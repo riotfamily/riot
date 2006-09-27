@@ -1,0 +1,116 @@
+<project default="skeleton">
+
+	<available property="regexpmapper.available" 
+		classname="org.apache.tools.ant.util.RegexpPatternMapper" />
+	
+	<!--
+	 - Create a new project skeleton.
+	 -->
+	<target name="skeleton">
+		<fail unless="prefix">
+			A target direcory must be specified. Use the -Dprefix command line argument or invoke the target from a riot bootstrap build file.
+		</fail>
+		<available file="${prefix}" property="prefix.exists" />
+		<fail unless="prefix.exists">
+			The target directory '${prefix}' does not exist.
+		</fail>
+		<basename file="${prefix}" property="project.name" />
+		
+		<antcall target="-copy-skeleton" />
+		<antcall target="-install-riot-pages" />
+		<antcall target="-copy-runtime-libs" />
+		<antcall target="-copy-buildtime-libs" />
+		<antcall target="-copy-cvsignore" />
+		<antcall target="-regexpmapper-notice" />
+		
+		<ant dir="${prefix}" target="webapp" />
+	</target>
+	
+	
+	<!--
+	  - Copys the skeleton data. Files calles ".empty" or "_.cvsignore" are
+	  - excluded. The project's build.xml file is filtered in order to fill in
+	  - the actual project name.
+	  -->
+	<target name="-copy-skeleton">
+		<copy todir="${prefix}" includeemptydirs="true" overwrite="true">
+			<fileset dir="data">
+				<exclude name="**/.empty" />
+				<exclude name="build.xml" />
+				<exclude name="**/_.cvsignore" />
+			</fileset>
+		</copy>
+		
+		<copy todir="${prefix}">
+			<fileset dir="data">
+				<include name="build.xml" />
+			</fileset>
+			<filterset>
+				<filter token="project.name" value="${project.name}" />
+			</filterset>
+		</copy>
+	</target>
+	
+	<!--
+	  - Copys all JAR files needed for a Riot Pages application to the
+	  - WEB-INF/lib directory of the new project.
+	  -->
+	<target name="-install-riot-pages">
+		<ant antfile="../pages/build.xml" target="copy-jars" inheritall="false">
+			<property name="dest" value="${prefix}/webapp/WEB-INF/lib" />
+		</ant>
+		
+		<ant antfile="../pages/build.xml" target="copy-libs" inheritall="false">
+			<property name="dest" value="${prefix}/webapp/WEB-INF/lib" />
+		</ant>
+	</target>
+	
+	<!--
+	  - Copys some runtime libraries, like a JAXP Transformer (Xalan),
+	  - the Jakarta JSTL implementation, and a JDBC driver (HSQLSB).
+	  -->
+	<target name="-copy-runtime-libs">
+		<copy todir="${prefix}/webapp/WEB-INF/lib" flatten="true">
+			<fileset dir="../lib">
+				<include name="xalan/*.jar" />
+				<include name="jdbc/hsqldb/*.jar" />
+				<include name="j2ee/jstl.jar" />
+				<include name="j2ee/standard.jar" />
+			</fileset>
+		</copy>
+	</target>
+		
+	<!-- 
+	  - Copys libraries that are provided by the servlet container (at runtime)
+	  - to the project's lib directory in order to make them available at 
+	  - compile time.
+	  -->
+	<target name="-copy-buildtime-libs">
+		<copy todir="${prefix}/lib" flatten="true">
+			<fileset dir="../lib">
+				<include name="j2ee/servlet*.jar" />
+				<include name="hibernate/hibernate-tools.jar" />
+			</fileset>
+		</copy>
+	</target>
+		
+	<target name="-regexpmapper-notice" unless="regexpmapper.available">
+		<echo>
+			This build file uses a RegexpPatternMapper to copy .cvsignore files
+			to the target project. Sice your Ant version does not support this
+			feature the .cvsignore files WILL NOT be copied.
+			
+			http://ant.apache.org/manual/CoreTypes/mapper.html#regexp-mapper
+		</echo>
+	</target>
+
+	<target name="-copy-cvsignore" if="regexpmapper.available">
+		<copy todir="${prefix}" includeemptydirs="true" verbose="true">
+			<fileset dir="data">
+				<include name="**/_.cvsignore" />
+			</fileset>
+			<regexpmapper from="^(.*)_\.(.*)$" to="\1.\2" />
+		</copy>
+	</target>
+
+</project>

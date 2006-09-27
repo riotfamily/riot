@@ -1,0 +1,68 @@
+ul.tree {
+	width: auto;
+	margin-left: 0px;
+	padding-left: 0;
+}
+
+ul.tree ul {
+	margin-left: 16px;
+	padding-left: 0;
+}
+
+ul.tree li {
+	list-style: none;
+	background: url(i-repeater.gif) 0 0 repeat-y;
+}
+
+ul.tree li.last {
+	list-style: none;
+	background-image: none;
+}
+
+ul.tree div.a {
+	background: url(t.gif) 0 50% no-repeat;
+}
+ul.tree div.a.last {
+	background: url(l.gif) 0 50% no-repeat;
+}
+ul.tree div.a.children div.b {
+	background: url(minus.gif) 0 50% no-repeat;
+	cursor: pointer;
+}
+ul.tree li.closed div.a.children div.b {
+	background: url(plus.gif) 0 50% no-repeat;
+	cursor: pointer;
+}
+
+ul.tree div.c {
+	margin-left: 16px;
+	display: block;
+	padding: 3px 0;
+}
+ul.tree div.children div.c {
+	background: url(i-bottom.gif) 0 50% no-repeat;
+}
+
+ul.tree li.closed div.c {
+	background-image: none;
+}
+
+ul.tree li.closed ul {
+	display: none;
+}
+
+ul.tree a {
+	background: url(page-file.gif) 0 50% no-repeat;
+	padding: 1px 0 1px 18px;
+	text-decoration: none;
+	font-size: 12px;
+	font-family: Arial, Sans-Serif;
+	color: #3d3d3d !important;
+}
+
+ul.tree div.children a {
+	background-image: url(page-openfoldericon.gif);
+}
+ul.tree li.closed div.children a {
+	background-image: url(page-foldericon.gif);
+}

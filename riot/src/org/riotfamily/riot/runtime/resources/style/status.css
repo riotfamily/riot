@@ -1,0 +1,26 @@
+@import url(common.css);
+
+body {
+	padding-top: 1px;
+	padding-bottom: 0;
+}
+
+body, a {
+	font-size: 11px;
+}
+
+#panel {
+	background-color: #ebebeb;
+}
+#status {
+	padding: 10px 0 10px 30px;
+}
+
+.value {
+	margin-right: 10px;
+}
+
+a {
+	color: ${highlight};
+	text-decoration: none;
+}

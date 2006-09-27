@@ -1,0 +1,7 @@
+.floating-options {
+	overflow: hidden;
+}
+.floating-options li {
+	float: left;
+	width: 25%;
+}

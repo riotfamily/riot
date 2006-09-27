@@ -1,0 +1,202 @@
+package org.riotfamily.pages.css;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.riotfamily.cachius.spring.AbstractCacheableController;
+import org.riotfamily.common.web.util.ServletMappingHelper;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.io.Resource;
+import org.springframework.web.context.ServletContextAware;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.LastModified;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+
+/**
+ * Controller that serves dynamic CSS files.
+ * <p>
+ * It's sometimes desirable to use constants in CSS files or to perform
+ * arithmetic operations. This controller allows you to do so, by using
+ * FreeMarker to process the stylesheets.
+ * </p>
+ * <p>
+ * You can place a <code>css.ini</code> file in the same directory where your 
+ * stylesheets are located. All properties defined in that file will be 
+ * available within the FreeMarker template.
+ * </p>
+ * <p>
+ * Additionally the controller allows you to create styles that look different
+ * in various contexts. A good example would be a website that uses multiple
+ * color schemes. Therefore you can add named sections to your your ini file
+ * and request <code>&lt;file>_&lt;section-name>.css</code> instead of 
+ * <code>&lt;file>.css</code>. This will cause the controller to expose the 
+ * properties of the requested section, possibly overriding any default 
+ * values with the same name.
+ * </p>
+ * <p>
+ * You can access the properties from all sections at any time by using
+ * <code>&lt;section_name>.&lt;property_name></code> in the FreeMarker template.
+ * If a default value has been overridden by a section value you can still 
+ * access the original default, by using <code>global.&lt;property_name></code>.
+ * </p>
+ */
+public class CssTemplateController extends AbstractCacheableController
+		implements LastModified, ServletContextAware, InitializingBean {
+
+	public static final String KEY_PROPERTY = "key";
+	
+	public static final String CONTEXT_PATH_PROPERTY = "contextPath";
+
+	private static final String DEFAULT_INI_FILE_NAME = "css.ini";
+	
+	private static final String CSS_SUFFIX = ".css";
+	
+	private ServletMappingHelper mappingHelper = new ServletMappingHelper();
+	
+	private ServletContext servletContext;
+		
+	private Pattern keyPattern = Pattern.compile("(/[^/]+?)_(.*?)(\\.css)");
+
+	private String contentType = "text/css";
+	
+	private Configuration freeMarkerConfig;
+	
+	private IniFile iniFile;
+	
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;
+	}
+	
+	public void setFreeMarkerConfig(Configuration configuration) {
+		this.freeMarkerConfig = configuration;
+	}
+	
+	public void setIniFileLocation(Resource resource) throws IOException {
+		iniFile = new IniFile(resource.getFile());
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		if (freeMarkerConfig == null) {
+			freeMarkerConfig = new Configuration();
+		}
+		freeMarkerConfig.setDirectoryForTemplateLoading(
+				new File(servletContext.getRealPath("/")));
+	}
+		
+	public long getLastModified(HttpServletRequest request) {
+		DynamicStylesheet stylesheet = lookup(request);
+		return stylesheet.lastModified();
+	}
+	
+	public ModelAndView handleRequest(HttpServletRequest request, 
+			HttpServletResponse response) throws Exception {
+		
+		DynamicStylesheet stylesheet = lookup(request);
+		stylesheet.serve(request, response);
+		return null;
+	}
+	
+	protected DynamicStylesheet lookup(HttpServletRequest request) {
+		String path = mappingHelper.getPathWithinApplication(request);
+		String key = null;
+		File file = new File(servletContext.getRealPath(path));
+		if (!file.exists()) {
+			Matcher matcher = keyPattern.matcher(path);
+			if (matcher.find()) {
+				key = matcher.group(2);
+				path = matcher.replaceFirst("$1$3");
+				file = new File(servletContext.getRealPath(path));
+			}
+		}
+		return new DynamicStylesheet(file, path, key);
+	}
+		
+	protected class DynamicStylesheet {
+		
+		private File file;
+		
+		private String path;
+		
+		private String key;
+		
+		public DynamicStylesheet(File file, String path, String key) {
+			this.file = file;
+			this.path = path;
+			this.key = key;
+		}
+		
+		public long lastModified() {
+			long lastModified = -1;
+			if (file != null) {
+				lastModified = file.lastModified();
+			}
+			if (iniFile != null) {
+				lastModified = Math.max(lastModified, iniFile.lastModified());
+			}
+			return lastModified;
+		}
+		
+		public void serve(HttpServletRequest request, 
+				HttpServletResponse response) 
+				throws IOException, TemplateException {
+			
+			if (file == null) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+				return;
+			}
+			if (!file.getName().endsWith(CSS_SUFFIX)) {
+				response.sendError(HttpServletResponse.SC_FORBIDDEN);
+			}
+			if (!file.canRead()) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND, 
+						"Can't read file " + file.getAbsolutePath());
+				
+				return;
+			}
+		
+			if (iniFile == null) {
+				File f = new File(file.getParentFile(),	DEFAULT_INI_FILE_NAME);
+				if (f.canRead()) {
+					iniFile = new IniFile(f);
+				}
+			}
+			
+			response.setContentType(contentType);
+			
+			Map	model = buildModel();
+			model.put(KEY_PROPERTY, key);
+			model.put(CONTEXT_PATH_PROPERTY, request.getContextPath());
+				
+			Template template = freeMarkerConfig.getTemplate(path);
+			template.process(model, response.getWriter());
+		}
+		
+		private Map buildModel() {
+			HashMap model = new HashMap();
+			if (iniFile != null) {
+				Map sections = iniFile.getSections();
+				model.putAll(sections);
+				model.putAll((Map) sections.get(IniFile.GLOBAL_SECTION));
+				if (key != null) {
+					Map current = (Map) sections.get(key);
+					if (current != null) {
+						model.putAll(current);
+					}
+				}
+			}
+			return model;
+		}
+		
+	}
+}

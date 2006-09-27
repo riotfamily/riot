@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+	targetNamespace="http://www.riotfamily.org/schema/riot/riot-config"
+	elementFormDefault="qualified"
+	xmlns="http://www.riotfamily.org/schema/riot/riot-config"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<xsd:element name="riot-config">
+		<xsd:complexType>
+			<xsd:choice>
+				<xsd:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>	
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>

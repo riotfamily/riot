@@ -1,0 +1,285 @@
+body {
+background:#5b5751 url(bg.png) repeat-x;
+color:${pageFgColor};
+font-family:"Trebuchet MS";
+margin:0;
+padding:0;
+}
+
+.corner-bl,
+.corner-br {
+	margin-bottom: expression(-1 * (this.parentNode.offsetHeight % 2));
+}
+
+#page-frame {
+width:${pageWidth + 2 * shadowWidth}px;
+margin:34px auto 0 auto;
+}
+#shadow-left {
+background:url(shadow-left.jpg) no-repeat;
+}
+#shadow-right {
+margin-left:${shadowWidth}px;
+background:url(shadow-right.jpg) right top no-repeat;
+}
+#page {
+background:${pageBgColor};
+margin-right:${shadowWidth}px;
+}
+#page-body {
+margin-top:36px;
+}
+
+/* Header */
+
+#header {
+height:103px;
+background:#908c83 url(header_bg.png) repeat-x;
+}
+#logo {
+display:block;
+position:relative;
+top:16px;
+left:18px;
+width:144px;
+height:66px;
+background:url(riot-logo.jpg) no-repeat;
+}
+
+/* Footer */
+
+#footer {
+clear:both;
+position:relative;
+height:58px;
+background:#79756c;
+}
+#footer-content {
+color:#aba6a0;
+font-size:11px;
+font-family:verdana;
+margin:0 228px 0 198px;
+padding-top:22px;
+}
+#spring-button {
+position:absolute;
+right:26px;
+top:22px;
+display:block;
+width:80px;
+height:15px;
+background:url(spring.gif) no-repeat;
+}
+
+/* Menu */
+
+#menu {
+float:left;
+width:${menuWidth}px;
+border-top:1px solid #5e5b56;
+}
+#menu,
+#menu ul {
+padding:0;
+margin:0;
+list-style:none;
+font-size:1px;
+}
+#menu li {
+padding:0;
+margin:0;
+line-height:12px;
+width:100%;
+border-bottom:1px solid #5e5b56;
+}
+#menu ul {
+margin-left:17px;
+}
+#menu ul li {
+width:100%;
+border-bottom:none;
+}
+#menu a,
+#menu .active {
+display:block;
+padding:10px 5px 10px 40px;
+font-size:12px;
+color:${pageFgColor};
+background-position:27px 14px;
+background-repeat:no-repeat;
+}
+#menu a {
+text-decoration:none;
+background-image:url(arrow.gif);
+}
+#menu div.active {
+font-weight:bold;
+background-image:url(arrow.gif);
+}
+#menu a:hover {
+background-color:${highlight};
+background-image:url(arrow-inverse.gif);
+color:${pageBgColor};
+}
+
+/* Content */
+
+#content {
+float:left;
+width:${pageWidth - menuWidth - extraWidth - 2*27}px;
+margin-left:27px;
+padding-bottom:5px;
+font-size:11px;
+line-height:20px;
+font-family:verdana;
+}
+#content h1 {
+color:#fff;
+font-family: "Trebuchet MS";
+font-size:19px;
+margin: 0 0 5px 0;
+}
+#content h2 {
+color:${highlight};
+font-family: "Trebuchet MS";
+font-size:15px;
+font-weight:bold;
+margin-top:0;
+margin-bottom:25px;
+}
+#content p,
+#content pre,
+#content .box {
+margin-top:0px;
+margin-bottom:25px;
+paddint-top:0;
+}
+#content img {
+margin-bottom:32px;
+}
+#content a {
+color:${pageFgColor};
+}
+#content a:hover {
+background:${highlight};
+color:${pageBgColor};
+text-decoration:none;
+}
+
+#content .box {
+padding:10px 17px;
+margin-bottom:25px;
+}
+#content div.box {
+background:${boxBgColor};
+color:${pageBgColor};
+}
+#content .box p {
+margin-bottom:0;
+}
+#content .box a {
+color:${pageBgColor};
+}
+
+#content div.code-box {
+color:#fff;
+background:#38352e;
+padding:10px 17px;
+font-size:10px;
+font-family:monospace;
+line-height:14px;
+}
+
+.code-box .source {
+overflow:auto;
+}
+
+.java_keyword {
+font-weight:bold;
+}
+.java_type {
+color:${boxBgColor};
+}
+.java_literal {
+color:${highlight};
+}
+
+.xml_tag_symbols {
+color:${boxBgColor};
+}
+.xml_tag_name {
+font-weight:bold;
+}
+.xml_attribute_name {
+color:${boxBgColor};
+}
+
+/* Extra */
+
+#extra {
+float:right;
+width:${extraWidth}px;
+font-size:9px;
+font-family:verdana;
+color:#a7a491;
+padding-bottom:100px;
+}
+
+#extra .box-frame {
+border-bottom:1px solid #605d58;
+padding:15px 0;
+}
+#page #extra .component-1 {
+padding-top:0;
+}
+#page #extra .last-component {
+border-bottom:none;
+}
+#extra .box {
+width:180px;
+}
+#extra .box .title {
+font-weight:bold;
+padding-top:7px;
+padding-bottom:7px;
+}
+#extra .box .content {
+padding-top:10px;
+padding-bottom:10px;
+line-height:15px;
+}
+#extra .box .content p {
+margin-top:0;
+}
+#extra .box .content a {
+color:#a7a491;
+text-decoration:none;
+}
+#extra .box .content a:hover {
+background:${highlight};
+color:#4c4944;
+}
+
+#extra .filled-box .title {
+background:#ecece2;
+color:${pageBgColor};
+padding-left:10px;
+}
+#extra .filled-box .content {
+background:${boxBgColor};
+padding-left:10px;
+}
+#extra .filled-box .content,
+#extra .filled-box .content a {
+color:${pageBgColor};
+}
+#extra .box-frame .important .title {
+background:${highlight};
+}
+#extra .box-frame .important .content, 
+#extra .box-frame .important .content a {
+color:#fff;
+}
+#extra .box-frame .important .content a:hover {
+color:#4c4944;
+}

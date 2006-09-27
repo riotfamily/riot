@@ -1,0 +1,14 @@
+<ivy-module version="1.3">
+    <info 
+    	organisation="riotfamily" 
+    	module="jscalendar-js" 
+    	revision="1.0"
+    	status="release">
+    	
+    	<license name="LGPL" url="http://www.gnu.org/licenses/lgpl.html" />
+    	<description homepage="http://www.dynarch.com/projects/calendar" />
+    </info>
+    <publications>
+    	<artifact name="jscalendar-js" type="jar" />
+    </publications>
+</ivy-module>

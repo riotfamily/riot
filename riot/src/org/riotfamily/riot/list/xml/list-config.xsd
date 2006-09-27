@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema 
+		targetNamespace="http://www.riotfamily.org/schema/riot/list-config" 
+		xmlns="http://www.riotfamily.org/schema/riot/list-config"
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	
+    <xsd:element name="list-config">
+    	<xsd:complexType>
+	    	<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+	    		<xsd:element ref="list" />
+	    	</xsd:sequence>
+	    </xsd:complexType>
+    </xsd:element>
+
+	<xsd:element name="list">
+	    <xsd:complexType>
+	    	<xsd:sequence>
+	    		<xsd:element ref="dao" />
+	    		<xsd:element ref="columns" />
+	    		<xsd:element ref="command" minOccurs="0" maxOccurs="unbounded" />
+	    	</xsd:sequence>
+	    	<xsd:attribute name="id" type="xsd:string" use="required" />
+	    	<xsd:attribute name="id-property" type="xsd:string" />
+	    	<xsd:attribute name="default-command" type="xsd:string" />
+	    	<xsd:attribute name="filter-form" type="xsd:string" />
+	    	<xsd:attribute name="order-by" type="xsd:string" />
+	    	<xsd:attribute name="row-style-property" type="xsd:string" />
+	    </xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="dao">
+		<xsd:complexType>
+	        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+	        	<xsd:element ref="property" />
+	        </xsd:sequence>
+	        <xsd:attribute name="ref" type="xsd:string" />
+	    	<xsd:attribute name="class" type="xsd:string" />
+	    </xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="property">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+			<xsd:attribute name="ref" type="xsd:string" />
+			<xsd:attribute name="value" type="xsd:string" />
+	    </xsd:complexType>
+	</xsd:element>
+    
+    <xsd:element name="columns">
+	    <xsd:complexType>
+			<xsd:sequence>
+	    		<xsd:element ref="column" minOccurs="0" maxOccurs="unbounded" />
+	    		<xsd:element ref="command" minOccurs="0" maxOccurs="unbounded" />
+	    	</xsd:sequence>
+	    </xsd:complexType>
+	</xsd:element>
+	    
+	<xsd:element name="command">
+	    <xsd:complexType>
+	    	<xsd:attribute name="id" type="xsd:string" />
+	    </xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="column">
+	    <xsd:complexType>
+	    	<xsd:attribute name="property" type="xsd:string" />
+	    	<xsd:attribute name="lookup-level" type="xsd:positiveInteger" />
+	    	<xsd:attribute name="renderer" type="xsd:string" />
+	    	<xsd:attribute name="sortable" type="xsd:boolean" />
+	    	<xsd:attribute name="case-sensitive" type="xsd:boolean" />
+	    </xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>

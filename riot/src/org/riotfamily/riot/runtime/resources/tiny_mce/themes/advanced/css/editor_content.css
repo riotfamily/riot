@@ -1,0 +1,19 @@
+/* This file contains the CSS data for the editable area(iframe) of TinyMCE */
+/* You can extend this CSS by adding your own CSS file with the the content_css option */
+
+.mceVisualAid {
+	border: 1px dashed #BBBBBB !important;
+}
+
+div.mceVisualAid {
+	background-image:url('../images/spacer.gif');
+	visibility: visible !important;
+}
+
+a.mceItemAnchor {
+	width: 12px;
+	line-height: 6px;
+	overflow: hidden;
+	padding-left: 12px;
+	background: url('../images/anchor_symbol.gif') no-repeat center center;
+}

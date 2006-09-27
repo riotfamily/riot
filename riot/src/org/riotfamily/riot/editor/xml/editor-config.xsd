@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+		targetNamespace="http://www.riotfamily.org/schema/riot/editor-config"
+		xmlns="http://www.riotfamily.org/schema/riot/editor-config"
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<xsd:element name="editor-config">
+		<xsd:complexType>
+			<xsd:choice maxOccurs="unbounded">
+				<xsd:element ref="custom" />
+				<xsd:element ref="tree" />
+				<xsd:element ref="list" />
+				<xsd:element ref="group" />
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="group">
+		<xsd:complexType>
+			<xsd:choice maxOccurs="unbounded">
+				<xsd:element ref="group" />
+				<xsd:element ref="list" />
+				<xsd:element ref="tree" />
+				<xsd:element ref="custom" />
+			</xsd:choice>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+			<xsd:attribute name="icon" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:attributeGroup name="list-attributes">
+		<xsd:attribute name="list-ref" type="xsd:string" use="required" />
+		<xsd:attribute name="icon" type="xsd:string" />
+		<xsd:attribute name="name" type="xsd:string" />
+	</xsd:attributeGroup>
+	
+	<xsd:element name="list">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element ref="view" />
+				<xsd:element ref="form" />
+				<xsd:element ref="form-chooser" />
+				<xsd:element ref="list" />
+				<xsd:element ref="tree" />
+			</xsd:choice>
+			<xsd:attributeGroup ref="list-attributes" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="tree">
+		<xsd:complexType>
+			<xsd:choice>
+				<xsd:element ref="form" />
+				<xsd:element ref="form-chooser" />
+			</xsd:choice>
+			<xsd:attributeGroup ref="list-attributes" />
+			<xsd:attribute name="branch-class" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:attributeGroup name="form-attributes">
+		<xsd:attribute name="form-ref" type="xsd:string" use="required" />
+		<xsd:attribute name="icon" type="xsd:string" />
+		<xsd:attribute name="name" type="xsd:string" />
+		<xsd:attribute name="label-property" type="xsd:string" />
+	</xsd:attributeGroup>
+
+	<xsd:group name="form-children">
+		<xsd:choice>
+			<xsd:element ref="form" />
+			<xsd:element ref="form-chooser" />
+			<xsd:element ref="list" />
+			<xsd:element ref="tree" />
+		</xsd:choice>
+	</xsd:group>
+		
+	<xsd:element name="form">
+		<xsd:complexType>
+			<xsd:group ref="form-children" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:attributeGroup ref="form-attributes" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="form-chooser">
+		<xsd:complexType>
+			<xsd:sequence minOccurs="2" maxOccurs="unbounded">
+				<xsd:element ref="form-option" />
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string" />
+			<xsd:attribute name="label-property" type="xsd:string" />
+			<xsd:attribute name="discriminator-property" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="form-option">
+		<xsd:complexType>
+			<xsd:group ref="form-children" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:attributeGroup ref="form-attributes" />
+			<xsd:attribute name="discriminator-value" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="custom">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+			<xsd:attribute name="icon" type="xsd:string" />
+			<xsd:attribute name="target" type="xsd:string" use="optional" />
+			<xsd:attribute name="url" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="view">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" />
+			<xsd:attribute name="template" type="xsd:string" />
+			<xsd:attribute name="label-property" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>

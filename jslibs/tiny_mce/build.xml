@@ -1,0 +1,9 @@
+<project name="tiny_mce" default="jar">
+
+	<import file="../js.xml" />
+	
+	<target name="-resource-fileset" depends="-unpack">
+		<fileset id="resource.files" dir="${unpack.dir}/tinymce/jscripts/tiny_mce" />
+	</target>
+
+</project>

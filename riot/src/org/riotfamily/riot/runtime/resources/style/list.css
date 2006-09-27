@@ -1,0 +1,126 @@
+@import url(form.css);
+@import url(list-custom.css);
+
+body {
+	padding-right: 55px;
+}
+
+#filter div.element {
+	float: left;
+	width: auto;
+	margin: 0 10px 10px 0;
+	padding: auto 10px;
+	padding-right: 10px !important;
+}
+#filter .buttons {
+	float:left;
+}
+#filter input.text {
+	width: 150px;
+	display: inline;
+}
+#filter select {
+	margin-top:3px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	background-color: #fff;
+}
+thead {
+	background-color: #3d3d3d;
+	color: #fff;
+}
+
+.pager {
+	background-color: #ebebeb;
+}
+th, td {
+	padding: 3px;
+	padding-left: 18px;
+	margin: 0;
+}
+th {
+	height: 13px;
+	text-align: left;
+	font-weight: normal;
+}
+th.sortable {
+	cursor: pointer;
+	cursor: hand;
+}
+th span {
+	padding-right: 16px;
+}
+th .sorted-asc {
+	background: url(images/asc.gif) 100% 55% no-repeat;
+}
+th .sorted-desc {
+	background: url(images/desc.gif) 100% 55% no-repeat;
+}
+td {
+	line-height: 26px;
+}
+th.command, 
+td.command {
+	width: 34px;
+	padding: 0;
+}
+
+tbody td {
+	border-bottom: 1px solid #ebebeb;
+}
+	
+tr.highlight {
+	background-color: #ebebeb;
+}
+
+.pager {
+	padding: 18px;
+	text-align: center;
+}
+.pager a, 
+.pager .currentPage {
+	text-decoration: none;
+	color: #000000;
+	padding: 2px 4px;
+}
+.pager a.page:hover {
+	background-color: #E0DDD1;
+} 
+.pager .currentPage {
+	color: #F9F9F5;
+	background-color: ${highlight};
+	font-weight: bold;
+}
+.pager .gap {
+	font-size: 8px;
+	color: #635a45;
+}
+
+td.data .css-cell {
+	display: block;
+	width: 29px;
+	height: 29px;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+td.data .true {
+	background-image: url(images/true.gif);
+}
+td.data .false {
+	background-image: url(images/false.gif);
+}
+
+#list .command .action:hover {
+	background-position: 0 -32px;
+	background-color: ${highlight};
+}
+#list .command .disabled {
+	background-position: 0 -64px;
+}
+#list .command .disabled:hover {
+	background-color: #ebebeb;
+}

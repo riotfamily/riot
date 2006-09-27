@@ -1,0 +1,7 @@
+<project name="riot-common" default="compile">
+
+	<property name="module.title" value="Riot Common" />
+	
+	<import file="../module-build.xml" />
+
+</project>

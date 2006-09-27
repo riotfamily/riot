@@ -1,0 +1,552 @@
+<html>
+<head>
+<style type="text/css">
+body {
+	background-color: #fff;
+	padding: 10px 30px;
+}
+
+body, p, blockquote, li, h3 {
+	font-family: "Trebuchet MS", arial, sans-serif;
+	font-size:12px;
+	text-align: left;
+}
+
+ul {
+	list-style-type: square;
+}
+
+li {
+	margin-bottom: 10px;
+}
+
+h3 {
+	font-size:24px;
+	margin-top:50px;
+}
+
+p { 
+	margin-top: 0;
+}
+
+pre, code {
+	padding-left: 20px;
+	padding-right: 10px;
+}
+
+
+blockquote {
+	margin-left: 20px;
+	margin-right: 0px;
+}
+
+a {
+	color: black;
+}
+
+.caps {
+	letter-spacing: 0.1em;
+	font-size: 10px;
+}
+
+hr {
+	color: #3d3d3d;
+	width: 66%;
+	margin-top: 2em;
+	margin-bottom: 2em;
+}
+</style>
+</head>
+<body>
+
+	<a name="intro"></a>
+	<h3>What Textile Does</h3>
+
+	<ul>
+		<li>Replace single and double primes (&amp;#39; and &amp;#34;) used as quotation marks with <acronym title="HyperText Markup Language">HTML</acronym> entities for opening and closing quotation marks (&#8216;&#8217; and &#8220;&#8221;) in readable text, while leaving untouched the primes required within <span class="caps">HTML</span> tags.</li>
+		<li>Replace double hyphens (--) with an em-dash (&#8212;) entity.</li>
+		<li>Replace single hyphens surrounded by spaces with an en-dash (&#8211;) entity.</li>
+		<li>Replace triplets of periods (...) with an ellipsis (&#8230;) entity.</li>
+		<li>Convert many nonstandard characters (&#376;&#250;&#223;&#352;&#960;&#338;) to browser-safe entities corresponding to keyboard input.</li>
+		<li>Apply block- and phrase-level structural tags automatically and at the discretion of the writer via quick tags.</li>
+		<li>Allow the quick creation of simple and complex tables</li>
+		<li>Allow the simple application of style, class, id, language and alignment attributes to elements</li>
+		<li>Create hyperlinks and insert images via quick tags.</li>
+		<li>Define acronyms via quick tags</li>
+		<li>Wrap an &lt;acronym&gt; tag around runs of three or more capital letters automatically.</li>
+		<li>Convert (TM), (R), and (C) to &trade;, &reg;, and &copy;</li>
+		<li>Convert the letter x to a dimension sign: 2x4 to 2&times;4 and 8 x 10 to 8&times;10</li>
+	</ul>
+
+
+
+	<a name="header"></a>
+	<h3>Headers</h3>
+
+	<p>To make an entire paragraph into a Header, place &#8220;h<em>n</em>. &#8221; at its beginning, where <em>n</em> is a number from 1&#8211;6.</p>
+
+	<p>Examples:</p>
+
+<pre>
+h1. Header 1
+
+h2. Header 2
+
+h3. Header 3
+</pre>
+
+	<p>Will become:</p>
+
+<pre>
+&lt;h1&gt;Header 1&lt;/h1&gt;
+
+&lt;h2&gt;Header 2&lt;/h2&gt;
+
+&lt;h3&gt;Header 3&lt;/h3&gt;
+</pre>
+
+	<p>Which, when rendered by a browser, will appear like this:</p>
+
+	<blockquote>
+		<h1>Header 1</h1>
+	
+		<h2>Header 2</h2>
+	
+		<h3>Header 3</h3>
+	</blockquote>
+	
+	<p><small>NB: Unmodified paragraphs will be wrapped in &lt;p&gt; tags.</small></p>
+
+	<p><a href="http://www.htmlhelp.com/reference/html40/block/h1.html" title="H1 reference at htmlhelp.com">More information</a></p>
+
+
+
+	<a name="blockquote"></a>
+	<h3>Block Quotes</h3>
+
+	
+	<p>To make an entire paragraph into a block quotation, place &#8220;bq. &#8221; before it.</p>
+
+	<p>Example</p>
+
+<pre>
+Any old text.
+bq. A block quotation.
+Any old text.
+</pre>
+
+	<p>Will become:</p>
+<pre>
+Any old text.
+&lt;blockquote&gt;A block quotation.&lt;/blockquote&gt;
+Any old text.
+</pre>
+
+	<p>Which, when rendered by a browser, will appear like this:</p>
+
+	<p>Any old text.</p>
+	<blockquote>A block quotation.</blockquote>
+	<p>Any old text.</p>
+
+	<p><small>NB: Unmodified paragraphs will be wrapped in &lt;p&gt; tags.</small></p>
+
+	<p><a href="http://www.htmlhelp.com/reference/html40/block/blockquote.html" title="blockquote reference at htmlhelp.com">More information</a></p>
+
+
+	<a name="numeric"></a>
+	<h3>Numeric Lists</h3>	
+
+	<p>To make a numbered list, place each item in its own paragraph, preceded by &#8220;# &#8221;.</p>
+
+	<p>Example</p>
+
+<pre>
+# A first item
+# A second item
+# A third item
+# A fourth item
+</pre>
+
+	<p>Will become:</p>
+
+<pre>
+&lt;ol&gt;
+    &lt;li&gt;A first item&lt;/li&gt;
+    &lt;li&gt;A second item&lt;/li&gt;
+    &lt;li&gt;A third item&lt;/li&gt;
+    &lt;li&gt;A fourth item&lt;/li&gt;
+&lt;/ol&gt;
+</pre>
+
+	<p>Which, when rendered by a browser, will appear like this:</p>
+
+	<ol>
+		<li>A first item</li>
+		<li>A second item</li>
+		<li>A third item</li>
+		<li>A fourth item</li>
+	</ol>
+
+	<p><small>NB: Unmodified paragraphs will be wrapped in &lt;p&gt; tags.</small></p>
+
+	<p><a href="http://www.htmlhelp.com/reference/html40/lists/ol.html" title="Ordered list reference at htmlhelp.com" target="_blank">More information</a></p>
+
+
+
+
+	<a name="bulleted"></a>
+	<h3>Bulleted Lists</h3>
+
+
+	<p>To make a bulleted (point form) list, place each item in its own paragraph, preceded by &#8220;* &#8220;.</p>
+
+	<p>Example</p>
+
+<pre>
+  * A first item
+  * A second item
+  * A third item
+  * A fourth item
+</pre>
+
+	<p>Will become:</p>
+
+<pre>
+&lt;ul&gt;
+    &lt;li&gt;A first item&lt;/li&gt;
+    &lt;li&gt;A second item&lt;/li&gt;
+    &lt;li&gt;A third item&lt;/li&gt;
+    &lt;li&gt;A fourth item&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+
+	<p>Which, when rendered by a browser, will appear like this:</p>
+
+	<ul>
+		<li>A first item</li>
+		<li>A second item</li>
+		<li>A third item</li>
+		<li>A fourth item</li>
+	</ul>
+
+	<p><small>NB: Unmodified paragraphs will be wrapped in &lt;p&gt; tags.</small></p>
+
+	<p><a href="http://www.htmlhelp.com/reference/html40/lists/ul.html" title="">More information</a></p>
+
+
+
+	<a name="italic"></a>
+	<h3>Emphasis</h3>
+
+
+	<p>Use _underscores_ around text to be <em>emphasized.</em></p>
+
+	<p>The &lt;em&gt; <acronym title="HyperText Markup Language"><span class="caps">HTML</span></acronym> tag is applied:</p>
+
+	<p>_a phrase_&#160;&#160;&rarr;&#160;&#160;&lt;em&gt;a phrase&lt;/em&gt; &rarr; <em>a phrase</em></p>
+
+	<p>If the text is not meant to have structural emphasis, but simply to be styled in italic (e.g., a phrase in a foreign language) use double underscores:</p>
+
+	<p>__a phrase__ &rarr; &lt;i&gt;a phrase&lt;/i&gt; &rarr; <i>a phrase</i></p>
+
+	<p>NB: quick tags must open and close within a single paragraph to produce valid markup.</p>
+
+	<p><a href="http://www.htmlhelp.com/reference/html40/phrase/em.html" title="">More information</a></p>
+
+
+
+	<a name="bold"></a>
+	<h3>Strong Emphasis</h3>
+
+
+	<p>Use *asterisks* for text to be <strong>strongly emphasized</strong>.</p>
+
+	<p>The &lt;strong&gt; <span class="caps">HTML</span> tag is applied:</p>
+
+	<blockquote><strong>a phrase</strong> &rarr; &lt;strong&gt;a phrase&lt;/strong&gt; &rarr; <strong>a phrase</strong></blockquote>
+
+	<p>If the text is not meant to have <strong>structural</strong> emphasis, but simply to be styled in <b>bold</b> (e.g., as a design element) use double asterisks:</p>
+
+	<blockquote>**a phrase** &rarr; &lt;b&gt;a phrase&lt;/b&gt; &rarr; <b>a phrase</b></blockquote>
+
+	<p><small>NB: quick tags must open and close within a single paragraph to produce valid markup.</small></p>
+
+	<p><a href="http://www.htmlhelp.com/reference/html40/phrase/strong.html" title="strong reference at htmlhelp.com">More information</a></p>
+
+
+	<a name="cite"></a>
+	<h3>Cite</h3>
+
+	
+	<p>Use ??double question marks?? around <cite>citations,</cite> such as the title of a work being cited.</p>
+
+	<p>The &lt;cite&gt; <span class="caps">HTML</span> tag is applied:</p>
+
+	<p>Nabokov&#8217;s ??Pnin?? &rarr; Nabokov&#8217;s &lt;cite&gt;Pnin&lt;/cite&gt; &rarr; Nabokov&#8217;s <cite>Pnin</cite></p>
+
+	<p><small>NB: quick tags must open and close within a single paragraph to produce valid markup.</small></p>
+
+	<p><a href="http://www.htmlhelp.com/reference/html40/phrase/cite.html" title="">More information</a></p>
+
+
+	<a name="delete"></a>
+	<h3>Deleted Text</h3>
+
+
+	<p>Use -hyphens- around text that has been <del>deleted</del>. This is useful in marking changes from one version of a document to the next.</p>
+
+	<p>The &lt;del&gt; <acronym title="Hypertext Markup Language"><span class="caps">HTML</span></acronym> tag is applied:</p>
+
+	<p>-a phrase- &rarr; &lt;del&gt;a phrase&lt;/del&gt; &rarr; <del>a phrase</del></p>
+
+	<p><small>NB: quick tags must open and close within a single paragraph to produce valid markup.</small></p>
+
+	<p><a href="http://www.htmlhelp.com/reference/html40/phrase/del.html" title="del reference at htmlhelp.com">More information</a></p>
+
+
+	<a name="insert"></a>
+	<h3>Inserted Text</h3>
+
+
+	<p>Use +pluses+ around text that has been <ins>inserted</ins>. This is useful in marking changes from one version of a document to the next.</p>
+
+	<p>The &lt;ins&gt; <acronym title="Hypertext Markup Language"><span class="caps">HTML</span></acronym> tag is applied:</p>
+
+	<p>+a phrase+ &rarr; &lt;ins&gt;a phrase&lt;/ins&gt; &rarr; <ins>a phrase</ins></p>
+
+	<p><small>NB: quick tags must open and close within a single paragraph to produce valid markup.</small></p>
+
+	<p><a href="http://www.htmlhelp.com/reference/html40/phrase/ins.html" title="del reference at htmlhelp.com">More information</a></p>
+
+
+	<a name="super"></a>
+	<h3>Superscript</h3>
+
+	<p>Use ^carets^ for text to be rendered <sup>superscript</sup>.</p>
+
+	<p>The &lt;sup&gt; <span class="caps">HTML</span> tag is applied:</p>
+
+	<p>^a phrase^ &rarr; &lt;sup&gt;a phrase&lt;/sup&gt; &rarr; <sup>a phrase</sup></p>
+
+	<p><small>NB: quick tags must open and close within a single paragraph to produce valid markup.</small></p>
+
+	<p><a href="http://www.htmlhelp.com/reference/html40/special/sup.html" target="_blank" title="superscript reference at htmlhelp.com">More information</a></p>
+
+
+	<a name="sub"></a>
+	<h3>Subscript</h3>
+
+	<p>[...]</p>
+
+
+	<a name="span"></a>
+	<h3>Span</h3>
+
+
+	<p>Use the %per cent symbol% to indicate a span.</p>
+
+	<p>The &lt;span&gt; <span class="caps">HTML</span> tag is applied, along with whatever class, style, id or language attributes are specified between the opening per cent and the first character of the phrase:</p>
+
+	<p>&#37;(caps)SPAN&#37; &rarr; &lt;span class=&#34;caps&#34;&gt;SPAN&lt;/span&gt; &rarr; <span class="caps"><span class="caps">SPAN</span></span></p>
+
+	<p>&#37;{color:red}red&#37; &rarr; &lt;span style=&#34;color:red&#34;&gt;red&lt;/span&gt; &rarr; <span style="color:red">red</span></p>
+
+
+	<a name="attributes"></a>
+	<h3>Attributes</h3>
+
+
+	<p>Syntax:</p>
+
+	<p>
+		(class)<br />
+		(#id)<br />
+		(class#id) can be combined<br />
+		{style}<br />
+		[language]
+	</p>
+
+	<p><strong>Attributes in phrase elements</strong></p>
+
+	<p>&#37;{color:red}red&#37; &rarr; &lt;span style=&#34;color:red&#34;&gt;red&lt;/span&gt;</p>
+
+	<p>&#37;[fr]rouge&#37; &rarr; &lt;span lang=&#34;fr&#34;&gt;rouge&lt;/span&gt;</p>
+
+	<p>&#95;(big)red&#95; &rarr; &lt;em class=&#34;big&#34;&gt;red&lt;/em&gt;</p>
+
+	<p><strong>Attributes in block elements</strong></p>
+
+	<p>&#112;(bob). A paragraph &rarr; &lt;p class=&#34;bob&#34;&gt;A paragraph&lt;/p&gt;</p>
+
+	<p>&#112;{color:#ddd}. A paragraph &rarr; &lt;p style=&#34;color:#ddd&#34;&gt;A paragraph&lt;/p&gt;</p>
+
+	<p>&#112;[fr]. A paragraph &rarr; &lt;p lang=&#34;fr&#34;&gt;A paragraph&lt;/p&gt;</p>
+
+	<p><strong>Block attribute shorthand</strong></p>
+
+	<p>
+		&#112;&lt;. <em>align left</em><br />
+		&#112;&gt;. <em>align right</em><br />
+		&#112;=. <em>centered</em><br />
+		&#112;&lt;&gt;. <em>justified</em><br />
+
+		&#112;(., &#112;((.  <em>left indent 1em, 2em, etc.</em><br />
+		&#112;). <em>right indent 1em</em>
+	</p>
+
+	<p>Examples:</p>
+
+	<p>
+		&#104;2()&gt;. <em>right-aligned header 2, indented 1em both sides</em><br />
+		&#104;3=. <em>centered header 3</em><br />
+
+		&#33;&gt;/image.gif! <em>right-aligned image</em><br />
+		&#112;[no]{color:red}. <em>A Norse of a different colour</em>
+	</p>
+
+	<a name="link"></a>
+	<h3>Links</h3>
+
+
+	<p>To make a hypertext link, put the link text in "quotation marks" followed immediately by a colon and the <acronym title="Universal Resource Locator"><span class="caps">URL</span></acronym> of the link.</p>
+
+	<p>Optional: text in (parentheses) following the link text, but before the closing quotation mark, will become a Title attribute for the link, visible as a tool tip when a cursor is above it.</p>
+
+	<p>Example:</p>
+
+	<p>"This is a link (This is a title) ":http://www.textism.com</p>
+
+	<p>Will become:</p>
+
+	<p>&lt;a href=&#34;http://www.textism.com&#34; title=&#34;This is a title&#34;&gt;This is a link&lt;/a&gt;</p>
+
+	<p>Which, when displayed in a browser, will look like this:</p>
+
+	<p><a href="http://www.textism.com" title="This is a title" style="color:blue">This is a link</a></p>
+
+	<p><strong>New</strong> in Textile 2.0 is the ability to store long ugly urls outside of the text you&#8217;re working in, and reference them with aliases of your choosing.</p>
+
+	<p>Simply store the url anywhere in the document,  such as at the end, using this syntax:</p>
+
+	<p>[alias (optional title)]http://url</p>
+
+	<p>Each referenced url must begin on a new line.</p>
+
+	<p>
+		Example text:<br />
+		This is a &#34;link&#34;:bob to Bob&#8217;s website.
+	</p>
+
+	<p>
+		So long as this appears elsewhere in the document:<br />
+		[bob]http://itsbob.com/index.html
+	</p>
+
+	<p>
+		...the final output will be:<br />
+		This is a &lt;a href=&#34;http://itsbob.com/index.html&#34;&gt;link&lt;/a&gt; to Bob&#8217;s website.
+	</p>
+
+	<p><a href="http://www.htmlhelp.com/reference/html40/special/a.html" target="_blank" title="a tag reference at htmlhelp.com">More information</a></p>
+
+
+
+	<a name="image"></a>
+	<h3>Images</h3>
+
+
+	<p>To insert an image, put the <acronym title="Universal Resource Locator">URL</acronym> for the image inside exclamation marks.</p>
+
+	<p>Optional: text that immediately follows the <span class="caps">URL</span> in (parentheses) will be used as the Alt text for the image. Images on the web should always have descriptive Alt text for the benefit of readers using non-graphical browsers.</p>
+
+	<p>Optional: place a colon followed by a <span class="caps">URL</span> immediately after the closing ! to make the image into a link.</p>
+
+	<p>Example:</p>
+
+ !http://www.textism.com/common/textist.gif(Textist)!
+
+	<p>With a link:</p>
+
+ !/common/textist.gif(Textist)!:http://textism.com
+
+	<p>Will become:</p>
+
+	<p>&lt;img src="http://www.textism.com/common/textist.gif" alt="Textist" /&gt;</p>
+
+	<p>With a link:</p>
+
+	<p>&lt;a href="http://textism.com"&gt;&lt;img src="/common/textist.gif" alt="Textist" /&gt;&lt;/a&gt;</p>
+
+	<p>Which the browser will use to render the image:</p>
+
+	<p><img src="textist.gif" /></p>
+
+	<p>With a link:</p>
+
+	<p><a href="http://www.textism.com"><img src="textist.gif" border="0" /></a></p>
+
+	<p><a href="http://www.htmlhelp.com/reference/html40/special/img.html" target="_blank" title="img tag reference at htmlhelp.com">More information</a></p>
+
+
+	<a name="acronym"></a>
+	<h3>Defining Acronyms</h3>
+
+
+	<p><acronym title="HyperText Markup Language"><span class="caps">HTML</span></acronym> allows authors to define acronyms via the  tag. The definition appears as a tool tip when a cursor hovers over the acronym. A crucial aid to clear writing, this should be used at least once for each acronym in documents where they appear. </p>
+
+	<p>To quickly define an acronym in Textile, place the full text in (parentheses) immediately following the acronym.</p>
+
+	<p>Example:</p>
+
+	<blockquote>ACLU(American Civil Liberties Union)</blockquote>
+
+	<p>Will become:</p>
+
+	<blockquote>&lt;acronym title="American Civil Liberties Union"&gt;ACLU&lt;/acronym&gt;</blockquote>
+
+	<p>Which, when displayed in a browser, will look like this (move your cursor over the text):</p>
+
+	<blockquote><acronym title="American Civil Liberties Union"><span class="caps">ACLU</span></acronym></blockquote>
+
+	<p><small>NB: Textile automatically wraps a string of three or more capital letters in the &lt;acronym&gt; tag, even if it has no definition.</small></p>
+
+	<p><a href="http://diveintoaccessibility.org/day_17_defining_acronyms.html" title="more information on this tag at diveintoaccessibility.org">More information</a></p>
+
+
+<!--
+
+	<a name="footnote"></a>
+	<h3>Footnotes</h3>
+
+
+	<p>Numeric references within text to footnotes appear between square brackets:</p>
+
+	<p>This is covered elsewhere[1].</p>
+
+	<p>Will become:</p>
+
+	<p>This is covered elsewhere&lt;sup&gt;&lt;a href=&#34;#fn1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;</p>
+
+
+	<p>Which, when rendered by a browser, will appear like this:</p>
+
+	<p>This is covered elsewhere<sup><a href="#fn1">1</a></sup>.</p>
+
+	<p><p style="text-align:center">* * *</p></p>
+
+	<p>To create the footnote that corresponds to its reference within the text, begin a new paragraph with <em>fn</em> and the footnote&#8217;s number, followed by a dot and a space:</p>
+
+	<p>fn1. Down here, in fact.</p>
+
+	<p><em>becomes</em></p>
+
+	<p>&lt;p id=&#34;fn1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt; Down here, in fact.&lt;/p&gt;</p>
+
+	<p><em>which is rendered</em></p>
+
+	<p><p id="fn1"><sup>1</sup> Down here, in fact.</p></p>
+
+-->
+
+</body>
+</html>

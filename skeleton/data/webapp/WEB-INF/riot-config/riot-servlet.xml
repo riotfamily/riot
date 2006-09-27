@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+    <!-- Read placeholders from application.properties  -->
+	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath:/application.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+    <bean id="defaultFileStore" class="org.riotfamily.common.web.file.DefaultFileStore">
+		<property name="uriPrefix"><value>/media</value></property>
+		<property name="storagePath"><value>${riot.media.storagePath}</value></property>
+	</bean>
+	
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.FixedLocaleResolver">
+    	<property name="defaultLocale"><value>en_US</value></property>
+    </bean>
+    
+    <bean id="cssProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="properties">
+			<props>
+				<prop key="highlight">${riot.highlightColor=#cb0038}</prop>
+				<prop key="toolbarOutline">${riot.toolbarOutlineColor=#fff}</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="roles" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="sourceList">
+			<list>
+				<value>admin</value>
+			</list>
+		</property>
+	</bean>
+ 	
+ 	<bean id="pageLinkRenderer" class="org.riotfamily.riot.list.ui.render.LinkRenderer">
+ 		<property name="property"><value>path</value></property>
+ 		<property name="suffix"><value>.html</value></property>
+ 		<property name="target"><value>pages</value></property>
+ 		<property name="titleMessageKey"><value>command.pageLink</value></property>
+ 	</bean>
+ 	
+ 	<bean class="org.riotfamily.riot.hibernate.support.SetupBean">
+ 		<property name="sessionFactory"><ref bean="sessionFactory" /></property>
+ 		<property name="condition"><value>from User where id='admin'</value></property>
+ 		<property name="objects">
+ 			<list>
+ 				<bean class="org.riotfamily.riot.hibernate.security.User">
+ 					<property name="id"><value>admin</value></property>
+ 					<property name="role"><value>admin</value></property>
+ 					<property name="newPassword"><value>admin</value></property>
+ 				</bean>
+ 			</list>
+ 		</property>
+ 	</bean>
+
+	<bean class="org.riotfamily.riot.hibernate.support.SetupBean">
+ 		<property name="sessionFactory"><ref bean="sessionFactory" /></property>
+ 		<property name="condition"><value>select count(*) from PersistentPage</value></property>
+ 		<property name="objects">
+ 			<list>
+ 				<bean class="org.riotfamily.pages.page.PersistentPage">
+ 					<property name="pathComponent"><value>index</value></property>
+ 					<property name="published" value="true" />
+					<property name="metaData">
+						<bean class="org.riotfamily.pages.page.meta.MetaData">
+							<property name="title"><value>Home</value></property>
+						</bean>
+					</property>
+ 				</bean>
+ 			</list>
+ 		</property>
+ 	</bean>
+ 	
+</beans>

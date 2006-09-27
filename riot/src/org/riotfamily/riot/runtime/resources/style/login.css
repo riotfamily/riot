@@ -1,0 +1,85 @@
+@import url(common.css);
+
+#login {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 300px;
+	height: 264px;
+	margin: -180px 0 0 -150px;
+}
+
+#logo {
+	height: 111px;
+	background: url(images/logo.gif) top right no-repeat;
+	margin-right: 20px;
+}
+
+form {
+	margin: 0;
+	padding: 0;
+}
+
+#form {
+	border-top: 1px solid #ebebeb;
+	border-bottom: 1px solid #ebebeb;
+	padding: 14px;
+	overflow:hidden;
+}
+
+label {
+	width: 80px;
+	display: block;
+	float:left;
+	margin-right:10px;
+	margin-bottom: 10px;
+	clear:both;
+	line-height:26px;
+	text-align:right;
+}
+
+.error {
+	text-align: left;
+	color: ${highlight};
+	margin-left: 92px;
+	padding-bottom: 10px;
+}
+
+#username, 
+#password {
+	display: block;
+	width: 180px;
+	float:right;
+	font-size: 12px;
+	padding: 4px;
+	margin-bottom: 10px;
+	height: 26px;
+	-moz-box-sizing: border-box;
+	border: 1px solid #ebebeb;
+}
+
+#submit {
+	display: none;
+}
+
+.button-login {
+	display: block;
+	clear: both;
+	margin-left: 138px;
+	width: 133px;
+	height: 46px;
+	background: ${highlight} url(images/login.gif) 10px 10px no-repeat;
+}
+.button-login .face {
+	text-align: left;
+	padding: 10px 0 0 40px;
+	color: #fff;
+	font-family: "Trebuchet MS", arial, sans-serif;
+	font-size:12px;
+}
+
+#tip-of-the-day {
+	margin-top: 50px;
+	padding: 10px;
+	background-color: #ebebeb;
+}

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		elementFormDefault="qualified"
+		attributeFormDefault="unqualified" 
+		targetNamespace="http://www.riotfamily.org/schema/pages/component"
+		xmlns="http://www.riotfamily.org/schema/pages/component">
+	
+	<xsd:simpleType name="boolean">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="true"/>
+			<xsd:enumeration value="false"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+		
+	<xsd:element name="static-component">
+		<xsd:complexType>
+			<xsd:attribute name="id" type="xsd:ID" />
+			<xsd:attribute name="location" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="inheriting-component">
+		<xsd:complexType>
+			<xsd:attribute name="id" type="xsd:ID" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="abstract-component" abstract="true">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+			<xsd:choice>
+				<xsd:element name="property-processor">
+					<xsd:complexType>
+						<xsd:attribute name="ref" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="defaults">
+					<xsd:complexType>
+						<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+							<xsd:element name="property">
+								<xsd:complexType>
+									<xsd:attribute name="name" type="xsd:string" use="required" />
+									<xsd:attribute name="value" type="xsd:string" use="required" />
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="property-editor">
+					<xsd:complexType>
+						<xsd:attribute name="property" type="xsd:string" />
+						<xsd:attribute name="ref" type="xsd:string" use="required" />
+						<xsd:attribute name="default" type="xsd:string" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="hibernate-entity">
+					<xsd:complexType>
+						<xsd:attribute name="property" type="xsd:string" />
+						<xsd:attribute name="session-factory" type="xsd:string" />
+						<xsd:attribute name="class" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choice>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:ID" />
+	</xsd:complexType>
+		
+	<xsd:element name="view-component">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="abstract-component">
+					<xsd:attribute name="view-name" type="xsd:string" />
+					<xsd:attribute name="dynamic" type="boolean" default="false" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="include-component">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="abstract-component">
+					<xsd:attribute name="uri" type="xsd:string" />
+					<xsd:attribute name="dynamic" type="boolean" default="true" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>

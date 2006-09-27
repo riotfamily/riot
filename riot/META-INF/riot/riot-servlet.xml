@@ -1,0 +1,500 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<bean id="messageSource" name="riotMessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="fallbackToSystemLocale" value="false" />
+		<property name="cacheSeconds" value="1" />
+        <property name="basenames">
+        	<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+        		<property name="key" value="messageSourceBasenames" />
+        		<property name="sourceList">
+        			<list>
+	        			<value>/WEB-INF/riot-config/messages</value>
+        				<value>classpath:/org/riotfamily/riot/runtime/i18n/messages</value>
+        			</list>
+        		</property>
+        	</bean>
+        </property>
+    </bean>
+	
+	<bean id="messageCodesResolver" class="org.riotfamily.common.i18n.RiotMessageCodesResolver" />
+		
+	<!-- 
+	  - MultipartResolver that provides information about the file upload progress 
+	  -->
+	<bean id="multipartResolver" class="org.riotfamily.forms.fileupload.FormsMultipartResolver">
+		<constructor-arg>
+			<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+		</constructor-arg>	
+	</bean>
+	
+	<!-- 
+      - The default JDK map lacks some important web-related mimetypes ...
+	  -->
+	<bean id="fileTypeMap" class="org.riotfamily.common.io.MimetypesFileTypeMapFactoryBean">
+		<property name="types">
+			<list>
+				<value>text/css css</value>
+				<value>text/javascript js</value>
+				<value>image/png png</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 
+	  - Exception resolver that outputs a nicly formatted error message.
+	  -->
+	<bean id="exceptionResolver" class="org.riotfamily.common.web.util.AdvancedMappingExceptionResolver">
+		<property name="defaultErrorView" value="classpath:/org/riotfamily/riot/runtime/view/error.ftl" />
+	</bean>
+	
+	<!-- 
+	  - HandlerInterceptor that ensures that only authenticated users can
+	  - access the Riot admin pages.
+	  -->
+	<bean id="loginInterceptor" class="org.riotfamily.riot.security.LoginInterceptor">
+		<property name="loginFormController" ref="loginFormController" />
+		<property name="excludes">
+			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+				<property name="key" value="publicUrls" />
+				<property name="sourceList">
+					<list>
+						<value>/login</value>
+						<value>/logout</value>
+						<value>/resources/**</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="includes">
+			<list>
+				<value>/resources/*/dwr/**</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="principalBinder" class="org.riotfamily.riot.security.support.HttpSessionPrincipalBinder" />
+	
+	<!-- 
+	  - Service to authenticate users. You'll probably want to provide an
+	  - implementation that retrieves principals from the database or a 
+	  - directory server. To do so, place a bean called 'authenticationServiceImpl' 
+	  - in your configuration or deploy the riot-hibernate.jar file which 
+	  - contains a Hibernate based implementation.
+	  -->	
+	<bean id="authenticationService" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
+		<property name="fallback">
+			<bean class="org.riotfamily.riot.security.support.StaticAuthenticationService" />
+		</property>
+	</bean>
+
+	<!-- 
+	  - Persistence service for SessionData (last login date, last IP, etc.)
+	  -->
+	<bean id="sessionDataStore" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
+		<property name="fallback">
+			<bean class="org.riotfamily.riot.security.support.DefaultSessionDataStore" />
+		</property>
+	</bean>
+	
+	<bean id="loginManager" class="org.riotfamily.riot.security.LoginManager">
+		<constructor-arg ref="authenticationService" />
+		<constructor-arg ref="principalBinder" />
+		<property name="sessionDataStore" ref="sessionDataStore" />
+	</bean>
+	
+	<!-- 
+	  - Bean that configures the Riot AccessController by calling some 
+	  - static setter methods.
+	  -->
+	<bean id="accessControlConfigurer" class="org.riotfamily.riot.security.AccessControlConfigurer">
+		<property name="principalBinder" ref="principalBinder" />
+	</bean>
+	
+	<bean id="defaultPolicy" class="org.riotfamily.riot.security.policy.GrantAllPolicy" />
+	
+	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaders">
+			<list>
+				<bean class="org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader" />
+			</list>
+		</property>
+		<property name="freemarkerVariables">
+			<map>
+				<entry key="url"><bean class="org.riotfamily.common.web.view.freemarker.EncodeUrlMethod" /></entry>
+				<entry key="include"><bean class="org.riotfamily.common.web.view.freemarker.IncludeMethod" /></entry>
+				<entry key="riotVersion"><bean factory-bean="riotRuntime" factory-method="getVersionString" /></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="viewClass" value="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView" />
+		<property name="cache" value="true" />
+		<property name="exposeSpringMacroHelpers" value="true" />
+        <property name="attributesMap">
+        	<map>
+	        	<entry key="servletPrefix" value-ref="riotServletPrefix" />
+        		<entry key="resourcePath" value-ref="riotResourcePath" />
+        		<entry key="customStyleSheets">
+        			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+						<property name="key" value="customStyleSheets" />
+						<property name="sourceList">
+							<list>
+								<value>style/commands.css</value>
+							</list>
+						</property>
+					</bean>
+        		</entry>
+        	</map>
+        </property>
+    </bean>
+       
+    <bean id="commandExecutor" class="org.riotfamily.riot.list.command.support.CommandExecutor" />
+	
+	<!-- Core list commands -->
+	
+	<bean id="editCommand" class="org.riotfamily.riot.list.command.core.EditCommand" />
+	
+	<bean id="addCommand" class="org.riotfamily.riot.list.command.core.EditCommand" />
+	
+	<bean id="viewCommand" class="org.riotfamily.riot.list.command.core.EditCommand" />
+	
+	<bean id="deleteCommand" class="org.riotfamily.riot.list.command.core.DeleteCommand" />
+	
+	<bean id="stepIntoCommand" class="org.riotfamily.riot.list.command.core.StepIntoCommand" />
+	
+	<bean id="chooseCommand" class="org.riotfamily.riot.form.element.chooser.ChooseCommand" />
+	
+	<bean id="moveUpCommand" class="org.riotfamily.riot.list.command.core.SwapCommand">
+		<property name="swapWith" value="-1" />
+	</bean>
+	
+	<bean id="moveDownCommand" class="org.riotfamily.riot.list.command.core.SwapCommand">
+		<property name="swapWith" value="1" />
+	</bean>
+	
+	<bean id="cutCommand" class="org.riotfamily.riot.list.command.core.CutCommand" />
+	
+	<bean id="pasteCommand" class="org.riotfamily.riot.list.command.core.PasteCommand" />
+	
+	<!-- Alternative cell renderer  -->
+	
+	<bean id="imageRenderer" class="org.riotfamily.riot.list.ui.render.ImageRenderer" />
+	
+	<bean id="cssClassRenderer" class="org.riotfamily.riot.list.ui.render.CssClassRenderer" />
+	
+	<bean id="messageRenderer" class="org.riotfamily.riot.list.ui.render.MessageRenderer" />
+	
+	<bean id="mediumDateRenderer" class="org.riotfamily.riot.list.ui.render.DateRenderer" />
+	
+	
+	<!-- Repositories -->
+	
+	<bean id="listRepository" class="org.riotfamily.riot.list.xml.XmlListRepository">
+		<property name="configLocations">
+			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+				<property name="key" value="listConfigLocations" />
+				<property name="sourceList">
+					<list>
+						<value>/WEB-INF/riot-config/list-config.xml</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="customFormElements" class="org.riotfamily.common.beans.module.ModularPropertiesFactoryBean">
+		<property name="key" value="customFormElements" />
+		<property name="properties">
+			<props>
+				<prop key="chooser">org.riotfamily.riot.form.element.chooser.ObjectChooser</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="formRepository" class="org.riotfamily.forms.factory.xml.XmlFormRepository">
+		<property name="configLocations">
+			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+				<property name="key" value="formConfigLocations" />
+				<property name="sourceList">
+					<list>
+						<value>/WEB-INF/riot-config/form-config.xml</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="mimetypesMap" ref="fileTypeMap" />
+		<property name="customElements" ref="customFormElements" />
+	</bean>
+		
+	<bean id="editorRepository" class="org.riotfamily.riot.editor.xml.XmlEditorRepository">
+		<property name="configLocations">
+			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+				<property name="key" value="editorConfigLocations" />
+				<property name="sourceList">
+					<list>
+						<value>/WEB-INF/riot-config/editor-config.xml</value>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="listRepository" ref="listRepository" />
+		<property name="formRepository" ref="formRepository" />
+		<property name="messageCodesResolver" ref="messageCodesResolver" />
+	</bean>
+	
+	<!-- 
+	  - XmlHandlerMapping that maps the Riot admin URLs to controllers.
+	  -->
+	<bean id="handlerMapping" class="org.riotfamily.common.web.mapping.AdvancedBeanNameHandlerMapping">
+		<property name="servletMappingPrefix" ref="riotServletPrefix" />
+		<property name="interceptors">
+			<list>
+				<ref bean="loginInterceptor" />
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Controllers -->
+	
+	<!--
+	  - MVC controller that displays the login form and passes the user input
+	  - to the LoginManager.
+	  -->
+	<bean id="loginFormController" name="/login" class="org.riotfamily.riot.security.ui.LoginFormController">
+		<constructor-arg ref="loginManager" />
+	</bean>
+	
+	<!--
+	  - MVC controller that displays the bottom status frame containing 
+	  - login information.
+	  -->
+	<bean id="statusbarController" name="/statusbar" class="org.riotfamily.riot.security.ui.LoginStatusController" />
+	
+	<!--
+	  - MVC controller that performs a logout.
+	  -->
+	<bean id="logoutController" name="/logout" class="org.riotfamily.riot.security.ui.LogoutController">
+		<constructor-arg ref="loginManager" />
+	</bean>
+		
+	<bean id="cssProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="properties">
+			<props>
+				<prop key="highlight">#cb0038</prop>
+				<prop key="toolbarOutline">#3d3d3d</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="resourceController" name="/resources/*/@{resource*}" class="org.riotfamily.common.web.resource.ResourceController">
+		<property name="pathAttribute" value="resource" />
+		<property name="fileTypeMap" ref="fileTypeMap" />
+		<property name="filters">
+			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+				<property name="key" value="resourceFilters" />
+				<property name="sourceList">
+					<list>
+						<bean class="org.riotfamily.common.web.resource.PropertyResourceFilter">
+							<property name="match" value="/**/*.css" />
+							<property name="properties" ref="cssProperties" />
+						</bean>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="mappings">
+			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+				<property name="key" value="resourceMappings" />
+				<property name="sourceList">
+					<list>
+						<!-- Allow styles to be overwritten in WEB-INF/style -->
+						<bean class="org.riotfamily.common.web.resource.ResourceMapping">
+							<property name="path" value="/style/" />
+							<property name="location" value="/WEB-INF/riot-config/style/" />
+						</bean>
+						<!-- Riot resources -->
+						<bean class="org.riotfamily.common.web.resource.ResourceMapping">
+							<property name="path" value="/" />
+							<property name="location" value="classpath:/org/riotfamily/riot/runtime/resources/" />
+						</bean>
+						<!-- Resources from the jslib jars -->
+						<bean class="org.riotfamily.common.web.resource.ResourceMapping">
+							<property name="path" value="/" />
+							<property name="location" value="classpath:/org/riotfamily/resources/" />
+						</bean>
+						<!-- Form resources -->
+						<bean class="org.riotfamily.common.web.resource.ResourceMapping">
+							<property name="path" value="/form/" />
+							<property name="location" value="classpath:/org/riotfamily/forms/runtime/resources/" />
+						</bean>
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+	 
+	<bean id="groupController" class="org.riotfamily.riot.editor.ui.EditorGroupController">
+		<constructor-arg ref="editorRepository" />
+	</bean>
+	<alias name="groupController" alias="/group" />
+	<alias name="groupController" alias="/group/@{editorId}" />
+	
+	<bean id="editorFramesetController" name="/" class="org.springframework.web.servlet.mvc.ParameterizableViewController">
+		<property name="viewName" value="classpath:/org/riotfamily/riot/runtime/view/frameset.ftl" />
+	</bean>
+	
+	<bean id="pathController" name="/path" class="org.riotfamily.riot.editor.ui.PathController">
+		<constructor-arg ref="editorRepository" />
+		<constructor-arg ref="transactionManager" />
+	</bean>
+	
+	<bean id="formContextFactory" class="org.riotfamily.forms.controller.FormContextFactory">
+		<property name="messageCodesResolver" ref="messageCodesResolver" />
+		<property name="resourcePath" ref="riotResourcePath" />
+	</bean>
+	
+	<bean id="listController" class="org.riotfamily.riot.list.ui.ListController">
+		<constructor-arg ref="editorRepository" />
+		<constructor-arg ref="listRepository" />
+		<constructor-arg ref="formRepository" />
+		<constructor-arg ref="transactionManager" />
+		<constructor-arg ref="commandExecutor" />
+		<property name="formContextFactory" ref="formContextFactory" />
+	</bean>
+	<alias name="listController" alias="/list/@{editorId}" />
+	<alias name="listController" alias="/list/@{editorId}/@{parentId}" />
+	
+	<bean id="chooserController" class="org.riotfamily.riot.form.element.chooser.ChooserListController">
+		<constructor-arg ref="editorRepository" />
+		<constructor-arg ref="listRepository" />
+		<constructor-arg ref="formRepository" />
+		<constructor-arg ref="transactionManager" />
+		<constructor-arg ref="commandExecutor" />
+		<property name="formContextFactory" ref="formContextFactory" />
+	</bean>
+	<alias name="chooserController" alias="/chooser/@{targetEditorId}" />
+	<alias name="chooserController" alias="/chooser/@{targetEditorId}/@{editorId}" />
+	<alias name="chooserController" alias="/chooser/@{targetEditorId}/@{editorId}/@{parentId}" />
+	
+	<bean id="formController" class="org.riotfamily.riot.form.ui.FormController">
+		<constructor-arg ref="editorRepository" />
+		<constructor-arg ref="formRepository" />
+		<constructor-arg ref="transactionManager" />
+		<constructor-arg ref="commandExecutor" />
+		<constructor-arg ref="listRepository" />
+		<property name="formContextFactory" ref="formContextFactory" />
+	</bean>
+	<alias name="formController" alias="/form/@{editorId}" />
+	<alias name="formController" alias="/form/@{editorId}/@{objectId}" />
+	
+	<bean id="formChooserController" 
+			name="/form-chooser/@{editorId}" 
+			parent="formController" 
+			class="org.riotfamily.riot.form.ui.FormChooserController" />
+
+	<bean id="viewController" class="org.riotfamily.riot.editor.ui.ViewController">
+		<constructor-arg ref="editorRepository" />
+		<constructor-arg ref="listRepository" />
+		<constructor-arg ref="transactionManager" />
+		<constructor-arg ref="commandExecutor" />
+		<property name="messageCodesResolver" ref="messageCodesResolver" />	
+	</bean>
+	<alias name="viewController" alias="/view/@{editorId}" />
+	<alias name="viewController" alias="/view/@{editorId}/@{objectId}" />
+	
+	<bean id="customEditorController" 
+		name="/custom/@{editorId}"
+		class="org.riotfamily.riot.editor.ui.CustomEditorController">
+		<constructor-arg ref="editorRepository" />
+	</bean>
+	
+	<bean id="packageListController" name="/packages" class="org.riotfamily.common.web.util.PackageListController">
+		<property name="viewName" value="classpath:/org/riotfamily/riot/runtime/view/packages.ftl" />
+		<property name="patterns">
+			<list>
+				<value>org.riotfamily.*</value>
+				<value>org.springframework.*</value>
+				<value>org.hibernate.*</value>
+				<value>java.*</value>
+			</list>
+		</property>
+	</bean>	
+	
+	<bean id="notificationListController" name="/notifications" class="org.riotfamily.riot.workflow.notification.ui.NotificationListController">
+		<constructor-arg ref="notificationDao" />
+	</bean> 
+	
+	<bean id="statusController" name="/status" class="org.riotfamily.riot.workflow.status.ui.StatusController" />
+	
+    <bean id="jobUIUpdater" class="org.riotfamily.riot.job.ui.JobUIUpdater" />
+		
+	<bean id="jobManager" class="org.riotfamily.riot.job.JobManager">
+		<constructor-arg ref="jobDao" />
+		<constructor-arg ref="jobUIUpdater" />
+	</bean>
+		 
+	<bean id="jobUIService" class="org.riotfamily.riot.job.ui.JobUIService">
+		<constructor-arg ref="jobManager" />
+		<constructor-arg ref="jobDao" />
+		<constructor-arg ref="jobUIUpdater" />
+	</bean>
+	 
+	<bean id="jobUIController" name="/job" class="org.riotfamily.common.web.controller.ParameterViewController">
+		<property name="viewName" value="classpath:/org/riotfamily/riot/job/ui/JobView.ftl" />
+	</bean>
+	
+	<!-- 
+	  - Controller that exposes DWR services.
+	  -->
+	<bean id="dwrController" 
+		name="/resources/*/dwr/**"
+		class="org.riotfamily.common.web.dwr.DwrController">
+		<property name="debug" value="true" />
+		<property name="mapping" value="dwr" />
+		<property name="parameters">
+			<map>
+				<entry key="org.directwebremoting.PageNormalizer">
+					<bean class="org.riotfamily.common.web.dwr.NoOpPageNormalizer" />
+				</entry>
+				<!-- 
+				<entry key="org.directwebremoting.Remoter">
+					<bean class="org.riotfamily.common.web.dwr.ConstantsRemoter" />
+				</entry>
+				-->
+			</map>
+		</property>
+		<property name="configurators">
+			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+				<property name="key" value="dwrConfigurators" />
+				<property name="sourceList">
+					<list>
+						<bean class="org.riotfamily.common.web.dwr.SpringConfigurator">
+							<property name="converterTypes">
+								<props>
+									<prop key="org.riotfamily.riot.job.persistence.JobLogEntry">bean</prop>
+									<prop key="org.riotfamily.riot.job.persistence.JobDetail">bean</prop>
+								</props>
+							</property>
+							<property name="serviceBeans">
+								<map>
+									<entry key="JobUIService" value-ref="jobUIService" />
+								</map>
+							</property>
+						</bean>
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>	
+	
+</beans>

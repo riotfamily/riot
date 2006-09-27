@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE list-config PUBLIC "-//Riot//List Config DTD 6.2//EN" 
+		"http://www.riotfamily.org/dtd/6.2/list-config.dtd">
+		
+<list-config>
+	
+	<list id="pages" order-by="position" default-command="stepInto">
+		<dao ref="riotPageDao" />
+		<columns>
+			<column property="pathComponent" sortable="false" />
+			<column property="metaData.title" sortable="false" lookup-level="2" />
+			<column property="position" />
+			<column property="path" sortable="false" renderer="pageLinkRenderer" />
+			<command id="moveUp" />
+			<command id="moveDown" />
+			<command id="edit" />
+			<command id="cut" />
+			<command id="delete" />
+			<command id="publishPage" />
+			<command id="stepInto" />
+		</columns>
+		<command id="add"/>
+		<command id="paste"/>
+	</list>
+	
+	<list id="riotUsers">
+		<dao ref="hqlDao">
+			<property name="entityClass" value="org.riotfamily.riot.hibernate.security.User" />
+		</dao>
+		<columns>
+			<column property="id" />
+			<column property="name" />
+			<command id="edit" />
+			<command id="delete" />
+		</columns>
+		<command id="add" />
+	</list>
+
+</list-config>

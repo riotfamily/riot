@@ -1,0 +1,88 @@
+<project name="riotfamily" default="dist" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+		
+	<import file="common.xml" />
+			
+	<property name="dist.zip.file" value="${build.dir}/riotfamily.zip" />
+
+	<fileset id="module-build.files" dir="."> 
+		<include name="*/build.xml" />
+		<exclude name="jslibs/*/build.xml" />
+		<exclude name="skeleton/*" />
+	</fileset>
+			
+	<fileset id="js-build.files" dir="."> 
+		<include name="jslibs/*/build.xml" />
+	</fileset>
+	
+	<target name="resolve" depends="-setup-ivy">
+		<ivy:configure file="${root.dir}/ivyconf.xml" />
+		<ivy:buildlist reference="resolved-build.files">
+	    	<fileset refid="module-build.files" />
+	    </ivy:buildlist>
+		<subant target="resolve" buildpathref="resolved-build.files" />
+		<echo file="${lib.dir}/.cvsignore" message="*" />
+	</target>
+
+	<target name="jar" depends="-setup-ivy">
+		<ivy:configure file="${root.dir}/ivyconf.xml" />
+		<ivy:buildlist reference="resolved-build.files">
+	    	<fileset refid="module-build.files" />
+	    </ivy:buildlist>
+		<subant target="deliver" buildpathref="resolved-build.files" />
+	</target>
+		
+	<target name="js-jar" depends="-setup-ivy">
+		<ivy:configure file="${root.dir}/ivyconf.xml" />
+		<ivy:buildlist reference="resolved-build.files">
+	    	<fileset refid="js-build.files" />
+	    </ivy:buildlist>
+		<subant target="deliver" buildpathref="resolved-build.files" />
+	</target>
+
+	<target name="publish" depends="jar,js-jar">
+		<ivy:configure file="${root.dir}/ivyconf.xml" />
+		<ivy:buildlist reference="resolved-build.files">
+	    	<fileset refid="module-build.files" />
+			<fileset refid="js-build.files" />
+	    </ivy:buildlist>
+		<subant target="publish" buildpathref="resolved-build.files" />
+	</target>
+
+	<target name="publish-schemas">
+		<subant target="collect-xml-schemas">
+			<fileset refid="module-build.files" />
+		</subant>
+		<scp todir="${user.name}@riotfamily.org:/var/www/riotfamily.org/htdocs/schema"
+			keyfile="${user.home}/.ssh/id_rsa" passphrase="" trust="true">
+			<fileset dir="${build.dir}/schema" />
+		</scp>
+	</target>
+			
+	<target name="report" depends="-setup-ivy">
+		<ivy:configure file="${root.dir}/ivyconf.xml" />
+		<ivy:buildlist reference="resolved-build.files">
+	    	<fileset refid="module-build.files" />
+	    </ivy:buildlist>
+		<subant target="report" buildpathref="resolved-build.files" />
+	</target>
+
+	<target name="dist">
+		<zip destfile="${dist.zip.file}">
+			<fileset dir=".">
+				<exlude name="lib" />
+			</fileset>
+		</zip>
+	</target>
+
+	<target name="clean">
+		<subant target="clean">
+			<fileset refid="module-build.files" />
+		</subant>
+	</target>
+	
+	<target name="distclean">
+		<delete dir="${build.dir}" />
+		<delete dir="${lib.dir}" />
+	</target>
+		
+</project>

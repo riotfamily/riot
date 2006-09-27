@@ -1,0 +1,451 @@
+package org.riotfamily.forms.factory.xml;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.thumbnail.Thumbnailer;
+import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.common.web.file.FileStore;
+import org.riotfamily.common.xml.DigesterUtils;
+import org.riotfamily.common.xml.DocumentDigester;
+import org.riotfamily.forms.FormInitializer;
+import org.riotfamily.forms.element.ContainerElement;
+import org.riotfamily.forms.element.SelectElement;
+import org.riotfamily.forms.element.core.Calendar;
+import org.riotfamily.forms.element.core.Checkbox;
+import org.riotfamily.forms.element.core.CheckboxGroup;
+import org.riotfamily.forms.element.core.ElementGroup;
+import org.riotfamily.forms.element.core.FileUpload;
+import org.riotfamily.forms.element.core.ImageCheckbox;
+import org.riotfamily.forms.element.core.ImageUpload;
+import org.riotfamily.forms.element.core.ListEditor;
+import org.riotfamily.forms.element.core.MapEditor;
+import org.riotfamily.forms.element.core.NestedForm;
+import org.riotfamily.forms.element.core.NumberField;
+import org.riotfamily.forms.element.core.PasswordField;
+import org.riotfamily.forms.element.core.RadioButtonGroup;
+import org.riotfamily.forms.element.core.SelectBox;
+import org.riotfamily.forms.element.core.TextField;
+import org.riotfamily.forms.element.core.Textarea;
+import org.riotfamily.forms.element.core.TinyMCE;
+import org.riotfamily.forms.element.support.EditableIfNew;
+import org.riotfamily.forms.element.support.select.OptionsModel;
+import org.riotfamily.forms.element.support.select.StaticOptionsModel;
+import org.riotfamily.forms.factory.ContainerElementFactory;
+import org.riotfamily.forms.factory.ElementFactory;
+import org.riotfamily.forms.factory.FormFactory;
+import org.riotfamily.forms.factory.FormRepositoryException;
+import org.riotfamily.forms.factory.support.ConfigurableElementFactory;
+import org.riotfamily.forms.factory.support.DefaultFormFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.xml.DomUtils;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+
+
+/**
+ * Strategy for parsing a DOM that follows the form-config schema.
+ */
+public class XmlFormRepositoryDigester implements DocumentDigester {
+
+	public static final String NAMESPACE = "http://www.riotfamily.org/schema/forms/form-config";
+	
+	public static final String FORM = "form";
+	
+	public static final String FORM_ID = "id";
+	
+	public static final String FORM_BEAN_CLASS = "bean-class";
+	
+	public static final String FORM_INITIALIZER = "initializer";
+	
+	public static final String FORM_INITIALIZER_CLASS = "initializer-class";
+	
+	public static final String PACKAGE = "package";
+	
+	public static final String PACKAGE_NAME = "name";
+	
+	public static final String CUSTOM_ELEMENT = "element";
+	
+	public static final String CUSTOM_ELEMENT_TYPE = "type";
+	
+	public static final String ELEMENT_BIND = "bind";
+	
+	public static final String ELEMENT_BEAN_CLASS = "bean-class";
+	
+	public static final String FILE_STORE = "store";
+	
+	public static final String FILE_THUMBNAILER = "thumbnailer";
+	
+	public static final String PROPERTY = "set-property";
+	
+	public static final String PROPERTY_NAME = "name";
+	
+	public static final String PROPERTY_VALUE = "value";
+	
+	public static final String PROPERTY_BEAN_REF = "ref";
+	
+	public static final String MODEL = "model";
+	
+	public static final String MODEL_CLASS = "class";
+	
+	public static final String MODEL_BEAN_REF = "ref";
+	
+	public static final String IMPORT = "import";
+	
+	public static final String IMPORT_FORM_REF = "form";
+
+	private Log log = LogFactory.getLog(XmlFormRepositoryDigester.class);
+	
+	private BeanFactory beanFactory;
+	
+	private XmlFormRepository formRepository;
+	
+	private HashMap elementClasses = new HashMap();
+	
+	private DefaultFormFactory formFactory;
+	
+	private String formId;
+	
+	private ArrayList imports;
+	
+	private String currentPackage;
+	
+	private Resource resource;
+	
+	public XmlFormRepositoryDigester(XmlFormRepository formRepository, 
+			BeanFactory beanFactory) {
+		
+		this.formRepository = formRepository;
+		this.beanFactory = beanFactory;
+		
+		elementClasses.put("group", ElementGroup.class);
+		elementClasses.put("textfield", TextField.class);
+		elementClasses.put("passwordfield", PasswordField.class);
+		elementClasses.put("numberfield", NumberField.class);
+		elementClasses.put("textarea", Textarea.class);
+		elementClasses.put("richtext", TinyMCE.class);
+		elementClasses.put("calendar", Calendar.class);
+		elementClasses.put("checkbox", Checkbox.class);
+		elementClasses.put("imagecheckbox", ImageCheckbox.class);
+		elementClasses.put("nested-form", NestedForm.class);
+		elementClasses.put("list", ListEditor.class);
+		elementClasses.put("map", MapEditor.class);
+		elementClasses.put("selectbox", SelectBox.class);
+		elementClasses.put("radio-group", RadioButtonGroup.class);
+		elementClasses.put("checkbox-group", CheckboxGroup.class);
+		elementClasses.put("file-upload", FileUpload.class);
+		elementClasses.put("image-upload", ImageUpload.class);
+		elementClasses.put("editable-if-new", EditableIfNew.class);
+	}
+	
+	public void digest(Document doc, Resource resource) {
+		formId = null;
+		imports = new ArrayList();
+		currentPackage = null;
+		
+		Element root = doc.getDocumentElement();
+		Iterator it = DigesterUtils.getChildElements(root).iterator();
+		while (it.hasNext()) {
+			Element ele = (Element) it.next();
+			String namespace = ele.getNamespaceURI();
+			if (namespace == null || namespace.equals(NAMESPACE)) {
+				if (DomUtils.nodeNameEquals(ele, FORM)) {
+					parseFormDefinition(ele);
+				}
+				else if (DomUtils.nodeNameEquals(ele, PACKAGE)) {
+					parsePackageDefinition(ele);
+				}
+			}
+		}
+		
+		it = imports.iterator();
+		while (it.hasNext()) {
+			((Import) it.next()).apply();
+		}
+	}
+	
+	protected void parseFormDefinition(Element formElement) {
+		formFactory = new DefaultFormFactory();
+		formId = formElement.getAttribute(FORM_ID);
+		
+		String beanClassName = DigesterUtils.getAttribute(
+				formElement, FORM_BEAN_CLASS);
+				
+		formFactory.setBeanClass(getBeanClass(beanClassName));
+		
+		String initializerName = DigesterUtils.getAttribute(
+				formElement, FORM_INITIALIZER);
+		
+		if (initializerName != null) {
+			formFactory.setInitializer((FormInitializer) beanFactory.getBean(
+					initializerName, FormInitializer.class));
+		}
+		else {
+			String initializerClass = DigesterUtils.getAttribute(
+				formElement, FORM_INITIALIZER_CLASS);
+			
+			if (initializerClass != null) {
+				formFactory.setInitializer((FormInitializer) 
+						PropertyUtils.newInstance(initializerClass));
+			}	
+		}
+		
+		Iterator it = DigesterUtils.getChildElements(formElement).iterator();
+		while (it.hasNext()) {
+			parseElementDefinition((Element) it.next(), formFactory);
+		}
+		formRepository.registerFormFactory(formId, formFactory);
+	}
+	
+	protected void parsePackageDefinition(Element ele) {
+		currentPackage = DigesterUtils.getAttribute(ele, PACKAGE_NAME);
+		Iterator it = DomUtils.getChildElementsByTagName(
+				ele, FORM).iterator();
+		
+		while (it.hasNext()) {
+			parseFormDefinition((Element) it.next());
+		}
+	}
+	
+	protected void parseElementDefinition(Element ele, 
+			ContainerElementFactory parentFactory) {
+		
+		if (DomUtils.nodeNameEquals(ele, IMPORT)) {
+			String formId = ele.getAttribute(IMPORT_FORM_REF);
+			imports.add(new Import(formId, parentFactory));
+		}
+		else {			
+			ConfigurableElementFactory factory = createFactory(ele);
+			parentFactory.addChildFactory(factory);
+		}
+	}
+	
+	protected ConfigurableElementFactory createFactory(Element ele) {
+		Class elementClass = getElementClass(ele);
+		ConfigurableElementFactory factory = 
+				new ConfigurableElementFactory(elementClass);
+		
+		factory.setBeanFactory(beanFactory);
+		String beanClassName = DigesterUtils.getAttribute(ele, ELEMENT_BEAN_CLASS);
+		if (beanClassName != null) {
+			factory.setBeanClass(getBeanClass(beanClassName));
+		}
+		factory.setBind(DigesterUtils.getAttribute(ele, ELEMENT_BIND));
+
+		MutablePropertyValues pvs = getPropertyValues(ele);
+		
+		if (SelectElement.class.isAssignableFrom(elementClass)) {
+			log.debug("Looking for OptionsModel ...");
+			OptionsModel model = getOptionsModel(ele);
+			if (model != null) {
+				log.debug("OptionsModel: " + model);
+				pvs.addPropertyValue("optionsModel", model);
+			}
+		}
+		
+		if (FileUpload.class.isAssignableFrom(elementClass)) {
+			String ref = DigesterUtils.getAttribute(ele, FILE_STORE);
+			if (ref != null) {
+				FileStore fileStore = (FileStore) beanFactory.getBean(
+						ref, FileStore.class);
+				
+				pvs.addPropertyValue("fileStore", fileStore);
+			}
+			
+			ref = DigesterUtils.getAttribute(ele, FILE_THUMBNAILER);
+			if (ref != null) {
+				Thumbnailer thumbnailer = (Thumbnailer) beanFactory.getBean(
+						ref, Thumbnailer.class);
+				
+				pvs.addPropertyValue("thumbnailer", thumbnailer);
+			}
+			
+			if (formRepository.getMimetypesMap() != null) {
+				pvs.addPropertyValue("mimetypesMap", 
+						formRepository.getMimetypesMap()); 
+			}
+		}
+		
+		//TODO We should consider adding a common interface ...
+		if (ListEditor.class.isAssignableFrom(elementClass)
+				|| MapEditor.class.isAssignableFrom(elementClass)) {
+			
+			Element itemElement = DigesterUtils.getFirstChildElement(ele);
+			ElementFactory itemFactory = createFactory(itemElement);
+			pvs.addPropertyValue("itemElementFactory", itemFactory);
+		}
+				
+		factory.setPropertyValues(pvs);
+		
+		if (ContainerElement.class.isAssignableFrom(elementClass)) {
+			Iterator it = DigesterUtils.getChildElements(ele).iterator();
+			while (it.hasNext()) {
+				parseElementDefinition((Element) it.next(), factory);
+			}
+		}
+		
+		return factory;
+	}
+	
+	protected Class getElementClass(Element ele) {
+		if (DomUtils.nodeNameEquals(ele, CUSTOM_ELEMENT)) {
+			String type = DigesterUtils.getAttribute(ele, CUSTOM_ELEMENT_TYPE);
+			if (type == null) {
+				throw new FormRepositoryException(resource, formId, 
+						"Attribute '" + CUSTOM_ELEMENT_TYPE 
+						+ "' must be set.");
+			}
+			Class clazz = formRepository.getElementClass(type);
+			if (clazz == null) {
+				throw new FormRepositoryException(resource, formId,
+						"Unknown custom element type: " + type);
+			}
+			return clazz;
+		}
+		return getElementClass(DigesterUtils.getLocalName(ele));
+	}
+	
+	protected Class getElementClass(String type) {
+		Class elementClass = (Class) elementClasses.get(type);
+		Assert.notNull(elementClass, "Invalid element type: " + type);
+		return elementClass;
+	}
+	
+	protected Class getBeanClass(String beanClassName) {
+		if (beanClassName == null) {
+			return formRepository.getDefaultBeanClass();
+		}
+		if (beanClassName.indexOf('.') == -1 && currentPackage != null) {
+			beanClassName = currentPackage + '.' + beanClassName;
+		}
+		try {
+			return Class.forName(beanClassName);
+		}
+		catch (ClassNotFoundException e) {
+			throw new FormRepositoryException(resource, formId, 
+					"beanClass not found", e);
+		}
+	}
+	
+	protected MutablePropertyValues getPropertyValues(Element element) {
+		MutablePropertyValues pvs = new MutablePropertyValues();
+		
+		NamedNodeMap attrs = element.getAttributes();
+		for (int i = 0; attrs != null && i < attrs.getLength(); i++) {
+			Attr attr = (Attr) attrs.item(i);
+			String name = attr.getName();
+			if (!ELEMENT_BIND.equals(name)
+					&& !CUSTOM_ELEMENT_TYPE.equals(name)
+					&& !FORM_BEAN_CLASS.equals(name)
+					&& !FILE_STORE.equals(name)
+					&& !FILE_THUMBNAILER.equals(name)) {
+				
+				String property = FormatUtils.xmlToCamelCase(attr.getName());
+				log.debug("Setting property " + property + " to " + attr.getValue());
+				pvs.addPropertyValue(property, attr.getValue());
+			}
+		}
+		
+		Iterator it = DomUtils.getChildElementsByTagName(
+				element, PROPERTY).iterator();
+		
+		while (it.hasNext()) {
+			Element ele = (Element) it.next();
+			String name = DigesterUtils.getAttribute(ele, PROPERTY_NAME);
+			
+			Object value = null;
+			
+			String beanName = DigesterUtils.getAttribute(ele, PROPERTY_BEAN_REF);
+			if (beanName != null) {
+				value = beanFactory.getBean(beanName);
+			}
+			else {
+				value = DigesterUtils.getAttribute(ele, PROPERTY_VALUE);
+			}
+			
+			pvs.addPropertyValue(name, value);
+		}
+
+		return pvs;
+	}
+		
+	protected OptionsModel getOptionsModel(Element element) {
+		Element ele = DomUtils.getChildElementByTagName(element, MODEL);
+		OptionsModel model = null;
+		if (ele != null) {
+			String className = DigesterUtils.getAttribute(ele, MODEL_CLASS);
+			if (className != null) {
+				try {
+					Class modelClass = ClassUtils.forName(className);
+					model = (OptionsModel) BeanUtils.instantiateClass(modelClass);
+				}
+				catch (Exception e) {
+					throw new FormRepositoryException(resource, formId, 
+							"Error creating OptionsModel", e);
+				}
+			}
+			else {
+				String beanName = DigesterUtils.getAttribute(
+						ele, MODEL_BEAN_REF);
+				
+				if (beanName != null) {
+					Object bean = beanFactory.getBean(beanName);
+					if (bean instanceof OptionsModel) {
+						model = (OptionsModel) bean;
+					}
+					else if (bean instanceof Collection) {
+						model = new StaticOptionsModel((Collection) bean);
+					}
+					else {
+						throw new FormRepositoryException(resource, formId, 
+								"Bean [" + beanName + "] is neither an " +
+								"OptionsModel nor a Collection: " + bean);
+					}
+				}
+			}
+			if (model != null) {
+				List setPropElements = DomUtils.getChildElementsByTagName(
+						ele, PROPERTY);
+				
+				DigesterUtils.populate(model, setPropElements, beanFactory);
+			}
+		}
+		return model;
+	}
+	
+	private class Import {
+		
+		private ContainerElementFactory parent;
+		
+		private int insertAt;
+		
+		private String formId;
+		
+		Import(String formId, ContainerElementFactory parent) {
+			this.formId = formId;
+			this.parent = parent;
+			insertAt = parent.getChildFactories().size();
+		}
+		
+		public void apply() {
+			FormFactory formFactory = formRepository.getFormFactory(formId);
+			parent.getChildFactories().addAll(insertAt, 
+					formFactory.getChildFactories());
+		}
+
+	}
+	
+}

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		elementFormDefault="qualified"
+		attributeFormDefault="unqualified" 
+		targetNamespace="http://www.riotfamily.org/schema/pages/mvc"
+		xmlns="http://www.riotfamily.org/schema/pages/mvc">
+	
+	<xsd:simpleType name="boolean">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="true"/>
+			<xsd:enumeration value="false"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:complexType name="ref">
+		<xsd:attribute name="ref" use="required" type="xsd:string"/>
+	</xsd:complexType>
+	
+	<xsd:element name="generic-controller">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="model-builder">
+					<xsd:complexType>
+						<xsd:choice minOccurs="0">
+							<xsd:element name="bean" type="ref" />
+							<xsd:element name="hql" type="hql" />
+							<xsd:element name="paged-hql" type="paged-hql" />
+						</xsd:choice>
+						<xsd:attribute name="ref" type="xsd:string" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="post-processors" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence maxOccurs="unbounded">
+							<xsd:element name="bean" type="ref" />
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="view-builder" minOccurs="0" >
+					<xsd:complexType >
+						<xsd:sequence minOccurs="0">
+							<xsd:element name="bean" type="ref" />
+						</xsd:sequence>
+						<xsd:attribute name="ref" type="xsd:string" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="caching-policy" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence minOccurs="0">
+							<xsd:element name="bean" type="ref" />
+						</xsd:sequence>
+						<xsd:attribute name="ref" type="xsd:string" />
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			
+			<xsd:attribute name="id" type="xsd:string" />
+			<xsd:attribute name="name" type="xsd:string" />
+			<xsd:attribute name="view-name" type="xsd:string" use="required" />
+			<xsd:attribute name="content-type" type="xsd:string" />
+			<xsd:attribute name="add-uri-to-cache-key" type="boolean" />
+			<xsd:attribute name="cacheable" type="boolean" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:complexType name="hql">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="parameter-resolvers">
+				<xsd:complexType>
+					<xsd:choice maxOccurs="unbounded">
+						<xsd:element name="bean" type="ref" />
+						<xsd:element name="attribute" type="attribute"></xsd:element>
+						<xsd:element name="current-date" type="current-date"></xsd:element>
+						<xsd:element name="current-locale" type="current-locale"></xsd:element>
+						<xsd:element name="string-to-primitive" type="string-to-primitive"></xsd:element>
+						<xsd:element name="date" type="date"></xsd:element>
+					</xsd:choice>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="hql" use="required" />
+		<xsd:attribute name="model-key" use="required" />
+		<xsd:attribute name="list-mode" type="boolean" default="false" />
+		<xsd:attribute name="item-class" />
+		<xsd:attribute name="cache-eternally" type="boolean" default="true" />
+		<xsd:attribute name="tag-cache-items" type="boolean" default="true" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="paged-hql">
+		<xsd:complexContent>
+			<xsd:extension base="hql"> 
+				<xsd:attribute name="count-hql" use="optional" />
+				<xsd:attribute name="page-param" type="xsd:string" default="page" />
+				<xsd:attribute name="page-size" type="xsd:positiveInteger" default="10" />
+				<xsd:attribute name="page-size-param" type="xsd:string" use="optional" />
+				<xsd:attribute name="padding" type="xsd:positiveInteger" default="3" />
+				<xsd:attribute name="pager-model-key" type="xsd:string" default="pager" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="attribute">
+		<xsd:attribute name="param" use="required" />
+		<xsd:attribute name="attribute" />
+		<xsd:attribute name="property" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="current-date">
+		<xsd:attribute name="param" use="required" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="current-locale">
+		<xsd:attribute name="param" use="required" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="string-to-primitive">
+		<xsd:attribute name="param" use="required" />
+		<xsd:attribute name="type">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:NMTOKEN">
+					<xsd:enumeration value="Integer" />
+					<xsd:enumeration value="Long" />
+					<xsd:enumeration value="Short" />
+					<xsd:enumeration value="Double" />
+					<xsd:enumeration value="Float" />
+					<xsd:enumeration value="Boolean" />
+					<xsd:enumeration value="Character" />
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	
+	<xsd:complexType name="date">
+		<xsd:attribute name="param" use="required" />
+		<xsd:attribute name="yearparam" use="required" />
+		<xsd:attribute name="monthparam" use="required" />
+		<xsd:attribute name="dayparam" use="required" />
+	</xsd:complexType>
+	
+</xsd:schema>

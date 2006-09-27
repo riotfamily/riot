@@ -1,0 +1,7 @@
+<project name="riot-core" default="compile">
+
+	<property name="module.title" value="Riot Core" />
+	
+	<import file="../module-build.xml" />
+
+</project>

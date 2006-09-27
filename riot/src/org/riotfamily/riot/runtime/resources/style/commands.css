@@ -1,0 +1,59 @@
+.action {
+	display: block;
+	width: 32px;
+	height: 32px;
+	background-repeat: no-repeat;
+	cursor: hand;
+	cursor: pointer;
+}
+
+.action-edit {
+	background-image: url(icons/commands/edit.gif);
+}
+.action-view {
+	background-image: url(icons/commands/view.gif);
+}
+.action-delete {
+	background-image: url(icons/commands/delete.gif);
+}
+.action-moveUp {
+	background-image: url(icons/commands/moveUp.gif);
+}
+.action-moveDown {
+	background-image: url(icons/commands/moveDown.gif);
+}
+.action-cut {
+	background-image: url(icons/commands/cut.gif);
+}
+.action-choose {
+	background-image: url(icons/commands/choose.gif);
+}
+.action-stepInto,
+.action-descend {
+	background-image: url(icons/commands/stepInto.gif);
+}
+
+.list-commands .action {
+	background-color: #3d3d3d;
+	float: left;
+}
+.list-commands .action:hover {
+	background-color: ${highlight};
+}
+.list-commands .action-add {
+	background-image: url(icons/commands/add.gif);
+}
+.list-commands .action-paste {
+	background-image: url(icons/commands/paste.gif);
+}
+
+tr.cut td {
+	font-style: italic;
+}
+tr.cut .action-cut {
+	background-position: 0 -64px;
+}
+tr.cut .action-cut:hover {
+	background-color: #ebebeb;
+	background-position: 0 -64px;
+}

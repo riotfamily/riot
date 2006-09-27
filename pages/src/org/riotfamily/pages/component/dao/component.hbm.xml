@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping package="org.riotfamily.pages.component" auto-import="true">
+	
+	<class name="ComponentList" table="component_lists" lazy="false">
+		<id name="id">
+			<generator class="native" />
+		</id>
+		<property name="path" column="`path`" />
+		<property name="key" column="`key`"/>
+		<list name="liveList" inverse="false" lazy="false">
+			<key column="live_list" />
+			<index column="live_pos" />
+			<one-to-many class="VersionContainer" />
+		</list>
+		<list name="previewList" inverse="false" lazy="false">
+			<key column="preview_list" />
+			<index column="preview_pos" />
+			<one-to-many class="VersionContainer" />
+		</list>
+		<property name="dirty" />
+	</class>
+	
+	<class name="VersionContainer" table="components" lazy="false">
+		<id name="id">
+			<generator class="native" />
+		</id>
+		<many-to-one name="list" />
+		<many-to-one name="liveVersion" column="live_version" fetch="join" cascade="all" />
+		<many-to-one name="previewVersion" column="preview_version" fetch="join" cascade="all" />
+		<!-- 
+		<set name="versions">
+			<key column="component" />
+			<one-to-many class="ComponentVersion" />
+		</set>
+		 -->
+	</class>
+	
+	<class name="ComponentVersion" table="component_versions" lazy="false">
+		<id name="id">
+			<generator class="native" />
+		</id>
+		<property name="type" column="`type`" />
+		<map name="properties" table="component_properties" lazy="false">
+			<key column="component_version" />
+			<index column="`key`" type="string" />
+			<element type="text"></element>
+		</map>
+		<many-to-one name="container" />
+		<property name="dirty" />
+	</class>
+		
+</hibernate-mapping>

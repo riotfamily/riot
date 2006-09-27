@@ -1,0 +1,175 @@
+<project name="module" default="usage" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+	
+	<description>
+		Build file to be included by all sub-projects (modules). It defines 
+		common	tasks like compile, jar or clean.
+	</description>
+	
+	<import file="common.xml" />
+	
+	<!-- Module location -->
+	<dirname property="module.dir" file="${ant.file}" />
+	
+	<basename  property="module.dir.name" file="${module.dir}" />
+	
+	<property name="module.status" value="integration" />
+	
+	<property name="publish.conf" value="runtime" />
+	
+	<property name="resolve.conf" value="build" />
+	
+	<!-- Directory where source (and resource) files are located -->
+	<property name="module.src.dir" value="src" />
+
+	<!--
+	  - Location of the module's META-INF directory - It's okay if the 
+	  - directory denoted by this property does not exist. 
+	  -->
+	<property name="module.meta-inf.dir" value="META-INF" />
+	
+	<!-- 
+	  - Resource files to be included in the jar. By default all files found
+	  - the source directory are included except for .java files and Ant's
+	  - default excludes.
+	  -->
+	<patternset id="module.jar.resource.patterns">
+		<exclude name="**/*.java" />
+	</patternset>	
+		
+	<target name="usage">
+		<fail>This file is only intended for inclusion by sub-projects.</fail>
+	</target>
+	
+	<target name="-init-module">
+		
+		<echo>=================================================================</echo>
+		<echo>Entering module *${ant.project.name}*</echo>
+		<echo>=================================================================</echo>
+		
+		<ivy:configure file="${root.dir}/ivyconf.xml" />
+		<ivy:info file="ivy.xml" />
+		
+		<!-- Module name as defined by the module's ivy file -->
+		<property name="module.name" value="${ivy.module}" />		
+			
+		<!-- Module version - defaults to revision defined in the ivy file -->
+		<property name="module.version" value="${ivy.revision}" />
+		
+		<!-- Module build directory - artifacts will be placed here -->
+		<property name="module.build.dir" value="${build.dir}/${module.name}" />
+		<mkdir dir="${module.build.dir}" />
+		
+		<!-- Directory where class files will be created upon compilation -->	
+		<property name="module.build.classes.dir" value="${module.build.dir}/classes" />
+		
+		<!-- Location of the jar artifact published by the module -->
+		<property name="module.jar" value="${module.build.dir}/${module.name}.jar" />
+	</target>
+	
+	<target name="resolve" depends="-init-module">
+		<echo message="Retrieving module dependencies" />
+		<ivy:resolve conf="${resolve.conf}" showprogress="false" transitive="false" />
+		<ivy:retrieve pattern="${lib.dir}/[artifact].[ext]" />
+	</target>
+		
+	<target name="report" depends="resolve">
+		<ivy:report todir="${build.dir}/reports" graph="false" conf="runtime" />
+	</target>
+	
+	<!--
+	  - Compiles the java code from ${src.dir} into ${classes.dir}.
+	  -->
+	<target name="compile" depends="resolve" description="Compiles the module">
+    	<echo message="Compiling java sources" />
+		<mkdir dir="${module.build.classes.dir}" />
+		<javac srcdir="${module.src.dir}" destdir="${module.build.classes.dir}" 
+			source="1.4" target="1.4" deprecation="off" debug="on">
+			<classpath refid="classpath" />
+		</javac>
+    	<copy todir="${module.build.classes.dir}">
+	    	<fileset dir="${module.src.dir}">
+    			<patternset refid="module.jar.resource.patterns" />
+    		</fileset>
+    	</copy>
+	</target>
+	
+	<target name="deliver" depends="jar">
+		<ivy:deliver 
+			deliverpattern="${build.dir}/[module]/ivy-[revision].xml"
+			pubrevision="${module.version}"
+			pubdate="${publish.date}"
+    		status="${module.status}" />
+	</target>
+	
+	<target name="publish" depends="-init-module">
+		<ivy:resolve conf="${publish.conf}" showprogress="false" transitive="false" />
+		<ivy:publish resolver="local" 
+			artifactspattern="${build.dir}/[module]/[module].[ext]"
+			srcivypattern="${build.dir}/[module]/ivy-[revision].xml" 
+			status="${module.status}" />
+	</target>
+		
+	<!--
+	  - Creates a jar file ${jar.path} containing all files in ${classes.dir}
+	  -->
+	<target name="jar" depends="compile" 
+		description="Creates a jar file containing the compiled classes">		
+		<echo message="Creating jar file" />
+
+		<!-- Module title that is written to the MANIFEST file -->
+		<property name="module.title" value="${module.name}" />
+		
+		<!-- Module vendor that is written to the MANIFEST file -->
+		<property name="module.vendor" value="${ivy.organisation}" />
+
+		<available file="${module.meta-inf.dir}" property="jar-target" value="-jar-with-meta-inf" />
+		<property name="jar-target" value="-jar-without-meta-inf" />
+		<antcall target="${jar-target}" />
+	</target>
+	
+	<target name="-jar-without-meta-inf">
+		<jar jarfile="${module.jar}">
+			<fileset dir="${module.build.classes.dir}" />
+			<manifest>
+				<attribute name="Implementation-Title" value="${module.title}" />
+			    <attribute name="Implementation-Version" value="${module.version}" /> 
+			    <attribute name="Implementation-Vendor" value="${module.vendor}" />
+			</manifest>
+		</jar>
+	</target>
+	<target name="-jar-with-meta-inf">
+		<jar jarfile="${module.jar}">
+			<fileset dir="${module.build.classes.dir}" />
+			<metainf dir="${module.meta-inf.dir}" />
+			<manifest>
+				<attribute name="Implementation-Title" value="${module.title}" />
+			    <attribute name="Implementation-Version" value="${module.version}" /> 
+			    <attribute name="Implementation-Vendor" value="${module.vendor}" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="collect-xml-schemas">
+		<fail unless="release">A release version number must be specified</fail>		
+		<copy todir="${build.dir}/schema/${module.dir.name}" flatten="true">
+			<fileset dir="${module.src.dir}">
+				<include name="**/*.xsd" />
+			</fileset>
+			<chainedmapper>
+				<flattenmapper />
+				<globmapper from="*.xsd" to="*-${release}.xsd" />
+			</chainedmapper>
+		</copy>
+	</target>
+	
+	<!--
+	  - Removes the module's build directory.
+	  -->
+	<target name="clean" depends="-init-module"
+			description="Removes the module's build directory">
+			
+		<echo message="Removing the build directory" />
+		<delete dir="${module.build.dir}" />
+	</target>
+
+</project>

@@ -1,0 +1,9 @@
+<project name="scriptaculous" default="jar">
+
+	<property name="module.status" value="release" />
+	
+	<import file="../js.xml" />
+	
+	<mapper id="resource.mapper" type="regexp" from="^.*?/src/(.*)" to="\1" />	
+
+</project>

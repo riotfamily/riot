@@ -1,0 +1,7 @@
+<project name="riot-search" default="compile">
+	
+	<property name="module.title" value="Riot Website Search" />
+	
+	<import file="../module-build.xml" />
+			
+</project>

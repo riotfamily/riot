@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="configurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders"><value>true</value></property>
+		<property name="locations">
+			<list>
+				<value>classpath:/application.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- C3P0 -->
+	<bean id="localDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass"><value>${jdbc.driver_class}</value></property>
+	    <property name="jdbcUrl"><value>${jdbc.url}</value></property>
+	    <property name="user"><value>${jdbc.username}</value></property>
+	    <property name="password"><value>${jdbc.password}</value></property>
+	</bean>
+	
+	<!-- The Hibernate SessionFactory -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource"><ref bean="localDataSource"></ref></property>
+		<property name="mappingLocations">
+			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+				<property name="key"><value>hibernateMappingLocations</value></property>
+				<property name="sourceList"><list></list></property>
+			</bean>
+		</property>
+		<property name="hibernateProperties">
+			<bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+				<property name="location"><value>classpath:/application.properties</value></property>
+				<property name="properties">
+					<props>
+						<prop key="cache.provider_class">net.sf.ehcache.hibernate.Provider</prop>
+					</props>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<!-- The Transaction Manager -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory"><ref bean="sessionFactory"/></property>
+	</bean>
+
+</beans>	

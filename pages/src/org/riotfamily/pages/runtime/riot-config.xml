@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<riot-config
+	xmlns="http://www.riotfamily.org/schema/riot/riot-config"
+	xmlns:ed="http://www.riotfamily.org/schema/riot/editor-config"
+	xmlns:list="http://www.riotfamily.org/schema/riot/list-config"
+	xmlns:form="http://www.riotfamily.org/schema/forms/form-config"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.riotfamily.org/schema/riot/riot-config
+		http://www.riotfamily.org/schema/riot/riot-config-6.3.xsd
+		http://www.riotfamily.org/schema/riot/editor-config
+		http://www.riotfamily.org/schema/riot/editor-config-6.3.xsd
+		http://www.riotfamily.org/schema/riot/list-config
+		http://www.riotfamily.org/schema/riot/list-config-6.3.xsd
+		http://www.riotfamily.org/schema/forms/form-config
+		http://www.riotfamily.org/schema/forms/form-config-6.3.xsd">
+
+	<ed:tree name="sitemap" list-ref="pages" icon="sitemap">
+		<ed:form form-ref="page" />
+	</ed:tree>
+		
+	<list:list id="pages" order-by="position" default-command="stepInto">
+		<list:dao ref="riotPageDao" />
+		<list:columns>
+			<list:column property="pathComponent" sortable="false" />
+			<list:column property="metaData.title" sortable="false" lookup-level="2" />
+			<list:column property="position" />
+			<list:column property="path" sortable="false" renderer="pageLinkRenderer" />
+			<list:command id="moveUp" />
+			<list:command id="moveDown" />
+			<list:command id="edit" />
+			<list:command id="cut" />
+			<list:command id="delete" />
+			<list:command id="publishPage" />
+			<list:command id="stepInto" />
+		</list:columns>
+		<list:command id="add"/>
+		<list:command id="paste"/>
+	</list:list>
+
+	<form:form id="page" bean-class="org.riotfamily.pages.page.PersistentPage">
+		<form:group>
+			<form:textfield bind="pathComponent" required="true" regex="[A-Za-z_]*"/>
+			<form:checkbox bind="folder" />
+		</form:group>
+		<form:nested-form bind="metaData" required="true"
+				bean-class="org.riotfamily.pages.page.meta.MetaData">
+
+			<form:textfield bind="title" required="true" />
+			<form:textarea bind="description" rows="3" max-length="255" />
+			<form:textarea bind="keywords" rows="3" max-length="255" />
+		</form:nested-form>
+	</form:form>
+
+</riot-config>

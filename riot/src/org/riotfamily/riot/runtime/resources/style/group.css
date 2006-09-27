@@ -1,0 +1,122 @@
+@import url(common.css);
+@import url(group-custom.css);
+
+#group {
+	float: left;
+	width: 100%;
+}
+#group .title {
+	padding-left: 7px;
+}
+
+#editors {
+	margin-right: 280px;
+}
+
+#editors a {
+	display: block;
+	clear: both;
+	border-bottom: 1px solid #ebebeb;
+	overflow: hidden;
+	color: #3d3d3d;
+	text-decoration: none;
+}
+
+#editors a:hover {
+background-color:#ebebeb;
+}
+
+#editors .icon {
+	float: left;
+	width: 80px;
+	height: 80px;
+	background-color: ${highlight};
+	background-repeat: no-repeat;
+	margin: 1px 9px 1px 1px;
+}
+
+#editors a:hover .icon {
+	background-position: 0px -80px;
+}
+
+#editors .text {
+	height: 80px;
+	display: table-cell;
+	vertical-align: middle;
+	_position: relative; 
+	padding-left: 7px;
+}
+#editors .iefix1 {
+	_position:absolute;
+	_top: 50%;
+}
+#editors .iefix2 {
+	_position: relative; 
+	_top: -50%;
+}
+
+#editors .label {
+	font-size: 14px;
+	font-weight: bold;
+}
+
+#extras {
+	width: 250px;
+	float: left;
+	margin-left:-250px;
+}
+
+#status, #notifications {
+	background-color: #ebebeb;
+	padding-bottom: 10px;
+	margin-bottom: 30px;
+}
+
+#notificationList {
+	overflow: hidden;
+}
+
+#notifications .message {
+	float: left;
+	margin: 0 4px 16px 0;
+	width:195px;
+	clear: both;
+}
+
+#notifications .delete {
+	float: left;
+	width: 9px;
+	height: 9px;
+	margin: 2px 0 0 0;
+	background: url(images/remove_small.gif) no-repeat;
+}
+
+#notifications .notification {
+	margin-top: 10px;
+	padding-left: 35px;
+}
+
+#status a {
+	text-decoration: none;
+	color: #3d3d3d;
+}
+
+#status .message {
+	clear: both;
+	margin-top: 10px;
+}
+
+#status .message .icon {
+	float: left;
+	width: 32px;
+	height: 32px;
+	margin-right: 5px;
+	background: #3d3d3d url(icons/commands/stepInto.gif) 0 -32px no-repeat;
+}
+#status a:hover {
+	color: ${highlight};
+}
+
+#status a:hover .icon {
+	background-color: ${highlight};
+}

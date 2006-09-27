@@ -1,0 +1,88 @@
+<project name="common" default="usage" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+	
+	<description>
+		Build file to be included by all sub-projects (modules).
+	</description>
+	
+	<tstamp>
+		<format property="build.date" pattern="yyyy-MM-dd" />
+		<format property="publish.date" pattern="yyyyMMddHHmmss" />
+	</tstamp>
+	
+	<!-- Location of this buildfile -->
+	<dirname property="root.dir" file="${ant.file.common}" />
+	
+	<!-- Globally shared directories -->
+	<property name="lib.dir" value="${root.dir}/lib" />
+	<property name="build.dir" value="${root.dir}/build" />
+	<property name="build.tstamp" value="${build.dir}/.timestamp" />
+
+	<property name="ivy.jar" value="${lib.dir}/ivy.jar" />
+	
+	<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml" 
+		uri="antlib:fr.jayasoft.ivy.ant" classpath="${ivy.jar}" 
+		onerror="ignore" />
+	
+	<!-- 
+	  - The classpath. Contains all 3rd-party libraries and all 
+	  - module jar files.
+	  -->	
+	<path id="classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${build.dir}">
+			<include name="*/*.jar" />
+		</fileset>
+		<pathelement path="${java.class.path}" />
+	</path>
+	
+	<target name="usage">
+		<fail>This file is only intended for inclusion by other build files.</fail>
+	</target>
+	
+	<!--
+	 - Installs and configures ivy.
+	 -->
+	<target name="-setup-ivy">
+		<available resource="fr/jayasoft/ivy/ant/antlib.xml" property="ivy.available" />
+		<condition property="ivy.configured">
+			<isreference refid="ivy.instance" />
+		</condition>
+		<antcall target="-install-ivy" />
+	</target>
+	
+	<!--
+	  - Checks whether the ivy jar is present and optionally downloads it.
+	  - This target is invoked by -setup-ivy unless ivy is available in the 
+	  - the classpath.
+	  -->
+	<target name="-install-ivy" unless="ivy.available">
+		<echo>Ivy is not installed ANT_HOME/lib, using local version ...</echo>
+		<available file="${ivy.jar}" property="ivy.jar.available" />
+		<antcall target="-download-ivy" />
+	</target>
+
+	<!--
+	  - Downloads the ivy jar file from riotfamily.org.
+	  - This target is invoked by -install-ivy unless the jar file has already
+	  - been downloaded.
+	  -->
+	<target name="-download-ivy" unless="ivy.jar.available">
+		<echo>This project uses Ivy (http://jayasoft.org/ivy) to manage dependencies.</echo>
+		<echo>Since Ivy was not found in the classpath the JAR file will now be downloaded ...</echo>
+		<delete dir="${lib.dir}" />
+		<mkdir dir="${lib.dir}" />
+		<echo message="*" file="${lib.dir}/.cvsignore" />
+		<get src="http://riotfamily.org/ivy/ivy-2006-09-13.jar" dest="${ivy.jar}" verbose="true" />
+		<fail>Ant needs to be restarted.
+==============================================================================
+Ivy has been successfully downloaded and a local copy has been installed in
+the project's lib directory. Please re-execute ant in order to continue the 
+build process with Ivy support.
+==============================================================================
+		</fail>
+			
+	</target>
+	
+</project>

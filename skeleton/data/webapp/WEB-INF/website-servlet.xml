@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<import resource="website-controllers.xml" />
+
+	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
+		 <property name="interceptors">
+			<list>
+				<bean class="org.riotfamily.riot.security.AccessControlInterceptor" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="viewResolver" class="org.riotfamily.common.web.view.SuffixViewResolver">
+		<property name="resolvers">
+			<map>
+				<entry key="ftl">
+					<bean class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerViewResolver">
+						<property name="cache" value="true" />
+						<property name="exposeSpringMacroHelpers" value="true" />
+						<property name="exposeRequestAttributes" value="true" />
+						<property name="allowModelOverride" value="true" />
+					</bean>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="freemarkerConfig" class="org.riotfamily.pages.freemarker.FreeMarkerConfigurer">
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="templateLoaderPath" value="/WEB-INF/view" />
+	</bean>
+			 
+	<bean name="/**/*.css" class="org.riotfamily.pages.css.CssTemplateController" />
+	
+</beans>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="riot/src"/>
+	<classpathentry kind="src" path="search/src"/>
+	<classpathentry kind="src" path="riot-hibernate/src"/>
+	<classpathentry kind="src" path="cachius/src"/>
+	<classpathentry kind="src" path="pages/src"/>
+	<classpathentry kind="src" path="forms/src"/>
+	<classpathentry kind="src" path="common/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/activation.jar"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/dwr.jar"/>
+	<classpathentry kind="lib" path="lib/freemarker.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate.jar"/>
+	<classpathentry kind="lib" path="lib/htmlparser.jar"/>
+	<classpathentry kind="lib" path="lib/imageinfo.jar"/>
+	<classpathentry kind="lib" path="lib/json-lib.jar"/>
+	<classpathentry kind="lib" path="lib/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-core.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-highlighter.jar"/>
+	<classpathentry kind="lib" path="lib/servlet.jar"/>
+	<classpathentry kind="lib" path="lib/spring.jar"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping package="org.riotfamily.pages.page" auto-import="true">
+	
+	<class name="PersistentPage" table="pages" lazy="false">
+		<id name="id">
+			<generator class="native" />
+		</id>
+		<many-to-one name="parent" class="PersistentPage" access="field" />
+		<property name="path" />
+		<property name="pathComponent" />
+		<property name="controllerName" column="`type`" />
+		<property name="position" column="`position`" />
+		<set name="persistentChildPages" access="field" inverse="true" 
+				cascade="all" sort="org.riotfamily.pages.page.support.PageComparator">
+				
+			<key column="parent" />
+			<one-to-many class="PersistentPage" />
+		</set>
+		<component name="metaData" class="org.riotfamily.pages.page.meta.MetaData">
+	        <property name="title" />
+	        <property name="keywords" />
+	        <property name="description" />
+	    </component>
+		<property name="hidden" />
+		<property name="folder" />
+		<property name="published" />
+		<property name="everPublished" access="field" />
+		<property name="systemPage" />
+	</class>
+	
+</hibernate-mapping>

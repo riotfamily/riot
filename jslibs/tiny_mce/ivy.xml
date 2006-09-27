@@ -1,0 +1,16 @@
+<ivy-module version="1.3">
+    <info 
+    	organisation="riotfamily" 
+    	module="tinymce-js" 
+    	revision="2.0.6.1"
+    	status="release">
+    	
+    	<license name="LGPL" url="http://www.gnu.org/licenses/lgpl.html" />
+    	<description homepage="http://tinymce.moxiecode.com/">
+	    	TinyMCE is a platform independent web based Javascript HTML WYSIWYG editor.
+    	</description>
+    </info>
+    <publications>
+    	<artifact name="tinymce-js" type="jar" />
+    </publications>
+</ivy-module>

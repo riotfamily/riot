@@ -1,0 +1,97 @@
+a img {
+	border: none;
+}
+
+.mceButtonNormal img, 
+.mceButtonDown img, 
+.mceSeparator img, 
+.mceButtonDisabled img, 
+.mceButtonSelected img {
+	margin-top: 2px;
+	margin-left: 1px;
+	background-color: ${highlight};
+}
+
+.mceButtonNormal img,
+.mceButtonDown img {
+	border: 1px solid #fff;
+}
+
+.mceButtonSelected img {
+	border: 1px solid #3d3d3d;
+}
+
+.mceButtonNormal img:hover {
+	border: 1px solid #3d3d3d;
+}
+
+.mceButtonDisabled img {
+background-color: #3d3d3d;
+}
+
+a.mceButtonDisabled {
+	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=30);
+	-moz-opacity:0.3;
+	opacity: 0.3;
+	cursor: default;
+}
+
+.mceSelectList {
+	margin-top: 3px;
+	padding: 0px;
+	vertical-align: top;
+}
+
+.mceLabel, .mceLabelDisabled {
+	font-family: "MS Sans Serif";
+	font-size: 9pt;
+}
+
+.mceLabel {
+	color: #000000;
+}
+
+.mceLabelDisabled {
+	cursor: text;
+	color: #ebebeb;
+}
+
+.mceEditor {
+	background: #fff;
+	padding: 0px;
+	margin: 0px;
+}
+
+.mceEditorArea {
+	background: #fff;
+	padding: 0px;
+	margin: 0px;
+}
+
+.mceEditor td.container {
+	padding-bottom: 2px;
+}
+
+.mceStatusbarBottom {
+	font-size: 9pt;
+	padding: 5px 20px;
+	background-color: #ebebeb;
+	border-top: 1px solid #3d3d3d;
+}
+
+.mceStatusbarBottom br {
+	display:none;
+}
+
+.mceStatusbarPathText {
+	color: #3d3d3d;
+}
+
+.mcePathItem, .mcePathItem:link, .mcePathItem:visited, .mcePathItem:hover {
+	text-decoration: none;
+	color: #000;
+}
+
+.mcePathItem:hover {
+	text-decoration: underline;
+}

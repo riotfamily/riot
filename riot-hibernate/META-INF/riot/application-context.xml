@@ -1,0 +1,30 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="sessionFactory" abstract="true" />
+	
+	<bean id="transactionManager" abstract="true" />
+	 
+	<bean id="hibernateModule" class="org.riotfamily.common.beans.module.FactoryBeanModule">
+		<property name="properties">
+			<map>
+				<entry key="hibernateMappingLocations">
+					<list>
+						<value>classpath:/org/riotfamily/riot/hibernate/security/security.hbm.xml</value>
+						<value>classpath:/org/riotfamily/riot/hibernate/workflow/notification/notification.hbm.xml</value>
+						<value>classpath:/org/riotfamily/riot/hibernate/job/job.hbm.xml</value>
+					</list>	 			
+	 			</entry>
+			</map>
+		</property>
+	</bean>	
+
+	<bean id="notificationDaoImpl" class="org.riotfamily.riot.hibernate.workflow.notification.HibernateNotificationDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>	
+
+</beans>

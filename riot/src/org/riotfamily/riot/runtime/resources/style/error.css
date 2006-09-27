@@ -1,0 +1,25 @@
+@import url(common.css);
+
+h1 {
+	color: ${highlight};
+}
+
+h2 {
+	margin-top: 32px;
+}
+
+a.detail {
+	font-weight: bold;
+	color: #000;
+	text-decoration: underline;
+}
+
+#stacktrace {
+	font-size: 11px;
+	display: none;
+}
+
+#stacktrace .source {
+	font-style: italic;
+}
+

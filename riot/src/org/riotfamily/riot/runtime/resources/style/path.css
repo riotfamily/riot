@@ -1,0 +1,58 @@
+@import url(common.css);
+@import url(logo.css);
+
+body {
+	margin: 0;
+	padding: 30px 55px 0 55px;
+}
+body, a, span {
+	font-family: "Trebuchet MS", arial, sans-serif;
+	font-size: 11px;
+	color: #000;
+}
+a {
+	color: #000;
+}
+.active {
+	color: ${highlight};
+}
+.start-active {
+	text-decoration: none;
+}
+
+#path .none-active {
+	color: #000;
+}
+
+#path {
+	width: 100%;
+	margin-top: 20px;
+	background-color: #ebebeb;
+	overflow: hidden;
+}
+
+.group, .list, .tree, .form, .node, .none {
+	padding-top: 4px;
+	padding-bottom: 4px;
+	line-height: 22px;
+}
+	
+.group,
+.list, 
+.tree {
+	padding-left: 9px;
+}
+
+.list,
+.tree,
+.node {
+	margin-right: 5px;
+}
+
+.group,
+.form,
+.node,
+.none {
+	padding-right: 9px;
+	border-right: 1px solid #fff;
+}

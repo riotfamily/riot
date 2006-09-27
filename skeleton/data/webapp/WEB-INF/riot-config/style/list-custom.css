@@ -1,0 +1,72 @@
+.col-path {
+	text-align: right;
+	width: 32px;
+}
+	
+th.col-path span {
+	visibility: hidden;
+}
+	
+.col-path a {
+	display: block;
+	width: 26px;
+	height: 26px;
+	background: url(icons/browse.gif) 0 -2px no-repeat;
+}
+
+.col-path a:hover {
+	background-position: 0 -34px;
+	background-color: ${highlight};
+}
+
+
+#list.banner, 
+#list.banner tbody, 
+#list.banner tfoot, 
+#list.banner tr, 
+#list.banner td {
+	display: block;
+}
+
+#list.banner thead {
+	display: none;
+}
+#list.banner tbody tr {
+	float: left;
+	border: 1px solid #ebebeb;
+	-moz-border-radius: 3px;
+	margin: 5px;
+	width: 134px;
+	height: 132px;
+}
+#list.banner tbody td {
+	border-width: 0px;
+	padding:0;
+}
+#list.banner tbody td.command {
+	float:left;
+}
+#list.banner tfoot {
+	clear: left;
+}
+#list.banner td.col-image img {
+	max-width: 128px;
+	max-height: 96px;
+}
+#list.banner td.col-image {
+	width: 128px;
+	height: 96px;
+	line-height: 100px;
+	text-align: center;
+	overflow:hidden;
+	background: #fff;
+	margin: 3px 3px 0 3px;
+}
+
+#list.banner tr.highlight td.col-image {
+	background: #fff url(images/checkerboard.gif);
+}
+
+#list.banner td.col-id {
+	display: none;
+}

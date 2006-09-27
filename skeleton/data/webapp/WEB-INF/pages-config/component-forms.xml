@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-config PUBLIC "-//Riot//Form Config DTD 6.2//EN" 
+		"http://riotfamily.org/dtd/6.2/form-config.dtd">
+
+<form-config>
+
+	<form id="title">
+		<group label-key="label.componentForm">
+			<checkbox bind="showHeadline" />
+			<checkbox bind="showSubline" />
+		</group>
+	</form>
+	
+	<form id="image">
+		<group label-key="label.componentForm">
+			<image-upload bind="image" store="defaultFileStore" required="true" />
+			<selectbox bind="class" required="true" 
+				label-message-key="imageComponent.class." append-label="true">
+				<model class="org.riotfamily.forms.element.support.select.StaticOptionsModel">
+					<set-property name="commaDelimitedValues" value="block,right,left" />
+				</model>
+			</selectbox>
+			<checkbox bind="clear" />
+			<textfield bind="link" max-length="255"/>
+			<textfield bind="caption" max-length="255"/>
+		</group>
+	</form>
+	
+	<form id="paragraph">
+		<checkbox bind="clear" />
+	</form>
+	
+	<form id="teaser">
+		<image-upload bind="image" store="defaultFileStore" />
+		<textfield bind="imageLink" max-length="255"/>
+	</form>
+		
+</form-config>

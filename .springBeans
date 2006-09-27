@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<configExtensions>
+		<configExtension>xml</configExtension>
+	</configExtensions>
+	<configs>
+		<config>pages/META-INF/riot/application-context.xml</config>
+		<config>riot-hibernate/META-INF/riot/application-context.xml</config>
+	</configs>
+	<configSets>
+		<configSet>
+			<name>context</name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>true</incomplete>
+			<configs>
+				<config>riot-hibernate/META-INF/riot/application-context.xml</config>
+				<config>pages/META-INF/riot/application-context.xml</config>
+			</configs>
+		</configSet>
+	</configSets>
+</beansProjectDescription>

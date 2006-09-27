@@ -1,0 +1,98 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
+	
+	<!-- Module configuration -->
+	
+	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
+		<property name="properties">
+			<map>
+	 			<entry key="hibernateMappingLocations">
+					<list>
+						<value>classpath:org/riotfamily/pages/page/PersistentPage.hbm.xml</value>
+						<value>classpath:org/riotfamily/pages/page/PageAlias.hbm.xml</value>
+						<value>classpath:org/riotfamily/pages/component/dao/component.hbm.xml</value>
+					</list>	 			
+	 			</entry>
+	 		</map>
+		</property>
+	</bean>
+	 
+	<bean id="pageEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
+	
+	<tx:advice id="matchAllTxInterceptor">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" isolation="DEFAULT" />
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- Page DAO -->
+	
+	<bean id="pageDao" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
+		<property name="target" ref="pageDaoTarget" />
+	</bean>	
+	
+	<bean id="pageDaoTarget" class="org.riotfamily.pages.page.support.HibernatePageDao">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+	
+	<!-- Component DAO  -->
+	
+	<bean id="componentDao" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
+		<property name="target"><ref bean="componentDaoTarget" /></property>
+	</bean>
+		
+	<bean id="componentDaoTarget" class="org.riotfamily.pages.component.dao.HibernateComponentDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<!-- 
+	  - Exposes some beans from website-servlet to the riot-servlet context.
+	  - Refer to the JavaDocs for a detailed explanation.
+	  -->
+	<bean class="org.riotfamily.pages.setup.Plumber" />
+	
+	<!-- 
+	  - A Cachius cache instance to cache web content.
+	  -->	
+	<bean id="websiteCache" class="org.riotfamily.cachius.spring.CacheFactoryBean">
+		<property name="capacity" value="10000" />
+    </bean>
+    
+    <!-- 
+	  - AOP advisor that can be added to RiotDao instances in order to invalidate 
+	  - the website cache, when an object is saved, updated or deleted.
+	  -->
+	<bean id="objectIdInvalidator" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+		<constructor-arg ref="riotDaoPointcut" />
+		<constructor-arg>
+			<bean class="org.riotfamily.pages.mvc.cache.CacheInvalidationAdvice">
+				<property name="cache" ref="websiteCache" />
+				<property name="invalidateAll" value="false" />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<!-- 
+	  - AOP advisor that can be added to RiotDaos in order to invalidate the
+	  - website cache, when an object is saved, updated or deleted.
+	  -->
+	<bean id="itemClassInvalidator" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+		<constructor-arg ref="riotDaoPointcut" />
+		<constructor-arg>
+			<bean class="org.riotfamily.pages.mvc.cache.CacheInvalidationAdvice">
+				<property name="cache" ref="websiteCache" />
+				<property name="invalidateAll" value="true" />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+</beans>	

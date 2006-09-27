@@ -1,0 +1,25 @@
+.action-publishPage {
+	background-image: url(icons/commands/publish.gif);
+}
+
+.action-unpublishPage {
+	background-image: url(icons/commands/unpublish.gif);
+}
+
+.col-path {
+	text-align: right;
+	width: 32px;
+}
+th.col-path span {
+	visibility: hidden;
+}
+.col-path a {
+	display: block;
+	width: 26px;
+	height: 26px;
+	background: url(icons/commands/browse.gif) 0 -2px no-repeat;
+}
+.col-path a:hover {
+	background-position: 0 -34px;
+	background-color: ${highlight};
+}

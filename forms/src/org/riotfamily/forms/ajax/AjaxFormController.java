@@ -1,0 +1,129 @@
+package org.riotfamily.forms.ajax;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.riotfamily.forms.Element;
+import org.riotfamily.forms.Form;
+import org.riotfamily.forms.controller.AbstractFormController;
+import org.riotfamily.forms.resource.ScriptResource;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.support.RequestContextUtils;
+
+
+/**
+ *
+ */
+public abstract class AjaxFormController extends AbstractFormController
+		implements MessageSourceAware {
+	
+	private MessageSource messageSource;
+	
+	
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+
+	protected ModelAndView handleFormRequest(Form form, 
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+
+		if (isAjaxRequest(request)) {
+			processAjaxRequest(form, request, response);
+			return null;
+		}
+		else {
+			return super.handleFormRequest(form, request, response);
+		}
+	}
+	
+	protected void initForm(Form form, HttpServletRequest request) {
+		form.addResource(new ScriptResource("form/ajax.js", "propagate"));
+	}
+	
+	protected boolean isAjaxRequest(HttpServletRequest request) {
+		return request.getParameter("_ajax") != null;
+	}
+	
+	/**
+	 * Returns whether the given request is an initial form request.
+	 */
+	protected boolean isInitialRequest(HttpServletRequest request) {
+		return super.isInitialRequest(request) && !isAjaxRequest(request);
+	}
+	
+	protected void processAjaxRequest(Form form, HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		
+		AjaxResponse ajaxResponse = new AjaxResponse(response);
+		if (form != null) {
+			form.getFormContext().setWriter(response.getWriter());
+			form.setFormListener(ajaxResponse);
+			
+			String id = request.getParameter("event.source");		
+			log.debug("Processing AJAX request triggered by element " + id);
+			Element element = form.getElementById(id);
+			JavaScriptEvent event = new JavaScriptEvent(request);
+			if (element instanceof JavaScriptEventAdapter) {
+				JavaScriptEventAdapter ea = (JavaScriptEventAdapter) element;
+				ea.handleJavaScriptEvent(event);
+			}
+			else {
+				log.error("Element does not implement JavaScriptEventAdapter");
+			}
+			form.setFormListener(null);
+		}
+		else {
+			String message = messageSource.getMessage(
+					"error.sessionExpired", null, "Your session has expired", 
+					RequestContextUtils.getLocale(request));
+			
+			ajaxResponse.alert(message);
+		}
+		ajaxResponse.close();
+	}
+	
+	protected void renderForm(Form form, PrintWriter writer) {
+		form.render(writer);
+		
+		writer.print("<script>");
+		writer.print("document.getElementById('");
+		writer.print(form.getId());
+		writer.print("').ajaxUrl = '");
+		writer.print(form.getFormContext().getFormUrl());
+		writer.print("';\n");
+		
+		ArrayList propagations = new ArrayList();
+		Iterator it = form.getRegisteredElements().iterator();
+		while (it.hasNext()) {
+			Element element = (Element) it.next();
+			if (element instanceof JavaScriptEventAdapter) {
+				JavaScriptEventAdapter adapter = (JavaScriptEventAdapter) element;
+				EventPropagation.addPropagations(adapter, propagations);
+			}
+		}
+		
+		if (!propagations.isEmpty()) {
+			writer.print("Resources.waitFor('propagate', function() {");
+			it = propagations.iterator();
+			while (it.hasNext()) {
+				EventPropagation p = (EventPropagation) it.next();
+				writer.print("propagate('");
+				writer.print(p.getId());
+				writer.print("', '");
+				writer.print(p.getType());
+				writer.print("');\n");
+			}
+			writer.print("});");
+		}
+		writer.print("</script>");
+	}
+	
+}

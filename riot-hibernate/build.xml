@@ -1,0 +1,7 @@
+<project name="riot-hibernate" default="compile">
+
+	<property name="module.title" value="Riot Hibernate Bindings" />
+	
+	<import file="../module-build.xml" />
+	
+</project>

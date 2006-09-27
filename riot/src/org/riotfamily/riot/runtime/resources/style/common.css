@@ -1,0 +1,52 @@
+/**
+ * Common styles shared by several views
+ */
+body {
+	color:#000;
+	margin:0;
+	padding: 30px 55px;
+}
+body, a, td, th, h1, h2 {	
+	font-family: "Trebuchet MS", arial, sans-serif;
+	font-size:12px;
+}
+a {
+	color: ${highlight};
+}
+img {
+	border:0;
+}
+table {
+	border-spacing: 0;
+}
+td {
+	margin: 0;
+	padding: 0;
+	vertical-align: top;
+}
+
+.title {
+	background-color: #3d3d3d;
+	position: relative;
+	color: #fff;
+	text-transform: uppercase;
+	line-height: 20px;
+	height: 20px;
+}
+
+.title .icon {
+	width: 30px;
+	height: 20px;
+	position: absolute;
+	left: 0;
+	background: ${highlight} url(images/list.gif) no-repeat;
+}
+
+.title span {
+	padding-left: 36px;
+}
+
+.corner-tr,
+.corner-br {
+	margin-right: expression(-1 * (this.parentNode.offsetWidth % 2));
+}

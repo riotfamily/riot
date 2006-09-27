@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+		targetNamespace="http://www.riotfamily.org/schema/forms/form-config"
+		xmlns="http://www.riotfamily.org/schema/forms/form-config"
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	
+	<xsd:group name="elements">
+		<xsd:choice>
+			<xsd:element ref="element" />
+			<xsd:element ref="nested-form" />
+			<xsd:element ref="textfield" />
+			<xsd:element ref="numberfield" />
+			<xsd:element ref="passwordfield" />
+			<xsd:element ref="textarea" />
+			<xsd:element ref="checkbox" />
+			<xsd:element ref="imagecheckbox" />
+			<xsd:element ref="checkbox-group" />
+			<xsd:element ref="radio-group" />
+			<xsd:element ref="selectbox" />
+			<xsd:element ref="list" />
+			<xsd:element ref="map" />
+			<xsd:element ref="group" />
+			<xsd:element ref="calendar" />
+			<xsd:element ref="richtext" />
+			<xsd:element ref="file-upload" />
+			<xsd:element ref="image-upload" />
+			<xsd:element ref="import" />
+			<xsd:element ref="editable-if-new" />
+		</xsd:choice>	
+	</xsd:group>
+	
+	<xsd:complexType name="simple-editor">
+		<xsd:attribute name="bind" type="xsd:string" />
+		<xsd:attribute name="required" type="xsd:boolean" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="template-editor">
+		<xsd:complexContent>
+			<xsd:extension base="simple-editor">
+				<xsd:attribute name="template" type="xsd:string" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:element name="element">
+		<xsd:complexType>
+			<xsd:choice>
+				<xsd:group ref="elements" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element ref="set-property" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:choice>
+			<xsd:attribute name="bind" type="xsd:string" />
+			<xsd:attribute name="type" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="set-property">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+			<xsd:attribute name="value" type="xsd:string" />
+			<xsd:attribute name="ref" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="nested-form">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="simple-editor">
+					<xsd:group ref="elements" maxOccurs="unbounded" />
+					<xsd:attribute name="bean-class" type="xsd:string" />
+					<xsd:attribute name="indent" type="xsd:boolean" default="true" />
+					<xsd:attribute name="template" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:complexType name="textfield">
+		<xsd:complexContent>
+			<xsd:extension base="simple-editor">
+				<xsd:attribute name="style-class" type="xsd:string" />
+				<xsd:attribute name="max-length" type="xsd:positiveInteger" />
+				<xsd:attribute name="trim" type="xsd:boolean" default="true" />
+				<xsd:attribute name="random-param-name" type="xsd:boolean" />
+				<xsd:attribute name="confirm-message-text" type="xsd:string" />
+				<xsd:attribute name="confirm-message-key" type="xsd:string" />
+				<xsd:attribute name="confirm" type="xsd:boolean" />
+				<xsd:attribute name="regex" type="xsd:string" />
+				<xsd:attribute name="regex-mismatch-message-key" type="xsd:string" />
+				<xsd:attribute name="regex-mismatch-message-text" type="xsd:string" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:element name="textfield" type="textfield" />
+
+	<xsd:element name="passwordfield">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="textfield">
+					<xsd:attribute name="toggle-plaintext" type="xsd:boolean" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+		
+	<xsd:element name="numberfield">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="simple-editor">
+					<xsd:attribute name="style-class" type="xsd:string" />
+					<xsd:attribute name="min-value" type="xsd:decimal" />
+					<xsd:attribute name="max-value" type="xsd:decimal" />
+					<xsd:attribute name="precision" type="xsd:positiveInteger" />
+					<xsd:attribute name="spinner" type="xsd:boolean" default="true" />
+					<xsd:attribute name="step-size" type="xsd:decimal" />
+					<xsd:attribute name="unit" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="textarea">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="simple-editor">
+					<xsd:attribute name="style-class" type="xsd:string" />
+					<xsd:attribute name="max-length" type="xsd:positiveInteger" />
+					<xsd:attribute name="rows" type="xsd:positiveInteger" />
+					<xsd:attribute name="cols" type="xsd:positiveInteger" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="checkbox" type="simple-editor" />
+	
+	<xsd:element name="imagecheckbox">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="simple-editor">
+					<xsd:attribute name="style-class" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="select">
+		<xsd:complexContent>
+			<xsd:extension base="simple-editor">
+				<xsd:choice>
+					<xsd:element ref="model" />
+				</xsd:choice>
+				<xsd:attribute name="label-property" type="xsd:string" />
+				<xsd:attribute name="value-property" type="xsd:string" />
+				<xsd:attribute name="label-message-key" type="xsd:string" />
+				<xsd:attribute name="append-label" type="xsd:boolean" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="multiselect">
+		<xsd:complexContent>
+			<xsd:extension base="select">
+				<xsd:attribute name="collection-class" type="xsd:string" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:element name="model">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element ref="set-property" />
+			</xsd:choice>
+			<xsd:attribute name="class" type="xsd:string" />
+			<xsd:attribute name="ref" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="selectbox">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="multiselect">
+					<xsd:attribute name="size" type="xsd:positiveInteger" />
+					<xsd:attribute name="multiple" type="xsd:boolean" />
+					<xsd:attribute name="choose-label" type="xsd:string" />
+					<xsd:attribute name="choose-label-key" type="xsd:string" />
+					<xsd:attribute name="show-choose-option" type="xsd:boolean" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+		
+	<xsd:element name="checkbox-group">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="multiselect">
+					<xsd:attribute name="max-selection" type="xsd:positiveInteger" />
+					<xsd:attribute name="style-class" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="radio-group">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="select">
+					<xsd:attribute name="style-class" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="list">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="template-editor">
+					<xsd:group ref="elements" />
+					<xsd:attribute name="parent-property" type="xsd:string" />
+					<xsd:attribute name="collection-class" type="xsd:string" />
+					<xsd:attribute name="sortable" type="xsd:boolean" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="map">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="simple-editor">
+					<xsd:group ref="elements" />
+					<xsd:attribute name="label-property" type="xsd:string" />
+					<xsd:attribute name="key-collection-property" type="xsd:string" />
+					<xsd:attribute name="map-class" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="group">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="template-editor">
+					<xsd:group ref="elements" maxOccurs="unbounded" />
+					<xsd:attribute name="label-key" type="xsd:string" />
+					<xsd:attribute name="label-items" type="xsd:boolean" default="true" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="calendar">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="simple-editor">
+					<xsd:attribute name="default-value" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="richtext" type="simple-editor" />
+	
+	<xsd:complexType name="upload">
+		<xsd:complexContent>
+			<xsd:extension base="simple-editor">
+				<xsd:attribute name="store" type="xsd:string" />
+				<xsd:attribute name="thumbnailer" type="xsd:string" />
+				<xsd:attribute name="filename-property" type="xsd:string" />
+				<xsd:attribute name="content-type-property" type="xsd:string" />
+				<xsd:attribute name="size-property" type="xsd:string" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:element name="file-upload" type="upload" />
+	
+	<xsd:element name="image-upload">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="upload">
+					<xsd:attribute name="valid-formats" type="xsd:string" />
+					<xsd:attribute name="width" type="xsd:positiveInteger" />
+					<xsd:attribute name="height" type="xsd:positiveInteger" />
+					<xsd:attribute name="min-width" type="xsd:positiveInteger" />
+					<xsd:attribute name="min-height" type="xsd:positiveInteger" />
+					<xsd:attribute name="max-width" type="xsd:positiveInteger" />
+					<xsd:attribute name="max-height" type="xsd:positiveInteger" />
+					<xsd:attribute name="width-property" type="xsd:string" />
+					<xsd:attribute name="height-property" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="import">
+		<xsd:complexType>
+			<xsd:attribute name="form" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="editable-if-new">
+		<xsd:complexType>
+			<xsd:group ref="elements" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="form-config">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element ref="package" />
+				<xsd:element ref="form" />
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="package">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element ref="form" />
+			</xsd:choice>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="form">
+		<xsd:complexType>
+			<xsd:group ref="elements" maxOccurs="unbounded" />
+			<xsd:attribute name="id" type="xsd:string" use="required" />
+			<xsd:attribute name="bean-class" type="xsd:string" />
+			<xsd:attribute name="initializer" type="xsd:string" />
+			<xsd:attribute name="initializer-class" type="xsd:string" />
+			<xsd:attribute name="template" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+		
+</xsd:schema>

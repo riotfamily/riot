@@ -1,0 +1,80 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- 
+	  - In-memory representation of the sitemap. 
+	  -->
+	<bean id="pageMap" class="org.riotfamily.pages.page.PageMap">
+		<constructor-arg ref="pageDao" />
+		<constructor-arg ref="transactionManager" />
+		<property name="eventMulticaster" ref="pageEventMulticaster" />
+	</bean>
+	
+	<!-- 
+	  - MenuBuilder that creates MenuItems using the pageMap.
+	  -->
+	<bean id="pageMenuBuilder" class="org.riotfamily.pages.page.menu.PageMenuBuilder" />
+	
+	<!-- 
+	  - Repository that contains the component definitions.
+	  -->
+	<bean id="componentRepository" class="org.riotfamily.pages.component.ComponentRepository">
+		<property name="configLocations">
+			<list>
+				<value>classpath:/org/riotfamily/pages/runtime/component-messages.xml</value>
+				<value>/WEB-INF/pages-config/components.xml</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 
+	  - Bean that is exposed to all beans in the riot-servlet context, that 
+	  - implement the WebsiteConfigAware interface. Refer to the JavaDocs for
+	  - a detailed explanation.
+	  -->
+	<bean class="org.riotfamily.pages.setup.WebsiteConfig">
+		<constructor-arg ref="componentRepository" />
+		<property name="cache" ref="websiteCache" />
+	</bean>	
+	
+	<!-- 
+	  - Bean that checks whether a page should be displayed in preview- or
+	  - live-mode.
+	  -->
+	<bean id="viewModeResolver" class="org.riotfamily.pages.component.preview.DefaultViewModeResolver" />
+	
+	<!-- 
+	  - HandlerAdapter that handles CacheableControllers.
+	  -->
+	<bean class="org.riotfamily.cachius.spring.CachiusHandlerAdapter">
+		<constructor-arg ref="websiteCache" />
+	</bean>
+	
+	<!-- 
+	  - The default CachingPolicy used by AbstractCachingPolicyControllers.
+	  -->
+	<bean id="defaultCachingPolicy" class="org.riotfamily.pages.mvc.cache.DefaultCachingPolicy">
+		<property name="expiresAfter" value="5m" />
+		<property name="viewModeResolver" ref="viewModeResolver" />
+	</bean>
+	
+	<!-- 
+	  - Abstract parent for ComponentListControllers.
+	  -->
+	<bean id="abstractComponentList" abstract="true"
+		class="org.riotfamily.pages.component.ComponentListController">
+		
+		<constructor-arg ref="componentDao" />
+		<constructor-arg ref="componentRepository" />
+		<constructor-arg ref="websiteCache" />
+		<property name="viewModeResolver" ref="viewModeResolver" />
+		<property name="componentPathResolver">
+			<bean class="org.riotfamily.pages.component.resolver.PageComponentPathResolver" />
+		</property>
+	</bean>
+		
+</beans>

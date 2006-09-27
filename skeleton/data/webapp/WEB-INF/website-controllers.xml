@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://riotfamily.org/schema/pages/mvc"
+	xmlns:template="http://riotfamily.org/schema/pages/template"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://riotfamily.org/schema/pages/mvc
+		http://riotfamily.org/schema/6.2/pages/mvc.xsd
+		http://riotfamily.org/schema/pages/template
+		http://riotfamily.org/schema/6.2/pages/template.xsd">
+	
+	<!-- Handles all pages defined in the database -->
+	<bean name="/**/*.html" class="org.riotfamily.pages.page.PageController">
+		<constructor-arg ref="pageMap" />
+		<property name="rootPageAttribute" value="site" />
+	</bean>
+	
+	<!-- ========== -->
+	<!-- Page types -->
+	<!-- ========== -->
+	
+	<template:definition name="default" view-name="templates/default.ftl">
+		<template:insert slot="head" url="/inc/metadata.html" />
+		<template:insert slot="menu" url="/inc/menu.html" />
+		<template:insert slot="content" url="/inc/content.html" />
+		<template:insert slot="extra" url="/inc/extra.html" />
+	</template:definition>
+	
+	<!-- ======== -->
+	<!-- Includes -->
+	<!-- ======== -->
+
+	<!-- HEAD (title, keywords, description) -->
+	<bean name="/inc/metadata.html" class="org.riotfamily.pages.page.meta.MetaDataController">
+	</bean>
+	
+	<bean name="/inc/menu.html" class="org.riotfamily.pages.menu.MenuController">
+		<property name="menuBuilder"><ref bean="pageMenuBuilder" /></property>
+		<property name="viewName"><value>nav.ftl</value></property>
+	</bean>
+		
+	<!-- =============== -->
+	<!-- Component Lists -->
+	<!-- =============== -->
+	
+	<bean id="abstractComponentList" abstract="true"
+		class="org.riotfamily.pages.component.ComponentListController">
+		
+		<constructor-arg ref="componentDao" />
+		<constructor-arg ref="componentRepository" />
+		<constructor-arg ref="websiteCache" />
+		<property name="viewModeResolver" ref="viewModeResolver" />
+		<property name="componentPathResolver">
+			<bean class="org.riotfamily.pages.component.resolver.PageComponentPathResolver" />
+		</property>
+	</bean>
+	
+	<bean name="/inc/content.html" parent="abstractComponentList">
+		<property name="validComponentTypes" 
+			value="paragraph,title,image" />
+			
+		<property name="initialComponentTypes" value="title,paragraph" />
+	</bean>
+	
+	<bean name="/inc/extra.html" parent="abstractComponentList">
+		<property name="validComponentTypes" value="extra-box,filled-extra-box,important-extra-box,inherit" />
+	</bean>
+	
+</beans>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+<wb-module deploy-name="riotfamily">
+<wb-resource deploy-path="/" source-path="/riot/src"/>
+<wb-resource deploy-path="/" source-path="/search/src"/>
+<wb-resource deploy-path="/" source-path="/riot-hibernate/src"/>
+<wb-resource deploy-path="/" source-path="/cachius/src"/>
+<wb-resource deploy-path="/" source-path="/pages/src"/>
+<wb-resource deploy-path="/" source-path="/forms/src"/>
+<wb-resource deploy-path="/" source-path="/common/src"/>
+<wb-resource deploy-path="/" source-path="/ant/src"/>
+<wb-resource deploy-path="/" source-path="/forms/tiger"/>
+</wb-module>
+</project-modules>

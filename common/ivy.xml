@@ -1,0 +1,20 @@
+<ivy-module version="1.3">
+    <info organisation="riotfamily" module="riot-common" status="integration" />
+    <configurations>
+    	<conf name="build" />
+    	<conf name="runtime" />
+    </configurations>
+    <publications>
+    	<artifact name="riot-common" type="jar" conf="runtime" />
+    </publications>
+    <dependencies>
+	    <dependency org="sun" name="servlet-api" rev="latest.release" conf="build->default" />
+        <dependency org="apache" name="log4j" rev="latest.release" />
+        <dependency org="apache" name="commons-logging" rev="latest.release" />
+        <dependency org="springframework" name="spring" rev="latest.milestone" />
+		<dependency org="freemarker" name="freemarker" rev="2.3.8" />
+		<dependency org="json" name="json-lib" rev="latest.release" />
+		<dependency org="getahead" name="dwr" rev="2.0-Riot-2006-09-19" />
+		<dependency org="sun" name="jaf" rev="latest.release" />
+    </dependencies>
+</ivy-module>

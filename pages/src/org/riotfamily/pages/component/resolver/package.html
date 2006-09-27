@@ -1,0 +1,19 @@
+<body>
+	<p>
+	ComponentLists have two properties that define where a list is rendered.
+	The first one, called <i>path</i> resembles a URL. 
+	</p>
+	<p>
+	When a ComponentListController is rendered, it resolves the component path
+	for the current request. The most simple implementation would be to call
+	request.getRequestURI(). The controller would then use this String to 
+	look up all ComponentLists having this path. 
+	</p>
+	<p>
+	Since a page may contain more than one ComponentList, using just the 
+	requested path for a look-up would not be sufficient. Therefore each list
+	has a second property called <i>key</i>. This key could be a value like
+	"left" or "right" or something like that. In other words it defines where
+	exactly on a page the list should be displayed.
+	</p>
+</body>

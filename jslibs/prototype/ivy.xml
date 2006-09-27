@@ -1,0 +1,14 @@
+<ivy-module version="1.3">
+    <info 
+    	organisation="riotfamily" 
+    	module="prototype-js" 
+    	revision="1.5.0_rc0" 
+    	status="milestone">
+    	
+	    <license name="MIT" url="http://dev.rubyonrails.org/browser/spinoffs/prototype/LICENSE" />
+	    <description homepage="http://prototype.conio.net" />
+    </info>
+    <publications>
+    	<artifact name="prototype-js" type="jar" />
+    </publications>
+</ivy-module>

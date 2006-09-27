@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://riotfamily.org/schema/pages/component"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://riotfamily.org/schema/pages/component
+		http://riotfamily.org/schema/6.2/pages/component.xsd">
+
+	<bean id="booleanEditor" class="org.riotfamily.common.beans.propertyeditors.BooleanEditor" />
+	
+	<bean id="integerEditor" class="org.springframework.beans.propertyeditors.CustomNumberEditor">
+		<constructor-arg><value>java.lang.Integer</value></constructor-arg>
+		<constructor-arg><value>false</value></constructor-arg>
+	</bean>
+		
+	<c:view-component id="image" view-name="components/image.ftl">
+		<c:property-editor property="clear" ref="booleanEditor" />
+	</c:view-component>
+	
+	<c:view-component id="paragraph" view-name="components/paragraph.ftl">
+		<c:property-editor property="clear" ref="booleanEditor" />
+	</c:view-component>
+	
+	<c:view-component id="title" view-name="components/title.ftl">
+		<c:property-editor property="showHeadline" ref="booleanEditor" default="true" />
+		<c:property-editor property="showSubline" ref="booleanEditor" default="true" />
+	</c:view-component>
+	
+	<c:view-component id="extra-box" view-name="components/extra-box.ftl">
+		<c:defaults>
+			<c:property name="className" value="box" />
+		</c:defaults>
+	</c:view-component>
+	
+	<c:view-component id="filled-extra-box" view-name="components/extra-box.ftl">
+		<c:defaults>
+			<c:property name="className" value="box filled-box" />
+		</c:defaults>
+	</c:view-component>
+	
+	<c:view-component id="important-extra-box" view-name="components/extra-box.ftl">
+		<c:defaults>
+			<c:property name="className" value="box filled-box important" />
+		</c:defaults>
+	</c:view-component>
+		
+	<c:inheriting-component id="inherit" />	
+
+</beans>

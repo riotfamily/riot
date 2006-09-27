@@ -1,0 +1,494 @@
+@import url(common.css);
+@import url(form-custom.css);
+
+#columns {
+	width: 100%;
+	max-width: 1000px;
+}
+#form {
+	float:left;
+	margin-right: 300px;
+}
+#sidebar {
+	float:left;
+	width: 260px;
+	margin-left:-260px;
+}
+#sidebar .box {
+	width: 220px;
+	background-color: #ebebeb;
+	padding-bottom: 10px;
+	margin-bottom: 50px;
+}
+
+#childLists .list {
+	margin-top:10px;
+}
+#childLists .item {
+	padding: 3px 0 3px 35px;
+}
+#childLists a {
+	font-weight: bold;
+}
+
+#commands .action {
+	margin: 4px 0;
+	width: auto;
+	text-decoration: none;
+	padding-left: 32px;
+}
+#commands .action span {
+	display: block;
+	padding-left: 4px;
+	background-color: #ebebeb;
+	text-transform: capitalize;
+	color: #000 !important;
+	font-size: 11px;
+	line-height: 32px;
+}
+#commands .action:hover {
+	background-position: 0 -32px;
+	background-color: ${highlight};
+}
+#sidebar #commands .disabled {
+	background-position: 0 -64px;
+}
+#sidebar #commands .disabled:hover {
+	background-color: #ebebeb;
+}
+#commands .saveButton {
+	background-image: url(icons/commands/save.gif);
+}
+
+#form-options {
+	background-color: #ebebeb;
+	padding: 20px 10px 20px 36px;
+	margin-bottom: 50px;
+}
+
+#form-options form {
+	margin-top: 10px;
+}
+
+div.buttons {
+	clear:both;
+	float: right;
+	margin-bottom: 30px;
+}
+.button-save {
+	display: block;
+	width: 144px;
+	height: 56px;
+	background: ${highlight} url(images/save.gif) 10px 10px no-repeat;
+}
+.button-save .face {
+	padding: 10px 0 0 40px;
+	color: #fff;
+	text-transform: uppercase;
+	text-decoration: none;
+	font-family: "Trebuchet MS", arial, sans-serif;
+	font-size:12px;
+}
+
+#saving {
+	margin-left: 32px;
+}
+#form div.form-error,
+#form label.error {
+	color: ${highlight};
+}
+#form div.form-error {
+	margin:15px 0;
+}
+                      
+ul.errors {
+	padding-left: 0;
+	margin: 0;
+}
+ul.errors li {
+	margin: 5px 0;
+	list-style-type: none;
+	color: ${highlight};
+	font-weight: normal;
+}
+	
+textarea, input.text, input.number, input.password {
+	display: block;
+	font-family: verdana, arial, sans-serif;
+	font-size:12px;
+	padding: 4px;
+	-moz-box-sizing: border-box;
+}
+
+textarea, input.text, input.password {
+	width: 100%;
+}
+
+input.text, input.number, input.password {
+	height: 26px;
+}
+
+span.read-only {
+	line-height: 26px;
+}
+
+textarea {
+	line-height: 18px;
+}
+.counter {
+	display:inline;
+	float:right;
+	margin:-1px 0 10px 0;
+	padding:0 4px;
+	color:#3d3d3d;
+	font-size:11px;
+	background-color:#ebebeb;
+}
+
+textarea, 
+input.text,
+input.number, 
+input.password, 
+.mceEditor {
+	border: 1px solid #ebebeb;
+}
+
+.spinButtons div {
+	width: 13px;
+}
+.spinButtons .increase {
+	background: #ebebeb url(images/up.gif) 0px center no-repeat;
+}
+.spinButtons .decrease {
+	background: #ebebeb url(images/down.gif) 0px center no-repeat;
+}
+.spinButtons .increase:hover,
+.spinButtons .decrease:hover {
+	background-color: ${highlight};
+	background-position: -13px center;
+}
+.numberInput .unit {
+	float: left;
+	padding: 4px 0 0 10px;
+	font-size: 12px;
+}
+	
+.mceEditor .container {
+	padding: 4px;
+	border-bottom: 1px solid #ebebeb;
+}
+
+select {
+	margin: 4px 0 0 0;
+}
+
+input.checkbox {
+	margin: 6px 0 0 0;
+}
+
+ul.checkboxGroup li,
+ul.radioButtonGroup li {
+	margin: 6px 0 0 0;
+}
+
+ul.checkboxGroup input,
+ul.radioButtonGroup input {
+	margin: 0 2px 2px 0;
+}
+
+.composite {
+	margin-bottom: 30px;
+}
+
+.single  {
+	margin:10px 0 30px 30px;
+}
+
+.group-items-label-less {
+	padding:10px 0 30px 30px;
+}
+
+.group-items-label-less .item {
+	float:left;
+	margin-right:5px;
+}
+
+.group {
+	padding: 10px 0;
+}
+
+.composite,
+.single,	
+.group .item,
+.nestedForm .item {
+	clear:both;
+}
+
+.group .item,
+.nestedForm .item {
+	margin-bottom: 10px;
+}
+
+.group div.label,
+.nestedForm div.label {
+	width: 144px;
+	margin: 6px 5px 0 0;
+	float: left;
+}
+
+.nestedForm,
+.group {
+	margin-left: 30px;
+}
+.nestedForm .elements {
+	margin-top: 10px;
+}
+
+.group div.element,
+.nestedForm div.element {
+	margin-left: 154px;
+}
+
+.group div.label label,
+.nestedForm div.label label {
+	float: right;
+	font-weight: bold;
+	color: #3d3d3d;
+	text-align: right;
+}
+
+.hint-trigger {
+	float: right;
+	cursor: help;
+}
+
+.nestedForm {
+	overflow: hidden;
+}
+.nestedForm .element {
+	font-size: 1px;
+}
+
+.nestedForm div.optional {
+	float: left;
+	margin-left: -38px;
+	width: 100%;
+}
+.nestedForm div.optional div.label {
+	margin-left:38px;
+}
+.nestedForm div.optional div.element {
+	margin-left:188px;
+}
+.nestedForm .button-toggle {
+	float: right;
+}
+
+.dynamicList .nestedForm {
+	margin: 0;
+}
+.dynamicList .nestedForm .elements {
+	margin: 0;
+}
+
+ul.dynamicList {
+	padding: 0;
+	margin: 0;
+	background-color: #a4a4a4;
+}
+
+ul.dynamicList li.listItem {
+	list-style-type: none;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	background-color: #fff;
+	border-bottom: 1px solid #ebebeb;
+}
+table.listItem {
+	width: 100%;
+	border-spacing: 0;
+	margin-bottom: 1px;
+}
+table.listItem td {
+	padding: 0;
+	margin: 0;
+	vertical-align: top;
+}
+table.listItem td.handle {
+	background: #ebebeb url(images/move_ns.gif) center center no-repeat;
+}
+table.listItem td.handle div {
+	width: 30px;
+}
+table.listItem td.itemElement {
+	width: 100%;
+	padding: 10px 10px 10px 30px;
+}
+table.listItem .draggable td.itemElement {
+	padding-left: 10px;
+}
+table.listItem td.removeButton {	
+	padding-top: 6px;
+	line-height: 1px;
+}
+table.listItem .group,
+table.listItem .nestedForm {
+	border-bottom: 0;
+}
+
+div.dynamicList .button-add,
+.setButton .button-toggle {
+	margin: 2px 0 0 24px;
+}
+	
+.button-add, 
+.button-remove, 
+.button-toggle {
+	margin: 0;
+	border: none;
+	text-indent: 32px;
+	overflow: hidden;
+	background-color: #fff;
+	background-repeat: no-repeat;
+	background-position: center center;
+	padding: 0;
+	width: 32px;
+	height: 32px;
+}
+
+* html .button-add, 
+* html .button-remove, 
+* html .button-toggle {
+	padding: 32px 0 0 0;
+	text-indent: 0;
+}
+
+.button-add,
+.nestedForm .setButton .button-toggle {
+	background-image: url(images/add.gif);
+}
+.button-remove,
+.nestedForm .button-toggle {
+	background-image: url(images/remove.gif);
+}
+
+.calendar-button {
+	overflow: hidden;
+	width: 23px;
+	height: 26px;
+	margin-left: 5px;
+	background: ${highlight} url(images/calendar.gif) no-repeat center center;
+}
+#elements input.calendar-input {
+	width: 150px;
+	float: left;
+}
+
+.checkboxGroup,
+.radioButtonGroup {
+	padding: 0;
+	margin: 0;
+}
+.checkboxGroup li,
+.radioButtonGroup li {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+.imageCheckbox {
+	width: 13px;
+	height: 13px;
+	margin-top: 6px;
+}
+
+.imageCheckbox div {
+	width: 13px;
+	height: 13px;
+	background: url(images/image_checkbox.gif) center center no-repeat;
+}
+.imageCheckbox.checked div {
+	background-image: url(images/image_checkbox_checked.gif);
+}
+
+.filePreview {
+	margin: 10px 0;
+	overflow:hidden;
+}
+.filePreview .previewImageFrame {
+	width:100px;
+	height:100px;
+	float:left;
+	margin-right: 10px;
+	background: url(images/checkerboard.gif);
+}
+.filePreview .previewImageFrame img {
+	display: block;
+	margin: auto;
+	text-align: center;
+}
+.filePreview .fileInfo {
+	margin-bottom: 10px;	
+}
+.filePreview .fileInfo td {
+	padding: 0px;
+	color: #3d3d3d;
+}
+.filePreview .fileInfo td.label {
+	font-weight: bold;
+	padding: 0 4px 0 0;
+	width: auto;
+	text-align: right;
+}
+.filePreview .scaledImageHint {
+	width: 32px;
+	height: 32px;
+	float: left;
+	display: none;
+	background: url(images/view.gif) no-repeat;
+}
+
+.filePreview .download {
+	width: 32px;
+	height: 32px;
+	float: left;
+	display: block;
+	background: url(images/download.gif) no-repeat;
+}
+
+.chooser span {
+	margin-right: 10px;
+}
+
+.confirm-text p {
+	margin: 10px 0 5px 0;
+}
+
+.toggle-plaintext {
+	margin-top: 15px;
+}
+
+.hint-trigger {
+	margin: 2px 4px;
+	width: 12px;
+	height: 11px;
+	overflow: hidden;
+	background: url(images/hint.gif) no-repeat;
+}
+.title .hint-trigger {
+	background: url(images/hint_inverse.gif) 0 4px no-repeat;
+	float: none;
+	vertical-align: top;
+	height: 20px;
+	margin-left: 2px;
+	display: -moz-inline-box !important;
+	display: inline-block;
+}
+
+.hint {
+	display: none;
+	background-color: #ebebeb;
+	padding: 10px;
+	margin-bottom: 10px;
+}

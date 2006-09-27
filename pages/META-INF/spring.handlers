@@ -1,0 +1,7 @@
+http\://riotfamily.org/schema/pages/mvc=org.riotfamily.pages.mvc.config.MvcNamespaceHandler
+http\://riotfamily.org/schema/pages/component=org.riotfamily.pages.component.config.ComponentNamespaceHandler
+http\://riotfamily.org/schema/pages/template=org.riotfamily.pages.template.config.TemplateNamespaceHandler
+
+http\://www.riotfamily.org/schema/pages/mvc=org.riotfamily.pages.mvc.config.MvcNamespaceHandler
+http\://www.riotfamily.org/schema/pages/component=org.riotfamily.pages.component.config.ComponentNamespaceHandler
+http\://www.riotfamily.org/schema/pages/template=org.riotfamily.pages.template.config.TemplateNamespaceHandler

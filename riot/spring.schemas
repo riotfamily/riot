@@ -1,0 +1,7 @@
+http\://riotfamily.org/schema/6.3/riot/editor-config.xsd=org/riotfamily/riot/editor/xml/editor-config.xsd
+http\://riotfamily.org/schema/6.3/riot/list-config.xsd=org/riotfamily/riot/list/xml/list-config.xsd
+http\://riotfamily.org/schema/6.3/riot/riot-config.xsd=org/riotfamily/riot/runtime/riot-config.xsd
+
+http\://www.riotfamily.org/schema/riot/editor-config-6.3.xsd=org/riotfamily/riot/editor/xml/editor-config.xsd
+http\://www.riotfamily.org/schema/riot/list-config-6.3.xsd=org/riotfamily/riot/list/xml/list-config.xsd
+http\://www.riotfamily.org/schema/riot/riot-config-6.3.xsd=org/riotfamily/riot/runtime/riot-config.xsd

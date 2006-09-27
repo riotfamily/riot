@@ -1,0 +1,182 @@
+<project name="@project.name@" default="compile">
+	
+	<property name="src.dir" value="src" />
+	<property name="lib.dir" value="lib" />
+	<property name="conf.dir" value="conf" />
+	<property name="web.dir" value="webapp" />
+	<property name="build.dir" value="build" />
+	
+	<property name="target" value="development" />
+	<property name="profile" value="${user.name}" />
+
+	<property name="build.classes.dir" value="${build.dir}/classes" />
+	<property name="build.conf.dir" value="${build.dir}/conf" />
+	
+	<property name="jar.name" value="${ant.project.name}.jar" />
+	<property name="war.name" value="${ant.project.name}-${target}-${profile}.war" />
+	
+	<property name="war.path" location="${build.dir}/${war.name}" />
+
+	<property name="schema.name" value="${ant.project.name}-${target}-${profile}.sql" />
+	<property name="schema.path" value="${build.dir}/${schema.name}" />
+	
+	<!--
+	  - The classpath. Includes all jar files in lib and WEB-INF/lib.
+	  -->
+	<path id="classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${web.dir}/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+		<pathelement path="${java.class.path}" />
+	</path>
+
+	<!-- 
+	  - Resource files to be included in the jar.
+	  -->
+	<patternset id="jar-resource.patterns">
+		<exclude name="**/*.java" />
+	</patternset>
+
+	<target name="compile" description="Compiles the project sources.">
+		<mkdir dir="${build.classes.dir}" />
+		<javac srcdir="${src.dir}" destdir="${build.classes.dir}" deprecation="on" debug="on">
+			<classpath refid="classpath" />
+		</javac>
+    	<copy todir="${build.classes.dir}">
+	    	<fileset dir="${src.dir}">
+    			<patternset refid="jar-resource.patterns" />
+    		</fileset>
+    	</copy>
+	</target>
+	
+	<target name="jar" depends="compile" description="Creates the project jar file.">
+		<jar jarfile="${build.dir}/${jar.name}">
+			<fileset dir="${build.classes.dir}" />
+		</jar>
+	</target>
+
+	<target name="webapp" depends="configure,compile">
+		<copy todir="${web.dir}/WEB-INF/classes">
+			<fileset dir="${build.classes.dir}" />
+			<fileset dir="${build.conf.dir}" />
+		</copy>
+	</target>
+		
+	<target name="war" depends="configure,jar" description="Creates a war file.">
+		<delete file="${war.path}" />
+		<war destfile="${war.path}" webxml="${web.dir}/WEB-INF/web.xml">
+			<fileset dir="${web.dir}">
+				<exclude name="WEB-INF/web.xml" />
+				<exclude name="WEB-INF/classes/**" />
+				<exclude name="WEB-INF/temp/**" />
+				<exclude name="media" />
+				<exclude name="media/**" />
+			</fileset>
+			<lib file="${build.dir}/${jar.name}" />
+			<classes dir="${build.conf.dir}" />
+        </war>
+	</target>
+	
+	<target name="-backup-config">
+		<delete dir="${build.dir}/conf.bak" />
+		<copy todir="${build.dir}/conf.bak">
+			<fileset dir="${build.conf.dir}" />
+		</copy>
+	</target>
+	
+	<target name="-restore-config">
+		<move todir="${build.conf.dir}">
+			<fileset dir="${build.dir}/conf.bak" />
+		</move>
+	</target>
+	
+	<target name="deploy" depends="-backup-config,war">
+		<property file="${conf.dir}/${target}/${profile}/tomcat.properties" />
+		<property file="${conf.dir}/${target}/default/tomcat.properties" />
+		
+		<taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask" 
+				classpathref="classpath" />
+		
+		<taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"
+				classpathref="classpath" />
+		
+		<undeploy url="${tomcat.manager.url}"
+				username="${tomcat.manager.username}" 
+				password="${tomcat.manager.password}" 
+				path="${tomcat.contextPath}" failonerror="false" />
+		
+		<deploy url="${tomcat.manager.url}"
+				username="${tomcat.manager.username}" 
+				password="${tomcat.manager.password}" 
+				path="${tomcat.contextPath}" 
+				war="${war.path}" />
+
+		<antcall target="-restore-config" />
+	</target>
+		
+	<target name="configure" description="Configures the project.">
+		<echo>Merging configuration. Target: ${target} Profile: ${profile}</echo>
+		<merge-properties name="application" />
+		<merge-properties name="log4j" />
+	</target>
+
+	<macrodef name="merge-properties">
+	   <attribute name="name" />
+	   <sequential>
+		   	<property file="${conf.dir}/${target}/${profile}/@{name}.properties" prefix="@{name}." />
+	   		<property file="${conf.dir}/${target}/default/@{name}.properties" prefix="@{name}." />
+	   		
+	   		<mkdir dir="${build.conf.dir}" />
+   			<echoproperties destfile="${build.conf.dir}/@{name}.properties">
+   				<propertyset>
+   					<propertyref prefix="@{name}." />
+   					<mapper type="glob" from="@{name}.*" to="*" />
+   				</propertyset>
+   			</echoproperties>
+	   </sequential>
+	</macrodef>
+	
+	<target name="schema-export" depends="-backup-config,configure,compile" 
+			description="Exports the DB schema as SQL file.">
+		
+		<taskdef name="hibernatetool" 
+			classname="org.hibernate.tool.ant.HibernateToolTask"
+			classpathref="classpath" />
+		
+		<mkdir dir="${build.dir}" />
+		<property file="${build.conf.dir}/application.properties" />
+		<echoproperties destfile="${build.dir}/hibernate.properties">
+			<propertyset>
+				<propertyref name="hibernate.dialect" />
+				<propertyref prefix="jdbc." />
+				<mapper type="glob" from="jdbc.*" to="hibernate.connection.*" />
+			</propertyset>
+		</echoproperties>
+		
+		<hibernatetool destdir="${build.dir}">
+			<classpath>
+				<pathelement location="${build.classes.dir}" />
+				<pathelement location="${build.conf.dir}" />
+				<path refid="classpath" />
+			</classpath>
+			<annotationconfiguration 
+				configurationfile="${web.dir}/WEB-INF/hibernate.cfg.xml"
+				propertyfile="${build.dir}/hibernate.properties">
+				<fileset id="mappings" dir="${basedir}">
+					<include name="${web.dir}/WEB-INF/hibernate-mappings/*.hbm.xml" />
+					<include name="${web.dir}/WEB-INF/lib/riot-pages-*.jar" />
+					<include name="${web.dir}/WEB-INF/lib/riot-hibernate-*.jar" />
+				</fileset>
+			</annotationconfiguration>
+		  		
+		  	<hbm2ddl drop="false" create="true" export="false" update="false"
+		  		 outputfilename="${schema.name}" delimiter=";" format="true" />
+		  		
+		</hibernatetool>
+		<antcall target="-restore-config" />
+	</target>
+		
+</project>

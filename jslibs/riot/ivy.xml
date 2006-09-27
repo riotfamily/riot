@@ -1,0 +1,13 @@
+<ivy-module version="1.3">
+    <info 
+    	organisation="riotfamily" 
+    	module="riot-js" 
+    	status="release" />
+	
+    <publications>
+    	<artifact name="riot-js" type="jar" />
+    </publications>
+    <dependencies>
+    	<dependency org="riotfamily" name="scriptaculous-js" rev="latest.release" />
+    </dependencies>
+</ivy-module>

@@ -1,0 +1,396 @@
+package org.riotfamily.forms;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.markup.DocumentWriter;
+import org.riotfamily.common.markup.Html;
+import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.forms.bind.BeanEditor;
+import org.riotfamily.forms.bind.Editor;
+import org.riotfamily.forms.bind.EditorBinder;
+import org.riotfamily.forms.element.DHTMLElement;
+import org.riotfamily.forms.element.support.Container;
+import org.riotfamily.forms.error.FormErrors;
+import org.riotfamily.forms.event.FormListener;
+import org.riotfamily.forms.resource.FormResource;
+import org.riotfamily.forms.resource.ResourceElement;
+import org.riotfamily.forms.resource.StylesheetResource;
+import org.riotfamily.forms.template.TemplateUtils;
+
+
+/**
+ * Serverside representation of a HTML form.
+ */
+public class Form implements BeanEditor {
+
+	private static final String DEFAULT_ID = "form";
+	
+	private static final String FORM_ATTR = "form";
+	
+	private static final String ELEMENT_CONTAINER_ATTR = "elements";
+	
+	private Log log = LogFactory.getLog(Form.class);
+	
+	private String id = DEFAULT_ID;
+	
+	/** Elements keyed by their id */
+	private Map elementMap = new HashMap();
+
+	/** Counter to create unique ids */
+	private int idCount;
+	
+	/** Set of used parameter names */
+	private Set paramNames = new HashSet();
+
+	/** EditorBinder to bind toplevel elements to properties */
+	private EditorBinder editorBinder;
+
+	
+	/** Set containing resources required by the form itself (not it's elements) */
+	private List globalResources = new ArrayList();
+
+	private FormInitializer initializer;
+
+	private List containers = new ArrayList();
+	
+	private Container elements;
+	
+	private FormContext formContext;
+	
+	private FormErrors errors;
+	
+	private FormListener formListener;
+
+	private boolean rendering;
+	
+	private boolean includeStylesheet;
+	
+	private String template = TemplateUtils.getTemplatePath(this);
+	
+	private Map renderModel = new HashMap();
+	
+	public Form() {
+		setAttribute(FORM_ATTR, this);
+		elements = createContainer(ELEMENT_CONTAINER_ATTR);
+	}
+	
+	public Form(Class type) {
+		this();
+		setBeanClass(type);
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
+	}
+
+	public Collection getRegisteredElements() {
+		return elementMap.values();
+	}
+
+	public void setAttribute(String key, Object value) {
+		renderModel.put(key,value);
+	}
+	
+	public Object getAttribute(String key) {
+		return renderModel.get(key);
+	}
+	
+	public void setBeanClass(Class beanClass) {
+		editorBinder = new EditorBinder(beanClass);
+	}
+	
+	public void setValue(Object backingObject) {
+		if (backingObject != null) {
+			editorBinder.setBackingObject(backingObject);
+		}
+	}
+
+	public Object getValue() {
+		return editorBinder.getBackingObject();
+	}
+
+	public boolean isNew() {
+		return !editorBinder.isEditingExistingBean();
+	}
+
+	/**
+	 * @see BeanEditor#getEditorBinder()
+	 */
+	public EditorBinder getEditorBinder() {
+		return editorBinder;
+	}
+	
+	public void bind(Editor editor, String property) {
+		editorBinder.bind(editor, property);
+	}
+
+	public void addElement(Element element) {
+		elements.addElement(element);
+	}
+	
+	/**
+	 * Convinience method to add and bind an element within a single step.
+	 */
+	public void addElement(Editor element, String property) {
+		addElement(element);
+		editorBinder.bind(element, property);
+	}
+
+	public Container createContainer(String name) {
+		Container container = new Container();
+		containers.add(container);
+		registerElement(container);
+		setAttribute(name, container);
+		return container;
+	}
+	
+	public void addResource(FormResource resource) {
+		globalResources.add(resource);
+	}
+	
+	protected List getResources() {
+		List resources = new ArrayList(globalResources); 
+		Iterator it = getRegisteredElements().iterator();
+		while (it.hasNext()) {
+			Element element = (Element) it.next();
+			if (element instanceof ResourceElement) {
+				ResourceElement re = (ResourceElement) element; 
+				Collection res = re.getResources(); 
+				if (res != null) {
+					resources.addAll(res);
+				}
+			}
+		}
+		return resources;
+	}
+
+	/**
+	 * Creates and sets an id for the given element and puts it into the
+	 * internal elementMap.
+	 * 
+	 * @param element the element to register
+	 */
+	public void registerElement(Element element) {
+		String id = createId();
+		element.setId(id);
+		element.setForm(this);
+		if (formContext != null) {
+			element.setFormContext(formContext);
+		}
+		elementMap.put(id, element);
+	}
+	
+	public void unregisterElement(Element element) {
+		elementMap.remove(element.getId());
+	}
+	
+	public String createId() {
+		return "e" + idCount++;
+	}
+
+	/**
+	 * Returns the previously registered element with the given id.
+	 */
+	public Element getElementById(String id) {
+		return (Element) elementMap.get(id);
+	}
+
+	/**
+	 * Returns a String that can be used as parameter name for input elements.
+	 * Subsequent calls will return different values to ensure uniqueness of
+	 * parameter names within a form.
+	 */
+	public String createUniqueParameterName() {
+		return createUniqueParameterName(null);
+	}
+
+	/**
+	 * Like {@link #createUniqueParameterName()}this method returns a String
+	 * that can be used as parameter name. Since most modern browsers keep track
+	 * of previously entered values (with the same parameter name) a desired
+	 * name can be passed to this method. Typically an element will use the name
+	 * of the property it is bound to as name. As this name might already be
+	 * taken by another element (especially when lists of nested forms are used)
+	 * this method will append an integer value to the given name if necessary.
+	 */
+	public String createUniqueParameterName(String desiredName) {
+		if (desiredName == null) {
+			desiredName = "p" + paramNames.size();
+		}
+		String name = desiredName;
+		//TODO Aussure uniqueness of syntetic names
+		if (paramNames.contains(name)) {
+			name = desiredName + paramNames.size();
+		}
+		paramNames.add(name);
+		return name;
+	}
+	
+	public void render(PrintWriter writer) {
+		rendering = true;
+		
+		formContext.setWriter(writer);
+		DocumentWriter doc = new DocumentWriter(writer);
+		
+		doc.start(Html.SCRIPT);
+		doc.attribute(Html.SCRIPT_SRC, formContext.getContextPath() 
+				+ formContext.getResourcePath() + "riot-js/resources.js");
+		
+		doc.attribute(Html.SCRIPT_TYPE, "text/javascript");
+		doc.attribute(Html.SCRIPT_LANGUAGE, "JavaScript");
+		doc.end();
+		
+		doc.start(Html.SCRIPT);
+		doc.attribute(Html.SCRIPT_SRC, formContext.getContextPath() 
+				+ formContext.getResourcePath() + "form/hint.js");
+		
+		doc.attribute(Html.SCRIPT_TYPE, "text/javascript");
+		doc.attribute(Html.SCRIPT_LANGUAGE, "JavaScript");
+		doc.end();
+		
+		doc.start(Html.FORM);
+		doc.attribute(Html.COMMON_ID, getId());
+		doc.attribute(Html.FORM_METHOD, "post");
+		doc.attribute(Html.FORM_ENCTYPE, "multipart/form-data");
+		doc.body();
+		
+		doc.start(Html.SCRIPT);
+		doc.body();
+		
+		ArrayList loadedResources = new ArrayList();
+		Iterator it = getResources().iterator();
+		while (it.hasNext()) {
+			FormResource res = (FormResource) it.next();
+			res.renderLoadingCode(writer, loadedResources);
+			loadedResources.add(res);
+		}
+		doc.end();
+		
+		formContext.getTemplateRenderer().render(
+				template, renderModel, writer);
+
+		doc.end();
+		rendering = false;
+	}
+
+	public boolean isRendering() {
+		return rendering;
+	}
+	
+	public void elementRendered(Element element) {
+		log.debug("Element rendered: " + element.getId());
+		if (getFormListener() != null) {
+			getFormListener().elementRendered(element);
+		}
+		if (rendering && element instanceof DHTMLElement) {
+			DHTMLElement dhtml = (DHTMLElement) element;
+			PrintWriter writer = formContext.getWriter();
+			TagWriter script = new TagWriter(writer);
+			String initScript = dhtml.getInitScript();
+			if (initScript != null) {
+				script.start(Html.SCRIPT);
+				script.attribute(Html.SCRIPT_LANGUAGE, "JavaScript");
+				script.attribute(Html.SCRIPT_TYPE, "text/javascript");
+				script.body();
+				if (dhtml.getPrecondition() != null) {
+					writer.print("Resources.waitFor('");
+					writer.print(dhtml.getPrecondition());
+					writer.print("', function() {");
+					writer.print(initScript);
+					writer.print("})");
+				}
+				else {
+					writer.print(initScript);
+				}
+				script.end();
+			}
+		}
+	}
+
+	public void setInitializer(FormInitializer initializer) {
+		this.initializer = initializer;
+	}
+
+	public void init() {
+		if (initializer != null) {
+			initializer.initForm(this);
+		}
+		editorBinder.initEditors();
+		if (includeStylesheet) {
+			addResource(new StylesheetResource("form/form.css"));
+		}
+	}
+	
+	public void processRequest(HttpServletRequest request) {
+		errors = new FormErrors(this);
+		Iterator it = containers.iterator();
+		while (it.hasNext()) {
+			Container container = (Container) it.next();
+			container.processRequest(request);
+		}
+	}
+
+	public void setFormListener(FormListener formListener) {
+		this.formListener = formListener;
+	}
+
+	public FormListener getFormListener() {
+		return formListener;
+	}
+	
+	public void requestFocus(Element element) {
+		if (formListener != null) {
+			formListener.elementFocused(element);
+		}
+	}
+	
+	public Object getBackingObject() {
+		return editorBinder.getBackingObject();
+	}
+	
+	public Object populateBackingObject() {
+		return editorBinder.populateBackingObject();
+	}
+	
+	public FormContext getFormContext() {
+		return this.formContext;
+	}
+
+	public void setFormContext(FormContext formContext) {
+		this.formContext = formContext;
+		this.errors = new FormErrors(this);
+		Iterator it = getRegisteredElements().iterator();
+		while (it.hasNext()) {
+			Element element = (Element) it.next();
+			element.setFormContext(formContext);
+		}
+	}
+
+	public FormErrors getErrors() {
+		return errors;
+	}
+		
+	public boolean hasErrors() {
+		return errors.hasErrors();
+	}
+}
