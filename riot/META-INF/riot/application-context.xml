@@ -37,4 +37,6 @@
 		</property>
 	</bean>	
 
+	<bean id="riotAccessControlInterceptor" class="org.riotfamily.riot.security.AccessControlInterceptor" />
+
 </beans>
