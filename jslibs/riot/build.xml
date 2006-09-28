@@ -1,7 +1,5 @@
 <project name="riot-js" default="jar">
 
-	<property name="module.status" value="integration" />
-	
 	<import file="../js.xml" />
 		
 	<target name="-resource-fileset">

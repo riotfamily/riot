@@ -12,7 +12,7 @@
 	
 	<basename  property="module.dir.name" file="${module.dir}" />
 	
-	<property name="module.status" value="integration" />
+	<property name="publish.resolver" value="local" />
 	
 	<property name="publish.conf" value="runtime" />
 	
@@ -51,10 +51,7 @@
 		
 		<!-- Module name as defined by the module's ivy file -->
 		<property name="module.name" value="${ivy.module}" />		
-			
-		<!-- Module version - defaults to revision defined in the ivy file -->
-		<property name="module.version" value="${ivy.revision}" />
-		
+					
 		<!-- Module build directory - artifacts will be placed here -->
 		<property name="module.build.dir" value="${build.dir}/${module.name}" />
 		<mkdir dir="${module.build.dir}" />
@@ -64,6 +61,16 @@
 		
 		<!-- Location of the jar artifact published by the module -->
 		<property name="module.jar" value="${module.build.dir}/${module.name}.jar" />
+		
+		<condition property="module.status" value="release" else="integration">
+			<not><contains string="${ivy.revision}" substring="working@" /></not>
+		</condition>
+		
+		<property name="publish.revision" value="${project.version}-SNAPSHOT" />
+		
+		<condition property="module.version" value="${publish.revision}" else="${ivy.revision}">
+			<contains string="${ivy.revision}" substring="working@" />
+		</condition>
 	</target>
 	
 	<target name="resolve" depends="-init-module">
@@ -94,21 +101,18 @@
 	</target>
 	
 	<target name="deliver" depends="jar">
-		<ivy:deliver 
-			deliverpattern="${build.dir}/[module]/ivy-[revision].xml"
-			pubrevision="${module.version}"
-			pubdate="${publish.date}"
-    		status="${module.status}" />
+		<ivy:deliver deliverpattern="${build.dir}/[module]/ivy-[revision].xml"
+			pubrevision="${module.version}" status="${module.status}" />
 	</target>
 	
-	<target name="publish" depends="-init-module">
+	<target name="publish" depends="-init-module,deliver">
 		<ivy:resolve conf="${publish.conf}" showprogress="false" transitive="false" />
-		<ivy:publish resolver="local" 
+		<ivy:publish resolver="${publish.resolver}"
 			artifactspattern="${build.dir}/[module]/[module].[ext]"
 			srcivypattern="${build.dir}/[module]/ivy-[revision].xml" 
-			status="${module.status}" />
+			status="${module.status}" pubrevision="${module.version}" />
 	</target>
-		
+	
 	<!--
 	  - Creates a jar file ${jar.path} containing all files in ${classes.dir}
 	  -->
@@ -126,7 +130,7 @@
 		<property name="jar-target" value="-jar-without-meta-inf" />
 		<antcall target="${jar-target}" />
 	</target>
-	
+		
 	<target name="-jar-without-meta-inf">
 		<jar jarfile="${module.jar}">
 			<fileset dir="${module.build.classes.dir}" />
@@ -150,14 +154,13 @@
 	</target>
 	
 	<target name="collect-xml-schemas">
-		<fail unless="release">A release version number must be specified</fail>		
 		<copy todir="${build.dir}/schema/${module.dir.name}" flatten="true">
 			<fileset dir="${module.src.dir}">
 				<include name="**/*.xsd" />
 			</fileset>
 			<chainedmapper>
 				<flattenmapper />
-				<globmapper from="*.xsd" to="*-${release}.xsd" />
+				<globmapper from="*.xsd" to="*-${project.version}.xsd" />
 			</chainedmapper>
 		</copy>
 	</target>

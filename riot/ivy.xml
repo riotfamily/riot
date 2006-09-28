@@ -1,5 +1,5 @@
 <ivy-module version="1.3">
-    <info organisation="riotfamily" module="riot-core" status="integration" />
+    <info organisation="riotfamily" module="riot-core" />
     <configurations>
     	<conf name="build" />
     	<conf name="runtime" />

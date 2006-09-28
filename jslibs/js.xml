@@ -16,8 +16,6 @@
 	
 	<mapper id="resource.mapper" type="identity" />		
 	
-	<property name="module.status" value="release" />
-
 	<import file="../module-build.xml" />
 
 	<!--

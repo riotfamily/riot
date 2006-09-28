@@ -6,11 +6,15 @@
 			<ivy pattern="${build.dir}/[module]/ivy-[revision].xml" />
 			<artifact pattern="${build.dir}/[module]/[artifact].[ext]" />
 		</filesystem>
-		<url name="riotfamily">
+		<url name="riotfamily" changingPattern=".+-SNAPSHOT$">
 			<ivy pattern="http://riotfamily.org/ivy/repo/[organisation]/[module]/[revision]/ivy.xml" />
-			<artifact pattern="http://riotfamily.org/ivy/repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
 			<artifact pattern="http://riotfamily.org/ivy/repo/[organisation]/[module]/[revision]/[artifact].[ext]" />
+			<artifact pattern="http://riotfamily.org/ivy/repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
 		</url>
+		<ssh name="riotfamily-ssh" host="riotfamily.org" user="${user.name}" keyFile="${user.home}/.ssh/id_rsa" checksums="md5">
+			<ivy pattern="/var/www/riotfamily.org/htdocs/ivy/repo/[organisation]/[module]/[revision]/ivy.xml"/>
+			<artifact pattern="/var/www/riotfamily.org/htdocs/ivy/repo/[organisation]/[module]/[revision]/[artifact].[ext]" />
+		</ssh>
 		<chain name="default" returnFirst="true">
 			<resolver ref="build" />
 			<resolver ref="riotfamily" />

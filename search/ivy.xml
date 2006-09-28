@@ -1,5 +1,5 @@
 <ivy-module version="1.3">
-    <info organisation="riotfamily" module="riot-search" status="integration" />
+    <info organisation="riotfamily" module="riot-search" />
     <configurations>
     	<conf name="build" />
     	<conf name="runtime" />

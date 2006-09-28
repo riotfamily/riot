@@ -39,11 +39,11 @@
 		<subant target="deliver" buildpathref="resolved-build.files" />
 	</target>
 
-	<target name="publish" depends="jar,js-jar">
+	<target name="publish">
 		<ivy:configure file="${root.dir}/ivyconf.xml" />
 		<ivy:buildlist reference="resolved-build.files">
-	    	<fileset refid="module-build.files" />
 			<fileset refid="js-build.files" />
+			<fileset refid="module-build.files" />
 	    </ivy:buildlist>
 		<subant target="publish" buildpathref="resolved-build.files" />
 	</target>
