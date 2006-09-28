@@ -187,7 +187,7 @@ Element.cloneStyles = function(source, target, properties) {
 Element.getBackgroundColor = function(el) {
 	el = $(el);
 	var bg;
-	while (el && (!isSet(bg) || bg == 'transparent')) {
+	while (el && el.style && (!isSet(bg) || bg == 'transparent')) {
 		bg = Element.getStyle(el, 'background-color');
 		el = el.parentNode;
 	}
