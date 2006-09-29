@@ -40,7 +40,7 @@
 			<p id="tip-of-the-day">
 				<#assign alreadyLoggedIn = springMacroRequestContext.getMessage("bookmarklet.alreadyLoggedIn", "You are already logged in.")?js_string />
 				<#assign noToolbarSupport = springMacroRequestContext.getMessage("bookmarklet.noToolbarSupport", "Sorry, this page has no Riot Toolbar support.")?js_string />
-				<#assign bookmarklet = "javascript:if(typeof riotPagesUrl != 'undefined') void(window.open(riotPagesUrl + '/login', 'riotLogin', 'width=760,height=400,dependent=yes,toolbar=no,location=no,menubar=no,status=no,scrollbars=yes,resizable=yes')); else if (typeof riot != 'undefined') void(alert('" + alreadyLoggedIn + "')); else if (typeof riotBookmarletUsage == 'function') void(riotBookmarletUsage()); else void(alert('" + noToolbarSupport + "'));" />
+				<#assign bookmarklet = "javascript:if(typeof riotPagesUrl != 'undefined') void(window.open(riotPagesUrl + '/login', 'riotLogin', 'width=760,height=400,dependent=yes,toolbar=no,location=no,menubar=no,status=no,scrollbars=yes,resizable=yes').focus()); else if (typeof riot != 'undefined') void(alert('" + alreadyLoggedIn + "')); else if (typeof riotBookmarletUsage == 'function') void(riotBookmarletUsage()); else void(alert('" + noToolbarSupport + "'));" />
 				<#assign installation = 'To open a login window from any page, drag this <a href="{0}">Riot-Login</a> link to your browser\'s bookmark toolbar.' />
 				${springMacroRequestContext.getMessage('bookmarklet.installation', [bookmarklet], installation)}
 			</p>

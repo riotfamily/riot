@@ -17,7 +17,7 @@
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/style/tweak.js"></script>
 	</head>
-	<body onload="TweakStyle.login();$('username').focus()">
+	<body onload="TweakStyle.login();window.focus();$('username').focus()">
 		<div id="login">
 			<div id="logo"></div>
 			<div id="form">
