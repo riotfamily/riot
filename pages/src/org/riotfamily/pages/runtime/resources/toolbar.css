@@ -141,6 +141,7 @@ body > #riot-inspector {
 	margin: 1px 0;
 	font-family: "Trebuchet MS", arial, sans-serif;
 	font-size:11px;
+	text-align: left;
 	color: #3d3d3d;
 	background: url(icons/dialogs/componentType.gif) top left no-repeat;
 	cursor: pointer;
@@ -151,7 +152,8 @@ body > #riot-inspector {
 	padding: 1px 10px 1px 16px;
 	margin: 1px 0;
 	font-family: "Trebuchet MS", arial, sans-serif;
-	font-size:11px;
+	font-size: 11px;
+	text-align: left;
 	color: #fff;
 	background: ${highlight} url(icons/dialogs/componentType_hi.gif) top left no-repeat;
 }
