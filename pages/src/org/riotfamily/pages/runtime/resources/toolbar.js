@@ -7,7 +7,7 @@ riot.Toolbar.prototype = {
 			browse: new riot.ToolbarButton('browse', '${toolbar-button.browse}'),
 			insert: new riot.ToolbarButton('insert', '${toolbar-button.insert}'),
 			remove: new riot.ToolbarButton('remove', '${toolbar-button.remove}'),
-			changeType: new riot.ToolbarButton('changeType', '${toolbar-button.changeType}'),
+			//changeType: new riot.ToolbarButton('changeType', '${toolbar-button.changeType}'),
 			edit: new riot.ToolbarButton('edit', '${toolbar-button.edit}'),
 			properties: new riot.ToolbarButton('properties', '${toolbar-button.properties}'),
 			move: new riot.ToolbarButton('move', '${toolbar-button.move}'),
