@@ -61,10 +61,10 @@
 		<!-- Location of the jar artifact published by the module -->
 		<property name="module.jar" value="${module.build.dir}/${module.name}.jar" />
 		
-		<condition property="module.status" value="release" else="integration">
+		<condition property="module.status" value="release">
 			<not><contains string="${ivy.revision}" substring="working@" /></not>
 		</condition>
-		
+		<property name="module.status" value="integration" />
 		<property name="publish.revision" value="${project.version}-SNAPSHOT" />
 		
 		<condition property="module.version" value="${publish.revision}" else="${ivy.revision}">
