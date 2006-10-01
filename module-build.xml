@@ -65,11 +65,13 @@
 			<not><contains string="${ivy.revision}" substring="working@" /></not>
 		</condition>
 		<property name="module.status" value="integration" />
+		
 		<property name="publish.revision" value="${project.version}-SNAPSHOT" />
 		
-		<condition property="module.version" value="${publish.revision}" else="${ivy.revision}">
+		<condition property="module.version" value="${publish.revision}">
 			<contains string="${ivy.revision}" substring="working@" />
 		</condition>
+		<property name="module.version" value="${ivy.revision}" />
 	</target>
 	
 	<target name="resolve" depends="-init-module">
