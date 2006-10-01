@@ -40,13 +40,12 @@
 		<fail>This file is only intended for inclusion by sub-projects.</fail>
 	</target>
 	
-	<target name="-init-module">
+	<target name="-init-module" depends="-configure-ivy">
 		
 		<echo>=================================================================</echo>
 		<echo>Entering module *${ant.project.name}*</echo>
 		<echo>=================================================================</echo>
 		
-		<ivy:configure file="${root.dir}/ivyconf.xml" />
 		<ivy:info file="ivy.xml" />
 		
 		<!-- Module name as defined by the module's ivy file -->

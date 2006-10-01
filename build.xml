@@ -14,8 +14,7 @@
 		<include name="jslibs/*/build.xml" />
 	</fileset>
 	
-	<target name="resolve" depends="-setup-ivy">
-		<ivy:configure file="${root.dir}/ivyconf.xml" />
+	<target name="resolve" depends="-configure-ivy">
 		<ivy:buildlist reference="resolved-build.files">
 	    	<fileset refid="module-build.files" />
 	    </ivy:buildlist>
@@ -23,24 +22,21 @@
 		<echo file="${lib.dir}/.cvsignore" message="*" />
 	</target>
 
-	<target name="jar" depends="-setup-ivy">
-		<ivy:configure file="${root.dir}/ivyconf.xml" />
+	<target name="jar" depends="-configure-ivy">
 		<ivy:buildlist reference="resolved-build.files">
 	    	<fileset refid="module-build.files" />
 	    </ivy:buildlist>
 		<subant target="deliver" buildpathref="resolved-build.files" />
 	</target>
 		
-	<target name="js-jar" depends="-setup-ivy">
-		<ivy:configure file="${root.dir}/ivyconf.xml" />
+	<target name="js-jar" depends="-configure-ivy">
 		<ivy:buildlist reference="resolved-build.files">
 	    	<fileset refid="js-build.files" />
 	    </ivy:buildlist>
 		<subant target="deliver" buildpathref="resolved-build.files" />
 	</target>
 
-	<target name="publish">
-		<ivy:configure file="${root.dir}/ivyconf.xml" />
+	<target name="publish" depends="-configure-ivy">
 		<ivy:buildlist reference="resolved-build.files">
 			<fileset refid="js-build.files" />
 			<fileset refid="module-build.files" />
@@ -58,14 +54,34 @@
 		</scp>
 	</target>
 			
-	<target name="report" depends="-setup-ivy">
-		<ivy:configure file="${root.dir}/ivyconf.xml" />
+	<target name="report" depends="-configure-ivy">
 		<ivy:buildlist reference="resolved-build.files">
 	    	<fileset refid="module-build.files" />
 	    </ivy:buildlist>
 		<subant target="report" buildpathref="resolved-build.files" />
 	</target>
 
+	<target name="javadoc">
+		<javadoc destdir="${build.dir}/api" classpathref="classpath">
+			<packageset dir="common/src" />
+			<packageset dir="cachius/src" />
+			<packageset dir="forms/src" />
+			<packageset dir="riot/src" />
+			<packageset dir="riot-hibernate/src" />
+			<packageset dir="pages/src" />
+				
+			<group title="Core" packages="org.riotfamily.riot*" />
+			<group title="Pages" packages="org.riotfamily.pages*" />
+			<group title="Common" packages="org.riotfamily.common*" />
+			<group title="Cachius" packages="org.riotfamily.cachius*" />
+			<group title="Forms" packages="org.riotfamily.forms*" />
+			<group title="Hibernate" packages="org.riotfamily.riot.hibernate*" />
+			
+			<link href="http://java.sun.com/j2ee/1.4/docs/api" />
+			<link href="http://static.springframework.org/spring/docs/2.0.x/api" />
+		</javadoc>
+	</target>
+		
 	<target name="dist">
 		<zip destfile="${dist.zip.file}">
 			<fileset dir=".">

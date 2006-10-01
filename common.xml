@@ -48,6 +48,13 @@
 		<fail>This file is only intended for inclusion by other build files.</fail>
 	</target>
 	
+	<target name="-configure-ivy" depends="-setup-ivy">
+		<condition property="ivyconf" value="ivyconf-ssh.xml" else="ivyconf.xml">
+			<available classname="com.jcraft.jsch.JSchException" />
+		</condition>
+		<ivy:configure file="${root.dir}/${ivyconf}" />
+	</target>
+		
 	<!--
 	 - Installs and configures ivy.
 	 -->
