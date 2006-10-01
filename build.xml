@@ -62,7 +62,9 @@
 	</target>
 
 	<target name="javadoc">
-		<javadoc destdir="${build.dir}/api" classpathref="classpath">
+		<javadoc destdir="${build.dir}/api" classpathref="classpath" 
+				breakiterator="true">
+			
 			<packageset dir="common/src" />
 			<packageset dir="cachius/src" />
 			<packageset dir="forms/src" />
