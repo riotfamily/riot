@@ -53,7 +53,7 @@
 	  -->
 	<target name="-configure-ivy" depends="-setup-ivy">
 		<available classname="com.jcraft.jsch.JSchException" property="ivyconf" value="ivyconf-ssh.xml" />
-		<property property="ivyconf" value="ivyconf.xml" />
+		<property name="ivyconf" value="ivyconf.xml" />
 		<ivy:configure file="${root.dir}/${ivyconf}" />
 	</target>
 		
