@@ -4,9 +4,6 @@
     	<conf name="build" />
     	<conf name="runtime" />
     </configurations>
-    <publications>
-    	<artifact name="riot-common" type="jar" conf="runtime" />
-    </publications>
     <dependencies>
 	    <dependency org="sun" name="servlet-api" rev="latest.release" conf="build->default" />
         <dependency org="apache" name="log4j" rev="latest.release" />

@@ -4,9 +4,6 @@
     	<conf name="build" />
     	<conf name="runtime" />
     </configurations>
-    <publications>
-    	<artifact name="cachius" type="jar" conf="runtime" />
-    </publications>
     <dependencies>
 		<dependency org="riotfamily" name="riot-common" rev="latest.integration" conf="*->@" />
 		<dependency org="apache" name="commons-logging" rev="latest.release" />

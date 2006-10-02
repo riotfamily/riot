@@ -4,9 +4,6 @@
     	<conf name="build" />
     	<conf name="runtime" />
     </configurations>
-    <publications>
-    	<artifact name="riot-hibernate" type="jar" conf="runtime" />
-    </publications>
     <dependencies>
         <dependency org="riotfamily" name="riot-core" rev="latest.integration" conf="*->@" />
         <dependency org="springframework" name="spring" rev="latest.milestone" />

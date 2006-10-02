@@ -4,9 +4,6 @@
     	<conf name="build" />
     	<conf name="runtime" />
     </configurations>
-    <publications>
-    	<artifact name="riot-pages" type="jar" conf="runtime" />
-    </publications>
     <dependencies>
 	    <dependency org="riotfamily" name="riot-core" rev="latest.integration" conf="*->@" />
 	    <dependency org="riotfamily" name="riot-forms" rev="latest.integration" conf="*->@" />
