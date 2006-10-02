@@ -108,7 +108,8 @@
 	
 	<target name="publish" depends="-init-module,deliver">
 		<ivy:resolve conf="${publish.conf}" showprogress="false" transitive="false" />
-		<ivy:publish resolver="${publish.resolver}"
+		<ivy:publish resolver="${publish.resolver}" 
+			forcedeliver="true" overwrite="true"
 			artifactspattern="${build.dir}/[module]/[module].[ext]"
 			srcivypattern="${build.dir}/[module]/ivy-[revision].xml" 
 			status="${module.status}" pubrevision="${module.version}" />
