@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
@@ -25,12 +26,15 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.mvc.Controller;
 
-public class PageMap implements InitializingBean, 
-		ApplicationContextAware, ApplicationListener, MemberBinderAware {
+public class PageMap implements InitializingBean, ApplicationContextAware, 
+		ServletContextAware, ApplicationListener, MemberBinderAware {
 
 	private Log log = LogFactory.getLog(PageMap.class);
+	
+	private static final String SERVLET_CONTEXT_ATTR = PageMap.class.getName();
 	
 	private static final String DEFAULT_CONTROLLER = "default";
 
@@ -45,7 +49,7 @@ public class PageMap implements InitializingBean,
 	
 	private HashMap pageAndControllerMap;
 	
-	private Collection rootPages;
+	private TransientPage rootPage;
 		
 	private ApplicationContext applicationContext;
 	
@@ -56,11 +60,18 @@ public class PageMap implements InitializingBean,
 	private long lastModified;
 	
 	private String defaultControllerName = DEFAULT_CONTROLLER;
-	
+
+	public static PageMap getInstance(ServletContext servletContext) {
+		return (PageMap) servletContext.getAttribute(SERVLET_CONTEXT_ATTR);
+	}
 
 	public PageMap(PageDao pageDao, PlatformTransactionManager transactionManager) {
 		this.pageDao = pageDao;
 		this.transactionManager = transactionManager;
+	}
+	
+	public void setServletContext(ServletContext servletContext) {
+		servletContext.setAttribute(SERVLET_CONTEXT_ATTR, this);
 	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
@@ -99,8 +110,12 @@ public class PageMap implements InitializingBean,
 		new TransactionTemplate(transactionManager).execute(
 			new TransactionCallback() {
 				public Object doInTransaction(TransactionStatus status) {
-					rootPages = pageDao.listRootPages();
-					registerPages(rootPages);
+					rootPage = new TransientPage();
+					rootPage.setPath("/");
+					rootPage.setFolder(true);
+					rootPage.setPublished(true);
+					rootPage.setChildPages(pageDao.listRootPages());
+					registerPage(rootPage);
 					
 					Collection aliases = pageDao.listAliases();
 					registerAliases(aliases);
@@ -216,6 +231,9 @@ public class PageMap implements InitializingBean,
 	}
 	
 	public PageAndController getPageAndController(String path) {
+		if (path.length() > 1 && path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
 		return (PageAndController) pageAndControllerMap.get(path);
 	}
 	
@@ -225,7 +243,7 @@ public class PageMap implements InitializingBean,
 	}
 	
 	public Collection getRootPages() {
-		return rootPages;
+		return rootPage.getChildPages();
 	}
 	
 	public void onApplicationEvent(ApplicationEvent event) {

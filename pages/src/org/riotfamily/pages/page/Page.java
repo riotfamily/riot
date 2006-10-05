@@ -105,5 +105,7 @@ public interface Page {
 	 * Riot users.
 	 */
 	public boolean isSystemPage();
+	
+	public boolean isNew();
 
 }
