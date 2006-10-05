@@ -8,12 +8,16 @@ import org.riotfamily.common.web.util.ServletMappingHelper;
 import org.riotfamily.pages.component.preview.DefaultViewModeResolver;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
 import org.riotfamily.pages.page.support.PageUtils;
+import org.riotfamily.pages.page.support.PublishedPageInterceptor;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Ordered;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 
-public class PageHandlerMapping implements HandlerMapping, Ordered {
+public class PageHandlerMapping implements HandlerMapping, Ordered, 
+		InitializingBean {
 
 	private static Log log = LogFactory.getLog(PageHandlerMapping.class);
 	
@@ -58,6 +62,14 @@ public class PageHandlerMapping implements HandlerMapping, Ordered {
 		this.order = order;
 	}
 
+	public void afterPropertiesSet() throws Exception {
+		HandlerInterceptor publishedPageInterceptor = 
+				new PublishedPageInterceptor(viewModeResolver);
+		
+		interceptors = (HandlerInterceptor[]) ObjectUtils.addObjectToArray(
+				interceptors, publishedPageInterceptor);
+	}
+	
 	public HandlerExecutionChain getHandler(HttpServletRequest request) 
 			throws Exception {
 		
@@ -71,20 +83,7 @@ public class PageHandlerMapping implements HandlerMapping, Ordered {
 		}
 		
 		Page page = pc.getPage();
-		
 		exposePage(page, request);
-		
-		if (page != null) {
-			/*
-			request.setAttribute(ComponentEditor.INSTANT_PUBLISH_ATTRIBUTE,
-					Boolean.valueOf(page.isNew()));
-			*/
-			if (!page.isPublished() && (viewModeResolver == null 
-					|| !viewModeResolver.isPreviewMode(request))) {
-				
-				return null;	
-			}
-		}
 		return new HandlerExecutionChain(pc.getController(), interceptors);
 	}
 	
