@@ -59,9 +59,9 @@ Notification.prototype = {
 	
 	createElement: function (n) {	
 		var removeHandler = this.remove.bind(this);
-		return Element.DIV({className: 'notification'}, 
-			Element.DIV({className: 'message', title: this.data.issueDate, innerHTML: this.data.message}),
-			Element.DIV({className: 'delete', onclick: removeHandler})
+		return Element.create('div', {className: 'notification'},
+			Element.create('div', {className: 'message', title: this.data.issueDate, innerHTML = this.data.message}),
+			Element.create('div', {className: 'delete', onclick: removeHandler})
 		);
 	},
 		

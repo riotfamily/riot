@@ -214,7 +214,7 @@ function populateLog(entries) {
 }
 
 function createLogElement(entry) {
-	return Element.DIV({className: 'prio' + entry.priority}, entry.message);
+	return Element.create('div', {className: 'prio' + entry.priority}, entry.message);
 }
 
 function addLogEntry(entry) {

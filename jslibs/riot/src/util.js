@@ -93,24 +93,7 @@ Element.prependChild = function(parent, node) {
 	else parent.appendChild(node);
 }
 
-Element.defineTag = function(tag) {
-	Element[tag.toUpperCase()] = function() {
-		var args = [tag].concat($A(arguments));
-		return Element.createNode.apply(Element, args);
-	}
-};
-
-(function() {
-	var tags = ['a', 'button', 'div', 'h1', 'h2', 'h3', 'img', 'input', 
-		'label', 'li', 'option', 'p', 'select', 'span', 'table', 'tbody', 'td',
-		'textarea', 'tr', 'ul'];
-		
-	for (var i = tags.length - 1; i >= 0; i--) {
-		Element.defineTag(tags[i]);
-	}
-})();
-
-Element.createNode = function(tag, options) {
+Element.create = function(tag, options) {
 	var e;
 	e = document.createElement(tag);
 	for (var attr in options) {
