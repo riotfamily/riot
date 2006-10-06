@@ -171,10 +171,7 @@ riot.Component.prototype = {
 		
 		Element.getDescendants(this.element).each(function(e) {
 			var editorType = e.getAttribute('riot:editorType');
-			if (editorType == 'text') {
-				editors.push(new riot.InplaceTextEditor(e, component));
-			}
-			else if (editorType == 'multiline') {
+			if (editorType == 'text' || editorType == 'multiline') {
 				editors.push(new riot.InplaceTextEditor(e, component, {multiline: true}));
 			}
 			else if (editorType == 'textarea') {
@@ -188,6 +185,9 @@ riot.Component.prototype = {
 			}
 			else if (editorType == 'richtext') {
 				editors.push(new riot.RichtextEditor(e, component));
+			}
+			else if (editorType == 'richtext-chunks') {
+				editors.push(new riot.RichtextEditor(e, component, {split: true}));
 			}
 		});
 		if (this.editing) {
