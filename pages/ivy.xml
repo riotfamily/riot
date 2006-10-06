@@ -5,10 +5,10 @@
     	<conf name="runtime" />
     </configurations>
     <dependencies>
-	    <dependency org="riotfamily" name="riot-core" rev="latest.integration" conf="*->@" />
-	    <dependency org="riotfamily" name="riot-forms" rev="latest.integration" conf="*->@" />
-        <dependency org="riotfamily" name="riot-hibernate" rev="latest.integration" conf="*->@" />
-        <dependency org="riotfamily" name="cachius" rev="latest.integration" conf="*->@" />
+	    <dependency org="riotfamily" name="riot-core" rev="latest.integration" conf="*->@" changing="true" />
+	    <dependency org="riotfamily" name="riot-forms" rev="latest.integration" conf="*->@" changing="true" />
+        <dependency org="riotfamily" name="riot-hibernate" rev="latest.integration" conf="*->@" changing="true" />
+        <dependency org="riotfamily" name="cachius" rev="latest.integration" conf="*->@" changing="true" />
         <dependency org="springframework" name="spring" rev="latest.milestone" />
         <dependency org="sun" name="javamail" rev="latest.release" conf="runtime->default" />
         <dependency org="sun" name="jaf" rev="latest.release" />
