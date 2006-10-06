@@ -12,6 +12,7 @@ riot.InplaceEditor.prototype = {
 	
 	/* Subclasses may override this method to perform initalization upon creation */
 	oninit: function(options) {
+		this.options = options || {};
 	},
 	
 	/* Enables or disables the editor by adding (or removing) an onclick listener */
@@ -99,10 +100,7 @@ riot.InplaceEditor.prototype = {
 riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 
 	oninit: function(options) {
-		this.options = Object.extend({
-	    	multiline: false
-	    }, options || {});
-	    
+		this.options = options || {};
 		Element.makePositioned(this.element);
 		this.input = document.createElement(this.options.multiline 
 				? 'textarea' : 'input');
@@ -234,7 +232,34 @@ riot.RichtextEditor = Class.extend(riot.PopupTextEditor, {
 	openPopup: function() {
 		this.popup = new riot.TinyMCEPopup(this);
 		this.popup.open();
+	},
+	
+	save: function() {
+		if (this.options.split) {
+			var text = this.getText();
+			if (this.text != text) {
+				var chunks = [];
+				var n = Element.create('div');
+				n.innerHTML = text;
+				$A(n.childNodes).each(function(c) {
+					if (c.nodeType == 1) {
+						chunks.push('<' + c.nodeName + '>' + c.innerHTML 
+								+ '</' + c.nodeName + '>');
+					}
+				});
+				
+				ComponentEditor.updateTextChunks(
+						this.component.componentList.controllerId,
+						this.component.id, this.key, chunks, 
+						this.component.onupdate);
+			}
+			this.onsave(text);
+		}
+		else {
+			this.superclass.save();
+		}
 	}
+
 });
 
 riot.TextileEditor = Class.extend(riot.PopupTextEditor, {
@@ -260,12 +285,12 @@ riot.TextareaPopup = Class.create();
 riot.TextareaPopup.prototype = {
 
 	initialize: function(editor) {
-		this.div = Element.DIV({className: 'riot-popup riot-editor-popup'},
-			editor.help ? Element.DIV({className: 'riot-help-button', onclick: editor.help}) : null, 
-			this.closeButton = Element.DIV({className: 'riot-close-button', onclick: this.close.bind(this)}), 
-			Element.H2({}, '${editor-popup.title}'), 
-			this.textarea = Element.TEXTAREA({value: editor.text || ''}), 
-			this.okButton = Element.DIV({className: 'button-ok', onclick: editor.save.bind(editor)}, 'Ok')
+		this.div = Element.create('div', {className: 'riot-popup riot-editor-popup'},
+			editor.help ? Element.create('div', {className: 'riot-help-button', onclick: editor.help}) : null, 
+			this.closeButton = Element.create('div', {className: 'riot-close-button', onclick: this.close.bind(this)}), 
+			Element.create('h2', {}, '${editor-popup.title}'), 
+			this.textarea = Element.create('textarea', {value: editor.text || ''}), 
+			this.okButton = Element.create('div', {className: 'button-ok', onclick: editor.save.bind(editor)}, 'Ok')
 		);
 		Element.invisible(this.div);
 		document.body.appendChild(this.div);
@@ -280,7 +305,7 @@ riot.TextareaPopup.prototype = {
 	},
 	
 	suspend: function(message) {
-		this.suspended = Element.DIV({className: 'suspended'}, message);
+		this.suspended = Element.create('div', {className: 'suspended'}, message);
 		Element.hide(this.okButton);
 		Element.hide(this.closeButton);
 		this.div.appendChild(this.suspended);

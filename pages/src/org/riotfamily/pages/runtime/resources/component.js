@@ -19,7 +19,8 @@ riot.Component.prototype = {
 			'setHtml',
 			'typeChanged',
 			'createTypeInspector',
-			'propertiesChanged'
+			'propertiesChanged',
+			'onupdate'
 		]);
 		
 		this.id = el.getAttribute('riot:containerId');
@@ -27,10 +28,6 @@ riot.Component.prototype = {
 			this.type = el.getAttribute('riot:componentType');
 			this.formId = el.getAttribute('riot:formId');
 			this.setupElement();
-		}
-		else {
-			ComponentEditor.insertComponent(this.componentList.controllerId, 
-				this.componentList.id, null, this.created);
 		}
 	},
 	
@@ -105,9 +102,9 @@ riot.Component.prototype = {
 	},
 			
 	createTypeInspector: function(types) {
-		var select = Element.DIV({className: 'type-inspector'});
+		var select = Element.create('div', {className: 'type-inspector'});
 		for (var i = 0; i < types.length; i++) {
-			var e = Element.DIV({className: 'type'}, types[i].description);
+			var e = Element.create('div', {className: 'type'}, types[i].description);
 			e.type = types[i].type;
 			if (e.type == this.type) {
 				this.activeTypeButton = e;
@@ -130,9 +127,9 @@ riot.Component.prototype = {
 			select.appendChild(e);
 		}
 		
-		var inspector = Element.DIV({},
-			Element.DIV({className: 'riot-close-button', onclick: riot.toolbar.hideInspector.bind(riot.toolbar)}), 
-			Element.H2({}, '${type-inspector.title}'), 
+		var inspector = Element.create('div', {},
+			Element.create('div', {className: 'riot-close-button', onclick: riot.toolbar.hideInspector.bind(riot.toolbar)}), 
+			Element.create('h2', {}, '${type-inspector.title}'), 
 			select
 		);
 
@@ -203,6 +200,21 @@ riot.Component.prototype = {
 			el.className = el.className.replace(/component-\w*/, 'component-' + position);
 			Element.toggleClassName(el, 'last-component', last);
 		});
+	},
+	
+	onupdate: function(infos) {
+		this.setHtml(infos[0].html);
+		var prevEl = this.element;
+		for (var i = 1; i < infos.length; i++) {
+			var e = Element.create('div', {className: 'riot-component'});
+			Element.insertAfter(e, prevEl);
+			var c = new riot.Component(this.componentList, e);
+			c.id = infos[i].id;
+			c.typeChanged(infos[i]);
+			prevEl = e;
+		}
+		this.componentList.updatePositionClasses();
+		riot.toolbar.setDirty(this.componentList, true);
 	}
 	
 };
@@ -227,9 +239,11 @@ riot.InsertButton.prototype = {
 	},
 	
 	onclick: function() {
-		var e = Element.DIV({className: 'riot-component'});
+		var e = Element.create('div', {className: 'riot-component'});
 		Element.insertBefore(e, this.element);
-		new riot.Component(this.componentList, e);
+		var c = new riot.Component(this.componentList, e);
+		ComponentEditor.insertComponent(this.componentList.controllerId, 
+				this.componentList.id, -1, null, null, c.created);
 	}
 };
 
@@ -237,26 +251,26 @@ riot.PublishWidget = Class.create();
 riot.PublishWidget.prototype = {
 	initialize: function(componentList) {
 		this.componentList = componentList;
-		this.element = Element.DIV({className: 'riot-publish-widget'},
-			this.wrapper = Element.DIV({}, 
-				Element.DIV({className: 'riot-tabs'},
-					Element.DIV({className: 'riot-tab-preview', onclick: this.showPreviewVersion.bind(this)}, 'Preview'),
-					Element.DIV({className: 'riot-tab-live', onclick: this.showLiveVersion.bind(this)}, 'Live')
+		this.element = Element.create('div', {className: 'riot-publish-widget'},
+			this.wrapper = Element.create('div', {},
+				Element.create('div', {className: 'riot-tabs'},
+					Element.create('div', {className: 'riot-tab-preview', onclick: this.showPreviewVersion.bind(this)}, 'Preview'),
+					Element.create('div', {className: 'riot-tab-live', onclick: this.showLiveVersion.bind(this)}, 'Live')
 				),
-				Element.DIV({className: 'riot-publish-header'},
-					Element.A({className: 'riot-publish-button', href: '#', onclick: componentList.publishChanges.bind(componentList)}, 
-						Element.SPAN({className: 'icon'}), 
-						Element.SPAN({className: 'text'}, '${publish-dialog.publish}')
+				Element.create('div', {className: 'riot-publish-header'}, 
+					Element.create('a', {className: 'riot-publish-button', href: '#', onclick: componentList.publishChanges.bind(componentList)},
+						Element.create('span', {className: 'icon'}), 
+						Element.create('span', {className: 'text'}, '${publish-dialog.publish}')
 					),
-					Element.A({className: 'riot-discard-button', href: '#', onclick: componentList.discardChanges.bind(componentList)}, 
-						Element.SPAN({className: 'icon'}), 
-						Element.SPAN({className: 'text'}, '${publish-dialog.discard}')
+					Element.create('a', {className: 'riot-discard-button', href: '#', onclick: componentList.discardChanges.bind(componentList)},
+						Element.create('span', {className: 'icon'}), 
+						Element.create('span', {className: 'text'}, '${publish-dialog.discard}')
 					)
 				)
 			)
 		);
-		this.liveElement = Element.DIV({}, 'Retrieving live version ...');
-		this.footer = Element.DIV({className: 'riot-publish-footer'});
+		this.liveElement = Element.create('div', {}, 'Retrieving live version ...');
+		this.footer = Element.create('div', {className: 'riot-publish-footer'});
 	},
 	
 	show: function() {
@@ -383,7 +397,7 @@ riot.ComponentList.prototype = {
 	move: function(enable) {
 		if (this.getComponents().length > 1) {
 			if (enable) {
-				Sortable.create(this.element, {tag: 'div', only: 'riot-component'});
+				Sortable.create(this.element, {tag: 'div', only: 'riot-component', scroll: window, scrollSpeed: 20});
 				this.getComponents().each(function(component) {
 					Element.addClassName(component.element, 'riot-moveable-component');
 					component.element.onclick = Event.stop;

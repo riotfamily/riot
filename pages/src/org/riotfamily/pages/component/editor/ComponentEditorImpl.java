@@ -2,9 +2,11 @@ package org.riotfamily.pages.component.editor;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -100,6 +102,41 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	}
 	
 	/**
+	 *   
+	 */
+	public ComponentInfo[] updateTextChunks(String controllerId, 
+			Long containerId, String property, String[] chunks) 
+			throws RequestContextExpiredException {
+		
+		ComponentInfo[] result = new ComponentInfo[chunks.length];
+		
+		ComponentVersion version = getPreviewVersion(containerId, null);
+		
+		version.setProperty(property, chunks[0]);
+		dao.updateComponentVersion(version);
+		
+		ComponentInfo info = new ComponentInfo();
+		info.setId(containerId);
+		info.setType(version.getType());
+		info.setHtml(getHtml(controllerId, version));
+		result[0] = info;
+
+		VersionContainer container = version.getContainer();
+		ComponentList list = container.getList();
+		
+		int offset = list.getPreviewList().indexOf(container);
+		
+		for (int i = 1; i < chunks.length; i++) {
+			info = insertComponent(controllerId, list.getId(), 
+					offset + i - 1, info.getType(), 
+					Collections.singletonMap(property, chunks[i]));
+			
+			result[i] = info;
+		}
+		return result;
+	}
+	
+	/**
 	 * Returns a list of TypeInfo beans indicating which component types are
 	 * valid for the given controller.   
 	 */
@@ -129,10 +166,11 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	 * by the given ID.
 	 */
 	public ComponentInfo insertComponent(String controllerId, Long listId, 
-			Long nextContainerId) throws RequestContextExpiredException {
+			int position, String type, Map properties) 
+			throws RequestContextExpiredException {
 		
 		log.debug("insertComponent(" + controllerId + ", " + listId 
-				+ ", " + nextContainerId + ")");
+				+ ", " + position + ")");
 		
 		ComponentList componentList = dao.loadComponentList(listId);
 		
@@ -141,26 +179,24 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		ComponentListController controller = (ComponentListController) 
 				getControllers().get(controllerId);
 
-		String[] types = controller.getValidComponentTypes();
-		Assert.isTrue(types != null && types.length > 0,
-				"At least one valid component type must be specified.");
+		if (type == null) {
+			String[] types = controller.getValidComponentTypes();
+			Assert.isTrue(types != null && types.length > 0,
+					"At least one valid component type must be specified.");
+			
+			type = types[0];
+		}
 		
-		String type = types[0];
+		VersionContainer container = createVersionContainer(componentList, 
+				type, properties);
 		
-		VersionContainer container = createVersionContainer(componentList, type);
-		
-		if (nextContainerId != null) {
-			for (int i = 0; i < containers.size(); i++) {
-				VersionContainer c = (VersionContainer) containers.get(i);
-				if (c.getId().equals(nextContainerId)) {
-					containers.add(i, container);
-					break;
-				}
-			}
+		if (position >= 0) {
+			containers.add(position, container);
 		}
 		else {
 			containers.add(container);
 		}
+		
 		if (!isInstantPublishMode()) {
 			componentList.setDirty(true);
 		}
@@ -579,16 +615,16 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	}
 	
 	protected VersionContainer createVersionContainer(
-			ComponentList componentList, String type) {
+			ComponentList componentList, String type, Map properties) {
 		
 		VersionContainer container = new VersionContainer(componentList);
+		ComponentVersion version = new ComponentVersion(type);
+		version.setProperties(properties);
 		if (isInstantPublishMode()) {
-			ComponentVersion live = new ComponentVersion(type);
-			container.setLiveVersion(live);
+			container.setLiveVersion(version);
 		}
 		else {
-			ComponentVersion preview = new ComponentVersion(type);
-			container.setPreviewVersion(preview);
+			container.setPreviewVersion(version);
 		}
 		dao.saveVersionContainer(container);
 		return container;

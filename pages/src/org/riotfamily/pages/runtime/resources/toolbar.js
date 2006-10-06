@@ -14,10 +14,10 @@ riot.Toolbar.prototype = {
 			logout: new riot.ToolbarButton('logout', '${toolbar-button.logout}')
 		});
 		var buttonElements = this.buttons.values().pluck('element');
-		document.body.appendChild(this.element = Element.DIV({id: 'riot-toolbar'},
-			Element.DIV({id: 'riot-toolbar-buttons'}, buttonElements)
+		document.body.appendChild(this.element = Element.create('div', {id: 'riot-toolbar'},
+			Element.create('div', {id: 'riot-toolbar-buttons'}, buttonElements)
 		));
-		document.body.appendChild(this.inspectorPanel = Element.DIV({id: 'riot-inspector'}));
+		document.body.appendChild(this.inspectorPanel = Element.create('div', {id: 'riot-inspector'}));
 
 		this.buttons.logout.applyHandler = this.logout;
 	
@@ -159,10 +159,10 @@ riot.Toolbar.prototype = {
 				riot.activeEditor.suspend(message);
 			}
 			else {
-				this.showDialog(Element.DIV({className: 'riot-popup riot-message-popup'},
-					Element.H2({}, '${message-popup.title}'), 
-					Element.DIV({className: 'message'}, 
-						Element.P({}, message)
+				this.showDialog(Element.create('div', {className: 'riot-popup riot-message-popup'},
+					Element.create('h2', {}, '${message-popup.title}'), 
+					Element.create('div', {className: 'message'}, 
+						Element.create('p', {}, message)
 					)
 				));
 			}
@@ -193,7 +193,7 @@ riot.ToolbarButton.prototype = {
 
 	initialize: function(handler, title, href) {
 		this.handler = handler;
-		this.element = Element.A({
+		this.element = Element.create('a', {
 			id: 'riot-toolbar-button-' + handler,
 			className: 'toolbar-button',
 			title: title
@@ -256,7 +256,7 @@ riot.Overlay.prototype = {
 	initialize: function() {
 		var img = new Image(); // Preload image ...
 		img.src = Resources.resolveUrl('overlay.png');
-		this.element = Element.DIV({id: 'riot-overlay', style: {display: 'none', position: 'absolute', top: 0, left: 0, width: '100%'}});
+		this.element = Element.create('div', {id: 'riot-overlay', style: {display: 'none', position: 'absolute', top: 0, left: 0, width: '100%'}});
 		if (isDefined(this.element.style.filter)) {
 			this.element.style.filter = 
 				'progid:DXImageTransform.Microsoft.AlphaImageLoader(src="' 

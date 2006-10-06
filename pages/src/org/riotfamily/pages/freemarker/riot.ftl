@@ -96,7 +96,6 @@
 </#macro>
 
 <#macro inplace key editor="richtext" alwaysUseNested=false tag="" class="">
-	
 	<#if alwaysUseNested>
 		<#local value><#nested /></#local>
 	<#else>

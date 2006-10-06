@@ -1,6 +1,7 @@
 package org.riotfamily.pages.component.editor;
 
 import java.util.List;
+import java.util.Map;
 
 import org.riotfamily.pages.component.context.RequestContextExpiredException;
 
@@ -19,10 +20,14 @@ public interface ComponentEditor {
 			String property, String text)
 			throws RequestContextExpiredException;
 
+	public ComponentInfo[] updateTextChunks(String controllerId, 
+			Long containerId, String property, String[] chunks) 
+			throws RequestContextExpiredException;
+
 	public List getValidTypes(String controllerId);
 
 	public ComponentInfo insertComponent(String controllerId, Long listId,
-			Long nextContainerId)
+			int position, String type, Map properties)
 			throws RequestContextExpiredException;
 
 	public ComponentInfo setType(String controllerId, Long containerId,
