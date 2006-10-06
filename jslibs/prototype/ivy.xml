@@ -2,7 +2,7 @@
     <info 
     	organisation="riotfamily" 
     	module="prototype-js" 
-    	revision="1.5.0_rc0" 
+    	revision="1.5.0_rc1" 
     	status="milestone">
     	
 	    <license name="MIT" url="http://dev.rubyonrails.org/browser/spinoffs/prototype/LICENSE" />
