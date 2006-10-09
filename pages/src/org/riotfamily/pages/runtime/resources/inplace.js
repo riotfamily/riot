@@ -113,7 +113,7 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 			backgroundColor: 'transparent'
 		});
 		
-		this.input.onkeypress = this.updateElement.bindAsEventListener(this);
+		this.input.onkeyup = this.updateElement.bindAsEventListener(this);
 		this.input.onblur = this.save.bindAsEventListener(this);
 	
 		Element.cloneStyles(this.element, this.input, [
@@ -133,9 +133,12 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 		
 	edit: function() {
 		this.setText(this.element.innerHTML.trim()
-			.replace(/<br[^>]*>/gi, '\n')
 			.replace(/\s+/g, ' ')
+			.replace(/<br[^>]*>/gi, '\n')
 			.stripTags()
+			.replace(/&amp;/g, '&')
+			.replace(/&lt;/g, '<')
+			.replace(/&gt;/g, '>')
 		);
 	},
 		
@@ -161,7 +164,11 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 	},
 	
 	getText: function() {
-		return this.input.value.replace('<','&lt;').replace(/\n/g,'<br />');
+		return this.input.value
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/&/g, '&amp;')
+			.replace(/\n/g, '<br />');
 	},
 		
 	onsave: function(text) {
@@ -171,14 +178,13 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 	},
 
 	updateElement: function() {
-		this.element.innerHTML = this.input.value.replace('<','&lt;').replace(/\n/g,'<br>&nbsp;');
+		this.element.innerHTML = this.getText().replace(/<br[^>]*>/gi, '<br />&nbsp;');
 		this.resize();
 	},
 
 	resize: function() {
-		var padding = 0; //this.options.multiline ? 50 : 0;
-		this.input.style.width  = (this.element.offsetWidth + padding - this.paddingLeft) + 'px';
-    	this.input.style.height = (this.element.offsetHeight + padding - this.paddingTop) + 'px';
+		this.input.style.width  = (this.element.offsetWidth - this.paddingLeft) + 'px';
+    	this.input.style.height = (this.element.offsetHeight - this.paddingTop) + 'px';
 	}
 });
 
