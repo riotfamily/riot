@@ -10,15 +10,14 @@ riot.Component.prototype = {
 			
 		this.handlers = {
 			'remove': this.remove.bindAsEventListener(this),
-			'changeType': this.changeType.bindAsEventListener(this),
 			'properties': this.properties.bindAsEventListener(this)
 		};
 
 		Object.bindMethods(this, [
 			'created',
 			'setHtml',
+			'setType',
 			'typeChanged',
-			'createTypeInspector',
 			'propertiesChanged',
 			'onupdate'
 		]);
@@ -42,10 +41,6 @@ riot.Component.prototype = {
 		this.id = info.id;
 		this.typeChanged(info);
 		this.componentList.updatePositionClasses();
-		riot.toolbar.buttons.browse.click();
-		if (!this.componentList.fixedType) {
-			this.changeType();
-		}
 	},
 	
 	setMode: function(mode) {
@@ -77,65 +72,14 @@ riot.Component.prototype = {
 		ComponentEditor.deleteComponent(this.id);
 		riot.toolbar.setDirty(this.componentList, true);
 	},
-	
-	changeType: function(event) {
-		var e = event || window.event;
-		if (e) Event.stop(e);
-		Element.removeClassName(this.element, 'riot-highlight');
-		ComponentEditor.getValidTypes(this.componentList.controllerId, 
-				this.createTypeInspector);
-	},
-	
-	properties: function(event) {
-		var e = event || window.event;
-		if (e) Event.stop(e);
-		Element.removeClassName(this.element, 'riot-highlight');
-		if (this.formId) {
-			var win = window.open(riot.path + '/pages/form/' + this.id
-				+ '?instantPublish=' + riot.toolbar.instantPublishMode, 
-				'componentProperties', 
-				'width=760,height=400,dependent=yes,toolbar=no,location=no,' +
-				'menubar=no,status=no,scrollbars=yes,resizable=yes');
-				
-			WindowCallback.register(win, this.propertiesChanged);
-		}
-	},
-			
-	createTypeInspector: function(types) {
-		var select = Element.create('div', {className: 'type-inspector'});
-		for (var i = 0; i < types.length; i++) {
-			var e = Element.create('div', {className: 'type'}, types[i].description);
-			e.type = types[i].type;
-			if (e.type == this.type) {
-				this.activeTypeButton = e;
-				e.className = 'active-type';
-			}
-			e.component = this;
-			e.onclick = function() {
-				var c = this.component;
-				Element.removeClassName(c.element, 'riot-component-' + c.type);
-				Element.addClassName(c.element, 'riot-component-' + this.type);
-				c.type = this.type;
-				if (isSet(c.activeTypeButton)) {
-					c.activeTypeButton.className = 'type';
-				}
-				this.className = 'active-type'
-				c.activeTypeButton = this;
-				
-				ComponentEditor.setType(c.componentList.controllerId, c.id, c.type, c.typeChanged);
-			}
-			select.appendChild(e);
-		}
 		
-		var inspector = Element.create('div', {},
-			Element.create('div', {className: 'riot-close-button', onclick: riot.toolbar.hideInspector.bind(riot.toolbar)}), 
-			Element.create('h2', {}, '${type-inspector.title}'), 
-			select
-		);
-
-		riot.toolbar.setInspector(inspector, this);
+	setType: function(type) {
+		Element.removeClassName(this.element, 'riot-component-' + this.type);
+		Element.addClassName(this.element, 'riot-component-' + type);
+		this.type = type;
+		ComponentEditor.setType(this.componentList.controllerId, this.id, type, this.typeChanged);
 	},
-		
+	
 	typeChanged: function(info) {
 		this.type = info.type;
 		this.formId = info.formId;
@@ -153,6 +97,21 @@ riot.Component.prototype = {
 		this.setupElement();
 		setTimeout(function() { html.evalScripts() }, 10);
 		this.repaint();
+	},
+	
+	properties: function(event) {
+		var e = event || window.event;
+		if (e) Event.stop(e);
+		Element.removeClassName(this.element, 'riot-highlight');
+		if (this.formId) {
+			var win = window.open(riot.path + '/pages/form/' + this.id
+				+ '?instantPublish=' + riot.toolbar.instantPublishMode, 
+				'componentProperties', 
+				'width=760,height=400,dependent=yes,toolbar=no,location=no,' +
+				'menubar=no,status=no,scrollbars=yes,resizable=yes');
+				
+			WindowCallback.register(win, this.propertiesChanged);
+		}
 	},
 	
 	propertiesChanged: function() {
@@ -239,13 +198,63 @@ riot.InsertButton.prototype = {
 	},
 	
 	onclick: function() {
+		if (riot.activeInsertButton) {
+			Element.removeClassName(riot.activeInsertButton.element, 
+					'riot-insert-button-active');
+		}
+		Element.addClassName(this.element, 'riot-insert-button-active');
+		riot.activeInsertButton = this;
+		
+		this.inspector = new riot.TypeInspector(this.componentList.types, null, 
+				this.insert.bind(this));
+				
+		riot.toolbar.setInspector(this.inspector.element);
+	},
+	
+	insert: function(type) {
 		var e = Element.create('div', {className: 'riot-component'});
 		Element.insertBefore(e, this.element);
 		var c = new riot.Component(this.componentList, e);
 		ComponentEditor.insertComponent(this.componentList.controllerId, 
-				this.componentList.id, -1, null, null, c.created);
+				this.componentList.id, -1, type, null, c.created);
+		
+		this.inspector.onchange = c.setType;
 	}
 };
+
+riot.TypeInspector = Class.create();
+riot.TypeInspector.prototype = {
+
+	initialize: function(types, activeType, onchange) {
+		this.onchange = onchange;
+		var select = Element.create('div', {className: 'type-inspector'});
+		for (var i = 0; i < types.length; i++) {
+			var e = Element.create('div', {className: 'type'}, types[i].description);
+			e.type = types[i].type;
+			if (e.type == this.type) {
+				this.activeTypeButton = e;
+				e.className = 'active-type';
+			}
+			var inspector = this;
+			e.onclick = function() {
+				if (isSet(inspector.activeTypeButton)) {
+					inspector.activeTypeButton.className = 'type';
+				}
+				this.className = 'active-type'
+				inspector.activeTypeButton = this;
+				inspector.onchange(this.type);
+			}
+			select.appendChild(e);
+		}
+		
+		this.element = Element.create('div', {},
+			Element.create('div', {className: 'riot-close-button', onclick: riot.toolbar.hideInspector.bind(riot.toolbar)}), 
+			Element.create('h2', {}, '${type-inspector.title}'), 
+			select
+		);
+	}
+}
+
 
 riot.PublishWidget = Class.create();
 riot.PublishWidget.prototype = {
@@ -320,8 +329,15 @@ riot.ComponentList.prototype = {
 		this.id = el.getAttribute('riot:listId');
 		this.controllerId = el.getAttribute('riot:controllerId');
 		this.maxComponents = el.getAttribute('riot:maxComponents');
-		this.fixedType = el.getAttribute('riot:fixedType') == 'true';
 		if (!el.id) el.id = 'ComponentList' + this.id;
+		
+		ComponentEditor.getValidTypes(this.controllerId, 
+				this.setValidTypes.bind(this));
+	},
+	
+	setValidTypes: function(types) {
+		this.types = types;
+		this.fixedType = types.length == 1;
 	},
 	
 	getComponents: function() {
@@ -346,7 +362,7 @@ riot.ComponentList.prototype = {
 			component.updatePositionClasses(index + 1, index == last);
 		});
 	},
-		
+			
 	publishChanges: function() {
 		riot.toolbar.setDirty(this, false);
 		ComponentEditor.publishList(this.id, 
@@ -391,6 +407,7 @@ riot.ComponentList.prototype = {
 			else {
 				this.insertButton.hide();
 			}
+			riot.activeInsertButton = null;
 		}
 	},
 

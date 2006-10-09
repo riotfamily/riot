@@ -163,9 +163,14 @@ body > #riot-inspector {
 	position:relative;
 	height: 16px;
 	color: #fff;
-	border: 2px solid #fff;
-	background: #3d3d3d url(icons/dialogs/insert_bg.gif) center center no-repeat;
+	border: 2px solid ${toolbarOutline};
+	background: #fff url(icons/dialogs/insert_bg.gif) center 0px no-repeat;
 	margin-bottom:32px;
+}
+
+html .riot-insert-button-active {
+	background-color: #3d3d3d;
+	background-position: center -16px;
 }
 
 .riot-moveable-component {

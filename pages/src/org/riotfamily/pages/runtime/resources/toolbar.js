@@ -52,7 +52,7 @@ riot.Toolbar.prototype = {
 				|| Event.within(event, this.inspectorPanel);
 	},
 	
-	setInspector: function(inspector, component) {
+	setInspector: function(inspector) {
 		if (inspector != this.inspector) { 
 			this.removeInspector();
 			if (inspector != null) {
