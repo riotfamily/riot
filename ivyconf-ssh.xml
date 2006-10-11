@@ -1,5 +1,5 @@
 <ivyconf>
-	<include file="ivyconf.xml"/>
+	<include file="${root.dir}/ivyconf.xml"/>
 	<resolvers>
 		<ssh name="riotfamily-ssh" host="riotfamily.org" user="${user.name}" keyFile="${user.home}/.ssh/id_rsa" checksums="md5">
 			<ivy pattern="/var/www/riotfamily.org/htdocs/ivy/repo/[organisation]/[module]/[revision]/ivy.xml"/>
