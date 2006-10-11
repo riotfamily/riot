@@ -50,12 +50,21 @@
   - preview mode.
   -->
 <#macro ifPreviewMode>
-	<#if viewModeResolver?exists>
-		<#if viewModeResolver.isPreviewMode(request)>
-			<#nested />
-		</#if>
+	<#if viewModeResolver?exists && viewModeResolver.isPreviewMode(request)>
+		<#nested />
 	</#if>
 </#macro>
+
+<#--
+  - Macro that evaluates the nested content if the page is requested in
+  - live mode.
+  -->
+<#macro ifLiveMode>
+	<#if !viewModeResolver?exists || !viewModeResolver.isPreviewMode(request)>
+		<#nested />
+	</#if>
+</#macro>
+
 
 <#--
   - Macro that renders the Riot toolbar if the page is requested in preview mode.
