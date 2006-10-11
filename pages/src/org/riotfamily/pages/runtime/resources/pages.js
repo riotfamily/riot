@@ -7,7 +7,7 @@ Resources.loadScriptSequence([
 	{src: 'scriptaculous/effects.js', test: 'Effect'},
 	{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
 	{src: 'dwr/interface/ComponentEditor.js'},
-	{src: 'dwr/engine.js'},
+	{src: 'dwr/engine.js', test: 'DWREngine'},
 	{src: 'riot-js/util.js'},
 	{src: 'riot-js/effects.js'},
 	{src: 'riot-js/browserinfo.js'},
