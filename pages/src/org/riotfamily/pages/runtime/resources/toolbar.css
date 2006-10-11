@@ -18,13 +18,13 @@ body > #riot-inspector {
 
 #riot-toolbar-buttons {
 	background-color: ${toolbarOutline};
-	width:38px;
-	padding: 3px 0 2px 0;
+	width: 38px;
+	padding: 3px 0;
 	margin: auto;
 }
 
 #riot-toolbar-buttons a {
-	margin:0 3px 1px 3px;
+	margin: 0 3px;
 }
 
 #riot-toolbar a.toolbar-button,
@@ -35,7 +35,6 @@ body > #riot-inspector {
 	height: 32px;
 	background-color: #3d3d3d;
 	background-repeat: no-repeat;
-	margin-bottom: 1px;
 	padding: 0;
 	cursor: default;
 }
@@ -107,8 +106,8 @@ body > #riot-inspector {
 	display: none;
 }
 
-#riot-inspector h2,
-.riot-popup h2 {
+#riot-inspector .headline,
+.riot-popup .headline {
 	color: #3d3d3d;
 	background-color: #ebebeb;
 	border-bottom: 1px solid ${toolbarOutline};
@@ -117,6 +116,7 @@ body > #riot-inspector {
 	font-size:12px;
 	line-height: 16px;
 	font-weight: 500;
+	text-align: left;
 	margin:0;
 }
 
@@ -165,7 +165,7 @@ body > #riot-inspector {
 	color: #fff;
 	border: 2px solid ${toolbarOutline};
 	background: #fff url(icons/dialogs/insert_bg.gif) center 0px no-repeat;
-	margin-bottom:32px;
+	margin: 4px;
 }
 
 html .riot-insert-button-active {
@@ -373,6 +373,7 @@ body > .riot-popup {
 	white-space: nowrap;
 	text-decoration: none;
 	line-height: 16px;
+	background: none;
 }
 
 .riot-publish-widget a.riot-publish-button {

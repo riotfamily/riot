@@ -108,6 +108,9 @@ riot.Toolbar.prototype = {
 			if(!isDefined(list)) {
 				list = new riot.ComponentList(e[i]);
 				e[i].componentList = list;
+				if (this.activeButton) {
+					list[this.activeButton.handler](true);
+				}
 			}
 			lists.push(list);
 		}

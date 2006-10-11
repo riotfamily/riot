@@ -183,7 +183,7 @@ riot.InsertButton.prototype = {
 	initialize: function(component, componentList) {
 		this.component = component;
 		this.componentList = componentList || component.componentList;
-		this.element = document.createElement('riot');
+		this.element = document.createElement('div');
 		this.element.className = 'riot-insert-button';
 		this.element.onclick = this.onclick.bindAsEventListener(this);
 		Element.hide(this.element);
@@ -202,13 +202,18 @@ riot.InsertButton.prototype = {
 			Element.removeClassName(riot.activeInsertButton.element, 
 					'riot-insert-button-active');
 		}
-		Element.addClassName(this.element, 'riot-insert-button-active');
-		riot.activeInsertButton = this;
-		
-		this.inspector = new riot.TypeInspector(this.componentList.types, null, 
-				this.insert.bind(this));
-				
-		riot.toolbar.setInspector(this.inspector.element);
+		if (this.componentList.fixedType) {
+			this.insert(this.componentList.fixedType);
+			riot.toolbar.removeInspector();
+		}
+		else {
+			Element.addClassName(this.element, 'riot-insert-button-active');
+			riot.activeInsertButton = this;
+			this.inspector = new riot.TypeInspector(this.componentList.types, null, 
+					this.insert.bind(this));
+					
+			riot.toolbar.setInspector(this.inspector.element);
+		}
 	},
 	
 	insert: function(type) {
@@ -218,7 +223,9 @@ riot.InsertButton.prototype = {
 		ComponentEditor.insertComponent(this.componentList.controllerId, 
 				this.componentList.id, -1, type, null, c.created);
 		
-		this.inspector.onchange = c.setType;
+		if (this.inspector) {
+			this.inspector.onchange = c.setType;
+		}
 	}
 };
 
@@ -249,7 +256,7 @@ riot.TypeInspector.prototype = {
 		
 		this.element = Element.create('div', {},
 			Element.create('div', {className: 'riot-close-button', onclick: riot.toolbar.hideInspector.bind(riot.toolbar)}), 
-			Element.create('h2', {}, '${type-inspector.title}'), 
+			Element.create('div', {className: 'headline'}, '${type-inspector.title}'), 
 			select
 		);
 	}
@@ -337,7 +344,9 @@ riot.ComponentList.prototype = {
 	
 	setValidTypes: function(types) {
 		this.types = types;
-		this.fixedType = types.length == 1;
+		if (types.length == 1) {
+			this.fixedType = types[0].type;
+		}
 	},
 	
 	getComponents: function() {
@@ -488,7 +497,7 @@ riot.ComponentDragObserver.prototype = {
 riot.editProperties = function(e) {
 	e = e || this;
 	var componentElement = Element.getAncestorWithClassName(e, 'riot-component');
-	if (componentElement) {
+	if (componentElement && !isSet(componentElement.component.mode)) {
 		riot.toolbar.buttons.properties.click();
 		componentElement.component.properties();
 	}
