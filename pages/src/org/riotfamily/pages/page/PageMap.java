@@ -242,6 +242,15 @@ public class PageMap implements InitializingBean, ApplicationContextAware,
 		return pc != null ? pc.getPage() : null;
 	}
 	
+	public Page getPageOrAncestor(String path) {
+		Page page = null;
+		while (page == null && path != null) {
+			page = getPage(path);
+			path = getParentPath(path);
+		}
+		return page;
+	}
+	
 	public Collection getRootPages() {
 		return rootPage.getChildPages();
 	}
