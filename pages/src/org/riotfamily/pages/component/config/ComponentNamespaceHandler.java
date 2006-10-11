@@ -27,11 +27,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- * Spring 2.0 namespace handler that handles the <code>component</code> 
+ * NamespaceHandler that handles the <code>component</code> 
  * namspace as defined in <code>component.xsd</code> which can be found in 
  * the same package.
- * 
- * @link http://riotfamily.org/schema/6.2/pages/component.xsd
  */
 public class ComponentNamespaceHandler implements NamespaceHandler {
 
