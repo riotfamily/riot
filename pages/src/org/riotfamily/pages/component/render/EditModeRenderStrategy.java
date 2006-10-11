@@ -46,9 +46,6 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 				out.print(config.getMaxComponents());
 				out.print('"');
 			}
-			if (config.getValidComponentTypes().length == 1) {
-				out.print(" riot:fixedType=\"true\"");
-			}
 			out.print(" class=\"riot-components\">");
 			super.renderComponentList(list);
 			out.print("</div>");
