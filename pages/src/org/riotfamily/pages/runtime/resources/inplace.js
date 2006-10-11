@@ -294,7 +294,7 @@ riot.TextareaPopup.prototype = {
 		this.div = Element.create('div', {className: 'riot-popup riot-editor-popup'},
 			editor.help ? Element.create('div', {className: 'riot-help-button', onclick: editor.help}) : null, 
 			this.closeButton = Element.create('div', {className: 'riot-close-button', onclick: this.close.bind(this)}), 
-			Element.create('h2', {}, '${editor-popup.title}'), 
+			Element.create('div', {className: 'headline'}, '${editor-popup.title}'), 
 			this.textarea = Element.create('textarea', {value: editor.text || ''}), 
 			this.okButton = Element.create('div', {className: 'button-ok', onclick: editor.save.bind(editor)}, 'Ok')
 		);
