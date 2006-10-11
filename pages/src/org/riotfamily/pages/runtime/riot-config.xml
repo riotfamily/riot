@@ -23,7 +23,7 @@
 		<list:dao ref="riotPageDao" />
 		<list:columns>
 			<list:column property="pathComponent" sortable="false" />
-			<list:column property="metaData.title" sortable="false" lookup-level="2" />
+			<list:column property="title" sortable="false" lookup-level="2" />
 			<list:column property="position" />
 			<list:column property="path" sortable="false" renderer="pageLinkRenderer" />
 			<list:command id="moveUp" />
@@ -38,18 +38,18 @@
 		<list:command id="paste"/>
 	</list:list>
 
-	<form:form id="page" bean-class="org.riotfamily.pages.page.PersistentPage">
+	<form:form id="page" bean-class="org.riotfamily.pages.page.PersistentPage" 
+			initializer-class="org.riotfamily.pages.page.support.PageFormInitializer">
+		
 		<form:group>
 			<form:textfield bind="pathComponent" required="true" regex="[A-Za-z_]*"/>
 			<form:checkbox bind="folder" />
 		</form:group>
-		<form:nested-form bind="metaData" required="true"
-				bean-class="org.riotfamily.pages.page.meta.MetaData">
-
+		<form:group>
 			<form:textfield bind="title" required="true" />
 			<form:textarea bind="description" rows="3" max-length="255" />
 			<form:textarea bind="keywords" rows="3" max-length="255" />
-		</form:nested-form>
+		</form:group>
 	</form:form>
 
 </riot-config>
