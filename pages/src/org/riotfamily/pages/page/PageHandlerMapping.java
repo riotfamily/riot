@@ -8,7 +8,7 @@ import org.riotfamily.common.web.util.ServletMappingHelper;
 import org.riotfamily.pages.component.preview.DefaultViewModeResolver;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
 import org.riotfamily.pages.page.support.PageUtils;
-import org.riotfamily.pages.page.support.PublishedPageInterceptor;
+import org.riotfamily.pages.page.support.PageInterceptor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Ordered;
 import org.springframework.util.ObjectUtils;
@@ -30,16 +30,10 @@ public class PageHandlerMapping implements HandlerMapping, Ordered,
 	
 	private int order = Integer.MAX_VALUE;
 	
-	private String pageAttribute;
-		
 	private ViewModeResolver viewModeResolver = new DefaultViewModeResolver();
 	
 	public PageHandlerMapping(PageMap map) {
 		this.pageMap = map;
-	}
-
-	public void setPageAttribute(String pageAttribute) {
-		this.pageAttribute = pageAttribute;
 	}
 
 	public void setViewModeResolver(ViewModeResolver viewModeResolver) {
@@ -63,11 +57,11 @@ public class PageHandlerMapping implements HandlerMapping, Ordered,
 	}
 
 	public void afterPropertiesSet() throws Exception {
-		HandlerInterceptor publishedPageInterceptor = 
-				new PublishedPageInterceptor(viewModeResolver);
+		HandlerInterceptor pageInterceptor = 
+				new PageInterceptor(pageMap, viewModeResolver);
 		
 		interceptors = (HandlerInterceptor[]) ObjectUtils.addObjectToArray(
-				interceptors, publishedPageInterceptor);
+				interceptors, pageInterceptor);
 	}
 	
 	public HandlerExecutionChain getHandler(HttpServletRequest request) 
@@ -83,16 +77,8 @@ public class PageHandlerMapping implements HandlerMapping, Ordered,
 		}
 		
 		Page page = pc.getPage();
-		exposePage(page, request);
-		return new HandlerExecutionChain(pc.getController(), interceptors);
-	}
-	
-	protected void exposePage(Page page, HttpServletRequest request) {
 		PageUtils.exposePage(request, page);
-		PageUtils.exposePageMap(request, pageMap);
-		if (pageAttribute != null) {
-			request.setAttribute(pageAttribute, page);
-		}
+		return new HandlerExecutionChain(pc.getController(), interceptors);
 	}
 	
 }
