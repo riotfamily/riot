@@ -5,11 +5,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.pages.page.meta.MetaData;
 import org.riotfamily.pages.page.support.AbstractPage;
 import org.riotfamily.pages.page.support.PageComparator;
 
@@ -18,8 +15,6 @@ public class PersistentPage extends AbstractPage {
 	private static Log log = LogFactory.getLog(PersistentPage.class);
 	
 	private Long id;
-	
-	private MetaData metaData;
 	
 	private Collection persistentChildPages;
 	
@@ -140,19 +135,7 @@ public class PersistentPage extends AbstractPage {
 			}
 		}
 	}
-	
-	public MetaData getMetaData() {
-		return this.metaData;
-	}
-
-	public void setMetaData(MetaData metaData) {
-		this.metaData = metaData;
-	}
-	
-	public MetaData resolveMetaData(HttpServletRequest request) {
-		return metaData;
-	}
-	
+		
 	public int hashCode() {
 		return getPath().hashCode();
 	}

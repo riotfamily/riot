@@ -16,6 +16,12 @@ public class MetaData {
 		this.title = title;
 	}
 
+	public MetaData(String title, String keywords, String description) {
+		this.title = title;
+		this.keywords = keywords;
+		this.description = description;
+	}
+
 	public String getDescription() {
 		return this.description;
 	}

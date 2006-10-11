@@ -13,6 +13,12 @@ public abstract class AbstractPage implements Page {
 
 	private String path;
 	
+	private String title;
+	
+	private String keywords;
+	
+	private String description;
+	
 	private String controllerName;
 	
 	private boolean hidden;
@@ -27,6 +33,31 @@ public abstract class AbstractPage implements Page {
 
 	private boolean systemPage;
 	
+	
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getKeywords() {
+		return this.keywords;
+	}
+
+	public void setKeywords(String keywords) {
+		this.keywords = keywords;
+	}
+
+	public String getTitle() {
+		return this.title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 	public final String getControllerName() {
 		return this.controllerName;
 	}

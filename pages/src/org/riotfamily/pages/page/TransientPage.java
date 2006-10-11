@@ -5,10 +5,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.riotfamily.pages.page.meta.MetaData;
-import org.riotfamily.pages.page.meta.MetaDataProvider;
 import org.riotfamily.pages.page.support.AbstractPage;
 
 /**
@@ -18,10 +14,6 @@ import org.riotfamily.pages.page.support.AbstractPage;
 public class TransientPage extends AbstractPage {
 	
 	private List childPages;
-	
-	private MetaData metaData;
-	
-	private MetaDataProvider metaDataProvider;
 	
 	public TransientPage() {
 	}
@@ -61,28 +53,6 @@ public class TransientPage extends AbstractPage {
 		if (child != null) {
 			childPages.remove(child);
 		}
-	}
-	
-	public MetaDataProvider getMetaDataProvider() {
-		return this.metaDataProvider;
-	}
-
-	public void setMetaDataProvider(MetaDataProvider metaDataProvider) {
-		this.metaDataProvider = metaDataProvider;
-	}
-
-	public MetaData resolveMetaData(HttpServletRequest request) {
-		if (metaData != null) {
-			return metaData;
-		}
-		if (metaDataProvider != null) {
-			return metaDataProvider.getMetaData(this, request);
-		}
-		return null;
-	}
-	
-	public void setMetaData(MetaData metaData) {
-		this.metaData = metaData;
 	}
 
 }

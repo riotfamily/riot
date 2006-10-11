@@ -2,10 +2,13 @@ package org.riotfamily.pages.page.meta;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.pages.page.Page;
-
 public interface MetaDataProvider {
 
-	public MetaData getMetaData(Page page, HttpServletRequest request);
+	public MetaData getMetaData(HttpServletRequest request)
+			throws Exception;
+	
+	public void appendCacheKey(StringBuffer key, HttpServletRequest request);
+	
+	public long getLastModified(HttpServletRequest request);
 
 }

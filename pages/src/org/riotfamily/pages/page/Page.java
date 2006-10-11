@@ -5,7 +5,6 @@ import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.pages.member.WebsiteMember;
-import org.riotfamily.pages.page.meta.MetaData;
 
 
 public interface Page {
@@ -23,12 +22,11 @@ public interface Page {
 	 */
 	public String getPathComponent();
 	
-	/**
-	 * Returns the MetaData for the given request. Implementors can use the given
-	 * request to perform internationalization or to inspect request parameters
-	 * in case the page contains dynamic content.
-	 */
-	public MetaData resolveMetaData(HttpServletRequest request);
+	public String getTitle();
+	
+	public String getDescription();
+	
+	public String getKeywords();
 	
 	/**
 	 * Returns if the page is accessible and therefore should be included in

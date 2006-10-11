@@ -11,52 +11,61 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.pages.mvc.cache.AbstractCachingPolicyController;
-import org.riotfamily.pages.page.Page;
-import org.riotfamily.pages.page.support.PageUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 public class MetaDataController extends AbstractCachingPolicyController {
 
+	public static final String DEFAULT_TITLE_DELIMITER = " - ";
+	
 	private Log log = LogFactory.getLog(MetaDataController.class);
 			
 	private String titlePrefix;
 	
-	private boolean appendQueryStringToCacheKey = false;
+	private String titleDelimiter = DEFAULT_TITLE_DELIMITER;
+	
+	private MetaDataProvider metaDataProvider;
 	
 	public void setTitlePrefix(String titlePrefix) {
 		this.titlePrefix = titlePrefix;
 	}
 	
-	public void setAppendQueryStringToCacheKey(
-			boolean appendQueryParamsToCacheKey) {
-		this.appendQueryStringToCacheKey = appendQueryParamsToCacheKey;
+	protected String getTitlePrefix(HttpServletRequest request) {
+		return titlePrefix;
+	}
+		
+	public void setTitleDelimiter(String titleDelimiter) {
+		this.titleDelimiter = titleDelimiter;
 	}
 	
-	public long getLastModified(HttpServletRequest request) {
-        return PageUtils.getPageMap(request).getLastModified();
-    }
-	
-	public ModelAndView handleRequest(HttpServletRequest request, 
-			HttpServletResponse response) throws Exception {
+	public void setMetaDataProvider(MetaDataProvider metaDataProvider) {
+		this.metaDataProvider = metaDataProvider;
+	}
 
-		Page page = PageUtils.getPage(request);
-		if (page != null) {
-			MetaData metaData = page.resolveMetaData(request);
+	public long getLastModified(HttpServletRequest request) {
+        return metaDataProvider.getLastModified(request);
+    }
+		
+	public ModelAndView handleRequest(HttpServletRequest request, 
+			HttpServletResponse response) {
+
+		try {
+			MetaData metaData  = metaDataProvider.getMetaData(request);
 			if (metaData != null) {
 				renderMetaData(metaData, request, response);
 			}
 			else {
-				log.warn("Page has no MetaData.");
+				log.error("No MetaData - page title will not be rendered.");
 			}
 		}
-		else {
-			log.error("No Page found in request. MetaData will not be rendered.");
+		catch (Exception e) {
+			log.error("Error rendering MetaData", e);
 		}
 		return null;
 	}
 	
-	protected ModelAndView renderMetaData(MetaData metaData,
-			HttpServletRequest request, HttpServletResponse response) throws IOException {
+	protected ModelAndView renderMetaData(MetaData metaData, 
+			HttpServletRequest request, HttpServletResponse response) 
+			throws IOException {
 		
 		PrintWriter writer = response.getWriter();
 		TagWriter tag = new TagWriter(writer);
@@ -64,8 +73,13 @@ public class MetaDataController extends AbstractCachingPolicyController {
 		tag.start(Html.TITLE).body();
 		if (getTitlePrefix(request) != null) {
 			tag.print(getTitlePrefix(request));
+			if (metaData.getTitle() != null) {
+				tag.print(titleDelimiter);
+			}
 		}
-		tag.print(metaData.getTitle());
+		if (metaData.getTitle() != null) {
+			tag.print(metaData.getTitle());
+		}
 		tag.end();
 		
 		if (metaData.getKeywords() != null) {
@@ -85,17 +99,6 @@ public class MetaDataController extends AbstractCachingPolicyController {
 		}
 		
 		return null;
-	}
-	
-	protected String getTitlePrefix(HttpServletRequest request) {
-		return titlePrefix;
-	}
-	
-	protected void appendCacheKeyInternal(StringBuffer key, HttpServletRequest request) {		
-		super.appendCacheKeyInternal(key, request);
-		if (appendQueryStringToCacheKey) {
-			key.append("query:").append(request.getQueryString());
-		}
 	}
 	
 }

@@ -21,11 +21,9 @@
 			<key column="parent" />
 			<one-to-many class="PersistentPage" />
 		</set>
-		<component name="metaData" class="org.riotfamily.pages.page.meta.MetaData">
-	        <property name="title" />
-	        <property name="keywords" />
-	        <property name="description" />
-	    </component>
+        <property name="title" />
+        <property name="keywords" />
+        <property name="description" />
 		<property name="hidden" />
 		<property name="folder" />
 		<property name="published" />
