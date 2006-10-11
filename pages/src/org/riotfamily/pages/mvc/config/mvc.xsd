@@ -5,13 +5,6 @@
 		targetNamespace="http://www.riotfamily.org/schema/pages/mvc"
 		xmlns="http://www.riotfamily.org/schema/pages/mvc">
 	
-	<xsd:simpleType name="boolean">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="true"/>
-			<xsd:enumeration value="false"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	
 	<xsd:complexType name="ref">
 		<xsd:attribute name="ref" use="required" type="xsd:string"/>
 	</xsd:complexType>
@@ -58,8 +51,8 @@
 			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="view-name" type="xsd:string" use="required" />
 			<xsd:attribute name="content-type" type="xsd:string" />
-			<xsd:attribute name="add-uri-to-cache-key" type="boolean" />
-			<xsd:attribute name="cacheable" type="boolean" />
+			<xsd:attribute name="add-uri-to-cache-key" type="xsd:boolean" />
+			<xsd:attribute name="cacheable" type="xsd:boolean" />
 		</xsd:complexType>
 	</xsd:element>
 	
@@ -80,10 +73,10 @@
 		</xsd:sequence>
 		<xsd:attribute name="hql" use="required" />
 		<xsd:attribute name="model-key" use="required" />
-		<xsd:attribute name="list-mode" type="boolean" default="false" />
+		<xsd:attribute name="list-mode" type="xsd:boolean" default="false" />
 		<xsd:attribute name="item-class" />
-		<xsd:attribute name="cache-eternally" type="boolean" default="true" />
-		<xsd:attribute name="tag-cache-items" type="boolean" default="true" />
+		<xsd:attribute name="cache-eternally" type="xsd:boolean" default="true" />
+		<xsd:attribute name="tag-cache-items" type="xsd:boolean" default="true" />
 	</xsd:complexType>
 	
 	<xsd:complexType name="paged-hql">
