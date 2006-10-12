@@ -53,7 +53,9 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
             query.setFirstResult(params.getOffset());
             query.setMaxResults(params.getPageSize());
         }
-        query.setParameter("parent", parent);
+        if (parent != null) {
+        	query.setParameter("parent", parent);
+        }
         /*
         if (params.getFilter() != null) {
             query.setProperties(params.getFilter());
@@ -66,32 +68,37 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
      * Returns the total number of items.
      */
     public int getListSize(Object parent, ListParams params) {
-        Query query = createQuery(buildCountHql());
-        query.setParameter("parent", parent);
+        Query query = createQuery(buildCountHql(params));
+        if (parent != null) {
+        	query.setParameter("parent", parent);
+        }
         log.debug(query.getQueryString());
         Number size = (Number) query.uniqueResult();
         return size != null ? size.intValue() : 0;
     }
 
 
-    protected String getWhereClause() {
+    protected String getWhereClause(ListParams params) {
         StringBuffer sb = new StringBuffer();
         hasWhere = false;
         if (parentProperty != null) {
-        	sb.append("where ((:parent is null and this.");
-        	sb.append(parentProperty);
-        	sb.append(" is null) or (:parent is not null and this."); 
-        	sb.append(parentProperty);
-        	sb.append(" = :parent)) ");
+        	sb.append(" where this.");
+       		sb.append(parentProperty);
+        	if (params.getParentId() == null) {
+	        	sb.append(" is null");
+        	}
+        	else {
+        		sb.append(" = :parent)) ");
+        	}
         	hasWhere = true;
         }
         if (getWhere() != null) {
-        	sb.append(hasWhere ? " and " : "where ");
+        	sb.append(hasWhere ? " and " : " where ");
             sb.append(getWhere());
             hasWhere = true;
         }
         if (!isPolymorph()) {
-        	sb.append(hasWhere ? " and " : "where ");
+        	sb.append(hasWhere ? " and " : " where ");
             sb.append("this.class = ");
             sb.append(getEntityClass().getName());
             hasWhere = true;

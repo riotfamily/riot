@@ -34,36 +34,6 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     
     boolean hasWhere;
 
-    private String countHql = "select count(this) from $class as this $where";
-
-    private String hql = "select this from $class as this $where";
-
-    private String preparedCountHql;
-
-    private String preparedHql;
-    
-    /**
-     * @return Returns the hql.
-     */
-    public final String getHql() {
-        return hql;
-    }
-
-    /**
-     * @param hql The hql to set.
-     */
-    public final void setHql(String hql) {
-        this.hql = hql;
-    }
-
-	public String getCountHql() {
-		return countHql;
-	}
-
-	public void setCountHql(String countHql) {
-		this.countHql = countHql;
-	}
-    
 	/**
      * @return Returns the itemClass.
      */
@@ -141,7 +111,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
      * Returns the total number of items.
      */
     public int getListSize(Object parent, ListParams params) {
-        Query query = createQuery(buildCountHql());
+        Query query = createQuery(buildCountHql(params));
         if (params.getFilter() != null) {
             query.setProperties(params.getFilter());
         }
@@ -155,31 +125,29 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     /**
      * Builds a HQL query string to retrive the total number of items.
      */
-    protected String buildCountHql() {
-        if (preparedCountHql == null) {
-            preparedCountHql = countHql.replaceAll("\\$class", 
-                    entityClass.getName());
-            
-            preparedCountHql = preparedCountHql.replaceAll("\\$where",
-                    getWhereClause());
-        }
-        return preparedCountHql;
+    protected String buildCountHql(ListParams params) {
+    	StringBuffer hql = new StringBuffer();
+    	hql.append("select count(this) from ");
+    	hql.append(entityClass.getName());
+    	hql.append(" as this");
+    	hql.append(getWhereClause(params));
+        return hql.toString();
     }
 
     /**
      * Builds a HQL query string to retrive a list of items.
      */
     protected String buildHql(ListParams params) {
-        if (preparedHql == null) {
-            preparedHql = hql.replaceAll("\\$class", entityClass.getName());
-            preparedHql = preparedHql.replaceAll("\\$where", getWhereClause());
-            preparedHql = preparedHql.replaceAll("\\$and", 
-                    hasWhere ? " and " : " where ");
-        }
-        return preparedHql + getOrderBy(params);
+    	StringBuffer hql = new StringBuffer();
+    	hql.append("select this from ");
+    	hql.append(entityClass.getName());
+    	hql.append(" as this");
+    	hql.append(getWhereClause(params));
+    	hql.append(getOrderBy(params));
+        return hql.toString();
     }
 
-    protected String getWhereClause() {
+    protected String getWhereClause(ListParams params) {
         StringBuffer sb = new StringBuffer();
         hasWhere = where != null;
         if (hasWhere) {
