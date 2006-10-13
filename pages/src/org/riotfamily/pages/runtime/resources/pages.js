@@ -1,6 +1,7 @@
 var riot = {};
 
-riot.path = '${contextPath}${riotServletPrefix}';
+riot.contextPath = '${contextPath}';
+riot.path = riot.contextPath + '${riotServletPrefix}';
 
 Resources.loadScriptSequence([
 	{src: 'prototype/prototype.js', test: 'Prototype'},
