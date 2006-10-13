@@ -5,10 +5,15 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 public class RiotFreeMarkerViewResolver extends FreeMarkerViewResolver {
 
-	private boolean allowModelOverride;
+	private boolean allowModelOverride = true;
 	
 	private boolean freeMarkerServletMode;
 	
+	
+	public RiotFreeMarkerViewResolver() {
+		setExposeSpringMacroHelpers(true);
+	}
+
 	public void setAllowModelOverride(boolean allowModelOverride) {
 		this.allowModelOverride = allowModelOverride;
 	}

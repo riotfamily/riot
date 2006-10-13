@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.view.ViewContext;
-import org.springframework.beans.BeansException;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
 
@@ -30,7 +29,7 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 	public static final String MODEL_ATTRIBUTE = 
 			RiotFreeMarkerView.class.getName() + ".model";
 	
-	private boolean allowModelOverride;
+	private boolean allowModelOverride = true;
 	
 	private boolean freeMarkerServletMode;
 	
@@ -42,21 +41,6 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 		this.freeMarkerServletMode = freeMarkerServletMode;
 	}
 	
-	protected void initApplicationContext() throws BeansException {
-		super.initApplicationContext();
-		/*
-		Configuration cfg = getConfiguration();
-		TemplateLoader originalLoader = cfg.getTemplateLoader();
-		TemplateLoader macroLoader = new ClassTemplateLoader(getClass(), 
-				"/org/riotfamily/pages/runtime/macros");
-		
-		cfg.setTemplateLoader(new MultiTemplateLoader(
-				new TemplateLoader[] { macroLoader, originalLoader }));
-		
-		cfg.addAutoImport("riot", "/riot.ftl");
-		*/
-	}
-
 	public void render(Map model, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 	
