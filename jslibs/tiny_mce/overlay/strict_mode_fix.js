@@ -32,3 +32,5 @@ tinyMCE.addControl = function(id) {
 		setTimeout(function() { tinyMCE.addControl(id); }, 100);
 	}
 }
+
+tinyMCE.strictModeFixed = true;
