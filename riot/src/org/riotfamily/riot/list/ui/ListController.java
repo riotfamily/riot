@@ -8,6 +8,7 @@ import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.ui.EditorController;
 import org.riotfamily.riot.list.ListRepository;
 import org.riotfamily.riot.list.command.support.CommandExecutor;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -47,6 +48,16 @@ public class ListController extends AbstractListController
 				return viewModelBuilder.buildModel();
 			}
 		});
+	}
+	
+	protected ListDefinition getListDefinition(ListContext context) {
+		ListDefinition  listDef = super.getListDefinition(context);
+		if (!AccessController.isGranted(ACTION_VIEW, null, listDef)) {
+			return null;
+		}
+		else {
+			return listDef;
+		}
 	}
 
 }

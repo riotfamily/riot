@@ -10,6 +10,10 @@ import org.springframework.web.servlet.mvc.Controller;
  */
 public interface EditorController extends Controller {
 
+	public String ACTION_VIEW = "view";
+	
+	public String ACTION_EDIT = "edit";
+	
 	/**
 	 * Returns the EditorDefinition-class that is handled by the controller.
 	 */

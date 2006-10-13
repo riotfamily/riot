@@ -14,6 +14,7 @@ import org.riotfamily.common.web.mapping.UrlMappingAware;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.GroupDefinition;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -68,6 +69,10 @@ public class EditorGroupController implements EditorController,
 		
 		Assert.notNull(groupDefinition, "No such group: " + editorId);
 		
+		if (!AccessController.isGranted(ACTION_VIEW, null, groupDefinition)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+		}
+		
 		MessageResolver messageResolver = new MessageResolver(messageSource, 
 				editorRepository.getMessageCodesResolver(), 
 				RequestContextUtils.getLocale(request));
@@ -79,7 +84,7 @@ public class EditorGroupController implements EditorController,
 		Iterator ed = groupDefinition.getEditorDefinitions().iterator();
 		while (ed.hasNext()) {
 			EditorDefinition editor = (EditorDefinition) ed.next();
-			if (!editor.isHidden()) {
+			if (!editor.isHidden() && AccessController.isGranted("view", null, editor)) {
 				group.addReference(editor.createReference(null, messageResolver));
 			}
 		}

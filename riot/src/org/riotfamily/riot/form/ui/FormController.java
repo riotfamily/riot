@@ -1,5 +1,6 @@
 package org.riotfamily.riot.form.ui;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import org.riotfamily.riot.list.ListRepository;
 import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.command.support.CommandExecutor;
 import org.riotfamily.riot.list.ui.render.CommandRenderer;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -94,13 +96,22 @@ public class FormController extends BaseFormController
 
 	
 	protected Map createModel(Form form, FormDefinition formDefinition, 
-			HttpServletRequest request, HttpServletResponse response) {
+			HttpServletRequest request, HttpServletResponse response) {		
 		
 		Map model = super.createModel(form, formDefinition, request, response);
 
 		Object object = null;
 		if (!form.isNew()) {
 			object = form.getBackingObject();
+		}
+		try {
+			if (!AccessController.isGranted(ACTION_VIEW, object, formDefinition)) {
+				response.sendError(HttpServletResponse.SC_FORBIDDEN);
+			}
+		}
+		catch (IOException e) {
+			log.error("Error sending forbidden error for formDefinition[ " 
+					+ formDefinition.getName() + " ]");
 		}
 		
 		model.put("childLists", formDefinition.getChildEditorReferences(object, 

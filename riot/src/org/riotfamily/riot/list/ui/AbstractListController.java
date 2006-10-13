@@ -160,7 +160,11 @@ public abstract class AbstractListController implements Controller,
 				messageSource, editorRepository.getMessageCodesResolver(),
 				getCommand(commandId));
 
-		context.setListDefinition(getListDefinition(context));
+		ListDefinition listDef = getListDefinition(context);
+		if (listDef == null) {
+			return null;
+		}		
+		context.setListDefinition(listDef);
 		context.setListConfig(getListConfig(context));
 		context.setParams(getListParams(context));
 		
