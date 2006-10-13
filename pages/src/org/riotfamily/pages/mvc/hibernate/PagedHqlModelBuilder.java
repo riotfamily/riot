@@ -42,8 +42,8 @@ public class PagedHqlModelBuilder extends HqlModelBuilder {
 						getHql()).toString();
 			}
 			else {
-				throw new BeanCreationException(
-						"CountHql must be set if hql doesn't starts with >from<");
+				throw new BeanCreationException("The property 'countHql' must " 
+						+ "be set if hql doesn't starts with 'from'");
 			}
 		}
 	}
