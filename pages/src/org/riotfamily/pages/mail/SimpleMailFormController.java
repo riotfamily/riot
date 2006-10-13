@@ -37,6 +37,11 @@ public class SimpleMailFormController extends SimpleFormController
 	
 	private String[] requiredFields;
 	
+	
+	public SimpleMailFormController() {
+		setCommandClass(MailForm.class);
+	}
+
 	public void setTo(String to) {
 		this.to = to;
 	}
