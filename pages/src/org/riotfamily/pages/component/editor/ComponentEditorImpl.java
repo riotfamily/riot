@@ -51,6 +51,8 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	
 	private MessageSource messageSource;
 	
+	private Map editorConfigs;
+	
 	public ComponentEditorImpl(ComponentDao dao) {
 		this.dao = dao;
 	}
@@ -61,6 +63,14 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
+	}
+	
+	public Map getEditorConfigs() {
+		return this.editorConfigs;
+	}
+
+	public void setEditorConfigs(Map editorConfigs) {
+		this.editorConfigs = editorConfigs;
 	}
 
 	public boolean isInstantPublishMode() {

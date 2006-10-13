@@ -230,9 +230,11 @@ riot.PopupTextEditor = Class.extend(riot.InplaceEditor, {
 
 riot.RichtextEditor = Class.extend(riot.PopupTextEditor, {
 	showEditor: function() {
-		var tinyScript = 'tiny_mce/tiny_mce.js';
-		Resources.loadScript(tinyScript, 'tinyMCE');
-		Resources.execWhenLoaded([tinyScript], this.openPopup.bind(this));
+		Resources.loadScriptSequence([
+			{src: 'tiny_mce/tiny_mce.js', test: 'tinyMCE'},
+			{src: 'tiny_mce/strict_mode_fix.js', test: 'tinyMCE.strictModeFixed'}
+		]);
+		Resources.waitFor('tinyMCE.strictModeFixed', this.openPopup.bind(this));
 	},
 	
 	openPopup: function() {
@@ -479,50 +481,25 @@ riot.initTinyMCEInstance = function(inst) {
 
 riot.initTinyMCE = function() {
 	if (!riot.tinyMCEInitialized) {
-		
-		// TinyMCE disables strict_loading_mode in IE and Opera,
-		// so we have to overwrite the loadScript method ...
-		tinyMCE.loadScript = function(url) {
-			tinyMCE.settings.strict_loading_mode = true;
-			for (var i = 0; i < this.loadedFiles.length; i++) {
-				if (this.loadedFiles[i] == url) return;
-			}
-			this.pendingFiles[this.pendingFiles.length] = url;
-			this.loadedFiles[this.loadedFiles.length] = url;
-		};
-		
-		// TinyMCE uses document.createElementNS() which is not supported
-		// by IE, so we also have to overwrite the loadNextSript() method ...
-		tinyMCE.loadNextScript = function() {
-			var d = document;
-			if (this.loadingIndex < this.pendingFiles.length) {
-				var se = d.createElement('script');
-				se.type = 'text/javascript';
-				se.src = this.pendingFiles[this.loadingIndex++];
-				d.getElementsByTagName("head")[0].appendChild(se);
-			} 
-			else {
-				this.loadingIndex = -1;
-			}
-		};
-	
-		tinyMCE.init({
-			mode: 'none',
-			add_unload_trigger: false,
-			strict_loading_mode: true,
-			setupcontent_callback: 'riot.setupTinyMCEContent',
-			init_instance_callback: 'riot.initTinyMCEInstance',
-			plugins: 'smartquotes,autocleanup,nospam',
-			smartquotes_quoteStyle: 'de',
-			smartquotes_cleanup: false,
-			valid_elements: '+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote,sub,sup,span[class<mailto]',
-			theme: 'advanced',
-			theme_advanced_layout_manager: 'RowLayout',
-			theme_advanced_containers_default_align: 'left',
-			theme_advanced_container_buttons1: 'formatselect,bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap',
-			theme_advanced_containers: 'buttons1, mceEditor, mceStatusbar',
-			theme_advanced_blockformats: 'p,h3,h4'
-		});
+		tinyMCE.init(riot.tinyMCEConfig);
 		riot.tinyMCEInitialized = true;
 	}
 }
+
+ComponentEditor.getEditorConfigs(function(configs) {
+	riot.tinyMCEConfig = Object.extend({
+		mode: 'none',
+		add_unload_trigger: false,
+		strict_loading_mode: true,
+		setupcontent_callback: 'riot.setupTinyMCEContent',
+		init_instance_callback: 'riot.initTinyMCEInstance',
+		relative_urls: false,
+		theme: 'advanced',
+		theme_advanced_layout_manager: 'RowLayout',
+		theme_advanced_containers_default_align: 'left',
+		theme_advanced_containers: 'buttons1, mceEditor, mceStatusbar',
+		theme_advanced_container_buttons1: 'formatselect,bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap',
+		theme_advanced_blockformats: 'p,h3,h4',
+		valid_elements: '+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote,sub,sup,span[class<mailto]'
+	}, configs.tinyMCE);
+});

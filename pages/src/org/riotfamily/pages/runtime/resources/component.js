@@ -130,6 +130,7 @@ riot.Component.prototype = {
 		
 		Element.getDescendants(this.element).each(function(e) {
 			var editorType = e.getAttribute('riot:editorType');
+			//var editorConfig = e.getAttribute('riot:editorConfig');
 			if (editorType == 'text' || editorType == 'multiline') {
 				editors.push(new riot.InplaceTextEditor(e, component, {multiline: true}));
 			}

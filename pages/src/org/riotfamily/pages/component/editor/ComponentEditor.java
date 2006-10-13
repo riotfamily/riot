@@ -62,5 +62,7 @@ public interface ComponentEditor {
 	public boolean isInstantPublishMode() throws RequestContextExpiredException;
 
 	public void logout();
+	
+	public Map getEditorConfigs();
 
 }
