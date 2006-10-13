@@ -8,14 +8,13 @@ import org.riotfamily.pages.mvc.hibernate.DateParameterResolver;
 import org.riotfamily.pages.mvc.hibernate.DefaultParameterResolver;
 import org.riotfamily.pages.mvc.hibernate.HqlModelBuilder;
 import org.riotfamily.pages.mvc.hibernate.PagedHqlModelBuilder;
+import org.riotfamily.pages.mvc.hibernate.RiotPrincipalResolver;
 import org.riotfamily.pages.mvc.hibernate.StringToPrimitiveResolver;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
- * Spring 2.0 namespace handler that handles the <code>mvc</code> namspace as
+ * NamespaceHandler that handles the <code>mvc</code> namspace as
  * defined in <code>mvc.xsd</code> which can be found in the same package.
- * 
- * @link http://riotfamily.org/schema/6.2/pages/mvc.xsd
  */
 public class MvcNamespaceHandler extends NamespaceHandlerSupport {
 
@@ -28,11 +27,15 @@ public class MvcNamespaceHandler extends NamespaceHandlerSupport {
 		parser.registerElement("attribute", DefaultParameterResolver.class);
 		parser.registerElement("current-date", CurrentDateResolver.class);
 		parser.registerElement("current-locale", CurrentLocaleResolver.class);
+		parser.registerElement("riot-principal", RiotPrincipalResolver.class);
 		parser.registerElement("string-to-primitive", 
 				StringToPrimitiveResolver.class);
 		
 		parser.registerElement("date", DateParameterResolver.class);
+		
 		registerBeanDefinitionParser("generic-controller", parser);
+		registerBeanDefinitionParser("hql", parser);
+		registerBeanDefinitionParser("paged-hql", parser);
 	}
 
 }

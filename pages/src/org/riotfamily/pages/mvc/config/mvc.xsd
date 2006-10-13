@@ -16,8 +16,8 @@
 					<xsd:complexType>
 						<xsd:choice minOccurs="0">
 							<xsd:element name="bean" type="ref" />
-							<xsd:element name="hql" type="hql" />
-							<xsd:element name="paged-hql" type="paged-hql" />
+							<xsd:element ref="hql" />
+							<xsd:element ref="paged-hql" />
 						</xsd:choice>
 						<xsd:attribute name="ref" type="xsd:string" />
 					</xsd:complexType>
@@ -63,14 +63,16 @@
 					<xsd:choice maxOccurs="unbounded">
 						<xsd:element name="bean" type="ref" />
 						<xsd:element name="attribute" type="attribute"></xsd:element>
-						<xsd:element name="current-date" type="current-date"></xsd:element>
-						<xsd:element name="current-locale" type="current-locale"></xsd:element>
+						<xsd:element name="current-date" type="simple-resolver"></xsd:element>
+						<xsd:element name="current-locale" type="simple-resolver"></xsd:element>
+						<xsd:element name="riot-principal" type="simple-resolver"></xsd:element>
 						<xsd:element name="string-to-primitive" type="string-to-primitive"></xsd:element>
 						<xsd:element name="date" type="date"></xsd:element>
 					</xsd:choice>
 				</xsd:complexType>
 			</xsd:element>
 		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:ID" />
 		<xsd:attribute name="hql" use="required" />
 		<xsd:attribute name="model-key" use="required" />
 		<xsd:attribute name="list-mode" type="xsd:boolean" default="false" />
@@ -79,30 +81,30 @@
 		<xsd:attribute name="tag-cache-items" type="xsd:boolean" default="true" />
 	</xsd:complexType>
 	
-	<xsd:complexType name="paged-hql">
-		<xsd:complexContent>
-			<xsd:extension base="hql"> 
-				<xsd:attribute name="count-hql" use="optional" />
-				<xsd:attribute name="page-param" type="xsd:string" default="page" />
-				<xsd:attribute name="page-size" type="xsd:positiveInteger" default="10" />
-				<xsd:attribute name="page-size-param" type="xsd:string" use="optional" />
-				<xsd:attribute name="padding" type="xsd:positiveInteger" default="3" />
-				<xsd:attribute name="pager-model-key" type="xsd:string" default="pager" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
+	<xsd:element name="hql" type="hql" />
 	
+	<xsd:element name="paged-hql">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="hql"> 
+					<xsd:attribute name="count-hql" use="optional" />
+					<xsd:attribute name="page-param" type="xsd:string" default="page" />
+					<xsd:attribute name="page-size" type="xsd:positiveInteger" default="10" />
+					<xsd:attribute name="page-size-param" type="xsd:string" use="optional" />
+					<xsd:attribute name="padding" type="xsd:positiveInteger" default="3" />
+					<xsd:attribute name="pager-model-key" type="xsd:string" default="pager" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+		
 	<xsd:complexType name="attribute">
 		<xsd:attribute name="param" use="required" />
 		<xsd:attribute name="attribute" />
 		<xsd:attribute name="property" />
 	</xsd:complexType>
 	
-	<xsd:complexType name="current-date">
-		<xsd:attribute name="param" use="required" />
-	</xsd:complexType>
-	
-	<xsd:complexType name="current-locale">
+	<xsd:complexType name="simple-resolver">
 		<xsd:attribute name="param" use="required" />
 	</xsd:complexType>
 	
