@@ -88,7 +88,7 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
 	        	sb.append(" is null");
         	}
         	else {
-        		sb.append(" = :parent)) ");
+        		sb.append(" = :parent ");
         	}
         	hasWhere = true;
         }
