@@ -10,7 +10,7 @@
         <dependency org="apache" name="commons-logging" rev="latest.release" />
         <dependency org="springframework" name="spring" rev="latest.milestone" />
 		<dependency org="freemarker" name="freemarker" rev="2.3.8" />
-		<dependency org="json" name="json-lib" rev="latest.release" />
+		<dependency org="json" name="json-lib" rev="0.9" />
 		<dependency org="getahead" name="dwr" rev="2.0-Riot-2006-09-19" />
 		<dependency org="sun" name="jaf" rev="latest.release" />
     </dependencies>
