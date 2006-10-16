@@ -77,7 +77,7 @@
 		<echo>Since Ivy was not found in the classpath the JAR file will now be downloaded ...</echo>
 		<delete dir="${lib.dir}" />
 		<mkdir dir="${lib.dir}" />
-		<get src="http://riotfamily.org/ivy/ivy-1.4-RC1.jar" dest="${ivy.jar}" verbose="true" />
+		<get src="http://riotfamily.org/ivy/ivy.jar" dest="${ivy.jar}" verbose="true" />
 		<property name="ivy.downloaded" value="true" />
 	</target>
 	
