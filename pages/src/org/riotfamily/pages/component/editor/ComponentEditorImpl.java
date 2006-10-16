@@ -134,11 +134,11 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		VersionContainer container = version.getContainer();
 		ComponentList list = container.getList();
 		
-		int offset = list.getPreviewList().indexOf(container);
+		int offset = getPreviewContainers(list).indexOf(container);
 		
 		for (int i = 1; i < chunks.length; i++) {
 			info = insertComponent(controllerId, list.getId(), 
-					offset + i - 1, info.getType(), 
+					offset + i, info.getType(), 
 					Collections.singletonMap(property, chunks[i]));
 			
 			result[i] = info;

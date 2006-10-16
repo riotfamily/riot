@@ -170,6 +170,7 @@ riot.Component.prototype = {
 			Element.insertAfter(e, prevEl);
 			var c = new riot.Component(this.componentList, e);
 			c.id = infos[i].id;
+			c.editing = true;
 			c.typeChanged(infos[i]);
 			prevEl = e;
 		}
