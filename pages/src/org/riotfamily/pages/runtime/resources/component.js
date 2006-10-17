@@ -125,31 +125,35 @@ riot.Component.prototype = {
 	},
 	
 	setupElement: function() {
-		var editors = this.editors = new Array();
-		var component = this;
-		
-		Element.getDescendants(this.element).each(function(e) {
-			var editorType = e.getAttribute('riot:editorType');
-			//var editorConfig = e.getAttribute('riot:editorConfig');
-			if (editorType == 'text' || editorType == 'multiline') {
-				editors.push(new riot.InplaceTextEditor(e, component, {multiline: true}));
+		this.editors = [];
+		var desc = Element.getDescendants(this.element);
+		for (var i = 0; i < desc.length; i++) {
+			var e = desc[i];
+			try {
+				var editorType = e.getAttribute('riot:editorType');
+				if (editorType == 'text' || editorType == 'multiline') {
+					this.editors.push(new riot.InplaceTextEditor(e, this, {multiline: true}));
+				}
+				else if (editorType == 'textarea') {
+					this.editors.push(new riot.PopupTextEditor(e, this));
+				}
+				else if (editorType == 'textile') {
+					this.editors.push(new riot.TextileEditor(e, this));
+				}
+				else if (editorType == 'markdown') {
+					this.editors.push(new riot.MarkdownEditor(e, this));
+				}
+				else if (editorType == 'richtext') {
+					this.editors.push(new riot.RichtextEditor(e, this));
+				}
+				else if (editorType == 'richtext-chunks') {
+					this.editors.push(new riot.RichtextEditor(e, this, {split: true}));
+				}
 			}
-			else if (editorType == 'textarea') {
-				editors.push(new riot.PopupTextEditor(e, component));
+			catch (ex) {
+				// getAttribute('riot:editorType') fails in IE for TABLE elements (and maybe others?)
 			}
-			else if (editorType == 'textile') {
-				editors.push(new riot.TextileEditor(e, component));
-			}
-			else if (editorType == 'markdown') {
-				editors.push(new riot.MarkdownEditor(e, component));
-			}
-			else if (editorType == 'richtext') {
-				editors.push(new riot.RichtextEditor(e, component));
-			}
-			else if (editorType == 'richtext-chunks') {
-				editors.push(new riot.RichtextEditor(e, component, {split: true}));
-			}
-		});
+		}
 		if (this.editing) {
 			this.edit(true);
 		}
@@ -354,14 +358,15 @@ riot.ComponentList.prototype = {
 	getComponents: function() {
 		if (!this.components) {
 			this.components = [];
-			var _this = this;
-			document.getElementsByClassName('riot-component', this.element).each(function (e) {
+			var elements = document.getElementsByClassName('riot-component', this.element);
+			for (var i = 0; i < elements.length; i++) {
+				var e = elements[i];
 				var listElement = Element.getAncestorWithClassName(e, 'riot-components');
-				if (listElement == _this.element) {
-					var c = e.component || new riot.Component(_this, e);
-					_this.components.push(c);
+				if (listElement == this.element) {
+					var c = e.component || new riot.Component(this, e);
+					this.components.push(c);
 				}
-			});
+			}
 		}
 		return this.components;
 	},

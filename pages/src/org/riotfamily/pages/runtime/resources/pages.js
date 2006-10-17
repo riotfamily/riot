@@ -7,16 +7,16 @@ Resources.loadScriptSequence([
 	{src: 'prototype/prototype.js', test: 'Prototype'},
 	{src: 'scriptaculous/effects.js', test: 'Effect'},
 	{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
-	{src: 'dwr/interface/ComponentEditor.js'},
-	{src: 'dwr/engine.js', test: 'DWREngine'},
 	{src: 'riot-js/util.js'},
 	{src: 'riot-js/effects.js'},
 	{src: 'riot-js/browserinfo.js'},
 	{src: 'riot-js/viewport.js'},
 	{src: 'riot-js/window-callback.js'},
+	{src: 'dwr/engine.js', test: 'DWREngine'},
+	{src: 'dwr/interface/ComponentEditor.js', test: 'ComponentEditor'},
 	{src: 'pages/messages.js'},
-	{src: 'inplace.js'},
-	{src: 'component.js'},
+	{src: 'inplace.js', test: 'riot.InplaceEditor'},
+	{src: 'component.js', test: 'riot.ComponentList'},
 	{src: 'toolbar.js'}
 ]);
 
