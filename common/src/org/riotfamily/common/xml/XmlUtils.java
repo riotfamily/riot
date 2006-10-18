@@ -1,8 +1,23 @@
 package org.riotfamily.common.xml;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.BeanWrapper;
@@ -10,16 +25,19 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.util.Assert;
 import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Utility class that provides methods to create and populate beans from
  * DOM elements. 
  */
-public class DigesterUtils {
+public class XmlUtils {
 		
 	private static final String PROPERTY_NAME = "name";
 	
@@ -194,4 +212,76 @@ public class DigesterUtils {
 			beanWrapper.setPropertyValue(name, value);
 		}
 	}
+	
+	public static Document createDocument() {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		try {
+			return dbf.newDocumentBuilder().newDocument();
+		}
+		catch (ParserConfigurationException e) {
+			throw new IllegalStateException(e);
+		}			
+	}
+	
+	public static void removeNode(Node node) {
+		if (node != null) {
+			Node parent = node.getParentNode();
+			if (parent != null) {
+				parent.removeChild(node);
+			}
+		}
+	}
+	
+	public static void importAndAppend(Node node, Node parent) {
+		parent.appendChild(parent.getOwnerDocument().importNode(node, true));
+	}
+	
+	public static void removeAllChildNodes(Node node) {
+		while (node.hasChildNodes()) {
+			node.removeChild(node.getLastChild());
+		}
+	}
+	
+	public static void setTextValue(Element element, String value) {
+		removeAllChildNodes(element);
+		if (value != null) {
+			Node text = element.getOwnerDocument().createTextNode(value); 
+			element.appendChild(text);
+		}
+	}
+
+	public static Document parse(String xml) {
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			dbf.setNamespaceAware(true);
+			DocumentBuilder parser = dbf.newDocumentBuilder();
+			return parser.parse(new InputSource(new StringReader(xml)));
+		}
+		catch (ParserConfigurationException e) {
+			throw new RuntimeException(e);
+		}
+		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		catch (SAXException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	public static String serialize(Node node) {
+		try {
+			TransformerFactory tf = TransformerFactory.newInstance();
+			Transformer transformer = tf.newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			Source source = new DOMSource(node);
+			StringWriter sw = new StringWriter();
+			Result result = new StreamResult(sw);
+			transformer.transform(source, result);
+			return sw.toString();
+		}
+		catch (TransformerException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 }

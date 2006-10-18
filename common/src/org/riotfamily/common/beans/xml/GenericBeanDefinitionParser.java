@@ -8,7 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.PropertyUtils;
-import org.riotfamily.common.xml.DigesterUtils;
+import org.riotfamily.common.xml.XmlUtils;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -82,7 +82,7 @@ public class GenericBeanDefinitionParser implements BeanDefinitionParser {
 			pv.addPropertyValue(extractPropertyName(name), attribute.getValue());
 		}
 		
-		List children = DigesterUtils.getChildElements(element);
+		List children = XmlUtils.getChildElements(element);
 		Iterator it = children.iterator();
 		while (it.hasNext()) {
 			Element child = (Element) it.next();
@@ -100,7 +100,7 @@ public class GenericBeanDefinitionParser implements BeanDefinitionParser {
 		
 		if (List.class.isAssignableFrom(type)) {
 			ManagedList list = new ManagedList();
-			List children = DigesterUtils.getChildElements(element);
+			List children = XmlUtils.getChildElements(element);
 			Iterator it = children.iterator();
 			while (it.hasNext()) {
 				Element child = (Element) it.next();
@@ -109,11 +109,11 @@ public class GenericBeanDefinitionParser implements BeanDefinitionParser {
 			return list;
 		}
 		else {
-			String ref = DigesterUtils.getAttribute(element, REF_ATTRIBUTE);
+			String ref = XmlUtils.getAttribute(element, REF_ATTRIBUTE);
 			if (ref != null) {
 				return new RuntimeBeanReference(ref);
 			}
-			Element child = DigesterUtils.getFirstChildElement(element);
+			Element child = XmlUtils.getFirstChildElement(element);
 			return parseReference(child, registry); 
 		}
 	}

@@ -1,7 +1,7 @@
 package org.riotfamily.common.beans.xml;
 
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.xml.DigesterUtils;
+import org.riotfamily.common.xml.XmlUtils;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -31,11 +31,11 @@ public final class DefinitionParserUtils {
 			Element element, String idAttribute, String aliasAttribute, 
 			ParserContext parserContext) {
 		
-		String id = DigesterUtils.getAttribute(element, idAttribute);
+		String id = XmlUtils.getAttribute(element, idAttribute);
 		
 		String alias = null;
 		if (aliasAttribute != null) {
-			alias = DigesterUtils.getAttribute(element, aliasAttribute);
+			alias = XmlUtils.getAttribute(element, aliasAttribute);
 		}
 		
 		if (id == null) {
