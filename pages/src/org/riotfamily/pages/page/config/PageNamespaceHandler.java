@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.common.beans.xml.DefinitionParserUtils;
-import org.riotfamily.common.xml.DigesterUtils;
+import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.pages.page.PersistentPage;
 import org.riotfamily.pages.page.support.SitemapSetupBean;
 import org.springframework.beans.MutablePropertyValues;
@@ -64,7 +64,7 @@ public class PageNamespaceHandler implements NamespaceHandler {
 		MutablePropertyValues pv = new MutablePropertyValues();
 		definition.setPropertyValues(pv);
 		DefinitionParserUtils.addProperties(pv, element, SETUP_ATTRIBUTES);
-		List children = DigesterUtils.getChildElementsByRegex(element, PAGE);
+		List children = XmlUtils.getChildElementsByRegex(element, PAGE);
 		if (children != null && !children.isEmpty()) {
 			ManagedList pages = new ManagedList();
 			pv.addPropertyValue(PAGES_PROPERTY, pages);
@@ -93,7 +93,7 @@ public class PageNamespaceHandler implements NamespaceHandler {
 		MutablePropertyValues pv = new MutablePropertyValues();
 		definition.setPropertyValues(pv);
 		DefinitionParserUtils.addProperties(pv, element, PAGE_ATTRIBUTES);
-		List children = DigesterUtils.getChildElementsByRegex(element, PAGE);
+		List children = XmlUtils.getChildElementsByRegex(element, PAGE);
 		if (children != null && !children.isEmpty()) {
 			ManagedList childPages = new ManagedList();
 			pv.addPropertyValue(CHILD_PAGES_PROPERTY, childPages);

@@ -12,8 +12,8 @@ import org.riotfamily.common.thumbnail.Thumbnailer;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.common.web.file.FileStore;
-import org.riotfamily.common.xml.DigesterUtils;
 import org.riotfamily.common.xml.DocumentDigester;
+import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.element.ContainerElement;
 import org.riotfamily.forms.element.SelectElement;
@@ -34,6 +34,8 @@ import org.riotfamily.forms.element.core.SelectBox;
 import org.riotfamily.forms.element.core.TextField;
 import org.riotfamily.forms.element.core.Textarea;
 import org.riotfamily.forms.element.core.TinyMCE;
+import org.riotfamily.forms.element.dom.XmlElement;
+import org.riotfamily.forms.element.dom.XmlSequence;
 import org.riotfamily.forms.element.support.EditableIfNew;
 import org.riotfamily.forms.element.support.select.OptionsModel;
 import org.riotfamily.forms.element.support.select.StaticOptionsModel;
@@ -149,6 +151,8 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		elementClasses.put("file-upload", FileUpload.class);
 		elementClasses.put("image-upload", ImageUpload.class);
 		elementClasses.put("editable-if-new", EditableIfNew.class);
+		elementClasses.put("xml-element", XmlElement.class);
+		elementClasses.put("xml-sequence", XmlSequence.class);
 	}
 	
 	public void digest(Document doc, Resource resource) {
@@ -157,7 +161,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		currentPackage = null;
 		
 		Element root = doc.getDocumentElement();
-		Iterator it = DigesterUtils.getChildElements(root).iterator();
+		Iterator it = XmlUtils.getChildElements(root).iterator();
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();
 			String namespace = ele.getNamespaceURI();
@@ -181,12 +185,12 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		formFactory = new DefaultFormFactory();
 		formId = formElement.getAttribute(FORM_ID);
 		
-		String beanClassName = DigesterUtils.getAttribute(
+		String beanClassName = XmlUtils.getAttribute(
 				formElement, FORM_BEAN_CLASS);
 				
 		formFactory.setBeanClass(getBeanClass(beanClassName));
 		
-		String initializerName = DigesterUtils.getAttribute(
+		String initializerName = XmlUtils.getAttribute(
 				formElement, FORM_INITIALIZER);
 		
 		if (initializerName != null) {
@@ -194,7 +198,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 					initializerName, FormInitializer.class));
 		}
 		else {
-			String initializerClass = DigesterUtils.getAttribute(
+			String initializerClass = XmlUtils.getAttribute(
 				formElement, FORM_INITIALIZER_CLASS);
 			
 			if (initializerClass != null) {
@@ -203,7 +207,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			}	
 		}
 		
-		Iterator it = DigesterUtils.getChildElements(formElement).iterator();
+		Iterator it = XmlUtils.getChildElements(formElement).iterator();
 		while (it.hasNext()) {
 			parseElementDefinition((Element) it.next(), formFactory);
 		}
@@ -211,7 +215,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	}
 	
 	protected void parsePackageDefinition(Element ele) {
-		currentPackage = DigesterUtils.getAttribute(ele, PACKAGE_NAME);
+		currentPackage = XmlUtils.getAttribute(ele, PACKAGE_NAME);
 		Iterator it = DomUtils.getChildElementsByTagName(
 				ele, FORM).iterator();
 		
@@ -239,11 +243,11 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 				new ConfigurableElementFactory(elementClass);
 		
 		factory.setBeanFactory(beanFactory);
-		String beanClassName = DigesterUtils.getAttribute(ele, ELEMENT_BEAN_CLASS);
+		String beanClassName = XmlUtils.getAttribute(ele, ELEMENT_BEAN_CLASS);
 		if (beanClassName != null) {
 			factory.setBeanClass(getBeanClass(beanClassName));
 		}
-		factory.setBind(DigesterUtils.getAttribute(ele, ELEMENT_BIND));
+		factory.setBind(XmlUtils.getAttribute(ele, ELEMENT_BIND));
 
 		MutablePropertyValues pvs = getPropertyValues(ele);
 		
@@ -257,7 +261,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		}
 		
 		if (FileUpload.class.isAssignableFrom(elementClass)) {
-			String ref = DigesterUtils.getAttribute(ele, FILE_STORE);
+			String ref = XmlUtils.getAttribute(ele, FILE_STORE);
 			if (ref != null) {
 				FileStore fileStore = (FileStore) beanFactory.getBean(
 						ref, FileStore.class);
@@ -265,7 +269,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 				pvs.addPropertyValue("fileStore", fileStore);
 			}
 			
-			ref = DigesterUtils.getAttribute(ele, FILE_THUMBNAILER);
+			ref = XmlUtils.getAttribute(ele, FILE_THUMBNAILER);
 			if (ref != null) {
 				Thumbnailer thumbnailer = (Thumbnailer) beanFactory.getBean(
 						ref, Thumbnailer.class);
@@ -283,7 +287,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		if (ListEditor.class.isAssignableFrom(elementClass)
 				|| MapEditor.class.isAssignableFrom(elementClass)) {
 			
-			Element itemElement = DigesterUtils.getFirstChildElement(ele);
+			Element itemElement = XmlUtils.getFirstChildElement(ele);
 			ElementFactory itemFactory = createFactory(itemElement);
 			pvs.addPropertyValue("itemElementFactory", itemFactory);
 		}
@@ -291,7 +295,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		factory.setPropertyValues(pvs);
 		
 		if (ContainerElement.class.isAssignableFrom(elementClass)) {
-			Iterator it = DigesterUtils.getChildElements(ele).iterator();
+			Iterator it = XmlUtils.getChildElements(ele).iterator();
 			while (it.hasNext()) {
 				parseElementDefinition((Element) it.next(), factory);
 			}
@@ -302,7 +306,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	
 	protected Class getElementClass(Element ele) {
 		if (DomUtils.nodeNameEquals(ele, CUSTOM_ELEMENT)) {
-			String type = DigesterUtils.getAttribute(ele, CUSTOM_ELEMENT_TYPE);
+			String type = XmlUtils.getAttribute(ele, CUSTOM_ELEMENT_TYPE);
 			if (type == null) {
 				throw new FormRepositoryException(resource, formId, 
 						"Attribute '" + CUSTOM_ELEMENT_TYPE 
@@ -315,7 +319,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			}
 			return clazz;
 		}
-		return getElementClass(DigesterUtils.getLocalName(ele));
+		return getElementClass(XmlUtils.getLocalName(ele));
 	}
 	
 	protected Class getElementClass(String type) {
@@ -364,16 +368,16 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();
-			String name = DigesterUtils.getAttribute(ele, PROPERTY_NAME);
+			String name = XmlUtils.getAttribute(ele, PROPERTY_NAME);
 			
 			Object value = null;
 			
-			String beanName = DigesterUtils.getAttribute(ele, PROPERTY_BEAN_REF);
+			String beanName = XmlUtils.getAttribute(ele, PROPERTY_BEAN_REF);
 			if (beanName != null) {
 				value = beanFactory.getBean(beanName);
 			}
 			else {
-				value = DigesterUtils.getAttribute(ele, PROPERTY_VALUE);
+				value = XmlUtils.getAttribute(ele, PROPERTY_VALUE);
 			}
 			
 			pvs.addPropertyValue(name, value);
@@ -386,7 +390,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		Element ele = DomUtils.getChildElementByTagName(element, MODEL);
 		OptionsModel model = null;
 		if (ele != null) {
-			String className = DigesterUtils.getAttribute(ele, MODEL_CLASS);
+			String className = XmlUtils.getAttribute(ele, MODEL_CLASS);
 			if (className != null) {
 				try {
 					Class modelClass = ClassUtils.forName(className);
@@ -398,7 +402,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 				}
 			}
 			else {
-				String beanName = DigesterUtils.getAttribute(
+				String beanName = XmlUtils.getAttribute(
 						ele, MODEL_BEAN_REF);
 				
 				if (beanName != null) {
@@ -420,7 +424,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 				List setPropElements = DomUtils.getChildElementsByTagName(
 						ele, PROPERTY);
 				
-				DigesterUtils.populate(model, setPropElements, beanFactory);
+				XmlUtils.populate(model, setPropElements, beanFactory);
 			}
 		}
 		return model;

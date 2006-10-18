@@ -2,7 +2,7 @@ package org.riotfamily.riot.editor.xml;
 
 import java.util.Iterator;
 
-import org.riotfamily.common.xml.DigesterUtils;
+import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.common.xml.DocumentDigester;
 import org.riotfamily.riot.editor.AbstractEditorDefinition;
 import org.riotfamily.riot.editor.CustomEditorDefinition;
@@ -110,7 +110,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	}
 
 	protected void digestGroupEntries(Element groupElement, GroupDefinition group) {
-		Iterator it = DigesterUtils.getChildElements(groupElement).iterator();
+		Iterator it = XmlUtils.getChildElements(groupElement).iterator();
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();
 			String namespace = ele.getNamespaceURI();
@@ -148,7 +148,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	 */
 	protected GroupDefinition digestGroupDefinition(Element groupElement) {
 		GroupDefinition group = new GroupDefinition(editorRepository);
-		DigesterUtils.populate(group, groupElement, GROUP_ATTR);
+		XmlUtils.populate(group, groupElement, GROUP_ATTR);
 		addEditorDefinition(group);
 		digestGroupEntries(groupElement, group);
 		return group;
@@ -158,7 +158,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 		ListDefinition listDefinition;
 		if (isTreeElement(listElement)) {
 			listDefinition = new TreeDefinition(editorRepository);
-			DigesterUtils.populate(listDefinition, listElement, TREE_ATTR);
+			XmlUtils.populate(listDefinition, listElement, TREE_ATTR);
 		}
 		else {
 			listDefinition = new ListDefinition(editorRepository);
@@ -173,11 +173,11 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	protected void initListDefinition(ListDefinition listDefinition, 
 			Element listElement) {
 		
-		DigesterUtils.populate(listDefinition, listElement, LIST_ATTR);
+		XmlUtils.populate(listDefinition, listElement, LIST_ATTR);
 		addEditorDefinition(listDefinition);
 		
 		DisplayDefinition def = null;
-		Element e = DigesterUtils.getFirstChildByRegex(listElement, ANYTHING);
+		Element e = XmlUtils.getFirstChildByRegex(listElement, ANYTHING);
 		if (isFormElement(e) || isFormChooserElement(e) || isViewElement(e)) {
 			def = digestObjectEditorDefinition(e, listDefinition);
 		}
@@ -213,11 +213,11 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 			EditorDefinition parentDef) {
 		
 		FormDefinition formDefinition = new FormDefinition(editorRepository);
-		DigesterUtils.populate(formDefinition, formElement, FORM_ATTR, beanFactory);
+		XmlUtils.populate(formDefinition, formElement, FORM_ATTR, beanFactory);
 		formDefinition.setParentEditorDefinition(parentDef);
 		addEditorDefinition(formDefinition);
 		
-		Iterator it = DigesterUtils.getChildElementsByRegex(
+		Iterator it = XmlUtils.getChildElementsByRegex(
 				formElement, LIST_EDITOR).iterator();
 		
 		while (it.hasNext()) {
@@ -225,7 +225,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 					digestListOrTreeDefinition((Element) it.next()));
 		}
 		
-		it = DigesterUtils.getChildElementsByRegex(
+		it = XmlUtils.getChildElementsByRegex(
 				formElement, OBJECT_EDITOR).iterator();
 		
 		while (it.hasNext()) {
@@ -242,7 +242,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 			EditorDefinition parentDef) {
 		
 		ViewDefinition viewDefinition = new ViewDefinition(editorRepository);
-		DigesterUtils.populate(viewDefinition, formElement, VIEW_ATTR);
+		XmlUtils.populate(viewDefinition, formElement, VIEW_ATTR);
 		viewDefinition.setParentEditorDefinition(parentDef);
 		addEditorDefinition(viewDefinition);
 		return viewDefinition;
@@ -268,7 +268,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 		FormChooserDefinition formChooserDefinition = 
 				new FormChooserDefinition(editorRepository);
 		
-		DigesterUtils.populate(formChooserDefinition, chooserElement, 
+		XmlUtils.populate(formChooserDefinition, chooserElement, 
 				FORM_ATTR, beanFactory);
 		
 		formChooserDefinition.setParentEditorDefinition(parentDef);
@@ -292,7 +292,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	
 	protected EditorDefinition digestCustomDefinition(Element ele) {
 		CustomEditorDefinition custom = new CustomEditorDefinition(editorRepository);
-		DigesterUtils.populate(custom, ele, CUSTOM_ATTR);
+		XmlUtils.populate(custom, ele, CUSTOM_ATTR);
 		addEditorDefinition(custom);
 		return custom;
 	}

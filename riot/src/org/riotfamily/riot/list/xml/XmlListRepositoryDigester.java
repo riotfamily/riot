@@ -4,7 +4,7 @@ package org.riotfamily.riot.list.xml;
 import java.util.Iterator;
 import java.util.List;
 
-import org.riotfamily.common.xml.DigesterUtils;
+import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.common.xml.DocumentDigester;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.list.ColumnConfig;
@@ -81,7 +81,7 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	protected ListConfig digestListConfig(Element listElement) {
 		ListConfig listConfig = new ListConfig();
 		
-		DigesterUtils.populate(listConfig, listElement, LIST_ATTRS);
+		XmlUtils.populate(listConfig, listElement, LIST_ATTRS);
 		
 		digestDao(listConfig, listElement);
 		digestColumns(listConfig, listElement);
@@ -101,13 +101,13 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 		RiotDao dao = null;
 		boolean singleton = false;
 		
-		String ref = DigesterUtils.getAttribute(ele, DAO_REF);
+		String ref = XmlUtils.getAttribute(ele, DAO_REF);
 		if (ref != null) {
 			dao = (RiotDao) beanFactory.getBean(ref, RiotDao.class);
 			singleton = beanFactory.isSingleton(ref);
 		}
 		else {
-			String className = DigesterUtils.getAttribute(ele, DAO_CLASS);
+			String className = XmlUtils.getAttribute(ele, DAO_CLASS);
 			if (className != null) {
 				dao = instanciateDao(className);
 			}
@@ -117,7 +117,7 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 			throw new RuntimeException(PROPERTY 
 					+ " must not be applied to singleton beans.");
 		}
-		DigesterUtils.populate(dao, nodes, beanFactory);
+		XmlUtils.populate(dao, nodes, beanFactory);
 		
 		listConfig.setDao(dao);
 	}
@@ -143,7 +143,7 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 			Element listElement) {
 		
 		Element ele = DomUtils.getChildElementByTagName(listElement, COLUMNS);
-		List nodes = DigesterUtils.getChildElementsByRegex(ele, COLUMN);
+		List nodes = XmlUtils.getChildElementsByRegex(ele, COLUMN);
 		Iterator it = nodes.iterator();
 		while (it.hasNext()) {
 			listConfig.addColumnConfig(digestColumn((Element) it.next()));
@@ -156,12 +156,12 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	protected ColumnConfig digestColumn(Element ele) {
 		ColumnConfig columnConfig = new ColumnConfig();
 		if (DomUtils.nodeNameEquals(ele, COMMAND)) {
-			String commandId = DigesterUtils.getAttribute(ele, "id");
+			String commandId = XmlUtils.getAttribute(ele, "id");
 			columnConfig.setCommand(listRepository.getCommand(commandId));
 			columnConfig.setRenderer(listRepository.getItemCommandRenderer());
 		}
 		else {
-			DigesterUtils.populate(columnConfig, ele, COLUMN_ATTRS, beanFactory);	
+			XmlUtils.populate(columnConfig, ele, COLUMN_ATTRS, beanFactory);	
 			if (columnConfig.getRenderer() == null) {
 				columnConfig.setRenderer(listRepository.getDefaultCellRenderer());
 			}
@@ -178,7 +178,7 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 		Iterator it = nodes.iterator();
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();
-			String commandId = DigesterUtils.getAttribute(ele, ID);
+			String commandId = XmlUtils.getAttribute(ele, ID);
 			listConfig.addCommand(listRepository.getCommand(commandId));
 		}
 	}
