@@ -15,6 +15,10 @@ public class TemplateUtils {
 		return getTemplatePath(object, null);
 	}
 	
+	public static String getTemplatePath(Class clazz) {
+		return getTemplatePath(clazz, null);
+	}
+	
 	public static String getTemplatePath(Object object, String suffix) {
 		return getTemplatePath(object.getClass(), suffix);
 	}
