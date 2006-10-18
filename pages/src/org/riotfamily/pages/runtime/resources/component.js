@@ -433,7 +433,9 @@ riot.ComponentList.prototype = {
 				Sortable.create(this.element, {tag: 'div', only: 'riot-component', scroll: window, scrollSpeed: 20});
 				this.getComponents().each(function(component) {
 					Element.addClassName(component.element, 'riot-moveable-component');
-					component.element.onclick = Event.stop;
+					component.element.onclick = function(event) {
+						Event.stop(event || window.event);
+					}
 				});
 				Draggables.addObserver(new riot.ComponentDragObserver(this));
 			}
