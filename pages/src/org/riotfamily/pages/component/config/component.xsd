@@ -59,6 +59,11 @@
 						<xsd:attribute name="class" type="xsd:string" use="required" />
 					</xsd:complexType>
 				</xsd:element>
+				<xsd:element name="xml">
+					<xsd:complexType>
+						<xsd:attribute name="property" type="xsd:string" />
+					</xsd:complexType>
+				</xsd:element>
 			</xsd:choice>
 		</xsd:sequence>
 		<xsd:attribute name="id" type="xsd:ID" />

@@ -12,5 +12,6 @@
         <dependency org="springframework" name="spring" rev="latest.milestone" />
         <dependency org="sun" name="javamail" rev="latest.release" conf="runtime->default" />
         <dependency org="sun" name="jaf" rev="latest.release" />
+        <dependency org="apache" name="xalan" rev="latest.release" conf="runtime->default" />
     </dependencies>
 </ivy-module>

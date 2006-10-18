@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.riotfamily.common.beans.xml.DefinitionParserUtils;
-import org.riotfamily.common.xml.DigesterUtils;
+import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.pages.component.impl.IncludeComponent;
 import org.riotfamily.pages.component.impl.InheritingComponent;
 import org.riotfamily.pages.component.impl.StaticComponent;
@@ -13,6 +13,7 @@ import org.riotfamily.pages.component.impl.ViewComponent;
 import org.riotfamily.pages.component.property.DefaultValuePropertyProcessor;
 import org.riotfamily.pages.component.property.HibernatePropertyProcessor;
 import org.riotfamily.pages.component.property.PropertyEditorProcessor;
+import org.riotfamily.pages.component.property.XmlPropertyProcessor;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -93,7 +94,7 @@ public class ComponentNamespaceHandler implements NamespaceHandler {
 	protected void addPropertyProcessors(RootBeanDefinition definition, 
 			Element element, ParserContext parserContext) {
 		
-		List childElements = DigesterUtils.getChildElements(element);
+		List childElements = XmlUtils.getChildElements(element);
 		if (!childElements.isEmpty()) {
 			MutablePropertyValues pv = definition.getPropertyValues();
 			ManagedList processors = new ManagedList();
@@ -144,7 +145,15 @@ public class ComponentNamespaceHandler implements NamespaceHandler {
 			processor = DefinitionParserUtils.registerAnonymousBeanDefinition(
 					definition, parserContext);
 		}
-		
+		else if ("xml".equals(name)) {
+			RootBeanDefinition definition = parseBean(element, 
+					XmlPropertyProcessor.class, 
+					new String[] { "property" }, 
+					null, parserContext);
+			
+			processor = DefinitionParserUtils.registerAnonymousBeanDefinition(
+					definition, parserContext);
+		}
 		propertyProcessors.add(processor);
 	}
 	
@@ -153,8 +162,8 @@ public class ComponentNamespaceHandler implements NamespaceHandler {
 		Iterator it = propElements.iterator();
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();
-			String name = DigesterUtils.getAttribute(ele, "name");
-			String value = DigesterUtils.getAttribute(ele, "value");
+			String name = XmlUtils.getAttribute(ele, "name");
+			String value = XmlUtils.getAttribute(ele, "value");
 			props.setProperty(name, value);
 		}
 	}
