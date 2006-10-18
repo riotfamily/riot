@@ -10,6 +10,6 @@ public interface BeanEditor {
 	
 	public void bind(Editor editor, String property);
 	
-	public EditorBinder getEditorBinder();
+	public Editor getEditor(String property);
 	
 }

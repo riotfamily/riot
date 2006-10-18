@@ -20,6 +20,7 @@ import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.bind.BeanEditor;
 import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.bind.EditorBinder;
+import org.riotfamily.forms.bind.MapOrBeanWrapper;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.Container;
 import org.riotfamily.forms.error.FormErrors;
@@ -116,7 +117,7 @@ public class Form implements BeanEditor {
 	}
 	
 	public void setBeanClass(Class beanClass) {
-		editorBinder = new EditorBinder(beanClass);
+		editorBinder = new EditorBinder(new MapOrBeanWrapper(beanClass));
 	}
 	
 	public void setValue(Object backingObject) {
@@ -133,11 +134,12 @@ public class Form implements BeanEditor {
 		return !editorBinder.isEditingExistingBean();
 	}
 
-	/**
-	 * @see BeanEditor#getEditorBinder()
-	 */
 	public EditorBinder getEditorBinder() {
 		return editorBinder;
+	}
+	
+	public Editor getEditor(String property) {
+		return editorBinder.getEditor(property);
 	}
 	
 	public void bind(Editor editor, String property) {
@@ -153,7 +155,7 @@ public class Form implements BeanEditor {
 	 */
 	public void addElement(Editor element, String property) {
 		addElement(element);
-		editorBinder.bind(element, property);
+		bind(element, property);
 	}
 
 	public Container createContainer(String name) {

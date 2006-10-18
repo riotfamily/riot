@@ -15,7 +15,7 @@ public class PageFormInitializer implements FormInitializer {
 	public void initForm(Form form) {
 		Page page = (Page) form.getBackingObject();
 		if (page != null && page.isSystemPage()) {
-			Editor e = form.getEditorBinder().getEditor("pathComponent");
+			Editor e = form.getEditor("pathComponent");
 			if (e != null) {
 				ContainerElement container = (ContainerElement) e.getParent();
 				container.removeElement(e);

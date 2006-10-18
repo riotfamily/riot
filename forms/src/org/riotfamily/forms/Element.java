@@ -36,7 +36,8 @@ public interface Element {
 	public Form getForm();
 	
 	/**
-	 * 
+	 * Sets the FormContext. Invoked by {@link Form#registerElement(Element)}
+	 * or {@link Form#setFormContext(FormContext)}.
 	 */
 	public void setFormContext(FormContext formContext);
 	

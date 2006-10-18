@@ -6,16 +6,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.beans.MapAccessor;
-import org.riotfamily.common.beans.ProtectedPropertyAccessor;
+import org.riotfamily.common.beans.ObjectWrapper;
 import org.riotfamily.common.beans.propertyeditors.SqlDateEditor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.InvalidPropertyException;
-import org.springframework.beans.PropertyAccessor;
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.PropertyEditorRegistrySupport;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -33,61 +29,50 @@ public class EditorBinder extends PropertyEditorRegistrySupport {
 	/** List of {@link EditorBinding editor bindings} */
 	private List bindings = new LinkedList();
 
-	private Class beanClass;
-	
-	private Object backingObject;
-	
-	private PropertyAccessor propertyAccessor;
+	private ObjectWrapper objectWrapper;
 	
 	private boolean editingExistingBean;
 
 	private EditorBinding parent;
-	
-	/**
-	 * Creates a new EditorBinder for the given class.
-	 */
-	public EditorBinder(Class beanClass) {
+		
+	public EditorBinder(ObjectWrapper objectWrapper) {
 		registerDefaultEditors();
 		registerCustomEditor(java.sql.Date.class,new SqlDateEditor());
 		registerCustomEditor(Date.class, new CustomDateEditor(
 				new SimpleDateFormat("yyyy-MM-dd"), false));
 		
-		this.beanClass = beanClass;
-		setBackingObject(null);
+		this.objectWrapper = objectWrapper;
 	}
 	
 	public Class getBeanClass() {
-		return beanClass;
+		return objectWrapper.getWrappedClass();
 	}
 
 	public Object getBackingObject() {
-		return backingObject;
+		return objectWrapper.getWrappedInstance();
 	}
 	
 	public void setBackingObject(Object backingObject) {
+		editingExistingBean = backingObject != null;
 		if (backingObject != null) {
-			this.backingObject = backingObject;
-			editingExistingBean = true;
+			objectWrapper.setWrappedInstance(backingObject);
 		}
-		else {
-			this.backingObject = BeanUtils.instantiateClass(beanClass);
-			editingExistingBean = false;
-		}
-		propertyAccessor = createPropertyAccessor();
+	}
 		
-	}
-	
-	protected PropertyAccessor createPropertyAccessor() {
-		if (Map.class.isAssignableFrom(beanClass)) {
-			return new MapAccessor((Map) backingObject); 	
-		}
-		else {
-			return new ProtectedPropertyAccessor(backingObject);
-		}
-	}
-	
 	public boolean isEditingExistingBean() {
 		return editingExistingBean;
+	}
+	
+	public Object getPropertyValue(String property) {
+		return objectWrapper.getPropertyValue(property);
+	}
+	
+	public void setPropertyValue(String property, Object value) {
+		objectWrapper.setPropertyValue(property, value);
+	}
+	
+	public Class getPropertyType(String property) {		
+		return objectWrapper.getPropertyType(property);		
 	}
 
 	/**
@@ -115,7 +100,7 @@ public class EditorBinder extends PropertyEditorRegistrySupport {
 				Editor editor = findEditorByProperty(property);
 				if (editor instanceof BeanEditor) {
 					BeanEditor be = (BeanEditor) editor;
-					return be.getEditorBinder().findEditorByProperty(nested);
+					return be.getEditor(nested);
 				}
 				else {
 					throw new InvalidPropertyException(getBeanClass(),
@@ -138,21 +123,6 @@ public class EditorBinder extends PropertyEditorRegistrySupport {
 		}
 		throw new InvalidPropertyException(getBeanClass(), property,
 				"No editor bound to property");
-	}
-	
-	public Object getPropertyValue(String property) {
-		if (getBackingObject() != null) {
-			return propertyAccessor.getPropertyValue(property);
-		}
-		return null;
-	}
-	
-	public void setPropertyValue(String property, Object value) {
-		propertyAccessor.setPropertyValue(property, value);
-	}
-	
-	public Class getPropertyType(String property) {		
-		return propertyAccessor.getPropertyType(property);		
 	}
 	
 	public void registerPropertyEditors(PropertyEditorRegistrar[] registrars) {
