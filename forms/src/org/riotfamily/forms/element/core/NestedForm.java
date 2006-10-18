@@ -7,19 +7,20 @@ import org.riotfamily.forms.ajax.JavaScriptEvent;
 import org.riotfamily.forms.bind.BeanEditor;
 import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.bind.EditorBinder;
+import org.riotfamily.forms.bind.MapOrBeanWrapper;
 import org.riotfamily.forms.element.ContainerElement;
+import org.riotfamily.forms.element.support.AbstractEditorBase;
 import org.riotfamily.forms.element.support.Container;
 import org.riotfamily.forms.element.support.TemplateElement;
 import org.riotfamily.forms.i18n.MessageUtils;
 import org.riotfamily.forms.template.TemplateUtils;
-import org.springframework.util.Assert;
 
 /**
  * Element to edit nested beans.
  */
-public class NestedForm extends TemplateElement implements ContainerElement,
-		Editor, BeanEditor {
-	
+public class NestedForm extends TemplateElement implements 
+		ContainerElement, Editor, BeanEditor {
+		
 	private EditorBinder editorBinder;
 
 	private Container elements = new Container();
@@ -38,37 +39,39 @@ public class NestedForm extends TemplateElement implements ContainerElement,
 		addComponent("toggleButton", new ToggleButton());
 	}
 	
-	public NestedForm(Class beanClass) {
-		this();
-		setBeanClass(beanClass);
-	}
-
 	public void setIndent(boolean indent) {
 		this.indent = indent;
-		if (!indent) {
-			setTemplate(TemplateUtils.getTemplatePath(this, "_noindent"));
-		}
+		setTemplate(TemplateUtils.getTemplatePath(NestedForm.class, 
+				indent ? null : "_noindent"));
 	}	
 
+	protected void setEditorBinder(EditorBinder editorBinder) {
+		this.editorBinder = editorBinder;
+	}
+	
 	public void setBeanClass(Class beanClass) {
-		editorBinder = new EditorBinder(beanClass);
+		EditorBinder editorBinder = new EditorBinder(new MapOrBeanWrapper(beanClass));
+		setEditorBinder(editorBinder);
+	}
+	
+	/**
+	 * Invoked by {@link AbstractEditorBase#setEditorBinding} when the nested 
+	 * form is bound to a property.
+	 */
+	protected void afterBindingSet() {
+		if (editorBinder == null) {
+			setBeanClass(getEditorBinding().getPropertyType());
+		}
 		editorBinder.setParent(getEditorBinding());
-	}			
+	}
+	
+	public Editor getEditor(String property) {
+		return editorBinder.getEditor(property);
+	}
 	
 	protected void afterFormContextSet() {		
 		editorBinder.registerPropertyEditors(
 				getFormContext().getPropertyEditorRegistrars());
-	}
-	
-	protected void afterBindingSet() {
-		if (editorBinder == null) {			
-			if (getEditorBinding().getPropertyType() != null) {
-				setBeanClass(getEditorBinding().getPropertyType());
-			}
-			else {
-				throw new IllegalStateException("Could not determinate PropertyType for NestedForm");
-			}
-		}
 	}
 	
 	public String getLabel() {
@@ -99,9 +102,6 @@ public class NestedForm extends TemplateElement implements ContainerElement,
 	 * @see org.riotfamily.forms.bind.Editor#setValue(java.lang.Object)
 	 */
 	public void setValue(Object value) {
-		if (editorBinder == null) {			
-			throw new IllegalStateException("NestedForm is not bound");			
-		}
 		this.present = isRequired() || value != null;		
 		editorBinder.setBackingObject(value);
 		editorBinder.initEditors();
@@ -114,9 +114,6 @@ public class NestedForm extends TemplateElement implements ContainerElement,
 	 * @see org.riotfamily.forms.bind.Editor#getValue()
 	 */
 	public Object getValue() {
-		if (editorBinder == null) {
-			throw new IllegalStateException("NestedForm is not bound");
-		}		
 		// TODO: Revisit, present is false if used as DynamicList Element
 		if (present || isRequired()) {			
 			return editorBinder.populateBackingObject();
@@ -124,15 +121,7 @@ public class NestedForm extends TemplateElement implements ContainerElement,
 		return null;
 	}
 
-	/**
-	 * @see BeanEditor#getEditorBinder()
-	 */
-	public EditorBinder getEditorBinder() {
-		return editorBinder;
-	}
-	
 	public void bind(Editor editor, String property) {
-		Assert.notNull(editorBinder, "A beanClass must be set.");
 		editorBinder.bind(editor, property);
 	}
 

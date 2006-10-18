@@ -26,6 +26,8 @@
 			<xsd:element ref="image-upload" />
 			<xsd:element ref="import" />
 			<xsd:element ref="editable-if-new" />
+			<xsd:element ref="xml-element" />
+			<xsd:element ref="xml-sequence" />
 		</xsd:choice>	
 	</xsd:group>
 	
@@ -73,7 +75,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+		
 	<xsd:complexType name="textfield">
 		<xsd:complexContent>
 			<xsd:extension base="simple-editor">
@@ -293,6 +295,33 @@
 		</xsd:complexType>
 	</xsd:element>
 	
+		<xsd:element name="xml-element">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="simple-editor">
+					<xsd:group ref="elements" maxOccurs="unbounded" />
+					<xsd:attribute name="name" type="xsd:string" />
+					<xsd:attribute name="indent" type="xsd:boolean" default="true" />
+					<xsd:attribute name="template" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="xml-sequence">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="template-editor">
+					<xsd:sequence>
+						<xsd:element ref="xml-element" />
+					</xsd:sequence>
+					<xsd:attribute name="name" type="xsd:string" />
+					<xsd:attribute name="sortable" type="xsd:boolean" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
 	<xsd:element name="import">
 		<xsd:complexType>
 			<xsd:attribute name="form" type="xsd:string" use="required" />
@@ -304,7 +333,7 @@
 			<xsd:group ref="elements" />
 		</xsd:complexType>
 	</xsd:element>
-	
+		
 	<xsd:element name="form-config">
 		<xsd:complexType>
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">

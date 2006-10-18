@@ -62,6 +62,7 @@ public class ListEditor extends TemplateElement implements Editor,
 			}
 		});
 		addComponent("addButton", addButton);
+		setTemplate(TemplateUtils.getTemplatePath(ListEditor.class));
 	}
 	
 	public void setSortable(boolean sortable) {
