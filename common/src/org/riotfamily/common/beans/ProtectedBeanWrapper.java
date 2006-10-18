@@ -9,17 +9,18 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.BeansException;
 import org.springframework.util.StringUtils;
 
-public class ProtectedPropertyAccessor extends BeanWrapperImpl {
+public class ProtectedBeanWrapper extends BeanWrapperImpl 
+		implements ObjectWrapper {
 
-	public ProtectedPropertyAccessor() {
+	public ProtectedBeanWrapper() {
 		super();
 	}
 
-	public ProtectedPropertyAccessor(Class clazz) {
+	public ProtectedBeanWrapper(Class clazz) {
 		super(clazz);
 	}
 
-	public ProtectedPropertyAccessor(Object object) {
+	public ProtectedBeanWrapper(Object object) {
 		super(object);
 	}
 

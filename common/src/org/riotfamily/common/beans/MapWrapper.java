@@ -5,14 +5,14 @@ import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.PropertyAccessor;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
+import org.springframework.util.Assert;
 
 /**
  * PropertyAccessor implemenation that works on maps.
  */
-public class MapAccessor implements PropertyAccessor {
+public class MapWrapper implements ObjectWrapper {
 
 	private Map map;
 	
@@ -20,8 +20,12 @@ public class MapAccessor implements PropertyAccessor {
 	
 	private Class mapClass = HashMap.class;
 	
-	public MapAccessor(Map map) {
+	public MapWrapper(Map map) {
 		this.map = map;
+	}
+	
+	public MapWrapper(Class mapClass) {
+		this.mapClass = mapClass;
 	}
 	
 	public void setMapClass(Class mapClass) {
@@ -51,6 +55,19 @@ public class MapAccessor implements PropertyAccessor {
 		return Object.class;
 	}
 
+	public void setWrappedInstance(Object object) {
+		Assert.isInstanceOf(Map.class, object);
+		map = (Map) object;
+	}
+	
+	public Object getWrappedInstance() {
+		return getMap();
+	}
+	
+	public Class getWrappedClass() {
+		return mapClass;
+	}
+	
 	protected Map getMap() {
 		if (map == null) {
 			map = (Map) BeanUtils.instantiateClass(mapClass);
@@ -71,7 +88,7 @@ public class MapAccessor implements PropertyAccessor {
 	}
 
 	public void setPropertyValues(Map map) {
-		map.putAll(map);
+		getMap().putAll(map);
 	}
 	
 	public void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown, 

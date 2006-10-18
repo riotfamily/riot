@@ -5,7 +5,7 @@ import java.beans.PropertyEditor;
 import java.lang.reflect.Method;
 
 import org.riotfamily.common.beans.DefaultPropertyEditorRegistry;
-import org.riotfamily.common.beans.ProtectedPropertyAccessor;
+import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.PropertyAccessor;
 import org.springframework.util.Assert;
@@ -25,7 +25,7 @@ public final class PropertyUtils {
 		if (bean == null) {
 			return null;
 		}
-		PropertyAccessor accessor = new ProtectedPropertyAccessor(bean);
+		PropertyAccessor accessor = new ProtectedBeanWrapper(bean);
 		return accessor.getPropertyValue(name);
 	}
 	
@@ -59,7 +59,7 @@ public final class PropertyUtils {
 	}
 	
 	public static void setProperty(Object bean, String name, Object value) {
-		PropertyAccessor accessor = new ProtectedPropertyAccessor(bean);
+		PropertyAccessor accessor = new ProtectedBeanWrapper(bean);
 		accessor.setPropertyValue(name, value);
 	}
 	
