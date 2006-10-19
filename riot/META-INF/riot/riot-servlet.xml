@@ -184,6 +184,8 @@
 	
 	<bean id="cutCommand" class="org.riotfamily.riot.list.command.core.CutCommand" />
 	
+	<bean id="copyCommand" class="org.riotfamily.riot.list.command.core.CopyCommand" />
+	
 	<bean id="pasteCommand" class="org.riotfamily.riot.list.command.core.PasteCommand" />
 	
 	<!-- Alternative cell renderer  -->

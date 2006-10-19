@@ -1,6 +1,6 @@
 package org.riotfamily.riot.list.command.core;
 
-import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
+import org.riotfamily.riot.dao.CopyAndPasteEnabledDao;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.SetRowStyleResult;
@@ -9,15 +9,15 @@ import org.riotfamily.riot.list.command.support.AbstractCommand;
 import org.riotfamily.riot.list.command.support.Clipboard;
 import org.riotfamily.riot.list.ui.render.RenderContext;
 
-public class CutCommand extends AbstractCommand {
+public class CopyCommand extends AbstractCommand {
 
-	private static final String CUT_ROW_STYLE = "cut";
+	private static final String COPY_ROW_STYLE = "copied";
 	
 	public boolean isEnabled(RenderContext context) {
-		if (context.getDao() instanceof CutAndPasteEnabledDao) {
+		if (context.getDao() instanceof CopyAndPasteEnabledDao) {
 			Clipboard cb = Clipboard.get(context);
-			if (cb.isCut(context)) {
-				context.addRowStyle(CUT_ROW_STYLE);
+			if (cb.isCopied(context)) {
+				context.addRowStyle(COPY_ROW_STYLE);
 			}
 			return true;	
 		}
@@ -27,12 +27,13 @@ public class CutCommand extends AbstractCommand {
 	public CommandResult execute(CommandContext context) {
 		Clipboard cb = Clipboard.get(context);
 		boolean empty = cb.isEmpty();
-		cb.cut(context);
+		cb.copy(context);
 		if (empty) {
-			return new SetRowStyleResult(context.getObjectId(), CUT_ROW_STYLE);
+			return new SetRowStyleResult(context.getObjectId(), COPY_ROW_STYLE);
 		}
 		else {
-			return new ShowListResult(context);	
+			return new ShowListResult(context);
 		}
 	}
+	
 }
