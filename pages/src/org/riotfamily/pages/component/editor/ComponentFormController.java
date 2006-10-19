@@ -59,11 +59,10 @@ public class ComponentFormController extends RepositoryFormController
 	
 	private ComponentRepository componentRepository;
 	
-	public ComponentFormController(ComponentDao componentDao, 
-			FormRepository formRepository, PlatformTransactionManager transactionManager) {
+	public ComponentFormController(FormRepository formRepository, 
+			PlatformTransactionManager transactionManager) {
 		
 		super(formRepository);
-		this.componentDao = componentDao;
 		this.transactionManager = transactionManager;
 		
 		ButtonFactory buttonFactory = new ButtonFactory(this);
@@ -77,7 +76,8 @@ public class ComponentFormController extends RepositoryFormController
 	}
 		
 	public void setWebsiteConfig(WebsiteConfig websiteConfig) {
-		componentRepository = websiteConfig.getRepository();
+		componentRepository = websiteConfig.getComponentRepository();
+		componentDao = websiteConfig.getComponentDao();
 		setupForms(componentRepository.getComponentMap());
 	}
 	

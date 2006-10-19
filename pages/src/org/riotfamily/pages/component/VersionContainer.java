@@ -13,7 +13,9 @@ public class VersionContainer {
 
 	private Long id;
 	
-	private ComponentList list;
+	private ComponentList liveList;
+	
+	private ComponentList previewList;
 	
 	private ComponentVersion liveVersion;
 	
@@ -24,10 +26,6 @@ public class VersionContainer {
 	public VersionContainer() {
 	}
 	
-	public VersionContainer(ComponentList list) {
-		this.list = list;
-	}
-
 	public Long getId() {
 		return this.id;
 	}
@@ -37,22 +35,15 @@ public class VersionContainer {
 	}
 
 	public ComponentList getList() {
-		return this.list;
+		return this.previewList != null ? previewList : liveList;
 	}
 	
-	public void setList(ComponentList list) {
-		this.list = list;
-	}
-
 	public ComponentVersion getLiveVersion() {
 		return this.liveVersion;
 	}
 
 	public void setLiveVersion(ComponentVersion liveVersion) {
 		this.liveVersion = liveVersion;
-		if (liveVersion != null) {
-			liveVersion.setContainer(this);
-		}
 	}
 
 	public ComponentVersion getPreviewVersion() {
@@ -61,9 +52,6 @@ public class VersionContainer {
 
 	public void setPreviewVersion(ComponentVersion previewVersion) {
 		this.previewVersion = previewVersion;
-		if (previewVersion != null) {
-			previewVersion.setContainer(this);
-		}
 	}
 
 	public Set getVersions() {
@@ -72,6 +60,19 @@ public class VersionContainer {
 
 	public void setVersions(Set versions) {
 		this.versions = versions;
+	}
+	
+	public VersionContainer copy(ComponentRepository repository) {
+		VersionContainer copy = new VersionContainer();
+		if (liveVersion != null) {
+			Component component = repository.getComponent(liveVersion);
+			copy.setLiveVersion(component.copy(liveVersion));
+		}
+		if (previewVersion != null) {
+			Component component = repository.getComponent(previewVersion);
+			copy.setPreviewVersion(component.copy(previewVersion));
+		}
+		return copy;
 	}
 
 }

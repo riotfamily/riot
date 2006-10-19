@@ -10,7 +10,6 @@
 	</bean>
 
 	<bean id="componentEditorTarget" class="org.riotfamily.pages.component.editor.ComponentEditorImpl">
-		<constructor-arg ref="componentDao" />
 		<property name="loginManager" ref="loginManager" />
 		<property name="editorConfigs">
 			<map>
@@ -47,7 +46,6 @@
 	<bean id="componentFormController" 
 		name="/pages/form/@{componentId}"
 		class="org.riotfamily.pages.component.editor.ComponentFormController">
-		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="componentFormRepository" />
 		<constructor-arg ref="transactionManager" />
 		<property name="formContextFactory" ref="formContextFactory" />
@@ -187,7 +185,6 @@
 	<bean id="riotPageDao" class="org.riotfamily.pages.page.support.RiotPageDao">
 		<constructor-arg ref="pageDao" />
 		<constructor-arg ref="pageEventMulticaster" />
-		<property name="componentDao" ref="componentDao" />
 	</bean>
 	
 	<!-- 

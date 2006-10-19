@@ -12,12 +12,12 @@
 		</id>
 		<property name="path" column="`path`" />
 		<property name="key" column="`key`"/>
-		<list name="liveList" inverse="false" lazy="false">
+		<list name="liveList" lazy="false" cascade="all">
 			<key column="live_list" />
 			<index column="live_pos" />
 			<one-to-many class="VersionContainer" />
 		</list>
-		<list name="previewList" inverse="false" lazy="false">
+		<list name="previewList" lazy="false" cascade="all">
 			<key column="preview_list" />
 			<index column="preview_pos" />
 			<one-to-many class="VersionContainer" />
@@ -29,7 +29,10 @@
 		<id name="id">
 			<generator class="native" />
 		</id>
-		<many-to-one name="list" />
+
+		<many-to-one name="liveList" column="live_list" insert="false" update="false" access="field" />
+		<many-to-one name="previewList" column="preview_list" insert="false" update="false" access="field" />
+
 		<many-to-one name="liveVersion" column="live_version" fetch="join" cascade="all" />
 		<many-to-one name="previewVersion" column="preview_version" fetch="join" cascade="all" />
 		<!-- 
@@ -50,7 +53,8 @@
 			<index column="`key`" type="string" />
 			<element type="text"></element>
 		</map>
-		<many-to-one name="container" />
+		<one-to-one name="liveContainer" property-ref="liveVersion" access="field" />
+		<one-to-one name="previewContainer" property-ref="previewVersion" access="field" />
 		<property name="dirty" />
 	</class>
 		

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.riotfamily.cachius.Cache;
 import org.riotfamily.pages.component.ComponentRepository;
+import org.riotfamily.pages.component.dao.ComponentDao;
 import org.riotfamily.pages.page.PageMap;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -44,7 +45,11 @@ public class WebsiteConfigSupport implements ApplicationContextAware,
 	}
 	
 	protected ComponentRepository getRepository() {
-		return websiteConfig.getRepository();
+		return websiteConfig.getComponentRepository();
+	}
+	
+	protected ComponentDao getDao() {
+		return websiteConfig.getComponentDao();
 	}
 	
 	protected Map getControllers() {

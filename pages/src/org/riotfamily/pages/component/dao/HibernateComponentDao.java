@@ -1,8 +1,11 @@
 package org.riotfamily.pages.component.dao;
 
+import java.util.List;
+
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.pages.component.ComponentList;
+import org.riotfamily.pages.component.ComponentRepository;
 
 /**
  * Default ComponentDAO implementation that uses Hibernate. All mappings
@@ -13,7 +16,10 @@ public class HibernateComponentDao extends AbstractComponentDao {
 
 	private SessionFactory sessionFactory;
 	
-	public void setSessionFactory(SessionFactory sessionFactory) {
+	public HibernateComponentDao(ComponentRepository componentRepository,
+			SessionFactory sessionFactory) {
+
+		super(componentRepository);
 		this.sessionFactory = sessionFactory;
 	}
 
@@ -28,6 +34,14 @@ public class HibernateComponentDao extends AbstractComponentDao {
 		query.setParameter("key", key);
 		query.setMaxResults(1);
 		return (ComponentList) query.uniqueResult();
+	}
+	
+	public List findComponentLists(final String path) {
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"from ComponentList list where list.path = :path");
+				
+		query.setParameter("path", path);
+		return query.list();
 	}
 
 	protected Object loadObject(Class clazz, Long id) {

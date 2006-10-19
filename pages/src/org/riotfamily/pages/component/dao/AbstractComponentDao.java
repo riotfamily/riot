@@ -1,10 +1,14 @@
 package org.riotfamily.pages.component.dao;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.ComponentList;
+import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
+import org.riotfamily.pages.component.VersionContainer;
 
 /**
  * Abstract base class for {@link ComponentDao} implementations that delegates
@@ -14,6 +18,12 @@ public abstract class AbstractComponentDao implements ComponentDao {
 
 	private Log log = LogFactory.getLog(AbstractComponentDao.class);
 	
+	private ComponentRepository componentRepository;
+	
+	public AbstractComponentDao(ComponentRepository componentRepository) {
+		this.componentRepository = componentRepository;
+	}
+
 	public ComponentList loadComponentList(Long id) {
 		log.debug("Loading ComponentList " + id);
 		return (ComponentList) loadObject(ComponentList.class, id);
@@ -65,6 +75,18 @@ public abstract class AbstractComponentDao implements ComponentDao {
 		deleteObject(version);
 	}
 
+	public void copyComponentLists(String oldPath, String newPath) {
+		List lists = findComponentLists(oldPath);
+		if (lists != null) {
+			Iterator it = lists.iterator();
+			while (it.hasNext()) {
+				ComponentList list = (ComponentList) it.next();
+				ComponentList copy = list.copy(newPath, componentRepository);
+				saveComponentList(copy);		
+			}
+		}
+	}
+	
 	protected abstract Object loadObject(Class clazz, Long id);
 	
 	protected abstract void saveObject(Object object);

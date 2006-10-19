@@ -30,6 +30,7 @@
 			<list:command id="moveDown" />
 			<list:command id="edit" />
 			<list:command id="cut" />
+			<list:command id="copy" />
 			<list:command id="delete" />
 			<list:command id="publishPage" />
 			<list:command id="stepInto" />

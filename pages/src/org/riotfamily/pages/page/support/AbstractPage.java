@@ -171,5 +171,5 @@ public abstract class AbstractPage implements Page {
 	public void setSystemPage(boolean systemPage) {
 		this.systemPage = systemPage;
 	}
-
+	
 }

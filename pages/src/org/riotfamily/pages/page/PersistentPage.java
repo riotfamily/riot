@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.pages.page.support.AbstractPage;
 import org.riotfamily.pages.page.support.PageComparator;
 
-public class PersistentPage extends AbstractPage {
+public class PersistentPage extends AbstractPage implements Cloneable {
 	
 	private static Log log = LogFactory.getLog(PersistentPage.class);
 	
@@ -146,5 +146,18 @@ public class PersistentPage extends AbstractPage {
 			return this.getPath().equals(that.getPath());
 		}
 		return false;
+	}
+	
+	public PersistentPage copy() {
+		try {
+			PersistentPage copy = (PersistentPage) clone();
+			copy.id = null;
+			copy.childPages = null;
+			copy.persistentChildPages = null;
+			return copy;
+		}
+		catch (CloneNotSupportedException e) {
+			throw new RuntimeException();
+		}
 	}
 }

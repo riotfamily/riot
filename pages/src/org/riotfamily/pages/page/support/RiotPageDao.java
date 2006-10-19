@@ -10,14 +10,21 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.pages.component.dao.ComponentDao;
 import org.riotfamily.pages.page.PageDao;
 import org.riotfamily.pages.page.PersistentPage;
-import org.riotfamily.riot.dao.ParentChildDao;
+import org.riotfamily.pages.setup.Plumber;
+import org.riotfamily.pages.setup.WebsiteConfig;
+import org.riotfamily.pages.setup.WebsiteConfigAware;
+import org.riotfamily.riot.dao.CopyAndPasteEnabledDao;
 import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.ListParams;
+import org.riotfamily.riot.dao.ParentChildDao;
 import org.riotfamily.riot.dao.SwappableItemDao;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.event.ApplicationEventMulticaster;
 
 public class RiotPageDao implements ParentChildDao, SwappableItemDao, 
-		CutAndPasteEnabledDao {
+		CutAndPasteEnabledDao, CopyAndPasteEnabledDao, 
+		ApplicationContextAware, WebsiteConfigAware {
 
 	private static Log log = LogFactory.getLog(RiotPageDao.class);
 	
@@ -35,9 +42,14 @@ public class RiotPageDao implements ParentChildDao, SwappableItemDao,
 		this.eventMulticaster = eventMulticaster;
 	}
 
-	public void setComponentDao(ComponentDao componentDao) {
-		this.componentDao = componentDao;
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		Plumber.register(applicationContext, this);
 	}
+	
+	public void setWebsiteConfig(WebsiteConfig config) {
+		componentDao = config.getComponentDao();
+	}
+	
 
 	public Class getEntityClass() {
 		return entityClass;
@@ -138,6 +150,13 @@ public class RiotPageDao implements ParentChildDao, SwappableItemDao,
 		firePageMappingEvent();
 	}
 
+	public void addCopy(Object item, Object parent) {
+		PersistentPage page = (PersistentPage) item;
+		PersistentPage copy = page.copy();
+		save(copy, parent);
+		componentDao.copyComponentLists(page.getPath(), copy.getPath());
+	}
+	
 	public void removeChild(Object item, Object parent) {
 		PersistentPage page = (PersistentPage) item;
 		if (parent != null) {

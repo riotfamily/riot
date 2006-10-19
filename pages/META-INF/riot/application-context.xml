@@ -43,17 +43,6 @@
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 	
-	<!-- Component DAO  -->
-	
-	<bean id="componentDao" class="org.springframework.aop.framework.ProxyFactoryBean">
-		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
-		<property name="target"><ref bean="componentDaoTarget" /></property>
-	</bean>
-		
-	<bean id="componentDaoTarget" class="org.riotfamily.pages.component.dao.HibernateComponentDao">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-	
 	<!-- 
 	  - Exposes some beans from website-servlet to the riot-servlet context.
 	  - Refer to the JavaDocs for a detailed explanation.

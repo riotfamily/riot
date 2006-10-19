@@ -1,5 +1,7 @@
 package org.riotfamily.pages.component.dao;
 
+import java.util.List;
+
 import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentVersion;
@@ -12,6 +14,8 @@ import org.riotfamily.pages.component.ComponentVersion;
  */
 public interface ComponentDao {
 
+	public List findComponentLists(String path);
+	
 	public ComponentList findComponentList(String path, String key);
 	
 	public ComponentList loadComponentList(Long id);
@@ -36,5 +40,7 @@ public interface ComponentDao {
 	public void deleteComponentVersion(ComponentVersion version);
 	
 	public void updatePaths(String oldPath, String newPath);
+	
+	public void copyComponentLists(String oldPath, String newPath);
 
 }

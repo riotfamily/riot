@@ -26,7 +26,6 @@ import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.context.PageRequestContext;
 import org.riotfamily.pages.component.context.PageRequestUtils;
 import org.riotfamily.pages.component.context.RequestContextExpiredException;
-import org.riotfamily.pages.component.dao.ComponentDao;
 import org.riotfamily.pages.component.render.EditModeRenderStrategy;
 import org.riotfamily.pages.component.render.LiveModeRenderStrategy;
 import org.riotfamily.pages.setup.WebsiteConfigSupport;
@@ -45,18 +44,12 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	
 	private Log log = LogFactory.getLog(ComponentEditorImpl.class);
 	
-	private ComponentDao dao;
-	
 	private LoginManager loginManager;
 	
 	private MessageSource messageSource;
 	
 	private Map editorConfigs;
-	
-	public ComponentEditorImpl(ComponentDao dao) {
-		this.dao = dao;
-	}
-	
+		
 	public void setLoginManager(LoginManager loginManager) {
 		this.loginManager = loginManager;
 	}
@@ -106,7 +99,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		log.debug("updateText(" + containerId + ", " + property + ", " + text + ")");
 		ComponentVersion version = getPreviewVersion(containerId, null);
 		version.setProperty(property, text);
-		dao.updateComponentVersion(version);
+		getDao().updateComponentVersion(version);
 
 		return getHtml(controllerId, version);
 	}
@@ -123,7 +116,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		ComponentVersion version = getPreviewVersion(containerId, null);
 		
 		version.setProperty(property, chunks[0]);
-		dao.updateComponentVersion(version);
+		getDao().updateComponentVersion(version);
 		
 		ComponentInfo info = new ComponentInfo();
 		info.setId(containerId);
@@ -182,7 +175,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		log.debug("insertComponent(" + controllerId + ", " + listId 
 				+ ", " + position + ")");
 		
-		ComponentList componentList = dao.loadComponentList(listId);
+		ComponentList componentList = getDao().loadComponentList(listId);
 		
 		List containers = getPreviewContainers(componentList);
 		
@@ -197,9 +190,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			type = types[0];
 		}
 		
-		VersionContainer container = createVersionContainer(componentList, 
-				type, properties);
-		
+		VersionContainer container = createVersionContainer(type, properties);
 		if (position >= 0) {
 			containers.add(position, container);
 		}
@@ -210,7 +201,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		if (!isInstantPublishMode()) {
 			componentList.setDirty(true);
 		}
-		dao.updateComponentList(componentList);
+		getDao().updateComponentList(componentList);
 		
 		return new ComponentInfo(container.getId(), type, 
 				getRepository().getFormId(type), 
@@ -223,7 +214,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		
 		ComponentVersion version = getPreviewVersion(containerId, type);
 		version.setType(type);
-		dao.updateComponentVersion(version);
+		getDao().updateComponentVersion(version);
 		
 		return new ComponentInfo(containerId, type,
 				getRepository().getFormId(type),
@@ -280,7 +271,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			ComponentListController controller = (ComponentListController) 
 					getControllers().get(controllerId);
 			
-			ComponentList componentList = dao.loadComponentList(listId);
+			ComponentList componentList = getDao().loadComponentList(listId);
 			
 			StringWriter sw = new StringWriter();
 			HttpServletRequest request = getWrappedRequest();
@@ -304,7 +295,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			ComponentListController controller = (ComponentListController) 
 					getControllers().get(controllerId);
 			
-			ComponentList componentList = dao.loadComponentList(listId);
+			ComponentList componentList = getDao().loadComponentList(listId);
 			
 			StringWriter sw = new StringWriter();
 			HttpServletRequest request = getWrappedRequest();
@@ -325,7 +316,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	
 	public void moveComponent(Long containerId, Long nextContainerId) {
 		log.debug("moveComponent(" + containerId + ", " + nextContainerId + ")");
-		VersionContainer container = dao.loadVersionContainer(containerId);
+		VersionContainer container = getDao().loadVersionContainer(containerId);
 		ComponentList componentList = container.getList();
 		List containers = getPreviewContainers(componentList);
 		containers.remove(container);
@@ -344,19 +335,19 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		if (!isInstantPublishMode()) {
 			componentList.setDirty(true);
 		}
-		dao.updateComponentList(componentList);
+		getDao().updateComponentList(componentList);
 	}
 	
 	public void deleteComponent(Long containerId) {
 		log.debug("deleteComponent(" + containerId + ")");
-		VersionContainer container = dao.loadVersionContainer(containerId);
+		VersionContainer container = getDao().loadVersionContainer(containerId);
 		ComponentList componentList = container.getList();
 		List containers = getPreviewContainers(componentList);
 		containers.remove(container);
 		if (!isInstantPublishMode()) {
 			componentList.setDirty(true);
 		}
-		dao.updateComponentList(componentList);
+		getDao().updateComponentList(componentList);
 		if (!componentList.getLiveList().contains(container)) {
 			deleteVersionContainer(container);
 		}
@@ -369,7 +360,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		}
 		ArrayList result = new ArrayList(listIds.length);
 		for (int i = 0; i < listIds.length; i++) {
-			ComponentList componentList = dao.loadComponentList(listIds[i]);
+			ComponentList componentList = getDao().loadComponentList(listIds[i]);
 			if (componentList.isDirty()) {
 				log.debug("Dirty list: " + componentList.getId());
 				result.add(componentList.getId());
@@ -417,7 +408,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	 */
 	public void discardList(Long listId) {
 		log.debug("discardList(" + listId + ")");
-		ComponentList componentList = dao.loadComponentList(listId);
+		ComponentList componentList = getDao().loadComponentList(listId);
 		List previewList = componentList.getPreviewList();
 		List liveList = componentList.getLiveList();
 		if (componentList.isDirty()) {
@@ -433,7 +424,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 					deleteVersionContainer(container);
 				}
 			}
-			dao.updateComponentList(componentList);	
+			getDao().updateComponentList(componentList);	
 		}
 		Iterator it = liveList.iterator();
 		while (it.hasNext()) {
@@ -442,7 +433,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			if (preview != null) {
 				log.debug("Deleting previewVersion: " + preview.getId());
 				container.setPreviewVersion(null);
-				dao.updateVersionContainer(container);
+				getDao().updateVersionContainer(container);
 				deleteComponentVersion(preview);
 			}
 		}
@@ -463,7 +454,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	 */
 	public void publishList(Long listId) {
 		log.debug("publishList(" + listId + ')');
-		ComponentList componentList = dao.loadComponentList(listId);
+		ComponentList componentList = getDao().loadComponentList(listId);
 		boolean invalidateCache = false;
 		if (componentList.isDirty()) {
 			invalidateCache = true;
@@ -488,7 +479,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			liveList.addAll(previewList);
 			previewList.clear();
 			componentList.setDirty(false);
-			dao.updateComponentList(componentList);
+			getDao().updateComponentList(componentList);
 		}
 		
 		// Publish changes made to existing components ...
@@ -523,7 +514,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			}
 			container.setLiveVersion(preview);
 			container.setPreviewVersion(null);
-			dao.updateVersionContainer(container);
+			getDao().updateVersionContainer(container);
 			return true;
 		}
 		return false;
@@ -594,7 +585,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	}
 	
 	protected ComponentVersion getLatestVersion(Long containerId) {
-		return getLatestVersion(dao.loadVersionContainer(containerId));
+		return getLatestVersion(getDao().loadVersionContainer(containerId));
 	}
 	
 	protected ComponentVersion getLatestVersion(VersionContainer container) {
@@ -606,7 +597,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	}
 	
 	protected ComponentVersion getPreviewVersion(Long containerId, String type) {
-		VersionContainer container = dao.loadVersionContainer(containerId);
+		VersionContainer container = getDao().loadVersionContainer(containerId);
 		if (isInstantPublishMode()) {
 			return container.getLiveVersion();
 		}
@@ -619,15 +610,15 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			Component component = getRepository().getComponent(type);
 			preview = component.copy(live);
 			container.setPreviewVersion(preview);
-			dao.updateVersionContainer(container);
+			getDao().updateVersionContainer(container);
 		}
 		return preview;
 	}
 	
 	protected VersionContainer createVersionContainer(
-			ComponentList componentList, String type, Map properties) {
+			String type, Map properties) {
 		
-		VersionContainer container = new VersionContainer(componentList);
+		VersionContainer container = new VersionContainer();
 		ComponentVersion version = new ComponentVersion(type);
 		version.setProperties(properties);
 		if (isInstantPublishMode()) {
@@ -636,21 +627,21 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		else {
 			container.setPreviewVersion(version);
 		}
-		dao.saveVersionContainer(container);
+		getDao().saveVersionContainer(container);
 		return container;
 	}
 	
 	protected void deleteVersionContainer(VersionContainer container) {
 		deleteComponentVersion(container.getLiveVersion());
 		deleteComponentVersion(container.getPreviewVersion());
-		dao.deleteVersionContainer(container);
+		getDao().deleteVersionContainer(container);
 	}
 	
 	protected void deleteComponentVersion(ComponentVersion version) {
 		if (version != null) {
 			Component component = getRepository().getComponent(version);
 			component.delete(version);
-			dao.deleteComponentVersion(version);
+			getDao().deleteComponentVersion(version);
 		}
 	}
 }
