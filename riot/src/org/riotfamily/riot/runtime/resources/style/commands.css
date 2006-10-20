@@ -53,10 +53,12 @@
 tr.cut td {
 	font-style: italic;
 }
-tr.cut .action-cut {
+tr.cut .action-cut,
+tr.copied .action-copy {
 	background-position: 0 -64px;
 }
-tr.cut .action-cut:hover {
+tr.cut .action-cut:hover,
+tr.copied .action-copy:hover {
 	background-color: #ebebeb;
 	background-position: 0 -64px;
 }
