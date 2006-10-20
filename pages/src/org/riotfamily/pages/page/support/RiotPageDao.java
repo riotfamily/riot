@@ -135,8 +135,9 @@ public class RiotPageDao implements ParentChildDao, SwappableItemDao,
 		PersistentPage page = (PersistentPage) item;
 		String oldPath = page.getPath();
 		
+		PersistentPage parentPage = (PersistentPage) parent;
+		changeNameIfExists(parentPage, page);
 		if (parent != null) {
-			PersistentPage parentPage = (PersistentPage) parent;
 			parentPage.addChildPage(page);
 			dao.updatePage(parentPage);
 		}
@@ -152,9 +153,26 @@ public class RiotPageDao implements ParentChildDao, SwappableItemDao,
 
 	public void addCopy(Object item, Object parent) {
 		PersistentPage page = (PersistentPage) item;
+		PersistentPage parentPage = (PersistentPage) parent;
 		PersistentPage copy = page.copy();
+		changeNameIfExists(parentPage, copy);
 		save(copy, parent);
 		componentDao.copyComponentLists(page.getPath(), copy.getPath());
+	}
+	
+	private void changeNameIfExists(PersistentPage parent, 
+			PersistentPage page) {
+		
+		Collection siblings = parent != null 
+				? parent.getChildPages()
+				: dao.listRootPages();
+		
+		int i = 1;
+		String name = page.getPathComponent();
+		while (PageUtils.getPage(siblings, name) != null) {
+			name = name + "-" + i++;
+		}
+		page.setPathComponent(name);
 	}
 	
 	public void removeChild(Object item, Object parent) {

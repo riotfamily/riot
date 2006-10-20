@@ -66,7 +66,7 @@ public interface Page {
 	
 	public void addChildPage(Page child);
 	
-	public void removeChildPage(String pathComponent);
+	public void removeChildPage(Page child);
 	
 	/**
 	 * Returns the name of the controller that should be used to display the 

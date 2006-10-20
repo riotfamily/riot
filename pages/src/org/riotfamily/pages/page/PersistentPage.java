@@ -63,7 +63,6 @@ public class PersistentPage extends AbstractPage implements Cloneable {
 	public void addChildPage(Page child) {
 		child.setParent(this);
 		child.updatePath();
-		
 		if (!getChildPages().contains(child)) {
 			if (child instanceof PersistentPage) {
 				PersistentPage persistentChild = (PersistentPage) child;
@@ -77,21 +76,7 @@ public class PersistentPage extends AbstractPage implements Cloneable {
 		}
 	}
 	
-	protected Page getChildPage(String pathComponent) {
-		if (childPages != null) {
-			Iterator it = childPages.iterator();
-			while (it.hasNext()) {
-				Page child = (Page) it.next();
-				if (child.getPathComponent().equals(pathComponent)) {
-					return child;
-				}
-			}
-		}
-		return null;
-	}
-	
-	public void removeChildPage(String pathComponent) {
-		Page child = getChildPage(pathComponent);
+	public void removeChildPage(Page child ) {
 		if (child != null) {
 			if (childPages != null) {
 				childPages.remove(child);
@@ -107,13 +92,6 @@ public class PersistentPage extends AbstractPage implements Cloneable {
 			childPages = new ArrayList();
 			try {
 				if (persistentChildPages != null) {
-					/*
-					Iterator it = persistentChildPages.iterator();
-					while (it.hasNext()) {
-						PersistentPage child = (PersistentPage) it.next();
-						child.setParent(this);
-					}
-					*/
 					childPages.addAll(persistentChildPages);
 				}
 			}

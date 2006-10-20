@@ -1,6 +1,7 @@
 package org.riotfamily.pages.page.support;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -54,6 +55,23 @@ public final class PageUtils {
 			return null;
 		}
 		return (Page) childPages.iterator().next();
+	}
+	
+	public static Page getChild(Page page, String pathComponent) {
+		return getPage(page.getChildPages(), pathComponent);
+	}
+	
+	public static Page getPage(Collection pages, String pathComponent) {
+		if (pages != null) {
+			Iterator it = pages.iterator();
+			while (it.hasNext()) {
+				Page child = (Page) it.next();
+				if (child.getPathComponent().equals(pathComponent)) {
+					return child;
+				}
+			}
+		}
+		return null;
 	}
 
 }
