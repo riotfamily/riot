@@ -1,4 +1,7 @@
 <div id="elements">
+	<#if form.hint?exists>
+		<div class="form-hint">${form.hint}</div>
+	</#if>
 	<#if form.hasErrors()>
 		<div class="form-error">${form.errors.generalFormError}</div>
 	</#if>

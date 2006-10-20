@@ -1,6 +1,7 @@
 package org.riotfamily.forms.i18n;
 
 import org.riotfamily.forms.Element;
+import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormContext;
 import org.riotfamily.forms.bind.EditorBinding;
 
@@ -30,5 +31,11 @@ public class MessageUtils {
 		return context.getMessageResolver().getPropertyHint(
 				element.getForm().getId(), binding.getBeanClass(), 
 				binding.getProperty());
+	}
+	
+	public static String getHint(Form form, Class beanClass) {
+		FormContext context = form.getFormContext();
+		return context.getMessageResolver().getPropertyHint(
+				form.getId(), beanClass, null);
 	}
 }

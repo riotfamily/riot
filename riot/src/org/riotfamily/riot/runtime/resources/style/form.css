@@ -492,3 +492,8 @@ div.dynamicList .button-add,
 	padding: 10px;
 	margin-bottom: 10px;
 }
+div.form-hint {
+	background: url(images/hint.gif) 0 2px no-repeat;
+	padding-left:20px;
+	margin-bottom:20px;
+}

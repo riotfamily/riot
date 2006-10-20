@@ -55,10 +55,18 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 	}
 	
 	public String[] resolveHint(String objectName, Class objectClass, String field) {
-		return new String[] {
-			objectName + '.' + field + HINT_SUFFIX,
-			PropertyUtils.getDeclaringClass(objectClass, field).getName() + '.' + field + HINT_SUFFIX
-		};
+		if (field == null) {
+			return new String[] {
+					objectName +  HINT_SUFFIX ,
+					PropertyUtils.getDeclaringClass(objectClass, field).getName() + HINT_SUFFIX
+				};
+		}
+		else {
+			return new String[] {
+				objectName +  '.' + field + HINT_SUFFIX ,
+				PropertyUtils.getDeclaringClass(objectClass, field).getName() + '.' + field + HINT_SUFFIX
+			};
+		}
 	}
 
 }

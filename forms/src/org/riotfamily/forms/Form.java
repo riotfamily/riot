@@ -25,6 +25,7 @@ import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.Container;
 import org.riotfamily.forms.error.FormErrors;
 import org.riotfamily.forms.event.FormListener;
+import org.riotfamily.forms.i18n.MessageUtils;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.StylesheetResource;
@@ -81,6 +82,8 @@ public class Form implements BeanEditor {
 	private String template = TemplateUtils.getTemplatePath(this);
 	
 	private Map renderModel = new HashMap();
+	
+	private String hint;
 	
 	public Form() {
 		setAttribute(FORM_ATTR, this);
@@ -143,11 +146,18 @@ public class Form implements BeanEditor {
 	}
 	
 	public void bind(Editor editor, String property) {
-		editorBinder.bind(editor, property);
+		editorBinder.bind(editor, property);		
 	}
 
 	public void addElement(Element element) {
 		elements.addElement(element);
+	}
+	
+	public String getHint() {
+		if (hint == null) {
+			hint = MessageUtils.getHint(this, editorBinder.getBeanClass());
+		}
+		return hint;
 	}
 	
 	/**
