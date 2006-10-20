@@ -25,6 +25,9 @@
 .action-cut {
 	background-image: url(icons/commands/cut.gif);
 }
+.action-copy {
+	background-image: url(icons/commands/copy.gif);
+}
 .action-choose {
 	background-image: url(icons/commands/choose.gif);
 }
