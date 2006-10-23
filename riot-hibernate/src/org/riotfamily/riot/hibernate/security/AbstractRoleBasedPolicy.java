@@ -3,6 +3,7 @@ package org.riotfamily.riot.hibernate.security;
 import java.util.HashMap;
 
 import org.riotfamily.riot.editor.EditorDefinition;
+import org.riotfamily.riot.security.LoginManager;
 import org.riotfamily.riot.security.policy.AuthorizationPolicy;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
@@ -24,7 +25,14 @@ public abstract class AbstractRoleBasedPolicy extends HibernateDaoSupport
 	public final int checkPermission(String subject, String action, 
 			Object object, EditorDefinition editor) {
 		
+		if (LoginManager.ACTION_LOGIN.equals(action)) {
+			invalidateRole(subject);
+		}
 		return checkRolePermission(getRole(subject), action, object, editor);
+	}
+	
+	protected void invalidateRole(String userId) {
+		roles.remove(userId);
 	}
 	
 	protected String getRole(String userId) {

@@ -110,15 +110,7 @@
 		<constructor-arg ref="principalBinder" />
 		<property name="sessionDataStore" ref="sessionDataStore" />
 	</bean>
-	
-	<!-- 
-	  - Bean that configures the Riot AccessController by calling some 
-	  - static setter methods.
-	  -->
-	<bean id="accessControlConfigurer" class="org.riotfamily.riot.security.AccessControlConfigurer">
-		<property name="principalBinder" ref="principalBinder" />
-	</bean>
-	
+		
 	<bean id="defaultPolicy" class="org.riotfamily.riot.security.policy.GrantAllPolicy" />
 	
 	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
