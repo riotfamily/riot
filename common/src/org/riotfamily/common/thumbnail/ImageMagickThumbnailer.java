@@ -127,6 +127,8 @@ public class ImageMagickThumbnailer implements Thumbnailer {
 				cmd.add("-composite");
 			}
 		}
+		cmd.add("-colorspace");
+		cmd.add("RGB");
 		cmd.add(dest.getAbsolutePath());
 		return exec(StringUtils.toStringArray(cmd));
 	}
