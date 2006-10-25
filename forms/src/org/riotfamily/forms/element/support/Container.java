@@ -6,6 +6,7 @@ import java.util.List;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.Element;
+import org.riotfamily.forms.element.ContainerElement;
 
 
 /**
@@ -15,7 +16,7 @@ import org.riotfamily.forms.Element;
  * Refer to the {@link org.riotfamily.forms.element.core.ListEditor} implementation
  * for an example.
  */
-public class Container extends CompositeElement {
+public class Container extends CompositeElement implements ContainerElement {
 
 	/**
 	 * Creates an empty container.
