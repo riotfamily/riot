@@ -82,6 +82,7 @@ public class RedirectController implements Controller {
 		String destination = getDestination(request);
 		if (destination == null) {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return null;
 		}
 		
 		StringBuffer url = new StringBuffer();
