@@ -74,13 +74,12 @@ riot.Component.prototype = {
 	},
 		
 	setType: function(type) {
-		Element.removeClassName(this.element, 'riot-component-' + this.type);
-		Element.addClassName(this.element, 'riot-component-' + type);
-		this.type = type;
 		ComponentEditor.setType(this.componentList.controllerId, this.id, type, this.typeChanged);
 	},
 	
 	typeChanged: function(info) {
+		Element.removeClassName(this.element, 'riot-component-' + this.type);
+		Element.addClassName(this.element, 'riot-component-' + info.type);
 		this.type = info.type;
 		this.formId = info.formId;
 		this.setHtml(info.html);
