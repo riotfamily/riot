@@ -99,7 +99,7 @@
 	</target>
 	
 	<target name="clean">
-		<delete dir="${build.dir}" />
+		<delete dir="${module.build.dir}" />
 	</target>
 	
 </project>

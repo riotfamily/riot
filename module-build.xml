@@ -10,11 +10,13 @@
 	<!-- Module location -->
 	<dirname property="module.dir" file="${ant.file}" />
 	
-	<basename  property="module.dir.name" file="${module.dir}" />
+	<basename property="module.dir.name" file="${module.dir}" />
 	
-	<property name="publish.resolver" value="local" />
+	<property name="install.resolver" value="local" />
 	
 	<property name="publish.conf" value="runtime" />
+	
+	<property name="publish.status" value="integration" />
 	
 	<property name="resolve.conf" value="build" />
 	
@@ -52,7 +54,7 @@
 		<property name="module.name" value="${ivy.module}" />		
 					
 		<!-- Module build directory - artifacts will be placed here -->
-		<property name="module.build.dir" value="${build.dir}/${module.name}" />
+		<property name="module.build.dir" value="${build.modules.dir}/${module.name}" />
 		<mkdir dir="${module.build.dir}" />
 		
 		<!-- Directory where class files will be created upon compilation -->	
@@ -60,18 +62,19 @@
 		
 		<!-- Location of the jar artifact published by the module -->
 		<property name="module.jar" value="${module.build.dir}/${module.name}.jar" />
-		
+
 		<condition property="module.status" value="release">
 			<not><contains string="${ivy.revision}" substring="working@" /></not>
 		</condition>
-		<property name="module.status" value="integration" />
+		<property name="module.status" value="${publish.status}" />
 		
-		<property name="publish.revision" value="${project.version}-SNAPSHOT" />
-		
-		<condition property="module.version" value="${publish.revision}">
-			<contains string="${ivy.revision}" substring="working@" />
+		<condition property="module.revision" value="${ivy.revision}">
+			<not><contains string="${ivy.revision}" substring="working@" /></not>
 		</condition>
-		<property name="module.version" value="${ivy.revision}" />
+		<condition property="module.revision" value="${project.version}-dev-${publish.date}">
+			<equals arg1="${module.status}" arg2="integration" />
+		</condition>
+		<property name="module.revision" value="${project.version}" />
 	</target>
 	
 	<target name="resolve" depends="-init-module">
@@ -101,18 +104,19 @@
     	</copy>
 	</target>
 	
-	<target name="deliver" depends="jar">
-		<ivy:deliver deliverpattern="${build.dir}/[module]/ivy-[revision].xml"
-			pubrevision="${module.version}" status="${module.status}" />
+	<target name="publish-build" depends="jar">
+		<copy file="${module.dir}/ivy.xml" todir="${module.build.dir}" />
+		<ivy:publish resolver="build" 
+			forcedeliver="true" overwrite="true"
+			artifactspattern="${build.modules.dir}/[module]/[module].[ext]"
+			srcivypattern="${build.modules.dir}/[module]/ivy.xml" 
+			status="${module.status}" pubrevision="${module.revision}" />
 	</target>
 	
-	<target name="publish" depends="-init-module,deliver">
-		<ivy:resolve conf="${publish.conf}" showprogress="false" transitive="false" />
-		<ivy:publish resolver="${publish.resolver}" 
-			forcedeliver="true" overwrite="true"
-			artifactspattern="${build.dir}/[module]/[module].[ext]"
-			srcivypattern="${build.dir}/[module]/ivy-[revision].xml" 
-			status="${module.status}" pubrevision="${module.version}" />
+	<target name="install" depends="publish-build">
+		<ivy:install from="build" to="${install.resolver}" 
+			organisation="${ivy.organisation}" module="${ivy.module}" 
+			revision="${module.revision}" overwrite="true" />
 	</target>
 	
 	<!--
@@ -138,7 +142,7 @@
 			<fileset dir="${module.build.classes.dir}" />
 			<manifest>
 				<attribute name="Implementation-Title" value="${module.title}" />
-			    <attribute name="Implementation-Version" value="${module.version}" /> 
+			    <attribute name="Implementation-Version" value="${module.revision}" /> 
 			    <attribute name="Implementation-Vendor" value="${module.vendor}" />
 			</manifest>
 		</jar>
@@ -149,7 +153,7 @@
 			<metainf dir="${module.meta-inf.dir}" />
 			<manifest>
 				<attribute name="Implementation-Title" value="${module.title}" />
-			    <attribute name="Implementation-Version" value="${module.version}" /> 
+			    <attribute name="Implementation-Version" value="${module.revision}" /> 
 			    <attribute name="Implementation-Vendor" value="${module.vendor}" />
 			</manifest>
 		</jar>

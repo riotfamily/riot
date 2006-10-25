@@ -4,7 +4,7 @@
 		Build file to be included by all sub-projects (modules).
 	</description>
 	
-	<property name="project.version" value="6.3" />
+	<property name="project.version" value="6.3-RC2" />
 	
 	<tstamp>
 		<format property="build.date" pattern="yyyy-MM-dd" />
@@ -17,6 +17,8 @@
 	<!-- Globally shared directories -->
 	<property name="lib.dir" value="${root.dir}/lib" />
 	<property name="build.dir" value="${root.dir}/build" />
+	<property name="build.modules.dir" value="${build.dir}/modules" />
+	<property name="build.repo.dir" value="${build.dir}/repo" />
 	<property name="build.tstamp" value="${build.dir}/.timestamp" />
 
 	<property name="ivy.jar" value="${lib.dir}/ivy.jar" />
@@ -37,9 +39,6 @@
 	<path id="classpath">
 		<fileset dir="${lib.dir}">
 			<include name="*.jar" />
-		</fileset>
-		<fileset dir="${build.dir}">
-			<include name="*/*.jar" />
 		</fileset>
 		<pathelement path="${java.class.path}" />
 	</path>

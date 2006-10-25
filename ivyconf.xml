@@ -3,10 +3,10 @@
 	<include url="${ivy.default.conf.dir}/ivyconf-local.xml"/>
 	<resolvers>
 		<filesystem name="build">
-			<ivy pattern="${build.dir}/[module]/ivy-[revision].xml" />
-			<artifact pattern="${build.dir}/[module]/[artifact].[ext]" />
+			<ivy pattern="${build.repo.dir}/[module]/[revision]/ivy.xml" />
+			<artifact pattern="${build.repo.dir}/[module]/[revision]/[artifact].[ext]" />
 		</filesystem>
-		<url name="riotfamily" changingPattern=".+-SNAPSHOT$">
+		<url name="riotfamily">
 			<ivy pattern="http://riotfamily.org/ivy/repo/[organisation]/[module]/[revision]/ivy.xml" />
 			<artifact pattern="http://riotfamily.org/ivy/repo/[organisation]/[module]/[revision]/[artifact].[ext]" />
 			<artifact pattern="http://riotfamily.org/ivy/repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
