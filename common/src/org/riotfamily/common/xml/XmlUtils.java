@@ -219,7 +219,7 @@ public class XmlUtils {
 			return dbf.newDocumentBuilder().newDocument();
 		}
 		catch (ParserConfigurationException e) {
-			throw new IllegalStateException(e);
+			throw new RuntimeException(e);
 		}			
 	}
 	
@@ -264,7 +264,7 @@ public class XmlUtils {
 			throw new RuntimeException(e);
 		}
 		catch (SAXException e) {
-			throw new IllegalArgumentException(e);
+			throw new RuntimeException(e);
 		}
 	}
 	
