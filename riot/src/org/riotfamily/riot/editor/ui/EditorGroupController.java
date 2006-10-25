@@ -84,7 +84,7 @@ public class EditorGroupController implements EditorController,
 		Iterator ed = groupDefinition.getEditorDefinitions().iterator();
 		while (ed.hasNext()) {
 			EditorDefinition editor = (EditorDefinition) ed.next();
-			if (!editor.isHidden() && AccessController.isGranted("view", null, editor)) {
+			if (!editor.isHidden() && AccessController.isGranted(ACTION_VIEW, null, editor)) {
 				group.addReference(editor.createReference(null, messageResolver));
 			}
 		}
