@@ -159,6 +159,7 @@ body > #riot-inspector {
 }
 
 .riot-insert-button {
+	clear: both;
 	display: block;
 	position:relative;
 	height: 16px;
