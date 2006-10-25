@@ -38,7 +38,7 @@ public class FolderFilter extends OncePerRequestFilter {
 	
 		String uri = request.getRequestURI();
 		if (uri.lastIndexOf('.') < uri.lastIndexOf('/')) {
-			String path = urlPathHelper.getLookupPathForRequest(request);
+			String path = urlPathHelper.getPathWithinApplication(request);
 			if (include(path)) {
 				PageMap pageMap = PageMap.getInstance(getServletContext());
 				Page page = pageMap.getPage(path);
