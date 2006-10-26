@@ -505,7 +505,7 @@ riot.ComponentDragObserver.prototype = {
 riot.editProperties = function(e) {
 	e = e || this;
 	var componentElement = Element.getAncestorWithClassName(e, 'riot-component');
-	if (componentElement && !isSet(componentElement.component.mode)) {
+	if (componentElement && (!componentElement.component || !componentElement.component.mode)) {
 		riot.toolbar.buttons.properties.click();
 		componentElement.component.properties();
 	}
