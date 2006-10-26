@@ -26,14 +26,14 @@
 		<ivy:buildlist reference="resolved-build.files">
 	    	<fileset refid="module-build.files" />
 	    </ivy:buildlist>
-		<subant target="publish" buildpathref="resolved-build.files" />
+		<subant target="publish-build" buildpathref="resolved-build.files" />
 	</target>
 		
 	<target name="js-jar" depends="-configure-ivy">
 		<ivy:buildlist reference="resolved-build.files">
 	    	<fileset refid="js-build.files" />
 	    </ivy:buildlist>
-		<subant target="publish" buildpathref="resolved-build.files" />
+		<subant target="publish-build" buildpathref="resolved-build.files" />
 	</target>
 
 	<target name="install" depends="-configure-ivy">
