@@ -1,34 +1,37 @@
 package org.riotfamily.riot.editor.xml;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
-import org.riotfamily.common.xml.ConfigurationReloadedEvent;
+import org.riotfamily.common.xml.BeanConfigurationWatcher;
 import org.riotfamily.common.xml.ConfigurableBean;
-import org.riotfamily.common.xml.XmlBeanConfigurer;
+import org.riotfamily.common.xml.ConfigurationEventListener;
+import org.riotfamily.common.xml.DocumentReader;
+import org.riotfamily.common.xml.ValidatingDocumentReader;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.core.io.Resource;
 
 /**
  *
  */
 public class XmlEditorRepository extends EditorRepository 
-		implements InitializingBean, ConfigurableBean, ApplicationListener {
+		implements InitializingBean, ConfigurableBean, 
+		ConfigurationEventListener {
 
 	private List configLocations;
 
 	private boolean reloadable = true;
 	
-	private XmlBeanConfigurer configurer;
+	private BeanConfigurationWatcher configWatcher =  
+			new BeanConfigurationWatcher(this);
 	
+	private XmlEditorRepositoryDigester digester;
 	
 	public void setConfig(Resource config) {
-		this.configLocations = Collections.singletonList(config);
+		setConfigLocations(new Resource[] { config });
 	}
 	
 	public void setConfigLocations(Resource[] configLocations) {
@@ -38,6 +41,7 @@ public class XmlEditorRepository extends EditorRepository
 				this.configLocations.add(configLocations[i]);
 			}
 		}
+		configWatcher.setResources(this.configLocations);
 	}
 
 	public boolean isReloadable() {
@@ -49,36 +53,31 @@ public class XmlEditorRepository extends EditorRepository
 	}
 
 	public void afterPropertiesSet() throws Exception {
-		XmlEditorRepositoryDigester digester = 
-				new XmlEditorRepositoryDigester(this, getApplicationContext());
-		
-		configurer = new XmlBeanConfigurer(this, configLocations, digester, 
-				getApplicationContext());
-		
-		configurer.configure();
+		digester = new XmlEditorRepositoryDigester(this, getApplicationContext());
+		configure();
+		getFormRepository().addListener(this);
+		getListRepository().addListener(this);
 	}
 	
 	public synchronized EditorDefinition getEditorDefinition(String editorId) {
-		configurer.checkForModifications();
+		configWatcher.checkForModifications();
 		return super.getEditorDefinition(editorId);
 	}
 	
-	public void reset() {
+	
+	public void configure() {
 		setRootGroupDefinition(null);
 		getEditorDefinitions().clear();
-	}
-
-	public void configured() {
+		Iterator it = configLocations.iterator();
+		while (it.hasNext()) {
+			Resource res = (Resource) it.next();
+			DocumentReader reader = new ValidatingDocumentReader(res);
+			digester.digest(reader.readDocument(), res);
+		}
 	}
 	
-	public void onApplicationEvent(ApplicationEvent event) {
-		if (event instanceof ConfigurationReloadedEvent) {
-			if (event.getSource() == getListRepository() 
-					|| event.getSource() == getFormRepository()) {
-				
-				configurer.reconfigure();
-			}
-		}
+	public void beanReconfigured(ConfigurableBean bean) {
+		configure();
 	}
 	 
 }

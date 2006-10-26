@@ -1,11 +1,14 @@
 package org.riotfamily.riot.list.xml;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import org.riotfamily.common.xml.BeanConfigurationWatcher;
 import org.riotfamily.common.xml.ConfigurableBean;
-import org.riotfamily.common.xml.XmlBeanConfigurer;
+import org.riotfamily.common.xml.ConfigurationEventListener;
+import org.riotfamily.common.xml.DocumentReader;
+import org.riotfamily.common.xml.ValidatingDocumentReader;
 import org.riotfamily.riot.list.ListConfig;
 import org.riotfamily.riot.list.ListRepository;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,10 +24,16 @@ public class XmlListRepository extends ListRepository implements
 	
 	private boolean reloadable = true;
 	
-	private XmlBeanConfigurer configurer;
+	private BeanConfigurationWatcher configWatcher;
+	
+	private XmlListRepositoryDigester digester;
+	
+	public XmlListRepository() {
+		configWatcher = new BeanConfigurationWatcher(this);
+	}
 	
 	public void setConfig(Resource config) {
-		this.configLocations = Collections.singletonList(config);
+		setConfigLocations(new Resource[] { config });
 	}
 	
 	public void setConfigLocations(Resource[] configLocations) {
@@ -34,6 +43,7 @@ public class XmlListRepository extends ListRepository implements
 				this.configLocations.add(configLocations[i]);
 			}
 		}
+		configWatcher.setResources(this.configLocations);
 	}
 
 	public boolean isReloadable() {
@@ -44,26 +54,28 @@ public class XmlListRepository extends ListRepository implements
 		this.reloadable = reloadable;
 	}
 
+	public void addListener(ConfigurationEventListener listener) {
+		configWatcher.addListener(listener);
+	}
+	
 	public void afterPropertiesSet() throws Exception {
-		XmlListRepositoryDigester digester = new XmlListRepositoryDigester(
-				this, getApplicationContext());
-		
-		configurer = new XmlBeanConfigurer(this, configLocations, digester, 
-				getApplicationContext());
-		
-		configurer.configure();
+		digester = new XmlListRepositoryDigester(this, getApplicationContext());
+		configure();
 	}
 	
 	public ListConfig getListConfig(String listId) {
-		configurer.checkForModifications();
+		configWatcher.checkForModifications();
 		return super.getListConfig(listId);
 	}
 	
-	public void configured() {
-	}
-	
-	public void reset() {
+	public void configure() {
 		getListConfigs().clear();
+		Iterator it = configLocations.iterator();
+		while (it.hasNext()) {
+			Resource res = (Resource) it.next();
+			DocumentReader reader = new ValidatingDocumentReader(res);
+			digester.digest(reader.readDocument(), res);
+		}
 	}
 		
 }

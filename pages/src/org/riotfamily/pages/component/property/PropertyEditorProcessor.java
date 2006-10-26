@@ -34,9 +34,6 @@ public class PropertyEditorProcessor extends AbstractSinglePropertyProcessor {
 		if (value == null) {
 			value = defaultValue;
 		}
-		if (value == null) {
-			return null;
-		}
 		propertyEditor.setAsText(value);
 		return propertyEditor.getValue();
 	}

@@ -1,30 +1,30 @@
 package org.riotfamily.forms.factory.xml;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.xml.BeanConfigurationWatcher;
 import org.riotfamily.common.xml.ConfigurableBean;
-import org.riotfamily.common.xml.XmlBeanConfigurer;
+import org.riotfamily.common.xml.ConfigurationEventListener;
+import org.riotfamily.common.xml.DocumentReader;
+import org.riotfamily.common.xml.ValidatingDocumentReader;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.support.AbstractFormRepository;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.core.io.Resource;
 
 /**
  *
  */
 public class XmlFormRepository extends AbstractFormRepository implements
-		BeanFactoryAware, ApplicationEventPublisherAware, 
-		InitializingBean, ConfigurableBean {
+		BeanFactoryAware, InitializingBean, ConfigurableBean {
 
 	private Log log = LogFactory.getLog(XmlFormRepository.class);
 	
@@ -32,18 +32,19 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	
 	private boolean reloadable = true;
 
-	private XmlBeanConfigurer configurer;
+	private BeanConfigurationWatcher configWatcher = 
+			new BeanConfigurationWatcher(this);
+
+	private XmlFormRepositoryDigester digester;
 	
 	private BeanFactory beanFactory;
 		
 	private Class defaultBeanClass;
 	
-	private ApplicationEventPublisher eventPublisher;
-
 	private MimetypesFileTypeMap mimetypesMap;
 	
 	public void setConfig(Resource config) {
-		this.configLocations = Collections.singletonList(config);
+		setConfigLocations(new Resource[] { config });
 	}
 	
 	public void setConfigLocations(Resource[] configLocations) {
@@ -53,6 +54,7 @@ public class XmlFormRepository extends AbstractFormRepository implements
 				this.configLocations.add(configLocations[i]);
 			}
 		}
+		configWatcher.setResources(this.configLocations);
 	}
 
 	public Class getDefaultBeanClass() {
@@ -73,17 +75,15 @@ public class XmlFormRepository extends AbstractFormRepository implements
 		}
 		this.reloadable = reloadable;
 	}
+	
+	public void addListener(ConfigurationEventListener listener) {
+		configWatcher.addListener(listener);
+	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
 	}
 	
-	public void setApplicationEventPublisher(
-			ApplicationEventPublisher eventPublisher) {
-		
-		this.eventPublisher = eventPublisher;
-	}
-
 	public void setMimetypesMap(MimetypesFileTypeMap mimetypesMap) {
 		this.mimetypesMap = mimetypesMap;
 	}
@@ -93,25 +93,23 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	}
 
 	public final void afterPropertiesSet() throws Exception {
-		XmlFormRepositoryDigester digester = new XmlFormRepositoryDigester(
-				this, beanFactory);
-		
-		configurer = new XmlBeanConfigurer(this, configLocations, digester, 
-				eventPublisher);
-		
-		configurer.configure();
+		digester = new XmlFormRepositoryDigester(this, beanFactory);
+		configure();
 	}
 
 	public FormFactory getFormFactory(String id) {
-		configurer.checkForModifications();
+		configWatcher.checkForModifications();
 		return super.getFormFactory(id);
 	}
 	
-	public void reset() {
+	public void configure() {
 		getFactories().clear();
+		Iterator it = configLocations.iterator();
+		while (it.hasNext()) {
+			Resource res = (Resource) it.next();
+			DocumentReader reader = new ValidatingDocumentReader(res);
+			digester.digest(reader.readDocument(), res);
+		}
 	}
 	
-	public void configured() {
-	}
-
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.ui.render.CellRenderer;
 import org.riotfamily.riot.list.ui.render.CommandRenderer;
@@ -64,6 +65,9 @@ public class ListRepository implements ApplicationContextAware {
 	 */
 	protected ApplicationContext getApplicationContext() {
 		return applicationContext;
+	}
+	
+	public void addListener(ConfigurationEventListener listener) {
 	}
 	
 	public Command getCommand(String commandId) {

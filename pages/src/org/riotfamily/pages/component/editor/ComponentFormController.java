@@ -9,13 +9,17 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.beans.propertyeditors.BooleanEditor;
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.common.xml.ConfigurableBean;
+import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRepository;
 import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.controller.RepositoryFormController;
+import org.riotfamily.forms.element.core.Checkbox;
 import org.riotfamily.forms.element.core.FileUpload;
 import org.riotfamily.forms.factory.FormDefinitionException;
 import org.riotfamily.pages.component.Component;
@@ -24,6 +28,7 @@ import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.dao.ComponentDao;
 import org.riotfamily.pages.component.property.FileStoreProperyProcessor;
+import org.riotfamily.pages.component.property.PropertyEditorProcessor;
 import org.riotfamily.pages.setup.Plumber;
 import org.riotfamily.pages.setup.WebsiteConfig;
 import org.riotfamily.pages.setup.WebsiteConfigAware;
@@ -39,7 +44,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 public class ComponentFormController extends RepositoryFormController
 		implements FormSubmissionHandler, ApplicationContextAware,
-		WebsiteConfigAware {
+		WebsiteConfigAware, ConfigurationEventListener {
 
 	private static final String SESSION_ATTRIBUTE = "componentForm";
 	
@@ -78,6 +83,11 @@ public class ComponentFormController extends RepositoryFormController
 	public void setWebsiteConfig(WebsiteConfig websiteConfig) {
 		componentRepository = websiteConfig.getComponentRepository();
 		componentDao = websiteConfig.getComponentDao();
+		componentRepository.addListener(this);
+		setupForms(componentRepository.getComponentMap());
+	}
+	
+	public void beanReconfigured(ConfigurableBean bean) {
 		setupForms(componentRepository.getComponentMap());
 	}
 	
@@ -106,6 +116,13 @@ public class ComponentFormController extends RepositoryFormController
 						new FileStoreProperyProcessor(
 						upload.getEditorBinding().getProperty(),
 						upload.getFileStore()));
+			}
+			else if (e instanceof Checkbox) {
+				Checkbox cb = (Checkbox) e;
+				component.addPropertyProcessor(
+						new PropertyEditorProcessor(
+						cb.getEditorBinding().getProperty(),
+						new BooleanEditor()));
 			}
 		}
 	}

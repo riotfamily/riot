@@ -2,6 +2,7 @@ package org.riotfamily.forms;
 
 import java.util.Collection;
 
+import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.forms.factory.FormFactory;
 
 /**
@@ -18,5 +19,7 @@ public interface FormRepository {
 	public void registerFormFactory(String id, FormFactory formFactory);
 
 	public Class getElementClass(String type);
-	
+
+	public void addListener(ConfigurationEventListener listener);
+
 }
