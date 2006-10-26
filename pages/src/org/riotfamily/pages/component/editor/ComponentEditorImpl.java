@@ -191,6 +191,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		}
 		
 		VersionContainer container = createVersionContainer(type, properties);
+		container.setList(componentList);
 		if (position >= 0) {
 			containers.add(position, container);
 		}
@@ -627,6 +628,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		else {
 			container.setPreviewVersion(version);
 		}
+		version.setContainer(container);
 		getDao().saveVersionContainer(container);
 		return container;
 	}

@@ -86,6 +86,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 				VersionContainer container = new VersionContainer();
 				ComponentVersion live = new ComponentVersion(initialTypes[i]);
 				live.setContainer(container);
+				container.setList(list);
 				container.setLiveVersion(live);
 				componentDao.saveVersionContainer(container);
 				containers.add(container);

@@ -38,6 +38,11 @@ public class VersionContainer {
 		return this.previewList != null ? previewList : liveList;
 	}
 	
+	public void setList(ComponentList list) {
+		this.liveList = list;
+		this.previewList = list;
+	}
+	
 	public ComponentVersion getLiveVersion() {
 		return this.liveVersion;
 	}
