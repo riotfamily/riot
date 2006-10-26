@@ -98,12 +98,12 @@ public class ComponentVersion {
 		return previewContainer != null ? previewContainer : liveContainer;
 	}
 	
-	/*
+	
 	public void setContainer(VersionContainer container) {
 		this.liveContainer = container;
 		this.previewContainer = container;
 	}
-	*/
+	
 
 	public boolean isDirty() {
 		return this.dirty;
