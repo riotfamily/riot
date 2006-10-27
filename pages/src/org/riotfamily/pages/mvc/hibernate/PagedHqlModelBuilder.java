@@ -36,10 +36,13 @@ public class PagedHqlModelBuilder extends HqlModelBuilder {
 
 	public void afterPropertiesSet() throws Exception {
 		super.afterPropertiesSet();
-		if (this.countHql == null) {
+		if (countHql == null) {
 			if (getHql().startsWith("from")) {
-				this.countHql = new StringBuffer("select count(*) ").append(
-						getHql()).toString();
+				countHql = "select count(*) " + getHql();
+				int i = countHql.indexOf(" order by ");
+				if (i != -1) {
+					countHql = countHql.substring(0, i);
+				}
 			}
 			else {
 				throw new BeanCreationException("The property 'countHql' must " 
