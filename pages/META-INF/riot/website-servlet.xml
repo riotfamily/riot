@@ -17,7 +17,9 @@
 	<!-- 
 	  - MenuBuilder that creates MenuItems using the pageMap.
 	  -->
-	<bean id="pageMenuBuilder" class="org.riotfamily.pages.page.menu.PageMenuBuilder" />
+	<bean id="pageMenuBuilder" class="org.riotfamily.pages.page.menu.PageMenuBuilder">
+		<constructor-arg ref="pageMap"/>
+	</bean>
 	
 	<!-- 
 	  - Repository that contains the component definitions.

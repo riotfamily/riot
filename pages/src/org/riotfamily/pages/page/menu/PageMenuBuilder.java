@@ -39,6 +39,7 @@ import org.riotfamily.pages.member.support.NullMemberBinder;
 import org.riotfamily.pages.menu.MenuBuilder;
 import org.riotfamily.pages.menu.MenuItem;
 import org.riotfamily.pages.page.Page;
+import org.riotfamily.pages.page.PageMap;
 import org.riotfamily.pages.page.support.PageUtils;
 import org.springframework.util.StringUtils;
 
@@ -47,6 +48,12 @@ public class PageMenuBuilder implements MenuBuilder, MemberBinderAware {
 	private MemberBinder memberBinder = new NullMemberBinder();
 	
 	private ViewModeResolver viewModeResolver;
+	
+	private PageMap pageMap;
+	
+	public PageMenuBuilder(PageMap pageMap) {
+		this.pageMap = pageMap;
+	}
 	
 	public void setMemberBinder(MemberBinder memberBinder) {
 		this.memberBinder = memberBinder;
@@ -57,7 +64,7 @@ public class PageMenuBuilder implements MenuBuilder, MemberBinderAware {
 	}
 
 	public long getLastModified(HttpServletRequest request) {
-		return PageUtils.getPageMap(request).getLastModified();
+		return pageMap.getLastModified();
 	}
 	
 	public List buildMenu(HttpServletRequest request) {
@@ -78,7 +85,7 @@ public class PageMenuBuilder implements MenuBuilder, MemberBinderAware {
 			siblings = parent.getChildPages();
 		}
 		else {
-			siblings = PageUtils.getRootPages(request);
+			siblings = pageMap.getRootPages();
 		}
 
 		List items = null;
