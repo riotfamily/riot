@@ -18,15 +18,19 @@ public abstract class AbstractSinglePropertyProcessor
 	}
 
 	public void resolveStrings(Map map) {
-		String s = (String) map.get(property);
-		map.put(property, resolveString(s));
+		Object value = map.get(property);
+		if (value instanceof String) {
+			map.put(property, resolveString((String) value));
+		}
 	}
 	
 	protected abstract Object resolveString(String s);
 	
 	public void convertToStrings(Map map) {
 		Object object = map.get(property);
-		map.put(property, convertToString(object));
+		if (!(object instanceof String)) {
+			map.put(property, convertToString(object));
+		}
 	}
 
 	protected abstract String convertToString(Object object);
