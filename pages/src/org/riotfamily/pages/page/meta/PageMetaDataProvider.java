@@ -34,6 +34,9 @@ public class PageMetaDataProvider implements MetaDataProvider {
 			throws Exception {
 		
 		Page page = PageUtils.getPage(request);
+		if (page == null) {
+			return null;
+		}
 		return new MetaData(page.getTitle(), page.getKeywords(), 
 				page.getDescription());
 	}

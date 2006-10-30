@@ -72,7 +72,7 @@ public class MetaDataController extends AbstractCachingPolicyController {
 			HttpServletResponse response) {
 
 		try {
-			MetaData metaData  = metaDataProvider.getMetaData(request);
+			MetaData metaData = metaDataProvider.getMetaData(request);
 			if (metaData != null) {
 				renderMetaData(metaData, request, response);
 			}

@@ -10,9 +10,9 @@
 }
 
 #logo {
-	height: 111px;
-	background: url(images/logo.gif) top right no-repeat;
-	margin-right: 20px;
+	height: 120px;
+	background: url(images/logo.gif) right 55px no-repeat;
+	margin-right: 14px;
 }
 
 form {

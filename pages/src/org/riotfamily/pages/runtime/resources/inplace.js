@@ -410,7 +410,7 @@ riot.stylesheetMaker = {
 		return result;
 	},
 
-	copyStyles: function(el, doc) {
+	copyStyles: function(el, doc, classes) {
 		var sheet = doc.styleSheets[doc.styleSheets.length - 1];	
 		for (var i = 0; i < this.selectors.length; i++) {
 			var selector = this.selectors[i];
@@ -435,6 +435,15 @@ riot.stylesheetMaker = {
 			}
 			this.addRule(selector, styles, sheet);
 		}
+		if (classes) {
+			for (var i = 0; i < classes.length; i++) {
+				var e = document.createElement('span');
+				e.className = classes[i];
+				el.appendChild(e);
+				var styles = this.getStyles(e, this.properties['*']);
+				this.addRule('.' + classes[i], styles, sheet);
+			}
+		}
 	}
 }
 
@@ -448,7 +457,7 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	var clone = e.cloneNode(false);
 	Element.hide(clone);
 	Element.insertBefore(clone, e);
-	riot.stylesheetMaker.copyStyles(clone, doc);
+	riot.stylesheetMaker.copyStyles(clone, doc, riot.tinyMCEStyles);
 	Element.remove(clone);
 	
 	body.style.paddingLeft = '5px';
@@ -505,5 +514,11 @@ riot.tinyMCEConfig = {
 ComponentEditor.getEditorConfigs(function(configs) {
 	if (configs && configs.tinyMCE) {
 		Object.extend(riot.tinyMCEConfig, configs.tinyMCE);
+		var styles = riot.tinyMCEConfig.theme_advanced_styles;
+		if (styles) {
+			riot.tinyMCEStyles = styles.split(';').collect(function(pair) {
+		      return pair.split('=')[1];
+		    });
+		}
 	}
 });
