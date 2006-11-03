@@ -8,18 +8,31 @@ Viewport.getInnerHeight = function() {
 	if (document.body) { return document.body.clientHeight; }
 }
 
-Viewport.getInnerWidth = function() {
-	if (self.innerWidth) { return self.innerWidth; }
-	if (document.documentElement && document.documentElement.clientWidth) {
-		return document.documentElement.clientWidth;
+Viewport.getInnerWidth = function(w) {
+	if (!w) var w = window;
+	if (w.innerWidth) { 
+		return w.innerWidth;
 	}
-	if (document.body) { return document.body.clientWidth; }
+	var d = w.document;
+	if (d.documentElement && d.documentElement.clientWidth) {
+		return d.documentElement.clientWidth;
+	}
+	return d.body.clientWidth; 
 }
 
-Viewport.getPageHeight = function() {
-	var b = document.body;
-	var bodyHeight = Math.max(b.scrollHeight, b.offsetHeight);
-	return Math.max(bodyHeight, this.getInnerHeight());
+Viewport.getPageHeight = function(w) {
+	if (!w) var w = window;
+	return Math.max(Viewport.getBodyHeight(w), Viewport.getInnerHeight(w));
+}
+
+Viewport.getBodyHeight = function(w) {
+	var d = w ? w.document : document;
+	if (d.documentElement && d.documentElement.clientHeight) {
+		return d.documentElement.clientHeight;
+	} 
+	else {
+		return d.body.clientHeight;
+	}
 }
 
 Viewport.getScrollTop = function() {
