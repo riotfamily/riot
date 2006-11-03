@@ -70,5 +70,28 @@
 		<constructor-arg ref="jobDao" />
 	</bean>
 	-->
+	
+	<!-- Module configuration -->
+	
+	<bean id="hibernateModule" class="org.riotfamily.common.beans.module.FactoryBeanModule">
+		<property name="properties">
+			<map>
+				<entry key="formConfigLocations">
+					<value>classpath:/org/riotfamily/riot/hibernate/runtime/riot-config.xml</value>
+				</entry>
+				<entry key="listConfigLocations">
+					<value>classpath:/org/riotfamily/riot/hibernate/runtime/riot-config.xml</value>
+				</entry>
+				<entry key="editorConfigLocations">
+					<value>classpath:/org/riotfamily/riot/hibernate/runtime/riot-config.xml</value>
+				</entry>
+				<entry key="messageSourceBasenames">
+					<list>
+						<value>classpath:/org/riotfamily/riot/hibernate/runtime/i18n/messages</value>
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
 
 </beans>
