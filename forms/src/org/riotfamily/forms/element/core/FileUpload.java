@@ -185,6 +185,11 @@ public class FileUpload extends CompositeElement implements Editor,
 				contentType.equals("image/png"));
 	}
 	
+	public boolean isPreviewAvailable() {
+		return isWebImage() || (thumbnailer != null && contentType != null
+				&& thumbnailer.supports(contentType)); 
+	}
+	
 	public UploadElement getUpload() {
 		return upload;
 	}
@@ -426,11 +431,6 @@ public class FileUpload extends CompositeElement implements Editor,
 			else {
 				response.sendError(HttpServletResponse.SC_NO_CONTENT);
 			}
-		}
-		
-		public boolean isPreviewAvailable() {
-			return isWebImage() || (thumbnailer != null && contentType != null
-					&& thumbnailer.supports(contentType)); 
 		}
 		
 		public String getPreviewUrl() {

@@ -98,7 +98,10 @@ public class ImageUpload extends FileUpload {
 		this.widthProperty = widthProperty;
 	}
 
-
+	public boolean isPreviewAvailable() {
+		return true; 
+	}
+	
 	protected void validateFile(File file) {
 		try {
 			info = new ImageInfo();
