@@ -21,44 +21,6 @@ if (!String.prototype.trim) {
 	}
 }
 
-/**
- * Creates a new subclass. The superclass may either be a constructor function 
- * or an object (abstract superclass). 
- *
- * see: http://phrogz.net/JS/Classes/OOPinJS2.html
- */
-Class.extend = function(superclass, members) {
-	
-	var clazz = function() {
-		this.superclass = {};
-		Object.extend(this.superclass, this.supertype);
-		for (n in this.superclass) {
-			var member = this.superclass[n];
-			if (member.bind) this.superclass[n] = member.bind(this);
-		}
-		this.initialize.apply(this, arguments);
-    }
-    
-	if (superclass.constructor == Function) { 
-		Object.extend(clazz.prototype, superclass.prototype);
-		clazz.prototype.constructor = clazz;
-		clazz.prototype.supertype = superclass.prototype;
-	} 
-	else { 
-		clazz.prototype = superclass;
-		clazz.prototype.constructor = clazz;
-		clazz.prototype.supertype = superclass;
-	} 
-	
-	if (members) {
-		Object.extend(clazz.prototype, members);
-	}
-	if (!clazz.prototype.initialize) {
-		clazz.prototype.initialize = Prototype.emptyFunction;
-	}
-	return clazz;
-}
-
 Object.bindMethods = function(obj, methodNames) {
 	if (methodNames) {
 		for (var i = 0; i < methodNames.length; i++) {
@@ -248,3 +210,107 @@ Element.stopHighlighting = function(el) {
 		Event.stopObserving(el, 'mouseout', el.removeHighlight, false);
 	}
 }
+
+// See: http://www.bloglines.com/blog/reinyannyan?id=1
+
+var Class = {
+    create: function (proto) {
+        var clazz = function () {
+            if (this.initialize && arguments.callee.caller != Class.extend) {
+                this.__class__ = arguments.callee.prototype;
+                Object.extend(this, Class.Methods);
+                this.initialize.apply(this, arguments);
+            }
+        };
+        clazz.prototype = proto || {};
+        clazz.extend = Class.extend;
+        return clazz;
+    },
+
+    singleton: function (proto) {
+        var clazz = {
+            instance: function () {
+                if (!this.__instance__) {
+                    var clazz = Class.create(proto);
+                    this.__instance__ = eval('new clazz');
+                    proto = null;
+                }
+                return this.__instance__;
+            }
+        };
+        return clazz;
+    },
+
+    append_features: function (object, module) {
+        for (var prop in module) {
+            if (Class.kind_of(module[prop], Function)) {
+                (function (method) {
+                    object[method] = function () {
+                        return module[method].apply(object, arguments);
+                    };
+                })(prop);
+            }
+            else {
+                object[prop] = module[prop];
+			}
+		}		         
+    },
+  
+    extend: function (subobj) {
+        var subproto = new this;
+        Object.extend(subproto, subobj);
+        subproto.__super__ = this.prototype;
+        return Class.create(subproto);
+    },
+    get_method: function (clazz, args) {
+        var c = args.callee.caller;
+        for (var method in clazz) {
+            if (clazz[method] == c) return method;
+        }
+        return null;
+    },
+    call_super: function (superclass, self, method, args) {
+        if (superclass && superclass[method]) {
+            var __class__  = self.__class__;
+            self.__class__ = superclass;
+            self.__super__ = superclass.__super__;
+            try {
+                superclass[method].apply(self, args);
+            }
+            finally {
+                self.__class__ = __class__;
+                self.__super__ = superclass;
+            }
+        }
+    },
+    kind_of: function (object, clazz) {
+        return eval('clazz.prototype.isPrototypeOf(object)');
+    }
+};
+
+Class.Methods = {
+    extend: function () {
+        var i = arguments.length;
+        while (--i >= 0) {
+            Object.extend(this, arguments[i]);
+        }
+        return this;
+    },
+    
+    include: function () {
+        var i = arguments.length;
+        while (--i >= 0) {
+            Class.append_features(this, arguments[i]);
+        }
+        return this;
+    },
+    
+    kind_of: function (clazz) {
+        return Class.kind_of(this, clazz);
+    },
+    
+    SUPER: function () {
+        var method = Class.get_method(this.__class__, arguments);
+        Class.call_super(this.__super__, this, method, arguments);
+    }
+};
