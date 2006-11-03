@@ -98,8 +98,4 @@
 		<patch backups="true" patchfile="${patch.file}" dir="${jar.package.dir}" />
 	</target>
 	
-	<target name="clean">
-		<delete dir="${module.build.dir}" />
-	</target>
-	
 </project>

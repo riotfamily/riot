@@ -105,6 +105,7 @@
 	</target>
 	
 	<target name="publish-build" depends="jar">
+		<delete dir="${build.repo.dir}/${module.name}" />
 		<copy file="${module.dir}/ivy.xml" todir="${module.build.dir}" />
 		<ivy:publish resolver="build" 
 			forcedeliver="true" overwrite="true"
