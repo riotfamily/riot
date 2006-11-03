@@ -87,6 +87,7 @@
 				<entry key="messageSourceBasenames">
 					<list>
 						<value>classpath:/org/riotfamily/pages/runtime/i18n/messages</value>
+						<value>/WEB-INF/pages-config/messages</value>
 					</list>
 				</entry>
 				<entry key="publicUrls">
