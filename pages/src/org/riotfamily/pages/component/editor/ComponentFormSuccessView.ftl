@@ -5,10 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <script language="JavaScript" type="text/javascript">
-	if (opener.WindowCallback) {
-		opener.WindowCallback.invoke(window);
-	}
-	window.close();
+	parent.riot.popup.component.propertiesChanged();
 </script>
 </head>
 </html>

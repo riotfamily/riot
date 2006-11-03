@@ -12,15 +12,6 @@ riot.Component.prototype = {
 			'remove': this.remove.bindAsEventListener(this),
 			'properties': this.properties.bindAsEventListener(this)
 		};
-
-		Object.bindMethods(this, [
-			'created',
-			'setHtml',
-			'setType',
-			'typeChanged',
-			'propertiesChanged',
-			'onupdate'
-		]);
 		
 		this.id = el.getAttribute('riot:containerId');
 		if (this.id) {
@@ -74,7 +65,7 @@ riot.Component.prototype = {
 	},
 		
 	setType: function(type) {
-		ComponentEditor.setType(this.componentList.controllerId, this.id, type, this.typeChanged);
+		ComponentEditor.setType(this.componentList.controllerId, this.id, type, this.typeChanged.bind(this));
 	},
 	
 	typeChanged: function(info) {
@@ -87,7 +78,7 @@ riot.Component.prototype = {
 	},
 			
 	updateText: function(key, value) {
-		ComponentEditor.updateText(this.componentList.controllerId, this.id, key, value, this.setHtml);
+		ComponentEditor.updateText(this.componentList.controllerId, this.id, key, value, this.setHtml.bind(this));
 		riot.toolbar.setDirty(this.componentList, true);
 	},
 	
@@ -103,19 +94,23 @@ riot.Component.prototype = {
 		if (e) Event.stop(e);
 		Element.removeClassName(this.element, 'riot-highlight');
 		if (this.formId) {
-			var win = window.open(riot.path + '/pages/form/' + this.id
-				+ '?instantPublish=' + riot.toolbar.instantPublishMode, 
-				'componentProperties', 
-				'width=760,height=400,dependent=yes,toolbar=no,location=no,' +
-				'menubar=no,status=no,scrollbars=yes,resizable=yes');
-				
-			WindowCallback.register(win, this.propertiesChanged);
+			var formUrl = riot.path + '/pages/form/' + this.id + '?instantPublish=' + riot.toolbar.instantPublishMode;
+			var iframe = Element.create('iframe', {	src: formUrl, className: 'properties', height: '1px' });
+			riot.popup = new riot.Popup('${properties-inspector.title}', iframe, function() {
+				var win = iframe.contentWindow ? iframe.contentWindow : iframe.window;
+				win.save();
+			});
+			riot.popup.component = this;
 		}
 	},
 	
 	propertiesChanged: function() {
 		riot.toolbar.setDirty(this.componentList, true);
-		ComponentEditor.getHtml(this.componentList.controllerId, this.id, this.setHtml);
+		ComponentEditor.getHtml(this.componentList.controllerId, this.id, 
+			function(html) {
+				this.setHtml(html)
+				riot.popup.close();
+			}.bind(this));
 	},
 	
 	repaint: function() {
@@ -226,10 +221,10 @@ riot.InsertButton.prototype = {
 		Element.insertBefore(e, this.element);
 		var c = new riot.Component(this.componentList, e);
 		ComponentEditor.insertComponent(this.componentList.controllerId, 
-				this.componentList.id, -1, type, null, c.created);
+				this.componentList.id, -1, type, null, c.created.bind(c));
 		
 		if (this.inspector) {
-			this.inspector.onchange = c.setType;
+			this.inspector.onchange = c.setType.bind(c);
 		}
 	}
 };
@@ -428,6 +423,7 @@ riot.ComponentList.prototype = {
 
 	move: function(enable) {
 		if (this.getComponents().length > 1) {
+			Element.toggleClassName(this.element, 'riot-mode-move', enable);
 			if (enable) {
 				Sortable.create(this.element, {tag: 'div', only: 'riot-component', scroll: window, scrollSpeed: 20});
 				this.getComponents().each(function(component) {
@@ -507,6 +503,5 @@ riot.editProperties = function(e) {
 	var componentElement = Element.getAncestorWithClassName(e, 'riot-component');
 	if (componentElement && (!componentElement.component || !componentElement.component.mode)) {
 		riot.toolbar.buttons.properties.click();
-		componentElement.component.properties();
 	}
 }

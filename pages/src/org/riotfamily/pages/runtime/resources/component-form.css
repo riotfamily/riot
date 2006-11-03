@@ -1,0 +1,47 @@
+body {
+padding:20px 10px 30px 0;
+margin:0;
+}
+
+.title {
+color:#3d3d3d;
+background:#fff;
+font-weight:bold;
+text-transform:none;
+float:left;
+width:136px;
+text-align:right;
+}
+
+.title span {
+padding:0;
+}
+
+.single {
+margin-left:144px;
+margin-bottom:10px;
+clear:none;
+}
+
+.composite {
+margin-left:144px;
+margin-bottom:10px;
+clear:none;
+
+}
+.icon {
+display:none;
+}
+
+.nestedForm div.label {
+width:90px;
+}
+
+.nestedForm div.element {
+margin-left:100px;
+}
+
+div.dynamicList .button-add,
+.setButton .button-toggle {
+	margin-left: 0;
+}

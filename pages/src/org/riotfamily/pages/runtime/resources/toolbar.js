@@ -24,7 +24,6 @@ riot.Toolbar.prototype = {
 		this.buttons.publish.getHandlerTargets = function() { return riot.toolbar.dirtyComponentLists; };
 		this.buttons.publish.disable();
 		this.element.appendChild(this.buttons.publish.element);
-		this.overlay = new riot.Overlay();
 		
 		this.updateComponentLists();
 		this.instantPublishMode = false;
@@ -79,26 +78,7 @@ riot.Toolbar.prototype = {
 	hideInspector: function() {
 		this.inspectorPanel.style.display = 'none';
 	},
-	
-	showDialog: function(el) {
-		this.dialog = el;
-		if (el.parentNode == null || el.parentNode.nodeType == 11) {
-			Element.invisible(el);
-			document.body.appendChild(el);
-		}
-		this.overlay.show();
-		Viewport.center(el);
-		Element.visible(el);
-	},
-	
-	closeDialog: function() {
-		if (this.dialog) {
-			Element.remove(this.dialog);
-			this.overlay.hide();
-			this.dialog = null;
-		}
-	},
-		
+			
 	updateComponentLists: function() {
 		var lists = [];
 		var e = document.getElementsByClassName('riot-components');
@@ -151,36 +131,7 @@ riot.Toolbar.prototype = {
 	},
 	
 	keepAlive: function() {
-		ComponentEditor.keepAlive(this.resume.bind(this));
-	},
-	
-	suspend: function(message) {
-		if (!this.suspended) {
-			this.suspended = true;
-			if (riot.activeEditor && riot.activeEditor.popup) {
-				riot.activeEditor.suspend(message);
-			}
-			else {
-				this.showDialog(Element.create('div', {className: 'riot-popup riot-message-popup'},
-					Element.create('h2', {}, '${message-popup.title}'), 
-					Element.create('div', {className: 'message'}, 
-						Element.create('p', {}, message)
-					)
-				));
-			}
-		}
-	},
-	
-	resume: function() {
-		if (this.suspended) {
-			this.suspended = false;
-			if (riot.activeEditor && riot.activeEditor.popup) {
-				riot.activeEditor.resume();
-			}
-			else {
-				this.closeDialog();
-			}
-		}
+		ComponentEditor.keepAlive();
 	},
 	
 	logout: function() {
@@ -253,67 +204,8 @@ riot.ToolbarButton.prototype = {
 	
 }
 
-riot.Overlay = Class.create();
-riot.Overlay.prototype = {
-	initialize: function() {
-		var img = new Image(); // Preload image ...
-		img.src = Resources.resolveUrl('overlay.png');
-		this.element = Element.create('div', {id: 'riot-overlay', style: {display: 'none', position: 'absolute', top: 0, left: 0, width: '100%'}});
-		if (isDefined(this.element.style.filter)) {
-			this.element.style.filter = 
-				'progid:DXImageTransform.Microsoft.AlphaImageLoader(src="' 
-				+ img.src + '", sizingMethod="scale")';
-		}
-		else {
-			this.element.style.backgroundImage = 'url(' + img.src + ')'; 
-		}
-	},
-	
-	hideElements: function(name) {
-		$A(document.getElementsByTagName(name)).each(function (e) {
-			if (!Element.childOf(e, riot.toolbar.dialog)) {
-				Element.invisible(e);
-				e.hidden = true;
-			}
-		});
-	},
-	
-	showElements: function(name) {
-		$A(document.getElementsByTagName(name)).each(function (e) {
-			if (e.hidden) {
-				Element.visible(e);
-				e.hidden = false;
-			}
-		});
-	},
-	
-	show: function() {
-		if (browserInfo.ie) this.hideElements('select');
-		this.hideElements('object');
-		this.hideElements('embed');
-		this.element.style.height = Viewport.getPageHeight() + 'px';
-		Element.show(this.element);
-		Element.prependChild(document.body, this.element);
-	},
-	
-	hide: function() {
-		Element.hide(this.element);
-		Element.remove(this.element);
-		if (browserInfo.ie) this.showElements('select');
-		this.showElements('object');
-		this.showElements('embed');
-	}
-}
-
 DWREngine.setErrorHandler(function(err, ex) {
-	if (err == 'Invalid reply from server') { // See engine.js 778
-		riot.toolbar.suspend('${error.invalidReply}');
-	}
-	else if (err == 'No data received from server' || // See engine.js 759 (IE only)
-		(err.name && err.name == 'NS_ERROR_NOT_AVAILABLE')) { // ... for Mozilla
-		riot.toolbar.suspend('${error.serverNotAvailable}');
-	}
-	else if (err == 'Request context has expired') { // RequestContextExpiredException
+	if (err == 'Request context has expired') { // RequestContextExpiredException
 		location.reload();
 	}
 	else {
