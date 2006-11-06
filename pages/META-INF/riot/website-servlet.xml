@@ -41,8 +41,12 @@
 	</bean>
 		
 	<bean id="componentDaoTarget" class="org.riotfamily.pages.component.dao.HibernateComponentDao">
-		<constructor-arg ref="componentRepository" />
+		<constructor-arg ref="componentHelper" /> 		
 		<constructor-arg ref="sessionFactory" />
+	</bean>
+	
+	<bean id="componentHelper" class="org.riotfamily.pages.component.dao.ComponentHelper">
+		<constructor-arg ref="componentRepository" />
 	</bean>
 	
 	<!-- 
@@ -53,6 +57,7 @@
 	<bean class="org.riotfamily.pages.setup.WebsiteConfig">
 		<constructor-arg ref="componentRepository" />
 		<constructor-arg ref="componentDao" />
+		<constructor-arg ref="componentHelper" />
 		<property name="cache" ref="websiteCache" />
 	</bean>	
 	

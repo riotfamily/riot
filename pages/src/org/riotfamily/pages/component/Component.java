@@ -24,6 +24,7 @@
 package org.riotfamily.pages.component;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,11 +46,9 @@ public interface Component {
 	
 	public Map buildModel(ComponentVersion version);
 	
-	public void updateProperties(ComponentVersion version, Map model);
+	public void updateProperties(ComponentVersion version, Map model);	
 	
-	public ComponentVersion copy(ComponentVersion source);
-	
-	public void delete(ComponentVersion source);
+	public List getPropertyProcessors();	
 	
 	/**
 	 * Renders the given ComponentVersion.

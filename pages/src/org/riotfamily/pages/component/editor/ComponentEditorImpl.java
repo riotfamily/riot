@@ -65,14 +65,14 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 public class ComponentEditorImpl extends WebsiteConfigSupport 
 		implements ComponentEditor, MessageSourceAware {
 	
-	private Log log = LogFactory.getLog(ComponentEditorImpl.class);
+	private Log log = LogFactory.getLog(ComponentEditorImpl.class);	
 	
 	private LoginManager loginManager;
 	
 	private MessageSource messageSource;
 	
-	private Map editorConfigs;
-		
+	private Map editorConfigs;	
+
 	public void setLoginManager(LoginManager loginManager) {
 		this.loginManager = loginManager;
 	}
@@ -632,7 +632,8 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 				type = live.getType();
 			}
 			Component component = getRepository().getComponent(type);
-			preview = component.copy(live);
+			preview = getComponentHelper().
+					cloneComponentVersion(component, live);
 			container.setPreviewVersion(preview);
 			getDao().updateVersionContainer(container);
 		}
@@ -663,9 +664,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	}
 	
 	protected void deleteComponentVersion(ComponentVersion version) {
-		if (version != null) {
-			Component component = getRepository().getComponent(version);
-			component.delete(version);
+		if (version != null) {			
 			getDao().deleteComponentVersion(version);
 		}
 	}

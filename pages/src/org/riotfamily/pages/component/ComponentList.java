@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.component;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -103,28 +101,4 @@ public class ComponentList {
 		return sb.toString();		
 	}
 	
-	public ComponentList copy(String path, ComponentRepository repository) {
-		ComponentList copy = new ComponentList();
-		copy.path = path;
-		copy.key = key;
-		copy.dirty = dirty;
-		copy.liveList = copyContainers(liveList, repository);
-		copy.previewList = copyContainers(previewList, repository);
-		return copy;
-	}
-	
-	private List copyContainers(List source, ComponentRepository repository) {
-		if (source == null) {
-			return null;
-		}
-		List dest = new ArrayList(source.size());
-		Iterator it = source.iterator();
-		while (it.hasNext()) {
-			VersionContainer c = (VersionContainer) it.next();
-			VersionContainer copy = c.copy(repository);
-			dest.add(copy);
-		}
-		return dest;
-	}
-
 }

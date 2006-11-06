@@ -50,6 +50,7 @@ import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.dao.ComponentDao;
+import org.riotfamily.pages.component.dao.ComponentHelper;
 import org.riotfamily.pages.component.property.FileStoreProperyProcessor;
 import org.riotfamily.pages.component.property.PropertyEditorProcessor;
 import org.riotfamily.pages.setup.Plumber;
@@ -77,6 +78,8 @@ public class ComponentFormController extends RepositoryFormController
 	
 	private ComponentDao componentDao;
 	
+	private ComponentHelper componentHelper;
+	
 	private PlatformTransactionManager transactionManager;
 	
 	private String viewName = ResourceUtils.getPath(
@@ -91,8 +94,7 @@ public class ComponentFormController extends RepositoryFormController
 			PlatformTransactionManager transactionManager) {
 		
 		super(formRepository);
-		this.transactionManager = transactionManager;
-		
+		this.transactionManager = transactionManager;		
 		ButtonFactory buttonFactory = new ButtonFactory(this);
 		buttonFactory.setLabelKey("label.form.button.save");
 		buttonFactory.setCssClass("button button-save");
@@ -106,6 +108,7 @@ public class ComponentFormController extends RepositoryFormController
 	public void setWebsiteConfig(WebsiteConfig websiteConfig) {
 		componentRepository = websiteConfig.getComponentRepository();
 		componentDao = websiteConfig.getComponentDao();
+		componentHelper = websiteConfig.getComponentHelper();
 		componentRepository.addListener(this);
 		setupForms(componentRepository.getComponentMap());
 	}
@@ -172,7 +175,7 @@ public class ComponentFormController extends RepositoryFormController
 		if (preview == null) {
 			ComponentVersion live = container.getLiveVersion();
 			Component component = componentRepository.getComponent(live.getType());
-			preview = component.copy(live);
+			preview = componentHelper.cloneComponentVersion(component, live);
 			container.setPreviewVersion(preview);
 			componentDao.updateVersionContainer(container);
 		}

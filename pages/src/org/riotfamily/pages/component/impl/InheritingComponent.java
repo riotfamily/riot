@@ -25,6 +25,7 @@ package org.riotfamily.pages.component.impl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -110,13 +111,10 @@ public class InheritingComponent implements Component, MessageSourceAware {
 	public void updateProperties(ComponentVersion version, Map model) {
 	}
 	
-	public ComponentVersion copy(ComponentVersion version) {
-		return new ComponentVersion(version);
+	public List getPropertyProcessors() {		
+		return null;
 	}
-	
-	public void delete(ComponentVersion source) {
-	}
-	
+		
 	private static class InheritingRenderStrategy extends PreviewModeRenderStrategy {
 
 		private MessageSource messageSource;

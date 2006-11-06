@@ -88,19 +88,6 @@ public class VersionContainer {
 
 	public void setVersions(Set versions) {
 		this.versions = versions;
-	}
-	
-	public VersionContainer copy(ComponentRepository repository) {
-		VersionContainer copy = new VersionContainer();
-		if (liveVersion != null) {
-			Component component = repository.getComponent(liveVersion);
-			copy.setLiveVersion(component.copy(liveVersion));
-		}
-		if (previewVersion != null) {
-			Component component = repository.getComponent(previewVersion);
-			copy.setPreviewVersion(component.copy(previewVersion));
-		}
-		return copy;
-	}
+	}	
 
 }

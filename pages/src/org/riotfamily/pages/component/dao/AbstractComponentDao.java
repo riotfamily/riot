@@ -23,13 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.component.dao;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.pages.component.ComponentList;
-import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.VersionContainer;
 
@@ -39,12 +41,12 @@ import org.riotfamily.pages.component.VersionContainer;
  */
 public abstract class AbstractComponentDao implements ComponentDao {
 
-	private Log log = LogFactory.getLog(AbstractComponentDao.class);
+	private Log log = LogFactory.getLog(AbstractComponentDao.class);	
 	
-	private ComponentRepository componentRepository;
+	private ComponentHelper componentHelper;
 	
-	public AbstractComponentDao(ComponentRepository componentRepository) {
-		this.componentRepository = componentRepository;
+	public AbstractComponentDao(ComponentHelper componentHelper) {		
+		this.componentHelper = componentHelper;
 	}
 
 	public ComponentList loadComponentList(Long id) {
@@ -95,17 +97,70 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	
 	public void deleteComponentVersion(ComponentVersion version) {
 		log.debug("Deleting ComponentVersion " + version.getId());
+		componentHelper.deleteComponentVersion(version);
 		deleteObject(version);
 	}
 
 	public void copyComponentLists(String oldPath, String newPath) {
 		List lists = findComponentLists(oldPath);
+		List nestedLists = null;
+		Map copiedLists = null;
 		if (lists != null) {
+			copiedLists = new HashMap();
 			Iterator it = lists.iterator();
 			while (it.hasNext()) {
 				ComponentList list = (ComponentList) it.next();
-				ComponentList copy = list.copy(newPath, componentRepository);
-				saveComponentList(copy);		
+				if (list.getKey().indexOf('$') != -1) {					
+					if (nestedLists == null) {
+						nestedLists = new ArrayList();
+					}
+					nestedLists.add(list);
+				}
+				else {
+					ComponentList copy = componentHelper.
+							cloneComponentList(list, newPath);
+					saveComponentList(copy);					
+					copiedLists.put(copy.getKey(), copy);
+				}						
+			}
+		}
+		if (nestedLists != null) {
+			copyNestedLists(nestedLists, copiedLists, newPath);
+		}
+	}	
+
+	//TODO: nested list could also have nested lists again!
+	private void copyNestedLists(List nestedLists, Map copiedLists, 
+					String newPath) {
+		Iterator it = nestedLists.iterator();
+		while (it.hasNext()) {
+			ComponentList list = (ComponentList) it.next();				
+			String parentId = list.getKey().
+					substring(list.getKey().indexOf('$') + 1);				
+			VersionContainer parent = (VersionContainer)loadObject(
+							VersionContainer.class, Long.valueOf(parentId));
+			if (parent != null) {
+				ComponentList parentList = parent.getList();				
+				ComponentList copiedList = (ComponentList)copiedLists.get(
+								parentList.getKey());				
+				VersionContainer newParent = null;
+				if (parentList.getLiveList() != null 
+						&& parentList.getLiveList().contains(parent)) {						
+					newParent = (VersionContainer)copiedList.getLiveList().
+							get(parentList.getLiveList().indexOf(parent));
+				}
+				else {
+					newParent = (VersionContainer)copiedList.
+						getPreviewList().get(parentList.getPreviewList().
+								indexOf(parent));					
+				}				
+				ComponentList copy = componentHelper.
+						cloneComponentList(list, newPath);
+				String newKey = copy.getKey().
+						substring(0, copy.getKey().indexOf('$') + 1) 
+						+ newParent.getId();				
+				copy.setKey(newKey);
+				saveComponentList(copy);
 			}
 		}
 	}

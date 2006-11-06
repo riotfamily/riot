@@ -29,6 +29,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,16 +60,20 @@ public abstract class AbstractComponent implements Component {
 	
 	private String description;
 	
-	private ArrayList propertyProcessors = new ArrayList();
+	private List propertyProcessors = new ArrayList();
 	
 	
-	public void setPropertyProcessors(ArrayList propertyProcessors) {
+	public void setPropertyProcessors(List propertyProcessors) {
 		Assert.notNull(propertyProcessors);
 		this.propertyProcessors = propertyProcessors;
 	}
 
 	public void addPropertyProcessor(PropertyProcessor propertyProcessor) {
 		propertyProcessors.add(propertyProcessor);
+	}
+	
+	public List getPropertyProcessors() {		
+		return propertyProcessors;
 	}
 	
 	public String getDescription() {
@@ -146,25 +151,7 @@ public abstract class AbstractComponent implements Component {
 			}
 		}
 		version.setDirty(true);
-	}
-	
-	public ComponentVersion copy(ComponentVersion version) {
-		ComponentVersion copy = new ComponentVersion(version);
-		Iterator it = propertyProcessors.iterator();
-		while (it.hasNext()) {
-			PropertyProcessor pp = (PropertyProcessor) it.next();
-			pp.copy(version.getProperties(), copy.getProperties());
-		}
-		return copy;
-	}
-
-	public void delete(ComponentVersion version) {
-		Iterator it = propertyProcessors.iterator();
-		while (it.hasNext()) {
-			PropertyProcessor pp = (PropertyProcessor) it.next();
-			pp.delete(version.getProperties());
-		}
-	}
+	}	
 	
 	protected abstract void renderInternal(ComponentVersion componentVersion, 
 			String positionClassName, HttpServletRequest request, 
