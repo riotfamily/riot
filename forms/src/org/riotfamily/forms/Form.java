@@ -273,6 +273,10 @@ public class Form implements BeanEditor {
 			desiredName = "p" + paramNames.size();
 		}
 		String name = desiredName;
+		if (name.equalsIgnoreCase("target")) {
+			// Otherwise changing the target of the form would not work
+			name = "_target";
+		}
 		//TODO Aussure uniqueness of syntetic names
 		if (paramNames.contains(name)) {
 			name = desiredName + paramNames.size();
