@@ -44,6 +44,7 @@ import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.controller.RepositoryFormController;
 import org.riotfamily.forms.element.core.Checkbox;
 import org.riotfamily.forms.element.core.FileUpload;
+import org.riotfamily.forms.element.core.ImageUpload;
 import org.riotfamily.forms.factory.FormDefinitionException;
 import org.riotfamily.pages.component.Component;
 import org.riotfamily.pages.component.ComponentRepository;
@@ -56,6 +57,7 @@ import org.riotfamily.pages.component.property.PropertyEditorProcessor;
 import org.riotfamily.pages.setup.Plumber;
 import org.riotfamily.pages.setup.WebsiteConfig;
 import org.riotfamily.pages.setup.WebsiteConfigAware;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -131,6 +133,8 @@ public class ComponentFormController extends RepositoryFormController
 		}
 	}
 	
+	//TODO Refactor: Move this to a separate class.
+	
 	protected void setupForm(Component component, Form form) {
 		componentRepository.addFormId(form.getId());
 		Iterator it = form.getRegisteredElements().iterator();
@@ -142,13 +146,29 @@ public class ComponentFormController extends RepositoryFormController
 						new FileStoreProperyProcessor(
 						upload.getEditorBinding().getProperty(),
 						upload.getFileStore()));
+				
+				if (upload instanceof ImageUpload) {
+					ImageUpload imageUpload = (ImageUpload) upload;
+					if (imageUpload.getWidthProperty() != null) {
+						component.addPropertyProcessor(
+								new PropertyEditorProcessor(
+								imageUpload.getWidthProperty(),
+								new CustomNumberEditor(Integer.class, true)));
+					}
+					if (imageUpload.getHeightProperty() != null) {
+						component.addPropertyProcessor(
+								new PropertyEditorProcessor(
+								imageUpload.getHeightProperty(),
+								new CustomNumberEditor(Integer.class, true)));
+					}
+				}
 			}
 			else if (e instanceof Checkbox) {
 				Checkbox cb = (Checkbox) e;
 				component.addPropertyProcessor(
 						new PropertyEditorProcessor(
 						cb.getEditorBinding().getProperty(),
-						new BooleanEditor()));
+						new BooleanEditor(cb.isCheckedByDefault())));
 			}
 		}
 	}
