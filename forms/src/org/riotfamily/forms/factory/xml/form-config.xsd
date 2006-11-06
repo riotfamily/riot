@@ -134,7 +134,22 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="checkbox" type="simple-editor" />
+	<xsd:element name="checkbox">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="simple-editor">
+					<xsd:attribute name="default">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="checked" />
+								<xsd:enumeration value="unchecked" />
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
 	
 	<xsd:element name="imagecheckbox">
 		<xsd:complexType>

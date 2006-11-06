@@ -88,6 +88,8 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 
 	public static final String NAMESPACE = "http://www.riotfamily.org/schema/forms/form-config";
 	
+	public static final String DEFAULT = "default";
+	
 	public static final String FORM = "form";
 	
 	public static final String FORM_ID = "id";
@@ -101,6 +103,8 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	public static final String PACKAGE = "package";
 	
 	public static final String PACKAGE_NAME = "name";
+	
+	public static final String CHECKBOX_CHECKED = "checked";
 	
 	public static final String CUSTOM_ELEMENT = "element";
 	
@@ -283,7 +287,16 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			}
 		}
 		
+		if (Checkbox.class.isAssignableFrom(elementClass)) {
+			pvs.removePropertyValue(DEFAULT);
+			if (CHECKBOX_CHECKED.equals(XmlUtils.getAttribute(ele, DEFAULT))) {
+				pvs.addPropertyValue("checkedByDefault", Boolean.TRUE);
+			}
+		}
+		
 		if (FileUpload.class.isAssignableFrom(elementClass)) {
+			pvs.removePropertyValue(FILE_STORE);
+			pvs.removePropertyValue(FILE_THUMBNAILER);
 			String ref = XmlUtils.getAttribute(ele, FILE_STORE);
 			if (ref != null) {
 				FileStore fileStore = (FileStore) beanFactory.getBean(
@@ -376,9 +389,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			String name = attr.getName();
 			if (!ELEMENT_BIND.equals(name)
 					&& !CUSTOM_ELEMENT_TYPE.equals(name)
-					&& !FORM_BEAN_CLASS.equals(name)
-					&& !FILE_STORE.equals(name)
-					&& !FILE_THUMBNAILER.equals(name)) {
+					&& !FORM_BEAN_CLASS.equals(name)) {
 				
 				String property = FormatUtils.xmlToCamelCase(attr.getName());
 				log.debug("Setting property " + property + " to " + attr.getValue());

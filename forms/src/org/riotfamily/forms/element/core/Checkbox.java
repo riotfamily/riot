@@ -46,6 +46,7 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 	
 	private Object uncheckedValue = Boolean.FALSE;
 
+	private boolean checkedByDefault = false;
 	
 	public Checkbox() {
 		setStyleClass(TYPE_CHECKBOX);
@@ -67,6 +68,14 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 		this.uncheckedValue = uncheckedValue;
 	}
 	
+	public void setCheckedByDefault(boolean checkedByDefault) {
+		this.checkedByDefault = checkedByDefault;
+	}
+	
+	public boolean isCheckedByDefault() {
+		return this.checkedByDefault;
+	}
+
 	public void setChecked(boolean checked) {
 		this.checked = checked;
 	}
@@ -90,7 +99,12 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 	 * @see Editor#setValue(Object)
 	 */
 	public void setValue(Object value) {
-		this.checked = checkedValue.equals(value);
+		if (value != null) {
+			this.checked = checkedValue.equals(value);
+		}
+		else {
+			this.checked = checkedByDefault;
+		}
 	}
 
 	/**
