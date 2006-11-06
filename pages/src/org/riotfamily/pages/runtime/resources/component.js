@@ -125,23 +125,28 @@ riot.Component.prototype = {
 			var e = desc[i];
 			try {
 				var editorType = e.getAttribute('riot:editorType');
-				if (editorType == 'text' || editorType == 'multiline') {
-					this.editors.push(new riot.InplaceTextEditor(e, this, {multiline: true}));
-				}
-				else if (editorType == 'textarea') {
-					this.editors.push(new riot.PopupTextEditor(e, this));
-				}
-				else if (editorType == 'textile') {
-					this.editors.push(new riot.TextileEditor(e, this));
-				}
-				else if (editorType == 'markdown') {
-					this.editors.push(new riot.MarkdownEditor(e, this));
-				}
-				else if (editorType == 'richtext') {
-					this.editors.push(new riot.RichtextEditor(e, this));
-				}
-				else if (editorType == 'richtext-chunks') {
-					this.editors.push(new riot.RichtextEditor(e, this, {split: true}));
+				if (editorType) {
+					var componentElement = Element.getAncestorWithClassName(e, 'riot-component');
+					if (componentElement == this.element) {
+						if (editorType == 'text' || editorType == 'multiline') {
+							this.editors.push(new riot.InplaceTextEditor(e, this, {multiline: true}));
+						}
+						else if (editorType == 'textarea') {
+							this.editors.push(new riot.PopupTextEditor(e, this));
+						}
+						else if (editorType == 'textile') {
+							this.editors.push(new riot.TextileEditor(e, this));
+						}
+						else if (editorType == 'markdown') {
+							this.editors.push(new riot.MarkdownEditor(e, this));
+						}
+						else if (editorType == 'richtext') {
+							this.editors.push(new riot.RichtextEditor(e, this));
+						}
+						else if (editorType == 'richtext-chunks') {
+							this.editors.push(new riot.RichtextEditor(e, this, {split: true}));
+						}
+					}
 				}
 			}
 			catch (ex) {
