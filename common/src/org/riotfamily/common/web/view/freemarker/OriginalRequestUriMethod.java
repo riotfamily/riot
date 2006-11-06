@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.view.ViewContext;
+import org.springframework.util.StringUtils;
 
 import freemarker.template.TemplateMethodModel;
 import freemarker.template.TemplateModelException;
@@ -34,7 +35,11 @@ import freemarker.template.TemplateModelException;
 public class OriginalRequestUriMethod implements TemplateMethodModel {
 	
 	public Object exec(List args) throws TemplateModelException {
-		return ServletUtils.getOriginalRequestUri(ViewContext.getRequest());
+		String uri = ServletUtils.getOriginalRequestUri(ViewContext.getRequest());
+		if (StringUtils.hasText(ViewContext.getRequest().getQueryString())) {
+			uri = uri + "?" + ViewContext.getRequest().getQueryString();
+		}
+ 		return uri;
 	}
 
 }
