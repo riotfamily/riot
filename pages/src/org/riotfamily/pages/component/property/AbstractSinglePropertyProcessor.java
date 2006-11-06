@@ -42,7 +42,7 @@ public abstract class AbstractSinglePropertyProcessor
 
 	public void resolveStrings(Map map) {
 		Object value = map.get(property);
-		if (value instanceof String) {
+		if (value instanceof String || value == null) {
 			map.put(property, resolveString((String) value));
 		}
 	}

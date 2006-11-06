@@ -167,7 +167,8 @@ public class ComponentFormController extends RepositoryFormController
 				component.addPropertyProcessor(
 						new PropertyEditorProcessor(
 						cb.getEditorBinding().getProperty(),
-						new BooleanEditor(cb.isCheckedByDefault())));
+						new BooleanEditor(), 
+						Boolean.toString(cb.isCheckedByDefault())));
 			}
 		}
 	}

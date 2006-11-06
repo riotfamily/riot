@@ -41,8 +41,15 @@ public class PropertyEditorProcessor extends AbstractSinglePropertyProcessor {
 	public PropertyEditorProcessor(String property, 
 			PropertyEditor propertyEditor) {
 		
+		this(property, propertyEditor, null);
+	}
+			
+	public PropertyEditorProcessor(String property, 
+			PropertyEditor propertyEditor, String defaultValue) {
+		
 		this.propertyEditor = propertyEditor;
 		setProperty(property);
+		setDefaultValue(defaultValue);
 	}
 
 	public void setPropertyEditor(PropertyEditor propertyEditor) {
@@ -56,6 +63,9 @@ public class PropertyEditorProcessor extends AbstractSinglePropertyProcessor {
 	public synchronized Object resolveString(String value) {
 		if (value == null) {
 			value = defaultValue;
+		}
+		if (value == null) {
+			return null;
 		}
 		propertyEditor.setAsText(value);
 		return propertyEditor.getValue();
