@@ -84,12 +84,23 @@
 		</javadoc>
 	</target>
 		
-	<target name="dist">
-		<zip destfile="${dist.zip.file}">
-			<fileset dir=".">
-				<exlude name="lib" />
+	<target name="dist" depends="jar,javadoc">
+		<delete file="${dist.zip.file}" />
+		<mkdir dir="${build.dir}/tmp" />
+		<copy todir="${build.dir}/tmp" flatten="true">
+			<fileset dir="${build.dir}/modules">
+				<include name="**/*.jar" />
 			</fileset>
+			<chainedmapper>
+				<flattenmapper />				
+			</chainedmapper>
+		</copy>
+		<zip destfile="${dist.zip.file}">
+			<zipfileset dir="${build.dir}/api" prefix="riotfamily/api" />			
+			<zipfileset dir="." excludes="build/**,lib/**,.*/**,.*,**/CVS/**" prefix="riotfamily"/>
+			<zipfileset dir="${build.dir}/tmp" prefix="riotfamily/dist" includes="**/*.jar" />				
 		</zip>
+		<delete dir="${build.dir}/tmp" />
 	</target>
 
 	<target name="clean">
