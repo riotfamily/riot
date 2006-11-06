@@ -33,8 +33,20 @@ public class BooleanEditor extends PropertyEditorSupport {
 
 	public static final String VALUE_FALSE = "false";
 
-	private Boolean defaultValue = Boolean.FALSE;
+	private Boolean defaultValue;
 	
+	public BooleanEditor() {
+		this(Boolean.FALSE);
+	}
+	
+	public BooleanEditor(boolean defaultValue) {
+		this(Boolean.valueOf(defaultValue));
+	}
+	
+	public BooleanEditor(Boolean defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
 	public void setDefaultValue(Boolean defaultValue) {
 		this.defaultValue = defaultValue;
 	}
