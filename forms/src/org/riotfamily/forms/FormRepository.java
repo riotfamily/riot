@@ -37,7 +37,7 @@ public interface FormRepository {
 	
 	public Class getBeanClass(String formId);
 	
-	public Collection getFormIds(Class beanClass);
+	public Collection getFormIds();
 	
 	public void registerFormFactory(String id, FormFactory formFactory);
 

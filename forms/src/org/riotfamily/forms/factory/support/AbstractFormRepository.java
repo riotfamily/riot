@@ -86,15 +86,12 @@ public abstract class AbstractFormRepository implements FormRepository {
 		return getFormFactory(id).getBeanClass();
 	}
 	
-	public Collection getFormIds(Class beanClass) {
-		ArrayList ids = new ArrayList();
+	public Collection getFormIds() {
+		ArrayList ids = new ArrayList();		
 		Iterator it = factories.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			FormFactory factory = (FormFactory) entry.getValue();
-			if (factory.getBeanClass().isAssignableFrom(beanClass)) {
-				ids.add(entry.getKey());
-			}
+			Map.Entry entry = (Map.Entry) it.next();			
+			ids.add(entry.getKey());			
 		}
 		return ids;
 	}
