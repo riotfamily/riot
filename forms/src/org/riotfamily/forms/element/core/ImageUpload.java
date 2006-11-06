@@ -89,9 +89,16 @@ public class ImageUpload extends FileUpload {
 		this.width = width;
 	}
 
-	
+	public String getHeightProperty() {
+		return this.heightProperty;
+	}
+
 	public void setHeightProperty(String heightProperty) {
 		this.heightProperty = heightProperty;
+	}
+
+	public String getWidthProperty() {
+		return this.widthProperty;
 	}
 
 	public void setWidthProperty(String widthProperty) {
