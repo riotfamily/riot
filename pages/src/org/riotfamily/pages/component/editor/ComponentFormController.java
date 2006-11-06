@@ -112,25 +112,24 @@ public class ComponentFormController extends RepositoryFormController
 		componentDao = websiteConfig.getComponentDao();
 		componentHelper = websiteConfig.getComponentHelper();
 		componentRepository.addListener(this);
-		setupForms(componentRepository.getComponentMap());
+		setupForms();
 	}
 	
 	public void beanReconfigured(ConfigurableBean bean) {
-		setupForms(componentRepository.getComponentMap());
+		setupForms();
 	}
 	
-	protected void setupForms(Map components) {
-		Iterator it = components.entrySet().iterator();
+	protected void setupForms() {
+		Iterator it = getFormRepository().getFormIds().iterator();
 		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			String id = (String) entry.getKey();
-			Component component = (Component) entry.getValue();
+			String id = (String) it.next();
+			Component component = componentRepository.getComponent(id);			
 			try {
 				setupForm(component, getFormRepository().createForm(id));
 			}
 			catch (FormDefinitionException e) {
 			}
-		}
+		}		
 	}
 	
 	//TODO Refactor: Move this to a separate class.

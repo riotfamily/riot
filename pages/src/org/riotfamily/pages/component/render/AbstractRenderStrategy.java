@@ -38,7 +38,6 @@ import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentListConfiguration;
 import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.VersionContainer;
-import org.riotfamily.pages.component.impl.MissingComponent;
 
 public class AbstractRenderStrategy implements RenderStrategy {
 	
@@ -165,11 +164,7 @@ public class AbstractRenderStrategy implements RenderStrategy {
 			String positionClassName) throws IOException {
 		
 		String type = version.getType(); 
-		Component component = config.getRepository().getComponent(type);
-		if (component == null) {
-			log.error("No such Component: " + type);
-			component = new MissingComponent(type);
-		}
+		Component component = config.getRepository().getComponent(type);		
 		renderComponent(component, version, positionClassName);
 	}
 	

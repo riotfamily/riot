@@ -31,6 +31,8 @@
 				<value>/WEB-INF/pages-config/components.xml</value>
 			</list>
 		</property>
+		<property name="viewNamePrefix" value="components/" />
+		<property name="viewNameSuffix" value=".ftl" />
 	</bean>
 	
 	<!-- Component DAO  -->

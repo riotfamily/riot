@@ -24,7 +24,6 @@
 package org.riotfamily.pages.component;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -35,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.xml.BeanConfigurationWatcher;
 import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;
+import org.riotfamily.pages.component.impl.ViewComponent;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -58,6 +58,10 @@ public class ComponentRepository implements ServletContextAware,
 	private XmlWebApplicationContext context;
 	
 	private Map componentMap;
+	
+	private String viewNamePrefix;
+	
+	private String viewNameSuffix;
 
 	private BeanConfigurationWatcher configWatcher = 
 			new BeanConfigurationWatcher(this);
@@ -104,17 +108,7 @@ public class ComponentRepository implements ServletContextAware,
 		componentMap = context.getBeansOfType(Component.class);
 		log.debug("Components: " + componentMap);
 	}
-	
-	public Collection getComponents() {
-		configWatcher.checkForModifications();
-		return componentMap.values();
-	}
-	
-	public Map getComponentMap() {
-		configWatcher.checkForModifications();
-		return componentMap;
-	}
-	
+		
 	public void addFormId(String formId) {
 		formIds.add(formId);
 	}
@@ -129,11 +123,26 @@ public class ComponentRepository implements ServletContextAware,
 		
 	public Component getComponent(String type) {
 		configWatcher.checkForModifications();
+		if (componentMap.get(type) == null) {
+			ViewComponent viewComponent = new ViewComponent();
+			viewComponent.setApplicationContext(applicationContext);
+			String viewName = viewNamePrefix + type + viewNameSuffix;
+			viewComponent.setViewName(viewName);
+			componentMap.put(type, viewComponent);
+		}
 		return (Component) componentMap.get(type);
 	}
 	
 	public Component getComponent(ComponentVersion version) {
 		return getComponent(version.getType());
 	}
+
+	public void setViewNamePrefix(String defaultViewLocation) {
+		this.viewNamePrefix = defaultViewLocation;
+	}
+
+	public void setViewNameSuffix(String viewSuffix) {
+		this.viewNameSuffix = viewSuffix;
+	}	
 	
 }
