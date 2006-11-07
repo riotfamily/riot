@@ -28,8 +28,6 @@ td {
 .title {
 	background-color: #3d3d3d;
 	position: relative;
-	color: #fff;
-	text-transform: uppercase;
 	line-height: 20px;
 	height: 20px;
 }
@@ -42,7 +40,10 @@ td {
 	background: ${highlight} url(images/list.gif) no-repeat;
 }
 
-.title span {
+.title span,
+.title label {
+	color: #fff;
+	text-transform: uppercase;
 	padding-left: 36px;
 }
 

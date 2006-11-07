@@ -6,21 +6,16 @@
 		<div class="form-error">${form.errors.generalFormError}</div>
 	</#if>
 	<#list elements.elements as element>
-		<#if element.compositeElement?if_exists>
-			<#assign class = "composite" />
-		<#else>
-			<#assign class = "single" />
-		</#if>
-		<div class="form-element">
+		<div class="${element.compositeElement!false?string('composite','single')}">
 			<#if element.label?exists>
 				<div class="title">
-					<div class="icon"></div><span>${element.label}</span>
+					<div class="icon"></div><label for="${element.id}">${element.label}</label>
 					<#if element.hint?exists>
 						<div class="hint-trigger" onclick="toggleHint('${element.id}-hint')"></div>
 					</#if>
 				</div>
 			</#if>
-			<div class="${class}">
+			<div class="form-element">
 				<#if element.hint?exists>
 					<div id="${element.id}-hint" class="hint">${element.hint}</div>
 				</#if>
