@@ -20,7 +20,7 @@ Resources.loadScriptSequence([
 	{src: 'toolbar.js'}
 ]);
 
-Resources.loadStyleSheet('toolbar.css');
+Resources.loadStyleSheet('style/toolbar.css');
 
 if (riotUserStylesheet) {
 	Resources.loadStyleSheet(riotUserStylesheet);

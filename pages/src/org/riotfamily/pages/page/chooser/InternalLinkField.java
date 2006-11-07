@@ -45,7 +45,7 @@ public class InternalLinkField extends TextField implements ResourceElement,
 	static {
 		RESOURCES.add(Resources.PROTOTYPE);
 		RESOURCES.add(Resources.RIOT_WINDOW_CALLBACK);
-		RESOURCES.add(new StylesheetResource("internal-link-field.css"));
+		RESOURCES.add(new StylesheetResource("style/internal-link-field.css"));
 	}
 	
 	private String linkSuffix;

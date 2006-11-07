@@ -125,7 +125,7 @@
 				</entry>
 				<entry key="customStyleSheets">
 					<list>
-						<value>riot-pages.css</value>
+						<value>style/riot-pages.css</value>
 					</list>
 				</entry>
 				<entry key="customFormElements">
