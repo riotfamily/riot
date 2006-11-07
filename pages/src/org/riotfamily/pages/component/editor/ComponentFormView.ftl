@@ -29,7 +29,11 @@
 			Event.observe(window, 'load', function() {
 				var p = parent.riot.popup;
 				if (!p.isOpen) {
-					p.content.style.height = document.body.offsetHeight + 'px';
+					var h = Math.min(
+							Math.round(Viewport.getInnerHeight(parent) * 0.8), 
+							Viewport.getBodyHeight());
+					
+					p.content.style.height = h + 'px';
 					p.open();
 				}
 			});
