@@ -1,6 +1,6 @@
 var Viewport = {};
 
-Viewport.getInnerHeight = function() {
+Viewport.getInnerHeight = function(w) {
 	if (!w) var w = window;
 	if (w.innerHeight) {
 		// all except Explorer
