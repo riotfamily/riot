@@ -37,7 +37,9 @@ import org.riotfamily.cachius.support.SessionUtils;
 import org.riotfamily.pages.component.Component;
 import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentListConfiguration;
+import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
+import org.riotfamily.pages.component.dao.ComponentDao;
 
 public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 
@@ -49,12 +51,13 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 	
 	protected boolean listIsCacheable = true;
 	
-	public LiveModeRenderStrategy(ComponentListConfiguration config,
-			HttpServletRequest request, HttpServletResponse response)
-			throws IOException {
+	public LiveModeRenderStrategy(ComponentDao dao, 
+			ComponentRepository repository, ComponentListConfiguration config,
+			HttpServletRequest request, HttpServletResponse response, 
+			Cache cache) throws IOException {
 		
-		super(config, request, response);
-		cache = config.getCache();
+		super(dao, repository, config, request, response);
+		this.cache = cache;
 	}
 	
 	/**
@@ -151,7 +154,7 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 			CachiusResponseWrapper wrapper = new CachiusResponseWrapper(
 					response, updater);
 			
-			component.render(version, positionClassName, config, request, wrapper);
+			component.render(version, positionClassName, request, wrapper);
 			
 			wrapper.flushBuffer();
 			updater.updateCacheItem();

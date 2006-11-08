@@ -38,6 +38,7 @@ import org.riotfamily.pages.component.impl.ViewComponent;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
@@ -99,6 +100,10 @@ public class ComponentRepository implements ServletContextAware,
 		configure();
 	}
 	
+	public MessageSource getMessageSource() {
+		return applicationContext;
+	}
+	
 	public boolean isReloadable() {
 		return true;
 	}
@@ -136,7 +141,7 @@ public class ComponentRepository implements ServletContextAware,
 	public Component getComponent(ComponentVersion version) {
 		return getComponent(version.getType());
 	}
-
+	
 	public void setViewNamePrefix(String defaultViewLocation) {
 		this.viewNamePrefix = defaultViewLocation;
 	}

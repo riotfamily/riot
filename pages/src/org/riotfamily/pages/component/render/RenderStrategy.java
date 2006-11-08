@@ -29,7 +29,7 @@ import org.riotfamily.pages.component.ComponentList;
 
 public interface RenderStrategy {
 
-	public void render(String path, String key) throws IOException;
+	public void render() throws IOException;
 	
 	public void render(ComponentList list) throws IOException;
 	

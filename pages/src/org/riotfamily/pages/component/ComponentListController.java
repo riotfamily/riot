@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.cachius.Cache;
 import org.riotfamily.pages.component.context.PageRequestUtils;
 import org.riotfamily.pages.component.dao.ComponentDao;
-import org.riotfamily.pages.component.impl.AbstractComponent;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
 import org.riotfamily.pages.component.render.EditModeRenderStrategy;
 import org.riotfamily.pages.component.render.LiveModeRenderStrategy;
@@ -49,8 +48,8 @@ import org.springframework.web.servlet.mvc.Controller;
  * determined using a {@link ComponentPathResolver} and a 
  * {@link ComponentKeyResolver}. 
  */
-public class ComponentListController implements Controller,
-		BeanNameAware, ComponentListConfiguration {
+public class ComponentListController implements Controller, BeanNameAware,
+		ComponentListConfiguration {
 
 	private static final ComponentKeyResolver DEFAULT_KEY_RESOLVER = 
 			new TemplateComponentKeyResolver();
@@ -102,24 +101,36 @@ public class ComponentListController implements Controller,
 	public ComponentPathResolver getComponentPathResolver() {
 		return this.componentPathResolver;
 	}
-
+	
 	public String[] getInitialComponentTypes() {
 		return this.initialComponentTypes;
+	}
+
+	public void setInitialComponentTypes(String[] initialComponentTypes) {
+		this.initialComponentTypes = initialComponentTypes;
 	}
 
 	public Integer getMaxComponents() {
 		return this.maxComponents;
 	}
 
-	public ComponentRepository getRepository() {
-		return this.repository;
+	public void setMaxComponents(Integer maxComponents) {
+		this.maxComponents = maxComponents;
 	}
 
 	public String[] getValidComponentTypes() {
 		return this.validComponentTypes;
 	}
 
-	public String getBeanName() {
+	public void setValidComponentTypes(String[] validComponentTypes) {
+		this.validComponentTypes = validComponentTypes;
+	}
+
+	public ComponentRepository getRepository() {
+		return this.repository;
+	}
+
+	public String getControllerId() {
 		return this.beanName;
 	}
 
@@ -145,18 +156,6 @@ public class ComponentListController implements Controller,
 		this.componentPathResolver = componentPathResolver;
 	}
 
-	public void setInitialComponentTypes(String[] initialComponentTypes) {
-		this.initialComponentTypes = initialComponentTypes;
-	}
-
-	public void setMaxComponents(Integer maxComponents) {
-		this.maxComponents = maxComponents;
-	}
-
-	public void setValidComponentTypes(String[] validComponentTypes) {
-		this.validComponentTypes = validComponentTypes;
-	}
-
 	public void setViewModeResolver(ViewModeResolver viewModeResolver) {
 		this.viewModeResolver = viewModeResolver;
 	}	
@@ -171,39 +170,21 @@ public class ComponentListController implements Controller,
 		boolean preview = viewModeResolver.isPreviewMode(request);
 		RenderStrategy strategy = null;
 		if (preview) {
-			strategy = new EditModeRenderStrategy(this, request, response);
+			strategy = new EditModeRenderStrategy(componentDao, repository, 
+					this, request, response);
+			
 			PageRequestUtils.storeContext(request, 120000);
 		}
 		else {
-			strategy = new LiveModeRenderStrategy(this, request, response);
+			strategy = new LiveModeRenderStrategy(componentDao, repository, 
+					this, request, response, cache);
 		}
 		
-		String path = getComponentPath(request);
-		String key = getComponentKey(request);
-		strategy.render(path, key);
+		strategy.render();
 		
 		return null;
 	}
 
-	protected String getComponentPath(HttpServletRequest request) {
-		VersionContainer parentContainer = (VersionContainer) 
-				request.getAttribute(AbstractComponent.CONTAINER);
-		
-		if (parentContainer != null) {
-			return parentContainer.getList().getPath();
-		}
-		return componentPathResolver.getComponentPath(request);
-	}
 	
-	protected String getComponentKey(HttpServletRequest request) {
-		VersionContainer parentContainer = (VersionContainer) 
-				request.getAttribute(AbstractComponent.CONTAINER);
-		
-		if (parentContainer != null) {
-			return parentContainer.getList().getKey() + "$" 
-					+ parentContainer.getId();
-		}
-		return componentKeyResolver.getComponentKey(request);
-	}
 
 }

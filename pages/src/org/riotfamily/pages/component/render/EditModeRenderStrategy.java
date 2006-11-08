@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentListConfiguration;
+import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.dao.ComponentDao;
@@ -40,11 +41,22 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	
 	private boolean renderOuterDiv = true;
 	
-	public EditModeRenderStrategy(ComponentListConfiguration config,
-			HttpServletRequest request, HttpServletResponse response)
+	public EditModeRenderStrategy(ComponentDao dao, 
+			ComponentRepository repository, ComponentListConfiguration config,
+			HttpServletRequest request, HttpServletResponse response) 
 			throws IOException {
 		
-		super(config, request, response);
+		super(dao, repository, config, request, response);
+	}
+
+	public void renderComponentVersion(ComponentVersion version) 
+			throws IOException {
+		
+		VersionContainer c = version.getContainer();
+		List components = getComponentsToRender(c.getList());
+		int position = components.indexOf(c);
+		boolean last = position == components.size() - 1;
+		renderComponentVersion(version, getPositionalClassName(position, last));
 	}
 	
 	public void setRenderOuterDiv(boolean renderOuterDiv) {
@@ -62,7 +74,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 			out.print("<div riot:listId=\"");
 			out.print(list.getId());
 			out.print("\" riot:controllerId=\"");
-			out.print(config.getBeanName());
+			out.print(config.getControllerId());
 			out.print('"');
 			if (config.getMaxComponents() != null) {
 				out.print(" riot:maxComponents=\"");
@@ -98,10 +110,9 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	 */
 	protected ComponentList createNewList(String path, String key) {
 		ComponentList list = new ComponentList();
-		ComponentDao componentDao = config.getComponentDao();
 		list.setPath(path);
 		list.setKey(key);
-		componentDao.saveComponentList(list);
+		dao.saveComponentList(list);
 		String[] initialTypes = config.getInitialComponentTypes();
 		if (initialTypes != null) {
 			List containers = new ArrayList();
@@ -111,11 +122,11 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 				live.setContainer(container);
 				container.setList(list);
 				container.setLiveVersion(live);
-				componentDao.saveVersionContainer(container);
+				dao.saveVersionContainer(container);
 				containers.add(container);
 			}
 			list.setLiveList(containers);
-			componentDao.updateComponentList(list);
+			dao.updateComponentList(list);
 		}
 		return list;
 	}
@@ -137,7 +148,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		out.print('"');
 		
 		String type = version.getType(); 
-		String formId = config.getRepository().getFormId(type);
+		String formId = repository.getFormId(type);
 		if (formId != null) {
 			out.print(" riot:formId=\"");
 			out.print(formId);
@@ -149,6 +160,11 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		out.print("\">");
 		renderComponentVersion(version, positionClassName);
 		out.print("</div>");
+	}
+	
+	protected RenderStrategy getStrategyForParentList() throws IOException {
+		return new InheritingRenderStrategy(dao, repository, config, 
+				request, response);
 	}
 
 }

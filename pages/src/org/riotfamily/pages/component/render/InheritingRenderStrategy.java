@@ -24,7 +24,7 @@
 package org.riotfamily.pages.component.render;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,45 +32,49 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentListConfiguration;
 import org.riotfamily.pages.component.ComponentRepository;
-import org.riotfamily.pages.component.ComponentVersion;
-import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.dao.ComponentDao;
+import org.springframework.context.MessageSource;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
-public class PreviewModeRenderStrategy extends AbstractRenderStrategy {
+public class InheritingRenderStrategy extends PreviewModeRenderStrategy {
 
-	public static final String EDIT_MODE_ATTRIBUTE = "riotComponentEditMode";
+	private MessageSource messageSource;
 	
-	public PreviewModeRenderStrategy(ComponentDao dao, 
+	public InheritingRenderStrategy(ComponentDao dao, 
 			ComponentRepository repository, ComponentListConfiguration config,
-			HttpServletRequest request, HttpServletResponse response)
+			HttpServletRequest request, HttpServletResponse response) 
 			throws IOException {
 		
 		super(dao, repository, config, request, response);
+		this.messageSource = repository.getMessageSource();
 	}
 	
-	/**
-	 * Overrides the default implementation to return the preview components 
-	 * in case the list is marked as dirty.
-	 */
-	protected List getComponentsToRender(ComponentList list) {
-		if (list.isDirty()) { 
-			return list.getPreviewList();
-		}
-		else {
-			return list.getLiveList();
-		}
+	protected void renderComponentList(ComponentList list) throws IOException {
+		Object editMode = request.getAttribute(EDIT_MODE_ATTRIBUTE);
+		request.setAttribute(EDIT_MODE_ATTRIBUTE, Boolean.FALSE);
+		super.renderComponentList(list);
+		request.setAttribute(EDIT_MODE_ATTRIBUTE, editMode);
 	}
 	
-	/**
-	 * Overrides the default implementation to return the component's preview
-	 * version. In case no preview version exists, the live version is returned.
-	 */
-	protected ComponentVersion getVersionToRender(VersionContainer container) {
-		ComponentVersion version = container.getPreviewVersion(); 
-		if (version == null) {
-			version = container.getLiveVersion();
-		}
-		return version;
+	
+	protected void onListNotFound(String path, String key) throws IOException {
+		Locale locale = RequestContextUtils.getLocale(request);
+		out.print("<div class=\"riot-no-inheritance\">");
+		out.print(messageSource.getMessage(
+				"pages.inheritingComponent.noParentList", null, 
+				"No parent list available", locale));
+		
+		out.print("</div>");
+	}
+	
+	protected void onEmptyComponentList() throws IOException {
+		Locale locale = RequestContextUtils.getLocale(request);
+		out.print("<div class=\"riot-no-inheritance\">");
+		out.print(messageSource.getMessage(
+				"pages.inheritingComponent.emptyParentList", null, 
+				"The parent list does not contain any components", locale));
+		
+		out.print("</div>");
 	}
 	
 }

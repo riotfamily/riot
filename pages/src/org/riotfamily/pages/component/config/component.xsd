@@ -4,14 +4,7 @@
 		attributeFormDefault="unqualified" 
 		targetNamespace="http://www.riotfamily.org/schema/pages/component"
 		xmlns="http://www.riotfamily.org/schema/pages/component">
-	
-	<xsd:simpleType name="boolean">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="true"/>
-			<xsd:enumeration value="false"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-		
+			
 	<xsd:element name="static-component">
 		<xsd:complexType>
 			<xsd:attribute name="id" type="xsd:ID" />
@@ -19,12 +12,6 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="inheriting-component">
-		<xsd:complexType>
-			<xsd:attribute name="id" type="xsd:ID" />
-		</xsd:complexType>
-	</xsd:element>
-
 	<xsd:complexType name="abstract-component" abstract="true">
 		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
 			<xsd:choice>
@@ -74,7 +61,7 @@
 			<xsd:complexContent>
 				<xsd:extension base="abstract-component">
 					<xsd:attribute name="view-name" type="xsd:string" />
-					<xsd:attribute name="dynamic" type="boolean" default="false" />
+					<xsd:attribute name="dynamic" type="xsd:boolean" default="false" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -85,7 +72,7 @@
 			<xsd:complexContent>
 				<xsd:extension base="abstract-component">
 					<xsd:attribute name="uri" type="xsd:string" />
-					<xsd:attribute name="dynamic" type="boolean" default="true" />
+					<xsd:attribute name="dynamic" type="xsd:boolean" default="true" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

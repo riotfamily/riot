@@ -36,13 +36,22 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.pages.component.Component;
 import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentListConfiguration;
+import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.VersionContainer;
+import org.riotfamily.pages.component.dao.ComponentDao;
+import org.riotfamily.pages.component.impl.AbstractComponent;
 
 public class AbstractRenderStrategy implements RenderStrategy {
 	
+	public static final String INHERTING_COMPONENT = "inherit";
+	
 	protected Log log = LogFactory.getLog(getClass());
 	
+	protected ComponentDao dao; 
+	
+	protected ComponentRepository repository;
+				
 	protected ComponentListConfiguration config;
 	
 	protected HttpServletRequest request;
@@ -52,17 +61,24 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	protected PrintWriter out;
 	
 	
-	public AbstractRenderStrategy(ComponentListConfiguration config, 
+	public AbstractRenderStrategy(ComponentDao dao, 
+			ComponentRepository repository, ComponentListConfiguration config,
 			HttpServletRequest request, HttpServletResponse response) 
 			throws IOException {
 		
+		this.dao = dao;
+		this.repository = repository;
 		this.config = config;
 		this.request = request;
 		this.response = response;
-		out = response.getWriter();
+		this.out = response.getWriter();
 	}
 	
-	public void render(String path, String key) throws IOException {
+	public final void render() throws IOException {
+		render(getComponentPath(), getComponentKey());
+	}
+	
+	protected void render(String path, String key) throws IOException {
 		ComponentList list = getComponentList(path, key);
 		if (list != null) {
 			renderComponentList(list);
@@ -75,6 +91,28 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	public void render(ComponentList list) throws IOException {
 		renderComponentList(list);
 	}
+	
+	protected String getComponentPath() {
+		VersionContainer parentContainer = (VersionContainer) 
+				request.getAttribute(AbstractComponent.CONTAINER);
+		
+		if (parentContainer != null) {
+			return parentContainer.getList().getPath();
+		}
+		return config.getComponentPathResolver().getComponentPath(request);
+	}
+	
+	protected String getComponentKey() {
+		VersionContainer parentContainer = (VersionContainer) 
+				request.getAttribute(AbstractComponent.CONTAINER);
+		
+		if (parentContainer != null) {
+			return parentContainer.getList().getKey() + "$" 
+					+ parentContainer.getId();
+		}
+		return config.getComponentKeyResolver().getComponentKey(request);
+	}
+	
 
 	protected void onListNotFound(String path, String key) throws IOException {
 		log.debug("No ComponentList found with path " 
@@ -88,7 +126,7 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	 */
 	protected ComponentList getComponentList(String path, String key) {
 		log.debug("Looking up ComponentList " + path + '#' + key);
-		return config.getComponentDao().findComponentList(path, key);
+		return dao.findComponentList(path, key);
 	}	
 	
 	/**
@@ -163,16 +201,48 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	protected final void renderComponentVersion(ComponentVersion version, 
 			String positionClassName) throws IOException {
 		
-		String type = version.getType(); 
-		Component component = config.getRepository().getComponent(type);		
-		renderComponent(component, version, positionClassName);
+		String type = version.getType();
+		if (INHERTING_COMPONENT.equals(type)) {
+			renderParentList(version.getContainer().getList());
+		}
+		else {
+			Component component = repository.getComponent(type);		
+			renderComponent(component, version, positionClassName);
+		}
+	}
+	
+	protected final void renderParentList(ComponentList list) 
+			throws IOException {
+		
+		String path = list.getPath();
+		log.debug("Path: " + path);
+		
+		String parentPath = config.getComponentPathResolver().getParentPath(path);
+		log.debug("Parent path: " + parentPath);
+		
+		ComponentList parentList = getComponentList(parentPath, list.getKey());
+		
+		if (path != null) {
+			if (path.equals(parentPath)) {
+				log.warn("Parent path is the same");
+				return;
+			}
+			getStrategyForParentList().render(parentList);
+		}
+		else {
+			log.warn("No parent path returned by resolver");
+		}
+	}
+	
+	protected RenderStrategy getStrategyForParentList() throws IOException {
+		return this;
 	}
 	
 	protected void renderComponent(Component component, 
 			ComponentVersion version, String positionClassName) 
 			throws IOException {
 		
-		component.render(version, positionClassName, config, request, response);
+		component.render(version, positionClassName, request, response);
 	}
 	
 	protected String getPositionalClassName(int position, boolean last) {

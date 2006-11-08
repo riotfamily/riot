@@ -30,7 +30,6 @@ import java.util.Properties;
 import org.riotfamily.common.beans.xml.DefinitionParserUtils;
 import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.pages.component.impl.IncludeComponent;
-import org.riotfamily.pages.component.impl.InheritingComponent;
 import org.riotfamily.pages.component.impl.StaticComponent;
 import org.riotfamily.pages.component.impl.ViewComponent;
 import org.riotfamily.pages.component.property.DefaultValuePropertyProcessor;
@@ -66,10 +65,6 @@ public class ComponentNamespaceHandler implements NamespaceHandler {
 		if ("static-component".equals(name)) {
 			return parseBean(element, StaticComponent.class, 
 					new String[] { "location" }, "id",
-					parserContext);
-		}
-		if ("inheriting-component".equals(name)) {
-			return parseBean(element, InheritingComponent.class, null, "id",
 					parserContext);
 		}
 		if ("view-component".equals(name)) {

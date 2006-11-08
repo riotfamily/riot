@@ -54,6 +54,6 @@ public interface Component {
 	 * Renders the given ComponentVersion.
 	 */
 	public void render(ComponentVersion version, String positionClassName, 
-			ComponentListConfiguration config, HttpServletRequest request, 
-			HttpServletResponse response) throws IOException;
+			HttpServletRequest request, HttpServletResponse response) 
+			throws IOException;
 }

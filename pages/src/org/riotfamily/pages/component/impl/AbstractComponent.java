@@ -39,7 +39,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.pages.component.Component;
-import org.riotfamily.pages.component.ComponentListConfiguration;
 import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.property.PropertyProcessor;
 import org.springframework.util.Assert;
@@ -86,9 +85,8 @@ public abstract class AbstractComponent implements Component {
 	
 	
 	public final void render(ComponentVersion componentVersion, 
-			String positionClassName, ComponentListConfiguration config, 
-			HttpServletRequest request, HttpServletResponse response) 
-			throws IOException {
+			String positionClassName, HttpServletRequest request, 
+			HttpServletResponse response) throws IOException {
 		
 		try {
 			request.setAttribute(CONTAINER, componentVersion.getContainer());

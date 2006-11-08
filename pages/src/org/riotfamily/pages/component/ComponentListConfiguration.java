@@ -23,18 +23,17 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.component;
 
-import org.riotfamily.cachius.Cache;
-import org.riotfamily.pages.component.dao.ComponentDao;
-import org.riotfamily.pages.component.preview.ViewModeResolver;
+import org.riotfamily.pages.component.resolver.ComponentKeyResolver;
 import org.riotfamily.pages.component.resolver.ComponentPathResolver;
+
 
 public interface ComponentListConfiguration {
 
-	public ViewModeResolver getViewModeResolver();
+	public String getControllerId();
 	
 	public ComponentPathResolver getComponentPathResolver();
 	
-	public Cache getCache();
+	public ComponentKeyResolver getComponentKeyResolver();
 	
 	public Integer getMaxComponents();
 	
@@ -42,10 +41,4 @@ public interface ComponentListConfiguration {
 	
 	public String[] getInitialComponentTypes();
 	
-	public ComponentDao getComponentDao();
-	
-	public ComponentRepository getRepository();
-
-	public String getBeanName();
-
 }

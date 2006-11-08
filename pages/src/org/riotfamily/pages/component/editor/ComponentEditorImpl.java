@@ -266,19 +266,16 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			ComponentVersion version) throws RequestContextExpiredException {
 		
 		try {
-			Component component = getRepository().getComponent(version.getType());
-			
 			StringWriter sw = new StringWriter();
 			HttpServletRequest request = getWrappedRequest();
 			HttpServletResponse response = getCapturingResponse(sw);
 			
-			request.setAttribute(EditModeRenderStrategy.EDIT_MODE_ATTRIBUTE, 
-					Boolean.TRUE);
-							
-			component.render(version, "component-new last-component", 
-					controller, request, response);
+			EditModeRenderStrategy strategy = new EditModeRenderStrategy(
+					getDao(), getRepository(), controller, request, response);
 			
+			strategy.renderComponentVersion(version);
 			return sw.toString();
+			
 		}
 		catch (RequestContextExpiredException e) {
 			throw e;
@@ -302,7 +299,8 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			HttpServletResponse response = getCapturingResponse(sw);
 			
 			LiveModeRenderStrategy strategy = new LiveModeRenderStrategy(
-					controller, request, response);
+					getDao(), getRepository(), controller, request, response,
+					getCache());
 			
 			strategy.render(componentList);
 			return sw.toString();
@@ -326,7 +324,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			HttpServletResponse response = getCapturingResponse(sw);
 			
 			EditModeRenderStrategy strategy = new EditModeRenderStrategy(
-					controller, request, response);
+					getDao(), getRepository(), controller, request, response);
 			
 			strategy.setRenderOuterDiv(false);
 			strategy.render(componentList);
