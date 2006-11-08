@@ -6,7 +6,7 @@
 		<div class="form-error">${form.errors.generalFormError}</div>
 	</#if>
 	<#list elements.elements as element>
-		<div class="${element.compositeElement!false?string('composite','single')}">
+		<div class="${(element.compositeElement!false)?string('composite','single')}">
 			<#if element.label?exists>
 				<div class="title">
 					<div class="icon"></div><label for="${element.id}">${element.label}</label>
