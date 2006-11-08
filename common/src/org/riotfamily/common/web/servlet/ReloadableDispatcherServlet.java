@@ -34,6 +34,18 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+/**
+ * DispatcherServlet that checks whether one of the configuration files has
+ * been modified. If a change is detected the servlet is re-initalized and the
+ * underlying BeanFactory is refreshed.
+ * <p>
+ * As checks are performed upon each request you might want to set the 
+ * <code>reloadable</code> init parameter to <code>false</code> when used in
+ * a production environment.
+ *  
+ * @author Felix Gnass <fgnass@neteye.de>
+ * @author Jan-Frederic Linde <jfl@neteye.de>
+ */
 public class ReloadableDispatcherServlet extends DispatcherServlet 
 		implements ConfigurableBean {
 
@@ -51,7 +63,8 @@ public class ReloadableDispatcherServlet extends DispatcherServlet
 		return reloadable;
 	}
 
-	protected WebApplicationContext createWebApplicationContext(WebApplicationContext parent) throws BeansException {
+	protected WebApplicationContext createWebApplicationContext(
+			WebApplicationContext parent) throws BeansException {
 
 		context = new ResourceAwareContext();
 		
@@ -67,7 +80,6 @@ public class ReloadableDispatcherServlet extends DispatcherServlet
 			context.setConfigLocations(locations);
 		}
 		context.refresh();
-		
 		watcher.setResources(context.getConfigResources());
 		return context;
 	}
