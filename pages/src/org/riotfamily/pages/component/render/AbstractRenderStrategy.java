@@ -220,17 +220,18 @@ public class AbstractRenderStrategy implements RenderStrategy {
 		String parentPath = config.getComponentPathResolver().getParentPath(path);
 		log.debug("Parent path: " + parentPath);
 		
-		ComponentList parentList = getComponentList(parentPath, list.getKey());
-		
-		if (path != null) {
+		if (parentPath != null) {
 			if (path.equals(parentPath)) {
 				log.warn("Parent path is the same");
 				return;
 			}
-			getStrategyForParentList().render(parentList);
-		}
-		else {
-			log.warn("No parent path returned by resolver");
+			ComponentList parentList = getComponentList(parentPath, list.getKey());
+			if (parentList != null) {
+				getStrategyForParentList().render(parentList);
+			}
+			else {
+				onListNotFound(parentPath, list.getKey());
+			}
 		}
 	}
 	

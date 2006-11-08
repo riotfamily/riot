@@ -159,10 +159,12 @@ riot.Component.prototype = {
 	},
 	
 	updatePositionClasses: function(position, last) {
-		document.getElementsByClassName('component-\\w*', this.element).each(function(el) {
-			el.className = el.className.replace(/component-\w*/, 'component-' + position);
-			Element.toggleClassName(el, 'last-component', last);
-		});
+		if (this.type != 'inherit') {
+			document.getElementsByClassName('component-\\w*', this.element).each(function(el) {
+				el.className = el.className.replace(/component-\w*/, 'component-' + position);
+				Element.toggleClassName(el, 'last-component', last);
+			});
+		}
 	},
 	
 	onupdate: function(infos) {
