@@ -38,7 +38,7 @@ public class BeanConfigurationWatcher {
 
 	private ConfigurableBean bean;
 	
-	private List resources;
+	private List files;
 	
 	private long lastModified;
 	
@@ -49,8 +49,21 @@ public class BeanConfigurationWatcher {
 		this.lastModified = System.currentTimeMillis();
 	}
 
+	public void setFiles(List files) {
+		this.files = files;
+	}
+
 	public void setResources(List resources) {
-		this.resources = resources;
+		files = new ArrayList();
+		Iterator it = resources.iterator();
+		while (it.hasNext()) {
+			Resource res = (Resource) it.next();
+			try {
+				files.add(res.getFile());
+			}
+			catch (IOException e) {
+			}
+		}
 	}
 
 	public void addListener(ConfigurationEventListener listener) {
@@ -60,15 +73,10 @@ public class BeanConfigurationWatcher {
 	public synchronized void checkForModifications() {
 		if (bean.isReloadable()) {
 			long mtime = 0;
-			Iterator it = resources.iterator();
+			Iterator it = files.iterator();
 			while (it.hasNext()) {
-				Resource res = (Resource) it.next();
-				try {
-					File f = res.getFile();
-					mtime = Math.max(mtime, f.lastModified());
-				}
-				catch (IOException e) {
-				}
+				File file = (File) it.next();
+				mtime = Math.max(mtime, file.lastModified());
 			}
 			if (mtime > lastModified) {
 				lastModified = System.currentTimeMillis();
