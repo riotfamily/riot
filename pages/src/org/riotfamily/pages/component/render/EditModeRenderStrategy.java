@@ -52,6 +52,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	public void renderComponentVersion(ComponentVersion version) 
 			throws IOException {
 		
+		request.setAttribute(EDIT_MODE_ATTRIBUTE, Boolean.TRUE);
 		VersionContainer c = version.getContainer();
 		List components = getComponentsToRender(c.getList());
 		int position = components.indexOf(c);
