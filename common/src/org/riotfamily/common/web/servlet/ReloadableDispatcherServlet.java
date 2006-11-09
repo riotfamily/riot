@@ -23,13 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.servlet;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.xml.BeanConfigurationWatcher;
 import org.riotfamily.common.xml.ConfigurableBean;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
@@ -85,13 +86,14 @@ public class ReloadableDispatcherServlet extends DispatcherServlet
 		}
 		context.refresh();
 
-		ReloadableDispatcherServletConfig config = 
-				(ReloadableDispatcherServletConfig) BeanFactoryUtils.beanOfType(
-				context, ReloadableDispatcherServletConfig.class);
-		
-		if (config != null) {
+		Map beansOfType = context.getBeansOfType(
+					ReloadableDispatcherServletConfig.class);
+		if (beansOfType.size() == 1) {
+			ReloadableDispatcherServletConfig config = 
+				(ReloadableDispatcherServletConfig) beansOfType.values().
+						iterator().next();
 			setReloadable(config.isReloadable());
-		}
+		}		
 		
 		watcher.setResources(context.getConfigResources());
 		return context;
