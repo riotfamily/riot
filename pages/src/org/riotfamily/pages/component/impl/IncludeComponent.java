@@ -55,7 +55,7 @@ public class IncludeComponent extends AbstractComponent {
 		Map snapshot = ServletUtils.takeAttributesSnapshot(request);
 		WebUtils.exposeRequestAttributes(request, buildModel(componentVersion));
 		request.setAttribute(POSITION_CLASS, positionClassName);
-		request.setAttribute(COMPONENT_ID, componentVersion.getId());
+		request.setAttribute(COMPONENT_ID, String.valueOf(componentVersion.getId()));
 		request.getRequestDispatcher(uri).include(request, response);
 		ServletUtils.restoreAttributes(request, snapshot);
 	}

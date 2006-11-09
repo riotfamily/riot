@@ -62,7 +62,7 @@ public class ViewComponent extends AbstractComponent
 			HttpServletResponse response) throws Exception {
 		
 		Map model = buildModel(componentVersion);
-		model.put(COMPONENT_ID, componentVersion.getId());
+		model.put(COMPONENT_ID, String.valueOf(componentVersion.getId()));
 		model.put(POSITION_CLASS, positionClassName);
 		ModelAndView mv = new ModelAndView(viewName, model);
 		View view = viewResolverHelper.resolveView(request, mv);
