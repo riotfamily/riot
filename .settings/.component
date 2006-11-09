@@ -2,7 +2,6 @@
 <project-modules id="moduleCoreId" project-version="1.5.0">
 <wb-module deploy-name="riotfamily">
 <wb-resource deploy-path="/" source-path="/riot/src"/>
-<wb-resource deploy-path="/" source-path="/search/src"/>
 <wb-resource deploy-path="/" source-path="/riot-hibernate/src"/>
 <wb-resource deploy-path="/" source-path="/cachius/src"/>
 <wb-resource deploy-path="/" source-path="/pages/src"/>

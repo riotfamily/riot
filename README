@@ -5,8 +5,6 @@ The Riot Family consists of several sub-projects. These are:
  * common - A collection classes shared by several sub-projects
  * cachius - A caching library for the Spring MVC framework
  * pages - CMS features for websites
- * search - A fulltext search and website crawler
- * skeleton - Skeleton for new Riot projects
  * riot-hibernate - Hibernate 3 integration
  
 The 'jslibs' directory contains 3rd party JavaScript libraries and some Ant
