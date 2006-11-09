@@ -23,6 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.servlet;
 
+/**
+ * Bean that is looked up by the {@link ReloadableDispatcherServlet} to 
+ * determine whether reload checks should be enabled. If no instance of this 
+ * class is found, the DispatcherServlet will use the the value obtained from
+ * the <code>reloadable</code> init-parameter.
+ *   
+ * @author Felix Gnass <fgnass@neteye.de>
+ */
 public class ReloadableDispatcherServletConfig {
 
 	private boolean reloadable;
