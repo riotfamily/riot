@@ -84,7 +84,7 @@ public class PersistentPage extends AbstractPage implements Cloneable {
 	}
 	
 	public void addChildPage(Page child) {
-		child.setParent(this);
+		child.setParentAndUpdateChildPages(this);
 		child.updatePath();
 		if (!getChildPages().contains(child)) {
 			if (child instanceof PersistentPage) {
@@ -126,8 +126,8 @@ public class PersistentPage extends AbstractPage implements Cloneable {
 		return childPages;
 	}
 
-	public void setParent(Page parent) {
-		super.setParent(parent);
+	public void setParentAndUpdateChildPages(Page parent) {
+		super.setParentAndUpdateChildPages(parent);
 		if (persistentChildPages != null) {
 			Iterator it = persistentChildPages.iterator();
 			while (it.hasNext()) {

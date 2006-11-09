@@ -66,9 +66,9 @@ public interface Page {
 	public Page getParent();
 	
 	/**
-	 * Sets the parent page.
+	 * Sets the parent page and update the path of child pages
 	 */
-	public void setParent(Page parent);
+	public void setParentAndUpdateChildPages(Page parent);
 	
 	/**
 	 * Called after the pathComponent or the parent has been modified. 

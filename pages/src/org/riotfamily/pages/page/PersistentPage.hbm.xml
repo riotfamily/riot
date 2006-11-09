@@ -10,7 +10,7 @@
 		<id name="id">
 			<generator class="native" />
 		</id>
-		<many-to-one name="parent" class="PersistentPage" access="field" />
+		<many-to-one name="parent" class="PersistentPage" cascade="save-update"/>
 		<property name="path" />
 		<property name="pathComponent" />
 		<property name="controllerName" column="`type`" />

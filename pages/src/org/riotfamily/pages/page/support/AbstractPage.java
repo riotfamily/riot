@@ -129,9 +129,13 @@ public abstract class AbstractPage implements Page {
 	
 	public final Page getParent() {
 		return this.parent;
+	}	
+	
+	public void setParent(Page parent) {
+		this.parent = parent;
 	}
 
-	public void setParent(Page parent) {
+	public void setParentAndUpdateChildPages(Page parent) {
 		this.parent = parent;
 		if (parent instanceof AbstractPage) {
 			AbstractPage ap = (AbstractPage) parent;

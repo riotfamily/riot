@@ -53,7 +53,7 @@ public class TransientPage extends AbstractPage {
 			childPages = new ArrayList();
 		}
 		childPages.add(child);
-		child.setParent(this);
+		child.setParentAndUpdateChildPages(this);
 		child.updatePath();
 	}
 	
