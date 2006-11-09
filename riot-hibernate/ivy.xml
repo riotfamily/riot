@@ -6,7 +6,7 @@
     </configurations>
     <dependencies>
         <dependency org="riotfamily" name="riot-core" rev="latest.integration" conf="*->@" changing="true" />
-        <dependency org="springframework" name="spring" rev="latest.milestone" />
+        <dependency org="springframework" name="spring" rev="2.0" conf="*->default" />
 		<dependency org="hibernate" name="hibernate" conf="build->core;runtime->standalone,c3p0" rev="3.2.0.ga" />
     </dependencies>
 </ivy-module>
