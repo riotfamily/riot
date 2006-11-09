@@ -222,26 +222,19 @@ html .riot-insert-button-active {
 
 /* Popup Text Editors (Textile, Markdown, TinyMCE) */
 
-.riot-popup {
+#riot-popup {
 	position:absolute;
 	background-color: #3d3d3d;
+	width:600px;
 	z-index:1000;
 	padding:3px;
 }
 
-body > .riot-popup {
+body > #riot-popup {
 	position: fixed;
 }
 
-.riot-editor-popup {
-	width:600px;
-}
-
-.riot-message-popup {
-	width:300px;
-}
-
-.riot-popup .headline {
+#riot-popup .headline {
 	color: #3d3d3d;
 	background-color: #ebebeb;
 	padding: 5px 20px;
@@ -252,7 +245,7 @@ body > .riot-popup {
 	text-align: left;
 	margin: 0;
 }
-.riot-popup textarea {
+#riot-popup textarea {
 	width: 580px;
 	height: 400px;
 	border: none;
@@ -263,14 +256,14 @@ body > .riot-popup {
 	line-height: 18px;
 }
 
-.riot-popup iframe.properties {
+#riot-popup iframe.properties {
 	width: 100%;
 	border: none;
 	margin-top: 1px;
 	background: #fff;
 }
 
-.riot-popup .button-ok {
+#riot-popup .button-ok {
 	color: #3d3d3d;
 	font-family: "Trebuchet MS", arial, sans-serif;
 	font-size: 12px;
@@ -284,8 +277,8 @@ body > .riot-popup {
 	cursor: hand;
 }
 
-.riot-popup .riot-help-button,
-.riot-popup .riot-close-button {
+#riot-popup .riot-help-button,
+#riot-popup .riot-close-button {
 	position: absolute;
 	z-index: 1;
 	top: 7px;
@@ -295,31 +288,22 @@ body > .riot-popup {
 	cursor: hand;
 }
 
-.riot-popup .riot-help-button {
+#riot-popup .riot-help-button {
 	right: 34px;
 	background: url(icons/dialogs/help.gif) center center no-repeat;
 }
-.riot-popup .riot-close-button {
+#riot-popup .riot-close-button {
 	right: 10px;
 	background: url(icons/dialogs/close.gif) center center no-repeat;
 }
 
-.riot-popup .mceEditor td.container {
+#riot-popup .mceEditor td.container {
 	border-bottom:1px solid #3d3d3d;
 	padding-left: 20px;
 }
 
-.riot-popup div.message {
-	font-family: "Trebuchet MS", arial, sans-serif;
-	font-size:12px;
-	color:#3d3d3d;
-	background: #fff;
-	width: 100%;
+#riot-popup .mceEditor img {
 	margin: 0;
-	padding: 5px 0;
-}
-.riot-popup div.message p {
-	margin: 10px 20px;
 }
 
 #riot-overlay { 

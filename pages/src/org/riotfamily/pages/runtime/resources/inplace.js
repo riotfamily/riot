@@ -281,7 +281,7 @@ riot.Popup.prototype = {
 	initialize: function(title, content, ok, help) {
 		this.ok = ok;
 		this.overlay = Element.create('div', {id: 'riot-overlay', style: {display: 'none', position: 'absolute', top: 0, left: 0, width: '100%'}});
-		this.div = Element.create('div', {className: 'riot-popup riot-editor-popup'},
+		this.div = Element.create('div', {id: 'riot-popup'},
 			help ? Element.create('div', {className: 'riot-help-button', onclick: help}) : null, 
 			this.closeButton = Element.create('div', {className: 'riot-close-button', onclick: this.close.bind(this)}), 
 			Element.create('div', {className: 'headline'}, title), 
