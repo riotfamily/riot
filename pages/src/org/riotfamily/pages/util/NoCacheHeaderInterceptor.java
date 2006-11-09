@@ -31,7 +31,8 @@ import org.riotfamily.riot.security.AccessController;
 
 /**
  * Sets cache control headers to prevent client side caching if a Riot user 
- * is logged in.
+ * is logged in. This is especially useful if the user modifies a page via
+ * AJAX, leaves the page and hits the back button.
  * 
  * @author Felix Gnass <fgnass@neteye.de>
  */
