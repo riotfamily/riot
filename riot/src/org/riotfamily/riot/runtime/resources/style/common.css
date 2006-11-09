@@ -40,10 +40,14 @@ td {
 	background: ${highlight} url(images/list.gif) no-repeat;
 }
 
+.title,
 .title span,
 .title label {
 	color: #fff;
 	text-transform: uppercase;
+}
+.title span,
+.title label {
 	padding-left: 36px;
 }
 
