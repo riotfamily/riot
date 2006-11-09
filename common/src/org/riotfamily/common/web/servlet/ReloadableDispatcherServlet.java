@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.xml.BeanConfigurationWatcher;
 import org.riotfamily.common.xml.ConfigurableBean;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
@@ -41,7 +42,10 @@ import org.springframework.web.servlet.DispatcherServlet;
  * <p>
  * As checks are performed upon each request you might want to set the 
  * <code>reloadable</code> init parameter to <code>false</code> when used in
- * a production environment.
+ * a production environment. Alternatively you can add a 
+ * {@link ReloadableDispatcherServletConfig} bean to your ApplicationContext
+ * which allows you to set the <code>reloadable</code> property without
+ * modifying the web.xml.
  *  
  * @author Felix Gnass <fgnass@neteye.de>
  * @author Jan-Frederic Linde <jfl@neteye.de>
@@ -80,6 +84,15 @@ public class ReloadableDispatcherServlet extends DispatcherServlet
 			context.setConfigLocations(locations);
 		}
 		context.refresh();
+
+		ReloadableDispatcherServletConfig config = 
+				(ReloadableDispatcherServletConfig) BeanFactoryUtils.beanOfType(
+				context, ReloadableDispatcherServletConfig.class);
+		
+		if (config != null) {
+			setReloadable(config.isReloadable());
+		}
+		
 		watcher.setResources(context.getConfigResources());
 		return context;
 	}
