@@ -25,13 +25,16 @@
 			</xsd:choice>
 			<xsd:attribute name="name" type="xsd:string" use="required" />
 			<xsd:attribute name="icon" type="xsd:string" />
+			<xsd:attribute name="hidden" type="xsd:boolean" />
 		</xsd:complexType>
 	</xsd:element>
 	
 	<xsd:attributeGroup name="list-attributes">
+		<xsd:attribute name="id" type="xsd:string" />
 		<xsd:attribute name="list-ref" type="xsd:string" use="required" />
 		<xsd:attribute name="icon" type="xsd:string" />
 		<xsd:attribute name="name" type="xsd:string" />
+		<xsd:attribute name="hidden" type="xsd:boolean" />
 	</xsd:attributeGroup>
 	
 	<xsd:element name="list">

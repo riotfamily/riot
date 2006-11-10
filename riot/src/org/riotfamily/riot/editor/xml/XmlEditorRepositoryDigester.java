@@ -64,7 +64,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	private static final String LIST_EDITOR = LIST + '|' + TREE;
 	
 	private static final String[] LIST_ATTR = new String[] {
-		"name", "listId=list-ref", "icon", "hidden"
+		"name", "listId=list-ref", "icon", "hidden", "id"
 	};
 	
 	private static final String[] TREE_ATTR = new String[] {
@@ -127,7 +127,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	
 	protected void addEditorDefinition(AbstractEditorDefinition editor) {
 		if (editor.getId() == null) {
-			editor.setId(getUniqueId(editor.getName()));
+			editor.setId(getUniqueId(editor.getName()));			
 		}
 		editorRepository.addEditorDefinition(editor);
 	}
