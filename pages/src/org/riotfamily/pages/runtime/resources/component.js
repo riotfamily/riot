@@ -32,6 +32,7 @@ riot.Component.prototype = {
 		this.id = info.id;
 		this.typeChanged(info);
 		this.componentList.updatePositionClasses();
+		this.componentList.validateMaxComponents();
 	},
 	
 	setMode: function(mode) {
@@ -232,7 +233,7 @@ riot.InsertButton.prototype = {
 		
 		if (this.inspector) {
 			this.inspector.onchange = c.setType.bind(c);
-		}
+		}		
 	}
 };
 
@@ -424,6 +425,13 @@ riot.ComponentList.prototype = {
 			else {
 				this.insertButton.hide();
 			}
+			riot.activeInsertButton = null;
+		}
+	},
+	
+	validateMaxComponents: function() {
+		if (this.insertButton && isSet(this.maxComponents) && this.getComponents().length >= this.maxComponents) {
+			this.insertButton.hide();
 			riot.activeInsertButton = null;
 		}
 	},
