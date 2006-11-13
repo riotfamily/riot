@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.Cache;
+import org.riotfamily.pages.component.config.ComponentListConfiguration;
 import org.riotfamily.pages.component.context.PageRequestUtils;
 import org.riotfamily.pages.component.dao.ComponentDao;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
@@ -37,8 +38,6 @@ import org.riotfamily.pages.component.resolver.ComponentKeyResolver;
 import org.riotfamily.pages.component.resolver.ComponentPathResolver;
 import org.riotfamily.pages.component.resolver.FixedComponentKeyResolver;
 import org.riotfamily.pages.component.resolver.FixedComponentPathResolver;
-import org.riotfamily.pages.component.resolver.TemplateComponentKeyResolver;
-import org.riotfamily.pages.component.resolver.UrlComponentPathResolver;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -49,28 +48,21 @@ import org.springframework.web.servlet.mvc.Controller;
  * {@link ComponentKeyResolver}. 
  */
 public class ComponentListController implements Controller, BeanNameAware,
-		ComponentListConfiguration {
-
-	private static final ComponentKeyResolver DEFAULT_KEY_RESOLVER = 
-			new TemplateComponentKeyResolver();
-
-	private static final ComponentPathResolver DEFAULT_PATH_RESOLVER = 
-		new UrlComponentPathResolver();
-
+		ComponentListConfiguration {	
 	
 	private Cache cache;
 
 	private ComponentDao componentDao;
 
-	private ComponentKeyResolver componentKeyResolver = DEFAULT_KEY_RESOLVER;
+	private ComponentKeyResolver componentKeyResolver;
 
-	private ComponentPathResolver componentPathResolver = DEFAULT_PATH_RESOLVER;
+	private ComponentPathResolver componentPathResolver;
 
 	private String[] initialComponentTypes;
 
 	private Integer maxComponents;
 
-	private ComponentRepository repository;
+	private ComponentRepository componentRepository;
 
 	private String[] validComponentTypes;
 
@@ -78,11 +70,7 @@ public class ComponentListController implements Controller, BeanNameAware,
 
 	private String beanName;
 	
-	public ComponentListController(ComponentDao dao,
-			ComponentRepository repository, Cache cache) {
-
-		this.componentDao = dao;
-		this.repository = repository;
+	public void setCache(Cache cache) {
 		this.cache = cache;
 	}
 
@@ -90,6 +78,10 @@ public class ComponentListController implements Controller, BeanNameAware,
 		return this.cache;
 	}
 
+	public void setComponentDao(ComponentDao componentDao) {
+		this.componentDao = componentDao;
+	}
+	
 	public ComponentDao getComponentDao() {
 		return this.componentDao;
 	}
@@ -126,8 +118,12 @@ public class ComponentListController implements Controller, BeanNameAware,
 		this.validComponentTypes = validComponentTypes;
 	}
 
-	public ComponentRepository getRepository() {
-		return this.repository;
+	public void setComponentRepository(ComponentRepository repository) {
+		this.componentRepository = repository;
+	}
+	
+	public ComponentRepository getComponentRepository() {
+		return this.componentRepository;
 	}
 
 	public String getControllerId() {
@@ -170,13 +166,13 @@ public class ComponentListController implements Controller, BeanNameAware,
 		boolean preview = viewModeResolver.isPreviewMode(request);
 		RenderStrategy strategy = null;
 		if (preview) {
-			strategy = new EditModeRenderStrategy(componentDao, repository, 
+			strategy = new EditModeRenderStrategy(componentDao, componentRepository, 
 					this, request, response);
 			
 			PageRequestUtils.storeContext(request, 120000);
 		}
 		else {
-			strategy = new LiveModeRenderStrategy(componentDao, repository, 
+			strategy = new LiveModeRenderStrategy(componentDao, componentRepository, 
 					this, request, response, cache);
 		}
 		

@@ -9,6 +9,65 @@
 		<xsd:attribute name="ref" use="required" type="xsd:string"/>
 	</xsd:complexType>
 	
+	<xsd:element name="component-list">		 
+		<xsd:complexType>
+			<xsd:sequence minOccurs="0">
+				<xsd:element name="component-key-resolver" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence minOccurs="0">
+							<xsd:element name="bean" type="ref" />
+						</xsd:sequence>
+						<xsd:attribute name="ref" type="xsd:string" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="component-path-resolver" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence minOccurs="0">
+							<xsd:element name="bean" type="ref" />
+						</xsd:sequence>
+						<xsd:attribute name="ref" type="xsd:string" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="component-dao" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence minOccurs="0">
+							<xsd:element name="bean" type="ref" />
+						</xsd:sequence>
+						<xsd:attribute name="ref" type="xsd:string" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="component-repository" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence minOccurs="0">
+							<xsd:element name="bean" type="ref" />
+						</xsd:sequence>
+						<xsd:attribute name="ref" type="xsd:string" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="view-mode-resolver" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence minOccurs="0">
+							<xsd:element name="bean" type="ref" />
+						</xsd:sequence>
+						<xsd:attribute name="ref" type="xsd:string" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="cache" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence minOccurs="0">
+							<xsd:element name="bean" type="ref" />
+						</xsd:sequence>
+						<xsd:attribute name="ref" type="xsd:string" />
+					</xsd:complexType>
+				</xsd:element>								
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string" />
+			<xsd:attribute name="initialComponentTypes" type="xsd:string" />
+			<xsd:attribute name="validComponentTypes" type="xsd:string" />
+			<xsd:attribute name="maxComponents" type="xsd:positiveInteger"/>			
+		</xsd:complexType>
+	</xsd:element>
+	
 	<xsd:element name="generic-controller">
 		<xsd:complexType>
 			<xsd:sequence>

@@ -82,21 +82,18 @@
 	<bean id="defaultCachingPolicy" class="org.riotfamily.pages.mvc.cache.DefaultCachingPolicy">
 		<property name="expiresAfter" value="5m" />
 		<property name="viewModeResolver" ref="viewModeResolver" />
-	</bean>
+	</bean>	
 	
-	<!-- 
-	  - Abstract parent for ComponentListControllers.
-	  -->
-	<bean id="abstractComponentList" abstract="true"
-		class="org.riotfamily.pages.component.ComponentListController">
-		
-		<constructor-arg ref="componentDao" />
-		<constructor-arg ref="componentRepository" />
-		<constructor-arg ref="websiteCache" />
-		<property name="viewModeResolver" ref="viewModeResolver" />
+	  
+	<bean class="org.riotfamily.pages.component.config.ComponentListConfigurer">
+		<property name="componentDao" ref="componentDao" />
+		<property name="repository" ref="componentRepository" />
+		<property name="cache" ref="websiteCache" />
+		<property name="viewModeResolver" ref="viewModeResolver" />		
 		<property name="componentPathResolver">
 			<bean class="org.riotfamily.pages.component.resolver.PageComponentPathResolver" />
 		</property>
 	</bean>
+	
 		
 </beans>

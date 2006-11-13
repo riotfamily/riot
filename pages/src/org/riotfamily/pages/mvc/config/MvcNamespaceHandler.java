@@ -24,6 +24,7 @@
 package org.riotfamily.pages.mvc.config;
 
 import org.riotfamily.common.beans.xml.GenericBeanDefinitionParser;
+import org.riotfamily.pages.component.ComponentListController;
 import org.riotfamily.pages.mvc.GenericController;
 import org.riotfamily.pages.mvc.hibernate.CurrentDateResolver;
 import org.riotfamily.pages.mvc.hibernate.CurrentLocaleResolver;
@@ -56,9 +57,12 @@ public class MvcNamespaceHandler extends NamespaceHandlerSupport {
 		
 		parser.registerElement("date", DateParameterResolver.class);
 		
+		parser.registerElement("component-list", ComponentListController.class);
+		
 		registerBeanDefinitionParser("generic-controller", parser);
 		registerBeanDefinitionParser("hql", parser);
 		registerBeanDefinitionParser("paged-hql", parser);
+		registerBeanDefinitionParser("component-list", parser);
 	}
 
 }
