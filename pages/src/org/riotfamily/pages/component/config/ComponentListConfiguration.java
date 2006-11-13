@@ -21,7 +21,7 @@
  *   Felix Gnass <fgnass@neteye.de>
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.component;
+package org.riotfamily.pages.component.config;
 
 import org.riotfamily.pages.component.resolver.ComponentKeyResolver;
 import org.riotfamily.pages.component.resolver.ComponentPathResolver;

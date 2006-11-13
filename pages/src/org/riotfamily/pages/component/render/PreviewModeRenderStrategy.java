@@ -30,10 +30,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.pages.component.ComponentList;
-import org.riotfamily.pages.component.ComponentListConfiguration;
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.VersionContainer;
+import org.riotfamily.pages.component.config.ComponentListConfiguration;
 import org.riotfamily.pages.component.dao.ComponentDao;
 
 public class PreviewModeRenderStrategy extends AbstractRenderStrategy {

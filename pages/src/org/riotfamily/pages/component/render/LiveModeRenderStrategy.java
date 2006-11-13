@@ -36,9 +36,9 @@ import org.riotfamily.cachius.spring.TaggingContext;
 import org.riotfamily.cachius.support.SessionUtils;
 import org.riotfamily.pages.component.Component;
 import org.riotfamily.pages.component.ComponentList;
-import org.riotfamily.pages.component.ComponentListConfiguration;
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
+import org.riotfamily.pages.component.config.ComponentListConfiguration;
 import org.riotfamily.pages.component.dao.ComponentDao;
 
 public class LiveModeRenderStrategy extends AbstractRenderStrategy {

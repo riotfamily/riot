@@ -35,10 +35,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.pages.component.Component;
 import org.riotfamily.pages.component.ComponentList;
-import org.riotfamily.pages.component.ComponentListConfiguration;
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.VersionContainer;
+import org.riotfamily.pages.component.config.ComponentListConfiguration;
 import org.riotfamily.pages.component.dao.ComponentDao;
 import org.riotfamily.pages.component.impl.AbstractComponent;
 
