@@ -26,7 +26,7 @@ package org.riotfamily.common.web.dwr;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import org.directwebremoting.Creator;
+import org.directwebremoting.extend.Creator;
 import org.directwebremoting.impl.DefaultRemoter;
 
 public class ConstantsRemoter extends DefaultRemoter {

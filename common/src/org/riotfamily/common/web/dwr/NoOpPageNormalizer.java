@@ -23,11 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.dwr;
 
-import org.directwebremoting.PageNormalizer;
+import org.directwebremoting.extend.PageNormalizer;
 
 public class NoOpPageNormalizer implements PageNormalizer {
 
-	public String normalizaPage(String page) {
+	public String normalizePage(String page) {
 		return page;
 	}
 

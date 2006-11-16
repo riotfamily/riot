@@ -29,12 +29,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-import org.directwebremoting.AccessControl;
-import org.directwebremoting.Configurator;
+import org.directwebremoting.extend.AccessControl;
+import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.Container;
-import org.directwebremoting.ConverterManager;
-import org.directwebremoting.Creator;
-import org.directwebremoting.CreatorManager;
+import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.Creator;
+import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.spring.BeanCreator;
 import org.springframework.beans.factory.BeanCreationException;
 

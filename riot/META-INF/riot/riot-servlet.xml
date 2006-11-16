@@ -447,6 +447,14 @@
 		<property name="viewName" value="classpath:/org/riotfamily/riot/job/ui/JobView.ftl" />
 	</bean>
 	
+	<bean id="org.directwebremoting.PageNormalizer" 
+		class="org.riotfamily.common.web.dwr.NoOpPageNormalizer" />
+
+	<!--
+	<bean id="org.directwebremoting.Remoter" 
+		class="org.riotfamily.common.web.dwr.ConstantsRemoter" />
+	-->
+	
 	<!-- 
 	  - Controller that exposes DWR services.
 	  -->
@@ -455,18 +463,6 @@
 		class="org.riotfamily.common.web.dwr.DwrController">
 		<property name="debug" value="true" />
 		<property name="mapping" value="dwr" />
-		<property name="parameters">
-			<map>
-				<entry key="org.directwebremoting.PageNormalizer">
-					<bean class="org.riotfamily.common.web.dwr.NoOpPageNormalizer" />
-				</entry>
-				<!-- 
-				<entry key="org.directwebremoting.Remoter">
-					<bean class="org.riotfamily.common.web.dwr.ConstantsRemoter" />
-				</entry>
-				-->
-			</map>
-		</property>
 		<property name="configurators">
 			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
 				<property name="key" value="dwrConfigurators" />
