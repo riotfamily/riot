@@ -1,0 +1,7 @@
+<project name="revolt" default="compile">
+
+	<property name="module.title" value="Revolt" />
+	
+	<import file="../module-build.xml" />
+
+</project>

@@ -1,0 +1,126 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="jdbc:postgresql://zoe/riot_revolt" />
+		<property name="username" value="riot" />
+		<property name="password" value="riot" />
+	</bean>
+	
+	<bean id="dialectResolver" class="org.riotfamily.revolt.support.DialectResolver">
+		<property name="dialects">
+			<list>
+				<bean class="org.riotfamily.revolt.dialect.PostgresqlDialect" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean class="org.riotfamily.revolt.EvolutionHistory">
+		<constructor-arg value="moduleA" />
+		<constructor-arg ref="dataSource" />
+		<constructor-arg ref="dialectResolver" />
+		<property name="changeSets">
+			<list>
+				<bean class="org.riotfamily.revolt.ChangeSet">
+					<constructor-arg value="createFoo" />
+					<constructor-arg>
+						<list>
+							<bean class="org.riotfamily.revolt.refactor.CreateTable">
+								<property name="name" value="foo" />
+								<property name="columns">
+									<list>
+										<bean class="org.riotfamily.revolt.definition.Column">
+											<property name="name" value="bar" />
+											<property name="type" value="VARCHAR" />
+											<property name="length" value="42" />
+										</bean>
+									</list>
+								</property>
+							</bean>
+						</list>
+					</constructor-arg>
+				</bean>
+				<bean class="org.riotfamily.revolt.ChangeSet">
+					<constructor-arg value="changeFoo" />
+					<constructor-arg>
+						<list>
+							<bean class="org.riotfamily.revolt.refactor.AddColumn">
+								<property name="table" value="foo" />
+								<property name="column">
+									<bean class="org.riotfamily.revolt.definition.Column">
+										<property name="name" value="foobar" />
+										<property name="type" value="BOOLEAN" />
+									</bean>
+								</property>
+							</bean>
+						</list>
+					</constructor-arg>
+				</bean>
+				<bean class="org.riotfamily.revolt.ChangeSet">
+					<constructor-arg value="renameFoo" />
+					<constructor-arg>
+						<list>
+							<bean class="org.riotfamily.revolt.refactor.RenameTable">
+								<property name="table" value="foo" />
+								<property name="renameTo" value="bar" />
+							</bean>
+							<bean class="org.riotfamily.revolt.refactor.RenameColumn">
+								<property name="table" value="bar" />
+								<property name="column" value="foobar" />
+								<property name="renameTo" value="bar_foo" />
+							</bean>
+						</list>
+					</constructor-arg>
+				</bean>
+				<bean class="org.riotfamily.revolt.ChangeSet">
+					<constructor-arg value="modifyBar" />
+					<constructor-arg>
+						<list>
+							<bean class="org.riotfamily.revolt.refactor.ModifyColumn">
+								<property name="table" value="bar" />
+								<property name="column">
+									<bean class="org.riotfamily.revolt.definition.Column">
+										<property name="name" value="bar" />
+										<property name="notNull" value="true" />
+										<property name="defaultValue" value="riot" />
+									</bean>
+								</property>
+							</bean>
+						</list>
+					</constructor-arg>
+				</bean>
+				<bean class="org.riotfamily.revolt.ChangeSet">
+					<constructor-arg value="default" />
+					<constructor-arg>
+						<list>
+							<bean class="org.riotfamily.revolt.refactor.ModifyColumn">
+								<property name="table" value="bar" />
+								<property name="column">
+									<bean class="org.riotfamily.revolt.definition.Column">
+										<property name="name" value="bar" />
+										<property name="notNull" value="true" />
+										<property name="defaultValue" value="'riot'" />
+									</bean>
+								</property>
+							</bean>
+						</list>
+					</constructor-arg>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 
+	<revolt:change-set id="foo">
+		<revolt:create-table name="foo">
+			<revolt:column name="bar" type="VARCHAR" length="42" />
+		</revolt:create-table>
+	</revolt:change-set>
+	-->
+	 
+</beans>

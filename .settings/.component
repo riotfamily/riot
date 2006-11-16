@@ -9,5 +9,7 @@
 <wb-resource deploy-path="/" source-path="/common/src"/>
 <wb-resource deploy-path="/" source-path="/ant/src"/>
 <wb-resource deploy-path="/" source-path="/forms/tiger"/>
+<wb-resource deploy-path="/" source-path="/revolt/src"/>
+<wb-resource deploy-path="/" source-path="/revolt/test"/>
 </wb-module>
 </project-modules>
