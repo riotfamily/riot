@@ -167,7 +167,33 @@ public abstract class AbstractComponentDao implements ComponentDao {
 		}
 		return preview;
 	}
+	
+	/**
+	 * Inserts a container into a list.
+	 */
+	public void insertContainer(ComponentList componentList, 
+			VersionContainer container, int position, boolean live) {
+		 
+		List containers = live 
+				? componentList.getLiveList() 
+				: getOrCreatePreviewContainers(componentList);
+
+		container.setList(componentList);
 		
+		if (position >= 0) {
+			containers.add(position, container);
+		}
+		else {
+			containers.add(container);
+		}
+		
+		if (!live) {
+			componentList.setDirty(true);
+		}
+		
+		updateComponentList(componentList);
+	}
+
 	/**
 	 * Creates a new container, containing a version of the given type.
 	 * 

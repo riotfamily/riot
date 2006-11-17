@@ -141,6 +141,12 @@ public interface ComponentDao {
 			Map properties, boolean live);
 
 	/**
+	 * Inserts a container into a list.
+	 */
+	public void insertContainer(ComponentList componentList, 
+			VersionContainer container, int position, boolean live);
+	
+	/**
 	 * Creates copys of all ComponentLists under the given path and sets 
 	 * their path to the specified <code>newPath</code>.
 	 */

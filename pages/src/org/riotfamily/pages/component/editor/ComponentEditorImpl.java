@@ -175,7 +175,6 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			throws RequestContextExpiredException {
 		
 		ComponentList componentList = getDao().loadComponentList(listId);
-		List containers = getContainersToEdit(componentList);
 		
 		ComponentListConfiguration config = getConfig(controllerId);
 		if (type == null) {
@@ -189,18 +188,8 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		VersionContainer container = getDao().createVersionContainer(
 				type, properties, isInstantPublishMode());
 		
-		container.setList(componentList);
-		if (position >= 0) {
-			containers.add(position, container);
-		}
-		else {
-			containers.add(container);
-		}
-		
-		if (!isInstantPublishMode()) {
-			componentList.setDirty(true);
-		}
-		getDao().updateComponentList(componentList);
+		getDao().insertContainer(componentList, container, position, 
+				isInstantPublishMode());
 		
 		return new ComponentInfo(container.getId(), type, 
 				getRepository().getFormId(type), 

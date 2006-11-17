@@ -28,19 +28,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.web.util.ServletMappingHelper;
-
-/**
- * TODO Make this a subclass of UrlComponentPathResolver!
- */
-public class QueryParamComponentPathResolver implements ComponentPathResolver {
+public class QueryParamComponentPathResolver extends UrlComponentPathResolver {
 
 	private List params;
 
 	private String componentPathPrefix;
-
-	private static ServletMappingHelper servletMappingHelper = 
-			new ServletMappingHelper(true);
 
 	public String getComponentPath(HttpServletRequest request) {
 
@@ -49,28 +41,25 @@ public class QueryParamComponentPathResolver implements ComponentPathResolver {
 			path = new StringBuffer(componentPathPrefix);
 		}
 		else {
-			path = new StringBuffer(servletMappingHelper
-					.getLookupPathForRequest(request));
+			path = new StringBuffer(super.getComponentPath(request));
+			path.append('#');
 		}
 
 		Iterator it = params.iterator();
 		while (it.hasNext()) {
 			String paramValue = request.getParameter((String) it.next());
 			path.append(':').append(paramValue);
+			if (it.hasNext()) {
+				path.append(',');
+			}
 		}
 
 		return path.toString();
 	}
 
-	/**
-	 * Returns a substring of the given path starting at zero and ending before
-	 * the last slash character. If no slash is found or the only slash is at
-	 * the beginning of the path, <code>null</code> is returned.
-	 */
 	public String getParentPath(String path) {
-		int i = path.lastIndexOf('/');
-		if (i > 0) {
-			return path.substring(0, i);
+		if (componentPathPrefix == null) {
+			return super.getParentPath(path);
 		}
 		return null;
 	}
