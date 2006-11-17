@@ -56,7 +56,7 @@
 	  - The view includes a box with istallation instructions for the 
 	  - Riot-login bookmarklet.
 	  -->	
-	<bean id="loginFormController" name="/login" class="org.riotfamily.riot.security.ui.LoginFormController">
+	<bean id="loginFormController" class="org.riotfamily.riot.security.ui.LoginFormController">
 		<constructor-arg ref="loginManager" />
 		<property name="viewName" value="classpath:/org/riotfamily/pages/runtime/view/login-form.ftl" />
 	</bean>
