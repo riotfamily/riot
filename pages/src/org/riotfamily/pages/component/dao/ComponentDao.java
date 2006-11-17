@@ -24,46 +24,136 @@
 package org.riotfamily.pages.component.dao;
 
 import java.util.List;
+import java.util.Map;
 
-import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentVersion;
+import org.riotfamily.pages.component.VersionContainer;
 
 /**
- * DAO interface that provides CRUD methods for 
+ * DAO interface that provides methods to access 
  * {@link ComponentList ComponentList}s, 
  * {@link ComponentVersion ComponentVersion}s and 
  * {@link VersionContainer VersionContainer}s.
  */
 public interface ComponentDao {
 
+	/**
+	 * Returns all {@link ComponentList ComponentLists} with the given path.
+	 */
 	public List findComponentLists(String path);
 	
+	/**
+	 * Returns all {@link ComponentList ComponentLists} with the given path
+	 * and key.
+	 */
 	public ComponentList findComponentList(String path, String key);
 	
+	/**
+	 * Loads the ComponentList specified  by the given id.
+	 */
 	public ComponentList loadComponentList(Long id);
 	
+	/**
+	 * Loads the VersionContainer specified  by the given id.
+	 */
 	public VersionContainer loadVersionContainer(Long id);
 	
-	
+	/**
+	 * Saves the given ComponentList.
+	 */
 	public void saveComponentList(ComponentList list);
 	
+	/**
+	 * Saves the given VersionContainer.
+	 */
 	public void saveVersionContainer(VersionContainer container);
 	
-	
+	/**
+	 * Updates the given ComponentList.
+	 */
 	public void updateComponentList(ComponentList list);
 	
+	/**
+	 * Updates the given VersionContainer.
+	 */
 	public void updateVersionContainer(VersionContainer container);
 
+	/**
+	 * Updates the given ComponentVersion.
+	 */
 	public void updateComponentVersion(ComponentVersion version);
 	
-	
-	public void deleteVersionContainer(VersionContainer container);
-		
+	/**
+	 * Deletes the given ComponentVersion.
+	 */
 	public void deleteComponentVersion(ComponentVersion version);
 	
+	/**
+	 * Deletes the given VersionContainer.
+	 */
+	public void deleteVersionContainer(VersionContainer container);
+		
+	/**
+	 * Updates all ComponentLists under <code>oldPath</code> and changes their
+	 * path to <code>newPath</code>. 
+	 */
 	public void updatePaths(String oldPath, String newPath);
 	
-	public void copyComponentLists(String oldPath, String newPath);
+	/**
+	 * Returns a list of {@link VersionContainer containers} that can be 
+	 * modified without affecting the live list. If the preview list does not
+	 * already exist a new list is created and populated with the containers
+	 * from the live list. This method does not create any copys since the 
+	 * containers themself are responisble for managing the different versions. 
+	 */
+	public List getOrCreatePreviewContainers(ComponentList list);
+	
+	/**
+	 * Returns the most recent version within the given container. This can 
+	 * either be the preview version or the live version (in case the container
+	 * does not contain a preview version). This method will never return 
+	 * <code>null</code> since containers must not be empty.
+	 */
+	public ComponentVersion getLatestVersion(VersionContainer container);
+	
+	/**
+	 * Returns the preview version from the given container. If there is only
+	 * a live version, a new preview is created.
+	 *  
+	 * @param container The container to use
+	 * @param type The type to use when creating a new version. If set to
+	 * 		<code>null</code>, the type of the live version is used. 
+	 * 
+	 */
+	public ComponentVersion getOrCreatePreviewVersion(
+			VersionContainer container, String type);
+	
+	/**
+	 * Creates a new container, containing a version of the given type.
+	 * 
+	 * @param type The type of the version to create
+	 * @param properties Properties of the version to create
+	 * @param live Whether to create a preview or live version
+	 * @return The newly created container
+	 */
+	public VersionContainer createVersionContainer(String type, 
+			Map properties, boolean live);
 
+	/**
+	 * Creates copys of all ComponentLists under the given path and sets 
+	 * their path to the specified <code>newPath</code>.
+	 */
+	public void copyComponentLists(String oldPath, String newPath);
+	
+	/**
+	 * Publishes all changes made to the given list.
+	 */
+	public boolean publishList(ComponentList componentList);
+
+	/**
+	 * Discards all changes made to the given list.
+	 */
+	public void discardList(ComponentList componentList);
+	
 }

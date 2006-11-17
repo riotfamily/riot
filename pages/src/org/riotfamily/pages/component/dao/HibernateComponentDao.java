@@ -28,6 +28,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.pages.component.ComponentList;
+import org.riotfamily.pages.component.ComponentRepository;
 
 /**
  * Default ComponentDAO implementation that uses Hibernate. All mappings
@@ -38,10 +39,10 @@ public class HibernateComponentDao extends AbstractComponentDao {
 
 	private SessionFactory sessionFactory;
 	
-	public HibernateComponentDao(ComponentHelper componentHelper,
+	public HibernateComponentDao(ComponentRepository repository,
 			SessionFactory sessionFactory) {
-
-		super(componentHelper);
+		
+		super(repository);
 		this.sessionFactory = sessionFactory;
 	}
 

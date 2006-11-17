@@ -28,6 +28,11 @@ import java.util.Map;
 
 import org.riotfamily.pages.component.context.RequestContextExpiredException;
 
+/**
+ * Interface that is exposed to the JavaScript client via DWR. 
+ *
+ * @author Felix Gnass <fgnass@neteye.de>
+ */
 public interface ComponentEditor {
 
 	public static final String INSTANT_PUBLISH_ATTRIBUTE =

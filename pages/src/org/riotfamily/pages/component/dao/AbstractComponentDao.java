@@ -29,78 +29,284 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.pages.component.Component;
 import org.riotfamily.pages.component.ComponentList;
+import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.VersionContainer;
+import org.riotfamily.pages.component.property.PropertyProcessor;
 
 /**
- * Abstract base class for {@link ComponentDao} implementations that delegates
+ * Abstract base class for {@link Component implementations that delegates
  * the various CRUD methods to generic load, save, update and delete methods.
+ * 
+ * @author Felix Gnass <fgnass@neteye.de>
  */
 public abstract class AbstractComponentDao implements ComponentDao {
 
-	private Log log = LogFactory.getLog(AbstractComponentDao.class);	
+	private ComponentRepository repository;
 	
-	private ComponentHelper componentHelper;
-	
-	public AbstractComponentDao(ComponentHelper componentHelper) {		
-		this.componentHelper = componentHelper;
+	public AbstractComponentDao(ComponentRepository repository) {
+		this.repository = repository;
 	}
 
+	/**
+	 * Loads the ComponentList specified  by the given id.
+	 */
 	public ComponentList loadComponentList(Long id) {
-		log.debug("Loading ComponentList " + id);
 		return (ComponentList) loadObject(ComponentList.class, id);
 	}
 
+	/**
+	 * Loads the VersionContainer specified  by the given id.
+	 */
 	public VersionContainer loadVersionContainer(Long id) {
-		log.debug("Loading VersionContainer " + id);
 		return (VersionContainer) loadObject(VersionContainer.class, id);
 	}
-
+	
+	/**
+	 * Saves the given ComponentList.
+	 */
 	public void saveComponentList(ComponentList list) {
-		log.debug("Saving ComponentList");
 		saveObject(list);
 	}
 
+	/**
+	 * Saves the given VersionContainer.
+	 */
 	public void saveVersionContainer(VersionContainer container) {
-		log.debug("Saving ComponentData");
 		saveObject(container);
 	}
 
+	/**
+	 * Updates the given ComponentList.
+	 */
 	public void updateComponentList(ComponentList list) {
 		if (list.getId() != null) {
-			log.debug("Updating ComponentList " + list.getId());
 			updateObject(list);
 		}
 	}
 
+	/**
+	 * Updates the given VersionContainer.
+	 */
 	public void updateVersionContainer(VersionContainer container) {
 		if (container.getId() != null) {
-			log.debug("Updating VersionContainer " + container.getId());
 			updateObject(container);
 		}
 	}
 	
-	public void deleteVersionContainer(VersionContainer container) {
-		log.debug("Deleting VersionContainer " + container.getId());
-		deleteObject(container);
-	}
-
+	/**
+	 * Updates the given ComponentVersion.
+	 */
 	public void updateComponentVersion(ComponentVersion version) {
 		if (version.getId() != null) {
-			log.debug("Updating ComponentVersion " + version.getId());
 			updateObject(version);
 		}
 	}
 	
-	public void deleteComponentVersion(ComponentVersion version) {
-		log.debug("Deleting ComponentVersion " + version.getId());
-		componentHelper.deleteComponentVersion(version);
-		deleteObject(version);
+	/**
+	 * Returns a list of {@link VersionContainer containers} that can be 
+	 * modified without affecting the live list. If the preview list does not
+	 * already exist a new list is created and populated with the containers
+	 * from the live list. This method does not create any copys since the 
+	 * containers themself are responisble for managing the different versions. 
+	 */
+	public List getOrCreatePreviewContainers(ComponentList list) {
+		List previewContainers = list.getPreviewList(); 
+		if (!list.isDirty()) {
+			if (previewContainers == null) {
+				previewContainers = new ArrayList();
+			}
+			else {
+				previewContainers.clear();
+			}
+			List liveContainers = list.getLiveList();
+			if (liveContainers != null) {
+				previewContainers.addAll(liveContainers);
+			}
+			list.setPreviewList(previewContainers);
+			list.setDirty(true);
+		}
+		return previewContainers;
 	}
-
+	
+	/**
+	 * Returns the most recent version within the given container. This can 
+	 * either be the preview version or the live version (in case the container
+	 * does not contain a preview version). This method will never return 
+	 * <code>null</code> since containers must not be empty.
+	 */
+	public ComponentVersion getLatestVersion(VersionContainer container) {
+		ComponentVersion version = container.getPreviewVersion();
+		if (version == null) {
+			version = container.getLiveVersion();
+		}
+		return version;
+	}
+	
+	/**
+	 * Returns the preview version from the given container. If there is only
+	 * a live version, a new preview is created automatically.
+	 *  
+	 * @param container The container to use
+	 * @param type The type to use when creating a new version. If set to
+	 * 		<code>null</code>, the type of the live version is used. 
+	 * 
+	 */
+	public ComponentVersion getOrCreatePreviewVersion(VersionContainer container, String type) {
+		ComponentVersion preview = container.getPreviewVersion();
+		if (preview == null) {
+			ComponentVersion live = container.getLiveVersion();
+			if (type == null) {
+				type = live.getType();
+			}
+			preview = cloneComponentVersion(live);
+			container.setPreviewVersion(preview);
+			updateVersionContainer(container);
+		}
+		return preview;
+	}
+		
+	/**
+	 * Creates a new container, containing a version of the given type.
+	 * 
+	 * @param type The type of the version to create
+	 * @param properties Properties of the version to create
+	 * @param live Whether to create a preview or live version
+	 * @return The newly created container
+	 */
+	public VersionContainer createVersionContainer(
+			String type, Map properties, boolean live) {
+		
+		VersionContainer container = new VersionContainer();
+		ComponentVersion version = new ComponentVersion(type);
+		version.setProperties(properties);
+		if (live) {
+			container.setLiveVersion(version);
+		}
+		else {
+			container.setPreviewVersion(version);
+		}
+		version.setContainer(container);
+		saveVersionContainer(container);
+		return container;
+	}
+	
+	/**
+	 * Deletes the given VersionContainer.
+	 */
+	public void deleteVersionContainer(VersionContainer container) {
+		deleteComponentVersion(container.getLiveVersion());
+		deleteComponentVersion(container.getPreviewVersion());
+		deleteObject(container);
+	}
+	
+	/**
+	 * Deletes the given ComponentVersion.
+	 */
+	public void deleteComponentVersion(ComponentVersion version) {
+		if (version != null) {
+			Component component = repository.getComponent(version);
+			Iterator it = component.getPropertyProcessors().iterator();
+			while (it.hasNext()) {
+				PropertyProcessor pp = (PropertyProcessor) it.next();
+				pp.delete(version.getProperties());
+			}
+			deleteObject(version);
+		}
+	}
+	
+	/**
+	 * Publishes the given VersionContainer.
+	 * @return <code>true</code> if there was anything to publish
+	 */
+	public boolean publishContainer(VersionContainer container) {
+		ComponentVersion preview = container.getPreviewVersion();
+		if (preview != null) {
+			ComponentVersion liveVersion = container.getLiveVersion();
+			if (liveVersion != null) {
+				deleteComponentVersion(liveVersion);
+			}
+			container.setLiveVersion(preview);
+			container.setPreviewVersion(null);
+			updateVersionContainer(container);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Publishes the given list.
+	 * @return <code>true</code> if there was anything to publish
+	 */
+	public boolean publishList(ComponentList componentList) {
+		boolean result = false;
+		if (componentList.isDirty()) {
+			result = true;
+			List previewList = componentList.getPreviewList();
+			List liveList = componentList.getLiveList();
+			if (liveList == null) {
+				liveList = new ArrayList();
+			}
+			else {
+				Iterator it = liveList.iterator();
+				while (it.hasNext()) {
+					VersionContainer container = (VersionContainer) it.next();
+					if (!previewList.contains(container)) {
+						deleteVersionContainer(container);
+					}
+				}
+				liveList.clear();
+			}
+			liveList.addAll(previewList);
+			previewList.clear();
+			componentList.setDirty(false);
+			updateComponentList(componentList);
+		}
+		
+		Iterator it = componentList.getLiveList().iterator();
+		while (it.hasNext()) {
+			VersionContainer container = (VersionContainer) it.next();
+			result |= publishContainer(container);
+		}
+		return result;
+	}
+	
+	/**
+	 * Discards all changes made to the given list.
+	 */
+	public void discardList(ComponentList componentList) {
+		List previewList = componentList.getPreviewList();
+		List liveList = componentList.getLiveList();
+		if (componentList.isDirty()) {
+			componentList.setPreviewList(null);
+			componentList.setDirty(false);
+			Iterator it = previewList.iterator();
+			while (it.hasNext()) {
+				VersionContainer container = (VersionContainer) it.next();
+				if (liveList == null || !liveList.contains(container)) {
+					deleteVersionContainer(container);
+				}
+			}
+			updateComponentList(componentList);	
+		}
+		Iterator it = liveList.iterator();
+		while (it.hasNext()) {
+			VersionContainer container = (VersionContainer) it.next();
+			ComponentVersion preview = container.getPreviewVersion();
+			if (preview != null) {
+				container.setPreviewVersion(null);
+				updateVersionContainer(container);
+				deleteComponentVersion(preview);
+			}
+		}
+	}
+	
+	/**
+	 * Creates copys of all ComponentLists under the given path and sets 
+	 * their path to the specified <code>newPath</code>.
+	 */
 	public void copyComponentLists(String oldPath, String newPath) {
 		List lists = findComponentLists(oldPath);
 		List nestedLists = null;
@@ -117,8 +323,8 @@ public abstract class AbstractComponentDao implements ComponentDao {
 					nestedLists.add(list);
 				}
 				else {
-					ComponentList copy = componentHelper.
-							cloneComponentList(list, newPath);
+					ComponentList copy = cloneComponentList(list);
+					copy.setPath(newPath);
 					saveComponentList(copy);					
 					copiedLists.put(copy.getKey(), copy);
 				}						
@@ -129,16 +335,16 @@ public abstract class AbstractComponentDao implements ComponentDao {
 		}
 	}	
 
-	//TODO: nested list could also have nested lists again!
 	private void copyNestedLists(List nestedLists, Map copiedLists, 
 					String newPath) {
+
+		//TODO Nested list could again have nested lists
 		Iterator it = nestedLists.iterator();
 		while (it.hasNext()) {
 			ComponentList list = (ComponentList) it.next();				
 			String parentId = list.getKey().
 					substring(list.getKey().indexOf('$') + 1);				
-			VersionContainer parent = (VersionContainer)loadObject(
-							VersionContainer.class, Long.valueOf(parentId));
+			VersionContainer parent = loadVersionContainer(Long.valueOf(parentId));
 			if (parent != null) {
 				ComponentList parentList = parent.getList();				
 				ComponentList copiedList = (ComponentList)copiedLists.get(
@@ -154,8 +360,8 @@ public abstract class AbstractComponentDao implements ComponentDao {
 						getPreviewList().get(parentList.getPreviewList().
 								indexOf(parent));					
 				}				
-				ComponentList copy = componentHelper.
-						cloneComponentList(list, newPath);
+				ComponentList copy = cloneComponentList(list);
+				copy.setPath(newPath);
 				String newKey = copy.getKey().
 						substring(0, copy.getKey().indexOf('$') + 1) 
 						+ newParent.getId();				
@@ -163,6 +369,55 @@ public abstract class AbstractComponentDao implements ComponentDao {
 				saveComponentList(copy);
 			}
 		}
+	}
+	
+	private ComponentList cloneComponentList(ComponentList list) {
+		ComponentList copy = new ComponentList();
+		copy.setKey(list.getKey());
+		copy.setDirty(list.isDirty());
+		copy.setLiveList(copyContainers(list.getLiveList()));;
+		copy.setPreviewList(copyContainers(list.getPreviewList()));
+		return copy;
+	}
+	
+	private List copyContainers(List source) {
+		if (source == null) {
+			return null;
+		}
+		List dest = new ArrayList(source.size());
+		Iterator it = source.iterator();
+		while (it.hasNext()) {
+			VersionContainer vc = (VersionContainer) it.next();
+			VersionContainer copy = copyVersionContainer(vc);
+			dest.add(copy);
+		}
+		return dest;
+	}
+	
+	private VersionContainer copyVersionContainer(VersionContainer container) {
+		VersionContainer copy = new VersionContainer();
+		if (container.getLiveVersion() != null) {
+			copy.setLiveVersion(cloneComponentVersion(
+					container.getLiveVersion()));
+		}
+		if (container.getPreviewVersion() != null) {
+			copy.setPreviewVersion(cloneComponentVersion(
+					container.getPreviewVersion()));
+		}
+		return copy;
+	}
+	
+	private ComponentVersion cloneComponentVersion(ComponentVersion version) {
+		Component component = repository.getComponent(version);
+		ComponentVersion copy = new ComponentVersion(version);
+		if (component.getPropertyProcessors() != null) {
+			Iterator it = component.getPropertyProcessors().iterator();
+			while (it.hasNext()) {
+				PropertyProcessor pp = (PropertyProcessor) it.next();
+				pp.copy(version.getProperties(), copy.getProperties());
+			}
+		}
+		return copy;
 	}
 	
 	protected abstract Object loadObject(Class clazz, Long id);

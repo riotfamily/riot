@@ -29,7 +29,6 @@ import org.riotfamily.cachius.Cache;
 import org.riotfamily.pages.component.ComponentListController;
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.dao.ComponentDao;
-import org.riotfamily.pages.component.dao.ComponentHelper;
 import org.riotfamily.pages.page.PageMap;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -48,19 +47,15 @@ public class WebsiteConfig implements ApplicationContextAware, InitializingBean 
 	
 	private ComponentDao componentDao;
 	
-	private ComponentHelper componentHelper;
-	
 	private Map componentListControllers;
 	
 	private PageMap pageMap;
 	
 	private Cache cache;
 	
-	public WebsiteConfig(ComponentRepository repository, ComponentDao dao, 
-					ComponentHelper componentHelper) {
+	public WebsiteConfig(ComponentRepository repository, ComponentDao dao) {
 		this.componentRepository = repository;
 		this.componentDao = dao;
-		this.componentHelper = componentHelper;
 	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
@@ -102,10 +97,6 @@ public class WebsiteConfig implements ApplicationContextAware, InitializingBean 
 		return this.componentDao;
 	}
 	
-	public ComponentHelper getComponentHelper() {
-		return componentHelper;
-	}
-
 	public void afterPropertiesSet() throws Exception {
 		plumber.setWebsiteConfig(this);
 	}

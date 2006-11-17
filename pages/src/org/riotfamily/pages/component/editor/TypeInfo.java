@@ -25,7 +25,7 @@ package org.riotfamily.pages.component.editor;
 
 
 /**
- * Value bean that is send to the client JavaScript via DWR and provides
+ * Value bean that is send to the JavaScript client via DWR and provides
  * information about a component type.
  */
 public class TypeInfo {

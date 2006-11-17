@@ -51,7 +51,6 @@ import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.dao.ComponentDao;
-import org.riotfamily.pages.component.dao.ComponentHelper;
 import org.riotfamily.pages.component.property.FileStoreProperyProcessor;
 import org.riotfamily.pages.component.property.PropertyEditorProcessor;
 import org.riotfamily.pages.setup.Plumber;
@@ -79,8 +78,6 @@ public class ComponentFormController extends RepositoryFormController
 	private static final String INSTANT_PUBLISH_PARAM = "instantPublish";
 	
 	private ComponentDao componentDao;
-	
-	private ComponentHelper componentHelper;
 	
 	private PlatformTransactionManager transactionManager;
 	
@@ -110,7 +107,6 @@ public class ComponentFormController extends RepositoryFormController
 	public void setWebsiteConfig(WebsiteConfig websiteConfig) {
 		componentRepository = websiteConfig.getComponentRepository();
 		componentDao = websiteConfig.getComponentDao();
-		componentHelper = websiteConfig.getComponentHelper();
 		componentRepository.addListener(this);
 		setupForms();
 	}
@@ -190,16 +186,7 @@ public class ComponentFormController extends RepositoryFormController
 		if (instanPublishMode) {
 			return container.getLiveVersion();
 		}
-		
-		ComponentVersion preview = container.getPreviewVersion();
-		if (preview == null) {
-			ComponentVersion live = container.getLiveVersion();
-			Component component = componentRepository.getComponent(live.getType());
-			preview = componentHelper.cloneComponentVersion(component, live);
-			container.setPreviewVersion(preview);
-			componentDao.updateVersionContainer(container);
-		}
-		return preview;
+		return componentDao.getOrCreatePreviewVersion(container, null);
 	}
 	
 	public String getFormId(String componentType) {
