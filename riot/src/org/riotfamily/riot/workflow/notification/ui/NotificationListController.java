@@ -69,7 +69,7 @@ public class NotificationListController implements Controller {
 		List notifications = dao.getNotifications(userId);
 		
 		if (ServletUtils.isXmlHttpRequest(request)) {
-			return new ModelAndView(new JsonView(true), 
+			return new ModelAndView(new JsonView(), 
 					"notifications", notifications);
 		}
 		else if (notifications != null && !notifications.isEmpty()) {

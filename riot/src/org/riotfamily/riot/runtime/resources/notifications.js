@@ -30,7 +30,8 @@ NotificationList.prototype = {
 		}
 	},
 	
-	processResponse: function(res, model) {
+	processResponse: function(res) {
+		var model = eval(res.responseText);
 		var _this = this;
 		var knownIds = this.notifications.pluck('id');
 		model.notifications.each(function(data) {
