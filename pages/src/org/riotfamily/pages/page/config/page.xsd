@@ -23,6 +23,7 @@
 			<xsd:attribute name="title" type="xsd:string" use="required" />
 			<xsd:attribute name="system" type="xsd:boolean" default="true" />
 			<xsd:attribute name="published" type="xsd:boolean" default="true" />
+			<xsd:attribute name="hidden" type="xsd:boolean" default="false" />
 			<xsd:attribute name="controller" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>

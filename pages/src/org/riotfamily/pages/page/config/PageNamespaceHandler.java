@@ -57,7 +57,7 @@ public class PageNamespaceHandler implements NamespaceHandler {
 	
 	private static final String[] PAGE_ATTRIBUTES = {
 		"path-component", "title", "systemPage=system", 
-		"controllerName=controller", "published"
+		"controllerName=controller", "published", "hidden"
 	};
 	
 	private static final String PAGES_PROPERTY = "pages";
