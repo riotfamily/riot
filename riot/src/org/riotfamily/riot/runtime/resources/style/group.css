@@ -103,7 +103,12 @@ background-color:#ebebeb;
 
 #status .message {
 	clear: both;
-	margin-top: 10px;
+	margin-top: 5px;
+}
+
+#status .message .text {
+	padding-top: 5px;
+	padding-bottom: 3px;
 }
 
 #status .message .icon {
