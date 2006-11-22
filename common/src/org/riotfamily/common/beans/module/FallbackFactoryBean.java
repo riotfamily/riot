@@ -88,7 +88,7 @@ public class FallbackFactoryBean implements FactoryBean, BeanFactoryAware,
 	}
 
 	public Class getObjectType() {
-		return implementation.getClass();
+		return implementation != null ? implementation.getClass() : null;
 	}
 
 	public boolean isSingleton() {
