@@ -38,6 +38,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * Filter that prevents URLs from beeing encoded if the request is originated 
  * by search engine robot/crawler.
  * 
+ * @since 6.4
  * @author Felix Gnass <fgnass@neteye.de>
  */
 public class BotSessionFilter extends OncePerRequestFilter {
@@ -46,7 +47,7 @@ public class BotSessionFilter extends OncePerRequestFilter {
 	
 	private static final String USER_AGENT_HEADER = "User-Agent";
 	
-	private Pattern botPattern = Pattern.compile(DEFAULT_BOT_PATTERN);
+	private Pattern pattern = Pattern.compile(DEFAULT_BOT_PATTERN);
 	
 	/**
 	 * Sets the regular expression that is used to check whether a User-Agent
@@ -57,8 +58,8 @@ public class BotSessionFilter extends OncePerRequestFilter {
 	 * before the pattern is checked. The default is 
 	 * <code>bot|crawler|spider</code>.  
 	 */
-	public void setBotPattern(String pattern) {
-		botPattern = Pattern.compile(pattern);
+	public void setPattern(String pattern) {
+		this.pattern = Pattern.compile(pattern);
 	}
 	
 	/**
@@ -77,7 +78,7 @@ public class BotSessionFilter extends OncePerRequestFilter {
 	protected boolean isBot(HttpServletRequest request) {
 		String agent = request.getHeader(USER_AGENT_HEADER);
 		if (agent != null) {
-			return botPattern.matcher(agent.toLowerCase()).find();
+			return pattern.matcher(agent.toLowerCase()).find();
 		}
 		return false;
 	}
