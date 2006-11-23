@@ -38,6 +38,15 @@ public class DropUniqueConstraint implements Refactoring {
 
 	private String constraint;
 
+	
+	public DropUniqueConstraint() {
+	}
+
+	public DropUniqueConstraint(String table, String constraint) {
+		this.table = table;
+		this.constraint = constraint;
+	}
+	
 	public void setTable(String table) {
 		this.table = table;
 	}

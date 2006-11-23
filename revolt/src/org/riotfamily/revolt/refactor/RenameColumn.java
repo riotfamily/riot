@@ -40,6 +40,16 @@ public class RenameColumn implements Refactoring {
 
 	private String renameTo;
 
+	
+	public RenameColumn() {
+	}
+
+	public RenameColumn(String table, String column, String renameTo) {
+		this.table = table;
+		this.column = column;
+		this.renameTo = renameTo;
+	}
+
 	public void setColumn(String column) {
 		this.column = column;
 	}

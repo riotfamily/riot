@@ -39,6 +39,15 @@ public class ModifyColumn implements Refactoring {
 
 	private Column column;
 
+	
+	public ModifyColumn() {
+	}
+
+	public ModifyColumn(String table, Column column) {
+		this.table = table;
+		this.column = column;
+	}
+
 	public void setTable(String table) {
 		this.table = table;
 	}

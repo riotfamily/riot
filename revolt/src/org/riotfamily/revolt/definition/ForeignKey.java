@@ -31,11 +31,20 @@ import java.util.List;
  * @author Felix Gnass <fgnass@neteye.de>
  * 
  */
-public class ForeignKey extends AbstractDataDefinition {
-
+public class ForeignKey extends Identifier {
+	
 	private String foreignTable;
 
 	private List references;
+
+	public ForeignKey() {
+	}
+
+	public ForeignKey(String name, String foreignTable, List references) {
+		super(name);
+		this.foreignTable = foreignTable;
+		this.references = references;
+	}
 
 	public String getForeignTable() {
 		return this.foreignTable;

@@ -5,8 +5,6 @@
     	<conf name="runtime" />
     </configurations>
     <dependencies>
-    	<dependency org="postgresql" name="jdbc3" rev="latest.release" conf="build->default" />
-    	<dependency org="junit" name="junit" rev="4.1" conf="build->default" />
-	    <dependency org="springframework" name="spring" rev="2.0" conf="build->mock;runtime->default" changing="true" />
+	    <dependency org="springframework" name="spring" rev="2.0" conf="*->default" changing="true" />
     </dependencies>
 </ivy-module>

@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt;
 
+import java.util.Collection;
+
 import org.riotfamily.revolt.definition.Column;
 import org.riotfamily.revolt.definition.ForeignKey;
 import org.riotfamily.revolt.definition.Index;
@@ -35,7 +37,8 @@ import org.riotfamily.revolt.definition.UniqueConstraint;
  */
 public interface Dialect {
 
-	public boolean supports(String databaseProductName, int majorVersion, int minorVersion);
+	public boolean supports(String databaseProductName, int majorVersion, 
+			int minorVersion);
 
 	public Script createTable(Table table);
 
@@ -63,4 +66,5 @@ public interface Dialect {
 
 	public Script dropForeignKey(String table, String name);
 
+	public Script insert(String table, Collection data);
 }

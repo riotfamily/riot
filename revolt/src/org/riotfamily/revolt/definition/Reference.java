@@ -29,24 +29,21 @@ package org.riotfamily.revolt.definition;
  */
 public class Reference {
 
-	private String localColumn;
+	private Identifier localColumn;
 
-	private String foreignColumn;
+	private Identifier foreignColumn;
+	
+	public Reference(String localColumn, String foreignColumn) {
+		this.localColumn = new Identifier(localColumn);
+		this.foreignColumn = new Identifier(foreignColumn);
+	}
 
-	public String getForeignColumn() {
+	public Identifier getForeignColumn() {
 		return this.foreignColumn;
 	}
 
-	public void setForeignColumn(String foreignColumn) {
-		this.foreignColumn = foreignColumn;
-	}
-
-	public String getLocalColumn() {
+	public Identifier getLocalColumn() {
 		return this.localColumn;
-	}
-
-	public void setLocalColumn(String localColumn) {
-		this.localColumn = localColumn;
 	}
 
 }

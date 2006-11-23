@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		elementFormDefault="qualified"
+		attributeFormDefault="unqualified" 
+		targetNamespace="http://www.riotfamily.org/schema/revolt"
+		xmlns="http://www.riotfamily.org/schema/revolt">
+
+	<xsd:attributeGroup name="column-attributes">
+		<xsd:attribute name="name" type="xsd:string" use="required" />
+		<xsd:attribute name="type" type="xsd:string" use="required" />
+		<xsd:attribute name="length" type="xsd:positiveInteger" />
+		<xsd:attribute name="primary-key" type="xsd:boolean" />
+		<xsd:attribute name="not-null" type="xsd:boolean" />
+		<xsd:attribute name="auto-increment" type="xsd:boolean" />
+	</xsd:attributeGroup>		
+	
+	<xsd:element name="history">
+		<xsd:complexType>
+			<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+				<xsd:element ref="change-set" />
+			</xsd:sequence>
+			<xsd:attribute name="module" type="xsd:string" use="required" />
+			<xsd:attribute name="data-source" type="xsd:string" use="required" />
+		</xsd:complexType>		
+	</xsd:element>
+	
+	<xsd:element name="change-set">		 
+		<xsd:complexType>
+			<xsd:choice minOccurs="1" maxOccurs="unbounded">
+				<xsd:element name="add-column">
+					<xsd:complexType>
+						<xsd:attribute name="table" type="xsd:string" use="required" />
+						<xsd:attributeGroup ref="column-attributes" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="add-foreign-key">
+					<xsd:complexType>
+						<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+							<xsd:element name="ref">
+								<xsd:complexType>
+									<xsd:attribute name="local" type="xsd:string" use="required" />
+									<xsd:attribute name="foreign" type="xsd:string" use="required" />
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+						<xsd:attribute name="table" type="xsd:string" use="required" />
+						<xsd:attribute name="name" type="xsd:string" use="required" />
+						<xsd:attribute name="references" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="add-unique-constraint">
+					<xsd:complexType>
+						<xsd:attribute name="table" type="xsd:string" use="required" />
+						<xsd:attribute name="name" type="xsd:string" use="required" />
+						<xsd:attribute name="on" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="create-index">
+					<xsd:complexType>
+						<xsd:attribute name="table" type="xsd:string" use="required" />
+						<xsd:attribute name="name" type="xsd:string" use="required" />
+						<xsd:attribute name="on" type="xsd:string" use="required" />
+						<xsd:attribute name="unique" type="xsd:boolean" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="create-table">
+					<xsd:complexType>
+						<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+							<xsd:element name="column">
+								<xsd:complexType>
+									<xsd:attributeGroup ref="column-attributes" />
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+						<xsd:attribute name="name" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="drop-column">
+					<xsd:complexType>
+						<xsd:attribute name="table" type="xsd:string" use="required" />
+						<xsd:attribute name="column" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="drop-foreign-key">
+					<xsd:complexType>
+						<xsd:attribute name="table" type="xsd:string" use="required" />
+						<xsd:attribute name="foreign-key" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="drop-index">
+					<xsd:complexType>
+						<xsd:attribute name="table" type="xsd:string" use="required" />
+						<xsd:attribute name="index" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="drop-table">
+					<xsd:complexType>
+						<xsd:attribute name="table" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="drop-unique-constraint">
+					<xsd:complexType>
+						<xsd:attribute name="table" type="xsd:string" use="required" />
+						<xsd:attribute name="constraint" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="modify-column">
+					<xsd:complexType>
+						<xsd:attribute name="table" type="xsd:string" use="required" />
+						<xsd:attributeGroup ref="column-attributes" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="rename-column">
+					<xsd:complexType>
+						<xsd:attribute name="table" type="xsd:string" use="required" />
+						<xsd:attribute name="column" type="xsd:string" use="required" />
+						<xsd:attribute name="rename-to" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="rename-table">
+					<xsd:complexType>
+						<xsd:attribute name="table" type="xsd:string" use="required" />
+						<xsd:attribute name="rename-to" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="insert-data">
+					<xsd:complexType>
+						<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+							<xsd:element name="entry">
+								<xsd:complexType>
+									<xsd:attribute name="column" type="xsd:string" use="required" />
+									<xsd:attribute name="value" type="xsd:string" use="required" />
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+						<xsd:attribute name="table" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choice>
+			<xsd:attribute name="id" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+		
+</xsd:schema>

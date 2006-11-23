@@ -32,14 +32,15 @@ import java.util.Iterator;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.revolt.DatabaseOutOfSyncException;
 import org.riotfamily.revolt.definition.Column;
 import org.riotfamily.revolt.definition.Database;
+import org.riotfamily.revolt.definition.Identifier;
 import org.riotfamily.revolt.definition.Table;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
@@ -47,10 +48,20 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class DatabaseUtils {
 
-	private static Log log = LogFactory.getLog(DatabaseUtils.class);
+	public static String getUrl(DataSource dataSource) {
+		JdbcTemplate template = new JdbcTemplate(dataSource);
+		return (String) template.execute(new ConnectionCallback() {
+			public Object doInConnection(Connection connection) 
+					throws SQLException, DataAccessException {
+				
+				DatabaseMetaData metaData = connection.getMetaData();
+				return metaData.getURL();
+			}
+		});
+	}
 	
-	public static boolean databaseMatchesModel(
-			DataSource dataSource, final Database model) {
+	public static boolean tableExists(DataSource dataSource, 
+			final Identifier table) {
 		
 		JdbcTemplate template = new JdbcTemplate(dataSource);
 		Boolean result = (Boolean) template.execute(new ConnectionCallback() {
@@ -58,32 +69,78 @@ public class DatabaseUtils {
 					throws SQLException, DataAccessException {
 				
 				DatabaseMetaData metaData = connection.getMetaData();
-				return Boolean.valueOf(metaDataMatchesModel(metaData, model));
+				String pattern = getSearchPattern(metaData, table);
+				ResultSet rs = metaData.getTables(null, null, pattern, null);
+				return Boolean.valueOf(rs.next());
 			}
 		});
 		return result.booleanValue();
 	}
 	
-	private static boolean metaDataMatchesModel(
-			DatabaseMetaData metaData, Database model) 
-			throws SQLException {
+	public static void validate(DataSource dataSource, final Database model) 
+			throws DatabaseOutOfSyncException {
+		
+		JdbcTemplate template = new JdbcTemplate(dataSource);
+		template.execute(new ConnectionCallback() {
+			public Object doInConnection(Connection connection) 
+					throws SQLException, DataAccessException {
+				
+				DatabaseMetaData metaData = connection.getMetaData();
+				validate(metaData, model);
+				return null;
+			}
+		});
+	}
+	
+	private static String getSearchPattern(DatabaseMetaData metaData, 
+			Identifier identifier) throws SQLException {
+		
+		String escape = metaData.getSearchStringEscape();
+		escape = escape.replace("\\", "\\\\");
+		String pattern = identifier.getName().replaceAll("_", escape + "_");
+		
+		if (identifier.isQuoted()) {
+			if (metaData.storesUpperCaseQuotedIdentifiers()) {
+				pattern = pattern.toUpperCase();
+			}
+			else if (metaData.storesLowerCaseQuotedIdentifiers()) {
+				pattern = pattern.toLowerCase();
+			}
+		}
+		else {
+			if (metaData.storesUpperCaseIdentifiers()) {
+				pattern = pattern.toUpperCase();
+			}
+			else if (metaData.storesLowerCaseIdentifiers()) {
+				pattern = pattern.toLowerCase();
+			}	
+		}
+		return pattern;
+	}
+
+	private static void validate(DatabaseMetaData metaData, Database model) 
+			throws SQLException, DatabaseOutOfSyncException {
 		
 		Iterator it = model.getTables().iterator();
 		while (it.hasNext()) {
 			Table table = (Table) it.next();
-			ResultSet rs = metaData.getColumns(null, null, 
-					table.getName(), null);
-			
+			String pattern = getSearchPattern(metaData, table);
+			ResultSet rs = metaData.getColumns(null, null, pattern, "%");
 			ArrayList columns = new ArrayList();
 			while (rs.next()) {
 				columns.add(new Column(rs.getString("COLUMN_NAME")));
-				log.info("database column name:" + rs.getString("COLUMN_NAME"));
 			}
-			if(!columns.containsAll(table.getColumns())) {
-				return false;
+			if (columns.isEmpty()) {
+				throw new DatabaseOutOfSyncException("Table " 
+						+ table.getName() + " does not exist");
+			}
+			if (!columns.containsAll(table.getColumns())) {
+				ArrayList missing = new ArrayList(table.getColumns());
+				missing.removeAll(columns);
+				throw new DatabaseOutOfSyncException("Table "+ table.getName() 
+						+ " does not have the following column(s): " 
+						+ StringUtils.collectionToCommaDelimitedString(missing));
 			}
 		}
-		
-		return true;
 	}
 }

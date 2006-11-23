@@ -21,46 +21,43 @@
  *   Felix Gnass <fgnass@neteye.de>
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.revolt.refactor;
+package org.riotfamily.revolt;
 
-import org.riotfamily.revolt.Dialect;
-import org.riotfamily.revolt.Refactoring;
-import org.riotfamily.revolt.Script;
-import org.riotfamily.revolt.definition.Database;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
- * 
  */
-public class RenameTable implements Refactoring {
+public class EvolutionInstructions extends RuntimeException {
 
-	private String table;
-
-	private String renameTo;
-
+	private String instructions;
 	
-	public RenameTable() {
+	private boolean printed;
+	
+	public EvolutionInstructions(String instructions) {
+		super("The database schema is not up-to-date");
+		this.instructions = instructions;
 	}
 
-	public RenameTable(String table, String renameTo) {
-		this.table = table;
-		this.renameTo = renameTo;
-	}
-
-	public void setTable(String table) {
-		this.table = table;
-	}
-
-	public void setRenameTo(String renameTo) {
-		this.renameTo = renameTo;
-	}
-
-	public void alterModel(Database database) {
-		database.getTable(table).setName(renameTo);
+	public void printStackTrace(PrintStream s) {
+		if (!printed) {
+			s.append(instructions);
+			printed = true;
+		}
+		else {
+			s.append("\t... see above");
+		}
 	}
 	
-	public Script getScript(Dialect dialect) {
-		return dialect.renameTable(table, renameTo);
+	public void printStackTrace(PrintWriter s) {
+		if (!printed) {
+			s.print(instructions);
+			printed = true;
+		}
+		else {
+			s.print("\t... see above");
+		}
 	}
 
 }

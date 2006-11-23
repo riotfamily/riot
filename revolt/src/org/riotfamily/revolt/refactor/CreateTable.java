@@ -43,6 +43,11 @@ public class CreateTable implements Refactoring {
 
 	public CreateTable() {
 	}
+	
+	public CreateTable(String name, List columns) {
+		this.name = name;
+		this.columns = columns;
+	}
 
 	public void setName(String name) {
 		this.name = name;

@@ -23,44 +23,68 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt.refactor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.riotfamily.revolt.Dialect;
 import org.riotfamily.revolt.Refactoring;
 import org.riotfamily.revolt.Script;
 import org.riotfamily.revolt.definition.Database;
+import org.riotfamily.revolt.definition.RecordEntry;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
  * 
  */
-public class RenameTable implements Refactoring {
+public class InsertData implements Refactoring {
 
 	private String table;
-
-	private String renameTo;
-
 	
-	public RenameTable() {
+	private List entries;
+
+	public InsertData() {
+	}
+	
+	
+	public InsertData(String table) {
+		this.table = table;
+		this.entries = new ArrayList();
 	}
 
-	public RenameTable(String table, String renameTo) {
+	public InsertData(String table, List entries) {
 		this.table = table;
-		this.renameTo = renameTo;
+		this.entries = entries;
+	}
+
+	public void setEntries(List entries) {
+		this.entries = entries;
+	}
+	
+	public void addEntry(RecordEntry entry) {
+		entries.add(entry);
+	}
+	
+	public void addEntry(String column, Object value) {
+		String s;
+		if (value == null) {
+			s = "NULL";
+		}
+		else {
+			s = StringUtils.quoteIfString(value).toString();
+		}
+		entries.add(new RecordEntry(column, s));
 	}
 
 	public void setTable(String table) {
 		this.table = table;
 	}
 
-	public void setRenameTo(String renameTo) {
-		this.renameTo = renameTo;
-	}
-
 	public void alterModel(Database database) {
-		database.getTable(table).setName(renameTo);
 	}
 	
 	public Script getScript(Dialect dialect) {
-		return dialect.renameTable(table, renameTo);
+		return dialect.insert(table, entries);
 	}
 
 }

@@ -23,18 +23,20 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt;
 
-import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlProvider;
+import org.springframework.jdbc.core.StatementCallback;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
@@ -46,6 +48,8 @@ public class Script {
 
 	private StringBuffer buffer;
 
+	private boolean nospace;
+	
 	public Script() {
 	}
 
@@ -57,10 +61,23 @@ public class Script {
 		if (buffer == null) {
 			newStatement();
 		}
-		else {
+		else if (!nospace) {
 			buffer.append(' ');
 		}
+		nospace = false;
 		buffer.append(sql);
+		return this;
+	}
+	
+	public Script append(char c) {
+		if (buffer == null) {
+			newStatement();
+		}
+		else if (c == '(') {
+			buffer.append(' ');
+			nospace = true;
+		}
+		buffer.append(c);
 		return this;
 	}
 
@@ -71,7 +88,7 @@ public class Script {
 	}
 
 	public void newStatement() {
-		if (buffer != null) {
+		if (buffer != null && buffer.length() > 0) {
 			callbacks.add(new SqlCallback(buffer.toString()));
 		}
 		buffer = new StringBuffer();
@@ -86,13 +103,25 @@ public class Script {
 		JdbcTemplate template = new JdbcTemplate(dataSource);
 		Iterator it = getCallbacks().iterator();
 		while (it.hasNext()) {
-			ConnectionCallback callback = (ConnectionCallback) it.next();
+			StatementCallback callback = (StatementCallback) it.next();
 			template.execute(callback);
 		}
 	}
+	
+	public String getSql() {
+		StringBuffer sql = new StringBuffer();
+		Iterator it = getCallbacks().iterator();
+		while (it.hasNext()) {
+			SqlProvider provider = (SqlProvider) it.next();
+			sql.append(provider.getSql()).append(";\n");
+		}
+		return sql.toString();
+	}
 
-	public class SqlCallback implements ConnectionCallback, SqlProvider {
+	public static class SqlCallback implements StatementCallback, SqlProvider {
 
+		private static Log log = LogFactory.getLog(SqlCallback.class);
+		
 		private String sql;
 
 		public SqlCallback(String sql) {
@@ -103,8 +132,11 @@ public class Script {
 			return sql;
 		}
 
-		public Object doInConnection(Connection connection) throws SQLException, DataAccessException {
-			connection.createStatement().execute(sql);
+		public Object doInStatement(Statement statement) 
+				throws SQLException, DataAccessException {
+			
+			log.debug(sql);
+			statement.execute(sql);
 			return null;
 		}
 	}

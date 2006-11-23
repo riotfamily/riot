@@ -33,10 +33,8 @@ import org.riotfamily.revolt.EvolutionException;
  */
 public class OperationNotSupportedException extends EvolutionException {
 
-	public OperationNotSupportedException() {
-	}
-	
 	public OperationNotSupportedException(String message) {
 		super(message);
 	}
+
 }

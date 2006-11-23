@@ -39,6 +39,14 @@ public class AddForeignKey implements Refactoring {
 
 	private ForeignKey foreignKey;
 
+	public AddForeignKey() {
+	}
+
+	public AddForeignKey(String table, ForeignKey foreignKey) {
+		this.table = table;
+		this.foreignKey = foreignKey;
+	}
+
 	public void setTable(String table) {
 		this.table = table;
 	}

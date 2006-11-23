@@ -38,6 +38,14 @@ public class AddUniqueConstraint implements Refactoring {
 	private String table;
 
 	private UniqueConstraint constraint;
+	
+	public AddUniqueConstraint() {
+	}
+
+	public AddUniqueConstraint(String table, UniqueConstraint constraint) {
+		this.table = table;
+		this.constraint = constraint;
+	}
 
 	public void setTable(String table) {
 		this.table = table;

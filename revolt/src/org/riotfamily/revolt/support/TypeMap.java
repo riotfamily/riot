@@ -71,15 +71,9 @@ public class TypeMap {
 
 	public final static String LONGVARBINARY = "LONGVARBINARY";
 
-	public final static String NULL = "NULL";
-
-	public final static String OTHER = "OTHER";
-
 	public final static String BLOB = "BLOB";
 
 	public final static String CLOB = "CLOB";
-
-	public final static String BOOLEAN = "BOOLEAN";
 
 	private static HashMap jdbcTypes = new HashMap();
 
@@ -103,11 +97,8 @@ public class TypeMap {
 		jdbcTypes.put(BINARY, new Integer(Types.BINARY));
 		jdbcTypes.put(VARBINARY, new Integer(Types.VARBINARY));
 		jdbcTypes.put(LONGVARBINARY, new Integer(Types.LONGVARBINARY));
-		jdbcTypes.put(NULL, new Integer(Types.NULL));
-		jdbcTypes.put(OTHER, new Integer(Types.OTHER));
 		jdbcTypes.put(BLOB, new Integer(Types.BLOB));
 		jdbcTypes.put(CLOB, new Integer(Types.CLOB));
-		jdbcTypes.put(BOOLEAN, new Integer(Types.BOOLEAN));
 	}
 
 	public static int getJdbcType(String name) {

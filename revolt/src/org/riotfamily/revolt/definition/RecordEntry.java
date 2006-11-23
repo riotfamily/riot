@@ -21,22 +21,27 @@
  *   Felix Gnass <fgnass@neteye.de>
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.revolt;
+package org.riotfamily.revolt.definition;
 
-import org.springframework.test.AbstractSingleSpringContextTests;
+/**
+ * @author Felix Gnass <fgnass@neteye.de>
+ *
+ */
+public class RecordEntry extends Identifier {
 
+	private String value;
 
-public class EvolutionTest extends AbstractSingleSpringContextTests {
+	public RecordEntry(String name, String value) {
+		super(name);
+		this.value = value;
+	}
 
-	protected String[] getConfigLocations() {
-		return new String[] { 
-				"classpath:/org/riotfamily/revolt/test-context.xml" 
-		};
+	public String getValue() {
+		return this.value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 	
-	public void testEvolution() {
-		// Evolution is pretty much self-testing ... 
-		// We just make sure it runs without Exceptions.
-	}
-
 }

@@ -38,6 +38,14 @@ public class CreateIndex implements Refactoring {
 	private String table;
 
 	private Index index;
+	
+	public CreateIndex() {
+	}
+
+	public CreateIndex(String table, Index index) {
+		this.table = table;
+		this.index = index;
+	}
 
 	public void setTable(String table) {
 		this.table = table;

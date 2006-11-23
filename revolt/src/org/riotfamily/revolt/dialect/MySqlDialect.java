@@ -36,7 +36,6 @@ public class MySqlDialect extends Sql92Dialect {
 
 	protected void registerTypes() {
 		registerType(TypeMap.BIT, "TINYINT(1)");
-		registerType(TypeMap.BOOLEAN, "TINYINT(1)");
 		registerType(TypeMap.TINYINT, "SMALLINT");
 		registerType(TypeMap.SMALLINT, "SMALLINT");
 		registerType(TypeMap.INTEGER, "INTEGER");
@@ -62,6 +61,7 @@ public class MySqlDialect extends Sql92Dialect {
 	public boolean supports(String databaseProductName, 
 			int majorVersion, int minorVersion) {
 
+		//TODO Find out what the JDBC driver reports as product name! 
 		return false;
 	}
 	
@@ -73,12 +73,12 @@ public class MySqlDialect extends Sql92Dialect {
 	}
 
 	public Script renameTable(String name, String renameTo) {
-		return alterTable(name).append("RENAME TO").append(getTableName(renameTo));
+		return alterTable(name).append("RENAME TO").append(quote(renameTo));
 	}
 
 	public Script renameColumn(String table, String name, String renameTo) {
-		return alterTable(table).append("CHANGE COLUMN").append(
-				getColumnName(name)).append(getColumnName(renameTo));
+		return alterTable(table).append("CHANGE COLUMN").append(name)
+				.append(renameTo);
 	}
 
 	public Script modifyColumn(String table, Column column) {
@@ -95,5 +95,9 @@ public class MySqlDialect extends Sql92Dialect {
 
 	public Script dropIndex(String table, String name) {
 		return alterTable(table).append("DROP INDEX").append(name);
+	}
+	
+	protected String convertBackticksToIdentifierDelimiter(String s) {
+		return s;
 	}
 }

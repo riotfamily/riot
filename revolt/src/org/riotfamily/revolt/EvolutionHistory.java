@@ -33,81 +33,137 @@ import org.riotfamily.revolt.definition.Database;
 import org.riotfamily.revolt.support.DatabaseUtils;
 import org.riotfamily.revolt.support.DialectResolver;
 import org.riotfamily.revolt.support.LogTable;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.BeanNameAware;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
  * 
  */
-public class EvolutionHistory implements InitializingBean {
+public class EvolutionHistory implements BeanNameAware {
 
+	private String moduleName;
+	
 	private List changeSets;
 
 	private DataSource dataSource;
-
+	
 	private Dialect dialect;
-
+	
 	private LogTable logTable;
 	
-	public EvolutionHistory(String moduleName, DataSource dataSource, 
-			DialectResolver dialectResolver) {
-		
+	private List appliedIds;
+	
+	public EvolutionHistory(DataSource dataSource) {
 		this.dataSource = dataSource;
-		dialect = dialectResolver.getDialect(dataSource);
-		logTable = new LogTable(dataSource, dialect, moduleName);
+		this.dialect = new DialectResolver().getDialect(dataSource);
+	}
+	
+	public DataSource getDataSource() {
+		return this.dataSource;
+	}
+	
+	public Dialect getDialect() {
+		return this.dialect;
+	}
+
+	public void setBeanName(String name) {
+		this.moduleName = name;
+	}
+	
+	public String getModuleName() {
+		return this.moduleName;
 	}
 
 	public void setChangeSets(ChangeSet[] changeSets) {
 		this.changeSets = new ArrayList();
 		for (int i = 0; i < changeSets.length; i++) {
 			ChangeSet changeSet = changeSets[i];
+			changeSet.setHistory(this);
 			changeSet.setSequenceNumber(i);
 			this.changeSets.add(changeSet);
 		}
 	}
-
-	private void markAllChangesAsApplied() {
-		Iterator it = changeSets.iterator();
-		while (it.hasNext()) {
-			ChangeSet changeSet = (ChangeSet) it.next();
-			changeSet.markAsApplied(logTable);
-		}
-	}
-	
-	private void evolveDatabase() {
-		Database model = new Database();
-		Iterator it = changeSets.iterator();
-		while (it.hasNext()) {
-			ChangeSet changeSet = (ChangeSet) it.next();
-			changeSet.applyIfNeeded(dataSource, dialect, logTable, model);
-		}
-		if (!DatabaseUtils.databaseMatchesModel(dataSource, model)) {
-			throw new DatabaseOutOfSyncException();
-		}
-	}
-	
+		
 	private Database evolveModel() {
 		Database model = new Database();
 		Iterator it = changeSets.iterator();
 		while (it.hasNext()) {
 			ChangeSet changeSet = (ChangeSet) it.next();
-			changeSet.applyToModel(model);
+			changeSet.alterModel(model);
 		}
 		return model;
 	}
 	
-	public void evolve() throws DatabaseOutOfSyncException {
-		if (!logTable.hasEntries()) {
-			if (DatabaseUtils.databaseMatchesModel(dataSource, evolveModel())) {
-				markAllChangesAsApplied();
-				return;
-			}
-		}
-		evolveDatabase();
+	public void init(LogTable logTable) {
+		this.logTable = logTable;
+		appliedIds = logTable.getAppliedChangeSetIds(moduleName);
 	}
 	
-	public void afterPropertiesSet() {
-		evolve();
+	public void evolve() throws DatabaseOutOfSyncException {
+		if (appliedIds.isEmpty()) {
+			try {
+				DatabaseUtils.validate(dataSource, evolveModel());
+				Iterator it = changeSets.iterator();
+				while (it.hasNext()) {
+					ChangeSet changeSet = (ChangeSet) it.next();
+					markAsApplied(changeSet);
+				}
+				return;
+			}
+			catch (DatabaseOutOfSyncException e) {
+			}
+		}
+		Database model = new Database();
+		Iterator it = changeSets.iterator();
+		while (it.hasNext()) {
+			ChangeSet changeSet = (ChangeSet) it.next();
+			changeSet.alterModel(model);
+			if (!isApplied(changeSet)) {
+				changeSet.getScript(dialect).execute(dataSource);
+				markAsApplied(changeSet);
+				DatabaseUtils.validate(dataSource, model);
+			}
+		}
+		DatabaseUtils.validate(dataSource, model);
 	}
-
+	
+	public Script getScript() {
+		Script script = new Script();
+		Iterator it = changeSets.iterator();
+		while (it.hasNext()) {
+			ChangeSet changeSet = (ChangeSet) it.next();
+			if (!isApplied(changeSet)) {
+				script.append(changeSet.getScript(dialect));
+				script.append(logTable.getInsertScript(changeSet));
+			}
+		}
+		return script;
+	}
+	
+	private boolean isApplied(ChangeSet changeSet) {
+		if (appliedIds.size() > changeSet.getSequenceNumber()) {
+			String appliedId = (String) appliedIds.get(
+					changeSet.getSequenceNumber());
+			
+			if (appliedId.equals(changeSet.getId())) {
+				return true;
+			}
+			throw new DatabaseOutOfSyncException("ChangeSet number " 
+					+ changeSet.getSequenceNumber() + " should be [" 
+					+ changeSet.getId() + "] but is [" + appliedId + "]");
+		}
+		return false;
+	}
+	
+	private void markAsApplied(ChangeSet changeSet) {
+		if (changeSet.getSequenceNumber() != appliedIds.size()) {
+			throw new DatabaseOutOfSyncException("ChangeSet [" 
+					+ changeSet.getId() + "] is number " 
+					+ changeSet.getSequenceNumber() + " but there are already "
+					+ appliedIds.size() + " ChangeSets applied!");
+		}
+		appliedIds.add(changeSet.getId());
+		logTable.getInsertScript(changeSet).execute(dataSource);
+	}
+		
 }

@@ -23,22 +23,44 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt.definition;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
  * 
  */
-public class UniqueConstraint extends AbstractDataDefinition {
+public class UniqueConstraint extends Identifier {
 
-	private List columns;
+	private String name;
+	
+	private Collection columns;
 
-	public List getColumns() {
+	public UniqueConstraint() {
+	}
+
+	public UniqueConstraint(String name, String[] columnNames) {
+		this.name = name;
+		setColumnNames(columnNames);
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Collection getColumns() {
 		return this.columns;
 	}
 
-	public void setColumns(List columns) {
-		this.columns = columns;
+	public void setColumnNames(String[] names) {
+		columns = new ArrayList();
+		for (int i = 0; i < names.length; i++) {
+			columns.add(new Identifier(names[i]));
+		}
 	}
 
 }

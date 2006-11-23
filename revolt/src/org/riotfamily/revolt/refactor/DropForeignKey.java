@@ -37,6 +37,14 @@ public class DropForeignKey implements Refactoring {
 	private String table;
 
 	private String foreignKey;
+	
+	public DropForeignKey() {
+	}
+
+	public DropForeignKey(String table, String foreignKey) {
+		this.table = table;
+		this.foreignKey = foreignKey;
+	}
 
 	public void setTable(String table) {
 		this.table = table;

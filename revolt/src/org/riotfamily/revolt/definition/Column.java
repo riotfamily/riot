@@ -27,7 +27,7 @@ package org.riotfamily.revolt.definition;
  * @author Felix Gnass <fgnass@neteye.de>
  * 
  */
-public class Column extends AbstractDataDefinition {
+public class Column extends Identifier {
 
 	private String type;
 
@@ -157,24 +157,5 @@ public class Column extends AbstractDataDefinition {
 		if (column.isAutoIncrementSet()) {
 			setAutoIncrement(column.isAutoIncrement());
 		}
-	}
-
-	public int hashCode() {
-		return getName() == null ? 0 : getName().toUpperCase().hashCode();
-	}
-
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (getName() == null) {
-			return false;
-		}
-		if (!(obj instanceof Column)) {
-			return false;
-		}
-		Column other = (Column) obj;
-		return getName().equalsIgnoreCase(other.getName());
-	}
-
+	}	
 }

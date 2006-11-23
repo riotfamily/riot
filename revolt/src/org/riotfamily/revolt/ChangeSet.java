@@ -26,18 +26,16 @@ package org.riotfamily.revolt;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.riotfamily.revolt.definition.Database;
-import org.riotfamily.revolt.support.DatabaseUtils;
-import org.riotfamily.revolt.support.LogTable;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
  * 
  */
-public class ChangeSet {
+public class ChangeSet implements Refactoring {
 
+	private EvolutionHistory history;
+	
 	private String id;
 
 	private int sequenceNumber;
@@ -50,6 +48,22 @@ public class ChangeSet {
 		this.refactorings = refactorings; 
 	}
 
+	public String getId() {
+		return this.id;
+	}
+
+	public int getSequenceNumber() {
+		return this.sequenceNumber;
+	}
+
+	public void setHistory(EvolutionHistory history) {
+		this.history = history;
+	}
+
+	public String getModuleName() {
+		return history.getModuleName();
+	}
+	
 	public void setSequenceNumber(int sequenceNumber) {
 		this.sequenceNumber = sequenceNumber;
 	}
@@ -64,34 +78,12 @@ public class ChangeSet {
 		return script;
 	}
 	
-	private boolean isApplied(LogTable logTable) {
-		return logTable.containsChangeSet(id, sequenceNumber);
-	}
-	
-	public void markAsApplied(LogTable logTable) {
-		logTable.addChangeSet(id, sequenceNumber);
-	}
-
-	public void applyToModel(Database model) {
+	public void alterModel(Database model) {
 		Iterator it = refactorings.iterator();
 		while (it.hasNext()) {
 			Refactoring refactoring = (Refactoring) it.next();
 			refactoring.alterModel(model);
 		}
-	}
-	
-	public void applyIfNeeded(DataSource dataSource, Dialect dialect, 
-			LogTable logTable, Database model) {
-		
-		applyToModel(model);
-		if (!isApplied(logTable)) {
-			getScript(dialect).execute(dataSource);
-			markAsApplied(logTable);			
-			if (!DatabaseUtils.databaseMatchesModel(dataSource, model)) {
-				throw new DatabaseOutOfSyncException();
-			}
-		}
-		
 	}
 
 }

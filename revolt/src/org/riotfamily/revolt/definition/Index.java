@@ -23,24 +23,45 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt.definition;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
  * 
  */
-public class Index extends AbstractDataDefinition {
+public class Index extends Identifier {
 
-	private List columns;
+	private Collection columns;
 
-	// private boolean unique;
+	private boolean unique;
 
-	public List getColumns() {
+	public Index() {
+	}
+
+	public Index(String name, String[] columnNames, boolean unique) {
+		super(name);
+		this.unique = unique;
+		setColumnNames(columnNames);
+	}
+	
+	public Collection getColumns() {
 		return this.columns;
 	}
 
-	public void setColumns(List columns) {
-		this.columns = columns;
+	public void setColumnNames(String[] names) {
+		columns = new ArrayList();
+		for (int i = 0; i < names.length; i++) {
+			columns.add(new Identifier(names[i]));
+		}
 	}
 
+	public boolean isUnique() {
+		return this.unique;
+	}
+
+	public void setUnique(boolean unique) {
+		this.unique = unique;
+	}
+	
 }

@@ -23,10 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt;
 
+
 /**
  * @author Felix Gnass <fgnass@neteye.de>
  * 
  */
 public class DatabaseOutOfSyncException extends EvolutionException {
 
+	public DatabaseOutOfSyncException(String message) {
+		super(message);
+	}
+	
 }

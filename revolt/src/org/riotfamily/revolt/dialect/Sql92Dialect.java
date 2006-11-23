@@ -23,12 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt.dialect;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.riotfamily.revolt.Script;
 import org.riotfamily.revolt.definition.Column;
 import org.riotfamily.revolt.definition.ForeignKey;
+import org.riotfamily.revolt.definition.Identifier;
+import org.riotfamily.revolt.definition.Index;
+import org.riotfamily.revolt.definition.RecordEntry;
 import org.riotfamily.revolt.definition.Table;
 import org.riotfamily.revolt.definition.UniqueConstraint;
 
@@ -43,107 +46,115 @@ public abstract class Sql92Dialect extends AbstractDialect {
 
 	public Script createTable(Table table) {
 
-		Script sql = new Script("CREATE TABLE").append(getTableName(table.getName())).append("(");
+		Script sql = new Script("CREATE TABLE")
+				.append(quote(table)).append('(');
 
 		Iterator it = table.getColumns().iterator();
 		while (it.hasNext()) {
 			Column column = (Column) it.next();
 			addColumnDefinition(sql, column);
 			if (it.hasNext()) {
-				sql.append(",");
+				sql.append(',');
 			}
 		}
-		if (table.getPrimaryKeys() != null) {
-			sql.append(", PRIMARY KEY");
+		if (!(table.getPrimaryKeys().isEmpty())) {
+			sql.append(',').append("PRIMARY KEY");
 			addColumnNames(sql, table.getPrimaryKeys());
 		}
 
-		sql.append(")");
+		sql.append(')');
 
 		return sql;
 	}
 
-	/*
-	 * public Script renameTable(String name, String renameTo) {
-	 * 
-	 * throw new OperationNotSupportedException(); }
-	 */
+	public Script renameTable(String name, String renameTo) {
+		throw new OperationNotSupportedException(
+				"Tables can't be renamed in SQL 92"); 
+	}
 
 	public Script dropTable(String name) {
-
-		return new Script("DROP TABLE").append(getTableName(name));
+		return new Script("DROP TABLE").append(quote(name));
 	}
 
 	public Script addColumn(String table, Column column) {
-
 		Script sql = alterTable(table).append("ADD COLUMN");
 		addColumnDefinition(sql, column);
 		return sql;
 	}
 
-	/*
-	 * public Script renameColumn(String table, String name, String renameTo) {
-	 * 
-	 * throw new OperationNotSupportedException(); }
-	 */
-
-	/*
-	 * public Script modifyColumn(String table, Column column) {
-	 * 
-	 * throw new OperationNotSupportedException(); }
-	 */
-
-	public Script dropColumn(String table, String name) {
-
-		return alterTable(table).append("DROP COLUMN").append(getColumnName(name));
+	public Script renameColumn(String table, String name, String renameTo) {
+		throw new OperationNotSupportedException(
+				"Columns can't be renamed in SQL 92"); 
 	}
 
-	/*
-	 * public Script addIndex(String table, Index index) {
-	 * 
-	 * throw new OperationNotSupportedException(); }
-	 */
+	public Script modifyColumn(String table, Column column) {
+		throw new OperationNotSupportedException(
+				"Columns can't be modified in SQL 92");
+	}
+	
+	public Script dropColumn(String table, String name) {
 
-	/*
-	 * public Script dropIndex(String table, String name) {
-	 * 
-	 * throw new OperationNotSupportedException(); }
-	 */
+		return alterTable(table).append("DROP COLUMN")
+				.append(quote(name));
+	}
+
+	public Script addIndex(String table, Index index) {
+		throw new OperationNotSupportedException(
+				"SQL 92 does not support indices");
+	}
+
+	public Script dropIndex(String table, String name) {
+		throw new OperationNotSupportedException(
+				"SQL 92 does not support indices");
+	}
 
 	public Script addUniqueConstraint(String table, UniqueConstraint constraint) {
-
-		Script sql = alterTable(table).append("ADD CONSTRAINT").append(constraint.getName()).append("UNIQUE");
-
+		Script sql = alterTable(table).append("ADD CONSTRAINT")
+				.append(constraint.getName()).append("UNIQUE");
+		
 		addColumnNames(sql, constraint.getColumns());
 		return sql;
 	}
 
 	public Script dropUniqueConstraint(String table, String name) {
-
 		return dropConstraint(table, name);
 	}
 
 	public Script addForeignKey(String table, ForeignKey fk) {
-
-		Script sql = alterTable(table).append("ADD CONSTRAINT").append(fk.getName()).append("FOREIGN KEY");
-
+		Script sql = alterTable(table).append("ADD CONSTRAINT")
+				.append(fk.getName()).append("FOREIGN KEY");
+		
 		addColumnNames(sql, fk.getLocalColumns());
 		sql.append("REFERENCES").append(fk.getForeignTable());
-
 		addColumnNames(sql, fk.getForeignColumns());
-
 		// TODO ON DELETE / ON UPDATE
-
 		return sql;
 	}
 
 	public Script dropForeignKey(String table, String name) {
-
 		return dropConstraint(table, name);
 	}
 
+	public Script insert(String table, Collection data) {
+		Script sql = new Script("INSERT INTO")
+				.append(quote(table));
+		
+		addColumnNames(sql, data);
+		sql.append("VALUES").append('(');
+		Iterator it = data.iterator();
+		while (it.hasNext()) {
+			RecordEntry entry = (RecordEntry) it.next();
+			sql.append(convertQuotes(entry.getValue()));
+			if (it.hasNext()) {
+				sql.append(',');
+			}
+		}
+		sql.append(')');
+		return sql;
+	}
+	
 	protected Script alterTable(String name) {
-		return new Script("ALTER TABLE").append(getTableName(name));
+		return new Script("ALTER TABLE").append(quote(name));
 	}
 
 	protected Script dropConstraint(String table, String name) {
@@ -151,11 +162,10 @@ public abstract class Sql92Dialect extends AbstractDialect {
 	}
 
 	protected void addColumnDefinition(Script sql, Column column) {
-
-		sql.append(getColumnName(column.getName())).append(getColumnType(column));
-
+		sql.append(quote(column)).append(getColumnType(column));
+		
 		if (column.isDefaultValueSet()) {
-			sql.append("DEFAULT").append(getValue(column.getDefaultValue()));
+			sql.append("DEFAULT").append(convertQuotes(column.getDefaultValue()));
 		}
 		if (column.isNotNullSet()) {
 			if (column.isNotNull()) {
@@ -165,28 +175,35 @@ public abstract class Sql92Dialect extends AbstractDialect {
 		}
 	}
 
-	protected void addColumnNames(Script sql, List columns) {
-		sql.append("(");
+	protected void addColumnNames(Script sql, Collection columns) {
+		sql.append('(');
 		Iterator it = columns.iterator();
 		while (it.hasNext()) {
-			sql.append(getColumnName((String) it.next()));
+			sql.append(quote((Identifier) it.next()));
 			if (it.hasNext()) {
-				sql.append(",");
+				sql.append(',');
 			}
 		}
-		sql.append(")");
+		sql.append(')');
 	}
 
-	protected String getTableName(String name) {
-		return name; //TODO Support schemas and delimited identifiers
+	protected String getIdentifierQuote() {
+		return "\"";
 	}
-
-	protected String getColumnName(String name) {
-		return name; //TODO Support delimited identifiers
+	
+	protected String quote(String id) {
+		return quote(new Identifier(id));
 	}
-
-	protected String getValue(String value) {
-		return value; //TODO Quote value
+	
+	protected String quote(Identifier id) {
+		if (id.isQuoted()) {
+			return getIdentifierQuote() + id.getName() + getIdentifierQuote(); 
+		}
+		return id.getName();
+	}
+	
+	protected String convertQuotes(String value) {
+		return value;
 	}
 
 }

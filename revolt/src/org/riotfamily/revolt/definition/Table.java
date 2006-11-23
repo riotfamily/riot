@@ -31,17 +31,17 @@ import java.util.List;
  * @author Felix Gnass <fgnass@neteye.de>
  * 
  */
-public class Table extends AbstractDataDefinition {
+public class Table extends Identifier {
 
-	private List columns;
+	private List columns = new ArrayList();
 
-	private List primaryKeys;
+	private List primaryKeys = new ArrayList();
 	
-	private List foreignKeys;
+	private List foreignKeys = new ArrayList();
 	
-	private List uniqueConstraints;
+	private List uniqueConstraints = new ArrayList();
 	
-	private List indices;
+	private List indices = new ArrayList();
 
 	public Table() {
 	}
@@ -61,37 +61,32 @@ public class Table extends AbstractDataDefinition {
 
 	public void setColumns(List columns) {
 		this.columns = columns;
-		primaryKeys = null;
+		primaryKeys.clear();
 		if (columns != null) {
 			Iterator it = columns.iterator();
 			while (it.hasNext()) {
 				Column column = (Column) it.next();
 				if (column.isPrimaryKey()) {
-					if (primaryKeys == null) {
-						primaryKeys = new ArrayList();
-					}
-					primaryKeys.add(column.getName());
+					primaryKeys.add(column);
 				}
 			}
 		}
 	}
 
 	public void addColumn(Column column) {
-		columns = DefinitionUtils.addDefinition(columns, column);
+		columns.remove(column);
+		columns.add(column);
 		if (column.isPrimaryKey()) {
-			if (primaryKeys == null) {
-				primaryKeys = new ArrayList();
-			}
-			primaryKeys.add(column.getName());
+			primaryKeys.add(column);
 		}
 	}
 
 	public void removeColumn(String name) {
-		DefinitionUtils.removeDefinition(columns, name);
+		columns.remove(new Identifier(name));
 	}
 	
 	public Column getColumn(String name) {
-		return (Column) DefinitionUtils.findDefinition(columns, name);
+		return (Column) columns.get(columns.indexOf(new Identifier(name)));
 	}
 	
 	public List getPrimaryKeys() {
@@ -99,27 +94,30 @@ public class Table extends AbstractDataDefinition {
 	}
 	
 	public void addIndex(Index index) {
-		indices = DefinitionUtils.addDefinition(indices, index);
+		indices.remove(index);
+		indices.add(index);
 	}
 	
-	public void removeIndex(String index) {
-		DefinitionUtils.removeDefinition(indices, index);
+	public void removeIndex(String name) {
+		indices.remove(new Identifier(name));
 	}
 	
 	public void addForeignKey(ForeignKey fk) {
-		foreignKeys = DefinitionUtils.addDefinition(foreignKeys, fk);
+		foreignKeys.remove(fk);
+		foreignKeys.add(fk);
 	}
 	
-	public void removeForeignKey(String fk) {
-		DefinitionUtils.removeDefinition(foreignKeys, fk);
+	public void removeForeignKey(String name) {
+		foreignKeys.remove(new Identifier(name));
 	}
 	
 	public void addUniqueConstraint(UniqueConstraint uc) {
-		uniqueConstraints = DefinitionUtils.addDefinition(uniqueConstraints, uc);
+		uniqueConstraints.remove(uc);
+		uniqueConstraints.add(uc);
 	}
 	
 	public void removeUniqueConstraint(String uc) {
-		DefinitionUtils.removeDefinition(uniqueConstraints, uc);
+		uniqueConstraints.remove(new Identifier(uc));
 	}
-
+	
 }

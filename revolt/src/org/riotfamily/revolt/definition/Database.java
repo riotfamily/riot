@@ -43,11 +43,11 @@ public class Database {
 	}
 	
 	public Table getTable(String name) {
-		return (Table) DefinitionUtils.findDefinition(tables, name);
+		return (Table) tables.get(tables.indexOf(new Identifier(name)));
 	}
 	
-	public void removeTable(String table) {
-		DefinitionUtils.removeDefinition(tables, table);
+	public void removeTable(String name) {
+		tables.remove(new Identifier(name));
 	}
 
 }

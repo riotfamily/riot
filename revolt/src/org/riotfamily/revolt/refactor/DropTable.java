@@ -35,6 +35,13 @@ import org.riotfamily.revolt.definition.Database;
 public class DropTable implements Refactoring {
 
 	private String table;
+	
+	public DropTable() {
+	}
+
+	public DropTable(String table) {
+		this.table = table;
+	}
 
 	public void setTable(String table) {
 		this.table = table;

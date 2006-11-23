@@ -31,15 +31,19 @@ package org.riotfamily.revolt.definition;
  * @see DefinitionUtils
  * @author Felix Gnass <fgnass@neteye.de>
  */
-public class AbstractDataDefinition {
+public class Identifier {
+
+	public static final String QUOTED_DELIMITER = "`";
 
 	private String name;
 	
-	public AbstractDataDefinition() {
+	private boolean quoted;
+	
+	public Identifier() {
 	}
 
-	public AbstractDataDefinition(String name) {
-		this.name = name;
+	public Identifier(String name) {
+		setName(name);
 	}
 
 	public String getName() {
@@ -47,7 +51,44 @@ public class AbstractDataDefinition {
 	}
 
 	public void setName(String name) {
+		if (name != null && name.startsWith(QUOTED_DELIMITER) 
+				&& name.endsWith(QUOTED_DELIMITER)) {
+			
+			quoted = true;
+			name = name.replace(QUOTED_DELIMITER, "");
+		}
 		this.name = name;
+	}
+
+	public boolean isQuoted() {
+		return this.quoted;
+	}
+
+	public void setQuoted(boolean quoted) {
+		this.quoted = quoted;
+	}
+	
+	public int hashCode() {
+		return getName() == null ? 0 : getName().toUpperCase().hashCode();
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (name == null) {
+			return false;
+		}
+		if (!(obj instanceof Identifier)) {
+			return false;
+		}
+		Identifier other = (Identifier) obj;
+		return name.equals(other.name) || (quoted == other.quoted 
+				&& name.equalsIgnoreCase(other.name));  
+	}
+
+	public String toString() {
+		return name;
 	}
 	
 }

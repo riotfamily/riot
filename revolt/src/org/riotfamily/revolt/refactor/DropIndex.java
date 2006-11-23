@@ -37,6 +37,14 @@ public class DropIndex implements Refactoring {
 	private String table;
 
 	private String index;
+	
+	public DropIndex() {
+	}
+
+	public DropIndex(String table, String index) {
+		this.table = table;
+		this.index = index;
+	}
 
 	public void setTable(String table) {
 		this.table = table;

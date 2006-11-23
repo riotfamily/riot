@@ -38,6 +38,14 @@ public class DropColumn implements Refactoring {
 
 	private String column;
 
+	public DropColumn() {
+	}
+
+	public DropColumn(String table, String column) {
+		this.table = table;
+		this.column = column;
+	}
+
 	public void setColumn(String column) {
 		this.column = column;
 	}
