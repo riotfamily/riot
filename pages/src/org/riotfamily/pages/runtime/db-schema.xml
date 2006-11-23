@@ -1,0 +1,85 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:db="http://www.riotfamily.org/schema/revolt"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.riotfamily.org/schema/revolt
+		http://www.riotfamily.org/schema/revolt/revolt-0.1.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	
+	<db:history module="riot-pages" data-source="riotDataSource">
+		<db:change-set id="initial">
+			<db:create-table name="pages">
+				<db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
+				<db:column name="parent" type="BIGINT" />
+				<db:column name="path" type="VARCHAR" length="255" />
+				<db:column name="pathComponent" type="VARCHAR" length="255" />
+				<db:column name="`type`" type="VARCHAR" length="255" />
+				<db:column name="`position`" type="INTEGER" />
+		        <db:column name="title" type="VARCHAR" length="255" />
+		        <db:column name="keywords" type="VARCHAR" length="255" />
+		        <db:column name="description" type="VARCHAR" length="255" />
+				<db:column name="hidden" type="BIT" />
+				<db:column name="folder" type="BIT" />
+				<db:column name="published" type="BIT" />
+				<db:column name="everPublished" type="BIT" />
+				<db:column name="systemPage" type="BIT" />
+			</db:create-table>
+			<db:add-foreign-key table="pages" name="parent" references="pages">
+				<db:ref local="parent" foreign="id" />
+			</db:add-foreign-key>
+	
+			<db:create-table name="page_aliases">
+				<db:column name="`path`" type="VARCHAR" length="255" not-null="true" primary-key="true" />
+				<db:column name="page" type="BIGINT" />
+			</db:create-table>
+			<db:add-foreign-key table="page_aliases" name="page" references="pages">
+				<db:ref local="page" foreign="id" />
+			</db:add-foreign-key>
+
+			<db:create-table name="component_lists">
+				<db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
+				<db:column name="`path`" type="VARCHAR" length="255" />
+				<db:column name="`key`" type="VARCHAR" length="255" />
+				<db:column name="dirty" type="BIT" />
+			</db:create-table>
+	
+			<db:create-table name="components">
+				<db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
+				<db:column name="live_list" type="BIGINT" />
+				<db:column name="live_pos" type="INTEGER" />
+				<db:column name="preview_list" type="BIGINT" />
+				<db:column name="preview_pos" type="INTEGER" />
+				<db:column name="live_version" type="BIGINT" />
+				<db:column name="preview_version" type="BIGINT" />
+			</db:create-table>
+			
+			<db:add-foreign-key table="components" name="live_list" references="component_lists">
+				<db:ref local="live_list" foreign="id" />
+			</db:add-foreign-key>
+			<db:add-foreign-key table="components" name="preview_list" references="component_lists">
+				<db:ref local="preview_list" foreign="id" />
+			</db:add-foreign-key>
+				
+			<db:create-table name="component_versions">
+				<db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
+				<db:column name="`type`" type="VARCHAR" length="255" />
+				<db:column name="dirty" type="BIT" />
+			</db:create-table>
+			
+			<db:add-foreign-key table="components" name="live_version" references="component_versions">
+				<db:ref local="live_version" foreign="id" />
+			</db:add-foreign-key>
+			<db:add-foreign-key table="components" name="preview_version" references="component_versions">
+				<db:ref local="preview_version" foreign="id" />
+			</db:add-foreign-key>
+			
+			<db:create-table name="component_properties">
+				<db:column name="component_version" type="BIGINT" not-null="true" primary-key="true" />
+				<db:column name="`key`" type="VARCHAR" length="255" not-null="true" primary-key="true" />
+				<db:column name="elt" type="LONGVARCHAR" />
+			</db:create-table>
+		</db:change-set>
+	</db:history>
+</beans>

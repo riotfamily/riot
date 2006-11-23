@@ -349,7 +349,7 @@
 	
 	<bean id="pathController" name="/path" class="org.riotfamily.riot.editor.ui.PathController">
 		<constructor-arg ref="editorRepository" />
-		<constructor-arg ref="transactionManager" />
+		<constructor-arg ref="riotTransactionManager" />
 	</bean>
 	
 	<bean id="formContextFactory" class="org.riotfamily.forms.controller.FormContextFactory">
@@ -361,7 +361,7 @@
 		<constructor-arg ref="editorRepository" />
 		<constructor-arg ref="listRepository" />
 		<constructor-arg ref="formRepository" />
-		<constructor-arg ref="transactionManager" />
+		<constructor-arg ref="riotTransactionManager" />
 		<constructor-arg ref="commandExecutor" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
@@ -372,7 +372,7 @@
 		<constructor-arg ref="editorRepository" />
 		<constructor-arg ref="listRepository" />
 		<constructor-arg ref="formRepository" />
-		<constructor-arg ref="transactionManager" />
+		<constructor-arg ref="riotTransactionManager" />
 		<constructor-arg ref="commandExecutor" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
@@ -383,7 +383,7 @@
 	<bean id="formController" class="org.riotfamily.riot.form.ui.FormController">
 		<constructor-arg ref="editorRepository" />
 		<constructor-arg ref="formRepository" />
-		<constructor-arg ref="transactionManager" />
+		<constructor-arg ref="riotTransactionManager" />
 		<constructor-arg ref="commandExecutor" />
 		<constructor-arg ref="listRepository" />
 		<property name="formContextFactory" ref="formContextFactory" />
@@ -399,7 +399,7 @@
 	<bean id="viewController" class="org.riotfamily.riot.editor.ui.ViewController">
 		<constructor-arg ref="editorRepository" />
 		<constructor-arg ref="listRepository" />
-		<constructor-arg ref="transactionManager" />
+		<constructor-arg ref="riotTransactionManager" />
 		<constructor-arg ref="commandExecutor" />
 		<property name="messageCodesResolver" ref="messageCodesResolver" />	
 	</bean>

@@ -47,7 +47,7 @@
 		name="/pages/form/@{componentId}"
 		class="org.riotfamily.pages.component.editor.ComponentFormController">
 		<constructor-arg ref="componentFormRepository" />
-		<constructor-arg ref="transactionManager" />
+		<constructor-arg ref="riotTransactionManager" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 

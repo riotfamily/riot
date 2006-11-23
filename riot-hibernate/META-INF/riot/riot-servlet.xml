@@ -13,44 +13,44 @@
 	<bean id="hqlOptionsModel" scope="prototype" 
 		class="org.riotfamily.riot.hibernate.HqlOptionsModel">
 		
-		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 	
 	<!--  Dao prototypes -->
 	
 	<bean id="hqlDao" class="org.riotfamily.riot.hibernate.dao.HqlDao" scope="prototype">
-		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 	
 	<bean id="hqlParentChildDao" class="org.riotfamily.riot.hibernate.dao.HqlParentChildDao" scope="prototype">
-		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 	
 	<bean id="hqlCollectionDao" class="org.riotfamily.riot.hibernate.dao.HqlCollectionDao" scope="prototype">
-		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 	
 	<bean id="hqlSortedCollectionDao" class="org.riotfamily.riot.hibernate.dao.HqlSortedCollectionDao" scope="prototype">
-		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 	
 	<bean id="hqlIndexedListDao" class="org.riotfamily.riot.hibernate.dao.HqlIndexedListDao" scope="prototype">
-		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 
 	<!-- Hibernate-based user management  -->
 	
 	<bean id="authenticationServiceImpl" class="org.riotfamily.riot.hibernate.security.HibernateAuthenticationService">
-		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 
 	<bean id="sessionDataStoreImpl" class="org.riotfamily.riot.hibernate.security.HibernateSessionDataStore">
-		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 	
 	<!-- Jobs -->
 	
-	<tx:advice id="matchAllTxInterceptor">
+	<tx:advice id="matchAllTxInterceptor" transaction-manager="riotTransactionManager">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" isolation="DEFAULT" />
 		</tx:attributes>
@@ -62,7 +62,7 @@
 	</bean>	
 	
 	<bean id="jobDaoTarget" class="org.riotfamily.riot.hibernate.job.HibernateJobDao">
-		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 	
 	<!-- 

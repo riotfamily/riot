@@ -8,8 +8,8 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx.xsd">
 	
-	<!-- Module configuration -->
-	
+	<import resource="classpath:/org/riotfamily/pages/runtime/db-schema.xml"/>
+		
 	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
 		<property name="properties">
 			<map>
@@ -26,7 +26,7 @@
 	 
 	<bean id="pageEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
 	
-	<tx:advice id="matchAllTxInterceptor">
+	<tx:advice id="matchAllTxInterceptor" transaction-manager="riotTransactionManager">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" isolation="DEFAULT" />
 		</tx:attributes>
@@ -40,7 +40,7 @@
 	</bean>	
 	
 	<bean id="pageDaoTarget" class="org.riotfamily.pages.page.support.HibernatePageDao">
-		<constructor-arg ref="sessionFactory" />
+		<constructor-arg ref="riotSessionFactory" />
 	</bean>
 	
 	<!-- 

@@ -10,7 +10,7 @@
 	  -->
 	<bean id="pageMap" class="org.riotfamily.pages.page.PageMap">
 		<constructor-arg ref="pageDao" />
-		<constructor-arg ref="transactionManager" />
+		<constructor-arg ref="riotTransactionManager" />
 		<property name="eventMulticaster" ref="pageEventMulticaster" />
 	</bean>
 	
@@ -35,7 +35,7 @@
 		<property name="viewNameSuffix" value=".ftl" />
 	</bean>
 	
-	<!-- Component DAO  -->
+	<!-- Component DAO -->
 	
 	<bean id="componentDao" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
@@ -44,7 +44,7 @@
 		
 	<bean id="componentDaoTarget" class="org.riotfamily.pages.component.dao.HibernateComponentDao">
 		<constructor-arg ref="componentRepository" />
-		<constructor-arg ref="sessionFactory" />
+		<constructor-arg ref="riotSessionFactory" />
 	</bean>
 		
 	<!-- 

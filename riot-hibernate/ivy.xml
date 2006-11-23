@@ -8,5 +8,7 @@
         <dependency org="riotfamily" name="riot-core" rev="latest.integration" conf="*->@" changing="true" />
         <dependency org="springframework" name="spring" rev="2.0" conf="*->default" />
 		<dependency org="hibernate" name="hibernate" conf="build->core;runtime->standalone,c3p0" rev="3.2.0.ga" />
+		<dependency org="c3p0" name="c3p0" rev="latest.release" conf="*->default" />
+		<dependency org="riotfamily" name="revolt" rev="latest.integration" conf="*->@" changing="true" />
     </dependencies>
 </ivy-module>
