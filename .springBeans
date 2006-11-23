@@ -11,15 +11,18 @@
 		<config>riot-hibernate/META-INF/riot/riot-servlet.xml</config>
 		<config>riot/META-INF/riot/riot-servlet.xml</config>
 		<config>riot-hibernate/META-INF/riot/application-context.xml</config>
+		<config>riot/META-INF/riot/application-context.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
-			<name>context</name>
+			<name>website</name>
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
-			<incomplete>true</incomplete>
+			<incomplete>false</incomplete>
 			<configs>
+				<config>riot/META-INF/riot/application-context.xml</config>
 				<config>riot-hibernate/META-INF/riot/application-context.xml</config>
 				<config>pages/META-INF/riot/application-context.xml</config>
+				<config>pages/META-INF/riot/website-servlet.xml</config>
 			</configs>
 		</configSet>
 		<configSet>
@@ -31,20 +34,11 @@
 			</configs>
 		</configSet>
 		<configSet>
-			<name>website</name>
-			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
-			<incomplete>true</incomplete>
-			<configs>
-				<config>pages/META-INF/riot/website-servlet.xml</config>
-				<config>pages/META-INF/riot/application-context.xml</config>
-				<config>riot-hibernate/META-INF/riot/application-context.xml</config>
-			</configs>
-		</configSet>
-		<configSet>
 			<name>riot</name>
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
-			<incomplete>true</incomplete>
+			<incomplete>false</incomplete>
 			<configs>
+				<config>riot/META-INF/riot/application-context.xml</config>
 				<config>riot-hibernate/META-INF/riot/application-context.xml</config>
 				<config>pages/META-INF/riot/application-context.xml</config>
 				<config>riot/META-INF/riot/riot-servlet.xml</config>
