@@ -25,7 +25,6 @@ package org.riotfamily.pages.setup;
 
 import java.util.Map;
 
-import org.riotfamily.cachius.Cache;
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.dao.ComponentDao;
 import org.riotfamily.pages.page.PageMap;
@@ -79,10 +78,6 @@ public class WebsiteConfigSupport implements ApplicationContextAware,
 		return websiteConfig.getComponentListControllers();
 	}
 	
-	protected Cache getCache() {
-		return websiteConfig.getCache();
-	}
-
 	protected PageMap getPageMap() {
 		return websiteConfig.getPageMap();
 	}

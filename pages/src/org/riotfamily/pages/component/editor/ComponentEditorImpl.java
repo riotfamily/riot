@@ -38,6 +38,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
+import org.riotfamily.cachius.Cache;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.common.web.util.ServletUtils;
@@ -71,12 +72,18 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	
 	private MessageSource messageSource;
 	
-	private Map editorConfigs;	
+	private Map editorConfigs;
+	
+	private Cache cache;
 
 	public void setLoginManager(LoginManager loginManager) {
 		this.loginManager = loginManager;
 	}
 	
+	public void setCache(Cache cache) {
+		this.cache = cache;
+	}
+
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
@@ -254,7 +261,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			
 			LiveModeRenderStrategy strategy = new LiveModeRenderStrategy(
 					getDao(), getRepository(), config, request, response,
-					getCache());
+					cache);
 			
 			strategy.render(componentList);
 			return sw.toString();
@@ -394,12 +401,12 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		ComponentList componentList = getDao().loadComponentList(listId);
 		if (getDao().publishList(componentList)) {
 			log.debug("Changes published for ComponentList " + listId);
-			if (getCache() != null) {
+			if (cache != null) {
 				String tag = componentList.getPath() 
 						+ ':' + componentList.getKey();
 				
 				log.debug("Invalidating items tagged as " + tag);
-				getCache().invalidateTaggedItems(tag);
+				cache.invalidateTaggedItems(tag);
 			}
 		}
 	}

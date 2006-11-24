@@ -11,6 +11,7 @@
 
 	<bean id="componentEditorTarget" class="org.riotfamily.pages.component.editor.ComponentEditorImpl">
 		<property name="loginManager" ref="loginManager" />
+		<property name="cache" ref="websiteCache" />
 		<property name="editorConfigs">
 			<map>
 				<entry key="tinyMCE" value-ref="tinyMCE" />

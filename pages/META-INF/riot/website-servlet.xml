@@ -55,7 +55,6 @@
 	<bean class="org.riotfamily.pages.setup.WebsiteConfig">
 		<constructor-arg ref="componentRepository" />
 		<constructor-arg ref="componentDao" />
-		<property name="cache" ref="websiteCache" />
 	</bean>	
 	
 	<!-- 
@@ -67,7 +66,7 @@
 	<!-- 
 	  - HandlerAdapter that handles CacheableControllers.
 	  -->
-	<bean class="org.riotfamily.cachius.spring.CachiusHandlerAdapter">
+	<bean id="cachiusHandlerAdapter" class="org.riotfamily.cachius.spring.CachiusHandlerAdapter">
 		<constructor-arg ref="websiteCache" />
 	</bean>
 	

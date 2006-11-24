@@ -25,7 +25,6 @@ package org.riotfamily.pages.setup;
 
 import java.util.Map;
 
-import org.riotfamily.cachius.Cache;
 import org.riotfamily.pages.component.ComponentListController;
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.dao.ComponentDao;
@@ -51,8 +50,6 @@ public class WebsiteConfig implements ApplicationContextAware, InitializingBean 
 	
 	private PageMap pageMap;
 	
-	private Cache cache;
-	
 	public WebsiteConfig(ComponentRepository repository, ComponentDao dao) {
 		this.componentRepository = repository;
 		this.componentDao = dao;
@@ -71,14 +68,6 @@ public class WebsiteConfig implements ApplicationContextAware, InitializingBean 
 		}
 		catch (NoSuchBeanDefinitionException e) {
 		}
-	}
-
-	public Cache getCache() {
-		return this.cache;
-	}
-	
-	public void setCache(Cache cache) {
-		this.cache = cache;
 	}
 
 	public Map getComponentListControllers() {
