@@ -21,31 +21,31 @@
  *   Felix Gnass <fgnass@neteye.de>
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.forms.template;
+package org.riotfamily.common.web.view.freemarker;
 
-import java.io.PrintWriter;
-import java.util.Map;
+import freemarker.cache.CacheStorage;
 
-import freemarker.template.Configuration;
+/**
+ * FreeMarker CacheStorage that does not cache anything. 
+ * Can be used to disable the template caching which can come in handy
+ * if you need to find memory leaks within your application.
+ * 
+ * @since 6.4 
+ * @author Felix Gnass <fgnass@neteye.de>
+ */
+public class NoCacheStorage implements CacheStorage {
 
-public class TemplateRenderer {
+	public void clear() {
+	}
 
-	private Configuration configuration;
+	public Object get(Object key) {
+		return null;
+	}
+
+	public void put(Object key, Object value) {
+	}
+
+	public void remove(Object key) {
+	}
 	
-	public TemplateRenderer(Configuration configuration) {
-		this.configuration = configuration;
-	}
-
-	public void render(String templateName, Map model, PrintWriter writer) {
-		try {
-			configuration.getTemplate(templateName).process(model, writer);
-		}
-		catch (RuntimeException e) {
-			throw e;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 }

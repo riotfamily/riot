@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.forms.ajax.JavaScriptEvent;
 import org.riotfamily.forms.error.ErrorUtils;
+import org.springframework.beans.BeanUtils;
 
 /**
  * Abstract superclass for elements that let the user choose from a set of
@@ -93,12 +94,7 @@ public abstract class AbstractMultiSelectElement
 			collection = (Collection) getEditorBinding().getValue();
 		}
 		if (collection == null) {
-			try {
-				collection = (Collection) collectionClass.newInstance();
-			}
-			catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+			collection = (Collection) BeanUtils.instantiateClass(collectionClass);
 		}
 		else {
 			collection.clear();

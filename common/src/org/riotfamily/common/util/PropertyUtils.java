@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 import org.riotfamily.common.beans.DefaultPropertyEditorRegistry;
 import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.PropertyAccessor;
 import org.springframework.util.Assert;
 
@@ -118,22 +119,17 @@ public final class PropertyUtils {
     public static Class getDeclaringClass(Class clazz, 
             String property) {
 
-        try {
-            PropertyDescriptor[] descriptors = 
-            		BeanUtils.getPropertyDescriptors(clazz);
-            
-            for (int i = 0; i < descriptors.length; i++) {
-                if (descriptors[i].getName().equals(property)) {
-                    Method getter = descriptors[i].getReadMethod();
-                    if (getter == null) {
-                        return clazz; 
-                    }
-                    return getter.getDeclaringClass();
+        PropertyDescriptor[] descriptors = 
+        		BeanUtils.getPropertyDescriptors(clazz);
+        
+        for (int i = 0; i < descriptors.length; i++) {
+            if (descriptors[i].getName().equals(property)) {
+                Method getter = descriptors[i].getReadMethod();
+                if (getter == null) {
+                    return clazz; 
                 }
+                return getter.getDeclaringClass();
             }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
         }
         return clazz;
     }
@@ -141,10 +137,10 @@ public final class PropertyUtils {
     public static Object newInstance(String className) {
 		try {
 			Class clazz = Class.forName(className);
-			return clazz.newInstance();
+			return BeanUtils.instantiateClass(clazz);
 		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
+		catch (ClassNotFoundException e) {
+			throw new FatalBeanException(e.getMessage(), e);
 		}
     }
 

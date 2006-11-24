@@ -106,25 +106,18 @@ public class GenericController extends AbstractCachingPolicyController {
 	}
 	
 	public ModelAndView handleRequest(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response) throws Exception {
 			
-		try {
-			Map model = modelBuilder.buildModel(request);
-	
-			if (postProcessors != null) {
-				for (int i = 0; i < postProcessors.length; i++) {
-					postProcessors[i].postProcess(model, request);
-				}
+		Map model = modelBuilder.buildModel(request);
+		if (postProcessors != null) {
+			for (int i = 0; i < postProcessors.length; i++) {
+				postProcessors[i].postProcess(model, request);
 			}
-			if (contentType != null) {
-				response.setContentType(contentType);
-			}
-			return new ModelAndView(viewName, model);
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
+		if (contentType != null) {
+			response.setContentType(contentType);
 		}
+		return new ModelAndView(viewName, model);
 	}
 
 	public long getLastModified(HttpServletRequest request) {

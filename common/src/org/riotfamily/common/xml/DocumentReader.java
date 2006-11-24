@@ -68,6 +68,9 @@ public class DocumentReader {
 			return loader.loadDocument(source, getEntityResolver(), errorHandler, 
 					getValidationMode(), true);
 		}
+		catch (RuntimeException e) {
+			throw e;
+		}
 		catch (Exception e) {
 			throw new DocumentReaderException(resource, e);
 		}

@@ -24,6 +24,7 @@
 package org.riotfamily.common.web.view.freemarker;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,7 +47,7 @@ public class ExternalUrlMethod extends AbstractSimpleMethod {
 				}
 			}
 		}
-		catch (Exception e) {
+		catch (URISyntaxException e) {
 			log.warn(e.getMessage());
 		}
 		return false;

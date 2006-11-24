@@ -130,14 +130,17 @@ public final class Cache implements Serializable {
      */
     private CacheItem newItem(String key) {
         try {
+        	if (capacity == 0) {
+        		return null;
+        	}
             log.debug("Creating new cache item for " + key);
             CacheItem item = createCacheItem(key);
             
             if (size >= capacity) {
                 log.debug("Maximum size exceeded. Removing: " + last.getKey());
                 map.remove(last.getKey());
-                unlink(last);
                 last.delete();
+                unlink(last);
             }
             else {
                 size++;
@@ -148,7 +151,7 @@ public final class Cache implements Serializable {
 
             return item;
         }
-        catch (Exception e) {
+        catch (IOException e) {
             log.error("Error creating item.", e);
             return null;
         }
@@ -275,7 +278,10 @@ public final class Cache implements Serializable {
 		    	log.info("Serialized cache has been discarded due to " +
 		    			"version incompatibilies.");
 		    }
-		    catch (Exception e) {
+		    catch (IOException e) {
+		        log.warn("Deserialization failed.");
+		    }
+		    catch (ClassNotFoundException e) {
 		        log.warn("Deserialization failed.", e);
 		    }
 		}
@@ -298,7 +304,7 @@ public final class Cache implements Serializable {
                  out.close();
                  log.info("Cache state saved in " + f);
             }
-            catch (Exception e) {
+            catch (IOException e) {
                 log.error("Can't save cache state", e);
             }
         }

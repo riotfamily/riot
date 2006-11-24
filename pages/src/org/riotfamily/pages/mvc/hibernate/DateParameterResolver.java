@@ -80,8 +80,8 @@ public class DateParameterResolver extends AbstractParameterResolver {
 	private Integer getIntegerParameter(HttpServletRequest request, String param) {
 		try {
 			return Integer.valueOf(request.getParameter(param));
-		} catch (Exception e) {
-			
+		} 
+		catch (NumberFormatException e) {
 		}
 		return null;
 	} 

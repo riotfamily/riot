@@ -37,6 +37,9 @@ public abstract class AbstractSimpleMethod implements TemplateMethodModel {
 		try {
 			return exec(args.get(0));
 		}
+		catch (RuntimeException e) {
+			throw e;
+		}
 		catch (Exception e) {
 			throw new TemplateModelException(e);
 		}

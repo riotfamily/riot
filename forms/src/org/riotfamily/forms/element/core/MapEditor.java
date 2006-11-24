@@ -33,6 +33,7 @@ import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.element.support.Container;
 import org.riotfamily.forms.element.support.TemplateElement;
 import org.riotfamily.forms.factory.ElementFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 
 
@@ -128,12 +129,7 @@ public class MapEditor extends Container implements Editor {
 	private Map createOrClearMap() {
 		Map map = (Map) getEditorBinding().getValue();
 		if (map == null) {
-			try {
-				map = (Map) mapClass.newInstance();
-			}
-			catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+			map = (Map) BeanUtils.instantiateClass(mapClass);
 		}
 		else {
 			map.clear();

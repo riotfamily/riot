@@ -92,7 +92,7 @@ public class ItemUpdater {
 		                    "${jsessionid}", writer);
 		        }
 			}
-			catch (Exception e) {
+			catch (IOException e) {
 				discard();
 				log.error(e);
 			}
@@ -109,7 +109,7 @@ public class ItemUpdater {
 			try {
 				outputStream = new FileOutputStream(getTempFile());
 			}
-			catch (Exception e) {
+			catch (IOException e) {
 				discard();
 				log.error(e);
 			}

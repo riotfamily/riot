@@ -68,12 +68,11 @@ import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.FormRepositoryException;
 import org.riotfamily.forms.factory.support.ConfigurableElementFactory;
 import org.riotfamily.forms.factory.support.DefaultFormFactory;
-import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -427,10 +426,9 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			String className = XmlUtils.getAttribute(ele, MODEL_CLASS);
 			if (className != null) {
 				try {
-					Class modelClass = ClassUtils.forName(className);
-					model = (OptionsModel) BeanUtils.instantiateClass(modelClass);
+					model = (OptionsModel) PropertyUtils.newInstance(className);
 				}
-				catch (Exception e) {
+				catch (BeansException e) {
 					throw new FormRepositoryException(resource, formId, 
 							"Error creating OptionsModel", e);
 				}

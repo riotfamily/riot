@@ -46,6 +46,7 @@ import org.riotfamily.forms.factory.ElementFactory;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.template.TemplateUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 
 
@@ -174,12 +175,7 @@ public class ListEditor extends TemplateElement implements Editor,
 	private Collection createOrClearCollection() {
 		Collection collection = (Collection) getEditorBinding().getValue();
 		if (collection == null) {
-			try {
-				collection = (Collection) collectionClass.newInstance();
-			}
-			catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+			collection = (Collection) BeanUtils.instantiateClass(collectionClass);
 		}
 		else {
 			collection.clear();

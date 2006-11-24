@@ -228,9 +228,6 @@ public class CacheItem implements Serializable {
             IOUtils.move(tempFile, file);
             this.binary = binary;
         }
-        catch (Exception e) {
-            log.error("Failed to store captured data", e);
-        }
         finally {
             lock.releaseWriterLock();
         }

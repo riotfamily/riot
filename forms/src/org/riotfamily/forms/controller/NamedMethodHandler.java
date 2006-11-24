@@ -49,7 +49,10 @@ public class NamedMethodHandler implements FormSubmissionHandler {
 			handlerMethod = controller.getClass().getMethod(
 					methodName, HANDLER_PARAM_TYPES);
 		}
-		catch (Exception e) {
+		catch (SecurityException e) {
+			throw new RuntimeException(e);
+		}
+		catch (NoSuchMethodException e) {
 			throw new RuntimeException(e);
 		}
 		

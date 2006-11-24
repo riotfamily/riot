@@ -29,9 +29,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import org.directwebremoting.Container;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.Configurator;
-import org.directwebremoting.Container;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
@@ -82,7 +82,13 @@ public class SpringConfigurator implements Configurator {
 				try {
 					converterManager.addConverter(match, type, Collections.EMPTY_MAP);
 				}
-				catch (Exception e) {
+				catch (IllegalArgumentException e) {
+					throw new BeanCreationException("Error adding converter", e);
+				}
+				catch (InstantiationException e) {
+					throw new BeanCreationException("Error adding converter", e);
+				}
+				catch (IllegalAccessException e) {
 					throw new BeanCreationException("Error adding converter", e);
 				}
 			}

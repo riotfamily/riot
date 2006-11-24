@@ -25,6 +25,7 @@ package org.riotfamily.common.web.servlet;
 
 import java.util.Map;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -107,12 +108,13 @@ public class ReloadableDispatcherServlet extends DispatcherServlet
 	}
 	
 	public void configure() {
+		context.refresh();
+		watcher.setResources(context.getConfigResources());
 		try {
-			context.refresh();
-			watcher.setResources(context.getConfigResources());
 			initFrameworkServlet();
 		}
-		catch (Exception ex) {
+		catch (ServletException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }
