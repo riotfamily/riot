@@ -25,25 +25,16 @@ package org.riotfamily.common.beans.config;
 
 import java.util.Properties;
 
-import org.springframework.web.context.support.ServletContextPropertyPlaceholderConfigurer;
-
 /**
- * Subclass of ServletContextPropertyPlaceholderConfigurer that allows to 
- * define inline default values. 
- * {@link ServletContextPropertyPlaceholderConfigurer#setContextOverride 
- * ContextOverride} is set to <code>true</code> by default.
+ * PropertyPlaceholderConfigurer that allows to define inline default values. 
  */
 public class PlaceholderWithDefaultConfigurer 
-		extends ServletContextPropertyPlaceholderConfigurer {
+		extends PropertiesPlaceholderConfigurer {
 
 	public static final String DEFAULT_VALUE_SEPARATOR = "=";
 	
 	private String valueSeparator = DEFAULT_VALUE_SEPARATOR;
 	
-	public PlaceholderWithDefaultConfigurer() {
-		setContextOverride(true);
-	}
-
 	public void setValueSeparator(String valueSeparator) {
 		this.valueSeparator = valueSeparator;
 	}
@@ -68,6 +59,5 @@ public class PlaceholderWithDefaultConfigurer
 		
 		return value;
 	}
-	
 
 }
