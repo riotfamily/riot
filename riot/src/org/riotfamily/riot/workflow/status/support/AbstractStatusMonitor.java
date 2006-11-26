@@ -30,11 +30,12 @@ import java.util.Locale;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.riot.workflow.status.StatusMessage;
 import org.riotfamily.riot.workflow.status.StatusMonitor;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 
 public abstract class AbstractStatusMonitor implements StatusMonitor, 
-		MessageSourceAware {
+		MessageSourceAware, BeanNameAware {
 
 	private MessageSource messageSource;
 	
@@ -56,6 +57,12 @@ public abstract class AbstractStatusMonitor implements StatusMonitor,
 		this.messageKey = messageKey;
 	}
 
+	public void setBeanName(String name) {
+		if (messageKey == null) {
+			messageKey = name;
+		}
+	}
+	
 	public void setLink(String link) {
 		this.link = link;
 	}
@@ -63,7 +70,7 @@ public abstract class AbstractStatusMonitor implements StatusMonitor,
 	public void setCache(String period) {
 		cacheMillis = FormatUtils.parseMillis(period);
 	}
-
+	
 	public Collection getMessages(Locale locale) {
 		updateArgs();
 		if (isVisible(args)) {
