@@ -25,75 +25,61 @@ package org.riotfamily.pages.page.support;
 
 import java.io.IOException;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.web.filter.FilterPlugin;
+import org.riotfamily.common.web.filter.PluginChain;
 import org.riotfamily.pages.page.Page;
 import org.riotfamily.pages.page.PageMap;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.UrlPathHelper;
 
 /**
- * Servlet filter that forwards request which point to a folder to the
- * the folder's welcome page.
- * 
  * @author Felix Gnass <fgnass@neteye.de>
- * @deprecated In Riot 6.4 this filter has been replaced by 
- *             the {@link FolderFilterPlugin}
+ * @since 6.4
  */
-public class FolderFilter extends OncePerRequestFilter {
+public class FolderFilterPlugin extends FilterPlugin {
 
-	private String servletSuffix;
+	public static final String WEBSITE_SERVLET_SUFFIX_INIT_PARAM = 
+			"webiste-servlet-suffix";
 	
-	private String[] exclude;
+	public static final String DEFAULT_SERVLET_SUFFIX = ".html";
 	
 	private UrlPathHelper urlPathHelper = new UrlPathHelper();
 	
-	private AntPathMatcher pathMatcher = new AntPathMatcher();
+	private String servletSuffix = DEFAULT_SERVLET_SUFFIX;
 	
-	
-	public void setExclude(String[] exclude) {
-		this.exclude = exclude;
-	}
-
 	public void setServletSuffix(String servletSuffix) {
 		this.servletSuffix = servletSuffix;
 	}
+	
+	protected void initPlugin() {
+		String servletSuffixParam = getServletContext().getInitParameter(
+					WEBSITE_SERVLET_SUFFIX_INIT_PARAM);
+		
+		if (servletSuffixParam != null) {
+			servletSuffix = servletSuffixParam;
+		}
+	}
 
-	protected void doFilterInternal(HttpServletRequest request, 
-			HttpServletResponse response, FilterChain chain) 
+	public void doFilter(HttpServletRequest request, 
+			HttpServletResponse response, PluginChain chain) 
 			throws ServletException, IOException {
 	
 		String uri = request.getRequestURI();
 		if (uri.lastIndexOf('.') < uri.lastIndexOf('/')) {
 			String path = urlPathHelper.getPathWithinApplication(request);
-			if (include(path)) {
-				PageMap pageMap = PageMap.getInstance(getServletContext());
-				Page page = pageMap.getPage(path);
-				if (page != null && page.isFolder()) {
-					request.getRequestDispatcher(path + servletSuffix)
-							.forward(request, response);
+			PageMap pageMap = PageMap.getInstance(getServletContext());
+			Page page = pageMap.getPage(path);
+			if (page != null && page.isFolder()) {
+				request.getRequestDispatcher(path + servletSuffix)
+						.forward(request, response);
 					
-					return;
-				}
+				return;
 			}
 		}
 		chain.doFilter(request, response);
-	}
-
-	protected boolean include(String path) {
-		if (exclude != null) {
-			for (int i = 0; i < exclude.length; i++) {
-				String pattern = exclude[i];
-				if (pathMatcher.match(pattern, path)) {
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 
 }
