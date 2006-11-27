@@ -89,5 +89,8 @@
 		</property>
 	</bean>
 	
-		
+	<bean id="folderFilterPlugin" class="org.riotfamily.pages.page.support.FolderFilterPlugin">
+		<property name="filterName" value="website-servlet-filter" />
+	</bean>
+
 </beans>
