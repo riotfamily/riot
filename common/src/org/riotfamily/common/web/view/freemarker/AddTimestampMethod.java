@@ -27,23 +27,41 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.filter.ResourceStamper;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
  * @since 6.4
  */
-public class AddTimestampMethod extends AbstractStringTransformerMethod {
+public class AddTimestampMethod extends AbstractStringTransformerMethod 
+		implements ApplicationContextAware, InitializingBean {
 
 	private ResourceStamper stamper;
 	
 	private boolean addContextPath = true;
 
-	public AddTimestampMethod(ResourceStamper stamper) {
+	private ApplicationContext applicationContext;
+	
+	public void setStamper(ResourceStamper stamper) {
 		this.stamper = stamper;
 	}
 
 	public void setAddContextPath(boolean addContextPath) {
 		this.addContextPath = addContextPath;
+	}
+
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
+	
+	public void afterPropertiesSet() {
+		if (stamper == null) {
+			stamper = (ResourceStamper) BeanFactoryUtils
+					.beanOfType(applicationContext, ResourceStamper.class);
+		}
 	}
 	
 	protected String transform(String s, HttpServletRequest request, 
