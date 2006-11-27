@@ -65,7 +65,7 @@ public final class PluginFilter extends OncePerRequestFilter {
 	
 	private OrderComparator orderComparator = new OrderComparator();
 	
-	private FilterPlugin[] plugins;
+	private FilterPlugin[] plugins = new FilterPlugin[0];
 	
 	/**
 	 * Sets Ant-style path patterns that should not be filtered.
