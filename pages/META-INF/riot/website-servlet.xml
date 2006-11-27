@@ -92,5 +92,14 @@
 	<bean id="folderFilterPlugin" class="org.riotfamily.pages.page.support.FolderFilterPlugin">
 		<property name="filterName" value="website-servlet-filter" />
 	</bean>
+	
+	<bean id="resourceStamper" class="org.riotfamily.common.web.filter.ResourceStamper" />
+
+	<bean id="cssTemplateController" name="/**/*.css" 
+			class="org.riotfamily.pages.css.CssTemplateController">
+			
+		<property name="addContextPathToUrls" value="true" />
+		<property name="stamper" ref="resourceStamper" />
+	</bean>
 
 </beans>
