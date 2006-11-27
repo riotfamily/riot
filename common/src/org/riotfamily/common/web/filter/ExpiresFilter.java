@@ -40,6 +40,7 @@ import org.springframework.web.filter.GenericFilterBean;
 public class ExpiresFilter extends GenericFilterBean {
 
 	private static final String HEADER_EXPIRES = "Expires";
+
 	private long expiresAfter;
 	
 	public void setExpiresAfter(String expires) {
@@ -50,7 +51,7 @@ public class ExpiresFilter extends GenericFilterBean {
 			FilterChain filterChain) throws IOException, ServletException {
 		
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		httpResponse.addDateHeader(HEADER_EXPIRES, 
+		httpResponse.setDateHeader(HEADER_EXPIRES, 
 				System.currentTimeMillis() + expiresAfter);
 		
 		filterChain.doFilter(request, response);
