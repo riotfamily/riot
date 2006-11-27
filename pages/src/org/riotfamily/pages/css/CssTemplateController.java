@@ -25,6 +25,7 @@ package org.riotfamily.pages.css;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -35,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
+import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.util.ServletMappingHelper;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
@@ -97,6 +99,13 @@ public class CssTemplateController extends AbstractCacheableController
 	
 	private IniFile iniFile;
 	
+	private Pattern urlPattern = Pattern.compile(
+			"(url\\s*\\(\\s*[\"']?)(.*?)(['\"]?\\s*\\))");
+	
+	private ResourceStamper stamper;
+	
+	private boolean addContextPathToUrls = false;
+	
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
 	}
@@ -105,6 +114,27 @@ public class CssTemplateController extends AbstractCacheableController
 		this.freeMarkerConfig = configuration;
 	}
 	
+	/**
+	 * Sets the ResourceStamper that should be used to add timestamps to 
+	 * URLs specified within the template.
+	 * 
+	 * @see ResourceStamper
+	 * @since 6.4
+	 */
+	public void setStamper(ResourceStamper stamper) {
+		this.stamper = stamper;
+	}
+	
+	/**
+	 * Sets whether the contextPath should be added to absolute URLs
+	 * specified within the template. Defaults to <code>false</code>.
+	 * 
+	 * @since 6.4
+	 */
+	public void setAddContextPathToUrls(boolean addContextPathToUrls) {
+		this.addContextPathToUrls = addContextPathToUrls;
+	}
+
 	public void setIniFileLocation(Resource resource) throws IOException {
 		iniFile = new IniFile(resource.getFile());
 	}
@@ -202,7 +232,10 @@ public class CssTemplateController extends AbstractCacheableController
 			model.put(CONTEXT_PATH_PROPERTY, request.getContextPath());
 				
 			Template template = freeMarkerConfig.getTemplate(path);
-			template.process(model, response.getWriter());
+			StringWriter sw = new StringWriter();
+			template.process(model, sw);
+			response.getWriter().print(
+					processUrls(sw.toString(), request.getContextPath()));
 		}
 		
 		private Map buildModel() {
@@ -219,6 +252,26 @@ public class CssTemplateController extends AbstractCacheableController
 				}
 			}
 			return model;
+		}
+		
+		private String processUrls(String css, String contextPath) {
+			if (stamper == null && !addContextPathToUrls) {
+				return css;
+			}
+			StringBuffer sb = new StringBuffer();
+			Matcher matcher = urlPattern.matcher(css);
+			while (matcher.find()) {
+				String url = matcher.group(2);
+				if (stamper != null) {
+					url = stamper.stamp(url);
+				}
+				if (addContextPathToUrls && url.startsWith("/")) {
+					url = contextPath + url;
+				}
+				matcher.appendReplacement(sb, "$1" + url + "$3");
+			}
+			matcher.appendTail(sb);
+			return sb.toString();
 		}
 		
 	}
