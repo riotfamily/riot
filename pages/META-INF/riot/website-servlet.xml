@@ -21,6 +21,11 @@
 		<constructor-arg ref="pageMap"/>
 	</bean>
 	
+	<bean id="pageInterceptor" class="org.riotfamily.pages.page.support.PageInterceptor">
+		<constructor-arg ref="pageMap" />
+		<constructor-arg ref="viewModeResolver" />
+	</bean>
+	
 	<!-- 
 	  - Repository that contains the component definitions.
 	  -->
