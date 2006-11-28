@@ -16,6 +16,7 @@
 					</#if>
 				</div>
 			</#list>
+			<div style="clear: both;"></div>
 		</#if>
 	</div>
 </div>

@@ -77,8 +77,11 @@
 					var riotUserStylesheet = "${request.contextPath + stylesheet}";
 				</script>
 			</#if>
-			<script type="text/javascript" src="${riotEncodeUrl(riotResourcePath + '/riot-js/resources.js')}"></script>
-			<script type="text/javascript" src="${riotEncodeUrl(riotResourcePath + '/pages.js')}"></script>
+			<#if riotToolbarResources?has_content>
+				<#list riotToolbarResources as resource>
+					<script type="text/javascript" src="${riotEncodeUrl(resource)}"></script>
+				</#list>
+			</#if>			
 		<#else>
 			<script type="text/javascript">
 				<#-- The following variable is read by the login-bookmarklet: -->

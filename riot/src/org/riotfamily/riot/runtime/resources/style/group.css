@@ -109,6 +109,7 @@ background-color:#ebebeb;
 #status .message .text {
 	padding-top: 5px;
 	padding-bottom: 3px;
+	float: left;
 }
 
 #status .message .icon {

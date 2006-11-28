@@ -106,5 +106,14 @@
 		<property name="addContextPathToUrls" value="true" />
 		<property name="stamper" ref="resourceStamper" />
 	</bean>
+	
+	<bean id="riotToolbarResources" class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+		<property name="key" value="riotToolbarResources" />
+		<property name="sourceList">
+			<list>
+				<value>/pages.js</value>
+			</list>
+		</property>
+	</bean>
 
 </beans>

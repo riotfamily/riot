@@ -24,6 +24,8 @@
 package org.riotfamily.pages.freemarker;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.common.web.util.IncludeFirstInterceptor;
@@ -53,11 +55,13 @@ public class FreeMarkerConfigurer extends
 	
 	private static final String RIOT_MACRO_TEMPLATE = "/riot.ftl";
 	
+	private static final String RIOT_RESOURCES_JS = "/riot-js/resources.js";
+	
 	private static final String RIOT_RUNTIME_BEAN_NAME = "riotRuntime";
 	
-	private static final String SERVLET_PREFIX_VAR = "riotServletPrefix";
+	private static final String RIOT_TOOLBAR_RESOURCES = "riotToolbarResources";
 	
-	private static final String RESOUCE_PATH_VAR = "riotResourcePath";
+	private static final String SERVLET_PREFIX_VAR = "riotServletPrefix";	
 	
 	private static final String INCLUDE_URI_PARAM_VAR = "includeUriParam";
 	
@@ -70,7 +74,7 @@ public class FreeMarkerConfigurer extends
 	
 	private String riotServletPrefix;
 	
-	private String riotResourcePath;	
+	private List riotToolbarResources;
 	
 	private ViewModeResolver viewModeResolver;
 	
@@ -81,7 +85,20 @@ public class FreeMarkerConfigurer extends
 				RIOT_RUNTIME_BEAN_NAME, RiotRuntime.class);
 		
 		riotServletPrefix = runtime.getServletPrefix();
-		riotResourcePath = runtime.getResourcePath();
+		String riotResourcePath = runtime.getResourcePath();
+		List resources = (List) 
+				context.getBean(RIOT_TOOLBAR_RESOURCES, List.class);
+		
+		riotToolbarResources = new ArrayList(resources.size() + 1);
+		riotToolbarResources.add(riotResourcePath + RIOT_RESOURCES_JS);
+		Iterator it = resources.iterator();
+		while(it.hasNext()) {
+			String resource = (String) it.next();
+			if (!resource.startsWith(riotResourcePath)) {
+				resource = riotResourcePath + resource;					
+			}
+			riotToolbarResources.add(resource);
+		}		
 		
 		viewModeResolver = (ViewModeResolver) BeanFactoryUtils.beanOfType(
 				context, ViewModeResolver.class);
@@ -105,7 +122,7 @@ public class FreeMarkerConfigurer extends
 		
 		SimpleHash vars = new SimpleHash();
 		vars.put(SERVLET_PREFIX_VAR, riotServletPrefix);
-		vars.put(RESOUCE_PATH_VAR, riotResourcePath);
+		vars.put(RIOT_TOOLBAR_RESOURCES, riotToolbarResources);
 		vars.put(VIEW_MODE_RESOLVER_VAR, viewModeResolver);
 		vars.put(ENCODE_URL_METHOD_VAR, new EncodeUrlMethod());
 		vars.put(INCLUDE_METHOD_VAR, new IncludeMethod());
