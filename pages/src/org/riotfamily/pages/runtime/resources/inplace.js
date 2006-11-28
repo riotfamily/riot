@@ -258,24 +258,6 @@ riot.RichtextEditor = riot.PopupTextEditor.extend({
 
 });
 
-riot.TextileEditor = riot.PopupTextEditor.extend({
-	help: function() {
-		var win = window.open(Resources.resolveUrl('help/textile/toc.html'), 'textile_toc', 
-				'width=250,height=550,top=10,left=20,scrollbars=yes');
-				
-		win.focus();
-	}
-});
-
-riot.MarkdownEditor = riot.PopupTextEditor.extend({
-	help: function() {
-		var win = window.open(Resources.resolveUrl('help/markdown/help.html'), 'markdown_help', 
-				'width=250,height=550,top=10,left=20,scrollbars=yes');
-				
-		win.focus();
-	}
-});
-
 riot.Popup = Class.create();
 riot.Popup.prototype = {
 	initialize: function(title, content, ok, help) {

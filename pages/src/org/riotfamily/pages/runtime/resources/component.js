@@ -135,12 +135,6 @@ riot.Component.prototype = {
 						else if (editorType == 'textarea') {
 							this.editors.push(new riot.PopupTextEditor(e, this));
 						}
-						else if (editorType == 'textile') {
-							this.editors.push(new riot.TextileEditor(e, this));
-						}
-						else if (editorType == 'markdown') {
-							this.editors.push(new riot.MarkdownEditor(e, this));
-						}
 						else if (editorType == 'richtext') {
 							this.editors.push(new riot.RichtextEditor(e, this));
 						}

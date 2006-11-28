@@ -90,6 +90,11 @@ public class DefaultCachingPolicy implements CachingPolicy {
 		if (viewModeResolver != null 
 				&& viewModeResolver.isPreviewMode(request)) {
 			
+			log.debug("Pragma: " + request.getHeader("Pragma"));
+			log.debug("Cache-Control: " + request.getHeader("Cache-Control"));
+			log.debug("Referer: " + request.getHeader("Referer"));
+			log.debug("If-Modified-Since: " + request.getHeader("If-Modified-Since"));
+			
             log.debug("Preview mode -- bypassing cache");
             return true;
         }
@@ -99,9 +104,14 @@ public class DefaultCachingPolicy implements CachingPolicy {
 	public boolean forceRefresh(HttpServletRequest request) {
 		if (forceRefreshForRiotUsers 
 				&& AccessController.isAuthenticatedUser()) {
+
+			log.debug("Pragma: " + request.getHeader("Pragma"));
+			log.debug("Cache-Control: " + request.getHeader("Cache-Control"));
+			log.debug("Referer: " + request.getHeader("Referer"));
+			log.debug("If-Modified-Since: " + request.getHeader("If-Modified-Since"));
 			
-			log.debug("Authenticated user -- forcing cache refresh");
-            return true;
+			log.info("Authenticated user -- forcing cache refresh");
+			return true;
         }
 		return false;
 	}
