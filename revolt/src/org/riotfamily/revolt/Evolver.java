@@ -35,6 +35,7 @@ import org.riotfamily.revolt.support.LogTable;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
@@ -67,8 +68,9 @@ public class Evolver implements ApplicationContextAware {
 			}
 		}
 		if (!automatic) {
-			if (!scripts.isEmpty()) {
-				throw new EvolutionInstructions(getInstructions());
+			String instructions = getInstructions();
+			if (StringUtils.hasLength(instructions)) {
+				throw new EvolutionInstructions(instructions);
 			}
 		}
 	}
@@ -100,7 +102,7 @@ public class Evolver implements ApplicationContextAware {
 		}
 		return script;
 	}
-	
+		
 	private String getInstructions() {
 		StringBuffer sb = new StringBuffer();
 		Iterator it = scripts.entrySet().iterator();
@@ -108,13 +110,16 @@ public class Evolver implements ApplicationContextAware {
 			Map.Entry entry = (Map.Entry) it.next();
 			DataSource dataSource = (DataSource) entry.getKey();
 			Script script = (Script) entry.getValue();
-			sb.append("\n\n-------------------------------------------------------------------------\n\n");
-			sb.append("The database ").append(DatabaseUtils.getUrl(dataSource));
-			sb.append(" is not up-to-date.\nPlease execute the" 
-					+ " following SQL commands to evolve the schema:\n\n");
-					
-			sb.append(script.getSql());
-			sb.append("\n\n-------------------------------------------------------------------------\n\n");
+			String sql = script.getSql();
+			if (StringUtils.hasLength(sql)) {
+				sb.append("\n\n-------------------------------------------------------------------------\n\n");
+				sb.append("The database ").append(DatabaseUtils.getUrl(dataSource));
+				sb.append(" is not up-to-date.\nPlease execute the" 
+						+ " following SQL commands to evolve the schema:\n\n");
+						
+				sb.append(sql);
+				sb.append("\n\n-------------------------------------------------------------------------\n\n");
+			}
 		}
 		return sb.toString();
 	}
