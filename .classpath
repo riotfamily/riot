@@ -10,13 +10,14 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
-	<classpathentry sourcepath="/dwr/java" kind="lib" path="lib/dwr.jar"/>
+	<classpathentry kind="lib" path="lib/dwr.jar" sourcepath="/dwr/java"/>
 	<classpathentry kind="lib" path="lib/freemarker.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate.jar"/>
 	<classpathentry kind="lib" path="lib/imageinfo.jar"/>
 	<classpathentry kind="lib" path="lib/json-lib.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/servlet.jar"/>
-	<classpathentry sourcepath="lib/spring-src.zip" kind="lib" path="lib/spring.jar"/>
+	<classpathentry kind="lib" path="lib/spring.jar" sourcepath="lib/spring-src.zip"/>
+	<classpathentry kind="lib" path="lib/c3p0.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
