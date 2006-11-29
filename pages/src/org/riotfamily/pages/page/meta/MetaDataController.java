@@ -34,9 +34,13 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.pages.mvc.cache.AbstractCachingPolicyController;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
-public class MetaDataController extends AbstractCachingPolicyController {
+public class MetaDataController extends AbstractCachingPolicyController 
+		implements MessageSourceAware {
 
 	public static final String DEFAULT_TITLE_DELIMITER = " - ";
 	
@@ -44,7 +48,11 @@ public class MetaDataController extends AbstractCachingPolicyController {
 			
 	private String titlePrefix;
 	
+	private String titlePrefixMessageKey;
+	
 	private String titleDelimiter = DEFAULT_TITLE_DELIMITER;
+	
+	private MessageSource messageSource;
 	
 	private MetaDataProvider metaDataProvider;
 	
@@ -52,12 +60,16 @@ public class MetaDataController extends AbstractCachingPolicyController {
 		this.titlePrefix = titlePrefix;
 	}
 	
-	protected String getTitlePrefix(HttpServletRequest request) {
-		return titlePrefix;
-	}
-		
+	public void setTitlePrefixMessageKey(String titlePrefixMessageKey) {
+		this.titlePrefixMessageKey = titlePrefixMessageKey;
+	}	
+	
 	public void setTitleDelimiter(String titleDelimiter) {
 		this.titleDelimiter = titleDelimiter;
+	}
+	
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;		
 	}
 	
 	public void setMetaDataProvider(MetaDataProvider metaDataProvider) {
@@ -67,6 +79,17 @@ public class MetaDataController extends AbstractCachingPolicyController {
 	public long getLastModified(HttpServletRequest request) {
         return metaDataProvider.getLastModified(request);
     }
+	
+	protected String getTitlePrefix(HttpServletRequest request) {
+		if (titlePrefixMessageKey != null) {
+			return messageSource.getMessage(titlePrefixMessageKey, null, titlePrefix, 
+						RequestContextUtils.getLocale(request));
+		}
+		else {
+			return titlePrefix;
+		}
+	}
+		
 		
 	public ModelAndView handleRequest(HttpServletRequest request, 
 			HttpServletResponse response) {
