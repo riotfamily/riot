@@ -53,7 +53,7 @@
 	  - A Cachius cache instance to cache web content.
 	  -->	
 	<bean id="websiteCache" class="org.riotfamily.cachius.spring.CacheFactoryBean">
-		<property name="capacity" value="10000" />
+		<property name="capacity" value="${riot.websiteCache.capacity=10000}" />
     </bean>
     
     <!-- 

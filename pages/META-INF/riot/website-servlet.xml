@@ -5,6 +5,15 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 	
+	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
+		<property name="location" value="classpath:/application.properties" />
+		<property name="contextOverride" value="true" />
+	</bean>
+	
+	<bean class="org.riotfamily.common.web.servlet.ReloadableDispatcherServletConfig">
+		<property name="reloadable" value="${website-servlet.reloadable=false}" />
+	</bean>
+	
 	<!-- 
 	  - In-memory representation of the sitemap. 
 	  -->
@@ -24,6 +33,10 @@
 	<bean id="pageInterceptor" class="org.riotfamily.pages.page.support.PageInterceptor">
 		<constructor-arg ref="pageMap" />
 		<constructor-arg ref="viewModeResolver" />
+	</bean>
+	
+	<bean id="noCacheInterceptor" class="org.riotfamily.pages.util.NoCacheHeaderInterceptor">
+		<property name="includes" value="**/*.html" />
 	</bean>
 	
 	<!-- 

@@ -7,24 +7,22 @@
 	
 	<import resource="classpath:/org/riotfamily/riot/hibernate/runtime/db-schema.xml"/>
 	
-	<bean id="riotHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-		<property name="properties">
-			<props>
-				<prop key="dialect">org.hibernate.dialect.HSQLDialect</prop>
-				<prop key="cache.provider_class">net.sf.ehcache.hibernate.Provider</prop>
-			</props>
-		</property>
-	</bean> 
-	
 	<!-- JDBC DataSource pooled by C3P0 -->
 	<bean id="riotDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-		<property name="driverClass" value="org.hsqldb.jdbcDriver" />
-	    <property name="jdbcUrl" value="jdbc:hsqldb:mem:riot" />
-	    <property name="user" value="sa" />
-	    <property name="maxPoolSize" value="10" />
+		<property name="driverClass"><value>${jdbc.driver_class}</value></property>
+	    <property name="jdbcUrl"><value>${jdbc.url}</value></property>
+	    <property name="user"><value>${jdbc.username}</value></property>
+	    <property name="password"><value>${jdbc.password}</value></property>
+	    <property name="maxPoolSize"><value>${jdbc.maxPoolSize=10}</value></property>
 	</bean>
 	
-	<bean id="evolver" class="org.riotfamily.revolt.Evolver" />
+	<bean id="riotHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="properties" value="${hibernate.*}" />
+	</bean>
+		
+	<bean id="evolver" class="org.riotfamily.revolt.Evolver">
+		<property name="automatic" value="${riot.automaticSchemaEvolution=false}" />
+	</bean>
 	
 	<!-- The Hibernate SessionFactory -->
 	<bean id="riotSessionFactory" depends-on="evolver" 

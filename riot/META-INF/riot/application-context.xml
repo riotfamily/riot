@@ -5,6 +5,11 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 	
+	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
+		<property name="location" value="classpath:/application.properties" />
+		<property name="contextOverride" value="true" />
+	</bean>
+	
 	<bean id="riotRuntime" class="org.riotfamily.riot.runtime.RiotRuntime">
 		<property name="resourceMapping" value="/resources" />
 	</bean>
