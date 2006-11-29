@@ -73,7 +73,10 @@ public class ChangeSet implements Refactoring {
 		Iterator it = refactorings.iterator();
 		while (it.hasNext()) {
 			Refactoring refactoring = (Refactoring) it.next();
-			script.append(refactoring.getScript(dialect));
+			Script s = refactoring.getScript(dialect);
+			if (s != null) {
+				script.append(s);
+			}
 		}
 		return script;
 	}
