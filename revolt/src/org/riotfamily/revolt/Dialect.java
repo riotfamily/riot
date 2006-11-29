@@ -67,4 +67,7 @@ public interface Dialect {
 	public Script dropForeignKey(String table, String name);
 
 	public Script insert(String table, Collection data);
+	
+	public Script createAutoIncrementSequence(String name);
+
 }

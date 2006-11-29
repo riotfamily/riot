@@ -118,5 +118,9 @@ public class PostgresqlDialect extends Sql92Dialect {
 		return alterTable(table).append("RENAME COLUMN").append(quote(name))
 				.append("TO").append(quote(renameTo));
 	}
+	
+	public Script createAutoIncrementSequence(String name) {
+		return new Script("CREATE SEQUENCE").append(name);
+	}
 
 }

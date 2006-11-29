@@ -55,6 +55,11 @@
 						<xsd:attribute name="on" type="xsd:string" use="required" />
 					</xsd:complexType>
 				</xsd:element>
+				<xsd:element name="create-auto-increment-seq">
+					<xsd:complexType>
+						<xsd:attribute name="name" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
 				<xsd:element name="create-index">
 					<xsd:complexType>
 						<xsd:attribute name="table" type="xsd:string" use="required" />

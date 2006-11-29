@@ -10,6 +10,8 @@
 	
 	<db:history module="riot" data-source="riotDataSource">
 		<db:change-set id="initial">
+			<db:create-auto-increment-seq name="hibernate-sequence" />
+			
 			<db:create-table name="riot_session_data">
 				<db:column name="principal" type="VARCHAR" length="255" not-null="true" primary-key="true" />
 				<db:column name="lastLoginDate" type="TIMESTAMP" />

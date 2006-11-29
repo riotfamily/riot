@@ -74,6 +74,10 @@ public class HsqlDialect extends Sql92Dialect {
 		}
 	}
 	
+	public Script createAutoIncrementSequence(String name) {
+		return null;
+	}
+	
 	public Script renameTable(String name, String renameTo) {
 		return alterTable(name).append("RENAME TO").append(quote(renameTo));
 	}

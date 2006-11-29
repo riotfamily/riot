@@ -39,6 +39,7 @@ import org.riotfamily.revolt.definition.UniqueConstraint;
 import org.riotfamily.revolt.refactor.AddColumn;
 import org.riotfamily.revolt.refactor.AddForeignKey;
 import org.riotfamily.revolt.refactor.AddUniqueConstraint;
+import org.riotfamily.revolt.refactor.CreateAutoIncrementSequence;
 import org.riotfamily.revolt.refactor.CreateIndex;
 import org.riotfamily.revolt.refactor.CreateTable;
 import org.riotfamily.revolt.refactor.DropColumn;
@@ -183,6 +184,10 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 		if (DomUtils.nodeNameEquals(ele, "insert-data")) {
 			refactoring = new InsertData(ele.getAttribute("table"), 
 					parseEntries(ele));
+		}
+		if (DomUtils.nodeNameEquals(ele, "create-auto-increment-seq")) {
+			refactoring = new CreateAutoIncrementSequence(
+					ele.getAttribute("name"));
 		}
 		return refactoring;
 	}

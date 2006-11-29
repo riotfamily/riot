@@ -71,7 +71,11 @@ public class MySqlDialect extends Sql92Dialect {
 			sql.append("AUTO_INCREMENT");
 		}
 	}
-
+	
+	public Script createAutoIncrementSequence(String name) {
+		return null;
+	}
+	
 	public Script renameTable(String name, String renameTo) {
 		return alterTable(name).append("RENAME TO").append(quote(renameTo));
 	}
