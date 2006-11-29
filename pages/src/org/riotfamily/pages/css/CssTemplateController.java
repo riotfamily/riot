@@ -81,8 +81,6 @@ public class CssTemplateController extends AbstractCacheableController
 
 	public static final String KEY_PROPERTY = "key";
 	
-	public static final String CONTEXT_PATH_PROPERTY = "contextPath";
-
 	private static final String DEFAULT_INI_FILE_NAME = "css.ini";
 	
 	private static final String CSS_SUFFIX = ".css";
@@ -229,7 +227,6 @@ public class CssTemplateController extends AbstractCacheableController
 			
 			Map	model = buildModel();
 			model.put(KEY_PROPERTY, key);
-			model.put(CONTEXT_PATH_PROPERTY, request.getContextPath());
 				
 			Template template = freeMarkerConfig.getTemplate(path);
 			StringWriter sw = new StringWriter();
