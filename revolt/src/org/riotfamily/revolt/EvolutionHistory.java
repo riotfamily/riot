@@ -100,35 +100,25 @@ public class EvolutionHistory implements BeanNameAware {
 	}
 	
 	public void evolve() throws DatabaseOutOfSyncException {
+		getScript().execute(dataSource);
+		DatabaseUtils.validate(dataSource, evolveModel());
+	}
+	
+	public Script getScript() {
+		Script script = new Script();
 		if (appliedIds.isEmpty()) {
 			try {
 				DatabaseUtils.validate(dataSource, evolveModel());
 				Iterator it = changeSets.iterator();
 				while (it.hasNext()) {
 					ChangeSet changeSet = (ChangeSet) it.next();
-					markAsApplied(changeSet);
+					script.append(markAsApplied(changeSet));
 				}
-				return;
+				return script;
 			}
 			catch (DatabaseOutOfSyncException e) {
 			}
 		}
-		Database model = new Database();
-		Iterator it = changeSets.iterator();
-		while (it.hasNext()) {
-			ChangeSet changeSet = (ChangeSet) it.next();
-			changeSet.alterModel(model);
-			if (!isApplied(changeSet)) {
-				changeSet.getScript(dialect).execute(dataSource);
-				markAsApplied(changeSet);
-				DatabaseUtils.validate(dataSource, model);
-			}
-		}
-		DatabaseUtils.validate(dataSource, model);
-	}
-	
-	public Script getScript() {
-		Script script = new Script();
 		Iterator it = changeSets.iterator();
 		while (it.hasNext()) {
 			ChangeSet changeSet = (ChangeSet) it.next();
@@ -155,7 +145,7 @@ public class EvolutionHistory implements BeanNameAware {
 		return false;
 	}
 	
-	private void markAsApplied(ChangeSet changeSet) {
+	private Script markAsApplied(ChangeSet changeSet) {
 		if (changeSet.getSequenceNumber() != appliedIds.size()) {
 			throw new DatabaseOutOfSyncException("ChangeSet [" 
 					+ changeSet.getId() + "] is number " 
@@ -163,7 +153,7 @@ public class EvolutionHistory implements BeanNameAware {
 					+ appliedIds.size() + " ChangeSets applied!");
 		}
 		appliedIds.add(changeSet.getId());
-		logTable.getInsertScript(changeSet).execute(dataSource);
+		return logTable.getInsertScript(changeSet);
 	}
 		
 }
