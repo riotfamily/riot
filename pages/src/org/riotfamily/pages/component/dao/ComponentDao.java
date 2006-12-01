@@ -85,6 +85,11 @@ public interface ComponentDao {
 	public void updateComponentVersion(ComponentVersion version);
 	
 	/**
+	 * Deletes the given ComponentList.
+	 */
+	public void deleteComponentList(ComponentList list);
+	
+	/**
 	 * Deletes the given ComponentVersion.
 	 */
 	public void deleteComponentVersion(ComponentVersion version);

@@ -220,10 +220,34 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	}
 	
 	/**
+	 * Deletes the given ComponentList.
+	 */
+	public void deleteComponentList(ComponentList list) {
+		if (list.getLiveList() != null) {
+			Iterator it = list.getLiveList().iterator();
+			while (it.hasNext()) {
+				deleteVersionContainer((VersionContainer) it.next());
+			}
+		}
+		if (list.getPreviewList() != null) {
+			Iterator it = list.getPreviewList().iterator();
+			while (it.hasNext()) {
+				deleteVersionContainer((VersionContainer) it.next());
+			}
+		}
+		deleteObject(list);
+	}
+	
+	/**
 	 * Deletes the given VersionContainer.
 	 */
-	public void deleteVersionContainer(VersionContainer container) {
-		deleteComponentVersion(container.getLiveVersion());
+	public void deleteVersionContainer(VersionContainer container) {		
+		ComponentList nestedList = findComponentList(container.getList().getPath(), 
+					container.getList().getKey() + "$" + container.getId());
+		if (nestedList != null) {
+			deleteComponentList(nestedList);
+		}		
+		deleteComponentVersion(container.getLiveVersion());		
 		deleteComponentVersion(container.getPreviewVersion());
 		deleteObject(container);
 	}
@@ -233,7 +257,7 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 */
 	public void deleteComponentVersion(ComponentVersion version) {
 		if (version != null) {
-			Component component = repository.getComponent(version);
+			Component component = repository.getComponent(version);			
 			Iterator it = component.getPropertyProcessors().iterator();
 			while (it.hasNext()) {
 				PropertyProcessor pp = (PropertyProcessor) it.next();
