@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.util.OncePerRequestInterceptor;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.security.AccessController;
 
 /**
@@ -38,20 +39,11 @@ import org.riotfamily.riot.security.AccessController;
  */
 public class NoCacheHeaderInterceptor extends OncePerRequestInterceptor {
 
-	private static final String HEADER_PRAGMA = "Pragma";
-
-	private static final String HEADER_EXPIRES = "Expires";
-
-	private static final String HEADER_CACHE_CONTROL = "Cache-Control";
-	
 	protected boolean preHandleOnce(HttpServletRequest request, 
 			HttpServletResponse response, Object handler) throws Exception {
 
 		if (AccessController.isAuthenticatedUser()) {
-			response.setHeader(HEADER_PRAGMA, "No-cache");
-			response.setDateHeader(HEADER_EXPIRES, 1L);
-			response.setHeader(HEADER_CACHE_CONTROL, "no-cache");
-			response.addHeader(HEADER_CACHE_CONTROL, "no-store");
+			ServletUtils.setNoCacheHeaders(response);
 		}
 		return true;
 	}
