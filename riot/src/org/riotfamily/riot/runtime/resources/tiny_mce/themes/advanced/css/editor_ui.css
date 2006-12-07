@@ -71,6 +71,9 @@ a.mceButtonDisabled {
 .mceEditor td.container {
 	padding-bottom: 2px;
 }
+.mceEditor td.container a {
+	vertical-align:bottom;
+}
 
 .mceStatusbarBottom {
 	font-size: 9pt;

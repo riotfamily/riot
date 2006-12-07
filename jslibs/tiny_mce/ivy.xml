@@ -2,7 +2,7 @@
     <info 
     	organisation="riotfamily" 
     	module="tinymce-js" 
-    	revision="2.0.6.1"
+    	revision="2.0.8"
     	status="release">
     	
     	<license name="LGPL" url="http://www.gnu.org/licenses/lgpl.html" />
