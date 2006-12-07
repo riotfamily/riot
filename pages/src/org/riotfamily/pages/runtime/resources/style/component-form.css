@@ -3,6 +3,10 @@ body {
 	margin: 0;
 }
 
+div.form-error {
+	margin-left: 144px;
+}
+
 .title {
 	background: #fff;
 	padding-top: 2px;
