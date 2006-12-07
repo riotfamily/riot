@@ -95,7 +95,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 
 	oninit: function(options) {
 		this.options = options || {};
-		Element.makePositioned(this.element);
+		RElement.makePositioned(this.element);
 		this.input = document.createElement(this.options.multiline 
 				? 'textarea' : 'input');
 				
@@ -110,19 +110,19 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 		this.input.onkeyup = this.updateElement.bindAsEventListener(this);
 		this.input.onblur = this.save.bindAsEventListener(this);
 	
-		Element.cloneStyles(this.element, this.input, [
+		Styles.clone(this.element, this.input, [
 			'font-size', 'font-weight', 'font-family', 'font-style', 
 			'color', 'background-color', 'text-align', 'text-decoration', 
 			'letter-spacing', 'padding-left', 'padding-top']);
 		
 		if (this.options.multiline) {
-			Element.cloneStyles(this.element, this.input, ['line-height']);
+			Styles.clone(this.element, this.input, ['line-height']);
 		}
 		
 		this.input.style.boxSizing = this.input.style.MozBoxSizing = 'border-box';
 		
 		Element.hide(this.input);
-		Element.insertAfter(this.input, this.element);
+		RElement.insertAfter(this.input, this.element);
 	},
 		
 	edit: function() {
@@ -151,7 +151,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 			setHeight: false
 		});
 		this.resize();
-		Element.invisible(this.element);
+		RElement.makeInvisible(this.element);
 		Element.show(this.input);
 		this.input.focus();
 		this.input.value = this.text;
@@ -168,7 +168,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 	onsave: function(text) {
 		this.element.innerHTML = text;
 		Element.hide(this.input);
-		Element.visible(this.element);
+		RElement.makeVisible(this.element);
 	},
 
 	updateElement: function() {
@@ -217,7 +217,7 @@ riot.PopupTextEditor = riot.InplaceEditor.extend({
 riot.RichtextEditor = riot.PopupTextEditor.extend({
 	showEditor: function() {
 		Resources.loadScriptSequence([
-			{src: 'tiny_mce/tiny_mce.js', test: 'tinyMCE'},
+			{src: 'tiny_mce/tiny_mce_src.js', test: 'tinyMCE'},
 			{src: 'tiny_mce/strict_mode_fix.js', test: 'tinyMCE.strictModeFixed'}
 		]);
 		Resources.waitFor('tinyMCE.strictModeFixed', this.openPopup.bind(this));
@@ -233,12 +233,15 @@ riot.RichtextEditor = riot.PopupTextEditor.extend({
 			var text = this.getText();
 			if (this.text != text) {
 				var chunks = [];
-				var n = Element.create('div');
+				var n = RBuilder.node('div');
 				n.innerHTML = text;
 				$A(n.childNodes).each(function(c) {
 					if (c.nodeType == 1) {
 						chunks.push('<' + c.nodeName + '>' + c.innerHTML 
 								+ '</' + c.nodeName + '>');
+					}
+					else if (c.nodeType == 3) {
+						chunks.push('<p>' + c.nodeValue + '</p>');
 					}
 				});
 				if (chunks.length == 0) {
@@ -262,30 +265,23 @@ riot.Popup = Class.create();
 riot.Popup.prototype = {
 	initialize: function(title, content, ok, help) {
 		this.ok = ok;
-		this.overlay = Element.create('div', {id: 'riot-overlay', style: {display: 'none', position: 'absolute', top: 0, left: 0, width: '100%'}});
-		this.div = Element.create('div', {id: 'riot-popup'},
-			help ? Element.create('div', {className: 'riot-help-button', onclick: help}) : null, 
-			this.closeButton = Element.create('div', {className: 'riot-close-button', onclick: this.close.bind(this)}), 
-			Element.create('div', {className: 'headline'}, title), 
+		this.overlay = RBuilder.node('div', {id: 'riot-overlay', style: {display: 'none'}});
+		this.div = RBuilder.node('div', {id: 'riot-popup', style: {position: 'absolute'}},
+			help ? RBuilder.node('div', {className: 'riot-help-button', onclick: help}) : null, 
+			this.closeButton = RBuilder.node('div', {className: 'riot-close-button', onclick: this.close.bind(this)}), 
+			RBuilder.node('div', {className: 'headline'}, title), 
 			this.content = content,
-			this.okButton = Element.create('div', {className: 'button-ok', onclick: ok}, 'Ok')
+			this.okButton = RBuilder.node('div', {className: 'button-ok', onclick: ok}, 'Ok')
 		);
-		Element.hide(this.div);
+		RElement.makeInvisible(this.div);
 		document.body.appendChild(this.overlay);
 		document.body.appendChild(this.div);
-		Element.invisible(this.div);
-		Element.show(this.div);
-		Viewport.center(this.div);
-	},
-	
-	resizeOverlay: function() {
-		this.overlay.style.height = Viewport.getPageHeight() + 'px';
 	},
 	
 	hideElements: function(name) {
 		$A(document.getElementsByTagName(name)).each(function (e) {
 			if (!Element.childOf(e, this.div)) {
-				Element.invisible(e);
+				RElement.makeInvisible(e);
 				e.hidden = true;
 			}
 		});
@@ -294,7 +290,7 @@ riot.Popup.prototype = {
 	showElements: function(name) {
 		$A(document.getElementsByTagName(name)).each(function (e) {
 			if (e.hidden) {
-				Element.visible(e);
+				RElement.makeVisible(e);
 				e.hidden = false;
 			}
 		});
@@ -304,13 +300,22 @@ riot.Popup.prototype = {
 		if (browserInfo.ie) this.hideElements('select');
 		this.hideElements('object');
 		this.hideElements('embed');
+
+		var top = Math.round(Viewport.getInnerHeight() / 2 - this.div.clientHeight / 2);
+		var left = Math.round(Viewport.getInnerWidth() / 2 - this.div.clientWidth / 2);
 		
-		this.resizeOverlay();
+		Element.hide(this.div);
+		this.div.style.position = '';
+		if (Element.getStyle(this.div, 'position') != 'fixed') {
+			top += Viewport.getScrollTop();
+			left += Viewport.getScrollLeft();
+		}
+		this.div.style.top = top + 'px';
+		this.div.style.left = left + 'px';
+
 		Element.show(this.overlay);
-		
-		Viewport.center(this.div);
-		Element.visible(this.div);
-		
+		RElement.makeVisible(this.div);
+		Element.show(this.div);
 		this.isOpen = true;
 	},
 		
@@ -318,10 +323,8 @@ riot.Popup.prototype = {
 		if (browserInfo.ie) this.showElements('select');
 		this.showElements('object');
 		this.showElements('embed');
-		
 		Element.remove(this.div);
 		Element.remove(this.overlay);
-		
 		this.isOpen = false;
 	}
 }
@@ -329,7 +332,7 @@ riot.Popup.prototype = {
 riot.TextareaPopup = riot.Popup.extend({
 
 	initialize: function(editor) {
-		this.textarea = Element.create('textarea', {value: editor.text || ''}),
+		this.textarea = RBuilder.node('textarea', {value: editor.text || ''}),
 		this.SUPER('${editor-popup.title}', this.textarea, editor.save.bind(editor), editor.help);
 	},
 	
@@ -350,7 +353,8 @@ riot.TinyMCEPopup = riot.TextareaPopup.extend({
 		if (this.textarea.value == '') {
 			this.textarea.value = '<p>&nbsp;</p>';
 		}
-		Element.invisible(this.textarea);
+		RElement.makeInvisible(this.textarea);
+		this.textarea.style.position = 'absolute';
 		riot.initTinyMCE();
 		Resources.waitFor('tinyMCELang["lang_theme_block"]', 
 				this.addMCEControl.bind(this));
@@ -363,6 +367,7 @@ riot.TinyMCEPopup = riot.TextareaPopup.extend({
 
 	close: function() {
 		tinyMCE.instances = tinyMCE.instances.without(tinyMCE.selectedInstance);
+		tinyMCE.selectedInstance = null;
 		this.SUPER();
 	},
 	
@@ -440,7 +445,7 @@ riot.stylesheetMaker = {
 				Object.extend(styles, this.getStyles(p, props));
 			}
 			if (selector == 'body') {
-				styles['background-color'] = Element.getBackgroundColor(p);
+				styles['background-color'] = Styles.getBackgroundColor(p);
 			}
 			this.addRule(selector, styles, sheet);
 		}
@@ -465,7 +470,7 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	var e = riot.activeEditor.element;
 	var clone = e.cloneNode(false);
 	Element.hide(clone);
-	Element.insertBefore(clone, e);
+	RElement.insertBefore(clone, e);
 	riot.stylesheetMaker.copyStyles(clone, doc, riot.tinyMCEStyles);
 	Element.remove(clone);
 	
@@ -473,7 +478,7 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	
 	// Add a print margin ...
 
-	var bg = Element.getBackgroundColor(e).parseColor();
+	var bg = Styles.getBackgroundColor(e).parseColor();
 	var brightness = 0;
 	$R(0,2).each(function(i) { brightness += parseInt(bg.slice(i*2+1,i*2+3), 16) });
 	brightness /= 3;
