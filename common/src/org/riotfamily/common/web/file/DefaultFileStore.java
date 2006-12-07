@@ -160,7 +160,7 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 		uri.append('/').append(f.getName());
 		
 		if (overwriteFiles && appendTimestampParam) {
-			uri.append("?t=").append(System.currentTimeMillis());
+			uri.append("?").append(System.currentTimeMillis());
 		}
 		return uri.toString();
 	}

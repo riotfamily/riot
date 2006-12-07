@@ -26,10 +26,28 @@ package org.riotfamily.forms.element.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.devlib.schmidt.imageinfo.ImageInfo;
+import org.riotfamily.common.markup.Html;
+import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.forms.Element;
 import org.riotfamily.forms.bind.EditorBinder;
+import org.riotfamily.forms.element.ContentElement;
+import org.riotfamily.forms.element.DHTMLElement;
+import org.riotfamily.forms.element.support.AbstractElement;
+import org.riotfamily.forms.element.support.image.ImageCropper;
 import org.riotfamily.forms.error.ErrorUtils;
+import org.riotfamily.forms.resource.Resources;
+import org.riotfamily.forms.resource.ScriptResource;
+import org.riotfamily.forms.resource.ScriptSequence;
+import org.riotfamily.forms.template.TemplateUtils;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.ServletRequestUtils;
 
 /**
  * Specialized FileUpload element for image uploads.
@@ -48,7 +66,7 @@ public class ImageUpload extends FileUpload {
 	
 	private int maxHeight;
 	
-	private String validFormats;
+	private String validFormats = "GIF,JPEG,PNG";
 
 	private String widthProperty;
 	
@@ -56,37 +74,56 @@ public class ImageUpload extends FileUpload {
 	
 	private ImageInfo info;
 	
-	public void setHeight(int height) {
-		this.height = height;
+	private ImageCropper cropper;
+	
+	private File croppedFile;
+	
+	public ImageUpload() {
+		addResource(new ScriptSequence(new ScriptResource[] {
+			Resources.PROTOTYPE, 
+			Resources.SCRIPTACULOUS_SLIDER,
+			new ScriptResource("riot-js/image-cropper.js", "Cropper")	
+		}));
 	}
 
-
-	public void setMaxHeight(int maxHeight) {
-		this.maxHeight = maxHeight;
+	protected Element createPreviewElement() {
+		return new PreviewElement();
 	}
-
-
-	public void setMaxWidth(int maxWidth) {
-		this.maxWidth = maxWidth;
-	}
-
-
-	public void setMinHeight(int minHeight) {
-		this.minHeight = minHeight;
-	}
-
-
-	public void setMinWidth(int minWidth) {
-		this.minWidth = minWidth;
-	}
-
-
-	public void setValidFormats(String validFormats) {
-		this.validFormats = validFormats;
+	
+	public void setCropper(ImageCropper cropper) {
+		this.cropper = cropper;
 	}
 
 	public void setWidth(int width) {
 		this.width = width;
+		setMinWidth(width);
+		setMaxWidth(width);
+	}
+	
+	public void setHeight(int height) {
+		this.height = height;
+		setMinHeight(height);
+		setMaxHeight(height);
+	}
+
+	public void setMinWidth(int minWidth) {
+		this.minWidth = minWidth;
+	}
+	
+	public void setMaxWidth(int maxWidth) {
+		this.maxWidth = maxWidth;
+	}
+	
+	public void setMinHeight(int minHeight) {
+		this.minHeight = minHeight;
+	}
+	
+	public void setMaxHeight(int maxHeight) {
+		this.maxHeight = maxHeight;
+	}
+
+	public void setValidFormats(String validFormats) {
+		this.validFormats = validFormats;
 	}
 
 	public String getHeightProperty() {
@@ -109,6 +146,25 @@ public class ImageUpload extends FileUpload {
 		return true; 
 	}
 	
+	protected void cropImage(int width, int height, int x, int y, 
+			int scaledWidth) throws IOException {
+		
+		if (croppedFile == null) {
+			croppedFile = File.createTempFile("000", ".tmp");
+		}
+		cropper.cropImage(getFile(), croppedFile, width, height, x, y, 
+				scaledWidth);
+		
+		setFile(croppedFile);
+	}
+	
+	protected void destroy() {
+		super.destroy();
+		if (croppedFile != null && !croppedFile.equals(getReturnedFile())) {
+			croppedFile.delete();
+		}
+	}
+	
 	protected void validateFile(File file) {
 		try {
 			info = new ImageInfo();
@@ -119,7 +175,8 @@ public class ImageUpload extends FileUpload {
 			
 			if (validFormats != null) {
 				if (validFormats.indexOf(info.getFormatName()) == -1) {
-					ErrorUtils.reject(this, "image.invalidFormat", validFormats);
+					ErrorUtils.reject(this, "image.invalidFormat", 
+					new Object[] {  validFormats, info.getFormatName() });
 				}
 			}
 			int imageHeight = info.getHeight();
@@ -170,6 +227,96 @@ public class ImageUpload extends FileUpload {
 			}
 		}
 		return super.getValue();
+	}
+	
+	public class PreviewElement extends AbstractElement 
+			implements ContentElement, DHTMLElement {
+
+
+		protected void renderInternal(PrintWriter writer) {
+			int w = maxWidth > 0 ? maxWidth : 150;
+			int h = (maxHeight > 0 ? maxHeight : 100) + 50;
+			new TagWriter(writer).start(Html.DIV)
+					.attribute(Html.COMMON_ID, getId())
+					.attribute(Html.COMMON_STYLE, 
+					"width:" + w + "px;height:" + h + "px").end();
+		}
+		
+		private int getIntParameter(HttpServletRequest request, String name) {
+			return ServletRequestUtils.getIntParameter(request, name, 0);
+		}
+		
+		public void handleContentRequest(HttpServletRequest request,
+				HttpServletResponse response) throws IOException {
+			
+			if (isPresent()) {
+				if ("crop".equals(request.getParameter("action"))) {
+					cropImage(
+							getIntParameter(request, "width"), 
+							getIntParameter(request, "height"),
+							getIntParameter(request, "x"), 
+							getIntParameter(request, "y"),
+							getIntParameter(request, "scaledWidth"));
+					
+					response.getWriter().print(getCroppedImageUrl());
+				}
+				else {
+					ServletUtils.setNoCacheHeaders(response);
+					response.setHeader("Content-Type", getContentType());
+					response.setContentLength(getSize().intValue());
+					FileCopyUtils.copy(new FileInputStream(getFile()), 
+							response.getOutputStream());
+				}
+			}
+			else {
+				response.sendError(HttpServletResponse.SC_NO_CONTENT);
+			}
+		}
+		
+		public String getImageUrl() {
+			if (isPresent()) {
+				return getFormContext().getContentUrl(this) 
+						+ "&time=" + System.currentTimeMillis();
+			}
+			return null;
+		}
+		
+		public String getCropUrl() {
+			if (cropper == null) {
+				return null;
+			}
+			return getFormContext().getContentUrl(this) + "&action=crop";
+		}
+		
+		public String getCroppedImageUrl() {
+			return getFormContext().getContentUrl(this) 
+					+ "&cropped=true&time=" + System.currentTimeMillis();
+		}
+		
+		public String getInitScript() {
+			return TemplateUtils.getInitScript(this);
+		}
+
+		public String getPrecondition() {
+			return "Cropper";
+		}
+		
+		public int getMinWidth() {
+			return minWidth;
+		}
+		
+		public int getMaxWidth() {
+			return maxWidth;
+		}
+		
+		public int getMinHeight() {
+			return minHeight;
+		}
+		
+		public int getMaxHeight() {
+			return maxHeight;
+		}
+
 	}
 
 }

@@ -34,23 +34,24 @@ import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.thumbnail.Thumbnailer;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.file.FileStore;
+import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ajax.JavaScriptEvent;
 import org.riotfamily.forms.ajax.JavaScriptEventAdapter;
 import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.bind.EditorBinder;
 import org.riotfamily.forms.element.ContentElement;
-import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.CompositeElement;
 import org.riotfamily.forms.element.support.TemplateElement;
 import org.riotfamily.forms.error.ErrorUtils;
 import org.riotfamily.forms.fileupload.UploadStatus;
+import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.resource.StylesheetResource;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -66,10 +67,6 @@ public class FileUpload extends CompositeElement implements Editor,
 
 	private Collection resources = new LinkedList();
 
-	private UploadElement upload = new UploadElement();
-
-	private PreviewElement preview = new PreviewElement();
-
 	private String filenameProperty;
 
 	private String contentTypeProperty;
@@ -80,14 +77,13 @@ public class FileUpload extends CompositeElement implements Editor,
 	
 	private FileStore fileStore;
 	
-	private Thumbnailer thumbnailer;
-		
 	private String uri;
 	
 	private File file;
 	
 	private File tempFile;
 
+	private File returnedFile;
 	
 	private String fileName;
 
@@ -97,20 +93,24 @@ public class FileUpload extends CompositeElement implements Editor,
 
 
 	public FileUpload() {
-		addComponent(upload);
+		addComponent(new UploadElement());
 		addComponent(new RemoveButton());
-		addComponent(preview);
+		addComponent(createPreviewElement());
 		setSurroundBySpan(true);
-		resources.add(new StylesheetResource("form/fileupload/progress.css"));
-		resources.add(new ScriptResource("form/fileupload/upload.js"));
+		addResource(new StylesheetResource("form/fileupload/progress.css"));
+		addResource(new ScriptResource("form/fileupload/upload.js"));
+	}
+	
+	protected void addResource(FormResource resource) {
+		resources.add(resource);
+	}
+	
+	protected Element createPreviewElement() {
+		return new PreviewElement();
 	}
 	
 	public FileStore getFileStore() {
 		return this.fileStore;
-	}
-
-	public void setThumbnailer(Thumbnailer thumbnailer) {
-		this.thumbnailer = thumbnailer;
 	}
 
 	public void setFileStore(FileStore fileStore) {
@@ -160,6 +160,20 @@ public class FileUpload extends CompositeElement implements Editor,
 		return this.file;
 	}
 	
+	protected void setFile(File file) {
+		this.file = file;
+		this.size = new Long(file.length());
+		revalidate();
+	}
+	
+	protected File getTempFile() {
+		return tempFile;
+	}
+	
+	protected File getReturnedFile() {
+		return returnedFile;
+	}
+	
 	protected void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
@@ -174,26 +188,6 @@ public class FileUpload extends CompositeElement implements Editor,
 		}
 		return mimetypesMap.getContentType(file);
 	}
-	
-	public boolean isWebImage() {
-		return contentType != null && (
-				contentType.equals("image/gif") || 
-				contentType.equals("image/jpeg") ||
-				contentType.equals("image/pjpeg") ||
-				contentType.equals("image/jpg") ||
-				contentType.equals("image/x-png") ||
-				contentType.equals("image/png"));
-	}
-	
-	public boolean isPreviewAvailable() {
-		return isWebImage() || (thumbnailer != null && contentType != null
-				&& thumbnailer.supports(contentType)); 
-	}
-	
-	public UploadElement getUpload() {
-		return upload;
-	}
-	
 
 	public void setValue(Object value) {
 		log.debug("Value set to: " + value);
@@ -214,12 +208,13 @@ public class FileUpload extends CompositeElement implements Editor,
 			uri = null;
 			file = (File) value;
 		}
-		
-		tempFile = null;
-		
+				
 		EditorBinder editorBinder = getEditorBinding().getEditorBinder();
 		if (filenameProperty != null) {
 			fileName = (String) editorBinder.getPropertyValue(filenameProperty);
+		}
+		else {
+			fileName = file.getName();
 		}
 		
 		if (contentTypeProperty != null) {
@@ -244,11 +239,18 @@ public class FileUpload extends CompositeElement implements Editor,
 		}
 		
 		if (fileStore != null) {
-			if (tempFile != null) {
+			File originalFile = uri != null ? fileStore.retrieve(uri) : null;
+			if (!ObjectUtils.nullSafeEquals(originalFile, file)) {
 				try {
-					uri = fileStore.store(tempFile, fileName, uri);
-					tempFile = null;
-					file = fileStore.retrieve(uri);
+					if (file != null) {
+						uri = fileStore.store(file, fileName, uri);
+						file = fileStore.retrieve(uri);	
+						returnedFile = file;
+					}
+					else if (uri != null) {
+						fileStore.delete(uri);
+						uri = null;
+					}
 				}
 				catch (IOException e) {
 					throw new RuntimeException("Failed to store file: "
@@ -258,14 +260,22 @@ public class FileUpload extends CompositeElement implements Editor,
 			return uri;
 		}
 		else {
-			if (tempFile != null) {
-				file = tempFile;
-				tempFile = null;
-			}
+			returnedFile = file;
 			return file;
 		}
 	}
 
+	protected void destroy() {
+		if (tempFile != null && !tempFile.equals(returnedFile)) {
+			tempFile.delete();
+		}
+	}
+	
+	protected final void finalize() throws Throwable {
+		super.finalize();
+		destroy();
+	}
+	
 	protected final void validate() {
 		if (isRequired() && file == null) {
 			ErrorUtils.rejectRequired(this);
@@ -330,11 +340,7 @@ public class FileUpload extends CompositeElement implements Editor,
 						multipartFile.transferTo(tempFile);
 						log.debug("stored at: " + tempFile.getAbsolutePath());
 						
-						file = tempFile;
-						
-						size = new Long(tempFile.length());
-						
-						validateFile(file);
+						setFile(tempFile);
 						
 						log.debug("File uploaded: " + fileName + " (" 
 								+ contentType + ")");
@@ -386,8 +392,6 @@ public class FileUpload extends CompositeElement implements Editor,
 
 		protected void onClick() {
 			file = null;
-			tempFile = null;
-			uri = null;
 			ErrorUtils.removeErrors(FileUpload.this);
 			if (getFormListener() != null) {
 				getFormListener().elementChanged(FileUpload.this);			
@@ -406,7 +410,7 @@ public class FileUpload extends CompositeElement implements Editor,
 	}
 	
 	public class PreviewElement extends TemplateElement 
-			implements ContentElement, DHTMLElement {
+			implements ContentElement {
 
 		public PreviewElement() {
 			setAttribute("file", FileUpload.this);
@@ -417,33 +421,23 @@ public class FileUpload extends CompositeElement implements Editor,
 			
 			if (file != null && file.exists()) {
 				response.setDateHeader("Expires", 0);
-				response.setContentType(contentType);
-				if (thumbnailer != null && thumbnailer.supports(contentType)) {
-					thumbnailer.renderThumbnail(file, contentType, 
-							response.getOutputStream());
-				}
-				else {
-					response.setContentLength(size.intValue());
-					FileCopyUtils.copy(new FileInputStream(file), 
-							response.getOutputStream());
-				}
+				response.setHeader("Content-Type", "application/x-download");
+		        response.setHeader("Content-Disposition", 
+		        		"attachment;filename=" + fileName);
+		        
+				response.setContentLength(size.intValue());
+				FileCopyUtils.copy(new FileInputStream(file), 
+						response.getOutputStream());
 			}
 			else {
 				response.sendError(HttpServletResponse.SC_NO_CONTENT);
 			}
 		}
 		
-		public String getPreviewUrl() {
+		public String getDownloadUrl() {
 			return getFormContext().getContentUrl(this);
 		}
 
-		public String getInitScript() {
-			return "initPreview('" + getId() + "', '" + getPreviewUrl() + "')";
-		}
-		
-		public String getPrecondition() {
-			return "initPreview";
-		}
 	}
 
 

@@ -227,8 +227,11 @@
 			</bean>
 		</property>
 		<property name="mimetypesMap" ref="fileTypeMap" />
+		<property name="imageCropper" ref="imageCropper" />
 		<property name="customElements" ref="customFormElements" />
 	</bean>
+	
+	<bean id="imageCropper" class="org.riotfamily.forms.element.support.image.ImageMagickCropperFactoryBean" />
 		
 	<bean id="editorRepository" class="org.riotfamily.riot.editor.xml.XmlEditorRepository">
 		<property name="configLocations">

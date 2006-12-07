@@ -37,6 +37,9 @@ public final class Resources {
 	public static final ScriptResource SCRIPTACULOUS_DRAG_DROP = 
 			new ScriptResource("scriptaculous/dragdrop.js", "Droppables");
 	
+	public static final ScriptResource SCRIPTACULOUS_SLIDER = 
+			new ScriptResource("scriptaculous/slider.js", "Control.Slider");
+	
 	public static final ScriptSequence SCRIPTACULOUS_DRAG_DROP_SEQ =
 			new ScriptSequence(new ScriptResource[] {
 				PROTOTYPE, SCRIPTACULOUS_EFFECTS, SCRIPTACULOUS_DRAG_DROP 
@@ -49,6 +52,6 @@ public final class Resources {
 			new ScriptResource("riot-js/number-input.js");
 	
 	public static final ScriptResource RIOT_IMAGE_CHECKBOX = 
-		new ScriptResource("riot-js/image-checkbox.js");
+			new ScriptResource("riot-js/image-checkbox.js");
 
 }

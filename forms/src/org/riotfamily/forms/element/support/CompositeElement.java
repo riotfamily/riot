@@ -118,9 +118,17 @@ public abstract class CompositeElement extends AbstractEditorBase {
 	public void processRequest(HttpServletRequest request) {
 		processRequestInternal(request);		
 		processRequestCompontents(request);
-		validate();
+		revalidate();
 	}
 
+	protected final void revalidate() {
+		getForm().getErrors().removeErrors(this);
+		validate();
+	}
+	
+	protected void validate() {		
+	}
+	
 	/**
 	 * Processes the request for all the components
 	 */
@@ -156,9 +164,6 @@ public abstract class CompositeElement extends AbstractEditorBase {
 	protected void processRequestInternal(HttpServletRequest request) {
 	}
 
-	protected void validate() {		
-	}
-	
 	protected boolean isSurroundBySpan() {
 		return this.surroundBySpan;
 	}

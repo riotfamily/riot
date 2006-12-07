@@ -21,40 +21,17 @@
  *   Felix Gnass <fgnass@neteye.de>
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.io;
+package org.riotfamily.forms.element.support.image;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- * FileInputStream that deletes the underlying file when the stream is
- * closed or finalized. 
+ * @author Felix Gnass <fgnass@neteye.de>
  */
-public class TempFileInputStream extends FileInputStream {
+public interface ImageCropper {
 
-	private File file;
-
-	public TempFileInputStream(File file) throws FileNotFoundException {
-		super(file);
-		this.file = file;
-	}
-
-	public void close() throws IOException {
-		super.close();
-		deleteFile();
-	}
-
-	protected void finalize() throws IOException {
-		super.finalize();
-		deleteFile();
-	}
-
-	private void deleteFile() {
-		if (file.exists()) {
-			file.delete();
-		}
-	}
-
+	public void cropImage(File source, File dest, int width, int height,
+			int x, int y, int scaledWidth) throws IOException;
+	
 }

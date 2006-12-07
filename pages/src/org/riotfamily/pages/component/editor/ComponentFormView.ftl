@@ -26,18 +26,23 @@
 				}
 			}
 			
-			Event.observe(window, 'load', function() {
-				var p = parent.riot.popup;
-				if (!p.isOpen) {
-					var h = Math.min(
-							Math.round(Viewport.getInnerHeight(parent) * 0.8), 
-							Viewport.getBodyHeight());
-					
-					p.content.style.height = h + 'px';
-					p.open();
-				}
-			});
-			
+			if (parent && parent.riot) {
+				Event.observe(window, 'load', function() {
+					var p = parent.riot.popup;
+					if (!p.isOpen) {
+						var h = Math.min(
+								Math.round(Viewport.getInnerHeight(parent) * 0.8), 
+								Viewport.getBodyHeight());
+						
+						p.content.style.height = h + 'px';
+						
+						var w = Math.max(600, Viewport.getBodyWidth() + 32);						
+						p.div.style.width = w + 'px';
+						
+						p.open();
+					}
+				});
+			}			
 		</script>
 	</head>
 	<body>

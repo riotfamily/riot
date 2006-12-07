@@ -41,6 +41,12 @@ public final class ServletUtils {
 	public static final String INCLUDE_URI_REQUEST_ATTRIBUTE = 
 			"javax.servlet.include.request_uri";
 
+	private static final String PRAGMA_HEADER = "Pragma";
+
+	private static final String EXPIRES_HEADER = "Expires";
+
+	private static final String CACHE_CONTROL_HEADER = "Cache-Control";
+	
 	public static final String REQUESTED_WITH_HEADER = "X-Requested-With";
 	
 	public static final String XML_HTTP_REQUEST = "XMLHttpRequest";
@@ -200,6 +206,17 @@ public final class ServletUtils {
 	 */
 	public static boolean isXmlHttpRequest(HttpServletRequest request) {
 		return XML_HTTP_REQUEST.equals(request.getHeader(REQUESTED_WITH_HEADER));
+	}
+	
+	/**
+	 * Sets Pragma, Expires and Cache-Control headers to prevent caching.
+	 * @since 6.4
+	 */
+	public static void setNoCacheHeaders(HttpServletResponse response) {
+		response.setHeader(PRAGMA_HEADER, "No-cache");
+		response.setDateHeader(EXPIRES_HEADER, 1L);
+		response.setHeader(CACHE_CONTROL_HEADER, "no-cache");
+		response.addHeader(CACHE_CONTROL_HEADER, "no-store");
 	}
 
 }

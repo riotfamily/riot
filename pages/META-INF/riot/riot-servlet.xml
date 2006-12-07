@@ -25,6 +25,7 @@
 				<prop key="plugins">smartquotes,autocleanup,nospam</prop>
 				<prop key="smartquotes_quoteStyle">de</prop>
 				<prop key="smartquotes_cleanup">false</prop>
+				<prop key="gecko_spellcheck">true</prop>
 				<prop key="valid_elements">+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote,sub,sup,span[class&lt;mailto]</prop>
 				<prop key="theme_advanced_container_buttons1">formatselect,bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap</prop>
 				<prop key="theme_advanced_blockformats">p,h3,h4</prop>
@@ -39,6 +40,8 @@
 		<property name="config" value="/WEB-INF/pages-config/component-forms.xml" />
 		<property name="customElements" ref="customFormElements" />
 		<property name="defaultBeanClass" value="java.util.HashMap" />
+		<property name="mimetypesMap" ref="fileTypeMap" />
+		<property name="imageCropper" ref="imageCropper" />
 	</bean>
 	
 	<!-- 

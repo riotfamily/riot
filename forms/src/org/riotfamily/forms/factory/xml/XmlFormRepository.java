@@ -36,6 +36,7 @@ import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.common.xml.DocumentReader;
 import org.riotfamily.common.xml.ValidatingDocumentReader;
+import org.riotfamily.forms.element.support.image.ImageCropper;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.support.AbstractFormRepository;
 import org.springframework.beans.factory.BeanFactory;
@@ -65,6 +66,8 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	private Class defaultBeanClass;
 	
 	private MimetypesFileTypeMap mimetypesMap;
+	
+	private ImageCropper imageCropper;
 	
 	public void setConfig(Resource config) {
 		setConfigLocations(new Resource[] { config });
@@ -113,6 +116,14 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	
 	public MimetypesFileTypeMap getMimetypesMap() {
 		return this.mimetypesMap;
+	}
+	
+	public ImageCropper getImageCropper() {
+		return this.imageCropper;
+	}
+
+	public void setImageCropper(ImageCropper imageCropper) {
+		this.imageCropper = imageCropper;
 	}
 
 	public final void afterPropertiesSet() throws Exception {

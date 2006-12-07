@@ -29,16 +29,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.util.CommandUtils;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.util.StringUtils;
 
 public class ImageMagickThumbnailer implements Thumbnailer {
 
-	private static Log log = LogFactory.getLog(ImageMagickThumbnailer.class);
-	
-	private String convertCommand = "/usr/bin/convert";
+	private String convertCommand = "convert";
 	
 	private int maxWidth;
 	
@@ -111,19 +107,15 @@ public class ImageMagickThumbnailer implements Thumbnailer {
 				source.getParentFile());
 		
 		try {
-			if (convert(source, dest)) {
-				FileCopyUtils.copy(new FileInputStream(dest), out);
-			}
-			else {
-				throw new IOException("Failed to create thumbnail.");
-			}
+			convert(source, dest);
+			FileCopyUtils.copy(new FileInputStream(dest), out);
 		}
 		finally {
 			dest.delete();
 		}
 	}
 	
-	private boolean convert(File source, File dest) throws IOException {
+	private void convert(File source, File dest) throws IOException {
 		ArrayList cmd = new ArrayList();
 		cmd.add(convertCommand);
 		cmd.add(source.getAbsolutePath());
@@ -153,20 +145,7 @@ public class ImageMagickThumbnailer implements Thumbnailer {
 		cmd.add("-colorspace");
 		cmd.add("RGB");
 		cmd.add(dest.getAbsolutePath());
-		return exec(StringUtils.toStringArray(cmd));
-	}
-
-
-	private boolean exec(String[] command) throws IOException {
-		log.debug(StringUtils.arrayToDelimitedString(command, " "));
-		Process proc = Runtime.getRuntime().exec(command);
-		try {
-			int exitStatus = proc.waitFor();
-			return exitStatus == 0;
-		}
-		catch (InterruptedException e) {
-			return false;
-		}
+		CommandUtils.exec(cmd);
 	}
 
 }

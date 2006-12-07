@@ -39,16 +39,14 @@ import org.springframework.validation.FieldError;
 
 public class FormErrors extends AbstractBindingResultSupport {	
 	
-	private static final String GENERAL_FORM_ERROR_MESSAGE_KEY = "error.form.hasErrors";
+	private static final String GENERAL_FORM_ERROR_MESSAGE_KEY = 
+			"error.form.hasErrors";
 	
-	private static final String GENERAL_FORM_ERROR_DEFAULT_MESSAGE = "Form has an error";
+	private static final String GENERAL_FORM_ERROR_DEFAULT_MESSAGE = 
+			"Please correct the error(s) below.";
 	
 	private Form form;
 	
-	private String generalFormErrorMessageKey = GENERAL_FORM_ERROR_MESSAGE_KEY;
-	
-	private String generalFormErrorDefaultMessage = GENERAL_FORM_ERROR_DEFAULT_MESSAGE;
-
 	public FormErrors(Form form) {
 		super(form.getId());		
 		this.form = form;
@@ -56,15 +54,6 @@ public class FormErrors extends AbstractBindingResultSupport {
 				.getMessageCodesResolver());		
 	}	
 	
-	public void setGeneralFormErrorDefaultMessage(
-			String generalFormErrorDefaultMessage) {
-		this.generalFormErrorDefaultMessage = generalFormErrorDefaultMessage;
-	}
-	
-	public void setGeneralFormErrorMessageKey(String generalFormErrorMessageKey) {
-		this.generalFormErrorMessageKey = generalFormErrorMessageKey;
-	}
-
 	public Object getTarget() {
 		return form.getBackingObject();
 	}	
@@ -113,13 +102,9 @@ public class FormErrors extends AbstractBindingResultSupport {
 	}
 	
 	public String getGeneralFormError() {
-		return getGeneralFormError(null);
-	}
-	
-	public String getGeneralFormError(Object[] args) {
 		return form.getFormContext().getMessageResolver().getMessage(
-					generalFormErrorMessageKey, args, 
-					generalFormErrorDefaultMessage);
+				GENERAL_FORM_ERROR_MESSAGE_KEY, null, 
+				GENERAL_FORM_ERROR_DEFAULT_MESSAGE);
 	}
 	
 	public boolean hasErrors(Element element) {

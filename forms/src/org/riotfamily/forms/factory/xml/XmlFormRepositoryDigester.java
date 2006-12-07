@@ -318,6 +318,10 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			}
 		}
 		
+		if (ImageUpload.class.isAssignableFrom(elementClass)) {
+			pvs.addPropertyValue("cropper", formRepository.getImageCropper()); 
+		}
+		
 		//TODO We should consider adding a common interface ...
 		if (ListEditor.class.isAssignableFrom(elementClass)
 				|| MapEditor.class.isAssignableFrom(elementClass)) {

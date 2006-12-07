@@ -36,6 +36,18 @@ Viewport.getPageHeight = function(w) {
 	return bodyHeight < windowHeight ? windowHeight : bodyHeight;
 }
 
+Viewport.getBodyWidth = function(w) {
+	if (!w) var w = window;
+	var d = w.document;
+	if (w.innerWidth && w.scrollMaxX) {	
+		return w.innerWidth + w.scrollMaxX;
+	} 
+	if (d.body.scrollWidth > d.body.offsetWidth) { 
+		return d.body.scrollWidth;
+	} 
+	return d.body.offsetWidth;
+}
+
 Viewport.getBodyHeight = function(w) {
 	if (!w) var w = window;
 	var d = w.document;
@@ -43,10 +55,8 @@ Viewport.getBodyHeight = function(w) {
 		return w.innerHeight + w.scrollMaxY;
 	} 
 	if (d.body.scrollHeight > d.body.offsetHeight) { 
-		// all but Explorer Mac
 		return d.body.scrollHeight;
 	} 
-	// Explorer Mac... would also work in Explorer 6 Strict, Mozilla and Safari
 	return d.body.offsetHeight;
 }
 
