@@ -37,7 +37,7 @@ riot.Component.prototype = {
 	
 	setMode: function(mode) {
 		if (mode == null) {
-			Element.stopHighlighting(this.element);
+			RElement.stopHighlighting(this.element);
 			if (isSet(this.mode)) {
 				Event.stopObserving(this.element, 'click', this.handlers[this.mode]);
 			}
@@ -47,7 +47,7 @@ riot.Component.prototype = {
 				this.mode = null;
 				return;
 			}
-			Element.hoverHighlight(this.element, 'riot-highlight');
+			RElement.hoverHighlight(this.element, 'riot-highlight');
 			Event.observe(this.element, 'click', this.handlers[mode]);
 		}
 		this.mode = mode;
@@ -96,7 +96,7 @@ riot.Component.prototype = {
 		Element.removeClassName(this.element, 'riot-highlight');
 		if (this.formId) {
 			var formUrl = riot.path + '/pages/form/' + this.id + '?instantPublish=' + riot.toolbar.instantPublishMode;
-			var iframe = Element.create('iframe', {	src: formUrl, className: 'properties', height: '1px' });
+			var iframe = RBuilder.node('iframe', {	src: formUrl, className: 'properties', width: 1, height: 1});
 			riot.popup = new riot.Popup('${properties-inspector.title}', iframe, function() {
 				var win = iframe.contentWindow ? iframe.contentWindow : iframe.window;
 				win.save();
@@ -115,19 +115,19 @@ riot.Component.prototype = {
 	},
 	
 	repaint: function() {
-		var next = Element.getNextSiblingElement(this.element);
-		if (next != null) {	Element.repaint(next); }
+		var next = RElement.getNextSiblingElement(this.element);
+		if (next != null) {	RElement.repaint(next); }
 	},
 	
 	setupElement: function() {
 		this.editors = [];
-		var desc = Element.getDescendants(this.element);
+		var desc = RElement.getDescendants(this.element);
 		for (var i = 0; i < desc.length; i++) {
 			var e = desc[i];
 			try {
 				var editorType = e.getAttribute('riot:editorType');
 				if (editorType) {
-					var componentElement = Element.getAncestorWithClassName(e, 'riot-component');
+					var componentElement = RElement.getAncestorWithClassName(e, 'riot-component');
 					if (componentElement == this.element) {
 						if (editorType == 'text' || editorType == 'multiline') {
 							this.editors.push(new riot.InplaceTextEditor(e, this, {multiline: true}));
@@ -157,7 +157,7 @@ riot.Component.prototype = {
 		if (this.type != 'inherit') {
 			document.getElementsByClassName('component-\\w*', this.element).each(function(el) {
 				el.className = el.className.replace(/component-\w*/, 'component-' + position);
-				Element.toggleClassName(el, 'last-component', last);
+				RElement.toggleClassName(el, 'last-component', last);
 			});
 		}
 	},
@@ -166,8 +166,8 @@ riot.Component.prototype = {
 		this.setHtml(infos[0].html);
 		var prevEl = this.element;
 		for (var i = 1; i < infos.length; i++) {
-			var e = Element.create('div', {className: 'riot-component'});
-			Element.insertAfter(e, prevEl);
+			var e = RBuilder.node('div', {className: 'riot-component'});
+			RElement.insertAfter(e, prevEl);
 			var c = new riot.Component(this.componentList, e);
 			c.id = infos[i].id;
 			c.editing = true;
@@ -219,8 +219,8 @@ riot.InsertButton.prototype = {
 	},
 	
 	insert: function(type) {
-		var e = Element.create('div', {className: 'riot-component'});
-		Element.insertBefore(e, this.element);
+		var e = RBuilder.node('div', {className: 'riot-component'});
+		RElement.insertBefore(e, this.element);
 		var c = new riot.Component(this.componentList, e);
 		ComponentEditor.insertComponent(this.componentList.controllerId, 
 				this.componentList.id, -1, type, null, c.created.bind(c));
@@ -236,9 +236,9 @@ riot.TypeInspector.prototype = {
 
 	initialize: function(types, activeType, onchange) {
 		this.onchange = onchange;
-		var select = Element.create('div', {className: 'type-inspector'});
+		var select = RBuilder.node('div', {className: 'type-inspector'});
 		for (var i = 0; i < types.length; i++) {
-			var e = Element.create('div', {className: 'type'}, types[i].description);
+			var e = RBuilder.node('div', {className: 'type'}, types[i].description);
 			e.type = types[i].type;
 			if (e.type == this.type) {
 				this.activeTypeButton = e;
@@ -256,9 +256,9 @@ riot.TypeInspector.prototype = {
 			select.appendChild(e);
 		}
 		
-		this.element = Element.create('div', {},
-			Element.create('div', {className: 'riot-close-button', onclick: riot.toolbar.hideInspector.bind(riot.toolbar)}), 
-			Element.create('div', {className: 'headline'}, '${type-inspector.title}'), 
+		this.element = RBuilder.node('div', {},
+			RBuilder.node('div', {className: 'riot-close-button', onclick: riot.toolbar.hideInspector.bind(riot.toolbar)}), 
+			RBuilder.node('div', {className: 'headline'}, '${type-inspector.title}'), 
 			select
 		);
 	}
@@ -269,34 +269,34 @@ riot.PublishWidget = Class.create();
 riot.PublishWidget.prototype = {
 	initialize: function(componentList) {
 		this.componentList = componentList;
-		this.element = Element.create('div', {className: 'riot-publish-widget'},
-			this.wrapper = Element.create('div', {},
-				Element.create('div', {className: 'riot-tabs'},
-					Element.create('div', {className: 'riot-tab-preview', onclick: this.showPreviewVersion.bind(this)}, 'Preview'),
-					Element.create('div', {className: 'riot-tab-live', onclick: this.showLiveVersion.bind(this)}, 'Live')
+		this.element = RBuilder.node('div', {className: 'riot-publish-widget'},
+			this.wrapper = RBuilder.node('div', {},
+				RBuilder.node('div', {className: 'riot-tabs'},
+					RBuilder.node('div', {className: 'riot-tab-preview', onclick: this.showPreviewVersion.bind(this)}, 'Preview'),
+					RBuilder.node('div', {className: 'riot-tab-live', onclick: this.showLiveVersion.bind(this)}, 'Live')
 				),
-				Element.create('div', {className: 'riot-publish-header'}, 
-					Element.create('a', {className: 'riot-publish-button', href: '#', onclick: componentList.publishChanges.bind(componentList)},
-						Element.create('span', {className: 'icon'}), 
-						Element.create('span', {className: 'text'}, '${publish-dialog.publish}')
+				RBuilder.node('div', {className: 'riot-publish-header'}, 
+					RBuilder.node('a', {className: 'riot-publish-button', href: '#', onclick: componentList.publishChanges.bind(componentList)},
+						RBuilder.node('span', {className: 'icon'}), 
+						RBuilder.node('span', {className: 'text'}, '${publish-dialog.publish}')
 					),
-					Element.create('a', {className: 'riot-discard-button', href: '#', onclick: componentList.discardChanges.bind(componentList)},
-						Element.create('span', {className: 'icon'}), 
-						Element.create('span', {className: 'text'}, '${publish-dialog.discard}')
+					RBuilder.node('a', {className: 'riot-discard-button', href: '#', onclick: componentList.discardChanges.bind(componentList)},
+						RBuilder.node('span', {className: 'icon'}), 
+						RBuilder.node('span', {className: 'text'}, '${publish-dialog.discard}')
 					)
 				)
 			)
 		);
-		this.liveElement = Element.create('div', {}, 'Retrieving live version ...');
-		this.footer = Element.create('div', {className: 'riot-publish-footer'});
+		this.liveElement = RBuilder.node('div', {}, 'Retrieving live version ...');
+		this.footer = RBuilder.node('div', {className: 'riot-publish-footer'});
 	},
 	
 	show: function() {
 		this.liveHtmlRetrieved = false;
 		this.showPreviewVersion();
-		Element.insertBefore(this.element, this.componentList.element);
-		Element.insertAfter(this.liveElement, this.element);
-		Element.insertAfter(this.footer, this.componentList.element);
+		RElement.insertBefore(this.element, this.componentList.element);
+		RElement.insertAfter(this.liveElement, this.element);
+		RElement.insertAfter(this.footer, this.componentList.element);
 	},
 	
 	hide: function() {
@@ -357,7 +357,7 @@ riot.ComponentList.prototype = {
 			var elements = document.getElementsByClassName('riot-component', this.element);
 			for (var i = 0; i < elements.length; i++) {
 				var e = elements[i];
-				var listElement = Element.getAncestorWithClassName(e, 'riot-components');
+				var listElement = RElement.getAncestorWithClassName(e, 'riot-components');
 				if (listElement == this.element) {
 					var c = e.component || new riot.Component(this, e);
 					this.components.push(c);
@@ -432,7 +432,7 @@ riot.ComponentList.prototype = {
 
 	move: function(enable) {
 		if (this.getComponents().length > 1) {
-			Element.toggleClassName(this.element, 'riot-mode-move', enable);
+			RElement.toggleClassName(this.element, 'riot-mode-move', enable);
 			if (enable) {
 				Sortable.create(this.element, {tag: 'div', only: 'riot-component', scroll: window, scrollSpeed: 20});
 				this.getComponents().each(function(component) {
@@ -455,19 +455,19 @@ riot.ComponentList.prototype = {
 	},
 
 	remove: function(enable) {
-		Element.toggleClassName(this.element, 'riot-mode-remove', enable);
+		RElement.toggleClassName(this.element, 'riot-mode-remove', enable);
 		this.getComponents().invoke('setMode', enable ? 'remove' : null);
 	},
 	
 	changeType: function(enable) {
 		if (!this.fixedType) {
-			Element.toggleClassName(this.element, 'riot-mode-changeType', enable);
+			RElement.toggleClassName(this.element, 'riot-mode-changeType', enable);
 			this.getComponents().invoke('setMode', enable ? 'changeType' : null);
 		}
 	},
 	
 	properties: function(enable) {
-		Element.toggleClassName(this.element, 'riot-mode-properties', enable);
+		RElement.toggleClassName(this.element, 'riot-mode-properties', enable);
 		this.getComponents().invoke('setMode', enable ? 'properties' : null);
 	},
 	
@@ -501,7 +501,7 @@ riot.ComponentDragObserver.prototype = {
 			var nextId = nextEl && nextEl.component ? nextEl.component.id : null;
 			ComponentEditor.moveComponent(el.component.id, nextId);
 			riot.toolbar.setDirty(this.componentList, true);
-			if (nextEl) { Element.repaint(nextEl); }
+			if (nextEl) { RElement.repaint(nextEl); }
 		}
 		this.nextEl = null;
 	}
@@ -509,7 +509,7 @@ riot.ComponentDragObserver.prototype = {
 
 riot.editProperties = function(e) {
 	e = e || this;
-	var componentElement = Element.getAncestorWithClassName(e, 'riot-component');
+	var componentElement = RElement.getAncestorWithClassName(e, 'riot-component');
 	if (componentElement && (!componentElement.component || !componentElement.component.mode)) {
 		riot.toolbar.buttons.properties.click();
 	}

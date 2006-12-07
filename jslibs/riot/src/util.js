@@ -39,25 +39,9 @@ Event.within = function(event, element) {
 	return Position.within(element, pX, pY);
 }
 
-Element.insertBefore = function(node, marker) {
-	marker.parentNode.insertBefore(node, marker);
-}
-
-Element.insertAfter = function(node, marker) {
-	var p = marker.parentNode;
-	if (marker.nextSibling) p.insertBefore(node, marker.nextSibling);
-	else p.appendChild(node);
-}
-
-Element.prependChild = function(parent, node) {
-	parent = $(parent);
-	if (parent.firstChild) parent.insertBefore(node, parent.firstChild);
-	else parent.appendChild(node);
-}
-
-Element.create = function(tag, options) {
-	var e;
-	e = document.createElement(tag);
+var RBuilder = {};
+RBuilder.node = function(tag, options) {
+	var e = Element.extend(document.createElement(tag));
 	for (var attr in options) {
 		if (attr == 'style') {
 			Element.setStyle(e, options.style);
@@ -81,133 +65,152 @@ Element.create = function(tag, options) {
         }
         e.appendChild(arg);
     }
-    
+   
 	return e;
-};
-	
-/**
- * Returns the computed runtime styles for the given element.
- */
-Element.getStyles = function(element) {
-	element = $(element);
-	var styles = {};
-	for (name in element.style) {
-		if (typeof name != 'function' && name != 'length' && name != 'parentRule') {
-			styles[name] = element.style[name]; 
-		}
-	}
-	if(document.defaultView && document.defaultView.getComputedStyle) {
-		var css = document.defaultView.getComputedStyle(element, null);
-		for (var i = 0; i < css.length; i++) {
-			var name = css.item(i);
-			var value = css.getPropertyValue(name);
-			if (value != 'auto') styles[name] = value;
-		}
-	}
-	else if(element.currentStyle) {
-		for (name in element.currentStyle) {
-			if (typeof name == 'function') continue;
-			value = element.currentStyle[name]; 
-			if (value != 'auto') styles[name] = value;
-		}
-	}
-	return styles;
-}
-	
-/**
- * 
- */
-Element.cloneStyles = function(source, target, properties) {
-	if (properties) {
-		for (var i = 0; i < properties.length; i++) {
-			target.style[properties[i].camelize()] = Element.getStyle(
-					source, properties[i]);
-		}
-	}
-	else {
-		this.setStyle(target, this.getStyles(source));
-	}
 }
 
-Element.getBackgroundColor = function(el) {
-	el = $(el);
-	var bg;
-	while (el && el.style && (!isSet(bg) || bg == 'transparent')) {
-		bg = Element.getStyle(el, 'background-color');
+var Styles = {
+	clone: function(source, target, properties) {
+		if (properties) {
+			for (var i = 0; i < properties.length; i++) {
+				target.style[properties[i].camelize()] = Element.getStyle(
+						source, properties[i]);
+			}
+		}
+		else {
+			this.setStyle(target, this.getStyles(source));
+		}
+	},
+	
+	getAll: function(element) {
+		element = $(element);
+		var styles = {};
+		for (name in element.style) {
+			if (typeof name != 'function' && name != 'length' && name != 'parentRule') {
+				styles[name] = element.style[name]; 
+			}
+		}
+		if(document.defaultView && document.defaultView.getComputedStyle) {
+			var css = document.defaultView.getComputedStyle(element, null);
+			for (var i = 0; i < css.length; i++) {
+				var name = css.item(i);
+				var value = css.getPropertyValue(name);
+				if (value != 'auto') styles[name] = value;
+			}
+		}
+		else if(element.currentStyle) {
+			for (name in element.currentStyle) {
+				if (typeof name == 'function') continue;
+				value = element.currentStyle[name]; 
+				if (value != 'auto') styles[name] = value;
+			}
+		}
+		return styles;
+	},
+	
+	getBackgroundColor: function(element) {
+		element = $(element);
+		var bg;
+		while (element && element.style && (!isSet(bg) || bg == 'transparent')) {
+			bg = Element.getStyle(element, 'background-color');
+			element = element.parentNode;
+		}
+		return bg || '#ffffff';
+	}
+}
+	
+var RElement = {
+	insertBefore: function(element, marker) {
+		marker.parentNode.insertBefore($(element), marker);
+	},
+
+	insertAfter: function(element, marker) {
+		element = $(element)
+		var p = marker.parentNode;
+		if (marker.nextSibling) p.insertBefore(element, marker.nextSibling);
+		else p.appendChild(element);
+	},
+
+	prependChild: function(element, child) {
+		element = $(element);
+		if (element.firstChild) element.insertBefore(child, element.firstChild);
+		else element.appendChild(child);
+	},
+	
+	findAncestor: function(el, iterator) {
 		el = el.parentNode;
-	}
-	return bg || '#ffffff';
-}
-				
-Element.findAncestor = function(el, iterator) {
-	el = el.parentNode;
-	while (el) {
-		if (iterator(el)) return el;
-		el = el.parentNode;		
-	}
-	return null;
-}
-
-Element.getAncestorWithClassName = function(el, className) {
-	return Element.findAncestor(el, function(a) { 
-		return Element.hasClassName(a, className);
-	});
-}
-
-Element.getDescendants = function(el) {
-	return Array.from(el.all ? el.all : el.getElementsByTagName('*'));
-}
-
-Element.getNextSiblingElement = function(el) {
-	var e = el.nextSibling;
-	while (e) {
-		if (e.nodeType == 1) return e;
-		e = e.nextSibling;
-	}
-	return null;
-}
-
-Element.invisible = function(el) {
-	$(el).style.visibility = 'hidden';
-}
-
-Element.visible = function(el) {
-	$(el).style.visibility = 'visible';
-}
-
-Element.toggleClassName = function(el, className, add) {
-	if (!isDefined(add)) add = !Element.hasClassName(el, className);
-	if (add) Element.addClassName(el, className); else Element.removeClassName(el, className);
-}
-  
-Element.repaint = function(el) {
-	var e = el || document.body;
-	var display = Element.getStyle(e, 'display');
-	e.style.display = 'none';
-	e.style.display = display;
-}
-
-Element.hoverHighlight = function(el, className) {
-	if(!isSet(el.addHighlight)) {
-		el.addHighlight = function(event) {
-			Element.addClassName(this, className);
-			if (event) Event.stop(event);
-		}.bindAsEventListener(el);
+		while (el) {
+			if (iterator(el)) return el;
+			el = el.parentNode;		
+		}
+		return null;
+	},
 		
-		el.removeHighlight = function(event) {
-			Element.removeClassName(this, className);
-			if (event) Event.stop(event);
-		}.bindAsEventListener(el);
-	}	
-	Event.observe(el, 'mouseover', el.addHighlight, false);
-	Event.observe(el, 'mouseout', el.removeHighlight, false);
-}
+	getAncestorWithClassName: function(el, className) {
+		return RElement.findAncestor($(el), function(a) { 
+			return Element.hasClassName(a, className);
+		});
+	},
 
-Element.stopHighlighting = function(el) {
-	if(isSet(el.removeHighlight)) {
-		el.removeHighlight();
-		Event.stopObserving(el, 'mouseover', el.addHighlight, false);
-		Event.stopObserving(el, 'mouseout', el.removeHighlight, false);
+	getDescendants: function(el) {
+		el = $(el);
+		return Array.from(el.all ? el.all : el.getElementsByTagName('*'));
+	},
+
+	getNextSiblingElement: function(el) {
+		var e = $(el).nextSibling;
+		while (e) {
+			if (e.nodeType == 1) return e;
+			e = e.nextSibling;
+		}
+		return null;
+	},
+
+	makeInvisible: function(el) {
+		$(el).style.visibility = 'hidden';
+	},
+
+	makeVisible: function(el) {
+		$(el).style.visibility = 'visible';
+	},
+
+	toggleClassName: function(el, className, add) {
+		el = $(el);
+		if (!isDefined(add)) add = !Element.hasClassName(el, className);
+		if (add) Element.addClassName(el, className); else Element.removeClassName(el, className);
+	},
+  
+	repaint: function(el) {
+		var e = $(el) || document.body;
+		var display = Element.getStyle(e, 'display');
+		e.style.display = 'none';
+		e.style.display = display;
+	},
+
+	hoverHighlight: function(el, className) {
+		el = $(el);
+		if(!isSet(el.addHighlight)) {
+			el.addHighlight = function(event) {
+				Element.addClassName(this, className);
+				if (event) Event.stop(event);
+			}.bindAsEventListener(el);
+			
+			el.removeHighlight = function(event) {
+				Element.removeClassName(this, className);
+				if (event) Event.stop(event);
+			}.bindAsEventListener(el);
+		}	
+		Event.observe(el, 'mouseover', el.addHighlight, false);
+		Event.observe(el, 'mouseout', el.removeHighlight, false);
+	},
+
+	stopHighlighting: function(el) {
+		el = $(el);
+		if(isSet(el.removeHighlight)) {
+			el.removeHighlight();
+			Event.stopObserving(el, 'mouseover', el.addHighlight, false);
+			Event.stopObserving(el, 'mouseout', el.removeHighlight, false);
+		}
 	}
 }
 

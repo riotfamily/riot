@@ -13,10 +13,10 @@ riot.Toolbar.prototype = {
 			logout: new riot.ToolbarButton('logout', '${toolbar-button.logout}')
 		});
 		var buttonElements = this.buttons.values().pluck('element');
-		document.body.appendChild(this.element = Element.create('div', {id: 'riot-toolbar'},
-			Element.create('div', {id: 'riot-toolbar-buttons'}, buttonElements)
+		document.body.appendChild(this.element = RBuilder.node('div', {id: 'riot-toolbar'},
+			RBuilder.node('div', {id: 'riot-toolbar-buttons'}, buttonElements)
 		));
-		document.body.appendChild(this.inspectorPanel = Element.create('div', {id: 'riot-inspector'}));
+		document.body.appendChild(this.inspectorPanel = RBuilder.node('div', {id: 'riot-inspector'}));
 
 		this.buttons.logout.applyHandler = this.logout;
 	
@@ -146,7 +146,7 @@ riot.ToolbarButton.prototype = {
 
 	initialize: function(handler, title, href) {
 		this.handler = handler;
-		this.element = Element.create('a', {
+		this.element = RBuilder.node('a', {
 			id: 'riot-toolbar-button-' + handler,
 			className: 'toolbar-button',
 			title: title
