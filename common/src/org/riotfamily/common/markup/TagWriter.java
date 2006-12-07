@@ -54,6 +54,8 @@ public class TagWriter {
 	
 	private static final int STATE_BODY = 2;
 	
+	private static final int STATE_CDATA = 3;
+		
     private boolean empty = false;
 
     private String tagName;
@@ -61,7 +63,7 @@ public class TagWriter {
     private PrintWriter writer;
 
     private boolean xhtml = true;
-    
+        
     private int state = STATE_CLOSED;
     
     private TagWriter parent;
@@ -184,29 +186,44 @@ public class TagWriter {
         return this;
     }
     
-    public TagWriter cDataBody(String body) {
-        body();
-        if (body != null) {
-        	writer.write("<![CDATA[\n");
-            writer.write(body);
-            writer.write("\n]]>");
-        }
-        return this;
-    }
-    
-    public TagWriter print(String s) {
+    public TagWriter cData() {
     	if (state != STATE_BODY) {
     		throw new IllegalStateException("body() must be called first");
     	}
-    	writer.print(HtmlUtils.htmlEscape(s));
+    	if (state == STATE_CDATA) {
+    		throw new IllegalStateException(
+    				"cData() must not be called within a CDATA section");
+    	}
+        writer.write("<![CDATA[\n");
+        state = STATE_CDATA;
+        return this;
+    }
+
+    public TagWriter closeCData() {
+    	if (state != STATE_CDATA) {
+    		throw new IllegalStateException("cData() must be called first");
+    	}
+    	writer.write("]]>");
+    	state = STATE_BODY;
+    	return this;
+    }
+    
+    public TagWriter print(String s) {
+    	if (state < STATE_BODY) {
+    		throw new IllegalStateException("body() must be called first");
+    	}
+    	writer.print(state == STATE_CDATA ? s : HtmlUtils.htmlEscape(s));
     	return this;
     }
     
     public TagWriter println(String s) {
-    	if (state != STATE_BODY) {
-    		throw new IllegalStateException("body() must be called first");
-    	}
-    	writer.println(HtmlUtils.htmlEscape(s));
+    	print(s);
+    	writer.println();
+    	return this;
+    }
+    
+    public TagWriter println() {
+    	writer.println();
     	return this;
     }
     
@@ -221,7 +238,10 @@ public class TagWriter {
             writer.write('>');
         }
         else {
-        	if (state != STATE_BODY) {
+        	if (state == STATE_CDATA) {
+        		closeCData();
+        	}
+        	if (state < STATE_BODY) {
         		body();
         	}
             writer.write('<');

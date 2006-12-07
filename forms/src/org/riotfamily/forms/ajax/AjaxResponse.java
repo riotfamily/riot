@@ -198,14 +198,14 @@ public class AjaxResponse implements FormListener {
 				TagWriter tag = new TagWriter(writer);
 				tag.start("eval").body();
 				if (e.getPrecondition() != null) {
-					writer.print("Resources.waitFor('");
-					writer.print(e.getPrecondition());
-					writer.print("', function() {");
-					writer.print(script);
-					writer.print("})");
+					tag.print("Resources.waitFor('");
+					tag.print(e.getPrecondition());
+					tag.print("', function() {");
+					tag.print(script);
+					tag.print("})");
 				}
 				else {
-					writer.print(script);
+					tag.print(script);
 				}
 				tag.end();
 			}

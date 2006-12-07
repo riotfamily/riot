@@ -350,18 +350,18 @@ public class Form implements BeanEditor {
 				script.start(Html.SCRIPT);
 				script.attribute(Html.SCRIPT_LANGUAGE, "JavaScript");
 				script.attribute(Html.SCRIPT_TYPE, "text/javascript");
-				script.body();
+				script.body().print("//").cData().println();
 				if (dhtml.getPrecondition() != null) {
-					writer.print("Resources.waitFor('");
-					writer.print(dhtml.getPrecondition());
-					writer.print("', function() {");
-					writer.print(initScript);
-					writer.print("})");
+					script.print("Resources.waitFor('");
+					script.print(dhtml.getPrecondition());
+					script.print("', function() {");
+					script.print(initScript);
+					script.print("})");
 				}
 				else {
-					writer.print(initScript);
+					script.print(initScript);
 				}
-				script.end();
+				script.print("//").end();
 			}
 		}
 	}
