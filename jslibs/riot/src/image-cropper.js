@@ -135,7 +135,7 @@ Cropper.UI.prototype = {
 	},
 	
 	setImage: function(src) {
-		var present = src && src != '';
+		var present = (typeof src == 'string') && src != '';
 		if (present) {		
 			this.img.style.width = 'auto';
 			this.img.src = src;
