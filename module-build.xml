@@ -111,7 +111,8 @@
 			forcedeliver="true" overwrite="true"
 			artifactspattern="${build.modules.dir}/[module]/[module].[ext]"
 			srcivypattern="${build.modules.dir}/[module]/ivy.xml" 
-			status="${module.status}" pubrevision="${module.revision}" />
+			status="${module.status}" pubrevision="${module.revision}" 
+			replacedynamicrev="false" />
 	</target>
 	
 	<target name="install" depends="publish-build">
