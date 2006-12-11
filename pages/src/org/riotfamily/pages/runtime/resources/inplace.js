@@ -95,7 +95,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 
 	oninit: function(options) {
 		this.options = options || {};
-		RElement.makePositioned(this.element);
+		Element.makePositioned(this.element);
 		this.input = document.createElement(this.options.multiline 
 				? 'textarea' : 'input');
 				
