@@ -96,7 +96,6 @@ public class DatabaseUtils {
 			Identifier identifier) throws SQLException {
 		
 		String escape = metaData.getSearchStringEscape();
-		escape = escape.replace("\\", "\\\\");
 		String pattern = identifier.getName().replaceAll("_", escape + "_");
 		
 		if (identifier.isQuoted()) {
