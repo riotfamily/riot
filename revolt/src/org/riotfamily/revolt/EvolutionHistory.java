@@ -51,7 +51,7 @@ public class EvolutionHistory implements BeanNameAware {
 	
 	private LogTable logTable;
 	
-	private List appliedIds;
+	private ArrayList appliedIds;
 	
 	public EvolutionHistory(DataSource dataSource) {
 		this.dataSource = dataSource;
@@ -96,7 +96,8 @@ public class EvolutionHistory implements BeanNameAware {
 	
 	public void init(LogTable logTable) {
 		this.logTable = logTable;
-		appliedIds = logTable.getAppliedChangeSetIds(moduleName);
+		appliedIds = new ArrayList();
+		appliedIds.addAll(logTable.getAppliedChangeSetIds(moduleName));
 	}
 	
 	public void evolve() throws DatabaseOutOfSyncException {

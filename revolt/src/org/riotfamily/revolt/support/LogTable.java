@@ -25,8 +25,8 @@ package org.riotfamily.revolt.support;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -83,7 +83,7 @@ public class LogTable {
 		return dialect.createTable(table);
 	}
 	
-	public List getAppliedChangeSetIds(final String moduleName) {
+	public Collection getAppliedChangeSetIds(final String moduleName) {
 		if (!exists) {
 			return Collections.EMPTY_LIST;
 		}
