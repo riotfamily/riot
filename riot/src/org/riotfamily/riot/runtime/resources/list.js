@@ -11,7 +11,7 @@ function initList(listId, defaultCommand) {
 			initRow(rows[i], index++, defaultCommand);
 		}
 	}
-	var cmds = document.getElementsByClassName('(command-.*|defaultCommand)', table);
+	var cmds = findElements(table, '(command-.*|defaultCommand)');
 	for (var i = 0; i < cmds.length; i++) {
 		var e = cmds[i];
 		if (!e.command)	e.command = getCommand(e);
@@ -52,7 +52,7 @@ function initRow(row, index, defaultCommand) {
 	var objectId = getObjectId(row);
 	var defaultEnabled = false;
 	
-	var cmds = document.getElementsByClassName('command-.*', row);
+	var cmds = findElements(row, 'command-.*');
 	for (var i = 0; i < cmds.length; i++) {
 		cmds[i].objectId = objectId;
 		cmds[i].rowIndex = index;
@@ -62,7 +62,7 @@ function initRow(row, index, defaultCommand) {
 	}
 	
 	if (defaultEnabled) {	
-		var data = document.getElementsByClassName('data', row);
+		var data = findElements(row, 'data');
 		for (var i = 0; i < data.length; i++) {
 			if (data[i].getElementsByTagName('a').length == 0) {
 				data[i].objectId = objectId;
@@ -99,6 +99,22 @@ function getObjectId(e) {
 		return e.id.substring(7); 
 	}
 	return null;
+}
+
+/**
+ * Like prototype's document.getElementsByClassName() but without XPath
+ * which allows us to use regular expressions within the className.
+ */
+function findElements(parent, className) {
+	var children = parent.getElementsByTagName('*');
+	var elements = [];
+	for (var i = 0, length = children.length; i < length; i++) {
+		var child = children[i];
+		if (Element.hasClassName(child, className)) {
+			elements.push(Element.extend(child));
+		}
+	}
+	return elements;
 }
 
 /* 
