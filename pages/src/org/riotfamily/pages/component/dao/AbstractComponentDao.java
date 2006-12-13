@@ -305,6 +305,7 @@ public abstract class AbstractComponentDao implements ComponentDao {
 					VersionContainer container = (VersionContainer) it.next();
 					if (!previewList.contains(container)) {
 						deleteVersionContainer(container);
+						it.remove();
 					}
 				}
 				liveList.clear();
@@ -337,6 +338,7 @@ public abstract class AbstractComponentDao implements ComponentDao {
 				VersionContainer container = (VersionContainer) it.next();
 				if (liveList == null || !liveList.contains(container)) {
 					deleteVersionContainer(container);
+					it.remove();
 				}
 			}
 			updateComponentList(componentList);	
