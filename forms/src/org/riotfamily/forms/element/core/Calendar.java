@@ -171,7 +171,6 @@ public class Calendar extends TextField implements ResourceElement,
 				date = sdf.parse(defaultValue);
 			}
 			catch (ParseException e) {
-				date = null;
 			}
 		}
 		return date;
