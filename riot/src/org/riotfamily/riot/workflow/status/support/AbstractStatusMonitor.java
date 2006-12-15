@@ -49,12 +49,22 @@ public abstract class AbstractStatusMonitor implements StatusMonitor,
 	
 	private Object[] args;
 	
+	private boolean hideZeroStatus;
+	
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
 
 	public void setMessageKey(String messageKey) {
 		this.messageKey = messageKey;
+	}
+
+	public boolean isHideZeroStatus() {
+		return this.hideZeroStatus;
+	}
+
+	public void setHideZeroStatus(boolean hideZeroStatus) {
+		this.hideZeroStatus = hideZeroStatus;
 	}
 
 	public void setBeanName(String name) {
@@ -90,7 +100,7 @@ public abstract class AbstractStatusMonitor implements StatusMonitor,
 		if (args == null || args.length == 0) {
 			return false;
 		}
-		if (args[0] instanceof Number) {
+		if (hideZeroStatus && args[0] instanceof Number) {
 			return ((Number) args[0]).intValue() > 0;
 		}
 		return true;	
