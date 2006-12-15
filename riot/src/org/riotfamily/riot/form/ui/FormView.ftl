@@ -43,8 +43,7 @@
 			
 			function initCommands() {
 				var form = $('${formId}');
-				var container = $('commands');
-				var cmds = document.getElementsByClassName('command-.*', container);
+				var cmds = $('commands').getElementsByClassName('enabled-command');
 				for (var i = 0; i < cmds.length; i++) {
 					var e = cmds[i];
 					e.objectId = '${objectId?if_exists}';
