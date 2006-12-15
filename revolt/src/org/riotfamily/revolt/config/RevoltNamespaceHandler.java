@@ -127,7 +127,7 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 		Refactoring refactoring = null;
 		if (DomUtils.nodeNameEquals(ele, "add-column")) {
 			refactoring = new AddColumn(ele.getAttribute("table"), 
-					(Column) parseColumn(ele));
+					parseColumn(ele));
 		}
 		if (DomUtils.nodeNameEquals(ele, "add-foreign-key")) {
 			refactoring = new AddForeignKey(ele.getAttribute("table"), 

@@ -69,7 +69,7 @@ public final class FormatUtils {
 		if (kb < 1024) {
 			return numberFormat.format(kb) + " KB";
 		}
-		float mb = (float) kb / 1024;
+		float mb = kb / 1024;
 		return numberFormat.format(mb) + " MB";
 	}
 
@@ -160,7 +160,8 @@ public final class FormatUtils {
 	}
 
 	/**
-	 * "a", "b", "c" -> "a b c a-b a-b-c" "a", "b", null -> "a b a-b"
+	 * "a", "b", "c" -> "a b c a-b a-b-c"
+	 * "a", "b", null -> "a b a-b"
 	 */
 	public static String combine(String[] s) {
 		StringBuffer sb = new StringBuffer();

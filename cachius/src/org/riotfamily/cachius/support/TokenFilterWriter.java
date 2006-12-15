@@ -64,7 +64,7 @@ public class TokenFilterWriter extends FilterWriter {
     
     public void write(char[] buf, int offset, int len) throws IOException {
         for (int i = offset; i < len; i++) {
-            write((char) buf[i]);
+            write(buf[i]);
         }
     }
     

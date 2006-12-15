@@ -72,7 +72,7 @@ public final class HashUtils {
 		StringBuffer sb = new StringBuffer();
 		String s = null;
 		for (int i = 0; i < buffer.length; i++) {
-			s = Integer.toHexString((int) buffer[i] & 0xff);
+			s = Integer.toHexString(buffer[i] & 0xff);
 			if (s.length() < 2) {
 				sb.append('0');
 			}

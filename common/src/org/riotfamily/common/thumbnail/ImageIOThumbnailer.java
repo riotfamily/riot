@@ -122,8 +122,8 @@ public class ImageIOThumbnailer implements Thumbnailer {
     	if ((width - maxWidth > cropFactor * width) 
     			|| (height - maxHeight > cropFactor * height)) {
     		
-    		scaleX = (double) maxWidth / ((double) imageWidth - cropFactor * imageWidth);
-    		scaleY = (double) maxHeight / ((double) imageHeight - cropFactor * imageHeight);
+    		scaleX = maxWidth / (imageWidth - cropFactor * imageWidth);
+    		scaleY = maxHeight / (imageHeight - cropFactor * imageHeight);
     		scale = Math.min(Math.min(scaleX, scaleY), 1);
     	}
 	
