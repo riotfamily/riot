@@ -434,7 +434,13 @@
 	<bean id="statusController" name="/status" class="org.riotfamily.riot.workflow.status.ui.StatusController" />
 	
     <bean id="jobUIUpdater" class="org.riotfamily.riot.job.ui.JobUIUpdater" />
-		
+	
+	<bean id="jobDao" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
+		<property name="fallback">
+			<bean class="org.riotfamily.riot.job.persistence.InMemoryJobDao" />
+		</property>
+	</bean>
+	
 	<bean id="jobManager" class="org.riotfamily.riot.job.JobManager">
 		<constructor-arg ref="jobDao" />
 		<constructor-arg ref="jobUIUpdater" />
