@@ -4,4 +4,23 @@
 	
 	<import file="../module-build.xml" />
 	
+	<target name="-jar-with-meta-inf">
+		<jar jarfile="${module.build.dir}/${module.name}.jar">
+			<fileset dir="${module.build.classes.dir}" />
+			<manifest>
+				<attribute name="Implementation-Title" value="${module.title}" />
+			    <attribute name="Implementation-Version" value="${module.revision}" /> 
+			    <attribute name="Implementation-Vendor" value="${module.vendor}" />
+			</manifest>
+		</jar>
+		<jar jarfile="${module.build.dir}/${module.name}-context.jar">
+			<metainf dir="${module.meta-inf.dir}" />
+			<manifest>
+				<attribute name="Implementation-Title" value="${module.title}" />
+			    <attribute name="Implementation-Version" value="${module.revision}" /> 
+			    <attribute name="Implementation-Vendor" value="${module.vendor}" />
+			</manifest>
+		</jar>
+	</target>
+
 </project>

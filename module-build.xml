@@ -109,7 +109,7 @@
 		<copy file="${module.dir}/ivy.xml" todir="${module.build.dir}" />
 		<ivy:publish resolver="build" 
 			forcedeliver="true" overwrite="true"
-			artifactspattern="${build.modules.dir}/[module]/[module].[ext]"
+			artifactspattern="${build.modules.dir}/[module]/[artifact].[ext]"
 			srcivypattern="${build.modules.dir}/[module]/ivy.xml" 
 			status="${module.status}" pubrevision="${module.revision}" 
 			replacedynamicrev="false" />
