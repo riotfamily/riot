@@ -3,8 +3,6 @@
 	width: 32px;
 	height: 32px;
 	background-repeat: no-repeat;
-	cursor: hand;
-	cursor: pointer;
 }
 
 .action-edit {
@@ -12,6 +10,9 @@
 }
 .action-view {
 	background-image: url(icons/commands/view.gif);
+}
+.action-link {
+	background-image: url(icons/commands/link.gif);
 }
 .action-delete {
 	background-image: url(icons/commands/delete.gif);

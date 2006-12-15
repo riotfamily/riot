@@ -25,7 +25,7 @@
 			<list:column property="pathComponent" sortable="false" />
 			<list:column property="title" sortable="false" lookup-level="2" />
 			<list:column property="position" />
-			<list:column property="path" sortable="false" renderer="pageLinkRenderer" />
+			<list:command id="gotoPage" />
 			<list:command id="moveUp" />
 			<list:command id="moveDown" />
 			<list:command id="edit" />

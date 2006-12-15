@@ -197,4 +197,9 @@
 	  -->
 	<bean id="publishPageCommand" class="org.riotfamily.pages.page.PublishPageCommand" />	
 
+	<bean id="gotoPageCommand" class="org.riotfamily.riot.list.command.core.LinkCommand">
+		<property name="windowName" value="preview" />
+		<property name="link" value="@{path}.html" />
+	</bean>
+	
 </beans>

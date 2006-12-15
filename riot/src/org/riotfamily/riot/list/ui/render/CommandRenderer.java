@@ -65,7 +65,7 @@ public class CommandRenderer implements CellRenderer {
 				}
 				StringBuffer classAttr = new StringBuffer();
 				if (enabled) {
-					classAttr.append("command-");
+					classAttr.append("enabled-command command-");
 					classAttr.append(command.getId());
 					classAttr.append(' ');
 				}
