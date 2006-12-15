@@ -26,10 +26,13 @@ package org.riotfamily.common.util;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.lang.reflect.Method;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.riotfamily.common.beans.DefaultPropertyEditorRegistry;
 import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.PropertyAccessor;
 import org.springframework.util.Assert;
@@ -41,6 +44,9 @@ public final class PropertyUtils {
 
 	private static DefaultPropertyEditorRegistry registry = 
 			new DefaultPropertyEditorRegistry();
+
+	private static Pattern expressionPattern = Pattern.compile(
+			"\\$\\{(.*?)\\}");
 	
 	private PropertyUtils() {
 	}
@@ -54,20 +60,34 @@ public final class PropertyUtils {
 	}
 	
 	public static String getPropertyAsString(Object bean, String name) {
-		Object value = getProperty(bean, name);
-		if (value != null) {
-			if (!(value instanceof String)) {
-				PropertyEditor pe = registry.findEditor(value.getClass());
-				if (pe != null) {
-					synchronized (pe) {
-						pe.setValue(value);
-						return pe.getAsText();
-					}
-				}
-			}
-			return value.toString();
+		return convertToString(getProperty(bean, name));
+	}
+	
+	/**
+	 * @since 6.4
+	 */
+	public static String evaluate(String expression, Object bean) {
+		PropertyAccessor accessor = new BeanWrapperImpl(bean);
+		Matcher matcher = expressionPattern.matcher(expression);
+		StringBuffer sb = new StringBuffer();
+		while (matcher.find()) {
+			String property = matcher.group(1);
+			Object value = accessor.getPropertyValue(property);
+			matcher.appendReplacement(sb, convertToString(value));
 		}
-		return null;
+		matcher.appendTail(sb);
+		return sb.toString();
+	}
+	
+	public static void setProperty(Object bean, String name, Object value) {
+		PropertyAccessor accessor = new ProtectedBeanWrapper(bean);
+		accessor.setPropertyValue(name, value);
+	}
+	
+	public static void setPropertyAsString(Object bean, String name, String s) {
+		Class type = getPropertyType(bean.getClass(), name);
+		Object value = convert(s, type);
+		setProperty(bean, name, value);
 	}
 	
 	public static Object convert(String s, Class targetClass) {
@@ -82,15 +102,23 @@ public final class PropertyUtils {
 		}
 	}
 	
-	public static void setProperty(Object bean, String name, Object value) {
-		PropertyAccessor accessor = new ProtectedBeanWrapper(bean);
-		accessor.setPropertyValue(name, value);
-	}
-	
-	public static void setPropertyAsString(Object bean, String name, String s) {
-		Class type = getPropertyType(bean.getClass(), name);
-		Object value = convert(s, type);
-		setProperty(bean, name, value);
+	/**
+	 * @since 6.4
+	 */
+	public static String convertToString(Object value) {
+		if (value != null) {
+			if (!(value instanceof String)) {
+				PropertyEditor pe = registry.findEditor(value.getClass());
+				if (pe != null) {
+					synchronized (pe) {
+						pe.setValue(value);
+						return pe.getAsText();
+					}
+				}
+			}
+			return value.toString();
+		}
+		return null;
 	}
 	
 	public static PropertyDescriptor getPropertyDescriptor(Class clazz,
