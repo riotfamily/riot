@@ -149,9 +149,7 @@ public class TagWriter {
         if (value != null) {
             writer.write('=');
             writer.write('"');
-            if (value != null) {
-            	writer.write(HtmlUtils.htmlEscape(value));
-            }
+           	writer.write(HtmlUtils.htmlEscape(value));
             writer.write('"');
         }
         return this;
