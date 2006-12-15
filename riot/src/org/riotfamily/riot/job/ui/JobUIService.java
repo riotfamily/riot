@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job.ui;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.directwebremoting.WebContextFactory;
 import org.riotfamily.riot.job.JobManager;
@@ -49,7 +49,7 @@ public class JobUIService {
 		return dao.getJobDetail(jobId);
 	}
 	
-	public List getLogEntries(Long jobId) {
+	public Collection getLogEntries(Long jobId) {
 		return dao.getLogEntries(jobId);
 	}
 	

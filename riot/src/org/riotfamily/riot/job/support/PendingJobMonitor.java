@@ -26,7 +26,6 @@ package org.riotfamily.riot.job.support;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
 import org.riotfamily.riot.job.persistence.JobDao;
@@ -53,7 +52,7 @@ public class PendingJobMonitor implements StatusMonitor, MessageSourceAware {
 	}
 
 	public Collection getMessages(Locale locale) {
-		List jobs = dao.getPendingJobDetails();
+		Collection jobs = dao.getPendingJobDetails();
 		if (jobs.isEmpty()) {
 			return null;
 		}

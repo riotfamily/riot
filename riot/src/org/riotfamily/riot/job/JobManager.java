@@ -23,9 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -81,7 +81,7 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 	 */
 	protected void checkForAbortedJobs() {
 		log.info("Checking for interrupted jobs ...");
-		List pendingJobs = dao.getPendingJobDetails();
+		Collection pendingJobs = dao.getPendingJobDetails();
 		Iterator it = pendingJobs.iterator();
 		while (it.hasNext()) {
 			JobDetail jd = (JobDetail) it.next();

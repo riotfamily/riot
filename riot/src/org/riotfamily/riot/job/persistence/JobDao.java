@@ -23,18 +23,18 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job.persistence;
 
-import java.util.List;
+import java.util.Collection;
 
 
 public interface JobDao {
 
-	public List getLogEntries(Long jobId);
+	public Collection getLogEntries(Long jobId);
 	
 	public void log(JobLogEntry entry);
 	
-	public List getJobDetails();
+	public Collection getJobDetails();
 	
-	public List getPendingJobDetails();
+	public Collection getPendingJobDetails();
 	
 	public JobDetail getJobDetail(Long jobId);
 	

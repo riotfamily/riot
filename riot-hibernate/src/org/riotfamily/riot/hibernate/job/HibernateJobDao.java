@@ -24,6 +24,7 @@
 package org.riotfamily.riot.hibernate.job;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -37,12 +38,12 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 public class HibernateJobDao extends HibernateDaoSupport implements JobDao {
 
-	public List getJobDetails() {
+	public Collection getJobDetails() {
 		return getHibernateTemplate().find("from JobDetail job " +
 				"order by job.endDate desc");
 	}
 	
-	public List getPendingJobDetails() {
+	public Collection getPendingJobDetails() {
 		return getHibernateTemplate().find("from JobDetail job where " +
 				"job.state != " + JobDetail.CANCELED + " and " +
 				"job.state != " + JobDetail.COMPLETED +
@@ -93,7 +94,7 @@ public class HibernateJobDao extends HibernateDaoSupport implements JobDao {
 		getHibernateTemplate().update(job);
 	}
 
-	public List getLogEntries(Long jobId) {
+	public Collection getLogEntries(Long jobId) {
 		return getHibernateTemplate().find("from JobLogEntry e where " +
 				"e.job.id = ? order by e.date desc", jobId);
 	}
