@@ -1,3 +1,4 @@
+<#import "/spring.ftl" as spring />
 <?xml version="1.0" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
 		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -18,76 +19,92 @@
 		</script>		
 	</head>
 	<body onload="TweakStyle.list()">
-		<#if filterForm?exists>
-			<div id="filter">
-				${filterForm}
-			</div>
-			<br clear="left" />
-		</#if>
-		<table id="list" class="${list.cssClass}">
-			<thead>
-				<tr>
-					<#list list.headings as heading>
-						<th class="${heading.cssClass}">
-							${heading.data?if_exists}
-						</th>
-					</#list>
-				</tr>
-			</thead>
-			<tbody>
-				<#list list.rows as row>
-					<tr id="object-${row.objectId}"<#if row.cssClass?exists> class="${row.cssClass}"</#if>>
-						<#list row.cells as cell>
-							<td class="${cell.cssClass}">${cell.data}</td>
-						</#list>
-					</tr>
-				</#list>
-			</tbody>
-			<#if list.commands?has_content>
-				<tfoot>
-					<tr>
-						<td colspan="${list.colCount}" class="list-commands">
-							<#list list.commands as command>
-								${command}
+		<div id="wrapper">
+			<div class="main">
+				<table id="list" class="${list.cssClass}">
+					<thead>
+						<tr>
+							<#list list.headings as heading>
+								<th class="${heading.cssClass}">
+									${heading.data?if_exists}
+								</th>
 							</#list>
-						</td>
-					</tr>
-				</tfoot>
+						</tr>
+					</thead>
+					<tbody>
+						<#list list.rows as row>
+							<tr id="object-${row.objectId}"<#if row.cssClass?exists> class="${row.cssClass}"</#if>>
+								<#list row.cells as cell>
+									<td class="${cell.cssClass}">${cell.data}</td>
+								</#list>
+							</tr>
+						</#list>
+					</tbody>
+					<#if list.pager?exists>
+						<tfoot>
+							<tr>
+								<td colspan="${list.colCount}" class="pager">
+									<#if list.pager.prevPage?exists>
+										<a href="${list.pager.prevPage.link}">&lt;&lt;</a>
+									</#if>
+								
+									<#if list.pager.firstPage?exists>
+										<a class="page" href="${list.pager.firstPage.link}">1</a>
+										<#if list.pager.gapToFirstPage> <span class="gap">...</span> </#if>
+									</#if>
+								
+									<#list list.pager.prevPages as page>
+										<a class="page" href="${page.link}">${page.number}</a>
+									</#list>
+								
+									<span class="currentPage">${list.pager.currentPage}</span>
+								
+									<#list list.pager.nextPages as page>
+										<a class="page" href="${page.link}">${page.number}</a>
+									</#list>
+								
+									<#if list.pager.lastPage?exists>
+										<#if list.pager.gapToLastPage> <span class="gap">...</span> </#if>
+										<a class="page" href="${list.pager.lastPage.link}">${list.pager.lastPage.number}</a>
+									</#if>
+								
+									<#if list.pager.nextPage?exists>
+										<a href="${list.pager.nextPage.link}">&gt;&gt;</a>
+									</#if>
+								</td>
+							</tr>
+						</tfoot>
+					</#if>	
+				</table>
+			</div>		
+		</div>
+		<div class="extra">
+			
+			<#if list.commands?has_content>
+				<div id="commands" class="box">
+					<div class="title">
+						<div class="icon"></div>
+						<span><@spring.messageText "label.commands", "Commands" /></span>
+					</div>
+					<div class="list">
+						<#list list.commands as command>
+							${command}
+						</#list>
+					</div>
+				</div>
 			</#if>
-		</table>
-		
-		<#if list.pager?exists>
-			<div class="pager">
-				<#if list.pager.prevPage?exists>
-					<a href="${list.pager.prevPage.link}">&lt;&lt;</a>
-				</#if>
 			
-				<#if list.pager.firstPage?exists>
-					<a class="page" href="${list.pager.firstPage.link}">1</a>
-					<#if list.pager.gapToFirstPage> <span class="gap">...</span> </#if>
-				</#if>
+			<#if filterForm?exists>
+				<div id="filter" class="box">
+					<div class="title">
+						<div class="icon"></div>
+						<span><@spring.messageText "label.list.filter", "Filter" /></span>
+					</div>
+					${filterForm}
+				</div>
+			</#if>
 			
-				<#list list.pager.prevPages as page>
-					<a class="page" href="${page.link}">${page.number}</a>
-				</#list>
-			
-				<span class="currentPage">${list.pager.currentPage}</span>
-			
-				<#list list.pager.nextPages as page>
-					<a class="page" href="${page.link}">${page.number}</a>
-				</#list>
-			
-				<#if list.pager.lastPage?exists>
-					<#if list.pager.gapToLastPage> <span class="gap">...</span> </#if>
-					<a class="page" href="${list.pager.lastPage.link}">${list.pager.lastPage.number}</a>
-				</#if>
-			
-				<#if list.pager.nextPage?exists>
-					<a href="${list.pager.nextPage.link}">&gt;&gt;</a>
-				</#if>
-			</div>
-		</#if>
-		
+		</div>
 		<script type="text/javascript" language="JavaScript">
 			initList('list', '${list.defaultCommandId?if_exists}');
 		</script>

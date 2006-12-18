@@ -53,7 +53,7 @@ var TweakStyle = {
 		
 		var face = document.createElement('div');
 		face.className = 'face';
-		face.appendChild(document.createTextNode(button.value));
+		face.innerHTML = button.value;
 		a.appendChild(face);
 		
 		button.parentNode.insertBefore(a, button);
@@ -97,12 +97,8 @@ var TweakStyle = {
 	},
 	
 	list: function() {
-		var table = $('list');
-		var div = document.createElement('div');
-		Element.setStyle(div, {width: '100%', backgroundColor: '#3d3d3d'});
-		table.parentNode.replaceChild(div, table);
-		div.appendChild(table);
-		this.roundElement(div);
+		this.roundElements('div', 'title');
+		this.roundElement($('list').parentNode);
 	}
 	
 }

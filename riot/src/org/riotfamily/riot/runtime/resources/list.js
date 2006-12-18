@@ -11,7 +11,7 @@ function initList(listId, defaultCommand) {
 			initRow(rows[i], index++, defaultCommand);
 		}
 	}
-	var cmds = findElements(table, '(command-.*|defaultCommand)');
+	var cmds = findElements(document, '(command-.*|defaultCommand)');
 	for (var i = 0; i < cmds.length; i++) {
 		var e = cmds[i];
 		if (!e.command)	e.command = getCommand(e);

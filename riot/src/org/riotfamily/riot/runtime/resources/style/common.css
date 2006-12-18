@@ -25,6 +25,24 @@ td {
 	vertical-align: top;
 }
 
+#wrapper {
+	width: 100%;
+	float: left;
+}
+.main {
+	margin-right: 300px;
+}
+.extra {
+	float:left;
+	width: 260px;
+	margin-left: -260px;
+}
+.extra .box {
+	background-color: #ebebeb;
+	padding-bottom: 10px;
+	margin-bottom: 50px;
+}
+
 .title {
 	background-color: #3d3d3d;
 	position: relative;
@@ -54,4 +72,10 @@ td {
 .corner-tr,
 .corner-br {
 	margin-right: expression(-1 * (this.parentNode.offsetWidth % 2));
+}
+
+span.messageCode {
+	padding: 0 0 0 20px;
+	text-decoration: none;
+	background: url(images/i18n.gif) right center no-repeat;
 }

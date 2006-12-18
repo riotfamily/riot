@@ -68,7 +68,7 @@ public class ListRepository implements ApplicationContextAware {
 		
 		CommandRenderer renderer = new CommandRenderer();
 		renderer.setRenderDisabled(false);
-		renderer.setRenderText(false);
+		renderer.setRenderText(true);
 		setListCommandRenderer(renderer);
 	}
 

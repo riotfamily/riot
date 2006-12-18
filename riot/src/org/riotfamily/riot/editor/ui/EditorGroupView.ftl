@@ -18,9 +18,8 @@
 		</script>		
 	</head>
 	<body onload="TweakStyle.group()">
-		
-		<div id="group">
-			<div id="editors">
+		<div id="wrapper">
+			<div id="editors" class="main">
 				<div class="title">${group.title}</div>
 				<#list group.editors as ref>
 					<a class="editor ${ref.styleClass?default('default')}" href="${url(ref.editorUrl)}" <#if ref.targetWindow?exists> target="${ref.targetWindow}"</#if>>
@@ -37,7 +36,7 @@
 				</#list>
 			</div>
 		</div>
-		<div id="extras">
+		<div class="extra">
 			${include(servletPrefix + '/notifications')}
 			${include(servletPrefix + '/status')}
 		</div>

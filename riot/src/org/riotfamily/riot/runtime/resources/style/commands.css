@@ -36,18 +36,10 @@
 .action-descend {
 	background-image: url(icons/commands/stepInto.gif);
 }
-
-.list-commands .action {
-	background-color: #3d3d3d;
-	float: left;
-}
-.list-commands .action:hover {
-	background-color: ${highlight};
-}
-.list-commands .action-add {
+.action-add {
 	background-image: url(icons/commands/add.gif);
 }
-.list-commands .action-paste {
+.action-paste {
 	background-image: url(icons/commands/paste.gif);
 }
 
@@ -62,4 +54,30 @@ tr.cut .action-cut:hover,
 tr.copied .action-copy:hover {
 	background-color: #ebebeb;
 	background-position: 0 -64px;
+}
+
+#commands .action {
+	margin: 4px 0;
+	width: auto;
+	text-decoration: none;
+	padding-left: 32px;
+}
+#commands .action span {
+	display: block;
+	padding-left: 4px;
+	background-color: #ebebeb;
+	text-transform: capitalize;
+	color: #000 !important;
+	font-size: 11px;
+	line-height: 32px;
+}
+#commands .action:hover {
+	background-position: 0 -32px;
+	background-color: ${highlight};
+}
+.extra #commands .disabled {
+	background-position: 0 -64px;
+}
+.extra #commands .disabled:hover {
+	background-color: #ebebeb;
 }

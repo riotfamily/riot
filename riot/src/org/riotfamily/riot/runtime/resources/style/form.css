@@ -9,17 +9,6 @@
 	float:left;
 	margin-right: 300px;
 }
-#sidebar {
-	float:left;
-	width: 260px;
-	margin-left:-260px;
-}
-#sidebar .box {
-	width: 220px;
-	background-color: #ebebeb;
-	padding-bottom: 10px;
-	margin-bottom: 50px;
-}
 
 #childLists .list {
 	margin-top:10px;
@@ -31,31 +20,6 @@
 	font-weight: bold;
 }
 
-#commands .action {
-	margin: 4px 0;
-	width: auto;
-	text-decoration: none;
-	padding-left: 32px;
-}
-#commands .action span {
-	display: block;
-	padding-left: 4px;
-	background-color: #ebebeb;
-	text-transform: capitalize;
-	color: #000 !important;
-	font-size: 11px;
-	line-height: 32px;
-}
-#commands .action:hover {
-	background-position: 0 -32px;
-	background-color: ${highlight};
-}
-#sidebar #commands .disabled {
-	background-position: 0 -64px;
-}
-#sidebar #commands .disabled:hover {
-	background-color: #ebebeb;
-}
 #commands .saveButton {
 	background-image: url(icons/commands/save.gif);
 }

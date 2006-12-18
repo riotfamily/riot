@@ -29,7 +29,8 @@
 			}
 			
 			function showSavingMessage() {
-				Element.hide('columns');
+				Element.hide('form');
+				Element.hide('extras');
 				Element.show('saving');
 			}
 			
@@ -58,8 +59,8 @@
 		</script>
 	</head>
 	<body>
-		<div id="columns">
-			<div id="form">
+		<div id="wrapper">
+			<div id="form" class="main">
 				<#if options?has_content>
 					<div id="form-options">
 						<@spring.messageText "label.formChooser.choose", "Please select the kind of object you would like to create." />
@@ -76,58 +77,56 @@
 				</#if>
 				${form}
 			</div>
-
-			<div id="sidebar">
-				<#if childLists?has_content>
-				<div id="childLists" class="box">
-					<div class="title">
-						<div class="icon"></div>
-						<span><@spring.messageText "label.sidebar.childLists", "Sub-Elements" /></span>
-					</div>
-					<div class="list">
-						<#list childLists as item>
-							<div class="item">
-								<#if item.enabled>
-									<a href="${url(item.editorUrl)}">${item.label}</a>
-								<#else>
-									${item.label}
-								</#if>
-							</div>
-						</#list>
-					</div>
+		</div>
+		<div id="extras" class="extra">
+			<#if childLists?has_content>
+			<div id="childLists" class="box">
+				<div class="title">
+					<div class="icon"></div>
+					<span><@spring.messageText "label.childLists", "Sub-Elements" /></span>
 				</div>
-				</#if>
-				
-				<div id="commands" class="box">
-					<div class="title">
-						<div class="icon"></div>
-						<span><@spring.messageText "label.sidebar.commands", "Actions" /></span>
-					</div>
-					<div class="list">
-						<div class="item"><a class="saveButton action" href="javascript:save()"><span><@spring.messageText "label.form.button.save", "Save" /></span></a></div>
-						<#if commands?has_content>
-							<#list commands as command>
-								<div class="item">${command}</div>
-							</#list>
-						</#if>
-					</div>
+				<div class="list">
+					<#list childLists as item>
+						<div class="item">
+							<#if item.enabled>
+								<a href="${url(item.editorUrl)}">${item.label}</a>
+							<#else>
+								${item.label}
+							</#if>
+						</div>
+					</#list>
 				</div>
-				
-				<script type="text/javascript" language="JavaScript">
-					TweakStyle.form();
-					initCommands();
-					<#if confirmCommand?exists>
-					if (confirm('${confirmCommand?js_string}')) {
-						var form = $('${formId}');
-						addHiddenField(form, 'command', '${command}');
-						addHiddenField(form, 'confirmed', 'true');
-						form.submit();
-					}
-					</#if>
-					${commandResult?if_exists}
-				</script>
 			</div>
-				
+			</#if>
+			
+			<div id="commands" class="box">
+				<div class="title">
+					<div class="icon"></div>
+					<span><@spring.messageText "label.commands", "Commands" /></span>
+				</div>
+				<div class="list">
+					<div class="item"><a class="saveButton action" href="javascript:save()"><span><@spring.messageText "label.form.button.save", "Save" /></span></a></div>
+					<#if commands?has_content>
+						<#list commands as command>
+							<div class="item">${command}</div>
+						</#list>
+					</#if>
+				</div>
+			</div>
+			
+			<script type="text/javascript" language="JavaScript">
+				TweakStyle.form();
+				initCommands();
+				<#if confirmCommand?exists>
+				if (confirm('${confirmCommand?js_string}')) {
+					var form = $('${formId}');
+					addHiddenField(form, 'command', '${command}');
+					addHiddenField(form, 'confirmed', 'true');
+					form.submit();
+				}
+				</#if>
+				${commandResult?if_exists}
+			</script>
 		</div>
 		
 		<div id="saving" style="display:none">
