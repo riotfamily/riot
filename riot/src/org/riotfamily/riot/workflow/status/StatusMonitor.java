@@ -28,6 +28,11 @@ import java.util.Locale;
 
 public interface StatusMonitor {
 
+	/**
+	 * Implementors may return a Collection of HTML strings. Make sure that
+	 * you properly escape all parts of the message that could contain 
+	 * user-generated content to prevent XSS attacks.  
+	 */
 	public Collection getMessages(Locale locale);
 		
 }

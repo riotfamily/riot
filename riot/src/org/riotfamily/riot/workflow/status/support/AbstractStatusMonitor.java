@@ -90,9 +90,9 @@ public abstract class AbstractStatusMonitor implements StatusMonitor,
 		return null;
 	}
 
-	private void updateArgs() {
+	private synchronized void updateArgs() {
 		if (lastUpdate + cacheMillis < System.currentTimeMillis()) {
-			args = getArgs();
+			this.args = FormatUtils.htmlEscapeArgs(getArgs());
 		}
 	}
 	
@@ -106,6 +106,13 @@ public abstract class AbstractStatusMonitor implements StatusMonitor,
 		return true;	
 	}
 	
+	/**
+	 * Subclasses must return an array of objects which will be passed to
+	 * the MessageSource as arguments. All arguments that are neither 
+	 * primitive wrappers nor dates will be HTML-escaped automatically to  
+	 * prevent XSS attacks.
+	 * @see FormatUtils#htmlEscapeArgs(Object[]) 
+	 */
 	protected abstract Object[] getArgs();
 	
 }

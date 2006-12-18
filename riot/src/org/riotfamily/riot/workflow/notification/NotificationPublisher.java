@@ -25,6 +25,7 @@ package org.riotfamily.riot.workflow.notification;
 
 import java.util.Locale;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 
@@ -56,8 +57,8 @@ public class NotificationPublisher implements MessageSourceAware {
 	public void publishNotification(String messageKey, Object[] args, 
 			String category) {
 		
-		String message = messageSource.getMessage(
-				messageKey, args, Locale.getDefault());
+		String message = messageSource.getMessage(messageKey, 
+				FormatUtils.htmlEscapeArgs(args), Locale.getDefault());
 		
 		publishNotification(message, category);
 	}
@@ -66,7 +67,9 @@ public class NotificationPublisher implements MessageSourceAware {
 		if (category == null) {
 			category = DEFAULT_CATEGORY;
 		}
-		Notification notification = notificationFactory.createNotification(message, category);
+		Notification notification = notificationFactory.createNotification(
+				message, category);
+		
 		notificationDao.saveNotification(notification);		
 	}	
 	

@@ -31,7 +31,7 @@
 					<input id="username" type="text" name="riot-username" value="${username?if_exists}" />
 					<label for="password"><@spring.messageText "label.login.password", "Password" /></label>
 					<input id="password" type="password" name="riot-password" />
-					<input id="submit" type="submit" class="button-login" value="<@spring.messageText "label.login.submit", "Login" />" />
+					<input id="submit" type="submit" class="button-login" value="${springMacroRequestContext.getMessage("label.login.submit", "Login")?html}" />
 				</form>
 			</div>
 		</div>

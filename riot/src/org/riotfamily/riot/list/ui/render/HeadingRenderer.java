@@ -53,7 +53,7 @@ public class HeadingRenderer implements CellRenderer {
 							+ (primaryOrder.isAscending() ? "asc" : "desc"));
 				}
 			}
-			tag.body(getLabel(context));
+			tag.body(getLabel(context), false);
 			tag.end();
 		}
 	}
@@ -67,19 +67,18 @@ public class HeadingRenderer implements CellRenderer {
 	
 	protected String getLabel(RenderContext context, Class clazz, 
 			String property, int lookupLevel) {
-		
-		String key = property;
+
+		String root = property;
         int pos = property.indexOf('.');
         if (pos > 0) {
-            property = property.substring(0, pos);
+            root = property.substring(0, pos);
         }
-        if (pos > 0 && lookupLevel > 1) {
-            clazz = PropertyUtils.getPropertyType(clazz, property);
-            property = key.substring(pos + 1);
-            return getLabel(context, clazz, property, lookupLevel - 1);
+        if (lookupLevel > 1) {
+        	clazz = PropertyUtils.getPropertyType(clazz, root);
+        	String nestedProperty = property.substring(pos + 1);
+        	return getLabel(context, clazz, nestedProperty, lookupLevel - 1);
         }
-        clazz = PropertyUtils.getDeclaringClass(clazz, property);
-        return context.getMessageResolver().getPropertyLabel(
-        		context.getListConfig().getId(), clazz, property);
+	    return context.getMessageResolver().getPropertyLabel(
+	    		context.getListConfig().getId(), clazz, property);
 	}
 }

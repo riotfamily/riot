@@ -31,6 +31,7 @@ import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
 import org.riotfamily.riot.list.command.support.AbstractCommand;
 import org.riotfamily.riot.list.ui.render.RenderContext;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * Command that deletes an item. To prevent accidental deletion a confirmation
@@ -48,7 +49,8 @@ public class DeleteCommand extends AbstractCommand implements FormCommand {
 		Object item = context.getItem();
 		
 		String type = context.getMessageResolver().getClassLabel(null, clazz);
-		String label = context.getEditorDefinition().getLabel(item);
+		String label = HtmlUtils.htmlEscape(
+				context.getEditorDefinition().getLabel(item));
 		
 		Object[] args = new Object[] {label, type, context.getObjectId()};
 		

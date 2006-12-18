@@ -79,11 +79,13 @@ public class CommandRenderer implements CellRenderer {
 				classAttr.append(FormatUtils.combine(classes));
 				doc.attribute(Html.COMMON_CLASS, classAttr.toString());
 				String commandName = context.getMessageResolver().getMessage(COMMAND_MESSAGE_PREFIX + command.getId(), null,FormatUtils.camelToTitleCase(command.getId()));
-				doc.attribute(Html.TITLE,commandName);
 				if (renderText) {
 					doc.start(Html.SPAN)
 						.attribute(Html.COMMON_CLASS)
-						.body(commandName);
+						.body(commandName, false);
+				}
+				else {
+					doc.attribute(Html.TITLE, commandName);
 				}
 				doc.closeAll();
 			}
