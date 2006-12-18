@@ -8,22 +8,27 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-	<bean id="messageSource" name="riotMessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<property name="defaultEncoding" value="UTF-8" />
-		<property name="fallbackToSystemLocale" value="false" />
-		<property name="cacheSeconds" value="1" />
-        <property name="basenames">
-        	<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
-        		<property name="key" value="messageSourceBasenames" />
-        		<property name="sourceList">
-        			<list>
-	        			<value>/WEB-INF/riot-config/messages</value>
-        				<value>classpath:/org/riotfamily/riot/runtime/i18n/messages</value>
-        			</list>
-        		</property>
-        	</bean>
-        </property>
-    </bean>
+	<bean id="messageSource" name="riotMessageSource" class="org.riotfamily.common.i18n.CodeRevealingMessageSource">
+		<property name="revealCodes" value="false" />
+		<property name="parentMessageSource">
+			<bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+				<property name="defaultEncoding" value="UTF-8" />
+				<property name="fallbackToSystemLocale" value="false" />
+				<property name="cacheSeconds" value="1" />
+		        <property name="basenames">
+		        	<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+		        		<property name="key" value="messageSourceBasenames" />
+		        		<property name="sourceList">
+		        			<list>
+			        			<value>/WEB-INF/riot-config/messages</value>
+		        				<value>classpath:/org/riotfamily/riot/runtime/i18n/messages</value>
+		        			</list>
+		        		</property>
+		        	</bean>
+		        </property>
+		    </bean>
+		</property>
+	</bean>
 	
 	<bean id="messageCodesResolver" class="org.riotfamily.common.i18n.RiotMessageCodesResolver" />
 		
@@ -305,6 +310,14 @@
 							<property name="match" value="/**/*.css" />
 							<property name="properties" ref="cssProperties" />
 						</bean>
+						<bean class="org.riotfamily.common.web.resource.PropertyResourceFilter">
+							<property name="match" value="/**/frameset.js" />
+							<property name="propertiesMap">
+								<map>
+									<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
+								</map>
+							</property>
+						</bean>
 					</list>
 				</property>
 			</bean>
@@ -426,6 +439,8 @@
 			</list>
 		</property>
 	</bean>	
+	
+	<bean id="messageCodeRevelationController" name="/toggle-i18n" class="org.riotfamily.common.i18n.MessageCodeRevelationController" />
 	
 	<bean id="notificationListController" name="/notifications" class="org.riotfamily.riot.workflow.notification.ui.NotificationListController">
 		<constructor-arg ref="notificationDao" />

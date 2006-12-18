@@ -8,9 +8,11 @@
 		<title><@spring.messageText "title.riot", "Riot V6" /></title>
 		<link rel="icon" href="${request.contextPath}${resourcePath}/style/images/favicon.ico" type="image/x-icon" />
     	<link rel="shortcut icon" href="${request.contextPath}${resourcePath}/style/images/favicon.ico" type="image/x-icon" /> 
+    	<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
+    	<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/riot-js/viewport.js"></script>
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/frameset.js"></script>
 		<script type="text/javascript" language="JavaScript">
-			var frameset = new RowFrameset('rows');
+			var frameset = new RiotFrameset('rows');
 		</script>
 		<style type="text/css">
 			frame {

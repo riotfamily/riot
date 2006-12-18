@@ -78,7 +78,7 @@ public class MessageResolver {
 			Class clazz, String property) {
 		
 		String[] codes = messageCodesResolver.resolveLabel(objectName, clazz, property);
-		String defaultMessage = FormatUtils.camelToTitleCase(property);
+		String defaultMessage = FormatUtils.propertyToTitleCase(property);
 		return getMessage(codes, null, defaultMessage);
 	}
 	

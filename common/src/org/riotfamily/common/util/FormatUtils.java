@@ -29,6 +29,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.springframework.util.ClassUtils;
+import org.springframework.web.util.HtmlUtils;
+
 /**
  * Utility class that provides some simple text formatting methods.
  */
@@ -52,9 +55,9 @@ public final class FormatUtils {
 	private static final String ENTITY_QUOT = "&quot;";
 
 	private static final String ALLOW_URI_CHARS = "0123456789" +
-											  	  "abcdefghijklmnopqrstuvwxyz" +
-											  	  "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-											  	  "-._~!$&'()*+,;=:@%?/";
+		"abcdefghijklmnopqrstuvwxyz" +
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+		"-._~!$&'()*+,;=:@%?/";
 
 	private static final String HEX = "0123456789ABCDEF";
 
@@ -75,8 +78,8 @@ public final class FormatUtils {
 
 	/**
 	 * <pre>
-	 *  	camelCase =&gt; Camel Case
-	 *   CamelCASE =&gt; Camel CASE
+	 * camelCase -> Camel Case
+	 * CamelCASE -> Camel CASE
 	 * </pre>
 	 */
 	public static String camelToTitleCase(String s) {
@@ -105,8 +108,8 @@ public final class FormatUtils {
 
 	/**
 	 * <pre>
-	 *    foo-bar =&gt; fooBar
-	 *    Foo-bAR =&gt; FooBAR
+	 * foo-bar -> fooBar
+	 * Foo-bAR -> FooBAR
 	 * </pre>
 	 */
 	public static String xmlToCamelCase(String s) {
@@ -123,8 +126,8 @@ public final class FormatUtils {
 
 	/**
 	 * <pre>
-	 *    foo-bar =&gt; Foo Bar
-	 *    fooBar =&gt; Foo Bar
+	 * foo-bar -> Foo Bar
+	 * fooBar  -> Foo Bar
 	 * </pre>
 	 */
 	public static String xmlToTitleCase(String s) {
@@ -133,8 +136,20 @@ public final class FormatUtils {
 
 	/**
 	 * <pre>
-	 *    CamelCase =&gt; camel-case
-	 *    camelCASE =&gt; camel-case
+	 * foo.bar    -> Foo Bar
+	 * foo.barBar -> Foo Bar Bar
+	 * </pre>
+	 */
+	public static String propertyToTitleCase(String s) {
+		if (s == null) {
+			return null;
+		}
+		return xmlToTitleCase(s.replace('.', '-'));
+	}
+	/**
+	 * <pre>
+	 * CamelCase -> camel-case
+	 * camelCASE -> camel-case
 	 * </pre>
 	 */
 	public static String camelToXmlCase(String s) {
@@ -515,5 +530,31 @@ public final class FormatUtils {
 		}
 		return sb.toString();
 	}
-
+	
+	/**
+	 * Escapes all HTML special characters in the given array. Dates and 
+	 * primitive-wrappers are left as-is, all other objects are converted to
+	 * their String representation and escaped using 
+	 * {@link HtmlUtils#htmlEscape(String)}.
+	 * @since 6.4  
+	 */
+	public static Object[] htmlEscapeArgs(Object[] args) {
+		Object[] escapedArgs = new Object[args.length];
+		escapedArgs = new Object[args.length];
+		for (int i = 0; i < args.length; i++) {
+			Object arg = args[i];
+			if (arg instanceof String) {
+				escapedArgs[i] = HtmlUtils.htmlEscape((String) arg);
+			}
+			else if (ClassUtils.isPrimitiveWrapper(arg.getClass())
+					|| arg instanceof Date) {
+				
+				escapedArgs[i] = arg;
+			}
+			else {
+				escapedArgs[i] = HtmlUtils.htmlEscape(arg.toString());
+			}
+		}
+		return escapedArgs;
+	}
 }
