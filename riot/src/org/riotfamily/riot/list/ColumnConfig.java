@@ -35,7 +35,7 @@ public class ColumnConfig {
 
 	private int lookupLevel;
 
-	private boolean sortable;
+	private boolean sortable = true;
 
 	private boolean ascending = true;
 	
