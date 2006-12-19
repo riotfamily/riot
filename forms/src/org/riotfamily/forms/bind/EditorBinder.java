@@ -148,6 +148,20 @@ public class EditorBinder extends PropertyEditorRegistrySupport {
 				"No editor bound to property");
 	}
 	
+	/**
+	 * Returns the names of all properties an editor is bound to.
+	 * @since 6.4
+	 */
+	public String[] getBoundProperties() {
+		String[] props = new String[bindings.size()];
+		Iterator it = bindings.iterator();
+		for (int i = 0; it.hasNext(); i++) {
+			EditorBinding binding = (EditorBinding) it.next();
+			props[i] = binding.getProperty();
+		}
+		return props;
+	}
+	
 	public void registerPropertyEditors(PropertyEditorRegistrar[] registrars) {
 		if (registrars != null) {
 			for (int i = 0; i < registrars.length; i++) {
