@@ -35,7 +35,7 @@ import org.riotfamily.forms.element.core.TextField;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.StylesheetResource;
-import org.riotfamily.forms.template.TemplateUtils;
+import org.riotfamily.forms.support.TemplateUtils;
 
 public class InternalLinkField extends TextField implements ResourceElement,
 	DHTMLElement {
