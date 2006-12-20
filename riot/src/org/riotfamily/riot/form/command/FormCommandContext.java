@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormContext;
+import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.editor.AbstractDisplayDefinition;
 import org.riotfamily.riot.editor.DisplayDefinition;
@@ -40,14 +41,12 @@ import org.riotfamily.riot.form.ui.FormUtils;
 import org.riotfamily.riot.list.ColumnConfig;
 import org.riotfamily.riot.list.ListConfig;
 import org.riotfamily.riot.list.command.Command;
+import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.support.ListParamsImpl;
-import org.riotfamily.riot.list.ui.Constants;
-import org.riotfamily.riot.list.ui.MutableListParams;
-import org.riotfamily.riot.list.ui.render.RenderContext;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.ServletRequestUtils;
 
-public class FormCommandContext implements RenderContext {
+public class FormCommandContext implements CommandContext {
 
 	private ListConfig listConfig;
 	
@@ -78,7 +77,7 @@ public class FormCommandContext implements RenderContext {
 		this.item = item;
 		this.listConfig = listConfig;
 		this.confirmed = ServletRequestUtils.getBooleanParameter(
-				request, Constants.PARAM_CONFIRMED, false);
+				request, "confirmed", false);
 		
 		FormContext formContext = form.getFormContext();
 		this.messageResolver = formContext.getMessageResolver();
@@ -97,7 +96,7 @@ public class FormCommandContext implements RenderContext {
 		this.item = item;
 		this.listConfig = listConfig;
 		this.confirmed = ServletRequestUtils.getBooleanParameter(
-				request, Constants.PARAM_CONFIRMED, false);
+				request, "confirmed", false);
 				
 		this.messageResolver = messageResolver;
 		this.locale = locale;
@@ -138,8 +137,8 @@ public class FormCommandContext implements RenderContext {
 		return listConfig.getDao();
 	}
 
-	public MutableListParams getParams() {
-		MutableListParams params = new ListParamsImpl();
+	public ListParams getParams() {
+		ListParamsImpl params = new ListParamsImpl();
 		params.setParentId(getParentId());
 		return params;
 	}
@@ -170,7 +169,7 @@ public class FormCommandContext implements RenderContext {
 		return EditorDefinitionUtils.getObjectId(definition, item);
 	}
 
-	public Object getItem() {
+	public Object getBean() {
 		return item;
 	}
 	

@@ -24,10 +24,6 @@
 package org.riotfamily.riot.form.ui;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,24 +31,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRepository;
-import org.riotfamily.riot.editor.EditorDefinition;
-import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.FormDefinition;
-import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.ui.EditorController;
-import org.riotfamily.riot.form.command.FormCommand;
-import org.riotfamily.riot.form.command.FormCommandContext;
-import org.riotfamily.riot.list.ListConfig;
-import org.riotfamily.riot.list.ListRepository;
-import org.riotfamily.riot.list.command.Command;
-import org.riotfamily.riot.list.command.support.CommandExecutor;
-import org.riotfamily.riot.list.ui.render.CommandRenderer;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -61,63 +45,18 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 public class FormController extends BaseFormController 
 		implements EditorController, BeanNameAware {
-	
-	private ListRepository listRepository;
-	
-	private CommandExecutor commandExecutor;
-	
+		
 	public FormController(EditorRepository editorRepository, 
 			FormRepository formRepository, 
-			PlatformTransactionManager transactionManager,
-			CommandExecutor commandExecutor, ListRepository listRepository) {
+			PlatformTransactionManager transactionManager) {
 		
 		super(editorRepository, formRepository, transactionManager);
-		this.commandExecutor = commandExecutor;
-		this.listRepository = listRepository;
 	}
 		
 	public Class getDefinitionClass() {
 		return FormDefinition.class;
 	}
-		
-	protected Command getCommand(HttpServletRequest request) {
-		String commandId = request.getParameter("command");
-		if (commandId == null) {
-			return null;
-		}
-		return listRepository.getCommand(commandId);
-	}
-	
-	protected boolean isCommandRequest(HttpServletRequest request) {
-		return request.getParameter("command") != null;
-	}
-	
-	/**
-	 * Returns whether the given request is an initial form request.
-	 */
-	protected boolean isInitialRequest(HttpServletRequest request) {
-		return super.isInitialRequest(request) && !isCommandRequest(request);
-	}
-	
-	protected ModelAndView handleFormRequest(final Form form, 
-			final HttpServletRequest request, 
-			final HttpServletResponse response) throws Exception {
-
-		final ModelAndView mv = super.handleFormRequest(form, request, response);
-		if (isCommandRequest(request) && !form.hasErrors()) {
-			execInTransaction(new TransactionCallbackWithoutResult() {
-				protected void doInTransactionWithoutResult(TransactionStatus ts) {
-					FormDefinition formDefinition = getFormDefinition(request);
-					commandExecutor.executeCommand(listRepository, 
-							formDefinition, form, form.getBackingObject(), 
-							request, response, mv.getModel());
-				}
-			});
-		}
-		return mv;
-	}
-
-	
+			
 	protected Map createModel(Form form, FormDefinition formDefinition, 
 			HttpServletRequest request, HttpServletResponse response) {		
 		
@@ -140,38 +79,6 @@ public class FormController extends BaseFormController
 		model.put("childLists", formDefinition.getChildEditorReferences(object, 
 				form.getFormContext().getMessageResolver()));
 				
-		ListDefinition parentList = EditorDefinitionUtils
-				.getParentListDefinition(formDefinition);
-		
-		if (parentList != null && listRepository != null) {
-			ListConfig listConfig = listRepository.getListConfig(
-					parentList.getListId());
-			
-			FormCommandContext context = new FormCommandContext(
-					formDefinition, form, listConfig, object, 
-					request, response);
-			
-			EditorDefinition parent = formDefinition.getParentEditorDefinition();
-			
-			if (!(parent instanceof FormDefinition)) {
-				ArrayList commands = new ArrayList();
-				CommandRenderer renderer = new CommandRenderer();
-				renderer.setRenderText(true);
-				
-				Iterator it = listConfig.getColumnCommands().iterator();
-				while (it.hasNext()) {
-					Command command = (Command) it.next();
-					if (command instanceof FormCommand) {
-						context.setCommand(command);
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						renderer.render(context, pw);
-						commands.add(sw.toString());
-					}
-				}
-				model.put("commands", commands);
-			}
-		}
 		
 		return model;
 	}

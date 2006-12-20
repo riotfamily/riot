@@ -23,69 +23,41 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor.ui;
 
-import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.collection.FlatMap;
-import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
-import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.mapping.UrlMapping;
 import org.riotfamily.common.web.mapping.UrlMappingAware;
 import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
-import org.riotfamily.riot.editor.AbstractDisplayDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
-import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.ViewDefinition;
-import org.riotfamily.riot.form.command.FormCommand;
-import org.riotfamily.riot.form.command.FormCommandContext;
-import org.riotfamily.riot.list.ListConfig;
-import org.riotfamily.riot.list.ListRepository;
-import org.riotfamily.riot.list.command.Command;
-import org.riotfamily.riot.list.command.support.CommandExecutor;
-import org.riotfamily.riot.list.ui.render.CommandRenderer;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import freemarker.template.Configuration;
 
 public class ViewController implements Controller, ResourceLoaderAware, 
-		InitializingBean, EditorController, MessageSourceAware, 
-		UrlMappingAware, BeanNameAware {
+		InitializingBean, EditorController, UrlMappingAware, BeanNameAware {
 
 	private EditorRepository editorRepository;
 	
-	private ListRepository listRepository;
-	
 	private ResourceLoader resourceLoader;
 	
-	private AdvancedMessageCodesResolver messageCodesResolver;
-	
-	private MessageSource messageSource;
-	
 	private PlatformTransactionManager transactionManager;
-	
-	private CommandExecutor commandExecutor;
 	
 	private String editorIdAttribute = "editorId";
 	
@@ -101,20 +73,11 @@ public class ViewController implements Controller, ResourceLoaderAware,
 	private Configuration configuration;
 	
 	public ViewController(EditorRepository repository, 
-			ListRepository listRepository, 
-			PlatformTransactionManager transactionManager,
-			CommandExecutor commandExecutor) {
+			PlatformTransactionManager transactionManager) {
 		
 		this.editorRepository = repository;
-		this.listRepository = listRepository;
 		this.transactionManager = transactionManager;
-		this.commandExecutor = commandExecutor;
 	}	
-
-	public void setMessageCodesResolver(
-			AdvancedMessageCodesResolver messageCodesResolver) {
-		this.messageCodesResolver = messageCodesResolver;
-	}
 
 	public void setEditorIdAttribute(String editorIdAttribute) {
 		this.editorIdAttribute = editorIdAttribute;
@@ -131,10 +94,6 @@ public class ViewController implements Controller, ResourceLoaderAware,
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
 	}	
-	
-	public void setMessageSource(MessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
 	
 	public void setUrlMapping(UrlMapping urlMapping) {
 		this.urlMapping = urlMapping;
@@ -167,7 +126,7 @@ public class ViewController implements Controller, ResourceLoaderAware,
 		
 		final StringWriter sw = new StringWriter();
 		
-		Object object = new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
+		new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
 			public Object doInTransaction(TransactionStatus ts) {
 				Object object = EditorDefinitionUtils.loadBean(viewDef, objectId);
 				FlatMap model = new FlatMap();
@@ -188,44 +147,6 @@ public class ViewController implements Controller, ResourceLoaderAware,
 		viewModel.put("objectId", objectId);
 		viewModel.put("form", sw.toString());
 		
-		ListDefinition parentList = EditorDefinitionUtils.getParentListDefinition(viewDef);
-		
-		if (parentList != null && listRepository != null) {
-			ListConfig listConfig = listRepository.getListConfig(
-					parentList.getListId());
-					
-			ArrayList commands = new ArrayList();
-			CommandRenderer renderer = new CommandRenderer();
-			renderer.setRenderText(true);
-			
-			Locale locale = RequestContextUtils.getLocale(request);
-			
-			final FormCommandContext context = getFormCommandContext(viewDef, 
-					locale, listConfig, object, request, response);
-			
-			Iterator it = listConfig.getColumnCommands().iterator();
-			while (it.hasNext()) {
-				Command command = (Command) it.next();
-				if (command instanceof FormCommand) {
-					context.setCommand(command);
-					StringWriter commandSw = new StringWriter();
-					PrintWriter pw = new PrintWriter(commandSw);
-					renderer.render(context, pw);
-					commands.add(commandSw.toString());					
-				}
-			}
-			viewModel.put("commands", commands);
-			if (isCommandRequest(request)) {
-				new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
-					protected void doInTransactionWithoutResult(TransactionStatus ts) {
-						commandExecutor.executeCommand(listRepository, context, 
-								request, response, viewModel);
-					}
-				});
-				return null;
-			}
-		}		
-		
 		return new ModelAndView(viewName, viewModel);
 	}
 	
@@ -244,10 +165,4 @@ public class ViewController implements Controller, ResourceLoaderAware,
 		return request.getParameter("command") != null;
 	}
 	
-	protected FormCommandContext getFormCommandContext(AbstractDisplayDefinition add, Locale locale,
-			ListConfig listConfig, Object bean, HttpServletRequest request, HttpServletResponse response) {	
-		return new FormCommandContext(
-				add, new MessageResolver(messageSource, messageCodesResolver, locale), locale, listConfig, bean, 
-				request, response);
-	}
 }
