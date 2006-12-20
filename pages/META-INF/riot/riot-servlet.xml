@@ -176,13 +176,6 @@
 	  - Security policy that limits the access to pages flaged as system page.
 	  -->
 	<bean id="systemPagePolicy" class="org.riotfamily.pages.page.support.SystemPagePolicy" />
-
-	<bean id="pageLinkRenderer" class="org.riotfamily.riot.list.ui.render.LinkRenderer">
- 		<property name="property" value="path" />
- 		<property name="suffix" value=".html" />
- 		<property name="target" value="pages" />
- 		<property name="titleMessageKey" value="command.pageLink" />
- 	</bean>
  	
  	<!-- 
  	  - RiotDao to access pages.
