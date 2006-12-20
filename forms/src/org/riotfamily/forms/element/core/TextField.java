@@ -29,18 +29,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
+import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.AbstractTextElement;
 import org.riotfamily.forms.error.ErrorUtils;
-import org.riotfamily.forms.i18n.MessageUtils;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.resource.ScriptSequence;
+import org.riotfamily.forms.support.MessageUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -132,7 +131,7 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 		}
 	}
 	
-	public void processRequest(HttpServletRequest request) {
+	public void processRequest(FormRequest request) {
 		if (confirm) {
 			confirmText = request.getParameter(getConfirmParamName());
 		}

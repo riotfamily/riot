@@ -29,7 +29,7 @@ import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.select.AbstractMultiSelectElement;
 import org.riotfamily.forms.element.support.select.InputTagRenderer;
-import org.riotfamily.forms.template.TemplateUtils;
+import org.riotfamily.forms.support.TemplateUtils;
 
 
 /**

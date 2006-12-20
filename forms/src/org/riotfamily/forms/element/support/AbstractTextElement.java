@@ -29,11 +29,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.PasswordGenerator;
+import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.ajax.JavaScriptEvent;
 import org.riotfamily.forms.ajax.JavaScriptEventAdapter;
 import org.riotfamily.forms.bind.Editor;
@@ -168,7 +167,7 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		}
 	}
 
-	public void processRequest(HttpServletRequest request) {
+	public void processRequest(FormRequest request) {
 		String newText = request.getParameter(getParamName());
 		if (newText != null) {
 			if (!newText.equals(getText())) {

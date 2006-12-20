@@ -29,7 +29,7 @@ import org.riotfamily.forms.Element;
 import org.riotfamily.forms.element.ContainerElement;
 import org.riotfamily.forms.element.support.Container;
 import org.riotfamily.forms.element.support.TemplateElement;
-import org.riotfamily.forms.i18n.MessageUtils;
+import org.riotfamily.forms.support.MessageUtils;
 
 
 /**

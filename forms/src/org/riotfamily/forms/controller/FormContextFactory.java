@@ -30,7 +30,7 @@ import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.RiotMessageCodesResolver;
 import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.forms.FormContext;
-import org.riotfamily.forms.template.TemplateRenderer;
+import org.riotfamily.forms.support.TemplateRenderer;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;

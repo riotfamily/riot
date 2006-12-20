@@ -39,6 +39,7 @@ import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.ContentElement;
 import org.riotfamily.forms.element.support.Container;
+import org.riotfamily.forms.support.HttpFormRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -214,7 +215,7 @@ public abstract class AbstractFormController implements Controller {
 		if (form != null) {
 			String id = request.getParameter(EXCLUSIVE_PARAM);
 			Element element = form.getElementById(id);
-			element.processRequest(request);
+			element.processRequest(new HttpFormRequest(request));
 		}
 		return null;
 	}

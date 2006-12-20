@@ -25,8 +25,6 @@ package org.riotfamily.forms;
 
 import java.io.PrintWriter;
 
-import javax.servlet.http.HttpServletRequest;
-
 
 /**
  * Interface to be implemented by all form elements. If you want to create a 
@@ -76,11 +74,11 @@ public interface Element {
 	public Element getParent();
 	
 	/**
-	 * This method is invoked whenever a http request needs to be processed.
+	 * This method is invoked whenever a HTTP request needs to be processed.
 	 * Elements may impelement this method to change their internal state 
 	 * according to parameters found in the request. 
 	 */
-	public void processRequest(HttpServletRequest request);
+	public void processRequest(FormRequest request);
 		
 	/**
 	 * Renders the element to the given writer.

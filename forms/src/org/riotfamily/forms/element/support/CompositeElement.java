@@ -28,12 +28,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
+import org.riotfamily.forms.FormRequest;
 
 
 /**
@@ -115,7 +114,7 @@ public abstract class CompositeElement extends AbstractEditorBase {
 	 * Calls <code>processRequestInternal()</code> and afterwards 
 	 * <code>processRequestComponents()</code> to process the components.
 	 */
-	public void processRequest(HttpServletRequest request) {
+	public void processRequest(FormRequest request) {
 		processRequestInternal(request);		
 		processRequestCompontents(request);
 		revalidate();
@@ -132,7 +131,7 @@ public abstract class CompositeElement extends AbstractEditorBase {
 	/**
 	 * Processes the request for all the components
 	 */
-	protected final void processRequestCompontents(HttpServletRequest request) {
+	protected final void processRequestCompontents(FormRequest request) {
 		// Temporary list to allow concurrent modification
 		List tempList = new ArrayList(components);
 		Iterator it = tempList.iterator();
@@ -161,7 +160,7 @@ public abstract class CompositeElement extends AbstractEditorBase {
 	 * Subclasses can override this method to perform custom processing. The
 	 * default implementation does nothing.
 	 */
-	protected void processRequestInternal(HttpServletRequest request) {
+	protected void processRequestInternal(FormRequest request) {
 	}
 
 	protected boolean isSurroundBySpan() {

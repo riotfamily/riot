@@ -32,7 +32,7 @@ import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.resource.ScriptSequence;
-import org.riotfamily.forms.template.TemplateUtils;
+import org.riotfamily.forms.support.TemplateUtils;
 
 
 /**

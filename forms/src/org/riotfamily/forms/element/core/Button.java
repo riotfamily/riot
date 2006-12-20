@@ -28,17 +28,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.ajax.JavaScriptEvent;
 import org.riotfamily.forms.ajax.JavaScriptEventAdapter;
 import org.riotfamily.forms.element.support.AbstractEditorBase;
 import org.riotfamily.forms.event.ClickEvent;
 import org.riotfamily.forms.event.ClickListener;
-import org.riotfamily.forms.i18n.MessageUtils;
+import org.riotfamily.forms.support.MessageUtils;
 
 
 /**
@@ -118,7 +117,7 @@ public class Button extends AbstractEditorBase
 		listeners.add(listener);
 	}
 	
-	public void processRequest(HttpServletRequest request) {		
+	public void processRequest(FormRequest request) {		
 		String value = request.getParameter(getParamName());
 		clicked = value != null;
 		if (clicked) {

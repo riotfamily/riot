@@ -37,7 +37,7 @@ import org.riotfamily.forms.element.support.AbstractEditorBase;
 import org.riotfamily.forms.error.ErrorUtils;
 import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
-import org.riotfamily.forms.i18n.MessageUtils;
+import org.riotfamily.forms.support.MessageUtils;
 import org.springframework.util.Assert;
 
 /**

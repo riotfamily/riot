@@ -24,7 +24,7 @@
 package org.riotfamily.forms.element.support;
 
 import org.riotfamily.forms.bind.EditorBinding;
-import org.riotfamily.forms.i18n.MessageUtils;
+import org.riotfamily.forms.support.MessageUtils;
 
 public abstract class AbstractEditorBase extends AbstractElement {
 

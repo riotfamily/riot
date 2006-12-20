@@ -23,9 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.core;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.riotfamily.forms.Element;
+import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.ajax.JavaScriptEvent;
 import org.riotfamily.forms.bind.BeanEditor;
 import org.riotfamily.forms.bind.Editor;
@@ -35,8 +34,8 @@ import org.riotfamily.forms.element.ContainerElement;
 import org.riotfamily.forms.element.support.AbstractEditorBase;
 import org.riotfamily.forms.element.support.Container;
 import org.riotfamily.forms.element.support.TemplateElement;
-import org.riotfamily.forms.i18n.MessageUtils;
-import org.riotfamily.forms.template.TemplateUtils;
+import org.riotfamily.forms.support.MessageUtils;
+import org.riotfamily.forms.support.TemplateUtils;
 
 /**
  * Element to edit nested beans.
@@ -112,7 +111,7 @@ public class NestedForm extends TemplateElement implements
 		}
 	}
 	
-	public void processRequest(HttpServletRequest request) {
+	public void processRequest(FormRequest request) {
 		if (present || isRequired()) {
 			super.processRequest(request);
 		}

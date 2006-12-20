@@ -43,7 +43,7 @@ import org.riotfamily.forms.element.ContentElement;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
-import org.riotfamily.forms.template.TemplateUtils;
+import org.riotfamily.forms.support.TemplateUtils;
 import org.springframework.util.StringUtils;
 
 public abstract class AbstractChooser extends AbstractEditorBase

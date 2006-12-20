@@ -25,13 +25,12 @@ package org.riotfamily.forms.element.support;
 
 import java.io.PrintWriter;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormContext;
+import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.event.FormListener;
 
 
@@ -154,7 +153,7 @@ public abstract class AbstractElement implements Element {
 	 * Subclasses may override this method to change their internal state
 	 * according the given request.
 	 */
-	public void processRequest(HttpServletRequest request) {
+	public void processRequest(FormRequest request) {
 	}
 	
 	/**

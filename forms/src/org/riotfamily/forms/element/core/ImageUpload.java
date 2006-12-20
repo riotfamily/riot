@@ -45,7 +45,7 @@ import org.riotfamily.forms.error.ErrorUtils;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.resource.ScriptSequence;
-import org.riotfamily.forms.template.TemplateUtils;
+import org.riotfamily.forms.support.TemplateUtils;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.ServletRequestUtils;
 

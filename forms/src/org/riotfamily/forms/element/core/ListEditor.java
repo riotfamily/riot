@@ -32,9 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.Container;
@@ -45,7 +44,7 @@ import org.riotfamily.forms.event.ClickListener;
 import org.riotfamily.forms.factory.ElementFactory;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
-import org.riotfamily.forms.template.TemplateUtils;
+import org.riotfamily.forms.support.TemplateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 
@@ -218,7 +217,7 @@ public class ListEditor extends TemplateElement implements Editor,
 		return Resources.SCRIPTACULOUS_DRAG_DROP_SEQ.getTest();
 	}
 	
-	protected void processRequestInternal(HttpServletRequest request) {
+	protected void processRequestInternal(FormRequest request) {
 		if (sortable) {
 			String itemOrder = request.getParameter(getParamName());
 			if (StringUtils.hasLength(itemOrder)) {

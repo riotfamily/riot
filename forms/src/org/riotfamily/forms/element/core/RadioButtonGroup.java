@@ -28,7 +28,7 @@ import java.io.PrintWriter;
 import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.forms.element.support.select.AbstractSingleSelectElement;
 import org.riotfamily.forms.element.support.select.InputTagRenderer;
-import org.riotfamily.forms.template.TemplateUtils;
+import org.riotfamily.forms.support.TemplateUtils;
 
 /**
  * Single-select element that uses a group of radio-buttons to render 

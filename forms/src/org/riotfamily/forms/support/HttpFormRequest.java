@@ -21,31 +21,39 @@
  *   Felix Gnass <fgnass@neteye.de>
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.forms.template;
+package org.riotfamily.forms.support;
 
-import java.io.PrintWriter;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 
-import freemarker.template.Configuration;
+import org.riotfamily.forms.FormRequest;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-public class TemplateRenderer {
+/**
+ * @author Felix Gnass <fgnass@neteye.de>
+ * @since 6.4
+ */
+public class HttpFormRequest implements FormRequest {
 
-	private Configuration configuration;
+	private HttpServletRequest request;
 	
-	public TemplateRenderer(Configuration configuration) {
-		this.configuration = configuration;
+	public HttpFormRequest(HttpServletRequest request) {
+		this.request = request;
 	}
 
-	public void render(String templateName, Map model, PrintWriter writer) {
-		try {
-			configuration.getTemplate(templateName).process(model, writer);
+	public MultipartFile getFile(String name) {
+		if (request instanceof MultipartHttpServletRequest) {
+			return ((MultipartHttpServletRequest) request).getFile(name);
 		}
-		catch (RuntimeException e) {
-			throw e;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		return null;
+	}
+
+	public String getParameter(String name) {
+		return request.getParameter(name);
+	}
+
+	public String[] getParameterValues(String name) {
+		return request.getParameterValues(name);
 	}
 
 }

@@ -33,7 +33,7 @@ import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.element.ContentElement;
-import org.riotfamily.forms.template.TemplateRenderer;
+import org.riotfamily.forms.support.TemplateRenderer;
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.context.MessageSource;
 import org.springframework.web.servlet.support.RequestContextUtils;

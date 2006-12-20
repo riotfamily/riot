@@ -29,8 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
+import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.ajax.JavaScriptEvent;
 import org.riotfamily.forms.error.ErrorUtils;
 import org.springframework.beans.BeanUtils;
@@ -119,7 +118,7 @@ public abstract class AbstractMultiSelectElement
 	/**
 	 * @see org.riotfamily.forms.element.support.AbstractElement#processRequest
 	 */
-	public void processRequest(HttpServletRequest request) {
+	public void processRequest(FormRequest request) {
 		updateSelection(request.getParameterValues(getParamName()));
 	}
 	

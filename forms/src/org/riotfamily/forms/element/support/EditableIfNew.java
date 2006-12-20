@@ -25,11 +25,10 @@ package org.riotfamily.forms.element.support;
 
 import java.io.PrintWriter;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.Element;
+import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.element.ContainerElement;
 import org.springframework.util.Assert;
@@ -66,7 +65,7 @@ public class EditableIfNew extends AbstractElement implements ContainerElement {
 		}
 	}
 
-	public void processRequest(HttpServletRequest request) {
+	public void processRequest(FormRequest request) {
 		if (getForm().isNew()) {
 			editor.processRequest(request);
 		}

@@ -21,7 +21,7 @@
  *   Felix Gnass <fgnass@neteye.de>
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.forms.i18n;
+package org.riotfamily.forms.support;
 
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;

@@ -27,7 +27,7 @@ import java.io.PrintWriter;
 
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
-import org.riotfamily.forms.template.TemplateUtils;
+import org.riotfamily.forms.support.TemplateUtils;
 
 public class PasswordField extends TextField {
 

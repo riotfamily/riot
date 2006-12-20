@@ -48,11 +48,12 @@ import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.Container;
 import org.riotfamily.forms.error.FormErrors;
 import org.riotfamily.forms.event.FormListener;
-import org.riotfamily.forms.i18n.MessageUtils;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.StylesheetResource;
-import org.riotfamily.forms.template.TemplateUtils;
+import org.riotfamily.forms.support.HttpFormRequest;
+import org.riotfamily.forms.support.MessageUtils;
+import org.riotfamily.forms.support.TemplateUtils;
 
 
 /**
@@ -381,6 +382,10 @@ public class Form implements BeanEditor {
 	}
 	
 	public void processRequest(HttpServletRequest request) {
+		processRequest(new HttpFormRequest(request));
+	}
+	
+	public void processRequest(FormRequest request) {
 		errors = new FormErrors(this);
 		Iterator it = containers.iterator();
 		while (it.hasNext()) {

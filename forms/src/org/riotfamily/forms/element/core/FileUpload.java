@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.file.FileStore;
 import org.riotfamily.forms.Element;
+import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.ajax.JavaScriptEvent;
 import org.riotfamily.forms.ajax.JavaScriptEventAdapter;
 import org.riotfamily.forms.bind.Editor;
@@ -53,7 +54,6 @@ import org.riotfamily.forms.resource.StylesheetResource;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 /**
@@ -319,36 +319,30 @@ public class FileUpload extends CompositeElement implements Editor,
 			return status;
 		}
 		
-		public void processRequestInternal(HttpServletRequest request) {
+		public void processRequestInternal(FormRequest request) {
 			log.debug("Processing " + getParamName());
-			if (request instanceof MultipartHttpServletRequest) {
-				MultipartHttpServletRequest mpRequest = 
-						(MultipartHttpServletRequest) request;
-			
-				MultipartFile multipartFile = mpRequest.getFile(getParamName());
-			
-				if ((multipartFile != null) && (!multipartFile.isEmpty())) {
-					try {
-						fileName = multipartFile.getOriginalFilename();
-						contentType = multipartFile.getContentType();
-						if (tempFile != null) {
-							tempFile.delete();
-						}
-						tempFile = File.createTempFile("000", "."
-								+ FormatUtils.getExtension(fileName));
-						
-						multipartFile.transferTo(tempFile);
-						log.debug("stored at: " + tempFile.getAbsolutePath());
-						
-						setFile(tempFile);
-						
-						log.debug("File uploaded: " + fileName + " (" 
-								+ contentType + ")");
-						
+			MultipartFile multipartFile = request.getFile(getParamName());
+			if ((multipartFile != null) && (!multipartFile.isEmpty())) {
+				try {
+					fileName = multipartFile.getOriginalFilename();
+					contentType = multipartFile.getContentType();
+					if (tempFile != null) {
+						tempFile.delete();
 					}
-					catch (IOException e) {
-						log.error("error saving uploaded file");
-					}
+					tempFile = File.createTempFile("000", "."
+							+ FormatUtils.getExtension(fileName));
+					
+					multipartFile.transferTo(tempFile);
+					log.debug("stored at: " + tempFile.getAbsolutePath());
+					
+					setFile(tempFile);
+					
+					log.debug("File uploaded: " + fileName + " (" 
+							+ contentType + ")");
+					
+				}
+				catch (IOException e) {
+					log.error("error saving uploaded file");
 				}
 			}
 		}

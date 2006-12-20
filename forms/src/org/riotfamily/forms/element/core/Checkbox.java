@@ -25,10 +25,9 @@ package org.riotfamily.forms.element.core;
 
 import java.io.PrintWriter;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.element.support.AbstractEditorBase;
 
@@ -119,7 +118,7 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 		return checked ? checkedValue : uncheckedValue;
 	}
 	
-	public void processRequest(HttpServletRequest request) {
+	public void processRequest(FormRequest request) {
 		Object newValue = request.getParameter(getParamName());
 		checked = newValue != null;
 	}

@@ -23,8 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.support.select;
 
-import javax.servlet.http.HttpServletRequest;
-
+import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.ajax.JavaScriptEvent;
 
 /**
@@ -55,7 +54,7 @@ public abstract class AbstractSingleSelectElement
 	/**
 	 * @see org.riotfamily.forms.element.support.AbstractElement#processRequest
 	 */
-	public void processRequest(HttpServletRequest request) {
+	public void processRequest(FormRequest request) {
 		updateSelection(request.getParameter(getParamName()));
 	}
 	

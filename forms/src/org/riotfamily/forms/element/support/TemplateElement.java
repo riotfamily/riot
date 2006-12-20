@@ -30,7 +30,7 @@ import java.util.Map;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.Element;
-import org.riotfamily.forms.template.TemplateUtils;
+import org.riotfamily.forms.support.TemplateUtils;
 
 
 /**
@@ -80,7 +80,7 @@ public class TemplateElement extends CompositeElement {
 	 * 
 	 * @param name name of the template to use
 	 * @see #renderInternal(PrintWriter)
-	 * @see org.riotfamily.forms.template.TemplateRenderer
+	 * @see org.riotfamily.forms.support.TemplateRenderer
 	 */
 	public final void setTemplate(String name) {
 		this.template = name;
