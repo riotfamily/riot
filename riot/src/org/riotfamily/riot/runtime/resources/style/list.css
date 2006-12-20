@@ -54,9 +54,9 @@ th .sorted-desc {
 td {
 	line-height: 26px;
 }
-th.command, 
-td.command {
-	width: 34px;
+
+th.commands, 
+td.commands {
 	padding: 0;
 }
 
@@ -106,13 +106,17 @@ td.data .false {
 	background-image: url(images/false.gif);
 }
 
-#list .command .action:hover {
+#list .commands .action {
+	float: left;
+}
+
+#list .commands .action:hover {
 	background-position: 0 -32px;
 	background-color: ${highlight};
 }
-#list .command .disabled {
+#list .commands .disabled {
 	background-position: 0 -64px;
 }
-#list .command .disabled:hover {
+#list .commands .disabled:hover {
 	background-color: #ebebeb;
 }
