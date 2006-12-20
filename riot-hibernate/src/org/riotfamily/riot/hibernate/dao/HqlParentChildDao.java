@@ -32,6 +32,7 @@ import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.riot.dao.ParentChildDao;
 import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.ListParams;
+import org.riotfamily.riot.hibernate.support.HibernateUtils;
 
 
 
@@ -79,11 +80,9 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
         if (parent != null) {
         	query.setParameter("parent", parent);
         }
-        /*
         if (params.getFilter() != null) {
             query.setProperties(params.getFilter());
         }
-        */
         return query.list();
     }
 
@@ -103,7 +102,7 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
 
     protected String getWhereClause(ListParams params) {
         StringBuffer sb = new StringBuffer();
-        hasWhere = false;
+        boolean hasWhere = false;
         if (parentProperty != null) {
         	sb.append(" where this.");
        		sb.append(parentProperty);
@@ -115,16 +114,22 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
         	}
         	hasWhere = true;
         }
-        if (getWhere() != null) {
+        
+        String where = getWhere();
+        if (where == null && params.getFilter() != null) {
+        	where = HibernateUtils.getExampleWhereClause(params.getFilter(), 
+        			"this", params.getFilteredProperties());
+        }
+        if (where != null) {
         	sb.append(hasWhere ? " and " : " where ");
-            sb.append(getWhere());
+            sb.append(where);
             hasWhere = true;
         }
+        
         if (!isPolymorph()) {
         	sb.append(hasWhere ? " and " : " where ");
             sb.append("this.class = ");
             sb.append(getEntityClass().getName());
-            hasWhere = true;
         }
         return sb.toString();
     }

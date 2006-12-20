@@ -136,15 +136,15 @@ public class HqlCollectionDao extends HibernateSupport
 	}
     
     protected void buildQueryString(StringBuffer hql, ListParams params) {
-        boolean whereKeyword = false;
+        boolean hasWhere = false;
         if (!polymorph) {
             hql.append(" where this.class = ");
             hql.append(entityClass.getName());
-            whereKeyword = true;
+            hasWhere = true;
         }
         if (where != null) {
-            hql.append(whereKeyword ? " and " : " where ");
-            whereKeyword = true;
+            hql.append(hasWhere ? " and " : " where ");
+            hasWhere = true;
             hql.append(where);
         }
         hql.append(getOrderBy(params));

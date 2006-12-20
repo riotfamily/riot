@@ -55,8 +55,6 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 
     private String positionProperty;
     
-    boolean hasWhere;
-
 	/**
      * @return Returns the itemClass.
      */
@@ -172,16 +170,19 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 
     protected String getWhereClause(ListParams params) {
         StringBuffer sb = new StringBuffer();
-        hasWhere = where != null;
-        if (hasWhere) {
-            sb.append(" where ").append(where);
+        String where = this.where;
+        if (where == null && params.getFilter() != null) {
+        	where = HibernateUtils.getExampleWhereClause(params.getFilter(), 
+        			"this", params.getFilteredProperties()); 
+        }
+        if (where != null) {
+        	sb.append(" where ").append(where);
         }
         if (!polymorph) {
-            sb.append(hasWhere ? " and " : " where ");
+            sb.append(where != null ? " and " : " where ");
             sb.append(" (this.class = ");
             sb.append(entityClass.getName());
             sb.append(')');
-            hasWhere = true;
         }
         return sb.toString();
     }

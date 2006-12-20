@@ -24,6 +24,7 @@
 package org.riotfamily.riot.hibernate.support;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
@@ -56,5 +57,33 @@ public final class HibernateUtils {
 		Class clazz = Hibernate.getClass(bean);
 		ClassMetadata metadata = sessionFactory.getClassMetadata(clazz);
 		return metadata.getIdentifier(bean, EntityMode.POJO).toString();
+	}
+	
+	public static String getExampleWhereClause(Object example, String alias, 
+			String[] propertyNames) {
+		
+		if (example == null || propertyNames == null) {
+			return null;
+		}
+		StringBuffer hql = new StringBuffer();
+		Map properties;
+		if (example instanceof Map) {
+			properties = (Map) example;
+		}
+		else {
+			properties = PropertyUtils.getProperties(example);
+		}
+		for (int i = 0; i < propertyNames.length; i++) {
+			String name = propertyNames[i];
+			Object value = properties.get(name);
+			if (value != null) {
+				if (hql.length() > 0) {
+					hql.append(" and ");
+				}
+				hql.append(alias).append('.').append(name);
+				hql.append(" = :").append(name);
+			}
+		}
+		return hql.length() > 0 ? hql.toString() : null;
 	}
 }
