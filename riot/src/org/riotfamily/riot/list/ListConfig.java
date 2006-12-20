@@ -27,10 +27,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.dao.Order;
+import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.list.command.Command;
-import org.riotfamily.riot.list.ui.render.CellRenderer;
 
 /**
  *
@@ -47,11 +46,9 @@ public class ListConfig {
 
 	private List commands = new ArrayList();
 	
-	private ArrayList columnCommands = null;
+	private ArrayList columnCommands = new ArrayList();
 	
 	private String defaultCommandId;
-
-	private CellRenderer listCommandRenderer;
 
 	private String idProperty;
 	
@@ -136,14 +133,6 @@ public class ListConfig {
 		return commands;
 	}
 
-	public CellRenderer getListCommandRenderer() {
-		return listCommandRenderer;
-	}
-
-	public void setListCommandRenderer(CellRenderer commandRenderer) {
-		this.listCommandRenderer = commandRenderer;
-	}
-	
 	public Class getItemClass() {
 		return dao.getEntityClass();
 	}
@@ -171,24 +160,39 @@ public class ListConfig {
 		return null;
 	}
 	
+	public void addColumnCommand(Command command) {
+		columnCommands.add(command);
+	}
+	
 	public List getColumnCommands() {
-		if (columnCommands == null) {
-			columnCommands = new ArrayList();
-			Iterator it = columnConfigs.iterator();
-			while (it.hasNext()) {
-				ColumnConfig col = (ColumnConfig) it.next();
-				if (col.getCommand() != null) {
-					columnCommands.add(col.getCommand());
-				}
-			}
-		}
 		return columnCommands;
 	}
 	
+	public Command getColumnCommand(String id) {
+		Iterator it = columnCommands.iterator();
+		while (it.hasNext()) {
+			Command command = (Command) it.next();
+			if (command.getId().equals(id)) {
+				return command;
+			}
+		}
+		throw new IllegalArgumentException("No such command: " + id);
+	}
+	
+	public Command getListCommand(String id) {
+		Iterator it = commands.iterator();
+		while (it.hasNext()) {
+			Command command = (Command) it.next();
+			if (command.getId().equals(id)) {
+				return command;
+			}
+		}
+		throw new IllegalArgumentException("No such command: " + id);
+	}
+	
 	public Command getFirstColumnCommand() {
-		List commands = getColumnCommands();
-		if (commands != null && !commands.isEmpty()) {
-			return (Command) commands.get(0);
+		if (!columnCommands.isEmpty()) {
+			return (Command) columnCommands.get(0);
 		}
 		return null;
 	}

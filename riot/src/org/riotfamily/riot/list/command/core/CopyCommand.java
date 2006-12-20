@@ -30,13 +30,12 @@ import org.riotfamily.riot.list.command.result.SetRowStyleResult;
 import org.riotfamily.riot.list.command.result.ShowListResult;
 import org.riotfamily.riot.list.command.support.AbstractCommand;
 import org.riotfamily.riot.list.command.support.Clipboard;
-import org.riotfamily.riot.list.ui.render.RenderContext;
 
 public class CopyCommand extends AbstractCommand {
 
 	private static final String COPY_ROW_STYLE = "copied";
 	
-	public boolean isEnabled(RenderContext context) {
+	public boolean isEnabled(CommandContext context) {
 		if (context.getDao() instanceof CopyAndPasteEnabledDao) {
 			Clipboard cb = Clipboard.get(context);
 			if (cb.isCopied(context)) {

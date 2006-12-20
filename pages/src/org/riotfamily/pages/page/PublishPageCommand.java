@@ -35,11 +35,11 @@ public class PublishPageCommand extends AbstractCommand {
 			
 	public String getConfirmationMessage(CommandContext context) {
 		
-		Class clazz = context.getBeanClass();
-		Page page = (Page) context.getItem();
+		Class clazz = context.getListDefinition().getBeanClass();
+		Page page = (Page) context.getBean();
 		
 		String type = context.getMessageResolver().getClassLabel(null, clazz);
-		String label = context.getEditorDefinition().getLabel(page);
+		String label = context.getListDefinition().getDisplayDefinition().getLabel(page);
 		
 		Object[] args = new Object[] {label, type, context.getObjectId()};
 		
@@ -54,14 +54,14 @@ public class PublishPageCommand extends AbstractCommand {
 	}
 	
 	public CommandResult execute(CommandContext context) {
-		Page page = (Page) context.getItem();
+		Page page = (Page) context.getBean();
 		page.setPublished(!page.isPublished());
 		context.getDao().update(page);
 		return new ReloadResult();
 	}
 
 	public String getAction(CommandContext context) {
-		Page page = (Page) context.getItem();
+		Page page = (Page) context.getBean();
 		return page.isPublished() ? "unpublishPage" : "publishPage"; 
 	}
 	

@@ -28,9 +28,8 @@ import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.form.command.FormCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.result.GotoUrlResult;
+import org.riotfamily.riot.list.command.result.ShowListResult;
 import org.riotfamily.riot.list.command.support.AbstractCommand;
-import org.riotfamily.riot.list.ui.render.RenderContext;
 import org.springframework.web.util.HtmlUtils;
 
 /**
@@ -39,18 +38,18 @@ import org.springframework.web.util.HtmlUtils;
  */
 public class DeleteCommand extends AbstractCommand implements FormCommand {
 
-	public boolean isEnabled(RenderContext context) {
+	public boolean isEnabled(CommandContext context) {
 		return context.getObjectId() != null;
 	}
 	
 	public String getConfirmationMessage(CommandContext context) {
 		
-		Class clazz = context.getBeanClass();
-		Object item = context.getItem();
+		Class clazz = context.getListDefinition().getBeanClass();
+		Object item = context.getBean();
 		
 		String type = context.getMessageResolver().getClassLabel(null, clazz);
-		String label = HtmlUtils.htmlEscape(
-				context.getEditorDefinition().getLabel(item));
+		String label = HtmlUtils.htmlEscape(context.getListDefinition()
+				.getDisplayDefinition().getLabel(item));
 		
 		Object[] args = new Object[] {label, type, context.getObjectId()};
 		
@@ -59,16 +58,13 @@ public class DeleteCommand extends AbstractCommand implements FormCommand {
 	}
 	
 	public CommandResult execute(CommandContext context) {
-
 		ListDefinition listDef = context.getListDefinition();
 		String parentId = context.getParentId();
 		Object parent = EditorDefinitionUtils.loadParent(listDef, parentId);
 		
-		Object item = context.getItem();
-		listDef.getListConfig().getDao().delete(item, parent);
-		
-		String url = context.getListDefinition().getEditorUrl(null, parentId);
-		return new GotoUrlResult(url);
+		Object item = context.getBean();
+		context.getDao().delete(item, parent);
+		return new ShowListResult(context);
 	}
 
 }

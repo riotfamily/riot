@@ -18,31 +18,46 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.ui;
 
-
 /**
- * Holds information about a list cell, namely the CSS class and the content.
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.4
  */
-public class ListCell {
+public class CommandState {
 
-	private String cssClass;
+	private String id;
 	
-	private String data;
+	private String action;
 	
-	public ListCell(String cssClass, String data) {
-		this.cssClass = cssClass;
-		this.data = data;
+	private boolean enabled;
+
+	public String getAction() {
+		return this.action;
 	}
-	
-	public String getCssClass() {
-		return cssClass;
+
+	public void setAction(String action) {
+		this.action = action;
 	}
-	
-	public String getData() {
-		return data;
+
+	public boolean isEnabled() {
+		return this.enabled;
 	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	
 }

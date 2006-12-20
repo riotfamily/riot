@@ -27,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.ui.render.RenderContext;
 import org.springframework.beans.factory.BeanNameAware;
 
 /**
@@ -93,7 +92,7 @@ public abstract class AbstractCommand implements Command, BeanNameAware {
 	 * Always returns <code>true</code>. Subclasses may override this method
 	 * to disable the command depending on the context.
 	 */
-	public boolean isEnabled(RenderContext context) {
+	public boolean isEnabled(CommandContext context) {
 		return true;
 	}
 

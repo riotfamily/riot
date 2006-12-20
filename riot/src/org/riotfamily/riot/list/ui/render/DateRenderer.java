@@ -54,11 +54,13 @@ public class DateRenderer implements CellRenderer {
 		}
 	}
 	
-	public void render(RenderContext context, PrintWriter writer) {
-		Date date = (Date) context.getValue();
+	public void render(String propertyName, Object value, RenderContext context, 
+			PrintWriter writer) {
+		
+		Date date = (Date) value;
 		if (date != null) {
 			DateFormat format = SimpleDateFormat.getDateInstance(
-					style, context.getLocale());
+					style, context.getMessageResolver().getLocale());
 			
 			writer.print(format.format(date));
 		}

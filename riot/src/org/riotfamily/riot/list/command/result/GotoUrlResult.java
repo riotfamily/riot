@@ -23,43 +23,49 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.result;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 
 public class GotoUrlResult implements CommandResult {
 
+	public static final String ACTION = "gotoUrl";
+	
 	private String url;
 	
-	private String target = "window";
+	private String target = "self";
 	
 	private boolean replace;
 	
-	private boolean contextRelative;
-
 	public GotoUrlResult(String url) {
-		this(url, true);
+		this.url = url;
 	}
 	
-	public GotoUrlResult(String url, boolean contextRelative) {
-		this.url = url;
-		this.contextRelative = contextRelative;
+	public GotoUrlResult(String url, CommandContext context) {
+		this.url = context.getRequest().getContextPath() + url;
+	}
+	
+	public String getAction() {
+		return ACTION;
 	}
 
-	public String getJavaScriptCode(HttpServletRequest request, 
-			HttpServletResponse response) {
-		
-		StringBuffer js = new StringBuffer();
-		js.append(target);
-		js.append(".location.");
-		js.append(replace ? "replace('" : "href = '");
-		String href = contextRelative ? request.getContextPath() + url : url;  
-		js.append(response.encodeURL(href));
-		js.append('\'');
-		if (replace) {
-			js.append(')');
-		}
-		return js.toString();
+	public boolean isReplace() {
+		return this.replace;
 	}
+
+	public void setReplace(boolean replace) {
+		this.replace = replace;
+	}
+
+	public String getTarget() {
+		return this.target;
+	}
+
+	public void setTarget(String target) {
+		this.target = target;
+	}
+
+	public String getUrl() {
+		return this.url;
+	}
+
 }

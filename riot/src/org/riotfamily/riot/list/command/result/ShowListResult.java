@@ -29,7 +29,7 @@ public class ShowListResult extends GotoUrlResult {
 
 	public ShowListResult(CommandContext context) {
 		super(context.getListDefinition().getEditorUrl(
-				null, context.getParentId()));
+				null, context.getParentId()), context);
 	}
 
 }

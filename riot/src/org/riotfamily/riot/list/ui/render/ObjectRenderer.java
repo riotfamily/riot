@@ -46,17 +46,16 @@ public class ObjectRenderer implements CellRenderer {
 		this.propertyEditor = propertyEditor;
 	}
 	
-	public void render(RenderContext context, PrintWriter writer) {
-		Object object = context.getValue();
-		if (object != null) {
-			Class type = object.getClass();
+	public void render(String propertyName, Object value, RenderContext context, PrintWriter writer) {
+		if (value != null) {
+			Class type = value.getClass();
 			if (propertyEditor == null) {
 				propertyEditor = PropertyEditorManager.findEditor(type);
 				if (propertyEditor == null) {
 					propertyEditor = DEFAULT_EDITOR;
 				}
 			}
-			propertyEditor.setValue(object);
+			propertyEditor.setValue(value);
 			renderValue(context, writer, propertyEditor.getAsText());
 		}
 	}

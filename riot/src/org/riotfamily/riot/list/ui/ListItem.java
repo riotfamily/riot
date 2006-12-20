@@ -23,35 +23,62 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.ui;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
- * Holds information about a list row.
+ * @author Felix Gnass <fgnass@neteye.de>
+ * @since 6.4
  */
-public class ListRow {
+public class ListItem {
 
-	private String cssClass;
+	private int rowIndex;
 	
 	private String objectId;
+	
+	private String cssClass;
+	
+	private List columns;
+	
+	private List commands;
 
-	private Collection cells;
-
-	public ListRow(String cssClass, String objectId, Collection cells) {
-		this.cssClass = cssClass;
-		this.objectId = objectId;
-		this.cells = cells;
+	public List getColumns() {
+		return this.columns;
 	}
 
-	public Collection getCells() {
-		return cells;
-	}
-
-	public String getObjectId() {
-		return objectId;
+	public void setColumns(List columns) {
+		this.columns = columns;
 	}
 
 	public String getCssClass() {
 		return this.cssClass;
+	}
+
+	public void setCssClass(String cssClass) {
+		this.cssClass = cssClass;
+	}
+
+	public List getCommands() {
+		return this.commands;
+	}
+
+	public void setCommands(List commands) {
+		this.commands = commands;
+	}
+
+	public String getObjectId() {
+		return this.objectId;
+	}
+
+	public void setObjectId(String objectId) {
+		this.objectId = objectId;
+	}
+
+	public int getRowIndex() {
+		return this.rowIndex;
+	}
+
+	public void setRowIndex(int rowIndex) {
+		this.rowIndex = rowIndex;
 	}
 	
 }

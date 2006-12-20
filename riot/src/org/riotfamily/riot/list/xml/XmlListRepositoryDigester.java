@@ -67,7 +67,7 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	
 	private static final String COLUMNS = "columns";
 	
-	private static final String COLUMN = "column|command";
+	private static final String COLUMN = "column";
 	
 	private static final String[] COLUMN_ATTRS = new String[] {
 		"sortable", "lookup-level", "@renderer", "property", "case-sensitive"
@@ -160,11 +160,20 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	protected void digestColumns(ListConfig listConfig, 
 			Element listElement) {
 		
-		Element ele = DomUtils.getChildElementByTagName(listElement, COLUMNS);
-		List nodes = XmlUtils.getChildElementsByRegex(ele, COLUMN);
+		Element columns = DomUtils.getChildElementByTagName(listElement, COLUMNS);
+		
+		List nodes = DomUtils.getChildElementsByTagName(columns, COLUMN);
 		Iterator it = nodes.iterator();
 		while (it.hasNext()) {
 			listConfig.addColumnConfig(digestColumn((Element) it.next()));
+		}
+		
+		nodes = DomUtils.getChildElementsByTagName(columns, COMMAND);
+		it = nodes.iterator();
+		while (it.hasNext()) {
+			Element e = (Element) it.next();
+			String commandId = XmlUtils.getAttribute(e, ID);
+			listConfig.addColumnCommand(listRepository.getCommand(commandId));
 		}
 	}
 	
@@ -173,26 +182,15 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	 */
 	protected ColumnConfig digestColumn(Element ele) {
 		ColumnConfig columnConfig = new ColumnConfig();
-		if (DomUtils.nodeNameEquals(ele, COMMAND)) {
-			String commandId = XmlUtils.getAttribute(ele, "id");
-			columnConfig.setCommand(listRepository.getCommand(commandId));
-			columnConfig.setRenderer(listRepository.getItemCommandRenderer());
+		XmlUtils.populate(columnConfig, ele, COLUMN_ATTRS, beanFactory);	
+		if (columnConfig.getRenderer() == null) {
+			columnConfig.setRenderer(listRepository.getDefaultCellRenderer());
 		}
-		else {
-			XmlUtils.populate(columnConfig, ele, COLUMN_ATTRS, beanFactory);	
-			if (columnConfig.getRenderer() == null) {
-				columnConfig.setRenderer(listRepository.getDefaultCellRenderer());
-			}
-		}
-		columnConfig.setHeadingRenderer(listRepository.getDefaultHeadingRenderer());
 		return columnConfig;
 	}
 	
 	protected void digestCommands(ListConfig listConfig, Element listElement) {
 		List nodes = DomUtils.getChildElementsByTagName(listElement, COMMAND);
-		listConfig.setListCommandRenderer(
-				listRepository.getListCommandRenderer());
-		
 		Iterator it = nodes.iterator();
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();

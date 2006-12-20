@@ -29,7 +29,6 @@ import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.PopupResult;
 import org.riotfamily.riot.list.command.support.AbstractCommand;
-import org.riotfamily.riot.list.ui.render.RenderContext;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
@@ -57,22 +56,24 @@ public class LinkCommand extends AbstractCommand implements FormCommand {
 		this.windowName = windowName;
 	}
 	
-	public boolean isEnabled(RenderContext context) {
+	public boolean isEnabled(CommandContext context) {
 		return context.getObjectId() != null;
 	}
 
 	public CommandResult execute(CommandContext context) {
-		String url = PropertyUtils.evaluate(link, context.getItem());
-		return new PopupResult(url, contextRelative, windowName, 
+		String url = PropertyUtils.evaluate(link, context.getBean());
+		if (contextRelative) {
+			url = context.getRequest().getContextPath() + url;
+		}
+		return new PopupResult(url, windowName,	
 				getPopupBlockerMessage(context, url));
 	}
 	
 	protected String getPopupBlockerMessage(CommandContext context, String url) {
-		String domain = context.getRequest().getServerName();
 		return context.getMessageResolver().getMessage("error.popupBlocked", 
-				new Object[] { domain, url }, 
+				new Object[] { url }, 
 				"A popup-blocker prevented the window from opening. " +
-				"Please allow popups for the domain " + domain);
+				"Please allow popups for this domain.");
 	}
 
 	public String getAction(CommandContext context) {

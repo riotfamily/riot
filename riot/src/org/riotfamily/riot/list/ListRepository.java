@@ -32,8 +32,6 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.ui.render.CellRenderer;
-import org.riotfamily.riot.list.ui.render.CommandRenderer;
-import org.riotfamily.riot.list.ui.render.HeadingRenderer;
 import org.riotfamily.riot.list.ui.render.ObjectRenderer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -51,25 +49,12 @@ public class ListRepository implements ApplicationContextAware {
 	
 	private ApplicationContext applicationContext;
 	
-	private CellRenderer defaultHeadingRenderer;
-	
-	private CellRenderer itemCommandRenderer;
-	
-	private CellRenderer listCommandRenderer;
-	
 	private CellRenderer defaultCellRenderer;
 	
 	private int defaultPageSize = 50;
 
 	public ListRepository() {
-		setDefaultHeadingRenderer(new HeadingRenderer());
 		setDefaultCellRenderer(new ObjectRenderer());
-		setItemCommandRenderer(new CommandRenderer());
-		
-		CommandRenderer renderer = new CommandRenderer();
-		renderer.setRenderDisabled(false);
-		renderer.setRenderText(true);
-		setListCommandRenderer(renderer);
 	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
@@ -116,22 +101,6 @@ public class ListRepository implements ApplicationContextAware {
 		return listConfigs;
 	}
 
-	public CellRenderer getItemCommandRenderer() {
-		return itemCommandRenderer;
-	}
-
-	public void setItemCommandRenderer(CellRenderer commandRenderer) {
-		this.itemCommandRenderer = commandRenderer;
-	}
-	
-	public CellRenderer getListCommandRenderer() {
-		return listCommandRenderer;
-	}
-	
-	public void setListCommandRenderer(CellRenderer listCommandRenderer) {
-		this.listCommandRenderer = listCommandRenderer;
-	}
-
 	public CellRenderer getDefaultCellRenderer() {
 		return defaultCellRenderer;
 	}
@@ -140,14 +109,6 @@ public class ListRepository implements ApplicationContextAware {
 		this.defaultCellRenderer = defaultCellRenderer;
 	}
 	
-	public CellRenderer getDefaultHeadingRenderer() {
-		return defaultHeadingRenderer;
-	}
-
-	public void setDefaultHeadingRenderer(CellRenderer defaultHeadingRenderer) {
-		this.defaultHeadingRenderer = defaultHeadingRenderer;
-	}
-
 	public int getDefaultPageSize() {
 		return defaultPageSize;
 	}

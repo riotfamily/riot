@@ -23,34 +23,20 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.ui.render;
 
-import java.util.Locale;
-
-import org.riotfamily.riot.list.ColumnConfig;
-import org.riotfamily.riot.list.command.Command;
-import org.riotfamily.riot.list.command.CommandContext;
+import org.riotfamily.common.i18n.MessageResolver;
 
 /**
  * Context passed to a {@link org.riotfamily.riot.list.ui.render.CellRenderer
  * CellRenderer} when rendering a list cell.
  */
-public interface RenderContext extends CommandContext {
+public interface RenderContext {
 
-	public int getItemsTotal();
+	public String getListId();
 	
-	public Object getValue();
+	public Class getBeanClass();
 	
-	public Command getCommand();
+	public MessageResolver getMessageResolver();
 	
-	public String getProperty();
-	
-	public ColumnConfig getColumnConfig();
-	
-	public Locale getLocale();
-
 	public String getContextPath();
-	
-	public String encodeURL(String url);
-
-	public void addRowStyle(String className);
 
 }

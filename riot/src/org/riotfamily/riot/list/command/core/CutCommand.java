@@ -30,13 +30,12 @@ import org.riotfamily.riot.list.command.result.SetRowStyleResult;
 import org.riotfamily.riot.list.command.result.ShowListResult;
 import org.riotfamily.riot.list.command.support.AbstractCommand;
 import org.riotfamily.riot.list.command.support.Clipboard;
-import org.riotfamily.riot.list.ui.render.RenderContext;
 
 public class CutCommand extends AbstractCommand {
 
 	private static final String CUT_ROW_STYLE = "cut";
 	
-	public boolean isEnabled(RenderContext context) {
+	public boolean isEnabled(CommandContext context) {
 		if (context.getDao() instanceof CutAndPasteEnabledDao) {
 			Clipboard cb = Clipboard.get(context);
 			if (cb.isCut(context)) {

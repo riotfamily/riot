@@ -40,13 +40,12 @@ public class ThumbnailRenderer extends ObjectRenderer {
 	
 	protected void renderValue(RenderContext context, PrintWriter writer, 
 			String value) {		
+
 		writer.print("<img src=\"");
 		writer.print(context.getContextPath());
-		writer.print(context.getRequest().getServletPath());
 		writer.print(thumbnailControllerPath);
 		writer.print("?sourceFile=");
 		writer.print(value);
 		writer.print("\" />"); 
-		
 	}
 }

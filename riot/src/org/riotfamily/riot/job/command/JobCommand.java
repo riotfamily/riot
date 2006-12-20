@@ -29,7 +29,6 @@ import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
 import org.riotfamily.riot.list.command.support.AbstractCommand;
-import org.riotfamily.riot.list.ui.render.RenderContext;
 import org.riotfamily.riot.runtime.RiotRuntime;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
@@ -59,7 +58,7 @@ public class JobCommand extends AbstractCommand implements
 				context, RiotRuntime.class);
 	}
 	
-	public boolean isEnabled(RenderContext context) {
+	public boolean isEnabled(CommandContext context) {
 		return true;
 	}
 	
@@ -69,6 +68,6 @@ public class JobCommand extends AbstractCommand implements
 				
 		JobDetail detail = jobManager.getOrCreateJob(jobType, objectId);
 		return new GotoUrlResult(runtime.getServletPrefix() + "/job?jobId=" 
-				+ detail.getId());
+				+ detail.getId(), context);
 	}
 }

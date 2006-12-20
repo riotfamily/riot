@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list;
 
-import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.ui.render.CellRenderer;
 
 /**
@@ -41,24 +40,15 @@ public class ColumnConfig {
 	
 	private boolean caseSensitive = true;
 
-	private Command command;
-
 	private CellRenderer renderer;
-
-	private CellRenderer headingRenderer;
 
 	private String cssClass;
 
-	
 	public ColumnConfig() {
 	}
 	
-	public ColumnConfig(Command command, CellRenderer renderer, 
-			CellRenderer headingRenderer) {
-		
-		this.command = command;
+	public ColumnConfig(CellRenderer renderer) {
 		this.renderer = renderer;
-		this.headingRenderer = headingRenderer;
 	}
 
 	public int getLookupLevel() {
@@ -101,28 +91,12 @@ public class ColumnConfig {
 		this.sortable = sortable;
 	}
 
-	public Command getCommand() {
-		return command;
-	}
-
-	public void setCommand(Command command) {
-		this.command = command;
-	}
-
 	public CellRenderer getRenderer() {
 		return renderer;
 	}
 
 	public void setRenderer(CellRenderer renderer) {
 		this.renderer = renderer;
-	}
-
-	public CellRenderer getHeadingRenderer() {
-		return headingRenderer;
-	}
-
-	public void setHeadingRenderer(CellRenderer headingRenderer) {
-		this.headingRenderer = headingRenderer;
 	}
 
 	public String getCssClass() {

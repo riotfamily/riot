@@ -23,56 +23,53 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.result;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.list.command.CommandResult;
-import org.springframework.web.util.JavaScriptUtils;
 
 public class PopupResult implements CommandResult {
 
-	private String url;
+	public static final String ACTION = "popup";
 	
-	private boolean contextRelative;
+	private String url;
 	
 	private String windowName;
 	
 	private String popupBlockerMessage;
 	
+	
 	public PopupResult(String url) {
 		this.url = url;
 	}
 	
-	public PopupResult(String url, boolean contextRelative, String windowName, 
+	public String getAction() {
+		return ACTION;
+	}
+	
+	public PopupResult(String url, String windowName, 
 			String popupBlockerMessage) {
 		
 		this.url = url;
-		this.contextRelative = contextRelative;
 		this.windowName = windowName;
 		this.popupBlockerMessage = popupBlockerMessage;
 	}
 
-	public String getJavaScriptCode(HttpServletRequest request, 
-			HttpServletResponse response) {
-		
-		StringBuffer js = new StringBuffer();
-		js.append("var popup = window.open('");
-		if (contextRelative && !ServletUtils.isAbsoluteUrl(url)) {
-			js.append(request.getContextPath());
-		}
-		js.append(url).append('\'');
-		if (windowName != null) {
-			js.append(", '");
-			js.append(windowName);
-			js.append('\'');
-		}
-		js.append(");");
-		if (popupBlockerMessage != null) {
-			js.append("if (!popup) alert('");
-			js.append(JavaScriptUtils.javaScriptEscape(popupBlockerMessage));
-			js.append("')");
-		}
-		return js.toString();
+	public String getPopupBlockerMessage() {
+		return this.popupBlockerMessage;
 	}
+
+	public void setPopupBlockerMessage(String popupBlockerMessage) {
+		this.popupBlockerMessage = popupBlockerMessage;
+	}
+
+	public String getUrl() {
+		return this.url;
+	}
+
+	public String getWindowName() {
+		return this.windowName;
+	}
+
+	public void setWindowName(String windowName) {
+		this.windowName = windowName;
+	}
+	
 }

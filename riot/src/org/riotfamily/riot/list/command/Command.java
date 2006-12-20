@@ -76,6 +76,6 @@ public interface Command {
 	 * is passed as argument to allow implementors to consider the lists
 	 * sort order or the item's index.  
 	 */
-	public boolean isEnabled(RenderContext context);
+	public boolean isEnabled(CommandContext context);
 
 }

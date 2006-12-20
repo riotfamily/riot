@@ -25,62 +25,104 @@ package org.riotfamily.riot.list.ui;
 
 import java.util.HashMap;
 
-import org.riotfamily.forms.FormRepository;
-import org.riotfamily.riot.editor.EditorRepository;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.collection.FlatMap;
+import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.common.web.mapping.UrlMapping;
+import org.riotfamily.common.web.mapping.UrlMappingAware;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.ui.EditorController;
-import org.riotfamily.riot.list.ListRepository;
-import org.riotfamily.riot.list.command.support.CommandExecutor;
-import org.riotfamily.riot.security.AccessController;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * Controller that displays lists defined in the ListRepository.
  */
-public class ListController extends AbstractListController 
-		implements EditorController {
+public class ListController implements Controller, 
+		UrlMappingAware, BeanNameAware, EditorController {
+	
+	protected Log log = LogFactory.getLog(ListController.class);
+	
+	private String editorIdAttribute = "editorId";
+
+	private String parentIdAttribute = "parentId";
+
+	private String viewName = ResourceUtils.getPath(
+			ListController.class, "ListView.ftl");
+
+	private UrlMapping urlMapping;
+	
+	private String beanName;
+	
+	private ListService listService;
+
+	public void setListService(ListService listService) {
+		this.listService = listService;
+	}
+
+	public void setEditorIdAttribute(String editorIdAttribute) {
+		this.editorIdAttribute = editorIdAttribute;
+	}
+
+	protected String getEditorIdAttribute() {
+		return editorIdAttribute;
+	}
+
+	public void setParentIdAttribute(String parentIdAttribute) {
+		this.parentIdAttribute = parentIdAttribute;
+	}
+
+	protected String getParentIdAttribute() {
+		return parentIdAttribute;
+	}
+	
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
+	}
+
+	protected String getViewName() {
+		return viewName;
+	}
+	
+	public void setUrlMapping(UrlMapping urlMapping) {
+		this.urlMapping = urlMapping;
+	}
+	
+	public void setBeanName(String beanName) {
+		this.beanName = beanName;
+	}
+		
+	public final ModelAndView handleRequest(HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+
+		/*
+		String editorId = (String) request.getAttribute(editorIdAttribute);
+		String parentId = (String) request.getAttribute(parentIdAttribute);
+		
+		ListTable table = listService.getTable(editorId, parentId, request);
+		*/
+		FlatMap model = new FlatMap();
+		model.put(editorIdAttribute, request.getAttribute(editorIdAttribute));
+		model.put(parentIdAttribute, request.getAttribute(parentIdAttribute));
+		return new ModelAndView(viewName, model);
+	}
 	
 	public Class getDefinitionClass() {
 		return ListDefinition.class;
 	}
-	
-	public ListController(EditorRepository editorRepository, 
-			ListRepository listRepository, FormRepository formRepository,
-			PlatformTransactionManager transactionManager,
-			CommandExecutor commandExecutor) {
 		
-		super(editorRepository, listRepository, formRepository, 
-				transactionManager, commandExecutor);
-	}
-	
 	public String getUrl(String editorId, String objectId, String parentId) {
 		HashMap attrs = new HashMap();
 		attrs.put(getEditorIdAttribute(), editorId);
 		if (parentId != null) {
 			attrs.put(getParentIdAttribute(), parentId);
 		}
-		return getUrl(attrs);
-	}
-	
-	protected ViewModel createViewModel(final ListContext context) {
-		return (ViewModel) execInTransaction(new TransactionCallback() {
-			public Object doInTransaction(TransactionStatus ts) {
-				ViewModelBuilder viewModelBuilder = new ViewModelBuilder(context);
-				return viewModelBuilder.buildModel();
-			}
-		});
-	}
-	
-	protected ListDefinition getListDefinition(ListContext context) {
-		ListDefinition  listDef = super.getListDefinition(context);
-		if (!AccessController.isGranted(ACTION_VIEW, null, listDef)) {
-			return null;
-		}
-		else {
-			return listDef;
-		}
+		return urlMapping.getUrl(beanName, attrs);
 	}
 
 }

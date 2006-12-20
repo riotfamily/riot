@@ -109,7 +109,7 @@ public class Clipboard {
 	private void pasteCut(CommandContext context) {
 		CutAndPasteEnabledDao dao = (CutAndPasteEnabledDao) context.getDao();
 		Object item = dao.load(objectId);
-		Object parent = context.getItem();
+		Object parent = context.getBean();
 		dao.addChild(item, parent);
 		if (parentId != null) {
 			Object previousParent = EditorDefinitionUtils.loadParent(
@@ -125,7 +125,7 @@ public class Clipboard {
 	private void pasteCopied(CommandContext context) {
 		CopyAndPasteEnabledDao dao = (CopyAndPasteEnabledDao) context.getDao();
 		Object item = dao.load(objectId);
-		Object parent = context.getItem();
+		Object parent = context.getBean();
 		dao.addCopy(item, parent);
 	}
 
@@ -146,7 +146,7 @@ public class Clipboard {
 	
 	private boolean isCutObjectAncestor(CommandContext context) {
 		if (mode == MODE_CUT) {
-			EditorReference ref = context.getEditorDefinition().createEditorPath(
+			EditorReference ref = context.getListDefinition().createEditorPath(
 					null, context.getParentId(), 
 					context.getMessageResolver()).getParent();
 			

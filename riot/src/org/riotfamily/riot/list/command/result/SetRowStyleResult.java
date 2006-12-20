@@ -23,34 +23,31 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.result;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.riotfamily.riot.list.command.CommandResult;
 
 public class SetRowStyleResult implements CommandResult {
 
+	public static final String ACTION = "setRowStyle";
+	
 	private String objectId;
 	
-	private String rowStyle;
-	
+	private String rowStyle;	
 	
 	public SetRowStyleResult(String objectId, String rowStyle) {
 		this.objectId = objectId;
 		this.rowStyle = rowStyle;
 	}
-
-	public String getJavaScriptCode(HttpServletRequest request, 
-			HttpServletResponse response) {
-		
-		StringBuffer js = new StringBuffer();
-		js.append("Element.addClassName('object-");
-		js.append(objectId);
-		js.append("', '");
-		js.append(rowStyle);
-		js.append("');");
-		return js.toString();
-	}
 	
+	public String getAction() {
+		return ACTION;
+	}
+
+	public String getObjectId() {
+		return this.objectId;
+	}
+
+	public String getRowStyle() {
+		return this.rowStyle;
+	}
 
 }

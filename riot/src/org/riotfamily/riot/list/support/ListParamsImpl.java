@@ -23,25 +23,26 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.support;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.Order;
-import org.riotfamily.riot.list.ui.MutableListParams;
 
 /**
  * A bean style implementation of the ListModelParams interface.
  */
-public class ListParamsImpl implements MutableListParams, Serializable {
+public class ListParamsImpl implements ListParams {
 
 	private String parentId;
 	
 	private Object filter;
+	
+	private String[] filteredProperties;
 
+	private String search;
+	
 	private List order;
 	
 	private int pageSize;
@@ -55,6 +56,7 @@ public class ListParamsImpl implements MutableListParams, Serializable {
 	public ListParamsImpl(ListParams params) {
 		this.parentId = params.getParentId();
 		this.filter = params.getFilter();
+		this.filteredProperties = params.getFilteredProperties();
 		this.order = params.getOrder();
 		this.pageSize = params.getPageSize();
 		this.offset = params.getOffset();
@@ -74,6 +76,22 @@ public class ListParamsImpl implements MutableListParams, Serializable {
 
 	public void setFilter(Object filter) {
 		this.filter = filter;
+	}
+	
+	public String[] getFilteredProperties() {
+		return this.filteredProperties;
+	}
+
+	public void setFilteredProperties(String[] filterProperties) {
+		this.filteredProperties = filterProperties;
+	}
+
+	public String getSearch() {
+		return this.search;
+	}
+
+	public void setSearch(String search) {
+		this.search = search;
 	}
 
 	public int getOffset() {
@@ -144,23 +162,6 @@ public class ListParamsImpl implements MutableListParams, Serializable {
 
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
-	}
-	
-    /**
-     * Checks if the filter is serializable and sets it to <code>null</code>
-     * if not. Afterwards <code>out.defaultWriteObject()</code> is called.
-     * <p>
-     * The idea is not to force filter implementations to be serializable
-     * but to support serialization if needed.
-     * </p>
-     */ 
-	private void writeObject(java.io.ObjectOutputStream out)
-    		throws IOException {
-		
-		if (!(filter instanceof Serializable)) {
-			filter = null;
-		}
-		out.defaultWriteObject();
 	}
 
 }

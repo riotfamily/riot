@@ -31,6 +31,6 @@ import java.io.PrintWriter;
  */
 public interface CellRenderer {
 
-	public void render(RenderContext context, PrintWriter writer);
+	public void render(String propertyName, Object value, RenderContext context, PrintWriter writer);
 
 }
