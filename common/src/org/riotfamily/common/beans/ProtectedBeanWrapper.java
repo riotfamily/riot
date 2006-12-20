@@ -25,12 +25,10 @@ package org.riotfamily.common.beans;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
 
-import org.springframework.beans.BeanUtils;
+import org.riotfamily.common.util.PropertyUtils;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.BeansException;
-import org.springframework.util.StringUtils;
 
 public class ProtectedBeanWrapper extends BeanWrapperImpl 
 		implements ObjectWrapper {
@@ -47,22 +45,24 @@ public class ProtectedBeanWrapper extends BeanWrapperImpl
 		super(object);
 	}
 
-	protected PropertyDescriptor getPropertyDescriptorInternal(
-			String propertyName) throws BeansException {
+	protected PropertyDescriptor getPropertyDescriptorInternal(String name) 
+			throws BeansException {
 
 		try {
-			PropertyDescriptor pd = super.getPropertyDescriptorInternal(propertyName);
+			PropertyDescriptor pd = super.getPropertyDescriptorInternal(name);
 			if (pd == null) {
-				pd = new PropertyDescriptor(propertyName, 
-						findReadMethod(propertyName),
-						findWriteMethod(propertyName));
+				pd = new PropertyDescriptor(name, 
+						PropertyUtils.findReadMethod(getWrappedClass(), name),
+						PropertyUtils.findWriteMethod(getWrappedClass(), name));
 			}
 			else {
 				if (pd.getReadMethod() == null) {
-					pd.setReadMethod(findReadMethod(propertyName));
+					pd.setReadMethod(PropertyUtils.findReadMethod(
+							getWrappedClass(), name));
 				}
 				if (pd.getWriteMethod() == null) {
-					pd.setWriteMethod(findWriteMethod(propertyName));
+					pd.setWriteMethod(PropertyUtils.findWriteMethod(
+							getWrappedClass(), name));
 				}
 			}
 			return pd;
@@ -72,27 +72,4 @@ public class ProtectedBeanWrapper extends BeanWrapperImpl
 		}
 	}
 	
-	protected Method findReadMethod(String propertyName) {
-		String methodName = "get" + StringUtils.capitalize(propertyName);
-		Method readMethod = BeanUtils.findDeclaredMethod(
-				getWrappedClass(), methodName, null);
-		
-		if (readMethod != null) {
-			readMethod.setAccessible(true);
-			return readMethod;
-		}
-		return null;
-	}
-	
-	protected Method findWriteMethod(String propertyName) {
-		String methodName = "set" + StringUtils.capitalize(propertyName);
-		Method writeMethod = BeanUtils.findDeclaredMethodWithMinimalParameters(
-				getWrappedClass(), methodName); 
-			
-		if (writeMethod != null) {
-			writeMethod.setAccessible(true);
-			return writeMethod;
-		}
-		return null;
-	}
 }

@@ -26,16 +26,19 @@ package org.riotfamily.common.util;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.riotfamily.common.beans.DefaultPropertyEditorRegistry;
 import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.FatalBeanException;
-import org.springframework.beans.PropertyAccessor;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Utility class to access bean properties via relection.
@@ -55,39 +58,52 @@ public final class PropertyUtils {
 		if (bean == null) {
 			return null;
 		}
-		PropertyAccessor accessor = new ProtectedBeanWrapper(bean);
-		return accessor.getPropertyValue(name);
+		ProtectedBeanWrapper wrapper = new ProtectedBeanWrapper(bean);
+		return wrapper.getPropertyValue(name);
 	}
 	
 	public static String getPropertyAsString(Object bean, String name) {
 		return convertToString(getProperty(bean, name));
 	}
 	
-	/**
-	 * @since 6.4
-	 */
-	public static String evaluate(String expression, Object bean) {
-		PropertyAccessor accessor = new BeanWrapperImpl(bean);
-		Matcher matcher = expressionPattern.matcher(expression);
-		StringBuffer sb = new StringBuffer();
-		while (matcher.find()) {
-			String property = matcher.group(1);
-			Object value = accessor.getPropertyValue(property);
-			matcher.appendReplacement(sb, convertToString(value));
-		}
-		matcher.appendTail(sb);
-		return sb.toString();
-	}
-	
 	public static void setProperty(Object bean, String name, Object value) {
-		PropertyAccessor accessor = new ProtectedBeanWrapper(bean);
-		accessor.setPropertyValue(name, value);
+		ProtectedBeanWrapper wrapper = new ProtectedBeanWrapper(bean);
+		wrapper.setPropertyValue(name, value);
 	}
 	
 	public static void setPropertyAsString(Object bean, String name, String s) {
 		Class type = getPropertyType(bean.getClass(), name);
 		Object value = convert(s, type);
 		setProperty(bean, name, value);
+	}
+	
+	/**
+	 * Returns a Map containing the bean's properties.
+	 * @since 6.4
+	 */
+	public static Map getProperties(Object bean) {
+		PropertyDescriptor[] pd = BeanUtils.getPropertyDescriptors(bean.getClass());
+		HashMap properties = new HashMap();
+		for (int i = 0; i < pd.length; i++) {
+			Object value = ReflectionUtils.invokeMethod(pd[i].getReadMethod(), bean); 
+			properties.put(pd[i].getName(), value);
+		}
+		return properties;
+	}
+	
+	/**
+	 * @since 6.4
+	 */
+	public static String evaluate(String expression, Object bean) {
+		Matcher matcher = expressionPattern.matcher(expression);
+		StringBuffer sb = new StringBuffer();
+		while (matcher.find()) {
+			String property = matcher.group(1);
+			Object value = getProperty(bean, property);
+			matcher.appendReplacement(sb, convertToString(value));
+		}
+		matcher.appendTail(sb);
+		return sb.toString();
 	}
 	
 	public static Object convert(String s, Class targetClass) {
@@ -121,25 +137,46 @@ public final class PropertyUtils {
 		return null;
 	}
 	
-	public static PropertyDescriptor getPropertyDescriptor(Class clazz,
-            String property) {
+	/**
+	 * @deprecated as of Riot 6.4, in favor of Spring's <code>BeanUtils.getPropertyDescriptor</code>.
+	 */
+	public static PropertyDescriptor getPropertyDescriptor(
+			Class clazz, String property) {
 
-        PropertyDescriptor[] pd = BeanUtils.getPropertyDescriptors(clazz);
-        for (int i = 0; i < pd.length; i++) {
-            if (pd[i].getName().equals(property)) {
-                return pd[i];
-            }
-        }
-        return null;
+        return BeanUtils.getPropertyDescriptor(clazz, property);
     }
 
     public static Class getPropertyType(Class clazz, String property) {
-        PropertyDescriptor pd = getPropertyDescriptor(clazz, property);
-        if (pd == null) {
-            return null;
-        }
+        PropertyDescriptor pd = BeanUtils.getPropertyDescriptor(clazz, property);
+        Assert.notNull(pd, "Property '" + property + "' not found in class " + clazz);
         return pd.getPropertyType();
     }
+    
+    /**
+	 * @since 6.4
+	 */
+	public static Method findReadMethod(Class clazz, String property) {
+		String methodName = "get" + StringUtils.capitalize(property);
+		Method readMethod = BeanUtils.findDeclaredMethod(clazz, methodName, null);
+		if (readMethod != null) {
+			readMethod.setAccessible(true);
+		}
+		return readMethod;
+	}
+	
+	/**
+	 * @since 6.4
+	 */
+	public static Method findWriteMethod(Class clazz, String property) {
+		String methodName = "set" + StringUtils.capitalize(property);
+		Method writeMethod = BeanUtils.findDeclaredMethodWithMinimalParameters(
+				clazz, methodName);
+		
+		if (writeMethod != null) {
+			writeMethod.setAccessible(true);
+		}
+		return writeMethod;
+	}
     
     /**
      * Returns the (super-)class where the given property is decared. 
@@ -161,10 +198,10 @@ public final class PropertyUtils {
         }
         return clazz;
     }
-    
+	
     public static Object newInstance(String className) {
 		try {
-			Class clazz = Class.forName(className);
+			Class clazz = ClassUtils.forName(className);
 			return BeanUtils.instantiateClass(clazz);
 		}
 		catch (ClassNotFoundException e) {
