@@ -132,4 +132,11 @@ public class MessageResolver {
 		return this.messageCodesResolver;
 	}
 	
+	/**
+	 * @since 6.4
+	 */
+	public Locale getLocale() {
+		return locale;
+	}
+	
 }
