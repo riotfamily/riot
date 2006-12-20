@@ -155,8 +155,6 @@
         </property>
     </bean>
        
-    <bean id="commandExecutor" class="org.riotfamily.riot.list.command.support.CommandExecutor" />
-	
 	<!-- Core list commands -->
 	
 	<bean id="editCommand" class="org.riotfamily.riot.list.command.core.EditCommand" />
@@ -168,8 +166,6 @@
 	<bean id="deleteCommand" class="org.riotfamily.riot.list.command.core.DeleteCommand" />
 	
 	<bean id="stepIntoCommand" class="org.riotfamily.riot.list.command.core.StepIntoCommand" />
-	
-	<bean id="chooseCommand" class="org.riotfamily.riot.form.element.chooser.ChooseCommand" />
 	
 	<bean id="moveUpCommand" class="org.riotfamily.riot.list.command.core.SwapCommand">
 		<property name="swapWith" value="-1" />
@@ -374,34 +370,26 @@
 	</bean>
 	
 	<bean id="listController" class="org.riotfamily.riot.list.ui.ListController">
-		<constructor-arg ref="editorRepository" />
-		<constructor-arg ref="listRepository" />
-		<constructor-arg ref="formRepository" />
-		<constructor-arg ref="riotTransactionManager" />
-		<constructor-arg ref="commandExecutor" />
-		<property name="formContextFactory" ref="formContextFactory" />
+		<property name="listService" ref="listService" />
 	</bean>
+	
 	<alias name="listController" alias="/list/@{editorId}" />
 	<alias name="listController" alias="/list/@{editorId}/@{parentId}" />
 	
-	<bean id="chooserController" class="org.riotfamily.riot.form.element.chooser.ChooserListController">
-		<constructor-arg ref="editorRepository" />
-		<constructor-arg ref="listRepository" />
-		<constructor-arg ref="formRepository" />
-		<constructor-arg ref="riotTransactionManager" />
-		<constructor-arg ref="commandExecutor" />
-		<property name="formContextFactory" ref="formContextFactory" />
+	<bean id="listService" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
+		<property name="target"><ref bean="listServiceTarget" /></property>
 	</bean>
-	<alias name="chooserController" alias="/chooser/@{targetEditorId}" />
-	<alias name="chooserController" alias="/chooser/@{targetEditorId}/@{editorId}" />
-	<alias name="chooserController" alias="/chooser/@{targetEditorId}/@{editorId}/@{parentId}" />
 	
+	<bean id="listServiceTarget" class="org.riotfamily.riot.list.ui.ListServiceImpl">
+		<property name="editorRepository" ref="editorRepository" />
+		<property name="messageCodesResolver" ref="messageCodesResolver" />
+	</bean>
+		
 	<bean id="formController" class="org.riotfamily.riot.form.ui.FormController">
 		<constructor-arg ref="editorRepository" />
 		<constructor-arg ref="formRepository" />
 		<constructor-arg ref="riotTransactionManager" />
-		<constructor-arg ref="commandExecutor" />
-		<constructor-arg ref="listRepository" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 	<alias name="formController" alias="/form/@{editorId}" />
@@ -414,10 +402,7 @@
 
 	<bean id="viewController" class="org.riotfamily.riot.editor.ui.ViewController">
 		<constructor-arg ref="editorRepository" />
-		<constructor-arg ref="listRepository" />
 		<constructor-arg ref="riotTransactionManager" />
-		<constructor-arg ref="commandExecutor" />
-		<property name="messageCodesResolver" ref="messageCodesResolver" />	
 	</bean>
 	<alias name="viewController" alias="/view/@{editorId}" />
 	<alias name="viewController" alias="/view/@{editorId}/@{objectId}" />
@@ -497,12 +482,30 @@
 								<props>
 									<prop key="org.riotfamily.riot.job.persistence.JobLogEntry">bean</prop>
 									<prop key="org.riotfamily.riot.job.persistence.JobDetail">bean</prop>
+									
+									<prop key="org.riotfamily.riot.list.ui.ListTable">bean</prop>
+									<prop key="org.riotfamily.riot.list.ui.ListColumn">bean</prop>
+									<prop key="org.riotfamily.riot.list.ui.ListItem">bean</prop>
+									<prop key="org.riotfamily.riot.list.ui.CommandState">bean</prop>
+									
+									<prop key="org.riotfamily.riot.list.command.result.GotoUrlResult">bean</prop>
+									<prop key="org.riotfamily.riot.list.command.result.PopupResult">bean</prop>
+									<prop key="org.riotfamily.riot.list.command.result.ReloadResult">bean</prop>
+									<prop key="org.riotfamily.riot.list.command.result.ScriptResult">bean</prop>
+									<prop key="org.riotfamily.riot.list.command.result.SetRowStyleResult">bean</prop>
+									<prop key="org.riotfamily.riot.list.command.result.ShowListResult">bean</prop>
 								</props>
 							</property>
 							<property name="serviceBeans">
 								<map>
 									<entry key="JobUIService" value-ref="jobUIService" />
+									<entry key="ListService" value-ref="listService" />
 								</map>
+							</property>
+							<property name="serviceInterfaces">
+								<list>
+									<value>org.riotfamily.riot.list.ui.ListService</value>
+								</list>
 							</property>
 						</bean>
 					</list>
