@@ -1,9 +1,12 @@
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
 	
 	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
 		<property name="location" value="classpath:/application.properties" />
@@ -30,6 +33,12 @@
 			<bean class="org.riotfamily.riot.workflow.notification.support.DefaultNotificationFactory" />
 		</property>
 	</bean>
+	
+	<tx:advice id="matchAllTxInterceptor" transaction-manager="riotTransactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" isolation="DEFAULT" />
+		</tx:attributes>
+	</tx:advice>
 	
 	<bean id="riotDaoPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
 		<property name="mappedNames">
