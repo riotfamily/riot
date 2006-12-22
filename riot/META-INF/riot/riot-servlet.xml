@@ -488,6 +488,7 @@
 									<prop key="org.riotfamily.riot.list.ui.ListItem">bean</prop>
 									<prop key="org.riotfamily.riot.list.ui.CommandState">bean</prop>
 									
+									<prop key="org.riotfamily.riot.list.command.result.ConfirmResult">bean</prop>
 									<prop key="org.riotfamily.riot.list.command.result.GotoUrlResult">bean</prop>
 									<prop key="org.riotfamily.riot.list.command.result.PopupResult">bean</prop>
 									<prop key="org.riotfamily.riot.list.command.result.ReloadResult">bean</prop>

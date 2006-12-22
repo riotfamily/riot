@@ -45,6 +45,7 @@ import org.riotfamily.riot.list.ColumnConfig;
 import org.riotfamily.riot.list.ListConfig;
 import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.command.CommandResult;
+import org.riotfamily.riot.list.command.result.ConfirmResult;
 import org.riotfamily.riot.list.support.ListParamsImpl;
 import org.riotfamily.riot.list.ui.render.RenderContext;
 
@@ -223,21 +224,24 @@ public class ListSession implements RenderContext {
 		}
 		return result;
 	}
-	
-	public CommandResult execListCommand(String commandId, 
-			HttpServletRequest request, HttpServletResponse response) {
 		
-		Command command = listConfig.getListCommand(commandId);
-		CommandContextImpl context = new CommandContextImpl(this, request);
-		return command.execute(context);
-		}
-	
-	public CommandResult execItemCommand(ListItem item, String commandId, 
-			HttpServletRequest request, HttpServletResponse response) {
+	public CommandResult execCommand(ListItem item, String commandId, 
+			boolean confirmed, HttpServletRequest request, 
+			HttpServletResponse response) {
 		
-		Command command = listConfig.getColumnCommand(commandId);
+		Command command = item != null 
+				? listConfig.getColumnCommand(commandId)
+				: listConfig.getListCommand(commandId);
+		
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		context.setItem(item);
+		
+		if (!confirmed) {
+			String message = command.getConfirmationMessage(context);
+			if (message != null) {
+				return new ConfirmResult(item, commandId, message);
+			}
+		}
 		return command.execute(context);
 	}
 	
