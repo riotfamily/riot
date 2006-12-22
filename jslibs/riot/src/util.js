@@ -46,6 +46,9 @@ RBuilder.node = function(tag, options) {
 		if (attr == 'style') {
 			Element.setStyle(e, options.style);
 		}
+		else if (attr == 'parent') {
+			$(options[attr]).appendChild(e);
+		}
 		else {
 			if (attr == 'class') attr = 'className';
 			e[attr] = options[attr];
