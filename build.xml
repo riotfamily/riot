@@ -53,7 +53,12 @@
 			<fileset dir="${build.dir}/schema" />
 		</scp>
 	</target>
-			
+	
+	<target name="mirror-repository" depends="-configure-ivy">
+		<ivy:install from="riotfamily" to="local" organisation=".*" module=".*" 
+			revision=".*" matcher="regexp" />
+	</target>
+		
 	<target name="report" depends="-configure-ivy">
 		<ivy:buildlist reference="resolved-build.files">
 	    	<fileset refid="module-build.files" />
