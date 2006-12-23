@@ -23,19 +23,25 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.controller;
 
+import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
+import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.i18n.RiotMessageCodesResolver;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.forms.FormContext;
+import org.riotfamily.forms.support.DefaultFormContext;
 import org.riotfamily.forms.support.TemplateRenderer;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import freemarker.template.Configuration;
 
@@ -104,8 +110,20 @@ public final class FormContextFactory implements MessageSourceAware,
 	public FormContext createFormContext(HttpServletRequest request, 
 			HttpServletResponse response) {
 
-		return new FormContext(messageCodesResolver, messageSource, 
-				request, response, resourcePath, templateRenderer);
+		Locale locale = RequestContextUtils.getLocale(request);
+		MessageResolver messageResolver = new MessageResolver(messageSource,
+				messageCodesResolver, locale);
+		
+		String contextPath = request.getContextPath();
+		String formUrl = response.encodeURL(ServletUtils.getIncludeUri(request));
+		return createFormContext(messageResolver, contextPath, formUrl);
+	}
+	
+	public FormContext createFormContext(MessageResolver messageResolver,
+			String contextPath, String formUrl) {
+		
+		return new DefaultFormContext(messageResolver, templateRenderer, 
+				contextPath, resourcePath, formUrl);
 	}
 
 }
