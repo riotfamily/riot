@@ -46,7 +46,7 @@ public interface ListService {
 	public List gotoPage(String editorId, String parentId, int page, 
 			HttpServletRequest request);
 	
-	public List sort(String editorId, String parentId, String property, 
+	public ListTable sort(String editorId, String parentId, String property, 
 			HttpServletRequest request);
 	
 	public List filter(String editorId, String parentId, Map filter, 

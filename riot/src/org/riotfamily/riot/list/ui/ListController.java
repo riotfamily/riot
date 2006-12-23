@@ -100,15 +100,13 @@ public class ListController implements Controller,
 	public final ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		/*
 		String editorId = (String) request.getAttribute(editorIdAttribute);
 		String parentId = (String) request.getAttribute(parentIdAttribute);
 		
-		ListTable table = listService.getTable(editorId, parentId, request);
-		*/
 		FlatMap model = new FlatMap();
-		model.put(editorIdAttribute, request.getAttribute(editorIdAttribute));
-		model.put(parentIdAttribute, request.getAttribute(parentIdAttribute));
+		model.put("filterForm", listService.getFilterForm(editorId, parentId, request));
+		model.put(editorIdAttribute, editorId);
+		model.put(parentIdAttribute, parentId);
 		return new ModelAndView(viewName, model);
 	}
 	

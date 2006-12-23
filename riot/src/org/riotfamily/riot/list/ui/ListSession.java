@@ -37,7 +37,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.forms.Form;
+import org.riotfamily.forms.FormRepository;
+import org.riotfamily.forms.controller.FormContextFactory;
 import org.riotfamily.forms.support.SimpleFormRequest;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.ListDefinition;
@@ -71,25 +74,32 @@ public class ListSession implements RenderContext {
 
 	
 	public ListSession(ListDefinition listDefinition, String parentId,
-			MessageResolver messageResolver, 
-			String contextPath, Form filterForm) {
+			MessageResolver messageResolver, String contextPath,
+			FormRepository formRepository, 
+			FormContextFactory formContextFactory) {
 		
 		this.listDefinition = listDefinition;
 		this.parentId = parentId;
 		this.messageResolver = messageResolver;
 		this.contextPath = contextPath;
-		this.filterForm = filterForm;
-		
 		this.listConfig = listDefinition.getListConfig();
 		
 		params = new ListParamsImpl();
 		params.setParentId(parentId);
-		if (filterForm != null) {
-			params.setFilteredProperties(
-					filterForm.getEditorBinder().getBoundProperties());
+		
+		String formId = listConfig.getFilterFormId();
+		if (formId != null) {
+			filterForm = formRepository.createForm(formId);
+			filterForm.setFormContext(formContextFactory.createFormContext(
+					messageResolver, contextPath, null));
+			
+			filterForm.setTemplate(ResourceUtils.getPath(getClass(), "FilterForm.ftl"));
+			params.setFilteredProperties(filterForm.getEditorBinder()
+					.getBoundProperties());
 		}
+		
 		params.setPageSize(listConfig.getPageSize());
-		//params.setOrder(listConfig.getDefaultOrder());
+		params.setOrder(listConfig.getDefaultOrder());
 		
 	}
 
@@ -151,7 +161,12 @@ public class ListSession implements RenderContext {
 					config.getLookupLevel()));
 			
 			column.setSortable(config.isSortable());
-			//column.setAscending(config.isAscending());
+			if (params.hasOrder() && params.getPrimaryOrder()
+					.getProperty().equals(config.getProperty())) {
+				
+				column.setSorted(true);
+				column.setAscending(params.getPrimaryOrder().isAscending());
+			}
 			columns.add(column);
 		}
 		table.setColumns(columns);
@@ -175,10 +190,10 @@ public class ListSession implements RenderContext {
 	    		getListId(), clazz, property);
 	}
 	
-	public List sort(String property, HttpServletRequest request) {
+	public ListTable sort(String property, HttpServletRequest request) {
 		ColumnConfig col = listConfig.getColumnConfig(property);
 		params.orderBy(property, col.isAscending(), col.isCaseSensitive());
-		return getItems(request);
+		return getTable(request);
 	}
 	
 	public List search(String search, HttpServletRequest request) {

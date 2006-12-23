@@ -9,5 +9,5 @@
 </#list>
 </div>
 <div class="buttons">
-	<input type="submit" name="submit" value="Apply Filter" />
+	<input type="button" value="Apply Filter" onclick="list.filter(dwr.util.getValues(this.form)); return false" />
 </div>

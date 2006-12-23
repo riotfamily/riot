@@ -59,6 +59,7 @@
 					</div>
 				</div>
 			</#if>
+			-->
 			
 			<#if filterForm?exists>
 				<div id="filter" class="box">
@@ -69,7 +70,7 @@
 					${filterForm}
 				</div>
 			</#if>
-			-->
+			
 			
 		</div>
 		

@@ -384,6 +384,7 @@
 	<bean id="listServiceTarget" class="org.riotfamily.riot.list.ui.ListServiceImpl">
 		<property name="editorRepository" ref="editorRepository" />
 		<property name="messageCodesResolver" ref="messageCodesResolver" />
+		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 		
 	<bean id="formController" class="org.riotfamily.riot.form.ui.FormController">

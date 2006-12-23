@@ -118,11 +118,16 @@ public class ListParamsImpl implements ListParams {
 		this.order = order;
 	}
 	
+	public void setOrder(Order order) {
+		this.order = new LinkedList();
+		this.order.add(order);
+	}
+	
 	public boolean hasOrder() {
 		return order != null && !order.isEmpty();
 	}
 	
-	private Order getPrimaryOrder() {
+	public Order getPrimaryOrder() {
 		if (!hasOrder()) {
 			return null;
 		}

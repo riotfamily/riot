@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.MessageResolver;
-import org.riotfamily.forms.Form;
+import org.riotfamily.forms.controller.FormContextFactory;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandResult;
@@ -51,6 +51,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 	
 	private AdvancedMessageCodesResolver messageCodesResolver;
 	
+	private FormContextFactory formContextFactory;
 	
 	public void setMessageCodesResolver(AdvancedMessageCodesResolver codesResolver) {
 		this.messageCodesResolver = codesResolver;
@@ -62,6 +63,10 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
+	}
+
+	public void setFormContextFactory(FormContextFactory formContextFactory) {
+		this.formContextFactory = formContextFactory;
 	}
 
 	protected ListSession getListSession(String editorId, String parentId, 
@@ -84,7 +89,8 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 				messageCodesResolver, RequestContextUtils.getLocale(request));
 		
 		return new ListSession(listDef, parentId, messageResolver, 
-				request.getContextPath(), createFilterForm(listDef));
+				request.getContextPath(), editorRepository.getFormRepository(),
+				formContextFactory);
 	}
 	
 	public ListTable getTable(String editorId, String parentId,
@@ -92,15 +98,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 		
 		return getListSession(editorId, parentId, request).getTable(request);
 	}
-	
-	protected Form createFilterForm(ListDefinition listDef) {
-		String formId = listDef.getListConfig().getFilterFormId();
-		if (formId != null) {
-			return editorRepository.getFormRepository().createForm(formId);
-		}
-		return null;
-	}
-	
+		
 	public String getFilterForm(String editorId, String parentId,
 			HttpServletRequest request) {
 		
@@ -135,7 +133,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 				page, request);
 	}
 
-	public List sort(String editorId, String parentId, String property, 
+	public ListTable sort(String editorId, String parentId, String property, 
 			HttpServletRequest request) {
 		
 		return getListSession(editorId, parentId, request).sort(
