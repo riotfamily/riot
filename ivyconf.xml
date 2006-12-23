@@ -13,6 +13,7 @@
 		</url>
 		<chain name="default" returnFirst="true">
 			<resolver ref="build" />
+			<resolver ref="local" />
 			<resolver ref="riotfamily" />
 		</chain>
 	</resolvers>
