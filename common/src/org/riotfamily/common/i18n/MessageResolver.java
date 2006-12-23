@@ -38,7 +38,7 @@ public class MessageResolver {
 	
 	private AdvancedMessageCodesResolver messageCodesResolver;
 	
-	private MessageSource source;
+	private MessageSource messageSource;
 	
 	private Locale locale;
 	
@@ -50,7 +50,7 @@ public class MessageResolver {
 		Assert.notNull(resolver, "MessageCodesResolver must not be null");
 		Assert.notNull(locale, "Locale must not be null");
 		
-		this.source = source;
+		this.messageSource = source;
 		this.messageCodesResolver = resolver;
 		this.locale = locale;
 	}
@@ -104,7 +104,7 @@ public class MessageResolver {
 	}
 	
 	public String getMessage(String code, Object[] args, String defaultMessage) {
-		return source.getMessage(code, args, defaultMessage, locale);
+		return messageSource.getMessage(code, args, defaultMessage, locale);
 	}
 	
 	public String getMessage(MessageSourceResolvable resolvable) {
@@ -121,7 +121,7 @@ public class MessageResolver {
 		MessageSourceResolvable resolvable = 
 				new DefaultMessageSourceResolvable(codes, args, defaultMessage);
 		
-		String message = source.getMessage(resolvable, locale);
+		String message = messageSource.getMessage(resolvable, locale);
 		if (message == EMPTY_MESSAGE) {
 			return null;
 		}
@@ -137,6 +137,13 @@ public class MessageResolver {
 	 */
 	public Locale getLocale() {
 		return locale;
+	}
+	
+	/**
+	 * @since 6.4
+	 */
+	public MessageSource getMessageSource() {
+		return messageSource;
 	}
 	
 }
