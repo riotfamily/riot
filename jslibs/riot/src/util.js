@@ -140,6 +140,11 @@ var RElement = {
 		else element.appendChild(child);
 	},
 	
+	replaceBy: function(element, replacement) {
+		element = $(element);
+		element.parentNode.replaceChild($(replacement), element);
+	},
+	
 	findAncestor: function(el, iterator) {
 		el = el.parentNode;
 		while (el) {
