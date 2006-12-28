@@ -294,6 +294,16 @@ var Class = {
     }
 };
 
+var RForm = {
+	getValues: function(form) {
+		return $(form).getElements().inject($H(), function(map, e) {
+			if (e.name) map[e.name] = e.getValue(); 
+			return map;
+		});
+	}
+}
+
+
 Class.Methods = {
     extend: function () {
         var i = arguments.length;
