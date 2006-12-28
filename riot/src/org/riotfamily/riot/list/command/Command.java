@@ -47,19 +47,25 @@ public interface Command {
 	 * Returns a localized message that is displayed to the user asking for
 	 * a confirmation. Implementors may return <code>null</code> if no 
 	 * confirmation is needed. Otherwise a dialog containing an <i>Ok</i> and a
-	 * <i>Cancel</i> button will be displayed. If the user clicks <i>Ok</i> 
+	 * <i>Cancel</i> button is displayed. If the user clicks <i>Ok</i> 
 	 * the command is executed otherwise no action takes place.
 	 */
 	public String getConfirmationMessage(CommandContext context);
 	
+	
+	/**
+	 * Returns a localized String that describes what the command does. 
+	 */
+	public String getLabel(CommandContext context);
+	
 	/**
 	 * Returns a String identifiying the action that will be performed when
 	 * {@link #execute(CommandContext) execute()} is invoked. The String is
-	 * used by the {@link org.riotfamily.riot.list.ui.render.CommandRenderer
-	 * renderer} to determine the icon to be displayed and passed to the
-	 * {@link org.riotfamily.riot.security.policy.AuthorizationPolicy policy} in order
-	 * to check whether a user is allowed to execute the command.
-	 * 
+	 * used passed to the {@link org.riotfamily.riot.security.policy.AuthorizationPolicy policy} 
+	 * in order to check whether a user is allowed to execute the command.
+	 * The String is also used as CSS class and therefore defines which icon
+	 * is displayed.
+	 * <p>
 	 * Typically the method will return the command's id though it's possible
 	 * to return different actions depending on the context.
 	 */

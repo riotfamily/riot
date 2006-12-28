@@ -32,7 +32,11 @@ import org.riotfamily.riot.list.command.support.AbstractCommand;
  * List command to toggle the publish-state of a page. 
  */
 public class PublishPageCommand extends AbstractCommand {
-			
+	
+	public static final String ACTION_PUBLISH = "publishPage";
+	
+	public static final String ACTION_UNPUBLISH = "unpublishPage";
+	
 	public String getConfirmationMessage(CommandContext context) {
 		
 		Class clazz = context.getListDefinition().getBeanClass();
@@ -62,9 +66,11 @@ public class PublishPageCommand extends AbstractCommand {
 
 	public String getAction(CommandContext context) {
 		Page page = (Page) context.getBean();
-		return page.isPublished() ? "unpublishPage" : "publishPage"; 
+		return page.isPublished() ? ACTION_UNPUBLISH : ACTION_PUBLISH; 
 	}
 	
-	
+	protected String getLabelKeySuffix(CommandContext context) {
+		return getAction(context);
+	}
 
 }

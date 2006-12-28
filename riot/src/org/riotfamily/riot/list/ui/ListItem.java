@@ -41,6 +41,14 @@ public class ListItem {
 	
 	private List commands;
 
+	
+	public ListItem() {
+	}
+	
+	public ListItem(String objectId) {
+		this.objectId = objectId;
+	}
+
 	public List getColumns() {
 		return this.columns;
 	}

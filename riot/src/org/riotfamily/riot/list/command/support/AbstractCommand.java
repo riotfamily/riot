@@ -25,6 +25,7 @@ package org.riotfamily.riot.list.command.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.springframework.beans.factory.BeanNameAware;
@@ -36,6 +37,8 @@ public abstract class AbstractCommand implements Command, BeanNameAware {
 
 	private static final String COMMAND_NAME_SUFFIX = "Command";
 
+	private final String COMMAND_MESSAGE_PREFIX = "command.";
+	
 	protected Log log = LogFactory.getLog(getClass());
 	
 	private String id;
@@ -80,6 +83,28 @@ public abstract class AbstractCommand implements Command, BeanNameAware {
 		return null;
 	}
 
+	/**
+	 * Returns a label by resolving the message-key 
+	 * <code>command.<i>labelKeySuffix</i></code>, where <i>labelKeySuffix</i>
+	 * is the String returned by {@link #getLabelKeySuffix(CommandContext)}. 
+	 */
+	public String getLabel(CommandContext context) {
+		String key = getLabelKeySuffix(context);
+		return context.getMessageResolver().getMessage(
+				COMMAND_MESSAGE_PREFIX + key, null, 
+				FormatUtils.camelToTitleCase(key));
+	}
+	
+	/**
+	 * Returns the command's id. Subclasses may override this method if the
+	 * label depends on the context.
+	 * 
+	 * @see #getLabel(CommandContext)
+	 */
+	protected String getLabelKeySuffix(CommandContext context) {
+		return getId();
+	}
+	
 	/**
 	 * Returns the command's id. Subclasses may override this method if the
 	 * action depends on the context.

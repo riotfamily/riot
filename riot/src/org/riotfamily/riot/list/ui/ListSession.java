@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.riotfamily.common.i18n.MessageResolver;
-import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.forms.Form;
@@ -59,8 +58,6 @@ import org.riotfamily.riot.list.ui.render.RenderContext;
  */
 public class ListSession implements RenderContext {
 
-	private final String COMMAND_MESSAGE_PREFIX = "command.";
-	
 	private ListDefinition listDefinition;
 	
 	private String parentId;
@@ -233,7 +230,7 @@ public class ListSession implements RenderContext {
 			bean = listConfig.getDao().load(objectId);
 		}
 		return getCommandStates(listConfig.getFormCommands(), 
-				null, bean, request);
+				new ListItem(objectId), bean, request);
 	}
 	
 	private List getCommandStates(List commands, ListItem item, Object bean, 
@@ -251,10 +248,7 @@ public class ListSession implements RenderContext {
 			state.setId(command.getId());
 			state.setAction(action);
 			state.setEnabled(command.isEnabled(context));
-			state.setLabel(messageResolver.getMessage(
-					COMMAND_MESSAGE_PREFIX + action, null,
-					FormatUtils.camelToTitleCase(action)));
-			
+			state.setLabel(command.getLabel(context));
 			result.add(state);
 		}
 		return result;
