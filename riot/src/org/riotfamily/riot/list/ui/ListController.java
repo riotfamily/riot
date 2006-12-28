@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.mapping.UrlMapping;
 import org.riotfamily.common.web.mapping.UrlMappingAware;
@@ -103,8 +102,9 @@ public class ListController implements Controller,
 		String editorId = (String) request.getAttribute(editorIdAttribute);
 		String parentId = (String) request.getAttribute(parentIdAttribute);
 		
-		FlatMap model = new FlatMap();
+		HashMap model = new HashMap();
 		model.put("filterForm", listService.getFilterForm(editorId, parentId, request));
+		model.put("commands", listService.getListCommands(editorId, parentId, request));
 		model.put(editorIdAttribute, editorId);
 		model.put(parentIdAttribute, parentId);
 		return new ModelAndView(viewName, model);

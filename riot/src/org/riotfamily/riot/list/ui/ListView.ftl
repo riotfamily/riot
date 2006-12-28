@@ -16,6 +16,7 @@
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/engine.js"></script>
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/util.js"></script>
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/interface/ListService.js"></script>
+		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/list.js"></script>
 		
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/path.js"></script>		
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/style/tweak.js"></script>		
@@ -26,21 +27,21 @@
 	<body onload="TweakStyle.list()">
 		<div id="wrapper">
 			<div class="main">
-				<table id="list">
-				</table>
+				<div id="list"></div>
 			</div>		
 		</div>
 		<div class="extra">
+			<#if commands?has_content>
+				<div id="commands" class="box">
+					<div class="title">
+						<div class="icon"></div>
+						<span><@spring.messageText "label.commands", "Commands" /></span>
+					</div>
+					<div id="listCommands" class="list">
+					</div>
+				</div>
+			</#if>
 
-			<div id="commands" class="box">
-				<div class="title">
-					<div class="icon"></div>
-					<span><@spring.messageText "label.commands", "Commands" /></span>
-				</div>
-				<div id="listCommands" class="list">
-				</div>
-			</div>
-			
 			<#--			
 			<#if list.search?exists>
 				<div id="search" class="box">
@@ -66,13 +67,10 @@
 					${filterForm}
 				</div>
 			</#if>
-			
-			
 		</div>
-		
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}/list.js"></script>
 		<script type="text/javascript" language="JavaScript">
 			var list = new RiotList('${editorId}'<#if parentId?exists>, '${parentId}'</#if>);
+			list.render('list', 'listCommands');
 		</script>
 	</body>
 </html>
