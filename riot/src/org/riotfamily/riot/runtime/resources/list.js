@@ -4,23 +4,30 @@ RiotList.prototype = {
 	initialize: function(editorId, parentId) {
 		this.editorId = editorId;
 		this.parentId = parentId;
-
-		this.table = $('list');
-		RBuilder.node('thead', {parent: this.table}, 
-			this.headRow = RBuilder.node('tr')
-		);
-		this.tbody = RBuilder.node('tbody', {parent: this.table});
-		
-		ListService.getTable(editorId, parentId, this.renderTable.bind(this));
 	},
 	
-	renderTable: function(data) {
+	render: function(target, commandTarget) {
+		var table = RBuilder.node('table', {parent: $(target)}, 
+			RBuilder.node('thead', null, 
+				this.headRow = RBuilder.node('tr')
+			),
+			this.tbody = RBuilder.node('tbody')
+		);
+		ListService.getTable(this.editorId, this.parentId, this.renderTable.bind(this, commandTarget));		
+	},
+	
+	renderFormCommands: function(objectId, target) {
+		var item = {objectId: objectId};
+		ListService.getFormCommands(this.editorId, this.parentId, objectId, this.appendCommands.bind(this, target, true, item));
+	},
+		
+	renderTable: function(commandTarget, data) {
 		this.headings = {};
 		data.columns.each(this.addColumn.bind(this));
 		var th = RBuilder.node('th', {className: 'commands', parent: this.headRow,
 			style: { width: data.itemCommandCount * 34 + 'px' }});
 		
-		this.appendCommands($('listCommands'), data.listCommands, null, true);	
+		this.appendCommands(commandTarget, true, null, data.listCommands);	
 		this.updateRows(data.rows);
 	},
 	
@@ -31,7 +38,7 @@ RiotList.prototype = {
 	
 	addColumn: function(col) {
 		var label;
-		var th = RBuilder.node('th', { property: col.property }, 
+		var th = RBuilder.node('th', {property: col.property}, 
 			label = RBuilder.node('span', null, col.heading)
 		);
 		this.headings[col.property] = label;
@@ -71,30 +78,31 @@ RiotList.prototype = {
 		var tr = RBuilder.node('tr');
 		RElement.hoverHighlight(tr, 'highlight');
 		row.columns.each(function(data) {
-			RBuilder.node('td', { innerHTML: data, parent: tr });
+			RBuilder.node('td', {innerHTML: data, parent: tr});
 		});
-		var td = RBuilder.node('td', { className: 'commands' });
-		this.appendCommands(td, row.commands, row);
+		var td = RBuilder.node('td', {className: 'commands'});
+		this.appendCommands(td, false, row, row.commands);
 		tr.appendChild(td);
 		this.tbody.appendChild(tr);
 	},
 	
-	appendCommands: function(el, commands, item, renderLabel) {
+	appendCommands: function(el, renderLabel, item, commands) {
+		el = $(el);
 		var handler = this.execItemCommand.bindAsEventListener(this);
 		commands.each(function(command) {
-			var a = RBuilder.node('a', { href: '#', item: item, 
-					className: 'action action-' + command.action });
+			var a = RBuilder.node('a', {href: '#', item: item, 
+					className: 'action action-' + command.action});
 					
 			if (command.enabled) {
 				a.command = command;
-				a.addClassName('command-enabled');
 				Event.observe(a, 'click', handler);
 			}
 			else {
+				a.addClassName('disabled');
 				a.onclick = Event.stop;
 			}
 			if (renderLabel) {
-				RBuilder.node('span', { parent: a }, command.label);
+				RBuilder.node('span', {parent: a}, command.label);
 			}
 			el.appendChild(a);
 		});

@@ -12,7 +12,13 @@
 		<link rel="stylesheet" href="${request.contextPath}${resourcePath}/style/form.css" type="text/css" />
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/path.js"></script>
+		
+		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/riot-js/util.js"></script>
+		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/engine.js"></script>
+		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/util.js"></script>
+		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/interface/ListService.js"></script>
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/list.js"></script>
+		
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/style/tweak.js"></script>
 		<script type="text/javascript" language="JavaScript">
 			updatePath('${editorId}', '${objectId?if_exists}', '${parentId?if_exists}');
@@ -27,35 +33,11 @@
 					}
 				}
 			}
-			
 			function showSavingMessage() {
 				Element.hide('form');
 				Element.hide('extras');
 				Element.show('saving');
 			}
-			
-			function addHiddenField(form, name, value) {
-				var hf = document.createElement('input');
-				hf.type = 'hidden';
-				hf.name = name;
-				hf.value = value;
-				form.appendChild(hf);
-			}
-			
-			function initCommands() {
-				var form = $('${formId}');
-				var cmds = $('commands').getElementsByClassName('enabled-command');
-				for (var i = 0; i < cmds.length; i++) {
-					var e = cmds[i];
-					e.objectId = '${objectId?if_exists}';
-					e.command = getCommand(e);
-					e.onclick = function() {
-						addHiddenField(form, 'command', this.command);
-						form.submit();
-					}
-				}
-			}
-			
 		</script>
 	</head>
 	<body>
@@ -104,28 +86,15 @@
 					<div class="icon"></div>
 					<span><@spring.messageText "label.commands", "Commands" /></span>
 				</div>
-				<div class="list">
+				<div id="formCommands" class="list">
 					<div class="item"><a class="saveButton action" href="javascript:save()"><span><@spring.messageText "label.form.button.save", "Save" /></span></a></div>
-					<#if commands?has_content>
-						<#list commands as command>
-							<div class="item">${command}</div>
-						</#list>
-					</#if>
 				</div>
 			</div>
 			
 			<script type="text/javascript" language="JavaScript">
 				TweakStyle.form();
-				initCommands();
-				<#if confirmCommand?exists>
-				if (confirm('${confirmCommand?js_string}')) {
-					var form = $('${formId}');
-					addHiddenField(form, 'command', '${command}');
-					addHiddenField(form, 'confirmed', 'true');
-					form.submit();
-				}
-				</#if>
-				${commandResult?if_exists}
+				var list = new RiotList('${parentEditorId}'<#if parentId?exists>, '${parentId}'</#if>);
+				list.renderFormCommands(<#if objectId?exists>'${objectId}'<#else>null</#if>, 'formCommands');
 			</script>
 		</div>
 		

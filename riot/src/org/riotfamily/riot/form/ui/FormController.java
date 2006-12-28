@@ -31,8 +31,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRepository;
+import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.FormDefinition;
+import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.ui.EditorController;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.beans.factory.BeanNameAware;
@@ -78,7 +80,13 @@ public class FormController extends BaseFormController
 		
 		model.put("childLists", formDefinition.getChildEditorReferences(object, 
 				form.getFormContext().getMessageResolver()));
-				
+		
+		ListDefinition parentListDef = EditorDefinitionUtils
+				.getParentListDefinition(formDefinition);
+		
+		if (parentListDef != null) {
+			model.put("parentEditorId", parentListDef.getId());
+		}
 		
 		return model;
 	}
