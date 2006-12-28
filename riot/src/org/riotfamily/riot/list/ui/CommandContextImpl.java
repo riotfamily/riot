@@ -58,10 +58,6 @@ class CommandContextImpl implements CommandContext {
 		return session.getListDefinition().getListConfig().getDao();
 	}
 	
-	public void addRowStyle(String cssClass) {
-		item.setCssClass(cssClass);
-	}
-
 	public Object getBean() {
 		if (bean == null && getObjectId() != null) {
 			bean = session.loadBean(getObjectId());

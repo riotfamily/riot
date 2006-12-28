@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.riotfamily.riot.dao.Order;
 import org.riotfamily.riot.dao.RiotDao;
+import org.riotfamily.riot.form.command.FormCommand;
 import org.riotfamily.riot.list.command.Command;
 
 /**
@@ -47,6 +48,8 @@ public class ListConfig {
 	private List commands = new ArrayList();
 	
 	private ArrayList columnCommands = new ArrayList();
+	
+	private List formCommands;
 	
 	private String defaultCommandId;
 
@@ -166,6 +169,20 @@ public class ListConfig {
 	
 	public List getColumnCommands() {
 		return columnCommands;
+	}
+	
+	public List getFormCommands() {
+		if (formCommands == null) {
+			formCommands = new ArrayList();
+			Iterator it = columnCommands.iterator();
+			while (it.hasNext()) {
+				Object command = it.next();
+				if (command instanceof FormCommand) {
+					formCommands.add(command);
+				}
+			}
+		}
+		return formCommands;
 	}
 	
 	public Command getColumnCommand(String id) {

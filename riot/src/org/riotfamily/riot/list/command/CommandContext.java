@@ -53,8 +53,6 @@ public interface CommandContext {
 	
 	public HttpServletRequest getRequest();
 
-	public void addRowStyle(String cssClass);
-	
 	public int getItemsTotal();
 	
 }

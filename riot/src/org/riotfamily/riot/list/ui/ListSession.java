@@ -115,16 +115,14 @@ public class ListSession implements RenderContext {
 			Object bean = it.next();
 			ListItem item = new ListItem();
 			item.setRowIndex(rowIndex++);
-			item.setObjectId(getObjectId(bean));
+			item.setObjectId(EditorDefinitionUtils.getObjectId(listDefinition, bean));
 			item.setColumns(getColumns(bean));
-			item.setCommands(getCommands(item, bean, request));
+			item.setCommands(getCommandStates(listConfig.getColumnCommands(), 
+					item, bean, request));
+			
 			items.add(item);
 		}
 		return items;
-	}
-	
-	private String getObjectId(Object bean) {
-		return EditorDefinitionUtils.getObjectId(listDefinition, bean);
 	}
 	
 	private List getColumns(Object bean) {
@@ -146,10 +144,11 @@ public class ListSession implements RenderContext {
 	
 	public ListTable getTable(HttpServletRequest request) {
 		ListTable table = new ListTable();
+
 		table.setEditorId(listDefinition.getId());
 		table.setParentId(parentId);
 		table.setItemCommandCount(listConfig.getColumnCommands().size());
-		//listConfig.getCommands();
+		table.setListCommands(getListCommands(request));
 		
 		ArrayList columns = new ArrayList();
 		Iterator it = listConfig.getColumnConfigs().iterator();
@@ -221,14 +220,27 @@ public class ListSession implements RenderContext {
 		return getItems(request);
 	}
 	
-	private List getCommands(ListItem item, Object bean, 
+	public List getListCommands(HttpServletRequest request) {
+		return getCommandStates(listConfig.getCommands(), null, null, request);
+	}
+	
+	public List getFormCommands(String objectId, HttpServletRequest request) {
+		Object bean = null;
+		if (objectId != null) {
+			bean = listConfig.getDao().load(objectId);
+		}
+		return getCommandStates(listConfig.getFormCommands(), 
+				null, bean, request);
+	}
+	
+	private List getCommandStates(List commands, ListItem item, Object bean, 
 			HttpServletRequest request) {
 		
 		ArrayList result = new ArrayList();
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		context.setBean(bean);
 		context.setItem(item);
-		Iterator it = listConfig.getColumnCommands().iterator();
+		Iterator it = commands.iterator();
 		while (it.hasNext()) {
 			Command command = (Command) it.next();
 			CommandState state = new CommandState();
