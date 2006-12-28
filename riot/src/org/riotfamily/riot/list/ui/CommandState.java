@@ -34,6 +34,8 @@ public class CommandState {
 	private String action;
 	
 	private boolean enabled;
+	
+	private String label;
 
 	public String getAction() {
 		return this.action;
@@ -59,5 +61,12 @@ public class CommandState {
 		this.id = id;
 	}
 
+	public String getLabel() {
+		return this.label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
 	
 }

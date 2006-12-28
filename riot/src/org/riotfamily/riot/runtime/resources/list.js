@@ -19,7 +19,8 @@ RiotList.prototype = {
 		data.columns.each(this.addColumn.bind(this));
 		var th = RBuilder.node('th', {className: 'commands', parent: this.headRow,
 			style: { width: data.itemCommandCount * 34 + 'px' }});
-			
+		
+		this.appendCommands($('listCommands'), data.listCommands, null, true);	
 		this.updateRows(data.rows);
 	},
 	
@@ -31,7 +32,7 @@ RiotList.prototype = {
 	addColumn: function(col) {
 		var label;
 		var th = RBuilder.node('th', { property: col.property }, 
-			label = RBuilder.node('span', { property: col.property }, col.heading)
+			label = RBuilder.node('span', null, col.heading)
 		);
 		this.headings[col.property] = label;
 		if (col.sortable) {
@@ -53,7 +54,7 @@ RiotList.prototype = {
 	},
 	
 	sort: function(event) {
-		var property = Event.element(event).property;
+		var property = Event.findElement(event, 'th').property;
 		ListService.sort(this.editorId, this.parentId, property, this.updateTable.bind(this));
 	},
 	
@@ -73,14 +74,14 @@ RiotList.prototype = {
 			RBuilder.node('td', { innerHTML: data, parent: tr });
 		});
 		var td = RBuilder.node('td', { className: 'commands' });
-		this.appendItemCommands(td, row);
+		this.appendCommands(td, row.commands, row);
 		tr.appendChild(td);
 		this.tbody.appendChild(tr);
 	},
 	
-	appendItemCommands: function(el, item) {
+	appendCommands: function(el, commands, item, renderLabel) {
 		var handler = this.execItemCommand.bindAsEventListener(this);
-		item.commands.each(function(command) {
+		commands.each(function(command) {
 			var a = RBuilder.node('a', { href: '#', item: item, 
 					className: 'action action-' + command.action });
 					
@@ -92,12 +93,15 @@ RiotList.prototype = {
 			else {
 				a.onclick = Event.stop;
 			}
+			if (renderLabel) {
+				RBuilder.node('span', { parent: a }, command.label);
+			}
 			el.appendChild(a);
 		});
 	},
 	
 	execItemCommand: function(event) {
-		var a = Event.element(event);
+		var a = Event.findElement(event, 'a');
 		this.execCommand(a.item, a.command.id, false);
 		Event.stop(event);
 	},

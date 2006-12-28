@@ -31,21 +31,17 @@
 			</div>		
 		</div>
 		<div class="extra">
-			<#--
-			<#if list.commands?has_content>
-				<div id="commands" class="box">
-					<div class="title">
-						<div class="icon"></div>
-						<span><@spring.messageText "label.commands", "Commands" /></span>
-					</div>
-					<div class="list">
-						<#list list.commands as command>
-							${command}
-						</#list>
-					</div>
+
+			<div id="commands" class="box">
+				<div class="title">
+					<div class="icon"></div>
+					<span><@spring.messageText "label.commands", "Commands" /></span>
 				</div>
-			</#if>
+				<div id="listCommands" class="list">
+				</div>
+			</div>
 			
+			<#--			
 			<#if list.search?exists>
 				<div id="search" class="box">
 					<div class="title">

@@ -9,5 +9,5 @@
 </#list>
 </div>
 <div class="buttons">
-	<input type="button" value="Apply Filter" onclick="list.filter(dwr.util.getValues(this.form)); return false" />
+	<input type="button" value="Apply Filter" onclick="list.filter(RForm.getValues(this.form)); return false" />
 </div>

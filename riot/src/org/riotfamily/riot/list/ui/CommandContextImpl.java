@@ -82,7 +82,7 @@ class CommandContextImpl implements CommandContext {
 	}
 
 	public String getObjectId() {
-		return item.getObjectId();
+		return item != null ? item.getObjectId() : null;
 	}
 
 	public ListParams getParams() {

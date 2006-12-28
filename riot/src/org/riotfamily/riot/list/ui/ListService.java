@@ -52,6 +52,12 @@ public interface ListService {
 	public List filter(String editorId, String parentId, Map filter, 
 			HttpServletRequest request);
 		
+	public List getFormCommands(String editorId, String parentId, 
+			String objectId, HttpServletRequest request);
+	
+	public List getListCommands(String editorId, String parentId, 
+			HttpServletRequest request);
+	
 	public CommandResult execCommand(String editorId, String parentId, 
 			ListItem item, String commandId, boolean confirmed, 
 			HttpServletRequest request, HttpServletResponse response);

@@ -105,6 +105,20 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 		return getListSession(editorId, parentId, request).getFilterForm();
 	}
 
+	public List getListCommands(String editorId, String parentId, 
+			HttpServletRequest request) {
+		
+		return getListSession(editorId, parentId, request)
+				.getListCommands(request);
+	}
+	
+	public List getFormCommands(String editorId, String parentId, 
+			String objectId, HttpServletRequest request) {
+		
+		return getListSession(editorId, parentId, request).getFormCommands(
+				objectId, request);
+	}
+	
 	public CommandResult execCommand(String editorId, String parentId, 
 			ListItem item, String commandId, boolean confirmed, 
 			HttpServletRequest request, HttpServletResponse response) {
