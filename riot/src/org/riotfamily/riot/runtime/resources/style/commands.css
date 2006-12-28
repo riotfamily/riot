@@ -75,6 +75,9 @@ tr.copied .action-copy:hover {
 	background-position: 0 -32px;
 	background-color: ${highlight};
 }
+#commands .disabled {
+	cursor: default;
+}
 .extra #commands .disabled {
 	background-position: 0 -64px;
 }
