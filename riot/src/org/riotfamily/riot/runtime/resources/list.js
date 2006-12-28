@@ -1,165 +1,142 @@
-/*
- * Initializes the specified table by adding event listeners. 
- */
-function initList(listId, defaultCommand) {
-	var table = $(listId);
-	initHeadings(table.tHead.rows[0].cells);
-	var rows = table.tBodies[0].rows;
-	var index = 0;
-	for (var i = 0; i < rows.length; i++) {
-		if (rows[i].className != 'separator') {
-			initRow(rows[i], index++, defaultCommand);
-		}
-	}
-	var cmds = findElements(document, '(command-.*|defaultCommand)');
-	for (var i = 0; i < cmds.length; i++) {
-		var e = cmds[i];
-		if (!e.command)	e.command = getCommand(e);
-		e.onclick = executeCommand;
-	}
-}
+var RiotList = Class.create();
+RiotList.prototype = {
 
-/*
- * Initializes the given list of cells by adding an onclick handler that
- * reloads the list with an 'orderBy' parameter set to the cell's index.
- * Cells that don't have the 'sortable' class are ignored.
- */
-function initHeadings(cells) {
-	for (var i = 0; i < cells.length; i++) {
-		var th = cells[i];
-		if (Element.hasClassName(th, 'sortable')) {
-			th.onclick = function() {
-				location.replace('?orderBy=' + this.cellIndex);
-			};
-		}
-	}
-}
+	initialize: function(editorId, parentId) {
+		this.editorId = editorId;
+		this.parentId = parentId;
 
-/*
- * Initializes the given row. Adds an onmouseover and onmouseout handler
- * to highlight the row onmouseover. Additionally the objectId property 
- * is set on descendent elements that have a 'command-*' class.
- */
-function initRow(row, index, defaultCommand) {
-	Element.addClassName(row, (index % 2 == 0) ? 'even' : 'odd');
-	row.onmouseover = function() {
-		Element.addClassName(this, 'highlight');
-	};
-	row.onmouseout = function() {
-		Element.removeClassName(this, 'highlight');
-	};
+		this.table = $('list');
+		RBuilder.node('thead', {parent: this.table}, 
+			this.headRow = RBuilder.node('tr')
+		);
+		this.tbody = RBuilder.node('tbody', {parent: this.table});
+		
+		ListService.getTable(editorId, parentId, this.renderTable.bind(this));
+	},
 	
-	var objectId = getObjectId(row);
-	var defaultEnabled = false;
+	renderTable: function(data) {
+		this.headings = {};
+		data.columns.each(this.addColumn.bind(this));
+		var th = RBuilder.node('th', {className: 'commands', parent: this.headRow,
+			style: { width: data.itemCommandCount * 34 + 'px' }});
+			
+		this.updateRows(data.rows);
+	},
 	
-	var cmds = findElements(row, 'command-.*');
-	for (var i = 0; i < cmds.length; i++) {
-		cmds[i].objectId = objectId;
-		cmds[i].rowIndex = index;
-		if (defaultCommand != '' && Element.hasClassName(cmds[i], defaultCommand)) {
-			defaultEnabled = true;
+	updateTable: function(data) {
+		data.columns.each(this.updateSortIndicator.bind(this));
+		this.updateRows(data.rows);
+	},
+	
+	addColumn: function(col) {
+		var label;
+		var th = RBuilder.node('th', { property: col.property }, 
+			label = RBuilder.node('span', { property: col.property }, col.heading)
+		);
+		this.headings[col.property] = label;
+		if (col.sortable) {
+			th.className = 'sortable';
+			Event.observe(th, 'click', this.sort.bindAsEventListener(this));
+			this.updateSortIndicator(col);
 		}
-	}
+		this.headRow.appendChild(th);
+	},
 	
-	if (defaultEnabled) {	
-		var data = findElements(row, 'data');
-		for (var i = 0; i < data.length; i++) {
-			if (data[i].getElementsByTagName('a').length == 0) {
-				data[i].objectId = objectId;
-				data[i].rowIndex = index;
-				data[i].command = defaultCommand;
-				Element.addClassName(data[i], 'defaultCommand');
+	updateSortIndicator: function(col) {
+		var e = this.headings[col.property];
+		if (col.sorted) {
+			e.className = col.ascending ? 'sorted-asc' : 'sorted-desc';
+		}
+		else {
+			e.className = '';
+		}	
+	},
+	
+	sort: function(event) {
+		var property = Event.element(event).property;
+		ListService.sort(this.editorId, this.parentId, property, this.updateTable.bind(this));
+	},
+	
+	filter: function(filter) {
+		ListService.filter(this.editorId, this.parentId, filter, this.updateRows.bind(this));
+	},
+	
+	updateRows: function(rows) {
+		this.tbody.innerHTML = '';
+		rows.each(this.addRow.bind(this));
+	},
+	
+	addRow: function(row) {
+		var tr = RBuilder.node('tr');
+		RElement.hoverHighlight(tr, 'highlight');
+		row.columns.each(function(data) {
+			RBuilder.node('td', { innerHTML: data, parent: tr });
+		});
+		var td = RBuilder.node('td', { className: 'commands' });
+		this.appendItemCommands(td, row);
+		tr.appendChild(td);
+		this.tbody.appendChild(tr);
+	},
+	
+	appendItemCommands: function(el, item) {
+		var handler = this.execItemCommand.bindAsEventListener(this);
+		item.commands.each(function(command) {
+			var a = RBuilder.node('a', { href: '#', item: item, 
+					className: 'action action-' + command.action });
+					
+			if (command.enabled) {
+				a.command = command;
+				a.addClassName('command-enabled');
+				Event.observe(a, 'click', handler);
+			}
+			else {
+				a.onclick = Event.stop;
+			}
+			el.appendChild(a);
+		});
+	},
+	
+	execItemCommand: function(event) {
+		var a = Event.element(event);
+		this.execCommand(a.item, a.command.id, false);
+		Event.stop(event);
+	},
+	
+	execCommand: function(item, commandId, confirmed) {
+		ListService.execCommand(this.editorId, this.parentId, 
+				item, commandId, confirmed, 
+				this.processCommandResult.bind(this));
+	},
+	
+	processCommandResult: function(result) {
+		if (result.action == 'confirm') {
+			if (confirm(result.message)) {
+				this.execCommand(result.item, result.commandId, true);
 			}
 		}
-	}
-}
-
-/*
- * Parses a command id from the className of the given element.
- * Example: class="command command-foo enabled" would return 'foo'.
- */
-function getCommand(e) {
-	var c = e.className;
-	var i = c.indexOf('command-');
-	if (i != -1) {
-		var i = i + 8;
-		var n = c.indexOf(' ', i);
-		if (n == -1) n = c.length;
-		return c.substring(i, n);
-	}
-	return null;
-}
-
-/*
- * Returns the objectId for the given element by inspecting the id attribute. 
- * Example: id="object-23" would return 23.
- */
-function getObjectId(e) {
-	if (e.id && e.id.indexOf('object-') == 0) {
-		return e.id.substring(7); 
-	}
-	return null;
-}
-
-/**
- * Like prototype's document.getElementsByClassName() but without XPath
- * which allows us to use regular expressions within the className.
- */
-function findElements(parent, className) {
-	var children = parent.getElementsByTagName('*');
-	var elements = [];
-	for (var i = 0, length = children.length; i < length; i++) {
-		var child = children[i];
-		if (Element.hasClassName(child, className)) {
-			elements.push(Element.extend(child));
-		}
-	}
-	return elements;
-}
-
-/* 
- * Onclick handler that executes a command using a XMLHttpRequest.
- */
-function executeCommand(e) {
-	if (this.command) {
-		if (!e) var e = window.event;
-		e.cancelBubble = true;
-		if (e.stopPropagation) e.stopPropagation();
-		
-		var url = location.href;
-		var i = url.indexOf('?');
-		if (i != -1) {
-			url = url.substring(0, i);
-		}
-		url += '?command=' + this.command;
-		
-		if (this.objectId != null) url += '&objectId=' + this.objectId;
-		if (this.rowIndex != null) url += '&rowIndex=' + this.rowIndex;
-		sendCommandRequest(url);
-		return false;
-	}
-}
-
-function sendCommandRequest(url) {
-	document.body.style.cursor = 'wait';
-	new Ajax.Request(url, {
-		method: 'get', 
-		onComplete: processCommandResponse
-	});
-}
-
-function processCommandResponse(req) {
-	document.body.style.cursor = 'default';
-	var e = req.responseXML.documentElement.firstChild;
-	while (e) {
-		if (e.nodeName == 'confirm') {
-			if (confirm(e.firstChild.nodeValue)) {
-				sendCommandRequest(e.getAttribute('url'));
+		else if (result.action == 'gotoUrl') {
+			if (result.replace) {
+				window[result.target].location.replace(result.url);
+			}
+			else {
+				window[result.target].location.href = result.url;
 			}
 		}
-		else if (e.nodeName == 'eval') {
-			eval(e.firstChild.nodeValue);
+		else if (result.action == 'popup') {
+			var win = window.open(result.url, result.windowName || 'commandPopup');
+			if (!win) {
+				alert(result.popupBlockerMessage || 'The Popup has been blocked by the browser.');
+			}
 		}
-		e = e.nextSibling;		
+		else if (result.action == 'reload') {
+			window.location.reload();
+		}
+		else if (result.action == 'eval') {
+			eval(result.script);
+		}
+		else if (result.action == 'setRowStyle') {
+			alert(result.objectId + ': ' + result.rowStyle);
+		}
 	}
+
 }
