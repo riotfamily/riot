@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.forms.controller.FormContextFactory;
+import org.riotfamily.riot.editor.DisplayDefinition;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandResult;
@@ -69,88 +70,79 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 		this.formContextFactory = formContextFactory;
 	}
 
-	protected ListSession getListSession(String editorId, String parentId, 
-			HttpServletRequest request) {
+	public ListSession getOrCreateListSession(String editorId, String parentId, 
+			String choose, HttpServletRequest request) {
 		
 		String key = "list-" + editorId + "#" + parentId;
-		ListSession session = (ListSession) request.getSession().getAttribute(key);
+		if (choose != null) {
+			key += "-choose:" + choose;
+		}
+		
+		ListSession session = getListSession(key, request);
 		if (session == null) {
-			session = createListSession(editorId, parentId, request);
+			ListDefinition listDef = editorRepository.getListDefinition(editorId);
+			MessageResolver messageResolver = new MessageResolver(messageSource, 
+					messageCodesResolver, RequestContextUtils.getLocale(request));
+			
+			session = new ListSession(key, listDef, parentId, messageResolver, 
+					request.getContextPath(), editorRepository.getFormRepository(),
+					formContextFactory);
+			
+			if (choose != null) {
+				session.setChooserTarget((DisplayDefinition) 
+						editorRepository.getEditorDefinition(choose)); 
+			}
+			
 			request.getSession().setAttribute(key, session);
 		}
 		return session;
 	}
 	
-	protected ListSession createListSession(String editorId, String parentId,
-			HttpServletRequest request) {
-		
-		ListDefinition listDef = editorRepository.getListDefinition(editorId);
-		MessageResolver messageResolver = new MessageResolver(messageSource, 
-				messageCodesResolver, RequestContextUtils.getLocale(request));
-		
-		return new ListSession(listDef, parentId, messageResolver, 
-				request.getContextPath(), editorRepository.getFormRepository(),
-				formContextFactory);
+	protected ListSession getListSession(String key, HttpServletRequest request) {
+		return (ListSession) request.getSession().getAttribute(key);
 	}
 	
-	public ListTable getTable(String editorId, String parentId,
-			HttpServletRequest request) {
-		
-		return getListSession(editorId, parentId, request).getTable(request);
+	public ListTable getTable(String key,HttpServletRequest request) {
+		return getListSession(key, request).getTable(request);
 	}
 		
-	public String getFilterForm(String editorId, String parentId,
-			HttpServletRequest request) {
-		
-		return getListSession(editorId, parentId, request).getFilterForm();
+	public String getFilterForm(String key,	HttpServletRequest request) {
+		return getListSession(key, request).getFilterForm();
 	}
 
-	public List getListCommands(String editorId, String parentId, 
+	public List getListCommands(String key,	HttpServletRequest request) {
+		return getListSession(key, request).getListCommands(request);
+	}
+	
+	public List getFormCommands(String key, String objectId, 
 			HttpServletRequest request) {
 		
-		return getListSession(editorId, parentId, request)
-				.getListCommands(request);
+		return getListSession(key, request).getFormCommands(objectId, request);
 	}
 	
-	public List getFormCommands(String editorId, String parentId, 
-			String objectId, HttpServletRequest request) {
-		
-		return getListSession(editorId, parentId, request).getFormCommands(
-				objectId, request);
-	}
-	
-	public CommandResult execCommand(String editorId, String parentId, 
-			ListItem item, String commandId, boolean confirmed, 
+	public CommandResult execCommand(String key, ListItem item, 
+			String commandId, boolean confirmed, 
 			HttpServletRequest request, HttpServletResponse response) {
 		
-		return getListSession(editorId, parentId, request).execCommand(
+		return getListSession(key, request).execCommand(
 				item, commandId, confirmed, request, response);
 	}
 
-	public List filter(String editorId, String parentId, Map filter, 
-			HttpServletRequest request) {
-		
-		return getListSession(editorId, parentId, request).filter(
-				filter, request);
+	public List filter(String key, Map filter, HttpServletRequest request) {
+		return getListSession(key, request).filter(filter, request);
 	}
 
-	public List getItems(String editorId, String parentId, 
-			HttpServletRequest request) {
-		
-		return getListSession(editorId, parentId, request).getItems(request);
+	public List getItems(String key, HttpServletRequest request) {
+		return getListSession(key, request).getItems(request);
 	}
 
-	public List gotoPage(String editorId, String parentId, int page, 
-			HttpServletRequest request) {
-		
-		return getListSession(editorId, parentId, request).gotoPage(
-				page, request);
+	public List gotoPage(String key, int page, HttpServletRequest request) {
+		return getListSession(key, request).gotoPage(page, request);
 	}
 
-	public ListTable sort(String editorId, String parentId, String property, 
+	public ListTable sort(String key, String property, 
 			HttpServletRequest request) {
 		
-		return getListSession(editorId, parentId, request).sort(
-				property, request);
+		return getListSession(key, request).sort(property, request);
 	}
 }

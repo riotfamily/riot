@@ -391,6 +391,7 @@
 		<constructor-arg ref="editorRepository" />
 		<constructor-arg ref="formRepository" />
 		<constructor-arg ref="riotTransactionManager" />
+		<constructor-arg ref="listService" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 	<alias name="formController" alias="/form/@{editorId}" />

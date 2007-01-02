@@ -1,9 +1,8 @@
 var RiotList = Class.create();
 RiotList.prototype = {
 
-	initialize: function(editorId, parentId) {
-		this.editorId = editorId;
-		this.parentId = parentId;
+	initialize: function(key) {
+		this.key = key;
 	},
 	
 	render: function(target, commandTarget) {
@@ -13,12 +12,12 @@ RiotList.prototype = {
 			),
 			this.tbody = RBuilder.node('tbody')
 		);
-		ListService.getTable(this.editorId, this.parentId, this.renderTable.bind(this, commandTarget));		
+		ListService.getTable(this.key, this.renderTable.bind(this, commandTarget));
 	},
 	
 	renderFormCommands: function(objectId, target) {
 		var item = {objectId: objectId};
-		ListService.getFormCommands(this.editorId, this.parentId, objectId, this.appendCommands.bind(this, target, true, item));
+		ListService.getFormCommands(this.key, objectId, this.appendCommands.bind(this, target, true, item));
 	},
 		
 	renderTable: function(commandTarget, data) {
@@ -62,11 +61,11 @@ RiotList.prototype = {
 	
 	sort: function(event) {
 		var property = Event.findElement(event, 'th').property;
-		ListService.sort(this.editorId, this.parentId, property, this.updateTable.bind(this));
+		ListService.sort(this.key, property, this.updateTable.bind(this));
 	},
 	
 	filter: function(filter) {
-		ListService.filter(this.editorId, this.parentId, filter, this.updateRows.bind(this));
+		ListService.filter(this.key, filter, this.updateRows.bind(this));
 	},
 	
 	updateRows: function(rows) {
@@ -115,8 +114,7 @@ RiotList.prototype = {
 	},
 	
 	execCommand: function(item, commandId, confirmed) {
-		ListService.execCommand(this.editorId, this.parentId, 
-				item, commandId, confirmed, 
+		ListService.execCommand(this.key, item, commandId, confirmed, 
 				this.processCommandResult.bind(this));
 	},
 	

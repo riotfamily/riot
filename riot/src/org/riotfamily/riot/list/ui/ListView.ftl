@@ -69,7 +69,7 @@
 			</#if>
 		</div>
 		<script type="text/javascript" language="JavaScript">
-			var list = new RiotList('${editorId}'<#if parentId?exists>, '${parentId}'</#if>);
+			var list = new RiotList('${listKey}');
 			list.render('list', 'listCommands');
 		</script>
 	</body>

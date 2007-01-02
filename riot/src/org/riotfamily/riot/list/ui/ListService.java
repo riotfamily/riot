@@ -37,32 +37,29 @@ import org.riotfamily.riot.list.command.CommandResult;
  */
 public interface ListService {
 
-	public ListTable getTable(String editorId, String parentId,
+	public ListSession getOrCreateListSession(String editorId, String parentId, 
+			String choose, HttpServletRequest request);
+	
+	public ListTable getTable(String key, HttpServletRequest request);
+	
+	public List getItems(String key, HttpServletRequest request);
+	
+	public List gotoPage(String key, int page,	HttpServletRequest request);
+	
+	public ListTable sort(String key, String property, 
 			HttpServletRequest request);
 	
-	public List getItems(String editorId, String parentId, 
-			HttpServletRequest request);
-	
-	public List gotoPage(String editorId, String parentId, int page, 
-			HttpServletRequest request);
-	
-	public ListTable sort(String editorId, String parentId, String property, 
-			HttpServletRequest request);
-	
-	public List filter(String editorId, String parentId, Map filter, 
-			HttpServletRequest request);
+	public List filter(String key, Map filter, HttpServletRequest request);
 		
-	public List getFormCommands(String editorId, String parentId, 
-			String objectId, HttpServletRequest request);
-	
-	public List getListCommands(String editorId, String parentId, 
+	public List getFormCommands(String key, String objectId, 
 			HttpServletRequest request);
 	
-	public CommandResult execCommand(String editorId, String parentId, 
-			ListItem item, String commandId, boolean confirmed, 
+	public List getListCommands(String key,	HttpServletRequest request);
+	
+	public CommandResult execCommand(String key, ListItem item, 
+			String commandId, boolean confirmed, 
 			HttpServletRequest request, HttpServletResponse response);
 	
-	public String getFilterForm(String editorId, String parentId,
-			HttpServletRequest request);
+	public String getFilterForm(String key,	HttpServletRequest request);
 	
 }

@@ -101,12 +101,18 @@ public class ListController implements Controller,
 
 		String editorId = (String) request.getAttribute(editorIdAttribute);
 		String parentId = (String) request.getAttribute(parentIdAttribute);
+		String choose = request.getParameter("choose");
+		
+		ListSession session = listService.getOrCreateListSession(
+				editorId, parentId, choose, request);
 		
 		HashMap model = new HashMap();
-		model.put("filterForm", listService.getFilterForm(editorId, parentId, request));
-		model.put("commands", listService.getListCommands(editorId, parentId, request));
 		model.put(editorIdAttribute, editorId);
 		model.put(parentIdAttribute, parentId);
+		model.put("filterForm", session.getFilterForm());
+		model.put("commands", session.getListCommands(request));
+		model.put("listKey", session.getKey());
+		
 		return new ModelAndView(viewName, model);
 	}
 	

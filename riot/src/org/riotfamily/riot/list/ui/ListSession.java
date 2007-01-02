@@ -42,12 +42,16 @@ import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRepository;
 import org.riotfamily.forms.controller.FormContextFactory;
 import org.riotfamily.forms.support.SimpleFormRequest;
+import org.riotfamily.riot.editor.DisplayDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.ListDefinition;
+import org.riotfamily.riot.editor.TreeDefinition;
 import org.riotfamily.riot.list.ColumnConfig;
 import org.riotfamily.riot.list.ListConfig;
 import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.command.CommandResult;
+import org.riotfamily.riot.list.command.core.ChooseCommand;
+import org.riotfamily.riot.list.command.core.DescendCommand;
 import org.riotfamily.riot.list.command.result.ConfirmResult;
 import org.riotfamily.riot.list.support.ListParamsImpl;
 import org.riotfamily.riot.list.ui.render.RenderContext;
@@ -58,6 +62,8 @@ import org.riotfamily.riot.list.ui.render.RenderContext;
  */
 public class ListSession implements RenderContext {
 
+	private String key;
+	
 	private ListDefinition listDefinition;
 	
 	private String parentId;
@@ -70,20 +76,24 @@ public class ListSession implements RenderContext {
 	
 	private ListConfig listConfig;
 	
+	private List itemCommands;
+	
 	private ListParamsImpl params;
 
 	
-	public ListSession(ListDefinition listDefinition, String parentId,
-			MessageResolver messageResolver, String contextPath,
+	public ListSession(String key, ListDefinition listDefinition, 
+			String parentId, MessageResolver messageResolver, String contextPath,
 			FormRepository formRepository, 
 			FormContextFactory formContextFactory) {
 		
+		this.key = key;
 		this.listDefinition = listDefinition;
 		this.parentId = parentId;
 		this.messageResolver = messageResolver;
 		this.contextPath = contextPath;
 		this.listConfig = listDefinition.getListConfig();
 		
+		itemCommands = listConfig.getColumnCommands();
 		params = new ListParamsImpl();
 		params.setParentId(parentId);
 		
@@ -103,6 +113,28 @@ public class ListSession implements RenderContext {
 		
 	}
 
+	public String getKey() {
+		return key;
+	}
+	
+	public void setChooserTarget(DisplayDefinition target) {
+		ListDefinition targetList = EditorDefinitionUtils
+				.getParentListDefinition(target);
+		
+		ListDefinition nextList = targetList;
+		if (listDefinition != targetList) {
+			nextList = EditorDefinitionUtils.getNextListDefinition(
+					listDefinition, targetList);
+		}
+		if (nextList instanceof TreeDefinition) {
+			TreeDefinition tree = (TreeDefinition) nextList;
+			nextList = tree.getNodeListDefinition();
+		}
+		itemCommands = new ArrayList();
+		itemCommands.add(new DescendCommand(nextList, target));
+		itemCommands.add(new ChooseCommand(targetList));
+	}
+		
 	public List getItems(HttpServletRequest request) {
 		Object parent = EditorDefinitionUtils.loadParent(
 				listDefinition, params.getParentId());
@@ -117,7 +149,7 @@ public class ListSession implements RenderContext {
 			item.setRowIndex(rowIndex++);
 			item.setObjectId(EditorDefinitionUtils.getObjectId(listDefinition, bean));
 			item.setColumns(getColumns(bean));
-			item.setCommands(getCommandStates(listConfig.getColumnCommands(), 
+			item.setCommands(getCommandStates(itemCommands, 
 					item, bean, request));
 			
 			items.add(item);
@@ -147,7 +179,7 @@ public class ListSession implements RenderContext {
 
 		table.setEditorId(listDefinition.getId());
 		table.setParentId(parentId);
-		table.setItemCommandCount(listConfig.getColumnCommands().size());
+		table.setItemCommandCount(itemCommands.size());
 		table.setListCommands(getListCommands(request));
 		
 		ArrayList columns = new ArrayList();

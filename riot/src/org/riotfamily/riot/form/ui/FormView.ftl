@@ -93,7 +93,7 @@
 			
 			<script type="text/javascript" language="JavaScript">
 				TweakStyle.form();
-				var list = new RiotList('${parentEditorId}'<#if parentId?exists>, '${parentId}'</#if>);
+				var list = new RiotList('${listKey}');
 				list.renderFormCommands(<#if objectId?exists>'${objectId}'<#else>null</#if>, 'formCommands');
 			</script>
 		</div>

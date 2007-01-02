@@ -43,11 +43,11 @@ public class ObjectChooser extends AbstractChooser
 		
 	private BeanFactory beanFactory;
 	
-	private ChooserController chooserController;
-	
 	private EditorRepository editorRepository;
 	
-	private DisplayDefinition targetEditorDefinition;
+	private ListDefinition targetListDefinition;
+	
+	private DisplayDefinition targetDisplayDefinition;
 	
 	
 	public void setTargetEditorId(String targetEditorId) {
@@ -59,52 +59,51 @@ public class ObjectChooser extends AbstractChooser
 	}
 	
 	protected void afterFormSet() {
-		if (chooserController == null) {
+		if (editorRepository == null) {
 			Assert.isInstanceOf(ListableBeanFactory.class, beanFactory,
 					"Not a ListableBeanFactory");
 			
 			ListableBeanFactory lbf = (ListableBeanFactory) beanFactory;
-			chooserController = (ChooserController) 
+			editorRepository = (EditorRepository) 
 					BeanFactoryUtils.beanOfTypeIncludingAncestors(
-					lbf, ChooserController.class);
+					lbf, EditorRepository.class);
 			
-			Assert.notNull(chooserController, 
-					"No ChooserListController found in BeanFactory");
+			Assert.notNull(editorRepository, 
+					"No EditorRepository found in BeanFactory");
 		}
 		
 		log.debug("Looking up editor: " + targetEditorId);
-		editorRepository = chooserController.getEditorRepository();
 		EditorDefinition editor = editorRepository.getEditorDefinition(
 				targetEditorId);
 		
 		Assert.notNull(editor, "No such EditorDefinition: " + targetEditorId);
-		targetEditorDefinition = getDisplayDefinition(editor);
-	}
 
-	private DisplayDefinition getDisplayDefinition(EditorDefinition def) {
-		if (def instanceof DisplayDefinition) {
-			return (DisplayDefinition) def;
+		if (editor instanceof DisplayDefinition) {
+			targetDisplayDefinition = (DisplayDefinition) editor;
+			targetListDefinition = EditorDefinitionUtils.getParentListDefinition(editor); 
 		}
-		else if (def instanceof ListDefinition) {
-			ListDefinition listDef = (ListDefinition) def;
-			return listDef.getDisplayDefinition();
+		else if (editor instanceof ListDefinition) {
+			targetListDefinition = (ListDefinition) editor;
+			targetDisplayDefinition = targetListDefinition.getDisplayDefinition();
 		}
 		else {
 			throw new IllegalArgumentException(
-					"Neither a List- nor FormDefinition: " + def);
+					"Neither a List- nor DisplayDefinition: " + editor);
 		}
+		
 	}
-	
+
 	protected Object loadBean(String objectId) {
-		return EditorDefinitionUtils.loadBean(targetEditorDefinition, objectId);
+		return EditorDefinitionUtils.loadBean(targetListDefinition, objectId);
 	}
 	
 	protected String getDisplayName(Object object) {
-		return targetEditorDefinition.getLabel(object);
+		return targetDisplayDefinition.getLabel(object);
 	}
 
 	protected String getChooserUrl() {
-		return chooserController.getUrl(targetEditorId);
+		return targetListDefinition.getEditorUrl(null, null) 
+				+ "?choose=" + targetDisplayDefinition.getId();
 	}
 	
 }
