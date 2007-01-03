@@ -24,7 +24,10 @@
 			updatePath('${editorId}', null, '${parentId?if_exists}');
 		</script>		
 	</head>
-	<body onload="TweakStyle.list()">
+	
+	<#assign hasExtraColumn = commands?has_content || search?exists || filterForm?exists />
+	
+	<body onload="TweakStyle.list()"<#if !hasExtraColumn> class="wide"</#if>>
 		<div id="wrapper">
 			<div class="main">
 				<div id="list"></div>

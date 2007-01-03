@@ -37,6 +37,12 @@ td {
 	width: 260px;
 	margin-left: -260px;
 }
+.wide .main {
+	margin-right: 0px;
+}
+.wide .extra {
+	display: none;
+}
 .extra .box {
 	background-color: #ebebeb;
 	padding-bottom: 10px;
