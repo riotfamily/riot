@@ -31,7 +31,7 @@ public interface ListParams {
 	 * Returns the String representation of the parent object's id, 
 	 * or <code>null</code> if the list is not a child-list.
 	 */
-	public String getParentId();
+	//public String getParentId();
 
 	/**
 	 * Returns an object populated by the list's filter-form, 

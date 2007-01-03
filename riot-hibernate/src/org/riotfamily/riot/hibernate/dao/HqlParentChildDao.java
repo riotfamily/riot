@@ -72,7 +72,7 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
      * Returns a list of items.
      */
     protected List listInternal(Object parent, ListParams params) {
-        Query query = createQuery(buildHql(params));
+        Query query = createQuery(buildHql(parent, params));
         if (params.getPageSize() > 0) {
             query.setFirstResult(params.getOffset());
             query.setMaxResults(params.getPageSize());
@@ -90,7 +90,7 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
      * Returns the total number of items.
      */
     public int getListSize(Object parent, ListParams params) {
-        Query query = createQuery(buildCountHql(params));
+        Query query = createQuery(buildCountHql(parent, params));
         if (parent != null) {
         	query.setParameter("parent", parent);
         }
@@ -100,13 +100,13 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
     }
 
 
-    protected String getWhereClause(ListParams params) {
+    protected String getWhereClause(Object parent, ListParams params) {
         StringBuffer sb = new StringBuffer();
         boolean hasWhere = false;
         if (parentProperty != null) {
         	sb.append(" where this.");
        		sb.append(parentProperty);
-        	if (params.getParentId() == null) {
+        	if (parent == null) {
 	        	sb.append(" is null");
         	}
         	else {

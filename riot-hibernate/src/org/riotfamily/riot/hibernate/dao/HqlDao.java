@@ -117,7 +117,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     }
     
     protected List listInternal(Object parent, ListParams params) {
-    	Query query = createQuery(buildHql(params));
+    	Query query = createQuery(buildHql(parent, params));
         if (params.getPageSize() > 0) {
             query.setFirstResult(params.getOffset());
             query.setMaxResults(params.getPageSize());
@@ -132,7 +132,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
      * Returns the total number of items.
      */
     public int getListSize(Object parent, ListParams params) {
-        Query query = createQuery(buildCountHql(params));
+        Query query = createQuery(buildCountHql(parent, params));
         if (params.getFilter() != null) {
             query.setProperties(params.getFilter());
         }
@@ -146,29 +146,29 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     /**
      * Builds a HQL query string to retrive the total number of items.
      */
-    protected String buildCountHql(ListParams params) {
+    protected String buildCountHql(Object parent, ListParams params) {
     	StringBuffer hql = new StringBuffer();
     	hql.append("select count(this) from ");
     	hql.append(entityClass.getName());
     	hql.append(" as this");
-    	hql.append(getWhereClause(params));
+    	hql.append(getWhereClause(parent, params));
         return hql.toString();
     }
 
     /**
      * Builds a HQL query string to retrive a list of items.
      */
-    protected String buildHql(ListParams params) {
+    protected String buildHql(Object parent, ListParams params) {
     	StringBuffer hql = new StringBuffer();
     	hql.append("select this from ");
     	hql.append(entityClass.getName());
     	hql.append(" as this");
-    	hql.append(getWhereClause(params));
+    	hql.append(getWhereClause(parent, params));
     	hql.append(getOrderBy(params));
         return hql.toString();
     }
 
-    protected String getWhereClause(ListParams params) {
+    protected String getWhereClause(Object parent, ListParams params) {
         StringBuffer sb = new StringBuffer();
         String where = this.where;
         if (where == null && params.getFilter() != null) {

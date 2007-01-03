@@ -35,8 +35,6 @@ import org.riotfamily.riot.dao.Order;
  */
 public class ListParamsImpl implements ListParams {
 
-	private String parentId;
-	
 	private Object filter;
 	
 	private String[] filteredProperties;
@@ -54,7 +52,6 @@ public class ListParamsImpl implements ListParams {
 	}
 
 	public ListParamsImpl(ListParams params) {
-		this.parentId = params.getParentId();
 		this.filter = params.getFilter();
 		this.filteredProperties = params.getFilteredProperties();
 		this.order = params.getOrder();
@@ -62,14 +59,6 @@ public class ListParamsImpl implements ListParams {
 		this.offset = params.getOffset();
 	}
 	
-	public String getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(String parentId) {
-		this.parentId = parentId;
-	}
-
 	public Object getFilter() {
 		return filter;
 	}
