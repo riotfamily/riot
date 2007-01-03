@@ -1,3 +1,5 @@
+@import url(command-custom.css);
+
 .action {
 	display: block;
 	width: 32px;
@@ -71,7 +73,7 @@ tr.copied .action-copy:hover {
 	font-size: 11px;
 	line-height: 32px;
 }
-#commands .action:hover {
+#commands .enabled:hover {
 	background-position: 0 -32px;
 	background-color: ${highlight};
 }
