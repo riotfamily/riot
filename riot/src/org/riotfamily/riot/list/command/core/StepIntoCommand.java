@@ -48,7 +48,7 @@ public class StepIntoCommand extends AbstractCommand {
 	}
 	
 	public CommandResult execute(CommandContext context) {
-		return new GotoUrlResult(getTargetUrl(context), context);
+		return new GotoUrlResult(context, getTargetUrl(context));
 	}
 	
 	private static String getTargetUrl(CommandContext context) {

@@ -40,7 +40,7 @@ public class GotoUrlResult implements CommandResult {
 		this.url = url;
 	}
 	
-	public GotoUrlResult(String url, CommandContext context) {
+	public GotoUrlResult(CommandContext context, String url) {
 		this.url = context.getRequest().getContextPath() + url;
 	}
 	

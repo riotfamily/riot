@@ -39,9 +39,7 @@ public class EditCommand extends AbstractCommand {
 	public CommandResult execute(CommandContext context) {
 		DisplayDefinition def = context.getListDefinition().getDisplayDefinition();
 		Assert.notNull(def, "A DisplayDefinition must be set");
-		String url = def.getEditorUrl(context.getObjectId(), 
-				context.getParentId());
-		
-		return new GotoUrlResult(url, context);
+		return new GotoUrlResult(context, def.getEditorUrl(
+				context.getObjectId(), context.getParentId()));
 	}
 }
