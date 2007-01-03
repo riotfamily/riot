@@ -115,7 +115,8 @@ td.data .false {
 	float: left;
 }
 
-#list .commands .action:hover {
+#list .commands .enabled:hover,
+tr.highlight .highlight-default .default {
 	background-position: 0 -32px;
 	background-color: ${highlight};
 }

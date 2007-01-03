@@ -75,11 +75,21 @@ RiotList.prototype = {
 	
 	addRow: function(row) {
 		var tr = RBuilder.node('tr');
-		RElement.hoverHighlight(tr, 'highlight');
+		Event.observe(tr, 'mouseover', tr.addClassName.bind(tr, 'highlight'));
+		Event.observe(tr, 'mouseout', tr.removeClassName.bind(tr, 'highlight'));
+		
+		if (row.defaultCommandId) {
+			Event.observe(tr, 'click', this.execCommand.bind(this, row, row.defaultCommandId, false));
+		}
+		
 		row.columns.each(function(data) {
 			RBuilder.node('td', {innerHTML: data, parent: tr});
 		});
-		var td = RBuilder.node('td', {className: 'commands'});
+
+		var td = RBuilder.node('td', {className: 'commands highlight-default'});
+		Event.observe(td, 'mouseover', td.removeClassName.bind(td, 'highlight-default'));
+		Event.observe(td, 'mouseout', td.addClassName.bind(td, 'highlight-default'));
+		
 		this.appendCommands(td, false, row, row.commands);
 		tr.appendChild(td);
 		this.tbody.appendChild(tr);
@@ -94,6 +104,10 @@ RiotList.prototype = {
 					
 			if (command.enabled) {
 				a.command = command;
+				a.addClassName('enabled');
+				if (item && item.defaultCommandId == command.id) {
+					a.addClassName('default');
+				}
 				Event.observe(a, 'click', handler);
 			}
 			else {

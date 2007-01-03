@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +77,11 @@ public class ListSession implements RenderContext {
 	
 	private ListConfig listConfig;
 	
+	private List listCommands;
+	
 	private List itemCommands;
+	
+	private String[] defaultCommandIds;
 	
 	private ListParamsImpl params;
 
@@ -93,9 +98,11 @@ public class ListSession implements RenderContext {
 		this.contextPath = contextPath;
 		this.listConfig = listDefinition.getListConfig();
 		
+		listCommands = listConfig.getCommands();
 		itemCommands = listConfig.getColumnCommands();
+		defaultCommandIds = listConfig.getDefaultCommandIds();
+		
 		params = new ListParamsImpl();
-		params.setParentId(parentId);
 		
 		String formId = listConfig.getFilterFormId();
 		if (formId != null) {
@@ -130,14 +137,23 @@ public class ListSession implements RenderContext {
 			TreeDefinition tree = (TreeDefinition) nextList;
 			nextList = tree.getNodeListDefinition();
 		}
+		
+		listCommands = Collections.EMPTY_LIST;
 		itemCommands = new ArrayList();
 		itemCommands.add(new DescendCommand(nextList, target));
-		itemCommands.add(new ChooseCommand(targetList));
+		
+		if (target.getBeanClass().isAssignableFrom(
+				listDefinition.getBeanClass())) {
+			
+			itemCommands.add(new ChooseCommand(target));
+		}
+		
+		defaultCommandIds = new String[] { DescendCommand.ID, ChooseCommand.ID };
 	}
 		
 	public List getItems(HttpServletRequest request) {
 		Object parent = EditorDefinitionUtils.loadParent(
-				listDefinition, params.getParentId());
+				listDefinition, parentId);
 
 		Collection beans = listConfig.getDao().list(parent, params);
 		ArrayList items = new ArrayList(beans.size());
@@ -149,9 +165,10 @@ public class ListSession implements RenderContext {
 			item.setRowIndex(rowIndex++);
 			item.setObjectId(EditorDefinitionUtils.getObjectId(listDefinition, bean));
 			item.setColumns(getColumns(bean));
+			item.setDefaultCommandIds(defaultCommandIds);
 			item.setCommands(getCommandStates(itemCommands, 
 					item, bean, request));
-			
+
 			items.add(item);
 		}
 		return items;
@@ -253,7 +270,7 @@ public class ListSession implements RenderContext {
 	}
 	
 	public List getListCommands(HttpServletRequest request) {
-		return getCommandStates(listConfig.getCommands(), null, null, request);
+		return getCommandStates(listCommands, null, null, request);
 	}
 		
 	public List getFormCommands(String objectId, HttpServletRequest request) {
@@ -285,14 +302,13 @@ public class ListSession implements RenderContext {
 		}
 		return result;
 	}
-		
+	
 	public CommandResult execCommand(ListItem item, String commandId, 
 			boolean confirmed, HttpServletRequest request, 
 			HttpServletResponse response) {
 		
-		Command command = item != null 
-				? listConfig.getColumnCommand(commandId)
-				: listConfig.getListCommand(commandId);
+		Collection commands = item != null ? itemCommands : listCommands;
+		Command command = getCommand(commands, commandId);
 		
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		context.setItem(item);
@@ -304,6 +320,17 @@ public class ListSession implements RenderContext {
 			}
 		}
 		return command.execute(context);
+	}
+	
+	private Command getCommand(Collection commands, String id) {
+		Iterator it = commands.iterator();
+		while (it.hasNext()) {
+			Command command = (Command) it.next();
+			if (id.equals(command.getId())) {
+				return command;
+			}
+		}
+		throw new IllegalArgumentException("No such command: " + id);
 	}
 	
 	public Object loadBean(String objectId) {
@@ -319,11 +346,11 @@ public class ListSession implements RenderContext {
 	}
 	
 	public ListParamsImpl getParams() {
-		return this.params;
+		return params;
 	}
 
 	public String getParentId() {
-		return this.parentId;
+		return parentId;
 	}
 
 	public Class getBeanClass() {

@@ -51,7 +51,7 @@ public class ListConfig {
 	
 	private List formCommands;
 	
-	private String defaultCommandId;
+	private String[] defaultCommandIds;
 
 	private String idProperty;
 	
@@ -185,28 +185,6 @@ public class ListConfig {
 		return formCommands;
 	}
 	
-	public Command getColumnCommand(String id) {
-		Iterator it = columnCommands.iterator();
-		while (it.hasNext()) {
-			Command command = (Command) it.next();
-			if (command.getId().equals(id)) {
-				return command;
-			}
-		}
-		throw new IllegalArgumentException("No such command: " + id);
-	}
-	
-	public Command getListCommand(String id) {
-		Iterator it = commands.iterator();
-		while (it.hasNext()) {
-			Command command = (Command) it.next();
-			if (command.getId().equals(id)) {
-				return command;
-			}
-		}
-		throw new IllegalArgumentException("No such command: " + id);
-	}
-	
 	public Command getFirstColumnCommand() {
 		if (!columnCommands.isEmpty()) {
 			return (Command) columnCommands.get(0);
@@ -222,16 +200,22 @@ public class ListConfig {
 		this.filterFormId = filterForm;
 	}
 
-	public String getDefaultCommandId() {
-		if (defaultCommandId == null) {
-			Command command = getFirstColumnCommand();
-			defaultCommandId = command != null ? command.getId() : ""; 
-		}
-		return defaultCommandId;
+	public void setDefaultCommandId(String defaultCommandId) {
+		setDefaultCommandIds(new String[] {defaultCommandId});
+	}
+	
+	public void setDefaultCommandIds(String[] defaultCommandIds) {
+		this.defaultCommandIds = defaultCommandIds;
 	}
 
-	public void setDefaultCommandId(String defaultCommandId) {
-		this.defaultCommandId = defaultCommandId;
+	public String[] getDefaultCommandIds() {
+		if (defaultCommandIds == null) {
+			Command command = getFirstColumnCommand();
+			if (command != null) {
+				defaultCommandIds = new String[] {command.getId()};	
+			}
+		}
+		return defaultCommandIds;
 	}
 
 	public void setOrderBy(String orderBy) {		

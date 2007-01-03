@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.core;
 
-import org.riotfamily.riot.editor.ListDefinition;
+import org.riotfamily.riot.editor.DisplayDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.ScriptResult;
@@ -34,12 +34,22 @@ import org.riotfamily.riot.list.command.support.AbstractCommand;
  */
 public class ChooseCommand extends AbstractCommand {
 
-	private ListDefinition listDefinition;
+	public static final String ID = "choose";
 	
-	public ChooseCommand(ListDefinition listDefinition) {
-		this.listDefinition = listDefinition;
+	private DisplayDefinition target;
+	
+	public ChooseCommand(DisplayDefinition target) {
+		this.target = target;
 	}
 
+	public String getId() {
+		return ID;
+	}
+
+	public boolean isEnabled(CommandContext context) {
+		return target.getBeanClass().isInstance(context.getBean());
+	}
+	
 	public CommandResult execute(CommandContext context) {
 		return new ScriptResult("parent.chosen('" + 
 				context.getObjectId() + "')");

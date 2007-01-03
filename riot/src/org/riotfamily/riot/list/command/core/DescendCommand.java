@@ -23,21 +23,28 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.core;
 
+import org.riotfamily.riot.dao.ListParams;
+import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.editor.DisplayDefinition;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
 import org.riotfamily.riot.list.command.support.AbstractCommand;
+import org.riotfamily.riot.list.support.ListParamsImpl;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class DescendCommand extends AbstractCommand {
 
+	public static final String ID = "descend";
+	
 	private ListDefinition nextListDefinition;
 	
 	private DisplayDefinition targetDefinition;
+	
+	private static ListParams params = new ListParamsImpl();
 	
 	public DescendCommand(ListDefinition listDefinition, 
 			DisplayDefinition targetDefinition) {
@@ -46,8 +53,22 @@ public class DescendCommand extends AbstractCommand {
 		this.targetDefinition = targetDefinition;
 	}
 
+	public String getId() {
+		return ID;
+	}
+	
+	public boolean isEnabled(CommandContext context) {
+		RiotDao dao = nextListDefinition.getListConfig().getDao();
+		int size = dao.getListSize(context.getBean(), params);
+		if (size == -1) {
+			size = dao.list(context.getBean(), params).size();
+		}
+		return size > 0;
+	}
+	
 	public CommandResult execute(CommandContext context) {
-		return new GotoUrlResult(nextListDefinition.getEditorUrl(
-				null, context.getObjectId()) + "?choose=" + targetDefinition.getId());
+		return new GotoUrlResult(context, nextListDefinition.getEditorUrl(
+				null, context.getObjectId()) + "?choose=" 
+				+ targetDefinition.getId());
 	}
 }

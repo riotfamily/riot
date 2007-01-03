@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.ui;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -41,6 +42,9 @@ public class ListItem {
 	
 	private List commands;
 
+	private String defaultCommandId;
+	
+	private String[] defaultCommandIds;
 	
 	public ListItem() {
 	}
@@ -87,6 +91,38 @@ public class ListItem {
 
 	public void setRowIndex(int rowIndex) {
 		this.rowIndex = rowIndex;
+	}
+
+	public void setDefaultCommandIds(String[] defaultCommandIds) {
+		this.defaultCommandIds = defaultCommandIds;
+	}
+	
+	public void setDefaultCommandId(String defaultCommandId) {
+		this.defaultCommandId = defaultCommandId;
+	}
+
+	public String getDefaultCommandId() {
+		if (defaultCommandId == null) {
+			for (int i = 0; i < defaultCommandIds.length; i++) {
+				CommandState state = getCommandState(defaultCommandIds[i]);
+				if (state != null && state.isEnabled()) {
+					defaultCommandId = state.getId();
+					break;
+				}
+			}
+		}
+		return defaultCommandId;
+	}
+	
+	private CommandState getCommandState(String id) {
+		Iterator it = commands.iterator();
+		while (it.hasNext()) {
+			CommandState state = (CommandState) it.next();
+			if (state.getId().equals(id)) {
+				return state;
+			}
+		}
+		return null;
 	}
 	
 }
