@@ -214,13 +214,13 @@ function populateLog(entries) {
 }
 
 function createLogElement(entry) {
-	return Element.create('div', {className: 'prio' + entry.priority}, entry.message);
+	return RBuilder.node('div', {className: 'prio' + entry.priority}, entry.message);
 }
 
 function addLogEntry(entry) {
 	var e = createLogElement(entry);
 	Element.hide(e);	
-	Element.prependChild('log', e);
+	RElement.prependChild('log', e);
 	new Effect.Appear(e);
 }
 
