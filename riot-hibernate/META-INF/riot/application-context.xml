@@ -24,23 +24,23 @@
 		<property name="automatic" value="${riot.automaticSchemaEvolution=false}" />
 	</bean>
 	
+	<bean id="riotHibernateMappingLocations" class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+		<property name="key" value="hibernateMappingLocations" />
+		<property name="sourceList">
+			<list>
+				<value>classpath:/org/riotfamily/riot/hibernate/security/security.hbm.xml</value>
+				<value>classpath:/org/riotfamily/riot/hibernate/workflow/notification/notification.hbm.xml</value>
+				<value>classpath:/org/riotfamily/riot/hibernate/job/job.hbm.xml</value>
+			</list>
+		</property>
+	</bean>
+		
 	<!-- The Hibernate SessionFactory -->
 	<bean id="riotSessionFactory" depends-on="evolver" 
 			class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
 			
 		<property name="dataSource" ref="riotDataSource" />
-		<property name="mappingLocations">
-			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
-				<property name="key" value="hibernateMappingLocations" />
-				<property name="sourceList">
-					<list>
-						<value>classpath:/org/riotfamily/riot/hibernate/security/security.hbm.xml</value>
-						<value>classpath:/org/riotfamily/riot/hibernate/workflow/notification/notification.hbm.xml</value>
-						<value>classpath:/org/riotfamily/riot/hibernate/job/job.hbm.xml</value>
-					</list>
-				</property>
-			</bean>
-		</property>
+		<property name="mappingLocations" ref="riotHibernateMappingLocations" />
 		<property name="hibernateProperties" ref="riotHibernateProperties" />
 	</bean>
 
