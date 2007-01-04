@@ -109,7 +109,7 @@ public class ListController implements Controller,
 		HashMap model = new HashMap();
 		model.put(editorIdAttribute, editorId);
 		model.put(parentIdAttribute, parentId);
-		model.put("filterForm", session.getFilterForm());
+		model.put("filterForm", session.getFilterFormHtml());
 		model.put("commands", session.getListCommands(request));
 		model.put("listKey", session.getKey());
 		

@@ -301,7 +301,7 @@ var Class = {
 
 var RForm = {
 	getValues: function(form) {
-		return $(form).getElements().inject($H(), function(map, e) {
+		return $(form).getElements().inject({}, function(map, e) {
 			if (e.name) map[e.name] = e.getValue(); 
 			return map;
 		});

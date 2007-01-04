@@ -12,7 +12,10 @@ RiotList.prototype = {
 			),
 			this.tbody = RBuilder.node('tbody')
 		);
-		ListService.getTable(this.key, this.renderTable.bind(this, commandTarget));
+		this.pager = new Pager(RBuilder.node('div', {parent: $(target)}), {
+			onclick: this.gotoPage.bind(this)
+		});
+		ListService.getModel(this.key, this.renderTable.bind(this, commandTarget));
 	},
 	
 	renderFormCommands: function(objectId, target) {
@@ -20,19 +23,24 @@ RiotList.prototype = {
 		ListService.getFormCommands(this.key, objectId, this.appendCommands.bind(this, target, true, item));
 	},
 		
-	renderTable: function(commandTarget, data) {
+	renderTable: function(commandTarget, model) {
 		this.headings = {};
-		data.columns.each(this.addColumn.bind(this));
+		model.columns.each(this.addColumn.bind(this));
 		var th = RBuilder.node('th', {className: 'commands', parent: this.headRow,
-			style: { width: data.itemCommandCount * 34 + 'px' }});
+			style: { width: model.itemCommandCount * 34 + 'px' }});
 		
-		this.appendCommands(commandTarget, true, null, data.listCommands);	
-		this.updateRows(data.rows);
+		this.appendCommands(commandTarget, true, null, model.listCommands);	
+		this.updateRowsAndPager(model);
 	},
 	
-	updateTable: function(data) {
-		data.columns.each(this.updateSortIndicator.bind(this));
-		this.updateRows(data.rows);
+	updateColsAndRows: function(model) {
+		model.columns.each(this.updateSortIndicator.bind(this));
+		this.updateRows(model.items);
+	},
+	
+	updateRowsAndPager: function(model) {
+		this.updateRows(model.items);
+		this.pager.update(model.currentPage, model.pages);
 	},
 	
 	addColumn: function(col) {
@@ -61,16 +69,20 @@ RiotList.prototype = {
 	
 	sort: function(event) {
 		var property = Event.findElement(event, 'th').property;
-		ListService.sort(this.key, property, this.updateTable.bind(this));
+		ListService.sort(this.key, property, this.updateColsAndRows.bind(this));
 	},
 	
 	filter: function(filter) {
-		ListService.filter(this.key, filter, this.updateRows.bind(this));
+		ListService.filter(this.key, filter, this.updateRowsAndPager.bind(this));
 	},
 	
-	updateRows: function(rows) {
+	gotoPage: function(page) {
+		ListService.gotoPage(this.key, page, this.updateRowsAndPager.bind(this));
+	},
+	
+	updateRows: function(items) {
 		this.tbody.innerHTML = '';
-		rows.each(this.addRow.bind(this));
+		items.each(this.addRow.bind(this));
 	},
 	
 	addRow: function(row) {

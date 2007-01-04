@@ -57,7 +57,7 @@ public class ListConfig {
 	
 	private String rowStyleProperty;
 	
-	private int pageSize;
+	private int pageSize = 15;
 	
 	private String filterFormId;
 	

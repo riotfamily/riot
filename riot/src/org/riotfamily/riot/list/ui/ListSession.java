@@ -75,6 +75,8 @@ public class ListSession implements RenderContext {
 	
 	private Form filterForm;
 	
+	private String filterFormHtml;
+	
 	private ListConfig listConfig;
 	
 	private List listCommands;
@@ -113,6 +115,12 @@ public class ListSession implements RenderContext {
 			filterForm.setTemplate(ResourceUtils.getPath(getClass(), "FilterForm.ftl"));
 			params.setFilteredProperties(filterForm.getEditorBinder()
 					.getBoundProperties());
+			
+			params.setFilter(filterForm.populateBackingObject());
+			
+			StringWriter writer = new StringWriter();
+			filterForm.render(new PrintWriter(writer));
+			filterFormHtml = writer.toString();
 		}
 		
 		params.setPageSize(listConfig.getPageSize());
@@ -151,9 +159,13 @@ public class ListSession implements RenderContext {
 		defaultCommandIds = new String[] { DescendCommand.ID, ChooseCommand.ID };
 	}
 		
-	public List getItems(HttpServletRequest request) {
+	public ListModel getItems(HttpServletRequest request) {
 		Object parent = EditorDefinitionUtils.loadParent(
 				listDefinition, parentId);
+
+		int itemsTotal = listConfig.getDao().getListSize(parent, params);
+		ListModel model = new ListModel(itemsTotal, params.getPageSize(), 
+				params.getPage());
 
 		Collection beans = listConfig.getDao().list(parent, params);
 		ArrayList items = new ArrayList(beans.size());
@@ -171,7 +183,8 @@ public class ListSession implements RenderContext {
 
 			items.add(item);
 		}
-		return items;
+		model.setItems(items);
+		return model;
 	}
 	
 	private List getColumns(Object bean) {
@@ -191,13 +204,13 @@ public class ListSession implements RenderContext {
 		return result;
 	}
 	
-	public ListTable getTable(HttpServletRequest request) {
-		ListTable table = new ListTable();
+	public ListModel getModel(HttpServletRequest request) {
+		ListModel model = getItems(request);
 
-		table.setEditorId(listDefinition.getId());
-		table.setParentId(parentId);
-		table.setItemCommandCount(itemCommands.size());
-		table.setListCommands(getListCommands(request));
+		model.setEditorId(listDefinition.getId());
+		model.setParentId(parentId);
+		model.setItemCommandCount(itemCommands.size());
+		model.setListCommands(getListCommands(request));
 		
 		ArrayList columns = new ArrayList();
 		Iterator it = listConfig.getColumnConfigs().iterator();
@@ -217,11 +230,10 @@ public class ListSession implements RenderContext {
 			}
 			columns.add(column);
 		}
-		table.setColumns(columns);
-		table.setRows(getItems(request));
-		return table;
+		model.setColumns(columns);
+		return model;
 	}
-	
+		
 	private String getHeading(String property, int lookupLevel) {
 		Class clazz = getBeanClass();
 		String root = property;
@@ -238,33 +250,28 @@ public class ListSession implements RenderContext {
 	    		getListId(), clazz, property);
 	}
 	
-	public ListTable sort(String property, HttpServletRequest request) {
+	public ListModel sort(String property, HttpServletRequest request) {
 		ColumnConfig col = listConfig.getColumnConfig(property);
 		params.orderBy(property, col.isAscending(), col.isCaseSensitive());
-		return getTable(request);
+		return getModel(request);
 	}
 	
-	public List search(String search, HttpServletRequest request) {
+	public ListModel search(String search, HttpServletRequest request) {
 		params.setSearch(search);
 		return getItems(request);
 	}
 	
-	public String getFilterForm() {
-		if (filterForm != null) {
-			StringWriter writer = new StringWriter();
-			filterForm.render(new PrintWriter(writer));
-			return writer.toString();
-		}
-		return null;
+	public String getFilterFormHtml() {
+		return filterFormHtml;
 	}
 
-	public List filter(Map filter, HttpServletRequest request) {
+	public ListModel filter(Map filter, HttpServletRequest request) {
 		filterForm.processRequest(new SimpleFormRequest(filter));
 		params.setFilter(filterForm.populateBackingObject());
 		return getItems(request);
 	}
 	
-	public List gotoPage(int page, HttpServletRequest request) {
+	public ListModel gotoPage(int page, HttpServletRequest request) {
 		params.setPage(page);
 		return getItems(request);
 	}

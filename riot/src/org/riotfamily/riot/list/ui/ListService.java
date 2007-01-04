@@ -40,16 +40,14 @@ public interface ListService {
 	public ListSession getOrCreateListSession(String editorId, String parentId, 
 			String choose, HttpServletRequest request);
 	
-	public ListTable getTable(String key, HttpServletRequest request);
+	public ListModel getModel(String key, HttpServletRequest request);
 	
-	public List getItems(String key, HttpServletRequest request);
+	public ListModel gotoPage(String key, int page,	HttpServletRequest request);
 	
-	public List gotoPage(String key, int page,	HttpServletRequest request);
-	
-	public ListTable sort(String key, String property, 
+	public ListModel sort(String key, String property, 
 			HttpServletRequest request);
 	
-	public List filter(String key, Map filter, HttpServletRequest request);
+	public ListModel filter(String key, Map filter, HttpServletRequest request);
 		
 	public List getFormCommands(String key, String objectId, 
 			HttpServletRequest request);
@@ -60,6 +58,6 @@ public interface ListService {
 			String commandId, boolean confirmed, 
 			HttpServletRequest request, HttpServletResponse response);
 	
-	public String getFilterForm(String key,	HttpServletRequest request);
+	public String getFilterFormHtml(String key,	HttpServletRequest request);
 	
 }

@@ -102,12 +102,12 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 		return (ListSession) request.getSession().getAttribute(key);
 	}
 	
-	public ListTable getTable(String key,HttpServletRequest request) {
-		return getListSession(key, request).getTable(request);
+	public ListModel getModel(String key,HttpServletRequest request) {
+		return getListSession(key, request).getModel(request);
 	}
 		
-	public String getFilterForm(String key,	HttpServletRequest request) {
-		return getListSession(key, request).getFilterForm();
+	public String getFilterFormHtml(String key,	HttpServletRequest request) {
+		return getListSession(key, request).getFilterFormHtml();
 	}
 
 	public List getListCommands(String key,	HttpServletRequest request) {
@@ -128,19 +128,15 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 				item, commandId, confirmed, request, response);
 	}
 
-	public List filter(String key, Map filter, HttpServletRequest request) {
+	public ListModel filter(String key, Map filter, HttpServletRequest request) {
 		return getListSession(key, request).filter(filter, request);
 	}
 
-	public List getItems(String key, HttpServletRequest request) {
-		return getListSession(key, request).getItems(request);
-	}
-
-	public List gotoPage(String key, int page, HttpServletRequest request) {
+	public ListModel gotoPage(String key, int page, HttpServletRequest request) {
 		return getListSession(key, request).gotoPage(page, request);
 	}
 
-	public ListTable sort(String key, String property, 
+	public ListModel sort(String key, String property, 
 			HttpServletRequest request) {
 		
 		return getListSession(key, request).sort(property, request);
