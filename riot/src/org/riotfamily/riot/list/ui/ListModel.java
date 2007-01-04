@@ -29,7 +29,7 @@ import java.util.List;
  * @author Felix Gnass <fgnass@neteye.de>
  * @since 6.4
  */
-public class ListTable {
+public class ListModel {
 
 	private String editorId;
 	
@@ -37,11 +37,29 @@ public class ListTable {
 	
 	private List columns;
 	
-	private List rows;
+	private List items;
 	
 	private List listCommands;
 
 	private int itemCommandCount;
+	
+	private int pages;
+	
+	private int pageSize;
+	
+	private int currentPage;
+	
+	private int itemsTotal;
+	
+	public ListModel(int itemsTotal, int pageSize, int currentPage) {
+		this.itemsTotal = itemsTotal;
+		this.pageSize = pageSize;
+		this.currentPage = currentPage;
+		pages = (int) itemsTotal / pageSize + 1;
+		if (itemsTotal % pageSize == 0) {
+			pages--;
+		}
+	}
 	
 	public String getEditorId() {
 		return this.editorId;
@@ -67,12 +85,12 @@ public class ListTable {
 		this.columns = columns;
 	}
 
-	public List getRows() {
-		return this.rows;
+	public List getItems() {
+		return this.items;
 	}
 
-	public void setRows(List rows) {
-		this.rows = rows;
+	public void setItems(List items) {
+		this.items = items;
 	}
 
 	public List getListCommands() {
@@ -89,6 +107,22 @@ public class ListTable {
 
 	public void setItemCommandCount(int itemCommandCount) {
 		this.itemCommandCount = itemCommandCount;
+	}
+
+	public int getCurrentPage() {
+		return this.currentPage;
+	}
+
+	public int getItemsTotal() {
+		return this.itemsTotal;
+	}
+
+	public int getPages() {
+		return this.pages;
+	}
+
+	public int getPageSize() {
+		return this.pageSize;
 	}
 	
 }
