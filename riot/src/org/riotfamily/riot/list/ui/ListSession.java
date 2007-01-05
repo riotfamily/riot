@@ -117,10 +117,7 @@ public class ListSession implements RenderContext {
 					.getBoundProperties());
 			
 			params.setFilter(filterForm.populateBackingObject());
-			
-			StringWriter writer = new StringWriter();
-			filterForm.render(new PrintWriter(writer));
-			filterFormHtml = writer.toString();
+			updateFilterFormHtml();
 		}
 		
 		params.setPageSize(listConfig.getPageSize());
@@ -158,16 +155,26 @@ public class ListSession implements RenderContext {
 		
 		defaultCommandIds = new String[] { DescendCommand.ID, ChooseCommand.ID };
 	}
+	
+	private void updateFilterFormHtml() {
+		StringWriter writer = new StringWriter();
+		filterForm.render(new PrintWriter(writer));
+		filterFormHtml = writer.toString();
+	}
 		
 	public ListModel getItems(HttpServletRequest request) {
 		Object parent = EditorDefinitionUtils.loadParent(
 				listDefinition, parentId);
 
 		int itemsTotal = listConfig.getDao().getListSize(parent, params);
+		Collection beans = listConfig.getDao().list(parent, params);
+		if (itemsTotal < beans.size()) {
+			itemsTotal = beans.size();
+		}
+		
 		ListModel model = new ListModel(itemsTotal, params.getPageSize(), 
 				params.getPage());
 
-		Collection beans = listConfig.getDao().list(parent, params);
 		ArrayList items = new ArrayList(beans.size());
 		int rowIndex = 0;
 		Iterator it = beans.iterator();
@@ -179,7 +186,7 @@ public class ListSession implements RenderContext {
 			item.setColumns(getColumns(bean));
 			item.setDefaultCommandIds(defaultCommandIds);
 			item.setCommands(getCommandStates(itemCommands, 
-					item, bean, request));
+					item, bean, itemsTotal, request));
 
 			items.add(item);
 		}
@@ -268,6 +275,7 @@ public class ListSession implements RenderContext {
 	public ListModel filter(Map filter, HttpServletRequest request) {
 		filterForm.processRequest(new SimpleFormRequest(filter));
 		params.setFilter(filterForm.populateBackingObject());
+		updateFilterFormHtml();
 		return getItems(request);
 	}
 	
@@ -277,7 +285,8 @@ public class ListSession implements RenderContext {
 	}
 	
 	public List getListCommands(HttpServletRequest request) {
-		return getCommandStates(listCommands, null, null, request);
+		//REVISIT: Should we pass the correct item count here? 
+		return getCommandStates(listCommands, null, null, -1, request);
 	}
 		
 	public List getFormCommands(String objectId, HttpServletRequest request) {
@@ -286,16 +295,17 @@ public class ListSession implements RenderContext {
 			bean = listConfig.getDao().load(objectId);
 		}
 		return getCommandStates(listConfig.getFormCommands(), 
-				new ListItem(objectId), bean, request);
+				new ListItem(objectId), bean, 1, request);
 	}
 	
 	private List getCommandStates(List commands, ListItem item, Object bean, 
-			HttpServletRequest request) {
+			int itemsTotal, HttpServletRequest request) {
 		
 		ArrayList result = new ArrayList();
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		context.setBean(bean);
 		context.setItem(item);
+		context.setItemsTotal(itemsTotal);
 		Iterator it = commands.iterator();
 		while (it.hasNext()) {
 			Command command = (Command) it.next();

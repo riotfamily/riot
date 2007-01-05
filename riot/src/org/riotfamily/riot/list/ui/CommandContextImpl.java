@@ -37,6 +37,8 @@ class CommandContextImpl implements CommandContext {
 
 	private ListItem item;
 	
+	private int itemsTotal;
+	
 	private Object bean;
 	
 	private HttpServletRequest request;
@@ -69,8 +71,12 @@ class CommandContextImpl implements CommandContext {
 		this.bean = bean;
 	}
 
+	public void setItemsTotal(int itemsTotal) {
+		this.itemsTotal = itemsTotal;
+	}
+
 	public int getItemsTotal() {
-		return 0;
+		return itemsTotal;
 	}
 
 	public ListDefinition getListDefinition() {
