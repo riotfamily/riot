@@ -328,6 +328,11 @@
 							<property name="path" value="/style/" />
 							<property name="location" value="/WEB-INF/riot-config/style/" />
 						</bean>
+						<!-- Allow any resource to be overwritten in WEB-INF/resources -->
+						<bean class="org.riotfamily.common.web.resource.ResourceMapping">
+							<property name="path" value="/" />
+							<property name="location" value="/WEB-INF/riot-config/resources/" />
+						</bean>
 						<!-- Riot resources -->
 						<bean class="org.riotfamily.common.web.resource.ResourceMapping">
 							<property name="path" value="/" />
