@@ -11,3 +11,7 @@
 <div class="buttons">
 	<input type="button" value="Apply Filter" onclick="list.filter(RForm.getValues(this.form)); return false" />
 </div>
+<script>
+<#-- Prevent form submission -->
+$('${form.id}').onsubmit = function() { return false; }
+</script>
