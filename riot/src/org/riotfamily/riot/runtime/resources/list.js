@@ -6,7 +6,7 @@ RiotList.prototype = {
 	},
 	
 	render: function(target, commandTarget) {
-		var table = RBuilder.node('table', {parent: $(target)}, 
+		this.table = RBuilder.node('table', {parent: $(target)}, 
 			RBuilder.node('thead', null, 
 				this.headRow = RBuilder.node('tr')
 			),
@@ -15,6 +15,7 @@ RiotList.prototype = {
 		this.pager = new Pager(RBuilder.node('div', {parent: $(target)}), {
 			onclick: this.gotoPage.bind(this)
 		});
+		Event.observe(window, 'resize', this.resizeColumns.bind(this));
 		ListService.getModel(this.key, this.renderTable.bind(this, commandTarget));
 	},
 	
@@ -24,11 +25,13 @@ RiotList.prototype = {
 	},
 		
 	renderTable: function(commandTarget, model) {
+		this.columns = [];
 		this.headings = {};
 		model.columns.each(this.addColumn.bind(this));
 		var th = RBuilder.node('th', {className: 'commands', parent: this.headRow,
 			style: { width: model.itemCommandCount * 34 + 'px' }});
 		
+		//this.columns.push(th);
 		this.appendCommands(commandTarget, true, null, model.listCommands);	
 		this.updateRowsAndPager(model);
 	},
@@ -48,6 +51,7 @@ RiotList.prototype = {
 		var th = RBuilder.node('th', {property: col.property}, 
 			label = RBuilder.node('span', null, col.heading)
 		);
+		this.columns.push(th);
 		this.headings[col.property] = label;
 		if (col.sortable) {
 			th.className = 'sortable';
@@ -76,12 +80,30 @@ RiotList.prototype = {
 		ListService.filter(this.key, filter, this.updateRowsAndPager.bind(this));
 	},
 	
+	resizeColumns: function() {
+		if (this.columnsSized) {
+			this.columns.each(function(th) {
+				th.style.width = 'auto';
+			});
+			this.columnsSized = false;
+		}
+	},
+	
 	gotoPage: function(page) {
+		if (!this.columnsSized) {
+			this.columns.each(function(th) {
+				var colWidth = th.offsetWidth - parseInt(th.getStyle('padding-left')) 
+					- parseInt(th.getStyle('padding-right'));
+					
+				th.style.width = colWidth + 'px';
+			});
+			this.columnsSized = true;
+		}
 		ListService.gotoPage(this.key, page, this.updateRowsAndPager.bind(this));
 	},
 	
 	updateRows: function(items) {
-		this.tbody.innerHTML = '';
+		this.tbody.update();
 		items.each(this.addRow.bind(this));
 	},
 	
