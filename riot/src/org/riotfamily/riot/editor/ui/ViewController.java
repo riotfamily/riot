@@ -24,6 +24,7 @@
 package org.riotfamily.riot.editor.ui;
 
 import java.io.StringWriter;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +36,10 @@ import org.riotfamily.common.web.mapping.UrlMappingAware;
 import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
+import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.ViewDefinition;
+import org.riotfamily.riot.list.ui.ListService;
+import org.riotfamily.riot.list.ui.ListSession;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ResourceLoaderAware;
@@ -59,6 +63,8 @@ public class ViewController implements Controller, ResourceLoaderAware,
 	
 	private PlatformTransactionManager transactionManager;
 	
+	private ListService listService;
+	
 	private String editorIdAttribute = "editorId";
 	
 	private String objectIdAttribute = "objectId";
@@ -73,10 +79,12 @@ public class ViewController implements Controller, ResourceLoaderAware,
 	private Configuration configuration;
 	
 	public ViewController(EditorRepository repository, 
-			PlatformTransactionManager transactionManager) {
+			PlatformTransactionManager transactionManager,
+			ListService listService) {
 		
 		this.editorRepository = repository;
 		this.transactionManager = transactionManager;
+		this.listService = listService;
 	}	
 
 	public void setEditorIdAttribute(String editorIdAttribute) {
@@ -126,7 +134,7 @@ public class ViewController implements Controller, ResourceLoaderAware,
 		
 		final StringWriter sw = new StringWriter();
 		
-		new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
+		Object bean = new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
 			public Object doInTransaction(TransactionStatus ts) {
 				Object object = EditorDefinitionUtils.loadBean(viewDef, objectId);
 				FlatMap model = new FlatMap();
@@ -142,12 +150,24 @@ public class ViewController implements Controller, ResourceLoaderAware,
 			}
 		});
 		
-		final FlatMap viewModel = new FlatMap();
-		viewModel.put("editorId", editorId);
-		viewModel.put("objectId", objectId);
-		viewModel.put("form", sw.toString());
+		HashMap model = new HashMap();
+		model.put("editorId", editorId);
+		model.put("objectId", objectId);
+		model.put("form", sw.toString());
 		
-		return new ModelAndView(viewName, viewModel);
+		ListDefinition parentListDef = EditorDefinitionUtils
+				.getParentListDefinition(viewDef);
+		
+		if (parentListDef != null) {
+			ListSession session = listService.getOrCreateListSession(
+				parentListDef.getId(), 
+				EditorDefinitionUtils.getParentId(viewDef, bean), 
+				null, request);
+			
+			model.put("listKey", session.getKey());
+		}
+
+		return new ModelAndView(viewName, model);
 	}
 	
 	public Class getDefinitionClass() {
@@ -160,9 +180,5 @@ public class ViewController implements Controller, ResourceLoaderAware,
 		attrs.put(objectIdAttribute, objectId);
 		return urlMapping.getUrl(beanName, attrs);
 	}	
-	
-	protected boolean isCommandRequest(HttpServletRequest request) {
-		return request.getParameter("command") != null;
-	}
-	
+		
 }

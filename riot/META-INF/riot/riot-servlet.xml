@@ -405,6 +405,7 @@
 	<bean id="viewController" class="org.riotfamily.riot.editor.ui.ViewController">
 		<constructor-arg ref="editorRepository" />
 		<constructor-arg ref="riotTransactionManager" />
+		<constructor-arg ref="listService" />
 	</bean>
 	<alias name="viewController" alias="/view/@{editorId}" />
 	<alias name="viewController" alias="/view/@{editorId}/@{objectId}" />
