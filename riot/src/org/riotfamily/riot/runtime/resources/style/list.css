@@ -13,7 +13,9 @@
 #filter .buttons {
 	margin: 10px 0 0 0;
 }
-
+#filter .title .icon {
+	background-image: url(images/filter.gif);
+}
 div#list {
 	width: 100%;
 	height: 100px;
@@ -77,17 +79,17 @@ tr.highlight {
 	text-align: center;
 }
 .pager a, 
-.pager .currentPage {
+.pager .current-page {
 	text-decoration: none;
 	color: #000000;
-	padding: 2px 4px;
+	padding: 1px 4px;
 }
-.pager a.page:hover {
-	background-color: #E0DDD1;
+.pager a:hover {
+	color: #cb0038;
 } 
-.pager .currentPage {
+.pager .current-page {
 	color: #F9F9F5;
-	background-color: ${highlight};
+	background-color: #cb0038;
 	font-weight: bold;
 }
 .pager .gap {

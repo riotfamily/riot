@@ -363,14 +363,14 @@ div.dynamicList .button-add,
 }
 
 .imageCheckbox {
-	width: 13px;
-	height: 13px;
-	margin-top: 6px;
+	width: 14px;
+	height: 14px;
+	margin-top: 5px;
 }
 
 .imageCheckbox div {
-	width: 13px;
-	height: 13px;
+	width: 14px;
+	height: 14px;
 	background: url(images/image_checkbox.gif) center center no-repeat;
 }
 .imageCheckbox.checked div {
