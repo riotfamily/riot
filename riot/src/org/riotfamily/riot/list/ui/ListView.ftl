@@ -35,17 +35,7 @@
 			</div>		
 		</div>
 		<div class="extra">
-			<#if commands?has_content>
-				<div id="commands" class="box">
-					<div class="title">
-						<div class="icon"></div>
-						<span><@spring.messageText "label.commands", "Commands" /></span>
-					</div>
-					<div id="listCommands" class="list">
-					</div>
-				</div>
-			</#if>
-
+			
 			<#--			
 			<#if list.search?exists>
 				<div id="search" class="box">
@@ -71,6 +61,18 @@
 					${filterForm}
 				</div>
 			</#if>
+			
+			<#if commands?has_content>
+				<div id="commands" class="box">
+					<div class="title">
+						<div class="icon"></div>
+						<span><@spring.messageText "label.commands", "Commands" /></span>
+					</div>
+					<div id="listCommands" class="list">
+					</div>
+				</div>
+			</#if>
+			
 		</div>
 		<script type="text/javascript" language="JavaScript">
 			var list = new RiotList('${listKey}');
