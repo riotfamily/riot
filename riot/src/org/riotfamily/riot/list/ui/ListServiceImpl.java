@@ -38,6 +38,7 @@ import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.util.Assert;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
@@ -81,6 +82,8 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 		ListSession session = getListSession(key, request);
 		if (session == null) {
 			ListDefinition listDef = editorRepository.getListDefinition(editorId);
+			Assert.notNull(listDef, "No such ListDefinition: " + editorId);
+			
 			MessageResolver messageResolver = new MessageResolver(messageSource, 
 					messageCodesResolver, RequestContextUtils.getLocale(request));
 			
