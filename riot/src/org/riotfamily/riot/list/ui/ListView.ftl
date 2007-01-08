@@ -11,6 +11,7 @@
 			<link rel="stylesheet" href="${request.contextPath}${resourcePath}/${item}" type="text/css" />
 		</#list>
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
+		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/scriptaculous/effects.js"></script>
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/riot-js/util.js"></script>
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/riot-js/pager.js"></script>
 		

@@ -1,83 +1,76 @@
 var Pager = Class.create();
 Pager.prototype = {
 
-	initialize: function(el, options) {
+	initialize: function(el, onclick) {
 		this.el = $(el);
-		this.options = Object.extend({
-			padding: 3, 
-			prevLabel: '<', 
-			nextLabel: '>',
-			gapLabel: '...'
-		}, options);
-	},
-
-	render: function() {
-		this.el.innerHTML = '';
-		if (this.pages < 2) {
-			this.el.removeClassName('pager');
-			return;
-		}
-		this.el.addClassName('pager');
-		var start = this.currentPage - this.options.padding;
-		var end = this.currentPage + this.options.padding;
-		if (start < 0) end += -1 * start + 1;
-		if (end > this.pages) start -= (end - this.pages);
-		if (start < 1) start = 1;
-		if (end > this.pages) end = this.pages;
-
-		var prevCount = Math.max(this.currentPage - start, 0);
-		if (prevCount > 0) this.appendButton(this.currentPage - 1, 'prev', this.options.prevLabel);
-		if (start > 1) this.appendButton(1);
-		if (start > 2) this.appendSpan('gap', this.options.gapLabel);
-
-		for (var i = 0; i < prevCount; i++) {
-			this.appendButton(start + i);
-		}
-
-		this.appendSpan('page current-page', this.currentPage);
-
-		var nextCount = Math.max(end - this.currentPage, 0);
-		for (var i = 0; i < nextCount; i++) {
-			this.appendButton(this.currentPage + i + 1);
-		}
-
-		if (end < this.pages - 1) this.appendSpan('gap', this.options.gapLabel);
-		if (end < this.pages) this.appendButton(this.pages);
-		if (nextCount > 0) 	this.appendButton(this.currentPage + 1, 'next', this.options.nextLabel);
-	},
-
-	onclick: function(ev, page) {
-		if (this.options.onclick) {
-			this.options.onclick(page);
-		}
-		Event.stop(ev);
+		this.onclick = onclick;
+		this.clip = document.createElement('div');
+		this.clip.className = 'clip';
+		this.clip.style.position = 'relative';
+		Element.makeClipping(this.clip);
+		
+		this.reel = document.createElement('div');
+		this.reel.style.whiteSpace = 'nowrap';
+		Element.makePositioned(this.reel);
+		
+		this.clip.appendChild(this.reel);
+		this.el.appendChild(this.clip);
 	},
 
 	update: function(currentPage, pages) {
-		this.currentPage = currentPage;
-		if (pages) this.pages = pages;
-		this.render();
+		if (pages != this.pages) {
+			Element.update(this.reel);
+			this.el.addClassName('pager');
+			this.buttons = [];
+			for (var i = 1; i <= pages; i++) {
+				this.buttons[i] = this.appendButton(i);
+			}
+			var end = document.createElement('span');
+			this.reel.appendChild(end);
+			this.maxOffset = end.offsetLeft - this.clip.clientWidth;
+		}
+		this.gotoPage(currentPage);
 	},
+	
+	gotoPage: function(page) {
+		var prevPage = this.currentPage;
+		var p = this.buttons[page];
+		p.addClassName('current-page');
+		this.currentPage = p;
+		if (this.maxOffset > 0) {
+			if (this.effect && this.effect.state == 'running') {
+				this.effect.cancel();
+			}
 
-	appendSpan: function(className, label) {
-		var span = document.createElement('span');
-		span.className = className;
-		span.appendChild(document.createTextNode(label));
-		this.el.appendChild(span);
-		this.appendSpace();
+			var offset = p.offsetLeft - Math.round(this.clip.clientWidth / 2 - p.clientWidth / 2);
+			if (offset < 0) offset = 0;
+			if (offset > this.maxOffset) {
+				offset = this.maxOffset;
+			}
+
+			if (prevPage) {
+				prevPage.removeClassName('current-page');
+				if (offset != -parseInt(Element.getStyle(this.reel, 'left'))) {
+					this.effect = new Effect.Move(this.reel, {x: -offset, mode: 'absolute'});
+				}
+			}
+			else {
+				this.reel.style.left = -offset + 'px';
+			}
+		}
 	},
-
-	appendSpace: function() {
-		this.el.appendChild(document.createTextNode(' '));
+	
+	handleClick: function(page) {
+		//this.gotoPage(page);
+		this.onclick(page);
 	},
 
 	appendButton: function(page, className, label) {
-		var a = document.createElement('a');
-		a.href = '#' + page;
-		Event.observe(a, 'click', this.onclick.bindAsEventListener(this, page));
+		var a = document.createElement('span');
+		Event.observe(a, 'click', this.handleClick.bind(this, page));
 		a.className = className || 'page';
 		a.innerHTML = label || page;
-		this.el.appendChild(a);
-		this.appendSpace();
+		this.reel.appendChild(a);
+		return Element.extend(a);
 	}
 }

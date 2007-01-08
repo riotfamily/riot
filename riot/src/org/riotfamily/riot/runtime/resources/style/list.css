@@ -31,9 +31,6 @@ thead {
 	color: #fff;
 }
 
-.pager {
-	background-color: #ebebeb;
-}
 th, td {
 	padding: 3px;
 	padding-left: 18px;
@@ -75,26 +72,25 @@ tr.highlight {
 }
 
 .pager {
-	padding: 18px;
-	text-align: center;
+	background-color: #ebebeb;
+	cursor: default;
+	padding: 14px;
 }
-.pager a, 
-.pager .current-page {
+.pager .clip {
+	width: 300px;
+	margin: 0 auto;
+}
+.pager .page {
 	text-decoration: none;
 	color: #000000;
 	padding: 1px 4px;
+	-moz-user-select: none;
 }
-.pager a:hover {
-	color: #cb0038;
-} 
 .pager .current-page {
 	color: #F9F9F5;
+	padding: 1px 4px;
 	background-color: #cb0038;
 	font-weight: bold;
-}
-.pager .gap {
-	font-size: 8px;
-	color: #635a45;
 }
 
 td.data .css-cell {

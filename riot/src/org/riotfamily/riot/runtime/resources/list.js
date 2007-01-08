@@ -12,9 +12,7 @@ RiotList.prototype = {
 			),
 			this.tbody = RBuilder.node('tbody')
 		);
-		this.pager = new Pager(RBuilder.node('div', {parent: $(target)}), {
-			onclick: this.gotoPage.bind(this)
-		});
+		this.pager = new Pager(RBuilder.node('div', {parent: $(target)}), this.gotoPage.bind(this));
 		Event.observe(window, 'resize', this.resizeColumns.bind(this));
 		ListService.getModel(this.key, this.renderTable.bind(this, commandTarget));
 	},
@@ -31,7 +29,6 @@ RiotList.prototype = {
 		var th = RBuilder.node('th', {className: 'commands', parent: this.headRow,
 			style: { width: model.itemCommandCount * 34 + 'px' }});
 		
-		//this.columns.push(th);
 		this.appendCommands(commandTarget, true, null, model.listCommands);	
 		this.updateRowsAndPager(model);
 	},
