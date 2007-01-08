@@ -9,11 +9,15 @@
 	
 	<!-- JDBC DataSource pooled by C3P0 -->
 	<bean id="riotDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-		<property name="driverClass"><value>${jdbc.driver_class}</value></property>
-	    <property name="jdbcUrl"><value>${jdbc.url}</value></property>
-	    <property name="user"><value>${jdbc.username}</value></property>
-	    <property name="password"><value>${jdbc.password}</value></property>
-	    <property name="maxPoolSize"><value>${jdbc.maxPoolSize=10}</value></property>
+		<property name="driverClass" value="${jdbc.driver_class}" />
+	    <property name="jdbcUrl" value="${jdbc.url}" />
+	    <property name="user" value="${jdbc.username}" />
+	    <property name="password" value="${jdbc.password}" />
+	    <property name="maxPoolSize" value="${jdbc.maxPoolSize=10}" />
+	    <property name="maxStatements" value="0" />
+	    <property name="acquireIncrement" value="1" />
+	    <property name="idleConnectionTestPeriod" value="60" />
+	    <property name="checkoutTimeout" value="30000" />
 	</bean>
 	
 	<bean id="riotHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
