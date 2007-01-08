@@ -8,7 +8,7 @@ NotificationList.prototype = {
 		this.url = url;
 		this.emptyMessage = this.element.innerHTML;
 		this.update();
-		new PeriodicalExecuter(this.update.bind(this), 10);
+		new PeriodicalExecuter(this.update.bind(this), 30);
 	},
 	
 	update: function() {
