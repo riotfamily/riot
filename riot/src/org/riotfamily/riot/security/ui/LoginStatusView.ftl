@@ -7,7 +7,6 @@
 	<head>
 		<title></title>
 		<link rel="stylesheet" href="${request.contextPath}${resourcePath}/style/status.css" type="text/css" />
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/status.js"></script>
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/style/tweak.js"></script>
 	</head>
@@ -19,5 +18,10 @@
 				<a href="${url(servletPrefix + '/logout')}"><@spring.messageText "label.status.logout", "Logout" /></a>
 			</div>
 		</div>
+		<script>
+			new PeriodicalExecuter(function() {
+				new Ajax.Request('${url(servletPrefix + '/ping')}');
+			}, 180);
+		</script>
 	</body>
 </html>

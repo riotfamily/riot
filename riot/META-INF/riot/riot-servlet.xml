@@ -278,6 +278,9 @@
 	  -->
 	<bean id="statusbarController" name="/statusbar" class="org.riotfamily.riot.security.ui.LoginStatusController" />
 	
+	<!-- Controller that keeps the HTTP session alive -->
+	<bean name="/ping" class="org.riotfamily.common.web.controller.SessionKeepAliveController" />
+	
 	<!--
 	  - MVC controller that performs a logout.
 	  -->
