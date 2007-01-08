@@ -20,19 +20,22 @@ Pager.prototype = {
 	update: function(currentPage, pages) {
 		if (pages != this.pages) {
 			Element.update(this.reel);
-			this.el.addClassName('pager');
 			this.buttons = [];
-			for (var i = 1; i <= pages; i++) {
-				this.buttons[i] = this.appendButton(i);
+			if (pages > 1) {
+				this.el.addClassName('pager');
+				for (var i = 1; i <= pages; i++) {
+					this.buttons[i] = this.appendButton(i);
+				}
+				var end = document.createElement('span');
+				this.reel.appendChild(end);
+				this.maxOffset = end.offsetLeft - this.clip.clientWidth;
 			}
-			var end = document.createElement('span');
-			this.reel.appendChild(end);
-			this.maxOffset = end.offsetLeft - this.clip.clientWidth;
 		}
 		this.gotoPage(currentPage);
 	},
 	
 	gotoPage: function(page) {
+		if (page >= this.buttons.length) return;
 		var prevPage = this.currentPage;
 		var p = this.buttons[page];
 		p.addClassName('current-page');
@@ -61,7 +64,6 @@ Pager.prototype = {
 	},
 	
 	handleClick: function(page) {
-		//this.gotoPage(page);
 		this.onclick(page);
 	},
 

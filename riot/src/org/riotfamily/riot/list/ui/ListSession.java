@@ -275,6 +275,7 @@ public class ListSession implements RenderContext {
 	public ListModel filter(Map filter, HttpServletRequest request) {
 		filterForm.processRequest(new SimpleFormRequest(filter));
 		params.setFilter(filterForm.populateBackingObject());
+		params.setPage(1);
 		updateFilterFormHtml();
 		return getItems(request);
 	}
