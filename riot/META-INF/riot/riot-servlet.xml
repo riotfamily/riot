@@ -523,6 +523,14 @@
 									<value>org.riotfamily.riot.list.ui.ListService</value>
 								</list>
 							</property>
+							<property name="signatures">
+								<value>
+									import org.riotfamily.riot.list.ui.ListItem;
+									import org.riotfamily.riot.list.ui.CommandState;
+									ListItem.setColumns(List&lt;String&gt;);
+									ListItem.setCommands(List&lt;CommandState&gt;);
+								</value>
+							</property>
 						</bean>
 					</list>
 				</property>
