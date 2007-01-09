@@ -481,8 +481,12 @@
 	<bean id="dwrController" 
 		name="/resources/*/dwr/**"
 		class="org.riotfamily.common.web.dwr.DwrController">
-		<property name="debug" value="true" />
 		<property name="mapping" value="dwr" />
+		<property name="parameters">
+			<props>
+				<prop key="pollAndCometEnabled">true</prop>
+			</props>
+		</property>
 		<property name="configurators">
 			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
 				<property name="key" value="dwrConfigurators" />
