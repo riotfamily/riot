@@ -130,7 +130,7 @@
 }
 </style>
 </head>
-<body onload="DWREngine.setReverseAjax(true)">
+<body onload="dwr.engine.setActiveReverseAjax(true)">
 	<h1 id="name"></h1>
 	<div id="description"></div>
 
@@ -155,7 +155,7 @@
 		<div id="log"></div>
 	</div>
 	<div id="logFilter">
-		<input type="checkbox" id="errorsOnly" onclick="Element.toggleClassName('log', 'errorsOnly')" /><label for="errorsOnly">Errors Only</label>
+		<input type="checkbox" id="errorsOnly" onclick="RElement.toggleClassName('log', 'errorsOnly')" /><label for="errorsOnly">Errors Only</label>
 	</div>
 	
 <script type="text/javascript" language="JavaScript">
@@ -168,17 +168,17 @@ var state;
 
 function updateJob(job) {
 	if (!state) {
-		DWRUtil.setValue('name', job.name);
-		DWRUtil.setValue('description', job.description);
+		dwr.util.setValue('name', job.name);
+		dwr.util.setValue('description', job.description);
 		subPage(job.name); <#-- see path.js -->
 	}
 	if (job.estimatedTime) {
 		if (job.state == 0) {
-			DWRUtil.setValue('eta', 'This job will presumably take ' 
+			dwr.util.setValue('eta', 'This job will presumably take ' 
 					+ job.estimatedTime + ' to complete');
 		}
 		else {
-			DWRUtil.setValue('eta', job.estimatedTime + ' remaining');
+			dwr.util.setValue('eta', job.estimatedTime + ' remaining');
 		}
 	}
 	if (job.progress > 0) {
@@ -201,7 +201,7 @@ function updateJob(job) {
 		else {
 			$('runnable').style.visibility = 'hidden';
 			$('finished').style.display = 'block';
-			DWREngine.setReverseAjax(false);
+			dwr.engine.setActiveReverseAjax(false);
 		}
 	}
 }
