@@ -64,7 +64,7 @@ tr.copied .action-copy:hover {
 	text-decoration: none;
 	padding-left: 32px;
 }
-#commands .action span {
+#commands .action .label {
 	display: block;
 	padding-left: 4px;
 	background-color: #ebebeb;

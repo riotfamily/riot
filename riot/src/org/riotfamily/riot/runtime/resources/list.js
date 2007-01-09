@@ -46,7 +46,7 @@ RiotList.prototype = {
 	addColumn: function(col) {
 		var label;
 		var th = RBuilder.node('th', {property: col.property}, 
-			label = RBuilder.node('span', null, col.heading)
+			label = RBuilder.node('span', {innerHTML: col.heading})
 		);
 		this.columns.push(th);
 		this.headings[col.property] = label;
@@ -146,7 +146,10 @@ RiotList.prototype = {
 				a.onclick = Event.stop;
 			}
 			if (renderLabel) {
-				RBuilder.node('span', {parent: a}, command.label);
+				RBuilder.node('span', {className: 'label', parent: a, innerHTML: command.label});
+			}
+			else {
+				a.title = command.label.stripTags();
 			}
 			el.appendChild(a);
 		});
