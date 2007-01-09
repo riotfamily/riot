@@ -237,6 +237,13 @@ body > #riot-popup {
 	position: fixed;
 }
 
+#riot-popup * {
+	margin: 0;
+	padding: 0;
+	border: none;
+	background-image: none;
+}
+
 #riot-popup .headline {
 	color: #3d3d3d;
 	background-color: #ebebeb;
@@ -246,7 +253,6 @@ body > #riot-popup {
 	line-height: 16px;
 	font-weight: 500;
 	text-align: left;
-	margin: 0;
 }
 #riot-popup textarea {
 	width: 580px;
