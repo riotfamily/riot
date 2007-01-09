@@ -29,6 +29,7 @@ import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.editor.ListDefinition;
+import org.riotfamily.riot.list.ListConfig;
 
 /**
  * Context passed to commands during command execution.
@@ -36,6 +37,8 @@ import org.riotfamily.riot.editor.ListDefinition;
 public interface CommandContext {
 
 	public ListDefinition getListDefinition();
+	
+	public ListConfig getListConfig();
 	
 	public RiotDao getDao();
 	
@@ -47,6 +50,11 @@ public interface CommandContext {
 	
 	public String getObjectId();
 
+	/**
+	 * @deprecated The method has been renamed to getBean()
+	 */
+	public Object getItem();
+	
 	public Object getBean();
 		
 	public MessageResolver getMessageResolver();

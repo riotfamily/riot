@@ -29,6 +29,7 @@ import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.editor.ListDefinition;
+import org.riotfamily.riot.list.ListConfig;
 import org.riotfamily.riot.list.command.CommandContext;
 
 class CommandContextImpl implements CommandContext {
@@ -70,6 +71,13 @@ class CommandContextImpl implements CommandContext {
 	public void setBean(Object bean) {
 		this.bean = bean;
 	}
+	
+	/**
+	 * @deprecated
+	 */
+	public Object getItem() {
+		return getBean();
+	}
 
 	public void setItemsTotal(int itemsTotal) {
 		this.itemsTotal = itemsTotal;
@@ -83,6 +91,10 @@ class CommandContextImpl implements CommandContext {
 		return session.getListDefinition();
 	}
 
+	public ListConfig getListConfig() {
+		return getListDefinition().getListConfig();
+	}
+	
 	public MessageResolver getMessageResolver() {
 		return session.getMessageResolver();
 	}
