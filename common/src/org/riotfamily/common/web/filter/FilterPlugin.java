@@ -30,6 +30,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Ordered;
@@ -49,6 +52,8 @@ import org.springframework.web.context.ServletContextAware;
 public abstract class FilterPlugin implements ServletContextAware, 
 		InitializingBean, DisposableBean, Ordered {
 
+	private static Log log = LogFactory.getLog(FilterPlugin.class);
+	
 	private ServletContext servletContext;
 	
 	private PluginFilter filter;
@@ -57,6 +62,8 @@ public abstract class FilterPlugin implements ServletContextAware,
 	
 	private int order = Integer.MAX_VALUE;
 	
+	private boolean ignoreFilterNotPresent;
+	
 	/**
 	 * Sets the name of the filter where the plugin should be registered.
 	 */
@@ -64,6 +71,13 @@ public abstract class FilterPlugin implements ServletContextAware,
 		this.filterName = filterName;
 	}
 
+	/**
+	 * Sets whether errors caused by a missing filter should be ignored.
+	 */
+	public void setIgnoreFilterNotPresent(boolean ignoreFilterNotPresent) {
+		this.ignoreFilterNotPresent = ignoreFilterNotPresent;
+	}
+	
 	/**
 	 * Subclasses must implement this method to filter the request/response.
 	 * The contract is the same as for {@link javax.servlet.FilterFilter#doFilter}.
@@ -105,7 +119,18 @@ public abstract class FilterPlugin implements ServletContextAware,
 	public final void afterPropertiesSet() throws Exception {
 		Assert.notNull(filterName, "A filterName must be set.");
 		filter = PluginFilter.getInstance(servletContext, filterName);
-		Assert.notNull(filter, "No such filter: " + filterName);
+		if (filter == null) {
+			if (ignoreFilterNotPresent) {
+				log.warn("Failed to register FilterPlugin because no filter "
+						+ "named " + filterName + " is defined in web.xml");
+				
+				return;
+			}
+			else {
+				throw new FatalBeanException(
+						"No such filter defined in web.xml: " + filterName);
+			}
+		}
 		initPlugin();
 		filter.addPlugin(this);
 	}

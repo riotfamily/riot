@@ -109,6 +109,7 @@
 	
 	<bean id="folderFilterPlugin" class="org.riotfamily.pages.page.support.FolderFilterPlugin">
 		<property name="filterName" value="website-servlet-filter" />
+		<property name="ignoreFilterNotPresent" value="true" />
 	</bean>
 	
 	<bean id="resourceStamper" class="org.riotfamily.common.web.filter.ResourceStamper" />
