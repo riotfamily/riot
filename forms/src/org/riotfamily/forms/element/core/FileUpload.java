@@ -166,6 +166,9 @@ public class FileUpload extends CompositeElement implements Editor,
 		revalidate();
 	}
 	
+	protected void afterFileUploaded() {
+	} 
+	
 	protected File getTempFile() {
 		return tempFile;
 	}
@@ -336,6 +339,7 @@ public class FileUpload extends CompositeElement implements Editor,
 					log.debug("stored at: " + tempFile.getAbsolutePath());
 					
 					setFile(tempFile);
+					afterFileUploaded();
 					
 					log.debug("File uploaded: " + fileName + " (" 
 							+ contentType + ")");

@@ -76,6 +76,8 @@ public class ImageUpload extends FileUpload {
 	
 	private ImageCropper cropper;
 	
+	private File originalFile;
+	
 	private File croppedFile;
 	
 	public ImageUpload() {
@@ -152,10 +154,21 @@ public class ImageUpload extends FileUpload {
 		if (croppedFile == null) {
 			croppedFile = File.createTempFile("000", ".tmp");
 		}
-		cropper.cropImage(getFile(), croppedFile, width, height, x, y, 
+		if (originalFile == null) {
+			originalFile = getFile();
+		}
+		cropper.cropImage(originalFile, croppedFile, width, height, x, y, 
 				scaledWidth);
 		
 		setFile(croppedFile);
+	}
+	
+	protected void afterFileUploaded() {
+		originalFile = getFile();
+	}
+	
+	protected void undoCrop() {
+		setFile(originalFile);
 	}
 	
 	protected void destroy() {
@@ -260,10 +273,14 @@ public class ImageUpload extends FileUpload {
 					
 					response.getWriter().print(getCroppedImageUrl());
 				}
+				else if ("undo".equals(request.getParameter("action"))) {
+					undoCrop();
+				}
 				else {
 					ServletUtils.setNoCacheHeaders(response);
 					response.setHeader("Content-Type", getContentType());
 					response.setContentLength(getSize().intValue());
+					//TODO Check if file exists
 					FileCopyUtils.copy(new FileInputStream(getFile()), 
 							response.getOutputStream());
 				}
@@ -286,6 +303,13 @@ public class ImageUpload extends FileUpload {
 				return null;
 			}
 			return getFormContext().getContentUrl(this) + "&action=crop";
+		}
+		
+		public String getUndoUrl() {
+			if (cropper == null) {
+				return null;
+			}
+			return getFormContext().getContentUrl(this) + "&action=undo";
 		}
 		
 		public String getCroppedImageUrl() {

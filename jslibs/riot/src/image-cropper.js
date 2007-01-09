@@ -299,6 +299,9 @@ Cropper.UI.prototype = {
 	},
 
 	undo: function() {
+		if (this.options.undoUrl) {
+			new Ajax.Request(this.options.undoUrl, { method: 'get'});
+		}
 		this.setCrop(true);
 		this.undoButton.hide();
 		this.cropButton.show();
