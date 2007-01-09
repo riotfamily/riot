@@ -35,8 +35,10 @@ import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
+import org.directwebremoting.impl.SignatureParser;
 import org.directwebremoting.spring.BeanCreator;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.util.StringUtils;
 
 public class SpringConfigurator implements Configurator {
 
@@ -45,6 +47,8 @@ public class SpringConfigurator implements Configurator {
 	private Class[] serviceInterfaces;
 	
 	private Properties converterTypes;
+	
+	private String signatures;
 	
 	/**
 	 * Sets a map of beans to be exported keyed by their script name.
@@ -69,6 +73,10 @@ public class SpringConfigurator implements Configurator {
 		this.converterTypes = converterTypes;
 	}
 
+	public void setSignatures(String signatures) {
+		this.signatures = signatures;
+	}
+	
 	public void configure(Container container) {
 		ConverterManager converterManager = (ConverterManager) 
 				container.getBean(ConverterManager.class.getName());
@@ -121,6 +129,11 @@ public class SpringConfigurator implements Configurator {
         			accessControl.addIncludeRule(scriptName, methods[m].getName());			
         		}
         	}
+        }
+        
+        if (StringUtils.hasText(signatures)) {
+            SignatureParser sigp = new SignatureParser(converterManager, creatorManager);
+            sigp.parse(signatures);
         }
 	}
 
