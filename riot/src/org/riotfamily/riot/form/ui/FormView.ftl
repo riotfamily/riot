@@ -87,7 +87,7 @@
 					<span><@spring.messageText "label.commands", "Commands" /></span>
 				</div>
 				<div id="formCommands" class="list">
-					<div class="item"><a class="saveButton action" href="javascript:save()"><span><@spring.messageText "label.form.button.save", "Save" /></span></a></div>
+					<div class="item"><a class="saveButton action" href="javascript:save()"><span class="label"><@spring.messageText "label.form.button.save", "Save" /></span></a></div>
 				</div>
 			</div>
 			
