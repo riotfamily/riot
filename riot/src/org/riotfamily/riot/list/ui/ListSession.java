@@ -77,6 +77,8 @@ public class ListSession implements RenderContext {
 	
 	private String filterFormHtml;
 	
+	private String title;
+	
 	private ListConfig listConfig;
 	
 	private List listCommands;
@@ -103,7 +105,7 @@ public class ListSession implements RenderContext {
 		listCommands = listConfig.getCommands();
 		itemCommands = listConfig.getColumnCommands();
 		defaultCommandIds = listConfig.getDefaultCommandIds();
-		
+		title = listDefinition.createReference(parentId, messageResolver).getLabel();
 		params = new ListParamsImpl();
 		
 		String formId = listConfig.getFilterFormId();
@@ -154,6 +156,10 @@ public class ListSession implements RenderContext {
 		}
 		
 		defaultCommandIds = new String[] { DescendCommand.ID, ChooseCommand.ID };
+	}
+	
+	public String getTitle() {
+		return title;
 	}
 	
 	private void updateFilterFormHtml() {

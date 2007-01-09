@@ -5,7 +5,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title></title>
+		<title>${title?if_exists}</title>
 		<link rel="stylesheet" href="${request.contextPath}${resourcePath}/style/list.css" type="text/css" />
 		<#list customStyleSheets as item>
 			<link rel="stylesheet" href="${request.contextPath}${resourcePath}/${item}" type="text/css" />
