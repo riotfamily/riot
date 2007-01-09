@@ -23,15 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.support;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
@@ -39,16 +33,14 @@ import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.forms.ajax.JavaScriptEvent;
 import org.riotfamily.forms.ajax.JavaScriptEventAdapter;
 import org.riotfamily.forms.bind.Editor;
-import org.riotfamily.forms.element.ContentElement;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
-import org.riotfamily.forms.support.TemplateUtils;
 import org.springframework.util.StringUtils;
 
 public abstract class AbstractChooser extends AbstractEditorBase
 		implements Editor, DHTMLElement, JavaScriptEventAdapter, 
-		ResourceElement, ContentElement {
+		ResourceElement {
 	
 	private String displayNameProperty;
 	
@@ -98,7 +90,8 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	}
 	
 	public String getInitScript() {
-		return "new Chooser('" + getId() + "');";
+		return "new Chooser('" + getId() + "', '" 
+				+ getFormContext().getContextPath() + getChooserUrl() + "');";
 	}
 	
 	public String getPrecondition() {
@@ -136,20 +129,6 @@ public abstract class AbstractChooser extends AbstractEditorBase
 
 	public Object getValue() {
 		return object;
-	}
-	
-	public void handleContentRequest(HttpServletRequest request, 
-			HttpServletResponse response) throws IOException {
-
-		response.setContentType("text/html");
-		Map model = new HashMap();
-		model.put("title", "Choose wisely (FIXME)"); //TODO I18n
-		model.put("chooserUrl", request.getContextPath() + getChooserUrl());
-		String template = TemplateUtils.getTemplatePath(AbstractChooser.class, 
-				"_content");
-		
-		getFormContext().getTemplateRenderer().render(template, 
-				model, response.getWriter());
 	}
 	
 	protected abstract String getChooserUrl();

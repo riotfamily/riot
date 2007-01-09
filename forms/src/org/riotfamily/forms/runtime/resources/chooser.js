@@ -1,4 +1,4 @@
-function Chooser(id) {
+function Chooser(id, url) {
 	this.id = id;
 	this.element = document.getElementById(id);
 	var button = this.element.getElementsByTagName('button');
@@ -7,7 +7,7 @@ function Chooser(id) {
 		if (button[i].className == 'choose') {
 			button[i].onclick = function() {
 				var c = this.chooser;
-				c.popup = window.open('?_content=' + c.id, 'chooser', 'width=800,height=400,dependent=yes,toolbar=no,location=no,menubar=no,status=no');
+				c.popup = window.open(url, 'chooser', 'width=800,height=400,dependent=yes,toolbar=no,location=no,menubar=no,status=no');
 				c.popup.chooser = c;
 				return false;
 			}
