@@ -152,7 +152,7 @@ Cropper.UI.prototype = {
 
 	setCanvasSize: function(size) {
 		size.applySize(this.canvas);
-		this.element.style.width = this.canvas.offsetWidth + 'px';
+		this.element.style.width = this.controls.style.width = this.canvas.offsetWidth + 'px';
 		this.element.style.height = 'auto';
 		this.zoomSlider.trackLength = this.canvas.offsetWidth;
 	},
