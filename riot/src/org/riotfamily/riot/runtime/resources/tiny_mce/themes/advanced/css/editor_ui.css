@@ -1,5 +1,20 @@
-a img {
-	border: none;
+.mceEditor td.container {
+	padding:1px 0;
+}
+
+.mceSelectList {
+	margin: 3px 3px 0 0;
+	padding: 0px;
+	vertical-align: top;
+}
+
+.mceButtonNormal, 
+.mceButtonDown, 
+.mceSeparator, 
+.mceButtonDisabled, 
+.mceButtonSelected {
+	margin-left:1px;
+	line-height:1px;
 }
 
 .mceButtonNormal img, 
@@ -7,12 +22,11 @@ a img {
 .mceSeparator img, 
 .mceButtonDisabled img, 
 .mceButtonSelected img {
-	margin-top: 2px;
-	margin-left: 1px;
 	background-color: ${highlight};
 }
 
 .mceButtonNormal img,
+.mceButtonDisabled img,
 .mceButtonDown img {
 	border: 1px solid #fff;
 }
@@ -26,7 +40,7 @@ a img {
 }
 
 .mceButtonDisabled img {
-background-color: #3d3d3d;
+	background-color: #3d3d3d;
 }
 
 a.mceButtonDisabled {
@@ -34,12 +48,6 @@ a.mceButtonDisabled {
 	-moz-opacity:0.3;
 	opacity: 0.3;
 	cursor: default;
-}
-
-.mceSelectList {
-	margin-top: 3px;
-	padding: 0px;
-	vertical-align: top;
 }
 
 .mceLabel, .mceLabelDisabled {
@@ -66,13 +74,6 @@ a.mceButtonDisabled {
 	background: #fff;
 	padding: 0px;
 	margin: 0px;
-}
-
-.mceEditor td.container {
-	padding-bottom: 2px;
-}
-.mceEditor td.container a {
-	vertical-align:bottom;
 }
 
 .mceStatusbarBottom {
