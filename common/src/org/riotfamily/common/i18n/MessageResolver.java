@@ -103,6 +103,13 @@ public class MessageResolver {
 		return getMessage(code, args, null);
 	}
 	
+	/**
+	 * @since 6.4
+	 */
+	public String getMessage(String code, String defaultMessage) {
+		return getMessage(code, null, defaultMessage);
+	}
+	
 	public String getMessage(String code, Object[] args, String defaultMessage) {
 		return messageSource.getMessage(code, args, defaultMessage, locale);
 	}
