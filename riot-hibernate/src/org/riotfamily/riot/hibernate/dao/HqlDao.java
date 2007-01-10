@@ -118,29 +118,36 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     
     protected List listInternal(Object parent, ListParams params) {
     	Query query = createQuery(buildHql(parent, params));
+    	setQueryParameters(query, parent, params);
         if (params.getPageSize() > 0) {
             query.setFirstResult(params.getOffset());
             query.setMaxResults(params.getPageSize());
         }
-        if (params.getFilter() != null) {
-            query.setProperties(params.getFilter());
-        }        
         return query.list();
     }
 
     /**
      * Returns the total number of items.
      */
-    public int getListSize(Object parent, ListParams params) {
+    public final int getListSize(Object parent, ListParams params) {
         Query query = createQuery(buildCountHql(parent, params));
-        if (params.getFilter() != null) {
-            query.setProperties(params.getFilter());
-        }
+        setQueryParameters(query, parent, params);
         Number size = (Number) query.uniqueResult();
         if (size == null) {
         	return 0;
         }
         return size.intValue();
+    }
+    
+    protected void setQueryParameters(Query query, Object parent, 
+    		ListParams params) {
+    	
+    	if (params.getFilter() != null) {
+            query.setProperties(params.getFilter());
+        }
+    	if (params.getSearch() != null) {
+    		query.setParameter("search", params.getSearch() + "%");
+    	}
     }
 
     /**
@@ -151,7 +158,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     	hql.append("select count(this) from ");
     	hql.append(entityClass.getName());
     	hql.append(" as this");
-    	hql.append(getWhereClause(parent, params));
+    	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
         return hql.toString();
     }
 
@@ -163,34 +170,41 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     	hql.append("select this from ");
     	hql.append(entityClass.getName());
     	hql.append(" as this");
-    	hql.append(getWhereClause(parent, params));
-    	hql.append(getOrderBy(params));
+    	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
+    	HibernateUtils.appendHql(hql, "order by", getOrderBy(params));
         return hql.toString();
     }
 
     protected String getWhereClause(Object parent, ListParams params) {
         StringBuffer sb = new StringBuffer();
-        String where = this.where;
-        if (where == null && params.getFilter() != null) {
-        	where = HibernateUtils.getExampleWhereClause(params.getFilter(), 
-        			"this", params.getFilteredProperties()); 
+        HibernateUtils.appendHql(sb, null, where);
+        
+    	if (params.getFilter() != null) {
+    		String filter = HibernateUtils.getExampleWhereClause(
+    				params.getFilter(), "this", 
+    				params.getFilteredProperties());
+    		
+    		HibernateUtils.appendHql(sb, "and", filter);
+    	}
+    	
+    	if (params.getSearch() != null) {
+    		String search = HibernateUtils.getSearchWhereClause("this", 
+    				params.getSearchProperties(), "search");
+    		
+    		HibernateUtils.appendHql(sb, "and", search);
         }
-        if (where != null) {
-        	sb.append(" where ").append(where);
-        }
+        
         if (!polymorph) {
-            sb.append(where != null ? " and " : " where ");
-            sb.append(" (this.class = ");
-            sb.append(entityClass.getName());
-            sb.append(')');
+        	HibernateUtils.appendHql(sb, "and", "(this.class = ")
+        		.append(entityClass.getName()).append(')');
         }
+        
         return sb.toString();
     }
 
     protected String getOrderBy(ListParams params) {
         StringBuffer sb = new StringBuffer();
         if (params.hasOrder()) {
-        	sb.append(" order by");
         	Iterator it = params.getOrder().iterator();
         	while (it.hasNext()) {
         		Order order = (Order) it.next();

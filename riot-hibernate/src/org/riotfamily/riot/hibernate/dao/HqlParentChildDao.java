@@ -23,15 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.dao;
 
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Query;
 import org.riotfamily.common.util.PropertyUtils;
-import org.riotfamily.riot.dao.ParentChildDao;
 import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.ListParams;
+import org.riotfamily.riot.dao.ParentChildDao;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 
 
@@ -41,8 +37,6 @@ import org.riotfamily.riot.hibernate.support.HibernateUtils;
  */
 public class HqlParentChildDao extends HqlDao implements ParentChildDao, 
 		CutAndPasteEnabledDao {
-
-    private Log log = LogFactory.getLog(HqlParentChildDao.class);
 
     private String parentProperty;
     
@@ -67,44 +61,20 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
 		PropertyUtils.setProperty(entity, parentProperty, null);
 		getSession().delete(entity);
 	}
+	
+	protected void setQueryParameters(Query query, Object parent, 
+			ListParams params) {
 		
-    /**
-     * Returns a list of items.
-     */
-    protected List listInternal(Object parent, ListParams params) {
-        Query query = createQuery(buildHql(parent, params));
-        if (params.getPageSize() > 0) {
-            query.setFirstResult(params.getOffset());
-            query.setMaxResults(params.getPageSize());
-        }
-        if (parent != null) {
+		super.setQueryParameters(query, parent, params);
+		 if (parent != null) {
         	query.setParameter("parent", parent);
         }
-        if (params.getFilter() != null) {
-            query.setProperties(params.getFilter());
-        }
-        return query.list();
-    }
-
-    /**
-     * Returns the total number of items.
-     */
-    public int getListSize(Object parent, ListParams params) {
-        Query query = createQuery(buildCountHql(parent, params));
-        if (parent != null) {
-        	query.setParameter("parent", parent);
-        }
-        log.debug(query.getQueryString());
-        Number size = (Number) query.uniqueResult();
-        return size != null ? size.intValue() : 0;
-    }
-
-
+	}
+	
     protected String getWhereClause(Object parent, ListParams params) {
         StringBuffer sb = new StringBuffer();
-        boolean hasWhere = false;
         if (parentProperty != null) {
-        	sb.append(" where this.");
+        	sb.append("this.");
        		sb.append(parentProperty);
         	if (parent == null) {
 	        	sb.append(" is null");
@@ -112,25 +82,8 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
         	else {
         		sb.append(" = :parent ");
         	}
-        	hasWhere = true;
         }
-        
-        String where = getWhere();
-        if (where == null && params.getFilter() != null) {
-        	where = HibernateUtils.getExampleWhereClause(params.getFilter(), 
-        			"this", params.getFilteredProperties());
-        }
-        if (where != null) {
-        	sb.append(hasWhere ? " and " : " where ");
-            sb.append(where);
-            hasWhere = true;
-        }
-        
-        if (!isPolymorph()) {
-        	sb.append(hasWhere ? " and " : " where ");
-            sb.append("this.class = ");
-            sb.append(getEntityClass().getName());
-        }
+        HibernateUtils.appendHql(sb, "and", super.getWhereClause(parent, params));
         return sb.toString();
     }
     

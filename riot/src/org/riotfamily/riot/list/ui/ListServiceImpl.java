@@ -134,6 +134,10 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 	public ListModel filter(String key, Map filter, HttpServletRequest request) {
 		return getListSession(key, request).filter(filter, request);
 	}
+	
+	public ListModel search(String key, String query, HttpServletRequest request) {
+		return getListSession(key, request).search(query, request);
+	}
 
 	public ListModel gotoPage(String key, int page, HttpServletRequest request) {
 		return getListSession(key, request).gotoPage(page, request);

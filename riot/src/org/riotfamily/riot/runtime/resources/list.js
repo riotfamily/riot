@@ -77,6 +77,10 @@ RiotList.prototype = {
 		ListService.filter(this.key, filter, this.updateRowsAndPager.bind(this));
 	},
 	
+	search: function(query) {
+		ListService.search(this.key, query, this.updateRowsAndPager.bind(this));
+	},
+	
 	resizeColumns: function() {
 		if (this.columnsSized) {
 			this.columns.each(function(th) {

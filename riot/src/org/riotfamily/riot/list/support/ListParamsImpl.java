@@ -41,6 +41,8 @@ public class ListParamsImpl implements ListParams {
 
 	private String search;
 	
+	private String[] searchProperties;
+	
 	private List order;
 	
 	private int pageSize;
@@ -49,14 +51,6 @@ public class ListParamsImpl implements ListParams {
 
 	
 	public ListParamsImpl() {
-	}
-
-	public ListParamsImpl(ListParams params) {
-		this.filter = params.getFilter();
-		this.filteredProperties = params.getFilteredProperties();
-		this.order = params.getOrder();
-		this.pageSize = params.getPageSize();
-		this.offset = params.getOffset();
 	}
 	
 	public Object getFilter() {
@@ -81,6 +75,14 @@ public class ListParamsImpl implements ListParams {
 
 	public void setSearch(String search) {
 		this.search = search;
+	}
+	
+	public String[] getSearchProperties() {
+		return this.searchProperties;
+	}
+
+	public void setSearchProperties(String[] searchProperties) {
+		this.searchProperties = searchProperties;
 	}
 
 	public int getOffset() {

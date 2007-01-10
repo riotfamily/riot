@@ -32,6 +32,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.riotfamily.common.util.PropertyUtils;
+import org.springframework.util.StringUtils;
 
 public final class HibernateUtils {
 	
@@ -85,5 +86,35 @@ public final class HibernateUtils {
 			}
 		}
 		return hql.length() > 0 ? hql.toString() : null;
+	}
+	
+	public static String getSearchWhereClause(String alias, 
+			String[] propertyNames, String searchParamName) {
+		
+		if (propertyNames == null) {
+			return null;
+		}
+		StringBuffer hql = new StringBuffer();
+		for (int i = 0; i < propertyNames.length; i++) {
+			String name = propertyNames[i];
+			if (hql.length() > 0) {
+				hql.append(" and ");
+			}
+			hql.append(alias).append('.').append(name);
+			hql.append(" like :").append(searchParamName);
+		}
+		return hql.length() > 0 ? hql.toString() : null;
+	}
+	
+	public static StringBuffer appendHql(StringBuffer hql, 
+			String expression, String term) {
+		
+		if (StringUtils.hasText(term)) {
+			if (expression != null && hql.length() > 0) {
+				hql.append(' ').append(expression).append(' ');
+			}
+			hql.append(term);
+		}
+		return hql;
 	}
 }

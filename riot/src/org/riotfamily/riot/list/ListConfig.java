@@ -31,6 +31,7 @@ import org.riotfamily.riot.dao.Order;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.form.command.FormCommand;
 import org.riotfamily.riot.list.command.Command;
+import org.springframework.util.StringUtils;
 
 /**
  *
@@ -63,6 +64,7 @@ public class ListConfig {
 	
 	private Order defaultOrder;
 	
+	private String[] searchProperties;
 
 	public String getId() {
 		return id;
@@ -244,6 +246,19 @@ public class ListConfig {
 			}
 		}		
 		return defaultOrder;
-	}	
+	}
+	
+	public String[] getSearchProperties() {
+		return this.searchProperties;
+	}
+
+	public void setSearchProperties(String[] searchProperties) {
+		this.searchProperties = searchProperties;
+	}
+
+	public void setSearch(String search) {
+		setSearchProperties(StringUtils.tokenizeToStringArray(
+				search, " ,\t\r\n"));
+	}
 	
 }

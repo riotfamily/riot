@@ -48,6 +48,9 @@ td {
 	padding-bottom: 10px;
 	margin-bottom: 50px;
 }
+.extra .box form {
+	margin: 8px 32px 4px 35px;
+}
 
 .title {
 	background-color: #3d3d3d;

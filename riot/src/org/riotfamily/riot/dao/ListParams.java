@@ -28,12 +28,6 @@ import java.util.List;
 public interface ListParams {
 
 	/**
-	 * Returns the String representation of the parent object's id, 
-	 * or <code>null</code> if the list is not a child-list.
-	 */
-	//public String getParentId();
-
-	/**
 	 * Returns an object populated by the list's filter-form, 
 	 * or <code>null</code> if the list does not have a filter.
 	 */
@@ -42,6 +36,7 @@ public interface ListParams {
 	/**
 	 * Returns the names of all properties bound to the filter-form,
 	 * or <code>null</code> if the list does not have a filter.
+	 * @since 6.4
 	 */
 	public String[] getFilteredProperties();
 	
@@ -51,6 +46,13 @@ public interface ListParams {
 	 * @since 6.4
 	 */
 	public String getSearch();
+	
+	/**
+	 * Returns the name of all properties that should be included in the
+	 * full-text search, or <code>null</code> if searching is disabled.
+	 * @since 6.4
+	 */
+	public String[] getSearchProperties();
 	
 	/**
 	 * Returns whether sort-order was specified.

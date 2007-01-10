@@ -37,21 +37,18 @@
 		</div>
 		<div class="extra">
 			
-			<#--			
-			<#if list.search?exists>
+			<#if search?exists>
 				<div id="search" class="box">
 					<div class="title">
 						<div class="icon"></div>
 						<span><@spring.messageText "label.search", "Search" /></span>
 					</div>
-					<div class="list">
-						<form method="post">
-							<input type="text" name="search" value="" />
-						</form>
-					</div>
+					<form onsubmit="list.search(this.query.value); return false">
+						<input type="text" class="text" name="query" value="${searchQuery?if_exists}" />
+						<input type="submit" class="submit" value="<@spring.messageText "label.search", "Search" />" />
+					</form>
 				</div>
 			</#if>
-			-->
 			
 			<#if filterForm?exists>
 				<div id="filter" class="box">
@@ -69,7 +66,7 @@
 						<div class="icon"></div>
 						<span><@spring.messageText "label.commands", "Commands" /></span>
 					</div>
-					<div id="listCommands" class="list">
+					<div id="listCommands">
 					</div>
 				</div>
 			</#if>

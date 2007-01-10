@@ -122,6 +122,7 @@ public class ListSession implements RenderContext {
 			updateFilterFormHtml();
 		}
 		
+		params.setSearchProperties(listConfig.getSearchProperties());
 		params.setPageSize(listConfig.getPageSize());
 		params.setOrder(listConfig.getDefaultOrder());
 		
@@ -267,6 +268,14 @@ public class ListSession implements RenderContext {
 		ColumnConfig col = listConfig.getColumnConfig(property);
 		params.orderBy(property, col.isAscending(), col.isCaseSensitive());
 		return getModel(request);
+	}
+	
+	public String[] getSearchProperties() {
+		return listConfig.getSearchProperties();
+	}
+	
+	public String getSearchQuery() {
+		return params.getSearch();
 	}
 	
 	public ListModel search(String search, HttpServletRequest request) {

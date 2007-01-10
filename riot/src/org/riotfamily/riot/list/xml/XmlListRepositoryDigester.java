@@ -54,7 +54,7 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	private static final String[] LIST_ATTRS = new String[] {
 		"id", "id-property", "filterFormId=filter-form", 
 		"defaultCommandId=default-command", "order-by",
-		"row-style-property"
+		"row-style-property", "search"
 	};
 	
 	private static final String DAO = "dao";
