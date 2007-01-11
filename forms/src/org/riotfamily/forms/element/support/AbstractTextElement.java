@@ -40,6 +40,7 @@ import org.riotfamily.forms.error.ErrorUtils;
 import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 
@@ -169,13 +170,11 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 
 	public void processRequest(FormRequest request) {
 		String newText = request.getParameter(getParamName());
-		if (newText != null) {
-			if (!newText.equals(getText())) {
-				Object oldValue = getValue();
-				setText(newText);
-				Object newValue = getValue();
-				fireChangeEvent(newValue, oldValue);
-			}
+		if (!ObjectUtils.nullSafeEquals(newText, getText())) {
+			Object oldValue = getValue();
+			setText(newText);
+			Object newValue = getValue();
+			fireChangeEvent(newValue, oldValue);
 		}
 		validate();
 	}
