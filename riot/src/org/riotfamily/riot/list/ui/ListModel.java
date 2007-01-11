@@ -51,6 +51,8 @@ public class ListModel {
 	
 	private int itemsTotal;
 	
+	private String filterFormHtml;
+	
 	public ListModel(int itemsTotal, int pageSize, int currentPage) {
 		this.itemsTotal = itemsTotal;
 		this.pageSize = pageSize;
@@ -123,6 +125,14 @@ public class ListModel {
 
 	public int getPageSize() {
 		return this.pageSize;
+	}
+
+	public String getFilterFormHtml() {
+		return this.filterFormHtml;
+	}
+
+	public void setFilterFormHtml(String filterFormHtml) {
+		this.filterFormHtml = filterFormHtml;
 	}
 	
 }

@@ -27,7 +27,7 @@
 		</script>		
 	</head>
 	
-	<#assign hasExtraColumn = commands?has_content || search?exists || filterForm?exists />
+	<#assign hasExtraColumn = commands?has_content || filterForm?exists />
 	
 	<body onload="TweakStyle.list()"<#if !hasExtraColumn> class="wide"</#if>>
 		<div id="wrapper">
@@ -37,26 +37,14 @@
 		</div>
 		<div class="extra">
 			
-			<#if search?exists>
-				<div id="search" class="box">
-					<div class="title">
-						<div class="icon"></div>
-						<span><@spring.messageText "label.search", "Search" /></span>
-					</div>
-					<form onsubmit="list.search(this.query.value); return false">
-						<input type="text" class="text" name="query" value="${searchQuery?if_exists}" />
-						<input type="submit" class="submit" value="<@spring.messageText "label.search", "Search" />" />
-					</form>
-				</div>
-			</#if>
-			
 			<#if filterForm?exists>
 				<div id="filter" class="box">
 					<div class="title">
 						<div class="icon"></div>
 						<span><@spring.messageText "label.list.filter", "Filter" /></span>
 					</div>
-					${filterForm}
+					<div id="filterForm">
+					</div>
 				</div>
 			</#if>
 			
@@ -74,7 +62,7 @@
 		</div>
 		<script type="text/javascript" language="JavaScript">
 			var list = new RiotList('${listKey}');
-			list.render('list', 'listCommands');
+			list.render('list', 'listCommands'<#if filterForm?exists>, 'filterForm'</#if>);
 		</script>
 	</body>
 </html>

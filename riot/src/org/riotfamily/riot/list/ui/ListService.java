@@ -48,8 +48,6 @@ public interface ListService {
 			HttpServletRequest request);
 	
 	public ListModel filter(String key, Map filter, HttpServletRequest request);
-	
-	public ListModel search(String key, String query, HttpServletRequest request);
 		
 	public List getFormCommands(String key, String objectId, 
 			HttpServletRequest request);

@@ -46,6 +46,8 @@ public class ListItem {
 	
 	private String[] defaultCommandIds;
 	
+	private boolean lastOnPage;
+	
 	public ListItem() {
 	}
 	
@@ -91,6 +93,14 @@ public class ListItem {
 
 	public void setRowIndex(int rowIndex) {
 		this.rowIndex = rowIndex;
+	}
+
+	public boolean isLastOnPage() {
+		return this.lastOnPage;
+	}
+
+	public void setLastOnPage(boolean lastOnPage) {
+		this.lastOnPage = lastOnPage;
 	}
 
 	public void setDefaultCommandIds(String[] defaultCommandIds) {

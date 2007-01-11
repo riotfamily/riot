@@ -5,7 +5,7 @@ RiotList.prototype = {
 		this.key = key;
 	},
 	
-	render: function(target, commandTarget) {
+	render: function(target, commandTarget, filterForm) {
 		this.table = RBuilder.node('table', {parent: $(target)}, 
 			RBuilder.node('thead', null, 
 				this.headRow = RBuilder.node('tr')
@@ -13,6 +13,9 @@ RiotList.prototype = {
 			this.tbody = RBuilder.node('tbody')
 		);
 		this.pager = new Pager(RBuilder.node('div', {parent: $(target)}), this.gotoPage.bind(this));
+		if (filterForm) {
+			this.filterForm = $(filterForm);
+		}
 		Event.observe(window, 'resize', this.resizeColumns.bind(this));
 		ListService.getModel(this.key, this.renderTable.bind(this, commandTarget));
 	},
@@ -30,7 +33,7 @@ RiotList.prototype = {
 			style: { width: model.itemCommandCount * 34 + 'px' }});
 		
 		this.appendCommands(commandTarget, true, null, model.listCommands);	
-		this.updateRowsAndPager(model);
+		this.updateFilter(model);
 	},
 	
 	updateColsAndRows: function(model) {
@@ -77,8 +80,15 @@ RiotList.prototype = {
 		ListService.filter(this.key, filter, this.updateRowsAndPager.bind(this));
 	},
 	
-	search: function(query) {
-		ListService.search(this.key, query, this.updateRowsAndPager.bind(this));
+	reset: function() {
+		ListService.filter(this.key, null, this.updateFilter.bind(this));
+	},
+	
+	updateFilter: function(model) {
+		this.updateRowsAndPager(model);
+		if (this.filterForm) {
+			this.filterForm.update(model.filterFormHtml);
+		}
 	},
 	
 	resizeColumns: function() {
@@ -112,7 +122,9 @@ RiotList.prototype = {
 		var tr = RBuilder.node('tr');
 		Event.observe(tr, 'mouseover', tr.addClassName.bind(tr, 'highlight'));
 		Event.observe(tr, 'mouseout', tr.removeClassName.bind(tr, 'highlight'));
-		
+		if (row.lastOnPage) {
+			tr.addClassName('last');
+		}
 		if (row.defaultCommandId) {
 			Event.observe(tr, 'click', this.execCommand.bind(this, row, row.defaultCommandId, false));
 		}

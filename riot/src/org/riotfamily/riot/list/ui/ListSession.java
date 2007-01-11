@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRepository;
 import org.riotfamily.forms.controller.FormContextFactory;
+import org.riotfamily.forms.element.core.TextField;
 import org.riotfamily.forms.support.SimpleFormRequest;
 import org.riotfamily.riot.editor.DisplayDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
@@ -74,6 +76,8 @@ public class ListSession implements RenderContext {
 	private String contextPath;
 	
 	private Form filterForm;
+	
+	private TextField searchField;
 	
 	private String filterFormHtml;
 	
@@ -111,6 +115,19 @@ public class ListSession implements RenderContext {
 		String formId = listConfig.getFilterFormId();
 		if (formId != null) {
 			filterForm = formRepository.createForm(formId);
+		}
+		
+		if (listConfig.getSearchProperties() != null) {
+			if (filterForm == null) {
+				filterForm = new Form();
+				filterForm.setBeanClass(HashMap.class);
+			}
+			searchField = new TextField();
+			searchField.setLabel("Search");
+			filterForm.addElement(searchField);
+		}
+		
+		if (filterForm != null) {
 			filterForm.setFormContext(formContextFactory.createFormContext(
 					messageResolver, contextPath, null));
 			
@@ -189,6 +206,7 @@ public class ListSession implements RenderContext {
 			Object bean = it.next();
 			ListItem item = new ListItem();
 			item.setRowIndex(rowIndex++);
+			item.setLastOnPage(!it.hasNext());
 			item.setObjectId(EditorDefinitionUtils.getObjectId(listDefinition, bean));
 			item.setColumns(getColumns(bean));
 			item.setDefaultCommandIds(defaultCommandIds);
@@ -245,6 +263,7 @@ public class ListSession implements RenderContext {
 			columns.add(column);
 		}
 		model.setColumns(columns);
+		model.setFilterFormHtml(filterFormHtml);
 		return model;
 	}
 		
@@ -278,21 +297,23 @@ public class ListSession implements RenderContext {
 		return params.getSearch();
 	}
 	
-	public ListModel search(String search, HttpServletRequest request) {
-		params.setSearch(search);
-		return getItems(request);
-	}
-	
 	public String getFilterFormHtml() {
 		return filterFormHtml;
 	}
 
 	public ListModel filter(Map filter, HttpServletRequest request) {
-		filterForm.processRequest(new SimpleFormRequest(filter));
-		params.setFilter(filterForm.populateBackingObject());
+		if (filterForm != null) {
+			filterForm.processRequest(new SimpleFormRequest(filter));
+			params.setFilter(filterForm.populateBackingObject());
+			if (searchField != null) {
+				params.setSearch(searchField.getText());
+			}
+			updateFilterFormHtml();
+		}
 		params.setPage(1);
-		updateFilterFormHtml();
-		return getItems(request);
+		ListModel result = getItems(request);
+		result.setFilterFormHtml(filterFormHtml);
+		return result;
 	}
 	
 	public ListModel gotoPage(int page, HttpServletRequest request) {
