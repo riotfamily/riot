@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.support;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.riotfamily.forms.FormRequest;
@@ -37,7 +38,7 @@ public class SimpleFormRequest implements FormRequest {
 	private Map params;
 	
 	public SimpleFormRequest(Map params) {
-		this.params = params;
+		this.params = params != null ? params : Collections.EMPTY_MAP;
 	}
 
 	public MultipartFile getFile(String name) {
