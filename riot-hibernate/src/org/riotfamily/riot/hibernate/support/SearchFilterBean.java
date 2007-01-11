@@ -23,6 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.support;
 
+/**
+ * @deprecated Searching is now a core feature and doesn't need to be done
+ * using a filter anymore.
+ */
 public class SearchFilterBean {
 
 	private String search;
