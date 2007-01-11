@@ -71,6 +71,9 @@ td.commands {
 tbody td {
 	border-bottom: 1px solid #ebebeb;
 }
+tbody tr.last td {
+	border-bottom: 1px solid #fff;
+}
 	
 tr.highlight {
 	background-color: #ebebeb;
