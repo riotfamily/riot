@@ -308,12 +308,6 @@ public class Form implements BeanEditor {
 		doc.attribute(Html.SCRIPT_LANGUAGE, "JavaScript");
 		doc.end();
 		
-		doc.start(Html.FORM);
-		doc.attribute(Html.COMMON_ID, getId());
-		doc.attribute(Html.FORM_METHOD, "post");
-		doc.attribute(Html.FORM_ENCTYPE, "multipart/form-data");
-		doc.body();
-		
 		doc.start(Html.SCRIPT);
 		doc.body();
 		
@@ -328,8 +322,7 @@ public class Form implements BeanEditor {
 		
 		formContext.getTemplateRenderer().render(
 				template, renderModel, writer);
-
-		doc.end();
+		
 		rendering = false;
 	}
 

@@ -1,3 +1,4 @@
+<form id="${form.id}" method="post" enctype="multipart/form-data">
 <div id="elements">
 	<#if form.hint?exists>
 		<div class="form-hint">${form.hint}</div>
@@ -33,3 +34,4 @@
 		</#list>
 	</div>
 </#if>
+</form>
