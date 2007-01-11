@@ -26,12 +26,13 @@ package org.riotfamily.riot.hibernate.dao;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 import org.riotfamily.common.util.PropertyUtils;
-import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.Order;
+import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.dao.SwappableItemDao;
 import org.riotfamily.riot.hibernate.support.HibernateSupport;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
@@ -143,7 +144,13 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     		ListParams params) {
     	
     	if (params.getFilter() != null) {
-            query.setProperties(params.getFilter());
+    		if (params.getFilter() instanceof Map) {
+    			Map filterMap = (Map) params.getFilter();
+    			query.setProperties(filterMap);
+    		}
+    		else {
+    			query.setProperties(params.getFilter());
+    		}
         }
     	if (params.getSearch() != null) {
     		query.setParameter("search", params.getSearch()
