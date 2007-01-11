@@ -60,6 +60,11 @@ public final class HibernateUtils {
 		return metadata.getIdentifier(bean, EntityMode.POJO).toString();
 	}
 	
+	/**
+	 * Returns a HQL term that can be used within a where-clause to perform
+	 * a query-by-example.
+	 * @since 6.4
+	 */
 	public static String getExampleWhereClause(Object example, String alias, 
 			String[] propertyNames) {
 		
@@ -88,24 +93,38 @@ public final class HibernateUtils {
 		return hql.length() > 0 ? hql.toString() : null;
 	}
 	
+	/**
+	 * Returns a HQL term that can be used within a where-clause to perform
+	 * a search. Example: <code>"(lower(&lt;alias&gt;.&lt;property[0]&gt;) 
+	 * like :&lt;searchParamName&gt; or lower(&lt;alias&gt;.&lt;property[1]&gt;)
+	 * like :&lt;searchParamName&gt; or ...)"</code>
+	 * @since 6.4
+	 */
 	public static String getSearchWhereClause(String alias, 
 			String[] propertyNames, String searchParamName) {
 		
-		if (propertyNames == null) {
+		if (propertyNames == null || propertyNames.length == 0) {
 			return null;
 		}
-		StringBuffer hql = new StringBuffer();
+		StringBuffer hql = new StringBuffer("(");
 		for (int i = 0; i < propertyNames.length; i++) {
 			String name = propertyNames[i];
-			if (hql.length() > 0) {
-				hql.append(" and ");
+			if (i > 0) {
+				hql.append(" or ");
 			}
-			hql.append(alias).append('.').append(name);
-			hql.append(" like :").append(searchParamName);
+			hql.append("lower(").append(alias).append('.').append(name);
+			hql.append(") like :").append(searchParamName);
 		}
-		return hql.length() > 0 ? hql.toString() : null;
+		hql.append(')');
+		return hql.toString();
 	}
 	
+	/**
+	 * Appends the given term to the StringBuffer. If the buffer is not empty,
+	 * the provided expression is inserted right before the term (surrounded
+	 * by spaces).
+	 * @since 6.4
+	 */
 	public static StringBuffer appendHql(StringBuffer hql, 
 			String expression, String term) {
 		
