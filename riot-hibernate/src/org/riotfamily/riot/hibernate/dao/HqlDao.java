@@ -146,7 +146,8 @@ public class HqlDao extends HibernateSupport implements RiotDao,
             query.setProperties(params.getFilter());
         }
     	if (params.getSearch() != null) {
-    		query.setParameter("search", params.getSearch() + "%");
+    		query.setParameter("search", params.getSearch()
+    				.toLowerCase().replace('*', '%') + "%");
     	}
     }
 
