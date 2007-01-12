@@ -32,12 +32,13 @@ div.form-error {
 	font-size: 14px;
 }
 
+div.title {
+	background:none;
+}
 .title label {
 	padding: 0;
-}
-
-.icon {
-	display: none;
+	background:none;
+	margin:0;
 }
 
 .single .form-element {
