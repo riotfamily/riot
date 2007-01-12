@@ -15,12 +15,6 @@ function isFunction(func) {
 	return typeof(func) == 'function';
 }
 
-if (!String.prototype.trim) {
-	String.prototype.trim = function() {
-		return this.replace(/^\s+|\s+$/g, '');
-	}
-}
-
 Object.bindMethods = function(obj, methodNames) {
 	if (methodNames) {
 		for (var i = 0; i < methodNames.length; i++) {
@@ -145,24 +139,12 @@ var RElement = {
 		element.parentNode.replaceChild($(replacement), element);
 	},
 	
-	findAncestor: function(el, iterator) {
-		el = el.parentNode;
-		while (el) {
-			if (iterator(el)) return el;
-			el = el.parentNode;		
-		}
-		return null;
+	getAncestorByClassName: function(el, className) {
+		return $(el).ancestors().detect(function(e) {return e.hasClassName(className)});
 	},
-		
-	getAncestorWithClassName: function(el, className) {
-		return RElement.findAncestor($(el), function(a) { 
-			return Element.hasClassName(a, className);
-		});
-	},
-
-	getDescendants: function(el) {
-		el = $(el);
-		return Array.from(el.all ? el.all : el.getElementsByTagName('*'));
+	
+	getDescendantsByClassName: function(el, className) {
+		return $(el).descendants().findAll(function(e) {return e.hasClassName(className)});
 	},
 
 	getNextSiblingElement: function(el) {
@@ -189,15 +171,19 @@ var RElement = {
 	},
   
 	repaint: function(el) {
-		var e = $(el) || document.body;
-		var display = Element.getStyle(e, 'display');
-		e.style.display = 'none';
-		e.style.display = display;
+		try {
+			el = $(el) || document.body;
+		    var t = document.createTextNode(' ');
+			el.appendChild(t);
+		    el.removeChild(t);
+		} 
+		catch (ex) {
+		}
 	},
 
 	hoverHighlight: function(el, className) {
 		el = $(el);
-		if(!isSet(el.addHighlight)) {
+		if (!isSet(el.addHighlight)) {
 			el.addHighlight = function(event) {
 				Element.addClassName(this, className);
 				if (event) Event.stop(event);
@@ -214,7 +200,7 @@ var RElement = {
 
 	stopHighlighting: function(el) {
 		el = $(el);
-		if(isSet(el.removeHighlight)) {
+		if (isSet(el.removeHighlight)) {
 			el.removeHighlight();
 			Event.stopObserving(el, 'mouseover', el.addHighlight, false);
 			Event.stopObserving(el, 'mouseout', el.removeHighlight, false);

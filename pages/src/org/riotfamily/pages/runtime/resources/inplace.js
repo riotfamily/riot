@@ -126,7 +126,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 	},
 		
 	edit: function() {
-		this.setText(this.element.innerHTML.trim()
+		this.setText(this.element.innerHTML.strip()
 			.replace(/\s+/g, ' ')
 			.replace(/<br[^>]*>/gi, '\n')
 			.stripTags()

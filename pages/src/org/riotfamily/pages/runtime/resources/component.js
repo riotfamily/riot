@@ -121,13 +121,13 @@ riot.Component.prototype = {
 	
 	setupElement: function() {
 		this.editors = [];
-		var desc = RElement.getDescendants(this.element);
+		var desc = this.element.descendants();
 		for (var i = 0; i < desc.length; i++) {
 			var e = desc[i];
 			try {
 				var editorType = e.getAttribute('riot:editorType');
 				if (editorType) {
-					var componentElement = RElement.getAncestorWithClassName(e, 'riot-component');
+					var componentElement = RElement.getAncestorByClassName(e, 'riot-component');
 					if (componentElement == this.element) {
 						if (editorType == 'text' || editorType == 'multiline') {
 							this.editors.push(new riot.InplaceTextEditor(e, this, {multiline: true}));
@@ -155,7 +155,7 @@ riot.Component.prototype = {
 	
 	updatePositionClasses: function(position, last) {
 		if (this.type != 'inherit') {
-			document.getElementsByClassName('component-\\w*', this.element).each(function(el) {
+			RElement.getDescendantsByClassName(this.element, 'component-\\w*').each(function(el) {
 				el.className = el.className.replace(/component-\w*/, 'component-' + position);
 				RElement.toggleClassName(el, 'last-component', last);
 			});
@@ -185,10 +185,8 @@ riot.InsertButton.prototype = {
 	initialize: function(component, componentList) {
 		this.component = component;
 		this.componentList = componentList || component.componentList;
-		this.element = document.createElement('div');
-		this.element.className = 'riot-insert-button';
-		this.element.onclick = this.onclick.bindAsEventListener(this);
-		Element.hide(this.element);
+		this.element = RBuilder.node('div', {className: 'riot-insert-button', 
+				onclick: this.onclick.bindAsEventListener(this)}).hide();
 	},
 	
 	show: function() {
@@ -357,7 +355,7 @@ riot.ComponentList.prototype = {
 			var elements = document.getElementsByClassName('riot-component', this.element);
 			for (var i = 0; i < elements.length; i++) {
 				var e = elements[i];
-				var listElement = RElement.getAncestorWithClassName(e, 'riot-components');
+				var listElement = RElement.getAncestorByClassName(e, 'riot-components');
 				if (listElement == this.element) {
 					var c = e.component || new riot.Component(this, e);
 					this.components.push(c);
@@ -509,7 +507,7 @@ riot.ComponentDragObserver.prototype = {
 
 riot.editProperties = function(e) {
 	e = e || this;
-	var componentElement = RElement.getAncestorWithClassName(e, 'riot-component');
+	var componentElement = RElement.getAncestorByClassName(e, 'riot-component');
 	if (componentElement && (!componentElement.component || !componentElement.component.mode)) {
 		riot.toolbar.buttons.properties.click();
 	}
