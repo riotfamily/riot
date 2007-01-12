@@ -64,7 +64,6 @@
 			<#if childLists?has_content>
 			<div id="childLists" class="box">
 				<div class="title">
-					<div class="icon"></div>
 					<span><@spring.messageText "label.childLists", "Sub-Elements" /></span>
 				</div>
 				<div class="list">
@@ -83,7 +82,6 @@
 			
 			<div id="commands" class="box">
 				<div class="title">
-					<div class="icon"></div>
 					<span><@spring.messageText "label.commands", "Commands" /></span>
 				</div>
 				<div id="formCommands" class="list">

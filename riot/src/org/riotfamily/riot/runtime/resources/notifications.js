@@ -61,8 +61,8 @@ Notification.prototype = {
 	createElement: function (n) {	
 		var removeHandler = this.remove.bind(this);
 		return RBuilder.node('div', {className: 'notification'},
-			RBuilder.node('div', {className: 'message', title: this.data.issueDate, innerHTML: this.data.message}),
-			RBuilder.node('div', {className: 'delete', onclick: removeHandler})
+			RBuilder.node('div', {className: 'delete', onclick: removeHandler}),
+			RBuilder.node('div', {className: 'message', title: this.data.issueDate, innerHTML: this.data.message})
 		);
 	},
 		

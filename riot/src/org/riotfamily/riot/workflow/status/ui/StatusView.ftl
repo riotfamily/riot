@@ -2,7 +2,6 @@
 
 <div id="status" class="box">
 	<div class="title">
-		<div class="icon"></div>
 		<span><@spring.messageText "label.status.title", "Status" /></span>
 	</div>
 	<div id="statusMessages">

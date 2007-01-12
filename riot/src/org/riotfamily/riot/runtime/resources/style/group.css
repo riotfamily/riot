@@ -2,7 +2,8 @@
 @import url(group-custom.css);
 
 #editors .title {
-	padding-left: 7px;
+	background: #3d3d3d;
+	padding: 2px 0 2px 7px;
 }
 
 #editors a {
@@ -59,15 +60,14 @@ background-color:#ebebeb;
 #notifications .message {
 	float: left;
 	margin: 0 4px 16px 0;
-	width:195px;
-	clear: both;
 }
 
 #notifications .delete {
 	float: left;
+	clear: both;
 	width: 9px;
 	height: 9px;
-	margin: 2px 0 0 0;
+	margin: 4px 0 0 -22px;
 	background: url(images/remove_small.gif) no-repeat;
 }
 
@@ -101,9 +101,9 @@ background-color:#ebebeb;
 	background: url(icons/commands/stepInto.gif) 0 -32px no-repeat;
 }
 #status a:hover {
-	color: ${highlight};
+	color: #cb0038;
 }
 
 #status a:hover .icon {
-	background-color: ${highlight};
+	background-color: #cb0038;
 }

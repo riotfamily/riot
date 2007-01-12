@@ -1,10 +1,6 @@
 @import url(common.css);
 @import url(form-custom.css);
 
-#columns {
-	width: 100%;
-	max-width: 1000px;
-}
 #form {
 	float:left;
 	margin-right: 300px;
@@ -76,7 +72,18 @@ ul.errors li {
 	color: ${highlight};
 	font-weight: normal;
 }
-	
+
+div.title {
+	background: ${highlight} url(images/list.gif) top left no-repeat;
+}
+div.title label {
+	display: block;
+}
+div.title .no-label {
+	display: block;
+	height: 12px;
+}
+
 textarea, input.text, input.number, input.password {
 	display: block;
 	font-family: verdana, arial, sans-serif;
@@ -220,11 +227,6 @@ ul.radioButtonGroup input {
 	font-weight: bold;
 	color: #3d3d3d;
 	text-align: right;
-}
-
-.hint-trigger {
-	float: right;
-	cursor: help;
 }
 
 .nestedForm {
@@ -461,6 +463,8 @@ div.dynamicList .button-add,
 }
 
 .hint-trigger {
+	float: right;
+	cursor: help;
 	margin: 2px 4px;
 	width: 12px;
 	height: 11px;

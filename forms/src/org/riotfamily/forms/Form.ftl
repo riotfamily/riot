@@ -10,10 +10,16 @@
 		<div class="${(element.compositeElement!false)?string('composite','single')}">
 			<#if element.label?exists>
 				<div class="title">
-					<div class="icon"></div><label for="${element.id}">${element.label}</label>
-					<#if element.hint?exists>
-						<div class="hint-trigger" onclick="toggleHint('${element.id}-hint')"></div>
-					</#if>
+					<label for="${element.id}">
+						<#if element.label?has_content>
+							${element.label}
+						<#else>
+							<span class="no-label"></span>
+						</#if>
+						<#if element.hint?exists>
+							<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')"></span>
+						</#if>
+					</label>
 				</div>
 			</#if>
 			<div class="form-element">

@@ -34,7 +34,6 @@
 		<div id="extras" class="extra">
 			<div id="commands" class="box">
 				<div class="title">
-					<div class="icon"></div>
 					<span><@spring.messageText "label.commands", "Commands" /></span>
 				</div>
 				<div id="formCommands" class="list"></div>

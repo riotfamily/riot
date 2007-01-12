@@ -10,11 +10,17 @@
 		<div class="form-element">
 			<#if element.label?exists>
 				<div class="title">
-					<div class="icon"></div><span>${element.label}</span>
+					<label>
+						<#if element.label?has_content>
+							${element.label}
+						<#else>
+							<span class="no-label"></span>
+						</#if>
+						<#if element.hint?exists>
+							<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')"></span>
+						</#if>
+					</label>
 				</div>
-				<#if element.hint?exists>
-					<div class="hint-trigger" onclick="toggleHint('${element.id}-hint')"></div>
-				</#if>
 			</#if>
 			<div class="${class}">
 				<#if element.hint?exists>
