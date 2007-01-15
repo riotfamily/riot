@@ -5,8 +5,8 @@
     	<conf name="runtime" />
     </configurations>
     <dependencies>
-	    <dependency org="riotfamily" name="riot-common" rev="6.4+" conf="*->@" changing="true" />
-	    <dependency org="riotfamily" name="riot-forms" rev="6.4+" conf="*->@" changing="true" />
+	    <dependency org="riotfamily" name="riot-common" rev="latest.integration" conf="*->@" changing="true" />
+	    <dependency org="riotfamily" name="riot-forms" rev="latest.integration" conf="*->@" changing="true" />
 	    <dependency org="springframework" name="spring" rev="2.0.+" conf="*->default" />
     </dependencies>
 </ivy-module>

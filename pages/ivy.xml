@@ -5,9 +5,9 @@
     	<conf name="runtime" />
     </configurations>
     <dependencies>
-	    <dependency org="riotfamily" name="riot-core" rev="6.4+" conf="*->@" changing="true" />
-        <dependency org="riotfamily" name="riot-hibernate" rev="6.4+" conf="*->@" changing="true" />
-        <dependency org="riotfamily" name="cachius" rev="6.4+" conf="*->@" changing="true" />
+	    <dependency org="riotfamily" name="riot-core" rev="latest.integration" conf="*->@" changing="true" />
+        <dependency org="riotfamily" name="riot-hibernate" rev="latest.integration" conf="*->@" changing="true" />
+        <dependency org="riotfamily" name="cachius" rev="latest.integration" conf="*->@" changing="true" />
         <dependency org="springframework" name="spring" rev="2.0.+" conf="*->default" />
         <dependency org="sun" name="javamail" rev="latest.release" conf="runtime->default" />
         <dependency org="sun" name="jaf" rev="latest.release" />

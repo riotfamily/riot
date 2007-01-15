@@ -84,6 +84,12 @@
 			<equals arg1="${module.status}" arg2="integration" />
 		</condition>
 	
+		<!-- Don't replace dynamic revisions if status is 'integration' -->
+		<condition property="publish.replacedynamicrev" value="false">
+			<equals arg1="${module.status}" arg2="integration" />
+		</condition>
+		<property name="publish.replacedynamicrev" value="true" />
+	
 		<!-- 
 		  - If no revision is specified in ivy.xml and status is not set to 
 		  - 'integration', set module.revision to project.version 
@@ -126,7 +132,7 @@
 			artifactspattern="${build.modules.dir}/[module]/[artifact].[ext]"
 			srcivypattern="${build.modules.dir}/[module]/ivy.xml" 
 			status="${module.status}" pubrevision="${module.revision}" 
-			replacedynamicrev="false" />
+			replacedynamicrev="${publish.replacedynamicrev}" />
 	</target>
 	
 	<target name="install" depends="publish-build">
