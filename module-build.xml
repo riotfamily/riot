@@ -63,17 +63,31 @@
 		<!-- Location of the jar artifact published by the module -->
 		<property name="module.jar" value="${module.build.dir}/${module.name}.jar" />
 
+		<!-- Set module.status to 'release' if a revision is specified in ivy.xml -->
 		<condition property="module.status" value="release">
 			<not><contains string="${ivy.revision}" substring="working@" /></not>
 		</condition>
+	
+		<!-- If no revision is specified, set module.status to publish.status -->
 		<property name="module.status" value="${publish.status}" />
 		
+		<!-- Set module.revision to value from ivy.xml (if specified) -->
 		<condition property="module.revision" value="${ivy.revision}">
 			<not><contains string="${ivy.revision}" substring="working@" /></not>
 		</condition>
+	
+		<!-- 
+		  - If no revision is specified and module.status is 'integration', 
+		  - set module.revision to '${project.version}-dev-${publish.date}' 
+		  -->
 		<condition property="module.revision" value="${project.version}-dev-${publish.date}">
 			<equals arg1="${module.status}" arg2="integration" />
 		</condition>
+	
+		<!-- 
+		  - If no revision is specified in ivy.xml and status is not set to 
+		  - 'integration', set module.revision to project.version 
+		  -->
 		<property name="module.revision" value="${project.version}" />
 	</target>
 	
