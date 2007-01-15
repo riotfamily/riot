@@ -5,7 +5,7 @@
     	<conf name="runtime" />
     </configurations>
     <dependencies>
-		<dependency org="riotfamily" name="riot-common" rev="[6.4,6.5[" conf="*->@" />
+		<dependency org="riotfamily" name="riot-common" rev="6.4+" conf="*->@" />
 		<dependency org="apache" name="commons-logging" rev="latest.release" />
 		<dependency org="springframework" name="spring" rev="2.0.+" conf="*->default" />
     </dependencies>

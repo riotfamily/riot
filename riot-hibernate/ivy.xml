@@ -9,8 +9,8 @@
     	<artifact name="riot-hibernate-context" conf="runtime" />
     </publications>
     <dependencies>
-        <dependency org="riotfamily" name="riot-core" rev="[6.4,6.5[" conf="*->@" changing="true" />
-        <dependency org="riotfamily" name="revolt" rev="[6.4,6.5[" conf="*->@" changing="true" />
+        <dependency org="riotfamily" name="riot-core" rev="6.4+" conf="*->@" changing="true" />
+        <dependency org="riotfamily" name="revolt" rev="6.4+" conf="*->@" changing="true" />
         <dependency org="springframework" name="spring" rev="2.0.+" conf="*->default" />
 		<dependency org="hibernate" name="hibernate" conf="build->core;runtime->standalone,c3p0" rev="3.2.1" />
 		<dependency org="c3p0" name="c3p0" rev="latest.release" conf="*->default" />
