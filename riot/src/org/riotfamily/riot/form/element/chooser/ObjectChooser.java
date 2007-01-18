@@ -98,7 +98,7 @@ public class ObjectChooser extends AbstractChooser
 	}
 	
 	protected String getDisplayName(Object object) {
-		return targetDisplayDefinition.getLabel(object);
+		return object != null ? targetDisplayDefinition.getLabel(object) : null;
 	}
 
 	protected String getChooserUrl() {

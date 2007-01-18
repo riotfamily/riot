@@ -30,10 +30,12 @@ import java.util.Collections;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.ajax.JavaScriptEvent;
 import org.riotfamily.forms.ajax.JavaScriptEventAdapter;
 import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.element.DHTMLElement;
+import org.riotfamily.forms.error.ErrorUtils;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.springframework.util.StringUtils;
@@ -61,9 +63,11 @@ public abstract class AbstractChooser extends AbstractEditorBase
 		doc.start(Html.DIV);
 		doc.attribute(Html.COMMON_ID, getId());
 		doc.attribute(Html.COMMON_CLASS, "chooser");
-		doc.start(Html.SPAN);
-		doc.body(displayName);
-		doc.end();
+		if (displayName != null) {
+			doc.start(Html.SPAN);
+			doc.body(displayName);
+			doc.end();
+		}
 		doc.start(Html.BUTTON).attribute(Html.COMMON_CLASS, "choose");
 		doc.body("Choose");
 		doc.end();
@@ -80,6 +84,16 @@ public abstract class AbstractChooser extends AbstractEditorBase
 		return 0;
 	}
 	
+	public void processRequest(FormRequest request) {
+		validate();
+	}
+	
+	protected void validate() {
+		if (isRequired() && object == null) {
+			ErrorUtils.reject(this, "required");
+		}
+	}
+
 	public void handleJavaScriptEvent(JavaScriptEvent event) {
 		setObjectId(event.getValue());
 		getFormListener().elementChanged(this);
