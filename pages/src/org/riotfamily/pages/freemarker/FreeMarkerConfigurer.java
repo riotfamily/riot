@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.riotfamily.common.web.util.IncludeFirstInterceptor;
 import org.riotfamily.common.web.view.freemarker.EncodeUrlMethod;
+import org.riotfamily.common.web.view.freemarker.ErrorPrintingExceptionHandler;
 import org.riotfamily.common.web.view.freemarker.IncludeMethod;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
 import org.riotfamily.riot.runtime.RiotRuntime;
@@ -42,6 +43,7 @@ import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.SimpleHash;
 import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 
 /**
  * FreeMarkerConfigurer that exposes all variables needed by the Riot toolbar
@@ -53,24 +55,24 @@ public class FreeMarkerConfigurer extends
 
 	public static final String RIOT_NAMESPACE = "riot";
 	
-	private static final String RIOT_MACRO_TEMPLATE = "/riot.ftl";
+	private static final String RIOT_MACROS = "/riot.ftl";
 	
-	private static final String RIOT_RESOURCES_JS = "/riot-js/resources.js";
+	private static final String RESOURCES_JS = "/riot-js/resources.js";
 	
-	private static final String RIOT_RUNTIME_BEAN_NAME = "riotRuntime";
+	private static final String VAR_TOOLBAR_RESOURCES = "riotToolbarResources";
 	
-	private static final String RIOT_TOOLBAR_RESOURCES = "riotToolbarResources";
+	private static final String VAR_SERVLET_PREFIX = "riotServletPrefix";	
 	
-	private static final String SERVLET_PREFIX_VAR = "riotServletPrefix";	
+	private static final String VAR_INCLUDE_URI_PARAM = "includeUriParam";
 	
-	private static final String INCLUDE_URI_PARAM_VAR = "includeUriParam";
+	private static final String VAR_VIEW_MODE_RESOLVER = "viewModeResolver";
 	
-	private static final String VIEW_MODE_RESOLVER_VAR = "viewModeResolver";
+	private static final String VAR_ENCODE_URL_METHOD = "riotEncodeUrl";
 	
-	private static final String ENCODE_URL_METHOD_VAR = "riotEncodeUrl";
+	private static final String VAR_INCLUDE_METHOD = "riotInclude";
 	
-	private static final String INCLUDE_METHOD_VAR = "riotInclude";
-	
+	private static final TemplateExceptionHandler DEFAULT_EXCEPTION_HANDLER =
+			new ErrorPrintingExceptionHandler();
 	
 	private String riotServletPrefix;
 	
@@ -81,16 +83,15 @@ public class FreeMarkerConfigurer extends
 	public void setApplicationContext(ApplicationContext context) 
 			throws BeansException {
 		
-		RiotRuntime runtime = (RiotRuntime) context.getBean(
-				RIOT_RUNTIME_BEAN_NAME, RiotRuntime.class);
-		
+		RiotRuntime runtime = (RiotRuntime) BeanFactoryUtils
+				.beanOfTypeIncludingAncestors(context, RiotRuntime.class);
+				
 		riotServletPrefix = runtime.getServletPrefix();
 		String riotResourcePath = runtime.getResourcePath();
-		List resources = (List) 
-				context.getBean(RIOT_TOOLBAR_RESOURCES, List.class);
+		List resources = (List) context.getBean(VAR_TOOLBAR_RESOURCES, List.class);
 		
 		riotToolbarResources = new ArrayList(resources.size() + 1);
-		riotToolbarResources.add(riotResourcePath + RIOT_RESOURCES_JS);
+		riotToolbarResources.add(riotResourcePath + RESOURCES_JS);
 		Iterator it = resources.iterator();
 		while(it.hasNext()) {
 			String resource = (String) it.next();
@@ -112,21 +113,30 @@ public class FreeMarkerConfigurer extends
 				+ "FreeMarker configuration");
 	}
 	
+	/**
+	 * Calls <code>super.newConfiguration()</code> and sets a 
+	 * {@link TemplateExceptionHandler} that does not print the stacktrace. 
+	 * @since 6.4
+	 */
+	protected Configuration newConfiguration() throws IOException, TemplateException {
+		Configuration configuration = super.newConfiguration();
+		configuration.setTemplateExceptionHandler(DEFAULT_EXCEPTION_HANDLER);
+		return configuration;
+	}
+	
 	protected void postProcessConfiguration(Configuration configuration) 
 			throws IOException, TemplateException {
 		
-		super.postProcessConfiguration(configuration);
-
-		configuration.addAutoImport(RIOT_NAMESPACE, RIOT_MACRO_TEMPLATE);
+		configuration.addAutoImport(RIOT_NAMESPACE, RIOT_MACROS);
 		logger.info("Riot macros imported under namespace " + RIOT_NAMESPACE);
 		
 		SimpleHash vars = new SimpleHash();
-		vars.put(SERVLET_PREFIX_VAR, riotServletPrefix);
-		vars.put(RIOT_TOOLBAR_RESOURCES, riotToolbarResources);
-		vars.put(VIEW_MODE_RESOLVER_VAR, viewModeResolver);
-		vars.put(ENCODE_URL_METHOD_VAR, new EncodeUrlMethod());
-		vars.put(INCLUDE_METHOD_VAR, new IncludeMethod());
-		vars.put(INCLUDE_URI_PARAM_VAR, IncludeFirstInterceptor.INCLUDE_URI_PARAM);
+		vars.put(VAR_SERVLET_PREFIX, riotServletPrefix);
+		vars.put(VAR_TOOLBAR_RESOURCES, riotToolbarResources);
+		vars.put(VAR_VIEW_MODE_RESOLVER, viewModeResolver);
+		vars.put(VAR_ENCODE_URL_METHOD, new EncodeUrlMethod());
+		vars.put(VAR_INCLUDE_METHOD, new IncludeMethod());
+		vars.put(VAR_INCLUDE_URI_PARAM, IncludeFirstInterceptor.INCLUDE_URI_PARAM);
 		configuration.setAllSharedVariables(vars);
 	}
 	
