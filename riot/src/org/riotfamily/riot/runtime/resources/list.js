@@ -201,6 +201,9 @@ RiotList.prototype = {
 			if (!win) {
 				alert(result.popupBlockerMessage || 'The Popup has been blocked by the browser.');
 			}
+			else {
+				win.focus();
+			}
 		}
 		else if (result.action == 'reload') {
 			window.location.reload();
