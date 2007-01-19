@@ -36,7 +36,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * Usage: Place an instance of this class in your website servlet's context.
+ * Usage: Place an instance of this class in your website-servlet's context.
  */
 public class WebsiteConfig implements ApplicationContextAware, InitializingBean {
 	

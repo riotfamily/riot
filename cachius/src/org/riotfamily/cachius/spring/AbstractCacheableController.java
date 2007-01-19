@@ -131,6 +131,10 @@ public abstract class AbstractCacheableController
     }
     
     /**
+     * Returns the time in milliseconds that has to be elapsed since the last
+     * modification check before another check is performed. A negative value
+     * indicates that the content should be cached eternaly.
+     * 
      * Returns <code>5000</code> as default.
      */
     public long getTimeToLive(HttpServletRequest request) {
