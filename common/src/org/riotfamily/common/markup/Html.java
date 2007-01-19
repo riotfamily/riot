@@ -101,6 +101,12 @@ public class Html {
 	
 	public static final String UL = "ul";
 	
+	public static final String DL = "dl";
+	
+	public static final String DT = "dt";
+	
+	public static final String DD = "dd";
+	
 	public static final String LI = "li";
 	
 	public static final String FORM = "form";
