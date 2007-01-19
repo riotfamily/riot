@@ -97,7 +97,7 @@
 	</bean>	
 	
 	  
-	<bean class="org.riotfamily.pages.component.config.ComponentListConfigurer">
+	<bean class="org.riotfamily.pages.component.config.ControllerConfigurer">
 		<property name="componentDao" ref="componentDao" />
 		<property name="repository" ref="componentRepository" />
 		<property name="cache" ref="websiteCache" />

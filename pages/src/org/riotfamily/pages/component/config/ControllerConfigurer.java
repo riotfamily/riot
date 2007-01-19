@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.riotfamily.cachius.Cache;
+import org.riotfamily.pages.component.ComponentController;
 import org.riotfamily.pages.component.ComponentListController;
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.dao.ComponentDao;
@@ -41,7 +42,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
 
-public class ComponentListConfigurer implements BeanFactoryAware, 
+public class ControllerConfigurer implements BeanFactoryAware, 
 		InitializingBean {
 	
 	private static final ComponentKeyResolver DEFAULT_KEY_RESOLVER = 
@@ -98,10 +99,37 @@ public class ComponentListConfigurer implements BeanFactoryAware,
 		this.componentPathResolver = componentPathResolver;
 	}
 	
-	public void afterPropertiesSet() throws Exception {		
-		
+	public void afterPropertiesSet() throws Exception {
+		configureComponenControllers();
+		configureComponentListControllers();
+	}
+	
+	protected void configureComponenControllers() {
 		Map controllers = beanFactory.getBeansOfType(
-						ComponentListController.class);		
+						ComponentController.class);
+		
+		Iterator it = controllers.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			ComponentController controller = 
+					(ComponentController) entry.getValue();
+			
+			if (controller.getComponentDao() == null) {
+				controller.setComponentDao(componentDao);
+			}
+			if (controller.getComponentRepository() == null) {
+				controller.setComponentRepository(repository);
+			}
+			if (controller.getViewModeResolver() == null) {
+				controller.setViewModeResolver(viewModeResolver);
+			}
+		}
+	}
+	
+	protected void configureComponentListControllers() {
+		Map controllers = beanFactory.getBeansOfType(
+						ComponentListController.class);
+		
 		Iterator it = controllers.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();
