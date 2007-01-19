@@ -65,6 +65,14 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	}
 	
 	/**
+	 * Loads the ComponentVersion specified  by the given id.
+	 * @since 6.4
+	 */
+	public ComponentVersion loadComponentVersion(Long id) {
+		return (ComponentVersion) loadObject(ComponentVersion.class, id);
+	}
+	
+	/**
 	 * Saves the given ComponentList.
 	 */
 	public void saveComponentList(ComponentList list) {
