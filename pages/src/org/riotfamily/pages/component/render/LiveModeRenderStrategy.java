@@ -24,6 +24,8 @@
 package org.riotfamily.pages.component.render;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -122,17 +124,29 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 			cachedList.setTags(TaggingContext.popTags(request));
 		}
 	}
-		
 
 	protected void renderComponent(Component component, 
-			ComponentVersion version, String positionClassName) throws IOException {
+			ComponentVersion version, String positionClassName) 
+			throws IOException {
 		
+		tagCacheItems(component, version);
 		if (component.isDynamic()) {
 			listIsCacheable = false;
 			super.renderComponent(component, version, positionClassName);
 		}
 		else {
 			renderCacheableComponent(component, version, positionClassName);
+		}
+	}
+	
+	private void tagCacheItems(Component component, ComponentVersion version) {
+		Collection tags = component.getCacheTags(version);
+		if (tags != null) {
+			Iterator it = tags.iterator();
+			while (it.hasNext()) {
+				String tag = (String) it.next();
+				TaggingContext.tag(request, tag);
+			}
 		}
 	}
 	

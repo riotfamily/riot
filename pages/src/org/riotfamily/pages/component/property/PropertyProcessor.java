@@ -57,4 +57,10 @@ public interface PropertyProcessor {
 	 */
 	public void delete(Map map);
 	
+	/**
+	 * Implementors may return an array of Strings that are used to tag the 
+	 * CacheItem that contains the rendered component markup.
+	 */
+	public String[] getCacheTags(Map map);
+	
 }

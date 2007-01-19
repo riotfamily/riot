@@ -73,5 +73,12 @@ public class DefaultValuePropertyProcessor implements PropertyProcessor {
 	 */
 	public void delete(Map map) {
 	}
+	
+	/**
+	 * Always returns <code>null</code>.
+	 */
+	public String[] getCacheTags(Map map) {
+		return null;
+	}
 
 }

@@ -24,6 +24,7 @@
 package org.riotfamily.pages.component;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -56,4 +57,11 @@ public interface Component {
 	public void render(ComponentVersion version, String positionClassName, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws IOException;
+	
+	/**
+	 * Returns a Collection of Strings that should be used to tag the
+	 * CacheItem containing the rendered component.
+	 */
+	public Collection getCacheTags(ComponentVersion version);
+
 }

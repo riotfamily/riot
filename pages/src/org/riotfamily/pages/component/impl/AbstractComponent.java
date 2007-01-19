@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -154,5 +155,18 @@ public abstract class AbstractComponent implements Component {
 	protected abstract void renderInternal(ComponentVersion componentVersion, 
 			String positionClassName, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception;
+	
+	public Collection getCacheTags(ComponentVersion version) {
+		ArrayList result = new ArrayList();
+		Iterator it = propertyProcessors.iterator();
+		while (it.hasNext()) {
+			PropertyProcessor pp = (PropertyProcessor) it.next();
+			String[] tags = pp.getCacheTags(version.getProperties());
+			for (int i = 0; tags != null && i < tags.length; i++) {
+				result.add(tags[i]);
+			}
+		}
+		return result;
+	}
 
 }

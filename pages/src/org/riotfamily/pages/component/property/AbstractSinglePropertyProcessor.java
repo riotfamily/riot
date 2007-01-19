@@ -74,5 +74,15 @@ public abstract class AbstractSinglePropertyProcessor
 	
 	protected void delete(String s) {
 	}
+	
+	public String[] getCacheTags(Map map) {
+		String s = (String) map.get(property);
+		String tag = getCacheTag(s);
+		return tag != null ? new String[] {tag} : null;
+	}
+	
+	protected String getCacheTag(String s) {
+		return null;
+	}
 
 }

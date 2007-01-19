@@ -27,10 +27,17 @@ import java.io.Serializable;
 
 import org.hibernate.SessionFactory;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.util.Assert;
 
-public class HibernatePropertyProcessor extends AbstractSinglePropertyProcessor {
+public class HibernatePropertyProcessor extends AbstractSinglePropertyProcessor 
+		implements InitializingBean, ApplicationContextAware {
 
+	private ApplicationContext applicationContext;
+	
 	private SessionFactory sessionFactory;
 	
 	private Class entityClass;
@@ -54,6 +61,18 @@ public class HibernatePropertyProcessor extends AbstractSinglePropertyProcessor 
 		this.sessionFactory = sessionFactory;
 	}
 
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
+	
+	public void afterPropertiesSet() throws Exception {
+		if (sessionFactory == null) {
+			sessionFactory = (SessionFactory) applicationContext.getBean(
+					"riotSessionFactory", SessionFactory.class);
+		}
+		Assert.notNull(entityClass, "The property 'entityClass' must be set.");
+	}
+	
 	protected String convertToString(Object object) {
 		if (object == null) {
 			return null;
@@ -69,6 +88,13 @@ public class HibernatePropertyProcessor extends AbstractSinglePropertyProcessor 
 				sessionFactory);
 				
 		return new HibernateTemplate(sessionFactory).get(entityClass, sid);
+	}
+	
+	protected String getCacheTag(String s) {
+		if (s == null) {
+			return null;
+		}
+		return entityClass.getName() + '#' + s;
 	}
 	
 }
