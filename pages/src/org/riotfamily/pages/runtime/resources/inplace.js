@@ -19,14 +19,15 @@ riot.InplaceEditor.prototype = {
 	setEnabled: function(enabled) {
 		this.enabled = enabled;
 		if (enabled) {
-			Event.observe(this.element, 'click', this.onclickHandler, true);
+			this.originalOnlickHandler = this.element.onclick;
+			this.element.onclick = this.onclickHandler;
 			Element.addClassName(this.element, 'riot-editable-text');
 		}
 		else {
 			if (riot.activeEditor == this) {
 				this.close();
 			}
-			Event.stopObserving(this.element, 'click', this.onclickHandler, true);
+			this.element.onclick = this.originalOnclickHandler;
 			Element.removeClassName(this.element, 'riot-editable-text');
 		}
 	},
