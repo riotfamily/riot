@@ -51,7 +51,7 @@ public class ChooseCommand extends AbstractCommand {
 	}
 	
 	public CommandResult execute(CommandContext context) {
-		return new ScriptResult("chooser.chosen('" + 
+		return new ScriptResult("parent.chosen('" + 
 				context.getObjectId() + "')");
 	}
 	
