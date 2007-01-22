@@ -19,7 +19,7 @@ riot.InplaceEditor.prototype = {
 	setEnabled: function(enabled) {
 		this.enabled = enabled;
 		if (enabled) {
-			this.originalOnlickHandler = this.element.onclick;
+			this.originalOnclickHandler = this.element.onclick;
 			this.element.onclick = this.onclickHandler;
 			Element.addClassName(this.element, 'riot-editable-text');
 		}
