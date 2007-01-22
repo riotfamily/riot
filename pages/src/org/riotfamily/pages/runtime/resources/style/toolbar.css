@@ -237,7 +237,8 @@ body > #riot-popup {
 	position: fixed;
 }
 
-#riot-popup * {
+#riot-popup div,
+#riot-popup h2 {
 	margin: 0;
 	padding: 0;
 	border: none;
