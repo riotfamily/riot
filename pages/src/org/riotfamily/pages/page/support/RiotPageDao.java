@@ -151,6 +151,7 @@ public class RiotPageDao implements ParentChildDao, SwappableItemDao,
 				dao.clearAliases(child);
 			}
 		}
+		componentDao.deleteComponentLists(page.getPath());
 		firePageMappingEvent();
 	}
 	

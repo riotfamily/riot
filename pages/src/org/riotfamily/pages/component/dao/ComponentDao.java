@@ -91,6 +91,12 @@ public interface ComponentDao {
 	public void updateComponentVersion(ComponentVersion version);
 	
 	/**
+	 * Deletes all {@link ComponentList ComponentLists} with the given path.
+	 * @since 6.4
+	 */
+	public void deleteComponentLists(String path);
+	
+	/**
 	 * Deletes the given ComponentList.
 	 */
 	public void deleteComponentList(ComponentList list);

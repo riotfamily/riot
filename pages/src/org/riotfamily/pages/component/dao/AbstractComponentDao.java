@@ -228,6 +228,19 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	}
 	
 	/**
+	 * Delete all ComponentLists for the given path
+	 * @since 6.4
+	 */
+	public void deleteComponentLists(String path) {
+		List componentLists = findComponentLists(path);
+		Iterator it = componentLists.iterator();
+		while (it.hasNext()) {
+			ComponentList list = (ComponentList) it.next();
+			deleteComponentList(list);
+		}		
+	}
+	
+	/**
 	 * Deletes the given ComponentList.
 	 */
 	public void deleteComponentList(ComponentList list) {
