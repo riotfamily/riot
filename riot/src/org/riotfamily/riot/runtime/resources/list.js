@@ -183,6 +183,7 @@ RiotList.prototype = {
 	},
 	
 	processCommandResult: function(result) {
+		if (!result) return;
 		if (result.action == 'confirm') {
 			if (confirm(result.message)) {
 				this.execCommand(result.item, result.commandId, true);

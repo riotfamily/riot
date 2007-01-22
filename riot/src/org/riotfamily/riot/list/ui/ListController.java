@@ -112,7 +112,7 @@ public class ListController implements Controller,
 		model.put("filterForm", session.getFilterFormHtml());
 		model.put("search", session.getSearchProperties());
 		model.put("searchQuery", session.getSearchQuery());
-		model.put("commands", session.getListCommands(request));
+		model.put("hasCommands", Boolean.valueOf(session.hasListCommands()));
 		model.put("listKey", session.getKey());
 		model.put("title", session.getTitle());
 		

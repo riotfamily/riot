@@ -27,7 +27,7 @@
 		</script>		
 	</head>
 	
-	<#assign hasExtraColumn = commands?has_content || filterForm?exists />
+	<#assign hasExtraColumn = hasCommands || filterForm?exists />
 	
 	<body onload="TweakStyle.list()"<#if !hasExtraColumn> class="wide"</#if>>
 		<div id="wrapper">
@@ -47,7 +47,7 @@
 				</div>
 			</#if>
 			
-			<#if commands?has_content>
+			<#if hasCommands>
 				<div id="commands" class="box">
 					<div class="title">
 						<span><@spring.messageText "label.commands", "Commands" /></span>

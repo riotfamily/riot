@@ -43,9 +43,7 @@ public class ListItem {
 	private List commands;
 
 	private String defaultCommandId;
-	
-	private String[] defaultCommandIds;
-	
+		
 	private boolean lastOnPage;
 	
 	public ListItem() {
@@ -103,25 +101,14 @@ public class ListItem {
 		this.lastOnPage = lastOnPage;
 	}
 
-	public void setDefaultCommandIds(String[] defaultCommandIds) {
-		this.defaultCommandIds = defaultCommandIds;
-	}
-	
-	public void setDefaultCommandId(String defaultCommandId) {
-		this.defaultCommandId = defaultCommandId;
-	}
-
-	public String getDefaultCommandId() {
-		if (defaultCommandId == null) {
-			for (int i = 0; i < defaultCommandIds.length; i++) {
-				CommandState state = getCommandState(defaultCommandIds[i]);
-				if (state != null && state.isEnabled()) {
-					defaultCommandId = state.getId();
-					break;
-				}
+	void setDefaultCommandIds(String[] defaultCommandIds) {
+		for (int i = 0; i < defaultCommandIds.length; i++) {
+			CommandState state = getCommandState(defaultCommandIds[i]);
+			if (state != null && state.isEnabled()) {
+				defaultCommandId = state.getId();
+				break;
 			}
 		}
-		return defaultCommandId;
 	}
 	
 	private CommandState getCommandState(String id) {
@@ -135,4 +122,12 @@ public class ListItem {
 		return null;
 	}
 	
+	public void setDefaultCommandId(String defaultCommandId) {
+		this.defaultCommandId = defaultCommandId;
+	}
+	
+	public String getDefaultCommandId() {
+		return defaultCommandId;
+	}
+		
 }

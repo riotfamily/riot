@@ -167,8 +167,8 @@ public class ListSession implements RenderContext {
 		itemCommands = new ArrayList();
 		itemCommands.add(new DescendCommand(nextList, target));
 		
-		if (target.getBeanClass().isAssignableFrom(
-				listDefinition.getBeanClass())) {
+		if (listDefinition.getBeanClass().isAssignableFrom(
+				target.getBeanClass())) {
 			
 			itemCommands.add(new ChooseCommand(target));
 		}
@@ -209,10 +209,10 @@ public class ListSession implements RenderContext {
 			item.setLastOnPage(!it.hasNext());
 			item.setObjectId(EditorDefinitionUtils.getObjectId(listDefinition, bean));
 			item.setColumns(getColumns(bean));
-			item.setDefaultCommandIds(defaultCommandIds);
 			item.setCommands(getCommandStates(itemCommands, 
 					item, bean, itemsTotal, request));
-
+			
+			item.setDefaultCommandIds(defaultCommandIds);
 			items.add(item);
 		}
 		model.setItems(items);
@@ -321,6 +321,10 @@ public class ListSession implements RenderContext {
 		return getItems(request);
 	}
 	
+	public boolean hasListCommands() {
+		return !listCommands.isEmpty();
+	}
+	
 	public List getListCommands(HttpServletRequest request) {
 		//REVISIT: Should we pass the correct item count here? 
 		return getCommandStates(listCommands, null, null, -1, request);
@@ -365,7 +369,13 @@ public class ListSession implements RenderContext {
 		Command command = getCommand(commands, commandId);
 		
 		CommandContextImpl context = new CommandContextImpl(this, request);
-		context.setItem(item);
+		if (item != null) {
+			context.setItem(item);
+		}
+		else {
+			context.setBean(EditorDefinitionUtils.loadParent(
+					listDefinition, parentId));
+		}
 		
 		if (!confirmed) {
 			String message = command.getConfirmationMessage(context);
