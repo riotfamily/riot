@@ -47,6 +47,8 @@ public class ModularListFactoryBean extends AbstractFactoryBean
 	
 	private List sourceList;
 
+	private boolean sourceListFirst = false;
+	
 	private Class targetListClass = ArrayList.class;
 	
 	private String key;
@@ -60,6 +62,16 @@ public class ModularListFactoryBean extends AbstractFactoryBean
 	 */
 	public void setSourceList(List sourceList) {
 		this.sourceList = sourceList;
+	}
+
+	/**
+	 * Sets whether items from the source list should be inserted before items
+	 * provided by modules. Default is false.
+	 * @since 6.4
+	 */
+	
+	public void setSourceListFirst(boolean sourceListFirst) {
+		this.sourceListFirst = sourceListFirst;
 	}
 
 	/**
@@ -92,6 +104,11 @@ public class ModularListFactoryBean extends AbstractFactoryBean
 
 	protected Object createInstance() {
 		List result = (List) BeanUtils.instantiateClass(this.targetListClass);
+		
+		if (sourceListFirst && sourceList != null) {
+			result.addAll(sourceList);
+		}
+		
 		Map modules = applicationContext.getBeansOfType(
 				FactoryBeanModule.class, false, false);
 		
@@ -107,7 +124,7 @@ public class ModularListFactoryBean extends AbstractFactoryBean
 			}
 		}
 		
-		if (sourceList != null) {
+		if (!sourceListFirst && sourceList != null) {
 			result.addAll(sourceList);
 		}
 		
