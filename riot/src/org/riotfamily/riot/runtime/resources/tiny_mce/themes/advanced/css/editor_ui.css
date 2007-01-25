@@ -4,9 +4,16 @@
 
 .mceSelectList {
 	margin: 3px 3px 0 0;
-	padding: 0px;
+	font-family: 'MS Sans Serif', sans-serif, Verdana, Arial;
+	font-size: 7pt !important;
+	font-weight: normal;
+	padding: 0;
+	display: inline;
 	vertical-align: top;
+	background-color: #fff;
 }
+
+* html .mceSelectList {margin-top: 2px;}
 
 .mceButtonNormal, 
 .mceButtonDown, 
