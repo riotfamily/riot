@@ -237,8 +237,7 @@ body > #riot-popup {
 	position: fixed;
 }
 
-#riot-popup div,
-#riot-popup h2 {
+#riot-popup div {
 	margin: 0;
 	padding: 0;
 	border: none;
@@ -264,6 +263,10 @@ body > #riot-popup {
 	font-family: monospace;
 	font-size: 12px;
 	line-height: 18px;
+}
+
+* html #riot-popup.riot-richtext textarea {
+	width: 579px;
 }
 
 #riot-popup iframe.properties {
