@@ -20,7 +20,7 @@
 	<body onload="TweakStyle.group()">
 		<div id="wrapper">
 			<div id="editors" class="main">
-				<div class="title">${group.title}</div>
+				<div class="title"><span>${group.title}</span></div>
 				<#list group.editors as ref>
 					<a class="editor ${ref.styleClass?default('default')}" href="${url(ref.editorUrl)}" <#if ref.targetWindow?exists> target="${ref.targetWindow}"</#if>>
 						<#if ref.icon?exists>

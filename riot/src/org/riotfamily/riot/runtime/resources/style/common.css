@@ -70,6 +70,7 @@ td {
 	padding: 2px 0 2px 6px;
 	background: #3d3d3d;
 }
+* html .title {height: 1%;}
 
 .corner-tr,
 .corner-br {

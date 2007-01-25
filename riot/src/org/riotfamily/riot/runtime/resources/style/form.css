@@ -1,11 +1,6 @@
 @import url(common.css);
 @import url(form-custom.css);
 
-#form {
-	float:left;
-	margin-right: 300px;
-}
-
 #childLists .list {
 	margin-top:10px;
 }

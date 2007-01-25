@@ -3,7 +3,9 @@
 
 #editors .title {
 	background: #3d3d3d;
-	padding: 2px 0 2px 7px;
+}
+#editors .title span {
+	margin: 0;
 }
 
 #editors a {

@@ -98,7 +98,7 @@ var TweakStyle = {
 	
 	list: function() {
 		this.roundElements('div', 'title');
-		this.roundElement($('list').parentNode);
+		this.roundElement('list');
 	}
 	
 }
