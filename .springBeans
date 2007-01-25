@@ -7,7 +7,6 @@
 		<config>pages/META-INF/riot/riot-servlet.xml</config>
 		<config>pages/META-INF/riot/application-context.xml</config>
 		<config>pages/META-INF/riot/website-servlet.xml</config>
-		<config>revolt/test/org/riotfamily/revolt/test-context.xml</config>
 		<config>riot-hibernate/META-INF/riot/riot-servlet.xml</config>
 		<config>riot/META-INF/riot/riot-servlet.xml</config>
 		<config>riot-hibernate/META-INF/riot/application-context.xml</config>
@@ -23,14 +22,6 @@
 				<config>riot-hibernate/META-INF/riot/application-context.xml</config>
 				<config>pages/META-INF/riot/application-context.xml</config>
 				<config>pages/META-INF/riot/website-servlet.xml</config>
-			</configs>
-		</configSet>
-		<configSet>
-			<name>test</name>
-			<allowBeanDefinitionOverriding>false</allowBeanDefinitionOverriding>
-			<incomplete>false</incomplete>
-			<configs>
-				<config>revolt/test/org/riotfamily/revolt/test-context.xml</config>
 			</configs>
 		</configSet>
 		<configSet>
