@@ -123,7 +123,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 		this.input.style.boxSizing = this.input.style.MozBoxSizing = 'border-box';
 		
 		Element.hide(this.input);
-		RElement.insertAfter(this.input, this.element);
+		document.body.appendChild(this.input);
 	},
 		
 	edit: function() {
@@ -147,10 +147,12 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 				this.paddingTop = parseInt(Element.getStyle(this.element, 'padding-top'));
 			}
 		}
+
 		Position.clone(this.element, this.input, {
 			setWidth: false,
 			setHeight: false
 		});
+		
 		this.resize();
 		RElement.makeInvisible(this.element);
 		Element.show(this.input);
@@ -168,12 +170,12 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 		
 	onsave: function(text) {
 		this.element.innerHTML = text;
-		Element.hide(this.input);
+		this.input.hide();
 		RElement.makeVisible(this.element);
 	},
 
 	updateElement: function() {
-		this.element.innerHTML = this.getText().replace(/<br[^>]*>/gi, '<br />&nbsp;');
+		this.element.update(this.getText().replace(/<br[^>]*>/gi, '<br />&nbsp;'));
 		this.resize();
 	},
 
@@ -280,8 +282,9 @@ riot.Popup.prototype = {
 	},
 	
 	hideElements: function(name) {
-		$A(document.getElementsByTagName(name)).each(function (e) {
-			if (!Element.childOf(e, this.div)) {
+		var exclude = this.div;
+		$$(name).each(function (e) {
+			if (!e.childOf(exclude)) {
 				RElement.makeInvisible(e);
 				e.hidden = true;
 			}
@@ -289,7 +292,7 @@ riot.Popup.prototype = {
 	},
 	
 	showElements: function(name) {
-		$A(document.getElementsByTagName(name)).each(function (e) {
+		$$(name).each(function (e) {
 			if (e.hidden) {
 				RElement.makeVisible(e);
 				e.hidden = false;
@@ -305,7 +308,7 @@ riot.Popup.prototype = {
 		var top = Math.round(Viewport.getInnerHeight() / 2 - this.div.clientHeight / 2);
 		var left = Math.round(Viewport.getInnerWidth() / 2 - this.div.clientWidth / 2);
 		
-		Element.hide(this.div);
+		this.div.hide();
 		this.div.style.position = '';
 		if (Element.getStyle(this.div, 'position') != 'fixed') {
 			top += Viewport.getScrollTop();
@@ -313,10 +316,10 @@ riot.Popup.prototype = {
 		}
 		this.div.style.top = top + 'px';
 		this.div.style.left = left + 'px';
-
-		Element.show(this.overlay);
+		this.overlay.style.height = Viewport.getPageHeight() + 'px';
+		this.overlay.show();
 		RElement.makeVisible(this.div);
-		Element.show(this.div);
+		this.div.show();
 		this.isOpen = true;
 	},
 		
@@ -324,8 +327,8 @@ riot.Popup.prototype = {
 		if (browserInfo.ie) this.showElements('select');
 		this.showElements('object');
 		this.showElements('embed');
-		Element.remove(this.div);
-		Element.remove(this.overlay);
+		this.div.remove();
+		this.overlay.remove();
 		this.isOpen = false;
 	}
 }
@@ -351,10 +354,11 @@ riot.TextareaPopup = riot.Popup.extend({
 riot.TinyMCEPopup = riot.TextareaPopup.extend({
 	initialize: function(editor) {
 		this.SUPER(editor);
+		this.div.addClassName('riot-richtext');
 		if (this.textarea.value == '') {
 			this.textarea.value = '<p>&nbsp;</p>';
 		}
-		RElement.makeInvisible(this.textarea);
+		RElement.makeInvisible(this.textarea);		
 		this.textarea.style.position = 'absolute';
 		riot.initTinyMCE();
 		Resources.waitFor('tinyMCELang["lang_theme_block"]', 
@@ -514,14 +518,16 @@ riot.tinyMCEConfig = {
 	mode: 'none',
 	add_unload_trigger: false,
 	strict_loading_mode: true,
-	setupcontent_callback: 'riot.setupTinyMCEContent',
-	init_instance_callback: 'riot.initTinyMCEInstance',
+	setupcontent_callback: riot.setupTinyMCEContent,
+	init_instance_callback: riot.initTinyMCEInstance,
 	relative_urls: false,
+	gecko_spellcheck: true,
+	hide_selects_on_submit: false,
 	theme: 'advanced',
 	theme_advanced_layout_manager: 'RowLayout',
 	theme_advanced_containers_default_align: 'left',
 	theme_advanced_containers: 'buttons1, mceEditor, mceStatusbar',
-	theme_advanced_container_buttons1: 'formatselect,bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap',
+	theme_advanced_container_buttons1: 'formatselect,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap',
 	theme_advanced_blockformats: 'p,h3,h4',
 	valid_elements: '+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote,sub,sup,span[class<mailto]'
 }
