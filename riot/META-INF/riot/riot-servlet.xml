@@ -324,6 +324,7 @@
 		<property name="mappings">
 			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
 				<property name="key" value="resourceMappings" />
+				<property name="sourceListFirst" value="true" />
 				<property name="sourceList">
 					<list>
 						<!-- Allow styles to be overwritten in WEB-INF/style -->
