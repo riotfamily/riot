@@ -2,7 +2,7 @@
     <info 
     	organisation="riotfamily" 
     	module="scriptaculous-js" 
-    	revision="1.7.0_beta2"
+    	revision="1.7.0"
     	status="release">
     	
      	<license name="MIT" url="http://wiki.script.aculo.us/scriptaculous/show/License" />
@@ -12,6 +12,6 @@
     	<artifact name="scriptaculous-js" type="jar" />
     </publications>
     <dependencies>
-    	<dependency org="riotfamily" name="prototype-js" rev="1.5.0_rc2" />
+    	<dependency org="riotfamily" name="prototype-js" rev="1.5.0" />
     </dependencies>
 </ivy-module>
