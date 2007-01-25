@@ -179,33 +179,8 @@ var RElement = {
 		} 
 		catch (ex) {
 		}
-	},
-
-	hoverHighlight: function(el, className) {
-		el = $(el);
-		if (!isSet(el.addHighlight)) {
-			el.addHighlight = function(event) {
-				Element.addClassName(this, className);
-				if (event) Event.stop(event);
-			}.bindAsEventListener(el);
-			
-			el.removeHighlight = function(event) {
-				Element.removeClassName(this, className);
-				if (event) Event.stop(event);
-			}.bindAsEventListener(el);
-		}	
-		Event.observe(el, 'mouseover', el.addHighlight, false);
-		Event.observe(el, 'mouseout', el.removeHighlight, false);
-	},
-
-	stopHighlighting: function(el) {
-		el = $(el);
-		if (isSet(el.removeHighlight)) {
-			el.removeHighlight();
-			Event.stopObserving(el, 'mouseover', el.addHighlight, false);
-			Event.stopObserving(el, 'mouseout', el.removeHighlight, false);
-		}
 	}
+
 }
 
 // See: http://www.bloglines.com/blog/reinyannyan?id=1

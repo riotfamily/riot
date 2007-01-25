@@ -181,19 +181,18 @@ html .riot-insert-button-active {
 	cursor: text;
 }
 
-.riot-highlight,
 .riot-editable-text:hover {
 	outline:2px dotted ${highlight};
 	-moz-outline:2px dotted ${highlight};
 	cursor: crosshair;
 }
 
-* html .riot-highlight,
-* html .riot-highlight *,
-* html .riot-editable-text:hover {
-	background-color: ${highlight};
-	background-image: none;	
-	color: #fff;
+.riot-highlight {
+	z-index: 1000;
+}
+.riot-highlight:hover {
+	border:2px dotted ${highlight};
+	cursor: crosshair;
 }
 
 .riot-no-inheritance {

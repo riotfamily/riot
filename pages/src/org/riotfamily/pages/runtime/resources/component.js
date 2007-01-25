@@ -37,18 +37,18 @@ riot.Component.prototype = {
 	
 	setMode: function(mode) {
 		if (mode == null) {
-			RElement.stopHighlighting(this.element);
-			if (isSet(this.mode)) {
-				Event.stopObserving(this.element, 'click', this.handlers[this.mode]);
-			}
+			this.hover.remove();
 		}
 		else {
 			if (mode == 'properties' && !this.formId) {
 				this.mode = null;
 				return;
 			}
-			RElement.hoverHighlight(this.element, 'riot-highlight');
-			Event.observe(this.element, 'click', this.handlers[mode]);
+			this.hover = RBuilder.node('a', {className: 'riot-highlight', href: '?',
+				style: {position: 'absolute', display: 'block'}, parent: document.body, onclick: this.handlers[mode]}, 
+				RBuilder.node('img', {src: Resources.basePath + '/1px.gif', style: {width: '100%', height: '100%'}})
+			);
+			Position.clone(this.element, this.hover, {offsetTop: -2, offsetLeft: -2});
 		}
 		this.mode = mode;
 	},
