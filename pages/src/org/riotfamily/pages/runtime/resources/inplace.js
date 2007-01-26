@@ -327,15 +327,17 @@ riot.Popup.prototype = {
 	},
 		
 	close: function() {
-		if (browserInfo.ie) {
-			this.showElements('select');
-			this.root.undoClipping();
+		if (this.isOpen) {
+			if (browserInfo.ie) {
+				this.showElements('select');
+				this.root.undoClipping();
+			}
+			this.showElements('object');
+			this.showElements('embed');
+			this.div.remove();
+			this.overlay.remove();
+			this.isOpen = false;
 		}
-		this.showElements('object');
-		this.showElements('embed');
-		this.div.remove();
-		this.overlay.remove();
-		this.isOpen = false;
 	}
 }
 
