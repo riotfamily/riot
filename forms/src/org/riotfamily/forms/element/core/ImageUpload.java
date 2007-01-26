@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.SocketException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -280,9 +281,18 @@ public class ImageUpload extends FileUpload {
 					ServletUtils.setNoCacheHeaders(response);
 					response.setHeader("Content-Type", getContentType());
 					response.setContentLength(getSize().intValue());
-					//TODO Check if file exists
-					FileCopyUtils.copy(new FileInputStream(getFile()), 
-							response.getOutputStream());
+					
+					try {
+						//TODO Check if file exists
+						FileCopyUtils.copy(new FileInputStream(getFile()), 
+								response.getOutputStream());
+					}
+					catch (IOException e) {
+						// Ignore exceptions caused by client abortion:
+						if (!SocketException.class.isInstance(e.getCause())) {
+							throw e;
+						}
+					}
 				}
 			}
 			else {
