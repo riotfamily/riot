@@ -53,6 +53,7 @@ import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.resource.StylesheetResource;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -332,8 +333,11 @@ public class FileUpload extends CompositeElement implements Editor,
 					if (tempFile != null) {
 						tempFile.delete();
 					}
-					tempFile = File.createTempFile("000", "."
-							+ FormatUtils.getExtension(fileName));
+					String ext = FormatUtils.getExtension(fileName);
+					if (StringUtils.hasLength(ext)) {
+						ext = '.' + ext;
+					}
+					tempFile = File.createTempFile("000", ext);
 					
 					multipartFile.transferTo(tempFile);
 					log.debug("stored at: " + tempFile.getAbsolutePath());

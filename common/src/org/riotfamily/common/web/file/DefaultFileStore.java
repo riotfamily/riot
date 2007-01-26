@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.ServletContextAware;
 
 public class DefaultFileStore implements FileStore, ServletContextAware,
@@ -142,7 +143,10 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 		}
 		
 		if (dest == null) {
-			dest = File.createTempFile("000", "." + ext, storageDir);
+			if (StringUtils.hasLength(ext)) {
+				ext = '.' + ext;
+			}
+			dest = File.createTempFile("000", ext, storageDir);
 		}
 		
 		if (!file.renameTo(dest)) {
