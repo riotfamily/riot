@@ -47,7 +47,7 @@ riot.Component.prototype = {
 				this.mode = null;
 				return;
 			}
-			this.hover = RBuilder.node('a', {className: 'riot-highlight', href: '#',
+			this.hover = RBuilder.node('a', {className: 'riot-highlight', href: '#', componentElement: this.element,
 				style: {position: 'absolute', display: 'none'}, parent: document.body, onclick: this.handlers[mode]}, 
 				RBuilder.node('img', {src: Resources.basePath + '/1px.gif', style: {width: '100%', height: '100%'}})
 			);
@@ -518,6 +518,13 @@ riot.ComponentDragObserver.prototype = {
 
 // Preload the 1px image ...
 new Image().src = Resources.basePath + '/1px.gif';
+
+// Re-position hovers on window resize ...
+Event.observe(window, 'resize', function() {
+	$$('.riot-highlight').each(function(e) {
+		if (e.componentElement) Position.clone(e.componentElement, e);
+	});
+});
 
 riot.editProperties = function(e) {
 	e = e || this;
