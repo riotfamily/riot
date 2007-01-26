@@ -11,6 +11,9 @@
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/style/tweak.js"></script>
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/riot-js/viewport.js"></script>
 		<style type="text/css">
+			html, body { 
+				border: none; 
+			}
 			input.button-save {
 				display: none;
 			}
@@ -32,7 +35,7 @@
 					if (!p.isOpen) {
 						var h = Math.min(
 								Math.round(Viewport.getInnerHeight(parent) * 0.8), 
-								Viewport.getBodyHeight());
+								Viewport.getBodyHeight() + 32);
 						
 						p.content.style.height = h + 'px';
 						

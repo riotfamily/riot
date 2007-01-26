@@ -8,6 +8,7 @@ var Cropper = {
 	},
 	appendDiv: function(parent, className) {
 		var e = document.createElement('div');
+		e.unselectable = 'on';
 		if (className) e.className = className;
 		if (parent) parent.appendChild(e);
 		return Element.extend(e);
@@ -70,7 +71,7 @@ Cropper.UI.prototype = {
 		
 		this.controls = Cropper.appendDiv(this.element, 'controls no-crop').setStyle({width: this.canvas.offsetWidth + 'px'});
 		this.resizeHandle = Cropper.appendDiv(this.preview, 'resizeHandle').setStyle({
-			position: 'absolute', bottom: 0, right: 0, zIndex: 100,	cursor: 'se-resize'
+			position: 'absolute', bottom: 0, right: 0, zIndex: 100,	cursor: 'se-resize', overflow: 'hidden'
 		});
 		Event.observe(this.resizeHandle, 'mousedown', this.onMouseDownResize.bindAsEventListener(this));
 
@@ -96,6 +97,7 @@ Cropper.UI.prototype = {
 
 		this.img = document.createElement('img');
 		this.img.style.position = 'absolute';
+		this.img.unselectable = 'on';
 		this.img.onload = this.onLoadImage.bind(this);
 		this.preview.appendChild(this.img);
 
@@ -224,14 +226,23 @@ Cropper.UI.prototype = {
 
 	onMouseDownResize: function(event) {
 		this.mode = 'resize';
-		this.img.style.cursor = document.body.style.cursor = this.resizeHandle.style.cursor;
+		if (document.all) {
+			this.resizeHandle.style.cursor = 'auto';
+			this.img.style.cursor = 'auto';
+		}
+		else {
+			this.img.style.cursor = document.body.style.cursor = this.resizeHandle.style.cursor;
+		}
 		Event.stop(event);
 	},
 
 	onMouseUp: function(event) {
 		this.mode = null;
-		this.img.style.cursor = this.img.width > this.preview.offsetWidth || this.img.height > this.preview.offsetHeight ? 'move' : 'default';
-		document.body.style.cursor = 'default';
+		if (document.all) {
+			this.resizeHandle.style.cursor = 'se-resize';
+		}
+		this.img.style.cursor = this.img.width > this.preview.offsetWidth || this.img.height > this.preview.offsetHeight ? 'move' : 'auto';
+		document.body.style.cursor = 'auto';
 	},
 
 	onMouseOut: function(event) {

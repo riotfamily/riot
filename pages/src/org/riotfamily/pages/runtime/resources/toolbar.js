@@ -44,6 +44,12 @@ riot.Toolbar.prototype = {
 		this.selectedComponent = null;
 		this.activeButton = button;
 	},
+	
+	buttonDisabled: function(button) {
+		if (this.activeButton == button) {
+			this.activeButton = null;
+		}
+	},
 		
 	isWithin: function(event) {
 		return Event.within(event, this.element) 
@@ -175,11 +181,14 @@ riot.ToolbarButton.prototype = {
 	enable: function() {
 		this.element.className = 'toolbar-button';
 		this.enabled = true;
+		return this;
 	},
 	
 	disable: function() {
 		this.enabled = false;
 		this.reset();
+		if (riot.toolbar) riot.toolbar.buttonDisabled(this);
+		return this;
 	},
 
 	reset: function() {
@@ -189,6 +198,8 @@ riot.ToolbarButton.prototype = {
 		}
 		this.element.className = this.enabled ? 
 				'toolbar-button' : 'toolbar-button-disabled';
+				
+		return this;
 	},
 
 	getHandlerTargets: function() {

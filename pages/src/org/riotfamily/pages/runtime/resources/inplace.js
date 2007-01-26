@@ -301,7 +301,10 @@ riot.Popup.prototype = {
 	},
 		
 	open: function() {
-		if (browserInfo.ie) this.hideElements('select');
+		if (browserInfo.ie) {
+			this.hideElements('select');
+			this.root = $$(document.compatMode && document.compatMode == 'BackCompat' ? 'body' : 'html').first().makeClipping();
+		}
 		this.hideElements('object');
 		this.hideElements('embed');
 
@@ -324,7 +327,10 @@ riot.Popup.prototype = {
 	},
 		
 	close: function() {
-		if (browserInfo.ie) this.showElements('select');
+		if (browserInfo.ie) {
+			this.showElements('select');
+			this.root.undoClipping();
+		}
 		this.showElements('object');
 		this.showElements('embed');
 		this.div.remove();

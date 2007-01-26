@@ -37,18 +37,22 @@ riot.Component.prototype = {
 	
 	setMode: function(mode) {
 		if (mode == null) {
-			this.hover.remove();
+			if (this.hover) {
+				this.hover.remove();
+				this.hover = null;
+			}
 		}
 		else {
 			if (mode == 'properties' && !this.formId) {
 				this.mode = null;
 				return;
 			}
-			this.hover = RBuilder.node('a', {className: 'riot-highlight', href: '?',
-				style: {position: 'absolute', display: 'block'}, parent: document.body, onclick: this.handlers[mode]}, 
+			this.hover = RBuilder.node('a', {className: 'riot-highlight', href: '#',
+				style: {position: 'absolute', display: 'none'}, parent: document.body, onclick: this.handlers[mode]}, 
 				RBuilder.node('img', {src: Resources.basePath + '/1px.gif', style: {width: '100%', height: '100%'}})
 			);
 			Position.clone(this.element, this.hover, {offsetTop: -2, offsetLeft: -2});
+			this.hover.style.display = 'block';
 		}
 		this.mode = mode;
 	},
@@ -56,13 +60,15 @@ riot.Component.prototype = {
 	remove: function(event) {
 		var e = event || window.event;
 		if (e) Event.stop(e);
-		this.setMode(null);
+		riot.toolbar.buttons.remove.disable();
 		new Effect.Remove(this.element, function(el) {
 			Element.remove(el);
 			el.component.componentList.updatePositionClasses();
+			riot.toolbar.buttons.remove.enable().click();
 		});
 		ComponentEditor.deleteComponent(this.id);
 		riot.toolbar.setDirty(this.componentList, true);
+		return false;
 	},
 		
 	setType: function(type) {
@@ -93,6 +99,7 @@ riot.Component.prototype = {
 	properties: function(event) {
 		var e = event || window.event;
 		if (e) Event.stop(e);
+		if (this.hover) this.hover.blur();
 		Element.removeClassName(this.element, 'riot-highlight');
 		if (this.formId) {
 			var formUrl = riot.path + '/pages/form/' + this.id + '?instantPublish=' + riot.toolbar.instantPublishMode;
@@ -103,14 +110,18 @@ riot.Component.prototype = {
 			});
 			riot.popup.component = this;
 		}
+		return false;
 	},
 	
 	propertiesChanged: function() {
 		riot.toolbar.setDirty(this.componentList, true);
+		//riot.toolbar.buttons.properties.disable();
+		riot.toolbar.buttons.browse.click();
 		ComponentEditor.getHtml(this.componentList.controllerId, this.id, 
 			function(html) {
 				this.setHtml(html)
 				riot.popup.close();
+				//riot.toolbar.buttons.properties.enable().click();
 			}.bind(this));
 	},
 	
@@ -505,10 +516,14 @@ riot.ComponentDragObserver.prototype = {
 	}
 }
 
+// Preload the 1px image ...
+new Image().src = Resources.basePath + '/1px.gif';
+
 riot.editProperties = function(e) {
 	e = e || this;
 	var componentElement = RElement.getAncestorByClassName(e, 'riot-component');
 	if (componentElement && (!componentElement.component || !componentElement.component.mode)) {
 		riot.toolbar.buttons.properties.click();
+		componentElement.component.properties();
 	}
 }

@@ -188,7 +188,8 @@ html .riot-insert-button-active {
 }
 
 .riot-highlight {
-	z-index: 1000;
+	z-index: 999;
+	-moz-user-select: none;
 }
 .riot-highlight:hover {
 	border:2px dotted ${highlight};
