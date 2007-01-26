@@ -28,7 +28,11 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.util.HtmlUtils;
 
@@ -37,6 +41,8 @@ import org.springframework.web.util.HtmlUtils;
  */
 public final class FormatUtils {
 
+	private static final Log log = LogFactory.getLog(FormatUtils.class);
+	
 	private static NumberFormat numberFormat = new DecimalFormat("0.#");
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
@@ -556,5 +562,25 @@ public final class FormatUtils {
 			}
 		}
 		return escapedArgs;
+	}
+	
+	/**
+	 * Extracts an integer from a String using the first capture group of the 
+	 * given regular expression.
+	 * @since 6.4
+	 */
+	public static int parseInt(String s, String regex) {
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(s);
+		if (matcher.find()) {
+			String group = matcher.group(1);
+			try {
+				return Integer.parseInt(group);
+			}
+			catch (NumberFormatException e) {
+				log.error("Not a valid number: " + group);
+			}
+		}
+		return -1;
 	}
 }

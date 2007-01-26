@@ -38,10 +38,21 @@ public class ImageMagickCropper implements ImageCropper {
 
 	private String convertCommand = "convert";
 	
+	private boolean repage = true;
+
 	public void setConvertCommand(String convertCommand) {
 		this.convertCommand = convertCommand;
 	}
 	
+	/**
+	 * Sets whether the "+repage" operation should be used. If set to 
+	 * <code>false</code>, "-page +0+0" is used instead (for IM 5 and earlier).
+	 * Default is <code>true</code> 
+	 */
+	public void setRepage(boolean repage) {
+		this.repage = repage;
+	}
+
 	public void cropImage(File source, File dest, int width, int height,
 			int x, int y, int scaledWidth) throws IOException {
 		
@@ -52,9 +63,13 @@ public class ImageMagickCropper implements ImageCropper {
 		cmd.add(scaledWidth + "x>");
 		cmd.add("-crop");
 		cmd.add(width + "x" + height + "+" + x + "+" + y);
-		cmd.add("+repage");
-		//cmd.add("-sharpen");
-		//cmd.add("0x.5");
+		if (repage) {
+			cmd.add("+repage");
+		}
+		else {
+			cmd.add("-page");
+			cmd.add("+0+0");
+		}
 		cmd.add("-quality");
 		cmd.add("100");
 		
