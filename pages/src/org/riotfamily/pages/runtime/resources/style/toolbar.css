@@ -195,6 +195,10 @@ html .riot-insert-button-active {
 	border:2px dotted ${highlight};
 	cursor: crosshair;
 }
+.riot-highlight:focus {
+	-moz-outline: none;
+	outline: none;
+}
 
 .riot-no-inheritance {
 	display: none;

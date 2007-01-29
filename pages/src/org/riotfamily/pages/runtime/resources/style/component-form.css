@@ -36,9 +36,13 @@ div.title {
 	background:none;
 }
 .title label {
-	padding: 0;
-	background:none;
-	margin:0;
+	padding: 2px 0 0 0;
+	background: none;
+	margin: 0;
+}
+.title span.hint-trigger {
+	background-image: url(images/hint.gif);
+	background-position: 0px 3px;
 }
 
 .single .form-element {
