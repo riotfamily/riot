@@ -192,6 +192,13 @@ riot.PopupTextEditor = riot.InplaceEditor.extend({
 		ComponentEditor.getText(this.component.id, this.key, 
 			this.setText.bind(this));
 	},
+	
+	setText: function(text) {
+		if ((!text || text.length == 0) && this.options.useInnerHtmlAsDefault) {
+			text = this.element.innerHTML;
+		}
+		this.SUPER(text);
+	},
 		
 	showEditor: function() {
 		this.popup = new riot.TextareaPopup(this);
@@ -497,14 +504,14 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	brightness /= 3;
 	var bgImage = brightness > 227 ? 'margin.gif' : 'margin_hi.gif';
 
-	var editorWidth = riot.activeEditor.width;
-	var componentWidth = riot.activeEditor.component.element.offsetWidth;
+	var editorWidth = tinyMCE.isMSIE ? body.scrollWidth : riot.activeEditor.width;
+	var componentWidth = riot.activeEditor.element.offsetWidth;
 	var margin = editorWidth - componentWidth;
 	if (margin > 0) {
-		body.style.paddingRight = margin + 'px';
+		body.style.paddingRight = (margin - 5) + 'px';
 		body.style.backgroundImage = 'url(' + Resources.resolveUrl(bgImage) + ')';
 		body.style.backgroundRepeat = 'repeat-y';
-		body.style.backgroundPosition = componentWidth + 'px';
+		body.style.backgroundPosition = (componentWidth + 5) + 'px';
 		body.style.backgroundAttachment = 'fixed';
 	}
 }

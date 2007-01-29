@@ -147,10 +147,10 @@ riot.Component.prototype = {
 							this.editors.push(new riot.PopupTextEditor(e, this));
 						}
 						else if (editorType == 'richtext') {
-							this.editors.push(new riot.RichtextEditor(e, this));
+							this.editors.push(new riot.RichtextEditor(e, this, {useInnerHtmlAsDefault: true}));
 						}
 						else if (editorType == 'richtext-chunks') {
-							this.editors.push(new riot.RichtextEditor(e, this, {split: true}));
+							this.editors.push(new riot.RichtextEditor(e, this, {split: true, useInnerHtmlAsDefault: true}));
 						}
 					}
 				}
