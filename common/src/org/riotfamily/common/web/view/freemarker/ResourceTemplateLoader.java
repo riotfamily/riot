@@ -37,7 +37,14 @@ public class ResourceTemplateLoader implements TemplateLoader,
 		ResourceLoaderAware {
 
 	private ResourceLoader resourceLoader;
-		
+	
+	public ResourceTemplateLoader() {
+	}
+	
+	public ResourceTemplateLoader(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
+	}
+
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
 	}
