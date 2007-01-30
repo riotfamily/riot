@@ -102,11 +102,13 @@ public class ListItem {
 	}
 
 	void setDefaultCommandIds(String[] defaultCommandIds) {
-		for (int i = 0; i < defaultCommandIds.length; i++) {
-			CommandState state = getCommandState(defaultCommandIds[i]);
-			if (state != null && state.isEnabled()) {
-				defaultCommandId = state.getId();
-				break;
+		if (defaultCommandIds != null) {
+			for (int i = 0; i < defaultCommandIds.length; i++) {
+				CommandState state = getCommandState(defaultCommandIds[i]);
+				if (state != null && state.isEnabled()) {
+					defaultCommandId = state.getId();
+					break;
+				}
 			}
 		}
 	}
