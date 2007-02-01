@@ -209,6 +209,17 @@ public final class FormatUtils {
 	}
 
 	/**
+	 * Truncates the given String if its length exceeds the specified value.
+	 * @since 6.4
+	 */
+	public static String truncate(String s, int length) {
+		if (s == null || s.length() <= length) {
+			return s;
+		}
+		return s.substring(0, length);
+	}
+	
+	/**
 	 * Converts the given String into a valid CSS class name.
 	 */
 	public static String toCssClass(String s) {
