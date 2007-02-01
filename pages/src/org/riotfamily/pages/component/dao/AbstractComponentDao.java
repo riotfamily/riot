@@ -24,6 +24,7 @@
 package org.riotfamily.pages.component.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.property.PropertyProcessor;
+import org.riotfamily.riot.security.AccessController;
 
 /**
  * Abstract base class for {@link Component implementations that delegates
@@ -76,6 +78,8 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 * Saves the given ComponentList.
 	 */
 	public void saveComponentList(ComponentList list) {
+		list.setLastModified(new Date());
+		list.setLastModifiedBy(AccessController.getPrincipalForCurrentThread());
 		saveObject(list);
 	}
 
@@ -91,6 +95,8 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 */
 	public void updateComponentList(ComponentList list) {
 		if (list.getId() != null) {
+			list.setLastModified(new Date());
+			list.setLastModifiedBy(AccessController.getPrincipalForCurrentThread());
 			updateObject(list);
 		}
 	}
@@ -163,6 +169,11 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 * 
 	 */
 	public ComponentVersion getOrCreatePreviewVersion(VersionContainer container, String type) {
+		ComponentList list = container.getList();
+		if (!list.isDirty()) {
+			getOrCreatePreviewContainers(list);
+			updateComponentList(list);
+		}
 		ComponentVersion preview = container.getPreviewVersion();
 		if (preview == null) {
 			ComponentVersion live = container.getLiveVersion();

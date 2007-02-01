@@ -10,8 +10,8 @@
 		<id name="id">
 			<generator class="native" />
 		</id>
-		<property name="path" column="`path`" />
-		<property name="key" column="`key`"/>
+		<property name="path" column="`path`" unique-key="composite_key" />
+		<property name="key" column="`key`" unique-key="composite_key" />
 		<list name="liveList" lazy="false" cascade="all">
 			<key column="live_list" />
 			<index column="live_pos" />
@@ -23,6 +23,8 @@
 			<one-to-many class="VersionContainer" />
 		</list>
 		<property name="dirty" />
+		<property name="lastModified" />
+		<property name="lastModifiedBy" />
 	</class>
 	
 	<class name="VersionContainer" table="components" lazy="false">

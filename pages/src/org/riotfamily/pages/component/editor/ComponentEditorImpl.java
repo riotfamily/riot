@@ -26,7 +26,6 @@ package org.riotfamily.pages.component.editor;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -342,6 +341,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 				result.add(componentList.getId());
 				continue;
 			}
+			/*
 			List containers = componentList.getLiveList();
 			Iterator it = containers.iterator();
 			while (it.hasNext()) {
@@ -353,6 +353,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 					break;
 				}
 			}
+			*/
 		}
 		return result;
 	}

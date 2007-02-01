@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.component;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,6 +45,10 @@ public class ComponentList {
 	private List previewList;
 	
 	private boolean dirty;
+	
+	private Date lastModified;
+	
+	private String lastModifiedBy;
 
 	public Long getId() {
 		return this.id;
@@ -85,6 +90,11 @@ public class ComponentList {
 		this.previewList = list;
 	}
 
+	/**
+	 * Returns whether the list has a preview-list. The flag is needed because
+	 * Hibernate does not distinguish between a null collection reference and 
+	 * an empty collection.  
+	 */
 	public boolean isDirty() {
 		return this.dirty;
 	}
@@ -93,6 +103,38 @@ public class ComponentList {
 		this.dirty = dirty;
 	}
 	
+	/**
+	 * Returns the date of the last modification.
+	 * @since 6.4
+	 */
+	public Date getLastModified() {
+		return this.lastModified;
+	}
+
+	/**
+	 * Sets the date of the last modification.
+	 * @since 6.4
+	 */
+	public void setLastModified(Date lastModified) {
+		this.lastModified = lastModified;
+	}
+
+	/**
+	 * Returns the principal that made the last modification.
+	 * @since 6.4
+	 */
+	public String getLastModifiedBy() {
+		return this.lastModifiedBy;
+	}
+
+	/**
+	 * Sets the principal that made the last modification.
+	 * @since 6.4
+	 */
+	public void setLastModifiedBy(String lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("ComponentList ");

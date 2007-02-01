@@ -26,7 +26,7 @@
 				<db:column name="everPublished" type="BIT" />
 				<db:column name="systemPage" type="BIT" />
 			</db:create-table>
-			<db:add-foreign-key table="pages" name="parent" references="pages">
+			<db:add-foreign-key table="pages" name="pages_parent" references="pages">
 				<db:ref local="parent" foreign="id" />
 			</db:add-foreign-key>
 	
@@ -34,7 +34,7 @@
 				<db:column name="`path`" type="VARCHAR" length="255" not-null="true" primary-key="true" />
 				<db:column name="page" type="BIGINT" />
 			</db:create-table>
-			<db:add-foreign-key table="page_aliases" name="page" references="pages">
+			<db:add-foreign-key table="page_aliases" name="page_aliases_page" references="pages">
 				<db:ref local="page" foreign="id" />
 			</db:add-foreign-key>
 
@@ -55,10 +55,10 @@
 				<db:column name="preview_version" type="BIGINT" />
 			</db:create-table>
 			
-			<db:add-foreign-key table="components" name="live_list" references="component_lists">
+			<db:add-foreign-key table="components" name="components_live_list" references="component_lists">
 				<db:ref local="live_list" foreign="id" />
 			</db:add-foreign-key>
-			<db:add-foreign-key table="components" name="preview_list" references="component_lists">
+			<db:add-foreign-key table="components" name="components_preview_list" references="component_lists">
 				<db:ref local="preview_list" foreign="id" />
 			</db:add-foreign-key>
 				
@@ -68,10 +68,10 @@
 				<db:column name="dirty" type="BIT" />
 			</db:create-table>
 			
-			<db:add-foreign-key table="components" name="live_version" references="component_versions">
+			<db:add-foreign-key table="components" name="components_live_version" references="component_versions">
 				<db:ref local="live_version" foreign="id" />
 			</db:add-foreign-key>
-			<db:add-foreign-key table="components" name="preview_version" references="component_versions">
+			<db:add-foreign-key table="components" name="components_preview_version" references="component_versions">
 				<db:ref local="preview_version" foreign="id" />
 			</db:add-foreign-key>
 			
@@ -80,6 +80,13 @@
 				<db:column name="`key`" type="VARCHAR" length="255" not-null="true" primary-key="true" />
 				<db:column name="elt" type="LONGVARCHAR" />
 			</db:create-table>
+		</db:change-set>
+		<db:change-set id="uniqueComponentListKeys">
+			<db:add-unique-constraint table="component_lists" name="component_list_key" on="`path`,`key`" />
+		</db:change-set>
+		<db:change-set id="componentMetaData">
+			<db:add-column table="component_lists" name="lastModifiedBy" type="VARCHAR" length="255" />
+			<db:add-column table="component_lists" name="lastModified" type="TIMESTAMP" />
 		</db:change-set>
 	</db:history>
 </beans>

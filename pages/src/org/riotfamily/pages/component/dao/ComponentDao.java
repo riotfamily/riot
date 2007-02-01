@@ -44,6 +44,11 @@ public interface ComponentDao {
 	public List findComponentLists(String path);
 	
 	/**
+	 * Returns all {@link ComponentList ComponentLists} marked as dirty.
+	 */
+	public List findDirtyComponentLists();
+	
+	/**
 	 * Returns all {@link ComponentList ComponentLists} with the given path
 	 * and key.
 	 */

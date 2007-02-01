@@ -66,6 +66,13 @@ public class HibernateComponentDao extends AbstractComponentDao {
 		query.setParameter("path", path);
 		return query.list();
 	}
+	
+	public List findDirtyComponentLists() {
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"from ComponentList list where list.dirty = true");
+				
+		return query.list();
+	}
 
 	protected Object loadObject(Class clazz, Long id) {
 		return sessionFactory.getCurrentSession().get(clazz, id);
