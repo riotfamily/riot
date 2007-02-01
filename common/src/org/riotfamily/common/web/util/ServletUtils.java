@@ -98,6 +98,13 @@ public final class ServletUtils {
 		return true;
     }
     
+    /**
+	 * @since 6.4
+     */
+    public static boolean isHttpUrl(String url) {
+    	return isAbsoluteUrl(url) && url.startsWith("http");
+    }
+    
 	public static String resolveUrl(String url,	HttpServletRequest request) {
 		if (url == null || isAbsoluteUrl(url)) {
 			return url;
