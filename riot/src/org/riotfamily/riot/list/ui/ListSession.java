@@ -269,16 +269,18 @@ public class ListSession implements RenderContext {
 		
 	private String getHeading(String property, int lookupLevel) {
 		Class clazz = getBeanClass();
-		String root = property;
-        int pos = property.indexOf('.');
-        if (pos > 0) {
-            root = property.substring(0, pos);
-        }
-        if (lookupLevel > 1) {
-        	clazz = PropertyUtils.getPropertyType(clazz, root);
-        	String nestedProperty = property.substring(pos + 1);
-        	return getHeading(nestedProperty, lookupLevel - 1);
-        }
+		if (clazz != null) {
+			String root = property;
+	        int pos = property.indexOf('.');
+	        if (pos > 0) {
+	            root = property.substring(0, pos);
+	        }
+	        if (lookupLevel > 1) {
+	        	clazz = PropertyUtils.getPropertyType(clazz, root);
+	        	String nestedProperty = property.substring(pos + 1);
+	        	return getHeading(nestedProperty, lookupLevel - 1);
+	        }
+		}
 	    return messageResolver.getPropertyLabel(
 	    		getListId(), clazz, property);
 	}

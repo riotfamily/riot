@@ -23,7 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.i18n;
 
+import java.util.ArrayList;
+
 import org.riotfamily.common.util.PropertyUtils;
+import org.springframework.util.StringUtils;
 
 
 
@@ -40,7 +43,8 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 			return new String[] {
 					errorCode
 			};
-		} else {
+		} 
+		else {
 			return new String[] {
 				ERROR_PREFIX + objectName + SEPARATOR + errorCode,
 				ERROR_PREFIX + errorCode
@@ -50,11 +54,13 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 
 	public String[] resolveMessageCodes(String errorCode, String objectName, 
 			String field, Class fieldType) {
+		
 		if (errorCode.startsWith(ERROR_PREFIX)) {
 			return new String[] {
 					errorCode
 			};
-		} else {
+		} 
+		else {
 			return new String[] {
 				ERROR_PREFIX + objectName + SEPARATOR + field + SEPARATOR + errorCode,
 				ERROR_PREFIX + field + SEPARATOR + errorCode,
@@ -64,32 +70,53 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 	}
 	
 	public String[] resolveLabel(String objectName, Class objectClass) {
-		return new String[] {
-			objectName,
-			objectClass.getName()
-		};
+		ArrayList codes = new ArrayList(2);
+		if (objectName != null) {
+			codes.add(objectName);
+		}
+		if (objectClass != null) {
+			codes.add(objectClass.getName());
+		}
+		return StringUtils.toStringArray(codes);
 	}
 
-	public String[] resolveLabel(String objectName, Class objectClass, String field) {
-		return new String[] {
-			objectName + '.' + field,
-			PropertyUtils.getDeclaringClass(objectClass, field).getName() + '.' + field
-		};
+	public String[] resolveLabel(String objectName, Class objectClass, 
+			String field) {
+		
+		ArrayList codes = new ArrayList(2);
+		if (objectName != null) {
+			codes.add(objectName + '.' + field);
+		}
+		if (objectClass != null) {
+			codes.add(PropertyUtils.getDeclaringClass(
+					objectClass, field).getName() + '.' + field);
+		}
+		return StringUtils.toStringArray(codes);
 	}
 	
-	public String[] resolveHint(String objectName, Class objectClass, String field) {
+	public String[] resolveHint(String objectName, Class objectClass, 
+			String field) {
+		
+		ArrayList codes = new ArrayList(2);
 		if (field == null) {
-			return new String[] {
-					objectName +  HINT_SUFFIX ,
-					PropertyUtils.getDeclaringClass(objectClass, field).getName() + HINT_SUFFIX
-				};
+			if (objectName != null) {
+				codes.add(objectName +  HINT_SUFFIX);
+			}
+			if (objectClass != null) {
+				codes.add(PropertyUtils.getDeclaringClass(
+						objectClass, field).getName() + HINT_SUFFIX);
+			}
 		}
 		else {
-			return new String[] {
-				objectName +  '.' + field + HINT_SUFFIX ,
-				PropertyUtils.getDeclaringClass(objectClass, field).getName() + '.' + field + HINT_SUFFIX
-			};
+			if (objectName != null) {
+				codes.add(objectName +  '.' + field + HINT_SUFFIX);
+			}
+			if (objectClass != null) {
+				codes.add(PropertyUtils.getDeclaringClass(
+						objectClass, field).getName() + '.' + field + HINT_SUFFIX);
+			}
 		}
+		return StringUtils.toStringArray(codes);
 	}
 
 }
