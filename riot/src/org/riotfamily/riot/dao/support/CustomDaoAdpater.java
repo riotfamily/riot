@@ -103,9 +103,9 @@ public class CustomDaoAdpater implements RiotDao, InitializingBean {
 		Assert.notNull(listMethodName, "A listMethod must be specified.");
 		listMethod = daoClass.getMethod(listMethodName, null);
 		
-		Assert.notNull(loadMethodName, "A loadMethod must be specified.");
-		loadMethod = daoClass.getMethod(loadMethodName, new Class[] { idClass });
-		
+		if (loadMethodName != null) {
+			loadMethod = daoClass.getMethod(loadMethodName, new Class[] { idClass });
+		}
 		if (saveMethodName != null) {
 			saveMethod = daoClass.getMethod(saveMethodName, new Class[] { itemClass });
 		}
@@ -128,6 +128,9 @@ public class CustomDaoAdpater implements RiotDao, InitializingBean {
 	}
 
 	public String getObjectId(Object item) {
+		if (idProperty == null) {
+			return null;
+		}
 		return PropertyUtils.getPropertyAsString(item, idProperty);
 	}
 
@@ -136,6 +139,7 @@ public class CustomDaoAdpater implements RiotDao, InitializingBean {
 	}
 
 	public Object load(String objectId) {
+		Assert.notNull(loadMethod, "A loadMethod must be specified.");
 		Object id = PropertyUtils.convert(objectId, idClass);
 		return ReflectionUtils.invokeMethod(loadMethod, customDao, new Object[] { id });
 	}
