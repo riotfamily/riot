@@ -185,6 +185,11 @@
 	</bean>
 	
 	<!-- 
+	  - RiotDao to list dirty ComponentLists.
+	  -->
+	<bean id="dirtyComponentListDao" class="org.riotfamily.pages.component.dao.DirtyComponentListDao" />
+	
+	<!-- 
 	  - Command to publish or unpublish pages.
 	  -->
 	<bean id="publishPageCommand" class="org.riotfamily.pages.page.PublishPageCommand" />	
