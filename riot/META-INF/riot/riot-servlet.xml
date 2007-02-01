@@ -290,10 +290,11 @@
 		
 	<bean id="cssProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<property name="properties">
-			<props>
-				<prop key="highlight">#cb0038</prop>
-				<prop key="toolbarOutline">#3d3d3d</prop>
-			</props>
+			<map>
+				<entry key="highlight" value="#cb0038" />
+				<entry key="toolbarOutline" value="#3d3d3d" />
+				<entry key="resourcePath" value-ref="riotResourcePath" />
+			</map>
 		</property>
 	</bean>
 	
