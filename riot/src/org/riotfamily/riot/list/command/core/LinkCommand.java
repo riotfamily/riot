@@ -24,6 +24,7 @@
 package org.riotfamily.riot.list.command.core;
 
 import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.form.command.FormCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
@@ -62,7 +63,7 @@ public class LinkCommand extends AbstractCommand implements FormCommand {
 
 	public CommandResult execute(CommandContext context) {
 		String url = PropertyUtils.evaluate(link, context.getBean());
-		if (contextRelative) {
+		if (contextRelative && !ServletUtils.isAbsoluteUrl(url)) {
 			url = context.getRequest().getContextPath() + url;
 		}
 		return new PopupResult(url, windowName,	
