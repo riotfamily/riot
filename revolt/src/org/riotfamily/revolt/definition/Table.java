@@ -52,7 +52,7 @@ public class Table extends Identifier {
 	
 	public Table(String name, List columns) {
 		super(name);
-		setColumns(columns);
+		setColumns(new ArrayList(columns));
 	}
 
 	public List getColumns() {
