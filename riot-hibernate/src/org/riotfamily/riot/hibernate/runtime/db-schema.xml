@@ -38,7 +38,7 @@
 				<db:column name="notification" type="BIGINT" />
 				<db:column name="read" type="BIT" />
 			</db:create-table>
-			<db:add-foreign-key table="riot_user_notification" name="notification" references="riot_notification">
+			<db:add-foreign-key table="riot_user_notification" name="riot_user_notification" references="riot_notification">
 				<db:ref local="notification" foreign="id" />
 			</db:add-foreign-key>
 			
@@ -64,7 +64,7 @@
 				<db:column name="priority" type="INTEGER" />
 				<db:column name="message" type="VARCHAR" length="255" />
 			</db:create-table>
-			<db:add-foreign-key table="riot_job_log" name="job" references="riot_jobs">
+			<db:add-foreign-key table="riot_job_log" name="riot_job_log_job" references="riot_jobs">
 				<db:ref local="job" foreign="id" />
 			</db:add-foreign-key>
 		</db:change-set>
