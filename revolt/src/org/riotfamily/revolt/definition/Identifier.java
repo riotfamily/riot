@@ -57,7 +57,7 @@ public class Identifier {
 				&& name.endsWith(QUOTED_DELIMITER)) {
 			
 			quoted = true;
-			StringUtils.delete(name, QUOTED_DELIMITER);
+			name = StringUtils.delete(name, QUOTED_DELIMITER);
 		}
 		this.name = name;
 	}
