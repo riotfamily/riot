@@ -44,33 +44,48 @@ public class Evolver implements ApplicationContextAware {
 
 	private boolean automatic;
 	
+	private boolean validate = true;
+	
 	private HashMap scripts = new HashMap();
 	
 	private HashMap logTables = new HashMap();
 	
+	/**
+	 * Sets whether Revolt should automatically apply pending refactorings.
+	 */
 	public void setAutomatic(boolean automatic) {
 		this.automatic = automatic;
+	}
+	
+	/**
+	 * Sets whether Revolt should validate the schema. 
+	 * Default is <code>true</code>.
+	 */
+	public void setValidate(boolean validate) {
+		this.validate = validate;
 	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		Collection evolutions = BeanFactoryUtils.beansOfTypeIncludingAncestors(
 				applicationContext, EvolutionHistory.class).values();
 		
-		Iterator it = evolutions.iterator();
-		while (it.hasNext()) {
-			EvolutionHistory history = (EvolutionHistory) it.next();
-			history.init(getLogTable(history));
-			if (automatic) {
-				history.evolve();
+		if (automatic || validate) {
+			Iterator it = evolutions.iterator();
+			while (it.hasNext()) {
+				EvolutionHistory history = (EvolutionHistory) it.next();
+				history.init(getLogTable(history));
+				if (automatic) {
+					history.evolve();
+				}
+				else {
+					getScript(history).append(history.getScript());
+				}
 			}
-			else {
-				getScript(history).append(history.getScript());
-			}
-		}
-		if (!automatic) {
-			String instructions = getInstructions();
-			if (StringUtils.hasLength(instructions)) {
-				throw new EvolutionInstructions(instructions);
+			if (!automatic) {
+				String instructions = getInstructions();
+				if (StringUtils.hasLength(instructions)) {
+					throw new EvolutionInstructions(instructions);
+				}
 			}
 		}
 	}
