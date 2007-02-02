@@ -19,7 +19,7 @@
 	  -->
 	<bean id="pageMap" class="org.riotfamily.pages.page.PageMap">
 		<constructor-arg ref="pageDao" />
-		<constructor-arg ref="riotTransactionManager" />
+		<constructor-arg ref="transactionManager" />
 		<property name="eventMulticaster" ref="pageEventMulticaster" />
 	</bean>
 	

@@ -371,7 +371,7 @@
 	
 	<bean id="pathController" name="/path" class="org.riotfamily.riot.editor.ui.PathController">
 		<constructor-arg ref="editorRepository" />
-		<constructor-arg ref="riotTransactionManager" />
+		<constructor-arg ref="transactionManager" />
 	</bean>
 	
 	<bean id="formContextFactory" class="org.riotfamily.forms.controller.FormContextFactory">
@@ -400,7 +400,7 @@
 	<bean id="formController" class="org.riotfamily.riot.form.ui.FormController">
 		<constructor-arg ref="editorRepository" />
 		<constructor-arg ref="formRepository" />
-		<constructor-arg ref="riotTransactionManager" />
+		<constructor-arg ref="transactionManager" />
 		<constructor-arg ref="listService" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
@@ -414,7 +414,7 @@
 
 	<bean id="viewController" class="org.riotfamily.riot.editor.ui.ViewController">
 		<constructor-arg ref="editorRepository" />
-		<constructor-arg ref="riotTransactionManager" />
+		<constructor-arg ref="transactionManager" />
 		<constructor-arg ref="listService" />
 	</bean>
 	<alias name="viewController" alias="/view/@{editorId}" />

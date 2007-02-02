@@ -50,7 +50,7 @@
 	
 	<!-- Jobs -->
 	
-	<tx:advice id="matchAllTxInterceptor" transaction-manager="riotTransactionManager">
+	<tx:advice id="matchAllTxInterceptor">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" isolation="DEFAULT" />
 		</tx:attributes>

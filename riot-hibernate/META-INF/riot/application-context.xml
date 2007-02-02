@@ -49,7 +49,7 @@
 	</bean>
 
 	<!-- The Transaction Manager -->
-	<bean id="riotTransactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+	<bean id="transactionManager" name="riotTransactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 	
