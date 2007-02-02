@@ -68,6 +68,9 @@
 				<db:ref local="job" foreign="id" />
 			</db:add-foreign-key>
 		</db:change-set>
+		<db:change-set id="longJobDescription">
+			<db:modify-column table="riot_jobs" name="description" type="LONGVARCHAR" />
+		</db:change-set>
 	</db:history>
 	
 </beans>
