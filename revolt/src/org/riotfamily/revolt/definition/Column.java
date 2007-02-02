@@ -27,7 +27,7 @@ package org.riotfamily.revolt.definition;
  * @author Felix Gnass <fgnass@neteye.de>
  * 
  */
-public class Column extends Identifier {
+public class Column extends Identifier implements Cloneable {
 
 	private String type;
 
@@ -139,6 +139,15 @@ public class Column extends Identifier {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	public Column copy() {
+		try {
+			return (Column) clone();
+		} 
+		catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public void merge(Column column) {

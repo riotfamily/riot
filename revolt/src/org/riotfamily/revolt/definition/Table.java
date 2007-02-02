@@ -52,7 +52,7 @@ public class Table extends Identifier {
 	
 	public Table(String name, List columns) {
 		super(name);
-		setColumns(new ArrayList(columns));
+		setColumns(columns);
 	}
 
 	public List getColumns() {
@@ -60,14 +60,16 @@ public class Table extends Identifier {
 	}
 
 	public void setColumns(List columns) {
-		this.columns = columns;
+		this.columns = new ArrayList(columns.size());
 		primaryKeys.clear();
 		if (columns != null) {
 			Iterator it = columns.iterator();
 			while (it.hasNext()) {
 				Column column = (Column) it.next();
+				Column copy = column.copy();
+				this.columns.add(copy);
 				if (column.isPrimaryKey()) {
-					primaryKeys.add(column);
+					primaryKeys.add(copy);
 				}
 			}
 		}
@@ -75,9 +77,11 @@ public class Table extends Identifier {
 
 	public void addColumn(Column column) {
 		columns.remove(column);
-		columns.add(column);
+		primaryKeys.remove(column);
+		Column copy = column.copy();
+		columns.add(copy);
 		if (column.isPrimaryKey()) {
-			primaryKeys.add(column);
+			primaryKeys.add(copy);
 		}
 	}
 
