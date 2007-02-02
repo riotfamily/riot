@@ -35,6 +35,7 @@ import javax.sql.DataSource;
 import org.riotfamily.revolt.Dialect;
 import org.riotfamily.revolt.dialect.HsqlDialect;
 import org.riotfamily.revolt.dialect.MySqlDialect;
+import org.riotfamily.revolt.dialect.Postgresql8Dialect;
 import org.riotfamily.revolt.dialect.PostgresqlDialect;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -53,6 +54,7 @@ public class DialectResolver {
 	public DialectResolver() {
 		dialects = new ArrayList();
 		dialects.add(new PostgresqlDialect());
+		dialects.add(new Postgresql8Dialect());
 		dialects.add(new MySqlDialect());
 		dialects.add(new HsqlDialect());
 	}
