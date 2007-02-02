@@ -255,16 +255,23 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 * Deletes the given ComponentList.
 	 */
 	public void deleteComponentList(ComponentList list) {
-		if (list.getLiveList() != null) {
-			Iterator it = list.getLiveList().iterator();
+		List previewList = list.getPreviewList();
+		List liveList = list.getLiveList();
+		if (liveList != null) {
+			Iterator it = liveList.listIterator();
 			while (it.hasNext()) {
-				deleteVersionContainer((VersionContainer) it.next());
+				VersionContainer component = (VersionContainer) it.next();
+				if (previewList == null || !previewList.contains(component)) {
+					deleteVersionContainer(component);
+				}
+				it.remove();
 			}
 		}
-		if (list.getPreviewList() != null) {
-			Iterator it = list.getPreviewList().iterator();
+		if (previewList != null) {
+			Iterator it = previewList.listIterator();
 			while (it.hasNext()) {
 				deleteVersionContainer((VersionContainer) it.next());
+				it.remove();
 			}
 		}
 		deleteObject(list);
