@@ -96,34 +96,9 @@ public class HsqlDialect extends Sql92Dialect {
 
 	public Script modifyColumn(String table, Column column) {
 		Script sql = new Script();
-		if (column.isDefaultValueSet()) {
-			addAlterColumn(sql, table, column);
-			sql.append("SET DEFAULT").append(convertQuotes(column.getDefaultValue()));
-			sql.newStatement();
-		}
-		if (column.isNotNullSet()) {
-			addAlterColumn(sql, table, column);
-			sql.append("SET");
-			if (column.isNotNull()) {
-				sql.append("NOT");
-			}
-			sql.append("NULL");
-			sql.newStatement();
-		}
-		if (column.getType() != null) {
-			sql.append(modifyColumnType(table, column));
-		}
+		sql.append("ALTER TABLE").append(quote(table)).append("ALTER COLUMN");
+		addColumnDefinition(sql, column);
 		return sql;
-	}
-
-	protected Script modifyColumnType(String table, Column column) {
-		throw new OperationNotSupportedException(
-				"Changing the column type is currently not supported.");
-	}
-
-	protected void addAlterColumn(Script sql, String table, Column column) {
-		sql.append("ALTER TABLE").append(quote(table))
-				.append("ALTER COLUMN").append(quote(column));
 	}
 
 	public Script renameColumn(String table, String name, String renameTo) {

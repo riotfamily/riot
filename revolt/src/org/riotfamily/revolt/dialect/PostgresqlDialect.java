@@ -45,15 +45,15 @@ public class PostgresqlDialect extends Sql92Dialect {
 		registerType(TypeMap.DOUBLE, "DOUBLE PRECISION");
 		registerType(TypeMap.NUMERIC, "NUMERIC");
 		registerType(TypeMap.DECIMAL, "NUMERIC");
-		registerType(TypeMap.CHAR, "CHAR");
-		registerType(TypeMap.VARCHAR, "VARCHAR");
+		registerType(TypeMap.CHAR, "CHAR", true);
+		registerType(TypeMap.VARCHAR, "VARCHAR", true);
 		registerType(TypeMap.LONGVARCHAR, "TEXT");
 		registerType(TypeMap.DATE, "DATE");
 		registerType(TypeMap.TIME, "TIME");
 		registerType(TypeMap.TIMESTAMP, "TIMESTAMP");
-		registerType(TypeMap.BINARY, "BYTEA");
-		registerType(TypeMap.VARBINARY, "BYTEA");
-		registerType(TypeMap.LONGVARBINARY, "BYTEA");
+		registerType(TypeMap.BINARY, "BYTEA", true);
+		registerType(TypeMap.VARBINARY, "BYTEA", true);
+		registerType(TypeMap.LONGVARBINARY, "BYTEA", true);
 		registerType(TypeMap.BLOB, "BYTEA");
 		registerType(TypeMap.CLOB, "TEXT");
 	}
@@ -61,7 +61,7 @@ public class PostgresqlDialect extends Sql92Dialect {
 	public boolean supports(String databaseProductName, 
 			int majorVersion, int minorVersion) {
 
-		return "PostgreSQL".equals(databaseProductName);
+		return "PostgreSQL".equals(databaseProductName) && majorVersion < 8;
 	}
 		
 	public Script renameTable(String name, String renameTo) {

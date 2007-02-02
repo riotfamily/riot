@@ -45,14 +45,14 @@ public class MySqlDialect extends Sql92Dialect {
 		registerType(TypeMap.DOUBLE, "DOUBLE");
 		registerType(TypeMap.NUMERIC, "NUMERIC");
 		registerType(TypeMap.DECIMAL, "DECIMAL");
-		registerType(TypeMap.CHAR, "CHAR");
-		registerType(TypeMap.VARCHAR, "VARCHAR");
+		registerType(TypeMap.CHAR, "CHAR", true);
+		registerType(TypeMap.VARCHAR, "VARCHAR", true);
 		registerType(TypeMap.LONGVARCHAR, "TEXT");
 		registerType(TypeMap.DATE, "DATE");
 		registerType(TypeMap.TIME, "TIME");
 		registerType(TypeMap.TIMESTAMP, "TIMESTAMP");
-		registerType(TypeMap.BINARY, "BINARY");
-		registerType(TypeMap.VARBINARY, "VARBINARY");
+		registerType(TypeMap.BINARY, "BINARY", true);
+		registerType(TypeMap.VARBINARY, "VARBINARY", true);
 		registerType(TypeMap.LONGVARBINARY, "VARBINARY");
 		registerType(TypeMap.BLOB, "BLOB");
 		registerType(TypeMap.CLOB, "TEXT");

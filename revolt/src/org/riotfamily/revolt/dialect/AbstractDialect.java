@@ -24,6 +24,7 @@
 package org.riotfamily.revolt.dialect;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +41,8 @@ public abstract class AbstractDialect implements Dialect {
 	private static Log log = LogFactory.getLog(AbstractDialect.class);
 	
 	private HashMap nativeTypes = new HashMap();
+	
+	private HashSet typesWithLength = new HashSet();
 
 	public AbstractDialect() {
 		registerTypes();
@@ -51,7 +54,20 @@ public abstract class AbstractDialect implements Dialect {
 	protected abstract void registerTypes();
 	
 	protected final void registerType(String jdbcName, String nativeName) {
+		registerType(jdbcName, nativeName, false);
+	}
+	
+	protected final void registerType(String jdbcName, String nativeName, 
+			boolean hasLength) {
+		
 		nativeTypes.put(jdbcName, nativeName);
+		if (hasLength) {
+			typesWithLength.add(jdbcName);
+		}
+	}
+	
+	protected boolean typeHasLength(String type) {
+		return typesWithLength.contains(type);
 	}
 
 	protected final String getColumnType(Column column) {
@@ -59,10 +75,10 @@ public abstract class AbstractDialect implements Dialect {
 		if (type == null) {
 			throw new TypeNotSupportedException(column.getType());
 		}
-		if (column.isLengthSet()) {
+		if (column.isLengthSet() && typeHasLength(type)) {
 			type += "(" + column.getLength() + ")";
 		}
 		return type;
 	}
-
+	
 }
