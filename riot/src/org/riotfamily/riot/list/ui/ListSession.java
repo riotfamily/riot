@@ -58,6 +58,7 @@ import org.riotfamily.riot.list.command.core.DescendCommand;
 import org.riotfamily.riot.list.command.result.ConfirmResult;
 import org.riotfamily.riot.list.support.ListParamsImpl;
 import org.riotfamily.riot.list.ui.render.RenderContext;
+import org.riotfamily.riot.security.AccessController;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
@@ -354,9 +355,12 @@ public class ListSession implements RenderContext {
 			Command command = (Command) it.next();
 			CommandState state = new CommandState();
 			String action = command.getAction(context);
+			boolean granted = AccessController.isGranted(
+					action, bean, listDefinition);
+			
 			state.setId(command.getId());
 			state.setAction(action);
-			state.setEnabled(command.isEnabled(context));
+			state.setEnabled(granted && command.isEnabled(context));
 			state.setLabel(command.getLabel(context));
 			result.add(state);
 		}
@@ -369,23 +373,28 @@ public class ListSession implements RenderContext {
 		
 		Collection commands = item != null ? itemCommands : listCommands;
 		Command command = getCommand(commands, commandId);
-		
+		Object bean = null;
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		if (item != null) {
 			context.setItem(item);
 		}
 		else {
-			context.setBean(EditorDefinitionUtils.loadParent(
-					listDefinition, parentId));
+			bean = EditorDefinitionUtils.loadParent(listDefinition, parentId);
+			context.setBean(bean);
 		}
-		
-		if (!confirmed) {
-			String message = command.getConfirmationMessage(context);
-			if (message != null) {
-				return new ConfirmResult(item, commandId, message);
+		String action = command.getAction(context);
+		if (AccessController.isGranted(action, bean, listDefinition)) {
+			if (!confirmed) {
+				String message = command.getConfirmationMessage(context);
+				if (message != null) {
+					return new ConfirmResult(item, commandId, message);
+				}
 			}
+			return command.execute(context);
 		}
-		return command.execute(context);
+		else {
+			return null;
+		}
 	}
 	
 	private Command getCommand(Collection commands, String id) {
