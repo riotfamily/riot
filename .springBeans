@@ -18,8 +18,8 @@
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
-				<config>riot/META-INF/riot/application-context.xml</config>
 				<config>riot-hibernate/META-INF/riot/application-context.xml</config>
+				<config>riot/META-INF/riot/application-context.xml</config>
 				<config>pages/META-INF/riot/application-context.xml</config>
 				<config>pages/META-INF/riot/website-servlet.xml</config>
 			</configs>
@@ -29,8 +29,8 @@
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
-				<config>riot/META-INF/riot/application-context.xml</config>
 				<config>riot-hibernate/META-INF/riot/application-context.xml</config>
+				<config>riot/META-INF/riot/application-context.xml</config>
 				<config>pages/META-INF/riot/application-context.xml</config>
 				<config>riot/META-INF/riot/riot-servlet.xml</config>
 				<config>riot-hibernate/META-INF/riot/riot-servlet.xml</config>
