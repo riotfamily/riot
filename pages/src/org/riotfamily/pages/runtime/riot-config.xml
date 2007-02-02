@@ -38,6 +38,17 @@
 		<list:command id="add"/>
 		<list:command id="paste"/>
 	</list:list>
+	
+	<list:list id="dirtyComponentLists">
+		<list:dao ref="dirtyComponentListDao" />
+		<list:columns>
+			<list:column property="path" />
+			<list:column property="key" />
+			<list:column property="lastModified" />
+			<list:column property="lastModifiedBy" />
+			<list:command id="gotoPage" />
+		</list:columns>
+	</list:list>
 
 	<form:form id="page" bean-class="org.riotfamily.pages.page.PersistentPage" 
 			initializer-class="org.riotfamily.pages.page.support.PageFormInitializer">
