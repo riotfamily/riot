@@ -42,11 +42,11 @@ public class EvolutionInstructions extends RuntimeException {
 
 	public void printStackTrace(PrintStream s) {
 		if (!printed) {
-			s.append(instructions);
+			s.print(instructions);
 			printed = true;
 		}
 		else {
-			s.append("\t... see above");
+			s.print("\t... see above");
 		}
 	}
 	

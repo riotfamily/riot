@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt.definition;
 
+import org.springframework.util.StringUtils;
+
 
 /**
  * Abstract base for all classes that represent a named component within 
@@ -55,7 +57,7 @@ public class Identifier {
 				&& name.endsWith(QUOTED_DELIMITER)) {
 			
 			quoted = true;
-			name = name.replace(QUOTED_DELIMITER, "");
+			StringUtils.delete(name, QUOTED_DELIMITER);
 		}
 		this.name = name;
 	}
