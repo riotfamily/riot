@@ -45,7 +45,7 @@ import org.riotfamily.forms.FormRepository;
 import org.riotfamily.forms.controller.FormContextFactory;
 import org.riotfamily.forms.element.core.TextField;
 import org.riotfamily.forms.support.SimpleFormRequest;
-import org.riotfamily.riot.editor.DisplayDefinition;
+import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.TreeDefinition;
@@ -150,23 +150,25 @@ public class ListSession implements RenderContext {
 		return key;
 	}
 	
-	public void setChooserTarget(DisplayDefinition target) {
+	public void setChooserTarget(EditorDefinition target) {
+		listCommands = Collections.EMPTY_LIST;
+		itemCommands = new ArrayList();
+		
 		ListDefinition targetList = EditorDefinitionUtils
 				.getParentListDefinition(target);
 		
-		ListDefinition nextList = targetList;
-		if (listDefinition != targetList) {
-			nextList = EditorDefinitionUtils.getNextListDefinition(
-					listDefinition, targetList);
+		if (targetList != listDefinition) {
+			ListDefinition nextList = targetList;
+			if (listDefinition != targetList) {
+				nextList = EditorDefinitionUtils.getNextListDefinition(
+						listDefinition, targetList);
+			}
+			if (nextList instanceof TreeDefinition) {
+				TreeDefinition tree = (TreeDefinition) nextList;
+				nextList = tree.getNodeListDefinition();
+			}
+			itemCommands.add(new DescendCommand(nextList, target));
 		}
-		if (nextList instanceof TreeDefinition) {
-			TreeDefinition tree = (TreeDefinition) nextList;
-			nextList = tree.getNodeListDefinition();
-		}
-		
-		listCommands = Collections.EMPTY_LIST;
-		itemCommands = new ArrayList();
-		itemCommands.add(new DescendCommand(nextList, target));
 		
 		if (listDefinition.getBeanClass().isAssignableFrom(
 				target.getBeanClass())) {

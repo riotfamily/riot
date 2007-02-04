@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.forms.controller.FormContextFactory;
-import org.riotfamily.riot.editor.DisplayDefinition;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandResult;
@@ -79,7 +78,12 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 			key += "-choose:" + choose;
 		}
 		
-		ListSession session = getListSession(key, request);
+		ListSession session = null;
+		try {
+			session = getListSession(key, request);
+		}
+		catch (ListSessionExpiredException e) {
+		}
 		if (session == null) {
 			ListDefinition listDef = editorRepository.getListDefinition(editorId);
 			Assert.notNull(listDef, "No such ListDefinition: " + editorId);
@@ -92,8 +96,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 					formContextFactory);
 			
 			if (choose != null) {
-				session.setChooserTarget((DisplayDefinition) 
-						editorRepository.getEditorDefinition(choose)); 
+				session.setChooserTarget(editorRepository.getEditorDefinition(choose)); 
 			}
 			
 			request.getSession().setAttribute(key, session);
@@ -101,46 +104,64 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 		return session;
 	}
 	
-	protected ListSession getListSession(String key, HttpServletRequest request) {
-		return (ListSession) request.getSession().getAttribute(key);
+	protected ListSession getListSession(String key, HttpServletRequest request)
+			throws ListSessionExpiredException {
+		
+		ListSession session = (ListSession) request.getSession().getAttribute(key);
+		/*
+		if (session != null && session.isExpired()) {
+			throw new ListSessionExpiredException();
+		}
+		*/
+		return session;
 	}
 	
-	public ListModel getModel(String key,HttpServletRequest request) {
+	public ListModel getModel(String key,HttpServletRequest request)
+			throws ListSessionExpiredException {
+		
 		return getListSession(key, request).getModel(request);
 	}
 		
-	public String getFilterFormHtml(String key,	HttpServletRequest request) {
+	public String getFilterFormHtml(String key,	HttpServletRequest request)
+			throws ListSessionExpiredException {
+		
 		return getListSession(key, request).getFilterFormHtml();
 	}
 
-	public List getListCommands(String key,	HttpServletRequest request) {
+	public List getListCommands(String key,	HttpServletRequest request)
+			throws ListSessionExpiredException {
+		
 		return getListSession(key, request).getListCommands(request);
 	}
 	
 	public List getFormCommands(String key, String objectId, 
-			HttpServletRequest request) {
+			HttpServletRequest request) throws ListSessionExpiredException {
 		
 		return getListSession(key, request).getFormCommands(objectId, request);
 	}
 	
 	public CommandResult execCommand(String key, ListItem item, 
 			String commandId, boolean confirmed, 
-			HttpServletRequest request, HttpServletResponse response) {
+			HttpServletRequest request, HttpServletResponse response)
+			throws ListSessionExpiredException {
 		
 		return getListSession(key, request).execCommand(
 				item, commandId, confirmed, request, response);
 	}
 
-	public ListModel filter(String key, Map filter, HttpServletRequest request) {
+	public ListModel filter(String key, Map filter, HttpServletRequest request)
+			throws ListSessionExpiredException {
 		return getListSession(key, request).filter(filter, request);
 	}
 	
-	public ListModel gotoPage(String key, int page, HttpServletRequest request) {
+	public ListModel gotoPage(String key, int page, HttpServletRequest request)
+			throws ListSessionExpiredException {
+		
 		return getListSession(key, request).gotoPage(page, request);
 	}
 
 	public ListModel sort(String key, String property, 
-			HttpServletRequest request) {
+			HttpServletRequest request) throws ListSessionExpiredException {
 		
 		return getListSession(key, request).sort(property, request);
 	}

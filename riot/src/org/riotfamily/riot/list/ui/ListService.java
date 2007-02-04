@@ -40,24 +40,30 @@ public interface ListService {
 	public ListSession getOrCreateListSession(String editorId, String parentId, 
 			String choose, HttpServletRequest request);
 	
-	public ListModel getModel(String key, HttpServletRequest request);
+	public ListModel getModel(String key, HttpServletRequest request)
+			throws ListSessionExpiredException;
 	
-	public ListModel gotoPage(String key, int page,	HttpServletRequest request);
+	public ListModel gotoPage(String key, int page,	HttpServletRequest request)
+			throws ListSessionExpiredException;
 	
 	public ListModel sort(String key, String property, 
-			HttpServletRequest request);
+			HttpServletRequest request) throws ListSessionExpiredException;
 	
-	public ListModel filter(String key, Map filter, HttpServletRequest request);
+	public ListModel filter(String key, Map filter, HttpServletRequest request)
+			throws ListSessionExpiredException;
 		
 	public List getFormCommands(String key, String objectId, 
-			HttpServletRequest request);
+			HttpServletRequest request) throws ListSessionExpiredException;
 	
-	public List getListCommands(String key,	HttpServletRequest request);
+	public List getListCommands(String key,	HttpServletRequest request)
+			throws ListSessionExpiredException;
 	
 	public CommandResult execCommand(String key, ListItem item, 
 			String commandId, boolean confirmed, 
-			HttpServletRequest request, HttpServletResponse response);
+			HttpServletRequest request, HttpServletResponse response)
+			throws ListSessionExpiredException;
 	
-	public String getFilterFormHtml(String key,	HttpServletRequest request);
+	public String getFilterFormHtml(String key,	HttpServletRequest request)
+			throws ListSessionExpiredException;
 	
 }
