@@ -49,9 +49,6 @@ public class FormChooserDefinition extends FormDefinition {
 
 	public void addFormDefinition(FormDefinition formDefinition) {
 		formDefinitions.add(formDefinition);
-		if (formDefinition.getLabelProperty() == null) {
-			formDefinition.setLabelProperty(getLabelProperty());
-		}
 		formDefinition.setParentEditorDefinition(getParentEditorDefinition());
 	}
 

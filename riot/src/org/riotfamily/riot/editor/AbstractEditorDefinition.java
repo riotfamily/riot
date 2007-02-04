@@ -24,8 +24,11 @@
 package org.riotfamily.riot.editor;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.riot.editor.ui.EditorReference;
 
 public abstract class AbstractEditorDefinition implements EditorDefinition {
@@ -94,7 +97,7 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 		this.parentEditorDefinition = parentEditorDefinition;
 	}
 	
-	public void addReference(List refs, DisplayDefinition parentDef, 
+	public void addReference(List refs, EditorDefinition parentDef, 
 			Object parent, MessageResolver messageResolver) {
 		
 		String parentId = null;
@@ -136,6 +139,33 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 		key.append('.');
 		key.append(getName());
 		return key;
+	}
+	
+	public String getLabelProperty() {
+		return null;
+	}
+	
+	public String getLabel(Object object) {
+		if (object == null) {
+			return "New"; //TODO I18nize this
+		}
+		if (getLabelProperty() != null) {
+			StringBuffer label = new StringBuffer();
+			Pattern p = Pattern.compile("(\\w+)(\\W*)");
+			Matcher m = p.matcher(getLabelProperty());
+			while (m.find()) {
+				String property = m.group(1);
+				Object value = PropertyUtils.getProperty(object, property);
+				if (value != null) {
+					label.append(value);
+					label.append(m.group(2));
+				}
+			}
+			if (label.length() > 0) {
+				return label.toString();
+			}
+		}
+		return "Untitled"; //TODO I18nize this
 	}
 
 }

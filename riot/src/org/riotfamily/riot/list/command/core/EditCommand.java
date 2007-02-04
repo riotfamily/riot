@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.core;
 
-import org.riotfamily.riot.editor.DisplayDefinition;
+import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
@@ -37,7 +37,7 @@ import org.springframework.util.Assert;
 public class EditCommand extends AbstractCommand {
 	
 	public CommandResult execute(CommandContext context) {
-		DisplayDefinition def = context.getListDefinition().getDisplayDefinition();
+		EditorDefinition def = context.getListDefinition().getDisplayDefinition();
 		Assert.notNull(def, "A DisplayDefinition must be set");
 		return new GotoUrlResult(context, def.getEditorUrl(
 				context.getObjectId(), context.getParentId()));

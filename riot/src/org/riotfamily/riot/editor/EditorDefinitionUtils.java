@@ -76,20 +76,6 @@ public final class EditorDefinitionUtils {
 		}
 		return def;
 	}
-	
-	public static DisplayDefinition getParentDisplayDefinition(EditorDefinition def) {
-		if (def == null) {
-			return null;
-		}
-		EditorDefinition parentDef = def.getParentEditorDefinition();
-		while (parentDef != null) {
-			if (parentDef instanceof DisplayDefinition) {
-				return (DisplayDefinition) parentDef;
-			}
-			parentDef = parentDef.getParentEditorDefinition();
-		}
-		return null;
-	}
 
 	public static String getObjectId(EditorDefinition def, Object item) {
 		ListDefinition listDef = getListDefinition(def);

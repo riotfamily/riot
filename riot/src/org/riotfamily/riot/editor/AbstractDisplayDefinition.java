@@ -27,14 +27,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.riot.editor.ui.EditorReference;
-import org.riotfamily.riot.list.ListConfig;
 
 /**
  * Abstract base class for editors that display a single object.
@@ -42,17 +38,14 @@ import org.riotfamily.riot.list.ListConfig;
  * @see org.riotfamily.riot.editor.FormDefinition
  * @see org.riotfamily.riot.editor.ViewDefinition
  */
-public abstract class AbstractDisplayDefinition extends AbstractEditorDefinition 
-		implements DisplayDefinition {
+public abstract class AbstractDisplayDefinition 
+		extends AbstractEditorDefinition {
 
-	
 	private Class beanClass;
 	
 	private String labelProperty;
 	
 	private List childEditorDefinitions = new LinkedList();
-	
-	private boolean nested;
 	
 	public AbstractDisplayDefinition(EditorRepository repository, 
 			String editorType) {
@@ -61,7 +54,11 @@ public abstract class AbstractDisplayDefinition extends AbstractEditorDefinition
 	}
 
 	public Class getBeanClass() {
-		return beanClass;
+		if (beanClass != null) {
+			return beanClass;
+		}
+		EditorDefinition parent = getParentEditorDefinition();
+		return parent != null ? parent.getBeanClass() : null;
 	}
 
 	public void setBeanClass(Class beanClass) {
@@ -69,33 +66,20 @@ public abstract class AbstractDisplayDefinition extends AbstractEditorDefinition
 	}
 
 	public String getLabelProperty() {
-		return labelProperty;
+		if (labelProperty != null) {
+			return labelProperty;
+		}
+		EditorDefinition parent = getParentEditorDefinition();
+		if (parent instanceof ListDefinition) {
+			ListDefinition listDef = (ListDefinition) parent;
+			return listDef.getListConfig().getFirstProperty();	
+		}
+		return null;
 	}
 
 	public void setLabelProperty(String labelProperty) {
 		this.labelProperty = labelProperty;
 	}
-	
-	public void setParentEditorDefinition(EditorDefinition editorDef) {
-		if (editorDef instanceof ListDefinition) {
-			ListDefinition listDef = (ListDefinition) editorDef;
-			ListConfig listConfig = listDef.getListConfig();
-			if (labelProperty == null) {
-				labelProperty = listConfig.getFirstProperty();	
-			}
-		}
-		else if (editorDef instanceof FormChooserDefinition) {
-			editorDef = editorDef.getParentEditorDefinition();
-		}
-		else if (editorDef instanceof DisplayDefinition) {
-			nested = true;
-		}
-		if (beanClass == null && editorDef != null) {
-			beanClass = editorDef.getBeanClass();
-		}
-		super.setParentEditorDefinition(editorDef);
-	}
-	
 	
 	public List getChildEditorDefinitions() {
 		return childEditorDefinitions;
@@ -120,29 +104,6 @@ public abstract class AbstractDisplayDefinition extends AbstractEditorDefinition
 	
 	protected Object loadBean(String objectId) {
 		return EditorDefinitionUtils.loadBean(this, objectId);
-	}
-	
-	public String getLabel(Object object) {
-		if (object == null) {
-			return "New"; //TODO I18nize this
-		}
-		if (getLabelProperty() != null) {
-			StringBuffer label = new StringBuffer();
-			Pattern p = Pattern.compile("(\\w+)(\\W*)");
-			Matcher m = p.matcher(labelProperty);
-			while (m.find()) {
-				String property = m.group(1);
-				Object value = PropertyUtils.getProperty(object, property);
-				if (value != null) {
-					label.append(value);
-					label.append(m.group(2));
-				}
-			}
-			if (label.length() > 0) {
-				return label.toString();
-			}
-		}
-		return "Untitled"; //TODO I18nize this
 	}
 	
 	/**
@@ -183,7 +144,7 @@ public abstract class AbstractDisplayDefinition extends AbstractEditorDefinition
 		
 		EditorReference component = null;
 		Object parentBean = null;
-		if (nested) {
+		if (!(getParentEditorDefinition() instanceof ListDefinition)) {
 			String objectId = EditorDefinitionUtils.getObjectId(this, bean);
 			component = createReference(objectId, messageResolver);
 			parentBean = bean;

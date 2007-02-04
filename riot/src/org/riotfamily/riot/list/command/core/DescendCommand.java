@@ -25,7 +25,7 @@ package org.riotfamily.riot.list.command.core;
 
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.RiotDao;
-import org.riotfamily.riot.editor.DisplayDefinition;
+import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
@@ -42,12 +42,12 @@ public class DescendCommand extends AbstractCommand {
 	
 	private ListDefinition nextListDefinition;
 	
-	private DisplayDefinition targetDefinition;
+	private EditorDefinition targetDefinition;
 	
 	private static ListParams params = new ListParamsImpl();
 	
 	public DescendCommand(ListDefinition listDefinition, 
-			DisplayDefinition targetDefinition) {
+			EditorDefinition targetDefinition) {
 		
 		this.nextListDefinition = listDefinition;
 		this.targetDefinition = targetDefinition;

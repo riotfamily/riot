@@ -51,7 +51,7 @@ public class TreeDefinition extends ListDefinition {
 		return this.nodeListDefinition;
 	}
 
-	public void setDisplayDefinition(final DisplayDefinition def) {
+	public void setDisplayDefinition(final EditorDefinition def) {
 		Assert.isInstanceOf(FormDefinition.class, def);
 		super.setDisplayDefinition(def);
 		
@@ -117,10 +117,10 @@ public class TreeDefinition extends ListDefinition {
 				return false;
 			}
 			
-			DisplayDefinition parentDef = TreeDefinition.this.
-					getParentDisplayDefinition();
+			EditorDefinition parentDef = TreeDefinition.this.
+					getParentEditorDefinition();
 			
-			if (parentDef != null) {
+			if (parentDef != null && !(parentDef instanceof GroupDefinition)) {
 				Class parentClass = parentDef.getBeanClass();
 				if (parentClass.isInstance(bean)) {
 					return false;
@@ -129,7 +129,7 @@ public class TreeDefinition extends ListDefinition {
 			return true;
 		}
 		
-		public void addReference(List refs, DisplayDefinition parentDef, 
+		public void addReference(List refs, EditorDefinition parentDef, 
 				Object parent, MessageResolver messageResolver) {
 			
 			if (branchClass == null || branchClass.isInstance(parent)) {

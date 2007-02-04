@@ -27,7 +27,6 @@ import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.riot.editor.ui.EditorReference;
 import org.riotfamily.riot.list.ListConfig;
-import org.riotfamily.riot.list.ListRepository;
 import org.springframework.util.Assert;
 
 /**
@@ -37,14 +36,10 @@ public class ListDefinition extends AbstractEditorDefinition {
 
 	protected static final String TYPE_LIST = "list";
 
-	private DisplayDefinition displayDefinition;
-
-	private DisplayDefinition parentDisplayDefinition;
+	private EditorDefinition displayDefinition;
 
 	private String listId;
 
-	private ListConfig listConfig;
-	
 	public ListDefinition(EditorRepository repository) {
 		this(repository, TYPE_LIST);
 	}
@@ -58,9 +53,7 @@ public class ListDefinition extends AbstractEditorDefinition {
 		
 		this(repository);
 		displayDefinition = prototype.getDisplayDefinition();
-		parentDisplayDefinition = prototype.getParentDisplayDefinition();
 		listId = prototype.getListId();
-		listConfig = prototype.getListConfig();
 		setId(prototype.getId());
 	}
 	
@@ -74,32 +67,19 @@ public class ListDefinition extends AbstractEditorDefinition {
 
 	public void setListId(String listId) {
 		this.listId = listId;
-		ListRepository repository = getEditorRepository().getListRepository();
-		listConfig = repository.getListConfig(listId);
-		Assert.notNull(listConfig, "No such list: " + listId);
+		Assert.notNull(getListConfig(), "No such list: " + listId);
 	}
 
 	public Class getBeanClass() {
-		return listConfig.getItemClass();
+		return getListConfig().getItemClass();
 	}
 
-	public DisplayDefinition getDisplayDefinition() {
+	public EditorDefinition getDisplayDefinition() {
 		return displayDefinition;
 	}
 
-	public void setDisplayDefinition(DisplayDefinition editorDef) {
+	public void setDisplayDefinition(EditorDefinition editorDef) {
 		this.displayDefinition = editorDef;
-	}
-
-	public DisplayDefinition getParentDisplayDefinition() {
-		return parentDisplayDefinition;
-	}
-
-	public void setParentEditorDefinition(EditorDefinition parentDef) {
-		super.setParentEditorDefinition(parentDef);
-		if (parentDef instanceof DisplayDefinition) {
-			this.parentDisplayDefinition = (DisplayDefinition) parentDef;
-		}
 	}
 
 	public EditorReference createEditorPath(String objectId, String parentId,
@@ -124,8 +104,8 @@ public class ListDefinition extends AbstractEditorDefinition {
 		EditorReference component = null;
 		EditorReference parent = null;
 		
-		if (parentDisplayDefinition != null) {
-			parent = parentDisplayDefinition.createEditorPath(bean, messageResolver);
+		if (getParentEditorDefinition() != null) {
+			parent = getParentEditorDefinition().createEditorPath(bean, messageResolver);
 			component = createReference(parent.getObjectId(), messageResolver);
 			component.setParent(parent);
 		}
@@ -165,7 +145,7 @@ public class ListDefinition extends AbstractEditorDefinition {
 	}
 	
 	public ListConfig getListConfig() {
-		return listConfig;
+		return getEditorRepository().getListRepository().getListConfig(listId);
 	}
 	
 }

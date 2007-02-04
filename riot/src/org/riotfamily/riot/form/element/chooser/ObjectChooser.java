@@ -24,7 +24,6 @@
 package org.riotfamily.riot.form.element.chooser;
 
 import org.riotfamily.forms.element.support.AbstractChooser;
-import org.riotfamily.riot.editor.DisplayDefinition;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
@@ -47,7 +46,7 @@ public class ObjectChooser extends AbstractChooser
 	
 	private ListDefinition targetListDefinition;
 	
-	private DisplayDefinition targetDisplayDefinition;
+	private EditorDefinition targetEditorDefinition;
 	
 	
 	public void setTargetEditorId(String targetEditorId) {
@@ -73,24 +72,20 @@ public class ObjectChooser extends AbstractChooser
 		}
 		
 		log.debug("Looking up editor: " + targetEditorId);
-		EditorDefinition editor = editorRepository.getEditorDefinition(
+		targetEditorDefinition = editorRepository.getEditorDefinition(
 				targetEditorId);
 		
-		Assert.notNull(editor, "No such EditorDefinition: " + targetEditorId);
+		Assert.notNull(targetEditorDefinition, "No such EditorDefinition: "
+					+ targetEditorId);
 
-		if (editor instanceof DisplayDefinition) {
-			targetDisplayDefinition = (DisplayDefinition) editor;
-			targetListDefinition = EditorDefinitionUtils.getParentListDefinition(editor); 
-		}
-		else if (editor instanceof ListDefinition) {
-			targetListDefinition = (ListDefinition) editor;
-			targetDisplayDefinition = targetListDefinition.getDisplayDefinition();
+		if (targetEditorDefinition instanceof ListDefinition) {
+			targetListDefinition = (ListDefinition) targetEditorDefinition;
+			targetEditorDefinition = targetListDefinition.getDisplayDefinition();
 		}
 		else {
-			throw new IllegalArgumentException(
-					"Neither a List- nor DisplayDefinition: " + editor);
+			targetListDefinition = EditorDefinitionUtils
+					.getParentListDefinition(targetEditorDefinition);
 		}
-		
 	}
 
 	protected Object loadBean(String objectId) {
@@ -98,12 +93,12 @@ public class ObjectChooser extends AbstractChooser
 	}
 	
 	protected String getDisplayName(Object object) {
-		return object != null ? targetDisplayDefinition.getLabel(object) : null;
+		return object != null ? targetEditorDefinition.getLabel(object) : null;
 	}
 
 	protected String getChooserUrl() {
 		return targetListDefinition.getEditorUrl(null, null) 
-				+ "?choose=" + targetDisplayDefinition.getId();
+				+ "?choose=" + targetEditorDefinition.getId();
 	}
 	
 }

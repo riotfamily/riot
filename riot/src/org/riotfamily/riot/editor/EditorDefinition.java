@@ -39,6 +39,8 @@ public interface EditorDefinition {
 	
 	public Class getBeanClass();
 	
+	public String getLabel(Object bean);
+	
 	public void setParentEditorDefinition(EditorDefinition parent);	
 
 	public EditorDefinition getParentEditorDefinition();
@@ -72,7 +74,7 @@ public interface EditorDefinition {
 			MessageResolver messageResolver);
 	
 	
-	public void addReference(List refs, DisplayDefinition parentDef, 
+	public void addReference(List refs, EditorDefinition parentDef, 
 			Object parent, MessageResolver messageResolver);
 	
 	/**

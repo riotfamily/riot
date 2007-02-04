@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
+import org.springframework.util.Assert;
+
 
 /**
  *
@@ -51,7 +53,11 @@ public class FormDefinition extends AbstractDisplayDefinition
 
 	public void setFormId(String formId) {
 		this.formId = formId;
-		setBeanClass(getEditorRepository().getFormRepository().getBeanClass(formId));		
+	}
+	
+	public Class getBeanClass() {
+		Assert.notNull(formId, "A formId must be set before calling getBeanClass().");
+		return getEditorRepository().getFormRepository().getBeanClass(formId);
 	}
 	
 	protected String getDefaultName() {

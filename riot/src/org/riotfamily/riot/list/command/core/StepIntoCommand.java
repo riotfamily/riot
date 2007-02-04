@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.riot.editor.AbstractDisplayDefinition;
-import org.riotfamily.riot.editor.DisplayDefinition;
+import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.IntermediateDefinition;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.ui.EditorReference;
@@ -52,9 +52,7 @@ public class StepIntoCommand extends AbstractCommand {
 	}
 	
 	private static String getTargetUrl(CommandContext context) {
-		DisplayDefinition def = context.getListDefinition()
-				.getDisplayDefinition();
-		
+		EditorDefinition def = context.getListDefinition().getDisplayDefinition();
 		Assert.notNull(def, "A DisplayDefinition must be set");
 		
 		if (def instanceof IntermediateDefinition) {

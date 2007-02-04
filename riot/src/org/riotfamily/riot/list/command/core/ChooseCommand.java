@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.core;
 
-import org.riotfamily.riot.editor.DisplayDefinition;
+import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.ScriptResult;
@@ -36,9 +36,9 @@ public class ChooseCommand extends AbstractCommand {
 
 	public static final String ID = "choose";
 	
-	private DisplayDefinition target;
+	private EditorDefinition target;
 	
-	public ChooseCommand(DisplayDefinition target) {
+	public ChooseCommand(EditorDefinition target) {
 		this.target = target;
 	}
 

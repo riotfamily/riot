@@ -25,11 +25,10 @@ package org.riotfamily.riot.editor.xml;
 
 import java.util.Iterator;
 
-import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.common.xml.DocumentDigester;
+import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.riot.editor.AbstractEditorDefinition;
 import org.riotfamily.riot.editor.CustomEditorDefinition;
-import org.riotfamily.riot.editor.DisplayDefinition;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.FormChooserDefinition;
 import org.riotfamily.riot.editor.FormDefinition;
@@ -199,7 +198,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 		XmlUtils.populate(listDefinition, listElement, LIST_ATTR);
 		addEditorDefinition(listDefinition);
 		
-		DisplayDefinition def = null;
+		EditorDefinition def = null;
 		Element e = XmlUtils.getFirstChildByRegex(listElement, ANYTHING);
 		if (isFormElement(e) || isFormChooserElement(e) || isViewElement(e)) {
 			def = digestObjectEditorDefinition(e, listDefinition);
@@ -212,7 +211,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	}
 	
 	
-	protected DisplayDefinition digestObjectEditorDefinition(
+	protected EditorDefinition digestObjectEditorDefinition(
 			Element ele, EditorDefinition parentDef) {
 		
 		if (isFormElement(ele)) {
@@ -295,9 +294,6 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 				FORM_ATTR, beanFactory);
 		
 		formChooserDefinition.setParentEditorDefinition(parentDef);
-		if (formChooserDefinition.getBeanClass() == null) {
-			formChooserDefinition.setBeanClass(parentDef.getBeanClass());
-		}
 		addEditorDefinition(formChooserDefinition);
 		
 		Iterator it = DomUtils.getChildElementsByTagName(
