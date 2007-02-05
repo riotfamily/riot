@@ -23,14 +23,23 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.ui;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.common.web.util.SessionReferenceRemover;
+import org.riotfamily.common.xml.ConfigurableBean;
+import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.forms.controller.FormContextFactory;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.ListDefinition;
@@ -44,7 +53,10 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * @author Felix Gnass <fgnass@neteye.de>
  * @since 6.4
  */
-public class ListServiceImpl implements ListService, MessageSourceAware {
+public class ListServiceImpl implements ListService, MessageSourceAware, 
+		ConfigurationEventListener {
+	
+	private static final Log log = LogFactory.getLog(ListServiceImpl.class);
 
 	private EditorRepository editorRepository;
 	
@@ -54,12 +66,16 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 	
 	private FormContextFactory formContextFactory;
 	
+	private Collection sessions = new ArrayList();
+	
 	public void setMessageCodesResolver(AdvancedMessageCodesResolver codesResolver) {
 		this.messageCodesResolver = codesResolver;
 	}
 
 	public void setEditorRepository(EditorRepository editorRepository) {
 		this.editorRepository = editorRepository;
+		editorRepository.getListRepository().addListener(this);
+		editorRepository.getFormRepository().addListener(this);
 	}
 
 	public void setMessageSource(MessageSource messageSource) {
@@ -78,42 +94,61 @@ public class ListServiceImpl implements ListService, MessageSourceAware {
 			key += "-choose:" + choose;
 		}
 		
-		ListSession session = null;
+		ListSession listSession = null;
 		try {
-			session = getListSession(key, request);
+			listSession = getListSession(key, request);
 		}
 		catch (ListSessionExpiredException e) {
+			log.info("Session expired - creating a new one ...");
 		}
-		if (session == null) {
+		if (listSession == null) {
 			ListDefinition listDef = editorRepository.getListDefinition(editorId);
 			Assert.notNull(listDef, "No such ListDefinition: " + editorId);
 			
 			MessageResolver messageResolver = new MessageResolver(messageSource, 
 					messageCodesResolver, RequestContextUtils.getLocale(request));
 			
-			session = new ListSession(key, listDef, parentId, messageResolver, 
+			listSession = new ListSession(key, listDef, parentId, messageResolver, 
 					request.getContextPath(), editorRepository.getFormRepository(),
 					formContextFactory);
 			
 			if (choose != null) {
-				session.setChooserTarget(editorRepository.getEditorDefinition(choose)); 
+				listSession.setChooserTarget(editorRepository.getEditorDefinition(choose)); 
 			}
 			
-			request.getSession().setAttribute(key, session);
+			HttpSession httpSession = request.getSession();
+			httpSession.setAttribute(key, listSession);
+			sessions.add(listSession);
+			
+			SessionReferenceRemover.removeFromCollectionOnInvalidation(
+					httpSession, sessions, listSession);
+			
 		}
-		return session;
+		return listSession;
 	}
 	
 	protected ListSession getListSession(String key, HttpServletRequest request)
 			throws ListSessionExpiredException {
 		
 		ListSession session = (ListSession) request.getSession().getAttribute(key);
-		/*
-		if (session != null && session.isExpired()) {
-			throw new ListSessionExpiredException();
+		if (session != null) {
+			//Trigger a modification check:
+			editorRepository.getListRepository().getListConfig(session.getListId());
+			if (session.isExpired()) {
+				throw new ListSessionExpiredException();
+			}
 		}
-		*/
 		return session;
+	}
+	
+	public void beanReconfigured(ConfigurableBean bean) {
+		Iterator it = sessions.iterator();
+		while (it.hasNext()) {
+			ListSession session = (ListSession) it.next();
+			log.info("Invalidating session " + session.getKey());
+			session.invalidate();
+			it.remove();
+		}
 	}
 	
 	public ListModel getModel(String key,HttpServletRequest request)

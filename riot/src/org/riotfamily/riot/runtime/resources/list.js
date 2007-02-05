@@ -225,3 +225,12 @@ RiotList.prototype = {
 	}
 
 }
+
+DWREngine.setErrorHandler(function(err, ex) {
+	if (err == 'List session has expired') { // ListSessionExpiredException
+		location.reload();
+	}
+	else {
+		alert(err);
+	}
+});

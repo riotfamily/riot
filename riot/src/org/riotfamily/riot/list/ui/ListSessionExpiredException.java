@@ -31,4 +31,8 @@ package org.riotfamily.riot.list.ui;
  */
 public class ListSessionExpiredException extends Exception {
 
+	public ListSessionExpiredException() {
+		super("List session has expired");
+	}
+	
 }

@@ -30,6 +30,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Collection whose values are stored as {@link WeakReference weak references}.
  *   
@@ -38,6 +41,9 @@ import java.util.Iterator;
  */
 public class WeakReferenceCollection extends AbstractCollection {
 
+	private static final Log log = LogFactory
+			.getLog(WeakReferenceCollection.class);
+	
 	private Collection references = new ArrayList();
 	
 	/**
@@ -93,6 +99,7 @@ public class WeakReferenceCollection extends AbstractCollection {
 				Reference ref = (Reference) it.next();
 				nextValue = ref.get();
 				if (nextValue == null) {
+					log.debug("Item cleared, removing reference.");
 					it.remove();
 				}
 				else {

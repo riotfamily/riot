@@ -94,6 +94,7 @@ public class ListSession implements RenderContext {
 	
 	private ListParamsImpl params;
 
+	private boolean expired;
 	
 	public ListSession(String key, ListDefinition listDefinition, 
 			String parentId, MessageResolver messageResolver, String contextPath,
@@ -440,6 +441,14 @@ public class ListSession implements RenderContext {
 	
 	public String getContextPath() {
 		return contextPath;
+	}
+	
+	void invalidate() {
+		expired = true;
+	}
+	
+	public boolean isExpired() {
+		return expired;
 	}
 	
 }
