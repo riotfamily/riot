@@ -6,18 +6,23 @@
 
 <hibernate-mapping package="org.riotfamily.pages.component" auto-import="true">
 	
-	<class name="ComponentList" table="component_lists" lazy="false">
+	<class name="ComponentList" table="component_lists">
+		<cache usage="nonstrict-read-write" region="components" />
 		<id name="id">
 			<generator class="native" />
 		</id>
-		<property name="path" column="`path`" unique-key="composite_key" />
-		<property name="key" column="`key`" unique-key="composite_key" />
-		<list name="liveList" lazy="false" cascade="all">
+		<natural-id>
+			<property name="path" column="`path`" unique-key="composite_key" />
+			<property name="key" column="`key`" unique-key="composite_key" />
+		</natural-id>
+		<list name="liveList" cascade="all">
+			<cache usage="nonstrict-read-write" region="components" />
 			<key column="live_list" />
 			<index column="live_pos" />
 			<one-to-many class="VersionContainer" />
 		</list>
-		<list name="previewList" lazy="false" cascade="all">
+		<list name="previewList" cascade="all">
+			<cache usage="nonstrict-read-write" region="components" />
 			<key column="preview_list" />
 			<index column="preview_pos" />
 			<one-to-many class="VersionContainer" />
@@ -27,7 +32,8 @@
 		<property name="lastModifiedBy" />
 	</class>
 	
-	<class name="VersionContainer" table="components" lazy="false">
+	<class name="VersionContainer" table="components">
+		<cache usage="nonstrict-read-write" region="components" />
 		<id name="id">
 			<generator class="native" />
 		</id>
@@ -35,8 +41,8 @@
 		<many-to-one name="liveList" column="live_list" insert="false" update="false" access="field" />
 		<many-to-one name="previewList" column="preview_list" insert="false" update="false" access="field" />
 
-		<many-to-one name="liveVersion" column="live_version" fetch="join" cascade="all" />
-		<many-to-one name="previewVersion" column="preview_version" fetch="join" cascade="all" />
+		<many-to-one name="liveVersion" column="live_version" cascade="all" />
+		<many-to-one name="previewVersion" column="preview_version" cascade="all" />
 		<!-- 
 		<set name="versions">
 			<key column="component" />
@@ -45,12 +51,14 @@
 		 -->
 	</class>
 	
-	<class name="ComponentVersion" table="component_versions" lazy="false">
+	<class name="ComponentVersion" table="component_versions">
+		<cache usage="nonstrict-read-write" region="components" />
 		<id name="id">
 			<generator class="native" />
 		</id>
 		<property name="type" column="`type`" />
-		<map name="properties" table="component_properties" lazy="false">
+		<map name="properties" table="component_properties" fetch="join" lazy="false">
+			<cache usage="nonstrict-read-write" region="components" />
 			<key column="component_version" />
 			<index column="`key`" type="string" />
 			<element type="text"></element>

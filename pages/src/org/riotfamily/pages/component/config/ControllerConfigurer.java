@@ -41,6 +41,8 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.util.Assert;
 
 public class ControllerConfigurer implements BeanFactoryAware, 
 		InitializingBean {
@@ -65,6 +67,8 @@ public class ControllerConfigurer implements BeanFactoryAware,
 
 	private ComponentPathResolver componentPathResolver;
 	
+	private PlatformTransactionManager transactionManager;
+	
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		if (beanFactory instanceof ListableBeanFactory) {		
 			this.beanFactory = (ListableBeanFactory) beanFactory;
@@ -81,6 +85,10 @@ public class ControllerConfigurer implements BeanFactoryAware,
 
 	public void setComponentDao(ComponentDao componentDao) {
 		this.componentDao = componentDao;
+	}
+	
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
 	}
 	
 	public void setViewModeResolver(ViewModeResolver viewModeResolver) {
@@ -100,6 +108,7 @@ public class ControllerConfigurer implements BeanFactoryAware,
 	}
 	
 	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(transactionManager, "A transactionManager must be set.");
 		configureComponenControllers();
 		configureComponentListControllers();
 	}
@@ -135,6 +144,9 @@ public class ControllerConfigurer implements BeanFactoryAware,
 			Map.Entry entry = (Map.Entry) it.next();
 			ComponentListController controller = 
 						(ComponentListController) entry.getValue();
+			
+			controller.setTransactionManager(transactionManager);
+			
 			if (controller.getCache() == null) {
 				controller.setCache(cache);
 			}

@@ -75,7 +75,7 @@ public class HibernateComponentDao extends AbstractComponentDao {
 	}
 
 	protected Object loadObject(Class clazz, Long id) {
-		return sessionFactory.getCurrentSession().get(clazz, id);
+		return sessionFactory.getCurrentSession().load(clazz, id);
 	}
 	
 	protected void saveObject(Object object) {

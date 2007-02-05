@@ -84,13 +84,6 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	}
 
 	/**
-	 * Saves the given VersionContainer.
-	 */
-	public void saveVersionContainer(VersionContainer container) {
-		saveObject(container);
-	}
-
-	/**
 	 * Updates the given ComponentList.
 	 */
 	public void updateComponentList(ComponentList list) {
@@ -234,7 +227,6 @@ public abstract class AbstractComponentDao implements ComponentDao {
 			container.setPreviewVersion(version);
 		}
 		version.setContainer(container);
-		saveVersionContainer(container);
 		return container;
 	}
 	

@@ -74,12 +74,7 @@ public interface ComponentDao {
 	 * Saves the given ComponentList.
 	 */
 	public void saveComponentList(ComponentList list);
-	
-	/**
-	 * Saves the given VersionContainer.
-	 */
-	public void saveVersionContainer(VersionContainer container);
-	
+		
 	/**
 	 * Updates the given ComponentList.
 	 */

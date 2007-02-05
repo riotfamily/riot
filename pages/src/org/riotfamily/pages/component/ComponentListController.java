@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.component;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -39,6 +41,10 @@ import org.riotfamily.pages.component.resolver.ComponentPathResolver;
 import org.riotfamily.pages.component.resolver.FixedComponentKeyResolver;
 import org.riotfamily.pages.component.resolver.FixedComponentPathResolver;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -70,6 +76,8 @@ public class ComponentListController implements Controller, BeanNameAware,
 
 	private String beanName;
 	
+	private PlatformTransactionManager transactionManager;
+	
 	public void setCache(Cache cache) {
 		this.cache = cache;
 	}
@@ -84,6 +92,10 @@ public class ComponentListController implements Controller, BeanNameAware,
 	
 	public ComponentDao getComponentDao() {
 		return this.componentDao;
+	}
+	
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
 	}
 
 	public ComponentKeyResolver getComponentKeyResolver() {
@@ -164,7 +176,7 @@ public class ComponentListController implements Controller, BeanNameAware,
 			HttpServletResponse response) throws Exception {
 
 		boolean preview = viewModeResolver.isPreviewMode(request);
-		RenderStrategy strategy = null;
+		final RenderStrategy strategy;
 		if (preview) {
 			strategy = new EditModeRenderStrategy(componentDao, componentRepository, 
 					this, request, response);
@@ -176,7 +188,16 @@ public class ComponentListController implements Controller, BeanNameAware,
 					this, request, response, cache);
 		}
 		
-		strategy.render();
+		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				try {
+					strategy.render();
+				}
+				catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
 		
 		return null;
 	}

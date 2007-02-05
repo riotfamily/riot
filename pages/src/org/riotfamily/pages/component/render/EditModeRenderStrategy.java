@@ -123,7 +123,6 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 				live.setContainer(container);
 				container.setList(list);
 				container.setLiveVersion(live);
-				dao.saveVersionContainer(container);
 				containers.add(container);
 			}
 			list.setLiveList(containers);
