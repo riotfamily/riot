@@ -28,7 +28,7 @@ import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.web.util.ServletMappingHelper;
+import org.springframework.web.util.UrlPathHelper;
 
 /**
  *  
@@ -63,8 +63,7 @@ public class Pager {
 	
 	private boolean copyParameters = true;
 
-	private ServletMappingHelper servletMappingHelper = 
-			new ServletMappingHelper(true);
+	private UrlPathHelper urlPathHelper = new UrlPathHelper();
 	
 	public Pager(int page, int pageSize, long itemCount) {
 		currentPage = page;
@@ -137,11 +136,11 @@ public class Pager {
 
 	private void prepareLinkPrefix(HttpServletRequest request) {
 		StringBuffer url = new StringBuffer(
-				servletMappingHelper.getRequestUri(request));
+				urlPathHelper.getOriginatingRequestUri(request));
 		
 		url.append('?');
 		if (copyParameters) {
-			String query = servletMappingHelper.getQueryString(request);
+			String query = urlPathHelper.getOriginatingQueryString(request);
 			if (query != null) {
 				int i = query.indexOf(pageParam);
 				if (i != -1) {

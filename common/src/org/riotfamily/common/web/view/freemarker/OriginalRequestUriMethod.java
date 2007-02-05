@@ -35,7 +35,7 @@ import freemarker.template.TemplateModelException;
 public class OriginalRequestUriMethod implements TemplateMethodModel {
 	
 	public Object exec(List args) throws TemplateModelException {
-		String uri = ServletUtils.getOriginalRequestUri(ViewContext.getRequest());
+		String uri = ServletUtils.getOriginatingRequestUri(ViewContext.getRequest());
 		if (StringUtils.hasText(ViewContext.getRequest().getQueryString())) {
 			uri = uri + "?" + ViewContext.getRequest().getQueryString();
 		}

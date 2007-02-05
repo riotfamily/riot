@@ -27,25 +27,24 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.web.util.ServletMappingHelper;
 import org.riotfamily.pages.component.preview.DefaultViewModeResolver;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
-import org.riotfamily.pages.page.support.PageUtils;
 import org.riotfamily.pages.page.support.PageInterceptor;
+import org.riotfamily.pages.page.support.PageUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Ordered;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.util.UrlPathHelper;
 
 public class PageHandlerMapping implements HandlerMapping, Ordered, 
 		InitializingBean {
 
 	private static Log log = LogFactory.getLog(PageHandlerMapping.class);
 	
-	private ServletMappingHelper servletMappingHelper = 
-			new ServletMappingHelper();
+	private UrlPathHelper urlPathHelper = new UrlPathHelper();
 	
 	private PageMap pageMap;
 	
@@ -90,7 +89,7 @@ public class PageHandlerMapping implements HandlerMapping, Ordered,
 	public HandlerExecutionChain getHandler(HttpServletRequest request) 
 			throws Exception {
 		
-		String path = servletMappingHelper.getLookupPathForRequest(request);
+		String path = urlPathHelper.getLookupPathForRequest(request);
 		if (log.isDebugEnabled()) {
 			log.debug("Looking up handler for [" + path + "]");
 		}

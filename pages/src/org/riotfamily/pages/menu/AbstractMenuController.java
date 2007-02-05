@@ -32,13 +32,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.web.util.ServletMappingHelper;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.member.MemberBinder;
 import org.riotfamily.pages.member.MemberBinderAware;
 import org.riotfamily.pages.member.WebsiteMember;
 import org.riotfamily.pages.member.support.NullMemberBinder;
 import org.riotfamily.pages.mvc.cache.AbstractCachingPolicyController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UrlPathHelper;
 
 /**
  * Abstract base class for controllers that render navigation menus.
@@ -53,7 +54,7 @@ public abstract class AbstractMenuController
 	
 	private String viewName;
 	
-	private ServletMappingHelper servletMappingHelper;
+	private UrlPathHelper urlPathHelper = new UrlPathHelper();
 	
 	private String contextPath;
 	
@@ -67,10 +68,6 @@ public abstract class AbstractMenuController
 	
 	private MemberBinder memberBinder = new NullMemberBinder();
 	
-	public AbstractMenuController() {
-		servletMappingHelper = new ServletMappingHelper();
-		servletMappingHelper.setUseOriginalRequest(true);
-	}
 	
 	public void setMenuBuilder(MenuBuilder menuBuilder) {
 		this.menuBuilder = menuBuilder;
@@ -156,21 +153,21 @@ public abstract class AbstractMenuController
 
 	protected String getContextPath(HttpServletRequest request) {
 		if (contextPath == null) {
-			contextPath = servletMappingHelper.getContextPath(request);
+			contextPath = urlPathHelper.getOriginatingContextPath(request);
 		}
 		return contextPath;
 	}
 	
 	protected String getServletPrefix(HttpServletRequest request) {
 		if (servletPrefix == null) {
-			servletPrefix = servletMappingHelper.getServletPrefix(request);
+			servletPrefix = ServletUtils.getServletPrefix(request);
 		}
 		return servletPrefix;
 	}
 	
 	protected String getServletSuffix(HttpServletRequest request) {
 		if (servletSuffix == null) {
-			servletSuffix = servletMappingHelper.getServletSuffix(request);
+			servletSuffix = ServletUtils.getServletSuffix(request);
 		}
 		return servletSuffix;
 	}

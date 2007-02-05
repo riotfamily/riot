@@ -37,12 +37,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.common.web.filter.ResourceStamper;
-import org.riotfamily.common.web.util.ServletMappingHelper;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.LastModified;
+import org.springframework.web.util.UrlPathHelper;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -85,7 +85,7 @@ public class CssTemplateController extends AbstractCacheableController
 	
 	private static final String CSS_SUFFIX = ".css";
 	
-	private ServletMappingHelper mappingHelper = new ServletMappingHelper();
+	private UrlPathHelper urlPathHelper = new UrlPathHelper();
 	
 	private ServletContext servletContext;
 		
@@ -159,7 +159,7 @@ public class CssTemplateController extends AbstractCacheableController
 	}
 	
 	protected DynamicStylesheet lookup(HttpServletRequest request) {
-		String path = mappingHelper.getPathWithinApplication(request);
+		String path = urlPathHelper.getPathWithinApplication(request);
 		String key = null;
 		File file = new File(servletContext.getRealPath(path));
 		if (!file.exists()) {

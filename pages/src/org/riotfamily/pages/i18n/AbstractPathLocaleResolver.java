@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.web.util.ServletMappingHelper;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
@@ -45,17 +45,13 @@ public abstract class AbstractPathLocaleResolver implements LocaleResolver {
 	
 	private LocaleResolver defaultResolver = new AcceptHeaderLocaleResolver();
 	
-	private ServletMappingHelper servletMappingHelper =
-			new ServletMappingHelper(true);
-
-	
 	public void setDefaultResolver(LocaleResolver defaultResolver) {
 		Assert.notNull(defaultResolver);
 		this.defaultResolver = defaultResolver;
 	}
 
 	public final Locale resolveLocale(HttpServletRequest request) {
-		String path = servletMappingHelper.getLookupPathForRequest(request);
+		String path = ServletUtils.getLookupPathForOriginatingRequest(request);
 		Locale locale = resolveLocaleForPath(path);
 		log.debug("Locale for path [" + path + "] is: " + locale);
 		if (locale == null) {

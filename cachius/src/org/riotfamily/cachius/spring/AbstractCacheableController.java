@@ -69,7 +69,7 @@ public abstract class AbstractCacheableController
 	
 	protected void appendCacheKey(StringBuffer key, HttpServletRequest request) {
 		key.append(beanName).append(':');
-		key.append(ServletUtils.getOriginalRequestUri(request));
+		key.append(ServletUtils.getOriginatingRequestUri(request));
 	}
 	
     /**

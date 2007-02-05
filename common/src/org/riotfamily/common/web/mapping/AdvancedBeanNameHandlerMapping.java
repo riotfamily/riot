@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.web.util.ServletMappingHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.core.Ordered;
@@ -49,6 +48,7 @@ import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapter;
+import org.springframework.web.util.UrlPathHelper;
 
 /**
  * HandlerMapping that works like Spring's BeanNameUrlHandlerMapping and
@@ -75,8 +75,7 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 
 	private HandlerInterceptor[] interceptors;
 
-	private ServletMappingHelper servletMappingHelper = 
-			new ServletMappingHelper();
+	private UrlPathHelper urlPathHelper = new UrlPathHelper();
 
 	private PathMatcher pathMatcher = new AntPathMatcher();
 
@@ -107,7 +106,7 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 	 * @see org.springframework.web.util.UrlPathHelper#setAlwaysUseFullPath
 	 */
 	public void setAlwaysUseFullPath(boolean alwaysUseFullPath) {
-		this.servletMappingHelper.setAlwaysUseFullPath(alwaysUseFullPath);
+		this.urlPathHelper.setAlwaysUseFullPath(alwaysUseFullPath);
 	}
 
 	/**
@@ -123,7 +122,7 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 	 * @see org.springframework.web.util.UrlPathHelper#setUrlDecode
 	 */
 	public void setUrlDecode(boolean urlDecode) {
-		this.servletMappingHelper.setUrlDecode(urlDecode);
+		this.urlPathHelper.setUrlDecode(urlDecode);
 	}
 
 	public final void setOrder(int order) {
@@ -207,7 +206,7 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 	public final HandlerExecutionChain getHandler(HttpServletRequest request) 
 			throws Exception {
 		
-		String lookupPath = this.servletMappingHelper.getLookupPathForRequest(request);
+		String lookupPath = this.urlPathHelper.getLookupPathForRequest(request);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Looking up handler for [" + lookupPath + "]");
 		}

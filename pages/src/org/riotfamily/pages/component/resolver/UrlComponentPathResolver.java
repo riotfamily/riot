@@ -25,7 +25,7 @@ package org.riotfamily.pages.component.resolver;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.web.util.ServletMappingHelper;
+import org.riotfamily.common.web.util.ServletUtils;
 
 /**
  * ComponentPathResolver that utilizes a 
@@ -41,11 +41,8 @@ import org.riotfamily.common.web.util.ServletMappingHelper;
  */
 public class UrlComponentPathResolver implements ComponentPathResolver {
 
-	private static ServletMappingHelper servletMappingHelper = 
-			new ServletMappingHelper(true);
-	
 	public String getComponentPath(HttpServletRequest request) {
-		return servletMappingHelper.getLookupPathForRequest(request);
+		return ServletUtils.getLookupPathForOriginatingRequest(request);
 	}
 	
 	/**

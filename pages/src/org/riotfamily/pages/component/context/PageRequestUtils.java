@@ -28,7 +28,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.web.util.ServletMappingHelper;
+import org.springframework.web.util.UrlPathHelper;
 
 public final class PageRequestUtils {
 
@@ -37,14 +37,13 @@ public final class PageRequestUtils {
 
 	private static Log log = LogFactory.getLog(PageRequestUtils.class);
 	
-	private static ServletMappingHelper servletMappingHelper = 
-			new ServletMappingHelper(true);
+	private static UrlPathHelper urlPathHelper = new UrlPathHelper();
 	
 	private PageRequestUtils() {
 	}
 	
 	public static void storeContext(HttpServletRequest request, int timeToLive) {
-		String uri = servletMappingHelper.getRequestUri(request);
+		String uri = urlPathHelper.getOriginatingRequestUri(request);
 		log.debug("Storing context for URI: " + uri);
 		ContextMap contextMap = getContextMap(request);
 		PageRequestContext context = new PageRequestContext(request, timeToLive);

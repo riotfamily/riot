@@ -123,7 +123,7 @@ public abstract class AbstractCachingPolicyController
 			HttpServletRequest request) {
 
 		key.append(getBeanName()).append(':');
-		key.append(ServletUtils.getOriginalRequestUri(request));
+		key.append(ServletUtils.getOriginatingRequestUri(request));
 	}
 	
 }

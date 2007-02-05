@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.mapping.UrlMapping;
 import org.riotfamily.common.web.mapping.UrlMappingAware;
-import org.riotfamily.common.web.util.ServletMappingHelper;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.security.LoginManager;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.util.StringUtils;
@@ -50,9 +50,6 @@ public class LoginFormController implements Controller,
 	private UrlMapping urlMapping;
 	
 	private String beanName;
-	
-	private ServletMappingHelper servletMappingHelper = 
-			new ServletMappingHelper();
 	
 	public LoginFormController(LoginManager loginManager) {
 		this.loginManager = loginManager;
@@ -86,7 +83,7 @@ public class LoginFormController implements Controller,
 					return new ModelAndView(successViewName);
 				}
 				else {
-					String successUrl = servletMappingHelper.getRootPath(request);
+					String successUrl = ServletUtils.getRootPath(request);
 					return new ModelAndView(new RedirectView(successUrl));
 				}
 			}

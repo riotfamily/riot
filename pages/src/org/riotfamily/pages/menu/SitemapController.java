@@ -30,13 +30,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.util.ServletMappingHelper;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.member.MemberBinder;
 import org.riotfamily.pages.member.MemberBinderAware;
 import org.riotfamily.pages.member.WebsiteMember;
 import org.riotfamily.pages.member.support.NullMemberBinder;
 import org.riotfamily.pages.mvc.cache.AbstractCachingPolicyController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UrlPathHelper;
 
 public class SitemapController extends AbstractCachingPolicyController implements MemberBinderAware {
 
@@ -44,7 +45,7 @@ public class SitemapController extends AbstractCachingPolicyController implement
 	
 	private String viewName;
 	
-	private ServletMappingHelper servletMappingHelper;
+	private UrlPathHelper urlPathHelper = new UrlPathHelper();
 	
 	private String contextPath;
 	
@@ -55,11 +56,6 @@ public class SitemapController extends AbstractCachingPolicyController implement
 	private boolean includeMemberRoleInCacheKey = true;
 	
 	private MemberBinder memberBinder = new NullMemberBinder();	
-
-	public SitemapController() {
-		servletMappingHelper = new ServletMappingHelper();
-		servletMappingHelper.setUseOriginalRequest(true);
-	}
 	
 	public void setSitemapBuilder(SitemapBuilder sitemapBuilder) {
 		this.sitemapBuilder = sitemapBuilder;
@@ -102,21 +98,21 @@ public class SitemapController extends AbstractCachingPolicyController implement
 
 	protected String getContextPath(HttpServletRequest request) {
 		if (contextPath == null) {
-			contextPath = servletMappingHelper.getContextPath(request);
+			contextPath = urlPathHelper.getContextPath(request);
 		}
 		return contextPath;
 	}
 	
 	protected String getServletPrefix(HttpServletRequest request) {
 		if (servletPrefix == null) {
-			servletPrefix = servletMappingHelper.getServletPrefix(request);
+			servletPrefix = ServletUtils.getServletPrefix(request);
 		}
 		return servletPrefix;
 	}
 	
 	protected String getServletSuffix(HttpServletRequest request) {
 		if (servletSuffix == null) {
-			servletSuffix = servletMappingHelper.getServletSuffix(request);
+			servletSuffix = ServletUtils.getServletSuffix(request);
 		}
 		return servletSuffix;
 	}

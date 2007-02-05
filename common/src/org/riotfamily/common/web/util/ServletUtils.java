@@ -36,6 +36,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.util.StringUtils;
+import org.springframework.web.util.UrlPathHelper;
+import org.springframework.web.util.WebUtils;
+
 public final class ServletUtils {
 
 	public static final String INCLUDE_URI_REQUEST_ATTRIBUTE = 
@@ -67,12 +71,144 @@ public final class ServletUtils {
     public static final String VALID_SCHEME_CHARS =
     		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+.-";
 
-    private static ServletMappingHelper servletMappingHelper =
-    		new ServletMappingHelper(true);  
+    private static UrlPathHelper urlPathHelper = new UrlPathHelper();  
     
 	private ServletUtils() {
 	}
+	
+	public static String getOriginatingContextPath(HttpServletRequest request) {
+		return urlPathHelper.getOriginatingContextPath(request);
+	}
+	
+	public static String getOriginatingRequestUri(HttpServletRequest request) {
+		return urlPathHelper.getOriginatingRequestUri(request);
+	}
+	
+	/**
+	 * @deprecated Use getOriginatingRequestUri() instead.
+	 */
+	public static String getOriginalRequestUri(HttpServletRequest request) {
+		return getOriginatingRequestUri(request);
+	}
+	
+	public static String getOriginatingServletPath(HttpServletRequest request) {
+		String servletPath = (String) request.getAttribute(
+				WebUtils.FORWARD_SERVLET_PATH_ATTRIBUTE);
+		
+		if (servletPath == null) {
+			servletPath = request.getServletPath();
+		}
+		return servletPath;
+	}
+	
+	/**
+	 * Return the path within the web application for the given request.
+	 * @param request current HTTP request
+	 * @return the path within the web application
+	 */
+	public static String getOriginatingPathWithinApplication(HttpServletRequest request) {
+		String contextPath = getOriginatingContextPath(request);
+		String requestUri = getOriginatingRequestUri(request);
+		if (StringUtils.startsWithIgnoreCase(requestUri, contextPath)) {
+			// Normal case: URI contains context path.
+			String path = requestUri.substring(contextPath.length());
+			return (StringUtils.hasText(path) ? path : "/");
+		}
+		else {
+			// Special case: rather unusual.
+			return requestUri;
+		}
+	}
+	
+	/**
+	 * Return the path within the servlet mapping for the given request,
+	 * i.e. the part of the request's URL beyond the part that called the servlet,
+	 * or "" if the whole URL has been used to identify the servlet.
+	 * <p>E.g.: servlet mapping = "/test/*"; request URI = "/test/a" -> "/a".
+	 * <p>E.g.: servlet mapping = "/test"; request URI = "/test" -> "".
+	 * <p>E.g.: servlet mapping = "/*.test"; request URI = "/a.test" -> "".
+	 * @param request current HTTP request
+	 * @return the path within the servlet mapping, or ""
+	 */
+	public static String getOriginatingPathWithinServletMapping(HttpServletRequest request) {
+		String pathWithinApp = getOriginatingPathWithinApplication(request);
+		String servletPath = getOriginatingServletPath(request);
+		if (pathWithinApp.startsWith(servletPath)) {
+			// Normal case: URI contains servlet path.
+			return pathWithinApp.substring(servletPath.length());
+		}
+		else {
+			// Special case: URI is different from servlet path.
+			// Can happen e.g. with index page: URI="/", servletPath="/index.html"
+			// Use servlet path in this case, as it indicates the actual target path.
+			return servletPath;
+		}
+	}
+	
+	/**
+	 * Returns the lookup-path for a given request. This is either the path
+	 * within the servlet-mapping (in case of a prefix mapping) or the path
+	 * within the application without the trailing suffix (in case of a suffix
+	 * mapping).
+	 */
+	public static String getLookupPathForOriginatingRequest(HttpServletRequest request) {
+		String path = getOriginatingPathWithinServletMapping(request);
+		if (path.length() == 0) {
+			path = getOriginatingPathWithinApplication(request);
+			if (path.equals(getServletPrefix(request))) {
+				return "/";
+			}
+			int dotIndex = path.lastIndexOf('.');
+			if (dotIndex >= 0) {
+				path = path.substring(0, dotIndex);
+			}	
+		}
+		return path;
+	}
+	
+	/**
+	 * Returns the servlet-mapping prefix for the given request or an empty 
+	 * String if the servlet is mapped by a suffix.  
+	 */
+	public static String getServletPrefix(HttpServletRequest request) {
+		
+		String path = getOriginatingPathWithinApplication(request);
+		String servletPath = getOriginatingServletPath(request);
+		if (path.length() > servletPath.length()
+				|| path.lastIndexOf('/') > path.lastIndexOf('.')) {
 
+			return servletPath;
+		}
+		return "";
+	}
+	
+	/**
+	 * Returns the servlet-mapping suffix for the given request or an empty
+	 * String if the servlet is mapped by a prefix.
+	 */
+	public static String getServletSuffix(HttpServletRequest request) {
+		String path = getOriginatingPathWithinApplication(request);
+		if (path.equals(getOriginatingServletPath(request))) {
+			int dotIndex = path.lastIndexOf('.');
+			if (dotIndex >= 0) {
+				return path.substring(dotIndex);
+			}
+		}
+		return "";
+	}
+
+	/**
+	 * Returns a String consisting of the context-path and the servlet-prefix
+	 * for the given request. The String will always end with a slash. 
+	 */
+	public static String getRootPath(HttpServletRequest request) {
+		StringBuffer path = new StringBuffer();
+		path.append(getOriginatingContextPath(request));
+		path.append(getServletPrefix(request));
+		path.append('/');
+		return path.toString();
+	}
+	
 	/**
      * Returns <tt>true</tt> if our current URL is absolute,
      * <tt>false</tt> otherwise.
@@ -123,10 +259,6 @@ public final class ServletUtils {
 		}
 		url = resolveUrl(url, request);
 		return response.encodeURL(url);
-	}
-	
-	public static String getOriginalRequestUri(HttpServletRequest request) {
-		return servletMappingHelper.getRequestUri(request);
 	}
 	
 	public static String getIncludeUri(HttpServletRequest request) {

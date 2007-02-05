@@ -31,7 +31,7 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.util.ServletMappingHelper;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -40,9 +40,6 @@ import org.springframework.web.servlet.mvc.Controller;
  */
 public class RedirectController implements Controller {
 
-	private static ServletMappingHelper servletMappingHelper = 
-			new ServletMappingHelper();
-	
 	private boolean http10Compatible = true;
 	
 	private boolean addContextPath = false;
@@ -114,13 +111,13 @@ public class RedirectController implements Controller {
 			url.append(request.getContextPath());
 		}
 		if (addServletMapping) {
-			url.append(servletMappingHelper.getServletPrefix(request));
+			url.append(ServletUtils.getServletPrefix(request));
 		}
 		
 		url.append(destination);
 		
 		if (addServletMapping) {
-			url.append(servletMappingHelper.getServletSuffix(request));
+			url.append(ServletUtils.getServletSuffix(request));
 		}
 		appendParameters(url, request);
 		sendRedirect(request, response, url.toString());

@@ -26,11 +26,11 @@ package org.riotfamily.pages.page.support;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.util.ServletMappingHelper;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
 import org.riotfamily.pages.page.Page;
 import org.riotfamily.pages.page.PageMap;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.util.UrlPathHelper;
 
 public class PageInterceptor extends HandlerInterceptorAdapter {
 
@@ -38,8 +38,7 @@ public class PageInterceptor extends HandlerInterceptorAdapter {
 
 	private PageMap pageMap;
 	
-	private ServletMappingHelper servletMappingHelper = 
-			new ServletMappingHelper();
+	private UrlPathHelper urlPathHelper = new UrlPathHelper();
 	
 	public PageInterceptor(PageMap pageMap, ViewModeResolver viewModeResolver) {
 		this.pageMap = pageMap;
@@ -52,7 +51,7 @@ public class PageInterceptor extends HandlerInterceptorAdapter {
 		PageUtils.exposePageMap(request, pageMap);
 		Page page = PageUtils.getPage(request);
 		if (page == null) {
-			String path = servletMappingHelper.getLookupPathForRequest(request);
+			String path = urlPathHelper.getLookupPathForRequest(request);
 			page = pageMap.getPageOrAncestor(path);
 			PageUtils.exposePage(request, page);
 		}
