@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.component.preview.DefaultViewModeResolver;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
 import org.riotfamily.pages.page.support.PageInterceptor;
@@ -37,14 +38,11 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.util.UrlPathHelper;
 
 public class PageHandlerMapping implements HandlerMapping, Ordered, 
 		InitializingBean {
 
 	private static Log log = LogFactory.getLog(PageHandlerMapping.class);
-	
-	private UrlPathHelper urlPathHelper = new UrlPathHelper();
 	
 	private PageMap pageMap;
 	
@@ -89,7 +87,7 @@ public class PageHandlerMapping implements HandlerMapping, Ordered,
 	public HandlerExecutionChain getHandler(HttpServletRequest request) 
 			throws Exception {
 		
-		String path = urlPathHelper.getLookupPathForRequest(request);
+		String path = ServletUtils.getLookupPathForOriginatingRequest(request);
 		if (log.isDebugEnabled()) {
 			log.debug("Looking up handler for [" + path + "]");
 		}
