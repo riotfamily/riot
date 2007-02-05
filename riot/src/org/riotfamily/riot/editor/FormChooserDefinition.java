@@ -56,6 +56,10 @@ public class FormChooserDefinition extends FormDefinition {
 		FormDefinition defaultFormDef = (FormDefinition) formDefinitions.get(0); 
 		return defaultFormDef.getFormId();
 	}
+	
+	public Class getBeanClass() {
+		return getParentEditorDefinition().getBeanClass();
+	}
 
 	protected String getDefaultName() {
 		return null;
