@@ -50,6 +50,12 @@ public abstract class AbstractDialect implements Dialect {
 			log.warn("Dialect does not support all JDBC types!");
 		}
 	}
+	
+	public String getName() {
+		String s = getClass().getName();
+		s = s.substring(s.lastIndexOf('.') + 1);
+		return s.substring(0, s.indexOf("Dialect"));
+	}
 
 	protected abstract void registerTypes();
 	

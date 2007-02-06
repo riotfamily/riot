@@ -37,6 +37,8 @@ import org.riotfamily.revolt.definition.UniqueConstraint;
  */
 public interface Dialect {
 
+	public String getName();
+	
 	public boolean supports(String databaseProductName, int majorVersion, 
 			int minorVersion);
 
@@ -69,5 +71,5 @@ public interface Dialect {
 	public Script insert(String table, Collection data);
 	
 	public Script createAutoIncrementSequence(String name);
-
+	
 }

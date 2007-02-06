@@ -29,6 +29,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.riotfamily.revolt.definition.Database;
 import org.riotfamily.revolt.support.DatabaseUtils;
 import org.riotfamily.revolt.support.DialectResolver;
@@ -41,6 +43,8 @@ import org.springframework.beans.factory.BeanNameAware;
  */
 public class EvolutionHistory implements BeanNameAware {
 
+	private static final Log log = LogFactory.getLog(EvolutionHistory.class);
+	
 	private String moduleName;
 	
 	private List changeSets;
@@ -83,7 +87,11 @@ public class EvolutionHistory implements BeanNameAware {
 			this.changeSets.add(changeSet);
 		}
 	}
-		
+
+	public void validate() {
+		DatabaseUtils.validate(dataSource, evolveModel());
+	}
+	
 	private Database evolveModel() {
 		Database model = new Database();
 		Iterator it = changeSets.iterator();
@@ -99,17 +107,14 @@ public class EvolutionHistory implements BeanNameAware {
 		appliedIds = new ArrayList();
 		appliedIds.addAll(logTable.getAppliedChangeSetIds(moduleName));
 	}
-	
-	public void evolve() throws DatabaseOutOfSyncException {
-		getScript().execute(dataSource);
-		DatabaseUtils.validate(dataSource, evolveModel());
-	}
-	
+		
 	public Script getScript() {
 		Script script = new Script();
 		if (appliedIds.isEmpty()) {
+			log.info("The log-table contains no entries. Checking if schema is up-to-date ...");
 			try {
 				DatabaseUtils.validate(dataSource, evolveModel());
+				log.info("Schema looks okay. Marking all changes as applied.");
 				Iterator it = changeSets.iterator();
 				while (it.hasNext()) {
 					ChangeSet changeSet = (ChangeSet) it.next();
@@ -118,6 +123,8 @@ public class EvolutionHistory implements BeanNameAware {
 				return script;
 			}
 			catch (DatabaseOutOfSyncException e) {
+				log.info("Schema is out of sync: " + e.getMessage());
+				script.forceManualExecution();
 			}
 		}
 		Iterator it = changeSets.iterator();

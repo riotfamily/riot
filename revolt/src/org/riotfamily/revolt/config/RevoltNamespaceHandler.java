@@ -36,6 +36,7 @@ import org.riotfamily.revolt.definition.Index;
 import org.riotfamily.revolt.definition.RecordEntry;
 import org.riotfamily.revolt.definition.Reference;
 import org.riotfamily.revolt.definition.UniqueConstraint;
+import org.riotfamily.revolt.definition.UpdateStatement;
 import org.riotfamily.revolt.refactor.AddColumn;
 import org.riotfamily.revolt.refactor.AddForeignKey;
 import org.riotfamily.revolt.refactor.AddUniqueConstraint;
@@ -51,6 +52,7 @@ import org.riotfamily.revolt.refactor.InsertData;
 import org.riotfamily.revolt.refactor.ModifyColumn;
 import org.riotfamily.revolt.refactor.RenameColumn;
 import org.riotfamily.revolt.refactor.RenameTable;
+import org.riotfamily.revolt.refactor.UpdateData;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -185,6 +187,9 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 			refactoring = new InsertData(ele.getAttribute("table"), 
 					parseEntries(ele));
 		}
+		if (DomUtils.nodeNameEquals(ele, "update-data")) {
+			refactoring = new UpdateData(parseUpdateStatements(ele));
+		}
 		if (DomUtils.nodeNameEquals(ele, "create-auto-increment-seq")) {
 			refactoring = new CreateAutoIncrementSequence(
 					ele.getAttribute("name"));
@@ -248,6 +253,18 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 					e.getAttribute("value")));
 		}
 		return entries;
+	}
+	
+	private List parseUpdateStatements(Element ele) {
+		ArrayList statements = new ArrayList();
+		Iterator it = DomUtils.getChildElementsByTagName(ele, "statement").iterator();
+		while (it.hasNext()) {
+			Element e = (Element) it.next();
+			statements.add(new UpdateStatement(
+					e.getAttribute("dialects"), 
+					e.getAttribute("sql")));
+		}
+		return statements;
 	}
 	
 	public BeanDefinitionHolder decorate(Node node, BeanDefinitionHolder 

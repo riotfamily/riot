@@ -141,6 +141,18 @@
 						<xsd:attribute name="table" type="xsd:string" use="required" />
 					</xsd:complexType>
 				</xsd:element>
+				<xsd:element name="update-data">
+					<xsd:complexType>
+						<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+							<xsd:element name="statement">
+								<xsd:complexType>
+									<xsd:attribute name="dialects" type="xsd:string" use="required" />
+									<xsd:attribute name="sql" type="xsd:string" use="required" />
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
 			</xsd:choice>
 			<xsd:attribute name="id" type="xsd:string" use="required" />
 		</xsd:complexType>

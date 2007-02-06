@@ -37,6 +37,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlProvider;
 import org.springframework.jdbc.core.StatementCallback;
+import org.springframework.util.Assert;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
@@ -49,6 +50,8 @@ public class Script {
 	private StringBuffer buffer;
 
 	private boolean nospace;
+	
+	private boolean manualExecutionOnly;
 	
 	public Script() {
 	}
@@ -84,6 +87,7 @@ public class Script {
 	public Script append(Script script) {
 		newStatement();
 		callbacks.addAll(script.getCallbacks());
+		manualExecutionOnly |= script.isManualExecutionOnly();
 		return this;
 	}
 
@@ -94,12 +98,23 @@ public class Script {
 		buffer = new StringBuffer();
 	}
 
+	public boolean isManualExecutionOnly() {
+		return manualExecutionOnly;
+	}
+
+	public void forceManualExecution() {
+		manualExecutionOnly = true;
+	}
+
 	public List getCallbacks() {
 		newStatement();
 		return callbacks;
 	}
 
 	public void execute(DataSource dataSource) {
+		Assert.state(manualExecutionOnly == false, 
+				"This script must be manually executed.");
+		
 		JdbcTemplate template = new JdbcTemplate(dataSource);
 		Iterator it = getCallbacks().iterator();
 		while (it.hasNext()) {
@@ -135,7 +150,7 @@ public class Script {
 		public Object doInStatement(Statement statement) 
 				throws SQLException, DataAccessException {
 			
-			log.debug(sql);
+			log.info("Revolt: " + sql);
 			statement.execute(sql);
 			return null;
 		}

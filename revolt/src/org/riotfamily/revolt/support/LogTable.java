@@ -72,17 +72,6 @@ public class LogTable {
 		return exists;
 	}
 	
-	public void create() {
-		if (!exists) {
-			getCreateTableScript().execute(dataSource);
-			exists = true;
-		}
-	}
-
-	public Script getCreateTableScript() {
-		return dialect.createTable(table);
-	}
-	
 	public Collection getAppliedChangeSetIds(final String moduleName) {
 		if (!exists) {
 			return Collections.EMPTY_LIST;
@@ -109,6 +98,10 @@ public class LogTable {
 					}
 				}
 		);
+	}
+	
+	public Script getCreateTableScript() {
+		return dialect.createTable(table);
 	}
 		
 	public Script getInsertScript(ChangeSet changeSet) {

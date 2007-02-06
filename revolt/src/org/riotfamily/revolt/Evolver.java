@@ -30,6 +30,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.riotfamily.revolt.support.DatabaseUtils;
 import org.riotfamily.revolt.support.LogTable;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -42,6 +44,8 @@ import org.springframework.util.StringUtils;
  */
 public class Evolver implements ApplicationContextAware {
 
+	private static final Log log = LogFactory.getLog(Evolver.class);
+	
 	private boolean automatic;
 	
 	private boolean validate = true;
@@ -71,21 +75,25 @@ public class Evolver implements ApplicationContextAware {
 		
 		if (automatic || validate) {
 			Iterator it = evolutions.iterator();
+			
 			while (it.hasNext()) {
 				EvolutionHistory history = (EvolutionHistory) it.next();
 				history.init(getLogTable(history));
-				if (automatic) {
-					history.evolve();
-				}
-				else {
-					getScript(history).append(history.getScript());
-				}
+				getScript(history).append(history.getScript());
 			}
-			if (!automatic) {
-				String instructions = getInstructions();
-				if (StringUtils.hasLength(instructions)) {
-					throw new EvolutionInstructions(instructions);
-				}
+			
+			if (automatic) {
+				executeScripts();
+			}
+			
+			String instructions = getInstructions();
+			if (StringUtils.hasLength(instructions)) {
+				throw new EvolutionInstructions(instructions);
+			}
+			
+			while (it.hasNext()) {
+				EvolutionHistory history = (EvolutionHistory) it.next();
+				history.validate();
 			}
 		}
 	}
@@ -97,12 +105,8 @@ public class Evolver implements ApplicationContextAware {
 			logTable = new LogTable(dataSource, history.getDialect());
 			logTables.put(history.getDataSource(), logTable);
 			if (!logTable.exists()) {
-				if (automatic) {
-					logTable.create();
-				}
-				else {
-					getScript(history).append(logTable.getCreateTableScript());
-				}
+				log.info("Revolt log-table does not exist.");
+				getScript(history).append(logTable.getCreateTableScript());
 			}
 		}
 		return logTable;
@@ -117,6 +121,18 @@ public class Evolver implements ApplicationContextAware {
 		}
 		return script;
 	}
+	
+	private void executeScripts() {
+		Iterator it = scripts.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			DataSource dataSource = (DataSource) entry.getKey();
+			Script script = (Script) entry.getValue();
+			if (!script.isManualExecutionOnly()) {
+				script.execute(dataSource);
+			}
+		}
+	}
 		
 	private String getInstructions() {
 		StringBuffer sb = new StringBuffer();
@@ -125,15 +141,17 @@ public class Evolver implements ApplicationContextAware {
 			Map.Entry entry = (Map.Entry) it.next();
 			DataSource dataSource = (DataSource) entry.getKey();
 			Script script = (Script) entry.getValue();
-			String sql = script.getSql();
-			if (StringUtils.hasLength(sql)) {
-				sb.append("\n\n-------------------------------------------------------------------------\n\n");
-				sb.append("The database ").append(DatabaseUtils.getUrl(dataSource));
-				sb.append(" is not up-to-date.\nPlease execute the" 
-						+ " following SQL commands to evolve the schema:\n\n");
-						
-				sb.append(sql);
-				sb.append("\n\n-------------------------------------------------------------------------\n\n");
+			if (!automatic || script.isManualExecutionOnly()) {
+				String sql = script.getSql();
+				if (StringUtils.hasLength(sql)) {
+					sb.append("\n\n-------------------------------------------------------------------------\n\n");
+					sb.append("The database ").append(DatabaseUtils.getUrl(dataSource));
+					sb.append(" is not up-to-date.\nPlease execute the" 
+							+ " following SQL commands to evolve the schema:\n\n");
+							
+					sb.append(sql);
+					sb.append("\n\n-------------------------------------------------------------------------\n\n");
+				}
 			}
 		}
 		return sb.toString();
