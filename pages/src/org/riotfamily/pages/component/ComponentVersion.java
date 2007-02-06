@@ -41,10 +41,8 @@ public class ComponentVersion {
 	
 	private boolean dirty;
 	
-	private VersionContainer liveContainer;
+	private VersionContainer container;
 	
-	private VersionContainer previewContainer;
-		
 	public ComponentVersion() {
 	}
 	
@@ -55,8 +53,7 @@ public class ComponentVersion {
 	public ComponentVersion(ComponentVersion prototype) {
 		if (prototype != null) {
 			this.type = prototype.getType();
-			this.liveContainer = prototype.getContainer();
-			this.previewContainer = prototype.getContainer();
+			this.container = prototype.getContainer();
 			this.properties = new HashMap(prototype.getProperties());
 		}
 	}
@@ -118,15 +115,12 @@ public class ComponentVersion {
 	 * Returns the VersionContainer this version belongs to.
 	 */
 	public VersionContainer getContainer() {
-		return previewContainer != null ? previewContainer : liveContainer;
+		return container;
 	}
-	
 	
 	public void setContainer(VersionContainer container) {
-		this.liveContainer = container;
-		this.previewContainer = container;
+		this.container = container;
 	}
-	
 
 	public boolean isDirty() {
 		return this.dirty;

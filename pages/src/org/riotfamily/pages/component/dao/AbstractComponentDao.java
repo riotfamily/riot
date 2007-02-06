@@ -161,7 +161,9 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 * 		<code>null</code>, the type of the live version is used. 
 	 * 
 	 */
-	public ComponentVersion getOrCreatePreviewVersion(VersionContainer container, String type) {
+	public ComponentVersion getOrCreatePreviewVersion(
+			VersionContainer container, String type) {
+		
 		ComponentList list = container.getList();
 		if (!list.isDirty()) {
 			getOrCreatePreviewContainers(list);
@@ -183,13 +185,14 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	/**
 	 * Inserts a container into a list.
 	 */
-	public void insertContainer(ComponentList componentList, 
-			VersionContainer container, int position, boolean live) {
+	public VersionContainer insertContainer(ComponentList componentList, 
+			String type, Map properties, int position, boolean live) {
 		 
 		List containers = live 
 				? componentList.getLiveList() 
 				: getOrCreatePreviewContainers(componentList);
 
+		VersionContainer container = createVersionContainer(type, properties, live);
 		container.setList(componentList);
 		
 		if (position >= 0) {
@@ -204,8 +207,19 @@ public abstract class AbstractComponentDao implements ComponentDao {
 		}
 		
 		updateComponentList(componentList);
+		return container;
 	}
 
+	public ComponentVersion getComponentVersionForContainer(Long containerId, 
+			boolean live) {
+		
+		VersionContainer container = loadVersionContainer(containerId);
+		if (live) {
+			return container.getLiveVersion();
+		}
+		return getOrCreatePreviewVersion(container, null);
+	}
+	
 	/**
 	 * Creates a new container, containing a version of the given type.
 	 * 
@@ -214,7 +228,7 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 * @param live Whether to create a preview or live version
 	 * @return The newly created container
 	 */
-	public VersionContainer createVersionContainer(
+	private VersionContainer createVersionContainer(
 			String type, Map properties, boolean live) {
 		
 		VersionContainer container = new VersionContainer();
@@ -226,7 +240,6 @@ public abstract class AbstractComponentDao implements ComponentDao {
 		else {
 			container.setPreviewVersion(version);
 		}
-		version.setContainer(container);
 		return container;
 	}
 	

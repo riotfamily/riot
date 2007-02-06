@@ -25,8 +25,11 @@ package org.riotfamily.pages.component.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentRepository;
 
@@ -49,14 +52,11 @@ public class HibernateComponentDao extends AbstractComponentDao {
 	public ComponentList findComponentList(
 			final String path, final String key) {
 		
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from ComponentList list where list.path = :path" +
-				" and list.key = :key");
-				
-		query.setParameter("path", path);
-		query.setParameter("key", key);
-		query.setMaxResults(1);
-		return (ComponentList) query.uniqueResult();
+		Criteria c = sessionFactory.getCurrentSession().createCriteria(ComponentList.class);
+		c.add(Restrictions.naturalId().set("path", path).set("key", key));
+		c.setCacheable(true);
+		c.setCacheRegion("components");
+		return (ComponentList) c.uniqueResult();
 	}
 	
 	public List findComponentLists(final String path) {
@@ -64,13 +64,17 @@ public class HibernateComponentDao extends AbstractComponentDao {
 				"from ComponentList list where list.path = :path");
 				
 		query.setParameter("path", path);
+		query.setCacheable(true);
+		query.setCacheRegion("components");
 		return query.list();
 	}
 	
 	public List findDirtyComponentLists() {
 		Query query = sessionFactory.getCurrentSession().createQuery(
 				"from ComponentList list where list.dirty = true");
-				
+		
+		query.setCacheable(true);
+		query.setCacheRegion("components");
 		return query.list();
 	}
 
@@ -83,7 +87,9 @@ public class HibernateComponentDao extends AbstractComponentDao {
 	}
 	
 	protected void updateObject(Object object) {
-		sessionFactory.getCurrentSession().update(object);
+		Session session = sessionFactory.getCurrentSession();
+		session.update(object);
+		session.flush();
 	}
 	
 	protected void deleteObject(Object object) {

@@ -191,11 +191,8 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			type = types[0];
 		}
 		
-		VersionContainer container = getDao().createVersionContainer(
-				type, properties, isInstantPublishMode());
-		
-		getDao().insertContainer(componentList, container, position, 
-				isInstantPublishMode());
+		VersionContainer container = getDao().insertContainer(componentList, 
+				type, properties, position, isInstantPublishMode());
 		
 		return new ComponentInfo(container.getId(), type, 
 				getRepository().getFormId(type), 

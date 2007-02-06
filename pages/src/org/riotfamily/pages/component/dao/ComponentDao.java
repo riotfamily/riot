@@ -71,6 +71,15 @@ public interface ComponentDao {
 	public ComponentVersion loadComponentVersion(Long id);
 	
 	/**
+	 * Returns a ComponentVersion for the given container id.
+	 * @param containerId Id of the container to load
+	 * @param live Whether to return the live (or preview) version
+	 * @since 6.4
+	 */
+	public ComponentVersion getComponentVersionForContainer(
+			Long containerId, boolean live);
+	
+	/**
 	 * Saves the given ComponentList.
 	 */
 	public void saveComponentList(ComponentList list);
@@ -147,21 +156,10 @@ public interface ComponentDao {
 			VersionContainer container, String type);
 	
 	/**
-	 * Creates a new container, containing a version of the given type.
-	 * 
-	 * @param type The type of the version to create
-	 * @param properties Properties of the version to create
-	 * @param live Whether to create a preview or live version
-	 * @return The newly created container
-	 */
-	public VersionContainer createVersionContainer(String type, 
-			Map properties, boolean live);
-
-	/**
 	 * Inserts a container into a list.
 	 */
-	public void insertContainer(ComponentList componentList, 
-			VersionContainer container, int position, boolean live);
+	public VersionContainer insertContainer(ComponentList componentList, 
+			String type, Map properties, int position, boolean live);
 	
 	/**
 	 * Creates copys of all ComponentLists under the given path and sets 

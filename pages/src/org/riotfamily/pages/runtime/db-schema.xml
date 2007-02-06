@@ -88,5 +88,16 @@
 			<db:add-column table="component_lists" name="lastModifiedBy" type="VARCHAR" length="255" />
 			<db:add-column table="component_lists" name="lastModified" type="TIMESTAMP" />
 		</db:change-set>
+		<db:change-set id="versionToContainerReference">
+			<db:add-column table="component_versions" name="container" type="BIGINT" />
+			<db:add-foreign-key table="component_versions" name="component_versions_container" references="components">
+				<db:ref local="container" foreign="id" />
+			</db:add-foreign-key>
+			<db:update-data>
+				<db:statement 
+					dialects="hsql,postgresql,postgresql8,mysql" 
+					sql="update component_versions set container = (select id from components where live_version = component_versions.id or preview_version= component_versions.id)" />
+			</db:update-data>
+		</db:change-set>
 	</db:history>
 </beans>

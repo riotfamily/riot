@@ -49,7 +49,6 @@ import org.riotfamily.forms.factory.FormDefinitionException;
 import org.riotfamily.pages.component.Component;
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
-import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.dao.ComponentDao;
 import org.riotfamily.pages.component.property.FileStoreProperyProcessor;
 import org.riotfamily.pages.component.property.PropertyEditorProcessor;
@@ -179,14 +178,10 @@ public class ComponentFormController extends RepositoryFormController
 	
 	protected ComponentVersion getPreview(HttpServletRequest request) {
 		Long id = new Long((String) request.getAttribute(COMPONENT_ID));
-		VersionContainer container = componentDao.loadVersionContainer(id);
 		boolean instanPublishMode = ServletRequestUtils.getBooleanParameter(
 				request, INSTANT_PUBLISH_PARAM, false);
 		
-		if (instanPublishMode) {
-			return container.getLiveVersion();
-		}
-		return componentDao.getOrCreatePreviewVersion(container, null);
+		return componentDao.getComponentVersionForContainer(id, instanPublishMode);
 	}
 	
 	public String getFormId(String componentType) {

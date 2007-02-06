@@ -12,8 +12,8 @@
 			<generator class="native" />
 		</id>
 		<natural-id>
-			<property name="path" column="`path`" unique-key="composite_key" />
-			<property name="key" column="`key`" unique-key="composite_key" />
+			<property name="path" column="`path`" />
+			<property name="key" column="`key`" />
 		</natural-id>
 		<list name="liveList" cascade="all">
 			<cache usage="nonstrict-read-write" region="components" />
@@ -32,7 +32,7 @@
 		<property name="lastModifiedBy" />
 	</class>
 	
-	<class name="VersionContainer" table="components">
+	<class name="VersionContainer" table="components" lazy="false">
 		<cache usage="nonstrict-read-write" region="components" />
 		<id name="id">
 			<generator class="native" />
@@ -43,6 +43,7 @@
 
 		<many-to-one name="liveVersion" column="live_version" cascade="all" />
 		<many-to-one name="previewVersion" column="preview_version" cascade="all" />
+				
 		<!-- 
 		<set name="versions">
 			<key column="component" />
@@ -51,20 +52,19 @@
 		 -->
 	</class>
 	
-	<class name="ComponentVersion" table="component_versions">
+	<class name="ComponentVersion" table="component_versions" lazy="false">
 		<cache usage="nonstrict-read-write" region="components" />
 		<id name="id">
 			<generator class="native" />
 		</id>
 		<property name="type" column="`type`" />
-		<map name="properties" table="component_properties" fetch="join" lazy="false">
+		<map name="properties" table="component_properties" lazy="false">
 			<cache usage="nonstrict-read-write" region="components" />
 			<key column="component_version" />
 			<index column="`key`" type="string" />
 			<element type="text"></element>
 		</map>
-		<one-to-one name="liveContainer" property-ref="liveVersion" access="field" />
-		<one-to-one name="previewContainer" property-ref="previewVersion" access="field" />
+		<many-to-one name="container" />
 		<property name="dirty" />
 	</class>
 		

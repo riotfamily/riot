@@ -72,6 +72,9 @@ public class VersionContainer {
 
 	public void setLiveVersion(ComponentVersion liveVersion) {
 		this.liveVersion = liveVersion;
+		if (liveVersion != null) {
+			liveVersion.setContainer(this);
+		}
 	}
 
 	public ComponentVersion getPreviewVersion() {
@@ -80,6 +83,9 @@ public class VersionContainer {
 
 	public void setPreviewVersion(ComponentVersion previewVersion) {
 		this.previewVersion = previewVersion;
+		if (previewVersion != null) {
+			previewVersion.setContainer(this);
+		}
 	}
 
 	public Set getVersions() {
