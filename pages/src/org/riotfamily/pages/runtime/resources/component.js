@@ -38,8 +38,9 @@ riot.Component.prototype = {
 	setMode: function(mode) {
 		if (mode == null) {
 			if (this.hover) {
-				this.hover.remove();
-				this.hover = null;
+				Element.hide(this.hover);
+				//this.hover = null;
+				//this.element.undoPositioned();
 			}
 		}
 		else {
@@ -47,12 +48,22 @@ riot.Component.prototype = {
 				this.mode = null;
 				return;
 			}
-			this.hover = RBuilder.node('a', {className: 'riot-highlight', href: '#', componentElement: this.element,
-				style: {position: 'absolute', display: 'none'}, parent: document.body, onclick: this.handlers[mode]}, 
-				RBuilder.node('img', {src: Resources.basePath + '/1px.gif', style: {width: '100%', height: '100%'}})
-			);
-			Position.clone(this.element, this.hover, {offsetTop: -2, offsetLeft: -2});
-			this.hover.style.display = 'block';
+			var e = this.element;
+			if (!this.hover) {
+				e.makePositioned();
+				var a = this.hover = document.createElement('a');
+				a.className = 'riot-highlight';
+				a.href = '#';
+				a.innerHTML = '<img src="' + Resources.basePath + '/1px.gif" />';
+				setTimeout(function() {RElement.prependChild(e, a)}, 1);
+			}
+			else {
+				var a = this.hover;
+				setTimeout(function() {a.style.display = 'block'}, 1);
+			}
+			this.hover.style.width = this.element.offsetWidth + 'px';
+			this.hover.style.height = this.element.offsetHeight + 'px';
+			this.hover.onclick = this.handlers[mode];
 		}
 		this.mode = mode;
 	},
@@ -60,11 +71,11 @@ riot.Component.prototype = {
 	remove: function(event) {
 		var e = event || window.event;
 		if (e) Event.stop(e);
-		riot.toolbar.buttons.remove.disable();
+		//riot.toolbar.buttons.remove.disable();
 		new Effect.Remove(this.element, function(el) {
 			Element.remove(el);
 			el.component.componentList.updatePositionClasses();
-			riot.toolbar.buttons.remove.enable().click();
+			//riot.toolbar.buttons.remove.enable().click();
 		});
 		ComponentEditor.deleteComponent(this.id);
 		riot.toolbar.setDirty(this.componentList, true);
@@ -518,13 +529,6 @@ riot.ComponentDragObserver.prototype = {
 
 // Preload the 1px image ...
 new Image().src = Resources.basePath + '/1px.gif';
-
-// Re-position hovers on window resize ...
-Event.observe(window, 'resize', function() {
-	$$('.riot-highlight').each(function(e) {
-		if (e.componentElement) Position.clone(e.componentElement, e);
-	});
-});
 
 riot.editProperties = function(e) {
 	e = e || this;
