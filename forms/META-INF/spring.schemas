@@ -1,3 +1,4 @@
 http\://riotfamily.org/schema/6.3/forms/form-config.xsd=org/riotfamily/forms/factory/xml/form-config.xsd
+http\://www.riotfamily.org/schema/forms/form-config.xsd=org/riotfamily/forms/factory/xml/form-config.xsd
 http\://www.riotfamily.org/schema/forms/form-config-6.3.xsd=org/riotfamily/forms/factory/xml/form-config.xsd
 http\://www.riotfamily.org/schema/forms/form-config-6.4.xsd=org/riotfamily/forms/factory/xml/form-config.xsd

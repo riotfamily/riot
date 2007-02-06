@@ -1,8 +1,12 @@
+http\://www.riotfamily.org/schema/pages/mvc.xsd=org/riotfamily/pages/mvc/config/mvc.xsd
 http\://www.riotfamily.org/schema/pages/mvc-6.3.xsd=org/riotfamily/pages/mvc/config/mvc.xsd
 http\://www.riotfamily.org/schema/pages/mvc-6.4.xsd=org/riotfamily/pages/mvc/config/mvc.xsd
+http\://www.riotfamily.org/schema/pages/component.xsd=org/riotfamily/pages/component/config/component.xsd
 http\://www.riotfamily.org/schema/pages/component-6.3.xsd=org/riotfamily/pages/component/config/component.xsd
 http\://www.riotfamily.org/schema/pages/component-6.4.xsd=org/riotfamily/pages/component/config/component.xsd
+http\://www.riotfamily.org/schema/pages/template.xsd=org/riotfamily/pages/template/config/template.xsd
 http\://www.riotfamily.org/schema/pages/template-6.3.xsd=org/riotfamily/pages/template/config/template.xsd
 http\://www.riotfamily.org/schema/pages/template-6.4.xsd=org/riotfamily/pages/template/config/template.xsd
+http\://www.riotfamily.org/schema/pages/page.xsd=org/riotfamily/pages/page/config/page.xsd
 http\://www.riotfamily.org/schema/pages/page-6.3.xsd=org/riotfamily/pages/page/config/page.xsd
 http\://www.riotfamily.org/schema/pages/page-6.4.xsd=org/riotfamily/pages/page/config/page.xsd
