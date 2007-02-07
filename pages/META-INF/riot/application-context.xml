@@ -5,7 +5,7 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
 	
-	<import resource="classpath:/org/riotfamily/pages/runtime/db-schema.xml"/>
+	<import resource="classpath:org/riotfamily/pages/runtime/db-schema.xml"/>
 		
 	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
 		<property name="properties">
