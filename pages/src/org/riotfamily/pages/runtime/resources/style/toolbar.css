@@ -187,7 +187,8 @@ html .riot-insert-button-active {
 	cursor: crosshair;
 }
 
-.riot-highlight {
+a.riot-highlight {
+	background: none !important;
 	display: block;
 	position: absolute;
 	top: -2px;
@@ -195,9 +196,10 @@ html .riot-insert-button-active {
 	z-index: 999;
 	-moz-user-select: none;
 }
-.riot-highlight img {
+a.riot-highlight img {
 	width: 100%;
 	height: 100%;
+	border: none;
 }
 .riot-highlight:hover {
 	border:2px dotted ${highlight};
