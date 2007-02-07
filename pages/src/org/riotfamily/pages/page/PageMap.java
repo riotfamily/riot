@@ -64,7 +64,7 @@ public class PageMap implements InitializingBean, ApplicationContextAware,
 	private static final Controller PAGE_HAS_GONE = 
 			new HttpErrorController(HttpServletResponse.SC_GONE);
 	
-	private PageDao pageDao;
+	protected PageDao pageDao;
 	
 	private PlatformTransactionManager transactionManager;
 	
@@ -72,7 +72,7 @@ public class PageMap implements InitializingBean, ApplicationContextAware,
 	
 	private HashMap pageAndControllerMap;
 	
-	private TransientPage rootPage;
+	protected TransientPage rootPage;
 		
 	private ApplicationContext applicationContext;
 	
@@ -123,25 +123,29 @@ public class PageMap implements InitializingBean, ApplicationContextAware,
 		initMappings();
 	}
 	
+	protected void initMappingsInternal() {
+		rootPage = new TransientPage();
+		rootPage.setPath("/");
+		rootPage.setFolder(true);
+		rootPage.setPublished(true);
+		rootPage.setChildPages(pageDao.listRootPages());
+		registerPage(rootPage);
+
+		Collection aliases = pageDao.listAliases();
+		registerAliases(aliases);
+	}
+	
 	/**
 	 * Called upon startup and when an ApplicationEvent is received ...
 	 */
-	public synchronized void initMappings() {
+	public final synchronized void initMappings() {
 		lastModified = System.currentTimeMillis();
 		pageAndControllerMap = new HashMap();
 		
 		new TransactionTemplate(transactionManager).execute(
 			new TransactionCallback() {
 				public Object doInTransaction(TransactionStatus status) {
-					rootPage = new TransientPage();
-					rootPage.setPath("/");
-					rootPage.setFolder(true);
-					rootPage.setPublished(true);
-					rootPage.setChildPages(pageDao.listRootPages());
-					registerPage(rootPage);
-					
-					Collection aliases = pageDao.listAliases();
-					registerAliases(aliases);
+					initMappingsInternal();
 					
 					if (postProcessor != null) {
 						postProcessor.process(PageMap.this);
