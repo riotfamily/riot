@@ -1,3 +1,9 @@
+riot.hover = RBuilder.node('div', {className: 'riot-highlight'}).hide();
+document.body.appendChild(riot.hover);
+riot.hideHover = function() {
+	if (riot.hover) riot.hover.hide();
+}
+
 riot.Component = Class.create();
 riot.Component.prototype = {
 
@@ -12,6 +18,9 @@ riot.Component.prototype = {
 			'remove': this.remove.bindAsEventListener(this),
 			'properties': this.properties.bindAsEventListener(this)
 		};
+		
+		this.onMouseOver = this.showOutline.bindAsEventListener(this);
+		this.onMouseOut = this.hideOutline.bindAsEventListener(this);
 		
 		this.id = el.getAttribute('riot:containerId');
 		if (this.id) {
@@ -37,10 +46,10 @@ riot.Component.prototype = {
 	
 	setMode: function(mode) {
 		if (mode == null) {
-			if (this.hover) {
-				Element.hide(this.hover);
-				//this.hover = null;
-				//this.element.undoPositioned();
+			if (isSet(this.mode)) {
+				Event.stopObserving(this.element, 'click', this.handlers[this.mode]);
+				Event.stopObserving(this.element, 'mouseover', this.onMouseOver);
+				Event.stopObserving(this.element, 'mouseout', this.onMouseOut);
 			}
 		}
 		else {
@@ -48,24 +57,34 @@ riot.Component.prototype = {
 				this.mode = null;
 				return;
 			}
-			var e = this.element;
-			if (!this.hover) {
-				e.makePositioned();
-				var a = this.hover = document.createElement('a');
-				a.className = 'riot-highlight';
-				a.href = '#';
-				a.innerHTML = '<img src="' + Resources.basePath + '/1px.gif" />';
-				setTimeout(function() {RElement.prependChild(e, a)}, 1);
-			}
-			else {
-				var a = this.hover;
-				setTimeout(function() {a.style.display = 'block'}, 1);
-			}
-			this.hover.style.width = this.element.offsetWidth + 'px';
-			this.hover.style.height = this.element.offsetHeight + 'px';
-			this.hover.onclick = this.handlers[mode];
+			
+			Event.observe(this.element, 'click', this.handlers[mode]);
+			Event.observe(this.element, 'mouseover', this.onMouseOver);
+			Event.observe(this.element, 'mouseout', this.onMouseOut);
 		}
 		this.mode = mode;
+	},
+	
+	showOutline: function(event) {
+		if (browserInfo.ie) {
+			if (riot.hoverTimeout) clearTimeout(riot.hoverTimeout);
+			Position.clone(this.element, riot.hover);
+			riot.hover.show();
+		}
+		else {
+			this.element.addClassName('riot-outline');
+		}
+		Event.stop(event);
+	},
+	
+	hideOutline: function(event) {
+		if (browserInfo.ie) {
+			riot.hoverTimeout = setTimeout(riot.hideHover, 250);
+		}
+		else {
+			this.element.removeClassName('riot-outline');
+		}
+		Event.stop(event);
 	},
 	
 	remove: function(event) {
@@ -101,6 +120,7 @@ riot.Component.prototype = {
 	},
 	
 	setHtml: function(html) {
+		this.hover = null;
 		this.element.innerHTML = html.stripScripts();
 		this.setupElement();
 		setTimeout(function() { html.evalScripts() }, 10);
@@ -169,6 +189,15 @@ riot.Component.prototype = {
 			catch (ex) {
 				// getAttribute('riot:editorType') fails in IE for TABLE elements (and maybe others?)
 			}
+		}
+		if (!browserInfo.ie) {
+			var e = this.element; 
+			e.immediateDescendants().each(function(c) {
+				if (c.getStyle('float') != 'none') {
+					c.addClassName('riot-floating-content');
+					e.style.zIndex = 1;
+				}
+			});
 		}
 		if (this.editing) {
 			this.edit(true);
@@ -526,9 +555,6 @@ riot.ComponentDragObserver.prototype = {
 		this.nextEl = null;
 	}
 }
-
-// Preload the 1px image ...
-new Image().src = Resources.basePath + '/1px.gif';
 
 riot.editProperties = function(e) {
 	e = e || this;
