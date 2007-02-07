@@ -25,8 +25,8 @@
 	</bean>
 		
 	<bean id="evolver" class="org.riotfamily.revolt.Evolver">
-		<property name="automatic" value="${riot.automaticSchemaEvolution=false}" />
-		<property name="validate" value="${riot.validateSchema=true}" />
+		<property name="automatic" value="${riot.revolt.automatic=false}" />
+		<property name="enabled" value="${riot.revolt.enabled=true}" />
 	</bean>
 	
 	<bean id="riotHibernateMappingLocations" class="org.riotfamily.common.beans.module.ModularListFactoryBean">

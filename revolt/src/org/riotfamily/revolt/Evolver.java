@@ -46,9 +46,9 @@ public class Evolver implements ApplicationContextAware {
 
 	private static final Log log = LogFactory.getLog(Evolver.class);
 	
-	private boolean automatic;
+	private boolean enabled = true;
 	
-	private boolean validate = true;
+	private boolean automatic;
 	
 	private HashMap scripts = new HashMap();
 	
@@ -62,18 +62,18 @@ public class Evolver implements ApplicationContextAware {
 	}
 	
 	/**
-	 * Sets whether Revolt should validate the schema. 
+	 * Sets whether Revolt should validate/evolve the schema. 
 	 * Default is <code>true</code>.
 	 */
-	public void setValidate(boolean validate) {
-		this.validate = validate;
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		Collection evolutions = BeanFactoryUtils.beansOfTypeIncludingAncestors(
 				applicationContext, EvolutionHistory.class).values();
 		
-		if (automatic || validate) {
+		if (enabled) {
 			Iterator it = evolutions.iterator();
 			
 			while (it.hasNext()) {

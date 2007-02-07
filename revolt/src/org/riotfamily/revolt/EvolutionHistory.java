@@ -111,7 +111,9 @@ public class EvolutionHistory implements BeanNameAware {
 	public Script getScript() {
 		Script script = new Script();
 		if (appliedIds.isEmpty()) {
-			log.info("The log-table contains no entries. Checking if schema is up-to-date ...");
+			log.info("The log-table contains no entries for module '" 
+					+ moduleName + "'. Checking if schema is up-to-date ...");
+			
 			try {
 				DatabaseUtils.validate(dataSource, evolveModel());
 				log.info("Schema looks okay. Marking all changes as applied.");
@@ -123,7 +125,7 @@ public class EvolutionHistory implements BeanNameAware {
 				return script;
 			}
 			catch (DatabaseOutOfSyncException e) {
-				log.info("Schema is out of sync: " + e.getMessage());
+				log.info(e.getMessage());
 				script.forceManualExecution();
 			}
 		}
