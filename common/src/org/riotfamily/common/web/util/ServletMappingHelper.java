@@ -47,7 +47,7 @@ public class ServletMappingHelper extends UrlPathHelper {
 
 	public String getLookupPathForRequest(HttpServletRequest request) {
 		if (useOriginalRequest) {
-			return ServletUtils.getLookupPathForOriginatingRequest(request);
+			return ServletUtils.getOriginatingPathWithoutServletMapping(request);
 		}
 		return super.getLookupPathForRequest(request);
 	}

@@ -34,7 +34,7 @@ public class PageComponentPathResolver extends WebsiteConfigSupport
 		implements ComponentPathResolver {
 
 	public String getComponentPath(HttpServletRequest request) {
-		return ServletUtils.getLookupPathForOriginatingRequest(request);
+		return ServletUtils.getOriginatingPathWithoutServletMapping(request);
 	}
 	
 	public String getParentPath(String path) {

@@ -87,7 +87,7 @@ public class PageHandlerMapping implements HandlerMapping, Ordered,
 	public HandlerExecutionChain getHandler(HttpServletRequest request) 
 			throws Exception {
 		
-		String path = ServletUtils.getLookupPathForOriginatingRequest(request);
+		String path = ServletUtils.getPathWithoutServletMapping(request);
 		if (log.isDebugEnabled()) {
 			log.debug("Looking up handler for [" + path + "]");
 		}

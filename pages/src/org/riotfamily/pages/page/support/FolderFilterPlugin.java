@@ -31,9 +31,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.common.web.filter.PluginChain;
-import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.page.Page;
 import org.riotfamily.pages.page.PageMap;
+import org.springframework.web.util.UrlPathHelper;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
@@ -47,6 +47,8 @@ public class FolderFilterPlugin extends FilterPlugin {
 	public static final String DEFAULT_SERVLET_SUFFIX = ".html";
 	
 	private String servletSuffix = DEFAULT_SERVLET_SUFFIX;
+	
+	private UrlPathHelper urlPathHelper = new UrlPathHelper();
 	
 	public void setServletSuffix(String servletSuffix) {
 		this.servletSuffix = servletSuffix;
@@ -67,7 +69,7 @@ public class FolderFilterPlugin extends FilterPlugin {
 	
 		String uri = request.getRequestURI();
 		if (uri.lastIndexOf('.') < uri.lastIndexOf('/')) {
-			String path = ServletUtils.getOriginatingPathWithinApplication(request);
+			String path = urlPathHelper.getPathWithinApplication(request);
 			PageMap pageMap = PageMap.getInstance(getServletContext());
 			Page page = pageMap.getPage(path);
 			if (page != null && page.isFolder()) {

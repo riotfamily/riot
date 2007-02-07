@@ -51,7 +51,7 @@ public abstract class AbstractPathLocaleResolver implements LocaleResolver {
 	}
 
 	public final Locale resolveLocale(HttpServletRequest request) {
-		String path = ServletUtils.getLookupPathForOriginatingRequest(request);
+		String path = ServletUtils.getOriginatingPathWithoutServletMapping(request);
 		Locale locale = resolveLocaleForPath(path);
 		log.debug("Locale for path [" + path + "] is: " + locale);
 		if (locale == null) {

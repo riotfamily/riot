@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.core.Ordered;
@@ -48,7 +49,6 @@ import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapter;
-import org.springframework.web.util.UrlPathHelper;
 
 /**
  * HandlerMapping that works like Spring's BeanNameUrlHandlerMapping and
@@ -75,8 +75,6 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 
 	private HandlerInterceptor[] interceptors;
 
-	private UrlPathHelper urlPathHelper = new UrlPathHelper();
-
 	private PathMatcher pathMatcher = new AntPathMatcher();
 
 	private final Map handlerMap = new HashMap();
@@ -98,31 +96,15 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
     }
     
     /**
-	 * Set if URL lookup should always use the full path within the current servlet
-	 * context. Else, the path within the current servlet mapping is used
-	 * if applicable (i.e. in the case of a ".../*" servlet mapping in web.xml).
-	 * Default is "false".
-	 * <p><strong>Copied from AbstractUrlHandlerMapping</strong>
-	 * @see org.springframework.web.util.UrlPathHelper#setAlwaysUseFullPath
+	 * @deprecated 
 	 */
 	public void setAlwaysUseFullPath(boolean alwaysUseFullPath) {
-		this.urlPathHelper.setAlwaysUseFullPath(alwaysUseFullPath);
 	}
 
 	/**
-	 * Set if context path and request URI should be URL-decoded.
-	 * Both are returned <i>undecoded</i> by the Servlet API,
-	 * in contrast to the servlet path.
-	 * <p>Uses either the request encoding or the default encoding according
-	 * to the Servlet spec (ISO-8859-1).
-	 * <p>Note: Setting this to "true" requires JDK 1.4 if the encoding differs
-	 * from the VM's platform default encoding, as JDK 1.3's URLDecoder class
-	 * does not offer a way to specify the encoding.
-	 * <p><strong>Copied from AbstractUrlHandlerMapping</strong>
-	 * @see org.springframework.web.util.UrlPathHelper#setUrlDecode
+	 * @deprecated
 	 */
 	public void setUrlDecode(boolean urlDecode) {
-		this.urlPathHelper.setUrlDecode(urlDecode);
 	}
 
 	public final void setOrder(int order) {
@@ -206,7 +188,7 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 	public final HandlerExecutionChain getHandler(HttpServletRequest request) 
 			throws Exception {
 		
-		String lookupPath = this.urlPathHelper.getLookupPathForRequest(request);
+		String lookupPath = ServletUtils.getPathWithoutServletMapping(request);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Looking up handler for [" + lookupPath + "]");
 		}

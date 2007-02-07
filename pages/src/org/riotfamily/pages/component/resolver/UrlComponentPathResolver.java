@@ -37,12 +37,12 @@ import org.riotfamily.common.web.util.ServletUtils;
  * for a request to <code>/myapp/foo/bar.html</code> will be 
  * <code>/foo/bar</code>.
  * </p>
- * @see ServletMappingHelper#getLookupPathForRequest(HttpServletRequest)
+ * @see ServletMappingHelper#getPathWithoutServletMapping(HttpServletRequest)
  */
 public class UrlComponentPathResolver implements ComponentPathResolver {
 
 	public String getComponentPath(HttpServletRequest request) {
-		return ServletUtils.getLookupPathForOriginatingRequest(request);
+		return ServletUtils.getOriginatingPathWithoutServletMapping(request);
 	}
 	
 	/**

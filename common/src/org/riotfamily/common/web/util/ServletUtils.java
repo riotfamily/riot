@@ -151,7 +151,32 @@ public final class ServletUtils {
 	 * within the application without the trailing suffix (in case of a suffix
 	 * mapping).
 	 */
-	public static String getLookupPathForOriginatingRequest(HttpServletRequest request) {
+	public static String getPathWithoutServletMapping(
+			HttpServletRequest request) {
+		
+		String path = urlPathHelper.getPathWithinServletMapping(request);
+		if (path.length() == 0) {
+			path = urlPathHelper.getPathWithinApplication(request);
+			if (path.equals(getServletPrefix(request))) {
+				return "/";
+			}
+			int dotIndex = path.lastIndexOf('.');
+			if (dotIndex >= 0) {
+				path = path.substring(0, dotIndex);
+			}	
+		}
+		return path;
+	}
+	
+	/**
+	 * Returns the lookup-path for a given request. This is either the path
+	 * within the servlet-mapping (in case of a prefix mapping) or the path
+	 * within the application without the trailing suffix (in case of a suffix
+	 * mapping).
+	 */
+	public static String getOriginatingPathWithoutServletMapping(
+			HttpServletRequest request) {
+		
 		String path = getOriginatingPathWithinServletMapping(request);
 		if (path.length() == 0) {
 			path = getOriginatingPathWithinApplication(request);
@@ -171,9 +196,8 @@ public final class ServletUtils {
 	 * String if the servlet is mapped by a suffix.  
 	 */
 	public static String getServletPrefix(HttpServletRequest request) {
-		
-		String path = getOriginatingPathWithinApplication(request);
-		String servletPath = getOriginatingServletPath(request);
+		String path = urlPathHelper.getPathWithinApplication(request);
+		String servletPath = urlPathHelper.getServletPath(request);
 		if (path.length() > servletPath.length()
 				|| path.lastIndexOf('/') > path.lastIndexOf('.')) {
 
@@ -187,8 +211,8 @@ public final class ServletUtils {
 	 * String if the servlet is mapped by a prefix.
 	 */
 	public static String getServletSuffix(HttpServletRequest request) {
-		String path = getOriginatingPathWithinApplication(request);
-		if (path.equals(getOriginatingServletPath(request))) {
+		String path = urlPathHelper.getPathWithinApplication(request);
+		if (path.equals(urlPathHelper.getServletPath(request))) {
 			int dotIndex = path.lastIndexOf('.');
 			if (dotIndex >= 0) {
 				return path.substring(dotIndex);
