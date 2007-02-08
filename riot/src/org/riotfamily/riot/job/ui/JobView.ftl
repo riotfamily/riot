@@ -54,8 +54,8 @@ var state;
 
 function updateJob(job) {
 	if (!state) {
-		$('name').update(job.name);
-		$('description').update(job.description);
+		$('name').update(job.name || '');
+		$('description').update(job.description || '');
 		subPage(job.name); <#-- see path.js -->
 	}
 	if (job.estimatedTime) {
