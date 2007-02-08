@@ -44,6 +44,16 @@ public class FactoryBeanModule implements BeanNameAware {
 	private Map properties;
 		
 	private String beanName;
+	
+	private String[] processAfter;
+	
+	public String[] getProcessAfter() {
+		return this.processAfter;
+	}
+
+	public void setProcessAfter(String[] processAfter) {
+		this.processAfter = processAfter;
+	}
 
 	public void setBeanName(String beanName) {
 		this.beanName = beanName;

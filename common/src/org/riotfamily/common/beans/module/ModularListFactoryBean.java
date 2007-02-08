@@ -24,9 +24,9 @@
 package org.riotfamily.common.beans.module;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -109,10 +109,10 @@ public class ModularListFactoryBean extends AbstractFactoryBean
 			result.addAll(sourceList);
 		}
 		
-		Map modules = applicationContext.getBeansOfType(
-				FactoryBeanModule.class, false, false);
+		Collection modules =
+			ModularFactoryBeansUtils.getFactoryBeanModules(applicationContext);
 		
-		Iterator it = modules.values().iterator();
+		Iterator it = modules.iterator();
 		while (it.hasNext()) {
 			FactoryBeanModule module = (FactoryBeanModule) it.next();
 			List moduleList = module.getList(key);

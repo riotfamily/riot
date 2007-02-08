@@ -24,9 +24,9 @@
 package org.riotfamily.common.beans.module;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -54,10 +54,10 @@ public class ModularPropertiesFactoryBean extends PropertiesFactoryBean
 
 	protected Object createInstance() throws IOException {
 		Properties result = (Properties) super.createInstance();
-		Map modules = applicationContext.getBeansOfType(
-				FactoryBeanModule.class, false, false);
-
-		Iterator it = modules.values().iterator();
+		Collection modules =
+			ModularFactoryBeansUtils.getFactoryBeanModules(applicationContext);
+		
+		Iterator it = modules.iterator();
 		while (it.hasNext()) {
 			FactoryBeanModule module = (FactoryBeanModule) it.next();
 			Properties moduleProps = module.getProperties(key);

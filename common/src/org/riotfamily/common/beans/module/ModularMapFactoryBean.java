@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.module;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -51,10 +52,10 @@ public class ModularMapFactoryBean extends MapFactoryBean
 
 	protected Object createInstance() {
 		Map result = (Map) super.createInstance();
-		Map modules = applicationContext.getBeansOfType(
-				FactoryBeanModule.class, false, false);
+		Collection modules =
+			ModularFactoryBeansUtils.getFactoryBeanModules(applicationContext);
 		
-		Iterator it = modules.values().iterator();
+		Iterator it = modules.iterator();
 		while (it.hasNext()) {
 			FactoryBeanModule module = (FactoryBeanModule) it.next();
 			Map moduleMap = module.getMap(key);
