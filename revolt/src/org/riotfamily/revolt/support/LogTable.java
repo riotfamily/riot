@@ -101,7 +101,11 @@ public class LogTable {
 	}
 	
 	public Script getCreateTableScript() {
-		return dialect.createTable(table);
+		Script script = dialect.createTable(table);
+		if (DatabaseUtils.anyTablesExist(dataSource)) {
+			script.forceManualExecution();
+		}
+		return script;
 	}
 		
 	public Script getInsertScript(ChangeSet changeSet) {

@@ -126,7 +126,6 @@ public class EvolutionHistory implements BeanNameAware {
 			}
 			catch (DatabaseOutOfSyncException e) {
 				log.info(e.getMessage());
-				script.forceManualExecution();
 			}
 		}
 		Iterator it = changeSets.iterator();

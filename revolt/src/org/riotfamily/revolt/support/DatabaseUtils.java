@@ -43,11 +43,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.StringUtils;
 
 /**
- * @author Felix Gnass <fgnass@neteye.de>
- *
+ * Utility class that retieves database meta data via JDBC.
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class DatabaseUtils {
 
+	/**
+	 * Returns the JDBC-URL for the given DataSource. 
+	 */
 	public static String getUrl(DataSource dataSource) {
 		JdbcTemplate template = new JdbcTemplate(dataSource);
 		return (String) template.execute(new ConnectionCallback() {
@@ -60,6 +63,26 @@ public class DatabaseUtils {
 		});
 	}
 	
+	/**
+	 * Returns whether the DataSource contains any tables.
+	 */
+	public static boolean anyTablesExist(DataSource dataSource) {
+		JdbcTemplate template = new JdbcTemplate(dataSource);
+		Boolean result = (Boolean) template.execute(new ConnectionCallback() {
+			public Object doInConnection(Connection connection) 
+					throws SQLException, DataAccessException {
+				
+				DatabaseMetaData metaData = connection.getMetaData();
+				ResultSet rs = metaData.getTables(null, null, "_", null);
+				return Boolean.valueOf(rs.next());
+			}
+		});
+		return result.booleanValue();	
+	}
+	
+	/**
+	 * Returns whether the specified table exists. 
+	 */
 	public static boolean tableExists(DataSource dataSource, 
 			final Identifier table) {
 		
@@ -77,6 +100,9 @@ public class DatabaseUtils {
 		return result.booleanValue();
 	}
 	
+	/**
+	 * Checks whether the database schema matches the given model.
+	 */
 	public static void validate(DataSource dataSource, final Database model) 
 			throws DatabaseOutOfSyncException {
 		
