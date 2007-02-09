@@ -16,7 +16,8 @@
 		<property name="controllerName" column="`type`" />
 		<property name="position" column="`position`" />
 		<set name="persistentChildPages" access="field" inverse="true" 
-				cascade="all" sort="org.riotfamily.pages.page.support.PageComparator">
+				cascade="all" batch-size="10"
+				sort="org.riotfamily.pages.page.support.PageComparator">
 				
 			<key column="parent" />
 			<one-to-many class="PersistentPage" />
