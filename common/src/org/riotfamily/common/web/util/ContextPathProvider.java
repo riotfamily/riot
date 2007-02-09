@@ -95,6 +95,9 @@ public class ContextPathProvider implements ServletContextAware,
 					if (contextPath.equals("ROOT")) {
 						contextPath = "";
 					}
+					if (contextPath.length() > 0) {
+						contextPath = '/' + contextPath;
+					}
 				}
 				else {
 					if (defaultToEmptyPath) {
@@ -111,6 +114,7 @@ public class ContextPathProvider implements ServletContextAware,
 				}
 			}
 		}
+		log.info("ContextPath: '" + contextPath + "'");
 	}
 	
 	public String getContextPath() {

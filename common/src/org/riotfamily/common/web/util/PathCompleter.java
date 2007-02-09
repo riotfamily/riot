@@ -25,6 +25,10 @@ package org.riotfamily.common.web.util;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.util.Assert;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -32,6 +36,8 @@ import javax.servlet.ServletContext;
  */
 public class PathCompleter {
 
+	private static final Log log = LogFactory.getLog(PathCompleter.class);
+	
 	private String contextPath;
 	
 	private ServletContext servletContext;
@@ -56,11 +62,21 @@ public class PathCompleter {
 		if (i > 0) {
 			servletPrefix = servletMapping.substring(0, i);
 		}
+		log.info("Servlet prefix: '" + servletPrefix + "'");
+		log.info("Servlet suffix: '" + servletSuffix + "'");
 	}
 	
 	public void setServletName(String servletName) {
-		setServletMapping(ServletUtils.getServletMapping(servletName, 
-				servletContext));
+		String mapping = ServletUtils.getServletMapping(servletName, 
+				servletContext);
+		
+		Assert.notNull(mapping, "Could not dertermine mapping for servlet '"
+				+ servletName + "'.");
+	
+		log.info("Servlet '" + servletName + "' is mapped to " + mapping
+				+ " in web.xml");
+		
+		setServletMapping(mapping);
 	}
 
 	public String addContextAndServletMapping(String path) {
