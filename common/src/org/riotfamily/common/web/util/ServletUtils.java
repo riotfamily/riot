@@ -32,13 +32,19 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.xml.DocumentReader;
 import org.springframework.util.StringUtils;
+import org.springframework.util.xml.DomUtils;
+import org.springframework.web.context.support.ServletContextResource;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public final class ServletUtils {
 
@@ -380,6 +386,32 @@ public final class ServletUtils {
 		response.setDateHeader(EXPIRES_HEADER, 1L);
 		response.setHeader(CACHE_CONTROL_HEADER, "no-cache");
 		response.addHeader(CACHE_CONTROL_HEADER, "no-store");
+	}
+	
+	/**
+	 * Parses the web.xml deployment descriptor and returns the url-pattern
+	 * for the given servlet-name, or <code>null</code> if no mapping is found.
+	 * @since 6.4
+	 */
+	public static String getServletMapping(String servletName, 
+			ServletContext servletContext) {
+		
+		DocumentReader reader = new DocumentReader(new ServletContextResource(
+				servletContext,	"/WEB-INF/web.xml"));
+		
+		Document doc = reader.readDocument();
+		Iterator it = DomUtils.getChildElementsByTagName(
+				doc.getDocumentElement(), "servlet-mapping").iterator();
+		
+		while (it.hasNext()) {
+			Element e = (Element) it.next();
+			Element name = DomUtils.getChildElementByTagName(e, "servlet-name");
+			if (servletName.equals(DomUtils.getTextValue(name))) {
+				return DomUtils.getTextValue(DomUtils.getChildElementByTagName(
+						e, "url-pattern")).trim();
+			}
+		}
+		return null;
 	}
 	
 }
