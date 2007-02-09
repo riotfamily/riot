@@ -26,8 +26,8 @@ package org.riotfamily.pages.page.support;
 import java.util.Iterator;
 import java.util.List;
 
-import org.riotfamily.pages.page.PageDao;
 import org.riotfamily.pages.page.PersistentPage;
+import org.riotfamily.pages.page.dao.PageDao;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 

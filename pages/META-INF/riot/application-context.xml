@@ -12,15 +12,22 @@
 			<map>
 	 			<entry key="hibernateMappingLocations">
 					<list>
-						<value>classpath:org/riotfamily/pages/page/PersistentPage.hbm.xml</value>
-						<value>classpath:org/riotfamily/pages/page/PageAlias.hbm.xml</value>
-						<value>classpath:org/riotfamily/pages/component/dao/component.hbm.xml</value>
+						<value>classpath:org/riotfamily/pages/page/dao/hibernate/PersistentPage.hbm.xml</value>
+						<value>classpath:org/riotfamily/pages/page/dao/hibernate/PageAlias.hbm.xml</value>
+						<value>classpath:org/riotfamily/pages/component/dao/hibernate/component.hbm.xml</value>
 					</list>	 			
 	 			</entry>
 	 		</map>
 		</property>
 	</bean>
-	 
+	
+	<bean id="contextPathProvider" class="org.riotfamily.common.web.util.ContextPathProvider" />
+	
+	<bean id="pathCompleter" class="org.riotfamily.common.web.util.PathCompleter">
+		<constructor-arg ref="contextPathProvider" />
+		<property name="servletName" value="website" />
+	</bean>
+	
 	<bean id="pageEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
 	
 	<!-- Page DAO -->
@@ -30,7 +37,7 @@
 		<property name="target" ref="pageDaoTarget" />
 	</bean>	
 	
-	<bean id="pageDaoTarget" class="org.riotfamily.pages.page.support.HibernatePageDao">
+	<bean id="pageDaoTarget" class="org.riotfamily.pages.page.dao.hibernate.HibernatePageDao">
 		<constructor-arg ref="riotSessionFactory" />
 	</bean>
 	

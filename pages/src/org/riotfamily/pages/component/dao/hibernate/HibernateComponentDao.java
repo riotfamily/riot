@@ -21,7 +21,7 @@
  *   Felix Gnass <fgnass@neteye.de>
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.component.dao;
+package org.riotfamily.pages.component.dao.hibernate;
 
 import java.util.List;
 
@@ -32,6 +32,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentRepository;
+import org.riotfamily.pages.component.dao.AbstractComponentDao;
 
 /**
  * Default ComponentDAO implementation that uses Hibernate. All mappings

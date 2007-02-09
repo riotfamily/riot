@@ -21,9 +21,11 @@
  *   Felix Gnass <fgnass@neteye.de>
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.page;
+package org.riotfamily.pages.page.dao;
 
 import java.util.List;
+
+import org.riotfamily.pages.page.PersistentPage;
 
 
 public interface PageDao {

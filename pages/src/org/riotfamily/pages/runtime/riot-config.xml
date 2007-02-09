@@ -46,7 +46,7 @@
 			<list:column property="key" />
 			<list:column property="lastModified" />
 			<list:column property="lastModifiedBy" />
-			<list:command id="gotoPage" />
+			<list:command id="gotoComponentList" />
 		</list:columns>
 	</list:list>
 

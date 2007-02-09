@@ -21,7 +21,7 @@
  *   Felix Gnass <fgnass@neteye.de>
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.page.support;
+package org.riotfamily.pages.page.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,8 +31,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.pages.component.dao.ComponentDao;
-import org.riotfamily.pages.page.PageDao;
 import org.riotfamily.pages.page.PersistentPage;
+import org.riotfamily.pages.page.support.PageMappingEvent;
+import org.riotfamily.pages.page.support.PageUtils;
 import org.riotfamily.pages.setup.Plumber;
 import org.riotfamily.pages.setup.WebsiteConfig;
 import org.riotfamily.pages.setup.WebsiteConfigAware;
@@ -45,11 +46,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.event.ApplicationEventMulticaster;
 
-public class RiotPageDao implements ParentChildDao, SwappableItemDao, 
+public class PageRiotDao implements ParentChildDao, SwappableItemDao, 
 		CutAndPasteEnabledDao, CopyAndPasteEnabledDao, 
 		ApplicationContextAware, WebsiteConfigAware {
 
-	private static Log log = LogFactory.getLog(RiotPageDao.class);
+	private static Log log = LogFactory.getLog(PageRiotDao.class);
 	
 	private PageDao dao;
 	
@@ -60,7 +61,7 @@ public class RiotPageDao implements ParentChildDao, SwappableItemDao,
 	private ComponentDao componentDao;
 
 	
-	public RiotPageDao(PageDao dao, ApplicationEventMulticaster eventMulticaster) {
+	public PageRiotDao(PageDao dao, ApplicationEventMulticaster eventMulticaster) {
 		this.dao = dao;
 		this.eventMulticaster = eventMulticaster;
 	}

@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.riotfamily.common.web.event.ContentChangedEvent;
 import org.riotfamily.pages.component.Component;
 import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentRepository;
@@ -37,6 +38,8 @@ import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.property.PropertyProcessor;
 import org.riotfamily.riot.security.AccessController;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 
 /**
  * Abstract base class for {@link Component implementations that delegates
@@ -44,14 +47,23 @@ import org.riotfamily.riot.security.AccessController;
  * 
  * @author Felix Gnass <fgnass@neteye.de>
  */
-public abstract class AbstractComponentDao implements ComponentDao {
+public abstract class AbstractComponentDao implements ComponentDao, 
+		ApplicationEventPublisherAware {
 
 	private ComponentRepository repository;
+	
+	private ApplicationEventPublisher eventPublisher;
 	
 	public AbstractComponentDao(ComponentRepository repository) {
 		this.repository = repository;
 	}
 
+	public void setApplicationEventPublisher(
+			ApplicationEventPublisher eventPublisher) {
+		
+		this.eventPublisher = eventPublisher;
+	}
+	
 	/**
 	 * Loads the ComponentList specified  by the given id.
 	 */
@@ -315,7 +327,7 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 * Publishes the given VersionContainer.
 	 * @return <code>true</code> if there was anything to publish
 	 */
-	public boolean publishContainer(VersionContainer container) {
+	protected boolean publishContainer(VersionContainer container) {
 		ComponentVersion preview = container.getPreviewVersion();
 		if (preview != null) {
 			ComponentVersion liveVersion = container.getLiveVersion();
@@ -365,6 +377,8 @@ public abstract class AbstractComponentDao implements ComponentDao {
 			VersionContainer container = (VersionContainer) it.next();
 			result |= publishContainer(container);
 		}
+		
+		eventPublisher.publishEvent(new ContentChangedEvent(this, componentList.getPath()));
 		return result;
 	}
 	

@@ -60,7 +60,7 @@
 		<property name="target"><ref bean="componentDaoTarget" /></property>
 	</bean>
 		
-	<bean id="componentDaoTarget" class="org.riotfamily.pages.component.dao.HibernateComponentDao">
+	<bean id="componentDaoTarget" class="org.riotfamily.pages.component.dao.hibernate.HibernateComponentDao">
 		<constructor-arg ref="componentRepository" />
 		<constructor-arg ref="riotSessionFactory" />
 	</bean>

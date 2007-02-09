@@ -21,15 +21,15 @@
  *   Felix Gnass <fgnass@neteye.de>
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.page.support;
+package org.riotfamily.pages.page.dao.hibernate;
 
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.pages.page.PageAlias;
-import org.riotfamily.pages.page.PageDao;
 import org.riotfamily.pages.page.PersistentPage;
+import org.riotfamily.pages.page.dao.PageDao;
 import org.riotfamily.riot.hibernate.support.HibernateSupport;
 
 /**

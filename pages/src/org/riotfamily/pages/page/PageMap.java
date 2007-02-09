@@ -37,6 +37,7 @@ import org.riotfamily.common.web.controller.RedirectController;
 import org.riotfamily.pages.member.MemberBinder;
 import org.riotfamily.pages.member.MemberBinderAware;
 import org.riotfamily.pages.member.support.NullMemberBinder;
+import org.riotfamily.pages.page.dao.PageDao;
 import org.riotfamily.pages.page.support.FolderController;
 import org.riotfamily.pages.page.support.PageMappingEvent;
 import org.springframework.beans.factory.InitializingBean;
