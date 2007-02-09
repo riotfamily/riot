@@ -147,7 +147,7 @@ RiotList.prototype = {
 		var handler = this.execItemCommand.bindAsEventListener(this);
 		commands.each(function(command) {
 			var a = RBuilder.node('a', {href: '#', item: item, 
-					className: 'action action-' + command.action});
+					className: 'action action-' + command.styleClass});
 					
 			if (command.enabled) {
 				a.command = command;

@@ -33,6 +33,8 @@ public class CommandState {
 	
 	private String action;
 	
+	private String styleClass;
+	
 	private boolean enabled;
 	
 	private String label;
@@ -43,6 +45,14 @@ public class CommandState {
 
 	public void setAction(String action) {
 		this.action = action;
+	}
+
+	public String getStyleClass() {
+		return this.styleClass;
+	}
+
+	public void setStyleClass(String styleClass) {
+		this.styleClass = styleClass;
 	}
 
 	public boolean isEnabled() {

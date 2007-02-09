@@ -365,6 +365,7 @@ public class ListSession implements RenderContext {
 			
 			state.setId(command.getId());
 			state.setAction(action);
+			state.setStyleClass(command.getStyleClass(context));
 			state.setEnabled(granted && command.isEnabled(context));
 			state.setLabel(command.getLabel(context));
 			result.add(state);

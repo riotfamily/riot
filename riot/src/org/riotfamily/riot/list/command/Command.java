@@ -63,13 +63,19 @@ public interface Command {
 	 * {@link #execute(CommandContext) execute()} is invoked. The String is
 	 * used passed to the {@link org.riotfamily.riot.security.policy.AuthorizationPolicy policy} 
 	 * in order to check whether a user is allowed to execute the command.
-	 * The String is also used as CSS class and therefore defines which icon
-	 * is displayed.
 	 * <p>
 	 * Typically the method will return the command's id though it's possible
 	 * to return different actions depending on the context.
 	 */
 	public String getAction(CommandContext context);
+	
+	/**
+	 * Returns the CSS class that is assigned to command's HTML element and
+	 * therefore defines which icon is displayed.
+	 * 
+	 * @since 6.4  
+	 */
+	public String getStyleClass(CommandContext context);
 	
 	/**
 	 * Implementors may evaluate the given context to decide whether the 

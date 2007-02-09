@@ -27,23 +27,19 @@ import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.form.command.FormCommand;
 import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.result.PopupResult;
-import org.riotfamily.riot.list.command.support.AbstractCommand;
+import org.riotfamily.riot.list.command.support.PopupCommand;
 
 /**
  * @author Felix Gnass <fgnass@neteye.de>
  * @since 6.4
  */
-public class LinkCommand extends AbstractCommand implements FormCommand {
+public class LinkCommand extends PopupCommand implements FormCommand {
 
-	private static final String ACTION = "link";
+	public static final String STYLE_CLASS = "link";
 	
 	private String link;
 	
 	private boolean contextRelative = true;
-	
-	private String windowName;
 	
 	public void setLink(String link) {
 		this.link = link.replace('@', '$');
@@ -52,33 +48,17 @@ public class LinkCommand extends AbstractCommand implements FormCommand {
 	public void setContextRelative(boolean contextRelative) {
 		this.contextRelative = contextRelative;
 	}
-
-	public void setWindowName(String windowName) {
-		this.windowName = windowName;
-	}
 	
-	public boolean isEnabled(CommandContext context) {
-		return context.getObjectId() != null;
-	}
-
-	public CommandResult execute(CommandContext context) {
+	protected String getUrl(CommandContext context) {
 		String url = PropertyUtils.evaluate(link, context.getBean());
 		if (contextRelative && !ServletUtils.isAbsoluteUrl(url)) {
 			url = context.getRequest().getContextPath() + url;
 		}
-		return new PopupResult(url, windowName,	
-				getPopupBlockerMessage(context, url));
+		return url;
 	}
 	
-	protected String getPopupBlockerMessage(CommandContext context, String url) {
-		return context.getMessageResolver().getMessage("error.popupBlocked", 
-				new Object[] { url }, 
-				"A popup-blocker prevented the window from opening. " +
-				"Please allow popups for this domain.");
-	}
-
-	public String getAction(CommandContext context) {
-		return ACTION;
+	public String getStyleClass(CommandContext context) {
+		return STYLE_CLASS;
 	}
 
 }

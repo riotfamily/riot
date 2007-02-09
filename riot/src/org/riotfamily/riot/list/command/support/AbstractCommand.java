@@ -112,6 +112,14 @@ public abstract class AbstractCommand implements Command, BeanNameAware {
 	public String getAction(CommandContext context) {
 		return getId();
 	}
+	
+	/**
+	 * Returns the command's CSS class. The default implementation delegates
+	 * the call to {@link #getAction(CommandContext)}.
+	 */
+	public String getStyleClass(CommandContext context) {
+		return getAction(context);
+	}
 
 	/**
 	 * Always returns <code>true</code>. Subclasses may override this method
