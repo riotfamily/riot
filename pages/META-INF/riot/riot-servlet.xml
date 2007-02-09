@@ -179,7 +179,7 @@
  	<!-- 
  	  - RiotDao to access pages.
  	  -->
-	<bean id="riotPageDao" class="org.riotfamily.pages.page.support.RiotPageDao">
+	<bean id="riotPageDao" class="org.riotfamily.pages.page.dao.PageRiotDao">
 		<constructor-arg ref="pageDao" />
 		<constructor-arg ref="pageEventMulticaster" />
 	</bean>
@@ -192,11 +192,16 @@
 	<!-- 
 	  - Command to publish or unpublish pages.
 	  -->
-	<bean id="publishPageCommand" class="org.riotfamily.pages.page.PublishPageCommand" />	
+	<bean id="publishPageCommand" class="org.riotfamily.pages.page.command.PublishPageCommand" />	
 
-	<bean id="gotoPageCommand" class="org.riotfamily.riot.list.command.core.LinkCommand">
+	<bean id="gotoPageCommand" class="org.riotfamily.pages.page.command.GotoPageCommand">
+		<constructor-arg ref="pathCompleter" />
 		<property name="windowName" value="preview" />
-		<property name="link" value="@{path}.html" />
+	</bean>
+	
+	<bean id="gotoComponentListCommand" class="org.riotfamily.pages.component.command.GotoListCommand">
+		<constructor-arg ref="pathCompleter" />
+		<property name="windowName" value="preview" />
 	</bean>
 	
 </beans>

@@ -21,8 +21,9 @@
  *   Felix Gnass <fgnass@neteye.de>
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.page;
+package org.riotfamily.pages.page.command;
 
+import org.riotfamily.pages.page.Page;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.ReloadResult;
