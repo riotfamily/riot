@@ -1,7 +1,10 @@
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.0.xsd
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 	
@@ -124,10 +127,45 @@
 	
 	<bean id="riotToolbarResources" class="org.riotfamily.common.beans.module.ModularListFactoryBean">
 		<property name="key" value="riotToolbarResources" />
+		<property name="sourceListFirst" value="true" />
 		<property name="sourceList">
 			<list>
+				<value>/riot-js/resources.js</value>
 				<value>/pages.js</value>
 			</list>
+		</property>
+	</bean>
+	
+	<bean id="freemarkerConfig" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerConfigurer">
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="templateLoaderPath" value="/WEB-INF/view" />
+		<property name="freemarkerSettings" value="${website-servlet.freemarker.*}" />
+		<property name="macroLibraries">
+			<bean class="org.riotfamily.common.beans.module.ModularPropertiesFactoryBean">
+				<property name="key" value="freemarkerMacroLibraries" />
+				<property name="properties">
+					<props>
+						<prop key="riot">classpath:org/riotfamily/pages/freemarker/riot.ftl</prop>
+					</props>
+				</property>
+			</bean>
+		</property>
+		<property name="freemarkerVariables">
+			<bean class="org.riotfamily.common.beans.module.ModularMapFactoryBean">
+				<property name="key" value="freemarkerVariables" />
+				<property name="includeRootList" value="true" />
+				<property name="sourceMap">
+					<map>
+						<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
+						<entry key="riotResourcePath" value-ref="riotResourcePath" />
+						<entry key="viewModeResolver" value-ref="viewModeResolver" />
+						<entry key="riotEncodeUrl"><bean class="org.riotfamily.common.web.view.freemarker.EncodeUrlMethod" /></entry>
+						<entry key="riotInclude"><bean class="org.riotfamily.common.web.view.freemarker.IncludeMethod" /></entry>
+						<entry key="riotToolbarResources" value-ref="riotToolbarResources" />
+						<entry key="includeUriParam" value="__includeUri" />
+					</map>
+				</property>
+			</bean>		
 		</property>
 	</bean>
 

@@ -79,7 +79,7 @@
 			</#if>
 			<#if riotToolbarResources?has_content>
 				<#list riotToolbarResources as resource>
-					<script type="text/javascript" src="${riotEncodeUrl(resource)}"></script>
+					<script type="text/javascript" src="${riotEncodeUrl(riotResourcePath + resource)}"></script>
 				</#list>
 			</#if>			
 		<#else>
