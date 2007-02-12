@@ -35,9 +35,11 @@ riot.InplaceEditor.prototype = {
 	/* Handler that is invoked when an enabled editor is clicked */
 	onclick: function(ev) {
 		Event.stop(ev);
-		riot.toolbar.selectedComponent = this.component;
-		riot.activeEditor = this;
-		this.edit();
+		if (riot.activeEditor != this) {
+			riot.toolbar.selectedComponent = this.component;
+			riot.activeEditor = this;
+			this.edit();
+		}
 	},
 	
 	/* Acquires the current text and invokes setText() */
