@@ -35,26 +35,26 @@ import org.springframework.web.context.support.ServletContextPropertyPlaceholder
  * <p>
  * Example:
  * <pre>
- * &lt;bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"&gt;
- *   &lt;property name="hibernateProperties" ref="${hibernate.*}" /&gt;
+ * &lt;bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer"&gt;
+ *   &lt;property name="freemarkerSettings" ref="${freemarker.*}" /&gt;
  * &lt;/bean&gt;
  * </pre>
  *
  * The configurer will look for all properties start start with 
- * '<code>hibernate.</code>'. So having a properties file like this ...
+ * '<code>freemarker.</code>'. So having a properties file like this ...
  * 
  * <pre>
- * hibernate.dialect = org.hibernate.dialect.HSQLDialect
- * hibernate.cache.provider_class = net.sf.ehcache.hibernate.Provider
+ * freemarker.number_format = 0.######
+ * freemarker.locale = en_US
  * </pre>
  * 
  * ... would be equivalent to writing:
  * <pre>
- * &lt;bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"&gt;
- *   &lt;property name="hibernateProperties"&gt;
+ * &lt;bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer"&gt;
+ *   &lt;property name="freemarkerSettings"&gt;
  *     &lt;value&gt;
- *       hibernate.dialect = org.hibernate.dialect.HSQLDialect
- *       hibernate.cache.provider_class = net.sf.ehcache.hibernate.Provider
+ *       number_format = 0.######
+ *       locale = en_US
  *     &lt/value&gt;
  *   &lt;/property&gt;
  * &lt;/bean&gt;
@@ -62,9 +62,6 @@ import org.springframework.web.context.support.ServletContextPropertyPlaceholder
  * 
  * Spring's {@link PropertiesEditor} will then take care of converting the 
  * String value into a <code>java.util.Properties</code> object.
- * <p>
- * If you want to strip the prefix from the final property keys, insert a
- * minus sign at the end of the placeholder, e.g. <code>${hibernate.*-}</code>.
  * 
  * @author Felix Gnass <fgnass@neteye.de>
  * @since 6.4
@@ -75,19 +72,18 @@ public class PropertiesPlaceholderConfigurer extends
 	protected String resolvePlaceholder(String placeholder, Properties props) {	
 		int i = placeholder.indexOf('*');
 		if (i != -1) {
-			boolean strip = placeholder.endsWith("!"); 
-			return resolveAll(props, placeholder.substring(0, i), strip);
+			return resolveAll(props, placeholder.substring(0, i));
 		}
 		return super.resolvePlaceholder(placeholder, props);
 	}
 	
-	protected String resolveAll(Properties props, String prefix, boolean strip) {
+	protected String resolveAll(Properties props, String prefix) {
 		StringBuffer sb = new StringBuffer();
 		Enumeration names = props.propertyNames();
 		while (names.hasMoreElements()) {
 			String name = (String) names.nextElement();
 			if (name.startsWith(prefix) && name.length() > prefix.length()) {
-				sb.append(strip ? name.substring(prefix.length()) : name);
+				sb.append(name.substring(prefix.length()));
 				sb.append('=');
 				sb.append(props.getProperty(name));
 				sb.append('\n');

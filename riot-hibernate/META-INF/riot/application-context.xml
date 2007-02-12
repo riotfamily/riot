@@ -20,10 +20,11 @@
 	    <property name="checkoutTimeout" value="30000" />
 	</bean>
 	
-	<bean id="riotHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+	<bean id="riotHibernateProperties" class="org.riotfamily.riot.hibernate.support.PropertiesPrefixFactoryBean">
+		<property name="prefix" value="hibernate." />
 		<property name="properties" value="${hibernate.*}" />
 	</bean>
-		
+
 	<bean id="evolver" class="org.riotfamily.revolt.Evolver">
 		<property name="automatic" value="${riot.revolt.automatic=false}" />
 		<property name="enabled" value="${riot.revolt.enabled=true}" />
@@ -31,6 +32,7 @@
 	
 	<bean id="riotHibernateMappingLocations" class="org.riotfamily.common.beans.module.ModularListFactoryBean">
 		<property name="key" value="hibernateMappingLocations" />
+		<property name="includeRootList" value="true" />
 		<property name="sourceList">
 			<list>
 				<value>classpath:/org/riotfamily/riot/hibernate/security/security.hbm.xml</value>
