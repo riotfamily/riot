@@ -287,7 +287,9 @@ riot.TypeInspector.prototype = {
 		this.onchange = onchange;
 		var select = RBuilder.node('div', {className: 'type-inspector'});
 		for (var i = 0; i < types.length; i++) {
-			var e = RBuilder.node('div', {className: 'type'}, types[i].description);
+			var e = RBuilder.node('div', {className: 'type'}, 
+				RBuilder.node('span', {className: 'type-' + types[i].type}, types[i].description)
+			);
 			e.type = types[i].type;
 			if (e.type == this.type) {
 				this.activeTypeButton = e;
