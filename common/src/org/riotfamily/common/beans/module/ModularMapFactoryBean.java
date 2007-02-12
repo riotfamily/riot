@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.MapFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -40,10 +41,21 @@ public class ModularMapFactoryBean extends MapFactoryBean
 	
 	private String key;
 	
+	private boolean includeRootMap;
+	
 	private ApplicationContext applicationContext;
 	
 	public void setKey(String key) {
 		this.key = key;
+	}
+	
+	/**
+	 * Sets whether the root bean defintion (having the key as id) should be
+	 * included in the map. This is useful if not only modules but the
+	 * application itself should be able to add entries to the map.
+	 */
+	public void setIncludeRootList(boolean includeRootMap) {
+		this.includeRootMap = includeRootMap;
 	}
 	
 	public void setApplicationContext(ApplicationContext applicationContext) {
@@ -64,6 +76,14 @@ public class ModularMapFactoryBean extends MapFactoryBean
 						+ " to " + key);
 				
 				result.putAll(moduleMap);
+			}
+		}
+		if (includeRootMap) {
+			try {
+				Map rootMap = (Map) applicationContext.getBean(key, Map.class);
+				result.putAll(rootMap);
+			}
+			catch (NoSuchBeanDefinitionException e) {
 			}
 		}
 		return result;
