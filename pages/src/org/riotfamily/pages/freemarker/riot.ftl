@@ -65,6 +65,12 @@
 	</#if>
 </#macro>
 
+<#--
+  - Returns the current page.
+  -->
+<#function getPage>
+	<#return riotMacroPageHelper.getPage(request) />
+</#function>
 
 <#--
   - Macro that renders the Riot toolbar if the page is requested in preview mode.

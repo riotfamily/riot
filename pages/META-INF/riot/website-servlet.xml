@@ -163,6 +163,7 @@
 						<entry key="riotInclude"><bean class="org.riotfamily.common.web.view.freemarker.IncludeMethod" /></entry>
 						<entry key="riotToolbarResources" value-ref="riotToolbarResources" />
 						<entry key="includeUriParam" value="__includeUri" />
+						<entry key="riotMacroPageHelper"><bean class="org.riotfamily.pages.freemarker.MacroPageHelper" /></entry>
 					</map>
 				</property>
 			</bean>		
