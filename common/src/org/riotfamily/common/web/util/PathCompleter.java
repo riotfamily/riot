@@ -27,32 +27,55 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+import org.springframework.web.context.ServletContextAware;
 
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public class PathCompleter {
+public class PathCompleter implements ServletContextAware, InitializingBean {
 
 	private static final Log log = LogFactory.getLog(PathCompleter.class);
 	
-	private String contextPath;
+	private String servletName;
+	
+	private String servletMapping;
 	
 	private ServletContext servletContext;
 	
 	private String servletPrefix;
 	
 	private String servletSuffix;
-	
-	
-	public PathCompleter(ContextPathProvider contextPathProvider) {
-		contextPath = contextPathProvider.getContextPath();
-		servletContext = contextPathProvider.getServletContext();
+		
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;
 	}
-	
+
 	public void setServletMapping(String servletMapping) {
+		this.servletMapping = servletMapping;
+	}
+
+	public void setServletName(String servletName) {
+		this.servletName = servletName;
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		if (servletMapping == null) {
+			Assert.notNull(servletName, "Either servletMapping or "
+					+ "servletName must be set.");
+			
+			servletMapping = ServletUtils.getServletMapping(servletName, 
+					servletContext);
+			
+			Assert.notNull(servletMapping, "Could not dertermine mapping " 
+					+ "for servlet '" + servletName + "'.");
+		
+			log.info("Servlet '" + servletName + "' is mapped to " 
+					+ servletMapping + " in web.xml");
+		}
 		servletSuffix = "";
 		servletPrefix = "";
 		int i = servletMapping.indexOf('*');
@@ -64,23 +87,6 @@ public class PathCompleter {
 		}
 		log.info("Servlet prefix: '" + servletPrefix + "'");
 		log.info("Servlet suffix: '" + servletSuffix + "'");
-	}
-	
-	public void setServletName(String servletName) {
-		String mapping = ServletUtils.getServletMapping(servletName, 
-				servletContext);
-		
-		Assert.notNull(mapping, "Could not dertermine mapping for servlet '"
-				+ servletName + "'.");
-	
-		log.info("Servlet '" + servletName + "' is mapped to " + mapping
-				+ " in web.xml");
-		
-		setServletMapping(mapping);
-	}
-
-	public String addContextAndServletMapping(String path) {
-		return contextPath + addServletMapping(path);
 	}
 	
 	public String addServletMapping(String path) {

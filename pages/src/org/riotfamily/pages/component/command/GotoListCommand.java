@@ -44,7 +44,8 @@ public class GotoListCommand extends PopupCommand {
 
 	protected String getUrl(CommandContext context) {
 		ComponentList list = (ComponentList) context.getBean();
-		return pathCompleter.addContextAndServletMapping(list.getPath());
+		return context.getRequest().getContextPath() 
+				+ pathCompleter.addServletMapping(list.getPath());
 	}
 	
 	public String getStyleClass(CommandContext context) {

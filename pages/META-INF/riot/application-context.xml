@@ -21,10 +21,7 @@
 		</property>
 	</bean>
 	
-	<bean id="contextPathProvider" class="org.riotfamily.common.web.util.ContextPathProvider" />
-	
 	<bean id="pathCompleter" class="org.riotfamily.common.web.util.PathCompleter">
-		<constructor-arg ref="contextPathProvider" />
 		<property name="servletName" value="website" />
 	</bean>
 	

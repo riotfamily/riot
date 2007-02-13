@@ -44,7 +44,8 @@ public class GotoPageCommand extends PopupCommand {
 
 	protected String getUrl(CommandContext context) {
 		Page page = (Page) context.getBean();
-		return pathCompleter.addContextAndServletMapping(page.getPath());
+		return context.getRequest().getContextPath() 
+				+ pathCompleter.addServletMapping(page.getPath());
 	}
 	
 	public String getStyleClass(CommandContext context) {
