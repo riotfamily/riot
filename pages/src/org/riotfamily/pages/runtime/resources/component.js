@@ -120,7 +120,6 @@ riot.Component.prototype = {
 	},
 	
 	setHtml: function(html) {
-		this.hover = null;
 		this.element.innerHTML = html.stripScripts();
 		this.setupElement();
 		setTimeout(function() { html.evalScripts() }, 10);
@@ -130,11 +129,10 @@ riot.Component.prototype = {
 	properties: function(event) {
 		var e = event || window.event;
 		if (e) Event.stop(e);
-		if (this.hover) this.hover.blur();
 		Element.removeClassName(this.element, 'riot-highlight');
 		if (this.formId) {
 			var formUrl = riot.path + '/pages/form/' + this.id + '?instantPublish=' + riot.toolbar.instantPublishMode;
-			var iframe = RBuilder.node('iframe', {	src: formUrl, className: 'properties', width: 1, height: 1});
+			var iframe = RBuilder.node('iframe', {src: formUrl, className: 'properties', width: 1, height: 1});
 			riot.popup = new riot.Popup('${properties-inspector.title}', iframe, function() {
 				var win = iframe.contentWindow ? iframe.contentWindow : iframe.window;
 				win.save();
@@ -196,6 +194,10 @@ riot.Component.prototype = {
 				if (c.getStyle('float') != 'none') {
 					c.addClassName('riot-floating-content');
 					e.style.zIndex = 1;
+				}
+				var clear = c.getStyle('clear');
+				if (clear != 'none') {
+					e.style.clear = clear;
 				}
 			});
 		}

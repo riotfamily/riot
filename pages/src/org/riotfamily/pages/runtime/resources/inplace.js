@@ -35,11 +35,9 @@ riot.InplaceEditor.prototype = {
 	/* Handler that is invoked when an enabled editor is clicked */
 	onclick: function(ev) {
 		Event.stop(ev);
-		if (riot.activeEditor != this) {
-			riot.toolbar.selectedComponent = this.component;
-			riot.activeEditor = this;
-			this.edit();
-		}
+		riot.toolbar.selectedComponent = this.component;
+		riot.activeEditor = this;
+		this.edit();
 	},
 	
 	/* Acquires the current text and invokes setText() */
@@ -191,8 +189,10 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 riot.PopupTextEditor = riot.InplaceEditor.extend({
 
 	edit: function() {
-		ComponentEditor.getText(this.component.id, this.key, 
-			this.setText.bind(this));
+		if (!riot.activePopup) {
+			ComponentEditor.getText(this.component.id, this.key, 
+				this.setText.bind(this));
+		}
 	},
 	
 	setText: function(text) {
@@ -310,6 +310,10 @@ riot.Popup.prototype = {
 	},
 		
 	open: function() {
+		if (riot.activePopup) {
+			return;
+		}
+		riot.activePopup = this;
 		if (browserInfo.ie) {
 			this.hideElements('select');
 			this.root = $$(document.compatMode && document.compatMode == 'BackCompat' ? 'body' : 'html').first().makeClipping();
@@ -332,11 +336,10 @@ riot.Popup.prototype = {
 		this.overlay.show();
 		RElement.makeVisible(this.div);
 		this.div.show();
-		this.isOpen = true;
 	},
 		
 	close: function() {
-		if (this.isOpen) {
+		if (riot.activePopup == this) {
 			if (browserInfo.ie) {
 				this.showElements('select');
 				this.root.undoClipping();
@@ -345,7 +348,7 @@ riot.Popup.prototype = {
 			this.showElements('embed');
 			this.div.remove();
 			this.overlay.remove();
-			this.isOpen = false;
+			riot.activePopup = null;
 		}
 	}
 }
