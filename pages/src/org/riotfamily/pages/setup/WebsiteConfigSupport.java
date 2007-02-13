@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.dao.ComponentDao;
+import org.riotfamily.pages.menu.SitemapBuilder;
 import org.riotfamily.pages.page.PageMap;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -80,5 +81,9 @@ public class WebsiteConfigSupport implements ApplicationContextAware,
 	
 	protected PageMap getPageMap() {
 		return websiteConfig.getPageMap();
+	}
+	
+	protected SitemapBuilder getSitemapBuilder() {
+		return websiteConfig.getSitemapBuilder();
 	}
 }

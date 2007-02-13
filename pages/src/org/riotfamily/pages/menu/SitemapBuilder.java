@@ -27,6 +27,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.pages.page.Page;
+
 public interface SitemapBuilder {
 	
 	/**
@@ -37,10 +39,10 @@ public interface SitemapBuilder {
 	public long getLastModified(HttpServletRequest request);
 
 	/**
-	 * Returns a list of all toplevel {@link MenuItem MenuItem}s. The items
+	 * Returns a list of all child {@link MenuItem MenuItem}s. The items
 	 * must be initialized with child items so that the returned structure 
-	 * represents the complete sitemap tree.
+	 * represents the remaining sitemap tree. If root is null, all toplevel
+	 * {@link MenuItem MenuItem}s are returned.
 	 */
-	public List buildSitemap(HttpServletRequest request);
-
+	public List buildSitemap(Page root, HttpServletRequest request);
 }

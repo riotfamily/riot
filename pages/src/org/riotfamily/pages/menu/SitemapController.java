@@ -26,6 +26,7 @@ package org.riotfamily.pages.menu;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,12 +37,17 @@ import org.riotfamily.pages.member.MemberBinderAware;
 import org.riotfamily.pages.member.WebsiteMember;
 import org.riotfamily.pages.member.support.NullMemberBinder;
 import org.riotfamily.pages.mvc.cache.AbstractCachingPolicyController;
+import org.riotfamily.pages.page.Page;
+import org.riotfamily.pages.page.support.PageUtils;
+import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UrlPathHelper;
 
 public class SitemapController extends AbstractCachingPolicyController implements MemberBinderAware {
 
 	private SitemapBuilder sitemapBuilder;
+	
+	private int rootLevel = 0;
 	
 	private String viewName;
 	
@@ -55,7 +61,23 @@ public class SitemapController extends AbstractCachingPolicyController implement
 
 	private boolean includeMemberRoleInCacheKey = true;
 	
-	private MemberBinder memberBinder = new NullMemberBinder();	
+	private MemberBinder memberBinder = new NullMemberBinder();
+	
+	public Page getRootPage(HttpServletRequest request) {
+		if (rootLevel > 0) {
+			Page page = PageUtils.getPage(request);
+			Assert.notNull(page);
+			Vector path = new Vector();
+			while (page != null) {
+				path.insertElementAt(page, 0);
+				page = page.getParent();
+			}
+			
+			return (Page) path.get(rootLevel);
+		}
+		
+		return null;
+	}
 	
 	public void setSitemapBuilder(SitemapBuilder sitemapBuilder) {
 		this.sitemapBuilder = sitemapBuilder;
@@ -70,9 +92,9 @@ public class SitemapController extends AbstractCachingPolicyController implement
 	}
 
 	public ModelAndView handleRequest(HttpServletRequest request, 
-			HttpServletResponse response) throws Exception {
+		HttpServletResponse response) throws Exception {
 		
-		List items = sitemapBuilder.buildSitemap(request);
+		List items = sitemapBuilder.buildSitemap(getRootPage(request), request);
 		completeLinks(items, request, response);
 		return new ModelAndView(viewName, "items", items);
 	}
@@ -128,10 +150,19 @@ public class SitemapController extends AbstractCachingPolicyController implement
 				key.append(member.getRole());
 			}
 		}
+		
+		Page root = getRootPage(request);
+		if (root != null) {
+			key.append("#root-path=");
+			key.append(root.getPath());
+		}
 	}
 	
 	public long getLastModified(HttpServletRequest request) {
 		return sitemapBuilder.getLastModified(request);
 	}
 
+	public void setRootLevel(int rootLevel) {
+		this.rootLevel = rootLevel;
+	}
 }

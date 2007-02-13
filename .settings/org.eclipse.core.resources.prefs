@@ -1,6 +1,8 @@
-#Wed Aug 30 11:42:36 CEST 2006
+#Tue Feb 13 08:40:15 CET 2007
 eclipse.preferences.version=1
 encoding//pages/src/org/riotfamily/pages/runtime/i18n/messages.properties=UTF-8
 encoding//pages/src/org/riotfamily/pages/runtime/i18n/messages_de.properties=UTF-8
+encoding//revolt/src/org/riotfamily/revolt/config/revolt.xsd=UTF8
+encoding//riot/src/org/riotfamily/riot/list/xml/list-config.xsd=UTF8
 encoding//riot/src/org/riotfamily/riot/runtime/i18n/messages.properties=UTF-8
 encoding//riot/src/org/riotfamily/riot/runtime/i18n/messages_de.properties=UTF-8

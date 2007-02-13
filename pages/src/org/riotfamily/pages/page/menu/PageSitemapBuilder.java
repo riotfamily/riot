@@ -26,12 +26,10 @@ package org.riotfamily.pages.page.menu;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.pages.component.preview.DefaultViewModeResolver;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
 import org.riotfamily.pages.member.MemberBinder;
 import org.riotfamily.pages.member.MemberBinderAware;
@@ -40,50 +38,21 @@ import org.riotfamily.pages.member.support.NullMemberBinder;
 import org.riotfamily.pages.menu.MenuItem;
 import org.riotfamily.pages.menu.SitemapBuilder;
 import org.riotfamily.pages.page.Page;
-import org.riotfamily.pages.page.support.PageUtils;
+import org.riotfamily.pages.page.PageMap;
 
 public class PageSitemapBuilder implements SitemapBuilder, MemberBinderAware {
 
-	private int rootLevel = 0;
-	
 	private ViewModeResolver viewModeResolver;
 	
 	private MemberBinder memberBinder = new NullMemberBinder();
 	
-	public void setMemberBinder(MemberBinder memberBinder) {
-		this.memberBinder = memberBinder;
+	private PageMap pageMap;
+	
+	protected Collection getRootPages(HttpServletRequest request) {
+		return pageMap.getRootPages();
 	}
 	
-	public void setRootLevel(int level) {
-		this.rootLevel = level;
-	}
-
-	public void setViewModeResolver(ViewModeResolver viewModeResolver) {
-		this.viewModeResolver = viewModeResolver;
-	}
-
-	public List buildSitemap(HttpServletRequest request) {
-		Collection rootPages = null;
-		if (rootLevel > 0) {
-			Page page = PageUtils.getPage(request);
-			LinkedList path = new LinkedList();
-			while (page != null) {
-				path.add(0, page);
-				page = page.getParent();
-			}
-			Page parent = (Page) path.get(rootLevel - 1);
-			rootPages = parent.getChildPages();
-		}
-		else {
-			rootPages = PageUtils.getRootPages(request);
-		}
-		return createItems(rootPages, request);
-	}
-		
-	public List createItems(Collection pages, HttpServletRequest request) {
-		if (viewModeResolver == null) {
-			viewModeResolver = new DefaultViewModeResolver();
-		}
+	protected List createItems(Collection pages, HttpServletRequest request) {
 		ArrayList items = new ArrayList();
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
@@ -95,7 +64,8 @@ public class PageSitemapBuilder implements SitemapBuilder, MemberBinderAware {
 				items.add(item);
 				Collection childPages = page.getChildPages();
 				if (childPages != null && !childPages.isEmpty()) {
-					item.setChildItems(createItems(page.getChildPages(), request));
+					item.setChildItems(
+						createItems(page.getChildPages(), request));
 				}
 			}
 		}
@@ -104,11 +74,32 @@ public class PageSitemapBuilder implements SitemapBuilder, MemberBinderAware {
 	
 	protected boolean includePage(Page page, HttpServletRequest request) {
 		WebsiteMember member = memberBinder.getMember(request);
-		return !page.isHidden() && page.isAccessible(request, member) && (page.isPublished() || viewModeResolver.isPreviewMode(request));		
+		
+		return !page.isHidden() && page.isAccessible(request, member) &&
+			(page.isPublished() || viewModeResolver.isPreviewMode(request));		
 	}
 	
+	public void setMemberBinder(MemberBinder memberBinder) {
+		this.memberBinder = memberBinder;
+	}
+	
+	public final List buildSitemap(Page root, HttpServletRequest request) {
+		if (root != null) {
+			return createItems(getRootPages(request), request);
+		} else {
+			return createItems(getRootPages(request), request);
+		}
+	}
+		
 	public long getLastModified(HttpServletRequest request) {
-		return PageUtils.getPageMap(request).getLastModified();
+		return pageMap.getLastModified();
 	}
 
+	public void setPageMap(PageMap pageMap) {
+		this.pageMap = pageMap;
+	}
+
+	public void setViewModeResolver(ViewModeResolver viewModeResolver) {
+		this.viewModeResolver = viewModeResolver;
+	}
 }

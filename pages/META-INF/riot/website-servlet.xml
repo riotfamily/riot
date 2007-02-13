@@ -169,4 +169,9 @@
 		</property>
 	</bean>
 
+	<bean name="sitemapBuilder" class="org.riotfamily.pages.page.menu.PageSitemapBuilder">
+		<property name="pageMap" ref="pageMap" />
+		<property name="viewModeResolver" ref="viewModeResolver" />		
+	</bean>
+
 </beans>

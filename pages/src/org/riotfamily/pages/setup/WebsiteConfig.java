@@ -28,6 +28,7 @@ import java.util.Map;
 import org.riotfamily.pages.component.ComponentListController;
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.dao.ComponentDao;
+import org.riotfamily.pages.menu.SitemapBuilder;
 import org.riotfamily.pages.page.PageMap;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -50,6 +51,8 @@ public class WebsiteConfig implements ApplicationContextAware, InitializingBean 
 	
 	private PageMap pageMap;
 	
+	private SitemapBuilder sitemapBuilder;
+	
 	public WebsiteConfig(ComponentRepository repository, ComponentDao dao) {
 		this.componentRepository = repository;
 		this.componentDao = dao;
@@ -65,6 +68,8 @@ public class WebsiteConfig implements ApplicationContextAware, InitializingBean 
 		try {
 			pageMap = (PageMap) BeanFactoryUtils.beanOfType(
 					applicationContext,	PageMap.class);
+			sitemapBuilder = (SitemapBuilder) BeanFactoryUtils.beanOfType(
+					applicationContext,	SitemapBuilder.class);
 		}
 		catch (NoSuchBeanDefinitionException e) {
 		}
@@ -76,6 +81,10 @@ public class WebsiteConfig implements ApplicationContextAware, InitializingBean 
 
 	public PageMap getPageMap() {
 		return this.pageMap;
+	}
+	
+	public SitemapBuilder getSitemapBuilder() {
+		return this.sitemapBuilder;
 	}
 
 	public ComponentRepository getComponentRepository() {
