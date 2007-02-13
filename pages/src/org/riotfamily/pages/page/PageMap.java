@@ -41,6 +41,7 @@ import org.riotfamily.pages.page.dao.PageDao;
 import org.riotfamily.pages.page.support.FolderController;
 import org.riotfamily.pages.page.support.PageMappingEvent;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
@@ -85,6 +86,8 @@ public class PageMap implements InitializingBean, ApplicationContextAware,
 	
 	private String defaultControllerName = DEFAULT_CONTROLLER;
 
+	private Controller defaultController;
+	
 	public static PageMap getInstance(ServletContext servletContext) {
 		return (PageMap) servletContext.getAttribute(SERVLET_CONTEXT_ATTR);
 	}
@@ -121,6 +124,14 @@ public class PageMap implements InitializingBean, ApplicationContextAware,
 		else {
 			log.warn("No ApplicationEventMulticaster has been set.");
 		}
+		
+		try {
+			defaultController = (Controller) applicationContext.getBean(
+					defaultControllerName, Controller.class);
+		}
+		catch (NoSuchBeanDefinitionException e) {
+		}
+		
 		initMappings();
 	}
 	
@@ -252,7 +263,7 @@ public class PageMap implements InitializingBean, ApplicationContextAware,
 		}
 		String controllerName = page.getControllerName();
 		if (controllerName == null) {
-			controllerName = defaultControllerName;
+			return defaultController;
 		}
 		return (Controller) applicationContext.getBean(
 				controllerName, Controller.class);
