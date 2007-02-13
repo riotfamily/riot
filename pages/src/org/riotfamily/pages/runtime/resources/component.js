@@ -90,11 +90,9 @@ riot.Component.prototype = {
 	remove: function(event) {
 		var e = event || window.event;
 		if (e) Event.stop(e);
-		//riot.toolbar.buttons.remove.disable();
 		new Effect.Remove(this.element, function(el) {
 			Element.remove(el);
-			el.component.componentList.updatePositionClasses();
-			//riot.toolbar.buttons.remove.enable().click();
+			el.component.componentList.componentRemoved();
 		});
 		ComponentEditor.deleteComponent(this.id);
 		riot.toolbar.setDirty(this.componentList, true);
@@ -391,6 +389,7 @@ riot.ComponentList.prototype = {
 		this.id = el.getAttribute('riot:listId');
 		this.controllerId = el.getAttribute('riot:controllerId');
 		this.maxComponents = el.getAttribute('riot:maxComponents');
+		this.minComponents = el.getAttribute('riot:minComponents');
 		if (!el.id) el.id = 'ComponentList' + this.id;
 		
 		ComponentEditor.getValidTypes(this.controllerId, 
@@ -508,8 +507,18 @@ riot.ComponentList.prototype = {
 	},
 
 	remove: function(enable) {
+		if (enable && this.getComponents().length == this.minComponents) {
+			return;
+		}
 		RElement.toggleClassName(this.element, 'riot-mode-remove', enable);
 		this.getComponents().invoke('setMode', enable ? 'remove' : null);
+	},
+	
+	componentRemoved: function() {
+		this.updatePositionClasses();
+		if (this.minComponents > 0 && this.getComponents().length == this.minComponents) {
+			this.remove(false);
+		}
 	},
 	
 	changeType: function(enable) {

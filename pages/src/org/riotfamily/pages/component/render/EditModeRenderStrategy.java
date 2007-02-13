@@ -77,6 +77,11 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 			out.print("\" riot:controllerId=\"");
 			out.print(config.getControllerId());
 			out.print('"');
+			if (config.getMinComponents() != null) {
+				out.print(" riot:minComponents=\"");
+				out.print(config.getMinComponents());
+				out.print('"');
+			}
 			if (config.getMaxComponents() != null) {
 				out.print(" riot:maxComponents=\"");
 				out.print(config.getMaxComponents());

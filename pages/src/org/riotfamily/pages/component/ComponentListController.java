@@ -66,6 +66,8 @@ public class ComponentListController implements Controller, BeanNameAware,
 
 	private String[] initialComponentTypes;
 
+	private Integer minComponents;
+	
 	private Integer maxComponents;
 
 	private ComponentRepository componentRepository;
@@ -112,6 +114,14 @@ public class ComponentListController implements Controller, BeanNameAware,
 
 	public void setInitialComponentTypes(String[] initialComponentTypes) {
 		this.initialComponentTypes = initialComponentTypes;
+	}
+
+	public Integer getMinComponents() {
+		return this.minComponents;
+	}
+
+	public void setMinComponents(Integer minComponents) {
+		this.minComponents = minComponents;
 	}
 
 	public Integer getMaxComponents() {

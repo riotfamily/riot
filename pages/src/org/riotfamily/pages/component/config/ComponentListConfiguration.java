@@ -35,6 +35,8 @@ public interface ComponentListConfiguration {
 	
 	public ComponentKeyResolver getComponentKeyResolver();
 	
+	public Integer getMinComponents();
+	
 	public Integer getMaxComponents();
 	
 	public String[] getValidComponentTypes();

@@ -64,6 +64,7 @@
 			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="initialComponentTypes" type="xsd:string" />
 			<xsd:attribute name="validComponentTypes" type="xsd:string" />
+			<xsd:attribute name="minComponents" type="xsd:positiveInteger"/>
 			<xsd:attribute name="maxComponents" type="xsd:positiveInteger"/>			
 		</xsd:complexType>
 	</xsd:element>
