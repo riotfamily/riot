@@ -86,6 +86,8 @@
 	<bean class="org.riotfamily.pages.setup.WebsiteConfig">
 		<constructor-arg ref="componentRepository" />
 		<constructor-arg ref="componentDao" />
+		<constructor-arg ref="pageMap" />
+		<constructor-arg ref="sitemapBuilder" />
 	</bean>	
 	
 	<!-- 

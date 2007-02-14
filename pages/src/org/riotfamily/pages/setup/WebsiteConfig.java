@@ -25,8 +25,6 @@ package org.riotfamily.pages.setup;
 
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.riotfamily.pages.component.ComponentListController;
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.dao.ComponentDao;
@@ -34,7 +32,6 @@ import org.riotfamily.pages.menu.SitemapBuilder;
 import org.riotfamily.pages.page.PageMap;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -43,8 +40,6 @@ import org.springframework.context.ApplicationContextAware;
  */
 public class WebsiteConfig implements ApplicationContextAware,
 	InitializingBean {
-	
-	private static final Log log = LogFactory.getLog(WebsiteConfig.class);
 	
 	private Plumber plumber;
 	
@@ -58,9 +53,12 @@ public class WebsiteConfig implements ApplicationContextAware,
 	
 	private SitemapBuilder sitemapBuilder;
 	
-	public WebsiteConfig(ComponentRepository repository, ComponentDao dao) {
+	public WebsiteConfig(ComponentRepository repository, ComponentDao dao,
+		PageMap pageMap, SitemapBuilder sitemapBuilder) {
 		this.componentRepository = repository;
 		this.componentDao = dao;
+		this.pageMap = pageMap;
+		this.sitemapBuilder = sitemapBuilder;
 	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
@@ -69,16 +67,6 @@ public class WebsiteConfig implements ApplicationContextAware,
 		
 		componentListControllers = applicationContext.getBeansOfType(
 				ComponentListController.class);
-		
-		try {
-			pageMap = (PageMap) BeanFactoryUtils.beanOfType(
-					applicationContext,	PageMap.class);
-			sitemapBuilder = (SitemapBuilder) BeanFactoryUtils.beanOfType(
-					applicationContext,	SitemapBuilder.class);
-		}
-		catch (NoSuchBeanDefinitionException e) {
-			log.info("Pagemap or sitemap not found in bean factory", e);
-		}
 	}
 
 	public Map getComponentListControllers() {
@@ -104,5 +92,4 @@ public class WebsiteConfig implements ApplicationContextAware,
 	public void afterPropertiesSet() throws Exception {
 		plumber.setWebsiteConfig(this);
 	}
-
 }
