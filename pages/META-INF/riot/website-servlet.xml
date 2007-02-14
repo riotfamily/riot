@@ -173,6 +173,7 @@
 	<bean name="sitemapBuilder" class="org.riotfamily.pages.page.menu.PageSitemapBuilder">
 		<property name="pageMap" ref="pageMap" />
 		<property name="viewModeResolver" ref="viewModeResolver" />		
+		<property name="pathCompleter" ref="pathCompleter" />
 	</bean>
 
 </beans>

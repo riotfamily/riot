@@ -31,7 +31,6 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.member.MemberBinder;
 import org.riotfamily.pages.member.MemberBinderAware;
 import org.riotfamily.pages.member.WebsiteMember;
@@ -41,9 +40,9 @@ import org.riotfamily.pages.page.Page;
 import org.riotfamily.pages.page.support.PageUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.UrlPathHelper;
 
-public class SitemapController extends AbstractCachingPolicyController implements MemberBinderAware {
+public class SitemapController extends AbstractCachingPolicyController
+	implements MemberBinderAware {
 
 	private SitemapBuilder sitemapBuilder;
 	
@@ -51,14 +50,6 @@ public class SitemapController extends AbstractCachingPolicyController implement
 	
 	private String viewName;
 	
-	private UrlPathHelper urlPathHelper = new UrlPathHelper();
-	
-	private String contextPath;
-	
-	private String servletPrefix;
-	
-	private String servletSuffix;
-
 	private boolean includeMemberRoleInCacheKey = true;
 	
 	private MemberBinder memberBinder = new NullMemberBinder();
@@ -95,11 +86,11 @@ public class SitemapController extends AbstractCachingPolicyController implement
 		HttpServletResponse response) throws Exception {
 		
 		List items = sitemapBuilder.buildSitemap(getRootPage(request), request);
-		completeLinks(items, request, response);
+		encodeLinks(items, request, response);
 		return new ModelAndView(viewName, "items", items);
 	}
 		
-	protected void completeLinks(Collection items, HttpServletRequest request, 
+	protected void encodeLinks(Collection items, HttpServletRequest request, 
 			HttpServletResponse response) {
 		
 		if (items == null) {
@@ -108,37 +99,11 @@ public class SitemapController extends AbstractCachingPolicyController implement
 		Iterator it = items.iterator();
 		while (it.hasNext()) {
 			MenuItem item = (MenuItem) it.next();
-			StringBuffer link = new StringBuffer();
-			link.append(getContextPath(request));
-			link.append(getServletPrefix(request));
-			link.append(item.getLink());
-			link.append(getServletSuffix(request));
-			item.setLink(response.encodeURL(link.toString()));
-			completeLinks(item.getChildItems(), request, response);
+			item.setLink(response.encodeURL(item.getLink()));
+			encodeLinks(item.getChildItems(), request, response);
 		}
 	}
 
-	protected String getContextPath(HttpServletRequest request) {
-		if (contextPath == null) {
-			contextPath = urlPathHelper.getContextPath(request);
-		}
-		return contextPath;
-	}
-	
-	protected String getServletPrefix(HttpServletRequest request) {
-		if (servletPrefix == null) {
-			servletPrefix = ServletUtils.getServletPrefix(request);
-		}
-		return servletPrefix;
-	}
-	
-	protected String getServletSuffix(HttpServletRequest request) {
-		if (servletSuffix == null) {
-			servletSuffix = ServletUtils.getServletSuffix(request);
-		}
-		return servletSuffix;
-	}
-	
 	public void appendCacheKeyInternal(StringBuffer key, 
 			HttpServletRequest request) {
 		

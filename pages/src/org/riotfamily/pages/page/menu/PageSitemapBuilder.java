@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.web.util.PathCompleter;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
 import org.riotfamily.pages.member.MemberBinder;
 import org.riotfamily.pages.member.MemberBinderAware;
@@ -48,6 +49,8 @@ public class PageSitemapBuilder implements SitemapBuilder, MemberBinderAware {
 	
 	private PageMap pageMap;
 	
+	private PathCompleter pathCompleter;
+	
 	protected Collection getRootPages(HttpServletRequest request) {
 		return pageMap.getRootPages();
 	}
@@ -60,7 +63,7 @@ public class PageSitemapBuilder implements SitemapBuilder, MemberBinderAware {
 			if (includePage(page, request)) {
 				MenuItem item = new MenuItem();
 				item.setLabel(page.getTitle());
-				item.setLink(page.getPath());
+				item.setLink(completeLink(request, page.getPath()));
 				items.add(item);
 				Collection childPages = page.getChildPages();
 				if (childPages != null && !childPages.isEmpty()) {
@@ -70,6 +73,13 @@ public class PageSitemapBuilder implements SitemapBuilder, MemberBinderAware {
 			}
 		}
 		return items;
+	}
+	
+	protected String completeLink(HttpServletRequest request, String path) {
+		StringBuffer link = new StringBuffer();
+		link.append(request.getContextPath());
+		link.append(pathCompleter.addServletMapping(path));
+		return link.toString();
 	}
 	
 	protected boolean includePage(Page page, HttpServletRequest request) {
@@ -85,7 +95,7 @@ public class PageSitemapBuilder implements SitemapBuilder, MemberBinderAware {
 	
 	public final List buildSitemap(Page root, HttpServletRequest request) {
 		if (root != null) {
-			return createItems(getRootPages(request), request);
+			return createItems(root.getChildPages(), request);
 		} else {
 			return createItems(getRootPages(request), request);
 		}
@@ -101,5 +111,9 @@ public class PageSitemapBuilder implements SitemapBuilder, MemberBinderAware {
 
 	public void setViewModeResolver(ViewModeResolver viewModeResolver) {
 		this.viewModeResolver = viewModeResolver;
+	}
+
+	public void setPathCompleter(PathCompleter pathCompleter) {
+		this.pathCompleter = pathCompleter;
 	}
 }

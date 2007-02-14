@@ -25,6 +25,8 @@ package org.riotfamily.pages.setup;
 
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.riotfamily.pages.component.ComponentListController;
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.dao.ComponentDao;
@@ -39,7 +41,10 @@ import org.springframework.context.ApplicationContextAware;
 /**
  * Usage: Place an instance of this class in your website-servlet's context.
  */
-public class WebsiteConfig implements ApplicationContextAware, InitializingBean {
+public class WebsiteConfig implements ApplicationContextAware,
+	InitializingBean {
+	
+	private static final Log log = LogFactory.getLog(WebsiteConfig.class);
 	
 	private Plumber plumber;
 	
@@ -72,6 +77,7 @@ public class WebsiteConfig implements ApplicationContextAware, InitializingBean 
 					applicationContext,	SitemapBuilder.class);
 		}
 		catch (NoSuchBeanDefinitionException e) {
+			log.info("Pagemap or sitemap not found in bean factory", e);
 		}
 	}
 
