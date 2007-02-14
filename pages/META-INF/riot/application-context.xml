@@ -27,6 +27,8 @@
 	
 	<bean id="pageEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
 	
+	<bean id="contentEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
+	
 	<!-- Page DAO -->
 	
 	<bean id="pageDao" class="org.springframework.aop.framework.ProxyFactoryBean">

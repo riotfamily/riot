@@ -72,7 +72,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.io.Resource;
-import org.springframework.util.Assert;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -105,9 +104,9 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	
 	public static final String CHECKBOX_CHECKED = "checked";
 	
-	public static final String CUSTOM_ELEMENT = "element";
+	public static final String GENERIC_ELEMENT = "element";
 	
-	public static final String CUSTOM_ELEMENT_TYPE = "type";
+	public static final String GENERIC_ELEMENT_TYPE = "type";
 	
 	public static final String ELEMENT_BIND = "bind";
 	
@@ -182,6 +181,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	}
 	
 	public void digest(Document doc, Resource resource) {
+		this.resource = resource;
 		formId = null;
 		imports = new ArrayList();
 		currentPackage = null;
@@ -344,26 +344,31 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	}
 	
 	protected Class getElementClass(Element ele) {
-		if (DomUtils.nodeNameEquals(ele, CUSTOM_ELEMENT)) {
-			String type = XmlUtils.getAttribute(ele, CUSTOM_ELEMENT_TYPE);
-			if (type == null) {
-				throw new FormRepositoryException(resource, formId, 
-						"Attribute '" + CUSTOM_ELEMENT_TYPE 
-						+ "' must be set.");
-			}
-			Class clazz = formRepository.getElementClass(type);
-			if (clazz == null) {
-				throw new FormRepositoryException(resource, formId,
-						"Unknown custom element type: " + type);
-			}
-			return clazz;
+		String type = null;
+		if (DomUtils.nodeNameEquals(ele, GENERIC_ELEMENT)) {
+			type = XmlUtils.getAttribute(ele, GENERIC_ELEMENT_TYPE);
 		}
-		return getElementClass(XmlUtils.getLocalName(ele));
+		else {
+			String namespace = ele.getNamespaceURI();
+			if (namespace == null || namespace.equals(NAMESPACE)) {
+				type = XmlUtils.getLocalName(ele);
+			}
+			else {
+				type = '{' + namespace + '}' + ele.getLocalName();
+			}
+		}
+		return getElementClass(type);
 	}
 	
 	protected Class getElementClass(String type) {
 		Class elementClass = (Class) elementClasses.get(type);
-		Assert.notNull(elementClass, "Invalid element type: " + type);
+		if (elementClass == null) {
+			elementClass = formRepository.getElementClass(type);
+		}
+		if (elementClass == null) {
+			throw new FormRepositoryException(resource, formId,
+					"Unknown element type: " + type);
+		}
 		return elementClass;
 	}
 	
@@ -391,7 +396,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			Attr attr = (Attr) attrs.item(i);
 			String name = attr.getName();
 			if (!ELEMENT_BIND.equals(name)
-					&& !CUSTOM_ELEMENT_TYPE.equals(name)
+					&& !GENERIC_ELEMENT_TYPE.equals(name)
 					&& !FORM_BEAN_CLASS.equals(name)) {
 				
 				String property = FormatUtils.xmlToCamelCase(attr.getName());

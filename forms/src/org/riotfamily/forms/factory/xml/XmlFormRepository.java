@@ -24,8 +24,11 @@
 package org.riotfamily.forms.factory.xml;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.activation.MimetypesFileTypeMap;
 
@@ -68,6 +71,45 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	private MimetypesFileTypeMap mimetypesMap;
 	
 	private ImageCropper imageCropper;
+	
+	private HashMap customElements;
+	
+	private HashMap customElementsWithoutNS;
+	
+	
+	public void setCustomElements(Properties props) 
+			throws ClassNotFoundException {
+		
+		customElements = new HashMap();
+		customElementsWithoutNS = new HashMap();
+		
+		Iterator it = props.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry prop = (Map.Entry) it.next();
+			String className = (String) prop.getValue();
+			if (className != null) {
+				String type = (String) prop.getKey();
+				Class elementClass = Class.forName(className);
+				customElements.put(type, elementClass);
+				int i = type.indexOf('}');
+				if (i != -1 && i < type.length() - 1) {
+					type = type.substring(i + 1);
+					customElementsWithoutNS.put(type, elementClass);
+				}
+			}
+		}
+	}
+
+	public Class getElementClass(String type) {
+		if (customElements == null) {
+			return null;
+		}
+		Class elementClass = (Class) customElements.get(type);
+		if (elementClass == null) {
+			elementClass = (Class) customElementsWithoutNS.get(type);
+		}
+		return elementClass;
+	}
 	
 	public void setConfig(Resource config) {
 		setConfigLocations(new Resource[] { config });

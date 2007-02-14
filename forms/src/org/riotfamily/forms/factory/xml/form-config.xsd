@@ -6,28 +6,7 @@
 	
 	<xsd:group name="elements">
 		<xsd:choice>
-			<xsd:element ref="element" />
-			<xsd:element ref="nested-form" />
-			<xsd:element ref="textfield" />
-			<xsd:element ref="numberfield" />
-			<xsd:element ref="passwordfield" />
-			<xsd:element ref="textarea" />
-			<xsd:element ref="checkbox" />
-			<xsd:element ref="imagecheckbox" />
-			<xsd:element ref="checkbox-group" />
-			<xsd:element ref="radio-group" />
-			<xsd:element ref="selectbox" />
-			<xsd:element ref="list" />
-			<xsd:element ref="map" />
-			<xsd:element ref="group" />
-			<xsd:element ref="calendar" />
-			<xsd:element ref="richtext" />
-			<xsd:element ref="file-upload" />
-			<xsd:element ref="image-upload" />
-			<xsd:element ref="import" />
-			<xsd:element ref="editable-if-new" />
-			<xsd:element ref="xml-element" />
-			<xsd:element ref="xml-sequence" />
+			<xsd:any namespace="##any" />
 		</xsd:choice>	
 	</xsd:group>
 	
@@ -48,7 +27,6 @@
 		<xsd:complexType>
 			<xsd:choice>
 				<xsd:group ref="elements" minOccurs="0" maxOccurs="unbounded" />
-				<xsd:element ref="set-property" minOccurs="0" maxOccurs="unbounded" />
 			</xsd:choice>
 			<xsd:attribute name="bind" type="xsd:string" />
 			<xsd:attribute name="type" type="xsd:string" use="required" />

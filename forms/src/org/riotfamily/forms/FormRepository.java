@@ -41,8 +41,6 @@ public interface FormRepository {
 	
 	public void registerFormFactory(String id, FormFactory formFactory);
 
-	public Class getElementClass(String type);
-
 	public void addListener(ConfigurationEventListener listener);
 
 }
