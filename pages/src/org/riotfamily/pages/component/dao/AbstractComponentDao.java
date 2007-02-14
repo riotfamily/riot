@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.riotfamily.common.web.event.ContentChangedEvent;
+import org.riotfamily.common.web.util.PathCompleter;
 import org.riotfamily.pages.component.Component;
 import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentRepository;
@@ -38,8 +39,7 @@ import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.property.PropertyProcessor;
 import org.riotfamily.riot.security.AccessController;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.context.event.ApplicationEventMulticaster;
 
 /**
  * Abstract base class for {@link Component implementations that delegates
@@ -47,23 +47,26 @@ import org.springframework.context.ApplicationEventPublisherAware;
  * 
  * @author Felix Gnass <fgnass@neteye.de>
  */
-public abstract class AbstractComponentDao implements ComponentDao, 
-		ApplicationEventPublisherAware {
+public abstract class AbstractComponentDao implements ComponentDao {
 
 	private ComponentRepository repository;
+
+	private ApplicationEventMulticaster eventMulticaster;
 	
-	private ApplicationEventPublisher eventPublisher;
+	private PathCompleter pathCompleter;
 	
 	public AbstractComponentDao(ComponentRepository repository) {
 		this.repository = repository;
 	}
 
-	public void setApplicationEventPublisher(
-			ApplicationEventPublisher eventPublisher) {
-		
-		this.eventPublisher = eventPublisher;
+	public void setEventMulticaster(ApplicationEventMulticaster eventMulticaster) {
+		this.eventMulticaster = eventMulticaster;
 	}
-	
+
+	public void setPathCompleter(PathCompleter pathCompleter) {
+		this.pathCompleter = pathCompleter;
+	}
+
 	/**
 	 * Loads the ComponentList specified  by the given id.
 	 */
@@ -378,7 +381,9 @@ public abstract class AbstractComponentDao implements ComponentDao,
 			result |= publishContainer(container);
 		}
 		
-		eventPublisher.publishEvent(new ContentChangedEvent(this, componentList.getPath()));
+		String path = pathCompleter.addServletMapping(componentList.getPath());
+		eventMulticaster.multicastEvent(new ContentChangedEvent(this, path));
+		
 		return result;
 	}
 	
