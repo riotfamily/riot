@@ -21,7 +21,7 @@
 		</id>
 		<many-to-one name="user" column="`user`"/>
 		<many-to-one name="notification" />
-		<property name="read" />
+		<property name="read" column="`read`" />
 	</class>
 	
 </hibernate-mapping>

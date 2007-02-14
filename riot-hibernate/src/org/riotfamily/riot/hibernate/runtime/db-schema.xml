@@ -36,7 +36,7 @@
 				<db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
 				<db:column name="`user`" type="VARCHAR" length="255" />
 				<db:column name="notification" type="BIGINT" />
-				<db:column name="read" type="BIT" />
+				<db:column name="`read`" type="BIT" />
 			</db:create-table>
 			<db:add-foreign-key table="riot_user_notification" name="riot_user_notification" references="riot_notification">
 				<db:ref local="notification" foreign="id" />
