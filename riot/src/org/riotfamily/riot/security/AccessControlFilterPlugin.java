@@ -25,12 +25,12 @@ package org.riotfamily.riot.security;
 
 import java.io.IOException;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.riotfamily.common.web.filter.FilterPlugin;
+import org.riotfamily.common.web.filter.PluginChain;
 
 /**
  * Servlet filter that binds the authenticated principal (if present) to the
@@ -38,19 +38,18 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * 
  * @see AccessController
  */
-public final class AccessControlFilter extends OncePerRequestFilter {
+public final class AccessControlFilterPlugin extends FilterPlugin {
 
-	protected void doFilterInternal(HttpServletRequest request, 
-			HttpServletResponse response, FilterChain filterChain) 
-			throws ServletException, IOException {
+	public void doFilter(HttpServletRequest request,
+		HttpServletResponse response, PluginChain pluginChain)
+		throws IOException, ServletException {
 		
 		try {
 			AccessController.bindPrincipalToCurrentTread(request);
-			filterChain.doFilter(request, response);
+			pluginChain.doFilter(request, response);
 		}
 		finally {
 			AccessController.resetPrincipal();
 		}
 	}
-
 }

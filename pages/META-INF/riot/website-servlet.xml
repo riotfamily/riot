@@ -17,6 +17,10 @@
 		<property name="reloadable" value="${website-servlet.reloadable=false}" />
 	</bean>
 	
+	<bean name="riotAccessControlFilterPlugin" class="org.riotfamily.riot.security.AccessControlFilterPlugin">
+		<property name="filterName" value="website-servlet-filter" />
+	</bean>
+	
 	<!-- 
 	  - In-memory representation of the sitemap. 
 	  -->
@@ -31,6 +35,12 @@
 	  -->
 	<bean id="pageMenuBuilder" class="org.riotfamily.pages.page.menu.PageMenuBuilder">
 		<constructor-arg ref="pageMap"/>
+	</bean>
+	
+	<bean name="sitemapBuilder" class="org.riotfamily.pages.page.menu.PageSitemapBuilder">
+		<property name="pageMap" ref="pageMap" />
+		<property name="viewModeResolver" ref="viewModeResolver" />		
+		<property name="pathCompleter" ref="pathCompleter" />
 	</bean>
 	
 	<bean id="pageInterceptor" class="org.riotfamily.pages.page.support.PageInterceptor">
@@ -168,12 +178,6 @@
 				</property>
 			</bean>		
 		</property>
-	</bean>
-
-	<bean name="sitemapBuilder" class="org.riotfamily.pages.page.menu.PageSitemapBuilder">
-		<property name="pageMap" ref="pageMap" />
-		<property name="viewModeResolver" ref="viewModeResolver" />		
-		<property name="pathCompleter" ref="pathCompleter" />
 	</bean>
 
 </beans>
