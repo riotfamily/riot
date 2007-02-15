@@ -31,20 +31,13 @@ import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.component.preview.DefaultViewModeResolver;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
 import org.riotfamily.pages.page.support.PageUtils;
-import org.springframework.core.Ordered;
-import org.springframework.web.servlet.HandlerExecutionChain;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 
-public class PageHandlerMapping implements HandlerMapping, Ordered {
+public class PageHandlerMapping extends AbstractHandlerMapping {
 
 	private static Log log = LogFactory.getLog(PageHandlerMapping.class);
 	
 	private PageMap pageMap;
-	
-	private HandlerInterceptor[] interceptors;
-	
-	private int order = Integer.MAX_VALUE;
 	
 	private ViewModeResolver viewModeResolver = new DefaultViewModeResolver();
 	
@@ -60,21 +53,7 @@ public class PageHandlerMapping implements HandlerMapping, Ordered {
 		return this.pageMap;
 	}
 
-	public void setInterceptors(HandlerInterceptor[] interceptors) {
-		this.interceptors = interceptors;
-	}
-
-	public int getOrder() {
-		return this.order;
-	}
-
-	public void setOrder(int order) {
-		this.order = order;
-	}
-
-	public HandlerExecutionChain getHandler(HttpServletRequest request) 
-			throws Exception {
-		
+	protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
 		String path = ServletUtils.getPathWithoutServletMapping(request);
 		if (log.isDebugEnabled()) {
 			log.debug("Looking up handler for [" + path + "]");
@@ -89,12 +68,10 @@ public class PageHandlerMapping implements HandlerMapping, Ordered {
 				PageUtils.exposePage(request, page);
 				PageUtils.exposePageMap(request, pageMap);
 			
-				return new HandlerExecutionChain(pc.getController(),
-					interceptors);
+				return pc.getController();
 			}
 		}
 		
 		return null;
 	}
-	
 }
