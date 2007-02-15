@@ -57,9 +57,11 @@ public class ListModel {
 		this.itemsTotal = itemsTotal;
 		this.pageSize = pageSize;
 		this.currentPage = currentPage;
-		pages = (int) itemsTotal / pageSize + 1;
-		if (itemsTotal % pageSize == 0) {
-			pages--;
+		if (pageSize > 0) {
+			pages = (int) itemsTotal / pageSize + 1;
+			if (itemsTotal % pageSize == 0) {
+				pages--;
+			}
 		}
 	}
 	
