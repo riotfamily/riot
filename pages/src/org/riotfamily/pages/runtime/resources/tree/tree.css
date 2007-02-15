@@ -52,12 +52,20 @@ ul.tree li.closed ul {
 }
 
 ul.tree a {
-	background: url(page-file.gif) 0 50% no-repeat;
 	padding: 1px 0 1px 18px;
 	text-decoration: none;
 	font-size: 12px;
 	font-family: Arial, Sans-Serif;
+}
+
+ul.tree a.published {
+	background: url(page-file.gif) 0 50% no-repeat;
 	color: #3d3d3d !important;
+}
+
+ul.tree a.unpublished {
+	background: url(page-file-draft.gif) 0 50% no-repeat;
+	color: #888 !important;
 }
 
 ul.tree div.children a {

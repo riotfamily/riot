@@ -25,8 +25,12 @@ package org.riotfamily.pages.menu;
 
 import java.util.List;
 
+import org.riotfamily.pages.page.Page;
+
 public class MenuItem {
 
+	private Page page;
+	
 	private String label;
 	
 	private String title;
@@ -43,21 +47,27 @@ public class MenuItem {
 	
 	private List childItems;
 	
-	public MenuItem() {
+	public MenuItem(Page page) {
+		this.page = page;
 	}
 	
-	public MenuItem(String label, String link) {
+	public MenuItem(Page page, String label, String link) {
+		this.page = page;
 		this.label = label;
 		this.link = link;
 	}
 
-	public MenuItem(String label, String link, String style) {
+	public MenuItem(Page page, String label, String link, String style) {
+		this.page = page;
 		this.label = label;
 		this.link = link;
 		this.style = style;
 	}
 	
-	public MenuItem(String label, String link, String style, String title) {
+	public MenuItem(Page page, String label, String link, String style,
+		String title) {
+		
+		this.page = page;
 		this.label = label;
 		this.link = link;
 		this.style = style;
@@ -126,6 +136,10 @@ public class MenuItem {
 
 	public void setStyle(String style) {
 		this.style = style;
+	}
+	
+	public Page getPage() {
+		return page;
 	}
 	
 	public String toString() {

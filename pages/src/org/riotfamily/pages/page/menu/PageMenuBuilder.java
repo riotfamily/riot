@@ -117,7 +117,7 @@ public class PageMenuBuilder implements MenuBuilder, MemberBinderAware {
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
 			if (!page.isHidden() && page.isAccessible(request, member) && (page.isPublished() || viewModeResolver.isPreviewMode(request))) {
-				MenuItem item = new MenuItem();
+				MenuItem item = new MenuItem(page);
 				item.setLabel(page.getTitle());
 				item.setLink(page.getPath());
 				item.setStyle(StringUtils.getFilename(page.getPath()));

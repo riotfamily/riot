@@ -24,28 +24,36 @@
 	<!-- 
 	  - In-memory representation of the sitemap. 
 	  -->
-	<bean id="pageMap" class="org.riotfamily.pages.page.PageMap">
-		<constructor-arg ref="pageDao" />
-		<constructor-arg ref="transactionManager" />
-		<property name="eventMulticaster" ref="pageEventMulticaster" />
+	<bean id="pageMap" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
+		<property name="fallback">
+			<bean class="org.riotfamily.pages.page.PageMap">
+				<constructor-arg ref="pageDao" />
+				<constructor-arg ref="transactionManager" />
+				<property name="eventMulticaster" ref="pageEventMulticaster" />
+			</bean>
+		</property>
 	</bean>
+	
 	
 	<!-- 
 	  - MenuBuilder that creates MenuItems using the pageMap.
 	  -->
-	<bean id="pageMenuBuilder" class="org.riotfamily.pages.page.menu.PageMenuBuilder">
-		<constructor-arg ref="pageMap"/>
+	<bean id="pageMenuBuilder" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
+		<property name="fallback">
+			<bean class="org.riotfamily.pages.page.menu.PageMenuBuilder">
+				<constructor-arg ref="pageMap"/>
+			</bean>
+		</property>
 	</bean>
 	
-	<bean name="sitemapBuilder" class="org.riotfamily.pages.page.menu.PageSitemapBuilder">
-		<property name="pageMap" ref="pageMap" />
-		<property name="viewModeResolver" ref="viewModeResolver" />		
-		<property name="pathCompleter" ref="pathCompleter" />
-	</bean>
-	
-	<bean id="pageInterceptor" class="org.riotfamily.pages.page.support.PageInterceptor">
-		<constructor-arg ref="pageMap" />
-		<constructor-arg ref="viewModeResolver" />
+	<bean id="sitemapBuilder" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
+		<property name="fallback">
+			<bean class="org.riotfamily.pages.page.menu.PageSitemapBuilder">
+				<property name="pageMap" ref="pageMap" />
+				<property name="viewModeResolver" ref="viewModeResolver" />		
+				<property name="pathCompleter" ref="pathCompleter" />
+			</bean>
+		</property>
 	</bean>
 	
 	<bean id="noCacheInterceptor" class="org.riotfamily.pages.util.NoCacheHeaderInterceptor">

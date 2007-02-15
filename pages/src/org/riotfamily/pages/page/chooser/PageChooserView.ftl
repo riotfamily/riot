@@ -21,7 +21,7 @@
 <#macro renderItems items>
 	<#list items as item>
 		<li>
-			<a href="${item.link}">${item.label}</a>
+			<a class="<#if item.page.published>published<#else>unpublished</#if>" href="${item.link}">${item.label}</a>
 			<#if item.childItems?has_content>
 				<ul>
 					<@renderItems item.childItems />

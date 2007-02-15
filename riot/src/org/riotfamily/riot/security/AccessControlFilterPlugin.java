@@ -39,6 +39,15 @@ import org.riotfamily.common.web.filter.PluginChain;
  * @see AccessController
  */
 public final class AccessControlFilterPlugin extends FilterPlugin {
+	public static final int ORDER = 0;
+	
+	public int getOrder() {
+		return ORDER;
+	}
+
+	public void setOrder(int order) {
+		throw new UnsupportedOperationException();
+	}
 
 	public void doFilter(HttpServletRequest request,
 		HttpServletResponse response, PluginChain pluginChain)

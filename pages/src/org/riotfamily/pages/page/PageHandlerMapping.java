@@ -30,17 +30,13 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.component.preview.DefaultViewModeResolver;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
-import org.riotfamily.pages.page.support.PageInterceptor;
 import org.riotfamily.pages.page.support.PageUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Ordered;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 
-public class PageHandlerMapping implements HandlerMapping, Ordered, 
-		InitializingBean {
+public class PageHandlerMapping implements HandlerMapping, Ordered {
 
 	private static Log log = LogFactory.getLog(PageHandlerMapping.class);
 	
@@ -76,14 +72,6 @@ public class PageHandlerMapping implements HandlerMapping, Ordered,
 		this.order = order;
 	}
 
-	public void afterPropertiesSet() throws Exception {
-		HandlerInterceptor pageInterceptor = 
-				new PageInterceptor(pageMap, viewModeResolver);
-		
-		interceptors = (HandlerInterceptor[]) ObjectUtils.addObjectToArray(
-				interceptors, pageInterceptor);
-	}
-	
 	public HandlerExecutionChain getHandler(HttpServletRequest request) 
 			throws Exception {
 		
@@ -92,13 +80,21 @@ public class PageHandlerMapping implements HandlerMapping, Ordered,
 			log.debug("Looking up handler for [" + path + "]");
 		}
 		PageAndController pc = pageMap.getPageAndController(path);
-		if (pc == null) {
-			return null;
+		
+		if (pc != null) {
+			Page page = pc.getPage();
+			if (page.isPublished() || (viewModeResolver != null 
+				&& viewModeResolver.isPreviewMode(request))) {
+				
+				PageUtils.exposePage(request, page);
+				PageUtils.exposePageMap(request, pageMap);
+			
+				return new HandlerExecutionChain(pc.getController(),
+					interceptors);
+			}
 		}
 		
-		Page page = pc.getPage();
-		PageUtils.exposePage(request, page);
-		return new HandlerExecutionChain(pc.getController(), interceptors);
+		return null;
 	}
 	
 }
