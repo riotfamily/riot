@@ -59,7 +59,7 @@ public class TreeDefinition extends ListDefinition {
 		nodeListDefinition = new NodeListDefinition();
 		
 		getEditorRepository().addEditorDefinition(nodeListDefinition);
-		formDefinition.addChildEditorDefinition(nodeListDefinition);
+		formDefinition.getChildEditorDefinitions().add(0, nodeListDefinition);
 		
 		FormDefinition nodeForm = formDefinition.copy("node-");
 		nodeForm.setParentEditorDefinition(nodeListDefinition);
