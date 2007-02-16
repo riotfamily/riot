@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.support;
@@ -30,7 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 /**
- * @author Felix Gnass <fgnass@neteye.de>
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
 public class HttpFormRequest implements FormRequest {

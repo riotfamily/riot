@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.view.freemarker;
@@ -33,7 +33,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * @author Felix Gnass <fgnass@neteye.de>
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
 public class AddTimestampMethod extends AbstractStringTransformerMethod 

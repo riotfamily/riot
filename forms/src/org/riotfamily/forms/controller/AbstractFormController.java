@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.controller;
@@ -45,7 +45,9 @@ import org.springframework.web.servlet.mvc.Controller;
 
 
 /**
- *
+ * Abstract base class for controllers that display a form.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public abstract class AbstractFormController implements Controller {
 

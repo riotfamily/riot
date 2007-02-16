@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.config;
@@ -26,7 +26,14 @@ package org.riotfamily.common.beans.config;
 import java.util.Properties;
 
 /**
- * PropertyPlaceholderConfigurer that allows to define inline default values. 
+ * PropertyPlaceholderConfigurer that allows to define inline default values.
+ * <p>
+ * Example:
+ * <pre>
+ * &lt;bean class="org.riotfamily.example.HelloWorld"&gt;
+ * 	  &lt;property name="message" value="${hello.message=Hello World}" /&gt;
+ * &lt;/bean&gt;
+ * </pre>
  */
 public class PlaceholderWithDefaultConfigurer 
 		extends PropertiesPlaceholderConfigurer {

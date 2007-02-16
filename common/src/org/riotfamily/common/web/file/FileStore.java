@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.file;
@@ -34,7 +34,7 @@ public interface FileStore {
 	 * 
 	 * @param file The file to store
 	 * @param originalFileName A file name provided by the user
-	 * @param previousUri The URI of another file beeing replaced
+	 * @param previousUri The URI of another file being replaced
 	 * @return The URI to access the stored file
 	 */
 	public String store(File file, String originalFileName, String previousUri) 

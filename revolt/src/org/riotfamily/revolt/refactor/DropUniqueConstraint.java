@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt.refactor;
@@ -29,7 +29,7 @@ import org.riotfamily.revolt.Script;
 import org.riotfamily.revolt.definition.Database;
 
 /**
- * @author Felix Gnass <fgnass@neteye.de>
+ * @author Felix Gnass [fgnass at neteye dot de]
  * 
  */
 public class DropUniqueConstraint implements Refactoring {

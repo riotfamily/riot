@@ -18,15 +18,32 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.mapping;
 
 import java.util.Map;
 
+import org.springframework.web.servlet.HandlerMapping;
+
+/**
+ * Interface that can be implemented by {@link HandlerMapping HandlerMappings} 
+ * in order to allow reverse lookups. This way you can obtain an URL for a 
+ * mapped handler.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.4
+ */
 public interface UrlMapping {
 
+	/**
+	 * Returns the URL of a mapped handler.
+	 * @param beanName The name of the handler
+	 * @param attributes Map of request attributes to be incorporated into the 
+	 * 	   URL. Only relevant for HandlerMappings that export parts of the URL
+	 *     as request attributes.
+	 */
 	public String getUrl(String beanName, Map attributes);
 
 }

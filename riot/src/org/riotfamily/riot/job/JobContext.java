@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job;
@@ -26,6 +26,11 @@ package org.riotfamily.riot.job;
 import org.riotfamily.riot.job.support.JobTask;
 
 
+/**
+ * Context that is passed to a {@link Job} upon execution.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class JobContext {
 
 	private JobTask task;

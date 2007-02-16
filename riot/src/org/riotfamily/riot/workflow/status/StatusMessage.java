@@ -18,12 +18,16 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.workflow.status;
 
-
+/**
+ * Class used for messages returned by a {@link StatusMonitor}.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class StatusMessage {
 
 	private String text;

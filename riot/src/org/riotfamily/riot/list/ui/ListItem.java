@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.ui;
@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @author Felix Gnass <fgnass@neteye.de>
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
 public class ListItem {

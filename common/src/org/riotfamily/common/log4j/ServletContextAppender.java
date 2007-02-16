@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.log4j;
@@ -34,11 +34,10 @@ import org.apache.log4j.spi.LoggingEvent;
  * ServletContext.log()}. 
  * 
  * NOTE: Since the appender needs a reference to the ServletContext you must 
- * either add the 
- * @link org.riotfamily.common.log4j.ServletContextAppenderListener
- * to your web.xml or put the 
- * @link org.riotfamily.common.log4j.ServletContextAppenderConfigurer
- * into your ApplicationContext.
+ * either add the {@link ServletContextAppenderListener} to your web.xml or 
+ * put a {@link ServletContextAppenderConfigurer} into your ApplicationContext.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class ServletContextAppender extends AppenderSkeleton {
 

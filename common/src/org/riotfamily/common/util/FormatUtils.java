@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.util;
@@ -230,7 +230,7 @@ public final class FormatUtils {
 
 	/**
 	 * Parses a formatted String and returns the value in milliseconds. You can
-	 * use one of the following sufixes:
+	 * use one of the following suffixes:
 	 * 
 	 * <pre>
 	 *     s - seconds

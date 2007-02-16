@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.controller;
@@ -31,7 +31,9 @@ import org.riotfamily.forms.ajax.AjaxFormController;
 
 
 /**
- *
+ * FormController that creates forms using a {@link FormRepository}.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public abstract class RepositoryFormController extends AjaxFormController {
 	

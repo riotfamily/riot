@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.thumbnail;
@@ -32,6 +32,11 @@ import java.util.ArrayList;
 import org.riotfamily.common.util.CommandUtils;
 import org.springframework.util.FileCopyUtils;
 
+/**
+ * Thumbnailer that uses ImageMagick.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class ImageMagickThumbnailer implements Thumbnailer {
 
 	private String convertCommand = "convert";

@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.filter;
@@ -39,7 +39,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * 
  * If don't want to modify the response encoding use the {@link 
  * org.springframework.web.filter.CharacterEncodingFilter 
- * CharacterEncodingFilter} provied by Spring. 
+ * CharacterEncodingFilter} provided by Spring. 
  */
 public class CharacterEncodingFilter extends OncePerRequestFilter {
 

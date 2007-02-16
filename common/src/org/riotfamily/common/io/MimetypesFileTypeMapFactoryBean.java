@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.io;
@@ -28,6 +28,11 @@ import javax.activation.MimetypesFileTypeMap;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.core.io.Resource;
 
+/**
+ * FactoryBean that creates a {@link MimetypesFileTypeMap}.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class MimetypesFileTypeMapFactoryBean implements FactoryBean {
 
 	private Resource location;

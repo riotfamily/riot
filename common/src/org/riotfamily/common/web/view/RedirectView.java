@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.view;
@@ -26,6 +26,13 @@ package org.riotfamily.common.web.view;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Extension to Spring's RedirectView that can be configured to not append
+ * the model as query-string.
+ * 
+ * @deprecated Because we don't really need it.
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class RedirectView extends 
 		org.springframework.web.servlet.view.RedirectView {
 

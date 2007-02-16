@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.workflow.status.support;
@@ -34,6 +34,11 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 
+/**
+ * Convenience base class for {@link StatusMonitor} implementations.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public abstract class AbstractStatusMonitor implements StatusMonitor, 
 		MessageSourceAware, BeanNameAware {
 

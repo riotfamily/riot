@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.util;
@@ -32,6 +32,12 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+/**
+ * ResponseWrapper that captures the output and redirects it to another
+ * OutputStream or Writer.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class CapturingResponseWrapper extends HttpServletResponseWrapper {
 
 	private OutputStream targetStream;

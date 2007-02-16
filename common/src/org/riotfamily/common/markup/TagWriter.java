@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.markup;
@@ -30,15 +30,15 @@ import org.springframework.web.util.HtmlUtils;
 /**
  * Utility class to generate markup code. This example ... 
  * <pre>
- * 	TagWriter tag = new TagWriter(writer);
- *  tag.start("div").attribute("id", "foo")
- *      .body("Hello ")
- *      .start("strong").body("World")
- *      .closeAll();
+ *TagWriter tag = new TagWriter(writer);
+ *tag.start("div").attribute("id", "foo")
+ *        .body("Hello ")
+ *        .start("strong").body("World")
+ *        .closeAll();
  * </pre>
  * ... will produce the following code:
  * <pre>
- *     &lt;div id="foo"&gt;Hello &lt;strong&gt;World&lt;/strong&gt;&lt;/div&gt;
+ * &lt;div id="foo"&gt;Hello &lt;strong&gt;World&lt;/strong&gt;&lt;/div&gt;
  * </pre>
  * <p>
  * Note that calling <code>start()</code> on an already opened tag will return

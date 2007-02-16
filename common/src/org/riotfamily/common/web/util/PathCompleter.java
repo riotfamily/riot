@@ -33,6 +33,9 @@ import org.springframework.web.context.ServletContextAware;
 
 
 /**
+ * Service class that can be used to add the servlet-prefix or suffix to a
+ * path without having a request object.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
@@ -70,7 +73,7 @@ public class PathCompleter implements ServletContextAware, InitializingBean {
 			servletMapping = ServletUtils.getServletMapping(servletName, 
 					servletContext);
 			
-			Assert.notNull(servletMapping, "Could not dertermine mapping " 
+			Assert.notNull(servletMapping, "Could not determine mapping " 
 					+ "for servlet '" + servletName + "'.");
 		
 			log.info("Servlet '" + servletName + "' is mapped to " 

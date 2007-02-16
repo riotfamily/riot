@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.page.support;
@@ -40,7 +40,7 @@ import org.springframework.web.util.UrlPathHelper;
  * Servlet filter that forwards request which point to a folder to the
  * the folder's welcome page.
  * 
- * @author Felix Gnass <fgnass@neteye.de>
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @deprecated In Riot 6.4 this filter has been replaced by 
  *             the {@link FolderFilterPlugin}
  */

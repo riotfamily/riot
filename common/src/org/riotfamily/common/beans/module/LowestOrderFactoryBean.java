@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.module;
@@ -34,6 +34,12 @@ import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 
+/**
+ * FactoryBean that looks for all beans of a certain type and returns the one
+ * with the lowest {@link Ordered order}.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class LowestOrderFactoryBean implements FactoryBean, 
 		ApplicationContextAware {
 

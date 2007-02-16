@@ -12,6 +12,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.xml.sax.InputSource;
 
+/**
+ * XmlWebApplicationContext that is aware of all resources that are used
+ * to configure the context, including resources referenced via 
+ * <code>&lt;import resource="..." /&gt;</code> tags.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class ResourceAwareContext extends XmlWebApplicationContext {
 
 	private ArrayList configResources;

@@ -18,11 +18,18 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.mapping;
 
+/**
+ * Interface to be implemented by handlers that need to be aware of their 
+ * UrlMapping. Currently the {@link AdvancedBeanNameHandlerMapping} is the only
+ * HandlerMapping that supports this feature.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public interface UrlMappingAware {
 
 	public void setUrlMapping(UrlMapping urlMapping);

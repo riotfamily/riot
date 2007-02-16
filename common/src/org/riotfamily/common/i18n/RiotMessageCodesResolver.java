@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.i18n;
@@ -28,8 +28,11 @@ import java.util.ArrayList;
 import org.riotfamily.common.util.PropertyUtils;
 import org.springframework.util.StringUtils;
 
-
-
+/**
+ * AdvancedMessageCodesResolver implementation used by Riot.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 
 	private static final char SEPARATOR = '.';

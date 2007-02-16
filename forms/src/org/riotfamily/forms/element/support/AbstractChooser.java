@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.support;
@@ -48,6 +48,12 @@ import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.support.TemplateUtils;
 import org.springframework.util.StringUtils;
 
+/**
+ * Abstract base class for elements that let the user choose a reference to
+ * to another object.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public abstract class AbstractChooser extends AbstractEditorBase
 		implements Editor, DHTMLElement, JavaScriptEventAdapter, 
 		ResourceElement, ContentElement {

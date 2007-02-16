@@ -18,15 +18,13 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -34,14 +32,22 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
-public class SetupBeanFactory implements InitializingBean, 
+/**
+ * Convenience class that loads a child XmlWebApplicationContext. The loading
+ * can be skipped by setting {@link #setLoadContext(boolean)} to false.
+ * <p>
+ * Use this class if you need to perform setup operations in your development
+ * environment, like the population of an in-memeory database. 
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.4
+ */
+public class ChildContextLoader implements InitializingBean, 
 		ApplicationContextAware, ServletContextAware, BeanNameAware {
 
-	private static Log log = LogFactory.getLog(SetupBeanFactory.class);
-	
 	private String displayName;
 	
-	private boolean performSetup = true;
+	private boolean loadContext = true;
 	
 	private String[] configLocations;
 	
@@ -55,8 +61,8 @@ public class SetupBeanFactory implements InitializingBean,
 		this.configLocations = configLocations;
 	}
 
-	public void setPerformSetup(boolean performSetup) {
-		this.performSetup = performSetup;
+	public void setLoadContext(boolean loadContext) {
+		this.loadContext = loadContext;
 	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
@@ -72,17 +78,13 @@ public class SetupBeanFactory implements InitializingBean,
 	}
 	
 	public void afterPropertiesSet() throws Exception {
-		if (performSetup) {
+		if (loadContext) {
 			context = new XmlWebApplicationContext();
 			context.setParent(parent);
 			context.setDisplayName(displayName);
 			context.setConfigLocations(configLocations);
 			context.setServletContext(servletContext);
-			log.info("Performing setup ...");
 			context.refresh();
-		}
-		else {
-			log.info("Skipping setup.");
 		}
 	}
 

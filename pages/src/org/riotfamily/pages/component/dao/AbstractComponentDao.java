@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.component.dao;
@@ -42,10 +42,10 @@ import org.riotfamily.riot.security.AccessController;
 import org.springframework.context.event.ApplicationEventMulticaster;
 
 /**
- * Abstract base class for {@link Component implementations that delegates
+ * Abstract base class for {@link Component} implementations that delegates
  * the various CRUD methods to generic load, save, update and delete methods.
  * 
- * @author Felix Gnass <fgnass@neteye.de>
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public abstract class AbstractComponentDao implements ComponentDao {
 

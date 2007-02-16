@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  *   Alf Werder <alf.werder@glonz.com>
  * 
  * ***** END LICENSE BLOCK ***** */

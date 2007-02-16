@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.util;
@@ -28,6 +28,12 @@ import java.io.OutputStream;
 
 import javax.servlet.ServletOutputStream;
 
+/**
+ * ServletOutputStream that delegates all methods to a regular 
+ * {@link OutputStream}. 
+ *
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class DelegatingServletOutputStream extends ServletOutputStream {
 
     private final OutputStream targetStream;

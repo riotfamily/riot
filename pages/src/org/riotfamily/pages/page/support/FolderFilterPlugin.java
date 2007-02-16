@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.page.support;
@@ -36,7 +36,7 @@ import org.riotfamily.pages.page.PageMap;
 import org.springframework.web.util.UrlPathHelper;
 
 /**
- * @author Felix Gnass <fgnass@neteye.de>
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
 public class FolderFilterPlugin extends FilterPlugin {

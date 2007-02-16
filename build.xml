@@ -85,6 +85,7 @@
 			<group title="Hibernate" packages="org.riotfamily.riot.hibernate*" />
 			
 			<link href="http://java.sun.com/j2ee/1.4/docs/api" />
+			<link href="http://java.sun.com/j2se/1.4.2/docs/api" />
 			<link href="http://static.springframework.org/spring/docs/2.0.x/api" />
 		</javadoc>
 	</target>

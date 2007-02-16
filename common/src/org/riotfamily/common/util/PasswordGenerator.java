@@ -18,13 +18,18 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.util;
 
 import java.util.Random;
 
+/**
+ * Class that generates random strings suitable for use as passwords.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class PasswordGenerator {
 
     private static final String UPPER_CHARS = "ABCDEFGHJKLKMNPQRSTWXYZ";

@@ -18,11 +18,16 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.util;
 
+/**
+ * Provides utility method to work with classpath resources.
+ *   
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public final class ResourceUtils {
 
 	private static final String CLASSPATH_PREFIX = "classpath:";

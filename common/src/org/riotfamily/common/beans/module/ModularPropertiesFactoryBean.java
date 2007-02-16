@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.module;
@@ -35,6 +35,13 @@ import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+/**
+ * Creates a Properties instance by merging the entries with the given key from all
+ * {@link org.riotfamily.common.beans.module.FactoryBeanModule modules} found in
+ * the ApplicationContext.
+ * 
+ * @see org.riotfamily.common.beans.module.FactoryBeanModule
+ */
 public class ModularPropertiesFactoryBean extends PropertiesFactoryBean
 		implements ApplicationContextAware {
 

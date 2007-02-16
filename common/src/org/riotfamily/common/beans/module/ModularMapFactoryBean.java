@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.module;
@@ -34,6 +34,13 @@ import org.springframework.beans.factory.config.MapFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+/**
+ * Creates a map by merging the entries with the given key from all
+ * {@link org.riotfamily.common.beans.module.FactoryBeanModule modules} found in
+ * the ApplicationContext.
+ * 
+ * @see org.riotfamily.common.beans.module.FactoryBeanModule
+ */
 public class ModularMapFactoryBean extends MapFactoryBean 
 		implements ApplicationContextAware {
 

@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.view;
@@ -36,6 +36,10 @@ import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.util.WebUtils;
 
+/**
+ * @deprecated Because we don't really need it. 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class ControllerView implements View {
 
 	private Controller controller;

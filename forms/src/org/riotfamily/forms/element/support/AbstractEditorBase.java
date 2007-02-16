@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.support;
@@ -26,6 +26,11 @@ package org.riotfamily.forms.element.support;
 import org.riotfamily.forms.bind.EditorBinding;
 import org.riotfamily.forms.support.MessageUtils;
 
+/**
+ * Abstract base class for editor elements.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public abstract class AbstractEditorBase extends AbstractElement {
 
 	private String paramName;

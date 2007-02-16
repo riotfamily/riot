@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans;
@@ -30,6 +30,12 @@ import org.riotfamily.common.util.PropertyUtils;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.BeansException;
 
+/**
+ * BeanWrapper that that provides access to non-public setters and getters.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.4
+ */
 public class ProtectedBeanWrapper extends BeanWrapperImpl 
 		implements ObjectWrapper {
 

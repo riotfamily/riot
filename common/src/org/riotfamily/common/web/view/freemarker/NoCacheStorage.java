@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.view.freemarker;
@@ -31,7 +31,7 @@ import freemarker.cache.CacheStorage;
  * if you need to find memory leaks within your application.
  * 
  * @since 6.4 
- * @author Felix Gnass <fgnass@neteye.de>
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class NoCacheStorage implements CacheStorage {
 

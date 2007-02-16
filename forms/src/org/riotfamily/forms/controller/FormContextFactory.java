@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.controller;
@@ -67,7 +67,7 @@ public final class FormContextFactory implements MessageSourceAware,
 	}
 
 	/**
-	 * Sets the {@link MessageSource} that is used to look up lables and
+	 * Sets the {@link MessageSource} that is used to look up labels and
 	 * error messages.
 	 * 
 	 * @see MessageSourceAware
@@ -77,7 +77,7 @@ public final class FormContextFactory implements MessageSourceAware,
 	}
 
 	/**
-	 * Sets the {@link ResourceLoader} that is used to load the Freemarker
+	 * Sets the {@link ResourceLoader} that is used to load the FreeMarker
 	 * templates.
 	 * 
 	 * @see ResourceLoaderAware

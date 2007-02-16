@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.servlet;
@@ -49,7 +49,7 @@ import org.springframework.web.servlet.DispatcherServlet;
  * which allows you to set the <code>reloadable</code> property without
  * modifying the web.xml.
  *  
- * @author Felix Gnass <fgnass@neteye.de>
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @author Jan-Frederic Linde <jfl@neteye.de>
  */
 public class ReloadableDispatcherServlet extends DispatcherServlet 

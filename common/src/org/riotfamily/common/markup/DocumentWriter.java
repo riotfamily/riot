@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.markup;
@@ -36,10 +36,9 @@ import java.io.PrintWriter;
  *  doc.closeAll();
  * </pre>
  * ... will produce the following code:
- * <tt>
- *  &lt;body&gt;&lt;p class="foo"&gt;Hello &lt;strong&gt;World&lt;/strong&gt;
- *  &lt;/p&gt;&lt;/body&gt;
- * </tt>
+ * <pre>
+ * &lt;body&gt;&lt;p class="foo"&gt;Hello &lt;strong&gt;World&lt;/strong&gt;&lt;/p&gt;&lt;/body&gt;
+ * </pre>
  */
 public class DocumentWriter {
 

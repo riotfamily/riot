@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
@@ -31,6 +31,10 @@ import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.riot.editor.ui.EditorReference;
 
+/**
+ * Abstract base class for {@link EditorDefinition EditorDefinitions}.
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public abstract class AbstractEditorDefinition implements EditorDefinition {
 
 	private String id;

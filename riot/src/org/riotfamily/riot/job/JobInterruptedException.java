@@ -18,11 +18,17 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job;
 
+/**
+ * Exception that is thrown to signal a {@link Job} that an interruption has 
+ * been requested.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class JobInterruptedException extends RuntimeException {
 
 	public JobInterruptedException() {

@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt.definition;
@@ -31,7 +31,7 @@ import org.springframework.util.StringUtils;
  * a database definition, like tables, columns and constraints.
  * 
  * @see DefinitionUtils
- * @author Felix Gnass <fgnass@neteye.de>
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class Identifier {
 

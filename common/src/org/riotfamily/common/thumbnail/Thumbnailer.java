@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.thumbnail;
@@ -27,6 +27,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Interface to render thumbnails.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public interface Thumbnailer {
 
 	public boolean supports(String mimeType);

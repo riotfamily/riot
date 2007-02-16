@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.util;
@@ -26,6 +26,12 @@ package org.riotfamily.common.web.util;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
+/**
+ * Extends the {@link SimpleMappingExceptionResolver} and adds the
+ * root-cause of the exception to the model.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class AdvancedMappingExceptionResolver 
 		extends SimpleMappingExceptionResolver {
 

@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.workflow.status;
@@ -26,12 +26,18 @@ package org.riotfamily.riot.workflow.status;
 import java.util.Collection;
 import java.util.Locale;
 
+/**
+ * Interface that enables classes to display status messages on the Riot 
+ * dashboard.
+ *   
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public interface StatusMonitor {
 
 	/**
-	 * Implementors may return a Collection of HTML strings. Make sure that
-	 * you properly escape all parts of the message that could contain 
-	 * user-generated content to prevent XSS attacks.  
+	 * Implementors may return a Collection of {@link StatusMessage} instances. 
+	 * Make sure that you properly escape all parts of the message that could 
+	 * contain user-generated content to prevent XSS attacks.  
 	 */
 	public Collection getMessages(Locale locale);
 		

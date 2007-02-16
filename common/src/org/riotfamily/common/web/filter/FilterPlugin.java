@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.filter;
@@ -46,7 +46,7 @@ import org.springframework.web.context.ServletContextAware;
  * Note that plugins are only invoked once per request, so they won't be 
  * called for included or forwarded requests.
  * </p>
- * @author Felix Gnass <fgnass@neteye.de>
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
 public abstract class FilterPlugin implements ServletContextAware, 

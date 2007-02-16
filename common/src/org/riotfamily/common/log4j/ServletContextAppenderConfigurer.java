@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.log4j;
@@ -30,6 +30,8 @@ import org.springframework.web.context.ServletContextAware;
 /**
  * Bean that initializes the ServletContextAppender by setting a reference
  * to the ServletContext.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class ServletContextAppenderConfigurer implements ServletContextAware {
 

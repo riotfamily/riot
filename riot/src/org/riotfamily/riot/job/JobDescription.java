@@ -18,14 +18,15 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job;
 
 /**
- * Description created by the {@link org.riotfamily.riot.job.Job#setup(String) 
- * setup()}-method.
+ * Description created by a Job's {@link Job#setup(String) setup()}-method.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class JobDescription {
 

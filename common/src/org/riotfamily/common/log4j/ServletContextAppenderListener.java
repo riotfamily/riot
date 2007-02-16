@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.log4j;
@@ -30,6 +30,8 @@ import javax.servlet.ServletContextListener;
  * ServletContextListener that initializes the ServletContextAppender by 
  * setting a reference to the ServletContext as soon as the context is
  * initialized.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class ServletContextAppenderListener implements ServletContextListener {
 

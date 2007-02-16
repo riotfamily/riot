@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.thumbnail;
@@ -48,6 +48,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 
+/**
+ * Thumbnailer that uses the Java ImageIO API.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class ImageIOThumbnailer implements Thumbnailer {
 
 	public static final String FORMAT_JPG = "jpg";

@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.controller;
@@ -29,6 +29,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+/**
+ * Controller that sends a HTTP error response with a configurable message 
+ * and status code.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class HttpErrorController implements Controller {
 
 	private int statusCode;

@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.controller;
@@ -31,6 +31,16 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.RedirectView;
 
+/**
+ * Controller that can be used as action for a quick-jump form.
+ * 
+ * The controller reads a URL from a request parameter and send a redirect to
+ * that URL. If the parameter is either <code>null</code>, an empty string or 
+ * starts with with a hash character ('#'), a <strong>204 No Content</strong>
+ * response is sent.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class QuickjumpController implements Controller {
 
 	private String urlParameter = "url";

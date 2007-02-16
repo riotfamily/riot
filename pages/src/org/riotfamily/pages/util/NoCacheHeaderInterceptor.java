@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.util;
@@ -35,7 +35,7 @@ import org.riotfamily.riot.security.AccessController;
  * is logged in. This is especially useful if the user modifies a page via
  * AJAX, leaves the page and hits the back button.
  * 
- * @author Felix Gnass <fgnass@neteye.de>
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class NoCacheHeaderInterceptor extends OncePerRequestInterceptor {
 

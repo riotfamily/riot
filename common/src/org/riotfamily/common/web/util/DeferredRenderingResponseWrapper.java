@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.util;
@@ -37,6 +37,9 @@ import org.springframework.util.FileCopyUtils;
 /**
  * ResponseWrapper that buffers the output and defers the rendering until 
  * {@link #renderResponse()} is invoked.
+ * 
+ * @see IncludeFirstInterceptor
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class DeferredRenderingResponseWrapper extends HttpServletResponseWrapper {	
 	

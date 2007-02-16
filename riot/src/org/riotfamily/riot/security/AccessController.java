@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.security;
@@ -31,10 +31,9 @@ import org.riotfamily.riot.editor.EditorDefinition;
 /**
  * Provides static methods to check permissions and associate a principal
  * with the current Thread. 
- * 
- * This class is only usable if an 
- * @link org.riotfamily.riot.security.AccessControlFilter or
- * @link org.riotfamily.riot.security.AccessControlInterceptor is configured.  
+ * <p>
+ * This class is only usable if an {@link AccessControlFilterPlugin} or 
+ * {@link AccessControlInterceptor} is configured.  
  */
 public final class AccessController {
 

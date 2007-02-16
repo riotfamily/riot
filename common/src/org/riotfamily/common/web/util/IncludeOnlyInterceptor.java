@@ -18,17 +18,24 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.util;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
 
+/**
+ * HandlerInterceptor that sends a 404 error if the request is not an 
+ * include-request, i.e. was not dispatched by a {@link RequestDispatcher}.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class IncludeOnlyInterceptor extends HandlerInterceptorAdapter {
 
 	public boolean preHandle(HttpServletRequest request, 

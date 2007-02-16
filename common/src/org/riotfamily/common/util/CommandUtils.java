@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.util;
@@ -32,8 +32,9 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 /**
- * @author Felix Gnass <fgnass@neteye.de>
- *
+ * Provides utility methods to invoke commands via Runtime.exec().
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public final class CommandUtils {
 

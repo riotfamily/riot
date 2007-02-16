@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.servlet;
@@ -29,7 +29,7 @@ package org.riotfamily.common.web.servlet;
  * class is found, the DispatcherServlet will use the the value obtained from
  * the <code>reloadable</code> init-parameter.
  *   
- * @author Felix Gnass <fgnass@neteye.de>
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class ReloadableDispatcherServletConfig {
 

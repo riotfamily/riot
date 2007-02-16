@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.support.image;
@@ -31,7 +31,7 @@ import org.riotfamily.common.util.CommandUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * @author Felix Gnass <fgnass@neteye.de>
+ * @author Felix Gnass [fgnass at neteye dot de]
  *
  */
 public class ImageMagickCropper implements ImageCropper {

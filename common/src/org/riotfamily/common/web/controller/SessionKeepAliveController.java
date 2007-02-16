@@ -30,6 +30,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
+ * Controller that invokes <code>request.getSession(false)</code> to keep an
+ * existing HTTP session alive.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */

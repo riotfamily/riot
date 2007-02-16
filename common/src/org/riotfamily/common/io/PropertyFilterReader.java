@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.io;
@@ -27,8 +27,7 @@ import java.io.Reader;
 import java.util.Properties;
 
 /**
- * FilterReader that replaces <code>${...}</code> tokens with values form a 
- * <code>java.util.Properties</code> map.
+ * FilterReader that replaces tokens with values form a Properties instance.
  */
 public class PropertyFilterReader extends AbstractTokenFilterReader {
 

@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.filter;
@@ -35,11 +35,11 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * Filter that prevents URLs from beeing encoded if the request is originated 
+ * Filter that prevents URLs from being encoded if the request is originated 
  * by search engine robot/crawler.
  * 
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
- * @author Felix Gnass <fgnass@neteye.de>
  */
 public class BotSessionFilter extends OncePerRequestFilter {
 
@@ -85,7 +85,7 @@ public class BotSessionFilter extends OncePerRequestFilter {
 	
 	/**
 	 * Passes the request on to the filter chain using a response wrapper that
-	 * prevents URLs from beeing encoded. 
+	 * prevents URLs from being encoded. 
 	 */
 	protected final void doFilterInternal(HttpServletRequest request, 
 			HttpServletResponse response, FilterChain filterChain) 

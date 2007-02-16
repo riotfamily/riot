@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass <fgnass@neteye.de>
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.util;
@@ -34,7 +34,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * HandlerInterceptor that allows an included controller to handle the request
  * before any other controller is executed. This is useful if an included 
  * controller needs to send a redirect, which would not work under normal 
- * circumstances, since the response would have already been commited.
+ * circumstances, since the response would have already been committed.
  * <p>
  * The interceptor looks for a special request parameter which contains the URI
  * of the controller that should handle the request in the fist place. If such
