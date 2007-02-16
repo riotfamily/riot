@@ -26,6 +26,8 @@ package org.riotfamily.pages.page.config;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.beans.xml.DefinitionParserUtils;
 import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.pages.page.PersistentPage;
@@ -38,6 +40,8 @@ import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.NamespaceHandler;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -46,6 +50,8 @@ import org.w3c.dom.Node;
  * defined in <code>page.xsd</code> which can be found in the same package.
  */
 public class PageNamespaceHandler implements NamespaceHandler {
+	static final Log log =
+		LogFactory.getLog(PageNamespaceHandler.class);
 
 	private static final String SETUP = "setup";
 	
@@ -63,6 +69,8 @@ public class PageNamespaceHandler implements NamespaceHandler {
 	private static final String PAGES_PROPERTY = "pages";
 	
 	private static final String CHILD_PAGES_PROPERTY = "childPages";
+
+	private static final String CLASS_PROPERTY = "class";
 	
 	public void init() {
 	}
@@ -107,11 +115,35 @@ public class PageNamespaceHandler implements NamespaceHandler {
 		return definition;
 	}
 	
+	protected Class getCustomPageClass(Element element,
+		ParserContext parserContext) {
+		
+		Class clazz = null;
+		
+		String className = element.getAttribute(CLASS_PROPERTY);
+		if (StringUtils.hasText(className)) {
+			try {
+				clazz = Class.forName(className);
+			} catch (ClassNotFoundException e) {
+				throw new RuntimeException("Cannot create Page of type ["
+					+ className + "]", e);
+			}
+		}
+		
+		return clazz;
+	}
+	
 	protected BeanDefinition parsePage(Element element, 
 			ParserContext parserContext) {
 		
 		RootBeanDefinition definition = new RootBeanDefinition();
-		definition.setBeanClass(PersistentPage.class);
+		Class clazz = getCustomPageClass(element, parserContext);
+		if (clazz == null) {
+			clazz = PersistentPage.class;
+		} else {
+			Assert.isAssignable(PersistentPage.class, clazz);
+		}
+		definition.setBeanClass(clazz);
 		
 		MutablePropertyValues pv = new MutablePropertyValues();
 		definition.setPropertyValues(pv);

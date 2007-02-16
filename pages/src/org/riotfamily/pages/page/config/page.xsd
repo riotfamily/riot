@@ -1,31 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-		elementFormDefault="qualified"
-		attributeFormDefault="unqualified" 
-		targetNamespace="http://www.riotfamily.org/schema/pages/page"
-		xmlns="http://www.riotfamily.org/schema/pages/page">
+<xsd:schema xmlns="http://www.riotfamily.org/schema/pages/page" xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.riotfamily.org/schema/pages/page">
 	
 	<xsd:element name="setup">
 		<xsd:complexType>
-			<xsd:sequence minOccurs="0" maxOccurs="unbounded">
-				<xsd:element ref="page" />
+			<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+				<xsd:element ref="page"/>
 			</xsd:sequence>
-			<xsd:attribute name="dao" type="xsd:string" use="required" />
+			<xsd:attribute name="dao" type="xsd:string" use="required"/>
 		</xsd:complexType>
 	</xsd:element>
 	
 	<xsd:element name="page">
 		<xsd:complexType>
-			<xsd:sequence minOccurs="0" maxOccurs="unbounded">
-				<xsd:element ref="page" />
+			<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+				<xsd:element ref="page"/>
 			</xsd:sequence>
-			<xsd:attribute name="path-component" type="xsd:string" use="required" />
-			<xsd:attribute name="title" type="xsd:string" use="required" />
-			<xsd:attribute name="system" type="xsd:boolean" default="true" />
-			<xsd:attribute name="published" type="xsd:boolean" default="true" />
-			<xsd:attribute name="hidden" type="xsd:boolean" default="false" />
-			<xsd:attribute name="controller" type="xsd:string" />
-		</xsd:complexType>
-	</xsd:element>
-	
+			<xsd:attribute name="path-component" type="xsd:string" use="required"/>
+			<xsd:attribute name="title" type="xsd:string" use="required"/>
+			<xsd:attribute default="true" name="system" type="xsd:boolean"/>
+			<xsd:attribute default="true" name="published" type="xsd:boolean"/>
+			<xsd:attribute default="false" name="hidden" type="xsd:boolean"/>
+			<xsd:attribute name="controller" type="xsd:string"/>
+			<xsd:attribute name="class" type="xsd:string"/>
+			</xsd:complexType>
+  </xsd:element>
 </xsd:schema>
