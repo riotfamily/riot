@@ -45,12 +45,9 @@ import org.springframework.util.StringUtils;
 
 
 /**
- * Abstract baseclass for elements that handle textual input from a single HTTP
+ * Abstract base class for elements that handle textual input from a single HTTP
  * parameter. Optionally a <code>PropertyEditor</code> can be set to convert
- * the text into an arbitary object. Note that this class implements the
- * {@link org.riotfamily.forms.bind.PropertyEditorAware} interface, so that a
- * suitable <code>PropertyEditor</code> is automatically set, if the element
- * is bound to a non-string property.
+ * the text into an arbitrary object.
  * 
  * @see org.riotfamily.forms.bind.EditorBinder#bind(Editor, String)
  */
@@ -88,7 +85,7 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 	
 	/**
 	 * Overrides {@link AbstractElement#getStyleClass()} and returns the
-	 * element's type if no custom style has been ist.
+	 * element's type if no custom style has been set.
 	 * 
 	 * @see #getType()
 	 */

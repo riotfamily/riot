@@ -100,7 +100,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	 * Overrides the default implementation to create a new list if no existing
 	 * list is found.
 	 * 
-	 * @see #createNewList() 
+	 * @see #createNewList(String, String) 
 	 */
 	protected ComponentList getComponentList(String path, String key) {
 		ComponentList list = super.getComponentList(path, key);

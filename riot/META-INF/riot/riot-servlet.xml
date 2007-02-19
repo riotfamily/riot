@@ -211,7 +211,7 @@
 		<property name="key" value="customFormElements" />
 		<property name="properties">
 			<props>
-				<prop key="{http://www.riotfamily.org/schema/riot/form-elements}chooser">org.riotfamily.riot.form.element.chooser.ObjectChooser</prop>
+				<prop key="{http://www.riotfamily.org/schema/riot/form-elements}chooser">org.riotfamily.riot.form.element.ObjectChooser</prop>
 			</props>
 		</property>
 	</bean>

@@ -45,6 +45,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.riotfamily.cachius.spring.TaggingContext;
 import org.riotfamily.common.collection.FlatMap;
+import org.riotfamily.pages.mvc.cache.CacheInvalidationAdvice;
 import org.riotfamily.pages.mvc.cache.CacheableModelBuilder;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.BeanInitializationException;
@@ -157,7 +158,7 @@ public class HqlModelBuilder implements CacheableModelBuilder,
 	}
 
 	/**
-	 * Sets which classname should be used for taging the cache item
+	 * Sets which class name should be used for tagging the cache item
 	 * when the result is empty.
 	 */
 	public void setItemClass(String clazz) {
@@ -213,9 +214,8 @@ public class HqlModelBuilder implements CacheableModelBuilder,
 	 * <code>true</code>, or <code>-1</code> otherwise. Subclasses may override 
 	 * this method to support modification based caching. Since a database 
 	 * lookup might be nearly as expensive as building the actual model you 
-	 * might want to consider using item-tagging in conjunction with an 
-	 * {@link org.riotfamily.pages.mvc.cache.CacheItemInvalidator}
-	 * instead.
+	 * might want to consider using item-tagging in conjunction with a 
+	 * {@link CacheInvalidationAdvice} instead.
 	 */
 	public long getLastModified(HttpServletRequest request) {
 		return cacheEternally ? 0 : -1;
@@ -267,7 +267,7 @@ public class HqlModelBuilder implements CacheableModelBuilder,
 	/**
 	 * Tags the current cache item (if present). If the ModelBuilder operates
 	 * in listMode the configured itemClass is used.
-	 * Otherwise the fully qualified classname of the given object plus the
+	 * Otherwise the fully qualified class name of the given object plus the
 	 * entity's primary key is used (separated by a hash character).
 	 * 
 	 * @see TaggingContext#tag(HttpServletRequest, String)

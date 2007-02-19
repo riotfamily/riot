@@ -28,16 +28,15 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.common.web.util.ServletUtils;
 
 /**
- * ComponentPathResolver that utilizes a 
- * {@link ServletMappingHelper ServletMappingHelper} to determine the   
- * lookup-path for a given request.
+ * ComponentPathResolver that calls 
+ * {@link ServletUtils#getOriginatingPathWithoutServletMapping(HttpServletRequest)} 
+ * to determine the lookup-path for a given request.
  * <p>
  * Example: If the DispatcherServlet is mapped to <code>*.html</code> and 
  * <code>/myapp</code> is the application's context path, the component-path
  * for a request to <code>/myapp/foo/bar.html</code> will be 
  * <code>/foo/bar</code>.
  * </p>
- * @see ServletMappingHelper#getPathWithoutServletMapping(HttpServletRequest)
  */
 public class UrlComponentPathResolver implements ComponentPathResolver {
 

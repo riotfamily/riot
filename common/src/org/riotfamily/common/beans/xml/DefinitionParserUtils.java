@@ -89,7 +89,7 @@ public final class DefinitionParserUtils {
 	
 	/**
 	 * Generates a bean name that is unique within the given bean factory.
-	 * Does the same as {@link BeanDefinitionReaderUtils#generateBeanName}
+	 * Does the same as {@link BeanDefinitionReaderUtils#generateBeanName(org.springframework.beans.factory.support.AbstractBeanDefinition, BeanDefinitionRegistry, boolean)}
 	 * but takes a BeanDefinition as argument (instead of an AbstractBeanDefinition).
 	 * Therefore name generation will fail for factory beans that use the
 	 * 'factory-bean' attribute.
@@ -112,7 +112,7 @@ public final class DefinitionParserUtils {
 
 		String id = generatedId;
 		if (isInnerBean) {
-			// Inner bean: generate identity hashcode suffix.
+			// Inner bean: generate identity hash code suffix.
 			id = generatedId + BeanDefinitionReaderUtils.GENERATED_BEAN_NAME_SEPARATOR 
 					+ ObjectUtils.getIdentityHexString(beanDefinition);
 		}
@@ -159,7 +159,6 @@ public final class DefinitionParserUtils {
 	 * @param pv PropertyValues where the reference should be added 
 	 * @param element Element that provides the referenced bean name as attribute
 	 * @param attribute Name of the attribute that contains the bean name
-	 * @return
 	 */
 	public static boolean addReference(MutablePropertyValues pv, 
 			Element element, String attribute) {

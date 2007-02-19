@@ -183,7 +183,6 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 	 * handler if no specific one is found.
 	 * @param request current HTTP request
 	 * @return the looked up handler instance, or the default handler
-	 * @see #getHandlerInternal
 	 */
 	public final HandlerExecutionChain getHandler(HttpServletRequest request) 
 			throws Exception {

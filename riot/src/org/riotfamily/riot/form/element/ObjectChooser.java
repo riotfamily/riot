@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.form.element.chooser;
+package org.riotfamily.riot.form.element;
 
 import org.riotfamily.forms.element.support.AbstractChooser;
 import org.riotfamily.riot.editor.EditorDefinition;

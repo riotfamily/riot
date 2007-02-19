@@ -141,9 +141,9 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	
 	/**
 	 * Renders the given list. The default implementation iterates over the 
-	 * given list and calls {@link #renderContainer(VersionContainer)} for each
-	 * item. If the list is empty or null, {@link #onEmptyComponentList()} is
-	 * invoked.
+	 * given list and calls {@link #renderContainer(VersionContainer, String)} 
+	 * for each item. If the list is empty or null, 
+	 * {@link #onEmptyComponentList()} is invoked.
 	 */
 	protected final void renderComponents(List components) throws IOException {
 		if (components == null || components.isEmpty()) {
@@ -173,10 +173,9 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	/**
 	 * Renders the given VersionContainer. The default implementation calls 
 	 * {@link #getVersionToRender(VersionContainer) getVersionToRender()} and 
-	 * passes the result to {@link #renderComponentVersion(ComponentVersion)
+	 * passes the result to {@link #renderComponentVersion(ComponentVersion, String) 
 	 * renderComponentVersion()} (if not null). 
 	 */
-	
 	protected void renderContainer(VersionContainer container, 
 			String positionClassName) throws IOException {
 

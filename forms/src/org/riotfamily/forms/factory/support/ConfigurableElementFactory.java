@@ -226,12 +226,10 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 	}
 	
 	/**
-	 * Called by {@link #createElement()} to populate the given element with 
-	 * the poperty values set via {@link #setPropertyValues(PropertyValues)}. 
-	 * Values will be resolved if necessary by calling 
-	 * {@link #resolveValueIfNecessary(Object)}.
-	 * 
-	 * @see #setPropertyValues(PropertyValues)
+	 * Called by {@link #createElement(Element, Form)} to populate the given 
+	 * element with the property values set via 
+	 * {@link #setPropertyValues(PropertyValues)}. Values will be resolved if 
+	 * necessary by calling {@link #resolveValueIfNecessary(Object)}.
 	 */
 	protected void populateElement(Element element) {
 		if (propertyValues == null) {
