@@ -134,11 +134,12 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 		if (session != null) {
 			//Trigger a modification check:
 			editorRepository.getListRepository().getListConfig(session.getListId());
-			if (session.isExpired()) {
-				throw new ListSessionExpiredException();
+			if (!session.isExpired()) {
+				return session;
 			}
 		}
-		return session;
+		throw new ListSessionExpiredException();
+		
 	}
 	
 	public void beanReconfigured(ConfigurableBean bean) {
