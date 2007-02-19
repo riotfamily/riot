@@ -84,6 +84,8 @@
 	<bean id="componentDaoTarget" class="org.riotfamily.pages.component.dao.hibernate.HibernateComponentDao">
 		<constructor-arg ref="componentRepository" />
 		<constructor-arg ref="riotSessionFactory" />
+		<property name="eventMulticaster" ref="contentEventMulticaster" />
+		<property name="pathCompleter" ref="pathCompleter" />
 	</bean>
 		
 	<!-- 
