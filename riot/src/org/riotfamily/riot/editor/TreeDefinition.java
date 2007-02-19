@@ -19,6 +19,7 @@
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
+ *   Alf Werder [alf dot werder at artundweise dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
@@ -39,6 +40,25 @@ public class TreeDefinition extends ListDefinition {
 	
 	private ListDefinition nodeListDefinition;
 	
+	private boolean isNode(Object bean) {
+		if (bean == null) {
+			return false;
+		}
+		if (!nodeListDefinition.getBeanClass().isInstance(bean)) {
+			return false;
+		}
+		
+		EditorDefinition parentDef = getParentEditorDefinition();
+		
+		if (parentDef != null && !(parentDef instanceof GroupDefinition)) {
+			Class parentClass = parentDef.getBeanClass();
+			if (parentClass.isInstance(bean)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public TreeDefinition(EditorRepository editorRepository) {
 		super(editorRepository, TYPE_TREE);
 	}
@@ -66,7 +86,17 @@ public class TreeDefinition extends ListDefinition {
 		nodeListDefinition.setDisplayDefinition(nodeForm);
 		nodeListDefinition.setParentEditorDefinition(nodeForm);
 	}
+	
+	public EditorReference createEditorPath(Object bean,
+		MessageResolver messageResolver) {
 		
+		if (isNode(bean)) {
+			return nodeListDefinition.createEditorPath(bean, messageResolver);
+		}
+		
+		return super.createEditorPath(bean, messageResolver);
+	}
+
 	private class NodeListDefinition extends ListDefinition {
 
 		NodeListDefinition() {
@@ -107,26 +137,6 @@ public class TreeDefinition extends ListDefinition {
 				return TreeDefinition.this.createEditorPath(
 						bean, messageResolver);
 			}
-		}
-		
-		private boolean isNode(Object bean) {
-			if (bean == null) {
-				return false;
-			}
-			if (!getBeanClass().isInstance(bean)) {
-				return false;
-			}
-			
-			EditorDefinition parentDef = TreeDefinition.this.
-					getParentEditorDefinition();
-			
-			if (parentDef != null && !(parentDef instanceof GroupDefinition)) {
-				Class parentClass = parentDef.getBeanClass();
-				if (parentClass.isInstance(bean)) {
-					return false;
-				}
-			}
-			return true;
 		}
 		
 		public void addReference(List refs, EditorDefinition parentDef, 
