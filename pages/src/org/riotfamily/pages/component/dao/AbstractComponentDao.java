@@ -131,8 +131,8 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 * Returns a list of {@link VersionContainer containers} that can be 
 	 * modified without affecting the live list. If the preview list does not
 	 * already exist a new list is created and populated with the containers
-	 * from the live list. This method does not create any copys since the 
-	 * containers themself are responisble for managing the different versions. 
+	 * from the live list. This method does not create any copies since the 
+	 * containers themselves are responsible for managing the different versions. 
 	 */
 	public List getOrCreatePreviewContainers(ComponentList list) {
 		List previewContainers = list.getPreviewList(); 
@@ -381,8 +381,10 @@ public abstract class AbstractComponentDao implements ComponentDao {
 			result |= publishContainer(container);
 		}
 		
-		String path = pathCompleter.addServletMapping(componentList.getPath());
-		eventMulticaster.multicastEvent(new ContentChangedEvent(this, path));
+		if (pathCompleter != null && eventMulticaster != null) {
+			String path = pathCompleter.addServletMapping(componentList.getPath());
+			eventMulticaster.multicastEvent(new ContentChangedEvent(this, path));
+		}
 		
 		return result;
 	}
@@ -419,7 +421,7 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	}
 	
 	/**
-	 * Creates copys of all ComponentLists under the given path and sets 
+	 * Creates copies of all ComponentLists under the given path and sets 
 	 * their path to the specified <code>newPath</code>.
 	 */
 	public void copyComponentLists(String oldPath, String newPath) {
