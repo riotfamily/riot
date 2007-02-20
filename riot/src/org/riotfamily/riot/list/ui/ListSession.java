@@ -40,6 +40,7 @@ import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRepository;
 import org.riotfamily.forms.controller.FormContextFactory;
@@ -134,6 +135,13 @@ public class ListSession implements RenderContext {
 					messageResolver, contextPath, null));
 			
 			filterForm.setTemplate(ResourceUtils.getPath(getClass(), "FilterForm.ftl"));
+			
+			Iterator it = filterForm.getRegisteredElements().iterator();
+			while (it.hasNext()) {
+				Element e = (Element) it.next();
+				e.setRequired(false);
+			}
+			
 			params.setFilteredProperties(filterForm.getEditorBinder()
 					.getBoundProperties());
 			
