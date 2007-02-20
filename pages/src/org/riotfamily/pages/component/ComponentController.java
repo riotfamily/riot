@@ -30,6 +30,10 @@ import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.TaggingContext;
 import org.riotfamily.pages.component.dao.ComponentDao;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -39,6 +43,8 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class ComponentController extends AbstractCacheableController {
 
+	private PlatformTransactionManager transactionManager;
+	
 	private ComponentDao componentDao;
 	
 	private ComponentRepository componentRepository;
@@ -50,6 +56,10 @@ public class ComponentController extends AbstractCacheableController {
 	private String viewName;
 	
 	
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
+	}
+
 	public ComponentDao getComponentDao() {
 		return this.componentDao;
 	}
@@ -102,8 +112,20 @@ public class ComponentController extends AbstractCacheableController {
 		return -1;
 	}
 	
-	public ModelAndView handleRequest(HttpServletRequest request, 
-			HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequest(final HttpServletRequest request, 
+			final HttpServletResponse response) throws Exception {
+	
+		return (ModelAndView) new TransactionTemplate(transactionManager)
+				.execute(new TransactionCallback() {
+					
+			public Object doInTransaction(TransactionStatus status) {
+				return handleRequestInTransaction(request, response);
+			}
+		});
+	}
+	
+	protected ModelAndView handleRequestInTransaction(
+			HttpServletRequest request, HttpServletResponse response) {
 		
 		Long id = getVersionId(request);
 		ComponentVersion version = componentDao.loadComponentVersion(id);

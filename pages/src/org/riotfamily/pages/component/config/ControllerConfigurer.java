@@ -123,6 +123,8 @@ public class ControllerConfigurer implements BeanFactoryAware,
 			ComponentController controller = 
 					(ComponentController) entry.getValue();
 			
+			controller.setTransactionManager(transactionManager);
+			
 			if (controller.getComponentDao() == null) {
 				controller.setComponentDao(componentDao);
 			}
