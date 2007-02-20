@@ -31,10 +31,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Query;
 import org.riotfamily.common.util.PropertyUtils;
-import org.riotfamily.riot.dao.ParentChildDao;
 import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.Order;
+import org.riotfamily.riot.dao.ParentChildDao;
 import org.riotfamily.riot.hibernate.support.HibernateSupport;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.springframework.util.Assert;
@@ -47,8 +47,6 @@ import org.springframework.util.Assert;
 public class HqlCollectionDao extends HibernateSupport 
 		implements ParentChildDao, CutAndPasteEnabledDao {
 
-	public static final String DEFAULT_ID_PROPERTY = "id";
-	
 	private Log log = LogFactory.getLog(HqlCollectionDao.class);
 	
 	private Class entityClass;
@@ -56,8 +54,6 @@ public class HqlCollectionDao extends HibernateSupport
 	private boolean polymorph = true;
         
     private String where;
-    
-    private String idProperty = DEFAULT_ID_PROPERTY;
     
     private Class parentClass;
     
@@ -81,8 +77,10 @@ public class HqlCollectionDao extends HibernateSupport
         where = string;
     }
     
+    /**
+     * @deprecated The objectId is now obtained using the Hibernate meta data API.
+     */
     public void setIdProperty(String idProperty) {
-		this.idProperty = idProperty;
 	}
 
 	public void setParentClass(Class parentClass) {
@@ -96,9 +94,9 @@ public class HqlCollectionDao extends HibernateSupport
     public void setParentProperty(String parentProperty) {
 		this.parentProperty = parentProperty;
 	}
-
+    
 	public String getObjectId(Object entity) {
-		return PropertyUtils.getPropertyAsString(entity, idProperty);
+		return HibernateUtils.getIdAsString(getSessionFactory(), entity);
 	}
 
 	public Object getParent(Object entity) {
@@ -244,4 +242,5 @@ public class HqlCollectionDao extends HibernateSupport
     		getSession().update(entity);	
     	}
     }
+
 }

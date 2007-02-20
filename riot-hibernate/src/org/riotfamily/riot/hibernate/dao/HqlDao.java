@@ -48,16 +48,12 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 	
 	private static final Log log = LogFactory.getLog(HqlDao.class);
 	
-	public static final String DEFAULT_ID_PROPERTY = "id";
-	
     private Class entityClass;
 
     private boolean polymorph = true;
 
     private String where;
     
-    private String idProperty = DEFAULT_ID_PROPERTY;
-
     private String positionProperty;
     
 	/**
@@ -101,9 +97,11 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     public final void setWhere(String where) {
         this.where = where;
     }
-    
+
+    /**
+     * @deprecated The objectId is now obtained using Hibernate meta data.
+     */
 	public void setIdProperty(String idProperty) {
-		this.idProperty = idProperty;
 	}
 
 	public void setPositionProperty(String positionProperty) {
@@ -111,7 +109,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 	}
 
 	public String getObjectId(Object item) {
-		return PropertyUtils.getPropertyAsString(item, idProperty);
+		return HibernateUtils.getIdAsString(getSessionFactory(), item);
 	}
 	
 	/**
