@@ -61,7 +61,7 @@ public class PageSitemapBuilder implements SitemapBuilder, MemberBinderAware {
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
 			if (includePage(page, request)) {
-				MenuItem item = new MenuItem(page);
+				MenuItem item = new PageMenuItem(page);
 				item.setLabel(page.getTitle());
 				item.setLink(completeLink(request, page.getPath()));
 				items.add(item);
