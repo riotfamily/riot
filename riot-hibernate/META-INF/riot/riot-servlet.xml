@@ -13,29 +13,29 @@
 	<bean id="hqlOptionsModel" scope="prototype" 
 		class="org.riotfamily.riot.hibernate.HqlOptionsModel">
 		
-		<property name="sessionFactory" ref="riotSessionFactory" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
 	<!--  Dao prototypes -->
 	
 	<bean id="hqlDao" class="org.riotfamily.riot.hibernate.dao.HqlDao" scope="prototype">
-		<property name="sessionFactory" ref="riotSessionFactory" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
 	<bean id="hqlParentChildDao" class="org.riotfamily.riot.hibernate.dao.HqlParentChildDao" scope="prototype">
-		<property name="sessionFactory" ref="riotSessionFactory" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
 	<bean id="hqlCollectionDao" class="org.riotfamily.riot.hibernate.dao.HqlCollectionDao" scope="prototype">
-		<property name="sessionFactory" ref="riotSessionFactory" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
 	<bean id="hqlSortedCollectionDao" class="org.riotfamily.riot.hibernate.dao.HqlSortedCollectionDao" scope="prototype">
-		<property name="sessionFactory" ref="riotSessionFactory" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
 	<bean id="hqlIndexedListDao" class="org.riotfamily.riot.hibernate.dao.HqlIndexedListDao" scope="prototype">
-		<property name="sessionFactory" ref="riotSessionFactory" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
 	<!-- Hibernate-based user management  -->
@@ -56,7 +56,7 @@
 		</tx:attributes>
 	</tx:advice>
 	
-	<bean id="jobDao" class="org.springframework.aop.framework.ProxyFactoryBean">
+	<bean id="jobDaoImpl" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
 		<property name="target" ref="jobDaoTarget" />
 	</bean>	
