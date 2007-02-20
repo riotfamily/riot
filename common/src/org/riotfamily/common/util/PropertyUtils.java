@@ -92,6 +92,19 @@ public final class PropertyUtils {
 	}
 	
 	/**
+	 * Returns a Map containing the bean's properties.
+	 * @since 6.4
+	 */
+	public static Map getProperties(Object bean, String[] propertyNames) {
+		HashMap properties = new HashMap();
+		for (int i = 0; i < propertyNames.length; i++) {
+			String name = propertyNames[i];
+			properties.put(name, getProperty(bean, name));
+		}
+		return properties;
+	}
+	
+	/**
 	 * @since 6.4
 	 */
 	public static String evaluate(String expression, Object bean) {
@@ -179,7 +192,7 @@ public final class PropertyUtils {
 	}
     
     /**
-     * Returns the (super-)class where the given property is decared. 
+     * Returns the (super-)class where the given property is declared. 
      */    
     public static Class getDeclaringClass(Class clazz, 
             String property) {

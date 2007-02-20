@@ -24,10 +24,13 @@
 package org.riotfamily.riot.hibernate.support;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
@@ -77,7 +80,7 @@ public final class HibernateUtils {
 			properties = (Map) example;
 		}
 		else {
-			properties = PropertyUtils.getProperties(example);
+			properties = PropertyUtils.getProperties(example, propertyNames);
 		}
 		for (int i = 0; i < propertyNames.length; i++) {
 			String name = propertyNames[i];
@@ -86,11 +89,57 @@ public final class HibernateUtils {
 				if (hql.length() > 0) {
 					hql.append(" and ");
 				}
-				hql.append(alias).append('.').append(name);
-				hql.append(" = :").append(name);
+				if (value instanceof Collection) {
+					Collection c = (Collection) value;
+					hql.append("1 = 1");
+					for (int j = 0; j < c.size(); j++) {
+						hql.append(" and :").append(name).append("_").append(j)
+								.append(" in elements(").append(alias)
+								.append('.').append(name).append(')');
+					}
+				}
+				else {
+					hql.append(alias).append('.').append(name);
+					hql.append(" = :").append(name);
+				}
 			}
 		}
 		return hql.length() > 0 ? hql.toString() : null;
+	}
+	
+	/**
+	 * Sets collection values as individual query parameters. Use this method
+	 * together with {@link #getExampleWhereClause(Object, String, String[])}
+	 * when your example contains collections.
+	 * <p>
+	 * The method iterates over the provides names array and inspects the given
+	 * bean (or map). If there's a property (or map entry) of the type
+	 * <code>java.util.Collection</code>, the methods iterates over the 
+	 * collection and sets a query parameter for each item. The name is suffixed
+	 * with an underscore and the item's index.
+	 * 
+	 * @since 6.4
+	 */
+	public static void setCollectionValueParams(Query query, 
+			String[] names, Object object) {
+		
+		for (int i = 0; i < names.length; i++) {
+			String name = names[i];
+			Object value;
+			if (object instanceof Map) {
+				value = ((Map) object).get(name);
+			}
+			else {
+				value = PropertyUtils.getProperty(object, name);
+			}
+			if (value instanceof Collection) {
+				int j = 0;
+				Iterator values = ((Collection) value).iterator();
+				while (values.hasNext()) {
+					query.setParameter(name + "_" + j++, values.next());
+				}
+			}
+		}
 	}
 	
 	/**

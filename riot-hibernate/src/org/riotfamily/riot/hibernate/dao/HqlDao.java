@@ -28,6 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Query;
 import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.riot.dao.ListParams;
@@ -43,6 +45,8 @@ import org.springframework.util.Assert;
  */
 public class HqlDao extends HibernateSupport implements RiotDao, 
 		SwappableItemDao {	
+	
+	private static final Log log = LogFactory.getLog(HqlDao.class);
 	
 	public static final String DEFAULT_ID_PROPERTY = "id";
 	
@@ -151,6 +155,9 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     		else {
     			query.setProperties(params.getFilter());
     		}
+    		
+    		HibernateUtils.setCollectionValueParams(query, 
+    				params.getFilteredProperties(), params.getFilter());
         }
     	if (params.getSearch() != null) {
     		query.setParameter("search", params.getSearch()
@@ -159,7 +166,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     }
 
     /**
-     * Builds a HQL query string to retrive the total number of items.
+     * Builds a HQL query string to retrieve the total number of items.
      */
     protected String buildCountHql(Object parent, ListParams params) {
     	StringBuffer hql = new StringBuffer();
@@ -167,11 +174,12 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     	hql.append(entityClass.getName());
     	hql.append(" as this");
     	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
+    	log.info(hql);
         return hql.toString();
     }
 
     /**
-     * Builds a HQL query string to retrive a list of items.
+     * Builds a HQL query string to retrieve a list of items.
      */
     protected String buildHql(Object parent, ListParams params) {
     	StringBuffer hql = new StringBuffer();
@@ -180,6 +188,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     	hql.append(" as this");
     	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
     	HibernateUtils.appendHql(hql, "order by", getOrderBy(params));
+    	log.info(hql);
         return hql.toString();
     }
 
