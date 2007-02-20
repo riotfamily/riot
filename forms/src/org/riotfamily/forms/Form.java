@@ -54,6 +54,7 @@ import org.riotfamily.forms.resource.StylesheetResource;
 import org.riotfamily.forms.support.HttpFormRequest;
 import org.riotfamily.forms.support.MessageUtils;
 import org.riotfamily.forms.support.TemplateUtils;
+import org.springframework.util.Assert;
 
 
 /**
@@ -144,6 +145,7 @@ public class Form implements BeanEditor {
 	}
 	
 	public void setBeanClass(Class beanClass) {
+		Assert.notNull(beanClass, "The beanClass must not be null.");
 		editorBinder = new EditorBinder(new MapOrBeanWrapper(beanClass));
 	}
 	
