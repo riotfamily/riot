@@ -23,10 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.support;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.riotfamily.forms.FormRequest;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -55,6 +58,10 @@ public class SimpleFormRequest implements FormRequest {
 			String[] values = (String[]) value;
 			return values.length > 0 ? values[0] : null;
 		}
+		if (value instanceof Collection) {
+			Iterator it  = ((Collection) value).iterator();
+			return it.hasNext() ? (String) it.next() : null;
+		}
 		if (value instanceof String) {
 			return (String) value;
 		}
@@ -65,6 +72,9 @@ public class SimpleFormRequest implements FormRequest {
 		Object value = params.get(name);
 		if (value instanceof String[]) {
 			return (String[]) value;
+		}
+		if (value instanceof Collection) {
+			return StringUtils.toStringArray((Collection) value);
 		}
 		if (value instanceof String) {
 			return new String[] { (String) value };

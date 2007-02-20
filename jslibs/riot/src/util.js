@@ -263,7 +263,13 @@ var Class = {
 var RForm = {
 	getValues: function(form) {
 		return $(form).getElements().inject({}, function(map, e) {
-			if (e.name) map[e.name] = e.getValue(); 
+			if (e.name) {
+				var value = e.getValue();
+				if (value) {
+					if (!map[e.name]) map[e.name] = [];
+					map[e.name].push(value);
+				}
+			}
 			return map;
 		});
 	}

@@ -529,8 +529,11 @@
 								<value>
 									import org.riotfamily.riot.list.ui.ListItem;
 									import org.riotfamily.riot.list.ui.CommandState;
+									import java.util.List;
+									import javax.servlet.http.HttpServletRequest;
 									ListItem.setColumns(List&lt;String&gt;);
 									ListItem.setCommands(List&lt;CommandState&gt;);
+									ListService.filter(String, Map&lt;String, List&gt;, HttpServletRequest);
 								</value>
 							</property>
 						</bean>
