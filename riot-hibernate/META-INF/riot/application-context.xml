@@ -43,7 +43,7 @@
 	</bean>
 		
 	<!-- The Hibernate SessionFactory -->
-	<bean id="riotSessionFactory" depends-on="evolver" 
+	<bean id="riotSessionFactory" name="sessionFactory" depends-on="evolver" 
 			class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
 			
 		<property name="dataSource" ref="riotDataSource" />
@@ -52,7 +52,7 @@
 	</bean>
 
 	<!-- The Transaction Manager -->
-	<bean id="transactionManager" name="riotTransactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 	
