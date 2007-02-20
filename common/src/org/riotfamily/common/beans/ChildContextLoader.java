@@ -37,7 +37,7 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
  * can be skipped by setting {@link #setLoadContext(boolean)} to false.
  * <p>
  * Use this class if you need to perform setup operations in your development
- * environment, like the population of an in-memeory database. 
+ * environment, like the population of an in-memory database. 
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
