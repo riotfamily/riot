@@ -24,6 +24,7 @@
 		        				<value>classpath:/org/riotfamily/riot/runtime/i18n/messages</value>
 		        			</list>
 		        		</property>
+		        		<property name="sourceListFirst" value="true" />
 		        	</bean>
 		        </property>
 		    </bean>
