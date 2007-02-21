@@ -260,7 +260,6 @@
 		<xsd:complexContent>
 			<xsd:extension base="simple-editor">
 				<xsd:attribute name="store" type="xsd:string" />
-				<xsd:attribute name="thumbnailer" type="xsd:string" />
 				<xsd:attribute name="filename-property" type="xsd:string" />
 				<xsd:attribute name="content-type-property" type="xsd:string" />
 				<xsd:attribute name="size-property" type="xsd:string" />

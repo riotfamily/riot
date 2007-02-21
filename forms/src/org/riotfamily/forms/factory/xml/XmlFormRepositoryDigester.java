@@ -31,7 +31,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.thumbnail.Thumbnailer;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.common.web.file.FileStore;
@@ -113,8 +112,6 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	public static final String ELEMENT_BEAN_CLASS = "bean-class";
 	
 	public static final String FILE_STORE = "store";
-	
-	public static final String FILE_THUMBNAILER = "thumbnailer";
 	
 	public static final String PROPERTY = "set-property";
 	
@@ -295,21 +292,12 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		
 		if (FileUpload.class.isAssignableFrom(elementClass)) {
 			pvs.removePropertyValue(FILE_STORE);
-			pvs.removePropertyValue(FILE_THUMBNAILER);
 			String ref = XmlUtils.getAttribute(ele, FILE_STORE);
 			if (ref != null) {
 				FileStore fileStore = (FileStore) beanFactory.getBean(
 						ref, FileStore.class);
 				
 				pvs.addPropertyValue("fileStore", fileStore);
-			}
-			
-			ref = XmlUtils.getAttribute(ele, FILE_THUMBNAILER);
-			if (ref != null) {
-				Thumbnailer thumbnailer = (Thumbnailer) beanFactory.getBean(
-						ref, Thumbnailer.class);
-				
-				pvs.addPropertyValue("thumbnailer", thumbnailer);
 			}
 			
 			if (formRepository.getMimetypesMap() != null) {

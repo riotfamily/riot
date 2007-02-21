@@ -24,13 +24,10 @@
 package org.riotfamily.common.thumbnail;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 
 import org.riotfamily.common.util.CommandUtils;
-import org.springframework.util.FileCopyUtils;
 
 /**
  * Thumbnailer that uses ImageMagick.
@@ -40,16 +37,12 @@ import org.springframework.util.FileCopyUtils;
 public class ImageMagickThumbnailer implements Thumbnailer {
 
 	private String convertCommand = "convert";
-	
-	private int maxWidth;
-	
-	private int maxHeight;
-	
+		
 	private boolean crop;
 	
 	private String backgroundColor;
 	
-	private String format = "jpg";
+	private String format = "JPG";
 	
 	
 	public void setConvertCommand(String convertCommand) {
@@ -58,14 +51,6 @@ public class ImageMagickThumbnailer implements Thumbnailer {
 
 	public void setFormat(String format) {
 		this.format = format;
-	}
-
-	public void setMaxHeight(int maxHeight) {
-		this.maxHeight = maxHeight;
-	}
-
-	public void setMaxWidth(int maxWidth) {
-		this.maxWidth = maxWidth;
 	}
 	
 	public void setCrop(boolean crop) {
@@ -101,45 +86,28 @@ public class ImageMagickThumbnailer implements Thumbnailer {
 		this.backgroundColor = backgroundColor;
 	}
 
-	public boolean supports(String mimeType) {
-		return mimeType.startsWith("image");
-	}
-	
-	public void renderThumbnail(File source, String mimeType, OutputStream out) 
+	public void renderThumbnail(File source, File dest, int width, int height)
 			throws IOException {
 		
-		File dest = File.createTempFile(".magick", "." + format, 
-				source.getParentFile());
-		
-		try {
-			convert(source, dest);
-			FileCopyUtils.copy(new FileInputStream(dest), out);
-		}
-		finally {
-			dest.delete();
-		}
-	}
-	
-	private void convert(File source, File dest) throws IOException {
 		ArrayList cmd = new ArrayList();
 		cmd.add(convertCommand);
 		cmd.add(source.getAbsolutePath());
 		cmd.add("-resize");
 		if (crop) {
-			cmd.add("x" + maxHeight * 2);
+			cmd.add("x" + height * 2);
 			cmd.add("-resize");
-			cmd.add(maxWidth * 2 + "x<");
+			cmd.add(width * 2 + "x<");
 			cmd.add("-resize");
 			cmd.add("50%");
 			cmd.add("-crop");
-			cmd.add(maxWidth + "x" + maxHeight + "+0+0");
+			cmd.add(width + "x" + height + "+0+0");
 			cmd.add("+repage");
 		}
 		else {
-			cmd.add(maxWidth + "x" + maxHeight + ">");
+			cmd.add(width + "x" + height + ">");
 			if (backgroundColor != null) {
 				cmd.add("-size");
-				cmd.add(maxWidth + "x" + maxHeight);
+				cmd.add(width + "x" + height);
 				cmd.add("xc:" + backgroundColor);
 				cmd.add("+swap");
 				cmd.add("-gravity");
@@ -149,7 +117,7 @@ public class ImageMagickThumbnailer implements Thumbnailer {
 		}
 		cmd.add("-colorspace");
 		cmd.add("RGB");
-		cmd.add(dest.getAbsolutePath());
+		cmd.add(format.toUpperCase() + ':' + dest.getAbsolutePath());
 		CommandUtils.exec(cmd);
 	}
 
