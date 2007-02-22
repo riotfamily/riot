@@ -14,7 +14,7 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
@@ -23,37 +23,42 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.component.property;
 
-import java.util.Enumeration;
 import java.util.Map;
-import java.util.Properties;
 
 /**
- * PropertyProcessor that initializes properties with the specified default 
- * values.
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.4
  */
-public class DefaultValuePropertyProcessor extends PropertyProcessorAdapter {
+public class PropertyProcessorAdapter implements PropertyProcessor {
 
-	private Properties values;
+	/**
+	 * Does nothing.
+	 */
+	public void resolveStrings(Map map) {
+	}
 	
-	public void setValues(Properties values) {
-		this.values = values;
+	/**
+	 * Does nothing.
+	 */
+	public void convertToStrings(Map map) {
 	}
 
 	/**
-	 * Iterates over the defaults and checks whether a value is already set.
-	 * If no matching entry is found in the map, the default value is added
-	 * to the map. 
+	 * Does nothing.
 	 */
-	public void resolveStrings(Map map) {
-		if (values != null) {
-			Enumeration en = values.propertyNames();
-			while (en.hasMoreElements()) {
-				String prop = (String) en.nextElement();
-				if (!map.containsKey(prop)) {
-					map.put(prop, values.getProperty(prop));
-				}
-			}
-		}
+	public void copy(Map source, Map dest) {
 	}
 
+	/**
+	 * Does nothing.
+	 */
+	public void delete(Map map) {
+	}
+	
+	/**
+	 * Always returns <code>null</code>.
+	 */
+	public String[] getCacheTags(Map map) {
+		return null;
+	}
 }
