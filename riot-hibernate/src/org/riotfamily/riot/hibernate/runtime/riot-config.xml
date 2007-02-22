@@ -37,14 +37,14 @@
 			<form:editable-if-new>
 				<form:textfield bind="id" required="true" />
 			</form:editable-if-new>
-			<form:selectbox bind="role" required="true">
+			<form:selectbox bind="role" required="true" label-message-key="riot.user.role." append-label="true">
 				<form:model ref="roles" />
 			</form:selectbox>
 			<form:textfield bind="name" />
 			<form:textfield bind="email" />
 		</form:group>
 		<form:group>
-			<form:textfield bind="newPassword" />
+			<form:passwordfield bind="newPassword" confirm="true"/>
 		</form:group>
 	</form:form>
 
