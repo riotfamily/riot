@@ -30,12 +30,16 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.ServletContextAware;
 
+/**
+ * Default FileStore implementation.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class DefaultFileStore implements FileStore, ServletContextAware,
 		InitializingBean {
 
@@ -45,158 +49,188 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 	
 	private String storagePath;
 	
-	private File storageDir;
+	private File baseDir;
 
+	private File storageDir;
+	
+	private int storageDirIndex;
+	
+	private int maxFilesPerDir = 500;
+	
 	private ServletContext servletContext;
-	
-	private boolean overwriteFiles = true;
-	
-	private boolean deleteOldFiles = true;
-	
-	private boolean appendTimestampParam = true;
-	
+		
 	
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
 	}
 
+	/**
+	 * Sets the path to the directory where the files are stored. Relative
+	 * paths are resolved against the webapp's root directory by calling
+	 * {@link ServletContext#getRealPath(String)}.
+	 * 
+	 * @param storagePath Either an absolute or relative path denoting a directory
+	 */
 	public void setStoragePath(String storagePath) {
 		this.storagePath = storagePath;
 	}
 
-	public void setUriPrefix(String prefix) {
-		this.uriPrefix = prefix; 
-	}
-	
-	public void setOverwriteFiles(boolean overwriteFiles) {
-		this.overwriteFiles = overwriteFiles;
-	}
-	
-	public void setDeleteOldFiles(boolean deleteOldFiles) {
-		this.deleteOldFiles = deleteOldFiles;
-	}
-
-	public void setAppendTimestampParam(boolean appendTimestampParam) {
-		this.appendTimestampParam = appendTimestampParam;
-	}
-
-	public void afterPropertiesSet() throws IOException {
-		if (storagePath != null) {
-			boolean absolutePath = storagePath.startsWith(File.separator) 
-					|| storagePath.indexOf(":") == 1;
-			
-			if (!absolutePath) {
-				storagePath = servletContext.getRealPath(storagePath);
-			}
-			storageDir = new File(storagePath);	
-			
-		}
-		if (uriPrefix == null) {
-			uriPrefix = "/media";
-		}
-		else if (uriPrefix.endsWith("/")) {
+	/**
+	 * Sets a prefix that is added to all URIs returned by the 
+	 * {@link #store(File, String) store()} method.  
+	 */
+	public void setUriPrefix(String uriPrefix) {
+		Assert.notNull(uriPrefix, "The uriPrefix must not be null");
+		if (uriPrefix.endsWith("/")) {
 			uriPrefix = uriPrefix.substring(0, uriPrefix.length() - 1);
 		}
-		if (storageDir == null) {
-			storageDir = new File(servletContext.getRealPath(uriPrefix));
-		}
-		
-		if (!storageDir.exists() && !storageDir.mkdirs()) {
-			log.error("Error creating directory: " 
-					+ storageDir.getCanonicalPath());
-		}
-		else if (!storageDir.canWrite()) {
-			log.error("Directory " + storageDir.getCanonicalPath() 
-					+ " is not writeable for user " 
-					+ System.getProperty("user.name"));
-		}
-		else {
-			log.info("Files will be stored in " 
-					+ storageDir.getCanonicalPath());
-		}
+		this.uriPrefix = uriPrefix;
 	}
 	
-	public String store(File file, String originalFileName, String previousUri) 
-			throws IOException {
-		
-		String ext = FormatUtils.getExtension(originalFileName);
-		
-		File dest = null;
-		if (previousUri != null) {
-			File oldFile = retrieve(previousUri); 
-			if (overwriteFiles && FormatUtils.getExtension(
-					oldFile.getName()).equals(ext)) {
-				
-				dest = oldFile;	
-			}
-			else if (deleteOldFiles) {
-				oldFile.delete();
-			}
+	/**
+	 * Sets the maximum number of files that may be stored in a directory
+	 * before a new storageDir is created. Defaults to 500.
+	 */
+	public void setMaxFilesPerDir(int maxFilesPerDir) {
+		this.maxFilesPerDir = maxFilesPerDir;
+	}
+	
+	/**
+	 * Creates the baseDir after all properties have been set.
+	 */
+	public void afterPropertiesSet() throws IOException {
+		Assert.notNull(uriPrefix, "The uriPrefix must not be null");
+		if (storagePath == null) {
+			storagePath = servletContext.getRealPath(uriPrefix);
+		}
+		else if (!storagePath.startsWith(File.separator) 
+				&& storagePath.indexOf(":") != 1) {
+			
+			storagePath = servletContext.getRealPath(storagePath);
 		}
 		
-		storageDir.mkdirs();
-		if (!storageDir.canWrite()) {
-			throw new IOException("The directory " 
-					+ storageDir.getAbsolutePath()
-					+ " is not writeable for user " 
+		baseDir = createDir(new File(storagePath));	
+		log.info("Files will be stored in " 
+				+ baseDir.getCanonicalPath());
+		
+		getStorageDir();
+	}
+	
+	/**
+	 * Creates the given directory and all parent directories (unless they 
+	 * already exist). If the directory can't be created or is not writable
+	 * an error message is logged. 
+	 */
+	protected File createDir(File dir) {
+		if (!(dir.exists() || dir.mkdirs())) {
+			log.error("Error creating directory: " + dir.getPath());
+		}
+		if (!dir.canWrite()) {
+			log.error("Directory " + dir.getPath() 
+					+ " is not writable for user " 
 					+ System.getProperty("user.name"));
 		}
-		
-		if (dest == null) {
-			if (StringUtils.hasLength(ext)) {
-				ext = '.' + ext;
+		return dir;
+	}
+	
+	/**
+	 * Returns whether the next storage directory should be used.
+	 */
+	private boolean storageExceeded() {
+		return storageDir == null || storageDir.list().length >= maxFilesPerDir;
+	}
+
+	/**
+	 * Returns the directory where the files should be stored. The default
+	 * implementation limits the number of files per directory and creates a
+	 * new directory when the number of files exceeds the 
+	 * {@link #setMaxFilesPerDir(int) maxFilesPerDir} value.
+	 */
+	protected File getStorageDir() {
+		if (storageExceeded()) {
+			synchronized (this) {
+				while (storageExceeded()) {
+					String name = String.valueOf(storageDirIndex++);
+					storageDir = createDir(new File(baseDir, name));
+				}	
 			}
-			dest = File.createTempFile("000", ext, storageDir);
 		}
-		
+		return storageDir;
+	}
+	
+	/**
+	 * Returns an empty new directory with an unique name within the current
+	 * storageDir. 
+	 */
+	protected File getUniqueDir() {
+		File parent = getStorageDir();
+		for (int i = 0; i < maxFilesPerDir; i++) {
+			File dir = new File(parent, String.valueOf(
+					System.currentTimeMillis()) + i);
+			
+			if (!dir.exists()) {
+				dir.mkdir();
+				return dir;
+			}
+		}
+		//This should never happen ...
+		throw new RuntimeException("Failed to create a unique directory name.");
+	}
+	
+	/**
+	 * Moves the given file into the store and returns an URI that can be
+	 * used to request the file via HTTP.
+	 */
+	public String store(File file, String fileName)	throws IOException {
+		if (fileName == null) {
+			fileName = file.getName();
+		}
+		File dest = new File(getUniqueDir(), fileName); 
 		if (!file.renameTo(dest)) {
 			FileCopyUtils.copy(file, dest);
 			file.delete();
 		}
-		return getUri(dest);
+		return uriPrefix + dest.getPath().substring(baseDir.getPath().length());
 	}
 	
-	protected String getUri(File f) {
-		StringBuffer uri = new StringBuffer();
-		if (uriPrefix != null) {
-			uri.append(uriPrefix);
-		}
-		uri.append('/').append(f.getName());
-		
-		if (overwriteFiles && appendTimestampParam) {
-			uri.append("?").append(System.currentTimeMillis());
-		}
-		return uri.toString();
-	}
-	
+	/**
+	 * Retrieves a file from the store that was previously added via the
+	 * {@link #store(File, String) store()} method. 
+	 */
 	public File retrieve(String uri) {
 		log.debug("Retrieving file for URI: " + uri);
-		if (uriPrefix != null) {
-			if (!uri.startsWith(uriPrefix)) {
-				return null;
-			}
-			uri = uri.substring(uriPrefix.length() + 1);
+		if (!uri.startsWith(uriPrefix)) {
+			return null;
 		}
-		
+		uri = stripQueryString(uri.substring(uriPrefix.length() + 1));
+		File file = new File(baseDir, uri);
+		log.debug("File: " + file);
+		return file;
+	}
+	
+	/**
+	 * Strips the query string from the given URI. Older FileStore 
+	 * implementations had the option to append a timestamp parameter to the
+	 * URI therefore this method is used to ensure backwards compatibility. 
+	 */
+	private String stripQueryString(String uri) {
 		int i = uri.indexOf('?');
 		if (i != -1) {
 			uri = uri.substring(0, i);
 		}
-		
-		File file = new File(storageDir, uri);
-		log.debug("File: " + file);
-		return file;
+		return uri;
 	}
 
+	/**
+	 * Deletes the file denoted by the given URI from the store.
+	 */
 	public void delete(String uri) {
-		retrieve(uri).delete();
+		File file = retrieve(uri);
+		file.delete();
+		File dir = file.getParentFile();
+		if (dir.list().length == 0 && !dir.equals(baseDir)) {
+			dir.delete();
+		}
 	}
 	
-	public String copy(String uri) throws IOException {
-		File f = retrieve(uri);
-		String ext = FormatUtils.getExtension(f.getName());
-		File dest = File.createTempFile("000", "." + ext, storageDir);
-		FileCopyUtils.copy(f, dest);
-		return getUri(dest);
-	}
 }

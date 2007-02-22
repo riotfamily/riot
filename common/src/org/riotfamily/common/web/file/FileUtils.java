@@ -14,7 +14,7 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
@@ -26,30 +26,25 @@ package org.riotfamily.common.web.file;
 import java.io.File;
 import java.io.IOException;
 
-public interface FileStore {
+import org.springframework.util.FileCopyUtils;
 
-	/**
-	 * Moves the given file into the store and returns an URI that can be
-	 * used to request the file via HTTP.
-	 * <p>
-	 * Implementors are expected to move the given file to a new location.
-	 * </p>
-	 * @param file The file to move into the store
-	 * @param fileName The desired target file name, or <code>null</code> if it
-	 * 		  should be up to the store to choose a name 
-	 * @return The URI to access the stored file
-	 */
-	public String store(File file, String fileName)	throws IOException;
+/**
+ * Provides utility methods to work with files and FileStores.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.4
+ */
+public final class FileUtils {
+
+	private FileUtils() {
+	}
 	
-	/**
-	 * Retrieves a file from the store that was previously added via the
-	 * {@link #store(File, String) store()} method. 
-	 */
-	public File retrieve(String uri);
-	
-	/**
-	 * Deletes the file denoted by the given URI from the store.
-	 */
-	public void delete(String uri);
-	
+	public static String copy(FileStore fileStore, String uri) 
+			throws IOException {
+		
+		File f = fileStore.retrieve(uri);
+		File dest = File.createTempFile(f.getName(), ".copy");
+		FileCopyUtils.copy(f, dest);
+		return fileStore.store(dest, f.getName());
+	}
 }

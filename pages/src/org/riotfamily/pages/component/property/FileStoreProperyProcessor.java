@@ -28,6 +28,7 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.web.file.FileStore;
+import org.riotfamily.common.web.file.FileUtils;
 
 /**
  * PropertyProcessor for URIs resolvable by a {@link FileStore}. When a 
@@ -55,7 +56,7 @@ public class FileStoreProperyProcessor extends AbstractSinglePropertyProcessor {
 	protected String copy(String s) {
 		if (s != null) {
 			try {
-				return fileStore.copy(s);
+				return FileUtils.copy(fileStore, s);
 			}
 			catch (IOException e) {
 				log.error("Error copying file", e);

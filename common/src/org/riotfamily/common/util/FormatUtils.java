@@ -325,7 +325,7 @@ public final class FormatUtils {
 	 * Returns the extension of the given filename. Examples:
 	 * 
 	 * <pre>
-	 *  	&quot;foo.bar&quot; - &quot;bar&quot;
+	 *   $quot;foo.bar&quot; - &quot;bar&quot;
 	 *   &quot;/some/file.name.foo&quot; - &quot;foo&quot;
 	 * </pre>
 	 * 
@@ -478,6 +478,10 @@ public final class FormatUtils {
 		return dateFormat.format(date);
 	}
 
+	/**
+	 * Invokes toLowerCase(), converts all whitespaces to underscores and 
+	 * removes all characters other than a-z, 0-9, dot, underscore or minus.
+	 */
 	public static String toFilename(String s) {
 		s = s.toLowerCase();
 		s = s.replaceAll("\\s+", "_");
