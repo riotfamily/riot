@@ -52,6 +52,7 @@ import org.riotfamily.pages.component.context.RequestContextExpiredException;
 import org.riotfamily.pages.component.render.EditModeRenderStrategy;
 import org.riotfamily.pages.component.render.LiveModeRenderStrategy;
 import org.riotfamily.pages.setup.WebsiteConfigSupport;
+import org.riotfamily.riot.security.AccessController;
 import org.riotfamily.riot.security.LoginManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -397,15 +398,21 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	 */
 	public void publishList(Long listId) {
 		ComponentList componentList = getDao().loadComponentList(listId);
-		if (getDao().publishList(componentList)) {
-			log.debug("Changes published for ComponentList " + listId);
-			if (cache != null) {
-				String tag = componentList.getPath() 
-						+ ':' + componentList.getKey();
-				
-				log.debug("Invalidating items tagged as " + tag);
-				cache.invalidateTaggedItems(tag);
+		
+		if (AccessController.isGranted("publish", componentList, null)) {
+			if (getDao().publishList(componentList)) {
+				log.debug("Changes published for ComponentList " + listId);
+				if (cache != null) {
+					String tag = componentList.getPath() 
+							+ ':' + componentList.getKey();
+					
+					log.debug("Invalidating items tagged as " + tag);
+					cache.invalidateTaggedItems(tag);
+				}
 			}
+		} else {
+			throw new RuntimeException(messageSource.getMessage(
+				"pages.componentList.publish.notGranted", null, getLocale()));
 		}
 	}
 		
