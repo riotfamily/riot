@@ -199,6 +199,9 @@
 		<property name="windowName" value="preview" />
 	</bean>
 	
+	<bean id="deleteUnpublishedCommand" parent="deleteCommand"
+		class="org.riotfamily.pages.page.command.DeleteUnpublishedCommand" />
+	
 	<bean id="gotoComponentListCommand" class="org.riotfamily.pages.component.command.GotoListCommand">
 		<constructor-arg ref="pathCompleter" />
 		<property name="windowName" value="preview" />
