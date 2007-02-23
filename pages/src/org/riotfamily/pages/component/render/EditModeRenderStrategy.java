@@ -118,6 +118,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		ComponentList list = new ComponentList();
 		list.setPath(path);
 		list.setKey(key);
+		list.setParent(parent);
 		dao.saveComponentList(list);
 		String[] initialTypes = config.getInitialComponentTypes();
 		if (initialTypes != null) {
@@ -130,7 +131,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 				container.setLiveVersion(live);
 				containers.add(container);
 			}
-			list.setLiveList(containers);
+			list.setLiveContainers(containers);
 			dao.updateComponentList(list);
 		}
 		return list;

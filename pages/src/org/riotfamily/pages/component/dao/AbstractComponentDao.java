@@ -25,10 +25,11 @@ package org.riotfamily.pages.component.dao;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.riotfamily.common.web.event.ContentChangedEvent;
 import org.riotfamily.common.web.util.PathCompleter;
@@ -135,7 +136,7 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 * containers themselves are responsible for managing the different versions. 
 	 */
 	public List getOrCreatePreviewContainers(ComponentList list) {
-		List previewContainers = list.getPreviewList(); 
+		List previewContainers = list.getPreviewContainers(); 
 		if (!list.isDirty()) {
 			if (previewContainers == null) {
 				previewContainers = new ArrayList();
@@ -143,11 +144,11 @@ public abstract class AbstractComponentDao implements ComponentDao {
 			else {
 				previewContainers.clear();
 			}
-			List liveContainers = list.getLiveList();
+			List liveContainers = list.getLiveContainers();
 			if (liveContainers != null) {
 				previewContainers.addAll(liveContainers);
 			}
-			list.setPreviewList(previewContainers);
+			list.setPreviewContainers(previewContainers);
 			list.setDirty(true);
 		}
 		return previewContainers;
@@ -190,7 +191,7 @@ public abstract class AbstractComponentDao implements ComponentDao {
 			if (type == null) {
 				type = live.getType();
 			}
-			preview = cloneComponentVersion(live);
+			preview = copyComponentVersion(live);
 			container.setPreviewVersion(preview);
 			updateVersionContainer(container);
 		}
@@ -204,7 +205,7 @@ public abstract class AbstractComponentDao implements ComponentDao {
 			String type, Map properties, int position, boolean live) {
 		 
 		List containers = live 
-				? componentList.getLiveList() 
+				? componentList.getLiveContainers() 
 				: getOrCreatePreviewContainers(componentList);
 
 		VersionContainer container = createVersionContainer(type, properties, live);
@@ -275,8 +276,8 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 * Deletes the given ComponentList.
 	 */
 	public void deleteComponentList(ComponentList list) {
-		List previewList = list.getPreviewList();
-		List liveList = list.getLiveList();
+		List previewList = list.getPreviewContainers();
+		List liveList = list.getLiveContainers();
 		if (liveList != null) {
 			Iterator it = liveList.listIterator();
 			while (it.hasNext()) {
@@ -301,11 +302,10 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 * Deletes the given VersionContainer.
 	 */
 	public void deleteVersionContainer(VersionContainer container) {		
-		ComponentList nestedList = findComponentList(container.getList().getPath(), 
-					container.getList().getKey() + "$" + container.getId());
-		if (nestedList != null) {
-			deleteComponentList(nestedList);
-		}		
+		Iterator it = container.getChildLists().iterator();
+		while (it.hasNext()) {
+			deleteComponentList((ComponentList) it.next());	
+		}
 		deleteComponentVersion(container.getLiveVersion());		
 		deleteComponentVersion(container.getPreviewVersion());
 		deleteObject(container);
@@ -353,8 +353,8 @@ public abstract class AbstractComponentDao implements ComponentDao {
 		boolean result = false;
 		if (componentList.isDirty()) {
 			result = true;
-			List previewList = componentList.getPreviewList();
-			List liveList = componentList.getLiveList();
+			List previewList = componentList.getPreviewContainers();
+			List liveList = componentList.getLiveContainers();
 			if (liveList == null) {
 				liveList = new ArrayList();
 			}
@@ -375,7 +375,7 @@ public abstract class AbstractComponentDao implements ComponentDao {
 			updateComponentList(componentList);
 		}
 		
-		Iterator it = componentList.getLiveList().iterator();
+		Iterator it = componentList.getLiveContainers().iterator();
 		while (it.hasNext()) {
 			VersionContainer container = (VersionContainer) it.next();
 			result |= publishContainer(container);
@@ -393,10 +393,10 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 * Discards all changes made to the given list.
 	 */
 	public void discardList(ComponentList componentList) {
-		List previewList = componentList.getPreviewList();
-		List liveList = componentList.getLiveList();
+		List previewList = componentList.getPreviewContainers();
+		List liveList = componentList.getLiveContainers();
 		if (componentList.isDirty()) {
-			componentList.setPreviewList(null);
+			componentList.setPreviewContainers(null);
 			componentList.setDirty(false);
 			Iterator it = previewList.iterator();
 			while (it.hasNext()) {
@@ -426,105 +426,65 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 */
 	public void copyComponentLists(String oldPath, String newPath) {
 		List lists = findComponentLists(oldPath);
-		List nestedLists = null;
-		Map copiedLists = null;
 		if (lists != null) {
-			copiedLists = new HashMap();
 			Iterator it = lists.iterator();
 			while (it.hasNext()) {
 				ComponentList list = (ComponentList) it.next();
-				if (list.getKey().indexOf('$') != -1) {					
-					if (nestedLists == null) {
-						nestedLists = new ArrayList();
-					}
-					nestedLists.add(list);
-				}
-				else {
-					ComponentList copy = cloneComponentList(list);
-					copy.setPath(newPath);
-					saveComponentList(copy);					
-					copiedLists.put(copy.getKey(), copy);
-				}						
+				ComponentList copy = copyComponentList(list, newPath);
+				saveComponentList(copy);					
 			}
-		}
-		if (nestedLists != null) {
-			copyNestedLists(nestedLists, copiedLists, newPath);
 		}
 	}	
 
-	private void copyNestedLists(List nestedLists, Map copiedLists, 
-					String newPath) {
-
-		//TODO Nested list could again have nested lists
-		Iterator it = nestedLists.iterator();
-		while (it.hasNext()) {
-			ComponentList list = (ComponentList) it.next();				
-			String parentId = list.getKey().
-					substring(list.getKey().indexOf('$') + 1);				
-			VersionContainer parent = loadVersionContainer(Long.valueOf(parentId));
-			if (parent != null) {
-				ComponentList parentList = parent.getList();				
-				ComponentList copiedList = (ComponentList)copiedLists.get(
-								parentList.getKey());				
-				VersionContainer newParent = null;
-				if (parentList.getLiveList() != null 
-						&& parentList.getLiveList().contains(parent)) {						
-					newParent = (VersionContainer)copiedList.getLiveList().
-							get(parentList.getLiveList().indexOf(parent));
-				}
-				else {
-					newParent = (VersionContainer)copiedList.
-						getPreviewList().get(parentList.getPreviewList().
-								indexOf(parent));					
-				}				
-				ComponentList copy = cloneComponentList(list);
-				copy.setPath(newPath);
-				String newKey = copy.getKey().
-						substring(0, copy.getKey().indexOf('$') + 1) 
-						+ newParent.getId();				
-				copy.setKey(newKey);
-				saveComponentList(copy);
-			}
-		}
-	}
-	
-	private ComponentList cloneComponentList(ComponentList list) {
+	private ComponentList copyComponentList(ComponentList list, String path) {
 		ComponentList copy = new ComponentList();
+		copy.setPath(path);
 		copy.setKey(list.getKey());
 		copy.setDirty(list.isDirty());
-		copy.setLiveList(copyContainers(list.getLiveList()));;
-		copy.setPreviewList(copyContainers(list.getPreviewList()));
+		copy.setLiveContainers(copyContainers(list.getLiveContainers(), path));
+		copy.setPreviewContainers(copyContainers(list.getPreviewContainers(), path));
 		return copy;
 	}
 	
-	private List copyContainers(List source) {
+	private List copyContainers(List source, String path) {
 		if (source == null) {
 			return null;
 		}
 		List dest = new ArrayList(source.size());
 		Iterator it = source.iterator();
 		while (it.hasNext()) {
-			VersionContainer vc = (VersionContainer) it.next();
-			VersionContainer copy = copyVersionContainer(vc);
-			dest.add(copy);
+			VersionContainer container = (VersionContainer) it.next();
+			dest.add(copyVersionContainer(container, path));
 		}
 		return dest;
 	}
 	
-	private VersionContainer copyVersionContainer(VersionContainer container) {
+	private VersionContainer copyVersionContainer(VersionContainer container, String path) {
 		VersionContainer copy = new VersionContainer();
 		if (container.getLiveVersion() != null) {
-			copy.setLiveVersion(cloneComponentVersion(
+			copy.setLiveVersion(copyComponentVersion(
 					container.getLiveVersion()));
 		}
 		if (container.getPreviewVersion() != null) {
-			copy.setPreviewVersion(cloneComponentVersion(
+			copy.setPreviewVersion(copyComponentVersion(
 					container.getPreviewVersion()));
+		}
+		Set childLists = container.getChildLists();
+		if (childLists != null) {
+			HashSet clonedLists = new HashSet(); 
+			Iterator it = childLists.iterator();
+			while (it.hasNext()) {
+				ComponentList list = (ComponentList) it.next();
+				ComponentList clonedList = copyComponentList(list, path);
+				clonedList.setParent(copy);
+				clonedLists.add(clonedList);
+			}
+			copy.setChildLists(clonedLists);
 		}
 		return copy;
 	}
 	
-	private ComponentVersion cloneComponentVersion(ComponentVersion version) {
+	private ComponentVersion copyComponentVersion(ComponentVersion version) {
 		Component component = repository.getComponent(version);
 		ComponentVersion copy = new ComponentVersion(version);
 		if (component.getPropertyProcessors() != null) {

@@ -25,11 +25,9 @@ package org.riotfamily.pages.component.dao.hibernate;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.dao.AbstractComponentDao;
@@ -50,19 +48,22 @@ public class HibernateComponentDao extends AbstractComponentDao {
 		this.sessionFactory = sessionFactory;
 	}
 
-	public ComponentList findComponentList(
-			final String path, final String key) {
-		
-		Criteria c = sessionFactory.getCurrentSession().createCriteria(ComponentList.class);
-		c.add(Restrictions.naturalId().set("path", path).set("key", key));
-		c.setCacheable(true);
-		c.setCacheRegion("components");
-		return (ComponentList) c.uniqueResult();
+	public ComponentList findComponentList( String path, String key) {
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"from ComponentList list where list.path = :path " +
+				"and list.key = :key and list.parent is null");
+				
+		query.setParameter("path", path);
+		query.setParameter("key", key);
+		query.setCacheable(true);
+		query.setCacheRegion("components");
+		return (ComponentList) query.uniqueResult();
 	}
 	
-	public List findComponentLists(final String path) {
+	public List findComponentLists(String path) {
 		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from ComponentList list where list.path = :path");
+				"from ComponentList list where list.path = :path " +
+				"and list.parent is null");
 				
 		query.setParameter("path", path);
 		query.setCacheable(true);
@@ -97,7 +98,7 @@ public class HibernateComponentDao extends AbstractComponentDao {
 		sessionFactory.getCurrentSession().delete(object);
 	}
 
-	public void updatePaths(final String oldPath, final String newPath) {
+	public void updatePaths(String oldPath, String newPath) {
 		Query query = sessionFactory.getCurrentSession().createQuery(
 				"update ComponentList set path = :newPath" +
 				" where path = :oldPath");

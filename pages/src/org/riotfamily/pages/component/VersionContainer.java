@@ -45,6 +45,8 @@ public class VersionContainer {
 	private ComponentVersion previewVersion;
 	
 	private Set versions;
+	
+	private Set childLists;
 
 	public VersionContainer() {
 	}
@@ -94,6 +96,14 @@ public class VersionContainer {
 
 	public void setVersions(Set versions) {
 		this.versions = versions;
-	}	
+	}
 
+	public Set getChildLists() {
+		return this.childLists;
+	}
+
+	public void setChildLists(Set childLists) {
+		this.childLists = childLists;
+	}
+	
 }

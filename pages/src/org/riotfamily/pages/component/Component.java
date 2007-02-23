@@ -63,5 +63,10 @@ public interface Component {
 	 * CacheItem containing the rendered component.
 	 */
 	public Collection getCacheTags(ComponentVersion version);
+	
+	/**
+	 * Returns a JavaScript that is executed when the component is modified.
+	 */
+	public String getOnChangeScript();
 
 }

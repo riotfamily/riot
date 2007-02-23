@@ -11,17 +11,16 @@
 		<id name="id">
 			<generator class="native" />
 		</id>
-		<natural-id>
-			<property name="path" column="`path`" />
-			<property name="key" column="`key`" />
-		</natural-id>
-		<list name="liveList" cascade="all">
+		<property name="path" column="`path`" unique-key="component_list_key" />
+		<property name="key" column="`key`" unique-key="component_list_key" />
+		<many-to-one name="parent" unique-key="component_list_key" />
+		<list name="liveContainers" cascade="all">
 			<cache usage="nonstrict-read-write" region="components" />
 			<key column="live_list" />
 			<index column="live_pos" />
 			<one-to-many class="VersionContainer" />
 		</list>
-		<list name="previewList" cascade="all">
+		<list name="previewContainers" cascade="all">
 			<cache usage="nonstrict-read-write" region="components" />
 			<key column="preview_list" />
 			<index column="preview_pos" />
@@ -44,12 +43,10 @@
 		<many-to-one name="liveVersion" column="live_version" cascade="all" />
 		<many-to-one name="previewVersion" column="preview_version" cascade="all" />
 				
-		<!-- 
-		<set name="versions">
-			<key column="component" />
-			<one-to-many class="ComponentVersion" />
+		<set name="childLists" inverse="true" cascade="all">
+			<key column="parent" />
+			<one-to-many class="ComponentList" />
 		</set>
-		 -->
 	</class>
 	
 	<class name="ComponentVersion" table="component_versions" lazy="false">

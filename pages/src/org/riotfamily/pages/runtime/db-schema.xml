@@ -99,5 +99,18 @@
 					sql="update component_versions set container = (select id from components where live_version = component_versions.id or preview_version= component_versions.id)" />
 			</db:update-data>
 		</db:change-set>
+		<db:change-set id="nestedComponentLists">
+			<db:add-column table="component_lists" name="parent" type="BIGINT" />
+			<db:update-data>
+				<db:statement 
+					dialects="postgresql,postgresql8" 
+					sql="update component_lists set parent = cast(substring(key from position('$' in key) + 1) as numeric) where key like '%$%'" />
+			</db:update-data>
+			<db:add-foreign-key table="component_lists" name="component_lists_parent" references="components">
+				<db:ref local="parent" foreign="id" />
+			</db:add-foreign-key>
+			<db:drop-unique-constraint table="component_lists" constraint="component_list_key" />
+			<db:add-unique-constraint table="component_lists" name="component_list_key" on="`path`,`key`,parent" />
+		</db:change-set>
 	</db:history>
 </beans>

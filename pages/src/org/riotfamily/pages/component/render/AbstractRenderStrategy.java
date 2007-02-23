@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,6 +61,7 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	
 	protected PrintWriter out;
 	
+	protected VersionContainer parent;
 	
 	public AbstractRenderStrategy(ComponentDao dao, 
 			ComponentRepository repository, ComponentListConfiguration config,
@@ -72,6 +74,8 @@ public class AbstractRenderStrategy implements RenderStrategy {
 		this.request = request;
 		this.response = response;
 		this.out = response.getWriter();
+		this.parent = (VersionContainer) request.getAttribute(
+				AbstractComponent.CONTAINER);
 	}
 	
 	public final void render() throws IOException {
@@ -93,26 +97,18 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	}
 	
 	protected String getComponentPath() {
-		VersionContainer parentContainer = (VersionContainer) 
-				request.getAttribute(AbstractComponent.CONTAINER);
-		
-		if (parentContainer != null) {
-			return parentContainer.getList().getPath();
+		if (parent != null) {
+			return parent.getList().getPath();
 		}
 		return config.getComponentPathResolver().getComponentPath(request);
 	}
 	
 	protected String getComponentKey() {
-		VersionContainer parentContainer = (VersionContainer) 
-				request.getAttribute(AbstractComponent.CONTAINER);
-		
-		if (parentContainer != null) {
-			return parentContainer.getList().getKey() + "$" 
-					+ parentContainer.getId();
+		if (parent != null) {
+			return parent.getList().getKey();
 		}
 		return config.getComponentKeyResolver().getComponentKey(request);
 	}
-	
 
 	protected void onListNotFound(String path, String key) throws IOException {
 		log.debug("No ComponentList found with path " 
@@ -125,6 +121,13 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	 * path/key-combination.
 	 */
 	protected ComponentList getComponentList(String path, String key) {
+		if (parent != null) {
+			Set childLists = parent.getChildLists();
+			if (childLists != null && !childLists.isEmpty()) {
+				return (ComponentList) childLists.iterator().next();
+			}
+			return null;
+		}
 		log.debug("Looking up ComponentList " + path + '#' + key);
 		return dao.findComponentList(path, key);
 	}	
@@ -167,7 +170,7 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	 * simply returns the list's live components.
 	 */
 	protected List getComponentsToRender(ComponentList list) {
-		return list.getLiveList();
+		return list.getLiveContainers();
 	}
 	
 	/**

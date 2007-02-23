@@ -54,10 +54,10 @@ public class PreviewModeRenderStrategy extends AbstractRenderStrategy {
 	 */
 	protected List getComponentsToRender(ComponentList list) {
 		if (list.isDirty()) { 
-			return list.getPreviewList();
+			return list.getPreviewContainers();
 		}
 		else {
-			return list.getLiveList();
+			return list.getLiveContainers();
 		}
 	}
 	

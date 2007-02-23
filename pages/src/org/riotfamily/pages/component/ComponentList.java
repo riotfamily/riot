@@ -40,16 +40,18 @@ public class ComponentList {
 	
 	private String key;
 	
-	private List liveList;
+	private List liveContainers;
 	
-	private List previewList;
+	private List previewContainers;
 	
 	private boolean dirty;
 	
 	private Date lastModified;
 	
 	private String lastModifiedBy;
-
+	
+	private VersionContainer parent;
+	
 	public Long getId() {
 		return this.id;
 	}
@@ -66,12 +68,12 @@ public class ComponentList {
 		this.key = key;
 	}
 
-	public List getLiveList() {
-		return this.liveList;
+	public List getLiveContainers() {
+		return this.liveContainers;
 	}
 
-	public void setLiveList(List list) {
-		this.liveList = list;
+	public void setLiveContainers(List list) {
+		this.liveContainers = list;
 	}
 
 	public String getPath() {
@@ -82,12 +84,20 @@ public class ComponentList {
 		this.path = path;
 	}
 
-	public List getPreviewList() {
-		return this.previewList;
+	public VersionContainer getParent() {
+		return this.parent;
 	}
 
-	public void setPreviewList(List list) {
-		this.previewList = list;
+	public void setParent(VersionContainer parent) {
+		this.parent = parent;
+	}
+
+	public List getPreviewContainers() {
+		return this.previewContainers;
+	}
+
+	public void setPreviewContainers(List list) {
+		this.previewContainers = list;
 	}
 
 	/**
