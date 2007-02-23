@@ -61,7 +61,7 @@ public interface ComponentEditor {
 	public ComponentInfo setType(String controllerId, Long containerId,
 			String type) throws RequestContextExpiredException;
 
-	public String getHtml(String controllerId, Long containerId)
+	public ComponentInfo getComponent(String controllerId, Long containerId)
 			throws RequestContextExpiredException;
 
 	public String getLiveListHtml(String controllerId, Long listId);

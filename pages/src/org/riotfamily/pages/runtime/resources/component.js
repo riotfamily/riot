@@ -109,6 +109,9 @@ riot.Component.prototype = {
 		this.type = info.type;
 		this.formId = info.formId;
 		this.setHtml(info.html);
+		if (info.onChangeScript) {
+			eval(info.onChangeScript);
+		}
 		riot.toolbar.setDirty(this.componentList, true);
 	},
 			
@@ -142,13 +145,14 @@ riot.Component.prototype = {
 	
 	propertiesChanged: function() {
 		riot.toolbar.setDirty(this.componentList, true);
-		//riot.toolbar.buttons.properties.disable();
 		riot.toolbar.buttons.browse.click();
-		ComponentEditor.getHtml(this.componentList.controllerId, this.id, 
-			function(html) {
-				this.setHtml(html)
+		ComponentEditor.getComponent(this.componentList.controllerId, this.id, 
+			function(info) {
+				this.setHtml(info.html);
+				if (info.onChangeScript) {
+					eval(info.onChangeScript);
+				}
 				riot.popup.close();
-				//riot.toolbar.buttons.properties.enable().click();
 			}.bind(this));
 	},
 	

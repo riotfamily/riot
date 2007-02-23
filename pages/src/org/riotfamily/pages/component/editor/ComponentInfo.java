@@ -23,6 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.component.editor;
 
+import org.riotfamily.pages.component.ComponentRepository;
+import org.riotfamily.pages.component.ComponentVersion;
+
 /**
  * Value bean that is send to the JavaScript client via DWR. It provides  
  * information about a component including the rendered HTML code.
@@ -37,14 +40,18 @@ public class ComponentInfo {
 	
 	private String html;
 
+	private String onChangeScript;
 	
 	public ComponentInfo() {
 	}
 
-	public ComponentInfo(Long id, String type, String formId, String html) {
-		this.id = id;
-		this.type = type;
-		this.formId = formId;
+	public ComponentInfo(ComponentRepository repository, 
+			ComponentVersion version, String html) {
+		
+		this.id = version.getContainer().getId();
+		this.type = version.getType();
+		this.formId = repository.getFormId(type);
+		this.onChangeScript = repository.getComponent(type).getOnChangeScript();
 		this.html = html;
 	}
 
@@ -78,6 +85,14 @@ public class ComponentInfo {
 
 	public void setFormId(String formId) {
 		this.formId = formId;
-	}	
+	}
 
+	public String getOnChangeScript() {
+		return this.onChangeScript;
+	}
+
+	public void setOnChangeScript(String onChangeScript) {
+		this.onChangeScript = onChangeScript;
+	}
+	
 }

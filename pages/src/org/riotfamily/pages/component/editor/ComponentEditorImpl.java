@@ -134,10 +134,9 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		version.setProperty(property, chunks[0]);
 		getDao().updateComponentVersion(version);
 		
-		ComponentInfo info = new ComponentInfo();
-		info.setId(containerId);
-		info.setType(version.getType());
-		info.setHtml(getHtml(getConfig(controllerId), version));
+		ComponentInfo info = new ComponentInfo(getRepository(), version,
+				getHtml(getConfig(controllerId), version));
+		
 		result[0] = info;
 
 		ComponentList list = container.getList();
@@ -195,9 +194,9 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		VersionContainer container = getDao().insertContainer(componentList, 
 				type, properties, position, isInstantPublishMode());
 		
-		return new ComponentInfo(container.getId(), type, 
-				getRepository().getFormId(type), 
-				getHtml(config, getDao().getLatestVersion(container)));
+		ComponentVersion version = getDao().getLatestVersion(container);
+		return new ComponentInfo(getRepository(), version, 
+				getHtml(config, version));
 	}
 	
 	
@@ -210,17 +209,18 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		version.setType(type);
 		getDao().updateComponentVersion(version);
 		
-		return new ComponentInfo(containerId, type,
-				getRepository().getFormId(type),
+		return new ComponentInfo(getRepository(), version,
 				getHtml(getConfig(controllerId), version));
 	}
 	
-	public String getHtml(String controllerId, Long containerId) 
+	public ComponentInfo getComponent(String controllerId, Long containerId) 
 			throws RequestContextExpiredException {
 		
 		VersionContainer container = getDao().loadVersionContainer(containerId);
 		ComponentVersion version = getDao().getLatestVersion(container);
-		return getHtml(getConfig(controllerId), version);
+		
+		return new ComponentInfo(getRepository(), version,
+				getHtml(getConfig(controllerId), version));
 	}
 		
 	private String getHtml(ComponentListConfiguration config, 
@@ -323,7 +323,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			componentList.setDirty(true);
 		}
 		getDao().updateComponentList(componentList);
-		if (!componentList.getLiveList().contains(container)) {
+		if (!componentList.getLiveContainers().contains(container)) {
 			getDao().deleteVersionContainer(container);
 		}
 	}
@@ -487,7 +487,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	
 	private List getContainersToEdit(ComponentList list) {
 		if (isInstantPublishMode()) {
-			return list.getLiveList();
+			return list.getLiveContainers();
 		}
 		return getDao().getOrCreatePreviewContainers(list);
 	}
