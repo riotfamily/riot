@@ -57,6 +57,8 @@ public class EvolutionHistory implements BeanNameAware {
 	
 	private ArrayList appliedIds;
 	
+	private boolean newModule;
+	
 	public EvolutionHistory(DataSource dataSource) {
 		this.dataSource = dataSource;
 		this.dialect = new DialectResolver().getDialect(dataSource);
@@ -114,6 +116,7 @@ public class EvolutionHistory implements BeanNameAware {
 			log.info("The log-table contains no entries for module '" 
 					+ moduleName + "'. Checking if schema is up-to-date ...");
 			
+			newModule = true;
 			try {
 				DatabaseUtils.validate(dataSource, evolveModel());
 				log.info("Schema looks okay. Marking all changes as applied.");
@@ -137,6 +140,10 @@ public class EvolutionHistory implements BeanNameAware {
 			}
 		}
 		return script;
+	}
+	
+	public boolean isNewModule() {
+		return newModule;
 	}
 	
 	private boolean isApplied(ChangeSet changeSet) {

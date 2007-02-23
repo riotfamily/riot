@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.revolt.definition.Database;
+import org.riotfamily.revolt.refactor.UpdateData;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -73,9 +74,13 @@ public class ChangeSet implements Refactoring {
 		Iterator it = refactorings.iterator();
 		while (it.hasNext()) {
 			Refactoring refactoring = (Refactoring) it.next();
-			Script s = refactoring.getScript(dialect);
-			if (s != null) {
-				script.append(s);
+			// UpdateData refactorings only need to be applied if the module 
+			// was previously in use and the database might contain data
+			if (!(history.isNewModule() && refactoring instanceof UpdateData)) {
+				Script s = refactoring.getScript(dialect);
+				if (s != null) {
+					script.append(s);
+				}
 			}
 		}
 		return script;
