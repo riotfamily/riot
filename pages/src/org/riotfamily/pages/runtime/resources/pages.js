@@ -22,7 +22,3 @@ Resources.loadScriptSequence([
 ]);
 
 Resources.loadStyleSheet('style/toolbar.css');
-
-if (riotUserStylesheet) {
-	Resources.loadStyleSheet(riotUserStylesheet);
-}

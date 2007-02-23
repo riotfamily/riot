@@ -75,14 +75,9 @@
 <#--
   - Macro that renders the Riot toolbar if the page is requested in preview mode.
   -->
-<#macro toolbar stylesheet="">
+<#macro toolbar>
 	<#if viewModeResolver?exists>
 		<#if viewModeResolver.isPreviewMode(request)>
-			<#if stylesheet?has_content>
-				<script type="text/javascript">
-					var riotUserStylesheet = "${request.contextPath + stylesheet}";
-				</script>
-			</#if>
 			<#if riotToolbarResources?has_content>
 				<#list riotToolbarResources as resource>
 					<script type="text/javascript" src="${riotEncodeUrl(riotResourcePath + resource)}"></script>

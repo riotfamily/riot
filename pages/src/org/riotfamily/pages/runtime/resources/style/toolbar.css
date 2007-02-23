@@ -1,3 +1,5 @@
+@import url(edit-mode.css);
+
 #riot-toolbar,
 #riot-inspector {
 	position: absolute;
