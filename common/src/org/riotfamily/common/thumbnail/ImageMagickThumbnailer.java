@@ -42,17 +42,10 @@ public class ImageMagickThumbnailer implements Thumbnailer {
 	
 	private String backgroundColor;
 	
-	private String format = "JPG";
-	
-	
 	public void setConvertCommand(String convertCommand) {
 		this.convertCommand = convertCommand;
 	}
 
-	public void setFormat(String format) {
-		this.format = format;
-	}
-	
 	public void setCrop(boolean crop) {
 		this.crop = crop;
 	}
@@ -117,7 +110,7 @@ public class ImageMagickThumbnailer implements Thumbnailer {
 		}
 		cmd.add("-colorspace");
 		cmd.add("RGB");
-		cmd.add(format.toUpperCase() + ':' + dest.getAbsolutePath());
+		cmd.add(dest.getAbsolutePath());
 		CommandUtils.exec(cmd);
 	}
 

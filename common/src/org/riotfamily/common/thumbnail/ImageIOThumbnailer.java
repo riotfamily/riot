@@ -41,6 +41,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -49,23 +50,17 @@ import org.springframework.util.Assert;
  * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class ImageIOThumbnailer implements Thumbnailer {
-
-	public static final String FORMAT_JPG = "jpg";
-	
-	public static final String FORMAT_PNG = "png";
 	
     static {
         System.setProperty("java.awt.headless", "true");
     }
     
-	private String format = FORMAT_JPG;
-	
+    private static final String FORMAT_JPG = "jpg";
+    
+    private static final String FORMAT_PNG = "png";
+    
 	private int maxCrop = 0; 
 		
-	public void setFormat(String format) {
-		this.format = format;
-	}
-
 	public void setMaxCrop(int maxCrop) {
 		this.maxCrop = maxCrop;
 	}
@@ -120,7 +115,7 @@ public class ImageIOThumbnailer implements Thumbnailer {
         	thumbImage = thumbImage.getSubimage(x, y, thumbWidth, thumbHeight);
         }
         
-        writeImage(thumbImage, format, dest);
+        writeImage(thumbImage, dest);
 	}
 
 	private BufferedImage readImage(InputStream in) throws IOException {
@@ -136,15 +131,14 @@ public class ImageIOThumbnailer implements Thumbnailer {
     	}
     }
     
-    private void writeImage(RenderedImage im, String formatName,
-    		File dest) throws IOException {
-    	
-    	Assert.notNull(formatName, "A formatName must be specified");
-    	
-        ImageWriter writer = null;
+    private void writeImage(RenderedImage im, File dest) throws IOException {
+    	ImageWriter writer = null;
         ImageOutputStream ios = null;
-        
         try {
+        	String formatName = FormatUtils.getExtension(dest.getName()).toLowerCase();
+        	if (!formatName.equals(FORMAT_JPG) && !formatName.equals(FORMAT_PNG)) {
+        		formatName = FORMAT_JPG;
+        	}
 	        Iterator it = ImageIO.getImageWritersByFormatName(formatName);
 	        if (it.hasNext()) {
 	            writer = (ImageWriter) it.next();

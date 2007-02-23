@@ -27,12 +27,16 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Interface to render thumbnails.
+ * Interface to render thumbnail images.
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
  */
 public interface Thumbnailer {
 
+	/**
+	 * Renders a thumbnail image of the source file to the specified 
+	 * destination.
+	 */
 	public void renderThumbnail(File source, File dest, int width, int height)
 			throws IOException;
 	
