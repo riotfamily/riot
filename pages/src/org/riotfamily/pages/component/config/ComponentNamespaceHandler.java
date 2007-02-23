@@ -25,33 +25,25 @@ package org.riotfamily.pages.component.config;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import org.riotfamily.common.beans.xml.DefinitionParserUtils;
 import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.pages.component.impl.IncludeComponent;
 import org.riotfamily.pages.component.impl.StaticComponent;
 import org.riotfamily.pages.component.impl.ViewComponent;
-import org.riotfamily.pages.component.property.DefaultValuePropertyProcessor;
-import org.riotfamily.pages.component.property.HibernatePropertyProcessor;
-import org.riotfamily.pages.component.property.PropertyEditorProcessor;
-import org.riotfamily.pages.component.property.XmlPropertyProcessor;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.ManagedList;
-import org.springframework.beans.factory.support.ManagedProperties;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.NamespaceHandler;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
  * NamespaceHandler that handles the <code>component</code> 
- * namspace as defined in <code>component.xsd</code> which can be found in 
+ * namespace as defined in <code>component.xsd</code> which can be found in 
  * the same package.
  */
 public class ComponentNamespaceHandler implements NamespaceHandler {
@@ -63,23 +55,23 @@ public class ComponentNamespaceHandler implements NamespaceHandler {
 	public BeanDefinition parse(Element element, ParserContext parserContext) {
 		String name = element.getLocalName();
 		if ("static-component".equals(name)) {
-			return parseBean(element, StaticComponent.class, 
-					new String[] { "location" }, "id",
+			return parseComponent(element, StaticComponent.class, 
+					new String[] { "location", "onChangeScript=onchange" }, 
 					parserContext);
 		}
 		if ("view-component".equals(name)) {
-			RootBeanDefinition definition = parseBean(element, 
+			RootBeanDefinition definition = parseComponent(element, 
 					ViewComponent.class, 
-					new String[] { "view-name", "dynamic" }, "id",
+					new String[] { "view-name", "dynamic", "onChangeScript=onchange" }, 
 					parserContext);
 			
 			addPropertyProcessors(definition, element, parserContext);
 			return definition;
 		}
 		if ("include-component".equals(name)) {
-			RootBeanDefinition definition = parseBean(element, 
+			RootBeanDefinition definition = parseComponent(element, 
 					IncludeComponent.class, 
-					new String[] { "uri", "dynamic" }, "id",
+					new String[] { "uri", "dynamic", "onChangeScript=onchange" }, 
 					parserContext);
 			
 			addPropertyProcessors(definition, element, parserContext);
@@ -88,9 +80,8 @@ public class ComponentNamespaceHandler implements NamespaceHandler {
 		throw new IllegalArgumentException("Element not supported: " + name);
 	}
 	
-	protected RootBeanDefinition parseBean(Element element, Class beanClass, 
-			String[] attributeNames, String idProperty, 
-			ParserContext parserContext) {
+	private RootBeanDefinition parseComponent(Element element, Class beanClass, 
+			String[] attributeNames, ParserContext parserContext) {
 		
 		RootBeanDefinition definition = new RootBeanDefinition();
 		definition.setBeanClass(beanClass);
@@ -101,15 +92,13 @@ public class ComponentNamespaceHandler implements NamespaceHandler {
 			DefinitionParserUtils.addProperties(pv, element, attributeNames);
 		}
 		
-		if (idProperty != null) {
-			DefinitionParserUtils.registerBeanDefinition(definition, element, 
-				idProperty, null, parserContext);
-		}
+		DefinitionParserUtils.registerBeanDefinition(definition, element, 
+				"id", null, parserContext);
 		
 		return definition;
 	}
 	
-	protected void addPropertyProcessors(RootBeanDefinition definition, 
+	private void addPropertyProcessors(RootBeanDefinition definition, 
 			Element element, ParserContext parserContext) {
 		
 		List childElements = XmlUtils.getChildElements(element);
@@ -120,72 +109,14 @@ public class ComponentNamespaceHandler implements NamespaceHandler {
 			Iterator it = childElements.iterator();
 			while (it.hasNext()) {
 				Element child = (Element) it.next();
-				addPropertyProcessor(processors, child, parserContext);
+				if ("bean".equals(child.getLocalName())) {
+					processors.add(parserContext.getDelegate()
+							.parseBeanDefinitionElement(child, definition));
+				}
 			}
 		}
 	}
-	
-	protected void addPropertyProcessor(List propertyProcessors, 
-			Element element, ParserContext parserContext) {
-	
-		String name = element.getLocalName();
-		RuntimeBeanReference processor = null;
-		if ("property-processor".equals(name)) {
-			processor = new RuntimeBeanReference(element.getAttribute("ref"));
-		}
-		else if ("defaults".equals(name)) {
-			RootBeanDefinition definition = parseBean(element, 
-					DefaultValuePropertyProcessor.class, 
-					null, null, parserContext);
 		
-			ManagedProperties defaults = new ManagedProperties();
-			definition.getPropertyValues().addPropertyValue("values", defaults);
-			addProps(defaults, element);
-			
-			processor = DefinitionParserUtils.registerAnonymousBeanDefinition(
-					definition, parserContext);	
-		}
-		else if ("property-editor".equals(name)) {
-			RootBeanDefinition definition = parseBean(element, 
-					PropertyEditorProcessor.class, 
-					new String[] { "property", "propertyEditor=@ref", "defaultValue=default" }, 
-					null, parserContext);
-			
-			processor = DefinitionParserUtils.registerAnonymousBeanDefinition(
-					definition, parserContext);
-		}
-		else if ("hibernate-entity".equals(name)) {
-			RootBeanDefinition definition = parseBean(element, 
-					HibernatePropertyProcessor.class, 
-					new String[] { "property", "@session-factory", "entityClass=class" }, 
-					null, parserContext);
-			
-			processor = DefinitionParserUtils.registerAnonymousBeanDefinition(
-					definition, parserContext);
-		}
-		else if ("xml".equals(name)) {
-			RootBeanDefinition definition = parseBean(element, 
-					XmlPropertyProcessor.class, 
-					new String[] { "property" }, 
-					null, parserContext);
-			
-			processor = DefinitionParserUtils.registerAnonymousBeanDefinition(
-					definition, parserContext);
-		}
-		propertyProcessors.add(processor);
-	}
-	
-	protected void addProps(Properties props, Element element) {
-		List propElements = DomUtils.getChildElementsByTagName(element, "property");
-		Iterator it = propElements.iterator();
-		while (it.hasNext()) {
-			Element ele = (Element) it.next();
-			String name = XmlUtils.getAttribute(ele, "name");
-			String value = XmlUtils.getAttribute(ele, "value");
-			props.setProperty(name, value);
-		}
-	}
-	
 	public BeanDefinitionHolder decorate(Node node, BeanDefinitionHolder 
 			holder, ParserContext parserContext) {
 		
