@@ -45,6 +45,7 @@ import org.riotfamily.forms.controller.RepositoryFormController;
 import org.riotfamily.forms.element.core.Checkbox;
 import org.riotfamily.forms.element.core.FileUpload;
 import org.riotfamily.forms.element.core.ImageUpload;
+import org.riotfamily.forms.element.core.NumberField;
 import org.riotfamily.forms.factory.FormDefinitionException;
 import org.riotfamily.pages.component.Component;
 import org.riotfamily.pages.component.ComponentRepository;
@@ -164,6 +165,17 @@ public class ComponentFormController extends RepositoryFormController
 						cb.getEditorBinding().getProperty(),
 						new BooleanEditor(), 
 						Boolean.toString(cb.isCheckedByDefault())));
+			}
+			else if (e instanceof NumberField) {
+				NumberField nf = (NumberField) e;
+				Class numberClass = nf.getEditorBinding().getPropertyType();
+				if (!(Number.class.isAssignableFrom(numberClass))) {
+					numberClass = Integer.class;
+				}
+				component.addPropertyProcessor(
+						new PropertyEditorProcessor(
+						nf.getEditorBinding().getProperty(),
+						new CustomNumberEditor(numberClass, false)));
 			}
 		}
 	}
