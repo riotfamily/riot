@@ -166,7 +166,7 @@
 	<#if alwaysUseNested>
 		<#local value><#nested /></#local>
 	<#else>
-		<#local value = (key + "?if_exists")?eval />
+		<#local value = .vars[key]?if_exists />
 		<#if !value?has_content>
 			<#local value><#nested /></#local>
 		</#if>
