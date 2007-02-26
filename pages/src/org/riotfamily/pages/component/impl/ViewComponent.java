@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.ViewResolverHelper;
 import org.riotfamily.pages.component.ComponentVersion;
+import org.riotfamily.pages.component.VersionContainer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.servlet.ModelAndView;
@@ -62,8 +63,14 @@ public class ViewComponent extends AbstractComponent
 			HttpServletResponse response) throws Exception {
 		
 		Map model = buildModel(componentVersion);
-		model.put(COMPONENT_ID, String.valueOf(componentVersion.getId()));
 		model.put(POSITION_CLASS, positionClassName);
+		model.put(COMPONENT_ID, String.valueOf(componentVersion.getId()));
+
+		VersionContainer parentContainer = componentVersion.getContainer().getList().getParent();
+		if (parentContainer != null) {
+			request.setAttribute(PARENT_ID, String.valueOf(parentContainer.getId()));
+		}
+		
 		ModelAndView mv = new ModelAndView(viewName, model);
 		View view = viewResolverHelper.resolveView(request, mv);
 		view.render(model, request, response);

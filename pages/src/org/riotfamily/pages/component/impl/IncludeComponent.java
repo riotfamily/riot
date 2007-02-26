@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.component.ComponentVersion;
+import org.riotfamily.pages.component.VersionContainer;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -56,6 +57,12 @@ public class IncludeComponent extends AbstractComponent {
 		WebUtils.exposeRequestAttributes(request, buildModel(componentVersion));
 		request.setAttribute(POSITION_CLASS, positionClassName);
 		request.setAttribute(COMPONENT_ID, String.valueOf(componentVersion.getId()));
+		
+		VersionContainer parentContainer = componentVersion.getContainer().getList().getParent();
+		if (parentContainer != null) {
+			request.setAttribute(PARENT_ID, String.valueOf(parentContainer.getId()));
+		}
+		
 		request.getRequestDispatcher(uri).include(request, response);
 		ServletUtils.restoreAttributes(request, snapshot);
 	}

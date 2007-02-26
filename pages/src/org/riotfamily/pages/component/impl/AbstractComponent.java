@@ -54,6 +54,8 @@ public abstract class AbstractComponent implements Component {
 	
 	public static final String COMPONENT_ID = "componentId";
 	
+	public static final String PARENT_ID = "parentId";
+	
 	public static final String POSITION_CLASS = "positionClass";
 	
 	protected Log log = LogFactory.getLog(AbstractComponent.class);
