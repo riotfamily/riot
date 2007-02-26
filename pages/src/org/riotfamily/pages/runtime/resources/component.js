@@ -395,7 +395,6 @@ riot.ComponentList.prototype = {
 		this.maxComponents = el.getAttribute('riot:maxComponents');
 		this.minComponents = el.getAttribute('riot:minComponents');
 		if (!el.id) el.id = 'ComponentList' + this.id;
-		
 		ComponentEditor.getValidTypes(this.controllerId, 
 				this.setValidTypes.bind(this));
 	},
@@ -493,16 +492,14 @@ riot.ComponentList.prototype = {
 				Sortable.create(this.element, {tag: 'div', only: 'riot-component', scroll: window, scrollSpeed: 20});
 				this.getComponents().each(function(component) {
 					Element.addClassName(component.element, 'riot-moveable-component');
-					component.element.onclick = function(event) {
-						Event.stop(event || window.event);
-					}
+					component.element.observe('click', riot.stopEvent, true);
 				});
 				Draggables.addObserver(new riot.ComponentDragObserver(this));
 			}
 			else {
 				this.getComponents().each(function(component) {
 					Element.removeClassName(component.element, 'riot-moveable-component');
-					component.element.onclick = null;
+					component.element.stopObserving('click', riot.stopEvent, true);
 				});
 				Sortable.destroy(this.element);
 				Draggables.removeObserver(this.element);
@@ -572,6 +569,8 @@ riot.ComponentDragObserver.prototype = {
 		this.nextEl = null;
 	}
 }
+
+riot.stopEvent = Event.stop.bindAsEventListener(riot);
 
 riot.editProperties = function(e) {
 	e = e || this;
