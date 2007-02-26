@@ -25,17 +25,28 @@ package org.riotfamily.pages.component.property;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
+
 /**
  * Abstract base class for PropertyProcessors that process a single property.
  */
 public abstract class AbstractSinglePropertyProcessor 
-		implements PropertyProcessor {
+		implements PropertyProcessor, InitializingBean {
 
 	private String property;
 	
 	public AbstractSinglePropertyProcessor() {
 	}
 
+	public final void afterPropertiesSet() throws Exception {
+		Assert.notNull(property, "The name of the property must be set.");
+		initialize();
+	}
+	
+	protected void initialize() {
+	}
+	
 	public void setProperty(String property) {
 		this.property = property;
 	}
