@@ -22,3 +22,4 @@ Resources.loadScriptSequence([
 ]);
 
 Resources.loadStyleSheet('style/toolbar.css');
+Resources.loadStyleSheet('style/edit-mode.css');
