@@ -173,7 +173,26 @@ html .riot-insert-button-active {
 	background-position: center -16px;
 }
 
-.riot-moveable-component {
+.riot-components:after {
+    content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
+}
+
+.riot-components {
+	clear: both;
+	display: inline-block;
+}
+
+/* Hides from IE-mac \*/
+* html .riot-components {height: 1%;}
+.riot-components {display: block;}
+/* End hide from IE-mac */
+
+.riot-moveable-component,
+.riot-moveable-component * {
 	cursor: move;
 }
 
@@ -189,8 +208,6 @@ html .riot-insert-button-active {
 
 div.riot-highlight {
 	position: absolute;
-	top: -2px;
-	left: -2px;
 	border: 2px dotted #cb0038;
 }
 

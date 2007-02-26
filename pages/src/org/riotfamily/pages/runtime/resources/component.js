@@ -3,7 +3,9 @@ document.body.appendChild(riot.hover);
 riot.hideHover = function() {
 	if (riot.hover) riot.hover.hide();
 }
-
+riot.hover.onmouseout = function() {
+	riot.hoverTimeout = setTimeout(riot.hideHover, 250);
+}
 riot.Component = Class.create();
 riot.Component.prototype = {
 
@@ -47,7 +49,8 @@ riot.Component.prototype = {
 	setMode: function(mode) {
 		if (mode == null) {
 			if (isSet(this.mode)) {
-				Event.stopObserving(this.element, 'click', this.handlers[this.mode]);
+				Event.stopObserving(this.element, 'click', riot.stopEvent, true);
+				Event.stopObserving(this.element, 'mouseup', this.handlers[this.mode]);
 				Event.stopObserving(this.element, 'mouseover', this.onMouseOver);
 				Event.stopObserving(this.element, 'mouseout', this.onMouseOut);
 			}
@@ -57,8 +60,8 @@ riot.Component.prototype = {
 				this.mode = null;
 				return;
 			}
-			
-			Event.observe(this.element, 'click', this.handlers[mode]);
+			Event.observe(this.element, 'click', riot.stopEvent, true);
+			Event.observe(this.element, 'mouseup', this.handlers[mode]);
 			Event.observe(this.element, 'mouseover', this.onMouseOver);
 			Event.observe(this.element, 'mouseout', this.onMouseOut);
 		}
@@ -68,7 +71,7 @@ riot.Component.prototype = {
 	showOutline: function(event) {
 		if (browserInfo.ie) {
 			if (riot.hoverTimeout) clearTimeout(riot.hoverTimeout);
-			Position.clone(this.element, riot.hover);
+			Position.clone(this.element, riot.hover, {offsetTop: -2, offsetLeft: -2});
 			riot.hover.show();
 		}
 		else {
@@ -79,7 +82,9 @@ riot.Component.prototype = {
 	
 	hideOutline: function(event) {
 		if (browserInfo.ie) {
-			riot.hoverTimeout = setTimeout(riot.hideHover, 250);
+			if (riot.hover != event.toElement) {
+				riot.hoverTimeout = setTimeout(riot.hideHover, 250);
+			}
 		}
 		else {
 			this.element.removeClassName('riot-outline');
@@ -190,19 +195,23 @@ riot.Component.prototype = {
 				// getAttribute('riot:editorType') fails in IE for TABLE elements (and maybe others?)
 			}
 		}
-		if (!browserInfo.ie) {
-			var e = this.element; 
-			e.immediateDescendants().each(function(c) {
-				if (c.getStyle('float') != 'none') {
-					c.addClassName('riot-floating-content');
-					e.style.zIndex = 1;
-				}
-				var clear = c.getStyle('clear');
-				if (clear != 'none') {
-					e.style.clear = clear;
-				}
-			});
-		}
+		
+		// Adopt float and clear styles from the child element(s) ...
+		var c = this; 
+		c.element.immediateDescendants().each(function(child) {
+			var cssFloat = child.getStyle('float');
+			if (cssFloat != 'none') {
+				c.element.style.zIndex = 1;
+				c.element.style.cssFloat = cssFloat;
+				c.element.style.styleFloat = cssFloat;
+				c.componentList.floating = true;
+			}
+			var clear = child.getStyle('clear');
+			if (clear != 'none') {
+				c.element.style.clear = clear;
+			}
+		});
+		
 		if (this.editing) {
 			this.edit(true);
 		}
@@ -489,7 +498,11 @@ riot.ComponentList.prototype = {
 		if (this.getComponents().length > 1) {
 			RElement.toggleClassName(this.element, 'riot-mode-move', enable);
 			if (enable) {
-				Sortable.create(this.element, {tag: 'div', only: 'riot-component', scroll: window, scrollSpeed: 20});
+				Sortable.create(this.element, {tag: 'div', only: 'riot-component', 
+						overlap: this.floating ? 'horizontal' : 'vertical',
+						constraint: this.floating ? false : 'vertical', 
+						scroll: window, scrollSpeed: 20
+				});
 				this.getComponents().each(function(component) {
 					Element.addClassName(component.element, 'riot-moveable-component');
 					component.element.observe('click', riot.stopEvent, true);
@@ -570,7 +583,10 @@ riot.ComponentDragObserver.prototype = {
 	}
 }
 
-riot.stopEvent = Event.stop.bindAsEventListener(riot);
+riot.stopEvent = function(ev) {
+	Event.stop(ev || window.event);
+	return false;
+}
 
 riot.editProperties = function(e) {
 	e = e || this;
@@ -579,4 +595,5 @@ riot.editProperties = function(e) {
 		riot.toolbar.buttons.properties.click();
 		componentElement.component.properties();
 	}
+	return false;
 }
