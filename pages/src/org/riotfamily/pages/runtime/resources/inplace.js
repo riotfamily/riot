@@ -147,12 +147,6 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 				this.paddingTop = parseInt(Element.getStyle(this.element, 'padding-top'));
 			}
 		}
-
-		Position.clone(this.element, this.input, {
-			setWidth: false,
-			setHeight: false
-		});
-		
 		this.resize();
 		RElement.makeInvisible(this.element);
 		Element.show(this.input);
@@ -180,6 +174,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 	},
 
 	resize: function() {
+		Position.clone(this.element, this.input, { setWidth: false, setHeight: false });
 		this.input.style.width  = (this.element.offsetWidth - this.paddingLeft) + 'px';
     	this.input.style.height = (this.element.offsetHeight - this.paddingTop) + 'px';
 	}
