@@ -11,19 +11,26 @@
 	<div id="test1"></div>
 	<div id="test2"></div>
 	<div id="test3"></div>
+	<div id="test4"></div>
 	<script type="text/javascript">
 		new Cropper.UI('test1', 'downloads.jpg', null, {maxWidth: 100, maxHeight: 100});
 		
 		new Cropper.UI('test2', 'downloads.jpg', '?', {
-			maxWidth: 200, maxHeight: 200, minHeight: 10,
-			widths: [80,120,200], 
-			heights: [80,120,200]
+			maxWidth: 202, maxHeight: 202, minHeight: 10,
+			widths: [80,120,202], 
+			heights: [80,120,202]
 		});
-		
+
 		new Cropper.UI('test3', '', '?', {
 			maxWidth: 200, maxHeight: 200, minHeight: 10,
 			widths: [80,120,200], 
 			heights: [80,120,200]
+		});
+
+		new Cropper.UI('test4', 'downloads.jpg', '?', {
+			maxHeight: 300, minHeight: 10,
+			maxWidth: 600, minWidth: 500,
+			widths: [500,550,600]
 		});
 	</script>
 </body>

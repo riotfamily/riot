@@ -36,6 +36,7 @@ Cropper.Pos.prototype = {
 	
 	keepWithin: function(minX, minY, maxX, maxY) {
 		if (maxX < minX) maxX = minX; if (maxY < minY) maxY = minY;
+		//if (minX > maxX) minX = maxX; if (minY > maxY) minY = maxY;
 		if (this.x < minX) this.x = minX; else if (this.x > maxX) this.x = maxX;
 		if (this.y < minY) this.y = minY; else if (this.y > maxY) this.y = maxY;
 	},
@@ -86,7 +87,8 @@ Cropper.UI.prototype = {
 				e = Cropper.appendDiv(this.controls, 'sizeSelectors');
 			}
 			if (o.widths) {
-				e.appendChild(this.createSizeSelector(o.widths, 'setWidth'));
+				this.widthSelector = this.createSizeSelector(o.widths, 'setWidth');
+				e.appendChild(this.widthSelector);
 				if (o.heights) {
 					var x = document.createElement('span');
 					x.innerHTML = '&times;';
@@ -95,7 +97,8 @@ Cropper.UI.prototype = {
 				}
 			}
 			if (o.heights) {
-				e.appendChild(this.createSizeSelector(o.heights, 'setHeight'));
+				this.heightSelector = this.createSizeSelector(o.heights, 'setHeight');
+				e.appendChild(this.heightSelector);
 			}
 			
 			e = this.cropButton = Cropper.appendDiv(this.controls, 'cropButton');
@@ -192,17 +195,40 @@ Cropper.UI.prototype = {
 	onLoadImage: function() {
 		this.imageSize = new Cropper.Pos(this.img.width, this.img.height);
 		this.min = new Cropper.Pos(this.options.minWidth, this.options.minHeight);
+		this.min.keepWithin(0, 0, this.imageSize.x, this.imageSize.y);
 		this.max = new Cropper.Pos(this.options.maxWidth || this.imageSize.x, this.options.maxHeight || this.imageSize.y);
 		this.setCanvasSize(this.max);
 		this.max.keepWithin(0, 0, this.imageSize.x, this.imageSize.y);
 		this.zoomSlider.range.end = this.imageSize.x;
 		this.setSize(this.max);
-		if (this.options.widths) {
-			this.setWidth(this.options.widths[0]);
+		
+		if (this.widthSelector) {
+			var initialWidth;
+			var opts = this.widthSelector.options;
+			for (var i = 0; i < opts.length; i++) {
+				var v = parseInt(opts[i].value);
+				opts[i].disabled = v < this.min.x || v > this.max.x;
+				if (v > (initialWidth || 0) && !opts[i].disabled) {
+					initialWidth = v;
+					opts[i].selected = true;
+				}
+			}
+			if (initialWidth) this.setWidth(initialWidth);
 		}
-		if (this.options.heights) {
-			this.setHeight(this.options.heights[0]);
+		if (this.heightSelector) {
+			var initialHeight;
+			var opts = this.heightSelector.options;
+			for (var i = 0; i < opts.length; i++) {
+				var v = parseInt(opts[i].value);
+				opts[i].disabled = v < this.min.y || v > this.max.y;
+				if (v > (initialHeight || 0) && !opts[i].disabled) {
+					initialHeight = v;
+					opts[i].selected = true;
+				}
+			}
+			if (initialHeight) this.setHeight(initialHeight);
 		}
+		
 		this.zoomSlider.setValue(this.imageSize.x);
 	},
 
@@ -247,7 +273,7 @@ Cropper.UI.prototype = {
 	},
 	
 	setSizeFromSelect: function(sel, setter) {
-		if (this.cropEnabled) {
+		if (this.imageSize) {
 			this[setter](sel.options[sel.selectedIndex].value);
 		}
 	},
