@@ -83,7 +83,7 @@ a.mceButtonDisabled {
 	margin: 0px;
 }
 
-.mceStatusbarBottom {
+.mceEditor td.mceStatusbarBottom {
 	font-size: 9pt;
 	padding: 5px 20px;
 	background-color: #ebebeb;

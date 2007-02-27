@@ -351,6 +351,16 @@ body > #riot-popup {
 	margin: 0;
 }
 
+table.mceEditor {
+	border-spacing: 0;
+	border-collapse: collapse;
+	border: none;
+}
+.mceEditor td {
+	padding: 0;
+	margin: 0;
+}
+
 #riot-overlay { 
 	position: absolute;
 	top: 0;
