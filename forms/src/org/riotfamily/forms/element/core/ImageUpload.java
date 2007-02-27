@@ -236,12 +236,12 @@ public class ImageUpload extends FileUpload {
 				}
 				if (!match) {
 					ErrorUtils.reject(this, "image.size.mismatch");
+					return;
 				}
 			}
-			else {
-				if (imageWidth < minWidth || (maxWidth > 0 && imageWidth > maxWidth)) {
-					ErrorUtils.reject(this, "image.size.mismatch");
-				}
+			else if (imageWidth < minWidth || (maxWidth > 0 && imageWidth > maxWidth)) {
+				ErrorUtils.reject(this, "image.size.mismatch");
+				return;
 			}
 			
 			if (heights != null) {
@@ -256,10 +256,8 @@ public class ImageUpload extends FileUpload {
 					ErrorUtils.reject(this, "image.size.mismatch");
 				}
 			}
-			else {
-				if (imageHeight < minHeight || (maxHeight > 0 && imageHeight > maxHeight)) {
-					ErrorUtils.reject(this, "image.size.mismatch");
-				}
+			else if (imageHeight < minHeight || (maxHeight > 0 && imageHeight > maxHeight)) {
+				ErrorUtils.reject(this, "image.size.mismatch");
 			}
 		}
 		catch (IOException e) {
