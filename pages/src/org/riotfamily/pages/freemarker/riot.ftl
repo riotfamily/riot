@@ -188,6 +188,7 @@
 			<#local element=tag />
 		<#else>
 			<#local element="div" />
+			<#local attrs=attrs + " class=\"riot-editor\"" />
 		</#if>
 		<${element} riot:key="${key}" riot:editorType="${editor}"${attrs?if_exists}>${value}</${element}>
 	<#elseif tag?has_content>
