@@ -55,7 +55,7 @@ Cropper.UI = Class.create();
 Cropper.UI.prototype = {
 	initialize: function(el, src, cropUrl, options) {
 		this.element = $(el).addClassName('cropper');
-		this.cropUrl = cropUrl;
+		this.cropUrl = this.resizeable = cropUrl;
 		var o = this.options = options || {};
 
 		o.minWidth = o.minWidth || o.width || 0;
@@ -80,7 +80,25 @@ Cropper.UI.prototype = {
 
 		if (this.cropUrl) {
 			this.cropEnabled = true;
-			var e = this.cropButton = Cropper.appendDiv(this.controls, 'cropButton');
+			
+			var e;
+			if (o.widths || o.heights) {
+				e = Cropper.appendDiv(this.controls, 'sizeSelectors');
+			}
+			if (o.widths) {
+				e.appendChild(this.createSizeSelector(o.widths, 'setWidth'));
+				if (o.heights) {
+					var x = document.createElement('span');
+					x.innerHTML = '&times;';
+					e.appendChild(x);
+					this.resizeable = false;
+				}
+			}
+			if (o.heights) {
+				e.appendChild(this.createSizeSelector(o.heights, 'setHeight'));
+			}
+			
+			e = this.cropButton = Cropper.appendDiv(this.controls, 'cropButton');
 			e.appendChild(document.createTextNode(o.cropLabel || 'Crop'));
 			e.onclick = this.crop.bind(this);
 
@@ -136,6 +154,18 @@ Cropper.UI.prototype = {
 		this.setImage(src);
 	},
 	
+	createSizeSelector: function(values, setter) {
+		var sel = document.createElement('select');
+		values.each(function(s) {
+			var option = document.createElement('option');
+			option.value = s;
+			option.text = s + ' px';
+			sel.appendChild(option);
+		});
+		sel.onchange = this.setSizeFromSelect.bind(this, sel, setter);
+		return sel;
+	},
+	
 	setImage: function(src) {
 		var present = (typeof src == 'string') && src != '';
 		if (present) {		
@@ -146,10 +176,10 @@ Cropper.UI.prototype = {
 			this.setCanvasSize(new Cropper.Pos(this.options.maxWidth || 150, this.options.maxHeight || 100));
 		}
 		this.setCrop(false);
-		this.setCrop(present);
+		this.setCrop(present && this.cropUrl);
 		Cropper.toggle(this.img, present);
 		Cropper.toggle(this.zoomTrack, present);
-		Cropper.toggle(this.resizeHandle, present);
+		Cropper.toggle(this.resizeHandle, present && this.resizeable);
 	},
 
 	setCanvasSize: function(size) {
@@ -166,7 +196,13 @@ Cropper.UI.prototype = {
 		this.setCanvasSize(this.max);
 		this.max.keepWithin(0, 0, this.imageSize.x, this.imageSize.y);
 		this.zoomSlider.range.end = this.imageSize.x;
-		this.setSize(this.max);		
+		this.setSize(this.max);
+		if (this.options.widths) {
+			this.setWidth(this.options.widths[0]);
+		}
+		if (this.options.heights) {
+			this.setHeight(this.options.heights[0]);
+		}
 		this.zoomSlider.setValue(this.imageSize.x);
 	},
 
@@ -199,7 +235,23 @@ Cropper.UI.prototype = {
 		var handleSize = Math.round(this.zoomSlider.trackLength * (minWidth / this.imageSize.x));
 		this.zoomSlider.rescale(minWidth, handleSize);
 	},
-
+	
+	setWidth: function(width) {
+		this.min.x = this.max.x = width;
+		this.setSize(new Cropper.Pos(width, this.preview.offsetHeight));
+	},
+	
+	setHeight: function(height) {
+		this.min.y = this.max.y = height;
+		this.setSize(new Cropper.Pos(this.preview.offsetWidth, height));
+	},
+	
+	setSizeFromSelect: function(sel, setter) {
+		if (this.cropEnabled) {
+			this[setter](sel.options[sel.selectedIndex].value);
+		}
+	},
+	
 	zoom: function(newWidth) {
 		if (isNaN(newWidth)) return;
 		newWidth = Math.round(newWidth);
@@ -207,6 +259,7 @@ Cropper.UI.prototype = {
 		var newHeight = this.img.height * scale;
 
 		if (this.mode != 'resize') {
+			this.elementPos = Cropper.elementPos(this.element);
 			var center = this.zoomToPointer
 					? new Cropper.Pos(this.mousePos.x - this.elementPos.x, this.mousePos.y - this.elementPos.y)
 					: new Cropper.Pos(this.preview.offsetWidth / 2, this.preview.offsetHeight / 2);
@@ -226,6 +279,7 @@ Cropper.UI.prototype = {
 
 	onMouseDownResize: function(event) {
 		this.mode = 'resize';
+		this.elementPos = Cropper.elementPos(this.element);
 		if (document.all) {
 			this.resizeHandle.style.cursor = 'auto';
 			this.img.style.cursor = 'auto';

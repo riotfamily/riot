@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.beans.propertyeditors.IntArrayPropertyEditor;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.bind.BeanEditor;
@@ -236,6 +237,7 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 			return;
 		}
 		BeanWrapper beanWrapper = new BeanWrapperImpl(element);
+		beanWrapper.registerCustomEditor(int[].class, new IntArrayPropertyEditor());
 		MutablePropertyValues pvs = new MutablePropertyValues();
 		PropertyValue[] pvArray = propertyValues.getPropertyValues();
 		for (int i = 0; i < pvArray.length; i++) {

@@ -426,6 +426,17 @@ div.dynamicList .button-add,
 	height:12px;
 	background-color: #3d3d3d;
 }
+
+.cropper .sizeSelectors {
+	float: left;
+	margin-right: 10px;
+}
+.cropper .sizeSelectors span {
+	padding: 0 3px 0 1px;
+}
+.cropper select {
+	font-size: 10px !important;
+}
 .cropper .cropButton,
 .cropper .undoButton {
 	float: left;

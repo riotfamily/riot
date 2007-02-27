@@ -55,9 +55,9 @@ import org.springframework.web.bind.ServletRequestUtils;
  */
 public class ImageUpload extends FileUpload {
 
-	private int width;
+	private int[] widths;
 	
-	private int height;
+	private int[] heights;
 	
 	private int minWidth;
 	
@@ -76,6 +76,8 @@ public class ImageUpload extends FileUpload {
 	private ImageInfo info;
 	
 	private ImageCropper cropper;
+	
+	private boolean crop = true;
 	
 	private File originalFile;
 	
@@ -97,16 +99,44 @@ public class ImageUpload extends FileUpload {
 		this.cropper = cropper;
 	}
 
+	public void setCrop(boolean crop) {
+		this.crop = crop;
+	}
+	
+	public void setWidths(int[] widths) {
+		this.widths = widths;
+		if (widths != null) {
+			int min = Integer.MAX_VALUE;
+			int max = 0;
+			for (int i = 0; i < widths.length; i++) {
+				min = Math.min(min, widths[i]);
+				max = Math.max(max, widths[i]);
+			}
+			setMinWidth(min);
+			setMaxWidth(max);
+		}
+	}
+	
 	public void setWidth(int width) {
-		this.width = width;
-		setMinWidth(width);
-		setMaxWidth(width);
+		setWidths(new int[] { width });
+	}
+	
+	public void setHeights(int[] heights) {
+		this.heights = heights;
+		if (heights != null) {
+			int min = Integer.MAX_VALUE;
+			int max = 0;
+			for (int i = 0; i < heights.length; i++) {
+				min = Math.min(min, heights[i]);
+				max = Math.max(max, heights[i]);
+			}
+			setMinHeight(min);
+			setMaxHeight(max);
+		}
 	}
 	
 	public void setHeight(int height) {
-		this.height = height;
-		setMinHeight(height);
-		setMaxHeight(height);
+		setHeights(new int[] {height});
 	}
 
 	public void setMinWidth(int minWidth) {
@@ -196,31 +226,39 @@ public class ImageUpload extends FileUpload {
 			int imageHeight = info.getHeight();
 			int imageWidth = info.getWidth();
 			
-			if (width > 0) {
-				if (imageWidth != width) {
-					ErrorUtils.reject(this, "image.width.mismatch", new Integer(width));
+			if (widths != null) {
+				boolean match = false;
+				for (int i = 0; i < widths.length; i++) {
+					if (imageWidth == widths[i]) {
+						match = true;
+						break;
+					}
+				}
+				if (!match) {
+					ErrorUtils.reject(this, "image.size.mismatch");
 				}
 			}
 			else {
-				if (imageWidth < minWidth) {
-					ErrorUtils.reject(this, "image.width.tooSmall", new Integer(minWidth));
-				}
-				if (maxWidth > 0 && imageWidth > maxWidth) {
-					ErrorUtils.reject(this, "image.width.tooLarge", new Integer(maxWidth));
+				if (imageWidth < minWidth || (maxWidth > 0 && imageWidth > maxWidth)) {
+					ErrorUtils.reject(this, "image.size.mismatch");
 				}
 			}
 			
-			if (height > 0) {
-				if (imageHeight != height) {
-					ErrorUtils.reject(this, "image.height.mismatch", new Integer(height));
+			if (heights != null) {
+				boolean match = false;
+				for (int i = 0; i < heights.length; i++) {
+					if (imageHeight == heights[i]) {
+						match = true;
+						break;
+					}
+				}
+				if (!match) {
+					ErrorUtils.reject(this, "image.size.mismatch");
 				}
 			}
 			else {
-				if (imageHeight < minHeight) {
-					ErrorUtils.reject(this, "image.height.tooSmall", new Integer(minHeight));
-				}
-				if (maxHeight > 0 && imageHeight > maxHeight) {
-					ErrorUtils.reject(this, "image.height.tooLarge", new Integer(maxHeight));
+				if (imageHeight < minHeight || (maxHeight > 0 && imageHeight > maxHeight)) {
+					ErrorUtils.reject(this, "image.size.mismatch");
 				}
 			}
 		}
@@ -309,17 +347,17 @@ public class ImageUpload extends FileUpload {
 		}
 		
 		public String getCropUrl() {
-			if (cropper == null) {
-				return null;
+			if (cropper != null && crop) {
+				return getFormContext().getContentUrl(this) + "&action=crop";	
 			}
-			return getFormContext().getContentUrl(this) + "&action=crop";
+			return null;
 		}
 		
 		public String getUndoUrl() {
-			if (cropper == null) {
-				return null;
+			if (cropper != null && crop) {
+				return getFormContext().getContentUrl(this) + "&action=undo";
 			}
-			return getFormContext().getContentUrl(this) + "&action=undo";
+			return null;			
 		}
 		
 		public String getCroppedImageUrl() {
@@ -349,6 +387,14 @@ public class ImageUpload extends FileUpload {
 		
 		public int getMaxHeight() {
 			return maxHeight;
+		}
+		
+		public int[] getWidths() {
+			return widths;
+		}
+		
+		public int[] getHeights() {
+			return heights;
 		}
 
 	}

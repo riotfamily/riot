@@ -276,18 +276,27 @@
 					<xsd:attribute name="valid-formats" type="xsd:string" />
 					<xsd:attribute name="width" type="xsd:positiveInteger" />
 					<xsd:attribute name="height" type="xsd:positiveInteger" />
+					<xsd:attribute name="widths" type="commaDelimitedIntegers" />
+					<xsd:attribute name="heights" type="commaDelimitedIntegers" />
 					<xsd:attribute name="min-width" type="xsd:positiveInteger" />
 					<xsd:attribute name="min-height" type="xsd:positiveInteger" />
 					<xsd:attribute name="max-width" type="xsd:positiveInteger" />
 					<xsd:attribute name="max-height" type="xsd:positiveInteger" />
 					<xsd:attribute name="width-property" type="xsd:string" />
 					<xsd:attribute name="height-property" type="xsd:string" />
+					<xsd:attribute name="crop" type="xsd:boolean" default="true" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	
-		<xsd:element name="xml-element">
+	<xsd:simpleType name="commaDelimitedIntegers">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d+(\s*,\s*\d+)*" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:element name="xml-element">
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="simple-editor">

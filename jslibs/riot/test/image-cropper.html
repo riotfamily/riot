@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<script type="text/javascript" src="../../prototype/src/prototype.js"></script>
+	<script type="text/javascript" src="../../../build/modules/scriptaculous-js/unpack/scriptaculous-js-1.7.0/src/scriptaculous.js?load=slider"></script>
+	<script type="text/javascript" src="../src/image-cropper.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../../riot/src/org/riotfamily/riot/runtime/resources/style/form.css" />
+</head>
+<body>
+	<div id="test1"></div>
+	<div id="test2"></div>
+	<div id="test3"></div>
+	<script type="text/javascript">
+		new Cropper.UI('test1', 'downloads.jpg', null, {maxWidth: 100, maxHeight: 100});
+		
+		new Cropper.UI('test2', 'downloads.jpg', '?', {
+			maxWidth: 200, maxHeight: 200, minHeight: 10,
+			widths: [80,120,200], 
+			heights: [80,120,200]
+		});
+		
+		new Cropper.UI('test3', '', '?', {
+			maxWidth: 200, maxHeight: 200, minHeight: 10,
+			widths: [80,120,200], 
+			heights: [80,120,200]
+		});
+	</script>
+</body>
+</html>
