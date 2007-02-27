@@ -204,11 +204,12 @@ riot.Component.prototype = {
 				c.element.style.zIndex = 1;
 				c.element.style.cssFloat = cssFloat;
 				c.element.style.styleFloat = cssFloat;
-				c.componentList.floating = true;
+				child.style.cssFloat = 'none';
+				child.style.styleFloat = 'none';
 			}
-			var clear = child.getStyle('clear');
-			if (clear != 'none') {
-				c.element.style.clear = clear;
+			var cssClear = child.getStyle('clear');
+			if (cssClear != 'none') {
+				c.element.style.clear = cssClear;
 			}
 		});
 		
@@ -499,8 +500,8 @@ riot.ComponentList.prototype = {
 			RElement.toggleClassName(this.element, 'riot-mode-move', enable);
 			if (enable) {
 				Sortable.create(this.element, {tag: 'div', only: 'riot-component', 
-						overlap: this.floating ? 'horizontal' : 'vertical',
-						constraint: this.floating ? false : 'vertical', 
+						overlap: 'vertical',
+						constraint: 'vertical', 
 						scroll: window, scrollSpeed: 20
 				});
 				this.getComponents().each(function(component) {
@@ -566,6 +567,9 @@ riot.ComponentDragObserver.prototype = {
 	},
 	onStart: function(eventName, draggable, event) {
 		Element.addClassName(draggable.element, 'riot-drag');
+		if (draggable.element.getStyle('clear') == 'none') {
+			draggable.options.constraint = false;
+		}
 		this.nextEl = draggable.element.nextSibling;
 	},
 	onEnd: function(eventName, draggable, event) {

@@ -191,6 +191,16 @@ html .riot-insert-button-active {
 .riot-components {display: block;}
 /* End hide from IE-mac */
 
+
+.riot-component {
+	position: relative;
+	clear: none;
+}
+
+div.riot-editor {
+	clear: none;
+}
+
 .riot-moveable-component,
 .riot-moveable-component * {
 	cursor: move;
