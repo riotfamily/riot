@@ -24,15 +24,6 @@ Object.bindMethods = function(obj, methodNames) {
 	}
 }
 
-/**
- * Returns true if the mouse event was fired within the range of the given element.
- */
-Event.within = function(event, element) {
-	var pX = Event.pointerX(event);
-	var pY = Event.pointerY(event);
-	return Position.within(element, pX, pY);
-}
-
 var RBuilder = {};
 RBuilder.node = function(tag, options) {
 	var e = Element.extend(document.createElement(tag));
@@ -179,6 +170,24 @@ var RElement = {
 		} 
 		catch (ex) {
 		}
+	},
+	
+	disableHandlers: function(el, name) {
+		$(el).descendants().each(function(e) {
+			if (e[name]) {
+				e['riot_' + name] = e[name];
+				e[name] = null;
+			}
+		});
+	},
+	
+	restoreHandlers: function(el, name) {
+		$(el).descendants().each(function(e) {
+			if (e['riot_' + name]) {
+				e[name] = e['riot_' + name];
+				e['riot_' + name] = null;
+			}
+		});
 	}
 
 }

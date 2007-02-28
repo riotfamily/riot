@@ -1,3 +1,8 @@
+riot.stopEvent = function(ev) {
+	Event.stop(ev || window.event);
+	return false;
+}
+
 riot.hover = RBuilder.node('div', {className: 'riot-highlight'}).hide();
 document.body.appendChild(riot.hover);
 riot.hideHover = function() {
@@ -47,23 +52,25 @@ riot.Component.prototype = {
 	},
 	
 	setMode: function(mode) {
-		if (mode == null) {
+		if (mode != null) {
+			if (mode == 'properties' && !this.formId) {
+				this.mode = null;
+				return;
+			}
+			RElement.disableHandlers(this.element, 'onclick');
+			Event.observe(this.element, 'click', riot.stopEvent, true);
+			Event.observe(this.element, 'mouseup', this.handlers[mode]);
+			Event.observe(this.element, 'mouseover', this.onMouseOver);
+			Event.observe(this.element, 'mouseout', this.onMouseOut);
+		}
+		else {
 			if (isSet(this.mode)) {
+				RElement.restoreHandlers(this.element, 'onclick');
 				Event.stopObserving(this.element, 'click', riot.stopEvent, true);
 				Event.stopObserving(this.element, 'mouseup', this.handlers[this.mode]);
 				Event.stopObserving(this.element, 'mouseover', this.onMouseOver);
 				Event.stopObserving(this.element, 'mouseout', this.onMouseOut);
 			}
-		}
-		else {
-			if (mode == 'properties' && !this.formId) {
-				this.mode = null;
-				return;
-			}
-			Event.observe(this.element, 'click', riot.stopEvent, true);
-			Event.observe(this.element, 'mouseup', this.handlers[mode]);
-			Event.observe(this.element, 'mouseover', this.onMouseOver);
-			Event.observe(this.element, 'mouseout', this.onMouseOut);
 		}
 		this.mode = mode;
 	},
@@ -132,9 +139,9 @@ riot.Component.prototype = {
 		this.repaint();
 	},
 	
-	properties: function(event) {
-		var e = event || window.event;
-		if (e) Event.stop(e);
+	properties: function(ev) {
+		ev = ev || window.event;
+		if (ev) Event.stop(ev);
 		Element.removeClassName(this.element, 'riot-highlight');
 		if (this.formId) {
 			var formUrl = riot.path + '/pages/form/' + this.id + '?instantPublish=' + riot.toolbar.instantPublishMode;
@@ -255,24 +262,23 @@ riot.InsertButton.prototype = {
 	},
 	
 	show: function() {
-		Element.show(this.element);
+		this.element.show();
 	},
 	
 	hide: function() {
-		Element.hide(this.element);
+		this.element.hide();
 	},
 	
 	onclick: function() {
 		if (riot.activeInsertButton) {
-			Element.removeClassName(riot.activeInsertButton.element, 
-					'riot-insert-button-active');
+			riot.activeInsertButton.element.removeClassName('riot-insert-button-active');
 		}
 		if (this.componentList.fixedType) {
 			this.insert(this.componentList.fixedType);
 			riot.toolbar.removeInspector();
 		}
 		else {
-			Element.addClassName(this.element, 'riot-insert-button-active');
+			this.element.addClassName('riot-insert-button-active');
 			riot.activeInsertButton = this;
 			this.inspector = new riot.TypeInspector(this.componentList.types, null, 
 					this.insert.bind(this));
@@ -507,6 +513,7 @@ riot.ComponentList.prototype = {
 				this.getComponents().each(function(component) {
 					Element.addClassName(component.element, 'riot-moveable-component');
 					component.element.observe('click', riot.stopEvent, true);
+					RElement.disableHandlers(component.element, 'onclick');
 				});
 				Draggables.addObserver(new riot.ComponentDragObserver(this));
 			}
@@ -514,6 +521,7 @@ riot.ComponentList.prototype = {
 				this.getComponents().each(function(component) {
 					Element.removeClassName(component.element, 'riot-moveable-component');
 					component.element.stopObserving('click', riot.stopEvent, true);
+					RElement.restoreHandlers(component.element, 'onclick');
 				});
 				Sortable.destroy(this.element);
 				Draggables.removeObserver(this.element);
@@ -585,11 +593,6 @@ riot.ComponentDragObserver.prototype = {
 		}
 		this.nextEl = null;
 	}
-}
-
-riot.stopEvent = function(ev) {
-	Event.stop(ev || window.event);
-	return false;
 }
 
 riot.editProperties = function(e) {
