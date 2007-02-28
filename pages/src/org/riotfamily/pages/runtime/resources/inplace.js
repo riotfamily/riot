@@ -2,7 +2,7 @@ riot.InplaceEditor = Class.create();
 riot.InplaceEditor.prototype = {
 
 	initialize: function(element, component, options) {
-		this.element = element;
+		this.element = $(element);
 		this.component = component;
 		this.key = element.getAttribute('riot:key');
 		this.enabled = false;
@@ -21,14 +21,14 @@ riot.InplaceEditor.prototype = {
 		if (enabled) {
 			this.originalOnclickHandler = this.element.onclick;
 			this.element.onclick = this.onclickHandler;
-			Element.addClassName(this.element, 'riot-editable-text');
+			this.element.addClassName('riot-editable-text');
 		}
 		else {
 			if (riot.activeEditor == this) {
 				this.close();
 			}
 			this.element.onclick = this.originalOnclickHandler;
-			Element.removeClassName(this.element, 'riot-editable-text');
+			this.element.removeClassName('riot-editable-text');
 		}
 	},
 	
@@ -96,13 +96,13 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 
 	oninit: function(options) {
 		this.options = options || {};
-		Element.makePositioned(this.element);
-		this.input = document.createElement(this.options.multiline 
-				? 'textarea' : 'input');
+		this.element.makePositioned();
+		this.input = $(document.createElement(this.options.multiline 
+				? 'textarea' : 'input'));
 				
 		if (this.options.multiline) this.input.wrap = 'off';
 		
-		Element.setStyle(this.input, {
+		this.input.setStyle({
 			position: 'absolute', overflow: 'hidden',
 			top: 0,	left: 0, border: 0, padding: 0, margin: 0,
 			backgroundColor: 'transparent'
@@ -122,7 +122,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 		
 		this.input.style.boxSizing = this.input.style.MozBoxSizing = 'border-box';
 		
-		Element.hide(this.input);
+		this.input.hide();
 		document.body.appendChild(this.input);
 	},
 		
@@ -143,13 +143,13 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 		if (browserInfo.ie || browserInfo.opera) { 
 			var cm = document['compatMode'];
 			if (cm != 'BackCompat' && cm != 'QuirksMode') {
-				this.paddingLeft = parseInt(Element.getStyle(this.element, 'padding-left'));
-				this.paddingTop = parseInt(Element.getStyle(this.element, 'padding-top'));
+				this.paddingLeft = parseInt(this.element.getStyle('padding-left'));
+				this.paddingTop = parseInt(this.element.getStyle('padding-top'));
 			}
 		}
 		this.resize();
-		RElement.makeInvisible(this.element);
-		Element.show(this.input);
+		this.element.makeInvisible();
+		this.input.show();
 		this.input.focus();
 		this.input.value = this.text;
 	},
@@ -165,7 +165,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 	onsave: function(text) {
 		this.element.innerHTML = text;
 		this.input.hide();
-		RElement.makeVisible(this.element);
+		this.element.makeVisible();
 	},
 
 	updateElement: function() {
@@ -280,7 +280,7 @@ riot.Popup.prototype = {
 			this.content = content,
 			this.okButton = RBuilder.node('div', {className: 'button-ok', onclick: ok}, 'Ok')
 		);
-		RElement.makeInvisible(this.div);
+		this.div.makeInvisible();
 		document.body.appendChild(this.overlay);
 		document.body.appendChild(this.div);
 	},
@@ -289,7 +289,7 @@ riot.Popup.prototype = {
 		var exclude = this.div;
 		$$(name).each(function (e) {
 			if (!e.childOf(exclude)) {
-				RElement.makeInvisible(e);
+				e.makeInvisible();
 				e.hidden = true;
 			}
 		});
@@ -298,7 +298,7 @@ riot.Popup.prototype = {
 	showElements: function(name) {
 		$$(name).each(function (e) {
 			if (e.hidden) {
-				RElement.makeVisible(e);
+				e.makeVisible();
 				e.hidden = false;
 			}
 		});
@@ -321,7 +321,7 @@ riot.Popup.prototype = {
 		
 		this.div.hide();
 		this.div.style.position = '';
-		if (Element.getStyle(this.div, 'position') != 'fixed') {
+		if (this.div.getStyle('position') != 'fixed') {
 			top += Viewport.getScrollTop();
 			left += Viewport.getScrollLeft();
 		}
@@ -329,8 +329,7 @@ riot.Popup.prototype = {
 		this.div.style.left = left + 'px';
 		this.overlay.style.height = Viewport.getPageHeight() + 'px';
 		this.overlay.show();
-		RElement.makeVisible(this.div);
-		this.div.show();
+		this.div.makeVisible().show();
 	},
 		
 	close: function() {
@@ -373,7 +372,7 @@ riot.TinyMCEPopup = riot.TextareaPopup.extend({
 		if (this.textarea.value == '') {
 			this.textarea.value = '<p>&nbsp;</p>';
 		}
-		RElement.makeInvisible(this.textarea);		
+		this.textarea.makeInvisible();		
 		this.textarea.style.position = 'absolute';
 		riot.initTinyMCE();
 		Resources.waitFor('tinyMCELang["lang_theme_block"]', 
@@ -488,11 +487,10 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	head.appendChild(style);
 		
 	var e = riot.activeEditor.element;
-	var clone = e.cloneNode(false);
-	Element.hide(clone);
-	RElement.insertBefore(clone, e);
+	var clone = $(e.cloneNode(false));
+	clone.hide().insertSelfBefore(e);
 	riot.stylesheetMaker.copyStyles(clone, doc, riot.tinyMCEStyles);
-	Element.remove(clone);
+	clone.remove();
 	
 	body.style.paddingLeft = '5px';
 	

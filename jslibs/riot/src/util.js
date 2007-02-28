@@ -108,61 +108,76 @@ var Styles = {
 }
 	
 var RElement = {
-	insertBefore: function(element, marker) {
-		marker.parentNode.insertBefore($(element), marker);
+	insertSelfBefore: function(el, marker) {
+		el = $(el);
+		marker.parentNode.insertBefore(el, marker);
+		return el;
 	},
 
-	insertAfter: function(element, marker) {
-		element = $(element)
+	insertSelfAfter: function(el, marker) {
+		el = $(el);
 		var p = marker.parentNode;
-		if (marker.nextSibling) p.insertBefore(element, marker.nextSibling);
-		else p.appendChild(element);
+		if (marker.nextSibling) p.insertBefore(el, marker.nextSibling);
+		else p.appendChild(el);
+		return el;
 	},
 
-	prependChild: function(element, child) {
-		element = $(element);
-		if (element.firstChild) element.insertBefore(child, element.firstChild);
-		else element.appendChild(child);
+	prependChild: function(el, child) {
+		el = $(el);
+		if (el.firstChild) el.insertBefore(child, el.firstChild);
+		else el.appendChild(child);
+		return el;
 	},
 	
-	replaceBy: function(element, replacement) {
-		element = $(element);
-		element.parentNode.replaceChild($(replacement), element);
+	replaceBy: function(el, replacement) {
+		el = $(el);
+		el.parentNode.replaceChild($(replacement), el);
+		return el;
 	},
 	
 	makeInvisible: function(el) {
-		$(el).style.visibility = 'hidden';
+		if (!(el = $(el))) return;
+		el.style.visibility = 'hidden';
+		return el;
 	},
 
 	makeVisible: function(el) {
-		$(el).style.visibility = 'visible';
+		if (!(el = $(el))) return;
+		el.style.visibility = 'visible';
+		return el;
 	},
 
 	toggleClassName: function(el, className, add) {
-		el = $(el);
-		if (!isDefined(add)) add = !Element.hasClassName(el, className);
-		if (add) Element.addClassName(el, className); else Element.removeClassName(el, className);
+		if (!(el = $(el))) return;
+		if (!isDefined(add)) add = !el.hasClassName(className);
+    	Element.classNames(el)[add ? 'add' : 'remove'](className);
+	    return el;
 	},
   
 	disableHandlers: function(el, name) {
-		$(el).descendants().each(function(e) {
+		if (!(el = $(el))) return;
+		el.descendants().each(function(e) {
 			if (e[name]) {
 				e['riot_' + name] = e[name];
 				e[name] = null;
 			}
 		});
+		return el;
 	},
 	
 	restoreHandlers: function(el, name) {
+		if (!(el = $(el))) return;
 		$(el).descendants().each(function(e) {
 			if (e['riot_' + name]) {
 				e[name] = e['riot_' + name];
 				e['riot_' + name] = null;
 			}
 		});
+		return el;
 	}
-
 }
+
+Element.addMethods(RElement);
 
 // See: http://www.bloglines.com/blog/reinyannyan?id=1
 

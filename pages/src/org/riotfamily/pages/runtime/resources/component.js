@@ -57,7 +57,7 @@ riot.Component.prototype = {
 				this.mode = null;
 				return;
 			}
-			RElement.disableHandlers(this.element, 'onclick');
+			this.element.disableHandlers('onclick');
 			Event.observe(this.element, 'click', riot.stopEvent, true);
 			Event.observe(this.element, 'mouseup', this.handlers[mode]);
 			Event.observe(this.element, 'mouseover', this.onMouseOver);
@@ -65,7 +65,7 @@ riot.Component.prototype = {
 		}
 		else {
 			if (isSet(this.mode)) {
-				RElement.restoreHandlers(this.element, 'onclick');
+				this.element.restoreHandlers('onclick');
 				Event.stopObserving(this.element, 'click', riot.stopEvent, true);
 				Event.stopObserving(this.element, 'mouseup', this.handlers[this.mode]);
 				Event.stopObserving(this.element, 'mouseover', this.onMouseOver);
@@ -104,7 +104,7 @@ riot.Component.prototype = {
 		if (e) Event.stop(e);
 		riot.hideHover();
 		new Effect.Remove(this.element, function(el) {
-			Element.remove(el);
+			el.remove();
 			el.component.componentList.componentRemoved();
 		});
 		ComponentEditor.deleteComponent(this.id);
@@ -117,8 +117,8 @@ riot.Component.prototype = {
 	},
 	
 	typeChanged: function(info) {
-		Element.removeClassName(this.element, 'riot-component-' + this.type);
-		Element.addClassName(this.element, 'riot-component-' + info.type);
+		this.element.removeClassName('riot-component-' + this.type);
+		this.element.addClassName('riot-component-' + info.type);
 		this.type = info.type;
 		this.formId = info.formId;
 		this.setHtml(info.html);
@@ -143,7 +143,7 @@ riot.Component.prototype = {
 	properties: function(ev) {
 		ev = ev || window.event;
 		if (ev) Event.stop(ev);
-		Element.removeClassName(this.element, 'riot-highlight');
+		this.element.removeClassName('riot-highlight');
 		if (this.formId) {
 			var formUrl = riot.path + '/pages/form/' + this.id + '?instantPublish=' + riot.toolbar.instantPublishMode;
 			var iframe = RBuilder.node('iframe', {src: formUrl, className: 'properties', width: 1, height: 1});
@@ -182,7 +182,7 @@ riot.Component.prototype = {
 			try {
 				var editorType = e.getAttribute('riot:editorType');
 				if (editorType) {
-					var componentElement = e.up('.riot-component');
+					var componentElement = Element.up(e, '.riot-component');
 					if (componentElement == this.element) {
 						if (editorType == 'text' || editorType == 'multiline') {
 							this.editors.push(new riot.InplaceTextEditor(e, this, {multiline: true}));
@@ -231,7 +231,7 @@ riot.Component.prototype = {
 			this.element.descendants().each(function(el) {
 				if (el.hasClassName('component-\\w*')) {
 					el.className = el.className.replace(/component-\w*/, 'component-' + position);
-					RElement.toggleClassName(el, 'last-component', last);
+					el.toggleClassName('last-component', last);
 				}
 			});
 		}
@@ -242,7 +242,7 @@ riot.Component.prototype = {
 		var prevEl = this.element;
 		for (var i = 1; i < infos.length; i++) {
 			var e = RBuilder.node('div', {className: 'riot-component'});
-			RElement.insertAfter(e, prevEl);
+			e.insertSelfAfter(prevEl);
 			var c = new riot.Component(this.componentList, e);
 			c.id = infos[i].id;
 			c.editing = true;
@@ -292,7 +292,7 @@ riot.InsertButton.prototype = {
 	
 	insert: function(type) {
 		var e = RBuilder.node('div', {className: 'riot-component'});
-		RElement.insertBefore(e, this.element);
+		e.insertSelfBefore(this.element);
 		var c = new riot.Component(this.componentList, e);
 		ComponentEditor.insertComponent(this.componentList.controllerId, 
 				this.componentList.id, -1, type, null, c.created.bind(c));
@@ -368,30 +368,30 @@ riot.PublishWidget.prototype = {
 	show: function() {
 		this.liveHtmlRetrieved = false;
 		this.showPreviewVersion();
-		RElement.insertBefore(this.element, this.componentList.element);
-		RElement.insertAfter(this.liveElement, this.element);
-		RElement.insertAfter(this.footer, this.componentList.element);
+		this.element.insertSelfBefore(this.componentList.element);
+		this.liveElement.insertSelfAfter(this.element);
+		this.footer.insertSelfAfter(this.componentList.element);
 	},
 	
 	hide: function() {
 		if (this.element.parentNode) {
-			Element.remove(this.element);
-			Element.remove(this.liveElement);
-			Element.remove(this.footer);
-			Element.show(this.componentList.element);
+			this.element.remove();
+			this.liveElement.remove();
+			this.footer.remove();
+			this.componentList.element.show();
 		}
 	},
 	
 	showPreviewVersion: function() {
 		this.wrapper.className = 'riot-preview-version';
-		Element.hide(this.liveElement);
-		Element.show(this.componentList.element);
+		this.liveElement.hide();
+		this.componentList.element.show();
 	},
 	
 	showLiveVersion: function() {
 		this.wrapper.className = 'riot-live-version';
-		Element.hide(this.componentList.element);
-		Element.show(this.liveElement);
+		this.componentList.element.hide();
+		this.liveElement.show();
 		if (!this.liveHtmlRetrieved) {
 			this.liveHtmlRetrieved = true;
 			ComponentEditor.getLiveListHtml(this.componentList.controllerId,
@@ -507,7 +507,7 @@ riot.ComponentList.prototype = {
 
 	move: function(enable) {
 		if (this.getComponents().length > 1) {
-			RElement.toggleClassName(this.element, 'riot-mode-move', enable);
+			this.element.toggleClassName('riot-mode-move', enable);
 			if (enable) {
 				Sortable.create(this.element, {tag: 'div', only: 'riot-component', 
 						overlap: 'vertical',
@@ -515,17 +515,13 @@ riot.ComponentList.prototype = {
 						scroll: window, scrollSpeed: 20
 				});
 				this.getComponents().each(function(component) {
-					Element.addClassName(component.element, 'riot-moveable-component');
-					component.element.observe('click', riot.stopEvent, true);
-					RElement.disableHandlers(component.element, 'onclick');
+					component.element.addClassName('riot-moveable-component').observe('click', riot.stopEvent, true).disableHandlers('onclick');
 				});
 				Draggables.addObserver(new riot.ComponentDragObserver(this));
 			}
 			else {
 				this.getComponents().each(function(component) {
-					Element.removeClassName(component.element, 'riot-moveable-component');
-					component.element.stopObserving('click', riot.stopEvent, true);
-					RElement.restoreHandlers(component.element, 'onclick');
+					component.element.removeClassName('riot-moveable-component').stopObserving('click', riot.stopEvent, true).restoreHandlers('onclick');
 				});
 				Sortable.destroy(this.element);
 				Draggables.removeObserver(this.element);
@@ -537,7 +533,7 @@ riot.ComponentList.prototype = {
 		if (enable && this.getComponents().length == this.minComponents) {
 			return;
 		}
-		RElement.toggleClassName(this.element, 'riot-mode-remove', enable);
+		this.element.toggleClassName('riot-mode-remove', enable);
 		this.getComponents().invoke('setMode', enable ? 'remove' : null);
 	},
 	
@@ -550,13 +546,13 @@ riot.ComponentList.prototype = {
 	
 	changeType: function(enable) {
 		if (!this.fixedType) {
-			RElement.toggleClassName(this.element, 'riot-mode-changeType', enable);
+			this.element.toggleClassName('riot-mode-changeType', enable);
 			this.getComponents().invoke('setMode', enable ? 'changeType' : null);
 		}
 	},
 	
 	properties: function(enable) {
-		RElement.toggleClassName(this.element, 'riot-mode-properties', enable);
+		this.element.toggleClassName('riot-mode-properties', enable);
 		this.getComponents().invoke('setMode', enable ? 'properties' : null);
 	},
 	
@@ -578,7 +574,7 @@ riot.ComponentDragObserver.prototype = {
 		this.element = componentList.element;
 	},
 	onStart: function(eventName, draggable, event) {
-		Element.addClassName(draggable.element, 'riot-drag');
+		draggable.element.addClassName('riot-drag');
 		if (draggable.element.getStyle('clear') == 'none') {
 			draggable.options.constraint = false;
 		}
@@ -586,7 +582,7 @@ riot.ComponentDragObserver.prototype = {
 	},
 	onEnd: function(eventName, draggable, event) {
 		var el = draggable.element;
-		Element.removeClassName(el, 'riot-drag');
+		el.removeClassName('riot-drag');
 		var nextEl = el.nextSibling;
 		if(el.parentNode == this.element && nextEl != this.nextEl) {
 			this.componentList.updatePositionClasses();
