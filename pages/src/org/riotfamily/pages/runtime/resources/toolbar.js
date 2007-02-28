@@ -51,11 +51,6 @@ riot.Toolbar.prototype = {
 		}
 	},
 		
-	isWithin: function(event) {
-		return Event.within(event, this.element) 
-				|| Event.within(event, this.inspectorPanel);
-	},
-	
 	setInspector: function(inspector) {
 		if (inspector != this.inspector) { 
 			this.removeInspector();
