@@ -88,10 +88,6 @@ body > #riot-inspector {
 	margin:8px auto;
 }
 
-#riot-toolbar #riot-toolbar-button-publish.toolbar-button-disabled {
-	display: none;
-}
-
 #riot-toolbar a.toolbar-button-disabled {
 	background-color: #a4a4a4;
 	cursor: default;

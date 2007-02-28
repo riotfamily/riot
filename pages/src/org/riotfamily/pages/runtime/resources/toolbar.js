@@ -3,28 +3,38 @@ riot.Toolbar.prototype = {
 	
 	initialize: function() {
 		this.buttons = $H({
-			gotoRiot: new riot.ToolbarButton('gotoRiot', '${toolbar-button.gotoRiot}', riot.path),
-			browse: new riot.ToolbarButton('browse', '${toolbar-button.browse}'),
-			insert: new riot.ToolbarButton('insert', '${toolbar-button.insert}'),
-			remove: new riot.ToolbarButton('remove', '${toolbar-button.remove}'),
-			edit: new riot.ToolbarButton('edit', '${toolbar-button.edit}'),
-			properties: new riot.ToolbarButton('properties', '${toolbar-button.properties}'),
-			move: new riot.ToolbarButton('move', '${toolbar-button.move}'),
-			logout: new riot.ToolbarButton('logout', '${toolbar-button.logout}')
+			gotoRiot: new riot.ToolbarButton('gotoRiot', '${toolbar-button.gotoRiot}', riot.path).disable(),
+			browse: new riot.ToolbarButton('browse', '${toolbar-button.browse}').disable(),
+			insert: new riot.ToolbarButton('insert', '${toolbar-button.insert}').disable(),
+			remove: new riot.ToolbarButton('remove', '${toolbar-button.remove}').disable(),
+			edit: new riot.ToolbarButton('edit', '${toolbar-button.edit}').disable(),
+			properties: new riot.ToolbarButton('properties', '${toolbar-button.properties}').disable(),
+			move: new riot.ToolbarButton('move', '${toolbar-button.move}').disable(),
+			logout: new riot.ToolbarButton('logout', '${toolbar-button.logout}').disable()
 		});
+		this.buttons.logout.applyHandler = this.logout;
+		
 		var buttonElements = this.buttons.values().pluck('element');
 		document.body.appendChild(this.element = RBuilder.node('div', {id: 'riot-toolbar'},
 			RBuilder.node('div', {id: 'riot-toolbar-buttons'}, buttonElements)
 		));
 		document.body.appendChild(this.inspectorPanel = RBuilder.node('div', {id: 'riot-inspector'}));
 
-		this.buttons.logout.applyHandler = this.logout;
+		this.publishButton = new riot.ToolbarButton('publish', '${toolbar-button.publish}');
+		this.publishButton.getHandlerTargets = function() { return riot.toolbar.dirtyComponentLists; };
+		this.publishButton.enable = function() {
+			this.enabled = true;
+			new Effect.Appear(this.element, {duration: 0.4});
+		}
+		this.publishButton.disable = function() {
+			this.enabled = false;
+			this.element.hide();
+		}
+		this.publishButton.element.hide();
+		this.element.appendChild(this.publishButton.element);
+	},
 	
-		this.buttons.publish = new riot.ToolbarButton('publish', '${toolbar-button.publish}');
-		this.buttons.publish.getHandlerTargets = function() { return riot.toolbar.dirtyComponentLists; };
-		this.buttons.publish.disable();
-		this.element.appendChild(this.buttons.publish.element);
-		
+	activate: function() {
 		this.updateComponentLists();
 		this.instantPublishMode = false;
 		var listIds = this.componentLists.pluck('id');
@@ -32,10 +42,11 @@ riot.Toolbar.prototype = {
 			callback: this.setDirtyListIds.bind(this),
 			errorHandler: Prototype.emptyFunction
 		});
-		
+		this.buttons.values().invoke('enable');
+		this.buttons.browse.click();
 		this.keepAliveTimer = setInterval(this.keepAlive.bind(this), 60000);
 	},
-		
+			
 	buttonClicked: function(button) {
 		if (isSet(this.activeButton)) {
 			this.activeButton.reset();
@@ -106,11 +117,11 @@ riot.Toolbar.prototype = {
 			this.dirtyComponentLists = this.componentLists.findAll(function(list) {
 				return ids.include(list.id);
 			});
-			this.buttons.publish.enable();
+			this.publishButton.enable();
 		}
 		else {
 			this.dirtyComponentLists = [];
-			this.buttons.publish.disable();
+			this.publishButton.disable();
 		}
 	},
 	
@@ -120,13 +131,13 @@ riot.Toolbar.prototype = {
 		if (dirty) {
 			if (!this.dirtyComponentLists.include(list)) {
 				this.dirtyComponentLists.push(list);
-				this.buttons.publish.enable();
+				this.publishButton.enable();
 			}
 		}
 		else {
 			this.dirtyComponentLists = this.dirtyComponentLists.without(list);
 			if (this.dirtyComponentLists.length == 0) {
-				this.buttons.publish.disable();
+				this.publishButton.disable();
 			}
 		}
 	},
@@ -210,14 +221,4 @@ riot.ToolbarButton.prototype = {
 	
 }
 
-DWREngine.setErrorHandler(function(err, ex) {
-	if (err == 'Request context has expired') { // RequestContextExpiredException
-		location.reload();
-	}
-	else {
-		alert(err);
-	}
-});
-
 riot.toolbar = new riot.Toolbar();
-riot.toolbar.buttons.browse.click();

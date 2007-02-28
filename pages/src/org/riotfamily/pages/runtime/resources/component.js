@@ -102,6 +102,7 @@ riot.Component.prototype = {
 	remove: function(event) {
 		var e = event || window.event;
 		if (e) Event.stop(e);
+		riot.hideHover();
 		new Effect.Remove(this.element, function(el) {
 			Element.remove(el);
 			el.component.componentList.componentRemoved();
@@ -169,8 +170,8 @@ riot.Component.prototype = {
 	},
 	
 	repaint: function() {
-		var next = RElement.getNextSiblingElement(this.element);
-		if (next != null) {	RElement.repaint(next); }
+		var next = this.element.next();
+		if (next) {	next.forceRerendering(); }
 	},
 	
 	setupElement: function() {
@@ -181,7 +182,7 @@ riot.Component.prototype = {
 			try {
 				var editorType = e.getAttribute('riot:editorType');
 				if (editorType) {
-					var componentElement = RElement.getAncestorByClassName(e, 'riot-component');
+					var componentElement = e.up('.riot-component');
 					if (componentElement == this.element) {
 						if (editorType == 'text' || editorType == 'multiline') {
 							this.editors.push(new riot.InplaceTextEditor(e, this, {multiline: true}));
@@ -227,9 +228,11 @@ riot.Component.prototype = {
 	
 	updatePositionClasses: function(position, last) {
 		if (this.type != 'inherit') {
-			RElement.getDescendantsByClassName(this.element, 'component-\\w*').each(function(el) {
-				el.className = el.className.replace(/component-\w*/, 'component-' + position);
-				RElement.toggleClassName(el, 'last-component', last);
+			this.element.descendants().each(function(el) {
+				if (el.hasClassName('component-\\w*')) {
+					el.className = el.className.replace(/component-\w*/, 'component-' + position);
+					RElement.toggleClassName(el, 'last-component', last);
+				}
 			});
 		}
 	},
@@ -466,6 +469,7 @@ riot.ComponentList.prototype = {
 		this.element.innerHTML = html;
 		this.publishWidget.hide();
 		this.components = null;
+		this.insertButton = null;
 	},
 	
 	browse: function() {
@@ -589,7 +593,7 @@ riot.ComponentDragObserver.prototype = {
 			var nextId = nextEl && nextEl.component ? nextEl.component.id : null;
 			ComponentEditor.moveComponent(el.component.id, nextId);
 			riot.toolbar.setDirty(this.componentList, true);
-			if (nextEl) { RElement.repaint(nextEl); }
+			if (nextEl) { nextEl.forceRerendering(); }
 		}
 		this.nextEl = null;
 	}
@@ -597,10 +601,21 @@ riot.ComponentDragObserver.prototype = {
 
 riot.editProperties = function(e) {
 	e = e || this;
-	var componentElement = RElement.getAncestorByClassName(e, 'riot-component');
+	var componentElement = e.up('.riot-component');
 	if (componentElement && (!componentElement.component || !componentElement.component.mode)) {
 		riot.toolbar.buttons.properties.click();
 		componentElement.component.properties();
 	}
 	return false;
 }
+
+dwr.engine.setErrorHandler(function(err, ex) {
+	if (err == 'Request context has expired') { // RequestContextExpiredException
+		location.reload();
+	}
+	else {
+		alert(err);
+	}
+});
+
+riot.toolbar.activate();
