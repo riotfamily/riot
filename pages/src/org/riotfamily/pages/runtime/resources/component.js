@@ -428,10 +428,10 @@ riot.ComponentList.prototype = {
 	getComponents: function() {
 		if (!this.components) {
 			this.components = [];
-			var elements = document.getElementsByClassName('riot-component', this.element);
+			var elements = this.element.getElementsByClassName('riot-component');
 			for (var i = 0; i < elements.length; i++) {
 				var e = elements[i];
-				var listElement = RElement.getAncestorByClassName(e, 'riot-components');
+				var listElement = e.up('.riot-components');
 				if (listElement == this.element) {
 					var c = e.component || new riot.Component(this, e);
 					this.components.push(c);
@@ -601,7 +601,7 @@ riot.ComponentDragObserver.prototype = {
 
 riot.editProperties = function(e) {
 	e = e || this;
-	var componentElement = e.up('.riot-component');
+	var componentElement = Element.up(e, '.riot-component');
 	if (componentElement && (!componentElement.component || !componentElement.component.mode)) {
 		riot.toolbar.buttons.properties.click();
 		componentElement.component.properties();
