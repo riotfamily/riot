@@ -130,23 +130,6 @@ var RElement = {
 		element.parentNode.replaceChild($(replacement), element);
 	},
 	
-	getAncestorByClassName: function(el, className) {
-		return $(el).ancestors().detect(function(e) {return e.hasClassName(className)});
-	},
-	
-	getDescendantsByClassName: function(el, className) {
-		return $(el).descendants().findAll(function(e) {return e.hasClassName(className)});
-	},
-
-	getNextSiblingElement: function(el) {
-		var e = $(el).nextSibling;
-		while (e) {
-			if (e.nodeType == 1) return e;
-			e = e.nextSibling;
-		}
-		return null;
-	},
-
 	makeInvisible: function(el) {
 		$(el).style.visibility = 'hidden';
 	},
@@ -161,17 +144,6 @@ var RElement = {
 		if (add) Element.addClassName(el, className); else Element.removeClassName(el, className);
 	},
   
-	repaint: function(el) {
-		try {
-			el = $(el) || document.body;
-		    var t = document.createTextNode(' ');
-			el.appendChild(t);
-		    el.removeChild(t);
-		} 
-		catch (ex) {
-		}
-	},
-	
 	disableHandlers: function(el, name) {
 		$(el).descendants().each(function(e) {
 			if (e[name]) {
