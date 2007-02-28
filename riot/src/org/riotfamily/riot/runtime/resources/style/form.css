@@ -429,7 +429,7 @@ div.dynamicList .button-add,
 
 .cropper .sizeSelectors {
 	float: left;
-	margin-right: 10px;
+	margin: 0 8px 8px 0;
 }
 .cropper .sizeSelectors span {
 	padding: 0 3px 0 1px;

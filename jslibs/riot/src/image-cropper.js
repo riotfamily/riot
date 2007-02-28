@@ -36,7 +36,6 @@ Cropper.Pos.prototype = {
 	
 	keepWithin: function(minX, minY, maxX, maxY) {
 		if (maxX < minX) maxX = minX; if (maxY < minY) maxY = minY;
-		//if (minX > maxX) minX = maxX; if (minY > maxY) minY = maxY;
 		if (this.x < minX) this.x = minX; else if (this.x > maxX) this.x = maxX;
 		if (this.y < minY) this.y = minY; else if (this.y > maxY) this.y = maxY;
 	},
@@ -58,14 +57,11 @@ Cropper.UI.prototype = {
 		this.element = $(el).addClassName('cropper');
 		this.cropUrl = this.resizeable = cropUrl;
 		var o = this.options = options || {};
-
-		o.minWidth = o.minWidth || o.width || 0;
-		o.maxWidth = o.maxWidth || o.width;
-
-		o.minHeight = o.minHeight || o.height || 0;
-		o.maxHeight = o.maxHeight || o.height;
 		
-		this.canvas = Cropper.appendDiv(this.element, 'canvas');		
+		this.canvas = Cropper.appendDiv(this.element, 'canvas');
+		this.canvasSize = new Cropper.Pos(o.canvasWidth || o.maxWidth || 263,
+				o.canvasHeight || o.maxHeight || 150);
+		
 		this.preview = Cropper.appendDiv(this.canvas, 'preview').setStyle({
 			MozUserSelect: 'none',	overflow: 'hidden',	position: 'relative'
 		});
@@ -81,8 +77,9 @@ Cropper.UI.prototype = {
 
 		if (this.cropUrl) {
 			this.cropEnabled = true;
-			
 			var e;
+			
+			// Size selectors:
 			if (o.widths || o.heights) {
 				e = Cropper.appendDiv(this.controls, 'sizeSelectors');
 			}
@@ -101,6 +98,7 @@ Cropper.UI.prototype = {
 				e.appendChild(this.heightSelector);
 			}
 			
+			// Buttons:
 			e = this.cropButton = Cropper.appendDiv(this.controls, 'cropButton');
 			e.appendChild(document.createTextNode(o.cropLabel || 'Crop'));
 			e.onclick = this.crop.bind(this);
@@ -130,18 +128,21 @@ Cropper.UI.prototype = {
 			onSlide: zoomHandler,
 			onChange: zoomHandler
 		});
+		
+		// Patch to support rescaling: 
+		zoomSlider.translateToPx = function(value) {
+			var range = this.range.end-this.range.start;
+			if (range == 0) return 0;
+			return Math.round(((this.trackLength-this.handleLength)/range) * (value - this.range.start)) + 'px';
+		}
 		zoomSlider.rescale = function(min, handleSize) {
 			this.range.start = min;
 			this.handleLength = handleSize;
 			this.handles[0].style.width = handleSize + 'px';
 			this.setValueBy(0);
 		}
-		zoomSlider.translateToPx = function(value) {
-			var range = this.range.end-this.range.start;
-			if (range == 0) return 0;
-			return Math.round(((this.trackLength-this.handleLength)/range) * (value - this.range.start)) + 'px';
-		}
-
+		
+		// Enable zooming using the mouse wheel:
 		if (this.img.addEventListener) {
 			this.img.addEventListener("DOMMouseScroll", this.onMouseWheel.bindAsEventListener(this), true);
 		}
@@ -154,6 +155,7 @@ Cropper.UI.prototype = {
 		Event.observe(document, 'mouseup', this.onMouseUp.bindAsEventListener(this));
 		Event.observe(window, 'mouseout', this.onMouseOut.bindAsEventListener(this));
 
+		this.setCanvasSize(this.canvasSize);
 		this.setImage(src);
 	},
 	
@@ -169,15 +171,29 @@ Cropper.UI.prototype = {
 		return sel;
 	},
 	
+	getMaxFromSelector: function(sel, min, max) {
+		var initialValue;
+		if (sel) {
+			var opts = sel.options;
+			for (var i = 0; i < opts.length; i++) {
+				var v = parseInt(opts[i].value);
+				opts[i].disabled = v <min || v > max;
+				if (v > (initialValue || 0) && !opts[i].disabled) {
+					initialValue = v;
+					opts[i].selected = true;
+				}
+			}
+		}
+		return initialValue;
+	},
+	
 	setImage: function(src) {
 		var present = (typeof src == 'string') && src != '';
 		if (present) {		
 			this.img.style.width = 'auto';
 			this.img.src = src;
 		}
-		else if (!this.img.src) {
-			this.setCanvasSize(new Cropper.Pos(this.options.maxWidth || 150, this.options.maxHeight || 100));
-		}
+		
 		this.setCrop(false);
 		this.setCrop(present && this.cropUrl);
 		Cropper.toggle(this.img, present);
@@ -194,41 +210,22 @@ Cropper.UI.prototype = {
 
 	onLoadImage: function() {
 		this.imageSize = new Cropper.Pos(this.img.width, this.img.height);
+		
+		// Make sure min and max are not greater than the image dimrensions:
 		this.min = new Cropper.Pos(this.options.minWidth, this.options.minHeight);
 		this.min.keepWithin(0, 0, this.imageSize.x, this.imageSize.y);
-		this.max = new Cropper.Pos(this.options.maxWidth || this.imageSize.x, this.options.maxHeight || this.imageSize.y);
-		this.setCanvasSize(this.max);
+		this.max = new Cropper.Pos(this.options.maxWidth || this.canvasSize.x, this.options.maxHeight || this.canvasSize.y);
 		this.max.keepWithin(0, 0, this.imageSize.x, this.imageSize.y);
+		
 		this.zoomSlider.range.end = this.imageSize.x;
 		this.setSize(this.max);
 		
-		if (this.widthSelector) {
-			var initialWidth;
-			var opts = this.widthSelector.options;
-			for (var i = 0; i < opts.length; i++) {
-				var v = parseInt(opts[i].value);
-				opts[i].disabled = v < this.min.x || v > this.max.x;
-				if (v > (initialWidth || 0) && !opts[i].disabled) {
-					initialWidth = v;
-					opts[i].selected = true;
-				}
-			}
-			if (initialWidth) this.setWidth(initialWidth);
-		}
-		if (this.heightSelector) {
-			var initialHeight;
-			var opts = this.heightSelector.options;
-			for (var i = 0; i < opts.length; i++) {
-				var v = parseInt(opts[i].value);
-				opts[i].disabled = v < this.min.y || v > this.max.y;
-				if (v > (initialHeight || 0) && !opts[i].disabled) {
-					initialHeight = v;
-					opts[i].selected = true;
-				}
-			}
-			if (initialHeight) this.setHeight(initialHeight);
-		}
+		var initialWidth = this.getMaxFromSelector(this.widthSelector, this.min.x, this.max.x);
+		if (initialWidth) this.setWidth(initialWidth);
 		
+		var initialHeight = this.getMaxFromSelector(this.heightSelector, this.min.y, this.max.y);
+		if (initialHeight) this.setHeight(initialHeight);
+				
 		this.zoomSlider.setValue(this.imageSize.x);
 	},
 
@@ -257,7 +254,7 @@ Cropper.UI.prototype = {
 		
 		this.setCrop(size.x < this.imageSize.x || size.y < this.imageSize.y);
 
-		var minWidth = Math.max(size.x, Math.ceil(this.imageSize.x * (size.y / this.imageSize.y)));
+		var minWidth = this.cropUrl ? Math.max(size.x, Math.ceil(this.imageSize.x * (size.y / this.imageSize.y))) : size.x;
 		var handleSize = Math.round(this.zoomSlider.trackLength * (minWidth / this.imageSize.x));
 		this.zoomSlider.rescale(minWidth, handleSize);
 	},
