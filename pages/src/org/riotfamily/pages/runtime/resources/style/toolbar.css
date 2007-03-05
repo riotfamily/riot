@@ -442,6 +442,7 @@ body > #riot-overlay {
 }
 
 .riot-publish-widget a.riot-publish-button {
+	font-size: 12px;
 	padding-right: 10px;
 }
 

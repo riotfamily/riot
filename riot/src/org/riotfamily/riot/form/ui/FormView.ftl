@@ -24,15 +24,10 @@
 			updatePath('${editorId}', '${objectId?if_exists}', '${parentId?if_exists}');
 			
 			function save() {
-				tags = document.getElementsByTagName('input');
-				for (var i = 0; i < tags.length; i++) {
-					if (Element.hasClassName(tags[i], 'button-save')) {
-						showSavingMessage();
-						tags[i].click();
-						return;
-					}
-				}
+				showSavingMessage();
+				$$('input.button-save').first().form.submit();
 			}
+			
 			function showSavingMessage() {
 				Element.hide('form');
 				Element.hide('extras');
