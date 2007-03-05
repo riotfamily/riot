@@ -21,6 +21,7 @@ tinyMCE.loadNextScript = function() {
 	} 
 	else {
 		this.loadingIndex = -1;
+		if (!tinyMCE.isLoaded) tinyMCE.onLoad();
 	}
 };
 
