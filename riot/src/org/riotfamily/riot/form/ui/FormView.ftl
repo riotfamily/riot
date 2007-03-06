@@ -25,7 +25,7 @@
 			
 			function save() {
 				showSavingMessage();
-				$$('input.button-save').first().form.submit();
+				$$('input.button-save').first().click();
 			}
 			
 			function showSavingMessage() {
