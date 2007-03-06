@@ -179,10 +179,14 @@
  	<!-- 
  	  - RiotDao to access pages.
  	  -->
-	<bean id="riotPageDao" class="org.riotfamily.pages.page.dao.PageRiotDao">
-		<constructor-arg ref="pageDao" />
-		<constructor-arg ref="pageEventMulticaster" />
-	</bean>
+    <bean id="riotPageDao" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
+        <property name="fallback">
+        	<bean class="org.riotfamily.pages.page.dao.PageRiotDao">
+        		<constructor-arg ref="pageDao" />
+        		<constructor-arg ref="pageEventMulticaster" />
+        	</bean>
+        </property>
+    </bean>
 	
 	<!-- 
 	  - RiotDao to list dirty ComponentLists.

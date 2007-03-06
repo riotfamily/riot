@@ -152,7 +152,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 				dao.clearAliases(child);
 			}
 		}
-		componentDao.deleteComponentLists(page.getPath());
+		deleteComponentLists(page.getPath());
 		firePageMappingEvent();
 	}
 	
@@ -182,7 +182,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 		PersistentPage copy = page.copy();
 		changeNameIfExists(parentPage, copy);
 		save(copy, parent);
-		componentDao.copyComponentLists(page.getPath(), copy.getPath());
+		copyComponentLists(page.getPath(), copy.getPath());
 	}
 	
 	private void changeNameIfExists(PersistentPage parent, 
@@ -251,9 +251,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 		if (!newPath.equals(oldPath)) {
 			dao.deleteAlias(newPath);
 			dao.addAlias(oldPath, page);
-			if (componentDao != null) {
-				componentDao.updatePaths(oldPath, newPath);
-			}
+			moveComponentLists(oldPath, newPath);
 			Collection childPages = page.getPersistentChildPages();
 			if (childPages != null) {
 				Iterator it = childPages.iterator();
@@ -272,6 +270,19 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 			eventMulticaster.multicastEvent(PageMappingEvent.MAPPINGS_MODIFIED);
 		}
 	}
+	
+	protected void moveComponentLists(String oldPath, String newPath) {
+		if (componentDao != null) {
+			componentDao.updatePaths(oldPath, newPath);
+		}
+	}
+	
+	protected void copyComponentLists(String originalPath, String copyPath) {
+		componentDao.copyComponentLists(originalPath, copyPath);
+	}
 
+	protected void deleteComponentLists(String path) {
+		componentDao.deleteComponentLists(path);
 
+	}
 }
