@@ -21,7 +21,53 @@ tinyMCE.loadNextScript = function() {
 	} 
 	else {
 		this.loadingIndex = -1;
-		if (!tinyMCE.isLoaded) tinyMCE.onLoad();
+		if (!tinyMCE.isLoaded) {
+			tinyMCE.onLoad();
+		}
+	}
+};
+
+// We have to overwrite the onLoad function since it is missing a check for
+// window.event which is null when the function is invoked manually. Some
+// initialization stuff has been left out to reduce the script size. Therefore
+// TinyMCE will only work in init-mode 'none'.
+tinyMCE.onLoad = function() {
+	if (tinyMCE.isRealIE && window.event && window.event.type == "readystatechange" && document.readyState != "complete") return true;
+
+	if (tinyMCE.isLoaded) return true;
+	tinyMCE.isLoaded = true;
+
+	if (tinyMCE.isRealIE && document.body) {
+		var r = document.body.createTextRange();
+		r.collapse(true);
+		r.select();
+	}
+
+	tinyMCE.dispatchCallback(null, 'onpageload', 'onPageLoad');
+		
+	for (var c=0; c<tinyMCE.configs.length; c++) {
+		tinyMCE.settings = tinyMCE.configs[c];
+		// Add submit triggers
+		if (document.forms && tinyMCE.settings['add_form_submit_trigger'] && !tinyMCE.submitTriggers) {
+			for (var i=0; i<document.forms.length; i++) {
+				var form = document.forms[i];
+
+				tinyMCE.addEvent(form, "submit", TinyMCE_Engine.prototype.handleEvent);
+				tinyMCE.addEvent(form, "reset", TinyMCE_Engine.prototype.handleEvent);
+				tinyMCE.submitTriggers = true; // Do it only once
+
+				// Patch the form.submit function
+				if (tinyMCE.settings['submit_patch']) {
+					try {
+						form.mceOldSubmit = form.submit;
+						form.submit = TinyMCE_Engine.prototype.submitPatch;
+					} 
+					catch (e) {
+					}
+				}
+				tinyMCE.dispatchCallback(null, 'oninit', 'onInit');
+			}
+		}
 	}
 };
 
