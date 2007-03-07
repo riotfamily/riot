@@ -14,7 +14,7 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
@@ -23,33 +23,20 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job;
 
+import org.springframework.core.NestedRuntimeException;
+
 /**
- * Interface to define background jobs.
- * 
  * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.4
  */
-public interface Job {
+public class JobCreationException extends NestedRuntimeException {
 
-	/**
-	 * Creates a JobDescription and optionally performs setup tasks.
-	 */
-	public JobDescription setup(String objectId) throws JobCreationException;
+	public JobCreationException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
+
+	public JobCreationException(String msg) {
+		super(msg);
+	}
 	
-	/**
-	 * Returns whether the job can be executed concurrently with different 
-	 * objectIds.
-	 */
-	public boolean isConcurrent();
-	
-	/**
-	 * Performs the actual work. The given context can be used to log messages
-	 * or to provide progress information.
-	 */
-	public void execute(JobContext context);
-
-	/**
-	 * Invoked when a job is canceled or completed.
-	 */
-	public void tearDown(String objectId);
-
 }

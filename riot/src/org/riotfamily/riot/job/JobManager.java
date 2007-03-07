@@ -97,7 +97,9 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 		return (Job) jobs.get(type);
 	}
 	
-	public JobDetail getOrCreateJob(String type, String objectId) {
+	public JobDetail getOrCreateJob(String type, String objectId) 
+			throws JobCreationException {
+		
 		JobDetail detail = dao.getPendingJobDetail(type, objectId);
 		if (detail == null) {
 			detail = setupJob(type, objectId);
@@ -111,7 +113,9 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 		return detail;
 	}
 	
-	private JobDetail setupJob(String type, String objectId) {
+	private JobDetail setupJob(String type, String objectId) 
+			throws JobCreationException {
+		
 		Job job = getJob(type);
 		JobDescription desc = job.setup(objectId);
 		int averageStepTime = 0;

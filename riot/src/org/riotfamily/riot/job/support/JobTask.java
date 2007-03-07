@@ -109,6 +109,7 @@ public class JobTask implements Runnable {
 		catch (Exception e) {
 			interrupted = true;
 			logError(e.getMessage());
+			log.error("Job aborted due to exception", e);
 		}
 		jobStoped(!interrupted);
 		synchronized (thread) {

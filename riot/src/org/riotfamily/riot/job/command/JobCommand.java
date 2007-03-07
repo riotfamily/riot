@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job.command;
 
+import org.riotfamily.riot.job.JobCreationException;
 import org.riotfamily.riot.job.JobManager;
 import org.riotfamily.riot.job.persistence.JobDetail;
 import org.riotfamily.riot.list.command.CommandContext;
@@ -65,9 +66,9 @@ public class JobCommand extends AbstractCommand implements
 	public CommandResult execute(CommandContext context) {
 		String objectId = context.getObjectId() != null 
 				? context.getObjectId() : context.getParentId();
-				
+		
 		JobDetail detail = jobManager.getOrCreateJob(jobType, objectId);
-		return new GotoUrlResult(context, runtime.getServletPrefix() + "/job?jobId=" 
-						+ detail.getId());
+		return new GotoUrlResult(context, runtime.getServletPrefix() 
+				+ "/job?jobId="	+ detail.getId());
 	}
 }
