@@ -23,9 +23,7 @@
 				<div class="title"><span>${group.title}</span></div>
 				<#list group.editors as ref>
 					<a class="editor ${ref.styleClass?default('default')}" href="${url(ref.editorUrl)}" <#if ref.targetWindow?exists> target="${ref.targetWindow}"</#if>>
-						<#if ref.icon?exists>
-							<div class="icon" style="background-image:url(${request.contextPath}${resourcePath}/style/icons/editors/${ref.icon}.gif)"></div>
-						</#if>
+						<div class="icon"<#if ref.icon?exists> style="background-image:url(${request.contextPath}${resourcePath}/style/icons/editors/${ref.icon}.gif)"</#if>></div>
 						<div class="text">
 							<div class="iefix1"><div class="iefix2">
 								<div class="label">${ref.label}</div>
