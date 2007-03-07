@@ -26,8 +26,13 @@ package org.riotfamily.riot.job.support;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.job.Job;
 import org.riotfamily.riot.job.JobContext;
+import org.riotfamily.riot.job.JobCreationException;
 import org.riotfamily.riot.job.JobDescription;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public abstract class AbstractJob implements Job, BeanNameAware {
 
@@ -37,12 +42,18 @@ public abstract class AbstractJob implements Job, BeanNameAware {
 	
 	private RiotDao dao;
 	
+	private PlatformTransactionManager transactionManager;
+	
 	public void setDao(RiotDao dao) {
 		this.dao = dao;
 	}
 	
 	protected RiotDao getDao() {
 		return this.dao;
+	}
+	
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
 	}
 
 	public void setConcurrent(boolean concurrent) {
@@ -60,17 +71,39 @@ public abstract class AbstractJob implements Job, BeanNameAware {
 	public JobDescription setup(String objectId) {
 		JobDescription jd = new JobDescription();
 		jd.setName(beanName);
+		try {
+			initDescription(jd, loadObject(objectId));
+		}
+		catch (Exception e) {
+			throw new JobCreationException("Job creation failed.", e);
+		}
 		return jd;
 	}
 	
-	public final void execute(JobContext context) {
-		execute(context, dao.load(context.getObjectId()));
+	protected void initDescription(JobDescription jd, Object entity) throws Exception {
+	}
+	
+	public final void execute(final JobContext context) {
+		if (transactionManager != null) {
+			new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
+				public Object doInTransaction(TransactionStatus status) {
+					execute(context, loadObject(context.getObjectId()));
+					return null;
+				}
+			});
+		}
+		else {
+			execute(context, loadObject(context.getObjectId()));
+		}
+	}
+	
+	protected Object loadObject(String objectId) {
+		return dao.load(objectId);
 	}
 	
 	protected abstract void execute(JobContext context, Object entity);
 	
 	public void tearDown(String objectId) {
-		// TODO
 	}
 
 }
