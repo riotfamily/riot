@@ -6,7 +6,7 @@
 
 	<xsd:element name="editor-config">
 		<xsd:complexType>
-			<xsd:choice maxOccurs="unbounded">
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
 				<xsd:element ref="custom" />
 				<xsd:element ref="tree" />
 				<xsd:element ref="list" />
