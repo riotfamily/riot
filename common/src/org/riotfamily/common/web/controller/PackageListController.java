@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.util;
+package org.riotfamily.common.web.controller;
 
 import java.util.Collection;
 
