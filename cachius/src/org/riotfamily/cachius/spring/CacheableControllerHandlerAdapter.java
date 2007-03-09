@@ -41,6 +41,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.LastModified;
+import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 
 
 /**
@@ -53,8 +54,7 @@ import org.springframework.web.servlet.mvc.LastModified;
  * </p>
  * <p>
  * If a controller does not implement the {@link CacheableController} interface
- * the adapter does the same as Spring's 
- * {@link org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter}.
+ * the adapter does the same as Spring's {@link SimpleControllerHandlerAdapter}.
  * </p>
  * 
  * @author Felix Gnass
@@ -86,7 +86,9 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
 
     /**
      * Returns <code>true</code> if handler implements the 
-     * {@link Controller Controller} interface.
+     * {@link Controller Controller} interface. The adapter supports both
+     * cacheable and non-cacheable controllers so that it can be used as
+     * drop-in replacement for the {@link SimpleControllerHandlerAdapter}.
      */
     public boolean supports(Object handler) {
         return handler instanceof Controller;
@@ -213,25 +215,33 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
         if (mtime > cacheItem.getLastModified()) {
             // Update the timestamp so that other threads won't
             // call the handleRequest() method, too. Note: For new items 
-            // lastModified is set by the  CacheItem.update() method.
+            // lastModified is set by the CacheItem.update() method.
             cacheItem.setLastModified(System.currentTimeMillis());
             return false;
         }
        	return true;
     }
     
-    
     /**
      * Delegates the call to the handler, if it implements the
-     * {@link LastModified} interface. Otherwise <code>-1</code> is returned.
+     * {@link CacheableController} or {@link LastModified} interface. 
+     * Otherwise <code>-1</code> is returned.
      */
     public long getLastModified(HttpServletRequest request, Object handler) {
-        if (handler instanceof LastModified) {
+    	if (handler instanceof CacheableController) {
+    		CacheableController controller = (CacheableController) handler;
+    		CacheItem cacheItem = getCacheItem(controller, request);
+    		try {
+    			return controller.getLastModified(request, cacheItem);
+    		}
+    		catch (Exception e) {
+    			log.error("Error invoking the last-modified method", e);
+    		}
+    	}
+    	else if (handler instanceof LastModified) {
             return ((LastModified) handler).getLastModified(request);
         }
         return -1L;
     }
 
-    
-    
 }
