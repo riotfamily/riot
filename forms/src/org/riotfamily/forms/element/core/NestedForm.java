@@ -36,6 +36,7 @@ import org.riotfamily.forms.element.support.Container;
 import org.riotfamily.forms.element.support.TemplateElement;
 import org.riotfamily.forms.support.MessageUtils;
 import org.riotfamily.forms.support.TemplateUtils;
+import org.springframework.util.Assert;
 
 /**
  * Element to edit nested beans.
@@ -144,6 +145,10 @@ public class NestedForm extends TemplateElement implements
 	}
 
 	public void bind(Editor editor, String property) {
+		Assert.notNull(editorBinder, "The NestedForm must either be bound " +
+				"to a property or setBeanClass() must be invoked before " +
+				"nested editors can be added.");
+		
 		editorBinder.bind(editor, property);
 	}
 
