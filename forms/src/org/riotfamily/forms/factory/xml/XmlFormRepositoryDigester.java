@@ -39,6 +39,7 @@ import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.element.ContainerElement;
 import org.riotfamily.forms.element.SelectElement;
+import org.riotfamily.forms.element.core.AutocompleteTextField;
 import org.riotfamily.forms.element.core.Calendar;
 import org.riotfamily.forms.element.core.Checkbox;
 import org.riotfamily.forms.element.core.CheckboxGroup;
@@ -113,6 +114,8 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	
 	public static final String FILE_STORE = "store";
 	
+	public static final String AUTOCOMPLETER_MODEL = "model";
+	
 	public static final String PROPERTY = "set-property";
 	
 	public static final String PROPERTY_NAME = "name";
@@ -175,6 +178,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		elementClasses.put("editable-if-new", EditableIfNew.class);
 		elementClasses.put("xml-element", XmlElement.class);
 		elementClasses.put("xml-sequence", XmlSequence.class);
+		elementClasses.put("autocomplete", AutocompleteTextField.class);
 	}
 	
 	public void digest(Document doc, Resource resource) {
@@ -318,7 +322,12 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			ElementFactory itemFactory = createFactory(itemElement);
 			pvs.addPropertyValue("itemElementFactory", itemFactory);
 		}
-				
+		
+		if (AutocompleteTextField.class.isAssignableFrom(elementClass)) {
+			pvs.addPropertyValue("model", beanFactory.getBean(
+					XmlUtils.getAttribute(ele, AUTOCOMPLETER_MODEL)));
+		}
+		
 		factory.setPropertyValues(pvs);
 		
 		if (ContainerElement.class.isAssignableFrom(elementClass)) {

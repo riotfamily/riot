@@ -296,6 +296,14 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 	
+	<xsd:complexType name="autocomplete">
+		<xsd:complexContent>
+			<xsd:extension base="simple-editor">
+				<xsd:attribute name="model" type="xsd:string" use="required" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
 	<xsd:element name="xml-element">
 		<xsd:complexType>
 			<xsd:complexContent>
