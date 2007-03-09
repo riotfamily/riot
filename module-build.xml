@@ -13,9 +13,7 @@
 	<basename property="module.dir.name" file="${module.dir}" />
 	
 	<property name="install.resolver" value="local" />
-	
-	<property name="publish.conf" value="runtime" />
-	
+		
 	<property name="publish.status" value="integration" />
 	
 	<property name="resolve.conf" value="build" />
