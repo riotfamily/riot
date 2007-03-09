@@ -228,7 +228,9 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 		File file = retrieve(uri);
 		file.delete();
 		File dir = file.getParentFile();
-		if (dir.list().length == 0 && !dir.equals(baseDir)) {
+		if (dir.isDirectory() && dir.list().length == 0 &&
+			!dir.equals(baseDir)) {
+			
 			dir.delete();
 		}
 	}
