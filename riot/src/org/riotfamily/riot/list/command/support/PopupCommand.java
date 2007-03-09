@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.support;
 
-import org.riotfamily.riot.form.command.FormCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.PopupResult;
@@ -32,9 +31,13 @@ import org.riotfamily.riot.list.command.result.PopupResult;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public abstract class PopupCommand extends AbstractCommand implements FormCommand {
+public abstract class PopupCommand extends AbstractCommand {
 
 	private String windowName;
+	
+	public PopupCommand() {
+		setShowOnForm(true);
+	}
 	
 	public void setWindowName(String windowName) {
 		this.windowName = windowName;

@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.riotfamily.riot.dao.Order;
 import org.riotfamily.riot.dao.RiotDao;
-import org.riotfamily.riot.form.command.FormCommand;
 import org.riotfamily.riot.list.command.Command;
 import org.springframework.util.StringUtils;
 
@@ -178,8 +177,8 @@ public class ListConfig {
 			formCommands = new ArrayList();
 			Iterator it = columnCommands.iterator();
 			while (it.hasNext()) {
-				Object command = it.next();
-				if (command instanceof FormCommand) {
+				Command command = (Command) it.next();
+				if (command.isShowOnForm()) {
 					formCommands.add(command);
 				}
 			}

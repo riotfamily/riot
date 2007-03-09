@@ -90,4 +90,8 @@ public interface Command {
 	 */
 	public boolean isEnabled(CommandContext context);
 
+	/**
+	 * Returns whether the command should be shown beside the form.
+	 */
+	public boolean isShowOnForm();
 }

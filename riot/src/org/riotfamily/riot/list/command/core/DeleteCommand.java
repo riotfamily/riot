@@ -25,7 +25,6 @@ package org.riotfamily.riot.list.command.core;
 
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.ListDefinition;
-import org.riotfamily.riot.form.command.FormCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.ShowListResult;
@@ -36,12 +35,16 @@ import org.springframework.web.util.HtmlUtils;
  * Command that deletes an item. To prevent accidental deletion a confirmation
  * message is displayed.
  */
-public class DeleteCommand extends AbstractCommand implements FormCommand {
+public class DeleteCommand extends AbstractCommand {
 
+	public DeleteCommand() {
+		setShowOnForm(true);
+	}
+	
 	public boolean isEnabled(CommandContext context) {
 		return context.getObjectId() != null;
 	}
-	
+		
 	public String getConfirmationMessage(CommandContext context) {
 		
 		Class clazz = context.getListDefinition().getBeanClass();

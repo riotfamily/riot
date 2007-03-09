@@ -25,7 +25,6 @@ package org.riotfamily.riot.list.command.core;
 
 import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.riot.form.command.FormCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.support.PopupCommand;
 
@@ -33,14 +32,14 @@ import org.riotfamily.riot.list.command.support.PopupCommand;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public class LinkCommand extends PopupCommand implements FormCommand {
+public class LinkCommand extends PopupCommand {
 
 	public static final String STYLE_CLASS = "link";
 	
 	private String link;
 	
 	private boolean contextRelative = true;
-	
+		
 	public void setLink(String link) {
 		this.link = link.replace('@', '$');
 	}

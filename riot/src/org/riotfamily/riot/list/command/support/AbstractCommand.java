@@ -43,6 +43,8 @@ public abstract class AbstractCommand implements Command, BeanNameAware {
 	
 	private String id;
 	
+	private boolean showOnForm;
+	
 	public String getId() {
 		return id;
 	}
@@ -129,4 +131,12 @@ public abstract class AbstractCommand implements Command, BeanNameAware {
 		return true;
 	}
 
+	public boolean isShowOnForm() {
+		return this.showOnForm;
+	}
+
+	public void setShowOnForm(boolean showOnForm) {
+		this.showOnForm = showOnForm;
+	}
+	
 }
