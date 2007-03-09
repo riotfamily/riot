@@ -30,23 +30,19 @@ var TweakStyle = {
 		}
 	},
 	
-	roundElements: function(tagName, className, corners) {
-		var tags = document.getElementsByTagName(tagName);
-		for (var i = 0; i <  tags.length; i++) {
-			if (Element.hasClassName(tags[i], className)) {
-				this.roundElement(tags[i], corners);
-			}
-		}
+	roundElements: function(selector, corners) {
+		$$(selector).each(function(e) {
+			TweakStyle.roundElement(e, corners);
+		});
 	},
 	
-	styleButton: function(button, beforeClick) {
+	styleButton: function(button) {
 		button = $(button);
 		button.style.display = 'none';
 		var a = document.createElement('a');
 		a.className = button.className;
 		a.href = '#';
 		a.onclick = function() {
-			if (beforeClick) beforeClick();
 			button.click();
 			return false;
 		}
@@ -71,7 +67,7 @@ var TweakStyle = {
 	},
 	
 	group: function() {
-		this.roundElements('div', 'title');
+		this.roundElements('div.title');
 	},
 	
 	status: function() {
@@ -82,23 +78,20 @@ var TweakStyle = {
 	},
 	
 	form: function() {
-		this.roundElements('div', 'title');
-		var beforeSave;
-		if (typeof showSavingMessage != 'undefined') {
-			beforeSave = showSavingMessage;
-		}
-		tags = document.getElementsByTagName('input');
-		for (var i = 0; i < tags.length; i++) {
-			if (Element.hasClassName(tags[i], 'button-save')) {
-				this.styleButton(tags[i], beforeSave);
-			}
-		} 
+		this.roundElements('div.title');
+		$$('.buttons input.button').each(function(b) {
+			TweakStyle.styleButton(b);
+		});
 		this.roundElement('form-options', 'all');
 	},
 	
 	list: function() {
-		this.roundElements('div', 'title');
+		this.roundElements('div.title');
 		this.roundElement('list');
+	},
+	
+	dialogForm: function() {
+		this.form();
 	}
 	
 }

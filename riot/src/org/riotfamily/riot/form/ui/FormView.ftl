@@ -22,16 +22,8 @@
 		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/style/tweak.js"></script>
 		<script type="text/javascript" language="JavaScript">
 			updatePath('${editorId}', '${objectId?if_exists}', '${parentId?if_exists}');
-			
 			function save() {
-				showSavingMessage();
 				$$('input.button-save').first().click();
-			}
-			
-			function showSavingMessage() {
-				Element.hide('form');
-				Element.hide('extras');
-				Element.show('saving');
 			}
 		</script>
 	</head>
@@ -88,6 +80,11 @@
 				TweakStyle.form();
 				var list = new RiotList('${listKey}');
 				list.renderFormCommands(<#if objectId?exists>'${objectId}'<#else>null</#if>, 'formCommands');
+				$$('form[id]').first().observe('submit', function() {
+					Element.hide('form');
+					Element.hide('extras');
+					Element.show('saving');
+				});
 			</script>
 		</div>
 		
