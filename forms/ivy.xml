@@ -9,7 +9,7 @@
 	    <dependency org="riotfamily" name="riot-js" rev="latest.integration" conf="runtime->default" changing="true" />
 	    <dependency org="riotfamily" name="jscalendar-js" rev="latest.release" conf="runtime->default" />
 	    <dependency org="riotfamily" name="tinymce-js" rev="latest.release" conf="runtime->default" />
-	    <dependency org="springframework" name="spring" rev="2.0.+" conf="*->default" />
+	    <dependency org="springframework" name="spring" rev="2.0.+" conf="build->default;runtime->web" />
 	    <dependency org="devlib" name="imageinfo" rev="latest.release" />
 	    <dependency org="apache" name="commons-fileupload" rev="latest.release" conf="runtime->default" />
     </dependencies>
