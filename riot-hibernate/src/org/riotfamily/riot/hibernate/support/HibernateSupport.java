@@ -28,6 +28,14 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+/**
+ * Base class for implementing DAOs based on plain Hibernate3 API.
+ * Hibernate 3.0.1 introduced a feature called "contextual Sessions", 
+ * where Hibernate itself manages one current Session per transaction. 
+ * {@linkplain http://static.springframework.org/spring/docs/2.0.x/reference/orm.html#orm-hibernate-straight}
+ *
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class HibernateSupport {
 
 	private SessionFactory sessionFactory;
