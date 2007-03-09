@@ -119,6 +119,14 @@ public class Form implements BeanEditor {
 		this();
 		setBeanClass(type);
 	}
+	
+	/**
+	 * @since 6.4
+	 */
+	public Form(Object object) {
+		this();
+		editorBinder = new EditorBinder(new MapOrBeanWrapper(object));
+	}
 
 	public String getId() {
 		return this.id;

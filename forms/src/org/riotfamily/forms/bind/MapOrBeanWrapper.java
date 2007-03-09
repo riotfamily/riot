@@ -44,6 +44,18 @@ public class MapOrBeanWrapper implements ObjectWrapper {
 			wrapper = new ProtectedBeanWrapper(objectClass);
 		}
 	}
+	
+	/**
+	 * @since 6.4
+	 */
+	public MapOrBeanWrapper(Object object) {
+		if (object instanceof Map) {
+			wrapper = new MapWrapper((Map) object); 	
+		}
+		else {
+			wrapper = new ProtectedBeanWrapper(object);
+		}
+	}
 
 	public Class getPropertyType(String propertyName) throws BeansException {
 		return this.wrapper.getPropertyType(propertyName);
