@@ -186,8 +186,7 @@ public abstract class AbstractFormController implements Controller {
 	 * Returns whether the request is to be handled by a {@link ContentElement}. 
 	 */
 	protected boolean isContentRequest(HttpServletRequest request) {
-		return "GET".equals(request.getMethod()) && 
-				request.getParameter(CONTENT_PARAM) != null;
+		return request.getParameter(CONTENT_PARAM) != null;
 	}
 	
 	protected boolean isExclusiveRequest(HttpServletRequest request) {
