@@ -42,6 +42,12 @@ public interface Job {
 	public boolean isConcurrent();
 	
 	/**
+	 * Returns whether the job can be executed more than once with the same
+	 * objectId.  
+	 */
+	public boolean isRepeatable();
+	
+	/**
 	 * Performs the actual work. The given context can be used to log messages
 	 * or to provide progress information.
 	 */

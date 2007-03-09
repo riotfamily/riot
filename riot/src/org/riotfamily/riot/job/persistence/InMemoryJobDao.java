@@ -57,6 +57,10 @@ public class InMemoryJobDao implements JobDao {
 		return null;
 	}
 
+	public JobDetail getLastCompletedJobDetail(String type, String objectId) {
+		return null;
+	}
+	
 	public Collection getPendingJobDetails() {
 		return null;
 	}

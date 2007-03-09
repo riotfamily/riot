@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job.command;
 
-import org.riotfamily.riot.job.JobCreationException;
 import org.riotfamily.riot.job.JobManager;
 import org.riotfamily.riot.job.persistence.JobDetail;
 import org.riotfamily.riot.list.command.CommandContext;

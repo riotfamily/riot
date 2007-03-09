@@ -36,8 +36,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 public abstract class AbstractJob implements Job, BeanNameAware {
 
-	private boolean concurrent;
-	
 	private String beanName;
 	
 	private RiotDao dao;
@@ -56,12 +54,12 @@ public abstract class AbstractJob implements Job, BeanNameAware {
 		this.transactionManager = transactionManager;
 	}
 
-	public void setConcurrent(boolean concurrent) {
-		this.concurrent = concurrent;
-	}
-
 	public boolean isConcurrent() {
-		return concurrent;
+		return false;
+	}
+	
+	public boolean isRepeatable() {
+		return true;
 	}
 	
 	public void setBeanName(String beanName) {

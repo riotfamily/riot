@@ -89,6 +89,10 @@ public class TestJob implements Job {
 	public boolean isConcurrent() {
 		return false;
 	}
+	
+	public boolean isRepeatable() {
+		return true;
+	}
 
 	public void tearDown(String objectId) {
 		step = 1;

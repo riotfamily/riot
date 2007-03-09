@@ -40,6 +40,8 @@ public interface JobDao {
 	
 	public JobDetail getPendingJobDetail(String type, String objectId);
 	
+	public JobDetail getLastCompletedJobDetail(String type, String objectId);
+	
 	public int getAverageStepTime(String type);
 	
 	public void saveJobDetail(JobDetail detail);

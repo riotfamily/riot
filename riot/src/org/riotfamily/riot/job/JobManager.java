@@ -102,10 +102,13 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 		
 		JobDetail detail = dao.getPendingJobDetail(type, objectId);
 		if (detail == null) {
-			detail = setupJob(type, objectId);
-			log.debug("No pending job found of type " + type 
-					+ " for objectId '" + objectId + "' - a new job has been"
-					+ " set up with id " + detail.getId());
+			detail = dao.getLastCompletedJobDetail(type, objectId);
+			if (detail == null || getJob(type).isRepeatable()) {
+				detail = setupJob(type, objectId);
+				log.debug("No pending job found of type " + type 
+						+ " for objectId '" + objectId + "' - a new job has "
+						+ " been set up with id " + detail.getId());
+			}
 		}
 		else {
 			log.debug("Found pending job: " + detail.getId());
