@@ -34,16 +34,13 @@ import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.FormChooserDefinition;
 import org.riotfamily.riot.editor.FormDefinition;
 import org.riotfamily.riot.list.ui.ListService;
-import org.springframework.transaction.PlatformTransactionManager;
 
 public class FormChooserController extends FormController {
 
 	public FormChooserController(EditorRepository editorRepository, 
-			FormRepository formRepository, 
-			PlatformTransactionManager transactionManager,
-			ListService listService) {
+			FormRepository formRepository, ListService listService) {
 		
-		super(editorRepository, formRepository, transactionManager, listService);
+		super(editorRepository, formRepository, listService);
 	}
 	
 	public Class getDefinitionClass() {

@@ -25,6 +25,7 @@ package org.riotfamily.riot.editor.ui;
 
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +34,7 @@ import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.mapping.UrlMapping;
 import org.riotfamily.common.web.mapping.UrlMappingAware;
+import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
@@ -44,10 +46,6 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -55,13 +53,12 @@ import org.springframework.web.servlet.mvc.Controller;
 import freemarker.template.Configuration;
 
 public class ViewController implements Controller, ResourceLoaderAware, 
-		InitializingBean, EditorController, UrlMappingAware, BeanNameAware {
+		InitializingBean, EditorController, UrlMappingAware, BeanNameAware,
+		TransactionalController {
 
 	private EditorRepository editorRepository;
 	
 	private ResourceLoader resourceLoader;
-	
-	private PlatformTransactionManager transactionManager;
 	
 	private ListService listService;
 	
@@ -79,11 +76,9 @@ public class ViewController implements Controller, ResourceLoaderAware,
 	private Configuration configuration;
 	
 	public ViewController(EditorRepository repository, 
-			PlatformTransactionManager transactionManager,
 			ListService listService) {
 		
 		this.editorRepository = repository;
-		this.transactionManager = transactionManager;
 		this.listService = listService;
 	}	
 
@@ -134,23 +129,18 @@ public class ViewController implements Controller, ResourceLoaderAware,
 		
 		final StringWriter sw = new StringWriter();
 		
-		Object bean = new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
-			public Object doInTransaction(TransactionStatus ts) {
-				Object object = EditorDefinitionUtils.loadBean(viewDef, objectId);
-				FlatMap model = new FlatMap();
-				model.put("object", object);
-				model.put("request", request);
-				try {
-					configuration.getTemplate(viewDef.getTemplate()).process(model, sw);
-				}
-				catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-				return object;
-			}
-		});
+		Object object = EditorDefinitionUtils.loadBean(viewDef, objectId);
+		Map model = new FlatMap();
+		model.put("object", object);
+		model.put("request", request);
+		try {
+			configuration.getTemplate(viewDef.getTemplate()).process(model, sw);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 		
-		HashMap model = new HashMap();
+		model = new HashMap();
 		model.put("editorId", editorId);
 		model.put("objectId", objectId);
 		model.put("form", sw.toString());
@@ -161,7 +151,7 @@ public class ViewController implements Controller, ResourceLoaderAware,
 		if (parentListDef != null) {
 			ListSession session = listService.getOrCreateListSession(
 				parentListDef.getId(), 
-				EditorDefinitionUtils.getParentId(viewDef, bean), 
+				EditorDefinitionUtils.getParentId(viewDef, object), 
 				null, request);
 			
 			model.put("listKey", session.getKey());

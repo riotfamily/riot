@@ -35,6 +35,7 @@ import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.mapping.UrlMapping;
 import org.riotfamily.common.web.mapping.UrlMappingAware;
+import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.ajax.AjaxFormController;
 import org.riotfamily.forms.controller.ButtonFactory;
@@ -49,7 +50,8 @@ import org.springframework.web.servlet.ModelAndView;
  * @since 6.4
  */
 public class DialogFormController extends AjaxFormController
-		implements UrlMappingAware, BeanNameAware, FormSubmissionHandler {
+		implements UrlMappingAware, BeanNameAware, FormSubmissionHandler,
+		TransactionalController {
 	
 	private ListRepository listRepository;
 	

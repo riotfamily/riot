@@ -62,6 +62,12 @@
 		<property name="defaultErrorView" value="classpath:/org/riotfamily/riot/runtime/view/error.ftl" />
 	</bean>
 	
+	<bean class="org.riotfamily.common.web.transaction.TransactionalControllerHandlerAdapter">
+		<constructor-arg ref="transactionManager" />
+	</bean>
+	
+	<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+	
 	<!-- 
 	  - HandlerInterceptor that ensures that only authenticated users can
 	  - access the Riot admin pages.
@@ -372,7 +378,6 @@
 	
 	<bean id="pathController" name="/path" class="org.riotfamily.riot.editor.ui.PathController">
 		<constructor-arg ref="editorRepository" />
-		<constructor-arg ref="transactionManager" />
 	</bean>
 	
 	<bean id="formContextFactory" class="org.riotfamily.forms.controller.FormContextFactory">
@@ -401,7 +406,6 @@
 	<bean id="formController" class="org.riotfamily.riot.form.ui.FormController">
 		<constructor-arg ref="editorRepository" />
 		<constructor-arg ref="formRepository" />
-		<constructor-arg ref="transactionManager" />
 		<constructor-arg ref="listService" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
@@ -415,7 +419,6 @@
 
 	<bean id="viewController" class="org.riotfamily.riot.editor.ui.ViewController">
 		<constructor-arg ref="editorRepository" />
-		<constructor-arg ref="transactionManager" />
 		<constructor-arg ref="listService" />
 	</bean>
 	<alias name="viewController" alias="/view/@{editorId}" />
@@ -434,7 +437,7 @@
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 
-	<bean id="packageListController" name="/packages" class="org.riotfamily.common.web.util.PackageListController">
+	<bean id="packageListController" name="/packages" class="org.riotfamily.common.web.controller.PackageListController">
 		<property name="viewName" value="classpath:/org/riotfamily/riot/runtime/view/packages.ftl" />
 		<property name="patterns">
 			<list>

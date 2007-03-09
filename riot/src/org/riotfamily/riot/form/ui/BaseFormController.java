@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.mapping.UrlMapping;
 import org.riotfamily.common.web.mapping.UrlMappingAware;
+import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRepository;
 import org.riotfamily.forms.controller.ButtonFactory;
@@ -45,11 +46,6 @@ import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.FormDefinition;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -57,7 +53,8 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 public abstract class BaseFormController extends RepositoryFormController 
-		implements UrlMappingAware, BeanNameAware, FormSubmissionHandler {
+		implements UrlMappingAware, BeanNameAware, FormSubmissionHandler,
+		TransactionalController {
 
 	protected static final String FORM_DEFINITION_ATTR = 
 			FormController.class.getName() + ".formDefinition";
@@ -77,15 +74,11 @@ public abstract class BaseFormController extends RepositoryFormController
 	
 	private String beanName;
 	
-	private PlatformTransactionManager transactionManager;
-	
 	public BaseFormController(EditorRepository editorRepository, 
-			FormRepository formRepository, 
-			PlatformTransactionManager transactionManager) {
+			FormRepository formRepository) {
 		
 		super(formRepository);
 		this.editorRepository = editorRepository;
-		this.transactionManager = transactionManager;
 		ButtonFactory buttonFactory = new ButtonFactory(this);
 		buttonFactory.setLabelKey("label.form.button.save");
 		buttonFactory.setCssClass("button button-save");
@@ -159,44 +152,7 @@ public abstract class BaseFormController extends RepositoryFormController
 		FormUtils.setParentId(form, getParentId(request));
 		return form;
 	}
-	
-	protected Object execInTransaction(TransactionCallback callback) {
-		return new TransactionTemplate(transactionManager).execute(callback);		
-	}
-	
-	protected Form createAndInitForm(final HttpServletRequest request, 
-			final HttpServletResponse response) throws Exception {
 		
-		return (Form) execInTransaction(new TransactionCallback() {
-			public Object doInTransaction(TransactionStatus ts) {
-				try {
-					return BaseFormController.super.createAndInitForm(
-							request, response);		
-				}
-				catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-			}
-		});
-	}
-	
-	protected ModelAndView handleFormRequest(final Form form, 
-			final HttpServletRequest request, 
-			final HttpServletResponse response) throws Exception {
-		
-		return (ModelAndView) execInTransaction(new TransactionCallback() {
-			public Object doInTransaction(TransactionStatus ts) {
-				try {
-					return BaseFormController.super.handleFormRequest(
-							form, request, response);
-				}
-				catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-			}
-		});
-	}
-	
 	/**
 	 * @see org.riotfamily.forms.controller.RepositoryFormController#getFormBackingObject(javax.servlet.http.HttpServletRequest)
 	 */
@@ -223,16 +179,11 @@ public abstract class BaseFormController extends RepositoryFormController
 	/**
 	 * @see org.riotfamily.forms.controller.AbstractFormController#showForm(org.riotfamily.forms.Form, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	protected ModelAndView showForm(final Form form, 
-			HttpServletRequest request, HttpServletResponse response) {
+	protected ModelAndView showForm(Form form, HttpServletRequest request, 
+			HttpServletResponse response) {
 		
-		final StringWriter sw = new StringWriter();
-		execInTransaction(new TransactionCallbackWithoutResult() {
-			protected void doInTransactionWithoutResult(TransactionStatus ts) {
-				renderForm(form, new PrintWriter(sw));
-			}
-		});
-		
+		StringWriter sw = new StringWriter();
+		renderForm(form, new PrintWriter(sw));
 		Map model = createModel(form, getFormDefinition(request), 
 				request, response);
 		

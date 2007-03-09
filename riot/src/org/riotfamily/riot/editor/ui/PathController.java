@@ -28,28 +28,22 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * Controller that displays a breadcrumb navigation for an editor.
  */
-public class PathController implements Controller, MessageSourceAware {
+public class PathController implements TransactionalController, MessageSourceAware {
 
 	private EditorRepository repository;
 	
 	private MessageSource messageSource;
-	
-	private PlatformTransactionManager transactionManager;
 	
 	private String editorIdParam = "editorId";
 
@@ -64,11 +58,8 @@ public class PathController implements Controller, MessageSourceAware {
 
 	private String modelKey = "path";
 
-	public PathController(EditorRepository repository, 
-			PlatformTransactionManager transactionManager) {
-		
+	public PathController(EditorRepository repository) {
 		this.repository = repository;
-		this.transactionManager = transactionManager;
 	}
 
 	public void setMessageSource(MessageSource messageSource) {
@@ -151,10 +142,6 @@ public class PathController implements Controller, MessageSourceAware {
 			final EditorDefinition editor, final String objectId, 
 			final String parentId, final MessageResolver messageResolver) {
 		
-		return (EditorReference) new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
-			public Object doInTransaction(TransactionStatus ts) {
-				return editor.createEditorPath(objectId, parentId, messageResolver);
-			}
-		});
+		return editor.createEditorPath(objectId, parentId, messageResolver);
 	}
 }
