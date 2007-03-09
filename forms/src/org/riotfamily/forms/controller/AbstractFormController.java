@@ -240,7 +240,7 @@ public abstract class AbstractFormController implements Controller {
 			}
 		}
 		
-		form.setValue(getFormBackingObject(request)); 
+		populateForm(form, request); 
 		form.init();
 		initForm(form, request);
 		
@@ -249,9 +249,39 @@ public abstract class AbstractFormController implements Controller {
 		
 		return form;
 	}
+	
+	/**
+	 * Populates newly created forms. The default implementation invokes 
+	 * {@link Form#setValue(Object)} with the object returned by 
+	 * {@link #getFormBackingObject(HttpServletRequest)}. 
+	 */
+	protected void populateForm(Form form, HttpServletRequest request) 
+			throws Exception {
+		
+		form.setValue(getFormBackingObject(request));
+	}
+	
+	/**
+	 * Returns the object backing the form. Subclasses may overwrite this method
+	 * to retrieve a persistent object. The default implementation returns
+	 * <code>null</code>.
+	 */
+	protected Object getFormBackingObject(HttpServletRequest request) 
+			throws Exception {
+		
+		return null;
+	}
 
+	/**
+	 * Subclasses must implement this method and return a fresh 
+	 * {@link Form} instance.
+	 */
 	protected abstract Form createForm(HttpServletRequest request);
 	
+	/**
+	 * Subclasses may overwite this method to inialize forms after they have
+	 * been populated. The default implementation does nothing.
+	 */
 	protected void initForm(Form form, HttpServletRequest request) {
 	}
 	
@@ -269,9 +299,6 @@ public abstract class AbstractFormController implements Controller {
 		}
 		return showForm(form, request, response);
 	}
-	
-	protected abstract Object getFormBackingObject(HttpServletRequest request)
-			throws Exception;
 	
 	protected String getSessionAttribute(HttpServletRequest request) {
 		return AbstractFormController.class.getName() + ".form";
