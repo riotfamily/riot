@@ -427,6 +427,13 @@
 		<constructor-arg ref="editorRepository" />
 	</bean>
 	
+	<bean id="commandDialogController" 
+		name="/dialog/@{commandId}"
+		class="org.riotfamily.riot.list.command.dialog.ui.DialogFormController">
+		<constructor-arg ref="listRepository" />
+		<property name="formContextFactory" ref="formContextFactory" />
+	</bean>
+
 	<bean id="packageListController" name="/packages" class="org.riotfamily.common.web.util.PackageListController">
 		<property name="viewName" value="classpath:/org/riotfamily/riot/runtime/view/packages.ftl" />
 		<property name="patterns">
