@@ -14,7 +14,7 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
@@ -23,12 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.resource;
 
-
 /**
- *
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.4
  */
-public interface ResourceElement {
+public interface ResourceVisitor {
+
+	public void visitStyleSheet(StylesheetResource res);
 	
-	FormResource getResource();
+	public void visitScript(ScriptResource res);
 
 }

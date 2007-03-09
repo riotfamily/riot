@@ -49,6 +49,7 @@ import org.riotfamily.forms.element.support.Container;
 import org.riotfamily.forms.error.FormErrors;
 import org.riotfamily.forms.event.FormListener;
 import org.riotfamily.forms.resource.FormResource;
+import org.riotfamily.forms.resource.LoadingCodeGenerator;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.StylesheetResource;
 import org.riotfamily.forms.support.HttpFormRequest;
@@ -221,9 +222,9 @@ public class Form implements BeanEditor {
 			Element element = (Element) it.next();
 			if (element instanceof ResourceElement) {
 				ResourceElement re = (ResourceElement) element; 
-				Collection res = re.getResources(); 
+				FormResource res = re.getResource(); 
 				if (res != null) {
-					resources.addAll(res);
+					resources.add(res);
 				}
 			}
 		}
@@ -318,16 +319,8 @@ public class Form implements BeanEditor {
 		doc.attribute(Html.SCRIPT_LANGUAGE, "JavaScript");
 		doc.end();
 		
-		doc.start(Html.SCRIPT);
-		doc.body();
-		
-		ArrayList loadedResources = new ArrayList();
-		Iterator it = getResources().iterator();
-		while (it.hasNext()) {
-			FormResource res = (FormResource) it.next();
-			res.renderLoadingCode(writer, loadedResources);
-			loadedResources.add(res);
-		}
+		doc.start(Html.SCRIPT).body();
+		LoadingCodeGenerator.renderLoadingCode(getResources(), writer);
 		doc.end();
 		
 		formContext.getTemplateRenderer().render(

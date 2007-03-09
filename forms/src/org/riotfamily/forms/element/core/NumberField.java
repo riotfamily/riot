@@ -31,8 +31,6 @@ import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.error.ErrorUtils;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
-import org.riotfamily.forms.resource.ScriptResource;
-import org.riotfamily.forms.resource.ScriptSequence;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -40,9 +38,7 @@ public class NumberField extends TextField implements DHTMLElement,
 		ResourceElement {
 
 	private static final List RESOURCES = Collections.singletonList(
-			new ScriptSequence(new ScriptResource[] {
-				Resources.PROTOTYPE, Resources.RIOT_NUMBER_INPUT 
-			}));
+			Resources.RIOT_NUMBER_INPUT);
 	
 	private Float minValue;
 	

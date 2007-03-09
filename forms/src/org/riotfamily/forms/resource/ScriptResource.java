@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.resource;
 
-import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.springframework.util.Assert;
@@ -37,15 +37,29 @@ public class ScriptResource implements FormResource {
 	
 	private String test;
 	
+	private Collection dependencies;
 	
 	public ScriptResource(String src) {
 		this(src, null);
 	}
 	
 	public ScriptResource(String src, String test) {
+		this(src, test, (FormResource[]) null);
+	}
+	
+	public ScriptResource(String src, String test, FormResource dependency) {
+		this(src, test, dependency != null 
+				? new FormResource[] { dependency } 
+				: null);
+	}
+	
+	public ScriptResource(String src, String test, FormResource[] dependencies) {
 		Assert.notNull(src);
 		this.src = src;
 		this.test = test;
+		if (dependencies != null && dependencies.length > 0) {
+			this.dependencies = Arrays.asList(dependencies);
+		}
 	}
 	
 	public String getSrc() {
@@ -56,18 +70,12 @@ public class ScriptResource implements FormResource {
 		return this.test;
 	}
 
-	public void renderLoadingCode(PrintWriter writer, Collection loadedResources) {
-		if (!loadedResources.contains(this)) {
-			writer.print("Resources.loadScript('");
-			writer.print(src);
-			writer.print('\'');
-			if (test != null) {
-				writer.print(", '");
-				writer.print(test);
-				writer.print('\'');
-			}
-			writer.print(");");
-		}
+	public Collection getDependencies() {
+		return this.dependencies;
+	}
+
+	public void accept(ResourceVisitor vistor) {
+		vistor.visitScript(this);
 	}
 	
 	public int hashCode() {

@@ -32,26 +32,27 @@ public final class Resources {
 			new ScriptResource("prototype/prototype.js", "Prototype");
 	
 	public static final ScriptResource SCRIPTACULOUS_EFFECTS = 
-			new ScriptResource("scriptaculous/effects.js", "Effect");
+			new ScriptResource("scriptaculous/effects.js", "Effect", PROTOTYPE);
 	
 	public static final ScriptResource SCRIPTACULOUS_DRAG_DROP = 
-			new ScriptResource("scriptaculous/dragdrop.js", "Droppables");
+			new ScriptResource("scriptaculous/dragdrop.js", "Droppables",
+			SCRIPTACULOUS_EFFECTS);
+	
+	public static final ScriptResource SCRIPTACULOUS_CONTROLS = 
+			new ScriptResource("scriptaculous/controls.js", "Autocompleter", 
+			SCRIPTACULOUS_EFFECTS);
 	
 	public static final ScriptResource SCRIPTACULOUS_SLIDER = 
-			new ScriptResource("scriptaculous/slider.js", "Control.Slider");
-	
-	public static final ScriptSequence SCRIPTACULOUS_DRAG_DROP_SEQ =
-			new ScriptSequence(new ScriptResource[] {
-				PROTOTYPE, SCRIPTACULOUS_EFFECTS, SCRIPTACULOUS_DRAG_DROP 
-			});
-	
+			new ScriptResource("scriptaculous/slider.js", "Control.Slider", 
+			PROTOTYPE);
+		
 	public static final ScriptResource RIOT_WINDOW_CALLBACK = 
 			new ScriptResource("riot-js/window-callback.js", "WindowCallback");
 				
 	public static final ScriptResource RIOT_NUMBER_INPUT = 
-			new ScriptResource("riot-js/number-input.js");
+			new ScriptResource("riot-js/number-input.js", null, PROTOTYPE);
 	
 	public static final ScriptResource RIOT_IMAGE_CHECKBOX = 
-			new ScriptResource("riot-js/image-checkbox.js");
+			new ScriptResource("riot-js/image-checkbox.js", null, PROTOTYPE);
 
 }

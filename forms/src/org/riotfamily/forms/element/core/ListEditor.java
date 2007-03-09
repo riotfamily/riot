@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.riotfamily.common.util.PropertyUtils;
@@ -42,6 +41,7 @@ import org.riotfamily.forms.error.ErrorUtils;
 import org.riotfamily.forms.event.ClickEvent;
 import org.riotfamily.forms.event.ClickListener;
 import org.riotfamily.forms.factory.ElementFactory;
+import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.support.TemplateUtils;
@@ -54,10 +54,7 @@ import org.springframework.util.StringUtils;
  */
 public class ListEditor extends TemplateElement implements Editor, 
 		ResourceElement, DHTMLElement {
-	
-	private static final List RESOURCES = Collections.singletonList(
-			Resources.SCRIPTACULOUS_DRAG_DROP_SEQ);
-	
+		
 	/** Class to use for newly created collections */
 	private Class collectionClass;
 		
@@ -100,8 +97,8 @@ public class ListEditor extends TemplateElement implements Editor,
 		this.parentProperty = parentProperty;
 	}
 
-	public Collection getResources() {
-		return sortable ? RESOURCES : null;
+	public FormResource getResource() {
+		return sortable ? Resources.SCRIPTACULOUS_DRAG_DROP : null;
 	}
 	
 	/**
@@ -214,7 +211,7 @@ public class ListEditor extends TemplateElement implements Editor,
 	}
 	
 	public String getPrecondition() {
-		return Resources.SCRIPTACULOUS_DRAG_DROP_SEQ.getTest();
+		return Resources.SCRIPTACULOUS_DRAG_DROP.getTest();
 	}
 	
 	protected void processRequestInternal(FormRequest request) {

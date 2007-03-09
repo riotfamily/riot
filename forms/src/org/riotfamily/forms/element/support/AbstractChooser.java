@@ -25,8 +25,6 @@ package org.riotfamily.forms.element.support;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +41,7 @@ import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.element.ContentElement;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.error.ErrorUtils;
+import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.support.TemplateUtils;
@@ -64,8 +63,8 @@ public abstract class AbstractChooser extends AbstractEditorBase
 
 	private String displayName;
 
-	private Collection resources = Collections.singleton(
-			new ScriptResource("form/chooser.js", "Chooser"));
+	private static FormResource RESOURCE = 
+			new ScriptResource("form/chooser.js", "Chooser");
 	
 	
 	public void setDisplayNameProperty(String displayNameProperty) {
@@ -113,8 +112,8 @@ public abstract class AbstractChooser extends AbstractEditorBase
 		getFormListener().elementChanged(this);
 	}
 	
-	public Collection getResources() {
-		return resources;
+	public FormResource getResource() {
+		return RESOURCE;
 	}
 	
 	public String getInitScript() {

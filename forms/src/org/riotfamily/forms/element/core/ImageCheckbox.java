@@ -23,23 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.core;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import org.riotfamily.forms.element.DHTMLElement;
+import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
-import org.riotfamily.forms.resource.ScriptResource;
-import org.riotfamily.forms.resource.ScriptSequence;
 
 public class ImageCheckbox extends Checkbox 
 		implements DHTMLElement, ResourceElement  {
-	
-	private static final List RESOURCES = Collections.singletonList(
-			new ScriptSequence(new ScriptResource[] {
-				Resources.PROTOTYPE, Resources.RIOT_IMAGE_CHECKBOX 
-			}));
 	
 	private static final String STYLE_CLASS = "hidden";
 	
@@ -47,8 +37,8 @@ public class ImageCheckbox extends Checkbox
 		setStyleClass(STYLE_CLASS);
 	}
 	
-	public Collection getResources() {
-		return RESOURCES;
+	public FormResource getResource() {
+		return Resources.RIOT_IMAGE_CHECKBOX;
 	}
 	
 	public String getPrecondition() {		

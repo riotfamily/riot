@@ -27,8 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.LinkedList;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
@@ -66,7 +64,9 @@ public class FileUpload extends CompositeElement implements Editor,
 	private static MimetypesFileTypeMap defaultMimetypesMap = 
 			new MimetypesFileTypeMap();
 
-	private Collection resources = new LinkedList();
+	protected static FormResource RESOURCE = new ScriptResource(
+			"form/fileupload/upload.js", null, 
+			new StylesheetResource("form/fileupload/progress.css"));
 
 	private String filenameProperty;
 
@@ -98,14 +98,8 @@ public class FileUpload extends CompositeElement implements Editor,
 		addComponent(new RemoveButton());
 		addComponent(createPreviewElement());
 		setSurroundBySpan(true);
-		addResource(new StylesheetResource("form/fileupload/progress.css"));
-		addResource(new ScriptResource("form/fileupload/upload.js"));
 	}
-	
-	protected void addResource(FormResource resource) {
-		resources.add(resource);
-	}
-	
+		
 	protected Element createPreviewElement() {
 		return new PreviewElement();
 	}
@@ -118,8 +112,8 @@ public class FileUpload extends CompositeElement implements Editor,
 		this.fileStore = fileStore;
 	}
 
-	public Collection getResources() {
-		return resources;
+	public FormResource getResource() {
+		return RESOURCE;
 	}
 
 	public void setFilenameProperty(String property) {

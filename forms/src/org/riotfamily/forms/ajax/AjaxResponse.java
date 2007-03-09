@@ -25,8 +25,6 @@ package org.riotfamily.forms.ajax;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -41,6 +39,7 @@ import org.riotfamily.forms.Element;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.event.FormListener;
 import org.riotfamily.forms.resource.FormResource;
+import org.riotfamily.forms.resource.LoadingCodeGenerator;
 import org.riotfamily.forms.resource.ResourceElement;
 
 
@@ -144,9 +143,9 @@ public class AjaxResponse implements FormListener {
 		}
 		if (element instanceof ResourceElement) {
 			ResourceElement re = (ResourceElement) element;
-			Collection res = re.getResources();
+			FormResource res = re.getResource();
 			if (res != null) {
-				resources.addAll(res);
+				resources.add(res);
 			}
 		}
 		if (element instanceof DHTMLElement) {
@@ -215,13 +214,7 @@ public class AjaxResponse implements FormListener {
 	protected void renderResources() {
 		TagWriter tag = new TagWriter(writer);
 		tag.start("eval").body();
-		ArrayList loadedResources = new ArrayList();
-		Iterator it = resources.iterator();
-		while (it.hasNext()) {
-			FormResource res = (FormResource) it.next();
-			res.renderLoadingCode(writer, loadedResources);
-			loadedResources.add(res);
-		}
+		LoadingCodeGenerator.renderLoadingCode(resources, writer);
 		tag.end();
 	}
 	

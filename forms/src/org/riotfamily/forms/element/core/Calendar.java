@@ -36,7 +36,6 @@ import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
-import org.riotfamily.forms.resource.ScriptSequence;
 import org.riotfamily.forms.resource.StylesheetResource;
 import org.riotfamily.forms.support.MessageUtils;
 import org.riotfamily.forms.support.TemplateUtils;
@@ -144,11 +143,9 @@ public class Calendar extends TextField implements ResourceElement,
 		
 		resources = new ArrayList();
 		resources.add(new StylesheetResource("jscalendar/calendar.css"));
-		resources.add(new ScriptSequence(new ScriptResource[] {
-			new ScriptResource("jscalendar/calendar.js", "Calendar"),
-			new ScriptResource("jscalendar/lang/calendar-" + lang + ".js", "Calendar._DN"),
-			new ScriptResource("jscalendar/calendar-setup.js", "Calendar.setup")
-		}));
+		resources.add(new ScriptResource("jscalendar/calendar.js", "Calendar"));
+		resources.add(new ScriptResource("jscalendar/lang/calendar-" + lang + ".js", "Calendar._DN"));
+		resources.add(new ScriptResource("jscalendar/calendar-setup.js", "Calendar.setup"));
 	}
 	
 	public Collection getResources() {

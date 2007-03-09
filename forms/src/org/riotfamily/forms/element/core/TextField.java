@@ -24,9 +24,6 @@
 package org.riotfamily.forms.element.core;
 
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import org.riotfamily.common.markup.DocumentWriter;
@@ -35,10 +32,10 @@ import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.AbstractTextElement;
 import org.riotfamily.forms.error.ErrorUtils;
+import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
-import org.riotfamily.forms.resource.ScriptSequence;
 import org.riotfamily.forms.support.MessageUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -56,10 +53,9 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 	private static final String DEFAULT_REGEX_MISMATCH_MESSAGE_KEY =
 			"error.textField.regexMismatch";
 	
-	private static final List RESOURCES = Collections.singletonList(
-			new ScriptSequence(new ScriptResource[] {
-				Resources.PROTOTYPE, new ScriptResource("riot-js/text-input.js")
-			}));
+	private static final FormResource RESOURCE = 
+			new ScriptResource("riot-js/text-input.js", null, 
+			Resources.PROTOTYPE);
 	
 	private boolean confirm;
 	
@@ -196,8 +192,8 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 		return regex != null ? "TextInput" : null;
 	}
 	
-	public Collection getResources() {
-		return regex != null ? RESOURCES : null;
+	public FormResource getResource() {
+		return regex != null ? RESOURCE : null;
 	}
 	
 }

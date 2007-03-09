@@ -23,9 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.resource;
 
-import java.io.PrintWriter;
-import java.util.Collection;
-
 import org.springframework.util.Assert;
 
 /**
@@ -40,12 +37,12 @@ public class StylesheetResource implements FormResource {
 		this.href = href;
 	}
 	
-	public void renderLoadingCode(PrintWriter writer, Collection loadedResources) {
-		if (!loadedResources.contains(this)) {
-			writer.print("Resources.loadStyleSheet('");
-			writer.print(href);
-			writer.print("');");
-		}
+	public String getHref() {
+		return this.href;
+	}
+
+	public void accept(ResourceVisitor visitor) {
+		visitor.visitStyleSheet(this);
 	}
 	
 	public int hashCode() {

@@ -24,14 +24,12 @@
 package org.riotfamily.forms.element.core;
 
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.AbstractTextElement;
+import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
 
@@ -42,8 +40,8 @@ import org.riotfamily.forms.resource.ScriptResource;
 public class Textarea extends AbstractTextElement implements ResourceElement, 
 		DHTMLElement {
 
-	private static List RESOURCES = Collections.singletonList(
-			new ScriptResource("riot-js/textarea.js", "TextArea"));
+	private static FormResource RESOURCE = 
+		new ScriptResource("riot-js/textarea.js", "TextArea");
 	
 	private int rows = 10;
 
@@ -77,8 +75,8 @@ public class Textarea extends AbstractTextElement implements ResourceElement,
 		tag.body(getText()).end();
 	}
 	
-	public Collection getResources() {
-		return RESOURCES;
+	public FormResource getResource() {
+		return RESOURCE;
 	}
 	
 	public String getInitScript() {

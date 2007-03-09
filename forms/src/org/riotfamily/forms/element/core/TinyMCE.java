@@ -24,14 +24,13 @@
 package org.riotfamily.forms.element.core;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
-import org.riotfamily.forms.resource.ScriptSequence;
 import org.riotfamily.forms.support.TemplateUtils;
 
 
@@ -40,15 +39,11 @@ import org.riotfamily.forms.support.TemplateUtils;
  */
 public class TinyMCE extends Textarea implements ResourceElement, DHTMLElement {
 
-	private List resources;
+	private List resources = new ArrayList();
 	
 	public TinyMCE() {
-		resources = Collections.singletonList(
-				new ScriptSequence(new ScriptResource[] {
-
-			new ScriptResource("tiny_mce/tiny_mce_src.js", "tinyMCE"),
-			new ScriptResource("tiny_mce/strict_mode_fix.js", "tinyMCE.addControl")
-		}));
+		resources.add(new ScriptResource("tiny_mce/tiny_mce_src.js", "tinyMCE"));
+		resources.add(new ScriptResource("tiny_mce/strict_mode_fix.js", "tinyMCE.addControl"));
 	}
 	
 	public Collection getResources() {
