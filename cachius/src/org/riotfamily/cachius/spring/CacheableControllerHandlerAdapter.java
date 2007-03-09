@@ -36,6 +36,7 @@ import org.riotfamily.cachius.support.SessionUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -60,7 +61,7 @@ import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
  * @author Felix Gnass
  */
 public class CacheableControllerHandlerAdapter implements HandlerAdapter, 
-		DisposableBean, ApplicationContextAware {
+		DisposableBean, ApplicationContextAware, Ordered {
 	
     private Log log = LogFactory.getLog(CacheableControllerHandlerAdapter.class);
 
@@ -68,11 +69,21 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
     
     private ViewResolverHelper viewResolverHelper;
     
+    private int order = 0;
+    
     public CacheableControllerHandlerAdapter(Cache cache) {
 		this.cache = cache;
 	}
     
-    public void setApplicationContext(ApplicationContext context) {
+    public int getOrder() {
+		return this.order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
+	public void setApplicationContext(ApplicationContext context) {
         viewResolverHelper = new ViewResolverHelper(context);
     }
 
