@@ -25,24 +25,33 @@
 	margin-top: 10px;
 }
 
-div.buttons {
+.buttons {
 	clear:both;
-	float: right;
 	margin-bottom: 30px;
 }
-.button-save {
+.buttons .button {
 	display: block;
+	float: right;
 	width: 144px;
 	height: 56px;
-	background: ${highlight} url(images/save.gif) 10px 10px no-repeat;
+	background-color: ${highlight};
+	background-position: 10px 10px;
+	background-repeat: no-repeat;
 }
-.button-save .face {
+.buttons .button .face {
 	padding: 10px 0 0 40px;
 	color: #fff;
 	text-transform: uppercase;
 	text-decoration: none;
 	font-family: "Trebuchet MS", arial, sans-serif;
 	font-size:12px;
+}
+
+.buttons .button-save {
+	background-image: url(images/save.gif);
+}
+.buttons .button-execute {
+	background-image: url(images/play.gif);
 }
 
 #saving {
@@ -502,8 +511,7 @@ div.form-hint {
 div.autocomplete {
 	position: absolute;
 	width: 250px;
-	background-color: white;
-	border:1px solid #888;
+	border: 1px solid #a4a4a4;
 	margin: 0;
 	padding: 0;
 }
@@ -511,16 +519,15 @@ div.autocomplete ul {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-}
-div.autocomplete ul li.selected { 
-	background-color: #ffb;
+	background-color: #fff;
 }
 div.autocomplete ul li {
 	list-style-type: none;
 	display: block;
-	margin: 0;
 	padding: 2px;
-	height: 32px;
 	cursor: pointer;
 	font-size: 12px;
+}
+div.autocomplete ul li.selected { 
+	background-color: #ffb;
 }
