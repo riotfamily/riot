@@ -24,7 +24,9 @@
 package org.riotfamily.revolt.definition;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -33,6 +35,8 @@ import java.util.List;
 public class Database {
 
 	private List tables = new ArrayList();
+	
+	private Set sequences = new HashSet();
 	
 	public List getTables() {
 		return this.tables;
@@ -48,6 +52,14 @@ public class Database {
 	
 	public void removeTable(String name) {
 		tables.remove(new Identifier(name));
+	}
+
+	public void addSequence(String name) {
+		sequences.add(name);
+	}
+
+	public Set getSequences() {
+		return this.sequences;
 	}
 
 }

@@ -39,6 +39,10 @@ public class Index extends Identifier {
 	public Index() {
 	}
 
+	public Index(String name) {
+		super(name);
+	}
+			
 	public Index(String name, String[] columnNames, boolean unique) {
 		super(name);
 		this.unique = unique;

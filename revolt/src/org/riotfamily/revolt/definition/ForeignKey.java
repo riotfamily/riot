@@ -39,6 +39,10 @@ public class ForeignKey extends Identifier {
 
 	public ForeignKey() {
 	}
+	
+	public ForeignKey(String name) {
+		super(name);
+	}
 
 	public ForeignKey(String name, String foreignTable, List references) {
 		super(name);

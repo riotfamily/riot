@@ -103,7 +103,7 @@ public class Table extends Identifier {
 	}
 	
 	public void removeIndex(String name) {
-		indices.remove(new Identifier(name));
+		indices.remove(new Index(name));
 	}
 	
 	public void addForeignKey(ForeignKey fk) {
@@ -112,7 +112,7 @@ public class Table extends Identifier {
 	}
 	
 	public void removeForeignKey(String name) {
-		foreignKeys.remove(new Identifier(name));
+		foreignKeys.remove(new ForeignKey(name));
 	}
 	
 	public void addUniqueConstraint(UniqueConstraint uc) {
@@ -121,7 +121,19 @@ public class Table extends Identifier {
 	}
 	
 	public void removeUniqueConstraint(String uc) {
-		uniqueConstraints.remove(new Identifier(uc));
+		uniqueConstraints.remove(new UniqueConstraint(uc));
+	}
+
+	public List getForeignKeys() {
+		return this.foreignKeys;
+	}
+
+	public List getIndices() {
+		return this.indices;
+	}
+
+	public List getUniqueConstraints() {
+		return this.uniqueConstraints;
 	}
 	
 }

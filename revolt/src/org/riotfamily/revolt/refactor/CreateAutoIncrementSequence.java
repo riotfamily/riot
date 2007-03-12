@@ -47,6 +47,7 @@ public class CreateAutoIncrementSequence implements Refactoring {
 	}
 
 	public void alterModel(Database database) {
+		database.addSequence(name);
 	}
 	
 	public Script getScript(Dialect dialect) {

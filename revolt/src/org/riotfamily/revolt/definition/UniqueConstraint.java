@@ -28,28 +28,21 @@ import java.util.Collection;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * 
  */
 public class UniqueConstraint extends Identifier {
 
-	private String name;
-	
 	private Collection columns;
 
 	public UniqueConstraint() {
 	}
 
+	public UniqueConstraint(String name) {
+		super(name);
+	}
+	
 	public UniqueConstraint(String name, String[] columnNames) {
-		this.name = name;
+		super(name);
 		setColumnNames(columnNames);
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public Collection getColumns() {
