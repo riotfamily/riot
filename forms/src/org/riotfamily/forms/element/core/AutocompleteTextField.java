@@ -63,7 +63,9 @@ public class AutocompleteTextField extends AbstractTextElement
 		super.renderInternal(writer);
 		TagWriter tag = new TagWriter(writer);
 		tag.start(Html.DIV).attribute(Html.COMMON_ID, getChoicesDivId())
-				.attribute(Html.COMMON_CLASS, "autocomplete").end();
+				.attribute(Html.COMMON_CLASS, "autocomplete")
+				.attribute(Html.COMMON_STYLE, "display:none")
+				.end();
 	}
 	
 	private String getChoicesDivId() {
