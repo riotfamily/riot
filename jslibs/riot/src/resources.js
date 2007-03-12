@@ -24,6 +24,7 @@ var Resources = {
 	 * may be specified to check whether the script is (already) loaded.
 	 */
 	loadScript: function(src, test) {
+		if (Resources._STOP_LOADING) return;
 		src = Resources.resolveUrl(src);
 		Resources._debug('Script requested: ' + src);
 		if (!Resources.isLoaded(src)) {
@@ -53,6 +54,7 @@ var Resources = {
 	},
 	
 	loadScriptSequence: function(scripts) {
+		if (Resources._STOP_LOADING) return;
 		if (scripts.length > 0) {
 			var script = scripts.shift();
 			Resources.loadScript(script.src, script.test);
@@ -145,12 +147,16 @@ var Resources = {
 				eval(callback);
 			}
 		}
-		else {
+		else if (!Resources._STOP_LOADING) {
 			setTimeout(function() { 
 				Resources.waitFor(test, callback); 
 			}, 100);
 		}
 	},	
+	
+	stopLoading: function() {
+		Resources._STOP_LOADING = true;
+	},
 	
 	LOADING: 'loading',
 	
@@ -179,10 +185,21 @@ var Resources = {
 	
 	_debug: function(msg) {
 		if (Resources.debugEnabled) {
-			alert(msg);
+			if (typeof console != 'undefined') console.log(msg); else alert(msg);
 		}
 	}
 }
 
+// Add an unload handler to stop loading when the user leaves the page before
+// all resources have finished loading. Otherwise exceptions might be raised
+// when a script tries to access another resource that has already been garbage 
+// collected.
+if (window.addEventListener) {
+	window.addEventListener('unload', Resources.stopLoading, false);
+} 
+else if (window.attachEvent) {
+    window.attachEvent('onunload', Resources.stopLoading);
+}
+    
 Resources.useBasePathFromScript('riot-js/resources.js');
 Resources.debugEnabled = top.location.href.indexOf('debug-resources') != -1;
