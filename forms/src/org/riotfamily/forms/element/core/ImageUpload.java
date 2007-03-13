@@ -92,6 +92,10 @@ public class ImageUpload extends FileUpload {
 	public ImageUpload() {
 	}
 
+	public FormResource getResource() {
+		return RESOURCE;
+	}
+	
 	protected Element createPreviewElement() {
 		return new PreviewElement();
 	}
