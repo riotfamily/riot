@@ -83,6 +83,10 @@ a.mceButtonDisabled {
 	margin: 0px;
 }
 
+.mceEditorIframe {
+	border: none;
+}
+
 .mceEditor td.mceStatusbarBottom {
 	font-size: 9pt;
 	padding: 5px 20px;
