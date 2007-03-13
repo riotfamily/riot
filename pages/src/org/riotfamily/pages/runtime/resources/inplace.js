@@ -419,7 +419,8 @@ riot.stylesheetMaker = {
 	addRule: function(selector, styles, sheet) {
 		var css = '';
 		for (prop in styles) {
-			if (typeof(prop) == 'function') { continue; }
+			if (typeof(prop) == 'function') { continue }
+			if (Prototype.Browser.IE && prop == 'font-size' && selector == 'body' && styles[prop].match(/(em|%)$/)) { continue }
 			css += prop + ':' + styles[prop] 
 			if (selector == 'a' && (prop == 'color' || prop == 'text-decoration')) {
 				css += ' !important';
