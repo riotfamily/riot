@@ -6,7 +6,10 @@ riot.stopEvent = function(ev) {
 riot.hover = RBuilder.node('div', {className: 'riot-highlight'}).hide();
 document.body.appendChild(riot.hover);
 riot.hideHover = function() {
-	if (riot.hover) riot.hover.hide();
+	if (riot.hover) {
+		riot.hover.hide();
+		riot.hover.onclick = null;
+	}
 }
 riot.hover.onmouseout = function() {
 	riot.hoverTimeout = setTimeout(riot.hideHover, 250);
@@ -79,6 +82,7 @@ riot.Component.prototype = {
 		if (Prototype.Browser.IE) {
 			if (riot.hoverTimeout) clearTimeout(riot.hoverTimeout);
 			Position.clone(this.element, riot.hover, {offsetTop: -2, offsetLeft: -2});
+			riot.hover.onclick = this.handlers[this.mode];
 			riot.hover.show();
 		}
 		else {
