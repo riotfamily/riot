@@ -164,7 +164,7 @@ Cropper.UI.prototype = {
 		values.each(function(s) {
 			var option = document.createElement('option');
 			option.value = s;
-			option.text = s + ' px';
+			option.innerHTML = s + ' px';
 			sel.appendChild(option);
 		});
 		sel.onchange = this.setSizeFromSelect.bind(this, sel, setter);
