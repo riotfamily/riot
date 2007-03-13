@@ -1,29 +1,10 @@
-riot.stopEvent = function(ev) {
-	Event.stop(ev || window.event);
-	return false;
-}
-
-riot.hover = RBuilder.node('div', {className: 'riot-highlight'}).hide();
-document.body.appendChild(riot.hover);
-riot.hideHover = function() {
-	if (riot.hover) {
-		riot.hover.hide();
-		riot.hover.onclick = null;
-	}
-}
-riot.hover.onmouseout = function() {
-	riot.hoverTimeout = setTimeout(riot.hideHover, 250);
-}
 riot.Component = Class.create();
 riot.Component.prototype = {
 
 	initialize: function(componentList, el) {
 		this.componentList = componentList;
 		this.element = el;
-		
 		el.component = this;
-		el.style.position = 'relative';
-			
 		this.handlers = {
 			'remove': this.remove.bindAsEventListener(this),
 			'properties': this.properties.bindAsEventListener(this)
@@ -526,6 +507,7 @@ riot.ComponentList.prototype = {
 			else {
 				this.getComponents().each(function(component) {
 					component.element.removeClassName('riot-moveable-component').stopObserving('click', riot.stopEvent, true).restoreHandlers('onclick');
+					component.element.style.position = '';
 				});
 				Sortable.destroy(this.element);
 				Draggables.removeObserver(this.element);

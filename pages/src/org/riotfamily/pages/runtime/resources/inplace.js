@@ -1,3 +1,20 @@
+riot.stopEvent = function(ev) {
+	Event.stop(ev || window.event);
+	return false;
+}
+
+riot.hover = RBuilder.node('div', {className: 'riot-highlight'}).hide();
+document.body.appendChild(riot.hover);
+riot.hideHover = function() {
+	if (riot.hover) {
+		riot.hover.hide();
+		riot.hover.onclick = null;
+	}
+}
+riot.hover.onmouseout = function() {
+	riot.hoverTimeout = setTimeout(riot.hideHover, 250);
+}
+
 riot.InplaceEditor = Class.create();
 riot.InplaceEditor.prototype = {
 
@@ -8,6 +25,8 @@ riot.InplaceEditor.prototype = {
 		this.enabled = false;
 		this.onclickHandler = this.onclick.bindAsEventListener(this);
 		this.oninit(options);
+		this.onMouseOver = this.showOutline.bindAsEventListener(this);
+		this.onMouseOut = this.hideOutline.bindAsEventListener(this);
 	},
 	
 	/* Subclasses may override this method to perform initalization upon creation */
@@ -22,6 +41,10 @@ riot.InplaceEditor.prototype = {
 			this.originalOnclickHandler = this.element.onclick;
 			this.element.onclick = this.onclickHandler;
 			this.element.addClassName('riot-editable-text');
+			if (Prototype.Browser.IE) {
+				this.element.observe('mouseover', this.onMouseOver);
+				this.element.observe('mouseout', this.onMouseOut);
+			}
 		}
 		else {
 			if (riot.activeEditor == this) {
@@ -29,7 +52,33 @@ riot.InplaceEditor.prototype = {
 			}
 			this.element.onclick = this.originalOnclickHandler;
 			this.element.removeClassName('riot-editable-text');
+			if (Prototype.Browser.IE) {
+				this.element.stopObserving('mouseover', this.onMouseOver);
+				this.element.stopObserving('mouseout', this.onMouseOut);
+			}
 		}
+	},
+	
+	showOutline: function(event) {
+		if (Prototype.Browser.IE) {
+			if (riot.hoverTimeout) clearTimeout(riot.hoverTimeout);
+			Position.clone(this.element, riot.hover, {offsetTop: -2, offsetLeft: -2});
+			riot.hover.onclick = this.onclickHandler;
+			riot.hover.show();
+		}
+		Event.stop(event);
+	},
+	
+	hideOutline: function(event) {
+		if (Prototype.Browser.IE) {
+			if (riot.hover != event.toElement) {
+				riot.hoverTimeout = setTimeout(riot.hideHover, 250);
+			}
+		}
+		else {
+			this.element.removeClassName('riot-outline');
+		}
+		Event.stop(event);
 	},
 	
 	/* Handler that is invoked when an enabled editor is clicked */
@@ -96,7 +145,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 
 	oninit: function(options) {
 		this.options = options || {};
-		this.element.makePositioned();
+		//this.element.makePositioned();
 		this.input = $(document.createElement(this.options.multiline 
 				? 'textarea' : 'input'));
 				
