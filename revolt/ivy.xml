@@ -5,6 +5,6 @@
     	<conf name="runtime" />
     </configurations>
     <dependencies>
-	    <dependency org="springframework" name="spring" rev="2.0.+" conf="*->default" />
+	    <dependency org="springframework" name="spring" rev="2.0.3" conf="*->default" />
     </dependencies>
 </ivy-module>
