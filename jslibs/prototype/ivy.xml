@@ -2,11 +2,15 @@
     <info 
     	organisation="riotfamily" 
     	module="prototype-js" 
-    	revision="1.5.0" 
+    	revision="1.5.1_rc1" 
     	status="milestone">
     	
 	    <license name="MIT" url="http://dev.rubyonrails.org/browser/spinoffs/prototype/LICENSE" />
-	    <description homepage="http://prototype.conio.net" />
+	    <description homepage="http://prototypejs.org/">
+			Prototype is a JavaScript Framework that aims to ease development of
+			dynamic web applications, featuring a unique, easy-to-use toolkit 
+			for class-driven development and a nice Ajax library.
+	    </description>
     </info>
     <publications>
     	<artifact name="prototype-js" type="jar" />

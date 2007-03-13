@@ -76,7 +76,7 @@ riot.Component.prototype = {
 	},
 	
 	showOutline: function(event) {
-		if (browserInfo.ie) {
+		if (Prototype.Browser.IE) {
 			if (riot.hoverTimeout) clearTimeout(riot.hoverTimeout);
 			Position.clone(this.element, riot.hover, {offsetTop: -2, offsetLeft: -2});
 			riot.hover.show();
@@ -88,7 +88,7 @@ riot.Component.prototype = {
 	},
 	
 	hideOutline: function(event) {
-		if (browserInfo.ie) {
+		if (Prototype.Browser.IE) {
 			if (riot.hover != event.toElement) {
 				riot.hoverTimeout = setTimeout(riot.hideHover, 250);
 			}

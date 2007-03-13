@@ -14,19 +14,13 @@
 			html, body { 
 				border: none; 
 			}
-			input.button-save {
+			.buttons input.button-save {
 				display: none;
 			}
 		</style>
 		<script>
 			function save() {
-				tags = document.getElementsByTagName('input');
-				for (var i = 0; i < tags.length; i++) {
-					if (Element.hasClassName(tags[i], 'button-save')) {
-						tags[i].click();
-						return;
-					}
-				}
+				$$('input.button-save').first().click();
 			}
 			
 			if (parent && parent.riot) {

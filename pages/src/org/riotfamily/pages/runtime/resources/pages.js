@@ -16,7 +16,6 @@ Resources.loadScriptSequence([
 	{src: 'dwr/interface/ComponentEditor.js', test: 'ComponentEditor'},
 	{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
 	{src: 'riot-js/effects.js'},
-	{src: 'riot-js/browserinfo.js'},
 	{src: 'riot-js/viewport.js'},
 	{src: 'riot-js/window-callback.js'},
 	{src: 'pages/messages.js'},

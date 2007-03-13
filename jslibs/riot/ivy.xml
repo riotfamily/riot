@@ -8,6 +8,6 @@
     	<artifact name="riot-js" type="jar" />
     </publications>
     <dependencies>
-    	<dependency org="riotfamily" name="scriptaculous-js" rev="latest.release" />
+    	<dependency org="riotfamily" name="scriptaculous-js" rev="1.7.1_beta1" />
     </dependencies>
 </ivy-module>

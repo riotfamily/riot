@@ -140,7 +140,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 	showEditor: function() {
 		this.paddingLeft = 0;
 		this.paddingTop = 0;
-		if (browserInfo.ie || browserInfo.opera) { 
+		if (Prototype.Browser.IE || Prototype.Browser.Opera) { 
 			var cm = document['compatMode'];
 			if (cm != 'BackCompat' && cm != 'QuirksMode') {
 				this.paddingLeft = parseInt(this.element.getStyle('padding-left'));
@@ -309,7 +309,7 @@ riot.Popup.prototype = {
 			return;
 		}
 		riot.activePopup = this;
-		if (browserInfo.ie) {
+		if (Prototype.Browser.IE) {
 			this.hideElements('select');
 			this.root = $$(document.compatMode && document.compatMode == 'BackCompat' ? 'body' : 'html').first().makeClipping();
 		}
@@ -334,7 +334,7 @@ riot.Popup.prototype = {
 		
 	close: function() {
 		if (riot.activePopup == this) {
-			if (browserInfo.ie) {
+			if (Prototype.Browser.IE) {
 				this.showElements('select');
 				this.root.undoClipping();
 			}
