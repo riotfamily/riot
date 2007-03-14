@@ -12,6 +12,7 @@ tinyMCE.loadScript = function(url) {
 // TinyMCE uses document.createElementNS() which is not supported
 // by IE, so we also have to overwrite the loadNextSript() method ...
 tinyMCE.loadNextScript = function() {
+	if (this.loadingIndex == -1) return;
 	var d = document;
 	if (this.loadingIndex < this.pendingFiles.length) {
 		var se = d.createElement('script');
