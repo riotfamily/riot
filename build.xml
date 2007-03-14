@@ -7,7 +7,6 @@
 	<fileset id="module-build.files" dir="."> 
 		<include name="*/build.xml" />
 		<exclude name="jslibs/*/build.xml" />
-		<exclude name="skeleton/*" />
 	</fileset>
 			
 	<fileset id="js-build.files" dir="."> 
@@ -112,6 +111,9 @@
 	<target name="clean">
 		<subant target="clean">
 			<fileset refid="module-build.files" />
+		</subant>
+		<subant target="clean">
+			<fileset refid="js-build.files" />
 		</subant>
 	</target>
 	
