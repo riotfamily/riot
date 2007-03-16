@@ -26,6 +26,8 @@ package org.riotfamily.riot.runtime;
 import javax.servlet.ServletContext;
 
 import org.riotfamily.riot.RiotVersion;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.web.context.ServletContextAware;
 
@@ -76,4 +78,8 @@ public class RiotRuntime implements ServletContextAware {
 		return RiotVersion.getVersionString();
 	}
 
+	public static RiotRuntime getRuntime(ApplicationContext context) {
+		return (RiotRuntime) BeanFactoryUtils.beanOfTypeIncludingAncestors(
+				context, RiotRuntime.class);
+	}
 }
