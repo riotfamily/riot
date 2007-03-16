@@ -138,6 +138,13 @@ RiotList.prototype = {
 		Event.observe(td, 'mouseout', td.addClassName.bind(td, 'highlight-default'));
 		
 		this.appendCommands(td, false, row, row.commands);
+		
+		row.commands.each(function(command) {
+			if (command.itemStyleClass) {
+				tr.addClassName(command.itemStyleClass);
+			}
+		});
+		
 		tr.appendChild(td);
 		this.tbody.appendChild(tr);
 	},

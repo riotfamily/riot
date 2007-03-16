@@ -46,6 +46,7 @@ import org.riotfamily.forms.FormRepository;
 import org.riotfamily.forms.controller.FormContextFactory;
 import org.riotfamily.forms.element.core.TextField;
 import org.riotfamily.forms.support.SimpleFormRequest;
+import org.riotfamily.riot.dao.SortableDao;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.ListDefinition;
@@ -259,6 +260,8 @@ public class ListSession implements RenderContext {
 		model.setItemCommandCount(itemCommands.size());
 		model.setListCommands(getListCommands(request));
 		
+		boolean sortableDao = listConfig.getDao() instanceof SortableDao;
+		
 		ArrayList columns = new ArrayList();
 		Iterator it = listConfig.getColumnConfigs().iterator();
 		while (it.hasNext()) {
@@ -268,7 +271,7 @@ public class ListSession implements RenderContext {
 			column.setHeading(getHeading(config.getProperty(), 
 					config.getLookupLevel()));
 			
-			column.setSortable(config.isSortable());
+			column.setSortable(sortableDao && config.isSortable());
 			if (params.hasOrder() && params.getPrimaryOrder()
 					.getProperty().equals(config.getProperty())) {
 				
@@ -375,6 +378,7 @@ public class ListSession implements RenderContext {
 			state.setId(command.getId());
 			state.setAction(action);
 			state.setStyleClass(command.getStyleClass(context));
+			state.setItemStyleClass(command.getItemStyleClass(context));
 			state.setEnabled(granted && command.isEnabled(context));
 			state.setLabel(command.getLabel(context));
 			result.add(state);
