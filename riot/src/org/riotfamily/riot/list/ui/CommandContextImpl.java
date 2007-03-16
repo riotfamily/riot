@@ -72,13 +72,6 @@ class CommandContextImpl implements CommandContext {
 		this.bean = bean;
 	}
 	
-	/**
-	 * @deprecated
-	 */
-	public Object getItem() {
-		return getBean();
-	}
-
 	public void setItemsTotal(int itemsTotal) {
 		this.itemsTotal = itemsTotal;
 	}

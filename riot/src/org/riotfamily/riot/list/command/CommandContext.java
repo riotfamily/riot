@@ -50,11 +50,6 @@ public interface CommandContext {
 	
 	public String getObjectId();
 
-	/**
-	 * @deprecated The method has been renamed to getBean()
-	 */
-	public Object getItem();
-	
 	public Object getBean();
 		
 	public MessageResolver getMessageResolver();
