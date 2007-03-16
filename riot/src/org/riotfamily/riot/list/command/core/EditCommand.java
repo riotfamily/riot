@@ -36,6 +36,14 @@ import org.springframework.util.Assert;
  */
 public class EditCommand extends AbstractCommand {
 	
+	public static final String ACTION_EDIT = "edit";
+	
+	public static final String ACTION_ADD = "add";
+
+	public String getAction(CommandContext context) {
+		return context.getBean() != null ? ACTION_EDIT : ACTION_ADD;
+	}
+	
 	public CommandResult execute(CommandContext context) {
 		EditorDefinition def = context.getListDefinition().getDisplayDefinition();
 		Assert.notNull(def, "A DisplayDefinition must be set");

@@ -37,8 +37,14 @@ import org.springframework.web.util.HtmlUtils;
  */
 public class DeleteCommand extends AbstractCommand {
 
+	public static final String ACTION_DELETE = "delete";
+	
 	public DeleteCommand() {
 		setShowOnForm(true);
+	}
+	
+	public String getAction(CommandContext context) {
+		return ACTION_DELETE;
 	}
 	
 	public boolean isEnabled(CommandContext context) {
