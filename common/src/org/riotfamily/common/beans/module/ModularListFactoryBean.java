@@ -148,7 +148,7 @@ public class ModularListFactoryBean extends AbstractFactoryBean implements
 		if (includeRootList) {
 			try {
 				List rootList = (List) applicationContext.getBean(key, List.class);
-				result.add(rootList);
+				result.addAll(rootList);
 			}
 			catch (NoSuchBeanDefinitionException e) {
 			}
