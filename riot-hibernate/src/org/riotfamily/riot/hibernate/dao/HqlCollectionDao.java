@@ -35,6 +35,7 @@ import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.Order;
 import org.riotfamily.riot.dao.ParentChildDao;
+import org.riotfamily.riot.dao.SortableDao;
 import org.riotfamily.riot.hibernate.support.HibernateSupport;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.springframework.util.Assert;
@@ -45,7 +46,7 @@ import org.springframework.util.Assert;
  * bean's properties as (filtered) collection.
  */
 public class HqlCollectionDao extends HibernateSupport 
-		implements ParentChildDao, CutAndPasteEnabledDao {
+		implements SortableDao, ParentChildDao, CutAndPasteEnabledDao {
 
 	private Log log = LogFactory.getLog(HqlCollectionDao.class);
 	
@@ -77,12 +78,6 @@ public class HqlCollectionDao extends HibernateSupport
         where = string;
     }
     
-    /**
-     * @deprecated The objectId is now obtained using the Hibernate meta data API.
-     */
-    public void setIdProperty(String idProperty) {
-	}
-
 	public void setParentClass(Class parentClass) {
         this.parentClass = parentClass;
     }

@@ -35,6 +35,7 @@ import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.Order;
 import org.riotfamily.riot.dao.RiotDao;
+import org.riotfamily.riot.dao.SortableDao;
 import org.riotfamily.riot.dao.SwappableItemDao;
 import org.riotfamily.riot.hibernate.support.HibernateSupport;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
@@ -44,7 +45,7 @@ import org.springframework.util.Assert;
  * RiotDao implementation based on Hibernate.
  */
 public class HqlDao extends HibernateSupport implements RiotDao, 
-		SwappableItemDao {	
+		SortableDao, SwappableItemDao {	
 	
 	private static final Log log = LogFactory.getLog(HqlDao.class);
 	
