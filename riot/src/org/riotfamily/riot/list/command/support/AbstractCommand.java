@@ -26,6 +26,8 @@ package org.riotfamily.riot.list.command.support;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.riot.editor.EditorDefinitionUtils;
+import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.springframework.beans.factory.BeanNameAware;
@@ -122,6 +124,16 @@ public abstract class AbstractCommand implements Command, BeanNameAware {
 	public String getStyleClass(CommandContext context) {
 		return getAction(context);
 	}
+	
+	/** 
+	 * Always returns <code>true</code>. Subclasses may override this method
+	 * to highlight a list item depending on the context.
+	 * 
+	 * @since 6.5
+	 */
+	public String getItemStyleClass(CommandContext context) {
+		return null;
+	}
 
 	/**
 	 * Always returns <code>true</code>. Subclasses may override this method
@@ -137,6 +149,20 @@ public abstract class AbstractCommand implements Command, BeanNameAware {
 
 	public void setShowOnForm(boolean showOnForm) {
 		this.showOnForm = showOnForm;
+	}
+
+	/**
+	 * Convenience method that can be used by subclasses to load to parent 
+	 * object.
+	 * @since 6.5
+	 */
+	protected Object loadParent(CommandContext context) {
+		String parentId = context.getParentId();
+		if (parentId != null) {
+			ListDefinition listDef = context.getListDefinition();
+			return EditorDefinitionUtils.loadParent(listDef, parentId);
+		}
+		return null;
 	}
 	
 }

@@ -78,6 +78,14 @@ public interface Command {
 	public String getStyleClass(CommandContext context);
 	
 	/**
+	 * Returns a CSS class that is added to the list of class names of the 
+	 * whole item/row. If <code>null</code> is returned nothing is added.
+	 *   
+	 * @since 6.5
+	 */
+	public String getItemStyleClass(CommandContext context);
+	
+	/**
 	 * Implementors may evaluate the given context to decide whether the 
 	 * command should be enabled. Commands don't need to check the 
 	 * {@link org.riotfamily.riot.security.policy.AuthorizationPolicy policy} since
