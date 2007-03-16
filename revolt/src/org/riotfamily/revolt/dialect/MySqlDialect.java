@@ -61,8 +61,7 @@ public class MySqlDialect extends Sql92Dialect {
 	public boolean supports(String databaseProductName, 
 			int majorVersion, int minorVersion) {
 
-		//TODO Find out what the JDBC driver reports as product name! 
-		return false;
+		return "MySQL".equals(databaseProductName);
 	}
 	
 	protected void addColumnDefinition(Script sql, Column column) {
