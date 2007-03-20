@@ -30,6 +30,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentRepository;
+import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.dao.AbstractComponentDao;
 
 /**
@@ -54,6 +55,20 @@ public class HibernateComponentDao extends AbstractComponentDao {
 				"and list.key = :key and list.parent is null");
 				
 		query.setParameter("path", path);
+		query.setParameter("key", key);
+		query.setCacheable(true);
+		query.setCacheRegion("components");
+		return (ComponentList) query.uniqueResult();
+	}
+	
+	public ComponentList findComponentList(VersionContainer parent,
+		String key) {
+		
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"from ComponentList list where list.parent = :parent " +
+				"and list.key = :key");
+				
+		query.setParameter("parent", parent);
 		query.setParameter("key", key);
 		query.setCacheable(true);
 		query.setCacheRegion("components");

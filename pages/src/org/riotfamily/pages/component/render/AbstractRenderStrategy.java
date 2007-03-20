@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -104,9 +103,9 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	}
 	
 	protected String getComponentKey() {
-		if (parent != null) {
+		/* if (parent != null) {
 			return parent.getList().getKey();
-		}
+		} */
 		return config.getComponentKeyResolver().getComponentKey(request);
 	}
 
@@ -122,14 +121,18 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	 */
 	protected ComponentList getComponentList(String path, String key) {
 		if (parent != null) {
-			Set childLists = parent.getChildLists();
+			/* Set childLists = parent.getChildLists();
 			if (childLists != null && !childLists.isEmpty()) {
 				return (ComponentList) childLists.iterator().next();
 			}
-			return null;
+			return null; */
+			log.debug("Looking up ComponentList parent:" +
+				parent.getId() + '#' + key);
+			return dao.findComponentList(parent, key);
+		} else {
+			log.debug("Looking up ComponentList path:" + path + '#' + key);
+			return dao.findComponentList(path, key);
 		}
-		log.debug("Looking up ComponentList " + path + '#' + key);
-		return dao.findComponentList(path, key);
 	}	
 	
 	/**

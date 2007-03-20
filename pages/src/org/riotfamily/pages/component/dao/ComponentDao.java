@@ -54,6 +54,13 @@ public interface ComponentDao {
 	 */
 	public ComponentList findComponentList(String path, String key);
 	
+
+	/**
+	 * Returns all {@link ComponentList ComponentLists} with the given parent
+	 * and key.
+	 */
+	public ComponentList findComponentList(VersionContainer parent, String key);
+	
 	/**
 	 * Loads the ComponentList specified  by the given id.
 	 */
@@ -176,5 +183,4 @@ public interface ComponentDao {
 	 * Discards all changes made to the given list.
 	 */
 	public void discardList(ComponentList componentList);
-	
 }
