@@ -47,7 +47,8 @@ public final class Resources {
 			PROTOTYPE);
 		
 	public static final ScriptResource RIOT_WINDOW_CALLBACK = 
-			new ScriptResource("riot-js/window-callback.js", "WindowCallback");
+			new ScriptResource("riot-js/window-callback.js", "WindowCallback", 
+			PROTOTYPE);
 				
 	public static final ScriptResource RIOT_NUMBER_INPUT = 
 			new ScriptResource("riot-js/number-input.js", null, PROTOTYPE);
