@@ -24,10 +24,7 @@
 package org.riotfamily.pages;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Locale;
 
 
@@ -111,13 +108,7 @@ public class Page {
 	}
 	
 	public Collection getChildPages(boolean fallback) {
-		LinkedList childPages = new LinkedList();
-		Iterator it = node.getChildNodes().iterator();
-		while (it.hasNext()) {
-			PageNode childNode = (PageNode) it.next();
-			childPages.add(childNode.getPage(locale, fallback));
-		}
-		return Collections.unmodifiableCollection(childPages);
+		return node.getChildPages(locale, fallback);
 	}
 	
 	public void addChildPage(Page child) {

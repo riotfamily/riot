@@ -24,19 +24,22 @@
 package org.riotfamily.pages.riot;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 import org.riotfamily.pages.Page;
+import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.ParentChildDao;
+import org.riotfamily.riot.dao.SwappableItemDao;
 import org.springframework.dao.DataAccessException;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PageRiotDao implements ParentChildDao {
+public class PageRiotDao implements ParentChildDao, SwappableItemDao {
 
 	private PageDao pageDao;
 	
@@ -82,7 +85,7 @@ public class PageRiotDao implements ParentChildDao {
 		}
 		else {
 			Locale locale = (Locale) parent;
-			return pageDao.listRootPages(locale);
+			return pageDao.getRootNode().getChildPages(locale, true);
 		}
 	}
 
@@ -104,6 +107,32 @@ public class PageRiotDao implements ParentChildDao {
 
 	public void update(Object entity) throws DataAccessException {
 		pageDao.updatePage((Page) entity);
+	}
+	
+	public void swapEntity(Object entity, Object parent, ListParams params, 
+			int swapWith) {
+		
+		Page page = (Page) entity;
+		PageNode node = page.getNode();
+		PageNode parentNode = node.getParent(); 
+		List nodes = parentNode.getChildNodes();
+		
+		int pos = nodes.indexOf(node);
+		Object otherNode = nodes.get(swapWith);
+    	
+    	nodes.remove(node);
+    	nodes.remove(otherNode);
+    	
+    	if (pos < swapWith) {
+    		nodes.add(pos, otherNode);
+    		nodes.add(swapWith, node);
+    	}
+    	else {
+    		nodes.add(swapWith, node);
+    		nodes.add(pos, otherNode);
+    	}
+
+    	pageDao.updateNode(parentNode);
 	}
 
 }

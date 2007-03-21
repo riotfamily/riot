@@ -23,12 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.dao;
 
-import java.util.Collection;
 import java.util.Locale;
 
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
 import org.riotfamily.pages.PageLocation;
+import org.riotfamily.pages.PageNode;
 
 /**
  * DAO interface for {@link Page pages} and {@link PageAlias aliases}.
@@ -57,6 +57,8 @@ public interface PageDao {
 
 	public void deletePage(Page page);
 
-	public Collection listRootPages(Locale locale);
-
+	public PageNode getRootNode();
+	
+	public void updateNode(PageNode node);
+	
 }

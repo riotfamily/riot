@@ -28,6 +28,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.web.util.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.PageLocation;
 import org.springframework.util.StringUtils;
@@ -41,6 +42,12 @@ public class DefaultPageLocationResolver implements PageLocationResolver {
 
 	private Collection locales;
 	
+	private PathCompleter pathCompleter;
+	
+	public DefaultPageLocationResolver(PathCompleter pathCompleter) {
+		this.pathCompleter = pathCompleter;
+	}
+
 	public void setLocales(Collection locales) {
 		this.locales = locales;
 	}
@@ -67,14 +74,13 @@ public class DefaultPageLocationResolver implements PageLocationResolver {
 	
 	public String getUrl(PageLocation location, HttpServletRequest request) {
 		StringBuffer url = new StringBuffer();
-		url.append(request.getContextPath());
-		url.append(ServletUtils.getServletPrefix(request));
 		if (localesInPath() && location.getLocale() != null) {
 			url.append('/');
 			url.append(location.getLocale().toString().toLowerCase());
 		}
 		url.append(location.getPath());
-		url.append(ServletUtils.getServletSuffix(request));
+		pathCompleter.addServletMapping(url);
+		url.insert(0, request.getContextPath());
 		return url.toString();
 	}
 }

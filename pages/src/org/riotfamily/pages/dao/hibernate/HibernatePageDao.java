@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.dao.hibernate;
 
-import java.util.Collection;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -35,8 +33,8 @@ import org.hibernate.criterion.Expression;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
-import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.PageLocation;
+import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.dao.AbstractPageDao;
 import org.springframework.util.ObjectUtils;
 
@@ -80,12 +78,20 @@ public class HibernatePageDao extends AbstractPageDao {
 		return (Page) c.uniqueResult();
 	}
 	
-	protected void saveNode(PageNode node) {
+	public PageNode getRootNode() {
 		Session session = sessionFactory.getCurrentSession();
-		session.save(node);
+		Criteria c = session.createCriteria(PageNode.class)
+				.add(Expression.isNull("parent"));
+		
+		PageNode root = (PageNode) c.uniqueResult();
+		if (root == null) {
+			root = new PageNode();
+			session.save(root);
+		}
+		return root;
 	}
 	
-	protected void updateNode(PageNode node) {
+	public void updateNode(PageNode node) {
 		Session session = sessionFactory.getCurrentSession();
 		session.update(node);
 		session.flush();
@@ -111,15 +117,6 @@ public class HibernatePageDao extends AbstractPageDao {
 		return dirty;
 	}
 		
-	
-	protected Collection listRootNodes() {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria c = session.createCriteria(PageNode.class)
-				.add(Expression.isNull("parent"));
-		
-		return c.list();
-	}
-	
 	public PageAlias findPageAlias(PageLocation location) {
 		Session session = sessionFactory.getCurrentSession();
 		return (PageAlias) session.get(PageAlias.class, location);

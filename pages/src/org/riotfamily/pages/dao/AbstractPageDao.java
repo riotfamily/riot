@@ -26,15 +26,14 @@ package org.riotfamily.pages.dao;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.PageLocation;
+import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.component.PageComponentListLocator;
 
 /**
@@ -56,14 +55,16 @@ public abstract class AbstractPageDao implements PageDao {
 	
 	public void saveRootPage(Page page, Locale locale) {
 		PageNode node = new PageNode(page);
+		PageNode root = getRootNode();
+		root.addChildNode(node);
 		page.setLocale(locale);
 		page.setCreationDate(new Date());
 		page.setPath(buildPath(page));
-		saveNode(node);
+		updateNode(root);
 		deleteAlias(new PageLocation(page));
 		log.debug("Page saved: " + page);
 	}
-	
+		
 	public void savePage(Page parent, Page page) {
 		parent.addChildPage(page);
 		page.setCreationDate(new Date());
@@ -83,8 +84,6 @@ public abstract class AbstractPageDao implements PageDao {
 		return path.toString();
 	}
 	
-	protected abstract void saveNode(PageNode node);
-	
 	public Page addTranslation(Page page, Locale locale) {
 		log.info("Adding translation " + page + " --> " + locale);
 		Page translation = new Page();
@@ -94,8 +93,6 @@ public abstract class AbstractPageDao implements PageDao {
 		updateNode(page.getNode());
 		return translation;
 	}
-	
-	protected abstract void updateNode(PageNode node);
 	
 	public void updatePage(Page page) {
 		boolean dirtyPath = isDirty(page);
@@ -165,17 +162,5 @@ public abstract class AbstractPageDao implements PageDao {
 	}
 	
 	protected abstract void deleteNode(PageNode node);
-	
-	public Collection listRootPages(Locale locale) {
-		LinkedList pages = new LinkedList(); 
-		Iterator it = listRootNodes().iterator();
-		while (it.hasNext()) {
-			PageNode node = (PageNode) it.next();
-			pages.add(node.getPage(locale, true));
-		}
-		return pages;
-	}
-	
-	protected abstract Collection listRootNodes();
 	
 }

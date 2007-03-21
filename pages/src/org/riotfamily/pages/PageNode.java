@@ -25,10 +25,15 @@ package org.riotfamily.pages;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+
+import org.springframework.util.ObjectUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -41,7 +46,7 @@ public class PageNode {
 	
 	private PageNode parent;
 
-	private Collection childNodes;
+	private List childNodes;
 	
 	private Set pages;
 	
@@ -78,7 +83,7 @@ public class PageNode {
 		this.pages = pages;
 	}
 
-	public void setChildNodes(Collection childNodes) {
+	public void setChildNodes(List childNodes) {
 		this.childNodes = childNodes;
 	}
 	
@@ -90,8 +95,23 @@ public class PageNode {
 		childNodes.add(node);	
 	}
 
-	public Collection getChildNodes() {
+	public List getChildNodes() {
 		return this.childNodes;
+	}
+	
+	public Collection getChildPages(Locale locale, boolean fallback) {
+		LinkedList pages = new LinkedList();
+		if (childNodes != null) {
+			Iterator it = childNodes.iterator();
+			while (it.hasNext()) {
+				PageNode childNode = (PageNode) it.next();
+				Page page = childNode.getPage(locale, fallback);
+				if (page != null) {
+					pages.add(page);
+				}
+			}
+		}
+		return Collections.unmodifiableCollection(pages);
 	}
 	
 	public Page getPage(Locale locale) {
@@ -102,7 +122,7 @@ public class PageNode {
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
-			if (page.getLocale().equals(locale)) {
+			if (ObjectUtils.nullSafeEquals(page.getLocale(), locale)) {
 				return page;
 			}
 		}

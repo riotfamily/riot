@@ -23,8 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
-import org.riotfamily.common.web.util.PathCompleter;
 import org.riotfamily.pages.Page;
+import org.riotfamily.pages.PageLocation;
+import org.riotfamily.pages.mapping.PageLocationResolver;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.core.PopupCommand;
 
@@ -36,16 +37,15 @@ public class GotoPageCommand extends PopupCommand {
 
 	public static final String STYLE_CLASS = "link";
 	
-	private PathCompleter pathCompleter;
+	private PageLocationResolver resolver;
 
-	public GotoPageCommand(PathCompleter pathCompleter) {
-		this.pathCompleter = pathCompleter;
+	public GotoPageCommand(PageLocationResolver resolver) {
+		this.resolver = resolver;
 	}
 
 	protected String getUrl(CommandContext context) {
 		Page page = (Page) context.getBean();
-		return context.getRequest().getContextPath() 
-				+ pathCompleter.addServletMapping(page.getPath());
+		return resolver.getUrl(new PageLocation(page), context.getRequest());
 	}
 	
 	protected String getStyleClass(CommandContext context, String action) {

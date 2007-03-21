@@ -46,31 +46,33 @@ public class CountryFlagRenderer implements CellRenderer,
 	public void render(String propertyName, Object value, 
 			RenderContext context, PrintWriter writer) {
 
-		String flag = null;
-		String title = null;
-		if (value instanceof Locale) {
-			Locale locale = (Locale) value;
-			flag = locale.getCountry();
-			if (flag == null) {
-				flag = locale.getLanguage();
+		if (value != null) {
+			String flag = null;
+			String title = null;
+			if (value instanceof Locale) {
+				Locale locale = (Locale) value;
+				flag = locale.getCountry();
+				if (flag == null) {
+					flag = locale.getLanguage();
+				}
+				title = locale.getDisplayName();
 			}
-			title = locale.getDisplayName();
+			else {
+				flag = value.toString();
+			}
+			writer.print("<img src=\"");
+			writer.print(context.getContextPath());
+			writer.print(riot.getResourcePath());
+			writer.print("/style/icons/flags/");
+			writer.print(flag.toLowerCase());
+			writer.print(".gif\"");
+			if (title != null) {
+				writer.print("title=\"");
+				writer.print(title);
+				writer.print('"');
+			}
+			writer.print(" />");
 		}
-		else {
-			flag = value.toString();
-		}
-		writer.print("<img src=\"");
-		writer.print(context.getContextPath());
-		writer.print(riot.getResourcePath());
-		writer.print("/style/icons/flags/");
-		writer.print(flag.toLowerCase());
-		writer.print(".gif\"");
-		if (title != null) {
-			writer.print("title=\"");
-			writer.print(title);
-			writer.print('"');
-		}
-		writer.print(" />");
 	}
 
 }

@@ -40,4 +40,9 @@
 		<value>fr_CH</value>
 	</util:list>
 	
+	<bean id="pageLocationResolver" class="org.riotfamily.pages.mapping.DefaultPageLocationResolver">
+		<constructor-arg ref="pathCompleter" />
+		<property name="locales" ref="websiteLocales" />
+	</bean>
+	
 </beans>	

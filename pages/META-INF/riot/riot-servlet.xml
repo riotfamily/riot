@@ -71,8 +71,12 @@
 	-->
 
 	<bean id="gotoPageCommand" class="org.riotfamily.pages.riot.command.GotoPageCommand">
-		<constructor-arg ref="pathCompleter" />
+		<constructor-arg ref="pageLocationResolver" />
 		<property name="windowName" value="preview" />
+	</bean>
+	
+	<bean class="org.riotfamily.pages.riot.EditorRepositoryInitializer">
+		<constructor-arg ref="editorRepository" />
 	</bean>
 	
 </beans>

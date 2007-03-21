@@ -66,6 +66,13 @@ public class XmlEditorRepository extends EditorRepository
 		}
 		configWatcher.setResources(this.configLocations);
 	}
+	
+	/**
+	 * @since 6.5
+	 */
+	public void addListener(ConfigurationEventListener listener) {
+		configWatcher.addListener(listener);
+	}
 
 	public boolean isReloadable() {
 		return this.reloadable;

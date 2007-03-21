@@ -32,6 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.collection.TypeDifferenceComparator;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
+import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.forms.FormRepository;
 import org.riotfamily.riot.editor.ui.EditorController;
 import org.riotfamily.riot.list.ListRepository;
@@ -105,16 +106,10 @@ public class EditorRepository extends ApplicationObjectSupport {
 		return (GroupDefinition) getEditorDefinition(editorId);
 	}
 
-	/**
-	 * @return Returns the listRepository.
-	 */
 	public ListRepository getListRepository() {
 		return listRepository;
 	}
 
-	/**
-	 * @param listRepository The listRepository to set.
-	 */
 	public void setListRepository(ListRepository listRepository) {
 		this.listRepository = listRepository;
 	}
@@ -135,12 +130,29 @@ public class EditorRepository extends ApplicationObjectSupport {
 		this.messageCodesResolver = messageKeyResolver;
 	}
 
+	/**
+	 * Retrieves all {@link EditorController} instances from the 
+	 * ApplicationContext.
+	 */
 	public void initApplicationContext() {
 		Map map = getApplicationContext().getBeansOfType(EditorController.class);
 		editorControllers = map.values();
 	}
 	
-	protected EditorController getEditorController(
+	/**
+	 * Subclasses may overwrite this method to allow the registration of 
+	 * {@link ConfigurationEventListener ConfigurationEventListeners}. 
+	 * The default implementation does nothing.
+	 * @since 6.5
+	 */
+	public void addListener(ConfigurationEventListener listener) {
+	}
+
+	/**
+	 * Returns the most specialized {@link EditorController} for the given
+	 * {@link EditorDefinition}.
+	 */
+	public EditorController getEditorController(
 			EditorDefinition editorDefinition) {
 		
 		Class definitionClass = editorDefinition.getClass();
@@ -160,6 +172,10 @@ public class EditorRepository extends ApplicationObjectSupport {
 		return controller;
 	}
 	
+	/**
+	 * Convenience method to obtain an editor URL. This is a shortcut for
+	 * {@link #getEditorController(EditorDefinition)}.{@link EditorController#getUrl(String, String, String)}.
+	 */
 	public String getEditorUrl(EditorDefinition editorDefinition, 
 			String objectId, String parentId) {
 		
@@ -167,6 +183,10 @@ public class EditorRepository extends ApplicationObjectSupport {
 		return controller.getUrl(editorDefinition.getId(), objectId, parentId);
 	}
 	
+	/**
+	 * Comparator that can be used to find the most specialized EditorController
+	 * for a given EditorDefinition class. 
+	 */
 	protected static class EditorControllerComparator 
 			extends TypeDifferenceComparator {
 		
