@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		elementFormDefault="qualified"
+		attributeFormDefault="unqualified" 
+		targetNamespace="http://www.riotfamily.org/schema/components/controller"
+		xmlns:beans="http://www.springframework.org/schema/beans"
+		xmlns="http://www.riotfamily.org/schema/components/controller">
+	
+	<xsd:import namespace="http://www.springframework.org/schema/beans"
+		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.0.xsd" />
+	
+	<xsd:complexType name="beanOrReference">
+		<xsd:sequence minOccurs="0">
+			<xsd:element ref="beans:bean" />
+		</xsd:sequence>
+		<xsd:attribute name="ref" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:element name="list">		 
+		<xsd:complexType>
+			<xsd:sequence minOccurs="0">
+				<xsd:element name="component-key-resolver" minOccurs="0" type="beanOrReference" />
+				<xsd:element name="component-path-resolver" minOccurs="0"  type="beanOrReference" />
+				<xsd:element name="component-dao" minOccurs="0"  type="beanOrReference" />
+				<xsd:element name="component-repository" minOccurs="0"  type="beanOrReference" />
+				<xsd:element name="view-mode-resolver" minOccurs="0"  type="beanOrReference" />
+				<xsd:element name="cache" minOccurs="0"  type="beanOrReference" />
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string" />
+			<xsd:attribute name="initialComponentTypes" type="xsd:string" />
+			<xsd:attribute name="validComponentTypes" type="xsd:string" />
+			<xsd:attribute name="minComponents" type="xsd:positiveInteger"/>
+			<xsd:attribute name="maxComponents" type="xsd:positiveInteger"/>			
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>

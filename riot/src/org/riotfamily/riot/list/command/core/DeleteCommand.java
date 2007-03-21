@@ -28,7 +28,6 @@ import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.ShowListResult;
-import org.riotfamily.riot.list.command.support.AbstractCommand;
 import org.springframework.web.util.HtmlUtils;
 
 /**
@@ -43,11 +42,11 @@ public class DeleteCommand extends AbstractCommand {
 		setShowOnForm(true);
 	}
 	
-	public String getAction(CommandContext context) {
+	protected String getAction(CommandContext context) {
 		return ACTION_DELETE;
 	}
 	
-	public boolean isEnabled(CommandContext context) {
+	protected boolean isEnabled(CommandContext context, String action) {
 		return context.getObjectId() != null;
 	}
 		

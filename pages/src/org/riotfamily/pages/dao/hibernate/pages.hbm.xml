@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.riotfamily.pages" auto-import="true">
+	
+	<class name="PageNode">
+		<id name="id">
+			<generator class="native" />
+		</id>
+		<many-to-one name="parent" insert="false" update="false" />
+		<list name="childNodes" cascade="all-delete-orphan">
+			<key column="parent" />
+			<list-index column="pos" />
+			<one-to-many class="PageNode" />
+		</list>
+		<set name="pages" order-by="creationDate" cascade="all-delete-orphan">
+			<key column="node" />
+			<one-to-many class="Page" />
+		</set>
+		<property name="handlerName" />
+	</class>
+	
+	<class name="Page">
+		<id name="id" access="field">
+			<generator class="native" />
+		</id>
+		<many-to-one name="node" insert="false" update="false" />
+		<property name="locale" />
+		<property name="creationDate" />
+		<property name="pathComponent" />
+		<property name="path" column="`path`" unique="true" />
+	</class>
+	
+	<class name="PageAlias" table="page_aliases">
+		<composite-id name="location">
+			<key-property name="path" column="`path`" />
+			<key-property name="locale" column="locale" />
+		</composite-id>
+		<many-to-one name="page" />
+	</class>
+		
+</hibernate-mapping>

@@ -34,7 +34,6 @@ import org.riotfamily.riot.editor.ui.EditorReference;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
-import org.riotfamily.riot.list.command.support.AbstractCommand;
 import org.springframework.util.Assert;
 
 
@@ -43,7 +42,7 @@ import org.springframework.util.Assert;
  */
 public class StepIntoCommand extends AbstractCommand {
 	
-	public boolean isEnabled(CommandContext context) {
+	protected boolean isEnabled(CommandContext context, String action) {
 		return getTargetUrl(context) != null;
 	}
 	

@@ -11,6 +11,11 @@
 		<config>riot/META-INF/riot/riot-servlet.xml</config>
 		<config>riot-hibernate/META-INF/riot/application-context.xml</config>
 		<config>riot/META-INF/riot/application-context.xml</config>
+		<config>components/META-INF/riot/application-context.xml</config>
+		<config>components/META-INF/riot/riot-servlet.xml</config>
+		<config>components/META-INF/riot/website-servlet.xml</config>
+		<config>website/META-INF/riot/application-context.xml</config>
+		<config>website/META-INF/riot/website-servlet.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -20,7 +25,11 @@
 			<configs>
 				<config>riot-hibernate/META-INF/riot/application-context.xml</config>
 				<config>riot/META-INF/riot/application-context.xml</config>
+				<config>website/META-INF/riot/application-context.xml</config>
+				<config>components/META-INF/riot/application-context.xml</config>
 				<config>pages/META-INF/riot/application-context.xml</config>
+				<config>website/META-INF/riot/website-servlet.xml</config>
+				<config>components/META-INF/riot/website-servlet.xml</config>
 				<config>pages/META-INF/riot/website-servlet.xml</config>
 			</configs>
 		</configSet>
@@ -31,9 +40,12 @@
 			<configs>
 				<config>riot-hibernate/META-INF/riot/application-context.xml</config>
 				<config>riot/META-INF/riot/application-context.xml</config>
+				<config>website/META-INF/riot/application-context.xml</config>
+				<config>components/META-INF/riot/application-context.xml</config>
 				<config>pages/META-INF/riot/application-context.xml</config>
 				<config>riot/META-INF/riot/riot-servlet.xml</config>
 				<config>riot-hibernate/META-INF/riot/riot-servlet.xml</config>
+				<config>components/META-INF/riot/riot-servlet.xml</config>
 				<config>pages/META-INF/riot/riot-servlet.xml</config>
 			</configs>
 		</configSet>

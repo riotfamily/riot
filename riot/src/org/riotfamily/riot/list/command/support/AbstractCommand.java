@@ -30,10 +30,12 @@ import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.command.CommandContext;
+import org.riotfamily.riot.list.command.CommandState;
 import org.springframework.beans.factory.BeanNameAware;
 
 /**
- * Abstract baseclass for commands.
+ * Abstract base class for old-style (pre 6.5) commands.
+ * @deprecated
  */
 public abstract class AbstractCommand implements Command, BeanNameAware {
 
@@ -163,6 +165,17 @@ public abstract class AbstractCommand implements Command, BeanNameAware {
 			return EditorDefinitionUtils.loadParent(listDef, parentId);
 		}
 		return null;
+	}
+	
+	public CommandState getState(CommandContext context) {
+		CommandState state = new CommandState();
+		state.setId(getId());
+		state.setAction(getAction(context));
+		state.setLabel(getLabel(context));
+		state.setEnabled(isEnabled(context));
+		state.setStyleClass(getStyleClass(context));
+		state.setItemStyleClass(getItemStyleClass(context));
+		return state;
 	}
 	
 }

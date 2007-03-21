@@ -1,0 +1,7 @@
+<project name="riot-components" default="compile">
+
+	<property name="module.title" value="Riot Components" />
+	
+	<import file="../module-build.xml" />
+	
+</project>

@@ -1,0 +1,4 @@
+http\://www.riotfamily.org/schema/website/mvc.xsd=org/riotfamily/website/mvc/config/mvc.xsd
+http\://www.riotfamily.org/schema/website/mvc-6.5.xsd=org/riotfamily/website/mvc/config/mvc.xsd
+http\://www.riotfamily.org/schema/website/template.xsd=org/riotfamily/website/template/config/template.xsd
+http\://www.riotfamily.org/schema/website/template-6.5.xsd=org/riotfamily/website/template/config/template.xsd

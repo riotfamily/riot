@@ -45,7 +45,7 @@ public final class AccessController {
 	private static ThreadLocal principal = new ThreadLocal();
 	
 	
-		public static void setLoginManager(LoginManager loginManager) {
+	static void setLoginManager(LoginManager loginManager) {
 		AccessController.loginManager = loginManager;
 	}
 

@@ -26,6 +26,8 @@ package org.riotfamily.riot.list.ui;
 import java.util.Iterator;
 import java.util.List;
 
+import org.riotfamily.riot.list.command.CommandState;
+
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4

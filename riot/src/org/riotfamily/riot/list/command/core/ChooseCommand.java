@@ -27,7 +27,6 @@ import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.ScriptResult;
-import org.riotfamily.riot.list.command.support.AbstractCommand;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -46,7 +45,7 @@ public class ChooseCommand extends AbstractCommand {
 		return ID;
 	}
 
-	public boolean isEnabled(CommandContext context) {
+	protected boolean isEnabled(CommandContext context, String action) {
 		return target.getBeanClass().isInstance(context.getBean());
 	}
 	

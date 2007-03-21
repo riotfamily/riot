@@ -169,7 +169,7 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 				return label.toString();
 			}
 		}
-		return "Untitled"; //TODO I18nize this
+		return object.toString();
 	}
 
 }

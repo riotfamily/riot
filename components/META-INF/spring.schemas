@@ -1,0 +1,5 @@
+http\://www.riotfamily.org/schema/components/component.xsd=org/riotfamily/components/config/component.xsd
+http\://www.riotfamily.org/schema/components/component-6.5.xsd=org/riotfamily/components/config/component.xsd
+
+http\://www.riotfamily.org/schema/components/controller.xsd=org/riotfamily/components/config/controller.xsd
+http\://www.riotfamily.org/schema/components/controller-6.5.xsd=org/riotfamily/components/config/controller.xsd

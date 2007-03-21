@@ -35,9 +35,6 @@ import org.riotfamily.common.xml.XmlUtils;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
-import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -77,9 +74,7 @@ public class GenericBeanDefinitionParser implements BeanDefinitionParser {
 	}
 	
 	public BeanDefinition parse(Element element, ParserContext parserContext) {
-		RootBeanDefinition definition = parseDefinition(
-				element, parserContext.getRegistry());
-		
+		RootBeanDefinition definition = parseDefinition(element, parserContext);
 		DefinitionParserUtils.registerBeanDefinition(definition, element, 
 				ID_ATTRIBUTE, NAME_ATTRIBUTE, parserContext);
 		
@@ -87,7 +82,7 @@ public class GenericBeanDefinitionParser implements BeanDefinitionParser {
 	}
 	
 	private RootBeanDefinition parseDefinition(Element element, 
-			BeanDefinitionRegistry registry) {
+			ParserContext parserContext) {
 		
 		RootBeanDefinition definition = new RootBeanDefinition();
 		Class beanClass = getBeanClass(element);
@@ -111,51 +106,32 @@ public class GenericBeanDefinitionParser implements BeanDefinitionParser {
 			Element child = (Element) it.next();
 			String property = extractPropertyName(child.getLocalName());
 			Class type = PropertyUtils.getPropertyType(beanClass, property);
-			Object value = collectionOrReference(child, type, registry);
+			Object value;
+			if (List.class.isAssignableFrom(type)) {
+				value = parserContext.getDelegate().parseListElement(child, definition);
+			}
+			else {
+				value = parseBeanOrReference(child, parserContext, definition);
+			}
 			pv.addPropertyValue(property, value);
 		}
 		
 		return definition;
 	}
 	
-	protected Object collectionOrReference(Element element, Class type, 
-			BeanDefinitionRegistry registry) {
+	protected Object parseBeanOrReference(Element element, 
+			ParserContext parserContext, RootBeanDefinition definition) {
 		
-		if (List.class.isAssignableFrom(type)) {
-			ManagedList list = new ManagedList();
-			List children = XmlUtils.getChildElements(element);
-			Iterator it = children.iterator();
-			while (it.hasNext()) {
-				Element child = (Element) it.next();
-				list.add(parseReference(child, registry));
-			}
-			return list;
+		String ref = XmlUtils.getAttribute(element, REF_ATTRIBUTE);
+		if (ref != null) {
+			return new RuntimeBeanReference(ref);
 		}
 		else {
-			String ref = XmlUtils.getAttribute(element, REF_ATTRIBUTE);
-			if (ref != null) {
-				return new RuntimeBeanReference(ref);
-			}
-			Element child = XmlUtils.getFirstChildElement(element);
-			return parseReference(child, registry); 
+			Element beanEle = XmlUtils.getFirstChildByTagName(element, BEAN_ELEMENT);
+			Assert.notNull(beanEle, "Attribute 'ref' or nested 'bean' tag expected.");
+			return parserContext.getDelegate().parseBeanDefinitionElement(
+					beanEle, definition); 
 		}
-	}
-		
-	protected RuntimeBeanReference parseReference(Element element, 
-			BeanDefinitionRegistry registry) {
-		
-		String beanName;
-		if (element.getLocalName().equals(BEAN_ELEMENT)) {
-			beanName = element.getAttribute(REF_ATTRIBUTE);
-		}
-		else {
-			RootBeanDefinition definition = parseDefinition(element, registry);
-			beanName = BeanDefinitionReaderUtils.generateBeanName(
-					definition, registry, true);
-			
-			registry.registerBeanDefinition(beanName, definition);
-		}
-		return new RuntimeBeanReference(beanName);
 	}
 	
 }

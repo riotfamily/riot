@@ -1,0 +1,82 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.0.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	
+	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
+		<property name="location" value="classpath:/application.properties" />
+		<property name="contextOverride" value="true" />
+	</bean>
+	
+	<bean class="org.riotfamily.common.web.servlet.ReloadableDispatcherServletConfig">
+		<property name="reloadable" value="${website-servlet.reloadable=false}" />
+	</bean>
+	
+	<bean name="riotAccessControlFilterPlugin" class="org.riotfamily.riot.security.AccessControlFilterPlugin">
+		<property name="filterName" value="website-servlet-filter" />
+	</bean>
+		
+	<bean id="noCacheInterceptor" class="org.riotfamily.website.util.NoCacheHeaderInterceptor">
+		<property name="includes" value="**/*.html" />
+	</bean>
+	
+	<!-- 
+	  - HandlerAdapter that handles CacheableControllers.
+	  -->
+	<bean id="cachiusHandlerAdapter" class="org.riotfamily.cachius.spring.CachiusHandlerAdapter">
+		<constructor-arg ref="websiteCache" />
+	</bean>
+	
+	<!-- 
+	  - The default CachingPolicy used by AbstractCachingPolicyControllers.
+	  -->
+	<bean id="defaultCachingPolicy" class="org.riotfamily.website.mvc.cache.DefaultCachingPolicy">
+		<property name="expiresAfter" value="5m" />
+	</bean>	
+		
+	<bean id="resourceStamper" class="org.riotfamily.common.web.filter.ResourceStamper" />
+
+	<bean id="cssTemplateController" name="/**/*.css" 
+			class="org.riotfamily.website.css.CssTemplateController">
+			
+		<property name="addContextPathToUrls" value="true" />
+		<property name="stamper" ref="resourceStamper" />
+	</bean>
+	
+	<bean id="freemarkerConfig" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerConfigurer">
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="templateLoaderPath" value="/WEB-INF/view" />
+		<property name="freemarkerSettings" value="${website-servlet.freemarker.*}" />
+		<property name="macroLibraries">
+			<bean class="org.riotfamily.common.beans.module.ModularPropertiesFactoryBean">
+				<property name="key" value="freemarkerMacroLibraries" />
+				<property name="properties">
+					<props>
+						<prop key="riot">classpath:org/riotfamily/website/runtime/riot.ftl</prop>
+					</props>
+				</property>
+			</bean>
+		</property>
+		<property name="freemarkerVariables">
+			<bean class="org.riotfamily.common.beans.module.ModularMapFactoryBean">
+				<property name="key" value="freemarkerVariables" />
+				<property name="includeRootList" value="true" />
+				<property name="sourceMap">
+					<map>
+						<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
+						<entry key="riotPrincipalBinder" value-ref="riotPrincipalBinder" />
+						<entry key="riotEncodeUrl"><bean class="org.riotfamily.common.web.view.freemarker.EncodeUrlMethod" /></entry>
+						<entry key="riotInclude"><bean class="org.riotfamily.common.web.view.freemarker.IncludeMethod" /></entry>
+						<entry key="includeUriParam" value="__includeUri" />
+					</map>
+				</property>
+			</bean>		
+		</property>
+	</bean>
+
+</beans>

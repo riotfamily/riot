@@ -3,84 +3,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 	
-	<!-- Service bean to edit components. Exposed via DWR.  -->
-	<bean id="componentEditor" class="org.springframework.aop.framework.ProxyFactoryBean">
-		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
-		<property name="target"><ref bean="componentEditorTarget" /></property>
-	</bean>
-
-	<bean id="componentEditorTarget" class="org.riotfamily.pages.component.editor.ComponentEditorImpl">
-		<property name="loginManager" ref="loginManager" />
-		<property name="cache" ref="websiteCache" />
-		<property name="editorConfigs">
-			<map>
-				<entry key="tinyMCE" value-ref="tinyMCE" />
-			</map>
-		</property>
-	</bean>
-	
-	<bean id="tinyMCE" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-		<property name="properties">
-			<props>
-				<prop key="plugins">smartquotes,autocleanup,nospam</prop>
-				<prop key="smartquotes_quoteStyle">de</prop>
-				<prop key="smartquotes_cleanup">false</prop>
-				<prop key="valid_elements">+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote,sub,sup,span[class&lt;mailto]</prop>
-				<prop key="theme_advanced_container_buttons1">formatselect,bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap</prop>
-				<prop key="theme_advanced_blockformats">p,h3,h4</prop>
-			</props>
-		</property>
-	</bean>
-	
-	<!-- 
-	  - FormRepository providing component property forms.
-	  -->
-	<bean id="componentFormRepository" class="org.riotfamily.forms.factory.xml.XmlFormRepository">
-		<property name="config" value="/WEB-INF/pages-config/component-forms.xml" />
-		<property name="customElements" ref="customFormElements" />
-		<property name="defaultBeanClass" value="java.util.HashMap" />
-		<property name="mimetypesMap" ref="fileTypeMap" />
-		<property name="imageCropper" ref="imageCropper" />
-	</bean>
-	
-	<!-- 
-	  - Controller that renders forms to edit component properties.
-	  -->		
-	<bean id="componentFormController" 
-		name="/pages/form/@{componentId}"
-		class="org.riotfamily.pages.component.editor.ComponentFormController">
-		<constructor-arg ref="componentFormRepository" />
-		<constructor-arg ref="transactionManager" />
-		<property name="formContextFactory" ref="formContextFactory" />
-	</bean>
-
-	<!--
-	  - Overwrites the default loginFormController to use another view. 
-	  - The view includes a box with istallation instructions for the 
-	  - Riot-login bookmarklet.
-	  -->	
-	<bean id="loginFormController" class="org.riotfamily.riot.security.ui.LoginFormController">
-		<constructor-arg ref="loginManager" />
-		<property name="viewName" value="classpath:/org/riotfamily/pages/runtime/view/login-form.ftl" />
-	</bean>
-	
-	<!-- 
-	  - Login-popup that is opend by the Riot-login bookmarklet.
-	  -->
-	<bean id="toolbarLoginFormController" 
-		name="/pages/login"
-		class="org.riotfamily.riot.security.ui.LoginFormController">
-		<constructor-arg ref="loginManager" />
-		<property name="successViewName" value="classpath:/org/riotfamily/pages/runtime/view/toolbar-login-success.ftl" />
-	</bean>
-	
 	<!-- 
 	  - Controller that displays the sitemap as DHTML tree. Used by the 
 	  - internalLink form element.
 	  -->
 	<bean id="pageChooserController" name="/pages/chooser"
-		class="org.riotfamily.pages.page.chooser.PageChooserController" />
-	
+		class="org.riotfamily.pages.riot.chooser.PageChooserController" />
 	
 	<!-- Module configuration -->
 	
@@ -93,36 +21,11 @@
 						<value>/WEB-INF/pages-config/messages</value>
 					</list>
 				</entry>
-				<entry key="publicUrls">
-					<value>/pages/login</value>
-				</entry>
 				<entry key="resourceMappings">
 					<list>
 						<bean class="org.riotfamily.common.web.resource.ResourceMapping">
 							<property name="path" value="/" />
 							<property name="location" value="classpath:/org/riotfamily/pages/runtime/resources/" />
-						</bean>
-					</list>
-				</entry>
-				<entry key="resourceFilters">
-					<list>
-						<bean class="org.riotfamily.common.web.resource.PropertyResourceFilter">
-							<property name="match" value="/**/pages.js" />
-							<property name="propertiesMap">
-								<map>
-									<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
-								</map>
-							</property>
-						</bean>
-						<bean class="org.riotfamily.common.web.resource.MessageResourceFilter">
-							<property name="prefix" value="pages." />
-							<property name="matches">
-								<list>
-									<value>/**/toolbar.js</value>
-									<value>/**/inplace.js</value>
-									<value>/**/component.js</value>
-								</list>
-							</property>
 						</bean>
 					</list>
 				</entry>
@@ -133,30 +36,8 @@
 				</entry>
 				<entry key="customFormElements">
 					<props>
-						<prop key="internalLink">org.riotfamily.pages.page.chooser.InternalLinkField</prop>
+						<prop key="internalLink">org.riotfamily.pages.riot.chooser.InternalLinkField</prop>
 					</props>
-				</entry>
-				<entry key="dwrConfigurators">
-					<list>
-						<bean class="org.riotfamily.common.web.dwr.SpringConfigurator">
-							<property name="converterTypes">
-								<props>
-									<prop key="org.riotfamily.pages.component.editor.TypeInfo">bean</prop>
-									<prop key="org.riotfamily.pages.component.editor.ComponentInfo">bean</prop>
-								</props>
-							</property>
-							<property name="serviceBeans">
-								<map>
-									<entry key="ComponentEditor" value-ref="componentEditor" />
-								</map>
-							</property>
-							<property name="serviceInterfaces">
-								<list>
-									<value>org.riotfamily.pages.component.editor.ComponentEditor</value>
-								</list>
-							</property>
-						</bean>
-					</list>
 				</entry>
 				<entry key="formConfigLocations">
 					<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
@@ -171,42 +52,25 @@
 		</property>
 	</bean>
 	
-	<!-- 
-	  - Security policy that limits the access to pages flaged as system page.
-	  -->
-	<bean id="systemPagePolicy" class="org.riotfamily.pages.page.support.SystemPagePolicy" />
- 	
- 	<!-- 
- 	  - RiotDao to access pages.
- 	  -->
-    <bean id="riotPageDao" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
-        <property name="fallback">
-        	<bean class="org.riotfamily.pages.page.dao.PageRiotDao">
-        		<constructor-arg ref="pageDao" />
-        		<constructor-arg ref="pageEventMulticaster" />
-        	</bean>
-        </property>
-    </bean>
-	
-	<!-- 
-	  - RiotDao to list dirty ComponentLists.
-	  -->
-	<bean id="dirtyComponentListDao" class="org.riotfamily.pages.component.dao.DirtyComponentListDao" />
-	
-	<!-- 
-	  - Command to publish or unpublish pages.
-	  -->
-	<bean id="publishPageCommand" class="org.riotfamily.pages.page.command.PublishPageCommand" />	
-
-	<bean id="gotoPageCommand" class="org.riotfamily.pages.page.command.GotoPageCommand">
-		<constructor-arg ref="pathCompleter" />
-		<property name="windowName" value="preview" />
+	<bean id="localeRiotDao" class="org.riotfamily.riot.dao.support.StaticRiotDao">
+		<constructor-arg ref="websiteLocales" />
+  	</bean>
+	 	
+ 	<bean id="pageRiotDao" class="org.riotfamily.pages.riot.PageRiotDao">
+		<constructor-arg ref="pageDao" />
 	</bean>
 	
-	<bean id="deleteUnpublishedCommand" parent="deleteCommand"
-		class="org.riotfamily.pages.page.command.DeleteUnpublishedCommand" />
+	<bean id="editPageCommand" class="org.riotfamily.pages.riot.command.EditPageCommand">
+		<constructor-arg ref="pageDao" />
+	</bean>
 	
-	<bean id="gotoComponentListCommand" class="org.riotfamily.pages.component.command.GotoListCommand">
+	<bean id="deletePageCommand" class="org.riotfamily.pages.riot.command.DeletePageCommand" />
+
+	<!--
+	<bean id="publishPageCommand" class="org.riotfamily.pages.command.PublishPageCommand" />	
+	-->
+
+	<bean id="gotoPageCommand" class="org.riotfamily.pages.riot.command.GotoPageCommand">
 		<constructor-arg ref="pathCompleter" />
 		<property name="windowName" value="preview" />
 	</bean>

@@ -55,6 +55,7 @@ import org.riotfamily.riot.list.ColumnConfig;
 import org.riotfamily.riot.list.ListConfig;
 import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.command.CommandResult;
+import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.list.command.core.ChooseCommand;
 import org.riotfamily.riot.list.command.core.DescendCommand;
 import org.riotfamily.riot.list.command.result.ConfirmResult;
@@ -242,7 +243,13 @@ public class ListSession implements RenderContext {
 		while (it.hasNext()) {
 			ColumnConfig col = (ColumnConfig) it.next();
 			String propertyName = col.getProperty();
-			Object value = wrapper.getPropertyValue(propertyName);
+			Object value;
+			if (propertyName != null) {
+				value = wrapper.getPropertyValue(propertyName);
+			}
+			else {
+				value = bean;
+			}
 			StringWriter writer = new StringWriter();
 			col.getRenderer().render(propertyName, value, this, 
 					new PrintWriter(writer));
@@ -286,6 +293,9 @@ public class ListSession implements RenderContext {
 	}
 		
 	private String getHeading(String property, int lookupLevel) {
+		if (property == null) {
+			return null;
+		}
 		Class clazz = getBeanClass();
 		if (clazz != null) {
 			String root = property;
@@ -370,17 +380,11 @@ public class ListSession implements RenderContext {
 		Iterator it = commands.iterator();
 		while (it.hasNext()) {
 			Command command = (Command) it.next();
-			CommandState state = new CommandState();
-			String action = command.getAction(context);
+			CommandState state = command.getState(context);
 			boolean granted = AccessController.isGranted(
-					action, bean, listDefinition);
+					state.getAction(), bean, listDefinition);
 			
-			state.setId(command.getId());
-			state.setAction(action);
-			state.setStyleClass(command.getStyleClass(context));
-			state.setItemStyleClass(command.getItemStyleClass(context));
-			state.setEnabled(granted && command.isEnabled(context));
-			state.setLabel(command.getLabel(context));
+			state.setEnabled(state.isEnabled() && granted);
 			result.add(state);
 		}
 		return result;
@@ -401,7 +405,7 @@ public class ListSession implements RenderContext {
 			bean = EditorDefinitionUtils.loadParent(listDefinition, parentId);
 			context.setBean(bean);
 		}
-		String action = command.getAction(context);
+		String action = command.getState(context).getAction();
 		if (AccessController.isGranted(action, bean, listDefinition)) {
 			if (!confirmed) {
 				String message = command.getConfirmationMessage(context);

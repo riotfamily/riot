@@ -31,7 +31,8 @@ import org.riotfamily.riot.security.PrincipalBinder;
 
 public class HttpSessionPrincipalBinder implements PrincipalBinder {
 
-	public static final String DEFAULT_SESSION_KEY = "riotSubject";
+	public static final String DEFAULT_SESSION_KEY = 
+			HttpSessionPrincipalBinder.class.getName() + ".pricipal";
 	
 	private String sessionKey = DEFAULT_SESSION_KEY;
 	

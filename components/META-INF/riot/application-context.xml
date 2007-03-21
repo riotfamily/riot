@@ -1,0 +1,49 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<import resource="classpath:org/riotfamily/components/runtime/db-schema.xml"/>
+		
+	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
+		<property name="properties">
+			<map>
+	 			<entry key="hibernateMappingLocations">
+					<list>
+						<value>classpath:org/riotfamily/components/dao/hibernate/component.hbm.xml</value>
+					</list>	 			
+	 			</entry>
+	 		</map>
+		</property>
+	</bean>
+	
+	<!-- 
+	  - Repository that contains the component definitions.
+	  -->
+	<bean id="componentRepository" class="org.riotfamily.components.ComponentRepository">
+		<property name="configLocations">
+			<list>
+				<value>classpath:/org/riotfamily/components/runtime/component-messages.xml</value>
+				<value>/WEB-INF/pages-config/components.xml</value>
+			</list>
+		</property>
+		<property name="viewNamePrefix" value="components/" />
+		<property name="viewNameSuffix" value=".ftl" />
+	</bean>
+		
+	<bean id="componentDao" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
+		<property name="target"><ref bean="componentDaoTarget" /></property>
+	</bean>
+		
+	<bean id="componentDaoTarget" class="org.riotfamily.components.dao.hibernate.HibernateComponentDao">
+		<constructor-arg ref="componentRepository" />
+		<constructor-arg ref="riotSessionFactory" />
+		<property name="eventMulticaster" ref="contentEventMulticaster" />
+	</bean>
+	
+	<bean id="contentEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
+	
+</beans>	

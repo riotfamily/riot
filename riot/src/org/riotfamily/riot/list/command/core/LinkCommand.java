@@ -26,7 +26,6 @@ package org.riotfamily.riot.list.command.core;
 import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.support.PopupCommand;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -56,7 +55,7 @@ public class LinkCommand extends PopupCommand {
 		return url;
 	}
 	
-	public String getStyleClass(CommandContext context) {
+	protected String getStyleClass(CommandContext context, String action) {
 		return STYLE_CLASS;
 	}
 

@@ -15,53 +15,34 @@
 		http://www.riotfamily.org/schema/forms/form-config
 		http://www.riotfamily.org/schema/forms/form-config.xsd">
 
-	<ed:tree name="sitemap" list-ref="pages" icon="sitemap">
-		<ed:form form-ref="page" />
-	</ed:tree>
-		
-	<list:list id="pages" order-by="position" default-command="stepInto">
-		<list:dao ref="riotPageDao" />
+	<ed:list id="sitemap" list-ref="locales">
+		<ed:tree id="pages" list-ref="pages" icon="sitemap">
+			<ed:form form-ref="page" label-property="pathComponent" />
+		</ed:tree>
+	</ed:list>
+	
+	<list:list id="locales">
+		<list:dao ref="localeRiotDao" />
 		<list:columns>
-			<list:column property="pathComponent" sortable="false" />
-			<list:column property="title" sortable="false" lookup-level="2" />
-			<list:column property="position" />
-			<list:command id="gotoPage" />
-			<list:command id="moveUp" />
-			<list:command id="moveDown" />
-			<list:command id="edit" />
-			<list:command id="cut" />
-			<list:command id="copy" />
-			<list:command id="deleteUnpublished" />
-			<list:command id="publishPage" />
+			<list:column renderer="countryFlagRenderer" />
+			<list:column property="displayName" />
 			<list:command id="stepInto" />
 		</list:columns>
-		<list:command id="add"/>
-		<list:command id="paste"/>
 	</list:list>
 	
-	<list:list id="dirtyComponentLists">
-		<list:dao ref="dirtyComponentListDao" />
+	<list:list id="pages">
+		<list:dao ref="pageRiotDao" />
 		<list:columns>
-			<list:column property="path" />
-			<list:column property="key" />
-			<list:column property="lastModified" />
-			<list:column property="lastModifiedBy" />
-			<list:command id="gotoComponentList" />
+			<list:column property="locale" renderer="countryFlagRenderer" />
+			<list:column property="pathComponent" />
+			<list:command id="editPage" />
+			<list:command id="deletePage" />
 		</list:columns>
+		<list:command id="add"/>
 	</list:list>
-
-	<form:form id="page" bean-class="org.riotfamily.pages.page.PersistentPage" 
-			initializer-class="org.riotfamily.pages.page.support.PageFormInitializer">
-		
-		<form:group>
-			<form:textfield bind="pathComponent" required="true" regex="[A-Za-z0-9_.,-]*"/>
-			<form:checkbox bind="folder" />
-		</form:group>
-		<form:group>
-			<form:textfield bind="title" required="true" />
-			<form:textarea bind="description" rows="3" max-length="255" />
-			<form:textarea bind="keywords" rows="3" max-length="255" />
-		</form:group>
+	
+	<form:form id="page" bean-class="org.riotfamily.pages.Page">
+		<form:textfield bind="pathComponent" required="true" regex="[A-Za-z0-9_.,-]*" />
 	</form:form>
 
 </riot-config>

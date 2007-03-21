@@ -11,5 +11,7 @@
 <wb-resource deploy-path="/" source-path="/forms/tiger"/>
 <wb-resource deploy-path="/" source-path="/revolt/src"/>
 <wb-resource deploy-path="/" source-path="/revolt/test"/>
+<wb-resource deploy-path="/" source-path="/website/src"/>
+<wb-resource deploy-path="/" source-path="/components/src"/>
 </wb-module>
 </project-modules>

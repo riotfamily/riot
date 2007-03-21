@@ -1,0 +1,2 @@
+http\://www.riotfamily.org/schema/website/mvc=org.riotfamily.website.mvc.config.MvcNamespaceHandler
+http\://www.riotfamily.org/schema/website/template=org.riotfamily.website.template.config.TemplateNamespaceHandler

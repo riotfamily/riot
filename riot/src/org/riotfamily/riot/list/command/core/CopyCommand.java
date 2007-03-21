@@ -26,12 +26,10 @@ package org.riotfamily.riot.list.command.core;
 import org.riotfamily.riot.dao.CopyAndPasteEnabledDao;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.support.AbstractCommand;
-import org.riotfamily.riot.list.command.support.Clipboard;
 
 public class CopyCommand extends AbstractCommand {
 
-	public boolean isEnabled(CommandContext context) {
+	protected boolean isEnabled(CommandContext context, String action) {
 		return context.getDao() instanceof CopyAndPasteEnabledDao;
 	}
 	

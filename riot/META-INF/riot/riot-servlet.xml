@@ -93,8 +93,6 @@
 		</property>
 	</bean>
 
-	<bean id="principalBinder" class="org.riotfamily.riot.security.support.HttpSessionPrincipalBinder" />
-	
 	<!-- 
 	  - Service to authenticate users. You'll probably want to provide an
 	  - implementation that retrieves principals from the database or a 
@@ -119,7 +117,7 @@
 	
 	<bean id="loginManager" class="org.riotfamily.riot.security.LoginManager">
 		<constructor-arg ref="authenticationService" />
-		<constructor-arg ref="principalBinder" />
+		<constructor-arg ref="riotPrincipalBinder" />
 		<property name="sessionDataStore" ref="sessionDataStore" />
 	</bean>
 		
@@ -516,7 +514,7 @@
 									<prop key="org.riotfamily.riot.list.ui.ListModel">bean</prop>
 									<prop key="org.riotfamily.riot.list.ui.ListColumn">bean</prop>
 									<prop key="org.riotfamily.riot.list.ui.ListItem">bean</prop>
-									<prop key="org.riotfamily.riot.list.ui.CommandState">bean</prop>
+									<prop key="org.riotfamily.riot.list.command.CommandState">bean</prop>
 									
 									<prop key="org.riotfamily.riot.list.command.result.ConfirmResult">bean</prop>
 									<prop key="org.riotfamily.riot.list.command.result.GotoUrlResult">bean</prop>
@@ -541,7 +539,7 @@
 							<property name="signatures">
 								<value>
 									import org.riotfamily.riot.list.ui.ListItem;
-									import org.riotfamily.riot.list.ui.CommandState;
+									import org.riotfamily.riot.list.command.CommandState;
 									import java.util.List;
 									import javax.servlet.http.HttpServletRequest;
 									ListItem.setColumns(List&lt;String&gt;);

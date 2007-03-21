@@ -44,7 +44,7 @@ import org.springframework.web.filter.GenericFilterBean;
  * <p>
  * You can use {@link org.riotfamily.common.web.view.freemarker.AddTimestampMethod 
  * this FreeMarker method} to add timestamps to your URLs.
- * The {@link org.riotfamily.pages.css.CssTemplateController CssTemplateController}
+ * The {@link org.riotfamily.website.css.CssTemplateController CssTemplateController}
  * provided by the riot-pages module can be configured to do this automatically.   
  * </p>
  * @author Felix Gnass [fgnass at neteye dot de]

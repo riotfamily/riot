@@ -50,7 +50,7 @@ import org.springframework.web.servlet.DispatcherServlet;
  * modifying the web.xml.
  *  
  * @author Felix Gnass [fgnass at neteye dot de]
- * @author Jan-Frederic Linde <jfl@neteye.de>
+ * @author Jan-Frederic Linde [jfl at neteye dot de]
  */
 public class ReloadableDispatcherServlet extends DispatcherServlet 
 		implements ConfigurableBean {

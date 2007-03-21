@@ -26,12 +26,10 @@ package org.riotfamily.riot.list.command.core;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.ShowListResult;
-import org.riotfamily.riot.list.command.support.AbstractCommand;
-import org.riotfamily.riot.list.command.support.Clipboard;
 
 public class PasteCommand extends AbstractCommand {
 	
-	public boolean isEnabled(CommandContext context) {
+	protected boolean isEnabled(CommandContext context, String action) {
 		Clipboard cb = Clipboard.get(context);
 		return cb.canPaste(context);
 	}

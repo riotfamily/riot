@@ -29,7 +29,6 @@ import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.ReloadResult;
-import org.riotfamily.riot.list.command.support.AbstractCommand;
 
 /**
  * Command that swaps two items in a list.
@@ -42,7 +41,7 @@ public class SwapCommand extends AbstractCommand {
 		this.swapWith = swapWith;
 	}
 		
-	public boolean isEnabled(CommandContext context) {
+	protected boolean isEnabled(CommandContext context, String action) {
 		if (context.getDao() instanceof SwappableItemDao) {
 			int index = context.getParams().getOffset() + context.getRowIndex(); 
 			return index + swapWith >= 0 && 

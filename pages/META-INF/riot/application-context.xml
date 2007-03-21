@@ -1,84 +1,43 @@
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.0.xsd
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
 	
+	<!--
 	<import resource="classpath:org/riotfamily/pages/runtime/db-schema.xml"/>
-		
+	-->
+	
 	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
 		<property name="properties">
 			<map>
 	 			<entry key="hibernateMappingLocations">
 					<list>
-						<value>classpath:org/riotfamily/pages/page/dao/hibernate/PersistentPage.hbm.xml</value>
-						<value>classpath:org/riotfamily/pages/page/dao/hibernate/PageAlias.hbm.xml</value>
-						<value>classpath:org/riotfamily/pages/component/dao/hibernate/component.hbm.xml</value>
+						<value>classpath:org/riotfamily/pages/dao/hibernate/pages.hbm.xml</value>
 					</list>	 			
 	 			</entry>
 	 		</map>
 		</property>
 	</bean>
 	
-	<bean id="pathCompleter" class="org.riotfamily.common.web.util.PathCompleter">
-		<property name="servletName" value="website" />
-	</bean>
-	
+	<!--
 	<bean id="pageEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
-	
-	<bean id="contentEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
-	
-	<!-- Page DAO -->
-	
-	<bean id="pageDao" class="org.springframework.aop.framework.ProxyFactoryBean">
-		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
-		<property name="target" ref="pageDaoTarget" />
-	</bean>	
-	
-	<bean id="pageDaoTarget" class="org.riotfamily.pages.page.dao.hibernate.HibernatePageDao">
+	-->
+		
+	<bean id="pageDao" class="org.riotfamily.pages.dao.hibernate.HibernatePageDao">
+		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="riotSessionFactory" />
 	</bean>
 	
-	<!-- 
-	  - Exposes some beans from website-servlet to the riot-servlet context.
-	  - Refer to the JavaDocs for a detailed explanation.
-	  -->
-	<bean class="org.riotfamily.pages.setup.Plumber" />
+	<util:list id="websiteLocales" value-type="java.util.Locale">
+		<value>de_DE</value>
+		<value>de_CH</value>
+		<value>fr_FR</value>
+		<value>fr_CH</value>
+	</util:list>
 	
-	<!-- 
-	  - A Cachius cache instance to cache web content.
-	  -->	
-	<bean id="websiteCache" class="org.riotfamily.cachius.spring.CacheFactoryBean">
-		<property name="capacity" value="${riot.websiteCache.capacity=10000}" />
-    </bean>
-    
-    <!-- 
-	  - AOP advisor that can be added to RiotDao instances in order to invalidate 
-	  - the website cache, when an object is saved, updated or deleted.
-	  -->
-	<bean id="objectIdInvalidator" class="org.springframework.aop.support.DefaultPointcutAdvisor">
-		<constructor-arg ref="riotDaoPointcut" />
-		<constructor-arg>
-			<bean class="org.riotfamily.pages.mvc.cache.CacheInvalidationAdvice">
-				<property name="cache" ref="websiteCache" />
-				<property name="invalidateAll" value="false" />
-			</bean>
-		</constructor-arg>
-	</bean>
-
-	<!-- 
-	  - AOP advisor that can be added to RiotDaos in order to invalidate the
-	  - website cache, when an object is saved, updated or deleted.
-	  -->
-	<bean id="itemClassInvalidator" class="org.springframework.aop.support.DefaultPointcutAdvisor">
-		<constructor-arg ref="riotDaoPointcut" />
-		<constructor-arg>
-			<bean class="org.riotfamily.pages.mvc.cache.CacheInvalidationAdvice">
-				<property name="cache" ref="websiteCache" />
-				<property name="invalidateAll" value="true" />
-			</bean>
-		</constructor-arg>
-	</bean>
-
 </beans>	

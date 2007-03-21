@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="riot/src"/>
+	<classpathentry kind="src" path="components/src"/>
+	<classpathentry kind="src" path="website/src"/>
 	<classpathentry kind="src" path="riot-hibernate/src"/>
 	<classpathentry kind="src" path="cachius/src"/>
 	<classpathentry kind="src" path="pages/src"/>
@@ -17,7 +19,7 @@
 	<classpathentry kind="lib" path="lib/json-lib.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/servlet.jar"/>
-	<classpathentry kind="lib" path="lib/spring.jar" sourcepath="lib/spring-src.zip"/>
+	<classpathentry kind="lib" path="lib/spring.jar" sourcepath="/home/flx/java/spring/latest/src"/>
 	<classpathentry kind="lib" path="lib/c3p0.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

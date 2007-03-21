@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		elementFormDefault="qualified"
+		attributeFormDefault="unqualified" 
+		targetNamespace="http://www.riotfamily.org/schema/components/component"
+		xmlns:beans="http://www.springframework.org/schema/beans"
+		xmlns="http://www.riotfamily.org/schema/components/component">
+	
+	<xsd:import namespace="http://www.springframework.org/schema/beans"
+		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.0.xsd" />
+	
+	<xsd:element name="static-component">
+		<xsd:complexType>
+			<xsd:attribute name="id" type="xsd:ID" use="required" />
+			<xsd:attribute name="location" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:complexType name="abstract-component" abstract="true">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+			<xsd:element ref="beans:bean" />
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:ID" use="required" />
+		<xsd:attribute name="onchange" type="xsd:string" />
+	</xsd:complexType>
+		
+	<xsd:element name="view-component">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="abstract-component">
+					<xsd:attribute name="view-name" type="xsd:string" />
+					<xsd:attribute name="dynamic" type="xsd:boolean" default="false" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="include-component">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="abstract-component">
+					<xsd:attribute name="uri" type="xsd:string" />
+					<xsd:attribute name="dynamic" type="xsd:boolean" default="true" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>

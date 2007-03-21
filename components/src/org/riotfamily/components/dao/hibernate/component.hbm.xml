@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping package="org.riotfamily.components" auto-import="true">
+	
+	<class name="ComponentList" table="component_lists">
+		<cache usage="nonstrict-read-write" region="components" />
+		<id name="id">
+			<generator class="native" />
+		</id>
+		<component name="location">
+			<property name="type" column="`type`" unique-key="component_list_key" />
+			<property name="path" column="`path`" unique-key="component_list_key" />
+			<property name="slot" column="slot" unique-key="component_list_key" />	
+		</component>
+		<many-to-one name="parent" unique-key="component_list_key" />
+		<list name="liveContainers" cascade="all">
+			<cache usage="nonstrict-read-write" region="components" />
+			<key column="live_list" />
+			<index column="live_pos" />
+			<one-to-many class="VersionContainer" />
+		</list>
+		<list name="previewContainers" cascade="all">
+			<cache usage="nonstrict-read-write" region="components" />
+			<key column="preview_list" />
+			<index column="preview_pos" />
+			<one-to-many class="VersionContainer" />
+		</list>
+		<property name="dirty" />
+		<property name="lastModified" />
+		<property name="lastModifiedBy" />
+	</class>
+	
+	<class name="VersionContainer" table="version_containers" lazy="false">
+		<cache usage="nonstrict-read-write" region="components" />
+		<id name="id">
+			<generator class="native" />
+		</id>
+
+		<many-to-one name="liveList" column="live_list" insert="false" update="false" access="field" />
+		<many-to-one name="previewList" column="preview_list" insert="false" update="false" access="field" />
+
+		<many-to-one name="liveVersion" column="live_version" cascade="all" />
+		<many-to-one name="previewVersion" column="preview_version" cascade="all" />
+				
+		<set name="childLists" inverse="true" cascade="all">
+			<key column="parent" />
+			<one-to-many class="ComponentList" />
+		</set>
+	</class>
+	
+	<class name="ComponentVersion" table="component_versions" lazy="false">
+		<cache usage="nonstrict-read-write" region="components" />
+		<id name="id">
+			<generator class="native" />
+		</id>
+		<property name="type" column="`type`" />
+		<map name="properties" table="component_properties" lazy="false">
+			<cache usage="nonstrict-read-write" region="components" />
+			<key column="component_version" />
+			<index column="`key`" type="string" />
+			<element type="text"></element>
+		</map>
+		<many-to-one name="container" />
+		<property name="dirty" />
+	</class>
+		
+</hibernate-mapping>

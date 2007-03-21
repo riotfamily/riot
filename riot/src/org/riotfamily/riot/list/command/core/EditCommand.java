@@ -27,7 +27,6 @@ import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
-import org.riotfamily.riot.list.command.support.AbstractCommand;
 import org.springframework.util.Assert;
 
 
@@ -40,7 +39,7 @@ public class EditCommand extends AbstractCommand {
 	
 	public static final String ACTION_ADD = "add";
 
-	public String getAction(CommandContext context) {
+	protected String getAction(CommandContext context) {
 		return context.getBean() != null ? ACTION_EDIT : ACTION_ADD;
 	}
 	

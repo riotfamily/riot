@@ -30,7 +30,6 @@ import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
-import org.riotfamily.riot.list.command.support.AbstractCommand;
 import org.riotfamily.riot.list.support.ListParamsImpl;
 
 /**
@@ -57,7 +56,7 @@ public class DescendCommand extends AbstractCommand {
 		return ID;
 	}
 	
-	public boolean isEnabled(CommandContext context) {
+	protected boolean isEnabled(CommandContext context, String action) {
 		RiotDao dao = nextListDefinition.getListConfig().getDao();
 		int size = dao.getListSize(context.getBean(), params);
 		if (size == -1) {

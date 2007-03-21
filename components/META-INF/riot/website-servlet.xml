@@ -1,0 +1,56 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.0.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	
+	<bean id="defaultComponentListLocator" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
+		<property name="fallback">
+			<bean class="org.riotfamily.components.locator.UrlComponentListLocator">
+				<constructor-arg ref="pathCompleter" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean class="org.riotfamily.components.config.ControllerConfigurer">
+		<property name="componentDao" ref="componentDao" />
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="repository" ref="componentRepository" />
+		<property name="locator" ref="defaultComponentListLocator" />
+		<property name="cache" ref="websiteCache" />
+	</bean>
+	
+	<bean id="riotToolbarResources" class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+		<property name="key" value="riotToolbarResources" />
+		<property name="sourceListFirst" value="true" />
+		<property name="sourceList">
+			<list>
+				<value>/riot-js/resources.js</value>
+				<value>/pages.js</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
+		<property name="properties">
+			<map>
+	 			<entry key="freemarkerMacroLibraries">
+					<props>
+						<prop key="edit">classpath:org/riotfamily/components/runtime/edit.ftl</prop>
+					</props>
+	 			</entry>
+	 			<entry key="freemarkerVariables">
+					<map>
+						<entry key="riotResourcePath" value-ref="riotResourcePath" />
+						<entry key="riotToolbarResources" value-ref="riotToolbarResources" />
+					</map>
+	 			</entry>
+	 		</map>
+		</property>
+	</bean>
+	
+</beans>

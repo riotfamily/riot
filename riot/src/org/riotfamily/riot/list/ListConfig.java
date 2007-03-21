@@ -122,7 +122,7 @@ public class ListConfig {
 		Iterator it = columnConfigs.iterator();
 		while (it.hasNext()) {
 			ColumnConfig columnConfig = (ColumnConfig) it.next();			
-			if (columnConfig.getProperty().equals(property)){
+			if (property.equals(columnConfig.getProperty())) {
 				return columnConfig;
 			}
 		}
@@ -142,12 +142,9 @@ public class ListConfig {
 	}
 
 	public String getFirstProperty() {
-		Iterator it = columnConfigs.iterator();
-		while (it.hasNext()) {
-			ColumnConfig columnConfig = (ColumnConfig) it.next();
-			if (columnConfig.getProperty() != null) {
-				return columnConfig.getProperty(); 
-			}
+		if (!columnConfigs.isEmpty()) {
+			ColumnConfig columnConfig = (ColumnConfig) columnConfigs.get(0);
+			return columnConfig.getProperty();
 		}
 		return null;
 	}
