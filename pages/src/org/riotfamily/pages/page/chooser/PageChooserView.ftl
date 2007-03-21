@@ -10,7 +10,7 @@
 	</ul>
 	<script>
 		Tree.create('tree', function(a) {
-			opener.WindowCallback.invoke(self, this.getAttribute('href'));
+			opener.WindowCallback.invoke(self, this.getAttribute('href', 2));
 			close();
 			return false;
 		});

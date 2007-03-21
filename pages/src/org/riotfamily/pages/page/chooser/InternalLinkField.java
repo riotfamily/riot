@@ -45,7 +45,6 @@ public class InternalLinkField extends AbstractTextElement
 	
 
 	public InternalLinkField() {
-		setStyleClass("text internal-link");
 	}
 	
 	public String getChooserUrl() {
@@ -85,13 +84,8 @@ public class InternalLinkField extends AbstractTextElement
 	public void renderInternal(PrintWriter writer) {
 		DocumentWriter doc = new DocumentWriter(writer);
 		doc.start(Html.DIV).attribute(Html.COMMON_CLASS, "internal-link");
-		doc.start(Html.DIV).attribute(Html.COMMON_CLASS, "input-wrapper");
 		doc.body();
-		
 		super.renderInternal(writer);
-		
-		doc.end();
-		
 		doc.startEmpty(Html.INPUT)
 				.attribute(Html.INPUT_TYPE, "button")
 				.attribute(Html.INPUT_VALUE, "Internal ...")

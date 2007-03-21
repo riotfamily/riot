@@ -1,15 +1,9 @@
-.internal-link {
-	position: relative;
-}
-
-.internal-link .input-wrapper {
-	margin-right: 100px;
+.internal-link input.text {
+	float: left;
+	width: 200px;
 }
 
 .internal-link .button {
-	position: absolute;
-	width: 100px;
-	height: 100%;
-	right: 0;
-	top: 0;
+	float: left;
+	margin-left: 2px;
 }
