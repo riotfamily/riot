@@ -34,11 +34,14 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageNode;
-import org.riotfamily.pages.PathAndLocale;
+import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.component.PageComponentListLocator;
 
 /**
+ * Abstract base class for {@link PageDao} implementations.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
+ * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
 public abstract class AbstractPageDao implements PageDao {
@@ -57,7 +60,7 @@ public abstract class AbstractPageDao implements PageDao {
 		page.setCreationDate(new Date());
 		page.setPath(buildPath(page));
 		saveNode(node);
-		deleteAlias(new PathAndLocale(page));
+		deleteAlias(new PageLocation(page));
 		log.debug("Page saved: " + page);
 	}
 	
@@ -66,7 +69,7 @@ public abstract class AbstractPageDao implements PageDao {
 		page.setCreationDate(new Date());
 		page.setPath(buildPath(page));
 		updateNode(parent.getNode());
-		deleteAlias(new PathAndLocale(page));
+		deleteAlias(new PageLocation(page));
 		log.debug("Page saved: " + page);
 	}
 	
@@ -99,7 +102,7 @@ public abstract class AbstractPageDao implements PageDao {
 		updatePageWithoutChecks(page);
 		if (dirtyPath) {
 			log.info("Path modified: " + page);
-			PathAndLocale oldLocation = new PathAndLocale(page);
+			PageLocation oldLocation = new PageLocation(page);
 			page.setPath(buildPath(page));
 			createAlias(page, oldLocation);
 			updatePaths(page.getChildPages());
@@ -112,7 +115,7 @@ public abstract class AbstractPageDao implements PageDao {
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
-			PathAndLocale oldLocation = new PathAndLocale(page);
+			PageLocation oldLocation = new PageLocation(page);
 			page.setPath(buildPath(page));
 			createAlias(page, oldLocation);
 			updatePageWithoutChecks(page);
@@ -122,9 +125,9 @@ public abstract class AbstractPageDao implements PageDao {
 	
 	protected abstract void clearAliases(Page page);
 	
-	protected abstract void createAlias(Page page, PathAndLocale location);
+	protected abstract void createAlias(Page page, PageLocation location);
 	
-	protected abstract void deleteAlias(PathAndLocale location);
+	protected abstract void deleteAlias(PageLocation location);
 	
 	protected abstract void updatePageWithoutChecks(Page page);
 	

@@ -28,24 +28,28 @@ import java.util.Locale;
 
 
 /**
+ * Class that specifies the location of a Page. A page or alias can be uniquely
+ * identified using a path and a locale.
+ *  
  * @author Felix Gnass [fgnass at neteye dot de]
+ * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
-public class PathAndLocale implements Serializable {
+public class PageLocation implements Serializable {
 
 	private String path;
 	
 	private Locale locale;
 
-	public PathAndLocale() {
+	public PageLocation() {
 	}
 
-	public PathAndLocale(String path, Locale locale) {
+	public PageLocation(String path, Locale locale) {
 		this.path = path;
 		this.locale = locale;
 	}
 	
-	public PathAndLocale(Page page) {
+	public PageLocation(Page page) {
 		this.path = page.getPath();
 		this.locale = page.getLocale();
 	}
@@ -71,7 +75,7 @@ public class PathAndLocale implements Serializable {
 	}
 	
 	public boolean equals(Object obj) {
-		if (obj instanceof PathAndLocale) {
+		if (obj instanceof PageLocation) {
 			return toString().equals(obj.toString());
 		}
 		return false;

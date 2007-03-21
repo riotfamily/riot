@@ -32,6 +32,7 @@ import java.util.Set;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
+ * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
 public class PageNode {

@@ -36,12 +36,15 @@ import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
 import org.riotfamily.pages.PageNode;
-import org.riotfamily.pages.PathAndLocale;
+import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.dao.AbstractPageDao;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * PageDao implementation that uses Hibernate.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
+ * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
 public class HibernatePageDao extends AbstractPageDao {
@@ -62,7 +65,7 @@ public class HibernatePageDao extends AbstractPageDao {
 		return (Page) session.load(Page.class, id);
 	}
 	
-	public Page findPage(PathAndLocale location) {
+	public Page findPage(PageLocation location) {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria c = session.createCriteria(Page.class);
 		c.add(Expression.eq("path", location.getPath()));
@@ -117,12 +120,12 @@ public class HibernatePageDao extends AbstractPageDao {
 		return c.list();
 	}
 	
-	public PageAlias findPageAlias(PathAndLocale location) {
+	public PageAlias findPageAlias(PageLocation location) {
 		Session session = sessionFactory.getCurrentSession();
 		return (PageAlias) session.get(PageAlias.class, location);
 	}
 	
-	protected void deleteAlias(PathAndLocale location) {
+	protected void deleteAlias(PageLocation location) {
 		Session session = sessionFactory.getCurrentSession();
 		PageAlias alias = findPageAlias(location);
 		if (alias != null) {
@@ -131,10 +134,10 @@ public class HibernatePageDao extends AbstractPageDao {
 		}
 	}
 	
-	protected void createAlias(Page page, PathAndLocale location) {
+	protected void createAlias(Page page, PageLocation location) {
 		Session session = sessionFactory.getCurrentSession();
 		if (page != null) {
-			deleteAlias(new PathAndLocale(page));
+			deleteAlias(new PageLocation(page));
 		}
 		PageAlias alias = new PageAlias(page, location);
 		log.info("Creating " + alias);
@@ -149,7 +152,7 @@ public class HibernatePageDao extends AbstractPageDao {
 		
 		query.setParameter("page", page);
 		query.executeUpdate();
-		createAlias(null, new PathAndLocale(page));
+		createAlias(null, new PageLocation(page));
 	}
 	 
 }

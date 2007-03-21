@@ -29,14 +29,15 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.pages.PathAndLocale;
+import org.riotfamily.pages.PageLocation;
 import org.springframework.util.StringUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
+ * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
-public class DefaultPathAndLocaleResolver implements PathAndLocaleResolver {
+public class DefaultPageLocationResolver implements PageLocationResolver {
 
 	private Collection locales;
 	
@@ -48,7 +49,7 @@ public class DefaultPathAndLocaleResolver implements PathAndLocaleResolver {
 		return locales != null && !locales.isEmpty();
 	}
 	
-	public PathAndLocale getPathAndLocale(HttpServletRequest request) {
+	public PageLocation getPageLocation(HttpServletRequest request) {
 		String path = ServletUtils.getPathWithoutServletMapping(request);
 		Locale locale = null;
 		if (localesInPath()) {
@@ -61,10 +62,10 @@ public class DefaultPathAndLocaleResolver implements PathAndLocaleResolver {
 				}
 			}
 		}
-		return new PathAndLocale(path, locale);
+		return new PageLocation(path, locale);
 	}
 	
-	public String getUrl(PathAndLocale location, HttpServletRequest request) {
+	public String getUrl(PageLocation location, HttpServletRequest request) {
 		StringBuffer url = new StringBuffer();
 		url.append(request.getContextPath());
 		url.append(ServletUtils.getServletPrefix(request));

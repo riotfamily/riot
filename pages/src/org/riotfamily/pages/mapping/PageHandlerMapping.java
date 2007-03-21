@@ -32,7 +32,7 @@ import org.riotfamily.common.web.controller.HttpErrorController;
 import org.riotfamily.common.web.controller.RedirectController;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
-import org.riotfamily.pages.PathAndLocale;
+import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.dao.PageDao;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -42,6 +42,8 @@ import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
+ * @author Jan-Frederic Linde [jfl at neteye dot de]
+ * @since 6.5
  */
 public class PageHandlerMapping extends AbstractHandlerMapping {
 
@@ -51,17 +53,17 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 	
 	private PlatformTransactionManager transactionManager;
 	
-	private PathAndLocaleResolver pathAndLocaleResolver;
+	private PageLocationResolver locationResolver;
 	
 	private Object defaultPageHandler;
 	
 	public PageHandlerMapping(PageDao pageDao, 
 			PlatformTransactionManager transactionManager,
-			PathAndLocaleResolver pathAndLocaleResolver) {
+			PageLocationResolver pathAndLocaleResolver) {
 
 		this.pageDao = pageDao;
 		this.transactionManager = transactionManager;
-		this.pathAndLocaleResolver = pathAndLocaleResolver;
+		this.locationResolver = pathAndLocaleResolver;
 	}
 
 	public void setDefaultPageHandler(Object defaultPageHandler) {
@@ -79,7 +81,7 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 	}
 	
 	protected Object getHandlerWithinTransaction(HttpServletRequest request) {
-		PathAndLocale location = pathAndLocaleResolver.getPathAndLocale(request); 
+		PageLocation location = locationResolver.getPageLocation(request); 
 		Page page = pageDao.findPage(location);
 		log.debug("Page: " + page);
 		if (page != null) {
@@ -95,8 +97,8 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 			if (alias != null) {
 				page = alias.getPage();
 				if (page != null) {
-					String url = pathAndLocaleResolver.getUrl(
-							new PathAndLocale(page), request);
+					String url = locationResolver.getUrl(
+							new PageLocation(page), request);
 					
 					return new RedirectController(url);
 				}

@@ -25,17 +25,18 @@ package org.riotfamily.pages.mapping;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.pages.PathAndLocale;
+import org.riotfamily.pages.PageLocation;
 
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
+ * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
-public interface PathAndLocaleResolver {
+public interface PageLocationResolver {
 
-	public PathAndLocale getPathAndLocale(HttpServletRequest request);
+	public PageLocation getPageLocation(HttpServletRequest request);
 	
-	public String getUrl(PathAndLocale location, HttpServletRequest request);
+	public String getUrl(PageLocation location, HttpServletRequest request);
 
 }

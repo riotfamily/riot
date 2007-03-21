@@ -28,27 +28,28 @@ package org.riotfamily.pages;
  * ancestors) is renamed or moved.
  *
  * @author Felix Gnass [fgnass at neteye dot de]
+ * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
 public class PageAlias {
 
 	private Page page;
 	
-	private PathAndLocale location;
+	private PageLocation location;
 	
 	public PageAlias() {
 	}
 	
-	public PageAlias(Page page, PathAndLocale location) {
+	public PageAlias(Page page, PageLocation location) {
 		this.page = page;
 		this.location = location;
 	}
 
-	public PathAndLocale getLocation() {
+	public PageLocation getLocation() {
 		return this.location;
 	}
 
-	public void setLocation(PathAndLocale location) {
+	public void setLocation(PageLocation location) {
 		this.location = location;
 	}
 
