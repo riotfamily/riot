@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
@@ -71,6 +72,7 @@ public class TaggingContext {
 	}
 
 	public static void tag(HttpServletRequest request, String tag) {
+		Assert.notNull(tag, "Tag must not be null!");
 		TaggingContext context = getContext(request);
 		if (context != null) {
 			context.addTag(tag);
