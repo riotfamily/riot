@@ -101,9 +101,10 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 	}
 	
 	protected void renderComponentList(ComponentList list) throws IOException {
+		listTag = list.getLocation().toString();
 		try {
 			TaggingContext.openNestedContext(request);
-			TaggingContext.tag(request, list.getLocation().toString());
+			TaggingContext.tag(request, listTag);
 			
 			ItemUpdater updater = new ItemUpdater(cachedList, request);
 			response = new CachiusResponseWrapper(response, updater);

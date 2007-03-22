@@ -77,6 +77,7 @@
 	
 	<bean class="org.riotfamily.pages.riot.EditorRepositoryInitializer">
 		<constructor-arg ref="editorRepository" />
+		<constructor-arg ref="websiteLocales" />
 	</bean>
 	
 </beans>
