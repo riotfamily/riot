@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot;
 
+import java.util.Collection;
+
 import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.riot.editor.EditorRepository;
@@ -39,8 +41,13 @@ public class EditorRepositoryInitializer implements ConfigurationEventListener {
 
 	private EditorRepository repository;
 
-	public EditorRepositoryInitializer(EditorRepository repository) {
+	private Collection locales;
+	
+	public EditorRepositoryInitializer(EditorRepository repository, 
+			Collection locales) {
+		
 		this.repository = repository;
+		this.locales = locales;
 		repository.addListener(this);
 		initRepository();
 	}
@@ -51,15 +58,15 @@ public class EditorRepositoryInitializer implements ConfigurationEventListener {
 	
 	protected void initRepository() {
 		ListDefinition pages = repository.getListDefinition("pages");
-		
-		ListConfig listConfig = pages.getListConfig();
-		ColumnConfig localeColumn = listConfig.getColumnConfig("locale");
-		listConfig.getColumnConfigs().remove(localeColumn);
-		
-		pages.setId("sitemap");
-		repository.addEditorDefinition(pages);
-		repository.getRootGroupDefinition().addEditorDefinition(pages);
-		
+		if (locales == null || locales.isEmpty()) {
+			ListConfig listConfig = pages.getListConfig();
+			ColumnConfig localeColumn = listConfig.getColumnConfig("locale");
+			listConfig.getColumnConfigs().remove(localeColumn);
+			
+			pages.setId("sitemap");
+			repository.addEditorDefinition(pages);
+			repository.getRootGroupDefinition().addEditorDefinition(pages);
+		}
 		FormDefinition pageForm = (FormDefinition) pages.getDisplayDefinition();
 		//pageForm.addChildEditorDefinition(editorDef);
 	}
