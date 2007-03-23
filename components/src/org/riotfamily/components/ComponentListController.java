@@ -32,6 +32,7 @@ import org.riotfamily.cachius.Cache;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.editor.ComponentFormRegistry;
 import org.riotfamily.components.render.EditModeRenderStrategy;
 import org.riotfamily.components.render.LiveModeRenderStrategy;
 import org.riotfamily.components.render.RenderStrategy;
@@ -65,6 +66,8 @@ public class ComponentListController implements Controller, BeanNameAware,
 	private Integer maxComponents;
 
 	private ComponentRepository componentRepository;
+	
+	private ComponentFormRegistry formRegistry;
 
 	private String[] validComponentTypes;
 
@@ -128,6 +131,14 @@ public class ComponentListController implements Controller, BeanNameAware,
 		this.componentRepository = repository;
 	}
 	
+	public ComponentFormRegistry getFormRegistry() {
+		return this.formRegistry;
+	}
+
+	public void setFormRegistry(ComponentFormRegistry formRegistry) {
+		this.formRegistry = formRegistry;
+	}
+
 	public ComponentRepository getComponentRepository() {
 		return this.componentRepository;
 	}
@@ -153,8 +164,8 @@ public class ComponentListController implements Controller, BeanNameAware,
 
 		final RenderStrategy strategy;
 		if (AccessController.isAuthenticatedUser()) {
-			strategy = new EditModeRenderStrategy(componentDao, componentRepository, 
-					this, request, response);
+			strategy = new EditModeRenderStrategy(componentDao, 
+					componentRepository, formRegistry, this, request, response);
 			
 			PageRequestUtils.storeContext(request, 120000);
 		}

@@ -27,6 +27,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 
+import org.riotfamily.components.ComponentVersion;
+import org.riotfamily.components.VersionContainer;
+import org.riotfamily.pages.component.PageComponent;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -46,6 +50,8 @@ public class Page {
 	private String path;
 	
 	private Date creationDate;
+	
+	private VersionContainer versionContainer;
 	
 	public Long getId() {
 		return this.id;
@@ -120,6 +126,19 @@ public class Page {
 		return node.getHandlerName();
 	}
 	
+	public VersionContainer getVersionContainer() {
+		if (versionContainer == null) {
+			versionContainer = new VersionContainer();
+			ComponentVersion version = new ComponentVersion(PageComponent.TYPE);
+			versionContainer.setPreviewVersion(version);
+		}
+		return versionContainer;
+	}
+
+	public void setVersionContainer(VersionContainer versionContainer) {
+		this.versionContainer = versionContainer;
+	}
+
 	public String toString() {
 		return locale + ":" + path;
 	}

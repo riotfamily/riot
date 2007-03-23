@@ -93,18 +93,22 @@ riot.Toolbar.prototype = {
 			
 	updateComponentLists: function() {
 		var lists = [];
-		var e = document.getElementsByClassName('riot-components');
-		for (var i = 0; i < e.length; i++) {
-			var list = e[i].componentList;
+		$$('.riot-components').each(function(e) {
+			var list = e.componentList;
 			if(!isDefined(list)) {
-				list = new riot.ComponentList(e[i]);
-				e[i].componentList = list;
-				if (this.activeButton) {
-					list[this.activeButton.handler](true);
+				list = new riot.ComponentList(e);
+				e.componentList = list;
+				if (riot.toolbar.activeButton) {
+					list[riot.toolbar.handler](true);
 				}
 			}
 			lists.push(list);
-		}
+		});
+		$$('.riot-single-component').each(function(e) {
+			var c = new riot.Component(null, e);
+			lists.push(c);
+		});
+		
 		this.componentLists = lists.reverse();
 	},
 		
@@ -126,6 +130,7 @@ riot.Toolbar.prototype = {
 	},
 	
 	setDirty: function(list, dirty) {
+		if (!list) return; //TODO
 		this.updateComponentLists();
 		if (this.instantPublishMode) return;
 		if (dirty) {
@@ -215,7 +220,12 @@ riot.ToolbarButton.prototype = {
 	applyHandler: function(enable) {
 		var targets = this.getHandlerTargets();
 		for (var i = 0; i < targets.length; i++) {
-			targets[i][this.handler](enable);
+			if (targets[i][this.handler]) {
+				targets[i][this.handler](enable);
+			}
+			else {
+				targets[i].setMode(enable ? this.handler : null);
+			}
 		}
 	}
 	

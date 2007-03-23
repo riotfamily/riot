@@ -21,36 +21,39 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.riot.command;
+package org.riotfamily.components.editor;
 
-import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageLocation;
-import org.riotfamily.pages.mapping.PageLocationResolver;
-import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.core.PopupCommand;
+import java.util.HashSet;
+
+import org.springframework.util.Assert;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.4
+ * @since 6.5
  */
-public class GotoPageCommand extends PopupCommand {
+public class ComponentFormRegistry {
 
-	public static final String STYLE_CLASS = "link";
+	private ComponentFormController formController;
 	
-	private PageLocationResolver resolver;
-
-	public GotoPageCommand(PageLocationResolver resolver) {
-		this.resolver = resolver;
-	}
-
-	protected String getUrl(CommandContext context) {
-		Page page = (Page) context.getBean();
-		return context.getRequest().getContextPath() 
-				+ resolver.getUrl(new PageLocation(page));
+	private HashSet formIds = new HashSet();
+	
+	public void clear() {
+		formIds.clear();
 	}
 	
-	protected String getStyleClass(CommandContext context, String action) {
-		return STYLE_CLASS;
+	public void registerFormId(String formId) {
+		formIds.add(formId);
+	}
+	
+	public void setFormController(ComponentFormController formController) {
+		this.formController = formController;
 	}
 
+	public String getFormUrl(String formId, Long containerId) {
+		Assert.notNull(formController, "A FormController must be set.");
+		if (formIds.contains(formId)) {
+			return formController.getUrl(formId, containerId);
+		}
+		return null;
+	}
 }

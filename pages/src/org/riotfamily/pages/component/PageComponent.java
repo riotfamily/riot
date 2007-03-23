@@ -21,36 +21,27 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.riot.command;
+package org.riotfamily.pages.component;
 
-import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageLocation;
-import org.riotfamily.pages.mapping.PageLocationResolver;
-import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.core.PopupCommand;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.riotfamily.components.ComponentVersion;
+import org.riotfamily.components.component.AbstractComponent;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.4
+ * @since 6.5
  */
-public class GotoPageCommand extends PopupCommand {
+public class PageComponent extends AbstractComponent {
 
-	public static final String STYLE_CLASS = "link";
+	public static final String TYPE = "riot-page-component";
 	
-	private PageLocationResolver resolver;
-
-	public GotoPageCommand(PageLocationResolver resolver) {
-		this.resolver = resolver;
+	protected void renderInternal(ComponentVersion componentVersion, 
+			String positionClassName, HttpServletRequest request, 
+			HttpServletResponse response) throws Exception {
+		
+		throw new UnsupportedOperationException(
+				"Page components can't be rendered");
 	}
-
-	protected String getUrl(CommandContext context) {
-		Page page = (Page) context.getBean();
-		return context.getRequest().getContextPath() 
-				+ resolver.getUrl(new PageLocation(page));
-	}
-	
-	protected String getStyleClass(CommandContext context, String action) {
-		return STYLE_CLASS;
-	}
-
 }

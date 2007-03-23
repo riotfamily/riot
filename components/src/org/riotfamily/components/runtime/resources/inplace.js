@@ -114,8 +114,11 @@ riot.InplaceEditor.prototype = {
 	save: function() {
 		var text = this.getText();
 		if (this.text != text) {
-			ComponentEditor.updateText(this.component.componentList.controllerId,
-					this.component.id, this.key, text, this.onupdate.bind(this));
+			var controllerId = this.component.componentList 
+					? this.component.componentList.controllerId : null;
+					
+			ComponentEditor.updateText(controllerId, this.component.id, 
+					this.key, text, this.onupdate.bind(this));
 					
 			riot.toolbar.setDirty(this.component.componentList, true);
 		}

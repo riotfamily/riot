@@ -32,6 +32,7 @@ import org.riotfamily.components.ComponentListController;
 import org.riotfamily.components.ComponentListLocator;
 import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.editor.ComponentFormRegistry;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -50,6 +51,8 @@ public class ControllerConfigurer implements ApplicationContextAware,
 	private ComponentListLocator locator;
 	
 	private ComponentRepository repository;
+	
+	private ComponentFormRegistry formRegistry; 
 	
 	private PlatformTransactionManager transactionManager;
 	
@@ -77,6 +80,10 @@ public class ControllerConfigurer implements ApplicationContextAware,
 		this.repository = repository;
 	}	
 	
+	public void setFormRegistry(ComponentFormRegistry formRegistry) {
+		this.formRegistry = formRegistry;
+	}
+
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(transactionManager, "A transactionManager must be set.");
 		configureComponenControllers();
@@ -124,6 +131,9 @@ public class ControllerConfigurer implements ApplicationContextAware,
 			}
 			if (controller.getComponentRepository() == null) {
 				controller.setComponentRepository(repository);
+			}
+			if (controller.getFormRegistry() == null) {
+				controller.setFormRegistry(formRegistry);
 			}
 			if (controller.getLocator() == null) {
 				controller.setLocator(locator);

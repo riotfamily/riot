@@ -16,10 +16,7 @@
 		<property name="properties">
 			<map>
 				<entry key="messageSourceBasenames">
-					<list>
-						<value>classpath:/org/riotfamily/pages/runtime/i18n/messages</value>
-						<value>/WEB-INF/pages-config/messages</value>
-					</list>
+					<value>classpath:/org/riotfamily/pages/runtime/i18n/messages</value>
 				</entry>
 				<entry key="resourceMappings">
 					<list>
@@ -78,6 +75,27 @@
 	<bean class="org.riotfamily.pages.riot.EditorRepositoryInitializer">
 		<constructor-arg ref="editorRepository" />
 		<constructor-arg ref="websiteLocales" />
+	</bean>
+	
+	<!-- 
+	  - FormRepository providing page property forms.
+	  -->
+	<bean id="pageComponentFormRepository" parent="componentFormRepository">
+		<property name="config" value="/WEB-INF/website-config/page-forms.xml" />
+	</bean>
+	
+	<!-- 
+	  - Controller that renders forms to edit component properties.
+	  -->		
+	<bean id="pageComponentFormController" 
+		name="/pages/form/@{formId}/@{containerId}"
+		class="org.riotfamily.pages.component.PageComponentFormController">
+		<constructor-arg ref="pageComponentFormRepository" />
+		<constructor-arg ref="componentRepository" />
+		<constructor-arg ref="pageComponentFormRegistry" />
+		<constructor-arg ref="componentDao" />
+		<constructor-arg ref="transactionManager" />
+		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 	
 </beans>

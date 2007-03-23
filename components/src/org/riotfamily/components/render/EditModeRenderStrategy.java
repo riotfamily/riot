@@ -39,19 +39,24 @@ import org.riotfamily.components.Location;
 import org.riotfamily.components.VersionContainer;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.editor.ComponentFormRegistry;
 
 public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	
 	private static final Log log = LogFactory.getLog(EditModeRenderStrategy.class);
 	
+	private ComponentFormRegistry formRegistry;
+	
 	private boolean renderOuterDiv = true;
 	
 	public EditModeRenderStrategy(ComponentDao dao, 
-			ComponentRepository repository, ComponentListConfiguration config,
+			ComponentRepository repository, ComponentFormRegistry formRegistry,
+			ComponentListConfiguration config,
 			HttpServletRequest request, HttpServletResponse response) 
 			throws IOException {
 		
 		super(dao, repository, config, request, response);
+		this.formRegistry = formRegistry;
 	}
 
 	public void renderComponentVersion(ComponentVersion version) 
@@ -159,10 +164,10 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		out.print('"');
 		
 		String type = version.getType(); 
-		String formId = repository.getFormId(type);
-		if (formId != null) {
-			out.print(" riot:formId=\"");
-			out.print(formId);
+		String formUrl = formRegistry.getFormUrl(type, container.getId());
+		if (formUrl != null) {
+			out.print(" riot:form=\"");
+			out.print(formUrl);
 			out.print('"');
 		}
 		

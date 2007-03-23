@@ -71,6 +71,8 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	
 	private ComponentRepository repository;
 	
+	private ComponentFormRegistry formRegistry;
+	
 	private LoginManager loginManager;
 	
 	private MessageSource messageSource;
@@ -79,9 +81,12 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	
 	private Cache cache;
 	
-	public ComponentEditorImpl(ComponentDao dao, ComponentRepository repository) {
+	public ComponentEditorImpl(ComponentDao dao, ComponentRepository repository,
+			ComponentFormRegistry formRegistry) {
+		
 		this.dao = dao;
 		this.repository = repository;
+		this.formRegistry = formRegistry;
 	}
 
 	public void setLoginManager(LoginManager loginManager) {
@@ -124,7 +129,9 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		ComponentVersion version = getVersionToEdit(container, null);
 		version.setProperty(property, text);
 		dao.updateComponentVersion(version);
-
+		if (controllerId == null) {
+			return null;
+		}
 		return getHtml(repository.getListConfiguration(controllerId), version);
 	}
 	
@@ -243,7 +250,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 			HttpServletResponse response = getCapturingResponse(sw);
 			
 			EditModeRenderStrategy strategy = new EditModeRenderStrategy(
-					dao, repository, config, request, response);
+					dao, repository, formRegistry, config, request, response);
 			
 			strategy.renderComponentVersion(version);
 			return sw.toString();
@@ -289,7 +296,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 			HttpServletResponse response = getCapturingResponse(sw);
 			
 			EditModeRenderStrategy strategy = new EditModeRenderStrategy(
-					dao, repository, 
+					dao, repository, formRegistry,
 					repository.getListConfiguration(controllerId), 
 					request, response);
 			

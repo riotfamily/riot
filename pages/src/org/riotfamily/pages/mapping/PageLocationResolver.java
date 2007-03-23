@@ -37,6 +37,6 @@ public interface PageLocationResolver {
 
 	public PageLocation getPageLocation(HttpServletRequest request);
 	
-	public String getUrl(PageLocation location, HttpServletRequest request);
+	public String getUrl(PageLocation location);
 
 }

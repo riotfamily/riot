@@ -167,25 +167,25 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 * a live version, a new preview is created automatically.
 	 *  
 	 * @param container The container to use
-	 * @param type The type to use when creating a new version. If set to
-	 * 		<code>null</code>, the type of the live version is used. 
-	 * 
+	 * @param type The type to use when creating an initial preview version. 
 	 */
 	public ComponentVersion getOrCreatePreviewVersion(
 			VersionContainer container, String type) {
 		
 		ComponentList list = container.getList();
-		if (!list.isDirty()) {
+		if (list != null && !list.isDirty()) {
 			getOrCreatePreviewContainers(list);
 			updateComponentList(list);
 		}
 		ComponentVersion preview = container.getPreviewVersion();
 		if (preview == null) {
 			ComponentVersion live = container.getLiveVersion();
-			if (type == null) {
-				type = live.getType();
+			if (live != null) {
+				preview = copyComponentVersion(live);
 			}
-			preview = copyComponentVersion(live);
+			else {
+				preview = new ComponentVersion(type);
+			}
 			container.setPreviewVersion(preview);
 			updateVersionContainer(container);
 		}

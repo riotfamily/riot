@@ -17,7 +17,7 @@
 
 	<bean id="defaultComponentListLocatorImpl" class="org.riotfamily.pages.component.PageComponentListLocator">
 		<constructor-arg ref="pageDao" />
-		<constructor-arg ref="pathCompleter" />
+		<constructor-arg ref="pageLocationResolver" />
 	</bean>
 	
 </beans>

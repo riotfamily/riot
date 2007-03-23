@@ -14,6 +14,7 @@
 	<bean id="componentEditorTarget" class="org.riotfamily.components.editor.ComponentEditorImpl">
 		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="componentRepository" />
+		<constructor-arg ref="componentFormRegistry" />
 		<property name="loginManager" ref="loginManager" />
 		<property name="cache" ref="websiteCache" />
 		<property name="editorConfigs">
@@ -40,7 +41,7 @@
 	  - FormRepository providing component property forms.
 	  -->
 	<bean id="componentFormRepository" class="org.riotfamily.forms.factory.xml.XmlFormRepository">
-		<property name="config" value="/WEB-INF/pages-config/component-forms.xml" />
+		<property name="config" value="/WEB-INF/website-config/component-forms.xml" />
 		<property name="customElements" ref="customFormElements" />
 		<property name="defaultBeanClass" value="java.util.HashMap" />
 		<property name="mimetypesMap" ref="fileTypeMap" />
@@ -51,10 +52,11 @@
 	  - Controller that renders forms to edit component properties.
 	  -->		
 	<bean id="componentFormController" 
-		name="/pages/form/@{componentId}"
+		name="/components/form/@{formId}/@{containerId}"
 		class="org.riotfamily.components.editor.ComponentFormController">
 		<constructor-arg ref="componentFormRepository" />
 		<constructor-arg ref="componentRepository" />
+		<constructor-arg ref="componentFormRegistry" />
 		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="transactionManager" />
 		<property name="formContextFactory" ref="formContextFactory" />
@@ -89,7 +91,7 @@
 				<entry key="messageSourceBasenames">
 					<list>
 						<value>classpath:/org/riotfamily/components/runtime/i18n/messages</value>
-						<value>/WEB-INF/pages-config/messages</value>
+						<value>/WEB-INF/website-config/messages</value>
 					</list>
 				</entry>
 				<entry key="publicUrls">

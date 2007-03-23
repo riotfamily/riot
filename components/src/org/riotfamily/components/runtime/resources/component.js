@@ -6,17 +6,18 @@ riot.Component.prototype = {
 		this.element = el;
 		el.component = this;
 		this.handlers = {
-			'remove': this.remove.bindAsEventListener(this),
-			'properties': this.properties.bindAsEventListener(this)
+			'properties': this.editProperties.bindAsEventListener(this)
 		};
-		
+		if (!el.hasClassName('riot-single-component')) {
+			this.handlers.remove = this.removeComponent.bindAsEventListener(this);
+		}
 		this.onMouseOver = this.showOutline.bindAsEventListener(this);
 		this.onMouseOut = this.hideOutline.bindAsEventListener(this);
 		
 		this.id = el.getAttribute('riot:containerId');
 		if (this.id) {
 			this.type = el.getAttribute('riot:componentType');
-			this.formId = el.getAttribute('riot:formId');
+			this.form = el.getAttribute('riot:form');
 			this.setupElement();
 		}
 	},
@@ -34,10 +35,10 @@ riot.Component.prototype = {
 		this.componentList.updatePositionClasses();
 		this.componentList.validateMaxComponents();
 	},
-	
+		
 	setMode: function(mode) {
 		if (mode != null) {
-			if (mode == 'properties' && !this.formId) {
+			if (!this.handlers[mode] || (mode == 'properties' && !this.form)) {
 				this.mode = null;
 				return;
 			}
@@ -84,7 +85,7 @@ riot.Component.prototype = {
 		Event.stop(event);
 	},
 	
-	remove: function(event) {
+	removeComponent: function(event) {
 		var e = event || window.event;
 		if (e) Event.stop(e);
 		riot.hideHover();
@@ -105,7 +106,7 @@ riot.Component.prototype = {
 		this.element.removeClassName('riot-component-' + this.type);
 		this.element.addClassName('riot-component-' + info.type);
 		this.type = info.type;
-		this.formId = info.formId;
+		this.form = info.form;
 		this.setHtml(info.html);
 		if (info.onChangeScript) {
 			eval(info.onChangeScript);
@@ -125,12 +126,12 @@ riot.Component.prototype = {
 		this.repaint();
 	},
 	
-	properties: function(ev) {
+	editProperties: function(ev) {
 		ev = ev || window.event;
 		if (ev) Event.stop(ev);
 		this.element.removeClassName('riot-highlight');
-		if (this.formId) {
-			var formUrl = riot.path + '/pages/form/' + this.id + '?instantPublish=' + riot.toolbar.instantPublishMode;
+		if (this.form) {
+			var formUrl = riot.contextPath + this.form + '?instantPublish=' + riot.toolbar.instantPublishMode;
 			var iframe = RBuilder.node('iframe', {src: formUrl, className: 'properties', width: 1, height: 1});
 			riot.popup = new riot.Popup('${properties-inspector.title}', iframe, function() {
 				var win = iframe.contentWindow ? iframe.contentWindow : iframe.window;
@@ -162,13 +163,13 @@ riot.Component.prototype = {
 	setupElement: function() {
 		this.editors = [];
 		var desc = this.element.descendants();
+		desc.push(this.element);
 		for (var i = 0; i < desc.length; i++) {
 			var e = desc[i];
 			try {
 				var editorType = e.getAttribute('riot:editorType');
 				if (editorType) {
-					var componentElement = Element.up(e, '.riot-component');
-					if (componentElement == this.element) {
+					if (e == this.element || this.element == Element.up(e, '.riot-component')) {
 						if (editorType == 'text' || editorType == 'multiline') {
 							this.editors.push(new riot.InplaceTextEditor(e, this, {multiline: true}));
 						}
@@ -529,14 +530,7 @@ riot.ComponentList.prototype = {
 			this.remove(false);
 		}
 	},
-	
-	changeType: function(enable) {
-		if (!this.fixedType) {
-			this.element.toggleClassName('riot-mode-changeType', enable);
-			this.getComponents().invoke('setMode', enable ? 'changeType' : null);
-		}
-	},
-	
+		
 	properties: function(enable) {
 		this.element.toggleClassName('riot-mode-properties', enable);
 		this.getComponents().invoke('setMode', enable ? 'properties' : null);

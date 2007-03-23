@@ -72,7 +72,7 @@ public class DefaultPageLocationResolver implements PageLocationResolver {
 		return new PageLocation(path, locale);
 	}
 	
-	public String getUrl(PageLocation location, HttpServletRequest request) {
+	public String getUrl(PageLocation location) {
 		StringBuffer url = new StringBuffer();
 		if (localesInPath() && location.getLocale() != null) {
 			url.append('/');
@@ -80,7 +80,6 @@ public class DefaultPageLocationResolver implements PageLocationResolver {
 		}
 		url.append(location.getPath());
 		pathCompleter.addServletMapping(url);
-		url.insert(0, request.getContextPath());
 		return url.toString();
 	}
 }

@@ -33,7 +33,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.beans.propertyeditors.BooleanEditor;
+import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.common.web.mapping.UrlMapping;
+import org.riotfamily.common.web.mapping.UrlMappingAware;
 import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.components.Component;
@@ -53,6 +56,7 @@ import org.riotfamily.forms.element.core.FileUpload;
 import org.riotfamily.forms.element.core.ImageUpload;
 import org.riotfamily.forms.element.core.NumberField;
 import org.riotfamily.forms.factory.FormDefinitionException;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -63,11 +67,12 @@ import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 public class ComponentFormController extends RepositoryFormController
-		implements FormSubmissionHandler, ConfigurationEventListener {
+		implements FormSubmissionHandler, ConfigurationEventListener,
+		UrlMappingAware, BeanNameAware {
 
 	private static final String SESSION_ATTRIBUTE = "componentForm";
 	
-	private static final String COMPONENT_ID = "componentId";
+	//private static final String COMPONENT_ID = "componentId";
 	
 	private static final String INSTANT_PUBLISH_PARAM = "instantPublish";
 	
@@ -83,23 +88,57 @@ public class ComponentFormController extends RepositoryFormController
 	
 	private ComponentRepository componentRepository;
 	
+	private ComponentFormRegistry formRegistry;
+	
+	private UrlMapping urlMapping;
+	
+	private String beanName;
+	
+	private String formIdAttribute = "formId";
+	
+	private String containerIdAttribute = "containerId";
+	
 	public ComponentFormController(FormRepository formRepository,
-			ComponentRepository componentRepository, ComponentDao componentDao,
+			ComponentRepository componentRepository, 
+			ComponentFormRegistry formRegistry, ComponentDao componentDao,
 			PlatformTransactionManager transactionManager) {
 		
 		super(formRepository);
 		this.componentRepository = componentRepository;
+		this.formRegistry = formRegistry;
 		this.componentDao = componentDao;
 		this.transactionManager = transactionManager;
 		componentRepository.addListener(this);
+		formRegistry.setFormController(this);
 		ButtonFactory buttonFactory = new ButtonFactory(this);
 		buttonFactory.setLabelKey("label.form.button.save");
 		buttonFactory.setCssClass("button button-save");
 		addButton(buttonFactory);
+		formRegistry.clear();
 		setupForms();
 	}
 	
+	public void setBeanName(String beanName) {
+		this.beanName = beanName;
+	}
+
+	public void setUrlMapping(UrlMapping urlMapping) {
+		this.urlMapping = urlMapping;
+	}
+	
+	public String getUrl(String formId, Long containerId) {
+		FlatMap attributes = new FlatMap();
+		attributes.put(formIdAttribute, formId);
+		attributes.put(containerIdAttribute, containerId);
+		return urlMapping.getUrl(beanName, attributes);
+	}
+	
+	protected ComponentRepository getComponentRepository() {
+		return this.componentRepository;
+	}
+
 	public void beanReconfigured(ConfigurableBean bean) {
+		formRegistry.clear();
 		setupForms();
 	}
 	
@@ -119,7 +158,7 @@ public class ComponentFormController extends RepositoryFormController
 	//TODO Refactor: Move this to a separate class.
 	
 	protected void setupForm(Component component, Form form) {
-		componentRepository.addFormId(form.getId());
+		formRegistry.registerFormId(form.getId());
 		Iterator it = form.getRegisteredElements().iterator();
 		while (it.hasNext()) {
 			Element e = (Element) it.next();
@@ -177,20 +216,15 @@ public class ComponentFormController extends RepositoryFormController
 	}
 	
 	protected ComponentVersion getPreview(HttpServletRequest request) {
-		Long id = new Long((String) request.getAttribute(COMPONENT_ID));
+		Long id = new Long((String) request.getAttribute(containerIdAttribute));
 		boolean instanPublishMode = ServletRequestUtils.getBooleanParameter(
 				request, INSTANT_PUBLISH_PARAM, false);
 		
 		return componentDao.getComponentVersionForContainer(id, instanPublishMode);
 	}
-	
-	public String getFormId(String componentType) {
-		return componentRepository.getFormId(componentType);
-	}
-	
+		
 	protected String getFormId(HttpServletRequest request) {
-		ComponentVersion preview = getPreview(request);
-		return getFormId(preview.getType());
+		return (String) request.getAttribute(formIdAttribute);
 	}
 		
 	protected Object getFormBackingObject(HttpServletRequest request) {

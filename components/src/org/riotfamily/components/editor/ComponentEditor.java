@@ -43,7 +43,7 @@ public interface ComponentEditor {
 	public static final String LAST_COMPONENT_CLASS = "last-component";
 
 	public String getText(Long containerId, String property);
-
+	
 	public String updateText(String controllerId, Long containerId,
 			String property, String text)
 			throws RequestContextExpiredException;

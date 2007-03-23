@@ -25,12 +25,14 @@ package org.riotfamily.pages.component;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.web.util.PathCompleter;
 import org.riotfamily.components.locator.AbstractComponentListLocator;
 import org.riotfamily.pages.Page;
+import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.pages.mapping.PageLocationResolver;
 
 /**
+ * ComponentListLocator that uses the page-id as component-path.
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
@@ -40,15 +42,15 @@ public class PageComponentListLocator extends AbstractComponentListLocator {
 	
 	private PageDao pageDao;
 	
-	private PathCompleter pathCompleter;
+	private PageLocationResolver resolver;
 	
 	
 	public PageComponentListLocator(PageDao pageDao, 
-			PathCompleter pathCompleter) {
+			PageLocationResolver resolver) {
 		
 		super(TYPE_PAGE);
 		this.pageDao = pageDao;
-		this.pathCompleter = pathCompleter;
+		this.resolver = resolver;
 	}
 
 	protected String getPath(HttpServletRequest request) {
@@ -58,8 +60,7 @@ public class PageComponentListLocator extends AbstractComponentListLocator {
 
 	protected String getUrlForPath(String path) {
 		Page page = pageDao.loadPage(new Long(path));
-		//TODO Add locale
-		return pathCompleter.addServletMapping(page.getPath());
+		return resolver.getUrl(new PageLocation(page));
 	}
 	
 	protected String getParentPath(String path) {

@@ -36,7 +36,7 @@ public class ComponentInfo {
 	
 	private String type;
 	
-	private String formId;
+	private String form;
 	
 	private String html;
 
@@ -50,7 +50,7 @@ public class ComponentInfo {
 		
 		this.id = version.getContainer().getId();
 		this.type = version.getType();
-		this.formId = repository.getFormId(type);
+		this.form = "/pages/form/" + id;
 		this.onChangeScript = repository.getComponent(type).getOnChangeScript();
 		this.html = html;
 	}
@@ -79,12 +79,12 @@ public class ComponentInfo {
 		this.type = type;
 	}
 
-	public String getFormId() {
-		return this.formId;
+	public String getForm() {
+		return this.form;
 	}
 
-	public void setFormId(String formId) {
-		this.formId = formId;
+	public void setForm(String form) {
+		this.form = form;
 	}
 
 	public String getOnChangeScript() {

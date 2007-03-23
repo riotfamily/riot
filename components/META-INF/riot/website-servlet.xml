@@ -20,6 +20,7 @@
 		<property name="componentDao" ref="componentDao" />
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="repository" ref="componentRepository" />
+		<property name="formRegistry" ref="componentFormRegistry" />
 		<property name="locator" ref="defaultComponentListLocator" />
 		<property name="cache" ref="websiteCache" />
 	</bean>

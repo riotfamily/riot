@@ -31,6 +31,7 @@
 		<property name="creationDate" />
 		<property name="pathComponent" />
 		<property name="path" column="`path`" unique="true" />
+		<many-to-one name="versionContainer" cascade="all" />
 	</class>
 	
 	<class name="PageAlias" table="page_aliases">

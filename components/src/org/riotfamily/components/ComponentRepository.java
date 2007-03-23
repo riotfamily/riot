@@ -25,7 +25,6 @@ package org.riotfamily.components;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -61,7 +60,7 @@ public class ComponentRepository implements ServletContextAware,
 	
 	private XmlWebApplicationContext context;
 	
-	private Map componentMap;
+	private Map componentMap = new HashMap();
 	
 	private String viewNamePrefix;
 	
@@ -70,8 +69,6 @@ public class ComponentRepository implements ServletContextAware,
 	private BeanConfigurationWatcher configWatcher = 
 			new BeanConfigurationWatcher(this);
 	
-	private HashSet formIds = new HashSet();
-
 	private Map controllers;
 	
 	private Map locators;
@@ -120,19 +117,11 @@ public class ComponentRepository implements ServletContextAware,
 		componentMap = context.getBeansOfType(Component.class);
 		log.debug("Components: " + componentMap);
 	}
-		
-	public void addFormId(String formId) {
-		formIds.add(formId);
-	}
 	
-	public String getFormId(String componentType) {
-		configWatcher.checkForModifications();
-		if (formIds.contains(componentType)) {
-			return componentType;
-		}
-		return null;
+	public void addComponent(String type, Component component) {
+		componentMap.put(type, component);
 	}
-		
+			
 	public Component getComponent(String type) {
 		configWatcher.checkForModifications();
 		if (componentMap.get(type) == null) {

@@ -98,9 +98,9 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 				page = alias.getPage();
 				if (page != null) {
 					String url = locationResolver.getUrl(
-							new PageLocation(page), request);
+							new PageLocation(page));
 					
-					return new RedirectController(url);
+					return new RedirectController(url, true, false);
 				}
 				else {
 					return new HttpErrorController(HttpServletResponse.SC_GONE);
