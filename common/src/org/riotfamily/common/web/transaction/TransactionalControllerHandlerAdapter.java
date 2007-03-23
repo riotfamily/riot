@@ -26,8 +26,6 @@ package org.riotfamily.common.web.transaction;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.spring.CacheableController;
-import org.riotfamily.cachius.spring.CacheableControllerHandlerAdapter;
 import org.springframework.core.Ordered;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -43,11 +41,11 @@ import org.springframework.web.servlet.mvc.LastModified;
  * is rolled back when an exception is thrown by the controller.
  * <p>
  * NOTE: HandlerAdapters can't be chained. If your use the 
- * {@link CacheableControllerHandlerAdapter} and a controller implements both
- * {@link CacheableController} and {@link TransactionalController} the adapter
- * with the highest precedence will be used to handle the request. So if you 
- * want to cache a {@link TransactionalController} use an AOP proxy instead
- * of this class.
+ * {@link org.riotfamily.cachius.spring.CacheableControllerHandlerAdapter} and a 
+ * controller implements both {@link org.riotfamily.cachius.spring.CacheableController} 
+ * and {@link TransactionalController} the adapter with the highest precedence 
+ * will be used to handle the request. So if you want to cache a 
+ * {@link TransactionalController} use an AOP proxy instead of this class.
  *  
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
