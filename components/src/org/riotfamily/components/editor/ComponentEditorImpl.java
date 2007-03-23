@@ -358,19 +358,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 				result.add(componentList.getId());
 				continue;
 			}
-			/*
-			List containers = componentList.getLiveList();
-			Iterator it = containers.iterator();
-			while (it.hasNext()) {
-				VersionContainer container = (VersionContainer) it.next();
-				if (container.getPreviewVersion() != null
-						&& container.getPreviewVersion().isDirty()) {
-					
-					result.add(componentList.getId());
-					break;
-				}
-			}
-			*/
 		}
 		return result;
 	}

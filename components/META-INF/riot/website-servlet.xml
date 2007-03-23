@@ -48,6 +48,7 @@
 					<map>
 						<entry key="riotResourcePath" value-ref="riotResourcePath" />
 						<entry key="riotToolbarResources" value-ref="riotToolbarResources" />
+						<entry key="isEditMode"><bean class="org.riotfamily.components.editor.EditModeMethod" /></entry>
 					</map>
 	 			</entry>
 	 		</map>

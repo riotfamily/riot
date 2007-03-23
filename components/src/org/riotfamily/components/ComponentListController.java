@@ -36,7 +36,6 @@ import org.riotfamily.components.editor.ComponentFormRegistry;
 import org.riotfamily.components.render.EditModeRenderStrategy;
 import org.riotfamily.components.render.LiveModeRenderStrategy;
 import org.riotfamily.components.render.RenderStrategy;
-import org.riotfamily.riot.security.AccessController;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -163,7 +162,7 @@ public class ComponentListController implements Controller, BeanNameAware,
 			HttpServletResponse response) throws Exception {
 
 		final RenderStrategy strategy;
-		if (AccessController.isAuthenticatedUser()) {
+		if (ViewModeSwitcher.isEditMode(request)) {
 			strategy = new EditModeRenderStrategy(componentDao, 
 					componentRepository, formRegistry, this, request, response);
 			
