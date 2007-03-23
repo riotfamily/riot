@@ -31,11 +31,12 @@ import freemarker.template.TemplateModelException;
 public abstract class AbstractSimpleMethod implements TemplateMethodModel {
 
 	public final Object exec(List args) throws TemplateModelException {
-		if (args.size() != 1) {
+		if (args.size() > 1) {
 			throw new TemplateModelException("Invalid number of arguments.");
 		}
 		try {
-			return exec(args.get(0));
+			Object arg = args.isEmpty() ? null : args.get(0);
+			return exec(arg);
 		}
 		catch (RuntimeException e) {
 			throw e;
