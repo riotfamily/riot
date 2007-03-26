@@ -242,12 +242,14 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
     	if (handler instanceof CacheableController) {
     		CacheableController controller = (CacheableController) handler;
     		CacheItem cacheItem = getCacheItem(controller, request);
+    		if (cacheItem != null) {
     		try {
     			return controller.getLastModified(request, cacheItem);
     		}
     		catch (Exception e) {
     			log.error("Error invoking the last-modified method", e);
     		}
+    	}
     	}
     	else if (handler instanceof LastModified) {
             return ((LastModified) handler).getLastModified(request);
