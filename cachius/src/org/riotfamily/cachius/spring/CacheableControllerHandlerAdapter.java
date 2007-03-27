@@ -33,6 +33,7 @@ import org.riotfamily.cachius.CacheItem;
 import org.riotfamily.cachius.CachiusResponseWrapper;
 import org.riotfamily.cachius.ItemUpdater;
 import org.riotfamily.cachius.support.SessionUtils;
+import org.riotfamily.common.web.view.ViewResolverHelper;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -40,10 +41,7 @@ import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.LastModified;
-import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
-
 
 /**
  * Adapter that handles {@link CacheableController cacheable controllers}.
@@ -54,10 +52,11 @@ import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
  * and written to the cache.
  * </p>
  * <p>
- * If a controller does not implement the {@link CacheableController} interface
- * the adapter does the same as Spring's {@link SimpleControllerHandlerAdapter}.
+ * Since 6.5 the adapter does no longer support regular controllers. In order
+ * to support both cacheable and non-cacheable controllers you hav to add 
+ * a {@link org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter}
+ * to your context manually.
  * </p>
- * 
  * @author Felix Gnass
  */
 public class CacheableControllerHandlerAdapter implements HandlerAdapter, 
@@ -97,29 +96,10 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
 
     /**
      * Returns <code>true</code> if handler implements the 
-     * {@link Controller Controller} interface. The adapter supports both
-     * cacheable and non-cacheable controllers so that it can be used as
-     * drop-in replacement for the {@link SimpleControllerHandlerAdapter}.
+     * {@link CacheableController} interface.
      */
     public boolean supports(Object handler) {
-        return handler instanceof Controller;
-    }
-
-    /**
-     * If the given handler is cacheable, 
-     * {@link #handleCacheableController handleCacheableController()} is
-     * invoked. Otherwise the handler is casted to {@link Controller Controller} 
-     * and its <code>handleRequest()</code> method is called.
-     */
-    public ModelAndView handle(HttpServletRequest request,
-            HttpServletResponse response, Object handler) throws Exception {
-
-    	if (!(handler instanceof CacheableController)) {
-    		return ((Controller) handler).handleRequest(request, response);
-    	}
-    	
-        CacheableController controller = (CacheableController) handler;
-    	return handleCacheableController(request, response, controller);
+        return handler instanceof CacheableController;
     }
 
     /**
@@ -128,11 +108,12 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
      * If an item was found and it's up-to-date, the cached content is served.
      * Otherwise {@link #handleRequestAndUpdateCacheItem} is invoked.
      */
-	protected ModelAndView handleCacheableController(HttpServletRequest request, 
-			HttpServletResponse response, CacheableController controller) 
-			throws Exception {
-		
-		CacheItem cacheItem = getCacheItem(controller, request);
+    public ModelAndView handle(HttpServletRequest request,
+            HttpServletResponse response, Object handler) throws Exception {
+
+    	CacheableController controller = (CacheableController) handler;
+    	String cacheKey = controller.getCacheKey(request);
+		CacheItem cacheItem = getCacheItem(cacheKey, request);
         if (cacheItem == null) {
             log.debug("No cacheItem - Response won't be cached");
             return controller.handleRequest(request, response);
@@ -176,10 +157,9 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
 		}
 	}
     
-    protected CacheItem getCacheItem(CacheableController controller,
+    protected CacheItem getCacheItem(String cacheKey, 
     		HttpServletRequest request) {
     	
-        String cacheKey = controller.getCacheKey(request);
         if (cacheKey == null) {
             log.debug("Cache key is null - Response won't be cached.");
             return null;
@@ -239,21 +219,17 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
      * Otherwise <code>-1</code> is returned.
      */
     public long getLastModified(HttpServletRequest request, Object handler) {
-    	if (handler instanceof CacheableController) {
-    		CacheableController controller = (CacheableController) handler;
-    		CacheItem cacheItem = getCacheItem(controller, request);
-    		if (cacheItem != null) {
-	    		try {
-	    			return controller.getLastModified(request, cacheItem);
-	    		}
-	    		catch (Exception e) {
-	    			log.error("Error invoking the last-modified method", e);
-	    		}
+		CacheableController controller = (CacheableController) handler;
+		String cacheKey = controller.getCacheKey(request);
+		CacheItem cacheItem = getCacheItem(cacheKey, request);
+		if (cacheItem != null) {
+    		try {
+    			return controller.getLastModified(request, cacheItem);
     		}
-    	}
-    	else if (handler instanceof LastModified) {
-            return ((LastModified) handler).getLastModified(request);
-        }
+    		catch (Exception e) {
+    			log.error("Error invoking the last-modified method", e);
+    		}
+		}
         return -1L;
     }
 
