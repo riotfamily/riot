@@ -73,7 +73,8 @@ public class IncludeFirstInterceptor extends HandlerInterceptorAdapter {
 			}
 		}
 		else {
-			return handleSubsequentInclude(handler, firstHandler, responseWrapper);
+			return handleSubsequentInclude(handler, firstHandler, 
+							responseWrapper, response);
 		}
 	}
 		
@@ -106,14 +107,16 @@ public class IncludeFirstInterceptor extends HandlerInterceptorAdapter {
 	}
 	
 	protected boolean handleSubsequentInclude(Object handler, 
-			Object firstHandler, DeferredRenderingResponseWrapper responseWrapper) 
+			Object firstHandler, 
+			DeferredRenderingResponseWrapper responseWrapper, 
+			HttpServletResponse response) 
 			throws IOException {
 
 		//TODO Check if getRequestURI() matches the includeUri, to support
 		//multiple includes of the same handler under different URLs.
 		if (handler.equals(firstHandler)) {
 			//Second time we come across the handler ...
-			responseWrapper.renderResponse();
+			responseWrapper.renderResponse(response);
 			return false;
 		}
 		return true;
