@@ -34,10 +34,6 @@ import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.dao.PageDao;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 
 /**
@@ -51,18 +47,14 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 	
 	private PageDao pageDao;
 	
-	private PlatformTransactionManager transactionManager;
-	
 	private PageLocationResolver locationResolver;
 	
 	private Object defaultPageHandler;
 	
 	public PageHandlerMapping(PageDao pageDao, 
-			PlatformTransactionManager transactionManager,
 			PageLocationResolver pathAndLocaleResolver) {
 
 		this.pageDao = pageDao;
-		this.transactionManager = transactionManager;
 		this.locationResolver = pathAndLocaleResolver;
 	}
 
@@ -70,17 +62,9 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 		this.defaultPageHandler = defaultPageHandler;
 	}
 	
-	protected Object getHandlerInternal(final HttpServletRequest request) 
+	protected Object getHandlerInternal(HttpServletRequest request) 
 			throws Exception {
 
-		return new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
-			public Object doInTransaction(TransactionStatus status) {
-				return getHandlerWithinTransaction(request);
-			}
-		});
-	}
-	
-	protected Object getHandlerWithinTransaction(HttpServletRequest request) {
 		PageLocation location = locationResolver.getPageLocation(request); 
 		Page page = pageDao.findPage(location);
 		log.debug("Page: " + page);
