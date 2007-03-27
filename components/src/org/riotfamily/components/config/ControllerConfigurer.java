@@ -112,6 +112,7 @@ public class ControllerConfigurer implements ApplicationContextAware,
 	}
 	
 	protected void configureComponentListControllers() {
+		repository.clearControllers();
 		Map controllers = applicationContext.getBeansOfType(
 						ComponentListController.class);
 		
@@ -138,8 +139,14 @@ public class ControllerConfigurer implements ApplicationContextAware,
 			if (controller.getLocator() == null) {
 				controller.setLocator(locator);
 			}
+			
+			String controllerId = (String) entry.getKey();
+			repository.registerController(controllerId, controller);
+			String[] aliases = applicationContext.getAliases(controllerId);
+			for (int i = 0; i < aliases.length; i++) {
+				repository.registerController(aliases[i], controller);	
+			}
 		}
-		repository.setControllers(controllers);
 	}
 	
 }

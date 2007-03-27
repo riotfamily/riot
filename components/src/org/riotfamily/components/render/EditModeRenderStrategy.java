@@ -32,12 +32,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.ComponentList;
 import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.Location;
 import org.riotfamily.components.VersionContainer;
 import org.riotfamily.components.config.ComponentListConfiguration;
+import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.editor.ComponentFormRegistry;
 
@@ -46,8 +48,6 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	private static final Log log = LogFactory.getLog(EditModeRenderStrategy.class);
 	
 	private ComponentFormRegistry formRegistry;
-	
-	private boolean renderOuterDiv = true;
 	
 	public EditModeRenderStrategy(ComponentDao dao, 
 			ComponentRepository repository, ComponentFormRegistry formRegistry,
@@ -70,22 +70,23 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		renderComponentVersion(version, getPositionalClassName(position, last));
 	}
 	
-	public void setRenderOuterDiv(boolean renderOuterDiv) {
-		this.renderOuterDiv = renderOuterDiv;
-	}
-
 	/**
 	 * Overrides the default implementation to render a DIV tag around the 
 	 * actual list. The DIV has attributes that are required for the 
 	 * Riot-Toolbar JavaScript.
 	 */
 	protected void renderComponentList(ComponentList list) throws IOException {
+		boolean renderOuterDiv = PageRequestUtils.storeContext(
+				request, list.getId(), 120000);
+		
 		request.setAttribute(EDIT_MODE_ATTRIBUTE, Boolean.TRUE);
 		if (renderOuterDiv) {
 			out.print("<div riot:listId=\"");
 			out.print(list.getId());
 			out.print("\" riot:controllerId=\"");
-			out.print(config.getControllerId());
+			String uri = ServletUtils.getIncludeUri(request);
+			uri = uri.substring(request.getContextPath().length());
+			out.print(uri);
 			out.print('"');
 			if (config.getMinComponents() != null) {
 				out.print(" riot:minComponents=\"");

@@ -15,11 +15,9 @@ riot.Component.prototype = {
 		this.onMouseOut = this.hideOutline.bindAsEventListener(this);
 		
 		this.id = el.getAttribute('riot:containerId');
-		if (this.id) {
-			this.type = el.getAttribute('riot:componentType');
-			this.form = el.getAttribute('riot:form');
-			this.setupElement();
-		}
+		this.type = el.getAttribute('riot:componentType');
+		this.form = el.getAttribute('riot:form');
+		this.setupElement();
 	},
 	
 	edit: function(enable) {
@@ -28,14 +26,7 @@ riot.Component.prototype = {
 			editor.setEnabled(enable);
 		});
 	},
-	
-	created: function(info) {
-		this.id = info.id;
-		this.typeChanged(info);
-		this.componentList.updatePositionClasses();
-		this.componentList.validateMaxComponents();
-	},
-		
+			
 	setMode: function(mode) {
 		if (mode != null) {
 			if (!this.handlers[mode] || (mode == 'properties' && !this.form)) {
@@ -97,32 +88,15 @@ riot.Component.prototype = {
 		riot.toolbar.setDirty(this.componentList, true);
 		return false;
 	},
-		
-	setType: function(type) {
-		ComponentEditor.setType(this.componentList.controllerId, this.id, type, this.typeChanged.bind(this));
-	},
-	
-	typeChanged: function(info) {
-		this.element.removeClassName('riot-component-' + this.type);
-		this.element.addClassName('riot-component-' + info.type);
-		this.type = info.type;
-		this.form = info.form;
-		this.setHtml(info.html);
-		if (info.onChangeScript) {
-			eval(info.onChangeScript);
-		}
-		riot.toolbar.setDirty(this.componentList, true);
-	},
-			
+				
 	updateText: function(key, value) {
 		ComponentEditor.updateText(this.componentList.controllerId, this.id, key, value, this.setHtml.bind(this));
 		riot.toolbar.setDirty(this.componentList, true);
 	},
 	
 	setHtml: function(html) {
-		this.element.innerHTML = html.stripScripts();
+		this.element.update(html);
 		this.setupElement();
-		setTimeout(function() { html.evalScripts() }, 10);
 		this.repaint();
 	},
 	
@@ -131,7 +105,7 @@ riot.Component.prototype = {
 		if (ev) Event.stop(ev);
 		this.element.removeClassName('riot-highlight');
 		if (this.form) {
-			var formUrl = riot.contextPath + this.form + '?instantPublish=' + riot.toolbar.instantPublishMode;
+			var formUrl = riot.contextPath + this.form;
 			var iframe = RBuilder.node('iframe', {src: formUrl, className: 'properties', width: 1, height: 1});
 			riot.popup = new riot.Popup('${properties-inspector.title}', iframe, function() {
 				var win = iframe.contentWindow ? iframe.contentWindow : iframe.window;
@@ -143,16 +117,12 @@ riot.Component.prototype = {
 	},
 	
 	propertiesChanged: function() {
-		riot.toolbar.setDirty(this.componentList, true);
-		riot.toolbar.buttons.browse.click();
-		ComponentEditor.getComponent(this.componentList.controllerId, this.id, 
-			function(info) {
-				this.setHtml(info.html);
-				if (info.onChangeScript) {
-					eval(info.onChangeScript);
-				}
-				riot.popup.close();
-			}.bind(this));
+		//TODO: Close popup
+		this.onupdate();
+	},
+	
+	onupdate: function() {
+		this.componentList.update();
 	},
 	
 	repaint: function() {
@@ -221,22 +191,6 @@ riot.Component.prototype = {
 				}
 			});
 		}
-	},
-	
-	onupdate: function(infos) {
-		this.setHtml(infos[0].html);
-		var prevEl = this.element;
-		for (var i = 1; i < infos.length; i++) {
-			var e = RBuilder.node('div', {className: 'riot-component'});
-			e.insertSelfAfter(prevEl);
-			var c = new riot.Component(this.componentList, e);
-			c.id = infos[i].id;
-			c.editing = true;
-			c.typeChanged(infos[i]);
-			prevEl = e;
-		}
-		this.componentList.updatePositionClasses();
-		riot.toolbar.setDirty(this.componentList, true);
 	}
 	
 };
@@ -277,15 +231,22 @@ riot.InsertButton.prototype = {
 	},
 	
 	insert: function(type) {
-		var e = RBuilder.node('div', {className: 'riot-component'});
-		e.insertSelfBefore(this.element);
-		var c = new riot.Component(this.componentList, e);
-		ComponentEditor.insertComponent(this.componentList.controllerId, 
-				this.componentList.id, -1, type, null, c.created.bind(c));
+		ComponentEditor.insertComponent(this.componentList.id, -1, type, null, 
+				this.oninsert.bind(this));
 		
 		if (this.inspector) {
-			this.inspector.onchange = c.setType.bind(c);
+			this.inspector.onchange = this.changeType.bind(this);
 		}		
+	},
+	
+	oninsert: function(id) {
+		this.componentId = id;
+		this.componentList.update();
+	},
+	
+	changeType: function(type) {
+		ComponentEditor.setType(this.componentId, type, 
+				this.componentList.update.bind(this.componentList));
 	}
 };
 
@@ -427,6 +388,10 @@ riot.ComponentList.prototype = {
 		return this.components;
 	},
 	
+	update: function() {
+		ComponentEditor.getPreviewListHtml(this.controllerId, this.id, this.replaceHtml.bind(this));
+	},
+
 	updatePositionClasses: function() {
 		this.components = null;
 		var last = this.getComponents().length - 1;
@@ -452,10 +417,10 @@ riot.ComponentList.prototype = {
 	},
 	
 	replaceHtml: function(html) {
-		this.element.innerHTML = html;
-		this.publishWidget.hide();
+		this.element.update(html);
 		this.components = null;
-		this.insertButton = null;
+		this.getComponents();
+		//TODO: Invoke setMode() on components
 	},
 	
 	browse: function() {

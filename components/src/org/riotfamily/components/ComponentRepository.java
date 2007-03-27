@@ -25,7 +25,6 @@ package org.riotfamily.components;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -149,15 +148,15 @@ public class ComponentRepository implements ServletContextAware,
 		return (ComponentListController) controllers.get(controllerId);
 	}
 	
-	public void setControllers(Map controllers) {
-		this.controllers = controllers;
+	public void clearControllers() {
+		controllers = new HashMap();
 		locators = new HashMap();
-		Iterator it = controllers.values().iterator();
-		while (it.hasNext()) {
-			ComponentListController controller = (ComponentListController) it.next();
-			ComponentListLocator locator = controller.getLocator();
-			locators.put(locator.getType(), locator);
-		}
+	}
+	
+	public void registerController(String name, ComponentListController controller) {
+		controllers.put(name, controller);
+		ComponentListLocator locator = controller.getLocator();
+		locators.put(locator.getType(), locator);
 	}
 	
 	public String getUrl(ComponentList componentList) {

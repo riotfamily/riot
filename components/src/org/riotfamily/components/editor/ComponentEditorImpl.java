@@ -45,18 +45,14 @@ import org.riotfamily.components.ComponentList;
 import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.VersionContainer;
-import org.riotfamily.components.config.ComponentListConfiguration;
-import org.riotfamily.components.context.PageRequestContext;
 import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.context.RequestContextExpiredException;
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.components.render.EditModeRenderStrategy;
 import org.riotfamily.components.render.LiveModeRenderStrategy;
 import org.riotfamily.riot.security.AccessController;
 import org.riotfamily.riot.security.LoginManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
@@ -121,51 +117,30 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	/**
 	 * Sets the given property to a new value and returns the updated HTML.  
 	 */
-	public String updateText(String controllerId, Long containerId,
-			String property, String text) 
-			throws RequestContextExpiredException {
-		
+	public void updateText(Long containerId, String property, String text) {
 		VersionContainer container = dao.loadVersionContainer(containerId);
-		ComponentVersion version = getVersionToEdit(container, null);
+		ComponentVersion version = dao.getOrCreatePreviewVersion(container, null);
 		version.setProperty(property, text);
 		dao.updateComponentVersion(version);
-		if (controllerId == null) {
-			return null;
-		}
-		return getHtml(repository.getListConfiguration(controllerId), version);
 	}
 	
 	/**
 	 *   
 	 */
-	public ComponentInfo[] updateTextChunks(String controllerId, 
-			Long containerId, String property, String[] chunks) 
-			throws RequestContextExpiredException {
-		
-		ComponentInfo[] result = new ComponentInfo[chunks.length];
+	public void updateTextChunks(Long containerId, String property, 
+			String[] chunks) {
 		
 		VersionContainer container = dao.loadVersionContainer(containerId);
-		ComponentVersion version = getVersionToEdit(container, null);
+		ComponentVersion version = dao.getOrCreatePreviewVersion(container, null);
 		version.setProperty(property, chunks[0]);
 		dao.updateComponentVersion(version);
 		
-		ComponentInfo info = new ComponentInfo(repository, version,	getHtml(
-				repository.getListConfiguration(controllerId), version));
-		
-		result[0] = info;
-
 		ComponentList list = container.getList();
-		
-		int offset = getContainersToEdit(list).indexOf(container);
-		
+		int offset = dao.getOrCreatePreviewContainers(list).indexOf(container);
 		for (int i = 1; i < chunks.length; i++) {
-			info = insertComponent(controllerId, list.getId(), 
-					offset + i, info.getType(), 
+			insertComponent(list.getId(), offset + i, version.getType(), 
 					Collections.singletonMap(property, chunks[i]));
-			
-			result[i] = info;
 		}
-		return result;
 	}
 	
 	/**
@@ -192,45 +167,24 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 * Creates a new VersionContainer and inserts it in the list identified
 	 * by the given id.
 	 */
-	public ComponentInfo insertComponent(String controllerId, Long listId, 
-			int position, String type, Map properties) 
-			throws RequestContextExpiredException {
+	public Long insertComponent(Long listId, int position, String type, 
+			Map properties) {
 		
 		ComponentList componentList = dao.loadComponentList(listId);
+		VersionContainer container = dao.insertContainer(componentList, type, 
+				properties, position, false);
 		
-		ComponentListConfiguration config = 
-				repository.getListConfiguration(controllerId);
-		
-		if (type == null) {
-			String[] types = config.getValidComponentTypes();
-			Assert.isTrue(types != null && types.length > 0,
-					"At least one valid component type must be specified.");
-			
-			type = types[0];
-		}
-		
-		VersionContainer container = dao.insertContainer(componentList, 
-				type, properties, position, isInstantPublishMode());
-		
-		ComponentVersion version = dao.getLatestVersion(container);
-		return new ComponentInfo(repository, version, 
-				getHtml(config, version));
+		return container.getId();
 	}
 	
-	
-	public ComponentInfo setType(String controllerId, Long containerId, 
-			String type) throws RequestContextExpiredException {
-		
+	public void setType(Long containerId, String type) {
 		VersionContainer container = dao.loadVersionContainer(containerId);
-		ComponentVersion version = getVersionToEdit(container, type);
-
+		ComponentVersion version = dao.getOrCreatePreviewVersion(container, type);
 		version.setType(type);
 		dao.updateComponentVersion(version);
-		
-		return new ComponentInfo(repository, version, getHtml(
-				repository.getListConfiguration(controllerId), version));
 	}
 	
+	/*
 	public ComponentInfo getComponent(String controllerId, Long containerId) 
 			throws RequestContextExpiredException {
 		
@@ -240,7 +194,9 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		return new ComponentInfo(repository, version, getHtml(
 				repository.getListConfiguration(controllerId), version));
 	}
-		
+	*/
+	
+	/*
 	private String getHtml(ComponentListConfiguration config, 
 			ComponentVersion version) throws RequestContextExpiredException {
 		
@@ -264,13 +220,33 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 			throw new RuntimeException(e);
 		}
 	}
+	*/
+	
+	private String getHtml(String url, Object key) 
+			throws RequestContextExpiredException {
+		
+		try {
+			StringWriter sw = new StringWriter();
+			HttpServletRequest request = getWrappedRequest(key);
+			HttpServletResponse response = getCapturingResponse(sw);
+			request.getRequestDispatcher(url).include(request, response);
+			return sw.toString();
+		}
+		catch (RequestContextExpiredException e) {
+			throw e;
+		}
+		catch (Exception e) {
+			log.error("Error rendering component.", e);
+			throw new RuntimeException(e);
+		}
+	}
 	
 	public String getLiveListHtml(String controllerId, Long listId) {
 		try {
 			ComponentList componentList = dao.loadComponentList(listId);
 			
 			StringWriter sw = new StringWriter();
-			HttpServletRequest request = getWrappedRequest();
+			HttpServletRequest request = getWrappedRequest(listId);
 			HttpServletResponse response = getCapturingResponse(sw);
 			
 			LiveModeRenderStrategy strategy = new LiveModeRenderStrategy(
@@ -287,33 +263,16 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		}	
 	}
 	
-	public String getPreviewListHtml(String controllerId, Long listId) {
-		try {
-			ComponentList componentList = dao.loadComponentList(listId);
-			
-			StringWriter sw = new StringWriter();
-			HttpServletRequest request = getWrappedRequest();
-			HttpServletResponse response = getCapturingResponse(sw);
-			
-			EditModeRenderStrategy strategy = new EditModeRenderStrategy(
-					dao, repository, formRegistry,
-					repository.getListConfiguration(controllerId), 
-					request, response);
-			
-			strategy.setRenderOuterDiv(false);
-			strategy.render(componentList);
-			return sw.toString();
-		}
-		catch (Exception e) {
-			log.error("Error rendering component.", e);
-			throw new RuntimeException(e);
-		}	
+	public String getPreviewListHtml(String controllerId, Long listId)
+			throws RequestContextExpiredException {
+		
+		return getHtml(controllerId, listId);	
 	}
 	
 	public void moveComponent(Long containerId, Long nextContainerId) {
 		VersionContainer container = dao.loadVersionContainer(containerId);
 		ComponentList componentList = container.getList();
-		List containers = getContainersToEdit(componentList);
+		List containers = dao.getOrCreatePreviewContainers(componentList);
 		containers.remove(container);
 		if (nextContainerId != null) {
 			for (int i = 0; i < containers.size(); i++) {
@@ -327,20 +286,16 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		else {
 			containers.add(container);
 		}
-		if (!isInstantPublishMode()) {
-			componentList.setDirty(true);
-		}
+		componentList.setDirty(true);
 		dao.updateComponentList(componentList);
 	}
 	
 	public void deleteComponent(Long containerId) {
 		VersionContainer container = dao.loadVersionContainer(containerId);
 		ComponentList componentList = container.getList();
-		List containers = getContainersToEdit(componentList);
+		List containers = dao.getOrCreatePreviewContainers(componentList);
 		containers.remove(container);
-		if (!isInstantPublishMode()) {
-			componentList.setDirty(true);
-		}
+		componentList.setDirty(true);
 		dao.updateComponentList(componentList);
 		if (!componentList.getLiveContainers().contains(container)) {
 			dao.deleteVersionContainer(container);
@@ -348,9 +303,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	}
 		
 	public List getDirtyListIds(Long[] listIds) {
-		if (isInstantPublishMode()) {
-			return null;
-		}
 		ArrayList result = new ArrayList(listIds.length);
 		for (int i = 0; i < listIds.length; i++) {
 			ComponentList componentList = dao.loadComponentList(listIds[i]);
@@ -394,7 +346,9 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 * the HTML of the live version. A new preview version is implicitly 
 	 * created, which is why the method name might be a little bit confusing.
 	 */
-	public String discardListAndGetPreviewHtml(String controllerId, Long listId) {
+	public String discardListAndGetPreviewHtml(String controllerId, Long listId) 
+			throws RequestContextExpiredException {
+		
 		discardList(listId);
 		return getPreviewListHtml(controllerId, listId);
 	}
@@ -419,24 +373,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 				"pages.componentList.publish.notGranted", null, getLocale()));
 		}
 	}
-		
-	/**
-	 * 
-	 */
-	public boolean isInstantPublishMode() {
-		WebContext ctx = WebContextFactory.get();
-		HttpServletRequest request = ctx.getHttpServletRequest();
-		String path = ServletUtils.getPath(ctx.getCurrentPage());
-		PageRequestContext context = PageRequestUtils.getContext(request, path);
-		if (context == null) {
-			return false;
-		}
-		Boolean mode = (Boolean) context.getAttributes().get(
-				INSTANT_PUBLISH_ATTRIBUTE);
-		
-		return mode != null && mode.booleanValue();
-	}
-	
+			
 	/**
 	 * This method is invoked by the Riot toolbar to inform the server that
 	 * the specified URL is still being edited. 
@@ -465,13 +402,13 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	
 	/* Utility methods */
 	
-	private HttpServletRequest getWrappedRequest() 
+	private HttpServletRequest getWrappedRequest(Object key) 
 			throws RequestContextExpiredException {
 		
 		WebContext ctx = WebContextFactory.get();
 		HttpServletRequest request = ctx.getHttpServletRequest();
 		String path = ServletUtils.getPath(ctx.getCurrentPage());
-		return PageRequestUtils.wrapRequest(request, path);
+		return PageRequestUtils.wrapRequest(request, path, key);
 	}
 	
 	private HttpServletResponse getCapturingResponse(StringWriter sw) {
@@ -485,6 +422,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		return RequestContextUtils.getLocale(request);
 	}
 	
+	/*
 	private List getContainersToEdit(ComponentList list) {
 		if (isInstantPublishMode()) {
 			return list.getLiveContainers();
@@ -500,5 +438,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		}
 		return dao.getOrCreatePreviewVersion(container, type);
 	}
+	*/
 		
 }

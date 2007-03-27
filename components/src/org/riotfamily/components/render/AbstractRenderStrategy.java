@@ -97,10 +97,16 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	}
 	
 	protected final Location getLocation() {
+		Location location;
 		if (parent != null) {
-			return parent.getList().getLocation();
+			log.debug("Nested list - parent: " + parent.getList());
+			location = parent.getList().getLocation();
 		}
-		return config.getLocator().getLocation(request);
+		else {
+			location = config.getLocator().getLocation(request);
+		}
+		log.debug("List location: " + location);
+		return location;
 	}
 	
 	protected void onListNotFound(Location location) throws IOException {

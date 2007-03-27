@@ -28,15 +28,16 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.riotfamily.cachius.Cache;
 import org.riotfamily.components.config.ComponentListConfiguration;
-import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.editor.ComponentFormRegistry;
 import org.riotfamily.components.render.EditModeRenderStrategy;
 import org.riotfamily.components.render.LiveModeRenderStrategy;
 import org.riotfamily.components.render.RenderStrategy;
-import org.springframework.beans.factory.BeanNameAware;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -49,8 +50,11 @@ import org.springframework.web.servlet.mvc.Controller;
  * determined using a {@link ComponentPathResolver} and a 
  * {@link ComponentKeyResolver}. 
  */
-public class ComponentListController implements Controller, BeanNameAware,
+public class ComponentListController implements Controller,
 		ComponentListConfiguration {	
+	
+	private static final Log log = LogFactory.getLog(
+			ComponentListController.class);
 	
 	private Cache cache;
 
@@ -70,8 +74,6 @@ public class ComponentListController implements Controller, BeanNameAware,
 
 	private String[] validComponentTypes;
 
-	private String beanName;
-	
 	private PlatformTransactionManager transactionManager;
 	
 	public void setCache(Cache cache) {
@@ -142,14 +144,6 @@ public class ComponentListController implements Controller, BeanNameAware,
 		return this.componentRepository;
 	}
 
-	public String getControllerId() {
-		return this.beanName;
-	}
-
-	public void setBeanName(String beanName) {
-		this.beanName = beanName;
-	}
-
 	public ComponentListLocator getLocator() {
 		return this.locator;
 	}
@@ -162,11 +156,10 @@ public class ComponentListController implements Controller, BeanNameAware,
 			HttpServletResponse response) throws Exception {
 
 		final RenderStrategy strategy;
-		if (ViewModeSwitcher.isEditMode(request)) {
+		if (AccessController.isAuthenticatedUser()) {
+			log.debug("Authenticated user - rendering list in edit-mode");
 			strategy = new EditModeRenderStrategy(componentDao, 
 					componentRepository, formRegistry, this, request, response);
-			
-			PageRequestUtils.storeContext(request, 120000);
 		}
 		else {
 			strategy = new LiveModeRenderStrategy(componentDao, componentRepository, 

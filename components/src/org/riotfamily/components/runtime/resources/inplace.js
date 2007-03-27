@@ -114,10 +114,7 @@ riot.InplaceEditor.prototype = {
 	save: function() {
 		var text = this.getText();
 		if (this.text != text) {
-			var controllerId = this.component.componentList 
-					? this.component.componentList.controllerId : null;
-					
-			ComponentEditor.updateText(controllerId, this.component.id, 
+			ComponentEditor.updateText(this.component.id, 
 					this.key, text, this.onupdate.bind(this));
 					
 			riot.toolbar.setDirty(this.component.componentList, true);
@@ -130,7 +127,7 @@ riot.InplaceEditor.prototype = {
 	},
 	
 	/* Callback that is invoked after the text as been sucessfully submitted. */
-	onupdate: function(html) {
+	onupdate: function() {
 	},
 		
 	/* This method is invoked when the active editor is disabled (either by
@@ -268,7 +265,8 @@ riot.PopupTextEditor = riot.InplaceEditor.extend({
 	},
 	
 	onupdate: function(html) {
-		this.component.setHtml(html);
+		//this.component.setHtml(html);
+		this.component.componentList.update();
 	}
 		
 });
@@ -307,7 +305,6 @@ riot.RichtextEditor = riot.PopupTextEditor.extend({
 					chunks.push('<p></p>');
 				}
 				ComponentEditor.updateTextChunks(
-						this.component.componentList.controllerId,
 						this.component.id, this.key, chunks, 
 						this.component.onupdate.bind(this.component));
 			}

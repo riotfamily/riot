@@ -36,7 +36,6 @@ riot.Toolbar.prototype = {
 	
 	activate: function() {
 		this.updateComponentLists();
-		this.instantPublishMode = false;
 		var listIds = this.componentLists.pluck('id');
 		ComponentEditor.getDirtyListIds(listIds, {
 			callback: this.setDirtyListIds.bind(this),
@@ -114,7 +113,6 @@ riot.Toolbar.prototype = {
 		
 	setDirtyListIds: function(ids) {
 		if (!ids) {
-			this.instantPublishMode = true;
 			return;
 		}
 		if (ids.length > 0) {
@@ -132,7 +130,6 @@ riot.Toolbar.prototype = {
 	setDirty: function(list, dirty) {
 		if (!list) return; //TODO
 		this.updateComponentLists();
-		if (this.instantPublishMode) return;
 		if (dirty) {
 			if (!this.dirtyComponentLists.include(list)) {
 				this.dirtyComponentLists.push(list);

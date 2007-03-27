@@ -28,8 +28,6 @@ import org.riotfamily.components.ComponentListLocator;
 
 public interface ComponentListConfiguration {
 
-	public String getControllerId();
-	
 	public ComponentListLocator getLocator();
 	
 	public Integer getMinComponents();

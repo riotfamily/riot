@@ -44,29 +44,22 @@ public interface ComponentEditor {
 
 	public String getText(Long containerId, String property);
 	
-	public String updateText(String controllerId, Long containerId,
-			String property, String text)
-			throws RequestContextExpiredException;
+	public void updateText(Long containerId, String property, String text);
 
-	public ComponentInfo[] updateTextChunks(String controllerId, 
-			Long containerId, String property, String[] chunks) 
-			throws RequestContextExpiredException;
+	public void updateTextChunks(Long containerId, String property, 
+			String[] chunks);
 
 	public List getValidTypes(String controllerId);
 
-	public ComponentInfo insertComponent(String controllerId, Long listId,
-			int position, String type, Map properties)
-			throws RequestContextExpiredException;
+	public Long insertComponent(Long listId, int position, String type, 
+			Map properties);
 
-	public ComponentInfo setType(String controllerId, Long containerId,
-			String type) throws RequestContextExpiredException;
-
-	public ComponentInfo getComponent(String controllerId, Long containerId)
-			throws RequestContextExpiredException;
+	public void setType(Long containerId, String type);
 
 	public String getLiveListHtml(String controllerId, Long listId);
 
-	public String getPreviewListHtml(String controllerId, Long listId);
+	public String getPreviewListHtml(String controllerId, Long listId)
+			throws RequestContextExpiredException;
 
 	public void moveComponent(Long containerId, Long nextContainerId);
 
@@ -81,14 +74,12 @@ public interface ComponentEditor {
 	public void discardList(Long listId);
 
 	public String discardListAndGetPreviewHtml(String controllerId,
-			Long listId);
+			Long listId) throws RequestContextExpiredException;
 
 	public void publishList(Long listId);
 
 	public void keepAlive();
 	
-	public boolean isInstantPublishMode() throws RequestContextExpiredException;
-
 	public void logout();
 	
 	public Map getEditorConfigs();
