@@ -25,6 +25,7 @@ package org.riotfamily.pages;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Locale;
 
 import org.riotfamily.components.ComponentVersion;
@@ -115,6 +116,20 @@ public class Page {
 	
 	public Collection getChildPages(boolean fallback) {
 		return node.getChildPages(locale, fallback);
+	}
+	
+	public Collection getAncestors() {
+		LinkedList pages = new LinkedList();
+		Page page = this;
+		while (page != null) {
+			pages.addFirst(page);
+			page = page.getParentPage();
+		}
+		return pages;
+	}
+	
+	public Collection getSiblings() {
+		return node.getParent().getChildPages(locale, false);
 	}
 	
 	public void addChildPage(Page child) {
