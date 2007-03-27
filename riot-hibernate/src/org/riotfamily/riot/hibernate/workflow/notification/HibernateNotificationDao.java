@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -82,14 +83,12 @@ public class HibernateNotificationDao extends HibernateDaoSupport
 					throws HibernateException, SQLException {
 				
 				session.save(n);
-
-				Query query = session.createQuery("from User user");
-				Iterator it = query.iterate();
+				Criteria c = session.createCriteria(User.class);
+				Iterator it = c.list().iterator();
 				while (it.hasNext()) {
 					User user = (User) it.next();
 					session.save(new UserNotification(user, n));
 				}
-				
 				return null;
 			}
 		});
