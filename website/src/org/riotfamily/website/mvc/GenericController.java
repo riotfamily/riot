@@ -29,7 +29,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.website.mvc.cache.AbstractCachingPolicyController;
+import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.website.mvc.cache.CacheableModelBuilder;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.web.servlet.ModelAndView;
@@ -39,7 +39,7 @@ import org.springframework.web.servlet.ModelAndView;
  * a model which is passed on to a view with a configurable name. Additionally
  * ModelPostProcessors can be registered to tweak the model.
  */
-public class GenericController extends AbstractCachingPolicyController {
+public class GenericController extends AbstractCacheableController {
 
 	/** The ModelBuilder */
 	private ModelBuilder modelBuilder;
@@ -100,9 +100,6 @@ public class GenericController extends AbstractCachingPolicyController {
 		if (modelBuilder instanceof CacheableModelBuilder) {
 			cacheableModelBuilder = (CacheableModelBuilder) modelBuilder;
 		}
-		else {
-			setCacheable(false);
-		}
 	}
 	
 	public ModelAndView handleRequest(HttpServletRequest request,
@@ -120,23 +117,20 @@ public class GenericController extends AbstractCachingPolicyController {
 		return new ModelAndView(viewName, model);
 	}
 
+	protected boolean bypassCache(HttpServletRequest request) {
+		return cacheableModelBuilder == null;
+	}
+	
 	public long getLastModified(HttpServletRequest request) {
-		if (cacheableModelBuilder != null) {
-			return cacheableModelBuilder.getLastModified(request); 
-		}
-		return -1;
+		return cacheableModelBuilder.getLastModified(request); 
 	}
 		
-	protected void appendCacheKeyInternal(StringBuffer key, 
+	protected void appendCacheKey(StringBuffer key,	
 			HttpServletRequest request) {
 		
-		super.appendCacheKeyInternal(key, request);
-		
-		if (cacheableModelBuilder != null) {
-			cacheableModelBuilder.appendCacheKey(key, request);
-			if (addUriToCacheKey) {
-				super.appendCacheKey(key, request);	
-			}
+		cacheableModelBuilder.appendCacheKey(key, request);
+		if (addUriToCacheKey) {
+			super.appendCacheKey(key, request);	
 		}
 	}
 
