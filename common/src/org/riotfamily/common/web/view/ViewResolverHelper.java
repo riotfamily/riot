@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.cachius.spring;
+package org.riotfamily.common.web.view;
 
 import java.util.ArrayList;
 import java.util.Collections;
