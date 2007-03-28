@@ -14,7 +14,6 @@
 	<bean id="componentEditorTarget" class="org.riotfamily.components.editor.ComponentEditorImpl">
 		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="componentRepository" />
-		<constructor-arg ref="componentFormRegistry" />
 		<property name="loginManager" ref="loginManager" />
 		<property name="cache" ref="websiteCache" />
 		<property name="editorConfigs">

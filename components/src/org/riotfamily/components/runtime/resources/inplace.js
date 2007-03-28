@@ -145,13 +145,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 
 	oninit: function(options) {
 		this.options = options || {};
-		//this.element.makePositioned();
-		this.input = $(document.createElement(this.options.multiline 
-				? 'textarea' : 'input'));
-				
-		if (this.options.multiline) this.input.wrap = 'off';
-		
-		this.input.setStyle({
+		this.input = RBuilder.node('textarea', {wrap: 'off'}).setStyle({
 			position: 'absolute', overflow: 'hidden',
 			top: 0,	left: 0, border: 0, padding: 0, margin: 0,
 			backgroundColor: 'transparent'
@@ -163,14 +157,9 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 		Styles.clone(this.element, this.input, [
 			'font-size', 'font-weight', 'font-family', 'font-style', 
 			'color', 'background-color', 'text-align', 'text-decoration', 
-			'letter-spacing', 'padding-left', 'padding-top']);
-		
-		if (this.options.multiline) {
-			Styles.clone(this.element, this.input, ['line-height']);
-		}
+			'letter-spacing', 'line-height', 'padding-left', 'padding-top']);
 		
 		this.input.style.boxSizing = this.input.style.MozBoxSizing = 'border-box';
-		
 		this.input.hide();
 		document.body.appendChild(this.input);
 	},
@@ -444,7 +433,7 @@ riot.TinyMCEPopup = riot.TextareaPopup.extend({
 	},
 	
 	getText: function() {
-		return tinyMCE.getContent();
+		return tinyMCE.getContent().strip();
 	}
 	
 });

@@ -53,6 +53,9 @@ import org.springframework.web.servlet.mvc.Controller;
 public class ComponentListController implements Controller,
 		ComponentListConfiguration {	
 	
+	public static final String LIVE_MODE_ATTRIBUTE = 
+			ComponentListController.class.getName() + ".liveMode";
+	
 	private static final Log log = LogFactory.getLog(
 			ComponentListController.class);
 	
@@ -156,7 +159,9 @@ public class ComponentListController implements Controller,
 			HttpServletResponse response) throws Exception {
 
 		final RenderStrategy strategy;
-		if (AccessController.isAuthenticatedUser()) {
+		if (AccessController.isAuthenticatedUser() 
+				&& request.getAttribute(LIVE_MODE_ATTRIBUTE) == null) {
+			
 			log.debug("Authenticated user - rendering list in edit-mode");
 			strategy = new EditModeRenderStrategy(componentDao, 
 					componentRepository, formRegistry, this, request, response);

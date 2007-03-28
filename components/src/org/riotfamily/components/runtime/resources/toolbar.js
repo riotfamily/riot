@@ -32,15 +32,11 @@ riot.Toolbar.prototype = {
 		}
 		this.publishButton.element.hide();
 		this.element.appendChild(this.publishButton.element);
+		this.dirtyComponentLists = [];
 	},
 	
 	activate: function() {
 		this.updateComponentLists();
-		var listIds = this.componentLists.pluck('id');
-		ComponentEditor.getDirtyListIds(listIds, {
-			callback: this.setDirtyListIds.bind(this),
-			errorHandler: Prototype.emptyFunction
-		});
 		this.buttons.values().invoke('enable');
 		this.buttons.browse.click();
 		this.keepAliveTimer = setInterval(this.keepAlive.bind(this), 60000);
@@ -92,44 +88,27 @@ riot.Toolbar.prototype = {
 			
 	updateComponentLists: function() {
 		var lists = [];
+		var dirtyLists = [];
 		$$('.riot-components').each(function(e) {
 			var list = e.componentList;
 			if(!isDefined(list)) {
-				list = new riot.ComponentList(e);
+				list = riot.createComponentList(e);
 				e.componentList = list;
 				if (riot.toolbar.activeButton) {
 					list[riot.toolbar.handler](true);
 				}
 			}
 			lists.push(list);
+			if (list.dirty) {
+				dirtyLists.push(list);
+			}
 		});
-		$$('.riot-single-component').each(function(e) {
-			var c = new riot.Component(null, e);
-			lists.push(c);
-		});
-		
 		this.componentLists = lists.reverse();
-	},
-		
-	setDirtyListIds: function(ids) {
-		if (!ids) {
-			return;
-		}
-		if (ids.length > 0) {
-			this.dirtyComponentLists = this.componentLists.findAll(function(list) {
-				return ids.include(list.id);
-			});
-			this.publishButton.enable();
-		}
-		else {
-			this.dirtyComponentLists = [];
-			this.publishButton.disable();
-		}
+		this.dirtyComponentLists = dirtyLists;
+		if (dirtyLists.length > 0) this.publishButton.enable();
 	},
 	
 	setDirty: function(list, dirty) {
-		if (!list) return; //TODO
-		this.updateComponentLists();
 		if (dirty) {
 			if (!this.dirtyComponentLists.include(list)) {
 				this.dirtyComponentLists.push(list);
@@ -219,9 +198,6 @@ riot.ToolbarButton.prototype = {
 		for (var i = 0; i < targets.length; i++) {
 			if (targets[i][this.handler]) {
 				targets[i][this.handler](enable);
-			}
-			else {
-				targets[i].setMode(enable ? this.handler : null);
 			}
 		}
 	}

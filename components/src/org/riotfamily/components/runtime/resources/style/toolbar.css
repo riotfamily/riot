@@ -169,7 +169,7 @@ html .riot-insert-button-active {
 	background-position: center -16px;
 }
 
-.riot-components:after {
+.riot-component-list:after {
     content: "."; 
     display: block; 
     height: 0; 
@@ -177,18 +177,18 @@ html .riot-insert-button-active {
     visibility: hidden;
 }
 
-.riot-components {
+.riot-component-list {
 	clear: both;
 	display: inline-block;
 }
 
 /* Hides from IE-mac \*/
-* html .riot-components {height: 1%;}
-.riot-components {display: block;}
+* html .riot-component-list {height: 1%;}
+.riot-component-list {display: block;}
 /* End hide from IE-mac */
 
 
-.riot-component {
+.riot-component-list .riot-component {
 	clear: none;
 }
 
@@ -372,118 +372,63 @@ body > #riot-overlay {
 	position: fixed;
 }
 
-.riot-publish-widget {
-	text-align:left;
+.riot-publish-overlay-preview,
+.riot-publish-overlay-live {
+	border: 2px solid ${toolbarOutline};
 }
-
-.riot-publish-footer {
-	border: 3px solid ${toolbarOutline};
-	border-top: 0;
-	height: 10px;
-	overflow: hidden;
-	background: #fff;
-	margin-top: 5px;
+.riot-publish-overlay-preview .riot-live {
+	display: none;
 }
-
-.riot-publish-widget .riot-tabs {
-	position: relative;
-	float: left;
-	top: 3px;
-	background-color: ${toolbarOutline};
-	border:3px solid ${toolbarOutline};
-	border-bottom:0;
+.riot-publish-overlay-live .riot-preview {
+	display: none;
 }
-
-.riot-publish-widget .riot-tab-preview,
-.riot-publish-widget .riot-tab-live {
-	float: left;
-	padding: 2px 10px 1px 10px;
-	color: #fff;
-	background-color: #3d3d3d;
-	font-family: "Trebuchet MS", Arial;
-	font-size: 11px;
-	line-height: 16px;
-	cursor: default;
-	-moz-user-select: none;
-}
-
-.riot-publish-widget .riot-tab-preview {
-	margin-right: 3px;
-}
-
-.riot-publish-header {
-	clear:left;
-	border: 3px solid ${toolbarOutline};
-	border-bottom: 0;
-	background: #fff;
-	margin: 0 0 5px 0;
+.riot-publish-controls {
+	left: -2px;
+	background-color: #fff;
+	border: 2px solid ${toolbarOutline};
 	padding: 5px;
-	overflow: hidden !important;
-	height: auto !important;
-	height: 1px; /* For some reason IE needs a height, otherwise a random margin appears above the div */
-	overflow: visible; /* A visible overflow causes IE to extend the height as needed, very strange ... */
 }
-
-.riot-publish-widget .riot-preview-version .riot-tab-preview,
-.riot-publish-widget .riot-live-version .riot-tab-live {
-	color: #3d3d3d;
-	background: #fff;
-	border-bottom: 3px solid #fff;
-}
-
-.riot-publish-widget a.riot-publish-button,
-.riot-publish-widget a.riot-discard-button {
-	float: left;
-	white-space: nowrap;
+.riot-publish-controls a {
 	text-decoration: none;
-	line-height: 16px;
-	background: none;
-}
-
-.riot-publish-widget a.riot-publish-button {
+	white-space: nowrap;
 	font-size: 12px;
 	padding-right: 10px;
 }
 
-.riot-publish-widget .riot-publish-button .icon,
-.riot-publish-widget .riot-discard-button .icon {
-	display: -moz-inline-box !important;
-	display: inline-block;
-	width: 14px;
-	height: 13px;
-	vertical-align: middle;
-	overflow: hidden;
+.riot-publish-controls a .icon {
 	background-color: #3d3d3d;
+	display: -moz-inline-box !important;
+	height: 13px;
 	margin-right: 3px;
+	overflow: hidden;
+	vertical-align: middle;
+	width: 14px;
 }
 
-.riot-publish-widget .riot-publish-button .icon {
+.riot-publish-button .icon {
 	background-image: url(icons/dialogs/ok_small.gif);
 }
-
-.riot-publish-widget .riot-discard-button .icon {
+.riot-discard-button .icon {
+	background-image: url(icons/dialogs/revert_small.gif);
+}
+.riot-live-button .icon {
+	background-image: url(icons/dialogs/revert_small.gif);
+}
+.riot-preview-button .icon {
 	background-image: url(icons/dialogs/revert_small.gif);
 }
 
-
-.riot-publish-widget .riot-publish-button:hover .icon,
-.riot-publish-widget .riot-discard-button:hover .icon {
-	background-color: ${highlight};
-}
-
-.riot-publish-widget a:hover {
-	background-color: transparent !important;
-}
-.riot-publish-widget a .text {
+.riot-publish-controls a .text {
 	color: #3d3d3d;
 	text-decoration: underline;
 	vertical-align: middle;
 }
-.riot-publish-widget a:hover .text {
-	color: ${highlight};
+.riot-publish-controls a:hover {
+	background-color: transparent !important;
 }
-
-.riot-publish-widget .riot-live-version .riot-publish-button,
-.riot-publish-widget .riot-live-version .riot-discard-button {
-	visibility: hidden;
+.riot-publish-controls a:hover .icon {
+	background-color: ${highlight};
+}
+.riot-publish-controls a:hover .text {
+	color: ${highlight};
 }

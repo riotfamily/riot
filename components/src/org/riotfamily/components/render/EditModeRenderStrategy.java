@@ -98,7 +98,10 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 				out.print(config.getMaxComponents());
 				out.print('"');
 			}
-			out.print(" class=\"riot-components\">");
+			if (list.isDirty()) {
+				out.print(" riot:dirty=\"true\"");
+			}
+			out.print(" class=\"riot-components riot-component-list\">");
 			super.renderComponentList(list);
 			out.print("</div>");
 		}

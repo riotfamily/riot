@@ -56,7 +56,8 @@ public interface ComponentEditor {
 
 	public void setType(Long containerId, String type);
 
-	public String getLiveListHtml(String controllerId, Long listId);
+	public String getLiveListHtml(String controllerId, Long listId)
+			throws RequestContextExpiredException;
 
 	public String getPreviewListHtml(String controllerId, Long listId)
 			throws RequestContextExpiredException;
@@ -64,8 +65,6 @@ public interface ComponentEditor {
 	public void moveComponent(Long containerId, Long nextContainerId);
 
 	public void deleteComponent(Long containerId);
-
-	public List getDirtyListIds(Long[] listIds);
 
 	public void publishLists(Long[] listIds);
 
