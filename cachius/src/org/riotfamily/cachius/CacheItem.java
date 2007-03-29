@@ -119,7 +119,8 @@ public class CacheItem implements Serializable {
      */
     private transient long lastModified;
     
-        
+    private transient long lastCheck;
+    
     public CacheItem(String key, File cacheDir) throws IOException {
         this.key = key;
         file = File.createTempFile(ITEM_PREFIX, TEMPFILE_SUFFIX, cacheDir);
@@ -158,21 +159,17 @@ public class CacheItem implements Serializable {
         this.previous = previous;
     }
 
-   
     public CacheItem getNext() {
         return next;
     }
-
    
     public void setNext(CacheItem next) {
         this.next = next;
     }
     
-    
     public int hashCode() {
         return key.hashCode();
     }
-
 
     public boolean isFilterSessionId() {
 		return filterSessionId;
@@ -186,23 +183,27 @@ public class CacheItem implements Serializable {
         this.contentType = contentType;
     }
     
-    
     public String getContentType() {
         return contentType;
     }
-            
         
     public long getLastModified() {
         return lastModified;
     }
   
-  
     public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
     }
-  
-  
-    public boolean isNew() {
+
+    public long getLastCheck() {
+		return this.lastCheck;
+	}
+
+	public void setLastCheck(long lastCheck) {
+		this.lastCheck = lastCheck;
+	}
+
+	public boolean isNew() {
         return lastModified == NOT_YET;
     }
     
@@ -285,7 +286,6 @@ public class CacheItem implements Serializable {
     		}
     	}
     }
-  
     
     /**
      * Calls <code>out.defaultWriteObject()</code> and sets the mtime of 

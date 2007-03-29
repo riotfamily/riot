@@ -25,9 +25,6 @@ package org.riotfamily.cachius.spring;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.riotfamily.cachius.CacheItem;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.beans.factory.BeanNameAware;
 
@@ -40,10 +37,6 @@ import org.springframework.beans.factory.BeanNameAware;
 public abstract class AbstractCacheableController 
 		implements CacheableController, BeanNameAware {
 
-    protected static final long DEFAULT_TTL = 5000;
-
-    private Log log = LogFactory.getLog(AbstractCacheableController.class);
-
 	private String beanName;
 	
 	public final void setBeanName(String beanName) {
@@ -54,70 +47,48 @@ public abstract class AbstractCacheableController
 		return beanName;
 	}
 	
+	/**
+	 * Returns the cache-key for the request unless 
+	 * {@link #bypassCache(HttpServletRequest)} returns <code>true</code>.
+	 * The method creates a StringBuffer and appends the controller's beanName.
+	 * The buffer is passed to {@link #appendCacheKey(StringBuffer, HttpServletRequest)}
+	 * allowing subclasses to add further values to the key.
+	 */
     public final String getCacheKey(HttpServletRequest request) {
     	if (bypassCache(request)) {
     		return null;
     	}
     	StringBuffer key = new StringBuffer();
+    	key.append(beanName).append(':');
     	appendCacheKey(key, request);
         return key.toString();
     }
             
+    /**
+     * Returns whether the cache should be bypassed. The default implementation 
+     * always returns <code>false</code>. 
+     */
     protected boolean bypassCache(HttpServletRequest request) {
 		return false;
 	}
-	
+
+    /**
+     * Subclasses may overwrite this method to append values to the cache-key.
+     * The default implementation appends the {@link 
+     * ServletUtils#getOriginatingRequestUri(HttpServletRequest) originating
+     * requestURI}.
+     */
 	protected void appendCacheKey(StringBuffer key, HttpServletRequest request) {
-		key.append(beanName).append(':');
 		key.append(ServletUtils.getOriginatingRequestUri(request));
 	}
-	
-    /**
-     * First checks if given CacheItem is older than the time to live. If
-     * it has expired, the abstract <code>getLastModified()</code> method is 
-     * called. In case the actual modification time is not newer than cached 
-     * item, the item is "touched" and will live for another 
-     * <code>timeToLive</code> milliseconds.
-     */
-    public final long getLastModified(HttpServletRequest request,
-            CacheItem cacheItem) throws Exception {
-            
-        long now = System.currentTimeMillis();
-        if (forceRefresh(request)) {
-        	return now;
-        }
-        
-        long cacheTime = cacheItem.getLastModified();
-        long timeToLive = getTimeToLive(request);
-        if (timeToLive < 0) {
-	        log.debug("Negative TTL - Item will be cached eternally.");
-			return cacheTime;
-        }
-        
-        if (cacheTime + timeToLive < now) {
-        
-            log.debug("CacheItem has expired - Checking for modification...");
-            long lastModified = getLastModified(request);
-                    
-            if (lastModified <= cacheTime) {
-                log.debug("Not newer than the cacheEntry - Just touching it.");
-                cacheItem.setLastModified(now);
-                return now;
-            }
-            else {
-                return lastModified;
-            }
-        }
-        return cacheTime;
-    }
-    
-    /**
-	 * Returns whether the cached version should be discarded. Subclasses
-	 * may return <code>true</code> in order to force the recreation of the
-	 * cached item.
+
+	/**
+	 * The default implementation returns <code>0</code> so that 
+	 * {@link #getLastModified(HttpServletRequest)} is invoked every time the
+	 * controller is requested.
 	 */
-	protected boolean forceRefresh(HttpServletRequest request) {
-		return false;
+	public long getTimeToLive() {
+		return 0;
 	}
 	
     /**
@@ -128,17 +99,6 @@ public abstract class AbstractCacheableController
      */
     public long getLastModified(HttpServletRequest request) {
         return System.currentTimeMillis();
-    }
-    
-    /**
-     * Returns the time in milliseconds that has to be elapsed since the last
-     * modification check before another check is performed. A negative value
-     * indicates that the content should be cached eternaly.
-     * 
-     * Returns <code>5000</code> as default.
-     */
-    public long getTimeToLive(HttpServletRequest request) {
-        return DEFAULT_TTL;
     }
     
 }

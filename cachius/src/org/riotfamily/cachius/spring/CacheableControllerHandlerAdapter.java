@@ -70,14 +70,32 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
     
     private int order = 0;
     
+    private boolean enabled = true;
+    
     public CacheableControllerHandlerAdapter(Cache cache) {
 		this.cache = cache;
 	}
     
-    public int getOrder() {
+    /**
+     * Sets whether this HandlerAdapter is enabled. 
+     * Default is <code>true</code>. You can set this property to 
+     * <code>false</code> in order to disable caching without removing the
+     * HandlerAdapter from the context.
+     */
+    public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+    /**
+	 * Returns the order in which this HandlerAdapter is processed.
+	 */
+	public int getOrder() {
 		return this.order;
 	}
 
+	/**
+	 * Set the order in which this HandlerAdapter is processed.
+	 */
 	public void setOrder(int order) {
 		this.order = order;
 	}
@@ -99,7 +117,7 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
      * {@link CacheableController} interface.
      */
     public boolean supports(Object handler) {
-        return handler instanceof CacheableController;
+        return enabled && handler instanceof CacheableController;
     }
 
     /**
@@ -202,13 +220,22 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
             return false;
         }
 
-        long mtime = controller.getLastModified(request, cacheItem);
-        if (mtime > cacheItem.getLastModified()) {
-            // Update the timestamp so that other threads won't
-            // call the handleRequest() method, too. Note: For new items 
-            // lastModified is set by the CacheItem.update() method.
-            cacheItem.setLastModified(System.currentTimeMillis());
-            return false;
+        long now = System.currentTimeMillis();
+        long ttl = controller.getTimeToLive();
+        if (ttl == CacheableController.CACHE_ETERNALLY) {
+        	log.debug("Item is cached eternally");
+        	return true;
+        }
+        if (cacheItem.getLastCheck() + ttl > now) {
+	        long mtime = controller.getLastModified(request);
+	        cacheItem.setLastCheck(now);
+	        if (mtime > cacheItem.getLastModified()) {
+	            // Update the timestamp so that other threads won't call
+	            // the handleRequest() method, too. Note: For new items 
+	            // lastModified is set by the CacheItem.update() method.
+	            cacheItem.setLastModified(now);
+	            return false;
+	        }
         }
        	return true;
     }
@@ -223,8 +250,16 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
 		String cacheKey = controller.getCacheKey(request);
 		CacheItem cacheItem = getCacheItem(cacheKey, request);
 		if (cacheItem != null) {
+			long now = System.currentTimeMillis();
+	        long ttl = controller.getTimeToLive();
+	        if (ttl == CacheableController.CACHE_ETERNALLY 
+	        		|| cacheItem.getLastCheck() + ttl <= now) {
+	        	
+	        	return cacheItem.getLastModified();
+	        }
     		try {
-    			return controller.getLastModified(request, cacheItem);
+    			cacheItem.setLastCheck(now);
+    			return controller.getLastModified(request);
     		}
     		catch (Exception e) {
     			log.error("Error invoking the last-modified method", e);
