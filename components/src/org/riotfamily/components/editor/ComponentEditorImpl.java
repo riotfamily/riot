@@ -42,7 +42,6 @@ import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.ComponentList;
-import org.riotfamily.components.ComponentListController;
 import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.VersionContainer;
@@ -188,11 +187,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 			StringWriter sw = new StringWriter();
 			HttpServletRequest request = getWrappedRequest(key);
 			HttpServletResponse response = getCapturingResponse(sw);
-			if (live) {
-				request.setAttribute(ComponentListController.LIVE_MODE_ATTRIBUTE, Boolean.TRUE);
-			}
-			request.getRequestDispatcher(url).include(request, response);
-			request.removeAttribute(ComponentListController.LIVE_MODE_ATTRIBUTE);
+			EditModeUtils.include(request, response, url, live);
 			return sw.toString();
 			
 		}
@@ -208,13 +203,21 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	public String getLiveListHtml(String controllerId, Long listId)
 			throws RequestContextExpiredException {
 		
-		return getHtml(controllerId, listId, true);
+		Object contextKey = listId;
+		if (contextKey == null) {
+			contextKey = controllerId;
+		}
+		return getHtml(controllerId, contextKey, true);
 	}
 	
 	public String getPreviewListHtml(String controllerId, Long listId)
 			throws RequestContextExpiredException {
 		
-		return getHtml(controllerId, listId, false);	
+		Object contextKey = listId;
+		if (contextKey == null) {
+			contextKey = controllerId;
+		}
+		return getHtml(controllerId, contextKey, false);	
 	}
 	
 	public void moveComponent(Long containerId, Long nextContainerId) {

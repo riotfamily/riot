@@ -34,10 +34,10 @@ import org.riotfamily.cachius.Cache;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.editor.ComponentFormRegistry;
+import org.riotfamily.components.editor.EditModeUtils;
 import org.riotfamily.components.render.EditModeRenderStrategy;
 import org.riotfamily.components.render.LiveModeRenderStrategy;
 import org.riotfamily.components.render.RenderStrategy;
-import org.riotfamily.riot.security.AccessController;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -52,9 +52,6 @@ import org.springframework.web.servlet.mvc.Controller;
  */
 public class ComponentListController implements Controller,
 		ComponentListConfiguration {	
-	
-	public static final String LIVE_MODE_ATTRIBUTE = 
-			ComponentListController.class.getName() + ".liveMode";
 	
 	private static final Log log = LogFactory.getLog(
 			ComponentListController.class);
@@ -159,9 +156,7 @@ public class ComponentListController implements Controller,
 			HttpServletResponse response) throws Exception {
 
 		final RenderStrategy strategy;
-		if (AccessController.isAuthenticatedUser() 
-				&& request.getAttribute(LIVE_MODE_ATTRIBUTE) == null) {
-			
+		if (EditModeUtils.isEditMode(request)) {
 			log.debug("Authenticated user - rendering list in edit-mode");
 			strategy = new EditModeRenderStrategy(componentDao, 
 					componentRepository, formRegistry, this, request, response);
