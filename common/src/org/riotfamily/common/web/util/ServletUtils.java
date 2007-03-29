@@ -90,13 +90,6 @@ public final class ServletUtils {
 		return urlPathHelper.getOriginatingRequestUri(request);
 	}
 	
-	/**
-	 * @deprecated Use getOriginatingRequestUri() instead.
-	 */
-	public static String getOriginalRequestUri(HttpServletRequest request) {
-		return getOriginatingRequestUri(request);
-	}
-	
 	public static String getOriginatingServletPath(HttpServletRequest request) {
 		String servletPath = (String) request.getAttribute(
 				WebUtils.FORWARD_SERVLET_PATH_ATTRIBUTE);
