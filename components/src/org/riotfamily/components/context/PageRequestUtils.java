@@ -51,7 +51,7 @@ public final class PageRequestUtils {
 		}
 		else {
 			String uri = urlPathHelper.getOriginatingRequestUri(request);
-			log.debug("Storing context for URI: " + uri);
+			log.debug("Storing context for " + uri + "#" + contextKey);
 			ContextMap contextMap = getContextMap(request);
 			PageRequestContext context = new PageRequestContext(request);
 			contextMap.put(uri, contextKey, context, timeToLive);
@@ -76,6 +76,7 @@ public final class PageRequestUtils {
 			HttpServletRequest request, String pageUri, Object contextKey) 
 			throws RequestContextExpiredException {
 		
+		log.debug("Wrapping context for key " + contextKey);
 		ContextMap contexts = getContextMap(request);
 		PageRequestContext context = contexts.get(pageUri, contextKey);
 		if (context == null) {
