@@ -62,13 +62,17 @@ public class ViewResolverHelper {
 		if (!mv.isReference()) {
 		    return mv.getView();
 		}
-		String viewName = mv.getViewName();
-		View view = null;
+		return resolveView(request, mv.getViewName());
+	}
+	
+	public View resolveView(HttpServletRequest request, String viewName) 
+			throws Exception {
+
 		Iterator i = viewResolvers.iterator();
 		while (i.hasNext()) {
 		    ViewResolver viewResolver = (ViewResolver) i.next();
 		    Locale locale = RequestContextUtils.getLocale(request);
-		    view = viewResolver.resolveViewName(viewName, locale);
+		    View view = viewResolver.resolveViewName(viewName, locale);
 		    if (view != null) {
 		        return view;
 		    }
