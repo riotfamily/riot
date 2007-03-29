@@ -132,7 +132,6 @@
 							<property name="converterTypes">
 								<props>
 									<prop key="org.riotfamily.components.editor.TypeInfo">bean</prop>
-									<prop key="org.riotfamily.components.editor.ComponentInfo">bean</prop>
 								</props>
 							</property>
 							<property name="serviceBeans">
