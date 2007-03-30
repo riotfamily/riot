@@ -44,6 +44,7 @@ import org.riotfamily.forms.element.support.AbstractElement;
 import org.riotfamily.forms.element.support.image.ImageCropper;
 import org.riotfamily.forms.error.ErrorUtils;
 import org.riotfamily.forms.resource.FormResource;
+import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.support.TemplateUtils;
@@ -55,11 +56,9 @@ import org.springframework.web.bind.ServletRequestUtils;
  */
 public class ImageUpload extends FileUpload {
 
-	protected static final FormResource RESOURCE = new ScriptResource(
-			"riot-js/image-cropper.js", "Cropper",
-			new FormResource[] { 
-					FileUpload.RESOURCE, Resources.SCRIPTACULOUS_SLIDER
-			});
+	private static final FormResource PREVIEW_RESOURCE = new ScriptResource(
+			"riot-js/image-cropper.js", "Cropper", 
+			Resources.SCRIPTACULOUS_SLIDER);
 	
 	private int[] widths;
 	
@@ -90,10 +89,6 @@ public class ImageUpload extends FileUpload {
 	private File croppedFile;
 	
 	public ImageUpload() {
-	}
-
-	public FormResource getResource() {
-		return RESOURCE;
 	}
 	
 	protected Element createPreviewElement() {
@@ -285,8 +280,11 @@ public class ImageUpload extends FileUpload {
 	}
 	
 	public class PreviewElement extends AbstractElement 
-			implements ContentElement, DHTMLElement {
+			implements ContentElement, DHTMLElement, ResourceElement {
 
+		public FormResource getResource() {
+			return PREVIEW_RESOURCE;
+		}
 
 		protected void renderInternal(PrintWriter writer) {
 			int w = crop && maxWidth > 0 ? maxWidth : 263;

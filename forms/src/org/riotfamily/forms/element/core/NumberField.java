@@ -83,7 +83,7 @@ public class NumberField extends TextField implements DHTMLElement,
 
 	public FormResource getResource() {
 		FormResource res = super.getResource();
-		return new ScriptResource("riot-js/number-input.js", null, 
+		return new ScriptResource("riot-js/number-input.js", "NumberInput", 
 				res != null ? res : Resources.PROTOTYPE);
 	}
 
