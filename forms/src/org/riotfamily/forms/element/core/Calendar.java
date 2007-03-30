@@ -26,14 +26,14 @@ package org.riotfamily.forms.element.core;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms.element.DHTMLElement;
+import org.riotfamily.forms.element.support.AbstractTextElement;
+import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.resource.StylesheetResource;
@@ -43,7 +43,7 @@ import org.riotfamily.forms.support.TemplateUtils;
 /**
  * A DHTML calendar widget.
  */
-public class Calendar extends TextField implements ResourceElement,
+public class Calendar extends AbstractTextElement implements ResourceElement,
 		DHTMLElement {	
 	
 	/** Format conversion patterns */
@@ -77,8 +77,6 @@ public class Calendar extends TextField implements ResourceElement,
         }
     }
     
-	private ArrayList resources;
-	
 	private String formatPattern = "yyyy-MM-dd";
 	
 	private String jsFormatPattern;
@@ -87,6 +85,7 @@ public class Calendar extends TextField implements ResourceElement,
 	
 	private String defaultValue;
 	
+	private ScriptResource resource;
 	
 	public Calendar() {
 		setStyleClass("text calendar-input");
@@ -140,26 +139,21 @@ public class Calendar extends TextField implements ResourceElement,
 		if (languageScript == null) {
 			lang = "en";
 		}
-		
-		resources = new ArrayList();
-		resources.add(new StylesheetResource("jscalendar/calendar.css"));
-		resources.add(new ScriptResource("jscalendar/calendar.js", "Calendar"));
-		resources.add(new ScriptResource("jscalendar/lang/calendar-" + lang + ".js", "Calendar._DN"));
-		resources.add(new ScriptResource("jscalendar/calendar-setup.js", "Calendar.setup"));
+		resource = new ScriptResource("jscalendar/calendar-setup.js", "Calendar.setup", new FormResource[] {
+			new ScriptResource("jscalendar/lang/calendar-" + lang + ".js", "Calendar._DN"),
+			new ScriptResource("jscalendar/calendar.js", "Calendar"),
+			new StylesheetResource("jscalendar/calendar.css")
+		});
 	}
 	
-	public Collection getResources() {
-		return resources;
+	public FormResource getResource() {
+		return resource;
 	}	
 
 	public String getInitScript() {
 		return TemplateUtils.getInitScript(this);
 	}
-	
-	public String getPrecondition() {
-		return "Calendar.setup";
-	}
-	
+		
 	protected Date getDefaultDate() {
 		Date date = FormatUtils.parseDate(defaultValue);
 		if (date == null) {

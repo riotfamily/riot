@@ -120,10 +120,6 @@ public abstract class AbstractChooser extends AbstractEditorBase
 		return "new Chooser('" + getId() + "');";
 	}
 	
-	public String getPrecondition() {
-		return "Chooser";
-	}
-
 	protected abstract Object loadBean(String objectId);
 	
 	protected String getDisplayName(Object object) {

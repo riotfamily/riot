@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.resource;
 
+
 public final class Resources {
 
 	private Resources() {
@@ -49,5 +50,4 @@ public final class Resources {
 	public static final ScriptResource RIOT_WINDOW_CALLBACK = 
 			new ScriptResource("riot-js/window-callback.js", "WindowCallback", 
 			PROTOTYPE);
-
 }

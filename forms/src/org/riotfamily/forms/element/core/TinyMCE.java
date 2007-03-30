@@ -59,9 +59,5 @@ public class TinyMCE extends Textarea implements ResourceElement, DHTMLElement {
 	public String getInitScript() {
 		return TemplateUtils.getInitScript(this);
 	}
-	
-	public String getPrecondition() {
-		return "tinyMCE.addControl";
-	}
 
 }

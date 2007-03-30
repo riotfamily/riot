@@ -209,11 +209,7 @@ public class ListEditor extends TemplateElement implements Editor,
 			return null;
 		}
 	}
-	
-	public String getPrecondition() {
-		return Resources.SCRIPTACULOUS_DRAG_DROP.getTest();
-	}
-	
+		
 	protected void processRequestInternal(FormRequest request) {
 		if (sortable) {
 			String itemOrder = request.getParameter(getParamName());
@@ -265,10 +261,6 @@ public class ListEditor extends TemplateElement implements Editor,
 				return null;
 			}
 			return ListEditor.this.getInitScript();
-		}
-		
-		public String getPrecondition() {
-			return null;
 		}
 		
 	}

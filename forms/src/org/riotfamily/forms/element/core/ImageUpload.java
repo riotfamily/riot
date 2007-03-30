@@ -371,10 +371,6 @@ public class ImageUpload extends FileUpload {
 		public String getInitScript() {
 			return TemplateUtils.getInitScript(this);
 		}
-
-		public String getPrecondition() {
-			return "Cropper";
-		}
 		
 		public int getMinWidth() {
 			return minWidth;

@@ -35,7 +35,7 @@ public class ImageCheckbox extends Checkbox
 	private static final String STYLE_CLASS = "hidden";
 	
 	protected static final FormResource RESOURCE = new ScriptResource(
-			"riot-js/image-checkbox.js", null, Resources.PROTOTYPE);
+			"riot-js/image-checkbox.js", "ImageCheckbox", Resources.PROTOTYPE);
 	
 	public ImageCheckbox() {
 		setStyleClass(STYLE_CLASS);
@@ -44,11 +44,7 @@ public class ImageCheckbox extends Checkbox
 	public FormResource getResource() {
 		return RESOURCE;
 	}
-	
-	public String getPrecondition() {		
-		return "ImageCheckbox";
-	}
-	
+		
 	public String getInitScript() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("new ImageCheckbox('");
