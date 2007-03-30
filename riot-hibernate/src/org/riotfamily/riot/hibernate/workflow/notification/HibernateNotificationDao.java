@@ -46,7 +46,8 @@ public class HibernateNotificationDao extends HibernateDaoSupport
 			public Object doInHibernate(Session session)
 					throws HibernateException, SQLException {
 
-				String hql = "select un.notification from UserNotification un "
+				String hql = "select un.notification from " + 
+						UserNotification.class.getName() + " un "
 						+ "where un.read = false and un.user.id = :userId "
 						+ "order by un.notification.issueDate desc";
 				

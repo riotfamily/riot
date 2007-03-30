@@ -144,8 +144,8 @@ public class HibernatePageDao extends AbstractPageDao {
 	protected void clearAliases(Page page) {
 		log.info("Clearing aliases for " + page);
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("update PageAlias alias " +
-				"set alias.page = null where alias.page = :page");
+		Query query = session.createQuery("update " + PageAlias.class.getName()
+				+  " alias set alias.page = null where alias.page = :page");
 		
 		query.setParameter("page", page);
 		query.executeUpdate();

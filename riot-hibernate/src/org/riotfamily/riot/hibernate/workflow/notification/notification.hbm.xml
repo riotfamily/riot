@@ -4,7 +4,7 @@
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 
-<hibernate-mapping>
+<hibernate-mapping auto-import="false">
 	
 	<class name="org.riotfamily.riot.workflow.notification.support.DefaultNotification" table="riot_notification">
 		<id name="id">
