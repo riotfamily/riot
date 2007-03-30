@@ -12,16 +12,14 @@ TinyMCE_Engine.prototype.loadScript = function(url) {
 // TinyMCE uses document.createElementNS() which is not supported
 // by IE, so we also have to overwrite the loadNextSript() method ...
 TinyMCE_Engine.prototype.loadNextScript = function() {
-	if (this.loadingIndex == -1) return;
-	var d = document;
 	if (this.loadingIndex < this.pendingFiles.length) {
+		var d = document;
 		var se = d.createElement('script');
 		se.type = 'text/javascript';
 		se.src = this.pendingFiles[this.loadingIndex++];
 		d.getElementsByTagName("head")[0].appendChild(se);
 	} 
 	else {
-		this.loadingIndex = -1;
 		if (!tinyMCE.isLoaded) {
 			tinyMCE.onLoad();
 		}
