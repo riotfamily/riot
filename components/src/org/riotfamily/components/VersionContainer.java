@@ -106,4 +106,8 @@ public class VersionContainer {
 		this.childLists = childLists;
 	}
 	
+	public ComponentVersion getLatestVersion() {
+		return previewVersion != null ? previewVersion : liveVersion;
+	}
+	
 }

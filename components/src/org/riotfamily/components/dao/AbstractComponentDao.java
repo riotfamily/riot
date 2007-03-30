@@ -322,9 +322,9 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	
 	/**
 	 * Publishes the given VersionContainer.
-	 * @return <code>true</code> if there was anything to publish
+	 * @return <code>true</code> if there was anything to publish.
 	 */
-	protected boolean publishContainer(VersionContainer container) {
+	public boolean publishContainer(VersionContainer container) {
 		ComponentVersion preview = container.getPreviewVersion();
 		if (preview != null) {
 			ComponentVersion liveVersion = container.getLiveVersion();
@@ -405,13 +405,23 @@ public abstract class AbstractComponentDao implements ComponentDao {
 		Iterator it = liveList.iterator();
 		while (it.hasNext()) {
 			VersionContainer container = (VersionContainer) it.next();
-			ComponentVersion preview = container.getPreviewVersion();
-			if (preview != null) {
-				container.setPreviewVersion(null);
-				updateVersionContainer(container);
-				deleteComponentVersion(preview);
-			}
+			discardContainer(container);
 		}
+	}
+	
+	/**
+	 * Discards all changes made to the given VersionContainer.
+	 * @return <code>true</code> if there was anything to discard.
+	 */
+	public boolean discardContainer(VersionContainer container) {
+		ComponentVersion preview = container.getPreviewVersion();
+		if (preview != null) {
+			container.setPreviewVersion(null);
+			updateVersionContainer(container);
+			deleteComponentVersion(preview);
+			return true;
+		}
+		return false;
 	}
 	
 	/**

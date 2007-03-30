@@ -62,7 +62,6 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	public void renderComponentVersion(ComponentVersion version) 
 			throws IOException {
 		
-		request.setAttribute(EDIT_MODE_ATTRIBUTE, Boolean.TRUE);
 		VersionContainer c = version.getContainer();
 		List components = getComponentsToRender(c.getList());
 		int position = components.indexOf(c);
@@ -79,7 +78,6 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		boolean renderOuterDiv = PageRequestUtils.storeContext(
 				request, list.getId(), 120000);
 		
-		request.setAttribute(EDIT_MODE_ATTRIBUTE, Boolean.TRUE);
 		if (renderOuterDiv) {
 			out.print("<div riot:listId=\"");
 			out.print(list.getId());

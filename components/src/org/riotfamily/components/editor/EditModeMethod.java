@@ -23,8 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.editor;
 
+import org.riotfamily.common.web.view.ViewContext;
 import org.riotfamily.common.web.view.freemarker.AbstractSimpleMethod;
-import org.riotfamily.riot.security.AccessController;
 
 /**
  * FreeMarker method that returns whether the page is viewed in edit-mode.
@@ -34,6 +34,7 @@ import org.riotfamily.riot.security.AccessController;
 public class EditModeMethod extends AbstractSimpleMethod {
 
 	protected Object exec(Object arg) throws Exception {
-		return Boolean.valueOf(AccessController.isAuthenticatedUser());
+		return Boolean.valueOf(EditModeUtils.isEditMode(
+				ViewContext.getRequest()));
 	}
 }

@@ -166,15 +166,25 @@ public interface ComponentDao {
 	 * their path to the specified <code>newPath</code>.
 	 */
 	public void copyComponentLists(String type, String oldPath, String newPath);
-	
+
 	/**
 	 * Publishes all changes made to the given list.
 	 */
 	public boolean publishList(ComponentList componentList);
-
+	
+	/**
+	 * Published all changes made to the given container.
+	 */
+	public boolean publishContainer(VersionContainer container);
+	
 	/**
 	 * Discards all changes made to the given list.
 	 */
 	public void discardList(ComponentList componentList);
+	
+	/**
+	 * Discards all changes made to the given container.
+	 */
+	public boolean discardContainer(VersionContainer container);
 	
 }

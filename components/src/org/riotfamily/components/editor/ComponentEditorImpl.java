@@ -272,6 +272,17 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	}
 	
 	/**
+	 * Discards all changes made to the VersionContainers identified by the 
+	 * given IDs.
+	 */
+	public void discardContainers(Long[] ids) {
+		for (int i = 0; i < ids.length; i++) {
+			VersionContainer container = dao.loadVersionContainer(ids[i]);
+			dao.discardContainer(container);
+		}
+	}
+	
+	/**
 	 * Discards all changes made to the ComponentList identified by the 
 	 * given ID.
 	 */
@@ -292,6 +303,17 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		return getPreviewListHtml(controllerId, listId);
 	}
 
+	/**
+	 * Publishes all changes made to the VersionContainers identified by the 
+	 * given IDs.
+	 */
+	public void publishContainers(Long[] ids) {
+		for (int i = 0; i < ids.length; i++) {
+			VersionContainer container = dao.loadVersionContainer(ids[i]);
+			dao.publishContainer(container);
+		}
+	}
+	
 	/**
 	 * Publishes the ComponentList identified by the given ID.
 	 */

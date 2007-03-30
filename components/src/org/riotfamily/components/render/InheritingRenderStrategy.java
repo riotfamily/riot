@@ -34,6 +34,7 @@ import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.Location;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.editor.EditModeUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -51,12 +52,11 @@ public class InheritingRenderStrategy extends PreviewModeRenderStrategy {
 	}
 	
 	protected void renderComponentList(ComponentList list) throws IOException {
-		Object editMode = request.getAttribute(EDIT_MODE_ATTRIBUTE);
-		request.setAttribute(EDIT_MODE_ATTRIBUTE, Boolean.FALSE);
+		boolean live = EditModeUtils.isEditMode(request);
+		EditModeUtils.setLiveMode(request, true);
 		super.renderComponentList(list);
-		request.setAttribute(EDIT_MODE_ATTRIBUTE, editMode);
+		EditModeUtils.setLiveMode(request, live);
 	}
-	
 	
 	protected void onListNotFound(Location location) throws IOException {
 		Locale locale = RequestContextUtils.getLocale(request);

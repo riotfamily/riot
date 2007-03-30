@@ -44,19 +44,30 @@ public final class EditModeUtils {
 	}
 	
 	public static boolean isEditMode(HttpServletRequest request) {
-		return AccessController.isAuthenticatedUser() 
-				&& request.getAttribute(LIVE_MODE_ATTRIBUTE) == null;
+		return AccessController.isAuthenticatedUser() && !isLiveMode(request);
+	}
+	
+	public static boolean isLiveMode(HttpServletRequest request) {
+		return request.getAttribute(LIVE_MODE_ATTRIBUTE) == Boolean.TRUE;
+	}
+	
+	public static void setLiveMode(HttpServletRequest request, boolean liveMode) {
+		if (liveMode) {
+			request.setAttribute(LIVE_MODE_ATTRIBUTE, Boolean.TRUE);
+		}
+		else {
+			request.removeAttribute(LIVE_MODE_ATTRIBUTE);
+		}
 	}
 	
 	public static void include(HttpServletRequest request, 
 			HttpServletResponse response, String url, boolean liveMode) 
 			throws ServletException, IOException {
 		
-		if (liveMode) {
-			request.setAttribute(LIVE_MODE_ATTRIBUTE, Boolean.TRUE);
-		}
+		boolean previouslyLive = isLiveMode(request);
+		setLiveMode(request, liveMode);
 		request.getRequestDispatcher(url).include(request, response);
-		request.removeAttribute(LIVE_MODE_ATTRIBUTE);
+		setLiveMode(request, previouslyLive);
 	}
 	
 }

@@ -67,10 +67,14 @@ public interface ComponentEditor {
 	public void deleteComponent(Long containerId);
 
 	public void publishLists(Long[] listIds);
+	
+	public void publishContainers(Long[] containerIds);
 
 	public void discardLists(Long[] listIds);
 
 	public void discardList(Long listId);
+	
+	public void discardContainers(Long[] containerIds);
 
 	public String discardListAndGetPreviewHtml(String controllerId,
 			Long listId) throws RequestContextExpiredException;

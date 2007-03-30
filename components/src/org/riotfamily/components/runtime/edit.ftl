@@ -22,7 +22,7 @@
   - line-breaks which are converted to <br>-tags.
   -
   - The call delegated to the editable macro, using editor="text".
-  - See: <@riot.editable> for a description of the supported parameters.
+  - See: <@editable> for a description of the supported parameters.
   -->
 <#macro text key tag="" alwaysUseNested=false attributes...>
 	<@editable key=key editor="text" tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
@@ -37,7 +37,7 @@
   - 
   - The call delegated to the editable macro, using editor="richtext" or
   - editor="richtext-chunks", depending on the chunk parameter.
-  - See: <@riot.editable> for a description of the other parameters.
+  - See: <@editable> for a description of the other parameters.
   -->
 <#macro richtext key tag="" alwaysUseNested=false chunk=false attributes...>
 	<#if chunk>
@@ -53,6 +53,8 @@
   -
   - key: Name of the model-key/variable to edit
   -
+  - scope: Hash that contains the model. Defaults to the built-in .vars hash.
+  -
   - editor: Name of the editor widget to use. Can be either 'text', 'richtext' 
   - or 'richtext-chunks'. Default is 'text'.
   -
@@ -65,11 +67,11 @@
   -
   - attributes...: Attributes to set on the surrounding tag.
   -->
-<#macro editable key editor="text" tag="" alwaysUseNested=false attributes... >
+<#macro editable key scope=.vars editor="text" tag="" alwaysUseNested=false attributes... >
 	<#if alwaysUseNested>
 		<#local value><#nested /></#local>
 	<#else>
-		<#local value = .vars[key]?if_exists />
+		<#local value = scope[key]?if_exists />
 		<#if !value?has_content>
 			<#local value><#nested /></#local>
 		</#if>
@@ -81,12 +83,12 @@
 		</#if>
 		<#local attrs="" />
 		<#local keys=attributes?keys />
-		<#list keys as key>
-			<#local attrs=attrs + " " + key + "=\"" + attributes[key] + "\"" />
+		<#list keys as attributeName>
+			<#local attrs=attrs + " " + attributeName + "=\"" + attributes[attributeName] + "\"" />
 		</#list>
 	</#if>
 	
-	<#if riotComponentEditMode?if_exists>
+	<#if isEditMode()>
 		<#if tag?has_content>
 			<#local element=tag />
 		<#else>

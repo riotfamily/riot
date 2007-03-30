@@ -4,7 +4,7 @@
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 
-<hibernate-mapping package="org.riotfamily.components" auto-import="true">
+<hibernate-mapping package="org.riotfamily.components" auto-import="false">
 	
 	<class name="ComponentList" table="component_lists">
 		<cache usage="nonstrict-read-write" region="components" />

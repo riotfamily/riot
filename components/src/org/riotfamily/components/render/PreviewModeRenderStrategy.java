@@ -38,8 +38,6 @@ import org.riotfamily.components.dao.ComponentDao;
 
 public class PreviewModeRenderStrategy extends AbstractRenderStrategy {
 
-	public static final String EDIT_MODE_ATTRIBUTE = "riotComponentEditMode";
-	
 	public PreviewModeRenderStrategy(ComponentDao dao, 
 			ComponentRepository repository, ComponentListConfiguration config,
 			HttpServletRequest request, HttpServletResponse response)
@@ -64,15 +62,11 @@ public class PreviewModeRenderStrategy extends AbstractRenderStrategy {
 	}
 	
 	/**
-	 * Overrides the default implementation to return the component's preview
-	 * version. In case no preview version exists, the live version is returned.
+	 * Overrides the default implementation to return the component's latest
+	 * version.
 	 */
 	protected ComponentVersion getVersionToRender(VersionContainer container) {
-		ComponentVersion version = container.getPreviewVersion(); 
-		if (version == null) {
-			version = container.getLiveVersion();
-		}
-		return version;
+		return container.getLatestVersion(); 
 	}
 	
 }

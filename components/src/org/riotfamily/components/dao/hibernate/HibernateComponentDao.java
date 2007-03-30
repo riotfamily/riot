@@ -51,9 +51,9 @@ public class HibernateComponentDao extends AbstractComponentDao {
 	}
 
 	public ComponentList findComponentList(Location location) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from ComponentList list where list.location = :location " +
-				"and list.parent is null");
+		Query query = sessionFactory.getCurrentSession().createQuery("from " 
+				+ ComponentList.class.getName()	+ " list where " 
+				+ "list.location = :location and list.parent is null");
 				
 		query.setParameter("location", location);
 		query.setCacheable(true);
@@ -62,9 +62,9 @@ public class HibernateComponentDao extends AbstractComponentDao {
 	}
 	
 	public ComponentList findComponentList(VersionContainer parent, String slot) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from ComponentList list where list.parent = :parent " +
-				"and list.location.slot = :slot");
+		Query query = sessionFactory.getCurrentSession().createQuery("from " 
+				+ ComponentList.class.getName() + " list where list.parent = " 
+				+":parent and list.location.slot = :slot");
 				
 		query.setParameter("parent", parent);
 		query.setParameter("slot", slot);
@@ -74,11 +74,11 @@ public class HibernateComponentDao extends AbstractComponentDao {
 	}
 	
 	public List findComponentLists(String type, String path) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from ComponentList list where " +
-				"list.location.type = :type " +
-				"and list.location.path = :path " +
-				"and list.parent is null");
+		Query query = sessionFactory.getCurrentSession().createQuery("from " 
+				+ ComponentList.class.getName() + " list where " 
+				+ "list.location.type = :type "
+				+ "and list.location.path = :path " 
+				+ "and list.parent is null");
 		
 		query.setParameter("type", type);
 		query.setParameter("path", path);
@@ -88,8 +88,9 @@ public class HibernateComponentDao extends AbstractComponentDao {
 	}
 	
 	public List findDirtyComponentLists() {
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from ComponentList list where list.dirty = true");
+		Query query = sessionFactory.getCurrentSession().createQuery("from " 
+				+ ComponentList.class.getName() 
+				+ " list where list.dirty = true");
 		
 		query.setCacheable(true);
 		query.setCacheRegion("components");
