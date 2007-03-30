@@ -15,15 +15,6 @@ function isFunction(func) {
 	return typeof(func) == 'function';
 }
 
-Object.bindMethods = function(obj, methodNames) {
-	if (methodNames) {
-		for (var i = 0; i < methodNames.length; i++) {
-			var method = obj[methodNames[i]];
-			obj[methodNames[i]] = method.bind(obj);
-		}
-	}
-}
-
 var RBuilder = {};
 RBuilder.node = function(tag, options) {
 	var e = Element.extend(document.createElement(tag));
@@ -153,7 +144,7 @@ var RElement = {
     	Element.classNames(el)[add ? 'add' : 'remove'](className);
 	    return el;
 	},
-  
+	
 	disableHandlers: function(el, name) {
 		if (!(el = $(el))) return;
 		el.descendants().each(function(e) {
