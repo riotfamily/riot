@@ -27,18 +27,22 @@ import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
+import org.riotfamily.forms.resource.ScriptResource;
 
 public class ImageCheckbox extends Checkbox 
 		implements DHTMLElement, ResourceElement  {
 	
 	private static final String STYLE_CLASS = "hidden";
 	
+	protected static final FormResource RESOURCE = new ScriptResource(
+			"riot-js/image-checkbox.js", null, Resources.PROTOTYPE);
+	
 	public ImageCheckbox() {
 		setStyleClass(STYLE_CLASS);
 	}
 	
 	public FormResource getResource() {
-		return Resources.RIOT_IMAGE_CHECKBOX;
+		return RESOURCE;
 	}
 	
 	public String getPrecondition() {		

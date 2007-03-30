@@ -54,7 +54,9 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 		Iterator it = resources.iterator();
 		while (it.hasNext()) {
 			FormResource resource = (FormResource) it.next();
-			resource.accept(this);
+			if (resource != null) {
+				resource.accept(this);
+			}
 		}
 	}
 	
