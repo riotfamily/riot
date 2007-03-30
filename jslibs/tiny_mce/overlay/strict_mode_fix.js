@@ -1,6 +1,6 @@
 // TinyMCE disables strict_loading_mode in IE and Opera,
 // so we have to overwrite the loadScript method ...
-tinyMCE.loadScript = function(url) {
+TinyMCE_Engine.prototype.loadScript = function(url) {
 	tinyMCE.settings.strict_loading_mode = true;
 	for (var i = 0; i < this.loadedFiles.length; i++) {
 		if (this.loadedFiles[i] == url) return;
@@ -11,7 +11,7 @@ tinyMCE.loadScript = function(url) {
 
 // TinyMCE uses document.createElementNS() which is not supported
 // by IE, so we also have to overwrite the loadNextSript() method ...
-tinyMCE.loadNextScript = function() {
+TinyMCE_Engine.prototype.loadNextScript = function() {
 	if (this.loadingIndex == -1) return;
 	var d = document;
 	if (this.loadingIndex < this.pendingFiles.length) {
@@ -32,7 +32,7 @@ tinyMCE.loadNextScript = function() {
 // window.event which is null when the function is invoked manually. Some
 // initialization stuff has been left out to reduce the script size. Therefore
 // TinyMCE will only work in init-mode 'none'.
-tinyMCE.onLoad = function() {
+TinyMCE_Engine.prototype.onLoad = function() {
 	if (tinyMCE.isRealIE && window.event && window.event.type == "readystatechange" && document.readyState != "complete") return true;
 
 	if (tinyMCE.isLoaded) return true;
@@ -72,7 +72,7 @@ tinyMCE.onLoad = function() {
 	}
 };
 
-tinyMCE.addControl = function(id) {
+TinyMCE_Engine.prototype.addControl = function(id) {
 	if (tinyMCELang && tinyMCELang['lang_theme_block']) {
 		tinyMCE.addMCEControl(document.getElementById(id));
 	}
