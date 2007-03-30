@@ -88,7 +88,4 @@ public class Textarea extends AbstractTextElement implements ResourceElement,
 		}
 	}
 	
-	public String getPrecondition() {
-		return "TextArea";
-	}
 }

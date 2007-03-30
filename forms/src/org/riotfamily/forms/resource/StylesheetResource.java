@@ -30,15 +30,15 @@ import org.springframework.util.Assert;
  */
 public class StylesheetResource implements FormResource {
 
-	private String href;
+	private String url;
 	
-	public StylesheetResource(String href) {
-		Assert.notNull(href);
-		this.href = href;
+	public StylesheetResource(String url) {
+		Assert.notNull(url);
+		this.url = url;
 	}
 	
-	public String getHref() {
-		return this.href;
+	public String getUrl() {
+		return this.url;
 	}
 
 	public void accept(ResourceVisitor visitor) {
@@ -46,7 +46,7 @@ public class StylesheetResource implements FormResource {
 	}
 	
 	public int hashCode() {
-		return href.hashCode();
+		return url.hashCode();
 	}
 	
 	public boolean equals(Object obj) {
@@ -58,7 +58,7 @@ public class StylesheetResource implements FormResource {
 		}
 		if (obj instanceof StylesheetResource) {
 			StylesheetResource other = (StylesheetResource) obj;
-			return this.href.equals(other.href);
+			return this.url.equals(other.url);
 		}
 		return false;
 	}

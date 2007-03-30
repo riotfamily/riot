@@ -33,18 +33,18 @@ import org.springframework.util.Assert;
  */
 public class ScriptResource implements FormResource {
 	
-	private String src;
+	private String url;
 	
 	private String test;
 	
 	private Collection dependencies;
 	
-	public ScriptResource(String src) {
-		this(src, null);
+	public ScriptResource(String url) {
+		this(url, null);
 	}
 	
-	public ScriptResource(String src, String test) {
-		this(src, test, (FormResource[]) null);
+	public ScriptResource(String url, String test) {
+		this(url, test, (FormResource[]) null);
 	}
 	
 	public ScriptResource(String src, String test, FormResource dependency) {
@@ -53,17 +53,17 @@ public class ScriptResource implements FormResource {
 				: null);
 	}
 	
-	public ScriptResource(String src, String test, FormResource[] dependencies) {
-		Assert.notNull(src);
-		this.src = src;
+	public ScriptResource(String url, String test, FormResource[] dependencies) {
+		Assert.notNull(url);
+		this.url = url;
 		this.test = test;
 		if (dependencies != null && dependencies.length > 0) {
 			this.dependencies = Arrays.asList(dependencies);
 		}
 	}
 	
-	public String getSrc() {
-		return this.src;
+	public String getUrl() {
+		return this.url;
 	}
 
 	public String getTest() {
@@ -79,7 +79,7 @@ public class ScriptResource implements FormResource {
 	}
 	
 	public int hashCode() {
-		return src.hashCode();
+		return url.hashCode();
 	}
 	
 	public boolean equals(Object obj) {
@@ -91,7 +91,7 @@ public class ScriptResource implements FormResource {
 		}
 		if (obj instanceof ScriptResource) {
 			ScriptResource other = (ScriptResource) obj;
-			return this.src.equals(other.src);
+			return this.url.equals(other.url);
 		}
 		return false;
 	}

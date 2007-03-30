@@ -37,12 +37,5 @@ public interface DHTMLElement extends Element {
 	 * element, or <code>null</code> if no initialization is needed.
 	 */
 	public String getInitScript();
-	
-	/**
-	 * Implementors may return an object path expression 
-	 * (like <code>foo.bar.something</code>) that must be defined before
-	 * the init script can be evaluated.
-	 */
-	public String getPrecondition();
 
 }

@@ -36,4 +36,6 @@ public interface FormResource {
 	
 	public void accept(ResourceVisitor visitor);
 
+	public String getUrl();
+
 }

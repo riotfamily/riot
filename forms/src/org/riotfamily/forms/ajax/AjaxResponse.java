@@ -196,12 +196,19 @@ public class AjaxResponse implements FormListener {
 				log.debug("Evaluating init script ...");
 				TagWriter tag = new TagWriter(writer);
 				tag.start("eval").body();
-				if (e.getPrecondition() != null) {
-					tag.print("Resources.waitFor('");
-					tag.print(e.getPrecondition());
-					tag.print("', function() {");
-					tag.print(script);
-					tag.print("})");
+				if (e instanceof ResourceElement) {
+					ResourceElement resEle = (ResourceElement) e;
+					FormResource res = resEle.getResource();
+					if (res != null) {
+						tag.print("Resources.execWhenLoaded(['");
+						tag.print(res.getUrl());
+						tag.print("'], function() {");
+						tag.print(script);
+						tag.print("})");
+					}
+					else {
+						tag.print(script);
+					}
 				}
 				else {
 					tag.print(script);

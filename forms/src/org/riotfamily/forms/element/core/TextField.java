@@ -54,7 +54,7 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 			"error.textField.regexMismatch";
 	
 	private static final FormResource RESOURCE = 
-			new ScriptResource("riot-js/text-input.js", null, 
+			new ScriptResource("riot-js/text-input.js", "TextInput", 
 			Resources.PROTOTYPE);
 	
 	private boolean confirm;
@@ -186,10 +186,6 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 			return sb.toString();
 		}
 		return null;
-	}
-	
-	public String getPrecondition() {
-		return regex != null ? "TextInput" : null;
 	}
 	
 	public FormResource getResource() {

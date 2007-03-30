@@ -183,8 +183,10 @@ public class XmlFormRepository extends AbstractFormRepository implements
 		Iterator it = configLocations.iterator();
 		while (it.hasNext()) {
 			Resource res = (Resource) it.next();
-			DocumentReader reader = new ValidatingDocumentReader(res);
-			digester.digest(reader.readDocument(), res);
+			if (res.exists()) {
+				DocumentReader reader = new ValidatingDocumentReader(res);
+				digester.digest(reader.readDocument(), res);
+			}
 		}
 	}
 	

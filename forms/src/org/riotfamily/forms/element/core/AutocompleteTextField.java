@@ -80,11 +80,7 @@ public class AutocompleteTextField extends AbstractTextElement
 		
 		return sb.toString();
 	}
-	
-	public String getPrecondition() {
-		return Resources.SCRIPTACULOUS_CONTROLS.getTest();
-	}
-	
+		
 	public void handleContentRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws IOException {
 

@@ -79,7 +79,7 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 		while (it.hasNext()) {
 			StylesheetResource stylesheet = (StylesheetResource) it.next();
 			writer.print("Resources.loadStyleSheet('");
-			writer.print(stylesheet.getHref());
+			writer.print(stylesheet.getUrl());
 			writer.print("');");
 		}
 		
@@ -89,7 +89,7 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 			while (it.hasNext()) {
 				ScriptResource script = (ScriptResource) it.next();
 				writer.print("{src:'");
-				writer.print(script.getSrc());
+				writer.print(script.getUrl());
 				writer.print('\'');
 				if (script.getTest() != null) {
 					writer.print(", test:'");

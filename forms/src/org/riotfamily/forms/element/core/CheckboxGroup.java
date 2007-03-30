@@ -61,9 +61,5 @@ public class CheckboxGroup extends AbstractMultiSelectElement
 	public String getInitScript() {
 		return TemplateUtils.getInitScript(this, CheckboxGroup.class);
 	}
-	
-	public String getPrecondition() {
-		return null;
-	}
 
 }
