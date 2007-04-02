@@ -98,4 +98,8 @@
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 	
+	<bean id="localesOptionsModel" class="org.riotfamily.forms.element.support.select.StaticOptionsModel">
+		<constructor-arg ref="websiteLocales" />
+	</bean>
+	
 </beans>
