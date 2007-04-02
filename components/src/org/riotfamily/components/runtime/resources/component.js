@@ -12,9 +12,9 @@ riot.Component.prototype = {
 		this.onMouseOver = this.showOutline.bindAsEventListener(this);
 		this.onMouseOut = this.hideOutline.bindAsEventListener(this);
 		
-		this.id = el.getAttribute('riot:containerId');
-		this.type = el.getAttribute('riot:componentType');
-		this.form = el.getAttribute('riot:form');
+		this.id = el.readAttribute('riot:containerId');
+		this.type = el.readAttribute('riot:componentType');
+		this.form = el.readAttribute('riot:form');
 		this.setupElement();
 	},
 	
@@ -115,8 +115,8 @@ riot.Component.prototype = {
 	},
 	
 	propertiesChanged: function() {
-		//TODO: Close popup
 		this.onupdate();
+		riot.popup.close();
 	},
 	
 	onupdate: function() {
@@ -135,7 +135,7 @@ riot.Component.prototype = {
 		for (var i = 0, len = desc.length; i < len; i++) {
 			var e = desc[i];
 			try {
-				var editorType = e.getAttribute('riot:editorType');
+				var editorType = e.readAttribute('riot:editorType');
 				if (editorType) {
 					if (e == this.element || this.element == Element.up(e, '.riot-component')) {
 						if (editorType == 'text') {
@@ -202,6 +202,9 @@ riot.InsertButton.prototype = {
 	},
 	
 	show: function() {
+		if (!this.element.parentNode) {
+			this.componentList.element.appendChild(this.element);
+		}
 		this.element.show();
 	},
 	
@@ -239,6 +242,7 @@ riot.InsertButton.prototype = {
 	oninsert: function(id) {
 		this.componentId = id;
 		this.componentList.update();
+		riot.toolbar.setDirty(this.componentList, true);
 	},
 	
 	changeType: function(type) {
@@ -286,73 +290,141 @@ riot.PublishWidget = Class.create();
 riot.PublishWidget.prototype = {
 	initialize: function(componentList) {
 		this.componentList = componentList;
-		this.element = RBuilder.node('div', {className: 'riot-publish-overlay-preview', style: {position: 'absolute', display: 'none'}},
-			this.controls = RBuilder.node('div', {className: 'riot-publish-controls', style: {position: 'absolute', visibility: 'hidden'}},
-				RBuilder.node('div', {className: 'riot-preview'},
-					RBuilder.node('a', {className: 'riot-publish-button', href: '#', onclick: componentList.publishChanges.bind(componentList)},
-						RBuilder.node('span', {className: 'icon'}), 
-						RBuilder.node('span', {className: 'text'}, '${publish-dialog.publish}')
-					),
-					RBuilder.node('a', {className: 'riot-discard-button', href: '#', onclick: componentList.discardChanges.bind(componentList)},
-						RBuilder.node('span', {className: 'icon'}), 
-						RBuilder.node('span', {className: 'text'}, '${publish-dialog.discard}')
-					),
-					RBuilder.node('a', {className: 'riot-live-button', href: '#', onclick: this.showLiveVersion.bind(this)},
-						RBuilder.node('span', {className: 'icon'}), 
-						RBuilder.node('span', {className: 'text'}, 'View Live Version')
-					)
+		this.previewHtml = this.componentList.element.innerHTML;
+		this.element = RBuilder.node('div', {className: 'riot-publish-outline riot-publish-outline-preview', style: {position: 'absolute', display: 'none'}},
+			this.overlay = RBuilder.node('div', {})
+		);
+		
+		this.controls = RBuilder.node('div', {className: 'riot-publish-controls preview', style: {position: 'absolute', display: 'none'}},
+			RBuilder.node('div', {className: 'riot-preview'},
+				RBuilder.node('div', {className: 'title'}, 'Edit Mode'),
+				RBuilder.node('a', {className: 'riot-publish-button', href: '#', onclick: this.publish.bind(this)},
+					RBuilder.node('span', {className: 'icon'}), 
+					RBuilder.node('span', {className: 'text'}, '${publish-dialog.publish}')
 				),
-				RBuilder.node('div', {className: 'riot-live'},
-					RBuilder.node('a', {className: 'riot-preview-button', href: '#', onclick: this.showPreviewVersion.bind(this)},
-						RBuilder.node('span', {className: 'icon'}), 
-						RBuilder.node('span', {className: 'text'}, 'View Preview Version')
-					)
+				RBuilder.node('a', {className: 'riot-discard-button', href: '#', onclick: this.discard.bind(this)},
+					RBuilder.node('span', {className: 'icon'}), 
+					RBuilder.node('span', {className: 'text'}, '${publish-dialog.discard}')
+				),
+				RBuilder.node('a', {className: 'riot-live-button', href: '#', onclick: this.toggleVersion.bindAsEventListener(this)},
+					RBuilder.node('span', {className: 'icon'}), 
+					RBuilder.node('span', {className: 'text'}, 'View Live Version')
+				)
+			),
+			RBuilder.node('div', {className: 'riot-live'},
+				RBuilder.node('div', {className: 'title'}, 'Live Mode'),
+				RBuilder.node('a', {className: 'riot-preview-button', href: '#', onclick: this.toggleVersion.bindAsEventListener(this)},
+					RBuilder.node('span', {className: 'icon'}), 
+					RBuilder.node('span', {className: 'text'}, 'Switch back to edit mode')
 				)
 			)
 		);
+		this.controls.observe('mouseover', this.clearTimeout.bind(this));
+		this.controls.observe('mouseout', this.scheduleHideControls.bind(this));
+		this.element.observe('mouseover', this.showControls.bind(this));
+		this.element.observe('mouseout', this.scheduleHideControls.bind(this));
+		this.element.observe('click', this.toggleVersion.bind(this));
 	},
 	
 	show: function() {
-		document.body.appendChild(this.element);
-		Position.clone(this.componentList.element, this.element, {offsetTop: -2, offsetLeft: -2});
+		document.body.appendChild(this.controls);
+		this.componentList.element.makePositioned();
+		this.componentList.element.appendChild(this.element);
+		this.overlay.style.height = this.componentList.element.offsetHeight + 'px';
+		this.positionControls();
 		this.element.show();
-		this.controls.style.top = -this.controls.offsetHeight + 'px';
-		this.controls.makeVisible();
+	},
+		
+	showControls: function() {
+		this.clearTimeout();
+		if (riot.activePublishWidget) {
+			if (riot.activePublishWidget != this) {
+				riot.activePublishWidget.hideControls();
+			}
+			else {
+				return;
+			}
+		}
+		riot.activePublishWidget = this;
+		this.overlay.addClassName('riot-publish-overlay');
+		this.positionControls();
+		new Effect.Appear(this.controls, {duration: 0.3});
+	},
+	
+	positionControls: function() {
+		var pos = Position.page(this.element);
+		var top = pos[1];
+		var scrollY = Viewport.getScrollTop();
+		if (top < scrollY) top = scrollY;
+		
+		this.controls.style.left = (pos[0] + 10) + 'px';
+		this.controls.style.top = (top + 10) + 'px';
+	},
+	
+	scheduleHideControls: function() {
+		this.timeout = setTimeout(this.hideControls.bind(this), 250);
+	},
+	
+	clearTimeout: function() {
+		if (this.timeout) clearTimeout(this.timeout);
+	},
+	
+	hideControls: function() {
+		if (riot.activePublishWidget == this) riot.activePublishWidget = null;
+		this.overlay.removeClassName('riot-publish-overlay');
+		this.controls.hide();
 	},
 	
 	hide: function() {
-		this.element.remove();
+		if (this.controls.parentNode) this.controls.remove();
+		if (this.element.parentNode) this.element.remove();
 	},
 	
-	showPreviewVersion: function() {
-		this.element.removeClassName('riot-publish-overlay-live');
-		this.element.addClassName('riot-publish-overlay-preview');
-		
-		this.setHtml(this.previewHtml);
-	},
-	
-	showLiveVersion: function() {
-		this.element.removeClassName('riot-publish-overlay-preview');
-		this.element.addClassName('riot-publish-overlay-live');
-		
-		if (!this.liveHtml) {
-			ComponentEditor.getLiveListHtml(this.componentList.controllerId, 
-					this.componentList.id, this.setLiveHtml.bind(this));
+	toggleVersion: function(ev) {
+		if (ev) Event.stop(ev);
+		this.live = !this.live;
+		this.overlay.toggleClassName('riot-publish-overlay-live', this.live);
+		this.overlay.toggleClassName('riot-publish-overlay-preview', !this.live);
+		this.element.toggleClassName('riot-publish-outline-live', this.live);
+		this.element.toggleClassName('riot-publish-outline-preview', !this.live);
+		this.controls.toggleClassName('live', this.live);
+		this.controls.toggleClassName('preview', !this.live);
+		if (this.live) {
+			if (!this.liveHtml) {
+				ComponentEditor.getLiveListHtml(this.componentList.controllerId, 
+						this.componentList.id, this.setLiveHtml.bind(this));
+			}
+			else {
+				this.setHtml(this.liveHtml);
+			}
 		}
 		else {
-			this.setHtml(this.liveHtml);
+			this.setHtml(this.previewHtml);
 		}
 	},
 	
 	setLiveHtml: function(html) {
 		this.liveHtml = html;
-		this.previewHtml = this.componentList.element.innerHTML;
 		this.setHtml(html);
 	},
 	
 	setHtml: function(html) {
 		this.componentList.replaceHtml(html);
-		Position.clone(this.componentList.element, this.element, {offsetTop: -2, offsetLeft: -2});
+		this.show();
+	},
+	
+	publish: function() {
+		this.componentList.publishChanges();
+		riot.toolbar.setDirty(this.componentList, false);
+		this.hide();
+		return false;
+	},
+	
+	discard: function() {
+		this.componentList.discardChanges();
+		riot.toolbar.setDirty(this.componentList, false);
+		this.hide();
+		return false;
 	}
 }
 
@@ -364,8 +436,7 @@ riot.AbstractComponentCollection.prototype = {
 		this.element = el;
 		el.componentList = this;
 		if (!el.id) el.id = 'riot-components-' + riot.listCount++;
-		this.controllerId = el.getAttribute('riot:controllerId');
-		this.dirty = el.getAttribute('riot:dirty');
+		this.controllerId = el.readAttribute('riot:controllerId');
 	},
 	
 	getComponents: function() {
@@ -387,14 +458,19 @@ riot.AbstractComponentCollection.prototype = {
 	},
 	
 	update: function() {
-		ComponentEditor.getPreviewListHtml(this.controllerId, this.id, this.replaceHtml.bind(this));
+		ComponentEditor.getPreviewListHtml(this.controllerId, this.id, this.onupdate.bind(this));
 	},
 
+	onupdate: function(html) {
+		this.replaceHtml(html);
+		var handler = riot.toolbar.activeButton.handler;
+		if (handler != 'publish') this[handler](true);
+	},
+	
 	replaceHtml: function(html) {
 		this.element.update(html);
 		this.components = null;
 		this.getComponents();
-		//TODO: Invoke setMode() on components
 	},
 	
 	browse: function() {
@@ -410,35 +486,43 @@ riot.AbstractComponentCollection.prototype = {
 	},
 	
 	publish: function(enable) {
-		if (!this.publishWidget) this.publishWidget = new riot.PublishWidget(this);
 		if (enable) {
+			this.publishWidget = new riot.PublishWidget(this);
 			this.publishWidget.show();
 		}
 		else {
 			this.publishWidget.hide();
+			this.publishWidget = null;
 		}
 	}
 }
 
 riot.ComponentSet = riot.AbstractComponentCollection.extend({
-	publishChanges: function() {
-		riot.toolbar.setDirty(this, false);
-		return false;
+	initialize: function(el) {
+		this.SUPER(el);
+		this.dirty = this.getComponents().pluck('element').any(function(e) {
+			return e.readAttribute('riot:dirty') != null;
+		});
 	},
-	
+
+	publishChanges: function() {
+		ComponentEditor.publishContainers(this.getComponents().pluck('id'), 
+				this.publishWidget.hide.bind(this.publishWidget));
+	},
+
 	discardChanges: function() {
-		riot.toolbar.setDirty(this, false);
-		this.publishWidget.hide();
-		return false;
+		ComponentEditor.discardContainers(this.getComponents().pluck('id'), 
+				this.update.bind(this));
 	}
 });
 
 riot.ComponentList = riot.AbstractComponentCollection.extend({
 	initialize: function(el) {
 		this.SUPER(el);
-		this.id = el.getAttribute('riot:listId');
-		this.maxComponents = el.getAttribute('riot:maxComponents');
-		this.minComponents = el.getAttribute('riot:minComponents');
+		this.dirty = el.readAttribute('riot:dirty');
+		this.id = el.readAttribute('riot:listId');
+		this.maxComponents = el.readAttribute('riot:maxComponents');
+		this.minComponents = el.readAttribute('riot:minComponents');
 		ComponentEditor.getValidTypes(this.controllerId, 
 				this.setValidTypes.bind(this));
 	},
@@ -461,14 +545,12 @@ riot.ComponentList = riot.AbstractComponentCollection.extend({
 	insert: function(enable) {
 		if (!isSet(this.maxComponents) || this.getComponents().length < this.maxComponents) {
 			if (enable) {
-				if (!this.insertButton) {
-					this.insertButton = new riot.InsertButton(null, this);
-					this.element.appendChild(this.insertButton.element);
-				}
+				this.insertButton = new riot.InsertButton(null, this);
 				this.insertButton.show();
 			}
 			else {
 				this.insertButton.hide();
+				this.insertButton = null;
 			}
 			riot.activeInsertButton = null;
 		}
@@ -497,7 +579,7 @@ riot.ComponentList = riot.AbstractComponentCollection.extend({
 				this.getComponents().each(function(component) {
 					component.element.addClassName('riot-moveable-component').observe('click', riot.stopEvent, true).disableHandlers('onclick');
 				});
-				//Draggables.addObserver(new riot.ComponentDragObserver(this));
+				Draggables.addObserver(new riot.ComponentDragObserver(this));
 			}
 			else {
 				this.getComponents().each(function(component) {
@@ -526,23 +608,17 @@ riot.ComponentList = riot.AbstractComponentCollection.extend({
 	},
 	
 	publishChanges: function() {
-		riot.toolbar.setDirty(this, false);
 		ComponentEditor.publishList(this.id, 
 				this.publishWidget.hide.bind(this.publishWidget));
-				
-		return false;
 	},
 	
 	discardChanges: function() {
-		riot.toolbar.setDirty(this, false);
-		this.publishWidget.hide();
 		ComponentEditor.discardList(this.id, this.update.bind(this));
-		return false;
 	}
 });
 
 riot.createComponentList = function(el) {
-	var listId = el.getAttribute('riot:listId');
+	var listId = el.readAttribute('riot:listId');
 	if (listId) {
 		return new riot.ComponentList(el);
 	}

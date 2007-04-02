@@ -97,11 +97,11 @@ riot.Toolbar.prototype = {
 				if (riot.toolbar.activeButton) {
 					list[riot.toolbar.handler](true);
 				}
+				if (list.dirty) {
+					dirtyLists.push(list);
+				}
 			}
 			lists.push(list);
-			if (list.dirty) {
-				dirtyLists.push(list);
-			}
 		});
 		this.componentLists = lists.reverse();
 		this.dirtyComponentLists = dirtyLists;
