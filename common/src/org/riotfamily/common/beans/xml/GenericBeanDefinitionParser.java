@@ -127,10 +127,15 @@ public class GenericBeanDefinitionParser implements BeanDefinitionParser {
 			return new RuntimeBeanReference(ref);
 		}
 		else {
-			Element beanEle = XmlUtils.getFirstChildByTagName(element, BEAN_ELEMENT);
-			Assert.notNull(beanEle, "Attribute 'ref' or nested 'bean' tag expected.");
-			return parserContext.getDelegate().parseBeanDefinitionElement(
-					beanEle, definition); 
+			Element beanEle = XmlUtils.getFirstChildElement(element);
+			if (beanEle.getTagName().equals(BEAN_ELEMENT)) {
+				return parserContext.getDelegate().parseBeanDefinitionElement(
+						beanEle, definition); 
+			}
+			else {
+				return parserContext.getDelegate().parseCustomElement(
+						beanEle, definition);
+			}
 		}
 	}
 	
