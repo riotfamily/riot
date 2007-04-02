@@ -59,7 +59,12 @@ public class MvcNamespaceHandler extends NamespaceHandlerSupport {
 		registerBeanDefinitionParser("generic-controller", parser);
 		registerBeanDefinitionParser("hql", parser);
 		registerBeanDefinitionParser("paged-hql", parser);
-		registerBeanDefinitionParser("component-list", parser);
+		registerBeanDefinitionParser("attribute", parser);
+		registerBeanDefinitionParser("current-date", parser);
+		registerBeanDefinitionParser("current-locale", parser);
+		registerBeanDefinitionParser("riot-principal", parser);
+		registerBeanDefinitionParser("string-to-primitive", parser);
+		registerBeanDefinitionParser("date", parser);
 	}
 
 }
