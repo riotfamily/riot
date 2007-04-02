@@ -96,7 +96,10 @@ public abstract class AbstractJob implements Job, BeanNameAware {
 	}
 	
 	protected Object loadObject(String objectId) {
-		return dao.load(objectId);
+		if (objectId != null) {
+			return dao.load(objectId);
+		}
+		return null;
 	}
 	
 	protected abstract void execute(JobContext context, Object entity);
