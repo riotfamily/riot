@@ -70,7 +70,7 @@
 	position: absolute;
 	bottom: 6px;
 	text-align: right;
-	color: #cb0038;
+	color: ${highlight};
 	font-family: arial;
 	font-size: 14px;
 	font-weight: bold;
