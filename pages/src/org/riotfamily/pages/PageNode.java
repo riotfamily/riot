@@ -119,6 +119,9 @@ public class PageNode {
 	}
 	
 	public Page getPage(Locale locale, boolean fallback) {
+		if (pages == null) {
+			return null;
+		}
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();

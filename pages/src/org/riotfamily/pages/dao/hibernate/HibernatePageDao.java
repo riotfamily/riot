@@ -91,6 +91,22 @@ public class HibernatePageDao extends AbstractPageDao {
 		return root;
 	}
 	
+	public PageNode getNodeForHandler(String handlerName) {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria c = session.createCriteria(PageNode.class)
+				.add(Expression.eq("handlerName", handlerName));
+		
+		PageNode node = (PageNode) c.uniqueResult();
+		if (node == null) {
+			node = new PageNode();
+			node.setHandlerName(handlerName);
+			PageNode root = getRootNode();
+			root.addChildNode(node);
+			updateNode(root);
+		}
+		return node;
+	}
+	
 	public void updateNode(PageNode node) {
 		Session session = sessionFactory.getCurrentSession();
 		session.update(node);

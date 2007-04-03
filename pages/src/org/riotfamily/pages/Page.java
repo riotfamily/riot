@@ -54,6 +54,15 @@ public class Page {
 	
 	private VersionContainer versionContainer;
 	
+	
+	public Page() {
+	}
+	
+	public Page(String pathComponent, Locale locale) {
+		this.pathComponent = pathComponent;
+		this.locale = locale;
+	}
+
 	public Long getId() {
 		return this.id;
 	}
@@ -95,11 +104,25 @@ public class Page {
 	}
 	
 	public String getPath() {
+		if (path == null) {
+			path = buildPath();
+		}
 		return path;
 	}
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+	
+	public String buildPath() {
+		StringBuffer path = new StringBuffer();
+		Page page = this;
+		while (page != null) {
+			path.insert(0, page.getPathComponent());
+			path.insert(0, '/');
+			page = page.getParentPage();
+		}
+		return path.toString();
 	}
 
 	public Page getParentPage() {

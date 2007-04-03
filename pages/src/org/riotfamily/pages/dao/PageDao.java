@@ -47,9 +47,9 @@ public interface PageDao {
 
 	public PageAlias findPageAlias(PageLocation location);
 	
+	public void saveRootPage(Page page, String handlerName);
+	
 	public void savePage(Page parent, Page child);
-
-	public void saveRootPage(Page page, Locale locale);
 
 	public Page addTranslation(Page page, Locale locale);
 
@@ -58,6 +58,8 @@ public interface PageDao {
 	public void deletePage(Page page);
 
 	public PageNode getRootNode();
+	
+	public PageNode getNodeForHandler(String handlerName);
 	
 	public void updateNode(PageNode node);
 	

@@ -53,35 +53,23 @@ public abstract class AbstractPageDao implements PageDao {
 		this.componentDao = componentDao;
 	}
 	
-	public void saveRootPage(Page page, Locale locale) {
-		PageNode node = new PageNode(page);
-		PageNode root = getRootNode();
-		root.addChildNode(node);
-		page.setLocale(locale);
-		page.setCreationDate(new Date());
-		page.setPath(buildPath(page));
-		updateNode(root);
-		deleteAlias(new PageLocation(page));
-		log.debug("Page saved: " + page);
+	public void saveRootPage(Page page, String handlerName) {
+		savePage(getRootNode(), page, handlerName);
 	}
 		
 	public void savePage(Page parent, Page page) {
-		parent.addChildPage(page);
-		page.setCreationDate(new Date());
-		page.setPath(buildPath(page));
-		updateNode(parent.getNode());
-		deleteAlias(new PageLocation(page));
-		log.debug("Page saved: " + page);
+		page.setLocale(parent.getLocale());
+		savePage(parent.getNode(), page, null);
 	}
 	
-	protected String buildPath(Page page) {
-		StringBuffer path = new StringBuffer();
-		while (page != null) {
-			path.insert(0, page.getPathComponent());
-			path.insert(0, '/');
-			page = page.getParentPage();
-		}
-		return path.toString();
+	private void savePage(PageNode parentNode, Page page, String handlerName) {
+		PageNode node = new PageNode(page);
+		node.setHandlerName(handlerName);
+		parentNode.addChildNode(node);
+		page.setCreationDate(new Date());
+		updateNode(parentNode);
+		deleteAlias(new PageLocation(page));
+		log.debug("Page saved: " + page);	
 	}
 	
 	public Page addTranslation(Page page, Locale locale) {
@@ -96,11 +84,11 @@ public abstract class AbstractPageDao implements PageDao {
 	
 	public void updatePage(Page page) {
 		boolean dirtyPath = isDirty(page);
-		updatePageWithoutChecks(page);
+		updatePageWithoutChecks(page);	
 		if (dirtyPath) {
 			log.info("Path modified: " + page);
 			PageLocation oldLocation = new PageLocation(page);
-			page.setPath(buildPath(page));
+			page.setPath(page.buildPath());
 			createAlias(page, oldLocation);
 			updatePaths(page.getChildPages());
 		}
@@ -113,7 +101,7 @@ public abstract class AbstractPageDao implements PageDao {
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
 			PageLocation oldLocation = new PageLocation(page);
-			page.setPath(buildPath(page));
+			page.setPath(page.buildPath());
 			createAlias(page, oldLocation);
 			updatePageWithoutChecks(page);
 			updatePaths(page.getChildPages());
