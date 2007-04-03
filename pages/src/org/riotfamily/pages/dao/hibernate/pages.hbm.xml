@@ -27,10 +27,10 @@
 			<generator class="native" />
 		</id>
 		<many-to-one name="node" insert="false" update="false" />
-		<property name="locale" />
+		<property name="locale" unique-key="location" />
 		<property name="creationDate" />
 		<property name="pathComponent" />
-		<property name="path" column="`path`" unique="true" />
+		<property name="path" column="`path`" unique-key="location" />
 		<many-to-one name="versionContainer" cascade="all" />
 	</class>
 	
