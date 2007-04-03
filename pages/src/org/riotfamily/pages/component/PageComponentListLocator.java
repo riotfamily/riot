@@ -29,6 +29,7 @@ import org.riotfamily.components.locator.AbstractComponentListLocator;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.pages.mapping.PageLocationResolver;
 
 /**
@@ -54,7 +55,7 @@ public class PageComponentListLocator extends AbstractComponentListLocator {
 	}
 
 	protected String getPath(HttpServletRequest request) {
-		Page page = (Page) request.getAttribute("page");
+		Page page = PageHandlerMapping.getPage(request);
 		return getPath(page);
 	}
 

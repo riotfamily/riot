@@ -30,10 +30,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
+import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.view.ViewResolverHelper;
 import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.editor.EditModeUtils;
+import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -82,6 +84,8 @@ public class PageController extends AbstractCacheableController
 	public ModelAndView handleRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 
+		FlatMap model = new FlatMap();
+		model.put("page", PageHandlerMapping.getPage(request));
 		View view = viewResolverHelper.resolveView(request, viewName);
 		if (EditModeUtils.isEditMode(request)) {
 			String uri = ServletUtils.getIncludeUri(request);
@@ -90,7 +94,7 @@ public class PageController extends AbstractCacheableController
 				view = new PageView(view, uri);
 			}
 		}
-		return new ModelAndView(view);
+		return new ModelAndView(view, model);
 	}
 	
 	private static class PageView implements View {

@@ -43,6 +43,9 @@ import org.springframework.web.servlet.handler.AbstractHandlerMapping;
  */
 public class PageHandlerMapping extends AbstractHandlerMapping {
 
+	private static final String PAGE_ATTRIBUTE = 
+			PageHandlerMapping.class.getName() + ".page";
+			
 	private static final Log log = LogFactory.getLog(PageHandlerMapping.class);
 	
 	private PageDao pageDao;
@@ -69,7 +72,7 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 		Page page = pageDao.findPage(location);
 		log.debug("Page: " + page);
 		if (page != null) {
-			request.setAttribute("page", page);
+			request.setAttribute(PAGE_ATTRIBUTE, page);
 			String handlerName = page.getHandlerName();
 			if (handlerName != null) {
 				return getApplicationContext().getBean(handlerName);
@@ -92,6 +95,10 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 			}
 		}
 		return null;
+	}
+	
+	public static Page getPage(HttpServletRequest request) {
+		return (Page) request.getAttribute(PAGE_ATTRIBUTE);
 	}
 	
 }
