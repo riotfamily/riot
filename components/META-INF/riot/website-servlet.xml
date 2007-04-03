@@ -41,7 +41,7 @@
 			<map>
 	 			<entry key="freemarkerMacroLibraries">
 					<props>
-						<prop key="component">classpath:org/riotfamily/components/runtime/edit.ftl</prop>
+						<prop key="component">classpath:org/riotfamily/components/runtime/component.ftl</prop>
 					</props>
 	 			</entry>
 	 			<entry key="freemarkerVariables">
