@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.util;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -597,5 +599,47 @@ public final class FormatUtils {
 			}
 		}
 		return -1;
+	}
+	
+	public static String stripWhitespaces(String s) {
+		return stripWhitespaces(s, false);
+	}
+	
+	public static String stripWhitespaces(String s, boolean preserveBreaks) {
+		StringReader in = new StringReader(s);
+		StringBuffer sb = new StringBuffer();
+		try {
+			boolean lineBreak = false;
+			boolean charsWritten = false;
+			int count = 0;
+			int i;
+			while ((i = in.read()) != -1) {
+				char c = (char) i;
+				if (Character.isWhitespace(c)) {
+					if (charsWritten) {
+						count++;
+			            if (preserveBreaks && c == '\n') {
+			            	lineBreak = true;
+					    }
+					}
+		        }
+		        else {
+		        	if (count > 0) {
+		        		sb.append(lineBreak ? '\n' : ' ');
+		        		count = 0;
+		        		lineBreak = false;
+		        	}
+		        	sb.append(c);
+		        	charsWritten = true;
+		        }
+			}
+		}
+		catch (IOException e) {
+			// Should never happen since we are using a StringReader
+		}
+		finally {
+			in.close();
+		}
+		return sb.toString();
 	}
 }
