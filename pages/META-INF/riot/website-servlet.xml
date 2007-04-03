@@ -20,4 +20,26 @@
 		<constructor-arg ref="pageLocationResolver" />
 	</bean>
 	
+	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
+		<property name="properties">
+			<map>
+				<entry key="freemarkerMacroLibraries">
+					<props>
+						<prop key="page">classpath:org/riotfamily/pages/freemarker/page.ftl</prop>
+					</props>
+				</entry>
+				<entry key="freemarkerVariables">
+					<map>
+						<entry key="handlerUrl">
+							<bean class="org.riotfamily.pages.freemarker.HandlerUrlMethod">
+								<constructor-arg ref="pageDao" />
+								<constructor-arg ref="pageLocationResolver" />
+							</bean>
+						</entry>
+					</map>
+	 			</entry>
+			</map>
+		</property>
+	</bean>
+	
 </beans>
