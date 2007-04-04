@@ -124,6 +124,8 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	
 	public static final String PROPERTY_BEAN_REF = "ref";
 	
+	public static final String MAP_KEY_OPTIONS = "key-options";
+	
 	public static final String MODEL = "model";
 	
 	public static final String MODEL_CLASS = "class";
@@ -295,7 +297,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		}
 		
 		if (FileUpload.class.isAssignableFrom(elementClass)) {
-			pvs.removePropertyValue(FILE_STORE);
+			pvs.removePropertyValue("store");
 			String ref = XmlUtils.getAttribute(ele, FILE_STORE);
 			if (ref != null) {
 				FileStore fileStore = (FileStore) beanFactory.getBean(
@@ -314,13 +316,20 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			pvs.addPropertyValue("cropper", formRepository.getImageCropper()); 
 		}
 		
-		//TODO We should consider adding a common interface ...
 		if (ListEditor.class.isAssignableFrom(elementClass)
 				|| MapEditor.class.isAssignableFrom(elementClass)) {
 			
 			Element itemElement = XmlUtils.getFirstChildElement(ele);
 			ElementFactory itemFactory = createFactory(itemElement);
 			pvs.addPropertyValue("itemElementFactory", itemFactory);
+		}
+		
+		if (MapEditor.class.isAssignableFrom(elementClass)) {
+			pvs.removePropertyValue("keyOptions");
+			String optionsRef = XmlUtils.getAttribute(ele, MAP_KEY_OPTIONS);
+			if (optionsRef != null) {
+				pvs.addPropertyValue("keyOptionsModel", getOptionsModel(optionsRef));
+			}
 		}
 		
 		if (AutocompleteTextField.class.isAssignableFrom(elementClass)) {
@@ -425,7 +434,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		return pvs;
 	}
 		
-	protected OptionsModel getOptionsModel(Element element) {
+	private OptionsModel getOptionsModel(Element element) {
 		Element ele = DomUtils.getChildElementByTagName(element, MODEL);
 		OptionsModel model = null;
 		if (ele != null) {
@@ -444,18 +453,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 						ele, MODEL_BEAN_REF);
 				
 				if (beanName != null) {
-					Object bean = beanFactory.getBean(beanName);
-					if (bean instanceof OptionsModel) {
-						model = (OptionsModel) bean;
-					}
-					else if (bean instanceof Collection) {
-						model = new StaticOptionsModel((Collection) bean);
-					}
-					else {
-						throw new FormRepositoryException(resource, formId, 
-								"Bean [" + beanName + "] is neither an " +
-								"OptionsModel nor a Collection: " + bean);
-					}
+					model = getOptionsModel(beanName);
 				}
 			}
 			if (model != null) {
@@ -466,6 +464,21 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			}
 		}
 		return model;
+	}
+	
+	private OptionsModel getOptionsModel(String beanName) {
+		Object bean = beanFactory.getBean(beanName);
+		if (bean instanceof OptionsModel) {
+			return (OptionsModel) bean;
+		}
+		else if (bean instanceof Collection) {
+			return new StaticOptionsModel((Collection) bean);
+		}
+		else {
+			throw new FormRepositoryException(resource, formId, 
+					"Bean [" + beanName + "] is neither an " +
+					"OptionsModel nor a Collection: " + bean);
+		}
 	}
 	
 	private class Import {

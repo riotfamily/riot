@@ -32,7 +32,9 @@ import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.element.support.Container;
 import org.riotfamily.forms.element.support.TemplateElement;
+import org.riotfamily.forms.element.support.select.OptionsModel;
 import org.riotfamily.forms.factory.ElementFactory;
+import org.riotfamily.forms.support.TemplateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 
@@ -40,19 +42,31 @@ import org.springframework.util.Assert;
 /**
  * A list widget to edit maps.
  */
-public class MapEditor extends Container implements Editor {
+public class MapEditor extends TemplateElement implements Editor {
 	
 	/** Class to use for newly created maps */
 	private Class mapClass = HashMap.class;
+	
+	private OptionsModel keyOptionsModel;
 	
 	private String keyCollectionProperty;
 	
 	private String labelProperty;
 	
+	private Container items = new Container();
+	
 	/** Factory to create elements for newly added items */
 	private ElementFactory itemElementFactory;
 	
+	public MapEditor() {
+		addComponent("items", items);
+		setTemplate(TemplateUtils.getTemplatePath(MapEditor.class));
+	}
 	
+	public void setKeyOptionsModel(OptionsModel keyOptionsModel) {
+		this.keyOptionsModel = keyOptionsModel;
+	}
+
 	public void setKeyCollectionProperty(String keyCollectionProperty) {
 		this.keyCollectionProperty = keyCollectionProperty;
 	}
@@ -90,6 +104,10 @@ public class MapEditor extends Container implements Editor {
 			keys = (Collection) getEditorBinding().getEditorBinder()
 					.getPropertyValue(keyCollectionProperty);
 		}
+		else if (keyOptionsModel != null) {
+			keys = keyOptionsModel.getOptionValues();
+		}
+		
 		if (value != null) {
 			if (!(value instanceof Map)) {
 				throw new IllegalArgumentException("Value must implement " +
@@ -107,18 +125,18 @@ public class MapEditor extends Container implements Editor {
 					}
 				}
 			}
-			if (keys != null) {
-				it = keys.iterator();
-				while (it.hasNext()) {
-					addItem(it.next(), null);
-				}
+		}
+		if (keys != null) {
+			Iterator it = keys.iterator();
+			while (it.hasNext()) {
+				addItem(it.next(), null);
 			}
 		}
 	}
 	
 	public Object getValue() {
 		Map map = createOrClearMap();
-		Iterator it = getElements().iterator();
+		Iterator it = items.getElements().iterator();
 		while (it.hasNext()) {
 			MapItem item = (MapItem) it.next();
 			map.put(item.getKey(), item.getValue());
@@ -139,7 +157,7 @@ public class MapEditor extends Container implements Editor {
 
 	protected void addItem(Object key, Object value) {		
 		MapItem item = new MapItem(key);
-		addElement(item);
+		items.addElement(item);
 		item.focus();
 		item.setValue(value);
 	}

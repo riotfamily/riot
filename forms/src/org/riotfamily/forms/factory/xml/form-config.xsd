@@ -225,6 +225,7 @@
 				<xsd:extension base="simple-editor">
 					<xsd:group ref="elements" />
 					<xsd:attribute name="label-property" type="xsd:string" />
+					<xsd:attribute name="key-options" type="xsd:string" />
 					<xsd:attribute name="key-collection-property" type="xsd:string" />
 					<xsd:attribute name="map-class" type="xsd:string" />
 				</xsd:extension>
