@@ -107,6 +107,7 @@
 					<xsd:attribute name="max-length" type="xsd:positiveInteger" />
 					<xsd:attribute name="rows" type="xsd:positiveInteger" />
 					<xsd:attribute name="cols" type="xsd:positiveInteger" />
+					<xsd:attribute name="auto-resize" type="xsd:boolean" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -235,13 +236,10 @@
 	
 	<xsd:element name="group">
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="template-editor">
-					<xsd:group ref="elements" maxOccurs="unbounded" />
-					<xsd:attribute name="label-key" type="xsd:string" />
-					<xsd:attribute name="label-items" type="xsd:boolean" default="true" />
-				</xsd:extension>
-			</xsd:complexContent>
+			<xsd:group ref="elements" maxOccurs="unbounded" />
+			<xsd:attribute name="template" type="xsd:string" />
+			<xsd:attribute name="label-key" type="xsd:string" />
+			<xsd:attribute name="label-items" type="xsd:boolean" default="true" />
 		</xsd:complexType>
 	</xsd:element>
 	

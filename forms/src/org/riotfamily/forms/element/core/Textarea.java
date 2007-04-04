@@ -31,6 +31,7 @@ import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.AbstractTextElement;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
+import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
 
 
@@ -40,27 +41,25 @@ import org.riotfamily.forms.resource.ScriptResource;
 public class Textarea extends AbstractTextElement implements ResourceElement, 
 		DHTMLElement {
 
-	private static FormResource RESOURCE = 
-		new ScriptResource("riot-js/textarea.js", "TextArea");
+	private static FormResource RESOURCE = new ScriptResource(
+			"riot-js/textarea.js", "RiotTextArea", Resources.PROTOTYPE);
 	
-	private int rows = 10;
+	private int rows = 5;
 
 	private int cols = 80;
 
-	public int getCols() {
-		return cols;
-	}
-
+	private boolean autoResize;
+	
 	public void setCols(int cols) {
 		this.cols = cols;
 	}
 
-	public int getRows() {
-		return rows;
-	}
-
 	public void setRows(int rows) {
 		this.rows = rows;
+	}
+
+	public void setAutoResize(boolean autoResize) {
+		this.autoResize = autoResize;
 	}
 
 	public void renderInternal(PrintWriter writer) {
@@ -80,12 +79,19 @@ public class Textarea extends AbstractTextElement implements ResourceElement,
 	}
 	
 	public String getInitScript() {
-		if (getMaxLength() != null) {
-			return "TextArea.setMaxLength('" + getId() + "', " + getMaxLength() + ");";
+		if (getMaxLength() != null || autoResize) {
+			StringBuffer sb = new StringBuffer();
+			sb.append("new RiotTextArea('").append(getId()).append("')");
+			if (getMaxLength() != null) {
+				sb.append(".setMaxLength(").append(getMaxLength()).append(')');
+			}
+			if (autoResize) {
+				sb.append(".autoResize()");
+			}
+			sb.append(';');
+			return sb.toString();
 		}
-		else {
-			return null;
-		}
+		return null;
 	}
 	
 }
