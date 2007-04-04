@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title></title>
-		<link rel="stylesheet" href="${request.contextPath}${resourcePath}/style/common.css" type="text/css" />
+		<@riot.stylesheet href="style/common.css" />
 	</head>
 	<body id="packages">
 		<h1><@spring.messageText "label.packages.title", "Version Information" /></h1>

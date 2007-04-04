@@ -85,7 +85,7 @@ public class PageController extends AbstractCacheableController
 			HttpServletResponse response) throws Exception {
 
 		FlatMap model = new FlatMap();
-		model.put("page", PageHandlerMapping.getPage(request));
+		model.put("currentPage", PageHandlerMapping.getPage(request));
 		View view = viewResolverHelper.resolveView(request, viewName);
 		if (EditModeUtils.isEditMode(request)) {
 			String uri = ServletUtils.getIncludeUri(request);

@@ -63,7 +63,7 @@ public class RiotRuntime implements ServletContextAware {
 		if (servletPrefix == null) {
 			servletPrefix = DEFAULT_SERVLET_PREFIX;
 		}
-		resourcePath = servletPrefix + resourceMapping + '/' + getVersionString();
+		resourcePath = servletPrefix + resourceMapping + '/' + getVersionString() + '/';
 	}
 	
 	public String getServletPrefix() {

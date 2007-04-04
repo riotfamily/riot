@@ -2,16 +2,14 @@
   - Macro that renders the Riot toolbar if the page is requested in preview mode.
   -->
 <#macro toolbar>
-	<#if isEditMode()>
-		<#if riotToolbarResources?has_content>
-			<#list riotToolbarResources as resource>
-				<script type="text/javascript" src="${riotEncodeUrl(riotResourcePath + resource)}"></script>
-			</#list>
-		</#if>			
+	<#if componentMacroHelper.isEditMode()>
+		<#list componentMacroHelper.toolbarScripts as src>
+			<@riot.script src=src />
+		</#list>
 	<#else>
 		<script type="text/javascript">
 			<#-- The following variable is read by the login-bookmarklet: -->
-			var riotPagesUrl = '${request.contextPath}${riotServletPrefix}/pages';
+			var riotPagesUrl = '${riot.href("/pages")}';
 		</script>
 	</#if>
 </#macro>
@@ -88,7 +86,7 @@
 		</#list>
 	</#if>
 	
-	<#if isEditMode()>
+	<#if componentMacroHelper.isEditMode()>
 		<#if tag?has_content>
 			<#local element=tag />
 		<#else>

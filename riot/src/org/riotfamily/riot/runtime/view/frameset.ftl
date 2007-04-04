@@ -6,11 +6,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title><@spring.messageText "title.riot", "Riot V6" /></title>
-		<link rel="icon" href="${request.contextPath}${resourcePath}/style/images/favicon.ico" type="image/x-icon" />
-    	<link rel="shortcut icon" href="${request.contextPath}${resourcePath}/style/images/favicon.ico" type="image/x-icon" /> 
-    	<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
-    	<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/riot-js/viewport.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/frameset.js"></script>
+		<link rel="icon" href="${riot.resource("/style/images/favicon.ico")}" type="image/x-icon" />
+    	<link rel="shortcut icon" href="${riot.resource("/style/images/favicon.ico")}" type="image/x-icon" />
+    	<@riot.script src="prototype/prototype.js" />
+    	<@riot.script src="riot-js/viewport.js" />
+    	<@riot.script src="frameset.js" />
 		<script type="text/javascript" language="JavaScript">
 			var frameset = new RiotFrameset('rows');
 		</script>
@@ -21,8 +21,8 @@
 		</style>
 	</head>
 	<frameset id="rows" rows="126,*,32" border="0">
-		<frame name="path" src="${url(servletPrefix + '/path')}" />
-		<frame name="editor" src="${url(servletPrefix + '/group')}" />
-		<frame name="statusbar" src="${url(servletPrefix + '/statusbar')}" />
+		<frame name="path" src="${riot.href("/path")}" />
+		<frame name="editor" src="${riot.href("/group")}" />
+		<frame name="statusbar" src="${riot.href("/statusbar")}" />
 	</frameset>
 </html>

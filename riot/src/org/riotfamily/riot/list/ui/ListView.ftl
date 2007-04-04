@@ -6,22 +6,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>${title?if_exists}</title>
-		<link rel="stylesheet" href="${request.contextPath}${resourcePath}/style/list.css" type="text/css" />
+		<@riot.stylesheet href="style/list.css" />
 		<#list customStyleSheets as item>
-			<link rel="stylesheet" href="${request.contextPath}${resourcePath}/${item}" type="text/css" />
+			<@riot.stylesheet href=item />
 		</#list>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/scriptaculous/effects.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/riot-js/util.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/riot-js/pager.js"></script>
-		
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/engine.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/util.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/interface/ListService.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/list.js"></script>
-		
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/path.js"></script>		
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/style/tweak.js"></script>		
+		<@riot.script src="prototype/prototype.js" />
+		<@riot.script src="scriptaculous/effects.js" />
+		<@riot.script src="riot-js/util.js" />
+		<@riot.script src="riot-js/pager.js" />
+		<@riot.script src="dwr/engine.js" />
+		<@riot.script src="dwr/util.js" />
+		<@riot.script src="dwr/interface/ListService.js" />
+		<@riot.script src="list.js" />
+		<@riot.script src="path.js" />
+		<@riot.script src="style/tweak.js" />
 		<script type="text/javascript" language="JavaScript">
 			updatePath('${editorId}', null, '${parentId?if_exists}');
 		</script>		

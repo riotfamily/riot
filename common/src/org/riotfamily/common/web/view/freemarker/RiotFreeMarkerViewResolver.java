@@ -23,6 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.view.freemarker;
 
+import java.util.Map;
+
+import org.riotfamily.common.web.view.MacroHelperFactory;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
@@ -30,8 +33,9 @@ public class RiotFreeMarkerViewResolver extends FreeMarkerViewResolver {
 
 	private boolean allowModelOverride = true;
 	
-	private boolean freeMarkerServletMode;
+	private boolean freeMarkerServletMode = false;
 	
+	private Map macroHelperFactories;
 	
 	public RiotFreeMarkerViewResolver() {
 		setExposeSpringMacroHelpers(true);
@@ -44,6 +48,11 @@ public class RiotFreeMarkerViewResolver extends FreeMarkerViewResolver {
 	public void setFreeMarkerServletMode(boolean freeMarkerServletMode) {
 		this.freeMarkerServletMode = freeMarkerServletMode;
 	}
+	
+	protected void initApplicationContext() {
+		super.initApplicationContext();
+		macroHelperFactories = getApplicationContext().getBeansOfType(MacroHelperFactory.class);
+	}
 
 	protected Class requiredViewClass() {
 		return RiotFreeMarkerView.class;
@@ -53,6 +62,7 @@ public class RiotFreeMarkerViewResolver extends FreeMarkerViewResolver {
 		RiotFreeMarkerView view = (RiotFreeMarkerView) super.buildView(viewName);
 		view.setAllowModelOverride(allowModelOverride);
 		view.setFreeMarkerServletMode(freeMarkerServletMode);
+		view.setMacroHelperFactories(macroHelperFactories);
 		return view;
 	}
 }

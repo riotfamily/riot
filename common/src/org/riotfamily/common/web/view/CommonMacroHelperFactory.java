@@ -14,30 +14,36 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.view.freemarker;
+package org.riotfamily.common.web.view;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.view.ViewContext;
+import org.riotfamily.common.web.filter.ResourceStamper;
 
-public abstract class AbstractStringTransformerMethod 
-		extends AbstractSimpleMethod {
+/**
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public class CommonMacroHelperFactory implements MacroHelperFactory {
 
-	protected final Object exec(Object arg) throws Exception {
-		HttpServletRequest request = ViewContext.getRequest();
-		HttpServletResponse response = ViewContext.getResponse();
-		return transform((String) arg, request, response);
-	}
+	private ResourceStamper stamper;
 	
-	protected abstract String transform(String s, HttpServletRequest request, 
-			HttpServletResponse response) throws Exception;
+	public void setStamper(ResourceStamper stamper) {
+		this.stamper = stamper;
+	}
+
+	public Object createMacroHelper(HttpServletRequest request, 
+			HttpServletResponse response) {
+		
+		return new CommonMacroHelper(request, response, stamper);
+	}
 
 }

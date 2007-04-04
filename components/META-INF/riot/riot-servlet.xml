@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 	
 	<!-- 
 	  - Service bean to edit components. Exposed via DWR.
@@ -62,13 +67,11 @@
 	</bean>
 
 	<!--
-	  - Overwrites the default loginFormController to use another view. 
-	  - The view includes a box with istallation instructions for the 
-	  - Riot-login bookmarklet.
+	  - Overwrites the default loginFormView to display a box with istallation 
+	  - instructions for the Riot-login bookmarklet.
 	  -->	
-	<bean id="loginFormController" class="org.riotfamily.riot.security.ui.LoginFormController">
-		<constructor-arg ref="loginManager" />
-		<property name="viewName" value="classpath:/org/riotfamily/components/runtime/view/login-form.ftl" />
+	<bean id="loginFormViewReplacement" class="java.lang.String">
+		<constructor-arg value="classpath:org/riotfamily/components/runtime/view/login-form.ftl" />
 	</bean>
 	
 	<!-- 

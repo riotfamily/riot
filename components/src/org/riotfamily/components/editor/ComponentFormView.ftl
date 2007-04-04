@@ -5,11 +5,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title></title>
-		<link rel="stylesheet" href="${request.contextPath}${resourcePath}/style/form.css" type="text/css" />
-		<link rel="stylesheet" href="${request.contextPath}${resourcePath}/style/component-form.css" type="text/css" />
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/style/tweak.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/riot-js/viewport.js"></script>
+		<@riot.stylesheet href="style/form.css" />
+		<@riot.stylesheet href="style/component-form.css" />
+		<@riot.script src="prototype/prototype.js" />
+		<@riot.script src="style/tweak.js" />
+		<@riot.script src="riot-js/viewport.js" />
 		<style type="text/css">
 			html, body { 
 				border: none; 

@@ -6,21 +6,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title></title>
-		<link rel="stylesheet" href="${request.contextPath}${resourcePath}/style/status.css" type="text/css" />
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/style/tweak.js"></script>
+		<@riot.stylesheet href="style/status.css" />
+		<@riot.script src="prototype/prototype.js" />
+		<@riot.script src="style/tweak.js" />
 	</head>
 	<body onload="TweakStyle.status()">
 		<div id="panel">
 			<div id="status">
 				<span class="label"><@spring.messageText "label.status.username", "User" />:</span> <span class="value">${sessionData.username?if_exists}</span>
 				<span class="label"><@spring.messageText "label.status.lastLogin", "Last login" />: </span><span class="value">${sessionData.lastLoginData?if_exists} [${sessionData.lastLoginIP?if_exists}]</span>
-				<a href="${url(servletPrefix + '/logout')}"><@spring.messageText "label.status.logout", "Logout" /></a>
+				<a href="${riot.href("/logout")}"><@spring.messageText "label.status.logout", "Logout" /></a>
 			</div>
 		</div>
 		<script>
 			new PeriodicalExecuter(function() {
-				new Ajax.Request('${url(servletPrefix + '/ping')}');
+				new Ajax.Request('${riot.href("/ping")}');
 			}, 180);
 		</script>
 	</body>

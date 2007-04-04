@@ -21,14 +21,12 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.freemarker;
+package org.riotfamily.pages.macro;
 
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.web.view.ViewContext;
-import org.riotfamily.common.web.view.freemarker.AbstractSimpleMethod;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
@@ -36,34 +34,36 @@ import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageLocationResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class HandlerUrlMethod extends AbstractSimpleMethod {
+public class PageMacroHelper {
 
 	private PageDao pageDao;
 	
 	private PageLocationResolver resolver;
+
+	private HttpServletRequest request;
 	
-	public HandlerUrlMethod(PageDao pageDao, PageLocationResolver resolver) {
+	public PageMacroHelper(PageDao pageDao, PageLocationResolver resolver, 
+			HttpServletRequest request) {
+
 		this.pageDao = pageDao;
 		this.resolver = resolver;
+		this.request = request;
 	}
 
-	protected Object exec(Object arg) throws Exception {
-		String handlerName = (String) arg;
-		HttpServletRequest request = ViewContext.getRequest();
+	public String getHandlerUrl(String handlerName) {
 		PageNode node = pageDao.getNodeForHandler(handlerName);
 		if (node != null) {
 			Locale locale = RequestContextUtils.getLocale(request);
 			Page page = node.getPage(locale);
 			if (page != null) {
-				String url = resolver.getUrl(new PageLocation(page));
-				return request.getContextPath() + url;
+				return resolver.getUrl(new PageLocation(page));
 			}
 		}
 		return null;
 	}
+	
 }

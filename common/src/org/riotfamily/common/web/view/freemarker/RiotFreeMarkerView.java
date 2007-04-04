@@ -24,13 +24,14 @@
 package org.riotfamily.common.web.view.freemarker;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.view.ViewContext;
+import org.riotfamily.common.web.view.MacroHelperFactory;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
 
@@ -39,22 +40,22 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
  * <ul>
  * <li>Model attributes may override attributes from the request or the session</li>
  * <li>The HttpServletRequest is exposed under the key "request"</li>
- * <li>The template URL is exposed under the key "template"</li>
  * <li>The model is only exposed to the request if freeMarkerServletMode is enabled</li>
+ * <li>Provides the possibility to expose objects created by a {@link MacroHelperFactory}</li>
  * </ul> 
  */
 public class RiotFreeMarkerView extends FreeMarkerView {	
 	
 	public static final String REQUEST_ATTRIBUTE = "request";
 	
-	public static final String TEMPLATE_ATTRIBUTE = "template";
-		
 	public static final String MODEL_ATTRIBUTE = 
 			RiotFreeMarkerView.class.getName() + ".model";
 	
 	private boolean allowModelOverride = true;
 	
-	private boolean freeMarkerServletMode;
+	private boolean freeMarkerServletMode = false;
+	
+	private Map macroHelperFactories;
 	
 	public void setAllowModelOverride(boolean allowModelOverride) {
 		this.allowModelOverride = allowModelOverride;
@@ -64,6 +65,10 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 		this.freeMarkerServletMode = freeMarkerServletMode;
 	}
 	
+	public void setMacroHelperFactories(Map macroHelperFactories) {
+		this.macroHelperFactories = macroHelperFactories;
+	}
+
 	public void render(Map model, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 	
@@ -88,19 +93,15 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 			throws Exception {
 
 		unwrapModel(model);
-		ViewContext.execute(request, response, new ViewContext.Callback() {
-			public void doInContext() throws Exception {
-				doRender(model, request, response);
-			}
-		});
-	}
-	
-	protected void doRender(Map model, HttpServletRequest request, 
-			HttpServletResponse response) throws Exception {
-		
 		model.put(REQUEST_ATTRIBUTE, request);
-		model.put(TEMPLATE_ATTRIBUTE, getUrl());
-		
+		if (macroHelperFactories != null) {
+			Iterator it = macroHelperFactories.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry entry = (Map.Entry) it.next();
+				MacroHelperFactory factory = (MacroHelperFactory) entry.getValue();
+				model.put(entry.getKey(), factory.createMacroHelper(request, response));
+			}
+		}
 		if (freeMarkerServletMode) {
 			super.doRender(model, request, response);
 		}

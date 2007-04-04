@@ -7,19 +7,17 @@
 	<head>
 		<title></title>
 		<#list customStyleSheets as item>
-			<link rel="stylesheet" href="${request.contextPath}${resourcePath}/${item}" type="text/css" />
+			<@riot.stylesheet href=item />
 		</#list>
-		<link rel="stylesheet" href="${request.contextPath}${resourcePath}/style/form.css" type="text/css" />
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/path.js"></script>
-		
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/riot-js/util.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/engine.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/util.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/interface/ListService.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/list.js"></script>
-		
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/style/tweak.js"></script>
+		<@riot.stylesheet href="style/form.css" />
+		<@riot.script src="prototype/prototype.js" />
+		<@riot.script src="path.js" />
+		<@riot.script src="riot-js/util.js" />
+		<@riot.script src="dwr/engine.js" />
+		<@riot.script src="dwr/util.js" />
+		<@riot.script src="dwr/interface/ListService.js" />
+		<@riot.script src="list.js" />
+		<@riot.script src="style/tweak.js" />
 		
 		<script type="text/javascript" language="JavaScript">
 			updatePath('${editorId}', '${objectId?if_exists}', '${parentId?if_exists}');

@@ -14,32 +14,36 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.view.freemarker;
+package org.riotfamily.riot.runtime.macro;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.common.web.view.ViewContext;
-import org.springframework.util.StringUtils;
+import org.riotfamily.common.web.view.MacroHelperFactory;
+import org.riotfamily.riot.runtime.RiotRuntime;
 
-import freemarker.template.TemplateMethodModel;
-import freemarker.template.TemplateModelException;
+/**
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public class RiotMacroHelperFactory implements MacroHelperFactory {
 
-public class OriginalRequestUriMethod implements TemplateMethodModel {
+	private RiotMacroHelper riotMacroHelper;
 	
-	public Object exec(List args) throws TemplateModelException {
-		String uri = ServletUtils.getOriginatingRequestUri(ViewContext.getRequest());
-		if (StringUtils.hasText(ViewContext.getRequest().getQueryString())) {
-			uri = uri + "?" + ViewContext.getRequest().getQueryString();
-		}
- 		return uri;
+	public RiotMacroHelperFactory(RiotRuntime runtime) {
+		this.riotMacroHelper = new RiotMacroHelper(runtime);
 	}
-
+	
+	public Object createMacroHelper(HttpServletRequest request, 
+			HttpServletResponse response) {
+		
+		return riotMacroHelper;
+	}
 }

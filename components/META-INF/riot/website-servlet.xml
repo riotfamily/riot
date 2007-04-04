@@ -25,33 +25,30 @@
 		<property name="cache" ref="websiteCache" />
 	</bean>
 	
-	<bean id="riotToolbarResources" class="org.riotfamily.common.beans.module.ModularListFactoryBean">
-		<property name="key" value="riotToolbarResources" />
-		<property name="sourceListFirst" value="true" />
-		<property name="sourceList">
-			<list>
-				<value>/riot-js/resources.js</value>
-				<value>/pages.js</value>
-			</list>
-		</property>
-	</bean>
-	
 	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
 		<property name="properties">
 			<map>
 	 			<entry key="freemarkerMacroLibraries">
 					<props>
-						<prop key="component">classpath:org/riotfamily/components/runtime/component.ftl</prop>
+						<prop key="component">classpath:org/riotfamily/components/macro/component.ftl</prop>
 					</props>
 	 			</entry>
-	 			<entry key="freemarkerVariables">
-					<map>
-						<entry key="riotResourcePath" value-ref="riotResourcePath" />
-						<entry key="riotToolbarResources" value-ref="riotToolbarResources" />
-						<entry key="isEditMode"><bean class="org.riotfamily.components.editor.EditModeMethod" /></entry>
-					</map>
-	 			</entry>
 	 		</map>
+		</property>
+	</bean>
+	
+	<bean id="componentMacroHelper" class="org.riotfamily.components.macro.ComponentMacroHelperFactory">
+		<property name="toolbarScripts">
+			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+				<property name="key" value="riotToolbarResources" />
+				<property name="sourceListFirst" value="true" />
+				<property name="sourceList">
+					<list>
+						<value>riot-js/resources.js</value>
+						<value>pages.js</value>
+					</list>
+				</property>
+			</bean>
 		</property>
 	</bean>
 	

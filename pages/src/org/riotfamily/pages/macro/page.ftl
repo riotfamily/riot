@@ -1,3 +1,7 @@
+<#function handlerUrl handlerName>
+	<#return common.url(pageMacroHelper.getHandlerUrl(handlerName)) />
+</#function>
+
 <#macro text page, key, tag="" attributes ...>
 	<#local props = page.versionContainer.latestVersion.properties />
 	<#local attrs = {"riot:containerId": page.versionContainer.id} + attributes />

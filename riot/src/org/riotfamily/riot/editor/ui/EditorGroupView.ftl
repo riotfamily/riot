@@ -6,13 +6,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title></title>
-		<link rel="stylesheet" href="${request.contextPath}${resourcePath}/style/group.css" type="text/css" />
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/path.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/scriptaculous/effects.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/effects.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/style/tweak.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/riot-js/util.js"></script>
+		<@riot.stylesheet href="style/group.css" />
+		<@riot.script src="path.js" />
+		<@riot.script src="prototype/prototype.js" />
+		<@riot.script src="scriptaculous/effects.js" />
+		<@riot.script src="effects.js" />
+		<@riot.script src="style/tweak.js" />
+		<@riot.script src="riot-js/util.js" />
 		<script type="text/javascript" language="JavaScript">
 			updatePath('${group.id}');
 		</script>		
@@ -22,8 +22,8 @@
 			<div id="editors" class="main">
 				<div class="title"><span>${group.title}</span></div>
 				<#list group.editors as ref>
-					<a class="editor ${ref.styleClass?default('default')}" href="${url(ref.editorUrl)}" <#if ref.targetWindow?exists> target="${ref.targetWindow}"</#if>>
-						<div class="icon"<#if ref.icon?exists> style="background-image:url(${request.contextPath}${resourcePath}/style/icons/editors/${ref.icon}.gif)"</#if>></div>
+					<a class="editor ${ref.styleClass?default('default')}" href="${common.url(ref.editorUrl)}" <#if ref.targetWindow?exists> target="${ref.targetWindow}"</#if>>
+						<div class="icon"<#if ref.icon?exists> style="background-image:url(${riot.resource("style/icons/editors/" + ref.icon + ".gif")})"</#if>></div>
 						<div class="text">
 							<div class="iefix1"><div class="iefix2">
 								<div class="label">${ref.label}</div>
@@ -35,8 +35,8 @@
 			</div>
 		</div>
 		<div class="extra">
-			${include(servletPrefix + '/notifications')}
-			${include(servletPrefix + '/status')}
+			<@riot.controller "/notifications" />
+			<@riot.controller "/status" />
 		</div>
 	</body>
 </html>

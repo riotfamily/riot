@@ -1,10 +1,13 @@
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.0.xsd
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx.xsd">
 
@@ -123,29 +126,25 @@
 		
 	<bean id="defaultPolicy" class="org.riotfamily.riot.security.policy.GrantAllPolicy" />
 	
-	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+	<bean id="freemarkerConfig" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerConfigurer">
 		<property name="templateLoaders">
 			<list>
 				<bean class="org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader" />
 			</list>
 		</property>
+		<property name="macroLibraries">
+			<bean class="org.riotfamily.common.beans.module.ModularPropertiesFactoryBean">
+				<property name="key" value="freemarkerMacroLibraries" />
+				<property name="properties">
+					<props>
+						<prop key="common">classpath:org/riotfamily/common/web/view/freemarker/common.ftl</prop>
+						<prop key="riot">classpath:org/riotfamily/riot/runtime/macro/riot.ftl</prop>
+					</props>
+				</property>
+			</bean>
+		</property>
 		<property name="freemarkerVariables">
 			<map>
-				<entry key="url"><bean class="org.riotfamily.common.web.view.freemarker.EncodeUrlMethod" /></entry>
-				<entry key="include"><bean class="org.riotfamily.common.web.view.freemarker.IncludeMethod" /></entry>
-				<entry key="riotVersion"><bean factory-bean="riotRuntime" factory-method="getVersionString" /></entry>
-			</map>
-		</property>
-	</bean>
-	
-	<bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
-		<property name="viewClass" value="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView" />
-		<property name="cache" value="true" />
-		<property name="exposeSpringMacroHelpers" value="true" />
-        <property name="attributesMap">
-        	<map>
-	        	<entry key="servletPrefix" value-ref="riotServletPrefix" />
-        		<entry key="resourcePath" value-ref="riotResourcePath" />
         		<entry key="customStyleSheets">
         			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
 						<property name="key" value="customStyleSheets" />
@@ -156,9 +155,20 @@
 						</property>
 					</bean>
         		</entry>
-        	</map>
-        </property>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="riotMacroHelper" class="org.riotfamily.riot.runtime.macro.RiotMacroHelperFactory">
+		<constructor-arg ref="riotRuntime" />
+	</bean>
+	
+	<bean id="viewResolver" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerViewResolver">
+		<property name="viewClass" value="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView" />
+		<property name="cache" value="true" />
     </bean>
+    
+	<bean id="commonMacroHelper" class="org.riotfamily.common.web.view.CommonMacroHelperFactory" />
        
 	<!-- Core list commands -->
 	
@@ -276,6 +286,12 @@
 	  -->
 	<bean id="loginFormController" name="/login" class="org.riotfamily.riot.security.ui.LoginFormController">
 		<constructor-arg ref="loginManager" />
+		<property name="viewName" ref="loginFormView" />
+	</bean>
+	
+	<bean id="loginFormView" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
+		<property name="implementationBeanName" value="loginFormViewReplacement" />
+		<property name="fallback" value="classpath:org/riotfamily/riot/security/ui/LoginFormView.ftl" />
 	</bean>
 	
 	<!--

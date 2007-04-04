@@ -9,8 +9,8 @@
 			<@spring.messageText "label.notifications.emptyList", "No new messages" />					
 		</div>
 	</div>
-	<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/notifications.js"></script>
+	<@riot.script src="notifications.js" />
 	<script type="text/javascript" language="JavaScript">
-		new NotificationList('notificationList', '${url(servletPrefix + '/notifications')}');			
+		new NotificationList('notificationList', '${riot.href("/notifications")}');			
 	</script>				
 </div>	

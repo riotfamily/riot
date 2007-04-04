@@ -14,38 +14,38 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.view.freemarker;
+package org.riotfamily.components.macro;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
 
-import freemarker.template.TemplateMethodModel;
-import freemarker.template.TemplateModelException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-public abstract class AbstractSimpleMethod implements TemplateMethodModel {
+import org.riotfamily.common.web.view.MacroHelperFactory;
 
-	public final Object exec(List args) throws TemplateModelException {
-		if (args.size() > 1) {
-			throw new TemplateModelException("Invalid number of arguments.");
-		}
-		try {
-			Object arg = args.isEmpty() ? null : args.get(0);
-			return exec(arg);
-		}
-		catch (RuntimeException e) {
-			throw e;
-		}
-		catch (Exception e) {
-			throw new TemplateModelException(e);
-		}
-	}
+/**
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public class ComponentMacroHelperFactory implements MacroHelperFactory {
+
+	private Collection toolbarScripts = Collections.EMPTY_LIST;
 	
-	protected abstract Object exec(Object arg) throws Exception;
+	public void setToolbarScripts(Collection toolbarScripts) {
+		this.toolbarScripts = toolbarScripts;
+	}
 
+	public Object createMacroHelper(HttpServletRequest request, 
+			HttpServletResponse response) {
+		
+		return new ComponentMacroHelper(request, toolbarScripts);
+	}
 }

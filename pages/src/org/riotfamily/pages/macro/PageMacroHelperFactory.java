@@ -14,28 +14,42 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.view.freemarker;
+package org.riotfamily.pages.macro;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.view.ViewContext;
+import org.riotfamily.common.web.view.MacroHelperFactory;
+import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.pages.mapping.PageLocationResolver;
 
-public class IncludeMethod extends AbstractSimpleMethod {
+/**
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public class PageMacroHelperFactory implements MacroHelperFactory {
 
-	protected Object exec(Object arg) throws Exception {
-		String url = (String) arg;
-		HttpServletRequest request = ViewContext.getRequest();
-		RequestDispatcher rd = request.getRequestDispatcher(url);
-		rd.include(request, ViewContext.getResponse());
-		return "";
+	private PageDao pageDao;
+	
+	private PageLocationResolver resolver;
+	
+	public PageMacroHelperFactory(PageDao pageDao, 
+			PageLocationResolver resolver) {
+		
+		this.pageDao = pageDao;
+		this.resolver = resolver;
 	}
 
+	public Object createMacroHelper(HttpServletRequest request, 
+			HttpServletResponse response) {
+		
+		return new PageMacroHelper(pageDao, resolver, request);
+	}
 }

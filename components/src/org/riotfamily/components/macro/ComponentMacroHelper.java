@@ -14,26 +14,43 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.view.freemarker;
+package org.riotfamily.components.macro;
+
+import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.components.editor.EditModeUtils;
 
-public class EncodeUrlMethod extends AbstractStringTransformerMethod {
+/**
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public class ComponentMacroHelper {
 
-	protected String transform(String s, HttpServletRequest request, 
-			HttpServletResponse response) throws Exception {
+	private HttpServletRequest request;
+	
+	private Collection toolbarScripts;
+	
+	public ComponentMacroHelper(HttpServletRequest request, 
+			Collection toolbarScripts) {
 		
-		return ServletUtils.resolveAndEncodeUrl(s, request, response);
+		this.request = request;
+		this.toolbarScripts = toolbarScripts;
 	}
 
+	public boolean isEditMode() {
+		return EditModeUtils.isEditMode(request);
+	}
+	
+	public Collection getToolbarScripts() {
+		return this.toolbarScripts;
+	}
 }

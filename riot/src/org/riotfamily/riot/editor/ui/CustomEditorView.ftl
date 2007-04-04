@@ -4,7 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/path.js"></script>
+	<@riot.script src="path.js" />
 	<script type="text/javascript" language="JavaScript">
 		updatePath('${editorId}');
 		window.location.replace('${editorUrl}');

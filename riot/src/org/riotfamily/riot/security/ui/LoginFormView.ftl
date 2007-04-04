@@ -11,11 +11,11 @@
 				top.location.replace(window.location.href);
 			}
 		</script>
-		<link rel="stylesheet" href="${request.contextPath}${resourcePath}/style/login.css" type="text/css" />
-		<link rel="icon" href="${request.contextPath}${resourcePath}/style/images/favicon.ico" type="image/x-icon" />
-    	<link rel="shortcut icon" href="${request.contextPath}${resourcePath}/style/images/favicon.ico" type="image/x-icon" /> 
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/style/tweak.js"></script>
+		<@riot.stylesheet href="style/login.css" />
+		<link rel="icon" href="${riot.resource("/style/images/favicon.ico")}" type="image/x-icon" />
+    	<link rel="shortcut icon" href="${riot.resource("/style/images/favicon.ico")}" type="image/x-icon" />
+    	<@riot.script src="prototype/prototype.js" />
+    	<@riot.script src="style/tweak.js" />
 	</head>
 	<body onload="TweakStyle.login();window.focus();$('username').focus()">
 		<div id="login">

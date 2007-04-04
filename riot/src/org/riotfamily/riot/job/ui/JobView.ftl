@@ -5,16 +5,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/interface/JobUIService.js"></script>
-<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/engine.js"></script>
-<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/dwr/util.js"></script>
-<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
-<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/scriptaculous/effects.js"></script>
-<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/riot-js/util.js"></script>
-<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/style/tweak.js"></script>
-<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/path.js"></script>
-<link rel="stylesheet" href="${request.contextPath}${resourcePath}/style/common.css" type="text/css" />
-<link rel="stylesheet" href="${request.contextPath}${resourcePath}/style/job.css" type="text/css" />
+<@riot.script src="dwr/interface/JobUIService.js" />
+<@riot.script src="dwr/engine.js" />
+<@riot.script src="dwr/util.js" />
+<@riot.script src="prototype/prototype.js" />
+<@riot.script src="scriptaculous/effects.js" />
+<@riot.script src="riot-js/util.js" />
+<@riot.script src="style/tweak.js" />
+<@riot.script src="path.js" />
+<@riot.stylesheet href="style/common.css" />
+<@riot.stylesheet href="style/job.css" />
 </head>
 <body onload="dwr.engine.setActiveReverseAjax(true)">
 	<h1 id="name"></h1>

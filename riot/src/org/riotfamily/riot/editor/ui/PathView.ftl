@@ -8,16 +8,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title></title>
-		<link rel="stylesheet" href="${request.contextPath}${resourcePath}/style/path.css" type="text/css" />
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/pathView.js"></script>
-		<script type="text/javascript" language="JavaScript" src="${request.contextPath}${resourcePath}/style/tweak.js"></script>
+		<@riot.stylesheet href="style/path.css" />
+		<@riot.script src="prototype/prototype.js" />
+		<@riot.script src="pathView.js" />
+		<@riot.script src="style/tweak.js" />
 		<script type="text/javascript" language="JavaScript">
 			path = new Path();
 		</script>
 	</head>
 	<body onload="TweakStyle.path()">
-		<div id="logo" title="Riot V${riotVersion}"></div>
+		<div id="logo" title="Riot V${riotMacroHelper.runtime.versionString}"></div>
 		<div id="path"><@renderPath /></div>
 	</body>
 </html>
@@ -26,7 +26,7 @@
 <#macro renderPath>
 	<#list path.components as comp>
 		<#if comp.enabled>
-			<a href="${url(comp.editorUrl)}" target="editor" class="${comp.editorType}">${comp.label?default('[untitled]')}<#if comp.editorType == "list">:</#if></a>
+			<a href="${common.url(comp.editorUrl)}" target="editor" class="${comp.editorType}">${comp.label?default('[untitled]')}<#if comp.editorType == "list">:</#if></a>
 		<#else>
 			<span class="${comp.editorType} active ${comp.editorType}-active">${comp.label?default('[untitled]')}</span>
 		</#if>

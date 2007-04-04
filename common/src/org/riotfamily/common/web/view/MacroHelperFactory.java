@@ -21,20 +21,17 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.editor;
+package org.riotfamily.common.web.view;
 
-import org.riotfamily.common.web.view.ViewContext;
-import org.riotfamily.common.web.view.freemarker.AbstractSimpleMethod;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * FreeMarker method that returns whether the page is viewed in edit-mode.
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class EditModeMethod extends AbstractSimpleMethod {
+public interface MacroHelperFactory {
 
-	protected Object exec(Object arg) throws Exception {
-		return Boolean.valueOf(EditModeUtils.isEditMode(
-				ViewContext.getRequest()));
-	}
+	public Object createMacroHelper(HttpServletRequest request, 
+			HttpServletResponse response);
 }
