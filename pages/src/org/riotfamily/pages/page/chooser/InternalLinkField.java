@@ -68,11 +68,7 @@ public class InternalLinkField extends AbstractTextElement
 				new FormResource[] { Resources.PROTOTYPE, 
 				new StylesheetResource("style/internal-link-field.css")});
 	}
-	
-	public String getPrecondition() {
-		return "WindowCallback";
-	}
-	
+		
 	public String getInitScript() {
 		return TemplateUtils.getInitScript(this);
 	}
