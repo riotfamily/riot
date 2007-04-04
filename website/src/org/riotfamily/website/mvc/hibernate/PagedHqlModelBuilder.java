@@ -33,7 +33,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.riotfamily.common.collection.FlatMap;
-import org.riotfamily.common.web.view.Pager;
+import org.riotfamily.website.mvc.view.Pager;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.web.bind.ServletRequestUtils;

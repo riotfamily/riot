@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.view;
+package org.riotfamily.website.mvc.view;
 
 import java.util.Locale;
 
@@ -36,8 +36,8 @@ import org.springframework.web.servlet.ViewResolver;
  * In order to dump the model whenever a controller returns no view, add the
  * following to bean definitions to the context of your DispatcherServlet: 
  * <pre>
- *  &lt;bean id="viewNameTranslator" class="{@link org.riotfamily.common.web.view.FixedViewNameTranslator}" /&gt;
- *  &lt;bean class="{@link org.riotfamily.common.web.view.DumpModelViewResolver}" /&gt;
+ *  &lt;bean id="viewNameTranslator" class="{@link org.riotfamily.website.mvc.view.FixedViewNameTranslator}" /&gt;
+ *  &lt;bean class="{@link org.riotfamily.website.mvc.view.DumpModelViewResolver}" /&gt;
  * </pre>	
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4

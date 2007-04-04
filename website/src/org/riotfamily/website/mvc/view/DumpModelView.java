@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.view;
+package org.riotfamily.website.mvc.view;
 
 import java.util.Iterator;
 import java.util.Map;
