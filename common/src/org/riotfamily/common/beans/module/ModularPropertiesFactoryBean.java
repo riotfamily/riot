@@ -31,6 +31,7 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -43,14 +44,20 @@ import org.springframework.context.ApplicationContextAware;
  * @see org.riotfamily.common.beans.module.FactoryBeanModule
  */
 public class ModularPropertiesFactoryBean extends PropertiesFactoryBean
-		implements ApplicationContextAware {
+		implements ApplicationContextAware, BeanNameAware {
 
 	private static Log log = LogFactory.getLog(ModularPropertiesFactoryBean.class);
 	
 	private String key;
 	
 	private ApplicationContext applicationContext;
-		
+	
+	public void setBeanName(String name) {
+		if (key == null) {
+			key = name;
+		}
+	}
+	
 	public void setKey(String key) {
 		this.key = key;
 	}

@@ -31,6 +31,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.context.ApplicationContext;
@@ -44,7 +45,7 @@ import org.springframework.context.ApplicationContextAware;
  * @see org.riotfamily.common.beans.module.FactoryBeanModule
  */
 public class ModularListFactoryBean extends AbstractFactoryBean implements
-		ApplicationContextAware {
+		ApplicationContextAware, BeanNameAware {
 
 	private List sourceList;
 
@@ -111,6 +112,12 @@ public class ModularListFactoryBean extends AbstractFactoryBean implements
 		return java.util.List.class;
 	}
 
+	public void setBeanName(String name) {
+		if (key == null) {
+			key = name;
+		}
+	}
+	
 	public void setKey(String key) {
 		this.key = key;
 	}

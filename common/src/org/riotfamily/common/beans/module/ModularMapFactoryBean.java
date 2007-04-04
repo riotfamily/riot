@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.MapFactoryBean;
 import org.springframework.context.ApplicationContext;
@@ -42,7 +43,7 @@ import org.springframework.context.ApplicationContextAware;
  * @see org.riotfamily.common.beans.module.FactoryBeanModule
  */
 public class ModularMapFactoryBean extends MapFactoryBean 
-		implements ApplicationContextAware {
+		implements ApplicationContextAware, BeanNameAware {
 
 	private static Log log = LogFactory.getLog(ModularMapFactoryBean.class);
 	
@@ -51,6 +52,12 @@ public class ModularMapFactoryBean extends MapFactoryBean
 	private boolean includeRootMap;
 	
 	private ApplicationContext applicationContext;
+	
+	public void setBeanName(String name) {
+		if (key == null) {
+			key = name;
+		}
+	}
 	
 	public void setKey(String key) {
 		this.key = key;
