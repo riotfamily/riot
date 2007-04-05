@@ -1,10 +1,14 @@
-<div id="${form.id}" class="nestedForm ${form.property?default('unbound')}">
+<div id="${form.id}" class="nestedForm<#if !form.required> optional</#if> ${form.property?default('unbound')}">
+<#if !form.required>
+	<div class="<#if form.present>present<#else>not-present</#if>">
+  		${toggleButton.render()}
+	</div>	
+</#if>
 <#if form.required || form.present>
-	
 	<#if (elements.elements?size > 1)>
-		<div class="elements<#if !form.required> optional</#if>">
+		<div class="indent elements">
 			<#list elements.elements as element>
-		    	<div class="item">
+		    	<div class="item<#if element.styleClass?exists> item-${element.styleClass}</#if>">
 		    		<div class="label">
 			    		<label for="${element.id}" class="field<#if element.form.errors.hasErrors(element)> error</#if>">
 							${element.label?if_exists}<#if element.required>* </#if>
@@ -24,7 +28,7 @@
 			</#list>			
 		</div>
 	<#else>
-		<div class="element singleElement">
+		<div class="indent element singleElement">
 			<#list elements.elements as element>
 				<#if element.hint?exists>
 					<div id="${element.id}-hint" class="hint">${element.hint}</div>
@@ -33,12 +37,5 @@
 			</#list>
 		</div>
 	</#if>
-	
-	<#if !form.required && form.present>
-  		${toggleButton.render()}
-	</#if>
-	
-<#else>
-	<div class="setButton">${toggleButton.render()}</div>
 </#if>
 </div>

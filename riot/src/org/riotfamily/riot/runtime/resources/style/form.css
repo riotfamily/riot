@@ -88,14 +88,16 @@ div.title .no-label {
 	height: 12px;
 }
 
+textarea, input.text, input.number, input.password, select, option {
+	font-family: verdana, arial, sans-serif;
+	font-size:11px;
+	color: #3d3d3d;
+}
 textarea, input.text, input.number, input.password {
 	display: block;
-	font-family: verdana, arial, sans-serif;
-	font-size:12px;
 	padding: 4px;
 	-moz-box-sizing: border-box;
 }
-
 textarea, input.text, input.password {
 	width: 100%;
 }
@@ -126,7 +128,7 @@ input.text,
 input.number, 
 input.password, 
 .mceEditor {
-	border: 1px solid #ebebeb;
+	border: 1px solid #e0e0e0;
 }
 
 .spinButtons div {
@@ -145,13 +147,14 @@ input.password,
 }
 .numberInput .unit {
 	float: left;
-	padding: 4px 0 0 10px;
+	padding: 5px 0 0 7px;
 	font-size: 12px;
+	color: #3d3d3d;
 }
 	
 .mceEditor .container {
 	padding: 4px;
-	border-bottom: 1px solid #ebebeb;
+	border-bottom: 1px solid #e0e0e0;
 }
 
 select {
@@ -159,7 +162,21 @@ select {
 }
 
 input.checkbox {
-	margin: 6px 0 0 0;
+	margin: 0;
+}
+
+.item-checkbox {
+	position: relative;
+	overflow: hidden;
+	margin-bottom: 10px;
+}
+.item-checkbox .label {
+	float: left;
+	margin-left: 20px;
+}
+.item-checkbox .element {
+	position: absolute;
+	left: 0;
 }
 
 ul.checkboxGroup li,
@@ -172,94 +189,50 @@ ul.radioButtonGroup input {
 	margin: 0 2px 2px 0;
 }
 
+
 .composite {
 	margin-bottom: 30px;
 }
 
-.single .form-element {
-	margin:10px 0 30px 30px;
+.indent {
+	margin: 20px 0 0 36px;
+}
+.indent .indent {
+	margin: 10px 0 0 0;
+}
+.optional .indent {
+	margin-top: -12px;
 }
 
-.group-items-label-less {
-	padding:10px 0 30px 30px;
+.indent .element {
+	margin-bottom: 17px;
 }
-
-.group-items-label-less .item {
-	float:left;
-	margin-right:5px;
-}
-
-.group {
-	padding: 10px 0;
-}
-
-.composite,
-.single,	
-.group .item,
-.nestedForm .item {
-	clear:both;
-}
-
-.group .item,
-.nestedForm .item {
+.indent .indent .element {
 	margin-bottom: 10px;
 }
-
-.group div.label,
-.nestedForm div.label {
-	width: 144px;
-	margin: 6px 5px 0 0;
-	float: left;
+.indent .indent .indent .element {
+	margin-bottom: 5px;
 }
 
-.nestedForm,
-.group {
-	margin-left: 30px;
-}
-.nestedForm .elements {
-	margin-top: 10px;
+.indent .indent div.label label {
+	font-size: 11px;
+	font-weight: normal;
+	margin: 0 0 2px 0;
 }
 
-.group div.element,
-.nestedForm div.element {
-	margin-left: 154px;
-}
-
-.group div.label label,
-.nestedForm div.label label {
-	float: right;
+.indent div.label label {
+	display: block;
 	font-weight: bold;
-	color: #3d3d3d;
-	text-align: right;
+	color: #363636;
+	margin: 0 0 4px 0;
 }
 
 .nestedForm {
-	overflow: hidden;
-}
-.nestedForm .element {
-	font-size: 1px;
-}
-
-.nestedForm div.optional {
-	float: left;
-	margin-left: -38px;
-	width: 100%;
-}
-.nestedForm div.optional div.label {
-	margin-left:38px;
-}
-.nestedForm div.optional div.element {
-	margin-left:188px;
-}
-.nestedForm .button-toggle {
-	float: right;
+	position: relative;
 }
 
 .dynamicList .nestedForm {
-	margin: 0;
-}
-.dynamicList .nestedForm .elements {
-	margin: 0;
+	margin: 10px 0 0 0;
 }
 
 ul.dynamicList {
@@ -287,6 +260,9 @@ table.listItem td {
 	vertical-align: top;
 }
 table.listItem td.handle {
+	background: #ebebeb;
+}
+table.listItem .draggable td.handle {
 	background: #ebebeb url(images/move_ns.gif) center center no-repeat;
 }
 table.listItem td.handle div {
@@ -306,11 +282,6 @@ table.listItem td.removeButton {
 table.listItem .group,
 table.listItem .nestedForm {
 	border-bottom: 0;
-}
-
-div.dynamicList .button-add,
-.setButton .button-toggle {
-	margin: 2px 0 0 24px;
 }
 	
 .button-add, 
@@ -336,7 +307,7 @@ div.dynamicList .button-add,
 }
 
 .button-add,
-.nestedForm .setButton .button-toggle {
+.nestedForm .not-present .button-toggle {
 	background-image: url(images/add.gif);
 }
 .button-remove,
@@ -467,6 +438,7 @@ div.dynamicList .button-add,
 
 .chooser span {
 	margin-right: 10px;
+	color: #3d3d3d;
 }
 
 .confirm-text p {

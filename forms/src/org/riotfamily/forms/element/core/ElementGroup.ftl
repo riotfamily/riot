@@ -1,6 +1,6 @@
-<div id="${group.id}" class="group<#if !group.labelItems>-items-label-less</#if>">
+<div id="${group.id}" class="indent group<#if !group.labelItems>-items-label-less</#if>">
 	<#list group.elements as element>
-		<div class="item">
+		<div class="item<#if element.styleClass?exists> item-${element.styleClass}</#if>">
 			<#if group.labelItems>
 				<div class="label">
 					<label for="${element.id}" class="field <#if element.form.errors.hasErrors(element)> error</#if>">
