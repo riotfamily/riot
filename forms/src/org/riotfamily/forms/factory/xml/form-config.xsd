@@ -107,7 +107,6 @@
 					<xsd:attribute name="max-length" type="xsd:positiveInteger" />
 					<xsd:attribute name="rows" type="xsd:positiveInteger" />
 					<xsd:attribute name="cols" type="xsd:positiveInteger" />
-					<xsd:attribute name="auto-resize" type="xsd:boolean" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

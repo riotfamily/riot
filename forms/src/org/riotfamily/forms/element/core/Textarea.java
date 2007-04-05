@@ -44,22 +44,16 @@ public class Textarea extends AbstractTextElement implements ResourceElement,
 	private static FormResource RESOURCE = new ScriptResource(
 			"riot-js/textarea.js", "RiotTextArea", Resources.PROTOTYPE);
 	
-	private int rows = 5;
+	private Integer rows = null;
 
-	private int cols = 80;
+	private Integer cols = null;
 
-	private boolean autoResize;
-	
-	public void setCols(int cols) {
+	public void setCols(Integer cols) {
 		this.cols = cols;
 	}
 
-	public void setRows(int rows) {
+	public void setRows(Integer rows) {
 		this.rows = rows;
-	}
-
-	public void setAutoResize(boolean autoResize) {
-		this.autoResize = autoResize;
 	}
 
 	public void renderInternal(PrintWriter writer) {
@@ -67,10 +61,15 @@ public class Textarea extends AbstractTextElement implements ResourceElement,
 		tag.start(Html.TEXTAREA)
 			.attribute(Html.COMMON_CLASS, getStyleClass())
 			.attribute(Html.COMMON_ID, getId())
-			.attribute(Html.INPUT_NAME, getParamName())
-			.attribute(Html.TEXTAREA_ROWS, rows)
-			.attribute(Html.TEXTAREA_COLS, cols);
-
+			.attribute(Html.INPUT_NAME, getParamName());
+		
+		if (rows != null) {
+			tag.attribute(Html.TEXTAREA_ROWS, rows.intValue());
+		}
+		if (cols != null) {
+			tag.attribute(Html.TEXTAREA_COLS, cols.intValue());
+		}
+		
 		tag.body(getText()).end();
 	}
 	
@@ -79,13 +78,13 @@ public class Textarea extends AbstractTextElement implements ResourceElement,
 	}
 	
 	public String getInitScript() {
-		if (getMaxLength() != null || autoResize) {
+		if (getMaxLength() != null || rows == null) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("new RiotTextArea('").append(getId()).append("')");
 			if (getMaxLength() != null) {
 				sb.append(".setMaxLength(").append(getMaxLength()).append(')');
 			}
-			if (autoResize) {
+			if (rows == null) {
 				sb.append(".autoResize()");
 			}
 			sb.append(';');
