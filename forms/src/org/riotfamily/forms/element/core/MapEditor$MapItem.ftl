@@ -1,4 +1,4 @@
 <div id="${item.id}" class="mapItem">
-	<div class="label">${item.label}</div>
+	<label for="${element.id}">${item.label}</label>
 	${element.render()}
 </div>

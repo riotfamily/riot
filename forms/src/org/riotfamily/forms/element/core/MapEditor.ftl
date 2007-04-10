@@ -1,7 +1,7 @@
-<div id="${element.id}" class="dynamicList">
-	<ul id="${items.id}" class="dynamicList">
+<div id="${element.id}" class="mapEditor">
+	<div id="${items.id}" class="indent">
 		<#list items.elements as item>
 			${item.render()}
 		</#list>
-	</ul>
+	</div>
 </div>
