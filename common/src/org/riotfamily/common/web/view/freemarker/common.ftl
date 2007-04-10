@@ -9,6 +9,10 @@
 	<#return commonMacroHelper.resolveAndEncodeUrl(uri) />
 </#function>
 
+<#function resource uri>
+	<#return commonMacroHelper.addTimestamp(uri) />
+</#function>
+
 <#macro includeUriField>
 	<input type="hidden" name="__includeUri" value="${commonMacroHelper.getOriginatingRequestUri()}" />
 </#macro>
