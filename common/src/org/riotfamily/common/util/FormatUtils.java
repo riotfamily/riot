@@ -88,6 +88,7 @@ public final class FormatUtils {
 	 * <pre>
 	 * camelCase -> Camel Case
 	 * CamelCASE -> Camel CASE
+	 * Cam31Case -> Cam 31 Case 
 	 * </pre>
 	 */
 	public static String camelToTitleCase(String s) {
@@ -95,21 +96,20 @@ public final class FormatUtils {
 			return null;
 		}
 		StringBuffer sb = new StringBuffer();
-		boolean lastWasLower = false;
+		char last = 0;
 		for (int i = 0; i < s.length(); i++) {
 			char c = s.charAt(i);
-			if (Character.isUpperCase(c) || Character.isDigit(c)) {
-				if (lastWasLower) {
-					sb.append(' ');
-				}
+			if (Character.isUpperCase(c) && last > 0 && !Character.isUpperCase(last)) {
+				sb.append(' ');
 			}
-			else {
-				lastWasLower = true;
-				if (i == 0) {
-					c = Character.toUpperCase(c);
-				}
+			else if (Character.isDigit(c) && last > 0 && !Character.isDigit(last)) {
+				sb.append(' ');
+			}
+			if (i == 0) {
+				c = Character.toUpperCase(c);
 			}
 			sb.append(c);
+			last = c;
 		}
 		return sb.toString();
 	}
