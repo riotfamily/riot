@@ -51,6 +51,7 @@ public class ImageCheckboxGroup extends CheckboxGroup {
 			sb.append("new RiotImageCheckbox('");
 			sb.append(option.getId());
 			sb.append("', null, '");
+			sb.append(getFormContext().getContextPath());
 			sb.append(image);
 			sb.append("');");
 		}
