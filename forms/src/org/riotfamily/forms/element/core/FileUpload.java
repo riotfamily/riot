@@ -49,6 +49,7 @@ import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.resource.StylesheetResource;
+import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -198,6 +199,7 @@ public class FileUpload extends CompositeElement implements Editor,
 			}
 			uri = (String) value;
 			file = fileStore.retrieve(uri);
+			Assert.notNull(file, "File not found in FileStore: " + uri);
 		}
 		else {
 			if (!(value instanceof File)) {
