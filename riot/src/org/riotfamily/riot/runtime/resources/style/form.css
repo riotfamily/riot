@@ -190,8 +190,12 @@ ul.radioButtonGroup input {
 }
 
 
-.composite {
+.single, .composite {
 	margin-bottom: 30px;
+}
+
+.single .form-element {
+	margin: 14px 0 30px 32px;
 }
 
 .indent {
@@ -227,21 +231,26 @@ ul.radioButtonGroup input {
 	margin: 0 0 4px 0;
 }
 
+.mapItem label {
+	font-weight: bold;
+	color: #3d3d3d;
+}
+
 .nestedForm {
 	position: relative;
 }
 
-.dynamicList .nestedForm {
+.listEditor .nestedForm {
 	margin: 10px 0 0 0;
 }
 
-ul.dynamicList {
+ul.listEditor {
 	padding: 0;
 	margin: 0;
 	background-color: #a4a4a4;
 }
 
-ul.dynamicList li.listItem {
+ul.listEditor li.listItem {
 	list-style-type: none;
 	width: 100%;
 	padding: 0;

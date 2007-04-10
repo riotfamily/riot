@@ -1,5 +1,5 @@
-<div id="${element.id}" class="dynamicList">
-	<ul id="${items.id}" class="dynamicList">
+<div id="${element.id}" class="listEditor">
+	<ul id="${items.id}">
 		<#list items.elements as item>
 			${item.render()}
 		</#list>
