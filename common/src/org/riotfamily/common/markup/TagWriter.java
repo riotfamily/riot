@@ -25,7 +25,7 @@ package org.riotfamily.common.markup;
 
 import java.io.PrintWriter;
 
-import org.springframework.web.util.HtmlUtils;
+import org.riotfamily.common.util.FormatUtils;
 
 /**
  * Utility class to generate markup code. This example ... 
@@ -149,7 +149,7 @@ public class TagWriter {
         if (value != null) {
             writer.write('=');
             writer.write('"');
-           	writer.write(HtmlUtils.htmlEscape(value));
+           	writer.write(FormatUtils.xmlEscape(value));
             writer.write('"');
         }
         return this;
@@ -175,7 +175,7 @@ public class TagWriter {
         body();
         if (body != null) {
         	if (escapeHtml) {
-        		writer.write(HtmlUtils.htmlEscape(body));
+        		writer.write(FormatUtils.xmlEscape(body));
         	}
         	else {
         		writer.write(body);
@@ -210,7 +210,7 @@ public class TagWriter {
     	if (state < STATE_BODY) {
     		throw new IllegalStateException("body() must be called first");
     	}
-    	writer.print(state == STATE_CDATA ? s : HtmlUtils.htmlEscape(s));
+    	writer.print(state == STATE_CDATA ? s : FormatUtils.xmlEscape(s));
     	return this;
     }
     
