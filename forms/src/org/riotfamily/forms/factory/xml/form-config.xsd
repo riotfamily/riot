@@ -196,6 +196,18 @@
 		</xsd:complexType>
 	</xsd:element>
 	
+	<xsd:element name="imagecheckbox-group">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="multiselect">
+					<xsd:attribute name="max-selection" type="xsd:positiveInteger" />
+					<xsd:attribute name="style-class" type="xsd:string" />
+					<xsd:attribute name="image-property" type="xsd:string" use="required" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
 	<xsd:element name="radio-group">
 		<xsd:complexType>
 			<xsd:complexContent>

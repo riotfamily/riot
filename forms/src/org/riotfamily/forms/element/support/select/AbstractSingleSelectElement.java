@@ -48,7 +48,7 @@ public abstract class AbstractSingleSelectElement
 	}
 	
 	public boolean isSelected(Option option) {
-		return hasSelection() && selectedValue.equals(option.getObject());
+		return hasSelection() && selectedValue.equals(option.getValue());
 	}
 
 	/**
@@ -65,7 +65,7 @@ public abstract class AbstractSingleSelectElement
 		}
 		if (i >= 0) {
 			Option option = (Option) getOptions().get(i);
-			selectedValue = option.getObject();
+			selectedValue = option.getValue();
 		}
 		else {
 			selectedValue = null;	

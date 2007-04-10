@@ -118,7 +118,7 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 				Object item = it.next();
 				String label = getOptionLabel(item);
 				Object value = getOptionValue(item);
-				options.add(new Option(value, label, this));
+				options.add(new Option(item, value, label, this));
 			}
 		}
 		return options;

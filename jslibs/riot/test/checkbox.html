@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<script type="text/javascript" src="../../prototype/src/prototype.js"></script>
+	<script type="text/javascript" src="../src/checkbox.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../../riot/src/org/riotfamily/riot/runtime/resources/style/form.css" />
+	<style type="text/css">
+		.foo {
+			border: 1px solid red;
+		}
+		.checked .foo {
+			border: 1px solid green;
+		}
+	</style>
+</head>
+<body>
+<br />
+<ul id="test1" class="checkboxGroup">
+	<li><input type="checkbox" name="option1" id="option1" /><label for="option1" class="option">Option 1</label></li>
+	<li><input type="checkbox" name="option2" id="option2" /><label for="option2" class="option">Option 2</label></li>
+	<li><input type="checkbox" name="option3" id="option3" /><label for="option3" class="option">Option 3</label></li>
+</ul>
+<script type="text/javascript">
+	new RiotImageCheckbox('option1', 'foo');
+	new RiotImageCheckbox('option2', 'foo', 'downloads.jpg');
+</script>
+</body>
+</html>

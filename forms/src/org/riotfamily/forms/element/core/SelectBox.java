@@ -99,7 +99,7 @@ public class SelectBox extends AbstractSingleSelectElement {
 					.getMessage(chooseLabelKey);
 		}
 		if (chooseLabel != null) {
-			Option chooseOption = new Option(null, chooseLabel, this);
+			Option chooseOption = new Option(null, null, chooseLabel, this);
 			options.add(0, chooseOption);
 		}
 		return options;

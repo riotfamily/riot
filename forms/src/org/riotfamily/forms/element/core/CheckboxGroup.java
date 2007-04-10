@@ -29,6 +29,10 @@ import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.select.AbstractMultiSelectElement;
 import org.riotfamily.forms.element.support.select.InputTagRenderer;
+import org.riotfamily.forms.resource.FormResource;
+import org.riotfamily.forms.resource.ResourceElement;
+import org.riotfamily.forms.resource.Resources;
+import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.support.TemplateUtils;
 
 
@@ -38,15 +42,22 @@ import org.riotfamily.forms.support.TemplateUtils;
  * the layout.
  */
 public class CheckboxGroup extends AbstractMultiSelectElement 
-		implements DHTMLElement {
+		implements DHTMLElement, ResourceElement {
 
+	protected static final FormResource RESOURCE = new ScriptResource(
+			"riot-js/checkbox.js", "RiotCheckboxGroup", Resources.PROTOTYPE);
+	
 	private String template;
 
 	public CheckboxGroup() {
 		setOptionRenderer(new InputTagRenderer("checkbox"));
-		template = TemplateUtils.getTemplatePath(this);
+		template = TemplateUtils.getTemplatePath(CheckboxGroup.class);
 	}
 
+	public FormResource getResource() {
+		return RESOURCE;
+	}
+	
 	public void setTemplate(String template) {
 		this.template = template;
 	}
@@ -59,7 +70,7 @@ public class CheckboxGroup extends AbstractMultiSelectElement
 	}
 	
 	public String getInitScript() {
-		return TemplateUtils.getInitScript(this, CheckboxGroup.class);
+		return "new RiotCheckboxGroup('" + getId() + "');";
 	}
 
 }

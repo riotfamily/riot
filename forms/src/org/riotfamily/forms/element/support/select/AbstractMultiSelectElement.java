@@ -112,7 +112,7 @@ public abstract class AbstractMultiSelectElement
 	
 	public boolean isSelected(Option option) {
 		return selectedValues != null && 
-				selectedValues.contains(option.getObject());
+				selectedValues.contains(option.getValue());
 	}
 
 	/**
@@ -129,7 +129,7 @@ public abstract class AbstractMultiSelectElement
 			for (int i = 0; i < indexes.length; i++) {
 				int index = Integer.parseInt(indexes[i]);
 				if (index != -1) {
-					selectedValues.add(((Option) options.get(index)).getObject());
+					selectedValues.add(((Option) options.get(index)).getValue());
 				}
 			}
 		}

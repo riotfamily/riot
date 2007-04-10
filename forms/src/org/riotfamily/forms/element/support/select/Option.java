@@ -32,13 +32,16 @@ import org.riotfamily.forms.element.SelectElement;
 public class Option {
 
 	private Object object;
+	
+	private Object value;
 
 	private String label;
 
 	private SelectElement parent;
 	
-	public Option(Object object, String label, SelectElement parent) {
+	public Option(Object object, Object value, String label, SelectElement parent) {
 		this.object = object;
+		this.value = value;
 		this.label = label;
 		this.parent = parent;
 	}
@@ -59,8 +62,12 @@ public class Option {
 		return label;
 	}
 
+	public Object getValue() {
+		return value;
+	}
+	
 	public Object getObject() {
-		return object;
+		return this.object;
 	}
 	
 	public String getId() {
