@@ -66,4 +66,11 @@ public class PageMacroHelper {
 		return null;
 	}
 	
+	public String getPageUrl(Page page) {
+		if (page != null) {
+			return resolver.getUrl(new PageLocation(page));
+		}
+		return null;
+	}
+	
 }
