@@ -7,7 +7,7 @@
 		<div class="form-error">${form.errors.generalFormError}</div>
 	</#if>
 	<#list elements.elements as element>
-		<div class="${(element.compositeElement!false)?string('composite','single')}">
+		<div class="${(element.compositeElement!false)?string('composite','single')}<#if element.styleClass?exists> ${element.styleClass}-element</#if>">
 			<#if element.label?exists>
 				<div class="title">
 					<label for="${element.id}">
@@ -22,7 +22,7 @@
 					</label>
 				</div>
 			</#if>
-			<div class="form-element">
+			<div class="element">
 				<#if element.hint?exists>
 					<div id="${element.id}-hint" class="hint">${element.hint}</div>
 				</#if>

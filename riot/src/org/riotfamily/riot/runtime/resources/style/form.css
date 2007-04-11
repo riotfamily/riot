@@ -165,16 +165,16 @@ input.checkbox {
 	margin: 0;
 }
 
-.item-checkbox {
+.checkbox-element {
 	position: relative;
 	overflow: hidden;
 	margin-bottom: 10px;
 }
-.item-checkbox .label {
+.checkbox-element .label {
 	float: left;
 	margin-left: 20px;
 }
-.item-checkbox .element {
+.checkbox-element .element {
 	position: absolute;
 	left: 0;
 }
@@ -194,7 +194,7 @@ ul.radioButtonGroup input {
 	margin-bottom: 30px;
 }
 
-.single .form-element {
+.single .element {
 	margin: 14px 0 30px 32px;
 }
 
@@ -240,17 +240,17 @@ ul.radioButtonGroup input {
 	position: relative;
 }
 
-.listEditor .nestedForm {
+.listItem .nestedForm {
 	margin: 10px 0 0 0;
 }
 
-ul.listEditor {
+.listEditor ul {
 	padding: 0;
 	margin: 0;
 	background-color: #a4a4a4;
 }
 
-ul.listEditor li.listItem {
+.listEditor li.listItem {
 	list-style-type: none;
 	width: 100%;
 	padding: 0;

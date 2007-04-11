@@ -7,7 +7,7 @@
 		<#else>
 			<#assign class = "single" />
 		</#if>
-		<div class="form-element">
+		<div class="form-element<#if element.styleClass?exists> ${element.styleClass}-element</#if>">
 			<#if element.label?exists>
 				<div class="title">
 					<label>

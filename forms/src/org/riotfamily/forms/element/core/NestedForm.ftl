@@ -8,7 +8,7 @@
 	<#if (elements.elements?size > 1)>
 		<div class="indent elements">
 			<#list elements.elements as element>
-		    	<div class="item<#if element.styleClass?exists> item-${element.styleClass}</#if>">
+		    	<div class="item<#if element.styleClass?exists> ${element.styleClass}-element</#if>">
 		    		<div class="label">
 			    		<label for="${element.id}" class="field<#if element.form.errors.hasErrors(element)> error</#if>">
 							${element.label?if_exists}<#if element.required>* </#if>
