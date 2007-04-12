@@ -102,10 +102,7 @@ public class AbstractRenderStrategy implements RenderStrategy {
 		return config.getComponentPathResolver().getComponentPath(request);
 	}
 	
-	protected String getComponentKey() {
-		/* if (parent != null) {
-			return parent.getList().getKey();
-		} */
+	protected String getComponentKey() {		
 		return config.getComponentKeyResolver().getComponentKey(request);
 	}
 
@@ -120,12 +117,7 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	 * path/key-combination.
 	 */
 	protected ComponentList getComponentList(String path, String key) {
-		if (parent != null) {
-			/* Set childLists = parent.getChildLists();
-			if (childLists != null && !childLists.isEmpty()) {
-				return (ComponentList) childLists.iterator().next();
-			}
-			return null; */
+		if (parent != null) {			
 			log.debug("Looking up ComponentList parent:" +
 				parent.getId() + '#' + key);
 			return dao.findComponentList(parent, key);
