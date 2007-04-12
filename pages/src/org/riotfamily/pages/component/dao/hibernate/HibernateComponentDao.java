@@ -64,12 +64,23 @@ public class HibernateComponentDao extends AbstractComponentDao {
 	public ComponentList findComponentList(VersionContainer parent,
 		String key) {
 		
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from ComponentList list where list.parent = :parent " +
-				"and list.key = :key");
+		StringBuffer hql = new StringBuffer();
+		hql.append("from ComponentList list where list.parent = :parent " 
+				+ "and list.key ");
+		if (key == null) {
+			hql.append("is null");
+		}
+		else {
+			hql.append("= :key");
+		}
+		
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery(hql.toString());
 				
 		query.setParameter("parent", parent);
-		query.setParameter("key", key);
+		if (key != null) {
+			query.setParameter("key", key);
+		}
 		query.setCacheable(true);
 		query.setCacheRegion("components");
 		return (ComponentList) query.uniqueResult();

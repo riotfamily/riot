@@ -92,6 +92,7 @@ public abstract class AbstractComponent implements Component {
 			String positionClassName, HttpServletRequest request, 
 			HttpServletResponse response) throws IOException {
 		
+		Object previousContainer = request.getAttribute(CONTAINER); 
 		try {
 			request.setAttribute(CONTAINER, componentVersion.getContainer());
 			renderInternal(componentVersion, positionClassName, request, response);
@@ -109,6 +110,9 @@ public abstract class AbstractComponent implements Component {
 					.body(strace.toString());
 			
 			pre.end();
+		}
+		finally {
+			request.setAttribute(CONTAINER, previousContainer);
 		}
 	}
 	
