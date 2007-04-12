@@ -187,7 +187,8 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
         if (encodedUrls) {
             cacheKey += ";jsessionid";
         }
-
+        
+        log.debug("Getting cache item for key " + cacheKey);
         CacheItem cacheItem = cache.getItem(cacheKey);
         if (cacheItem == null) {
             log.warn("Failed to create cache item");
@@ -226,8 +227,9 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
         	log.debug("Item is cached eternally");
         	return true;
         }
-        if (cacheItem.getLastCheck() + ttl > now) {
+        if (cacheItem.getLastCheck() + ttl < now) {
 	        long mtime = controller.getLastModified(request);
+	        log.debug("Last modified: " + mtime);
 	        cacheItem.setLastCheck(now);
 	        if (mtime > cacheItem.getLastModified()) {
 	            // Update the timestamp so that other threads won't call
@@ -236,6 +238,10 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
 	            cacheItem.setLastModified(now);
 	            return false;
 	        }
+        }
+        else if (log.isDebugEnabled()) {
+        	log.debug("Item not expired yet, will live for another " + 
+        			(ttl - (now - cacheItem.getLastCheck())) + " ms.");
         }
        	return true;
     }
