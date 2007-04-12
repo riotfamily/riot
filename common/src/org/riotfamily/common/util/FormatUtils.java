@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.util;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.DecimalFormat;
@@ -69,6 +70,10 @@ public final class FormatUtils {
 
 	private static final String HEX = "0123456789ABCDEF";
 
+	private static final Pattern RGB_PATTERN = Pattern.compile(
+			"rgb\\(\\s?(\\d{1,3})%?\\s?,\\s?(\\d{1,3})%?\\s?," +
+			"\\s?(\\d{1,3})(%?)\\s?\\)");
+	
 	private FormatUtils() {
 	}
 
@@ -586,7 +591,7 @@ public final class FormatUtils {
 	 * given regular expression.
 	 * @since 6.4
 	 */
-	public static int parseInt(String s, String regex) {
+	public static int extractInt(String s, String regex) {
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(s);
 		if (matcher.find()) {
@@ -642,4 +647,47 @@ public final class FormatUtils {
 		}
 		return sb.toString();
 	}
+	
+	/**
+	 * Creates a Color instance from a String. Supported formats are:
+	 * <pre>
+	 * #fff
+	 * #ffffff
+	 * rgb(255,155,155)
+	 * rgb(100%,100%,100%)
+	 * </pre>
+	 */
+	public static Color parseColor(String color) throws IllegalArgumentException {
+		int r, g, b;
+		if (color.startsWith("#")) {
+			if (color.length() == 4) {
+				r = Integer.parseInt(color.substring(1, 2) + color.charAt(1), 16);
+				g = Integer.parseInt(color.substring(2, 3) + color.charAt(2), 16);
+				b = Integer.parseInt(color.substring(3) + color.charAt(3), 16);
+				return new Color(r, g, b);
+			}
+			if (color.length() == 7) {
+				r = Integer.parseInt(color.substring(1, 3), 16);
+				g = Integer.parseInt(color.substring(3, 5), 16);
+				b = Integer.parseInt(color.substring(5), 16);
+				return new Color(r, g, b);
+			}
+		}
+		else {
+			Matcher m = RGB_PATTERN.matcher(color);
+			if (m.matches()) {
+				r = Integer.parseInt(m.group(1));
+				g = Integer.parseInt(m.group(2));
+				b = Integer.parseInt(m.group(3));
+				if ("%".equals(m.group(4))) {
+					r = 255 * (r / 100);
+					g = 255 * (g / 100);
+					b = 255 * (b / 100);
+				}
+				return new Color(r, g, b);
+			}
+		}
+		throw new IllegalArgumentException("Invalid color format.");
+	}
+	
 }
