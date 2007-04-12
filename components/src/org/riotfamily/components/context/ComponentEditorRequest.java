@@ -38,8 +38,8 @@ import org.springframework.util.Assert;
 
 public class ComponentEditorRequest extends HttpServletRequestWrapper {
 
-	private static final String WRAPPED = ComponentEditorRequest.class.getName() 
-			+ ".wrapped";
+	private static final String CONTEXT_KEY = 
+			ComponentEditorRequest.class.getName() + ".contextKey";
 	
 	private PageRequestContext context;
 	
@@ -103,8 +103,8 @@ public class ComponentEditorRequest extends HttpServletRequestWrapper {
 	}
 	
 	public Object getAttribute(String name) {
-		if (name.equals(WRAPPED)) {
-			return Boolean.TRUE;
+		if (name.equals(CONTEXT_KEY)) {
+			return context.getKey();
 		}
 		if (name.startsWith("javax.servlet.")) {
 			return super.getAttribute(name);
@@ -145,8 +145,10 @@ public class ComponentEditorRequest extends HttpServletRequestWrapper {
 		attributes.put(name, null);
 	}
 	
-	public static boolean isWrapped(HttpServletRequest request) {
-		return request.getAttribute(WRAPPED) == Boolean.TRUE;
+	public static boolean isWrapped(HttpServletRequest request, 
+			Object contextKey) {
+		
+		return contextKey.equals(request.getAttribute(CONTEXT_KEY));
 	}
 
 }

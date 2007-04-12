@@ -45,7 +45,7 @@ public final class PageRequestUtils {
 	public static boolean storeContext(HttpServletRequest request, 
 			Object contextKey, int timeToLive) {
 		
-		if (ComponentEditorRequest.isWrapped(request)) {
+		if (ComponentEditorRequest.isWrapped(request, contextKey)) {
 			log.debug("Request is already wrapped - ignoring it ...");
 			return false;
 		}
@@ -53,7 +53,7 @@ public final class PageRequestUtils {
 			String uri = urlPathHelper.getOriginatingRequestUri(request);
 			log.debug("Storing context for " + uri + "#" + contextKey);
 			ContextMap contextMap = getContextMap(request);
-			PageRequestContext context = new PageRequestContext(request);
+			PageRequestContext context = new PageRequestContext(contextKey, request);
 			contextMap.put(uri, contextKey, context, timeToLive);
 			return true;
 		}
