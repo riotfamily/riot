@@ -50,7 +50,7 @@ public class ImageMagickCropperFactoryBean extends AbstractFactoryBean {
 			String version = CommandUtils.exec(convertCommand, "-version");
 			log.info(version);
 			ImageMagickCropper cropper = new ImageMagickCropper();
-			int majorVersion = FormatUtils.parseInt(version, "ImageMagick ([0-9])");
+			int majorVersion = FormatUtils.extractInt(version, "ImageMagick ([0-9])");
 			log.info("Major version: " + majorVersion);
 			if (majorVersion < 6) {
 				cropper.setRepage(false);
