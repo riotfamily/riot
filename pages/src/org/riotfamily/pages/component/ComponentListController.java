@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.Cache;
 import org.riotfamily.pages.component.config.ComponentListConfiguration;
-import org.riotfamily.pages.component.context.PageRequestUtils;
 import org.riotfamily.pages.component.dao.ComponentDao;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
 import org.riotfamily.pages.component.render.EditModeRenderStrategy;
@@ -190,8 +189,6 @@ public class ComponentListController implements Controller, BeanNameAware,
 		if (preview) {
 			strategy = new EditModeRenderStrategy(componentDao, componentRepository, 
 					this, request, response);
-			
-			PageRequestUtils.storeContext(request, 120000);
 		}
 		else {
 			strategy = new LiveModeRenderStrategy(componentDao, componentRepository, 

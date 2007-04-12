@@ -38,6 +38,9 @@ import org.springframework.util.Assert;
 
 public class ComponentEditorRequest extends HttpServletRequestWrapper {
 
+	private static final String WRAPPED = ComponentEditorRequest.class.getName() 
+			+ ".wrapped";
+	
 	private PageRequestContext context;
 	
 	private HashMap attributes = new HashMap();
@@ -100,6 +103,9 @@ public class ComponentEditorRequest extends HttpServletRequestWrapper {
 	}
 	
 	public Object getAttribute(String name) {
+		if (name.equals(WRAPPED)) {
+			return Boolean.TRUE;
+		}
 		if (name.startsWith("javax.servlet.")) {
 			return super.getAttribute(name);
 		}
@@ -137,6 +143,10 @@ public class ComponentEditorRequest extends HttpServletRequestWrapper {
 		// Instead of removing the attribute we set it to null, which marks 
 		// it as removed ...
 		attributes.put(name, null);
+	}
+	
+	public static boolean isWrapped(HttpServletRequest request) {
+		return request.getAttribute(WRAPPED) == Boolean.TRUE;
 	}
 
 }

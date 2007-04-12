@@ -228,7 +228,9 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		
 		try {
 			StringWriter sw = new StringWriter();
-			HttpServletRequest request = getWrappedRequest();
+			HttpServletRequest request = getWrappedRequest(
+					version.getContainer().getList().getId());
+			
 			HttpServletResponse response = getCapturingResponse(sw);
 			
 			EditModeRenderStrategy strategy = new EditModeRenderStrategy(
@@ -253,7 +255,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			ComponentList componentList = getDao().loadComponentList(listId);
 			
 			StringWriter sw = new StringWriter();
-			HttpServletRequest request = getWrappedRequest();
+			HttpServletRequest request = getWrappedRequest(listId);
 			HttpServletResponse response = getCapturingResponse(sw);
 			
 			LiveModeRenderStrategy strategy = new LiveModeRenderStrategy(
@@ -275,7 +277,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			ComponentList componentList = getDao().loadComponentList(listId);
 			
 			StringWriter sw = new StringWriter();
-			HttpServletRequest request = getWrappedRequest();
+			HttpServletRequest request = getWrappedRequest(listId);
 			HttpServletResponse response = getCapturingResponse(sw);
 			
 			EditModeRenderStrategy strategy = new EditModeRenderStrategy(
@@ -329,7 +331,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	}
 		
 	public List getDirtyListIds(Long[] listIds) {
-		if (isInstantPublishMode()) {
+		if (listIds.length == 0 || isInstantPublishMode()) {
 			return null;
 		}
 		ArrayList result = new ArrayList(listIds.length);
@@ -423,7 +425,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		WebContext ctx = WebContextFactory.get();
 		HttpServletRequest request = ctx.getHttpServletRequest();
 		String path = ServletUtils.getPath(ctx.getCurrentPage());
-		PageRequestContext context = PageRequestUtils.getContext(request, path);
+		PageRequestContext context = PageRequestUtils.getFirstContext(request, path);
 		if (context == null) {
 			return false;
 		}
@@ -461,13 +463,13 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	
 	/* Utility methods */
 	
-	private HttpServletRequest getWrappedRequest() 
+	private HttpServletRequest getWrappedRequest(Object contextKey) 
 			throws RequestContextExpiredException {
 		
 		WebContext ctx = WebContextFactory.get();
 		HttpServletRequest request = ctx.getHttpServletRequest();
 		String path = ServletUtils.getPath(ctx.getCurrentPage());
-		return PageRequestUtils.wrapRequest(request, path);
+		return PageRequestUtils.wrapRequest(request, path, contextKey);
 	}
 	
 	private HttpServletResponse getCapturingResponse(StringWriter sw) {

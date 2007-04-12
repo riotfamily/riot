@@ -42,38 +42,53 @@ public final class PageRequestUtils {
 	private PageRequestUtils() {
 	}
 	
-	public static void storeContext(HttpServletRequest request, int timeToLive) {
-		String uri = urlPathHelper.getOriginatingRequestUri(request);
-		log.debug("Storing context for URI: " + uri);
-		ContextMap contextMap = getContextMap(request);
-		PageRequestContext context = new PageRequestContext(request, timeToLive);
-		contextMap.put(uri, context);
+	public static boolean storeContext(HttpServletRequest request, 
+			Object contextKey, int timeToLive) {
+		
+		if (ComponentEditorRequest.isWrapped(request)) {
+			log.debug("Request is already wrapped - ignoring it ...");
+			return false;
+		}
+		else {
+			String uri = urlPathHelper.getOriginatingRequestUri(request);
+			log.debug("Storing context for " + uri + "#" + contextKey);
+			ContextMap contextMap = getContextMap(request);
+			PageRequestContext context = new PageRequestContext(request);
+			contextMap.put(uri, contextKey, context, timeToLive);
+			return true;
+		}
 	}
 	
-	public static void touchContext(HttpServletRequest request, String uri) {
+	public static void touchContext(HttpServletRequest request, String pageUri) {
 		ContextMap contextMap = getContextMap(request);
-		PageRequestContext context = contextMap.get(uri);
-		if (context != null) {
-			context.touch();
-		}
+		contextMap.touch(pageUri);
 		contextMap.removeExpiredContexts();
 	}
 
-	public static PageRequestContext getContext(HttpServletRequest request, String uri) {
+	public static PageRequestContext getContext(HttpServletRequest request, 
+			String pageUri, Object contextKey) {
+		
 		ContextMap contexts = getContextMap(request);
-		return contexts.get(uri);
+		return contexts.get(pageUri, contextKey);
+	}
+	
+	public static PageRequestContext getFirstContext(HttpServletRequest request, 
+			String pageUri) {
+		
+		ContextMap contexts = getContextMap(request);
+		return contexts.getFirst(pageUri);
 	}
 	
 	public static HttpServletRequest wrapRequest(
-			HttpServletRequest request, String uri) 
+			HttpServletRequest request, String pageUri, Object contextKey) 
 			throws RequestContextExpiredException {
 		
+		log.debug("Wrapping context for key " + contextKey);
 		ContextMap contexts = getContextMap(request);
-		PageRequestContext context = contexts.get(uri);
+		PageRequestContext context = contexts.get(pageUri, contextKey);
 		if (context == null) {
 			throw new RequestContextExpiredException();
 		}
-		
 		return new ComponentEditorRequest(request, context);
 	}
 	

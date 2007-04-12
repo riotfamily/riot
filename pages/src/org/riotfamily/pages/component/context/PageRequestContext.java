@@ -32,10 +32,6 @@ import org.riotfamily.common.web.util.ServletUtils;
 
 public class PageRequestContext {
 
-	private long timestamp;
-	
-	private long timeToLive;
-	
 	private Map parameters;
 	
 	private Map attributes;
@@ -50,10 +46,7 @@ public class PageRequestContext {
 	
 	private String requestURI;
 	
-	public PageRequestContext(HttpServletRequest request, long timeToLive) {
-		this.timestamp = System.currentTimeMillis();
-		this.timeToLive = timeToLive;
-		
+	public PageRequestContext(HttpServletRequest request) {
 		this.method = request.getMethod();
 		this.pathInfo = request.getPathInfo();
 		this.servletPath = request.getServletPath();
@@ -62,14 +55,6 @@ public class PageRequestContext {
 		
 		this.attributes = ServletUtils.takeAttributesSnapshot(request);
 		this.parameters = new HashMap(request.getParameterMap());	
-	}
-
-	public boolean hasExpired() {
-		return System.currentTimeMillis() - timestamp > timeToLive;
-	}
-
-	public void touch() {
-		timestamp = System.currentTimeMillis();
 	}
 
 	public Map getAttributes() {

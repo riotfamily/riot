@@ -50,9 +50,9 @@ public class HibernateComponentDao extends AbstractComponentDao {
 	}
 
 	public ComponentList findComponentList( String path, String key) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from ComponentList list where list.path = :path " +
-				"and list.key = :key and list.parent is null");
+		Query query = sessionFactory.getCurrentSession().createQuery("from " 
+				+ ComponentList.class.getName() + " list where list.path = " 
+				+ ":path and list.key = :key and list.parent is null");
 				
 		query.setParameter("path", path);
 		query.setParameter("key", key);
@@ -65,8 +65,9 @@ public class HibernateComponentDao extends AbstractComponentDao {
 		String key) {
 		
 		StringBuffer hql = new StringBuffer();
-		hql.append("from ComponentList list where list.parent = :parent " 
-				+ "and list.key ");
+		hql.append("from ").append(ComponentList.class.getName())
+				.append(" list where list.parent = :parent and list.key ");
+		
 		if (key == null) {
 			hql.append("is null");
 		}
@@ -74,9 +75,7 @@ public class HibernateComponentDao extends AbstractComponentDao {
 			hql.append("= :key");
 		}
 		
-		Query query = sessionFactory.getCurrentSession()
-				.createQuery(hql.toString());
-				
+		Query query = sessionFactory.getCurrentSession().createQuery(hql.toString());
 		query.setParameter("parent", parent);
 		if (key != null) {
 			query.setParameter("key", key);
@@ -87,9 +86,9 @@ public class HibernateComponentDao extends AbstractComponentDao {
 	}
 	
 	public List findComponentLists(String path) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from ComponentList list where list.path = :path " +
-				"and list.parent is null");
+		Query query = sessionFactory.getCurrentSession().createQuery("from " 
+				+ ComponentList.class.getName() + " list where list.path = " 
+				+ ":path and list.parent is null");
 				
 		query.setParameter("path", path);
 		query.setCacheable(true);
@@ -99,7 +98,8 @@ public class HibernateComponentDao extends AbstractComponentDao {
 	
 	public List findDirtyComponentLists() {
 		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from ComponentList list where list.dirty = true");
+				"from " + ComponentList.class.getName() 
+				+ " list where list.dirty = true");
 		
 		query.setCacheable(true);
 		query.setCacheRegion("components");
@@ -125,9 +125,9 @@ public class HibernateComponentDao extends AbstractComponentDao {
 	}
 
 	public void updatePaths(String oldPath, String newPath) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"update ComponentList set path = :newPath" +
-				" where path = :oldPath");
+		Query query = sessionFactory.getCurrentSession().createQuery("update " 
+				+ ComponentList.class.getName() + " set path = :newPath " +
+				"where path = :oldPath");
 				
 		query.setParameter("oldPath", oldPath);
 		query.setParameter("newPath", newPath);

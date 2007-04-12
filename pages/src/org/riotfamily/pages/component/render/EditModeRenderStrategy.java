@@ -35,6 +35,7 @@ import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
 import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.config.ComponentListConfiguration;
+import org.riotfamily.pages.component.context.PageRequestUtils;
 import org.riotfamily.pages.component.dao.ComponentDao;
 
 public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
@@ -70,6 +71,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	 * Riot-Toolbar JavaScript.
 	 */
 	protected void renderComponentList(ComponentList list) throws IOException {
+		PageRequestUtils.storeContext(request, list.getId(), 120000);
 		request.setAttribute(EDIT_MODE_ATTRIBUTE, Boolean.TRUE);
 		if (renderOuterDiv) {
 			out.print("<div riot:listId=\"");
