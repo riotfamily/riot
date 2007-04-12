@@ -5,6 +5,7 @@
     	<conf name="runtime" />
     </configurations>
     <dependencies>
+	    <dependency org="riotfamily" name="riot-common" rev="latest.integration" conf="*->@" changing="true" />
         <dependency org="riotfamily" name="riot-hibernate" rev="latest.integration" conf="*->@" changing="true" />
         <dependency org="riotfamily" name="cachius" rev="latest.integration" conf="*->@" changing="true" />
         <dependency org="springframework" name="spring" rev="2.0.3" conf="build->default;runtime->web" />
