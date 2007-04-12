@@ -133,11 +133,17 @@ riot.InplaceEditor.prototype = {
 	/* This method is invoked when the active editor is disabled (either by
 	 * enabling another editor or by switching to another tool).
 	 * The default behaviour is to save all changes. Subclasses that provide
-	 * an explicit save button (like the TextileEditor) may override this 
+	 * an explicit save button (like the PopupTextEditor) may override this 
 	 * method.
 	 */
 	close: function() {
 		this.save();
+		this.onclose();
+	},
+	
+	/* Callback that is invoked after the editor has been closed. */
+	onclose: function() {
+		if (this.element.onedit) this.element.onedit();
 	}
 }
 
@@ -152,12 +158,13 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 		});
 		
 		this.input.onkeyup = this.updateElement.bindAsEventListener(this);
-		this.input.onblur = this.save.bindAsEventListener(this);
+		this.input.onblur = this.close.bindAsEventListener(this);
 	
 		Styles.clone(this.element, this.input, [
 			'font-size', 'font-weight', 'font-family', 'font-style', 
 			'color', 'background-color', 'text-align', 'text-decoration', 
-			'letter-spacing', 'line-height', 'padding-left', 'padding-top']);
+			'letter-spacing', 'line-height', 'padding-left', 'padding-top',
+			'text-transform']);
 		
 		this.input.style.boxSizing = this.input.style.MozBoxSizing = 'border-box';
 		this.input.hide();
@@ -190,6 +197,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 		this.input.show();
 		this.input.focus();
 		this.input.value = this.text;
+		this.resize();
 	},
 	
 	getText: function() {
@@ -243,6 +251,7 @@ riot.PopupTextEditor = riot.InplaceEditor.extend({
 	close: function() {
 		this.popup.close();
 		riot.activeEditor = null;
+		this.onclose();
 	},
 	
 	getText: function() {
@@ -254,7 +263,6 @@ riot.PopupTextEditor = riot.InplaceEditor.extend({
 	},
 	
 	onupdate: function(html) {
-		//this.component.setHtml(html);
 		this.component.componentList.update();
 	}
 		
