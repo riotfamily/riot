@@ -45,7 +45,7 @@ public final class PageRequestUtils {
 	public static boolean storeContext(HttpServletRequest request, 
 			Object contextKey, int timeToLive) {
 		
-		if (ComponentEditorRequest.isWrapped(request)) {
+		if (ComponentEditorRequest.isWrapped(request, contextKey)) {
 			log.debug("Request is already wrapped - ignoring it ...");
 			return false;
 		}
@@ -89,7 +89,7 @@ public final class PageRequestUtils {
 		if (context == null) {
 			throw new RequestContextExpiredException();
 		}
-		return new ComponentEditorRequest(request, context);
+		return new ComponentEditorRequest(request, context, contextKey);
 	}
 	
 	private static ContextMap getContextMap(HttpServletRequest request) {

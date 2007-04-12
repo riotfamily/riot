@@ -40,16 +40,19 @@ public class ComponentEditorRequest extends HttpServletRequestWrapper {
 
 	private static final String WRAPPED = ComponentEditorRequest.class.getName() 
 			+ ".wrapped";
+
+	private Object key;
 	
 	private PageRequestContext context;
 	
 	private HashMap attributes = new HashMap();
 	
 	public ComponentEditorRequest(HttpServletRequest request, 
-			PageRequestContext context) {
+			PageRequestContext context, Object key) {
 		
 		super(request);
 		this.context = context;
+		this.key = key;
 	}
 	
 	public String getMethod() {
@@ -104,7 +107,7 @@ public class ComponentEditorRequest extends HttpServletRequestWrapper {
 	
 	public Object getAttribute(String name) {
 		if (name.equals(WRAPPED)) {
-			return Boolean.TRUE;
+			return key;
 		}
 		if (name.startsWith("javax.servlet.")) {
 			return super.getAttribute(name);
@@ -145,8 +148,8 @@ public class ComponentEditorRequest extends HttpServletRequestWrapper {
 		attributes.put(name, null);
 	}
 	
-	public static boolean isWrapped(HttpServletRequest request) {
-		return request.getAttribute(WRAPPED) == Boolean.TRUE;
+	public static boolean isWrapped(HttpServletRequest request, Object key) {
+		return key.equals(request.getAttribute(WRAPPED));
 	}
 
 }
