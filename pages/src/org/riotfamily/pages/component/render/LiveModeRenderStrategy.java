@@ -75,6 +75,7 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		}
 		else {
 			// List was invalidated or this is the 1st request
+			log.debug("Serving dynamic list: " + path + '#' + key);
 			super.render(path, key);
 		}
 	}
@@ -90,6 +91,7 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		}
 		else {
 			// List was invalidated or this is the 1st request
+			log.debug("Serving dynamic list: " + path + '#' + key);
 			super.render(list);
 		}
 	}
@@ -132,9 +134,15 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		tagCacheItems(component, version);
 		if (component.isDynamic()) {
 			listIsCacheable = false;
+			log.debug("Component " + version.getType() 
+					+ " is dynamic and will NOT be cached.");
+			
 			super.renderComponent(component, version, positionClassName);
 		}
 		else {
+			log.debug("Component " + version.getType() 
+					+ " is static and will be cached.");
+			
 			renderCacheableComponent(component, version, positionClassName);
 		}
 	}
@@ -161,6 +169,7 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 			return;
 		}
 		try {
+			log.debug("No cache item found, rendering component ...");
 			TaggingContext.openNestedContext(request);
 			TaggingContext.tag(request, listTag);
 			
