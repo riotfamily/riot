@@ -24,9 +24,12 @@
 package org.riotfamily.riot.form.ui;
 
 import org.riotfamily.forms.Form;
+import org.riotfamily.riot.editor.FormDefinition;
 
 public class FormUtils {
 
+	private static final String FORM_DEFINITION_ATTRIBUTE = "formDefinition";
+	
 	private static final String OBJECT_ID_ATTRIBUTE = "objectId";
 	
 	private static final String PARENT_ID_ATTRIBUTE = "parentId";
@@ -45,6 +48,16 @@ public class FormUtils {
 	
 	public static String getParentId(Form form) {
 		return (String) form.getAttribute(PARENT_ID_ATTRIBUTE);
+	}
+	
+	public static void setFormDefinition(Form form, 
+			FormDefinition formDefinition) {
+		
+		form.setAttribute(FORM_DEFINITION_ATTRIBUTE, formDefinition);
+	}
+	
+	public static FormDefinition getFormDefinition(Form form) {
+		return (FormDefinition) form.getAttribute(FORM_DEFINITION_ATTRIBUTE);
 	}
 	
 }

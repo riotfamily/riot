@@ -150,6 +150,7 @@ public abstract class BaseFormController extends RepositoryFormController
 		Form form = super.createForm(request);
 		FormUtils.setObjectId(form, getObjectId(request));
 		FormUtils.setParentId(form, getParentId(request));
+		FormUtils.setFormDefinition(form, getFormDefinition(request));
 		return form;
 	}
 		

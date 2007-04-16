@@ -17,5 +17,12 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
+	
+	<xsd:element name="restricted">
+		<xsd:complexType>
+			<xsd:group ref="form:elements" />
+			<xsd:attribute name="hide" type="xsd:boolean" />
+		</xsd:complexType>
+	</xsd:element>
 
 </xsd:schema>
