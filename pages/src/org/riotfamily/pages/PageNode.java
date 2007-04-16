@@ -51,6 +51,8 @@ public class PageNode {
 	private Set pages;
 	
 	private String handlerName;
+	
+	private boolean hidden;
 
 	public PageNode() {
 	}
@@ -158,6 +160,14 @@ public class PageNode {
 
 	public void setHandlerName(String handlerName) {
 		this.handlerName = handlerName;
+	}
+
+	public boolean isHidden() {
+		return this.hidden;
+	}
+
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
 	}
 	
 }
