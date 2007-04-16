@@ -191,9 +191,9 @@ function processAjaxResponse(doc) {
 			}
 			else if (e.nodeName == 'error') {						
 				setValid(getRef(e), parseInt(e.getAttribute('valid')));
-				var newUl = importNode(getFirstChildElement(e), true);				
-				var oldUl = document.getElementById(newUl.id);
-				oldUl.parentNode.replaceChild(newUl, oldUl);								
+				var newEl = importNode(getFirstChildElement(e), true);				
+				var oldEl = document.getElementById(newEl.id);
+				if (oldEl) oldEl.parentNode.replaceChild(newEl, oldEl);								
 			}
 			else if (e.nodeName == 'focus') {		
 				focusElement(getRef(e));
