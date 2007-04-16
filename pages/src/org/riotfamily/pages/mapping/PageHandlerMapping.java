@@ -34,6 +34,7 @@ import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 
 /**
@@ -72,12 +73,14 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 		Page page = pageDao.findPage(location);
 		log.debug("Page: " + page);
 		if (page != null) {
-			request.setAttribute(PAGE_ATTRIBUTE, page);
-			String handlerName = page.getHandlerName();
-			if (handlerName != null) {
-				return getApplicationContext().getBean(handlerName);
+			if (page.isPublished() || AccessController.isAuthenticatedUser()) {
+				request.setAttribute(PAGE_ATTRIBUTE, page);
+				String handlerName = page.getHandlerName();
+				if (handlerName != null) {
+					return getApplicationContext().getBean(handlerName);
+				}
+				return defaultPageHandler;
 			}
-			return defaultPageHandler;
 		}
 		else {
 			PageAlias alias = pageDao.findPageAlias(location);
