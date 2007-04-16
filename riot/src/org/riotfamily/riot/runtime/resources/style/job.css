@@ -23,6 +23,8 @@
 	background-color: ${highlight};
 	background-position: 10px 10px;
 	background-repeat: no-repeat;
+	cursor: pointer;
+    cursor: hand;
 }
 #start {
 	background-image: url(images/play.gif);
