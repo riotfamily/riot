@@ -9,6 +9,7 @@
 <#macro text page, key, tag="" attributes ...>
 	<#local props = page.versionContainer.latestVersion.properties />
 	<#local attrs = {"riot:containerId": page.versionContainer.id} + attributes />
+	<#local attrs = attrs + {"class": ("riot-component " + attrs["class"]?if_exists)?trim} />
 	<#if page.versionContainer.previewVersion?exists>
 		<#local attrs = attrs + {"riot:dirty": "true"} />	
 	</#if>
