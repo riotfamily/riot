@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.i18n.MessageResolver;
-import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.riot.editor.ui.EditorReference;
 
 /**

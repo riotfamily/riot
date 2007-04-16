@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.util;
+package org.riotfamily.common.io;
 
 import java.io.BufferedReader;
 import java.io.IOException;

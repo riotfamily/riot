@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.cachius.support;
+package org.riotfamily.common.io;
 
 import java.io.File;
 import java.io.IOException;

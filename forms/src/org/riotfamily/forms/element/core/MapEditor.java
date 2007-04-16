@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.element.support.Container;
 import org.riotfamily.forms.element.support.TemplateElement;

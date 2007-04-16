@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.riotfamily.common.util.CommandUtils;
+import org.riotfamily.common.io.CommandUtils;
 
 /**
  * Thumbnailer that uses ImageMagick.

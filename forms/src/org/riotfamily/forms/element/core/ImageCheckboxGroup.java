@@ -25,7 +25,7 @@ package org.riotfamily.forms.element.core;
 
 import java.util.Iterator;
 
-import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.forms.element.support.select.Option;
 
 /**

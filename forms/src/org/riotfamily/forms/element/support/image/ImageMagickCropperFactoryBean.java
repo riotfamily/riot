@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.util.CommandUtils;
+import org.riotfamily.common.io.CommandUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 

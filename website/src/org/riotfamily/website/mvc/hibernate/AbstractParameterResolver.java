@@ -25,7 +25,7 @@ package org.riotfamily.website.mvc.hibernate;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.common.beans.PropertyUtils;
 
 
 public abstract class AbstractParameterResolver implements ParameterResolver {

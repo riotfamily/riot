@@ -31,9 +31,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
-import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.ajax.JavaScriptEvent;
 import org.riotfamily.forms.ajax.JavaScriptEventAdapter;

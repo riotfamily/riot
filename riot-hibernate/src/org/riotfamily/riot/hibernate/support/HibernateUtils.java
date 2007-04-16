@@ -34,7 +34,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
-import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.common.beans.PropertyUtils;
 import org.springframework.util.StringUtils;
 
 public final class HibernateUtils {

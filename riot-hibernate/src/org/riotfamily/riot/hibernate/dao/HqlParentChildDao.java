@@ -24,7 +24,7 @@
 package org.riotfamily.riot.hibernate.dao;
 
 import org.hibernate.Query;
-import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.ParentChildDao;

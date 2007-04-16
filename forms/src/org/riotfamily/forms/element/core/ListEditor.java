@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.element.DHTMLElement;

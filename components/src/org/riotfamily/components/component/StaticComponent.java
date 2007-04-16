@@ -30,7 +30,7 @@ import java.io.Writer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.support.IOUtils;
+import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.components.ComponentVersion;
 import org.springframework.core.io.Resource;
 

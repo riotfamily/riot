@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.util;
+package org.riotfamily.common.web.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -31,7 +31,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Query;
-import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.Order;
 import org.riotfamily.riot.dao.RiotDao;

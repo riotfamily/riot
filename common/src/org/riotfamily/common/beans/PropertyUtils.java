@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.util;
+package org.riotfamily.common.beans;
 
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
@@ -31,8 +31,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.riotfamily.common.beans.DefaultPropertyEditorRegistry;
-import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.util.Assert;

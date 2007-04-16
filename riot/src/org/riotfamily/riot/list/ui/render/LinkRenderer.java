@@ -25,9 +25,9 @@ package org.riotfamily.riot.list.ui.render;
 
 import java.io.PrintWriter;
 
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
-import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.list.command.core.LinkCommand;
 

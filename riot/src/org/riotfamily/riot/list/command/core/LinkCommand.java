@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.core;
 
-import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.list.command.CommandContext;
 

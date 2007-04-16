@@ -27,7 +27,7 @@ package org.riotfamily.riot.list.xml;
 import java.util.Iterator;
 import java.util.List;
 
-import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.common.xml.DocumentDigester;
 import org.riotfamily.riot.dao.RiotDao;

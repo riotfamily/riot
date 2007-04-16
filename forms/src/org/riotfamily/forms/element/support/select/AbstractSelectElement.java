@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.forms.ajax.JavaScriptEvent;
 import org.riotfamily.forms.ajax.JavaScriptEventAdapter;
 import org.riotfamily.forms.bind.Editor;

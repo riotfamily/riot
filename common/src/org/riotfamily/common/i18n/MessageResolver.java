@@ -25,8 +25,8 @@ package org.riotfamily.common.i18n;
 
 import java.util.Locale;
 
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.util.PropertyUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;

@@ -29,8 +29,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.common.xml.XmlUtils;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;

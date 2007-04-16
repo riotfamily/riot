@@ -36,9 +36,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.cachius.support.IOUtils;
 import org.riotfamily.cachius.support.SessionUtils;
 import org.riotfamily.cachius.support.TokenFilterWriter;
+import org.riotfamily.common.io.IOUtils;
 import org.springframework.util.Assert;
 
 /**

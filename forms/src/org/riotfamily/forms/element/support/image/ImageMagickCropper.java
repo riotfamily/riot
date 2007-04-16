@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.riotfamily.common.util.CommandUtils;
+import org.riotfamily.common.io.CommandUtils;
 import org.springframework.util.StringUtils;
 
 /**

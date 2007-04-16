@@ -26,7 +26,6 @@ package org.riotfamily.common.beans;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 
-import org.riotfamily.common.util.PropertyUtils;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.BeansException;
 

@@ -26,7 +26,7 @@ package org.riotfamily.riot.dao.support;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import org.riotfamily.common.util.PropertyUtils;
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.dao.ListParams;
 import org.springframework.beans.factory.InitializingBean;

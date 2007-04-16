@@ -29,10 +29,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.collection.TypeDifferenceComparator;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.common.web.view.LabelValueBean;
 
 

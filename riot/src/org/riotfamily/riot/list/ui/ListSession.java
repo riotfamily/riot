@@ -36,9 +36,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.riotfamily.common.i18n.MessageResolver;
-import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
