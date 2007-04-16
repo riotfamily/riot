@@ -350,6 +350,7 @@
 	<xsd:element name="editable-if-new">
 		<xsd:complexType>
 			<xsd:group ref="elements" />
+			<xsd:attribute name="hide" type="xsd:boolean" />
 		</xsd:complexType>
 	</xsd:element>
 		

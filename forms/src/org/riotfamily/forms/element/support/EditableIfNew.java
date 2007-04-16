@@ -36,7 +36,9 @@ import org.springframework.util.Assert;
 public class EditableIfNew extends AbstractElement implements ContainerElement {
 	
 	private Editor editor;
-		
+	
+	private boolean hide;
+
 	protected void afterFormSet() {
 		Assert.notNull(editor, "An editor must be set.");
 		getForm().registerElement(editor);
@@ -44,6 +46,13 @@ public class EditableIfNew extends AbstractElement implements ContainerElement {
 
 	public void setEditor(Editor editor) {
 		this.editor = editor;
+	}
+	
+	/**
+	 * Sets whether the editor should be hidden if the form is not new.
+	 */
+	public void setHide(boolean hide) {
+		this.hide = hide;
 	}
 	
 	/**
@@ -72,6 +81,9 @@ public class EditableIfNew extends AbstractElement implements ContainerElement {
 	}
 	
 	public String getLabel() {
+		if (hide && !getForm().isNew()) {
+			return null;
+		}
 		return editor.getLabel();
 	}
 	
@@ -79,7 +91,7 @@ public class EditableIfNew extends AbstractElement implements ContainerElement {
 		if (getForm().isNew()) {
 			editor.render(writer);
 		}
-		else {
+		else if (!hide) {
 			Object value = editor.getValue();
 			if (value != null) {
 				TagWriter tag = new TagWriter(writer);
