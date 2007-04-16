@@ -24,6 +24,7 @@
 package org.riotfamily.website.txt2img;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics2D;
@@ -56,6 +57,8 @@ public class ImageGenerator implements InitializingBean {
 	private float size = 22;
 	
 	private int paddingTop = 0;
+	
+	private int paddingBottom = 0;
 	
 	private Integer lineSpacing;
 	
@@ -115,32 +118,40 @@ public class ImageGenerator implements InitializingBean {
 		this.paddingTop = paddingTop;
 	}
 	
+	/**
+	 * Sets the padding at the bottom of the image in pixels. 
+	 * The default value is <code>0</code>.
+	 */
+	public void setPaddingBottom(int paddingBottom) {
+		this.paddingBottom = paddingBottom;
+	}
+	
 	public void afterPropertiesSet() throws Exception {
 		attributes.put(TextAttribute.FONT, font.deriveFont(size));
 		attributes.put(TextAttribute.FOREGROUND, color);
 	}
 	
-	public void generate(String text, int width, String color, OutputStream os) 
+	public void generate(String text, int maxWidth, String color, OutputStream os) 
 			throws IOException {
 		
-		int height = getHeight(text, width);
-        BufferedImage image = createImage(width, height);
-        drawText(text, width, color, image);
+		Dimension size = getSize(text, maxWidth);
+        BufferedImage image = createImage(size);
+        drawText(text, maxWidth, color, image);
        	ImageIO.write(image, "png", os);
        	image.flush();
 	}
 	
-	protected int getHeight(String text, float width) {
-	    return layout(text, width, null, createImage(1, 1), false);
+	protected Dimension getSize(String text, float maxWidth) {
+	    return layout(text, maxWidth, null, createImage(new Dimension(1, 1)), false);
 	}
 	
-	protected void drawText(String text, float width, String color, 
+	protected void drawText(String text, float maxWidth, String color, 
 			BufferedImage image) {
 		
-	    layout(text, width, color, image, true);
+	    layout(text, maxWidth, color, image, true);
 	}
 	
-	protected int layout(String text, float width, String color, 
+	protected Dimension layout(String text, float maxWidth, String color, 
 			BufferedImage image, boolean draw) {
 		
 		FlatMap attrs = attributes;
@@ -154,25 +165,28 @@ public class ImageGenerator implements InitializingBean {
         AttributedCharacterIterator it = as.getIterator();
 	    LineBreakMeasurer measurer = new LineBreakMeasurer(it, fc);
 	    int y = paddingTop;
+	    int maxX = 0;
 	    while (measurer.getPosition() < it.getEndIndex()) {
 	    	TextLayout layout;
 	    	int nextBreak = text.indexOf('\n', measurer.getPosition() + 1); 
 	    	if (nextBreak != -1) {
-	    		layout = measurer.nextLayout(width, nextBreak, false);
+	    		layout = measurer.nextLayout(maxWidth, nextBreak, false);
 	    	}
 	    	else {
-	    		layout = measurer.nextLayout(width);
+	    		layout = measurer.nextLayout(maxWidth);
 	    	}
 			y += layout.getAscent();
 			if (draw) {
 				layout.draw(graphics, 0, y);
 			}
 			y += layout.getDescent();
+			maxX = Math.max(maxX, (int) layout.getVisibleAdvance());
 			if (measurer.getPosition() < it.getEndIndex()) {
 				y += lineSpacing != null ? lineSpacing.intValue() : layout.getLeading();
 			}
 	    }
-	    return y;
+	    y += paddingBottom;
+	    return new Dimension(maxX, y);
 	}
 	
 	protected Graphics2D createGraphics(BufferedImage image) {
@@ -183,8 +197,9 @@ public class ImageGenerator implements InitializingBean {
         return graphics;
 	}
 	
-	protected BufferedImage createImage(int width, int height) {
-		return new BufferedImage(width, height,	BufferedImage.TYPE_INT_ARGB);
+	protected BufferedImage createImage(Dimension size) {
+		return new BufferedImage((int) size.getWidth(), (int) size.getHeight(),	
+				BufferedImage.TYPE_INT_ARGB);
 	}
 	
 }

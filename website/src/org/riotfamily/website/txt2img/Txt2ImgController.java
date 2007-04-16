@@ -88,13 +88,13 @@ public class Txt2ImgController extends AbstractCacheableController {
 				+ selector + " and no default generator is set.");
 		
 		String text = FormatUtils.stripWhitespaces(request.getParameter("text"), true);
-		int width = ServletRequestUtils.getIntParameter(request, "width", 800);
-		if (width <= 0) {
-			width = 800;
+		int maxWidth = ServletRequestUtils.getIntParameter(request, "width", 0);
+		if (maxWidth <= 0) {
+			maxWidth = Integer.MAX_VALUE;
 		}
 		String color = request.getParameter("color");
 		response.setContentType("image/png");
-		generator.generate(text, width, color, response.getOutputStream());
+		generator.generate(text, maxWidth, color, response.getOutputStream());
 		return null;
 	}
 }
