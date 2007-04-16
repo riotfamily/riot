@@ -33,7 +33,8 @@ import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.element.ContainerElement;
 import org.springframework.util.Assert;
 
-public class EditableIfNew extends AbstractElement implements ContainerElement {
+public abstract class AbstractConditionalElement extends AbstractElement 
+		implements ContainerElement {
 	
 	private Editor editor;
 	
@@ -46,6 +47,10 @@ public class EditableIfNew extends AbstractElement implements ContainerElement {
 
 	public void setEditor(Editor editor) {
 		this.editor = editor;
+	}
+	
+	protected Editor getEditor() {
+		return editor;
 	}
 	
 	/**
@@ -75,7 +80,7 @@ public class EditableIfNew extends AbstractElement implements ContainerElement {
 	}
 
 	public void processRequest(FormRequest request) {
-		if (getForm().isNew()) {
+		if (isEditable()) {
 			editor.processRequest(request);
 		}
 	}
@@ -88,7 +93,7 @@ public class EditableIfNew extends AbstractElement implements ContainerElement {
 	}
 	
 	protected void renderInternal(PrintWriter writer) {
-		if (getForm().isNew()) {
+		if (isEditable()) {
 			editor.render(writer);
 		}
 		else if (!hide) {
@@ -102,5 +107,7 @@ public class EditableIfNew extends AbstractElement implements ContainerElement {
 			}
 		}
 	}
+
+	protected abstract boolean isEditable();
 
 }
