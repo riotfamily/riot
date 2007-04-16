@@ -110,4 +110,8 @@ public class VersionContainer {
 		return previewVersion != null ? previewVersion : liveVersion;
 	}
 	
+	public boolean isPublished() {
+		return liveVersion != null;
+	}
+	
 }

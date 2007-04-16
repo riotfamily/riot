@@ -54,7 +54,6 @@ public class Page {
 	
 	private VersionContainer versionContainer;
 	
-	
 	public Page() {
 	}
 	
@@ -177,6 +176,10 @@ public class Page {
 		this.versionContainer = versionContainer;
 	}
 
+	public boolean isPublished() {
+		return getVersionContainer().isPublished();
+	}
+	
 	public String toString() {
 		return locale + ":" + path;
 	}
