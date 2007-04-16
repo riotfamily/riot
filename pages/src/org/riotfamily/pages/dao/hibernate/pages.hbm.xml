@@ -9,8 +9,12 @@
 		<id name="id">
 			<generator class="native" />
 		</id>
-		<many-to-one name="parent" insert="false" update="false" />
-		<list name="childNodes" cascade="all-delete-orphan">
+		
+		<!-- We have to cascade updates so that the parent is reattached -->
+		<many-to-one name="parent" insert="false" update="false" cascade="save-update" />
+		
+		<!-- We must not use all-delete-orphan here, because otherwise nodes can not be moved to another parent -->
+		<list name="childNodes" cascade="all">
 			<key column="parent" />
 			<list-index column="pos" />
 			<one-to-many class="PageNode" />
@@ -20,13 +24,15 @@
 			<one-to-many class="Page" />
 		</set>
 		<property name="handlerName" />
+		<property name="hidden" />
 	</class>
 	
 	<class name="Page">
 		<id name="id" access="field">
 			<generator class="native" />
 		</id>
-		<many-to-one name="node" insert="false" update="false" />
+		<!-- We have to cascade updates so that the parent is reattached -->
+		<many-to-one name="node" insert="false" update="false" cascade="save-update" />
 		<property name="locale" unique-key="location" />
 		<property name="creationDate" />
 		<property name="pathComponent" />

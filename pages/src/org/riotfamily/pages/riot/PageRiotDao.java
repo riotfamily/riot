@@ -30,6 +30,7 @@ import java.util.Locale;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.ParentChildDao;
 import org.riotfamily.riot.dao.SwappableItemDao;
@@ -39,7 +40,8 @@ import org.springframework.dao.DataAccessException;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PageRiotDao implements ParentChildDao, SwappableItemDao {
+public class PageRiotDao implements ParentChildDao, SwappableItemDao, 
+		CutAndPasteEnabledDao {
 
 	private PageDao pageDao;
 	
@@ -134,6 +136,23 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao {
     	}
 
     	pageDao.updateNode(parentNode);
+	}
+	
+	public void addChild(Object entity, Object parent) {
+		Page page = (Page) entity;
+		PageNode node = page.getNode();
+		PageNode parentNode;
+		if (parent instanceof Page) {
+			Page parentPage = (Page) parent;
+			parentNode = parentPage.getNode();
+		}
+		else {
+			parentNode = pageDao.getRootNode();
+		}
+		pageDao.moveNode(node, parentNode);
+	}
+	
+	public void removeChild(Object entity, Object parent) {
 	}
 
 }

@@ -36,7 +36,6 @@ import org.riotfamily.pages.PageAlias;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.dao.AbstractPageDao;
-import org.springframework.util.ObjectUtils;
 
 /**
  * PageDao implementation that uses Hibernate.
@@ -121,16 +120,6 @@ public class HibernatePageDao extends AbstractPageDao {
 	protected void updatePageWithoutChecks(Page page) {
 		Session session = sessionFactory.getCurrentSession();
 		session.update(page);
-	}
-	
-	protected boolean isDirty(Page page) {
-		Session session = sessionFactory.getCurrentSession();
-		Page oldPage = (Page) session.load(Page.class, page.getId());
-		boolean dirty = !ObjectUtils.nullSafeEquals(
-				page.getPathComponent(), oldPage.getPathComponent());
-		
-		session.evict(oldPage);
-		return dirty;
 	}
 		
 	public PageAlias findPageAlias(PageLocation location) {

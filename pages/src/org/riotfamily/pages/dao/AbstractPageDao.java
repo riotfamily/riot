@@ -35,6 +35,7 @@ import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.component.PageComponentListLocator;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Abstract base class for {@link PageDao} implementations.
@@ -63,8 +64,12 @@ public abstract class AbstractPageDao implements PageDao {
 	}
 	
 	private void savePage(PageNode parentNode, Page page, String handlerName) {
-		PageNode node = new PageNode(page);
-		node.setHandlerName(handlerName);
+		PageNode node = page.getNode(); 
+		if (node == null) {	
+			node = new PageNode();
+			node.setHandlerName(handlerName);
+		}
+		node.addPage(page);
 		parentNode.addChildNode(node);
 		page.setCreationDate(new Date());
 		updateNode(parentNode);
@@ -83,19 +88,27 @@ public abstract class AbstractPageDao implements PageDao {
 	}
 	
 	public void updatePage(Page page) {
-		boolean dirtyPath = isDirty(page);
-		updatePageWithoutChecks(page);	
-		if (dirtyPath) {
+		updatePageWithoutChecks(page);
+		String oldPath = page.getPath();
+		String newPath = page.buildPath();
+		if (!ObjectUtils.nullSafeEquals(oldPath, newPath)) {
 			log.info("Path modified: " + page);
 			PageLocation oldLocation = new PageLocation(page);
-			page.setPath(page.buildPath());
+			page.setPath(newPath);
 			createAlias(page, oldLocation);
 			updatePaths(page.getChildPages());
 		}
 	}
 	
-	protected abstract boolean isDirty(Page page);
-	
+	public void moveNode(PageNode node, PageNode newParent) {
+		PageNode parentNode = node.getParent();
+		parentNode.getChildNodes().remove(node);
+		newParent.addChildNode(node);
+		//updateNode(newParent);
+		//updateNode(parentNode);
+		updatePaths(node.getPages());
+	}
+		
 	private void updatePaths(Collection pages) {
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
@@ -143,9 +156,7 @@ public abstract class AbstractPageDao implements PageDao {
 				parentNode.getChildNodes().remove(node);
 				updateNode(parentNode);
 			}
-			else {
-				deleteNode(node);
-			}
+			deleteNode(node);
 		}
 	}
 	

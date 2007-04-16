@@ -63,4 +63,6 @@ public interface PageDao {
 	
 	public void updateNode(PageNode node);
 	
+	public void moveNode(PageNode node, PageNode newParent);
+	
 }
