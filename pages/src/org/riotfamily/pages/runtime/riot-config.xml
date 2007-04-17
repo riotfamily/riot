@@ -37,16 +37,25 @@
 			<list:column property="pathComponent" />
 			<list:command id="moveUp" />
 			<list:command id="moveDown" />
+			<list:command id="cut" />
 			<list:command id="editPage" />
 			<list:command id="deletePage" />
 			<list:command id="gotoPage" />
 			<list:command id="stepInto" />
 		</list:columns>
 		<list:command id="add"/>
+		<list:command id="paste" />
 	</list:list>
 	
 	<form:form id="page" bean-class="org.riotfamily.pages.Page">
-		<form:textfield bind="pathComponent" required="true" regex="[A-Za-z0-9_.,-]*" />
+		<form:group label-key="page.location">
+			<form:textfield bind="pathComponent" required="true" regex="[A-Za-z0-9_.,-]*" />
+		</form:group>
+		<form:editable-if-new hide="true">
+			<form:nested-form bind="node">
+				<form:checkbox bind="hidden" />
+			</form:nested-form>
+		</form:editable-if-new>
 	</form:form>
 
 </riot-config>

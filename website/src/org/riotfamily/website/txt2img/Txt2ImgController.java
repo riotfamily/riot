@@ -23,6 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.txt2img;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -30,7 +34,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
+import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,6 +48,9 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class Txt2ImgController extends AbstractCacheableController {
 
+	private static final Resource SCRIPT_RESOURCE = new ClassPathResource(
+			"txt2img.js", Txt2ImgController.class);
+	
 	private long lastModified = System.currentTimeMillis();
 	
 	private Map generators;
@@ -79,6 +89,19 @@ public class Txt2ImgController extends AbstractCacheableController {
 			}
 		}
 		
+		String text = request.getParameter("text");
+		if (text != null) {
+			serveImage(text, request, response);
+		}
+		else {
+			serveScript(request, response);
+		}
+		return null;
+	}
+	
+	protected void serveImage(String text, HttpServletRequest request, 
+			HttpServletResponse response) throws IOException {
+		
 		ImageGenerator generator = defaultGenerator;
 		String selector = request.getParameter("selector");
 		if (selector != null) {
@@ -87,7 +110,7 @@ public class Txt2ImgController extends AbstractCacheableController {
 		Assert.notNull(generator, "No ImageGenerator found for selector '"
 				+ selector + " and no default generator is set.");
 		
-		String text = FormatUtils.stripWhitespaces(request.getParameter("text"), true);
+		text = FormatUtils.stripWhitespaces(text, true);
 		int maxWidth = ServletRequestUtils.getIntParameter(request, "width", 0);
 		if (maxWidth <= 0) {
 			maxWidth = Integer.MAX_VALUE;
@@ -95,6 +118,28 @@ public class Txt2ImgController extends AbstractCacheableController {
 		String color = request.getParameter("color");
 		response.setContentType("image/png");
 		generator.generate(text, maxWidth, color, response.getOutputStream());
-		return null;
+	}
+	
+	protected void serveScript(HttpServletRequest request, 
+			HttpServletResponse response) throws IOException {
+		
+		response.setContentType("text/javascript");
+		PrintWriter out = response.getWriter();
+		IOUtils.copy(new InputStreamReader(
+				SCRIPT_RESOURCE.getInputStream(), "UTF-8"), out);
+		
+		out.print("new RiotImageReplacement('");
+		out.print(request.getRequestURI());
+		out.print("', [");
+		Iterator it = generators.keySet().iterator();
+		while (it.hasNext()) {
+			out.print("'");
+			out.print(it.next());
+			out.print("'");
+			if (it.hasNext()) {
+				out.print(", ");				
+			}
+		}
+		out.print("]);");
 	}
 }
