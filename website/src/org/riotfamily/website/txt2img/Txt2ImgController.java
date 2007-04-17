@@ -26,6 +26,7 @@ package org.riotfamily.website.txt2img;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -39,6 +40,7 @@ import org.riotfamily.common.util.FormatUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -60,7 +62,22 @@ public class Txt2ImgController extends AbstractCacheableController {
 	private Pattern refererPattern;
 	
 	public void setGenerators(Map generators) {
-		this.generators = generators;
+		this.generators = new HashMap();
+		Iterator it = generators.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			String selector = (String) entry.getKey();
+			ImageGenerator generator = (ImageGenerator) entry.getValue();
+			if (selector.indexOf(',') != -1) {
+				String[] sel = StringUtils.commaDelimitedListToStringArray(selector);
+				for (int i = 0; i < sel.length; i++) {
+					this.generators.put(sel[i], generator);
+				}
+			}
+			else {
+				this.generators.put(selector, generator);
+			}
+		}
 	}
 	
 	public void setDefaultGenerator(ImageGenerator defaultGenerator) {

@@ -24,7 +24,6 @@ RiotImageReplacement.prototype = {
 		text = text.gsub(/<br\/?>/i, '\n').stripTags();
 		var img = new Image();
 		img.onload = this.insertImage.bind(this, el, img);
-		img.alt = text;
 		img.src = this.imageUrl + '?text=' + escape(text) 
 				+ '&width=' + el.offsetWidth + '&selector=' + escape(sel)
 				+ '&color=' + escape(el.getStyle('color'));
@@ -49,8 +48,9 @@ RiotImageReplacement.prototype = {
 		else {
 			img = document.createElement('img');
 			img.src = image.src;
+			img.style.verticalAlign = 'top';
 		}
-		img.style.className = 'replacement';
+		img.className = 'replacement';
 		
 		var printText = document.createElement("span");
 		printText.style.display = 'none';
