@@ -1,37 +1,37 @@
 <project name="riotfamily" default="dist" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
-		
+
 	<import file="common.xml" />
-			
+
 	<property name="dist.zip.file" value="${build.dir}/riotfamily.zip" />
 
-	<fileset id="module-build.files" dir="."> 
+	<fileset id="module-build.files" dir=".">
 		<include name="*/build.xml" />
 		<exclude name="jslibs/*/build.xml" />
 	</fileset>
-			
-	<fileset id="js-build.files" dir="."> 
+
+	<fileset id="js-build.files" dir=".">
 		<include name="jslibs/*/build.xml" />
 	</fileset>
-	
+
 	<target name="resolve" depends="-configure-ivy">
 		<ivy:buildlist reference="resolved-build.files">
-	    	<fileset refid="module-build.files" />
-	    </ivy:buildlist>
+			<fileset refid="module-build.files" />
+		</ivy:buildlist>
 		<subant target="resolve" buildpathref="resolved-build.files" />
 		<echo file="${lib.dir}/.cvsignore" message="*" />
 	</target>
 
 	<target name="jar" depends="-configure-ivy">
 		<ivy:buildlist reference="resolved-build.files">
-	    	<fileset refid="module-build.files" />
-	    </ivy:buildlist>
+			<fileset refid="module-build.files" />
+		</ivy:buildlist>
 		<subant target="publish-build" buildpathref="resolved-build.files" />
 	</target>
-		
+
 	<target name="js-jar" depends="-configure-ivy">
 		<ivy:buildlist reference="resolved-build.files">
-	    	<fileset refid="js-build.files" />
-	    </ivy:buildlist>
+			<fileset refid="js-build.files" />
+		</ivy:buildlist>
 		<subant target="publish-build" buildpathref="resolved-build.files" />
 	</target>
 
@@ -39,7 +39,7 @@
 		<ivy:buildlist reference="resolved-build.files">
 			<fileset refid="js-build.files" />
 			<fileset refid="module-build.files" />
-	    </ivy:buildlist>
+		</ivy:buildlist>
 		<subant target="install" buildpathref="resolved-build.files" />
 	</target>
 
@@ -47,48 +47,49 @@
 		<subant target="collect-xml-schemas">
 			<fileset refid="module-build.files" />
 		</subant>
-		<scp todir="${user.name}@riotfamily.org:/var/www/riotfamily.org/www/htdocs/schema"
-			keyfile="${user.home}/.ssh/id_rsa" passphrase="" trust="true">
+		<scp todir="${user.name}@riotfamily.org:/var/www/riotfamily.org/www/htdocs/schema" keyfile="${user.home}/.ssh/id_rsa" passphrase="" trust="true">
 			<fileset dir="${build.dir}/schema" />
 		</scp>
 	</target>
-	
+
 	<target name="mirror-repository" depends="-configure-ivy">
-		<ivy:install from="riotfamily" to="local" organisation=".*" module=".*" 
-			revision=".*" matcher="regexp" />
+		<ivy:install from="riotfamily" to="local" organisation=".*" module=".*" revision=".*" matcher="regexp" />
 	</target>
-		
+
 	<target name="report" depends="-configure-ivy">
 		<ivy:buildlist reference="resolved-build.files">
-	    	<fileset refid="module-build.files" />
-	    </ivy:buildlist>
+			<fileset refid="module-build.files" />
+		</ivy:buildlist>
 		<subant target="report" buildpathref="resolved-build.files" />
 	</target>
 
 	<target name="javadoc">
-		<javadoc destdir="${build.dir}/api" classpathref="classpath" 
-				breakiterator="true">
-			
+		<javadoc destdir="${build.dir}/api" classpathref="classpath" breakiterator="true">
+
 			<packageset dir="common/src" />
 			<packageset dir="cachius/src" />
+			<packageset dir="components/src" />
 			<packageset dir="forms/src" />
 			<packageset dir="riot/src" />
 			<packageset dir="riot-hibernate/src" />
 			<packageset dir="pages/src" />
-				
+			<packageset dir="website/src" />
+
 			<group title="Core" packages="org.riotfamily.riot*" />
+			<group title="Website" packages="org.riotfamily.website*" />
+			<group title="Components" packages="org.riotfamily.components*" />
 			<group title="Pages" packages="org.riotfamily.pages*" />
 			<group title="Common" packages="org.riotfamily.common*" />
 			<group title="Cachius" packages="org.riotfamily.cachius*" />
 			<group title="Forms" packages="org.riotfamily.forms*" />
 			<group title="Hibernate" packages="org.riotfamily.riot.hibernate*" />
-			
+
 			<link href="http://java.sun.com/j2ee/1.4/docs/api" />
 			<link href="http://java.sun.com/j2se/1.4.2/docs/api" />
 			<link href="http://static.springframework.org/spring/docs/2.0.x/api" />
 		</javadoc>
 	</target>
-		
+
 	<target name="dist" depends="jar,javadoc">
 		<delete file="${dist.zip.file}" />
 		<mkdir dir="${build.dir}/tmp" />
@@ -97,13 +98,13 @@
 				<include name="**/*.jar" />
 			</fileset>
 			<chainedmapper>
-				<flattenmapper />				
+				<flattenmapper />
 			</chainedmapper>
 		</copy>
 		<zip destfile="${dist.zip.file}">
-			<zipfileset dir="${build.dir}/api" prefix="riotfamily/api" />			
-			<zipfileset dir="." excludes="build/**,lib/**,.*/**,.*,**/CVS/**" prefix="riotfamily"/>
-			<zipfileset dir="${build.dir}/tmp" prefix="riotfamily/dist" includes="**/*.jar" />				
+			<zipfileset dir="${build.dir}/api" prefix="riotfamily/api" />
+			<zipfileset dir="." excludes="build/**,lib/**,.*/**,.*,**/CVS/**" prefix="riotfamily" />
+			<zipfileset dir="${build.dir}/tmp" prefix="riotfamily/dist" includes="**/*.jar" />
 		</zip>
 		<delete dir="${build.dir}/tmp" />
 	</target>
@@ -116,10 +117,10 @@
 			<fileset refid="js-build.files" />
 		</subant>
 	</target>
-	
+
 	<target name="distclean">
 		<delete dir="${build.dir}" />
 		<delete dir="${lib.dir}" />
 	</target>
-		
+
 </project>
