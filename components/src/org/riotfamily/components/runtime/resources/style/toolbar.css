@@ -73,7 +73,12 @@ body > #riot-inspector {
 #riot-toolbar-button-move {
 	background-image: url(icons/toolbar/move.gif);
 }
-
+#riot-toolbar-button-publish {
+	background-image: url(icons/toolbar/publish.gif);
+}
+#riot-toolbar-button-discard {
+	background-image: url(icons/toolbar/discard.gif);
+}
 #riot-toolbar-button-logout {
 	background-image: url(icons/toolbar/logout.gif);
 }
@@ -82,8 +87,8 @@ body > #riot-inspector {
 	background-position: 0 0;
 }
 
-#riot-toolbar #riot-toolbar-button-publish {
-	background: ${highlight} url(icons/toolbar/publish_hi.gif);
+#riot-toolbar #riot-toolbar-button-apply {
+	background: ${highlight} url(icons/toolbar/apply_hi.gif);
 	border: 3px solid ${toolbarOutline};
 	margin:8px auto;
 }
@@ -389,75 +394,4 @@ body > #riot-overlay {
 	filter: alpha(opacity=60);
 	-moz-opacity: 0.6;
 	opacity: 0.6;
-}
-.riot-publish-controls {
-	background-color: #fff;
-	border: 2px solid ${toolbarOutline};
-	padding-bottom: 10px;
-	width: 250px;
-}
-
-.preview .riot-live,
-.live .riot-preview {
-	display: none;
-}
-
-.riot-publish-controls .title {
-	color: #3d3d3d;
-	background-color: #ebebeb;
-	padding: 5px 10px;
-	font-family: "Trebuchet MS", arial, sans-serif;
-	font-size: 12px;
-	line-height: 16px;
-	font-weight: 500;
-	text-align: left;
-	border-bottom: 1px solid #3d3d3d;
-	margin-bottom: 10px;
-}
-
-.riot-publish-controls a {
-	display: block;
-	text-decoration: none;
-	font-size: 12px;
-	height: 16px;
-	margin: 0 20px 2px 10px;
-}
-
-.riot-publish-controls a .icon {
-	background-color: #3d3d3d;
-	display: -moz-inline-box !important;
-	display: inline-block;
-	width: 15px;
-	height: 13px;
-	margin-right: 3px;
-	overflow: hidden;
-	vertical-align: middle;
-}
-
-.riot-publish-button .icon {
-	background-image: url(icons/dialogs/publish.gif);
-}
-.riot-discard-button .icon {
-	background-image: url(icons/dialogs/discard.gif);
-}
-.riot-live-button .icon {
-	background-image: url(icons/dialogs/live.gif);
-}
-.riot-preview-button .icon {
-	background-image: url(icons/dialogs/preview.gif);
-}
-
-.riot-publish-controls a .text {
-	color: #3d3d3d;
-	text-decoration: underline;
-	vertical-align: middle;
-}
-.riot-publish-controls a:hover {
-	background-color: transparent !important;
-}
-.riot-publish-controls a:hover .icon {
-	background-color: ${highlight};
-}
-.riot-publish-controls a:hover .text {
-	color: ${highlight};
 }

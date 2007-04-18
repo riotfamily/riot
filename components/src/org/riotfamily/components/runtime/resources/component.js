@@ -83,13 +83,13 @@ riot.Component.prototype = {
 			el.component.componentList.componentRemoved();
 		});
 		ComponentEditor.deleteComponent(this.id);
-		riot.toolbar.setDirty(this.componentList, true);
+		this.componentList.setDirty(true);
 		return false;
 	},
 				
 	updateText: function(key, value) {
 		ComponentEditor.updateText(this.componentList.controllerId, this.id, key, value, this.setHtml.bind(this));
-		riot.toolbar.setDirty(this.componentList, true);
+		this.componentList.setDirty(true);
 	},
 	
 	setHtml: function(html) {
@@ -242,7 +242,7 @@ riot.InsertButton.prototype = {
 	oninsert: function(id) {
 		this.componentId = id;
 		this.componentList.update();
-		riot.toolbar.setDirty(this.componentList, true);
+		this.componentList.setDirty(true);
 	},
 	
 	changeType: function(type) {
@@ -286,6 +286,8 @@ riot.TypeInspector.prototype = {
 	}
 }
 
+riot.publishWidgets = [];
+
 riot.PublishWidget = Class.create();
 riot.PublishWidget.prototype = {
 	initialize: function(componentList) {
@@ -294,113 +296,60 @@ riot.PublishWidget.prototype = {
 		this.element = RBuilder.node('div', {className: 'riot-publish-outline riot-publish-outline-preview', style: {position: 'absolute', display: 'none'}},
 			this.overlay = RBuilder.node('div', {})
 		);
-		
-		this.controls = RBuilder.node('div', {className: 'riot-publish-controls preview', style: {position: 'absolute', display: 'none'}},
-			RBuilder.node('div', {className: 'riot-preview'},
-				RBuilder.node('div', {className: 'title'}, 'Edit Mode'),
-				RBuilder.node('a', {className: 'riot-publish-button', href: '#', onclick: this.publish.bind(this)},
-					RBuilder.node('span', {className: 'icon'}), 
-					RBuilder.node('span', {className: 'text'}, '${publish-dialog.publish}')
-				),
-				RBuilder.node('a', {className: 'riot-discard-button', href: '#', onclick: this.discard.bind(this)},
-					RBuilder.node('span', {className: 'icon'}), 
-					RBuilder.node('span', {className: 'text'}, '${publish-dialog.discard}')
-				),
-				RBuilder.node('a', {className: 'riot-live-button', href: '#', onclick: this.toggleVersion.bindAsEventListener(this)},
-					RBuilder.node('span', {className: 'icon'}), 
-					RBuilder.node('span', {className: 'text'}, 'View Live Version')
-				)
-			),
-			RBuilder.node('div', {className: 'riot-live'},
-				RBuilder.node('div', {className: 'title'}, 'Live Mode'),
-				RBuilder.node('a', {className: 'riot-preview-button', href: '#', onclick: this.toggleVersion.bindAsEventListener(this)},
-					RBuilder.node('span', {className: 'icon'}), 
-					RBuilder.node('span', {className: 'text'}, 'Switch back to edit mode')
-				)
-			)
-		);
-		this.controls.observe('mouseover', this.clearTimeout.bind(this));
-		this.controls.observe('mouseout', this.scheduleHideControls.bind(this));
-		this.element.observe('mouseover', this.showControls.bind(this));
-		this.element.observe('mouseout', this.scheduleHideControls.bind(this));
 		this.element.observe('click', this.toggleVersion.bind(this));
+		riot.publishWidgets.push(this);
+		riot.toolbar.applyButton.enable();
+		this.show();
 	},
 	
 	show: function() {
-		document.body.appendChild(this.controls);
 		this.componentList.element.makePositioned();
 		this.componentList.element.appendChild(this.element);
 		this.overlay.style.height = this.componentList.element.offsetHeight + 'px';
-		this.positionControls();
 		this.element.show();
 	},
-		
-	showControls: function() {
-		this.clearTimeout();
-		if (riot.activePublishWidget) {
-			if (riot.activePublishWidget != this) {
-				riot.activePublishWidget.hideControls();
-			}
-			else {
-				return;
-			}
-		}
-		riot.activePublishWidget = this;
-		this.overlay.addClassName('riot-publish-overlay');
-		this.positionControls();
-		new Effect.Appear(this.controls, {duration: 0.3});
-	},
-	
-	positionControls: function() {
-		var pos = Position.page(this.element);
-		var top = pos[1];
-		var scrollY = Viewport.getScrollTop();
-		if (top < scrollY) top = scrollY;
-		
-		this.controls.style.left = (pos[0] + 10) + 'px';
-		this.controls.style.top = (top + 10) + 'px';
-	},
-	
-	scheduleHideControls: function() {
-		this.timeout = setTimeout(this.hideControls.bind(this), 250);
-	},
-	
-	clearTimeout: function() {
-		if (this.timeout) clearTimeout(this.timeout);
-	},
-	
-	hideControls: function() {
-		if (riot.activePublishWidget == this) riot.activePublishWidget = null;
-		this.overlay.removeClassName('riot-publish-overlay');
-		this.controls.hide();
-	},
-	
-	hide: function() {
-		if (this.controls.parentNode) this.controls.remove();
+			
+	destroy: function() {
+		this.showPreview();
+		riot.publishWidgets = riot.publishWidgets.without(this);
+		this.componentList.publishWidget = null;
 		if (this.element.parentNode) this.element.remove();
 	},
 	
 	toggleVersion: function(ev) {
 		if (ev) Event.stop(ev);
-		this.live = !this.live;
-		this.overlay.toggleClassName('riot-publish-overlay-live', this.live);
-		this.overlay.toggleClassName('riot-publish-overlay-preview', !this.live);
-		this.element.toggleClassName('riot-publish-outline-live', this.live);
-		this.element.toggleClassName('riot-publish-outline-preview', !this.live);
-		this.controls.toggleClassName('live', this.live);
-		this.controls.toggleClassName('preview', !this.live);
-		if (this.live) {
-			if (!this.liveHtml) {
-				ComponentEditor.getLiveListHtml(this.componentList.controllerId, 
-						this.componentList.id, this.setLiveHtml.bind(this));
-			}
-			else {
-				this.setHtml(this.liveHtml);
-			}
+		if (!this.live) {
+			this.showLive();
 		}
 		else {
-			this.setHtml(this.previewHtml);
+			this.showPreview();
 		}
+		if (riot.publishWidgets.any(this.changesAvailable)) {
+			riot.toolbar.applyButton.enable();
+		}
+		else {
+			riot.toolbar.applyButton.disable();
+		}
+	},
+
+	showPreview: function() {
+		if (!this.live) return;
+		this.live = false;
+		this.setHtml(this.previewHtml);
+		this.updateUI();
+	},
+		
+	showLive: function() {
+		if (this.live) return;
+		this.live = true;
+		if (!this.liveHtml) {
+			ComponentEditor.getLiveListHtml(this.componentList.controllerId, 
+					this.componentList.id, this.setLiveHtml.bind(this));
+		}
+		else {
+			this.setHtml(this.liveHtml);
+		}
+		this.updateUI();
 	},
 	
 	setLiveHtml: function(html) {
@@ -413,20 +362,42 @@ riot.PublishWidget.prototype = {
 		this.show();
 	},
 	
-	publish: function() {
-		this.componentList.publishChanges();
-		riot.toolbar.setDirty(this.componentList, false);
-		this.hide();
-		return false;
+	updateUI: function() {
+		this.overlay.toggleClassName('riot-publish-overlay-live', this.live);
+		this.overlay.toggleClassName('riot-publish-overlay-preview', !this.live);
+		this.element.toggleClassName('riot-publish-outline-live', this.live);
+		this.element.toggleClassName('riot-publish-outline-preview', !this.live);
 	},
 	
-	discard: function() {
-		this.componentList.discardChanges();
-		riot.toolbar.setDirty(this.componentList, false);
-		this.hide();
-		return false;
+	changesAvailable: function(instance) {
+		return !instance.live;
+	},
+	
+	apply: function() {
+		if (!this.live) {
+			this.componentList.publishChanges();
+			this.componentList.setDirty(false);
+		}
 	}
 }
+
+riot.DiscardWidget = riot.PublishWidget.extend({
+	initialize: function(componentList) {
+		this.SUPER(componentList);
+		this.showLive();
+	},
+	
+	changesAvailable: function(instance) {
+		return instance.live;
+	},
+	
+	apply: function() {
+		if (this.live) {
+			this.componentList.discardChanges();
+			this.componentList.setDirty(false);
+		}
+	}
+});
 
 riot.listCount = 0; // Counter to generate element IDs
 
@@ -463,8 +434,8 @@ riot.AbstractComponentCollection.prototype = {
 
 	onupdate: function(html) {
 		this.replaceHtml(html);
-		var handler = riot.toolbar.activeButton.handler;
-		if (handler != 'publish') this[handler](true);
+		var handler = riot.toolbar.selectedButton.handler;
+		if (handler != 'discard') this[handler](true);
 	},
 	
 	replaceHtml: function(html) {
@@ -485,29 +456,47 @@ riot.AbstractComponentCollection.prototype = {
 		this.getComponents().invoke('setMode', enable ? 'properties' : null);
 	},
 	
+	setDirty: function(dirty) {
+		this.dirty = dirty;
+		riot.toolbar.setDirty(this, dirty);
+	},
+	
+	discard: function(enable) {
+		if (enable) {
+			if (this.dirty) this.publishWidget = new riot.DiscardWidget(this);
+		}
+		else if (this.publishWidget) {
+			this.publishWidget.destroy();
+			riot.toolbar.applyButton.disable();
+		}
+	},
+	
 	publish: function(enable) {
 		if (enable) {
-			this.publishWidget = new riot.PublishWidget(this);
-			this.publishWidget.show();
+			if (this.dirty)	this.publishWidget = new riot.PublishWidget(this);
 		}
-		else {
-			this.publishWidget.hide();
-			this.publishWidget = null;
+		else  {
+			if (this.publishWidget) this.publishWidget.destroy();
+			riot.toolbar.applyButton.disable();
 		}
+	},
+	
+	apply: function() {
+		if (this.publishWidget) this.publishWidget.apply();
 	}
 }
 
 riot.ComponentSet = riot.AbstractComponentCollection.extend({
 	initialize: function(el) {
 		this.SUPER(el);
-		this.dirty = this.getComponents().pluck('element').any(function(e) {
+		this.setDirty(this.getComponents().pluck('element').any(function(e) {
 			return e.readAttribute('riot:dirty') != null;
-		});
+		}));
 	},
 
 	publishChanges: function() {
 		ComponentEditor.publishContainers(this.getComponents().pluck('id'), 
-				this.publishWidget.hide.bind(this.publishWidget));
+				this.publishWidget.destroy.bind(this.publishWidget));
 	},
 
 	discardChanges: function() {
@@ -519,7 +508,7 @@ riot.ComponentSet = riot.AbstractComponentCollection.extend({
 riot.ComponentList = riot.AbstractComponentCollection.extend({
 	initialize: function(el) {
 		this.SUPER(el);
-		this.dirty = el.readAttribute('riot:dirty');
+		this.setDirty(el.readAttribute('riot:dirty'));
 		this.id = el.readAttribute('riot:listId');
 		this.maxComponents = el.readAttribute('riot:maxComponents');
 		this.minComponents = el.readAttribute('riot:minComponents');
@@ -609,7 +598,7 @@ riot.ComponentList = riot.AbstractComponentCollection.extend({
 	
 	publishChanges: function() {
 		ComponentEditor.publishList(this.id, 
-				this.publishWidget.hide.bind(this.publishWidget));
+				this.publishWidget.destroy.bind(this.publishWidget));
 	},
 	
 	discardChanges: function() {
@@ -646,7 +635,7 @@ riot.ComponentDragObserver.prototype = {
 			this.componentList.updatePositionClasses();
 			var nextId = nextEl && nextEl.component ? nextEl.component.id : null;
 			ComponentEditor.moveComponent(el.component.id, nextId);
-			riot.toolbar.setDirty(this.componentList, true);
+			this.componentList.setDirty(true);
 			if (nextEl) { nextEl.forceRerendering(); }
 		}
 		this.nextEl = null;

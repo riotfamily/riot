@@ -117,7 +117,7 @@ riot.InplaceEditor.prototype = {
 			ComponentEditor.updateText(this.component.id, 
 					this.key, text, this.onupdate.bind(this));
 					
-			riot.toolbar.setDirty(this.component.componentList, true);
+			this.component.componentList.setDirty(true);
 		}
 		this.onsave(text);
 	},
@@ -137,6 +137,9 @@ riot.InplaceEditor.prototype = {
 	 * method.
 	 */
 	close: function() {
+		if (riot.activeEditor == this) {
+			riot.activeEditor = null;
+		}
 		this.save();
 		this.onclose();
 	},
@@ -151,7 +154,11 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 
 	oninit: function(options) {
 		this.options = options || {};
-		this.input = RBuilder.node('textarea', {wrap: 'off'}).setStyle({
+		this.inline = this.element.getStyle('display') == 'inline';
+		this.input = this.inline ? RBuilder.node('input', {type: 'text'})
+				: RBuilder.node('textarea', {wrap: 'off'});
+		
+		this.input.setStyle({
 			position: 'absolute', overflow: 'hidden',
 			top: 0,	left: 0, border: 0, padding: 0, margin: 0,
 			backgroundColor: 'transparent'
@@ -168,7 +175,6 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 		
 		this.input.style.boxSizing = this.input.style.MozBoxSizing = 'border-box';
 		this.input.hide();
-		document.body.appendChild(this.input);
 	},
 		
 	edit: function() {
@@ -192,12 +198,18 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 				this.paddingTop = parseInt(this.element.getStyle('padding-top'));
 			}
 		}
+		document.body.appendChild(this.input);
 		this.resize();
 		this.element.makeInvisible();
 		this.input.show();
 		this.input.focus();
 		this.input.value = this.text;
-		this.resize();
+		this.updateElement();
+	},
+	
+	close: function() {
+		this.SUPER();
+		this.input.remove();
 	},
 	
 	getText: function() {
@@ -215,14 +227,18 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 	},
 
 	updateElement: function() {
-		this.element.update(this.getText().replace(/<br[^>]*>/gi, '<br />&nbsp;'));
+		var html = this.getText().replace(/<br[^>]*>/gi, '<br />&nbsp;');
+		if (this.inline) {
+			html = html.replace(/\s/gi, '&nbsp;') + 'W'; // ... should be the widest character
+		}
+		this.element.update(html);
 		this.resize();
 	},
 
 	resize: function() {
 		Position.clone(this.element, this.input, { setWidth: false, setHeight: false });
 		this.input.style.width  = (this.element.offsetWidth - this.paddingLeft) + 'px';
-    	this.input.style.height = (this.element.offsetHeight - this.paddingTop) + 'px';
+   		this.input.style.height = (this.element.offsetHeight - this.paddingTop) + 'px';
 	}
 });
 
