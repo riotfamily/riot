@@ -310,7 +310,7 @@ riot.PublishWidget.prototype = {
 	},
 			
 	destroy: function() {
-		this.showPreview();
+		this.componentList.replaceHtml(this.previewHtml);
 		riot.publishWidgets = riot.publishWidgets.without(this);
 		this.componentList.publishWidget = null;
 		if (this.element.parentNode) this.element.remove();
@@ -358,7 +358,7 @@ riot.PublishWidget.prototype = {
 	},
 	
 	setHtml: function(html) {
-		this.componentList.replaceHtml(html);
+		this.componentList.element.update(html);
 		this.show();
 	},
 	
@@ -408,6 +408,12 @@ riot.AbstractComponentCollection.prototype = {
 		el.componentList = this;
 		if (!el.id) el.id = 'riot-components-' + riot.listCount++;
 		this.controllerId = el.readAttribute('riot:controllerId');
+		this.childLists = [];
+		var parent = el.up('.riot-components');
+		if (parent) {
+			this.parentList = parent.componentList;
+			this.parentList.childLists.push(this);
+		}
 	},
 	
 	getComponents: function() {
@@ -440,8 +446,15 @@ riot.AbstractComponentCollection.prototype = {
 	
 	replaceHtml: function(html) {
 		this.element.update(html);
+		this.updateComponents();
+	},
+	
+	updateComponents: function() {
 		this.components = null;
 		this.getComponents();
+		if (this.childLists) riot.toolbar.evictComponentLists(this.childLists);
+		this.childLists = riot.createComponentLists(this.element);
+		riot.toolbar.registerComponentLists(this.childLists);
 	},
 	
 	browse: function() {
@@ -457,8 +470,13 @@ riot.AbstractComponentCollection.prototype = {
 	},
 	
 	setDirty: function(dirty) {
-		this.dirty = dirty;
-		riot.toolbar.setDirty(this, dirty);
+		if (this.parentList) {
+			this.parentList.setDirty(dirty);
+		}
+		else {
+			this.dirty = dirty;
+			riot.toolbar.dirtyCheck(dirty);
+		}
 	},
 	
 	discard: function(enable) {
@@ -612,6 +630,25 @@ riot.createComponentList = function(el) {
 		return new riot.ComponentList(el);
 	}
 	return new riot.ComponentSet(el);
+}
+
+riot.createComponentLists = function(el) {
+	var lists = [];
+	el = el || $(document.body);
+	el.getElementsBySelector('.riot-components').each(function(e) {
+		var list = e.componentList;
+		if(!isDefined(list)) {
+			list = riot.createComponentList(e);
+			e.componentList = list;
+			/*
+			if (riot.toolbar.selectedButton) {
+				list[riot.toolbar.handler](true);
+			}
+			*/
+		}
+		lists.push(list);
+	});
+	return lists;
 }
 
 riot.ComponentDragObserver = Class.create();

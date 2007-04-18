@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.web.event.ContentChangedEvent;
 import org.riotfamily.components.Component;
 import org.riotfamily.components.ComponentList;
@@ -50,6 +52,8 @@ import org.springframework.context.event.ApplicationEventMulticaster;
  */
 public abstract class AbstractComponentDao implements ComponentDao {
 
+	private static final Log log = LogFactory.getLog(AbstractComponentDao.class);
+	
 	private ComponentRepository repository;
 
 	private ApplicationEventMulticaster eventMulticaster;
@@ -325,6 +329,15 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	 * @return <code>true</code> if there was anything to publish.
 	 */
 	public boolean publishContainer(VersionContainer container) {
+		boolean result = false;
+		Set childLists = container.getChildLists();
+		if (childLists != null) {
+			Iterator it = childLists.iterator();
+			while (it.hasNext()) {
+				ComponentList childList = (ComponentList) it.next();
+				result |= publishList(childList);
+			}
+		}
 		ComponentVersion preview = container.getPreviewVersion();
 		if (preview != null) {
 			ComponentVersion liveVersion = container.getLiveVersion();
@@ -334,9 +347,9 @@ public abstract class AbstractComponentDao implements ComponentDao {
 			container.setLiveVersion(preview);
 			container.setPreviewVersion(null);
 			updateVersionContainer(container);
-			return true;
+			result = true;
 		}
-		return false;
+		return result;
 	}
 	
 	/**
@@ -346,6 +359,7 @@ public abstract class AbstractComponentDao implements ComponentDao {
 	public boolean publishList(ComponentList componentList) {
 		boolean result = false;
 		if (componentList.isDirty()) {
+			log.debug("List " + componentList + " is dirty and will be published.");
 			result = true;
 			List previewList = componentList.getPreviewContainers();
 			List liveList = componentList.getLiveContainers();
