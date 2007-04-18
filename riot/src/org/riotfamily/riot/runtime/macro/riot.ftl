@@ -3,7 +3,7 @@
 </#macro>
 
 <#macro script src>
-<script langauge="JavaScript" type="text/javascript" src="${resource(src)}"></script>
+<script language="JavaScript" type="text/javascript" src="${resource(src)}"></script>
 </#macro>
 
 <#macro controller url>
