@@ -210,6 +210,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 	close: function() {
 		this.SUPER();
 		this.input.remove();
+		this.lastText = null;
 	},
 	
 	getText: function() {
@@ -227,12 +228,16 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 	},
 
 	updateElement: function() {
-		var html = this.getText().replace(/<br[^>]*>/gi, '<br />&nbsp;');
-		if (this.inline) {
-			html = html.replace(/\s/gi, '&nbsp;') + 'W'; // ... should be the widest character
+		var text = this.getText();
+		if (!this.lastText || this.lastText != text) {
+			this.lastText = text;
+			var html = text.replace(/<br[^>]*>/gi, '<br />&nbsp;');
+			if (this.inline) {
+				html = html.replace(/\s/gi, '&nbsp;') + 'W'; // ... should be the widest character
+			}
+			this.element.update(html);
+			this.resize();
 		}
-		this.element.update(html);
-		this.resize();
 	},
 
 	resize: function() {
