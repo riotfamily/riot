@@ -10,6 +10,11 @@
 		http://www.springframework.org/schema/util/spring-util-2.0.xsd
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx.xsd">
+		
+	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
+		<property name="location" value="classpath:/application.properties" />
+		<property name="contextOverride" value="true" />
+	</bean>	
 
 	<bean id="messageSource" name="riotMessageSource" class="org.riotfamily.common.i18n.CodeRevealingMessageSource">
 		<property name="revealCodes" value="false" />
@@ -248,7 +253,9 @@
 		<property name="customElements" ref="customFormElements" />
 	</bean>
 	
-	<bean id="imageCropper" class="org.riotfamily.forms.element.support.image.ImageMagickCropperFactoryBean" />
+	<bean id="imageCropper" class="org.riotfamily.forms.element.support.image.ImageMagickCropperFactoryBean">
+		<property name="convertCommand" value="${imageMagick.convertCommand=convert}" />
+	</bean>
 		
 	<bean id="editorRepository" class="org.riotfamily.riot.editor.xml.XmlEditorRepository">
 		<property name="configLocations">
