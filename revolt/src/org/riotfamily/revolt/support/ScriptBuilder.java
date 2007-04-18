@@ -55,7 +55,7 @@ public class ScriptBuilder {
 		Iterator it = model.getSequences().iterator();
 		while (it.hasNext()) {
 			String sequence = (String) it.next();
-			dialect.createAutoIncrementSequence(sequence);
+			script.append(dialect.createAutoIncrementSequence(sequence));
 		}
 		it = model.getTables().iterator();
 		while (it.hasNext()) {
