@@ -97,7 +97,7 @@ tr.highlight {
 .pager .current-page {
 	color: #F9F9F5;
 	padding: 1px 4px;
-	background-color: #cb0038;
+	background-color: ${highlight};
 	font-weight: bold;
 }
 
