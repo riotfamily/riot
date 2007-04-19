@@ -29,72 +29,42 @@ import java.util.List;
 
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
-import org.riotfamily.forms.element.support.select.AbstractSingleSelectElement;
+import org.riotfamily.forms.element.support.select.AbstractMultiSelectElement;
 import org.riotfamily.forms.element.support.select.Option;
 import org.riotfamily.forms.element.support.select.OptionTagRenderer;
 
 
 /**
- * A select-box widget.
+ * A select-box widget that allows multiple selections.
  */
-public class SelectBox extends AbstractSingleSelectElement {
+public class MultiSelectBox extends AbstractMultiSelectElement {
 
-	private static final String DEFAULT_CHOOSE_LABEL_KEY = 
-			"label.selectBox.choose";
-	
-	private String chooseLabelKey;
+	private int maxSize = 7;
 
-	private String chooseLabel;
-	
-	public SelectBox() {
+	public MultiSelectBox() {
 		setOptionRenderer(new OptionTagRenderer());
 	}
 
-	/**
-	 * @deprecated Use @link #setChooseLabel(String) or 
-	 * @link #setChooseLabelKey(String) instead.
-	 */
-	public void setShowChooseOption(boolean show) {
-		if (show) {
-			chooseLabelKey = DEFAULT_CHOOSE_LABEL_KEY;
-		}
-		else {
-			chooseLabelKey = null;
-			chooseLabel = null;
-		}
+	public int getMaxSize() {
+		return this.maxSize;
 	}
 
-	public void setChooseLabel(String chooseLabel) {
-		this.chooseLabel = chooseLabel;
+	public void setMaxSize(int maxSize) {
+		this.maxSize = maxSize;
 	}
 
-	public void setChooseLabelKey(String chooseLabelKey) {
-		this.chooseLabelKey = chooseLabelKey;
-	}
-
-	protected List createOptions() {
-		List options = super.createOptions();
-		if (chooseLabelKey != null) {
-			chooseLabel = getFormContext().getMessageResolver()
-					.getMessage(chooseLabelKey);
-		}
-		if (chooseLabel != null) {
-			Option chooseOption = new Option(null, null, chooseLabel, this);
-			options.add(0, chooseOption);
-		}
-		return options;
-	}
-	
 	public void renderInternal(PrintWriter writer) {
 		TagWriter selectTag = new TagWriter(writer);
 
+		List options = getOptions();
 		selectTag.start(Html.SELECT);
 		selectTag.attribute(Html.INPUT_NAME, getParamName());
 		selectTag.attribute(Html.COMMON_ID, getId());
-		selectTag.attribute(Html.SELECT_SIZE, 1);
+		selectTag.attribute(Html.SELECT_SIZE, Math.min(options.size(), maxSize));
+		selectTag.attribute(Html.SELECT_MULTIPLE, true);
 		selectTag.body();
 
-		Iterator it = getOptions().iterator();
+		Iterator it = options.iterator();
 		while (it.hasNext()) {
 			((Option) it.next()).render();
 		}

@@ -51,6 +51,7 @@ import org.riotfamily.forms.element.core.ImageCheckboxGroup;
 import org.riotfamily.forms.element.core.ImageUpload;
 import org.riotfamily.forms.element.core.ListEditor;
 import org.riotfamily.forms.element.core.MapEditor;
+import org.riotfamily.forms.element.core.MultiSelectBox;
 import org.riotfamily.forms.element.core.NestedForm;
 import org.riotfamily.forms.element.core.NumberField;
 import org.riotfamily.forms.element.core.PasswordField;
@@ -173,6 +174,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		elementClasses.put("nested-form", NestedForm.class);
 		elementClasses.put("list", ListEditor.class);
 		elementClasses.put("map", MapEditor.class);
+		elementClasses.put("multi-selectbox", MultiSelectBox.class);
 		elementClasses.put("selectbox", SelectBox.class);
 		elementClasses.put("radio-group", RadioButtonGroup.class);
 		elementClasses.put("checkbox-group", CheckboxGroup.class);

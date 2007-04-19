@@ -174,12 +174,20 @@
 	<xsd:element name="selectbox">
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="multiselect">
-					<xsd:attribute name="size" type="xsd:positiveInteger" />
-					<xsd:attribute name="multiple" type="xsd:boolean" />
+				<xsd:extension base="select">
 					<xsd:attribute name="choose-label" type="xsd:string" />
 					<xsd:attribute name="choose-label-key" type="xsd:string" />
 					<xsd:attribute name="show-choose-option" type="xsd:boolean" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="multi-selectbox">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="multiselect">
+					<xsd:attribute name="max-size" type="xsd:positiveInteger" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
