@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.core;
 
+import java.beans.PropertyEditor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,6 +35,8 @@ import java.util.Set;
 import org.riotfamily.common.util.PropertyUtils;
 import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.bind.Editor;
+import org.riotfamily.forms.bind.EditorBinder;
+import org.riotfamily.forms.bind.EditorBinding;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.Container;
 import org.riotfamily.forms.element.support.TemplateElement;
@@ -146,7 +149,7 @@ public class ListEditor extends TemplateElement implements Editor,
 			Iterator it = collection.iterator();			
 			while (it.hasNext()) {
 				ListItem item = addItem();
-				item.getElement().setValue(it.next());
+				item.setValue(it.next());
 			}
 		}
 	}
@@ -183,7 +186,9 @@ public class ListEditor extends TemplateElement implements Editor,
 		ListItem item = new ListItem();
 		items.addElement(item);
 		item.focus();
-		item.getElement().setValue(null);
+		
+		item.setValue(null);
+		
 		return item;
 	}
 	
@@ -256,6 +261,11 @@ public class ListEditor extends TemplateElement implements Editor,
 			return isSortable();
 		}
 		
+		public void setValue(Object value) {
+			element.setEditorBinding(new ListItemEditorBinding(element, value));
+			element.setValue(value);
+		}
+		
 		public String getInitScript() {
 			if (getForm().isRendering()) {
 				return null;
@@ -280,6 +290,52 @@ public class ListEditor extends TemplateElement implements Editor,
 			int pos2 = itemOrder.indexOf(item2.getId() + ',');
 			return pos1 - pos2;
 		}
+		
+	}
+	
+	private class ListItemEditorBinding implements EditorBinding {
+
+		private Editor editor;
+		
+		private Object value;
+		
+		public ListItemEditorBinding(Editor editor, Object value) {
+			this.editor = editor;
+			this.value = value;
+		}
+
+		public Class getBeanClass() {
+			return value != null ? value.getClass() : null;
+		}
+
+		public Editor getEditor() {
+			return editor;
+		}
+
+		public EditorBinder getEditorBinder() {
+			return null;
+		}
+
+		public String getProperty() {
+			return null;
+		}
+
+		public PropertyEditor getPropertyEditor() {
+			return null;
+		}
+
+		public String getPropertyPath() {
+			return "[" + editor.getId() + "]";
+		}
+
+		public Class getPropertyType() {
+			return Object.class;
+		}
+
+		public Object getValue() {
+			return value;
+		}
+		
 		
 	}
 }
