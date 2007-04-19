@@ -555,7 +555,7 @@ riot.ComponentList = riot.AbstractComponentCollection.extend({
 				this.insertButton = new riot.InsertButton(null, this);
 				this.insertButton.show();
 			}
-			else {
+			else if (this.insertButton) {
 				this.insertButton.hide();
 				this.insertButton = null;
 			}
