@@ -1,5 +1,5 @@
 <div id="${element.id}" class="listEditor">
-	<ul id="${items.id}">
+	<ul id="${items.id}" class="listItems">
 		<#list items.elements as item>
 			${item.render()}
 		</#list>

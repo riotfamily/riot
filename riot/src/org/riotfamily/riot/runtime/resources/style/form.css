@@ -77,15 +77,26 @@ ul.errors li {
 	font-weight: normal;
 }
 
+label {
+	font-size: 12px;
+	font-weight: bold;
+	color: #3d3d3d;
+}
+
 div.title {
 	background: ${highlight} url(images/list.gif) top left no-repeat;
 }
 div.title label {
 	display: block;
+	font-weight: normal;
 }
 div.title .no-label {
 	display: block;
 	height: 12px;
+}
+
+.single .element {
+	margin-top: 6px;
 }
 
 textarea, input.text, input.number, input.password, select, option {
@@ -214,38 +225,58 @@ ul.radioButtonGroup input {
 	margin-bottom: 5px;
 }
 
-.indent .indent div.label label {
-	font-size: 11px;
-	font-weight: normal;
-	margin: 0 0 2px 0;
-}
-
-.indent div.label label {
+.indent label {
 	display: block;
 	font-weight: bold;
 	color: #363636;
 	margin: 0 0 4px 0;
 }
 
-.mapItem label {
-	font-weight: bold;
-	color: #3d3d3d;
+.indent .indent label,
+.mapItem .indent label {
+	font-size: 11px;
+	font-weight: normal;
+	margin: 0 0 2px 0;
 }
 
 .nestedForm {
 	position: relative;
 }
 
-.listItem .nestedForm {
-	margin: 10px 0 0 0;
+.mapEditor ul.mapItems {
+	margin: 0;
+	padding: 0;
+	background-color: #ebebeb;
+	border-bottom: 1px solid #fff;
 }
-
+.mapEditor li {
+	list-style-type: none;
+	display: block;
+	padding: 0;
+	margin: 0;
+}
+.mapEditor li.compositeMapItem {
+	margin-bottom: 1px;
+	border-bottom: 1px solid #fff;
+}
+.mapEditor div.mapItem {
+	padding: 10px 0 5px 36px;
+	background: #fff;
+}
+.mapEditor .compositeMapItem div.mapItem {
+	margin: 0 0 0 30px;
+	padding: 10px 0 5px 6px;
+	border-bottom: 1px solid #fff;
+}
+.mapItem .indent {
+	margin-left: 10px;
+}
+}
 .listEditor ul {
 	padding: 0;
 	margin: 0;
 	background-color: #a4a4a4;
 }
-
 .listEditor li.listItem {
 	list-style-type: none;
 	width: 100%;
@@ -275,10 +306,7 @@ table.listItem td.handle div {
 }
 table.listItem td.itemElement {
 	width: 100%;
-	padding: 10px 10px 10px 30px;
-}
-table.listItem .draggable td.itemElement {
-	padding-left: 10px;
+	padding: 10px;
 }
 table.listItem td.removeButton {	
 	padding-top: 6px;
@@ -288,7 +316,13 @@ table.listItem .group,
 table.listItem .nestedForm {
 	border-bottom: 0;
 }
-	
+table.listItem .indent {
+	margin: 0;
+}
+.listItem .nestedForm {
+	margin: 10px 0 0 0;
+}
+
 .button-add, 
 .button-remove, 
 .button-toggle {
@@ -432,7 +466,7 @@ table.listItem .nestedForm {
 	-moz-user-select: none;
 }
 .cropper .cropButton {
-	background: #cb0038;
+	background: ${highlight};
 }
 .cropper .undoButton {
 	background: #3d3d3d;

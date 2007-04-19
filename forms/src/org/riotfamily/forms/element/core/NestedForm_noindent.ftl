@@ -2,32 +2,36 @@
 <#if form.required || form.present>
 	
 	<#list elements.elements as element>
-    	<#if element.compositeElement?if_exists>
-			<#assign class = "composite" />
-		<#else>
-			<#assign class = "single" />
-		</#if>
-		<div class="form-element<#if element.styleClass?exists> ${element.styleClass}-element</#if>">
+    	<div class="${(element.compositeElement?default(false))?string('composite','single')}<#if element.styleClass?exists> ${element.styleClass}-element</#if>">
 			<#if element.label?exists>
-				<div class="title">
-					<label>
-						<#if element.label?has_content>
-							${element.label}
-						<#else>
-							<span class="no-label"></span>
-						</#if>
+				<#if element.compositeElement?default(false)>
+					<div class="title">
+						<label for="${element.id}">
+							<#if element.label?has_content>
+								${element.label}
+							<#else>
+								<span class="no-label"></span>
+							</#if>
+							<#if element.hint?exists>
+								<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')"></span>
+							</#if>
+						</label>
+					</div>
+				<#else>
+					<label for="${element.id}">
+						${element.label}
 						<#if element.hint?exists>
 							<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')"></span>
 						</#if>
 					</label>
-				</div>
+				</#if>
 			</#if>
-			<div class="${class}">
+			<div class="element">
 				<#if element.hint?exists>
 					<div id="${element.id}-hint" class="hint">${element.hint}</div>
 				</#if>
 				${element.render()}
-				${element.form.errors.renderErrors(element)}
+				${form.errors.renderErrors(element)}
 			</div>
 		</div>
 	</#list>			
