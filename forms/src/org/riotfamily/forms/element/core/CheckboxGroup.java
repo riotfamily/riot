@@ -73,4 +73,7 @@ public class CheckboxGroup extends AbstractMultiSelectElement
 		return "new RiotCheckboxGroup('" + getId() + "');";
 	}
 
+	public boolean isCompositeElement() {
+		return true;
+	}
 }
