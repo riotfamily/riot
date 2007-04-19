@@ -15,7 +15,7 @@
 		http://www.riotfamily.org/schema/forms/form-config
 		http://www.riotfamily.org/schema/forms/form-config.xsd">
 
-	<ed:list id="sitemap" list-ref="locales">
+	<ed:list id="sitemap" list-ref="locales" icon="sitemap">
 		<ed:tree id="pages" list-ref="pages" icon="sitemap">
 			<ed:form form-ref="page" label-property="pathComponent" />
 		</ed:tree>
