@@ -85,21 +85,24 @@ public class ComponentEditorRequest extends HttpServletRequestWrapper {
 	
 	public String getParameter(String name) {
 		Assert.notNull(name, "Parameter name must not be null");
-		String[] arr = (String[]) context.getParameters().get(name);
+		String[] arr = (String[]) getParameterMap().get(name);
 		return (arr != null && arr.length > 0 ? arr[0] : null);
 	}
 
 	public Enumeration getParameterNames() {
-		return Collections.enumeration(context.getParameters().keySet());
+		return Collections.enumeration(getParameterMap().keySet());
 	}
 
 	public String[] getParameterValues(String name) {
 		Assert.notNull(name, "Parameter name must not be null");
-		return (String[]) context.getParameters().get(name);
+		return (String[]) getParameterMap().get(name);
 	}
 
 	public Map getParameterMap() {
-		return Collections.unmodifiableMap(context.getParameters());
+		HashMap params = new HashMap();
+		params.putAll(context.getParameters());
+		params.putAll(super.getParameterMap());
+		return params;
 	}
 	
 	public Object getAttribute(String name) {

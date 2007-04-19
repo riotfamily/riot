@@ -97,14 +97,7 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	}
 	
 	protected final Location getLocation() {
-		Location location;
-		if (parent != null) {
-			log.debug("Nested list - parent: " + parent.getList());
-			location = parent.getList().getLocation();
-		}
-		else {
-			location = config.getLocator().getLocation(request);
-		}
+		Location location = config.getLocator().getLocation(request);
 		log.debug("List location: " + location);
 		return location;
 	}
