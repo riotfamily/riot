@@ -15,7 +15,7 @@
 		http://www.riotfamily.org/schema/forms/form-config
 		http://www.riotfamily.org/schema/forms/form-config.xsd">
 
-	<ed:list list-ref="riotUsers" icon="users">
+	<ed:list id="riotUsers" list-ref="riotUsers" icon="users">
 		<ed:form form-ref="riotUser" />
 	</ed:list>
 		
