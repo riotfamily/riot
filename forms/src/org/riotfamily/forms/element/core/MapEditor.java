@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.forms.bind.CollectionItemEditorBinding;
 import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.element.support.Container;
 import org.riotfamily.forms.element.support.TemplateElement;
@@ -173,7 +174,6 @@ public class MapEditor extends TemplateElement implements Editor {
 			this.key = key;
 			setSurroundBySpan(false);
 			element = (Editor) itemElementFactory.createElement(this, getForm());
-			element.setRequired(true);
 			addComponent("element", element);
 		}
 		
@@ -197,6 +197,7 @@ public class MapEditor extends TemplateElement implements Editor {
 		}
 		
 		public void setValue(Object value) {
+			element.setEditorBinding(new CollectionItemEditorBinding(element, value));
 			element.setValue(value);
 		}
 

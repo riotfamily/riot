@@ -34,6 +34,7 @@ import java.util.Set;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.bind.Editor;
+import org.riotfamily.forms.bind.CollectionItemEditorBinding;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.Container;
 import org.riotfamily.forms.element.support.TemplateElement;
@@ -146,7 +147,7 @@ public class ListEditor extends TemplateElement implements Editor,
 			Iterator it = collection.iterator();			
 			while (it.hasNext()) {
 				ListItem item = addItem();
-				item.getElement().setValue(it.next());
+				item.setValue(it.next());
 			}
 		}
 	}
@@ -183,7 +184,9 @@ public class ListEditor extends TemplateElement implements Editor,
 		ListItem item = new ListItem();
 		items.addElement(item);
 		item.focus();
-		item.getElement().setValue(null);
+		
+		item.setValue(null);
+		
 		return item;
 	}
 	
@@ -254,6 +257,11 @@ public class ListEditor extends TemplateElement implements Editor,
 		
 		public boolean isShowDragHandle() {
 			return isSortable();
+		}
+		
+		public void setValue(Object value) {
+			element.setEditorBinding(new CollectionItemEditorBinding(element, value));
+			element.setValue(value);
 		}
 		
 		public String getInitScript() {
