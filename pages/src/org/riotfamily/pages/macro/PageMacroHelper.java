@@ -32,7 +32,7 @@ import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageLocationResolver;
-import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -54,10 +54,14 @@ public class PageMacroHelper {
 		this.request = request;
 	}
 
-	public String getHandlerUrl(String handlerName) {
+	public String getHandlerUrl(String handlerName, String localeString) {
+		Locale locale = StringUtils.parseLocaleString(localeString);
+		return getHandlerUrl(handlerName, locale);
+	}
+
+	public String getHandlerUrl(String handlerName, Locale locale) {
 		PageNode node = pageDao.getNodeForHandler(handlerName);
 		if (node != null) {
-			Locale locale = RequestContextUtils.getLocale(request);
 			Page page = node.getPage(locale);
 			if (page != null) {
 				return resolver.getUrl(new PageLocation(page));

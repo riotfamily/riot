@@ -1,12 +1,12 @@
-<#function handlerUrl handlerName>
-	<#return common.url(pageMacroHelper.getHandlerUrl(handlerName)) />
+<#function handlerUrl handlerName locale=.locale>
+	<#return common.url(pageMacroHelper.getHandlerUrl(handlerName, locale)) />
 </#function>
 
 <#function url page>
 	<#return common.url(pageMacroHelper.getPageUrl(page)) />
 </#function>
 
-<#macro text page, key, tag="" attributes ...>
+<#macro text page key tag="" attributes ...>
 	<#if componentMacroHelper.isEditMode()>
 		<#local props = page.versionContainer.latestVersion.properties />
 		<#local attrs = {"riot:containerId": page.versionContainer.id} + attributes />
