@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.core;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -102,11 +103,11 @@ public class MapEditor extends TemplateElement implements Editor {
 	public void setValue(Object value) {
 		Collection keys = null;
 		if (keyCollectionProperty != null) {
-			keys = (Collection) getEditorBinding().getEditorBinder()
-					.getPropertyValue(keyCollectionProperty);
+			keys = new ArrayList((Collection) getEditorBinding().getEditorBinder()
+					.getPropertyValue(keyCollectionProperty));
 		}
 		else if (keyOptionsModel != null) {
-			keys = keyOptionsModel.getOptionValues();
+			keys = new ArrayList(keyOptionsModel.getOptionValues());
 		}
 		
 		if (value != null) {
