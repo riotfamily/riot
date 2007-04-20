@@ -14,44 +14,38 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
  *   Jan-Frederic Linde [jfl at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.job;
+package org.riotfamily.riot.job.context;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.riotfamily.riot.job.JobContext;
+import org.riotfamily.riot.job.JobInterruptedException;
 
-
-/**
- * Context that is passed to a {@link Job} upon execution.
- * 
- * @author Felix Gnass [fgnass at neteye dot de]
- */
-public interface JobContext {
-
-	/**
-	 * Returns the objectId.
-	 */
-	public String getObjectId();
-
-	/**
-	 * Notifies the DAO that a step has been completed.
-	 * @throws JobInterruptedException if the job has been interrupted 
-	 */
-	public void stepCompleted() throws JobInterruptedException;
-			
-	/**
-	 * Logs an info message.
-	 */
-	public void logInfo(String message);
+public class CommonsLogginJobContext implements JobContext {
 	
-	/**
-	 * Logs an error message.
-	 */
-	public void logError(String message);
-		
+	private static final Log log = LogFactory.getLog(
+					CommonsLogginJobContext.class);
+
+	public String getObjectId() {
+		return null;
+	}
+
+	public void logError(String message) {
+		log.error(message);
+	}
+
+	public void logInfo(String message) {
+		log.info(message);
+	}
+
+	public void stepCompleted() throws JobInterruptedException {
+	}
+
 }

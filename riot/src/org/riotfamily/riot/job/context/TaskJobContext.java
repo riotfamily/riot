@@ -14,44 +14,54 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
  *   Jan-Frederic Linde [jfl at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.job;
+package org.riotfamily.riot.job.context;
 
+import org.riotfamily.riot.job.JobContext;
+import org.riotfamily.riot.job.JobInterruptedException;
+import org.riotfamily.riot.job.support.JobTask;
 
-
-/**
- * Context that is passed to a {@link Job} upon execution.
- * 
- * @author Felix Gnass [fgnass at neteye dot de]
- */
-public interface JobContext {
+public class TaskJobContext implements JobContext {
+	
+	private JobTask task;
+	
+	public TaskJobContext(JobTask task) {
+		this.task = task;
+	}
 
 	/**
 	 * Returns the objectId.
 	 */
-	public String getObjectId();
+	public String getObjectId() {
+		return task.getDetail().getObjectId();
+	}
 
 	/**
 	 * Notifies the DAO that a step has been completed.
 	 * @throws JobInterruptedException if the job has been interrupted 
 	 */
-	public void stepCompleted() throws JobInterruptedException;
+	public void stepCompleted() throws JobInterruptedException {
+		task.stepCompleted();	
+	}
 			
 	/**
 	 * Logs an info message.
 	 */
-	public void logInfo(String message);
+	public void logInfo(String message) {
+		task.logInfo(message);
+	}
 	
 	/**
 	 * Logs an error message.
 	 */
-	public void logError(String message);
-		
+	public void logError(String message) {
+		task.logError(message);
+	}
+
 }

@@ -28,8 +28,8 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.riot.job.Job;
-import org.riotfamily.riot.job.JobContext;
 import org.riotfamily.riot.job.JobInterruptedException;
+import org.riotfamily.riot.job.context.TaskJobContext;
 import org.riotfamily.riot.job.persistence.JobDao;
 import org.riotfamily.riot.job.persistence.JobDetail;
 import org.riotfamily.riot.job.persistence.JobLogEntry;
@@ -102,7 +102,7 @@ public class JobTask implements Runnable {
 		thread = Thread.currentThread();
 		try {
 			jobStarted();
-			job.execute(new JobContext(this));
+			job.execute(new TaskJobContext(this));
 		}
 		catch (JobInterruptedException e) {
 		}
