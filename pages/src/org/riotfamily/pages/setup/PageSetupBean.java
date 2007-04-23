@@ -21,13 +21,14 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages;
+package org.riotfamily.pages.setup;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Locale;
+import java.util.List;
 
+import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.dao.PageDao;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -43,7 +44,7 @@ public class PageSetupBean implements InitializingBean {
 
 	private Collection locales;
 	
-	private String[] handlerNames;
+	private List definitions;
 	
 	private PageDao pageDao;
 	
@@ -57,8 +58,8 @@ public class PageSetupBean implements InitializingBean {
 		this.transactionManager = transactionManager;
 	}
 
-	public void setHandlerNames(String[] handlerNames) {
-		this.handlerNames = handlerNames;
+	public void setDefinitions(List definitions) {
+		this.definitions = definitions;
 	}
 
 	public void setLocales(Collection locales) {
@@ -77,16 +78,20 @@ public class PageSetupBean implements InitializingBean {
 	}
 	
 	protected void createNodes() {
-		for (int i = 0; i < handlerNames.length; i++) {
-			PageNode node = pageDao.getNodeForHandler(handlerNames[i]);
-			Iterator it = locales.iterator();
-			while (it.hasNext()) {
-				Locale locale = (Locale) it.next();
-				if (node.getPage(locale) == null) {
-					node.addPage(new Page(handlerNames[i], locale));
-				}
+		Iterator it = definitions.iterator();
+		while (it.hasNext()) {
+			PageDefinition definition = (PageDefinition) it.next();
+			String parentHandler = definition.getParentHandlerName();
+			PageNode parentNode;
+			if (parentHandler != null) {
+				parentNode = pageDao.findNodeForHandler(parentHandler);
 			}
-			//pageDao.updateNode(node);
+			else {
+				parentNode = pageDao.getRootNode();
+			}
+			PageNode node = definition.createNode(locales);
+			parentNode.addChildNode(node);
+			pageDao.updateNode(parentNode);
 		}
 	}
 }
