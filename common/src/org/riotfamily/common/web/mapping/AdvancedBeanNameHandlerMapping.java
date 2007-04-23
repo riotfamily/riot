@@ -87,7 +87,13 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
     
     private String servletMappingSuffix;
     
-    public void setServletMappingPrefix(String prefix) {
+    private boolean stripServletMapping = true;
+    
+	public void setStripServletMapping(boolean stripServletMapping) {
+		this.stripServletMapping = stripServletMapping;
+	}
+
+	public void setServletMappingPrefix(String prefix) {
 		this.servletMappingPrefix = prefix;
 	}
 
@@ -95,18 +101,6 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
         this.servletMappingSuffix = suffix;
     }
     
-    /**
-	 * @deprecated 
-	 */
-	public void setAlwaysUseFullPath(boolean alwaysUseFullPath) {
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public void setUrlDecode(boolean urlDecode) {
-	}
-
 	public final void setOrder(int order) {
 		this.order = order;
 	}
@@ -177,6 +171,14 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 		}
 	}
 
+	protected String getLookupPath(HttpServletRequest request) {
+		if (stripServletMapping) {
+			return ServletUtils.getPathWithoutServletMapping(request);
+		}
+		else {
+			return ServletUtils.getPathWithinApplication(request);
+		}
+	}
 
 	/**
 	 * Look up a handler for the given request, falling back to the default
@@ -187,7 +189,7 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 	public final HandlerExecutionChain getHandler(HttpServletRequest request) 
 			throws Exception {
 		
-		String lookupPath = ServletUtils.getPathWithoutServletMapping(request);
+		String lookupPath = getLookupPath(request);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Looking up handler for [" + lookupPath + "]");
 		}
@@ -366,10 +368,10 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 			AttributePattern p = (AttributePattern) it.next();
 			if (p.matches(attributes)) {
 				StringBuffer url = p.buildUrl(attributes);
-				if (servletMappingPrefix != null) {
+				if (stripServletMapping && servletMappingPrefix != null) {
 					url.insert(0, servletMappingPrefix);
 				}
-				else if (servletMappingSuffix != null) {
+				else if (stripServletMapping &&  servletMappingSuffix != null) {
 					url.append(servletMappingSuffix);
 				}
 				return url.toString();
