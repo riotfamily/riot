@@ -18,38 +18,29 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
+ *   flx
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.macro;
+package org.riotfamily.common.web.view;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.view.MacroHelperFactory;
-import org.riotfamily.pages.dao.PageDao;
-import org.riotfamily.pages.mapping.PageLocationResolver;
-
 /**
- * @author Felix Gnass [fgnass at neteye dot de]
+ * @author flx
  * @since 6.5
  */
-public class PageMacroHelperFactory implements MacroHelperFactory {
+public class StatelessMacroHelperFactory implements MacroHelperFactory {
 
-	private PageDao pageDao;
+	private Object macroHelper;
 	
-	private PageLocationResolver resolver;
-	
-	public PageMacroHelperFactory(PageDao pageDao, 
-			PageLocationResolver resolver) {
-		
-		this.pageDao = pageDao;
-		this.resolver = resolver;
+	public StatelessMacroHelperFactory(Object macroHelper) {
+		this.macroHelper = macroHelper;
 	}
 
 	public Object createMacroHelper(HttpServletRequest request, 
 			HttpServletResponse response) {
 		
-		return new PageMacroHelper(pageDao, resolver, request);
+		return macroHelper;
 	}
 }
