@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import freemarker.template.Configuration;
+import freemarker.template.ObjectWrapper;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
@@ -50,14 +51,31 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 	
 	private Properties macroLibraries;
 	
+	private ObjectWrapper objectWrapper;
+	
+	/**
+	 * Sets the macro libraries to be auto-imported, keyed by their namespace.
+	 */
 	public void setMacroLibraries(Properties macroLibraries) {
 		this.macroLibraries = macroLibraries;
 	}
 
+	/**
+	 * Sets the {@link TemplateExceptionHandler} to be used. By default an
+	 * {@link ErrorPrintingExceptionHandler} will be used. 
+	 */
 	public void setExceptionHandler(TemplateExceptionHandler exceptionHandler) {
 		this.exceptionHandler = exceptionHandler;
 	}
 	
+	/**
+	 * Sets the {@link ObjectWrapper} to be used. If <code>null</code> 
+	 * (which is the default), FreeMarker's DefaultObjectWrapper will be used. 
+	 */
+	public void setObjectWrapper(ObjectWrapper objectWrapper) {
+		this.objectWrapper = objectWrapper;
+	}
+
 	protected void postProcessTemplateLoaders(List templateLoaders) {
 		super.postProcessTemplateLoaders(templateLoaders);
 		templateLoaders.add(new ResourceTemplateLoader(getResourceLoader()));
@@ -68,6 +86,9 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 		
 		importMacroLibraries(config);
 		config.setTemplateExceptionHandler(exceptionHandler);
+		if (objectWrapper != null) {
+			config.setObjectWrapper(objectWrapper);
+		}
 	}
 	
 	protected void importMacroLibraries(Configuration config) {
