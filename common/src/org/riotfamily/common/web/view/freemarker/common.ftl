@@ -13,6 +13,10 @@
 	<#return commonMacroHelper.addTimestamp(uri) />
 </#function>
 
+<#function partition collection property>
+	<#return commonMacroHelper.partition(collection, property) />
+</#function>
+
 <#macro includeUriField>
 	<input type="hidden" name="__includeUri" value="${commonMacroHelper.getOriginatingRequestUri()}" />
 </#macro>

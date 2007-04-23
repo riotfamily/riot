@@ -26,6 +26,9 @@ package org.riotfamily.common.web.view;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,9 +36,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -51,12 +56,21 @@ public class CommonMacroHelper {
 	
 	private ResourceStamper stamper;
 
+	private Locale requestLocale = null;
+	
 	public CommonMacroHelper(HttpServletRequest request, 
 			HttpServletResponse response, ResourceStamper stamper) {
 		
 		this.request = request;
 		this.response = response;
 		this.stamper = stamper;
+	}
+	
+	public Locale getLocale() {
+		if (requestLocale == null) {
+			requestLocale = RequestContextUtils.getLocale(request);
+		}
+		return requestLocale;
 	}
 	
 	public String resolveAndEncodeUrl(String url) {
@@ -95,6 +109,10 @@ public class CommonMacroHelper {
 	
 	public String addTimestamp(String s) {
 		return request.getContextPath() + stamper.stamp(s);
+	}
+	
+	public List partition(Collection c, String titleProperty) {
+		return PropertyUtils.partition(c, titleProperty);
 	}
 	
 }
