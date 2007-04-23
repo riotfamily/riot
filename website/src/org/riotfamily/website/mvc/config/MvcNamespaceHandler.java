@@ -26,6 +26,7 @@ package org.riotfamily.website.mvc.config;
 import org.riotfamily.common.beans.xml.GenericBeanDefinitionParser;
 import org.riotfamily.website.mvc.GenericController;
 import org.riotfamily.website.mvc.hibernate.CurrentDateResolver;
+import org.riotfamily.website.mvc.hibernate.CurrentLanguageResolver;
 import org.riotfamily.website.mvc.hibernate.CurrentLocaleResolver;
 import org.riotfamily.website.mvc.hibernate.DateParameterResolver;
 import org.riotfamily.website.mvc.hibernate.DefaultParameterResolver;
@@ -50,6 +51,7 @@ public class MvcNamespaceHandler extends NamespaceHandlerSupport {
 		parser.registerElement("attribute", DefaultParameterResolver.class);
 		parser.registerElement("current-date", CurrentDateResolver.class);
 		parser.registerElement("current-locale", CurrentLocaleResolver.class);
+		parser.registerElement("current-language", CurrentLanguageResolver.class);
 		parser.registerElement("riot-principal", RiotPrincipalResolver.class);
 		parser.registerElement("string-to-primitive", 
 				StringToPrimitiveResolver.class);
@@ -62,6 +64,7 @@ public class MvcNamespaceHandler extends NamespaceHandlerSupport {
 		registerBeanDefinitionParser("attribute", parser);
 		registerBeanDefinitionParser("current-date", parser);
 		registerBeanDefinitionParser("current-locale", parser);
+		registerBeanDefinitionParser("current-language", parser);
 		registerBeanDefinitionParser("riot-principal", parser);
 		registerBeanDefinitionParser("string-to-primitive", parser);
 		registerBeanDefinitionParser("date", parser);

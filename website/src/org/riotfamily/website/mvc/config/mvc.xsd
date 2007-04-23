@@ -65,6 +65,7 @@
 						<xsd:element name="attribute" type="attribute"></xsd:element>
 						<xsd:element name="current-date" type="simple-resolver"></xsd:element>
 						<xsd:element name="current-locale" type="simple-resolver"></xsd:element>
+						<xsd:element name="current-language" type="simple-resolver"></xsd:element>
 						<xsd:element name="riot-principal" type="simple-resolver"></xsd:element>
 						<xsd:element name="string-to-primitive" type="string-to-primitive"></xsd:element>
 						<xsd:element name="date" type="date"></xsd:element>
