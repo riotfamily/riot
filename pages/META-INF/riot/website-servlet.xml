@@ -32,9 +32,13 @@
 		</property>
 	</bean>
 	
-	<bean id="pageMacroHelper" class="org.riotfamily.pages.macro.PageMacroHelperFactory">
-		<constructor-arg ref="pageDao" />
-		<constructor-arg ref="pageLocationResolver" />
+	<bean id="pageMacroHelper" class="org.riotfamily.common.web.view.StatelessMacroHelperFactory">
+		<constructor-arg>
+			<bean class="org.riotfamily.pages.macro.PageMacroHelper">
+				<constructor-arg ref="pageDao" />
+				<constructor-arg ref="pageLocationResolver" />
+			</bean>
+		</constructor-arg>
 	</bean>
 	
 </beans>
