@@ -60,7 +60,10 @@
 		<property name="templateLoaderPath" value="/WEB-INF/view" />
 		<property name="freemarkerSettings" value="${website-servlet.freemarker.*}" />
 		<property name="macroLibraries" ref="freemarkerMacroLibraries" />
+		<property name="objectWrapper" ref="freemarkerObjectWrapper" />
 	</bean>
+	
+	<bean id="freemarkerObjectWrapper" class="org.riotfamily.common.web.view.freemarker.LocalizedObjectWrapper" />
 	
 	<bean id="commonMacroHelper" class="org.riotfamily.common.web.view.CommonMacroHelperFactory">
 		<property name="stamper" ref="resourceStamper" />
