@@ -28,7 +28,6 @@ import java.util.Collection;
 import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.riot.editor.EditorRepository;
-import org.riotfamily.riot.editor.FormDefinition;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.ColumnConfig;
 import org.riotfamily.riot.list.ListConfig;
@@ -67,8 +66,6 @@ public class EditorRepositoryInitializer implements ConfigurationEventListener {
 			repository.addEditorDefinition(pages);
 			repository.getRootGroupDefinition().addEditorDefinition(pages);
 		}
-		FormDefinition pageForm = (FormDefinition) pages.getDisplayDefinition();
-		//pageForm.addChildEditorDefinition(editorDef);
 	}
 	
 }
