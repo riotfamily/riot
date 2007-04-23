@@ -46,12 +46,17 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 
 	private static final String PAGE_ATTRIBUTE = 
 			PageHandlerMapping.class.getName() + ".page";
-			
+	
+	private static final String WILDCARD_MATCH_ATTRIBUTE = 
+		PageHandlerMapping.class.getName() + ".wildcardMatch";
+	
 	private static final Log log = LogFactory.getLog(PageHandlerMapping.class);
 	
 	private PageDao pageDao;
 	
 	private PageLocationResolver locationResolver;
+	
+	private boolean wildcardsEnabled = true;
 	
 	private Object defaultPageHandler;
 	
@@ -71,6 +76,18 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 
 		PageLocation location = locationResolver.getPageLocation(request); 
 		Page page = pageDao.findPage(location);
+		if (page == null && wildcardsEnabled) {
+			String path = location.getPath();
+			int i = path.lastIndexOf('/');
+			PageLocation wildcardLocation = new PageLocation(
+					path.substring(0, i) + "/*", location.getLocale());
+			
+			page = pageDao.findPage(wildcardLocation);
+			if (page != null) {
+				String wildcardMatch = path.substring(i + 1);
+				request.setAttribute(WILDCARD_MATCH_ATTRIBUTE, wildcardMatch);
+			}
+		}
 		log.debug("Page: " + page);
 		if (page != null) {
 			if (page.isPublished() || AccessController.isAuthenticatedUser()) {

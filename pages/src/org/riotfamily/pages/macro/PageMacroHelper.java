@@ -25,8 +25,6 @@ package org.riotfamily.pages.macro;
 
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
@@ -44,14 +42,9 @@ public class PageMacroHelper {
 	
 	private PageLocationResolver resolver;
 
-	private HttpServletRequest request;
-	
-	public PageMacroHelper(PageDao pageDao, PageLocationResolver resolver, 
-			HttpServletRequest request) {
-
+	public PageMacroHelper(PageDao pageDao, PageLocationResolver resolver) {
 		this.pageDao = pageDao;
 		this.resolver = resolver;
-		this.request = request;
 	}
 
 	public String getHandlerUrl(String handlerName, String localeString) {
@@ -60,11 +53,24 @@ public class PageMacroHelper {
 	}
 
 	public String getHandlerUrl(String handlerName, Locale locale) {
-		PageNode node = pageDao.getNodeForHandler(handlerName);
+		PageNode node = pageDao.findNodeForHandler(handlerName);
 		if (node != null) {
 			Page page = node.getPage(locale);
 			if (page != null) {
 				return resolver.getUrl(new PageLocation(page));
+			}
+		}
+		return null;
+	}
+	
+	public String getWildcardHandlerUrl(String handlerName, 
+			String wildcardReplacement, Locale locale) {
+		
+		PageNode node = pageDao.findNodeForHandler(handlerName);
+		if (node != null) {
+			Page page = node.getPage(locale);
+			if (page != null) {
+				return resolver.getUrl(new PageLocation(page, wildcardReplacement));
 			}
 		}
 		return null;

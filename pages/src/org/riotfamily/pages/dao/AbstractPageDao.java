@@ -54,20 +54,19 @@ public abstract class AbstractPageDao implements PageDao {
 		this.componentDao = componentDao;
 	}
 	
-	public void saveRootPage(Page page, String handlerName) {
-		savePage(getRootNode(), page, handlerName);
+	public void saveRootPage(Page page) {
+		savePage(getRootNode(), page);
 	}
 		
 	public void savePage(Page parent, Page page) {
 		page.setLocale(parent.getLocale());
-		savePage(parent.getNode(), page, null);
+		savePage(parent.getNode(), page);
 	}
 	
-	private void savePage(PageNode parentNode, Page page, String handlerName) {
+	private void savePage(PageNode parentNode, Page page) {
 		PageNode node = page.getNode(); 
 		if (node == null) {	
 			node = new PageNode();
-			node.setHandlerName(handlerName);
 		}
 		node.addPage(page);
 		parentNode.addChildNode(node);

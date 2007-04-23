@@ -2,6 +2,10 @@
 	<#return common.url(pageMacroHelper.getHandlerUrl(handlerName, locale)) />
 </#function>
 
+<#function wildcardHandlerUrl handlerName replacement locale=commonMacroHelper.locale>
+	<#return common.url(pageMacroHelper.getWildcardHandlerUrl(handlerName, replacement, locale)) />
+</#function>
+
 <#function url page>
 	<#return common.url(pageMacroHelper.getPageUrl(page)) />
 </#function>

@@ -26,6 +26,8 @@ package org.riotfamily.pages;
 import java.io.Serializable;
 import java.util.Locale;
 
+import org.springframework.util.Assert;
+
 
 /**
  * Class that specifies the location of a Page. A page or alias can be uniquely
@@ -51,6 +53,14 @@ public class PageLocation implements Serializable {
 	
 	public PageLocation(Page page) {
 		this.path = page.getPath();
+		this.locale = page.getLocale();
+	}
+	
+	public PageLocation(Page page, String wildcardReplacement) {
+		Assert.isTrue(page.isWildcardMapping(), "Page " + page 
+				+ " has no wildcard mapping");
+		
+		this.path = page.getParentPage().getPath() + "/" + wildcardReplacement;
 		this.locale = page.getLocale();
 	}
 

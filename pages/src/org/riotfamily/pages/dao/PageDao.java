@@ -47,7 +47,11 @@ public interface PageDao {
 
 	public PageAlias findPageAlias(PageLocation location);
 	
-	public void saveRootPage(Page page, String handlerName);
+	public PageNode findNodeForHandler(String handlerName);
+
+	public PageNode getRootNode();
+	
+	public void saveRootPage(Page page);
 	
 	public void savePage(Page parent, Page child);
 
@@ -57,10 +61,6 @@ public interface PageDao {
 
 	public void deletePage(Page page);
 
-	public PageNode getRootNode();
-	
-	public PageNode getNodeForHandler(String handlerName);
-	
 	public void updateNode(PageNode node);
 	
 	public void moveNode(PageNode node, PageNode newParent);

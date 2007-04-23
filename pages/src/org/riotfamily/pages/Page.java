@@ -102,6 +102,10 @@ public class Page {
 		this.pathComponent = pathComponent;
 	}
 	
+	public boolean isWildcardMapping() {
+		return "*".equals(pathComponent);
+	}
+	
 	public String getPath() {
 		if (path == null) {
 			path = buildPath();

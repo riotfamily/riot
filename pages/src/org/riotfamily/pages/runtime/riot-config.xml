@@ -49,7 +49,7 @@
 	
 	<form:form id="page" bean-class="org.riotfamily.pages.Page">
 		<form:group label-key="page.location">
-			<form:textfield bind="pathComponent" required="true" regex="[A-Za-z0-9_.,-]*" />
+			<form:textfield bind="pathComponent" required="true" regex="([A-Za-z0-9_.,-]*|\*)" />
 		</form:group>
 		<form:editable-if-new hide="true">
 			<form:nested-form bind="node">

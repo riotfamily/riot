@@ -104,7 +104,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 		else {
 			Locale locale = (Locale) parent;
 			page.setLocale(locale);
-			pageDao.saveRootPage(page, null);
+			pageDao.saveRootPage(page);
 		}
 	}
 
