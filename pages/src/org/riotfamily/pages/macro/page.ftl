@@ -1,4 +1,4 @@
-<#function handlerUrl handlerName locale=.locale>
+<#function handlerUrl handlerName locale=commonMacroHelper.locale>
 	<#return common.url(pageMacroHelper.getHandlerUrl(handlerName, locale)) />
 </#function>
 
