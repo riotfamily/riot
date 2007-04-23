@@ -28,9 +28,9 @@ import java.util.Map;
 
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 import org.springframework.web.servlet.view.InternalResourceView;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * View resolver that supports view names with a suffix. For example
@@ -54,11 +54,6 @@ public class SuffixViewResolver extends AbstractCachingViewResolver {
 	 * way but rather be treated as special shortcut.
 	 */
 	public static final String FORWARD_URL_PREFIX = "forward:";
-	
-	/**
-	 * TODO
-	 */
-	public static final String CONTROLLER_PREFIX = "controller:";
 	
 	private Map resolvers;
 
@@ -134,16 +129,7 @@ public class SuffixViewResolver extends AbstractCachingViewResolver {
 			String forwardUrl = viewName.substring(FORWARD_URL_PREFIX.length());
 			return new InternalResourceView(forwardUrl);
 		}
-		
-		// Check for special "controller:" prefix.
-		if (viewName.startsWith(CONTROLLER_PREFIX)) {
-			String controllerName = viewName.substring(CONTROLLER_PREFIX.length());
-			Controller controller = (Controller) getApplicationContext()
-					.getBean(controllerName, Controller.class);
-			
-			return new ControllerView(controller, this);
-		}
-		
+				
 		String suffix = null;
 		ViewResolver resolver = null;
 		int i = viewName.lastIndexOf('.');
