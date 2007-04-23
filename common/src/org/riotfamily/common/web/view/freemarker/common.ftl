@@ -17,6 +17,15 @@
 	<#return commonMacroHelper.partition(collection, property) />
 </#function>
 
+<#function fileExtension filename validExtension=[] defaultExtension="">
+	<#return commonMacroHelper.getFileExtension(filename, validExtension, defaultExtension) />
+</#function>
+
+<#function formatByteSize bytes>
+	<#return commonMacroHelper.formatByteSize(bytes) />
+</#function>
+
+
 <#macro includeUriField>
 	<input type="hidden" name="__includeUri" value="${commonMacroHelper.getOriginatingRequestUri()}" />
 </#macro>

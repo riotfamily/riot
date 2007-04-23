@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.util.StringUtils;
@@ -113,6 +114,20 @@ public class CommonMacroHelper {
 	
 	public List partition(Collection c, String titleProperty) {
 		return PropertyUtils.partition(c, titleProperty);
+	}
+	
+	public String getFileExtension(String filename, Collection validExtensions, 
+			String defaultExtension) {
+		
+		String ext = FormatUtils.getExtension(filename);
+		if (validExtensions.isEmpty() || validExtensions.contains(ext)) {
+			return ext;
+		}
+		return defaultExtension;
+	}
+	
+	public String formatByteSize(long bytes) {
+		return FormatUtils.formatByteSize(bytes);
 	}
 	
 }
