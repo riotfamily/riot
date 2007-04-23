@@ -102,6 +102,14 @@ public final class ServletUtils {
 	
 	/**
 	 * Return the path within the web application for the given request.
+	 * @see UrlPathHelper#getPathWithinApplication(HttpServletRequest)
+	 */
+	public static String getPathWithinApplication(HttpServletRequest request) {
+		return urlPathHelper.getPathWithinApplication(request);
+	}
+	
+	/**
+	 * Return the path within the web application for the given request.
 	 * @param request current HTTP request
 	 * @return the path within the web application
 	 */
