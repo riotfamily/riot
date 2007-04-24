@@ -33,7 +33,7 @@ import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.collection.TypeDifferenceComparator;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.web.view.LabelValueBean;
+import org.riotfamily.riot.form.ui.FormOption;
 
 
 public class FormChooserDefinition extends FormDefinition {
@@ -134,7 +134,7 @@ public class FormChooserDefinition extends FormDefinition {
 					option.getMessageKey().toString(), null, 
 					FormatUtils.camelToTitleCase(option.getFormId()));
 			
-			options.add(new LabelValueBean(label, option.getFormId()));
+			options.add(new FormOption(label, option.getFormId()));
 		}
 		return options;
 	}

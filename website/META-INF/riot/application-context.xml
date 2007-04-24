@@ -23,7 +23,7 @@
 	<bean id="objectIdInvalidator" class="org.springframework.aop.support.DefaultPointcutAdvisor">
 		<constructor-arg ref="riotDaoPointcut" />
 		<constructor-arg>
-			<bean class="org.riotfamily.website.mvc.cache.CacheInvalidationAdvice">
+			<bean class="org.riotfamily.website.cache.CacheInvalidationAdvice">
 				<property name="cache" ref="websiteCache" />
 				<property name="invalidateAll" value="false" />
 			</bean>
@@ -37,7 +37,7 @@
 	<bean id="itemClassInvalidator" class="org.springframework.aop.support.DefaultPointcutAdvisor">
 		<constructor-arg ref="riotDaoPointcut" />
 		<constructor-arg>
-			<bean class="org.riotfamily.website.mvc.cache.CacheInvalidationAdvice">
+			<bean class="org.riotfamily.website.cache.CacheInvalidationAdvice">
 				<property name="cache" ref="websiteCache" />
 				<property name="invalidateAll" value="true" />
 			</bean>

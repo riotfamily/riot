@@ -9,9 +9,8 @@
 		<resource path="riot/src/org/riotfamily/riot/security/ui/LoginFormView.ftl">
 			<value key="username" object-class="java.lang.String"/>
 		</resource>
-		<resource path="riot/src/org/riotfamily/riot/list/ui/ListView.ftl">
-			<value key="list" object-class="org.riotfamily.riot.list.ui.ViewModel"/>
-			<value key="filterForm" object-class="java.lang.String"/>
+		<resource path="common/src/org/riotfamily/common/web/view/freemarker/common.ftl">
+			<value key="commonMacroHelper" object-class="org.riotfamily.common.web.view.CommonMacroHelper"/>
 		</resource>
 	</context-values>
 	<macro-library>
