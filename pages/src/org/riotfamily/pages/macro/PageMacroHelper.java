@@ -25,10 +25,13 @@ package org.riotfamily.pages.macro;
 
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.pages.mapping.PageLocationResolver;
 import org.springframework.util.StringUtils;
 
@@ -42,11 +45,20 @@ public class PageMacroHelper {
 	
 	private PageLocationResolver resolver;
 
-	public PageMacroHelper(PageDao pageDao, PageLocationResolver resolver) {
+	private HttpServletRequest request;
+	
+	public PageMacroHelper(PageDao pageDao, PageLocationResolver resolver, 
+			HttpServletRequest request) {
+		
 		this.pageDao = pageDao;
 		this.resolver = resolver;
+		this.request = request;
 	}
 
+	public Page getCurrentPage() {
+		return PageHandlerMapping.getPage(request);
+	}
+	
 	public String getHandlerUrl(String handlerName, String localeString) {
 		Locale locale = StringUtils.parseLocaleString(localeString);
 		return getHandlerUrl(handlerName, locale);
