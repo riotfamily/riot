@@ -193,6 +193,10 @@ public abstract class AbstractElement implements Element {
 	public void setRequired(boolean required) {
 		this.required = required;
 	}
+	
+	public boolean isCompositeElement() {
+		return false;
+	}
 		
 	protected FormListener getFormListener() {
 		if (form != null) {

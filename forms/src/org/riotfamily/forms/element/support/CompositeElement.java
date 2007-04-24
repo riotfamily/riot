@@ -33,6 +33,7 @@ import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRequest;
+import org.riotfamily.forms.error.ErrorUtils;
 
 
 /**
@@ -121,7 +122,7 @@ public abstract class CompositeElement extends AbstractEditorBase {
 	}
 
 	protected final void revalidate() {
-		getForm().getErrors().removeErrors(this);
+		ErrorUtils.removeErrors(this);
 		validate();
 	}
 	

@@ -108,6 +108,10 @@ public abstract class AbstractConditionalElement extends AbstractElement
 		}
 	}
 
+	public boolean isCompositeElement() {
+		return editor.isCompositeElement();
+	}
+	
 	protected abstract boolean isEditable();
 
 }

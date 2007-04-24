@@ -54,5 +54,9 @@ public class RadioButtonGroup extends AbstractSingleSelectElement {
 		model.put("options", getOptions());
 		getFormContext().getTemplateRenderer().render(template, model, writer);
 	}
+	
+	public boolean isCompositeElement() {
+		return true;
+	}
 
 }

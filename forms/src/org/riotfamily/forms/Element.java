@@ -112,5 +112,12 @@ public interface Element {
 	 * Sets whether the element is required.
 	 */
 	public void setRequired(boolean required);
-			
+	
+	/**
+	 * Returns whether the element is composed of multiple widgets. 
+	 * The information may be used by templates to render composite elements
+	 * in the same style as element groups or nested forms. 
+	 */
+	public boolean isCompositeElement();
+	
 }
