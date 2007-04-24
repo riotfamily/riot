@@ -19,6 +19,7 @@
 		<xsd:complexContent>
 			<xsd:extension base="simple-editor">
 				<xsd:attribute name="template" type="xsd:string" />
+				<xsd:attribute name="desired-param-name" type="xsd:string" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
