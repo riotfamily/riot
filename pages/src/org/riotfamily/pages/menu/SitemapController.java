@@ -26,7 +26,6 @@ package org.riotfamily.pages.menu;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,7 +37,6 @@ import org.riotfamily.pages.member.support.NullMemberBinder;
 import org.riotfamily.pages.mvc.cache.AbstractCachingPolicyController;
 import org.riotfamily.pages.page.Page;
 import org.riotfamily.pages.page.support.PageUtils;
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 
 public class SitemapController extends AbstractCachingPolicyController
@@ -57,14 +55,7 @@ public class SitemapController extends AbstractCachingPolicyController
 	public Page getRootPage(HttpServletRequest request) {
 		if (rootLevel > 0) {
 			Page page = PageUtils.getPage(request);
-			Assert.notNull(page);
-			Vector path = new Vector();
-			while (page != null) {
-				path.insertElementAt(page, 0);
-				page = page.getParent();
-			}
-			
-			return (Page) path.get(rootLevel);
+			return PageUtils.getRootPage(page);
 		}
 		
 		return null;
