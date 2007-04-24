@@ -22,10 +22,13 @@ RiotImageReplacement.prototype = {
 			text = text.toUpperCase();
 		}
 		text = text.gsub(/<br\/?>/i, '\n').stripTags();
+		var width = el.offsetWidth - parseInt(el.getStyle('padding-left')) 
+				- parseInt(el.getStyle('padding-right'));
+				
 		var img = new Image();
 		img.onload = this.insertImage.bind(this, el, img);
 		img.src = this.imageUrl + '?text=' + escape(text) 
-				+ '&width=' + el.offsetWidth + '&selector=' + escape(sel)
+				+ '&width=' + width + '&selector=' + escape(sel)
 				+ '&color=' + escape(el.getStyle('color'));
 	},
 	
