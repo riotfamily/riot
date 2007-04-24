@@ -63,9 +63,4 @@ public interface Component {
 	 */
 	public Collection getCacheTags(ComponentVersion version);
 	
-	/**
-	 * Returns a JavaScript that is executed when the component is modified.
-	 */
-	public String getOnChangeScript();
-
 }

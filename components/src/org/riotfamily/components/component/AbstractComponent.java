@@ -64,8 +64,6 @@ public abstract class AbstractComponent implements Component {
 	
 	private List propertyProcessors = new ArrayList();
 	
-	private String onChangeScript;
-	
 	public void setPropertyProcessors(List propertyProcessors) {
 		Assert.notNull(propertyProcessors);
 		this.propertyProcessors = propertyProcessors;
@@ -116,14 +114,6 @@ public abstract class AbstractComponent implements Component {
 		return false;
 	}
 	
-	public String getOnChangeScript() {
-		return this.onChangeScript;
-	}
-
-	public void setOnChangeScript(String onChangeScript) {
-		this.onChangeScript = onChangeScript;
-	}
-
 	public Map buildModel(ComponentVersion componentVersion) {
 		Map model = new HashMap();
 		model.putAll(componentVersion.getProperties());
