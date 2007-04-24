@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class JavaScriptEvent {
 
+	public static final int NONE = 0;
+	
 	public static final int ON_CLICK = 1;
 
 	public static final int ON_CHANGE = 2;

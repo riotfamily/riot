@@ -81,18 +81,7 @@ public class PasswordField extends TextField {
 	}
 	
 	public String getInitScript() {
-		String superScript = super.getInitScript();
-		if (!togglePlaintext && superScript == null) {
-			return null;
-		}
-		StringBuffer sb = new StringBuffer();
-		if (superScript != null) {
-			sb.append(superScript);
-		}
-		if (togglePlaintext) {
-			sb.append(TemplateUtils.getInitScript(this));
-		}
-		return sb.toString();
+		return togglePlaintext ? TemplateUtils.getInitScript(this) : null;
 	}
 	
 }

@@ -25,6 +25,7 @@ package org.riotfamily.forms.ajax;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -61,6 +62,8 @@ public class AjaxResponse implements FormListener {
 	
 	private List dhtmlElements = new LinkedList();
 	
+	private HashSet validatedElements = new HashSet();
+	
 	private Element focusedElement;
 	
 	public AjaxResponse(HttpServletResponse response) throws IOException {
@@ -82,19 +85,7 @@ public class AjaxResponse implements FormListener {
 		response.setHeader("Expires", "0");
 		response.setHeader("Cache-Control", "no-store");
 	}
-	
-	protected void elementError(Element element) {
-		if (element.getForm().getErrors().getErrors(element) != null) {
-			TagWriter tag = new TagWriter(writer);
-			tag.start("error");
-			tag.attribute("ref", element.getId());
-			tag.attribute("valid", element.getForm().getErrors().hasErrors(element) ? 0 : 1);
-			tag.body();	
-			element.getForm().getErrors().renderErrors(element);		
-			tag.end();		
-		}
-	}
-	
+		
 	public void elementChanged(Element element) {
 		TagWriter tag = new TagWriter(writer);
 		tag.start("replace");
@@ -103,9 +94,13 @@ public class AjaxResponse implements FormListener {
 		tag.body();		
 		element.render(writer);		
 		tag.end();		
-		elementError(element);
+		validatedElements.add(element);
 	}
 
+	public void elementValidated(Element element) {
+		validatedElements.add(element);
+	}
+	
 	public void elementRemoved(Element element) {
 		TagWriter tag = new TagWriter(writer);
 		tag.startEmpty("remove");
@@ -235,11 +230,28 @@ public class AjaxResponse implements FormListener {
 		}
 	}
 	
+	protected void renderErrors() {
+		Iterator it = validatedElements.iterator();
+		while (it.hasNext()) {
+			Element element = (Element) it.next();
+			if (element.getForm().getErrors().getErrors(element) != null) {
+				TagWriter tag = new TagWriter(writer);
+				tag.start("error");
+				tag.attribute("ref", element.getId());
+				tag.attribute("valid", element.getForm().getErrors().hasErrors(element) ? 0 : 1);
+				tag.body();	
+				element.getForm().getErrors().renderErrors(element);		
+				tag.end();		
+			}
+		}
+	}
+	
 	protected void onClose() {
 		renderResources();
 		renderFocus();
 		renderPropagations();
 		renderScripts();
+		renderErrors();
 	}
 	
 	public void close() {

@@ -32,6 +32,8 @@ public interface FormListener {
 
 	public void elementRendered(Element element);
 	
+	public void elementValidated(Element element);
+	
 	public void elementChanged(Element element);
 	
 	public void elementRemoved(Element element);

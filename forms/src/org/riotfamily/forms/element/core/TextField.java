@@ -29,21 +29,16 @@ import java.util.regex.Pattern;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.forms.FormRequest;
-import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.AbstractTextElement;
 import org.riotfamily.forms.error.ErrorUtils;
-import org.riotfamily.forms.resource.FormResource;
-import org.riotfamily.forms.resource.ResourceElement;
-import org.riotfamily.forms.resource.Resources;
-import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.support.MessageUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * A text input field.
  */
-public class TextField extends AbstractTextElement implements DHTMLElement, 
-		ResourceElement {
+public class TextField extends AbstractTextElement {
 
 	private static final String CONFIRM_SUFFIX = "-confirm";
 	
@@ -53,10 +48,6 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 	private static final String DEFAULT_REGEX_MISMATCH_MESSAGE_KEY =
 			"error.textField.regexMismatch";
 	
-	private static final FormResource RESOURCE = 
-			new ScriptResource("riot-js/text-input.js", "TextInput", 
-			Resources.PROTOTYPE);
-	
 	private boolean confirm;
 	
 	private String confirmText = null;
@@ -65,7 +56,7 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 	
 	private String confirmMessageText;
 	
-	private String regex;
+	private Pattern pattern;
 	
 	private String regexMismatchMessageKey = DEFAULT_REGEX_MISMATCH_MESSAGE_KEY;
 	
@@ -93,7 +84,8 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 	}	
 
 	public void setRegex(String regex) {
-		this.regex = regex;
+		this.pattern = Pattern.compile(regex);
+		setValidateOnChange(true);
 	}
 
 	public void setRegexMismatchMessageKey(String regexMismatchMessageKey) {
@@ -134,15 +126,14 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 		super.processRequest(request);
 	}
 
-	protected void validate() {		
-		super.validate();
-		if (confirm) {
+	protected void validate(boolean formSubmitted) {		
+		super.validate(formSubmitted);
+		if (formSubmitted && confirm) {
 			if (!ObjectUtils.nullSafeEquals(getText(), confirmText)) {
 				ErrorUtils.reject(this, "confirmFailed");
 			}
 		}
-		if (regex != null) {
-			Pattern pattern = Pattern.compile(regex);
+		if (pattern != null && StringUtils.hasLength(getText())) {
 			if (!pattern.matcher(getText()).matches()) {
 				getForm().getErrors().rejectValue(getFieldName(), 
 						regexMismatchMessageKey, regexMismatchMessageText);
@@ -170,26 +161,5 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 	protected String getDefaultConfirmMessageKey() {
 		return DEFAULT_CONFIRM_MESSAGE_KEY;
 	}
-	
-	public String getInitScript() {
-		if (regex != null) {
-			StringBuffer sb = new StringBuffer();
-			sb.append("TextInput.create('");
-			sb.append(getId());
-			sb.append("', '");
-			sb.append(regex);
-			sb.append("', '");
-			sb.append(getFormContext().getMessageResolver().getMessage(
-					regexMismatchMessageKey, null, regexMismatchMessageKey));
-			
-			sb.append("');");
-			return sb.toString();
-		}
-		return null;
-	}
-	
-	public FormResource getResource() {
-		return regex != null ? RESOURCE : null;
-	}
-	
+
 }

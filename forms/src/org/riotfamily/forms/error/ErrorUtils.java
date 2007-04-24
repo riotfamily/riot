@@ -25,6 +25,7 @@ package org.riotfamily.forms.error;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.forms.Element;
 import org.riotfamily.forms.bind.Editor;
 
 public class ErrorUtils {
@@ -54,7 +55,7 @@ public class ErrorUtils {
 		reject(editor, ERROR_REQUIRED);
 	}
 	
-	public static void removeErrors(Editor editor) {
+	public static void removeErrors(Element editor) {
 		editor.getForm().getErrors().removeErrors(editor);
 	}
 

@@ -82,9 +82,8 @@ public class NumberField extends TextField implements DHTMLElement,
 	}
 
 	public FormResource getResource() {
-		FormResource res = super.getResource();
 		return new ScriptResource("riot-js/number-input.js", "NumberInput", 
-				res != null ? res : Resources.PROTOTYPE);
+				Resources.PROTOTYPE);
 	}
 
 	public String getInitScript() {
@@ -137,7 +136,8 @@ public class NumberField extends TextField implements DHTMLElement,
 	protected void afterBindingSet() {
 		Class type = getEditorBinding().getPropertyType();
 		Assert.notNull(type, "Unable to determine type of property '" + 
-				getEditorBinding().getProperty() + "'");		
+				getEditorBinding().getProperty() + "'");
+		
 		if (type.equals(Float.class) || type.equals(Double.class)
 				|| type.equals(float.class)	|| type.equals(double.class)) {
 			
@@ -146,12 +146,13 @@ public class NumberField extends TextField implements DHTMLElement,
 		super.afterBindingSet();
 	}
 	
-	protected void validate() {		
-		super.validate();
-		 if (getEditorBinding().getPropertyType().isPrimitive() 
-				 && !StringUtils.hasLength(getText())) {	 
+	protected void validate(boolean formSubmitted) {		
+		super.validate(formSubmitted);
+		if (getEditorBinding().getPropertyType().isPrimitive() 
+				&& !StringUtils.hasLength(getText())) {
+			
 			ErrorUtils.reject(this, "required");						 
-		 }		
+		}		
 	}
 	
 	

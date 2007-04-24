@@ -68,6 +68,8 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 
 	private PropertyEditor propertyEditor;
 
+	private boolean validateOnChange = false;
+	
 	public AbstractTextElement() {
 	}
 	
@@ -173,7 +175,7 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 			Object newValue = getValue();
 			fireChangeEvent(newValue, oldValue);
 		}
-		validate();
+		validate(true);
 	}
 
 	public void renderInternal(PrintWriter writer) {
@@ -189,8 +191,12 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		}
 		input.end();
 	}
-		
-	protected void validate() {
+	
+	public void setValidateOnChange(boolean validateOnChange) {
+		this.validateOnChange = validateOnChange;
+	}
+	
+	protected void validate(boolean formSubmitted) {
 		if (isRequired() && !StringUtils.hasLength(getText())) {
 			ErrorUtils.reject(this, "required");
 		}
@@ -215,10 +221,10 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 	}
 
 	public int getEventTypes() {
-		if (listeners != null) {
+		if (validateOnChange || listeners != null) {
 			return JavaScriptEvent.ON_CHANGE;
 		}
-		return 0;
+		return JavaScriptEvent.NONE;
 	}
 
 	public void handleJavaScriptEvent(JavaScriptEvent event) {
@@ -226,6 +232,12 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 			String oldValue = getText();
 			setText(event.getValue());
 			fireChangeEvent(getText(), oldValue);
+			ErrorUtils.removeErrors(this);
+			validate(false);
+			//TODO It would be nicer if the listener was notified by either FormErrors or ErrorUtils
+			if (getFormListener() != null) {
+				getFormListener().elementValidated(this);
+			}
 		}
 	}
 	

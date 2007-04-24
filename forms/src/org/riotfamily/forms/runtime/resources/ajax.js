@@ -248,21 +248,20 @@ function getRef(e) {
 
 function setValid(e, valid) {
 	var labels = document.getElementsByTagName('label');
-	for (i = 0; i < labels.length; i ++) {				
+	for (i = 0; i < labels.length; i++) {				
 		if ((labels[i].htmlFor == e.id) || isParentLabel(labels[i], e)) {	
 			setErrorClass(labels[i], valid);
-			break;
 		}
 	}
 }
 
 function setErrorClass(e, valid) {
 	if (valid) {
-		e.className = e.origClassName;
+		e.className = e.origClassName || '';
 	}
 	else {
 		if (!e.origClassName) {
-			e.origClassName = e.className ? e.className : '';
+			e.origClassName = e.className || '';
 		}
 		e.className += ' error'; 
 	}
