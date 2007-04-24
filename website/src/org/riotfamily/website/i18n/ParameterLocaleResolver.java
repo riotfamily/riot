@@ -18,28 +18,33 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
+ *   flx
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages;
+package org.riotfamily.website.i18n;
 
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.pages.mapping.PageHandlerMapping;
-import org.riotfamily.website.i18n.ChainedLocaleResolver;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PageLocaleResolver extends ChainedLocaleResolver {
+public class ParameterLocaleResolver extends ChainedLocaleResolver {
+
+	private String localeParameter = "locale";
+	
+	public void setLocaleParameter(String localeParameter) {
+		this.localeParameter = localeParameter;
+	}
 
 	protected Locale resolveLocaleInternal(HttpServletRequest request) {
-		Page page = PageHandlerMapping.getPage(request);
-		if (page != null) {
-			return page.getLocale();
+		String localeString = request.getParameter(localeParameter);
+		if (localeString != null) {
+			return StringUtils.parseLocaleString(localeString);
 		}
 		return null;
 	}
