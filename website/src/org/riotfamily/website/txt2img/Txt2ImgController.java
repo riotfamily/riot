@@ -43,6 +43,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * @author flx
@@ -108,7 +109,7 @@ public class Txt2ImgController extends AbstractCacheableController {
 		
 		String text = request.getParameter("text");
 		if (text != null) {
-			serveImage(text, request, response);
+			serveImage(HtmlUtils.htmlUnescape(text), request, response);
 		}
 		else {
 			serveScript(request, response);
