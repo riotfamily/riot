@@ -24,30 +24,29 @@
 package org.riotfamily.pages.riot.chooser;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.core.TextField;
+import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
+import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.resource.StylesheetResource;
 import org.riotfamily.forms.support.TemplateUtils;
 
 public class InternalLinkField extends TextField implements ResourceElement,
 	DHTMLElement {
 	
-	private static final List RESOURCES = new ArrayList();
-	
-	static {
-		RESOURCES.add(Resources.PROTOTYPE);
-		RESOURCES.add(Resources.RIOT_WINDOW_CALLBACK);
-		RESOURCES.add(new StylesheetResource("style/internal-link-field.css"));
-	}
-	
+	private static final ScriptResource RESOURCE = new ScriptResource(
+			"riot-js/window-callback.js", "WindowCallback",  
+			new FormResource[] {
+				Resources.PROTOTYPE, 
+				new StylesheetResource("style/internal-link-field.css")
+			}
+	);
+		
 	private String linkSuffix;
 	
 	private String chooserUrl = "/riot/pages/chooser";
@@ -73,8 +72,8 @@ public class InternalLinkField extends TextField implements ResourceElement,
 		this.linkSuffix = linkSuffix;
 	}
 
-	public Collection getResources() {
-		return RESOURCES;
+	public FormResource getResource() {
+		return RESOURCE;
 	}
 	
 	public String getInitScript() {
