@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.riotfamily.common.collection.FlatMap;
 import org.springframework.util.Assert;
@@ -73,9 +74,13 @@ public class LoginController implements Controller, MemberBinderAware {
 		String username = request.getParameter(USERNAME_PARAM);
 		String password = request.getParameter(PASSWORD_PARAM);
 		
-		String successUrl = (String) request.getSession().getAttribute(
-				MemberInterceptor.INTERCEPTED_URL);
-				
+		
+		String successUrl = null;
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			successUrl = (String) session.getAttribute(
+					MemberInterceptor.INTERCEPTED_URL);
+		}		
 		if (successUrl == null) {
 			successUrl = ServletRequestUtils.getStringParameter(request, 
 					SUCCESS_URL_PARAM, defaultSucessUrl);
