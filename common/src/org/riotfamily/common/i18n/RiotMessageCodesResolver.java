@@ -86,13 +86,18 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 	public String[] resolveLabel(String objectName, Class objectClass, 
 			String field) {
 		
-		ArrayList codes = new ArrayList(2);
+		ArrayList codes = new ArrayList(3);
 		if (objectName != null) {
 			codes.add(objectName + '.' + field);
 		}
 		if (objectClass != null) {
-			codes.add(PropertyUtils.getDeclaringClass(
-					objectClass, field).getName() + '.' + field);
+			Class declaringClass = PropertyUtils.getDeclaringClass(
+					objectClass, field);
+			codes.add(declaringClass.getName() + '.' + field);
+			
+			if (!declaringClass.equals(objectClass)) {
+				codes.add(objectClass.getName() + '.' + field);
+			}
 		}
 		return StringUtils.toStringArray(codes);
 	}
