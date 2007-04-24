@@ -98,13 +98,13 @@ public class DeferredRenderingResponseWrapper extends HttpServletResponseWrapper
 		return redirectSent;
 	}
 	
-	public void renderResponse() throws IOException {
+	public void renderResponse(HttpServletResponse response) throws IOException {
 		if (outputStream != null) {			
 			FileCopyUtils.copy(outputStream.toByteArray(),
-						getResponse().getOutputStream());
+					response.getOutputStream());
 		}
 		else if (writer != null) {
-			getResponse().getWriter().write(writer.toString());
+			response.getWriter().write(writer.toString());
 		}
 	}
 	
