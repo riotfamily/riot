@@ -149,6 +149,7 @@ public class Txt2ImgController extends AbstractCacheableController {
 			HttpServletResponse response) throws IOException {
 		
 		response.setContentType("text/javascript");
+		ServletUtils.setCacheHeaders(response, "1M");
 		PrintWriter out = response.getWriter();
 		IOUtils.copy(new InputStreamReader(
 				SCRIPT_RESOURCE.getInputStream(), "UTF-8"), out);
