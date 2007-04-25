@@ -1,19 +1,7 @@
 /*
- * RiotFamily utility functions (depend on prototype.js) 
+ * RiotFamily utility functions (depends on prototype.js) 
  * Author: Felix Gnass
  */ 
-
-function isDefined(obj) {
-	return typeof(obj) != 'undefined';
-}
-
-function isSet(obj) {
-	return this.isDefined(obj) && obj != null;
-}
-
-function isFunction(func) {
-	return typeof(func) == 'function';
-}
 
 var RBuilder = {};
 RBuilder.node = function(tag, options) {
@@ -90,7 +78,7 @@ var Styles = {
 	getBackgroundColor: function(element) {
 		element = $(element);
 		var bg;
-		while (element && element.style && (!isSet(bg) || bg == 'transparent')) {
+		while (element && element.style && (!bg || bg == 'transparent')) {
 			bg = Element.getStyle(element, 'background-color');
 			element = element.parentNode;
 		}
@@ -140,7 +128,7 @@ var RElement = {
 
 	toggleClassName: function(el, className, add) {
 		if (!(el = $(el))) return;
-		if (!isDefined(add)) add = !el.hasClassName(className);
+		if (typeof add == 'undefined') add = !el.hasClassName(className);
     	Element.classNames(el)[add ? 'add' : 'remove'](className);
 	    return el;
 	},

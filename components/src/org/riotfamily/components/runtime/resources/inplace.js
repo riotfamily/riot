@@ -527,9 +527,8 @@ riot.stylesheetMaker = {
 			}
 			
 			var styles = this.getStyles(p, this.properties['*']);
-			var props = this.properties[selector];
-			if (isDefined(props)) {
-				Object.extend(styles, this.getStyles(p, props));
+			if (this.properties[selector]) {
+				Object.extend(styles, this.getStyles(p, this.properties[selector]));
 			}
 			if (selector == 'body') {
 				styles['background-color'] = Styles.getBackgroundColor(p);
