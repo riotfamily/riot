@@ -37,6 +37,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.xml.DocumentReader;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
@@ -387,6 +388,18 @@ public final class ServletUtils {
 		response.setDateHeader(EXPIRES_HEADER, 1L);
 		response.setHeader(CACHE_CONTROL_HEADER, "no-cache");
 		response.addHeader(CACHE_CONTROL_HEADER, "no-store");
+	}
+	
+	/**
+	 * Sets Expires and Cache-Control headers to allow caching for the given
+	 * period.
+	 * @see FormatUtils#parseMillis(String)
+	 * @since 6.5
+	 */
+	public static void setCacheHeaders(HttpServletResponse response, String period) {
+		long millis = FormatUtils.parseMillis(period);
+		response.setDateHeader(EXPIRES_HEADER, System.currentTimeMillis() + millis);
+		response.setHeader(CACHE_CONTROL_HEADER, "max-age=" + millis / 1000L);
 	}
 	
 	/**
