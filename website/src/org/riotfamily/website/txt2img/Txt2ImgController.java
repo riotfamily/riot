@@ -68,6 +68,9 @@ public class Txt2ImgController extends AbstractCacheableController {
 
 	private Pattern refererPattern;
 
+	/**
+	 * Sets a Map of {@link ImageGenerator} objects keyed by CSS selectors.
+	 */
 	public void setGenerators(Map generators) {
 		this.generators = new HashMap();
 		Iterator it = generators.entrySet().iterator();
@@ -87,6 +90,10 @@ public class Txt2ImgController extends AbstractCacheableController {
 		}
 	}
 
+	/**
+	 * Sets the generator to be used if no generator is found for a given
+	 * CSS selector.
+	 */
 	public void setDefaultGenerator(ImageGenerator defaultGenerator) {
 		this.defaultGenerator = defaultGenerator;
 	}
@@ -99,6 +106,11 @@ public class Txt2ImgController extends AbstractCacheableController {
         return lastModified;
     }
 
+	/**
+	 * Sets a regular expression that is used to check the Referer header.
+	 * You may use this setting to prevent other websites from using your
+	 * ImageGenerator.
+	 */
 	public void setRefererPattern(Pattern refererPattern) {
 		this.refererPattern = refererPattern;
 	}
@@ -113,19 +125,8 @@ public class Txt2ImgController extends AbstractCacheableController {
 			}
 		}
 
-		String text = request.getParameter("text");
+		String text = getText(request);
 		if (text != null) {
-			text = HtmlUtils.htmlUnescape(text);
-			String transform = request.getParameter("transform");
-			if (StringUtils.hasText(transform)) {
-				Locale locale = RequestContextUtils.getLocale(request);
-				if (transform.equalsIgnoreCase("uppercase")) {
-					text = text.toUpperCase(locale);
-				}
-				if (transform.equalsIgnoreCase("lowercase")) {
-					text = text.toLowerCase(locale);
-				}
-			}
 			serveImage(text, request, response);
 		}
 		else if (request.getParameter("pixel") != null) {
@@ -137,6 +138,45 @@ public class Txt2ImgController extends AbstractCacheableController {
 		return null;
 	}
 
+	/**
+	 * Returns the locale for the given request. The method first checks for
+	 * a parameter called 'locale' an parses it. If the parameter is not set,
+	 * Spring's LocaleResolver mechanism is used.
+	 */
+	protected Locale getLocale(HttpServletRequest request) {
+		String localeString = request.getParameter("locale");
+		if (StringUtils.hasText(localeString)) {
+			return StringUtils.parseLocaleString(localeString);
+		}
+		return RequestContextUtils.getLocale(request);
+	}
+
+	/**
+	 * Returns the text to be rendered. The method unescapes HTML entities
+	 * and optionally converts the String to upper or lower case, if the
+	 * 'transform' HTTP parameter is set.
+	 */
+	protected String getText(HttpServletRequest request) {
+		String text = request.getParameter("text");
+		if (text != null) {
+			text = HtmlUtils.htmlUnescape(text);
+			String transform = request.getParameter("transform");
+			if (StringUtils.hasText(transform)) {
+				Locale locale = getLocale(request);
+				if (transform.equalsIgnoreCase("uppercase")) {
+					text = text.toUpperCase(locale);
+				}
+				if (transform.equalsIgnoreCase("lowercase")) {
+					text = text.toLowerCase(locale);
+				}
+			}
+		}
+		return text;
+	}
+
+	/**
+	 * Serves an image containing the given text.
+	 */
 	protected void serveImage(String text, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 
@@ -158,11 +198,15 @@ public class Txt2ImgController extends AbstractCacheableController {
 		generator.generate(text, maxWidth, color, response.getOutputStream());
 	}
 
+	/**
+	 * Serves a JavaScript file that can be used to replace texts on the
+	 * client side.
+	 */
 	protected void serveScript(HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 
 		response.setContentType("text/javascript");
-		ServletUtils.setCacheHeaders(response, "1M");
+		//ServletUtils.setCacheHeaders(response, "1M");
 		PrintWriter out = response.getWriter();
 		IOUtils.copy(new InputStreamReader(
 				SCRIPT_RESOURCE.getInputStream(), "UTF-8"), out);
@@ -186,6 +230,10 @@ public class Txt2ImgController extends AbstractCacheableController {
 		out.print("]);");
 	}
 
+	/**
+	 * Serves a transparent 1x1 pixel GIF that is needed by the JavaScript
+	 * to work around the PNG loading in IE &lt; 7.
+	 */
 	protected void servePixelGif(HttpServletResponse response) throws IOException {
 		response.setContentType("image/gif");
 		ServletUtils.setCacheHeaders(response, "1M");
