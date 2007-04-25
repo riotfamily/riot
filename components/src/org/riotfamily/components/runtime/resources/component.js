@@ -11,20 +11,20 @@ riot.Component.prototype = {
 		}
 		this.onMouseOver = this.showOutline.bindAsEventListener(this);
 		this.onMouseOut = this.hideOutline.bindAsEventListener(this);
-		
+
 		this.id = el.readAttribute('riot:containerId');
 		this.type = el.readAttribute('riot:componentType');
 		this.form = el.readAttribute('riot:form');
 		this.setupElement();
 	},
-	
+
 	edit: function(enable) {
 		this.editing = enable;
 		this.editors.each(function(editor) {
 			editor.setEnabled(enable);
 		});
 	},
-			
+
 	setMode: function(mode) {
 		if (mode != null) {
 			if (!this.handlers[mode] || (mode == 'properties' && !this.form)) {
@@ -48,7 +48,7 @@ riot.Component.prototype = {
 		}
 		this.mode = mode;
 	},
-	
+
 	showOutline: function(event) {
 		if (Prototype.Browser.IE) {
 			if (riot.hoverTimeout) clearTimeout(riot.hoverTimeout);
@@ -61,7 +61,7 @@ riot.Component.prototype = {
 		}
 		Event.stop(event);
 	},
-	
+
 	hideOutline: function(event) {
 		if (Prototype.Browser.IE) {
 			if (riot.hover != event.toElement) {
@@ -73,7 +73,7 @@ riot.Component.prototype = {
 		}
 		Event.stop(event);
 	},
-	
+
 	removeComponent: function(event) {
 		var e = event || window.event;
 		if (e) Event.stop(e);
@@ -86,18 +86,18 @@ riot.Component.prototype = {
 		this.componentList.setDirty(true);
 		return false;
 	},
-				
+
 	updateText: function(key, value) {
 		ComponentEditor.updateText(this.componentList.controllerId, this.id, key, value, this.setHtml.bind(this));
 		this.componentList.setDirty(true);
 	},
-	
+
 	setHtml: function(html) {
 		this.element.update(html);
 		this.setupElement();
 		this.repaint();
 	},
-	
+
 	editProperties: function(ev) {
 		ev = ev || window.event;
 		if (ev) Event.stop(ev);
@@ -113,23 +113,23 @@ riot.Component.prototype = {
 		}
 		return false;
 	},
-	
+
 	propertiesChanged: function() {
 		riot.popup.close();
 		// Timeout as we othwerwise get an 0x8004005 [nsIXMLHttpRequest.open] error.
 		// See https://bugzilla.mozilla.org/show_bug.cgi?id=249843
 		setTimeout(this.onupdate.bind(this), 1);
 	},
-	
+
 	onupdate: function() {
 		this.componentList.update();
 	},
-	
+
 	repaint: function() {
 		var next = this.element.next();
 		if (next) {	next.forceRerendering(); }
 	},
-	
+
 	setupElement: function() {
 		this.editors = [];
 		var desc = this.element.descendants();
@@ -159,29 +159,13 @@ riot.Component.prototype = {
 				// getAttribute('riot:editorType') fails in IE for TABLE elements (and maybe others?)
 			}
 		}
-		
-		// Adopt float and clear styles from the child element(s) ...
-		var c = this; 
-		c.element.immediateDescendants().each(function(child) {
-			var cssFloat = child.getStyle('float');
-			if (cssFloat != 'none') {
-				c.element.style.zIndex = 1;
-				c.element.style.cssFloat = cssFloat;
-				c.element.style.styleFloat = cssFloat;
-				child.style.cssFloat = 'none';
-				child.style.styleFloat = 'none';
-			}
-			var cssClear = child.getStyle('clear');
-			if (cssClear != 'none') {
-				c.element.style.clear = cssClear;
-			}
-		});
-		
+		// Adopt float and clear styles from the first child element
+		riot.adoptFloatAndClear(this.element);
 		if (this.editing) {
 			this.edit(true);
 		}
 	},
-	
+
 	updatePositionClasses: function(position, last) {
 		if (this.type != 'inherit') {
 			this.element.descendants().each(function(el) {
@@ -199,21 +183,21 @@ riot.InsertButton.prototype = {
 	initialize: function(component, componentList) {
 		this.component = component;
 		this.componentList = componentList || component.componentList;
-		this.element = RBuilder.node('div', {className: 'riot-insert-button', 
+		this.element = RBuilder.node('div', {className: 'riot-insert-button',
 				onclick: this.onclick.bindAsEventListener(this)}).hide();
 	},
-	
+
 	show: function() {
 		if (!this.element.parentNode) {
 			this.componentList.element.appendChild(this.element);
 		}
 		this.element.show();
 	},
-	
+
 	hide: function() {
 		this.element.hide();
 	},
-	
+
 	onclick: function() {
 		if (riot.activeInsertButton) {
 			riot.activeInsertButton.element.removeClassName('riot-insert-button-active');
@@ -225,30 +209,30 @@ riot.InsertButton.prototype = {
 		else {
 			this.element.addClassName('riot-insert-button-active');
 			riot.activeInsertButton = this;
-			this.inspector = new riot.TypeInspector(this.componentList.types, null, 
+			this.inspector = new riot.TypeInspector(this.componentList.types, null,
 					this.insert.bind(this));
-					
+
 			riot.toolbar.setInspector(this.inspector.element);
 		}
 	},
-	
+
 	insert: function(type) {
-		ComponentEditor.insertComponent(this.componentList.id, -1, type, null, 
+		ComponentEditor.insertComponent(this.componentList.id, -1, type, null,
 				this.oninsert.bind(this));
-		
+
 		if (this.inspector) {
 			this.inspector.onchange = this.changeType.bind(this);
-		}		
+		}
 	},
-	
+
 	oninsert: function(id) {
 		this.componentId = id;
 		this.componentList.update();
 		this.componentList.setDirty(true);
 	},
-	
+
 	changeType: function(type) {
-		ComponentEditor.setType(this.componentId, type, 
+		ComponentEditor.setType(this.componentId, type,
 				this.componentList.update.bind(this.componentList));
 	}
 };
@@ -260,7 +244,7 @@ riot.TypeInspector.prototype = {
 		this.onchange = onchange;
 		var select = RBuilder.node('div', {className: 'type-inspector'});
 		for (var i = 0; i < types.length; i++) {
-			var e = RBuilder.node('div', {className: 'type'}, 
+			var e = RBuilder.node('div', {className: 'type'},
 				RBuilder.node('span', {className: 'type-' + types[i].type}, types[i].description)
 			);
 			e.type = types[i].type;
@@ -279,10 +263,10 @@ riot.TypeInspector.prototype = {
 			}
 			select.appendChild(e);
 		}
-		
+
 		this.element = RBuilder.node('div', {},
-			RBuilder.node('div', {className: 'riot-close-button', onclick: riot.toolbar.hideInspector.bind(riot.toolbar)}), 
-			RBuilder.node('div', {className: 'headline'}, '${type-inspector.title}'), 
+			RBuilder.node('div', {className: 'riot-close-button', onclick: riot.toolbar.hideInspector.bind(riot.toolbar)}),
+			RBuilder.node('div', {className: 'headline'}, '${type-inspector.title}'),
 			select
 		);
 	}
@@ -292,32 +276,37 @@ riot.publishWidgets = [];
 
 riot.PublishWidget = Class.create();
 riot.PublishWidget.prototype = {
-	initialize: function(componentList) {
+	initialize: function(componentList, mode) {
+		mode = mode || 'publish'
+		this.className = 'riot-' + mode + '-outline';
 		this.componentList = componentList;
 		this.previewHtml = this.componentList.element.innerHTML;
-		this.element = RBuilder.node('div', {className: 'riot-publish-outline riot-publish-outline-preview', style: {position: 'absolute', display: 'none'}},
-			this.overlay = RBuilder.node('div', {})
+		this.element = RBuilder.node('div', {className: this.className, style: {position: 'absolute', display: 'none'}},
+			this.overlay = RBuilder.node('div')
 		);
+		this.live = false;
+		this.updateUI();
 		this.element.observe('click', this.toggleVersion.bind(this));
 		riot.publishWidgets.push(this);
 		riot.toolbar.applyButton.enable();
 		this.show();
 	},
-	
+
 	show: function() {
 		this.componentList.element.makePositioned();
 		this.componentList.element.appendChild(this.element);
-		this.overlay.style.height = this.componentList.element.offsetHeight + 'px';
+		this.overlay.style.width = (this.componentList.element.offsetWidth - 4) + 'px';
+		this.overlay.style.height = (this.componentList.element.offsetHeight - 4) + 'px';
 		this.element.show();
 	},
-			
+
 	destroy: function() {
 		this.componentList.replaceHtml(this.previewHtml);
 		riot.publishWidgets = riot.publishWidgets.without(this);
 		this.componentList.publishWidget = null;
 		if (this.element.parentNode) this.element.remove();
 	},
-	
+
 	toggleVersion: function(ev) {
 		if (ev) Event.stop(ev);
 		if (!this.live) {
@@ -340,12 +329,12 @@ riot.PublishWidget.prototype = {
 		this.setHtml(this.previewHtml);
 		this.updateUI();
 	},
-		
+
 	showLive: function() {
 		if (this.live) return;
 		this.live = true;
 		if (!this.liveHtml) {
-			ComponentEditor.getLiveListHtml(this.componentList.controllerId, 
+			ComponentEditor.getLiveListHtml(this.componentList.controllerId,
 					this.componentList.id, this.setLiveHtml.bind(this));
 		}
 		else {
@@ -353,28 +342,26 @@ riot.PublishWidget.prototype = {
 		}
 		this.updateUI();
 	},
-	
+
 	setLiveHtml: function(html) {
 		this.liveHtml = html;
 		this.setHtml(html);
 	},
-	
+
 	setHtml: function(html) {
 		this.componentList.setTempHtml(html);
 		this.show();
 	},
-	
+
 	updateUI: function() {
-		this.overlay.toggleClassName('riot-publish-overlay-live', this.live);
-		this.overlay.toggleClassName('riot-publish-overlay-preview', !this.live);
-		this.element.toggleClassName('riot-publish-outline-live', this.live);
-		this.element.toggleClassName('riot-publish-outline-preview', !this.live);
+		this.element.toggleClassName(this.className + '-live', this.live);
+		this.element.toggleClassName(this.className + '-preview', !this.live);
 	},
-	
+
 	changesAvailable: function(instance) {
 		return !instance.live;
 	},
-	
+
 	apply: function() {
 		if (!this.live) {
 			this.componentList.publishChanges();
@@ -385,14 +372,14 @@ riot.PublishWidget.prototype = {
 
 riot.DiscardWidget = riot.PublishWidget.extend({
 	initialize: function(componentList) {
-		this.SUPER(componentList);
+		this.SUPER(componentList, 'discard');
 		this.showLive();
 	},
-	
+
 	changesAvailable: function(instance) {
 		return instance.live;
 	},
-	
+
 	apply: function() {
 		if (this.live) {
 			this.componentList.discardChanges();
@@ -417,7 +404,7 @@ riot.AbstractComponentCollection.prototype = {
 			this.parentList.childLists.push(this);
 		}
 	},
-	
+
 	getComponents: function() {
 		if (!this.components) {
 			this.components = [];
@@ -435,35 +422,31 @@ riot.AbstractComponentCollection.prototype = {
 		}
 		return this.components;
 	},
-	
+
 	update: function() {
-		ComponentEditor.getPreviewListHtml(this.controllerId, this.id, this.onupdate.bind(this));
+		ComponentEditor.getPreviewListHtml(this.controllerId, this.id, this.replaceHtml.bind(this));
 	},
 
-	onupdate: function(html) {
-		this.replaceHtml(html);
-		var handler = riot.toolbar.selectedButton.handler;
-		if (handler != 'discard') this[handler](true);
-	},
-	
 	replaceHtml: function(html) {
 		this.element.update(html);
 		this.updateComponents();
-		this.invokeEditCallbacks();
+		this.onUpdate();
+		var handler = riot.toolbar.selectedButton.handler;
+		if (handler != 'discard') this[handler](true);
 	},
-	
+
 	setTempHtml: function(html) {
 		this.element.update(html);
-		this.invokeEditCallbacks();
+		this.onUpdate();
 	},
-	
-	invokeEditCallbacks: function() {
+
+	onUpdate: function() {
 		if (window.riotEditCallbacks) {
 			var listElement = this.element;
 			riotEditCallbacks.each(function(callback) { callback(listElement) });
 		}
 	},
-	
+
 	updateComponents: function() {
 		this.components = null;
 		this.getComponents();
@@ -471,19 +454,19 @@ riot.AbstractComponentCollection.prototype = {
 		this.childLists = riot.createComponentLists(this.element);
 		riot.toolbar.registerComponentLists(this.childLists);
 	},
-	
+
 	browse: function() {
 	},
-	
+
 	edit: function(enable) {
-		this.getComponents().invoke('edit', enable); 
+		this.getComponents().invoke('edit', enable);
 	},
-			
+
 	properties: function(enable) {
 		this.element.toggleClassName('riot-mode-properties', enable);
 		this.getComponents().invoke('setMode', enable ? 'properties' : null);
 	},
-	
+
 	setDirty: function(dirty) {
 		if (this.parentList) {
 			this.parentList.setDirty(dirty);
@@ -493,7 +476,7 @@ riot.AbstractComponentCollection.prototype = {
 			riot.toolbar.dirtyCheck(dirty);
 		}
 	},
-	
+
 	discard: function(enable) {
 		if (enable) {
 			if (this.dirty) this.publishWidget = new riot.DiscardWidget(this);
@@ -503,7 +486,7 @@ riot.AbstractComponentCollection.prototype = {
 			riot.toolbar.applyButton.disable();
 		}
 	},
-	
+
 	publish: function(enable) {
 		if (enable) {
 			if (this.dirty)	this.publishWidget = new riot.PublishWidget(this);
@@ -513,7 +496,7 @@ riot.AbstractComponentCollection.prototype = {
 			riot.toolbar.applyButton.disable();
 		}
 	},
-	
+
 	apply: function() {
 		if (this.publishWidget) this.publishWidget.apply();
 	}
@@ -522,18 +505,24 @@ riot.AbstractComponentCollection.prototype = {
 riot.ComponentSet = riot.AbstractComponentCollection.extend({
 	initialize: function(el) {
 		this.SUPER(el);
+		riot.adoptFloatAndClear(this.element);
 		this.setDirty(this.getComponents().pluck('element').any(function(e) {
 			return e.readAttribute('riot:dirty') != null;
 		}));
 	},
 
+	onUpdate: function() {
+		this.SUPER();
+		riot.adoptFloatAndClear(this.element);
+	},
+
 	publishChanges: function() {
-		ComponentEditor.publishContainers(this.getComponents().pluck('id'), 
+		ComponentEditor.publishContainers(this.getComponents().pluck('id'),
 				this.publishWidget.destroy.bind(this.publishWidget));
 	},
 
 	discardChanges: function() {
-		ComponentEditor.discardContainers(this.getComponents().pluck('id'), 
+		ComponentEditor.discardContainers(this.getComponents().pluck('id'),
 				this.update.bind(this));
 	}
 });
@@ -545,17 +534,17 @@ riot.ComponentList = riot.AbstractComponentCollection.extend({
 		this.id = el.readAttribute('riot:listId');
 		this.maxComponents = el.readAttribute('riot:maxComponents');
 		this.minComponents = el.readAttribute('riot:minComponents');
-		ComponentEditor.getValidTypes(this.controllerId, 
+		ComponentEditor.getValidTypes(this.controllerId,
 				this.setValidTypes.bind(this));
 	},
-	
+
 	setValidTypes: function(types) {
 		this.types = types;
 		if (types.length == 1) {
 			this.fixedType = types[0].type;
 		}
 	},
-	
+
 	updatePositionClasses: function() {
 		this.components = null;
 		var last = this.getComponents().length - 1;
@@ -563,7 +552,7 @@ riot.ComponentList = riot.AbstractComponentCollection.extend({
 			component.updatePositionClasses(index + 1, index == last);
 		});
 	},
-			
+
 	insert: function(enable) {
 		if (!this.maxComponents || this.getComponents().length < this.maxComponents) {
 			if (enable) {
@@ -577,7 +566,7 @@ riot.ComponentList = riot.AbstractComponentCollection.extend({
 			riot.activeInsertButton = null;
 		}
 	},
-	
+
 	validateMaxComponents: function() {
 		if (this.insertButton && this.maxComponents && this.getComponents().length >= this.maxComponents) {
 			this.insertButton.hide();
@@ -590,11 +579,11 @@ riot.ComponentList = riot.AbstractComponentCollection.extend({
 			this.element.toggleClassName('riot-mode-move', enable);
 			if (enable) {
 				var options = {
-					tag: 'div', 
-					only: 'riot-component', 
-					overlap: 'vertical', 
-					constraint: 'vertical', 
-					scroll: window, 
+					tag: 'div',
+					only: 'riot-component',
+					overlap: 'vertical',
+					constraint: 'vertical',
+					scroll: window,
 					scrollSpeed: 20
 				};
 				Sortable.create(this.element, options);
@@ -621,19 +610,19 @@ riot.ComponentList = riot.AbstractComponentCollection.extend({
 		this.element.toggleClassName('riot-mode-remove', enable);
 		this.getComponents().invoke('setMode', enable ? 'remove' : null);
 	},
-	
+
 	componentRemoved: function() {
 		this.updatePositionClasses();
 		if (this.minComponents > 0 && this.getComponents().length == this.minComponents) {
 			this.remove(false);
 		}
 	},
-	
+
 	publishChanges: function() {
-		ComponentEditor.publishList(this.id, 
+		ComponentEditor.publishList(this.id,
 				this.publishWidget.destroy.bind(this.publishWidget));
 	},
-	
+
 	discardChanges: function() {
 		ComponentEditor.discardList(this.id, this.update.bind(this));
 	}
@@ -684,6 +673,22 @@ riot.ComponentDragObserver.prototype = {
 			if (nextEl) { nextEl.forceRerendering(); }
 		}
 		this.nextEl = null;
+	}
+}
+
+riot.adoptFloatAndClear = function(el) {
+	var child = el.down();
+	if (child) {
+		var cssFloat = child.getStyle('float');
+		if (cssFloat != 'none') {
+			el.style.zIndex = 1;
+			el.style.cssFloat = el.style.styleFloat = cssFloat;
+			child.style.cssFloat = child.style.styleFloat = 'none';
+		}
+		var cssClear = child.getStyle('clear');
+		if (cssClear != 'none') {
+			el.style.clear = cssClear;
+		}
 	}
 }
 

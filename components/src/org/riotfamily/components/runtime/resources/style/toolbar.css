@@ -175,10 +175,10 @@ html .riot-insert-button-active {
 }
 
 .riot-component-list:after {
-    content: "."; 
-    display: block; 
-    height: 0; 
-    clear: both; 
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
     visibility: hidden;
 }
 
@@ -224,7 +224,7 @@ div.riot-highlight {
 .riot-outline,
 .riot-outline .riot-floating-content {
 	outline: 2px dotted ${highlight};
-	-moz-outline: 2px dotted ${highlight}; 
+	-moz-outline: 2px dotted ${highlight};
 }
 
 .riot-no-inheritance {
@@ -361,7 +361,7 @@ table.mceEditor {
 	margin: 0;
 }
 
-#riot-overlay { 
+#riot-overlay {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -377,19 +377,22 @@ body > #riot-overlay {
 	position: fixed;
 }
 
-.riot-publish-outline {
-	top: -2px;
-	left: -2px;
-	width: 100%;
+.riot-publish-outline,
+.riot-discard-outline {
+	top: 0;
+	left: 0;
 	background: url(images/pixel.gif);
 }
-.riot-publish-outline-preview {
+.riot-publish-outline-preview,
+.riot-discard-outline-live {
 	border: 2px dotted ${highlight};
 }
-.riot-publish-outline-live {
+.riot-publish-outline-live,
+.riot-discard-outline-preview {
 	border: 2px dotted ${toolbarOutline};
 }
-.riot-publish-overlay {
+.riot-publish-outline-live div,
+.riot-discard-outline-preview div {
 	background-color: #fff;
 	filter: alpha(opacity=60);
 	-moz-opacity: 0.6;
