@@ -68,6 +68,10 @@ var TweakStyle = {
 	
 	group: function() {
 		this.roundElements('div.title');
+		$$('#editors .text').each(function(el) {
+			var h = el.offsetHeight - parseInt(el.getStyle('padding-top'));
+			el.style.paddingTop = Math.round((el.parentNode.offsetHeight - h) / 2) + 'px';
+		});
 	},
 	
 	status: function() {

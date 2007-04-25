@@ -17,7 +17,7 @@
 			updatePath('${group.id}');
 		</script>		
 	</head>
-	<body onload="TweakStyle.group()">
+	<body>
 		<div id="wrapper">
 			<div id="editors" class="main">
 				<div class="title"><span>${group.title}</span></div>
@@ -25,10 +25,8 @@
 					<a class="editor ${ref.styleClass?default('default')}" href="${common.url(ref.editorUrl)}" <#if ref.targetWindow?exists> target="${ref.targetWindow}"</#if>>
 						<div class="icon"<#if ref.icon?exists> style="background-image:url(${riot.resource("style/icons/editors/" + ref.icon + ".gif")})"</#if>></div>
 						<div class="text">
-							<div class="iefix1"><div class="iefix2">
-								<div class="label">${ref.label}</div>
-								<div class="description">${ref.description?if_exists}</div>
-							</div></div>
+							<div class="label">${ref.label}</div>
+							<div class="description">${ref.description?if_exists}</div>
 						</div>
 					</a>
 				</#list>
@@ -38,5 +36,6 @@
 			<@riot.controller "/notifications" />
 			<@riot.controller "/status" />
 		</div>
+		<script>TweakStyle.group();</script>
 	</body>
 </html>
