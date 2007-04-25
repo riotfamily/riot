@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.ServletContextAware;
 
 /**
@@ -190,7 +191,9 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 			FileCopyUtils.copy(file, dest);
 			file.delete();
 		}
-		return uriPrefix + dest.getPath().substring(baseDir.getPath().length());
+		String path = dest.getPath().substring(baseDir.getPath().length());
+		path = StringUtils.replace(path, File.separator, "/");
+		return uriPrefix + path;
 	}
 	
 	/**
@@ -203,6 +206,7 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 			return null;
 		}
 		uri = stripQueryString(uri.substring(uriPrefix.length() + 1));
+		uri = StringUtils.replace(uri, "/", File.separator);
 		File file = new File(baseDir, uri);
 		log.debug("File: " + file);
 		return file;
