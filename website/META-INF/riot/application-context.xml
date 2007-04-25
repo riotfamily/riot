@@ -4,20 +4,21 @@
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
-	
+
 	<bean id="pathCompleter" class="org.riotfamily.common.web.util.PathCompleter">
 		<property name="servletName" value="website" />
 	</bean>
-	
-	<!-- 
+
+	<!--
 	  - A Cachius cache instance to cache web content.
-	  -->	
+	  -->
 	<bean id="websiteCache" class="org.riotfamily.cachius.spring.CacheFactoryBean">
 		<property name="capacity" value="${riot.websiteCache.capacity=10000}" />
+		<property name="restore" value="${riot.websiteCache.restore=true}" />
     </bean>
-    
-    <!-- 
-	  - AOP advisor that can be added to RiotDao instances in order to invalidate 
+
+    <!--
+	  - AOP advisor that can be added to RiotDao instances in order to invalidate
 	  - the website cache, when an object is saved, updated or deleted.
 	  -->
 	<bean id="objectIdInvalidator" class="org.springframework.aop.support.DefaultPointcutAdvisor">
@@ -30,7 +31,7 @@
 		</constructor-arg>
 	</bean>
 
-	<!-- 
+	<!--
 	  - AOP advisor that can be added to RiotDaos in order to invalidate the
 	  - website cache, when an object is saved, updated or deleted.
 	  -->
@@ -44,4 +45,4 @@
 		</constructor-arg>
 	</bean>
 
-</beans>	
+</beans>

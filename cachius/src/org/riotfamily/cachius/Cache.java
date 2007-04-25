@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.cachius;
 
@@ -44,22 +44,22 @@ import org.apache.commons.logging.LogFactory;
 public final class Cache implements Serializable {
 
     private static final String CACHE_FILE = "cache-info";
-    
+
     private static Log log = LogFactory.getLog(Cache.class);
-    
+
     private int size;
     private int capacity;
-    
+
     private transient CacheItem first;
     private transient CacheItem last;
-    
+
     private transient HashMap map;
     private transient File cacheDir = null;
     private transient File[] dirs = null;
-    
+
     private transient int numberOfDirs;
     private transient int currentDir = 0;
-            
+
     /**
      * Create the cache.
      */
@@ -70,24 +70,24 @@ public final class Cache implements Serializable {
         setCapacity(capacity);
         clear();
     }
-    
+
     public File getCacheDir() {
         return cacheDir;
     }
-    
+
     public void setCacheDir(File cacheDir) {
         if (this.cacheDir != null) {
             clear();
         }
         this.cacheDir = cacheDir;
     }
-    
+
     /**
      * Returns the CacheItem with the given key or creates a new one, if no
      * entry with that key exists.
-     * 
+     *
      * @param key The cache key
-     * @return The CacheItem for the given key 
+     * @return The CacheItem for the given key
      */
     public synchronized CacheItem getItem(String key) {
         CacheItem item = (CacheItem) map.get(key);
@@ -99,7 +99,7 @@ public final class Cache implements Serializable {
         }
         return item;
     }
-    
+
     /**
      * Sets the cache capacity. If <code>capacity</code> is lower than the
      * current capacity, items are removed to fit the new size.
@@ -114,7 +114,7 @@ public final class Cache implements Serializable {
             size--;
         }
     }
-    
+
     /**
      * Touches the given item, i.e. unlinks it and re-inserts it as the first
      * element of the list.
@@ -123,10 +123,10 @@ public final class Cache implements Serializable {
         unlink(item);
         link(item);
     }
-    
+
     /**
      * Creates a new item for the given key and adds it to the cache. If due
-     * to that operation the capacity is exeeded, the last item is removed. 
+     * to that operation the capacity is exeeded, the last item is removed.
      */
     private CacheItem newItem(String key) {
         try {
@@ -135,7 +135,7 @@ public final class Cache implements Serializable {
         	}
             log.debug("Creating new cache item for " + key);
             CacheItem item = createCacheItem(key);
-            
+
             if (size >= capacity) {
                 log.debug("Maximum size exceeded. Removing: " + last.getKey());
                 map.remove(last.getKey());
@@ -169,17 +169,17 @@ public final class Cache implements Serializable {
         else {
             first.setPrevious(item);
         }
-        
+
         first = item;
     }
-    
+
     /**
      * Removes the give item from the item list.
      */
     private void unlink(CacheItem item) {
         CacheItem previous = item.getPrevious();
         CacheItem next = item.getNext();
-        
+
         if (previous != null) {
             previous.setNext(next);
         }
@@ -194,7 +194,7 @@ public final class Cache implements Serializable {
             last = previous;
         }
     }
-    
+
     protected File getNextDir() {
         if (numberOfDirs <= 1) {
             return cacheDir;
@@ -215,15 +215,15 @@ public final class Cache implements Serializable {
     public CacheItem createCacheItem(String key) throws IOException {
         return new CacheItem(key, getNextDir());
     }
-        
+
     private synchronized void clear() {
         log.info("Removing all cache entries ...");
         File[] entries = cacheDir.listFiles();
         for (int i = 0; i < entries.length; i++) {
             deleteFile(entries[i]);
         }
-    } 
-    
+    }
+
     private void deleteFile(File f) {
         if (f.isDirectory()) {
             File[] entries = f.listFiles();
@@ -233,7 +233,7 @@ public final class Cache implements Serializable {
         }
         f.delete();
     }
-        
+
     public void invalidateTaggedItems(String tag) {
     	log.debug("Invalidating items taged as " + tag);
     	CacheItem item = first;
@@ -245,25 +245,26 @@ public final class Cache implements Serializable {
     		item = item.getNext();
     	}
     }
-    
+
     /**
-     * Factory method to create a new cache. If a cache file exists in the
-     * given directory, the method will try to deserialize it. If no file
-     * is found or the deserialization fails, a new cache is created. 
+     * Factory method to create a new cache. If restore is <code>true</code>
+     * and a cache file exists in the given directory, the method will try to
+     * deserialize it. If no file is found or the deserialization fails, a
+     * new cache is created.
      */
-    public static Cache newInstance(int capacity, File cacheDir) 
-    		throws IOException {
+    public static Cache newInstance(int capacity, File cacheDir,
+    		boolean restore) throws IOException {
 
 		if (!cacheDir.exists() && !cacheDir.mkdirs()) {
 		    throw new IOException("Can't create cache directory: " + cacheDir);
 		}
 		File f = new File(cacheDir, CACHE_FILE);
-		if (f.exists()) {
+		if (restore && f.exists()) {
 		    log.info("Trying to build cache from file: " + f);
 		    try {
 		        ObjectInputStream in = new ObjectInputStream(
 		                 new FileInputStream(f));
-		
+
 		        Cache cache = (Cache) in.readObject();
 		        in.close();
 		        f.delete();
@@ -271,7 +272,7 @@ public final class Cache implements Serializable {
 		        cache.setCapacity(capacity);
 		        log.info("Cache has been successfully deserialized. " +
 		        		"Number of items: " + cache.size);
-		        
+
 		        return cache;
 		    }
 		    catch (InvalidClassException e) {
@@ -288,7 +289,7 @@ public final class Cache implements Serializable {
 		log.info("Building new cache in: " + cacheDir);
 		return new Cache(capacity, cacheDir);
 	}
-    
+
     /**
      * Serializes the cache state to disk.
      */
@@ -299,7 +300,7 @@ public final class Cache implements Serializable {
                  log.info("Persisting the cache state ...");
                  ObjectOutputStream out = new ObjectOutputStream(
                          new FileOutputStream(f));
-                 
+
                  out.writeObject(this);
                  out.close();
                  log.info("Cache state saved in " + f);
@@ -309,7 +310,7 @@ public final class Cache implements Serializable {
             }
         }
     }
-    
+
     private void writeObject(ObjectOutputStream out) throws IOException {
     	out.defaultWriteObject();
     	CacheItem item = first;
@@ -318,10 +319,10 @@ public final class Cache implements Serializable {
     		item = item.getNext();
     	}
     }
-    
-    private void readObject(ObjectInputStream in) throws IOException, 
+
+    private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
-         
+
         in.defaultReadObject();
         map = new HashMap(capacity);
         if (size > 0) {
@@ -338,5 +339,5 @@ public final class Cache implements Serializable {
 	        last = item;
         }
     }
-        
+
 }
