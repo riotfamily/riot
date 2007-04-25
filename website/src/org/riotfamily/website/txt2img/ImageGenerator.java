@@ -42,12 +42,13 @@ import java.text.AttributedString;
 import javax.imageio.ImageIO;
 
 import org.riotfamily.common.collection.FlatMap;
+import org.riotfamily.common.util.ColorUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 
 /**
- * @author flx
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
 public class ImageGenerator implements InitializingBean {
@@ -92,7 +93,7 @@ public class ImageGenerator implements InitializingBean {
 	 * </pre>
 	 */
 	public void setColor(String color) {
-		this.color = FormatUtils.parseColor(color);
+		this.color = ColorUtils.parseColor(color);
 	}
 	
 	/**
@@ -157,7 +158,7 @@ public class ImageGenerator implements InitializingBean {
 		FlatMap attrs = attributes;
 		if (draw && color != null) {
 			attrs = new FlatMap(attributes);
-			attrs.put(TextAttribute.FOREGROUND, FormatUtils.parseColor(color));
+			attrs.put(TextAttribute.FOREGROUND, ColorUtils.parseColor(color));
 		}
 		AttributedString as = new AttributedString(text, attrs);
 		Graphics2D graphics = createGraphics(image);
