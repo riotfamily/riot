@@ -94,7 +94,7 @@ public class ImageGenerator implements InitializingBean {
 	public void setColor(String color) {
 		this.color = FormatUtils.parseColor(color);
 	}
-
+	
 	/**
 	 * Sets the font size.
 	 */

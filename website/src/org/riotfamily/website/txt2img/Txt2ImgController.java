@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
@@ -46,13 +47,16 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 
 /**
- * @author flx
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
 public class Txt2ImgController extends AbstractCacheableController {
 
 	private static final Resource SCRIPT_RESOURCE = new ClassPathResource(
 			"txt2img.js", Txt2ImgController.class);
+	
+	private static final Resource PIXEL_RESOURCE = new ClassPathResource(
+			"pixel.gif", Txt2ImgController.class);
 	
 	private long lastModified = System.currentTimeMillis();
 	
@@ -72,7 +76,7 @@ public class Txt2ImgController extends AbstractCacheableController {
 			if (selector.indexOf(',') != -1) {
 				String[] sel = StringUtils.commaDelimitedListToStringArray(selector);
 				for (int i = 0; i < sel.length; i++) {
-					this.generators.put(sel[i], generator);
+					this.generators.put(sel[i].trim(), generator);
 				}
 			}
 			else {
@@ -111,6 +115,9 @@ public class Txt2ImgController extends AbstractCacheableController {
 		if (text != null) {
 			serveImage(HtmlUtils.htmlUnescape(text), request, response);
 		}
+		else if (request.getParameter("pixel") != null) {
+			servePixelGif(response);
+		}
 		else {
 			serveScript(request, response);
 		}
@@ -126,7 +133,7 @@ public class Txt2ImgController extends AbstractCacheableController {
 			generator = (ImageGenerator) generators.get(selector);
 		}
 		Assert.notNull(generator, "No ImageGenerator found for selector '"
-				+ selector + " and no default generator is set.");
+				+ selector + "' and no default generator is set.");
 		
 		text = FormatUtils.stripWhitespaces(text, true);
 		int maxWidth = ServletRequestUtils.getIntParameter(request, "width", 0);
@@ -148,7 +155,9 @@ public class Txt2ImgController extends AbstractCacheableController {
 		
 		out.print("new RiotImageReplacement('");
 		out.print(request.getRequestURI());
-		out.print("', [");
+		out.print("', '");
+		out.print(request.getRequestURI());
+		out.print("?pixel', [");
 		Iterator it = generators.keySet().iterator();
 		while (it.hasNext()) {
 			out.print("'");
@@ -159,5 +168,11 @@ public class Txt2ImgController extends AbstractCacheableController {
 			}
 		}
 		out.print("]);");
+	}
+	
+	protected void servePixelGif(HttpServletResponse response) throws IOException {
+		response.setContentType("image/gif");
+		ServletUtils.setCacheHeaders(response, "1M");
+		IOUtils.copy(PIXEL_RESOURCE.getInputStream(), response.getOutputStream());
 	}
 }
