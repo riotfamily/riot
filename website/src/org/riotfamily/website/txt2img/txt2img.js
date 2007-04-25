@@ -13,6 +13,9 @@ RiotImageReplacement.prototype = {
 		this.pixelImage.src = pixelUrl;
 		this.createHoverRules();
 		Event.onDOMReady(this.insertImages.bind(this));
+		if (window.riotEditCallbacks) {
+			addRiotEditCallback(this.insertImages.bind(this));
+		}
 	},
 	
 	createHoverRules: function() {
@@ -48,6 +51,9 @@ RiotImageReplacement.prototype = {
 	},
 	
 	processElement: function(sel, el) {
+		if (el.down('img.replacement')) {
+			return;
+		}
 		el.onedit = this.processElement.bind(this, sel, el);
 		var text = el.innerHTML;
 		if (el.getStyle('text-transform') == 'uppercase') {
