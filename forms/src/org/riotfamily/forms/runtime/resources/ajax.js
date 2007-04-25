@@ -233,14 +233,6 @@ function focusElement(e) {
 	return false;
 }
 
-function isParentLabel(label,ref) {
-	if (ref.parentNode) {
-		return (label.htmlFor == ref.parentNode.id) 
-				|| isParentLabel(label, ref.parentNode);
-	}
-	return false;
-}
-
 function getRef(e) {
 	var refId = e.getAttribute('ref');
 	return document.getElementById(refId);
@@ -249,7 +241,7 @@ function getRef(e) {
 function setValid(e, valid) {
 	var labels = document.getElementsByTagName('label');
 	for (i = 0; i < labels.length; i++) {				
-		if ((labels[i].htmlFor == e.id) || isParentLabel(labels[i], e)) {	
+		if (labels[i].htmlFor == e.id) {	
 			setErrorClass(labels[i], valid);
 		}
 	}
