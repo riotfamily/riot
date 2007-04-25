@@ -5,7 +5,7 @@ RiotImageReplacement.prototype = {
 		this.generatorUrl = generatorUrl;
 		this.useFilter = false;
 		/*@cc_on
-		/*@if (@_jscript_version < 5.7) 
+		/*@if (@_jscript_version < 5.7)
 			this.useFilter = true;
 		/*@end
 		@*/
@@ -17,7 +17,7 @@ RiotImageReplacement.prototype = {
 			addRiotEditCallback(this.insertImages.bind(this));
 		}
 	},
-	
+
 	createHoverRules: function() {
 		$A(document.styleSheets).each(function(sheet) {
 		    $A(sheet.rules || sheet.cssRules).each(function(rule) {
@@ -40,67 +40,67 @@ RiotImageReplacement.prototype = {
 		    });
 		});
 	},
-	
+
 	insertImages: function() {
 		this.selectors.each(this.processSelectors.bind(this));
 	},
-	
+
 	processSelectors: function(sel) {
 		var _this = this;
 		$$(sel).each(this.processElement.bind(this, sel));
 	},
-	
+
 	processElement: function(sel, el) {
 		if (el.down('img.replacement')) {
 			return;
 		}
 		el.onedit = this.processElement.bind(this, sel, el);
 		var text = el.innerHTML;
-		if (el.getStyle('text-transform') == 'uppercase') {
-			text = text.toUpperCase();
-		}
 		text = text.gsub(/<br\/?>/i, '\n').stripTags();
+		var transform = el.getStyle('text-transform') || '';
 		var width = 0;
 		if (el.getStyle('display') == 'block') {
-			width = el.offsetWidth - parseInt(el.getStyle('padding-left')) 
+			width = el.offsetWidth - parseInt(el.getStyle('padding-left'))
 					- parseInt(el.getStyle('padding-right'));
 		}
-		
+
 		var color = el.getStyle('color');
-		
+
 		var hoverEl = $(document.createElement('span'));
 		hoverEl.className = 'txt2imgHover';
 		el.appendChild(hoverEl);
 		var hoverColor = hoverEl.getStyle('color');
 		hoverEl.remove();
-		
+
 		var hover = null;
 		if (hoverColor != color) {
 			hover = new Image();
-			hover.src = this.getImageUrl(text, width, sel, hoverColor);
+			hover.src = this.getImageUrl(text, transform, width, sel, hoverColor);
 		}
-		
+
 		var img = new Image();
 		img.onload = this.insertImage.bind(this, el, img, hover);
-		img.src = this.getImageUrl(text, width, sel, color);
+		img.src = this.getImageUrl(text, transform, width, sel, color);
 	},
-	
-	getImageUrl: function(text, width, sel, color) {
-		return this.generatorUrl + '?text=' + escape(text) 
+
+	getImageUrl: function(text, transform, width, sel, color) {
+		var url = this.generatorUrl;
+		url += url.include('?') ? '&' : '?';
+		return url + 'text=' + escape(text) + '&transform=' + transform
 				+ '&width=' + width + '&selector=' + escape(sel)
 				+ '&color=' + escape(color);
 	},
-	
+
 	setImageSrc: function(el, src) {
 		if (this.useFilters) {
-			el.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" 
+			el.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"
 				+ src + "', sizingMethod='scale')";
 		}
 		else {
 			el.src = src;
 		}
 	},
-	
+
 	insertImage: function(el, image, hover) {
 		var img;
 		img = document.createElement('img');
@@ -110,17 +110,17 @@ RiotImageReplacement.prototype = {
 		}
 		this.setImageSrc(img, image.src);
 		img.className = 'replacement';
-		
+
 		if (hover) {
 			img.onmouseover = this.setImageSrc.bind(this, img, hover.src);
 			img.onmouseout = this.setImageSrc.bind(this, img, image.src);
 		}
-		
+
 		var printText = document.createElement("span");
 		printText.style.display = 'none';
 		printText.className = "print-text";
 		printText.innerHTML = el.innerHTML;
-		
+
 		el.update();
 		el.appendChild(img);
 		el.appendChild(printText);
@@ -146,12 +146,12 @@ if (!Event.onDOMReady) {
 				/*@if (@_win32)
 				    document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
 				    document.getElementById("__ie_onload").onreadystatechange = function() {
-				        if (this.readyState == "complete") domReady(); 
+				        if (this.readyState == "complete") domReady();
 				    };
 				/*@end @*/
-		        if (/WebKit/i.test(navigator.userAgent)) { 
+		        if (/WebKit/i.test(navigator.userAgent)) {
 					this._timer = setInterval(function() {
-						if (/loaded|complete/.test(document.readyState)) domReady(); 
+						if (/loaded|complete/.test(document.readyState)) domReady();
 					}, 10);
 		        }
 				Event.observe(window, 'load', domReady);
