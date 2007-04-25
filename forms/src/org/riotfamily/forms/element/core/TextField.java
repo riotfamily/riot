@@ -130,7 +130,7 @@ public class TextField extends AbstractTextElement {
 		super.validate(formSubmitted);
 		if (formSubmitted && confirm) {
 			if (!ObjectUtils.nullSafeEquals(getText(), confirmText)) {
-				ErrorUtils.reject(this, "confirmFailed");
+				ErrorUtils.reject(this, "error.textField.confirmationFailed");
 			}
 		}
 		if (pattern != null && StringUtils.hasLength(getText())) {
