@@ -59,8 +59,12 @@
 }
 
 div.form-error,
-label.error {
+label.error,
+.indent label.error {
 	color: ${highlight};
+}
+.title label.error {
+	color: #fff;
 }
 div.form-error {
 	margin:15px 0;
