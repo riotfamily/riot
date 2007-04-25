@@ -38,7 +38,7 @@ riot.Component.prototype = {
 			Event.observe(this.element, 'mouseout', this.onMouseOut);
 		}
 		else {
-			if (isSet(this.mode)) {
+			if (this.mode) {
 				this.element.restoreHandlers('onclick');
 				Event.stopObserving(this.element, 'click', riot.stopEvent, true);
 				Event.stopObserving(this.element, 'mouseup', this.handlers[this.mode]);
@@ -115,8 +115,10 @@ riot.Component.prototype = {
 	},
 	
 	propertiesChanged: function() {
-		this.onupdate();
 		riot.popup.close();
+		// Timeout as we othwerwise get an 0x8004005 [nsIXMLHttpRequest.open] error.
+		// See https://bugzilla.mozilla.org/show_bug.cgi?id=249843
+		setTimeout(this.onupdate.bind(this), 1);
 	},
 	
 	onupdate: function() {
@@ -268,7 +270,7 @@ riot.TypeInspector.prototype = {
 			}
 			var inspector = this;
 			e.onclick = function() {
-				if (isSet(inspector.activeTypeButton)) {
+				if (inspector.activeTypeButton) {
 					inspector.activeTypeButton.className = 'type';
 				}
 				this.className = 'active-type'
@@ -358,7 +360,7 @@ riot.PublishWidget.prototype = {
 	},
 	
 	setHtml: function(html) {
-		this.componentList.element.update(html);
+		this.componentList.setTempHtml(html);
 		this.show();
 	},
 	
@@ -447,6 +449,19 @@ riot.AbstractComponentCollection.prototype = {
 	replaceHtml: function(html) {
 		this.element.update(html);
 		this.updateComponents();
+		this.invokeEditCallbacks();
+	},
+	
+	setTempHtml: function(html) {
+		this.element.update(html);
+		this.invokeEditCallbacks();
+	},
+	
+	invokeEditCallbacks: function() {
+		if (window.riotEditCallbacks) {
+			var listElement = this.element;
+			riotEditCallbacks.each(function(callback) { callback(listElement) });
+		}
 	},
 	
 	updateComponents: function() {
@@ -550,7 +565,7 @@ riot.ComponentList = riot.AbstractComponentCollection.extend({
 	},
 			
 	insert: function(enable) {
-		if (!isSet(this.maxComponents) || this.getComponents().length < this.maxComponents) {
+		if (!this.maxComponents || this.getComponents().length < this.maxComponents) {
 			if (enable) {
 				this.insertButton = new riot.InsertButton(null, this);
 				this.insertButton.show();
@@ -564,7 +579,7 @@ riot.ComponentList = riot.AbstractComponentCollection.extend({
 	},
 	
 	validateMaxComponents: function() {
-		if (this.insertButton && isSet(this.maxComponents) && this.getComponents().length >= this.maxComponents) {
+		if (this.insertButton && this.maxComponents && this.getComponents().length >= this.maxComponents) {
 			this.insertButton.hide();
 			riot.activeInsertButton = null;
 		}
@@ -636,17 +651,10 @@ riot.createComponentLists = function(el) {
 	var lists = [];
 	el = el || $(document.body);
 	el.getElementsBySelector('.riot-components').each(function(e) {
-		var list = e.componentList;
-		if(!isDefined(list)) {
-			list = riot.createComponentList(e);
-			e.componentList = list;
-			/*
-			if (riot.toolbar.selectedButton) {
-				list[riot.toolbar.handler](true);
-			}
-			*/
+		if(!e.componentList) {
+			e.componentList = riot.createComponentList(e);
 		}
-		lists.push(list);
+		lists.push(e.componentList);
 	});
 	return lists;
 }
@@ -684,7 +692,7 @@ riot.editProperties = function(e) {
 	var componentElement = Element.up(e, '.riot-component');
 	if (componentElement && (!componentElement.component || !componentElement.component.mode)) {
 		riot.toolbar.buttons.properties.click();
-		componentElement.component.properties();
+		componentElement.component.editProperties();
 	}
 	return false;
 }

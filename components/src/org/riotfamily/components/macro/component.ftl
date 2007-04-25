@@ -7,9 +7,22 @@
 			<@riot.script src=src />
 		</#list>
 	<#else>
-		<script type="text/javascript">
+		<script type="text/javascript" language="JavaScript">
 			<#-- The following variable is read by the login-bookmarklet: -->
 			var riotPagesUrl = '${riot.href("/pages")}';
+		</script>
+	</#if>
+</#macro>
+
+<#macro callbacks>
+	<#if componentMacroHelper.isEditMode()>
+		<!-- Riot edit callbacks -->
+		<script type="text/javascript" language="JavaScript">
+		var riotEditCallbacks = [];
+		function addRiotEditCallback(callback) {
+			riotEditCallbacks.push(callback);
+		}
+		<#nested />
 		</script>
 	</#if>
 </#macro>
