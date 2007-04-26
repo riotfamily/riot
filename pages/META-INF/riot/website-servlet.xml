@@ -7,8 +7,8 @@
 		http://www.springframework.org/schema/util/spring-util-2.0.xsd
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
-				
-	<!-- 
+
+	<!--
 	<bean id="folderFilterPlugin" class="org.riotfamily.pages.support.FolderFilterPlugin">
 		<property name="filterName" value="website-servlet-filter" />
 		<property name="ignoreFilterNotPresent" value="true" />
@@ -19,7 +19,7 @@
 		<constructor-arg ref="pageDao" />
 		<constructor-arg ref="pageLocationResolver" />
 	</bean>
-	
+
 	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
 		<property name="properties">
 			<map>
@@ -31,10 +31,11 @@
 			</map>
 		</property>
 	</bean>
-	
+
 	<bean id="pageMacroHelper" class="org.riotfamily.pages.macro.PageMacroHelperFactory">
 		<constructor-arg ref="pageDao" />
 		<constructor-arg ref="pageLocationResolver" />
+		<constructor-arg ref="pageComponentFormRegistry" />
 	</bean>
-	
+
 </beans>

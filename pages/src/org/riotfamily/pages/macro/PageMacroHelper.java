@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.macro;
 
@@ -27,6 +27,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.components.editor.ComponentFormRegistry;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
@@ -42,23 +43,26 @@ import org.springframework.util.StringUtils;
 public class PageMacroHelper {
 
 	private PageDao pageDao;
-	
+
 	private PageLocationResolver resolver;
 
+	private ComponentFormRegistry formRegistry;
+
 	private HttpServletRequest request;
-	
-	public PageMacroHelper(PageDao pageDao, PageLocationResolver resolver, 
-			HttpServletRequest request) {
-		
+
+	public PageMacroHelper(PageDao pageDao, PageLocationResolver resolver,
+			ComponentFormRegistry formRegistry, HttpServletRequest request) {
+
 		this.pageDao = pageDao;
 		this.resolver = resolver;
+		this.formRegistry = formRegistry;
 		this.request = request;
 	}
 
 	public Page getCurrentPage() {
 		return PageHandlerMapping.getPage(request);
 	}
-	
+
 	public String getHandlerUrl(String handlerName, String localeString) {
 		Locale locale = StringUtils.parseLocaleString(localeString);
 		return getHandlerUrl(handlerName, locale);
@@ -74,10 +78,10 @@ public class PageMacroHelper {
 		}
 		return null;
 	}
-	
-	public String getWildcardHandlerUrl(String handlerName, 
+
+	public String getWildcardHandlerUrl(String handlerName,
 			String wildcardReplacement, Locale locale) {
-		
+
 		PageNode node = pageDao.findNodeForHandler(handlerName);
 		if (node != null) {
 			Page page = node.getPage(locale);
@@ -87,12 +91,16 @@ public class PageMacroHelper {
 		}
 		return null;
 	}
-	
+
 	public String getPageUrl(Page page) {
 		if (page != null) {
 			return resolver.getUrl(new PageLocation(page));
 		}
 		return null;
 	}
-	
+
+	public String getFormUrl(String formId, Long containerId) {
+		return formRegistry.getFormUrl(formId, containerId);
+	}
+
 }
