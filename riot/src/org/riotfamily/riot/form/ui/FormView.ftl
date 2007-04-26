@@ -1,6 +1,6 @@
 <#import "/spring.ftl" as spring />
 <?xml version="1.0" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -49,7 +49,7 @@
 			<#if childLists?has_content>
 			<div id="childLists" class="box">
 				<div class="title">
-					<span><@spring.messageText "label.childLists", "Sub-Elements" /></span>
+					<span class="label"><@spring.messageText "label.childLists", "Sub-Elements" /></span>
 				</div>
 				<div class="list">
 					<#list childLists as item>
@@ -64,16 +64,16 @@
 				</div>
 			</div>
 			</#if>
-			
+
 			<div id="commands" class="box">
 				<div class="title">
-					<span><@spring.messageText "label.commands", "Commands" /></span>
+					<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
 				</div>
 				<div id="formCommands" class="list">
 					<div class="item"><a class="saveButton action" href="javascript:save()"><span class="label"><@spring.messageText "label.form.button.save", "Save" /></span></a></div>
 				</div>
 			</div>
-			
+
 			<script type="text/javascript" language="JavaScript">
 				TweakStyle.form();
 				var list = new RiotList('${listKey}');
@@ -85,7 +85,7 @@
 				});
 			</script>
 		</div>
-		
+
 		<div id="saving" style="display:none">
 			<@spring.messageText "label.form.saving", "Saving ..." />
 		</div>

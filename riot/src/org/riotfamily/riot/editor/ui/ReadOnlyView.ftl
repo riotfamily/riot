@@ -1,6 +1,6 @@
 <#import "/spring.ftl" as spring />
 <?xml version="1.0" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -18,7 +18,7 @@
 		<@riot.script src="dwr/interface/ListService.js" />
 		<@riot.script src="list.js" />
 		<@riot.script src="style/tweak.js" />
-		
+
 		<script type="text/javascript" language="JavaScript">
 			updatePath('${editorId}', '${objectId?if_exists}', '${parentId?if_exists}');
 		</script>
@@ -32,11 +32,11 @@
 		<div id="extras" class="extra">
 			<div id="commands" class="box">
 				<div class="title">
-					<span><@spring.messageText "label.commands", "Commands" /></span>
+					<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
 				</div>
 				<div id="formCommands" class="list"></div>
 			</div>
-			
+
 			<script type="text/javascript" language="JavaScript">
 				TweakStyle.form();
 				var list = new RiotList('${listKey}');

@@ -6,7 +6,7 @@ body {
 	margin:0;
 	padding: 30px 55px;
 }
-body, a, td, th, h1, h2 {	
+body, a, td, th, h1, h2 {
 	font-family: "Trebuchet MS", arial, sans-serif;
 	font-size:12px;
 }
@@ -63,8 +63,9 @@ td {
 	color: #fff;
 	text-transform: uppercase;
 }
-.title span,
-.title label {
+
+.title label,
+.title .label {
 	display: block;
 	margin-left: 30px;
 	padding: 2px 0 2px 6px;

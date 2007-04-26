@@ -37,8 +37,7 @@ thead {
 }
 
 th, td {
-	padding: 3px;
-	padding-left: 18px;
+	padding: 2px 3px 2px 18px;
 	margin: 0;
 }
 th {
@@ -63,7 +62,7 @@ td {
 	line-height: 26px;
 }
 
-th.commands, 
+th.commands,
 td.commands {
 	padding: 0;
 }
@@ -74,7 +73,7 @@ tbody td {
 tbody tr.last td {
 	border-bottom: 1px solid #fff;
 }
-	
+
 tr.highlight {
 	background-color: #ebebeb;
 }

@@ -2,15 +2,15 @@
 
 <div id="notifications" class="box">
 	<div class="title">
-		<span><@spring.messageText "label.notifications.title", "Messages" /></span>
+		<span class="label"><@spring.messageText "label.notifications.title", "Messages" /></span>
 	</div>
 	<div id="notificationList">
 		<div class="notification">
-			<@spring.messageText "label.notifications.emptyList", "No new messages" />					
+			<@spring.messageText "label.notifications.emptyList", "No new messages" />
 		</div>
 	</div>
 	<@riot.script src="notifications.js" />
 	<script type="text/javascript" language="JavaScript">
-		new NotificationList('notificationList', '${riot.href("/notifications")}');			
-	</script>				
-</div>	
+		new NotificationList('notificationList', '${riot.href("/notifications")}');
+	</script>
+</div>

@@ -1,6 +1,6 @@
 <#import "/spring.ftl" as spring />
 <?xml version="1.0" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -22,39 +22,39 @@
 		<@riot.script src="style/tweak.js" />
 		<script type="text/javascript" language="JavaScript">
 			updatePath('${editorId}', null, '${parentId?if_exists}');
-		</script>		
+		</script>
 	</head>
-	
+
 	<#assign hasExtraColumn = hasCommands || filterForm?exists />
-	
+
 	<body onload="TweakStyle.list()"<#if !hasExtraColumn> class="wide"</#if>>
 		<div id="wrapper">
 			<div class="main">
 				<div id="list"></div>
-			</div>		
+			</div>
 		</div>
 		<div class="extra">
-			
+
 			<#if filterForm?exists>
 				<div id="filter" class="box">
 					<div class="title">
-						<span><@spring.messageText "label.list.filter", "Filter" /></span>
+						<span class="label"><@spring.messageText "label.list.filter", "Filter" /></span>
 					</div>
 					<div id="filterForm">
 					</div>
 				</div>
 			</#if>
-			
+
 			<#if hasCommands>
 				<div id="commands" class="box">
 					<div class="title">
-						<span><@spring.messageText "label.commands", "Commands" /></span>
+						<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
 					</div>
 					<div id="listCommands">
 					</div>
 				</div>
 			</#if>
-			
+
 		</div>
 		<script type="text/javascript" language="JavaScript">
 			var list = new RiotList('${listKey}');

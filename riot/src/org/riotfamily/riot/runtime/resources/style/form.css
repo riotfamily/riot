@@ -69,7 +69,7 @@ label.error,
 div.form-error {
 	margin:15px 0;
 }
-                      
+
 ul.errors {
 	padding-left: 0;
 	margin: 0;
@@ -99,6 +99,13 @@ div.title .no-label {
 	height: 12px;
 }
 
+/*
+.title label span {
+	display: inline;
+	margin: 0;
+	padding: 0;
+}
+*/
 .single .element {
 	margin-top: 6px;
 }
@@ -138,10 +145,10 @@ textarea {
 	background-color:#ebebeb;
 }
 
-textarea, 
+textarea,
 input.text,
-input.number, 
-input.password, 
+input.number,
+input.password,
 .mceEditor {
 	border: 1px solid #e0e0e0;
 }
@@ -160,13 +167,14 @@ input.password,
 	background-color: ${highlight};
 	background-position: -13px center;
 }
+
 .numberInput .unit {
 	float: left;
 	padding: 5px 0 0 7px;
 	font-size: 12px;
 	color: #3d3d3d;
 }
-	
+
 .mceEditor .container {
 	padding: 4px;
 	border-bottom: 1px solid #e0e0e0;
@@ -182,16 +190,17 @@ input.checkbox {
 
 .checkbox-element {
 	position: relative;
-	overflow: hidden;
+	_height: 1px;
 	margin-bottom: 10px;
 }
-.checkbox-element .label {
-	float: left;
-	margin-left: 20px;
+.checkbox-element label {
+	padding-left: 20px;
 }
 .checkbox-element .element {
 	position: absolute;
-	left: 0;
+	left: 0px;
+	top: 0;
+	margin: 0;
 }
 
 ul.checkboxGroup li,
@@ -206,6 +215,7 @@ ul.radioButtonGroup input {
 
 
 .single, .composite {
+	clear: both;
 	margin-bottom: 30px;
 }
 
@@ -312,7 +322,7 @@ table.listItem td.itemElement {
 	width: 100%;
 	padding: 10px;
 }
-table.listItem td.removeButton {	
+table.listItem td.removeButton {
 	padding-top: 6px;
 	line-height: 1px;
 }
@@ -327,8 +337,8 @@ table.listItem .indent {
 	margin: 10px 0 0 0;
 }
 
-.button-add, 
-.button-remove, 
+.button-add,
+.button-remove,
 .button-toggle {
 	margin: 0;
 	border: none;
@@ -342,8 +352,8 @@ table.listItem .indent {
 	height: 32px;
 }
 
-* html .button-add, 
-* html .button-remove, 
+* html .button-add,
+* html .button-remove,
 * html .button-toggle {
 	padding: 32px 0 0 0;
 	text-indent: 0;
@@ -403,7 +413,7 @@ table.listItem .indent {
 }
 
 .filePreview .fileInfo {
-	margin-bottom: 10px;	
+	margin-bottom: 10px;
 }
 .filePreview .fileInfo td {
 	padding: 0px;
@@ -493,22 +503,14 @@ table.listItem .indent {
 }
 
 .hint-trigger {
-	float: right;
+	display: inline;
+	padding-left: 12px;
 	cursor: help;
-	margin: 2px 4px;
-	width: 12px;
-	height: 11px;
-	overflow: hidden;
-	background: url(images/hint.gif) no-repeat;
+	margin: 0 2px;
+	background: url(images/hint.gif) 0 2px no-repeat;
 }
 .title .hint-trigger {
-	background: url(images/hint_inverse.gif) 0 4px no-repeat;
-	float: none;
-	vertical-align: top;
-	height: 20px;
-	margin-left: 2px;
-	display: -moz-inline-box !important;
-	display: inline-block;
+	background: url(images/hint_inverse.gif) 0 2px no-repeat;
 }
 
 .hint {
@@ -543,6 +545,6 @@ div.autocomplete ul li {
 	cursor: pointer;
 	font-size: 12px;
 }
-div.autocomplete ul li.selected { 
+div.autocomplete ul li.selected {
 	background-color: #ffb;
 }

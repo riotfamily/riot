@@ -38,7 +38,7 @@ background-color:#ebebeb;
 	padding: 25px 0 0 7px;
 }
 
-#editors .label {
+#editors a.editor .label {
 	font-size: 14px;
 	font-weight: bold;
 }

@@ -2,7 +2,7 @@
 
 <div id="status" class="box">
 	<div class="title">
-		<span><@spring.messageText "label.status.title", "Status" /></span>
+		<span class="label"><@spring.messageText "label.status.title", "Status" /></span>
 	</div>
 	<div id="statusMessages">
 		<#if messages?has_content>
@@ -10,7 +10,7 @@
 				<div class="message">
 					<#if message.link?exists>
 						<a href="${riot.href(message.link)}"><div class="icon"></div><div class="text">${message.text}</div></a>
-					<#else>			
+					<#else>
 						<div class="icon"></div><div class="text">${message.text}</div>
 					</#if>
 				</div>
