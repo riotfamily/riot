@@ -70,6 +70,10 @@ public class ListEditor extends TemplateElement implements Editor,
 	/** Button to add an item to the list */
 	private Button addButton;
 		
+	private int minSize;
+	
+	private int maxSize;
+		
 	private boolean sortable;
 	
 	public ListEditor() {
@@ -92,6 +96,22 @@ public class ListEditor extends TemplateElement implements Editor,
 	
 	public boolean isSortable() {
 		return sortable;
+	}
+
+	public void setMinSize(int minSize) {
+		this.minSize = minSize;
+	}
+	
+	public void setMaxSize(int maxSize) {
+		this.maxSize = maxSize;
+	}
+	
+	public void setRequired(boolean required) {
+		minSize = required ? 1 : 0;
+	}
+	
+	public boolean isRequired() {
+		return minSize != 0;
 	}
 
 	public void setParentProperty(String parentProperty) {
@@ -195,8 +215,14 @@ public class ListEditor extends TemplateElement implements Editor,
 	}	
 	
 	protected void validate() {
-		if (isRequired() && ((Collection) getValue()).isEmpty()) {
-			ErrorUtils.rejectRequired(this);			
+		int size = ((Collection) getValue()).size();
+		if (minSize > 0 && size < minSize) {
+			ErrorUtils.reject(this, "list.size.tooSmall", 
+					new Object[] {new Integer(minSize)});
+		}
+		if (maxSize > 0 && size > maxSize) {
+			ErrorUtils.reject(this, "list.size.tooLarge", 
+					new Object[] {new Integer(maxSize)});
 		}
 	}
 	
