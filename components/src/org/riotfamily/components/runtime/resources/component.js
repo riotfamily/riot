@@ -289,18 +289,30 @@ riot.PublishWidget.prototype = {
 		this.element.observe('click', this.toggleVersion.bind(this));
 		riot.publishWidgets.push(this);
 		riot.toolbar.applyButton.enable();
+		if (document.addEventListener) {
+			this.domListener = this.scaleOverlay.bind(this);
+			this.componentList.element.addEventListener('DOMNodeInserted', this.domListener, false);
+		}
 		this.show();
 	},
 
 	show: function() {
 		this.componentList.element.makePositioned();
 		this.componentList.element.appendChild(this.element);
-		this.overlay.style.width = (this.componentList.element.offsetWidth - 4) + 'px';
-		this.overlay.style.height = (this.componentList.element.offsetHeight - 4) + 'px';
+		this.scaleOverlay();
 		this.element.show();
 	},
 
+	scaleOverlay: function() {
+		this.overlay.style.width = (this.componentList.element.offsetWidth - 4) + 'px';
+		this.overlay.style.height = (this.componentList.element.offsetHeight - 4) + 'px';
+	},
+
 	destroy: function() {
+		if (document.removeEventListener) {
+			this.domListener = this.show.bind(this);
+			this.componentList.element.removeEventListener('DOMNodeInserted', this.domListener, false);
+		}
 		this.componentList.replaceHtml(this.previewHtml);
 		riot.publishWidgets = riot.publishWidgets.without(this);
 		this.componentList.publishWidget = null;
@@ -432,7 +444,7 @@ riot.AbstractComponentCollection.prototype = {
 		this.updateComponents();
 		this.onUpdate();
 		var handler = riot.toolbar.selectedButton.handler;
-		if (handler != 'discard') this[handler](true);
+		if (handler != 'discard' && handler != 'publish') this[handler](true);
 	},
 
 	setTempHtml: function(html) {
