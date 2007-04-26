@@ -105,11 +105,11 @@ public abstract class AbstractCachingPolicyController
 	}
 	
 	protected boolean forceRefresh(HttpServletRequest request) {
-		return cachingPolicy.forceRefresh(request);
+		return !cacheable || cachingPolicy.forceRefresh(request);
 	}
 	
 	public long getTimeToLive(HttpServletRequest request) {
-		return cachingPolicy.getTimeToLive();
+		return !cacheable? 0: cachingPolicy.getTimeToLive();
 	}
 	
 	protected final void appendCacheKey(StringBuffer key, 
