@@ -1,6 +1,14 @@
 /* This file contains the CSS data for the editable area(iframe) of TinyMCE */
 /* You can extend this CSS by adding your own CSS file with the the content_css option */
 
+body {
+	font-family: verdana, arial, sans-serif;
+	font-size:11px;
+	color: #3d3d3d;
+	line-height: 16px;
+	padding: 7px 2px 0 4px;
+}
+
 .mceVisualAid {
 	border: 1px dashed #BBBBBB !important;
 }

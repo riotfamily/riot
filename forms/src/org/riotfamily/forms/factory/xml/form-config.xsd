@@ -3,18 +3,18 @@
 		targetNamespace="http://www.riotfamily.org/schema/forms/form-config"
 		xmlns="http://www.riotfamily.org/schema/forms/form-config"
 		xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	
+
 	<xsd:group name="elements">
 		<xsd:choice>
 			<xsd:any namespace="##any" />
-		</xsd:choice>	
+		</xsd:choice>
 	</xsd:group>
-	
+
 	<xsd:complexType name="simple-editor">
 		<xsd:attribute name="bind" type="xsd:string" />
 		<xsd:attribute name="required" type="xsd:boolean" />
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="template-editor">
 		<xsd:complexContent>
 			<xsd:extension base="simple-editor">
@@ -22,7 +22,7 @@
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
-	
+
 	<xsd:element name="element">
 		<xsd:complexType>
 			<xsd:choice>
@@ -32,7 +32,7 @@
 			<xsd:attribute name="type" type="xsd:string" use="required" />
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="set-property">
 		<xsd:complexType>
 			<xsd:attribute name="name" type="xsd:string" use="required" />
@@ -40,7 +40,7 @@
 			<xsd:attribute name="ref" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="nested-form">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -53,7 +53,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-		
+
 	<xsd:complexType name="textfield">
 		<xsd:complexContent>
 			<xsd:extension base="simple-editor">
@@ -70,7 +70,7 @@
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
-	
+
 	<xsd:element name="textfield" type="textfield" />
 
 	<xsd:element name="passwordfield">
@@ -82,7 +82,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-		
+
 	<xsd:element name="numberfield">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -98,7 +98,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="textarea">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -111,7 +111,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="checkbox">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -128,7 +128,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="imagecheckbox">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -152,7 +152,7 @@
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="multiselect">
 		<xsd:complexContent>
 			<xsd:extension base="select">
@@ -160,7 +160,7 @@
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
-	
+
 	<xsd:element name="model">
 		<xsd:complexType>
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -170,7 +170,7 @@
 			<xsd:attribute name="ref" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="selectbox">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -182,7 +182,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="multi-selectbox">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -192,7 +192,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-		
+
 	<xsd:element name="checkbox-group">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -203,7 +203,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="imagecheckbox-group">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -215,7 +215,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="radio-group">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -225,7 +225,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="list">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -240,7 +240,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="map">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -254,7 +254,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="group">
 		<xsd:complexType>
 			<xsd:group ref="elements" maxOccurs="unbounded" />
@@ -263,7 +263,7 @@
 			<xsd:attribute name="label-items" type="xsd:boolean" default="true" />
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="calendar">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -273,9 +273,17 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
-	<xsd:element name="richtext" type="simple-editor" />
-	
+
+	<xsd:element name="richtext">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="simple-editor">
+					<xsd:attribute name="rows" type="xsd:positiveInteger" default="10" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
 	<xsd:complexType name="upload">
 		<xsd:complexContent>
 			<xsd:extension base="simple-editor">
@@ -286,9 +294,9 @@
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
-	
+
 	<xsd:element name="file-upload" type="upload" />
-	
+
 	<xsd:element name="image-upload">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -309,13 +317,13 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:simpleType name="commaDelimitedIntegers">
 		<xsd:restriction base="xsd:string">
 			<xsd:pattern value="\d+(\s*,\s*\d+)*" />
 		</xsd:restriction>
 	</xsd:simpleType>
-	
+
 	<xsd:complexType name="autocomplete">
 		<xsd:complexContent>
 			<xsd:extension base="simple-editor">
@@ -323,7 +331,7 @@
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
-	
+
 	<xsd:element name="xml-element">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -336,7 +344,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="xml-sequence">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -350,20 +358,20 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="import">
 		<xsd:complexType>
 			<xsd:attribute name="form" type="xsd:string" use="required" />
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="editable-if-new">
 		<xsd:complexType>
 			<xsd:group ref="elements" />
 			<xsd:attribute name="hide" type="xsd:boolean" />
 		</xsd:complexType>
 	</xsd:element>
-		
+
 	<xsd:element name="form-config">
 		<xsd:complexType>
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -372,7 +380,7 @@
 			</xsd:choice>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="package">
 		<xsd:complexType>
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -381,7 +389,7 @@
 			<xsd:attribute name="name" type="xsd:string" use="required" />
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="form">
 		<xsd:complexType>
 			<xsd:group ref="elements" maxOccurs="unbounded" />
@@ -392,5 +400,5 @@
 			<xsd:attribute name="template" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
-		
+
 </xsd:schema>
