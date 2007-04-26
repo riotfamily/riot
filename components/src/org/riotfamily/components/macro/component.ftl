@@ -27,9 +27,9 @@
 	</#if>
 </#macro>
 
-<#-- 
+<#--
   - Macro that makes content editable via the Riot toolbar. The text is edited
-  - in-line, which means that no further markup is supported, except for 
+  - in-line, which means that no further markup is supported, except for
   - line-breaks which are converted to <br>-tags.
   -
   - The call delegated to the editable macro, using editor="text".
@@ -39,13 +39,13 @@
 	<@editable key=key editor="text" tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
 </#macro>
 
-<#-- 
+<#--
   - Macro that makes content editable via the Riot toolbar. The text is edited
   - via TinyMCE which is displayed as 'inline-popup'.
   -
-  - chunk: If set to true, the content will be split up into multiple 
+  - chunk: If set to true, the content will be split up into multiple
   - components for each top-level block element. Default is false.
-  - 
+  -
   - The call delegated to the editable macro, using editor="richtext" or
   - editor="richtext-chunks", depending on the chunk parameter.
   - See: <@editable> for a description of the other parameters.
@@ -59,18 +59,18 @@
 	<@editable key=key editor=editor tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
 </#macro>
 
-<#-- 
+<#--
   - Macro that makes content editable via the Riot toolbar.
   -
   - key: Name of the model-key/variable to edit
   -
   - scope: Hash that contains the model. Defaults to the built-in .vars hash.
   -
-  - editor: Name of the editor widget to use. Can be either 'text', 'richtext' 
+  - editor: Name of the editor widget to use. Can be either 'text', 'richtext'
   - or 'richtext-chunks'. Default is 'text'.
   -
   - alwaysUseNested: If true, the nested code is always evaluated, otherwise
-  -   the nested code is only evaluated if no value is found in model under 
+  -   the nested code is only evaluated if no value is found in model under
   -   the given key.
   -
   - tag: HTML tag that is used to surround the editable content. If omitted,
@@ -87,7 +87,7 @@
 			<#local value><#nested /></#local>
 		</#if>
 	</#if>
-	
+
 	<#if attributes?has_content>
 		<#if attributes.attributes?exists>
 			<#local attributes=attributes.attributes />
@@ -95,10 +95,12 @@
 		<#local attrs="" />
 		<#local keys=attributes?keys />
 		<#list keys as attributeName>
-			<#local attrs=attrs + " " + attributeName + "=\"" + attributes[attributeName] + "\"" />
+			<#if attributes[attributeName]?has_content>
+				<#local attrs=attrs + " " + attributeName + "=\"" + attributes[attributeName] + "\"" />
+			</#if>
 		</#list>
 	</#if>
-	
+
 	<#if componentMacroHelper.isEditMode()>
 		<#if tag?has_content>
 			<#local element=tag />
