@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.factory.xml;
 
@@ -43,6 +43,7 @@ import org.riotfamily.forms.element.core.AutocompleteTextField;
 import org.riotfamily.forms.element.core.Calendar;
 import org.riotfamily.forms.element.core.Checkbox;
 import org.riotfamily.forms.element.core.CheckboxGroup;
+import org.riotfamily.forms.element.core.ColorPicker;
 import org.riotfamily.forms.element.core.EditableIfNew;
 import org.riotfamily.forms.element.core.ElementGroup;
 import org.riotfamily.forms.element.core.FileUpload;
@@ -87,81 +88,81 @@ import org.w3c.dom.NamedNodeMap;
 public class XmlFormRepositoryDigester implements DocumentDigester {
 
 	public static final String NAMESPACE = "http://www.riotfamily.org/schema/forms/form-config";
-	
+
 	public static final String DEFAULT = "default";
-	
+
 	public static final String FORM = "form";
-	
+
 	public static final String FORM_ID = "id";
-	
+
 	public static final String FORM_BEAN_CLASS = "bean-class";
-	
+
 	public static final String FORM_INITIALIZER = "initializer";
-	
+
 	public static final String FORM_INITIALIZER_CLASS = "initializer-class";
-	
+
 	public static final String PACKAGE = "package";
-	
+
 	public static final String PACKAGE_NAME = "name";
-	
+
 	public static final String CHECKBOX_CHECKED = "checked";
-	
+
 	public static final String GENERIC_ELEMENT = "element";
-	
+
 	public static final String GENERIC_ELEMENT_TYPE = "type";
-	
+
 	public static final String ELEMENT_BIND = "bind";
-	
+
 	public static final String ELEMENT_BEAN_CLASS = "bean-class";
-	
+
 	public static final String FILE_STORE = "store";
-	
+
 	public static final String AUTOCOMPLETER_MODEL = "model";
-	
+
 	public static final String PROPERTY = "set-property";
-	
+
 	public static final String PROPERTY_NAME = "name";
-	
+
 	public static final String PROPERTY_VALUE = "value";
-	
+
 	public static final String PROPERTY_BEAN_REF = "ref";
-	
+
 	public static final String MAP_KEY_OPTIONS = "key-options";
-	
+
 	public static final String MODEL = "model";
-	
+
 	public static final String MODEL_CLASS = "class";
-	
+
 	public static final String MODEL_BEAN_REF = "ref";
-	
+
 	public static final String IMPORT = "import";
-	
+
 	public static final String IMPORT_FORM_REF = "form";
 
 	private Log log = LogFactory.getLog(XmlFormRepositoryDigester.class);
-	
+
 	private BeanFactory beanFactory;
-	
+
 	private XmlFormRepository formRepository;
-	
+
 	private HashMap elementClasses = new HashMap();
-	
+
 	private DefaultFormFactory formFactory;
-	
+
 	private String formId;
-	
+
 	private ArrayList imports;
-	
+
 	private String currentPackage;
-	
+
 	private Resource resource;
-	
-	public XmlFormRepositoryDigester(XmlFormRepository formRepository, 
+
+	public XmlFormRepositoryDigester(XmlFormRepository formRepository,
 			BeanFactory beanFactory) {
-		
+
 		this.formRepository = formRepository;
 		this.beanFactory = beanFactory;
-		
+
 		elementClasses.put("group", ElementGroup.class);
 		elementClasses.put("textfield", TextField.class);
 		elementClasses.put("passwordfield", PasswordField.class);
@@ -169,6 +170,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		elementClasses.put("textarea", Textarea.class);
 		elementClasses.put("richtext", TinyMCE.class);
 		elementClasses.put("calendar", Calendar.class);
+		elementClasses.put("color-picker", ColorPicker.class);
 		elementClasses.put("checkbox", Checkbox.class);
 		elementClasses.put("imagecheckbox", ImageCheckbox.class);
 		elementClasses.put("nested-form", NestedForm.class);
@@ -186,13 +188,13 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		elementClasses.put("xml-sequence", XmlSequence.class);
 		elementClasses.put("autocomplete", AutocompleteTextField.class);
 	}
-	
+
 	public void digest(Document doc, Resource resource) {
 		this.resource = resource;
 		formId = null;
 		imports = new ArrayList();
 		currentPackage = null;
-		
+
 		Element root = doc.getDocumentElement();
 		Iterator it = XmlUtils.getChildElements(root).iterator();
 		while (it.hasNext()) {
@@ -207,25 +209,25 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 				}
 			}
 		}
-		
+
 		it = imports.iterator();
 		while (it.hasNext()) {
 			((Import) it.next()).apply();
 		}
 	}
-	
+
 	protected void parseFormDefinition(Element formElement) {
 		formFactory = new DefaultFormFactory();
 		formId = formElement.getAttribute(FORM_ID);
-		
+
 		String beanClassName = XmlUtils.getAttribute(
 				formElement, FORM_BEAN_CLASS);
-				
+
 		formFactory.setBeanClass(getBeanClass(beanClassName));
-		
+
 		String initializerName = XmlUtils.getAttribute(
 				formElement, FORM_INITIALIZER);
-		
+
 		if (initializerName != null) {
 			formFactory.setInitializer((FormInitializer) beanFactory.getBean(
 					initializerName, FormInitializer.class));
@@ -233,48 +235,48 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		else {
 			String initializerClass = XmlUtils.getAttribute(
 				formElement, FORM_INITIALIZER_CLASS);
-			
+
 			if (initializerClass != null) {
-				formFactory.setInitializer((FormInitializer) 
+				formFactory.setInitializer((FormInitializer)
 						PropertyUtils.newInstance(initializerClass));
-			}	
+			}
 		}
-		
+
 		Iterator it = XmlUtils.getChildElements(formElement).iterator();
 		while (it.hasNext()) {
 			parseElementDefinition((Element) it.next(), formFactory);
 		}
 		formRepository.registerFormFactory(formId, formFactory);
 	}
-	
+
 	protected void parsePackageDefinition(Element ele) {
 		currentPackage = XmlUtils.getAttribute(ele, PACKAGE_NAME);
 		Iterator it = DomUtils.getChildElementsByTagName(
 				ele, FORM).iterator();
-		
+
 		while (it.hasNext()) {
 			parseFormDefinition((Element) it.next());
 		}
 	}
-	
-	protected void parseElementDefinition(Element ele, 
+
+	protected void parseElementDefinition(Element ele,
 			ContainerElementFactory parentFactory) {
-		
+
 		if (DomUtils.nodeNameEquals(ele, IMPORT)) {
 			String formId = ele.getAttribute(IMPORT_FORM_REF);
 			imports.add(new Import(formId, parentFactory));
 		}
-		else {			
+		else {
 			ConfigurableElementFactory factory = createFactory(ele);
 			parentFactory.addChildFactory(factory);
 		}
 	}
-	
+
 	protected ConfigurableElementFactory createFactory(Element ele) {
 		Class elementClass = getElementClass(ele);
-		ConfigurableElementFactory factory = 
+		ConfigurableElementFactory factory =
 				new ConfigurableElementFactory(elementClass);
-		
+
 		factory.setBeanFactory(beanFactory);
 		String beanClassName = XmlUtils.getAttribute(ele, ELEMENT_BEAN_CLASS);
 		if (beanClassName != null) {
@@ -283,7 +285,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		factory.setBind(XmlUtils.getAttribute(ele, ELEMENT_BIND));
 
 		MutablePropertyValues pvs = getPropertyValues(ele);
-		
+
 		if (SelectElement.class.isAssignableFrom(elementClass)) {
 			log.debug("Looking for OptionsModel ...");
 			OptionsModel model = getOptionsModel(ele);
@@ -292,42 +294,42 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 				pvs.addPropertyValue("optionsModel", model);
 			}
 		}
-		
+
 		if (Checkbox.class.isAssignableFrom(elementClass)) {
 			pvs.removePropertyValue(DEFAULT);
 			if (CHECKBOX_CHECKED.equals(XmlUtils.getAttribute(ele, DEFAULT))) {
 				pvs.addPropertyValue("checkedByDefault", Boolean.TRUE);
 			}
 		}
-		
+
 		if (FileUpload.class.isAssignableFrom(elementClass)) {
 			pvs.removePropertyValue("store");
 			String ref = XmlUtils.getAttribute(ele, FILE_STORE);
 			if (ref != null) {
 				FileStore fileStore = (FileStore) beanFactory.getBean(
 						ref, FileStore.class);
-				
+
 				pvs.addPropertyValue("fileStore", fileStore);
 			}
-			
+
 			if (formRepository.getMimetypesMap() != null) {
-				pvs.addPropertyValue("mimetypesMap", 
-						formRepository.getMimetypesMap()); 
+				pvs.addPropertyValue("mimetypesMap",
+						formRepository.getMimetypesMap());
 			}
 		}
-		
+
 		if (ImageUpload.class.isAssignableFrom(elementClass)) {
-			pvs.addPropertyValue("cropper", formRepository.getImageCropper()); 
+			pvs.addPropertyValue("cropper", formRepository.getImageCropper());
 		}
-		
+
 		if (ListEditor.class.isAssignableFrom(elementClass)
 				|| MapEditor.class.isAssignableFrom(elementClass)) {
-			
+
 			Element itemElement = XmlUtils.getFirstChildElement(ele);
 			ElementFactory itemFactory = createFactory(itemElement);
 			pvs.addPropertyValue("itemElementFactory", itemFactory);
 		}
-		
+
 		if (MapEditor.class.isAssignableFrom(elementClass)) {
 			pvs.removePropertyValue("keyOptions");
 			String optionsRef = XmlUtils.getAttribute(ele, MAP_KEY_OPTIONS);
@@ -335,24 +337,24 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 				pvs.addPropertyValue("keyOptionsModel", getOptionsModel(optionsRef));
 			}
 		}
-		
+
 		if (AutocompleteTextField.class.isAssignableFrom(elementClass)) {
 			pvs.addPropertyValue("model", beanFactory.getBean(
 					XmlUtils.getAttribute(ele, AUTOCOMPLETER_MODEL)));
 		}
-		
+
 		factory.setPropertyValues(pvs);
-		
+
 		if (ContainerElement.class.isAssignableFrom(elementClass)) {
 			Iterator it = XmlUtils.getChildElements(ele).iterator();
 			while (it.hasNext()) {
 				parseElementDefinition((Element) it.next(), factory);
 			}
 		}
-		
+
 		return factory;
 	}
-	
+
 	protected Class getElementClass(Element ele) {
 		String type = null;
 		if (DomUtils.nodeNameEquals(ele, GENERIC_ELEMENT)) {
@@ -369,7 +371,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		}
 		return getElementClass(type);
 	}
-	
+
 	protected Class getElementClass(String type) {
 		Class elementClass = (Class) elementClasses.get(type);
 		if (elementClass == null) {
@@ -381,7 +383,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		}
 		return elementClass;
 	}
-	
+
 	protected Class getBeanClass(String beanClassName) {
 		if (beanClassName == null) {
 			return formRepository.getDefaultBeanClass();
@@ -393,14 +395,14 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			return Class.forName(beanClassName);
 		}
 		catch (ClassNotFoundException e) {
-			throw new FormRepositoryException(resource, formId, 
+			throw new FormRepositoryException(resource, formId,
 					"beanClass not found", e);
 		}
 	}
-	
+
 	protected MutablePropertyValues getPropertyValues(Element element) {
 		MutablePropertyValues pvs = new MutablePropertyValues();
-		
+
 		NamedNodeMap attrs = element.getAttributes();
 		for (int i = 0; attrs != null && i < attrs.getLength(); i++) {
 			Attr attr = (Attr) attrs.item(i);
@@ -408,22 +410,22 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			if (!ELEMENT_BIND.equals(name)
 					&& !GENERIC_ELEMENT_TYPE.equals(name)
 					&& !FORM_BEAN_CLASS.equals(name)) {
-				
+
 				String property = FormatUtils.xmlToCamelCase(attr.getName());
 				log.debug("Setting property " + property + " to " + attr.getValue());
 				pvs.addPropertyValue(property, attr.getValue());
 			}
 		}
-		
+
 		Iterator it = DomUtils.getChildElementsByTagName(
 				element, PROPERTY).iterator();
-		
+
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();
 			String name = XmlUtils.getAttribute(ele, PROPERTY_NAME);
-			
+
 			Object value = null;
-			
+
 			String beanName = XmlUtils.getAttribute(ele, PROPERTY_BEAN_REF);
 			if (beanName != null) {
 				value = beanFactory.getBean(beanName);
@@ -431,13 +433,13 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			else {
 				value = XmlUtils.getAttribute(ele, PROPERTY_VALUE);
 			}
-			
+
 			pvs.addPropertyValue(name, value);
 		}
 
 		return pvs;
 	}
-		
+
 	private OptionsModel getOptionsModel(Element element) {
 		Element ele = DomUtils.getChildElementByTagName(element, MODEL);
 		OptionsModel model = null;
@@ -448,14 +450,14 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 					model = (OptionsModel) PropertyUtils.newInstance(className);
 				}
 				catch (BeansException e) {
-					throw new FormRepositoryException(resource, formId, 
+					throw new FormRepositoryException(resource, formId,
 							"Error creating OptionsModel", e);
 				}
 			}
 			else {
 				String beanName = XmlUtils.getAttribute(
 						ele, MODEL_BEAN_REF);
-				
+
 				if (beanName != null) {
 					model = getOptionsModel(beanName);
 				}
@@ -463,13 +465,13 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			if (model != null) {
 				List setPropElements = DomUtils.getChildElementsByTagName(
 						ele, PROPERTY);
-				
+
 				XmlUtils.populate(model, setPropElements, beanFactory);
 			}
 		}
 		return model;
 	}
-	
+
 	private OptionsModel getOptionsModel(String beanName) {
 		Object bean = beanFactory.getBean(beanName);
 		if (bean instanceof OptionsModel) {
@@ -479,32 +481,32 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			return new StaticOptionsModel((Collection) bean);
 		}
 		else {
-			throw new FormRepositoryException(resource, formId, 
+			throw new FormRepositoryException(resource, formId,
 					"Bean [" + beanName + "] is neither an " +
 					"OptionsModel nor a Collection: " + bean);
 		}
 	}
-	
+
 	private class Import {
-		
+
 		private ContainerElementFactory parent;
-		
+
 		private int insertAt;
-		
+
 		private String formId;
-		
+
 		Import(String formId, ContainerElementFactory parent) {
 			this.formId = formId;
 			this.parent = parent;
 			insertAt = parent.getChildFactories().size();
 		}
-		
+
 		public void apply() {
 			FormFactory formFactory = formRepository.getFormFactory(formId);
-			parent.getChildFactories().addAll(insertAt, 
+			parent.getChildFactories().addAll(insertAt,
 					formFactory.getChildFactories());
 		}
 
 	}
-	
+
 }

@@ -54,6 +54,8 @@
 		</xsd:complexType>
 	</xsd:element>
 
+	<xsd:element name="color-picker" type="simple-editor" />
+
 	<xsd:complexType name="textfield">
 		<xsd:complexContent>
 			<xsd:extension base="simple-editor">

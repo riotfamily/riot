@@ -1,0 +1,121 @@
+#colorpicker {
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	height: 122px;
+	overflow: hidden;
+	position: relative;
+	width: 145px;
+	margin-top: 5px;
+}
+
+#colorpicker-hue-container {
+	height: 112px;
+	left: 119px;
+	position: absolute;
+	top: 6px;
+	width: 18px;
+}
+
+#colorpicker-hue-bg-img {
+	height: 100%;
+	width: 100%;
+}
+
+#colorpicker-hue-slider {
+	height: 100%;
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: 100%;
+}
+
+#colorpicker-hue-thumb {
+	cursor: default;
+	height: 16px;
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: 18px;
+	z-index: 1009;
+}
+
+#colorpicker-bar {
+	padding-right: 10px;
+	text-align: right;
+}
+
+#colorpicker-close {
+	color: blue;
+	cursor: pointer;
+	font-family: Tahoma, Helvetica, Sans-Serif;
+	font-size: 10px;
+	font-weight: bold;
+}
+
+#colorpicker-div {
+	border: 1px solid #3d3d3d;
+	height: 100px;
+	left: 10px;
+	position: absolute;
+	top: 10px;
+	width: 100px;
+}
+
+#colorpicker-bg,#colorpicker-bg-overlay {
+	height: 100%;
+	left: 0;
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 1001;
+}
+
+#colorpicker-selector {
+	cursor: default;
+	height: 11px;
+	left: 0px;
+	margin-left: -6px;
+	margin-top: -6px;
+	position: absolute;
+	top: 0px;
+	width: 11px;
+	z-index: 1009;
+}
+
+#colorpicker-selector img {
+	left: 0;
+	position: absolute;
+	top: 0;
+}
+
+#colorpicker-footer {
+	display: none;
+}
+
+#colorpicker-value {
+	float: left;
+}
+
+#colorpicker-value,#colorpicker-value-input {
+	font-family: Helvetica, Verdana, Sans-Serif;
+	color: #3d3d3d;
+	font-size: 9px !important;
+	margin-left: 2px;
+}
+
+#colorpicker-value-input {
+	width: 40px;
+	border: 1px solid #e0e0e0;
+}
+
+#colorpicker-okbutton {
+	background: #fff;
+	border: 1px solid #3d3d3d;
+	color: #000;
+	float: right;
+	font-family: Tahoma, Helvetica, Sans-Serif;
+	font-size: 10px;
+	padding: 0 10px;
+	font-weight: bold;
+}

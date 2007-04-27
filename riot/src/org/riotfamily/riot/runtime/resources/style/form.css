@@ -99,13 +99,6 @@ div.title .no-label {
 	height: 12px;
 }
 
-/*
-.title label span {
-	display: inline;
-	margin: 0;
-	padding: 0;
-}
-*/
 .single .element {
 	margin-top: 6px;
 }
@@ -369,17 +362,28 @@ table.listItem .indent {
 }
 
 .calendar-button {
-	overflow: hidden;
 	width: 23px;
 	height: 26px;
-	margin-left: 5px;
+	padding: 0;
+	overflow: hidden;
+	border: 0;
+	vertical-align: top;
 	background: ${highlight} url(images/calendar.gif) no-repeat center center;
 }
-#elements input.calendar-input {
-	width: 150px;
-	float: left;
+#elements input.calendar-input,
+#elements input.color-input {
+	width: 116px;
+	display: inline;
+	margin-right: 5px;
 }
-
+button.color-swatch {
+	width: 26px;
+	height: 26px;
+	overflow: hidden;
+	padding: 0;
+	border: 1px solid #3d3d3d;
+	vertical-align: top;
+}
 .checkboxGroup,
 .radioButtonGroup {
 	padding: 0;
