@@ -1,18 +1,19 @@
 <?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC 
+<!DOCTYPE hibernate-mapping PUBLIC
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="org.riotfamily.pages" auto-import="false">
-	
+
 	<class name="PageNode">
+		<cache usage="nonstrict-read-write" region="pages" />
 		<id name="id">
 			<generator class="native" />
 		</id>
-		
+
 		<!-- We have to cascade updates so that the parent is reattached -->
 		<many-to-one name="parent" insert="false" update="false" cascade="save-update" />
-		
+
 		<!-- We must not use all-delete-orphan here, because otherwise nodes can not be moved to another parent -->
 		<list name="childNodes" cascade="all">
 			<key column="parent" />
@@ -24,10 +25,12 @@
 			<one-to-many class="Page" />
 		</set>
 		<property name="handlerName" />
+		<property name="childHandlerName" />
 		<property name="hidden" />
 	</class>
-	
+
 	<class name="Page">
+		<cache usage="nonstrict-read-write" region="pages" />
 		<id name="id" access="field">
 			<generator class="native" />
 		</id>
@@ -39,13 +42,14 @@
 		<property name="path" column="`path`" unique-key="location" />
 		<many-to-one name="versionContainer" cascade="all" />
 	</class>
-	
+
 	<class name="PageAlias" table="page_aliases">
+		<cache usage="nonstrict-read-write" region="pages" />
 		<composite-id name="location">
 			<key-property name="path" column="`path`" />
 			<key-property name="locale" column="locale" />
 		</composite-id>
 		<many-to-one name="page" />
 	</class>
-		
+
 </hibernate-mapping>

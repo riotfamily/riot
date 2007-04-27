@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages;
 
@@ -43,20 +43,22 @@ import org.springframework.util.ObjectUtils;
 public class PageNode {
 
 	private Long id;
-	
+
 	private PageNode parent;
 
 	private List childNodes;
-	
+
 	private Set pages;
-	
+
 	private String handlerName;
-	
+
+	private String childHandlerName;
+
 	private boolean hidden;
 
 	public PageNode() {
 	}
-	
+
 	public PageNode(Page page) {
 		addPage(page);
 	}
@@ -76,7 +78,7 @@ public class PageNode {
 	public void setParent(PageNode parent) {
 		this.parent = parent;
 	}
-	
+
 	public Set getPages() {
 		return pages;
 	}
@@ -88,19 +90,26 @@ public class PageNode {
 	public void setChildNodes(List childNodes) {
 		this.childNodes = childNodes;
 	}
-	
+
+	/**
+	 * Adds a child node. If the given node has no handlerName, it will be
+	 * set to the childHandlerName.
+	 */
 	public void addChildNode(PageNode node) {
 		node.setParent(this);
+		if (node.getHandlerName() == null) {
+			node.setHandlerName(childHandlerName);
+		}
 		if (childNodes == null) {
 			childNodes = new ArrayList();
 		}
-		childNodes.add(node);	
+		childNodes.add(node);
 	}
 
 	public List getChildNodes() {
 		return this.childNodes;
 	}
-	
+
 	public Collection getChildPages(Locale locale, boolean fallback) {
 		LinkedList pages = new LinkedList();
 		if (childNodes != null) {
@@ -115,11 +124,11 @@ public class PageNode {
 		}
 		return Collections.unmodifiableCollection(pages);
 	}
-	
+
 	public Page getPage(Locale locale) {
 		return getPage(locale, false);
 	}
-	
+
 	public Page getPage(Locale locale, boolean fallback) {
 		if (pages == null) {
 			return null;
@@ -133,11 +142,11 @@ public class PageNode {
 		}
 		return fallback ? getFirstPage() : null;
 	}
-	
+
 	public Page getFirstPage() {
 		return (Page) pages.iterator().next();
 	}
-	
+
 	public void addPage(Page page) {
 		page.setNode(this);
 		if (pages == null) {
@@ -145,15 +154,18 @@ public class PageNode {
 		}
 		pages.add(page);
 	}
-	
+
 	public void removePage(Page page) {
 		pages.remove(page);
 	}
-	
+
 	public boolean hasPages() {
 		return !pages.isEmpty();
 	}
 
+	/**
+	 * Returns the name of the handler that will be used to serve the page.
+	 */
 	public String getHandlerName() {
 		return handlerName;
 	}
@@ -162,6 +174,21 @@ public class PageNode {
 		this.handlerName = handlerName;
 	}
 
+	/**
+	 * Returns the handlerName that will be assigned to child nodes that
+	 * don't have an expicit handlerName set.
+	 */
+	public String getChildHandlerName() {
+		return this.childHandlerName;
+	}
+
+	public void setChildHandlerName(String childHandlerName) {
+		this.childHandlerName = childHandlerName;
+	}
+
+	/**
+	 * Returns whether the page should be hidden in menus.
+	 */
 	public boolean isHidden() {
 		return this.hidden;
 	}
@@ -169,5 +196,5 @@ public class PageNode {
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
 	}
-	
+
 }
