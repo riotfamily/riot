@@ -2,6 +2,10 @@
 	<#return pageMacroHelper.currentPage />
 </#function>
 
+<#function pagesForHandler handlerName locale=commonMacroHelper.locale>
+	<#return pageMacroHelper.getPagesForHandler(handlerName, locale) />
+</#function>
+
 <#function handlerUrl handlerName locale=commonMacroHelper.locale>
 	<#return common.url(pageMacroHelper.getHandlerUrl(handlerName, locale)) />
 </#function>

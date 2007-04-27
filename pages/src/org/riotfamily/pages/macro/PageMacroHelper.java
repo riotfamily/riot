@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.macro;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +62,10 @@ public class PageMacroHelper {
 
 	public Page getCurrentPage() {
 		return PageHandlerMapping.getPage(request);
+	}
+
+	public List getPagesForHandler(String handlerName, Locale locale) {
+		return pageDao.findPagesForHandler(handlerName, locale);
 	}
 
 	public String getHandlerUrl(String handlerName, String localeString) {
