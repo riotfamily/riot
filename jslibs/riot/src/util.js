@@ -1,7 +1,7 @@
 /*
- * RiotFamily utility functions (depends on prototype.js) 
+ * RiotFamily utility functions (depends on prototype.js)
  * Author: Felix Gnass
- */ 
+ */
 
 var RBuilder = {};
 RBuilder.node = function(tag, options) {
@@ -23,7 +23,7 @@ RBuilder.node = function(tag, options) {
 		if (!arg) continue;
 		if(arg.constructor == Array) arg.each(append); else append(arg);
 	}
-	
+
 	function append(arg) {
         if(arg == null) return;
         switch(typeof arg) {
@@ -32,7 +32,7 @@ RBuilder.node = function(tag, options) {
         }
         e.appendChild(arg);
     }
-   
+
 	return e;
 }
 
@@ -48,13 +48,13 @@ var Styles = {
 			this.setStyle(target, this.getStyles(source));
 		}
 	},
-	
+
 	getAll: function(element) {
 		element = $(element);
 		var styles = {};
 		for (name in element.style) {
 			if (typeof name != 'function' && name != 'length' && name != 'parentRule') {
-				styles[name] = element.style[name]; 
+				styles[name] = element.style[name];
 			}
 		}
 		if(document.defaultView && document.defaultView.getComputedStyle) {
@@ -68,13 +68,13 @@ var Styles = {
 		else if(element.currentStyle) {
 			for (name in element.currentStyle) {
 				if (typeof name == 'function') continue;
-				value = element.currentStyle[name]; 
+				value = element.currentStyle[name];
 				if (value != 'auto') styles[name] = value;
 			}
 		}
 		return styles;
 	},
-	
+
 	getBackgroundColor: function(element) {
 		element = $(element);
 		var bg;
@@ -85,7 +85,7 @@ var Styles = {
 		return bg || '#ffffff';
 	}
 }
-	
+
 var RElement = {
 	insertSelfBefore: function(el, marker) {
 		el = $(el);
@@ -107,13 +107,13 @@ var RElement = {
 		else el.appendChild(child);
 		return el;
 	},
-	
+
 	replaceBy: function(el, replacement) {
 		el = $(el);
 		el.parentNode.replaceChild($(replacement), el);
 		return el;
 	},
-	
+
 	makeInvisible: function(el) {
 		if (!(el = $(el))) return;
 		el.style.visibility = 'hidden';
@@ -132,7 +132,7 @@ var RElement = {
     	Element.classNames(el)[add ? 'add' : 'remove'](className);
 	    return el;
 	},
-	
+
 	disableHandlers: function(el, name) {
 		if (!(el = $(el))) return;
 		el.descendants().each(function(e) {
@@ -143,7 +143,7 @@ var RElement = {
 		});
 		return el;
 	},
-	
+
 	restoreHandlers: function(el, name) {
 		if (!(el = $(el))) return;
 		$(el).descendants().each(function(e) {
@@ -153,6 +153,20 @@ var RElement = {
 			}
 		});
 		return el;
+	},
+
+	clonePos: function(el, target) {
+		var options = Object.extend({
+			setWidth: true,
+		    setHeight: true,
+	    	offsetWidth: 0,
+	    	offsetTop: 0
+	    }, arguments[2] || {});
+		if(options.setWidth)  target.style.width = el.offsetWidth + options.offsetWidth + 'px';
+	    if(options.setHeight) target.style.height = el.offsetHeight + options.offsetHeight + 'px';
+		Position.clone(el, target, Object.extend(options, {
+			setWidth: false, setHeight: false
+		}));
 	}
 }
 
@@ -200,9 +214,9 @@ var Class = {
             else {
                 object[prop] = module[prop];
 			}
-		}		         
+		}
     },
-  
+
     extend: function (subobj) {
         var subproto = new this;
         Object.extend(subproto, subobj);
@@ -259,7 +273,7 @@ Class.Methods = {
         }
         return this;
     },
-    
+
     include: function () {
         var i = arguments.length;
         while (--i >= 0) {
@@ -267,11 +281,11 @@ Class.Methods = {
         }
         return this;
     },
-    
+
     kind_of: function (clazz) {
         return Class.kind_of(this, clazz);
     },
-    
+
     SUPER: function () {
         var method = Class.get_method(this.__class__, arguments);
         Class.call_super(this.__super__, this, method, arguments);

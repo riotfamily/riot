@@ -50,26 +50,16 @@ riot.Component.prototype = {
 	},
 
 	showOutline: function(event) {
-		if (Prototype.Browser.IE) {
-			if (riot.hoverTimeout) clearTimeout(riot.hoverTimeout);
-			Position.clone(this.element, riot.hover, {offsetTop: -2, offsetLeft: -2});
-			riot.hover.onclick = this.handlers[this.mode];
-			riot.hover.show();
-		}
-		else {
-			this.element.addClassName('riot-outline');
-		}
+		if (riot.hoverTimeout) clearTimeout(riot.hoverTimeout);
+		this.element.clonePos(riot.hover, {offsetWidth: -4, offsetHeight: -4});
+		riot.hover.onclick = this.handlers[this.mode];
+		riot.hover.show();
 		Event.stop(event);
 	},
 
 	hideOutline: function(event) {
-		if (Prototype.Browser.IE) {
-			if (riot.hover != event.toElement) {
-				riot.hoverTimeout = setTimeout(riot.hideHover, 250);
-			}
-		}
-		else {
-			this.element.removeClassName('riot-outline');
+		if (riot.hover != (event.toElement || event.relatedTarget)) {
+			riot.hoverTimeout = setTimeout(riot.hideHover, 250);
 		}
 		Event.stop(event);
 	},

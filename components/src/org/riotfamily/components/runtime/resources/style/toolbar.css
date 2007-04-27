@@ -211,8 +211,6 @@ div.riot-editor {
 }
 
 .riot-editable-text:hover {
-	outline:2px dotted ${highlight};
-	-moz-outline:2px dotted ${highlight};
 	cursor: crosshair;
 }
 
