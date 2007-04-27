@@ -12,7 +12,7 @@ div.form-error {
 }
 
 .single .element {
-	margin: 0;
+	margin-bottom: 16px;
 }
 
 div.title {
@@ -29,9 +29,4 @@ div.title {
 .title span.hint-trigger {
 	background-image: url(images/hint.gif);
 	background-position: 0px 3px;
-}
-
-.checkbox-element .title {
-	float: left;
-	margin-left: 20px;
 }
