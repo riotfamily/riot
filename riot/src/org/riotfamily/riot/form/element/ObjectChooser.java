@@ -97,7 +97,13 @@ public class ObjectChooser extends AbstractChooser
 	}
 
 	protected String getChooserUrl() {
-		return targetListDefinition.getEditorUrl(null, null) 
+		EditorDefinition rootList =
+			EditorDefinitionUtils.getRootListDefinition(targetListDefinition);
+		if (rootList == null) {
+			rootList = targetListDefinition;
+		}
+		
+		return rootList.getEditorUrl(null, null) 
 				+ "?choose=" + targetEditorDefinition.getId();
 	}
 	

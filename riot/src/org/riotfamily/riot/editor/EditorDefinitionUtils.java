@@ -65,6 +65,20 @@ public final class EditorDefinitionUtils {
 		return null;
 	}
 	
+	public static ListDefinition getRootListDefinition(EditorDefinition def) {
+		ListDefinition list = getParentListDefinition(def);
+		
+		if (list != null) {
+			while (getParentListDefinition(list) != null) {
+				list = getParentListDefinition(list);
+			}
+			
+			return list;
+		}
+		
+		return def instanceof ListDefinition? (ListDefinition) def: null;
+	}
+	
 	public static ListDefinition getNextListDefinition(
 			ListDefinition start, ListDefinition destination) {
 		
