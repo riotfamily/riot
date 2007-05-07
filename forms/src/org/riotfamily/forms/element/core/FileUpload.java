@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.core;
 
@@ -59,14 +59,14 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * A widget to upload files.
  */
-public class FileUpload extends CompositeElement implements Editor, 
+public class FileUpload extends CompositeElement implements Editor,
 		ResourceElement {
 
-	private static MimetypesFileTypeMap defaultMimetypesMap = 
+	private static MimetypesFileTypeMap defaultMimetypesMap =
 			new MimetypesFileTypeMap();
 
 	protected static FormResource RESOURCE = new ScriptResource(
-			"form/fileupload/upload.js", null, 
+			"form/fileupload/upload.js", null,
 			new StylesheetResource("form/fileupload/progress.css"));
 
 	private String filenameProperty;
@@ -76,17 +76,17 @@ public class FileUpload extends CompositeElement implements Editor,
 	private String sizeProperty;
 
 	private MimetypesFileTypeMap mimetypesMap;
-	
+
 	private FileStore fileStore;
-	
+
 	private String uri;
-	
+
 	private File file;
-	
+
 	private File tempFile;
 
 	private File returnedFile;
-	
+
 	private String fileName;
 
 	private String contentType;
@@ -100,11 +100,11 @@ public class FileUpload extends CompositeElement implements Editor,
 		addComponent(createPreviewElement());
 		setSurroundBySpan(true);
 	}
-		
+
 	protected Element createPreviewElement() {
 		return new PreviewElement();
 	}
-	
+
 	public FileStore getFileStore() {
 		return this.fileStore;
 	}
@@ -128,19 +128,23 @@ public class FileUpload extends CompositeElement implements Editor,
 	public void setSizeProperty(String property) {
 		this.sizeProperty = property;
 	}
-	
+
+	public String getSizeProperty() {
+		return this.sizeProperty;
+	}
+
 	public String getContentType() {
 		return contentType;
 	}
-	
+
 	public String getFileName() {
 		return fileName;
 	}
-	
+
 	public Long getSize() {
 		return size;
 	}
-	
+
 	public String getFormatedSize() {
 		if (size != null) {
 			return FormatUtils.formatByteSize(size.longValue());
@@ -151,28 +155,28 @@ public class FileUpload extends CompositeElement implements Editor,
 	public boolean isPresent() {
 		return file != null;
 	}
-	
+
 	protected File getFile() {
 		return this.file;
 	}
-	
+
 	protected void setFile(File file) {
 		this.file = file;
 		this.size = new Long(file.length());
 		revalidate();
 	}
-	
+
 	protected void afterFileUploaded() {
-	} 
-	
+	}
+
 	protected File getTempFile() {
 		return tempFile;
 	}
-	
+
 	protected File getReturnedFile() {
 		return returnedFile;
 	}
-	
+
 	protected void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
@@ -208,7 +212,7 @@ public class FileUpload extends CompositeElement implements Editor,
 			uri = null;
 			file = (File) value;
 		}
-				
+
 		EditorBinder editorBinder = getEditorBinding().getEditorBinder();
 		if (filenameProperty != null) {
 			fileName = (String) editorBinder.getPropertyValue(filenameProperty);
@@ -216,7 +220,7 @@ public class FileUpload extends CompositeElement implements Editor,
 		else {
 			fileName = file.getName();
 		}
-		
+
 		if (contentTypeProperty != null) {
 			contentType = (String) editorBinder.getPropertyValue(contentTypeProperty);
 		}
@@ -237,7 +241,7 @@ public class FileUpload extends CompositeElement implements Editor,
 		if (sizeProperty != null) {
 			editorBinder.setPropertyValue(sizeProperty, size);
 		}
-		
+
 		if (fileStore != null) {
 			File originalFile = uri != null ? fileStore.retrieve(uri) : null;
 			if (!ObjectUtils.nullSafeEquals(originalFile, file)) {
@@ -247,7 +251,7 @@ public class FileUpload extends CompositeElement implements Editor,
 					}
 					if (file != null) {
 						uri = fileStore.store(file, FormatUtils.toFilename(fileName));
-						file = fileStore.retrieve(uri);	
+						file = fileStore.retrieve(uri);
 						returnedFile = file;
 					}
 					else {
@@ -272,12 +276,12 @@ public class FileUpload extends CompositeElement implements Editor,
 			tempFile.delete();
 		}
 	}
-	
+
 	protected final void finalize() throws Throwable {
 		super.finalize();
 		destroy();
 	}
-	
+
 	protected final void validate() {
 		if (isRequired() && file == null) {
 			ErrorUtils.rejectRequired(this);
@@ -286,10 +290,10 @@ public class FileUpload extends CompositeElement implements Editor,
 			validateFile(file);
 		}
 	}
-		
+
 	protected void validateFile(File file) {
 	}
-	
+
 	/**
 	 * Though this is a composite element we want it to be treated as a
 	 * single widget.
@@ -300,19 +304,19 @@ public class FileUpload extends CompositeElement implements Editor,
 
 	public class UploadElement extends TemplateElement
 			implements JavaScriptEventAdapter {
-			
+
 		private String uploadId;
-		
+
 		private UploadStatus status;
-		
+
 		public UploadElement() {
 			this.uploadId = UploadStatus.createUploadId();
 		}
-				
+
 		public String getUploadId() {
 			return uploadId;
 		}
-		
+
 		public String getUploadUrl() {
 			return getFormContext().getUploadUrl(uploadId);
 		}
@@ -320,7 +324,7 @@ public class FileUpload extends CompositeElement implements Editor,
 		public UploadStatus getStatus() {
 			return status;
 		}
-		
+
 		public void processRequestInternal(FormRequest request) {
 			log.debug("Processing " + getParamName());
 			MultipartFile multipartFile = request.getFile(getParamName());
@@ -336,32 +340,32 @@ public class FileUpload extends CompositeElement implements Editor,
 						ext = '.' + ext;
 					}
 					tempFile = File.createTempFile("000", ext);
-					
+
 					multipartFile.transferTo(tempFile);
 					log.debug("stored at: " + tempFile.getAbsolutePath());
-					
+
 					setFile(tempFile);
 					afterFileUploaded();
-					
-					log.debug("File uploaded: " + fileName + " (" 
+
+					log.debug("File uploaded: " + fileName + " ("
 							+ contentType + ")");
-					
+
 				}
 				catch (IOException e) {
 					log.error("error saving uploaded file");
 				}
 			}
 		}
-						
+
 		/**
 		 * @see org.riotfamily.forms.ajax.JavaScriptEventAdapter#getEventTypes()
 		 */
 		public int getEventTypes() {
 			return 0;
 		}
-		
+
 		/**
-		 * 
+		 *
 		 */
 		public void handleJavaScriptEvent(JavaScriptEvent event) {
 			status = UploadStatus.getStatus(uploadId);
@@ -377,15 +381,15 @@ public class FileUpload extends CompositeElement implements Editor,
 				}
 			}
 		}
-	
+
 	}
-	
+
 	private class RemoveButton extends Button {
-		
+
 		private RemoveButton() {
 			setCssClass("remove-file");
 		}
-		
+
 		public String getLabel() {
 			return "Remove";
 		}
@@ -394,46 +398,46 @@ public class FileUpload extends CompositeElement implements Editor,
 			file = null;
 			ErrorUtils.removeErrors(FileUpload.this);
 			if (getFormListener() != null) {
-				getFormListener().elementChanged(FileUpload.this);			
-			}			
+				getFormListener().elementChanged(FileUpload.this);
+			}
 		}
-		
+
 		public void render(PrintWriter writer) {
 			if (!FileUpload.this.isRequired() && isPresent()) {
 				super.render(writer);
 			}
 		}
-		
+
 		public int getEventTypes() {
 			return JavaScriptEvent.ON_CLICK;
 		}
 	}
-	
-	public class PreviewElement extends TemplateElement 
+
+	public class PreviewElement extends TemplateElement
 			implements ContentElement {
 
 		public PreviewElement() {
 			setAttribute("file", FileUpload.this);
 		}
-		
+
 		public void handleContentRequest(HttpServletRequest request,
 				HttpServletResponse response) throws IOException {
-			
+
 			if (file != null && file.exists()) {
 				response.setDateHeader("Expires", 0);
 				response.setHeader("Content-Type", "application/x-download");
-		        response.setHeader("Content-Disposition", 
+		        response.setHeader("Content-Disposition",
 		        		"attachment;filename=" + fileName);
-		        
+
 				response.setContentLength(size.intValue());
-				FileCopyUtils.copy(new FileInputStream(file), 
+				FileCopyUtils.copy(new FileInputStream(file),
 						response.getOutputStream());
 			}
 			else {
 				response.sendError(HttpServletResponse.SC_NO_CONTENT);
 			}
 		}
-		
+
 		public String getDownloadUrl() {
 			return getFormContext().getContentUrl(this);
 		}
