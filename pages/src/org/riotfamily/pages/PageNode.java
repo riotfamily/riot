@@ -100,6 +100,9 @@ public class PageNode {
 		if (node.getHandlerName() == null) {
 			node.setHandlerName(childHandlerName);
 		}
+		if (node.getChildHandlerName() == null) {
+			node.setChildHandlerName(childHandlerName);
+		}
 		if (childNodes == null) {
 			childNodes = new ArrayList();
 		}
