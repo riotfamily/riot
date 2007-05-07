@@ -26,8 +26,8 @@ package org.riotfamily.website.txt2img;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -72,7 +72,7 @@ public class Txt2ImgController extends AbstractCacheableController {
 	 * Sets a Map of {@link ImageGenerator} objects keyed by CSS selectors.
 	 */
 	public void setGenerators(Map generators) {
-		this.generators = new HashMap();
+		this.generators = new LinkedHashMap();
 		Iterator it = generators.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();
