@@ -5,9 +5,10 @@
     	<conf name="runtime" />
     </configurations>
     <dependencies>
-	    <dependency org="riotfamily" name="riot-core" rev="latest.integration" conf="*->@" changing="true" />
-        <dependency org="riotfamily" name="riot-hibernate" rev="latest.integration" conf="*->@" changing="true" />
-        <dependency org="riotfamily" name="riot-website" rev="latest.integration" conf="*->@" changing="true" />
+	    <dependency org="riotfamily" name="riot-core" rev="latest.integration" conf="*->@" />
+	    <dependency org="riotfamily" name="riot-forms" rev="latest.integration" conf="*->@" />
+        <dependency org="riotfamily" name="riot-hibernate" rev="latest.integration" conf="*->@" />
+        <dependency org="riotfamily" name="riot-website" rev="latest.integration" conf="*->@" />
         <dependency org="freemarker" name="freemarker" rev="2.3.9" conf="runtime->default" />
         <dependency org="springframework" name="spring" rev="2.0.3" conf="build->default;runtime->web" />
     </dependencies>
