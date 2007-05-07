@@ -8,6 +8,7 @@ Resources.loadStyleSheet('style/edit-mode.css');
 
 Resources.loadScriptSequence([
 	{src: 'prototype/prototype.js', test: 'Prototype'},
+	{src: 'riot-js/inheritance.js', test: 'Class.extend'},
 	{src: 'riot-js/util.js', test: 'RElement'},
 	{src: 'scriptaculous/effects.js', test: 'Effect'},
 	{src: 'toolbar.js', test: 'riot.toolbar'},
@@ -20,5 +21,5 @@ Resources.loadScriptSequence([
 	{src: 'riot-js/window-callback.js'},
 	{src: 'pages/messages.js'},
 	{src: 'inplace.js', test: 'riot.InplaceEditor'},
-	{src: 'component.js'}	
+	{src: 'component.js'}
 ]);

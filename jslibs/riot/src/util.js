@@ -160,7 +160,7 @@ var RElement = {
 			setWidth: true,
 		    setHeight: true,
 	    	offsetWidth: 0,
-	    	offsetTop: 0
+	    	offsetHeight: 0
 	    }, arguments[2] || {});
 		if(options.setWidth)  target.style.width = el.offsetWidth + options.offsetWidth + 'px';
 	    if(options.setHeight) target.style.height = el.offsetHeight + options.offsetHeight + 'px';
@@ -171,83 +171,6 @@ var RElement = {
 }
 
 Element.addMethods(RElement);
-
-// See: http://www.bloglines.com/blog/reinyannyan?id=1
-
-var Class = {
-    create: function (proto) {
-        var clazz = function () {
-            if (this.initialize && arguments.callee.caller != Class.extend) {
-                this.__class__ = arguments.callee.prototype;
-                Object.extend(this, Class.Methods);
-                this.initialize.apply(this, arguments);
-            }
-        };
-        clazz.prototype = proto || {};
-        clazz.extend = Class.extend;
-        return clazz;
-    },
-
-    singleton: function (proto) {
-        var clazz = {
-            instance: function () {
-                if (!this.__instance__) {
-                    var clazz = Class.create(proto);
-                    this.__instance__ = eval('new clazz');
-                    proto = null;
-                }
-                return this.__instance__;
-            }
-        };
-        return clazz;
-    },
-
-    append_features: function (object, module) {
-        for (var prop in module) {
-            if (Class.kind_of(module[prop], Function)) {
-                (function (method) {
-                    object[method] = function () {
-                        return module[method].apply(object, arguments);
-                    };
-                })(prop);
-            }
-            else {
-                object[prop] = module[prop];
-			}
-		}
-    },
-
-    extend: function (subobj) {
-        var subproto = new this;
-        Object.extend(subproto, subobj);
-        subproto.__super__ = this.prototype;
-        return Class.create(subproto);
-    },
-    get_method: function (clazz, args) {
-        var c = args.callee.caller;
-        for (var method in clazz) {
-            if (clazz[method] == c) return method;
-        }
-        return null;
-    },
-    call_super: function (superclass, self, method, args) {
-        if (superclass && superclass[method]) {
-            var __class__  = self.__class__;
-            self.__class__ = superclass;
-            self.__super__ = superclass.__super__;
-            try {
-                superclass[method].apply(self, args);
-            }
-            finally {
-                self.__class__ = __class__;
-                self.__super__ = superclass;
-            }
-        }
-    },
-    kind_of: function (object, clazz) {
-        return eval('clazz.prototype.isPrototypeOf(object)');
-    }
-};
 
 var RForm = {
 	getValues: function(form) {
@@ -263,31 +186,3 @@ var RForm = {
 		});
 	}
 }
-
-
-Class.Methods = {
-    extend: function () {
-        var i = arguments.length;
-        while (--i >= 0) {
-            Object.extend(this, arguments[i]);
-        }
-        return this;
-    },
-
-    include: function () {
-        var i = arguments.length;
-        while (--i >= 0) {
-            Class.append_features(this, arguments[i]);
-        }
-        return this;
-    },
-
-    kind_of: function (clazz) {
-        return Class.kind_of(this, clazz);
-    },
-
-    SUPER: function () {
-        var method = Class.get_method(this.__class__, arguments);
-        Class.call_super(this.__super__, this, method, arguments);
-    }
-};

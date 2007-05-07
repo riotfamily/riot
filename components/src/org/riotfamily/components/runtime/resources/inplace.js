@@ -21,7 +21,7 @@ riot.InplaceEditor.prototype = {
 	initialize: function(element, component, options) {
 		this.element = $(element);
 		this.component = component;
-		this.key = element.getAttribute('riot:key');
+		this.key = this.element.readAttribute('riot:key');
 		this.enabled = false;
 		this.onclickHandler = this.onclick.bindAsEventListener(this);
 		this.oninit(options);
@@ -139,7 +139,7 @@ riot.InplaceEditor.prototype = {
 	}
 }
 
-riot.InplaceTextEditor = riot.InplaceEditor.extend({
+riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 
 	oninit: function(options) {
 		this.options = options || {};
@@ -237,7 +237,7 @@ riot.InplaceTextEditor = riot.InplaceEditor.extend({
 });
 
 
-riot.PopupTextEditor = riot.InplaceEditor.extend({
+riot.PopupTextEditor = Class.extend(riot.InplaceEditor, {
 
 	edit: function() {
 		if (!riot.activePopup) {
@@ -278,7 +278,7 @@ riot.PopupTextEditor = riot.InplaceEditor.extend({
 
 });
 
-riot.RichtextEditor = riot.PopupTextEditor.extend({
+riot.RichtextEditor = Class.extend(riot.PopupTextEditor, {
 	showEditor: function() {
 		Resources.loadScriptSequence([
 			{src: 'tiny_mce/tiny_mce_src.js', test: 'tinyMCE'},
@@ -403,7 +403,7 @@ riot.Popup.prototype = {
 	}
 }
 
-riot.TextareaPopup = riot.Popup.extend({
+riot.TextareaPopup = Class.extend(riot.Popup, {
 
 	initialize: function(editor) {
 		this.textarea = RBuilder.node('textarea', {value: editor.text || ''}),
@@ -421,7 +421,7 @@ riot.TextareaPopup = riot.Popup.extend({
 
 });
 
-riot.TinyMCEPopup = riot.TextareaPopup.extend({
+riot.TinyMCEPopup = Class.extend(riot.TextareaPopup, {
 	initialize: function(editor) {
 		this.SUPER(editor);
 		this.div.addClassName('riot-richtext');

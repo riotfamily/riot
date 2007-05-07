@@ -52,8 +52,15 @@ riot.Component.prototype = {
 	showOutline: function(event) {
 		if (riot.hoverTimeout) clearTimeout(riot.hoverTimeout);
 		this.element.clonePos(riot.hover, {offsetWidth: -4, offsetHeight: -4});
-		riot.hover.onclick = this.handlers[this.mode];
 		riot.hover.show();
+		if (!Prototype.Browser.IE) {
+			riot.hover.update();
+			this.element.getElementsByClassName('riot-component').each(function(e) {
+				var div = RBuilder.node('div', {parent: riot.hover, onmouseover: riot.hideHover, style: {position: 'absolute'}});
+				e.clonePos(div);
+			});
+		}
+		riot.hover.onclick = this.handlers[this.mode];
 		Event.stop(event);
 	},
 
@@ -270,7 +277,7 @@ riot.PublishWidget.prototype = {
 		mode = mode || 'publish'
 		this.className = 'riot-' + mode + '-outline';
 		this.componentList = componentList;
-		this.previewHtml = this.componentList.element.innerHTML;
+		this.previewHtml = componentList.element.innerHTML;
 		this.element = RBuilder.node('div', {className: this.className, style: {position: 'absolute', display: 'none'}},
 			this.overlay = RBuilder.node('div')
 		);
@@ -372,7 +379,7 @@ riot.PublishWidget.prototype = {
 	}
 }
 
-riot.DiscardWidget = riot.PublishWidget.extend({
+riot.DiscardWidget = Class.extend(riot.PublishWidget, {
 	initialize: function(componentList) {
 		this.SUPER(componentList, 'discard');
 		this.showLive();
@@ -504,7 +511,7 @@ riot.AbstractComponentCollection.prototype = {
 	}
 }
 
-riot.ComponentSet = riot.AbstractComponentCollection.extend({
+riot.ComponentSet = Class.extend(riot.AbstractComponentCollection, {
 	initialize: function(el) {
 		this.SUPER(el);
 		riot.adoptFloatAndClear(this.element);
@@ -529,7 +536,7 @@ riot.ComponentSet = riot.AbstractComponentCollection.extend({
 	}
 });
 
-riot.ComponentList = riot.AbstractComponentCollection.extend({
+riot.ComponentList = Class.extend(riot.AbstractComponentCollection, {
 	initialize: function(el) {
 		this.SUPER(el);
 		this.setDirty(el.readAttribute('riot:dirty'));
@@ -679,6 +686,7 @@ riot.ComponentDragObserver.prototype = {
 }
 
 riot.adoptFloatAndClear = function(el) {
+	if (!el) return;
 	var child = el.down();
 	if (child) {
 		var cssFloat = child.getStyle('float');
