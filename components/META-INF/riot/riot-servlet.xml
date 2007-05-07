@@ -3,12 +3,12 @@
 	xmlns:util="http://www.springframework.org/schema/util"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
-		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.0.xsd">
-	
-	<!-- 
+
+	<!--
 	  - Service bean to edit components. Exposed via DWR.
 	  -->
 	<bean id="componentEditor" class="org.springframework.aop.framework.ProxyFactoryBean">
@@ -27,7 +27,7 @@
 			</map>
 		</property>
 	</bean>
-	
+
 	<bean id="tinyMCE" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<property name="properties">
 			<props>
@@ -40,8 +40,8 @@
 			</props>
 		</property>
 	</bean>
-	
-	<!-- 
+
+	<!--
 	  - FormRepository providing component property forms.
 	  -->
 	<bean id="componentFormRepository" class="org.riotfamily.forms.factory.xml.XmlFormRepository">
@@ -51,42 +51,41 @@
 		<property name="mimetypesMap" ref="fileTypeMap" />
 		<property name="imageCropper" ref="imageCropper" />
 	</bean>
-	
-	<!-- 
+
+	<!--
 	  - Controller that renders forms to edit component properties.
-	  -->		
-	<bean id="componentFormController" 
+	  -->
+	<bean id="componentFormController"
 		name="/components/form/@{formId}/@{containerId}"
 		class="org.riotfamily.components.editor.ComponentFormController">
 		<constructor-arg ref="componentFormRepository" />
 		<constructor-arg ref="componentRepository" />
 		<constructor-arg ref="componentFormRegistry" />
 		<constructor-arg ref="componentDao" />
-		<constructor-arg ref="transactionManager" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 
 	<!--
-	  - Overwrites the default loginFormView to display a box with istallation 
+	  - Overwrites the default loginFormView to display a box with istallation
 	  - instructions for the Riot-login bookmarklet.
-	  -->	
+	  -->
 	<bean id="loginFormViewReplacement" class="java.lang.String">
 		<constructor-arg value="classpath:org/riotfamily/components/runtime/view/login-form.ftl" />
 	</bean>
-	
-	<!-- 
+
+	<!--
 	  - Login-popup that is opend by the Riot-login bookmarklet.
 	  -->
-	<bean id="toolbarLoginFormController" 
+	<bean id="toolbarLoginFormController"
 		name="/pages/login"
 		class="org.riotfamily.riot.security.ui.LoginFormController">
 		<constructor-arg ref="loginManager" />
 		<property name="successViewName" value="classpath:/org/riotfamily/components/runtime/view/toolbar-login-success.ftl" />
 	</bean>
-	
-	
+
+
 	<!-- Module configuration -->
-	
+
 	<bean id="componentsModule" class="org.riotfamily.common.beans.module.FactoryBeanModule">
 		<property name="properties">
 			<map>
@@ -150,21 +149,21 @@
 						</bean>
 					</list>
 				</entry>
-			</map>			
+			</map>
 		</property>
 	</bean>
-	 	
 
-	<!-- 
+
+	<!--
 	  - RiotDao to list dirty ComponentLists.
 	  -->
 	<bean id="dirtyComponentListDao" class="org.riotfamily.components.dao.DirtyComponentListDao">
 		<constructor-arg ref="componentDao" />
 	</bean>
-	 
+
 	<bean id="gotoComponentListCommand" class="org.riotfamily.components.command.GotoListCommand">
 		<constructor-arg ref="componentRepository" />
 		<property name="windowName" value="preview" />
 	</bean>
-	
+
 </beans>

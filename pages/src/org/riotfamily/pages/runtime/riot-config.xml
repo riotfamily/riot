@@ -20,7 +20,7 @@
 			<ed:form form-ref="page" label-property="pathComponent" />
 		</ed:tree>
 	</ed:list>
-	
+
 	<list:list id="locales">
 		<list:dao ref="localeRiotDao" />
 		<list:columns>
@@ -29,7 +29,7 @@
 			<list:command id="stepInto" />
 		</list:columns>
 	</list:list>
-	
+
 	<list:list id="pages" default-command="stepInto">
 		<list:dao ref="pageRiotDao" />
 		<list:columns>
@@ -46,16 +46,11 @@
 		<list:command id="add"/>
 		<list:command id="paste" />
 	</list:list>
-	
+
 	<form:form id="page" bean-class="org.riotfamily.pages.Page">
 		<form:group label-key="page.location">
 			<form:textfield bind="pathComponent" required="true" regex="([A-Za-z0-9_.,-]*|\*)" />
 		</form:group>
-		<form:editable-if-new hide="true">
-			<form:nested-form bind="node">
-				<form:checkbox bind="hidden" />
-			</form:nested-form>
-		</form:editable-if-new>
 	</form:form>
 
 </riot-config>

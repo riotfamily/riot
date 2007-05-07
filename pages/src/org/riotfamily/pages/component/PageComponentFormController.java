@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.component;
 
@@ -31,7 +31,6 @@ import org.riotfamily.components.editor.ComponentFormController;
 import org.riotfamily.components.editor.ComponentFormRegistry;
 import org.riotfamily.forms.FormRepository;
 import org.riotfamily.forms.factory.FormDefinitionException;
-import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -40,13 +39,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class PageComponentFormController extends ComponentFormController {
 
 	private PageComponent pageComponent;
-	
-	public PageComponentFormController(FormRepository formRepository, 
+
+	public PageComponentFormController(FormRepository formRepository,
 			ComponentRepository componentRepository,
 			ComponentFormRegistry formRegistry,
-			ComponentDao componentDao, PlatformTransactionManager tm) {
-		
-		super(formRepository, componentRepository, formRegistry, componentDao, tm);
+			ComponentDao componentDao) {
+
+		super(formRepository, componentRepository, formRegistry, componentDao);
 	}
 
 	protected void setupForms() {
@@ -62,5 +61,5 @@ public class PageComponentFormController extends ComponentFormController {
 			}
 		}
 	}
-	
+
 }
