@@ -30,6 +30,7 @@ import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.FormRequest;
 import org.riotfamily.forms.bind.Editor;
 import org.riotfamily.forms.element.support.AbstractEditorBase;
+import org.riotfamily.forms.error.ErrorUtils;
 
 
 /**
@@ -121,6 +122,13 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 	public void processRequest(FormRequest request) {
 		Object newValue = request.getParameter(getParamName());
 		checked = newValue != null;
+		validate();
+	}
+	
+	protected void validate() {
+		if (isRequired() && !isChecked()) {
+			ErrorUtils.reject(this, "required");
+		}
 	}
 
 }
