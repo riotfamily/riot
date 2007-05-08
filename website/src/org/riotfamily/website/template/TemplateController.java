@@ -4,23 +4,23 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  *   Alf Werder <alf.werder@glonz.com>
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.template;
 
@@ -47,25 +47,25 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * right place.
  * <p>
  * The most simple way to achieve this is to use a JSTL view that contains
- * a <code>&lt;c:import value="${<i>slotname</i>}" /&gt;</code> tag for each 
+ * a <code>&lt;c:import value="${<i>slotname</i>}" /&gt;</code> tag for each
  * slot, where <code><i>slotname</i></code> has to be one of the keys present
- * in the controllers configuration map. 
+ * in the controllers configuration map.
  * </p>
  * <p>
- * You may extend existing template configurations by setting the 
- * {@link #setParent(TemplateController) parent} property to another 
+ * You may extend existing template configurations by setting the
+ * {@link #setParent(TemplateController) parent} property to another
  * TemplateController. The local configuration will then be merged with the
- * one of the parent, overriding previously defined URLs.   
+ * one of the parent, overriding previously defined URLs.
  * </p>
  * <p>
- * Additionally the controller supports nested templates, i.e. the URL of a 
+ * Additionally the controller supports nested templates, i.e. the URL of a
  * slot may in turn map to another TemplateController. These nested structures
  * are taken into account when configurations are merged. When extending a
  * parent you may also override URLs defined in nested templates.
  * </p>
  * <p>
- * Let's say Template A has two slots, <i>left</i> and <i>right</i>. The right 
- * slot includes another Template B which also has two slots <i>top</i> and 
+ * Let's say Template A has two slots, <i>left</i> and <i>right</i>. The right
+ * slot includes another Template B which also has two slots <i>top</i> and
  * <i>bottom</i>, where <i>top</i> contains the URL <code>/foo.html</code>.
  * </p>
  * We can now define a third TemplateController A2 which extends A:
@@ -79,38 +79,36 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * {@link org.riotfamily.website.template.config.TemplateNamespaceHandler}
  * for more information.
  * </p>
- *   
+ *
  * @author Alf Werder
  * @author Felix Gnass
  */
-public class TemplateController extends AbstractController 
+public class TemplateController extends AbstractController
 		implements InitializingBean {
 
 	/** NOTE: The DispatcherServlet class name prefix forces an attribute
-	 * cleanup to be performed after an include, regardless of the servlet's 
+	 * cleanup to be performed after an include, regardless of the servlet's
 	 * cleanupAfterIncludes setting.
 	 */
-	private static final String SLOTS_CONFIGURATION_ATTRIBUTE = 
+	private static final String SLOTS_CONFIGURATION_ATTRIBUTE =
 			DispatcherServlet.class.getName() + "#" +
 			TemplateController.class.getName() + ".SLOTS_CONFIG";
-	
+
 	private static final String SLOT_PATH_ATTRIBUTE =
 		DispatcherServlet.class.getName() + "#" +
 		TemplateController.class.getName() + ".SLOT_PATH";
 
-	private static final String SLOT_PARAMETER = 
+	private static final String SLOT_PARAMETER =
 			TemplateController.class.getName() + ".SLOT";
 
 	private TemplateController parent;
-	
+
 	private String viewName;
 
 	private Map configuration;
 
 	private Map mergedConfiguration;
-	
-	private boolean session;
-	
+
 	public TemplateController getParent() {
 		return parent;
 	}
@@ -134,10 +132,6 @@ public class TemplateController extends AbstractController
 	public void setConfiguration(Map configuration) {
 		this.configuration = configuration;
 	}
-	
-	public void setSession(boolean session) {
-		this.session = session;
-	}
 
 	/**
 	 * Initializes the controller after all properties have been set. If a
@@ -148,9 +142,9 @@ public class TemplateController extends AbstractController
 		mergeConfiguration();
 		inheritView();
 	}
-	
+
 	/**
-	 * Merges the configuration map with the ones defined by ancestors. 
+	 * Merges the configuration map with the ones defined by ancestors.
 	 */
 	protected void mergeConfiguration() {
 		mergedConfiguration = new HashMap();
@@ -161,11 +155,11 @@ public class TemplateController extends AbstractController
 			mergedConfiguration.putAll(configuration);
 		}
 	}
-	
+
 	protected Map getMergedConfiguration() {
 		return mergedConfiguration;
 	}
-	
+
 	/**
 	 * Sets the view to the parent view if it has not been set locally.
 	 */
@@ -174,13 +168,13 @@ public class TemplateController extends AbstractController
 			viewName = getParent().getViewName();
 		}
 	}
-	
+
 	private Map getEffectiveConfiguration(HttpServletRequest request) {
 		Map effectiveConfiguration = new HashMap(mergedConfiguration);
-		
+
 		Map slotsConfiguration = (Map) request.getAttribute(
 				SLOTS_CONFIGURATION_ATTRIBUTE);
-		
+
 		if (slotsConfiguration != null) {
 			String slot = request.getParameter(SLOT_PARAMETER);
 			if (slot != null) {
@@ -189,10 +183,10 @@ public class TemplateController extends AbstractController
 						selectEntries(slotsConfiguration, prefix));
 			}
 		}
-		
+
 		return effectiveConfiguration;
 	}
-	
+
 	/**
 	 * Creates a new map containing all entries starting with the given prefix.
 	 * The prefix is stripped from the keys of the new map.
@@ -210,7 +204,7 @@ public class TemplateController extends AbstractController
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Builds a map of URLs that is used as model for the template view.
 	 */
@@ -247,13 +241,10 @@ public class TemplateController extends AbstractController
 		url.append(slot);
 		return url.toString();
 	}
-	
+
 	protected ModelAndView handleRequestInternal(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		if (session) {
-			request.getSession();
-		}
 		Map config = getEffectiveConfiguration(request);
 		request.setAttribute(SLOTS_CONFIGURATION_ATTRIBUTE, config);
 		request.setAttribute(SLOT_PATH_ATTRIBUTE, getSlotPath(request));
@@ -265,10 +256,10 @@ public class TemplateController extends AbstractController
 			return null;
 		}
 	}
-	
+
 	protected void render(Map config, HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		
+
 		ArrayList slots = new ArrayList(config.keySet());
 		Collections.sort(slots);
 		Iterator it = slots.iterator();
@@ -284,7 +275,7 @@ public class TemplateController extends AbstractController
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the fully qualified slot-path for the given request.
 	 */
@@ -301,5 +292,5 @@ public class TemplateController extends AbstractController
 		}
 		return slotPath;
 	}
-	
+
 }
