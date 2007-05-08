@@ -47,6 +47,8 @@ public class PageDefinition {
 
 	private boolean hidden;
 
+	private boolean systemNode = true;
+
 	public void setPathComponent(String pathComponent) {
 		this.pathComponent = pathComponent;
 	}
@@ -65,6 +67,10 @@ public class PageDefinition {
 		this.hidden = hidden;
 	}
 
+	public void setSystemNode(boolean systemNode) {
+		this.systemNode = systemNode;
+	}
+
 	public void setParentHandlerName(String parentHandlerName) {
 		this.parentHandlerName = parentHandlerName;
 	}
@@ -79,6 +85,7 @@ public class PageDefinition {
 
 	public PageNode createNode(Collection locales) {
 		PageNode node = new PageNode();
+		node.setSystemNode(systemNode);
 		node.setHandlerName(handlerName);
 		node.setChildHandlerName(childHandlerName);
 		node.setHidden(hidden);

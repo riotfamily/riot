@@ -52,6 +52,8 @@ public class PageNode {
 
 	private String handlerName;
 
+	private boolean systemNode;
+
 	private String childHandlerName;
 
 	private boolean hidden;
@@ -198,6 +200,19 @@ public class PageNode {
 
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
+	}
+
+	/**
+	 * Returns whether the node is a system node. System nodes are usually
+	 * created by a PageSetupBean and provide some kind of functionality
+	 * (in contrast to nodes that only contain content) and must not be deleted.
+	 */
+	public boolean isSystemNode() {
+		return this.systemNode;
+	}
+
+	public void setSystemNode(boolean systemNode) {
+		this.systemNode = systemNode;
 	}
 
 }

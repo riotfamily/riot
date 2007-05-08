@@ -27,6 +27,7 @@
 		<property name="handlerName" />
 		<property name="childHandlerName" />
 		<property name="hidden" />
+		<property name="systemNode" />
 	</class>
 
 	<class name="Page">
