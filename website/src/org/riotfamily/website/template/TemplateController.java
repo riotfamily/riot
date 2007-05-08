@@ -90,15 +90,15 @@ public class TemplateController extends AbstractController
 	 * cleanup to be performed after an include, regardless of the servlet's
 	 * cleanupAfterIncludes setting.
 	 */
-	private static final String SLOTS_CONFIGURATION_ATTRIBUTE =
+	protected static final String SLOTS_CONFIGURATION_ATTRIBUTE =
 			DispatcherServlet.class.getName() + "#" +
 			TemplateController.class.getName() + ".SLOTS_CONFIG";
 
-	private static final String SLOT_PATH_ATTRIBUTE =
+	protected static final String SLOT_PATH_ATTRIBUTE =
 		DispatcherServlet.class.getName() + "#" +
 		TemplateController.class.getName() + ".SLOT_PATH";
 
-	private static final String SLOT_PARAMETER =
+	protected static final String SLOT_PARAMETER =
 			TemplateController.class.getName() + ".SLOT";
 
 	private TemplateController parent;
@@ -109,6 +109,8 @@ public class TemplateController extends AbstractController
 
 	private Map mergedConfiguration;
 
+	private boolean session;
+	
 	public TemplateController getParent() {
 		return parent;
 	}
@@ -131,6 +133,10 @@ public class TemplateController extends AbstractController
 
 	public void setConfiguration(Map configuration) {
 		this.configuration = configuration;
+	}
+
+	public void setSession(boolean session) {
+		this.session = session;
 	}
 
 	/**
@@ -245,6 +251,9 @@ public class TemplateController extends AbstractController
 	protected ModelAndView handleRequestInternal(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
+		if (session) {
+			request.getSession();
+		}
 		Map config = getEffectiveConfiguration(request);
 		request.setAttribute(SLOTS_CONFIGURATION_ATTRIBUTE, config);
 		request.setAttribute(SLOT_PATH_ATTRIBUTE, getSlotPath(request));

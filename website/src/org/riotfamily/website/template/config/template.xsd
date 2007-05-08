@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 		elementFormDefault="qualified"
-		attributeFormDefault="unqualified"
+		attributeFormDefault="unqualified" 
 		targetNamespace="http://www.riotfamily.org/schema/website/template"
 		xmlns="http://www.riotfamily.org/schema/website/template">
-
+	
 	<xsd:element name="definition">
 		<xsd:complexType>
 			<xsd:sequence minOccurs="0" maxOccurs="unbounded">
@@ -26,7 +26,8 @@
 			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="view-name" type="xsd:string" />
 			<xsd:attribute name="parent" type="xsd:IDREF" />
+			<xsd:attribute name="session" type="xsd:boolean" default="false" />
 		</xsd:complexType>
 	</xsd:element>
-
+	
 </xsd:schema>
