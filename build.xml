@@ -1,4 +1,4 @@
-<project name="riotfamily" default="dist" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+<project name="riotfamily" default="dist" xmlns:ivy="antlib:org.apache.ivy.ant">
 
 	<import file="common.xml" />
 

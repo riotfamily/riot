@@ -1,19 +1,19 @@
-<project name="common" default="usage" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
-	
+<project name="common" default="usage" xmlns:ivy="antlib:org.apache.ivy.ant">
+
 	<description>
 		Build file to be included by all sub-projects (modules).
 	</description>
-	
+
 	<property name="project.version" value="6.5" />
-	
+
 	<tstamp>
 		<format property="build.date" pattern="yyyy-MM-dd" />
 		<format property="publish.date" pattern="yyyyMMddHHmmss" />
 	</tstamp>
-	
+
 	<!-- Location of this buildfile -->
 	<dirname property="root.dir" file="${ant.file.common}" />
-	
+
 	<!-- Globally shared directories -->
 	<property name="lib.dir" value="${root.dir}/lib" />
 	<property name="build.dir" value="${root.dir}/build" />
@@ -21,6 +21,7 @@
 	<property name="build.repo.dir" value="${build.dir}/repo" />
 	<property name="build.tstamp" value="${build.dir}/.timestamp" />
 
+	<property name="ivy.download" value="http://riotfamily.org/ivy/ivy-2.0.0-alpha-1-incubating.jar" />
 	<property name="ivy.jar" value="${lib.dir}/ivy.jar" />
 
 	<path id="ivy-classpath">
@@ -28,68 +29,68 @@
 		<pathelement path="${ivy.jar}"/>
 	</path>
 
-	<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml" 
-		uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy-classpath"
+	<taskdef resource="org/apache/ivy/ant/antlib.xml"
+		uri="antlib:org.apache.ivy.ant" classpathref="ivy-classpath"
 		onerror="ignore" />
-	
-	<!-- 
-	  - The classpath. Contains all 3rd-party libraries and all 
+
+	<!--
+	  - The classpath. Contains all 3rd-party libraries and all
 	  - module jar files.
-	  -->	
+	  -->
 	<path id="classpath">
 		<fileset dir="${lib.dir}">
 			<include name="*.jar" />
 		</fileset>
 		<pathelement path="${java.class.path}" />
 	</path>
-	
+
 	<target name="usage">
 		<fail>This file is only intended for inclusion by other build files.</fail>
 	</target>
-	
+
 	<!--
 	  - Configures Ivy.
 	  -->
 	<target name="-configure-ivy" depends="-setup-ivy">
-		<available classname="com.jcraft.jsch.JSchException" property="ivyconf" value="ivyconf-ssh.xml" />
-		<property name="ivyconf" value="ivyconf.xml" />
-		<ivy:configure file="${root.dir}/${ivyconf}" />
+		<available classname="com.jcraft.jsch.JSchException" property="ivy.settings" value="ivysettings-ssh.xml" />
+		<property name="ivy.settings" value="ivysettings.xml" />
+		<ivy:configure file="${root.dir}/${ivy.settings}" />
 	</target>
-		
+
 	<target name="-setup-ivy" depends="-install-ivy">
-		<available resource="fr/jayasoft/ivy/ant/antlib.xml" property="ivy.available" />
+		<available resource="org/apache/ivy/ant/antlib.xml" property="ivy.available" />
 	</target>
-	
+
 	<!--
 	  - Installs Ivy (if needed).
 	  -->
 	<target name="-install-ivy" depends="-download-ivy" if="ivy.downloaded">
-		<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml" 
-			uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy-classpath" />
+		<taskdef resource="org/apache/ivy/ant/antlib.xml"
+			uri="antlib:org.apache.ivy.ant" classpathref="ivy-classpath" />
 	</target>
-	
+
 	<!--
 	  - Downloads the Ivy jar file from riotfamily.org.
 	  -->
 	<target name="-download-ivy" depends="-check-ivy" unless="ivy.available">
-		<echo>This project uses Ivy (http://jayasoft.org/ivy) to manage dependencies.</echo>
+		<echo>This project uses Ivy (http://incubator.apache.org/ivy/) to manage dependencies.</echo>
 		<echo>Since Ivy was not found in the classpath the JAR file will now be downloaded ...</echo>
 		<delete dir="${lib.dir}" />
 		<mkdir dir="${lib.dir}" />
-		<get src="http://riotfamily.org/ivy/ivy.jar" dest="${ivy.jar}" verbose="true" />
+		<get src="${ivy.download}" dest="${ivy.jar}" verbose="true" />
 		<property name="ivy.downloaded" value="true" />
 	</target>
-	
+
 	<!--
 	  - Checks whether Ivy is available in the classpath.
 	  -->
 	<target name="-check-ivy">
 		<condition property="ivy.available">
 			<or>
-				<available resource="fr/jayasoft/ivy/ant/antlib.xml" />
+				<available resource="org/apache/ivy/ant/antlib.xml" />
 				<available file="${ivy.jar}" />
 			</or>
 		</condition>
 	</target>
-	
+
 </project>
