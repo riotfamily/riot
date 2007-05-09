@@ -12,7 +12,9 @@ riot.hideHover = function() {
 	}
 }
 riot.hover.onmouseout = function() {
-	riot.hoverTimeout = setTimeout(riot.hideHover, 250);
+	if (riot.hover.visible()) {
+		riot.hoverTimeout = setTimeout(riot.hideHover, 250);
+	}
 }
 
 riot.InplaceEditor = Class.create();
@@ -57,9 +59,21 @@ riot.InplaceEditor.prototype = {
 
 	showOutline: function(event) {
 		if (riot.hoverTimeout) clearTimeout(riot.hoverTimeout);
-		this.element.clonePos(riot.hover, {offsetWidth: -4, offsetHeight: -4});
+		riot.hover.copyPosFrom(this.element, {offsetWidth: -4, offsetHeight: -4}).show();
+		if (!Prototype.Browser.IE) {
+			riot.hover.update();
+			this.element.previousSiblings().each(function(sibling) {
+				if (sibling.getStyle('float') == 'right') {
+					sibling.getElementsByClassName('riot-editable-text').each(function(e) {
+						RBuilder.node('div')
+							.setStyle({position: 'absolute', display: 'none'})
+							.appendTo(riot.hover).copyPosFrom(e).show()
+							.onmouseover = riot.hideHover;
+					});
+				}
+			});
+		}
 		riot.hover.onclick = this.onclickHandler;
-		riot.hover.show();
 		Event.stop(event);
 	},
 

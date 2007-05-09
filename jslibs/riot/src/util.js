@@ -108,6 +108,12 @@ var RElement = {
 		return el;
 	},
 
+	appendTo: function(el, parent) {
+		el = $(el);
+		$(parent).appendChild(el);
+		return el;
+	},
+
 	replaceBy: function(el, replacement) {
 		el = $(el);
 		el.parentNode.replaceChild($(replacement), el);
@@ -155,18 +161,26 @@ var RElement = {
 		return el;
 	},
 
-	clonePos: function(el, target) {
+	copyPosFrom: function(el, source) {
+		el = $(el);
+		source = $(source);
 		var options = Object.extend({
 			setWidth: true,
 		    setHeight: true,
 	    	offsetWidth: 0,
 	    	offsetHeight: 0
 	    }, arguments[2] || {});
-		if(options.setWidth)  target.style.width = el.offsetWidth + options.offsetWidth + 'px';
-	    if(options.setHeight) target.style.height = el.offsetHeight + options.offsetHeight + 'px';
-		Position.clone(el, target, Object.extend(options, {
+		if(options.setWidth)  el.style.width = source.offsetWidth + options.offsetWidth + 'px';
+	    if(options.setHeight) el.style.height = source.offsetHeight + options.offsetHeight + 'px';
+		Position.clone(source, el, Object.extend(options, {
 			setWidth: false, setHeight: false
 		}));
+		return el;
+	},
+
+	copyPosTo: function(el, target) {
+		$(target).copyPosFrom(el);
+		return el;
 	}
 }
 

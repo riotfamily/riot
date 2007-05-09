@@ -51,13 +51,14 @@ riot.Component.prototype = {
 
 	showOutline: function(event) {
 		if (riot.hoverTimeout) clearTimeout(riot.hoverTimeout);
-		this.element.clonePos(riot.hover, {offsetWidth: -4, offsetHeight: -4});
-		riot.hover.show();
+		riot.hover.copyPosFrom(this.element, {offsetWidth: -4, offsetHeight: -4}).show();
 		if (!Prototype.Browser.IE) {
 			riot.hover.update();
 			this.element.getElementsByClassName('riot-component').each(function(e) {
-				var div = RBuilder.node('div', {parent: riot.hover, onmouseover: riot.hideHover, style: {position: 'absolute'}});
-				e.clonePos(div);
+				RBuilder.node('div')
+					.setStyle({position: 'absolute', display: 'none'})
+					.appendTo(riot.hover).copyPosFrom(e).show()
+					.onmouseover = riot.hideHover;
 			});
 		}
 		riot.hover.onclick = this.handlers[this.mode];
