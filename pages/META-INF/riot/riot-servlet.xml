@@ -63,9 +63,9 @@
 
 	<bean id="deletePageCommand" class="org.riotfamily.pages.riot.command.DeletePageCommand" />
 
-	<!--
-	<bean id="publishPageCommand" class="org.riotfamily.pages.command.PublishPageCommand" />
-	-->
+	<bean id="showChildPagesCommand" class="org.riotfamily.pages.riot.command.ShowChildPagesCommand" />
+
+	<bean id="publishPageCommand" class="org.riotfamily.pages.riot.command.PublishPageCommand" />
 
 	<bean id="gotoPageCommand" class="org.riotfamily.pages.riot.command.GotoPageCommand">
 		<constructor-arg ref="pageLocationResolver" />

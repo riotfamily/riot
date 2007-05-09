@@ -50,6 +50,8 @@ public class Page {
 
 	private String path;
 
+	private boolean published;
+
 	private Date creationDate;
 
 	private VersionContainer versionContainer;
@@ -171,7 +173,7 @@ public class Page {
 		if (versionContainer == null) {
 			versionContainer = new VersionContainer();
 			ComponentVersion version = new ComponentVersion(PageComponent.TYPE);
-			versionContainer.setPreviewVersion(version);
+			versionContainer.setLiveVersion(version);
 		}
 		return versionContainer;
 	}
@@ -181,7 +183,11 @@ public class Page {
 	}
 
 	public boolean isPublished() {
-		return node.isSystemNode() || getVersionContainer().isPublished();
+		return this.published;
+	}
+
+	public void setPublished(boolean published) {
+		this.published = published;
 	}
 
 	public String toString() {

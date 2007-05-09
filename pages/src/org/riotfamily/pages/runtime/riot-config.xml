@@ -30,18 +30,19 @@
 		</list:columns>
 	</list:list>
 
-	<list:list id="pages" default-command="stepInto">
+	<list:list id="pages" default-command="showChildPages">
 		<list:dao ref="pageRiotDao" />
 		<list:columns>
 			<list:column property="locale" renderer="countryFlagRenderer" />
 			<list:column property="pathComponent" />
+			<list:command id="publishPage" />
 			<list:command id="moveUp" />
 			<list:command id="moveDown" />
 			<list:command id="cut" />
 			<list:command id="editPage" />
 			<list:command id="deletePage" />
 			<list:command id="gotoPage" />
-			<list:command id="stepInto" />
+			<list:command id="showChildPages" />
 		</list:columns>
 		<list:command id="add"/>
 		<list:command id="paste" />

@@ -37,7 +37,8 @@
 		</id>
 		<!-- We have to cascade updates so that the parent is reattached -->
 		<many-to-one name="node" insert="false" update="false" cascade="save-update" />
-		<property name="locale" unique-key="location" />
+		<property name="locale" unique-key="location" length="5"/>
+		<property name="published" />
 		<property name="creationDate" />
 		<property name="pathComponent" />
 		<property name="path" column="`path`" unique-key="location" />

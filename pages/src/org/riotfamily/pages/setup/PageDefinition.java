@@ -47,6 +47,8 @@ public class PageDefinition {
 
 	private boolean hidden;
 
+	private boolean published = true;
+
 	private boolean systemNode = true;
 
 	public void setPathComponent(String pathComponent) {
@@ -92,7 +94,9 @@ public class PageDefinition {
 		Iterator it = locales.iterator();
 		while (it.hasNext()) {
 			Locale locale = (Locale) it.next();
-			node.addPage(new Page(getPathComponent(), locale));
+			Page page = new Page(getPathComponent(), locale);
+			page.setPublished(published);
+			node.addPage(page);
 		}
 		return node;
 	}
