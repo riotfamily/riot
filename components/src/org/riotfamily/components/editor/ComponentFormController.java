@@ -136,6 +136,7 @@ public class ComponentFormController extends RepositoryFormController
 		while (it.hasNext()) {
 			String id = (String) it.next();
 			Component component = componentRepository.getComponent(id);
+			componentRepository.resetPropertyProcessors(component);
 			try {
 				setupForm(component, getFormRepository().createForm(id));
 			}

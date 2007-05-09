@@ -4,27 +4,29 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -46,32 +48,34 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
 /**
  * Repository containing component implementations.
  */
-public class ComponentRepository implements ServletContextAware, 
+public class ComponentRepository implements ServletContextAware,
 		ApplicationContextAware, InitializingBean, ConfigurableBean {
 
 	private Log log = LogFactory.getLog(ComponentRepository.class);
-	
+
 	private String[] configLocations;
-	
+
 	private ServletContext servletContext;
-	
+
 	private ApplicationContext applicationContext;
-	
+
 	private XmlWebApplicationContext context;
-	
+
 	private Map componentMap = new HashMap();
-	
+
 	private String viewNamePrefix;
-	
+
 	private String viewNameSuffix;
 
-	private BeanConfigurationWatcher configWatcher = 
+	private BeanConfigurationWatcher configWatcher =
 			new BeanConfigurationWatcher(this);
-	
+
 	private Map controllers;
-	
+
 	private Map locators;
-	
+
+	private Map configuredPropertyProcessors;
+
 	public void setConfigLocations(String[] configLocations) {
 		this.configLocations = configLocations;
 	}
@@ -83,44 +87,63 @@ public class ComponentRepository implements ServletContextAware,
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 	}
-	
+
 	public void addListener(ConfigurationEventListener listener) {
 		configWatcher.addListener(listener);
 	}
-	
+
 	public void afterPropertiesSet() {
 		context = new XmlWebApplicationContext();
 		context.setParent(applicationContext);
 		context.setServletContext(servletContext);
 		context.setConfigLocations(configLocations);
-		
+
 		ArrayList resources = new ArrayList();
 		for (int i = 0; i < configLocations.length; i++) {
 			resources.add(applicationContext.getResource(configLocations[i]));
 		}
 		configWatcher.setResources(resources);
-		
+
 		configure();
 	}
-	
+
 	public MessageSource getMessageSource() {
 		return applicationContext;
 	}
-	
+
 	public boolean isReloadable() {
 		return true;
 	}
-	
+
 	public void configure() {
 		context.refresh();
 		componentMap = context.getBeansOfType(Component.class);
 		log.debug("Components: " + componentMap);
+		storeConfiguredPropertyProcessors();
 	}
-	
+
+	private void storeConfiguredPropertyProcessors() {
+		configuredPropertyProcessors = new HashMap();
+		Iterator it = componentMap.values().iterator();
+		while (it.hasNext()) {
+			Component component = (Component) it.next();
+			configuredPropertyProcessors.put(component, new ArrayList(
+					component.getPropertyProcessors()));
+		}
+	}
+
+	public void resetPropertyProcessors(Component component) {
+		List processors = (List) configuredPropertyProcessors.get(component);
+		if (processors == null) {
+			processors = new ArrayList();
+		}
+		component.setPropertyProcessors(processors);
+	}
+
 	public void addComponent(String type, Component component) {
 		componentMap.put(type, component);
 	}
-			
+
 	public Component getComponent(String type) {
 		configWatcher.checkForModifications();
 		if (componentMap.get(type) == null) {
@@ -131,11 +154,11 @@ public class ComponentRepository implements ServletContextAware,
 		}
 		return (Component) componentMap.get(type);
 	}
-	
+
 	public Component getComponent(ComponentVersion version) {
 		return getComponent(version.getType());
 	}
-	
+
 	public void setViewNamePrefix(String defaultViewLocation) {
 		this.viewNamePrefix = defaultViewLocation;
 	}
@@ -143,27 +166,27 @@ public class ComponentRepository implements ServletContextAware,
 	public void setViewNameSuffix(String viewSuffix) {
 		this.viewNameSuffix = viewSuffix;
 	}
-	
+
 	public ComponentListConfiguration getListConfiguration(String controllerId) {
 		return (ComponentListController) controllers.get(controllerId);
 	}
-	
+
 	public void clearControllers() {
 		controllers = new HashMap();
 		locators = new HashMap();
 	}
-	
+
 	public void registerController(String name, ComponentListController controller) {
 		controllers.put(name, controller);
 		ComponentListLocator locator = controller.getLocator();
 		locators.put(locator.getType(), locator);
 	}
-	
+
 	public String getUrl(ComponentList componentList) {
 		Location location = componentList.getLocation();
 		ComponentListLocator locator = (ComponentListLocator) locators.get(
 				location.getType());
-		
+
 		if (locator == null) {
 			return null;
 		}
