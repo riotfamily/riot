@@ -1,5 +1,5 @@
 <#--
-  - Macro that renders the Riot toolbar if the page is requested in preview mode.
+  - Macro that renders the Riot toolbar if the page is requested in edit mode.
   -->
 <#macro toolbar>
 	<#if componentMacroHelper.isEditMode()>
@@ -14,6 +14,21 @@
 	</#if>
 </#macro>
 
+<#--
+  - Macro that renders the nested content if the page is requested in edit mode.
+  -->
+<#macro ifEditMode>
+	<#if componentMacroHelper.isEditMode()><#nested></#if>
+</#macro>
+
+<#--
+  - Macro that enables the Riot JavaScript edit-callbacks. The callback functions
+  - are invoked when a component-list is re-rendered. To register a custom callback
+  - add the following code as nested content:
+  - addRiotEditCallback(function(el) {
+  -     alert('ComponentList updated: ' + el.componentList.id);
+  - });
+  -->
 <#macro callbacks>
 	<#if componentMacroHelper.isEditMode()>
 		<!-- Riot edit callbacks -->
