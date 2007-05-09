@@ -85,12 +85,9 @@
 	  - Checks whether Ivy is available in the classpath.
 	  -->
 	<target name="-check-ivy">
-		<condition property="ivy.available">
-			<or>
-				<available resource="org/apache/ivy/ant/antlib.xml" />
-				<available file="${ivy.jar}" />
-			</or>
-		</condition>
+		<available property="ivy.available"
+			resource="org/apache/ivy/ant/antlib.xml"
+			classpathref="classpath" />
 	</target>
 
 </project>
