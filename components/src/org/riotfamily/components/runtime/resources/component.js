@@ -37,7 +37,7 @@ riot.Component.prototype = {
 			Event.observe(this.element, 'mouseover', this.onMouseOver);
 			Event.observe(this.element, 'mouseout', this.onMouseOut);
 			if (mode == 'properties') {
-				this.element.removeClassName('riot-mode-properties');
+				this.element.addClassName('riot-mode-properties');
 			}
 		}
 		else {
@@ -47,8 +47,8 @@ riot.Component.prototype = {
 				Event.stopObserving(this.element, 'mouseup', this.handlers[this.mode]);
 				Event.stopObserving(this.element, 'mouseover', this.onMouseOver);
 				Event.stopObserving(this.element, 'mouseout', this.onMouseOut);
-				if (mode == 'properties') {
-					this.element.addClassName('riot-mode-properties');
+				if (this.mode == 'properties') {
+					this.element.removeClassName('riot-mode-properties');
 				}
 			}
 		}
