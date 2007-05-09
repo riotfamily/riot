@@ -45,6 +45,7 @@ import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.property.FileStoreProperyProcessor;
 import org.riotfamily.components.property.PropertyEditorProcessor;
+import org.riotfamily.components.property.XmlPropertyProcessor;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRepository;
@@ -55,6 +56,7 @@ import org.riotfamily.forms.element.core.Checkbox;
 import org.riotfamily.forms.element.core.FileUpload;
 import org.riotfamily.forms.element.core.ImageUpload;
 import org.riotfamily.forms.element.core.NumberField;
+import org.riotfamily.forms.element.dom.XmlSequence;
 import org.riotfamily.forms.factory.FormDefinitionException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
@@ -196,6 +198,11 @@ public class ComponentFormController extends RepositoryFormController
 						new PropertyEditorProcessor(
 						nf.getEditorBinding().getProperty(),
 						new CustomNumberEditor(numberClass, false)));
+			}
+			else if (e instanceof XmlSequence) {
+				XmlSequence xs = (XmlSequence) e;
+				component.addPropertyProcessor(new XmlPropertyProcessor(
+						xs.getEditorBinding().getProperty()));
 			}
 		}
 	}
