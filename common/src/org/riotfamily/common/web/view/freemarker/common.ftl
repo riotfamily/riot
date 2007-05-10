@@ -5,6 +5,10 @@
 	<#if uri?has_content>${commonMacroHelper.include(uri)}</#if>
 </#macro>
 
+<#macro setAttribute name value>
+	${request.setAttribute(name, value)?if_exists}
+</#macro>
+
 <#function url uri>
 	<#return commonMacroHelper.resolveAndEncodeUrl(uri) />
 </#function>
@@ -24,7 +28,6 @@
 <#function formatByteSize bytes>
 	<#return commonMacroHelper.formatByteSize(bytes) />
 </#function>
-
 
 <#macro includeUriField>
 	<input type="hidden" name="__includeUri" value="${commonMacroHelper.getOriginatingRequestUri()}" />

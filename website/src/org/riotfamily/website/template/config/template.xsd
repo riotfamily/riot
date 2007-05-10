@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 		elementFormDefault="qualified"
-		attributeFormDefault="unqualified" 
+		attributeFormDefault="unqualified"
 		targetNamespace="http://www.riotfamily.org/schema/website/template"
 		xmlns="http://www.riotfamily.org/schema/website/template">
-	
+
 	<xsd:element name="definition">
 		<xsd:complexType>
 			<xsd:sequence minOccurs="0" maxOccurs="unbounded">
@@ -13,6 +13,7 @@
 						<xsd:complexType>
 							<xsd:attribute name="slot" use="required" />
 							<xsd:attribute name="url" use="required" />
+							<xsd:attribute name="push-up" type="xsd:positiveInteger" />
 						</xsd:complexType>
 					</xsd:element>
 					<xsd:element name="remove">
@@ -29,5 +30,5 @@
 			<xsd:attribute name="session" type="xsd:boolean" default="false" />
 		</xsd:complexType>
 	</xsd:element>
-	
+
 </xsd:schema>

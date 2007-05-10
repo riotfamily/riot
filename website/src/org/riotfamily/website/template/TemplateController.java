@@ -110,7 +110,7 @@ public class TemplateController extends AbstractController
 	private Map mergedConfiguration;
 
 	private boolean session;
-	
+
 	public TemplateController getParent() {
 		return parent;
 	}
@@ -187,6 +187,9 @@ public class TemplateController extends AbstractController
 				String prefix = slot + '.';
 				effectiveConfiguration.putAll(
 						selectEntries(slotsConfiguration, prefix));
+			}
+			else {
+				effectiveConfiguration.putAll(slotsConfiguration);
 			}
 		}
 
