@@ -209,6 +209,19 @@ public class HibernateHelper extends HibernateSupport {
 	}
 
 	/**
+	 * Re-reads the state of the given persistent or detached instance.
+	 * @see Session#refresh(Object)
+	 */
+	public void refresh(Object object) throws DataAccessException {
+		try {
+			getSession().refresh(object);
+		}
+		catch (HibernateException e) {
+			throw SessionFactoryUtils.convertHibernateAccessException(e);
+		}
+	}
+
+	/**
 	 * Forces the current session to flush.
 	 * @see Session#flush()
 	 */
