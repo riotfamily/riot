@@ -109,7 +109,7 @@ riot.Component.prototype = {
 		if (this.form) {
 			var formUrl = riot.contextPath + this.form;
 			var iframe = RBuilder.node('iframe', {src: formUrl, className: 'properties', width: 1, height: 1});
-			riot.popup = new riot.Popup('${properties-inspector.title}', iframe, function() {
+			riot.popup = new riot.Popup('${title.properties}', iframe, function() {
 				var win = iframe.contentWindow ? iframe.contentWindow : iframe.window;
 				win.save();
 			});
@@ -270,7 +270,7 @@ riot.TypeInspector.prototype = {
 
 		this.element = RBuilder.node('div', {},
 			RBuilder.node('div', {className: 'riot-close-button', onclick: riot.toolbar.hideInspector.bind(riot.toolbar)}),
-			RBuilder.node('div', {className: 'headline'}, '${type-inspector.title}'),
+			RBuilder.node('div', {className: 'headline'}, '${title.typeInspector}'),
 			select
 		);
 	}

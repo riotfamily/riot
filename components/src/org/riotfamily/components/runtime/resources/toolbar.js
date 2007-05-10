@@ -1,28 +1,28 @@
 riot.Toolbar = Class.create();
 riot.Toolbar.prototype = {
-	
+
 	initialize: function() {
 		this.buttons = $H({
-			gotoRiot: new riot.ToolbarButton('gotoRiot', '${toolbar-button.gotoRiot}', riot.path),
-			browse: new riot.ToolbarButton('browse', '${toolbar-button.browse}'),
-			insert: new riot.ToolbarButton('insert', '${toolbar-button.insert}'),
-			remove: new riot.ToolbarButton('remove', '${toolbar-button.remove}'),
-			edit: new riot.ToolbarButton('edit', '${toolbar-button.edit}'),
-			properties: new riot.ToolbarButton('properties', '${toolbar-button.properties}'),
-			move: new riot.ToolbarButton('move', '${toolbar-button.move}'),
-			discard: new riot.ToolbarButton('discard', '${toolbar-button.discard}'),
-			publish: new riot.ToolbarButton('publish', '${toolbar-button.publish}'),
-			logout: new riot.ToolbarButton('logout', '${toolbar-button.logout}')
+			gotoRiot: new riot.ToolbarButton('gotoRiot', '${toolbarButton.gotoRiot}', riot.path),
+			browse: new riot.ToolbarButton('browse', '${toolbarButton.browse}'),
+			insert: new riot.ToolbarButton('insert', '${toolbarButton.insert}'),
+			remove: new riot.ToolbarButton('remove', '${toolbarButton.remove}'),
+			edit: new riot.ToolbarButton('edit', '${toolbarButton.edit}'),
+			properties: new riot.ToolbarButton('properties', '${toolbarButton.properties}'),
+			move: new riot.ToolbarButton('move', '${toolbarButton.move}'),
+			discard: new riot.ToolbarButton('discard', '${toolbarButton.discard}'),
+			publish: new riot.ToolbarButton('publish', '${toolbarButton.publish}'),
+			logout: new riot.ToolbarButton('logout', '${toolbarButton.logout}')
 		});
 		this.buttons.logout.applyHandler = this.logout;
-		
+
 		var buttonElements = this.buttons.values().pluck('element');
 		document.body.appendChild(this.element = RBuilder.node('div', {id: 'riot-toolbar'},
 			RBuilder.node('div', {id: 'riot-toolbar-buttons'}, buttonElements)
 		));
 		document.body.appendChild(this.inspectorPanel = RBuilder.node('div', {id: 'riot-inspector'}));
 
-		this.applyButton = new riot.ToolbarButton('apply', '${toolbar-button.apply}').activate();
+		this.applyButton = new riot.ToolbarButton('apply', '${toolbarButton.apply}').activate();
 		this.applyButton.enable = function() {
 			this.enabled = true;
 			new Effect.Appear(this.element, {duration: 0.4});
@@ -39,14 +39,14 @@ riot.Toolbar.prototype = {
 		this.element.appendChild(this.applyButton.element);
 		this.componentLists = [];
 	},
-	
+
 	activate: function() {
 		this.updateComponentLists();
 		this.buttons.values().invoke('activate');
 		this.buttons.browse.click();
 		this.keepAliveTimer = setInterval(this.keepAlive.bind(this), 60000);
 	},
-			
+
 	buttonClicked: function(button) {
 		if (this.selectedButton) {
 			this.selectedButton.reset();
@@ -55,15 +55,15 @@ riot.Toolbar.prototype = {
 		this.selectedComponent = null;
 		this.selectedButton = button;
 	},
-	
+
 	buttonDisabled: function(button) {
 		if (this.selectedButton == button) {
 			this.selectedButton = null;
 		}
 	},
-		
+
 	setInspector: function(inspector) {
-		if (inspector != this.inspector) { 
+		if (inspector != this.inspector) {
 			this.removeInspector();
 			if (inspector != null) {
 				this.inspector = inspector;
@@ -72,7 +72,7 @@ riot.Toolbar.prototype = {
 			}
 		}
 	},
-	
+
 	removeInspector: function() {
 		if (this.inspector) {
 			Element.remove(this.inspector);
@@ -80,22 +80,22 @@ riot.Toolbar.prototype = {
 			this.hideInspector();
 		}
 	},
-	
+
 	showInspector: function() {
 		if (this.inspector) {
 			this.inspectorPanel.style.display = 'block';
 		}
 	},
-	
+
 	hideInspector: function() {
 		this.inspectorPanel.style.display = 'none';
 	},
-			
+
 	updateComponentLists: function() {
 		this.componentLists = riot.createComponentLists();
 		this.dirtyCheck();
 	},
-	
+
 	evictComponentLists: function(orphanedLists) {
 		if (orphanedLists && orphanedLists.length > 0) {
 			this.componentLists = this.componentLists.findAll(function(list) {
@@ -103,11 +103,11 @@ riot.Toolbar.prototype = {
 			});
 		}
 	},
-	
+
 	registerComponentLists: function(lists) {
 		this.componentLists = this.componentLists.concat(lists);
 	},
-	
+
 	dirtyCheck: function(callerIsDirty) {
 		if (callerIsDirty || this.componentLists.pluck('dirty').any()) {
 			this.buttons.publish.enable();
@@ -118,11 +118,13 @@ riot.Toolbar.prototype = {
 			this.buttons.discard.disable();
 		}
 	},
-	
+
 	keepAlive: function() {
-		ComponentEditor.keepAlive();
+		ComponentEditor.keepAlive({
+			errorHandler: Prototype.emptyFunction
+		});
 	},
-	
+
 	logout: function() {
 		ComponentEditor.logout(function() {
 			location.reload();
@@ -155,7 +157,7 @@ riot.ToolbarButton.prototype = {
 		if (this.active) this.click();
 		return false;
 	},
-	
+
 	click: function() {
 		if (this.enabled && !this.selected) {
 			this.selected = true;
@@ -165,19 +167,19 @@ riot.ToolbarButton.prototype = {
 		}
 		return false;
 	},
-	
+
 	activate: function() {
 		this.active = true;
 		this.element.className = this.enabled ? 'toolbar-button' : 'toolbar-button-disabled';
 		return this;
 	},
-		
+
 	enable: function() {
 		this.element.className = 'toolbar-button';
 		this.enabled = true;
 		return this;
 	},
-	
+
 	disable: function() {
 		this.enabled = false;
 		this.reset();
@@ -190,16 +192,16 @@ riot.ToolbarButton.prototype = {
 			this.selected = false;
 			this.applyHandler(false);
 		}
-		this.element.className = this.enabled ? 
+		this.element.className = this.enabled ?
 				'toolbar-button' : 'toolbar-button-disabled';
-				
+
 		return this;
 	},
 
 	getHandlerTargets: function() {
 		return riot.toolbar.componentLists;
 	},
-	
+
 	applyHandler: function(enable) {
 		var targets = this.getHandlerTargets();
 		for (var i = 0; i < targets.length; i++) {
@@ -208,7 +210,7 @@ riot.ToolbarButton.prototype = {
 			}
 		}
 	}
-	
+
 }
 
 riot.toolbar = new riot.Toolbar();

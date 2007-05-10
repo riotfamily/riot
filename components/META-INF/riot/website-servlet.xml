@@ -7,7 +7,7 @@
 		http://www.springframework.org/schema/util/spring-util-2.0.xsd
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
-	
+
 	<bean id="defaultComponentListLocator" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
 		<property name="fallback">
 			<bean class="org.riotfamily.components.locator.UrlComponentListLocator">
@@ -15,7 +15,7 @@
 			</bean>
 		</property>
 	</bean>
-	
+
 	<bean class="org.riotfamily.components.config.ControllerConfigurer">
 		<property name="componentDao" ref="componentDao" />
 		<property name="transactionManager" ref="transactionManager" />
@@ -24,7 +24,7 @@
 		<property name="locator" ref="defaultComponentListLocator" />
 		<property name="cache" ref="websiteCache" />
 	</bean>
-	
+
 	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
 		<property name="properties">
 			<map>
@@ -36,7 +36,7 @@
 	 		</map>
 		</property>
 	</bean>
-	
+
 	<bean id="componentMacroHelper" class="org.riotfamily.components.macro.ComponentMacroHelperFactory">
 		<property name="toolbarScripts">
 			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
@@ -45,11 +45,11 @@
 				<property name="sourceList">
 					<list>
 						<value>riot-js/resources.js</value>
-						<value>pages.js</value>
+						<value>toolbar-loader.js</value>
 					</list>
 				</property>
 			</bean>
 		</property>
 	</bean>
-	
+
 </beans>

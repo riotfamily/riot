@@ -421,7 +421,7 @@ riot.TextareaPopup = Class.extend(riot.Popup, {
 
 	initialize: function(editor) {
 		this.textarea = RBuilder.node('textarea', {value: editor.text || ''}),
-		this.SUPER('${editor-popup.title}', this.textarea, editor.save.bind(editor), editor.help);
+		this.SUPER('${title.editorPopup}', this.textarea, editor.save.bind(editor), editor.help);
 	},
 
 	setText: function(text) {

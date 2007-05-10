@@ -117,7 +117,7 @@
 							</property>
 						</bean>
 						<bean class="org.riotfamily.common.web.resource.MessageResourceFilter">
-							<property name="prefix" value="pages." />
+							<property name="prefix" value="components." />
 							<property name="matches">
 								<list>
 									<value>/**/toolbar.js</value>
