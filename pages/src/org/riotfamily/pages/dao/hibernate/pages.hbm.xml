@@ -5,7 +5,7 @@
 
 <hibernate-mapping package="org.riotfamily.pages" auto-import="false">
 
-	<class name="PageNode">
+	<class name="PageNode" table="riot_page_nodes">
 		<cache usage="nonstrict-read-write" region="pages" />
 		<id name="id">
 			<generator class="native" />
@@ -30,7 +30,7 @@
 		<property name="systemNode" />
 	</class>
 
-	<class name="Page">
+	<class name="Page" table="riot_pages">
 		<cache usage="nonstrict-read-write" region="pages" />
 		<id name="id" access="field">
 			<generator class="native" />
@@ -45,7 +45,7 @@
 		<many-to-one name="versionContainer" cascade="all" />
 	</class>
 
-	<class name="PageAlias" table="page_aliases">
+	<class name="PageAlias" table="riot_page_aliases">
 		<cache usage="nonstrict-read-write" region="pages" />
 		<composite-id name="location">
 			<key-property name="path" column="`path`" />

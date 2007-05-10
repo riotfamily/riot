@@ -1,20 +1,26 @@
 <?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC 
+<!DOCTYPE hibernate-mapping PUBLIC
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 
 <hibernate-mapping package="org.riotfamily.components" auto-import="false">
-	
-	<class name="ComponentList" table="component_lists">
+
+	<class name="ComponentList" table="riot_component_lists">
 		<cache usage="nonstrict-read-write" region="components" />
 		<id name="id">
 			<generator class="native" />
 		</id>
 		<component name="location">
-			<property name="type" column="`type`" unique-key="component_list_key" />
-			<property name="path" column="`path`" unique-key="component_list_key" />
-			<property name="slot" column="slot" unique-key="component_list_key" />	
+			<!--
+			  - We have to use these short string lengths, as MySQL has a limit of
+			  - 1000 bytes for indexes and UTF-8 strings take up to 3 bytes per char:
+			  - 66 * 3 + 66 * 3 + 200 * 3 = 996
+			  - NOTE: This might be still too long for InnoDB tables ...
+			  -->
+			<property name="type" column="`type`" length="66" unique-key="component_list_key" />
+			<property name="path" column="`path`" length="200" unique-key="component_list_key" />
+			<property name="slot" column="slot" length="66" unique-key="component_list_key" />
 		</component>
 		<many-to-one name="parent" unique-key="component_list_key" />
 		<list name="liveContainers" cascade="all">
@@ -33,8 +39,8 @@
 		<property name="lastModified" />
 		<property name="lastModifiedBy" />
 	</class>
-	
-	<class name="VersionContainer" table="version_containers" lazy="false">
+
+	<class name="VersionContainer" table="riot_version_containers" lazy="false">
 		<cache usage="nonstrict-read-write" region="components" />
 		<id name="id">
 			<generator class="native" />
@@ -45,20 +51,20 @@
 
 		<many-to-one name="liveVersion" column="live_version" cascade="all" />
 		<many-to-one name="previewVersion" column="preview_version" cascade="all" />
-				
+
 		<set name="childLists" inverse="true" cascade="all">
 			<key column="parent" />
 			<one-to-many class="ComponentList" />
 		</set>
 	</class>
-	
-	<class name="ComponentVersion" table="component_versions" lazy="false">
+
+	<class name="ComponentVersion" table="riot_component_versions" lazy="false">
 		<cache usage="nonstrict-read-write" region="components" />
 		<id name="id">
 			<generator class="native" />
 		</id>
 		<property name="type" column="`type`" />
-		<map name="properties" table="component_properties" lazy="false">
+		<map name="properties" table="riot_component_properties" lazy="false">
 			<cache usage="nonstrict-read-write" region="components" />
 			<key column="component_version" />
 			<index column="`key`" type="string" />
@@ -67,5 +73,5 @@
 		<many-to-one name="container" />
 		<property name="dirty" />
 	</class>
-		
+
 </hibernate-mapping>
