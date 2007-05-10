@@ -121,8 +121,8 @@ public class HibernatePageDao extends AbstractPageDao {
 		hibernate.delete(node);
 	}
 
-	public void reattachPage(Page page) {
-		updatePageWithoutChecks(page);
+	public void refreshPage(Page page) {
+		hibernate.refresh(page);
 	}
 
 	protected void updatePageWithoutChecks(Page page) {

@@ -93,7 +93,7 @@ public class PageController extends AbstractCacheableController
 		FlatMap model = new FlatMap();
 		Page page = PageHandlerMapping.getPage(request);
 		if (ComponentEditorRequest.isWrapped(request)) {
-			pageDao.reattachPage(page);
+			pageDao.refreshPage(page);
 		}
 		model.put("currentPage", page);
 		View view = viewResolverHelper.resolveView(request, viewName);

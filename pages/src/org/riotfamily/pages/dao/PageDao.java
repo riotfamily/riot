@@ -48,9 +48,9 @@ public interface PageDao {
 	public Page loadPage(Long id);
 
 	/**
-	 * Reattaches a previously loaded page.
+	 * Re-loads the given Page from the database.
 	 */
-	public void reattachPage(Page page);
+	public void refreshPage(Page page);
 
 	/**
 	 * Returns the Page with the given location, or <code>null</code> if
