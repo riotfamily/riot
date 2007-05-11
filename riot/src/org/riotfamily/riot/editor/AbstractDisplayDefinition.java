@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
@@ -34,22 +34,22 @@ import org.riotfamily.riot.editor.ui.EditorReference;
 
 /**
  * Abstract base class for editors that display a single object.
- *  
+ *
  * @see org.riotfamily.riot.editor.FormDefinition
  * @see org.riotfamily.riot.editor.ViewDefinition
  */
-public abstract class AbstractDisplayDefinition 
+public abstract class AbstractDisplayDefinition
 		extends AbstractEditorDefinition {
 
 	private Class beanClass;
-	
+
 	private String labelProperty;
-	
+
 	private List childEditorDefinitions = new LinkedList();
-	
-	public AbstractDisplayDefinition(EditorRepository repository, 
+
+	public AbstractDisplayDefinition(EditorRepository repository,
 			String editorType) {
-		
+
 		super(repository, editorType);
 	}
 
@@ -72,7 +72,7 @@ public abstract class AbstractDisplayDefinition
 		EditorDefinition parent = getParentEditorDefinition();
 		if (parent instanceof ListDefinition) {
 			ListDefinition listDef = (ListDefinition) parent;
-			return listDef.getListConfig().getFirstProperty();	
+			return listDef.getListConfig().getFirstProperty();
 		}
 		return null;
 	}
@@ -80,14 +80,18 @@ public abstract class AbstractDisplayDefinition
 	public void setLabelProperty(String labelProperty) {
 		this.labelProperty = labelProperty;
 	}
-	
+
+	protected String getConfiguredLabelProperty() {
+		return labelProperty;
+	}
+
 	public List getChildEditorDefinitions() {
 		return childEditorDefinitions;
 	}
-	
-	public List getChildEditorReferences(Object object, 
+
+	public List getChildEditorReferences(Object object,
 			MessageResolver messageResolver) {
-		
+
 		List refs = new ArrayList();
 		Iterator it = childEditorDefinitions.iterator();
 		while (it.hasNext()) {
@@ -101,15 +105,15 @@ public abstract class AbstractDisplayDefinition
 		childEditorDefinitions.add(editorDef);
 		editorDef.setParentEditorDefinition(this);
 	}
-	
+
 	protected Object loadBean(String objectId) {
 		return EditorDefinitionUtils.loadBean(this, objectId);
 	}
-	
+
 	/**
 	 * Returns a PathComponent for the given objectId and parentId that
 	 * represents the complete path to the form.
-	 * 
+	 *
 	 * @param objectId Id of the object to be edited or <code>null</code> if a
 	 *        form for a new object is requested
 	 * @param parentId Id of the the parent object or <code>null</code> if
@@ -118,7 +122,7 @@ public abstract class AbstractDisplayDefinition
 	 */
 	public EditorReference createEditorPath(String objectId, String parentId,
 			MessageResolver messageResolver) {
-		
+
 		if (objectId != null) {
 			//Editing an existing object
 			Object bean = loadBean(objectId);
@@ -139,9 +143,9 @@ public abstract class AbstractDisplayDefinition
 	 * Returns a PathComponent for the given bean that represents the complete
 	 * path to the form.
 	 */
-	public EditorReference createEditorPath(Object bean, 
+	public EditorReference createEditorPath(Object bean,
 			MessageResolver messageResolver) {
-		
+
 		EditorReference component = null;
 		Object parentBean = null;
 		if (!(getParentEditorDefinition() instanceof ListDefinition)) {
@@ -153,7 +157,7 @@ public abstract class AbstractDisplayDefinition
 			component = createPathComponent(bean, null);
 			parentBean = EditorDefinitionUtils.getParent(this, bean);
 		}
-		
+
 		//Create ancestors
 		EditorReference parent = getParentEditorDefinition()
 				.createEditorPath(parentBean, messageResolver);
@@ -166,7 +170,7 @@ public abstract class AbstractDisplayDefinition
 	 * Creates a PathComponent for the given bean (or parentId). This method is
 	 * not recursive and {@link EditorReference#getParent() getParent()} will
 	 * always return <code>null</code>.
-	 * 
+	 *
 	 * @param bean The bean to be edited or <code>null</code> if a form for a
 	 *        new (unsaved) object is requested.
 	 * @param parentId Id of the the parent object or <code>null</code> if
@@ -186,19 +190,19 @@ public abstract class AbstractDisplayDefinition
 		component.setEditorUrl(getEditorUrl(objectId, parentId));
 		return component;
 	}
-	
+
 	/**
-	 *  
+	 *
 	 */
-	public EditorReference createReference(String objectId, 
+	public EditorReference createReference(String objectId,
 			MessageResolver messageResolver) {
-		
+
 		EditorReference ref = new EditorReference();
 		ref.setEditorType(getEditorType());
 		String defaultLabel = FormatUtils.camelToTitleCase(getId());
 		ref.setLabel(messageResolver.getMessage(
 				getMessageKey().toString(), null, defaultLabel));
-		
+
 		ref.setObjectId(objectId);
 		ref.setEditorUrl(getEditorUrl(objectId, null));
 		return ref;
