@@ -109,7 +109,7 @@
 				<entry key="resourceFilters">
 					<list>
 						<bean class="org.riotfamily.common.web.resource.PropertyResourceFilter">
-							<property name="match" value="/**/pages.js" />
+							<property name="match" value="/**/toolbar-loader.js" />
 							<property name="propertiesMap">
 								<map>
 									<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
