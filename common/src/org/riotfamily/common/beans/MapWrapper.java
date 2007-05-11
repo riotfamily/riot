@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans;
 
@@ -38,19 +38,19 @@ import org.springframework.util.Assert;
 public class MapWrapper implements ObjectWrapper {
 
 	private Map map;
-	
+
 	private Class valueClass;
-	
+
 	private Class mapClass = HashMap.class;
-	
+
 	public MapWrapper(Map map) {
 		this.map = map;
 	}
-	
+
 	public MapWrapper(Class mapClass) {
 		this.mapClass = mapClass;
 	}
-	
+
 	public void setMapClass(Class mapClass) {
 		this.mapClass = mapClass;
 	}
@@ -78,26 +78,26 @@ public class MapWrapper implements ObjectWrapper {
 		return Object.class;
 	}
 
-	public void setWrappedInstance(Object object) {
+	public void setObject(Object object) {
 		Assert.isInstanceOf(Map.class, object);
 		map = (Map) object;
 	}
-	
-	public Object getWrappedInstance() {
+
+	public Object getObject() {
 		return getMap();
 	}
-	
-	public Class getWrappedClass() {
+
+	public Class getObjectClass() {
 		return mapClass;
 	}
-	
+
 	protected Map getMap() {
 		if (map == null) {
 			map = (Map) BeanUtils.instantiateClass(mapClass);
 		}
 		return map;
 	}
-	
+
 	public Object getPropertyValue(String propertyName) {
 		return getMap().get(propertyName);
 	}
@@ -113,10 +113,10 @@ public class MapWrapper implements ObjectWrapper {
 	public void setPropertyValues(Map map) {
 		getMap().putAll(map);
 	}
-	
-	public void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown, 
+
+	public void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown,
 			boolean ignoreInvalid) throws BeansException {
-		
+
 		setPropertyValues(pvs);
 	}
 
