@@ -6,7 +6,7 @@
     </configurations>
     <dependencies>
 		<dependency org="riotfamily" name="riot-common" rev="latest.integration" conf="*->@" />
-		<dependency org="apache" name="commons-logging" rev="1.1" />
+		<dependency org="apache" name="commons-logging" rev="1.0.4" />
 		<dependency org="springframework" name="spring" rev="2.0.4" conf="build->default;runtime->web" />
     </dependencies>
 </ivy-module>
