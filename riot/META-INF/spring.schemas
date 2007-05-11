@@ -1,14 +1,18 @@
 http\://www.riotfamily.org/schema/riot/editor-config.xsd=org/riotfamily/riot/editor/xml/editor-config.xsd
 http\://www.riotfamily.org/schema/riot/editor-config-6.3.xsd=org/riotfamily/riot/editor/xml/editor-config.xsd
 http\://www.riotfamily.org/schema/riot/editor-config-6.4.xsd=org/riotfamily/riot/editor/xml/editor-config.xsd
+http\://www.riotfamily.org/schema/riot/editor-config-6.5.xsd=org/riotfamily/riot/editor/xml/editor-config.xsd
 
 http\://www.riotfamily.org/schema/riot/list-config.xsd=org/riotfamily/riot/list/xml/list-config.xsd
 http\://www.riotfamily.org/schema/riot/list-config-6.3.xsd=org/riotfamily/riot/list/xml/list-config.xsd
 http\://www.riotfamily.org/schema/riot/list-config-6.4.xsd=org/riotfamily/riot/list/xml/list-config.xsd
+http\://www.riotfamily.org/schema/riot/list-config-6.5.xsd=org/riotfamily/riot/list/xml/list-config.xsd
 
 http\://www.riotfamily.org/schema/riot/riot-config.xsd=org/riotfamily/riot/runtime/riot-config.xsd
 http\://www.riotfamily.org/schema/riot/riot-config-6.3.xsd=org/riotfamily/riot/runtime/riot-config.xsd
 http\://www.riotfamily.org/schema/riot/riot-config-6.4.xsd=org/riotfamily/riot/runtime/riot-config.xsd
+http\://www.riotfamily.org/schema/riot/riot-config-6.5.xsd=org/riotfamily/riot/runtime/riot-config.xsd
 
 http\://www.riotfamily.org/schema/riot/form-elements.xsd=org/riotfamily/riot/form/element/form-elements.xsd
 http\://www.riotfamily.org/schema/riot/form-elements-6.4.xsd=org/riotfamily/riot/form/element/form-elements.xsd
+http\://www.riotfamily.org/schema/riot/form-elements-6.5.xsd=org/riotfamily/riot/form/element/form-elements.xsd
