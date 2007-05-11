@@ -9,6 +9,6 @@
         <dependency org="riotfamily" name="riot-hibernate" rev="latest.integration" conf="*->@" />
         <dependency org="riotfamily" name="riot-website" rev="latest.integration" conf="*->@" />
         <dependency org="riotfamily" name="riot-components" rev="latest.integration" conf="*->@" />
-        <dependency org="springframework" name="spring" rev="2.0.3" conf="build->default;runtime->web" />
+        <dependency org="springframework" name="spring" rev="2.0.4" conf="build->default;runtime->web" />
     </dependencies>
 </ivy-module>

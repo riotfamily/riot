@@ -11,8 +11,8 @@
     <dependencies>
         <dependency org="riotfamily" name="riot-core" rev="latest.integration" conf="*->@" />
         <dependency org="riotfamily" name="revolt" rev="latest.integration" conf="*->@" />
-        <dependency org="springframework" name="spring" rev="2.0.3" conf="build->default;runtime->aop" />
-		<dependency org="hibernate" name="hibernate" conf="build->core;runtime->standalone,c3p0" rev="3.2.1" />
-		<dependency org="c3p0" name="c3p0" rev="0.9.1" conf="*->default" />
+        <dependency org="springframework" name="spring" rev="2.0.4" conf="build->default;runtime->aop" />
+		<dependency org="hibernate" name="hibernate" conf="build->core;runtime->standalone,c3p0" rev="3.2.4.ga" />
+		<dependency org="c3p0" name="c3p0" rev="0.9.1.1" conf="*->default" />
     </dependencies>
 </ivy-module>

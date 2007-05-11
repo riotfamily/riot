@@ -8,7 +8,7 @@
 	    <dependency org="riotfamily" name="riot-common" rev="latest.integration" conf="*->@" />
         <dependency org="riotfamily" name="riot-hibernate" rev="latest.integration" conf="*->@" />
         <dependency org="riotfamily" name="cachius" rev="latest.integration" conf="*->@" />
-        <dependency org="springframework" name="spring" rev="2.0.3" conf="build->default;runtime->web" />
+        <dependency org="springframework" name="spring" rev="2.0.4" conf="build->default;runtime->web" />
         <dependency org="sun" name="javamail" rev="1.3.2" conf="runtime->default" />
         <dependency org="sun" name="jaf" rev="1.0.2" />
     </dependencies>
