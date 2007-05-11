@@ -81,6 +81,7 @@ riot.Component.prototype = {
 	removeComponent: function(event) {
 		var e = event || window.event;
 		if (e) Event.stop(e);
+		this.setMode(null);
 		riot.hideHover();
 		new Effect.Remove(this.element, function(el) {
 			el.remove();
