@@ -216,13 +216,8 @@ div.riot-editor {
 
 div.riot-highlight {
 	position: absolute;
+	z-index: 100000;
 	border: 2px dotted ${highlight};
-}
-
-.riot-outline,
-.riot-outline .riot-floating-content {
-	outline: 2px dotted ${highlight};
-	-moz-outline: 2px dotted ${highlight};
 }
 
 .riot-no-inheritance {
