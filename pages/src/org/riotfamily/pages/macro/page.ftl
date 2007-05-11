@@ -61,3 +61,7 @@
 	</#if>
 	<@component.editable key=key tag=tag scope=props editor="text" attributes=attrs><#nested /></@component.editable>
 </#macro>
+
+<#function group pages size>
+	<#return pageMacroHelper.group(pages, size) />
+</#function>

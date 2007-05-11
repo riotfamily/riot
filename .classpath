@@ -12,7 +12,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/dwr.jar" sourcepath="/dwr/java"/>
+	<classpathentry kind="lib" path="lib/dwr.jar" sourcepath="/home/flx/java/dwr/dwr-2.0.1/java"/>
 	<classpathentry kind="lib" path="lib/freemarker.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://freemarker.org/docs/api/"/>
@@ -31,7 +31,7 @@
 			<attribute name="javadoc_location" value="http://tomcat.apache.org/tomcat-5.5-doc/servletapi/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/spring.jar">
+	<classpathentry kind="lib" path="lib/spring.jar" sourcepath="/home/flx/java/spring/latest/src">
 		<attributes>
 			<attribute name="javadoc_location" value="http://static.springframework.org/spring/docs/2.0.x/api/"/>
 		</attributes>

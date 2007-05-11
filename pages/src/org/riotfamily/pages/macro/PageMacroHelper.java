@@ -23,12 +23,16 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.macro;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.components.editor.ComponentFormRegistry;
+import org.riotfamily.components.editor.EditModeUtils;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.dao.PageDao;
@@ -105,4 +109,23 @@ public class PageMacroHelper {
 		return formRegistry.getFormUrl(formId, containerId);
 	}
 
+	public List group(Collection pages, int size) {
+		ArrayList groups = new ArrayList();
+		int i = 0;
+		ArrayList group = null;
+		Iterator it = pages.iterator();
+		while (it.hasNext()) {
+			Page page = (Page) it.next();
+			if (!page.getNode().isHidden() && (page.isPublished()
+					|| EditModeUtils.isEditMode(request))) {
+
+				if (i++ % size == 0) {
+					group = new ArrayList();
+					groups.add(group);
+				}
+				group.add(page);
+			}
+		}
+		return groups;
+	}
 }

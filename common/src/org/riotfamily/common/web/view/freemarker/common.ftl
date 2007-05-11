@@ -21,6 +21,10 @@
 	<#return commonMacroHelper.partition(collection, property) />
 </#function>
 
+<#function group collection size filter=true>
+	<#return commonMacroHelper.group(collection, size, filter) />
+</#function>
+
 <#function fileExtension filename validExtension=[] defaultExtension="">
 	<#return commonMacroHelper.getFileExtension(filename, validExtension, defaultExtension) />
 </#function>

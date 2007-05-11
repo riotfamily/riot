@@ -26,7 +26,9 @@ package org.riotfamily.common.web.view;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -121,6 +123,21 @@ public class CommonMacroHelper {
 
 	public List partition(Collection c, String titleProperty) {
 		return PropertyUtils.partition(c, titleProperty);
+	}
+
+	public List group(Collection c, int size) {
+		ArrayList groups = new ArrayList();
+		int i = 0;
+		ArrayList group = null;
+		Iterator it = c.iterator();
+		while (it.hasNext()) {
+			if (i++ % size == 0) {
+				group = new ArrayList();
+				groups.add(group);
+			}
+			group.add(it.next());
+		}
+		return groups;
 	}
 
 	public String getFileExtension(String filename, Collection validExtensions,
