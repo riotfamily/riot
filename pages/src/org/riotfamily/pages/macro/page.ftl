@@ -2,6 +2,10 @@
 	<#return pageMacroHelper.currentPage />
 </#function>
 
+<#function pageForHandler handlerName locale=commonMacroHelper.locale>
+	<#return pageMacroHelper.getPageForHandler(handlerName, locale) />
+</#function>
+
 <#function pagesForHandler handlerName locale=commonMacroHelper.locale>
 	<#return pageMacroHelper.getPagesForHandler(handlerName, locale) />
 </#function>
@@ -15,10 +19,17 @@
 </#function>
 
 <#function url page>
-	<#return common.url(pageMacroHelper.getPageUrl(page)) />
+	<#return common.url(pageMacroHelper.getUrl(page)) />
+</#function>
+
+<#function visible page>
+	<#return !page.node.hidden && (page.published || componentMacroHelper.isEditMode()) />
 </#function>
 
 <#function property page, key>
+	<#if !page?is_hash>
+		<#local page = pageForHandler(page, commonMacroHelper.locale) />
+	</#if>
 	<#if componentMacroHelper.isEditMode()>
 		<#return page.versionContainer.latestVersion.properties[key] />
 	<#elseif page.versionContainer.liveVersion?exists>
