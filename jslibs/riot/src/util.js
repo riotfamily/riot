@@ -120,6 +120,12 @@ var RElement = {
 		return el;
 	},
 
+	makeBlock: function(el) {
+		el = $(el);
+		el.style.display = 'block';
+		return el;
+	},
+
 	makeInvisible: function(el) {
 		if (!(el = $(el))) return;
 		el.style.visibility = 'hidden';
