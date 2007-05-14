@@ -399,6 +399,7 @@ riot.Popup.prototype = {
 		this.div.style.left = left + 'px';
 		this.overlay.style.height = Viewport.getPageHeight() + 'px';
 		this.overlay.show();
+		riot.hideHover();
 		this.div.makeVisible().show();
 	},
 
