@@ -18,7 +18,7 @@ TinyMCE_Engine.prototype.loadNextScript = function() {
 		se.type = 'text/javascript';
 		se.src = this.pendingFiles[this.loadingIndex++];
 		d.getElementsByTagName("head")[0].appendChild(se);
-	} 
+	}
 	else {
 		if (!tinyMCE.isLoaded) {
 			tinyMCE.onLoad();
@@ -36,18 +36,18 @@ TinyMCE_Engine.prototype.onLoad = function() {
 	if (tinyMCE.isLoaded) return true;
 	tinyMCE.isLoaded = true;
 
-	if (tinyMCE.isRealIE && document.body) {
+	if (tinyMCE.isRealIE && document.body && window.location.href != window.top.location.href) {
 		var r = document.body.createTextRange();
 		r.collapse(true);
 		r.select();
 	}
 
 	tinyMCE.dispatchCallback(null, 'onpageload', 'onPageLoad');
-		
+
 	for (var c=0; c<tinyMCE.configs.length; c++) {
 		tinyMCE.settings = tinyMCE.configs[c];
 		// Add submit triggers
-		if (document.forms && tinyMCE.settings['add_form_submit_trigger'] && !tinyMCE.submitTriggers) {
+		if (document.forms && tinyMCE.settings.add_form_submit_trigger && !tinyMCE.submitTriggers) {
 			for (var i=0; i<document.forms.length; i++) {
 				var form = document.forms[i];
 
@@ -56,11 +56,11 @@ TinyMCE_Engine.prototype.onLoad = function() {
 				tinyMCE.submitTriggers = true; // Do it only once
 
 				// Patch the form.submit function
-				if (tinyMCE.settings['submit_patch']) {
+				if (tinyMCE.settings.submit_patch) {
 					try {
 						form.mceOldSubmit = form.submit;
 						form.submit = TinyMCE_Engine.prototype.submitPatch;
-					} 
+					}
 					catch (e) {
 					}
 				}
