@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.render;
 
@@ -47,22 +47,22 @@ import org.riotfamily.components.dao.ComponentDao;
 public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 
 	protected Cache cache;
-	
+
 	protected String listTag;
-	
+
 	protected CacheItem cachedList;
-	
+
 	protected boolean listIsCacheable = true;
-	
-	public LiveModeRenderStrategy(ComponentDao dao, 
+
+	public LiveModeRenderStrategy(ComponentDao dao,
 			ComponentRepository repository, ComponentListConfiguration config,
-			HttpServletRequest request, HttpServletResponse response, 
+			HttpServletRequest request, HttpServletResponse response,
 			Cache cache) throws IOException {
-		
+
 		super(dao, repository, config, request, response);
 		this.cache = cache;
 	}
-	
+
 	/**
 	 * Overrides the default implementation to render the cached version of
 	 * the list (if present).
@@ -79,7 +79,7 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 			super.render(location);
 		}
 	}
-	
+
 	public void render(ComponentList list) throws IOException {
 		String cacheKey = getCacheKey(list.getLocation());
 		cachedList = cache.getItem(cacheKey);
@@ -92,42 +92,48 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 			super.render(list);
 		}
 	}
-	
+
 	protected String getCacheKey(Location location) {
-		StringBuffer sb = new StringBuffer();
-		sb.append(location);
+		StringBuffer sb = new StringBuffer("ComponentList ");
+		if (parent != null) {
+			sb.append(parent.getId()).append('$');
+			sb.append(location.getSlot());
+		}
+		else {
+			sb.append(location);
+		}
 		SessionUtils.addStateToCacheKey(request, sb);
 		return sb.toString();
 	}
-	
+
 	protected void renderComponentList(ComponentList list) throws IOException {
 		listTag = list.getLocation().toString();
 		try {
 			TaggingContext.openNestedContext(request);
 			TaggingContext.tag(request, listTag);
-			
+
 			ItemUpdater updater = new ItemUpdater(cachedList, request);
 			response = new CachiusResponseWrapper(response, updater);
-			
+
 			super.renderComponentList(list);
 			if (!listIsCacheable) {
 				updater.discard();
 				cachedList.delete();
 			}
-			
+
 			response.flushBuffer();
 			updater.updateCacheItem();
-			
+
 		}
 		finally {
 			cachedList.setTags(TaggingContext.popTags(request));
 		}
 	}
 
-	protected void renderComponent(Component component, 
-			ComponentVersion version, String positionClassName) 
+	protected void renderComponent(Component component,
+			ComponentVersion version, String positionClassName)
 			throws IOException {
-		
+
 		tagCacheItems(component, version);
 		if (component.isDynamic()) {
 			listIsCacheable = false;
@@ -137,7 +143,7 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 			renderCacheableComponent(component, version, positionClassName);
 		}
 	}
-	
+
 	private void tagCacheItems(Component component, ComponentVersion version) {
 		Collection tags = component.getCacheTags(version);
 		if (tags != null) {
@@ -148,11 +154,11 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 			}
 		}
 	}
-	
-	protected void renderCacheableComponent(Component component, 
-			ComponentVersion version, String positionClassName) 
+
+	protected void renderCacheableComponent(Component component,
+			ComponentVersion version, String positionClassName)
 			throws IOException {
-	
+
 		String key = getComponentCacheKey(version);
 		CacheItem cachedComponent = cache.getItem(key);
 		if (cachedComponent.exists() && !cachedComponent.isNew()) {
@@ -162,13 +168,13 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		try {
 			TaggingContext.openNestedContext(request);
 			TaggingContext.tag(request, listTag);
-			
+
 			ItemUpdater updater = new ItemUpdater(cachedComponent, request);
 			CachiusResponseWrapper wrapper = new CachiusResponseWrapper(
 					response, updater);
-			
+
 			component.render(version, positionClassName, request, wrapper);
-			
+
 			wrapper.flushBuffer();
 			updater.updateCacheItem();
 		}
@@ -176,7 +182,7 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 			cachedComponent.setTags(TaggingContext.popTags(request));
 		}
 	}
-	
+
 	protected String getComponentCacheKey(ComponentVersion version) {
 		StringBuffer key = new StringBuffer();
 		key.append(version.getClass().getName());
