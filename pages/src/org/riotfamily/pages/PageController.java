@@ -30,14 +30,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.view.ViewResolverHelper;
-import org.riotfamily.components.context.ComponentEditorRequest;
 import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.editor.EditModeUtils;
 import org.riotfamily.pages.dao.PageDao;
-import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -51,20 +48,20 @@ import org.springframework.web.servlet.View;
 public class PageController extends AbstractCacheableController
 		implements ApplicationContextAware {
 
-	private String viewName;
+	protected String viewName;
 
-	private ViewResolverHelper viewResolverHelper;
+	protected ViewResolverHelper viewResolverHelper;
 
-	private PageDao pageDao;
+	protected PageDao pageDao;
 
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
 	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
-		viewResolverHelper = new ViewResolverHelper(applicationContext);
+		this.viewResolverHelper = new ViewResolverHelper(applicationContext);
 		//TODO Use a better way to aquire a PageDao without need for injection
-		pageDao = (PageDao) applicationContext.getBean("pageDao");
+		this.pageDao = (PageDao) applicationContext.getBean("pageDao");
 	}
 
 	public long getTimeToLive(HttpServletRequest request) {
@@ -90,21 +87,15 @@ public class PageController extends AbstractCacheableController
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		FlatMap model = new FlatMap();
-		Page page = PageHandlerMapping.getPage(request);
-		if (ComponentEditorRequest.isWrapped(request)) {
-			pageDao.refreshPage(page);
-		}
-		model.put("currentPage", page);
-		View view = viewResolverHelper.resolveView(request, viewName);
 		if (EditModeUtils.isEditMode(request)) {
 			String uri = ServletUtils.getIncludeUri(request);
 			uri = uri.substring(request.getContextPath().length());
 			if (PageRequestUtils.storeContext(request, uri, 120000)) {
-				view = new PageView(view, uri);
+				View view = viewResolverHelper.resolveView(request, viewName);
+				return new ModelAndView(new PageView(view, uri));
 			}
 		}
-		return new ModelAndView(view, model);
+		return new ModelAndView(viewName);
 	}
 
 	private static class PageView implements View {
