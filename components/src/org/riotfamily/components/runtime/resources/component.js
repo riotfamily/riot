@@ -10,7 +10,6 @@ riot.Component.prototype = {
 			remove: this.removeComponent.bindAsEventListener(this)
 		}
 		this.onMouseOver = this.showOutline.bindAsEventListener(this);
-		this.onMouseOut = this.hideOutline.bindAsEventListener(this);
 
 		this.id = el.readAttribute('riot:containerId');
 		this.type = el.readAttribute('riot:componentType');
@@ -35,7 +34,7 @@ riot.Component.prototype = {
 			Event.observe(this.element, 'click', riot.stopEvent, true);
 			Event.observe(this.element, 'mouseup', this.handlers[mode]);
 			Event.observe(this.element, 'mouseover', this.onMouseOver);
-			Event.observe(this.element, 'mouseout', this.onMouseOut);
+			Event.observe(this.element, 'mouseout', riot.outline.scheduleHide);
 			if (mode == 'properties') {
 				this.element.addClassName('riot-mode-properties');
 			}
@@ -46,7 +45,7 @@ riot.Component.prototype = {
 				Event.stopObserving(this.element, 'click', riot.stopEvent, true);
 				Event.stopObserving(this.element, 'mouseup', this.handlers[this.mode]);
 				Event.stopObserving(this.element, 'mouseover', this.onMouseOver);
-				Event.stopObserving(this.element, 'mouseout', this.onMouseOut);
+				Event.stopObserving(this.element, 'mouseout', riot.outline.scheduleHide);
 				if (this.mode == 'properties') {
 					this.element.removeClassName('riot-mode-properties');
 				}
@@ -56,36 +55,23 @@ riot.Component.prototype = {
 	},
 
 	showOutline: function(event) {
-		if (riot.hoverTimeout) clearTimeout(riot.hoverTimeout);
-		riot.hover.copyPosFrom(this.element, {offsetWidth: -4, offsetHeight: -4}).show();
-		if (!Prototype.Browser.IE) {
-			riot.hover.update();
-			this.element.getElementsByClassName('riot-component').each(function(e) {
-				RBuilder.node('div')
-					.setStyle({position: 'absolute', display: 'none'})
-					.appendTo(riot.hover).copyPosFrom(e).show()
-					.onmouseover = riot.hideHover;
-			});
-		}
-		riot.hover.onclick = this.handlers[this.mode];
-		Event.stop(event);
-	},
-
-	hideOutline: function(event) {
-		if (riot.hover != (event.toElement || event.relatedTarget)) {
-			riot.hoverTimeout = setTimeout(riot.hideHover, 250);
-		}
-		Event.stop(event);
+		riot.outline.show(this.element, this.handlers[this.mode],
+			Prototype.Browser.IE ? null : this.element.descendants().findAll(function(e) {
+				return e.component && e.component.mode
+			})
+		)
 	},
 
 	removeComponent: function(event) {
 		var e = event || window.event;
 		if (e) Event.stop(e);
 		this.setMode(null);
-		riot.hideHover();
+		riot.outline.hide();
+		riot.outline.suspended = true;
 		new Effect.Remove(this.element, function(el) {
 			el.remove();
 			el.component.componentList.componentRemoved();
+			riot.outline.suspended = false;
 		});
 		ComponentEditor.deleteComponent(this.id);
 		this.componentList.setDirty(true);
@@ -106,7 +92,6 @@ riot.Component.prototype = {
 	editProperties: function(ev) {
 		ev = ev || window.event;
 		if (ev) Event.stop(ev);
-		this.element.removeClassName('riot-highlight');
 		if (this.form) {
 			var formUrl = riot.contextPath + this.form;
 			var iframe = RBuilder.node('iframe', {src: formUrl, className: 'properties', width: 1, height: 1});

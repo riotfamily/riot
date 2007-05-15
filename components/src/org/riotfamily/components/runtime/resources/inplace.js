@@ -3,19 +3,43 @@ riot.stopEvent = function(ev) {
 	return false;
 }
 
-riot.hover = RBuilder.node('div', {className: 'riot-highlight'}).hide();
-document.body.appendChild(riot.hover);
-riot.hideHover = function() {
-	if (riot.hover) {
-		riot.hover.hide();
-		riot.hover.onclick = null;
+riot.outline = {
+	show: function(el, onclick, excludes) {
+		riot.outline.cancelHide();
+		if (riot.outline.suspended) return;
+		riot.outline.element.copyPosFrom(el, {offsetWidth: -4, offsetHeight: -4}).update().show().onclick = onclick;
+		if (excludes) {
+			excludes.each(function(e) {
+				RBuilder.node('div')
+					.setStyle({position: 'absolute', display: 'none'})
+					.appendTo(riot.outline.element).copyPosFrom(e).show()
+					.onmouseover = riot.outline.hide;
+			});
+		}
+	},
+
+	hide: function() {
+		riot.outline.element.hide().onclick = null;
+	},
+
+	scheduleHide: function(ev) {
+		if (!ev || riot.outline.element != (ev.toElement || ev.relatedTarget)) {
+			riot.outline.timeout = setTimeout(riot.outline.hide, 250);
+		}
+	},
+
+	cancelHide: function() {
+		if (riot.outline.timeout) {
+			clearTimeout(riot.outline.timeout);
+			riot.outline.timeout = null;
+		}
 	}
 }
-riot.hover.onmouseout = function() {
-	if (riot.hover.visible()) {
-		riot.hoverTimeout = setTimeout(riot.hideHover, 250);
-	}
-}
+riot.outline.element = RBuilder.node('div', {
+		className: 'riot-highlight',
+		onmouseover: riot.outline.cancelHide,
+		onmouseout: riot.outline.scheduleHide
+	}).hide().appendTo(document.body)
 
 riot.InplaceEditor = Class.create();
 riot.InplaceEditor.prototype = {
@@ -28,7 +52,6 @@ riot.InplaceEditor.prototype = {
 		this.onclickHandler = this.onclick.bindAsEventListener(this);
 		this.oninit(options);
 		this.onMouseOver = this.showOutline.bindAsEventListener(this);
-		this.onMouseOut = this.hideOutline.bindAsEventListener(this);
 	},
 
 	/* Subclasses may override this method to perform initalization upon creation */
@@ -44,7 +67,7 @@ riot.InplaceEditor.prototype = {
 			this.element.onclick = this.onclickHandler;
 			this.element.addClassName('riot-editable-text');
 			this.element.observe('mouseover', this.onMouseOver);
-			this.element.observe('mouseout', this.onMouseOut);
+			this.element.observe('mouseout', riot.outline.scheduleHide);
 		}
 		else {
 			if (riot.activeEditor == this) {
@@ -53,35 +76,21 @@ riot.InplaceEditor.prototype = {
 			this.element.onclick = this.originalOnclickHandler;
 			this.element.removeClassName('riot-editable-text');
 			this.element.stopObserving('mouseover', this.onMouseOver);
-			this.element.stopObserving('mouseout', this.onMouseOut);
+			this.element.stopObserving('mouseout', riot.outline.scheduleHide);
 		}
 	},
 
 	showOutline: function(event) {
-		if (riot.hoverTimeout) clearTimeout(riot.hoverTimeout);
-		riot.hover.copyPosFrom(this.element, {offsetWidth: -4, offsetHeight: -4}).show();
+		var excludes;
 		if (!Prototype.Browser.IE) {
-			riot.hover.update();
-			this.element.previousSiblings().each(function(sibling) {
-				if (sibling.getStyle('float') == 'right') {
-					sibling.getElementsByClassName('riot-editable-text').each(function(e) {
-						RBuilder.node('div')
-							.setStyle({position: 'absolute', display: 'none'})
-							.appendTo(riot.hover).copyPosFrom(e).show()
-							.onmouseover = riot.hideHover;
-					});
+			excludes = [];
+			this.element.previousSiblings().each(function(s) {
+				if (s.getStyle('float') == 'right') {
+					excludes = excludes.concat(s.getElementsByClassName('riot-editable-text'));
 				}
 			});
 		}
-		riot.hover.onclick = this.onclickHandler;
-		Event.stop(event);
-	},
-
-	hideOutline: function(event) {
-		if (riot.hover != (event.toElement || event.relatedTarget)) {
-			riot.hoverTimeout = setTimeout(riot.hideHover, 250);
-		}
-		Event.stop(event);
+		riot.outline.show(this.element, this.onclickHandler, excludes);
 	},
 
 	/* Handler that is invoked when an enabled editor is clicked */
@@ -399,7 +408,7 @@ riot.Popup.prototype = {
 		this.div.style.left = left + 'px';
 		this.overlay.style.height = Viewport.getPageHeight() + 'px';
 		this.overlay.show();
-		riot.hideHover();
+		riot.outline.hide();
 		this.div.makeVisible().show();
 	},
 
