@@ -43,17 +43,17 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class PageSetupBean implements InitializingBean {
 
 	private Collection locales;
-	
+
 	private List definitions;
-	
+
 	private PageDao pageDao;
-	
+
 	private PlatformTransactionManager transactionManager;
 
 	public void setPageDao(PageDao pageDao) {
 		this.pageDao = pageDao;
 	}
-	
+
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}
@@ -65,7 +65,7 @@ public class PageSetupBean implements InitializingBean {
 	public void setLocales(Collection locales) {
 		this.locales = locales;
 	}
-	
+
 	public void afterPropertiesSet() throws Exception {
 		if (locales == null) {
 			locales = Collections.singletonList(null);
@@ -76,22 +76,29 @@ public class PageSetupBean implements InitializingBean {
 			}
 		});
 	}
-	
+
 	protected void createNodes() {
+		PageNode rootNode = pageDao.getRootNode();
 		Iterator it = definitions.iterator();
 		while (it.hasNext()) {
 			PageDefinition definition = (PageDefinition) it.next();
-			String parentHandler = definition.getParentHandlerName();
-			PageNode parentNode;
-			if (parentHandler != null) {
-				parentNode = pageDao.findNodeForHandler(parentHandler);
-			}
-			else {
-				parentNode = pageDao.getRootNode();
-			}
-			PageNode node = definition.createNode(locales);
-			parentNode.addChildNode(node);
-			pageDao.updateNode(parentNode);
+			PageNode childNode = definition.createNode(locales);
+			rootNode.addChildNode(childNode);
 		}
+		pageDao.updateNode(rootNode);
 	}
+
+
+	/*
+	PageNode parentNode;
+	String parentHandler = definition.getParentHandlerName();
+
+	if (parentHandler != null) {
+		parentNode = pageDao.findNodeForHandler(parentHandler);
+	}
+	else {
+		parentNode = pageDao.getRootNode();
+	}
+	 */
+
 }

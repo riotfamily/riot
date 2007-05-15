@@ -25,6 +25,7 @@ package org.riotfamily.pages.setup;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import org.riotfamily.common.util.FormatUtils;
@@ -44,6 +45,8 @@ public class PageDefinition {
 	private String parentHandlerName;
 
 	private String childHandlerName;
+
+	private List children;
 
 	private boolean hidden;
 
@@ -85,12 +88,22 @@ public class PageDefinition {
 		this.childHandlerName = childHandlerName;
 	}
 
+	public List getChildren() {
+		return this.children;
+	}
+
+	public void setChildren(List children) {
+		this.children = children;
+	}
+
 	public PageNode createNode(Collection locales) {
 		PageNode node = new PageNode();
-		node.setSystemNode(systemNode);
 		node.setHandlerName(handlerName);
+		node.setSystemNode(systemNode);
 		node.setChildHandlerName(childHandlerName);
 		node.setHidden(hidden);
+
+		// Create the nodes Pages
 		Iterator it = locales.iterator();
 		while (it.hasNext()) {
 			Locale locale = (Locale) it.next();
@@ -98,6 +111,17 @@ public class PageDefinition {
 			page.setPublished(published);
 			node.addPage(page);
 		}
+
+		// Create the nodes Children
+		if (children != null) {
+			it = children.iterator();
+			while (it.hasNext()) {
+				PageDefinition childDefinition = (PageDefinition) it.next();
+				PageNode childNode = childDefinition.createNode(locales);
+				node.addChildNode(childNode);
+			}
+		}
+
 		return node;
 	}
 }
