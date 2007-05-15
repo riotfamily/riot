@@ -31,6 +31,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.components.context.ComponentEditorRequest;
 import org.riotfamily.components.editor.ComponentFormRegistry;
 import org.riotfamily.components.editor.EditModeUtils;
 import org.riotfamily.pages.Page;
@@ -45,6 +46,9 @@ import org.springframework.util.StringUtils;
  * @since 6.5
  */
 public class PageMacroHelper {
+
+	private static final String PAGE_REFRESHED = PageMacroHelper.class.getName()
+			+ ".refreshedPage";
 
 	private PageDao pageDao;
 
@@ -64,7 +68,14 @@ public class PageMacroHelper {
 	}
 
 	public Page getCurrentPage() {
-		return PageHandlerMapping.getPage(request);
+		Page page = PageHandlerMapping.getPage(request);
+		if (ComponentEditorRequest.isWrapped(request)
+				&& request.getAttribute(PAGE_REFRESHED) == null) {
+
+			pageDao.refreshPage(page);
+			request.setAttribute(PAGE_REFRESHED, Boolean.TRUE);
+		}
+		return page;
 	}
 
 	public Page getPageForHandler(String handlerName, Locale locale) {
