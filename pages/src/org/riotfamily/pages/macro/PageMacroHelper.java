@@ -75,6 +75,10 @@ public class PageMacroHelper {
 		return pageDao.findPagesForHandler(handlerName, locale);
 	}
 
+	public Collection getTopLevelPages(Locale locale) {
+		return pageDao.getRootNode().getChildPages(locale, false);
+	}
+
 	public String getUrl(Page page) {
 		if (page != null) {
 			return resolver.getUrl(new PageLocation(page));
