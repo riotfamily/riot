@@ -47,8 +47,7 @@ import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * Controller that renders a ComponentList. Which list is to be rendered is 
- * determined using a {@link ComponentPathResolver} and a 
- * {@link ComponentKeyResolver}. 
+ * determined using a {@link ComponentListLocator}.
  */
 public class ComponentListController implements Controller,
 		ComponentListConfiguration {	

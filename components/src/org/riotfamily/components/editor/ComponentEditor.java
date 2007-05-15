@@ -29,7 +29,8 @@ import java.util.Map;
 import org.riotfamily.components.context.RequestContextExpiredException;
 
 /**
- * Interface that is exposed to the JavaScript client via DWR.
+ * Interface used by the Riot Toolbar to edit components. All methods defined
+ * by this interface are exposed to the JavaScript client via DWR.
  *
  * @author Felix Gnass [fgnass at neteye dot de]
  */

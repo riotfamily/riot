@@ -56,8 +56,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
- * Service bean that is exposed via DWR and provides methods to edit
- * ComponentLists and ComponentVersions.
+ * Service bean to edit ComponentLists and ComponentVersions.
  */
 public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware {
 

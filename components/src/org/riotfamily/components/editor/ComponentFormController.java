@@ -62,6 +62,12 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * Controller that displays a form to edit the properties of a ComponentVersion.
+ *
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
 public class ComponentFormController extends RepositoryFormController
 		implements FormSubmissionHandler, ConfigurationEventListener,
 		TransactionalController, UrlMappingAware, BeanNameAware {
