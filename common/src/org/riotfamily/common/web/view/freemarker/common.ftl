@@ -21,8 +21,13 @@
 	<#return commonMacroHelper.partition(collection, property) />
 </#function>
 
-<#function group collection size filter=true>
-	<#return commonMacroHelper.group(collection, size, filter) />
+<#function group collection size>
+	<#return commonMacroHelper.group(collection, size) />
+</#function>
+
+<#function randomItem(collection)>
+	<#local index = commonMacroHelper.random.nextInt(collection?size) />
+	<#return collection[index] />
 </#function>
 
 <#function fileExtension filename validExtension=[] defaultExtension="">
@@ -36,3 +41,18 @@
 <#macro includeUriField>
 	<input type="hidden" name="__includeUri" value="${commonMacroHelper.getOriginatingRequestUri()}" />
 </#macro>
+
+<#macro wrap value="" tag="div" attributes...>
+	<#if value?has_content>
+		<#local attrs = "" />
+		<#if attributes?has_content>
+			<#list attributes?keys as attributeName>
+				<#if attributes[attributeName]?has_content>
+					<#local attrs=attrs + " " + attributeName + "=\"" + attributes[attributeName] + "\"" />
+				</#if>
+			</#list>
+		</#if>
+		<${tag}${attrs?if_exists}>${value}</${tag}>
+	</#if>
+</#macro>
+
