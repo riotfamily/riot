@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.dao;
 
@@ -39,7 +39,7 @@ import org.springframework.util.ObjectUtils;
 
 /**
  * Abstract base class for {@link PageDao} implementations.
- * 
+ *
  * @author Felix Gnass [fgnass at neteye dot de]
  * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
@@ -47,25 +47,25 @@ import org.springframework.util.ObjectUtils;
 public abstract class AbstractPageDao implements PageDao {
 
 	private static final Log log = LogFactory.getLog(AbstractPageDao.class);
-	
+
 	private ComponentDao componentDao;
-	
+
 	public AbstractPageDao(ComponentDao componentDao) {
 		this.componentDao = componentDao;
 	}
-	
+
 	public void saveRootPage(Page page) {
 		savePage(getRootNode(), page);
 	}
-		
+
 	public void savePage(Page parent, Page page) {
 		page.setLocale(parent.getLocale());
 		savePage(parent.getNode(), page);
 	}
-	
+
 	private void savePage(PageNode parentNode, Page page) {
-		PageNode node = page.getNode(); 
-		if (node == null) {	
+		PageNode node = page.getNode();
+		if (node == null) {
 			node = new PageNode();
 		}
 		node.addPage(page);
@@ -73,9 +73,9 @@ public abstract class AbstractPageDao implements PageDao {
 		page.setCreationDate(new Date());
 		updateNode(parentNode);
 		deleteAlias(new PageLocation(page));
-		log.debug("Page saved: " + page);	
+		log.debug("Page saved: " + page);
 	}
-	
+
 	public Page addTranslation(Page page, Locale locale) {
 		log.info("Adding translation " + page + " --> " + locale);
 		Page translation = new Page();
@@ -83,9 +83,13 @@ public abstract class AbstractPageDao implements PageDao {
 		translation.setPathComponent(page.getPathComponent());
 		page.getNode().addPage(translation);
 		updateNode(page.getNode());
+
+		componentDao.copyComponentLists(PageComponentListLocator.TYPE_PAGE,
+				page.getId().toString(), translation.getId().toString());
+
 		return translation;
 	}
-	
+
 	public void updatePage(Page page) {
 		updatePageWithoutChecks(page);
 		String oldPath = page.getPath();
@@ -98,7 +102,7 @@ public abstract class AbstractPageDao implements PageDao {
 			updatePaths(page.getChildPages());
 		}
 	}
-	
+
 	public void moveNode(PageNode node, PageNode newParent) {
 		PageNode parentNode = node.getParent();
 		parentNode.getChildNodes().remove(node);
@@ -107,7 +111,7 @@ public abstract class AbstractPageDao implements PageDao {
 		//updateNode(parentNode);
 		updatePaths(node.getPages());
 	}
-		
+
 	private void updatePaths(Collection pages) {
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
@@ -119,15 +123,15 @@ public abstract class AbstractPageDao implements PageDao {
 			updatePaths(page.getChildPages());
 		}
 	}
-	
+
 	protected abstract void clearAliases(Page page);
-	
+
 	protected abstract void createAlias(Page page, PageLocation location);
-	
+
 	protected abstract void deleteAlias(PageLocation location);
-	
+
 	protected abstract void updatePageWithoutChecks(Page page);
-	
+
 	public void deletePage(Page page) {
 		log.info("Deleting page " + page);
 		Collection childPages = page.getChildPages();
@@ -138,11 +142,11 @@ public abstract class AbstractPageDao implements PageDao {
 				deletePage(child);
 			}
 		}
-		componentDao.deleteComponentLists(PageComponentListLocator.TYPE_PAGE, 
+		componentDao.deleteComponentLists(PageComponentListLocator.TYPE_PAGE,
 				PageComponentListLocator.getPath(page));
-		
+
 		clearAliases(page);
-		
+
 		PageNode node = page.getNode();
 		node.removePage(page);
 		if (node.hasPages()) {
@@ -158,7 +162,7 @@ public abstract class AbstractPageDao implements PageDao {
 			deleteNode(node);
 		}
 	}
-	
+
 	protected abstract void deleteNode(PageNode node);
-	
+
 }
