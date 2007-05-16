@@ -42,8 +42,6 @@ public class PageDefinition {
 
 	private String handlerName;
 
-	private String parentHandlerName;
-
 	private String childHandlerName;
 
 	private List children;
@@ -53,6 +51,8 @@ public class PageDefinition {
 	private boolean published = true;
 
 	private boolean systemNode = true;
+
+	private boolean folder;
 
 	public void setPathComponent(String pathComponent) {
 		this.pathComponent = pathComponent;
@@ -76,12 +76,8 @@ public class PageDefinition {
 		this.systemNode = systemNode;
 	}
 
-	public void setParentHandlerName(String parentHandlerName) {
-		this.parentHandlerName = parentHandlerName;
-	}
-
-	public String getParentHandlerName() {
-		return this.parentHandlerName;
+	public void setFolder(boolean folder) {
+		this.folder = folder;
 	}
 
 	public void setChildHandlerName(String childHandlerName) {
@@ -102,26 +98,30 @@ public class PageDefinition {
 		node.setSystemNode(systemNode);
 		node.setChildHandlerName(childHandlerName);
 		node.setHidden(hidden);
+		createPages(node, locales);
+		createChildNodes(node, locales);
+		return node;
+	}
 
-		// Create the nodes Pages
+	private void createPages(PageNode node, Collection locales) {
 		Iterator it = locales.iterator();
 		while (it.hasNext()) {
 			Locale locale = (Locale) it.next();
 			Page page = new Page(getPathComponent(), locale);
 			page.setPublished(published);
+			page.setFolder(folder);
 			node.addPage(page);
 		}
+	}
 
-		// Create the nodes Children
+	private void createChildNodes(PageNode node, Collection locales) {
 		if (children != null) {
-			it = children.iterator();
+			Iterator it = children.iterator();
 			while (it.hasNext()) {
 				PageDefinition childDefinition = (PageDefinition) it.next();
 				PageNode childNode = childDefinition.createNode(locales);
 				node.addChildNode(childNode);
 			}
 		}
-
-		return node;
 	}
 }

@@ -48,6 +48,8 @@ public class Page {
 
 	private String pathComponent;
 
+	private boolean folder;
+
 	private String path;
 
 	private boolean published;
@@ -106,6 +108,18 @@ public class Page {
 
 	public boolean isWildcardMapping() {
 		return "*".equals(pathComponent);
+	}
+
+	/**
+	 * Returns whether the page only acts as container for other pages and
+	 * has no own content.
+	 */
+	public boolean isFolder() {
+		return this.folder;
+	}
+
+	public void setFolder(boolean folder) {
+		this.folder = folder;
 	}
 
 	public String getPath() {

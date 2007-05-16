@@ -41,6 +41,7 @@
 		<property name="published" />
 		<property name="creationDate" />
 		<property name="pathComponent" />
+		<property name="folder" />
 		<property name="path" column="`path`" unique-key="location" />
 		<many-to-one name="versionContainer" cascade="all" />
 	</class>
