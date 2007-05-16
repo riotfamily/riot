@@ -8,7 +8,12 @@
 	  - internalLink form element.
 	  -->
 	<bean id="pageChooserController" name="/pages/chooser"
-		class="org.riotfamily.pages.riot.chooser.PageChooserController" />
+		class="org.riotfamily.pages.riot.chooser.PageChooserController">
+
+		<constructor-arg ref="pageDao" />
+		<constructor-arg ref="pageLocationResolver" />
+		<property name="locales" ref="websiteLocales" />
+	</bean>
 
 	<!-- Module configuration -->
 

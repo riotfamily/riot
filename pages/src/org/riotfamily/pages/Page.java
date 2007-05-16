@@ -196,6 +196,14 @@ public class Page {
 		this.versionContainer = versionContainer;
 	}
 
+	public String getProperty(String key, boolean preview) {
+		ComponentVersion version = preview
+				? getVersionContainer().getLatestVersion()
+				: getVersionContainer().getLatestVersion();
+
+		return version != null ? version.getProperty(key) : null;
+	}
+
 	public boolean isPublished() {
 		return this.published;
 	}

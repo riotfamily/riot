@@ -115,6 +115,10 @@ public class PageNode {
 		return this.childNodes;
 	}
 
+	public Collection getChildPages(Locale locale) {
+		return getChildPages(locale, false);
+	}
+
 	public Collection getChildPages(Locale locale, boolean fallback) {
 		LinkedList pages = new LinkedList();
 		if (childNodes != null) {

@@ -1,12 +1,22 @@
 <html>
 <head>
-	<script type="text/javascript" src="${request.contextPath}${resourcePath}/prototype/prototype.js"></script>
-	<script type="text/javascript" src="${request.contextPath}${resourcePath}/tree/tree.js"></script>
-	<link rel="stylesheet" type="text/css" href="${request.contextPath}${resourcePath}/tree/tree.css" />
+	<title>Sitemap</title>
+	<@riot.stylesheet href="tree/tree.css" />
+	<@riot.script src="prototype/prototype.js" />
+	<@riot.script src="tree/tree.js" />
 </head>
 <body>
+	<#if locales?has_content>
+		<form action="?" method="GET">
+			<select name="locale" onchange="this.form.submit()">
+				<#list locales as locale>
+					<option value="${locale}"<#if locale == selectedLocale>selected="selected"</#if>>${locale.displayName}</option>
+				</#list>
+			</select>
+		</form>
+	</#if>
 	<ul id="tree" class="tree">
-		<@renderItems items />	
+		<@renderPages pages />
 	</ul>
 	<script>
 		Tree.create('tree', function(a) {
@@ -18,13 +28,13 @@
 </body>
 </html>
 
-<#macro renderItems items>
-	<#list items as item>
+<#macro renderPages pages>
+	<#list pages as page>
 		<li>
-			<a class="<#if item.page.published>published<#else>unpublished</#if>" href="${item.link}">${item.label}</a>
-			<#if item.childItems?has_content>
+			<a class="<#if page.published>published<#else>unpublished</#if>" href="${page.link}">${page.pathComponent}</a>
+			<#if page.childPages?has_content>
 				<ul>
-					<@renderItems item.childItems />
+					<@renderPages page.childPages />
 				</ul>
 			</#if>
 		</li>
