@@ -86,9 +86,9 @@ RiotImageReplacement.prototype = {
 	getImageUrl: function(text, transform, width, sel, color) {
 		var url = this.generatorUrl;
 		url += url.include('?') ? '&' : '?';
-		return url + 'text=' + escape(text) + '&transform=' + transform
-				+ '&width=' + width + '&selector=' + escape(sel)
-				+ '&color=' + escape(color);
+		return url + 'text=' + encodeURIComponent(text) + '&transform=' + transform
+				+ '&width=' + width + '&selector=' + encodeURIComponent(sel)
+				+ '&color=' + encodeURIComponent(color);
 	},
 
 	setImageSrc: function(el, src) {
