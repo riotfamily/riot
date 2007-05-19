@@ -40,6 +40,7 @@ import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageLocationResolver;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -88,7 +89,9 @@ public class PageChooserController implements TransactionalController {
 		Locale locale = getLocale(request);
 
 		HashMap model = new HashMap();
-		model.put("mode", request.getParameter("mode"));
+		model.put("mode", ServletRequestUtils.getStringParameter(
+				request, "mode", "forms"));
+
 		model.put("locales", locales);
 		model.put("selectedLocale", locale);
 		model.put("pages", createpageLinks(
