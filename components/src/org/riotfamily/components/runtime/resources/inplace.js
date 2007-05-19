@@ -576,10 +576,15 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 
 	// Add a print margin ...
 
-	var bg = Styles.getBackgroundColor(e).parseColor();
+	var bg = Styles.getBackgroundColor(e);
 	var brightness = 0;
-	$R(0,2).each(function(i) { brightness += parseInt(bg.slice(i*2+1,i*2+3), 16) });
-	brightness /= 3;
+	if (bg == 'transparent') {
+		brightness = 255;
+	}
+	else {
+		$R(0,2).each(function(i) { brightness += parseInt(bg.parseColor().slice(i*2+1,i*2+3), 16) });
+		brightness /= 3;
+	}
 	var bgImage = brightness > 227 ? 'margin.gif' : 'margin_hi.gif';
 
 	var editorWidth = tinyMCE.isMSIE ? body.scrollWidth : riot.activeEditor.width;

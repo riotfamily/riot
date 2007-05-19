@@ -28,6 +28,9 @@
 						<prop key="page">classpath:org/riotfamily/pages/macro/page.ftl</prop>
 					</props>
 				</entry>
+				<entry key="riotToolbarResources">
+					<value>tiny_mce/page-chooser.js</value>
+				</entry>
 			</map>
 		</property>
 	</bean>

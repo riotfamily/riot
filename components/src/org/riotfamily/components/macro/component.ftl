@@ -22,6 +22,13 @@
 </#macro>
 
 <#--
+  - Macro that renders the nested content if the page is requested in live mode.
+  -->
+<#macro ifLiveMode>
+	<#if !componentMacroHelper.isEditMode()><#nested></#if>
+</#macro>
+
+<#--
   - Macro that enables the Riot JavaScript edit-callbacks. The callback functions
   - are invoked when a component-list is re-rendered. To register a custom callback
   - add the following code as nested content:

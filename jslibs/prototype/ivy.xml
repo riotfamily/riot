@@ -1,14 +1,14 @@
 <ivy-module version="1.3">
-    <info 
-    	organisation="riotfamily" 
-    	module="prototype-js" 
-    	revision="1.5.1_rc1" 
-    	status="milestone">
-    	
+    <info
+    	organisation="riotfamily"
+    	module="prototype-js"
+    	revision="1.5.1"
+    	status="release">
+
 	    <license name="MIT" url="http://dev.rubyonrails.org/browser/spinoffs/prototype/LICENSE" />
 	    <description homepage="http://prototypejs.org/">
 			Prototype is a JavaScript Framework that aims to ease development of
-			dynamic web applications, featuring a unique, easy-to-use toolkit 
+			dynamic web applications, featuring a unique, easy-to-use toolkit
 			for class-driven development and a nice Ajax library.
 	    </description>
     </info>

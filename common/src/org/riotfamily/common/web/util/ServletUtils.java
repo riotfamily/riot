@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.util;
 
@@ -49,7 +49,7 @@ import org.w3c.dom.Element;
 
 public final class ServletUtils {
 
-	public static final String INCLUDE_URI_REQUEST_ATTRIBUTE = 
+	public static final String INCLUDE_URI_REQUEST_ATTRIBUTE =
 			"javax.servlet.include.request_uri";
 
 	private static final String PRAGMA_HEADER = "Pragma";
@@ -57,11 +57,15 @@ public final class ServletUtils {
 	private static final String EXPIRES_HEADER = "Expires";
 
 	private static final String CACHE_CONTROL_HEADER = "Cache-Control";
-	
+
 	public static final String REQUESTED_WITH_HEADER = "X-Requested-With";
-	
+
 	public static final String XML_HTTP_REQUEST = "XMLHttpRequest";
-	
+
+	public static final String SCHEME_HTTP = "http";
+
+	public static final String SCHEME_HTTPS = "https";
+
 	/** <p>Valid characters in a scheme.</p>
      *  <p>RFC 1738 says the following:</p>
      *  <blockquote>
@@ -78,29 +82,29 @@ public final class ServletUtils {
     public static final String VALID_SCHEME_CHARS =
     		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+.-";
 
-    private static UrlPathHelper urlPathHelper = new UrlPathHelper();  
-    
+    private static UrlPathHelper urlPathHelper = new UrlPathHelper();
+
 	private ServletUtils() {
 	}
-	
+
 	public static String getOriginatingContextPath(HttpServletRequest request) {
 		return urlPathHelper.getOriginatingContextPath(request);
 	}
-	
+
 	public static String getOriginatingRequestUri(HttpServletRequest request) {
 		return urlPathHelper.getOriginatingRequestUri(request);
 	}
-	
+
 	public static String getOriginatingServletPath(HttpServletRequest request) {
 		String servletPath = (String) request.getAttribute(
 				WebUtils.FORWARD_SERVLET_PATH_ATTRIBUTE);
-		
+
 		if (servletPath == null) {
 			servletPath = request.getServletPath();
 		}
 		return servletPath;
 	}
-	
+
 	/**
 	 * Return the path within the web application for the given request.
 	 * @see UrlPathHelper#getPathWithinApplication(HttpServletRequest)
@@ -108,7 +112,7 @@ public final class ServletUtils {
 	public static String getPathWithinApplication(HttpServletRequest request) {
 		return urlPathHelper.getPathWithinApplication(request);
 	}
-	
+
 	/**
 	 * Return the path within the web application for the given request.
 	 * @param request current HTTP request
@@ -127,7 +131,7 @@ public final class ServletUtils {
 			return requestUri;
 		}
 	}
-	
+
 	/**
 	 * Return the path within the servlet mapping for the given request,
 	 * i.e. the part of the request's URL beyond the part that called the servlet,
@@ -152,7 +156,7 @@ public final class ServletUtils {
 			return servletPath;
 		}
 	}
-	
+
 	/**
 	 * Returns the lookup-path for a given request. This is either the path
 	 * within the servlet-mapping (in case of a prefix mapping) or the path
@@ -161,7 +165,7 @@ public final class ServletUtils {
 	 */
 	public static String getPathWithoutServletMapping(
 			HttpServletRequest request) {
-		
+
 		String path = urlPathHelper.getPathWithinServletMapping(request);
 		if (path.length() == 0) {
 			path = urlPathHelper.getPathWithinApplication(request);
@@ -171,11 +175,11 @@ public final class ServletUtils {
 			int dotIndex = path.lastIndexOf('.');
 			if (dotIndex >= 0) {
 				path = path.substring(0, dotIndex);
-			}	
+			}
 		}
 		return path;
 	}
-	
+
 	/**
 	 * Returns the lookup-path for a given request. This is either the path
 	 * within the servlet-mapping (in case of a prefix mapping) or the path
@@ -184,7 +188,7 @@ public final class ServletUtils {
 	 */
 	public static String getOriginatingPathWithoutServletMapping(
 			HttpServletRequest request) {
-		
+
 		String path = getOriginatingPathWithinServletMapping(request);
 		if (path.length() == 0) {
 			path = getOriginatingPathWithinApplication(request);
@@ -194,14 +198,14 @@ public final class ServletUtils {
 			int dotIndex = path.lastIndexOf('.');
 			if (dotIndex >= 0) {
 				path = path.substring(0, dotIndex);
-			}	
+			}
 		}
 		return path;
 	}
-	
+
 	/**
-	 * Returns the servlet-mapping prefix for the given request or an empty 
-	 * String if the servlet is mapped by a suffix.  
+	 * Returns the servlet-mapping prefix for the given request or an empty
+	 * String if the servlet is mapped by a suffix.
 	 */
 	public static String getServletPrefix(HttpServletRequest request) {
 		String path = urlPathHelper.getPathWithinApplication(request);
@@ -213,7 +217,7 @@ public final class ServletUtils {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Returns the servlet-mapping suffix for the given request or an empty
 	 * String if the servlet is mapped by a prefix.
@@ -231,7 +235,7 @@ public final class ServletUtils {
 
 	/**
 	 * Returns a String consisting of the context-path and the servlet-prefix
-	 * for the given request. The String will always end with a slash. 
+	 * for the given request. The String will always end with a slash.
 	 */
 	public static String getRootPath(HttpServletRequest request) {
 		StringBuffer path = new StringBuffer();
@@ -240,7 +244,7 @@ public final class ServletUtils {
 		path.append('/');
 		return path.toString();
 	}
-	
+
 	/**
      * Returns <tt>true</tt> if our current URL is absolute,
      * <tt>false</tt> otherwise.
@@ -265,14 +269,14 @@ public final class ServletUtils {
 		// if so, we've got an absolute url
 		return true;
     }
-    
+
     /**
 	 * @since 6.4
      */
     public static boolean isHttpUrl(String url) {
     	return isAbsoluteUrl(url) && url.startsWith("http");
     }
-    
+
 	public static String resolveUrl(String url,	HttpServletRequest request) {
 		if (url == null || isAbsoluteUrl(url)) {
 			return url;
@@ -282,27 +286,27 @@ public final class ServletUtils {
 		}
 		return url;
 	}
-		
-	public static String resolveAndEncodeUrl(String url, 
+
+	public static String resolveAndEncodeUrl(String url,
 			HttpServletRequest request, HttpServletResponse response) {
-		
+
 		if (url == null || isAbsoluteUrl(url)) {
 			return url;
 		}
 		url = resolveUrl(url, request);
 		return response.encodeURL(url);
 	}
-	
+
 	public static String getIncludeUri(HttpServletRequest request) {
 		String uri = (String) request.getAttribute(
 				INCLUDE_URI_REQUEST_ATTRIBUTE);
-		
+
 		if (uri == null) {
 			uri = request.getRequestURI();
 		}
 		return uri;
 	}
-	
+
 	public static Map takeAttributesSnapshot(HttpServletRequest request) {
 		Map snapshot = new HashMap();
 		Enumeration attrNames = request.getAttributeNames();
@@ -312,13 +316,13 @@ public final class ServletUtils {
 		}
 		return snapshot;
 	}
-	
+
 	/**
 	 * Restores request attributes from the given map.
 	 */
-	public static void restoreAttributes(HttpServletRequest request, 
+	public static void restoreAttributes(HttpServletRequest request,
 			Map attributesSnapshot) {
-		
+
 		// Copy into separate Collection to avoid side upon removal
 		Set attrsToCheck = new HashSet();
 		Enumeration attrNames = request.getAttributeNames();
@@ -327,7 +331,7 @@ public final class ServletUtils {
 			attrsToCheck.add(attrName);
 		}
 
-		Iterator it = attrsToCheck.iterator(); 
+		Iterator it = attrsToCheck.iterator();
 		while (it.hasNext()) {
 			String attrName = (String) it.next();
 			Object attrValue = attributesSnapshot.get(attrName);
@@ -339,9 +343,9 @@ public final class ServletUtils {
 			}
 		}
 	}
-	
+
 	/**
-	 * Returns a map of request parameters. Unlike 
+	 * Returns a map of request parameters. Unlike
 	 * {@link ServletRequest#getParameterMap()} this method returns Strings
 	 * instead of String arrays. When more than one parameter with the same
 	 * name is present, only the first value is put into the map.
@@ -355,22 +359,45 @@ public final class ServletUtils {
 		}
 		return params;
 	}
-	
+
 	/**
 	 * Returns the path of the given URI. Uses {@link java.net.URI}
 	 * internally to parse the given String.
-	 *  
+	 *
 	 * @throws IllegalArgumentException If the given string violates RFC 2396
 	 */
 	public static String getPath(String uri) {
 		try {
-			return new URI(uri).getPath(); 
+			return new URI(uri).getPath();
 		}
 		catch (URISyntaxException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
-	
+
+	/**
+	 * Returns a StringBuffer containing an URL with the protocol, hostname
+	 * and port (unless it's the protocol's default port) of the given request.
+	 */
+	public static StringBuffer getAbsoluteUrlPrefix(HttpServletRequest request) {
+		StringBuffer url = new StringBuffer();
+        String scheme = request.getScheme();
+        int port = request.getServerPort();
+        if (port <= 0) {
+            port = 80;
+        }
+        url.append(scheme);
+        url.append("://");
+        url.append(request.getServerName());
+        if ((scheme.equals(SCHEME_HTTP) && port != 80)
+        		|| (scheme.equals(SCHEME_HTTPS) && port != 443)) {
+
+            url.append(':');
+            url.append(port);
+        }
+        return url;
+	}
+
 	/**
 	 * Returns whether the <code>X-Requested-With</code> header is set to
 	 * <code>XMLHttpRequest</code> as done by prototype.js.
@@ -378,7 +405,7 @@ public final class ServletUtils {
 	public static boolean isXmlHttpRequest(HttpServletRequest request) {
 		return XML_HTTP_REQUEST.equals(request.getHeader(REQUESTED_WITH_HEADER));
 	}
-	
+
 	/**
 	 * Sets Pragma, Expires and Cache-Control headers to prevent caching.
 	 * @since 6.4
@@ -389,7 +416,7 @@ public final class ServletUtils {
 		response.setHeader(CACHE_CONTROL_HEADER, "no-cache");
 		response.addHeader(CACHE_CONTROL_HEADER, "no-store");
 	}
-	
+
 	/**
 	 * Sets Expires and Cache-Control headers to allow caching for the given
 	 * period.
@@ -401,22 +428,22 @@ public final class ServletUtils {
 		response.setDateHeader(EXPIRES_HEADER, System.currentTimeMillis() + millis);
 		response.setHeader(CACHE_CONTROL_HEADER, "max-age=" + millis / 1000L);
 	}
-	
+
 	/**
 	 * Parses the web.xml deployment descriptor and returns the url-pattern
 	 * for the given servlet-name, or <code>null</code> if no mapping is found.
 	 * @since 6.4
 	 */
-	public static String getServletMapping(String servletName, 
+	public static String getServletMapping(String servletName,
 			ServletContext servletContext) {
-		
+
 		DocumentReader reader = new DocumentReader(new ServletContextResource(
 				servletContext,	"/WEB-INF/web.xml"));
-		
+
 		Document doc = reader.readDocument();
 		Iterator it = DomUtils.getChildElementsByTagName(
 				doc.getDocumentElement(), "servlet-mapping").iterator();
-		
+
 		while (it.hasNext()) {
 			Element e = (Element) it.next();
 			Element name = DomUtils.getChildElementByTagName(e, "servlet-name");
@@ -427,5 +454,5 @@ public final class ServletUtils {
 		}
 		return null;
 	}
-	
+
 }

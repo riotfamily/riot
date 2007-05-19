@@ -177,7 +177,11 @@ var RElement = {
 	    	offsetHeight: 0
 	    }, arguments[2] || {});
 		if(options.setWidth)  el.style.width = source.offsetWidth + options.offsetWidth + 'px';
-	    if(options.setHeight) el.style.height = source.offsetHeight + options.offsetHeight + 'px';
+	    if(options.setHeight) {
+	    	var h = source.offsetHeight;
+	    	if (h == 0 && source.firstChild) h = source.firstChild.offsetHeight;
+	    	el.style.height = h + options.offsetHeight + 'px';
+	    }
 		Position.clone(source, el, Object.extend(options, {
 			setWidth: false, setHeight: false
 		}));

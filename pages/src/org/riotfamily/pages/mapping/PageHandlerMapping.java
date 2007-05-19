@@ -46,11 +46,11 @@ import org.springframework.web.servlet.handler.AbstractHandlerMapping;
  */
 public class PageHandlerMapping extends AbstractHandlerMapping {
 
+	public static final String WILDCARD_MATCH_ATTRIBUTE =
+			PageHandlerMapping.class.getName() + ".wildcardMatch";
+
 	private static final String PAGE_ATTRIBUTE =
 			PageHandlerMapping.class.getName() + ".page";
-
-	private static final String WILDCARD_MATCH_ATTRIBUTE =
-		PageHandlerMapping.class.getName() + ".wildcardMatch";
 
 	private static final Log log = LogFactory.getLog(PageHandlerMapping.class);
 
@@ -143,6 +143,10 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 
 	public static Page getPage(HttpServletRequest request) {
 		return (Page) request.getAttribute(PAGE_ATTRIBUTE);
+	}
+
+	public static String getWildcardMatch(HttpServletRequest request) {
+		return (String) request.getAttribute(WILDCARD_MATCH_ATTRIBUTE);
 	}
 
 }

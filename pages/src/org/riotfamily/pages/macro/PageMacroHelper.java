@@ -120,6 +120,10 @@ public class PageMacroHelper {
 		return null;
 	}
 
+	public String getWildcardMatch() {
+		return PageHandlerMapping.getWildcardMatch(request);
+	}
+
 	public String getFormUrl(String formId, Long containerId) {
 		return formRegistry.getFormUrl(formId, containerId);
 	}

@@ -22,6 +22,10 @@
 	<#return common.url(pageMacroHelper.getWildcardHandlerUrl(handlerName, replacement, locale)) />
 </#function>
 
+<#function wildcardMatch>
+	<#return pageMacroHelper.wildcardMatch />
+</#function>
+
 <#function url page>
 	<#return common.url(pageMacroHelper.getUrl(page)) />
 </#function>
@@ -41,7 +45,7 @@
 	</#if>
 </#function>
 
-<#macro text page key tag="" form="" attributes ...>
+<#macro text key page=pageMacroHelper.currentPage tag="" form="" attributes ...>
 	<#if componentMacroHelper.isEditMode()>
 		<#local props = page.versionContainer.latestVersion.properties />
 		<#local attrs = {"riot:containerId": page.versionContainer.id} + attributes />
@@ -64,6 +68,26 @@
 		<#local attrs = attributes />
 	</#if>
 	<@component.editable key=key tag=tag scope=props editor="text" attributes=attrs><#nested /></@component.editable>
+</#macro>
+
+<#macro properties form page=pageMacroHelper.currentPage tag="div" attributes ...>
+	<#if componentMacroHelper.isEditMode()>
+		<#local attributes = attributes + {
+			"riot:containerId": page.versionContainer.id,
+			"riot:form": pageMacroHelper.getFormUrl(form, page.versionContainer.id),
+			"class": ("riot-component " + attributes["class"]?if_exists)?trim
+		} />
+		<#local attrs = "" />
+		<#local keys = attributes?keys />
+		<#list keys as attributeName>
+			<#if attributes[attributeName]?has_content>
+				<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName] + "\"" />
+			</#if>
+		</#list>
+		<${tag}${attrs}>
+			<#nested>
+		</${tag}>
+	</#if>
 </#macro>
 
 <#function group pages size>

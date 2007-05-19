@@ -25,6 +25,7 @@ package org.riotfamily.pages.riot.chooser;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +33,6 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.pages.Page;
@@ -69,7 +69,7 @@ public class PageChooserController implements TransactionalController {
 		if (localeString != null) {
 			return StringUtils.parseLocaleString(localeString);
 		}
-		if (locales != null) {
+		if (locales != null && !locales.isEmpty()) {
 			if (locales.size() == 1) {
 				return (Locale) locales.get(0);
 			}
@@ -87,7 +87,8 @@ public class PageChooserController implements TransactionalController {
 
 		Locale locale = getLocale(request);
 
-		FlatMap model = new FlatMap();
+		HashMap model = new HashMap();
+		model.put("mode", request.getParameter("mode"));
 		model.put("locales", locales);
 		model.put("selectedLocale", locale);
 		model.put("pages", createpageLinks(
