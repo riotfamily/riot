@@ -50,4 +50,8 @@ public final class Resources {
 	public static final ScriptResource RIOT_WINDOW_CALLBACK = 
 			new ScriptResource("riot-js/window-callback.js", "WindowCallback", 
 			PROTOTYPE);
+	
+	public static final ScriptResource RIOT_UTIL = 
+			new ScriptResource("riot-js/util.js", "RElement", 
+			PROTOTYPE);
 }

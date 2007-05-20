@@ -178,8 +178,7 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 
 		this.input.onkeyup = this.updateElement.bindAsEventListener(this);
 		this.input.onblur = this.close.bindAsEventListener(this);
-
-		Styles.clone(this.element, this.input, [
+		this.input.cloneStyle(this.element, [
 			'font-size', 'font-weight', 'font-family', 'font-style',
 			'color', 'background-color', 'text-align', 'text-decoration',
 			'letter-spacing', 'line-height', 'padding-left', 'padding-top',
@@ -544,7 +543,7 @@ riot.stylesheetMaker = {
 				Object.extend(styles, this.getStyles(p, this.properties[selector]));
 			}
 			if (selector == 'body') {
-				styles['background-color'] = Styles.getBackgroundColor(p);
+				styles['background-color'] = RElement.getBackgroundColor(p);
 			}
 			this.addRule(selector, styles, sheet);
 		}
@@ -576,7 +575,7 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 
 	// Add a print margin ...
 
-	var bg = Styles.getBackgroundColor(e);
+	var bg = RElement.getBackgroundColor(e);
 	var brightness = 0;
 	if (bg == 'transparent') {
 		brightness = 255;

@@ -36,56 +36,6 @@ RBuilder.node = function(tag, options) {
 	return e;
 }
 
-var Styles = {
-	clone: function(source, target, properties) {
-		if (properties) {
-			for (var i = 0; i < properties.length; i++) {
-				target.style[properties[i].camelize()] = Element.getStyle(
-						source, properties[i]);
-			}
-		}
-		else {
-			this.setStyle(target, this.getStyles(source));
-		}
-	},
-
-	getAll: function(element) {
-		element = $(element);
-		var styles = {};
-		for (name in element.style) {
-			if (typeof name != 'function' && name != 'length' && name != 'parentRule') {
-				styles[name] = element.style[name];
-			}
-		}
-		if(document.defaultView && document.defaultView.getComputedStyle) {
-			var css = document.defaultView.getComputedStyle(element, null);
-			for (var i = 0; i < css.length; i++) {
-				var name = css.item(i);
-				var value = css.getPropertyValue(name);
-				if (value != 'auto') styles[name] = value;
-			}
-		}
-		else if(element.currentStyle) {
-			for (name in element.currentStyle) {
-				if (typeof name == 'function') continue;
-				value = element.currentStyle[name];
-				if (value != 'auto') styles[name] = value;
-			}
-		}
-		return styles;
-	},
-
-	getBackgroundColor: function(element) {
-		element = $(element);
-		var bg;
-		while (element && element.style && (!bg || bg == 'transparent')) {
-			bg = Element.getStyle(element, 'background-color');
-			element = element.parentNode;
-		}
-		return bg || '#ffffff';
-	}
-}
-
 var RElement = {
 	insertSelfBefore: function(el, marker) {
 		el = $(el);
@@ -116,8 +66,15 @@ var RElement = {
 
 	replaceBy: function(el, replacement) {
 		el = $(el);
-		el.parentNode.replaceChild($(replacement), el);
-		return el;
+		replacement = $(replacement);
+		el.parentNode.replaceChild(replacement, el);
+		return replacement;
+	},
+
+	surroundWith: function(el, wrapper) {
+		el = $(el);
+		el.replaceBy(wrapper).appendChild(el);
+		return wrapper;
 	},
 
 	makeBlock: function(el) {
@@ -136,6 +93,25 @@ var RElement = {
 		if (!(el = $(el))) return;
 		el.style.visibility = 'visible';
 		return el;
+	},
+
+	cloneStyle: function(el, source, properties) {
+		el = $(el);
+		source = $(source);
+		for (var i = 0; i < properties.length; i++) {
+			el.style[properties[i].camelize()] = source.getStyle(properties[i]);
+		}
+		return el;
+	},
+
+	getBackgroundColor: function(el) {
+		element = $(el);
+		var bg;
+		while (el && el.style && (!bg || bg == 'transparent')) {
+			bg = Element.getStyle(el, 'background-color');
+			el = el.parentNode;
+		}
+		return bg || '#fff';
 	},
 
 	toggleClassName: function(el, className, add) {

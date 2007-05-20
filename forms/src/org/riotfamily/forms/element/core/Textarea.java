@@ -42,7 +42,7 @@ public class Textarea extends AbstractTextElement implements ResourceElement,
 		DHTMLElement {
 
 	private static FormResource RESOURCE = new ScriptResource(
-			"riot-js/textarea.js", "RiotTextArea", Resources.PROTOTYPE);
+			"riot-js/textarea.js", "RiotTextArea", Resources.RIOT_UTIL);
 	
 	private Integer rows = null;
 

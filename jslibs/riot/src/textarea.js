@@ -6,11 +6,7 @@ RiotTextArea.prototype = {
 	setMaxLength: function(maxlength) {
 		this.maxLength = maxlength;
 		if (!this.counter) {
-			var c = this.counter = document.createElement('div');
-			c.className = 'counter';
-			if (this.el.nextSibling) this.el.parentNode.insertBefore(c, this.el.nextSibling);
-			else this.el.parentNode.appendChild(c);
-		
+			var c = this.counter = RBuilder.node('div', {className: 'counter'}).insertSelfAfter(this.el);
 			this.el.observe('keypress', this.checkLength.bindAsEventListener(this));
 			this.el.observe('keyup', this.updateCounter.bind(this));
 		}
@@ -28,15 +24,28 @@ RiotTextArea.prototype = {
 		}
 		this.counter.update(this.el.value.length + '/' + this.maxLength);
 	},
-	autoResize: function() {
-		this.resize();
+	autoResize: function(maxHeight) {
 		if (this.autoSize) return;
+		this.maxHeight = maxHeight || 300;
+		var padding = parseInt(this.el.getStyle('paddingTop')) + parseInt(this.el.getStyle('paddingBottom')) 
+				+ parseInt(this.el.getStyle('borderBottomWidth')) + parseInt(this.el.getStyle('borderTopWidth'));
+
+		this.maxHeight -= (this.maxHeight - padding) % parseInt(this.el.getStyle('lineHeight'));
+		this.measure = RBuilder.node('div').cloneStyle(this.el, [
+			'paddingTop', 'paddingRight', 'paddingBottom', 
+			'paddingLeft', 'lineHeight', 'fontSize', 'fontFamily'
+		]).setStyle({
+			visibility: 'hidden',
+			position: 'absolute'
+		});
+		this.el.surroundWith(RBuilder.node('div').setStyle({position: 'relative'})).prependChild(this.measure);
 		this.el.observe('keyup', this.resize.bind(this));
+		this.resize();
 		this.autoSize = true;
 		return this;
 	},
 	resize: function() {
-		var lines = this.el.value.split('\n');
-		this.el.rows = lines.length + 1;
+		this.measure.innerHTML = this.el.value.gsub(/</, '&lt;').gsub(/\n/, '<br/>').gsub(/  /, '&nbsp; ') + '<br>&nbsp;';
+		this.el.style.height = Math.min(this.measure.offsetHeight, this.maxHeight) + 'px';
 	}
 }
