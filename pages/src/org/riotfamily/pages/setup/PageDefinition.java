@@ -68,8 +68,26 @@ public class PageDefinition {
 		this.handlerName = handlerName;
 	}
 
+	public void setChildHandlerName(String childHandlerName) {
+		this.childHandlerName = childHandlerName;
+	}
+
+	public void setChildren(List children) {
+		this.children = children;
+	}
+
+/*
+ 	public List getChildren() {
+		return this.children;
+	}
+*/
+
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
+	}
+
+	public void setPublished(boolean published) {
+		this.published = published;
 	}
 
 	public void setSystemNode(boolean systemNode) {
@@ -78,18 +96,6 @@ public class PageDefinition {
 
 	public void setFolder(boolean folder) {
 		this.folder = folder;
-	}
-
-	public void setChildHandlerName(String childHandlerName) {
-		this.childHandlerName = childHandlerName;
-	}
-
-	public List getChildren() {
-		return this.children;
-	}
-
-	public void setChildren(List children) {
-		this.children = children;
 	}
 
 	public PageNode createNode(Collection locales) {
@@ -124,4 +130,5 @@ public class PageDefinition {
 			}
 		}
 	}
+
 }
