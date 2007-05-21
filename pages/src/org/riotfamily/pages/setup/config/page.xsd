@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.riotfamily.org/schema/pages/page"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	attributeFormDefault="unqualified" elementFormDefault="qualified"
+	targetNamespace="http://www.riotfamily.org/schema/pages/page">
+
+
+	<xsd:element name="setup" type="setupType"/>
+
+	<xsd:complexType name="setupType">
+		<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+			<xsd:element name="page" type="pageType" />
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:ID"/>
+		<xsd:attribute name="dao" type="xsd:string" use="required" />
+		<xsd:attribute name="tx" type="xsd:string" use="required" />
+		<xsd:attribute name="locales" type="xsd:string" use="required" />
+	</xsd:complexType>
+
+	<xsd:complexType name="pageType">
+		<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+			<xsd:element name="page" type="pageType" />
+		</xsd:sequence>
+		<xsd:attribute name="path-component" type="xsd:string" /><!-- EntwederOder use="required" /> -->
+		<xsd:attribute name="handler-name" type="xsd:string" /><!-- EntwederOder use="required" /> -->
+		<xsd:attribute name="child-handler-name" type="xsd:string" />
+		<xsd:attribute default="false" name="hidden" type="xsd:boolean" />
+		<xsd:attribute default="true" name="published" type="xsd:boolean" />
+		<xsd:attribute default="true" name="system" type="xsd:boolean" />
+		<xsd:attribute default="false" name="folder" type="xsd:boolean" />
+	</xsd:complexType>
+
+</xsd:schema>
