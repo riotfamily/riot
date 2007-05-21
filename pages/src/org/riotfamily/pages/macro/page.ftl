@@ -47,7 +47,6 @@
 
 <#macro text key page=pageMacroHelper.currentPage tag="" form="" attributes ...>
 	<#if componentMacroHelper.isEditMode()>
-		<#local props = page.versionContainer.latestVersion.properties />
 		<#local attrs = {"riot:containerId": page.versionContainer.id} + attributes />
 		<#local attrs = attrs + {"class": ("riot-component " + attrs["class"]?if_exists)?trim} />
 		<#if form?has_content>
@@ -56,37 +55,40 @@
 				<#local attrs = attrs + {"riot:form": formUrl} />
 			</#if>
 		</#if>
-		<#if page.versionContainer.previewVersion?exists>
+		<#if page.dirty>
 			<#local attrs = attrs + {"riot:dirty": "true"} />
 		</#if>
 	<#else>
-		<#if page.versionContainer.liveVersion?exists>
-			<#local props = page.versionContainer.liveVersion.properties />
-		<#else>
-			<#local props = {} />
-		</#if>
 		<#local attrs = attributes />
 	</#if>
-	<@component.editable key=key tag=tag scope=props editor="text" attributes=attrs><#nested /></@component.editable>
+	<#local props = page.getProperties(componentMacroHelper.isEditMode()) />
+	<@component.editable key=key tag=tag scope=props editor="text" attributes=attrs><#nested props /></@component.editable>
 </#macro>
 
-<#macro properties form page=pageMacroHelper.currentPage tag="div" attributes ...>
+<#macro properties form page=pageMacroHelper.currentPage tag="" attributes ...>
 	<#if componentMacroHelper.isEditMode()>
+		<#if !tag?has_content>
+			<#local tag = "div" />
+		</#if>
 		<#local attributes = attributes + {
 			"riot:containerId": page.versionContainer.id,
 			"riot:form": pageMacroHelper.getFormUrl(form, page.versionContainer.id),
 			"class": ("riot-component " + attributes["class"]?if_exists)?trim
 		} />
-		<#local attrs = "" />
-		<#local keys = attributes?keys />
-		<#list keys as attributeName>
-			<#if attributes[attributeName]?has_content>
-				<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName] + "\"" />
-			</#if>
-		</#list>
+	</#if>
+	<#local attrs = "" />
+	<#local keys = attributes?keys />
+	<#list keys as attributeName>
+		<#if attributes[attributeName]?has_content>
+			<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName] + "\"" />
+		</#if>
+	</#list>
+	<#if tag?has_content>
 		<${tag}${attrs}>
-			<#nested>
+			<#nested page.getProperties(componentMacroHelper.isEditMode())>
 		</${tag}>
+	<#else>
+		<#nested page.getProperties(componentMacroHelper.isEditMode())>
 	</#if>
 </#macro>
 

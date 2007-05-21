@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Map;
 
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.VersionContainer;
@@ -196,12 +197,24 @@ public class Page {
 		this.versionContainer = versionContainer;
 	}
 
+	public Map getProperties(boolean preview) {
+		if (preview) {
+			return getVersionContainer().getLatestVersion().getProperties();
+		}
+		ComponentVersion version = getVersionContainer().getLiveVersion();
+		return version != null ? version.getProperties() : null;
+	}
+
 	public String getProperty(String key, boolean preview) {
 		ComponentVersion version = preview
 				? getVersionContainer().getLatestVersion()
 				: getVersionContainer().getLatestVersion();
 
 		return version != null ? version.getProperty(key) : null;
+	}
+
+	public boolean isDirty() {
+		return getVersionContainer().getPreviewVersion() != null;
 	}
 
 	public boolean isPublished() {

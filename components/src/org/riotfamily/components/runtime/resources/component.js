@@ -123,7 +123,7 @@ riot.Component.prototype = {
 			try {
 				var editorType = e.readAttribute('riot:editorType');
 				if (editorType) {
-					if (e == this.element || this.element == Element.up(e, '.riot-component')) {
+					if (e == this.element || (!e.component && this.element == Element.up(e, '.riot-component'))) {
 						if (editorType == 'text') {
 							this.editors.push(new riot.InplaceTextEditor(e, this));
 						}
@@ -468,13 +468,8 @@ riot.AbstractComponentCollection.prototype = {
 	},
 
 	setDirty: function(dirty) {
-		if (this.parentList) {
-			this.parentList.setDirty(dirty);
-		}
-		else {
-			this.dirty = dirty;
-			riot.toolbar.dirtyCheck(dirty);
-		}
+		this.dirty = dirty;
+		riot.toolbar.dirtyCheck(dirty);
 	},
 
 	discard: function(enable) {
@@ -615,6 +610,16 @@ riot.ComponentList = Class.extend(riot.AbstractComponentCollection, {
 		this.updatePositionClasses();
 		if (this.minComponents > 0 && this.getComponents().length == this.minComponents) {
 			this.remove(false);
+		}
+	},
+
+	setDirty: function(dirty) {
+		if (this.parentList) {
+			this.parentList.setDirty(dirty);
+		}
+		else {
+			this.dirty = dirty;
+			riot.toolbar.dirtyCheck(dirty);
 		}
 	},
 
