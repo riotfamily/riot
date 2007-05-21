@@ -7,5 +7,5 @@ http\://www.riotfamily.org/schema/pages/component-6.4.xsd=org/riotfamily/pages/c
 http\://www.riotfamily.org/schema/pages/template.xsd=org/riotfamily/pages/template/config/template.xsd
 http\://www.riotfamily.org/schema/pages/template-6.3.xsd=org/riotfamily/pages/template/config/template.xsd
 http\://www.riotfamily.org/schema/pages/template-6.4.xsd=org/riotfamily/pages/template/config/template.xsd
-http\://www.riotfamily.org/schema/pages/page.xsd=org/riotfamily/pages/page/config/page.xsd
-http\://www.riotfamily.org/schema/pages/page-6.5.xsd=org/riotfamily/pages/page/config/page.xsd
+http\://www.riotfamily.org/schema/pages/page.xsd=org/riotfamily/pages/setup/config/page.xsd
+http\://www.riotfamily.org/schema/pages/page-6.5.xsd=org/riotfamily/pages/setup/config/page.xsd
