@@ -31,6 +31,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.parsing.BeanComponentDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.ChildBeanDefinition;
@@ -43,50 +44,50 @@ public final class DefinitionParserUtils {
 
 	private DefinitionParserUtils() {
 	}
-	
+
 	public static void registerBeanDefinition(BeanDefinition definition,
 			Element element, String idAttribute,  ParserContext parserContext) {
-		
+
 		registerBeanDefinition(definition, element, idAttribute, null, parserContext);
 	}
-	
+
 	public static void registerBeanDefinition(BeanDefinition definition,
-			Element element, String idAttribute, String aliasAttribute, 
+			Element element, String idAttribute, String aliasAttribute,
 			ParserContext parserContext) {
-		
+
 		String id = XmlUtils.getAttribute(element, idAttribute);
-		
+
 		String alias = null;
 		if (aliasAttribute != null) {
 			alias = XmlUtils.getAttribute(element, aliasAttribute);
 		}
-		
+
 		if (id == null) {
 			BeanDefinitionRegistry registry = parserContext.getRegistry();
 			id = generateBeanName(definition, registry, false);
 		}
-		
-		BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, id, 
+
+		BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, id,
 				alias != null ? new String[] { alias } : null);
-				
+
 		BeanDefinitionReaderUtils.registerBeanDefinition(
 				holder, parserContext.getRegistry());
-		
+
 		parserContext.getReaderContext().fireComponentRegistered(
 				new BeanComponentDefinition(holder));
-		
+
 	}
-	
+
 	public static RuntimeBeanReference registerAnonymousBeanDefinition(
 			BeanDefinition definition, ParserContext parserContext) {
-		
+
 		BeanDefinitionRegistry registry = parserContext.getRegistry();
 		String beanName = generateBeanName(definition, registry, true);
-			
+
 		registry.registerBeanDefinition(beanName, definition);
 		return new RuntimeBeanReference(beanName);
 	}
-	
+
 	/**
 	 * Generates a bean name that is unique within the given bean factory.
 	 * Does the same as {@link BeanDefinitionReaderUtils#generateBeanName(org.springframework.beans.factory.support.AbstractBeanDefinition, BeanDefinitionRegistry, boolean)}
@@ -113,7 +114,7 @@ public final class DefinitionParserUtils {
 		String id = generatedId;
 		if (isInnerBean) {
 			// Inner bean: generate identity hash code suffix.
-			id = generatedId + BeanDefinitionReaderUtils.GENERATED_BEAN_NAME_SEPARATOR 
+			id = generatedId + BeanDefinitionReaderUtils.GENERATED_BEAN_NAME_SEPARATOR
 					+ ObjectUtils.getIdentityHexString(beanDefinition);
 		}
 		else {
@@ -122,14 +123,14 @@ public final class DefinitionParserUtils {
 			int counter = 0;
 			while (beanFactory.containsBeanDefinition(id)) {
 				counter++;
-				id = generatedId 
+				id = generatedId
 						+ BeanDefinitionReaderUtils.GENERATED_BEAN_NAME_SEPARATOR
 						+ counter;
 			}
 		}
 		return id;
 	}
-	
+
 	/**
 	 * Adds a RuntimeBeanReference to the the given PropertyValues.
 	 * 
@@ -140,9 +141,9 @@ public final class DefinitionParserUtils {
 	 * @return Returns <code>true</code> if the attribute was present, 
 	 * 		<code>false</code> otherwise
 	 */
-	public static boolean addReference(MutablePropertyValues pv, 
+	public static boolean addReference(MutablePropertyValues pv,
 			Element element, String attribute, String property) {
-		
+
 		String beanName = element.getAttribute(attribute);
 		if (StringUtils.hasText(beanName)) {
 			pv.addPropertyValue(property, new RuntimeBeanReference(beanName));
@@ -150,7 +151,7 @@ public final class DefinitionParserUtils {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Adds a RuntimeBeanReference to the the given PropertyValues.
 	 * The property name is derived from the attribute name using 
@@ -160,23 +161,23 @@ public final class DefinitionParserUtils {
 	 * @param element Element that provides the referenced bean name as attribute
 	 * @param attribute Name of the attribute that contains the bean name
 	 */
-	public static boolean addReference(MutablePropertyValues pv, 
+	public static boolean addReference(MutablePropertyValues pv,
 			Element element, String attribute) {
-	
-		return addReference(pv, element, attribute, 
+
+		return addReference(pv, element, attribute,
 				FormatUtils.xmlToCamelCase(attribute));
 	}
-	
-	public static boolean addString(MutablePropertyValues pv, 
+
+	public static boolean addString(MutablePropertyValues pv,
 			Element element, String attribute) {
-	
-		return addString(pv, element, attribute, 
+
+		return addString(pv, element, attribute,
 				FormatUtils.xmlToCamelCase(attribute));
 	}
-	
-	public static boolean addString(MutablePropertyValues pv, 
+
+	public static boolean addString(MutablePropertyValues pv,
 			Element element, String attribute, String property) {
-		
+
 		String value = element.getAttribute(attribute);
 		if (StringUtils.hasText(value)) {
 			pv.addPropertyValue(property, value);
@@ -184,37 +185,51 @@ public final class DefinitionParserUtils {
 		}
 		return false;
 	}
-	
-	public static void addProperties(MutablePropertyValues pv, 
+
+	public static void addProperties(BeanDefinitionBuilder bean,
 			Element element, String[] attributeNames) {
-		
+
+		for (int i = 0; i < attributeNames.length; i++) {
+			addProperty(bean, element, attributeNames[i]);
+		}
+	}
+
+	public static void addProperties(MutablePropertyValues pv,
+			Element element, String[] attributeNames) {
+
 		for (int i = 0; i < attributeNames.length; i++) {
 			addProperty(pv, element, attributeNames[i]);
 		}
 	}
-	
-	public static void addProperty(MutablePropertyValues pv, 
+
+	public static void addProperty(BeanDefinitionBuilder bean,
 			Element element, String attr) {
-		
+
+		addProperty(bean.getBeanDefinition().getPropertyValues(), element, attr);
+	}
+
+	public static void addProperty(MutablePropertyValues pv,
+			Element element, String attribute) {
+
 		String property = null;
-		int i = attr.indexOf('=');
+
+		int i = attribute.indexOf('=');
 		if (i != -1) {
-			property = attr.substring(0, i);
-			attr = attr.substring(i + 1);
+			property = attribute.substring(0, i);
+			attribute = attribute.substring(i + 1);
 		}
-		
-		boolean beanRef = attr.charAt(0) == '@';
-		if (beanRef) {
-			attr = attr.substring(1);
+
+		boolean hasBeanRef = attribute.charAt(0) == '@';
+		if (hasBeanRef) {
+			attribute = attribute.substring(1);
 		}
-		
+
 		if (property == null) {
-			property = FormatUtils.xmlToCamelCase(attr);
+			property = FormatUtils.xmlToCamelCase(attribute);
 		}
-		
-		String value = element.getAttribute(attr); 
+		String value = element.getAttribute(attribute);
 		if (StringUtils.hasText(value)) {
-			if (beanRef) {
+			if (hasBeanRef) {
 				pv.addPropertyValue(property, new RuntimeBeanReference(value));
 			}
 			else {
