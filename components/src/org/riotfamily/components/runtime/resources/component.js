@@ -100,6 +100,7 @@ riot.Component.prototype = {
 
 	propertiesChanged: function() {
 		riot.popup.close();
+		this.componentList.setDirty(true);
 		// Timeout as we othwerwise get an 0x8004005 [nsIXMLHttpRequest.open] error.
 		// See https://bugzilla.mozilla.org/show_bug.cgi?id=249843
 		setTimeout(this.onupdate.bind(this), 1);
@@ -272,7 +273,7 @@ riot.PublishWidget.prototype = {
 		);
 		this.live = false;
 		this.updateUI();
-		this.element.observe('click', this.toggleVersion.bind(this));
+		this.element.observe('click', this.toggleVersion.bind(this), true);
 		riot.publishWidgets.push(this);
 		riot.toolbar.applyButton.enable();
 		if (document.addEventListener) {
@@ -286,6 +287,7 @@ riot.PublishWidget.prototype = {
 		this.componentList.element.makePositioned();
 		this.componentList.element.appendChild(this.element);
 		this.scaleOverlay();
+		setTimeout(this.scaleOverlay.bind(this), 50);
 		this.element.show();
 	},
 
@@ -469,7 +471,16 @@ riot.AbstractComponentCollection.prototype = {
 
 	setDirty: function(dirty) {
 		this.dirty = dirty;
+		if (dirty && this.parentList) {
+			this.parentList.setDirty(dirty);
+		}
 		riot.toolbar.dirtyCheck(dirty);
+	},
+
+	getDirtyContainerIds: function() {
+		return this.childLists.collect(function(cl) {
+			if (cl.dirty) return cl.getDirtyContainerIds();
+		}).flatten().compact();
 	},
 
 	discard: function(enable) {
@@ -484,7 +495,7 @@ riot.AbstractComponentCollection.prototype = {
 
 	publish: function(enable) {
 		if (enable) {
-			if (this.dirty)	this.publishWidget = new riot.PublishWidget(this);
+			if (this.dirty && !this.parentList) this.publishWidget = new riot.PublishWidget(this);
 		}
 		else  {
 			if (this.publishWidget) this.publishWidget.destroy();
@@ -494,12 +505,23 @@ riot.AbstractComponentCollection.prototype = {
 
 	apply: function() {
 		if (this.publishWidget) this.publishWidget.apply();
+	},
+
+	publishChanges: function() {
+		ComponentEditor.publish(this.id, this.getDirtyContainerIds(),
+				this.publishWidget.destroy.bind(this.publishWidget));
+	},
+
+	discardChanges: function() {
+		ComponentEditor.discard(this.id, this.getDirtyContainerIds(),
+				this.update.bind(this));
 	}
 }
 
 riot.ComponentSet = Class.extend(riot.AbstractComponentCollection, {
 	initialize: function(el) {
 		this.SUPER(el);
+		this.id = null;
 		riot.adoptFloatAndClear(this.element);
 		this.setDirty(this.getComponents().pluck('element').any(function(e) {
 			return e.readAttribute('riot:dirty') != null;
@@ -511,14 +533,8 @@ riot.ComponentSet = Class.extend(riot.AbstractComponentCollection, {
 		riot.adoptFloatAndClear(this.element);
 	},
 
-	publishChanges: function() {
-		ComponentEditor.publishContainers(this.getComponents().pluck('id'),
-				this.publishWidget.destroy.bind(this.publishWidget));
-	},
-
-	discardChanges: function() {
-		ComponentEditor.discardContainers(this.getComponents().pluck('id'),
-				this.update.bind(this));
+	getDirtyContainerIds: function() {
+		return this.SUPER().concat(this.getComponents().pluck('id')).compact().uniq();
 	}
 });
 
@@ -611,26 +627,8 @@ riot.ComponentList = Class.extend(riot.AbstractComponentCollection, {
 		if (this.minComponents > 0 && this.getComponents().length == this.minComponents) {
 			this.remove(false);
 		}
-	},
-
-	setDirty: function(dirty) {
-		if (this.parentList) {
-			this.parentList.setDirty(dirty);
-		}
-		else {
-			this.dirty = dirty;
-			riot.toolbar.dirtyCheck(dirty);
-		}
-	},
-
-	publishChanges: function() {
-		ComponentEditor.publishList(this.id,
-				this.publishWidget.destroy.bind(this.publishWidget));
-	},
-
-	discardChanges: function() {
-		ComponentEditor.discardList(this.id, this.update.bind(this));
 	}
+
 });
 
 riot.createComponentList = function(el) {

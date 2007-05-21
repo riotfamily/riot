@@ -252,21 +252,21 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		}
 	}
 
-	/**
-	 * Published all changes made to the lists identified by the given IDs.
-	 */
-	public void publishLists(Long[] listIds) {
-		for (int i = 0; i < listIds.length; i++) {
-			publishList(listIds[i]);
+	public void publish(Long listId, Long[] containerIds) {
+		if (listId != null) {
+			publishList(listId);
+		}
+		if (containerIds != null) {
+			publishContainers(containerIds);
 		}
 	}
 
-	/**
-	 * Discards all changes made to the lists identified by the given IDs.
-	 */
-	public void discardLists(Long[] listIds) {
-		for (int i = 0; i < listIds.length; i++) {
-			discardList(listIds[i]);
+	public void discard(Long listId, Long[] containerIds) {
+		if (listId != null) {
+			discardList(listId);
+		}
+		if (containerIds != null) {
+			discardContainers(containerIds);
 		}
 	}
 
@@ -274,7 +274,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 * Discards all changes made to the VersionContainers identified by the
 	 * given IDs.
 	 */
-	public void discardContainers(Long[] ids) {
+	private void discardContainers(Long[] ids) {
 		for (int i = 0; i < ids.length; i++) {
 			VersionContainer container = dao.loadVersionContainer(ids[i]);
 			dao.discardContainer(container);
@@ -285,28 +285,16 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 * Discards all changes made to the ComponentList identified by the
 	 * given ID.
 	 */
-	public void discardList(Long listId) {
+	private void discardList(Long listId) {
 		ComponentList componentList = dao.loadComponentList(listId);
 		dao.discardList(componentList);
-	}
-
-	/**
-	 * Discards all changes made to the list with the specified ID and returns
-	 * the HTML of the live version. A new preview version is implicitly
-	 * created, which is why the method name might be a little bit confusing.
-	 */
-	public String discardListAndGetPreviewHtml(String controllerId, Long listId)
-			throws RequestContextExpiredException {
-
-		discardList(listId);
-		return getPreviewListHtml(controllerId, listId);
 	}
 
 	/**
 	 * Publishes all changes made to the VersionContainers identified by the
 	 * given IDs.
 	 */
-	public void publishContainers(Long[] ids) {
+	private void publishContainers(Long[] ids) {
 		for (int i = 0; i < ids.length; i++) {
 			VersionContainer container = dao.loadVersionContainer(ids[i]);
 			dao.publishContainer(container);
@@ -316,7 +304,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	/**
 	 * Publishes the ComponentList identified by the given ID.
 	 */
-	public void publishList(Long listId) {
+	private void publishList(Long listId) {
 		ComponentList componentList = dao.loadComponentList(listId);
 
 		if (AccessController.isGranted("publish", componentList, null)) {
