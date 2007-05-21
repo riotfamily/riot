@@ -94,7 +94,7 @@ public class PageNamespaceHandler extends NamespaceHandlerSupport {
 		private static final String PAGE = "page";
 		private static final String[] PAGE_DEFINITION_ATTRIBUTES = {
 			"path-component", "handler-name", "child-handler-name",
-			"hidden", "publish", "system-node", "folder"
+			"hidden", "publish", "systemNode=system", "folder"
 		};
 		private static final String PAGE_DEFINITION_CHILDREN_PROPERTY = "children";
 
