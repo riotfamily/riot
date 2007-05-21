@@ -27,15 +27,16 @@ RiotTextArea.prototype = {
 	autoResize: function(maxHeight) {
 		if (this.autoSize) return;
 		this.maxHeight = maxHeight || 300;
-		var padding = parseInt(this.el.getStyle('paddingTop')) + parseInt(this.el.getStyle('paddingBottom')) 
-				+ parseInt(this.el.getStyle('borderBottomWidth')) + parseInt(this.el.getStyle('borderTopWidth'));
-
-		this.maxHeight -= (this.maxHeight - padding) % parseInt(this.el.getStyle('lineHeight'));
+        var border = parseInt(this.el.getStyle('borderTopWidth')) + parseInt(this.el.getStyle('borderBottomWidth'));
+		var padding = parseInt(this.el.getStyle('paddingTop')) + parseInt(this.el.getStyle('paddingBottom'));
+		this.maxHeight -= (this.maxHeight - border - padding) % parseInt(this.el.getStyle('lineHeight'));
 		this.measure = RBuilder.node('div').cloneStyle(this.el, [
 			'paddingTop', 'paddingRight', 'paddingBottom', 
-			'paddingLeft', 'lineHeight', 'fontSize', 'fontFamily'
+			'paddingLeft', 'lineHeight', 'fontSize', 'fontFamily',
+            'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth'
 		]).setStyle({
 			visibility: 'hidden',
+            borderStyle: 'solid',
 			position: 'absolute'
 		});
 		this.el.surroundWith(RBuilder.node('div').setStyle({position: 'relative'})).prependChild(this.measure);

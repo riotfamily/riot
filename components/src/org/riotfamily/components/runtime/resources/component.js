@@ -33,16 +33,16 @@ riot.Component.prototype = {
 			this.element.disableHandlers('onclick');
 			Event.observe(this.element, 'click', riot.stopEvent, true);
 			Event.observe(this.element, 'mouseup', this.handlers[mode]);
-			Event.observe(this.element, 'mouseover', this.onMouseOver);
-			Event.observe(this.element, 'mouseout', riot.outline.scheduleHide);
+			Event.observe(this.element, 'mouseover', this.onMouseOver, true);
+			Event.observe(this.element, 'mouseout', riot.outline.scheduleHide, true);
 		}
 		else {
 			if (this.mode) {
 				this.element.restoreHandlers('onclick');
 				Event.stopObserving(this.element, 'click', riot.stopEvent, true);
 				Event.stopObserving(this.element, 'mouseup', this.handlers[this.mode]);
-				Event.stopObserving(this.element, 'mouseover', this.onMouseOver);
-				Event.stopObserving(this.element, 'mouseout', riot.outline.scheduleHide);
+				Event.stopObserving(this.element, 'mouseover', this.onMouseOver, true);
+				Event.stopObserving(this.element, 'mouseout', riot.outline.scheduleHide, true);
 			}
 		}
 		this.mode = mode;

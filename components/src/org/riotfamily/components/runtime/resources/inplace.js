@@ -7,7 +7,7 @@ riot.outline = {
 	show: function(el, onclick, excludes) {
 		riot.outline.cancelHide();
 		if (riot.outline.suspended) return;
-		riot.outline.element.copyPosFrom(el, {offsetWidth: -4, offsetHeight: -4}).update().show().onclick = onclick;
+		riot.outline.element.hide().copyPosFrom(el, {offsetWidth: -4, offsetHeight: -4}).update().show().onclick = onclick;
 		if (excludes) {
 			excludes.each(function(e) {
 				RBuilder.node('div')
@@ -18,7 +18,7 @@ riot.outline = {
 		}
 	},
 
-	hide: function() {
+	hide: function(ev) {
 		riot.outline.element.hide().onclick = null;
 	},
 
