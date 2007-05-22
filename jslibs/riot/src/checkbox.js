@@ -6,13 +6,13 @@ RiotCheckboxGroup.prototype = {
 		el.options = this.el.getElementsBySelector('input');
 		el.options.each(function(cb) {
 			el.form = cb.form;
-			cb.observe('click', handler.bind(this, cb));
+			cb.observe('click', handler.bind(el, cb));
 		});
 	},
 	onclick: function(cb) {
 		cb.selected = cb.checked;
-		if (this.el._onchange) {
-			this.el._onchange(new ChangeEvent(this.el));
+		if (this._onchange) {
+			this._onchange(new ChangeEvent(this));
 		}
 	}
 }
@@ -27,21 +27,21 @@ RiotImageCheckbox.prototype = {
 		$$('label[for="' + id + '"]').each(function(label) {
 			label.observe('click', handler);
 		});
-		
+
 		this.wrapper = document.createElement('span');
 		el.id = id + '-checkbox';
 		this.wrapper.id = id;
 		this.wrapper.className = 'imageCheckbox';
-		
+
 		el.parentNode.insertBefore(this.wrapper, el);
 		el.remove();
 		this.wrapper.appendChild(el);
-		
+
 		var image = document.createElement(src ? 'img' : 'div');
 		image.className = className || 'image';
 		image.src = src;
 		this.wrapper.appendChild(image);
-		
+
 		if (this.checkbox.checked) {
 			Element.addClassName(this.wrapper, 'checked');
 		}
@@ -57,4 +57,3 @@ RiotImageCheckbox.prototype = {
 		}
 	}
 }
- 
