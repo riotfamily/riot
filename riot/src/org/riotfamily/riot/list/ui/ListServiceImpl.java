@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.ui;
 
@@ -53,27 +53,28 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public class ListServiceImpl implements ListService, MessageSourceAware, 
+public class ListServiceImpl implements ListService, MessageSourceAware,
 		ConfigurationEventListener {
-	
+
 	private static final Log log = LogFactory.getLog(ListServiceImpl.class);
 
 	private EditorRepository editorRepository;
-	
+
 	private MessageSource messageSource;
-	
+
 	private AdvancedMessageCodesResolver messageCodesResolver;
-	
+
 	private FormContextFactory formContextFactory;
-	
+
 	private Collection sessions = new ArrayList();
-	
+
 	public void setMessageCodesResolver(AdvancedMessageCodesResolver codesResolver) {
 		this.messageCodesResolver = codesResolver;
 	}
 
 	public void setEditorRepository(EditorRepository editorRepository) {
 		this.editorRepository = editorRepository;
+		editorRepository.addListener(this);
 		editorRepository.getListRepository().addListener(this);
 		editorRepository.getFormRepository().addListener(this);
 	}
@@ -86,14 +87,14 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 		this.formContextFactory = formContextFactory;
 	}
 
-	public ListSession getOrCreateListSession(String editorId, String parentId, 
+	public ListSession getOrCreateListSession(String editorId, String parentId,
 			String choose, HttpServletRequest request) {
-		
+
 		String key = "list-" + editorId + "#" + parentId;
 		if (choose != null) {
 			key += "-choose:" + choose;
 		}
-		
+
 		ListSession listSession = null;
 		try {
 			listSession = getListSession(key, request);
@@ -104,32 +105,32 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 		if (listSession == null) {
 			ListDefinition listDef = editorRepository.getListDefinition(editorId);
 			Assert.notNull(listDef, "No such ListDefinition: " + editorId);
-			
-			MessageResolver messageResolver = new MessageResolver(messageSource, 
+
+			MessageResolver messageResolver = new MessageResolver(messageSource,
 					messageCodesResolver, RequestContextUtils.getLocale(request));
-			
-			listSession = new ListSession(key, listDef, parentId, messageResolver, 
+
+			listSession = new ListSession(key, listDef, parentId, messageResolver,
 					request.getContextPath(), editorRepository.getFormRepository(),
 					formContextFactory);
-			
+
 			if (choose != null) {
-				listSession.setChooserTarget(editorRepository.getEditorDefinition(choose)); 
+				listSession.setChooserTarget(editorRepository.getEditorDefinition(choose));
 			}
-			
+
 			HttpSession httpSession = request.getSession();
 			httpSession.setAttribute(key, listSession);
 			sessions.add(listSession);
-			
+
 			SessionReferenceRemover.removeFromCollectionOnInvalidation(
 					httpSession, sessions, listSession);
-			
+
 		}
 		return listSession;
 	}
-	
+
 	protected ListSession getListSession(String key, HttpServletRequest request)
 			throws ListSessionExpiredException {
-		
+
 		ListSession session = (ListSession) request.getSession().getAttribute(key);
 		if (session != null) {
 			//Trigger a modification check:
@@ -139,9 +140,9 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 			}
 		}
 		throw new ListSessionExpiredException();
-		
+
 	}
-	
+
 	public void beanReconfigured(ConfigurableBean bean) {
 		Iterator it = sessions.iterator();
 		while (it.hasNext()) {
@@ -151,36 +152,36 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 			it.remove();
 		}
 	}
-	
+
 	public ListModel getModel(String key,HttpServletRequest request)
 			throws ListSessionExpiredException {
-		
+
 		return getListSession(key, request).getModel(request);
 	}
-		
+
 	public String getFilterFormHtml(String key,	HttpServletRequest request)
 			throws ListSessionExpiredException {
-		
+
 		return getListSession(key, request).getFilterFormHtml();
 	}
 
 	public List getListCommands(String key,	HttpServletRequest request)
 			throws ListSessionExpiredException {
-		
+
 		return getListSession(key, request).getListCommands(request);
 	}
-	
-	public List getFormCommands(String key, String objectId, 
+
+	public List getFormCommands(String key, String objectId,
 			HttpServletRequest request) throws ListSessionExpiredException {
-		
+
 		return getListSession(key, request).getFormCommands(objectId, request);
 	}
-	
-	public CommandResult execCommand(String key, ListItem item, 
-			String commandId, boolean confirmed, 
+
+	public CommandResult execCommand(String key, ListItem item,
+			String commandId, boolean confirmed,
 			HttpServletRequest request, HttpServletResponse response)
 			throws ListSessionExpiredException {
-		
+
 		return getListSession(key, request).execCommand(
 				item, commandId, confirmed, request, response);
 	}
@@ -189,16 +190,16 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 			throws ListSessionExpiredException {
 		return getListSession(key, request).filter(filter, request);
 	}
-	
+
 	public ListModel gotoPage(String key, int page, HttpServletRequest request)
 			throws ListSessionExpiredException {
-		
+
 		return getListSession(key, request).gotoPage(page, request);
 	}
 
-	public ListModel sort(String key, String property, 
+	public ListModel sort(String key, String property,
 			HttpServletRequest request) throws ListSessionExpiredException {
-		
+
 		return getListSession(key, request).sort(property, request);
 	}
 }
