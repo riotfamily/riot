@@ -30,6 +30,8 @@ import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
+import org.riotfamily.pages.Site;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 /**
  * DAO interface for {@link Page pages} and {@link PageAlias aliases}.
@@ -86,9 +88,9 @@ public interface PageDao {
 	 */
 	public List findPagesForHandler(String handlerName, Locale locale);
 
-	public PageNode getRootNode();
+	public PageNode getRootNode(Site site);
 
-	public void saveRootPage(Page page);
+	public void savePage(Site site, Page page);
 
 	public void savePage(Page parent, Page child);
 
@@ -101,5 +103,19 @@ public interface PageDao {
 	public void updateNode(PageNode node);
 
 	public void moveNode(PageNode node, PageNode newParent);
+
+	public Site loadSite(Long id);
+
+	public Site getSite(String name);
+
+	public List findSites();
+
+	public void saveSite(Site site);
+
+	public void updateSite(Site site);
+
+	public void deleteSite(Site site);
+
+	public Site getDefaultSite();
 
 }

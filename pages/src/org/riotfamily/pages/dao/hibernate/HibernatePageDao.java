@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.dao.hibernate;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,12 +32,13 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
+import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.AbstractPageDao;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
@@ -61,32 +63,59 @@ public class HibernatePageDao extends AbstractPageDao {
 		this.hibernate = new HibernateHelper(sessionFactory, "pages");
 	}
 
-	public Page loadPage(Long id) {
-		return (Page) hibernate.load(Page.class, id);
+	protected Object loadObject(Class clazz, Serializable id) {
+		return hibernate.load(clazz, id);
+	}
+
+	protected void saveObject(Object object) {
+		hibernate.save(object);
+	}
+
+	protected void updateObject(Object object) {
+		hibernate.update(object);
+		hibernate.flush(); //REVIST
+	}
+
+	protected void deleteObject(Object object) {
+		hibernate.delete(object);
+	}
+
+	public List findSites() {
+		Criteria c = hibernate.createCacheableCriteria(Site.class);
+		return hibernate.list(c);
+	}
+
+	public Site getSite(String name) {
+		Criteria c = hibernate.createCacheableCriteria(Site.class);
+		c.add(Restrictions.eq("name", name));
+		Site site = (Site) hibernate.uniqueResult(c);
+		if (site == null) {
+			site = new Site();
+			site.setName(name);
+			site.setEnabled(true);
+			saveSite(site);
+		}
+		return site;
+	}
+
+	public PageNode getRootNode(Site site) {
+		Criteria c = hibernate.createCacheableCriteria(PageNode.class);
+		c.add(Restrictions.isNull("parent"));
+		c.add(Restrictions.eq("site", site));
+		return (PageNode) hibernate.uniqueResult(c);
 	}
 
 	public Page findPage(PageLocation location) {
 		Criteria c = hibernate.createCacheableCriteria(Page.class);
-		c.add(Expression.eq("path", location.getPath()));
+		c.createCriteria("node").createCriteria("site").add(Restrictions.eq("name", location.getSiteName()));
+		c.add(Restrictions.eq("path", location.getPath()));
 		HibernateUtils.addEqOrNull(c, "locale", location.getLocale());
 		return (Page) hibernate.uniqueResult(c);
 	}
 
-	public PageNode getRootNode() {
-		Criteria c = hibernate.createCacheableCriteria(PageNode.class)
-				.add(Expression.isNull("parent"));
-
-		PageNode root = (PageNode) c.uniqueResult();
-		if (root == null) {
-			root = new PageNode();
-			hibernate.save(root);
-		}
-		return root;
-	}
-
 	public PageNode findNodeForHandler(String handlerName) {
 		Criteria c = hibernate.createCacheableCriteria(PageNode.class)
-				.add(Expression.eq("handlerName", handlerName));
+				.add(Restrictions.eq("handlerName", handlerName));
 
 		return (PageNode) hibernate.uniqueResult(c);
 	}
@@ -112,43 +141,14 @@ public class HibernatePageDao extends AbstractPageDao {
 		return query;
 	}
 
-	public void updateNode(PageNode node) {
-		hibernate.update(node);
-		hibernate.flush();
-	}
-
-	protected void deleteNode(PageNode node) {
-		hibernate.delete(node);
-	}
-
 	public void refreshPage(Page page) {
 		hibernate.refresh(page);
-	}
-
-	protected void updatePageWithoutChecks(Page page) {
-		hibernate.update(page);
 	}
 
 	public PageAlias findPageAlias(PageLocation location) {
 		return (PageAlias) hibernate.get(PageAlias.class, location);
 	}
 
-	protected void deleteAlias(PageLocation location) {
-		PageAlias alias = findPageAlias(location);
-		if (alias != null) {
-			log.info("Deleting " + alias);
-			hibernate.delete(alias);
-		}
-	}
-
-	protected void createAlias(Page page, PageLocation location) {
-		if (page != null) {
-			deleteAlias(new PageLocation(page));
-		}
-		PageAlias alias = new PageAlias(page, location);
-		log.info("Creating " + alias);
-		hibernate.save(alias);
-	}
 
 	protected void clearAliases(Page page) {
 		log.info("Clearing aliases for " + page);

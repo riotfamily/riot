@@ -4,24 +4,24 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.riot;
+package org.riotfamily.pages.riot.dao;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,6 +29,7 @@ import java.util.Locale;
 
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageNode;
+import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.ListParams;
@@ -40,11 +41,11 @@ import org.springframework.dao.DataAccessException;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PageRiotDao implements ParentChildDao, SwappableItemDao, 
+public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 		CutAndPasteEnabledDao {
 
 	private PageDao pageDao;
-	
+
 	public PageRiotDao(PageDao pageDao) {
 		this.pageDao = pageDao;
 	}
@@ -55,7 +56,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 		if (parentPage != null) {
 			return parentPage;
 		}
-		return page.getLocale();
+		return new SiteLocale(page.getNode().getSite(), page.getLocale());
 	}
 
 	public void delete(Object entity, Object parent) throws DataAccessException {
@@ -67,7 +68,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 		return Page.class;
 	}
 
-	public int getListSize(Object parent, ListParams params) 
+	public int getListSize(Object parent, ListParams params)
 			throws DataAccessException {
 
 		return -1;
@@ -78,16 +79,25 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 		return page.getId().toString();
 	}
 
-	public Collection list(Object parent, ListParams params) 
+	public Collection list(Object parent, ListParams params)
 			throws DataAccessException {
-		
+
 		if (parent instanceof Page) {
 			Page parentPage = (Page) parent;
 			return parentPage.getChildPages(true);
 		}
 		else {
-			Locale locale = (Locale) parent;
-			return pageDao.getRootNode().getChildPages(locale, true);
+			Site site = null;
+			Locale locale = null;
+			if (parent instanceof SiteLocale) {
+				SiteLocale siteLocale = (SiteLocale) parent;
+				site = siteLocale.getSite();
+				locale = siteLocale.getLocale();
+			}
+			else {
+				site = pageDao.getDefaultSite();
+			}
+			return pageDao.getRootNode(site).getChildPages(locale, true);
 		}
 	}
 
@@ -102,30 +112,39 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 			pageDao.savePage(parentPage, page);
 		}
 		else {
-			Locale locale = (Locale) parent;
+			Site site = null;
+			Locale locale = null;
+			if (parent instanceof SiteLocale) {
+				SiteLocale siteLocale = (SiteLocale) parent;
+				site = siteLocale.getSite();
+				locale = siteLocale.getLocale();
+			}
+			else {
+				site = pageDao.getDefaultSite();
+			}
 			page.setLocale(locale);
-			pageDao.saveRootPage(page);
+			pageDao.savePage(site, page);
 		}
 	}
 
 	public void update(Object entity) throws DataAccessException {
 		pageDao.updatePage((Page) entity);
 	}
-	
-	public void swapEntity(Object entity, Object parent, ListParams params, 
+
+	public void swapEntity(Object entity, Object parent, ListParams params,
 			int swapWith) {
-		
+
 		Page page = (Page) entity;
 		PageNode node = page.getNode();
-		PageNode parentNode = node.getParent(); 
+		PageNode parentNode = node.getParent();
 		List nodes = parentNode.getChildNodes();
-		
+
 		int pos = nodes.indexOf(node);
 		Object otherNode = nodes.get(swapWith);
-    	
+
     	nodes.remove(node);
     	nodes.remove(otherNode);
-    	
+
     	if (pos < swapWith) {
     		nodes.add(pos, otherNode);
     		nodes.add(swapWith, node);
@@ -137,21 +156,29 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 
     	pageDao.updateNode(parentNode);
 	}
-	
+
 	public void addChild(Object entity, Object parent) {
 		Page page = (Page) entity;
 		PageNode node = page.getNode();
-		PageNode parentNode;
+		PageNode parentNode = null;
 		if (parent instanceof Page) {
 			Page parentPage = (Page) parent;
 			parentNode = parentPage.getNode();
 		}
 		else {
-			parentNode = pageDao.getRootNode();
+			Site site = null;
+			if (parent instanceof SiteLocale) {
+				SiteLocale siteLocale = (SiteLocale) parent;
+				site = siteLocale.getSite();
+			}
+			else {
+				site = pageDao.getDefaultSite();
+			}
+			parentNode = pageDao.getRootNode(site);
 		}
 		pageDao.moveNode(node, parentNode);
 	}
-	
+
 	public void removeChild(Object entity, Object parent) {
 	}
 

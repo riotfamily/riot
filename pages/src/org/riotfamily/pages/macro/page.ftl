@@ -31,7 +31,7 @@
 </#function>
 
 <#function visible page>
-	<#return !page.node.hidden && (page.published || componentMacroHelper.isEditMode()) />
+	<#return !page.node.hidden && (page.enabled || componentMacroHelper.isEditMode()) />
 </#function>
 
 <#function property page, key>

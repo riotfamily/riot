@@ -46,6 +46,8 @@ public class PageNode {
 
 	private PageNode parent;
 
+	private Site site;
+
 	private List childNodes;
 
 	private Set pages;
@@ -81,6 +83,14 @@ public class PageNode {
 		this.parent = parent;
 	}
 
+	public Site getSite() {
+		return this.site;
+	}
+
+	public void setSite(Site site) {
+		this.site = site;
+	}
+
 	public Set getPages() {
 		return pages;
 	}
@@ -99,6 +109,7 @@ public class PageNode {
 	 */
 	public void addChildNode(PageNode node) {
 		node.setParent(this);
+		node.setSite(site);
 		if (node.getHandlerName() == null) {
 			node.setHandlerName(childHandlerName);
 		}

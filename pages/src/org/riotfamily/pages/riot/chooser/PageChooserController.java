@@ -37,6 +37,7 @@ import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageLocation;
+import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageLocationResolver;
 import org.springframework.util.StringUtils;
@@ -86,6 +87,7 @@ public class PageChooserController implements TransactionalController {
 	public ModelAndView handleRequest(HttpServletRequest request,
 		HttpServletResponse response) throws Exception {
 
+		Site site = pageDao.getDefaultSite(); //FIXME
 		Locale locale = getLocale(request);
 
 		HashMap model = new HashMap();
@@ -95,7 +97,7 @@ public class PageChooserController implements TransactionalController {
 		model.put("locales", locales);
 		model.put("selectedLocale", locale);
 		model.put("pages", createpageLinks(
-				pageDao.getRootNode().getChildPages(locale)));
+				pageDao.getRootNode(site).getChildPages(locale)));
 
 		return new ModelAndView(viewName, model);
 	}

@@ -26,6 +26,7 @@ package org.riotfamily.pages.riot.command;
 import java.util.Locale;
 
 import org.riotfamily.pages.Page;
+import org.riotfamily.pages.riot.dao.SiteLocale;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.springframework.util.ObjectUtils;
 
@@ -48,8 +49,8 @@ public final class PageCommandUtils {
 		if (parent instanceof Page) {
 			locale = ((Page) parent).getLocale();
 		}
-		else if (parent instanceof Locale) {
-			locale = (Locale) parent;
+		else if (parent instanceof SiteLocale) {
+			locale = ((SiteLocale) parent).getLocale();
 		}
 		return locale;
 	}

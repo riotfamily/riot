@@ -14,6 +14,8 @@
 		<!-- We have to cascade updates so that the parent is reattached -->
 		<many-to-one name="parent" insert="false" update="false" cascade="save-update" />
 
+		<many-to-one name="site" />
+
 		<!-- We must not use all-delete-orphan here, because otherwise nodes can not be moved to another parent -->
 		<list name="childNodes" cascade="all">
 			<key column="parent" />
@@ -53,6 +55,21 @@
 			<key-property name="locale" column="locale" />
 		</composite-id>
 		<many-to-one name="page" />
+	</class>
+
+	<class name="Site" table="riot_sites">
+		<cache usage="nonstrict-read-write" region="pages" />
+		<id name="id" access="field">
+			<generator class="native" />
+		</id>
+		<property name="name" unique="true" />
+		<property name="enabled" />
+		<list name="locales" table="riot_site_locales">
+			<cache usage="nonstrict-read-write" region="pages" />
+			<key column="site" />
+			<index column="pos" />
+			<element type="locale" />
+		</list>
 	</class>
 
 </hibernate-mapping>

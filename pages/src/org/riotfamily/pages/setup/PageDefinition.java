@@ -31,6 +31,7 @@ import java.util.Locale;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageNode;
+import org.riotfamily.pages.Site;
 
 /**
  * @author flx
@@ -98,14 +99,22 @@ public class PageDefinition {
 		this.folder = folder;
 	}
 
-	public PageNode createNode(Collection locales) {
+	public PageNode createNode(Site site, Collection locales) {
 		PageNode node = new PageNode();
+		node.setSite(site);
 		node.setHandlerName(handlerName);
 		node.setSystemNode(systemNode);
 		node.setChildHandlerName(childHandlerName);
 		node.setHidden(hidden);
 		createPages(node, locales);
-		createChildNodes(node, locales);
+		if (children != null) {
+			Iterator it = children.iterator();
+			while (it.hasNext()) {
+				PageDefinition childDefinition = (PageDefinition) it.next();
+				PageNode childNode = childDefinition.createNode(site, locales);
+				node.addChildNode(childNode);
+			}
+		}
 		return node;
 	}
 
@@ -117,17 +126,6 @@ public class PageDefinition {
 			page.setPublished(published);
 			page.setFolder(folder);
 			node.addPage(page);
-		}
-	}
-
-	private void createChildNodes(PageNode node, Collection locales) {
-		if (children != null) {
-			Iterator it = children.iterator();
-			while (it.hasNext()) {
-				PageDefinition childDefinition = (PageDefinition) it.next();
-				PageNode childNode = childDefinition.createNode(locales);
-				node.addChildNode(childNode);
-			}
 		}
 	}
 

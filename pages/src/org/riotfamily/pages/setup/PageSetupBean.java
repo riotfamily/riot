@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.setup;
 
@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.pages.PageNode;
+import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -41,6 +42,8 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @since 6.5
  */
 public class PageSetupBean implements InitializingBean {
+
+	private String siteName = Site.DEFAULT_NAME;
 
 	private Collection locales;
 
@@ -78,27 +81,16 @@ public class PageSetupBean implements InitializingBean {
 	}
 
 	protected void createNodes() {
-		PageNode rootNode = pageDao.getRootNode();
+		Site site = pageDao.getSite(siteName);
+		PageNode rootNode = pageDao.getRootNode(site);
 		Iterator it = definitions.iterator();
 		while (it.hasNext()) {
 			PageDefinition definition = (PageDefinition) it.next();
-			PageNode childNode = definition.createNode(locales);
+			PageNode childNode = definition.createNode(site, locales);
 			rootNode.addChildNode(childNode);
 		}
 		pageDao.updateNode(rootNode);
 	}
 
-
-	/*
-	PageNode parentNode;
-	String parentHandler = definition.getParentHandlerName();
-
-	if (parentHandler != null) {
-		parentNode = pageDao.findNodeForHandler(parentHandler);
-	}
-	else {
-		parentNode = pageDao.getRootNode();
-	}
-	 */
 
 }

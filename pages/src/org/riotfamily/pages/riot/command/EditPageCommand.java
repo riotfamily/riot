@@ -27,11 +27,10 @@ import java.util.Locale;
 
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.dao.PageDao;
-import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.EditCommand;
-import org.riotfamily.riot.list.command.result.GotoUrlResult;
+import org.riotfamily.riot.list.command.result.ShowListResult;
 
 public class EditPageCommand extends EditCommand {
 
@@ -60,10 +59,8 @@ public class EditPageCommand extends EditCommand {
 		}
 		Page page = (Page) context.getBean();
 		Locale locale = PageCommandUtils.getParentLocale(context);
-		Page translation = pageDao.addTranslation(page, locale);
-		EditorDefinition def = context.getListDefinition().getDisplayDefinition();
-		return new GotoUrlResult(context, def.getEditorUrl(
-				translation.getId().toString(), context.getParentId()));
+		pageDao.addTranslation(page, locale);
+		return new ShowListResult(context);
 	}
 
 }

@@ -36,6 +36,7 @@ import org.riotfamily.components.editor.ComponentFormRegistry;
 import org.riotfamily.components.editor.EditModeUtils;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageLocation;
+import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.pages.mapping.PageLocationResolver;
@@ -87,7 +88,8 @@ public class PageMacroHelper {
 	}
 
 	public Collection getTopLevelPages(Locale locale) {
-		return pageDao.getRootNode().getChildPages(locale);
+		Site site = getCurrentPage().getNode().getSite();
+		return pageDao.getRootNode(site).getChildPages(locale);
 	}
 
 	public String getUrl(Page page) {

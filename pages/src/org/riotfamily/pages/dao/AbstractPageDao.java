@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.dao;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -32,8 +33,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.pages.Page;
+import org.riotfamily.pages.PageAlias;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
+import org.riotfamily.pages.Site;
 import org.riotfamily.pages.component.PageComponentListLocator;
 import org.springframework.util.ObjectUtils;
 
@@ -54,13 +57,31 @@ public abstract class AbstractPageDao implements PageDao {
 		this.componentDao = componentDao;
 	}
 
-	public void saveRootPage(Page page) {
-		savePage(getRootNode(), page);
+	protected abstract Object loadObject(Class clazz, Serializable id);
+
+	protected abstract void saveObject(Object object);
+
+	protected abstract void updateObject(Object object);
+
+	protected abstract void deleteObject(Object object);
+
+
+	public Page loadPage(Long id) {
+		return (Page) loadObject(Page.class, id);
+	}
+
+	public Site loadSite(Long id) {
+		return (Site) loadObject(Site.class, id);
 	}
 
 	public void savePage(Page parent, Page page) {
 		page.setLocale(parent.getLocale());
 		savePage(parent.getNode(), page);
+	}
+
+	public void savePage(Site site, Page page) {
+		PageNode rootNode = getRootNode(site);
+		savePage(rootNode, page);
 	}
 
 	private void savePage(PageNode parentNode, Page page) {
@@ -91,7 +112,7 @@ public abstract class AbstractPageDao implements PageDao {
 	}
 
 	public void updatePage(Page page) {
-		updatePageWithoutChecks(page);
+		updateObject(page);
 		String oldPath = page.getPath();
 		String newPath = page.buildPath();
 		if (!ObjectUtils.nullSafeEquals(oldPath, newPath)) {
@@ -101,6 +122,10 @@ public abstract class AbstractPageDao implements PageDao {
 			createAlias(page, oldLocation);
 			updatePaths(page.getChildPages());
 		}
+	}
+
+	public void updateNode(PageNode node) {
+			updateObject(node);
 	}
 
 	public void moveNode(PageNode node, PageNode newParent) {
@@ -119,18 +144,30 @@ public abstract class AbstractPageDao implements PageDao {
 			PageLocation oldLocation = new PageLocation(page);
 			page.setPath(page.buildPath());
 			createAlias(page, oldLocation);
-			updatePageWithoutChecks(page);
+			updateObject(page);
 			updatePaths(page.getChildPages());
 		}
 	}
 
 	protected abstract void clearAliases(Page page);
 
-	protected abstract void createAlias(Page page, PageLocation location);
+	protected void deleteAlias(PageLocation location) {
+		PageAlias alias = findPageAlias(location);
+		if (alias != null) {
+			log.info("Deleting " + alias);
+			deleteObject(alias);
+		}
+	}
 
-	protected abstract void deleteAlias(PageLocation location);
+	protected void createAlias(Page page, PageLocation location) {
+		if (page != null) {
+			deleteAlias(new PageLocation(page));
+		}
+		PageAlias alias = new PageAlias(page, location);
+		log.info("Creating " + alias);
+		saveObject(alias);
+	}
 
-	protected abstract void updatePageWithoutChecks(Page page);
 
 	public void deletePage(Page page) {
 		log.info("Deleting page " + page);
@@ -159,10 +196,35 @@ public abstract class AbstractPageDao implements PageDao {
 				parentNode.getChildNodes().remove(node);
 				updateNode(parentNode);
 			}
-			deleteNode(node);
+			deleteObject(node);
 		}
 	}
 
-	protected abstract void deleteNode(PageNode node);
+	public Site getDefaultSite() {
+		return getSite(Site.DEFAULT_NAME);
+	}
+
+	public void saveSite(Site site) {
+		saveObject(site);
+		PageNode rootNode = new PageNode();
+		rootNode.setSite(site);
+		saveObject(rootNode);
+	}
+
+	public void updateSite(Site site) {
+		updateObject(site);
+	}
+
+	public void deleteSite(Site site) {
+		PageNode rootNode = getRootNode(site);
+		Iterator it = rootNode.getPages().iterator();
+		while (it.hasNext()) {
+			Page page = (Page) it.next();
+			deletePage(page);
+		}
+		deleteObject(site);
+	}
+
+
 
 }

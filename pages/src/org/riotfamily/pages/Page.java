@@ -225,6 +225,10 @@ public class Page {
 		this.published = published;
 	}
 
+	public boolean isEnabled() {
+		return published && getNode().getSite().isLocaleEnabled(locale);
+	}
+
 	public String toString() {
 		return locale + ":" + path;
 	}

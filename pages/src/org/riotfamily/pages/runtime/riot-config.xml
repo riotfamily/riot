@@ -15,17 +15,38 @@
 		http://www.riotfamily.org/schema/forms/form-config
 		http://www.riotfamily.org/schema/forms/form-config.xsd">
 
-	<ed:list id="sitemap" list-ref="locales" icon="sitemap">
-		<ed:tree id="pages" list-ref="pages" icon="sitemap">
-			<ed:form form-ref="page" label-property="pathComponent" />
-		</ed:tree>
+	<ed:list id="sitemap" list-ref="sites" icon="sitemap">
+		<ed:list list-ref="locales">
+			<ed:tree list-ref="pages">
+				<ed:form form-ref="page" label-property="pathComponent" />
+			</ed:tree>
+		</ed:list>
 	</ed:list>
+
+	<list:list id="sites">
+		<list:dao ref="siteRiotDao" />
+		<list:columns>
+			<list:column property="name" />
+			<list:command id="stepInto" />
+		</list:columns>
+	</list:list>
+
+	<list:list id="editableSites">
+		<list:dao ref="siteRiotDao" />
+		<list:columns>
+			<list:column property="name" />
+			<list:column property="enabled" renderer="cssClassRenderer" />
+			<list:command id="edit" />
+			<list:command id="delete" />
+		</list:columns>
+		<list:command id="add" />
+	</list:list>
 
 	<list:list id="locales">
 		<list:dao ref="localeRiotDao" />
 		<list:columns>
-			<list:column renderer="countryFlagRenderer" />
-			<list:column property="displayName" />
+			<list:column property="locale" renderer="countryFlagRenderer" />
+			<list:column property="locale.displayName" />
 			<list:command id="stepInto" />
 		</list:columns>
 	</list:list>
@@ -47,6 +68,16 @@
 		<list:command id="add"/>
 		<list:command id="paste" />
 	</list:list>
+
+	<form:form id="site" bean-class="org.riotfamily.pages.Site">
+		<form:group label-key="site.general">
+			<form:textfield bind="name" required="true" max-length="255" />
+			<form:checkbox bind="enabled" default="checked" />
+		</form:group>
+		<form:checkbox-group bind="locales" label-property="displayName">
+			<form:model ref="localesOptionsModel" />
+		</form:checkbox-group>
+	</form:form>
 
 	<form:form id="page" bean-class="org.riotfamily.pages.Page">
 		<form:group label-key="page.location">

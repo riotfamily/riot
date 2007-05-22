@@ -81,8 +81,11 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 		if (page == null && wildcardsEnabled) {
 			String path = location.getPath();
 			int i = path.lastIndexOf('/');
+
 			PageLocation wildcardLocation = new PageLocation(
-					path.substring(0, i) + "/*", location.getLocale());
+					location.getSiteName(),
+					path.substring(0, i) + "/*",
+					location.getLocale());
 
 			page = pageDao.findPage(wildcardLocation);
 			if (page != null) {
@@ -127,7 +130,7 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 	}
 
 	private boolean isRequestable(Page page) {
-		return page.isPublished() || AccessController.isAuthenticatedUser();
+		return page.isEnabled() || AccessController.isAuthenticatedUser();
 	}
 
 	private String getFirstVisibleChildPageUrl(Page parent) {
