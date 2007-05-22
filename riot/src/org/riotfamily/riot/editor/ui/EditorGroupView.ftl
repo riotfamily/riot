@@ -7,6 +7,7 @@
 	<head>
 		<title></title>
 		<@riot.stylesheet href="style/group.css" />
+		<@riot.stylesheet href="style/group-custom.css" />
 		<@riot.script src="path.js" />
 		<@riot.script src="prototype/prototype.js" />
 		<@riot.script src="scriptaculous/effects.js" />

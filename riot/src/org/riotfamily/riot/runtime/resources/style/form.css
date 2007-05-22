@@ -1,5 +1,4 @@
 @import url(common.css);
-@import url(form-custom.css);
 
 #childLists .list {
 	margin-top:10px;
@@ -384,10 +383,10 @@ button.color-swatch {
 	border: 1px solid #3d3d3d;
 	vertical-align: top;
 }
-.checkboxGroup,
-.radioButtonGroup {
+ul.checkboxGroup,
+ul.radioButtonGroup {
 	padding: 0;
-	margin: 0;
+	margin: 20px 0 30px 36px;
 }
 .checkboxGroup li,
 .radioButtonGroup li {

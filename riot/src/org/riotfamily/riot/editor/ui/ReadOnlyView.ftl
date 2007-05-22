@@ -6,10 +6,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title></title>
+		<@riot.stylesheet href="style/form.css" />
+		<@riot.stylesheet href="style/form-custom.css" />
 		<#list customStyleSheets as item>
 			<@riot.stylesheet href=item />
 		</#list>
-		<@riot.stylesheet href="style/form.css" />
 		<@riot.script src="prototype/prototype.js" />
 		<@riot.script src="path.js" />
 		<@riot.script src="riot-js/util.js" />

@@ -7,6 +7,7 @@
 	<head>
 		<title>${title?if_exists}</title>
 		<@riot.stylesheet href="style/list.css" />
+		<@riot.stylesheet href="style/list-custom.css" />
 		<#list customStyleSheets as item>
 			<@riot.stylesheet href=item />
 		</#list>
