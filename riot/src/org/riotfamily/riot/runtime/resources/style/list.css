@@ -107,10 +107,14 @@ td.data .css-cell {
 	background-repeat: no-repeat;
 }
 
-td.data .true {
+td div.true {
+	width: 29px;
+	height: 29px;
 	background-image: url(images/true.gif);
 }
-td.data .false {
+td div.false {
+	width: 29px;
+	height: 29px;
 	background-image: url(images/false.gif);
 }
 
