@@ -38,20 +38,15 @@ import org.springframework.web.context.ServletContextAware;
 
 public class JobUIUpdater implements ServletContextAware {
 
-	public static final String JOB_ID_ATTRIBUTE = "jobId";
-	
-	private String page;
-	
+	public static final String JOB_ID_ATTRIBUTE = JobUIUpdater.class.getName() + ".jobId";
+			
 	private ServletContext servletContext;
 		
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
 	}
 
-	public void register(WebContext wctx, Long jobId) {
-		if (page == null) {
-			page = wctx.getCurrentPage();
-		}
+	public void register(WebContext wctx, Long jobId) {		
 		wctx.getScriptSession().setAttribute(JOB_ID_ATTRIBUTE, jobId);
 	}
 	
@@ -63,12 +58,9 @@ public class JobUIUpdater implements ServletContextAware {
 		send(jd.getId(), "updateJob", jd);
 	}
 	
-	private void send(Long jobId, String functionName, Object arg) {
-		if (page == null) {
-			return;
-		}
+	private void send(Long jobId, String functionName, Object arg) {		
 		ServerContext serverContext = ServerContextFactory.get(servletContext);
-		Iterator it = serverContext.getScriptSessionsByPage(page).iterator();
+		Iterator it = serverContext.getAllScriptSessions().iterator();
 		while (it.hasNext()) {
 			ScriptSession session = (ScriptSession) it.next();
 			Long pageJobId = (Long) session.getAttribute(JOB_ID_ATTRIBUTE);
