@@ -212,6 +212,8 @@
 
 	<bean id="mediumDateRenderer" class="org.riotfamily.riot.list.ui.render.DateRenderer" />
 
+	<bean id="localeRenderer" class="org.riotfamily.riot.list.ui.render.LocaleRenderer" />
+
 	<bean id="countryFlagRenderer" class="org.riotfamily.riot.list.ui.render.CountryFlagRenderer" />
 
 	<!-- Repositories -->
