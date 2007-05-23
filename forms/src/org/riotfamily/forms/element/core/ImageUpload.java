@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.core;
 
@@ -57,44 +57,44 @@ import org.springframework.web.bind.ServletRequestUtils;
 public class ImageUpload extends FileUpload {
 
 	private static final FormResource PREVIEW_RESOURCE = new ScriptResource(
-			"riot-js/image-cropper.js", "Cropper", 
+			"riot-js/image-cropper.js", "Cropper",
 			Resources.SCRIPTACULOUS_SLIDER);
-	
+
 	private int[] widths;
-	
+
 	private int[] heights;
-	
+
 	private int minWidth;
-	
+
 	private int maxWidth;
-	
+
 	private int minHeight;
-	
+
 	private int maxHeight;
-	
+
 	private String validFormats = "GIF,JPEG,PNG";
 
 	private String widthProperty;
-	
+
 	private String heightProperty;
-	
+
 	private ImageInfo info;
-	
+
 	private ImageCropper cropper;
-	
+
 	private boolean crop = true;
-	
+
 	private File originalFile;
-	
+
 	private File croppedFile;
-	
+
 	public ImageUpload() {
 	}
-	
+
 	protected Element createPreviewElement() {
 		return new PreviewElement();
 	}
-	
+
 	public void setCropper(ImageCropper cropper) {
 		this.cropper = cropper;
 	}
@@ -102,7 +102,7 @@ public class ImageUpload extends FileUpload {
 	public void setCrop(boolean crop) {
 		this.crop = crop;
 	}
-	
+
 	public void setWidths(int[] widths) {
 		this.widths = widths;
 		if (widths != null) {
@@ -116,11 +116,11 @@ public class ImageUpload extends FileUpload {
 			setMaxWidth(max);
 		}
 	}
-	
+
 	public void setWidth(int width) {
 		setWidths(new int[] { width });
 	}
-	
+
 	public void setHeights(int[] heights) {
 		this.heights = heights;
 		if (heights != null) {
@@ -134,7 +134,7 @@ public class ImageUpload extends FileUpload {
 			setMaxHeight(max);
 		}
 	}
-	
+
 	public void setHeight(int height) {
 		setHeights(new int[] {height});
 	}
@@ -142,15 +142,15 @@ public class ImageUpload extends FileUpload {
 	public void setMinWidth(int minWidth) {
 		this.minWidth = minWidth;
 	}
-	
+
 	public void setMaxWidth(int maxWidth) {
 		this.maxWidth = maxWidth;
 	}
-	
+
 	public void setMinHeight(int minHeight) {
 		this.minHeight = minHeight;
 	}
-	
+
 	public void setMaxHeight(int maxHeight) {
 		this.maxHeight = maxHeight;
 	}
@@ -176,56 +176,56 @@ public class ImageUpload extends FileUpload {
 	}
 
 	public boolean isPreviewAvailable() {
-		return true; 
+		return true;
 	}
-	
-	protected void cropImage(int width, int height, int x, int y, 
+
+	protected void cropImage(int width, int height, int x, int y,
 			int scaledWidth) throws IOException {
-		
+
 		if (croppedFile == null) {
 			croppedFile = File.createTempFile("000", ".tmp");
 		}
 		if (originalFile == null) {
 			originalFile = getFile();
 		}
-		cropper.cropImage(originalFile, croppedFile, width, height, x, y, 
+		cropper.cropImage(originalFile, croppedFile, width, height, x, y,
 				scaledWidth);
-		
+
 		setFile(croppedFile);
 	}
-	
+
 	protected void afterFileUploaded() {
 		originalFile = getFile();
 	}
-	
+
 	protected void undoCrop() {
 		setFile(originalFile);
 	}
-	
+
 	protected void destroy() {
 		super.destroy();
 		if (croppedFile != null && !croppedFile.equals(getReturnedFile())) {
 			croppedFile.delete();
 		}
 	}
-	
+
 	protected void validateFile(File file) {
 		try {
 			info = new ImageInfo();
 			info.setInput(new FileInputStream(file));
 			info.check();
-			log.debug(info.getFormatName() + " Size: " 
+			log.debug(info.getFormatName() + " Size: "
 					+ info.getWidth() + "x" + info.getHeight());
-			
+
 			if (validFormats != null) {
 				if (validFormats.indexOf(info.getFormatName()) == -1) {
-					ErrorUtils.reject(this, "image.invalidFormat", 
+					ErrorUtils.reject(this, "image.invalidFormat",
 					new Object[] {  validFormats, info.getFormatName() });
 				}
 			}
 			int imageHeight = info.getHeight();
 			int imageWidth = info.getWidth();
-			
+
 			if (widths != null) {
 				boolean match = false;
 				for (int i = 0; i < widths.length; i++) {
@@ -243,7 +243,7 @@ public class ImageUpload extends FileUpload {
 				ErrorUtils.reject(this, "image.size.mismatch");
 				return;
 			}
-			
+
 			if (heights != null) {
 				boolean match = false;
 				for (int i = 0; i < heights.length; i++) {
@@ -268,18 +268,18 @@ public class ImageUpload extends FileUpload {
 		if (info != null) {
 			EditorBinder editorBinder = getEditorBinding().getEditorBinder();
 			if (widthProperty != null) {
-				editorBinder.setPropertyValue(widthProperty, 
+				editorBinder.setPropertyValue(widthProperty,
 						new Integer(info.getWidth()));
 			}
 			if (heightProperty != null) {
-				editorBinder.setPropertyValue(heightProperty, 
+				editorBinder.setPropertyValue(heightProperty,
 						new Integer(info.getHeight()));
 			}
 		}
 		return super.getValue();
 	}
-	
-	public class PreviewElement extends AbstractElement 
+
+	public class PreviewElement extends AbstractElement
 			implements ContentElement, DHTMLElement, ResourceElement {
 
 		public FormResource getResource() {
@@ -287,30 +287,27 @@ public class ImageUpload extends FileUpload {
 		}
 
 		protected void renderInternal(PrintWriter writer) {
-			int w = crop && maxWidth > 0 ? maxWidth : 263;
-			int h = (crop && maxHeight > 0 ? maxHeight : 150) + 50;
 			new TagWriter(writer).start(Html.DIV)
 					.attribute(Html.COMMON_ID, getId())
-					.attribute(Html.COMMON_STYLE, 
-					"width:" + w + "px;height:" + h + "px").end();
+					.end();
 		}
-		
+
 		private int getIntParameter(HttpServletRequest request, String name) {
 			return ServletRequestUtils.getIntParameter(request, name, 0);
 		}
-		
+
 		public void handleContentRequest(HttpServletRequest request,
 				HttpServletResponse response) throws IOException {
-			
+
 			if (isPresent()) {
 				if ("crop".equals(request.getParameter("action"))) {
 					cropImage(
-							getIntParameter(request, "width"), 
+							getIntParameter(request, "width"),
 							getIntParameter(request, "height"),
-							getIntParameter(request, "x"), 
+							getIntParameter(request, "x"),
 							getIntParameter(request, "y"),
 							getIntParameter(request, "scaledWidth"));
-					
+
 					response.getWriter().print(getCroppedImageUrl());
 				}
 				else if ("undo".equals(request.getParameter("action"))) {
@@ -320,10 +317,10 @@ public class ImageUpload extends FileUpload {
 					ServletUtils.setNoCacheHeaders(response);
 					response.setHeader("Content-Type", getContentType());
 					response.setContentLength(getSize().intValue());
-					
+
 					try {
 						//TODO Check if file exists
-						FileCopyUtils.copy(new FileInputStream(getFile()), 
+						FileCopyUtils.copy(new FileInputStream(getFile()),
 								response.getOutputStream());
 					}
 					catch (IOException e) {
@@ -338,58 +335,58 @@ public class ImageUpload extends FileUpload {
 				response.sendError(HttpServletResponse.SC_NO_CONTENT);
 			}
 		}
-		
+
 		public String getImageUrl() {
 			if (isPresent()) {
-				return getFormContext().getContentUrl(this) 
+				return getFormContext().getContentUrl(this)
 						+ "&time=" + System.currentTimeMillis();
 			}
 			return null;
 		}
-		
+
 		public String getCropUrl() {
 			if (cropper != null && crop) {
-				return getFormContext().getContentUrl(this) + "&action=crop";	
+				return getFormContext().getContentUrl(this) + "&action=crop";
 			}
 			return null;
 		}
-		
+
 		public String getUndoUrl() {
 			if (cropper != null && crop) {
 				return getFormContext().getContentUrl(this) + "&action=undo";
 			}
-			return null;			
+			return null;
 		}
-		
+
 		public String getCroppedImageUrl() {
-			return getFormContext().getContentUrl(this) 
+			return getFormContext().getContentUrl(this)
 					+ "&cropped=true&time=" + System.currentTimeMillis();
 		}
-		
+
 		public String getInitScript() {
 			return TemplateUtils.getInitScript(this);
 		}
-		
+
 		public int getMinWidth() {
 			return minWidth;
 		}
-		
+
 		public int getMaxWidth() {
 			return maxWidth;
 		}
-		
+
 		public int getMinHeight() {
 			return minHeight;
 		}
-		
+
 		public int getMaxHeight() {
 			return maxHeight;
 		}
-		
+
 		public int[] getWidths() {
 			return widths;
 		}
-		
+
 		public int[] getHeights() {
 			return heights;
 		}
