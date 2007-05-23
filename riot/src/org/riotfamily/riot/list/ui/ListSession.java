@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.ui;
 
@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
@@ -70,58 +71,58 @@ import org.riotfamily.riot.security.AccessController;
 public class ListSession implements RenderContext {
 
 	private String key;
-	
+
 	private ListDefinition listDefinition;
-	
+
 	private String parentId;
-	
+
 	private MessageResolver messageResolver;
-	
+
 	private String contextPath;
-	
+
 	private Form filterForm;
-	
+
 	private TextField searchField;
-	
+
 	private String filterFormHtml;
-	
+
 	private String title;
-	
+
 	private ListConfig listConfig;
-	
+
 	private List listCommands;
-	
+
 	private List itemCommands;
-	
+
 	private String[] defaultCommandIds;
-	
+
 	private ListParamsImpl params;
 
 	private boolean expired;
-	
-	public ListSession(String key, ListDefinition listDefinition, 
+
+	public ListSession(String key, ListDefinition listDefinition,
 			String parentId, MessageResolver messageResolver, String contextPath,
-			FormRepository formRepository, 
+			FormRepository formRepository,
 			FormContextFactory formContextFactory) {
-		
+
 		this.key = key;
 		this.listDefinition = listDefinition;
 		this.parentId = parentId;
 		this.messageResolver = messageResolver;
 		this.contextPath = contextPath;
 		this.listConfig = listDefinition.getListConfig();
-		
+
 		listCommands = listConfig.getCommands();
 		itemCommands = listConfig.getColumnCommands();
 		defaultCommandIds = listConfig.getDefaultCommandIds();
 		title = listDefinition.createReference(parentId, messageResolver).getLabel();
 		params = new ListParamsImpl();
-		
+
 		String formId = listConfig.getFilterFormId();
 		if (formId != null) {
 			filterForm = formRepository.createForm(formId);
 		}
-		
+
 		if (listConfig.getSearchProperties() != null) {
 			if (filterForm == null) {
 				filterForm = new Form();
@@ -131,46 +132,46 @@ public class ListSession implements RenderContext {
 			searchField.setLabel("Search");
 			filterForm.addElement(searchField);
 		}
-		
+
 		if (filterForm != null) {
 			filterForm.setFormContext(formContextFactory.createFormContext(
 					messageResolver, contextPath, null));
-			
+
 			filterForm.setTemplate(ResourceUtils.getPath(getClass(), "FilterForm.ftl"));
-			
+
 			Iterator it = filterForm.getRegisteredElements().iterator();
 			while (it.hasNext()) {
 				Element e = (Element) it.next();
 				e.setRequired(false);
 			}
-			
+
 			params.setFilteredProperties(filterForm.getEditorBinder()
 					.getBoundProperties());
-			
+
 			params.setFilter(filterForm.populateBackingObject());
 			updateFilterFormHtml();
 		}
-		
+
 		params.setSearchProperties(listConfig.getSearchProperties());
 		params.setPageSize(listConfig.getPageSize());
 		params.setOrder(listConfig.getDefaultOrder());
-		
+
 	}
 
 	public String getKey() {
 		return key;
 	}
-	
+
 	public void setChooserTarget(EditorDefinition target) {
 		listCommands = Collections.EMPTY_LIST;
 		itemCommands = new ArrayList();
-		
+
 		ListDefinition targetList = EditorDefinitionUtils
 				.getParentListDefinition(target);
-		
-		if (targetList != listDefinition 
+
+		if (targetList != listDefinition
 				|| targetList instanceof TreeDefinition) {
-			
+
 			ListDefinition nextList = targetList;
 			if (listDefinition != targetList) {
 				nextList = EditorDefinitionUtils.getNextListDefinition(
@@ -182,26 +183,26 @@ public class ListSession implements RenderContext {
 			}
 			itemCommands.add(new DescendCommand(nextList, target));
 		}
-		
+
 		if (listDefinition.getBeanClass().isAssignableFrom(
 				target.getBeanClass())) {
-			
+
 			itemCommands.add(new ChooseCommand(target));
 		}
-		
+
 		defaultCommandIds = new String[] { DescendCommand.ID, ChooseCommand.ID };
 	}
-	
+
 	public String getTitle() {
 		return title;
 	}
-	
+
 	private void updateFilterFormHtml() {
 		StringWriter writer = new StringWriter();
 		filterForm.render(new PrintWriter(writer));
 		filterFormHtml = writer.toString();
 	}
-		
+
 	public ListModel getItems(HttpServletRequest request) {
 		Object parent = EditorDefinitionUtils.loadParent(
 				listDefinition, parentId);
@@ -213,7 +214,7 @@ public class ListSession implements RenderContext {
 			itemsTotal = beans.size();
 			pageSize = itemsTotal;
 		}
-		
+
 		ListModel model = new ListModel(itemsTotal, pageSize, params.getPage());
 
 		ArrayList items = new ArrayList(beans.size());
@@ -226,16 +227,16 @@ public class ListSession implements RenderContext {
 			item.setLastOnPage(!it.hasNext());
 			item.setObjectId(EditorDefinitionUtils.getObjectId(listDefinition, bean));
 			item.setColumns(getColumns(bean));
-			item.setCommands(getCommandStates(itemCommands, 
+			item.setCommands(getCommandStates(itemCommands,
 					item, bean, itemsTotal, request));
-			
+
 			item.setDefaultCommandIds(defaultCommandIds);
 			items.add(item);
 		}
 		model.setItems(items);
 		return model;
 	}
-	
+
 	private List getColumns(Object bean) {
 		ArrayList result = new ArrayList();
 		Iterator it = listConfig.getColumnConfigs().iterator();
@@ -251,14 +252,14 @@ public class ListSession implements RenderContext {
 				value = bean;
 			}
 			StringWriter writer = new StringWriter();
-			col.getRenderer().render(propertyName, value, this, 
+			col.getRenderer().render(propertyName, value, this,
 					new PrintWriter(writer));
-			
+
 			result.add(writer.toString());
 		}
 		return result;
 	}
-	
+
 	public ListModel getModel(HttpServletRequest request) {
 		ListModel model = getItems(request);
 
@@ -266,22 +267,24 @@ public class ListSession implements RenderContext {
 		model.setParentId(parentId);
 		model.setItemCommandCount(itemCommands.size());
 		model.setListCommands(getListCommands(request));
-		
+		model.setCssClass(listConfig.getId());
+
 		boolean sortableDao = listConfig.getDao() instanceof SortableDao;
-		
+
 		ArrayList columns = new ArrayList();
 		Iterator it = listConfig.getColumnConfigs().iterator();
 		while (it.hasNext()) {
 			ColumnConfig config = (ColumnConfig) it.next();
 			ListColumn column = new ListColumn();
 			column.setProperty(config.getProperty());
-			column.setHeading(getHeading(config.getProperty(), 
+			column.setHeading(getHeading(config.getProperty(),
 					config.getLookupLevel()));
-			
+
+			column.setCssClass(FormatUtils.toCssClass(config.getProperty()));
 			column.setSortable(sortableDao && config.isSortable());
 			if (params.hasOrder() && params.getPrimaryOrder()
 					.getProperty().equals(config.getProperty())) {
-				
+
 				column.setSorted(true);
 				column.setAscending(params.getPrimaryOrder().isAscending());
 			}
@@ -291,12 +294,15 @@ public class ListSession implements RenderContext {
 		model.setFilterFormHtml(filterFormHtml);
 		return model;
 	}
-		
+
 	private String getHeading(String property, int lookupLevel) {
+		return getHeading(getBeanClass(), property, lookupLevel);
+	}
+
+	private String getHeading(Class clazz, String property, int lookupLevel) {
 		if (property == null) {
 			return null;
 		}
-		Class clazz = getBeanClass();
 		if (clazz != null) {
 			String root = property;
 	        int pos = property.indexOf('.');
@@ -305,28 +311,33 @@ public class ListSession implements RenderContext {
 	        }
 	        if (lookupLevel > 1) {
 	        	clazz = PropertyUtils.getPropertyType(clazz, root);
-	        	String nestedProperty = property.substring(pos + 1);
-	        	return getHeading(nestedProperty, lookupLevel - 1);
+	        	if (pos > 0) {
+		        	String nestedProperty = property.substring(pos + 1);
+		        	return getHeading(clazz, nestedProperty, lookupLevel - 1);
+	        	}
+	        	else {
+	        		return messageResolver.getClassLabel(null, clazz);
+	        	}
 	        }
 		}
 	    return messageResolver.getPropertyLabel(
 	    		getListId(), clazz, property);
 	}
-	
+
 	public ListModel sort(String property, HttpServletRequest request) {
 		ColumnConfig col = listConfig.getColumnConfig(property);
 		params.orderBy(property, col.isAscending(), col.isCaseSensitive());
 		return getModel(request);
 	}
-	
+
 	public String[] getSearchProperties() {
 		return listConfig.getSearchProperties();
 	}
-	
+
 	public String getSearchQuery() {
 		return params.getSearch();
 	}
-	
+
 	public String getFilterFormHtml() {
 		return filterFormHtml;
 	}
@@ -345,33 +356,33 @@ public class ListSession implements RenderContext {
 		result.setFilterFormHtml(filterFormHtml);
 		return result;
 	}
-	
+
 	public ListModel gotoPage(int page, HttpServletRequest request) {
 		params.setPage(page);
 		return getItems(request);
 	}
-	
+
 	public boolean hasListCommands() {
 		return !listCommands.isEmpty();
 	}
-	
+
 	public List getListCommands(HttpServletRequest request) {
-		//REVISIT: Should we pass the correct item count here? 
+		//REVISIT: Should we pass the correct item count here?
 		return getCommandStates(listCommands, null, null, -1, request);
 	}
-		
+
 	public List getFormCommands(String objectId, HttpServletRequest request) {
 		Object bean = null;
 		if (objectId != null) {
 			bean = listConfig.getDao().load(objectId);
 		}
-		return getCommandStates(listConfig.getFormCommands(), 
+		return getCommandStates(listConfig.getFormCommands(),
 				new ListItem(objectId), bean, 1, request);
 	}
-	
-	private List getCommandStates(List commands, ListItem item, Object bean, 
+
+	private List getCommandStates(List commands, ListItem item, Object bean,
 			int itemsTotal, HttpServletRequest request) {
-		
+
 		ArrayList result = new ArrayList();
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		context.setBean(bean);
@@ -383,17 +394,17 @@ public class ListSession implements RenderContext {
 			CommandState state = command.getState(context);
 			boolean granted = AccessController.isGranted(
 					state.getAction(), bean, listDefinition);
-			
+
 			state.setEnabled(state.isEnabled() && granted);
 			result.add(state);
 		}
 		return result;
 	}
-	
-	public CommandResult execCommand(ListItem item, String commandId, 
-			boolean confirmed, HttpServletRequest request, 
+
+	public CommandResult execCommand(ListItem item, String commandId,
+			boolean confirmed, HttpServletRequest request,
 			HttpServletResponse response) {
-		
+
 		Collection commands = item != null ? itemCommands : listCommands;
 		Command command = getCommand(commands, commandId);
 		Object bean = null;
@@ -419,7 +430,7 @@ public class ListSession implements RenderContext {
 			return null;
 		}
 	}
-	
+
 	private Command getCommand(Collection commands, String id) {
 		Iterator it = commands.iterator();
 		while (it.hasNext()) {
@@ -430,11 +441,11 @@ public class ListSession implements RenderContext {
 		}
 		throw new IllegalArgumentException("No such command: " + id);
 	}
-	
+
 	public Object loadBean(String objectId) {
 		return listDefinition.getListConfig().getDao().load(objectId);
 	}
-	
+
 	public ListDefinition getListDefinition() {
 		return listDefinition;
 	}
@@ -442,7 +453,7 @@ public class ListSession implements RenderContext {
 	public String getListId() {
 		return listDefinition.getListId();
 	}
-	
+
 	public ListParamsImpl getParams() {
 		return params;
 	}
@@ -454,21 +465,21 @@ public class ListSession implements RenderContext {
 	public Class getBeanClass() {
 		return listDefinition.getBeanClass();
 	}
-		
+
 	public MessageResolver getMessageResolver() {
 		return messageResolver;
 	}
-	
+
 	public String getContextPath() {
 		return contextPath;
 	}
-	
+
 	void invalidate() {
 		expired = true;
 	}
-	
+
 	public boolean isExpired() {
 		return expired;
 	}
-	
+
 }
