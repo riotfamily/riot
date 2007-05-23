@@ -99,7 +99,7 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 				if (page.isFolder()) {
 					String url = getFirstVisibleChildPageUrl(page);
 					if (url != null) {
-						return new RedirectController(url);
+						return new RedirectController(url, true, false);
 					}
 					return new HttpErrorController(HttpServletResponse.SC_NOT_FOUND);
 				}
