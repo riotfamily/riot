@@ -80,25 +80,21 @@ public class HibernatePageDao extends AbstractPageDao {
 		hibernate.delete(object);
 	}
 
-	public List findSites() {
+	public List listSites() {
 		Criteria c = hibernate.createCacheableCriteria(Site.class);
 		return hibernate.list(c);
 	}
 
 	public Site getSite(String name) {
+		if (name == null) {
+			return getDefaultSite();
+		}
 		Criteria c = hibernate.createCacheableCriteria(Site.class);
 		c.add(Restrictions.eq("name", name));
-		Site site = (Site) hibernate.uniqueResult(c);
-		if (site == null) {
-			site = new Site();
-			site.setName(name);
-			site.setEnabled(true);
-			saveSite(site);
-		}
-		return site;
+		return (Site) hibernate.uniqueResult(c);
 	}
 
-	public PageNode getRootNode(Site site) {
+	public PageNode findRootNode(Site site) {
 		Criteria c = hibernate.createCacheableCriteria(PageNode.class);
 		c.add(Restrictions.isNull("parent"));
 		c.add(Restrictions.eq("site", site));
@@ -106,8 +102,10 @@ public class HibernatePageDao extends AbstractPageDao {
 	}
 
 	public Page findPage(PageLocation location) {
+		String siteName = location.getSiteName();
+		Site site = siteName != null ? getSite(siteName) : getDefaultSite();
 		Criteria c = hibernate.createCacheableCriteria(Page.class);
-		c.createCriteria("node").createCriteria("site").add(Restrictions.eq("name", location.getSiteName()));
+		c.createCriteria("node").add(Restrictions.eq("site", site));
 		c.add(Restrictions.eq("path", location.getPath()));
 		HibernateUtils.addEqOrNull(c, "locale", location.getLocale());
 		return (Page) hibernate.uniqueResult(c);

@@ -9,16 +9,24 @@
 	</#if>
 </head>
 <body>
-	<#if locales?has_content>
+
 		<form action="?" method="GET">
 			<input type="hidden" name="mode" value="${mode?if_exists}" />
-			<select name="locale" onchange="this.form.submit()">
-				<#list locales as locale>
-					<option value="${locale}"<#if locale == selectedLocale>selected="selected"</#if>>${locale.displayName}</option>
-				</#list>
-			</select>
+			<#if sites?has_content && sites?size &gt; 1>
+				<select name="site" onchange="this.form.submit()">
+					<#list sites as site>
+						<option value="${site.id}"<#if site == selectedSite>selected="selected"</#if>>${site.name}</option>
+					</#list>
+				</select>
+			</#if>
+			<#if locales?has_content>
+				<select name="locale" onchange="this.form.submit()">
+					<#list locales as locale>
+						<option value="${locale}"<#if locale == selectedLocale>selected="selected"</#if>>${locale.displayName}</option>
+					</#list>
+				</select>
+			</#if>
 		</form>
-	</#if>
 	<ul id="tree" class="tree">
 		<@renderPages pages />
 	</ul>

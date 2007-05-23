@@ -85,9 +85,13 @@ public class PageChooserController implements TransactionalController {
 	}
 
 	public ModelAndView handleRequest(HttpServletRequest request,
-		HttpServletResponse response) throws Exception {
+			HttpServletResponse response) throws Exception {
 
-		Site site = pageDao.getDefaultSite(); //FIXME
+		Long siteId = ServletRequestUtils.getLongParameter(request, "site");
+		Site site = siteId != null
+				? pageDao.loadSite(siteId)
+				: pageDao.getDefaultSite();
+
 		Locale locale = getLocale(request);
 
 		HashMap model = new HashMap();
@@ -96,8 +100,10 @@ public class PageChooserController implements TransactionalController {
 
 		model.put("locales", locales);
 		model.put("selectedLocale", locale);
+		model.put("sites", pageDao.listSites());
+		model.put("selectedSite", site);
 		model.put("pages", createpageLinks(
-				pageDao.getRootNode(site).getChildPages(locale)));
+				pageDao.findRootNode(site).getChildPages(locale)));
 
 		return new ModelAndView(viewName, model);
 	}

@@ -97,7 +97,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 			else {
 				site = pageDao.getDefaultSite();
 			}
-			return pageDao.getRootNode(site).getChildPages(locale, true);
+			return pageDao.findRootNode(site).getChildPages(locale, true);
 		}
 	}
 
@@ -174,7 +174,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 			else {
 				site = pageDao.getDefaultSite();
 			}
-			parentNode = pageDao.getRootNode(site);
+			parentNode = pageDao.findRootNode(site);
 		}
 		pageDao.moveNode(node, parentNode);
 	}

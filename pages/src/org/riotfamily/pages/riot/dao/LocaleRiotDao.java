@@ -44,6 +44,7 @@ import org.springframework.util.StringUtils;
 public class LocaleRiotDao extends RiotDaoAdapter
 		implements ParentChildDao {
 
+	private static final String ID_SEPARATOR = ",";
 	private Set locales;
 
 	private PageDao pageDao;
@@ -73,12 +74,12 @@ public class LocaleRiotDao extends RiotDaoAdapter
 
 	public String getObjectId(Object entity) {
 		SiteLocale siteLocale = (SiteLocale) entity;
-		return siteLocale.getSite().getId().toString() + '$'
-				+ siteLocale.getLocale().toString();
+		return siteLocale.getSite().getId().toString()
+				+ ID_SEPARATOR + siteLocale.getLocale().toString();
 	}
 
 	public Object load(String id) throws DataAccessException {
-		String[] s = StringUtils.split(id, "$");
+		String[] s = StringUtils.split(id, ID_SEPARATOR);
 		Site site = pageDao.loadSite(new Long(s[0]));
 		Locale locale = StringUtils.parseLocaleString(s[1]);
 		return new SiteLocale(site, locale);

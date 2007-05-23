@@ -32,8 +32,6 @@ import java.util.Locale;
  */
 public class Site {
 
-	public static final String DEFAULT_NAME = "default";
-
 	private Long id;
 
 	private String name;

@@ -88,7 +88,10 @@ public interface PageDao {
 	 */
 	public List findPagesForHandler(String handlerName, Locale locale);
 
-	public PageNode getRootNode(Site site);
+	/**
+	 * Returns the root node for the given site.
+	 */
+	public PageNode findRootNode(Site site);
 
 	public void savePage(Site site, Page page);
 
@@ -106,16 +109,27 @@ public interface PageDao {
 
 	public Site loadSite(Long id);
 
+	/**
+	 * Returns the site with the specified name. If no such site exists a new
+	 * site instance is created (and persisted).
+	 */
 	public Site getSite(String name);
 
-	public List findSites();
+	/**
+	 * Returns the first site returned by listSites(). If no sites exist, a new
+	 * site instance with a default name is created.
+	 */
+	public Site getDefaultSite();
+
+	/**
+	 * Returns all sites.
+	 */
+	public List listSites();
 
 	public void saveSite(Site site);
 
 	public void updateSite(Site site);
 
 	public void deleteSite(Site site);
-
-	public Site getDefaultSite();
 
 }

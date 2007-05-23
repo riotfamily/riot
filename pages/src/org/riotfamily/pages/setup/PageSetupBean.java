@@ -43,7 +43,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class PageSetupBean implements InitializingBean {
 
-	private String siteName = Site.DEFAULT_NAME;
+	private String siteName = null;
 
 	private Collection locales;
 
@@ -82,7 +82,7 @@ public class PageSetupBean implements InitializingBean {
 
 	protected void createNodes() {
 		Site site = pageDao.getSite(siteName);
-		PageNode rootNode = pageDao.getRootNode(site);
+		PageNode rootNode = pageDao.findRootNode(site);
 		Iterator it = definitions.iterator();
 		while (it.hasNext()) {
 			PageDefinition definition = (PageDefinition) it.next();

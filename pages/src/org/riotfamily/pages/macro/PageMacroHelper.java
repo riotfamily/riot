@@ -89,7 +89,7 @@ public class PageMacroHelper {
 
 	public Collection getTopLevelPages(Locale locale) {
 		Site site = getCurrentPage().getNode().getSite();
-		return pageDao.getRootNode(site).getChildPages(locale);
+		return pageDao.findRootNode(site).getChildPages(locale);
 	}
 
 	public String getUrl(Page page) {

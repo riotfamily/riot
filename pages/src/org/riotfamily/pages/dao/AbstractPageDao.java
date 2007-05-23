@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.logging.Log;
@@ -48,6 +49,8 @@ import org.springframework.util.ObjectUtils;
  * @since 6.5
  */
 public abstract class AbstractPageDao implements PageDao {
+
+	private static final String DEFAULT_SITE_NAME = "default";
 
 	private static final Log log = LogFactory.getLog(AbstractPageDao.class);
 
@@ -80,7 +83,7 @@ public abstract class AbstractPageDao implements PageDao {
 	}
 
 	public void savePage(Site site, Page page) {
-		PageNode rootNode = getRootNode(site);
+		PageNode rootNode = findRootNode(site);
 		savePage(rootNode, page);
 	}
 
@@ -201,7 +204,15 @@ public abstract class AbstractPageDao implements PageDao {
 	}
 
 	public Site getDefaultSite() {
-		return getSite(Site.DEFAULT_NAME);
+		List sites = listSites();
+		if (sites.size() > 0) {
+			return (Site) sites.get(0);
+		}
+		Site site = new Site();
+		site.setName(DEFAULT_SITE_NAME);
+		site.setEnabled(true);
+		saveSite(site);
+		return site;
 	}
 
 	public void saveSite(Site site) {
@@ -216,7 +227,7 @@ public abstract class AbstractPageDao implements PageDao {
 	}
 
 	public void deleteSite(Site site) {
-		PageNode rootNode = getRootNode(site);
+		PageNode rootNode = findRootNode(site);
 		Iterator it = rootNode.getPages().iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();

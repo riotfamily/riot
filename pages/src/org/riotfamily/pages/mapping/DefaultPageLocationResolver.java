@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.common.web.util.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.PageLocation;
-import org.riotfamily.pages.Site;
 import org.springframework.util.StringUtils;
 
 /**
@@ -70,7 +69,7 @@ public class DefaultPageLocationResolver implements PageLocationResolver {
 				}
 			}
 		}
-		return new PageLocation(Site.DEFAULT_NAME, path, locale);
+		return new PageLocation(null, path, locale);
 	}
 
 	public String getUrl(PageLocation location) {

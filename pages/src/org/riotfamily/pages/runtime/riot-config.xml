@@ -45,8 +45,9 @@
 	<list:list id="locales">
 		<list:dao ref="localeRiotDao" />
 		<list:columns>
-			<list:column property="locale" renderer="countryFlagRenderer" />
-			<list:column property="locale.displayName" />
+			<list:column property="locale" renderer="countryFlagRenderer" lookup-level="2" />
+			<list:column property="locale.language" renderer="localeRenderer" lookup-level="2" />
+			<list:column property="locale.country" renderer="localeRenderer" lookup-level="2" />
 			<list:command id="stepInto" />
 		</list:columns>
 	</list:list>

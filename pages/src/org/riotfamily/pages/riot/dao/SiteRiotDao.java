@@ -48,7 +48,7 @@ public class SiteRiotDao extends RiotDaoAdapter {
 	}
 
 	public Collection list(Object parent, ListParams params) throws DataAccessException {
-		return pageDao.findSites();
+		return pageDao.listSites();
 	}
 
 	public void save(Object entity, Object parent) throws DataAccessException {
