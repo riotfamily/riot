@@ -1,4 +1,9 @@
-tr.foreign-page td {
+table.locales th.locale,
+table.pages th.locale {
+	width: 20px;
+}
+
+table.pages tr.foreign-page td {
 	color: #a4a4a4;
 	font-style: italic;
 }
