@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.util;
 
@@ -44,7 +44,7 @@ import org.springframework.web.util.HtmlUtils;
 public final class FormatUtils {
 
 	private static final Log log = LogFactory.getLog(FormatUtils.class);
-	
+
 	private static NumberFormat numberFormat = new DecimalFormat("0.#");
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
@@ -88,7 +88,7 @@ public final class FormatUtils {
 	 * <pre>
 	 * camelCase -> Camel Case
 	 * CamelCASE -> Camel CASE
-	 * Cam31Case -> Cam 31 Case 
+	 * Cam31Case -> Cam 31 Case
 	 * </pre>
 	 */
 	public static String camelToTitleCase(String s) {
@@ -220,12 +220,12 @@ public final class FormatUtils {
 		}
 		return s.substring(0, length);
 	}
-	
+
 	/**
 	 * Converts the given String into a valid CSS class name.
 	 */
 	public static String toCssClass(String s) {
-		s = s.replaceAll("[.\\s/]", "-").toLowerCase();
+		s = s.replaceAll("[.\\s/]", "-");
 		s = s.replaceAll("[^\\w-_]", "");
 		return s;
 	}
@@ -233,7 +233,7 @@ public final class FormatUtils {
 	/**
 	 * Parses a formatted String and returns the value in milliseconds. You can
 	 * use one of the following suffixes:
-	 * 
+	 *
 	 * <pre>
 	 *     s - seconds
 	 *     m - minutes
@@ -325,16 +325,16 @@ public final class FormatUtils {
 
 	/**
 	 * Returns the extension of the given filename. Examples:
-	 * 
+	 *
 	 * <pre>
 	 *   $quot;foo.bar&quot; - &quot;bar&quot;
 	 *   &quot;/some/file.name.foo&quot; - &quot;foo&quot;
 	 * </pre>
-	 * 
+	 *
 	 * The following examples will return an empty String:
-	 * 
+	 *
 	 * <pre>
-	 *   &quot;foo&quot; 
+	 *   &quot;foo&quot;
 	 *   &quot;foo.&quot;
 	 *   &quot;/dir.with.dots/file&quot;
 	 *   &quot;.bar&quot;
@@ -367,15 +367,15 @@ public final class FormatUtils {
 	/**
 	 * Parses a formatted String and returns the date. The date to parse starts
 	 * with today. You can use one of the following sufixes:
-	 * 
+	 *
 	 * <pre>
-	 * 	  	  
+	 *
 	 *     D - days
 	 *     W - weeks
 	 *     M - months
 	 *     Y - years
 	 * </pre>
-	 * 
+	 *
 	 * Days is option, any number without a suffix is treated as a number of
 	 * days
 	 */
@@ -481,7 +481,7 @@ public final class FormatUtils {
 	}
 
 	/**
-	 * Invokes toLowerCase(), converts all whitespaces to underscores and 
+	 * Invokes toLowerCase(), converts all whitespaces to underscores and
 	 * removes all characters other than a-z, 0-9, dot, underscore or minus.
 	 */
 	public static String toFilename(String s) {
@@ -493,7 +493,7 @@ public final class FormatUtils {
 
 	/**
 	 * Turn special characters into escaped characters conforming to XML.
-	 * 
+	 *
 	 * @param input the input string
 	 * @return the escaped string
 	 */
@@ -553,13 +553,13 @@ public final class FormatUtils {
 		}
 		return sb.toString();
 	}
-	
+
 	/**
-	 * Escapes all HTML special characters in the given array. Dates and 
+	 * Escapes all HTML special characters in the given array. Dates and
 	 * primitive-wrappers are left as-is, all other objects are converted to
-	 * their String representation and escaped using 
+	 * their String representation and escaped using
 	 * {@link HtmlUtils#htmlEscape(String)}.
-	 * @since 6.4  
+	 * @since 6.4
 	 */
 	public static Object[] htmlEscapeArgs(Object[] args) {
 		Object[] escapedArgs = new Object[args.length];
@@ -571,7 +571,7 @@ public final class FormatUtils {
 			}
 			else if (ClassUtils.isPrimitiveWrapper(arg.getClass())
 					|| arg instanceof Date) {
-				
+
 				escapedArgs[i] = arg;
 			}
 			else {
@@ -580,9 +580,9 @@ public final class FormatUtils {
 		}
 		return escapedArgs;
 	}
-	
+
 	/**
-	 * Extracts an integer from a String using the first capture group of the 
+	 * Extracts an integer from a String using the first capture group of the
 	 * given regular expression.
 	 * @since 6.4
 	 */
@@ -600,11 +600,11 @@ public final class FormatUtils {
 		}
 		return -1;
 	}
-	
+
 	public static String stripWhitespaces(String s) {
 		return stripWhitespaces(s, false);
 	}
-	
+
 	public static String stripWhitespaces(String s, boolean preserveBreaks) {
 		StringReader in = new StringReader(s);
 		StringBuffer sb = new StringBuffer();
@@ -642,5 +642,5 @@ public final class FormatUtils {
 		}
 		return sb.toString();
 	}
-	
+
 }
