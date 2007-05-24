@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 		elementFormDefault="qualified"
-		attributeFormDefault="unqualified" 
+		attributeFormDefault="unqualified"
 		targetNamespace="http://www.riotfamily.org/schema/website/generic"
 		xmlns:beans="http://www.springframework.org/schema/beans"
 		xmlns="http://www.riotfamily.org/schema/website/generic">
-	
+
 	<xsd:import namespace="http://www.springframework.org/schema/beans"
 		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.0.xsd" />
-	
+
+	<xsd:element name="view">
+		<xsd:complexType>
+			<xsd:attribute name="name" use="required" />
+			<xsd:attribute name="template" />
+			<xsd:attribute name="content-type" />
+		</xsd:complexType>
+	</xsd:element>
+
 	<xsd:element name="controller">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="model-builder">
-					<xsd:complexType>
-						<xsd:choice minOccurs="0">
-							<xsd:element ref="beans:bean" />
-							<xsd:element ref="hql" />
-							<xsd:element ref="paged-hql" />
-						</xsd:choice>
-						<xsd:attribute name="ref" type="xsd:string" />
-					</xsd:complexType>
-				</xsd:element>
+				<xsd:choice minOccurs="0">
+					<xsd:element ref="beans:bean" />
+					<xsd:element ref="hql" />
+					<xsd:element ref="paged-hql" />
+				</xsd:choice>
 				<xsd:element name="post-processors" minOccurs="0">
 					<xsd:complexType>
 						<xsd:sequence maxOccurs="unbounded">
@@ -30,16 +33,17 @@
 					</xsd:complexType>
 				</xsd:element>
 			</xsd:sequence>
-			
+
 			<xsd:attribute name="id" type="xsd:string" />
 			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="view-name" type="xsd:string" use="required" />
 			<xsd:attribute name="content-type" type="xsd:string" />
 			<xsd:attribute name="add-uri-to-cache-key" type="xsd:boolean" />
 			<xsd:attribute name="cacheable" type="xsd:boolean" />
+			<xsd:attribute name="model-builder" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:complexType name="hql">
 		<xsd:sequence minOccurs="0">
 			<xsd:element name="parameter-resolvers">
@@ -65,13 +69,13 @@
 		<xsd:attribute name="cache-eternally" type="xsd:boolean" default="true" />
 		<xsd:attribute name="tag-cache-items" type="xsd:boolean" default="true" />
 	</xsd:complexType>
-	
+
 	<xsd:element name="hql" type="hql" />
-	
+
 	<xsd:element name="paged-hql">
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="hql"> 
+				<xsd:extension base="hql">
 					<xsd:attribute name="count-hql" use="optional" />
 					<xsd:attribute name="page-param" type="xsd:string" default="page" />
 					<xsd:attribute name="page-size" type="xsd:positiveInteger" default="10" />
@@ -82,17 +86,17 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-		
+
 	<xsd:complexType name="attribute">
 		<xsd:attribute name="param" use="required" />
 		<xsd:attribute name="attribute" />
 		<xsd:attribute name="property" />
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="simple-resolver">
 		<xsd:attribute name="param" use="required" />
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="string-to-primitive">
 		<xsd:attribute name="param" use="required" />
 		<xsd:attribute name="type">
@@ -109,12 +113,12 @@
 			</xsd:simpleType>
 		</xsd:attribute>
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="date">
 		<xsd:attribute name="param" use="required" />
 		<xsd:attribute name="yearparam" use="required" />
 		<xsd:attribute name="monthparam" use="required" />
 		<xsd:attribute name="dayparam" use="required" />
 	</xsd:complexType>
-	
+
 </xsd:schema>

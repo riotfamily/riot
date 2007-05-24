@@ -45,43 +45,43 @@ public class GenericController extends AbstractCacheableController {
 
 	/** The ModelBuilder */
 	private ModelBuilder modelBuilder;
-	
+
 	/** Set if modelBuilder is cacheable to reduce number of casts */
 	private CacheableModelBuilder cacheableModelBuilder;
-		
+
 	/** ModelPostProcessors */
 	private ModelPostProcessor[] postProcessors;
-		
+
 	/** View name to use */
 	private String viewName;
-	
+
 	private String contentType;
-			
+
 	private boolean addUriToCacheKey;
-	
+
 	public GenericController() {
 	}
-	
+
 	public GenericController(ModelBuilder modelBuilder) {
 		this.modelBuilder = modelBuilder;
 	}
-	
+
 	public void setModelBuilder(ModelBuilder modelBuilder) {
 		this.modelBuilder = modelBuilder;
 	}
-	
+
 	public void setPostProcessors(ModelPostProcessor[] postProcessors) {
 		this.postProcessors = postProcessors;
 	}
-	
+
 	public void setPostProcessor(ModelPostProcessor postProcessor) {
 		this.postProcessors = new ModelPostProcessor[] { postProcessor };
 	}
-	
+
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
 	}
-	
+
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
@@ -89,24 +89,20 @@ public class GenericController extends AbstractCacheableController {
 	public void setAddUriToCacheKey(boolean addUriToCacheKey) {
 		this.addUriToCacheKey = addUriToCacheKey;
 	}
-	
-	protected void initController() {	
-		if (viewName == null) {
-			throw new BeanCreationException(getBeanName() 
-					+ ": A viewName must be set.");
-		}
+
+	protected void initController() {
 		if (modelBuilder == null) {
-			throw new BeanCreationException(getBeanName() 
+			throw new BeanCreationException(getBeanName()
 					+ ": A ModelBuilder must be set.");
 		}
 		if (modelBuilder instanceof CacheableModelBuilder) {
 			cacheableModelBuilder = (CacheableModelBuilder) modelBuilder;
 		}
 	}
-	
+
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-			
+
 		Map model = modelBuilder.buildModel(request);
 		if (postProcessors != null) {
 			for (int i = 0; i < postProcessors.length; i++) {
@@ -122,17 +118,17 @@ public class GenericController extends AbstractCacheableController {
 	protected boolean bypassCache(HttpServletRequest request) {
 		return cacheableModelBuilder == null;
 	}
-	
+
 	public long getLastModified(HttpServletRequest request) {
-		return cacheableModelBuilder.getLastModified(request); 
+		return cacheableModelBuilder.getLastModified(request);
 	}
-		
-	protected void appendCacheKey(StringBuffer key,	
+
+	protected void appendCacheKey(StringBuffer key,
 			HttpServletRequest request) {
-		
+
 		cacheableModelBuilder.appendCacheKey(key, request);
 		if (addUriToCacheKey) {
-			super.appendCacheKey(key, request);	
+			super.appendCacheKey(key, request);
 		}
 	}
 
