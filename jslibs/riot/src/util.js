@@ -171,6 +171,13 @@ var RElement = {
 }
 
 Element.addMethods(RElement);
+if (Prototype.Browser.IE) {
+	// Reset the _extended flag, inn case $() was already invoked before this point
+	for (var i = 0, len = document.all.length; i < len; i++) {
+		var el = document.all[i];
+		if (el._extended) el._extended = false;
+	}
+}
 
 var RForm = {
 	getValues: function(form) {
