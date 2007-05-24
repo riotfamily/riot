@@ -512,6 +512,11 @@
 	<bean id="org.directwebremoting.Remoter"
 		class="org.riotfamily.common.web.dwr.ConstantsRemoter" />
 	-->
+	
+	<bean id="csvExportController" name="/csv" class="org.riotfamily.riot.list.export.CsvExportController">
+		<constructor-arg ref="editorRepository" />
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
 
 	<!--
 	  - Controller that exposes DWR services.
