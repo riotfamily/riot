@@ -39,6 +39,7 @@ import org.riotfamily.pages.component.resolver.ComponentKeyResolver;
 import org.riotfamily.pages.component.resolver.ComponentPathResolver;
 import org.riotfamily.pages.component.resolver.FixedComponentKeyResolver;
 import org.riotfamily.pages.component.resolver.FixedComponentPathResolver;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -186,7 +187,7 @@ public class ComponentListController implements Controller, BeanNameAware,
 
 		boolean preview = viewModeResolver.isPreviewMode(request);
 		final RenderStrategy strategy;
-		if (preview) {
+		if (preview && AccessController.isGranted("edit", getLocation(request), null)) {
 			strategy = new EditModeRenderStrategy(componentDao, componentRepository, 
 					this, request, response);
 		}
@@ -209,6 +210,9 @@ public class ComponentListController implements Controller, BeanNameAware,
 		return null;
 	}
 
-	
+	private Location getLocation(HttpServletRequest request) {
+		return new Location(componentPathResolver.getComponentPath(request),
+			componentKeyResolver.getComponentKey(request));
+	}
 
 }

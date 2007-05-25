@@ -34,6 +34,7 @@ import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.security.policy.AuthorizationPolicy;
 import org.riotfamily.riot.security.session.SessionData;
 import org.riotfamily.riot.security.session.SessionDataStore;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -60,8 +61,9 @@ public class LoginManager implements ApplicationContextAware, InitializingBean {
 	
 	public void setApplicationContext(ApplicationContext context) {
 		policies = new ArrayList();
-		policies.addAll(context.getBeansOfType(
-				AuthorizationPolicy.class).values());
+		
+		policies.addAll(BeanFactoryUtils.beansOfTypeIncludingAncestors(
+			context, AuthorizationPolicy.class).values());
 		
 		Collections.sort(policies, new OrderComparator());
 	}
