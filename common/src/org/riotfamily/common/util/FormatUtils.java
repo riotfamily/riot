@@ -63,11 +63,14 @@ public final class FormatUtils {
 	private static final String ENTITY_QUOT = "&quot;";
 
 	private static final String ALLOW_URI_CHARS = "0123456789" +
-		"abcdefghijklmnopqrstuvwxyz" +
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-		"-._~!$&'()*+,;=:@%?/";
+			"abcdefghijklmnopqrstuvwxyz" +
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+			"-._~!$&'()*+,;=:@%?/";
 
 	private static final String HEX = "0123456789ABCDEF";
+
+	private static final String BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+			"abcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 	private FormatUtils() {
 	}
@@ -639,6 +642,38 @@ public final class FormatUtils {
 		}
 		finally {
 			in.close();
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * Decodes the given Base64 encoded String.
+	 * @since 6.5
+	 */
+	public static String decodeBase64(String s) {
+		if (s == null) {
+			return null;
+		}
+		StringBuffer sb = new StringBuffer();
+		int c1, c2, c3;
+		int e1, e2, e3, e4;
+		for (int i = 0; i < s.length();) {
+			e1 = BASE64.indexOf(s.charAt(i++));
+			e2 = BASE64.indexOf(s.charAt(i++));
+			e3 = BASE64.indexOf(s.charAt(i++));
+			e4 = BASE64.indexOf(s.charAt(i++));
+
+			c1 = (e1 << 2) | (e2 >> 4);
+			c2 = ((e2 & 15) << 4) | (e3 >> 2);
+			c3 = ((e3 & 3) << 6) | e4;
+
+			sb.append((char) c1);
+			if (e3 != 64) {
+				sb.append((char) c2);
+			}
+			if (e4 != 64) {
+				sb.append((char) c3);
+			}
 		}
 		return sb.toString();
 	}

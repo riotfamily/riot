@@ -56,7 +56,7 @@ RiotImageReplacement.prototype = {
 		}
 		el.onedit = this.processElement.bind(this, sel, el);
 		var text = el.innerHTML;
-		text = text.gsub(/<br\/?>/i, '\n').stripTags();
+		text = text.strip().gsub(/<br\/?>/i, '\n').stripTags();
 		var transform = el.getStyle('text-transform') || '';
 		var width = 0;
 		if (el.getStyle('display') == 'block') {
@@ -86,13 +86,40 @@ RiotImageReplacement.prototype = {
 	getImageUrl: function(text, transform, width, sel, color) {
 		var url = this.generatorUrl;
 		url += url.include('?') ? '&' : '?';
-		return url + 'text=' + encodeURIComponent(text) + '&transform=' + transform
-				+ '&width=' + width + '&selector=' + encodeURIComponent(sel)
-				+ '&color=' + encodeURIComponent(color);
+		return url + 'text=' + this.base64(text) + '&transform=' + transform
+				+ '&width=' + width + '&selector=' + this.base64(sel)
+				+ '&color=' + this.base64(color);
+	},
+
+	base64: function(s) {
+		// We have to use Base64 encoding because the AlphaImageLoader decodes
+		// correctly encoded URIs and converts %23 back to # (and %26 back to &)
+		// thereby corrupting the URL.
+		var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+		var c1, c2, c3;
+		var e1, e2, e3, e4;
+		var result = '';
+		for (var i = 0, len = s.length; i < len;) {
+		   c1 = s.charCodeAt(i++);
+		   c2 = s.charCodeAt(i++);
+		   c3 = s.charCodeAt(i++);
+		   e1 = c1 >> 2;
+		   e2 = ((c1 & 3) << 4) | (c2 >> 4);
+		   e3 = ((c2 & 15) << 2) | (c3 >> 6);
+		   e4 = c3 & 63;
+		   if (isNaN(c2)) {
+		      e3 = e4 = 64;
+		   }
+		   else if (isNaN(c3)) {
+		      e4 = 64;
+		   }
+		   result = result + chars.charAt(e1) + chars.charAt(e2) + chars.charAt(e3) + chars.charAt(e4);
+		}
+		return escape(result);
 	},
 
 	setImageSrc: function(el, src) {
-		if (this.useFilters) {
+		if (this.useFilter) {
 			el.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"
 				+ src + "', sizingMethod='scale')";
 		}
@@ -107,6 +134,8 @@ RiotImageReplacement.prototype = {
 		img.style.verticalAlign = 'top';
 		if (this.useFilter) {
 			img.src = this.pixelImage.src;
+			img.style.width = image.width + 'px';
+			img.style.height = image.height + 'px';
 		}
 		this.setImageSrc(img, image.src);
 		img.className = 'replacement';

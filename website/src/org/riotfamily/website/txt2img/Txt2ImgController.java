@@ -157,7 +157,7 @@ public class Txt2ImgController extends AbstractCacheableController {
 	 * 'transform' HTTP parameter is set.
 	 */
 	protected String getText(HttpServletRequest request) {
-		String text = request.getParameter("text");
+		String text = FormatUtils.decodeBase64(request.getParameter("text"));
 		if (text != null) {
 			text = HtmlUtils.htmlUnescape(text);
 			String transform = request.getParameter("transform");
@@ -181,7 +181,7 @@ public class Txt2ImgController extends AbstractCacheableController {
 			HttpServletResponse response) throws IOException {
 
 		ImageGenerator generator = defaultGenerator;
-		String selector = request.getParameter("selector");
+		String selector = FormatUtils.decodeBase64(request.getParameter("selector"));
 		if (selector != null) {
 			generator = (ImageGenerator) generators.get(selector);
 		}
@@ -193,8 +193,9 @@ public class Txt2ImgController extends AbstractCacheableController {
 		if (maxWidth <= 0) {
 			maxWidth = Integer.MAX_VALUE;
 		}
-		String color = request.getParameter("color");
+		String color = FormatUtils.decodeBase64(request.getParameter("color"));
 		response.setContentType("image/png");
+		ServletUtils.setCacheHeaders(response, "1M");
 		generator.generate(text, maxWidth, color, response.getOutputStream());
 	}
 
@@ -206,7 +207,7 @@ public class Txt2ImgController extends AbstractCacheableController {
 			HttpServletResponse response) throws IOException {
 
 		response.setContentType("text/javascript");
-		//ServletUtils.setCacheHeaders(response, "1M");
+		ServletUtils.setCacheHeaders(response, "1M");
 		PrintWriter out = response.getWriter();
 		IOUtils.copy(new InputStreamReader(
 				SCRIPT_RESOURCE.getInputStream(), "UTF-8"), out);
