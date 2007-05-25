@@ -7,44 +7,41 @@
 		http://www.springframework.org/schema/util/spring-util-2.0.xsd
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
-	
+
 	<!--
 	<import resource="classpath:org/riotfamily/pages/runtime/db-schema.xml"/>
 	-->
-	
+
 	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
 		<property name="properties">
 			<map>
 	 			<entry key="hibernateMappingLocations">
 					<list>
 						<value>classpath:org/riotfamily/pages/dao/hibernate/pages.hbm.xml</value>
-					</list>	 			
+					</list>
 	 			</entry>
 	 		</map>
 		</property>
 	</bean>
-	
+
 	<!--
 	<bean id="pageEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
 	-->
-		
+
 	<bean id="pageDao" class="org.riotfamily.pages.dao.hibernate.HibernatePageDao">
 		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="riotSessionFactory" />
 	</bean>
-	
+
 	<util:list id="websiteLocales" value-type="java.util.Locale">
-		<value>de_DE</value>
-		<value>de_CH</value>
-		<value>fr_FR</value>
-		<value>fr_CH</value>
+		<value>en_US</value>
 	</util:list>
-	
+
 	<bean id="pageLocationResolver" class="org.riotfamily.pages.mapping.DefaultPageLocationResolver">
 		<constructor-arg ref="pathCompleter" />
 		<property name="locales" ref="websiteLocales" />
 	</bean>
-	
+
 	<bean id="pageComponentFormRegistry" class="org.riotfamily.components.editor.ComponentFormRegistry" />
-	
-</beans>	
+
+</beans>
