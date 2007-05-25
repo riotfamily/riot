@@ -38,9 +38,10 @@ public class ComponentNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
 		NestedListDecorator addPropertyProcessors = new NestedListDecorator("propertyProcessors");
-		registerGenericParserAndDecorator("static-component", StaticComponent.class, addPropertyProcessors);
-		registerGenericParserAndDecorator("view-component", ViewComponent.class, addPropertyProcessors);
-		registerGenericParserAndDecorator("include-component", IncludeComponent.class, addPropertyProcessors);
+		register("static-component", StaticComponent.class, addPropertyProcessors);
+		register("view-component", ViewComponent.class, addPropertyProcessors);
+		register("include-component", IncludeComponent.class, addPropertyProcessors);
+		registerSpringBeanDefinitionParser("property-processor", addPropertyProcessors);
 	}
 
 }

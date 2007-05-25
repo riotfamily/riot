@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.setup.config;
 
-import org.riotfamily.common.beans.xml.GenericBeanDefinitionParser;
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
 import org.riotfamily.common.beans.xml.NestedListDecorator;
 import org.riotfamily.pages.setup.PageDefinition;
@@ -36,16 +35,15 @@ import org.riotfamily.pages.setup.PageSetupBean;
 public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
-		registerBeanDefinitionParser("setup", new GenericBeanDefinitionParser(PageSetupBean.class)
+		register("setup", PageSetupBean.class)
 				.addTranslation("tx", "transactionManager")
 				.addTranslation("dao", "pageDao")
 				.addReference("dao")
 				.addReference("locales")
-				.addReference("tx")
-		);
-		registerParserAndDecorator("page", new GenericBeanDefinitionParser(PageDefinition.class)
-				.addTranslation("system", "systemNode")
-				, new NestedListDecorator("definitions")
-		);
+				.addReference("tx");
+
+		register("page", PageDefinition.class,
+				new NestedListDecorator("definitions"))
+				.addTranslation("system", "systemNode");
 	}
 }

@@ -11,8 +11,9 @@
 
 	<xsd:element name="view">
 		<xsd:complexType>
-			<xsd:attribute name="name" use="required" />
-			<xsd:attribute name="template" />
+			<xsd:attribute name="id" type="xsd:ID" />
+			<xsd:attribute name="name" />
+			<xsd:attribute name="view-name" />
 			<xsd:attribute name="content-type" />
 		</xsd:complexType>
 	</xsd:element>
@@ -21,9 +22,14 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:choice minOccurs="0">
-					<xsd:element ref="beans:bean" />
 					<xsd:element ref="hql" />
 					<xsd:element ref="paged-hql" />
+					<xsd:element name="model-builder">
+						<xsd:complexType>
+							<xsd:group ref="beans:beanElements"/>
+							<xsd:attributeGroup ref="beans:beanAttributes"/>
+						</xsd:complexType>
+					</xsd:element>
 				</xsd:choice>
 				<xsd:element name="post-processors" minOccurs="0">
 					<xsd:complexType>
@@ -34,9 +40,9 @@
 				</xsd:element>
 			</xsd:sequence>
 
-			<xsd:attribute name="id" type="xsd:string" />
+			<xsd:attribute name="id" type="xsd:ID" />
 			<xsd:attribute name="name" type="xsd:string" />
-			<xsd:attribute name="view-name" type="xsd:string" use="required" />
+			<xsd:attribute name="view-name" type="xsd:string" />
 			<xsd:attribute name="content-type" type="xsd:string" />
 			<xsd:attribute name="add-uri-to-cache-key" type="xsd:boolean" />
 			<xsd:attribute name="cacheable" type="xsd:boolean" />
@@ -46,14 +52,19 @@
 
 	<xsd:complexType name="hql">
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
-			<xsd:element ref="beans:bean" />
-			<xsd:element name="attribute" type="attribute"></xsd:element>
-			<xsd:element name="current-date" type="simple-resolver"></xsd:element>
-			<xsd:element name="current-locale" type="simple-resolver"></xsd:element>
-			<xsd:element name="current-language" type="simple-resolver"></xsd:element>
-			<xsd:element name="riot-principal" type="simple-resolver"></xsd:element>
-			<xsd:element name="string-to-primitive" type="string-to-primitive"></xsd:element>
+			<xsd:element name="attribute" type="attribute" />
+			<xsd:element name="current-date" type="simple-resolver" />
+			<xsd:element name="current-locale" type="simple-resolver" />
+			<xsd:element name="current-language" type="simple-resolver" />
+			<xsd:element name="riot-principal" type="simple-resolver" />
+			<xsd:element name="string-to-primitive" type="string-to-primitive" />
 			<xsd:element name="date" type="date"></xsd:element>
+			<xsd:element name="custom-resolver">
+				<xsd:complexType>
+					<xsd:group ref="beans:beanElements "/>
+					<xsd:attributeGroup ref="beans:beanAttributes" />
+				</xsd:complexType>
+			</xsd:element>
 		</xsd:choice>
 		<xsd:attribute name="id" type="xsd:ID" />
 		<xsd:attribute name="hql" use="required" />

@@ -24,7 +24,6 @@
 package org.riotfamily.common.beans.xml;
 
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
-import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
@@ -33,22 +32,28 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  */
 public abstract class GenericNamespaceHandlerSupport extends NamespaceHandlerSupport {
 
-	protected void registerGenericParser(String elementName, Class beanClass) {
-		registerBeanDefinitionParser(elementName, new GenericBeanDefinitionParser(beanClass));
+	protected void registerSpringBeanDefinitionParser(String elementName) {
+		registerBeanDefinitionParser(elementName, new SpringBeanDefinitionParser());
 	}
 
-	protected void registerGenericParserAndDecorator(String elementName,
+	protected void registerSpringBeanDefinitionParser(String elementName,
+			BeanDefinitionDecorator decorator) {
+
+		registerSpringBeanDefinitionParser(elementName);
+		registerBeanDefinitionDecorator(elementName, decorator);
+	}
+
+	protected GenericBeanDefinitionParser register(String elementName, Class beanClass) {
+		GenericBeanDefinitionParser parser = new GenericBeanDefinitionParser(beanClass);
+		registerBeanDefinitionParser(elementName, parser);
+		return parser;
+	}
+
+	protected GenericBeanDefinitionParser register(String elementName,
 			Class beanClass, BeanDefinitionDecorator decorator) {
 
-		registerGenericParser(elementName, beanClass);
 		registerBeanDefinitionDecorator(elementName, decorator);
-	}
-
-	protected void registerParserAndDecorator(String elementName,
-			BeanDefinitionParser parser, BeanDefinitionDecorator decorator) {
-
-		registerBeanDefinitionParser(elementName, parser);
-		registerBeanDefinitionDecorator(elementName, decorator);
+		return register(elementName, beanClass);
 	}
 
 }

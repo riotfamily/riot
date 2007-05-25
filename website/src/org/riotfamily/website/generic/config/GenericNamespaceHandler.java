@@ -25,7 +25,6 @@
 package org.riotfamily.website.generic.config;
 
 
-import org.riotfamily.common.beans.xml.GenericBeanDefinitionParser;
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
 import org.riotfamily.common.beans.xml.NestedListDecorator;
 import org.riotfamily.common.beans.xml.NestedPropertyDecorator;
@@ -49,21 +48,23 @@ import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 public class GenericNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
-		registerBeanDefinitionParser("controller", new GenericBeanDefinitionParser(GenericController.class).addReference("model-builder"));
-		registerGenericParser("view", GenericViewController.class);
+		register("controller", GenericController.class).addReference("model-builder");
+		register("view", GenericViewController.class);
 
 		BeanDefinitionDecorator setModelBuilder = new NestedPropertyDecorator("modelBuilder");
-		registerParserAndDecorator("hql", new GenericBeanDefinitionParser(HqlModelBuilder.class), setModelBuilder);
-		registerParserAndDecorator("paged-hql", new GenericBeanDefinitionParser(PagedHqlModelBuilder.class), setModelBuilder);
+		register("hql", HqlModelBuilder.class, setModelBuilder);
+		register("paged-hql", PagedHqlModelBuilder.class, setModelBuilder);
+		registerSpringBeanDefinitionParser("model-builder", setModelBuilder);
 
 		BeanDefinitionDecorator addParameterResolver = new NestedListDecorator("parameterResolvers");
-		registerGenericParserAndDecorator("attribute", DefaultParameterResolver.class, addParameterResolver);
-		registerGenericParserAndDecorator("current-date", CurrentDateResolver.class, addParameterResolver);
-		registerGenericParserAndDecorator("current-locale", CurrentLocaleResolver.class, addParameterResolver);
-		registerGenericParserAndDecorator("current-language", CurrentLanguageResolver.class, addParameterResolver);
-		registerGenericParserAndDecorator("riot-principal", RiotPrincipalResolver.class, addParameterResolver);
-		registerGenericParserAndDecorator("string-to-primitive", StringToPrimitiveResolver.class, addParameterResolver);
-		registerGenericParserAndDecorator("date", DateParameterResolver.class, addParameterResolver);
+		register("attribute", DefaultParameterResolver.class, addParameterResolver);
+		register("current-date", CurrentDateResolver.class, addParameterResolver);
+		register("current-locale", CurrentLocaleResolver.class, addParameterResolver);
+		register("current-language", CurrentLanguageResolver.class, addParameterResolver);
+		register("riot-principal", RiotPrincipalResolver.class, addParameterResolver);
+		register("string-to-primitive", StringToPrimitiveResolver.class, addParameterResolver);
+		register("date", DateParameterResolver.class, addParameterResolver);
+		registerSpringBeanDefinitionParser("custom-resolver", addParameterResolver);
 	}
 
 }
