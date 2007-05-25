@@ -45,7 +45,7 @@ public class PageDefinition {
 
 	private String childHandlerName;
 
-	private List children;
+	private List definitions;
 
 	private boolean hidden;
 
@@ -73,16 +73,6 @@ public class PageDefinition {
 		this.childHandlerName = childHandlerName;
 	}
 
-	public void setChildren(List children) {
-		this.children = children;
-	}
-
-/*
- 	public List getChildren() {
-		return this.children;
-	}
-*/
-
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
 	}
@@ -99,6 +89,14 @@ public class PageDefinition {
 		this.folder = folder;
 	}
 
+	public List getDefinitions() {
+		return this.definitions;
+	}
+
+	public void setDefinitions(List definitions) {
+		this.definitions = definitions;
+	}
+
 	public PageNode createNode(Site site, Collection locales) {
 		PageNode node = new PageNode();
 		node.setSite(site);
@@ -107,8 +105,8 @@ public class PageDefinition {
 		node.setChildHandlerName(childHandlerName);
 		node.setHidden(hidden);
 		createPages(node, locales);
-		if (children != null) {
-			Iterator it = children.iterator();
+		if (definitions != null) {
+			Iterator it = definitions.iterator();
 			while (it.hasNext()) {
 				PageDefinition childDefinition = (PageDefinition) it.next();
 				PageNode childNode = childDefinition.createNode(site, locales);

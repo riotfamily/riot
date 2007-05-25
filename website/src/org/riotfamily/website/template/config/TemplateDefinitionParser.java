@@ -27,96 +27,55 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.riotfamily.common.beans.xml.DefinitionParserUtils;
+import org.riotfamily.common.beans.xml.GenericBeanDefinitionParser;
 import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.website.template.PushUpTemplateController;
 import org.riotfamily.website.template.TemplateController;
-import org.springframework.beans.MutablePropertyValues;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.beans.factory.xml.BeanDefinitionParser;
-import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
-public class TemplateDefinitionParser implements BeanDefinitionParser {
+public class TemplateDefinitionParser extends GenericBeanDefinitionParser {
 
-	private static final String ID_ATTRIBUTE = "id";
+	public TemplateDefinitionParser() {
+		super(TemplateController.class);
+		addReference("parent");
+		setDecorate(false);
+	}
 
-	private static final String NAME_ATTRIBUTE = "name";
-
-	private static final String PARENT_ATTRIBUTE = "parent";
-
-	private static final String VIEW_NAME_ATTRIBUTE = "view-name";
-
-	private static final String SESSION_ATTRIBUTE = "session";
-
-	private static final String INSERT_TAG = "insert";
-
-	private static final String REMOVE_TAG = "remove";
-
-	private static final String SLOT_ATTRIBUTE = "slot";
-
-	private static final String URL_ATTRIBUTE = "url";
-
-	private static final String PUSH_UP_ATTRIBUTE = "push-up";
-
-	private static final String PUSH_UP_SLOTS_PROPERTY = "pushUpSlots";
-
-	private static final String CONFIGURATION_PROPERTY = "configuration";
-
-	public BeanDefinition parse(Element element, ParserContext parserContext) {
-
-		RootBeanDefinition definition = new RootBeanDefinition();
-		definition.setBeanClass(TemplateController.class);
-
-		DefinitionParserUtils.registerBeanDefinition(definition, element,
-				ID_ATTRIBUTE, NAME_ATTRIBUTE, parserContext);
-
-		MutablePropertyValues pv = new MutablePropertyValues();
-
-		DefinitionParserUtils.addReference(pv, element, PARENT_ATTRIBUTE);
-		DefinitionParserUtils.addString(pv, element, VIEW_NAME_ATTRIBUTE);
-		DefinitionParserUtils.addString(pv, element, SESSION_ATTRIBUTE);
+	protected void postProcess(BeanDefinitionBuilder beanDefinition, Element element) {
 
 		HashMap configuration = new HashMap();
 		ArrayList pushUpSlots = null;
 
-		Iterator it = DomUtils.getChildElementsByTagName(
-				element, INSERT_TAG).iterator();
-
+		Iterator it = DomUtils.getChildElementsByTagName(element, "insert").iterator();
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();
-			String slot = ele.getAttribute(SLOT_ATTRIBUTE);
-			String url = ele.getAttribute(URL_ATTRIBUTE);
-			Integer pushUp = XmlUtils.getIntegerAttribute(ele, PUSH_UP_ATTRIBUTE);
+			String slot = ele.getAttribute("slot");
+			String url = ele.getAttribute("url");
+			Integer pushUp = XmlUtils.getIntegerAttribute(ele, "push-up");
 			if (pushUp != null) {
 				if (pushUpSlots == null) {
 					pushUpSlots = new ArrayList();
-					pv.addPropertyValue(PUSH_UP_SLOTS_PROPERTY, pushUpSlots);
-					definition.setBeanClass(PushUpTemplateController.class);
+					beanDefinition.addPropertyValue("pushUpSlots", pushUpSlots);
+					beanDefinition.getBeanDefinition().setBeanClass(
+							PushUpTemplateController.class);
 				}
 				pushUpSlots.add(slot);
 			}
 			configuration.put(slot, url);
 		}
 
-		it = DomUtils.getChildElementsByTagName(
-				element, REMOVE_TAG).iterator();
-
+		it = DomUtils.getChildElementsByTagName(element, "remove").iterator();
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();
-			String slot = ele.getAttribute(SLOT_ATTRIBUTE);
+			String slot = ele.getAttribute("slot");
 			configuration.put(slot, null);
 		}
 
 		if (!configuration.isEmpty()) {
-			pv.addPropertyValue(CONFIGURATION_PROPERTY, configuration);
+			beanDefinition.addPropertyValue("configuration", configuration);
 		}
-
-		definition.setPropertyValues(pv);
-
-		return definition;
 	}
 
 }

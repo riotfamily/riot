@@ -4,31 +4,26 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  *   Carsten Woelk [cwoelk at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.xml;
 
-import java.util.HashMap;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.beans.DefaultBean;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -37,6 +32,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.Assert;
@@ -44,55 +40,32 @@ import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
 /**
+ * Class similar to Spring's {@link AbstractBeanDefinitionParser}.
+ * Supports registering aliased beans and decoration of nested beans.
+ *
  * @author Carsten Woelk [cwoelk at neteye dot de]
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
 public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinitionParser {
 
-	private static Log log = LogFactory.getLog(AbstractGenericBeanDefinitionParser.class);
-
 	/** Constant for the id attribute */
 	public static final String ID_ATTRIBUTE = "id";
 
-	private final static String DEFAULT_CLASS_NAME = "*";
-	private final static Class DEFAULT_BEAN_CLASS = DefaultBean.class;
+	private Class beanClass;
 
-	private HashMap classes = new HashMap();
+	private boolean decorate = true;
 
-	/**
-	 * The empty constructor for this class register the default bean as default class.
-	 * You almost never want to use this constructor. 
-	 */
-	public AbstractGenericBeanDefinitionParser() {
-		this.registerDefaultClass(DEFAULT_BEAN_CLASS);
-	}
-
-	/**
-	 * Constructor takes the bean class as an argument which is being returned
-	 * in the {@link #getBeanClass(Element)}
-	 * @param beanClass
-	 */
 	public AbstractGenericBeanDefinitionParser(Class beanClass) {
-		this.registerDefaultClass(beanClass);
+		Assert.notNull(beanClass, "The beanClass must not be null");
+		this.beanClass = beanClass;
 	}
 
 	/**
-	 * This registers the default Bean Class which is being returned if no
-	 * matching Class is being configured for 
-	 * @param name
-	 * @param clazz
+	 * Sets whether the bean should be decorated. Default is <code>true</code>.
 	 */
-	public void registerDefaultClass(Class beanClass) {
-		this.registerElement(DEFAULT_CLASS_NAME, beanClass);
-	}
-
-	/**
-	 * This registers the given Bean Class for the given Element's name.
-	 * @param name the name of the Element to register
-	 * @param clazz the Class for the Element's Bean
-	 */
-	public void registerElement(String name, Class beanClass) {
-		classes.put(name, beanClass);
+	public void setDecorate(boolean decorate) {
+		this.decorate = decorate;
 	}
 
 	public final BeanDefinition parse(Element element, ParserContext parserContext) {
@@ -106,6 +79,9 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 				}
 				String[] aliases = resolveAliases(element, definition, parserContext);
 				BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, id, aliases);
+				if (decorate) {
+					parserContext.getDelegate().decorateBeanDefinitionIfRequired(element, holder);
+				}
 				registerBeanDefinition(holder, parserContext.getRegistry());
 				if (shouldFireEvents()) {
 					BeanComponentDefinition componentDefinition = new BeanComponentDefinition(holder);
@@ -117,6 +93,10 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 				parserContext.getReaderContext().error(ex.getMessage(), element);
 				return null;
 			}
+		}
+		else if (decorate) {
+			BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, "");
+			parserContext.getDelegate().decorateBeanDefinitionIfRequired(element, holder);
 		}
 		return definition;
 	}
@@ -133,8 +113,6 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	 * @see #doParse
 	 */
 	protected final AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
-		Class beanClass = getBeanClass(element);
-		Assert.state(beanClass != null, "Class returned from getBeanClass(Element) must not be null");
 		BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(beanClass);
 		builder.setSource(parserContext.extractSource(element));
 		if (parserContext.isNested()) {
@@ -147,24 +125,6 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 		}
 		doParse(element, parserContext, builder);
 		return builder.getBeanDefinition();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser#getBeanClass(org.w3c.dom.Element)
-	 */
-	protected Class getBeanClass(Element element) {
-		String name = element.getLocalName();
-		Class beanClass = (Class) classes.get(name);
-		if(beanClass == null) {
-			beanClass = (Class) classes.get(DEFAULT_CLASS_NAME);
-			// The below is not needed really as you would only come to this if
-			// registerDefaultClass explicitely would have been called with null.
-			if(beanClass == null) {
-				beanClass = DEFAULT_BEAN_CLASS;
-			}
-		}
-		log.debug("Class for element [" + name + "] is " + beanClass);
-		return beanClass;
 	}
 
 	/**
@@ -195,12 +155,27 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 		}
 	}
 
-	protected String[] resolveAliases(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
+	/**
+	 * Resolve the aliases for the supplied {@link BeanDefinition}. The default
+	 * implementation delegates the call to
+	 * {@link #resolveAlias(Element, AbstractBeanDefinition, ParserContext)}
+	 * and tokenizes the returned String.
+	 */
+	protected String[] resolveAliases(Element element,
+			AbstractBeanDefinition definition, ParserContext parserContext) {
+
 		String alias = resolveAlias(element, definition, parserContext);
 		return StringUtils.tokenizeToStringArray(alias, ",; ");
 	}
 
-	protected String resolveAlias(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
+	/**
+	 * Resolve the alias for the supplied {@link BeanDefinition}. The returned
+	 * String may contain multiple bean-names separated by commas, semicolons
+	 * or spaces. The default implementation returns <code>null</code>
+	 */
+	protected String resolveAlias(Element element,
+			AbstractBeanDefinition definition, ParserContext parserContext) {
+
 		return null;
 	}
 
@@ -215,7 +190,7 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	 * parameter is <code>false</code>, because one typically does not want inner beans
 	 * to be registered as top level beans.
 	 * @param definition the bean definition to be registered
-	 * @param registry the registry that the bean is to be registered with 
+	 * @param registry the registry that the bean is to be registered with
 	 * @see BeanDefinitionReaderUtils#registerBeanDefinition(BeanDefinitionHolder, BeanDefinitionRegistry)
 	 */
 	protected void registerBeanDefinition(BeanDefinitionHolder definition, BeanDefinitionRegistry registry) {
