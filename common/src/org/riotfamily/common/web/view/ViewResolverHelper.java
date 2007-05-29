@@ -74,7 +74,7 @@ public class ViewResolverHelper {
 	public View resolveView(HttpServletRequest request, ModelAndView mv)
 			throws Exception {
 
-		if (!mv.isReference()) {
+		if (mv.hasView() && !mv.isReference()) {
 		    return mv.getView();
 		}
 		return resolveView(request, mv.getViewName());
