@@ -41,6 +41,7 @@ import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.pages.mapping.PageLocationResolver;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -77,6 +78,11 @@ public class PageMacroHelper {
 			request.setAttribute(PAGE_REFRESHED, Boolean.TRUE);
 		}
 		return page;
+	}
+
+	public Page getPageForHandler(String handlerName, String localeString) {
+		Locale locale = StringUtils.parseLocaleString(localeString);
+		return getPageForHandler(handlerName, locale);
 	}
 
 	public Page getPageForHandler(String handlerName, Locale locale) {
