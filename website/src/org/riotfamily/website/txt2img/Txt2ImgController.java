@@ -212,7 +212,7 @@ public class Txt2ImgController extends AbstractCacheableController {
 		IOUtils.copy(new InputStreamReader(
 				SCRIPT_RESOURCE.getInputStream(), "UTF-8"), out);
 
-		out.print("new RiotImageReplacement('");
+		out.print("var txt2img = new RiotImageReplacement('");
 		out.print(request.getRequestURI());
 		out.print("?locale=");
 		out.print(RequestContextUtils.getLocale(request));

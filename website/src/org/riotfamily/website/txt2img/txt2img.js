@@ -41,17 +41,19 @@ RiotImageReplacement.prototype = {
 		});
 	},
 
-	insertImages: function() {
-		this.selectors.each(this.processSelectors.bind(this));
+	insertImages: function(el) {
+		for (var i = 0, len = this.selectors.length; i < len; i++) {
+			this.processSelector(this.selectors[i], el);
+		}
 	},
 
-	processSelectors: function(sel) {
-		var _this = this;
-		$$(sel).each(this.processElement.bind(this, sel));
+	processSelector: function(sel, el) {
+		new Selector(sel).findElements(el || document).each(
+				this.processElement.bind(this, sel));
 	},
 
 	processElement: function(sel, el) {
-		if (el.down('img.replacement')) {
+		if (el.down('img.replacement') || el.className == 'print-text') {
 			return;
 		}
 		el.onedit = this.processElement.bind(this, sel, el);
