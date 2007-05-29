@@ -38,8 +38,12 @@
 	<#return commonMacroHelper.formatByteSize(bytes) />
 </#function>
 
+<#function toTitleCase s>
+	<#return commonMacroHelper.toTitleCase(s) />
+</#function>
+
 <#macro includeUriField>
-	<input type="hidden" name="__includeUri" value="${commonMacroHelper.getOriginatingRequestUri()}" />
+	<input type="hidden" name="__includeUri" value="${request.requestUri}" />
 </#macro>
 
 <#macro wrap value="" tag="div" attributes...>

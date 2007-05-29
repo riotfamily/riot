@@ -154,4 +154,8 @@ public class CommonMacroHelper {
 		return FormatUtils.formatByteSize(bytes);
 	}
 
+	public String toTitleCase(String s) {
+		return FormatUtils.fileNameToTitleCase(s);
+	}
+
 }

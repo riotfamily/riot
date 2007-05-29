@@ -157,6 +157,21 @@ public final class FormatUtils {
 		}
 		return xmlToTitleCase(s.replace('.', '-'));
 	}
+
+	/**
+	 * <pre>
+	 * foo.bar     -> Foo Bar
+	 * foo-foo_bar -> Foo Foo Bar
+	 * foo.barBar  -> Foo Bar Bar
+	 * </pre>
+	 */
+	public static String fileNameToTitleCase(String s) {
+		if (s == null) {
+			return null;
+		}
+		return propertyToTitleCase(s.replace('_', '-'));
+	}
+
 	/**
 	 * <pre>
 	 * CamelCase -> camel-case
