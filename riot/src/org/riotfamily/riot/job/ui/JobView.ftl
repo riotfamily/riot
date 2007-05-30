@@ -1,6 +1,6 @@
 <#import "/spring.ftl" as spring />
 <?xml version="1.0" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -24,7 +24,7 @@
 		<div id="runnable">
 			<div id="start"><div id="startFace"></div></div>
 			<div id="cancel"><div id="cancelFace">Cancel</div></div>
-		
+
 			<div id="progress">
 				<div id="eta"></div>
 				<div id="percentage"></div>
@@ -35,7 +35,7 @@
 			Job finished.
 		</div>
 	</div>
-		
+
 	<div id="logTitle">Log Messages</div>
 	<div id="logPane">
 		<div id="log"></div>
@@ -43,7 +43,7 @@
 	<div id="logFilter">
 		<input type="checkbox" id="errorsOnly" onclick="RElement.toggleClassName('log', 'errorsOnly')" /><label for="errorsOnly">Errors Only</label>
 	</div>
-	
+
 <script type="text/javascript" language="JavaScript">
 
 TweakStyle.roundElement('start', 'all');
@@ -60,7 +60,7 @@ function updateJob(job) {
 	}
 	if (job.estimatedTime) {
 		if (job.state == 0) {
-			$('eta').update('This job will presumably take ' 
+			$('eta').update('This job will presumably take '
 					+ job.estimatedTime + ' to complete');
 		}
 		else {
@@ -102,9 +102,9 @@ function createLogElement(entry) {
 }
 
 function addLogEntry(entry) {
-	var e = createLogElement(entry).hide(e);	
+	var e = createLogElement(entry).hide(e);
 	RElement.prependChild('log', e);
-	new Effect.Appear(e);
+	new Effect.Appear(e, {duration: 0.2});
 }
 
 $('cancel').onclick = cancelJob;
