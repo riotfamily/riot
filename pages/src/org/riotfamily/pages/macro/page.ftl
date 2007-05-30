@@ -77,10 +77,10 @@
   - Outputs a page property and makes it editable via the text-tool.
   -->
 <#macro text key page=pageMacroHelper.currentPage tag="" form="" attributes ...>
+	<#if attributes.attributes?exists>
+		<#local attributes = attributes.attributes />
+	</#if>
 	<#if componentMacroHelper.isEditMode()>
-		<#if attributes.attributes?exists>
-			<#local attributes = attributes.attributes />
-		</#if>
 		<#local attributes = {"riot:containerId": page.versionContainer.id} + attributes />
 		<#local attributes = attributes + {"class": ("riot-component " + attributes["class"]?if_exists)?trim} />
 		<#if form?has_content>
