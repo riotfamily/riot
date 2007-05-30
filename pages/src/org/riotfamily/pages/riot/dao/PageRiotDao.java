@@ -46,8 +46,14 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 
 	private PageDao pageDao;
 
+	private Locale masterLocale;
+
 	public PageRiotDao(PageDao pageDao) {
 		this.pageDao = pageDao;
+	}
+
+	public void setMasterLocale(Locale masterLocale) {
+		this.masterLocale = masterLocale;
 	}
 
 	public Object getParent(Object entity) {
@@ -84,7 +90,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 
 		if (parent instanceof Page) {
 			Page parentPage = (Page) parent;
-			return parentPage.getChildPages(true);
+			return parentPage.getChildPages(masterLocale);
 		}
 		else {
 			Site site = null;
@@ -97,7 +103,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 			else {
 				site = pageDao.getDefaultSite();
 			}
-			return pageDao.findRootNode(site).getChildPages(locale, true);
+			return pageDao.findRootNode(site).getChildPages(locale, masterLocale);
 		}
 	}
 

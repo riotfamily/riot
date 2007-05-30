@@ -154,11 +154,11 @@ public class Page {
 	}
 
 	public Collection getChildPages() {
-		return getChildPages(false);
+		return node.getChildPages(locale);
 	}
 
-	public Collection getChildPages(boolean fallback) {
-		return node.getChildPages(locale, fallback);
+	public Collection getChildPages(Locale fallbackLocale) {
+		return node.getChildPages(locale, fallbackLocale);
 	}
 
 	public Collection getAncestors() {
@@ -172,7 +172,7 @@ public class Page {
 	}
 
 	public Collection getSiblings() {
-		return node.getParent().getChildPages(locale, false);
+		return node.getParent().getChildPages(locale);
 	}
 
 	public void addChildPage(Page child) {

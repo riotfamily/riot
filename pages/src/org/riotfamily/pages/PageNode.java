@@ -127,16 +127,32 @@ public class PageNode {
 	}
 
 	public Collection getChildPages(Locale locale) {
-		return getChildPages(locale, false);
-	}
-
-	public Collection getChildPages(Locale locale, boolean fallback) {
 		LinkedList pages = new LinkedList();
 		if (childNodes != null) {
 			Iterator it = childNodes.iterator();
 			while (it.hasNext()) {
 				PageNode childNode = (PageNode) it.next();
-				Page page = childNode.getPage(locale, fallback);
+				Page page = childNode.getPage(locale);
+				if (page != null) {
+					pages.add(page);
+				}
+			}
+		}
+		return Collections.unmodifiableCollection(pages);
+	}
+
+	public Collection getChildPages(Locale locale, Locale fallback) {
+		LinkedList pages = new LinkedList();
+		if (childNodes != null) {
+			Iterator it = childNodes.iterator();
+			while (it.hasNext()) {
+				PageNode childNode = (PageNode) it.next();
+				Page page = childNode.getPage(locale);
+				if (page == null) {
+					page = fallback != null
+						? childNode.getPage(fallback)
+						: childNode.getFirstPage();
+				}
 				if (page != null) {
 					pages.add(page);
 				}
@@ -146,10 +162,6 @@ public class PageNode {
 	}
 
 	public Page getPage(Locale locale) {
-		return getPage(locale, false);
-	}
-
-	public Page getPage(Locale locale, boolean fallback) {
 		if (pages == null) {
 			return null;
 		}
@@ -160,10 +172,10 @@ public class PageNode {
 				return page;
 			}
 		}
-		return fallback ? getFirstPage() : null;
+		return null;
 	}
 
-	public Page getFirstPage() {
+	private Page getFirstPage() {
 		return (Page) pages.iterator().next();
 	}
 
