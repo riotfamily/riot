@@ -29,6 +29,11 @@
 	<body>
 		<div id="wrapper">
 			<div id="form" class="main">
+				<#if saved>
+					<div id="message">
+						<@spring.messageText "label.form.saved", "The data has been saved." />
+					</div>
+				</#if>
 				<#if options?has_content>
 					<div id="form-options">
 						<@spring.messageText "label.formChooser.choose", "Please select the kind of object you would like to create." />

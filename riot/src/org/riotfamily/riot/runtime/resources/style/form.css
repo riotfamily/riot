@@ -14,7 +14,8 @@
 	background-image: url(icons/commands/save.gif);
 }
 
-#form-options {
+#form-options,
+#message {
 	background-color: #ebebeb;
 	padding: 20px 10px 20px 36px;
 	margin-bottom: 50px;

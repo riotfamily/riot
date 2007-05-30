@@ -25,6 +25,8 @@ package org.riotfamily.common.util;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -36,7 +38,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.ClassUtils;
-import org.springframework.web.util.HtmlUtils;
 
 /**
  * Utility class that provides some simple text formatting methods.
@@ -61,13 +62,6 @@ public final class FormatUtils {
 	private static final String ENTITY_AMP = "&amp;";
 
 	private static final String ENTITY_QUOT = "&quot;";
-
-	private static final String ALLOW_URI_CHARS = "0123456789" +
-			"abcdefghijklmnopqrstuvwxyz" +
-			"ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-			"-._~!$&'()*+,;=:@%?/";
-
-	private static final String HEX = "0123456789ABCDEF";
 
 	private static final String BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
 			"abcdefghijklmnopqrstuvwxyz0123456789+/=";
@@ -557,26 +551,20 @@ public final class FormatUtils {
 		return escapeChars(s, ".+*?{[^$", '\\');
 	}
 
-	public static String uriEscape(String str) {
-		StringBuffer sb = new StringBuffer(str.length());
-		for (int i = 0; i < str.length(); i++) {
-			char c = str.charAt(i);
-			if ((ALLOW_URI_CHARS.indexOf(c) == -1) && (c <= 127)) {
-				sb.append('%');
-				sb.append(HEX.charAt(c / 16));
-				sb.append(HEX.charAt(c % 16));
-			}
-			else
-				sb.append(c);
+	public static String uriEscape(String input) {
+		try {
+			return URLEncoder.encode(input, "UTF-8");
 		}
-		return sb.toString();
+		catch (UnsupportedEncodingException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	/**
-	 * Escapes all HTML special characters in the given array. Dates and
+	 * Escapes all XML special characters in the given array. Dates and
 	 * primitive-wrappers are left as-is, all other objects are converted to
 	 * their String representation and escaped using
-	 * {@link HtmlUtils#htmlEscape(String)}.
+	 * {@link #xmlEscape(String)}.
 	 * @since 6.4
 	 */
 	public static Object[] htmlEscapeArgs(Object[] args) {
@@ -585,7 +573,7 @@ public final class FormatUtils {
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];
 			if (arg instanceof String) {
-				escapedArgs[i] = HtmlUtils.htmlEscape((String) arg);
+				escapedArgs[i] = xmlEscape((String) arg);
 			}
 			else if (ClassUtils.isPrimitiveWrapper(arg.getClass())
 					|| arg instanceof Date) {
@@ -593,7 +581,7 @@ public final class FormatUtils {
 				escapedArgs[i] = arg;
 			}
 			else {
-				escapedArgs[i] = HtmlUtils.htmlEscape(arg.toString());
+				escapedArgs[i] = xmlEscape(arg.toString());
 			}
 		}
 		return escapedArgs;

@@ -455,4 +455,12 @@ public final class ServletUtils {
 		return null;
 	}
 
+	public static String addParameter(String url, String name, String value) {
+		StringBuffer sb = new StringBuffer(url);
+		boolean first = url.indexOf('?') == -1;
+		sb.append(first ? '?' : '&');
+		sb.append(name).append('=').append(FormatUtils.uriEscape(value));
+		return sb.toString();
+	}
+
 }

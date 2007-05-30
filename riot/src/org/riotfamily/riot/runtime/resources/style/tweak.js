@@ -16,7 +16,7 @@ var TweakStyle = {
 		c.style.backgroundColor = '#fff';
 		return c;
 	},
-	
+
 	roundElement: function(el, corners) {
 		el = $(el);
 		if (el) {
@@ -29,13 +29,13 @@ var TweakStyle = {
 			}
 		}
 	},
-	
+
 	roundElements: function(selector, corners) {
 		$$(selector).each(function(e) {
 			TweakStyle.roundElement(e, corners);
 		});
 	},
-	
+
 	styleButton: function(button) {
 		button = $(button);
 		button.style.display = 'none';
@@ -46,12 +46,12 @@ var TweakStyle = {
 			button.click();
 			return false;
 		}
-		
+
 		var face = document.createElement('div');
 		face.className = 'face';
 		face.innerHTML = button.value;
 		a.appendChild(face);
-		
+
 		button.parentNode.insertBefore(a, button);
 		this.roundElement(a, 'all');
 	},
@@ -60,12 +60,12 @@ var TweakStyle = {
 		this.styleButton('submit');
 		this.roundElement('tip-of-the-day', 'all');
 	},
-		
+
 	path: function() {
 		parent.frameset.resizeFrame(window);
 		this.roundElement('path');
 	},
-	
+
 	group: function() {
 		this.roundElements('div.title');
 		$$('#editors .text').each(function(el) {
@@ -73,29 +73,30 @@ var TweakStyle = {
 			el.style.paddingTop = Math.round((el.parentNode.offsetHeight - h) / 2) + 'px';
 		});
 	},
-	
+
 	status: function() {
 		var div = $('panel');
 		div.style.width = '100%';
 		this.roundElement(div);
 		parent.frameset.resizeFrame(window);
 	},
-	
+
 	form: function() {
 		this.roundElements('div.title');
 		$$('.buttons input.button').each(function(b) {
 			TweakStyle.styleButton(b);
 		});
 		this.roundElement('form-options', 'all');
+		this.roundElement('message', 'all');
 	},
-	
+
 	list: function() {
 		this.roundElements('div.title');
 		this.roundElement('list');
 	},
-	
+
 	dialogForm: function() {
 		this.form();
 	}
-	
+
 }
