@@ -81,15 +81,17 @@ public class PageSetupBean implements InitializingBean {
 	}
 
 	protected void createNodes() {
-		Site site = pageDao.getSite(siteName);
-		PageNode rootNode = pageDao.findRootNode(site);
-		Iterator it = definitions.iterator();
-		while (it.hasNext()) {
-			PageDefinition definition = (PageDefinition) it.next();
-			PageNode childNode = definition.createNode(site, locales);
-			rootNode.addChildNode(childNode);
+		if (pageDao.listSites().isEmpty()) {
+			Site site = pageDao.getSite(siteName);
+			PageNode rootNode = pageDao.findRootNode(site);
+			Iterator it = definitions.iterator();
+			while (it.hasNext()) {
+				PageDefinition definition = (PageDefinition) it.next();
+				PageNode childNode = definition.createNode(site, locales);
+				rootNode.addChildNode(childNode);
+			}
+			pageDao.updateNode(rootNode);
 		}
-		pageDao.updateNode(rootNode);
 	}
 
 
