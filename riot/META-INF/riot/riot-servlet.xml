@@ -128,6 +128,8 @@
 		<constructor-arg ref="riotPrincipalBinder" />
 		<property name="sessionDataStore" ref="sessionDataStore" />
 	</bean>
+		
+    <bean id="loggingPolicy" class="org.riotfamily.riot.security.policy.LoggingPolicy" />
 
 	<bean id="defaultPolicy" class="org.riotfamily.riot.security.policy.GrantAllPolicy" />
 

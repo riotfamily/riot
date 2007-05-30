@@ -38,6 +38,7 @@ import org.riotfamily.components.editor.EditModeUtils;
 import org.riotfamily.components.render.EditModeRenderStrategy;
 import org.riotfamily.components.render.LiveModeRenderStrategy;
 import org.riotfamily.components.render.RenderStrategy;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -155,7 +156,9 @@ public class ComponentListController implements Controller,
 			HttpServletResponse response) throws Exception {
 
 		final RenderStrategy strategy;
-		if (EditModeUtils.isEditMode(request)) {
+		if (EditModeUtils.isEditMode(request) &&
+			AccessController.isGranted("edit", locator.getLocation(request))) {
+			
 			log.debug("Authenticated user - rendering list in edit-mode");
 			strategy = new EditModeRenderStrategy(componentDao, 
 					componentRepository, formRegistry, this, request, response);

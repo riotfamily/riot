@@ -304,14 +304,15 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	/**
 	 * Publishes the ComponentList identified by the given ID.
 	 */
-	private void publishList(Long listId) {
-		ComponentList componentList = dao.loadComponentList(listId);
+	public void publishList(Long listId) {
+		ComponentList list = dao.loadComponentList(listId);
 
-		if (AccessController.isGranted("publish", componentList, null)) {
-			if (dao.publishList(componentList)) {
+		if (AccessController.isGranted("publish", list.getLocation())) {
+			
+			if (dao.publishList(list)) {
 				log.debug("Changes published for ComponentList " + listId);
 				if (cache != null) {
-					String tag = componentList.getLocation().toString();
+					String tag = list.getLocation().toString();
 					log.debug("Invalidating items tagged as " + tag);
 					cache.invalidateTaggedItems(tag);
 				}

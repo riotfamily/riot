@@ -79,4 +79,10 @@ public final class AccessController {
 		return loginManager.isGranted(getPrincipalForCurrentThread(), 
 				action, object, editor);
 	}	
+	
+	public static boolean isGranted(String action, Object object) {
+		
+		return loginManager.isGranted(getPrincipalForCurrentThread(), 
+				action, object, null);
+	}	
 }
