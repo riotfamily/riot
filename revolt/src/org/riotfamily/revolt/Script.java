@@ -85,9 +85,11 @@ public class Script {
 	}
 
 	public Script append(Script script) {
-		newStatement();
-		callbacks.addAll(script.getCallbacks());
-		manualExecutionOnly |= script.isManualExecutionOnly();
+		if (script != null) {
+			newStatement();
+			callbacks.addAll(script.getCallbacks());
+			manualExecutionOnly |= script.isManualExecutionOnly();
+		}
 		return this;
 	}
 
