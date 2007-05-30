@@ -117,7 +117,7 @@ RiotImageReplacement.prototype = {
 		   }
 		   result = result + chars.charAt(e1) + chars.charAt(e2) + chars.charAt(e3) + chars.charAt(e4);
 		}
-		return escape(result);
+		return encodeURIComponent(result);
 	},
 
 	setImageSrc: function(el, src) {
