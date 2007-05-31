@@ -4,9 +4,9 @@
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
-	
+
 	<import resource="classpath:/org/riotfamily/riot/hibernate/runtime/db-schema.xml"/>
-	
+
 	<!-- JDBC DataSource pooled by C3P0 -->
 	<bean id="riotDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
 		<property name="driverClass" value="${jdbc.driver_class}" />
@@ -19,17 +19,17 @@
 	    <property name="idleConnectionTestPeriod" value="60" />
 	    <property name="checkoutTimeout" value="30000" />
 	</bean>
-	
+
 	<bean id="riotHibernateProperties" class="org.riotfamily.riot.hibernate.support.PropertiesPrefixFactoryBean">
 		<property name="prefix" value="hibernate." />
 		<property name="properties" value="${hibernate.*}" />
 	</bean>
 
-	<bean id="evolver" class="org.riotfamily.revolt.Evolver">
+	<bean id="revolt" class="org.riotfamily.revolt.Evolver">
 		<property name="automatic" value="${riot.revolt.automatic=false}" />
 		<property name="enabled" value="${riot.revolt.enabled=true}" />
 	</bean>
-	
+
 	<bean id="riotHibernateMappingLocations" class="org.riotfamily.common.beans.module.ModularListFactoryBean">
 		<property name="key" value="hibernateMappingLocations" />
 		<property name="includeRootList" value="true" />
@@ -41,11 +41,11 @@
 			</list>
 		</property>
 	</bean>
-		
+
 	<!-- The Hibernate SessionFactory -->
-	<bean id="riotSessionFactory" name="sessionFactory" depends-on="evolver" 
+	<bean id="riotSessionFactory" name="sessionFactory" depends-on="revolt"
 			class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-			
+
 		<property name="dataSource" ref="riotDataSource" />
 		<property name="mappingLocations" ref="riotHibernateMappingLocations" />
 		<property name="hibernateProperties" ref="riotHibernateProperties" />
@@ -55,9 +55,9 @@
 	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
-	
+
 	<bean id="notificationDaoImpl" class="org.riotfamily.riot.hibernate.workflow.notification.HibernateNotificationDao">
 		<property name="sessionFactory" ref="riotSessionFactory" />
-	</bean>	
+	</bean>
 
 </beans>
