@@ -6,39 +6,40 @@
 	<@riot.script src="tree/tree.js" />
 	<#if mode == "tinyMCE">
 		<@riot.script src="tiny_mce/tiny_mce_popup.js" />
+		<script>
+			tinyMCE.setWindowArg('mce_replacevariables', false);
+		</script>
 	</#if>
 </head>
 <body>
-
-		<form action="?" method="GET">
-			<input type="hidden" name="mode" value="${mode?if_exists}" />
-			<#if sites?has_content && sites?size &gt; 1>
-				<select name="site" onchange="this.form.submit()">
-					<#list sites as site>
-						<option value="${site.id}"<#if site == selectedSite>selected="selected"</#if>>${site.name}</option>
-					</#list>
-				</select>
-			</#if>
-			<#if locales?has_content>
-				<select name="locale" onchange="this.form.submit()">
-					<#list locales as locale>
-						<option value="${locale}"<#if locale == selectedLocale>selected="selected"</#if>>${locale.displayName}</option>
-					</#list>
-				</select>
-			</#if>
-		</form>
+	<form action="?" method="GET">
+		<input type="hidden" name="mode" value="${mode?if_exists}" />
+		<#if sites?has_content && sites?size &gt; 1>
+			<select name="site" onchange="this.form.submit()">
+				<#list sites as site>
+					<option value="${site.id}"<#if site == selectedSite>selected="selected"</#if>>${site.name}</option>
+				</#list>
+			</select>
+		</#if>
+		<#if locales?has_content>
+			<select name="locale" onchange="this.form.submit()">
+				<#list locales as locale>
+					<option value="${locale}"<#if locale == selectedLocale>selected="selected"</#if>>${locale.displayName}</option>
+				</#list>
+			</select>
+		</#if>
+	</form>
 	<ul id="tree" class="tree">
 		<@renderPages pages />
 	</ul>
 	<script>
-		Tree.create('tree', function(a) {
+		new Tree('tree', function(href) {
 			<#if mode == "tinyMCE">
-				tinyMCE.getWindowArg('window').document.getElementById(tinyMCE.getWindowArg('input')).value = this.getAttribute('href');
+				tinyMCE.getWindowArg('window').document.getElementById(tinyMCE.getWindowArg('input')).value = href;
 				tinyMCEPopup.close();
 			<#else>
-				opener.WindowCallback.invoke(self, this.getAttribute('href'));
+				opener.WindowCallback.invoke(self, href);
 				close();
-				return false;
 			</#if>
 		});
 	</script>

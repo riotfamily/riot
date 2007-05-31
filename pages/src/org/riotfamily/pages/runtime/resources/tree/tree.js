@@ -3,20 +3,32 @@
  * See http://www.silverstripe.com/downloads/tree/
  * The code has been refactored and now uses prototype.js.
  */
-var Tree = {
-	
-	create: function(el, linkHandler) {
+var Tree = Class.create();
+Tree.prototype = {
+
+	initialize: function(el, linkHandler) {
 		el = $(el);
-		var items = $A(el.childNodes).findAll(function(e) { return e.tagName == 'LI' });
-		items.each(function(item, index) {
-			Tree._initLi(item, index == items.length - 1);
-		});
-		if (linkHandler) {
-			$A(el.getElementsByTagName('A')).each(function(a) { a.onclick = linkHandler	});
+		this.linkHandler = linkHandler;
+		this.initUl(el);
+		var a = el.getElementsByTagName('A');
+		for (var i = 0, len = a.length; i < len; i++) {
+			Event.observe(a[i], 'click', this.handleClick.bindAsEventListener(this, a[i]));
 		}
 	},
 
-	_initLi: function(li, last) {
+	handleClick: function(ev, a) {
+		Event.stop(ev);
+		this.linkHandler(a.getAttribute('href'));
+	},
+
+	initUl: function(ul) {
+		var items = ul.childElements().findAll(function(e) {return e.tagName == 'LI'});
+		for (var i = 0, len = items.length; i < len; i++) {
+			this.initLi(items[i], i == len -1);
+		}
+	},
+
+	initLi: function(li, last) {
 		// Create the extra divs
 		var divA = document.createElement('div');
 		var divB = document.createElement('div');
@@ -29,24 +41,18 @@ var Tree = {
 		divC.className = 'c';
 
 		Element.addClassName(li, 'closed');
-		
+
 		if (last) {
 			Element.addClassName(li, 'last');
 			Element.addClassName(divA, 'last');
 		}
-		
+
 		divB.onclick = function(ev) {
-			var el = this.li;
-			if (el.childUL) {
-				if(!Element.hasClassName(el, 'closed')) {
-					Element.addClassName(li, 'closed');
-				} 
-				else {
-					Element.removeClassName(li, 'closed');
-				}
+			if (this.li.childUl) {
+				Element.toggleClassName(this.li, 'closed');
 			}
-		};	
-			
+		};
+
 		// Find nested UL within the LI
 		var stoppingPoint = li.childNodes.length;
 		var startingPoint = 0;
@@ -57,17 +63,17 @@ var Tree = {
 				continue;
 			}
 			if (li.childNodes[j].tagName == 'UL') {
-				li.childUL = li.childNodes[j];
+				li.childUl = li.childNodes[j];
 				stoppingPoint = j;
-				break;					
+				break;
 			}
 		}
-				
+
 		// Move all the nodes up until that point into divC
 		for (var j = startingPoint; j < stoppingPoint; j++) {
 			divC.appendChild(li.childNodes[startingPoint]);
 		}
-			
+
 		// Insert the outermost extra div into the tree
 		if (li.childNodes.length > startingPoint) {
 			li.insertBefore(divA, li.childNodes[startingPoint]);
@@ -75,10 +81,10 @@ var Tree = {
 		else {
 			li.appendChild(divA);
 		}
-			
+
 		// Process the children
-		if (li.childUL) {
-			this.create(li.childUL);
+		if (li.childUl) {
+			this.initUl(li.childUl);
 			Element.addClassName(li, 'children');
 			Element.addClassName(divA, 'children');
 		}

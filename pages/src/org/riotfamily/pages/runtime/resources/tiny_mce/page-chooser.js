@@ -8,3 +8,7 @@ function riotPageChooser(field_name, url, type, win) {
     });
     return false;
 }
+
+Resources.waitFor('riot.tinyMCEConfig', function() {
+	riot.tinyMCEConfig.file_browser_callback = 'riotPageChooser';
+});
