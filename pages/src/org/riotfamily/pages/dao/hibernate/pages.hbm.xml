@@ -39,20 +39,21 @@
 		</id>
 		<!-- We have to cascade updates so that the parent is reattached -->
 		<many-to-one name="node" insert="false" update="false" cascade="save-update" />
-		<property name="locale" unique-key="location" length="5"/>
+		<property name="locale" length="5"/>
 		<property name="published" />
 		<property name="creationDate" />
 		<property name="pathComponent" />
 		<property name="folder" />
-		<property name="path" column="`path`" unique-key="location" />
+		<property name="path" column="`path`" />
 		<many-to-one name="versionContainer" cascade="all" />
 	</class>
 
 	<class name="PageAlias" table="riot_page_aliases">
 		<cache usage="nonstrict-read-write" region="pages" />
 		<composite-id name="location">
+			<key-property name="siteName" />
 			<key-property name="path" column="`path`" />
-			<key-property name="locale" column="locale" />
+			<key-property name="locale" />
 		</composite-id>
 		<many-to-one name="page" />
 	</class>
