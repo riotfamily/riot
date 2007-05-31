@@ -1,8 +1,8 @@
 <#import "/spring.ftl" as spring />
 <?xml version="1.0" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" 
-		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">	
-		
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title><@spring.messageText "title.riot", "Riot V6" /></title>
@@ -11,9 +11,6 @@
     	<@riot.script src="prototype/prototype.js" />
     	<@riot.script src="riot-js/viewport.js" />
     	<@riot.script src="frameset.js" />
-		<script type="text/javascript" language="JavaScript">
-			var frameset = new RiotFrameset('rows');
-		</script>
 		<style type="text/css">
 			frame {
 				background-color: #fff;
