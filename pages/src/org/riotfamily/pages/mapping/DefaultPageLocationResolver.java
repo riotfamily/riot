@@ -42,6 +42,8 @@ public class DefaultPageLocationResolver implements PageLocationResolver {
 
 	private Collection locales;
 
+	private Locale fixedLocale = null;
+
 	private PathCompleter pathCompleter;
 
 	public DefaultPageLocationResolver(PathCompleter pathCompleter) {
@@ -50,10 +52,13 @@ public class DefaultPageLocationResolver implements PageLocationResolver {
 
 	public void setLocales(Collection locales) {
 		this.locales = locales;
+		if (locales != null && locales.size() == 1) {
+			fixedLocale = (Locale) locales.iterator().next();
+		}
 	}
 
 	protected boolean localesInPath() {
-		return locales != null && !locales.isEmpty();
+		return locales != null && locales.size() > 1;
 	}
 
 	public PageLocation getPageLocation(HttpServletRequest request) {
@@ -68,6 +73,9 @@ public class DefaultPageLocationResolver implements PageLocationResolver {
 					path = path.substring(i);
 				}
 			}
+		}
+		else {
+			locale = fixedLocale;
 		}
 		return new PageLocation(null, path, locale);
 	}
