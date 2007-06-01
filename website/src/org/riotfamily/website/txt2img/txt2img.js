@@ -83,8 +83,8 @@ RiotImageReplacement.prototype = {
 		}
 
 		var img = new Image();
-		img.onload = this.insertImage.bind(this, el, img, hover);
 		img.src = this.getImageUrl(text, transform, width, sel, color);
+		this.insertImage(el, img, hover);
 	},
 
 	getImageUrl: function(text, transform, width, sel, color) {
