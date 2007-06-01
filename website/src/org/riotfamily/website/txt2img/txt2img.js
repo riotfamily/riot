@@ -48,8 +48,10 @@ RiotImageReplacement.prototype = {
 	},
 
 	processSelector: function(sel, el) {
-		new Selector(sel).findElements(el || document).each(
-				this.processElement.bind(this, sel));
+		var elements = new Selector(sel).findElements(el);
+		for (var i = 0, len = elements.length; i < len; i++) {
+			this.processElement(sel, elements[i]);
+		}
 	},
 
 	processElement: function(sel, el) {
@@ -164,7 +166,9 @@ if (!Event.onDOMReady) {
 		    if (arguments.callee.done) return;
 		    arguments.callee.done = true;
 		    if (this._timer) clearInterval(this._timer);
-		    this._readyCallbacks.each(function(f) { f() });
+		    for (var i = 0; i < this._readyCallbacks.length; i++) {
+		    	this._readyCallbacks[i]();
+		    }
 		    this._readyCallbacks = null;
 		},
 		onDOMReady: function(f) {
