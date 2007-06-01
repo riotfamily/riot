@@ -150,6 +150,18 @@ public class CommonMacroHelper {
 		return defaultExtension;
 	}
 
+	public String baseName(String path) {
+		int begin = path.lastIndexOf('/') + 1;
+		int end = path.indexOf(';');
+		if (end == -1) {
+			end = path.indexOf('?');
+			if (end == -1) {
+				end = path.length();
+			}
+		}
+		return path.substring(begin, end);
+	}
+
 	public String formatByteSize(long bytes) {
 		return FormatUtils.formatByteSize(bytes);
 	}

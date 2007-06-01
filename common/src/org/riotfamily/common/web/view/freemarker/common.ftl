@@ -30,6 +30,10 @@
 	<#return collection[index] />
 </#function>
 
+<#function baseName url>
+	<#return commonMacroHelper.baseName(url) />
+</#function>
+
 <#function fileExtension filename validExtension=[] defaultExtension="">
 	<#return commonMacroHelper.getFileExtension(filename, validExtension, defaultExtension) />
 </#function>
