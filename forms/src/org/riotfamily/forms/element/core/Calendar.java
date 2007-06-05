@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.core;
 
@@ -39,14 +39,19 @@ import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.resource.StylesheetResource;
 import org.riotfamily.forms.support.MessageUtils;
 import org.riotfamily.forms.support.TemplateUtils;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 
 /**
  * A DHTML calendar widget.
+ * http://www.dynarch.com/projects/calendar/
  */
 public class Calendar extends AbstractTextElement implements ResourceElement,
-		DHTMLElement {	
-	
-	/** Format conversion patterns */
+		DHTMLElement {
+
+	/**
+	 * Rules to translate {@link SimpleDateFormat SimpleDateFormat patterns}
+	 * to the syntax used by the JavaScript calendar widget.
+	 * */
     private static String[] conversions = new String[] {
             "'(.)", "$1",
             "%", "%%",
@@ -66,48 +71,55 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
             "(?<!%)EE?", "%a",
             "(?<!%)w", "%W",
             "(?<!%)a", "%P"};
-    
+
     /** List of compiled conversion patterns */
     private static Pattern[] patterns;
-    
+
     static {
         patterns = new Pattern[conversions.length / 2];
         for (int i = 0; i < patterns.length; i++) {
             patterns[i] = Pattern.compile(conversions[i * 2]);
         }
     }
-    
+
 	private String formatPattern = "yyyy-MM-dd";
-	
+
 	private String jsFormatPattern;
-	
+
 	private String formatKey;
-	
+
 	private String defaultValue;
-	
+
 	private ScriptResource resource;
-	
+
 	public Calendar() {
 		setStyleClass("text calendar-input");
 	}
-	
+
 	public String getFormatPattern() {
 		return formatPattern;
 	}
-	
+
+	/**
+	 * Sets the format pattern to use.
+	 * @see SimpleDateFormat
+	 */
 	public void setFormatPattern(String formatPattern) {
 		this.formatPattern = formatPattern;
 	}
-	
+
 	public String getJsFormatPattern() {
 		return jsFormatPattern;
 	}
-	
+
+	/**
+	 * Sets a message-key that is used to look-up the actual format pattern.
+	 */
 	public void setFormatKey(String formatKey) {
 		this.formatKey = formatKey;
-	}	 
-	
-	public void setDefaultValue(String defaultValue) {		
+	}
+
+	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
 	}
 
@@ -120,9 +132,15 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
             Matcher matcher = patterns[i].matcher(jsFormatPattern);
             jsFormatPattern = matcher.replaceAll(conversions[i * 2 + 1]);
         }
-		
+		setPropertyEditor(new CustomDateEditor(
+				new SimpleDateFormat(formatPattern), false));
 	}
-	
+
+	public boolean isShowTime() {
+		return formatPattern != null && (formatPattern.indexOf('H') != -1 ||
+				formatPattern.indexOf('h') != -1);
+	}
+
 	public void setValue(Object value) {
 		if (value == null && defaultValue != null) {
 			super.setValue(getDefaultDate());
@@ -133,29 +151,29 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
 	protected void afterFormContextSet() {
 		String lang = getFormContext().getLocale().getLanguage().toLowerCase();
 		URL languageScript = getClass().getResource(
-				"/org/riotfamily/resources/jscalendar/lang/calendar-" 
+				"/org/riotfamily/resources/jscalendar/lang/calendar-"
 				+ lang + ".js");
-		
+
 		if (languageScript == null) {
 			lang = "en";
 		}
-		
+
 		resource = new ScriptResource("jscalendar/calendar-setup.js", "Calendar.setup", new FormResource[] {
-			new ScriptResource("jscalendar/lang/calendar-" + lang + ".js", "Calendar._DN", 
+			new ScriptResource("jscalendar/lang/calendar-" + lang + ".js", "Calendar._DN",
 				new ScriptResource("jscalendar/calendar.js", "Calendar")
 			),
 			new StylesheetResource("jscalendar/calendar.css")
 		});
 	}
-	
+
 	public FormResource getResource() {
 		return resource;
-	}	
+	}
 
 	public String getInitScript() {
 		return TemplateUtils.getInitScript(this);
 	}
-		
+
 	protected Date getDefaultDate() {
 		Date date = FormatUtils.parseDate(defaultValue);
 		if (date == null) {
@@ -167,5 +185,5 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
 			}
 		}
 		return date;
-	}	
+	}
 }

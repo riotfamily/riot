@@ -1,7 +1,7 @@
 /* The main calendar widget.  DIV containing a table. */
 
-div.calendar { 
-  position: relative; 
+div.calendar {
+  position: relative;
   border: 1px solid #3d3d3d;
 }
 
@@ -123,7 +123,7 @@ div.calendar {
   border: 1px solid ${highlight};
 }
 
-.calendar tbody td.today { 
+.calendar tbody td.today {
   font-weight: bold;
 }
 
@@ -199,17 +199,16 @@ div.calendar {
 }
 
 .calendar td.time {
-  border-top: 1px solid #897969;
+  border-top: 1px solid #3D3D3D;
   padding: 2px 0px;
   text-align: center;
-  background-color: #D0CBB7;
+  background-color: #A4A4A4;
 }
 
 .calendar td.time .hour,
 .calendar td.time .minute,
 .calendar td.time .ampm {
   padding: 0px 3px 0px 4px;
-  border: 1px solid #D0CBB7;
   font-weight: bold;
 }
 
