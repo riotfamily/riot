@@ -51,8 +51,6 @@ public class PageChooserController implements TransactionalController {
 
 	private PageLocationResolver resolver;
 
-	private List locales;
-
 	private String viewName = ResourceUtils.getPath(
 			PageChooserController.class, "PageChooserView.ftl");
 
@@ -62,15 +60,12 @@ public class PageChooserController implements TransactionalController {
 		this.resolver = resolver;
 	}
 
-	public void setLocales(List locales) {
-		this.locales = locales;
-	}
-
 	private Locale getLocale(HttpServletRequest request) {
 		String localeString = request.getParameter("locale");
 		if (localeString != null) {
 			return StringUtils.parseLocaleString(localeString);
 		}
+		List locales = pageDao.getLocales();
 		if (locales != null && !locales.isEmpty()) {
 			if (locales.size() == 1) {
 				return (Locale) locales.get(0);
@@ -98,7 +93,7 @@ public class PageChooserController implements TransactionalController {
 		model.put("mode", ServletRequestUtils.getStringParameter(
 				request, "mode", "forms"));
 
-		model.put("locales", locales);
+		model.put("locales", pageDao.getLocales());
 		model.put("selectedLocale", locale);
 		model.put("sites", pageDao.listSites());
 		model.put("selectedSite", site);

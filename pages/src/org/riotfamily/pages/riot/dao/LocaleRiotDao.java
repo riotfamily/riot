@@ -26,8 +26,8 @@ package org.riotfamily.pages.riot.dao;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
@@ -45,12 +45,10 @@ public class LocaleRiotDao extends RiotDaoAdapter
 		implements ParentChildDao {
 
 	private static final String ID_SEPARATOR = ",";
-	private Set locales;
 
 	private PageDao pageDao;
 
-	public LocaleRiotDao(Set locales, PageDao pageDao) {
-		this.locales = locales;
+	public LocaleRiotDao(PageDao pageDao) {
 		this.pageDao = pageDao;
 	}
 
@@ -63,6 +61,7 @@ public class LocaleRiotDao extends RiotDaoAdapter
 		if (site == null) {
 			site = pageDao.getDefaultSite();
 		}
+		List locales = pageDao.getLocales();
 		ArrayList result = new ArrayList(locales.size());
 		Iterator it = locales.iterator();
 		while (it.hasNext()) {

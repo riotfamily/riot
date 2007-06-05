@@ -24,6 +24,7 @@
 package org.riotfamily.pages.dao;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -39,6 +40,7 @@ import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.Site;
 import org.riotfamily.pages.component.PageComponentListLocator;
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -56,8 +58,12 @@ public abstract class AbstractPageDao implements PageDao {
 
 	private ComponentDao componentDao;
 
-	public AbstractPageDao(ComponentDao componentDao) {
+	private List locales;
+
+	public AbstractPageDao(ComponentDao componentDao, List locales) {
 		this.componentDao = componentDao;
+		this.locales = locales;
+		Assert.notEmpty(locales, "At least one Locale must be configured.");
 	}
 
 	protected abstract Object loadObject(Class clazz, Serializable id);
@@ -211,6 +217,7 @@ public abstract class AbstractPageDao implements PageDao {
 		Site site = new Site();
 		site.setName(DEFAULT_SITE_NAME);
 		site.setEnabled(true);
+		site.setLocales(new ArrayList(locales));
 		saveSite(site);
 		return site;
 	}
@@ -236,6 +243,8 @@ public abstract class AbstractPageDao implements PageDao {
 		deleteObject(site);
 	}
 
-
+	public List getLocales() {
+		return locales;
+	}
 
 }

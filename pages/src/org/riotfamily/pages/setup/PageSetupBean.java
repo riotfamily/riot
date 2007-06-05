@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.setup;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -45,8 +43,6 @@ public class PageSetupBean implements InitializingBean {
 
 	private String siteName = null;
 
-	private Collection locales;
-
 	private List definitions;
 
 	private PageDao pageDao;
@@ -65,14 +61,7 @@ public class PageSetupBean implements InitializingBean {
 		this.definitions = definitions;
 	}
 
-	public void setLocales(Collection locales) {
-		this.locales = locales;
-	}
-
 	public void afterPropertiesSet() throws Exception {
-		if (locales == null) {
-			locales = Collections.singletonList(null);
-		}
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				createNodes();
@@ -87,7 +76,7 @@ public class PageSetupBean implements InitializingBean {
 			Iterator it = definitions.iterator();
 			while (it.hasNext()) {
 				PageDefinition definition = (PageDefinition) it.next();
-				PageNode childNode = definition.createNode(site, locales);
+				PageNode childNode = definition.createNode(site, pageDao.getLocales());
 				rootNode.addChildNode(childNode);
 			}
 			pageDao.updateNode(rootNode);

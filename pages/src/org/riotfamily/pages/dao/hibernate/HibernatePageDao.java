@@ -56,10 +56,10 @@ public class HibernatePageDao extends AbstractPageDao {
 
 	private HibernateHelper hibernate;
 
-	public HibernatePageDao(ComponentDao componentDao,
+	public HibernatePageDao(ComponentDao componentDao, List locales,
 			SessionFactory sessionFactory) {
 
-		super(componentDao);
+		super(componentDao, locales);
 		this.hibernate = new HibernateHelper(sessionFactory, "pages");
 	}
 

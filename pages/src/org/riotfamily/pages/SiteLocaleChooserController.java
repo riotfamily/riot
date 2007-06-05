@@ -41,40 +41,34 @@ import org.springframework.web.servlet.view.RedirectView;
  * @since 6.5
  */
 public class SiteLocaleChooserController extends AbstractCacheableController {
-		
+
 	private PageDao pageDao;
-	
+
 	private PageLocationResolver locationResolver;
-	
-	private List websiteLocales;
-	
+
 	private String siteName;
-	
+
 	private String viewName;
-	
-	public SiteLocaleChooserController(PageDao pageDao, 
+
+	public SiteLocaleChooserController(PageDao pageDao,
 					PageLocationResolver locationResolver) {
-		
+
 		this.pageDao = pageDao;
 		this.locationResolver = locationResolver;
 	}
-	
-	public void setWebsiteLocales(List websiteLocales) {
-		this.websiteLocales = websiteLocales;
-	}
-	
+
 	public void setSiteName(String siteName) {
 		this.siteName = siteName;
 	}
-	
+
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
 	}
-	
-	public ModelAndView handleRequest(HttpServletRequest request, 
+
+	public ModelAndView handleRequest(HttpServletRequest request,
 					HttpServletResponse response) throws Exception {
-		
-		
+
+
 		Site site = null;
 		if (siteName != null) {
 			site  = pageDao.getSite(siteName);
@@ -82,11 +76,11 @@ public class SiteLocaleChooserController extends AbstractCacheableController {
 		else {
 			site = pageDao.getDefaultSite();
 		}
-		
+
 		if (site != null) {
 			List locales = null;
 			if (AccessController.isAuthenticatedUser()) {
-				locales = websiteLocales;
+				locales = pageDao.getLocales();
 			}
 			else if (site.isEnabled()) {
 				locales = site.getLocales();
@@ -96,22 +90,22 @@ public class SiteLocaleChooserController extends AbstractCacheableController {
 					Locale locale = (Locale)locales.get(0);
 					PageNode root = pageDao.findRootNode(site);
 					Page page = (Page) root.getChildPages(locale).iterator().next();
-					
-					String url = request.getContextPath() + 
+
+					String url = request.getContextPath() +
 							locationResolver.getUrl(new PageLocation(page));
-					
+
 					return new ModelAndView(new RedirectView(url));
-				}			
+				}
 				if (!locales.isEmpty()) {
 					return new ModelAndView(viewName, "locales", locales);
 				}
 			}
 		}
-		
+
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);
-		return null;		
+		return null;
 	}
-	
+
 	public long getTimeToLive(HttpServletRequest request) {
 		return -1;
 	}

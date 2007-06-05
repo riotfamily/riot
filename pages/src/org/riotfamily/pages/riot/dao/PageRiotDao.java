@@ -102,6 +102,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 			}
 			else {
 				site = pageDao.getDefaultSite();
+				locale = getFixedLocale();
 			}
 			return pageDao.findRootNode(site).getChildPages(locale, masterLocale);
 		}
@@ -127,6 +128,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 			}
 			else {
 				site = pageDao.getDefaultSite();
+				locale = getFixedLocale();
 			}
 			page.setLocale(locale);
 			pageDao.savePage(site, page);
@@ -148,19 +150,19 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 		int pos = nodes.indexOf(node);
 		Object otherNode = nodes.get(swapWith);
 
-    	nodes.remove(node);
-    	nodes.remove(otherNode);
+		nodes.remove(node);
+		nodes.remove(otherNode);
 
-    	if (pos < swapWith) {
-    		nodes.add(pos, otherNode);
-    		nodes.add(swapWith, node);
-    	}
-    	else {
-    		nodes.add(swapWith, node);
-    		nodes.add(pos, otherNode);
-    	}
+		if (pos < swapWith) {
+			nodes.add(pos, otherNode);
+			nodes.add(swapWith, node);
+		}
+		else {
+			nodes.add(swapWith, node);
+			nodes.add(pos, otherNode);
+		}
 
-    	pageDao.updateNode(parentNode);
+		pageDao.updateNode(parentNode);
 	}
 
 	public void addChild(Object entity, Object parent) {
@@ -186,6 +188,15 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 	}
 
 	public void removeChild(Object entity, Object parent) {
+	}
+
+	private Locale getFixedLocale() {
+		List locales = pageDao.getLocales();
+		if (locales.size() > 1) {
+			throw new IllegalStateException("More than one Locale is " +
+					"configured but null was passed as parent");
+		}
+		return (Locale) locales.get(0);
 	}
 
 }

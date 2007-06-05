@@ -52,6 +52,9 @@ public final class PageCommandUtils {
 		else if (parent instanceof SiteLocale) {
 			locale = ((SiteLocale) parent).getLocale();
 		}
+		else {
+			locale = getPage(context).getLocale();
+		}
 		return locale;
 	}
 

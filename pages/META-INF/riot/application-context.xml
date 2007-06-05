@@ -30,6 +30,7 @@
 
 	<bean id="pageDao" class="org.riotfamily.pages.dao.hibernate.HibernatePageDao">
 		<constructor-arg ref="componentDao" />
+		<constructor-arg ref="websiteLocales" />
 		<constructor-arg ref="riotSessionFactory" />
 	</bean>
 

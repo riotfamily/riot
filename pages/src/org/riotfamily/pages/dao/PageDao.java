@@ -132,4 +132,10 @@ public interface PageDao {
 
 	public void deleteSite(Site site);
 
+	/**
+	 * Returns a list containing all configured Locales. Implementors must
+	 * return a list containing at least one element. 
+	 */
+	public List getLocales();
+
 }

@@ -17,7 +17,6 @@
 		<xsd:attribute name="id" type="xsd:ID"/>
 		<xsd:attribute name="dao" type="xsd:string" use="required" />
 		<xsd:attribute name="tx" type="xsd:string" use="required" />
-		<xsd:attribute name="locales" type="xsd:string" use="required" />
 	</xsd:complexType>
 
 	<xsd:complexType name="pageType">

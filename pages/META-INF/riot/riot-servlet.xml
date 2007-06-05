@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<!--
-	  - Controller that displays the sitemap as DHTML tree. Used by the
-	  - internalLink form element.
-	  -->
+		- Controller that displays the sitemap as DHTML tree. Used by the
+		- internalLink form element.
+		-->
 	<bean id="pageChooserController" name="/pages/chooser"
 		class="org.riotfamily.pages.riot.chooser.PageChooserController">
 
 		<constructor-arg ref="pageDao" />
 		<constructor-arg ref="pageLocationResolver" />
-		<property name="locales" ref="websiteLocales" />
 	</bean>
 
 	<!-- Module configuration -->
@@ -59,9 +58,8 @@
 	</bean>
 
 	<bean id="localeRiotDao" class="org.riotfamily.pages.riot.dao.LocaleRiotDao">
-		<constructor-arg ref="websiteLocales" />
 		<constructor-arg ref="pageDao" />
-  	</bean>
+	</bean>
 
  	<bean id="pageRiotDao" class="org.riotfamily.pages.riot.dao.PageRiotDao">
 		<constructor-arg ref="pageDao" />
@@ -83,15 +81,15 @@
 	</bean>
 
 	<!--
-	  - FormRepository providing page property forms.
-	  -->
+		- FormRepository providing page property forms.
+		-->
 	<bean id="pageComponentFormRepository" parent="componentFormRepository">
 		<property name="config" value="/WEB-INF/website-config/page-forms.xml" />
 	</bean>
 
 	<!--
-	  - Controller that renders forms to edit component properties.
-	  -->
+		- Controller that renders forms to edit component properties.
+		-->
 	<bean id="pageComponentFormController"
 		name="/pages/form/@{formId}/@{containerId}"
 		class="org.riotfamily.pages.component.PageComponentFormController">
