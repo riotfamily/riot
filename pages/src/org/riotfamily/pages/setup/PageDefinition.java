@@ -24,9 +24,12 @@
 package org.riotfamily.pages.setup;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.pages.Page;
@@ -54,6 +57,10 @@ public class PageDefinition {
 	private boolean systemNode = true;
 
 	private boolean folder;
+
+	private Properties globalProps;
+
+	private HashMap localizedProps;
 
 	public void setPathComponent(String pathComponent) {
 		this.pathComponent = pathComponent;
@@ -87,6 +94,14 @@ public class PageDefinition {
 
 	public void setFolder(boolean folder) {
 		this.folder = folder;
+	}
+
+	public void setGlobalProps(Properties globalProps) {
+		this.globalProps = globalProps;
+	}
+
+	public void setLocalizedProps(HashMap localizedProps) {
+		this.localizedProps = localizedProps;
 	}
 
 	public List getDefinitions() {
@@ -123,8 +138,24 @@ public class PageDefinition {
 			Page page = new Page(getPathComponent(), locale);
 			page.setPublished(published);
 			page.setFolder(folder);
+			addPageProps(page, locale);
 			node.addPage(page);
 		}
 	}
+
+	private void addPageProps(Page page, Locale locale) {
+		HashMap newProps = new HashMap();
+		if (globalProps != null) {
+			newProps.putAll(globalProps);
+		}
+		if (localizedProps != null) {
+			Map localizedMap = (Map) localizedProps.get(locale.toString());
+			if(localizedMap != null) {
+				newProps.putAll(localizedMap);
+			}
+		}
+		page.getProperties(false).putAll(newProps);
+	}
+
 
 }
