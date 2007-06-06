@@ -1,3 +1,5 @@
+<#assign locale = commonMacroHelper.getLocale() />
+
 <#--
   - Macro that includes the given URI using a RequestDispatcher.
   -->
