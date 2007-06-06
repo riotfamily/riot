@@ -9,35 +9,35 @@
   - Returns the system-page with the given handlerName. There must be only
   - one PageNode with that id, otherwise an exception is thrown.
   -->
-<#function pageForHandler handlerName locale=commonMacroHelper.locale>
+<#function pageForHandler handlerName locale=common.locale>
 	<#return pageMacroHelper.getPageForHandler(handlerName, locale) />
 </#function>
 
 <#--
   - Returns all pages with the given handlerName.
   -->
-<#function pagesForHandler handlerName locale=commonMacroHelper.locale>
+<#function pagesForHandler handlerName locale=common.locale>
 	<#return pageMacroHelper.getPagesForHandler(handlerName, locale) />
 </#function>
 
 <#--
   - Returns all top-level pages for the current site.
   -->
-<#function topLevelPages locale=commonMacroHelper.locale>
+<#function topLevelPages locale=common.locale>
 	<#return pageMacroHelper.getTopLevelPages(locale) />
 </#function>
 
 <#--
   - Returns the URL for the system-page with the given handlerName.
   -->
-<#function handlerUrl handlerName locale=commonMacroHelper.locale>
+<#function handlerUrl handlerName locale=common.locale>
 	<#return url(pageForHandler(handlerName, locale)) />
 </#function>
 
 <#--
   - Returns the URL for the wildcard-system-page with the given handlerName.
   -->
-<#function wildcardHandlerUrl handlerName replacement locale=commonMacroHelper.locale>
+<#function wildcardHandlerUrl handlerName replacement locale=common.locale>
 	<#return common.url(pageMacroHelper.getWildcardHandlerUrl(handlerName, replacement, locale)) />
 </#function>
 
@@ -60,7 +60,7 @@
   - Returns whether the given Page is visible and should be displayed in menus.
   -->
 <#function visible page>
-	<#return !page.node.hidden && (page.enabled || componentMacroHelper.isEditMode()) />
+	<#return !page.node.hidden && (page.enabled || component.isEditMode()) />
 </#function>
 
 <#--
@@ -68,9 +68,9 @@
   -->
 <#function property page, key>
 	<#if !page?is_hash>
-		<#local page = pageForHandler(page, commonMacroHelper.locale) />
+		<#local page = pageForHandler(page, common.locale) />
 	</#if>
-	<#return page.getProperty(key, componentMacroHelper.isEditMode()) />
+	<#return page.getProperty(key, component.isEditMode()) />
 </#function>
 
 <#--
@@ -80,7 +80,7 @@
 	<#if attributes.attributes?exists>
 		<#local attributes = attributes.attributes />
 	</#if>
-	<#if componentMacroHelper.isEditMode()>
+	<#if component.isEditMode()>
 		<#local attributes = {"riot:containerId": page.versionContainer.id} + attributes />
 		<#local attributes = attributes + {"class": ("riot-component " + attributes["class"]?if_exists)?trim} />
 		<#if form?has_content>
@@ -93,7 +93,7 @@
 			<#local attributes = attributes + {"riot:dirty": "true"} />
 		</#if>
 	</#if>
-	<#local props = page.getProperties(componentMacroHelper.isEditMode()) />
+	<#local props = page.getProperties(component.isEditMode()) />
 	<@component.editable key=key tag=tag scope=props editor="text" attributes=attributes><#nested props /></@component.editable>
 </#macro>
 
@@ -101,7 +101,7 @@
   - Makes the nested content editable via the properties-tool.
   -->
 <#macro properties form page=pageMacroHelper.currentPage tag="" attributes ...>
-	<#if componentMacroHelper.isEditMode()>
+	<#if component.isEditMode()>
 		<#if !tag?has_content>
 			<#local tag = "div" />
 		</#if>
@@ -120,10 +120,10 @@
 	</#list>
 	<#if tag?has_content>
 		<${tag}${attrs}>
-			<#nested page.getProperties(componentMacroHelper.isEditMode())>
+			<#nested page.getProperties(component.isEditMode())>
 		</${tag}>
 	<#else>
-		<#nested page.getProperties(componentMacroHelper.isEditMode())>
+		<#nested page.getProperties(component.isEditMode())>
 	</#if>
 </#macro>
 
@@ -132,7 +132,7 @@
   - pathComponent (converted to title-case) if the property is not set.
   -->
 <#function title page=pageMacroHelper.currentPage, key="title">
-	<#local title = page.getProperty(key, componentMacroHelper.isEditMode())?if_exists />
+	<#local title = page.getProperty(key, component.isEditMode())?if_exists />
 	<#if !title?has_content>
 		<#local title = common.toTitleCase(page.pathComponent) />
 	</#if>
