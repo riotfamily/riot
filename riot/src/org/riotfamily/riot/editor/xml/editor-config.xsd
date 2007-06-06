@@ -40,7 +40,7 @@
 
 	<xsd:element name="list">
 		<xsd:complexType>
-			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:choice minOccurs="0">
 				<xsd:element ref="view" />
 				<xsd:element ref="form" />
 				<xsd:element ref="form-chooser" />
