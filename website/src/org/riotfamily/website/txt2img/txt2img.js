@@ -140,6 +140,10 @@ RiotImageReplacement.prototype = {
 			img.src = this.pixelImage.src;
 			img.style.width = image.width + 'px';
 			img.style.height = image.height + 'px';
+			image.onload = function() {
+				img.style.width = this.width + 'px';
+				img.style.height = this.height + 'px';
+			}
 		}
 		this.setImageSrc(img, image.src);
 		img.className = 'replacement';
