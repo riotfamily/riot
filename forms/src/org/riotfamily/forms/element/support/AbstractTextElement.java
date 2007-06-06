@@ -167,17 +167,16 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 
 	public Object getValue() {
 		String txt = getText();
-		if (txt != null && StringUtils.hasLength(txt)
-				&& propertyEditor != null) {
-
-			try {
-				propertyEditor.setAsText(txt);
-				return propertyEditor.getValue();
-			}
-			catch (IllegalArgumentException e) {
-			}
+		if (!StringUtils.hasText(txt)) {
+			return null;
 		}
-		return txt;
+		if (propertyEditor != null) {
+			propertyEditor.setAsText(txt);
+			return propertyEditor.getValue();
+		}
+		else {
+			return txt;
+		}
 	}
 
 	public void setValue(Object value) {
