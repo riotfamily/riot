@@ -24,6 +24,7 @@
 package org.riotfamily.forms.element.core;
 
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,6 +34,7 @@ import java.util.regex.Pattern;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.AbstractTextElement;
+import org.riotfamily.forms.error.ErrorUtils;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
@@ -40,6 +42,7 @@ import org.riotfamily.forms.resource.StylesheetResource;
 import org.riotfamily.forms.support.MessageUtils;
 import org.riotfamily.forms.support.TemplateUtils;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.util.StringUtils;
 
 /**
  * A DHTML calendar widget.
@@ -84,13 +87,16 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
 
 	private String formatPattern = "yyyy-MM-dd";
 
-	private String jsFormatPattern;
-
 	private String formatKey;
 
 	private String defaultValue;
 
+	private String jsFormatPattern;
+
+	private DateFormat dateFormat;
+
 	private ScriptResource resource;
+
 
 	public Calendar() {
 		setStyleClass("text calendar-input");
@@ -132,8 +138,8 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
             Matcher matcher = patterns[i].matcher(jsFormatPattern);
             jsFormatPattern = matcher.replaceAll(conversions[i * 2 + 1]);
         }
-		setPropertyEditor(new CustomDateEditor(
-				new SimpleDateFormat(formatPattern), false));
+		dateFormat = new SimpleDateFormat(formatPattern);
+		setPropertyEditor(new CustomDateEditor(dateFormat, false));
 	}
 
 	public boolean isShowTime() {
@@ -143,9 +149,21 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
 
 	public void setValue(Object value) {
 		if (value == null && defaultValue != null) {
-			super.setValue(getDefaultDate());
+			value = getDefaultDate();
 		}
 		super.setValue(value);
+	}
+
+	protected void validate(boolean formSubmitted) {
+		super.validate(formSubmitted);
+		if (StringUtils.hasText(getText())) {
+			try {
+				dateFormat.parse(getText());
+			}
+			catch (ParseException e) {
+				ErrorUtils.reject(this, "error.calendar.invalidDateFormat");
+			}
+		}
 	}
 
 	protected void afterFormContextSet() {
@@ -178,8 +196,7 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
 		Date date = FormatUtils.parseDate(defaultValue);
 		if (date == null) {
 			try {
-				SimpleDateFormat sdf = new SimpleDateFormat(formatPattern);
-				date = sdf.parse(defaultValue);
+				date = dateFormat.parse(defaultValue);
 			}
 			catch (ParseException e) {
 			}

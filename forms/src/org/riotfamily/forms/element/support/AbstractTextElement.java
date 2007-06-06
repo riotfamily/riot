@@ -66,6 +66,8 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 
 	private String text;
 
+	private Object value;
+
 	private PropertyEditor propertyEditor;
 
 	private boolean validateOnChange = false;
@@ -107,23 +109,6 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		this.maxLength = maxLength;
 	}
 
-	public String getText() {
-		return text;
-	}
-
-	/**
-	 * Sets the element's text value. If {@link #setTrim(boolean)} is set to
-	 * <code>true</code>, leading and trailing whitespaces are stripped.
-	 */
-	public void setText(String text) {
-		if (trim && text != null) {
-			this.text = text.trim();
-		}
-		else {
-			this.text = text;
-		}
-	}
-
 	/**
 	 * Sets whether the user input should be trimmed.
 	 */
@@ -140,11 +125,12 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		this.randomParamName = randomParamName;
 	}
 
-	protected String getDesiredParamName() {
-		if (randomParamName) {
-			return PasswordGenerator.getDefaultInstance().generate();
-		}
-		return super.getDesiredParamName();
+	/**
+	 * Sets whether the element should be validated as soon as a change event
+	 * is received.
+	 */
+	public void setValidateOnChange(boolean validateOnChange) {
+		this.validateOnChange = validateOnChange;
 	}
 
 	public final void setPropertyEditor(PropertyEditor propertyEditor) {
@@ -165,26 +151,38 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		initPropertyEditor();
 	}
 
-	public Object getValue() {
-		String txt = getText();
-		if (!StringUtils.hasText(txt)) {
-			return null;
-		}
-		if (propertyEditor != null) {
-			propertyEditor.setAsText(txt);
-			return propertyEditor.getValue();
+	public final String getText() {
+		return text;
+	}
+
+	/**
+	 * Sets the element's text value. If {@link #setTrim(boolean)} is set to
+	 * <code>true</code>, leading and trailing whitespaces are stripped.
+	 */
+	public void setText(String text) {
+		if (trim && text != null) {
+			this.text = text.trim();
 		}
 		else {
-			return txt;
+			this.text = text;
 		}
 	}
 
+	public final Object getValue() {
+		return value;
+	}
+
 	public void setValue(Object value) {
+		this.value = value;
+		setTextFromValue();
+	}
+
+	protected void setTextFromValue() {
 		if (value == null) {
-			return;
+			text = null;
 		}
-		if (value instanceof String) {
-			setText((String) value);
+		else if (value instanceof String) {
+			text = (String) value;
 		}
 		else {
 			if (propertyEditor == null) {
@@ -194,19 +192,48 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 						+ "present");
 			}
 			propertyEditor.setValue(value);
-			setText(propertyEditor.getAsText());
+			text = propertyEditor.getAsText();
 		}
 	}
 
 	public void processRequest(FormRequest request) {
-		String newText = request.getParameter(getParamName());
-		if (!ObjectUtils.nullSafeEquals(newText, getText())) {
-			Object oldValue = getValue();
-			setText(newText);
-			Object newValue = getValue();
-			fireChangeEvent(newValue, oldValue);
-		}
+		text = request.getParameter(getParamName());
 		validate(true);
+		if (!ErrorUtils.hasErrors(this)) {
+			Object oldValue = value;
+			setValueFromText();
+			if (!ObjectUtils.nullSafeEquals(value, oldValue)) {
+				fireChangeEvent(value, oldValue);
+			}
+		}
+	}
+
+	protected void setValueFromText() {
+		if (!StringUtils.hasText(text)) {
+			value = null;
+		}
+		else {
+			if (propertyEditor != null) {
+				propertyEditor.setAsText(text);
+				value = propertyEditor.getValue();
+			}
+			else {
+				value = text;
+			}
+		}
+	}
+
+	protected void validate(boolean formSubmitted) {
+		if (isRequired() && !StringUtils.hasLength(text)) {
+			ErrorUtils.reject(this, "required");
+		}
+	}
+
+	protected String getDesiredParamName() {
+		if (randomParamName) {
+			return PasswordGenerator.getDefaultInstance().generate();
+		}
+		return super.getDesiredParamName();
 	}
 
 	public void renderInternal(PrintWriter writer) {
@@ -221,16 +248,6 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 			input.attribute(Html.INPUT_MAX_LENGTH, getMaxLength().intValue());
 		}
 		input.end();
-	}
-
-	public void setValidateOnChange(boolean validateOnChange) {
-		this.validateOnChange = validateOnChange;
-	}
-
-	protected void validate(boolean formSubmitted) {
-		if (isRequired() && !StringUtils.hasLength(getText())) {
-			ErrorUtils.reject(this, "required");
-		}
 	}
 
 	public void addChangeListener(ChangeListener listener) {
