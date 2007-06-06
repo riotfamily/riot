@@ -4,21 +4,21 @@
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
-	
+
 	<import resource="classpath:org/riotfamily/components/runtime/db-schema.xml"/>
-		
+
 	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
 		<property name="properties">
 			<map>
 	 			<entry key="hibernateMappingLocations">
 					<list>
 						<value>classpath:org/riotfamily/components/dao/hibernate/component.hbm.xml</value>
-					</list>	 			
+					</list>
 	 			</entry>
 	 		</map>
 		</property>
 	</bean>
-	
+
 	<bean id="componentRepository" class="org.riotfamily.components.ComponentRepository">
 		<property name="configLocations">
 			<list>
@@ -29,20 +29,21 @@
 		<property name="viewNamePrefix" value="components/" />
 		<property name="viewNameSuffix" value=".ftl" />
 	</bean>
-	
+
 	<bean id="componentFormRegistry" class="org.riotfamily.components.editor.ComponentFormRegistry" />
-	
+
 	<bean id="componentDao" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
 		<property name="target"><ref bean="componentDaoTarget" /></property>
 	</bean>
-		
+
 	<bean id="componentDaoTarget" class="org.riotfamily.components.dao.hibernate.HibernateComponentDao">
 		<constructor-arg ref="componentRepository" />
 		<constructor-arg ref="riotSessionFactory" />
+		<property name="cache" ref="websiteCache" />
 		<property name="eventMulticaster" ref="contentEventMulticaster" />
 	</bean>
-	
+
 	<bean id="contentEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
-	
-</beans>	
+
+</beans>

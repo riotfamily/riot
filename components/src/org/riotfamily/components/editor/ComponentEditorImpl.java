@@ -37,7 +37,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
-import org.riotfamily.cachius.Cache;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.common.web.util.ServletUtils;
@@ -72,7 +71,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 	private Map editorConfigs;
 
-	private Cache cache;
 
 	public ComponentEditorImpl(ComponentDao dao, ComponentRepository repository) {
 		this.dao = dao;
@@ -81,10 +79,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 	public void setLoginManager(LoginManager loginManager) {
 		this.loginManager = loginManager;
-	}
-
-	public void setCache(Cache cache) {
-		this.cache = cache;
 	}
 
 	public void setMessageSource(MessageSource messageSource) {
@@ -306,18 +300,10 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 */
 	public void publishList(Long listId) {
 		ComponentList list = dao.loadComponentList(listId);
-
 		if (AccessController.isGranted("publish", list.getLocation())) {
-			
-			if (dao.publishList(list)) {
-				log.debug("Changes published for ComponentList " + listId);
-				if (cache != null) {
-					String tag = list.getLocation().toString();
-					log.debug("Invalidating items tagged as " + tag);
-					cache.invalidateTaggedItems(tag);
-				}
-			}
-		} else {
+			dao.publishList(list);
+		}
+		else {
 			throw new RuntimeException(messageSource.getMessage(
 				"components.error.publishNotGranted", null, getLocale()));
 		}
