@@ -196,6 +196,7 @@ public final class Cache implements Serializable {
     }
 
     protected File getNextDir() {
+    	cacheDir.mkdirs();
         if (numberOfDirs <= 1) {
             return cacheDir;
         }
