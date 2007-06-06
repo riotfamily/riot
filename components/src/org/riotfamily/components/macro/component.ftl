@@ -1,8 +1,29 @@
 <#--
+  - Returns whether the page is requested in edit mode.
+  -->
+<#function isEditMode>
+	<#return componentMacroHelper.isEditMode() />
+</#function>
+
+<#--
+  - Macro that renders the nested content if the page is requested in edit mode.
+  -->
+<#macro ifEditMode>
+	<#if isEditMode()><#nested></#if>
+</#macro>
+
+<#--
+  - Macro that renders the nested content if the page is requested in live mode.
+  -->
+<#macro ifLiveMode>
+	<#if !isEditMode()><#nested></#if>
+</#macro>
+
+<#--
   - Macro that renders the Riot toolbar if the page is requested in edit mode.
   -->
 <#macro toolbar>
-	<#if componentMacroHelper.isEditMode()>
+	<#if isEditMode()>
 		<#list componentMacroHelper.toolbarScripts as src>
 			<@riot.script src=src />
 		</#list>
@@ -15,20 +36,6 @@
 </#macro>
 
 <#--
-  - Macro that renders the nested content if the page is requested in edit mode.
-  -->
-<#macro ifEditMode>
-	<#if componentMacroHelper.isEditMode()><#nested></#if>
-</#macro>
-
-<#--
-  - Macro that renders the nested content if the page is requested in live mode.
-  -->
-<#macro ifLiveMode>
-	<#if !componentMacroHelper.isEditMode()><#nested></#if>
-</#macro>
-
-<#--
   - Macro that enables the Riot JavaScript edit-callbacks. The callback functions
   - are invoked when a component-list is re-rendered. To register a custom callback
   - add the following code as nested content:
@@ -37,7 +44,7 @@
   - });
   -->
 <#macro callbacks>
-	<#if componentMacroHelper.isEditMode()>
+	<#if isEditMode()>
 		<!-- Riot edit callbacks -->
 		<script type="text/javascript" language="JavaScript">
 		var riotEditCallbacks = [];
@@ -123,7 +130,7 @@
 		</#list>
 	</#if>
 
-	<#if componentMacroHelper.isEditMode()>
+	<#if isEditMode()>
 		<#if tag?has_content>
 			<#local element=tag />
 		<#else>
