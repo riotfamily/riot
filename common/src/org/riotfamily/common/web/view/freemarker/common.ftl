@@ -15,6 +15,10 @@
 	<#return commonMacroHelper.resolveAndEncodeUrl(uri) />
 </#function>
 
+<#function isExternalUrl url>
+	<#return commonMacroHelper.isExternalUrl(url) />
+</#function>
+
 <#function resource uri>
 	<#return commonMacroHelper.addTimestamp(uri) />
 </#function>
