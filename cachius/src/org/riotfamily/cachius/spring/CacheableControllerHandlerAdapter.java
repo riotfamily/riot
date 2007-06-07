@@ -255,15 +255,16 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
 			String cacheKey = controller.getCacheKey(request);
 			CacheItem cacheItem = getCacheItem(cacheKey, request);
 			if (cacheItem != null) {
-				long now = System.currentTimeMillis();
-		        long ttl = controller.getTimeToLive();
-		        if (ttl == CacheableController.CACHE_ETERNALLY
-		        		|| cacheItem.getLastCheck() + ttl <= now) {
+				if (!cacheItem.isNew()) {
+					long now = System.currentTimeMillis();
+			        long ttl = controller.getTimeToLive();
+			        if (ttl == CacheableController.CACHE_ETERNALLY
+			        		|| cacheItem.getLastCheck() + ttl <= now) {
 
-		        	return cacheItem.getLastModified();
-		        }
+			        	return cacheItem.getLastModified();
+			        }
+				}
 	    		try {
-	    			cacheItem.setLastCheck(now);
 	    			return controller.getLastModified(request);
 	    		}
 	    		catch (Exception e) {
