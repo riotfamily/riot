@@ -70,7 +70,7 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
             "(?<!%)HH", "%H",
             "(?<!%)H", "%h",
             "(?<!%)mm?", "%M",
-            "(?<!%)s", "%S",
+            "(?<!%)ss?", "%S",
             "(?<!%)EE?", "%a",
             "(?<!%)w", "%W",
             "(?<!%)a", "%P"};
