@@ -85,6 +85,7 @@
 	  - Checks whether Ivy is available in the classpath.
 	  -->
 	<target name="-check-ivy">
+		<mkdir dir="${lib.dir}" />
 		<available property="ivy.available"
 			resource="org/apache/ivy/ant/antlib.xml"
 			classpathref="classpath" />
