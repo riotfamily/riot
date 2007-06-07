@@ -69,7 +69,7 @@
 			<cache usage="nonstrict-read-write" region="pages" />
 			<key column="site" />
 			<index column="pos" />
-			<element type="locale" />
+			<element type="locale" length="5" />
 		</list>
 	</class>
 

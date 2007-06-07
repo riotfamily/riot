@@ -20,7 +20,7 @@
 			<db:create-table name="riot_site_locales">
 				<db:column name="site" type="BIGINT" />
 				<db:column name="pos" type="INTEGER" />
-				<db:column name="locale" type="VARCHAR" length="5" />
+				<db:column name="elt" type="VARCHAR" length="5" />
 			</db:create-table>
 			<db:add-foreign-key table="riot_site_locales" name="riot_site_locales_site" references="riot_sites">
 				<db:ref local="site" foreign="id" />
