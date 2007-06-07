@@ -200,15 +200,28 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		text = request.getParameter(getParamName());
 		validate(true);
 		if (!ErrorUtils.hasErrors(this)) {
-			Object oldValue = value;
 			setValueFromText();
-			if (!ObjectUtils.nullSafeEquals(value, oldValue)) {
-				fireChangeEvent(value, oldValue);
+
+		}
+	}
+
+	public void handleJavaScriptEvent(JavaScriptEvent event) {
+		if (event.getType() == JavaScriptEvent.ON_CHANGE) {
+			text = event.getValue();
+			ErrorUtils.removeErrors(this);
+			validate(false);
+			if (!ErrorUtils.hasErrors(this)) {
+				setValueFromText();
+			}
+			//TODO It would be nicer if the listener was notified by either FormErrors or ErrorUtils
+			if (getFormListener() != null) {
+				getFormListener().elementValidated(this);
 			}
 		}
 	}
 
 	protected void setValueFromText() {
+		Object oldValue = value;
 		if (!StringUtils.hasText(text)) {
 			value = null;
 		}
@@ -220,6 +233,9 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 			else {
 				value = text;
 			}
+		}
+		if (!ObjectUtils.nullSafeEquals(value, oldValue)) {
+			fireChangeEvent(value, oldValue);
 		}
 	}
 
@@ -273,20 +289,6 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 			return JavaScriptEvent.ON_CHANGE;
 		}
 		return JavaScriptEvent.NONE;
-	}
-
-	public void handleJavaScriptEvent(JavaScriptEvent event) {
-		if (event.getType() == JavaScriptEvent.ON_CHANGE) {
-			String oldValue = getText();
-			setText(event.getValue());
-			fireChangeEvent(getText(), oldValue);
-			ErrorUtils.removeErrors(this);
-			validate(false);
-			//TODO It would be nicer if the listener was notified by either FormErrors or ErrorUtils
-			if (getFormListener() != null) {
-				getFormListener().elementValidated(this);
-			}
-		}
 	}
 
 }
