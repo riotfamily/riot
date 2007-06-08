@@ -212,6 +212,7 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 		document.body.appendChild(this.input);
 		this.resize();
 		this.element.makeInvisible();
+		riot.outline.hide();
 		this.input.show();
 		this.input.focus();
 		this.input.value = this.text;
