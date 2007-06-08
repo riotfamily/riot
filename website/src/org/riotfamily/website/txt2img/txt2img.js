@@ -57,7 +57,7 @@ RiotImageReplacement.prototype = {
 		if (el.down('img.replacement') || el.className == 'print-text') {
 			return;
 		}
-		el.onedit = this.processElement.bind(this, sel, el);
+		el.onedit = this.processElement.bind(this, el, sel);
 		var text = el.innerHTML;
 		text = text.strip().gsub(/<br\/?>/i, '\n').stripTags();
 		var transform = el.getStyle('text-transform') || '';
