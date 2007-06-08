@@ -6,6 +6,22 @@
 #filter div.element {
 	margin-bottom: 10px;
 }
+
+#filter .checkbox-element {
+	position: relative;
+	_height: 1px;
+	margin-bottom: 10px;
+}
+#filter .checkbox-element label {
+	padding-left: 20px;
+}
+#filter .checkbox-element input {
+	position: absolute;
+	left: 0px;
+	top: 0;
+	margin: 0;
+}
+
 #filter .buttons {
 	margin: 10px 0 0 0;
 }
