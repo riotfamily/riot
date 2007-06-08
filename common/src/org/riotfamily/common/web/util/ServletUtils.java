@@ -463,4 +463,16 @@ public final class ServletUtils {
 		return sb.toString();
 	}
 
+	public static String getRequestUrlWithQueryString(
+			HttpServletRequest request) {
+
+		request.getRequestURI();
+		StringBuffer sb = request.getRequestURL();
+		String queryString = request.getQueryString();
+		if (queryString != null) {
+			sb.append('?').append(queryString);
+		}
+		return sb.toString();
+	}
+
 }
