@@ -42,19 +42,18 @@ RiotImageReplacement.prototype = {
 	},
 
 	insertImages: function(el) {
-		for (var i = 0, len = this.selectors.length; i < len; i++) {
-			this.processSelector(this.selectors[i], el);
-		}
+		new CssMatcher(this.selectors, this.processElement.bind(this)).match(document.body);
 	},
 
-	processSelector: function(sel, el) {
+	processSelector: function(el, sel) {
 		var elements = new Selector(sel).findElements(el);
 		for (var i = 0, len = elements.length; i < len; i++) {
-			this.processElement(sel, elements[i]);
+			this.processElement(elements[i], sel);
 		}
 	},
 
-	processElement: function(sel, el) {
+	processElement: function(el, sel) {
+		el = Element.extend(el);
 		if (el.down('img.replacement') || el.className == 'print-text') {
 			return;
 		}
@@ -70,11 +69,11 @@ RiotImageReplacement.prototype = {
 
 		var color = el.getStyle('color');
 
-		var hoverEl = $(document.createElement('span'));
+		var hoverEl = document.createElement('span');
 		hoverEl.className = 'txt2imgHover';
 		el.appendChild(hoverEl);
-		var hoverColor = hoverEl.getStyle('color');
-		hoverEl.remove();
+		var hoverColor = Element.getStyle(hoverEl, 'color');
+		Element.remove(hoverEl);
 
 		var hover = null;
 		if (hoverColor != color) {
@@ -138,11 +137,15 @@ RiotImageReplacement.prototype = {
 		img.style.verticalAlign = 'top';
 		if (this.useFilter) {
 			img.src = this.pixelImage.src;
-			img.style.width = image.width + 'px';
-			img.style.height = image.height + 'px';
-			image.onload = function() {
-				img.style.width = this.width + 'px';
-				img.style.height = this.height + 'px';
+			if (image.width > 0) {
+				img.style.width = image.width + 'px';
+				img.style.height = image.height + 'px';
+			}
+			else {
+				image.onload = function() {
+					img.style.width = this.width + 'px';
+					img.style.height = this.height + 'px';
+				}
 			}
 		}
 		this.setImageSrc(img, image.src);
@@ -158,7 +161,7 @@ RiotImageReplacement.prototype = {
 		printText.className = "print-text";
 		printText.innerHTML = el.innerHTML;
 
-		el.update();
+		el.innerHTML = '';
 		el.appendChild(img);
 		el.appendChild(printText);
 	}
@@ -167,36 +170,137 @@ RiotImageReplacement.prototype = {
 if (!Event.onDOMReady) {
 	Object.extend(Event, {
 		_domReady: function() {
-		    if (arguments.callee.done) return;
-		    arguments.callee.done = true;
-		    if (this._timer) clearInterval(this._timer);
-		    for (var i = 0; i < this._readyCallbacks.length; i++) {
+			if (arguments.callee.done) return;
+			arguments.callee.done = true;
+			if (this._timer) clearInterval(this._timer);
+			for (var i = 0; i < this._readyCallbacks.length; i++) {
 		    	this._readyCallbacks[i]();
 		    }
-		    this._readyCallbacks = null;
+			this._readyCallbacks = null;
 		},
 		onDOMReady: function(f) {
 			if (!this._readyCallbacks) {
+				Event._readyCallbacks = [];
 				var domReady = this._domReady.bind(this);
 				if (document.addEventListener) {
-		        	document.addEventListener("DOMContentLoaded", domReady, false);
+					document.addEventListener("DOMContentLoaded", domReady, false);
 				}
+				else {
 				/*@cc_on @*/
-				/*@if (@_win32)
-				    document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
-				    document.getElementById("__ie_onload").onreadystatechange = function() {
-				        if (this.readyState == "complete") domReady();
-				    };
-				/*@end @*/
-		        if (/WebKit/i.test(navigator.userAgent)) {
-					this._timer = setInterval(function() {
-						if (/loaded|complete/.test(document.readyState)) domReady();
-					}, 10);
-		        }
-				Event.observe(window, 'load', domReady);
-				Event._readyCallbacks =  [];
-		    }
+					/*@if (@_win32)
+						document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
+						document.getElementById("__ie_onload").onreadystatechange = function() {
+							if (this.readyState == "complete") domReady();
+						};
+					@else @*/
+						if (/WebKit/i.test(navigator.userAgent)) {
+							this._timer = setInterval(function() {
+								if (/loaded|complete/.test(document.readyState)) domReady();
+							}, 10);
+						}
+						else {
+							Event.observe(window, 'load', domReady);
+						}
+					/*@end
+				@*/
+				}
+			}
 			Event._readyCallbacks.push(f);
 		}
 	});
 }
+
+var ElementMatcher = Class.create();
+ElementMatcher.prototype = {
+    initialize: function(s) {
+        var m = /([^.#]*)#?([^.]*)\.?(.*)/.exec(s);
+        this.tagName = m[1] != '' ? m[1].toUpperCase() : null;
+        this.id = m[2] != '' ? m[2] : null;
+        this.className = m[3] != '' ? m[3] : null;
+        this.classNameRegExp = new RegExp("(^|\\s)" + this.className + "(\\s|$)");
+    },
+
+    match: function(el) {
+        if (this.tagName && this.tagName != el.tagName) return false;
+        if (this.id && this.id != el.id) return false;
+        if (this.className && !this.checkClassName(el)) return false;
+        return true;
+    },
+
+	checkClassName: function(el) {
+		var c = el.className;
+		if (c.length == 0) return false;
+		return c == this.className || c.match(this.classNameRegExp);
+	},
+
+    inspect: function() {
+        return this.tagName + '#' + this.id + '.' + this.className;
+    }
+};
+
+var CssSelector = Class.create();
+CssSelector.prototype = {
+    initialize: function(sel) {
+        this.text = sel;
+        this.matchers = [];
+        var part = sel.split(/\s+/);
+        for (var i = 0; i < part.length; i++) {
+            this.matchers.push(new ElementMatcher(part[i]));
+        }
+        this.level = 0;
+        this.matcher = this.matchers[0];
+        this.prev = [];
+    },
+
+    match: function(el) {
+        if (this.matcher.match(el)) {
+            if (this.el) {
+                this.prev.push(this.el);
+            }
+            this.el = el;
+            this.matcher = this.matchers[++this.level];
+            return this.level == this.matchers.length;
+        }
+        return false;
+    },
+
+    leave: function(el) {
+        if (el == this.el) {
+            this.el = this.prev.pop();
+            this.matcher = this.matchers[--this.level];
+        }
+    }
+}
+
+var CssMatcher = Class.create();
+CssMatcher.prototype = {
+    initialize: function(selectors, handler) {
+        this.sel = selectors.collect(function(s) {return new CssSelector(s)});
+        this.handler = handler;
+    },
+    match: function(el) {
+        var matched = false;
+        for (var i = 0; i < this.sel.length; i++) {
+            if (this.sel[i].match(el)) {
+                this.handler(el, this.sel[i].text);
+                matched = true;
+                break;
+            }
+        }
+        if (!matched) {
+        	var child = el.firstChild;
+        	while (child) {
+	    		while (child && child.nodeType != 1) child = child.nextSibling;
+				if (child) {
+	                this.match(child);
+	                child = child.nextSibling;
+	            }
+	        }
+        }
+        for (var i = 0; i < this.sel.length; i++) {
+            this.sel[i].leave(el);
+        }
+        return matched;
+    }
+}
+
