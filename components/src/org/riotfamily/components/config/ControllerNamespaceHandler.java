@@ -24,18 +24,22 @@
 package org.riotfamily.components.config;
 
 import org.riotfamily.common.beans.xml.GenericBeanDefinitionParser;
+import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
+import org.riotfamily.common.beans.xml.NestedPropertyDecorator;
 import org.riotfamily.components.ComponentListController;
-import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
  * NamespaceHandler that handles the <code>controller</code> namspace as
  * defined in <code>controller.xsd</code> which can be found in the same package.
  */
-public class ControllerNamespaceHandler extends NamespaceHandlerSupport {
+public class ControllerNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
-		GenericBeanDefinitionParser parser = new GenericBeanDefinitionParser(ComponentListController.class);
-		registerBeanDefinitionParser("list", parser);
+		registerBeanDefinitionParser("list", new GenericBeanDefinitionParser(
+				ComponentListController.class).addReference("locator"));
+		
+		registerSpringBeanDefinitionParser("locator", 
+				new NestedPropertyDecorator("locator"));
 	}
 
 }
