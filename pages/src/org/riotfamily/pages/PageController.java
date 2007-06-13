@@ -24,6 +24,7 @@
 package org.riotfamily.pages;
 
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,6 +49,11 @@ import org.springframework.web.servlet.View;
 public class PageController extends AbstractCacheableController
 		implements ApplicationContextAware {
 
+	public static final String MODEL_KEY = PageController.class.getName();
+	
+	private static final Map MODEL = Collections.singletonMap(
+			MODEL_KEY, Boolean.TRUE);
+	
 	protected String viewName;
 
 	protected ViewResolverHelper viewResolverHelper;
@@ -92,10 +98,10 @@ public class PageController extends AbstractCacheableController
 			uri = uri.substring(request.getContextPath().length());
 			if (PageRequestUtils.storeContext(request, uri, 120000)) {
 				View view = viewResolverHelper.resolveView(request, viewName);
-				return new ModelAndView(new PageView(view, uri));
+				return new ModelAndView(new PageView(view, uri), MODEL);
 			}
 		}
-		return new ModelAndView(viewName);
+		return new ModelAndView(viewName, MODEL);
 	}
 
 	private static class PageView implements View {

@@ -77,6 +77,9 @@
   - Outputs a page property and makes it editable via the text-tool.
   -->
 <#macro text key page=pageMacroHelper.currentPage tag="" form="" attributes ...>
+	<#if !.data_model['org.riotfamily.pages.PageController']?if_exists>
+		<#stop "This macro must only be used by PageController views." />
+	</#if>
 	<#if attributes.attributes?exists>
 		<#local attributes = attributes.attributes />
 	</#if>
@@ -101,6 +104,9 @@
   - Makes the nested content editable via the properties-tool.
   -->
 <#macro properties form page=pageMacroHelper.currentPage tag="" attributes ...>
+	<#if !.data_model['org.riotfamily.pages.PageController']?if_exists>
+		<#stop "This macro must only be used by PageController views." />
+	</#if>
 	<#if component.isEditMode()>
 		<#if !tag?has_content>
 			<#local tag = "div" />
