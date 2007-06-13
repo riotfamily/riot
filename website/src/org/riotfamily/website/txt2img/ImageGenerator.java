@@ -59,7 +59,11 @@ public class ImageGenerator implements InitializingBean {
 	
 	private int paddingTop = 0;
 	
+	private int paddingRight = 0;
+	
 	private int paddingBottom = 0;
+	
+	private int paddingLeft = 0;
 	
 	private Integer lineSpacing;
 	
@@ -129,11 +133,27 @@ public class ImageGenerator implements InitializingBean {
 	}
 	
 	/**
+	 * Sets the padding at the right side of the image in pixels. 
+	 * The default value is <code>0</code>.
+	 */
+	public void setPaddingRight(int paddingRight) {
+		this.paddingRight = paddingRight;
+	}
+	
+	/**
 	 * Sets the padding at the bottom of the image in pixels. 
 	 * The default value is <code>0</code>.
 	 */
 	public void setPaddingBottom(int paddingBottom) {
 		this.paddingBottom = paddingBottom;
+	}
+	
+	/**
+	 * Sets the padding at the left side of the image in pixels. 
+	 * The default value is <code>0</code>.
+	 */
+	public void setPaddingLeft(int paddingLeft) {
+		this.paddingLeft = paddingLeft;
 	}
 	
 	public void afterPropertiesSet() throws Exception {
@@ -190,10 +210,10 @@ public class ImageGenerator implements InitializingBean {
 	    	}
 			y += layout.getAscent();
 			if (draw) {
-				layout.draw(graphics, 0, y);
+				layout.draw(graphics, paddingLeft, y);
 			}
 			y += layout.getDescent();
-			maxX = Math.max(maxX, (int) layout.getVisibleAdvance());
+			maxX = Math.max(maxX, paddingLeft + (int) layout.getVisibleAdvance() + paddingRight);
 			if (measurer.getPosition() < it.getEndIndex()) {
 				y += lineSpacing != null ? lineSpacing.intValue() : layout.getLeading();
 			}
