@@ -152,15 +152,19 @@ RiotImageReplacement.prototype = {
 		img.className = 'replacement';
 
 		if (hover) {
-			img.onmouseover = this.setImageSrc.bind(this, img, hover.src);
-			img.onmouseout = this.setImageSrc.bind(this, img, image.src);
+			var a = el.up('a') || el;
+			if (a._txt2ImgOver) a.stopObserving('mouseover', a._txt2ImgOver);
+			if (a._txt2ImgOut) a.stopObserving('mouseout', a._txt2ImgOut);
+			a._txt2ImgOver = this.setImageSrc.bind(this, img, hover.src);
+			a._txt2ImgOut = this.setImageSrc.bind(this, img, image.src);
+			a.observe('mouseover', a._txt2ImgOver);
+			a.observe('mouseout', a._txt2ImgOut);
 		}
 
 		var printText = document.createElement("span");
 		printText.style.display = 'none';
 		printText.className = "print-text";
 		printText.innerHTML = el.innerHTML;
-
 		el.innerHTML = '';
 		el.appendChild(img);
 		el.appendChild(printText);
