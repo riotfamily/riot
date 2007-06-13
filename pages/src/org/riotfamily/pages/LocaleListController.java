@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
+import org.riotfamily.cachius.spring.CacheableController;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageLocationResolver;
 import org.riotfamily.riot.security.AccessController;
@@ -40,7 +41,7 @@ import org.springframework.web.servlet.view.RedirectView;
  * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
-public class SiteLocaleChooserController extends AbstractCacheableController {
+public class LocaleListController extends AbstractCacheableController {
 
 	private PageDao pageDao;
 
@@ -50,7 +51,7 @@ public class SiteLocaleChooserController extends AbstractCacheableController {
 
 	private String viewName;
 
-	public SiteLocaleChooserController(PageDao pageDao,
+	public LocaleListController(PageDao pageDao,
 					PageLocationResolver locationResolver) {
 
 		this.pageDao = pageDao;
@@ -107,11 +108,7 @@ public class SiteLocaleChooserController extends AbstractCacheableController {
 	}
 
 	public long getTimeToLive(HttpServletRequest request) {
-		return -1;
-	}
-
-	protected boolean bypassCache(HttpServletRequest request) {
-		return AccessController.isAuthenticatedUser();
+		return CacheableController.CACHE_ETERNALLY;
 	}
 
 }
