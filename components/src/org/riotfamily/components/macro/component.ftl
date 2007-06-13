@@ -93,7 +93,7 @@
   -
   - key: Name of the model-key/variable to edit
   -
-  - scope: Hash that contains the model. Defaults to the built-in .vars hash.
+  - scope: Hash that contains the model. Defaults to the built-in data_model hash.
   -
   - editor: Name of the editor widget to use. Can be either 'text', 'richtext'
   - or 'richtext-chunks'. Default is 'text'.
@@ -107,7 +107,7 @@
   -
   - attributes...: Attributes to set on the surrounding tag.
   -->
-<#macro editable key scope=.vars editor="text" tag="" alwaysUseNested=false attributes... >
+<#macro editable key scope=.data_model editor="text" tag="" alwaysUseNested=false attributes... >
 	<#if alwaysUseNested>
 		<#local value><#nested /></#local>
 	<#else>
