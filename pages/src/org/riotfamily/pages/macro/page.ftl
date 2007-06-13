@@ -76,7 +76,7 @@
 <#--
   - Outputs a page property and makes it editable via the text-tool.
   -->
-<#macro text key page=pageMacroHelper.currentPage tag="" form="" attributes ...>
+<#macro text key page=pageMacroHelper.currentPage tag="" form="" alwaysUseNested=false attributes ...>
 	<#if !.data_model['org.riotfamily.pages.PageController']?if_exists>
 		<#stop "This macro must only be used by PageController views." />
 	</#if>
@@ -97,7 +97,7 @@
 		</#if>
 	</#if>
 	<#local props = page.getProperties(component.isEditMode()) />
-	<@component.editable key=key tag=tag scope=props editor="text" attributes=attributes><#nested props /></@component.editable>
+	<@component.editable key=key tag=tag scope=props editor="text" alwaysUseNested=alwaysUseNested attributes=attributes><#nested props /></@component.editable>
 </#macro>
 
 <#--
