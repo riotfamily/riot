@@ -63,6 +63,8 @@ public class ImageGenerator implements InitializingBean {
 	
 	private Integer lineSpacing;
 	
+	private Integer maxWidth;
+	
 	private Color color = Color.BLACK;
 	
 	private FlatMap attributes = new FlatMap();
@@ -112,6 +114,13 @@ public class ImageGenerator implements InitializingBean {
 	}
 	
 	/**
+	 * Sets the maximum image width.
+	 */
+	public void setMaxWidth(Integer maxWidth) {
+		this.maxWidth = maxWidth;
+	}
+	
+	/**
 	 * Sets the padding at the top of the image in pixels. 
 	 * The default value is <code>0</code>.
 	 */
@@ -135,6 +144,9 @@ public class ImageGenerator implements InitializingBean {
 	public void generate(String text, int maxWidth, String color, OutputStream os) 
 			throws IOException {
 		
+		if (this.maxWidth != null) {
+			maxWidth = this.maxWidth.intValue();
+		}
 		Dimension size = getSize(text, maxWidth);
         BufferedImage image = createImage(size);
         drawText(text, maxWidth, color, image);
