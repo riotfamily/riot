@@ -24,6 +24,7 @@
 package org.riotfamily.common.beans.xml;
 
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
@@ -32,10 +33,17 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  */
 public abstract class GenericNamespaceHandlerSupport extends NamespaceHandlerSupport {
 
+	/**
+	 * Registers a {@link SpringBeanDefinitionParser} for the given elementName.
+	 */
 	protected void registerSpringBeanDefinitionParser(String elementName) {
 		registerBeanDefinitionParser(elementName, new SpringBeanDefinitionParser());
 	}
 
+	/**
+	 * Registers a {@link SpringBeanDefinitionParser} and a decorator
+	 * for the given elementName.
+	 */
 	protected void registerSpringBeanDefinitionParser(String elementName,
 			BeanDefinitionDecorator decorator) {
 
@@ -43,12 +51,22 @@ public abstract class GenericNamespaceHandlerSupport extends NamespaceHandlerSup
 		registerBeanDefinitionDecorator(elementName, decorator);
 	}
 
+	/**
+	 * Registers a {@link GenericBeanDefinitionParser} for the given elementName
+	 * that creates BeanDefinitions for the specified class.
+	 */
 	protected GenericBeanDefinitionParser register(String elementName, Class beanClass) {
 		GenericBeanDefinitionParser parser = new GenericBeanDefinitionParser(beanClass);
 		registerBeanDefinitionParser(elementName, parser);
 		return parser;
 	}
 
+	/**
+	 * Registers a {@link GenericBeanDefinitionParser} for the given elementName
+	 * that creates BeanDefinitions for the specified class. Additionally a
+	 * decorator is registered for the elementName.
+	 *
+	 */
 	protected GenericBeanDefinitionParser register(String elementName,
 			Class beanClass, BeanDefinitionDecorator decorator) {
 
@@ -56,4 +74,13 @@ public abstract class GenericNamespaceHandlerSupport extends NamespaceHandlerSup
 		return register(elementName, beanClass);
 	}
 
+	/**
+	 * Registers a parser and decorator for the given elementName.
+	 */
+	protected void register(String elementName, BeanDefinitionParser parser,
+			BeanDefinitionDecorator decorator) {
+
+		registerBeanDefinitionParser(elementName, parser);
+		registerBeanDefinitionDecorator(elementName, decorator);
+	}
 }
