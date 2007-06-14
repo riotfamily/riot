@@ -5,6 +5,7 @@
     	<conf name="runtime" />
     </configurations>
     <dependencies>
+	    <dependency org="riotfamily" name="riot-common" rev="latest.integration" conf="*->@" />
 	    <dependency org="riotfamily" name="riot-core" rev="latest.integration" conf="*->@" />
 	    <dependency org="riotfamily" name="riot-forms" rev="latest.integration" conf="*->@" />
         <dependency org="riotfamily" name="riot-hibernate" rev="latest.integration" conf="*->@" />

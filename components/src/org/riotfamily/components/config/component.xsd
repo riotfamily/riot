@@ -17,14 +17,21 @@
 	</xsd:element>
 
 	<xsd:complexType name="abstract-component" abstract="true">
-		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:element name="property-processor">
 				<xsd:complexType>
 					<xsd:group ref="beans:beanElements"/>
 					<xsd:attributeGroup ref="beans:beanAttributes"/>
 				</xsd:complexType>
 			</xsd:element>
-		</xsd:sequence>
+			<xsd:element name="defaults">
+				<xsd:complexType>
+					<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+						<xsd:element ref="beans:prop" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:choice>
 		<xsd:attribute name="id" type="xsd:ID" use="required" />
 	</xsd:complexType>
 
