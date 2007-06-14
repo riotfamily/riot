@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms;
 
@@ -56,6 +56,7 @@ import org.riotfamily.forms.support.HttpFormRequest;
 import org.riotfamily.forms.support.MessageUtils;
 import org.riotfamily.forms.support.TemplateUtils;
 import org.springframework.util.Assert;
+import org.springframework.validation.Validator;
 
 
 /**
@@ -64,63 +65,65 @@ import org.springframework.util.Assert;
 public class Form implements BeanEditor {
 
 	private static final String DEFAULT_ID = "form";
-	
+
 	private static final String FORM_ATTR = "form";
-	
+
 	private static final String ELEMENT_CONTAINER_ATTR = "elements";
-	
+
 	private Log log = LogFactory.getLog(Form.class);
-	
+
 	private String id = DEFAULT_ID;
-	
+
 	/** Elements keyed by their id */
 	private Map elementMap = new HashMap();
 
 	/** Counter to create unique ids */
 	private int idCount;
-	
+
 	/** Set of used parameter names */
 	private Set paramNames = new HashSet();
 
 	/** EditorBinder to bind toplevel elements to properties */
 	private EditorBinder editorBinder;
 
-	
+
 	/** Set containing resources required by the form itself (not it's elements) */
 	private List globalResources = new ArrayList();
 
 	private FormInitializer initializer;
 
 	private List containers = new ArrayList();
-	
+
 	private Container elements;
-	
+
 	private FormContext formContext;
-	
+
 	private FormErrors errors;
-	
+
+	private Validator validator;
+
 	private FormListener formListener;
 
 	private boolean rendering;
-	
+
 	private boolean includeStylesheet;
-	
+
 	private String template = TemplateUtils.getTemplatePath(this);
-	
+
 	private Map renderModel = new HashMap();
-	
+
 	private String hint;
-	
+
 	public Form() {
 		setAttribute(FORM_ATTR, this);
 		elements = createContainer(ELEMENT_CONTAINER_ATTR);
 	}
-	
+
 	public Form(Class type) {
 		this();
 		setBeanClass(type);
 	}
-	
+
 	/**
 	 * @since 6.4
 	 */
@@ -148,16 +151,16 @@ public class Form implements BeanEditor {
 	public void setAttribute(String key, Object value) {
 		renderModel.put(key,value);
 	}
-	
+
 	public Object getAttribute(String key) {
 		return renderModel.get(key);
 	}
-	
+
 	public void setBeanClass(Class beanClass) {
 		Assert.notNull(beanClass, "The beanClass must not be null.");
 		editorBinder = new EditorBinder(new MapOrBeanWrapper(beanClass));
 	}
-	
+
 	public void setValue(Object backingObject) {
 		if (backingObject != null) {
 			editorBinder.setBackingObject(backingObject);
@@ -175,26 +178,26 @@ public class Form implements BeanEditor {
 	public EditorBinder getEditorBinder() {
 		return editorBinder;
 	}
-	
+
 	public Editor getEditor(String property) {
 		return editorBinder.getEditor(property);
 	}
-	
+
 	public void bind(Editor editor, String property) {
-		editorBinder.bind(editor, property);		
+		editorBinder.bind(editor, property);
 	}
 
 	public void addElement(Element element) {
 		elements.addElement(element);
 	}
-	
+
 	public String getHint() {
 		if (hint == null) {
 			hint = MessageUtils.getHint(this, editorBinder.getBeanClass());
 		}
 		return hint;
 	}
-	
+
 	/**
 	 * Convinience method to add and bind an element within a single step.
 	 */
@@ -210,19 +213,19 @@ public class Form implements BeanEditor {
 		setAttribute(name, container);
 		return container;
 	}
-	
+
 	public void addResource(FormResource resource) {
 		globalResources.add(resource);
 	}
-	
+
 	protected List getResources() {
-		List resources = new ArrayList(globalResources); 
+		List resources = new ArrayList(globalResources);
 		Iterator it = getRegisteredElements().iterator();
 		while (it.hasNext()) {
 			Element element = (Element) it.next();
 			if (element instanceof ResourceElement) {
-				ResourceElement re = (ResourceElement) element; 
-				FormResource res = re.getResource(); 
+				ResourceElement re = (ResourceElement) element;
+				FormResource res = re.getResource();
 				if (res != null) {
 					resources.add(res);
 				}
@@ -234,7 +237,7 @@ public class Form implements BeanEditor {
 	/**
 	 * Creates and sets an id for the given element and puts it into the
 	 * internal elementMap.
-	 * 
+	 *
 	 * @param element the element to register
 	 */
 	public void registerElement(Element element) {
@@ -246,11 +249,11 @@ public class Form implements BeanEditor {
 		}
 		elementMap.put(id, element);
 	}
-	
+
 	public void unregisterElement(Element element) {
 		elementMap.remove(element.getId());
 	}
-	
+
 	public String createId() {
 		return "e" + idCount++;
 	}
@@ -296,43 +299,43 @@ public class Form implements BeanEditor {
 		paramNames.add(name);
 		return name;
 	}
-	
+
 	public void render(PrintWriter writer) {
 		rendering = true;
-		
+
 		formContext.setWriter(writer);
 		DocumentWriter doc = new DocumentWriter(writer);
-		
+
 		doc.start(Html.SCRIPT);
-		doc.attribute(Html.SCRIPT_SRC, formContext.getContextPath() 
+		doc.attribute(Html.SCRIPT_SRC, formContext.getContextPath()
 				+ formContext.getResourcePath() + "riot-js/resources.js");
-		
+
 		doc.attribute(Html.SCRIPT_TYPE, "text/javascript");
 		doc.attribute(Html.SCRIPT_LANGUAGE, "JavaScript");
 		doc.end();
-		
+
 		doc.start(Html.SCRIPT);
-		doc.attribute(Html.SCRIPT_SRC, formContext.getContextPath() 
+		doc.attribute(Html.SCRIPT_SRC, formContext.getContextPath()
 				+ formContext.getResourcePath() + "form/hint.js");
-		
+
 		doc.attribute(Html.SCRIPT_TYPE, "text/javascript");
 		doc.attribute(Html.SCRIPT_LANGUAGE, "JavaScript");
 		doc.end();
-		
+
 		doc.start(Html.SCRIPT).body();
 		LoadingCodeGenerator.renderLoadingCode(getResources(), writer);
 		doc.end();
-		
+
 		formContext.getTemplateRenderer().render(
 				template, renderModel, writer);
-		
+
 		rendering = false;
 	}
 
 	public boolean isRendering() {
 		return rendering;
 	}
-	
+
 	public void elementRendered(Element element) {
 		log.debug("Element rendered: " + element.getId());
 		if (getFormListener() != null) {
@@ -374,6 +377,10 @@ public class Form implements BeanEditor {
 		this.initializer = initializer;
 	}
 
+	public void setValidator(Validator validator) {
+		this.validator = validator;
+	}
+
 	public void init() {
 		if (initializer != null) {
 			initializer.initForm(this);
@@ -383,17 +390,20 @@ public class Form implements BeanEditor {
 			addResource(new StylesheetResource("form/form.css"));
 		}
 	}
-	
+
 	public void processRequest(HttpServletRequest request) {
 		processRequest(new HttpFormRequest(request));
 	}
-	
+
 	public void processRequest(FormRequest request) {
 		errors = new FormErrors(this);
 		Iterator it = containers.iterator();
 		while (it.hasNext()) {
 			Container container = (Container) it.next();
 			container.processRequest(request);
+		}
+		if (validator != null) {
+			validator.validate(getValue(), errors);
 		}
 	}
 
@@ -404,21 +414,21 @@ public class Form implements BeanEditor {
 	public FormListener getFormListener() {
 		return formListener;
 	}
-	
+
 	public void requestFocus(Element element) {
 		if (formListener != null) {
 			formListener.elementFocused(element);
 		}
 	}
-	
+
 	public Object getBackingObject() {
 		return editorBinder.getBackingObject();
 	}
-	
+
 	public Object populateBackingObject() {
 		return editorBinder.populateBackingObject();
 	}
-	
+
 	public FormContext getFormContext() {
 		return this.formContext;
 	}
@@ -436,7 +446,7 @@ public class Form implements BeanEditor {
 	public FormErrors getErrors() {
 		return errors;
 	}
-		
+
 	public boolean hasErrors() {
 		return errors.hasErrors();
 	}

@@ -75,7 +75,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.io.Resource;
+import org.springframework.util.Assert;
 import org.springframework.util.xml.DomUtils;
+import org.springframework.validation.Validator;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -100,6 +102,10 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	public static final String FORM_INITIALIZER = "initializer";
 
 	public static final String FORM_INITIALIZER_CLASS = "initializer-class";
+
+	public static final String FORM_VALIDATOR = "validator";
+
+	public static final String FORM_VALIDATOR_CLASS = "validator-class";
 
 	public static final String PACKAGE = "package";
 
@@ -225,28 +231,42 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 
 		formFactory.setBeanClass(getBeanClass(beanClassName));
 
-		String initializerName = XmlUtils.getAttribute(
-				formElement, FORM_INITIALIZER);
+		formFactory.setInitializer((FormInitializer) getOrCreate(formElement,
+				FORM_INITIALIZER, FORM_INITIALIZER_CLASS,
+				FormInitializer.class));
 
-		if (initializerName != null) {
-			formFactory.setInitializer((FormInitializer) beanFactory.getBean(
-					initializerName, FormInitializer.class));
-		}
-		else {
-			String initializerClass = XmlUtils.getAttribute(
-				formElement, FORM_INITIALIZER_CLASS);
+		formFactory.setValidator((Validator) getOrCreate(formElement,
+				FORM_VALIDATOR, FORM_VALIDATOR_CLASS,
+				Validator.class));
 
-			if (initializerClass != null) {
-				formFactory.setInitializer((FormInitializer)
-						PropertyUtils.newInstance(initializerClass));
-			}
-		}
 
 		Iterator it = XmlUtils.getChildElements(formElement).iterator();
 		while (it.hasNext()) {
 			parseElementDefinition((Element) it.next(), formFactory);
 		}
 		formRepository.registerFormFactory(formId, formFactory);
+	}
+
+	private Object getOrCreate(Element element, String refAttribute,
+			String classNameAttribute, Class requiredClass) {
+
+		String ref = XmlUtils.getAttribute(
+				element, refAttribute);
+
+		if (ref != null) {
+			return beanFactory.getBean(ref, requiredClass);
+		}
+		else {
+			String className = XmlUtils.getAttribute(
+				element, classNameAttribute);
+
+			if (className != null) {
+				Object obj = PropertyUtils.newInstance(className);
+				Assert.isInstanceOf(requiredClass, obj);
+				return obj;
+			}
+		}
+		return null;
 	}
 
 	protected void parsePackageDefinition(Element ele) {
