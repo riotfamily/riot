@@ -106,7 +106,7 @@ riot.Toolbar.prototype = {
 	},
 
 	registerComponentLists: function(lists) {
-		this.componentLists = this.componentLists.concat(lists);
+		this.componentLists = lists.concat(this.componentLists);
 	},
 
 	dirtyCheck: function(callerIsDirty) {
