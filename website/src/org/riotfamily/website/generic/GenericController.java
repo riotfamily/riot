@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.generic;
 
@@ -33,7 +33,6 @@ import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.website.generic.model.CacheableModelBuilder;
 import org.riotfamily.website.generic.model.ModelBuilder;
 import org.riotfamily.website.generic.model.ModelPostProcessor;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -63,11 +62,14 @@ public class GenericController extends AbstractCacheableController {
 	}
 
 	public GenericController(ModelBuilder modelBuilder) {
-		this.modelBuilder = modelBuilder;
+		setModelBuilder(modelBuilder);
 	}
 
 	public void setModelBuilder(ModelBuilder modelBuilder) {
 		this.modelBuilder = modelBuilder;
+		if (modelBuilder instanceof CacheableModelBuilder) {
+			cacheableModelBuilder = (CacheableModelBuilder) modelBuilder;
+		}
 	}
 
 	public void setPostProcessors(ModelPostProcessor[] postProcessors) {
@@ -88,16 +90,6 @@ public class GenericController extends AbstractCacheableController {
 
 	public void setAddUriToCacheKey(boolean addUriToCacheKey) {
 		this.addUriToCacheKey = addUriToCacheKey;
-	}
-
-	protected void initController() {
-		if (modelBuilder == null) {
-			throw new BeanCreationException(getBeanName()
-					+ ": A ModelBuilder must be set.");
-		}
-		if (modelBuilder instanceof CacheableModelBuilder) {
-			cacheableModelBuilder = (CacheableModelBuilder) modelBuilder;
-		}
 	}
 
 	public ModelAndView handleRequest(HttpServletRequest request,
