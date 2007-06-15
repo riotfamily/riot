@@ -100,13 +100,13 @@ riot.Component.prototype = {
 
 	propertiesChanged: function() {
 		riot.popup.close();
-		this.componentList.setDirty(true);
 		// Timeout as we othwerwise get an 0x8004005 [nsIXMLHttpRequest.open] error.
 		// See https://bugzilla.mozilla.org/show_bug.cgi?id=249843
 		setTimeout(this.onupdate.bind(this), 1);
 	},
 
 	onupdate: function() {
+		this.componentList.setDirty(true);
 		this.componentList.update();
 	},
 

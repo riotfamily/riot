@@ -128,8 +128,6 @@ riot.InplaceEditor.prototype = {
 		if (this.text != text) {
 			ComponentEditor.updateText(this.component.id,
 					this.key, text, this.onupdate.bind(this));
-
-			this.component.componentList.setDirty(true);
 		}
 		this.onsave(text);
 	},
