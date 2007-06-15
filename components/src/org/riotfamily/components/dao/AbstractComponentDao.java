@@ -369,6 +369,10 @@ public abstract class AbstractComponentDao implements ComponentDao,
 			container.setPreviewVersion(null);
 			updateVersionContainer(container);
 			published = true;
+			if (container.getList() == null) {
+				cache.invalidateTaggedItems(VersionContainer.class.getName()
+						+ '$' + preview.getType());
+			}
 		}
 		return published;
 	}
