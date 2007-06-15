@@ -33,7 +33,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
 import org.riotfamily.pages.PageLocation;
@@ -42,6 +41,7 @@ import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.AbstractPageDao;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
+import org.springframework.util.Assert;
 
 /**
  * PageDao implementation that uses Hibernate.
@@ -56,11 +56,12 @@ public class HibernatePageDao extends AbstractPageDao {
 
 	private HibernateHelper hibernate;
 
-	public HibernatePageDao(ComponentDao componentDao, List locales,
-			SessionFactory sessionFactory) {
-
-		super(componentDao, locales);
+	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.hibernate = new HibernateHelper(sessionFactory, "pages");
+	}
+
+	protected void initDao() {
+		Assert.notNull(hibernate, "A SessionFactory must be  set.");
 	}
 
 	protected Object loadObject(Class clazz, Serializable id) {

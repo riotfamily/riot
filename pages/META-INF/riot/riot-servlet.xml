@@ -54,15 +54,15 @@
 	</bean>
 
 	<bean id="siteRiotDao" class="org.riotfamily.pages.riot.dao.SiteRiotDao">
-		<constructor-arg ref="pageDao" />
+		<property name="pageDao" ref="pageDao" />
 	</bean>
 
 	<bean id="localeRiotDao" class="org.riotfamily.pages.riot.dao.LocaleRiotDao">
-		<constructor-arg ref="pageDao" />
+		<property name="pageDao" ref="pageDao" />
 	</bean>
 
  	<bean id="pageRiotDao" class="org.riotfamily.pages.riot.dao.PageRiotDao">
-		<constructor-arg ref="pageDao" />
+		<property name="pageDao" ref="pageDao" />
 	</bean>
 
 	<bean id="editPageCommand" class="org.riotfamily.pages.riot.command.EditPageCommand">

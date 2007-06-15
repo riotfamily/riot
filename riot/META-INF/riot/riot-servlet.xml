@@ -11,6 +11,10 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx.xsd">
 
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">
+		<property name="proxyTargetClass" value="true" />
+	</bean>
+
 	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
 		<property name="location" value="classpath:/application.properties" />
 		<property name="contextOverride" value="true" />
@@ -128,7 +132,7 @@
 		<constructor-arg ref="riotPrincipalBinder" />
 		<property name="sessionDataStore" ref="sessionDataStore" />
 	</bean>
-		
+
     <bean id="loggingPolicy" class="org.riotfamily.riot.security.policy.LoggingPolicy" />
 
 	<bean id="defaultPolicy" class="org.riotfamily.riot.security.policy.GrantAllPolicy" />
@@ -514,7 +518,7 @@
 	<bean id="org.directwebremoting.Remoter"
 		class="org.riotfamily.common.web.dwr.ConstantsRemoter" />
 	-->
-	
+
 	<bean id="csvExportController" name="/csv" class="org.riotfamily.riot.list.export.CsvExportController">
 		<constructor-arg ref="editorRepository" />
 		<property name="transactionManager" ref="transactionManager" />

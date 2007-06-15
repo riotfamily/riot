@@ -34,7 +34,9 @@ import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.ParentChildDao;
 import org.riotfamily.riot.dao.support.RiotDaoAdapter;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
@@ -42,14 +44,21 @@ import org.springframework.util.StringUtils;
  * @since 6.5
  */
 public class LocaleRiotDao extends RiotDaoAdapter
-		implements ParentChildDao {
+		implements ParentChildDao, InitializingBean {
 
 	private static final String ID_SEPARATOR = ",";
 
 	private PageDao pageDao;
 
-	public LocaleRiotDao(PageDao pageDao) {
+	public LocaleRiotDao() {
+	}
+
+	public void setPageDao(PageDao pageDao) {
 		this.pageDao = pageDao;
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(pageDao, "A PageDao must be set.");
 	}
 
 	public Class getEntityClass() {

@@ -38,8 +38,8 @@
 	</bean>
 
 	<bean id="componentDaoTarget" class="org.riotfamily.components.dao.hibernate.HibernateComponentDao">
-		<constructor-arg ref="componentRepository" />
-		<constructor-arg ref="riotSessionFactory" />
+		<property name="repository" ref="componentRepository" />
+		<property name="sessionFactory" ref="riotSessionFactory" />
 		<property name="cache" ref="websiteCache" />
 		<property name="eventMulticaster" ref="contentEventMulticaster" />
 	</bean>

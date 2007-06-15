@@ -27,9 +27,9 @@
 	-->
 
 	<bean id="pageDao" class="org.riotfamily.pages.dao.hibernate.HibernatePageDao">
-		<constructor-arg ref="componentDao" />
-		<constructor-arg ref="websiteLocales" />
-		<constructor-arg ref="riotSessionFactory" />
+		<property name="componentDao" ref="componentDao" />
+		<property name="locales" ref="websiteLocales" />
+		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 
 	<util:list id="websiteLocales" value-type="java.util.Locale">

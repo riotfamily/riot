@@ -40,6 +40,7 @@ import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.Site;
 import org.riotfamily.pages.component.PageComponentListLocator;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
@@ -50,7 +51,7 @@ import org.springframework.util.ObjectUtils;
  * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
-public abstract class AbstractPageDao implements PageDao {
+public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	private static final String DEFAULT_SITE_NAME = "default";
 
@@ -60,10 +61,24 @@ public abstract class AbstractPageDao implements PageDao {
 
 	private List locales;
 
-	public AbstractPageDao(ComponentDao componentDao, List locales) {
+	public AbstractPageDao() {
+	}
+
+	public void setComponentDao(ComponentDao componentDao) {
 		this.componentDao = componentDao;
+	}
+
+	public void setLocales(List locales) {
 		this.locales = locales;
+	}
+
+	public final void afterPropertiesSet() throws Exception {
+		Assert.notNull(componentDao, "A ComponentDao must be set.");
 		Assert.notEmpty(locales, "At least one Locale must be configured.");
+		initDao();
+	}
+
+	protected void initDao() {
 	}
 
 	protected abstract Object loadObject(Class clazz, Serializable id);

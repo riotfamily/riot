@@ -43,7 +43,9 @@ import org.riotfamily.components.Location;
 import org.riotfamily.components.PropertyProcessor;
 import org.riotfamily.components.VersionContainer;
 import org.riotfamily.riot.security.AccessController;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.util.Assert;
 
 /**
  * Abstract base class for {@link Component} implementations that delegates
@@ -51,7 +53,8 @@ import org.springframework.context.event.ApplicationEventMulticaster;
  *
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public abstract class AbstractComponentDao implements ComponentDao {
+public abstract class AbstractComponentDao implements ComponentDao,
+		InitializingBean {
 
 	private static final Log log = LogFactory.getLog(AbstractComponentDao.class);
 
@@ -61,7 +64,10 @@ public abstract class AbstractComponentDao implements ComponentDao {
 
 	private ApplicationEventMulticaster eventMulticaster;
 
-	public AbstractComponentDao(ComponentRepository repository) {
+	public AbstractComponentDao() {
+	}
+
+	public void setRepository(ComponentRepository repository) {
 		this.repository = repository;
 	}
 
@@ -71,6 +77,14 @@ public abstract class AbstractComponentDao implements ComponentDao {
 
 	public void setEventMulticaster(ApplicationEventMulticaster eventMulticaster) {
 		this.eventMulticaster = eventMulticaster;
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(repository, "A ComponentRepository must be set.");
+		initDao();
+	}
+
+	protected void initDao() {
 	}
 
 	/**

@@ -29,18 +29,27 @@ import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.support.RiotDaoAdapter;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
+import org.springframework.util.Assert;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class SiteRiotDao extends RiotDaoAdapter {
+public class SiteRiotDao extends RiotDaoAdapter implements InitializingBean {
 
 	private PageDao pageDao;
 
-	public SiteRiotDao(PageDao pageDao) {
+	public SiteRiotDao() {
+	}
+
+	public void setPageDao(PageDao pageDao) {
 		this.pageDao = pageDao;
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(pageDao, "A PageDao must be set.");
 	}
 
 	public Class getEntityClass() {

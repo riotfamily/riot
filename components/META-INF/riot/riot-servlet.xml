@@ -154,7 +154,7 @@
 	  - RiotDao to list dirty ComponentLists.
 	  -->
 	<bean id="dirtyComponentListDao" class="org.riotfamily.components.dao.DirtyComponentListDao">
-		<constructor-arg ref="componentDao" />
+		<property name="componentDao" ref="componentDao" />
 	</bean>
 
 	<bean id="gotoComponentListCommand" class="org.riotfamily.components.command.GotoListCommand">

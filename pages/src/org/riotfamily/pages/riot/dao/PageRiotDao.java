@@ -35,21 +35,30 @@ import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.ParentChildDao;
 import org.riotfamily.riot.dao.SwappableItemDao;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
+import org.springframework.util.Assert;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
 public class PageRiotDao implements ParentChildDao, SwappableItemDao,
-		CutAndPasteEnabledDao {
+		CutAndPasteEnabledDao, InitializingBean {
 
 	private PageDao pageDao;
 
 	private Locale masterLocale;
 
-	public PageRiotDao(PageDao pageDao) {
+	public PageRiotDao() {
+	}
+
+	public void setPageDao(PageDao pageDao) {
 		this.pageDao = pageDao;
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(pageDao, "A PageDao must be set.");
 	}
 
 	public void setMasterLocale(Locale masterLocale) {

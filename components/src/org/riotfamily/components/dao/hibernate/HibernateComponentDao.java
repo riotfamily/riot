@@ -28,11 +28,11 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.components.ComponentList;
-import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.Location;
 import org.riotfamily.components.VersionContainer;
 import org.riotfamily.components.dao.AbstractComponentDao;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
+import org.springframework.util.Assert;
 
 /**
  * Default ComponentDAO implementation that uses Hibernate. All mappings
@@ -43,11 +43,15 @@ public class HibernateComponentDao extends AbstractComponentDao {
 
 	private HibernateHelper hibernate;
 
-	public HibernateComponentDao(ComponentRepository repository,
-			SessionFactory sessionFactory) {
+	public HibernateComponentDao() {
+	}
 
-		super(repository);
+	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.hibernate = new HibernateHelper(sessionFactory, "components");
+	}
+
+	protected void initDao() {
+		Assert.notNull(hibernate, "A SessionFactory must be set.");
 	}
 
 	public ComponentList findComponentList(Location location) {
