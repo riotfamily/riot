@@ -104,6 +104,7 @@
 
 	<xsd:complexType name="string-to-primitive">
 		<xsd:attribute name="param" use="required" />
+		<xsd:attribute name="attribute" />
 		<xsd:attribute name="type">
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:NMTOKEN">
