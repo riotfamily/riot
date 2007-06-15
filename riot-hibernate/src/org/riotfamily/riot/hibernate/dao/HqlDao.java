@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.dao;
 
@@ -44,58 +44,58 @@ import org.springframework.util.Assert;
 /**
  * RiotDao implementation based on Hibernate.
  */
-public class HqlDao extends HibernateSupport implements RiotDao, 
-		SortableDao, SwappableItemDao {	
-	
+public class HqlDao extends HibernateSupport implements RiotDao,
+		SortableDao, SwappableItemDao {
+
 	private static final Log log = LogFactory.getLog(HqlDao.class);
-	
+
     private Class entityClass;
 
     private boolean polymorph = true;
 
     private String where;
-    
+
     private String positionProperty;
-    
+
 	/**
      * @return Returns the itemClass.
      */
-    public final Class getEntityClass() {
+    public Class getEntityClass() {
         return entityClass;
     }
 
     /**
      * @param itemClass The itemClass to set.
      */
-    public final void setEntityClass(Class itemClass) {
+    public void setEntityClass(Class itemClass) {
         this.entityClass = itemClass;
     }
 
     /**
      * @return Returns the polymorph.
      */
-    public final boolean isPolymorph() {
+    public boolean isPolymorph() {
         return polymorph;
     }
 
     /**
      * @param polymorph The polymorph to set.
      */
-    public final void setPolymorph(boolean polymorph) {
+    public void setPolymorph(boolean polymorph) {
         this.polymorph = polymorph;
     }
 
     /**
      * @return Returns the where.
      */
-    public final String getWhere() {
+    public String getWhere() {
         return where;
     }
 
     /**
      * @param where The where to set.
      */
-    public final void setWhere(String where) {
+    public void setWhere(String where) {
         this.where = where;
     }
 
@@ -112,14 +112,14 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 	public String getObjectId(Object item) {
 		return HibernateUtils.getIdAsString(getSessionFactory(), item);
 	}
-	
+
 	/**
      * Returns a list of items.
      */
-    public final Collection list(Object parent, ListParams params) {
+    public Collection list(Object parent, ListParams params) {
         return listInternal(parent, params);
     }
-    
+
     protected List listInternal(Object parent, ListParams params) {
     	Query query = createQuery(buildHql(parent, params));
     	setQueryParameters(query, parent, params);
@@ -133,7 +133,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     /**
      * Returns the total number of items.
      */
-    public final int getListSize(Object parent, ListParams params) {
+    public int getListSize(Object parent, ListParams params) {
         Query query = createQuery(buildCountHql(parent, params));
         setQueryParameters(query, parent, params);
         Number size = (Number) query.uniqueResult();
@@ -142,10 +142,10 @@ public class HqlDao extends HibernateSupport implements RiotDao,
         }
         return size.intValue();
     }
-    
-    protected void setQueryParameters(Query query, Object parent, 
+
+    protected void setQueryParameters(Query query, Object parent,
     		ListParams params) {
-    	
+
     	if (params.getFilter() != null) {
     		if (params.getFilter() instanceof Map) {
     			Map filterMap = (Map) params.getFilter();
@@ -154,8 +154,8 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     		else {
     			query.setProperties(params.getFilter());
     		}
-    		
-    		HibernateUtils.setCollectionValueParams(query, 
+
+    		HibernateUtils.setCollectionValueParams(query,
     				params.getFilteredProperties(), params.getFilter());
         }
     	if (params.getSearch() != null) {
@@ -194,27 +194,27 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     protected String getWhereClause(Object parent, ListParams params) {
         StringBuffer sb = new StringBuffer();
         HibernateUtils.appendHql(sb, null, where);
-        
+
     	if (params.getFilter() != null) {
     		String filter = HibernateUtils.getExampleWhereClause(
-    				params.getFilter(), "this", 
+    				params.getFilter(), "this",
     				params.getFilteredProperties());
-    		
+
     		HibernateUtils.appendHql(sb, "and", filter);
     	}
-    	
+
     	if (params.getSearch() != null) {
-    		String search = HibernateUtils.getSearchWhereClause("this", 
+    		String search = HibernateUtils.getSearchWhereClause("this",
     				params.getSearchProperties(), "search");
-    		
+
     		HibernateUtils.appendHql(sb, "and", search);
         }
-        
+
         if (!polymorph) {
         	HibernateUtils.appendHql(sb, "and", "(this.class = ")
         		.append(entityClass.getName()).append(')');
         }
-        
+
         return sb.toString();
     }
 
@@ -241,38 +241,38 @@ public class HqlDao extends HibernateSupport implements RiotDao,
         }
         return sb.toString();
     }
-    
+
     public void save(Object entity, Object parent) {
     	getSession().save(entity);
     }
-    
+
     public void delete(Object entity, Object parent) {
     	getSession().delete(entity);
     }
-    
+
     public Object load(String objectId) {
     	Assert.notNull(objectId, "A non-null id must be passed to load()");
 		return HibernateUtils.get(getSession(), entityClass, objectId);
     }
-    
+
     public void update(Object entity) {
 		getSession().update(entity);
 	}
-    
-    public void swapEntity(Object item, Object parent, ListParams params, 
+
+    public void swapEntity(Object item, Object parent, ListParams params,
     		int swapWith) {
-    	
+
     	Assert.notNull(positionProperty, "A positionProperty must be specified.");
-    	
+
     	List items = listInternal(parent, params);
     	Object nextItem = items.get(swapWith);
-    	
+
     	Object pos1 = PropertyUtils.getProperty(item, positionProperty);
     	Object pos2 = PropertyUtils.getProperty(nextItem, positionProperty);
-    	
+
     	PropertyUtils.setProperty(item, positionProperty, pos2);
     	PropertyUtils.setProperty(nextItem, positionProperty, pos1);
-    	
+
     	getSession().update(item);
     	getSession().update(nextItem);
     }
