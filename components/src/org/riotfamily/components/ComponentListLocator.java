@@ -37,10 +37,10 @@ import org.riotfamily.components.render.InheritingRenderStrategy;
 public interface ComponentListLocator {
 
 	/**
-	 * Returns the location type associated with the locator.
+	 * Returns whether the locator supports the given type.
 	 * @see Location#getType()
 	 */
-	public String getType();
+	public boolean supports(String type);
 
 	/**
 	 * Returns the {@link Location} for the given request.

@@ -189,7 +189,7 @@ public abstract class AbstractPageDao implements PageDao {
 			}
 		}
 		componentDao.deleteComponentLists(PageComponentListLocator.TYPE_PAGE,
-				PageComponentListLocator.getPath(page));
+				page.getId().toString());
 
 		clearAliases(page);
 

@@ -50,16 +50,20 @@ public abstract class AbstractComponentListLocator
 		this.slotResolver = slotResolver;
 	}
 
-	public String getType() {
-		return type;
+	public boolean supports(String type) {
+		return this.type.equals(type);
 	}
 
 	public Location getLocation(HttpServletRequest request) {
 		Location location = new Location();
-		location.setType(type);
+		location.setType(getType(request));
 		location.setPath(getPath(request));
 		location.setSlot(slotResolver.getSlot(request));
 		return location;
+	}
+
+	protected String getType(HttpServletRequest request) {
+		return type;
 	}
 
 	protected abstract String getPath(HttpServletRequest request);

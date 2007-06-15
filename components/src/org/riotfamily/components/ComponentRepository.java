@@ -72,7 +72,7 @@ public class ComponentRepository implements ServletContextAware,
 
 	private Map controllers;
 
-	private Map locators;
+	private List locators;
 
 	private Map configuredPropertyProcessors;
 
@@ -173,23 +173,24 @@ public class ComponentRepository implements ServletContextAware,
 
 	public void clearControllers() {
 		controllers = new HashMap();
-		locators = new HashMap();
+		locators = new ArrayList();
 	}
 
 	public void registerController(String name, ComponentListController controller) {
 		controllers.put(name, controller);
 		ComponentListLocator locator = controller.getLocator();
-		locators.put(locator.getType(), locator);
+		locators.add(locator);
 	}
 
 	public String getUrl(ComponentList componentList) {
 		Location location = componentList.getLocation();
-		ComponentListLocator locator = (ComponentListLocator) locators.get(
-				location.getType());
-
-		if (locator == null) {
-			return null;
+		Iterator it = locators.iterator();
+		while (it.hasNext()) {
+			ComponentListLocator locator = (ComponentListLocator) it.next();
+			if (locator.supports(location.getType())) {
+				return locator.getUrl(location);
+			}
 		}
-		return locator.getUrl(location);
+		return null;
 	}
 }
