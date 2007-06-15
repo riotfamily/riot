@@ -126,6 +126,7 @@ riot.InplaceEditor.prototype = {
 	save: function() {
 		var text = this.getText();
 		if (this.text != text) {
+			this.component.updateText(this.key, text);
 			ComponentEditor.updateText(this.component.id,
 					this.key, text, this.onupdate.bind(this));
 		}
@@ -314,9 +315,9 @@ riot.RichtextEditor = Class.extend(riot.PopupTextEditor, {
 	},
 
 	save: function() {
-		if (this.options.split) {
-			var text = this.getText();
-			if (this.text != text) {
+		var text = this.getText();
+		if (this.text != text) {
+			if (this.options.split) {
 				var chunks = [];
 				var n = RBuilder.node('div');
 				n.innerHTML = text;
@@ -332,14 +333,12 @@ riot.RichtextEditor = Class.extend(riot.PopupTextEditor, {
 				if (chunks.length == 0) {
 					chunks.push('<p></p>');
 				}
-				ComponentEditor.updateTextChunks(
-						this.component.id, this.key, chunks,
-						this.component.onupdate.bind(this.component));
+				this.component.updateTextChunks(this.key, chunks);
+			}
+			else {
+				this.component.updateText(this.key, text, true);
 			}
 			this.onsave(text);
-		}
-		else {
-			this.SUPER();
 		}
 	}
 

@@ -72,9 +72,15 @@ riot.Component.prototype = {
 		return false;
 	},
 
-	updateText: function(key, value) {
-		ComponentEditor.updateText(this.componentList.controllerId, this.id, key, value, this.setHtml.bind(this));
+	updateText: function(key, value, updateFromServer) {
+		ComponentEditor.updateText(this.id, key, value, updateFromServer
+				? this.setHtml.bind(this) : Prototype.emptyFunction);
+
 		this.componentList.setDirty(true);
+	},
+
+	updateTextChunks: function(key, chunks) {
+		ComponentEditor.updateTextChunks(this.id, key, chunks, this.onupdate.bind(this));
 	},
 
 	setHtml: function(html) {
