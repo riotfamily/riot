@@ -31,10 +31,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
+import org.riotfamily.cachius.spring.TaggingContext;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.view.ViewResolverHelper;
+import org.riotfamily.components.VersionContainer;
 import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.editor.EditModeUtils;
+import org.riotfamily.pages.component.PageComponent;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.context.ApplicationContext;
@@ -50,10 +53,10 @@ public class PageController extends AbstractCacheableController
 		implements ApplicationContextAware {
 
 	public static final String MODEL_KEY = PageController.class.getName();
-	
+
 	private static final Map MODEL = Collections.singletonMap(
 			MODEL_KEY, Boolean.TRUE);
-	
+
 	protected String viewName;
 
 	protected ViewResolverHelper viewResolverHelper;
@@ -70,28 +73,20 @@ public class PageController extends AbstractCacheableController
 		this.pageDao = (PageDao) applicationContext.getBean("pageDao");
 	}
 
-	public long getTimeToLive(HttpServletRequest request) {
-		return -1;
+	public long getTimeToLive() {
+		return CACHE_ETERNALLY;
 	}
 
 	protected boolean bypassCache(HttpServletRequest request) {
 		return AccessController.isAuthenticatedUser();
 	}
 
-	/*
-	protected void appendCacheKey(StringBuffer key, HttpServletRequest request) {
-		if (EditModeUtils.isEditMode(request)) {
-			key.append("editMode:");
-		}
-		if (ComponentEditorRequest.isWrapped(request)) {
-			key.append("innerHTML:");
-		}
-		super.appendCacheKey(key, request);
-	}
-	*/
-
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
+
+		TaggingContext.tag(request, Page.class.getName());
+		TaggingContext.tag(request, VersionContainer.class.getName()
+				+ '$' + PageComponent.TYPE);
 
 		if (EditModeUtils.isEditMode(request)) {
 			String uri = ServletUtils.getIncludeUri(request);
