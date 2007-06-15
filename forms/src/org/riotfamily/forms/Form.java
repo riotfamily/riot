@@ -403,7 +403,7 @@ public class Form implements BeanEditor {
 			container.processRequest(request);
 		}
 		if (validator != null) {
-			validator.validate(getValue(), errors);
+			validator.validate(populateBackingObject(), errors);
 		}
 	}
 
