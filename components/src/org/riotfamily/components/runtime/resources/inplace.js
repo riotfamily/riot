@@ -405,6 +405,7 @@ riot.Popup.prototype = {
 		this.div.style.left = left + 'px';
 		this.overlay.style.height = Viewport.getPageHeight() + 'px';
 		this.overlay.show();
+		riot.outline.suspended = true;
 		riot.outline.hide();
 		this.div.makeVisible().show();
 	},
@@ -419,6 +420,7 @@ riot.Popup.prototype = {
 			this.showElements('embed');
 			this.div.remove();
 			this.overlay.remove();
+			riot.outline.suspended = false;
 			riot.activePopup = null;
 		}
 	}
