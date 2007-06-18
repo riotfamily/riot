@@ -106,7 +106,17 @@ riot.Toolbar.prototype = {
 	},
 
 	registerComponentLists: function(lists) {
+		lists.each(this.restoreMode.bind(this));
 		this.componentLists = lists.concat(this.componentLists);
+	},
+
+	restoreMode: function(componentList) {
+		if (this.selectedButton &&
+				this.selectedButton != this.buttons.publish &&
+				this.selectedButton != this.buttons.discard) {
+
+			componentList[this.selectedButton.handler](true);
+		}
 	},
 
 	dirtyCheck: function(callerIsDirty) {

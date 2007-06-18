@@ -437,10 +437,7 @@ riot.AbstractComponentCollection.prototype = {
 		this.element.update(html);
 		this.updateComponents();
 		this.onUpdate();
-		if (riot.toolbar.selectedButton) {
-			var handler = riot.toolbar.selectedButton.handler;
-			if (handler != 'discard' && handler != 'publish') this[handler](true);
-		}
+		riot.toolbar.restoreMode(this);
 	},
 
 	setTempHtml: function(html) {
