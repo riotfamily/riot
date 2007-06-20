@@ -152,27 +152,21 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
 			CacheableController controller, CacheItem cacheItem)
 			throws Exception {
 
-		try {
-			TaggingContext.openNestedContext(request);
-			ItemUpdater update = new ItemUpdater(cacheItem, request);
-			CachiusResponseWrapper wrapper = new CachiusResponseWrapper(
-					response, update);
+		ItemUpdater update = new ItemUpdater(cacheItem, request);
+		CachiusResponseWrapper wrapper = new CachiusResponseWrapper(
+				response, update);
 
-			ModelAndView mv = controller.handleRequest(request, wrapper);
-			if (mv == null) {
-				wrapper.flushBuffer();
-		        update.updateCacheItem();
-		        return null;
-		    }
-		    else {
-		    	View view = viewResolverHelper.resolveView(request, mv);
-		    	View cachingView = new CachingView(view, wrapper, update);
-		        return new ModelAndView(cachingView, mv.getModel());
-		    }
-		}
-		finally {
-			cacheItem.setTags(TaggingContext.popTags(request));
-		}
+		ModelAndView mv = controller.handleRequest(request, wrapper);
+		if (mv == null) {
+			wrapper.flushBuffer();
+	        update.updateCacheItem();
+	        return null;
+	    }
+	    else {
+	    	View view = viewResolverHelper.resolveView(request, mv);
+	    	View cachingView = new CachingView(view, wrapper, update);
+	        return new ModelAndView(cachingView, mv.getModel());
+	    }
 	}
 
     protected CacheItem getCacheItem(String cacheKey,

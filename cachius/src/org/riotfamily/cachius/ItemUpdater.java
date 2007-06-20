@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.cachius;
 
@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.cachius.spring.TaggingContext;
 import org.riotfamily.cachius.support.SessionUtils;
 import org.riotfamily.cachius.support.TokenFilterWriter;
 import org.riotfamily.common.io.IOUtils;
@@ -49,22 +50,23 @@ public class ItemUpdater {
 	private static final String FILE_ENCODING = "UTF-8";
 
 	private Log log = LogFactory.getLog(ItemUpdater.class);
-	
+
 	private CacheItem cacheItem;
-	
+
 	private HttpServletRequest request;
-	
+
 	private File tempFile;
-	
+
 	private boolean discard = false;
-	
+
 	private Writer writer;
-	
+
 	private OutputStream outputStream;
-	
+
 	public ItemUpdater(CacheItem cacheItem, HttpServletRequest request) {
 		this.cacheItem = cacheItem;
 		this.request = request;
+		TaggingContext.openNestedContext(request);
 	}
 
 	protected File getTempFile() throws IOException {
@@ -74,10 +76,10 @@ public class ItemUpdater {
 		Assert.notNull(tempFile);
 		return tempFile;
 	}
-	
-	public Writer getWriter() throws UnsupportedEncodingException, 
+
+	public Writer getWriter() throws UnsupportedEncodingException,
 			FileNotFoundException {
-		
+
 		if (writer == null) {
 			if (outputStream != null) {
 				throw new IllegalStateException("getWriter() must not be "
@@ -86,9 +88,9 @@ public class ItemUpdater {
 			try {
 				writer = new OutputStreamWriter(
 						new FileOutputStream(getTempFile()), FILE_ENCODING);
-		        
+
 		        if (cacheItem.isFilterSessionId()) {
-		            writer = new TokenFilterWriter(request.getSession().getId(), 
+		            writer = new TokenFilterWriter(request.getSession().getId(),
 		                    "${jsessionid}", writer);
 		        }
 			}
@@ -99,11 +101,11 @@ public class ItemUpdater {
 		}
 		return writer;
 	}
-	
+
 	public OutputStream getOutputStream() throws FileNotFoundException {
 		if (outputStream == null) {
 			if (writer != null) {
-				throw new IllegalStateException("getOutputStream() must not be " 
+				throw new IllegalStateException("getOutputStream() must not be "
 						+ "called after getWriter()!");
 			}
 			try {
@@ -116,16 +118,17 @@ public class ItemUpdater {
 		}
 		return outputStream;
 	}
-	
+
 	public void discard() {
 		discard = true;
 	}
-	
+
 	public void setContentType(String contentType) {
 		cacheItem.setContentType(contentType);
 	}
-	
+
 	public void updateCacheItem() {
+		cacheItem.setTags(TaggingContext.popTags(request));
 		IOUtils.closeStream(outputStream);
 		IOUtils.closeWriter(writer);
 		if (!discard) {
@@ -138,7 +141,7 @@ public class ItemUpdater {
 	            	log.debug("Session state has changed during " +
 	            			"processing. Since possibly not all URLs " +
 	            			"are encoded the response is NOT cached.");
-	            	
+
 	            	return;
 	            }
 			}
@@ -149,8 +152,8 @@ public class ItemUpdater {
 			tempFile = null;
 		}
 	}
-	
-	
+
+
 	public void finalize() {
 		IOUtils.delete(tempFile);
 	}
