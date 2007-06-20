@@ -74,7 +74,7 @@ riot.Component.prototype = {
 
 	updateText: function(key, value, updateFromServer) {
 		ComponentEditor.updateText(this.id, key, value, updateFromServer
-				? this.setHtml.bind(this) : Prototype.emptyFunction);
+				? this.onupdate.bind(this) : Prototype.emptyFunction);
 
 		this.componentList.setDirty(true);
 	},
