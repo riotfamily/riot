@@ -113,7 +113,8 @@ riot.Toolbar.prototype = {
 	restoreMode: function(componentList) {
 		if (this.selectedButton &&
 				this.selectedButton != this.buttons.publish &&
-				this.selectedButton != this.buttons.discard) {
+				this.selectedButton != this.buttons.discard &&
+				componentList[this.selectedButton.handler]) {
 
 			componentList[this.selectedButton.handler](true);
 		}
