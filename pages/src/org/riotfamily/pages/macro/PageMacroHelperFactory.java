@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.view.MacroHelperFactory;
-import org.riotfamily.components.editor.ComponentFormRegistry;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageLocationResolver;
 
@@ -41,20 +40,16 @@ public class PageMacroHelperFactory implements MacroHelperFactory {
 
 	private PageLocationResolver resolver;
 
-	private ComponentFormRegistry formRegistry;
-
 	public PageMacroHelperFactory(PageDao pageDao,
-			PageLocationResolver resolver,
-			ComponentFormRegistry formRegistry) {
+			PageLocationResolver resolver) {
 
 		this.pageDao = pageDao;
 		this.resolver = resolver;
-		this.formRegistry = formRegistry;
 	}
 
 	public Object createMacroHelper(HttpServletRequest request,
 			HttpServletResponse response) {
 
-		return new PageMacroHelper(pageDao, resolver, formRegistry, request);
+		return new PageMacroHelper(pageDao, resolver, request);
 	}
 }

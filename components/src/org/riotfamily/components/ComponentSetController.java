@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages;
+package org.riotfamily.components;
 
 import java.io.PrintWriter;
 import java.util.Collections;
@@ -31,14 +31,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.cachius.spring.TaggingContext;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.view.ViewResolverHelper;
-import org.riotfamily.components.VersionContainer;
 import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.editor.EditModeUtils;
-import org.riotfamily.pages.component.PageComponent;
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -49,10 +45,10 @@ import org.springframework.web.servlet.View;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PageController extends AbstractCacheableController
+public class ComponentSetController extends AbstractCacheableController
 		implements ApplicationContextAware {
 
-	public static final String MODEL_KEY = PageController.class.getName();
+	public static final String MODEL_KEY = ComponentSetController.class.getName();
 
 	private static final Map MODEL = Collections.singletonMap(
 			MODEL_KEY, Boolean.TRUE);
@@ -61,16 +57,12 @@ public class PageController extends AbstractCacheableController
 
 	protected ViewResolverHelper viewResolverHelper;
 
-	protected PageDao pageDao;
-
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
 	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.viewResolverHelper = new ViewResolverHelper(applicationContext);
-		//TODO Use a better way to aquire a PageDao without need for injection
-		this.pageDao = (PageDao) applicationContext.getBean("pageDao");
 	}
 
 	public long getTimeToLive() {
@@ -84,28 +76,24 @@ public class PageController extends AbstractCacheableController
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		TaggingContext.tag(request, Page.class.getName());
-		TaggingContext.tag(request, VersionContainer.class.getName()
-				+ '$' + PageComponent.TYPE);
-
 		if (EditModeUtils.isEditMode(request)) {
 			String uri = ServletUtils.getIncludeUri(request);
 			uri = uri.substring(request.getContextPath().length());
 			if (PageRequestUtils.storeContext(request, uri, 120000)) {
 				View view = viewResolverHelper.resolveView(request, viewName);
-				return new ModelAndView(new PageView(view, uri), MODEL);
+				return new ModelAndView(new ComponentSetView(view, uri), MODEL);
 			}
 		}
 		return new ModelAndView(viewName, MODEL);
 	}
 
-	private static class PageView implements View {
+	private static class ComponentSetView implements View {
 
 		private View view;
 
 		private String uri;
 
-		public PageView(View view, String uri) {
+		public ComponentSetView(View view, String uri) {
 			this.view = view;
 			this.uri = uri;
 		}

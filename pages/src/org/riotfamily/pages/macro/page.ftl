@@ -74,66 +74,6 @@
 </#function>
 
 <#--
-  - Outputs a page property and makes it editable via the text-tool.
-  -->
-<#macro text key page=pageMacroHelper.currentPage tag="" form="" alwaysUseNested=false attributes ...>
-	<#if !.data_model['org.riotfamily.pages.PageController']?if_exists>
-		<#stop "This macro must only be used by PageController views." />
-	</#if>
-	<#if attributes.attributes?exists>
-		<#local attributes = attributes.attributes />
-	</#if>
-	<#if component.isEditMode()>
-		<#local attributes = {"riot:containerId": page.versionContainer.id} + attributes />
-		<#local attributes = attributes + {"class": ("riot-component " + attributes["class"]?if_exists)?trim} />
-		<#if form?has_content>
-			<#local formUrl = pageMacroHelper.getFormUrl(form, page.versionContainer.id)?if_exists />
-			<#if formUrl?has_content>
-				<#local attributes = attributes + {"riot:form": formUrl} />
-			</#if>
-		</#if>
-		<#if page.dirty>
-			<#local attributes = attributes + {"riot:dirty": "true"} />
-		</#if>
-	</#if>
-	<#local props = page.getProperties(component.isEditMode()) />
-	<@component.editable key=key tag=tag scope=props editor="text" alwaysUseNested=alwaysUseNested attributes=attributes><#nested props /></@component.editable>
-</#macro>
-
-<#--
-  - Makes the nested content editable via the properties-tool.
-  -->
-<#macro properties form page=pageMacroHelper.currentPage tag="" attributes ...>
-	<#if !.data_model['org.riotfamily.pages.PageController']?if_exists>
-		<#stop "This macro must only be used by PageController views." />
-	</#if>
-	<#if component.isEditMode()>
-		<#if !tag?has_content>
-			<#local tag = "div" />
-		</#if>
-		<#local attributes = attributes + {
-			"riot:containerId": page.versionContainer.id,
-			"riot:form": pageMacroHelper.getFormUrl(form, page.versionContainer.id),
-			"class": ("riot-component " + attributes["class"]?if_exists)?trim
-		} />
-	</#if>
-	<#local attrs = "" />
-	<#local keys = attributes?keys />
-	<#list keys as attributeName>
-		<#if attributes[attributeName]?has_content>
-			<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName] + "\"" />
-		</#if>
-	</#list>
-	<#if tag?has_content>
-		<${tag}${attrs}>
-			<#nested page.getProperties(component.isEditMode())>
-		</${tag}>
-	<#else>
-		<#nested page.getProperties(component.isEditMode())>
-	</#if>
-</#macro>
-
-<#--
   - Returns the page property with the given key, falling back to the
   - pathComponent (converted to title-case) if the property is not set.
   -->
@@ -149,8 +89,8 @@
   - Renders an editable HTML link to the given Page.
   -->
 <#macro link page=pageMacroHelper.currentPage tag="a" titleKey="title" href="" form="" attributes ...>
-	<#local attributes = attributes + {"href": href} />
-	<@text page=page key=titleKey tag=tag form=form href=href?has_content?string(href, url(page)) attributes=attributes>${title(page, titleProperty)}</@text>
+	<#local attributes = attributes + {"href" : href?has_content?string(href, url(page))} />
+	<@component.editable editor="text" container=page.versionContainer key=titleKey tag=tag form=form attributes=attributes>${title(page, titleProperty)}</@component.editable>
 </#macro>
 
 <#--

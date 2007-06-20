@@ -38,10 +38,13 @@ import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.components.component.ViewComponent;
 import org.riotfamily.components.config.ComponentListConfiguration;
+import org.riotfamily.components.editor.ComponentFormController;
+import org.riotfamily.components.editor.ComponentFormRepository;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
+import org.springframework.util.Assert;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
@@ -76,6 +79,10 @@ public class ComponentRepository implements ServletContextAware,
 
 	private Map configuredPropertyProcessors;
 
+	private ComponentFormController formController;
+
+	private ComponentFormRepository formRepository;
+
 	public void setConfigLocations(String[] configLocations) {
 		this.configLocations = configLocations;
 	}
@@ -97,7 +104,6 @@ public class ComponentRepository implements ServletContextAware,
 		context.setParent(applicationContext);
 		context.setServletContext(servletContext);
 		context.setConfigLocations(configLocations);
-
 		ArrayList resources = new ArrayList();
 		for (int i = 0; i < configLocations.length; i++) {
 			resources.add(applicationContext.getResource(configLocations[i]));
@@ -193,4 +199,21 @@ public class ComponentRepository implements ServletContextAware,
 		}
 		return null;
 	}
+
+	public void setFormController(ComponentFormController formController) {
+		this.formController = formController;
+	}
+
+	public void setFormRepository(ComponentFormRepository formRepository) {
+		this.formRepository = formRepository;
+	}
+
+	public String getFormUrl(String formId, Long containerId) {
+		Assert.notNull(formController, "A FormController must be set.");
+		if (formRepository.containsForm(formId)) {
+			return formController.getUrl(formId, containerId);
+		}
+		return null;
+	}
+
 }

@@ -25,41 +25,26 @@ package org.riotfamily.components.editor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.beans.propertyeditors.BooleanEditor;
 import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.mapping.UrlMapping;
 import org.riotfamily.common.web.mapping.UrlMappingAware;
 import org.riotfamily.common.web.transaction.TransactionalController;
-import org.riotfamily.common.xml.ConfigurableBean;
-import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.components.Component;
 import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.components.property.FileStoreProperyProcessor;
-import org.riotfamily.components.property.PropertyEditorProcessor;
-import org.riotfamily.components.property.XmlPropertyProcessor;
-import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRepository;
 import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.controller.RepositoryFormController;
-import org.riotfamily.forms.element.core.Checkbox;
-import org.riotfamily.forms.element.core.FileUpload;
-import org.riotfamily.forms.element.core.ImageUpload;
-import org.riotfamily.forms.element.core.NumberField;
-import org.riotfamily.forms.element.dom.XmlSequence;
-import org.riotfamily.forms.factory.FormDefinitionException;
 import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -69,8 +54,8 @@ import org.springframework.web.servlet.ModelAndView;
  * @since 6.5
  */
 public class ComponentFormController extends RepositoryFormController
-		implements FormSubmissionHandler, ConfigurationEventListener,
-		TransactionalController, UrlMappingAware, BeanNameAware {
+		implements FormSubmissionHandler, TransactionalController,
+		UrlMappingAware, BeanNameAware {
 
 	private static final String SESSION_ATTRIBUTE = "componentForm";
 
@@ -84,8 +69,6 @@ public class ComponentFormController extends RepositoryFormController
 
 	private ComponentRepository componentRepository;
 
-	private ComponentFormRegistry formRegistry;
-
 	private UrlMapping urlMapping;
 
 	private String beanName;
@@ -96,21 +79,16 @@ public class ComponentFormController extends RepositoryFormController
 
 	public ComponentFormController(FormRepository formRepository,
 			ComponentRepository componentRepository,
-			ComponentFormRegistry formRegistry, ComponentDao componentDao) {
+			ComponentDao componentDao) {
 
 		super(formRepository);
 		this.componentRepository = componentRepository;
-		this.formRegistry = formRegistry;
 		this.componentDao = componentDao;
-		componentRepository.addListener(this);
-		formRepository.addListener(this);
-		formRegistry.setFormController(this);
+		componentRepository.setFormController(this);
 		ButtonFactory buttonFactory = new ButtonFactory(this);
 		buttonFactory.setLabelKey("label.form.button.save");
 		buttonFactory.setCssClass("button button-save");
 		addButton(buttonFactory);
-		formRegistry.clear();
-		setupForms();
 	}
 
 	public void setBeanName(String beanName) {
@@ -130,88 +108,6 @@ public class ComponentFormController extends RepositoryFormController
 
 	protected ComponentRepository getComponentRepository() {
 		return this.componentRepository;
-	}
-
-	public void beanReconfigured(ConfigurableBean bean) {
-		formRegistry.clear();
-		setupForms();
-	}
-
-	protected void setupForms() {
-		Iterator it = getFormRepository().getFormIds().iterator();
-		while (it.hasNext()) {
-			String id = (String) it.next();
-			Component component = componentRepository.getComponent(id);
-			componentRepository.resetPropertyProcessors(component);
-			try {
-				setupForm(component, getFormRepository().createForm(id));
-			}
-			catch (FormDefinitionException e) {
-			}
-		}
-	}
-
-	//TODO Refactor: Move this to a separate class.
-
-	protected void setupForm(Component component, Form form) {
-		formRegistry.registerFormId(form.getId());
-		Iterator it = form.getRegisteredElements().iterator();
-		while (it.hasNext()) {
-			Element e = (Element) it.next();
-			if (e instanceof FileUpload) {
-				FileUpload upload = (FileUpload) e;
-				component.addPropertyProcessor(
-						new FileStoreProperyProcessor(
-						upload.getEditorBinding().getProperty(),
-						upload.getFileStore()));
-
-				if (upload.getSizeProperty() != null) {
-					component.addPropertyProcessor(
-							new PropertyEditorProcessor(
-							upload.getSizeProperty(),
-							new CustomNumberEditor(Long.class, true)));
-				}
-				if (upload instanceof ImageUpload) {
-					ImageUpload imageUpload = (ImageUpload) upload;
-					if (imageUpload.getWidthProperty() != null) {
-						component.addPropertyProcessor(
-								new PropertyEditorProcessor(
-								imageUpload.getWidthProperty(),
-								new CustomNumberEditor(Integer.class, true)));
-					}
-					if (imageUpload.getHeightProperty() != null) {
-						component.addPropertyProcessor(
-								new PropertyEditorProcessor(
-								imageUpload.getHeightProperty(),
-								new CustomNumberEditor(Integer.class, true)));
-					}
-				}
-			}
-			else if (e instanceof Checkbox) {
-				Checkbox cb = (Checkbox) e;
-				component.addPropertyProcessor(
-						new PropertyEditorProcessor(
-						cb.getEditorBinding().getProperty(),
-						new BooleanEditor(),
-						Boolean.toString(cb.isCheckedByDefault())));
-			}
-			else if (e instanceof NumberField) {
-				NumberField nf = (NumberField) e;
-				Class numberClass = nf.getEditorBinding().getPropertyType();
-				if (!(Number.class.isAssignableFrom(numberClass))) {
-					numberClass = Integer.class;
-				}
-				component.addPropertyProcessor(
-						new PropertyEditorProcessor(
-						nf.getEditorBinding().getProperty(),
-						new CustomNumberEditor(numberClass, false)));
-			}
-			else if (e instanceof XmlSequence) {
-				XmlSequence xs = (XmlSequence) e;
-				component.addPropertyProcessor(new XmlPropertyProcessor(
-						xs.getEditorBinding().getProperty()));
-			}
-		}
 	}
 
 	public void setViewName(String viewName) {

@@ -31,7 +31,6 @@ import java.util.Map;
 
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.VersionContainer;
-import org.riotfamily.pages.component.PageComponent;
 
 
 /**
@@ -187,7 +186,7 @@ public class Page {
 	public VersionContainer getVersionContainer() {
 		if (versionContainer == null) {
 			versionContainer = new VersionContainer();
-			ComponentVersion version = new ComponentVersion(PageComponent.TYPE);
+			ComponentVersion version = new ComponentVersion(Page.class.getName());
 			versionContainer.setLiveVersion(version);
 		}
 		return versionContainer;
@@ -208,13 +207,13 @@ public class Page {
 	public String getProperty(String key, boolean preview) {
 		ComponentVersion version = preview
 				? getVersionContainer().getLatestVersion()
-				: getVersionContainer().getLatestVersion();
+				: getVersionContainer().getLiveVersion();
 
 		return version != null ? version.getProperty(key) : null;
 	}
 
 	public boolean isDirty() {
-		return getVersionContainer().getPreviewVersion() != null;
+		return getVersionContainer().isDirty();
 	}
 
 	public boolean isPublished() {

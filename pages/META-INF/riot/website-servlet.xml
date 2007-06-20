@@ -38,7 +38,6 @@
 	<bean id="pageMacroHelper" class="org.riotfamily.pages.macro.PageMacroHelperFactory">
 		<constructor-arg ref="pageDao" />
 		<constructor-arg ref="pageLocationResolver" />
-		<constructor-arg ref="pageComponentFormRegistry" />
 	</bean>
 
 </beans>

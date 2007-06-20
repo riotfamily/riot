@@ -4,25 +4,26 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -35,22 +36,22 @@ import java.util.Set;
 public class VersionContainer {
 
 	private Long id;
-	
+
 	private ComponentList liveList;
-	
+
 	private ComponentList previewList;
-	
+
 	private ComponentVersion liveVersion;
-	
+
 	private ComponentVersion previewVersion;
-	
+
 	private Set versions;
-	
+
 	private Set childLists;
 
 	public VersionContainer() {
 	}
-	
+
 	public Long getId() {
 		return this.id;
 	}
@@ -62,12 +63,12 @@ public class VersionContainer {
 	public ComponentList getList() {
 		return this.previewList != null ? previewList : liveList;
 	}
-	
+
 	public void setList(ComponentList list) {
 		this.liveList = list;
 		this.previewList = list;
 	}
-	
+
 	public ComponentVersion getLiveVersion() {
 		return this.liveVersion;
 	}
@@ -105,13 +106,29 @@ public class VersionContainer {
 	public void setChildLists(Set childLists) {
 		this.childLists = childLists;
 	}
-	
+
 	public ComponentVersion getLatestVersion() {
 		return previewVersion != null ? previewVersion : liveVersion;
 	}
-	
+
+	public boolean isDirty() {
+		return previewVersion != null;
+	}
+
 	public boolean isPublished() {
 		return liveVersion != null;
 	}
-	
+
+	public Map getProperties(boolean preview) {
+		if (preview) {
+			return getLatestVersion().getProperties();
+		}
+		return liveVersion != null ? liveVersion.getProperties() : null;
+	}
+
+	public String getProperty(String key, boolean preview) {
+		ComponentVersion version = preview ? getLatestVersion() : liveVersion;
+		return version != null ? version.getProperty(key) : null;
+	}
+
 }

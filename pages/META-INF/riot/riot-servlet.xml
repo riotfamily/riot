@@ -80,26 +80,6 @@
 		<property name="windowName" value="preview" />
 	</bean>
 
-	<!--
-		- FormRepository providing page property forms.
-		-->
-	<bean id="pageComponentFormRepository" parent="componentFormRepository">
-		<property name="config" value="/WEB-INF/website-config/page-forms.xml" />
-	</bean>
-
-	<!--
-		- Controller that renders forms to edit component properties.
-		-->
-	<bean id="pageComponentFormController"
-		name="/pages/form/@{formId}/@{containerId}"
-		class="org.riotfamily.pages.component.PageComponentFormController">
-		<constructor-arg ref="pageComponentFormRepository" />
-		<constructor-arg ref="componentRepository" />
-		<constructor-arg ref="pageComponentFormRegistry" />
-		<constructor-arg ref="componentDao" />
-		<property name="formContextFactory" ref="formContextFactory" />
-	</bean>
-
 	<bean id="localesOptionsModel" class="org.riotfamily.forms.element.support.select.StaticOptionsModel">
 		<constructor-arg ref="websiteLocales" />
 	</bean>

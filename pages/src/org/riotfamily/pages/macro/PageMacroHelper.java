@@ -32,7 +32,6 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.components.context.ComponentEditorRequest;
-import org.riotfamily.components.editor.ComponentFormRegistry;
 import org.riotfamily.components.editor.EditModeUtils;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageLocation;
@@ -56,16 +55,13 @@ public class PageMacroHelper {
 
 	private PageLocationResolver resolver;
 
-	private ComponentFormRegistry formRegistry;
-
 	private HttpServletRequest request;
 
 	public PageMacroHelper(PageDao pageDao, PageLocationResolver resolver,
-			ComponentFormRegistry formRegistry, HttpServletRequest request) {
+			HttpServletRequest request) {
 
 		this.pageDao = pageDao;
 		this.resolver = resolver;
-		this.formRegistry = formRegistry;
 		this.request = request;
 	}
 
@@ -118,10 +114,6 @@ public class PageMacroHelper {
 
 	public String getWildcardMatch() {
 		return PageHandlerMapping.getWildcardMatch(request);
-	}
-
-	public String getFormUrl(String formId, Long containerId) {
-		return formRegistry.getFormUrl(formId, containerId);
 	}
 
 	public List group(Collection pages, int size) {

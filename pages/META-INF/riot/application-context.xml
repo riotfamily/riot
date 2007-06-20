@@ -41,6 +41,4 @@
 		<property name="locales" ref="websiteLocales" />
 	</bean>
 
-	<bean id="pageComponentFormRegistry" class="org.riotfamily.components.editor.ComponentFormRegistry" />
-
 </beans>

@@ -20,7 +20,6 @@
 		<property name="componentDao" ref="componentDao" />
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="repository" ref="componentRepository" />
-		<property name="formRegistry" ref="componentFormRegistry" />
 		<property name="locator" ref="defaultComponentListLocator" />
 		<property name="cache" ref="websiteCache" />
 	</bean>
@@ -38,6 +37,7 @@
 	</bean>
 
 	<bean id="componentMacroHelper" class="org.riotfamily.components.macro.ComponentMacroHelperFactory">
+		<constructor-arg ref="componentRepository" />
 		<property name="toolbarScripts">
 			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
 				<property name="key" value="riotToolbarResources" />
