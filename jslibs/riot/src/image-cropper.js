@@ -80,23 +80,36 @@ Cropper.UI.prototype = {
 			var e;
 
 			// Size selectors:
-			if (o.widths || o.heights) {
+			if (o.minWidth || o.maxWidth || o.minHeight || o.maxHeight) {
 				e = Cropper.appendDiv(this.controls, 'sizeSelectors');
-			}
-			if (o.widths) {
-				this.widthSelector = this.createSizeSelector(o.widths, 'setWidth');
-				e.appendChild(this.widthSelector);
-				if (o.heights) {
-					var x = document.createElement('span');
-					x.className = 'times';
-					x.innerHTML = '&times;';
-					e.appendChild(x);
-					this.resizeable = false;
+
+				// Width
+				if (o.widths) {
+					this.widthSelector = this.createSizeSelector(o.widths, 'setWidth');
+					e.appendChild(this.widthSelector);
+					if (o.heights) {
+						this.resizeable = false;
+					}
 				}
-			}
-			if (o.heights) {
-				this.heightSelector = this.createSizeSelector(o.heights, 'setHeight');
-				e.appendChild(this.heightSelector);
+				else {
+					e.appendChild(this.createSizeLabel(o.minWidth, o.maxWidth));
+				}
+
+				// Times
+				var x = document.createElement('span');
+				x.className = 'times';
+				x.innerHTML = '&times;';
+				e.appendChild(x);
+
+				// Height
+				if (o.heights) {
+					this.heightSelector = this.createSizeSelector(o.heights, 'setHeight');
+					e.appendChild(this.heightSelector);
+				}
+				else {
+					e.appendChild(this.createSizeLabel(o.minHeight, o.maxHeight));
+				}
+
 			}
 
 			// Buttons:
@@ -174,9 +187,15 @@ Cropper.UI.prototype = {
 		}
 		else {
 			sel = document.createElement('span');
-			sel.innerHTML = values[0];
+			sel.innerHTML = values[0] + ' px';
 		}
 		return sel;
+	},
+
+	createSizeLabel: function(minValue, maxValue) {
+		var label = document.createElement('span');
+		label.innerHTML = (minValue || '1') + '-' + (maxValue ||  '&infin;') + ' px';
+		return label;
 	},
 
 	getMaxFromSelector: function(sel, min, max) {
@@ -246,13 +265,13 @@ Cropper.UI.prototype = {
 	onMouseWheel: function(event) {
 		var delta;
 		if (event.wheelDelta) {
-       		delta = -event.wheelDelta / 40;
-	    }
+					 delta = -event.wheelDelta / 40;
+			}
 		else {
-       		delta = event.detail || 0;
+					 delta = event.detail || 0;
 			if (delta < -3) delta = -3;
 			if (delta > 3) delta = 3;
-    	}
+			}
 		this.zoomToPointer = true;
 		this.zoomSlider.setValueBy(this.imageSize.x / 100 * delta);
 		this.zoomToPointer = false;
@@ -338,8 +357,8 @@ Cropper.UI.prototype = {
 
 	onMouseOut: function(event) {
 		if (!event.relatedTarget) {
-            this.onMouseUp(event);
-        }
+						this.onMouseUp(event);
+				}
 	},
 
 	onMouseMove: function(event) {

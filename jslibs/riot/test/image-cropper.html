@@ -1,11 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<script type="text/javascript" src="../../prototype/src/prototype.js"></script>
 	<script type="text/javascript" src="../../../build/modules/scriptaculous-js/unpack/scriptaculous-js-1.7.1_beta2/src/scriptaculous.js?load=slider"></script>
 	<script type="text/javascript" src="../src/image-cropper.js"></script>
 	<link rel="stylesheet" type="text/css" href="../../../riot/src/org/riotfamily/riot/runtime/resources/style/form.css" />
+	<style type="text/css">
+		.cropper .cropButton,
+		.cropper .undoButton {
+			background: #ccc;
+		}
+	</style>
 </head>
 <body>
 	<div id="test1" style="width:32px;height:32px"></div>
@@ -13,6 +19,8 @@
 	<div id="test3"></div>
 	<div id="test4"></div>
 	<div id="test5"></div>
+	<div id="test6"></div>
+	<div id="test7"></div>
 	<script type="text/javascript">
 		new Cropper.UI('test1', 'downloads.jpg', null);
 		new Cropper.UI('test2', null, null);
@@ -24,14 +32,21 @@
 		});
 
 		new Cropper.UI('test4', 'downloads.jpg', '?', {
-			maxWidth: 160, maxHeight: 140, minHeight: 10,
-			widths: [80,100,160]
+			maxWidth: 160, maxHeight: 140, minHeight: 10
 		});
 
 		new Cropper.UI('test5', 'downloads.jpg', '?', {
-			maxHeight: 300, minHeight: 10,
+			maxWidth: 160, minHeight: 140,
+			widths: [80,100,160]
+		});
+
+		new Cropper.UI('test6', 'downloads.jpg', '?', {
+			maxHeight: 300, minHeight: 100,
 			maxWidth: 600, minWidth: 500,
-			widths: [500,550,600]
+			heights: [100,250,300]
+		});
+
+		new Cropper.UI('test7', 'downloads.jpg', '?', {
 		});
 	</script>
 </body>
