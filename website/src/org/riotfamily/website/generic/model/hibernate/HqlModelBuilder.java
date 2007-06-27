@@ -40,7 +40,7 @@ import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.riotfamily.cachius.spring.TaggingContext;
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.riot.hibernate.support.HibernateSupport;
 import org.riotfamily.website.cache.CacheInvalidationAdvice;

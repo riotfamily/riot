@@ -34,7 +34,7 @@ import org.riotfamily.cachius.Cache;
 import org.riotfamily.cachius.CacheItem;
 import org.riotfamily.cachius.CachiusResponseWrapper;
 import org.riotfamily.cachius.ItemUpdater;
-import org.riotfamily.cachius.spring.TaggingContext;
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.cachius.support.SessionUtils;
 import org.riotfamily.components.Component;
 import org.riotfamily.components.ComponentList;

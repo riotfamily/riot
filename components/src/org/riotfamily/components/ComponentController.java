@@ -26,8 +26,8 @@ package org.riotfamily.components;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.cachius.spring.TaggingContext;
 import org.riotfamily.components.dao.ComponentDao;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;

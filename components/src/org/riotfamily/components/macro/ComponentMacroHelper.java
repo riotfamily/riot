@@ -27,7 +27,7 @@ import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.spring.TaggingContext;
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.VersionContainer;
