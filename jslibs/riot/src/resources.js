@@ -1,8 +1,8 @@
 var Resources = {
 
 	basePath: '/',
-	
-	/** 
+
+	/**
 	 * Adds the basePath to urls that don't start with a slash.
 	 */
 	resolveUrl: function(url) {
@@ -11,14 +11,14 @@ var Resources = {
 		}
 		return url;
 	},
-	
+
 	/**
 	 * Returns true if the given resource url has already been loaded.
 	 */
 	isLoaded: function(url) {
 		return Resources._states[url] == Resources.LOADED;
 	},
-	
+
 	/**
 	 * Dynamically loads a script from the given url. Optionally a test
 	 * may be specified to check whether the script is (already) loaded.
@@ -44,15 +44,15 @@ var Resources = {
 				Resources._debug('No test for script: ' + src);
 				Resources._loaded(src);
 			}
-					
+
 			var head = document.getElementsByTagName('head')[0];
-			var script = document.createElement('script'); 
+			var script = document.createElement('script');
 			script.type = 'text/javascript';
 			script.src = src;
 			head.appendChild(script);
 		}
 	},
-	
+
 	loadScriptSequence: function(scripts) {
 		if (Resources._STOP_LOADING) return;
 		if (scripts.length > 0) {
@@ -60,6 +60,7 @@ var Resources = {
 			Resources.loadScript(script.src, script.test);
 			if (script.test) {
 				Resources.execWhenLoaded([script.src], function() {
+					if (script.onload) script.onload();
 					Resources.loadScriptSequence(scripts);
 				});
 			}
@@ -68,7 +69,7 @@ var Resources = {
 			}
 		}
 	},
-	
+
 	/**
 	 * Dynamically loads a stylesheet from the given url.
 	 */
@@ -84,9 +85,9 @@ var Resources = {
 			Resources._loaded(url);
 		}
 	},
-	
+
 	/**
-	 * Loads a script using document.write(). Use this method only to load 
+	 * Loads a script using document.write(). Use this method only to load
 	 * scripts while the page is loading, otherwise the page will be blanked.
 	 */
 	writeScript: function(url, test) {
@@ -98,7 +99,7 @@ var Resources = {
 		}
 		document.write('<script type="text/javascript" src="' + url + '"></script>');
 	},
-		
+
 	/**
 	 * Executes the given callback function as soon as all resources in the
 	 * res array are completely loaded.
@@ -117,7 +118,7 @@ var Resources = {
 		};
 		Resources.waitFor(test, callback);
 	},
-	
+
 	useBasePathFromScript: function(scriptName) {
 		var scriptTags = document.getElementsByTagName('script');
 		for (var s = 0; s < scriptTags.length; s++) {
@@ -130,7 +131,7 @@ var Resources = {
 		}
 		alert('Script not found: ' + scriptName);
 	},
-	
+
 	waitFor: function(test, callback) {
 		var testPassed;
 		if (typeof test == 'function') {
@@ -148,30 +149,30 @@ var Resources = {
 			}
 		}
 		else if (!Resources._STOP_LOADING) {
-			setTimeout(function() { 
-				Resources.waitFor(test, callback); 
+			setTimeout(function() {
+				Resources.waitFor(test, callback);
 			}, 100);
 		}
-	},	
-	
+	},
+
 	stopLoading: function() {
 		Resources._STOP_LOADING = true;
 	},
-	
+
 	LOADING: 'loading',
-	
+
 	LOADED: 'loaded',
-	
+
 	_states: {},
-	
+
 	_loading: function(url) {
 		Resources._states[url] = Resources.LOADING;
 	},
-	
+
 	_loaded: function(url) {
 		Resources._states[url] = Resources.LOADED;
 	},
-	
+
 	_isExpressionDefined: function(exp) {
 		var s = exp.split('.');
 		exp = '';
@@ -182,7 +183,7 @@ var Resources = {
 		}
 		return true;
 	},
-	
+
 	_debug: function(msg) {
 		if (Resources.debugEnabled) {
 			if (typeof console != 'undefined') console.log(msg); else alert(msg);
@@ -192,14 +193,14 @@ var Resources = {
 
 // Add an unload handler to stop loading when the user leaves the page before
 // all resources have finished loading. Otherwise exceptions might be raised
-// when a script tries to access another resource that has already been garbage 
+// when a script tries to access another resource that has already been garbage
 // collected.
 if (window.addEventListener) {
 	window.addEventListener('unload', Resources.stopLoading, false);
-} 
+}
 else if (window.attachEvent) {
     window.attachEvent('onunload', Resources.stopLoading);
 }
-    
+
 Resources.useBasePathFromScript('riot-js/resources.js');
 Resources.debugEnabled = top.location.href.indexOf('debug-resources') != -1;
