@@ -79,11 +79,17 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	private static final String VIEW = "view";
 
 	private static final String[] VIEW_ATTR = new String[] {
-		"name", "template"
+		"name", "view-name"
+	};
+
+	private static final String CUSTOM = "custom";
+
+	private static final String[] CUSTOM_ATTR = new String[] {
+		"name", "editor=@ref", "target", "icon"
 	};
 
 	private static final String OBJECT_EDITOR = FORM + '|'
-			+ FORM_CHOOSER + '|' + VIEW;
+			+ FORM_CHOOSER + '|' + VIEW + '|' + CUSTOM;
 
 	private static final String FORM_OPTION = "form-option";
 
@@ -94,11 +100,6 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 
 	private static final String ANYTHING = OBJECT_EDITOR + '|' + LIST_EDITOR;
 
-	private static final String CUSTOM = "custom";
-
-	private static final String[] CUSTOM_ATTR = new String[] {
-		"name", "url", "target", "icon"
-	};
 
 	private XmlEditorRepository editorRepository;
 
@@ -160,7 +161,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 			ed = digestFormDefinition(ele, null);
 		}
 		else if (isCustomElement(ele)) {
-			ed = digestCustomDefinition(ele);
+			ed = digestCustomDefinition(ele, null);
 		}
 		return ed;
 	}
@@ -224,6 +225,9 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 		}
 		else if (isViewElement(ele)) {
 			return digestViewDefinition(ele, parentDef);
+		}
+		else if (isCustomElement(ele)) {
+			return digestCustomDefinition(ele, parentDef);
 		}
 		else {
 			throw new RuntimeException("Expected " + OBJECT_EDITOR);
@@ -323,9 +327,12 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 		return formChooserDefinition;
 	}
 
-	protected EditorDefinition digestCustomDefinition(Element ele) {
+	protected EditorDefinition digestCustomDefinition(Element ele,
+			EditorDefinition parentDef) {
+
 		CustomEditorDefinition custom = new CustomEditorDefinition(editorRepository);
-		XmlUtils.populate(custom, ele, CUSTOM_ATTR);
+		XmlUtils.populate(custom, ele, CUSTOM_ATTR, beanFactory);
+		custom.setParentEditorDefinition(parentDef);
 		addEditorDefinition(custom);
 		return custom;
 	}

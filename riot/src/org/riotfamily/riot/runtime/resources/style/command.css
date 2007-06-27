@@ -4,6 +4,10 @@
 	height: 32px;
 	background-repeat: no-repeat;
 }
+.action:focus {
+	outline: none;
+	-moz-outline: none;
+}
 
 .action-edit {
 	background-image: url(icons/commands/edit.gif);

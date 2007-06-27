@@ -237,8 +237,9 @@
 		</property>
 	</bean>
 
-	<bean id="customFormElements" class="org.riotfamily.common.beans.module.ModularPropertiesFactoryBean">
+	<bean id="riotCustomFormElements" class="org.riotfamily.common.beans.module.ModularPropertiesFactoryBean">
 		<property name="key" value="customFormElements" />
+		<property name="includeRootProps" value="true" />
 		<property name="properties">
 			<props>
 				<prop key="{http://www.riotfamily.org/schema/riot/form-elements}chooser">org.riotfamily.riot.form.element.ObjectChooser</prop>
@@ -259,7 +260,7 @@
 		</property>
 		<property name="mimetypesMap" ref="fileTypeMap" />
 		<property name="imageCropper" ref="imageCropper" />
-		<property name="customElements" ref="customFormElements" />
+		<property name="customElements" ref="riotCustomFormElements" />
 	</bean>
 
 	<bean id="imageCropper" class="org.riotfamily.forms.element.support.image.ImageMagickCropperFactoryBean">
@@ -434,23 +435,40 @@
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 
+	<bean id="formFramesetController" class="org.riotfamily.riot.form.ui.FormFramesetController" />
+	<alias name="formFramesetController" alias="/form-frameset/@{editorId}" />
+	<alias name="formFramesetController" alias="/form-frameset/@{editorId}/@{objectId}" />
+
 	<bean id="formController" class="org.riotfamily.riot.form.ui.FormController">
 		<constructor-arg ref="editorRepository" />
 		<constructor-arg ref="formRepository" />
-		<constructor-arg ref="listService" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 	<alias name="formController" alias="/form/@{editorId}" />
 	<alias name="formController" alias="/form/@{editorId}/@{objectId}" />
+
+	<bean id="formCommandsController" class="org.riotfamily.riot.form.ui.FormCommandsController">
+		<constructor-arg ref="editorRepository" />
+		<constructor-arg ref="listService" />
+		<constructor-arg ref="messageCodesResolver" />
+	</bean>
+	<alias name="formCommandsController" alias="/form-commands/@{editorId}" />
+	<alias name="formCommandsController" alias="/form-commands/@{editorId}/@{objectId}" />
+
+	<bean id="formChooserFramesetController" class="org.riotfamily.riot.form.ui.FormFramesetController" />
+	<alias name="formChooserFramesetController" alias="/form-chooser-frameset/@{editorId}" />
+	<alias name="formChooserFramesetController" alias="/form-chooser-frameset/@{editorId}/@{objectId}" />
 
 	<bean id="formChooserController"
 			name="/form-chooser/@{editorId}"
 			parent="formController"
 			class="org.riotfamily.riot.form.ui.FormChooserController" />
 
+	<alias name="formCommandsController" alias="/form-chooser-commands/@{editorId}" />
+	<alias name="formCommandsController" alias="/form-chooser-commands/@{editorId}/@{objectId}" />
+
 	<bean id="viewController" class="org.riotfamily.riot.editor.ui.ViewController">
 		<constructor-arg ref="editorRepository" />
-		<constructor-arg ref="listService" />
 	</bean>
 	<alias name="viewController" alias="/view/@{editorId}" />
 	<alias name="viewController" alias="/view/@{editorId}/@{objectId}" />

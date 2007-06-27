@@ -1,0 +1,10 @@
+html {
+	padding: 0 55px;
+}
+* html frameset {
+	border: 0 solid #fff;
+	border-width: 0 55px;
+}
+frame {
+	background-color: #fff;
+}

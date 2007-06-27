@@ -3,7 +3,7 @@
 
 body {
 	margin: 0;
-	padding: 30px 55px 0 55px;
+	padding-bottom: 0;
 }
 body, a, span {
 	font-family: "Trebuchet MS", arial, sans-serif;
@@ -36,9 +36,9 @@ a {
 	padding-bottom: 4px;
 	line-height: 22px;
 }
-	
+
 .group,
-.list, 
+.list,
 .tree {
 	padding-left: 9px;
 }

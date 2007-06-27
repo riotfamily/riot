@@ -40,13 +40,7 @@
 
 	<xsd:element name="list">
 		<xsd:complexType>
-			<xsd:choice minOccurs="0">
-				<xsd:element ref="view" />
-				<xsd:element ref="form" />
-				<xsd:element ref="form-chooser" />
-				<xsd:element ref="list" />
-				<xsd:element ref="tree" />
-			</xsd:choice>
+			<xsd:group ref="form-children" minOccurs="0" />
 			<xsd:attributeGroup ref="list-attributes" />
 		</xsd:complexType>
 	</xsd:element>
@@ -73,6 +67,8 @@
 		<xsd:choice>
 			<xsd:element ref="form" />
 			<xsd:element ref="form-chooser" />
+			<xsd:element ref="view" />
+			<xsd:element ref="custom" />
 			<xsd:element ref="list" />
 			<xsd:element ref="tree" />
 		</xsd:choice>
@@ -109,17 +105,17 @@
 
 	<xsd:element name="custom">
 		<xsd:complexType>
-			<xsd:attribute name="name" type="xsd:string" use="required" />
+			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="icon" type="xsd:string" />
 			<xsd:attribute name="target" type="xsd:string" use="optional" />
-			<xsd:attribute name="url" type="xsd:string" />
+			<xsd:attribute name="ref" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
 
 	<xsd:element name="view">
 		<xsd:complexType>
 			<xsd:attribute name="name" type="xsd:string" />
-			<xsd:attribute name="template" type="xsd:string" />
+			<xsd:attribute name="view-name" type="xsd:string" />
 			<xsd:attribute name="label-property" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>

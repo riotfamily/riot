@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.form.ui;
 
@@ -32,8 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.mapping.UrlMapping;
-import org.riotfamily.common.web.mapping.UrlMappingAware;
 import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRepository;
@@ -45,38 +43,32 @@ import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.FormDefinition;
 import org.riotfamily.riot.editor.ListDefinition;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
  */
-public abstract class BaseFormController extends RepositoryFormController 
-		implements UrlMappingAware, BeanNameAware, FormSubmissionHandler,
-		TransactionalController {
+public abstract class BaseFormController extends RepositoryFormController
+		implements FormSubmissionHandler, TransactionalController {
 
-	protected static final String FORM_DEFINITION_ATTR = 
+	protected static final String FORM_DEFINITION_ATTR =
 			FormController.class.getName() + ".formDefinition";
-	
+
 	private EditorRepository editorRepository;
-	
+
 	private String editorIdAttribute = "editorId";
-	
+
 	private String objectIdAttribute = "objectId";
-	
+
 	private String parentIdParam = "parentId";
-	
+
 	private String viewName = ResourceUtils.getPath(
 			BaseFormController.class, "FormView.ftl");
-	
-	private UrlMapping urlMapping;
-	
-	private String beanName;
-	
-	public BaseFormController(EditorRepository editorRepository, 
+
+	public BaseFormController(EditorRepository editorRepository,
 			FormRepository formRepository) {
-		
+
 		super(formRepository);
 		this.editorRepository = editorRepository;
 		ButtonFactory buttonFactory = new ButtonFactory(this);
@@ -84,46 +76,20 @@ public abstract class BaseFormController extends RepositoryFormController
 		buttonFactory.setCssClass("button button-save");
 		addButton(buttonFactory);
 	}
-	
+
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
 	}
 
-	public void setUrlMapping(UrlMapping urlMapping) {
-		this.urlMapping = urlMapping;
-	}
-
-	public void setBeanName(String beanName) {
-		this.beanName = beanName;
-	}
-		
-	public Class getDefinitionClass() {
-		return FormDefinition.class;
-	}
-
-	public String getUrl(String editorId, String objectId, String parentId) {
-		HashMap attrs = new HashMap();
-		attrs.put(editorIdAttribute, editorId);
-		if (objectId != null) {
-			attrs.put(objectIdAttribute, objectId);
-		}
-		StringBuffer url = new StringBuffer(urlMapping.getUrl(beanName, attrs));
-		if (parentId != null) {
-			url.append('?').append(parentIdParam);
-			url.append('=').append(parentId);
-		}
-		return url.toString();
-	}
-
 	protected String getSessionAttribute(HttpServletRequest request) {
-		return BaseFormController.class.getName() 
+		return BaseFormController.class.getName()
 				+ request.getAttribute(editorIdAttribute);
 	}
-	
+
 	protected FormDefinition getFormDefinition(HttpServletRequest request) {
-		FormDefinition formDefinition = (FormDefinition) 
+		FormDefinition formDefinition = (FormDefinition)
 				request.getAttribute(FORM_DEFINITION_ATTR);
-		
+
 		if (formDefinition == null) {
 			String editorId = (String) request.getAttribute(editorIdAttribute);
 			Assert.notNull(editorId, "An editorId attribute must be set");
@@ -133,19 +99,19 @@ public abstract class BaseFormController extends RepositoryFormController
 		}
 		return formDefinition;
 	}
-	
+
 	protected String getFormId(HttpServletRequest request) {
 		return getFormDefinition(request).getFormId();
 	}
-	
+
 	protected String getObjectId(HttpServletRequest request) {
 		return (String) request.getAttribute(objectIdAttribute);
 	}
-	
+
 	protected String getParentId(HttpServletRequest request) {
 		return request.getParameter(parentIdParam);
 	}
-	
+
 	protected Form createForm(HttpServletRequest request) {
 		Form form = super.createForm(request);
 		FormUtils.setObjectId(form, getObjectId(request));
@@ -153,7 +119,7 @@ public abstract class BaseFormController extends RepositoryFormController
 		FormUtils.setFormDefinition(form, getFormDefinition(request));
 		return form;
 	}
-		
+
 	/**
 	 * @see org.riotfamily.forms.controller.RepositoryFormController#getFormBackingObject(javax.servlet.http.HttpServletRequest)
 	 */
@@ -165,10 +131,10 @@ public abstract class BaseFormController extends RepositoryFormController
 		}
 		return EditorDefinitionUtils.loadBean(formDefinition, objectId);
 	}
-	
-	protected Map createModel(Form form, FormDefinition formDefinition, 
+
+	protected Map createModel(Form form, FormDefinition formDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
-		
+
 		HashMap model = new HashMap();
 		model.put("editorId", formDefinition.getId());
 		model.put("parentId", FormUtils.getParentId(form));
@@ -180,29 +146,29 @@ public abstract class BaseFormController extends RepositoryFormController
 	/**
 	 * @see org.riotfamily.forms.controller.AbstractFormController#showForm(org.riotfamily.forms.Form, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	protected ModelAndView showForm(Form form, HttpServletRequest request, 
+	protected ModelAndView showForm(Form form, HttpServletRequest request,
 			HttpServletResponse response) {
-		
+
 		StringWriter sw = new StringWriter();
 		renderForm(form, new PrintWriter(sw));
-		Map model = createModel(form, getFormDefinition(request), 
+		Map model = createModel(form, getFormDefinition(request),
 				request, response);
-		
+
 		model.put("form", sw.toString());
 		return new ModelAndView(viewName, model);
 	}
 
-	
+
 	public final ModelAndView handleFormSubmission(Form form,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-	
+
 		Object bean = form.populateBackingObject();
 		FormDefinition formDef = getFormDefinition(request);
-		
+
 		ListDefinition listDef = EditorDefinitionUtils.getParentListDefinition(formDef);
 		RiotDao dao = listDef.getListConfig().getDao();
-			
+
 		if (form.isNew()) {
 			log.debug("Saving entity ...");
 			String parentId = FormUtils.getParentId(form);
@@ -218,11 +184,11 @@ public abstract class BaseFormController extends RepositoryFormController
 			return afterUpdate(form, formDef, request, response);
 		}
 	}
-	
-	protected abstract ModelAndView afterSave(Form form, FormDefinition formDefinition, 
+
+	protected abstract ModelAndView afterSave(Form form, FormDefinition formDefinition,
 			HttpServletRequest request, HttpServletResponse response);
-	
-	protected abstract ModelAndView afterUpdate(Form form, FormDefinition formDefinition, 
+
+	protected abstract ModelAndView afterUpdate(Form form, FormDefinition formDefinition,
 			HttpServletRequest request, HttpServletResponse response);
-	
+
 }

@@ -122,7 +122,13 @@ public class FormChooserDefinition extends FormDefinition {
 			return formDefinition.getEditorUrl(objectId, parentId);
 		}
 		else {
-			return super.getEditorUrl(null, parentId);
+			//FIXME Get /riot prefix from RiotRuntime
+			StringBuffer sb = new StringBuffer();
+			sb.append("/riot/form-chooser-frameset/").append(getId());
+			if (parentId != null) {
+				sb.append("?parentId=").append(parentId);
+			}
+			return sb.toString();
 		}
 	}
 

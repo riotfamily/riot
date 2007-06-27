@@ -201,11 +201,12 @@ RiotList.prototype = {
 			}
 		}
 		else if (result.action == 'gotoUrl') {
+			var win = eval(result.target);
 			if (result.replace) {
-				window[result.target].location.replace(result.url);
+				win.location.replace(result.url);
 			}
 			else {
-				window[result.target].location.href = result.url;
+				win.location.href = result.url;
 			}
 		}
 		else if (result.action == 'popup') {

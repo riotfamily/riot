@@ -14,24 +14,21 @@
  *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.list.command.result;
+package org.riotfamily.riot.editor;
 
-import org.riotfamily.riot.list.command.CommandContext;
+/**
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public interface CustomEditor {
 
-public class ShowListResult extends GotoUrlResult {
-
-	public ShowListResult(CommandContext context) {
-		super(context, context.getListDefinition().getEditorUrl(
-						null, context.getParentId()));
-
-		setTarget("top.frames.editor");
-	}
+	public String getUrl(Object bean, String parentId);
 
 }

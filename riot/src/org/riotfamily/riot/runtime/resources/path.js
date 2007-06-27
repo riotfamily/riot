@@ -1,6 +1,6 @@
 function getPath() {
-	if(parent && parent.path && parent.path.path) {
-		return parent.path.path;
+	if(top.path && top.path.path) {
+		return top.path.path;
 	}
 	else {
 		return null;

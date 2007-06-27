@@ -4,7 +4,7 @@
 body {
 	color:#000;
 	margin:0;
-	padding: 30px 55px;
+	padding: 30px 0;
 }
 body, a, td, th, h1, h2 {
 	font-family: "Trebuchet MS", arial, sans-serif;
@@ -32,7 +32,7 @@ td {
 .main {
 	margin-right: 300px;
 }
-.extra {
+div.extra {
 	float:left;
 	width: 260px;
 	margin-left: -260px;

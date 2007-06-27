@@ -90,6 +90,10 @@ var TweakStyle = {
 		this.roundElement('message', 'all');
 	},
 
+	formCommands: function() {
+		this.roundElements('div.title');
+	},
+
 	list: function() {
 		this.roundElements('div.title');
 		this.roundElement('list');

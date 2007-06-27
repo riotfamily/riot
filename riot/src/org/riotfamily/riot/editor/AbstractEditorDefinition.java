@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
@@ -38,22 +38,22 @@ import org.riotfamily.riot.editor.ui.EditorReference;
 public abstract class AbstractEditorDefinition implements EditorDefinition {
 
 	private String id;
-	
+
 	private String name;
-	
+
 	private EditorRepository editorRepository;
-	
+
 	private EditorDefinition parentEditorDefinition;
-	
+
 	private String icon;
-	
+
 	private boolean hidden;
-		
+
 	private String editorType;
-		
-	public AbstractEditorDefinition(EditorRepository editorRepository, 
+
+	public AbstractEditorDefinition(EditorRepository editorRepository,
 			String editorType) {
-		
+
 		this.editorRepository = editorRepository;
 		this.editorType = editorType;
 	}
@@ -65,7 +65,7 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	public final void setName(String name) {
 		this.name = name;
 		if (id == null) {
@@ -76,7 +76,7 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 	public final String getName() {
 		return name != null ? name : getDefaultName();
 	}
-	
+
 	protected String getDefaultName() {
 		return null;
 	}
@@ -92,7 +92,7 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 	public Class getBeanClass() {
 		return null;
 	}
-	
+
 	public EditorDefinition getParentEditorDefinition() {
 		return this.parentEditorDefinition;
 	}
@@ -100,10 +100,10 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 	public void setParentEditorDefinition(EditorDefinition parentEditorDefinition) {
 		this.parentEditorDefinition = parentEditorDefinition;
 	}
-	
-	public void addReference(List refs, EditorDefinition parentDef, 
+
+	public void addReference(List refs, EditorDefinition parentDef,
 			Object parent, MessageResolver messageResolver) {
-		
+
 		String parentId = null;
 		if (parent != null) {
 			parentId = EditorDefinitionUtils.getObjectId(parentDef, parent);
@@ -112,15 +112,11 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 		ref.setEnabled(parent != null);
 		refs.add(ref);
 	}
-	
+
 	protected EditorRepository getEditorRepository() {
 		return editorRepository;
 	}
-	
-	public String getEditorUrl(String objectId, String parentId) {
-		return editorRepository.getEditorUrl(this, objectId, parentId);
-	}
-	
+
 	public String getIcon() {
 		return this.icon;
 	}
@@ -136,7 +132,7 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
 	}
-		
+
 	protected StringBuffer getMessageKey() {
 		StringBuffer key = new StringBuffer();
 		key.append(getEditorType());
@@ -144,11 +140,11 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 		key.append(getName());
 		return key;
 	}
-	
+
 	public String getLabelProperty() {
 		return null;
 	}
-	
+
 	public String getLabel(Object object) {
 		if (object == null) {
 			return "New"; //TODO I18nize this

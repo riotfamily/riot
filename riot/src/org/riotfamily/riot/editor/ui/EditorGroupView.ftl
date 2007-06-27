@@ -15,9 +15,6 @@
 		<@riot.script src="style/tweak.js" />
 		<@riot.script src="riot-js/util.js" />
 		<script type="text/javascript" language="JavaScript">
-			if (top.frameset) {
-				top.frameset.restoreEditor(window);
-			}
 			updatePath('${group.id}');
 		</script>
 	</head>

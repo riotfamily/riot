@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
@@ -43,24 +43,24 @@ public class ListDefinition extends AbstractEditorDefinition {
 	public ListDefinition(EditorRepository repository) {
 		this(repository, TYPE_LIST);
 	}
-	
+
 	protected ListDefinition(EditorRepository repository, String editorType) {
 		super(repository, editorType);
 	}
-	
-	public ListDefinition(ListDefinition prototype, 
+
+	public ListDefinition(ListDefinition prototype,
 			EditorRepository repository) {
-		
+
 		this(repository);
 		displayDefinition = prototype.getDisplayDefinition();
 		listId = prototype.getListId();
 		setId(prototype.getId());
 	}
-	
+
 	public String getListId() {
 		return listId;
 	}
-	
+
 	protected String getDefaultName() {
 		return getListId();
 	}
@@ -91,9 +91,9 @@ public class ListDefinition extends AbstractEditorDefinition {
 			parent = getParentEditorDefinition().createEditorPath(
 					parentId, null, messageResolver);
 		}
-		
+
 		EditorReference component = createReference(parentId, messageResolver);
-		
+
 		component.setParent(parent);
 		return component;
 	}
@@ -103,49 +103,59 @@ public class ListDefinition extends AbstractEditorDefinition {
 
 		EditorReference component = null;
 		EditorReference parent = null;
-		
+
 		if (getParentEditorDefinition() != null) {
 			parent = getParentEditorDefinition().createEditorPath(bean, messageResolver);
 			component = createReference(parent.getObjectId(), messageResolver);
 			component.setParent(parent);
 		}
-		else { 
+		else {
 			component = createReference(null, messageResolver);
 			if (getParentEditorDefinition() != null) {
 				parent = getParentEditorDefinition().createEditorPath(
 						null, null, messageResolver);
-				
+
 				component.setParent(parent);
 			}
 		}
 		return component;
 	}
-	
+
 	/**
-	 * Creates a reference to the list. The method is used by the {@link 
+	 * Creates a reference to the list. The method is used by the {@link
 	 * org.riotfamily.riot.form.ui.FormController FormController} to create
 	 * links pointing to the child lists.
 	 */
 	public EditorReference createReference(String parentId,
 			MessageResolver messageResolver) {
-		
+
 		EditorReference ref = new EditorReference();
 		ref.setEditorType(getEditorType());
 		ref.setIcon(getIcon());
-		
+
 		String defaultLabel = FormatUtils.camelToTitleCase(getListId());
 		ref.setLabel(messageResolver.getMessage(
 				getMessageKey().toString(), null, defaultLabel));
-		
+
 		ref.setDescription(messageResolver.getMessage(
 				getMessageKey().append(".description").toString(), null, null));
-		
+
 		ref.setEditorUrl(getEditorUrl(null, parentId));
 		return ref;
 	}
-	
+
 	public ListConfig getListConfig() {
 		return getEditorRepository().getListRepository().getListConfig(listId);
 	}
-	
+
+	public String getEditorUrl(String objectId, String parentId) {
+		//FIXME Get /riot prefix from RiotRuntime
+		StringBuffer sb = new StringBuffer();
+		sb.append("/riot/list/").append(getId());
+		if (parentId != null) {
+			sb.append('/').append(parentId);
+		}
+		return sb.toString();
+	}
+
 }
