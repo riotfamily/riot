@@ -71,6 +71,8 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 	private Map editorConfigs;
 
+	private boolean instantPublish = false;
+
 
 	public ComponentEditorImpl(ComponentDao dao, ComponentRepository repository) {
 		this.dao = dao;
@@ -93,12 +95,32 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		this.editorConfigs = editorConfigs;
 	}
 
+	public void setInstantPublish(boolean instantPublish) {
+		this.instantPublish = instantPublish;
+	}
+
+	protected ComponentVersion getVersionToEdit(VersionContainer container) {
+		return dao.getOrCreateVersion(container, null, instantPublish);
+	}
+
+	protected ComponentVersion getVersionToDisplay(VersionContainer container) {
+		return instantPublish
+				? container.getLiveVersion()
+				: container.getLatestVersion();
+	}
+
+	protected List getContainersToEdit(ComponentList componentList) {
+		return instantPublish
+				? componentList.getLiveContainers()
+				: dao.getOrCreatePreviewContainers(componentList);
+	}
+
 	/**
 	 * Returns the value of the given property.
 	 */
 	public String getText(Long containerId, String property) {
 		VersionContainer container = dao.loadVersionContainer(containerId);
-		ComponentVersion version = dao.getLatestVersion(container);
+		ComponentVersion version = getVersionToDisplay(container);
 		return version.getProperty(property);
 	}
 
@@ -107,7 +129,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 */
 	public void updateText(Long containerId, String property, String text) {
 		VersionContainer container = dao.loadVersionContainer(containerId);
-		ComponentVersion version = dao.getOrCreatePreviewVersion(container, null);
+		ComponentVersion version = getVersionToEdit(container);
 		version.setProperty(property, text);
 		dao.updateComponentVersion(version);
 	}
@@ -120,12 +142,12 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 		log.debug("Inserting chunks " + StringUtils.arrayToCommaDelimitedString(chunks));
 		VersionContainer container = dao.loadVersionContainer(containerId);
-		ComponentVersion version = dao.getOrCreatePreviewVersion(container, null);
+		ComponentVersion version = getVersionToEdit(container);
 		version.setProperty(property, chunks[0]);
 		dao.updateComponentVersion(version);
 
 		ComponentList list = container.getList();
-		int offset = dao.getOrCreatePreviewContainers(list).indexOf(container);
+		int offset = getContainersToEdit(list).indexOf(container);
 		for (int i = 1; i < chunks.length; i++) {
 			insertComponent(list.getId(), offset + i, version.getType(),
 					Collections.singletonMap(property, chunks[i]));
@@ -161,14 +183,14 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 		ComponentList componentList = dao.loadComponentList(listId);
 		VersionContainer container = dao.insertContainer(componentList, type,
-				properties, position, false);
+				properties, position, instantPublish);
 
 		return container.getId();
 	}
 
 	public void setType(Long containerId, String type) {
 		VersionContainer container = dao.loadVersionContainer(containerId);
-		ComponentVersion version = dao.getOrCreatePreviewVersion(container, type);
+		ComponentVersion version = getVersionToEdit(container);
 		version.setType(type);
 		dao.updateComponentVersion(version);
 	}
@@ -216,7 +238,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	public void moveComponent(Long containerId, Long nextContainerId) {
 		VersionContainer container = dao.loadVersionContainer(containerId);
 		ComponentList componentList = container.getList();
-		List containers = dao.getOrCreatePreviewContainers(componentList);
+		List containers = getContainersToEdit(componentList);
 		containers.remove(container);
 		if (nextContainerId != null) {
 			for (int i = 0; i < containers.size(); i++) {
@@ -230,16 +252,20 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		else {
 			containers.add(container);
 		}
-		componentList.setDirty(true);
+		if (!instantPublish) {
+			componentList.setDirty(true);
+		}
 		dao.updateComponentList(componentList);
 	}
 
 	public void deleteComponent(Long containerId) {
 		VersionContainer container = dao.loadVersionContainer(containerId);
 		ComponentList componentList = container.getList();
-		List containers = dao.getOrCreatePreviewContainers(componentList);
+		List containers = getContainersToEdit(componentList);
 		containers.remove(container);
-		componentList.setDirty(true);
+		if (!instantPublish) {
+			componentList.setDirty(true);
+		}
 		dao.updateComponentList(componentList);
 		if (!componentList.getLiveContainers().contains(container)) {
 			dao.deleteVersionContainer(container);

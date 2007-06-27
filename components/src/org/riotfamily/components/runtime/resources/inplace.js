@@ -127,18 +127,12 @@ riot.InplaceEditor.prototype = {
 		var text = this.getText();
 		if (this.text != text) {
 			this.component.updateText(this.key, text);
-			ComponentEditor.updateText(this.component.id,
-					this.key, text, this.onupdate.bind(this));
 		}
 		this.onsave(text);
 	},
 
 	/* Subclasses may override this method ... */
 	onsave: function(text) {
-	},
-
-	/* Callback that is invoked after the text as been sucessfully submitted. */
-	onupdate: function() {
 	},
 
 	/* This method is invoked when the active editor is disabled (either by
@@ -292,12 +286,7 @@ riot.PopupTextEditor = Class.extend(riot.InplaceEditor, {
 
 	onsave: function() {
 		this.close();
-	},
-
-	onupdate: function(html) {
-		this.component.componentList.update();
 	}
-
 });
 
 riot.RichtextEditor = Class.extend(riot.PopupTextEditor, {

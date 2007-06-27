@@ -125,8 +125,6 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		ComponentList list = new ComponentList();
 		list.setLocation(new Location(location));
 		list.setParent(parent);
-		dao.saveComponentList(list);
-		log.debug("New ComponentList created: " + list);
 		String[] initialTypes = config.getInitialComponentTypes();
 		if (initialTypes != null) {
 			List containers = new ArrayList();
@@ -139,8 +137,9 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 				containers.add(container);
 			}
 			list.setLiveContainers(containers);
-			dao.updateComponentList(list);
 		}
+		dao.saveComponentList(list);
+		log.debug("New ComponentList created: " + list);
 		return list;
 	}
 

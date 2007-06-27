@@ -103,7 +103,7 @@ public class HibernateComponentDao extends AbstractComponentDao {
 
 	protected void updateObject(Object object) {
 		hibernate.update(object);
-		hibernate.flush();
+		//hibernate.flush();
 	}
 
 	protected void deleteObject(Object object) {

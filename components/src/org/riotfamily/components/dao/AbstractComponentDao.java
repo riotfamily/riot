@@ -174,47 +174,46 @@ public abstract class AbstractComponentDao implements ComponentDao,
 	}
 
 	/**
-	 * Returns the most recent version within the given container. This can
-	 * either be the preview version or the live version (in case the container
-	 * does not contain a preview version). This method will never return
-	 * <code>null</code> since containers must not be empty.
-	 */
-	public ComponentVersion getLatestVersion(VersionContainer container) {
-		ComponentVersion version = container.getPreviewVersion();
-		if (version == null) {
-			version = container.getLiveVersion();
-		}
-		return version;
-	}
-
-	/**
 	 * Returns the preview version from the given container. If there is only
 	 * a live version, a new preview is created automatically.
 	 *
 	 * @param container The container to use
 	 * @param type The type to use when creating an initial preview version.
 	 */
-	public ComponentVersion getOrCreatePreviewVersion(
-			VersionContainer container, String type) {
+	public ComponentVersion getOrCreateVersion(
+			VersionContainer container, String type, boolean live) {
 
-		ComponentList list = container.getList();
-		if (list != null && !list.isDirty()) {
-			getOrCreatePreviewContainers(list);
-			updateComponentList(list);
-		}
-		ComponentVersion preview = container.getPreviewVersion();
-		if (preview == null) {
-			ComponentVersion live = container.getLiveVersion();
-			if (live != null) {
-				preview = copyComponentVersion(live);
+		if (live) {
+			ComponentVersion liveVersion = container.getLiveVersion();
+			if (liveVersion == null) {
+				liveVersion = new ComponentVersion(type);
+				container.setLiveVersion(liveVersion);
+				saveObject(liveVersion);
+				updateVersionContainer(container);
 			}
-			else {
-				preview = new ComponentVersion(type);
-			}
-			container.setPreviewVersion(preview);
-			updateVersionContainer(container);
+			return liveVersion;
 		}
-		return preview;
+		else {
+			ComponentList list = container.getList();
+			if (list != null && !list.isDirty()) {
+				getOrCreatePreviewContainers(list);
+				updateComponentList(list);
+			}
+			ComponentVersion previewVersion = container.getPreviewVersion();
+			if (previewVersion == null) {
+				ComponentVersion liveVersion = container.getLiveVersion();
+				if (liveVersion != null) {
+					previewVersion = copyComponentVersion(liveVersion);
+				}
+				else {
+					previewVersion = new ComponentVersion(type);
+					saveObject(previewVersion);
+				}
+				container.setPreviewVersion(previewVersion);
+				updateVersionContainer(container);
+			}
+			return previewVersion;
+		}
 	}
 
 	/**
@@ -245,16 +244,6 @@ public abstract class AbstractComponentDao implements ComponentDao,
 		return container;
 	}
 
-	public ComponentVersion getComponentVersionForContainer(Long containerId,
-			boolean live) {
-
-		VersionContainer container = loadVersionContainer(containerId);
-		if (live) {
-			return container.getLiveVersion();
-		}
-		return getOrCreatePreviewVersion(container, null);
-	}
-
 	/**
 	 * Creates a new container, containing a version of the given type.
 	 *
@@ -269,12 +258,14 @@ public abstract class AbstractComponentDao implements ComponentDao,
 		VersionContainer container = new VersionContainer();
 		ComponentVersion version = new ComponentVersion(type);
 		version.setProperties(properties);
+		saveObject(version);
 		if (live) {
 			container.setLiveVersion(version);
 		}
 		else {
 			container.setPreviewVersion(version);
 		}
+		saveObject(container);
 		return container;
 	}
 

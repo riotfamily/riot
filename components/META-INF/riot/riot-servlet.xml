@@ -27,6 +27,15 @@
 		</property>
 	</bean>
 
+	<bean id="instantComponentEditor" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
+		<property name="target">
+			<bean parent="componentEditorTarget">
+				<property name="instantPublish" value="true" />
+			</bean>
+		</property>
+	</bean>
+
 	<util:properties id="tinyMCE">
 		<prop key="plugins">smartquotes,autocleanup,nospam</prop>
 		<prop key="smartquotes_quoteStyle">de</prop>
@@ -43,7 +52,7 @@
 	<bean id="componentFormRepository" class="org.riotfamily.components.editor.ComponentFormRepository">
 		<constructor-arg ref="componentRepository" />
 		<property name="config" value="/WEB-INF/website-config/component-forms.xml" />
-		<property name="customElements" ref="customFormElements" />
+		<property name="customElements" ref="riotCustomFormElements" />
 		<property name="mimetypesMap" ref="fileTypeMap" />
 		<property name="imageCropper" ref="imageCropper" />
 	</bean>
@@ -134,6 +143,7 @@
 							<property name="serviceBeans">
 								<map>
 									<entry key="ComponentEditor" value-ref="componentEditor" />
+									<entry key="InstantComponentEditor" value-ref="instantComponentEditor" />
 								</map>
 							</property>
 							<property name="serviceInterfaces">

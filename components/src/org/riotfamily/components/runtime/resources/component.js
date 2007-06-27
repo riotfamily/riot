@@ -94,6 +94,9 @@ riot.Component.prototype = {
 		if (ev) Event.stop(ev);
 		if (this.form) {
 			var formUrl = riot.contextPath + this.form;
+			if (riot.instantPublish) {
+				formUrl += '?live=true';
+			}
 			var iframe = RBuilder.node('iframe', {src: formUrl, className: 'properties', width: 1, height: 1});
 			riot.popup = new riot.Popup('${title.properties}', iframe, function() {
 				var win = iframe.contentWindow ? iframe.contentWindow : iframe.window;

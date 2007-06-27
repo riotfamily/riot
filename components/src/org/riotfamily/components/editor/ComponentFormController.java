@@ -38,6 +38,7 @@ import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.components.Component;
 import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.ComponentVersion;
+import org.riotfamily.components.VersionContainer;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRepository;
@@ -45,6 +46,7 @@ import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.controller.RepositoryFormController;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -118,9 +120,11 @@ public class ComponentFormController extends RepositoryFormController
 		this.successViewName = successViewName;
 	}
 
-	protected ComponentVersion getPreview(HttpServletRequest request) {
+	protected ComponentVersion getVersion(HttpServletRequest request) {
 		Long id = new Long((String) request.getAttribute(containerIdAttribute));
-		return componentDao.getComponentVersionForContainer(id, false);
+		VersionContainer container = componentDao.loadVersionContainer(id);
+		boolean live = ServletRequestUtils.getBooleanParameter(request, "live", false);
+		return componentDao.getOrCreateVersion(container, null, live);
 	}
 
 	protected String getFormId(HttpServletRequest request) {
@@ -128,9 +132,9 @@ public class ComponentFormController extends RepositoryFormController
 	}
 
 	protected Object getFormBackingObject(HttpServletRequest request) {
-		ComponentVersion preview = getPreview(request);
-		Component component = componentRepository.getComponent(preview);
-		return component.buildModel(preview);
+		ComponentVersion version = getVersion(request);
+		Component component = componentRepository.getComponent(version);
+		return component.buildModel(version);
 	}
 
 	protected String getSessionAttribute(HttpServletRequest request) {
@@ -150,11 +154,11 @@ public class ComponentFormController extends RepositoryFormController
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 
-		ComponentVersion preview = getPreview(request);
-		Component component = componentRepository.getComponent(preview);
+		ComponentVersion version = getVersion(request);
+		Component component = componentRepository.getComponent(version);
 		Map properties = (Map) form.populateBackingObject();
-		component.updateProperties(preview, properties);
-		componentDao.updateComponentVersion(preview);
+		component.updateProperties(version, properties);
+		componentDao.updateComponentVersion(version);
 		return new ModelAndView(successViewName);
 	}
 

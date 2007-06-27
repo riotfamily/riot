@@ -1,7 +1,12 @@
-var riot = {};
+var riot = {
+	contextPath: '${contextPath}',
+	path: '${contextPath}${riotServletPrefix}',
+	instantPublish: window.riotInstantPublish || false
+};
 
-riot.contextPath = '${contextPath}';
-riot.path = riot.contextPath + '${riotServletPrefix}';
+riot.componentEditorResource = riot.instantPublish
+		? {src: 'dwr/interface/InstantComponentEditor.js', test: 'InstantComponentEditor', onload: function() {window.ComponentEditor = InstantComponentEditor}}
+		: {src: 'dwr/interface/ComponentEditor.js', test: 'ComponentEditor'}
 
 Resources.loadStyleSheet('style/toolbar.css');
 Resources.loadStyleSheet('style/edit-mode.css');
@@ -14,7 +19,7 @@ Resources.loadScriptSequence([
 	{src: 'toolbar.js', test: 'riot.toolbar'},
 	{src: 'dwr/engine.js', test: 'dwr.engine'},
 	{src: 'dwr/util.js', test: 'dwr.util'},
-	{src: 'dwr/interface/ComponentEditor.js', test: 'ComponentEditor'},
+	riot.componentEditorResource,
 	{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
 	{src: 'riot-js/effects.js'},
 	{src: 'riot-js/viewport.js'},
@@ -23,3 +28,5 @@ Resources.loadScriptSequence([
 	{src: 'inplace.js', test: 'riot.InplaceEditor'},
 	{src: 'component.js'}
 ]);
+
+

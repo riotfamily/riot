@@ -24,8 +24,13 @@
 <#--
   - Macro that renders the Riot toolbar if the page is requested in edit mode.
   -->
-<#macro toolbar>
+<#macro toolbar instantPublish=false>
 	<#if isEditMode()>
+		<#if instantPublish>
+			<script type="text/javascript" language="JavaScript">
+				var riotInstantPublish = true;
+			</script>
+		</#if>
 		<#list componentMacroHelper.toolbarScripts as src>
 			<@riot.script src=src />
 		</#list>
@@ -158,9 +163,6 @@
 	<#global currentVersionContainer = container />
 	<#if container != previousContainer>
 		${componentMacroHelper.tag(container)}
-	</#if>
-	<#if !.data_model['org.riotfamily.components.ComponentSetController']?if_exists>
-		<#stop "This macro must only be used within ComponentSetController views." />
 	</#if>
 	<#if isEditMode() && container != previousContainer>
 		<#if !tag?has_content>
