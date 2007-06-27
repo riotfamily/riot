@@ -62,8 +62,6 @@ public abstract class AbstractComponent implements Component {
 
 	protected Log log = LogFactory.getLog(AbstractComponent.class);
 
-	private String description;
-
 	private List propertyProcessors = new ArrayList();
 
 	public void setPropertyProcessors(List propertyProcessors) {
@@ -78,15 +76,6 @@ public abstract class AbstractComponent implements Component {
 	public List getPropertyProcessors() {
 		return propertyProcessors;
 	}
-
-	public String getDescription() {
-		return this.description;
-	}
-
-	public void setDescription(String name) {
-		this.description = name;
-	}
-
 
 	public final void render(ComponentVersion componentVersion,
 			String positionClassName, HttpServletRequest request,
