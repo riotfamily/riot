@@ -124,11 +124,7 @@ public class SpringConfigurator implements Configurator {
         		AccessControl.class.getName());
 
         	for (int i = 0; i < serviceInterfaces.length; i++) {
-        		String scriptName = findScriptNameForInterface(serviceInterfaces[i]);
-        		Method[] methods = serviceInterfaces[i].getDeclaredMethods();
-        		for (int m = 0; m < methods.length; m++) {
-        			accessControl.addIncludeRule(scriptName, methods[m].getName());
-        		}
+        		includeMethods(accessControl, serviceInterfaces[i]);
         	}
         }
 
@@ -138,20 +134,26 @@ public class SpringConfigurator implements Configurator {
         }
 	}
 
-	/**
-	 * Returns the script name of the first service bean that implements the
-	 * given interface.
-	 */
-	protected String findScriptNameForInterface(Class serviceInterface) {
+	private void includeMethods(AccessControl accessControl,
+			Class serviceInterface) {
+
 		Iterator it = serviceBeans.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();
 			if (serviceInterface.isInstance(entry.getValue())) {
-				return (String) entry.getKey();
+				String scriptName = (String) entry.getKey();
+				includeMethods(accessControl, serviceInterface, scriptName);
 			}
 		}
-		throw new BeanCreationException("No serviceBean found that implements "
-				+ serviceInterface.getName());
+	}
+
+	private void includeMethods(AccessControl accessControl,
+			Class serviceInterface, String scriptName) {
+
+		Method[] methods = serviceInterface.getDeclaredMethods();
+		for (int i = 0; i < methods.length; i++) {
+			accessControl.addIncludeRule(scriptName, methods[i].getName());
+		}
 	}
 
 }
