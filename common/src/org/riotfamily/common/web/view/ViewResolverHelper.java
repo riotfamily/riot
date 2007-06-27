@@ -72,7 +72,7 @@ public class ViewResolverHelper {
 	}
 
 	public View resolveView(HttpServletRequest request, ModelAndView mv)
-			throws Exception {
+			throws ViewResolutionException {
 
 		if (mv.hasView() && !mv.isReference()) {
 		    return mv.getView();
@@ -81,21 +81,26 @@ public class ViewResolverHelper {
 	}
 
 	public View resolveView(HttpServletRequest request, String viewName)
-			throws Exception {
+			throws ViewResolutionException {
 
-		if (viewName == null) {
-			viewName = viewNameTranslator.getViewName(request);
+		try {
+			if (viewName == null) {
+				viewName = viewNameTranslator.getViewName(request);
+			}
+			Iterator i = viewResolvers.iterator();
+			while (i.hasNext()) {
+			    ViewResolver viewResolver = (ViewResolver) i.next();
+			    Locale locale = RequestContextUtils.getLocale(request);
+			    View view = viewResolver.resolveViewName(viewName, locale);
+			    if (view != null) {
+			        return view;
+			    }
+			}
 		}
-		Iterator i = viewResolvers.iterator();
-		while (i.hasNext()) {
-		    ViewResolver viewResolver = (ViewResolver) i.next();
-		    Locale locale = RequestContextUtils.getLocale(request);
-		    View view = viewResolver.resolveViewName(viewName, locale);
-		    if (view != null) {
-		        return view;
-		    }
+		catch (Exception e) {
+			throw new ViewResolutionException(viewName, e);
 		}
-		throw new Exception("Could not resolve view with name " + viewName);
+		throw new ViewResolutionException(viewName);
 	}
 
 }

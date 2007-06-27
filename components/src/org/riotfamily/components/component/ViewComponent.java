@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.web.view.ViewResolutionException;
 import org.riotfamily.common.web.view.ViewResolverHelper;
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.VersionContainer;
@@ -65,11 +66,16 @@ public class ViewComponent extends AbstractComponent {
 		}
 
 		ModelAndView mv = new ModelAndView(viewName, model);
-		View view = new ViewResolverHelper(
-				RequestContextUtils.getWebApplicationContext(request))
-				.resolveView(request, mv);
+		try {
+			View view = new ViewResolverHelper(
+					RequestContextUtils.getWebApplicationContext(request))
+					.resolveView(request, mv);
 
-		view.render(model, request, response);
+			view.render(model, request, response);
+		}
+		catch (ViewResolutionException e) {
+			log.warn("ViewResolutionException - Skipping component ...", e);
+		}
 	}
 
 	public boolean isDynamic() {
