@@ -145,6 +145,9 @@ public class HibernatePageDao extends AbstractPageDao {
 	}
 
 	public PageAlias findPageAlias(PageLocation location) {
+		if (location.getSiteName() == null) {
+			location.setSiteName(getDefaultSite().getName());
+		}
 		return (PageAlias) hibernate.get(PageAlias.class, location);
 	}
 
