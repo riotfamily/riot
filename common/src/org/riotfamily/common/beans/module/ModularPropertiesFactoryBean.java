@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.module;
 
@@ -32,6 +32,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -40,28 +41,39 @@ import org.springframework.context.ApplicationContextAware;
  * Creates a Properties instance by merging the entries with the given key from all
  * {@link org.riotfamily.common.beans.module.FactoryBeanModule modules} found in
  * the ApplicationContext.
- * 
+ *
  * @see org.riotfamily.common.beans.module.FactoryBeanModule
  */
 public class ModularPropertiesFactoryBean extends PropertiesFactoryBean
 		implements ApplicationContextAware, BeanNameAware {
 
 	private static Log log = LogFactory.getLog(ModularPropertiesFactoryBean.class);
-	
+
 	private String key;
-	
+
+	private boolean includeRootProps = false;
+
 	private ApplicationContext applicationContext;
-	
+
 	public void setBeanName(String name) {
 		if (key == null) {
 			key = name;
 		}
 	}
-	
+
 	public void setKey(String key) {
 		this.key = key;
 	}
-	
+
+	/**
+	 * Sets whether the root bean defintion (having the key as id) should be
+	 * included in the properties. This is useful if not only modules but the
+	 * application itself should be able to add entries.
+	 */
+	public void setIncludeRootProps(boolean includeRootProps) {
+		this.includeRootProps = includeRootProps;
+	}
+
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 	}
@@ -70,20 +82,28 @@ public class ModularPropertiesFactoryBean extends PropertiesFactoryBean
 		Properties result = (Properties) super.createInstance();
 		Collection modules =
 			ModularFactoryBeansUtils.getFactoryBeanModules(applicationContext);
-		
+
 		Iterator it = modules.iterator();
 		while (it.hasNext()) {
 			FactoryBeanModule module = (FactoryBeanModule) it.next();
 			Properties moduleProps = module.getProperties(key);
 			if (moduleProps != null) {
-				log.info("Adding entries defined by " 
+				log.info("Adding entries defined by "
 						+ module.getName() + " to " + key);
-				
+
 				Enumeration en = moduleProps.propertyNames();
 				while (en.hasMoreElements()) {
 					String name = (String) en.nextElement();
 					result.setProperty(name, moduleProps.getProperty(name));
 				}
+			}
+		}
+		if (includeRootProps) {
+			try {
+				Properties rootProps = (Properties) applicationContext.getBean(key, Properties.class);
+				result.putAll(rootProps);
+			}
+			catch (NoSuchBeanDefinitionException e) {
 			}
 		}
 		return result;
