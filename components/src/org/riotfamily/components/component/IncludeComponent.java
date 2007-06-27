@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.component;
 
@@ -42,27 +42,28 @@ import org.springframework.web.util.WebUtils;
 public class IncludeComponent extends AbstractComponent {
 
 	private String uri;
-	
+
 	private boolean dynamic = true;
-	
+
 	public void setUri(String uri) {
 		this.uri = uri;
 	}
 
-	protected void renderInternal(ComponentVersion componentVersion, 
-			String positionClassName, HttpServletRequest request, 
+	protected void renderInternal(ComponentVersion componentVersion,
+			String positionClassName, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		
+
 		Map snapshot = ServletUtils.takeAttributesSnapshot(request);
 		WebUtils.exposeRequestAttributes(request, buildModel(componentVersion));
 		request.setAttribute(POSITION_CLASS, positionClassName);
 		request.setAttribute(COMPONENT_ID, String.valueOf(componentVersion.getId()));
-		
+		request.setAttribute(THIS, componentVersion);
+
 		VersionContainer parentContainer = componentVersion.getContainer().getList().getParent();
 		if (parentContainer != null) {
 			request.setAttribute(PARENT_ID, String.valueOf(parentContainer.getId()));
 		}
-		
+
 		request.getRequestDispatcher(uri).include(request, response);
 		ServletUtils.restoreAttributes(request, snapshot);
 	}
@@ -70,9 +71,9 @@ public class IncludeComponent extends AbstractComponent {
 	public boolean isDynamic() {
 		return this.dynamic;
 	}
-	
+
 	public void setDynamic(boolean dynamic) {
 		this.dynamic = dynamic;
 	}
-	
+
 }
