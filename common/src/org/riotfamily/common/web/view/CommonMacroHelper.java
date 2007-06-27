@@ -87,6 +87,11 @@ public class CommonMacroHelper {
 		return ServletUtils.resolveAndEncodeUrl(url, request, response);
 	}
 
+	public String getAbsoluteUrl(String url) {
+		return ServletUtils.getAbsoluteUrlPrefix(request)
+				.append(request.getContextPath()).append(url).toString();
+	}
+
 	public String getOriginatingRequestUri() {
 		String uri = ServletUtils.getOriginatingRequestUri(request);
 		if (StringUtils.hasText(request.getQueryString())) {

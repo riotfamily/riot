@@ -19,6 +19,10 @@
 	<#return commonMacroHelper.isExternalUrl(url) />
 </#function>
 
+<#function absoluteUrl uri>
+	<#return commonMacroHelper.getAbsoluteUrl(uri) />
+</#function>
+
 <#function resource uri>
 	<#return commonMacroHelper.addTimestamp(uri) />
 </#function>
