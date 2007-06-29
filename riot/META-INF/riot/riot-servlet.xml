@@ -522,7 +522,6 @@
 
 	<bean id="csvExportController" name="/csv" class="org.riotfamily.riot.list.export.CsvExportController">
 		<constructor-arg ref="editorRepository" />
-		<property name="transactionManager" ref="transactionManager" />
 	</bean>
 
 	<!--
