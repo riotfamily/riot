@@ -14,7 +14,7 @@
  *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -23,33 +23,19 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
+import java.util.List;
 
-public class ViewDefinition extends AbstractObjectEditorDefinition {
+import org.riotfamily.common.i18n.MessageResolver;
 
-	protected static final String TYPE_VIEW = "view";
+/**
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public interface ObjectEditorDefinition extends EditorDefinition {
 
-	private String template;
+	public List getChildEditorDefinitions();
 
-	public ViewDefinition(EditorRepository editorRepository) {
-		super(editorRepository, TYPE_VIEW);
-	}
-
-	public String getTemplate() {
-		return this.template;
-	}
-	
-	public void setTemplate(String template) {
-		this.template = template;
-	}
-
-	public String getEditorUrl(String objectId, String parentId) {
-		//FIXME Get /riot prefix from RiotRuntime
-		StringBuffer sb = new StringBuffer();
-		sb.append("/riot/view/").append(getId());
-		if (objectId != null) {
-			sb.append('/').append(objectId);
-		}
-		return sb.toString();
-	}
+	public List getChildEditorReferences(Object object,
+			MessageResolver messageResolver);
 
 }

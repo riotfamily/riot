@@ -25,7 +25,7 @@ package org.riotfamily.riot.editor;
 
 import org.riotfamily.riot.editor.ui.EditorReference;
 
-public class IntermediateDefinition extends AbstractDisplayDefinition {
+public class IntermediateDefinition extends AbstractObjectEditorDefinition {
 
 	private ListDefinition nestedListDefinition;
 

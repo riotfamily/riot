@@ -27,9 +27,11 @@ import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.riot.editor.ui.EditorReference;
 
 
-public class CustomEditorDefinition extends AbstractDisplayDefinition {
+public class CustomEditorDefinition extends AbstractObjectEditorDefinition {
 
 	protected static final String TYPE_CUSTOM = "custom";
+
+	private String url;
 
 	private CustomEditor editor;
 
@@ -47,6 +49,10 @@ public class CustomEditorDefinition extends AbstractDisplayDefinition {
 		this.editor = editor;
 	}
 
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
 	public EditorReference createReference(String objectId,
 			MessageResolver messageResolver) {
 
@@ -56,11 +62,14 @@ public class CustomEditorDefinition extends AbstractDisplayDefinition {
 	}
 
 	public String getTargetUrl(String objectId, String parentId) {
-		Object bean = null;
-		if (objectId != null) {
-			bean = loadBean(objectId);
+		if (editor != null) {
+			Object bean = null;
+			if (objectId != null) {
+				bean = loadBean(objectId);
+			}
+			return editor.getUrl(bean, parentId);
 		}
-		return editor.getUrl(bean, parentId);
+		return url;
 	}
 
 	public String getEditorUrl(String objectId, String parentId) {

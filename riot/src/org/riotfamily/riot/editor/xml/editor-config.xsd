@@ -107,7 +107,8 @@
 		<xsd:complexType>
 			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="icon" type="xsd:string" />
-			<xsd:attribute name="target" type="xsd:string" use="optional" />
+			<xsd:attribute name="target" type="xsd:string" />
+			<xsd:attribute name="url" type="xsd:string" />
 			<xsd:attribute name="ref" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>

@@ -34,6 +34,7 @@ import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
+import org.riotfamily.riot.editor.EditorConstants;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.ListDefinition;
@@ -87,10 +88,10 @@ public class ViewController implements TransactionalController,
 	public final ModelAndView handleRequest(final HttpServletRequest request,
 			final HttpServletResponse response) throws Exception {
 
-		String editorId = (String) request.getAttribute("editorId");
+		String editorId = (String) request.getAttribute(EditorConstants.EDITOR_ID);
 		Assert.notNull(editorId, "No editorId in request scope");
 
-		final String objectId = (String) request.getAttribute("objectId");
+		final String objectId = (String) request.getAttribute(EditorConstants.OBJECT_ID);
 		Assert.notNull(objectId, "No objectId in request scope");
 
 		final ViewDefinition viewDef = (ViewDefinition)
@@ -112,8 +113,8 @@ public class ViewController implements TransactionalController,
 		}
 
 		model = new HashMap();
-		model.put("editorId", editorId);
-		model.put("objectId", objectId);
+		model.put(EditorConstants.EDITOR_ID, editorId);
+		model.put(EditorConstants.OBJECT_ID, objectId);
 		model.put("form", sw.toString());
 
 		ListDefinition parentListDef = EditorDefinitionUtils

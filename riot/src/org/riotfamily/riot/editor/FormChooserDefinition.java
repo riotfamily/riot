@@ -125,8 +125,9 @@ public class FormChooserDefinition extends FormDefinition {
 			//FIXME Get /riot prefix from RiotRuntime
 			StringBuffer sb = new StringBuffer();
 			sb.append("/riot/form-chooser/").append(getId());
+			sb.append("?form=").append(getFormId());
 			if (parentId != null) {
-				sb.append("?parentId=").append(parentId);
+				sb.append("&parentId=").append(parentId);
 			}
 			return sb.toString();
 		}

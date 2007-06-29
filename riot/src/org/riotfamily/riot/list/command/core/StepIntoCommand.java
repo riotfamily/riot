@@ -26,7 +26,7 @@ package org.riotfamily.riot.list.command.core;
 import java.util.Iterator;
 import java.util.List;
 
-import org.riotfamily.riot.editor.AbstractDisplayDefinition;
+import org.riotfamily.riot.editor.AbstractObjectEditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.IntermediateDefinition;
 import org.riotfamily.riot.editor.ListDefinition;
@@ -65,8 +65,8 @@ public class StepIntoCommand extends AbstractCommand {
 			return listDef.getEditorUrl(null, context.getObjectId());
 		}
 		else {
-			Assert.isInstanceOf(AbstractDisplayDefinition.class, def);
-			AbstractDisplayDefinition displayDef = (AbstractDisplayDefinition) def;
+			Assert.isInstanceOf(AbstractObjectEditorDefinition.class, def);
+			AbstractObjectEditorDefinition displayDef = (AbstractObjectEditorDefinition) def;
 
 			List childRefs = displayDef.getChildEditorReferences(
 					context.getBean(), context.getMessageResolver());

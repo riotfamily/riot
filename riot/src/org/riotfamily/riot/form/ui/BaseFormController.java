@@ -39,9 +39,10 @@ import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.controller.RepositoryFormController;
 import org.riotfamily.riot.dao.RiotDao;
+import org.riotfamily.riot.editor.ObjectEditorDefinition;
+import org.riotfamily.riot.editor.EditorConstants;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
-import org.riotfamily.riot.editor.FormDefinition;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
@@ -52,16 +53,10 @@ import org.springframework.web.servlet.ModelAndView;
 public abstract class BaseFormController extends RepositoryFormController
 		implements FormSubmissionHandler, TransactionalController {
 
-	protected static final String FORM_DEFINITION_ATTR =
-			FormController.class.getName() + ".formDefinition";
+	protected static final String EDITOR_DEFINITION_ATTR =
+			FormController.class.getName() + ".editorDefinition";
 
 	private EditorRepository editorRepository;
-
-	private String editorIdAttribute = "editorId";
-
-	private String objectIdAttribute = "objectId";
-
-	private String parentIdParam = "parentId";
 
 	private String viewName = ResourceUtils.getPath(
 			BaseFormController.class, "FormView.ftl");
@@ -83,40 +78,36 @@ public abstract class BaseFormController extends RepositoryFormController
 
 	protected String getSessionAttribute(HttpServletRequest request) {
 		return BaseFormController.class.getName()
-				+ request.getAttribute(editorIdAttribute);
+				+ request.getAttribute(EditorConstants.EDITOR_ID);
 	}
 
-	protected FormDefinition getFormDefinition(HttpServletRequest request) {
-		FormDefinition formDefinition = (FormDefinition)
-				request.getAttribute(FORM_DEFINITION_ATTR);
+	protected ObjectEditorDefinition getFormDefinition(HttpServletRequest request) {
+		ObjectEditorDefinition editorDefinition = (ObjectEditorDefinition)
+				request.getAttribute(EDITOR_DEFINITION_ATTR);
 
-		if (formDefinition == null) {
-			String editorId = (String) request.getAttribute(editorIdAttribute);
+		if (editorDefinition == null) {
+			String editorId = (String) request.getAttribute(EditorConstants.EDITOR_ID);
 			Assert.notNull(editorId, "An editorId attribute must be set");
-			formDefinition = editorRepository.getFormDefinition(editorId);
-			Assert.notNull(formDefinition, "No such editor: " + editorId);
-			request.setAttribute(FORM_DEFINITION_ATTR, formDefinition);
+			editorDefinition = (ObjectEditorDefinition) editorRepository.getEditorDefinition(editorId);
+			Assert.notNull(editorDefinition, "No such editor: " + editorId);
+			request.setAttribute(EDITOR_DEFINITION_ATTR, editorDefinition);
 		}
-		return formDefinition;
-	}
-
-	protected String getFormId(HttpServletRequest request) {
-		return getFormDefinition(request).getFormId();
+		return editorDefinition;
 	}
 
 	protected String getObjectId(HttpServletRequest request) {
-		return (String) request.getAttribute(objectIdAttribute);
+		return (String) request.getAttribute(EditorConstants.OBJECT_ID);
 	}
 
 	protected String getParentId(HttpServletRequest request) {
-		return request.getParameter(parentIdParam);
+		return request.getParameter(EditorConstants.PARENT_ID);
 	}
 
 	protected Form createForm(HttpServletRequest request) {
 		Form form = super.createForm(request);
 		FormUtils.setObjectId(form, getObjectId(request));
 		FormUtils.setParentId(form, getParentId(request));
-		FormUtils.setFormDefinition(form, getFormDefinition(request));
+		FormUtils.setEditorDefinition(form, getFormDefinition(request));
 		return form;
 	}
 
@@ -124,21 +115,21 @@ public abstract class BaseFormController extends RepositoryFormController
 	 * @see org.riotfamily.forms.controller.RepositoryFormController#getFormBackingObject(javax.servlet.http.HttpServletRequest)
 	 */
 	protected Object getFormBackingObject(HttpServletRequest request) {
-		final FormDefinition formDefinition = getFormDefinition(request);
-		final String objectId = getObjectId(request);
+		ObjectEditorDefinition editorDefinition = getFormDefinition(request);
+		String objectId = getObjectId(request);
 		if (objectId == null) {
 			return null;
 		}
-		return EditorDefinitionUtils.loadBean(formDefinition, objectId);
+		return EditorDefinitionUtils.loadBean(editorDefinition, objectId);
 	}
 
-	protected Map createModel(Form form, FormDefinition formDefinition,
+	protected Map createModel(Form form, ObjectEditorDefinition formDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 
 		HashMap model = new HashMap();
-		model.put("editorId", formDefinition.getId());
-		model.put("parentId", FormUtils.getParentId(form));
-		model.put("objectId", FormUtils.getObjectId(form));
+		model.put(EditorConstants.EDITOR_ID, formDefinition.getId());
+		model.put(EditorConstants.PARENT_ID, FormUtils.getParentId(form));
+		model.put(EditorConstants.OBJECT_ID, FormUtils.getObjectId(form));
 		model.put("formId", form.getId());
 		return model;
 	}
@@ -164,9 +155,9 @@ public abstract class BaseFormController extends RepositoryFormController
 			throws Exception {
 
 		Object bean = form.populateBackingObject();
-		FormDefinition formDef = getFormDefinition(request);
+		ObjectEditorDefinition editorDef = getFormDefinition(request);
 
-		ListDefinition listDef = EditorDefinitionUtils.getParentListDefinition(formDef);
+		ListDefinition listDef = EditorDefinitionUtils.getParentListDefinition(editorDef);
 		RiotDao dao = listDef.getListConfig().getDao();
 
 		if (form.isNew()) {
@@ -176,19 +167,19 @@ public abstract class BaseFormController extends RepositoryFormController
 			dao.save(bean, parent);
 			FormUtils.setObjectId(form, dao.getObjectId(bean));
 			form.setValue(bean);
-			return afterSave(form, formDef, request, response);
+			return afterSave(form, editorDef, request, response);
 		}
 		else {
 			log.debug("Updating entity ...");
 			dao.update(bean);
-			return afterUpdate(form, formDef, request, response);
+			return afterUpdate(form, editorDef, request, response);
 		}
 	}
 
-	protected abstract ModelAndView afterSave(Form form, FormDefinition formDefinition,
+	protected abstract ModelAndView afterSave(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response);
 
-	protected abstract ModelAndView afterUpdate(Form form, FormDefinition formDefinition,
+	protected abstract ModelAndView afterUpdate(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response);
 
 }

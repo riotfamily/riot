@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.riot.editor.EditorConstants;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.GroupDefinition;
@@ -50,8 +51,6 @@ public class EditorGroupController implements Controller, MessageSourceAware {
 
 	private MessageSource messageSource;
 
-	private String editorIdAttribute = "editorId";
-
 	private String modelKey = "group";
 
 
@@ -69,7 +68,7 @@ public class EditorGroupController implements Controller, MessageSourceAware {
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		String editorId = (String) request.getAttribute(editorIdAttribute);
+		String editorId = (String) request.getAttribute(EditorConstants.EDITOR_ID);
 
 		GroupDefinition groupDefinition =
 				editorRepository.getGroupDefinition(editorId);

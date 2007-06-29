@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.riot.editor.EditorConstants;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -41,10 +42,6 @@ public class ListController implements Controller {
 
 	protected Log log = LogFactory.getLog(ListController.class);
 
-	private String editorIdAttribute = "editorId";
-
-	private String parentIdAttribute = "parentId";
-
 	private String viewName = ResourceUtils.getPath(
 			ListController.class, "ListView.ftl");
 
@@ -52,22 +49,6 @@ public class ListController implements Controller {
 
 	public void setListService(ListService listService) {
 		this.listService = listService;
-	}
-
-	public void setEditorIdAttribute(String editorIdAttribute) {
-		this.editorIdAttribute = editorIdAttribute;
-	}
-
-	protected String getEditorIdAttribute() {
-		return editorIdAttribute;
-	}
-
-	public void setParentIdAttribute(String parentIdAttribute) {
-		this.parentIdAttribute = parentIdAttribute;
-	}
-
-	protected String getParentIdAttribute() {
-		return parentIdAttribute;
 	}
 
 	public void setViewName(String viewName) {
@@ -81,16 +62,16 @@ public class ListController implements Controller {
 	public final ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		String editorId = (String) request.getAttribute(editorIdAttribute);
-		String parentId = (String) request.getAttribute(parentIdAttribute);
+		String editorId = (String) request.getAttribute(EditorConstants.EDITOR_ID);
+		String parentId = (String) request.getAttribute(EditorConstants.PARENT_ID);
 		String choose = request.getParameter("choose");
 
 		ListSession session = listService.getOrCreateListSession(
 				editorId, parentId, choose, request);
 
 		HashMap model = new HashMap();
-		model.put(editorIdAttribute, editorId);
-		model.put(parentIdAttribute, parentId);
+		model.put(EditorConstants.EDITOR_ID, editorId);
+		model.put(EditorConstants.PARENT_ID, parentId);
 		model.put("filterForm", session.getFilterFormHtml());
 		model.put("search", session.getSearchProperties());
 		model.put("searchQuery", session.getSearchQuery());

@@ -14,7 +14,7 @@
  *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -23,33 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
+/**
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public interface FormIdResolver extends EditorDefinition {
 
-public class ViewDefinition extends AbstractObjectEditorDefinition {
-
-	protected static final String TYPE_VIEW = "view";
-
-	private String template;
-
-	public ViewDefinition(EditorRepository editorRepository) {
-		super(editorRepository, TYPE_VIEW);
-	}
-
-	public String getTemplate() {
-		return this.template;
-	}
-	
-	public void setTemplate(String template) {
-		this.template = template;
-	}
-
-	public String getEditorUrl(String objectId, String parentId) {
-		//FIXME Get /riot prefix from RiotRuntime
-		StringBuffer sb = new StringBuffer();
-		sb.append("/riot/view/").append(getId());
-		if (objectId != null) {
-			sb.append('/').append(objectId);
-		}
-		return sb.toString();
-	}
+	public String getFormId();
 
 }

@@ -30,9 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRepository;
+import org.riotfamily.riot.editor.ObjectEditorDefinition;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.FormChooserDefinition;
-import org.riotfamily.riot.editor.FormDefinition;
 import org.riotfamily.riot.list.ui.ListService;
 
 public class FormChooserController extends FormController {
@@ -43,23 +43,11 @@ public class FormChooserController extends FormController {
 		super(editorRepository, formRepository, listService);
 	}
 
-	public Class getDefinitionClass() {
-		return FormChooserDefinition.class;
-	}
-
-	protected String getFormId(HttpServletRequest request) {
-		String formId = request.getParameter(getFormIdParam());
-		if (formId == null) {
-			formId = super.getFormId(request);
-		}
-		return formId;
-	}
-
-	protected Map createModel(Form form, FormDefinition formDefinition,
+	protected Map createModel(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 
-		Map model = super.createModel(form, formDefinition,request, response);
-		FormChooserDefinition chooser =	(FormChooserDefinition) formDefinition;
+		Map model = super.createModel(form, editorDefinition, request, response);
+		FormChooserDefinition chooser =	(FormChooserDefinition) editorDefinition;
 		model.put("formId", form.getId());
 		if (form.isNew()) {
 			model.put("options", chooser.createOptions(

@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
 /**
  *
  */
-public class FormDefinition extends AbstractDisplayDefinition
+public class FormDefinition extends AbstractObjectEditorDefinition
 		implements Cloneable {
 
 	protected static final String TYPE_FORM = "form";
@@ -91,8 +91,9 @@ public class FormDefinition extends AbstractDisplayDefinition
 		if (objectId != null) {
 			sb.append('/').append(objectId);
 		}
+		sb.append("?form=").append(formId);
 		if (parentId != null) {
-			sb.append("?parentId=").append(parentId);
+			sb.append("&parentId=").append(parentId);
 		}
 		return sb.toString();
 	}

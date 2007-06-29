@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor.ui;
 
@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.transaction.TransactionalController;
+import org.riotfamily.riot.editor.EditorConstants;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.springframework.context.MessageSource;
@@ -42,17 +43,9 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 public class PathController implements TransactionalController, MessageSourceAware {
 
 	private EditorRepository repository;
-	
+
 	private MessageSource messageSource;
-	
-	private String editorIdParam = "editorId";
 
-	private String objectIdParam = "objectId";
-
-	private String parentIdParam = "parentId";
-	
-	private String subPageParam = "subPage";
-	
 	private String viewName = ResourceUtils.getPath(
 			PathController.class, "PathView.ftl");
 
@@ -64,30 +57,6 @@ public class PathController implements TransactionalController, MessageSourceAwa
 
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
-	}
-
-	public String getObjectIdParam() {
-		return objectIdParam;
-	}
-
-	public void setObjectIdParam(String objectIdParam) {
-		this.objectIdParam = objectIdParam;
-	}
-
-	public String getParentIdParam() {
-		return parentIdParam;
-	}
-
-	public void setParentIdParam(String parentIdParam) {
-		this.parentIdParam = parentIdParam;
-	}
-
-	public String getSubPageParam() {
-		return this.subPageParam;
-	}
-
-	public void setSubPageParam(String subPageParam) {
-		this.subPageParam = subPageParam;
 	}
 
 	public String getModelKey() {
@@ -116,32 +85,32 @@ public class PathController implements TransactionalController, MessageSourceAwa
 			HttpServletResponse response) throws Exception {
 
 		EditorPath path;
-		String editorId = request.getParameter(editorIdParam);
-		
+		String editorId = request.getParameter(EditorConstants.EDITOR_ID);
+
 		EditorDefinition editor = repository.getEditorDefinition(editorId);
-		
-		String objectId = request.getParameter(objectIdParam);
-		String parentId = request.getParameter(parentIdParam);
+
+		String objectId = request.getParameter(EditorConstants.OBJECT_ID);
+		String parentId = request.getParameter(EditorConstants.PARENT_ID);
 
 		EditorReference lastComponent = createLastPathComponent(
-				editor, objectId, parentId, 
-				new MessageResolver(messageSource, 
-				repository.getMessageCodesResolver(), 
+				editor, objectId, parentId,
+				new MessageResolver(messageSource,
+				repository.getMessageCodesResolver(),
 				RequestContextUtils.getLocale(request)));
 
-		path = new EditorPath(editorId, objectId, parentId, 
+		path = new EditorPath(editorId, objectId, parentId,
 				lastComponent);
 
-		path.setSubPage(request.getParameter(subPageParam));
+		path.setSubPage(request.getParameter("subPage"));
 		path.encodeUrls(response);
-		
+
 		return new ModelAndView(viewName, modelKey, path);
 	}
 
 	protected EditorReference createLastPathComponent(
-			final EditorDefinition editor, final String objectId, 
+			final EditorDefinition editor, final String objectId,
 			final String parentId, final MessageResolver messageResolver) {
-		
+
 		return editor.createEditorPath(objectId, parentId, messageResolver);
 	}
 }

@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.riot.editor.CustomEditorDefinition;
+import org.riotfamily.riot.editor.EditorConstants;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
@@ -50,7 +51,7 @@ public class CustomEditorController implements TransactionalController {
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		String editorId = (String) request.getAttribute("editorId");
+		String editorId = (String) request.getAttribute(EditorConstants.EDITOR_ID);
 		Assert.notNull(editorId, "No editorId in request scope");
 
 		CustomEditorDefinition editorDef = (CustomEditorDefinition)
@@ -58,13 +59,13 @@ public class CustomEditorController implements TransactionalController {
 
 		Assert.notNull(editorDef, "No such editor: " + editorId);
 
-		String objectId = request.getParameter("objectId");
-		String parentId = request.getParameter("parentId");
+		String objectId = request.getParameter(EditorConstants.OBJECT_ID);
+		String parentId = request.getParameter(EditorConstants.PARENT_ID);
 
 		HashMap model = new HashMap();
-		model.put("editorId", editorId);
-		model.put("objectId", objectId);
-		model.put("parentId", parentId);
+		model.put(EditorConstants.EDITOR_ID, editorId);
+		model.put(EditorConstants.OBJECT_ID, objectId);
+		model.put(EditorConstants.PARENT_ID, parentId);
 		model.put("editorUrl", editorDef.getTargetUrl(objectId, parentId));
 
 		return new ModelAndView(viewName, model);

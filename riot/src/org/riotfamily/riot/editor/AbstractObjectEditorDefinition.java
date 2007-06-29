@@ -38,8 +38,9 @@ import org.riotfamily.riot.editor.ui.EditorReference;
  * @see org.riotfamily.riot.editor.FormDefinition
  * @see org.riotfamily.riot.editor.ViewDefinition
  */
-public abstract class AbstractDisplayDefinition
-		extends AbstractEditorDefinition {
+public abstract class AbstractObjectEditorDefinition
+		extends AbstractEditorDefinition
+		implements ObjectEditorDefinition {
 
 	private Class beanClass;
 
@@ -47,7 +48,7 @@ public abstract class AbstractDisplayDefinition
 
 	private List childEditorDefinitions = new LinkedList();
 
-	public AbstractDisplayDefinition(EditorRepository repository,
+	public AbstractObjectEditorDefinition(EditorRepository repository,
 			String editorType) {
 
 		super(repository, editorType);

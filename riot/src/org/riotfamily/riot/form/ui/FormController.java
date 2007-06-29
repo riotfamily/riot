@@ -32,9 +32,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRepository;
+import org.riotfamily.riot.editor.ObjectEditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
-import org.riotfamily.riot.editor.FormDefinition;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.ui.ListService;
 import org.riotfamily.riot.list.ui.ListSession;
@@ -58,10 +58,10 @@ public class FormController extends BaseFormController {
 		this.listService = listService;
 	}
 
-	protected Map createModel(Form form, FormDefinition formDefinition,
+	protected Map createModel(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 
-		Map model = super.createModel(form, formDefinition, request, response);
+		Map model = super.createModel(form, editorDefinition, request, response);
 		model.put(PARAM_SAVED, Boolean.valueOf(request.getParameter(PARAM_SAVED) != null));
 
 		Object object = null;
@@ -69,20 +69,18 @@ public class FormController extends BaseFormController {
 			object = form.getBackingObject();
 		}
 		try {
-			if (!AccessController.isGranted("view", object, formDefinition)) {
+			if (!AccessController.isGranted("view", object, editorDefinition)) {
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
 			}
 		}
 		catch (IOException e) {
-			log.error("Error sending forbidden error for formDefinition[ "
-					+ formDefinition.getName() + " ]");
 		}
 
-		model.put("childLists", formDefinition.getChildEditorReferences(object,
+		model.put("childLists", editorDefinition.getChildEditorReferences(object,
 				form.getFormContext().getMessageResolver()));
 
 		ListDefinition parentListDef = EditorDefinitionUtils
-				.getParentListDefinition(formDefinition);
+				.getParentListDefinition(editorDefinition);
 
 		if (parentListDef != null) {
 			ListSession session = listService.getOrCreateListSession(
@@ -95,27 +93,27 @@ public class FormController extends BaseFormController {
 		return model;
 	}
 
-	protected ModelAndView afterSave(Form form, FormDefinition formDefinition,
+	protected ModelAndView afterSave(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 
-		if (!formDefinition.getChildEditorDefinitions().isEmpty()) {
-			return reloadForm(form, formDefinition);
+		if (!editorDefinition.getChildEditorDefinitions().isEmpty()) {
+			return reloadForm(form, editorDefinition);
 		}
 		else {
-			return showParentList(form, formDefinition);
+			return showParentList(form, editorDefinition);
 		}
 	}
 
-	protected ModelAndView afterUpdate(Form form, FormDefinition formDefinition,
+	protected ModelAndView afterUpdate(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 
-		return showParentList(form, formDefinition);
+		return showParentList(form, editorDefinition);
 	}
 
 	protected ModelAndView showParentList(Form form,
-			FormDefinition formDefinition) {
+			ObjectEditorDefinition editorDefinition) {
 
-		String listUrl = formDefinition.createEditorPath(
+		String listUrl = editorDefinition.createEditorPath(
 				form.getBackingObject(),
 				form.getFormContext().getMessageResolver())
 				.getParent().getEditorUrl();
@@ -124,9 +122,9 @@ public class FormController extends BaseFormController {
 	}
 
 	protected ModelAndView reloadForm(Form form,
-			FormDefinition formDefinition) {
+			ObjectEditorDefinition editorDefinition) {
 
-		String formUrl = formDefinition.createEditorPath(
+		String formUrl = editorDefinition.createEditorPath(
 				form.getBackingObject(),
 				form.getFormContext().getMessageResolver())
 				.getEditorUrl();
