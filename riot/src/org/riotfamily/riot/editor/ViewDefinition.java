@@ -28,18 +28,18 @@ public class ViewDefinition extends AbstractDisplayDefinition {
 
 	protected static final String TYPE_VIEW = "view";
 
-	private String viewName;
+	private String template;
 
 	public ViewDefinition(EditorRepository editorRepository) {
 		super(editorRepository, TYPE_VIEW);
 	}
 
-	public String getViewName() {
-		return this.viewName;
+	public String getTemplate() {
+		return this.template;
 	}
-
-	public void setViewName(String viewName) {
-		this.viewName = viewName;
+	
+	public void setTemplate(String template) {
+		this.template = template;
 	}
 
 	public String getEditorUrl(String objectId, String parentId) {

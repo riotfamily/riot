@@ -29,14 +29,18 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormRepository;
+import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.FormDefinition;
+import org.riotfamily.riot.editor.ListDefinition;
+import org.riotfamily.riot.list.ui.ListService;
+import org.riotfamily.riot.list.ui.ListSession;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  *
@@ -45,13 +49,13 @@ public class FormController extends BaseFormController {
 
 	private static final String PARAM_SAVED = "saved";
 
-	private String successView = ResourceUtils.getPath(
-			FormController.class, "FormSuccessView.ftl");
+	private ListService listService;
 
 	public FormController(EditorRepository editorRepository,
-			FormRepository formRepository) {
+			FormRepository formRepository, ListService listService) {
 
 		super(editorRepository, formRepository);
+		this.listService = listService;
 	}
 
 	protected Map createModel(Form form, FormDefinition formDefinition,
@@ -72,6 +76,20 @@ public class FormController extends BaseFormController {
 		catch (IOException e) {
 			log.error("Error sending forbidden error for formDefinition[ "
 					+ formDefinition.getName() + " ]");
+		}
+
+		model.put("childLists", formDefinition.getChildEditorReferences(object,
+				form.getFormContext().getMessageResolver()));
+
+		ListDefinition parentListDef = EditorDefinitionUtils
+				.getParentListDefinition(formDefinition);
+
+		if (parentListDef != null) {
+			ListSession session = listService.getOrCreateListSession(
+				parentListDef.getId(), FormUtils.getParentId(form),
+				null, request);
+
+			model.put("listKey", session.getKey());
 		}
 
 		return model;
@@ -102,7 +120,7 @@ public class FormController extends BaseFormController {
 				form.getFormContext().getMessageResolver())
 				.getParent().getEditorUrl();
 
-		return new ModelAndView(successView, "successUrl", listUrl);
+		return new ModelAndView(new RedirectView(listUrl, true));
 	}
 
 	protected ModelAndView reloadForm(Form form,
@@ -114,6 +132,6 @@ public class FormController extends BaseFormController {
 				.getEditorUrl();
 
 		formUrl = ServletUtils.addParameter(formUrl, "saved", "true");
-		return new ModelAndView(successView, "successUrl", formUrl);
+		return new ModelAndView(new RedirectView(formUrl, true));
 	}
 }

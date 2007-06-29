@@ -1,7 +1,17 @@
 @import url(common.css);
 
-#form {
-	margin-right: 18px;
+#childLists .list {
+	margin-top:10px;
+}
+#childLists .item {
+	padding: 3px 0 3px 35px;
+}
+#childLists a {
+	font-weight: bold;
+}
+
+#commands .saveButton {
+	background-image: url(icons/commands/save.gif);
 }
 
 #form-options,

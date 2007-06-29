@@ -33,13 +33,14 @@ import org.riotfamily.forms.FormRepository;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.FormChooserDefinition;
 import org.riotfamily.riot.editor.FormDefinition;
+import org.riotfamily.riot.list.ui.ListService;
 
 public class FormChooserController extends FormController {
 
 	public FormChooserController(EditorRepository editorRepository,
-			FormRepository formRepository) {
+			FormRepository formRepository, ListService listService) {
 
-		super(editorRepository, formRepository);
+		super(editorRepository, formRepository, listService);
 	}
 
 	public Class getDefinitionClass() {

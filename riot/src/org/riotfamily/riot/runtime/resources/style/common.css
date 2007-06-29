@@ -30,12 +30,12 @@ td {
 	float: left;
 }
 .main {
-	margin-right: 300px;
+	margin-right: 320px;
 }
 div.extra {
 	float:left;
-	width: 260px;
-	margin-left: -260px;
+	width: 280px;
+	margin-left: -280px;
 }
 .wide .main {
 	margin-right: 0px;
