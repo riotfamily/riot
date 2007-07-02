@@ -76,9 +76,9 @@ public class CustomEditorDefinition extends AbstractObjectEditorDefinition {
 		if (target != null) {
 			return getTargetUrl(objectId, parentId);
 		}
-		//FIXME Get /riot prefix from RiotRuntime
 		StringBuffer sb = new StringBuffer();
-		sb.append("/riot/custom/").append(getId());
+		sb.append(getEditorRepository().getRiotServletPrefix());
+		sb.append("/custom/").append(getId());
 		if (objectId != null) {
 			sb.append("?objectId=").append(objectId);
 		}

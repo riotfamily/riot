@@ -32,6 +32,8 @@ import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.forms.FormRepository;
 import org.riotfamily.riot.list.ListRepository;
+import org.riotfamily.riot.runtime.RiotRuntime;
+import org.springframework.beans.BeansException;
 import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.util.Assert;
 
@@ -52,6 +54,15 @@ public class EditorRepository extends ApplicationObjectSupport {
 
 	private AdvancedMessageCodesResolver messageCodesResolver;
 
+	private String riotServletPrefix;
+
+	public String getRiotServletPrefix() {
+		return riotServletPrefix;
+	}
+
+	protected final void initApplicationContext() throws BeansException {
+		riotServletPrefix = RiotRuntime.getRuntime(getApplicationContext()).getServletPrefix();
+	}
 
 	public GroupDefinition getRootGroupDefinition() {
 		return this.rootGroupDefinition;

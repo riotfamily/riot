@@ -85,9 +85,9 @@ public class FormDefinition extends AbstractObjectEditorDefinition
 	}
 
 	public String getEditorUrl(String objectId, String parentId) {
-		//FIXME Get /riot prefix from RiotRuntime
 		StringBuffer sb = new StringBuffer();
-		sb.append("/riot/form/").append(getId());
+		sb.append(getEditorRepository().getRiotServletPrefix());
+		sb.append("/form/").append(getId());
 		if (objectId != null) {
 			sb.append('/').append(objectId);
 		}

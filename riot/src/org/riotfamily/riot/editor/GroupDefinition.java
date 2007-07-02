@@ -114,9 +114,9 @@ public class GroupDefinition extends AbstractEditorDefinition {
 	}
 
 	public String getEditorUrl(String objectId, String parentId) {
-		//FIXME Get /riot prefix from RiotRuntime
 		StringBuffer sb = new StringBuffer();
-		sb.append("/riot/group/").append(getId());
+		sb.append(getEditorRepository().getRiotServletPrefix());
+		sb.append("/group/").append(getId());
 		return sb.toString();
 	}
 }

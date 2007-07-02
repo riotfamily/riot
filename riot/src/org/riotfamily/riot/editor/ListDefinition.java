@@ -149,9 +149,9 @@ public class ListDefinition extends AbstractEditorDefinition {
 	}
 
 	public String getEditorUrl(String objectId, String parentId) {
-		//FIXME Get /riot prefix from RiotRuntime
 		StringBuffer sb = new StringBuffer();
-		sb.append("/riot/list/").append(getId());
+		sb.append(getEditorRepository().getRiotServletPrefix());
+		sb.append("/list/").append(getId());
 		if (parentId != null) {
 			sb.append('/').append(parentId);
 		}

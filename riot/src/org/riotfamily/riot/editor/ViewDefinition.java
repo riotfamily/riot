@@ -37,15 +37,15 @@ public class ViewDefinition extends AbstractObjectEditorDefinition {
 	public String getTemplate() {
 		return this.template;
 	}
-	
+
 	public void setTemplate(String template) {
 		this.template = template;
 	}
 
 	public String getEditorUrl(String objectId, String parentId) {
-		//FIXME Get /riot prefix from RiotRuntime
 		StringBuffer sb = new StringBuffer();
-		sb.append("/riot/view/").append(getId());
+		sb.append(getEditorRepository().getRiotServletPrefix());
+		sb.append("/view/").append(getId());
 		if (objectId != null) {
 			sb.append('/').append(objectId);
 		}
