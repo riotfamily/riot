@@ -41,7 +41,9 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.cachius.spring.CacheableController;
 import org.riotfamily.common.collection.FlatMap;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.riot.hibernate.support.HibernateSupport;
 import org.riotfamily.website.cache.CacheInvalidationAdvice;
 import org.riotfamily.website.generic.model.CacheableModelBuilder;
@@ -49,6 +51,7 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.StringUtils;
 
 
 /**
@@ -59,6 +62,8 @@ import org.springframework.context.ApplicationContextAware;
 public class HqlModelBuilder extends HibernateSupport
 		implements CacheableModelBuilder,
 		ApplicationContextAware, InitializingBean {
+
+	public final static String CACHE_ETERNAL_STRING = "eternal";
 
 	private Log log = LogFactory.getLog(HqlModelBuilder.class);
 
@@ -78,7 +83,7 @@ public class HqlModelBuilder extends HibernateSupport
 
 	private boolean tagCacheItems = true;
 
-	private boolean cacheEternally = true;
+	private long timeToLive = CacheableController.CACHE_ETERNALLY;
 
 	public HqlModelBuilder() {
 	}
@@ -133,15 +138,29 @@ public class HqlModelBuilder extends HibernateSupport
 		this.tagCacheItems = tagCacheItems;
 	}
 
-	public void setCacheEternally(boolean cacheEternaly) {
-		this.cacheEternally = cacheEternaly;
+	/**
+	 * Sets
+	 */
+	public void setTtlPeriod(String timeToLive) {
+		if (!StringUtils.hasText(timeToLive)) {
+			return;
+		}
+		timeToLive = StringUtils.trimTrailingWhitespace(timeToLive);
+		if (timeToLive.equalsIgnoreCase(CACHE_ETERNAL_STRING)) {
+			this.timeToLive = CacheableController.CACHE_ETERNALLY;
+		}
+		else {
+			this.timeToLive = FormatUtils.parseMillis(timeToLive);
+		}
 	}
+
 
 	/**
 	 * @deprecated Not needed anymore.
 	 */
 	public void setItemClass(String clazz) {
 	}
+
 
 	public void afterPropertiesSet() throws Exception {
 		if (getSessionFactory() == null) {
@@ -182,14 +201,24 @@ public class HqlModelBuilder extends HibernateSupport
 
 	/**
 	 * Returns <code>0</code>, if <code>cacheEternally</code> is set to
-	 * <code>true</code>, or <code>-1</code> otherwise. Subclasses may override
-	 * this method to support modification based caching. Since a database
-	 * lookup might be nearly as expensive as building the actual model you
-	 * might want to consider using item-tagging in conjunction with a
-	 * {@link CacheInvalidationAdvice} instead.
+	 * <code>false</code>, or <code>CacheableModelBuilder.CACHE_ETERNALLY</code>
+	 * otherwise. Subclasses may override this method to support modification
+	 * based caching.
+	 * @see org.riotfamily.website.generic.model.CacheableModelBuilder#getTimeToLive()
+	 */
+	public long getTimeToLive() {
+		return this.timeToLive;
+	}
+
+	/**
+	 * Returns <code>System.currentTimeMillis()</code>.
+	 * Subclasses may override this method to support modification based caching.
+	 * Since a database lookup might be nearly as expensive as building the
+	 * actual model you might want to consider using item-tagging in conjunction
+	 * with a {@link CacheInvalidationAdvice} instead.
 	 */
 	public long getLastModified(HttpServletRequest request) {
-		return cacheEternally ? 0 : -1;
+		return System.currentTimeMillis();
 	}
 
 	public Map buildModel(final HttpServletRequest request) {
@@ -279,4 +308,5 @@ public class HqlModelBuilder extends HibernateSupport
 			return resolver.getValue(request);
 		}
 	}
+
 }

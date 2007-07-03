@@ -45,7 +45,7 @@
 			<xsd:attribute name="view-name" type="xsd:string" />
 			<xsd:attribute name="content-type" type="xsd:string" />
 			<xsd:attribute name="add-uri-to-cache-key" type="xsd:boolean" />
-			<xsd:attribute name="cacheable" type="xsd:boolean" />
+			<xsd:attribute name="cache" type="xsd:boolean" />
 			<xsd:attribute name="model-builder" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
@@ -70,8 +70,8 @@
 		<xsd:attribute name="hql" use="required" />
 		<xsd:attribute name="model-key" use="required" />
 		<xsd:attribute name="list-mode" type="xsd:boolean" default="false" />
-		<xsd:attribute name="item-class" />
-		<xsd:attribute name="cache-eternally" type="xsd:boolean" default="true" />
+		<xsd:attribute name="item-class" type="xsd:string" /><!-- Will be removed in the next version... -->
+		<xsd:attribute name="time-to-live" type="xsd:string" default="eternal" />
 		<xsd:attribute name="tag-cache-items" type="xsd:boolean" default="true" />
 	</xsd:complexType>
 
