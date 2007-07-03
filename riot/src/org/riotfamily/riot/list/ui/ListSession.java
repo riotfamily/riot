@@ -1,26 +1,26 @@
 /* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+	* Version: MPL 1.1
+	* The contents of this file are subject to the Mozilla Public License Version
+	* 1.1 (the "License"); you may not use this file except in compliance with
+	* the License. You may obtain a copy of the License at
+	* http://www.mozilla.org/MPL/
+	*
+	* Software distributed under the License is distributed on an "AS IS" basis,
+	* WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	* for the specific language governing rights and limitations under the
+	* License.
+	*
+	* The Original Code is Riot.
+	*
+	* The Initial Developer of the Original Code is
+	* Neteye GmbH.
+	* Portions created by the Initial Developer are Copyright (C) 2006
+	* the Initial Developer. All Rights Reserved.
+	*
+	* Contributor(s):
+	*   Felix Gnass [fgnass at neteye dot de]
+	*
+	* ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.ui;
 
 import java.io.PrintWriter;
@@ -65,9 +65,9 @@ import org.riotfamily.riot.list.ui.render.RenderContext;
 import org.riotfamily.riot.security.AccessController;
 
 /**
- * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.4
- */
+	* @author Felix Gnass [fgnass at neteye dot de]
+	* @since 6.4
+	*/
 public class ListSession implements RenderContext {
 
 	private String key;
@@ -280,13 +280,15 @@ public class ListSession implements RenderContext {
 			column.setHeading(getHeading(config.getProperty(),
 					config.getLookupLevel()));
 
-			column.setCssClass(FormatUtils.toCssClass(config.getProperty()));
 			column.setSortable(sortableDao && config.isSortable());
-			if (params.hasOrder() && params.getPrimaryOrder()
-					.getProperty().equals(config.getProperty())) {
+			if (config.getProperty() != null) {
+				column.setCssClass(FormatUtils.toCssClass(config.getProperty()));
+				if (params.hasOrder() && params.getPrimaryOrder()
+						.getProperty().equals(config.getProperty())) {
 
-				column.setSorted(true);
-				column.setAscending(params.getPrimaryOrder().isAscending());
+					column.setSorted(true);
+					column.setAscending(params.getPrimaryOrder().isAscending());
+				}
 			}
 			columns.add(column);
 		}
@@ -305,23 +307,23 @@ public class ListSession implements RenderContext {
 		}
 		if (clazz != null) {
 			String root = property;
-	        int pos = property.indexOf('.');
-	        if (pos > 0) {
-	            root = property.substring(0, pos);
-	        }
-	        if (lookupLevel > 1) {
-	        	clazz = PropertyUtils.getPropertyType(clazz, root);
-	        	if (pos > 0) {
-		        	String nestedProperty = property.substring(pos + 1);
-		        	return getHeading(clazz, nestedProperty, lookupLevel - 1);
-	        	}
-	        	else {
-	        		return messageResolver.getClassLabel(null, clazz);
-	        	}
-	        }
+			int pos = property.indexOf('.');
+			if (pos > 0) {
+				root = property.substring(0, pos);
+			}
+			if (lookupLevel > 1) {
+				clazz = PropertyUtils.getPropertyType(clazz, root);
+				if (pos > 0) {
+					String nestedProperty = property.substring(pos + 1);
+					return getHeading(clazz, nestedProperty, lookupLevel - 1);
+				}
+				else {
+					return messageResolver.getClassLabel(null, clazz);
+				}
+			}
 		}
-	    return messageResolver.getPropertyLabel(
-	    		getListId(), clazz, property);
+		return messageResolver.getPropertyLabel(
+				getListId(), clazz, property);
 	}
 
 	public ListModel sort(String property, HttpServletRequest request) {
