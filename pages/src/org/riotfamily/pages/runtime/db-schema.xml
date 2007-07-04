@@ -34,6 +34,7 @@
 				<db:column name="childHandlerName" type="VARCHAR" length="255" />
 				<db:column name="hidden" type="BIT" />
 				<db:column name="systemNode" type="BIT" />
+				<db:column name="pos" type="INTEGER" />
 			</db:create-table>
 			<db:add-foreign-key table="riot_page_nodes" name="riot_page_nodes_parent" references="riot_page_nodes">
 				<db:ref local="parent" foreign="id" />

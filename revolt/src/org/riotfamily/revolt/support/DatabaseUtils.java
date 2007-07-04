@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt.support;
 
@@ -49,48 +49,48 @@ import org.springframework.util.StringUtils;
 public class DatabaseUtils {
 
 	/**
-	 * Returns the JDBC-URL for the given DataSource. 
+	 * Returns the JDBC-URL for the given DataSource.
 	 */
 	public static String getUrl(DataSource dataSource) {
 		JdbcTemplate template = new JdbcTemplate(dataSource);
 		return (String) template.execute(new ConnectionCallback() {
-			public Object doInConnection(Connection connection) 
+			public Object doInConnection(Connection connection)
 					throws SQLException, DataAccessException {
-				
+
 				DatabaseMetaData metaData = connection.getMetaData();
 				return metaData.getURL();
 			}
 		});
 	}
-	
+
 	/**
 	 * Returns whether the DataSource contains any tables.
 	 */
 	public static boolean anyTablesExist(DataSource dataSource) {
 		JdbcTemplate template = new JdbcTemplate(dataSource);
 		Boolean result = (Boolean) template.execute(new ConnectionCallback() {
-			public Object doInConnection(Connection connection) 
+			public Object doInConnection(Connection connection)
 					throws SQLException, DataAccessException {
-				
+
 				DatabaseMetaData metaData = connection.getMetaData();
 				ResultSet rs = metaData.getTables(null, null, "_", null);
 				return Boolean.valueOf(rs.next());
 			}
 		});
-		return result.booleanValue();	
+		return result.booleanValue();
 	}
-	
+
 	/**
-	 * Returns whether the specified table exists. 
+	 * Returns whether the specified table exists.
 	 */
-	public static boolean tableExists(DataSource dataSource, 
+	public static boolean tableExists(DataSource dataSource,
 			final Identifier table) {
-		
+
 		JdbcTemplate template = new JdbcTemplate(dataSource);
 		Boolean result = (Boolean) template.execute(new ConnectionCallback() {
-			public Object doInConnection(Connection connection) 
+			public Object doInConnection(Connection connection)
 					throws SQLException, DataAccessException {
-				
+
 				DatabaseMetaData metaData = connection.getMetaData();
 				String pattern = getSearchPattern(metaData, table);
 				ResultSet rs = metaData.getTables(null, null, pattern, null);
@@ -99,31 +99,31 @@ public class DatabaseUtils {
 		});
 		return result.booleanValue();
 	}
-	
+
 	/**
 	 * Checks whether the database schema matches the given model.
 	 */
-	public static void validate(DataSource dataSource, final Database model) 
+	public static void validate(DataSource dataSource, final Database model)
 			throws DatabaseOutOfSyncException {
-		
+
 		JdbcTemplate template = new JdbcTemplate(dataSource);
 		template.execute(new ConnectionCallback() {
-			public Object doInConnection(Connection connection) 
+			public Object doInConnection(Connection connection)
 					throws SQLException, DataAccessException {
-				
+
 				DatabaseMetaData metaData = connection.getMetaData();
 				validate(metaData, model);
 				return null;
 			}
 		});
 	}
-	
-	private static String getSearchPattern(DatabaseMetaData metaData, 
+
+	private static String getSearchPattern(DatabaseMetaData metaData,
 			Identifier identifier) throws SQLException {
-		
+
 		String escape = metaData.getSearchStringEscape();
 		String pattern = identifier.getName().replaceAll("_", escape + "_");
-		
+
 		if (identifier.isQuoted()) {
 			if (metaData.storesUpperCaseQuotedIdentifiers()) {
 				pattern = pattern.toUpperCase();
@@ -138,14 +138,14 @@ public class DatabaseUtils {
 			}
 			else if (metaData.storesLowerCaseIdentifiers()) {
 				pattern = pattern.toLowerCase();
-			}	
+			}
 		}
 		return pattern;
 	}
 
-	private static void validate(DatabaseMetaData metaData, Database model) 
+	private static void validate(DatabaseMetaData metaData, Database model)
 			throws SQLException, DatabaseOutOfSyncException {
-		
+
 		Iterator it = model.getTables().iterator();
 		while (it.hasNext()) {
 			Table table = (Table) it.next();
@@ -156,15 +156,22 @@ public class DatabaseUtils {
 				columns.add(new Column(rs.getString("COLUMN_NAME")));
 			}
 			if (columns.isEmpty()) {
-				throw new DatabaseOutOfSyncException("Table " 
+				throw new DatabaseOutOfSyncException("Table "
 						+ table.getName() + " does not exist");
 			}
 			if (!columns.containsAll(table.getColumns())) {
 				ArrayList missing = new ArrayList(table.getColumns());
 				missing.removeAll(columns);
-				throw new DatabaseOutOfSyncException("Table "+ table.getName() 
-						+ " does not have the following column(s): " 
+				throw new DatabaseOutOfSyncException("Table "+ table.getName()
+						+ " does not have the following column(s): "
 						+ StringUtils.collectionToCommaDelimitedString(missing));
+			}
+			if (!table.getColumns().containsAll(columns)) {
+				ArrayList redundant = new ArrayList(columns);
+				redundant.removeAll(table.getColumns());
+				throw new DatabaseOutOfSyncException("Table "+ table.getName()
+						+ " has additionally the following unspecified column(s): "
+						+ StringUtils.collectionToCommaDelimitedString(redundant));
 			}
 		}
 	}
