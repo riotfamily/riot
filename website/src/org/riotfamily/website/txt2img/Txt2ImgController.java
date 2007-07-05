@@ -105,8 +105,8 @@ public class Txt2ImgController extends AbstractCacheableController
 	}
 
 	public long getLastModified(HttpServletRequest request) {
-        return lastModified;
-    }
+		return lastModified;
+	}
 
 	/**
 	 * Sets a regular expression that is used to check the Referer header.
@@ -153,13 +153,18 @@ public class Txt2ImgController extends AbstractCacheableController
 		return RequestContextUtils.getLocale(request);
 	}
 
+	protected String getEncodedParam(HttpServletRequest request, String name) {
+		String value = request.getParameter(name);
+		return value != null ? FormatUtils.uriUnescape(value.replace('@', '%')) : null;
+	}
+
 	/**
 	 * Returns the text to be rendered. The method unescapes HTML entities
 	 * and optionally converts the String to upper or lower case, if the
 	 * 'transform' HTTP parameter is set.
 	 */
 	protected String getText(HttpServletRequest request) {
-		String text = FormatUtils.decodeBase64(request.getParameter("text"));
+		String text = getEncodedParam(request, "text");
 		if (text != null) {
 			text = HtmlUtils.htmlUnescape(text);
 			String transform = request.getParameter("transform");
@@ -183,7 +188,7 @@ public class Txt2ImgController extends AbstractCacheableController
 			HttpServletResponse response) throws IOException {
 
 		ImageGenerator generator = defaultGenerator;
-		String selector = FormatUtils.decodeBase64(request.getParameter("selector"));
+		String selector = getEncodedParam(request, "selector");
 		if (selector != null) {
 			generator = (ImageGenerator) generators.get(selector);
 		}
@@ -195,7 +200,7 @@ public class Txt2ImgController extends AbstractCacheableController
 		if (maxWidth <= 0) {
 			maxWidth = Integer.MAX_VALUE;
 		}
-		String color = FormatUtils.decodeBase64(request.getParameter("color"));
+		String color = getEncodedParam(request, "color");
 		response.setContentType("image/png");
 		ServletUtils.setCacheHeaders(response, "1M");
 		generator.generate(text, maxWidth, color, response.getOutputStream());
