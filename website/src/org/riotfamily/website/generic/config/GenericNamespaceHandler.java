@@ -53,7 +53,7 @@ public class GenericNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 		BeanDefinitionDecorator setModelBuilder = new NestedPropertyDecorator("modelBuilder");
 		register("hql", HqlModelBuilder.class, setModelBuilder).addTranslation("time-to-live", "ttlPeriod");
-		register("paged-hql", PagedHqlModelBuilder.class, setModelBuilder);
+		register("paged-hql", PagedHqlModelBuilder.class, setModelBuilder).addTranslation("time-to-live", "ttlPeriod");
 		registerSpringBeanDefinitionParser("model-builder", setModelBuilder);
 
 		BeanDefinitionDecorator addParameterResolver = new NestedListDecorator("parameterResolvers");
