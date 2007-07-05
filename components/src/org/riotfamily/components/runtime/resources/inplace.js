@@ -220,9 +220,9 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 
 	getText: function() {
 		return this.input.value
+			.replace(/&/g, '&amp;')
 			.replace(/</g, '&lt;')
 			.replace(/>/g, '&gt;')
-			.replace(/&/g, '&amp;')
 			.replace(/\n/g, '<br />');
 	},
 
@@ -248,7 +248,7 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 	resize: function() {
 		Position.clone(this.element, this.input, { setWidth: false, setHeight: false });
 		this.input.style.width  = (this.element.offsetWidth - this.paddingLeft) + 'px';
-   		this.input.style.height = (this.element.offsetHeight - this.paddingTop) + 'px';
+			 this.input.style.height = (this.element.offsetHeight - this.paddingTop) + 'px';
 	}
 });
 
@@ -624,8 +624,8 @@ ComponentEditor.getEditorConfigs(function(configs) {
 		var styles = riot.tinyMCEConfig.theme_advanced_styles;
 		if (styles) {
 			riot.tinyMCEStyles = styles.split(';').collect(function(pair) {
-		      return pair.split('=')[1];
-		    });
+					return pair.split('=')[1];
+				});
 		}
 	}
 });
