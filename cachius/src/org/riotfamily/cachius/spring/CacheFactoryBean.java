@@ -36,7 +36,7 @@ import org.springframework.web.util.WebUtils;
 
 /**
  * Factory bean that creates a new {@link Cache Cache} instance in the
- * specified directroy.
+ * specified directory.
  */
 public class CacheFactoryBean extends AbstractFactoryBean
 		implements ServletContextAware {

@@ -101,7 +101,7 @@ public class CacheItem implements Serializable {
     private String contentType = null;
     
     /** 
-     * Flag indicating wheather the cached content is binary 
+     * Flag indicating whether the cached content is binary 
      * or character data.
      */
     private boolean binary = true;
@@ -113,7 +113,7 @@ public class CacheItem implements Serializable {
     private transient ReaderWriterLock lock = new ReaderWriterLock();
     
     /**
-     * Timestamp indicating the last modifcation. On object 
+     * Timestamp indicating the last modification. On object 
      * serialization/deserialization this property is mapped to the
      * file's mtime.
      */
