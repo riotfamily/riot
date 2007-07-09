@@ -80,9 +80,12 @@ public class DialogFormController extends AjaxFormController
 		this.urlMapping = urlMapping;
 	}
 		
+	protected String getCommandId(HttpServletRequest request) {
+		return (String) request.getAttribute(commandIdAttribute);
+	}
+	
 	protected DialogCommand getCommand(HttpServletRequest request) {
-		String commandId = (String) request.getAttribute(commandIdAttribute);
-		return (DialogCommand) listRepository.getCommand(commandId);
+		return (DialogCommand) listRepository.getCommand(getCommandId(request));
 	}
 	
 	/**
@@ -103,16 +106,21 @@ public class DialogFormController extends AjaxFormController
 		return getCommand(request).getFormSessionAttribute();
 	}
 	
+	protected String getTitle(Form form, HttpServletRequest request) {
+		String commandId = getCommandId(request);
+		return form.getFormContext().getMessageResolver().getMessage(
+				"label.dialog." + commandId, commandId);
+	}
+	
 	protected ModelAndView showForm(final Form form, 
 			HttpServletRequest request, HttpServletResponse response) {
 		
 		StringWriter sw = new StringWriter();
-		//REVISIT Do in transaction?
 		renderForm(form, new PrintWriter(sw));
 		
 		Map model = new FlatMap();
 		model.put("form", sw.toString());
-		model.put("title", "FIXME");
+		model.put("title", getTitle(form, request));
 		return new ModelAndView(viewName, model);
 	}
 
