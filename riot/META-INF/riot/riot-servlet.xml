@@ -11,13 +11,21 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">
-		<property name="proxyTargetClass" value="true" />
-	</bean>
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.FixedLocaleResolver">
+    	<property name="defaultLocale"><value>en_US</value></property>
+    </bean>
 
 	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
 		<property name="location" value="classpath:/application.properties" />
 		<property name="contextOverride" value="true" />
+	</bean>
+
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">
+		<property name="proxyTargetClass" value="true" />
+	</bean>
+
+	<bean class="org.riotfamily.riot.runtime.RiotRuntimeBeanPostProcessor">
+		<constructor-arg ref="riotRuntime" />
 	</bean>
 
 	<bean id="messageSource" name="riotMessageSource" class="org.riotfamily.common.i18n.CodeRevealingMessageSource">

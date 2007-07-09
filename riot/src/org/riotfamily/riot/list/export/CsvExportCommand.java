@@ -30,11 +30,10 @@ import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
 import org.riotfamily.riot.runtime.RiotRuntime;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.riotfamily.riot.runtime.RiotRuntimeAware;
 
 public class CsvExportCommand extends AbstractCommand implements
-		ApplicationContextAware {
+		RiotRuntimeAware {
 
 	private List properties;
 
@@ -50,8 +49,8 @@ public class CsvExportCommand extends AbstractCommand implements
 		this.encoding = encoding;
 	}
 
-	public void setApplicationContext(ApplicationContext context) {
-		runtime = RiotRuntime.getRuntime(context);
+	public void setRiotRuntime(RiotRuntime runtime) {
+		this.runtime = runtime;
 	}
 
 	public void setProperties(List properties) {
