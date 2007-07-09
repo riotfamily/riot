@@ -67,7 +67,7 @@ public class CustomEditorDefinition extends AbstractObjectEditorDefinition {
 			if (objectId != null) {
 				bean = loadBean(objectId);
 			}
-			return editor.getUrl(bean, parentId);
+			return editor.getUrl(getId(), bean, parentId);
 		}
 		return url;
 	}

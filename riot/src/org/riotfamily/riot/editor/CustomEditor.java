@@ -29,6 +29,6 @@ package org.riotfamily.riot.editor;
  */
 public interface CustomEditor {
 
-	public String getUrl(Object bean, String parentId);
+	public String getUrl(String editorId, Object bean, String parentId);
 
 }
