@@ -26,6 +26,7 @@ package org.riotfamily.common.util;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -560,6 +561,15 @@ public final class FormatUtils {
 		}
 	}
 
+	public static String uriUnescape(String input) {
+		try {
+			return URLDecoder.decode(input, "UTF-8");
+		}
+		catch (UnsupportedEncodingException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
 	/**
 	 * Escapes all XML special characters in the given array. Dates and
 	 * primitive-wrappers are left as-is, all other objects are converted to
@@ -624,20 +634,20 @@ public final class FormatUtils {
 				if (Character.isWhitespace(c)) {
 					if (charsWritten) {
 						count++;
-			            if (preserveBreaks && c == '\n') {
-			            	lineBreak = true;
-					    }
+						if (preserveBreaks && c == '\n') {
+							lineBreak = true;
+						}
 					}
-		        }
-		        else {
-		        	if (count > 0) {
-		        		sb.append(lineBreak ? '\n' : ' ');
-		        		count = 0;
-		        		lineBreak = false;
-		        	}
-		        	sb.append(c);
-		        	charsWritten = true;
-		        }
+				}
+				else {
+					if (count > 0) {
+						sb.append(lineBreak ? '\n' : ' ');
+						count = 0;
+						lineBreak = false;
+					}
+					sb.append(c);
+					charsWritten = true;
+				}
 			}
 		}
 		catch (IOException e) {
