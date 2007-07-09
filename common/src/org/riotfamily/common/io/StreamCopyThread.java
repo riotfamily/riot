@@ -14,7 +14,7 @@
  *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -24,34 +24,31 @@
 package org.riotfamily.common.io;
 
 import java.io.IOException;
-import java.util.List;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import org.springframework.util.StringUtils;
+import org.springframework.util.FileCopyUtils;
 
 /**
- * Provides utility methods to invoke commands via Runtime.exec().
- *
  * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
  */
-public final class CommandUtils {
+public class StreamCopyThread extends Thread {
 
-	private CommandUtils() {
-	}
+	private InputStream in;
 
-	public static String exec(String executable) throws IOException {
-		return new RuntimeCommand(new String[] {executable}).exec().getResult();
-	}
+	private OutputStream out;
 
-	public static String exec(String executable, String arg) throws IOException {
-		return new RuntimeCommand(new String[] {executable, arg}).exec().getResult();
-	}
+	public StreamCopyThread(InputStream in, OutputStream out) {
+		this.in = in;
+		this.out = out;
+    }
 
-	public static String exec(List commandLine) throws IOException {
-		return new RuntimeCommand(StringUtils.toStringArray(commandLine)).exec().getResult();
-	}
-
-	public static String exec(String[] commandLine) throws IOException {
-		return new RuntimeCommand(commandLine).exec().getResult();
-	}
-
+    public void run() {
+    	try {
+        	FileCopyUtils.copy(in, out);
+    	}
+    	catch (IOException e) {
+    	}
+    }
 }
