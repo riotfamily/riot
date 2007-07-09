@@ -33,14 +33,13 @@ import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.forms.FormRepository;
 import org.riotfamily.riot.list.ListRepository;
 import org.riotfamily.riot.runtime.RiotRuntime;
-import org.springframework.beans.BeansException;
-import org.springframework.context.support.ApplicationObjectSupport;
+import org.riotfamily.riot.runtime.RiotRuntimeAware;
 import org.springframework.util.Assert;
 
 /**
  *
  */
-public class EditorRepository extends ApplicationObjectSupport {
+public class EditorRepository implements RiotRuntimeAware {
 
 	private static Log log = LogFactory.getLog(EditorRepository.class);
 
@@ -60,8 +59,8 @@ public class EditorRepository extends ApplicationObjectSupport {
 		return riotServletPrefix;
 	}
 
-	protected final void initApplicationContext() throws BeansException {
-		riotServletPrefix = RiotRuntime.getRuntime(getApplicationContext()).getServletPrefix();
+	public void setRiotRuntime(RiotRuntime runtime) {
+		riotServletPrefix = runtime.getServletPrefix();
 	}
 
 	public GroupDefinition getRootGroupDefinition() {
