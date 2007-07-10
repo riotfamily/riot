@@ -53,5 +53,15 @@ public interface JobContext {
 	 * Logs an error message.
 	 */
 	public void logError(String message);
+	
+	/**
+	 * Changes the job's description.
+	 */
+	public void updateDescription(String description);
+	
+	/**
+	 * Changes the number of total steps.
+	 */
+	public void updateStepsTotal(int stepsTotal);
 		
 }

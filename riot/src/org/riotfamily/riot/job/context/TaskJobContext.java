@@ -63,5 +63,13 @@ public class TaskJobContext implements JobContext {
 	public void logError(String message) {
 		task.logError(message);
 	}
+	
+	public void updateDescription(String description) {
+		task.updateDescription(description);
+	}
+	
+	public void updateStepsTotal(int stepsTotal) {
+		task.updateStepsTotal(stepsTotal);
+	}
 
 }

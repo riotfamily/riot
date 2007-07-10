@@ -67,6 +67,9 @@ function updateJob(job) {
 			$('eta').update(job.estimatedTime + ' remaining');
 		}
 	}
+	if (job.description) {
+		$('description').update(job.description);
+	}
 	if (job.progress > 0) {
 		$('percentage').style.width = job.progress + '%';
 		$('percentage').update(job.progress + '%');

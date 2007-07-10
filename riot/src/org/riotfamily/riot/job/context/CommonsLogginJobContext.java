@@ -47,5 +47,11 @@ public class CommonsLogginJobContext implements JobContext {
 
 	public void stepCompleted() throws JobInterruptedException {
 	}
+	
+	public void updateStepsTotal(int stepsTotal) {
+	}
+	
+	public void updateDescription(String description) {
+	}
 
 }

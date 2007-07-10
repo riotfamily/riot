@@ -141,6 +141,18 @@ public class JobTask implements Runnable {
 		dao.updateJobDetail(detail);	
 	}
 	
+	public void updateDescription(String description) {
+		detail.setDescription(description);
+		dao.updateJobDetail(detail);
+		uiUpdater.updateJob(detail);
+	}
+	
+	public void updateStepsTotal(int stepsTotal) {
+		detail.setStepsTotal(stepsTotal);
+		dao.updateJobDetail(detail);
+		uiUpdater.updateJob(detail);
+	}
+	
 	/**
 	 * Logs an info message.
 	 */
