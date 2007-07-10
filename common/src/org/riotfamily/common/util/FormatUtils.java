@@ -70,6 +70,9 @@ public final class FormatUtils {
 	private FormatUtils() {
 	}
 
+	/**
+	 * Returns a formatted string using an appropriate unit (Bytes, KB or MB). 
+	 */
 	public static String formatByteSize(long bytes) {
 		if (bytes < 1024) {
 			return numberFormat.format(bytes) + " Bytes";
@@ -315,6 +318,11 @@ public final class FormatUtils {
 		return millis;
 	}
 
+	/**
+	 * Returns a formatted string using the pattern hh:mm:ss. The hours are 
+	 * omitted if they are zero, the minutes are padded with a '0' character 
+	 * if they are less than 10. 
+	 */
 	public static String formatMillis(long millis) {
 		int hours = (int) (millis / (1000 * 60 * 60));
 		int minutes = (int) (millis / (1000 * 60)) % 60;
@@ -552,6 +560,10 @@ public final class FormatUtils {
 		return escapeChars(s, ".+*?{[^$", '\\');
 	}
 
+	/**
+	 * Translates the given string into application/x-www-form-urlencoded 
+	 * format using UTF-8 as encoding scheme.
+	 */
 	public static String uriEscape(String input) {
 		try {
 			return URLEncoder.encode(input, "UTF-8");
@@ -561,6 +573,10 @@ public final class FormatUtils {
 		}
 	}
 
+	/**
+	 * Decodes the given application/x-www-form-urlencoded string using 
+	 * UTF-8 as encoding scheme.
+	 */
 	public static String uriUnescape(String input) {
 		try {
 			return URLDecoder.decode(input, "UTF-8");
