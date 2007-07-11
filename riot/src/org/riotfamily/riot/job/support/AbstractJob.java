@@ -66,7 +66,20 @@ public abstract class AbstractJob implements Job, BeanNameAware {
 		this.beanName = beanName;
 	}
 
-	public JobDescription setup(String objectId) {
+	public JobDescription setup(final String objectId) {
+		if (transactionManager != null) {
+			return (JobDescription) new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
+				public Object doInTransaction(TransactionStatus status) {
+					return setupInternal(objectId);
+				}
+			});
+		}
+		else {
+			return setupInternal(objectId);
+		}
+	}
+	
+	protected final JobDescription setupInternal(String objectId) {
 		JobDescription jd = new JobDescription();
 		jd.setName(beanName);
 		try {

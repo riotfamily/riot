@@ -55,7 +55,7 @@ var state;
 function updateJob(job) {
 	if (!state) {
 		$('name').update(job.name || '');
-		$('description').update(job.description || '');
+		$('description').update(job.description || 'Please wait ...');
 		subPage(job.name); <#-- see path.js -->
 	}
 	if (job.estimatedTime) {
@@ -77,15 +77,16 @@ function updateJob(job) {
 	}
 	if (job.state != state) {
 		state = job.state;
-		if (state == 1) {
+		 if (state == 1) {
 			$('startFace').update('Pause');
 			$('start').addClassName('running').onclick = interruptJob;
 		}
 		else if (state == 0 || state == 2) {
+			$('runnable').style.visibility = 'visible';
 			$('startFace').update('Start');
 			$('start').removeClassName('running').onclick = startJob;
 		}
-		else {
+		else if (state == 3 || state == 4) {
 			$('runnable').style.visibility = 'hidden';
 			$('finished').style.display = 'block';
 			dwr.engine.setActiveReverseAjax(false);

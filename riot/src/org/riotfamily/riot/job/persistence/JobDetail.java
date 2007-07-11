@@ -33,6 +33,10 @@ import org.riotfamily.riot.job.JobDescription;
  */
 public class JobDetail {
 
+	public static final int NEW  = -1;
+	
+	public static final int INITIALIZED  = 0;
+	
 	public static final int STARTED = 1;
 	
 	public static final int INTERRUPTED = 2;
@@ -49,7 +53,7 @@ public class JobDetail {
 	
 	private String description;
 	
-	private int state;
+	private int state = NEW;
 	
 	private Date startDate;
 	
@@ -71,15 +75,17 @@ public class JobDetail {
 	public JobDetail() {
 	}
 
-	public JobDetail(String type, String objectId, JobDescription desc, 
-			int averageStepTime) {
-		
+	public JobDetail(String type, String objectId, int averageStepTime) {
 		this.type = type;
 		this.objectId = objectId;
+		this.averageStepTime = averageStepTime;
+	}
+	
+	public void init(JobDescription desc) {
 		this.name = desc.getName();
 		this.description = desc.getDescription();
 		this.stepsTotal = desc.getSteps();
-		this.averageStepTime = averageStepTime;
+		this.state = INITIALIZED;
 	}
 	
 	public Long getId() {

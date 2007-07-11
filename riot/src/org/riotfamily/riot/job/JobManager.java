@@ -119,14 +119,10 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 	private JobDetail setupJob(String type, String objectId) 
 			throws JobCreationException {
 		
-		Job job = getJob(type);
-		JobDescription desc = job.setup(objectId);
-		int averageStepTime = 0;
-		if (desc.getSteps() > 0) {
-			averageStepTime = dao.getAverageStepTime(type);
-		}
-		JobDetail detail = new JobDetail(type, objectId, desc, averageStepTime);
+		int averageStepTime = dao.getAverageStepTime(type);
+		JobDetail detail = new JobDetail(type, objectId, averageStepTime);
 		dao.saveJobDetail(detail);
+		taskExecutor.execute(new JobSetupTask(detail));
 		return detail;
 	}
 		
@@ -163,5 +159,23 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 		executionTimeUpdater.stop();
 		taskList.interruptAll();
 		log.debug("JobManager has been shut down.");
+	}
+	
+	private class JobSetupTask implements Runnable {
+
+		private JobDetail detail;
+		
+		private Job job;
+		
+		public JobSetupTask(JobDetail detail) {
+			this.detail = detail;
+			this.job = getJob(detail.getType());
+		}
+
+		public void run() {
+			detail.init(job.setup(detail.getObjectId()));
+			dao.updateJobDetail(detail);
+			uiUpdater.updateJob(detail);
+		}
 	}
 }
