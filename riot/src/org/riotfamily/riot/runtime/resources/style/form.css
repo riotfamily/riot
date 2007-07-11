@@ -439,6 +439,14 @@ ul.radioButtonGroup {
 	background: url(images/download.gif) no-repeat;
 }
 
+.filePreview .view {
+	width: 32px;
+	height: 32px;
+	float: left;
+	display: block;
+	background: url(images/view.gif) no-repeat;
+}
+
 .cropper {
 	margin: 10px 0;
 	overflow: hidden;

@@ -36,6 +36,7 @@ import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.core.Checkbox;
 import org.riotfamily.forms.element.core.FileUpload;
+import org.riotfamily.forms.element.core.FlashUpload;
 import org.riotfamily.forms.element.core.ImageUpload;
 import org.riotfamily.forms.element.core.NumberField;
 import org.riotfamily.forms.element.dom.XmlSequence;
@@ -93,6 +94,27 @@ public class ComponentFormRepository extends XmlFormRepository {
 						component.addPropertyProcessor(
 								new PropertyEditorProcessor(
 								imageUpload.getHeightProperty(),
+								new CustomNumberEditor(Integer.class, true)));
+					}
+				}
+				if (upload instanceof FlashUpload) {
+					FlashUpload flashUpload = (FlashUpload) upload;
+					if (flashUpload.getWidthProperty() != null) {
+						component.addPropertyProcessor(
+								new PropertyEditorProcessor(
+								flashUpload.getWidthProperty(),
+								new CustomNumberEditor(Integer.class, true)));
+					}
+					if (flashUpload.getHeightProperty() != null) {
+						component.addPropertyProcessor(
+								new PropertyEditorProcessor(
+								flashUpload.getHeightProperty(),
+								new CustomNumberEditor(Integer.class, true)));
+					}
+					if (flashUpload.getVersionProperty() != null) {
+						component.addPropertyProcessor(
+								new PropertyEditorProcessor(
+								flashUpload.getVersionProperty(),
 								new CustomNumberEditor(Integer.class, true)));
 					}
 				}

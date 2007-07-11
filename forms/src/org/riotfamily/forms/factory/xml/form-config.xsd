@@ -322,6 +322,20 @@
 		</xsd:complexType>
 	</xsd:element>
 
+	<xsd:element name="flash-upload">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="upload">
+					<xsd:attribute name="width" type="xsd:positiveInteger" />
+					<xsd:attribute name="height" type="xsd:positiveInteger" />
+					<xsd:attribute name="width-property" type="xsd:string" />
+					<xsd:attribute name="height-property" type="xsd:string" />
+					<xsd:attribute name="version-property" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
 	<xsd:simpleType name="commaDelimitedIntegers">
 		<xsd:restriction base="xsd:string">
 			<xsd:pattern value="\d+(\s*,\s*\d+)*" />
