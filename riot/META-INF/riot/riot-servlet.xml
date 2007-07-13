@@ -69,6 +69,7 @@
 		<property name="types">
 			<list>
 				<value>text/css css</value>
+				<value>text/xml xml</value>
 				<value>text/javascript js</value>
 				<value>image/png png</value>
 			</list>
