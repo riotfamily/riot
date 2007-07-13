@@ -46,6 +46,10 @@ public class RuntimeCommand {
 	private OutputStream stdOut = new ByteArrayOutputStream();
 
 	private OutputStream stdIn;
+	
+	private StreamCopyThread stdErrCopyThread;
+	
+	private StreamCopyThread stdOutCopyThread;
 
 	private Integer exitCode;
 
@@ -83,8 +87,13 @@ public class RuntimeCommand {
 
 	public RuntimeCommand exec() throws IOException {
 		process = Runtime.getRuntime().exec(commandLine);
-		new StreamCopyThread(process.getErrorStream(), stdErr).start();
-		new StreamCopyThread(process.getInputStream(), stdOut).start();
+		
+		stdErrCopyThread = new StreamCopyThread(process.getErrorStream(), stdErr);
+		stdErrCopyThread.start();
+		
+		stdOutCopyThread = new StreamCopyThread(process.getInputStream(), stdOut);
+		stdOutCopyThread.start();
+		
 		stdIn = process.getOutputStream();
 		return this;
 	}
@@ -99,6 +108,8 @@ public class RuntimeCommand {
 		if (exitCode == null) {
 			try {
 				IOUtils.closeStream(stdIn);
+				stdErrCopyThread.join();
+				stdOutCopyThread.join();
 				exitCode = new Integer(process.waitFor());
 			}
 			catch (InterruptedException e) {
