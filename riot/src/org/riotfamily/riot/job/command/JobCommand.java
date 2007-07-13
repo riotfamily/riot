@@ -65,6 +65,6 @@ public class JobCommand extends AbstractCommand implements
 
 		JobDetail detail = jobManager.getOrCreateJob(jobType, objectId);
 		return new GotoUrlResult(context, runtime.getServletPrefix()
-				+ "/job?jobId="	+ detail.getId());
+				+ "/job?jobId="	+ detail.getId() + "&type=" + jobType);
 	}
 }

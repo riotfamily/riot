@@ -46,6 +46,7 @@
 
 <script type="text/javascript" language="JavaScript">
 
+subPage('<@spring.messageText "job.title." + type, type />'); <#-- see path.js -->
 TweakStyle.roundElement('start', 'all');
 TweakStyle.roundElement('cancel', 'all');
 TweakStyle.roundElement('logPane', 'all');
@@ -56,7 +57,6 @@ function updateJob(job) {
 	if (!state) {
 		$('name').update(job.name || '');
 		$('description').update(job.description || 'Please wait ...');
-		subPage(job.name); <#-- see path.js -->
 	}
 	if (job.estimatedTime) {
 		if (job.state == 0) {
