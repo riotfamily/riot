@@ -39,11 +39,12 @@ import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.controller.RepositoryFormController;
 import org.riotfamily.riot.dao.RiotDao;
-import org.riotfamily.riot.editor.ObjectEditorDefinition;
 import org.riotfamily.riot.editor.EditorConstants;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
+import org.riotfamily.riot.editor.FormReference;
 import org.riotfamily.riot.editor.ListDefinition;
+import org.riotfamily.riot.editor.ObjectEditorDefinition;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -81,7 +82,7 @@ public abstract class BaseFormController extends RepositoryFormController
 				+ request.getAttribute(EditorConstants.EDITOR_ID);
 	}
 
-	protected ObjectEditorDefinition getFormDefinition(HttpServletRequest request) {
+	protected ObjectEditorDefinition getObjectEditorDefinition(HttpServletRequest request) {
 		ObjectEditorDefinition editorDefinition = (ObjectEditorDefinition)
 				request.getAttribute(EDITOR_DEFINITION_ATTR);
 
@@ -103,11 +104,16 @@ public abstract class BaseFormController extends RepositoryFormController
 		return request.getParameter(EditorConstants.PARENT_ID);
 	}
 
+	protected String getFormId(HttpServletRequest request) {
+		FormReference ref = (FormReference) getObjectEditorDefinition(request);
+		return ref.getFormId();
+	}
+	
 	protected Form createForm(HttpServletRequest request) {
 		Form form = super.createForm(request);
 		FormUtils.setObjectId(form, getObjectId(request));
 		FormUtils.setParentId(form, getParentId(request));
-		FormUtils.setEditorDefinition(form, getFormDefinition(request));
+		FormUtils.setEditorDefinition(form, getObjectEditorDefinition(request));
 		return form;
 	}
 
@@ -115,7 +121,7 @@ public abstract class BaseFormController extends RepositoryFormController
 	 * @see org.riotfamily.forms.controller.RepositoryFormController#getFormBackingObject(javax.servlet.http.HttpServletRequest)
 	 */
 	protected Object getFormBackingObject(HttpServletRequest request) {
-		ObjectEditorDefinition editorDefinition = getFormDefinition(request);
+		ObjectEditorDefinition editorDefinition = getObjectEditorDefinition(request);
 		String objectId = getObjectId(request);
 		if (objectId == null) {
 			return null;
@@ -142,7 +148,7 @@ public abstract class BaseFormController extends RepositoryFormController
 
 		StringWriter sw = new StringWriter();
 		renderForm(form, new PrintWriter(sw));
-		Map model = createModel(form, getFormDefinition(request),
+		Map model = createModel(form, getObjectEditorDefinition(request),
 				request, response);
 
 		model.put("form", sw.toString());
@@ -155,7 +161,7 @@ public abstract class BaseFormController extends RepositoryFormController
 			throws Exception {
 
 		Object bean = form.populateBackingObject();
-		ObjectEditorDefinition editorDef = getFormDefinition(request);
+		ObjectEditorDefinition editorDef = getObjectEditorDefinition(request);
 
 		ListDefinition listDef = EditorDefinitionUtils.getParentListDefinition(editorDef);
 		RiotDao dao = listDef.getListConfig().getDao();

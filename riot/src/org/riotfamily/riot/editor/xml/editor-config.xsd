@@ -105,6 +105,7 @@
 
 	<xsd:element name="custom">
 		<xsd:complexType>
+			<xsd:group ref="form-children" minOccurs="0" />
 			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="icon" type="xsd:string" />
 			<xsd:attribute name="target" type="xsd:string" />

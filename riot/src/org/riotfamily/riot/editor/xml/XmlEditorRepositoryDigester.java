@@ -35,6 +35,7 @@ import org.riotfamily.riot.editor.FormDefinition;
 import org.riotfamily.riot.editor.GroupDefinition;
 import org.riotfamily.riot.editor.IntermediateDefinition;
 import org.riotfamily.riot.editor.ListDefinition;
+import org.riotfamily.riot.editor.ObjectEditorDefinition;
 import org.riotfamily.riot.editor.TreeDefinition;
 import org.riotfamily.riot.editor.ViewDefinition;
 import org.springframework.beans.factory.BeanFactory;
@@ -84,8 +85,10 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 
 	private static final String CUSTOM = "custom";
 
+	private static final String CUSTOM_REF = "ref";
+	
 	private static final String[] CUSTOM_ATTR = new String[] {
-		"name", "editor=@ref", "target", "url", "icon"
+		"name", "target", "url", "icon"
 	};
 
 	private static final String OBJECT_EDITOR = FORM + '|'
@@ -201,16 +204,19 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 		XmlUtils.populate(listDefinition, listElement, LIST_ATTR);
 		addEditorDefinition(listDefinition);
 
-		EditorDefinition def = null;
 		Element e = XmlUtils.getFirstChildByRegex(listElement, ANYTHING);
-		if (isFormElement(e) || isFormChooserElement(e) || isViewElement(e)) {
-			def = digestObjectEditorDefinition(e, listDefinition);
+		if (e != null) {
+			EditorDefinition def = null;
+			if (isListElement(e) || isTreeElement(e)) {
+				def = new IntermediateDefinition(
+						listDefinition, digestListOrTreeDefinition(e));
+			}
+			else {
+				def = digestObjectEditorDefinition(e, listDefinition);
+				
+			}
+			listDefinition.setDisplayDefinition(def);
 		}
-		else if (isListElement(e) || isTreeElement(e)) {
-			def = new IntermediateDefinition(
-					listDefinition, digestListOrTreeDefinition(e));
-		}
-		listDefinition.setDisplayDefinition(def);
 	}
 
 
@@ -250,15 +256,15 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 		return formDefinition;
 	}
 
-	protected void digestChildEditors(Element ele, FormDefinition formDef) {
+	protected void digestChildEditors(Element ele, ObjectEditorDefinition editorDef) {
 		Iterator it = XmlUtils.getChildElementsByRegex(
 				ele, ANYTHING).iterator();
 
 		while (it.hasNext()) {
 			EditorDefinition childDef = digestChildEditorDefinition(
-					(Element) it.next(), formDef.getParentEditorDefinition());
+					(Element) it.next(), editorDef.getParentEditorDefinition());
 
-			formDef.addChildEditorDefinition(childDef);
+			editorDef.addChildEditorDefinition(childDef);
 		}
 	}
 
@@ -330,10 +336,23 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	protected EditorDefinition digestCustomDefinition(Element ele,
 			EditorDefinition parentDef) {
 
-		CustomEditorDefinition custom = new CustomEditorDefinition(editorRepository);
+		CustomEditorDefinition custom;
+		String beanName = XmlUtils.getAttribute(ele, CUSTOM_REF);
+		if (beanName != null) {
+			custom = (CustomEditorDefinition) beanFactory.getBean(
+					beanName, CustomEditorDefinition.class);
+		}
+		else {
+			custom = new CustomEditorDefinition();
+		}
+		custom.setEditorRepository(editorRepository);
+		
 		XmlUtils.populate(custom, ele, CUSTOM_ATTR, beanFactory);
 		custom.setParentEditorDefinition(parentDef);
 		addEditorDefinition(custom);
+		
+		digestChildEditors(ele, custom);
+		
 		return custom;
 	}
 

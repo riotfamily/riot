@@ -43,6 +43,14 @@ public class FormChooserController extends FormController {
 		super(editorRepository, formRepository, listService);
 	}
 
+	protected String getFormId(HttpServletRequest request) {
+		String formId = request.getParameter(getFormIdParam());
+		if (formId == null) {
+			formId = super.getFormId(request);
+		}
+		return formId;
+	}
+	
 	protected Map createModel(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 

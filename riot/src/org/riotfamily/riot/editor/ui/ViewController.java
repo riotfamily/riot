@@ -35,10 +35,11 @@ import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.riot.editor.EditorConstants;
+import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.ListDefinition;
-import org.riotfamily.riot.editor.ViewDefinition;
+import org.riotfamily.riot.editor.ViewReference;
 import org.riotfamily.riot.list.ui.ListService;
 import org.riotfamily.riot.list.ui.ListSession;
 import org.springframework.beans.factory.InitializingBean;
@@ -85,28 +86,27 @@ public class ViewController implements TransactionalController,
 		configuration.setTemplateLoader(loader);
 	}
 
-	public final ModelAndView handleRequest(final HttpServletRequest request,
-			final HttpServletResponse response) throws Exception {
+	public final ModelAndView handleRequest(HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
 		String editorId = (String) request.getAttribute(EditorConstants.EDITOR_ID);
 		Assert.notNull(editorId, "No editorId in request scope");
 
-		final String objectId = (String) request.getAttribute(EditorConstants.OBJECT_ID);
+		String objectId = (String) request.getAttribute(EditorConstants.OBJECT_ID);
 		Assert.notNull(objectId, "No objectId in request scope");
 
-		final ViewDefinition viewDef = (ViewDefinition)
-				editorRepository.getEditorDefinition(editorId);
+		EditorDefinition editorDef = editorRepository.getEditorDefinition(editorId);
+		Assert.notNull(editorDef, "No such EditorDefinition: " + editorId);
 
-		Assert.notNull(viewDef, "No such ViewDefinition: " + editorId);
+		StringWriter sw = new StringWriter();
 
-		final StringWriter sw = new StringWriter();
-
-		Object object = EditorDefinitionUtils.loadBean(viewDef, objectId);
+		Object object = EditorDefinitionUtils.loadBean(editorDef, objectId);
 		Map model = new FlatMap();
 		model.put("object", object);
 		model.put("request", request);
 		try {
-			configuration.getTemplate(viewDef.getTemplate()).process(model, sw);
+			String template = ((ViewReference) editorDef).getTemplate();
+			configuration.getTemplate(template).process(model, sw);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
@@ -118,18 +118,27 @@ public class ViewController implements TransactionalController,
 		model.put("form", sw.toString());
 
 		ListDefinition parentListDef = EditorDefinitionUtils
-				.getParentListDefinition(viewDef);
+				.getParentListDefinition(editorDef);
 
 		if (parentListDef != null) {
 			ListSession session = listService.getOrCreateListSession(
 				parentListDef.getId(),
-				EditorDefinitionUtils.getParentId(viewDef, object),
+				EditorDefinitionUtils.getParentId(editorDef, object),
 				null, request);
 
 			model.put("listKey", session.getKey());
 		}
 
 		return new ModelAndView(viewName, model);
+	}
+	
+	public static String getUrl(String editorId, String objectId) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("/view/").append(editorId);
+		if (objectId != null) {
+			sb.append('/').append(objectId);
+		}
+		return sb.toString();
 	}
 
 }

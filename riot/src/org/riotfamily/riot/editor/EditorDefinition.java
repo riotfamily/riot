@@ -37,6 +37,8 @@ public interface EditorDefinition {
 
 	public String getId();
 	
+	public String getEditorType();
+	
 	public Class getBeanClass();
 	
 	public String getLabel(Object bean);

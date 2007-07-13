@@ -41,11 +41,7 @@ public class ListDefinition extends AbstractEditorDefinition {
 	private String listId;
 
 	public ListDefinition(EditorRepository repository) {
-		this(repository, TYPE_LIST);
-	}
-
-	protected ListDefinition(EditorRepository repository, String editorType) {
-		super(repository, editorType);
+		setEditorRepository(repository);
 	}
 
 	public ListDefinition(ListDefinition prototype,
@@ -55,6 +51,10 @@ public class ListDefinition extends AbstractEditorDefinition {
 		displayDefinition = prototype.getDisplayDefinition();
 		listId = prototype.getListId();
 		setId(prototype.getId());
+	}
+	
+	public String getEditorType() {
+		return TYPE_LIST;
 	}
 
 	public String getListId() {

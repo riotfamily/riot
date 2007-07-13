@@ -24,6 +24,7 @@
 package org.riotfamily.riot.editor;
 
 import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.riot.editor.ui.CustomEditorController;
 import org.riotfamily.riot.editor.ui.EditorReference;
 
 
@@ -33,20 +34,15 @@ public class CustomEditorDefinition extends AbstractObjectEditorDefinition {
 
 	private String url;
 
-	private CustomEditor editor;
-
 	private String target;
 
-	public CustomEditorDefinition(EditorRepository editorRepository) {
-		super(editorRepository, TYPE_CUSTOM);
+	
+	public String getEditorType() {
+		return TYPE_CUSTOM;
 	}
-
+	
 	public void setTarget(String target) {
 		this.target = target;
-	}
-
-	public void setEditor(CustomEditor editor) {
-		this.editor = editor;
 	}
 
 	public void setUrl(String url) {
@@ -62,13 +58,6 @@ public class CustomEditorDefinition extends AbstractObjectEditorDefinition {
 	}
 
 	public String getTargetUrl(String objectId, String parentId) {
-		if (editor != null) {
-			Object bean = null;
-			if (objectId != null) {
-				bean = loadBean(objectId);
-			}
-			return editor.getUrl(getId(), bean, parentId);
-		}
 		return url;
 	}
 
@@ -76,16 +65,11 @@ public class CustomEditorDefinition extends AbstractObjectEditorDefinition {
 		if (target != null) {
 			return getTargetUrl(objectId, parentId);
 		}
-		StringBuffer sb = new StringBuffer();
-		sb.append(getEditorRepository().getRiotServletPrefix());
-		sb.append("/custom/").append(getId());
-		if (objectId != null) {
-			sb.append("?objectId=").append(objectId);
-		}
-		else if (parentId != null) {
-			sb.append("?parentId=").append(parentId);
-		}
-		return sb.toString();
+		return super.getEditorUrl(objectId, parentId);
+	}
+	
+	protected String getEditorUrlWithinServlet(String objectId, String parentId) {
+		return CustomEditorController.getUrl(getId(), objectId, parentId);
 	}
 
 }

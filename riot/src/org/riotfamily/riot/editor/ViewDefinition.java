@@ -23,17 +23,25 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
+import org.riotfamily.riot.editor.ui.ViewController;
 
-public class ViewDefinition extends AbstractObjectEditorDefinition {
+
+public class ViewDefinition extends AbstractObjectEditorDefinition 
+		implements ViewReference {
 
 	protected static final String TYPE_VIEW = "view";
 
 	private String template;
 
-	public ViewDefinition(EditorRepository editorRepository) {
-		super(editorRepository, TYPE_VIEW);
-	}
 
+	public ViewDefinition(EditorRepository editorRepository) {
+		setEditorRepository(editorRepository);
+	}
+	
+	public String getEditorType() {
+		return TYPE_VIEW;
+	}
+	
 	public String getTemplate() {
 		return this.template;
 	}
@@ -42,14 +50,8 @@ public class ViewDefinition extends AbstractObjectEditorDefinition {
 		this.template = template;
 	}
 
-	public String getEditorUrl(String objectId, String parentId) {
-		StringBuffer sb = new StringBuffer();
-		sb.append(getEditorRepository().getRiotServletPrefix());
-		sb.append("/view/").append(getId());
-		if (objectId != null) {
-			sb.append('/').append(objectId);
-		}
-		return sb.toString();
+	public String getEditorUrlWithinServlet(String objectId, String parentId) {
+		return ViewController.getUrl(getId(), objectId);
 	}
 
 }

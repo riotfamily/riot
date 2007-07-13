@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
+import org.riotfamily.riot.form.ui.FormController;
 import org.springframework.util.Assert;
 
 
@@ -30,7 +31,7 @@ import org.springframework.util.Assert;
  *
  */
 public class FormDefinition extends AbstractObjectEditorDefinition
-		implements Cloneable {
+		implements FormReference, Cloneable {
 
 	protected static final String TYPE_FORM = "form";
 
@@ -40,9 +41,13 @@ public class FormDefinition extends AbstractObjectEditorDefinition
 
 
 	public FormDefinition(EditorRepository editorRepository) {
-		super(editorRepository, TYPE_FORM);
+		setEditorRepository(editorRepository);
 	}
 
+	public String getEditorType() {
+		return TYPE_FORM;
+	}
+	
 	public String getFormId() {
 		return formId;
 	}
@@ -84,18 +89,8 @@ public class FormDefinition extends AbstractObjectEditorDefinition
 		}
 	}
 
-	public String getEditorUrl(String objectId, String parentId) {
-		StringBuffer sb = new StringBuffer();
-		sb.append(getEditorRepository().getRiotServletPrefix());
-		sb.append("/form/").append(getId());
-		if (objectId != null) {
-			sb.append('/').append(objectId);
-		}
-		sb.append("?form=").append(formId);
-		if (parentId != null) {
-			sb.append("&parentId=").append(parentId);
-		}
-		return sb.toString();
+	protected String getEditorUrlWithinServlet(String objectId, String parentId) {
+		return FormController.getUrl(getId(), objectId, parentId);
 	}
 
 }

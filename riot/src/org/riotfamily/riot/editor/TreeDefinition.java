@@ -40,6 +40,11 @@ public class TreeDefinition extends ListDefinition {
 	
 	private ListDefinition nodeListDefinition;
 	
+	
+	public TreeDefinition(EditorRepository editorRepository) {
+		super(editorRepository);
+	}
+	
 	private boolean isNode(Object bean) {
 		if (bean == null) {
 			return false;
@@ -59,9 +64,6 @@ public class TreeDefinition extends ListDefinition {
 		return true;
 	}
 
-	public TreeDefinition(EditorRepository editorRepository) {
-		super(editorRepository, TYPE_TREE);
-	}
 	
 	public void setBranchClass(Class nodeClass) {
 		this.branchClass = nodeClass;

@@ -132,4 +132,16 @@ public class FormController extends BaseFormController {
 		formUrl = ServletUtils.addParameter(formUrl, "saved", "true");
 		return new ModelAndView(new RedirectView(formUrl, true));
 	}
+	
+	public static String getUrl(String editorId, String objectId, String parentId) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("/form/").append(editorId);
+		if (objectId != null) {
+			sb.append('/').append(objectId);
+		}
+		if (parentId != null) {
+			sb.append("?parentId=").append(parentId);
+		}
+		return sb.toString();
+	}
 }

@@ -70,5 +70,17 @@ public class CustomEditorController implements TransactionalController {
 
 		return new ModelAndView(viewName, model);
 	}
+	
+	public static String getUrl(String editorId, String objectId, String parentId) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("/custom/").append(editorId);
+		if (objectId != null) {
+			sb.append("?objectId=").append(objectId);
+		}
+		else if (parentId != null) {
+			sb.append("?parentId=").append(parentId);
+		}
+		return sb.toString();
+	}
 
 }

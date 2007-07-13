@@ -48,12 +48,6 @@ public abstract class AbstractObjectEditorDefinition
 
 	private List childEditorDefinitions = new LinkedList();
 
-	public AbstractObjectEditorDefinition(EditorRepository repository,
-			String editorType) {
-
-		super(repository, editorType);
-	}
-
 	public Class getBeanClass() {
 		if (beanClass != null) {
 			return beanClass;
@@ -208,4 +202,13 @@ public abstract class AbstractObjectEditorDefinition
 		ref.setEditorUrl(getEditorUrl(objectId, null));
 		return ref;
 	}
+	
+	public String getEditorUrl(String objectId, String parentId) {
+		return getEditorRepository().getRiotServletPrefix() 
+				+ getEditorUrlWithinServlet(objectId, parentId);
+	}
+	
+	protected abstract String getEditorUrlWithinServlet(
+			String objectId, String parentId);
+	
 }

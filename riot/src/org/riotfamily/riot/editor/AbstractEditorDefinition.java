@@ -49,13 +49,8 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 
 	private boolean hidden;
 
-	private String editorType;
-
-	public AbstractEditorDefinition(EditorRepository editorRepository,
-			String editorType) {
-
+	public void setEditorRepository(EditorRepository editorRepository) {
 		this.editorRepository = editorRepository;
-		this.editorType = editorType;
 	}
 
 	public String getId() {
@@ -79,14 +74,6 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 
 	protected String getDefaultName() {
 		return null;
-	}
-
-	protected String getEditorType() {
-		return this.editorType;
-	}
-
-	protected void setEditorType(String editorType) {
-		this.editorType = editorType;
 	}
 
 	public Class getBeanClass() {

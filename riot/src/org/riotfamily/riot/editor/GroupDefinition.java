@@ -39,10 +39,15 @@ public class GroupDefinition extends AbstractEditorDefinition {
 
 	private List editorDefinitions;
 
+	
 	public GroupDefinition(EditorRepository editorRepository) {
-		super(editorRepository, TYPE_GROUP);
+		setEditorRepository(editorRepository);
 	}
-
+	
+	public String getEditorType() {
+		return TYPE_GROUP;
+	}
+	
 	public List getEditorDefinitions() {
 		return editorDefinitions;
 	}

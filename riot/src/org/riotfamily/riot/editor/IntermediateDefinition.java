@@ -32,12 +32,15 @@ public class IntermediateDefinition extends AbstractObjectEditorDefinition {
 	public IntermediateDefinition(ListDefinition parentListDefinition,
 			ListDefinition nestedListDefinition) {
 
-		super(nestedListDefinition.getEditorRepository(), "none");
 		setParentEditorDefinition(parentListDefinition);
 		this.nestedListDefinition = nestedListDefinition;
 		nestedListDefinition.setParentEditorDefinition(this);
 	}
 
+	public String getEditorType() {
+		return null;
+	}
+	
 	public ListDefinition getNestedListDefinition() {
 		return this.nestedListDefinition;
 	}
@@ -48,8 +51,8 @@ public class IntermediateDefinition extends AbstractObjectEditorDefinition {
 		return reference;
 	}
 
-	public String getEditorUrl(String objectId, String parentId) {
-		return null;
+	protected String getEditorUrlWithinServlet(String objectId, String parentId) {
+		throw new IllegalStateException("Intermediate definitions don't have editor URLs.");
 	}
 
 }
