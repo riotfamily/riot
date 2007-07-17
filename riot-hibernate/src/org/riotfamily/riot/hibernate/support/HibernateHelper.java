@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -189,6 +190,32 @@ public class HibernateHelper extends HibernateSupport {
 	public void update(Object object) throws DataAccessException {
 		try {
 			getSession().update(object);
+		}
+		catch (HibernateException e) {
+			throw SessionFactoryUtils.convertHibernateAccessException(e);
+		}
+	}
+
+	/**
+	 * Merges the given detached instance.
+	 * @see Session#merge(Object)
+	 */
+	public Object merge(Object object) throws DataAccessException {
+		try {
+			return getSession().merge(object);
+		}
+		catch (HibernateException e) {
+			throw SessionFactoryUtils.convertHibernateAccessException(e);
+		}
+	}
+
+	/**
+	 * Obtain the specified lock leve upon the given object.
+	 * @see Session#lock(Object, LockMode)
+	 */
+	public void lock(Object object, LockMode lockMode) throws DataAccessException {
+		try {
+			getSession().lock(object, lockMode);
 		}
 		catch (HibernateException e) {
 			throw SessionFactoryUtils.convertHibernateAccessException(e);
