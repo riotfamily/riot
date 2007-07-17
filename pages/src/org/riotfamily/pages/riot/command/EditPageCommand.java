@@ -26,6 +26,7 @@ package org.riotfamily.pages.riot.command;
 import java.util.Locale;
 
 import org.riotfamily.pages.Page;
+import org.riotfamily.pages.PageValidationUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
@@ -49,6 +50,15 @@ public class EditPageCommand extends EditCommand {
 				: ACTION_TRANSLATE;
 	}
 
+	protected boolean isEnabled(CommandContext context, String action) {
+		if (action == ACTION_TRANSLATE) {
+			Page page = PageCommandUtils.getPage(context);
+			Locale locale = PageCommandUtils.getParentLocale(context);
+			return PageValidationUtils.isTranslatable(page, locale);
+		}
+		return true;
+	}
+
 	protected String getItemStyleClass(CommandContext context, String action) {
 		return action == ACTION_TRANSLATE ? "foreign-page" : null;
 	}
@@ -57,7 +67,7 @@ public class EditPageCommand extends EditCommand {
 		if (PageCommandUtils.isTranslated(context)) {
 			return super.execute(context);
 		}
-		Page page = (Page) context.getBean();
+		Page page = PageCommandUtils.getPage(context);
 		Locale locale = PageCommandUtils.getParentLocale(context);
 		pageDao.addTranslation(page, locale);
 		return new ShowListResult(context);

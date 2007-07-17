@@ -14,31 +14,22 @@
  *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.list.command.core;
+package org.riotfamily.pages.riot.command;
 
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
+import org.riotfamily.riot.list.command.core.Clipboard;
+import org.riotfamily.riot.list.command.core.PasteCommand;
 import org.riotfamily.riot.list.command.result.ShowListResult;
 
-public class PasteCommand extends AbstractCommand {
-
-	public static final String ACTION_PASTE = "paste";
-
-	protected String getAction(CommandContext context) {
-		return ACTION_PASTE;
-	}
-
-	protected boolean isEnabled(CommandContext context, String action) {
-		Clipboard cb = Clipboard.get(context);
-		return cb.canPaste(context);
-	}
+public class PastePageCommand extends PasteCommand {
 
 	public CommandResult execute(CommandContext context) {
 		Clipboard cb = Clipboard.get(context);

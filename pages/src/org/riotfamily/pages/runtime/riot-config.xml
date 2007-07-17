@@ -58,9 +58,9 @@
 			<list:column property="locale" renderer="countryFlagRenderer" />
 			<list:column property="pathComponent" />
 			<list:command id="publishPage" />
-			<list:command id="moveUp" />
-			<list:command id="moveDown" />
-			<list:command id="cut" />
+			<list:command id="moveUpPage" />
+			<list:command id="moveDownPage" />
+			<list:command id="cutPage" />
 			<list:command id="editPage" />
 			<list:command id="deletePage" />
 			<list:command id="gotoPage" />

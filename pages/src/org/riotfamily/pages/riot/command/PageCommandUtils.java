@@ -26,6 +26,7 @@ package org.riotfamily.pages.riot.command;
 import java.util.Locale;
 
 import org.riotfamily.pages.Page;
+import org.riotfamily.pages.riot.dao.PageRiotDao;
 import org.riotfamily.pages.riot.dao.SiteLocale;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.springframework.util.ObjectUtils;
@@ -43,6 +44,10 @@ public final class PageCommandUtils {
 		return (Page) context.getBean();
 	}
 
+	public static Locale getLocale(CommandContext context) {
+		return getPage(context).getLocale();
+	}
+
 	public static Locale getParentLocale(CommandContext context) {
 		Object parent = context.getParent();
 		Locale locale = null;
@@ -56,6 +61,23 @@ public final class PageCommandUtils {
 			locale = getPage(context).getLocale();
 		}
 		return locale;
+	}
+
+	public static Locale getMasterLocale(CommandContext context) {
+		PageRiotDao dao = (PageRiotDao) context.getDao();
+		return dao.getMasterLocale();
+	}
+
+	public static boolean isMasterLocale(CommandContext context) {
+		return getLocale(context).equals(getMasterLocale(context));
+	}
+
+	public static boolean isMasterLocaleList(CommandContext context) {
+		return getParentLocale(context).equals(getMasterLocale(context));
+	}
+
+	public static boolean hasTranslation(CommandContext context) {
+		return getPage(context).getNode().getPages().size() > 1;
 	}
 
 	public static boolean isTranslated(CommandContext context) {
