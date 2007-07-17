@@ -93,6 +93,11 @@ tr.highlight {
 	background-color: #ebebeb;
 }
 
+tr.cut,
+tr.copied {
+	font-style: italic;
+}
+
 .pager {
 	background-color: #ebebeb;
 	cursor: default;
