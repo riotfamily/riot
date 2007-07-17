@@ -19,6 +19,7 @@
 	*
 	* Contributor(s):
 	*   Felix Gnass [fgnass at neteye dot de]
+	*   Carsten Woelk [cwoelk at neteye dot de]
 	*
 	* ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.macro;
@@ -116,6 +117,23 @@ public class PageMacroHelper {
 		return PageHandlerMapping.getWildcardMatch(request);
 	}
 
+	public boolean isVisible(Page page) {
+		return !page.getNode().isHidden() && (page.isEnabled()
+					|| EditModeUtils.isEditMode(request));
+	}
+
+	public Collection getVisiblePages(Collection pages) {
+		ArrayList result = new ArrayList();
+		Iterator it = pages.iterator();
+		while (it.hasNext()) {
+			Page page = (Page) it.next();
+			if (isVisible(page)) {
+				result.add(page);
+			}
+		}
+		return result;
+	}
+
 	public List group(Collection pages, int size) {
 		ArrayList groups = new ArrayList();
 		int i = 0;
@@ -123,9 +141,7 @@ public class PageMacroHelper {
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
-			if (!page.getNode().isHidden() && (page.isEnabled()
-					|| EditModeUtils.isEditMode(request))) {
-
+			if (isVisible(page)) {
 				if (i++ % size == 0) {
 					group = new ArrayList();
 					groups.add(group);
