@@ -170,10 +170,6 @@ public class Page {
 		return pages;
 	}
 
-	public Collection getSiblings() {
-		return node.getParent().getChildPages(locale);
-	}
-
 	public void addChildPage(Page child) {
 		child.setLocale(locale);
 		node.addChildNode(new PageNode(child));

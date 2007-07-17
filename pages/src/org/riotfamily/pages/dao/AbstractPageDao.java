@@ -1,26 +1,26 @@
 /* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Riot.
- *
- * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- *
- * ***** END LICENSE BLOCK ***** */
+	* Version: MPL 1.1
+	* The contents of this file are subject to the Mozilla Public License Version
+	* 1.1 (the "License"); you may not use this file except in compliance with
+	* the License. You may obtain a copy of the License at
+	* http://www.mozilla.org/MPL/
+	*
+	* Software distributed under the License is distributed on an "AS IS" basis,
+	* WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	* for the specific language governing rights and limitations under the
+	* License.
+	*
+	* The Original Code is Riot.
+	*
+	* The Initial Developer of the Original Code is
+	* Neteye GmbH.
+	* Portions created by the Initial Developer are Copyright (C) 2007
+	* the Initial Developer. All Rights Reserved.
+	*
+	* Contributor(s):
+	*   Felix Gnass [fgnass at neteye dot de]
+	*
+	* ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.dao;
 
 import java.io.Serializable;
@@ -38,6 +38,7 @@ import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
+import org.riotfamily.pages.PageValidationUtils;
 import org.riotfamily.pages.Site;
 import org.riotfamily.pages.component.PageComponentListLocator;
 import org.springframework.beans.factory.InitializingBean;
@@ -45,12 +46,12 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 /**
- * Abstract base class for {@link PageDao} implementations.
- *
- * @author Felix Gnass [fgnass at neteye dot de]
- * @author Jan-Frederic Linde [jfl at neteye dot de]
- * @since 6.5
- */
+	* Abstract base class for {@link PageDao} implementations.
+	*
+	* @author Felix Gnass [fgnass at neteye dot de]
+	* @author Jan-Frederic Linde [jfl at neteye dot de]
+	* @since 6.5
+	*/
 public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	private static final String DEFAULT_SITE_NAME = "default";
@@ -87,6 +88,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	protected abstract void updateObject(Object object);
 
+	protected abstract void reattachObject(Object object);
+
 	protected abstract void deleteObject(Object object);
 
 
@@ -114,6 +117,12 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 			node = new PageNode();
 		}
 		node.addPage(page);
+
+		if (!PageValidationUtils.isValidChild(parentNode, page)) {
+			log.warn("Page not saved because not valid: " + page);
+			throw new DuplicatePathComponentException("Page '{0}' did not validate", page.toString());
+		}
+
 		parentNode.addChildNode(node);
 		page.setCreationDate(new Date());
 		updateNode(parentNode);
@@ -128,6 +137,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		translation.setPathComponent(page.getPathComponent());
 		page.getNode().addPage(translation);
 		updateNode(page.getNode());
+		deleteAlias(new PageLocation(translation));
 
 		componentDao.copyComponentLists(PageComponentListLocator.TYPE_PAGE,
 				page.getId().toString(), translation.getId().toString());
@@ -136,6 +146,13 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 
 	public void updatePage(Page page) {
+		reattachObject(page);
+
+		if (!PageValidationUtils.isValidChild(page.getNode().getParent(), page)) {
+			log.warn("Page not saved because not valid: " + page);
+			throw new DuplicatePathComponentException("Page '{0}' did not validate", page.toString());
+		}
+
 		updateObject(page);
 		String oldPath = page.getPath();
 		String newPath = page.buildPath();
@@ -149,10 +166,18 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 
 	public void updateNode(PageNode node) {
-			updateObject(node);
+		updateObject(node);
 	}
 
 	public void moveNode(PageNode node, PageNode newParent) {
+/*
+		List newParentChilds = parentNode.getChildNodes();
+		Iterator it = newParentChilds.iterator();
+		while (it.hasNext()) {
+			PageNode traverseNode = (PageNode) it.next();
+			traverseNode.getPage(locale)
+		}
+*/
 		PageNode parentNode = node.getParent();
 		parentNode.getChildNodes().remove(node);
 		newParent.addChildNode(node);
@@ -210,6 +235,13 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 		PageNode node = page.getNode();
 		node.removePage(page);
+
+		/*
+		VersionContainer vc = page.getVersionContainer();
+		page.setVersionContainer(null);
+		componentDao.deleteVersionContainer(vc);
+		*/
+
 		if (node.hasPages()) {
 			updateNode(node);
 		}

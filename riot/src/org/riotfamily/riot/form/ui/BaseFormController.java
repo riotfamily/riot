@@ -38,6 +38,8 @@ import org.riotfamily.forms.FormRepository;
 import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.controller.RepositoryFormController;
+import org.riotfamily.riot.dao.InvalidPropertyValueException;
+import org.riotfamily.riot.dao.RioDaoException;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.editor.EditorConstants;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
@@ -108,7 +110,7 @@ public abstract class BaseFormController extends RepositoryFormController
 		FormReference ref = (FormReference) getObjectEditorDefinition(request);
 		return ref.getFormId();
 	}
-	
+
 	protected Form createForm(HttpServletRequest request) {
 		Form form = super.createForm(request);
 		FormUtils.setObjectId(form, getObjectId(request));
@@ -166,21 +168,34 @@ public abstract class BaseFormController extends RepositoryFormController
 		ListDefinition listDef = EditorDefinitionUtils.getParentListDefinition(editorDef);
 		RiotDao dao = listDef.getListConfig().getDao();
 
-		if (form.isNew()) {
-			log.debug("Saving entity ...");
-			String parentId = FormUtils.getParentId(form);
-			Object parent = EditorDefinitionUtils.loadParent(listDef, parentId);
-			dao.save(bean, parent);
-			FormUtils.setObjectId(form, dao.getObjectId(bean));
-			form.setValue(bean);
-			return afterSave(form, editorDef, request, response);
+		try {
+			if (form.isNew()) {
+				log.debug("Saving entity ...");
+				String parentId = FormUtils.getParentId(form);
+				Object parent = EditorDefinitionUtils.loadParent(listDef, parentId);
+				dao.save(bean, parent);
+				FormUtils.setObjectId(form, dao.getObjectId(bean));
+				form.setValue(bean);
+				return afterSave(form, editorDef, request, response);
+			}
+			else {
+				log.debug("Updating entity ...");
+				dao.update(bean);
+				return afterUpdate(form, editorDef, request, response);
+			}
 		}
-		else {
-			log.debug("Updating entity ...");
-			dao.update(bean);
-			return afterUpdate(form, editorDef, request, response);
+		catch (InvalidPropertyValueException e) {
+			form.getErrors().rejectValue(e.getField(), e.getCode(),
+					e.getArguments(), e.getMessage());
+
+			return showForm(form, request, response);
+		}
+		catch (RioDaoException e) {
+			form.getErrors().reject(e.getCode(), e.getArguments(), e.getMessage());
+			return showForm(form, request, response);
 		}
 	}
+
 
 	protected abstract ModelAndView afterSave(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response);

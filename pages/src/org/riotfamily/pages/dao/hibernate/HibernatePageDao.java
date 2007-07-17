@@ -30,6 +30,7 @@ import java.util.Locale;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
+import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -75,6 +76,10 @@ public class HibernatePageDao extends AbstractPageDao {
 	protected void updateObject(Object object) {
 		hibernate.update(object);
 		hibernate.flush(); //REVIST
+	}
+
+	protected void reattachObject(Object object) {
+		hibernate.lock(object, LockMode.NONE);
 	}
 
 	protected void deleteObject(Object object) {
@@ -161,5 +166,6 @@ public class HibernatePageDao extends AbstractPageDao {
 		hibernate.executeUpdate(query);
 		createAlias(null, new PageLocation(page));
 	}
+
 
 }

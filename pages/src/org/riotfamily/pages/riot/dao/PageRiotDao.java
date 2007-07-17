@@ -61,6 +61,10 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 		Assert.notNull(pageDao, "A PageDao must be set.");
 	}
 
+	public Locale getMasterLocale() {
+		return this.masterLocale;
+	}
+
 	public void setMasterLocale(Locale masterLocale) {
 		this.masterLocale = masterLocale;
 	}
