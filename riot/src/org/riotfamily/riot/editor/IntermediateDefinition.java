@@ -35,6 +35,7 @@ public class IntermediateDefinition extends AbstractObjectEditorDefinition {
 		setParentEditorDefinition(parentListDefinition);
 		this.nestedListDefinition = nestedListDefinition;
 		nestedListDefinition.setParentEditorDefinition(this);
+		setEditorRepository(parentListDefinition.getEditorRepository());
 	}
 
 	public String getEditorType() {
