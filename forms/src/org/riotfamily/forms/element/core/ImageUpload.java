@@ -287,8 +287,12 @@ public class ImageUpload extends FileUpload {
 		}
 
 		protected void renderInternal(PrintWriter writer) {
+			int w = crop && maxWidth > 0 ? maxWidth : 263;
+			int h = (maxHeight > 0 ? maxHeight : 100) + 50;
 			new TagWriter(writer).start(Html.DIV)
 					.attribute(Html.COMMON_ID, getId())
+					.attribute(Html.COMMON_STYLE,
+							"width:" + w + "px;height:" + h + "px")
 					.end();
 		}
 
