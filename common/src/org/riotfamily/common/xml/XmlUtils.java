@@ -45,8 +45,12 @@ import javax.xml.transform.stream.StreamResult;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.PropertyValue;
+import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -129,6 +133,17 @@ public class XmlUtils {
 		}
 		return null;
 	}
+	
+	public static Element getNextSiblingElement(Node node) {
+		node = node.getNextSibling();
+		while (node != null) {
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				return (Element) node;
+			}
+			node = node.getNextSibling();
+		}
+		return null;
+	}
 
 	public static String getAttribute(Element ele, String name) {
 		Assert.hasText(name, "An attribute name must be specified");
@@ -168,15 +183,21 @@ public class XmlUtils {
 	}
 
 	public static void populate(Object bean, NamedNodeMap attributes) {
+		BeanWrapper beanWrapper = new BeanWrapperImpl(bean);
+		beanWrapper.setPropertyValues(getPropertyValues(attributes));
+	}
+	
+	public static PropertyValues getPropertyValues(NamedNodeMap attributes) {
+		MutablePropertyValues pvs = new MutablePropertyValues();
 		if (attributes != null) {
-			BeanWrapper beanWrapper = new BeanWrapperImpl(bean);
 			int length = attributes.getLength();
 			for (int i = 0; i < length; i++) {
 				Attr attr = (Attr) attributes.item(i);
 				String property = FormatUtils.xmlToCamelCase(attr.getName());
-				beanWrapper.setPropertyValue(property, attr.getValue());
+				pvs.addPropertyValue(property, attr.getValue());
 			}
 		}
+		return pvs;
 	}
 
 	public static void populate(Object bean, Element element,
@@ -189,13 +210,27 @@ public class XmlUtils {
 			String[] attributeNames, BeanFactory beanFactory) {
 
 		BeanWrapper beanWrapper = new BeanWrapperImpl(bean);
-		for (int i = 0; i < attributeNames.length; i++) {
-			setProperty(beanWrapper, attributeNames[i], element, beanFactory);
-		}
+		beanWrapper.setPropertyValues(getPropertyValues(
+				element, attributeNames, beanFactory));
 	}
+	
+	public static PropertyValues getPropertyValues(Element element,
+			String[] attributeNames, BeanFactory beanFactory) {
 
-	private static void setProperty(BeanWrapper beanWrapper, String attr,
-			Element element, BeanFactory beanFactory) {
+		MutablePropertyValues pvs = new MutablePropertyValues();
+		for (int i = 0; i < attributeNames.length; i++) {
+			PropertyValue pv = getPropertyValue(element, 
+					attributeNames[i], beanFactory);
+			
+			if (pv != null) {
+				pvs.addPropertyValue(pv);
+			}
+		}
+		return pvs;
+	}
+	
+	public static PropertyValue getPropertyValue(Element element, String attr,
+			BeanFactory beanFactory) {
 
 		String property = null;
 		int i = attr.indexOf('=');
@@ -206,6 +241,9 @@ public class XmlUtils {
 
 		boolean beanRef = attr.charAt(0) == '@';
 		if (beanRef) {
+			Assert.notNull(beanFactory, "A BeanFactory must be passed in " +
+					"order to resolve references");
+			
 			attr = attr.substring(1);
 		}
 
@@ -214,15 +252,13 @@ public class XmlUtils {
 		}
 
 		String value = element.getAttribute(attr);
-		if (value.length() > 0) {
+		if (StringUtils.hasLength(value)) {
 			if (beanRef) {
-				Object object = beanFactory.getBean(value);
-				beanWrapper.setPropertyValue(property, object);
+				return new PropertyValue(property, beanFactory.getBean(value));
 			}
-			else {
-				beanWrapper.setPropertyValue(property, value);
-			}
+			return new PropertyValue(property, value);
 		}
+		return null;
 	}
 
 	public static void populate(Object bean, List elements,
