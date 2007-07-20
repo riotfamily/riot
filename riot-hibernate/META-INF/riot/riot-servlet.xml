@@ -7,72 +7,78 @@
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx.xsd">
-		
+
 	<!-- HQL OptionsModel prototype -->
-	
-	<bean id="hqlOptionsModel" scope="prototype" 
+
+	<bean id="hqlOptionsModel" scope="prototype"
 		class="org.riotfamily.riot.hibernate.HqlOptionsModel">
-		
+
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	
+
 	<!--  Dao prototypes -->
-	
+
 	<bean id="hqlDao" class="org.riotfamily.riot.hibernate.dao.HqlDao" scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	
+
 	<bean id="hqlParentChildDao" class="org.riotfamily.riot.hibernate.dao.HqlParentChildDao" scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	
+
 	<bean id="hqlCollectionDao" class="org.riotfamily.riot.hibernate.dao.HqlCollectionDao" scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	
+
 	<bean id="hqlSortedCollectionDao" class="org.riotfamily.riot.hibernate.dao.HqlSortedCollectionDao" scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	
+
 	<bean id="hqlIndexedListDao" class="org.riotfamily.riot.hibernate.dao.HqlIndexedListDao" scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
 	<!-- Hibernate-based user management  -->
-	
+
 	<bean id="authenticationServiceImpl" class="org.riotfamily.riot.hibernate.security.HibernateAuthenticationService">
 		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 
-	<bean id="sessionDataStoreImpl" class="org.riotfamily.riot.hibernate.security.HibernateSessionDataStore">
-		<property name="sessionFactory" ref="riotSessionFactory" />
+	<bean id="sessionDataStoreImpl" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
+		<property name="target">
+			<bean class="org.riotfamily.riot.hibernate.security.HibernateSessionDataStore">
+				<property name="sessionFactory" ref="riotSessionFactory" />
+			</bean>
+		</property>
 	</bean>
-	
+
 	<!-- Jobs -->
-	
+
 	<tx:advice id="matchAllTxInterceptor">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" isolation="DEFAULT" />
 		</tx:attributes>
 	</tx:advice>
-	
+
+
 	<bean id="jobDaoImpl" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
 		<property name="target" ref="jobDaoTarget" />
-	</bean>	
-	
+	</bean>
+
 	<bean id="jobDaoTarget" class="org.riotfamily.riot.hibernate.job.HibernateJobDao">
 		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
-	
-	<!-- 
+
+	<!--
 	<bean class="org.riotfamily.riot.job.support.PendingJobMonitor">
 		<constructor-arg ref="jobDao" />
 	</bean>
 	-->
-	
+
 	<!-- Module configuration -->
-	
+
 	<bean id="hibernateModule" class="org.riotfamily.common.beans.module.FactoryBeanModule">
 		<property name="properties">
 			<map>
