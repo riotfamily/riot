@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.Form;
-import org.riotfamily.forms.FormRepository;
+import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.riot.editor.ObjectEditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;

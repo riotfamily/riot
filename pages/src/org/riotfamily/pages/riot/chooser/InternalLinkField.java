@@ -27,15 +27,15 @@ import java.io.PrintWriter;
 
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
-import org.riotfamily.forms.element.DHTMLElement;
-import org.riotfamily.forms.element.core.TextField;
+import org.riotfamily.forms.DHTMLElement;
+import org.riotfamily.forms.MessageUtils;
+import org.riotfamily.forms.TemplateUtils;
+import org.riotfamily.forms.element.TextField;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.resource.StylesheetResource;
-import org.riotfamily.forms.support.MessageUtils;
-import org.riotfamily.forms.support.TemplateUtils;
 
 public class InternalLinkField extends TextField implements ResourceElement,
 	DHTMLElement {

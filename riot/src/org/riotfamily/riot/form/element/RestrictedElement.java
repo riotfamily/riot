@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.form.element;
 
-import org.riotfamily.forms.element.support.AbstractConditionalElement;
+import org.riotfamily.forms.element.AbstractConditionalElement;
 import org.riotfamily.riot.form.ui.FormUtils;
 import org.riotfamily.riot.security.AccessController;
 

@@ -37,7 +37,7 @@ import org.riotfamily.common.web.mapping.UrlMapping;
 import org.riotfamily.common.web.mapping.UrlMappingAware;
 import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.forms.Form;
-import org.riotfamily.forms.ajax.AjaxFormController;
+import org.riotfamily.forms.controller.AjaxFormController;
 import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.riot.list.ListRepository;

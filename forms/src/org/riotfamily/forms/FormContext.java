@@ -27,8 +27,6 @@ import java.io.PrintWriter;
 import java.util.Locale;
 
 import org.riotfamily.common.i18n.MessageResolver;
-import org.riotfamily.forms.element.ContentElement;
-import org.riotfamily.forms.support.TemplateRenderer;
 import org.springframework.beans.PropertyEditorRegistrar;
 
 public interface FormContext {

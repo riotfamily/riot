@@ -1,25 +1,4 @@
-if (typeof XMLHttpRequest == 'undefined') {
-	try {
-		var dummy = new ActiveXObject('Microsoft.XMLHTTP');
-		XMLHttpRequest = function () {
-			return new ActiveXObject('Microsoft.XMLHTTP');
-	 	}
- 	}
- 	catch(e) { 		
- 	}
-}
 
-function TreeWalker(func) {
-	this.callback = func;
-	this.walk = function(node) {
-		this.callback(node);
-		var currentNode = node.firstChild;
-		while (currentNode != null) {
-			this.walk(currentNode);			
-			currentNode = currentNode.nextSibling;
-		}
-	}
-}
 
 if (document.importNode && !(/Konqueror|Safari|KHTML/.test(navigator.userAgent))) {
 	function importNode(node, deep) {
@@ -118,81 +97,92 @@ function getFirstChildElement(e) {
 }
 
 function submitEvent(e) {
-	if (typeof XMLHttpRequest != 'undefined') {
-		if (!e) var e = window.event;
-		var source = getEventSource(e);
-		if (e.type == 'keyup') {
-			if (source.keyTimeout) {
-				clearTimeout(source.keyTimeout);
-			}
-			var changeEvent = new ChangeEvent(source);
-			source.keyTimeout = setTimeout(function() { submitEvent(changeEvent) }, 1000);
-			return;
+	if (!e) var e = window.event;
+	var source = getEventSource(e);
+	if (e.type == 'keyup') {
+		if (source.keyTimeout) {
+			clearTimeout(source.keyTimeout);
 		}
-	
-		var url;
-		if (source.form && source.form.ajaxUrl) {
-			url = source.form.ajaxUrl;
-		}
-		else {
-			url = window.location.href;	
-		}
-		
-		var body = '_ajax=true&event.type=' + e.type + '&event.source=' + source.id;
-		
-		if (source.options) {
-			for (var i = 0; i < source.options.length; i++) {
-				if (source.options[i].selected) {
-					body += '&source.value=' + encodeURIComponent(source.options[i].value);
-				}
-			}
-		}
-		else if (source.value) {
-			body += '&source.value=' + encodeURIComponent(source.value);
-		}
-		
-		var request = new XMLHttpRequest();
-		request.onreadystatechange = function() {
-			if (request.readyState == 4 && request.status == 200 && request.responseXML) {			
-				processAjaxResponse(request.responseXML.documentElement);
-			}
-		}
-		request.open("POST", url, true);
-		request.setRequestHeader("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
-		request.send(body);
-		return false;
+		var changeEvent = new ChangeEvent(source);
+		source.keyTimeout = setTimeout(function() { submitEvent(changeEvent) }, 1000);
+		return;
+	}
+
+	var url;
+	if (source.form && source.form.ajaxUrl) {
+		url = source.form.ajaxUrl;
+	}
+	else {
+		url = window.location.href;	
 	}
 	
+	var body = 'event.type=' + e.type + '&event.source=' + source.id;
+	
+	if (source.options) {
+		for (var i = 0; i < source.options.length; i++) {
+			if (source.options[i].selected) {
+				body += '&source.value=' + encodeURIComponent(source.options[i].value);
+			}
+		}
+	}
+	else if (source.value) {
+		body += '&source.value=' + encodeURIComponent(source.value);
+	}
+	
+	new Ajax.Request(url, {
+		onSuccess: processAjaxResponse,
+		postBody: body	
+	});
+	return false;
 }
 
-function processAjaxResponse(doc) {
-	if (!doc) return;
+function submitElement(id, clickedButton) {
+	var e = $(id);
+	var form = e.up('form');
+	var url = (form && form.ajaxUrl) ? form.ajaxUrl : window.loction.href;
+	var elements = e.descendants(); elements.push(e);
+	var data = elements.inject({_exclusive: id}, function(result, element) {
+		if (!element.disabled && element.form && element.name
+				&& element.type != 'file' 
+				&& (element.type != 'submit' || element == clickedButton)) {
+				
+			var key = element.name, value = element.getValue();
+			if (value != null) {
+				if (key in result) {
+				if (result[key].constructor != Array) result[key] = [result[key]];
+            		result[key].push(value);
+				}
+				else result[key] = value;
+        	}
+      	}
+      	return result;
+    });
+	new Ajax.Request(url, {
+		onSuccess: processAjaxResponse,
+		parameters: data
+	});
+}
+
+function processAjaxResponse(transport) {
+	var doc = transport.responseXML.documentElement;
 	var e = doc.firstChild;
 	while (e) {
 		try {
 			if (e.nodeName == 'remove') {
-				var ref = getRef(e);
-				ref.parentNode.removeChild(ref);
+				getRef(e).remove();
 			}
 			else if (e.nodeName == 'insert') {
-				var ref = getRef(e);
-				ref.appendChild(importNode(getFirstChildElement(e), true));
+				getRef(e).appendChild(importNode(getFirstChildElement(e), true));
 			}
 			else if (e.nodeName == 'replace') {
 				var ref = getRef(e);
 				var newNode = importNode(getFirstChildElement(e), true);
-				var p = ref.parentNode;
-				var marker = document.createTextNode(' ');
-				
-				p.insertBefore(marker, ref);
-				p.removeChild(ref);
-				p.insertBefore(newNode, marker);
-				p.removeChild(marker);
+				ref.parentNode.replaceChild(newNode, ref);
 			}
 			else if (e.nodeName == 'error') {						
 				setValid(getRef(e), parseInt(e.getAttribute('valid')));
 				var newEl = importNode(getFirstChildElement(e), true);				
-				var oldEl = document.getElementById(newEl.id);
+				var oldEl = $(newEl.id);
 				if (oldEl) oldEl.parentNode.replaceChild(newEl, oldEl);								
 			}
 			else if (e.nodeName == 'focus') {		
@@ -224,70 +214,51 @@ function focusElement(e) {
 		e.focus();
 		return true;
 	}
-	else {
-		var c = e.childNodes;
-		for (var i = 0; i < c.length; i++) {
-			if (focusElement(c[i])) return true;
-		}
-	}
-	return false;
+	return e.immediateDescendants().any(focusElement);
 }
 
 function getRef(e) {
-	var refId = e.getAttribute('ref');
-	return document.getElementById(refId);
+	return $(e.getAttribute('ref'));
 }
 
 function setValid(e, valid) {
-	var labels = document.getElementsByTagName('label');
-	for (i = 0; i < labels.length; i++) {				
-		if (labels[i].htmlFor == e.id) {	
-			setErrorClass(labels[i], valid);
-		}
-	}
+	$$('label[for="' + e.id + '"]').each(function(el) {	
+		setErrorClass(el, valid);
+	});
 }
 
 function setErrorClass(e, valid) {
-	if (valid) {
-		e.className = e.origClassName || '';
-	}
-	else {
-		if (!e.origClassName) {
-			e.origClassName = e.className || '';
-		}
-		e.className += ' error'; 
-	}
+	e = $(e);
+	if (valid) e.removeClassName('error')
+	else e.addClassName('error'); 
 }
 
 function setEnabled(e, enabled) {
-	var treeWalker = new TreeWalker(function(node) {
+	$(e).descendants().push(e).each(function(node) {
 		if (typeof node.disabled != 'undefined') {									
 			node.disabled = !enabled;
 		}
-	});			
-	treeWalker.walk(e);
+	});
 }
 
-function propagate(id, type) {
-	if (typeof XMLHttpRequest != 'undefined') {
-		var e = document.getElementById(id);
-		if (!e) return;
-		var tag = e.nodeName.toLowerCase();
-		if (tag == 'input' || tag == 'button' || tag == 'select' || tag == 'textarea') {
-			if (type == 'click') {
-				e.onclick = submitEvent;
+function propagate(e, type) {
+	e = $(e);
+	if (!e) return;
+	var tag = e.nodeName.toLowerCase();
+	if (tag == 'input' || tag == 'button' || tag == 'select' || tag == 'textarea') {
+		if (type == 'click') {
+			e.onclick = submitEvent;
+		}
+		else if (type == 'change') {
+			if (tag == 'input' && e.type == 'text') {
+				e.onkeyup = submitEvent;
 			}
-			else if (type == 'change') {
-				if (tag == 'input' && e.type == 'text') {
-					e.onkeyup = submitEvent;
-				}
-				else {
-					e.onchange = submitEvent;
-				}
+			else {
+				e.onchange = submitEvent;
 			}
 		}
-		else {
-			e["_on" + type] = submitEvent;
-		}
+	}
+	else {
+		e["_on" + type] = submitEvent;
 	}
 }

@@ -25,7 +25,7 @@ package org.riotfamily.riot.hibernate;
 
 import java.util.Collection;
 
-import org.riotfamily.forms.element.support.select.OptionsModel;
+import org.riotfamily.forms.element.select.OptionsModel;
 import org.riotfamily.riot.hibernate.support.HibernateSupport;
 
 public class HqlOptionsModel extends HibernateSupport implements OptionsModel {

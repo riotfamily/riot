@@ -90,7 +90,7 @@
 		<property name="windowName" value="preview" />
 	</bean>
 
-	<bean id="localesOptionsModel" class="org.riotfamily.forms.element.support.select.StaticOptionsModel">
+	<bean id="localesOptionsModel" class="org.riotfamily.forms.element.select.StaticOptionsModel">
 		<constructor-arg ref="websiteLocales" />
 	</bean>
 

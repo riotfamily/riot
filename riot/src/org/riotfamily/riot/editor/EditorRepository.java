@@ -30,7 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.xml.ConfigurationEventListener;
-import org.riotfamily.forms.FormRepository;
+import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.riot.list.ListRepository;
 import org.riotfamily.riot.runtime.RiotRuntime;
 import org.riotfamily.riot.runtime.RiotRuntimeAware;

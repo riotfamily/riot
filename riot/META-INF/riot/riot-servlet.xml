@@ -272,7 +272,7 @@
 		<property name="customElements" ref="riotCustomFormElements" />
 	</bean>
 
-	<bean id="imageCropper" class="org.riotfamily.forms.element.support.image.ImageMagickCropperFactoryBean">
+	<bean id="imageCropper" class="org.riotfamily.forms.element.upload.ImageMagickCropperFactoryBean">
 		<property name="convertCommand" value="${imageMagick.convertCommand=convert}" />
 	</bean>
 

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema
+		elementFormDefault="qualified"
+		attributeFormDefault="unqualified"
 		targetNamespace="http://www.riotfamily.org/schema/forms/form-config"
 		xmlns="http://www.riotfamily.org/schema/forms/form-config"
 		xmlns:xsd="http://www.w3.org/2001/XMLSchema">
@@ -145,7 +147,7 @@
 		<xsd:complexContent>
 			<xsd:extension base="simple-editor">
 				<xsd:choice>
-					<xsd:element ref="model" />
+					<xsd:element name="model" type="model" />
 				</xsd:choice>
 				<xsd:attribute name="label-property" type="xsd:string" />
 				<xsd:attribute name="value-property" type="xsd:string" />
@@ -163,15 +165,13 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
-	<xsd:element name="model">
-		<xsd:complexType>
-			<xsd:choice minOccurs="0" maxOccurs="unbounded">
-				<xsd:element ref="set-property" />
-			</xsd:choice>
-			<xsd:attribute name="class" type="xsd:string" />
-			<xsd:attribute name="ref" type="xsd:string" />
-		</xsd:complexType>
-	</xsd:element>
+	<xsd:complexType name="model">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element ref="set-property" />
+		</xsd:choice>
+		<xsd:attribute name="class" type="xsd:string" />
+		<xsd:attribute name="ref" type="xsd:string" />
+	</xsd:complexType>
 
 	<xsd:element name="selectbox">
 		<xsd:complexType>
@@ -247,11 +247,24 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="simple-editor">
-					<xsd:group ref="elements" />
-					<xsd:attribute name="label-property" type="xsd:string" />
-					<xsd:attribute name="key-options" type="xsd:string" />
-					<xsd:attribute name="key-collection-property" type="xsd:string" />
+					<xsd:sequence>
+						<xsd:choice>
+							<xsd:element name="key-options">
+								<xsd:complexType>
+									<xsd:attribute name="ref" type="xsd:string" />
+									<xsd:attribute name="collection-property" type="xsd:string" />
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="key-element">
+								<xsd:complexType>
+									<xsd:group ref="elements" />
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:choice>
+						<xsd:group ref="elements" />
+					</xsd:sequence>
 					<xsd:attribute name="map-class" type="xsd:string" />
+					<xsd:attribute name="label-property" type="xsd:string" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.form.element;
 
-import org.riotfamily.forms.element.support.AbstractChooser;
+import org.riotfamily.forms.element.select.AbstractChooser;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;

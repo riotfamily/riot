@@ -35,11 +35,11 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.forms.Container;
+import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
-import org.riotfamily.forms.element.ContentElement;
-import org.riotfamily.forms.element.support.Container;
-import org.riotfamily.forms.support.HttpFormRequest;
+import org.riotfamily.forms.request.HttpFormRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -122,9 +122,6 @@ public abstract class AbstractFormController implements Controller {
 		if (isContentRequest(request)) {
 			return handleContentRequest(form, request, response);
 		}
-		else if (isExclusiveRequest(request)){
-			return handleExclusiveRequest(form, request, response);
-		}
 		else {
 			return handleFormRequest(form, request, response);
 		}
@@ -135,11 +132,11 @@ public abstract class AbstractFormController implements Controller {
 			throws Exception {
 		
 		if (!isInitialRequest(request) || processNewForms) {
-			form.processRequest(request);
+			processForm(form, request);
 		}
 		return createModelAndView(form, request, response);
 	}
-
+	
 	/**
 	 * Returns the {@link Form Form} for the given request. By 
 	 * default this method looks for an existing instance in the HTTP session 
@@ -210,17 +207,6 @@ public abstract class AbstractFormController implements Controller {
 		return null;
 	}
 	
-	protected ModelAndView handleExclusiveRequest(Form form, 
-			HttpServletRequest request, HttpServletResponse response) 
-			throws IOException {
-		if (form != null) {
-			String id = request.getParameter(EXCLUSIVE_PARAM);
-			Element element = form.getElementById(id);
-			element.processRequest(new HttpFormRequest(request));
-		}
-		return null;
-	}
-
 	/**
 	 * Creates and initializes a form.
 	 */
@@ -247,6 +233,17 @@ public abstract class AbstractFormController implements Controller {
 		request.getSession().setAttribute(attrName, form);
 		
 		return form;
+	}
+	
+	protected void processForm(Form form, HttpServletRequest request) {
+		if (isExclusiveRequest(request)) {
+			String id = request.getParameter(EXCLUSIVE_PARAM);
+			Element element = form.getElementById(id);
+			element.processRequest(new HttpFormRequest(request));
+		}
+		else {
+			form.processRequest(request);
+		}
 	}
 	
 	/**

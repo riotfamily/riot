@@ -34,10 +34,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.forms.Form;
-import org.riotfamily.forms.FormRepository;
 import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
-import org.riotfamily.forms.controller.RepositoryFormController;
+import org.riotfamily.forms.factory.FormRepository;
+import org.riotfamily.forms.factory.RepositoryFormController;
 import org.riotfamily.riot.dao.InvalidPropertyValueException;
 import org.riotfamily.riot.dao.RioDaoException;
 import org.riotfamily.riot.dao.RiotDao;
@@ -110,7 +110,7 @@ public abstract class BaseFormController extends RepositoryFormController
 		FormReference ref = (FormReference) getObjectEditorDefinition(request);
 		return ref.getFormId();
 	}
-
+	
 	protected Form createForm(HttpServletRequest request) {
 		Form form = super.createForm(request);
 		FormUtils.setObjectId(form, getObjectId(request));
@@ -120,7 +120,7 @@ public abstract class BaseFormController extends RepositoryFormController
 	}
 
 	/**
-	 * @see org.riotfamily.forms.controller.RepositoryFormController#getFormBackingObject(javax.servlet.http.HttpServletRequest)
+	 * @see org.riotfamily.forms.factory.RepositoryFormController#getFormBackingObject(javax.servlet.http.HttpServletRequest)
 	 */
 	protected Object getFormBackingObject(HttpServletRequest request) {
 		ObjectEditorDefinition editorDefinition = getObjectEditorDefinition(request);

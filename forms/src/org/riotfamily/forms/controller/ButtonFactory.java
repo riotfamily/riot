@@ -24,7 +24,7 @@
 package org.riotfamily.forms.controller;
 
 import org.riotfamily.forms.Form;
-import org.riotfamily.forms.element.core.Button;
+import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.ClickEvent;
 import org.riotfamily.forms.event.ClickListener;
 import org.springframework.web.servlet.mvc.Controller;
