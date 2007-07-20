@@ -27,6 +27,8 @@ import org.riotfamily.riot.editor.ui.EditorReference;
 
 public class IntermediateDefinition extends AbstractObjectEditorDefinition {
 
+	private static final String TYPE_NONE = "none";
+	
 	private ListDefinition nestedListDefinition;
 
 	public IntermediateDefinition(ListDefinition parentListDefinition,
@@ -39,7 +41,7 @@ public class IntermediateDefinition extends AbstractObjectEditorDefinition {
 	}
 
 	public String getEditorType() {
-		return null;
+		return TYPE_NONE;
 	}
 	
 	public ListDefinition getNestedListDefinition() {
@@ -53,7 +55,6 @@ public class IntermediateDefinition extends AbstractObjectEditorDefinition {
 	}
 
 	protected String getEditorUrlWithinServlet(String objectId, String parentId) {
-		throw new IllegalStateException("Intermediate definitions don't have editor URLs.");
+		return null;
 	}
-
 }
