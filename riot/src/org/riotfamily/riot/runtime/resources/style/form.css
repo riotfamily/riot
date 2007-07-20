@@ -97,7 +97,7 @@ div.title label {
 }
 div.title .no-label {
 	display: block;
-	height: 12px;
+	height: 15px;
 }
 
 .single .element {
@@ -251,6 +251,7 @@ ul.radioButtonGroup input {
 	position: relative;
 }
 
+/*
 .mapEditor ul.mapItems {
 	margin: 0;
 	padding: 0;
@@ -279,13 +280,14 @@ ul.radioButtonGroup input {
 .mapItem .indent {
 	margin-left: 10px;
 }
+*/
 
-.listEditor ul {
+.collectionEditor ul.items {
 	padding: 0;
 	margin: 0;
 	background-color: #a4a4a4;
 }
-.listEditor li.listItem {
+.collectionEditor li.item {
 	list-style-type: none;
 	width: 100%;
 	padding: 0;
@@ -293,45 +295,58 @@ ul.radioButtonGroup input {
 	background-color: #fff;
 	border-bottom: 1px solid #ebebeb;
 }
-table.listItem {
+.collectionEditor table.item {
 	width: 100%;
 	border-spacing: 0;
 	margin-bottom: 1px;
 }
-table.listItem td {
+table.item td {
 	padding: 0;
 	margin: 0;
 	vertical-align: top;
 }
-table.listItem td.handle {
-	background: #ebebeb;
+
+table.item td.handle {
+	background: url(images/move_ns.gif) center center no-repeat;
 }
-table.listItem .draggable td.handle {
-	background: #ebebeb url(images/move_ns.gif) center center no-repeat;
+table.item td.handle div {
+	width: 20px;
 }
-table.listItem td.handle div {
-	width: 30px;
-}
-table.listItem td.itemElement {
+table.item td.itemElement {
 	width: 100%;
 	padding: 10px;
 }
-table.listItem td.removeButton {
-	padding-top: 6px;
-	line-height: 1px;
+table.item .draggable td.itemElement {
+	padding-right: 0;
 }
-table.listItem .group,
-table.listItem .nestedForm {
+
+table.item td.removeButton {
+	background: #ebebeb;
+	vertical-align: middle;
+}
+
+.addKey {
+	background: url(images/add_grey.gif) 10px 12px no-repeat;
+	padding: 10px 0 0 42px;
+}
+
+.addKey input {
+	width: auto;
+	display: inline;
+}
+
+table.item .group,
+table.item .nestedForm {
 	border-bottom: 0;
 }
-table.listItem .indent {
+table.item .indent {
 	margin: 0;
 }
-.listItem .nestedForm {
+.item .nestedForm {
 	margin: 10px 0 0 0;
 }
 
-.button-add,
+.listEditor .button-add,
 .button-remove,
 .button-toggle {
 	margin: 0;
@@ -346,17 +361,27 @@ table.listItem .indent {
 	height: 32px;
 }
 
-* html .button-add,
+* html .listEditor .button-add,
 * html .button-remove,
 * html .button-toggle {
 	padding: 32px 0 0 0;
 	text-indent: 0;
 }
 
-.button-add,
+.listEditor .button-add, 
 .nestedForm .not-present .button-toggle {
 	background-image: url(images/add.gif);
 }
+
+
+.collectionEditor .button-remove {
+	background: #fff url(images/remove_invert.gif) no-repeat;
+}
+.collectionEditor .button-remove:hover {
+	background-color: ${highlight};
+}
+
+
 .button-remove,
 .nestedForm .button-toggle {
 	background-image: url(images/remove.gif);
