@@ -59,7 +59,7 @@ public class RiotRuntime implements ServletContextAware {
 
 	public void setServletContext(ServletContext context) {
 		Assert.notNull(resourceMapping, "A resourceMapping must be specified.");
-		servletPrefix = (String) context.getAttribute(SERVLET_PREFIX_ATTRIBUTE);
+		servletPrefix = (String) context.getInitParameter(SERVLET_PREFIX_ATTRIBUTE);
 		if (servletPrefix == null) {
 			servletPrefix = DEFAULT_SERVLET_PREFIX;
 		}
