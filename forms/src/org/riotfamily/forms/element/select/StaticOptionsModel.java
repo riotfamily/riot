@@ -30,21 +30,20 @@ import org.springframework.util.StringUtils;
 
 public class StaticOptionsModel implements OptionsModel {
 
-	private Collection optionValues;
+	private Collection optionValues = new ArrayList();
 	
 	public StaticOptionsModel() {
 	}
 
 	public StaticOptionsModel(Collection options) {
-		this.optionValues = options;
+		optionValues.addAll(options);
 	}
 
 	public void setOptionValues(Collection options) {
-		this.optionValues = options;
+		optionValues.addAll(options);
 	}
 	
 	public void setCommaDelimitedValues(String s) {
-		optionValues = new ArrayList();
 		String[] tokens = StringUtils.commaDelimitedListToStringArray(s);
 		for (int i = 0; i < tokens.length; i++) {
 			optionValues.add(tokens[i]);
