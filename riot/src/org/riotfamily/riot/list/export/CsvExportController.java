@@ -24,7 +24,9 @@
 package org.riotfamily.riot.list.export;
 
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,7 +56,9 @@ public class CsvExportController implements Controller {
 	
 	private String encoding = "UTF-8";
 	
-	private String delimiter = ";";
+	private String fieldDelimiter = ";";
+	
+	private char stringDelimiter = '"';
 	
 	public CsvExportController(EditorRepository editorRepository) {
 		this.editorRepository = editorRepository;
@@ -65,12 +69,9 @@ public class CsvExportController implements Controller {
 	}
 	
 	public void setDelimiter(String delimiter) {
-		this.delimiter = delimiter;
+		this.fieldDelimiter = delimiter;
 	}
-	
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
-	}
+		
 	
 	public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 		if (transactionManager != null) {
@@ -107,16 +108,24 @@ public class CsvExportController implements Controller {
 		CsvExportCommand command = (CsvExportCommand) editorRepository
 				.getListRepository().getCommand(commandId);
 		
-		response.setContentType("text/csv; charset=" + encoding);
+		String fileEncoding = encoding;
+		if (command.getEncoding() != null) {
+			fileEncoding = command.getEncoding();
+		}
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+
+		String fileName = listId + '-' + sdf.format(new Date()) + ".csv";
+		
+		response.setContentType("text/csv; charset=" + fileEncoding);
 		response.setCharacterEncoding(encoding);
-		response.setHeader("Content-Disposition",
-						"attachment; filename=" + listId + ".csv");
+		response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
 		
 		PrintWriter out = response.getWriter();
 		
 		for (int i = 0; i < command.getProperties().size(); i++) {
 			out.print(command.getProperties().get(i));
-			out.print(delimiter);
+			out.print(fieldDelimiter);
 		}
 		out.println();
 		
@@ -132,23 +141,34 @@ public class CsvExportController implements Controller {
 		ListParams params = new ListParamsImpl();
 		Collection beans = listConfig.getDao().list(parent, params);
 		Iterator beanIterator = beans.iterator();
-		while (beanIterator.hasNext()) {
+		int count = 0;
+		while (beanIterator.hasNext()) {				
 			BeanWrapper bean = new BeanWrapperImpl(beanIterator.next());
 			for (int i = 0; i < command.getProperties().size(); i++) {
 				String propertyName = (String) command.getProperties().get(i);
-				Object value = bean.getPropertyValue(propertyName);
+				Object value = null;
+				try {
+					value = bean.getPropertyValue(propertyName);
+				}
+				catch (Exception e) {
+					// silently skipping invalid property
+				}
+				
 				if (value instanceof Collection) {
+					out.print(stringDelimiter);
 					Iterator it = ((Collection)value).iterator();
 					while (it.hasNext()) {
 						out.print(it.next());
 						out.print(' ');
 					}
+					out.print(stringDelimiter);
 				}
 				else if (value != null) {
+					out.print(stringDelimiter);
 					out.print(value);
-				}
-				
-				out.print(delimiter);
+					out.print(stringDelimiter);
+				}				
+				out.print(fieldDelimiter);
 			}
 			out.println();
 		}
