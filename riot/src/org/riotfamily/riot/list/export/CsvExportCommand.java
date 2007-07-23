@@ -39,11 +39,21 @@ public class CsvExportCommand extends AbstractCommand implements
 	
 	private List properties;
 	
+	private String encoding;
+	
 	private RiotRuntime runtime;
 	
 	public void setApplicationContext(ApplicationContext context) {
 		runtime = (RiotRuntime) BeanFactoryUtils.beanOfTypeIncludingAncestors(
 				context, RiotRuntime.class);
+	}
+		
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
+	
+	public String getEncoding() {
+		return this.encoding;
 	}
 	
 	public void setProperties(List properties) {
