@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.select;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -90,7 +91,7 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 
 	public void setOptionsModel(OptionsModel optionsModel) {
 		this.optionsModel = optionsModel;
-		options = null;
+		resetOptions();
 		setValue(null);
 	}
 
@@ -102,6 +103,15 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 		return optionsModel;
 	}
 
+	public void render(PrintWriter writer) {
+		resetOptions();
+		super.render(writer);
+	}
+	
+	protected void resetOptions() {
+		options = null;
+	}
+	
 	protected final List getOptions() {
 		if (options == null) {
 			options = createOptions();
