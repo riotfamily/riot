@@ -75,6 +75,8 @@ public class ListEditor extends TemplateElement implements Editor,
 	private int minSize;
 	
 	private int maxSize;
+	
+	private int initialSize;
 		
 	private boolean sortable;
 	
@@ -106,6 +108,10 @@ public class ListEditor extends TemplateElement implements Editor,
 	
 	public void setMaxSize(int maxSize) {
 		this.maxSize = maxSize;
+	}
+	
+	public void setInitialSize(int initialSize) {
+		this.initialSize = initialSize;
 	}
 	
 	public void setRequired(boolean required) {
@@ -160,16 +166,28 @@ public class ListEditor extends TemplateElement implements Editor,
 				collectionClass = type;
 			}
 		}
-		if (value != null) {
+		if (value == null) {			
+			for (int i = 0; i < initialSize; i++) {
+				addItem();
+			}
+		}
+		else {
 			if (!(value instanceof Collection)) {
 				throw new IllegalArgumentException("Value must implement " +
 						"the java.util.Collection interface");
 			}
 			Collection collection = (Collection) value;
-			Iterator it = collection.iterator();			
-			while (it.hasNext()) {
-				ListItem item = addItem();
-				item.setValue(it.next());
+			if (collection.isEmpty()) {
+				for (int i = 0; i < initialSize; i++) {
+					addItem();
+				}
+			}
+			else {
+				Iterator it = collection.iterator();			
+				while (it.hasNext()) {
+					ListItem item = addItem();
+					item.setValue(it.next());
+				}
 			}
 		}
 	}
