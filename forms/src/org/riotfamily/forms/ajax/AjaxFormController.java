@@ -67,6 +67,10 @@ public abstract class AjaxFormController extends AbstractFormController
 		}
 	}
 	
+	protected MessageSource getMessageSource() {
+		return messageSource;
+	}
+	
 	protected void initForm(Form form, HttpServletRequest request) {
 		form.addResource(new ScriptResource("form/ajax.js", "propagate"));
 	}
