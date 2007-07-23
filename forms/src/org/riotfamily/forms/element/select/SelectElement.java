@@ -38,6 +38,8 @@ public interface SelectElement extends Element {
 
 	public boolean isSelected(Option option);
 	
+	public OptionsModel getOptionsModel();
+	
 	public void setOptionsModel(OptionsModel model);
 	
 	public int getOptionIndex(Option option);
