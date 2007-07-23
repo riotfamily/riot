@@ -23,10 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms;
 
-
-
-
-
 /**
  * Interface to be implemented by form elements that are capable of editing
  * a property value.
@@ -57,6 +53,15 @@ public interface Editor extends Element {
 	public EditorBinding getEditorBinding();
 	
 	/**
+	 * Sets the fieldName that is used to build error codes. 
+	 * If <code>null</code>, {@link EditorBinding#getPropertyPath()} is used.
+	 * You should only use this method for unbound elements that are part
+	 * of complex (composite) widgets.
+	 */
+	public void setFieldName(String fieldName);
+	
+	/**
+	 * Returns the set (or computed) fieldName.
 	 */
 	public String getFieldName();
 	

@@ -24,8 +24,6 @@
 package org.riotfamily.forms;
 
 
-
-
 /**
  * Abstract base class for editor elements.
  * 
@@ -38,6 +36,8 @@ public abstract class AbstractEditorBase extends AbstractElement {
 	private String desiredParamName;
 	
 	private EditorBinding binding;
+	
+	private String fieldName;
 	
 	public EditorBinding getEditorBinding() {
 		return binding;
@@ -77,11 +77,18 @@ public abstract class AbstractEditorBase extends AbstractElement {
 		this.paramName = paramName;
 	}
 
+	public void setFieldName(String fieldName) {
+		this.fieldName = fieldName;
+	}
+	
 	public String getFieldName() {
+		if (fieldName != null) {
+			return fieldName;
+		}
 		if (binding != null) {
 			return binding.getPropertyPath();
 		}
-		return "unbound-" + getId(); 
+		return "unbound-" + getId();
 	}
 	
 	public String getLabel() {
