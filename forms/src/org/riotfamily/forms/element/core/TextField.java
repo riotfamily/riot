@@ -38,6 +38,7 @@ import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.support.MessageUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * A text input field.
@@ -58,6 +59,8 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 			Resources.PROTOTYPE);
 	
 	private boolean confirm;
+	
+	private boolean clientSideValidation = true;
 	
 	private String confirmText = null;
 	
@@ -103,6 +106,10 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 	public void setRegexMismatchMessageText(String regexMismatchMessageText) {
 		this.regexMismatchMessageText = regexMismatchMessageText;
 	}
+	
+	public void setClientSideValidation(boolean clientSideValidation) {
+		this.clientSideValidation = clientSideValidation;
+	}
 
 	public void renderInternal(PrintWriter writer) {
 		if (confirm) {
@@ -136,16 +143,19 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 
 	protected void validate() {		
 		super.validate();
+		String text = getText();
 		if (confirm) {
-			if (!ObjectUtils.nullSafeEquals(getText(), confirmText)) {
+			if (!ObjectUtils.nullSafeEquals(text, confirmText)) {
 				ErrorUtils.reject(this, "confirmFailed");
 			}
 		}
 		if (regex != null) {
-			Pattern pattern = Pattern.compile(regex);
-			if (!pattern.matcher(getText()).matches()) {
-				getForm().getErrors().rejectValue(getFieldName(), 
-						regexMismatchMessageKey, regexMismatchMessageText);
+			if (StringUtils.hasText(text)) {
+				Pattern pattern = Pattern.compile(regex);
+				if (!pattern.matcher(text).matches()) {
+					getForm().getErrors().rejectValue(getFieldName(), 
+							regexMismatchMessageKey, regexMismatchMessageText);
+				}
 			}
 			
 		}
@@ -172,7 +182,7 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 	}
 	
 	public String getInitScript() {
-		if (regex != null) {
+		if (clientSideValidation && regex != null) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("TextInput.create('");
 			sb.append(getId());
@@ -189,7 +199,7 @@ public class TextField extends AbstractTextElement implements DHTMLElement,
 	}
 	
 	public FormResource getResource() {
-		return regex != null ? RESOURCE : null;
+		return clientSideValidation && regex != null ? RESOURCE : null;
 	}
 	
 }

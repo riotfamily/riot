@@ -193,7 +193,9 @@ function processAjaxResponse(doc) {
 				setValid(getRef(e), parseInt(e.getAttribute('valid')));
 				var newUl = importNode(getFirstChildElement(e), true);				
 				var oldUl = document.getElementById(newUl.id);
-				oldUl.parentNode.replaceChild(newUl, oldUl);								
+				if (oldUl) {
+					oldUl.parentNode.replaceChild(newUl, oldUl);								
+				}
 			}
 			else if (e.nodeName == 'focus') {		
 				focusElement(getRef(e));
