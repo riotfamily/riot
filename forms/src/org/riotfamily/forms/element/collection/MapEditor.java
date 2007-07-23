@@ -23,10 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.collection;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.forms.Container;
@@ -36,6 +39,7 @@ import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.element.select.OptionsModel;
+import org.riotfamily.forms.element.select.SelectElement;
 import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.ClickEvent;
 import org.riotfamily.forms.event.ClickListener;
@@ -58,6 +62,8 @@ public class MapEditor extends TemplateElement implements Editor {
 	private Container items = new Container();
 
 	private ElementFactory keyElementFactory;
+	
+	private Editor keyEditor;
 	
 	/** Factory to create elements for newly added items */
 	private ElementFactory itemElementFactory;
@@ -85,7 +91,12 @@ public class MapEditor extends TemplateElement implements Editor {
 	
 	protected void initCompositeElement() {
 		if (keyElementFactory != null) {
-			final Editor keyEditor = (Editor) keyElementFactory.createElement(this, getForm());
+			keyEditor = (Editor) keyElementFactory.createElement(this, getForm());
+			keyEditor.setFieldName(getFieldName() + ".add");
+			if (keyEditor instanceof SelectElement) {
+				SelectElement se = (SelectElement) keyEditor;
+				se.setOptionsModel(new MapOptionsModel(se));
+			}
 			addComponent("keyEditor", keyEditor);
 			
 			Button addButton = new Button();
@@ -96,7 +107,10 @@ public class MapEditor extends TemplateElement implements Editor {
 				public void clicked(ClickEvent event) {
 					Object key = keyEditor.getValue();
 					if (key == null) {
-						ErrorUtils.reject(keyEditor, "required");
+						ErrorUtils.reject(keyEditor, "map.emptyKey");
+					}
+					else if (getKeys().contains(key)) {
+						ErrorUtils.reject(keyEditor, "map.duplicateKey");
 					}
 					else {
 						addItem(key, null);
@@ -177,8 +191,18 @@ public class MapEditor extends TemplateElement implements Editor {
 		return map;
 	}
 
+	private Set getKeys() {
+		HashSet keys = new HashSet();
+		Iterator it = items.getElements().iterator();
+		while (it.hasNext()) {
+			MapItem item = (MapItem) it.next();
+			keys.add(item.getKey());
+		}
+		return keys;
+	}
+	
 	protected void addItem(Object key, Object value) {		
-		MapItem item = new MapItem(key, keyElementFactory != null);
+		MapItem item = new MapItem(key, keyEditor != null);
 		items.addElement(item);
 		item.focus();
 		item.setValue(value);
@@ -186,6 +210,10 @@ public class MapEditor extends TemplateElement implements Editor {
 	
 	protected void removeItem(MapItem item) {
 		items.removeElement(item);
+		if (keyEditor != null) {
+			ErrorUtils.removeErrors(keyEditor);
+			getFormListener().elementChanged(keyEditor);
+		}
 	}
 					
 	public class MapItem extends TemplateElement {
@@ -246,4 +274,25 @@ public class MapEditor extends TemplateElement implements Editor {
 				
 	}
 	
+	private class MapOptionsModel implements OptionsModel {
+		
+		private OptionsModel model;
+		
+		public MapOptionsModel(SelectElement keyElement) {
+			this.model = keyElement.getOptionsModel();
+		}
+
+		public Collection getOptionValues() {
+			Collection keys = getKeys();
+			ArrayList result = new ArrayList();
+			Iterator it = model.getOptionValues().iterator();
+			while (it.hasNext()) {
+				Object key = (Object) it.next();
+				if (!keys.contains(key)) {
+					result.add(key);
+				}
+			}
+			return result;
+		}
+	}
 }
