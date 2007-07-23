@@ -56,6 +56,8 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     
     private String positionProperty;
     
+    private boolean setPositionOnSave = false;
+    
 	/**
      * @return Returns the itemClass.
      */
@@ -106,6 +108,13 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 
 	public void setPositionProperty(String positionProperty) {
 		this.positionProperty = positionProperty;
+	}
+	
+	/**
+	 * @param setPositionOnSave the setPositionOnSave to set
+	 */
+	public void setSetPositionOnSave(boolean setPositionOnSave) {
+		this.setPositionOnSave = setPositionOnSave;
 	}
 
 	public String getObjectId(Object item) {
@@ -242,6 +251,11 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     }
     
     public void save(Object entity, Object parent) {
+    	if (positionProperty != null && setPositionOnSave) {
+    		PropertyUtils.setProperty(entity, positionProperty,
+    						getNextPosition());
+    		
+    	}
     	getSession().save(entity);
     }
     
@@ -274,6 +288,20 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     	
     	getSession().update(item);
     	getSession().update(nextItem);
+    }
+    
+    protected Object getNextPosition() {
+    	StringBuffer hql = new StringBuffer();
+    	hql.append("select max(")
+    		.append(positionProperty)
+    		.append(") + 1 from ")
+    		.append(entityClass.getName());
+    	
+    	Object res = getSession().createQuery(hql.toString()).uniqueResult();
+    	if (res == null) {
+    		res = new Integer(0);
+    	}
+    	return res;
     }
 
 }
