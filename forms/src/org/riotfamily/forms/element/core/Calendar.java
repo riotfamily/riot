@@ -24,6 +24,7 @@
 package org.riotfamily.forms.element.core;
 
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,12 +34,14 @@ import java.util.regex.Pattern;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms.element.DHTMLElement;
 import org.riotfamily.forms.element.support.AbstractTextElement;
+import org.riotfamily.forms.error.ErrorUtils;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.resource.StylesheetResource;
 import org.riotfamily.forms.support.MessageUtils;
 import org.riotfamily.forms.support.TemplateUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * A DHTML calendar widget.
@@ -78,6 +81,8 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
     }
     
 	private String formatPattern = "yyyy-MM-dd";
+	
+	private DateFormat dateFormat;
 	
 	private String jsFormatPattern;
 	
@@ -120,6 +125,7 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
             Matcher matcher = patterns[i].matcher(jsFormatPattern);
             jsFormatPattern = matcher.replaceAll(conversions[i * 2 + 1]);
         }
+		dateFormat = new SimpleDateFormat(formatPattern);
 		
 	}
 	
@@ -139,9 +145,11 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
 		if (languageScript == null) {
 			lang = "en";
 		}
+		
 		resource = new ScriptResource("jscalendar/calendar-setup.js", "Calendar.setup", new FormResource[] {
-			new ScriptResource("jscalendar/lang/calendar-" + lang + ".js", "Calendar._DN"),
-			new ScriptResource("jscalendar/calendar.js", "Calendar"),
+			new ScriptResource("jscalendar/lang/calendar-" + lang + ".js", "Calendar._DN", 
+				new ScriptResource("jscalendar/calendar.js", "Calendar")
+			),
 			new StylesheetResource("jscalendar/calendar.css")
 		});
 	}
@@ -165,5 +173,18 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
 			}
 		}
 		return date;
+	}
+	
+	protected void validate() {
+		super.validate();
+		if (StringUtils.hasText(getText())) {
+			try {
+				dateFormat.parse(getText());
+			}
+			catch (ParseException e) {
+				ErrorUtils.reject(this, "invalidDateFormat", new Object[] {formatPattern});
+			}
+		}
 	}	
+	
 }
