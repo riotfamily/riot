@@ -398,6 +398,18 @@ public class Form implements BeanEditor {
 			validator.validate(populateBackingObject(), errors);
 		}
 	}
+	
+	public void processExclusiveRequest(String elementId,
+			HttpServletRequest request) {
+		
+		processExclusiveRequest(elementId, new HttpFormRequest(request));
+	}
+	
+	public void processExclusiveRequest(String elementId, FormRequest request) {
+		errors = new FormErrors(this);
+		Element element = getElementById(elementId);
+		element.processRequest(request);
+	}
 
 	public void setFormListener(FormListener formListener) {
 		this.formListener = formListener;
