@@ -32,6 +32,8 @@ import org.riotfamily.common.web.util.ServletUtils;
 
 public class PageRequestContext {
 
+	private Object key;
+	
 	private Map parameters;
 	
 	private Map attributes;
@@ -46,7 +48,8 @@ public class PageRequestContext {
 	
 	private String requestURI;
 	
-	public PageRequestContext(HttpServletRequest request) {
+	public PageRequestContext(Object key, HttpServletRequest request) {
+		this.key = key;
 		this.method = request.getMethod();
 		this.pathInfo = request.getPathInfo();
 		this.servletPath = request.getServletPath();
@@ -57,6 +60,10 @@ public class PageRequestContext {
 		this.parameters = new HashMap(request.getParameterMap());	
 	}
 
+	public Object getKey() {
+		return this.key;
+	}
+	
 	public Map getAttributes() {
 		return this.attributes;
 	}

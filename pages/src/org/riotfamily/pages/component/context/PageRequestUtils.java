@@ -53,7 +53,7 @@ public final class PageRequestUtils {
 			String uri = urlPathHelper.getOriginatingRequestUri(request);
 			log.debug("Storing context for " + uri + "#" + contextKey);
 			ContextMap contextMap = getContextMap(request);
-			PageRequestContext context = new PageRequestContext(request);
+			PageRequestContext context = new PageRequestContext(contextKey, request);
 			contextMap.put(uri, contextKey, context, timeToLive);
 			return true;
 		}
@@ -72,13 +72,6 @@ public final class PageRequestUtils {
 		return contexts.get(pageUri, contextKey);
 	}
 	
-	public static PageRequestContext getFirstContext(HttpServletRequest request, 
-			String pageUri) {
-		
-		ContextMap contexts = getContextMap(request);
-		return contexts.getFirst(pageUri);
-	}
-	
 	public static HttpServletRequest wrapRequest(
 			HttpServletRequest request, String pageUri, Object contextKey) 
 			throws RequestContextExpiredException {
@@ -89,7 +82,7 @@ public final class PageRequestUtils {
 		if (context == null) {
 			throw new RequestContextExpiredException();
 		}
-		return new ComponentEditorRequest(request, context, contextKey);
+		return new ComponentEditorRequest(request, context);
 	}
 	
 	private static ContextMap getContextMap(HttpServletRequest request) {
@@ -102,6 +95,13 @@ public final class PageRequestUtils {
 			session.setAttribute(CONTEXT_MAP_ATTRIBUTE, contextMap);
 		}
 		return contextMap;
+	}
+	
+	public static PageRequestContext getFirstContext(HttpServletRequest request, 
+			String pageUri) {
+		
+		ContextMap contexts = getContextMap(request);
+		return contexts.getFirst(pageUri);
 	}
 
 }
