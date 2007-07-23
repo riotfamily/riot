@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.web.util.OncePerRequestInterceptor;
 import org.riotfamily.pages.page.Page;
 import org.riotfamily.pages.page.support.PageUtils;
+import org.springframework.util.StringUtils;
 
 public class MemberInterceptor extends OncePerRequestInterceptor
 		implements MemberBinderAware {
@@ -56,6 +57,9 @@ public class MemberInterceptor extends OncePerRequestInterceptor
 		if (!page.isAccessible(request, member)) {
 			if (loginUrl != null) {
 				String url = request.getRequestURI();
+				if (request.getQueryString() != null) {
+					url = url + '?' + request.getQueryString();
+				}
 				request.getSession().setAttribute(INTERCEPTED_URL, url);
 				response.sendRedirect(request.getContextPath() + loginUrl);
 			}
