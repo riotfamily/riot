@@ -66,7 +66,7 @@ Cropper.UI.prototype = {
 			MozUserSelect: 'none',	overflow: 'hidden',	position: 'relative'
 		});
 
-		this.controls = Cropper.appendDiv(this.element, 'controls no-crop').setStyle({width: this.canvas.offsetWidth + 'px'});
+		this.controls = Cropper.appendDiv(this.element, 'controls no-crop');
 		this.resizeHandle = Cropper.appendDiv(this.preview, 'resizeHandle').setStyle({
 			position: 'absolute', bottom: 0, right: 0, zIndex: 100,	cursor: 'se-resize', overflow: 'hidden'
 		});
