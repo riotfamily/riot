@@ -60,6 +60,12 @@ public final class PageCommandUtils {
 		else if (parent instanceof SiteLocale) {
 			locale = ((SiteLocale) parent).getLocale();
 		}
+		else {
+			Page page = getPage(context);
+			if (page != null) { // TODO: This needs to change somehow...
+				locale = page.getLocale();
+			}
+		}
 		return locale;
 	}
 
@@ -73,7 +79,8 @@ public final class PageCommandUtils {
 	}
 
 	public static boolean isMasterLocaleList(CommandContext context) {
-		return getParentLocale(context).equals(getMasterLocale(context));
+		return ObjectUtils.nullSafeEquals(getParentLocale(context),
+					getMasterLocale(context));
 	}
 
 	public static boolean hasTranslation(CommandContext context) {
