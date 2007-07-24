@@ -25,7 +25,10 @@ package org.riotfamily.forms.element.select;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +43,8 @@ import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.TemplateUtils;
+import org.riotfamily.forms.event.ChangeEvent;
+import org.riotfamily.forms.event.ChangeListener;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.request.FormRequest;
@@ -64,6 +69,8 @@ public abstract class AbstractChooser extends AbstractEditorBase
 
 	private String displayName;
 
+	private List listeners;
+	
 	private static FormResource RESOURCE = 
 			new ScriptResource("form/chooser.js", "Chooser");
 	
@@ -135,13 +142,15 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	}
 	
 	protected void setObjectId(String objectId) {
-		log.debug("Setting objectid to: " + objectId);
+		log.debug("Setting objectId to: " + objectId);
+		Object oldObject = object;
 		if (StringUtils.hasLength(objectId)) {
 			object = loadBean(objectId);
 		}
 		else {
 			object = null;
 		}
+		fireChangeEvent(object, oldObject);
 		displayName = getDisplayName(object);
 	}
 	
@@ -152,6 +161,24 @@ public abstract class AbstractChooser extends AbstractEditorBase
 
 	public Object getValue() {
 		return object;
+	}
+	
+	public void addChangeListener(ChangeListener listener) {
+		if (listeners == null) {
+			listeners = new ArrayList();
+		}
+		listeners.add(listener);
+	}
+
+	protected void fireChangeEvent(Object newValue, Object oldValue) {
+		if (listeners != null) {
+			ChangeEvent event = new ChangeEvent(this, newValue, oldValue);
+			Iterator it = listeners.iterator();
+			while (it.hasNext()) {
+				ChangeListener listener = (ChangeListener) it.next();
+				listener.valueChanged(event);
+			}
+		}
 	}
 	
 	public void handleContentRequest(HttpServletRequest request, 
@@ -168,4 +195,5 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	}
 	
 	protected abstract String getChooserUrl();
+	
 }
