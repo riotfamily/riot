@@ -88,6 +88,14 @@ public class Clipboard {
 		return mode == MODE_EMPTY;
 	}
 
+	public Object getObject() {
+		if (!isEmpty()) {
+			return listDefinition.getListConfig().getDao().load(objectId);
+		}
+		return null;
+	}
+
+
 	public boolean canCopy(CommandContext context) {
 		return context.getDao() instanceof CopyAndPasteEnabledDao;
 	}
