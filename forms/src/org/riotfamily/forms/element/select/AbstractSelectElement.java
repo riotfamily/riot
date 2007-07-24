@@ -93,6 +93,9 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 		this.optionsModel = optionsModel;
 		resetOptions();
 		setValue(null);
+		if (getFormListener() != null) {
+			getFormListener().elementChanged(this);
+		}
 	}
 
 	public void setOptionValues(Collection optionValues) {
