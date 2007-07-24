@@ -48,6 +48,9 @@ public final class PageCommandUtils {
 		return getPage(context).getLocale();
 	}
 
+	/**
+	 * If the parent cannot be determined the return will be <code>null</code>.
+	 */
 	public static Locale getParentLocale(CommandContext context) {
 		Object parent = context.getParent();
 		Locale locale = null;
@@ -56,9 +59,6 @@ public final class PageCommandUtils {
 		}
 		else if (parent instanceof SiteLocale) {
 			locale = ((SiteLocale) parent).getLocale();
-		}
-		else {
-			locale = getPage(context).getLocale();
 		}
 		return locale;
 	}
@@ -89,4 +89,11 @@ public final class PageCommandUtils {
 	public static boolean isSystemPage(CommandContext context) {
 		return getPage(context).getNode().isSystemNode();
 	}
+	public static boolean isHiddenPage(CommandContext context) {
+		return getPage(context).getNode().isHidden();
+	}
+	public static boolean isFolder(CommandContext context) {
+		return getPage(context).isFolder();
+	}
+
 }
