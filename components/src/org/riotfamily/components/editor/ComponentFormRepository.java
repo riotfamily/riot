@@ -58,10 +58,17 @@ public class ComponentFormRepository extends XmlFormRepository {
 		setDefaultBeanClass(HashMap.class);
 	}
 
+	public void configure() {
+		componentRepository.resetPropertyProcessors();
+		super.configure();
+	}
+
 	public void registerFormFactory(String id, FormFactory formFactory) {
-		super.registerFormFactory(id, formFactory);
-		Component component = componentRepository.getComponent(id);
-		componentRepository.resetPropertyProcessors(component);
+		String[] s = id.split("#");
+		String type = s[0];
+		String formId = s[s.length - 1];
+		super.registerFormFactory(formId, formFactory);
+		Component component = componentRepository.getComponent(type);
 		setupForm(component, formFactory.createForm());
 	}
 
@@ -145,4 +152,6 @@ public class ComponentFormRepository extends XmlFormRepository {
 			}
 		}
 	}
+
+
 }

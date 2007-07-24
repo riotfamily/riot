@@ -138,12 +138,17 @@ public class ComponentRepository implements ServletContextAware,
 		}
 	}
 
-	public void resetPropertyProcessors(Component component) {
-		List processors = (List) configuredPropertyProcessors.get(component);
-		if (processors == null) {
-			processors = new ArrayList();
+	public void resetPropertyProcessors() {
+		Iterator it = configuredPropertyProcessors.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			Component component = (Component) entry.getKey();
+			List processors = (List) entry.getValue();
+			if (processors == null) {
+				processors = new ArrayList();
+			}
+			component.setPropertyProcessors(processors);
 		}
-		component.setPropertyProcessors(processors);
 	}
 
 	public void addComponent(String type, Component component) {
