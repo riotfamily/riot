@@ -8,6 +8,10 @@ table.pages tr.foreign-page td {
 	font-style: italic;
 }
 
+table.pages tr.hidden-page td {
+	color: #a4a4a4;
+}
+
 .action-translate {
 	background-image: url(icons/commands/add.gif);
 }

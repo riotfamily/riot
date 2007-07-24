@@ -60,7 +60,28 @@ public class EditPageCommand extends EditCommand {
 	}
 
 	protected String getItemStyleClass(CommandContext context, String action) {
-		return action == ACTION_TRANSLATE ? "foreign-page" : null;
+		StringBuffer styleClasses = new StringBuffer();
+		if (action == ACTION_TRANSLATE) {
+			appendStyleClass(styleClasses, "foreign-page");
+		}
+		/* TODO: It would be better to set these styles in a different location. */
+		if (PageCommandUtils.isSystemPage(context)) {
+			appendStyleClass(styleClasses, "system-page");
+		}
+		if (PageCommandUtils.isHiddenPage(context)) {
+			appendStyleClass(styleClasses, "hidden-page");
+		}
+		if (PageCommandUtils.isFolder(context)) {
+			appendStyleClass(styleClasses, "folder");
+		}
+		return styleClasses.toString();
+	}
+
+	private void appendStyleClass(StringBuffer buffer, String styleClass) {
+		if (buffer.length() > 0) {
+			buffer.append(" ");
+		}
+		buffer.append(styleClass);
 	}
 
 	public CommandResult execute(CommandContext context) {
