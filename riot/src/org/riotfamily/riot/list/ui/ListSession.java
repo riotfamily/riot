@@ -281,14 +281,12 @@ public class ListSession implements RenderContext {
 					config.getLookupLevel()));
 
 			column.setSortable(sortableDao && config.isSortable());
-			if (config.getProperty() != null) {
-				column.setCssClass(FormatUtils.toCssClass(config.getProperty()));
-				if (params.hasOrder() && params.getPrimaryOrder()
-						.getProperty().equals(config.getProperty())) {
+			column.setCssClass(FormatUtils.toCssClass(config.getProperty()));
+			if (params.hasOrder() && params.getPrimaryOrder()
+					.getProperty().equals(config.getProperty())) {
 
-					column.setSorted(true);
-					column.setAscending(params.getPrimaryOrder().isAscending());
-				}
+				column.setSorted(true);
+				column.setAscending(params.getPrimaryOrder().isAscending());
 			}
 			columns.add(column);
 		}

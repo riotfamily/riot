@@ -71,7 +71,7 @@ public final class FormatUtils {
 	}
 
 	/**
-	 * Returns a formatted string using an appropriate unit (Bytes, KB or MB). 
+	 * Returns a formatted string using an appropriate unit (Bytes, KB or MB).
 	 */
 	public static String formatByteSize(long bytes) {
 		if (bytes < 1024) {
@@ -241,6 +241,9 @@ public final class FormatUtils {
 	 * Converts the given String into a valid CSS class name.
 	 */
 	public static String toCssClass(String s) {
+		if (s == null) {
+			return null;
+		}
 		s = s.replaceAll("[.\\s/]", "-");
 		s = s.replaceAll("[^\\w-_]", "");
 		return s;
@@ -319,9 +322,9 @@ public final class FormatUtils {
 	}
 
 	/**
-	 * Returns a formatted string using the pattern hh:mm:ss. The hours are 
-	 * omitted if they are zero, the minutes are padded with a '0' character 
-	 * if they are less than 10. 
+	 * Returns a formatted string using the pattern hh:mm:ss. The hours are
+	 * omitted if they are zero, the minutes are padded with a '0' character
+	 * if they are less than 10.
 	 */
 	public static String formatMillis(long millis) {
 		int hours = (int) (millis / (1000 * 60 * 60));
@@ -561,7 +564,7 @@ public final class FormatUtils {
 	}
 
 	/**
-	 * Translates the given string into application/x-www-form-urlencoded 
+	 * Translates the given string into application/x-www-form-urlencoded
 	 * format using UTF-8 as encoding scheme.
 	 */
 	public static String uriEscape(String input) {
@@ -574,7 +577,7 @@ public final class FormatUtils {
 	}
 
 	/**
-	 * Decodes the given application/x-www-form-urlencoded string using 
+	 * Decodes the given application/x-www-form-urlencoded string using
 	 * UTF-8 as encoding scheme.
 	 */
 	public static String uriUnescape(String input) {
