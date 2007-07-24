@@ -67,7 +67,7 @@
 			<list:command id="showChildPages" />
 		</list:columns>
 		<list:command id="add"/>
-		<list:command id="paste" />
+		<list:command id="pastePage" />
 	</list:list>
 
 	<form:form id="site" bean-class="org.riotfamily.pages.Site">

@@ -14,6 +14,7 @@
 		<constructor-arg ref="pageLocationResolver" />
 	</bean>
 
+
 	<!-- Module configuration -->
 
 	<bean id="pagesModule" class="org.riotfamily.common.beans.module.FactoryBeanModule">
@@ -65,15 +66,12 @@
 		<property name="pageDao" ref="pageDao" />
 	</bean>
 
-	<bean id="editPageCommand" class="org.riotfamily.pages.riot.command.EditPageCommand">
-		<constructor-arg ref="pageDao" />
+	<bean id="localesOptionsModel" class="org.riotfamily.forms.element.select.StaticOptionsModel">
+		<constructor-arg ref="websiteLocales" />
 	</bean>
 
-	<bean id="cutPageCommand" class="org.riotfamily.pages.riot.command.CutPageCommand" />
 
-	<bean id="deletePageCommand" class="org.riotfamily.pages.riot.command.DeletePageCommand" />
-
-	<bean id="showChildPagesCommand" class="org.riotfamily.pages.riot.command.ShowChildPagesCommand" />
+	<!-- Customised Page Commands -->
 
 	<bean id="publishPageCommand" class="org.riotfamily.pages.riot.command.PublishPageCommand" />
 
@@ -85,13 +83,23 @@
 		<property name="swapWith" value="1" />
 	</bean>
 
+	<bean id="cutPageCommand" class="org.riotfamily.pages.riot.command.CutPageCommand" />
+
+	<bean id="editPageCommand" class="org.riotfamily.pages.riot.command.EditPageCommand">
+		<constructor-arg ref="pageDao" />
+	</bean>
+
+	<bean id="deletePageCommand" class="org.riotfamily.pages.riot.command.DeletePageCommand" />
+
 	<bean id="gotoPageCommand" class="org.riotfamily.pages.riot.command.GotoPageCommand">
 		<constructor-arg ref="pageLocationResolver" />
 		<property name="windowName" value="preview" />
 	</bean>
 
-	<bean id="localesOptionsModel" class="org.riotfamily.forms.element.select.StaticOptionsModel">
-		<constructor-arg ref="websiteLocales" />
+	<bean id="showChildPagesCommand" class="org.riotfamily.pages.riot.command.ShowChildPagesCommand" />
+
+	<bean id="pastePageCommand" class="org.riotfamily.pages.riot.command.PastePageCommand">
+		<constructor-arg ref="pageDao" />
 	</bean>
 
 </beans>

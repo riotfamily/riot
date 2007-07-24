@@ -23,18 +23,55 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
+import java.util.Locale;
+
+import org.riotfamily.pages.Page;
+import org.riotfamily.pages.PageNode;
+import org.riotfamily.pages.PageValidationUtils;
+import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.pages.riot.dao.SiteLocale;
 import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.Clipboard;
 import org.riotfamily.riot.list.command.core.PasteCommand;
-import org.riotfamily.riot.list.command.result.ShowListResult;
 
 public class PastePageCommand extends PasteCommand {
 
-	public CommandResult execute(CommandContext context) {
+	private PageDao pageDao;
+
+	public PastePageCommand(PageDao pageDao) {
+		this.pageDao = pageDao;
+	}
+
+	protected boolean isEnabled(CommandContext context, String action) {
+		boolean enabled = super.isEnabled(context, action);
 		Clipboard cb = Clipboard.get(context);
-		cb.paste(context);
-		return new ShowListResult(context);
+		Object obj = cb.getObject();
+		if (obj instanceof Page) {
+			Page page = (Page) obj;
+			enabled &= isValidChild(context.getParent(), page);
+
+			// Only allow pasting into the same locale
+			Locale locale = PageCommandUtils.getParentLocale(context);
+			if(locale != null) {
+				enabled &= page.getLocale().equals(locale);
+			}
+		}
+		return enabled;
+	}
+
+	private boolean isValidChild(Object parent, Page page) {
+		PageNode parentNode;
+		if (parent instanceof Page) {
+			parentNode = ((Page) parent).getNode();
+		}
+		else if (parent instanceof SiteLocale) {
+			SiteLocale siteLocale = ((SiteLocale) parent);
+			parentNode = pageDao.findRootNode(siteLocale.getSite());
+		}
+		else {
+			parentNode = pageDao.findRootNode(pageDao.getDefaultSite());
+		}
+		return PageValidationUtils.isValidChild(parentNode, page);
 	}
 
 }
