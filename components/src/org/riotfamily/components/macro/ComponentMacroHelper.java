@@ -24,10 +24,12 @@
 package org.riotfamily.components.macro;
 
 import java.util.Collection;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.components.Component;
 import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.VersionContainer;
@@ -76,4 +78,14 @@ public class ComponentMacroHelper {
 
 		return "";
 	}
+
+	public Map getProperties(VersionContainer container) {
+		ComponentVersion version = EditModeUtils.isEditMode(request)
+				? container.getLatestVersion()
+				: container.getLiveVersion();
+
+		Component component = repository.getComponent(version.getType());
+		return component.buildModel(version);
+	}
+
 }

@@ -156,6 +156,13 @@
 </#macro>
 
 <#--
+  - Returns the properties for the given container.
+  -->
+<#function properties container>
+	<#return componentMacroHelper.getProperties(container) />
+</#function>
+
+<#--
   -
   -->
 <#macro use container form="" tag="" attributes ...>
