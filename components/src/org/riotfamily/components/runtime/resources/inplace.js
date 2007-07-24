@@ -345,6 +345,8 @@ riot.Popup.prototype = {
 			this.content = content,
 			this.okButton = RBuilder.node('div', {className: 'button-ok', onclick: ok}, 'Ok')
 		);
+		this.keyDownHandler = this.handleKeyDown.bindAsEventListener(this);
+		Event.observe(document, 'keydown', this.keyDownHandler);
 		this.div.makeInvisible();
 		document.body.appendChild(this.overlay);
 		document.body.appendChild(this.div);
@@ -400,6 +402,7 @@ riot.Popup.prototype = {
 	},
 
 	close: function() {
+		Event.stopObserving(document, 'keydown', this.keyDownHandler);
 		if (riot.activePopup == this) {
 			if (Prototype.Browser.IE) {
 				this.showElements('select');
@@ -412,7 +415,16 @@ riot.Popup.prototype = {
 			riot.outline.suspended = false;
 			riot.activePopup = null;
 		}
+	},
+
+	/* Handler that is invoked when a key has been pressed */
+	handleKeyDown: function(ev) {
+		if (ev.keyCode == Event.KEY_ESC) {
+			Event.stop(ev);
+			this.close();
+		}
 	}
+
 }
 
 riot.TextareaPopup = Class.extend(riot.Popup, {
@@ -473,12 +485,12 @@ riot.stylesheetMaker = {
 	properties: {
 		'*': ['font-family', 'font-size', 'font-weight', 'font-style',
 			'line-height', 'text-decoration', 'color', 'background-color',
+			'background-image', 'background-position', 'background-repeat',
 			'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
 			'padding-top', 'padding-right', 'padding-bottom', 'padding-left'],
 		'a': ['border-bottom'],
 		'hr': ['width', 'height'],
-		'ul li': ['list-style-type', 'list-style-position', 'list-style-image',
-			'background-image', 'background-position', 'background-repeat']
+		'ul li': ['list-style-type', 'list-style-position', 'list-style-image']
 	},
 
 	selectors: ['body', 'p', 'a', 'strong', 'em', 'h1', 'h2',
