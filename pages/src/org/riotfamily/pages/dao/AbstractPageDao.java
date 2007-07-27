@@ -33,6 +33,7 @@ import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.components.VersionContainer;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
@@ -88,10 +89,10 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	protected abstract void updateObject(Object object);
 
-	protected abstract void reattachObject(Object object);
-
 	protected abstract void deleteObject(Object object);
 
+	protected abstract void flush();
+	
 
 	public Page loadPage(Long id) {
 		return (Page) loadObject(Page.class, id);
@@ -101,6 +102,10 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		return (Site) loadObject(Site.class, id);
 	}
 
+	public void saveNode(PageNode node) {
+		saveObject(node);
+	}
+	
 	public void savePage(Page parent, Page page) {
 		page.setLocale(parent.getLocale());
 		savePage(parent.getNode(), page);
@@ -116,7 +121,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		if (node == null) {
 			node = new PageNode();
 		}
-		node.addPage(page);
+		node.addPage(page); // It could be that the node does not yet contain
+							// the page itself, for example when edited nested...
 
 		if (!PageValidationUtils.isValidChild(parentNode, page)) {
 			log.warn("Page not saved because not valid: " + page);
@@ -125,7 +131,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 		parentNode.addChildNode(node);
 		page.setCreationDate(new Date());
-		updateNode(parentNode);
+		saveNode(node);
 		deleteAlias(new PageLocation(page));
 		log.debug("Page saved: " + page);
 	}
@@ -135,10 +141,12 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		Page translation = new Page();
 		translation.setLocale(locale);
 		translation.setPathComponent(page.getPathComponent());
-		page.getNode().addPage(translation);
-		updateNode(page.getNode());
+		PageNode node = page.getNode(); 
+		node.addPage(translation);
+		updateNode(node);
 		deleteAlias(new PageLocation(translation));
-
+		saveObject(translation);
+		
 		componentDao.copyComponentLists(PageComponentListLocator.TYPE_PAGE,
 				page.getId().toString(), translation.getId().toString());
 
@@ -146,14 +154,14 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 
 	public void updatePage(Page page) {
-		reattachObject(page);
+		updateNode(page.getNode());
+		updateObject(page);
 
 		if (!PageValidationUtils.isValidChild(page.getNode().getParent(), page)) {
 			log.warn("Page not saved because not valid: " + page);
 			throw new DuplicatePathComponentException("Page '{0}' did not validate", page.toString());
 		}
 
-		updateObject(page);
 		String oldPath = page.getPath();
 		String newPath = page.buildPath();
 		if (!ObjectUtils.nullSafeEquals(oldPath, newPath)) {
@@ -170,19 +178,9 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 
 	public void moveNode(PageNode node, PageNode newParent) {
-/*
-		List newParentChilds = parentNode.getChildNodes();
-		Iterator it = newParentChilds.iterator();
-		while (it.hasNext()) {
-			PageNode traverseNode = (PageNode) it.next();
-			traverseNode.getPage(locale)
-		}
-*/
 		PageNode parentNode = node.getParent();
 		parentNode.getChildNodes().remove(node);
 		newParent.addChildNode(node);
-		//updateNode(newParent);
-		//updateNode(parentNode);
 		updatePaths(node.getPages());
 	}
 
@@ -235,12 +233,11 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 		PageNode node = page.getNode();
 		node.removePage(page);
-
-		/*
+		deleteObject(page);
+		
 		VersionContainer vc = page.getVersionContainer();
 		page.setVersionContainer(null);
 		componentDao.deleteVersionContainer(vc);
-		*/
 
 		if (node.hasPages()) {
 			updateNode(node);
@@ -266,6 +263,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		site.setEnabled(true);
 		site.setLocales(new ArrayList(locales));
 		saveSite(site);
+		flush(); // REVISIT: Flush is required here because this method is
+				 // unfortunately called in non-transactional contexts
 		return site;
 	}
 

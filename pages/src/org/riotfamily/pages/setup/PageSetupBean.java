@@ -76,7 +76,7 @@ public class PageSetupBean implements InitializingBean {
 			Iterator it = definitions.iterator();
 			while (it.hasNext()) {
 				PageDefinition definition = (PageDefinition) it.next();
-				PageNode childNode = definition.createNode(site, pageDao.getLocales());
+				PageNode childNode = definition.createNode(rootNode, pageDao);
 				rootNode.addChildNode(childNode);
 			}
 			pageDao.updateNode(rootNode);

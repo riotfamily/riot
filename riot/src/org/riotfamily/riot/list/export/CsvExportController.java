@@ -32,7 +32,6 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
@@ -43,8 +42,9 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
-public class CsvExportController implements TransactionalController {
+public class CsvExportController implements Controller {
 
 	private EditorRepository editorRepository;
 

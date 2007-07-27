@@ -29,14 +29,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.riot.editor.CustomEditorDefinition;
 import org.riotfamily.riot.editor.EditorConstants;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
-public class CustomEditorController implements TransactionalController {
+public class CustomEditorController implements Controller {
 
 	private EditorRepository editorRepository;
 

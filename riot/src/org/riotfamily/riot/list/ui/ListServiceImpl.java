@@ -46,6 +46,7 @@ import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -65,6 +66,8 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 	private AdvancedMessageCodesResolver messageCodesResolver;
 
 	private FormContextFactory formContextFactory;
+	
+	private PlatformTransactionManager transactionManager;
 
 	private Collection sessions = new ArrayList();
 
@@ -87,6 +90,10 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 		this.formContextFactory = formContextFactory;
 	}
 
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
+	}
+	
 	public ListSession getOrCreateListSession(String editorId, String parentId,
 			String choose, HttpServletRequest request) {
 
@@ -111,7 +118,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 
 			listSession = new ListSession(key, listDef, parentId, messageResolver,
 					request.getContextPath(), editorRepository.getFormRepository(),
-					formContextFactory);
+					formContextFactory, transactionManager);
 
 			if (choose != null) {
 				listSession.setChooserTarget(editorRepository.getEditorDefinition(choose));

@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.setup;
 
-import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -34,7 +34,7 @@ import java.util.Properties;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageNode;
-import org.riotfamily.pages.Site;
+import org.riotfamily.pages.dao.PageDao;
 
 /**
  * @author flx
@@ -112,32 +112,36 @@ public class PageDefinition {
 		this.definitions = definitions;
 	}
 
-	public PageNode createNode(Site site, Collection locales) {
+	public PageNode createNode(PageNode parent, PageDao pageDao) {
 		PageNode node = new PageNode();
-		node.setSite(site);
+		node.setParent(parent);
+		node.setSite(parent.getSite());
 		node.setHandlerName(handlerName);
 		node.setSystemNode(systemNode);
 		node.setChildHandlerName(childHandlerName);
 		node.setHidden(hidden);
-		createPages(node, locales);
+		createPages(node, pageDao);
 		if (definitions != null) {
 			Iterator it = definitions.iterator();
 			while (it.hasNext()) {
 				PageDefinition childDefinition = (PageDefinition) it.next();
-				PageNode childNode = childDefinition.createNode(site, locales);
+				PageNode childNode = childDefinition.createNode(node, pageDao);
 				node.addChildNode(childNode);
 			}
 		}
+		pageDao.saveNode(node);
 		return node;
 	}
 
-	private void createPages(PageNode node, Collection locales) {
-		Iterator it = locales.iterator();
+	private void createPages(PageNode node, PageDao pageDao) {
+		Iterator it = pageDao.getLocales().iterator();
 		while (it.hasNext()) {
 			Locale locale = (Locale) it.next();
 			Page page = new Page(getPathComponent(), locale);
+			page.setNode(node);
 			page.setPublished(published);
 			page.setFolder(folder);
+			page.setCreationDate(new Date());
 			addPageProps(page, locale);
 			node.addPage(page);
 		}

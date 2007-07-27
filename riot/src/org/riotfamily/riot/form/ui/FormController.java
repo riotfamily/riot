@@ -39,6 +39,7 @@ import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.ui.ListService;
 import org.riotfamily.riot.list.ui.ListSession;
 import org.riotfamily.riot.security.AccessController;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -52,9 +53,11 @@ public class FormController extends BaseFormController {
 	private ListService listService;
 
 	public FormController(EditorRepository editorRepository,
-			FormRepository formRepository, ListService listService) {
+			FormRepository formRepository,
+			PlatformTransactionManager transactionManager,
+			ListService listService) {
 
-		super(editorRepository, formRepository);
+		super(editorRepository, formRepository, transactionManager);
 		this.listService = listService;
 	}
 

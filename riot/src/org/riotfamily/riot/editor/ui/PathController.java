@@ -28,19 +28,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.riot.editor.EditorConstants;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * Controller that displays a breadcrumb navigation for an editor.
  */
-public class PathController implements TransactionalController, MessageSourceAware {
+public class PathController implements Controller, MessageSourceAware {
 
 	private EditorRepository repository;
 

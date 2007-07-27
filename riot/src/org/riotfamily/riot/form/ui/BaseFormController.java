@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
@@ -47,6 +46,10 @@ import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.FormReference;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.ObjectEditorDefinition;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -54,21 +57,29 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 public abstract class BaseFormController extends RepositoryFormController
-		implements FormSubmissionHandler, TransactionalController {
+		implements FormSubmissionHandler {
 
 	protected static final String EDITOR_DEFINITION_ATTR =
 			FormController.class.getName() + ".editorDefinition";
 
+	private static final DefaultTransactionDefinition TRANSACTION_DEFINITION =
+			new DefaultTransactionDefinition(
+			TransactionDefinition.PROPAGATION_REQUIRED);
+	
 	private EditorRepository editorRepository;
+
+	private PlatformTransactionManager transactionManager;
 
 	private String viewName = ResourceUtils.getPath(
 			BaseFormController.class, "FormView.ftl");
 
 	public BaseFormController(EditorRepository editorRepository,
-			FormRepository formRepository) {
+			FormRepository formRepository,
+			PlatformTransactionManager transactionManager) {
 
 		super(formRepository);
 		this.editorRepository = editorRepository;
+		this.transactionManager = transactionManager;
 		ButtonFactory buttonFactory = new ButtonFactory(this);
 		buttonFactory.setLabelKey("label.form.button.save");
 		buttonFactory.setCssClass("button button-save");
@@ -162,27 +173,8 @@ public abstract class BaseFormController extends RepositoryFormController
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 
-		Object bean = form.populateBackingObject();
-		ObjectEditorDefinition editorDef = getObjectEditorDefinition(request);
-
-		ListDefinition listDef = EditorDefinitionUtils.getParentListDefinition(editorDef);
-		RiotDao dao = listDef.getListConfig().getDao();
-
 		try {
-			if (form.isNew()) {
-				log.debug("Saving entity ...");
-				String parentId = FormUtils.getParentId(form);
-				Object parent = EditorDefinitionUtils.loadParent(listDef, parentId);
-				dao.save(bean, parent);
-				FormUtils.setObjectId(form, dao.getObjectId(bean));
-				form.setValue(bean);
-				return afterSave(form, editorDef, request, response);
-			}
-			else {
-				log.debug("Updating entity ...");
-				dao.update(bean);
-				return afterUpdate(form, editorDef, request, response);
-			}
+			return handleFormSubmissionInternal(form, request, response);
 		}
 		catch (InvalidPropertyValueException e) {
 			form.getErrors().rejectValue(e.getField(), e.getCode(),
@@ -196,6 +188,43 @@ public abstract class BaseFormController extends RepositoryFormController
 		}
 	}
 
+	protected ModelAndView handleFormSubmissionInternal(Form form, 
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		
+		Object bean = form.populateBackingObject();
+		ObjectEditorDefinition editorDef = getObjectEditorDefinition(request);
+
+		ListDefinition listDef = EditorDefinitionUtils.getParentListDefinition(editorDef);
+		RiotDao dao = listDef.getListConfig().getDao();
+		
+		ModelAndView modelAndView;
+		TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
+		try {
+			if (form.isNew()) {
+				log.debug("Saving entity ...");
+				String parentId = FormUtils.getParentId(form);
+				Object parent = EditorDefinitionUtils.loadParent(listDef, parentId);
+				dao.save(bean, parent);
+				FormUtils.setObjectId(form, dao.getObjectId(bean));
+				form.setValue(bean);
+				modelAndView = afterSave(form, editorDef, request, response);
+			}
+			else {
+				log.debug("Updating entity ...");
+				dao.update(bean);
+				modelAndView = afterUpdate(form, editorDef, request, response);
+			}
+		}
+		catch (Exception e) {
+			transactionManager.rollback(status);
+			throw e;
+		}
+		transactionManager.commit(status);
+		return modelAndView;
+	}
+	
+	
 
 	protected abstract ModelAndView afterSave(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response);

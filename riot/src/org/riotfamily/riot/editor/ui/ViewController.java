@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.riot.editor.EditorConstants;
 import org.riotfamily.riot.editor.EditorDefinition;
@@ -47,10 +46,11 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 import freemarker.template.Configuration;
 
-public class ViewController implements TransactionalController,
+public class ViewController implements Controller,
 		ResourceLoaderAware, InitializingBean {
 
 	private EditorRepository editorRepository;

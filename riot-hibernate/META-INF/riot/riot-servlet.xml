@@ -95,6 +95,13 @@
 						<value>classpath:/org/riotfamily/riot/hibernate/runtime/i18n/messages</value>
 					</list>
 				</entry>
+				<entry key="riotHandlerInterceptors">
+					<list>
+						<bean class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
+							<property name="sessionFactory" ref="riotSessionFactory" />
+						</bean>
+					</list>
+				</entry>
 			</map>
 		</property>
 	</bean>

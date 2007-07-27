@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.Site;
@@ -43,9 +42,10 @@ import org.riotfamily.pages.mapping.PageLocationResolver;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-public class PageChooserController implements TransactionalController {
+public class PageChooserController implements Controller {
 
 	private PageDao pageDao;
 

@@ -30,17 +30,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.factory.FormRepository;
-import org.riotfamily.riot.editor.ObjectEditorDefinition;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.FormChooserDefinition;
+import org.riotfamily.riot.editor.ObjectEditorDefinition;
 import org.riotfamily.riot.list.ui.ListService;
+import org.springframework.transaction.PlatformTransactionManager;
 
 public class FormChooserController extends FormController {
 
 	public FormChooserController(EditorRepository editorRepository,
-			FormRepository formRepository, ListService listService) {
+			FormRepository formRepository,
+			PlatformTransactionManager transactionManager,
+			ListService listService) {
 
-		super(editorRepository, formRepository, listService);
+		super(editorRepository, formRepository, transactionManager, listService);
 	}
 
 	protected String getFormId(HttpServletRequest request) {

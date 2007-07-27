@@ -63,12 +63,20 @@ import org.riotfamily.riot.list.command.result.ConfirmResult;
 import org.riotfamily.riot.list.support.ListParamsImpl;
 import org.riotfamily.riot.list.ui.render.RenderContext;
 import org.riotfamily.riot.security.AccessController;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 /**
 	* @author Felix Gnass [fgnass at neteye dot de]
 	* @since 6.4
 	*/
 public class ListSession implements RenderContext {
+
+	private static final DefaultTransactionDefinition TRANSACTION_DEFINITION =
+		new DefaultTransactionDefinition(
+		TransactionDefinition.PROPAGATION_REQUIRED);
 
 	private String key;
 
@@ -79,6 +87,8 @@ public class ListSession implements RenderContext {
 	private MessageResolver messageResolver;
 
 	private String contextPath;
+
+	private PlatformTransactionManager transactionManager;
 
 	private Form filterForm;
 
@@ -103,13 +113,15 @@ public class ListSession implements RenderContext {
 	public ListSession(String key, ListDefinition listDefinition,
 			String parentId, MessageResolver messageResolver, String contextPath,
 			FormRepository formRepository,
-			FormContextFactory formContextFactory) {
+			FormContextFactory formContextFactory,
+			PlatformTransactionManager transactionManager) {
 
 		this.key = key;
 		this.listDefinition = listDefinition;
 		this.parentId = parentId;
 		this.messageResolver = messageResolver;
 		this.contextPath = contextPath;
+		this.transactionManager = transactionManager;
 		this.listConfig = listDefinition.getListConfig();
 
 		listCommands = listConfig.getCommands();
@@ -424,13 +436,23 @@ public class ListSession implements RenderContext {
 					return new ConfirmResult(item, commandId, message);
 				}
 			}
-			return command.execute(context);
+			TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
+			CommandResult result;
+			try {
+				result = command.execute(context); 
+			}
+			catch (RuntimeException e) {
+				transactionManager.rollback(status);
+				throw e;
+			}
+			transactionManager.commit(status);
+			return result; 
 		}
 		else {
 			return null;
 		}
 	}
-
+	
 	private Command getCommand(Collection commands, String id) {
 		Iterator it = commands.iterator();
 		while (it.hasNext()) {

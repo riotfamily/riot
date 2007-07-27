@@ -93,6 +93,8 @@ public interface PageDao {
 	 */
 	public PageNode findRootNode(Site site);
 
+	public void saveNode(PageNode node);
+
 	public void savePage(Site site, Page page);
 
 	public void savePage(Page parent, Page child);

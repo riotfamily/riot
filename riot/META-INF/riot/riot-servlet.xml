@@ -298,9 +298,14 @@
 	<bean id="handlerMapping" class="org.riotfamily.common.web.mapping.AdvancedBeanNameHandlerMapping">
 		<property name="servletMappingPrefix" ref="riotServletPrefix" />
 		<property name="interceptors">
-			<list>
-				<ref bean="loginInterceptor" />
-			</list>
+			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
+				<property name="key" value="riotHandlerInterceptors" />
+				<property name="sourceList">
+					<list>
+						<ref bean="loginInterceptor" />
+					</list>
+				</property>
+			</bean>
 		</property>
 	</bean>
 
@@ -433,20 +438,17 @@
 	<alias name="listController" alias="/list/@{editorId}" />
 	<alias name="listController" alias="/list/@{editorId}/@{parentId}" />
 
-	<bean id="listService" class="org.springframework.aop.framework.ProxyFactoryBean">
-		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
-		<property name="target"><ref bean="listServiceTarget" /></property>
-	</bean>
-
-	<bean id="listServiceTarget" class="org.riotfamily.riot.list.ui.ListServiceImpl">
+	<bean id="listService" class="org.riotfamily.riot.list.ui.ListServiceImpl">
 		<property name="editorRepository" ref="editorRepository" />
 		<property name="messageCodesResolver" ref="messageCodesResolver" />
 		<property name="formContextFactory" ref="formContextFactory" />
+		<property name="transactionManager" ref="transactionManager" />
 	</bean>
 
 	<bean id="formController" class="org.riotfamily.riot.form.ui.FormController">
 		<constructor-arg ref="editorRepository" />
 		<constructor-arg ref="formRepository" />
+		<constructor-arg ref="transactionManager" />
 		<constructor-arg ref="listService" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>

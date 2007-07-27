@@ -11,18 +11,19 @@
 			<generator class="native" />
 		</id>
 
-		<!-- We have to cascade updates so that the parent is reattached -->
-		<many-to-one name="parent" insert="false" update="false" cascade="save-update" />
+		<!-- We have to use cascade "update" to ensure that nodes are reattached -->
+		<many-to-one name="parent" insert="false" update="false" cascade="save-update"/>
 
 		<many-to-one name="site" />
 
 		<!-- We must not use all-delete-orphan here, because otherwise nodes can not be moved to another parent -->
-		<list name="childNodes" cascade="all">
+		<list name="childNodes">
 			<key column="parent" />
 			<list-index column="pos" />
 			<one-to-many class="PageNode" />
 		</list>
-		<set name="pages" order-by="creationDate" cascade="all-delete-orphan">
+		<!-- We have to use cascade "update" to ensure that pages are reattached -->
+		<set name="pages" order-by="creationDate" cascade="save-update">
 			<key column="node" />
 			<one-to-many class="Page" />
 		</set>
@@ -37,12 +38,12 @@
 		<id name="id" access="field">
 			<generator class="native" />
 		</id>
-		<!-- We have to cascade updates so that the parent is reattached -->
-		<many-to-one name="node" insert="false" update="false" cascade="save-update" />
+		<many-to-one name="node" insert="false" update="false" />
 		<property name="locale" length="5"/>
 		<property name="published" />
 		<property name="creationDate" />
 		<property name="pathComponent" />
+		<property name="hidden" />
 		<property name="folder" />
 		<property name="path" column="`path`" />
 		<many-to-one name="versionContainer" cascade="all" />
