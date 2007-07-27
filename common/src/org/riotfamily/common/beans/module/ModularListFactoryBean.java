@@ -80,7 +80,7 @@ public class ModularListFactoryBean extends AbstractFactoryBean implements
 	}
 
 	/**
-	 * Sets whether the root bean defintion (having the key as id) should be
+	 * Sets whether the root bean definition (having the key as id) should be
 	 * included in the list. This is useful if not only modules but the
 	 * application itself should be able to add items to the list.
 	 */
