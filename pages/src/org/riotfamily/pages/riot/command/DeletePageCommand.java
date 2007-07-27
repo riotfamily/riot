@@ -23,8 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
+import org.riotfamily.pages.Page;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.core.DeleteCommand;
+import org.springframework.web.util.HtmlUtils;
 
 public class DeletePageCommand extends DeleteCommand {
 
@@ -32,6 +34,23 @@ public class DeletePageCommand extends DeleteCommand {
 		return super.isEnabled(context, action)
 				&& !PageCommandUtils.isSystemPage(context)
 				&& PageCommandUtils.isTranslated(context);
+	}
+
+	public String getConfirmationMessage(CommandContext context) {
+		Page page = PageCommandUtils.getPage(context);
+		String label = HtmlUtils.htmlEscape(page.getPathComponent());
+		
+		int numChilds = page.getChildPages().size();
+		if (numChilds > 0) {
+			return context.getMessageResolver().getMessage(
+					"org.riotfamily.pages.confirm.delete.withChildren",
+					new Object[] {label, new Integer(numChilds)}, 
+					"Do you really want to delete this page and all of its child pages?");
+		}
+		return context.getMessageResolver().getMessage(
+				"org.riotfamily.pages.confirm.delete",
+				new Object[] {label}, 
+				"Do you really want to delete this page?");
 	}
 
 }
