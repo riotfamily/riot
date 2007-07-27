@@ -40,7 +40,7 @@ public interface RiotDao {
 	/**
 	 * Returns the id of the given entity. Implementors will most likely need
 	 * to perform a type conversion in order to return a String representation.
-	 * The returned String must be parsable by the {@link #load(String) load()}
+	 * The returned String must be parseable by the {@link #load(String) load()}
 	 * method.
 	 */
 	public String getObjectId(Object entity);
