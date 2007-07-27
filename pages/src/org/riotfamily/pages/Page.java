@@ -48,6 +48,8 @@ public class Page {
 
 	private String pathComponent;
 
+	private boolean hidden;
+
 	private boolean folder;
 
 	private String path;
@@ -110,6 +112,14 @@ public class Page {
 		return "*".equals(pathComponent);
 	}
 
+	public boolean isHidden() {
+		return this.hidden;
+	}
+	
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
+	}
+	
 	/**
 	 * Returns whether the page only acts as container for other pages and
 	 * has no own content.
@@ -227,4 +237,20 @@ public class Page {
 	public String toString() {
 		return locale + ":" + path;
 	}
+
+	public boolean equals(Object o) {
+		if (o instanceof Page) {
+			Page page = (Page) o;
+			if (id == null) {
+				return this == o;
+			}
+			return id.equals(page.getId());
+		}
+		return false;
+	}
+
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
+	}
+
 }

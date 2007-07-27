@@ -118,7 +118,8 @@ public class PageMacroHelper {
 	}
 
 	public boolean isVisible(Page page) {
-		return !page.getNode().isHidden() && (page.isEnabled()
+		return !page.isHidden() && !page.getNode().isHidden()
+					&& (page.isEnabled()
 					|| EditModeUtils.isEditMode(request));
 	}
 

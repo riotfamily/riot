@@ -50,6 +50,7 @@
 				<db:column name="published" type="BIT" />
 				<db:column name="creationDate" type="TIMESTAMP" />
 				<db:column name="pathComponent" type="VARCHAR" length="255" />
+				<db:column name="hidden" type="BIT" />
 				<db:column name="folder" type="BIT" />
 				<db:column name="path" type="VARCHAR" length="255" />
 				<db:column name="versionContainer" type="BIGINT" />
