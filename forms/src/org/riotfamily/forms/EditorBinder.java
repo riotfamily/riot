@@ -181,7 +181,11 @@ public class EditorBinder extends PropertyEditorRegistrySupport {
 		while (it.hasNext()) {
 			EditorBinding binding = (EditorBinding) it.next();
 			Editor editor = binding.getEditor();
-			editor.setValue(getPropertyValue(binding.getProperty()));
+			Object value = null;
+			if (editingExistingBean) {
+				value = getPropertyValue(binding.getProperty());
+			}
+			editor.setValue(value);
 		}
 	}
 
