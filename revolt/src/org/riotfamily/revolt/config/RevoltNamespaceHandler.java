@@ -228,6 +228,9 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 			column.setAutoIncrement(Boolean.valueOf(
 					ele.getAttribute("auto-increment")).booleanValue());
 		}
+		if (StringUtils.hasLength(ele.getAttribute("default-value"))) {
+			column.setDefaultValue(ele.getAttribute("default-value"));
+		}
 		return column;
 	}
 	

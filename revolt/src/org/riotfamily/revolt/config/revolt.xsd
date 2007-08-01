@@ -12,6 +12,7 @@
 		<xsd:attribute name="primary-key" type="xsd:boolean" />
 		<xsd:attribute name="not-null" type="xsd:boolean" />
 		<xsd:attribute name="auto-increment" type="xsd:boolean" />
+		<xsd:attribute name="default-value" type="xsd:string" />
 	</xsd:attributeGroup>		
 	
 	<xsd:element name="history">
