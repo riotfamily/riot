@@ -1,6 +1,7 @@
 var riot = {
 	contextPath: '${contextPath}',
 	path: '${contextPath}${riotServletPrefix}',
+	language: '${language}' || 'en',
 	instantPublish: window.riotInstantPublish || false
 };
 

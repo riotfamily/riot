@@ -621,6 +621,7 @@ riot.tinyMCEConfig = {
 	relative_urls: false,
 	gecko_spellcheck: true,
 	hide_selects_on_submit: false,
+	language: riot.language,
 	theme: 'advanced',
 	theme_advanced_layout_manager: 'RowLayout',
 	theme_advanced_containers_default_align: 'left',
