@@ -205,7 +205,7 @@ Cropper.UI.prototype = {
 			if (opts) {
 				for (var i = 0; i < opts.length; i++) {
 					var v = parseInt(opts[i].value);
-					opts[i].disabled = v <min || v > max;
+					opts[i].disabled = v < min || v > max;
 					if (v > (initialValue || 0) && !opts[i].disabled) {
 						initialValue = v;
 						opts[i].selected = true;
@@ -288,8 +288,10 @@ Cropper.UI.prototype = {
 		this.setCrop(size.x < this.imageSize.x || size.y < this.imageSize.y);
 
 		var minWidth = this.cropUrl ? Math.max(size.x, Math.ceil(this.imageSize.x * (size.y / this.imageSize.y))) : size.x;
-		var handleSize = Math.round(this.zoomSlider.trackLength * (minWidth / this.imageSize.x));
-		this.zoomSlider.rescale(minWidth, handleSize);
+		if (this.imageSize.x >= minWidth) {
+			var handleSize = Math.round(this.zoomSlider.trackLength * (minWidth / this.imageSize.x));
+			this.zoomSlider.rescale(minWidth, handleSize);
+		}
 	},
 
 	setWidth: function(width) {
