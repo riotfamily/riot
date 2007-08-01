@@ -196,10 +196,8 @@ riot.ToolbarButton.prototype = {
 	},
 
 	enable: function() {
-		if (!this.enabled) {
-			this.element.className = 'toolbar-button';
-			this.enabled = true;
-		}
+		this.element.className = 'toolbar-button';
+		this.enabled = true;
 		return this;
 	},
 

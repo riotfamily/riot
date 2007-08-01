@@ -394,17 +394,6 @@ riot.DiscardWidget = Class.extend(riot.PublishWidget, {
 			this.componentList.discardChanges();
 			this.componentList.setDirty(false);
 		}
-	},
-	
-	destroy: function() {
-		if (document.removeEventListener) {
-			this.domListener = this.show.bind(this);
-			this.componentList.element.removeEventListener('DOMNodeInserted', this.domListener, false);
-		}
-		this.componentList.replaceHtml(this.liveHtml);
-		riot.publishWidgets = riot.publishWidgets.without(this);
-		this.componentList.publishWidget = null;
-		if (this.element.parentNode) this.element.remove();
 	}
 });
 
@@ -502,7 +491,7 @@ riot.AbstractComponentCollection.prototype = {
 
 	discard: function(enable) {
 		if (enable) {
-			if (this.dirty && !this.parentList) this.publishWidget = new riot.DiscardWidget(this);
+			if (this.dirty) this.publishWidget = new riot.DiscardWidget(this);
 		}
 		else if (this.publishWidget) {
 			this.publishWidget.destroy();
@@ -529,7 +518,7 @@ riot.AbstractComponentCollection.prototype = {
 				this.publishWidget.destroy.bind(this.publishWidget));
 	},
 
-	discardChanges: function() {				
+	discardChanges: function() {
 		ComponentEditor.discard(this.id, this.getDirtyContainerIds(),
 				this.update.bind(this));
 	}
