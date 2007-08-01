@@ -9,6 +9,7 @@
 	<classpathentry kind="src" path="forms/src"/>
 	<classpathentry kind="src" path="common/src"/>
 	<classpathentry kind="src" path="revolt/src"/>
+	<classpathentry kind="src" path="revolt/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
@@ -37,5 +38,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/c3p0.jar"/>
+	<classpathentry kind="lib" path="lib/spring-mock.jar" sourcepath="lib/spring-src.zip"/>
+	<classpathentry kind="lib" path="lib/junit.jar"/>
+	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

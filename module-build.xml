@@ -97,7 +97,7 @@
 
 	<target name="resolve" depends="-init-module">
 		<echo message="Retrieving module dependencies" />
-		<ivy:resolve conf="${resolve.conf}" showprogress="false" transitive="false" />
+		<ivy:resolve conf="${resolve.conf}" showprogress="false" />
 		<ivy:retrieve pattern="${lib.dir}/[artifact].[ext]" />
 	</target>
 

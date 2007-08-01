@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:db="http://www.riotfamily.org/schema/revolt"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.riotfamily.org/schema/revolt
+		http://www.riotfamily.org/schema/revolt/revolt.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="org.hsqldb.jdbcDriver" />
+	    <property name="jdbcUrl" value="jdbc:hsqldb:mem:revolt" />
+	    <property name="user" value="sa" />
+	    <property name="password" value="" />
+	</bean>
+	
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="revolt" class="org.riotfamily.revolt.Evolver">
+		<property name="automatic" value="true" />
+		<property name="enabled" value="true" />
+	</bean>
+	
+	<db:history module="test" data-source="dataSource">
+		<db:change-set id="set1">
+			<db:create-table name="table1">
+				<db:column name="column1" type="VARCHAR" length="255" />
+			</db:create-table>
+		</db:change-set>
+		<db:change-set id="set2">
+			<db:insert-data table="table1">
+				<db:entry column="column1" value="'value1'" />
+			</db:insert-data>
+			<db:add-column table="table1" name="column2" type="VARCHAR" length="255" default-value="'default2'" />
+		</db:change-set>
+	</db:history>
+	
+</beans>

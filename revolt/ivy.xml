@@ -3,8 +3,10 @@
     <configurations>
     	<conf name="build" />
     	<conf name="runtime" />
+    	<conf name="test" />
     </configurations>
     <dependencies>
-	    <dependency org="springframework" name="spring" rev="2.0.4" conf="*->default" />
+	    <dependency org="springframework" name="spring" rev="2.0.4" conf="build,runtime->default;test->mock" />
+	    <dependency org="hsqldb" name="hsqldb" rev="latest.release" conf="test->default" />
     </dependencies>
 </ivy-module>
