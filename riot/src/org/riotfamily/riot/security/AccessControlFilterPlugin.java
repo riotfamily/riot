@@ -33,7 +33,7 @@ import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.common.web.filter.PluginChain;
 
 /**
- * Servlet filter that binds the authenticated principal (if present) to the
+ * Servlet filter that binds the authenticated user (if present) to the
  * current thread. 
  * 
  * @see AccessController
@@ -54,11 +54,12 @@ public final class AccessControlFilterPlugin extends FilterPlugin {
 		throws IOException, ServletException {
 		
 		try {
-			AccessController.bindPrincipalToCurrentTread(request);
+			RiotUser user = LoginManager.getUser(request);
+			AccessController.bindUserToCurrentThread(user);
 			pluginChain.doFilter(request, response);
 		}
 		finally {
-			AccessController.resetPrincipal();
+			AccessController.resetUser();
 		}
 	}
 }

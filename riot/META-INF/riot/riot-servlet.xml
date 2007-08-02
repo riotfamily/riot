@@ -94,7 +94,7 @@
 	  - access the Riot admin pages.
 	  -->
 	<bean id="loginInterceptor" class="org.riotfamily.riot.security.LoginInterceptor">
-		<property name="loginFormController" ref="loginFormController" />
+		<property name="loginUrl" value="/login" />
 		<property name="excludes">
 			<bean class="org.riotfamily.common.beans.module.ModularListFactoryBean">
 				<property name="key" value="publicUrls" />
@@ -123,28 +123,31 @@
 	  -->
 	<bean id="authenticationService" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
 		<property name="fallback">
-			<bean class="org.riotfamily.riot.security.support.StaticAuthenticationService" />
+			<bean class="org.riotfamily.riot.security.impl.StaticAuthenticationService" />
 		</property>
 	</bean>
 
 	<!--
 	  - Persistence service for SessionData (last login date, last IP, etc.)
 	  -->
-	<bean id="sessionDataStore" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
+	<bean id="sessionMetaDataStore" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
 		<property name="fallback">
-			<bean class="org.riotfamily.riot.security.support.DefaultSessionDataStore" />
+			<bean class="org.riotfamily.riot.security.impl.TransientSessionMetaDataStore" />
 		</property>
 	</bean>
 
 	<bean id="loginManager" class="org.riotfamily.riot.security.LoginManager">
 		<constructor-arg ref="authenticationService" />
-		<constructor-arg ref="riotPrincipalBinder" />
-		<property name="sessionDataStore" ref="sessionDataStore" />
+		<property name="metaDataStore" ref="sessionMetaDataStore" />
+	</bean>
+	
+	<bean class="org.riotfamily.riot.security.AccessControlInitializer">
+		<constructor-arg ref="loginManager" />
 	</bean>
 
-    <bean id="loggingPolicy" class="org.riotfamily.riot.security.policy.LoggingPolicy" />
+    <bean id="loggingPolicy" class="org.riotfamily.riot.security.impl.LoggingPolicy" />
 
-	<bean id="defaultPolicy" class="org.riotfamily.riot.security.policy.GrantAllPolicy" />
+	<bean id="defaultPolicy" class="org.riotfamily.riot.security.impl.GrantAllPolicy" />
 
 	<bean id="freemarkerConfig" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerConfigurer">
 		<property name="templateLoaders">
@@ -293,7 +296,7 @@
 	</bean>
 
 	<!--
-	  - XmlHandlerMapping that maps the Riot admin URLs to controllers.
+	  - HandlerMapping that maps the Riot admin URLs to controllers.
 	  -->
 	<bean id="handlerMapping" class="org.riotfamily.common.web.mapping.AdvancedBeanNameHandlerMapping">
 		<property name="servletMappingPrefix" ref="riotServletPrefix" />
@@ -335,11 +338,9 @@
 	<bean name="/ping" class="org.riotfamily.common.web.controller.SessionKeepAliveController" />
 
 	<!--
-	  - MVC controller that performs a logout.
+	  - Controller that performs a logout.
 	  -->
-	<bean id="logoutController" name="/logout" class="org.riotfamily.riot.security.ui.LogoutController">
-		<constructor-arg ref="loginManager" />
-	</bean>
+	<bean id="logoutController" name="/logout" class="org.riotfamily.riot.security.ui.LogoutController" />
 
 	<bean id="cssProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<property name="properties">

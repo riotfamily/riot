@@ -27,18 +27,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.mapping.UrlMapping;
-import org.riotfamily.common.web.mapping.UrlMappingAware;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.security.LoginManager;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.RedirectView;
 
-public class LoginFormController implements Controller, 
-		UrlMappingAware, BeanNameAware {
+public class LoginFormController implements Controller {
 
 	private LoginManager loginManager;
 	
@@ -47,10 +43,7 @@ public class LoginFormController implements Controller,
 	
 	private String successViewName;
 	
-	private UrlMapping urlMapping;
-	
-	private String beanName;
-	
+
 	public LoginFormController(LoginManager loginManager) {
 		this.loginManager = loginManager;
 	}
@@ -63,14 +56,6 @@ public class LoginFormController implements Controller,
 		this.successViewName = successViewName;
 	}
 
-	public void setUrlMapping(UrlMapping urlMapping) {
-		this.urlMapping = urlMapping;
-	}
-	
-	public void setBeanName(String beanName) {
-		this.beanName = beanName;
-	}
-	
 	public ModelAndView handleRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 
@@ -95,10 +80,6 @@ public class LoginFormController implements Controller,
 		else {
 			return new ModelAndView(viewName);
 		}
-	}
-	
-	public String getLoginFormUrl(HttpServletRequest request) {
-		return request.getContextPath() + urlMapping.getUrl(beanName, null);
 	}
 
 }

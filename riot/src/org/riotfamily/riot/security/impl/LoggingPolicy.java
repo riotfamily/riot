@@ -23,11 +23,12 @@
  *   Alf Werder [alf dot werder at artundweise dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.policy;
+package org.riotfamily.riot.security.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.riot.editor.EditorDefinition;
+import org.riotfamily.riot.security.AuthorizationPolicy;
+import org.riotfamily.riot.security.RiotUser;
 
 /**
  * A logging policy for debugging purposes.
@@ -36,6 +37,7 @@ import org.riotfamily.riot.editor.EditorDefinition;
  * @author Alf Werder [alf dot werder at artundweise dot de]
  */
 public class LoggingPolicy implements AuthorizationPolicy {
+	
     private static final Log log = LogFactory.getLog(LoggingPolicy.class);
     
 	private int order = Integer.MIN_VALUE;
@@ -48,25 +50,19 @@ public class LoggingPolicy implements AuthorizationPolicy {
 		this.order = order;
 	}
 
-	public int checkPermission(String subject, String action, Object object, 
-		EditorDefinition editor) {
-        
+	public int checkPermission(RiotUser user, String action, Object object) {
 		if (log.isDebugEnabled()) {
 			StringBuffer message = new StringBuffer();
-			
-			message.append("Subject: [").append(subject).append("], ");
+			message.append("user: [").append(user.getUserId()).append("], ");
 			message.append("action: [").append(action).append("], ");
-			
 			message.append("object: ");
 			if (object != null) {
 				message.append(object.getClass().getName());
 			}
-			message.append("[").append(object).append("], ");
-			message.append("editor: [").append(editor).append("]");
+			message.append("[").append(object).append("]");
 			
         	log.debug(message.toString());
         }
-
         return ACCESS_ABSTAIN;
     }
 

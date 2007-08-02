@@ -353,7 +353,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	public void logout() {
 		WebContext ctx = WebContextFactory.get();
 		if (loginManager != null) {
-			loginManager.logout(ctx.getHttpServletRequest(),
+			LoginManager.logout(ctx.getHttpServletRequest(),
 					ctx.getHttpServletResponse());
 		}
 		else {

@@ -23,105 +23,121 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.security;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import org.riotfamily.riot.editor.EditorDefinition;
-import org.riotfamily.riot.security.policy.AuthorizationPolicy;
-import org.riotfamily.riot.security.session.SessionData;
-import org.riotfamily.riot.security.session.SessionDataStore;
-import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.OrderComparator;
-
-public class LoginManager implements ApplicationContextAware, InitializingBean {
+public class LoginManager {
 
 	public static final String ACTION_LOGIN = "login";
 	
-	private AuthenticationService authService;
+	private static final String SESSION_KEY = 
+			LoginManager.class.getName() + ".userHolder";
 	
-	private PrincipalBinder principalBinder;
-	
-	private SessionDataStore sessionDataStore; 
-	
-	private ArrayList policies;
-	
-	public LoginManager(AuthenticationService authService, 
-			PrincipalBinder binder) {
-		
-		this.authService = authService;
-		this.principalBinder = binder;
-	}
-	
-	public void setApplicationContext(ApplicationContext context) {
-		policies = new ArrayList();
-		policies.addAll(BeanFactoryUtils.beansOfTypeIncludingAncestors(
-			context, AuthorizationPolicy.class).values());
-		Collections.sort(policies, new OrderComparator());
-	}
-	
-	public void afterPropertiesSet() throws Exception {
-		AccessController.setLoginManager(this);	
-	}
+	private AuthenticationService authenticationService;
 
-	public void setSessionDataStore(SessionDataStore sessionDataStore) {
-		this.sessionDataStore = sessionDataStore;
+	private SessionMetaDataStore metaDataStore; 
+	
+	
+	public LoginManager(AuthenticationService authenticationService) {
+		this.authenticationService = authenticationService;
 	}
-
-	public boolean login(HttpServletRequest request, String username, 
+	
+	public void setMetaDataStore(SessionMetaDataStore metaDataStore) {
+		this.metaDataStore = metaDataStore;
+	}
+	
+	/**
+	 * Tries to authenticate the user with the given credentials. If the 
+	 * authentication succeeds the RiotUser object is stored in the 
+	 * HTTP session.
+	 */
+	public boolean login(HttpServletRequest request, String userName, 
 			String password) {
 		
-		String principal = authService.authenticate(username, password);
-		if (principal != null && isGranted(principal, ACTION_LOGIN, null, null)) {
-			principalBinder.bindPrincipalToRequest(principal, request);
-			SessionData sessionData = null;
-			if (sessionDataStore != null) {
-				sessionData = sessionDataStore.loadSessionData(principal);
-			}
-			if (sessionData == null) {
-				sessionData = new SessionData();
-			}
-			
-			sessionData.setUsername(username);
-			sessionData.setPrincipal(principal);
-			sessionData.newSession(request, sessionDataStore);
-			
+		RiotUser user = authenticationService.authenticate(userName, password);
+		if (user != null && AccessController.isGranted(user, ACTION_LOGIN, null)) {
+			storeUserInSession(userName, user, request);
 			return true;
 		}
 		return false;
 	}
 	
-	public void logout(HttpServletRequest request, 
+	/**
+	 * Performs a logout. This is done by removing the {@link UserHolder} 
+	 * object from the session. 
+	 */
+	public static void logout(HttpServletRequest request, 
 			HttpServletResponse response) {
 		
-		principalBinder.unbind(request, response);
-		request.getSession().invalidate();
+		request.getSession().removeAttribute(SESSION_KEY);
 	}
 	
-	public String getPrincipal(HttpServletRequest request) {
-		return principalBinder.getPrincipal(request);
-	}
-	
-	public boolean isGranted(String subject, String action, Object object, 
-			EditorDefinition editor) {
+	/**
+	 * Retrieves the {@link SessionMetaData} for the given user from the 
+	 * {@link SessionMetaDataStore}. If no store is configured or no persistent
+	 * data is found, a new instance is created. 
+	 */
+	private SessionMetaData getOrCreateMetaData(String userName, RiotUser user, 
+			HttpServletRequest request) {
 		
-		Iterator it = policies.iterator();
-		while (it.hasNext()) {
-			AuthorizationPolicy policy = (AuthorizationPolicy) it.next();
-			int access = policy.checkPermission(subject, action, object, editor);
-			if (access == AuthorizationPolicy.ACCESS_GRANTED) {
-				return true;
-			}
-			else if (access == AuthorizationPolicy.ACCESS_DENIED) {
-				return false;
-			}
+		SessionMetaData metaData = null;
+		if (metaDataStore != null) {
+			metaData = metaDataStore.loadSessionMetaData(user);
 		}
-		return false;
-	}	
+		if (metaData == null) {
+			metaData = new SessionMetaData(user.getUserId(), userName, 
+					request.getRemoteHost());
+		}
+		return metaData;
+	}
+	
+	/**
+	 * Stores the given SessionData in the {@link SessionMetaDataStore}.
+	 */
+	void storeSessionMetaData(SessionMetaData sessionData) {
+		if (metaDataStore != null) {
+			metaDataStore.storeSessionMetaData(sessionData);
+		}
+	}
+	
+	/**
+	 * Stores the given user in the HTTP session. Actually a {@link UserHolder}
+	 * object is used, that holds both, the RiotUser and the SessionData. 
+	 */
+	private void storeUserInSession(String userName, RiotUser user, 
+			HttpServletRequest request) {
+		
+		SessionMetaData sessionData = getOrCreateMetaData(userName, user, request);
+		UserHolder holder = new UserHolder(user, sessionData);
+		request.getSession().setAttribute(SESSION_KEY, holder);
+	}
+
+	/**
+	 * Retrieves the {@link UserHolder} from the HTTP session. 
+	 */
+	private static UserHolder getUserHolder(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session == null) {
+			return null;
+		}
+		return (UserHolder) session.getAttribute(SESSION_KEY);
+	}
+
+	/**
+	 * Returns the user associated with the given request.
+	 */
+	public static RiotUser getUser(HttpServletRequest request) {
+		UserHolder holder = getUserHolder(request);
+		return holder != null ? holder.getUser() : null;
+	}
+
+	/**
+	 * Returns the SessionData for the given request.
+	 */
+	public static SessionMetaData getSessionMetaData(HttpServletRequest request) {
+		UserHolder holder = getUserHolder(request);
+		return holder != null ? holder.getSessionMetaData() : null;
+	}
+
 }

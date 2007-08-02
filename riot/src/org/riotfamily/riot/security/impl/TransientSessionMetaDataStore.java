@@ -21,11 +21,21 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.session;
+package org.riotfamily.riot.security.impl;
 
-public interface SessionDataStore {
+import org.riotfamily.riot.security.RiotUser;
+import org.riotfamily.riot.security.SessionMetaData;
+import org.riotfamily.riot.security.SessionMetaDataStore;
 
-	public SessionData loadSessionData(String principal);
+
+
+public class TransientSessionMetaDataStore implements SessionMetaDataStore {
+
+	public SessionMetaData loadSessionMetaData(RiotUser user) {
+		return null;
+	}
+
+	public void storeSessionMetaData(SessionMetaData sessionData) {
+	}
 	
-	public void storeSessionData(SessionData sessionData);
 }

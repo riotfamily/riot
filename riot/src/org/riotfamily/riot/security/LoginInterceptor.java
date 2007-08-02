@@ -26,14 +26,28 @@ package org.riotfamily.riot.security;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.riot.security.ui.LoginFormController;
+import org.riotfamily.riot.runtime.RiotRuntime;
+import org.riotfamily.riot.runtime.RiotRuntimeAware;
 
-public class LoginInterceptor extends AccessControlInterceptor {
+/**
+ * HandlerInterceptor that sends a redirect to the login URL in case the
+ * user is not logged in.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
+public class LoginInterceptor extends AccessControlInterceptor 
+		implements RiotRuntimeAware {
 	
-	private LoginFormController loginFormController;
+	private String loginUrl;
 	
-	public void setLoginFormController(LoginFormController loginFormController) {
-		this.loginFormController = loginFormController;
+	private RiotRuntime runtime;
+	
+	public void setLoginUrl(String loginUrl) {
+		this.loginUrl = loginUrl;
+	}
+	
+	public void setRiotRuntime(RiotRuntime runtime) {
+		this.runtime = runtime;
 	}
 
 	/**
@@ -41,14 +55,16 @@ public class LoginInterceptor extends AccessControlInterceptor {
 	 * <code>false</code> is returned and a redirect to the login form is sent.
 	 */
 	protected boolean isAuthorized(HttpServletRequest request,
-			HttpServletResponse response, String principal) throws Exception {
+			HttpServletResponse response, RiotUser user) throws Exception {
 		
-		if (principal != null) {
+		if (user != null) {
 			return true;
 		}
 		else {
-			String loginFormUrl = loginFormController.getLoginFormUrl(request);
-			response.sendRedirect(response.encodeRedirectURL(loginFormUrl));
+			response.sendRedirect(response.encodeRedirectURL(
+					request.getContextPath() + runtime.getServletPrefix() 
+					+ loginUrl));
+			
 			return false;
 		}
 	}

@@ -44,10 +44,10 @@
 		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 
-	<bean id="sessionDataStoreImpl" class="org.springframework.aop.framework.ProxyFactoryBean">
+	<bean id="sessionMetaDataStoreImpl" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
 		<property name="target">
-			<bean class="org.riotfamily.riot.hibernate.security.HibernateSessionDataStore">
+			<bean class="org.riotfamily.riot.hibernate.security.HibernateSessionMetaDataStore">
 				<property name="sessionFactory" ref="riotSessionFactory" />
 			</bean>
 		</property>

@@ -75,7 +75,7 @@ public class EditorGroupController implements Controller, MessageSourceAware {
 
 		Assert.notNull(groupDefinition, "No such group: " + editorId);
 
-		if (!AccessController.isGranted("view", null, groupDefinition)) {
+		if (!AccessController.isGranted("use-editor", groupDefinition)) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
 
@@ -90,7 +90,7 @@ public class EditorGroupController implements Controller, MessageSourceAware {
 		Iterator ed = groupDefinition.getEditorDefinitions().iterator();
 		while (ed.hasNext()) {
 			EditorDefinition editor = (EditorDefinition) ed.next();
-			if (!editor.isHidden() && AccessController.isGranted("view", null, editor)) {
+			if (!editor.isHidden() && AccessController.isGranted("use-editor", editor)) {
 				group.addReference(editor.createReference(null, messageResolver));
 			}
 		}

@@ -27,7 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.riot.security.session.SessionData;
+import org.riotfamily.riot.security.LoginManager;
+import org.riotfamily.riot.security.SessionMetaData;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -39,17 +40,17 @@ public class LoginStatusController implements Controller {
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
 	}
-
+	
 	public ModelAndView handleRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		
 		if (request.getParameter("update") != null) {
-			//Currently this is just used for session keepalive.
+			//Currently this is just used for session keep-alive.
 			//So nothing to do here ...
 			return null;
 		}
 		else {
-			SessionData data = SessionData.get(request);
+			SessionMetaData data = LoginManager.getSessionMetaData(request);
 			return new ModelAndView(viewName, "sessionData", data);
 		}
 	}

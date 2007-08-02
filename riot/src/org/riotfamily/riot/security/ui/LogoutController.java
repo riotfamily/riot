@@ -33,14 +33,8 @@ import org.springframework.web.servlet.mvc.Controller;
 
 public class LogoutController implements Controller {
 
-	private LoginManager loginManager;
-	
 	private String viewName = ResourceUtils.getPath(
 			LogoutController.class, "LogoutView.ftl");
-	
-	public LogoutController(LoginManager loginManager) {
-		this.loginManager = loginManager;
-	}
 	
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
@@ -49,7 +43,7 @@ public class LogoutController implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 
-		loginManager.logout(request, response);
+		LoginManager.logout(request, response);
 		return new ModelAndView(viewName);
 	}
 

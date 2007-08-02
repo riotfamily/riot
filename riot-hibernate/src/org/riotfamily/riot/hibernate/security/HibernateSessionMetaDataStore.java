@@ -21,29 +21,23 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.policy;
+package org.riotfamily.riot.hibernate.security;
 
-import org.riotfamily.riot.editor.EditorDefinition;
+import org.riotfamily.riot.security.RiotUser;
+import org.riotfamily.riot.security.SessionMetaData;
+import org.riotfamily.riot.security.SessionMetaDataStore;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-/**
- * Default RiotPolicy that always returns <code>true</code>.
- */
-public class GrantAllPolicy implements AuthorizationPolicy {
-    
-	private int order = Integer.MAX_VALUE;
-	
-    public int getOrder() {
-		return this.order;
-	}
-	
-    public void setOrder(int order) {
-		this.order = order;
+public class HibernateSessionMetaDataStore extends HibernateDaoSupport 
+		implements SessionMetaDataStore {
+
+	public SessionMetaData loadSessionMetaData(RiotUser user) {
+		return (SessionMetaData) getHibernateTemplate().get(
+				SessionMetaData.class, user.getUserId());
 	}
 
-	public int checkPermission(String subject, String action, Object object, 
-    		EditorDefinition editor) {
-    	
-        return ACCESS_GRANTED;
-    }
+	public void storeSessionMetaData(SessionMetaData sessionData) {
+		getHibernateTemplate().saveOrUpdate(sessionData);
+	}
 
 }

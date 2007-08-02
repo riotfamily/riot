@@ -18,8 +18,6 @@
 		<property name="resourceMapping" value="/resources" />
 	</bean>
 
-	<bean id="riotPrincipalBinder" class="org.riotfamily.riot.security.support.HttpSessionPrincipalBinder" />
-
 	<bean id="riotServletPrefix" factory-bean="riotRuntime" factory-method="getServletPrefix" />
 
 	<bean id="riotResourcePath" factory-bean="riotRuntime" factory-method="getResourcePath" />

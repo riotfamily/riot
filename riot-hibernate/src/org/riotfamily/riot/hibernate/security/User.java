@@ -24,8 +24,9 @@
 package org.riotfamily.riot.hibernate.security;
 
 import org.riotfamily.common.util.HashUtils;
+import org.riotfamily.riot.security.RiotUser;
 
-public class User {
+public class User implements RiotUser {
 
 	private String id;
 	
@@ -43,6 +44,10 @@ public class User {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+	
+	public String getUserId() {
+		return getId();
 	}
 
 	public String getRole() {

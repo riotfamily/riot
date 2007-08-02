@@ -21,21 +21,28 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security;
+package org.riotfamily.riot.security.impl;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.riotfamily.riot.security.AuthorizationPolicy;
+import org.riotfamily.riot.security.RiotUser;
 
 /**
- * @see org.riotfamily.riot.security.support.HttpSessionPrincipalBinder
+ * Default RiotPolicy that always returns <code>true</code>.
  */
-public interface PrincipalBinder {
+public class GrantAllPolicy implements AuthorizationPolicy {
+    
+	private int order = Integer.MAX_VALUE;
+	
+    public int getOrder() {
+		return this.order;
+	}
+	
+    public void setOrder(int order) {
+		this.order = order;
+	}
 
-	public String getPrincipal(HttpServletRequest request);
-	
-	public void bindPrincipalToRequest(String principal, 
-			HttpServletRequest request);
-	
-	public void unbind(HttpServletRequest request, 
-			HttpServletResponse response);
+	public int checkPermission(RiotUser user, String action, Object object) {
+        return ACCESS_GRANTED;
+    }
+
 }

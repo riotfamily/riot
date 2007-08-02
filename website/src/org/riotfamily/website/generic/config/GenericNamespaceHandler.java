@@ -37,7 +37,7 @@ import org.riotfamily.website.generic.model.hibernate.DateParameterResolver;
 import org.riotfamily.website.generic.model.hibernate.DefaultParameterResolver;
 import org.riotfamily.website.generic.model.hibernate.HqlModelBuilder;
 import org.riotfamily.website.generic.model.hibernate.PagedHqlModelBuilder;
-import org.riotfamily.website.generic.model.hibernate.RiotPrincipalResolver;
+import org.riotfamily.website.generic.model.hibernate.RiotUserResolver;
 import org.riotfamily.website.generic.model.hibernate.StringToPrimitiveResolver;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 
@@ -61,7 +61,7 @@ public class GenericNamespaceHandler extends GenericNamespaceHandlerSupport {
 		register("current-date", CurrentDateResolver.class, addParameterResolver);
 		register("current-locale", CurrentLocaleResolver.class, addParameterResolver);
 		register("current-language", CurrentLanguageResolver.class, addParameterResolver);
-		register("riot-principal", RiotPrincipalResolver.class, addParameterResolver);
+		register("riot-user", RiotUserResolver.class, addParameterResolver);
 		register("string-to-primitive", StringToPrimitiveResolver.class, addParameterResolver);
 		register("date", DateParameterResolver.class, addParameterResolver);
 		registerSpringBeanDefinitionParser("custom-resolver", addParameterResolver);

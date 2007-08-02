@@ -24,7 +24,6 @@
 package org.riotfamily.riot.form.element;
 
 import org.riotfamily.forms.element.AbstractConditionalElement;
-import org.riotfamily.riot.form.ui.FormUtils;
 import org.riotfamily.riot.security.AccessController;
 
 /**
@@ -35,7 +34,6 @@ public class RestrictedElement extends AbstractConditionalElement {
 	protected boolean isEditable() {
 		return AccessController.isGranted(
 				"edit-" + getEditor().getEditorBinding().getPropertyPath(), 
-				getForm().getBackingObject(), 
-				FormUtils.getEditorDefinition(getForm()));
+				getForm().getBackingObject());
 	}
 }

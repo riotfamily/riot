@@ -21,20 +21,12 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.website.generic.model.hibernate;
+package org.riotfamily.riot.security;
 
-import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.riot.security.AccessController;
+public interface SessionMetaDataStore {
 
-/**
- * Returns the logged in Riot user.
- * @see AccessController#getPrincipal(HttpServletRequest)
- */
-public class RiotPrincipalResolver extends AbstractParameterResolver {
-
-	protected Object getValueInternal(HttpServletRequest request) {
-		return AccessController.getPrincipal(request);
-	}
-
+	public SessionMetaData loadSessionMetaData(RiotUser user);
+	
+	public void storeSessionMetaData(SessionMetaData data);
 }

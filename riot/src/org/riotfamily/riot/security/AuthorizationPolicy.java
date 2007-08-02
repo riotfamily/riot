@@ -21,9 +21,8 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.policy;
+package org.riotfamily.riot.security;
 
-import org.riotfamily.riot.editor.EditorDefinition;
 import org.springframework.core.Ordered;
 
 
@@ -37,15 +36,14 @@ public interface AuthorizationPolicy extends Ordered {
 	public int ACCESS_DENIED = 1;
 	
 	public int ACCESS_GRANTED = 2;
+
 	/**
 	 * Checks whether the given user is allowed to perform the specified action.
-	 * @param subject The subject (userId)
+	 * 
+	 * @param subject The user
 	 * @param action The action to be performed
 	 * @param object The object on which the action is to be performed
-	 * @param editor The editor being invovled (may be null)
 	 */
-    public int checkPermission(String subject, String action, Object object, 
-    		EditorDefinition editor);
-        
+    public int checkPermission(RiotUser user, String action, Object object);    
 
 }

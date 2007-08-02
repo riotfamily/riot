@@ -114,7 +114,7 @@ public abstract class AbstractComponentDao implements ComponentDao,
 	 */
 	public void saveComponentList(ComponentList list) {
 		list.setLastModified(new Date());
-		list.setLastModifiedBy(AccessController.getPrincipalForCurrentThread());
+		list.setLastModifiedBy(AccessController.getCurrentUser().getUserId());
 		saveObject(list);
 	}
 
@@ -124,7 +124,7 @@ public abstract class AbstractComponentDao implements ComponentDao,
 	public void updateComponentList(ComponentList list) {
 		if (list.getId() != null) {
 			list.setLastModified(new Date());
-			list.setLastModifiedBy(AccessController.getPrincipalForCurrentThread());
+			list.setLastModifiedBy(AccessController.getCurrentUser().getUserId());
 			updateObject(list);
 		}
 	}

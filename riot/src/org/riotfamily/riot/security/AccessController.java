@@ -23,13 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.security;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Iterator;
+import java.util.List;
 
-import org.riotfamily.riot.editor.EditorDefinition;
 
 
 /**
- * Provides static methods to check permissions and associate a principal
+ * Provides static methods to check permissions and associate a user
  * with the current Thread. 
  * <p>
  * This class is only usable if an {@link AccessControlFilterPlugin} or 
@@ -42,47 +42,66 @@ public final class AccessController {
 	
 	private static LoginManager loginManager;
 	
-	private static ThreadLocal principal = new ThreadLocal();
+	private static List policies;
 	
+	private static ThreadLocal threadLocal = new ThreadLocal();
 	
+	/**
+	 * The {@link AccessControlInitializer} sets a reference to the
+	 * {@link LoginManager} so that it can be accessed from a static context.
+	 */
 	static void setLoginManager(LoginManager loginManager) {
 		AccessController.loginManager = loginManager;
 	}
 
-	static public String getPrincipal(HttpServletRequest request) {
-		return loginManager.getPrincipal(request);
+	/**
+	 * The {@link AccessControlInitializer} sets a list of 
+	 * {@link AuthorizationPolicy policies} so that they can be accessed 
+	 * from a static context.
+	 */
+	static void setPolicies(List policies) {
+		AccessController.policies = policies;
 	}
 	
-	static void bindPrincipalToCurrentThread(String s) {
-		principal.set(s);
+	static void storeSessionMetaData(SessionMetaData data) {
+		loginManager.storeSessionMetaData(data);
 	}
 	
-	static void bindPrincipalToCurrentTread(HttpServletRequest request) {
-		principal.set(getPrincipal(request));
+	static void bindUserToCurrentThread(RiotUser user) {
+		threadLocal.set(user);
 	}
 	
-	public static String getPrincipalForCurrentThread() {
-		return (String) principal.get();
+	static void resetUser() {
+		threadLocal.set(null);
 	}
 	
-	static void resetPrincipal() {
-		principal.set(null);
+	public static RiotUser getCurrentUser() {
+		return (RiotUser) threadLocal.get();
 	}
 	
 	public static boolean isAuthenticatedUser() {
-		return getPrincipalForCurrentThread() != null;
+		return getCurrentUser() != null;
 	}
 	
-	public static boolean isGranted(String action, Object object, 
-			EditorDefinition editor) {
-		
-		return loginManager.isGranted(getPrincipalForCurrentThread(), 
-				action, object, editor);
-	}	
-	
 	public static boolean isGranted(String action, Object object) {
-		
-		return loginManager.isGranted(getPrincipalForCurrentThread(), 
-				action, object, null);
-	}	
+		return isGranted(getCurrentUser(), action, object);
+	}
+
+	public static boolean isGranted(RiotUser subject, String action, Object object) {
+		if (subject != null) {
+			Iterator it = policies.iterator();
+			while (it.hasNext()) {
+				AuthorizationPolicy policy = (AuthorizationPolicy) it.next();
+				int access = policy.checkPermission(subject, action, object);
+				if (access == AuthorizationPolicy.ACCESS_GRANTED) {
+					return true;
+				}
+				else if (access == AuthorizationPolicy.ACCESS_DENIED) {
+					return false;
+				}
+			}
+		}
+		return false;
+	}
+	
 }

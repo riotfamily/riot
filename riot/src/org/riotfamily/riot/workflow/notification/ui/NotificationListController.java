@@ -57,7 +57,7 @@ public class NotificationListController implements Controller {
 			return null;
 		}
 		
-		String userId = AccessController.getPrincipal(request);
+		String userId = AccessController.getCurrentUser().getUserId();
 		if (request.getParameter(ID_PARAMETER) != null) {
 			Long notificationId = ServletRequestUtils.getLongParameter(
 					request, ID_PARAMETER);

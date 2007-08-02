@@ -405,7 +405,7 @@ public class ListSession implements RenderContext {
 			Command command = (Command) it.next();
 			CommandState state = command.getState(context);
 			boolean granted = AccessController.isGranted(
-					state.getAction(), bean, listDefinition);
+					state.getAction(), bean);
 
 			state.setEnabled(state.isEnabled() && granted);
 			result.add(state);
@@ -429,7 +429,7 @@ public class ListSession implements RenderContext {
 			context.setBean(bean);
 		}
 		String action = command.getState(context).getAction();
-		if (AccessController.isGranted(action, bean, listDefinition)) {
+		if (AccessController.isGranted(action, bean)) {
 			if (!confirmed) {
 				String message = command.getConfirmationMessage(context);
 				if (message != null) {

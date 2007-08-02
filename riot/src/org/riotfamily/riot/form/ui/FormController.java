@@ -71,13 +71,18 @@ public class FormController extends BaseFormController {
 		if (!form.isNew()) {
 			object = form.getBackingObject();
 		}
-		try {
-			if (!AccessController.isGranted("view", object, editorDefinition)) {
+		
+		if (!AccessController.isGranted("view", object)
+				|| !AccessController.isGranted("use-editor", editorDefinition)) {
+			
+			try {
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
 			}
+			catch (IOException e) {
+			}
+			return null;
 		}
-		catch (IOException e) {
-		}
+		
 
 		model.put("childLists", editorDefinition.getChildEditorReferences(object,
 				form.getFormContext().getMessageResolver()));

@@ -21,22 +21,23 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.support;
+package org.riotfamily.riot.security.impl;
 
 import org.riotfamily.riot.security.AuthenticationService;
+import org.riotfamily.riot.security.RiotUser;
+
 
 /**
  * AuthenticationService that uses a fixed username/password combination.
- * This class is indended for development purposes only.
+ * This class is intended for development purposes only.
  */
 public class StaticAuthenticationService implements AuthenticationService {
 
-	public static final String SUBJECT = "root";
-	
 	public static final String DEFAULT_USERNAME = "admin";
 	
 	public static final String DEFAULT_PASSWORD = "admin";
-	
+
+	private static final RiotUser ROOT = new RootUser();
 	
 	private String username = DEFAULT_USERNAME;
 	
@@ -51,11 +52,17 @@ public class StaticAuthenticationService implements AuthenticationService {
 		this.username = username;
 	}
 
-	public String authenticate(String username, String password) {
+	public RiotUser authenticate(String username, String password) {
 		if (this.username.equals(username) && this.password.equals(password)) {
-			return SUBJECT;
+			return ROOT;
 		}
 		return null;
 	}
 
+	private static class RootUser implements RiotUser {
+
+		public String getUserId() {
+			return "root";
+		}
+	}
 }

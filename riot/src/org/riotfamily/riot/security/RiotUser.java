@@ -14,25 +14,25 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.support;
+package org.riotfamily.riot.security;
 
-import org.riotfamily.riot.security.session.SessionData;
-import org.riotfamily.riot.security.session.SessionDataStore;
+import java.io.Serializable;
 
-public class DefaultSessionDataStore implements SessionDataStore {
+/**
+ * Interface to be returned by an {@link AuthenticationService}.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public interface RiotUser extends Serializable {
 
-	public SessionData loadSessionData(String principal) {
-		return null;
-	}
+	public String getUserId();
 
-	public void storeSessionData(SessionData sessionData) {
-	}
-	
 }

@@ -21,24 +21,20 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.hibernate.security;
+package org.riotfamily.website.generic.model.hibernate;
 
-import org.riotfamily.riot.security.session.SessionData;
-import org.riotfamily.riot.security.session.SessionDataStore;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import javax.servlet.http.HttpServletRequest;
 
-public class HibernateSessionDataStore extends HibernateDaoSupport 
-		implements SessionDataStore {
+import org.riotfamily.riot.security.AccessController;
 
-	public SessionData loadSessionData(String principal) {
-		return (SessionData) getHibernateTemplate().get(
-				SessionData.class, principal);
+/**
+ * Returns the logged in Riot user.
+ * @see AccessController#getCurrentUser()
+ */
+public class RiotUserResolver extends AbstractParameterResolver {
+
+	protected Object getValueInternal(HttpServletRequest request) {
+		return AccessController.getCurrentUser();
 	}
-
-	public void storeSessionData(SessionData sessionData) {
-		getHibernateTemplate().saveOrUpdate(sessionData);
-	}
-
-	
 
 }

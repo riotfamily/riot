@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.web.util.OncePerRequestInterceptor;
 
 /**
- * HandlerInterceptor that binds the authenticated principal (if present) to the
+ * HandlerInterceptor that binds the authenticated user (if present) to the
  * current thread. 
  * 
  * @see AccessController
@@ -39,13 +39,13 @@ public class AccessControlInterceptor extends OncePerRequestInterceptor {
 	public boolean preHandleOnce(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
 		
-		String principal = AccessController.getPrincipal(request);
-		AccessController.bindPrincipalToCurrentThread(principal);
-		return isAuthorized(request, response, principal);
+		RiotUser user = LoginManager.getUser(request);
+		AccessController.bindUserToCurrentThread(user);
+		return isAuthorized(request, response, user);
 	}
 
 	protected boolean isAuthorized(HttpServletRequest request,
-			HttpServletResponse response, String principal) throws Exception {
+			HttpServletResponse response, RiotUser user) throws Exception {
 		
 		return true;
 	}
@@ -54,7 +54,7 @@ public class AccessControlInterceptor extends OncePerRequestInterceptor {
 			HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
 
-		AccessController.resetPrincipal();
+		AccessController.resetUser();
 	}
 
 }

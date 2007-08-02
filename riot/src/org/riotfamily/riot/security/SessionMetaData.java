@@ -21,24 +21,21 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.session;
+package org.riotfamily.riot.security;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionBindingListener;
+/**
+ * Class that holds meta data about the last and current session.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
+public class SessionMetaData implements Serializable {
 
-public class SessionData implements Serializable, HttpSessionBindingListener {
-
-	private transient SessionDataStore store;
+	private String userId;
 	
-	private static final String SESSION_KEY = SessionData.class.getName();
-	
-	private String principal;
-	
-	private String username;
+	private String userName;
 	
 	private Date loginDate;
 	
@@ -48,15 +45,15 @@ public class SessionData implements Serializable, HttpSessionBindingListener {
 	
 	private String lastLoginIP;
 
-	public static SessionData get(HttpServletRequest request) {
-		return (SessionData) request.getSession().getAttribute(SESSION_KEY);
-	}
 	
-	public void newSession(HttpServletRequest request, SessionDataStore store) {
-		loginDate = new Date();
-		loginIP = request.getRemoteAddr();
-		this.store = store;
-		request.getSession().setAttribute(SESSION_KEY, this);
+	public SessionMetaData() {
+	}
+
+	public SessionMetaData(String userId, String userName, String loginIP) {
+		this.userId = userId;
+		this.userName = userName;
+		this.loginIP = loginIP;
+		this.loginDate = new Date();
 	}
 	
 	protected void sessionEnded() {
@@ -64,20 +61,20 @@ public class SessionData implements Serializable, HttpSessionBindingListener {
 		lastLoginIP = loginIP;
 	}
 	
-	public String getPrincipal() {
-		return principal;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setPrincipal(String principal) {
-		this.principal = principal;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public Date getLastLoginDate() {
@@ -94,16 +91,6 @@ public class SessionData implements Serializable, HttpSessionBindingListener {
 
 	public void setLastLoginIP(String lastLoginIP) {
 		this.lastLoginIP = lastLoginIP;
-	}
-	
-	public void valueBound(HttpSessionBindingEvent event) {
-	}
-
-	public void valueUnbound(HttpSessionBindingEvent event) {
-		sessionEnded();
-		if (store != null) {
-			store.storeSessionData(this);
-		}
 	}
 	
 }
