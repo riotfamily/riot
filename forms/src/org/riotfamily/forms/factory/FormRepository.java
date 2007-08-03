@@ -39,8 +39,6 @@ public interface FormRepository {
 	
 	public Collection getFormIds();
 	
-	public void registerFormFactory(String id, FormFactory formFactory);
-
 	public void addListener(ConfigurationEventListener listener);
 
 }

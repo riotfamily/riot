@@ -294,7 +294,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 
 	private void initSelectElement(Element ele, MutablePropertyValues pvs) {
 		log.debug("Looking for OptionsModel ...");
-		Element modelElement = DomUtils.getChildElementByTagName(ele, "model");
+		Element modelElement = XmlUtils.getFirstChildByRegex(ele, "model|options");
 		OptionsModel model = getOptionsModel(modelElement);
 		if (model != null) {
 			log.debug("OptionsModel: " + model);
@@ -417,8 +417,8 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			}
 		}
 
-		Iterator it = DomUtils.getChildElementsByTagName(
-				element, "set-property").iterator();
+		Iterator it = XmlUtils.getChildElementsByRegex(
+				element, "property|set-property").iterator();
 
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();
@@ -460,8 +460,8 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 				}
 			}
 			if (model != null) {
-				List setPropElements = DomUtils.getChildElementsByTagName(
-						ele, "set-property");
+				List setPropElements = XmlUtils.getChildElementsByRegex(
+						ele, "property|set-property");
 
 				XmlUtils.populate(model, setPropElements, beanFactory);
 			}

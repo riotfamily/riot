@@ -35,14 +35,6 @@
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:element name="set-property">
-		<xsd:complexType>
-			<xsd:attribute name="name" type="xsd:string" use="required" />
-			<xsd:attribute name="value" type="xsd:string" />
-			<xsd:attribute name="ref" type="xsd:string" />
-		</xsd:complexType>
-	</xsd:element>
-
 	<xsd:element name="nested-form">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -148,6 +140,7 @@
 			<xsd:extension base="simple-editor">
 				<xsd:choice>
 					<xsd:element name="model" type="model" />
+					<xsd:element name="options" type="options" />
 				</xsd:choice>
 				<xsd:attribute name="label-property" type="xsd:string" />
 				<xsd:attribute name="value-property" type="xsd:string" />
@@ -165,14 +158,40 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
+	<!-- Deprecated, use options instead -->
 	<xsd:complexType name="model">
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
-			<xsd:element ref="set-property" />
+			<xsd:element name="set-property" />
+		</xsd:choice>
+		<xsd:attribute name="class" type="xsd:string" />
+		<xsd:attribute name="ref" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="options">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="property" />
 		</xsd:choice>
 		<xsd:attribute name="class" type="xsd:string" />
 		<xsd:attribute name="ref" type="xsd:string" />
 	</xsd:complexType>
 
+	<!-- Deprecated, use property instead -->
+	<xsd:element name="set-property">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+			<xsd:attribute name="value" type="xsd:string" />
+			<xsd:attribute name="ref" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="property">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+			<xsd:attribute name="value" type="xsd:string" />
+			<xsd:attribute name="ref" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+		
 	<xsd:element name="selectbox">
 		<xsd:complexType>
 			<xsd:complexContent>
