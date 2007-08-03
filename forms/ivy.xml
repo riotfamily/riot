@@ -3,6 +3,7 @@
     <configurations>
     	<conf name="build" />
     	<conf name="runtime" />
+    	<conf name="test" />
     </configurations>
     <dependencies>
 	    <dependency org="riotfamily" name="riot-common" rev="latest.integration" conf="*->@" changing="true" />

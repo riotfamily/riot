@@ -16,7 +16,7 @@
 
 	<property name="publish.status" value="integration" />
 
-	<property name="resolve.conf" value="build" />
+	<property name="resolve.conf" value="build,test" />
 
 	<!-- Directory where source (and resource) files are located -->
 	<property name="module.src.dir" value="src" />

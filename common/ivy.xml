@@ -3,6 +3,7 @@
     <configurations>
     	<conf name="build" />
     	<conf name="runtime" />
+    	<conf name="test" />
     </configurations>
     <dependencies>
 	    <dependency org="sun" name="servlet-api" rev="2.4" conf="build->default" />
