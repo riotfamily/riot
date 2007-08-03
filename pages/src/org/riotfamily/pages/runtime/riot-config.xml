@@ -76,7 +76,7 @@
 			<form:checkbox bind="enabled" default="checked" />
 		</form:group>
 		<form:checkbox-group bind="locales" label-property="displayName">
-			<form:model ref="localesOptionsModel" />
+			<form:options ref="localesOptionsModel" />
 		</form:checkbox-group>
 	</form:form>
 

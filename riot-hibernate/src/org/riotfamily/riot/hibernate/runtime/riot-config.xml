@@ -38,7 +38,7 @@
 				<form:textfield bind="id" required="true" />
 			</form:editable-if-new>
 			<form:selectbox bind="role" required="true" label-message-key="riot.user.role." append-label="true">
-				<form:model ref="roles" />
+				<form:options ref="roles" />
 			</form:selectbox>
 			<form:textfield bind="name" />
 			<form:textfield bind="email" />
