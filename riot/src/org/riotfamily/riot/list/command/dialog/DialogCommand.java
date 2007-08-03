@@ -27,36 +27,21 @@ import org.riotfamily.forms.Form;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
-import org.riotfamily.riot.list.command.dialog.ui.DialogFormController;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
-import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public abstract class DialogCommand extends AbstractCommand 
-		implements ApplicationContextAware {
-
-	private DialogFormController dialogFormController;
-	
-	public final void setApplicationContext(ApplicationContext context) {
-		dialogFormController = (DialogFormController) BeanFactoryUtils
-				.beanOfType(context, DialogFormController.class);
-	}
+public abstract class DialogCommand extends AbstractCommand {
 
 	public final CommandResult execute(CommandContext context) {
 		context.getRequest().getSession().setAttribute(
 				getFormSessionAttribute(), createForm(context.getBean()));
 		
-		String url = dialogFormController.getUrl(
-				context.getListDefinition().getId(),
-				context.getObjectId(), getId());
-		
-		return new GotoUrlResult(context, url);
+		return new GotoUrlResult(context, getRiotServletPrefix() 
+				+ "/dialog/" + getId());
 	}
 	
 	public String getFormSessionAttribute() {

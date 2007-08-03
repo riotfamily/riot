@@ -93,7 +93,7 @@ riot.Component.prototype = {
 		ev = ev || window.event;
 		if (ev) Event.stop(ev);
 		if (this.form) {
-			var formUrl = riot.contextPath + this.form;
+			var formUrl = riot.path + this.form;
 			if (riot.instantPublish) {
 				formUrl += '?live=true';
 			}

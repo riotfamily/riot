@@ -25,7 +25,6 @@ package org.riotfamily.riot.list.command.dialog.ui;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collections;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,15 +32,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.mapping.UrlMapping;
-import org.riotfamily.common.web.mapping.UrlMappingAware;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.AjaxFormController;
 import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.riot.list.ListRepository;
 import org.riotfamily.riot.list.command.dialog.DialogCommand;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -49,13 +45,9 @@ import org.springframework.web.servlet.ModelAndView;
  * @since 6.4
  */
 public class DialogFormController extends AjaxFormController
-		implements UrlMappingAware, BeanNameAware, FormSubmissionHandler {
+		implements FormSubmissionHandler {
 	
 	private ListRepository listRepository;
-	
-	private UrlMapping urlMapping;
-	
-	private String beanName;
 	
 	private String commandIdAttribute = "commandId";
 	
@@ -70,14 +62,6 @@ public class DialogFormController extends AjaxFormController
 		addButton(buttonFactory);
 	}
 
-	public void setBeanName(String beanName) {
-		this.beanName = beanName;
-	}
-	
-	public void setUrlMapping(UrlMapping urlMapping) {
-		this.urlMapping = urlMapping;
-	}
-		
 	protected String getCommandId(HttpServletRequest request) {
 		return (String) request.getAttribute(commandIdAttribute);
 	}
@@ -129,11 +113,6 @@ public class DialogFormController extends AjaxFormController
 		
 		Object input = form.populateBackingObject();
 		return getCommand(request).handleInput(input);
-	}
-	
-	public String getUrl(String editorId, String objectId, String commandId) {
-		return urlMapping.getUrl(beanName, Collections.singletonMap(
-				commandIdAttribute, commandId));
 	}
 	
 }

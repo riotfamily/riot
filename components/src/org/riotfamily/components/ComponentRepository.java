@@ -216,7 +216,7 @@ public class ComponentRepository implements ServletContextAware,
 	public String getFormUrl(String formId, Long containerId) {
 		Assert.notNull(formController, "A FormController must be set.");
 		if (formRepository.containsForm(formId)) {
-			return formController.getUrl(formId, containerId);
+			return "/components/form/" + formId + "/" + containerId;
 		}
 		return null;
 	}

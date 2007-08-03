@@ -30,10 +30,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.mapping.UrlMapping;
-import org.riotfamily.common.web.mapping.UrlMappingAware;
 import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.components.Component;
 import org.riotfamily.components.ComponentRepository;
@@ -45,7 +42,6 @@ import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.forms.factory.RepositoryFormController;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -56,8 +52,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @since 6.5
  */
 public class ComponentFormController extends RepositoryFormController
-		implements FormSubmissionHandler, TransactionalController,
-		UrlMappingAware, BeanNameAware {
+		implements FormSubmissionHandler, TransactionalController {
 
 	private static final String SESSION_ATTRIBUTE = "componentForm";
 
@@ -70,10 +65,6 @@ public class ComponentFormController extends RepositoryFormController
 			ComponentFormController.class, "ComponentFormSuccessView.ftl");
 
 	private ComponentRepository componentRepository;
-
-	private UrlMapping urlMapping;
-
-	private String beanName;
 
 	private String formIdAttribute = "formId";
 
@@ -91,21 +82,6 @@ public class ComponentFormController extends RepositoryFormController
 		buttonFactory.setLabelKey("label.form.button.save");
 		buttonFactory.setCssClass("button button-save");
 		addButton(buttonFactory);
-	}
-
-	public void setBeanName(String beanName) {
-		this.beanName = beanName;
-	}
-
-	public void setUrlMapping(UrlMapping urlMapping) {
-		this.urlMapping = urlMapping;
-	}
-
-	public String getUrl(String formId, Long containerId) {
-		FlatMap attributes = new FlatMap();
-		attributes.put(formIdAttribute, formId);
-		attributes.put(containerIdAttribute, containerId);
-		return urlMapping.getUrl(beanName, attributes);
 	}
 
 	protected ComponentRepository getComponentRepository() {
