@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.mapping;
 
-import java.util.Iterator;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -96,13 +94,6 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 		log.debug("Page: " + page);
 		if (page != null) {
 			if (isRequestable(page)) {
-				if (page.isFolder()) {
-					String url = getFirstVisibleChildPageUrl(page);
-					if (url != null) {
-						return new RedirectController(url, true, false);
-					}
-					return new HttpErrorController(HttpServletResponse.SC_NOT_FOUND);
-				}
 				request.setAttribute(PAGE_ATTRIBUTE, page);
 				String handlerName = page.getHandlerName();
 				if (handlerName != null) {
@@ -116,8 +107,7 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 			if (alias != null) {
 				page = alias.getPage();
 				if (page != null) {
-					String url = locationResolver.getUrl(
-							new PageLocation(page));
+					String url = locationResolver.getUrl(page);
 
 					return new RedirectController(url, true, false);
 				}
@@ -131,17 +121,6 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 
 	private boolean isRequestable(Page page) {
 		return page.isEnabled() || AccessController.isAuthenticatedUser();
-	}
-
-	private String getFirstVisibleChildPageUrl(Page parent) {
-		Iterator it = parent.getChildPages().iterator();
-		while (it.hasNext()) {
-			Page page = (Page) it.next();
-			if (isRequestable(page)) {
-				return locationResolver.getUrl(new PageLocation(page));
-			}
-		}
-		return null;
 	}
 
 	public static Page getPage(HttpServletRequest request) {

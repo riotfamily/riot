@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageLocationResolver;
@@ -111,7 +110,7 @@ public class PageChooserController implements Controller {
 			if (!page.isWildcardMapping()) {
 				PageLink link = new PageLink();
 				link.setPathComponent(page.getPathComponent());
-				link.setLink(resolver.getUrl(new PageLocation(page)));
+				link.setLink(resolver.getUrl(page));
 				link.setTitle(page.getProperty("title", true));
 				link.setPublished(page.isPublished());
 				link.setChildPages(createpageLinks(page.getChildPages()));

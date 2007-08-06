@@ -30,10 +30,10 @@ import org.riotfamily.components.Location;
 import org.riotfamily.components.locator.SlotResolver;
 import org.riotfamily.components.locator.TemplateSlotResolver;
 import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.pages.mapping.PageLocationResolver;
+import org.springframework.util.StringUtils;
 
 /**
  * ComponentListLocator that uses the page-id as component-path.
@@ -92,12 +92,11 @@ public class PageComponentListLocator implements ComponentListLocator {
 
 	public String getUrl(Location location) {
 		Page page = loadPage(location);
-		PageLocation pageLocation = new PageLocation(page);
+		String url = resolver.getUrl(page);
 		if (page.isWildcardMapping()) {
-			pageLocation.setPath(page.getParentPage().getPath()
-					+ "/" + location.getPath());
+			url = StringUtils.replace(url, "*", location.getPath());
 		}
-		return resolver.getUrl(pageLocation);
+		return url;
 	}
 
 	private Page loadPage(Location location) {

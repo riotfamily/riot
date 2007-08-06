@@ -93,7 +93,7 @@ public class LocaleListController extends AbstractCacheableController {
 					Page page = (Page) root.getChildPages(locale).iterator().next();
 
 					String url = request.getContextPath() +
-							locationResolver.getUrl(new PageLocation(page));
+							locationResolver.getUrl(page);
 
 					return new ModelAndView(new RedirectView(url));
 				}

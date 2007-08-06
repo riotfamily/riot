@@ -24,7 +24,6 @@
 package org.riotfamily.pages.riot.command;
 
 import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.mapping.PageLocationResolver;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.core.PopupCommand;
@@ -45,8 +44,7 @@ public class GotoPageCommand extends PopupCommand {
 
 	protected String getUrl(CommandContext context) {
 		Page page = (Page) context.getBean();
-		return context.getRequest().getContextPath() 
-				+ resolver.getUrl(new PageLocation(page));
+		return context.getRequest().getContextPath() + resolver.getUrl(page);
 	}
 	
 	protected String getStyleClass(CommandContext context, String action) {

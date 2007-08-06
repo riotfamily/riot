@@ -25,6 +25,7 @@ package org.riotfamily.pages.mapping;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageLocation;
 
 
@@ -37,6 +38,6 @@ public interface PageLocationResolver {
 
 	public PageLocation getPageLocation(HttpServletRequest request);
 	
-	public String getUrl(PageLocation location);
+	public String getUrl(Page page);
 
 }

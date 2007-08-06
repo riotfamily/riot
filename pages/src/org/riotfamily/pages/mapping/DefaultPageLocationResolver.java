@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.util.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageLocation;
 import org.springframework.util.StringUtils;
 
@@ -63,6 +64,9 @@ public class DefaultPageLocationResolver implements PageLocationResolver {
 
 	public PageLocation getPageLocation(HttpServletRequest request) {
 		String path = ServletUtils.getPathWithoutServletMapping(request);
+		if (path.length() > 1 && path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
 		Locale locale = null;
 		if (localesInPath()) {
 			if (path.length() > 1) {
@@ -80,14 +84,17 @@ public class DefaultPageLocationResolver implements PageLocationResolver {
 		return new PageLocation(null, path, locale);
 	}
 
-	public String getUrl(PageLocation location) {
+	public String getUrl(Page page) {
+		PageLocation location = new PageLocation(page);
 		StringBuffer url = new StringBuffer();
 		if (localesInPath() && location.getLocale() != null) {
 			url.append('/');
 			url.append(location.getLocale().toString().toLowerCase());
 		}
 		url.append(location.getPath());
-		pathCompleter.addServletMapping(url);
+		if (!page.isFolder() || pathCompleter.isPrefixMapping()) {
+			pathCompleter.addServletMapping(url);
+		}
 		return url.toString();
 	}
 }

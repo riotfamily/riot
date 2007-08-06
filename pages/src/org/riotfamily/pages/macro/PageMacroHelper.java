@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.components.context.ComponentEditorRequest;
 import org.riotfamily.components.editor.EditModeUtils;
 import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
@@ -97,7 +96,7 @@ public class PageMacroHelper {
 
 	public String getUrl(Page page) {
 		if (page != null) {
-			return resolver.getUrl(new PageLocation(page));
+			return resolver.getUrl(page);
 		}
 		return null;
 	}
@@ -108,7 +107,8 @@ public class PageMacroHelper {
 		Page page = getPageForHandler(handlerName, locale);
 		if (page != null) {
 			Assert.isTrue(page.isWildcardMapping(), "Page has no wildcard mapping");
-			return resolver.getUrl(new PageLocation(page, wildcardReplacement));
+			String url = resolver.getUrl(page); 
+			return StringUtils.replace(url, "*", wildcardReplacement);
 		}
 		return null;
 	}
@@ -119,8 +119,7 @@ public class PageMacroHelper {
 
 	public boolean isVisible(Page page) {
 		return !page.isHidden() && !page.getNode().isHidden()
-					&& (page.isEnabled()
-					|| EditModeUtils.isEditMode(request));
+				&& (page.isEnabled() || EditModeUtils.isEditMode(request));
 	}
 
 	public Collection getVisiblePages(Collection pages) {
