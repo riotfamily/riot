@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.CacheableController;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageLocationResolver;
 import org.riotfamily.riot.security.AccessController;
@@ -91,10 +92,8 @@ public class LocaleListController extends AbstractCacheableController {
 					Locale locale = (Locale)locales.get(0);
 					PageNode root = pageDao.findRootNode(site);
 					Page page = (Page) root.getChildPages(locale).iterator().next();
-
-					String url = request.getContextPath() +
-							locationResolver.getUrl(page);
-
+					String url = locationResolver.getUrl(page);
+					url = ServletUtils.resolveUrl(url, request);
 					return new ModelAndView(new RedirectView(url));
 				}
 				if (!locales.isEmpty()) {

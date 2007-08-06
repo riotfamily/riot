@@ -30,14 +30,31 @@ import org.riotfamily.pages.PageLocation;
 
 
 /**
+ * Interface that resolves the {@link PageLocation} for a request. The 
+ * PageLocation can be passed to a PageDao in order to look up a Page.
+ * <p>
+ * Resolvers are virtually bidirectional as they can also be used to build 
+ * URLs that point to a given Page.  
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
 public interface PageLocationResolver {
 
+	/**
+	 * Returns the {@link PageLocation} that should be used to look up the Page.
+	 * Implementors may return <code>null</code> if it's obvious that a lookup 
+	 * will not yield any page.
+	 */
 	public PageLocation getPageLocation(HttpServletRequest request);
 	
+	/**
+	 * Returns an URL, which if requested will be mapped to the given Page.
+	 * Implementors <em>should</em> return an URL relative to the context path
+	 * but may also return an absolute URL (containing protocol and
+	 * server name). 
+	 */
 	public String getUrl(Page page);
 
 }

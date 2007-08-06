@@ -44,6 +44,14 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 /**
+ * FilterPlugin that provides folder support. Normally the website-servlet is
+ * mapped using a suffix-mapping like <code>*.html</code> and therefore can't
+ * handle requests like </code>/some/folder</code>. In case a page with the
+ * requested path exists and is {@link Page#isFolder() marked as folder}, this
+ * plugin will send a redirect to the first <i>requestable</i> child-page.
+ * A page is requestable if it is {@link Page#isEnabled() enabled} <em>or</em>
+ * a Riot user {@link AccessController#isAuthenticatedUser() is logged in}.  
+ *  
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
@@ -99,16 +107,18 @@ public class FolderFilterPlugin extends FilterPlugin {
 	}
 	
 	private Collection getIndexPages(HttpServletRequest request) {
-		PageLocation location = locationResolver.getPageLocation(request);
 		Collection childPages = null;
-		if (location.getPath().equals("/")) {
-			Site site = pageDao.getSite(location.getSiteName());
-			childPages = pageDao.findRootNode(site).getChildPages(location.getLocale());
-		}
-		else {
-			Page page = pageDao.findPage(location);
-			if (page != null && page.isFolder()) {
-				childPages = page.getChildPages();
+		PageLocation location = locationResolver.getPageLocation(request);
+		if (location != null) {
+			if ("/".equals(location.getPath())) {
+				Site site = pageDao.getSite(location.getSiteName());
+				childPages = pageDao.findRootNode(site).getChildPages(location.getLocale());
+			}
+			else {
+				Page page = pageDao.findPage(location);
+				if (page != null && page.isFolder()) {
+					childPages = page.getChildPages();
+				}
 			}
 		}
 		return childPages;
@@ -117,7 +127,7 @@ public class FolderFilterPlugin extends FilterPlugin {
 	private void sendRedirect(Collection pages, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		
-		String url = getFirstVisibleChildPageUrl(pages);
+		String url = getFirstRequestableChildPageUrl(pages);
 		if (url != null) {
 			response.sendRedirect(response.encodeRedirectURL(
 					request.getContextPath() + url));
@@ -127,7 +137,7 @@ public class FolderFilterPlugin extends FilterPlugin {
 		}
 	}
 	
-	private String getFirstVisibleChildPageUrl(Collection pages) {
+	private String getFirstRequestableChildPageUrl(Collection pages) {
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();

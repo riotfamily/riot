@@ -75,6 +75,9 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 			throws Exception {
 
 		PageLocation location = locationResolver.getPageLocation(request);
+		if (location == null) {
+			return null;
+		}
 		Page page = pageDao.findPage(location);
 		if (page == null && wildcardsEnabled) {
 			String path = location.getPath();
