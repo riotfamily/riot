@@ -173,7 +173,7 @@ public final class ServletUtils {
 				return "/";
 			}
 			int dotIndex = path.lastIndexOf('.');
-			if (dotIndex >= 0) {
+			if (dotIndex != -1 && dotIndex > path.lastIndexOf('/')) {
 				path = path.substring(0, dotIndex);
 			}
 		}
@@ -210,9 +210,7 @@ public final class ServletUtils {
 	public static String getServletPrefix(HttpServletRequest request) {
 		String path = urlPathHelper.getPathWithinApplication(request);
 		String servletPath = urlPathHelper.getServletPath(request);
-		if (path.length() > servletPath.length()
-				|| path.lastIndexOf('/') > path.lastIndexOf('.')) {
-
+		if (path.length() > servletPath.length()) {
 			return servletPath;
 		}
 		return "";
