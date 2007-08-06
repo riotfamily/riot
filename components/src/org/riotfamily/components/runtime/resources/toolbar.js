@@ -129,9 +129,9 @@ riot.Toolbar.prototype = {
 
 	dirtyCheck: function(callerIsDirty) {
 		if (!riot.instantPublish) {
-			if (callerIsDirty || this.componentLists.pluck('dirty').any()) {
-				this.buttons.publish.enable();
-				this.buttons.discard.enable();
+			if (callerIsDirty || this.componentLists.pluck('dirty').any()) {				
+				this.buttons.publish.enable();			
+				this.buttons.discard.enable();				
 			}
 			else {
 				this.buttons.publish.disable();
@@ -196,8 +196,10 @@ riot.ToolbarButton.prototype = {
 	},
 
 	enable: function() {
-		this.element.className = 'toolbar-button';
-		this.enabled = true;
+		if (!this.enabled) {		
+			this.element.className = 'toolbar-button';
+			this.enabled = true;
+		}		
 		return this;
 	},
 

@@ -422,10 +422,12 @@ public abstract class AbstractComponentDao implements ComponentDao,
 	/**
 	 * Discards all changes made to the given list.
 	 */
-	public void discardList(ComponentList componentList) {
+	public boolean discardList(ComponentList componentList) {
+		boolean discarded = false;
 		List previewList = componentList.getPreviewContainers();
 		List liveList = componentList.getLiveContainers();
 		if (componentList.isDirty()) {
+			discarded = true;
 			componentList.setPreviewContainers(null);
 			componentList.setDirty(false);
 			Iterator it = previewList.iterator();
@@ -441,23 +443,33 @@ public abstract class AbstractComponentDao implements ComponentDao,
 		Iterator it = liveList.iterator();
 		while (it.hasNext()) {
 			VersionContainer container = (VersionContainer) it.next();
-			discardContainer(container);
+			discarded |= discardContainer(container);
 		}
+		return discarded;
 	}
 
 	/**
 	 * Discards all changes made to the given VersionContainer.
 	 * @return <code>true</code> if there was anything to discard.
 	 */
-	public boolean discardContainer(VersionContainer container) {
+	public boolean discardContainer(VersionContainer container) {		
+		boolean discarded = false;
+		Set childLists = container.getChildLists();
+		if (childLists != null) {
+			Iterator it = childLists.iterator();
+			while (it.hasNext()) {
+				ComponentList childList = (ComponentList) it.next();
+				discarded |= discardList(childList);
+			}
+		}
 		ComponentVersion preview = container.getPreviewVersion();
 		if (preview != null) {
 			container.setPreviewVersion(null);
 			updateVersionContainer(container);
 			deleteComponentVersion(preview);
-			return true;
+			discarded = true;
 		}
-		return false;
+		return discarded;
 	}
 
 	/**

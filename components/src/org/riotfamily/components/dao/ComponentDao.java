@@ -162,7 +162,7 @@ public interface ComponentDao {
 	/**
 	 * Discards all changes made to the given list.
 	 */
-	public void discardList(ComponentList componentList);
+	public boolean discardList(ComponentList componentList);
 
 	/**
 	 * Discards all changes made to the given container.

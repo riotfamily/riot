@@ -275,7 +275,7 @@ riot.PublishWidget.prototype = {
 	initialize: function(componentList, mode) {
 		mode = mode || 'publish'
 		this.className = 'riot-' + mode + '-outline';
-		this.componentList = componentList;
+		this.componentList = componentList;		
 		this.previewHtml = componentList.element.innerHTML;
 		this.element = RBuilder.node('div', {className: this.className, style: {position: 'absolute', display: 'none'}},
 			this.overlay = RBuilder.node('div')
@@ -288,10 +288,10 @@ riot.PublishWidget.prototype = {
 		if (document.addEventListener) {
 			this.domListener = this.scaleOverlay.bind(this);
 			this.componentList.element.addEventListener('DOMNodeInserted', this.domListener, false);
-		}
-		this.show();
-	},
-
+		}		
+		this.show();		
+	},	
+	
 	show: function() {
 		this.componentList.element.makePositioned();
 		this.componentList.element.appendChild(this.element);
@@ -309,11 +309,12 @@ riot.PublishWidget.prototype = {
 		if (document.removeEventListener) {
 			this.domListener = this.show.bind(this);
 			this.componentList.element.removeEventListener('DOMNodeInserted', this.domListener, false);
-		}
+		}		
 		this.componentList.replaceHtml(this.previewHtml);
 		riot.publishWidgets = riot.publishWidgets.without(this);
 		this.componentList.publishWidget = null;
 		if (this.element.parentNode) this.element.remove();
+			
 	},
 
 	toggleVersion: function(ev) {
@@ -350,7 +351,7 @@ riot.PublishWidget.prototype = {
 			this.setHtml(this.liveHtml);
 		}
 		this.updateUI();
-	},
+	},	
 
 	setLiveHtml: function(html) {
 		this.liveHtml = html;
@@ -373,17 +374,18 @@ riot.PublishWidget.prototype = {
 
 	apply: function() {
 		if (!this.live) {
-			this.componentList.publishChanges();
-			this.componentList.setDirty(false);
+			this.componentList.publishChanges();										
 		}
 	}
+	
+	
 }
 
 riot.DiscardWidget = Class.extend(riot.PublishWidget, {
 	initialize: function(componentList) {
 		this.SUPER(componentList, 'discard');
-		this.showLive();
-	},
+		this.showLive();		
+	},	
 
 	changesAvailable: function(instance) {
 		return instance.live;
@@ -391,8 +393,8 @@ riot.DiscardWidget = Class.extend(riot.PublishWidget, {
 
 	apply: function() {
 		if (this.live) {
-			this.componentList.discardChanges();
-			this.componentList.setDirty(false);
+			this.previewHtml = this.liveHtml;
+			this.componentList.discardChanges();			
 		}
 	}
 });
@@ -475,10 +477,14 @@ riot.AbstractComponentCollection.prototype = {
 		this.getComponents().invoke('setMode', enable ? 'properties' : null);
 	},
 
-	setDirty: function(dirty) {
-		this.dirty = dirty;
-		if (dirty && this.parentList) {
-			this.parentList.setDirty(dirty);
+	setDirty: function(dirty) {		
+		if (this.parentList) {
+			if (dirty) {
+				this.parentList.setDirty(dirty);
+			}			
+		}
+		else {
+			this.dirty = dirty;
 		}
 		riot.toolbar.dirtyCheck(dirty);
 	},
@@ -491,10 +497,10 @@ riot.AbstractComponentCollection.prototype = {
 
 	discard: function(enable) {
 		if (enable) {
-			if (this.dirty) this.publishWidget = new riot.DiscardWidget(this);
+			if (this.dirty && !this.parentList) this.publishWidget = new riot.DiscardWidget(this);
 		}
-		else if (this.publishWidget) {
-			this.publishWidget.destroy();
+		else {
+			if (this.publishWidget) this.publishWidget.destroy();
 			riot.toolbar.applyButton.disable();
 		}
 	},
@@ -515,12 +521,14 @@ riot.AbstractComponentCollection.prototype = {
 
 	publishChanges: function() {
 		ComponentEditor.publish(this.id, this.getDirtyContainerIds(),
-				this.publishWidget.destroy.bind(this.publishWidget));
+				this.update.bind(this));
+		this.setDirty(false);
 	},
 
-	discardChanges: function() {
+	discardChanges: function() {		
 		ComponentEditor.discard(this.id, this.getDirtyContainerIds(),
 				this.update.bind(this));
+		this.setDirty(false);
 	}
 }
 
@@ -547,8 +555,8 @@ riot.ComponentSet = Class.extend(riot.AbstractComponentCollection, {
 riot.ComponentList = Class.extend(riot.AbstractComponentCollection, {
 	initialize: function(el) {
 		this.SUPER(el);
-		this.setDirty(el.readAttribute('riot:dirty'));
 		this.id = el.readAttribute('riot:listId');
+		this.setDirty(el.readAttribute('riot:dirty'));		
 		this.maxComponents = el.readAttribute('riot:maxComponents');
 		this.minComponents = el.readAttribute('riot:minComponents');
 		ComponentEditor.getValidTypes(this.controllerId,
