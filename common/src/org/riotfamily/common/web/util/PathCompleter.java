@@ -49,8 +49,12 @@ public class PathCompleter implements ServletContextAware, InitializingBean {
 
 	private ServletContext servletContext;
 
+	private boolean prefixMapping;
+	
 	private String servletPrefix;
 
+	private boolean suffixMapping;
+	
 	private String servletSuffix;
 
 	public void setServletContext(ServletContext servletContext) {
@@ -79,30 +83,49 @@ public class PathCompleter implements ServletContextAware, InitializingBean {
 			log.info("Servlet '" + servletName + "' is mapped to "
 					+ servletMapping + " in web.xml");
 		}
-		servletSuffix = "";
-		servletPrefix = "";
+				
 		int i = servletMapping.indexOf('*');
 		if (i == 0) {
+			suffixMapping = true;
 			servletSuffix = servletMapping.substring(1);
+			log.info("Servlet suffix: '" + servletSuffix + "'");
 		}
 		if (i > 0) {
+			prefixMapping = true;
 			servletPrefix = servletMapping.substring(0, i);
+			log.info("Servlet prefix: '" + servletPrefix + "'");
 		}
-		log.info("Servlet prefix: '" + servletPrefix + "'");
-		log.info("Servlet suffix: '" + servletSuffix + "'");
 	}
 
+	public boolean isPrefixMapping() {
+		return this.prefixMapping;
+	}
+	
+	public boolean isSuffixMapping() {
+		return this.suffixMapping;
+	}
+	
 	public String addServletMapping(String path) {
-		int i = path.indexOf('?');
-		if (i != -1 && servletSuffix.length() > 0) {
-			return path.substring(0, i) + servletSuffix + path.substring(i);
+		if (suffixMapping) {
+			int i = path.indexOf('?');
+			if (i != -1) {
+				return path.substring(0, i) + servletSuffix + path.substring(i);
+			}
+			else {
+				return path + servletSuffix;
+			}
 		}
-		return servletPrefix + path + servletSuffix;
+		if (prefixMapping) {
+			return servletPrefix + path;
+		}
+		return path;
 	}
 
 	public void addServletMapping(StringBuffer path) {
-		path.insert(0, servletPrefix);
-		if (servletSuffix.length() > 0) {
+		if (prefixMapping) {
+			path.insert(0, servletPrefix);
+		}
+		else if (suffixMapping) {
 			int i = path.indexOf("?");
 			if (i != -1) {
 				path.insert(i, servletSuffix);
