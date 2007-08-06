@@ -239,5 +239,65 @@ public final class ColorUtils {
 		}
 		throw new IllegalArgumentException("Invalid color format.");
 	}
+	
+	/**
+	 * Adjusts the brightness of the given color.
+	 * @param c The color to adjust
+	 * @param scale The factor (a value from -1 to 1) 
+	 */
+	public static Color brightness(Color c, float scale) {
+		int r = c.getRed();
+		int g = c.getGreen();
+		int b = c.getBlue();
+		if (r == 0 && g == 0 && b == 0 && scale > 0) {
+			r = g = b = Math.min(255, (int) (255 * scale));
+		}
+		else {
+			r = Math.max(0, (int) (r * scale));
+			g = Math.max(0, (int) (g * scale));
+			b = Math.max(0, (int) (b * scale));
+			if (r > 255 || g > 255 || b > 255) {
+				return c;
+			}
+		}
+		return new Color(r, g, b);
+	}
+	
+	/**
+	 * Adjusts the saturation of the given color.
+	 * @param c The color to adjust
+	 * @param scale The factor (a value from -1 to 1) 
+	 */
+	public static Color saturation(Color c, float scale) {
+		int r = c.getRed();
+		int g = c.getGreen();
+		int b = c.getBlue();
+		float[] hsb = Color.RGBtoHSB(r, g, b, null);
+		float s = hsb[1] * scale;
+		if (s < 0) { 
+			s = 0; 
+		};
+		if (s > 1) { 
+			s = 1; 
+		};
+		return Color.getHSBColor(hsb[0], s, hsb[2]);
+	}
 
+	public static String toHex(Color color) {
+		String r = Integer.toHexString(color.getRed());
+		String g = Integer.toHexString(color.getGreen());
+		String b = Integer.toHexString(color.getBlue());
+		if (r.length() == 1) {
+		  r = "0" + r;
+		}
+		if (g.length() == 1) {
+		  g = "0" + g;
+		}
+		if (b.length() == 1) {
+		  b = "0" + b;
+		}
+		return ("#" + r + g + b).toUpperCase();
+	}
 }
+
+	
