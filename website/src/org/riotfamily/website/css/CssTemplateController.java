@@ -104,6 +104,8 @@ public class CssTemplateController extends AbstractCacheableController
 
 	private ResourceStamper stamper;
 
+	private ColorTool colorTool = new ColorTool();
+	
 	private boolean addContextPathToUrls = false;
 
 	public void setServletContext(ServletContext servletContext) {
@@ -240,6 +242,7 @@ public class CssTemplateController extends AbstractCacheableController
 
 		private Map buildModel() {
 			HashMap model = new HashMap();
+			model.put("color", colorTool);
 			if (iniFile != null) {
 				Map sections = iniFile.getSections();
 				model.putAll(sections);
