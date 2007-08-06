@@ -17,7 +17,7 @@
 
 	<ed:list id="sitemap" list-ref="sites" icon="sitemap">
 		<ed:list list-ref="locales">
-			<ed:tree list-ref="pages">
+			<ed:tree list-ref="pages-i18n">
 				<ed:form form-ref="page" label-property="pathComponent" />
 			</ed:tree>
 		</ed:list>
@@ -55,6 +55,23 @@
 	<list:list id="pages" default-command="showChildPages">
 		<list:dao ref="pageRiotDao" />
 		<list:columns>
+			<list:column property="pathComponent" />
+			<list:command id="publishPage" />
+			<list:command id="moveUpPage" />
+			<list:command id="moveDownPage" />
+			<list:command id="cutPage" />
+			<list:command id="editPage" />
+			<list:command id="deletePage" />
+			<list:command id="gotoPage" />
+			<list:command id="showChildPages" />
+		</list:columns>
+		<list:command id="add"/>
+		<list:command id="pastePage" />
+	</list:list>
+	
+	<list:list id="pages-i18n" default-command="showChildPages">
+		<list:dao ref="pageRiotDao" />
+		<list:columns>
 			<list:column property="locale" renderer="countryFlagRenderer" />
 			<list:column property="pathComponent" />
 			<list:command id="publishPage" />
@@ -83,6 +100,7 @@
 	<form:form id="page" bean-class="org.riotfamily.pages.Page">
 		<form:group label-key="page.location">
 			<form:textfield bind="pathComponent" required="true" regex="([A-Za-z0-9_.,-]*|\*)" />
+			<form:checkbox bind="folder" />
 		</form:group>
 	</form:form>
 
