@@ -83,10 +83,13 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 	 * reconcile the name of an attribute with the name of a JavaBean
 	 * property.
 	 * @param element the XML element being parsed
+	 * @param parserContext the object encapsulating the current state of the parsing process
 	 * @param builder used to define the <code>BeanDefinition</code>
 	 * @see #extractPropertyName(String)
 	 */
-	protected final void doParse(Element element, BeanDefinitionBuilder builder) {
+	protected final void doParse(Element element, 
+			ParserContext parserContext, BeanDefinitionBuilder builder) {
+		
 		NamedNodeMap attributes = element.getAttributes();
 		for (int x = 0; x < attributes.getLength(); x++) {
 			Attr attribute = (Attr) attributes.item(x);
@@ -106,7 +109,7 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 				builder.addPropertyValue(propertyName, value);
 			}
 		}
-		postProcess(builder, element);
+		postProcess(builder, parserContext, element);
 	}
 
 	/**
@@ -143,6 +146,21 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 		return property;
 	}
 
+	/**
+	 * Hook method that derived classes can implement to inspect/change a
+	 * bean definition after parsing is complete.
+	 * <p>The default implementation delegates to the <code>postProcess</code>
+	 * version without ParserContext argument.
+	 * @param beanDefinition the parsed (and probably totally defined) bean definition being built
+	 * @param parserContext the object encapsulating the current state of the parsing process
+	 * @param element the XML element that was the source of the bean definition's metadata
+	 */
+	protected void postProcess(BeanDefinitionBuilder beanDefinition, 
+			ParserContext parserContext, Element element) {
+		
+		postProcess(beanDefinition, element);
+	}
+	
 	/**
 	 * Hook method that derived classes can implement to inspect/change a
 	 * bean definition after parsing is complete.
