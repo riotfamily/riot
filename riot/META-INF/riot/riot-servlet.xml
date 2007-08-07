@@ -114,27 +114,12 @@
 		</property>
 	</bean>
 
-	<!--
-	  - Service to authenticate users. You'll probably want to provide an
-	  - implementation that retrieves principals from the database or a
-	  - directory server. To do so, place a bean called 'authenticationServiceImpl'
-	  - in your configuration or deploy the riot-hibernate.jar file which
-	  - contains a Hibernate based implementation.
-	  -->
-	<bean id="authenticationService" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
-		<property name="fallback">
-			<bean class="org.riotfamily.riot.security.impl.StaticAuthenticationService" />
-		</property>
-	</bean>
+	 <bean id="authenticationService" class="org.riotfamily.riot.security.impl.StaticAuthenticationService" />
 
 	<!--
-	  - Persistence service for SessionData (last login date, last IP, etc.)
+	  - Persistence service for SessionMetaData (last login date, last IP, etc.)
 	  -->
-	<bean id="sessionMetaDataStore" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
-		<property name="fallback">
-			<bean class="org.riotfamily.riot.security.impl.TransientSessionMetaDataStore" />
-		</property>
-	</bean>
+	<bean id="sessionMetaDataStore" class="org.riotfamily.riot.security.impl.TransientSessionMetaDataStore" />
 
 	<bean id="loginManager" class="org.riotfamily.riot.security.LoginManager">
 		<constructor-arg ref="authenticationService" />
@@ -320,12 +305,7 @@
 	  -->
 	<bean id="loginFormController" name="/login" class="org.riotfamily.riot.security.ui.LoginFormController">
 		<constructor-arg ref="loginManager" />
-		<property name="viewName" ref="loginFormView" />
-	</bean>
-
-	<bean id="loginFormView" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
-		<property name="implementationBeanName" value="loginFormViewReplacement" />
-		<property name="fallback" value="classpath:org/riotfamily/riot/security/ui/LoginFormView.ftl" />
+		<property name="viewName" value="classpath:org/riotfamily/riot/security/ui/LoginFormView.ftl" />
 	</bean>
 
 	<!--
@@ -503,12 +483,8 @@
 
     <bean id="jobUIUpdater" class="org.riotfamily.riot.job.ui.JobUIUpdater" />
 
-	<bean id="jobDao" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
-		<property name="fallback">
-			<bean class="org.riotfamily.riot.job.persistence.InMemoryJobDao" />
-		</property>
-	</bean>
-
+	<bean id="jobDao" class="org.riotfamily.riot.job.persistence.InMemoryJobDao" />
+	
 	<bean id="jobManager" class="org.riotfamily.riot.job.JobManager">
 		<constructor-arg ref="jobDao" />
 		<constructor-arg ref="jobUIUpdater" />

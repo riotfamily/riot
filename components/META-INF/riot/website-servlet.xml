@@ -8,12 +8,8 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-	<bean id="defaultComponentListLocator" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
-		<property name="fallback">
-			<bean class="org.riotfamily.components.locator.UrlComponentListLocator">
-				<constructor-arg ref="pathCompleter" />
-			</bean>
-		</property>
+	<bean id="defaultComponentListLocator" class="org.riotfamily.components.locator.UrlComponentListLocator">
+		<constructor-arg ref="pathCompleter" />
 	</bean>
 
 	<bean class="org.riotfamily.components.config.ControllerConfigurer">

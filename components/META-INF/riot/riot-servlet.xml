@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:util="http://www.springframework.org/schema/util"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
 		http://www.springframework.org/schema/util
-		http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+		http://www.springframework.org/schema/util/spring-util-2.0.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-6.5.xsd">
 
 	<!--
 	  - Service bean to edit components. Exposed via DWR.
@@ -69,13 +72,9 @@
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 
-	<!--
-	  - Overwrites the default loginFormView to display a box with installation
-	  - instructions for the Riot-login bookmarklet.
-	  -->
-	<bean id="loginFormViewReplacement" class="java.lang.String">
-		<constructor-arg value="classpath:org/riotfamily/components/runtime/view/login-form.ftl" />
-	</bean>
+	<override:properties ref="loginFormController">
+		<property name="viewName" value="classpath:org/riotfamily/components/runtime/view/login-form.ftl" />
+	</override:properties>
 
 	<!--
 	  - Login-popup that is opend by the Riot-login bookmarklet.

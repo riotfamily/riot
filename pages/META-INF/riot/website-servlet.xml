@@ -1,17 +1,38 @@
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.0.xsd
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-6.5.xsd">
 
-	<bean id="defaultComponentListLocatorImpl" class="org.riotfamily.pages.component.PageComponentListLocator">
+
+	<bean id="pageHandlerMapping" class="org.riotfamily.pages.mapping.PageHandlerMapping">
 		<constructor-arg ref="pageDao" />
 		<constructor-arg ref="pageLocationResolver" />
+		<property name="interceptors">
+			<list>
+				<ref bean="noCacheInterceptor" />
+			</list>
+		</property>
 	</bean>
+	
+	<bean id="folderFilterPlugin" class="org.riotfamily.pages.mapping.FolderFilterPlugin">
+		<constructor-arg ref="pageDao" />
+		<constructor-arg ref="pageLocationResolver" />
+		<constructor-arg ref="transactionManager" />
+		<property name="filterName" value="website-filter" />
+	</bean>
+	
+	<override:bean ref="defaultComponentListLocator" class="org.riotfamily.pages.component.PageComponentListLocator">
+		<constructor-arg ref="pageDao" />
+		<constructor-arg ref="pageLocationResolver" />
+	</override:bean>
 
 	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
 		<property name="properties">

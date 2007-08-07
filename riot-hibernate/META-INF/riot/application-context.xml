@@ -1,9 +1,12 @@
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-6.5.xsd">
 
 	<import resource="classpath:/org/riotfamily/riot/hibernate/runtime/db-schema.xml"/>
 
@@ -56,8 +59,8 @@
 		<property name="sessionFactory" ref="riotSessionFactory" />
 	</bean>
 
-	<bean id="notificationDaoImpl" class="org.riotfamily.riot.hibernate.workflow.notification.HibernateNotificationDao">
+	<override:bean ref="notificationDao" class="org.riotfamily.riot.hibernate.workflow.notification.HibernateNotificationDao">
 		<property name="sessionFactory" ref="riotSessionFactory" />
-	</bean>
+	</override:bean>
 
 </beans>

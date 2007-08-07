@@ -1,0 +1,27 @@
+<xsd:schema xmlns="http://www.riotfamily.org/schema/common/override"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	attributeFormDefault="unqualified" elementFormDefault="qualified"
+	targetNamespace="http://www.riotfamily.org/schema/common/override">
+
+	<xsd:import namespace="http://www.springframework.org/schema/beans"
+		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.0.xsd" />
+
+	<xsd:element name="properties">
+		<xsd:complexType>
+			<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+				<xsd:element ref="beans:property" />
+			</xsd:sequence>
+			<xsd:attribute name="ref" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="bean">
+		<xsd:complexType>
+			<xsd:group ref="beans:beanElements"/>
+			<xsd:attribute name="ref" type="xsd:string" use="required" />
+			<xsd:attribute name="class" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+	
+</xsd:schema>

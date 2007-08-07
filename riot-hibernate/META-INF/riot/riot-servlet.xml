@@ -2,11 +2,14 @@
 	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/tx
-		http://www.springframework.org/schema/tx/spring-tx.xsd">
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-6.5.xsd">
 		
 	<!-- HQL OptionsModel prototype -->
 	
@@ -39,19 +42,18 @@
 	</bean>
 
 	<!-- Hibernate-based user management  -->
-	
-	<bean id="authenticationServiceImpl" class="org.riotfamily.riot.hibernate.security.HibernateAuthenticationService">
+ 	<override:bean ref="authenticationService" class="org.riotfamily.riot.hibernate.security.HibernateAuthenticationService">
 		<property name="sessionFactory" ref="riotSessionFactory" />
-	</bean>
-
-	<bean id="sessionMetaDataStoreImpl" class="org.springframework.aop.framework.ProxyFactoryBean">
+	</override:bean>
+ 
+	<override:bean ref="sessionMetaDataStore" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
 		<property name="target">
 			<bean class="org.riotfamily.riot.hibernate.security.HibernateSessionMetaDataStore">
 				<property name="sessionFactory" ref="riotSessionFactory" />
 			</bean>
 		</property>
-	</bean>
+	</override:bean>
 	
 	<!-- Jobs -->
 	
@@ -61,10 +63,10 @@
 		</tx:attributes>
 	</tx:advice>
 	
-	<bean id="jobDaoImpl" class="org.springframework.aop.framework.ProxyFactoryBean">
+	<override:bean ref="jobDao" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
 		<property name="target" ref="jobDaoTarget" />
-	</bean>	
+	</override:bean>	
 	
 	<bean id="jobDaoTarget" class="org.riotfamily.riot.hibernate.job.HibernateJobDao">
 		<property name="sessionFactory" ref="riotSessionFactory" />

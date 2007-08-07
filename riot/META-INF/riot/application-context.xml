@@ -22,17 +22,9 @@
 
 	<bean id="riotResourcePath" factory-bean="riotRuntime" factory-method="getResourcePath" />
 
-	<bean id="notificationDao" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
-		<property name="fallback">
-			<bean class="org.riotfamily.riot.workflow.notification.support.DefaultNotificationDao" />
-		</property>
-	</bean>
+	<bean id="notificationDao" class="org.riotfamily.riot.workflow.notification.support.DefaultNotificationDao" />
 
-	<bean id="notificationFactory" class="org.riotfamily.common.beans.module.FallbackFactoryBean">
-		<property name="fallback">
-			<bean class="org.riotfamily.riot.workflow.notification.support.DefaultNotificationFactory" />
-		</property>
-	</bean>
+	<bean id="notificationFactory" class="org.riotfamily.riot.workflow.notification.support.DefaultNotificationFactory" />
 
 	<tx:advice id="matchAllTxInterceptor">
 		<tx:attributes>
