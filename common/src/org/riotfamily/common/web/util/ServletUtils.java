@@ -210,7 +210,9 @@ public final class ServletUtils {
 	public static String getServletPrefix(HttpServletRequest request) {
 		String path = urlPathHelper.getPathWithinApplication(request);
 		String servletPath = urlPathHelper.getServletPath(request);
-		if (path.length() > servletPath.length()) {
+		if (path.length() > servletPath.length()
+				|| (path.equals(servletPath) && path.indexOf('.') == -1)) {
+			
 			return servletPath;
 		}
 		return "";
