@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.security;
 
-import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.security.AuthorizationPolicy;
 import org.riotfamily.riot.security.RiotUser;
 
@@ -40,13 +39,13 @@ public abstract class AbstractRoleBasedPolicy implements AuthorizationPolicy {
 	}
 
 	public final int checkPermission(RiotUser riotUser, String action,
-			Object object, EditorDefinition editor) {
+			Object object) {
 
 		User user = (User) riotUser;
-		return checkRolePermission(user.getRole(), action, object, editor);
+		return checkRolePermission(user.getRole(), action, object);
 	}
 
 	protected abstract int checkRolePermission(String role, String action,
-			Object object, EditorDefinition editor);
+				Object object);
 
 }
