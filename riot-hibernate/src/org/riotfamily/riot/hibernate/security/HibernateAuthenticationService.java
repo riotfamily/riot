@@ -29,9 +29,15 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 public class HibernateAuthenticationService extends HibernateDaoSupport 
 		implements AuthenticationService {
+	
+	private Class userClass = User.class;
+	
+	public void setUserClass(Class userClass) {
+		this.userClass = userClass;
+	}
 
 	public RiotUser authenticate(String username, String password) {
-		User user = (User) getHibernateTemplate().get(User.class, username);
+		User user = (User) getHibernateTemplate().get(userClass, username);
 		if (user != null && user.isvalidPassword(password)) {
 			return user;
 		}
