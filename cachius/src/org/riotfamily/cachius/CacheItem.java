@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
@@ -113,13 +112,14 @@ public class CacheItem implements Serializable {
     private transient ReaderWriterLock lock = new ReaderWriterLock();
     
     /**
-     * Timestamp indicating the last modification. On object 
-     * serialization/deserialization this property is mapped to the
-     * file's mtime.
+     * Time of the last modification.
      */
-    private transient long lastModified;
+    private long lastModified;
     
-    private transient long lastCheck;
+    /**
+     * Time of the last up-to-date check.
+     */
+    private long lastCheck;
     
     public CacheItem(String key, File cacheDir) throws IOException {
         this.key = key;
@@ -286,36 +286,15 @@ public class CacheItem implements Serializable {
     		}
     	}
     }
-    
+         
     /**
-     * Calls <code>out.defaultWriteObject()</code> and sets the mtime of 
-     * <code>file</code> to reflect the <code>lastModified</code> property.
-     */ 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-        if (lastModified >= 0) {
-        	file.setLastModified(lastModified);
-        }
-    }
-     
-    /**
-     * Calls <code>in.defaultReadObject()</code> and initializes the 
-     * <code>lastModified</code> property with the file's mtime. If the 
-     * tempfile doesn't exist or is empty, <code>lastModified</code> is 
-     * set to <code>NOT_YET</code> (-1).
+     * Calls <code>in.defaultReadObject()</code> and creates a new lock.
      */ 
     private void readObject(ObjectInputStream in) throws IOException, 
             ClassNotFoundException {
          
          in.defaultReadObject();
          lock = new ReaderWriterLock();
-         if (file.exists() && file.length() > 0) {
-         	// Initialize lastModified with the file's mtime
-            lastModified = file.lastModified();
-         }
-         else {
-             lastModified = NOT_YET;
-         }
     }
   
 }
