@@ -139,5 +139,13 @@ public class LoginManager {
 		UserHolder holder = getUserHolder(request);
 		return holder != null ? holder.getSessionMetaData() : null;
 	}
+	
+	public static void updateUser(RiotUser user) {
+		UserHolder.updateUser(user);
+	}
+	
+	public static void removeUser(String userId) {
+		UserHolder.removeUser(userId);
+	}
 
 }

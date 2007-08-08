@@ -40,6 +40,14 @@
 	<bean id="hqlIndexedListDao" class="org.riotfamily.riot.hibernate.dao.HqlIndexedListDao" scope="prototype">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+	
+	<bean id="riotUserDao" class="org.riotfamily.riot.hibernate.security.RiotUserDao">
+		<property name="dao">
+			<bean parent="hqlDao">
+				<property name="entityClass" value="org.riotfamily.riot.hibernate.security.User" />
+			</bean>
+		</property>
+	</bean>
 
 	<!-- Hibernate-based user management  -->
  	<override:bean ref="authenticationService" class="org.riotfamily.riot.hibernate.security.HibernateAuthenticationService">

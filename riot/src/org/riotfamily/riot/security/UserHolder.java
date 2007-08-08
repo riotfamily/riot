@@ -24,7 +24,8 @@
 package org.riotfamily.riot.security;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
@@ -35,7 +36,7 @@ import javax.servlet.http.HttpSessionBindingListener;
  */
 public class UserHolder implements Serializable, HttpSessionBindingListener {
 
-	private static HashMap users = new HashMap();
+	private static ArrayList users = new ArrayList();
 	
 	private RiotUser user;
 	
@@ -50,13 +51,17 @@ public class UserHolder implements Serializable, HttpSessionBindingListener {
 	public RiotUser getUser() {
 		return this.user;
 	}
+
+	public void setUser(RiotUser user) {
+		this.user = user;
+	}	
 	
 	public SessionMetaData getSessionMetaData() {
 		return this.metaData;
 	}
 	
 	public void valueBound(HttpSessionBindingEvent event) {
-		users.put(user.getUserId(), this);
+		users.add(this);
 	}
 	
 	public void valueUnbound(HttpSessionBindingEvent event) {
@@ -64,4 +69,25 @@ public class UserHolder implements Serializable, HttpSessionBindingListener {
 		metaData.sessionEnded();
 		AccessController.storeSessionMetaData(metaData);
 	}
+	
+	public static void updateUser(RiotUser user) {
+		updateUserInternal(user.getUserId(), user);
+	}
+	
+	public static void removeUser(String userId) {
+		updateUserInternal(userId, null);
+	}
+	
+	private static void updateUserInternal(String userId, RiotUser user) {
+		Iterator it = users.iterator();		
+		while (it.hasNext()) {
+			UserHolder holder = (UserHolder) it.next();
+			if (holder.getUser() != null 
+					&& userId.equals(holder.getUser().getUserId())) {
+				
+				holder.setUser(user);
+			}
+		}
+	}
+	
 }

@@ -20,9 +20,7 @@
 	</ed:list>
 		
 	<list:list id="riotUsers">
-		<list:dao ref="hqlDao">
-			<list:property name="entityClass" value="org.riotfamily.riot.hibernate.security.User" />
-		</list:dao>
+		<list:dao ref="riotUserDao" />			
 		<list:columns>
 			<list:column property="id" />
 			<list:column property="name" />
