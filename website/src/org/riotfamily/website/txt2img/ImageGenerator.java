@@ -27,7 +27,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
@@ -72,6 +74,12 @@ public class ImageGenerator implements InitializingBean {
 	private Color color = Color.BLACK;
 	
 	private boolean antiAlias = true;
+	
+	private boolean resample = false;
+	
+	private int internalFontSize = 120;
+	
+	private int scale = 1;
 	
 	private FlatMap attributes = new FlatMap();
 	
@@ -165,7 +173,34 @@ public class ImageGenerator implements InitializingBean {
 		this.paddingLeft = paddingLeft;
 	}
 	
-	public void afterPropertiesSet() throws Exception {
+	/**
+	 * If set to true, the text will be rendered at a larger size internally
+	 * and scaled down to the requested size.
+	 */
+	public void setResample(boolean resample) {
+		this.resample = resample;
+	}
+	
+	/**
+	 * Sets the font size at which the text is rendered internally when 
+	 * resampling is enabled.
+	 */
+	public void setInternalFontSize(int internalFontSize) {
+		this.internalFontSize = internalFontSize;
+	}
+	
+	public void afterPropertiesSet() {
+		if (resample) {
+			scale = Math.round(internalFontSize / size);
+			size *= scale;
+			paddingTop *= scale;
+			paddingRight *= scale;
+			paddingBottom *= scale;
+			paddingLeft *= scale;
+			if (maxWidth != null) {
+				maxWidth = new Integer(maxWidth.intValue() * scale);
+			}
+		}
 		attributes.put(TextAttribute.FONT, font.deriveFont(size));
 		attributes.put(TextAttribute.FOREGROUND, color);
 	}
@@ -176,9 +211,22 @@ public class ImageGenerator implements InitializingBean {
 		if (this.maxWidth != null) {
 			maxWidth = this.maxWidth.intValue();
 		}
+		else if (resample && maxWidth < Integer.MAX_VALUE) {
+			maxWidth *= scale;
+		}
 		Dimension size = getSize(text, maxWidth);
         BufferedImage image = createImage(size);
         drawText(text, maxWidth, color, image);
+        if (resample) {
+        	int w = (int) (size.getWidth() / scale);
+        	int h = (int) (size.getHeight() / scale);
+        	Image scaledImage = image.getScaledInstance(w, h, Image.SCALE_SMOOTH);
+        	image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        	Graphics g = image.getGraphics();
+        	g.drawImage(scaledImage, 0, 0, w, h, null);
+        	g.dispose();
+        }
+        
        	ImageIO.write(image, "png", os);
        	image.flush();
 	}
@@ -228,6 +276,7 @@ public class ImageGenerator implements InitializingBean {
 			}
 	    }
 	    y += paddingBottom;
+	    graphics.dispose();
 	    return new Dimension(maxX, y);
 	}
 	
@@ -244,20 +293,6 @@ public class ImageGenerator implements InitializingBean {
         graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, antiAlias 
         		? RenderingHints.VALUE_FRACTIONALMETRICS_ON
         		: RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
-        
-        // Quality settings
-        
-        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-           		RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        
-        graphics.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, 
-        		RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-        
-        graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, 
-        		RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-        
-        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, 
-        		RenderingHints.VALUE_RENDER_QUALITY);
         
         return graphics;
 	}
