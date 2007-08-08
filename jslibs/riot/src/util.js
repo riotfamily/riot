@@ -152,11 +152,15 @@ var RElement = {
 	    	offsetWidth: 0,
 	    	offsetHeight: 0
 	    }, arguments[2] || {});
-		if(options.setWidth)  el.style.width = source.offsetWidth + options.offsetWidth + 'px';
-	    if(options.setHeight) {
-	    	var h = source.offsetHeight;
-	    	if (h == 0 && source.firstChild) h = source.firstChild.offsetHeight;
-	    	el.style.height = h + options.offsetHeight + 'px';
+		if (options.setWidth)  el.style.width = source.offsetWidth + options.offsetWidth + 'px';
+	    if (options.setHeight) {
+	    	if (source.offsetHeight == 0) {
+	    		// Firefox wrongly reports the offsetHeight as 0, when an 
+	    		// inline element contains images but no text nodes ...
+	    		var img = source.down('img');
+	    		if (img) source = img;
+	    	}
+	    	el.style.height = source.offsetHeight + options.offsetHeight + 'px';
 	    }
 		Position.clone(source, el, Object.extend(options, {
 			setWidth: false, setHeight: false
