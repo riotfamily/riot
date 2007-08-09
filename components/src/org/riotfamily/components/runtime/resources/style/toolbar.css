@@ -382,7 +382,7 @@ body > #riot-overlay {
 }
 .riot-publish-outline-live,
 .riot-discard-outline-preview {
-	border: 2px dotted ${toolbarOutline};
+	border: 2px dotted #cdcdcd;
 }
 .riot-publish-outline-live div,
 .riot-discard-outline-preview div {
