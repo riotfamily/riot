@@ -31,6 +31,13 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
 /**
+ * Class that holds a reference to a RiotUser. An instance of this class is
+ * stored in the HttpSession. Additionally each instance is placed in a static
+ * list which allows us to access/update all currently logged in users. 
+ * <p>
+ * The class also implements the HttpSessionBindingListener interface and
+ * persists the SessionMetaData as soon as the session expires.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
@@ -70,15 +77,7 @@ public class UserHolder implements Serializable, HttpSessionBindingListener {
 		AccessController.storeSessionMetaData(metaData);
 	}
 	
-	public static void updateUser(RiotUser user) {
-		updateUserInternal(user.getUserId(), user);
-	}
-	
-	public static void removeUser(String userId) {
-		updateUserInternal(userId, null);
-	}
-	
-	private static void updateUserInternal(String userId, RiotUser user) {
+	public static void updateUser(String userId, RiotUser user) {
 		Iterator it = users.iterator();		
 		while (it.hasNext()) {
 			UserHolder holder = (UserHolder) it.next();

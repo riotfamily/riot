@@ -140,12 +140,12 @@ public class LoginManager {
 		return holder != null ? holder.getSessionMetaData() : null;
 	}
 	
-	public static void updateUser(RiotUser user) {
-		UserHolder.updateUser(user);
+	/**
+	 * Method that can be called if a RiotUser object has been modified or 
+	 * deleted.
+	 */
+	public static void updateUser(String userId, RiotUser user) {
+		UserHolder.updateUser(userId, user);
 	}
 	
-	public static void removeUser(String userId) {
-		UserHolder.removeUser(userId);
-	}
-
 }

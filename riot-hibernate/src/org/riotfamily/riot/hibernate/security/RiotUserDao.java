@@ -28,6 +28,7 @@ import java.util.Collection;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.security.LoginManager;
+import org.riotfamily.riot.security.RiotUser;
 import org.springframework.dao.DataAccessException;
 
 /**
@@ -38,21 +39,20 @@ public class RiotUserDao implements RiotDao {
 	
 	private RiotDao dao;
 	
-
 	public void setDao(RiotDao dao) {
 		this.dao = dao;
 	}
 
 	public void delete(Object entity, Object parent) {
 		dao.delete(entity, parent);
-		User user = (User) entity;
-		LoginManager.removeUser(user.getId());
+		RiotUser user = (RiotUser) entity;
+		LoginManager.updateUser(user.getUserId(), null);
 	}
 	
 	public void update(Object entity) {		
 		dao.update(entity);
-		User user = (User) entity;
-		LoginManager.updateUser(user);
+		RiotUser user = (RiotUser) entity;
+		LoginManager.updateUser(user.getUserId(), user);
 	}
 
 	public Class getEntityClass() {
@@ -83,6 +83,4 @@ public class RiotUserDao implements RiotDao {
 		dao.save(entity, parent);		
 	}
 	
-	
-
 }
