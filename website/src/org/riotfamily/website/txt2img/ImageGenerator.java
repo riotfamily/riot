@@ -271,9 +271,7 @@ public class ImageGenerator implements InitializingBean {
 			}
 			y += layout.getDescent();
 			maxX = Math.max(maxX, paddingLeft + (int) layout.getVisibleAdvance() + paddingRight);
-			if (measurer.getPosition() < it.getEndIndex()) {
-				y += lineSpacing != null ? lineSpacing.intValue() : layout.getLeading();
-			}
+			y += lineSpacing != null ? lineSpacing.intValue() : layout.getLeading();
 	    }
 	    y += paddingBottom;
 	    graphics.dispose();
