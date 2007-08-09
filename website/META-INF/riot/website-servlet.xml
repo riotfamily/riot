@@ -72,5 +72,7 @@
 	<bean id="riotMacroHelper" class="org.riotfamily.riot.runtime.macro.RiotMacroHelperFactory">
 		<constructor-arg ref="riotRuntime" />
 	</bean>
+	
+	<bean id="txt2ImgController" name="/riot-utils/txt2img.*" class="org.riotfamily.website.txt2img.Txt2ImgController" />
 
 </beans>

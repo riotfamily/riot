@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		elementFormDefault="qualified"
+		attributeFormDefault="unqualified"
+		targetNamespace="http://www.riotfamily.org/schema/website/txt2img"
+		xmlns="http://www.riotfamily.org/schema/website/txt2img">
+
+	<xsd:element name="config">
+		<xsd:complexType>
+			<xsd:choice minOccurs="1" maxOccurs="unbounded">
+				<xsd:element name="rule">
+					<xsd:complexType>
+						<xsd:attribute name="selector" type="xsd:string" use="required" />
+						<xsd:attribute name="font" type="xsd:string" use="required" />
+						<xsd:attribute name="size" type="xsd:positiveInteger" use="required" />
+						<xsd:attribute name="anti-alias" type="xsd:boolean" default="true" />
+						<xsd:attribute name="resample" type="xsd:boolean" default="false" />
+						<xsd:attribute name="color" type="xsd:string" />
+						<xsd:attribute name="padding-top" type="xsd:integer" />
+						<xsd:attribute name="padding-right" type="xsd:integer" />
+						<xsd:attribute name="padding-bottom" type="xsd:integer" />
+						<xsd:attribute name="padding-left" type="xsd:integer" />
+						<xsd:attribute name="line-spacing" type="xsd:integer" />
+						<xsd:attribute name="max-width" type="xsd:positiveInteger" />
+						<xsd:attribute name="internal-font-size" type="xsd:integer" />
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>

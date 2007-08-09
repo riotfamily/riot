@@ -26,8 +26,10 @@ package org.riotfamily.website.txt2img;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -64,34 +66,34 @@ public class Txt2ImgController extends AbstractCacheableController
 
 	private long lastModified = System.currentTimeMillis();
 
-	private Map generators;
+	
+	private Map generators = new HashMap();
+	
+	private List selectors = new ArrayList();
 
 	private ImageGenerator defaultGenerator = new ImageGenerator();
 
 	private Pattern refererPattern;
 
 	/**
-	 * Sets a Map of {@link ImageGenerator} objects keyed by CSS selectors.
+	 * Sets a List of {@link ReplacementRule} objects.
 	 */
-	public void setGenerators(Map generators) {
-		this.generators = new LinkedHashMap();
-		Iterator it = generators.entrySet().iterator();
+	public void setRules(List rules) {
+		Iterator it = rules.iterator();
 		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			String selector = (String) entry.getKey();
-			ImageGenerator generator = (ImageGenerator) entry.getValue();
-			if (selector.indexOf(',') != -1) {
-				String[] sel = StringUtils.commaDelimitedListToStringArray(selector);
-				for (int i = 0; i < sel.length; i++) {
-					this.generators.put(sel[i].trim(), generator);
-				}
-			}
-			else {
-				this.generators.put(selector, generator);
-			}
+			ReplacementRule rule = (ReplacementRule) it.next();
+			addRule(rule);
 		}
 	}
 
+	public void addRule(ReplacementRule rule) {
+		String[] sel = StringUtils.commaDelimitedListToStringArray(rule.getSelector());
+		for (int i = 0; i < sel.length; i++) {
+			selectors.add(sel[i]);
+			generators.put(sel[i], rule);
+		}
+	}
+	
 	/**
 	 * Sets the generator to be used if no generator is found for a given
 	 * CSS selector.
@@ -126,12 +128,13 @@ public class Txt2ImgController extends AbstractCacheableController
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
 			}
 		}
-
+		
+		String extension = FormatUtils.getExtension(request.getRequestURI());
 		String text = getText(request);
 		if (text != null) {
 			serveImage(text, request, response);
 		}
-		else if (request.getParameter("pixel") != null) {
+		else if (extension.equals("gif")) {
 			servePixelGif(response);
 		}
 		else {
@@ -220,13 +223,13 @@ public class Txt2ImgController extends AbstractCacheableController
 				SCRIPT_RESOURCE.getInputStream(), "UTF-8"), out);
 
 		out.print("var txt2img = new RiotImageReplacement('");
-		out.print(request.getRequestURI());
+		out.print(getGeneratorUrl(request));
 		out.print("?locale=");
 		out.print(RequestContextUtils.getLocale(request));
 		out.print("', '");
-		out.print(request.getRequestURI());
+		out.print(getPixelUrl(request));
 		out.print("?pixel', [");
-		Iterator it = generators.keySet().iterator();
+		Iterator it = selectors.iterator();
 		while (it.hasNext()) {
 			out.print("'");
 			out.print(it.next());
@@ -236,6 +239,14 @@ public class Txt2ImgController extends AbstractCacheableController
 			}
 		}
 		out.print("]);");
+	}
+	
+	private String getGeneratorUrl(HttpServletRequest request) {
+		return FormatUtils.stripExtension(request.getRequestURI()) + ".png";
+	}
+	
+	private String getPixelUrl(HttpServletRequest request) {
+		return FormatUtils.stripExtension(request.getRequestURI()) + ".gif";
 	}
 
 	/**
