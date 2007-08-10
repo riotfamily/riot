@@ -126,6 +126,9 @@ RiotList.prototype = {
 		var tr = RBuilder.node('tr');
 		Event.observe(tr, 'mouseover', tr.addClassName.bind(tr, 'highlight'));
 		Event.observe(tr, 'mouseout', tr.removeClassName.bind(tr, 'highlight'));
+		if (row.cssClass) {
+			tr.addClassName(row.cssClass);
+		}
 		if (row.lastOnPage) {
 			tr.addClassName('last');
 		}
@@ -134,6 +137,7 @@ RiotList.prototype = {
 		}
 
 		row.columns.each(function(data) {
+			//FIXME Add column className
 			RBuilder.node('td', {innerHTML: data, parent: tr});
 		});
 

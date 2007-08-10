@@ -242,6 +242,11 @@ public class ListSession implements RenderContext {
 			item.setCommands(getCommandStates(itemCommands,
 					item, bean, itemsTotal, request));
 
+			if (listConfig.getRowStyleProperty() != null) {
+				item.setCssClass(FormatUtils.toCssClass(
+						PropertyUtils.getPropertyAsString(bean, 
+						listConfig.getRowStyleProperty())));
+			}
 			item.setDefaultCommandIds(defaultCommandIds);
 			items.add(item);
 		}
