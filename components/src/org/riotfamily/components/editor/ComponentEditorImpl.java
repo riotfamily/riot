@@ -44,6 +44,7 @@ import org.riotfamily.components.ComponentList;
 import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.VersionContainer;
+import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.context.RequestContextExpiredException;
 import org.riotfamily.components.dao.ComponentDao;
@@ -51,6 +52,7 @@ import org.riotfamily.riot.security.AccessController;
 import org.riotfamily.riot.security.LoginManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -159,8 +161,9 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 * valid for the given controller.
 	 */
 	public List getValidTypes(String controllerId) {
-		String[] types = repository.getListConfiguration(controllerId)
-				.getValidComponentTypes();
+		ComponentListConfiguration cfg = repository.getListConfiguration(controllerId);
+		Assert.notNull(cfg, "No such controller: " + controllerId);
+		String[] types = cfg.getValidComponentTypes();
 
 		Locale locale = getLocale();
 		ArrayList result = new ArrayList();
