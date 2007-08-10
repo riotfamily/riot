@@ -169,7 +169,7 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 			backgroundColor: 'transparent'
 		});
 
-		this.input.onkeyup = this.updateElement.bindAsEventListener(this);
+		this.input.onkeypress = this.input.onkeyup = this.updateElement.bindAsEventListener(this);
 		this.input.onblur = this.close.bindAsEventListener(this);
 		this.input.cloneStyle(this.element, [
 			'font-size', 'font-weight', 'font-family', 'font-style',
@@ -202,6 +202,15 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 				this.paddingTop = parseInt(this.element.getStyle('padding-top'));
 			}
 		}
+		
+		this.extraWidth = 0;
+		if (this.inline) {
+			// If editing an inline element we have to add some extra width 
+			// to the textarea. Otherwise each new character would cause a
+			// linebreak. Twice the font-size should be enough ...
+			this.extraWidth = parseInt(this.element.getStyle('font-size')) * 2;
+		}
+		
 		document.body.appendChild(this.input);
 		this.resize();
 		this.element.makeInvisible();
@@ -236,10 +245,9 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 		var text = this.getText();
 		if (!this.lastText || this.lastText != text) {
 			this.lastText = text;
-			var html = text.replace(/<br[^>]*>/gi, '<br />&nbsp;');
-			if (this.inline) {
-				html = html.replace(/\s/gi, '&nbsp;') + 'W'; // ... should be the widest character
-			}
+			// Append a nbsp if the text ends with a <br> ...
+			var html = text.replace(/<br[^>]*>$/i, '<br />&nbsp;');
+			html = html.replace(/\s/gi, '&nbsp;');
 			this.element.update(html);
 			this.resize();
 		}
@@ -247,8 +255,8 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 
 	resize: function() {
 		Position.clone(this.element, this.input, { setWidth: false, setHeight: false });
-		this.input.style.width  = (this.element.offsetWidth - this.paddingLeft) + 'px';
-			 this.input.style.height = (this.element.offsetHeight - this.paddingTop) + 'px';
+		this.input.style.width = (this.element.offsetWidth - this.paddingLeft + this.extraWidth) + 'px';
+		this.input.style.height = (this.element.offsetHeight - this.paddingTop) + 'px';
 	}
 });
 
