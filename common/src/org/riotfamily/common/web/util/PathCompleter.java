@@ -92,7 +92,7 @@ public class PathCompleter implements ServletContextAware, InitializingBean {
 		}
 		if (i > 0) {
 			prefixMapping = true;
-			servletPrefix = servletMapping.substring(0, i);
+			servletPrefix = servletMapping.substring(0, i - 1);
 			log.info("Servlet prefix: '" + servletPrefix + "'");
 		}
 	}
