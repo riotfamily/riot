@@ -39,11 +39,11 @@ RiotList.prototype = {
 
 	updateColsAndRows: function(model) {
 		model.columns.each(this.updateSortIndicator.bind(this));
-		this.updateRows(model.items);
+		this.updateRows(model);
 	},
 
 	updateRowsAndPager: function(model) {
-		this.updateRows(model.items);
+		this.updateRows(model);
 		this.pager.update(model.currentPage, model.pages);
 	},
 
@@ -117,12 +117,12 @@ RiotList.prototype = {
 		ListService.gotoPage(this.key, page, this.updateRowsAndPager.bind(this));
 	},
 
-	updateRows: function(items) {
+	updateRows: function(model) {
 		this.tbody.update();
-		items.each(this.addRow.bind(this));
+		model.items.each(this.addRow.bind(this, model));
 	},
 
-	addRow: function(row) {
+	addRow: function(model, row) {
 		var tr = RBuilder.node('tr');
 		Event.observe(tr, 'mouseover', tr.addClassName.bind(tr, 'highlight'));
 		Event.observe(tr, 'mouseout', tr.removeClassName.bind(tr, 'highlight'));
@@ -136,10 +136,9 @@ RiotList.prototype = {
 			Event.observe(tr, 'click', this.execCommand.bind(this, row, row.defaultCommandId, false));
 		}
 
-		row.columns.each(function(data) {
-			//FIXME Add column className
-			RBuilder.node('td', {innerHTML: data, parent: tr});
-		});
+		for (var i = 0; i < row.columns.length; i++) {
+			RBuilder.node('td', {innerHTML: row.columns[i], parent: tr, className: model.columns[i].cssClass});
+		}
 
 		var td = RBuilder.node('td', {className: 'commands highlight-default'});
 		Event.observe(td, 'mouseover', td.removeClassName.bind(td, 'highlight-default'));
