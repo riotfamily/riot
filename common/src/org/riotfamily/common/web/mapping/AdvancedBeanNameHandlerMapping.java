@@ -58,10 +58,10 @@ import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapt
  * would be exposed as attributes "some" and "value".
  */
 public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
-		implements HandlerMapping, UrlMapping, Ordered {
+		implements HandlerMapping, Ordered {
 
 	private static final Pattern ATTRIBUTE_NAME_PATTERN =
-			Pattern.compile("@\\{(.*?)(\\*?)\\}");
+			Pattern.compile("@\\{(.+?)((\\*)|\\:(.*?))?\\}");
 
 	private static final Pattern STAR_PATTERN =
 			Pattern.compile("\\\\\\*");
@@ -83,23 +83,11 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 
     private HashMap patternsByBeanName = new HashMap();
 
-    private String servletMappingPrefix;
-
-    private String servletMappingSuffix;
-
     private boolean stripServletMapping = true;
 
 	public void setStripServletMapping(boolean stripServletMapping) {
 		this.stripServletMapping = stripServletMapping;
 	}
-
-	public void setServletMappingPrefix(String prefix) {
-		this.servletMappingPrefix = prefix;
-	}
-
-    public void setServletMappingSuffix(String suffix) {
-        this.servletMappingSuffix = suffix;
-    }
 
 	public final void setOrder(int order) {
 		this.order = order;
@@ -207,9 +195,6 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 		if (handler instanceof String) {
 			String handlerName = (String) handler;
 			handler = getApplicationContext().getBean(handlerName);
-			if (handler instanceof UrlMappingAware) {
-				((UrlMappingAware) handler).setUrlMapping(this);
-			}
 		}
 		return new HandlerExecutionChain(handler, this.interceptors);
 	}
@@ -273,9 +258,6 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 			if (getApplicationContext().isSingleton(handlerName)) {
 				handler = getApplicationContext().getBean(handlerName);
 			}
-		}
-		if (handler instanceof UrlMappingAware) {
-			((UrlMappingAware) handler).setUrlMapping(this);
 		}
 
 		if (urlPath.equals("/*")) {
@@ -350,7 +332,7 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 	}
 
 	protected String convertToAntPattern(String urlPattern) {
-		return ATTRIBUTE_NAME_PATTERN.matcher(urlPattern).replaceAll("*$2");
+		return ATTRIBUTE_NAME_PATTERN.matcher(urlPattern).replaceAll("*$3");
 	}
 
 	protected void exposeAttributes(String antPattern, String urlPath,
@@ -361,50 +343,29 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 
 	}
 
-	public String getUrl(String beanName, Map attributes) {
-		List patterns = (List) patternsByBeanName.get(beanName);
-		Iterator it = patterns.iterator();
-		while (it.hasNext()) {
-			AttributePattern p = (AttributePattern) it.next();
-			if (p.matches(attributes)) {
-				StringBuffer url = p.buildUrl(attributes);
-				if (stripServletMapping && servletMappingPrefix != null) {
-					url.insert(0, servletMappingPrefix);
-				}
-				else if (stripServletMapping &&  servletMappingSuffix != null) {
-					url.append(servletMappingSuffix);
-				}
-				return url.toString();
-			}
-		}
-		//TODO Throw RuntimeException ...
-		return null;
-	}
-
 	private static class AttributePattern {
-
-		private String attributePattern;
 
 		private Pattern pattern;
 
 		private ArrayList attributeNames;
+		
+		private ArrayList attributeTypes;
 
 		public AttributePattern(String attributePattern) {
-			this.attributePattern = attributePattern;
-
 			attributeNames = new ArrayList();
+			attributeTypes = new ArrayList();
 			Matcher m = ATTRIBUTE_NAME_PATTERN.matcher(attributePattern);
 			while (m.find()) {
 				attributeNames.add(m.group(1));
+				attributeTypes.add(m.group(4));
 			}
-
 			pattern = Pattern.compile(convertAttributePatternToRegex(attributePattern));
 		}
 
 		// Example pattern: /resources/*/@{resource*}
 		private String convertAttributePatternToRegex(final String antPattern) {
 			String regex = FormatUtils.escapeChars(antPattern, "()", '\\'); // ... just in case
-			regex = ATTRIBUTE_NAME_PATTERN.matcher(antPattern).replaceAll("(*$2)"); // /resources/*/(**)
+			regex = ATTRIBUTE_NAME_PATTERN.matcher(antPattern).replaceAll("(*$3)"); // /resources/*/(**)
 			regex = "^" + FormatUtils.escapeChars(regex, ".+*?{^$", '\\') + "$"; // ^/resources/\*/(\*\*)$
 			regex = DOUBLE_STAR_PATTERN.matcher(regex).replaceAll(".*?"); // ^/resources/\*/(.*?)$
 			regex = STAR_PATTERN.matcher(regex).replaceAll("[^/]*"); // ^/resources/[^/]*/.*?$
@@ -415,10 +376,43 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 			Matcher m = pattern.matcher(urlPath);
 			Assert.isTrue(m.matches());
 			for (int i = 0; i < attributeNames.size(); i++) {
-				request.setAttribute((String) attributeNames.get(i), m.group(i + 1));
+				String s = m.group(i + 1);
+				String type = (String) attributeTypes.get(i);
+				request.setAttribute((String) attributeNames.get(i), convert(s, type));
 			}
 		}
 
+		private Object convert(String s, String type) {
+			if (type == null || type.equalsIgnoreCase("String")) {
+				return s;
+			}
+			if (type.equalsIgnoreCase("Integer")) {
+				return Integer.valueOf(s);
+			}
+			else if (type.equalsIgnoreCase("Long")) {
+				return Long.valueOf(s);
+			}
+			else if (type.equalsIgnoreCase("Short")) {
+				return Short.valueOf(s);
+			}
+			else if (type.equalsIgnoreCase("Double")) {
+				return Double.valueOf(s);
+			}
+			else if (type.equalsIgnoreCase("Float")) {
+				return Float.valueOf(s);
+			}
+			else if (type.equalsIgnoreCase("Boolean")) {
+				return Boolean.valueOf(s);
+			}
+			else if (type.equalsIgnoreCase("Character")) {
+				return new Character(s.charAt(0));
+			}
+			else {
+				throw new IllegalArgumentException("Unsupported type: " + type 
+						+ " - must be Integer, Long, Short, Double, Float," 
+						+ " Boolean or Character");
+			}
+		}
 		public boolean matches(Map attributes) {
 			if (attributes != null) {
 				Collection names = attributes.keySet();
@@ -430,21 +424,6 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 			}
 		}
 
-		public StringBuffer buildUrl(Map attributes) {
-			StringBuffer url = new StringBuffer();
-			Matcher m = ATTRIBUTE_NAME_PATTERN.matcher(attributePattern);
-			while (m.find()) {
-				String name = m.group(1);
-				Object value = attributes.get(name);
-				String replacement = value != null
-						? StringUtils.replace(value.toString(), "$", "\\$")
-						: "";
-
-				m.appendReplacement(url, replacement);
-			}
-			m.appendTail(url);
-			return url;
-		}
 	}
 
 }
