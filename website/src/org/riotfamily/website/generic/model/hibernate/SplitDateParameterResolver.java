@@ -28,49 +28,41 @@ import java.util.GregorianCalendar;
 import javax.servlet.http.HttpServletRequest;
 
 
-public class DateParameterResolver extends AbstractParameterResolver {
+public class SplitDateParameterResolver extends AbstractParameterResolver {
 
-	private String yearparam;
+	private String yearParam = "year";
 
-	private String monthparam;
+	private String monthParam = "month";
 
-	private String dayparam;
+	private String dayParam = "day";
 
-	public String getDayparam() {
-		return dayparam;
+	public String getDayParam() {
+		return dayParam;
 	}
 
-	public void setDayparam(String dayparam) {
-		this.dayparam = dayparam;
+	public void setDayParam(String dayParam) {
+		this.dayParam = dayParam;
 	}
 
-	public String getMonthparam() {
-		return monthparam;
+	public void setMonthParam(String monthParam) {
+		this.monthParam = monthParam;
 	}
 
-	public void setMonthparam(String monthparam) {
-		this.monthparam = monthparam;
-	}
-
-	public String getYearparam() {
-		return yearparam;
-	}
-
-	public void setYearparam(String yearparam) {
-		this.yearparam = yearparam;
+	public void setYearParam(String yearParam) {
+		this.yearParam = yearParam;
 	}
 
 	public Object getValueInternal(HttpServletRequest request) {
-		Integer year = getIntegerParameter(request, yearparam); 
-		Integer month = getIntegerParameter(request, monthparam); 
-		Integer day = getIntegerParameter(request, dayparam);
+		Integer year = getIntegerParameter(request, yearParam); 
+		Integer month = getIntegerParameter(request, monthParam); 
+		Integer day = getIntegerParameter(request, dayParam);
 		
 		if (year != null) {
-			if (month != null && month.intValue() >=0 && month.intValue() <=11) {
-				if (day != null && day.intValue() >=1 && day.intValue() <= 31) {
-					return new GregorianCalendar(year.intValue(), month.intValue(), day.intValue()).getTime();
+			if (month != null && month.intValue() >= 1 && month.intValue() <= 12) {
+				if (day != null && day.intValue() >= 1 && day.intValue() <= 31) {
+					return new GregorianCalendar(year.intValue(), month.intValue() - 1, day.intValue()).getTime();
 				}
-				return new GregorianCalendar(year.intValue(), month.intValue(), 1).getTime();
+				return new GregorianCalendar(year.intValue(), month.intValue() - 1, 1).getTime();
 			}
 		}
 		
@@ -79,7 +71,8 @@ public class DateParameterResolver extends AbstractParameterResolver {
 	
 	private Integer getIntegerParameter(HttpServletRequest request, String param) {
 		try {
-			return Integer.valueOf(request.getParameter(param));
+			String s = request.getParameter(param);
+			return Integer.valueOf(s);
 		} 
 		catch (NumberFormatException e) {
 		}

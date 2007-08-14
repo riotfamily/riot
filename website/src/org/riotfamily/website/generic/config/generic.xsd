@@ -58,7 +58,7 @@
 			<xsd:element name="current-language" type="simple-resolver" />
 			<xsd:element name="riot-user" type="simple-resolver" />
 			<xsd:element name="string-to-primitive" type="string-to-primitive" />
-			<xsd:element name="date" type="date"></xsd:element>
+			<xsd:element name="split-date" type="split-date"></xsd:element>
 			<xsd:element name="custom-resolver">
 				<xsd:complexType>
 					<xsd:group ref="beans:beanElements "/>
@@ -120,11 +120,11 @@
 		</xsd:attribute>
 	</xsd:complexType>
 
-	<xsd:complexType name="date">
+	<xsd:complexType name="split-date">
 		<xsd:attribute name="param" use="required" />
-		<xsd:attribute name="yearparam" use="required" />
-		<xsd:attribute name="monthparam" use="required" />
-		<xsd:attribute name="dayparam" use="required" />
+		<xsd:attribute name="year-param" />
+		<xsd:attribute name="month-param" />
+		<xsd:attribute name="day-param" />
 	</xsd:complexType>
 
 </xsd:schema>
