@@ -1,10 +1,13 @@
-<beans
-	xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.0.xsd
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-6.5.xsd">
 
@@ -21,11 +24,6 @@
 	    <property name="acquireIncrement" value="1" />
 	    <property name="idleConnectionTestPeriod" value="60" />
 	    <property name="checkoutTimeout" value="30000" />
-	</bean>
-
-	<bean id="riotHibernateProperties" class="org.riotfamily.riot.hibernate.support.PropertiesPrefixFactoryBean">
-		<property name="prefix" value="hibernate." />
-		<property name="properties" value="${hibernate.*}" />
 	</bean>
 
 	<bean id="revolt" class="org.riotfamily.revolt.Evolver">
@@ -45,7 +43,9 @@
 				<value>classpath:/org/riotfamily/riot/hibernate/job/job.hbm.xml</value>
 			</list>
 		</property>
-		<property name="hibernateProperties" ref="riotHibernateProperties" />
+		<property name="hibernateProperties">
+			<util:properties location="classpath:/application.properties" />
+		</property>
 	</bean>
 
 	<!-- The Transaction Manager -->
