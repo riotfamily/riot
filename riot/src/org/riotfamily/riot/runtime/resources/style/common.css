@@ -57,15 +57,15 @@ div.extra {
 	background: ${highlight} url(images/list.gif) top left no-repeat;
 }
 
-.title,
-.title span,
-.title label {
+div.title,
+div.title span,
+div.title label {
 	color: #fff;
 	text-transform: uppercase;
 }
 
-.title label,
-.title .label {
+div.title label,
+div.title .label {
 	display: block;
 	margin-left: 30px;
 	padding: 2px 0 2px 6px;
