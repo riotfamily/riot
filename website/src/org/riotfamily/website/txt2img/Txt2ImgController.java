@@ -228,7 +228,7 @@ public class Txt2ImgController extends AbstractCacheableController
 		out.print(RequestContextUtils.getLocale(request));
 		out.print("', '");
 		out.print(getPixelUrl(request));
-		out.print("?pixel', [");
+		out.print("', [");
 		Iterator it = selectors.iterator();
 		while (it.hasNext()) {
 			out.print("'");
