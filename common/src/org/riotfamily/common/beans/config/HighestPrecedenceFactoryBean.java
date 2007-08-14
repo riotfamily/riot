@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.beans.module;
+package org.riotfamily.common.beans.config;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,11 +36,11 @@ import org.springframework.util.Assert;
 
 /**
  * FactoryBean that looks for all beans of a certain type and returns the one
- * with the lowest {@link Ordered order}.
+ * with the {@link Ordered#HIGHEST_PRECEDENCE highest precedence}.
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public class LowestOrderFactoryBean implements FactoryBean, 
+public class HighestPrecedenceFactoryBean implements FactoryBean, 
 		ApplicationContextAware {
 
 	private Class type;
