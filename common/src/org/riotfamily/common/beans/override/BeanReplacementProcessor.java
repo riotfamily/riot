@@ -50,7 +50,8 @@ public class BeanReplacementProcessor implements BeanFactoryPostProcessor {
 	private String ref;
 
 	private BeanDefinition beanDefinition;
-		
+	
+	private boolean merge;
 	
 	public void setRef(String ref) {
 		this.ref = ref;
@@ -62,6 +63,10 @@ public class BeanReplacementProcessor implements BeanFactoryPostProcessor {
 
 	public void setBeanReplacement(BeanReplacement replacement) {
 		setBeanDefinition(replacement.getBeanDefinition());
+	}
+	
+	public void setMerge(boolean merge) {
+		this.merge = merge;
 	}
 	
 	public void postProcessBeanFactory(
@@ -82,7 +87,9 @@ public class BeanReplacementProcessor implements BeanFactoryPostProcessor {
 		cas.addArgumentValues(source.getConstructorArgumentValues());
 		
 		MutablePropertyValues pvs = target.getPropertyValues();
-		pvs.clear();
+		if (!merge) {
+			pvs.clear();
+		}
 		pvs.addPropertyValues(source.getPropertyValues());
 	}
 	

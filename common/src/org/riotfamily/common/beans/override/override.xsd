@@ -21,6 +21,7 @@
 			<xsd:group ref="beans:beanElements"/>
 			<xsd:attribute name="ref" type="xsd:string" use="required" />
 			<xsd:attribute name="class" type="xsd:string" use="required" />
+			<xsd:attribute name="merge" type="xsd:boolean" default="false" />
 		</xsd:complexType>
 	</xsd:element>
 	
