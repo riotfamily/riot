@@ -55,7 +55,7 @@
 	<bean id="componentFormRepository" class="org.riotfamily.components.editor.ComponentFormRepository">
 		<constructor-arg ref="componentRepository" />
 		<property name="config" value="/WEB-INF/website-config/component-forms.xml" />
-		<property name="customElements" ref="riotCustomFormElements" />
+		<property name="customElements" ref="customFormElements" />
 		<property name="mimetypesMap" ref="fileTypeMap" />
 		<property name="imageCropper" ref="imageCropper" />
 	</bean>
@@ -87,77 +87,66 @@
 	</bean>
 
 
-	<!-- Module configuration -->
+	<!-- Overrides -->
 
-	<bean id="componentsModule" class="org.riotfamily.common.beans.module.FactoryBeanModule">
-		<property name="properties">
-			<map>
-				<entry key="messageSourceBasenames">
-					<list>
-						<value>classpath:/org/riotfamily/components/runtime/i18n/messages</value>
-						<value>/WEB-INF/website-config/messages</value>
-					</list>
-				</entry>
-				<entry key="publicUrls">
-					<value>/pages/login</value>
-				</entry>
-				<entry key="resourceMappings">
-					<list>
-						<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-							<property name="path" value="/" />
-							<property name="location" value="classpath:/org/riotfamily/components/runtime/resources/" />
-						</bean>
-					</list>
-				</entry>
-				<entry key="resourceFilters">
-					<list>
-						<bean class="org.riotfamily.common.web.resource.PropertyResourceFilter">
-							<property name="match" value="/**/toolbar-loader.js" />
-							<property name="propertiesMap">
-								<map>
-									<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
-								</map>
-							</property>
-						</bean>
-						<bean class="org.riotfamily.common.web.resource.MessageResourceFilter">
-							<property name="prefix" value="components." />
-							<property name="matches">
-								<list>
-									<value>/**/toolbar.js</value>
-									<value>/**/inplace.js</value>
-									<value>/**/component.js</value>
-								</list>
-							</property>
-						</bean>
-					</list>
-				</entry>
-				<entry key="dwrConfigurators">
-					<list>
-						<bean class="org.riotfamily.common.web.dwr.SpringConfigurator">
-							<property name="converterTypes">
-								<props>
-									<prop key="org.riotfamily.components.editor.TypeInfo">bean</prop>
-								</props>
-							</property>
-							<property name="serviceBeans">
-								<map>
-									<entry key="ComponentEditor" value-ref="componentEditor" />
-									<entry key="InstantComponentEditor" value-ref="instantComponentEditor" />
-								</map>
-							</property>
-							<property name="serviceInterfaces">
-								<list>
-									<value>org.riotfamily.components.editor.ComponentEditor</value>
-								</list>
-							</property>
-						</bean>
-					</list>
-				</entry>
-			</map>
-		</property>
-	</bean>
+	<override:add ref="messageBasenames">
+		<value>classpath:/org/riotfamily/components/runtime/i18n/messages</value>
+		<value>/WEB-INF/website-config/messages</value>
+	</override:add>
 
-
+	<override:add ref="loginInterceptor" property="excludes">
+		<value>/pages/login</value>
+	</override:add>
+	
+	<override:add ref="resourceController" property="filters">
+		<bean class="org.riotfamily.common.web.resource.PropertyResourceFilter">
+			<property name="match" value="/**/toolbar-loader.js" />
+			<property name="propertiesMap">
+				<map>
+					<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
+				</map>
+			</property>
+		</bean>
+		<bean class="org.riotfamily.common.web.resource.MessageResourceFilter">
+			<property name="prefix" value="components." />
+			<property name="matches">
+				<list>
+					<value>/**/toolbar.js</value>
+					<value>/**/inplace.js</value>
+					<value>/**/component.js</value>
+				</list>
+			</property>
+		</bean>
+	</override:add>
+	
+	<override:add ref="resourceController" property="mappings">
+		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
+			<property name="path" value="/" />
+			<property name="location" value="classpath:/org/riotfamily/components/runtime/resources/" />
+		</bean>
+	</override:add>	
+	
+	<override:add ref="dwrController" property="configurators">
+		<bean class="org.riotfamily.common.web.dwr.SpringConfigurator">
+			<property name="converterTypes">
+				<props>
+					<prop key="org.riotfamily.components.editor.TypeInfo">bean</prop>
+				</props>
+			</property>
+			<property name="serviceBeans">
+				<map>
+					<entry key="ComponentEditor" value-ref="componentEditor" />
+					<entry key="InstantComponentEditor" value-ref="instantComponentEditor" />
+				</map>
+			</property>
+			<property name="serviceInterfaces">
+				<list>
+					<value>org.riotfamily.components.editor.ComponentEditor</value>
+				</list>
+			</property>
+		</bean>
+	</override:add>
+	
 	<!--
 	  - RiotDao to list dirty ComponentLists.
 	  -->

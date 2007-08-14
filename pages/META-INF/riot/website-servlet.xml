@@ -34,20 +34,14 @@
 		<constructor-arg ref="pageLocationResolver" />
 	</override:bean>
 
-	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
-		<property name="properties">
-			<map>
-				<entry key="freemarkerMacroLibraries">
-					<props>
-						<prop key="page">classpath:org/riotfamily/pages/macro/page.ftl</prop>
-					</props>
-				</entry>
-				<entry key="riotToolbarResources">
-					<value>tiny_mce/page-chooser.js</value>
-				</entry>
-			</map>
-		</property>
-	</bean>
+	<override:put ref="freemarkerConfig" property="macroLibraries">
+		<entry key="page" value="classpath:org/riotfamily/pages/macro/page.ftl" />
+	</override:put>
+	
+	<override:add ref="componentMacroHelper" property="toolbarScripts">
+		<value>tiny_mce/page-chooser.js</value>
+	</override:add>
+
 
 	<bean id="pageMacroHelper" class="org.riotfamily.pages.macro.PageMacroHelperFactory">
 		<constructor-arg ref="pageDao" />

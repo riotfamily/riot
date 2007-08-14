@@ -1,26 +1,21 @@
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.0.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-6.5.xsd
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<import resource="classpath:org/riotfamily/pages/runtime/db-schema.xml"/>
-
-	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
-		<property name="properties">
-			<map>
-	 			<entry key="hibernateMappingLocations">
-					<list>
-						<value>classpath:org/riotfamily/pages/dao/hibernate/pages.hbm.xml</value>
-					</list>
-	 			</entry>
-	 		</map>
-		</property>
-	</bean>
+	
+	<override:add ref="sessionFactory" property="mappingLocations">
+		<value>classpath:org/riotfamily/pages/dao/hibernate/pages.hbm.xml</value>
+	</override:add>
 
 	<!--
 	<bean id="pageEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
@@ -29,7 +24,7 @@
 	<bean id="pageDao" class="org.riotfamily.pages.dao.hibernate.HibernatePageDao">
 		<property name="componentDao" ref="componentDao" />
 		<property name="locales" ref="websiteLocales" />
-		<property name="sessionFactory" ref="riotSessionFactory" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
 	<util:list id="websiteLocales" value-type="java.util.Locale">

@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.0.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-6.5.xsd">
+		
 	<!--
 		- Controller that displays the sitemap as DHTML tree. Used by the
 		- internalLink form element.
@@ -15,44 +24,41 @@
 	</bean>
 
 
-	<!-- Module configuration -->
+	<!-- Overrides -->
 
-	<bean id="pagesModule" class="org.riotfamily.common.beans.module.FactoryBeanModule">
-		<property name="properties">
-			<map>
-				<entry key="messageSourceBasenames">
-					<value>classpath:/org/riotfamily/pages/runtime/i18n/messages</value>
-				</entry>
-				<entry key="resourceMappings">
-					<list>
-						<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-							<property name="path" value="/" />
-							<property name="location" value="classpath:/org/riotfamily/pages/runtime/resources/" />
-						</bean>
-					</list>
-				</entry>
-				<entry key="customStyleSheets">
-					<list>
-						<value>style/riot-pages.css</value>
-					</list>
-				</entry>
-				<entry key="customFormElements">
-					<props>
-						<prop key="internalLink">org.riotfamily.pages.riot.chooser.InternalLinkField</prop>
-					</props>
-				</entry>
-				<entry key="formConfigLocations">
-					<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
-				</entry>
-				<entry key="listConfigLocations">
-					<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
-				</entry>
-				<entry key="editorConfigLocations">
-					<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
-				</entry>
-			</map>
-		</property>
-	</bean>
+	<override:add ref="messageBasenames">
+		<value>classpath:/org/riotfamily/pages/runtime/i18n/messages</value>
+	</override:add>
+	
+	<override:add ref="customStyleSheets">
+		<value>style/riot-pages.css</value>
+	</override:add>
+	
+	<override:add ref="listRepository" property="configLocations">
+		<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
+	</override:add>
+	
+	<override:add ref="formRepository" property="configLocations">
+		<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
+	</override:add>
+	
+	<override:add ref="editorRepository" property="configLocations">
+		<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
+	</override:add>
+
+	<override:put ref="customFormElements">
+		<entry key="internalLink" value="org.riotfamily.pages.riot.chooser.InternalLinkField" />
+	</override:put>
+				
+	<override:add ref="resourceController" property="mappings">			
+		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
+			<property name="path" value="/" />
+			<property name="location" value="classpath:/org/riotfamily/pages/runtime/resources/" />
+		</bean>
+	</override:add>
+
+
+	<!-- DAOs and models -->
 
 	<bean id="siteRiotDao" class="org.riotfamily.pages.riot.dao.SiteRiotDao">
 		<property name="pageDao" ref="pageDao" />

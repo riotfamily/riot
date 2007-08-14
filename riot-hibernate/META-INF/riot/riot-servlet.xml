@@ -51,14 +51,14 @@
 
 	<!-- Hibernate-based user management  -->
  	<override:bean ref="authenticationService" class="org.riotfamily.riot.hibernate.security.HibernateAuthenticationService">
-		<property name="sessionFactory" ref="riotSessionFactory" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</override:bean>
  
 	<override:bean ref="sessionMetaDataStore" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
 		<property name="target">
 			<bean class="org.riotfamily.riot.hibernate.security.HibernateSessionMetaDataStore">
-				<property name="sessionFactory" ref="riotSessionFactory" />
+				<property name="sessionFactory" ref="sessionFactory" />
 			</bean>
 		</property>
 	</override:bean>
@@ -77,7 +77,7 @@
 	</override:bean>	
 	
 	<bean id="jobDaoTarget" class="org.riotfamily.riot.hibernate.job.HibernateJobDao">
-		<property name="sessionFactory" ref="riotSessionFactory" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
 	<!-- 
@@ -86,34 +86,28 @@
 	</bean>
 	-->
 	
-	<!-- Module configuration -->
+	<!-- Overrides -->
 	
-	<bean id="hibernateModule" class="org.riotfamily.common.beans.module.FactoryBeanModule">
-		<property name="properties">
-			<map>
-				<entry key="formConfigLocations">
-					<value>classpath:/org/riotfamily/riot/hibernate/runtime/riot-config.xml</value>
-				</entry>
-				<entry key="listConfigLocations">
-					<value>classpath:/org/riotfamily/riot/hibernate/runtime/riot-config.xml</value>
-				</entry>
-				<entry key="editorConfigLocations">
-					<value>classpath:/org/riotfamily/riot/hibernate/runtime/riot-config.xml</value>
-				</entry>
-				<entry key="messageSourceBasenames">
-					<list>
-						<value>classpath:/org/riotfamily/riot/hibernate/runtime/i18n/messages</value>
-					</list>
-				</entry>
-				<entry key="riotHandlerInterceptors">
-					<list>
-						<bean class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
-							<property name="sessionFactory" ref="riotSessionFactory" />
-						</bean>
-					</list>
-				</entry>
-			</map>
-		</property>
-	</bean>
-
+	<override:add ref="messageBasenames">
+		<value>classpath:/org/riotfamily/riot/hibernate/runtime/i18n/messages</value>
+	</override:add>
+	
+	<override:add ref="listRepository" property="configLocations">
+		<value>classpath:/org/riotfamily/riot/hibernate/runtime/riot-config.xml</value>
+	</override:add>
+	
+	<override:add ref="formRepository" property="configLocations">
+		<value>classpath:/org/riotfamily/riot/hibernate/runtime/riot-config.xml</value>
+	</override:add>
+	
+	<override:add ref="editorRepository" property="configLocations">
+		<value>classpath:/org/riotfamily/riot/hibernate/runtime/riot-config.xml</value>
+	</override:add>
+	
+	<override:add ref="handlerMapping" property="interceptors">
+		<bean class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
+			<property name="sessionFactory" ref="sessionFactory" />
+		</bean>
+	</override:add>
+	
 </beans>

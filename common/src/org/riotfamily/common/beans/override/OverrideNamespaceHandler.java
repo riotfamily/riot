@@ -23,6 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.override;
 
+import java.util.List;
+import java.util.Map;
+
 import org.riotfamily.common.beans.xml.GenericBeanDefinitionParser;
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -39,6 +42,8 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
 		registerBeanDefinitionParser("properties", new PropertyOverrideParser());
+		registerBeanDefinitionParser("put", new MapMergeParser());
+		registerBeanDefinitionParser("add", new ListMergeParser());
 		registerBeanDefinitionParser("bean", new BeanReplacementParser());
 	}
 	
@@ -57,6 +62,38 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 		}
 	}
 	
+	private static class MapMergeParser extends GenericBeanDefinitionParser {
+		
+		public MapMergeParser() {
+			super(MapMergeProcessor.class);
+		}
+		
+		protected void postProcess(BeanDefinitionBuilder beanDefinition, 
+				ParserContext parserContext, Element element) {
+			
+			Map entries = parserContext.getDelegate().parseMapElement(
+					element, beanDefinition.getBeanDefinition());
+			
+			beanDefinition.addPropertyValue("entries", entries);
+		}
+	}
+	
+	private static class ListMergeParser extends GenericBeanDefinitionParser {
+		
+		public ListMergeParser() {
+			super(ListMergeProcessor.class);
+		}
+		
+		protected void postProcess(BeanDefinitionBuilder beanDefinition, 
+				ParserContext parserContext, Element element) {
+			
+			List values = parserContext.getDelegate().parseListElement(
+					element, beanDefinition.getBeanDefinition());
+			
+			beanDefinition.addPropertyValue("values", values);
+		}
+	}
+
 	private static class BeanReplacementParser extends GenericBeanDefinitionParser {
 		
 		public BeanReplacementParser() {

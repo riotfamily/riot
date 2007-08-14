@@ -1,24 +1,22 @@
-<beans
-	xmlns="http://www.springframework.org/schema/beans"
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans.xsd">
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.0.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-6.5.xsd">
 
 	<import resource="classpath:org/riotfamily/components/runtime/db-schema.xml"/>
 
-	<bean class="org.riotfamily.common.beans.module.FactoryBeanModule">
-		<property name="properties">
-			<map>
-	 			<entry key="hibernateMappingLocations">
-					<list>
-						<value>classpath:org/riotfamily/components/dao/hibernate/component.hbm.xml</value>
-					</list>
-	 			</entry>
-	 		</map>
-		</property>
-	</bean>
-
+	<override:add ref="sessionFactory" property="mappingLocations">
+		<value>classpath:org/riotfamily/components/dao/hibernate/component.hbm.xml</value>
+	</override:add>
+	
 	<bean id="componentRepository" class="org.riotfamily.components.ComponentRepository">
 		<property name="configLocations">
 			<list>
@@ -37,7 +35,7 @@
 
 	<bean id="componentDaoTarget" class="org.riotfamily.components.dao.hibernate.HibernateComponentDao">
 		<property name="repository" ref="componentRepository" />
-		<property name="sessionFactory" ref="riotSessionFactory" />
+		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="cache" ref="websiteCache" />
 		<property name="eventMulticaster" ref="contentEventMulticaster" />
 	</bean>

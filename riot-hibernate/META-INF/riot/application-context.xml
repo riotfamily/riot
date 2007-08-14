@@ -33,34 +33,28 @@
 		<property name="enabled" value="${riot.revolt.enabled=true}" />
 	</bean>
 
-	<bean id="riotHibernateMappingLocations" class="org.riotfamily.common.beans.module.ModularListFactoryBean">
-		<property name="key" value="hibernateMappingLocations" />
-		<property name="includeRootList" value="true" />
-		<property name="sourceList">
+	<!-- The Hibernate SessionFactory -->
+	<bean id="sessionFactory" depends-on="revolt"
+			class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+
+		<property name="dataSource" ref="riotDataSource" />
+		<property name="mappingLocations">
 			<list>
 				<value>classpath:/org/riotfamily/riot/hibernate/security/security.hbm.xml</value>
 				<value>classpath:/org/riotfamily/riot/hibernate/workflow/notification/notification.hbm.xml</value>
 				<value>classpath:/org/riotfamily/riot/hibernate/job/job.hbm.xml</value>
 			</list>
 		</property>
-	</bean>
-
-	<!-- The Hibernate SessionFactory -->
-	<bean id="riotSessionFactory" name="sessionFactory" depends-on="revolt"
-			class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-
-		<property name="dataSource" ref="riotDataSource" />
-		<property name="mappingLocations" ref="riotHibernateMappingLocations" />
 		<property name="hibernateProperties" ref="riotHibernateProperties" />
 	</bean>
 
 	<!-- The Transaction Manager -->
 	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-		<property name="sessionFactory" ref="riotSessionFactory" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
 	<override:bean ref="notificationDao" class="org.riotfamily.riot.hibernate.workflow.notification.HibernateNotificationDao">
-		<property name="sessionFactory" ref="riotSessionFactory" />
+		<property name="sessionFactory" ref="sessionFactory" />
 	</override:bean>
 
 </beans>
