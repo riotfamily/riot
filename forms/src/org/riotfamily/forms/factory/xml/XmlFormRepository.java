@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.activation.MimetypesFileTypeMap;
 
@@ -77,13 +76,13 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	private HashMap customElementsWithoutNS;
 	
 	
-	public void setCustomElements(Properties props) 
+	public void setCustomElements(Map elements) 
 			throws ClassNotFoundException {
 		
 		customElements = new HashMap();
 		customElementsWithoutNS = new HashMap();
 		
-		Iterator it = props.entrySet().iterator();
+		Iterator it = elements.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry prop = (Map.Entry) it.next();
 			String className = (String) prop.getValue();
