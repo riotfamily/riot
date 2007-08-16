@@ -200,6 +200,9 @@ public class ImageGenerator implements InitializingBean {
 			if (maxWidth != null) {
 				maxWidth = new Integer(maxWidth.intValue() * scale);
 			}
+			if (lineSpacing != null) {
+				lineSpacing = new Integer(lineSpacing.intValue() * scale);
+			}
 		}
 		attributes.put(TextAttribute.FONT, font.deriveFont(size));
 		attributes.put(TextAttribute.FOREGROUND, color);
