@@ -24,7 +24,7 @@
 		<#if locales?has_content>
 			<select name="locale" onchange="this.form.submit()">
 				<#list locales as locale>
-					<option value="${locale}"<#if locale == selectedLocale>selected="selected"</#if>>${locale.displayName}</option>
+					<option value="${locale}"<#if locale == selectedLocale> selected="selected"</#if>>${locale.displayName}</option>
 				</#list>
 			</select>
 		</#if>
@@ -35,7 +35,7 @@
 	<script>
 		new Tree('tree', function(href) {
 			<#if mode == "tinyMCE">
-				tinyMCE.getWindowArg('window').document.getElementById(tinyMCE.getWindowArg('input')).value = href;
+				tinyMCE.getWindowArg('window').document.getElementById(tinyMCE.getWindowArg('input')).value = '${request.contextPath}' + href;
 				tinyMCEPopup.close();
 			<#else>
 				opener.WindowCallback.invoke(self, href);
