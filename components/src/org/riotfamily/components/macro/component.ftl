@@ -72,7 +72,7 @@
   - See: <@editable> for a description of the supported parameters.
   -->
 <#macro text key container=currentVersionContainer form="" tag="" alwaysUseNested=false attributes...>
-	<@editable key=key container=container form=form editor="text" tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
+	<@editable key=key container=container form=form editor="text" tag=tag alwaysUseNested=alwaysUseNested escape=true attributes=attributes><#nested /></@editable>
 </#macro>
 
 <#--
@@ -87,12 +87,14 @@
   - See: <@editable> for a description of the other parameters.
   -->
 <#macro richtext key container=currentVersionContainer form="" tag="" alwaysUseNested=false chunk=false attributes...>
-	<#if chunk>
-		<#local editor="richtext-chunks" />
-	<#else>
-		<#local editor="richtext" />
-	</#if>
-	<@editable key=key container=container form=form editor=editor tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
+	<#compress>
+		<#if chunk>
+			<#local editor="richtext-chunks" />
+		<#else>
+			<#local editor="richtext" />
+		</#if>
+		<@editable key=key container=container form=form editor=editor tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
+	</#compress>
 </#macro>
 
 <#--
@@ -112,47 +114,52 @@
   -
   - attributes...: Attributes to set on the surrounding tag.
   -->
-<#macro editable key container=currentVersionContainer editor="text" form="" tag="" alwaysUseNested=false attributes... >
-	<#local previousContainer = currentVersionContainer />
-	<#global currentVersionContainer = container />
-	<#if container != previousContainer>
-		${componentMacroHelper.tag(container)}
-	</#if>
-	<#if attributes.attributes?exists>
-		<#local attributes=attributes.attributes />
-	</#if>
-
-
-	<#if alwaysUseNested>
-		<#local value><#nested /></#local>
-	<#else>
-		<#if container?has_content>
-			<#local value = container.getProperty(key, isEditMode())?if_exists />
-		<#else>
-			<#local value = .data_model[key]?if_exists />
-		</#if>
-		<#if !value?has_content>
-			<#local value><#nested /></#local>
-		</#if>
-	</#if>
-
-	<#if isEditMode()>
+<#macro editable key container=currentVersionContainer editor="text" form="" tag="" alwaysUseNested=false escape=false attributes... >
+	<#compress>
+		<#local previousContainer = currentVersionContainer />
+		<#global currentVersionContainer = container />
 		<#if container != previousContainer>
-			<#local attributes = addContainerAttributes(attributes, container, form) />
+			${componentMacroHelper.tag(container)}
 		</#if>
-		<#if tag?has_content>
-			<#local element=tag />
+		<#if attributes.attributes?exists>
+			<#local attributes=attributes.attributes />
+		</#if>
+	
+		<#if alwaysUseNested>
+			<#local value><#nested /></#local>
 		<#else>
-			<#local element="div" />
-			<#local attributes = attributes + {"class" : ("riot-editor " + attributes["class"]?if_exists)?trim} />
+			<#if container?has_content>
+				<#local value = container.getProperty(key, isEditMode())?if_exists />
+			<#else>
+				<#local value = .data_model[key]?if_exists />
+			</#if>
+			<#if !value?has_content>
+				<#local value><#nested /></#local>
+			</#if>
 		</#if>
-		<${element} riot:key="${key}" riot:editorType="${editor}"${join(attributes)}>${value}</${element}>
-	<#elseif tag?has_content>
-		<${tag}${join(attributes)}>${value}</${tag}>
-	<#else>
-		${value}
-	</#if>
-	<#global currentVersionContainer = previousContainer />
+	
+		<#if escape>
+			<#local value = value?html?replace("\n", "<br />") />
+		</#if>
+		
+		<#if isEditMode()>
+			<#if container != previousContainer>
+				<#local attributes = addContainerAttributes(attributes, container, form) />
+			</#if>
+			<#if tag?has_content>
+				<#local element=tag />
+			<#else>
+				<#local element="div" />
+				<#local attributes = attributes + {"class" : ("riot-editor " + attributes["class"]?if_exists)?trim} />
+			</#if>
+			<${element} riot:key="${key}" riot:editorType="${editor}"${join(attributes)}>${value}</${element}>
+		<#elseif tag?has_content>
+			<${tag}${join(attributes)}>${value}</${tag}>
+		<#else>
+			${value}
+		</#if>
+		<#global currentVersionContainer = previousContainer />
+	</#compress>
 </#macro>
 
 <#--
@@ -213,7 +220,7 @@
 	<#local attrs = "" />
 	<#list attributes?keys as attributeName>
 		<#if attributes[attributeName]?has_content>
-			<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName] + "\"" />
+			<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName]?html + "\"" />
 		</#if>
 	</#list>
 	<#return attrs />

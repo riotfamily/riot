@@ -228,15 +228,16 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 	},
 
 	getText: function() {
-		return this.input.value
+		return this.input.value;
+	},
+
+	onsave: function(text) {
+		this.element.innerHTML = text
 			.replace(/&/g, '&amp;')
 			.replace(/</g, '&lt;')
 			.replace(/>/g, '&gt;')
 			.replace(/\n/g, '<br />');
-	},
-
-	onsave: function(text) {
-		this.element.innerHTML = text;
+			
 		this.input.hide();
 		this.element.makeVisible();
 	},
@@ -245,9 +246,9 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 		var text = this.getText();
 		if (!this.lastText || this.lastText != text) {
 			this.lastText = text;
-			// Append a nbsp if the text ends with a <br> ...
-			var html = text.replace(/<br[^>]*>$/i, '<br />&nbsp;');
-			html = html.replace(/\s/gi, '&nbsp;');
+			var html = text.replace(/\n$/, '\n '); 
+			html = html.replace(/( (?= )|^ | $)/mg, '&nbsp;');
+			html = html.replace(/\n/g, '<br />');
 			this.element.update(html);
 			this.resize();
 		}
@@ -320,8 +321,9 @@ riot.RichtextEditor = Class.extend(riot.PopupTextEditor, {
 				n.innerHTML = text;
 				$A(n.childNodes).each(function(c) {
 					if (c.nodeType == 1) {
-						chunks.push('<' + c.nodeName + '>' + c.innerHTML
-								+ '</' + c.nodeName + '>');
+						chunks.push('<' + c.nodeName.toLowerCase() + '>'
+								+ c.innerHTML
+								+ '</' + c.nodeName.toLowerCase() + '>');
 					}
 					else if (c.nodeType == 3) {
 						chunks.push('<p>' + c.nodeValue + '</p>');
