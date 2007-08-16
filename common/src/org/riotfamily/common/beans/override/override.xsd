@@ -40,6 +40,7 @@
 			<xsd:group ref="beans:collectionElements" />
 			<xsd:attribute name="ref" type="xsd:string" use="required" />
 			<xsd:attribute name="property" type="xsd:string" />
+			<xsd:attribute name="append" type="xsd:boolean" default="false" />
 		</xsd:complexType>
 	</xsd:element>
 	

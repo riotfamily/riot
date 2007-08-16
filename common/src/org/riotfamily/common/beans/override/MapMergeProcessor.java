@@ -70,7 +70,7 @@ public class MapMergeProcessor implements BeanFactoryPostProcessor {
 		BeanDefinition bd = beanFactory.getBeanDefinition(ref);
 		if (property == null) {
 			Assert.state(MapFactoryBean.class.getName().equals(bd.getBeanClassName()),
-					"Bean must be a MapFactoryBean");
+					"Bean [" + ref + "] must be a MapFactoryBean");
 	
 			property = "sourceMap";
 		}

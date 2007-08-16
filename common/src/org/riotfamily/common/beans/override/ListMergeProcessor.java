@@ -51,6 +51,8 @@ public class ListMergeProcessor implements BeanFactoryPostProcessor {
 	
 	private List values;
 	
+	private boolean append = false;
+	
 	public void setRef(String ref) {
 		this.ref = ref;
 	}
@@ -62,6 +64,10 @@ public class ListMergeProcessor implements BeanFactoryPostProcessor {
 	public void setValues(List values) {
 		this.values = values;
 	}
+	
+	public void setAppend(boolean append) {
+		this.append = append;
+	}
 
 	public void postProcessBeanFactory(
 			ConfigurableListableBeanFactory beanFactory) 
@@ -70,7 +76,7 @@ public class ListMergeProcessor implements BeanFactoryPostProcessor {
 		BeanDefinition bd = beanFactory.getBeanDefinition(ref);
 		if (property == null) {
 			Assert.state(ListFactoryBean.class.getName().equals(bd.getBeanClassName()),
-					"Bean must be a ListFactoryBean");
+					"Bean [" + ref + "] must be a ListFactoryBean");
 			
 			property = "sourceList";
 		}
@@ -93,7 +99,15 @@ public class ListMergeProcessor implements BeanFactoryPostProcessor {
 			}
 			Assert.isInstanceOf(List.class, value);
 			List list = (List) value;
-			list.addAll(values);
+			if (append) {
+				list.addAll(values);
+			}
+			else {
+				for (int i = values.size() - 1; i >= 0; i--) {
+					list.add(0, values.get(i));
+				}
+			}
 		}
 	}
+	
 }
