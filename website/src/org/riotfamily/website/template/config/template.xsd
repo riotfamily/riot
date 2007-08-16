@@ -30,18 +30,31 @@
 	</xsd:element>
 		
 	<xsd:element name="definition">
+		<xsd:annotation>
+			<xsd:documentation><![CDATA[
+	Defines a template. A template is a view that works on a model containing
+	URLs. These URLs are included using a RequestDispatcher. The model keys
+	are called "slots".
+			]]></xsd:documentation>
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence minOccurs="0" maxOccurs="unbounded">
 				<xsd:choice>
 					<xsd:element name="insert">
+						<xsd:annotation>
+							<xsd:documentation><![CDATA[
+	Inserts an URL into a slot. The slot name may contain '.' characters to
+	refer to slots of nested templates. Instead of specifying a URL a handler
+	bean can be defined as nested tag. In this case a the URL (i.e. bean name)
+	is generated using the following pattern: prefix + '/' + templateId + '/' + slot + suffix
+							]]></xsd:documentation>
+						</xsd:annotation>
 						<xsd:complexType>
 							<xsd:choice minOccurs="0">
 								<xsd:any namespace="##any">
 									<xsd:annotation>
 										<xsd:documentation><![CDATA[
-	A handler to insert into the slot. Can be used instead of specifing the 
-	url attribute. In this case a the URL (i.e. bean name) is generated using
-	the following pattern: prefix + '/' + templateId + '/' + slot + suffix 
+	A handler to insert into the slot. Can be used instead of an url attribute.  
 										]]></xsd:documentation>
 									</xsd:annotation>
 								</xsd:any>							
@@ -52,6 +65,12 @@
 						</xsd:complexType>
 					</xsd:element>
 					<xsd:element name="remove">
+						<xsd:annotation>
+							<xsd:documentation><![CDATA[
+	Removes a slot from a template. The slot name may contain '.' characters to
+	refer to slots of nested templates.
+							]]></xsd:documentation>
+						</xsd:annotation>
 						<xsd:complexType>
 							<xsd:attribute name="slot" use="required" />
 						</xsd:complexType>
