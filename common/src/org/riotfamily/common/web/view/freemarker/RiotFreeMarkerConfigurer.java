@@ -53,6 +53,8 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 	
 	private ObjectWrapper objectWrapper;
 	
+	private boolean whitespaceStripping = false;
+	
 	/**
 	 * Sets the macro libraries to be auto-imported, keyed by their namespace.
 	 */
@@ -76,6 +78,14 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 		this.objectWrapper = objectWrapper;
 	}
 
+	/**
+	 * Sets whether the FTL parser will try to remove superfluous
+	 * white-space around certain FTL tags.
+	 */
+	public void setWhitespaceStripping(boolean whitespaceStripping) {
+		this.whitespaceStripping = whitespaceStripping;
+	}
+	
 	protected void postProcessTemplateLoaders(List templateLoaders) {
 		super.postProcessTemplateLoaders(templateLoaders);
 		templateLoaders.add(new ResourceTemplateLoader(getResourceLoader()));
@@ -84,6 +94,7 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 	protected void postProcessConfiguration(Configuration config) 
 			throws IOException, TemplateException {
 		
+		config.setWhitespaceStripping(whitespaceStripping);
 		importMacroLibraries(config);
 		config.setTemplateExceptionHandler(exceptionHandler);
 		if (objectWrapper != null) {
