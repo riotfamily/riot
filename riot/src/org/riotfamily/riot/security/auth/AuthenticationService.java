@@ -21,29 +21,18 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security;
-
-import org.springframework.core.Ordered;
+package org.riotfamily.riot.security.auth;
 
 
-/**
- * Interface to check if a user has the permission to perform a certain action.
- */
-public interface AuthorizationPolicy extends Ordered {
 
-	public int ACCESS_ABSTAIN = 0;
-	
-	public int ACCESS_DENIED = 1;
-	
-	public int ACCESS_GRANTED = 2;
+public interface AuthenticationService {
 
 	/**
-	 * Checks whether the given user is allowed to perform the specified action.
+	 * @param username The username
+	 * @param password The password (plaintext)
 	 * 
-	 * @param subject The user
-	 * @param action The action to be performed
-	 * @param object The object on which the action is to be performed
+	 * @return The RiotUser or <code>null</code> if the user could not be
+	 * authenticated
 	 */
-    public int checkPermission(RiotUser user, String action, Object object);    
-
+	public RiotUser authenticate(String username, String password);
 }

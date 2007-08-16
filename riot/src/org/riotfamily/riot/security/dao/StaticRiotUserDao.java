@@ -14,34 +14,32 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.impl;
+package org.riotfamily.riot.security.dao;
 
-import org.riotfamily.riot.security.AuthenticationService;
-import org.riotfamily.riot.security.RiotUser;
-
+import org.riotfamily.riot.dao.support.RiotDaoAdapter;
+import org.riotfamily.riot.security.auth.RiotUser;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
- * AuthenticationService that uses a fixed username/password combination.
- * This class is intended for development purposes only.
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
  */
-public class StaticAuthenticationService implements AuthenticationService {
-
-	public static final String DEFAULT_USERNAME = "admin";
-	
-	public static final String DEFAULT_PASSWORD = "admin";
+public class StaticRiotUserDao extends RiotDaoAdapter implements RiotUserDao, 
+		InitializingBean {
 
 	private static final RiotUser ROOT = new RootUser();
 	
-	private String username = DEFAULT_USERNAME;
+	private String username;
 	
-	private String password = DEFAULT_PASSWORD;
+	private String password;
 	
 	
 	public void setPassword(String password) {
@@ -52,13 +50,18 @@ public class StaticAuthenticationService implements AuthenticationService {
 		this.username = username;
 	}
 
-	public RiotUser authenticate(String username, String password) {
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(this.username, "No username set.");
+		Assert.notNull(this.password, "No password set.");
+	}
+	
+	public RiotUser findUserByCredentials(String username, String password) {
 		if (this.username.equals(username) && this.password.equals(password)) {
 			return ROOT;
 		}
 		return null;
 	}
-
+	
 	private static class RootUser implements RiotUser {
 
 		public String getUserId() {

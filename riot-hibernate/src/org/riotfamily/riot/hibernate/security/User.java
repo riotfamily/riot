@@ -23,8 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.security;
 
-import org.riotfamily.common.util.HashUtils;
-import org.riotfamily.riot.security.RiotUser;
+import org.riotfamily.riot.security.auth.RiotUser;
 
 public class User implements RiotUser {
 
@@ -33,6 +32,8 @@ public class User implements RiotUser {
 	private String role;
 	
 	private String password;
+	
+	private transient String newPassword;
 	
 	private String name;
 	
@@ -81,22 +82,13 @@ public class User implements RiotUser {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	public void setNewPassword(String password) {
-		if (password != null) {
-			this.password = HashUtils.md5(password);
-		}
-		else if (this.password == null) {
-			throw new IllegalStateException("A password must be set!");
-		}
-	}
-	
+
 	public String getNewPassword() {
-		return null;
-	}
-	
-	public boolean isvalidPassword(String pw) {
-		return pw != null && HashUtils.md5(pw).equals(this.password);
+		return this.newPassword;
 	}
 
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
+	}
+	
 }

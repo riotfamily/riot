@@ -17,7 +17,7 @@
 		<property name="reloadable" value="${website-servlet.reloadable=false}" />
 	</bean>
 	
-	<bean name="riotAccessControlFilterPlugin" class="org.riotfamily.riot.security.AccessControlFilterPlugin">
+	<bean name="riotAccessControlFilterPlugin" class="org.riotfamily.riot.security.session.AccessControlFilterPlugin">
 		<property name="filterName" value="website-filter" />
 	</bean>
 		

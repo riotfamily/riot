@@ -87,7 +87,7 @@
 	  - HandlerInterceptor that ensures that only authenticated users can
 	  - access the Riot admin pages.
 	  -->
-	<bean id="loginInterceptor" class="org.riotfamily.riot.security.LoginInterceptor">
+	<bean id="loginInterceptor" class="org.riotfamily.riot.security.session.LoginInterceptor">
 		<property name="loginUrl" value="/login" />
 		<property name="excludes">
 			<list>
@@ -103,12 +103,19 @@
 		</property>
 	</bean>
 
-	 <bean id="authenticationService" class="org.riotfamily.riot.security.impl.StaticAuthenticationService" />
-
+	<!-- BeanPostProcessor that wraps all RiotUserDao beans -->
+	<bean class="org.riotfamily.riot.security.dao.RiotUserDaoProcessor" />
+		
+	<!-- A RiotUserDao-based AuthenticationService -->
+	<bean id="authenticationService" class="org.riotfamily.riot.security.auth.StaticAuthenticationService">
+	 	<property name="username" value="root" />
+	 	<property name="password" value="riot" />
+	</bean>
+	
 	<!--
 	  - Persistence service for SessionMetaData (last login date, last IP, etc.)
 	  -->
-	<bean id="sessionMetaDataStore" class="org.riotfamily.riot.security.impl.TransientSessionMetaDataStore" />
+	<bean id="sessionMetaDataStore" class="org.riotfamily.riot.security.session.TransientSessionMetaDataStore" />
 
 	<bean id="loginManager" class="org.riotfamily.riot.security.LoginManager">
 		<constructor-arg ref="authenticationService" />
@@ -119,9 +126,9 @@
 		<constructor-arg ref="loginManager" />
 	</bean>
 
-    <bean id="loggingPolicy" class="org.riotfamily.riot.security.impl.LoggingPolicy" />
+    <bean id="loggingPolicy" class="org.riotfamily.riot.security.policy.LoggingPolicy" />
 
-	<bean id="defaultPolicy" class="org.riotfamily.riot.security.impl.GrantAllPolicy" />
+	<bean id="defaultPolicy" class="org.riotfamily.riot.security.policy.GrantAllPolicy" />
 
 	<bean id="freemarkerConfig" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerConfigurer">
 		<property name="templateLoaders">
@@ -206,9 +213,10 @@
 		</property>
 	</bean>
 
-	<util:properties id="customFormElements">
-		<prop key="{http://www.riotfamily.org/schema/riot/form-elements}chooser">org.riotfamily.riot.form.element.ObjectChooser</prop>
-	</util:properties>
+	<util:map id="customFormElements">
+		<entry key="{http://www.riotfamily.org/schema/riot/form-elements}chooser"
+				value="org.riotfamily.riot.form.element.ObjectChooser" />
+	</util:map>
 
 	<bean id="formRepository" class="org.riotfamily.forms.factory.xml.XmlFormRepository">
 		<property name="configLocations">

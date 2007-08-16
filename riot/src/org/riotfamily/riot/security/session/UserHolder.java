@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security;
+package org.riotfamily.riot.security.session;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,6 +29,9 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
+
+import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
  * Class that holds a reference to a RiotUser. An instance of this class is

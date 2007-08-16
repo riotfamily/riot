@@ -21,18 +21,17 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security;
+package org.riotfamily.riot.security.dao;
 
-import java.io.Serializable;
+import org.riotfamily.riot.dao.RiotDao;
+import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
- * Interface to be returned by an {@link AuthenticationService}.
- * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public interface RiotUser extends Serializable {
+public interface RiotUserDao extends RiotDao {
 
-	public String getUserId();
-
+	public RiotUser findUserByCredentials(String username, String password);
+	
 }

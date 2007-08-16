@@ -18,69 +18,72 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Jan-Frederic Linde [jfl at neteye dot de]
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.hibernate.security;
+package org.riotfamily.riot.security.dao;
 
 import java.util.Collection;
 
 import org.riotfamily.riot.dao.ListParams;
-import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.security.LoginManager;
-import org.riotfamily.riot.security.RiotUser;
+import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.dao.DataAccessException;
 
 /**
- * @author Jan-Frederic Linde [jfl at neteye dot de]
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class RiotUserDao implements RiotDao {
+public class RiotUserDaoWrapper implements RiotUserDao {
+
+	private RiotUserDao wrappedInstance;
 	
-	private RiotDao dao;
+	public RiotUserDaoWrapper(RiotUserDao userDao) {
+		this.wrappedInstance = userDao;
+	}
 	
-	public void setDao(RiotDao dao) {
-		this.dao = dao;
+	public RiotUser findUserByCredentials(String username, String password) {
+		return wrappedInstance.findUserByCredentials(username, password);
 	}
 
-	public void delete(Object entity, Object parent) {
-		dao.delete(entity, parent);
-		RiotUser user = (RiotUser) entity;
-		LoginManager.updateUser(user.getUserId(), null);
+	public Class getEntityClass() {
+		return wrappedInstance.getEntityClass();
+	}
+
+	public int getListSize(Object parent, ListParams params)
+		throws DataAccessException {
+
+		return wrappedInstance.getListSize(parent, params);
+	}
+	
+	public Collection list(Object parent, ListParams params) 
+			throws DataAccessException {
+		
+		return wrappedInstance.list(parent, params);
+	}
+	
+	public String getObjectId(Object entity) {
+		return wrappedInstance.getObjectId(entity);
+	}
+
+	public Object load(String id) throws DataAccessException {		
+		return wrappedInstance.load(id);
+	}
+
+	public void save(Object entity, Object parent) throws DataAccessException {
+		wrappedInstance.save(entity, parent);		
 	}
 	
 	public void update(Object entity) {		
-		dao.update(entity);
+		wrappedInstance.update(entity);
 		RiotUser user = (RiotUser) entity;
 		LoginManager.updateUser(user.getUserId(), user);
 	}
 
-	public Class getEntityClass() {
-		return dao.getEntityClass();
-	}
-
-	public int getListSize(Object parent, ListParams params)
-			throws DataAccessException {
-		
-		return dao.getListSize(parent, params);
-	}
-
-	public String getObjectId(Object entity) {		
-		return dao.getObjectId(entity);
-	}
-
-	public Collection list(Object parent, ListParams params) 
-			throws DataAccessException {
-		
-		return dao.list(parent, params);
-	}
-
-	public Object load(String id) throws DataAccessException {		
-		return dao.load(id);
-	}
-
-	public void save(Object entity, Object parent) throws DataAccessException {
-		dao.save(entity, parent);		
+	public void delete(Object entity, Object parent) {
+		wrappedInstance.delete(entity, parent);
+		RiotUser user = (RiotUser) entity;
+		LoginManager.updateUser(user.getUserId(), null);
 	}
 	
 }

@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security;
+package org.riotfamily.riot.security.session;
 
 import java.io.IOException;
 
@@ -31,6 +31,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.common.web.filter.PluginChain;
+import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.riot.security.LoginManager;
+import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
  * Servlet filter that binds the authenticated user (if present) to the

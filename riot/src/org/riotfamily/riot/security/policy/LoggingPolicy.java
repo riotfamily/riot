@@ -23,12 +23,11 @@
  *   Alf Werder [alf dot werder at artundweise dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.impl;
+package org.riotfamily.riot.security.policy;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.riot.security.AuthorizationPolicy;
-import org.riotfamily.riot.security.RiotUser;
+import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
  * A logging policy for debugging purposes.

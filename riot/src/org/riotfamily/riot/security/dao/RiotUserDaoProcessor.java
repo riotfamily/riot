@@ -14,35 +14,38 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.impl;
+package org.riotfamily.riot.security.dao;
 
-import org.riotfamily.riot.security.AuthorizationPolicy;
-import org.riotfamily.riot.security.RiotUser;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
- * Default RiotPolicy that always returns <code>true</code>.
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
  */
-public class GrantAllPolicy implements AuthorizationPolicy {
-    
-	private int order = Integer.MAX_VALUE;
-	
-    public int getOrder() {
-		return this.order;
+public class RiotUserDaoProcessor implements BeanPostProcessor {
+
+	public Object postProcessBeforeInitialization(Object bean, String beanName) 
+			throws BeansException {
+		
+		return bean;
 	}
 	
-    public void setOrder(int order) {
-		this.order = order;
+	public Object postProcessAfterInitialization(Object bean, String beanName) 
+			throws BeansException {
+		
+		if (bean instanceof RiotUserDao) {
+			return new RiotUserDaoWrapper((RiotUserDao) bean);
+		}
+		return bean;
 	}
 
-	public int checkPermission(RiotUser user, String action, Object object) {
-        return ACCESS_GRANTED;
-    }
-
+	
 }

@@ -14,24 +14,26 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security;
+package org.riotfamily.riot.security.auth;
+
+import java.io.Serializable;
 
 
-public interface AuthenticationService {
+/**
+ * Interface to be returned by an {@link AuthenticationService}.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public interface RiotUser extends Serializable {
 
-	/**
-	 * @param username The username
-	 * @param password The password (plaintext)
-	 * 
-	 * @return The RiotUser or <code>null</code> if the user could not be
-	 * authenticated
-	 */
-	public RiotUser authenticate(String username, String password);
+	public String getUserId();
+
 }

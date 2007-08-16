@@ -6,7 +6,7 @@
 
 <hibernate-mapping auto-import="false">
 	
-	<class name="org.riotfamily.riot.security.SessionMetaData" table="riot_session_data" lazy="false">
+	<class name="org.riotfamily.riot.security.session.SessionMetaData" table="riot_session_data" lazy="false">
 		<id name="userId" column="principal">
 	        <generator class="assigned" />
     	</id>

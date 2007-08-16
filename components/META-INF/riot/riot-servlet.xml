@@ -22,7 +22,6 @@
 	<bean id="componentEditorTarget" class="org.riotfamily.components.editor.ComponentEditorImpl">
 		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="componentRepository" />
-		<property name="loginManager" ref="loginManager" />
 		<property name="editorConfigs">
 			<map>
 				<entry key="tinyMCE" value-ref="tinyMCE" />

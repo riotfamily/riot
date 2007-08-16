@@ -41,19 +41,15 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
-	<bean id="riotUserDao" class="org.riotfamily.riot.hibernate.security.RiotUserDao">
-		<property name="dao">
-			<bean parent="hqlDao">
-				<property name="entityClass" value="org.riotfamily.riot.hibernate.security.User" />
-			</bean>
-		</property>
-	</bean>
-
-	<!-- Hibernate-based user management  -->
- 	<override:bean ref="authenticationService" class="org.riotfamily.riot.hibernate.security.HibernateAuthenticationService">
+	<bean id="riotUserDao" class="org.riotfamily.riot.hibernate.security.HibernateUserDao">
 		<property name="sessionFactory" ref="sessionFactory" />
-	</override:bean>
+		<property name="entityClass" value="org.riotfamily.riot.hibernate.security.User" />
+	</bean>
  
+ 	<override:bean ref="authenticationService" class="org.riotfamily.riot.security.auth.UserDaoAuthenticationService">
+ 		<property name="userDao" ref="riotUserDao" />
+ 	</override:bean>
+ 	
 	<override:bean ref="sessionMetaDataStore" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
 		<property name="target">

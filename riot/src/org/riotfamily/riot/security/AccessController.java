@@ -26,6 +26,12 @@ package org.riotfamily.riot.security;
 import java.util.Iterator;
 import java.util.List;
 
+import org.riotfamily.riot.security.auth.RiotUser;
+import org.riotfamily.riot.security.policy.AuthorizationPolicy;
+import org.riotfamily.riot.security.session.AccessControlFilterPlugin;
+import org.riotfamily.riot.security.session.AccessControlInterceptor;
+import org.riotfamily.riot.security.session.SessionMetaData;
+
 
 
 /**
@@ -63,15 +69,15 @@ public final class AccessController {
 		AccessController.policies = policies;
 	}
 	
-	static void storeSessionMetaData(SessionMetaData data) {
+	public static void storeSessionMetaData(SessionMetaData data) {
 		loginManager.storeSessionMetaData(data);
 	}
 	
-	static void bindUserToCurrentThread(RiotUser user) {
+	public static void bindUserToCurrentThread(RiotUser user) {
 		threadLocal.set(user);
 	}
 	
-	static void resetUser() {
+	public static void resetUser() {
 		threadLocal.set(null);
 	}
 	

@@ -21,27 +21,45 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.hibernate.security;
+package org.riotfamily.riot.security.auth;
 
-import org.riotfamily.riot.security.AuthenticationService;
-import org.riotfamily.riot.security.RiotUser;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.util.Assert;
 
-public class HibernateAuthenticationService extends HibernateDaoSupport 
-		implements AuthenticationService {
+/**
+ * AuthenticationService that uses a fixed username/password combination.
+ * This class is intended for development purposes only.
+ */
+public class StaticAuthenticationService implements AuthenticationService {
+
+	public static final String DEFAULT_USERNAME = "root";
 	
-	private Class userClass = User.class;
+	private static final RiotUser ROOT = new RootUser();
 	
-	public void setUserClass(Class userClass) {
-		this.userClass = userClass;
+	private String username = DEFAULT_USERNAME;
+	
+	private String password;
+	
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public RiotUser authenticate(String username, String password) {
-		User user = (User) getHibernateTemplate().get(userClass, username);
-		if (user != null && user.isvalidPassword(password)) {
-			return user;
+		Assert.notNull("No password set.");
+		if (this.username.equals(username) && this.password.equals(password)) {
+			return ROOT;
 		}
 		return null;
 	}
 
+	private static class RootUser implements RiotUser {
+
+		public String getUserId() {
+			return "root";
+		}
+	}
 }

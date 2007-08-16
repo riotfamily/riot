@@ -178,7 +178,7 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 	/**
 	 * Subclasses may inspect the given context to decide whether the
 	 * command should be enabled. Commands don't need to check the
-	 * {@link org.riotfamily.riot.security.AuthorizationPolicy policy} since
+	 * {@link org.riotfamily.riot.security.policy.AuthorizationPolicy policy} since
 	 * commands will be automatically disabled if the action returned by
 	 * {@link #getAction(CommandContext) getAction()} is denied.
 	 * The default implementation always returns <code>true</code>.

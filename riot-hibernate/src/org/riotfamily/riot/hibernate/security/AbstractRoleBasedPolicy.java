@@ -23,8 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.security;
 
-import org.riotfamily.riot.security.AuthorizationPolicy;
-import org.riotfamily.riot.security.RiotUser;
+import org.riotfamily.riot.security.auth.RiotUser;
+import org.riotfamily.riot.security.policy.AuthorizationPolicy;
 
 public abstract class AbstractRoleBasedPolicy implements AuthorizationPolicy {
 

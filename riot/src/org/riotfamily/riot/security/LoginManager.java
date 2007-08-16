@@ -27,6 +27,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.riotfamily.riot.security.auth.AuthenticationService;
+import org.riotfamily.riot.security.auth.RiotUser;
+import org.riotfamily.riot.security.session.SessionMetaData;
+import org.riotfamily.riot.security.session.SessionMetaDataStore;
+import org.riotfamily.riot.security.session.UserHolder;
+
 public class LoginManager {
 
 	public static final String ACTION_LOGIN = "login";

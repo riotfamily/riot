@@ -21,40 +21,53 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security;
+package org.riotfamily.riot.security.session;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.util.OncePerRequestInterceptor;
+import org.riotfamily.riot.runtime.RiotRuntime;
+import org.riotfamily.riot.runtime.RiotRuntimeAware;
+import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
- * HandlerInterceptor that binds the authenticated user (if present) to the
- * current thread. 
- * 
- * @see AccessController
+ * HandlerInterceptor that sends a redirect to the login URL in case the
+ * user is not logged in.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
  */
-public class AccessControlInterceptor extends OncePerRequestInterceptor {
-
-	public boolean preHandleOnce(HttpServletRequest request,
-			HttpServletResponse response, Object handler) throws Exception {
-		
-		RiotUser user = LoginManager.getUser(request);
-		AccessController.bindUserToCurrentThread(user);
-		return isAuthorized(request, response, user);
+public class LoginInterceptor extends AccessControlInterceptor 
+		implements RiotRuntimeAware {
+	
+	private String loginUrl;
+	
+	private RiotRuntime runtime;
+	
+	public void setLoginUrl(String loginUrl) {
+		this.loginUrl = loginUrl;
+	}
+	
+	public void setRiotRuntime(RiotRuntime runtime) {
+		this.runtime = runtime;
 	}
 
+	/**
+	 * Returns <code>true</code> if a principal is set, otherwise 
+	 * <code>false</code> is returned and a redirect to the login form is sent.
+	 */
 	protected boolean isAuthorized(HttpServletRequest request,
 			HttpServletResponse response, RiotUser user) throws Exception {
 		
-		return true;
+		if (user != null) {
+			return true;
+		}
+		else {
+			response.sendRedirect(response.encodeRedirectURL(
+					request.getContextPath() + runtime.getServletPrefix() 
+					+ loginUrl));
+			
+			return false;
+		}
 	}
 	
-	public final void afterLastCompletion(HttpServletRequest request,
-			HttpServletResponse response, Object handler, Exception ex)
-			throws Exception {
-
-		AccessController.resetUser();
-	}
-
 }

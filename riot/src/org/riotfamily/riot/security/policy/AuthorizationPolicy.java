@@ -21,23 +21,30 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.hibernate.security;
+package org.riotfamily.riot.security.policy;
 
 import org.riotfamily.riot.security.auth.RiotUser;
-import org.riotfamily.riot.security.session.SessionMetaData;
-import org.riotfamily.riot.security.session.SessionMetaDataStore;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.core.Ordered;
 
-public class HibernateSessionMetaDataStore extends HibernateDaoSupport 
-		implements SessionMetaDataStore {
 
-	public SessionMetaData loadSessionMetaData(RiotUser user) {
-		return (SessionMetaData) getHibernateTemplate().get(
-				SessionMetaData.class, user.getUserId());
-	}
+/**
+ * Interface to check if a user has the permission to perform a certain action.
+ */
+public interface AuthorizationPolicy extends Ordered {
 
-	public void storeSessionMetaData(SessionMetaData sessionData) {
-		getHibernateTemplate().saveOrUpdate(sessionData);
-	}
+	public int ACCESS_ABSTAIN = 0;
+	
+	public int ACCESS_DENIED = 1;
+	
+	public int ACCESS_GRANTED = 2;
+
+	/**
+	 * Checks whether the given user is allowed to perform the specified action.
+	 * 
+	 * @param subject The user
+	 * @param action The action to be performed
+	 * @param object The object on which the action is to be performed
+	 */
+    public int checkPermission(RiotUser user, String action, Object object);    
 
 }

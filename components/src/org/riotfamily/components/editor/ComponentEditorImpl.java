@@ -67,8 +67,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 	private ComponentRepository repository;
 
-	private LoginManager loginManager;
-
 	private MessageSource messageSource;
 
 	private Map editorConfigs;
@@ -79,10 +77,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	public ComponentEditorImpl(ComponentDao dao, ComponentRepository repository) {
 		this.dao = dao;
 		this.repository = repository;
-	}
-
-	public void setLoginManager(LoginManager loginManager) {
-		this.loginManager = loginManager;
 	}
 
 	public void setMessageSource(MessageSource messageSource) {
@@ -350,18 +344,12 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	}
 
 	/**
-	 * Performs a logout. If a <code>loginManager</code> has been set, the
-	 * call is delegated, otherwise the session is invalidated.
+	 * Performs a logout.
 	 */
 	public void logout() {
 		WebContext ctx = WebContextFactory.get();
-		if (loginManager != null) {
-			LoginManager.logout(ctx.getHttpServletRequest(),
-					ctx.getHttpServletResponse());
-		}
-		else {
-			ctx.getHttpServletRequest().getSession().invalidate();
-		}
+		LoginManager.logout(ctx.getHttpServletRequest(), 
+				ctx.getHttpServletResponse());
 	}
 
 	/* Utility methods */

@@ -26,6 +26,7 @@ package org.riotfamily.riot.security;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.riotfamily.riot.security.policy.AuthorizationPolicy;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

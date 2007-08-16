@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.riot.security.LoginManager;
-import org.riotfamily.riot.security.SessionMetaData;
+import org.riotfamily.riot.security.session.SessionMetaData;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 

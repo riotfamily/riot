@@ -14,30 +14,34 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.hibernate.security;
+package org.riotfamily.riot.security.auth;
 
-import org.riotfamily.riot.security.auth.RiotUser;
-import org.riotfamily.riot.security.session.SessionMetaData;
-import org.riotfamily.riot.security.session.SessionMetaDataStore;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.riotfamily.riot.security.dao.RiotUserDao;
 
-public class HibernateSessionMetaDataStore extends HibernateDaoSupport 
-		implements SessionMetaDataStore {
+/**
+ * AuthenticationService that uses a {@link RiotUserDao} to lookup a 
+ * {@link RiotUser}.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public class UserDaoAuthenticationService implements AuthenticationService {
 
-	public SessionMetaData loadSessionMetaData(RiotUser user) {
-		return (SessionMetaData) getHibernateTemplate().get(
-				SessionMetaData.class, user.getUserId());
+	private RiotUserDao userDao;
+	
+	public void setUserDao(RiotUserDao userDao) {
+		this.userDao = userDao;
 	}
 
-	public void storeSessionMetaData(SessionMetaData sessionData) {
-		getHibernateTemplate().saveOrUpdate(sessionData);
+	public RiotUser authenticate(String username, String password) {
+		return userDao.findUserByCredentials(username, password);
 	}
-
+	
 }
