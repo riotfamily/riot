@@ -20,24 +20,24 @@ RiotImageReplacement.prototype = {
 
 	createHoverRules: function() {
 		$A(document.styleSheets).each(function(sheet) {
-				$A(sheet.rules || sheet.cssRules).each(function(rule) {
-						if (rule.selectorText) {
-								rule.selectorText.split(',').each(function(sel) {
-										if (sel.include(':hover')) {
-												if (rule.style.color) {
-														var newSel = sel.replace(/:hover/, ' .txt2imgHover');
-														var newStyle = 'color: ' + rule.style.color;
-														if (sheet.insertRule) {
-													sheet.insertRule(newSel + ' {' + newStyle + '}', sheet.cssRules.length);
-												}
-												else if (sheet.addRule) {
-													sheet.addRule(newSel, newStyle);
-												}
-												}
-										}
-								});
+			$A(sheet.rules || sheet.cssRules).each(function(rule) {
+				if (rule.selectorText) {
+					rule.selectorText.split(',').each(function(sel) {
+						if (sel.include(':hover')) {
+							if (rule.style.color) {
+								var newSel = sel.replace(/:hover/, ' .txt2imgHover');
+								var newStyle = 'color: ' + rule.style.color;
+								if (sheet.insertRule) {
+									sheet.insertRule(newSel + ' {' + newStyle + '}', sheet.cssRules.length);
+								}
+								else if (sheet.addRule) {
+									sheet.addRule(newSel, newStyle);
+								}
+							}
 						}
-				});
+					});
+				}
+			});
 		});
 	},
 
@@ -166,7 +166,7 @@ if (!Event.onDOMReady) {
 			if (!this._readyCallbacks) {
 				Event._readyCallbacks = [];
 				var domReady = this._domReady.bind(this);
-				if (document.addEventListener) {
+				if (document.addEventListener && !Prototype.Browser.WebKit) {
 					document.addEventListener("DOMContentLoaded", domReady, false);
 				}
 				else {
@@ -177,7 +177,7 @@ if (!Event.onDOMReady) {
 							if (this.readyState == "complete") domReady();
 						};
 					@else @*/
-						if (/WebKit/i.test(navigator.userAgent)) {
+						if (Prototype.Browser.WebKit) {
 							this._timer = setInterval(function() {
 								if (/loaded|complete/.test(document.readyState)) domReady();
 							}, 10);
