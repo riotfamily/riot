@@ -118,7 +118,7 @@ public class TemplateController extends AbstractController
 	public void setParent(TemplateController parent) {
 		this.parent = parent;
 	}
-
+	
 	public String getViewName() {
 		return viewName;
 	}
@@ -141,31 +141,22 @@ public class TemplateController extends AbstractController
 
 	/**
 	 * Initializes the controller after all properties have been set. If a
-	 * parent controller is set the configuration will be merged and the view
-	 * will be inherited (if not set locally).
+	 * parent controller is set the view will be inherited (if not set locally).
 	 */
-	public void afterPropertiesSet() throws Exception {
-		mergeConfiguration();
+	public final void afterPropertiesSet() throws Exception {
 		inheritView();
+		inheritConfiguration();
+		initController();
 	}
-
+	
 	/**
-	 * Merges the configuration map with the ones defined by ancestors.
+	 * Subclasses may overwrite this method to perform initialization tasks 
+	 * after all properties have been set. The default implementation 
+	 * does nothing.
 	 */
-	protected void mergeConfiguration() {
-		mergedConfiguration = new HashMap();
-		if (parent != null) {
-			mergedConfiguration.putAll(parent.getMergedConfiguration());
-		}
-		if (configuration != null) {
-			mergedConfiguration.putAll(configuration);
-		}
+	protected void initController() {
 	}
-
-	protected Map getMergedConfiguration() {
-		return mergedConfiguration;
-	}
-
+		
 	/**
 	 * Sets the view to the parent view if it has not been set locally.
 	 */
@@ -174,10 +165,39 @@ public class TemplateController extends AbstractController
 			viewName = getParent().getViewName();
 		}
 	}
+	
+	/**
+	 * Merges the configuration map with the ones defined by ancestors.
+	 */
+	protected void inheritConfiguration() {
+		mergedConfiguration = new HashMap();
+		if (parent != null) {
+			mergedConfiguration.putAll(parent.getMergedConfiguration());
+		}
+		if (configuration != null) {
+			mergedConfiguration.putAll(configuration);
+		}
+	}
+	
+	protected Map getMergedConfiguration() {
+		return this.mergedConfiguration;
+	}
 
+	/**
+	 * Gets the effective configuration in case the template is nested within
+	 * another template. The surrounding template(s) may override the local 
+	 * slot configuration. 
+	 */
 	private Map getEffectiveConfiguration(HttpServletRequest request) {
-		Map effectiveConfiguration = new HashMap(mergedConfiguration);
+		Map effectiveConfiguration = new HashMap(getMergedConfiguration());
+		applyOverrides(effectiveConfiguration, request);
+		return effectiveConfiguration;
+	}
 
+	/**
+	 * Applies the overrides defined by surrounding templates.
+	 */
+	protected void applyOverrides(Map config, HttpServletRequest request) {
 		Map slotsConfiguration = (Map) request.getAttribute(
 				SLOTS_CONFIGURATION_ATTRIBUTE);
 
@@ -185,17 +205,14 @@ public class TemplateController extends AbstractController
 			String slot = request.getParameter(SLOT_PARAMETER);
 			if (slot != null) {
 				String prefix = slot + '.';
-				effectiveConfiguration.putAll(
-						selectEntries(slotsConfiguration, prefix));
+				config.putAll(selectEntries(slotsConfiguration, prefix));
 			}
 			else {
-				effectiveConfiguration.putAll(slotsConfiguration);
+				config.putAll(slotsConfiguration);
 			}
 		}
-
-		return effectiveConfiguration;
 	}
-
+	
 	/**
 	 * Creates a new map containing all entries starting with the given prefix.
 	 * The prefix is stripped from the keys of the new map.

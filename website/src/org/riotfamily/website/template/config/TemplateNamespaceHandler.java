@@ -23,7 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.template.config;
 
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
 /**
  * NamespaceHandler that handles the <code>template</code> namespace,
@@ -33,8 +37,21 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  */
 public class TemplateNamespaceHandler extends NamespaceHandlerSupport {
 
+	TemplateDefinitionParser definitionParser = new TemplateDefinitionParser();
+	
 	public void init() {
-		registerBeanDefinitionParser("definition", new TemplateDefinitionParser());
+		registerBeanDefinitionParser("config", new ConfigParser());
+		registerBeanDefinitionParser("definition", definitionParser);
+	}
+	
+	private class ConfigParser implements BeanDefinitionParser {
+		
+		public BeanDefinition parse(Element element, ParserContext parserContext) {
+			definitionParser.setPrefix(element.getAttribute("prefix"));
+			definitionParser.setSuffix(element.getAttribute("suffix"));
+			return null;
+		}
+		
 	}
 
 }

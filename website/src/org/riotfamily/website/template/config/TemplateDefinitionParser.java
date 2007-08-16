@@ -30,36 +30,79 @@ import java.util.Iterator;
 import org.riotfamily.common.beans.xml.GenericBeanDefinitionParser;
 import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.website.template.PushUpTemplateController;
-import org.riotfamily.website.template.TemplateController;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
+import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 public class TemplateDefinitionParser extends GenericBeanDefinitionParser {
 
+	private String prefix = "/inc";
+	
+	private String suffix = ".html";
+	
 	public TemplateDefinitionParser() {
-		super(TemplateController.class);
+		super(PushUpTemplateController.class);
 		addReference("parent");
 		setDecorate(false);
 	}
 
-	protected void postProcess(BeanDefinitionBuilder beanDefinition, Element element) {
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
+	}
+
+	protected void postProcess(BeanDefinitionBuilder builder, 
+			ParserContext parserContext, Element element) {
 
 		HashMap configuration = new HashMap();
 		ArrayList pushUpSlots = null;
-
+		
 		Iterator it = DomUtils.getChildElementsByTagName(element, "insert").iterator();
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();
-			String slot = ele.getAttribute("slot");
-			String url = ele.getAttribute("url");
+			String slot = XmlUtils.getAttribute(ele, "slot");
+			String url = XmlUtils.getAttribute(ele, "url");
+			if (url == null) {
+				
+				Element handlerElement = XmlUtils.getFirstChildElement(ele);
+				
+				BeanDefinition bd;
+				BeanDefinitionParserDelegate delegate = parserContext.getDelegate();
+				
+				if (delegate.isDefaultNamespace(handlerElement.getNamespaceURI())) {
+					bd = delegate.parseBeanDefinitionElement(handlerElement, null, null);
+				}
+				else {
+					bd = delegate.parseCustomElement(handlerElement);
+				}
+				
+				String beanName = delegate.getReaderContext().generateBeanName(bd);
+				
+				String id = XmlUtils.getAttribute(element, "id");
+				if (id == null) {
+					id = beanName;
+				}
+				
+				url = prefix  + "/" + id + "/" + slot + suffix; 
+				String[] aliases = new String[] {url};
+				
+				BeanDefinitionHolder bdHolder = new BeanDefinitionHolder(bd, beanName, aliases);
+				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, parserContext.getRegistry());
+				
+			}
 			Integer pushUp = XmlUtils.getIntegerAttribute(ele, "push-up");
 			if (pushUp != null) {
 				if (pushUpSlots == null) {
 					pushUpSlots = new ArrayList();
-					beanDefinition.addPropertyValue("pushUpSlots", pushUpSlots);
-					beanDefinition.getBeanDefinition().setBeanClass(
-							PushUpTemplateController.class);
+					builder.addPropertyValue("pushUpSlots", pushUpSlots);
 				}
 				pushUpSlots.add(slot);
 			}
@@ -74,7 +117,7 @@ public class TemplateDefinitionParser extends GenericBeanDefinitionParser {
 		}
 
 		if (!configuration.isEmpty()) {
-			beanDefinition.addPropertyValue("configuration", configuration);
+			builder.addPropertyValue("configuration", configuration);
 		}
 	}
 

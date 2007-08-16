@@ -5,14 +5,49 @@
 		targetNamespace="http://www.riotfamily.org/schema/website/template"
 		xmlns="http://www.riotfamily.org/schema/website/template">
 
+	<xsd:element name="config">
+		<xsd:annotation>
+			<xsd:documentation><![CDATA[
+	Configures how URLs for nested anonymous handlers are generated.
+			]]></xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="prefix" type="xsd:string" default="/inc">
+				<xsd:annotation>
+					<xsd:documentation><![CDATA[
+	The prefix that is used to generate bean names of nested handlers.
+					]]></xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="suffix" type="xsd:string" default=".html">
+				<xsd:annotation>
+					<xsd:documentation><![CDATA[
+	The suffix that is used to generate bean names of nested handlers.
+					]]></xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+		
 	<xsd:element name="definition">
 		<xsd:complexType>
 			<xsd:sequence minOccurs="0" maxOccurs="unbounded">
 				<xsd:choice>
 					<xsd:element name="insert">
 						<xsd:complexType>
+							<xsd:choice minOccurs="0">
+								<xsd:any namespace="##any">
+									<xsd:annotation>
+										<xsd:documentation><![CDATA[
+	A handler to insert into the slot. Can be used instead of specifing the 
+	url attribute. In this case a the URL (i.e. bean name) is generated using
+	the following pattern: prefix + '/' + templateId + '/' + slot + suffix 
+										]]></xsd:documentation>
+									</xsd:annotation>
+								</xsd:any>							
+							</xsd:choice>
 							<xsd:attribute name="slot" use="required" />
-							<xsd:attribute name="url" use="required" />
+							<xsd:attribute name="url" />
 							<xsd:attribute name="push-up" type="xsd:positiveInteger" />
 						</xsd:complexType>
 					</xsd:element>

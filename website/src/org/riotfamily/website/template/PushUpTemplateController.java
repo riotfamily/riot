@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.website.interceptor.pushup.DeferredRenderingResponseWrapper;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
@@ -46,7 +47,7 @@ import org.springframework.web.servlet.ModelAndView;
  * These 'pushed-up' controllers can expose request attributes which can then
  * be read by other controllers that would usually be processed before.
  * A common usecase is when a controller that renders the page content also
- * wants to controll the document's title tag.
+ * wants to control the document's title tag.
  * </p>
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
@@ -104,7 +105,8 @@ public class PushUpTemplateController extends TemplateController {
 	protected String getDeferredRenderingUrl(HttpServletRequest request,
 			String slot) {
 
-		StringBuffer url = new StringBuffer(request.getServletPath())
+		StringBuffer url = new StringBuffer()
+				.append(ServletUtils.getPathWithinApplication(request))
 				.append('?').append(SLOT_TO_RENDER_PARAMETER).append('=')
 				.append(slot);
 
