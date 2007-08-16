@@ -44,7 +44,7 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 		registerBeanDefinitionParser("properties", new PropertyOverrideParser());
 		registerBeanDefinitionParser("put", new MapMergeParser());
 		registerBeanDefinitionParser("add", new ListMergeParser());
-		registerBeanDefinitionParser("bean", new BeanReplacementParser());
+		registerBeanDefinitionParser("bean", new BeanOverrideParser());
 	}
 	
 	private static class PropertyOverrideParser extends GenericBeanDefinitionParser {
@@ -94,10 +94,10 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 		}
 	}
 
-	private static class BeanReplacementParser extends GenericBeanDefinitionParser {
+	private static class BeanOverrideParser extends GenericBeanDefinitionParser {
 		
-		public BeanReplacementParser() {
-			super(BeanReplacementProcessor.class);
+		public BeanOverrideParser() {
+			super(BeanOverrideProcessor.class);
 		}
 		
 		protected boolean isEligibleAttribute(String attributeName) {

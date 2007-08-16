@@ -43,9 +43,9 @@ import org.springframework.beans.factory.config.ConstructorArgumentValues;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class BeanReplacementProcessor implements BeanFactoryPostProcessor {
+public class BeanOverrideProcessor implements BeanFactoryPostProcessor {
 
-	private static Log log = LogFactory.getLog(BeanReplacementProcessor.class);
+	private static Log log = LogFactory.getLog(BeanOverrideProcessor.class);
 	
 	private String ref;
 
