@@ -16,10 +16,11 @@
 		<config>components/META-INF/riot/website-servlet.xml</config>
 		<config>website/META-INF/riot/application-context.xml</config>
 		<config>website/META-INF/riot/website-servlet.xml</config>
+		<config>components/src/org/riotfamily/components/runtime/riot-config.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
-			<name>website</name>
+			<name><![CDATA[website]]></name>
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
@@ -34,7 +35,7 @@
 			</configs>
 		</configSet>
 		<configSet>
-			<name>riot</name>
+			<name><![CDATA[riot]]></name>
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
