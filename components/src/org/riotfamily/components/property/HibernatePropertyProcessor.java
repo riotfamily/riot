@@ -67,7 +67,7 @@ public class HibernatePropertyProcessor extends AbstractSinglePropertyProcessor
 	protected void initialize() {
 		if (sessionFactory == null) {
 			sessionFactory = (SessionFactory) applicationContext.getBean(
-					"riotSessionFactory", SessionFactory.class);
+					"sessionFactory", SessionFactory.class);
 		}
 		Assert.notNull(entityClass, "The property 'entityClass' must be set.");
 	}
