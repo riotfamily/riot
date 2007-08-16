@@ -118,7 +118,7 @@
 		</bean>
 	</override:add>
 	
-	<override:add ref="resourceController" property="mappings">
+	<override:add ref="resourceController" property="mappings" append="true">
 		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
 			<property name="path" value="/" />
 			<property name="location" value="classpath:/org/riotfamily/components/runtime/resources/" />
