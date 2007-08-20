@@ -174,9 +174,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
-			if (page.isWildcardInPath()) {
-				patterns.add(new AttributePattern(locationResolver.getUrl(page)));
-			}
+			patterns.add(new AttributePattern(locationResolver.getUrl(page)));
 		}
 		return patterns;
 	}

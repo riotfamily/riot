@@ -27,15 +27,16 @@
 
 <#function urlForHandler handlerName attributes...>
 	<#if attributes?size == 0>
-		<#return url(commonMacroHelper.getUrlForHandler(handlerName)) />
+		<#local uri = commonMacroHelper.getUrlForHandler(handlerName) />
 	<#else>
 		<#local attributes = attributes[0] />
 		<#if attributes?is_hash>
-			<#return url(commonMacroHelper.getUrlForHandlerWithAttributes(handlerName, attributes)) />
+			<#local uri = commonMacroHelper.getUrlForHandlerWithAttributes(handlerName, attributes) />
 		<#else>
-			<#return url(commonMacroHelper.getUrlForHandlerWithAttribute(handlerName, attributes)) />
+			<#local uri = commonMacroHelper.getUrlForHandlerWithAttribute(handlerName, attributes) />
 		</#if>
 	</#if>
+	<#return url(uri) />
 </#function>
 
 <#function resource uri>
