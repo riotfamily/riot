@@ -46,6 +46,7 @@
 		<property name="hidden" />
 		<property name="folder" />
 		<property name="path" column="`path`" />
+		<property name="wildcardInPath" />
 		<many-to-one name="versionContainer" cascade="all" />
 	</class>
 

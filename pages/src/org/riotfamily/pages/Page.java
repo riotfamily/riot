@@ -53,6 +53,8 @@ public class Page {
 	private boolean folder;
 
 	private String path;
+	
+	private boolean wildcardInPath;
 
 	private boolean published;
 
@@ -108,10 +110,6 @@ public class Page {
 		this.pathComponent = pathComponent;
 	}
 
-	public boolean isWildcardMapping() {
-		return "*".equals(pathComponent);
-	}
-
 	public boolean isHidden() {
 		return this.hidden;
 	}
@@ -143,12 +141,26 @@ public class Page {
 		this.path = path;
 	}
 
+	public boolean isWildcard() {
+		return pathComponent.indexOf("@{") != -1;
+	}
+	
+	public boolean isWildcardInPath() {
+		return this.wildcardInPath;
+	}
+
+	public void setWildcardInPath(boolean wildcardInPath) {
+		this.wildcardInPath = wildcardInPath;
+	}
+
 	public String buildPath() {
 		StringBuffer path = new StringBuffer();
+		wildcardInPath = false;
 		Page page = this;
 		while (page != null) {
 			path.insert(0, page.getPathComponent());
 			path.insert(0, '/');
+			wildcardInPath |= page.isWildcard();
 			page = page.getParentPage();
 		}
 		return path.toString();

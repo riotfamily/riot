@@ -29,7 +29,7 @@ import java.util.Locale;
 
 /**
  * Class that specifies the location of a Page. A page or alias can be uniquely
- * identified using a path and a locale.
+ * identified using a path, locale and site name.
  *
  * @author Felix Gnass [fgnass at neteye dot de]
  * @author Jan-Frederic Linde [jfl at neteye dot de]

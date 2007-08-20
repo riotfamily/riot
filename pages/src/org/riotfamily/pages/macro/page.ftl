@@ -35,28 +35,6 @@
 </#function>
 
 <#--
-  - Returns the URL for the system-page with the given handlerName.
-  -->
-<#function handlerUrl handlerName locale=common.locale>
-	<#return url(pageForHandler(handlerName, locale)) />
-</#function>
-
-<#--
-  - Returns the URL for the wildcard-system-page with the given handlerName.
-  -->
-<#function wildcardHandlerUrl handlerName replacement locale=common.locale>
-	<#return common.url(pageMacroHelper.getWildcardHandlerUrl(handlerName, replacement, locale)) />
-</#function>
-
-<#--
-  - Returns the pathComponent that matched the wildcard, or null if the
-  - current Page has no wildcard mapping.
-  -->
-<#function wildcardMatch>
-	<#return pageMacroHelper.wildcardMatch />
-</#function>
-
-<#--
   - Returns the URL of the given page.
   -->
 <#function url page>

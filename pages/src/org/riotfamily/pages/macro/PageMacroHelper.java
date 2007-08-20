@@ -39,7 +39,6 @@ import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.pages.mapping.PageLocationResolver;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
@@ -99,22 +98,6 @@ public class PageMacroHelper {
 			return resolver.getUrl(page);
 		}
 		return null;
-	}
-
-	public String getWildcardHandlerUrl(String handlerName,
-			String wildcardReplacement, Locale locale) {
-
-		Page page = getPageForHandler(handlerName, locale);
-		if (page != null) {
-			Assert.isTrue(page.isWildcardMapping(), "Page has no wildcard mapping");
-			String url = resolver.getUrl(page); 
-			return StringUtils.replace(url, "*", wildcardReplacement);
-		}
-		return null;
-	}
-
-	public String getWildcardMatch() {
-		return PageHandlerMapping.getWildcardMatch(request);
 	}
 
 	public boolean isVisible(Page page) {

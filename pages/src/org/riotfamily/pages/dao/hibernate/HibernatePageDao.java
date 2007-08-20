@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
@@ -129,6 +130,17 @@ public class HibernatePageDao extends AbstractPageDao {
 
 	public List findPagesForHandler(String handlerName, Locale locale) {
 		return hibernate.list(createPageQuery(handlerName, locale));
+	}
+	
+	public List getWildcardPaths(PageLocation location) {
+		String siteName = location.getSiteName();
+		Site site = siteName != null ? getSite(siteName) : getDefaultSite();
+		Criteria c = hibernate.createCacheableCriteria(Page.class);
+		c.setProjection(Projections.property("path"));
+		c.add(Restrictions.eq("wildcardInPath", Boolean.TRUE));
+		HibernateUtils.addEqOrNull(c, "locale", location.getLocale());
+		c.createCriteria("node").add(Restrictions.eq("site", site));
+		return hibernate.list(c);
 	}
 
 	private Query createPageQuery(String handlerName, Locale locale) {

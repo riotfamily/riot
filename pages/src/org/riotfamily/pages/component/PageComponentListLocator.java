@@ -23,8 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.component;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
+import org.riotfamily.common.beans.MapWrapper;
+import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.components.ComponentListLocator;
 import org.riotfamily.components.Location;
 import org.riotfamily.components.locator.SlotResolver;
@@ -33,7 +39,6 @@ import org.riotfamily.pages.Page;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.pages.mapping.PageLocationResolver;
-import org.springframework.util.StringUtils;
 
 /**
  * ComponentListLocator that uses the page-id as component-path.
@@ -70,9 +75,11 @@ public class PageComponentListLocator implements ComponentListLocator {
 	public Location getLocation(HttpServletRequest request) {
 		Location location = new Location();
 		Page page = PageHandlerMapping.getPage(request);
-		if (page.isWildcardMapping()) {
+		if (page.isWildcardInPath()) {
+			Map attributes = PageHandlerMapping.getWildcardAttributes(request);
+			String jsonString = JSONObject.fromObject(attributes).toString();
 			location.setType(TYPE_WILDCARD_PAGE_PREFIX + page.getId());
-			location.setPath(PageHandlerMapping.getWildcardMatch(request));
+			location.setPath(jsonString);
 		}
 		else {
 			location.setType(TYPE_PAGE);
@@ -93,8 +100,9 @@ public class PageComponentListLocator implements ComponentListLocator {
 	public String getUrl(Location location) {
 		Page page = loadPage(location);
 		String url = resolver.getUrl(page);
-		if (page.isWildcardMapping()) {
-			url = StringUtils.replace(url, "*", location.getPath());
+		if (page.isWildcardInPath()) {
+			Map attributes = JSONObject.fromObject(location.getPath());
+			url = new AttributePattern(url).fillInAttributes(new MapWrapper(attributes));
 		}
 		return url;
 	}

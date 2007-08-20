@@ -107,7 +107,7 @@ public class PageChooserController implements Controller {
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
-			if (!page.isWildcardMapping()) {
+			if (!page.isWildcardInPath()) {
 				PageLink link = new PageLink();
 				link.setPathComponent(page.getPathComponent());
 				link.setLink(resolver.getUrl(page));

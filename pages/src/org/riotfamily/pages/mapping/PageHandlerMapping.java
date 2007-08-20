@@ -23,6 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.mapping;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,33 +36,35 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.web.controller.HttpErrorController;
 import org.riotfamily.common.web.controller.RedirectController;
+import org.riotfamily.common.web.mapping.AbstractReverseHandlerMapping;
+import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
 import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.riot.security.AccessController;
-import org.springframework.web.servlet.handler.AbstractHandlerMapping;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
+import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
-public class PageHandlerMapping extends AbstractHandlerMapping {
-
-	public static final String WILDCARD_MATCH_ATTRIBUTE =
-			PageHandlerMapping.class.getName() + ".wildcardMatch";
+public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 
 	private static final String PAGE_ATTRIBUTE =
 			PageHandlerMapping.class.getName() + ".page";
 
 	private static final Log log = LogFactory.getLog(PageHandlerMapping.class);
 
+	private PathMatcher pathMatcher = new AntPathMatcher();
+	
 	private PageDao pageDao;
 
 	private PageLocationResolver locationResolver;
-
-	private boolean wildcardsEnabled = true;
 
 	private Object defaultPageHandler;
 
@@ -75,25 +83,33 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 			throws Exception {
 
 		PageLocation location = locationResolver.getPageLocation(request);
+		String urlPath = location.getPath();
 		if (location == null) {
 			return null;
 		}
 		Page page = pageDao.findPage(location);
-		if (page == null && wildcardsEnabled) {
-			String path = location.getPath();
-			int i = path.lastIndexOf('/');
+		if (page == null) {
+			String bestMatch = null;
+			for (Iterator it = pageDao.getWildcardPaths(location).iterator(); it.hasNext();) {
+				String path = (String) it.next();
+				String antPattern = AttributePattern.convertToAntPattern(path);
+				if (pathMatcher.match(antPattern, urlPath) &&
+						(bestMatch == null || bestMatch.length() <= path.length())) {
 
-			PageLocation wildcardLocation = new PageLocation(
-					location.getSiteName(),
-					path.substring(0, i) + "/*",
-					location.getLocale());
-
-			page = pageDao.findPage(wildcardLocation);
-			if (page != null) {
-				String wildcardMatch = path.substring(i + 1);
-				request.setAttribute(WILDCARD_MATCH_ATTRIBUTE, wildcardMatch);
+					bestMatch = path;
+				}
+			}
+			if (bestMatch != null) {
+				location.setPath(bestMatch);
+				page = pageDao.findPage(location);
+				exposeAttributes(bestMatch, urlPath, request);
+				exposePathWithinMapping(pathMatcher.extractPathWithinPattern(bestMatch, urlPath), request);
 			}
 		}
+		else {
+			exposePathWithinMapping(urlPath, request);
+		}
+		
 		log.debug("Page: " + page);
 		if (page != null) {
 			if (isRequestable(page)) {
@@ -121,7 +137,25 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 		}
 		return null;
 	}
+	
+	/**
+	 * <strong>Copied from AbstractUrlHandlerMapping</strong>
+	 */
+	protected void exposePathWithinMapping(String pathWithinMapping, HttpServletRequest request) {
+		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, pathWithinMapping);
+	}
+	
+	protected void exposeAttributes(String antPattern, String urlPath,
+			HttpServletRequest request) {
 
+		AttributePattern pattern = new AttributePattern(antPattern);
+		pattern.expose(urlPath, request);
+	}
+	
+	public static Map getWildcardAttributes(HttpServletRequest request) {
+		return (Map) request.getAttribute(AttributePattern.EXPOSED_ATTRIBUTES);
+	}
+	
 	private boolean isRequestable(Page page) {
 		return page.isEnabled() || AccessController.isAuthenticatedUser();
 	}
@@ -129,9 +163,22 @@ public class PageHandlerMapping extends AbstractHandlerMapping {
 	public static Page getPage(HttpServletRequest request) {
 		return (Page) request.getAttribute(PAGE_ATTRIBUTE);
 	}
+	
 
-	public static String getWildcardMatch(HttpServletRequest request) {
-		return (String) request.getAttribute(WILDCARD_MATCH_ATTRIBUTE);
+	protected List getPatternsForHandler(String beanName, 
+			HttpServletRequest request) {
+		
+		Locale locale = RequestContextUtils.getLocale(request);
+		List pages = pageDao.findPagesForHandler(beanName, locale);
+		ArrayList patterns = new ArrayList(pages.size());
+		Iterator it = pages.iterator();
+		while (it.hasNext()) {
+			Page page = (Page) it.next();
+			if (page.isWildcardInPath()) {
+				patterns.add(new AttributePattern(locationResolver.getUrl(page)));
+			}
+		}
+		return patterns;
 	}
 
 }

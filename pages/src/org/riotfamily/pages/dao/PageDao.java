@@ -89,6 +89,11 @@ public interface PageDao {
 	public List findPagesForHandler(String handlerName, Locale locale);
 
 	/**
+	 * 
+	 */
+	public List getWildcardPaths(PageLocation location);
+	
+	/**
 	 * Returns the root node for the given site.
 	 */
 	public PageNode findRootNode(Site site);
