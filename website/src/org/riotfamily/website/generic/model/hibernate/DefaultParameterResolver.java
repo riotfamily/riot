@@ -26,10 +26,10 @@ package org.riotfamily.website.generic.model.hibernate;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * ParameterResolver that first looks for a HTTP parameter with name returned
- * by <code>getName()</code>. If parameter is empty it returns null.
- * If no parameter is found, it looks for a request attribute with the name
- * returned by <code>getAttribute()</code>.
+ * ParameterResolver that first looks for a request attribute with the name 
+ * returned by <code>getAttribute()</code>. If no attribute is found, it looks 
+ * for a request parameter with the name returned by <code>getName()</code>.
+ * If the parameter is an empty String, <code>null</code> is returned.
  */
 public class DefaultParameterResolver extends AbstractParameterResolver {
 
@@ -44,13 +44,12 @@ public class DefaultParameterResolver extends AbstractParameterResolver {
 	}
 
 	public Object getValueInternal(HttpServletRequest request) {
-		Object value = request.getParameter(getName());
-		if (value == null) {
-			value = request.getAttribute(getAttribute());
-		} else if (((String) value).length() == 0) {
-			return null;
+		Object value = request.getAttribute(getAttribute());
+		if (value != null) {
+			return value;
 		}
-		return value;
+		String s = (String) request.getParameter(getName());
+		return (s == null || s.length() == 0) ? null : s;
 	}
 	
 }
