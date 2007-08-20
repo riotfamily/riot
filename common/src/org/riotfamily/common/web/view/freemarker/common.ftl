@@ -1,4 +1,6 @@
 <#assign locale = commonMacroHelper.getLocale() />
+<#assign documentUri = commonMacroHelper.getOriginatingRequestUri() />
+<#assign includeUri = commonMacroHelper.getIncludeUri() />
 
 <#--
   - Macro that includes the given URI using a RequestDispatcher.
@@ -23,16 +25,25 @@
 	<#return commonMacroHelper.getAbsoluteUrl(uri) />
 </#function>
 
+<#function urlForHandler handlerName attributes...>
+	<#if attributes?size == 0>
+		<#return url(commonMacroHelper.getUrlForHandler(handlerName)) />
+	<#else>
+		<#local attributes = attributes[0] />
+		<#if attributes?is_hash>
+			<#return url(commonMacroHelper.getUrlForHandlerWithAttributes(handlerName, attributes)) />
+		<#else>
+			<#return url(commonMacroHelper.getUrlForHandlerWithAttribute(handlerName, attributes)) />
+		</#if>
+	</#if>
+</#function>
+
 <#function resource uri>
-	<#return commonMacroHelper.addTimestamp(uri) />
+	<#return url(commonMacroHelper.addTimestamp(uri)) />
 </#function>
 
 <#function partition collection property>
 	<#return commonMacroHelper.partition(collection, property) />
-</#function>
-
-<#function group collection size>
-	<#return commonMacroHelper.group(collection, size) />
 </#function>
 
 <#function randomItem(collection)>
@@ -55,10 +66,6 @@
 <#function toTitleCase s>
 	<#return commonMacroHelper.toTitleCase(s) />
 </#function>
-
-<#macro includeUriField>
-	<input type="hidden" name="__includeUri" value="${request.requestUri}" />
-</#macro>
 
 <#macro wrap value="" tag="div" attributes...>
 	<#if value?has_content>

@@ -26,7 +26,6 @@ package org.riotfamily.common.web.view;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -42,6 +41,7 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.filter.ResourceStamper;
+import org.riotfamily.common.web.mapping.ReverseHandlerMapping;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -62,14 +62,18 @@ public class CommonMacroHelper {
 
 	private ResourceStamper stamper;
 
+	private List mappings;
+	
 	private Locale requestLocale = null;
 
 	public CommonMacroHelper(HttpServletRequest request,
-			HttpServletResponse response, ResourceStamper stamper) {
+			HttpServletResponse response, ResourceStamper stamper,
+			List mappings) {
 
 		this.request = request;
 		this.response = response;
 		this.stamper = stamper;
+		this.mappings = mappings;
 	}
 
 	public Random getRandom() {
@@ -92,12 +96,52 @@ public class CommonMacroHelper {
 				.append(request.getContextPath()).append(url).toString();
 	}
 
+	public String getUrlForHandler(String handlerName) {
+		String url = null;
+		Iterator it = mappings.iterator();
+		while (url == null && it.hasNext()) {
+			ReverseHandlerMapping mapping = (ReverseHandlerMapping) it.next();
+			url = mapping.getUrlForHandler(handlerName, request);
+		}
+		return url; 
+	}
+	
+	public String getUrlForHandlerWithAttribute(String handlerName, 
+			Object attribute) { 
+		
+		String url = null;
+		Iterator it = mappings.iterator();
+		while (url == null && it.hasNext()) {
+			ReverseHandlerMapping mapping = (ReverseHandlerMapping) it.next();
+			url = mapping.getUrlForHandlerWithAttribute(
+					handlerName, attribute, request);
+		}
+		return url; 
+	}
+	
+	public String getUrlForHandlerWithAttributes(String handlerName,
+			Object attributes) {
+		
+		String url = null;
+		Iterator it = mappings.iterator();
+		while (url == null && it.hasNext()) {
+			ReverseHandlerMapping mapping = (ReverseHandlerMapping) it.next();
+			url = mapping.getUrlForHandlerWithAttributes(
+					handlerName, attributes, request);
+		}
+		return url;
+	}
+		
 	public String getOriginatingRequestUri() {
 		String uri = ServletUtils.getOriginatingRequestUri(request);
 		if (StringUtils.hasText(request.getQueryString())) {
 			uri = uri + "?" + request.getQueryString();
 		}
  		return uri;
+	}
+	
+	public String getIncludeUri() {
+		return ServletUtils.getIncludeUri(request);
 	}
 
 	public boolean isExternalUrl(String url) {
@@ -123,26 +167,11 @@ public class CommonMacroHelper {
 	}
 
 	public String addTimestamp(String s) {
-		return request.getContextPath() + stamper.stamp(s);
+		return stamper.stamp(s);
 	}
 
 	public List partition(Collection c, String titleProperty) {
 		return PropertyUtils.partition(c, titleProperty);
-	}
-
-	public List group(Collection c, int size) {
-		ArrayList groups = new ArrayList();
-		int i = 0;
-		ArrayList group = null;
-		Iterator it = c.iterator();
-		while (it.hasNext()) {
-			if (i++ % size == 0) {
-				group = new ArrayList();
-				groups.add(group);
-			}
-			group.add(it.next());
-		}
-		return groups;
 	}
 
 	public String getFileExtension(String filename, Collection validExtensions,

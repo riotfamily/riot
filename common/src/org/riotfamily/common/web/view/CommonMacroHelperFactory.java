@@ -23,27 +23,50 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.view;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.filter.ResourceStamper;
+import org.riotfamily.common.web.mapping.ReverseHandlerMapping;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.OrderComparator;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class CommonMacroHelperFactory implements MacroHelperFactory {
+public class CommonMacroHelperFactory implements MacroHelperFactory, 
+		ApplicationContextAware {
 
 	private ResourceStamper stamper;
 	
+	private List mappings;
+	
 	public void setStamper(ResourceStamper stamper) {
 		this.stamper = stamper;
+	}
+	
+	public void setApplicationContext(ApplicationContext applicationContext) 
+			throws BeansException {
+		
+		mappings = new ArrayList(applicationContext.getBeansOfType(
+				ReverseHandlerMapping.class).values());
+		
+		if (!mappings.isEmpty()) {
+			Collections.sort(mappings, new OrderComparator());
+		}
 	}
 
 	public Object createMacroHelper(HttpServletRequest request, 
 			HttpServletResponse response) {
 		
-		return new CommonMacroHelper(request, response, stamper);
+		return new CommonMacroHelper(request, response, stamper, mappings);
 	}
 
 }

@@ -24,31 +24,20 @@
 package org.riotfamily.common.web.mapping;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContextException;
-import org.springframework.core.Ordered;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.util.Assert;
 import org.springframework.util.PathMatcher;
 import org.springframework.util.StringUtils;
-import org.springframework.web.context.request.WebRequestInterceptor;
-import org.springframework.web.context.support.WebApplicationObjectSupport;
-import org.springframework.web.servlet.HandlerExecutionChain;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapter;
 
 /**
  * HandlerMapping that works like Spring's BeanNameUrlHandlerMapping and
@@ -57,25 +46,8 @@ import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapt
  * equivalent to <code>/foo/bar/&#42;/&#42;</code>, the last two wildcards
  * would be exposed as attributes "some" and "value".
  */
-public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
-		implements HandlerMapping, Ordered {
-
-	private static final Pattern ATTRIBUTE_NAME_PATTERN =
-			Pattern.compile("@\\{(.+?)((\\*)|\\:(.*?))?\\}");
-
-	private static final Pattern STAR_PATTERN =
-			Pattern.compile("\\\\\\*");
-
-	private static final Pattern DOUBLE_STAR_PATTERN =
-			Pattern.compile("\\\\\\*\\\\\\*");
-
-	private int order = Integer.MAX_VALUE;  // default: same as non-Ordered
-
-	private Object defaultHandler;
-
-	private HandlerInterceptor[] interceptors;
-
-	private PathMatcher pathMatcher = new AntPathMatcher();
+public class AdvancedBeanNameHandlerMapping 
+		extends AbstractReverseHandlerMapping {
 
 	private final Map handlerMap = new HashMap();
 
@@ -83,160 +55,71 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 
     private HashMap patternsByBeanName = new HashMap();
 
-    private boolean stripServletMapping = true;
-
+    private PathMatcher pathMatcher = new AntPathMatcher();
+	
+	private boolean stripServletMapping = true;
+	
 	public void setStripServletMapping(boolean stripServletMapping) {
 		this.stripServletMapping = stripServletMapping;
 	}
-
-	public final void setOrder(int order) {
-		this.order = order;
+	
+	protected boolean isStripServletMapping() {
+		return this.stripServletMapping;
 	}
-
-	public final int getOrder() {
-		return order;
-	}
-
-	/**
-	 * Set the default handler for this handler mapping.
-	 * This handler will be returned if no specific mapping was found.
-	 * <p>Default is <code>null</code>, indicating no default handler.
-	 * @param defaultHandler default handler instance, or <code>null</code> if none
+	
+    /**
+	 * <strong>Copied from BeanNameUrlHandlerMapping</strong>
 	 */
-	public final void setDefaultHandler(Object defaultHandler) {
-		this.defaultHandler = defaultHandler;
-		if (logger.isInfoEnabled()) {
-			logger.info("Default mapping to handler [" + this.defaultHandler + "]");
-		}
-	}
+	public void initApplicationContext() throws ApplicationContextException {
+		super.initApplicationContext();
+    	String[] beanNames = getApplicationContext().getBeanDefinitionNames();
 
-	/**
-	 * Return the default handler for this handler mapping.
-	 * @return the default handler instance, or <code>null</code> if none
-	 */
-	protected final Object getDefaultHandler() {
-		return defaultHandler;
-	}
-
-	/**
-	 * Set the interceptors to apply for all handlers mapped by this handler mapping.
-	 * <p>Supported interceptor types are HandlerInterceptor and WebRequestInterceptor.
-	 * @param interceptors array of handler interceptors, or <code>null</code> if none
-	 * @see #adaptInterceptor
-	 * @see org.springframework.web.servlet.HandlerInterceptor
-	 * @see org.springframework.web.context.request.WebRequestInterceptor
-	 */
-	public final void setInterceptors(Object[] interceptors) {
-		if (interceptors != null) {
-			this.interceptors = new HandlerInterceptor[interceptors.length];
-			for (int i = 0; i < interceptors.length; i++) {
-				this.interceptors[i] = adaptInterceptor(interceptors[i]);
+		// Take any bean name or alias that begins with a slash.
+		for (int i = 0; i < beanNames.length; i++) {
+			String[] urls = checkForUrl(beanNames[i]);
+			if (urls.length > 0) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Found URL mapping [" + beanNames[i] + "]");
+				}
+				ArrayList patterns = new ArrayList();
+				// Create a mapping to each part of the path.
+				for (int j = 0; j < urls.length; j++) {
+					String attributePattern = urls[j];
+					String antPattern = AttributePattern.convertToAntPattern(attributePattern);
+					registerHandler(antPattern, beanNames[i]);
+					AttributePattern p = new AttributePattern(attributePattern);
+					patternsByAntPath.put(antPattern, p);
+					patterns.add(p);
+				}
+				patternsByBeanName.put(beanNames[i], patterns);
 			}
-		}
-		else {
-			this.interceptors = null;
-		}
-	}
-
-	/**
-	 * Adapt the given interceptor object to the HandlerInterceptor interface.
-	 * <p>Supported interceptor types are HandlerInterceptor and WebRequestInterceptor.
-	 * Can be overridden in subclasses.
-	 * @param interceptor the specified interceptor object
-	 * @return the interceptor wrapped as HandlerInterceptor
-	 * @see org.springframework.web.servlet.HandlerInterceptor
-	 * @see org.springframework.web.context.request.WebRequestInterceptor
-	 */
-	protected HandlerInterceptor adaptInterceptor(Object interceptor) {
-		if (interceptor instanceof HandlerInterceptor) {
-			return (HandlerInterceptor) interceptor;
-		}
-		else if (interceptor instanceof WebRequestInterceptor) {
-			return new WebRequestHandlerInterceptorAdapter((WebRequestInterceptor) interceptor);
-		}
-		else {
-			throw new IllegalArgumentException("Interceptor type not supported: " + interceptor);
-		}
-	}
-
-	protected String getLookupPath(HttpServletRequest request) {
-		if (stripServletMapping) {
-			return ServletUtils.getPathWithoutServletMapping(request);
-		}
-		else {
-			return ServletUtils.getPathWithinApplication(request);
-		}
-	}
-
-	/**
-	 * Look up a handler for the given request, falling back to the default
-	 * handler if no specific one is found.
-	 * @param request current HTTP request
-	 * @return the looked up handler instance, or the default handler
-	 */
-	public final HandlerExecutionChain getHandler(HttpServletRequest request)
-			throws Exception {
-
-		String lookupPath = getLookupPath(request);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Looking up handler for [" + lookupPath + "]");
-		}
-
-		Object handler = lookupHandler(lookupPath, request);
-
-		if (handler == null) {
-			handler = this.defaultHandler;
-		}
-		if (handler == null) {
-			return null;
-		}
-
-		// bean name of resolved handler?
-		if (handler instanceof String) {
-			String handlerName = (String) handler;
-			handler = getApplicationContext().getBean(handlerName);
-		}
-		return new HandlerExecutionChain(handler, this.interceptors);
-	}
-
-	/**
-	 * Look up a handler instance for the given URL path.
-	 * <p>Supports direct matches, e.g. a registered "/test" matches "/test",
-	 * and various Ant-style pattern matches, e.g. a registered "/t*" matches
-	 * both "/test" and "/team". For details, see the AntPathMatcher class.
-	 * <p>Looks for the most exact pattern, where most exact is defined as
-	 * the longest path pattern.
-	 * <p><strong>Copied from AbstractUrlHandlerMapping</strong>
-	 * @param urlPath URL the bean is mapped to
-	 * @return the associated handler instance, or <code>null</code> if not found
-	 * @see org.springframework.util.AntPathMatcher
-	 */
-	protected Object lookupHandler(String urlPath, HttpServletRequest request) {
-		// direct match?
-		Object handler = this.handlerMap.get(urlPath);
-		if (handler == null) {
-			// pattern match?
-			String bestPathMatch = null;
-			for (Iterator it = this.handlerMap.keySet().iterator(); it.hasNext();) {
-				String registeredPath = (String) it.next();
-				if (this.pathMatcher.match(registeredPath, urlPath) &&
-						(bestPathMatch == null || bestPathMatch.length() <= registeredPath.length())) {
-
-					handler = this.handlerMap.get(registeredPath);
-					bestPathMatch = registeredPath;
+			else {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Rejected bean name '" + beanNames[i] + "'");
 				}
 			}
-			if (handler != null) {
-				exposeAttributes(bestPathMatch, urlPath, request);
-				exposePathWithinMapping(this.pathMatcher.extractPathWithinPattern(bestPathMatch, urlPath), request);
+		}
+	}
+	
+	/**
+	 * Check name and aliases of the given bean for URLs,
+	 * detected by starting with "/".
+	 * <p><strong>Copied from BeanNameUrlHandlerMapping</strong>
+	 */
+	private String[] checkForUrl(String beanName) {
+		List urls = new ArrayList();
+		if (beanName.startsWith("/")) {
+			urls.add(beanName);
+		}
+		String[] aliases = getApplicationContext().getAliases(beanName);
+		for (int j = 0; j < aliases.length; j++) {
+			if (aliases[j].startsWith("/")) {
+				urls.add(aliases[j]);
 			}
 		}
-		else {
-			exposePathWithinMapping(urlPath, request);
-		}
-		return handler;
+		return StringUtils.toStringArray(urls);
 	}
-
+		
 	/**
 	 * Register the given handler instance for the given URL path.
 	 * <p><strong>Copied from AbstractUrlHandlerMapping</strong>
@@ -244,7 +127,7 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 	 * @param handler the handler instance
 	 * @throws BeansException if the handler couldn't be registered
 	 */
-	protected void registerHandler(String urlPath, Object handler) throws BeansException {
+	private void registerHandler(String urlPath, Object handler) throws BeansException {
 		Object mappedHandler = this.handlerMap.get(urlPath);
 		if (mappedHandler != null) {
 			throw new ApplicationContextException(
@@ -272,69 +155,78 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 		}
 	}
 
+	protected String getLookupPath(HttpServletRequest request) {
+		if (stripServletMapping) {
+			return ServletUtils.getPathWithoutServletMapping(request);
+		}
+		else {
+			return ServletUtils.getPathWithinApplication(request);
+		}
+	}
+	
 	/**
+	 * Look up a handler for the given request, falling back to the default
+	 * handler if no specific one is found.
+	 * @param request current HTTP request
+	 * @return the looked up handler instance, or the default handler
+	 */
+	public Object getHandlerInternal(HttpServletRequest request)
+			throws Exception {
+
+		String lookupPath = getLookupPath(request);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Looking up handler for [" + lookupPath + "]");
+		}
+
+		return lookupHandler(lookupPath, request);
+	}
+
+	/**
+	 * Look up a handler instance for the given URL path.
+	 * <p>Supports direct matches, e.g. a registered "/test" matches "/test",
+	 * and various Ant-style pattern matches, e.g. a registered "/t*" matches
+	 * both "/test" and "/team". For details, see the AntPathMatcher class.
+	 * <p>Looks for the most exact pattern, where most exact is defined as
+	 * the longest path pattern.
+	 * <p><strong>Copied from AbstractUrlHandlerMapping</strong>
+	 * @param urlPath URL the bean is mapped to
+	 * @return the associated handler instance, or <code>null</code> if not found
+	 * @see org.springframework.util.AntPathMatcher
+	 */
+	protected Object lookupHandler(String urlPath, HttpServletRequest request) {
+		// direct match?
+		Object handler = handlerMap.get(urlPath);
+		if (handler == null) {
+			// pattern match?
+			String bestMatch = null;
+			for (Iterator it = handlerMap.keySet().iterator(); it.hasNext();) {
+				String path = (String) it.next();
+				if (pathMatcher.match(path, urlPath) &&
+						(bestMatch == null || bestMatch.length() <= path.length())) {
+
+					bestMatch = path;
+				}
+			}
+			if (bestMatch != null) {
+				exposeAttributes(bestMatch, urlPath, request);
+				exposePathWithinMapping(pathMatcher.extractPathWithinPattern(bestMatch, urlPath), request);
+				handler = handlerMap.get(bestMatch);
+			}
+		}
+		else {
+			exposePathWithinMapping(urlPath, request);
+		}
+		return handler;
+	}
+	
+    
+    /**
 	 * <strong>Copied from AbstractUrlHandlerMapping</strong>
 	 */
 	protected void exposePathWithinMapping(String pathWithinMapping, HttpServletRequest request) {
 		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, pathWithinMapping);
 	}
-
-	/**
-	 * <strong>Copied from BeanNameUrlHandlerMapping</strong>
-	 */
-	public void initApplicationContext() throws ApplicationContextException {
-    	String[] beanNames = getApplicationContext().getBeanDefinitionNames();
-
-		// Take any bean name or alias that begins with a slash.
-		for (int i = 0; i < beanNames.length; i++) {
-			String[] urls = checkForUrl(beanNames[i]);
-			if (urls.length > 0) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Found URL mapping [" + beanNames[i] + "]");
-				}
-				ArrayList patterns = new ArrayList();
-				// Create a mapping to each part of the path.
-				for (int j = 0; j < urls.length; j++) {
-					String attributePattern = urls[j];
-					String antPattern = convertToAntPattern(attributePattern);
-					registerHandler(antPattern, beanNames[i]);
-					AttributePattern p = new AttributePattern(attributePattern);
-					patternsByAntPath.put(antPattern, p);
-					patterns.add(p);
-				}
-				patternsByBeanName.put(beanNames[i], patterns);
-			}
-			else {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Rejected bean name '" + beanNames[i] + "'");
-				}
-			}
-		}
-	}
-
-	/**
-	 * Check name and aliases of the given bean for URLs,
-	 * detected by starting with "/".
-	 * <p><strong>Copied from BeanNameUrlHandlerMapping</strong>
-	 */
-	protected String[] checkForUrl(String beanName) {
-		List urls = new ArrayList();
-		if (beanName.startsWith("/")) {
-			urls.add(beanName);
-		}
-		String[] aliases = getApplicationContext().getAliases(beanName);
-		for (int j = 0; j < aliases.length; j++) {
-			if (aliases[j].startsWith("/")) {
-				urls.add(aliases[j]);
-			}
-		}
-		return StringUtils.toStringArray(urls);
-	}
-
-	protected String convertToAntPattern(String urlPattern) {
-		return ATTRIBUTE_NAME_PATTERN.matcher(urlPattern).replaceAll("*$3");
-	}
-
+	
 	protected void exposeAttributes(String antPattern, String urlPath,
 			HttpServletRequest request) {
 
@@ -342,88 +234,20 @@ public class AdvancedBeanNameHandlerMapping extends WebApplicationObjectSupport
 		pattern.expose(urlPath, request);
 
 	}
-
-	private static class AttributePattern {
-
-		private Pattern pattern;
-
-		private ArrayList attributeNames;
+	
+	protected String addServletMappingIfNecessary(String path, 
+			HttpServletRequest request) {
 		
-		private ArrayList attributeTypes;
-
-		public AttributePattern(String attributePattern) {
-			attributeNames = new ArrayList();
-			attributeTypes = new ArrayList();
-			Matcher m = ATTRIBUTE_NAME_PATTERN.matcher(attributePattern);
-			while (m.find()) {
-				attributeNames.add(m.group(1));
-				attributeTypes.add(m.group(4));
-			}
-			pattern = Pattern.compile(convertAttributePatternToRegex(attributePattern));
+		if (path != null && isStripServletMapping()) {
+			return ServletUtils.addServletMapping(path, request);
 		}
-
-		// Example pattern: /resources/*/@{resource*}
-		private String convertAttributePatternToRegex(final String antPattern) {
-			String regex = FormatUtils.escapeChars(antPattern, "()", '\\'); // ... just in case
-			regex = ATTRIBUTE_NAME_PATTERN.matcher(antPattern).replaceAll("(*$3)"); // /resources/*/(**)
-			regex = "^" + FormatUtils.escapeChars(regex, ".+*?{^$", '\\') + "$"; // ^/resources/\*/(\*\*)$
-			regex = DOUBLE_STAR_PATTERN.matcher(regex).replaceAll(".*?"); // ^/resources/\*/(.*?)$
-			regex = STAR_PATTERN.matcher(regex).replaceAll("[^/]*"); // ^/resources/[^/]*/.*?$
-			return regex;
-		}
-
-		public void expose(String urlPath, HttpServletRequest request) {
-			Matcher m = pattern.matcher(urlPath);
-			Assert.isTrue(m.matches());
-			for (int i = 0; i < attributeNames.size(); i++) {
-				String s = m.group(i + 1);
-				String type = (String) attributeTypes.get(i);
-				request.setAttribute((String) attributeNames.get(i), convert(s, type));
-			}
-		}
-
-		private Object convert(String s, String type) {
-			if (type == null || type.equalsIgnoreCase("String")) {
-				return s;
-			}
-			if (type.equalsIgnoreCase("Integer")) {
-				return Integer.valueOf(s);
-			}
-			else if (type.equalsIgnoreCase("Long")) {
-				return Long.valueOf(s);
-			}
-			else if (type.equalsIgnoreCase("Short")) {
-				return Short.valueOf(s);
-			}
-			else if (type.equalsIgnoreCase("Double")) {
-				return Double.valueOf(s);
-			}
-			else if (type.equalsIgnoreCase("Float")) {
-				return Float.valueOf(s);
-			}
-			else if (type.equalsIgnoreCase("Boolean")) {
-				return Boolean.valueOf(s);
-			}
-			else if (type.equalsIgnoreCase("Character")) {
-				return new Character(s.charAt(0));
-			}
-			else {
-				throw new IllegalArgumentException("Unsupported type: " + type 
-						+ " - must be Integer, Long, Short, Double, Float," 
-						+ " Boolean or Character");
-			}
-		}
-		public boolean matches(Map attributes) {
-			if (attributes != null) {
-				Collection names = attributes.keySet();
-				return names.size() == attributeNames.size() &&
-					attributeNames.containsAll(names);
-			}
-			else {
-				return attributeNames.isEmpty();
-			}
-		}
-
+		return path;
 	}
-
+	
+	protected List getPatternsForHandler(String beanName, 
+			HttpServletRequest request) {
+		
+		return (List) patternsByBeanName.get(beanName);
+	}
+	
 }
