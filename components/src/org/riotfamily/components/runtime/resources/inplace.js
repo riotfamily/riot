@@ -228,27 +228,30 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 	},
 
 	getText: function() {
-		return this.input.value;
-	},
-
-	onsave: function(text) {
-		this.element.innerHTML = text
+		return this.input.value
 			.replace(/&/g, '&amp;')
 			.replace(/</g, '&lt;')
 			.replace(/>/g, '&gt;')
 			.replace(/\n/g, '<br />');
-			
+	},
+
+	onsave: function(text) {
+		this.element.innerHTML = text;
 		this.input.hide();
 		this.element.makeVisible();
 	},
 
 	updateElement: function() {
-		var text = this.getText();
+		var text = this.input.value;
 		if (!this.lastText || this.lastText != text) {
 			this.lastText = text;
-			var html = text.replace(/\n$/, '\n '); 
-			html = html.replace(/( (?= )|^ | $)/mg, '&nbsp;');
-			html = html.replace(/\n/g, '<br />');
+			var html = text.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/\n$/, '\n ') 
+				.replace(/( (?= )|^ | $)/mg, '&nbsp;')
+				.replace(/\n/g, '<br />');
+				
 			this.element.update(html);
 			this.resize();
 		}

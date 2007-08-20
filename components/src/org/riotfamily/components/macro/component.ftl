@@ -36,7 +36,7 @@
 		</#list>
 	<#else>
 		<script type="text/javascript" language="JavaScript">
-			<#-- The following variable is read by the login-bookmarklet: -->
+			// This variable is read by the login-bookmarklet:
 			var riotPagesUrl = '${riot.href("/pages")}';
 		</script>
 	</#if>
@@ -72,7 +72,7 @@
   - See: <@editable> for a description of the supported parameters.
   -->
 <#macro text key container=currentVersionContainer form="" tag="" alwaysUseNested=false attributes...>
-	<@editable key=key container=container form=form editor="text" tag=tag alwaysUseNested=alwaysUseNested escape=true attributes=attributes><#nested /></@editable>
+	<@editable key=key container=container form=form editor="text" tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
 </#macro>
 
 <#--
@@ -114,7 +114,7 @@
   -
   - attributes...: Attributes to set on the surrounding tag.
   -->
-<#macro editable key container=currentVersionContainer editor="text" form="" tag="" alwaysUseNested=false escape=false attributes... >
+<#macro editable key container=currentVersionContainer editor="text" form="" tag="" alwaysUseNested=false attributes... >
 	<#compress>
 		<#local previousContainer = currentVersionContainer />
 		<#global currentVersionContainer = container />
@@ -137,10 +137,7 @@
 				<#local value><#nested /></#local>
 			</#if>
 		</#if>
-	
-		<#if escape>
-			<#local value = value?html?replace("\n", "<br />") />
-		</#if>
+		<#local value = value?trim />
 		
 		<#if isEditMode()>
 			<#if container != previousContainer>
