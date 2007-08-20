@@ -21,9 +21,7 @@
 		<property name="filterName" value="website-filter" />
 	</bean>
 		
-	<bean id="noCacheInterceptor" class="org.riotfamily.website.interceptor.NoCacheHeaderInterceptor">
-		<property name="includes" value="**/*.html" />
-	</bean>
+	<bean id="noCacheInterceptor" class="org.riotfamily.website.interceptor.NoCacheHeaderInterceptor" />
 	
 	<!-- 
 	  - HandlerAdapter that handles CacheableControllers.

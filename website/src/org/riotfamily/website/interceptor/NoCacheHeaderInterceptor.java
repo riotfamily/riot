@@ -26,9 +26,10 @@ package org.riotfamily.website.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.util.OncePerRequestInterceptor;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.security.AccessController;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
  * Sets cache control headers to prevent client side caching if a Riot user 
@@ -37,14 +38,16 @@ import org.riotfamily.riot.security.AccessController;
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public class NoCacheHeaderInterceptor extends OncePerRequestInterceptor {
+public class NoCacheHeaderInterceptor extends HandlerInterceptorAdapter {
 
-	protected boolean preHandleOnce(HttpServletRequest request, 
-			HttpServletResponse response, Object handler) throws Exception {
-
-		if (AccessController.isAuthenticatedUser()) {
+	public void postHandle(HttpServletRequest request, 
+			HttpServletResponse response, Object handler,
+			ModelAndView modelAndView) throws Exception {
+		
+		if (!response.isCommitted() && modelAndView != null 
+				&& AccessController.isAuthenticatedUser()) {
+			
 			ServletUtils.setNoCacheHeaders(response);
 		}
-		return true;
 	}
 }
