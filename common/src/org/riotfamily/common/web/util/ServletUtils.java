@@ -234,6 +234,20 @@ public final class ServletUtils {
 	}
 
 	/**
+	 * Adds the mapping of the servlet that is mapped to the given request
+	 * to the path.
+	 */
+	public static String addServletMapping(String path, 
+			HttpServletRequest request) {
+		
+		String suffix = getServletPrefix(request);
+		if (suffix.length() > 0) {
+			return path + suffix;
+		}
+		return getServletPrefix(request) + path;
+	}
+
+	/**
 	 * Returns a String consisting of the context-path and the servlet-prefix
 	 * for the given request. The String will always end with a slash.
 	 */
