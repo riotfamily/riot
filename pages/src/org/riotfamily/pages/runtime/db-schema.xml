@@ -53,6 +53,7 @@
 				<db:column name="hidden" type="BIT" />
 				<db:column name="folder" type="BIT" />
 				<db:column name="path" type="VARCHAR" length="255" />
+				<db:column name="wildcardInPath" type="BIT" />
 				<db:column name="versionContainer" type="BIGINT" />
 			</db:create-table>
 			<db:add-foreign-key table="riot_pages" name="riot_pages_node" references="riot_page_nodes">
