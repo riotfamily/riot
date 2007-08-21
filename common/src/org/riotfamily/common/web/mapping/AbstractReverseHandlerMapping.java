@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.beans.MapWrapper;
 import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 
 /**
@@ -51,6 +50,28 @@ public abstract class AbstractReverseHandlerMapping
 	}
 	
 	protected AttributePattern getPatternForHandler(String handlerName, 
+			HttpServletRequest request, int numberOfWildcards) {
+		
+		List patterns = getPatternsForHandler(handlerName, request);
+		if (patterns == null || patterns.isEmpty()) {
+			return null;
+		}
+		Iterator it = patterns.iterator();
+		while (it.hasNext()) {
+			AttributePattern p = (AttributePattern) it.next();
+			if (p.getNumberOfWildcards() != numberOfWildcards) {
+				it.remove();
+			}
+		}
+		if (patterns.size() != 1) {
+			throw new IllegalArgumentException("Exactly one mapping with "
+					+ numberOfWildcards + " wildcards required for hander " 
+					+ handlerName);
+		}
+		return (AttributePattern) patterns.get(0);
+	}
+	
+	protected AttributePattern getPatternForHandler(String handlerName, 
 			HttpServletRequest request) {
 		
 		List patterns = getPatternsForHandler(handlerName, request);
@@ -67,20 +88,17 @@ public abstract class AbstractReverseHandlerMapping
 	public String getUrlForHandler(String handlerName, 
 			HttpServletRequest request) {
 		
-		AttributePattern p = getPatternForHandler(handlerName, request);
+		AttributePattern p = getPatternForHandler(handlerName, request, 0);
 		if (p == null) {
 			return null;
 		}
-		Assert.isTrue(p.getNumberOfWildcards() == 0, "The URL pattern " +
-				"contains wildcards but no attributes have been specified.");
-		
 		return addServletMappingIfNecessary(p.toString(), request);
 	}
 	
 	public String getUrlForHandlerWithAttribute(String handlerName, 
 			Object attribute, HttpServletRequest request) {
 		
-		AttributePattern p = getPatternForHandler(handlerName, request);
+		AttributePattern p = getPatternForHandler(handlerName, request, 1);
 		if (p == null) {
 			return null;
 		}
