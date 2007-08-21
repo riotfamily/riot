@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.override;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -74,7 +76,10 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 			Map entries = parserContext.getDelegate().parseMapElement(
 					element, beanDefinition.getBeanDefinition());
 			
-			beanDefinition.addPropertyValue("entries", entries);
+			// The parsed Map is a ManagedMap. We put the values into a
+			// HashMap so that the reference resolution is deferred until
+			// the actual target bean is initialized.
+			beanDefinition.addPropertyValue("entries", new HashMap(entries));
 		}
 	}
 	
@@ -90,7 +95,10 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 			List values = parserContext.getDelegate().parseListElement(
 					element, beanDefinition.getBeanDefinition());
 			
-			beanDefinition.addPropertyValue("values", values);
+			// The parsed List is a ManagedList. We put the values into an
+			// ArrayList so that the reference resolution is deferred until
+			// the actual target bean is initialized.
+			beanDefinition.addPropertyValue("values", new ArrayList(values));
 		}
 	}
 

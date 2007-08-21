@@ -34,6 +34,7 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.MapFactoryBean;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -77,17 +78,25 @@ public class MapMergeProcessor implements BeanFactoryPostProcessor {
 		
 		if (log.isInfoEnabled()) {
 			String keys = StringUtils.collectionToCommaDelimitedString(entries.keySet());
-			log.info("Adding [" + keys + "] to " + property);
+			log.info("Adding [" + keys + "] to " + ref + "." + property);
 		}
 		
 		PropertyValue pv = bd.getPropertyValues().getPropertyValue(property);
-		Object value = pv.getValue();
-		if (value instanceof RuntimeBeanReference) {
-			RuntimeBeanReference ref = (RuntimeBeanReference) value;
-			value = beanFactory.getBean(ref.getBeanName());
+		if (pv == null) {
+			// No map set on the target bean, create a new one ...
+			ManagedMap map = new ManagedMap();
+			map.putAll(entries);
+			bd.getPropertyValues().addPropertyValue(property, map);
 		}
-		Assert.isInstanceOf(Map.class, value);
-		Map map = (Map) value;
-		map.putAll(entries);
+		else {
+			Object value = pv.getValue();
+			if (value instanceof RuntimeBeanReference) {
+				RuntimeBeanReference ref = (RuntimeBeanReference) value;
+				value = beanFactory.getBean(ref.getBeanName());
+			}
+			Assert.isInstanceOf(Map.class, value);
+			Map map = (Map) value;
+			map.putAll(entries);
+		}
 	}
 }

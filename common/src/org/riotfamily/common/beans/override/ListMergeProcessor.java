@@ -35,6 +35,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.ListFactoryBean;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.config.TypedStringValue;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.util.Assert;
 
 /**
@@ -80,10 +81,15 @@ public class ListMergeProcessor implements BeanFactoryPostProcessor {
 			
 			property = "sourceList";
 		}
-		log.info("Adding " + values.size() + " items to " + property);
+		
+		log.info("Adding " + values.size() + " items to " + ref + "." + property);
+		
 		PropertyValue pv = bd.getPropertyValues().getPropertyValue(property);
 		if (pv == null) {
-			bd.getPropertyValues().addPropertyValue(property, values);
+			// No list set on the target bean, create a new one ...
+			ManagedList list = new ManagedList();
+			list.addAll(values);
+			bd.getPropertyValues().addPropertyValue(property, list);
 		}
 		else {
 			Object value = pv.getValue();
@@ -93,8 +99,10 @@ public class ListMergeProcessor implements BeanFactoryPostProcessor {
 			}
 			else if (value instanceof TypedStringValue) {
 				TypedStringValue tsv = (TypedStringValue) value;
-				bd.getPropertyValues().addPropertyValue(property, values);
-				values.add(tsv.getValue());
+				ManagedList list = new ManagedList();
+				list.addAll(values);
+				list.add(tsv.getValue());
+				bd.getPropertyValues().addPropertyValue(property, list);
 				return;
 			}
 			Assert.isInstanceOf(List.class, value);
