@@ -87,10 +87,6 @@ public class PushUpInterceptor extends HandlerInterceptorAdapter {
 					new DeferredRenderingResponseWrapper(response);
 			
 			request.setAttribute(RESPONSE_WRAPPER_ATTRIBUTE, responseWrapper);			
-			if (includeUri.startsWith(request.getContextPath())) {
-				includeUri = includeUri.substring(
-							request.getContextPath().length());
-			}
 			request.getRequestDispatcher(includeUri).forward(
 					request, responseWrapper);
 			

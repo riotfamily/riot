@@ -140,10 +140,10 @@ public class CommonMacroHelper {
  		return uri;
 	}
 	
-	public String getIncludeUri() {
-		return ServletUtils.getIncludeUri(request);
+	public String getPathWithinApplication() {
+		return ServletUtils.getPathWithinApplication(request);
 	}
-
+	
 	public boolean isExternalUrl(String url) {
 		try {
 			URI uri = new URI(url);

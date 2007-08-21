@@ -1,6 +1,6 @@
 <#assign locale = commonMacroHelper.getLocale() />
 <#assign documentUri = commonMacroHelper.getOriginatingRequestUri() />
-<#assign includeUri = commonMacroHelper.getIncludeUri() />
+<#assign includeUri = commonMacroHelper.getPathWithinApplication() />
 
 <#--
   - Macro that includes the given URI using a RequestDispatcher.
