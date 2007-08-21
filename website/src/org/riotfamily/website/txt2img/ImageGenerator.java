@@ -67,7 +67,7 @@ public class ImageGenerator implements InitializingBean {
 	
 	private int paddingLeft = 0;
 	
-	private Integer lineSpacing;
+	private int lineSpacing = 0;
 	
 	private Integer maxWidth;
 	
@@ -130,7 +130,7 @@ public class ImageGenerator implements InitializingBean {
 	 * Sets the interline spacing in pixels. If not set, 
 	 * {@link TextLayout#getLeading()} is used.
 	 */
-	public void setLineSpacing(Integer lineSpacing) {
+	public void setLineSpacing(int lineSpacing) {
 		this.lineSpacing = lineSpacing;
 	}
 	
@@ -197,11 +197,9 @@ public class ImageGenerator implements InitializingBean {
 			paddingRight *= scale;
 			paddingBottom *= scale;
 			paddingLeft *= scale;
+			lineSpacing *= scale;
 			if (maxWidth != null) {
 				maxWidth = new Integer(maxWidth.intValue() * scale);
-			}
-			if (lineSpacing != null) {
-				lineSpacing = new Integer(lineSpacing.intValue() * scale);
 			}
 		}
 		attributes.put(TextAttribute.FONT, font.deriveFont(size));
@@ -274,7 +272,10 @@ public class ImageGenerator implements InitializingBean {
 			}
 			y += layout.getDescent();
 			maxX = Math.max(maxX, paddingLeft + (int) layout.getVisibleAdvance() + paddingRight);
-			y += lineSpacing != null ? lineSpacing.intValue() : layout.getLeading();
+			y += layout.getLeading();
+			if (measurer.getPosition() < it.getEndIndex()) {
+				y += lineSpacing;
+			}
 	    }
 	    y += paddingBottom;
 	    graphics.dispose();
