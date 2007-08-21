@@ -122,7 +122,15 @@ public class SimpleMailFormController extends SimpleFormController
 		mail.setFrom(from);
 		mail.setSubject(subject);
 		mail.setText(mailTextWriter.toString());
+		prepareMail(mail, command);
 		mailSender.send(mail);
 	}
 
+	/**
+	 * This method can be overriden in order to manipulate the mail before it
+	 * is being sent.
+	 */
+	protected void prepareMail(SimpleMailMessage mail, Object command) {
+	}
+	
 }
