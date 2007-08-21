@@ -63,6 +63,16 @@ public final class PropertyUtils {
 		ProtectedBeanWrapper wrapper = new ProtectedBeanWrapper(bean);
 		return wrapper.getPropertyValue(name);
 	}
+	
+	public static Object getProperty(Object bean, String name, 
+			Class requiredType) {
+		
+		Object value = getProperty(bean, name);
+		if (value != null) {
+			Assert.isInstanceOf(requiredType, value);
+		}
+		return value;
+	}
 
 	public static String getPropertyAsString(Object bean, String name) {
 		return convertToString(getProperty(bean, name));
