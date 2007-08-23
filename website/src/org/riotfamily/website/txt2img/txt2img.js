@@ -60,30 +60,32 @@ RiotImageReplacement.prototype = {
 		el.onedit = this.processElement.bind(this, el, sel);
 		var text = el.innerHTML;
 		text = text.strip().gsub(/<br\/?>/i, '\n').stripTags();
-		var transform = el.getStyle('text-transform') || '';
-		var width = 0;
-		if (el.getStyle('display') == 'block') {
-			width = el.offsetWidth - parseInt(el.getStyle('padding-left'))
-					- parseInt(el.getStyle('padding-right'));
+		if (text.length > 0) {
+			var transform = el.getStyle('text-transform') || '';
+			var width = 0;
+			if (el.getStyle('display') == 'block') {
+				width = el.offsetWidth - parseInt(el.getStyle('padding-left'))
+						- parseInt(el.getStyle('padding-right'));
+			}
+	
+			var color = el.getStyle('color');
+	
+			var hoverEl = document.createElement('span');
+			hoverEl.className = 'txt2imgHover';
+			el.appendChild(hoverEl);
+			var hoverColor = Element.getStyle(hoverEl, 'color');
+			Element.remove(hoverEl);
+	
+			var hover = null;
+			if (hoverColor != color) {
+				hover = new Image();
+				hover.src = this.getImageUrl(text, transform, width, sel, hoverColor);
+			}
+	
+			var img = new Image();
+			img.src = this.getImageUrl(text, transform, width, sel, color);
+			this.insertImage(el, img, hover);
 		}
-
-		var color = el.getStyle('color');
-
-		var hoverEl = document.createElement('span');
-		hoverEl.className = 'txt2imgHover';
-		el.appendChild(hoverEl);
-		var hoverColor = Element.getStyle(hoverEl, 'color');
-		Element.remove(hoverEl);
-
-		var hover = null;
-		if (hoverColor != color) {
-			hover = new Image();
-			hover.src = this.getImageUrl(text, transform, width, sel, hoverColor);
-		}
-
-		var img = new Image();
-		img.src = this.getImageUrl(text, transform, width, sel, color);
-		this.insertImage(el, img, hover);
 	},
 
 	getImageUrl: function(text, transform, width, sel, color) {
