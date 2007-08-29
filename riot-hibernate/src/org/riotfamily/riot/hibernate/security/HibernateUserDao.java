@@ -30,7 +30,7 @@ import org.riotfamily.common.util.HashUtils;
 import org.riotfamily.riot.hibernate.dao.HqlDao;
 import org.riotfamily.riot.list.support.ListParamsImpl;
 import org.riotfamily.riot.security.auth.RiotUser;
-import org.riotfamily.riot.security.dao.RiotUserDao;
+import org.riotfamily.riot.security.auth.RiotUserDao;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
