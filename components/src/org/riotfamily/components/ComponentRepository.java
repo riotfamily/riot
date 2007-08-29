@@ -38,13 +38,11 @@ import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.components.component.ViewComponent;
 import org.riotfamily.components.config.ComponentListConfiguration;
-import org.riotfamily.components.editor.ComponentFormController;
 import org.riotfamily.components.editor.ComponentFormRepository;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
-import org.springframework.util.Assert;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
@@ -78,8 +76,6 @@ public class ComponentRepository implements ServletContextAware,
 	private List locators;
 
 	private Map configuredPropertyProcessors;
-
-	private ComponentFormController formController;
 
 	private ComponentFormRepository formRepository;
 
@@ -205,16 +201,11 @@ public class ComponentRepository implements ServletContextAware,
 		return null;
 	}
 
-	public void setFormController(ComponentFormController formController) {
-		this.formController = formController;
-	}
-
 	public void setFormRepository(ComponentFormRepository formRepository) {
 		this.formRepository = formRepository;
 	}
 
 	public String getFormUrl(String formId, Long containerId) {
-		Assert.notNull(formController, "A FormController must be set.");
 		if (formRepository.containsForm(formId)) {
 			return "/components/form/" + formId + "/" + containerId;
 		}
