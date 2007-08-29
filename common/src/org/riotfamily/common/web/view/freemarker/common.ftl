@@ -82,3 +82,10 @@
 	</#if>
 </#macro>
 
+<#function getMessage code args=[] default=code>
+	<#return commonMacroHelper.getMessage(code, args, default) />
+</#function>
+
+<#macro message code args=[] default=code>
+${commonMacroHelper.getMessage(code, args, default)}
+</#macro>
