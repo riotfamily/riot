@@ -104,7 +104,7 @@
 	</bean>
 
 	<!-- BeanPostProcessor that wraps all RiotUserDao beans -->
-	<bean class="org.riotfamily.riot.security.dao.RiotUserDaoProcessor" />
+	<bean class="org.riotfamily.riot.security.session.RiotUserDaoProcessor" />
 		
 	<!-- A RiotUserDao-based AuthenticationService -->
 	<bean id="authenticationService" class="org.riotfamily.riot.security.auth.StaticAuthenticationService">
@@ -117,14 +117,12 @@
 	  -->
 	<bean id="sessionMetaDataStore" class="org.riotfamily.riot.security.session.TransientSessionMetaDataStore" />
 
-	<bean id="loginManager" class="org.riotfamily.riot.security.LoginManager">
+	<bean id="loginManager" class="org.riotfamily.riot.security.session.LoginManager">
 		<constructor-arg ref="authenticationService" />
 		<property name="metaDataStore" ref="sessionMetaDataStore" />
 	</bean>
 	
-	<bean class="org.riotfamily.riot.security.AccessControlInitializer">
-		<constructor-arg ref="loginManager" />
-	</bean>
+	<bean class="org.riotfamily.riot.security.AccessControlInitializer" />
 
     <bean id="loggingPolicy" class="org.riotfamily.riot.security.policy.LoggingPolicy" />
 
@@ -211,6 +209,7 @@
 		<property name="configLocations">
 			<value>/WEB-INF/riot-config/list-config.xml</value>
 		</property>
+		<property name="riotDaoService" ref="riotDaoService" />
 	</bean>
 
 	<util:map id="customFormElements">
@@ -229,7 +228,7 @@
 		<property name="customElements" ref="customFormElements" />
 	</bean>
 
-	<bean id="imageCropper" class="org.riotfamily.forms.element.upload.ImageMagickCropperFactoryBean">
+	<bean id="imageCropper" class="org.riotfamily.common.image.ImageMagickCropperFactoryBean">
 		<property name="convertCommand" value="${imageMagick.convertCommand=convert}" />
 	</bean>
 

@@ -32,6 +32,8 @@
 		</tx:attributes>
 	</tx:advice>
 
+	<bean id="riotDaoService" class="org.riotfamily.riot.list.RiotDaoService" />
+	
 	<bean id="riotDaoPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
 		<property name="classFilter">
 			<bean class="org.springframework.aop.support.RootClassFilter">
