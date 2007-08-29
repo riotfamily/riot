@@ -70,7 +70,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	 * Riot-Toolbar JavaScript.
 	 */
 	protected void renderComponentList(ComponentList list) throws IOException {
-		boolean renderOuterDiv = PageRequestUtils.storeContext(
+		boolean renderOuterDiv = PageRequestUtils.createAndStoreContext(
 				request, list.getId(), 120000);
 
 		if (renderOuterDiv) {

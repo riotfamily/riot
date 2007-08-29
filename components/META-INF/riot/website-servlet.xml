@@ -29,6 +29,7 @@
 	
 	<bean id="componentMacroHelper" class="org.riotfamily.components.macro.ComponentMacroHelperFactory">
 		<constructor-arg ref="componentRepository" />
+		<constructor-arg ref="riotDaoService" />
 		<property name="toolbarScripts">
 			<list>
 				<value>riot-js/resources.js</value>
@@ -36,5 +37,7 @@
 			</list>
 		</property>
 	</bean>
+
+	<bean id="storeContextInterceptor" class="org.riotfamily.components.context.StoreContextInterceptor" />
 
 </beans>

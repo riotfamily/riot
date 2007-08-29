@@ -18,7 +18,7 @@ div.form-error {
 div.title {
 	background: none;
 }
-.title label {
+div.title label {
 	padding: 2px 0 0 0;
 	background: none;
 	margin: 0;
@@ -26,7 +26,17 @@ div.title {
 	font-weight: bold;
 	text-transform: none;
 }
-.title span.hint-trigger {
+div.title span.hint-trigger {
 	background-image: url(images/hint.gif);
 	background-position: 0px 3px;
+}
+
+ul.checkboxGroup, 
+ul.radioButtonGroup {
+	margin: 10px 0 0 3px;
+}
+
+.checkboxGroup label,
+.radioButtonGroup label {
+	font-weight: normal;
 }

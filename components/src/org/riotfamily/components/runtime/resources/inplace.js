@@ -84,8 +84,12 @@ riot.InplaceEditor.prototype = {
 		var excludes;
 		if (!Prototype.Browser.IE) {
 			excludes = [];
-			this.element.previousSiblings().each(function(s) {
-				if (s.getStyle('float') == 'right') {
+			var pre = this.element.previousSibling 
+				? this.element.previousSiblings() 
+				: this.element.parentNode.previousSiblings();
+				  
+			pre.each(function(s) {
+				if (s.getStyle('float') != 'none') {
 					excludes = excludes.concat(s.getElementsByClassName('riot-editable-text'));
 				}
 			});
@@ -269,8 +273,7 @@ riot.PopupTextEditor = Class.extend(riot.InplaceEditor, {
 
 	edit: function() {
 		if (!riot.activePopup) {
-			ComponentEditor.getText(this.component.id, this.key,
-				this.setText.bind(this));
+			this.component.retrieveText(this.key, this.setText.bind(this));
 		}
 	},
 
@@ -655,3 +658,306 @@ ComponentEditor.getEditorConfigs(function(configs) {
 		}
 	}
 });
+
+
+riot.imageEditors = [];
+
+riot.ImageEditor = Class.extend(riot.InplaceEditor, {
+	initialize: function(el, component, options) {
+		this.SUPER(el, component, options);
+		this.key = this.element.readAttribute('riot:key');
+		var aw = el.offsetWidth - parseInt(el.getStyle('borderLeftWidth')) 
+				- parseInt(el.getStyle('borderRightWidth'));
+				
+		if (this.options.maxWidth == 'auto') this.options.maxWidth = aw;
+		if (this.options.minWidth == 'auto') this.options.minWidth = aw;
+		this.globalRef = 'riot.imageEditors[' + riot.imageEditors.length + ']';
+		riot.imageEditors.push(this);
+	},
+	
+	setToken: function(token) {
+		this.token = token;
+		this.upload = new SWFUpload({
+			upload_script: riot.path + '/components/upload?token=' + token,
+			flash_path: Resources.basePath + 'swfupload/SWFUpload.swf',
+			allowed_filetypes: '*.jpg;*.gif;*.png',
+			allowed_filetypes_description: 'Images',
+			auto_upload: true,
+			upload_file_complete_callback: this.globalRef + '.uploadFileComplete'
+		});
+	},
+	
+	setEnabled: function(enabled) {
+		this.SUPER(enabled);
+		if (enabled) {
+			UploadManager.generateToken(this.setToken.bind(this));
+		} 
+		else {
+			Element.remove(this.upload.movieElement);
+			UploadManager.invalidateToken(this.token);
+		}
+	},
+
+	edit: function() {
+		this.upload.browse();
+	},	
+	
+	uploadFileComplete: function() {
+		UploadManager.getFilePath(this.token, this.setPath.bind(this));
+	},
+	
+	setPath: function(path) {
+		riot.outline.suspended = true;
+		this.cropper = new Cropper.UI(this, path);
+	},
+	
+	update: function(img, path) {
+		riot.outline.suspended = false;
+		this.component.updateText(this.key, path);
+		this.element.width = img.width;
+		this.element.height = img.height;
+		this.element.src = img.src;
+		this.cropper.destroy();		
+		this.cropper = null;
+	}
+});
+
+var Cropper = {
+	elementPos: function(el) {
+		var p = Position.positionedOffset(el);
+		return new Cropper.Pos(p[0], p[1]);
+	},
+	elementSize: function(el) {
+		return new Cropper.Pos(el.offsetWidth, el.offsetHeight);
+	}
+};
+
+Cropper.Pos = Class.create();
+Cropper.Pos.prototype = {
+	initialize: function(x, y) {
+		this.x = Math.round(x || 0);
+		this.y = Math.round(y || 0);
+	},
+
+	setFromMouse: function(event) {
+		this.x = Event.pointerX(event); this.y = Event.pointerY(event);
+	},
+
+	mouseDelta: function(event, rtl) {
+		if (rtl) {
+			return new Cropper.Pos(this.x - Event.pointerX(event), Event.pointerY(event) - this.y);
+		}
+		else {
+			return new Cropper.Pos(Event.pointerX(event) - this.x, Event.pointerY(event) - this.y);
+		}
+	},
+
+	moveBy: function(x, y) {
+		this.x = Math.round(this.x + x);
+		this.y = Math.round(this.y + y);
+	},
+
+	keepWithin: function(minX, minY, maxX, maxY) {
+		if (maxX < minX) maxX = minX; if (maxY < minY) maxY = minY;
+		if (this.x < minX) this.x = minX; else if (this.x > maxX) this.x = maxX;
+		if (this.y < minY) this.y = minY; else if (this.y > maxY) this.y = maxY;
+	},
+
+	applyOffset: function(el) {
+		el.style.left = -this.x + 'px';
+		el.style.top = -this.y + 'px';
+	},
+
+	applySize: function(el) {
+		el.style.width = this.x + 'px';
+		el.style.height = this.y + 'px';
+	}
+}
+
+Cropper.UI = Class.create();
+Cropper.UI.prototype = {
+
+	initialize: function(editor, src) {
+		this.editor = editor;
+		this.src = src;
+		
+		this.initialSize = Cropper.elementSize(editor.element);
+		this.element = RBuilder.node('div', {className:'cropper'}).cloneStyle(editor.element, ['margin']);
+		this.editor.element.replaceBy(this.element);
+		
+		this.preview = RBuilder.node('div')
+			.setStyle({MozUserSelect: 'none', overflow: 'hidden', position: 'relative'})
+			.cloneStyle(editor.element,	['border'])
+			.appendTo(this.element);
+
+		this.rightAligned = editor.element.getStyle('float') == 'right' 
+				|| editor.element.originalFloat == 'right';
+		
+		var cursor = this.rightAligned ? 'sw-resize' : 'se-resize'; 
+		this.resizeHandle = RBuilder.node('div', {className: cursor}).setStyle({
+			position: 'absolute', bottom: 0, zIndex: 100, cursor: cursor, overflow: 'hidden'
+		});
+		this.resizeHandle.style[this.rightAligned ? 'left' : 'right'] = '0'; 
+		this.resizeHandle.className = cursor;
+		
+		this.resizeHandle.appendTo(this.preview);
+		Event.observe(this.resizeHandle, 'mousedown', this.onMouseDownResize.bindAsEventListener(this));
+
+		this.elementPos = Cropper.elementPos(this.element);
+		this.mousePos = new Cropper.Pos();
+		this.click = new Cropper.Pos();
+		this.offset = new Cropper.Pos();
+
+		this.img = RBuilder.node('img', {unselectable: 'on', onload: this.onLoadImage.bind(this)})
+				.setStyle({position: 'absolute'}).appendTo(this.preview);
+		
+		// Enable zooming using the mouse wheel:
+		if (this.img.addEventListener) {
+			this.img.addEventListener("DOMMouseScroll", this.onMouseWheel.bindAsEventListener(this), true);
+		}
+		else if (this.img.attachEvent) {
+			this.img.attachEvent("onmousewheel", this.onMouseWheel.bindAsEventListener(this));
+		}
+
+		Event.observe(this.img, 'mousedown', this.mouseDownHandler = this.onMouseDown.bindAsEventListener(this));
+		Event.observe(document, 'mousemove', this.mouseMoveHandler = this.onMouseMove.bindAsEventListener(this));
+		Event.observe(document, 'mouseup', this.mouseUpHandler = this.onMouseUp.bindAsEventListener(this));
+		
+		this.img.style.width = 'auto';
+		this.img.src = riot.contextPath + src;
+	},
+	
+	onLoadImage: function() {
+		this.imageSize = new Cropper.Pos(this.img.width, this.img.height);
+
+		// Make sure min and max are not greater than the image dimensions:
+		this.min = new Cropper.Pos(this.editor.options.minWidth || 10, this.editor.options.minHeight || 10);
+		this.min.keepWithin(0, 0, this.imageSize.x, this.imageSize.y);
+		
+		this.minZoom = this.min.x;
+		
+		this.max = new Cropper.Pos(this.editor.options.maxWidth || 10000, this.editor.options.maxHeight || 10000);
+		this.max.keepWithin(0, 0, this.imageSize.x, this.imageSize.y);
+		
+		this.setSize(this.initialSize);
+	},
+
+	onMouseWheel: function(event) {
+		var delta;
+		if (event.wheelDelta) {
+			delta = -event.wheelDelta / 40;
+		}
+		else {
+			delta = event.detail || 0;
+			if (delta < -3) delta = -3;
+			if (delta > 3) delta = 3;
+		}
+		this.zoomToPointer = true;
+		var z = this.img.width + this.imageSize.x / 100 * delta;
+		z = Math.max(this.minZoom, z);
+		z = Math.min(this.imageSize.x, z);
+		this.zoom(z);
+		this.zoomToPointer = false;
+		Event.stop(event);
+	},
+
+	setSize: function(size) {
+		size.keepWithin(this.min.x, this.min.y, this.max.x, this.max.y);
+		size.applySize(this.preview);
+
+		this.offset.keepWithin(0, 0, this.img.width - size.x, this.img.height - size.y);
+		this.offset.applyOffset(this.img);
+
+		this.minZoom = Math.max(size.x, Math.ceil(this.imageSize.x * (size.y / this.imageSize.y)));
+		
+		if (this.img.width < this.minZoom) this.zoom(this.minZoom);
+	},
+
+	zoom: function(newWidth) {
+		if (isNaN(newWidth)) return;
+		newWidth = Math.round(newWidth);
+		var scale = newWidth / this.img.width;
+		var newHeight = this.img.height * scale;
+
+		if (this.mode != 'resize') {
+			this.elementPos = Cropper.elementPos(this.element);
+			var center = this.zoomToPointer
+					? new Cropper.Pos(this.mousePos.x - this.elementPos.x, this.mousePos.y - this.elementPos.y)
+					: new Cropper.Pos(this.preview.offsetWidth / 2, this.preview.offsetHeight / 2);
+
+			var g = new Cropper.Pos(this.offset.x + center.x, this.offset.y + center.y);
+			this.offset.moveBy(g.x * scale - g.x, g.y * scale - g.y);
+		}
+		this.offset.keepWithin(0, 0, newWidth - this.preview.offsetWidth, newHeight - this.preview.offsetHeight);
+		this.offset.applyOffset(this.img);
+		this.img.style.width = newWidth + 'px';
+	},
+
+	onMouseDown: function(event) {
+		this.mode = 'pan';
+		Event.stop(event);
+	},
+
+	onMouseDownResize: function(event) {
+		this.mode = 'resize';
+		this.elementPos = Cropper.elementPos(this.element);
+		if (this.rightAligned) this.elementPos.x += this.preview.offsetWidth;
+		if (document.all) {
+			this.resizeHandle.style.cursor = 'auto';
+			this.img.style.cursor = 'auto';
+		}
+		else {
+			this.img.style.cursor = document.body.style.cursor = this.resizeHandle.style.cursor;
+		}
+		Event.stop(event);
+	},
+
+	onMouseUp: function(event) {
+		if (this.mode == null) {
+			this.crop();
+		}
+		this.mode = null;
+		if (document.all) {
+			this.resizeHandle.style.cursor = 'se-resize';
+		}
+		this.img.style.cursor = this.img.width > this.preview.offsetWidth || this.img.height > this.preview.offsetHeight ? 'move' : 'auto';
+		document.body.style.cursor = 'auto';
+	},
+
+	onMouseMove: function(event) {
+		if (this.mode == 'resize') {
+			this.setSize(this.elementPos.mouseDelta(event, this.rightAligned));
+			Event.stop(event);
+		}
+		else if (this.mode == 'pan') {
+			var delta = this.mousePos.mouseDelta(event);
+			this.offset.moveBy(-delta.x, -delta.y);
+			this.offset.keepWithin(0, 0, this.img.width - this.preview.offsetWidth, this.img.height - this.preview.offsetHeight);
+			this.offset.applyOffset(this.img);
+			Event.stop(event);
+		}
+		this.mousePos.setFromMouse(event);
+	},
+	
+	destroy: function() {
+		Event.stopObserving(this.img, 'mousedown', this.mouseDownHandler);
+		Event.stopObserving(document, 'mousemove', this.mouseMoveHandler);
+		Event.stopObserving(document, 'mouseup', this.mouseUpHandler);
+		this.element.replaceBy(this.editor.element);
+	},
+
+	crop: function() {
+		this.resizeHandle.hide();
+		UploadManager.cropImage(this.src, parseInt(this.preview.style.width),
+				parseInt(this.preview.style.height), this.offset.x, this.offset.y,
+				this.img.width, this.onCrop.bind(this));
+	},
+
+	onCrop: function(path) {
+		var img = new Image();
+		img.onload = this.editor.update.bind(this.editor, img, path);
+		img.src = riot.contextPath + path;
+	}
+	
+}
+

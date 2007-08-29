@@ -23,27 +23,17 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.editor;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.transaction.TransactionalController;
 import org.riotfamily.components.Component;
 import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.VersionContainer;
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.forms.Form;
-import org.riotfamily.forms.controller.ButtonFactory;
-import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.factory.FormRepository;
-import org.riotfamily.forms.factory.RepositoryFormController;
 import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Controller that displays a form to edit the properties of a ComponentVersion.
@@ -51,22 +41,11 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class ComponentFormController extends RepositoryFormController
-		implements FormSubmissionHandler, TransactionalController {
-
-	private static final String SESSION_ATTRIBUTE = "componentForm";
+public class ComponentFormController extends AbstractComponentFormController {
 
 	private ComponentDao componentDao;
 
-	private String viewName = ResourceUtils.getPath(
-			ComponentFormController.class, "ComponentFormView.ftl");
-
-	private String successViewName = ResourceUtils.getPath(
-			ComponentFormController.class, "ComponentFormSuccessView.ftl");
-
 	private ComponentRepository componentRepository;
-
-	private String formIdAttribute = "formId";
 
 	private String containerIdAttribute = "containerId";
 
@@ -77,23 +56,6 @@ public class ComponentFormController extends RepositoryFormController
 		super(formRepository);
 		this.componentRepository = componentRepository;
 		this.componentDao = componentDao;
-		componentRepository.setFormController(this);
-		ButtonFactory buttonFactory = new ButtonFactory(this);
-		buttonFactory.setLabelKey("label.form.button.save");
-		buttonFactory.setCssClass("button button-save");
-		addButton(buttonFactory);
-	}
-
-	protected ComponentRepository getComponentRepository() {
-		return this.componentRepository;
-	}
-
-	public void setViewName(String viewName) {
-		this.viewName = viewName;
-	}
-
-	public void setSuccessViewName(String successViewName) {
-		this.successViewName = successViewName;
 	}
 
 	protected ComponentVersion getVersion(HttpServletRequest request) {
@@ -103,39 +65,18 @@ public class ComponentFormController extends RepositoryFormController
 		return componentDao.getOrCreateVersion(container, null, live);
 	}
 
-	protected String getFormId(HttpServletRequest request) {
-		return (String) request.getAttribute(formIdAttribute);
-	}
-
 	protected Object getFormBackingObject(HttpServletRequest request) {
 		ComponentVersion version = getVersion(request);
 		Component component = componentRepository.getComponent(version);
 		return component.buildModel(version);
 	}
 
-	protected String getSessionAttribute(HttpServletRequest request) {
-		return SESSION_ATTRIBUTE;
-	}
-
-	protected ModelAndView showForm(final Form form,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-
-		StringWriter sw = new StringWriter();
-		renderForm(form, new PrintWriter(sw));
-		return new ModelAndView(viewName, "form", sw.toString());
-	}
-
-	public ModelAndView handleFormSubmission(Form form,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-
+	protected void onSave(Object object, HttpServletRequest request) {
 		ComponentVersion version = getVersion(request);
 		Component component = componentRepository.getComponent(version);
-		Map properties = (Map) form.populateBackingObject();
+		Map properties = (Map) object;
 		component.updateProperties(version, properties);
 		componentDao.updateComponentVersion(version);
-		return new ModelAndView(successViewName);
 	}
 
 }

@@ -165,7 +165,7 @@ body > #riot-inspector {
 	height: 16px;
 	color: #fff;
 	border: 2px solid ${toolbarOutline};
-	background: #fff url(icons/dialogs/insert_bg.gif) center 0px no-repeat;
+	background: #fff url(images/insert_bg.gif) center 0px no-repeat;
 	margin: 4px;
 }
 
@@ -390,4 +390,19 @@ body > #riot-overlay {
 	filter: alpha(opacity=60);
 	-moz-opacity: 0.6;
 	opacity: 0.6;
+}
+
+.cropper .se-resize {
+	width: 12px;
+	height: 12px;
+	background: url(images/resize.gif);
+}
+.cropper .sw-resize {
+	width: 12px;
+	height: 12px;
+	background: url(images/resize_sw.gif);
+}
+
+img.nosrc {
+	background: url(images/checkerboard_dark.gif);
 }

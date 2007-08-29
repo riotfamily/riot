@@ -1,31 +1,12 @@
-<#global currentVersionContainer = "" />
-
-<#--
-  - Returns whether the page is requested in edit mode.
-  -->
-<#function isEditMode>
-	<#return componentMacroHelper.isEditMode() />
-</#function>
-
-<#--
-  - Macro that renders the nested content if the page is requested in edit mode.
-  -->
-<#macro ifEditMode>
-	<#if isEditMode()><#nested></#if>
-</#macro>
-
-<#--
-  - Macro that renders the nested content if the page is requested in live mode.
-  -->
-<#macro ifLiveMode>
-	<#if !isEditMode()><#nested></#if>
-</#macro>
+<#global currentComponentScope = .data_model />
+<#global currentListId = "" />
+<#assign editMode = componentMacroHelper.isEditMode() />
 
 <#--
   - Macro that renders the Riot toolbar if the page is requested in edit mode.
   -->
 <#macro toolbar instantPublish=false>
-	<#if isEditMode()>
+	<#if editMode>
 		<#if instantPublish>
 			<script type="text/javascript" language="JavaScript">
 				var riotInstantPublish = true;
@@ -51,7 +32,7 @@
   - });
   -->
 <#macro callbacks>
-	<#if isEditMode()>
+	<#if editMode>
 		<!-- Riot edit callbacks -->
 		<script type="text/javascript" language="JavaScript">
 		var riotEditCallbacks = [];
@@ -63,6 +44,60 @@
 	</#if>
 </#macro>
 
+<#macro entityList listId>
+	<#global currentListId = listId />
+	<#if editMode && componentMacroHelper.storeContext()>
+		<div class="riot-components" riot:wrapper="entityList" riot:listId="${listId}" riot:controllerId="${common.includeUri}">
+			<#nested>
+		</div>
+	<#else>
+		<#nested />
+	</#if>
+	<#global currentListId = "" />
+</#macro>
+
+<#macro componentSet>
+	<#if editMode && componentMacroHelper.storeContext()>
+		<div class="riot-components" riot:wrapper="componentSet" riot:controllerId="${common.includeUri}">
+			<#nested>
+		</div>
+	<#else>
+		<#nested />
+	</#if>
+</#macro>
+
+<#macro entity object form="">
+	<#local previousComponentScope = currentComponentScope />
+	<#global currentComponentScope = object />
+	<#if editMode>
+		<#local listId = currentListId />
+		<#if !listId?has_content>
+			<#local listId = componentMacroHelper.getDefaultListId(object) />
+		</#if>
+		<#local objectId = componentMacroHelper.getObjectId(listId, object) />
+		
+		<#local attributes = {"class": "riot-component", "riot:objectId": objectId} />
+		
+		<#if form?has_content>
+			<#local attributes = attributes + {"riot:form": "/components/entity-form/" + listId + "/" + form + "/" + objectId} />
+		</#if>
+		
+		<#if !currentListId?has_content && componentMacroHelper.storeContext()>
+			<#local attributes = attributes + {
+				"class": "riot-components riot-component",
+				"riot:wrapper": "entity",
+				"riot:listId": listId,
+				"riot:controllerId": common.includeUri} />
+		</#if>
+		<div ${join(attributes)}>
+			<#nested />
+		</div>
+	<#else>
+		<#nested />
+	</#if>
+	<#global currentComponentScope = previousComponentScope />
+</#macro>
+
 <#--
   - Macro that makes content editable via the Riot toolbar. The text is edited
   - in-line, which means that no further markup is supported, except for
@@ -71,8 +106,8 @@
   - The call delegated to the editable macro, using editor="text".
   - See: <@editable> for a description of the supported parameters.
   -->
-<#macro text key container=currentVersionContainer form="" tag="" alwaysUseNested=false attributes...>
-	<@editable key=key container=container form=form editor="text" tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
+<#macro text key tag="" alwaysUseNested=false attributes...>
+	<@editable key=key editor="text" tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
 </#macro>
 
 <#--
@@ -86,63 +121,33 @@
   - editor="richtext-chunks", depending on the chunk parameter.
   - See: <@editable> for a description of the other parameters.
   -->
-<#macro richtext key container=currentVersionContainer form="" tag="" alwaysUseNested=false chunk=false attributes...>
+<#macro richtext key tag="" alwaysUseNested=false chunk=false attributes...>
 	<#compress>
 		<#if chunk>
 			<#local editor="richtext-chunks" />
 		<#else>
 			<#local editor="richtext" />
 		</#if>
-		<@editable key=key container=container form=form editor=editor tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
+		<@editable key=key editor=editor tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
 	</#compress>
 </#macro>
 
-<#--
-  - Macro that makes content editable via the Riot toolbar.
-  -
-  - key: Name of the model-key/variable to edit
-  -
-  - editor: Name of the editor widget to use. Can be either 'text', 'richtext'
-  - or 'richtext-chunks'. Default is 'text'.
-  -
-  - alwaysUseNested: If true, the nested code is always evaluated, otherwise
-  -   the nested code is only evaluated if no value is found in model under
-  -   the given key.
-  -
-  - tag: HTML tag that is used to surround the editable content. If omitted,
-  -   a 'div' is used in edit-mode and no tag in live-mode.
-  -
-  - attributes...: Attributes to set on the surrounding tag.
-  -->
-<#macro editable key container=currentVersionContainer editor="text" form="" tag="" alwaysUseNested=false attributes... >
+<#macro editable key editor="text" tag="" alwaysUseNested=false attributes... >
 	<#compress>
-		<#local previousContainer = currentVersionContainer />
-		<#global currentVersionContainer = container />
-		<#if container != previousContainer>
-			${componentMacroHelper.tag(container)}
-		</#if>
 		<#if attributes.attributes?exists>
 			<#local attributes=attributes.attributes />
 		</#if>
-	
 		<#if alwaysUseNested>
 			<#local value><#nested /></#local>
 		<#else>
-			<#if container?has_content>
-				<#local value = container.getProperty(key, isEditMode())?if_exists />
-			<#else>
-				<#local value = .data_model[key]?if_exists />
-			</#if>
+			<#local value = currentComponentScope[key]?if_exists />
 			<#if !value?has_content>
 				<#local value><#nested /></#local>
 			</#if>
 		</#if>
 		<#local value = value?trim />
 		
-		<#if isEditMode()>
-			<#if container != previousContainer>
-				<#local attributes = addContainerAttributes(attributes, container, form) />
-			</#if>
+		<#if editMode>
 			<#if tag?has_content>
 				<#local element=tag />
 			<#else>
@@ -155,27 +160,69 @@
 		<#else>
 			${value}
 		</#if>
-		<#global currentVersionContainer = previousContainer />
+	</#compress>
+</#macro>
+
+<#macro image key minWidth="10" maxWidth="1000" minHeight="10" maxHeight="1000" width="" height="" defaultWidth="100" defaultHeight="100" attributes... >
+	<#compress>
+		<#if width?has_content>
+			<#local minWidth = width />
+			<#local maxWidth = width />
+			<#local defaultWidth = width />
+		</#if>
+		<#if height?has_content>
+			<#local minHeight = height />
+			<#local maxHeight = height />
+			<#local defaultHeight = height />
+		</#if>
+		<#local value = currentComponentScope[key]?if_exists>
+		<#if value?has_content>
+			<#local attributes = attributes + {"src": common.url(value)} />
+		<#elseif editMode>
+			<#local attributes = attributes + {
+				"src": riot.resource('style/images/pixel.gif'),
+				"class": ("nosrc " + attributes["class"]?if_exists)?trim,
+				"width": defaultWidth,
+				"height": defaultHeight		
+				} />	
+		</#if>
+		<#if editMode>
+			<#local attributes = attributes + {
+				"class": ("riot-editor " + attributes["class"]?if_exists)?trim,
+				"riot:editorType": "image",
+				"riot:key": key,
+				"riot:minWidth": minWidth,
+				"riot:maxWidth": maxWidth,
+				"riot:minHeight": minHeight,
+				"riot:maxHeight": maxHeight 
+				} />
+		</#if>
+		<#if value?has_content || editMode>	
+			<img ${join(attributes)} />
+		</#if>
 	</#compress>
 </#macro>
 
 <#--
   - Returns the properties for the given container.
   -->
-<#function properties container>
-	<#return componentMacroHelper.getProperties(container) />
+<#function buildModel container>
+	<#return componentMacroHelper.buildModel(container) />
 </#function>
 
 <#--
   -
   -->
-<#macro use container form="" tag="" attributes ...>
-	<#local previousContainer = currentVersionContainer />
-	<#global currentVersionContainer = container />
-	<#if container != previousContainer>
-		${componentMacroHelper.tag(container)}
+<#macro use container form="" tag="" attributes...>
+	<#if attributes?is_sequence>
+		<#local attributes = {} />
+	<#elseif attributes.attributes?exists>
+		<#local attributes = attributes.attributes />
 	</#if>
-	<#if isEditMode() && container != previousContainer>
+	<#local previousComponentScope = currentComponentScope />
+	<#global currentComponentScope = buildModel(container) />
+	${componentMacroHelper.tag(container)}
+	<#if editMode>
 		<#if !tag?has_content>
 			<#local tag = "div" />
 		</#if>
@@ -183,19 +230,19 @@
 	</#if>
 	<#if tag?has_content>
 		<${tag}${join(attributes)}>
-			<#nested container.getProperties(isEditMode())>
+			<#nested currentComponentScope>
 		</${tag}>
 	<#else>
-		<#nested container.getProperties(isEditMode())>
+		<#nested currentComponentScope>
 	</#if>
-	<#global currentVersionContainer = previousContainer />
+	<#global currentComponentScope = previousComponentScope />
 </#macro>
 
 <#function addContainerAttributes attributes versionContainer form="">
 	<#if attributes.attributes?exists>
 		<#local attributes = attributes.attributes />
 	</#if>
-	<#if versionContainer?has_content && component.isEditMode()>
+	<#if versionContainer?has_content && editMode>
 		<#local attributes = attributes + {
 				"riot:containerId": versionContainer.id,
 				"class": ("riot-component " + attributes["class"]?if_exists)?trim

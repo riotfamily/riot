@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.view.MacroHelperFactory;
 import org.riotfamily.components.ComponentRepository;
+import org.riotfamily.riot.list.RiotDaoService;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -40,10 +41,15 @@ public class ComponentMacroHelperFactory implements MacroHelperFactory {
 
 	private Collection toolbarScripts = Collections.EMPTY_LIST;
 
-	private ComponentRepository repository;
+	private ComponentRepository componentRepository;
 
-	public ComponentMacroHelperFactory(ComponentRepository repository) {
-		this.repository = repository;
+	private RiotDaoService riotDaoService;
+	
+	public ComponentMacroHelperFactory(ComponentRepository componentRepository,
+			RiotDaoService riotDaoService) {
+		
+		this.componentRepository = componentRepository;
+		this.riotDaoService = riotDaoService;
 	}
 
 	public void setToolbarScripts(Collection toolbarScripts) {
@@ -53,6 +59,7 @@ public class ComponentMacroHelperFactory implements MacroHelperFactory {
 	public Object createMacroHelper(HttpServletRequest request,
 			HttpServletResponse response) {
 
-		return new ComponentMacroHelper(request, toolbarScripts, repository);
+		return new ComponentMacroHelper(request, toolbarScripts, 
+				componentRepository, riotDaoService);
 	}
 }

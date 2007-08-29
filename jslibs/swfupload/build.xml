@@ -1,0 +1,9 @@
+<project name="swfupload" default="jar">
+
+	<import file="../js.xml" />
+	
+	<target name="-resource-fileset">
+		<fileset id="resource.files" dir="src" />
+	</target>
+
+</project>

@@ -2,14 +2,14 @@
   - Returns the current Page as resolved by the PageHandlerMapping.
   -->
 <#function currentPage>
-	<#return pageMacroHelper.currentPage />
+	<#return pageMacroHelper.getCurrentPage() />
 </#function>
 
 <#--
   - Returns a collection containing the given page with its siblings in the correct order.
   -->
-<#function pageAndSiblings page=currentPage>
-	<#return getVisiblePages(page.node.parent.getChildPages(page.locale)) />
+<#function pageAndSiblings page=currentPage()>
+	<#return visiblePages(page.node.parent.getChildPages(page.locale)) />
 </#function>
 
 <#--
@@ -51,7 +51,7 @@
 <#--
   - Returns the given collection of pages containing only visible pages.
   -->
-<#function getVisiblePages pages>
+<#function visiblePages pages>
 	<#return pageMacroHelper.getVisiblePages(pages) />
 </#function>
 
@@ -62,33 +62,39 @@
 	<#if !page?is_hash>
 		<#local page = pageForHandler(page, common.locale) />
 	</#if>
-	<#return component.properties(page.versionContainer)[key] />
+	<#return component.buildModel(page.versionContainer)[key] />
 </#function>
 
 <#--
   - Returns the page property with the given key, falling back to the
   - pathComponent (converted to title-case) if the property is not set.
   -->
-<#function title page=pageMacroHelper.currentPage, key="title">
-	<#local title = page.getProperty(key, component.isEditMode())?if_exists />
+<#function title page=currentPage(), key="title">
+	<#local title = page.getProperty(key, component.editMode)?if_exists />
 	<#if !title?has_content>
 		<#local title = common.toTitleCase(page.pathComponent) />
 	</#if>
 	<#return title />
 </#function>
 
+<#macro use page=currentPage() form="" tag="" attributes...>
+	<#if attributes?is_sequence>
+		<#local attributes = {} />
+	</#if>
+	<@component.use container=page.versionContainer form=form tag=tag attributes=attributes>
+		<#nested />
+	</@component.use>
+</#macro>
+
+
 <#--
   - Renders an editable HTML link to the given Page.
   -->
-<#macro link page=pageMacroHelper.currentPage tag="a" titleKey="title" href="" form="" attributes ...>
+<#macro link page=currentPage() tag="a" form="" titleKey="title" href="" attributes ...>
+	<#local attributes = component.addContainerAttributes(attributes, page.versionContainer, form) />
 	<#local attributes = attributes + {"href" : href?has_content?string(href, url(page))} />
-	<@component.editable editor="text" container=page.versionContainer key=titleKey tag=tag form=form attributes=attributes>${title(page, titleProperty)}</@component.editable>
+	<#local previousComponentScope = currentComponentScope />
+	<#global currentComponentScope = component.buildModel(page.versionContainer) />
+	<@component.editable editor="text" key=titleKey tag=tag attributes=attributes>${title(page, titleProperty)}</@component.editable>
+	<#global currentComponentScope = previousComponentScope />
 </#macro>
-
-<#--
-  - Splits up the given pages into groups of the specified size. Pages that
-  - are not visible are skipped.
-  -->
-<#function group pages size>
-	<#return pageMacroHelper.group(pages, size) />
-</#function>

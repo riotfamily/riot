@@ -70,6 +70,17 @@
 		<constructor-arg ref="componentDao" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
+	
+	<!--
+	  - Controller that renders forms to edit entites.
+	  -->
+	<bean id="entityFormController"
+		name="/components/entity-form/@{listId}/@{formId}/@{objectId}"
+		class="org.riotfamily.components.editor.EntityFormController">
+		<constructor-arg ref="componentFormRepository" />
+		<constructor-arg ref="listRepository" />
+		<property name="formContextFactory" ref="formContextFactory" />
+	</bean>
 
 	<override:properties ref="loginFormController">
 		<property name="viewName" value="classpath:org/riotfamily/components/runtime/view/login-form.ftl" />
@@ -86,6 +97,24 @@
 	</bean>
 
 
+	<bean id="entityEditor" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
+		<property name="target"><ref bean="entityEditorTarget" /></property>
+	</bean>
+
+	<bean id="entityEditorTarget" class="org.riotfamily.components.editor.EntityEditorImpl">
+		<constructor-arg ref="riotDaoService" />
+	</bean>
+	
+	<bean id="uploadManager" class="org.riotfamily.components.editor.UploadManagerImpl">
+		<constructor-arg ref="defaultFileStore" />
+		<constructor-arg ref="imageCropper" />
+	</bean>
+	
+	<bean name="/components/upload" class="org.riotfamily.components.editor.FileUploadController">
+		<constructor-arg ref="uploadManager" />
+	</bean>
+	
 	<!-- Overrides -->
 
 	<override:add ref="messageBasenames">
@@ -95,6 +124,7 @@
 
 	<override:add ref="loginInterceptor" property="excludes">
 		<value>/pages/login</value>
+		<value>/components/upload</value>
 	</override:add>
 	
 	<override:add ref="resourceController" property="filters">
@@ -136,11 +166,15 @@
 				<map>
 					<entry key="ComponentEditor" value-ref="componentEditor" />
 					<entry key="InstantComponentEditor" value-ref="instantComponentEditor" />
+					<entry key="EntityEditor" value-ref="entityEditor" />
+					<entry key="UploadManager" value-ref="uploadManager" />
 				</map>
 			</property>
 			<property name="serviceInterfaces">
 				<list>
 					<value>org.riotfamily.components.editor.ComponentEditor</value>
+					<value>org.riotfamily.components.editor.EntityEditor</value>
+					<value>org.riotfamily.components.editor.UploadManager</value>
 				</list>
 			</property>
 		</bean>

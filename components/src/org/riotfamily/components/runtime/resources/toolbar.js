@@ -100,7 +100,7 @@ riot.Toolbar.prototype = {
 
 	updateComponentLists: function() {
 		// We have to reverse the list, otherwise moving nested components won't work
-		this.componentLists = riot.createComponentLists().reverse();
+		this.componentLists = riot.createWrappers().reverse();
 		this.dirtyCheck();
 	},
 

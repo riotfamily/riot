@@ -33,7 +33,12 @@ import org.riotfamily.components.Component;
 import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.VersionContainer;
+import org.riotfamily.components.context.ComponentEditorRequest;
+import org.riotfamily.components.context.StoreContextInterceptor;
 import org.riotfamily.components.editor.EditModeUtils;
+import org.riotfamily.riot.dao.RiotDao;
+import org.riotfamily.riot.list.RiotDaoService;
+import org.springframework.util.ClassUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -45,14 +50,18 @@ public class ComponentMacroHelper {
 
 	private Collection toolbarScripts;
 
-	private ComponentRepository repository;
+	private ComponentRepository componentRepository;
+	
+	private RiotDaoService riotDaoService;
 
 	public ComponentMacroHelper(HttpServletRequest request,
-			Collection toolbarScripts, ComponentRepository repository) {
+			Collection toolbarScripts, ComponentRepository repository,
+			RiotDaoService riotDaoService) {
 
 		this.request = request;
 		this.toolbarScripts = toolbarScripts;
-		this.repository = repository;
+		this.componentRepository = repository;
+		this.riotDaoService = riotDaoService;
 	}
 
 	public boolean isEditMode() {
@@ -64,7 +73,7 @@ public class ComponentMacroHelper {
 	}
 
 	public String getFormUrl(String formId, Long containerId) {
-		return repository.getFormUrl(formId, containerId);
+		return componentRepository.getFormUrl(formId, containerId);
 	}
 
 	public String tag(VersionContainer container) {
@@ -79,13 +88,30 @@ public class ComponentMacroHelper {
 		return "";
 	}
 
-	public Map getProperties(VersionContainer container) {
+	public Map buildModel(VersionContainer container) {
 		ComponentVersion version = EditModeUtils.isEditMode(request)
 				? container.getLatestVersion()
 				: container.getLiveVersion();
 
-		Component component = repository.getComponent(version.getType());
+		Component component = componentRepository.getComponent(version.getType());
 		return component.buildModel(version);
 	}
-
+	
+	public boolean storeContext() {
+		if (ComponentEditorRequest.isWrapped(request)) {
+			return false;		
+		}
+		StoreContextInterceptor.storeContext(request);
+		return true;
+	}
+	
+	public String getObjectId(String listId, Object object) {
+		RiotDao dao = riotDaoService.getDao(listId);
+		return dao.getObjectId(object);
+	}
+	
+	public String getDefaultListId(Object object) {
+		return riotDaoService.getDefaultListId(
+				ClassUtils.getUserClass(object));
+	}
 }

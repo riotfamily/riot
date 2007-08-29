@@ -1,19 +1,16 @@
-riot.Component = Class.create();
-riot.Component.prototype = {
+riot.AbstractComponent = Class.create();
+riot.AbstractComponent.prototype = {
 
 	initialize: function(componentList, el) {
 		this.componentList = componentList;
 		this.element = el;
 		el.component = this;
-		this.handlers = {
-			properties: this.editProperties.bindAsEventListener(this),
-			remove: this.removeComponent.bindAsEventListener(this)
-		}
+		this.handlers = {};
 		this.onMouseOver = this.showOutline.bindAsEventListener(this);
-
-		this.id = el.readAttribute('riot:containerId');
-		this.type = el.readAttribute('riot:componentType');
 		this.form = el.readAttribute('riot:form');
+		if (this.form) {
+			this.handlers.properties = this.editProperties.bindAsEventListener(this);
+		}
 		this.setupElement();
 	},
 
@@ -26,7 +23,7 @@ riot.Component.prototype = {
 
 	setMode: function(mode) {
 		if (mode != null) {
-			if (!this.handlers[mode] || (mode == 'properties' && !this.form)) {
+			if (!this.handlers[mode]) {
 				this.mode = null;
 				return;
 			}
@@ -67,20 +64,9 @@ riot.Component.prototype = {
 			el.component.componentList.componentRemoved();
 			riot.outline.suspended = false;
 		});
-		ComponentEditor.deleteComponent(this.id);
+		this.deleteObject();
 		this.componentList.setDirty(true);
 		return false;
-	},
-
-	updateText: function(key, value, updateFromServer) {
-		ComponentEditor.updateText(this.id, key, value, updateFromServer
-				? this.onupdate.bind(this) : Prototype.emptyFunction);
-
-		this.componentList.setDirty(true);
-	},
-
-	updateTextChunks: function(key, chunks) {
-		ComponentEditor.updateTextChunks(this.id, key, chunks, this.onupdate.bind(this));
 	},
 
 	setHtml: function(html) {
@@ -115,7 +101,6 @@ riot.Component.prototype = {
 	},
 
 	onupdate: function() {
-		this.componentList.setDirty(true);
 		this.componentList.update();
 	},
 
@@ -124,6 +109,30 @@ riot.Component.prototype = {
 		if (next) {	next.forceRerendering(); }
 	},
 
+	createEditor: function(e, editorType) {
+		if (editorType == 'text') {
+			return new riot.InplaceTextEditor(e, this);
+		}
+		if (editorType == 'textarea') {
+			return new riot.PopupTextEditor(e, this);
+		}
+		if (editorType == 'richtext') {
+			return new riot.RichtextEditor(e, this, {useInnerHtmlAsDefault: true});
+		}
+		if (editorType == 'richtext-chunks') {
+			return new riot.RichtextEditor(e, this, {split: true, useInnerHtmlAsDefault: true});
+		}
+		if (editorType == 'image') {
+			return new riot.ImageEditor(e, this, {
+				minWidth: e.readAttribute('riot:minWidth'),
+				maxWidth: e.readAttribute('riot:maxWidth'),
+				minHeight: e.readAttribute('riot:minHeight'),
+				maxHeight: e.readAttribute('riot:maxHeight')
+			});
+		}
+		return null;
+	},
+					
 	setupElement: function() {
 		this.editors = [];
 		var desc = this.element.descendants();
@@ -134,17 +143,9 @@ riot.Component.prototype = {
 				var editorType = e.readAttribute('riot:editorType');
 				if (editorType) {
 					if (e == this.element || (!e.component && this.element == Element.up(e, '.riot-component'))) {
-						if (editorType == 'text') {
-							this.editors.push(new riot.InplaceTextEditor(e, this));
-						}
-						else if (editorType == 'textarea') {
-							this.editors.push(new riot.PopupTextEditor(e, this));
-						}
-						else if (editorType == 'richtext') {
-							this.editors.push(new riot.RichtextEditor(e, this, {useInnerHtmlAsDefault: true}));
-						}
-						else if (editorType == 'richtext-chunks') {
-							this.editors.push(new riot.RichtextEditor(e, this, {split: true, useInnerHtmlAsDefault: true}));
+						var editor = this.createEditor(e, editorType);
+						if (editor) {
+							this.editors.push(editor);
 						}
 					}
 				}
@@ -160,6 +161,47 @@ riot.Component.prototype = {
 		}
 
 		this.element.toggleClassName('riot-component-with-form', this.form);
+	}
+};
+
+riot.Component = Class.extend(riot.AbstractComponent, {
+
+	initialize: function(componentList, el) {
+		this.id = el.readAttribute('riot:containerId');
+		this.type = el.readAttribute('riot:componentType');
+		this.SUPER(componentList, el);
+		this.handlers.remove = this.removeComponent.bindAsEventListener(this);
+	},
+
+	deleteObject: function() {
+		ComponentEditor.deleteComponent(this.id);
+	},
+
+	retrieveText: function(key, callback) {
+		ComponentEditor.getText(this.id, key, callback);
+	},
+	
+	updateText: function(key, value, updateFromServer) {
+		ComponentEditor.updateText(this.id, key, value, updateFromServer
+				? this.onupdate.bind(this) : Prototype.emptyFunction);
+
+		this.componentList.setDirty(true);
+	},
+
+	updateTextChunks: function(key, chunks) {
+		ComponentEditor.updateTextChunks(this.id, key, chunks, this.onupdate.bind(this));
+	},
+	
+	onupdate: function() {
+		this.componentList.setDirty(true);
+		this.SUPER();
+	},
+
+	createEditor: function(e, editorType) {
+		if (editorType == 'richtext-chunks') {
+			return new riot.RichtextEditor(e, this, {split: true, useInnerHtmlAsDefault: true});
+		}
+		return this.SUPER(e, editorType);
 	},
 
 	updatePositionClasses: function(position, last) {
@@ -172,7 +214,25 @@ riot.Component.prototype = {
 			});
 		}
 	}
-};
+});
+
+
+riot.EntityComponent = Class.extend(riot.AbstractComponent, {
+
+	initialize: function(componentList, el) {
+		this.objectId = el.readAttribute('riot:objectId');
+		this.SUPER(componentList, el);
+	},
+	
+	retrieveText: function(key, callback) {
+		EntityEditor.getText(this.componentList.listId, this.objectId, key, callback);
+	},
+
+	updateText: function(key, value, updateFromServer) {
+		EntityEditor.updateText(this.componentList.listId, this.objectId, key, value, 
+				updateFromServer ? this.onupdate.bind(this) : Prototype.emptyFunction);
+	}
+});
 
 riot.InsertButton = Class.create();
 riot.InsertButton.prototype = {
@@ -180,18 +240,13 @@ riot.InsertButton.prototype = {
 		this.component = component;
 		this.componentList = componentList || component.componentList;
 		this.element = RBuilder.node('div', {className: 'riot-insert-button',
-				onclick: this.onclick.bindAsEventListener(this)}).hide();
+				onclick: this.onclick.bindAsEventListener(this)});
+				
+		componentList.element.appendChild(this.element);
 	},
 
-	show: function() {
-		if (!this.element.parentNode) {
-			this.componentList.element.appendChild(this.element);
-		}
-		this.element.show();
-	},
-
-	hide: function() {
-		this.element.hide();
+	remove: function() {
+		this.element.remove();
 	},
 
 	onclick: function() {
@@ -401,8 +456,8 @@ riot.DiscardWidget = Class.extend(riot.PublishWidget, {
 
 riot.listCount = 0; // Counter to generate element IDs
 
-riot.AbstractComponentCollection = Class.create();
-riot.AbstractComponentCollection.prototype = {
+riot.AbstractWrapper = Class.create();
+riot.AbstractWrapper.prototype = {
 	initialize: function(el) {
 		this.element = el;
 		el.componentList = this;
@@ -425,13 +480,17 @@ riot.AbstractComponentCollection.prototype = {
 				var e = elements[i];
 				if (e.hasClassName('riot-component')) {
 					if (e == this.element || this.element == e.up('.riot-components')) {
-						var c = e.component || new riot.Component(this, e);
+						var c = e.component || this.createComponent(e);
 						this.components.push(c);
 					}
 				}
 			}
 		}
 		return this.components;
+	},
+	
+	createComponent: function(e) {
+		return new riot.Component(this, e);
 	},
 
 	update: function() {
@@ -461,7 +520,7 @@ riot.AbstractComponentCollection.prototype = {
 		this.components = null;
 		this.getComponents();
 		if (this.childLists) riot.toolbar.evictComponentLists(this.childLists);
-		this.childLists = riot.createComponentLists(this.element);
+		this.childLists = riot.createWrappers(this.element);
 		riot.toolbar.registerComponentLists(this.childLists);
 	},
 
@@ -532,7 +591,41 @@ riot.AbstractComponentCollection.prototype = {
 	}
 }
 
-riot.ComponentSet = Class.extend(riot.AbstractComponentCollection, {
+riot.Entity = Class.extend(riot.AbstractWrapper, {
+	initialize: function(el) {
+		this.SUPER(el);
+		this.listId = el.readAttribute('riot:listId');
+		this.getComponents();
+	},
+	
+	createComponent: function(e) {
+		return new riot.EntityComponent(this, e);
+	},
+		
+});
+
+riot.EntityList = Class.extend(riot.Entity, {
+	
+	insert: function(enable) {
+		if (enable) {
+			this.insertButton = RBuilder.node('div', {className: 'riot-insert-button',
+				onclick: this.createObject.bindAsEventListener(this)});
+				
+			this.element.prependChild(this.insertButton);
+		}
+		else {
+			this.insertButton.remove();
+		}
+	},
+	
+	createObject: function() {
+		EntityEditor.createObject(this.listId, this.update.bind(this));
+		riot.toolbar.buttons.browse.click();
+	}
+	
+});
+
+riot.ComponentSet = Class.extend(riot.AbstractWrapper, {
 	initialize: function(el) {
 		this.SUPER(el);
 		this.id = null;
@@ -552,10 +645,10 @@ riot.ComponentSet = Class.extend(riot.AbstractComponentCollection, {
 	}
 });
 
-riot.ComponentList = Class.extend(riot.AbstractComponentCollection, {
+riot.ComponentList = Class.extend(riot.AbstractWrapper, {
 	initialize: function(el) {
 		this.SUPER(el);
-		this.id = el.readAttribute('riot:listId');
+		this.id = el.readAttribute('riot:listId');;
 		this.setDirty(el.readAttribute('riot:dirty'));		
 		this.maxComponents = el.readAttribute('riot:maxComponents');
 		this.minComponents = el.readAttribute('riot:minComponents');
@@ -582,10 +675,9 @@ riot.ComponentList = Class.extend(riot.AbstractComponentCollection, {
 		if (!this.maxComponents || this.getComponents().length < this.maxComponents) {
 			if (enable) {
 				this.insertButton = new riot.InsertButton(null, this);
-				this.insertButton.show();
 			}
 			else if (this.insertButton) {
-				this.insertButton.hide();
+				this.insertButton.remove();
 				this.insertButton = null;
 			}
 			riot.activeInsertButton = null;
@@ -645,20 +737,26 @@ riot.ComponentList = Class.extend(riot.AbstractComponentCollection, {
 
 });
 
-riot.createComponentList = function(el) {
-	var listId = el.readAttribute('riot:listId');
-	if (listId) {
-		return new riot.ComponentList(el);
+riot.createWrapper = function(el) {
+	var wrapper = el.readAttribute('riot:wrapper');
+	if (wrapper == 'entity') {
+		return new riot.Entity(el);
 	}
-	return new riot.ComponentSet(el);
+	if (wrapper == 'entityList') {
+		return new riot.EntityList(el);
+	}
+	if (wrapper == 'componentSet') {
+		return new riot.ComponentSet(el);
+	}
+	return new riot.ComponentList(el);
 }
 
-riot.createComponentLists = function(el) {
+riot.createWrappers = function(el) {
 	var lists = [];
 	el = el || $(document.body);
 	el.getElementsBySelector('.riot-components').each(function(e) {
 		if(!e.componentList) {
-			e.componentList = riot.createComponentList(e);
+			e.componentList = riot.createWrapper(e);
 		}
 		lists.push(e.componentList);
 	});
@@ -702,6 +800,7 @@ riot.adoptFloatAndClear = function(el) {
 			el.style.zIndex = 1;
 			el.style.cssFloat = el.style.styleFloat = cssFloat;
 			child.style.cssFloat = child.style.styleFloat = 'none';
+			child.originalFloat = cssFloat;
 		}
 		var cssClear = child.getStyle('clear');
 		if (cssClear != 'none') {
@@ -710,12 +809,20 @@ riot.adoptFloatAndClear = function(el) {
 	}
 }
 
-riot.editProperties = function(e) {
+riot.getComponent = function(e) {
 	e = e || this;
 	var componentElement = Element.up(e, '.riot-component');
-	if (componentElement && (!componentElement.component || !componentElement.component.mode)) {
+	if (componentElement && componentElement.component) {
+		return componentElement.component;
+	}
+	return null;
+}
+
+riot.editProperties = function(e) {
+	var component = riot.getComponent(e);
+	if (component && !component.mode) {
 		riot.toolbar.buttons.properties.click();
-		componentElement.component.editProperties();
+		component.editProperties();
 	}
 	return false;
 }
