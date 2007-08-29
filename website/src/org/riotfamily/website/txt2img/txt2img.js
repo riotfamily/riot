@@ -117,6 +117,7 @@ RiotImageReplacement.prototype = {
 		var img;
 		img = document.createElement('img');
 		img.style.verticalAlign = 'top';
+		img.style.border = 'none';
 		if (this.useFilter) {
 			img.src = this.pixelImage.src;
 			if (image.width > 0) {
