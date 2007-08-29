@@ -28,6 +28,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
@@ -37,10 +39,17 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Expression;
 import org.hibernate.metadata.ClassMetadata;
 import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.util.StringUtils;
 
 public final class HibernateUtils {
 
+	public static final String LIVE_MODE_FILTER_NAME = "liveMode";
+	
+	public static final String PUBLISHED_PARAM_NAME = "published";
+	
+	private static Log log = LogFactory.getLog(HibernateUtils.class);
+	
 	private HibernateUtils() {
 	}
 
@@ -194,6 +203,23 @@ public final class HibernateUtils {
 		}
 		else {
 			c.add(Expression.isNull(name));
+		}
+	}
+
+	public static boolean isLiveModeFilterDefined(SessionFactory sf) {
+		return sf.getDefinedFilterNames().contains(LIVE_MODE_FILTER_NAME);
+	}
+	
+	public static void enableLiveModeFilterIfNecessary(Session session) {
+		if (!AccessController.isAuthenticatedUser()) {
+			if (isLiveModeFilterDefined(session.getSessionFactory())) {
+				session.enableFilter(LIVE_MODE_FILTER_NAME).setParameter(
+						PUBLISHED_PARAM_NAME, Boolean.TRUE);	
+			}
+			else {
+				log.warn("No filter named " + LIVE_MODE_FILTER_NAME 
+						+ " defined for SessionFactory");
+			}
 		}
 	}
 }
