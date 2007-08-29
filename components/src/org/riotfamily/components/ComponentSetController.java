@@ -77,9 +77,8 @@ public class ComponentSetController extends AbstractCacheableController
 			HttpServletResponse response) throws Exception {
 
 		if (EditModeUtils.isEditMode(request)) {
-			String uri = ServletUtils.getIncludeUri(request);
-			uri = uri.substring(request.getContextPath().length());
-			if (PageRequestUtils.storeContext(request, uri, 120000)) {
+			String uri = ServletUtils.getPathWithinApplication(request);
+			if (PageRequestUtils.createAndStoreContext(request, uri, 120000)) {
 				View view = viewResolverHelper.resolveView(request, viewName);
 				return new ModelAndView(new ComponentSetView(view, uri), MODEL);
 			}

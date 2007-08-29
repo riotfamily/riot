@@ -28,7 +28,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.web.util.UrlPathHelper;
+import org.riotfamily.common.web.util.ServletUtils;
 
 public final class PageRequestUtils {
 
@@ -37,26 +37,37 @@ public final class PageRequestUtils {
 
 	private static Log log = LogFactory.getLog(PageRequestUtils.class);
 	
-	private static UrlPathHelper urlPathHelper = new UrlPathHelper();
-	
 	private PageRequestUtils() {
 	}
 	
-	public static boolean storeContext(HttpServletRequest request, 
+	public static boolean createAndStoreContext(HttpServletRequest request, 
 			Object contextKey, int timeToLive) {
+		
+		PageRequestContext context = createContext(request, contextKey);
+		if (context != null) {
+			storeContext(context, request, timeToLive);
+			return true;
+		}
+		return false;
+	}
+	
+	public static PageRequestContext createContext(HttpServletRequest request, 
+			Object contextKey) {
 		
 		if (ComponentEditorRequest.isWrapped(request, contextKey)) {
 			log.debug("Request is already wrapped - ignoring it ...");
-			return false;
+			return null;
 		}
-		else {
-			String uri = urlPathHelper.getOriginatingRequestUri(request);
-			log.debug("Storing context for " + uri + "#" + contextKey);
-			ContextMap contextMap = getContextMap(request);
-			PageRequestContext context = new PageRequestContext(contextKey, request);
-			contextMap.put(uri, contextKey, context, timeToLive);
-			return true;
-		}
+		return new PageRequestContext(contextKey, request);
+	}
+	
+	public static void storeContext(PageRequestContext context,
+			HttpServletRequest request, int timeToLive) {
+		
+		String uri = ServletUtils.getOriginatingRequestUri(request);
+		log.debug("Storing context for " + uri + "#" + context.getKey());
+		ContextMap contextMap = getContextMap(request);
+		contextMap.put(uri, context.getKey(), context, timeToLive);
 	}
 	
 	public static void touchContext(HttpServletRequest request, String pageUri) {
