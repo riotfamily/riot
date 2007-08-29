@@ -14,7 +14,7 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
@@ -25,11 +25,24 @@ package org.riotfamily.riot.security.session;
 
 import org.riotfamily.riot.security.auth.RiotUser;
 
+/**
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public class SecurityContext {
 
-public interface SessionMetaDataStore {
-
-	public SessionMetaData loadSessionMetaData(RiotUser user);
+	private static ThreadLocal threadLocal = new ThreadLocal();
 	
-	public void storeSessionMetaData(SessionMetaData data);
-
+	public static void bindUserToCurrentThread(RiotUser user) {
+		threadLocal.set(user);
+	}
+	
+	public static RiotUser getCurrentUser() {
+		return (RiotUser) threadLocal.get();
+	}
+	
+	public static void resetUser() {
+		threadLocal.set(null);
+	}
+	
 }

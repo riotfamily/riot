@@ -27,8 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.util.OncePerRequestInterceptor;
-import org.riotfamily.riot.security.AccessController;
-import org.riotfamily.riot.security.LoginManager;
 import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
@@ -43,7 +41,7 @@ public class AccessControlInterceptor extends OncePerRequestInterceptor {
 			HttpServletResponse response, Object handler) throws Exception {
 		
 		RiotUser user = LoginManager.getUser(request);
-		AccessController.bindUserToCurrentThread(user);
+		SecurityContext.bindUserToCurrentThread(user);
 		return isAuthorized(request, response, user);
 	}
 
@@ -57,7 +55,7 @@ public class AccessControlInterceptor extends OncePerRequestInterceptor {
 			HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
 
-		AccessController.resetUser();
+		SecurityContext.resetUser();
 	}
 
 }

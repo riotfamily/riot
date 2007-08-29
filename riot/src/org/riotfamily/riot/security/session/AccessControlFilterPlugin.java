@@ -31,8 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.common.web.filter.PluginChain;
-import org.riotfamily.riot.security.AccessController;
-import org.riotfamily.riot.security.LoginManager;
 import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
@@ -58,11 +56,11 @@ public final class AccessControlFilterPlugin extends FilterPlugin {
 		
 		try {
 			RiotUser user = LoginManager.getUser(request);
-			AccessController.bindUserToCurrentThread(user);
+			SecurityContext.bindUserToCurrentThread(user);
 			pluginChain.doFilter(request, response);
 		}
 		finally {
-			AccessController.resetUser();
+			SecurityContext.resetUser();
 		}
 	}
 }

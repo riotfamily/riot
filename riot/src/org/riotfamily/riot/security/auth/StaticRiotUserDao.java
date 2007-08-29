@@ -21,10 +21,9 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.dao;
+package org.riotfamily.riot.security.auth;
 
 import org.riotfamily.riot.dao.support.RiotDaoAdapter;
-import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 

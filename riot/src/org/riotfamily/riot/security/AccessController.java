@@ -30,7 +30,7 @@ import org.riotfamily.riot.security.auth.RiotUser;
 import org.riotfamily.riot.security.policy.AuthorizationPolicy;
 import org.riotfamily.riot.security.session.AccessControlFilterPlugin;
 import org.riotfamily.riot.security.session.AccessControlInterceptor;
-import org.riotfamily.riot.security.session.SessionMetaData;
+import org.riotfamily.riot.security.session.SecurityContext;
 
 
 
@@ -46,19 +46,7 @@ public final class AccessController {
 	private AccessController() {
 	}
 	
-	private static LoginManager loginManager;
-	
 	private static List policies;
-	
-	private static ThreadLocal threadLocal = new ThreadLocal();
-	
-	/**
-	 * The {@link AccessControlInitializer} sets a reference to the
-	 * {@link LoginManager} so that it can be accessed from a static context.
-	 */
-	static void setLoginManager(LoginManager loginManager) {
-		AccessController.loginManager = loginManager;
-	}
 
 	/**
 	 * The {@link AccessControlInitializer} sets a list of 
@@ -68,21 +56,9 @@ public final class AccessController {
 	static void setPolicies(List policies) {
 		AccessController.policies = policies;
 	}
-	
-	public static void storeSessionMetaData(SessionMetaData data) {
-		loginManager.storeSessionMetaData(data);
-	}
-	
-	public static void bindUserToCurrentThread(RiotUser user) {
-		threadLocal.set(user);
-	}
-	
-	public static void resetUser() {
-		threadLocal.set(null);
-	}
-	
+		
 	public static RiotUser getCurrentUser() {
-		return (RiotUser) threadLocal.get();
+		return SecurityContext.getCurrentUser();
 	}
 	
 	public static boolean isAuthenticatedUser() {
@@ -92,13 +68,31 @@ public final class AccessController {
 	public static boolean isGranted(String action, Object object) {
 		return isGranted(getCurrentUser(), action, object);
 	}
-
-	public static boolean isGranted(RiotUser subject, String action, Object object) {
+	
+	public static void checkPermission(String action, Object object) {
+		RiotUser subject = getCurrentUser();
 		if (subject != null) {
 			Iterator it = policies.iterator();
 			while (it.hasNext()) {
 				AuthorizationPolicy policy = (AuthorizationPolicy) it.next();
 				int access = policy.checkPermission(subject, action, object);
+				if (access == AuthorizationPolicy.ACCESS_GRANTED) {
+					return;
+				}
+				else if (access == AuthorizationPolicy.ACCESS_DENIED) {
+					throw new AccessDeniedException(subject, action, object, policy);
+				}
+			}
+		}
+		throw new AccessDeniedException(subject, action, object, null);
+	}
+
+	public static boolean isGranted(RiotUser user, String action, Object object) {
+		if (user != null) {
+			Iterator it = policies.iterator();
+			while (it.hasNext()) {
+				AuthorizationPolicy policy = (AuthorizationPolicy) it.next();
+				int access = policy.checkPermission(user, action, object);
 				if (access == AuthorizationPolicy.ACCESS_GRANTED) {
 					return true;
 				}

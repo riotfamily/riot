@@ -21,13 +21,13 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.dao;
+package org.riotfamily.riot.security.session;
 
 import java.util.Collection;
 
 import org.riotfamily.riot.dao.ListParams;
-import org.riotfamily.riot.security.LoginManager;
 import org.riotfamily.riot.security.auth.RiotUser;
+import org.riotfamily.riot.security.auth.RiotUserDao;
 import org.springframework.dao.DataAccessException;
 
 /**
@@ -77,13 +77,13 @@ public class RiotUserDaoWrapper implements RiotUserDao {
 	public void update(Object entity) {		
 		wrappedInstance.update(entity);
 		RiotUser user = (RiotUser) entity;
-		LoginManager.updateUser(user.getUserId(), user);
+		UserHolder.updateUser(user.getUserId(), user);
 	}
 
 	public void delete(Object entity, Object parent) {
 		wrappedInstance.delete(entity, parent);
 		RiotUser user = (RiotUser) entity;
-		LoginManager.updateUser(user.getUserId(), null);
+		UserHolder.updateUser(user.getUserId(), user);
 	}
 	
 }

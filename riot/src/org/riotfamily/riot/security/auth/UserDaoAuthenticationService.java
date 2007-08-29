@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.security.auth;
 
-import org.riotfamily.riot.security.dao.RiotUserDao;
 
 /**
  * AuthenticationService that uses a {@link RiotUserDao} to lookup a 

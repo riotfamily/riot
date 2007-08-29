@@ -21,25 +21,20 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security;
+package org.riotfamily.riot.security.session;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.riotfamily.riot.security.auth.AuthenticationService;
 import org.riotfamily.riot.security.auth.RiotUser;
-import org.riotfamily.riot.security.session.SessionMetaData;
-import org.riotfamily.riot.security.session.SessionMetaDataStore;
-import org.riotfamily.riot.security.session.UserHolder;
+import org.springframework.web.context.ServletContextAware;
 
-public class LoginManager {
+public class LoginManager implements ServletContextAware {
 
-	public static final String ACTION_LOGIN = "login";
-	
-	private static final String SESSION_KEY = 
-			LoginManager.class.getName() + ".userHolder";
-	
+	private static final String CONTEXT_KEY = LoginManager.class.getName();
+		
 	private AuthenticationService authenticationService;
 
 	private SessionMetaDataStore metaDataStore; 
@@ -52,6 +47,14 @@ public class LoginManager {
 	public void setMetaDataStore(SessionMetaDataStore metaDataStore) {
 		this.metaDataStore = metaDataStore;
 	}
+
+	public void setServletContext(ServletContext servletContext) {
+		servletContext.setAttribute(CONTEXT_KEY, this);
+	}
+	
+	public static LoginManager getInstance(ServletContext servletContext) {
+		return (LoginManager) servletContext.getAttribute(CONTEXT_KEY);
+	}
 	
 	/**
 	 * Tries to authenticate the user with the given credentials. If the 
@@ -62,7 +65,7 @@ public class LoginManager {
 			String password) {
 		
 		RiotUser user = authenticationService.authenticate(userName, password);
-		if (user != null && AccessController.isGranted(user, ACTION_LOGIN, null)) {
+		if (user != null) {
 			storeUserInSession(userName, user, request);
 			return true;
 		}
@@ -76,7 +79,7 @@ public class LoginManager {
 	public static void logout(HttpServletRequest request, 
 			HttpServletResponse response) {
 		
-		request.getSession().removeAttribute(SESSION_KEY);
+		UserHolder.removeFromSession(request);
 	}
 	
 	/**
@@ -116,25 +119,14 @@ public class LoginManager {
 		
 		SessionMetaData sessionData = getOrCreateMetaData(userName, user, request);
 		UserHolder holder = new UserHolder(user, sessionData);
-		request.getSession().setAttribute(SESSION_KEY, holder);
-	}
-
-	/**
-	 * Retrieves the {@link UserHolder} from the HTTP session. 
-	 */
-	private static UserHolder getUserHolder(HttpServletRequest request) {
-		HttpSession session = request.getSession(false);
-		if (session == null) {
-			return null;
-		}
-		return (UserHolder) session.getAttribute(SESSION_KEY);
+		holder.storeInSession(request.getSession());
 	}
 
 	/**
 	 * Returns the user associated with the given request.
 	 */
-	public static RiotUser getUser(HttpServletRequest request) {
-		UserHolder holder = getUserHolder(request);
+	static RiotUser getUser(HttpServletRequest request) {
+		UserHolder holder = UserHolder.getInstance(request);
 		return holder != null ? holder.getUser() : null;
 	}
 
@@ -142,16 +134,8 @@ public class LoginManager {
 	 * Returns the SessionData for the given request.
 	 */
 	public static SessionMetaData getSessionMetaData(HttpServletRequest request) {
-		UserHolder holder = getUserHolder(request);
+		UserHolder holder = UserHolder.getInstance(request);
 		return holder != null ? holder.getSessionMetaData() : null;
-	}
-	
-	/**
-	 * Method that can be called if a RiotUser object has been modified or 
-	 * deleted.
-	 */
-	public static void updateUser(String userId, RiotUser user) {
-		UserHolder.updateUser(userId, user);
 	}
 	
 }

@@ -21,17 +21,32 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.dao;
+package org.riotfamily.riot.security.session;
 
-import org.riotfamily.riot.dao.RiotDao;
-import org.riotfamily.riot.security.auth.RiotUser;
+import org.riotfamily.riot.security.auth.RiotUserDao;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public interface RiotUserDao extends RiotDao {
+public class RiotUserDaoProcessor implements BeanPostProcessor {
 
-	public RiotUser findUserByCredentials(String username, String password);
+	public Object postProcessBeforeInitialization(Object bean, String beanName) 
+			throws BeansException {
+		
+		return bean;
+	}
+	
+	public Object postProcessAfterInitialization(Object bean, String beanName) 
+			throws BeansException {
+		
+		if (bean instanceof RiotUserDao) {
+			return new RiotUserDaoWrapper((RiotUserDao) bean);
+		}
+		return bean;
+	}
+
 	
 }

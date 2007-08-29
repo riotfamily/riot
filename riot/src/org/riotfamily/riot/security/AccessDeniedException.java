@@ -21,31 +21,48 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.dao;
+package org.riotfamily.riot.security;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.riotfamily.riot.security.auth.RiotUser;
+import org.riotfamily.riot.security.policy.AuthorizationPolicy;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class RiotUserDaoProcessor implements BeanPostProcessor {
+public class AccessDeniedException extends RuntimeException {
 
-	public Object postProcessBeforeInitialization(Object bean, String beanName) 
-			throws BeansException {
-		
-		return bean;
-	}
+	private RiotUser user;
 	
-	public Object postProcessAfterInitialization(Object bean, String beanName) 
-			throws BeansException {
+	private String action;
+	
+	private Object object;
+
+	private AuthorizationPolicy policy;
+
+	public AccessDeniedException(RiotUser user, String action, Object object, 
+			AuthorizationPolicy policy) {
 		
-		if (bean instanceof RiotUserDao) {
-			return new RiotUserDaoWrapper((RiotUserDao) bean);
-		}
-		return bean;
+		this.user = user;
+		this.action = action;
+		this.object = object;
+		this.policy = policy;
 	}
 
+	public RiotUser getUser() {
+		return this.user;
+	}
+
+	public String getAction() {
+		return this.action;
+	}
+
+	public Object getObject() {
+		return this.object;
+	}
+
+	public AuthorizationPolicy getPolicy() {
+		return this.policy;
+	}
 	
 }

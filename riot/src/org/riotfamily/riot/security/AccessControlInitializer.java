@@ -39,10 +39,6 @@ import org.springframework.core.OrderComparator;
  * @since 6.5
  */
 public class AccessControlInitializer implements ApplicationContextAware {
-
-	public AccessControlInitializer(LoginManager loginManager) {
-		AccessController.setLoginManager(loginManager);
-	}
 	
 	public void setApplicationContext(ApplicationContext context) {
 		ArrayList policies = new ArrayList();

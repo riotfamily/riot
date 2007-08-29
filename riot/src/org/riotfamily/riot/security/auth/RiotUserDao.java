@@ -14,22 +14,23 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.security.session;
+package org.riotfamily.riot.security.auth;
 
-import org.riotfamily.riot.security.auth.RiotUser;
+import org.riotfamily.riot.dao.RiotDao;
 
+/**
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public interface RiotUserDao extends RiotDao {
 
-public interface SessionMetaDataStore {
-
-	public SessionMetaData loadSessionMetaData(RiotUser user);
+	public RiotUser findUserByCredentials(String username, String password);
 	
-	public void storeSessionMetaData(SessionMetaData data);
-
 }

@@ -27,10 +27,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
-import org.riotfamily.riot.security.AccessController;
 import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
@@ -46,6 +48,8 @@ import org.riotfamily.riot.security.auth.RiotUser;
  */
 public class UserHolder implements Serializable, HttpSessionBindingListener {
 
+	private static final String SESSION_KEY = UserHolder.class.getName();
+	
 	private static ArrayList users = new ArrayList();
 	
 	private RiotUser user;
@@ -77,10 +81,11 @@ public class UserHolder implements Serializable, HttpSessionBindingListener {
 	public void valueUnbound(HttpSessionBindingEvent event) {
 		users.remove(user.getUserId());
 		metaData.sessionEnded();
-		AccessController.storeSessionMetaData(metaData);
+		ServletContext sc = event.getSession().getServletContext();
+		LoginManager.getInstance(sc).storeSessionMetaData(metaData);
 	}
 	
-	public static void updateUser(String userId, RiotUser user) {
+	static void updateUser(String userId, RiotUser user) {
 		Iterator it = users.iterator();		
 		while (it.hasNext()) {
 			UserHolder holder = (UserHolder) it.next();
@@ -92,4 +97,23 @@ public class UserHolder implements Serializable, HttpSessionBindingListener {
 		}
 	}
 	
+	void storeInSession(HttpSession session) {
+		session.setAttribute(SESSION_KEY, this);
+	}
+	
+	static void removeFromSession(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			session.removeAttribute(SESSION_KEY);
+		}
+	}
+	
+	static UserHolder getInstance(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session == null) {
+			return null;
+		}
+		return (UserHolder) session.getAttribute(SESSION_KEY);
+	}
+
 }
