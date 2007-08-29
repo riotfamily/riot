@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.thumbnail;
+package org.riotfamily.common.image;
 
 import java.io.File;
 import java.io.IOException;

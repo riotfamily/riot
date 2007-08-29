@@ -21,17 +21,23 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.forms.element.upload;
+package org.riotfamily.common.image;
 
 import java.io.File;
 import java.io.IOException;
 
 /**
+ * Interface to render thumbnail images.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public interface ImageCropper {
+public interface Thumbnailer {
 
-	public void cropImage(File source, File dest, int width, int height,
-			int x, int y, int scaledWidth) throws IOException;
+	/**
+	 * Renders a thumbnail image of the source file to the specified 
+	 * destination.
+	 */
+	public void renderThumbnail(File source, File dest, int width, int height)
+			throws IOException;
 	
 }

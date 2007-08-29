@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.thumbnail.Thumbnailer;
+import org.riotfamily.common.image.Thumbnailer;
 import org.riotfamily.common.web.file.FileStore;
 
 

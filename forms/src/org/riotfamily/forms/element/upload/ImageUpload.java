@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.devlib.schmidt.imageinfo.ImageInfo;
+import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.web.util.ServletUtils;

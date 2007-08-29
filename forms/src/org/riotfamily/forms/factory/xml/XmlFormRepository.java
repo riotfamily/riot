@@ -33,12 +33,12 @@ import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.xml.BeanConfigurationWatcher;
 import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.common.xml.DocumentReader;
 import org.riotfamily.common.xml.ValidatingDocumentReader;
-import org.riotfamily.forms.element.upload.ImageCropper;
 import org.riotfamily.forms.factory.AbstractFormRepository;
 import org.riotfamily.forms.factory.FormFactory;
 import org.springframework.beans.factory.BeanFactory;
