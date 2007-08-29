@@ -44,6 +44,8 @@ import org.springframework.core.OrderComparator;
 public class CommonMacroHelperFactory implements MacroHelperFactory, 
 		ApplicationContextAware {
 
+	private ApplicationContext ctx;
+	
 	private ResourceStamper stamper;
 	
 	private List mappings;
@@ -54,7 +56,8 @@ public class CommonMacroHelperFactory implements MacroHelperFactory,
 	
 	public void setApplicationContext(ApplicationContext applicationContext) 
 			throws BeansException {
-		
+	
+		this.ctx = applicationContext;
 		mappings = new ArrayList(applicationContext.getBeansOfType(
 				ReverseHandlerMapping.class).values());
 		
@@ -66,7 +69,7 @@ public class CommonMacroHelperFactory implements MacroHelperFactory,
 	public Object createMacroHelper(HttpServletRequest request, 
 			HttpServletResponse response) {
 		
-		return new CommonMacroHelper(request, response, stamper, mappings);
+		return new CommonMacroHelper(ctx, request, response, stamper, mappings);
 	}
 
 }

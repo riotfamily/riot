@@ -43,6 +43,7 @@ import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.mapping.ReverseHandlerMapping;
 import org.riotfamily.common.web.util.ServletUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -56,6 +57,8 @@ public class CommonMacroHelper {
 
 	private static Random random = new Random();
 
+	private ApplicationContext ctx;
+	
 	private HttpServletRequest request;
 
 	private HttpServletResponse response;
@@ -66,10 +69,11 @@ public class CommonMacroHelper {
 	
 	private Locale requestLocale = null;
 
-	public CommonMacroHelper(HttpServletRequest request,
-			HttpServletResponse response, ResourceStamper stamper,
-			List mappings) {
+	public CommonMacroHelper(ApplicationContext ctx,
+			HttpServletRequest request, HttpServletResponse response, 
+			ResourceStamper stamper, List mappings) {
 
+		this.ctx = ctx;
 		this.request = request;
 		this.response = response;
 		this.stamper = stamper;
@@ -85,6 +89,10 @@ public class CommonMacroHelper {
 			requestLocale = RequestContextUtils.getLocale(request);
 		}
 		return requestLocale;
+	}
+	
+	public String getMessage(String code, List args, String defaultMessage) {
+		return ctx.getMessage(code, args.toArray(), defaultMessage, getLocale());
 	}
 
 	public String resolveAndEncodeUrl(String url) {
