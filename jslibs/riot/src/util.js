@@ -36,6 +36,45 @@ RBuilder.node = function(tag, options) {
 	return e;
 }
 
+var StyleUtils = {
+	sides: ['top', 'right', 'bottom', 'left'],
+	borderProps: ['style', 'width', 'color'],
+	borderRegEx: /border(?:-(top|right|bottom|left))?(?:-(style|width|color))?/,
+	backgroundProps: ['color', 'image', 'position', 'repeat'],
+	combine: function(s, a) {
+		var result = [];
+		a.each(function(i) {
+			result.push(s + '-' + i);
+		});
+		return result;
+	},
+	resolveProperty: function(prop) {
+		if (prop == 'margin' || prop == 'padding') {
+			return StyleUtils.combine(prop, StyleUtils.sides);
+		}
+		if (prop == 'background') {
+			return StyleUtils.combine(prop, StyleUtils.backgroundProps);
+		}
+		var m = prop.match(StyleUtils.borderRegEx);
+		if (m) {
+			if (!m[1]) {
+				var a = StyleUtils.combine('border', StyleUtils.sides);
+				var b = m[2] ? [m[2]] : StyleUtils.borderProps;
+				return a.collect(function(i) {
+					return StyleUtils.combine(i, b);
+				}).flatten();
+			}
+			else if (!m[2]) {
+				return StyleUtils.combine(prop, StyleUtils.borderProps);
+			}
+		}
+		return [prop];
+	},
+	resolveProperties: function(props) {
+		return props.collect(StyleUtils.resolveProperty).flatten();
+	}
+}
+
 var RElement = {
 	insertSelfBefore: function(el, marker) {
 		el = $(el);
@@ -98,7 +137,9 @@ var RElement = {
 	cloneStyle: function(el, source, properties) {
 		el = $(el);
 		source = $(source);
+		properties = StyleUtils.resolveProperties(properties);
 		for (var i = 0; i < properties.length; i++) {
+			var prop = properties[i];
 			el.style[properties[i].camelize()] = source.getStyle(properties[i]);
 		}
 		return el;
