@@ -31,7 +31,7 @@ riot.AbstractComponent.prototype = {
 			Event.observe(this.element, 'click', riot.stopEvent, true);
 			Event.observe(this.element, 'mouseup', this.handlers[mode]);
 			Event.observe(this.element, 'mouseover', this.onMouseOver, true);
-			Event.observe(this.element, 'mouseout', riot.outline.scheduleHide, true);
+			Event.observe(this.element, 'mouseout', riot.outline.hide, true);
 		}
 		else {
 			if (this.mode) {
@@ -46,11 +46,7 @@ riot.AbstractComponent.prototype = {
 	},
 
 	showOutline: function(event) {
-		riot.outline.show(this.element, this.handlers[this.mode],
-			Prototype.Browser.IE ? null : this.element.descendants().findAll(function(e) {
-				return e.component && e.component.mode
-			})
-		)
+		riot.outline.show(this.element);
 	},
 
 	removeComponent: function(event) {

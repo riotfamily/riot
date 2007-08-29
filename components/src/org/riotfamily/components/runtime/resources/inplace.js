@@ -4,42 +4,26 @@ riot.stopEvent = function(ev) {
 }
 
 riot.outline = {
+	top: RBuilder.node('div', {className: 'riot-highlight riot-highlight-top'}).hide().appendTo(document.body),
+	right: RBuilder.node('div', {className: 'riot-highlight riot-highlight-right'}).hide().appendTo(document.body),
+	bottom: RBuilder.node('div', {className: 'riot-highlight riot-highlight-bottom'}).hide().appendTo(document.body),
+	left: RBuilder.node('div', {className: 'riot-highlight riot-highlight-left'}).hide().appendTo(document.body),
+	
 	show: function(el, onclick, excludes) {
-		riot.outline.cancelHide();
 		if (riot.outline.suspended) return;
-		riot.outline.element.hide().copyPosFrom(el, {offsetWidth: -4, offsetHeight: -4}).update().show().onclick = onclick;
-		if (excludes) {
-			excludes.each(function(e) {
-				RBuilder.node('div')
-					.setStyle({position: 'absolute', display: 'none'})
-					.appendTo(riot.outline.element).copyPosFrom(e).show()
-					.onmouseover = riot.outline.hide;
-			});
-		}
+		riot.outline.top.copyPosFrom(el, {setHeight: false, offsetTop: -1, offsetLeft: -1, offsetWidth: 2}).show();
+		riot.outline.right.copyPosFrom(el, {setWidth: false, offsetLeft: el.offsetWidth}).show();
+		riot.outline.bottom.copyPosFrom(el, {setHeight: false, offsetLeft: -1, offsetTop: el.offsetHeight, offsetWidth: 2}).show();
+		riot.outline.left.copyPosFrom(el, {setWidth: false, offsetLeft: -1}).show();
 	},
 
 	hide: function(ev) {
-		riot.outline.element.hide().onclick = null;
-	},
-
-	scheduleHide: function(ev) {
-		if (!ev || riot.outline.element != (ev.toElement || ev.relatedTarget)) {
-			riot.outline.timeout = setTimeout(riot.outline.hide, 250);
-		}
-	},
-
-	cancelHide: function() {
-		if (riot.outline.timeout) {
-			clearTimeout(riot.outline.timeout);
-			riot.outline.timeout = null;
-		}
+		riot.outline.top.hide();
+		riot.outline.right.hide();
+		riot.outline.bottom.hide();
+		riot.outline.left.hide();
 	}
 }
-riot.outline.element = RBuilder.node('div', {
-		className: 'riot-highlight',
-		onmouseover: riot.outline.cancelHide,
-		onmouseout: riot.outline.scheduleHide
-	}).hide().appendTo(document.body)
 
 riot.InplaceEditor = Class.create();
 riot.InplaceEditor.prototype = {
@@ -67,7 +51,7 @@ riot.InplaceEditor.prototype = {
 			this.element.onclick = this.onclickHandler;
 			this.element.addClassName('riot-editable-text');
 			this.element.observe('mouseover', this.onMouseOver);
-			this.element.observe('mouseout', riot.outline.scheduleHide);
+			this.element.observe('mouseout', riot.outline.hide);
 		}
 		else {
 			if (riot.activeEditor == this) {
@@ -81,20 +65,7 @@ riot.InplaceEditor.prototype = {
 	},
 
 	showOutline: function(event) {
-		var excludes;
-		if (!Prototype.Browser.IE) {
-			excludes = [];
-			var pre = this.element.previousSibling 
-				? this.element.previousSiblings() 
-				: this.element.parentNode.previousSiblings();
-				  
-			pre.each(function(s) {
-				if (s.getStyle('float') != 'none') {
-					excludes = excludes.concat(s.getElementsByClassName('riot-editable-text'));
-				}
-			});
-		}
-		riot.outline.show(this.element, this.onclickHandler, excludes);
+		riot.outline.show(this.element);
 	},
 
 	/* Handler that is invoked when an enabled editor is clicked */

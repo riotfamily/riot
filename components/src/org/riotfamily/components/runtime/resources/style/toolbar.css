@@ -217,7 +217,16 @@ div.riot-editor {
 div.riot-highlight {
 	position: absolute;
 	z-index: 100000;
-	border: 2px dotted ${highlight};
+	width: 1px;
+	height: 1px;
+}
+div.riot-highlight-left, 
+div.riot-highlight-right {
+	background: url(images/ants_v.gif);
+}
+div.riot-highlight-top, 
+div.riot-highlight-bottom {
+	background: url(images/ants_h.gif);
 }
 
 .riot-no-inheritance {
