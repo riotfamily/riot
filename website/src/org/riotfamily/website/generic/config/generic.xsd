@@ -23,7 +23,8 @@
 			<xsd:sequence>
 				<xsd:choice minOccurs="0">
 					<xsd:element ref="hql" />
-					<xsd:element ref="paged-hql" />
+					<xsd:element ref="hql-list" />
+					<xsd:element ref="hql-paged-list" />
 					<xsd:element name="model-builder">
 						<xsd:complexType>
 							<xsd:group ref="beans:beanElements"/>
@@ -68,16 +69,15 @@
 		</xsd:choice>
 		<xsd:attribute name="id" type="xsd:ID" />
 		<xsd:attribute name="hql" use="required" />
-		<xsd:attribute name="model-key" use="required" />
-		<xsd:attribute name="list-mode" type="xsd:boolean" default="false" />
-		<xsd:attribute name="item-class" type="xsd:string" /><!-- Will be removed in the next version... -->
+		<xsd:attribute name="model-key" />
 		<xsd:attribute name="time-to-live" type="xsd:string" default="eternal" />
 		<xsd:attribute name="tag-cache-items" type="xsd:boolean" default="true" />
 	</xsd:complexType>
 
 	<xsd:element name="hql" type="hql" />
+	<xsd:element name="hql-list" type="hql" />
 
-	<xsd:element name="paged-hql">
+	<xsd:element name="hql-paged-list">
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="hql">

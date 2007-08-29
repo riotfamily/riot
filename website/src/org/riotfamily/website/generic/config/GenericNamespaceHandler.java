@@ -33,11 +33,12 @@ import org.riotfamily.website.generic.GenericViewController;
 import org.riotfamily.website.generic.model.hibernate.CurrentDateResolver;
 import org.riotfamily.website.generic.model.hibernate.CurrentLanguageResolver;
 import org.riotfamily.website.generic.model.hibernate.CurrentLocaleResolver;
-import org.riotfamily.website.generic.model.hibernate.SplitDateParameterResolver;
 import org.riotfamily.website.generic.model.hibernate.DefaultParameterResolver;
+import org.riotfamily.website.generic.model.hibernate.HqlListModelBuilder;
 import org.riotfamily.website.generic.model.hibernate.HqlModelBuilder;
-import org.riotfamily.website.generic.model.hibernate.PagedHqlModelBuilder;
+import org.riotfamily.website.generic.model.hibernate.HqlPagedListModelBuilder;
 import org.riotfamily.website.generic.model.hibernate.RiotUserResolver;
+import org.riotfamily.website.generic.model.hibernate.SplitDateParameterResolver;
 import org.riotfamily.website.generic.model.hibernate.StringToPrimitiveResolver;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 
@@ -53,7 +54,8 @@ public class GenericNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 		BeanDefinitionDecorator setModelBuilder = new NestedPropertyDecorator("modelBuilder");
 		register("hql", HqlModelBuilder.class, setModelBuilder).addTranslation("time-to-live", "ttlPeriod");
-		register("paged-hql", PagedHqlModelBuilder.class, setModelBuilder).addTranslation("time-to-live", "ttlPeriod");
+		register("hql-list", HqlListModelBuilder.class, setModelBuilder).addTranslation("time-to-live", "ttlPeriod");
+		register("hql-paged-list", HqlPagedListModelBuilder.class, setModelBuilder).addTranslation("time-to-live", "ttlPeriod");
 		registerSpringBeanDefinitionParser("model-builder", setModelBuilder);
 
 		BeanDefinitionDecorator addParameterResolver = new NestedListDecorator("parameterResolvers");

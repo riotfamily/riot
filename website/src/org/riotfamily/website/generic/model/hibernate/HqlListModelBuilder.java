@@ -23,12 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.generic.model.hibernate;
 
-import java.io.Serializable;
-
 import javax.servlet.http.HttpServletRequest;
 
-import org.hibernate.EntityMode;
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.riotfamily.cachius.TaggingContext;
 
@@ -36,27 +32,20 @@ import org.riotfamily.cachius.TaggingContext;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class HqlModelBuilder extends AbstractHqlModelBuilder {
+public class HqlListModelBuilder extends AbstractHqlModelBuilder {
 
 	protected Object getResult(Query query) {
-		query.setMaxResults(1);
-		return query.uniqueResult();
+		return query.list();
 	}
 	
-	protected void tagResult(Query query, Object item, 
+	protected String generateModelKey(Query query) {
+		return super.generateModelKey(query) + "List";
+	}
+	
+	protected void tagResult(Query query, Object result, 
 			HttpServletRequest request) {
 		
-		if (item != null) {
-			Class clazz = Hibernate.getClass(item);
-			Serializable id = getSessionFactory()
-					.getClassMetadata(clazz).getIdentifier(
-					item, EntityMode.POJO);
-
-			TaggingContext.tag(request, clazz.getName() + "#" + id);
-		}
-		else {
-			Class clazz = query.getReturnTypes()[0].getReturnedClass();
-			TaggingContext.tag(request, clazz.getName());
-		}
+		TaggingContext.tag(request, getResultClass(query).getName());
 	}
+		
 }

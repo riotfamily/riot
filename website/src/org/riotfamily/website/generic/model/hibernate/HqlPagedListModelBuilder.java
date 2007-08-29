@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Query;
 import org.riotfamily.common.collection.FlatMap;
+import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.riotfamily.website.generic.view.Pager;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.web.bind.ServletRequestUtils;
@@ -39,7 +40,7 @@ import org.springframework.web.bind.ServletRequestUtils;
  * addition to the HQL query that returns the list items, a second query must be
  * specified, that returns the total number of items.
  */
-public class PagedHqlModelBuilder extends HqlModelBuilder {
+public class HqlPagedListModelBuilder extends HqlListModelBuilder {
 
 	private String pagerModelKey = "pager";
 
@@ -120,7 +121,7 @@ public class PagedHqlModelBuilder extends HqlModelBuilder {
 	}
 
 	/**
-	 * Returns the curent page number for the given request.
+	 * Returns the current page number for the given request.
 	 */
 	protected int getPage(HttpServletRequest request) {
 		return ServletRequestUtils.getIntParameter(request, pageParam, 1);
@@ -138,6 +139,7 @@ public class PagedHqlModelBuilder extends HqlModelBuilder {
 	}
 
 	public Map buildModel(final HttpServletRequest request) {
+		HibernateUtils.enableLiveModeFilterIfNecessary(getSession());
 		final int page = getPage(request);
 		final int pageSize = getPageSize(request);
 
@@ -154,10 +156,10 @@ public class PagedHqlModelBuilder extends HqlModelBuilder {
 		Pager pager = new Pager(page, pageSize, count.longValue());
 		pager.initialize(request, padding, pageParam);
 
-		tagList(request, query);
-
+		tagResult(query, items, request);
+		
 		FlatMap model = new FlatMap();
-		model.put(modelKey, items);
+		model.put(getModelKey(query), items);
 		model.put(pagerModelKey, pager);
 		return model;
 	}
