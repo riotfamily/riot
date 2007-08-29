@@ -45,6 +45,8 @@ public class ListRepository implements ApplicationContextAware {
 	
 	private HashMap listConfigs = new HashMap();
 	
+	private HashMap listConfigsByClass = new HashMap();
+	
 	private HashMap commands = new HashMap();
 	
 	private ApplicationContext applicationContext;
@@ -66,6 +68,10 @@ public class ListRepository implements ApplicationContextAware {
 			Command command = (Command) it.next();
 			this.commands.put(command.getId(), command);
 		}
+	}
+	
+	public void setRiotDaoService(RiotDaoService riotDaoService) {
+		riotDaoService.setListRepository(this);
 	}
 	
 	/**
@@ -90,17 +96,26 @@ public class ListRepository implements ApplicationContextAware {
 		return (ListConfig) listConfigs.get(listId);
 	}
 	
+	public ListConfig getListConfig(Class entityClass) {
+		return (ListConfig) listConfigsByClass.get(entityClass);
+	}
+	
 	public void addListConfig(ListConfig listConfig) {
 		listConfigs.put(listConfig.getId(), listConfig);
+		listConfigsByClass.put(listConfig.getDao().getEntityClass(), listConfig);
 		if (listConfig.getPageSize() == 0) {
 			listConfig.setPageSize(defaultPageSize);
 		}
 	}
 	
-	public HashMap getListConfigs() {
+	protected Map getListConfigsByClass() {
+		return this.listConfigsByClass;
+	}
+	
+	protected Map getListConfigs() {
 		return listConfigs;
 	}
-
+	
 	public CellRenderer getDefaultCellRenderer() {
 		return defaultCellRenderer;
 	}

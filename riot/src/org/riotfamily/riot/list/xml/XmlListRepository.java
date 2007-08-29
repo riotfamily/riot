@@ -93,6 +93,7 @@ public class XmlListRepository extends ListRepository implements
 	
 	public void configure() {
 		getListConfigs().clear();
+		getListConfigsByClass().clear();
 		Iterator it = configLocations.iterator();
 		while (it.hasNext()) {
 			Resource res = (Resource) it.next();
