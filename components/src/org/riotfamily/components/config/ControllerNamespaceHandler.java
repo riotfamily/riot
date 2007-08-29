@@ -36,7 +36,12 @@ public class ControllerNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
 		registerBeanDefinitionParser("list", new GenericBeanDefinitionParser(
-				ComponentListController.class).addReference("locator"));
+				ComponentListController.class)
+				.addReference("locator")
+				.addTranslation("valid", "validComponentTypes")
+				.addTranslation("initial", "initialComponentTypes")
+				.addTranslation("min", "minComponents")
+				.addTranslation("max", "maxComponents"));
 		
 		registerSpringBeanDefinitionParser("locator", 
 				new NestedPropertyDecorator("locator"));

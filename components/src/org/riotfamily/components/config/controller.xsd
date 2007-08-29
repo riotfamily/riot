@@ -20,10 +20,10 @@
 				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="name" type="xsd:string" />
-			<xsd:attribute name="initialComponentTypes" type="xsd:string" />
-			<xsd:attribute name="validComponentTypes" type="xsd:string" />
-			<xsd:attribute name="minComponents" type="xsd:positiveInteger" />
-			<xsd:attribute name="maxComponents" type="xsd:positiveInteger" />
+			<xsd:attribute name="initial" type="xsd:string" />
+			<xsd:attribute name="valid" type="xsd:string" />
+			<xsd:attribute name="min" type="xsd:positiveInteger" />
+			<xsd:attribute name="max" type="xsd:positiveInteger" />
 			<xsd:attribute name="locator" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
