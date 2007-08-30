@@ -40,6 +40,10 @@ public final class PageRequestUtils {
 	private PageRequestUtils() {
 	}
 	
+	public static boolean isPartialRequest(HttpServletRequest request) {
+		return PartialPageRequest.isWrapped(request);
+	}
+	
 	public static boolean createAndStoreContext(HttpServletRequest request, 
 			Object contextKey, int timeToLive) {
 		
@@ -54,7 +58,7 @@ public final class PageRequestUtils {
 	public static PageRequestContext createContext(HttpServletRequest request, 
 			Object contextKey) {
 		
-		if (ComponentEditorRequest.isWrapped(request, contextKey)) {
+		if (PartialPageRequest.isWrapped(request, contextKey)) {
 			log.debug("Request is already wrapped - ignoring it ...");
 			return null;
 		}
@@ -93,7 +97,7 @@ public final class PageRequestUtils {
 		if (context == null) {
 			throw new RequestContextExpiredException();
 		}
-		return new ComponentEditorRequest(request, context);
+		return new PartialPageRequest(request, context);
 	}
 	
 	private static ContextMap getContextMap(HttpServletRequest request) {

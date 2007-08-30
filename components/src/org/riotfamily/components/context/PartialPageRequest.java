@@ -36,16 +36,16 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import org.riotfamily.common.collection.IteratorEnumeration;
 import org.springframework.util.Assert;
 
-public class ComponentEditorRequest extends HttpServletRequestWrapper {
+public class PartialPageRequest extends HttpServletRequestWrapper {
 
 	private static final String CONTEXT_KEY =
-			ComponentEditorRequest.class.getName() + ".contextKey";
+			PartialPageRequest.class.getName() + ".contextKey";
 
 	private PageRequestContext context;
 
 	private HashMap attributes = new HashMap();
 
-	public ComponentEditorRequest(HttpServletRequest request,
+	public PartialPageRequest(HttpServletRequest request,
 			PageRequestContext context) {
 
 		super(request);

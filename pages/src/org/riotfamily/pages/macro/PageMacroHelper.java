@@ -32,7 +32,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.components.context.ComponentEditorRequest;
+import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.editor.EditModeUtils;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.Site;
@@ -66,7 +66,7 @@ public class PageMacroHelper {
 
 	public Page getCurrentPage() {
 		Page page = PageHandlerMapping.getPage(request);
-		if (ComponentEditorRequest.isWrapped(request)
+		if (PageRequestUtils.isPartialRequest(request)
 				&& request.getAttribute(PAGE_REFRESHED) == null) {
 
 			pageDao.refreshPage(page);

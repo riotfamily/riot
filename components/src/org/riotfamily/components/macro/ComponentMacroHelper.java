@@ -33,7 +33,7 @@ import org.riotfamily.components.Component;
 import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.VersionContainer;
-import org.riotfamily.components.context.ComponentEditorRequest;
+import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.context.StoreContextInterceptor;
 import org.riotfamily.components.editor.EditModeUtils;
 import org.riotfamily.riot.dao.RiotDao;
@@ -98,7 +98,7 @@ public class ComponentMacroHelper {
 	}
 	
 	public boolean storeContext() {
-		if (ComponentEditorRequest.isWrapped(request)) {
+		if (PageRequestUtils.isPartialRequest(request)) {
 			return false;		
 		}
 		StoreContextInterceptor.storeContext(request);
