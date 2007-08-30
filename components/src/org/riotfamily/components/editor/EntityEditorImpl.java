@@ -23,10 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.editor;
 
+import org.riotfamily.cachius.Cache;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.list.RiotDaoService;
 import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.website.cache.CacheInvalidationUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
@@ -38,8 +40,14 @@ public class EntityEditorImpl implements EntityEditor {
 
 	private RiotDaoService daoService;
 	
+	private Cache cache;
+	
 	public EntityEditorImpl(RiotDaoService daoService) {
 		this.daoService = daoService;
+	}
+	
+	public void setCache(Cache cache) {
+		this.cache = cache;
 	}
 
 	public String createObject(String listId) {
@@ -48,6 +56,7 @@ public class EntityEditorImpl implements EntityEditor {
 		Object entity = wrapper.getWrappedInstance();
 		AccessController.checkPermission("edit", entity);
 		dao.save(entity, null);
+		CacheInvalidationUtils.invalidate(cache, dao);
 		return dao.getObjectId(entity);
 	}
 	
@@ -56,6 +65,7 @@ public class EntityEditorImpl implements EntityEditor {
 		Object entity = dao.load(objectId);
 		AccessController.checkPermission("delete", entity);
 		dao.delete(entity, null);
+		CacheInvalidationUtils.invalidate(cache, dao, entity);
 	}
 	
 	public String getText(String listId, String objectId, String property) {
@@ -73,5 +83,6 @@ public class EntityEditorImpl implements EntityEditor {
 		BeanWrapper wrapper = new BeanWrapperImpl(entity);
 		wrapper.setPropertyValue(property, value);
 		dao.update(entity);
+		CacheInvalidationUtils.invalidate(cache, dao, entity);
 	}
 }
