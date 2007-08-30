@@ -59,12 +59,31 @@ public class AdvancedBeanNameHandlerMapping
 	
 	private boolean stripServletMapping = true;
 	
+	private Object rootHandler;
+	
 	public void setStripServletMapping(boolean stripServletMapping) {
 		this.stripServletMapping = stripServletMapping;
 	}
 	
 	protected boolean isStripServletMapping() {
 		return this.stripServletMapping;
+	}
+	
+	/**
+	 * Set the root handler for this handler mapping, that is,
+	 * the handler to be registered for the root path ("/").
+	 * <p>Default is <code>null</code>, indicating no root handler.
+	 */
+	public void setRootHandler(Object rootHandler) {
+		this.rootHandler = rootHandler;
+	}
+	
+	/**
+	 * Return the root handler for this handler mapping (registered for "/"),
+	 * or <code>null</code> if none.
+	 */
+	protected Object getRootHandler() {
+		return this.rootHandler;
 	}
 	
     /**
@@ -196,6 +215,9 @@ public class AdvancedBeanNameHandlerMapping
 	protected Object lookupHandler(String urlPath, HttpServletRequest request) {
 		// direct match?
 		Object handler = handlerMap.get(urlPath);
+		if (handler == null && "/".equals(urlPath)) {
+			handler = getRootHandler();
+		}
 		if (handler == null) {
 			// pattern match?
 			String bestMatch = null;
