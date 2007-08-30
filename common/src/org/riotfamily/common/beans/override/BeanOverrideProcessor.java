@@ -32,6 +32,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
+import org.springframework.core.Ordered;
 
 /**
  * BeanFactoryPostProcessor that can be used to replace beans that have been
@@ -43,7 +44,7 @@ import org.springframework.beans.factory.config.ConstructorArgumentValues;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class BeanOverrideProcessor implements BeanFactoryPostProcessor {
+public class BeanOverrideProcessor implements BeanFactoryPostProcessor, Ordered {
 
 	private static Log log = LogFactory.getLog(BeanOverrideProcessor.class);
 	
@@ -52,6 +53,8 @@ public class BeanOverrideProcessor implements BeanFactoryPostProcessor {
 	private BeanDefinition beanDefinition;
 	
 	private boolean merge;
+	
+	private int order = Ordered.LOWEST_PRECEDENCE;
 	
 	public void setRef(String ref) {
 		this.ref = ref;
@@ -69,6 +72,14 @@ public class BeanOverrideProcessor implements BeanFactoryPostProcessor {
 		this.merge = merge;
 	}
 	
+	public int getOrder() {
+		return this.order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
 	public void postProcessBeanFactory(
 			ConfigurableListableBeanFactory beanFactory) 
 			throws BeansException {

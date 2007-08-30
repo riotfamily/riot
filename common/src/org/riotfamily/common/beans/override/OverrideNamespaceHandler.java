@@ -109,7 +109,9 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 		}
 		
 		protected boolean isEligibleAttribute(String attributeName) {
-			return attributeName.equals("ref") || attributeName.equals("merge");
+			return attributeName.equals("ref") 
+					|| attributeName.equals("merge")
+					|| attributeName.equals("order");
 		}
 		
 		protected void postProcess(BeanDefinitionBuilder builder, 

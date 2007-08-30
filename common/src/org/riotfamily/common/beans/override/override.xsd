@@ -22,6 +22,7 @@
 			<xsd:attribute name="ref" type="xsd:string" use="required" />
 			<xsd:attribute name="class" type="xsd:string" use="required" />
 			<xsd:attribute name="merge" type="xsd:boolean" default="false" />
+			<xsd:attribute name="order" type="xsd:integer" />
 		</xsd:complexType>
 	</xsd:element>
 	
