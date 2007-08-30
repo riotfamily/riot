@@ -28,6 +28,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
@@ -50,32 +51,28 @@ public class PushUpInterceptor extends HandlerInterceptorAdapter {
 
 	public static final String INCLUDE_URI_PARAM = "__includeUri";
 	
+	private static final String DISPATCHED_ATTRIBUTE  = 
+			PushUpInterceptor.class.getName() + ".dispatched";
+	
 	private static final String HANDLER_ATTRIBUTE = 
 			PushUpInterceptor.class.getName() + ".handler";
 	
 	private static final String RESPONSE_WRAPPER_ATTRIBUTE = 
 		PushUpInterceptor.class.getName() + ".responseWrapper";
+
 	
 	public boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler) throws Exception {
 		
-		DeferredRenderingResponseWrapper responseWrapper = (DeferredRenderingResponseWrapper)
-				request.getAttribute(RESPONSE_WRAPPER_ATTRIBUTE);
-		
 		Object firstHandler = request.getAttribute(HANDLER_ATTRIBUTE);
-		
 		if (firstHandler == null) {
-			if (responseWrapper == null) {
-				return handleUnknown(request, response);
-			}
-			else {
+			boolean dispatched = request.getAttribute(DISPATCHED_ATTRIBUTE) != null;
+			if (dispatched) {
 				return handleFirstInclude(handler, request);
 			}
+			return handleUnknown(request, response);
 		}
-		else {
-			return handleSubsequentInclude(handler, firstHandler, 
-							responseWrapper, response);
-		}
+		return handleSubsequentInclude(handler, firstHandler, request, response);
 	}
 		
 	protected boolean handleUnknown(HttpServletRequest request, 
@@ -83,15 +80,24 @@ public class PushUpInterceptor extends HandlerInterceptorAdapter {
 		
 		String includeUri = request.getParameter(INCLUDE_URI_PARAM);
 		if (includeUri != null) {
-			DeferredRenderingResponseWrapper responseWrapper = 
-					new DeferredRenderingResponseWrapper(response);
-			
-			request.setAttribute(RESPONSE_WRAPPER_ATTRIBUTE, responseWrapper);			
-			request.getRequestDispatcher(includeUri).forward(
-					request, responseWrapper);
-			
-			if (responseWrapper.isRedirectSent()) {
+			request.setAttribute(DISPATCHED_ATTRIBUTE, Boolean.TRUE);
+			if (ServletUtils.isXmlHttpRequest(request)) {
+				request.getRequestDispatcher(includeUri).forward(
+						request, response);
+				
 				return false;
+			}
+			else {
+				DeferredRenderingResponseWrapper responseWrapper = 
+						new DeferredRenderingResponseWrapper(response);
+				
+				request.setAttribute(RESPONSE_WRAPPER_ATTRIBUTE, responseWrapper);			
+				request.getRequestDispatcher(includeUri).forward(
+						request, responseWrapper);
+				
+				if (responseWrapper.isRedirectSent()) {
+					return false;
+				}
 			}
 		}
 		return true;
@@ -103,15 +109,17 @@ public class PushUpInterceptor extends HandlerInterceptorAdapter {
 	}
 	
 	protected boolean handleSubsequentInclude(Object handler, 
-			Object firstHandler, 
-			DeferredRenderingResponseWrapper responseWrapper, 
-			HttpServletResponse response) 
-			throws IOException {
+			Object firstHandler, HttpServletRequest request, 
+			HttpServletResponse response) throws IOException {
 
 		//TODO Check if getRequestURI() matches the includeUri, to support
 		//multiple includes of the same handler under different URLs.
 		if (handler.equals(firstHandler)) {
 			//Second time we come across the handler ...
+			DeferredRenderingResponseWrapper responseWrapper = 
+				(DeferredRenderingResponseWrapper) request.getAttribute(
+				RESPONSE_WRAPPER_ATTRIBUTE);
+			
 			responseWrapper.renderResponse(response);
 			return false;
 		}
