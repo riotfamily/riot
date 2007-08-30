@@ -121,7 +121,8 @@ public class Form implements BeanEditor {
 	 */
 	public Form(Object object) {
 		this();
-		editorBinder = new EditorBinder(new MapOrBeanWrapper(object));
+		editorBinder = new EditorBinder(new MapOrBeanWrapper(object.getClass()));
+		editorBinder.setBackingObject(object);
 	}
 
 	public String getId() {
