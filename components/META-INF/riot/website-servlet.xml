@@ -40,4 +40,8 @@
 
 	<bean id="storeContextInterceptor" class="org.riotfamily.components.context.StoreContextInterceptor" />
 
+	<override:bean ref="cachiusHandlerAdapter" class="org.riotfamily.components.context.PartialRequestHandlerAdapter">
+		<constructor-arg ref="websiteCache" />
+	</override:bean>
+	
 </beans>
