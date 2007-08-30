@@ -23,6 +23,7 @@ Resources.loadScriptSequence([
 	riot.componentEditorResource,
 	{src: 'dwr/interface/EntityEditor.js', test: 'EntityEditor'},
 	{src: 'dwr/interface/UploadManager.js', test: 'UploadManager'},
+	{src: 'swfupload/SWFUpload.js', test: 'SWFUpload'},
 	{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
 	{src: 'riot-js/effects.js'},
 	{src: 'riot-js/viewport.js'},
