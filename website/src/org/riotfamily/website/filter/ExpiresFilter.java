@@ -21,23 +21,22 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.filter;
+package org.riotfamily.website.filter;
 
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.FormatUtils;
-import org.springframework.web.filter.GenericFilterBean;
+import org.riotfamily.common.web.filter.HttpFilterBean;
 
 /**
  * Servlet filter that sets an <code>Expires</code> header for each request.
  */
-public class ExpiresFilter extends GenericFilterBean {
+public class ExpiresFilter extends HttpFilterBean {
 
 	private static final String HEADER_EXPIRES = "Expires";
 
@@ -47,11 +46,10 @@ public class ExpiresFilter extends GenericFilterBean {
 		this.expiresAfter = FormatUtils.parseMillis(expires);
 	}
 	
-	public void doFilter(ServletRequest request, ServletResponse response, 
+	protected void filter(HttpServletRequest request, HttpServletResponse response, 
 			FilterChain filterChain) throws IOException, ServletException {
 		
-		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		httpResponse.setDateHeader(HEADER_EXPIRES, 
+		response.setDateHeader(HEADER_EXPIRES, 
 				System.currentTimeMillis() + expiresAfter);
 		
 		filterChain.doFilter(request, response);

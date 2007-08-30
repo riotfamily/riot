@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.filter;
+package org.riotfamily.website.filter;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -95,7 +95,7 @@ public class BotSessionFilter extends OncePerRequestFilter {
 	}
 	
 	/**
-	 * Response wrapper that prevents URLs from beeing encoded.
+	 * Response wrapper that prevents URLs from being encoded.
 	 */
 	private static class NoRewriteResponse extends HttpServletResponseWrapper {
 		
