@@ -95,9 +95,9 @@ public class LoginManager implements ServletContextAware {
 			metaData = metaDataStore.loadSessionMetaData(user);
 		}
 		if (metaData == null) {
-			metaData = new SessionMetaData(user.getUserId(), userName, 
-					request.getRemoteHost());
+			metaData = new SessionMetaData(user.getUserId());
 		}
+		metaData.sessionStarted(userName, request.getRemoteHost());
 		return metaData;
 	}
 	

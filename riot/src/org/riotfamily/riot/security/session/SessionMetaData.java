@@ -49,14 +49,17 @@ public class SessionMetaData implements Serializable {
 	public SessionMetaData() {
 	}
 
-	public SessionMetaData(String userId, String userName, String loginIP) {
-		this.userId = userId;
+	public SessionMetaData(String userId) {
+		this.userId = userId;		
+	}
+	
+	void sessionStarted(String userName, String loginIP) {
 		this.userName = userName;
 		this.loginIP = loginIP;
 		this.loginDate = new Date();
 	}
 	
-	protected void sessionEnded() {
+	void sessionEnded() {
 		lastLoginDate = loginDate;
 		lastLoginIP = loginIP;
 	}
