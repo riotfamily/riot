@@ -40,7 +40,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.context.ServletContextAware;
 
 /**
- * Class that can be plugged into a {@link FilterPlugin} to filter request
+ * Class that can be plugged into a {@link PluginFilter} to filter request
  * and response objects like a {@link javax.servlet.Filter servlet filter}.
  * <p>
  * Note that plugins are only invoked once per request, so they won't be 
