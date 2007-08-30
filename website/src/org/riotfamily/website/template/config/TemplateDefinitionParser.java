@@ -84,7 +84,8 @@ public class TemplateDefinitionParser extends GenericBeanDefinitionParser {
 					bd = delegate.parseCustomElement(handlerElement);
 				}
 				
-				String beanName = delegate.getReaderContext().generateBeanName(bd);
+				String beanName = delegate.getReaderContext()
+						.generateBeanName(bd).replace('#', '-');
 				
 				String id = XmlUtils.getAttribute(element, "id");
 				if (id == null) {
