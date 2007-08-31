@@ -26,6 +26,7 @@ package org.riotfamily.website.template.config;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.riotfamily.common.beans.xml.GenericBeanDefinitionParser;
 import org.riotfamily.common.xml.XmlUtils;
@@ -69,35 +70,19 @@ public class TemplateDefinitionParser extends GenericBeanDefinitionParser {
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();
 			String slot = XmlUtils.getAttribute(ele, "slot");
-			String url = XmlUtils.getAttribute(ele, "url");
+			Object url = XmlUtils.getAttribute(ele, "url");
 			if (url == null) {
-				
-				Element handlerElement = XmlUtils.getFirstChildElement(ele);
-				
-				BeanDefinition bd;
-				BeanDefinitionParserDelegate delegate = parserContext.getDelegate();
-				
-				if (delegate.isDefaultNamespace(handlerElement.getNamespaceURI())) {
-					bd = delegate.parseBeanDefinitionElement(handlerElement, null, null);
+				String templateId = XmlUtils.getAttribute(element, "id");
+				List handlersElements = XmlUtils.getChildElements(ele);
+				if (handlersElements.size() == 1) {
+					url = getHandlerUrl(templateId, slot, 
+							(Element) handlersElements.get(0), 
+							parserContext);
 				}
-				else {
-					bd = delegate.parseCustomElement(handlerElement);
+				else if (handlersElements.size() > 1) {
+					url = getHandlerUrls(templateId, slot, 
+							handlersElements, parserContext);
 				}
-				
-				String beanName = delegate.getReaderContext()
-						.generateBeanName(bd).replace('#', '-');
-				
-				String id = XmlUtils.getAttribute(element, "id");
-				if (id == null) {
-					id = beanName;
-				}
-				
-				url = prefix  + "/" + id + "/" + slot + suffix; 
-				String[] aliases = new String[] {url};
-				
-				BeanDefinitionHolder bdHolder = new BeanDefinitionHolder(bd, beanName, aliases);
-				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, parserContext.getRegistry());
-				
 			}
 			Integer pushUp = XmlUtils.getIntegerAttribute(ele, "push-up");
 			if (pushUp != null) {
@@ -120,6 +105,46 @@ public class TemplateDefinitionParser extends GenericBeanDefinitionParser {
 		if (!configuration.isEmpty()) {
 			builder.addPropertyValue("configuration", configuration);
 		}
+	}
+	
+	private List getHandlerUrls(String templateId, String slot, 
+			List handlerElements, ParserContext parserContext) {
+		
+		ArrayList urls = new ArrayList();
+		int i = 0;
+		Iterator it = handlerElements.iterator();
+		while (it.hasNext()) {
+			Element ele = (Element) it.next();
+			urls.add(getHandlerUrl(templateId, slot + i++, ele, parserContext));
+		}
+		return urls;
+	}
+	
+	private String getHandlerUrl(String templateId, String slot,
+			Element handlerElement, ParserContext parserContext) {
+		
+		BeanDefinition bd;
+		BeanDefinitionParserDelegate delegate = parserContext.getDelegate();
+		
+		if (delegate.isDefaultNamespace(handlerElement.getNamespaceURI())) {
+			bd = delegate.parseBeanDefinitionElement(handlerElement, null, null);
+		}
+		else {
+			bd = delegate.parseCustomElement(handlerElement);
+		}
+		
+		String beanName = delegate.getReaderContext()
+				.generateBeanName(bd).replace('#', '-');
+		
+		if (templateId == null) {
+			templateId = beanName;
+		}
+		String url = prefix  + "/" + templateId + "/" + slot + suffix; 
+		String[] aliases = new String[] {url};
+		
+		BeanDefinitionHolder bdHolder = new BeanDefinitionHolder(bd, beanName, aliases);
+		BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, parserContext.getRegistry());
+		return url;
 	}
 
 }

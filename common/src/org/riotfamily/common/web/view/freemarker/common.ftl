@@ -6,7 +6,15 @@
   - Macro that includes the given URI using a RequestDispatcher.
   -->
 <#macro include uri="">
-	<#if uri?has_content>${commonMacroHelper.include(uri)}</#if>
+<#compress>
+	<#if uri?is_sequence>
+		<#list uri as item>
+			${commonMacroHelper.include(item)}
+		</#list>
+	<#elseif uri?has_content>
+		${commonMacroHelper.include(uri)}
+	</#if>
+</#compress>
 </#macro>
 
 <#macro setAttribute name value>

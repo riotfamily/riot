@@ -24,15 +24,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.template;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -241,9 +238,8 @@ public class TemplateController extends AbstractController
 			Map.Entry entry = (Map.Entry) i.next();
 			String slot = (String) entry.getKey();
 			if (slot.indexOf('.') == -1) {
-				String location = (String) entry.getValue();
-				if (location != null) {
-					model.put(slot, getSlotUrl(location, slot));
+				if (entry.getValue() != null) {
+					model.put(slot, getUrlMapValue(entry.getValue(), slot));
 				}
 				else {
 					model.remove(slot);
@@ -253,6 +249,24 @@ public class TemplateController extends AbstractController
 		return model;
 	}
 
+	/**
+	 * Returns either a single String or a list of URLs. 
+	 */
+	protected Object getUrlMapValue(Object value, String slot) {
+		if (value instanceof Collection) {
+			ArrayList urls = new ArrayList();
+			Iterator it = ((Collection) value).iterator();
+			while (it.hasNext()) {
+				String location = (String) it.next();
+				urls.add(getSlotUrl(location, slot));
+			}
+			return urls;
+		}
+		else {
+			return getSlotUrl((String) value, slot);
+		}
+	}
+	
 	/**
 	 * Returns the include URL for the given location and slot. By default
 	 * <code>SLOT_REQUEST_PARAMETER_NAME</code> is appended, containing the
@@ -277,32 +291,7 @@ public class TemplateController extends AbstractController
 		Map config = getEffectiveConfiguration(request);
 		request.setAttribute(SLOTS_CONFIGURATION_ATTRIBUTE, config);
 		request.setAttribute(SLOT_PATH_ATTRIBUTE, getSlotPath(request));
-		if (getViewName() != null) {
-			return new ModelAndView(getViewName(), buildUrlMap(config));
-		}
-		else {
-			render(config, request, response);
-			return null;
-		}
-	}
-
-	protected void render(Map config, HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-
-		ArrayList slots = new ArrayList(config.keySet());
-		Collections.sort(slots);
-		Iterator it = slots.iterator();
-		while (it.hasNext()) {
-			String slot = (String) it.next();
-			if (slot.indexOf('.') == -1) {
-				String location = (String) config.get(slot);
-				if (location != null) {
-					String url = getSlotUrl(location, slot);
-					RequestDispatcher rd = request.getRequestDispatcher(url);
-					rd.include(request, response);
-				}
-			}
-		}
+		return new ModelAndView(getViewName(), buildUrlMap(config));
 	}
 
 	/**

@@ -50,11 +50,11 @@
 							]]></xsd:documentation>
 						</xsd:annotation>
 						<xsd:complexType>
-							<xsd:choice minOccurs="0">
+							<xsd:choice minOccurs="0" maxOccurs="unbounded">
 								<xsd:any namespace="##any">
 									<xsd:annotation>
 										<xsd:documentation><![CDATA[
-	A handler to insert into the slot. Can be used instead of an url attribute.  
+	Handler(s) to insert into the slot. Can be used instead of an url attribute.  
 										]]></xsd:documentation>
 									</xsd:annotation>
 								</xsd:any>							
