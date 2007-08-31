@@ -637,9 +637,7 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 	initialize: function(el, component, options) {
 		this.SUPER(el, component, options);
 		this.key = this.element.readAttribute('riot:key');
-		var aw = el.offsetWidth - parseInt(el.getStyle('borderLeftWidth')) 
-				- parseInt(el.getStyle('borderRightWidth'));
-				
+		var aw = el.parentNode.offsetWidth;
 		if (this.options.maxWidth == 'auto') this.options.maxWidth = aw;
 		if (this.options.minWidth == 'auto') this.options.minWidth = aw;
 		this.globalRef = 'riot.imageEditors[' + riot.imageEditors.length + ']';
