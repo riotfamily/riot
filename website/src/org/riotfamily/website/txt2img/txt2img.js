@@ -175,7 +175,7 @@ if (!Event.onDOMReady) {
 				else {
 				/*@cc_on @*/
 					/*@if (@_win32)
-						document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
+						document.write('<script id="__ie_onload" defer src="' + IEDOMReadyScript + '"><\/script>');
 						document.getElementById("__ie_onload").onreadystatechange = function() {
 							if (this.readyState == "complete") domReady();
 						};

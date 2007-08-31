@@ -137,7 +137,7 @@ public class Txt2ImgController extends AbstractCacheableController
 		else if (extension.equals("gif")) {
 			servePixelGif(response);
 		}
-		else {
+		else if (request.getParameter("empty") == null) {
 			serveScript(request, response);
 		}
 		return null;
@@ -219,6 +219,8 @@ public class Txt2ImgController extends AbstractCacheableController
 		response.setContentType("text/javascript");
 		ServletUtils.setCacheHeaders(response, "1M");
 		PrintWriter out = response.getWriter();
+		out.println("var IEDOMReadyScript = '" + request.getRequestURI() + "?empty=true';");
+
 		IOUtils.copy(new InputStreamReader(
 				SCRIPT_RESOURCE.getInputStream(), "UTF-8"), out);
 
@@ -240,7 +242,7 @@ public class Txt2ImgController extends AbstractCacheableController
 		}
 		out.print("]);");
 	}
-	
+
 	private String getGeneratorUrl(HttpServletRequest request) {
 		return FormatUtils.stripExtension(request.getRequestURI()) + ".png";
 	}
