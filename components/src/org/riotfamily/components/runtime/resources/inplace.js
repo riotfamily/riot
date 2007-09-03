@@ -651,6 +651,7 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 			flash_path: Resources.basePath + 'swfupload/SWFUpload.swf',
 			allowed_filetypes: '*.jpg;*.gif;*.png',
 			allowed_filetypes_description: 'Images',
+			allowed_filesize: '30000',
 			auto_upload: true,
 			upload_file_complete_callback: this.globalRef + '.uploadFileComplete'
 		});
