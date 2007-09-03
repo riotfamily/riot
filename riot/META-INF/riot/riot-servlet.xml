@@ -476,6 +476,7 @@
 				<bean class="org.riotfamily.common.web.dwr.SpringConfigurator">
 					<property name="converterTypes">
 						<props>
+							<prop key="java.lang.Exception">exception</prop>
 							<prop key="org.riotfamily.riot.job.persistence.JobLogEntry">bean</prop>
 							<prop key="org.riotfamily.riot.job.persistence.JobDetail">bean</prop>
 

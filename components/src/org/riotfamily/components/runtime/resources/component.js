@@ -824,7 +824,7 @@ riot.editProperties = function(e) {
 }
 
 dwr.engine.setErrorHandler(function(err, ex) {
-	if (err == 'Request context has expired') { // RequestContextExpiredException
+	if (ex.javaClassName == 'org.riotfamily.components.context.RequestContextExpiredException') {
 		location.reload();
 	}
 	else {
