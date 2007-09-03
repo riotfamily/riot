@@ -32,6 +32,7 @@ import java.util.Properties;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.Configurator;
+import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
@@ -47,6 +48,8 @@ public class SpringConfigurator implements Configurator {
 	private Class[] serviceInterfaces;
 
 	private Properties converterTypes;
+	
+	private Map converters;
 
 	private String signatures;
 
@@ -69,6 +72,10 @@ public class SpringConfigurator implements Configurator {
 		this.serviceInterfaces = serviceInterfaces;
 	}
 
+	public void setConverters(Map converters) {
+		this.converters = converters;
+	}
+	
 	public void setConverterTypes(Properties converterTypes) {
 		this.converterTypes = converterTypes;
 	}
@@ -81,6 +88,17 @@ public class SpringConfigurator implements Configurator {
 		ConverterManager converterManager = (ConverterManager)
 				container.getBean(ConverterManager.class.getName());
 
+		if (converters != null) {
+        	Iterator it = converters.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry entry = (Map.Entry) it.next();
+				String match = (String) entry.getKey();
+				Converter converter = (Converter) entry.getValue();
+				converter.setConverterManager(converterManager);
+				converterManager.addConverter(match, converter);
+			}
+        }
+		
         if (converterTypes != null) {
 			Iterator it = converterTypes.entrySet().iterator();
 			while (it.hasNext()) {
@@ -101,7 +119,7 @@ public class SpringConfigurator implements Configurator {
 				}
 			}
 		}
-
+                
         CreatorManager creatorManager = (CreatorManager)
         		container.getBean(CreatorManager.class.getName());
 

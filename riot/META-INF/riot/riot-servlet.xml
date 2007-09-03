@@ -474,24 +474,20 @@
 		<property name="configurators">
 			<list>
 				<bean class="org.riotfamily.common.web.dwr.SpringConfigurator">
+					<property name="converters">
+						<map>
+							<entry key="java.lang.Exception">
+								<bean class="org.directwebremoting.convert.ExceptionConverter">
+									<property name="include" value="message,lineNumber" />
+								</bean>
+							</entry>
+						</map>
+					</property>
 					<property name="converterTypes">
 						<props>
-							<prop key="java.lang.Exception">exception</prop>
-							<prop key="org.riotfamily.riot.job.persistence.JobLogEntry">bean</prop>
-							<prop key="org.riotfamily.riot.job.persistence.JobDetail">bean</prop>
-
-							<prop key="org.riotfamily.riot.list.ui.ListModel">bean</prop>
-							<prop key="org.riotfamily.riot.list.ui.ListColumn">bean</prop>
-							<prop key="org.riotfamily.riot.list.ui.ListItem">bean</prop>
-							<prop key="org.riotfamily.riot.list.command.CommandState">bean</prop>
-
-							<prop key="org.riotfamily.riot.list.command.result.ConfirmResult">bean</prop>
-							<prop key="org.riotfamily.riot.list.command.result.GotoUrlResult">bean</prop>
-							<prop key="org.riotfamily.riot.list.command.result.PopupResult">bean</prop>
-							<prop key="org.riotfamily.riot.list.command.result.ReloadResult">bean</prop>
-							<prop key="org.riotfamily.riot.list.command.result.ScriptResult">bean</prop>
-							<prop key="org.riotfamily.riot.list.command.result.SetRowStyleResult">bean</prop>
-							<prop key="org.riotfamily.riot.list.command.result.ShowListResult">bean</prop>
+							<prop key="org.riotfamily.riot.job.persistence.*">bean</prop>
+							<prop key="org.riotfamily.riot.list.ui.*">bean</prop>
+							<prop key="org.riotfamily.riot.list.command.*">bean</prop>
 						</props>
 					</property>
 					<property name="serviceBeans">
