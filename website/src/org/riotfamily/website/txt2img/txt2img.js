@@ -69,7 +69,6 @@ RiotImageReplacement.prototype = {
 			}
 	
 			var color = el.getStyle('color');
-	
 			var hoverEl = document.createElement('span');
 			hoverEl.className = 'txt2imgHover';
 			el.appendChild(hoverEl);
@@ -81,13 +80,13 @@ RiotImageReplacement.prototype = {
 				hover = new Image();
 				hover.src = this.getImageUrl(text, transform, width, sel, hoverColor);
 			}
-	
+			
 			var img = new Image();
 			img.src = this.getImageUrl(text, transform, width, sel, color);
 			this.insertImage(el, img, hover);
 		}
 	},
-
+	
 	getImageUrl: function(text, transform, width, sel, color) {
 		var url = this.generatorUrl;
 		url += url.include('?') ? '&' : '?';
@@ -175,7 +174,7 @@ if (!Event.onDOMReady) {
 				else {
 				/*@cc_on @*/
 					/*@if (@_win32)
-						document.write('<script id="__ie_onload" defer src="' + IEDOMReadyScript + '"><\/script>');
+						document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
 						document.getElementById("__ie_onload").onreadystatechange = function() {
 							if (this.readyState == "complete") domReady();
 						};
@@ -199,20 +198,20 @@ if (!Event.onDOMReady) {
 
 var ElementMatcher = Class.create();
 ElementMatcher.prototype = {
-		initialize: function(s) {
-				var m = /([^.#]*)#?([^.]*)\.?(.*)/.exec(s);
-				this.tagName = m[1] != '' ? m[1].toUpperCase() : null;
-				this.id = m[2] != '' ? m[2] : null;
-				this.className = m[3] != '' ? m[3] : null;
-				this.classNameRegExp = new RegExp("(^|\\s)" + this.className + "(\\s|$)");
-		},
+	initialize: function(s) {
+		var m = /([^.#]*)#?([^.]*)\.?(.*)/.exec(s);
+		this.tagName = m[1] != '' ? m[1].toUpperCase() : null;
+		this.id = m[2] != '' ? m[2] : null;
+		this.className = m[3] != '' ? m[3] : null;
+		this.classNameRegExp = new RegExp("(^|\\s)" + this.className + "(\\s|$)");
+	},
 
-		match: function(el) {
-				if (this.tagName && this.tagName != el.tagName) return false;
-				if (this.id && this.id != el.id) return false;
-				if (this.className && !this.checkClassName(el)) return false;
-				return true;
-		},
+	match: function(el) {
+		if (this.tagName && this.tagName != el.tagName) return false;
+		if (this.id && this.id != el.id) return false;
+		if (this.className && !this.checkClassName(el)) return false;
+		return true;
+	},
 
 	checkClassName: function(el) {
 		var c = el.className;
@@ -220,74 +219,113 @@ ElementMatcher.prototype = {
 		return c == this.className || c.match(this.classNameRegExp);
 	},
 
-		inspect: function() {
-				return this.tagName + '#' + this.id + '.' + this.className;
-		}
+	inspect: function() {
+			return this.tagName + '#' + this.id + '.' + this.className;
+	}
 };
 
 var CssSelector = Class.create();
 CssSelector.prototype = {
-		initialize: function(sel) {
-				this.text = sel;
-				this.matchers = [];
-				var part = sel.split(/\s+/);
-				for (var i = 0; i < part.length; i++) {
-						this.matchers.push(new ElementMatcher(part[i]));
-				}
-				this.level = 0;
-				this.matcher = this.matchers[0];
-				this.prev = [];
-		},
-
-		match: function(el) {
-				if (this.matcher.match(el)) {
-						if (this.el) {
-								this.prev.push(this.el);
-						}
-						this.el = el;
-						this.matcher = this.matchers[++this.level];
-						return this.level == this.matchers.length;
-				}
-				return false;
-		},
-
-		leave: function(el) {
-				if (el == this.el) {
-						this.el = this.prev.pop();
-						this.matcher = this.matchers[--this.level];
-				}
+	initialize: function(sel) {
+		this.text = sel;
+		this.matchers = [];
+		var part = sel.split(/\s+/);
+		for (var i = 0; i < part.length; i++) {
+			this.matchers.push(new ElementMatcher(part[i]));
 		}
+		this.level = 0;
+		this.matcher = this.matchers[0];
+		this.prev = [];
+	},
+
+	match: function(el) {
+		if (this.matcher.match(el)) {
+			if (this.el) {
+				this.prev.push(this.el);
+			}
+			this.el = el;
+			this.matcher = this.matchers[++this.level];
+			return this.level == this.matchers.length;
+		}
+		return false;
+	},
+
+	leave: function(el) {
+		if (el == this.el) {
+			this.el = this.prev.pop();
+			this.matcher = this.matchers[--this.level];
+		}
+	}
 }
 
 var CssMatcher = Class.create();
 CssMatcher.prototype = {
-		initialize: function(selectors, handler) {
-				this.sel = selectors.collect(function(s) {return new CssSelector(s)});
-				this.handler = handler;
-		},
-		match: function(el) {
-				var matched = false;
-				for (var i = 0; i < this.sel.length; i++) {
-						if (this.sel[i].match(el)) {
-								this.handler(el, this.sel[i].text);
-								matched = true;
-								break;
-						}
-				}
-				if (!matched) {
-					var child = el.firstChild;
-					while (child) {
-					while (child && child.nodeType != 1) child = child.nextSibling;
-				if (child) {
-									this.match(child);
-									child = child.nextSibling;
-							}
-					}
-				}
-				for (var i = 0; i < this.sel.length; i++) {
-						this.sel[i].leave(el);
-				}
-				return matched;
+	initialize: function(selectors, handler) {
+		this.sel = selectors.collect(function(s) {return new CssSelector(s)});
+		this.handler = handler;
+		this.callback = this.processElement.bind(this);
+		this.counter = 0;
+	},
+	
+	match: function(el) {
+		this.rootEl = el;
+		this.el = el;
+		this.processElement();
+	},
+	
+	nextElement: function(node) {
+		while (node && node.nodeType != 1) {
+			node = node.nextSibling;
 		}
+		return node;
+	},
+	
+	processElement: function() {
+		this.counter++;
+		var matched = false;
+		for (var i = 0; i < this.sel.length; i++) {
+			if (this.sel[i].match(this.el)) {
+				this.handler(this.el, this.sel[i].text);
+				matched = true;
+				break;
+			}
+		}
+		var nextEl = this.nextElement(this.el.firstChild);
+		if (!matched && nextEl) {
+			this.el = nextEl; 
+		}
+		else {
+			if (this.el == this.rootEl) return;
+			for (var i = 0; i < this.sel.length; i++) {
+				this.sel[i].leave(this.el);
+			} 
+			
+			nextEl = this.nextElement(this.el.nextSibling);
+			if (nextEl) {
+				this.el = nextEl;
+			}
+			else {
+				var p = this.el;
+				while (p && !nextEl) {
+					p = p.parentNode;
+					if (p == this.rootEl) return;
+					for (var i = 0; i < this.sel.length; i++) {
+						this.sel[i].leave(p);
+					}
+					nextEl = this.nextElement(p.nextSibling);
+				}
+				this.el = nextEl;
+			}
+		}
+		
+		if (this.el) {
+			if (this.counter % 50 == 0)	{
+				setTimeout(this.callback, 1);
+			}
+			else {
+				this.processElement();
+			}
+		}
+	}
 }
 
