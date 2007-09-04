@@ -28,33 +28,36 @@ import java.util.regex.Pattern;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.util.ServletUtils;
-import org.springframework.web.filter.GenericFilterBean;
 
 /**
  * Servlet filter that sets an Expires header for request URLs that contain
  * a timestamp. URLs are considered as 'stamped' if they match the configured
  * pattern.
  * <p>
- * The default pattern is <code>(/\\d{14}/)|(\\?[0-9]+$)</code>, this
+ *
+ * The default pattern is <code>(.*\\/\\d{14}/.+)|(.+\\?[0-9]+$)</code>, this
  * matches URLs created by the DefaultFileStore and URLs printed via the
  * <code>common.resource()</code> FreeMarker function.
  * </p>
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public class CacheStampedResourcesFilter extends GenericFilterBean {
+public class CacheStampedResourcesFilter extends HttpFilterBean {
 
+	private static Log log = LogFactory.getLog(
+			CacheStampedResourcesFilter.class);
+	
 	public static final String DEFAULT_EXPIRATION = "1M";
 
 	public static final Pattern DEFAULT_PATTERN =
-			Pattern.compile("(/\\d{14}/)|(\\?[0-9]+$)");
+			Pattern.compile("(.*/\\d{14}/.+)|(.+\\?[0-9]+$)");
 
 	private static final String EXPIRES_HEADER = "Expires";
 
@@ -77,18 +80,15 @@ public class CacheStampedResourcesFilter extends GenericFilterBean {
 				+ FormatUtils.parseMillis(expiresAfter);
 	}
 
-	public final void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain filterChain) throws IOException, ServletException {
-
-		doFilterInternal((HttpServletRequest) request,
-				(HttpServletResponse) response, filterChain);
-	}
-
-	protected void doFilterInternal(HttpServletRequest request,
+	protected void filter(HttpServletRequest request,
 			HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
 		if (isStamped(request)) {
+			if (log.isDebugEnabled()) {
+				log.debug("Setting Expires header for " 
+						+ request.getRequestURI());
+			}
 			response.setDateHeader(EXPIRES_HEADER, expires);
 		}
 		filterChain.doFilter(request, response);
