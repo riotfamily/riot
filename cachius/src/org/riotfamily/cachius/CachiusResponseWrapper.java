@@ -38,12 +38,16 @@ import org.riotfamily.cachius.support.MultiplexServletOutputStream;
 
 /**
  * A HttpServletResponseWrapper that captures the response and updates
- * the accociated CacheItem in case no error occures during request processing.
+ * the associated CacheItem in case no error occurs during request processing.
  *
  * @author Felix Gnass
  */
 public class CachiusResponseWrapper extends HttpServletResponseWrapper {
 
+	private static final String HEADER_EXPIRES = "Expires";
+	
+	private static final String HEADER_CACHE_CONTROL = "Cache-Control";
+	
     private ItemUpdater cacheItemUpdate;
     
     private ServletOutputStream outputStream;
@@ -75,7 +79,38 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
         super.setContentType(contentType);
         cacheItemUpdate.setContentType(contentType);
     }
-        
+    
+    public void setDateHeader(String name, long date) {
+       	super.setDateHeader(name, date);
+       	checkExpires(name, date);
+    }
+    
+    public void addDateHeader(String name, long date) {
+    	super.addDateHeader(name, date);
+    	checkExpires(name, date);
+    }
+    
+    private void checkExpires(String name, long date) {
+    	if (HEADER_EXPIRES.equalsIgnoreCase(name)) {
+    		cacheItemUpdate.setExpires(date);
+    	}
+    }
+    
+    public void setHeader(String name, String value) {
+    	super.setHeader(name, value);
+    	checkCacheControl(name, value);
+    }
+    
+    public void addHeader(String name, String value) {
+    	super.addHeader(name, value);
+    	checkCacheControl(name, value);
+    }
+    
+    private void checkCacheControl(String name, String value) {
+    	if (HEADER_CACHE_CONTROL.equalsIgnoreCase(name)) {
+    		cacheItemUpdate.setCacheControl(value);
+    	}
+    }
     
     /**
      * Get an OutputStream

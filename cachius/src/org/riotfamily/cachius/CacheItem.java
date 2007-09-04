@@ -37,8 +37,8 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.util.Arrays;
 
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,6 +66,10 @@ import org.riotfamily.common.io.IOUtils;
  */
 public class CacheItem implements Serializable {
     
+	private static final String HEADER_EXPIRES = "Expires";
+	
+	private static final String HEADER_CACHE_CONTROL = "Cache-Control";
+	
     private static final String ITEM_PREFIX = "item";
     
     private static final String TEMP_PREFIX = "tmp";
@@ -99,6 +103,17 @@ public class CacheItem implements Serializable {
     /** The content type (may be null) */
     private String contentType = null;
     
+    /**
+     * The Cache-Control header to be sent (may be null).
+     */
+    private String cacheControl;
+    
+    /**
+     * The Expires header to be sent.
+     */
+    private long expires = -1;
+    
+    
     /** 
      * Flag indicating whether the cached content is binary 
      * or character data.
@@ -120,6 +135,7 @@ public class CacheItem implements Serializable {
      * Time of the last up-to-date check.
      */
     private long lastCheck;
+    
     
     public CacheItem(String key, File cacheDir) throws IOException {
         this.key = key;
@@ -153,7 +169,6 @@ public class CacheItem implements Serializable {
     public CacheItem getPrevious() {
         return previous;
     }
-
    
     public void setPrevious(CacheItem previous) {
         this.previous = previous;
@@ -182,12 +197,16 @@ public class CacheItem implements Serializable {
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
-    
-    public String getContentType() {
-        return contentType;
-    }
         
-    public long getLastModified() {
+    public void setCacheControl(String cacheControl) {
+		this.cacheControl = cacheControl;
+	}
+
+	public void setExpires(long expires) {
+		this.expires = expires;
+	}
+
+	public long getLastModified() {
         return lastModified;
     }
   
@@ -235,7 +254,7 @@ public class CacheItem implements Serializable {
     }
     
     public void writeTo(HttpServletRequest request, 
-            ServletResponse response) throws IOException {
+            HttpServletResponse response) throws IOException {
             
    		log.debug("Serving cached version of " + key);
         try {
@@ -243,7 +262,12 @@ public class CacheItem implements Serializable {
             if (contentType != null) {
                 response.setContentType(contentType);
             }
-            
+            if (expires >= 0) {
+            	response.setDateHeader(HEADER_EXPIRES, expires);
+            }
+            if (cacheControl != null) {
+            	response.setHeader(HEADER_CACHE_CONTROL, cacheControl);
+            }
             if (binary) {
                 InputStream in = new BufferedInputStream(
                         new FileInputStream(file));

@@ -54,6 +54,12 @@ public class ItemUpdater {
 
 	private HttpServletRequest request;
 
+	private String contentType;
+	
+	private long expires = -1;
+	
+	private String cacheControl;
+	
 	private File tempFile;
 
 	private boolean discard = false;
@@ -123,7 +129,15 @@ public class ItemUpdater {
 	}
 
 	public void setContentType(String contentType) {
-		cacheItem.setContentType(contentType);
+		this.contentType = contentType;
+	}
+
+	public void setExpires(long expires) {
+		this.expires = expires;
+	}
+
+	public void setCacheControl(String cacheControl) {
+		this.cacheControl = cacheControl;
 	}
 
 	public void updateCacheItem() {
@@ -131,6 +145,15 @@ public class ItemUpdater {
 		IOUtils.closeStream(outputStream);
 		IOUtils.closeWriter(writer);
 		if (!discard) {
+			if (contentType != null) {
+				cacheItem.setContentType(contentType);
+			}
+			if (expires >= 0) {
+				cacheItem.setExpires(expires);
+			}
+			if (cacheControl != null) {
+				cacheItem.setCacheControl(cacheControl);
+			}
 			if (tempFile == null) {
 				log.debug("No content for item " + cacheItem.getKey());
 				return;
