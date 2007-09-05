@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.web.util.WebUtils;
 
 
 /**
@@ -48,35 +49,55 @@ public abstract class AbstractCacheableController
 	}
 	
 	/**
-	 * Returns the cache-key for the request unless 
-	 * {@link #bypassCache(HttpServletRequest)} returns <code>true</code>.
-	 * The method creates a StringBuffer and passes it to 
-	 * {@link #appendCacheKey(StringBuffer, HttpServletRequest)}.
-	 */
-    public final String getCacheKey(HttpServletRequest request) {
-    	if (bypassCache(request)) {
-    		return null;
-    	}
-    	StringBuffer key = new StringBuffer();
-    	appendCacheKey(key, request);
-        return key.toString();
-    }
-            
-    /**
      * Returns whether the cache should be bypassed. The default implementation 
      * always returns <code>false</code>. 
      */
     protected boolean bypassCache(HttpServletRequest request) {
 		return false;
 	}
-
+    
+	/**
+	 * Returns the cache-key for the request. The call is delegated to
+	 * {@link #getCacheKeyInternal(HttpServletRequest)}, unless 
+	 * {@link #bypassCache(HttpServletRequest)} returns <code>true</code>.
+	 */
+    public final String getCacheKey(HttpServletRequest request) {
+    	if (bypassCache(request)) {
+    		return null;
+    	}
+    	return getCacheKeyInternal(request);
+    }
+    
+    /**
+     * Returns the actual cache-key. Invoked by
+     * {@link #getCacheKey(HttpServletRequest) getCacheKey()}
+     * if {@link #bypassCache(HttpServletRequest) bypassCache()} 
+     * returned <code>false</code>.
+     * <p>
+     * The method creates a StringBuffer containing the 
+     * {@link ServletUtils#getOriginatingRequestUri(HttpServletRequest) 
+     * originating request URI} and, in case of an include, the 
+     * {@link ServletUtils#getIncludeUri(HttpServletRequest) include URI}.
+     * <p> 
+     * The StringBuffer is passed to {@link #appendCacheKey(StringBuffer, HttpServletRequest)},
+     * allowing subclasses to add additional information.
+     */
+    protected String getCacheKeyInternal(HttpServletRequest request) {
+    	StringBuffer key = new StringBuffer();
+    	key.append(ServletUtils.getOriginatingPathWithinApplication(request));
+		if (WebUtils.isIncludeRequest(request)) {
+			key.append('#').append(ServletUtils.getIncludeUri(request));
+		}
+		appendCacheKey(key, request);
+		return key.toString();
+    }
+            
     /**
      * Subclasses may overwrite this method to append values to the cache-key.
-     * The default implementation appends 
-     * {@link ServletUtils#getIncludeUri(HttpServletRequest)}.
+     * The default implementation does nothing.
+     * @see #getCacheKeyInternal(HttpServletRequest)
      */
 	protected void appendCacheKey(StringBuffer key, HttpServletRequest request) {
-		key.append(ServletUtils.getIncludeUri(request));
 	}
 
 	/**
