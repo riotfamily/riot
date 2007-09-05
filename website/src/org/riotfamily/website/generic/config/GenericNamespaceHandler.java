@@ -43,7 +43,7 @@ import org.riotfamily.website.generic.model.hibernate.StringToPrimitiveResolver;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 
 /**
- * NamespaceHandler that handles the <code>generic</code> namspace as
+ * NamespaceHandler that handles the <code>generic</code> namespace as
  * defined in <code>generic.xsd</code> which can be found in the same package.
  */
 public class GenericNamespaceHandler extends GenericNamespaceHandlerSupport {

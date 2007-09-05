@@ -26,77 +26,90 @@ package org.riotfamily.website.generic;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.cachius.spring.AbstractCacheableController;
+import org.riotfamily.cachius.spring.CacheableController;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
-import org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator;
 
 /**
- * <p>Trivial controller that allows you to set a content type for the view using
- * an exposed configuration property. A view name also is not required to be set
- * as if ommited the configured viewNameTranslator will translate the view. Per
- * default Spring is using its {@link DefaultRequestToViewNameTranslator} for
- * this purpose.</p>
+ * Class similar to Spring's {@link org.springframework.web.servlet.mvc.ParameterizableViewController}, 
+ * but with the following differences:
+ * <ul>
+ *   <li>
+ *     Setting a viewName is not required. If omitted Spring's 
+ *     {@link org.springframework.web.servlet.RequestToViewNameTranslator} 
+ *     will be used.
+ *   </li>
+ *   <li>
+ *     A Content-Type may be set.
+ *   </li>
+ *   <li>
+ *     Implements the {@link CacheableController} interface. The output will
+ *     be cached eternally unless caching is {@link #setCache(boolean) disabled}.
+ *   </li>
+ * </ul> 
  * 
- * <p>If you are using FreeMarker as your View technology you might want to configure
- * the viewNameTranslator with the suffix '.ftl' to work properly:
- * <code> 
- * <bean id="viewNameTranslator" class="org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator">
- *   <property name="suffix" value=".ftl" />
- * </bean>
- * </code>
- * </p>
- *
  * @author Carsten Woelk [cwoelk at neteye dot de]
  * @since 6.5
  */
-public class GenericViewController extends AbstractController {
+public class GenericViewController extends AbstractCacheableController {
 
 	private String viewName;
 
 	private String contentType;
 
+	private boolean cache = true;
 
 	/**
-	 * Set the name of the view to delegate to
-	 * @param viewName the name of the view to delegate to
+	 * Sets the name of the view to delegate to.
 	 */
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
 	}
 
 	/**
-	 * Returns the name of the view to delegate to
-	 * @return the name of the view to delegate to
+	 * Returns the name of the view to delegate to.
 	 */
 	public String getViewName() {
 		return this.viewName;
 	}
 
 	/**
-	 * Returns the content type to be set in the header
-	 * @return the content type to be set in the header
+	 * Returns the content type to be set in the header.
 	 */
 	public String getContentType() {
 		return this.contentType;
 	}
 
 	/**
-	 * Sets the content type to be set in the header
-	 * @param contentType to be set in the header
+	 * Sets the content type to be set in the header.
 	 */
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
+	
+	/**
+	 * Sets whether the output should be cached. If <code>true</code> (default)
+	 * the output is cached eternally.
+	 */
+	public void setCache(boolean cache) {
+		this.cache = cache;
+	}
 
-
+	public long getTimeToLive() {
+		return CACHE_ETERNALLY;
+	}
+	
+	protected boolean bypassCache(HttpServletRequest request) {
+		return !cache;
+	}
+	
 	/**
 	 * If configured sets the content on the request and returns a {@link ModelAndView}
 	 * object with the specified view name if configured. If none has been set
-	 * Spring will use its configure viewNameTranslator to resolve the view name.
-	 * @see #getViewName()
+	 * Spring will use its configured viewNameTranslator to resolve the view name.
 	 */
-	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	public ModelAndView handleRequest(HttpServletRequest request, 
+			HttpServletResponse response) throws Exception {
 
 		if (contentType != null) {
 			response.setContentType(contentType);
@@ -104,7 +117,5 @@ public class GenericViewController extends AbstractController {
 
 		return new ModelAndView(getViewName());
 	}
-
-
 
 }
