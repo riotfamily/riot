@@ -103,7 +103,10 @@ public class Txt2ImgController extends AbstractCacheableController
 	}
 
 	protected void appendCacheKey(StringBuffer key, HttpServletRequest request) {
-		key.append(ServletUtils.getRequestUrlWithQueryString(request));
+		String queryString = request.getQueryString();
+		if (queryString != null) {
+			key.append('?').append(queryString);
+		}
 	}
 
 	public long getLastModified(HttpServletRequest request) {
