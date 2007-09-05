@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.web.util.WebUtils;
 
 
 /**
@@ -75,9 +74,9 @@ public abstract class AbstractCacheableController
      * returned <code>false</code>.
      * <p>
      * The method creates a StringBuffer containing the 
-     * {@link ServletUtils#getOriginatingRequestUri(HttpServletRequest) 
-     * originating request URI} and, in case of an include, the 
-     * {@link ServletUtils#getIncludeUri(HttpServletRequest) include URI}.
+     * {@link ServletUtils#getOriginatingPathWithinApplication(HttpServletRequest) 
+     * originating path} and, in case of an include or forward, the 
+     * {@link ServletUtils#getPathWithinApplication(HttpServletRequest) nested path}.
      * <p> 
      * The StringBuffer is passed to {@link #appendCacheKey(StringBuffer, HttpServletRequest)},
      * allowing subclasses to add additional information.
@@ -85,8 +84,8 @@ public abstract class AbstractCacheableController
     protected String getCacheKeyInternal(HttpServletRequest request) {
     	StringBuffer key = new StringBuffer();
     	key.append(ServletUtils.getOriginatingPathWithinApplication(request));
-		if (WebUtils.isIncludeRequest(request)) {
-			key.append('#').append(ServletUtils.getIncludeUri(request));
+		if (!ServletUtils.isDirectRequest(request)) {
+			key.append('#').append(ServletUtils.getPathWithinApplication(request));
 		}
 		appendCacheKey(key, request);
 		return key.toString();
