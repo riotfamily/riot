@@ -75,4 +75,23 @@ public class Site {
 	public boolean isLocaleEnabled(Locale locale) {
 		return enabled && (locales == null || locales.contains(locale));
 	}
+	
+	public int hashCode() {
+		return name != null ? name.hashCode() : 0;
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof Site)) {
+			return false;
+		}
+		Site other = (Site) obj;
+		return name != null && name.equals(other.name);
+	}
+	
+	public String toString() {
+		return name;
+	}
 }

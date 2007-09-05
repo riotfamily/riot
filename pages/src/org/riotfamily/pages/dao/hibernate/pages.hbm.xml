@@ -18,12 +18,14 @@
 
 		<!-- We must not use all-delete-orphan here, because otherwise nodes can not be moved to another parent -->
 		<list name="childNodes">
+			<cache usage="nonstrict-read-write" region="pages" />	
 			<key column="parent" />
 			<list-index column="pos" />
 			<one-to-many class="PageNode" />
 		</list>
 		<!-- We have to use cascade "update" to ensure that pages are reattached -->
 		<set name="pages" order-by="creationDate" cascade="save-update">
+			<cache usage="nonstrict-read-write" region="pages" />
 			<key column="node" />
 			<one-to-many class="Page" />
 		</set>
