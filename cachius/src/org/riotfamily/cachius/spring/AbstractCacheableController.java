@@ -50,16 +50,14 @@ public abstract class AbstractCacheableController
 	/**
 	 * Returns the cache-key for the request unless 
 	 * {@link #bypassCache(HttpServletRequest)} returns <code>true</code>.
-	 * The method creates a StringBuffer and appends the controller's beanName.
-	 * The buffer is passed to {@link #appendCacheKey(StringBuffer, HttpServletRequest)}
-	 * allowing subclasses to add further values to the key.
+	 * The method creates a StringBuffer and passes it to 
+	 * {@link #appendCacheKey(StringBuffer, HttpServletRequest)}.
 	 */
     public final String getCacheKey(HttpServletRequest request) {
     	if (bypassCache(request)) {
     		return null;
     	}
     	StringBuffer key = new StringBuffer();
-    	key.append(beanName).append(':');
     	appendCacheKey(key, request);
         return key.toString();
     }
@@ -74,12 +72,11 @@ public abstract class AbstractCacheableController
 
     /**
      * Subclasses may overwrite this method to append values to the cache-key.
-     * The default implementation appends the {@link 
-     * ServletUtils#getOriginatingRequestUri(HttpServletRequest) originating
-     * requestURI}.
+     * The default implementation appends 
+     * {@link ServletUtils#getIncludeUri(HttpServletRequest)}.
      */
 	protected void appendCacheKey(StringBuffer key, HttpServletRequest request) {
-		key.append(ServletUtils.getOriginatingRequestUri(request));
+		key.append(ServletUtils.getIncludeUri(request));
 	}
 
 	/**
