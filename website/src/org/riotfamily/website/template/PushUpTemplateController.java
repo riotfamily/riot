@@ -76,11 +76,17 @@ public class PushUpTemplateController extends TemplateController {
 			renderCapturedSlot(request, response, slotToRender);
 			return null;
 		}
-		handlePushUps(request, response);
+		if (handlePushUps(request, response)) {
+			return null;
+		}
 		return super.handleRequestInternal(request, response);
 	}
 
-	protected void handlePushUps(HttpServletRequest request,
+	/**
+	 * Handles the push-up slots. Returns <code>true</code> if one of the 
+	 * controllers sent an error or redirect.
+	 */
+	protected boolean handlePushUps(HttpServletRequest request,
 			HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -92,9 +98,12 @@ public class PushUpTemplateController extends TemplateController {
 			while (it.hasNext()) {
 				String slot = (String) it.next();
 				config.put(slot, getDeferredRenderingUrl(request, slot));
-				handlePushUp(request, response, slot);
+				if (handlePushUp(request, response, slot)) {
+					return true;
+				}
 			}
 		}
+		return false;
 	}
 
 	/**
@@ -122,7 +131,7 @@ public class PushUpTemplateController extends TemplateController {
 		return wrappers;
 	}
 
-	protected void handlePushUp(HttpServletRequest request,
+	protected boolean handlePushUp(HttpServletRequest request,
 			HttpServletResponse response, String slot)
 			throws ServletException, IOException {
 
@@ -137,6 +146,8 @@ public class PushUpTemplateController extends TemplateController {
 		log.debug("Capturing pushed-up slot " + slot + " [" + url + "]");
 		request.getRequestDispatcher(url).forward(
 				request, responseWrapper);
+		
+		return responseWrapper.isRedirectSent();
 	}
 
 	/**
