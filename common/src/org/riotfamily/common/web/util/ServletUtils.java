@@ -421,6 +421,15 @@ public final class ServletUtils {
 	}
 
 	/**
+	 * Returns whether the given request is a direct request, i.e. not 
+	 * dispatched by a RequestDispatcher.
+	 */
+	public static boolean isDirectRequest(HttpServletRequest request) {
+		return request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE) == null 
+				&& request.getAttribute(WebUtils.FORWARD_REQUEST_URI_ATTRIBUTE) == null;
+	}
+
+	/**
 	 * Sets Pragma, Expires and Cache-Control headers to prevent caching.
 	 * @since 6.4
 	 */

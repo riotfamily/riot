@@ -31,7 +31,6 @@ import org.riotfamily.components.editor.EditModeUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.WebUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -51,7 +50,7 @@ public class StoreContextInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler) throws Exception {
 		
-		if (WebUtils.isIncludeRequest(request) && EditModeUtils.isEditMode(request)) {
+		if (ServletUtils.isDirectRequest(request) && EditModeUtils.isEditMode(request)) {
 			String uri = ServletUtils.getPathWithinApplication(request);
 			PageRequestContext context = PageRequestUtils.createContext(request, uri);
 			request.setAttribute(CONTEXT_ATTRIBUTE, context);
@@ -83,7 +82,11 @@ public class StoreContextInterceptor implements HandlerInterceptor {
 				+ StoreContextInterceptor.class.getName() 
 				+ " to your HandlerMapping(s).");
 		
-		request.setAttribute(STORE_ATTRIBUTE, Boolean.TRUE);
+		if (ServletUtils.isDirectRequest(request) 
+				&& EditModeUtils.isEditMode(request)) {
+			
+			request.setAttribute(STORE_ATTRIBUTE, Boolean.TRUE);
+		}
 	}
 
 }
