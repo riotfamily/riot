@@ -116,6 +116,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 				request.setAttribute(PAGE_ATTRIBUTE, page);
 				String handlerName = page.getHandlerName();
 				if (handlerName != null) {
+					exposeHandlerName(handlerName, request);
 					return getApplicationContext().getBean(handlerName);
 				}
 				return defaultPageHandler;
