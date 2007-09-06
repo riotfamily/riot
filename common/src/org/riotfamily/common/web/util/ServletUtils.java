@@ -87,10 +87,30 @@ public final class ServletUtils {
 	private ServletUtils() {
 	}
 
+	/**
+	 * Return the context path for the given request, detecting an include request
+	 * URL if called within a RequestDispatcher include.
+	 * @see UrlPathHelper#getOriginatingContextPath(HttpServletRequest)
+	 */
 	public static String getOriginatingContextPath(HttpServletRequest request) {
 		return urlPathHelper.getOriginatingContextPath(request);
 	}
-
+	
+	/**
+	 * Return the request URI for the given request, detecting an include request
+	 * URL if called within a RequestDispatcher include.
+	 * @see UrlPathHelper#getRequestUri(HttpServletRequest)
+	 */
+	public static String getRequestUri(HttpServletRequest request) {
+		return urlPathHelper.getRequestUri(request);
+	}
+	
+	/**
+	 * Return the request URI for root of the given request. If this is a 
+	 * forwarded request, correctly resolves to the request URI of the original 
+	 * request.
+	 * @see UrlPathHelper#getOriginatingRequestUri(HttpServletRequest)
+	 */
 	public static String getOriginatingRequestUri(HttpServletRequest request) {
 		return urlPathHelper.getOriginatingRequestUri(request);
 	}
@@ -311,6 +331,9 @@ public final class ServletUtils {
 		return response.encodeURL(url);
 	}
 
+	/**
+	 * @deprecated Use getRequestUri instead
+	 */
 	public static String getIncludeUri(HttpServletRequest request) {
 		String uri = (String) request.getAttribute(
 				INCLUDE_URI_REQUEST_ATTRIBUTE);
@@ -320,7 +343,7 @@ public final class ServletUtils {
 		}
 		return uri;
 	}
-
+	
 	public static Map takeAttributesSnapshot(HttpServletRequest request) {
 		Map snapshot = new HashMap();
 		Enumeration attrNames = request.getAttributeNames();

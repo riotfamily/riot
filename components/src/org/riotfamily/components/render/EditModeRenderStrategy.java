@@ -77,7 +77,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 			out.print("<div riot:listId=\"");
 			out.print(list.getId());
 			out.print("\" riot:controllerId=\"");
-			String uri = ServletUtils.getIncludeUri(request);
+			String uri = ServletUtils.getRequestUri(request);
 			uri = uri.substring(request.getContextPath().length());
 			out.print(uri);
 			out.print('"');
