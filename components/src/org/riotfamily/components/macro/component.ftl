@@ -106,7 +106,8 @@
   - The call delegated to the editable macro, using editor="text".
   - See: <@editable> for a description of the supported parameters.
   -->
-<#macro text key tag="" alwaysUseNested=false attributes...>
+<#macro text key tag="" alwaysUseNested=false textTransform=true attributes...>
+	<#local attributes = attributes + {'riot:textTransform': textTransform?string} />
 	<@editable key=key editor="text" tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
 </#macro>
 

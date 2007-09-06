@@ -107,7 +107,9 @@ riot.AbstractComponent.prototype = {
 
 	createEditor: function(e, editorType) {
 		if (editorType == 'text') {
-			return new riot.InplaceTextEditor(e, this);
+			return new riot.InplaceTextEditor(e, this, {
+				textTransform: e.readAttribute('riot:textTransform') == 'true'
+			});
 		}
 		if (editorType == 'textarea') {
 			return new riot.PopupTextEditor(e, this);

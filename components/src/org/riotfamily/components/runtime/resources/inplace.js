@@ -149,9 +149,11 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 		this.input.cloneStyle(this.element, [
 			'font-size', 'font-weight', 'font-family', 'font-style',
 			'color', 'background-color', 'text-align', 'text-decoration',
-			'letter-spacing', 'line-height', 'padding-left', 'padding-top',
-			'text-transform']);
+			'letter-spacing', 'line-height', 'padding-left', 'padding-top']);
 
+		if (this.options.textTransform) {
+			this.input.cloneStyle(this.element, ['text-transform']);
+		}
 		this.input.style.boxSizing = this.input.style.MozBoxSizing = 'border-box';
 		this.input.hide();
 	},
