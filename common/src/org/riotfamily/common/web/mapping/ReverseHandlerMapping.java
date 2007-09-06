@@ -38,6 +38,15 @@ import org.springframework.web.servlet.HandlerMapping;
 public interface ReverseHandlerMapping {
 
 	/**
+	 * Name of the {@link HttpServletRequest} attribute that contains the 
+	 * beanName of the matched handler.
+	 * <p>Note: This attribute is not required to be supported by all
+	 * ReverseHandlerMapping implementations.
+	 */
+	String TOP_LEVEL_HANDLER_NAME_ATTRIBUTE = 
+			ReverseHandlerMapping.class.getName() + ".topLevelHandlerName";
+	
+	/**
 	 * Returns the URL of a mapped handler.
 	 */
 	public String getUrlForHandler(String handlerName,

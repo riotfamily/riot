@@ -1,6 +1,7 @@
 <#assign locale = commonMacroHelper.getLocale() />
 <#assign documentUri = commonMacroHelper.getOriginatingRequestUri() />
 <#assign includeUri = commonMacroHelper.getPathWithinApplication() />
+<#assign topLevelHandlerName = commonMacroHelper.getTopLevelHandlerName()?if_exists />
 
 <#--
   - Macro that includes the given URI using a RequestDispatcher.
@@ -47,6 +48,10 @@
 	<#return url(uri) />
 </#function>
 
+<#function isHandler(handlerName)>
+	<#return handlerName == topLevelHandlerName />
+</#function>
+
 <#function resource uri>
 	<#return url(commonMacroHelper.addTimestamp(uri)) />
 </#function>
@@ -76,19 +81,6 @@
 	<#return commonMacroHelper.toTitleCase(s) />
 </#function>
 
-<#macro wrap value="" tag="div" attributes...>
-	<#if value?has_content>
-		<#local attrs = "" />
-		<#if attributes?has_content>
-			<#list attributes?keys as attributeName>
-				<#if attributes[attributeName]?has_content>
-					<#local attrs=attrs + " " + attributeName + "=\"" + attributes[attributeName] + "\"" />
-				</#if>
-			</#list>
-		</#if>
-		<${tag}${attrs?if_exists}>${value}</${tag}>
-	</#if>
-</#macro>
 
 <#function getMessage code args=[] default=code>
 	<#return commonMacroHelper.getMessage(code, args, default) />

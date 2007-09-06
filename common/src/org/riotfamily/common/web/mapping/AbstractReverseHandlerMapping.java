@@ -40,6 +40,7 @@ import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 public abstract class AbstractReverseHandlerMapping 
 		extends AbstractHandlerMapping implements ReverseHandlerMapping {
 	
+	
 	protected abstract List getPatternsForHandler(String beanName, 
 			HttpServletRequest request);
 	
@@ -146,6 +147,17 @@ public abstract class AbstractReverseHandlerMapping
 			return addServletMappingIfNecessary(path, request);
 		}
 		return null;
+	}
+	
+	/**
+	 * Exposes the name of the matched handler as request attribute, unless
+	 * the attribute is already present.
+	 * @see #TOP_LEVEL_HANDLER_NAME_ATTRIBUTE
+	 */
+	protected void exposeHandlerName(String beanName, HttpServletRequest request) {
+		if (request.getAttribute(TOP_LEVEL_HANDLER_NAME_ATTRIBUTE) == null) {
+			request.setAttribute(TOP_LEVEL_HANDLER_NAME_ATTRIBUTE, beanName);
+		}
 	}
 
 }

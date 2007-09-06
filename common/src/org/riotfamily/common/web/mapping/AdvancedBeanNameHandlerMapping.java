@@ -49,11 +49,13 @@ import org.springframework.web.servlet.HandlerMapping;
 public class AdvancedBeanNameHandlerMapping 
 		extends AbstractReverseHandlerMapping {
 
-	private final Map handlerMap = new HashMap();
+	private final Map handlerByPath = new HashMap();
 
     private HashMap patternsByAntPath = new HashMap();
 
     private HashMap patternsByBeanName = new HashMap();
+    
+    private HashMap beanNameByHandler = new HashMap();
 
     private PathMatcher pathMatcher = new AntPathMatcher();
 	
@@ -109,6 +111,7 @@ public class AdvancedBeanNameHandlerMapping
 					AttributePattern p = new AttributePattern(attributePattern);
 					patternsByAntPath.put(antPattern, p);
 					patterns.add(p);
+					
 				}
 				patternsByBeanName.put(beanNames[i], patterns);
 			}
@@ -146,32 +149,34 @@ public class AdvancedBeanNameHandlerMapping
 	 * @param handler the handler instance
 	 * @throws BeansException if the handler couldn't be registered
 	 */
-	private void registerHandler(String urlPath, Object handler) throws BeansException {
-		Object mappedHandler = this.handlerMap.get(urlPath);
+	private void registerHandler(String urlPath, String handlerName) 
+			throws BeansException {
+		
+		Object mappedHandler = this.handlerByPath.get(urlPath);
 		if (mappedHandler != null) {
-			throw new ApplicationContextException(
-					"Cannot map handler [" + handler + "] to URL path [" + urlPath +
+			throw new ApplicationContextException("Cannot map handler [" 
+					+ handlerName + "] to URL path [" + urlPath +
 					"]: there's already handler [" + mappedHandler + "] mapped");
 		}
 
+		Object handler = handlerName;
+		
 		// Eagerly resolve handler if referencing singleton via name.
-		if (handler instanceof String) {
-			String handlerName = (String) handler;
-			if (getApplicationContext().isSingleton(handlerName)) {
-				handler = getApplicationContext().getBean(handlerName);
-			}
+		if (getApplicationContext().isSingleton(handlerName)) {
+			handler = getApplicationContext().getBean(handlerName);
 		}
 
 		if (urlPath.equals("/*")) {
 			setDefaultHandler(handler);
 		}
 		else {
-			this.handlerMap.put(urlPath, handler);
+			this.handlerByPath.put(urlPath, handler);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Mapped URL path [" + urlPath
 						+ "] onto handler [" + handler + "]");
 			}
 		}
+		beanNameByHandler.put(handler, handlerName);
 	}
 
 	protected String getLookupPath(HttpServletRequest request) {
@@ -197,7 +202,9 @@ public class AdvancedBeanNameHandlerMapping
 			logger.debug("Looking up handler for [" + lookupPath + "]");
 		}
 
-		return lookupHandler(lookupPath, request);
+		Object handler = lookupHandler(lookupPath, request);
+		exposeHandlerName((String) beanNameByHandler.get(handler), request);
+		return handler;
 	}
 
 	/**
@@ -214,14 +221,14 @@ public class AdvancedBeanNameHandlerMapping
 	 */
 	protected Object lookupHandler(String urlPath, HttpServletRequest request) {
 		// direct match?
-		Object handler = handlerMap.get(urlPath);
+		Object handler = handlerByPath.get(urlPath);
 		if (handler == null && "/".equals(urlPath)) {
 			handler = getRootHandler();
 		}
 		if (handler == null) {
 			// pattern match?
 			String bestMatch = null;
-			for (Iterator it = handlerMap.keySet().iterator(); it.hasNext();) {
+			for (Iterator it = handlerByPath.keySet().iterator(); it.hasNext();) {
 				String path = (String) it.next();
 				if (pathMatcher.match(path, urlPath) &&
 						(bestMatch == null || bestMatch.length() <= path.length())) {
@@ -232,7 +239,7 @@ public class AdvancedBeanNameHandlerMapping
 			if (bestMatch != null) {
 				exposeAttributes(bestMatch, urlPath, request);
 				exposePathWithinMapping(pathMatcher.extractPathWithinPattern(bestMatch, urlPath), request);
-				handler = handlerMap.get(bestMatch);
+				handler = handlerByPath.get(bestMatch);
 			}
 		}
 		else {

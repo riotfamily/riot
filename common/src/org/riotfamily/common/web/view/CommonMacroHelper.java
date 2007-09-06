@@ -152,6 +152,11 @@ public class CommonMacroHelper {
 		return ServletUtils.getPathWithinApplication(request);
 	}
 	
+	public String getTopLevelHandlerName() {
+		return (String) request.getAttribute(
+				ReverseHandlerMapping.TOP_LEVEL_HANDLER_NAME_ATTRIBUTE);
+	}
+
 	public boolean isExternalUrl(String url) {
 		try {
 			URI uri = new URI(url);
