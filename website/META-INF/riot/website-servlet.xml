@@ -28,6 +28,7 @@
 	  -->
 	<bean id="cachiusHandlerAdapter" class="org.riotfamily.website.cache.RiotAwareCacheableControllerHandlerAdapter">
 		<constructor-arg ref="websiteCache" />
+		<property name="enabled" value="${riot.websiteCache.enabled=true}" />
 	</bean>
 	
 	<!-- 
