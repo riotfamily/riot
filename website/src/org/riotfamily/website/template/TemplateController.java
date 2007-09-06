@@ -33,6 +33,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.ModelAndView;
@@ -89,11 +90,16 @@ public class TemplateController extends AbstractController
 	 */
 	protected static final String SLOTS_CONFIGURATION_ATTRIBUTE =
 			DispatcherServlet.class.getName() + "#" +
-			TemplateController.class.getName() + ".SLOTS_CONFIG";
+			TemplateController.class.getName() + ".slots";
 
 	protected static final String SLOT_PATH_ATTRIBUTE =
 		DispatcherServlet.class.getName() + "#" +
-		TemplateController.class.getName() + ".SLOT_PATH";
+		TemplateController.class.getName() + ".slotPath";
+	
+	protected static final String TEMPLATE_URI_ATTRIBUTE =
+		DispatcherServlet.class.getName() + "#" +
+		TemplateController.class.getName() + ".templateUri";
+	
 
 	protected static final String SLOT_PARAMETER =
 			TemplateController.class.getName() + ".SLOT";
@@ -291,6 +297,7 @@ public class TemplateController extends AbstractController
 		Map config = getEffectiveConfiguration(request);
 		request.setAttribute(SLOTS_CONFIGURATION_ATTRIBUTE, config);
 		request.setAttribute(SLOT_PATH_ATTRIBUTE, getSlotPath(request));
+		request.setAttribute(TEMPLATE_URI_ATTRIBUTE, ServletUtils.getRequestUri(request));
 		return new ModelAndView(getViewName(), buildUrlMap(config));
 	}
 
@@ -311,4 +318,15 @@ public class TemplateController extends AbstractController
 		return slotPath;
 	}
 
+	/**
+	 * Returns whether the given request is handled by a TemplateController and
+	 * no further includes have been performed.
+	 */
+	public static boolean isInTemplate(HttpServletRequest request) {
+		String templateUri = (String) request.getAttribute(TEMPLATE_URI_ATTRIBUTE);
+		if (templateUri == null) {
+			return false;
+		}
+		return templateUri.equals(ServletUtils.getRequestUri(request));
+	}
 }

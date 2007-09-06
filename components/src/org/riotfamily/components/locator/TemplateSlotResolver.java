@@ -32,7 +32,7 @@ import org.riotfamily.website.template.TemplateController;
  * {@link TemplateController}.
  *
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
+ * @deprecated Use a {@link DefaultSlotResolver} instead
  */
 public class TemplateSlotResolver implements SlotResolver {
 

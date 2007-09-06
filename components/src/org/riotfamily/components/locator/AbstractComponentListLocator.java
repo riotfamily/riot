@@ -40,7 +40,7 @@ public abstract class AbstractComponentListLocator
 
 	private String type;
 
-	private SlotResolver slotResolver = new TemplateSlotResolver();
+	private SlotResolver slotResolver = new DefaultSlotResolver();
 
 	public AbstractComponentListLocator(String type) {
 		this.type = type;
