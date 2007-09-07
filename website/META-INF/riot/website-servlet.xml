@@ -52,6 +52,7 @@
 		<property name="macroLibraries">
 			<props>
 				<prop key="common">classpath:org/riotfamily/common/web/view/freemarker/common.ftl</prop>
+				<prop key="form">classpath:org/riotfamily/common/web/view/freemarker/form.ftl</prop>
 				<prop key="riot">classpath:org/riotfamily/riot/runtime/macro/riot.ftl</prop>
 			</props>
 		</property>

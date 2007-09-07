@@ -44,6 +44,7 @@ import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.mapping.ReverseHandlerMapping;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSourceResolvable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -93,6 +94,10 @@ public class CommonMacroHelper {
 	
 	public String getMessage(String code, List args, String defaultMessage) {
 		return ctx.getMessage(code, args.toArray(), defaultMessage, getLocale());
+	}
+	
+	public String getMessage(MessageSourceResolvable resolvable) {
+		return ctx.getMessage(resolvable, getLocale());
 	}
 
 	public String resolveAndEncodeUrl(String url) {
