@@ -50,7 +50,7 @@ public class StoreContextInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler) throws Exception {
 		
-		if (ServletUtils.isDirectRequest(request) && EditModeUtils.isEditMode(request)) {
+		if (!ServletUtils.isDirectRequest(request) && EditModeUtils.isEditMode(request)) {
 			String uri = ServletUtils.getPathWithinApplication(request);
 			PageRequestContext context = PageRequestUtils.createContext(request, uri);
 			request.setAttribute(CONTEXT_ATTRIBUTE, context);
@@ -82,7 +82,7 @@ public class StoreContextInterceptor implements HandlerInterceptor {
 				+ StoreContextInterceptor.class.getName() 
 				+ " to your HandlerMapping(s).");
 		
-		if (ServletUtils.isDirectRequest(request) 
+		if (!ServletUtils.isDirectRequest(request) 
 				&& EditModeUtils.isEditMode(request)) {
 			
 			request.setAttribute(STORE_ATTRIBUTE, Boolean.TRUE);
