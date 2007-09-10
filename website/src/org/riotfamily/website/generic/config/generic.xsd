@@ -46,7 +46,7 @@
 			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="view-name" type="xsd:string" />
 			<xsd:attribute name="content-type" type="xsd:string" />
-			<xsd:attribute name="add-uri-to-cache-key" type="xsd:boolean" />
+			<xsd:attribute name="add-uri-to-cache-key" type="xsd:boolean" default="true" />
 			<xsd:attribute name="cache" type="xsd:boolean" />
 			<xsd:attribute name="model-builder" type="xsd:string" />
 		</xsd:complexType>

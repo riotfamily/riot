@@ -56,8 +56,6 @@ public class GenericController extends AbstractCacheableController {
 
 	private String contentType;
 
-	private boolean addUriToCacheKey;
-
 	/** Controls whether caching is being used or not */
 	private boolean bypassCache = false;
 
@@ -91,10 +89,6 @@ public class GenericController extends AbstractCacheableController {
 		this.contentType = contentType;
 	}
 
-	public void setAddUriToCacheKey(boolean addUriToCacheKey) {
-		this.addUriToCacheKey = addUriToCacheKey;
-	}
-
 	public void setCache(boolean cache) {
 		this.bypassCache = !cache;
 	}
@@ -126,13 +120,8 @@ public class GenericController extends AbstractCacheableController {
 		return cacheableModelBuilder.getLastModified(request);
 	}
 
-	protected void appendCacheKey(StringBuffer key,
-			HttpServletRequest request) {
-
+	protected void appendCacheKey(StringBuffer key,	HttpServletRequest request) {
 		cacheableModelBuilder.appendCacheKey(key, request);
-		if (addUriToCacheKey) {
-			super.appendCacheKey(key, request);
-		}
 	}
 
 }

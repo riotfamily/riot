@@ -39,12 +39,27 @@ public abstract class AbstractCacheableController
 
 	private String beanName;
 	
+	private boolean addUriToCacheKey = true;
+	
 	public final void setBeanName(String beanName) {
 		this.beanName = beanName;
 	}
 		
 	protected String getBeanName() {
 		return beanName;
+	}
+	
+	/**
+	 * Sets whether the (originating) URI should be included in the cache-key.
+	 * Set this property to <code>false</code> if the controller looks the same
+	 * on every page, i.e. does not dependent on the URI. The default is 
+	 * <code>true</code> which is safe (as it will rule out wrong content to 
+	 * be displayed due to identical cache-keys) but could lead to many 
+	 * identical cache items.
+	 * @see #getCacheKeyInternal(HttpServletRequest)
+	 */
+	public void setAddUriToCacheKey(boolean addUriToCacheKey) {
+		this.addUriToCacheKey = addUriToCacheKey;
 	}
 	
 	/**
@@ -73,7 +88,7 @@ public abstract class AbstractCacheableController
      * if {@link #bypassCache(HttpServletRequest) bypassCache()} 
      * returned <code>false</code>.
      * <p>
-     * The method creates a StringBuffer containing the 
+     * The method creates a StringBuffer containing either the bean-name or the 
      * {@link ServletUtils#getOriginatingPathWithinApplication(HttpServletRequest) 
      * originating path} and, in case of an include or forward, the 
      * {@link ServletUtils#getPathWithinApplication(HttpServletRequest) nested path}.
@@ -83,10 +98,15 @@ public abstract class AbstractCacheableController
      */
     protected String getCacheKeyInternal(HttpServletRequest request) {
     	StringBuffer key = new StringBuffer();
-    	key.append(ServletUtils.getOriginatingPathWithinApplication(request));
-		if (!ServletUtils.isDirectRequest(request)) {
-			key.append('#').append(ServletUtils.getPathWithinApplication(request));
-		}
+    	if (addUriToCacheKey) {
+	    	key.append(ServletUtils.getOriginatingPathWithinApplication(request));
+			if (!ServletUtils.isDirectRequest(request)) {
+				key.append('#').append(ServletUtils.getPathWithinApplication(request));
+			}
+    	}
+    	else {
+    		key.append(getBeanName());
+    	}
 		appendCacheKey(key, request);
 		return key.toString();
     }
