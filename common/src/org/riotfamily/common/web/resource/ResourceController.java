@@ -66,7 +66,7 @@ public class ResourceController extends WebApplicationObjectSupport
     
     private List filters;
     
-	private long expiresAfter = 1000 * 60 * 60 * 24;
+	private long expiresAfter = FormatUtils.parseMillis("10Y");
 	
 	private long lastModified = System.currentTimeMillis();
 	

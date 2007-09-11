@@ -208,7 +208,7 @@ public class Txt2ImgController extends AbstractCacheableController
 		}
 		String color = getEncodedParam(request, "color");
 		response.setContentType("image/png");
-		ServletUtils.setCacheHeaders(response, "1M");
+		ServletUtils.setCacheHeaders(response, "10Y");
 		generator.generate(text, maxWidth, color, response.getOutputStream());
 	}
 
@@ -220,7 +220,7 @@ public class Txt2ImgController extends AbstractCacheableController
 			HttpServletResponse response) throws IOException {
 
 		response.setContentType("text/javascript");
-		ServletUtils.setCacheHeaders(response, "1M");
+		ServletUtils.setCacheHeaders(response, "10Y");
 		PrintWriter out = response.getWriter();
 		out.println("var IEDOMReadyScript = '" + request.getRequestURI() + "?empty=true';");
 
@@ -260,7 +260,7 @@ public class Txt2ImgController extends AbstractCacheableController
 	 */
 	protected void servePixelGif(HttpServletResponse response) throws IOException {
 		response.setContentType("image/gif");
-		ServletUtils.setCacheHeaders(response, "1M");
+		ServletUtils.setCacheHeaders(response, "10Y");
 		IOUtils.copy(PIXEL_RESOURCE.getInputStream(), response.getOutputStream());
 	}
 }

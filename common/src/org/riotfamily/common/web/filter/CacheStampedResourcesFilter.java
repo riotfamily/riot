@@ -37,11 +37,10 @@ import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 
 /**
- * Servlet filter that sets an Expires header for request URLs that contain
- * a timestamp. URLs are considered as 'stamped' if they match the configured
- * pattern.
+ * Servlet filter that sets a far future Expires header for request URLs that 
+ * contain a timestamp. URLs are considered as 'stamped' if they match the 
+ * configured pattern.
  * <p>
- *
  * The default pattern is <code>(.*\\/\\d{14}/.+)|(.+\\?[0-9]+$)</code>, this
  * matches URLs created by the DefaultFileStore and URLs printed via the
  * <code>common.resource()</code> FreeMarker function.
@@ -54,7 +53,7 @@ public class CacheStampedResourcesFilter extends HttpFilterBean {
 	private static Log log = LogFactory.getLog(
 			CacheStampedResourcesFilter.class);
 	
-	public static final String DEFAULT_EXPIRATION = "1M";
+	public static final String DEFAULT_EXPIRATION = "10Y";
 
 	public static final Pattern DEFAULT_PATTERN =
 			Pattern.compile("(.*/\\d{14}/.+)|(.+\\?[0-9]+$)");
