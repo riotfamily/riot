@@ -25,7 +25,9 @@ package org.riotfamily.components.editor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.util.PasswordGenerator;
@@ -40,7 +42,7 @@ public class UploadManagerImpl implements UploadManager {
 	private PasswordGenerator tokenGenerator = 
 			new PasswordGenerator(16, true, true, true);
 	
-	private HashMap filePaths = new HashMap();
+	private Map filePaths = Collections.synchronizedMap(new HashMap());
 
 	private FileStore fileStore;
 	

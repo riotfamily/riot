@@ -639,6 +639,7 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 	initialize: function(el, component, options) {
 		this.SUPER(el, component, options);
 		this.key = this.element.readAttribute('riot:key');
+		this.retryCount = 0;
 		var aw = el.parentNode.offsetWidth;
 		if (this.options.maxWidth == 'auto') this.options.maxWidth = aw;
 		if (this.options.minWidth == 'auto') this.options.minWidth = aw;
@@ -679,8 +680,16 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 	},
 	
 	setPath: function(path) {
-		riot.outline.suspended = true;
-		this.cropper = new Cropper.UI(this, path);
+		if (path == null) {
+			if (this.retryCount++ < 3) {
+				setTimeout(this.uploadFileComplete.bind(this), 500);
+			}
+		}
+		else {
+			this.retryCount = 0;
+			riot.outline.suspended = true;
+			this.cropper = new Cropper.UI(this, path);
+		}
 	},
 	
 	update: function(img, path) {
