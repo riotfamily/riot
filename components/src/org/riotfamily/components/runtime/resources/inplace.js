@@ -10,7 +10,7 @@ riot.outline = {
 	left: RBuilder.node('div', {className: 'riot-highlight riot-highlight-left'}).hide().appendTo(document.body),
 	
 	show: function(el, onclick, excludes) {
-		if (riot.outline.suspended) return;
+		if (!riot || riot.outline.suspended) return;
 		riot.outline.top.copyPosFrom(el, {setHeight: false, offsetTop: -1, offsetLeft: -1, offsetWidth: 2}).show();
 		riot.outline.right.copyPosFrom(el, {setWidth: false, offsetLeft: el.offsetWidth}).show();
 		riot.outline.bottom.copyPosFrom(el, {setHeight: false, offsetLeft: -1, offsetTop: el.offsetHeight, offsetWidth: 2}).show();
@@ -18,10 +18,12 @@ riot.outline = {
 	},
 
 	hide: function(ev) {
-		riot.outline.top.hide();
-		riot.outline.right.hide();
-		riot.outline.bottom.hide();
-		riot.outline.left.hide();
+		if (riot && riot.outline) { 
+			riot.outline.top.hide();
+			riot.outline.right.hide();
+			riot.outline.bottom.hide();
+			riot.outline.left.hide();
+		}
 	}
 }
 
@@ -639,7 +641,6 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 	initialize: function(el, component, options) {
 		this.SUPER(el, component, options);
 		this.key = this.element.readAttribute('riot:key');
-		this.retryCount = 0;
 		var aw = el.parentNode.offsetWidth;
 		if (this.options.maxWidth == 'auto') this.options.maxWidth = aw;
 		if (this.options.minWidth == 'auto') this.options.minWidth = aw;
@@ -680,16 +681,8 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 	},
 	
 	setPath: function(path) {
-		if (path == null) {
-			if (this.retryCount++ < 3) {
-				setTimeout(this.uploadFileComplete.bind(this), 500);
-			}
-		}
-		else {
-			this.retryCount = 0;
-			riot.outline.suspended = true;
-			this.cropper = new Cropper.UI(this, path);
-		}
+		riot.outline.suspended = true;
+		this.cropper = new Cropper.UI(this, path);
 	},
 	
 	update: function(img, path) {
