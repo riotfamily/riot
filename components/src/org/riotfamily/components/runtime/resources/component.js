@@ -598,7 +598,7 @@ riot.Entity = Class.extend(riot.AbstractWrapper, {
 	
 	createComponent: function(e) {
 		return new riot.EntityComponent(this, e);
-	},
+	}
 		
 });
 
