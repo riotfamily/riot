@@ -73,58 +73,84 @@
 </#macro>
 
 
-<#macro select field options id=field errorClass="error" valueProperty="" labelProperty="" emptyValue="" emptyLabel="" addEmptyOption=false attributes...>
+<#macro select field options id=field errorClass="error" valueProperty="" labelProperty="" messagePrefix="" emptyValue="" emptyLabel="" addEmptyOption=false attributes...>
 	<#local attributes = addErrorClass(attributes, field, errorClass) />
     <select id="${id}" name="${field}"${join(attributes)}>
     	<#if addEmptyOption || emptyLabel?has_content>
-    		<option value="${emptyValue?html}">${emptyOption?html}</option>
+    		<@option emptyValue?html emptyLabel?html />
     	</#if>
-        <@listOptions field options valueProperty labelProperty ; value, label, selected>
-        	<option value="${value}"<#if selected> selected="selected"</#if>>${label}</option>
+        <@listOptions field options valueProperty labelProperty messagePrefix ; value, label, selected>
+        	<@option value label selected />
         </@listOptions>
     </select>
 </#macro>
 
-<#macro checkboxes field options>
-	<@html.listOptions field options ; value, label, checked, id>
-		<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check checked/> />
-		<label for="${id}">${label}</label>
-	</@html.listOptions>
+<#macro checkbox field id=field errorClass="error" attributes...>
+	<#local attributes = addErrorClass(attributes, field, errorClass) />
+	<input type="checkbox" name="${field}" id="${id}" value="on"<@check getStatus(field).value?if_exists />${join(attributes)} />
 	<input type="hidden" name="_${field}" value="on"/>
 </#macro>
 
+<#macro checkboxes field options>
+	<@html.options field options ; value, label, checked, id>
+		<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check checked/> />
+		<label for="${id}">${label}</label>
+	</@html.options>
+	<input type="hidden" name="_${field}" value="on" />
+</#macro>
+
 <#macro radioButtons field options>
-	<@html.listOptions field options ; value, label, checked, id>
+	<@html.options field options ; value, label, checked, id>
 		<input type="radio" name="${field}" id="${id}" value="${value}"<@check checked/> />
 		<label for="${id}">${label}</label>
-	</@html.listOptions>
+	</@html.options>
 </#macro>
 	
-<#macro listOptions field options valueProperty="" labelProperty="">
+<#macro listOptions field options valueProperty="" labelProperty="" messagePrefix="">
 	<#local value = getStatus(field).value?if_exists />
-    <#list options as option>
-    	<#if option?is_hash>
-    		<#if labelProperty?has_content>
-    			<#local optionLabel = option[labelProperty]?if_exists />
-    		<#else>
-    			<#local optionLabel = option?string />
-    		</#if>
-    		<#if valueProperty?has_content>
-    			<#local optionValue = option[valueProperty]?if_exists />
-    		<#else>
-    			<#local optionValue = optionLabel />
-    		</#if>
-    	<#else>
-    		<#local optionLabel = option?string />
-    		<#local optionValue = optionLabel />
-    	</#if>
-    	<#if value?is_sequence>
-    		<#local selected = containsString(value, optionValue) />
-    	<#else>
-    		<#local selected = (value == optionValue) />
-    	</#if>
-    	<#nested optionValue?html, optionLabel?html, selected, field + '-' + option_index />
-    </#list>
+	<#if options?is_hash>
+		<#list options?keys as option>
+			<#if value?is_sequence>
+	    		<#local selected = containsString(value, option) />
+	    	<#else>
+	    		<#local selected = (value == option) />
+	    	</#if>
+			<#nested option?html, options[option]?html, selected, field + '-' + option_index />
+		</#list>
+	<#else>
+	    <#list options as option>
+	    	<#if option?is_hash>
+	    		<#if labelProperty?has_content>
+	    			<#local optionLabel = option[labelProperty]?if_exists />
+	    		<#else>
+	    			<#local optionLabel = option?string />
+	    		</#if>
+	    		<#if valueProperty?has_content>
+	    			<#local optionValue = option[valueProperty]?if_exists />
+	    		<#else>
+	    			<#local optionValue = option?string />
+	    		</#if>
+	    	<#else>
+	    		<#local optionLabel = option?string />
+	    		<#local optionValue = optionLabel />
+	    	</#if>
+
+	    	<#if messagePrefix?has_content>
+	    		<#local optionLabel = common.getMessage(messagePrefix + optionLabel) />
+	    	</#if>
+	    	
+	    	<#if value?is_sequence>
+	    		<#local selected = containsString(value, optionValue) />
+	    	<#else>
+	    		<#local selected = (value?string == optionValue) />
+	    	</#if>
+	    	<#nested optionValue?html, optionLabel?html, selected, field + '-' + option_index />
+	    </#list>
+	</#if>
+</#macro>
+
+<#macro option value label=value selected=false attributes...>
+	<option value="${value}"<#if selected> selected="selected"</#if>${join(attributes)}>${label}</option>
 </#macro>
 
 <#macro check checked><#if checked> checked="checked"</#if></#macro>
@@ -147,10 +173,12 @@
 
 <#function join attributes>
 	<#local attrs = "" />
-	<#list attributes?keys as attributeName>
-		<#if attributes[attributeName]?has_content>
-			<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName] + "\"" />
-		</#if>
-	</#list>
+	<#if attributes?is_hash>
+		<#list attributes?keys as attributeName>
+			<#if attributes[attributeName]?has_content>
+				<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName] + "\"" />
+			</#if>
+		</#list>
+	</#if>
 	<#return attrs />
 </#function>
