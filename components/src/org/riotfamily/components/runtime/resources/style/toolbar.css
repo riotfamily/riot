@@ -34,6 +34,7 @@ body > #riot-inspector {
 	width: 32px;
 	height: 32px;
 	background-color: #3d3d3d;
+	background-image: url(icons/toolbar.gif);
 	background-repeat: no-repeat;
 	padding: 0;
 	cursor: default;
@@ -46,49 +47,71 @@ body > #riot-inspector {
 #riot-toolbar a.toolbar-button-active {
 	background-color: #3d3d3d;
 	-moz-outline: none;
-	background-position: 0 -32px;
 }
 
-#riot-toolbar-button-gotoRiot {
-	background-image: url(icons/toolbar/riot.gif);
-}
 #riot-toolbar-button-browse {
-	background-image: url(icons/toolbar/browse.gif);
+	background-position: -32px 0;
 }
+#riot-toolbar-button-browse.toolbar-button-active {
+	background-position: -32px -32px;
+}
+
 #riot-toolbar-button-insert {
-	background-image: url(icons/toolbar/insert.gif);
+	background-position: -64px 0;
 }
+#riot-toolbar-button-insert.toolbar-button-active {
+	background-position: -64px -32px;
+}
+
 #riot-toolbar-button-remove {
-	background-image: url(icons/toolbar/remove.gif);
+	background-position: -96px 0;
 }
-#riot-toolbar-button-changeType {
-	background-image: url(icons/toolbar/changeType.gif);
+#riot-toolbar-button-remove.toolbar-button-active {
+	background-position: -96px -32px;
 }
+
 #riot-toolbar-button-edit {
-	background-image: url(icons/toolbar/edit.gif);
+	background-position: -128px 0;
 }
+#riot-toolbar-button-edit.toolbar-button-active {
+	background-position: -128px -32px;
+}
+
 #riot-toolbar-button-properties {
-	background-image: url(icons/toolbar/properties.gif);
+	background-position: -160px 0;
 }
+#riot-toolbar-button-properties.toolbar-button-active {
+	background-position: -160px -32px;
+}
+
 #riot-toolbar-button-move {
-	background-image: url(icons/toolbar/move.gif);
+	background-position: -192px 0;
 }
-#riot-toolbar-button-publish {
-	background-image: url(icons/toolbar/publish.gif);
+#riot-toolbar-button-move.toolbar-button-active {
+	background-position: -192px -32px;
 }
-#riot-toolbar-button-discard {
-	background-image: url(icons/toolbar/discard.gif);
-}
+
 #riot-toolbar-button-logout {
-	background-image: url(icons/toolbar/logout.gif);
+	background-position: -224px 0;
 }
-#riot-toolbar #riot-toolbar-button-logout.toolbar-button-active {
-	background-color: ${highlight};
-	background-position: 0 0;
+
+#riot-toolbar-button-discard {
+	background-position: -256px 0;
+}
+#riot-toolbar-button-discard.toolbar-button-active {
+	background-position: -256px -32px;
+}
+
+#riot-toolbar-button-publish {
+	background-position: -288px 0;
+}
+#riot-toolbar-button-publish.toolbar-button-active {
+	background-position: -288px -32px;
 }
 
 #riot-toolbar #riot-toolbar-button-apply {
-	background: ${highlight} url(icons/toolbar/apply_hi.gif);
+	background-position: -320px -32px; 
+	background-color: ${highlight};
 	border: 3px solid ${toolbarOutline};
 	margin:8px auto;
 }
