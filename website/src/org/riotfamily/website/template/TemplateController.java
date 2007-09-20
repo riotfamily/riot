@@ -96,11 +96,6 @@ public class TemplateController extends AbstractController
 		DispatcherServlet.class.getName() + "#" +
 		TemplateController.class.getName() + ".slotPath";
 	
-	protected static final String TEMPLATE_URI_ATTRIBUTE =
-		DispatcherServlet.class.getName() + "#" +
-		TemplateController.class.getName() + ".templateUri";
-	
-
 	protected static final String SLOT_PARAMETER =
 			TemplateController.class.getName() + ".SLOT";
 
@@ -297,7 +292,6 @@ public class TemplateController extends AbstractController
 		Map config = getEffectiveConfiguration(request);
 		request.setAttribute(SLOTS_CONFIGURATION_ATTRIBUTE, config);
 		request.setAttribute(SLOT_PATH_ATTRIBUTE, getSlotPath(request));
-		request.setAttribute(TEMPLATE_URI_ATTRIBUTE, ServletUtils.getRequestUri(request));
 		return new ModelAndView(getViewName(), buildUrlMap(config));
 	}
 
@@ -323,10 +317,19 @@ public class TemplateController extends AbstractController
 	 * no further includes have been performed.
 	 */
 	public static boolean isInTemplate(HttpServletRequest request) {
-		String templateUri = (String) request.getAttribute(TEMPLATE_URI_ATTRIBUTE);
-		if (templateUri == null) {
+		Map slots = (Map) request.getAttribute(SLOTS_CONFIGURATION_ATTRIBUTE);
+		String slotName = request.getParameter(SLOT_PARAMETER);
+		if (slots == null || slotName == null) {
 			return false;
 		}
-		return templateUri.equals(ServletUtils.getRequestUri(request));
+		Object content = slots.get(slotName);
+		String uri = ServletUtils.getPathWithinApplication(request);
+		if (content instanceof Collection) {
+			Collection c = (Collection) content;
+			return c.contains(uri);
+		}
+		else {
+			return uri.equals(content);
+		}
 	}
 }
