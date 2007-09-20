@@ -51,14 +51,6 @@ import org.springframework.util.Assert;
  */
 public class ImageIOThumbnailer implements Thumbnailer {
 	
-    static {
-        System.setProperty("java.awt.headless", "true");
-    }
-    
-    private static final String FORMAT_JPG = "jpg";
-    
-    private static final String FORMAT_PNG = "png";
-    
 	private int maxCrop = 0; 
 		
 	public void setMaxCrop(int maxCrop) {
@@ -68,7 +60,7 @@ public class ImageIOThumbnailer implements Thumbnailer {
 	public void renderThumbnail(File source, File dest, int width, int height)
 			throws IOException {
 		
-		BufferedImage originalImage = readImage(new FileInputStream(source));
+		BufferedImage originalImage = ImageUtils.readImage(source);
         boolean alpha = originalImage.getColorModel().hasAlpha();
         
         int imageWidth = originalImage.getWidth(null);
@@ -115,59 +107,7 @@ public class ImageIOThumbnailer implements Thumbnailer {
         	thumbImage = thumbImage.getSubimage(x, y, thumbWidth, thumbHeight);
         }
         
-        writeImage(thumbImage, dest);
+        ImageUtils.write(thumbImage, dest);
 	}
-
-	private BufferedImage readImage(InputStream in) throws IOException {
-    	try {
-    		return ImageIO.read(in);
-    	}
-    	finally {
-    		try {
-    			in.close();
-    		}
-    		catch (Exception e) {
-    		}
-    	}
-    }
-    
-    private void writeImage(RenderedImage im, File dest) throws IOException {
-    	ImageWriter writer = null;
-        ImageOutputStream ios = null;
-        try {
-        	String formatName = FormatUtils.getExtension(dest.getName()).toLowerCase();
-        	if (!formatName.equals(FORMAT_JPG) && !formatName.equals(FORMAT_PNG)) {
-        		formatName = FORMAT_JPG;
-        	}
-	        Iterator it = ImageIO.getImageWritersByFormatName(formatName);
-	        if (it.hasNext()) {
-	            writer = (ImageWriter) it.next();
-	        }
-	        Assert.notNull(writer, "No ImageWriter available for format " 
-	        		+ formatName);
-	        
-	        ios = ImageIO.createImageOutputStream(dest);
-	        writer.setOutput(ios);
-	        
-	        ImageWriteParam iwparam = null;
-	        
-	        if (formatName.equals(FORMAT_JPG)) {
-		        iwparam = new JPEGImageWriteParam(Locale.getDefault());
-		        iwparam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-		        iwparam.setCompressionQuality(1);
-	        }
-	        
-	        writer.write(null, new IIOImage(im, null, null), iwparam);
-	        ios.flush();
-        }
-        finally {
-        	if (writer != null) {
-        		writer.dispose();
-        	}
-        	if (ios != null) {
-        		ios.close();
-        	}
-        }
-    }
 
 }
