@@ -77,6 +77,10 @@
 	<#return commonMacroHelper.formatByteSize(bytes) />
 </#function>
 
+<#function formatMillis millis>
+	<#return commonMacroHelper.formatMillis(millis) />
+</#function>
+
 <#function toTitleCase s>
 	<#return commonMacroHelper.toTitleCase(s) />
 </#function>
@@ -86,6 +90,4 @@
 	<#return commonMacroHelper.getMessage(code, args, default) />
 </#function>
 
-<#macro message code args=[] default=code>
-${commonMacroHelper.getMessage(code, args, default)}
-</#macro>
+<#macro message code args=[] default=code>${commonMacroHelper.getMessage(code, args, default)}</#macro>

@@ -217,6 +217,10 @@ public class CommonMacroHelper {
 	public String formatByteSize(long bytes) {
 		return FormatUtils.formatByteSize(bytes);
 	}
+	
+	public String formatMillis(long millis) {
+		return FormatUtils.formatMillis(millis);
+	}
 
 	public String toTitleCase(String s) {
 		return FormatUtils.fileNameToTitleCase(s);
