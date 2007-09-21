@@ -19,6 +19,7 @@
 					</xsd:complexType>
 				</xsd:element>
 			</xsd:sequence>
+			<xsd:attribute name="id" type="xsd:ID" />
 			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="initial" type="xsd:string" />
 			<xsd:attribute name="valid" type="xsd:string" />
