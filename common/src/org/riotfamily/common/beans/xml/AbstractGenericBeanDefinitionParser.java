@@ -24,6 +24,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.xml;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -36,6 +39,7 @@ import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
@@ -52,13 +56,32 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	/** Constant for the id attribute */
 	public static final String ID_ATTRIBUTE = "id";
 
+	private static Log log = LogFactory.getLog(AbstractGenericBeanDefinitionParser.class);
+	
 	private Class beanClass;
 
 	private boolean decorate = true;
+	
+	private boolean enabled = true;
 
 	public AbstractGenericBeanDefinitionParser(Class beanClass) {
 		Assert.notNull(beanClass, "The beanClass must not be null");
 		this.beanClass = beanClass;
+	}
+	
+	public AbstractGenericBeanDefinitionParser(String className) {
+		try {
+			beanClass = ClassUtils.forName(className);
+		}
+		catch (ClassNotFoundException e) {
+			throw new FatalBeanException("Can't find the bean class", e);
+		}
+		catch (NoClassDefFoundError e) {
+			enabled = false;
+			log.warn("Turning of support for " + className 
+					+ " elements due to a missing dependency: " 
+					+ e.getMessage());
+		}
 	}
 
 	/**
@@ -69,6 +92,11 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	}
 
 	public final BeanDefinition parse(Element element, ParserContext parserContext) {
+		if (!enabled) {
+			throw new FatalBeanException("Support for " + element.getTagName() +
+					" has been disabled. Please add the required jar files " +
+					"to your classpath.");
+		}
 		AbstractBeanDefinition definition = parseInternal(element, parserContext);
 		if (!parserContext.isNested()) {
 			try {

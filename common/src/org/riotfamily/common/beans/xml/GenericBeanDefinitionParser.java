@@ -53,6 +53,10 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 	public GenericBeanDefinitionParser(Class beanClass) {
 		super(beanClass);
 	}
+	
+	public GenericBeanDefinitionParser(String className) {
+		super(className);
+	}
 
 	public GenericBeanDefinitionParser addTranslation(String attributeName,
 			String property) {

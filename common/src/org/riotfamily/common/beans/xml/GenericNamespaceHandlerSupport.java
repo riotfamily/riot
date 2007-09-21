@@ -60,18 +60,44 @@ public abstract class GenericNamespaceHandlerSupport extends NamespaceHandlerSup
 		registerBeanDefinitionParser(elementName, parser);
 		return parser;
 	}
+	
+	/**
+	 * Registers a {@link GenericBeanDefinitionParser} for the given elementName.
+	 * The bean class is passed as string to avoid runtime dependencies. If a
+	 * dependency is missing, a warning is logged and the element is ignored. 
+	 */
+	protected GenericBeanDefinitionParser register(String elementName, 
+			String className) {
+		
+		GenericBeanDefinitionParser parser = new GenericBeanDefinitionParser(className);
+		registerBeanDefinitionParser(elementName, parser);
+		return parser;
+	}
 
 	/**
 	 * Registers a {@link GenericBeanDefinitionParser} for the given elementName
 	 * that creates BeanDefinitions for the specified class. Additionally a
 	 * decorator is registered for the elementName.
-	 *
 	 */
 	protected GenericBeanDefinitionParser register(String elementName,
 			Class beanClass, BeanDefinitionDecorator decorator) {
 
 		registerBeanDefinitionDecorator(elementName, decorator);
 		return register(elementName, beanClass);
+	}
+	
+	/**
+	 * Registers a {@link GenericBeanDefinitionParser} for the given elementName
+	 * that creates BeanDefinitions for the specified class. The bean class is 
+	 * passed as string to avoid runtime dependencies. If a dependency is 
+	 * missing, a warning is logged and support for the element is disabled.
+	 * Additionally a decorator is registered for the elementName.
+	 */
+	protected GenericBeanDefinitionParser register(String elementName,
+			String className, BeanDefinitionDecorator decorator) {
+
+		registerBeanDefinitionDecorator(elementName, decorator);
+		return register(elementName, className);
 	}
 
 	/**
@@ -83,4 +109,5 @@ public abstract class GenericNamespaceHandlerSupport extends NamespaceHandlerSup
 		registerBeanDefinitionParser(elementName, parser);
 		registerBeanDefinitionDecorator(elementName, decorator);
 	}
+	
 }

@@ -28,18 +28,6 @@ package org.riotfamily.website.generic.config;
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
 import org.riotfamily.common.beans.xml.NestedListDecorator;
 import org.riotfamily.common.beans.xml.NestedPropertyDecorator;
-import org.riotfamily.website.generic.GenericController;
-import org.riotfamily.website.generic.GenericViewController;
-import org.riotfamily.website.generic.model.hibernate.CurrentDateResolver;
-import org.riotfamily.website.generic.model.hibernate.CurrentLanguageResolver;
-import org.riotfamily.website.generic.model.hibernate.CurrentLocaleResolver;
-import org.riotfamily.website.generic.model.hibernate.DefaultParameterResolver;
-import org.riotfamily.website.generic.model.hibernate.HqlListModelBuilder;
-import org.riotfamily.website.generic.model.hibernate.HqlModelBuilder;
-import org.riotfamily.website.generic.model.hibernate.HqlPagedListModelBuilder;
-import org.riotfamily.website.generic.model.hibernate.RiotUserResolver;
-import org.riotfamily.website.generic.model.hibernate.SplitDateParameterResolver;
-import org.riotfamily.website.generic.model.hibernate.StringToPrimitiveResolver;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 
 /**
@@ -49,23 +37,23 @@ import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 public class GenericNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
-		register("controller", GenericController.class).addReference("model-builder");
-		register("view", GenericViewController.class);
+		register("controller", "org.riotfamily.website.generic.GenericController").addReference("model-builder");
+		register("view", "org.riotfamily.website.generic.GenericViewController");
 
 		BeanDefinitionDecorator setModelBuilder = new NestedPropertyDecorator("modelBuilder");
-		register("hql", HqlModelBuilder.class, setModelBuilder).addTranslation("time-to-live", "ttlPeriod");
-		register("hql-list", HqlListModelBuilder.class, setModelBuilder).addTranslation("time-to-live", "ttlPeriod");
-		register("hql-paged-list", HqlPagedListModelBuilder.class, setModelBuilder).addTranslation("time-to-live", "ttlPeriod");
+		register("hql", "org.riotfamily.website.generic.model.hibernate.HqlModelBuilder", setModelBuilder).addTranslation("time-to-live", "ttlPeriod");
+		register("hql-list", "org.riotfamily.website.generic.model.hibernate.HqlListModelBuilder", setModelBuilder).addTranslation("time-to-live", "ttlPeriod");
+		register("hql-paged-list", "org.riotfamily.website.generic.model.hibernate.HqlPagedListModelBuilder", setModelBuilder).addTranslation("time-to-live", "ttlPeriod");
 		registerSpringBeanDefinitionParser("model-builder", setModelBuilder);
 
 		BeanDefinitionDecorator addParameterResolver = new NestedListDecorator("parameterResolvers");
-		register("attribute", DefaultParameterResolver.class, addParameterResolver);
-		register("current-date", CurrentDateResolver.class, addParameterResolver);
-		register("current-locale", CurrentLocaleResolver.class, addParameterResolver);
-		register("current-language", CurrentLanguageResolver.class, addParameterResolver);
-		register("riot-user", RiotUserResolver.class, addParameterResolver);
-		register("string-to-primitive", StringToPrimitiveResolver.class, addParameterResolver);
-		register("split-date", SplitDateParameterResolver.class, addParameterResolver);
+		register("attribute", "org.riotfamily.website.generic.model.hibernate.DefaultParameterResolver", addParameterResolver);
+		register("current-date", "org.riotfamily.website.generic.model.hibernate.CurrentDateResolver", addParameterResolver);
+		register("current-locale", "org.riotfamily.website.generic.model.hibernate.CurrentLocaleResolver", addParameterResolver);
+		register("current-language", "org.riotfamily.website.generic.model.hibernate.CurrentLanguageResolver", addParameterResolver);
+		register("riot-user", "org.riotfamily.website.generic.model.hibernate.RiotUserResolver", addParameterResolver);
+		register("string-to-primitive", "org.riotfamily.website.generic.model.hibernate.StringToPrimitiveResolver", addParameterResolver);
+		register("split-date", "org.riotfamily.website.generic.model.hibernate.SplitDateParameterResolver", addParameterResolver);
 		registerSpringBeanDefinitionParser("custom-resolver", addParameterResolver);
 	}
 
