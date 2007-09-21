@@ -31,12 +31,14 @@ import java.util.List;
 import org.riotfamily.common.beans.xml.GenericBeanDefinitionParser;
 import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.website.template.PushUpTemplateController;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
@@ -123,23 +125,47 @@ public class TemplateDefinitionParser extends GenericBeanDefinitionParser {
 	private String getHandlerUrl(String templateId, String slot,
 			Element handlerElement, ParserContext parserContext) {
 		
-		BeanDefinition bd;
 		BeanDefinitionParserDelegate delegate = parserContext.getDelegate();
-		
 		if (delegate.isDefaultNamespace(handlerElement.getNamespaceURI())) {
-			bd = delegate.parseBeanDefinitionElement(handlerElement, null, null);
+			if (DomUtils.nodeNameEquals(handlerElement, "ref")) {
+				String refName = handlerElement.getAttribute("bean");
+				if (!StringUtils.hasLength(refName)) {
+					refName = handlerElement.getAttribute("local");
+					if (!StringUtils.hasLength(refName)) {
+						throw new FatalBeanException("'bean' or 'local' is " +
+								"required for <ref> element");
+					}
+				}
+				if (refName.startsWith("/")) {
+					return refName;
+				}
+				else {
+					String alias = buildUrl(refName, templateId, slot);
+					parserContext.getRegistry().registerAlias(refName, alias);
+					return alias;
+				}
+			}
+			else if (DomUtils.nodeNameEquals(handlerElement, "bean")) {
+				BeanDefinition bd = delegate.parseBeanDefinitionElement(
+						handlerElement, null, null);
+				
+				return buildUrl(bd, templateId, slot, parserContext);
+			}
+			throw new FatalBeanException("Only 'bean' and 'ref' are allowed here.");
 		}
 		else {
-			bd = delegate.parseCustomElement(handlerElement);
+			BeanDefinition bd = delegate.parseCustomElement(handlerElement);
+			return buildUrl(bd, templateId, slot, parserContext);
 		}
+	}
+	
+	private String buildUrl(BeanDefinition bd, String templateId, String slot, 
+			ParserContext parserContext) {
 		
-		String beanName = delegate.getReaderContext()
+		String beanName = parserContext.getDelegate().getReaderContext()
 				.generateBeanName(bd).replace('#', '-');
 		
-		if (templateId == null) {
-			templateId = beanName;
-		}
-		String url = prefix  + "/" + templateId + "/" + slot + suffix; 
+		String url = buildUrl(beanName, templateId, slot);
 		String[] aliases = new String[] {url};
 		
 		BeanDefinitionHolder bdHolder = new BeanDefinitionHolder(bd, beanName, aliases);
@@ -147,4 +173,10 @@ public class TemplateDefinitionParser extends GenericBeanDefinitionParser {
 		return url;
 	}
 
+	private String buildUrl(String beanName, String templateId, String slot) {
+		if (templateId == null) {
+			templateId = beanName;
+		}
+		return prefix  + "/" + templateId + "/" + slot + suffix; 
+	}
 }
