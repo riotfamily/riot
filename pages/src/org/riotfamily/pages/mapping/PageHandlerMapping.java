@@ -89,22 +89,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		}
 		Page page = pageDao.findPage(location);
 		if (page == null) {
-			String bestMatch = null;
-			for (Iterator it = pageDao.getWildcardPaths(location).iterator(); it.hasNext();) {
-				String path = (String) it.next();
-				String antPattern = AttributePattern.convertToAntPattern(path);
-				if (pathMatcher.match(antPattern, urlPath) &&
-						(bestMatch == null || bestMatch.length() <= path.length())) {
-
-					bestMatch = path;
-				}
-			}
-			if (bestMatch != null) {
-				location.setPath(bestMatch);
-				page = pageDao.findPage(location);
-				exposeAttributes(bestMatch, urlPath, request);
-				exposePathWithinMapping(pathMatcher.extractPathWithinPattern(bestMatch, urlPath), request);
-			}
+			page = findWildcardPage(location, request);
 		}
 		else {
 			exposePathWithinMapping(urlPath, request);
@@ -112,28 +97,83 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		
 		log.debug("Page: " + page);
 		if (page != null) {
-			if (isRequestable(page)) {
-				request.setAttribute(PAGE_ATTRIBUTE, page);
-				String handlerName = page.getHandlerName();
-				if (handlerName != null) {
-					exposeHandlerName(handlerName, request);
-					return getApplicationContext().getBean(handlerName);
-				}
-				return defaultPageHandler;
+			return getPageHandler(page, request);
+		}
+		return getPageNotFoundHandler(location);
+	}
+	
+	protected Page findWildcardPage(PageLocation location, HttpServletRequest request) {
+		Page page = null; 
+		String bestMatch = null;
+		String urlPath = location.getPath();
+		for (Iterator it = pageDao.getWildcardPaths(location).iterator(); it.hasNext();) {
+			String path = (String) it.next();
+			String antPattern = AttributePattern.convertToAntPattern(path);
+			if (pathMatcher.match(antPattern, urlPath) &&
+					(bestMatch == null || bestMatch.length() <= path.length())) {
+
+				bestMatch = path;
 			}
 		}
-		else {
-			PageAlias alias = pageDao.findPageAlias(location);
-			if (alias != null) {
-				page = alias.getPage();
-				if (page != null) {
-					String url = locationResolver.getUrl(page);
+		if (bestMatch != null) {
+			location.setPath(bestMatch);
+			page = pageDao.findPage(location);
+			exposeAttributes(bestMatch, urlPath, request);
+			exposePathWithinMapping(pathMatcher.extractPathWithinPattern(bestMatch, urlPath), request);
+		}
+		return page;
+	}
+	
+	/**
+	 * Returns the handler for the given page.
+	 */
+	protected Object getPageHandler(Page page, HttpServletRequest request) {
+		if (page.isFolder()) {
+			return getFolderHandler(page);
+		}
+		if (isRequestable(page)) {
+			request.setAttribute(PAGE_ATTRIBUTE, page);
+			String handlerName = page.getHandlerName();
+			if (handlerName != null) {
+				exposeHandlerName(handlerName, request);
+				return getApplicationContext().getBean(handlerName);
+			}
+			return defaultPageHandler;
+		}
+		return null;
+	}
 
-					return new RedirectController(url, true, false);
-				}
-				else {
-					return new HttpErrorController(HttpServletResponse.SC_GONE);
-				}
+	/**
+	 * Returns a Controller that sends a redirect to the request to the first 
+	 * requestable child page.
+	 */
+	protected Object getFolderHandler(Page folder) {
+		Iterator it = folder.getChildPages().iterator();
+		while (it.hasNext()) {
+			Page page = (Page) it.next();
+			if (isRequestable(page)) {
+				String url = locationResolver.getUrl(page);
+				return new RedirectController(url, true, false);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Checks if an alias is registered for the given page and returns a 
+	 * RedirectController, or <code>null</code> in case no alias can be found.
+	 */
+	protected Object getPageNotFoundHandler(PageLocation location) {
+		PageAlias alias = pageDao.findPageAlias(location);
+		if (alias != null) {
+			Page page = alias.getPage();
+			if (page != null) {
+				String url = locationResolver.getUrl(page);
+
+				return new RedirectController(url, true, false);
+			}
+			else {
+				return new HttpErrorController(HttpServletResponse.SC_GONE);
 			}
 		}
 		return null;

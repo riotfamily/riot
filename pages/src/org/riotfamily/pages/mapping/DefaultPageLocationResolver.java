@@ -63,7 +63,13 @@ public class DefaultPageLocationResolver implements PageLocationResolver {
 	}
 
 	public PageLocation getPageLocation(HttpServletRequest request) {
-		String path = ServletUtils.getPathWithoutServletMapping(request);
+		String path = ServletUtils.getOriginatingPathWithinApplication(request);
+		if (!path.endsWith("/")) {
+			int dotIndex = path.lastIndexOf('.');
+			if (dotIndex >= 0) {
+				path = path.substring(0, dotIndex);
+			}
+		}
 		if (path.length() > 1 && path.endsWith("/")) {
 			path = path.substring(0, path.length() - 1);
 		}
