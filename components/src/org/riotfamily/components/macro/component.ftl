@@ -245,11 +245,11 @@
 	</#if>
 	<#if versionContainer?has_content && editMode>
 		<#local attributes = attributes + {
-				"riot:containerId": versionContainer.id,
+				"riot:containerId": versionContainer.id?c,
 				"class": ("riot-component " + attributes["class"]?if_exists)?trim
 		} />
 		<#if form?has_content>
-			<#local formUrl = componentMacroHelper.getFormUrl(form, versionContainer.id)?if_exists />
+			<#local formUrl = componentMacroHelper.getFormUrl(form, versionContainer.id?c)?if_exists />
 			<#if formUrl?has_content>
 				<#local attributes = attributes + {"riot:form": formUrl} />
 			</#if>
