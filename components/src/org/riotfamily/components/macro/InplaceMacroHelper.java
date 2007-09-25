@@ -44,7 +44,7 @@ import org.springframework.util.ClassUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class ComponentMacroHelper {
+public class InplaceMacroHelper {
 
 	private HttpServletRequest request;
 
@@ -54,7 +54,7 @@ public class ComponentMacroHelper {
 	
 	private RiotDaoService riotDaoService;
 
-	public ComponentMacroHelper(HttpServletRequest request,
+	public InplaceMacroHelper(HttpServletRequest request,
 			Collection toolbarScripts, ComponentRepository repository,
 			RiotDaoService riotDaoService) {
 

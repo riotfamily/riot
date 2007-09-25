@@ -1,6 +1,6 @@
 <#global currentComponentScope = .data_model />
 <#global currentListId = "" />
-<#assign editMode = componentMacroHelper.isEditMode() />
+<#assign editMode = inplaceMacroHelper.isEditMode() />
 
 <#--
   - Macro that renders the Riot toolbar if the page is requested in edit mode.
@@ -12,7 +12,7 @@
 				var riotInstantPublish = true;
 			</script>
 		</#if>
-		<#list componentMacroHelper.toolbarScripts as src>
+		<#list inplaceMacroHelper.toolbarScripts as src>
 			<@riot.script src=src />
 		</#list>
 	<#else>
@@ -46,7 +46,7 @@
 
 <#macro entityList listId>
 	<#global currentListId = listId />
-	<#if editMode && componentMacroHelper.storeContext()>
+	<#if editMode && inplaceMacroHelper.storeContext()>
 		<div class="riot-components" riot:wrapper="entityList" riot:listId="${listId}" riot:controllerId="${common.includeUri}">
 			<#nested>
 		</div>
@@ -57,7 +57,7 @@
 </#macro>
 
 <#macro componentSet>
-	<#if editMode && componentMacroHelper.storeContext()>
+	<#if editMode && inplaceMacroHelper.storeContext()>
 		<div class="riot-components" riot:wrapper="componentSet" riot:controllerId="${common.includeUri}">
 			<#nested>
 		</div>
@@ -72,9 +72,9 @@
 	<#if editMode>
 		<#local listId = currentListId />
 		<#if !listId?has_content>
-			<#local listId = componentMacroHelper.getDefaultListId(object) />
+			<#local listId = inplaceMacroHelper.getDefaultListId(object) />
 		</#if>
-		<#local objectId = componentMacroHelper.getObjectId(listId, object) />
+		<#local objectId = inplaceMacroHelper.getObjectId(listId, object) />
 		
 		<#local attributes = {"class": "riot-component", "riot:objectId": objectId} />
 		
@@ -82,7 +82,7 @@
 			<#local attributes = attributes + {"riot:form": "/components/entity-form/" + listId + "/" + form + "/" + objectId} />
 		</#if>
 		
-		<#if !currentListId?has_content && componentMacroHelper.storeContext()>
+		<#if !currentListId?has_content && inplaceMacroHelper.storeContext()>
 			<#local attributes = attributes + {
 				"class": "riot-components riot-component",
 				"riot:wrapper": "entity",
@@ -208,7 +208,7 @@
   - Returns the properties for the given container.
   -->
 <#function buildModel container>
-	<#return componentMacroHelper.buildModel(container) />
+	<#return inplaceMacroHelper.buildModel(container) />
 </#function>
 
 <#--
@@ -222,7 +222,7 @@
 	</#if>
 	<#local previousComponentScope = currentComponentScope />
 	<#global currentComponentScope = buildModel(container) />
-	${componentMacroHelper.tag(container)}
+	${inplaceMacroHelper.tag(container)}
 	<#if editMode>
 		<#if !tag?has_content>
 			<#local tag = "div" />
@@ -249,7 +249,7 @@
 				"class": ("riot-component " + attributes["class"]?if_exists)?trim
 		} />
 		<#if form?has_content>
-			<#local formUrl = componentMacroHelper.getFormUrl(form, versionContainer.id?c)?if_exists />
+			<#local formUrl = inplaceMacroHelper.getFormUrl(form, versionContainer.id)?if_exists />
 			<#if formUrl?has_content>
 				<#local attributes = attributes + {"riot:form": formUrl} />
 			</#if>

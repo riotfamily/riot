@@ -44,7 +44,7 @@
 <#--
   - Returns whether the given Page is visible and should be displayed in menus.
   -->
-<#function isVisible page>
+<#function visible page>
 	<#return pageMacroHelper.isVisible(page) />
 </#function>
 
@@ -62,7 +62,7 @@
 	<#if !page?is_hash>
 		<#local page = pageForHandler(page, common.locale) />
 	</#if>
-	<#return component.buildModel(page.versionContainer)[key] />
+	<#return inplace.buildModel(page.versionContainer)[key] />
 </#function>
 
 <#--
@@ -70,7 +70,7 @@
   - pathComponent (converted to title-case) if the property is not set.
   -->
 <#function title page=currentPage(), key="title">
-	<#local title = page.getProperty(key, component.editMode)?if_exists />
+	<#local title = page.getProperty(key, inplace.editMode)?if_exists />
 	<#if !title?has_content>
 		<#local title = common.toTitleCase(page.pathComponent) />
 	</#if>
@@ -81,9 +81,9 @@
 	<#if attributes?is_sequence>
 		<#local attributes = {} />
 	</#if>
-	<@component.use container=page.versionContainer form=form tag=tag attributes=attributes>
+	<@inplace.use container=page.versionContainer form=form tag=tag attributes=attributes>
 		<#nested />
-	</@component.use>
+	</@inplace.use>
 </#macro>
 
 
@@ -91,10 +91,10 @@
   - Renders an editable HTML link to the given Page.
   -->
 <#macro link page=currentPage() tag="a" form="" titleKey="title" href="" attributes ...>
-	<#local attributes = component.addContainerAttributes(attributes, page.versionContainer, form) />
+	<#local attributes = inplace.addContainerAttributes(attributes, page.versionContainer, form) />
 	<#local attributes = attributes + {"href" : href?has_content?string(href, url(page))} />
 	<#local previousComponentScope = currentComponentScope />
-	<#global currentComponentScope = component.buildModel(page.versionContainer) />
-	<@component.editable editor="text" key=titleKey tag=tag attributes=attributes>${title(page, titleProperty)}</@component.editable>
+	<#global currentComponentScope = inplace.buildModel(page.versionContainer) />
+	<@inplace.editable editor="text" key=titleKey tag=tag attributes=attributes>${title(page, titleProperty)}</@inplace.editable>
 	<#global currentComponentScope = previousComponentScope />
 </#macro>

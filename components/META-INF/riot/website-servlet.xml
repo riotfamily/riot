@@ -24,10 +24,12 @@
 	</bean>
 
 	<override:put ref="freemarkerConfig" property="macroLibraries">
-		<entry key="component" value="classpath:org/riotfamily/components/macro/component.ftl" />
+		<entry key="inplace" value="classpath:org/riotfamily/components/macro/inplace.ftl" />
+		<!-- The same ftl is aliased as 'component' for backwards compatibility: -->
+		<entry key="component" value="classpath:org/riotfamily/components/macro/inplace.ftl" />
 	</override:put>
 	
-	<bean id="componentMacroHelper" class="org.riotfamily.components.macro.ComponentMacroHelperFactory">
+	<bean id="inplaceMacroHelper" class="org.riotfamily.components.macro.InplaceMacroHelperFactory">
 		<constructor-arg ref="componentRepository" />
 		<constructor-arg ref="riotDaoService" />
 		<property name="toolbarScripts">
@@ -37,7 +39,7 @@
 			</list>
 		</property>
 	</bean>
-
+	
 	<bean id="storeContextInterceptor" class="org.riotfamily.components.context.StoreContextInterceptor" />
 
 	<override:bean ref="cachiusHandlerAdapter" class="org.riotfamily.components.context.PartialRequestHandlerAdapter">

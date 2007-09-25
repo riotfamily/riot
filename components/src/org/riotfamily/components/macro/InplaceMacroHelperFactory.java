@@ -37,7 +37,7 @@ import org.riotfamily.riot.list.RiotDaoService;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class ComponentMacroHelperFactory implements MacroHelperFactory {
+public class InplaceMacroHelperFactory implements MacroHelperFactory {
 
 	private Collection toolbarScripts = Collections.EMPTY_LIST;
 
@@ -45,7 +45,7 @@ public class ComponentMacroHelperFactory implements MacroHelperFactory {
 
 	private RiotDaoService riotDaoService;
 	
-	public ComponentMacroHelperFactory(ComponentRepository componentRepository,
+	public InplaceMacroHelperFactory(ComponentRepository componentRepository,
 			RiotDaoService riotDaoService) {
 		
 		this.componentRepository = componentRepository;
@@ -59,7 +59,7 @@ public class ComponentMacroHelperFactory implements MacroHelperFactory {
 	public Object createMacroHelper(HttpServletRequest request,
 			HttpServletResponse response) {
 
-		return new ComponentMacroHelper(request, toolbarScripts, 
+		return new InplaceMacroHelper(request, toolbarScripts, 
 				componentRepository, riotDaoService);
 	}
 }
