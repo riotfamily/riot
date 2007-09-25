@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.transaction.TransactionalController;
+import org.riotfamily.common.web.transaction.TransactionalHandler;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
@@ -46,7 +46,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public abstract class AbstractComponentFormController 
 		extends RepositoryFormController 
-		implements FormSubmissionHandler, TransactionalController {
+		implements FormSubmissionHandler, TransactionalHandler {
 
 	private static final String SESSION_ATTRIBUTE = "componentForm";
 

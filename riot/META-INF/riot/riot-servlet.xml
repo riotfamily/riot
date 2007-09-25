@@ -77,10 +77,6 @@
 		<property name="defaultErrorView" value="classpath:/org/riotfamily/riot/runtime/view/error.ftl" />
 	</bean>
 
-	<bean class="org.riotfamily.common.web.transaction.TransactionalControllerHandlerAdapter">
-		<constructor-arg ref="transactionManager" />
-	</bean>
-
 	<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
 
 	<!--
@@ -243,13 +239,13 @@
 		<property name="messageCodesResolver" ref="messageCodesResolver" />
 	</bean>
 
-	<!--
-	  - HandlerMapping that maps the Riot admin URLs to controllers.
-	  -->
 	<bean id="handlerMapping" class="org.riotfamily.common.web.mapping.AdvancedBeanNameHandlerMapping">
 		<property name="interceptors">
 			<list>
 				<ref bean="loginInterceptor" />
+				<bean class="org.riotfamily.common.web.transaction.TransactionalHandlerInterceptor">
+					<constructor-arg ref="transactionManager" />
+				</bean>
 			</list>
 		</property>
 	</bean>

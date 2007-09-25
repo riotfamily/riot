@@ -23,16 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.transaction;
 
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * Marker interface that indicates that the handleRequest() method should be
- * executed within a transaction.
+ * Marker interface that indicates that the handler should be executed 
+ * within a transaction.
  * 
- * @see TransactionalControllerHandlerAdapter
+ * @see TransactionalHandlerInterceptor
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public interface TransactionalController extends Controller {
+public interface TransactionalHandler {
 
 }
