@@ -137,7 +137,7 @@ RiotList.prototype = {
 		}
 
 		for (var i = 0; i < row.columns.length; i++) {
-			RBuilder.node('td', {innerHTML: row.columns[i], parent: tr, className: model.columns[i].cssClass});
+			RBuilder.node('td', {innerHTML: row.columns[i], parent: tr, className: this.columns[i].className});
 		}
 
 		var td = RBuilder.node('td', {className: 'commands highlight-default'});
