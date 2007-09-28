@@ -25,7 +25,6 @@ package org.riotfamily.forms.element.select;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -48,7 +47,7 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 		Editor, SelectElement, JavaScriptEventAdapter {
 
 	
-	private OptionsModel optionsModel;
+	private Object optionsModel;
 	
 	private String valueProperty;
 	
@@ -89,7 +88,7 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 		this.appendLabel = appendLabelToMessageKey;
 	}
 
-	public void setOptionsModel(OptionsModel optionsModel) {
+	public void setOptionsModel(Object optionsModel) {
 		this.optionsModel = optionsModel;
 		resetOptions();
 		setValue(null);
@@ -97,12 +96,8 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 			getFormListener().elementChanged(this);
 		}
 	}
-
-	public void setOptionValues(Collection optionValues) {
-		setOptionsModel(new StaticOptionsModel(optionValues));
-	}
 	
-	public OptionsModel getOptionsModel() {
+	public Object getOptionsModel() {
 		return optionsModel;
 	}
 
@@ -125,7 +120,7 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 	protected List createOptions() {
 		List options = new ArrayList();
 		if (optionsModel != null) {			
-			Iterator it = optionsModel.getOptionValues().iterator();
+			Iterator it = getForm().getOptionValues(optionsModel).iterator();
 			for (int i = 0; it.hasNext(); i++) {
 				Object item = it.next();
 				String label = getOptionLabel(item);

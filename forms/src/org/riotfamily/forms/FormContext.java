@@ -24,6 +24,7 @@
 package org.riotfamily.forms;
 
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Locale;
 
 import org.riotfamily.common.i18n.MessageResolver;
@@ -52,5 +53,7 @@ public interface FormContext {
 	public String getUploadUrl(String uploadId);
 
 	public PropertyEditorRegistrar[] getPropertyEditorRegistrars();
+
+	public List getOptionValuesAdapters();
 
 }

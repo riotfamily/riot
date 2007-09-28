@@ -14,34 +14,32 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.forms.element.select;
+package org.riotfamily.forms.options;
 
-import org.riotfamily.forms.Element;
+import java.util.Collection;
 
+import org.riotfamily.forms.Form;
+import org.riotfamily.forms.OptionValuesAdapter;
 
 /**
- * Interface to be implemented by elements that provide options the user
- * can choose from.
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
  */
-public interface SelectElement extends Element {
-		
-	public String getParamName();
-	
-	public void renderOption(Option option);
+public class FormAwareOptionsModelValuesAdapter implements OptionValuesAdapter {
 
-	public boolean isSelected(Option option);
+	public boolean supports(Object model) {
+		return model instanceof FormAwareOptionsModel;
+	}
 	
-	public Object getOptionsModel();
-	
-	public void setOptionsModel(Object model);
-	
-	public int getOptionIndex(Option option);
-
+	public Collection getValues(Object model, Form form) {
+		FormAwareOptionsModel optionsModel = (FormAwareOptionsModel) model;
+		return optionsModel.getOptionsValues(form);
+	}
 }

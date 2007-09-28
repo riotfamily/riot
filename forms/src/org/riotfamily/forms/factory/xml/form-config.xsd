@@ -141,6 +141,7 @@
 				<xsd:choice>
 					<xsd:element name="model" type="model" />
 					<xsd:element name="options" type="options" />
+					<xsd:element name="option" type="option" maxOccurs="unbounded" />
 				</xsd:choice>
 				<xsd:attribute name="label-property" type="xsd:string" />
 				<xsd:attribute name="value-property" type="xsd:string" />
@@ -175,6 +176,11 @@
 		<xsd:attribute name="ref" type="xsd:string" />
 	</xsd:complexType>
 
+	<xsd:complexType name="option">
+		<xsd:attribute name="value" type="xsd:string" />
+		<xsd:attribute name="ref" type="xsd:string" />
+	</xsd:complexType>
+	
 	<!-- Deprecated, use property instead -->
 	<xsd:element name="set-property">
 		<xsd:complexType>
@@ -268,12 +274,7 @@
 				<xsd:extension base="simple-editor">
 					<xsd:sequence>
 						<xsd:choice>
-							<xsd:element name="key-options">
-								<xsd:complexType>
-									<xsd:attribute name="ref" type="xsd:string" />
-									<xsd:attribute name="collection-property" type="xsd:string" />
-								</xsd:complexType>
-							</xsd:element>
+							<xsd:element name="key-options" type="options" />
 							<xsd:element name="key-element">
 								<xsd:complexType>
 									<xsd:group ref="elements" />

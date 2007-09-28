@@ -24,7 +24,6 @@
 package org.riotfamily.forms.factory.xml;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -58,11 +57,9 @@ import org.riotfamily.forms.element.collection.XmlSequence;
 import org.riotfamily.forms.element.select.CheckboxGroup;
 import org.riotfamily.forms.element.select.ImageCheckboxGroup;
 import org.riotfamily.forms.element.select.MultiSelectBox;
-import org.riotfamily.forms.element.select.OptionsModel;
 import org.riotfamily.forms.element.select.RadioButtonGroup;
 import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.element.select.SelectElement;
-import org.riotfamily.forms.element.select.StaticOptionsModel;
 import org.riotfamily.forms.element.suggest.AutocompleteTextField;
 import org.riotfamily.forms.element.upload.FileUpload;
 import org.riotfamily.forms.element.upload.FlashUpload;
@@ -293,9 +290,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	}
 
 	private void initSelectElement(Element ele, MutablePropertyValues pvs) {
-		log.debug("Looking for OptionsModel ...");
-		Element modelElement = XmlUtils.getFirstChildByRegex(ele, "model|options");
-		OptionsModel model = getOptionsModel(modelElement);
+		Object model = getOptionsModel(ele);
 		if (model != null) {
 			log.debug("OptionsModel: " + model);
 			pvs.addPropertyValue("optionsModel", model);
@@ -343,7 +338,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			pvs.addPropertyValue("keyElementFactory", factory);
 		}
 		else {
-			pvs.addPropertyValue("keyOptionsModel", getOptionsModel(keyElement));
+			pvs.addPropertyValue("keyOptionsModel", getOptionsModel(ele));
 		}
 		Element itemElement = XmlUtils.getNextSiblingElement(keyElement);
 		ElementFactory itemFactory = createFactory(itemElement);
@@ -440,13 +435,15 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		return pvs;
 	}
 
-	private OptionsModel getOptionsModel(Element ele) {
-		OptionsModel model = null;
-		if (ele != null) {
-			String className = XmlUtils.getAttribute(ele, "class");
+	private Object getOptionsModel(Element ele) {
+		log.debug("Looking for OptionsModel ...");
+		Element modelElement = XmlUtils.getFirstChildByRegex(ele, "model|options|key-options");
+		if (modelElement != null) {
+			Object model = null;
+			String className = XmlUtils.getAttribute(modelElement, "class");
 			if (className != null) {
 				try {
-					model = (OptionsModel) PropertyUtils.newInstance(className);
+					model = PropertyUtils.newInstance(className);
 				}
 				catch (BeansException e) {
 					throw new FormRepositoryException(resource, formId,
@@ -454,33 +451,33 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 				}
 			}
 			else {
-				String beanName = XmlUtils.getAttribute(ele, "ref");
+				String beanName = XmlUtils.getAttribute(modelElement, "ref");
 				if (beanName != null) {
-					model = getOptionsModel(beanName);
+					model = beanFactory.getBean(beanName);
 				}
 			}
 			if (model != null) {
-				List setPropElements = XmlUtils.getChildElementsByRegex(
-						ele, "property|set-property");
+				List propertyElements = XmlUtils.getChildElementsByRegex(
+						modelElement, "property|set-property");
 
-				XmlUtils.populate(model, setPropElements, beanFactory);
+				XmlUtils.populate(model, propertyElements, beanFactory);
 			}
-		}
-		return model;
-	}
-
-	private OptionsModel getOptionsModel(String beanName) {
-		Object bean = beanFactory.getBean(beanName);
-		if (bean instanceof OptionsModel) {
-			return (OptionsModel) bean;
-		}
-		else if (bean instanceof Collection) {
-			return new StaticOptionsModel((Collection) bean);
+			return model;
 		}
 		else {
-			throw new FormRepositoryException(resource, formId,
-					"Bean [" + beanName + "] is neither an " +
-					"OptionsModel nor a Collection: " + bean);
+			ArrayList values = new ArrayList();
+			Iterator it = DomUtils.getChildElementsByTagName(ele, "option").iterator();
+			while (it.hasNext()) {
+				Element e = (Element) it.next();
+				String beanName = XmlUtils.getAttribute(e, "ref");
+				if (beanName != null) {
+					values.add(beanFactory.getBean(beanName));
+				}
+				else {
+					values.add(XmlUtils.getAttribute(e, "value"));
+				}
+			}
+			return values;
 		}
 	}
 

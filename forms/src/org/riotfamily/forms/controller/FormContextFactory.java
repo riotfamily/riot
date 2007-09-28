@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,8 +36,15 @@ import org.riotfamily.common.i18n.RiotMessageCodesResolver;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.forms.FormContext;
+import org.riotfamily.forms.OptionValuesAdapter;
 import org.riotfamily.forms.TemplateRenderer;
+import org.riotfamily.forms.options.ArrayOptionValuesAdapter;
+import org.riotfamily.forms.options.CollectionOptionValuesAdapter;
+import org.riotfamily.forms.options.FormAwareOptionsModelValuesAdapter;
+import org.riotfamily.forms.options.OptionsModelValuesAdapter;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.ResourceLoaderAware;
@@ -45,7 +54,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import freemarker.template.Configuration;
 
 public final class FormContextFactory implements MessageSourceAware, 
-		ResourceLoaderAware, InitializingBean {
+		ResourceLoaderAware, ApplicationContextAware, InitializingBean {
 	
 	private MessageSource messageSource;
 
@@ -56,6 +65,12 @@ public final class FormContextFactory implements MessageSourceAware,
 	private TemplateRenderer templateRenderer;
 	
 	private String resourcePath = "/riot/resources";
+	
+	private List optionValuesAdapters = new ArrayList();
+	
+	public FormContextFactory() {
+		registerDefaultOptionValuesAdapters();
+	}
 	
 	/**
 	 * Sets the {@link AdvancedMessageCodesResolver} to be used. If not
@@ -83,6 +98,18 @@ public final class FormContextFactory implements MessageSourceAware,
 	 */
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
+	}
+	
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		optionValuesAdapters.addAll(applicationContext.getBeansOfType(
+				OptionValuesAdapter.class).values());
+	}
+	
+	private void registerDefaultOptionValuesAdapters() {
+		optionValuesAdapters.add(new CollectionOptionValuesAdapter());
+		optionValuesAdapters.add(new OptionsModelValuesAdapter());
+		optionValuesAdapters.add(new FormAwareOptionsModelValuesAdapter());
+		optionValuesAdapters.add(new ArrayOptionValuesAdapter());
 	}
 	
 	public void setResourcePath(String resourcePath) {
@@ -122,7 +149,7 @@ public final class FormContextFactory implements MessageSourceAware,
 			String contextPath, String formUrl) {
 		
 		return new DefaultFormContext(messageResolver, templateRenderer, 
-				contextPath, resourcePath, formUrl);
+				contextPath, resourcePath, formUrl, optionValuesAdapters);
 	}
 
 }

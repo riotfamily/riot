@@ -79,6 +79,10 @@ public class SelectBox extends AbstractSingleSelectElement {
 			Option chooseOption = new Option(null, null, chooseLabel, this);
 			options.add(0, chooseOption);
 		}
+		else if (!isRequired()) {
+			Option emptyOption = new Option(null, null, "", this);
+			options.add(0, emptyOption);
+		}
 		return options;
 	}
 	

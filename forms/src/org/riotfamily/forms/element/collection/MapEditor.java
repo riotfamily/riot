@@ -38,11 +38,11 @@ import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.element.TemplateElement;
-import org.riotfamily.forms.element.select.OptionsModel;
 import org.riotfamily.forms.element.select.SelectElement;
 import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.ClickEvent;
 import org.riotfamily.forms.event.ClickListener;
+import org.riotfamily.forms.options.OptionsModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 
@@ -55,7 +55,7 @@ public class MapEditor extends TemplateElement implements Editor {
 	/** Class to use for newly created maps */
 	private Class mapClass = HashMap.class;
 	
-	private OptionsModel keyOptionsModel;
+	private Object keyOptionsModel;
 	
 	private String labelProperty;
 	
@@ -74,7 +74,7 @@ public class MapEditor extends TemplateElement implements Editor {
 		setTemplate(TemplateUtils.getTemplatePath(MapEditor.class));
 	}
 	
-	public void setKeyOptionsModel(OptionsModel keyOptionsModel) {
+	public void setKeyOptionsModel(Object keyOptionsModel) {
 		this.keyOptionsModel = keyOptionsModel;
 	}
 
@@ -154,7 +154,7 @@ public class MapEditor extends TemplateElement implements Editor {
 		
 		Collection keys = null;
 		if (keyOptionsModel != null) {
-			keys = keyOptionsModel.getOptionValues();
+			keys = getForm().getOptionValues(keyOptionsModel);
 		}
 		else if (map != null) {
 			keys = map.keySet();
@@ -276,7 +276,7 @@ public class MapEditor extends TemplateElement implements Editor {
 	
 	private class MapOptionsModel implements OptionsModel {
 		
-		private OptionsModel model;
+		private Object model;
 		
 		public MapOptionsModel(SelectElement keyElement) {
 			this.model = keyElement.getOptionsModel();
@@ -285,7 +285,7 @@ public class MapEditor extends TemplateElement implements Editor {
 		public Collection getOptionValues() {
 			Collection keys = getKeys();
 			ArrayList result = new ArrayList();
-			Iterator it = model.getOptionValues().iterator();
+			Iterator it = getForm().getOptionValues(model).iterator();
 			while (it.hasNext()) {
 				Object key = (Object) it.next();
 				if (!keys.contains(key)) {

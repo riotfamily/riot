@@ -14,22 +14,32 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.forms.element.select;
+package org.riotfamily.forms.options;
 
 import java.util.Collection;
 
-/**
- *
- */
-public interface OptionsModel {
-	
-	public Collection getOptionValues();
+import org.riotfamily.forms.Form;
+import org.riotfamily.forms.OptionValuesAdapter;
+import org.springframework.util.CollectionUtils;
 
+/**
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public class ArrayOptionValuesAdapter implements OptionValuesAdapter {
+
+	public boolean supports(Object model) {
+		return model.getClass().isArray();
+	}
+	
+	public Collection getValues(Object model, Form form) {
+		return CollectionUtils.arrayToList(model);
+	}
 }

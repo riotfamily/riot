@@ -24,6 +24,7 @@
 package org.riotfamily.forms.controller;
 
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Locale;
 
 import org.riotfamily.common.i18n.MessageResolver;
@@ -54,18 +55,22 @@ public class DefaultFormContext implements FormContext {
 	
 	private PropertyEditorRegistrar[] propertyEditorRegistrars;
 	
+	private List optionValuesAdapters;
+	
 	public DefaultFormContext() {
 	}
 	
 	public DefaultFormContext(MessageResolver messageResolver,
 			TemplateRenderer templateRenderer,
-			String contextPath, String resourcePath, String formUrl) {
+			String contextPath, String resourcePath, String formUrl,
+			List optionValuesAdapters) {
 
 		this.messageResolver = messageResolver;
 		this.contextPath = contextPath;
 		setResourcePath(resourcePath);
 		this.templateRenderer = templateRenderer;
 		this.formUrl = formUrl;
+		this.optionValuesAdapters = optionValuesAdapters;
 	}
 
 	private void setResourcePath(String path) {
@@ -143,4 +148,7 @@ public class DefaultFormContext implements FormContext {
 		this.propertyEditorRegistrars = registrars;
 	}
 
+	public List getOptionValuesAdapters() {
+		return optionValuesAdapters;
+	}
 }

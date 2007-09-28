@@ -14,46 +14,26 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.forms.element.select;
+package org.riotfamily.forms;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 
+/**
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
+ */
+public interface OptionValuesAdapter {
 
-
-
-
-public class SequenceOptionsModel implements OptionsModel {
-
-	private int start = 0;
+	public boolean supports(Object model);
 	
-	private int end = 1;
-	
-	private ArrayList options = null;
-	
-	public void setStart(int start) {
-		this.start = start;
-	}
+	public Collection getValues(Object model, Form form);
 
-	public void setEnd(int end) {
-		this.end = end;
-	}
-
-	public Collection getOptionValues() {
-		if (options == null) {
-			options = new ArrayList(end - start);
-			for (int i = start; i <= end; i++) {
-				options.add(new Integer(i));
-			}
-		}
-		return options;
-	}
 }

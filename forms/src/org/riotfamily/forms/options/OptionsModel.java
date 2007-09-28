@@ -21,27 +21,15 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.forms.element.select;
+package org.riotfamily.forms.options;
 
-import org.riotfamily.forms.Element;
-
+import java.util.Collection;
 
 /**
- * Interface to be implemented by elements that provide options the user
- * can choose from.
+ *
  */
-public interface SelectElement extends Element {
-		
-	public String getParamName();
+public interface OptionsModel {
 	
-	public void renderOption(Option option);
-
-	public boolean isSelected(Option option);
-	
-	public Object getOptionsModel();
-	
-	public void setOptionsModel(Object model);
-	
-	public int getOptionIndex(Option option);
+	public Collection getOptionValues();
 
 }

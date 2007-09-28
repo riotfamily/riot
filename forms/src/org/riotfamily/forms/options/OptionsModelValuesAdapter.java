@@ -18,41 +18,28 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Jan-Frederic Linde [jfl at neteye dot de]
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.form.element;
+package org.riotfamily.forms.options;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
-import org.riotfamily.forms.element.select.OptionsModel;
-import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.forms.Form;
+import org.riotfamily.forms.OptionValuesAdapter;
 
 /**
- * @author Jan-Frederic Linde [jfl at neteye dot de]
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class RestrictedOptionsModel implements OptionsModel {
-	
-	private OptionsModel source;
-	
-	public RestrictedOptionsModel(OptionsModel source) {
-		this.source = source;
-	}
+public class OptionsModelValuesAdapter implements OptionValuesAdapter {
 
-	public Collection getOptionValues() {
-		Collection sourceOptions = source.getOptionValues();
-		ArrayList result = new ArrayList();
-		Iterator it = sourceOptions.iterator();
-		while (it.hasNext()) {
-			Object option = it.next();
-			if (AccessController.isGranted("use-option", option)) {
-				result.add(option);
-			}
-		}
-		return result;
+	public boolean supports(Object model) {
+		return model instanceof OptionsModel;
 	}
-
+	
+	public Collection getValues(Object model, Form form) {
+		OptionsModel optionsModel = (OptionsModel) model;
+		return optionsModel.getOptionValues();
+	}
 }

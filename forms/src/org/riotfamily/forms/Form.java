@@ -192,7 +192,7 @@ public class Form implements BeanEditor {
 	}
 
 	/**
-	 * Convinience method to add and bind an element within a single step.
+	 * Convenience method to add and bind an element in a single step.
 	 */
 	public void addElement(Editor element, String property) {
 		addElement(element);
@@ -285,7 +285,7 @@ public class Form implements BeanEditor {
 			// Otherwise changing the target of the form would not work
 			name = "_target";
 		}
-		//TODO Aussure uniqueness of syntetic names
+		//TODO Assure uniqueness of synthetic names
 		if (paramNames.contains(name)) {
 			name = desiredName + paramNames.size();
 		}
@@ -454,5 +454,16 @@ public class Form implements BeanEditor {
 
 	public boolean hasErrors() {
 		return errors.hasErrors();
+	}
+	
+	public Collection getOptionValues(Object model) {
+		Iterator it = formContext.getOptionValuesAdapters().iterator();
+		while (it.hasNext()) {
+			OptionValuesAdapter adapter = (OptionValuesAdapter) it.next();
+			if (adapter.supports(model)) {
+				return adapter.getValues(model, this);
+			}
+		}
+		throw new IllegalStateException("No adapter registered for " + model);
 	}
 }

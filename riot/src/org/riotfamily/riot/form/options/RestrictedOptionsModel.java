@@ -14,43 +14,45 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
+ *   Jan-Frederic Linde [jfl at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.forms.element.select;
+package org.riotfamily.riot.form.options;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
-import org.springframework.util.StringUtils;
+import org.riotfamily.forms.options.OptionsModel;
+import org.riotfamily.riot.security.AccessController;
 
-public class StaticOptionsModel implements OptionsModel {
-
-	private Collection optionValues = new ArrayList();
+/**
+ * @author Jan-Frederic Linde [jfl at neteye dot de]
+ * @since 6.5
+ */
+public class RestrictedOptionsModel implements OptionsModel {
 	
-	public StaticOptionsModel() {
-	}
-
-	public StaticOptionsModel(Collection options) {
-		optionValues.addAll(options);
-	}
-
-	public void setOptionValues(Collection options) {
-		optionValues.addAll(options);
-	}
+	private OptionsModel source;
 	
-	public void setCommaDelimitedValues(String s) {
-		String[] tokens = StringUtils.commaDelimitedListToStringArray(s);
-		for (int i = 0; i < tokens.length; i++) {
-			optionValues.add(tokens[i]);
-		}
+	public RestrictedOptionsModel(OptionsModel source) {
+		this.source = source;
 	}
 
 	public Collection getOptionValues() {
-		return optionValues;
+		Collection sourceOptions = source.getOptionValues();
+		ArrayList result = new ArrayList();
+		Iterator it = sourceOptions.iterator();
+		while (it.hasNext()) {
+			Object option = it.next();
+			if (AccessController.isGranted("use-option", option)) {
+				result.add(option);
+			}
+		}
+		return result;
 	}
+
 }
