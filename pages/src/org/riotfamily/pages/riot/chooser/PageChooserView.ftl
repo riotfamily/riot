@@ -20,13 +20,8 @@
 					<option value="${site.id}"<#if site == selectedSite>selected="selected"</#if>>${site.name}</option>
 				</#list>
 			</select>
-		</#if>
-		<#if locales?has_content>
-			<select name="locale" onchange="this.form.submit()">
-				<#list locales as locale>
-					<option value="${locale}"<#if locale == selectedLocale> selected="selected"</#if>>${locale.displayName}</option>
-				</#list>
-			</select>
+		<#else>
+			<input type="hidden" name="site" value="${selectedSite.id}" />
 		</#if>
 	</form>
 	<ul id="tree" class="tree">
@@ -48,7 +43,7 @@
 
 <#macro renderPages pages>
 	<#list pages as page>
-		<li>
+		<li<#if page.expanded> class="expanded"</#if>>
 			<a class="<#if page.published>published<#else>unpublished</#if>" href="${page.link}">${page.pathComponent}</a>
 			<#if page.childPages?has_content>
 				<ul>

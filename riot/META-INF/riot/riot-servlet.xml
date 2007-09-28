@@ -136,6 +136,11 @@
 				<prop key="riot">classpath:org/riotfamily/riot/runtime/macro/riot.ftl</prop>
 			</props>
 		</property>
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="number_format">#0.#</prop>
+			</props>
+        </property>
 		<property name="freemarkerVariables">
 			<map>
         		<entry key="customStyleSheets" value-ref="customStyleSheets" />
@@ -224,6 +229,8 @@
 		<property name="customElements" ref="customFormElements" />
 	</bean>
 
+	<bean id="riotDaoOptionValuesAdapter" class="org.riotfamily.riot.form.options.RiotDaoOptionValuesAdapter" />
+	
 	<bean id="imageCropper" class="org.riotfamily.common.image.ImageMagickCropperFactoryBean">
 		<property name="convertCommand" value="${imageMagick.convertCommand=convert}" />
 	</bean>

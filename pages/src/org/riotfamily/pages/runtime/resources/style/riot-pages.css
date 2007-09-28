@@ -1,6 +1,13 @@
-table.locales th.locale,
-table.pages th.locale {
+table.sites th.locale,
+table.site-chooser th.locale,
+table.pages-i18n th.site-locale {
 	width: 20px;
+}
+
+table.sites th.locale span,
+table.site-chooser th.locale span,
+table.pages-i18n th.site-locale span {
+	display: none;
 }
 
 table.pages tr.foreign-page td {

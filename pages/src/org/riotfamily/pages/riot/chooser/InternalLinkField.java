@@ -27,6 +27,8 @@ import java.io.PrintWriter;
 
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
+import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.components.editor.ComponentFormController;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.MessageUtils;
 import org.riotfamily.forms.TemplateUtils;
@@ -57,6 +59,17 @@ public class InternalLinkField extends TextField implements ResourceElement,
 
 	public String getChooserUrl() {
 		return this.chooserUrl;
+	}
+	
+	public String getChooserQueryString() {
+		String basePath = (String) getForm().getAttribute(
+				ComponentFormController.BASE_PATH_ATTRIBUTE);
+		
+		if (basePath == null) {
+			return "";
+		}
+		return "?" + PageChooserController.BASE_PATH_PARAM + "=" 
+				+ FormatUtils.uriEscape(basePath);
 	}
 
 	public void setChooserUrl(String chooserUrl) {

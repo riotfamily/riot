@@ -32,6 +32,7 @@ import org.riotfamily.components.ComponentRepository;
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.VersionContainer;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.forms.Form;
 import org.riotfamily.forms.factory.FormRepository;
 import org.springframework.web.bind.ServletRequestUtils;
 
@@ -43,6 +44,8 @@ import org.springframework.web.bind.ServletRequestUtils;
  */
 public class ComponentFormController extends AbstractComponentFormController {
 
+	public static final String BASE_PATH_ATTRIBUTE = "basePath";
+	
 	private ComponentDao componentDao;
 
 	private ComponentRepository componentRepository;
@@ -56,6 +59,11 @@ public class ComponentFormController extends AbstractComponentFormController {
 		super(formRepository);
 		this.componentRepository = componentRepository;
 		this.componentDao = componentDao;
+	}
+	
+	protected void initForm(Form form, HttpServletRequest request) {
+		super.initForm(form, request);
+		form.setAttribute(BASE_PATH_ATTRIBUTE, request.getParameter("path"));
 	}
 
 	protected ComponentVersion getVersion(HttpServletRequest request) {

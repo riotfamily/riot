@@ -27,13 +27,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageNode;
+import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 
 /**
@@ -112,20 +112,19 @@ public class PageDefinition {
 		this.definitions = definitions;
 	}
 
-	public PageNode createNode(PageNode parent, PageDao pageDao) {
+	public PageNode createNode(PageNode parent, List sites, PageDao pageDao) {
 		PageNode node = new PageNode();
 		node.setParent(parent);
-		node.setSite(parent.getSite());
 		node.setHandlerName(handlerName);
 		node.setSystemNode(systemNode);
 		node.setChildHandlerName(childHandlerName);
 		node.setHidden(hidden);
-		createPages(node, pageDao);
+		createPages(node, sites, pageDao);
 		if (definitions != null) {
 			Iterator it = definitions.iterator();
 			while (it.hasNext()) {
 				PageDefinition childDefinition = (PageDefinition) it.next();
-				PageNode childNode = childDefinition.createNode(node, pageDao);
+				PageNode childNode = childDefinition.createNode(node, sites, pageDao);
 				node.addChildNode(childNode);
 			}
 		}
@@ -133,27 +132,27 @@ public class PageDefinition {
 		return node;
 	}
 
-	private void createPages(PageNode node, PageDao pageDao) {
-		Iterator it = pageDao.getLocales().iterator();
+	private void createPages(PageNode node, List sites, PageDao pageDao) {
+		Iterator it = sites.iterator();
 		while (it.hasNext()) {
-			Locale locale = (Locale) it.next();
-			Page page = new Page(getPathComponent(), locale);
+			Site site = (Site) it.next();
+			Page page = new Page(getPathComponent(), site);
 			page.setNode(node);
 			page.setPublished(published);
 			page.setFolder(folder);
 			page.setCreationDate(new Date());
-			addPageProps(page, locale);
+			addPageProps(page, site);
 			node.addPage(page);
 		}
 	}
 
-	private void addPageProps(Page page, Locale locale) {
+	private void addPageProps(Page page, Site site) {
 		HashMap newProps = new HashMap();
 		if (globalProps != null) {
 			newProps.putAll(globalProps);
 		}
 		if (localizedProps != null) {
-			Map localizedMap = (Map) localizedProps.get(locale.toString());
+			Map localizedMap = (Map) localizedProps.get(site.getLocale().toString());
 			if(localizedMap != null) {
 				newProps.putAll(localizedMap);
 			}

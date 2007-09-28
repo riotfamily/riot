@@ -11,14 +11,31 @@
 	<xsd:element name="setup" type="setupType"/>
 
 	<xsd:complexType name="setupType">
-		<xsd:sequence maxOccurs="unbounded" minOccurs="0">
-			<xsd:element name="page" type="pageType" />
+		<xsd:sequence>
+			<xsd:element name="sites" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence maxOccurs="unbounded" minOccurs="1">
+						<xsd:element name="site" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+				<xsd:element name="page" type="pageType" />
+			</xsd:sequence>
 		</xsd:sequence>
+		
 		<xsd:attribute name="id" type="xsd:ID"/>
-		<xsd:attribute name="dao" type="xsd:string" use="required" />
-		<xsd:attribute name="tx" type="xsd:string" use="required" />
+		<xsd:attribute name="dao" type="xsd:string" />
+		<xsd:attribute name="tx" type="xsd:string" />
 	</xsd:complexType>
 
+	<xsd:complexType name="siteType">
+		<xsd:attribute name="name" type="xsd:string" />
+		<xsd:attribute name="locale" type="xsd:string" use="required" />
+		<xsd:attribute name="host" type="xsd:string" />
+		<xsd:attribute name="prefix" type="xsd:string" />
+	</xsd:complexType>
+	
 	<xsd:complexType name="pageType">
 		<xsd:sequence minOccurs="0" maxOccurs="1">
 			<xsd:element name="props" type="propsType" minOccurs="0" maxOccurs="unbounded" />

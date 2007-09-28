@@ -23,20 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages;
 
-import java.util.List;
-import java.util.Locale;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.CacheableController;
-import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
-import org.riotfamily.pages.mapping.PageLocationResolver;
-import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.pages.mapping.PageUrlBuilder;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * @author Jan-Frederic Linde [jfl at neteye dot de]
@@ -46,17 +40,17 @@ public class LocaleListController extends AbstractCacheableController {
 
 	private PageDao pageDao;
 
-	private PageLocationResolver locationResolver;
+	private PageUrlBuilder pageUrlBuilder;
 
 	private String siteName;
 
 	private String viewName;
 
 	public LocaleListController(PageDao pageDao,
-					PageLocationResolver locationResolver) {
+			PageUrlBuilder pageUrlBuilder) {
 
 		this.pageDao = pageDao;
-		this.locationResolver = locationResolver;
+		this.pageUrlBuilder = pageUrlBuilder;
 	}
 
 	public void setSiteName(String siteName) {
@@ -70,7 +64,7 @@ public class LocaleListController extends AbstractCacheableController {
 	public ModelAndView handleRequest(HttpServletRequest request,
 					HttpServletResponse response) throws Exception {
 
-
+		/*
 		Site site = null;
 		if (siteName != null) {
 			site  = pageDao.getSite(siteName);
@@ -103,6 +97,7 @@ public class LocaleListController extends AbstractCacheableController {
 		}
 
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		*/
 		return null;
 	}
 

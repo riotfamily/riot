@@ -23,8 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages;
 
-import java.util.List;
 import java.util.Locale;
+
+import org.springframework.util.ObjectUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -35,10 +36,18 @@ public class Site {
 	private Long id;
 
 	private String name;
+	
+	private String hostName;
+	
+	private String pathPrefix;
 
 	private boolean enabled;
 
-	private List locales;
+	private Locale locale;
+	
+	private String theme;
+	
+	private Site masterSite;
 
 	public boolean isEnabled() {
 		return this.enabled;
@@ -57,27 +66,87 @@ public class Site {
 	}
 
 	public String getName() {
-		return this.name;
+		if (name == null) {
+			StringBuffer sb = new StringBuffer();
+			if (hostName != null) {
+				sb.append(hostName);
+				if (pathPrefix != null) {
+					sb.append(pathPrefix);	
+				}
+			}
+			else {
+				sb.append(locale);
+				if (theme != null) {
+					sb.append(" (").append(theme).append(')');
+				}
+			}
+			name = sb.toString();
+		}
+		return name;
 	}
 
 	public void setName(String serverName) {
 		this.name = serverName;
 	}
 
-	public List getLocales() {
-		return this.locales;
+	public Locale getLocale() {
+		return this.locale;
 	}
 
-	public void setLocales(List locales) {
-		this.locales = locales;
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 
-	public boolean isLocaleEnabled(Locale locale) {
-		return enabled && (locales == null || locales.contains(locale));
+	public String getTheme() {
+		return this.theme;
+	}
+
+	public void setTheme(String theme) {
+		this.theme = theme;
+	}
+
+	public String getHostName() {
+		return this.hostName;
+	}
+
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
+	}
+
+	public String getPathPrefix() {
+		return this.pathPrefix;
+	}
+
+	public void setPathPrefix(String pathPrefix) {
+		this.pathPrefix = pathPrefix;
+	}
+	
+	public String stripPrefix(String path) {
+		if (pathPrefix != null) {
+			return path.substring(pathPrefix.length());
+		}
+		return path;
+	}
+	
+	public boolean matches(String hostName, String path) {
+		return (this.hostName == null || this.hostName.equals(hostName))
+				&& (pathPrefix == null || path.startsWith(pathPrefix));
+	}
+
+	public Site getMasterSite() {
+		return this.masterSite;
+	}
+
+	public void setMasterSite(Site masterSite) {
+		this.masterSite = masterSite;
+	}
+	
+	public String toString() {
+		return getName();
 	}
 	
 	public int hashCode() {
-		return name != null ? name.hashCode() : 0;
+		return getName().hashCode();
 	}
 	
 	public boolean equals(Object obj) {
@@ -88,10 +157,8 @@ public class Site {
 			return false;
 		}
 		Site other = (Site) obj;
-		return name != null && name.equals(other.name);
+		return ObjectUtils.nullSafeEquals(this.locale, other.getLocale())
+				&& ObjectUtils.nullSafeEquals(this.theme, other.getTheme());
 	}
 	
-	public String toString() {
-		return name;
-	}
 }

@@ -38,7 +38,7 @@ import org.riotfamily.components.locator.SlotResolver;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
-import org.riotfamily.pages.mapping.PageLocationResolver;
+import org.riotfamily.pages.mapping.PageUrlBuilder;
 
 /**
  * ComponentListLocator that uses the page-id as component-path.
@@ -53,15 +53,15 @@ public class PageComponentListLocator implements ComponentListLocator {
 
 	private PageDao pageDao;
 
-	private PageLocationResolver resolver;
+	private PageUrlBuilder pageUrlBuilder;
 
 	private SlotResolver slotResolver = new DefaultSlotResolver();
 
 	public PageComponentListLocator(PageDao pageDao,
-			PageLocationResolver resolver) {
+			PageUrlBuilder pageUrlBuilder) {
 
 		this.pageDao = pageDao;
-		this.resolver = resolver;
+		this.pageUrlBuilder = pageUrlBuilder;
 	}
 
 	public void setSlotResolver(SlotResolver slotResolver) {
@@ -99,7 +99,7 @@ public class PageComponentListLocator implements ComponentListLocator {
 
 	public String getUrl(Location location) {
 		Page page = loadPage(location);
-		String url = resolver.getUrl(page);
+		String url = pageUrlBuilder.getUrl(page);
 		if (page.isWildcardInPath()) {
 			Map attributes = JSONObject.fromObject(location.getPath());
 			url = new AttributePattern(url).fillInAttributes(new MapWrapper(attributes));

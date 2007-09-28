@@ -23,10 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
-import java.util.Locale;
-
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageValidationUtils;
+import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
@@ -53,8 +52,8 @@ public class EditPageCommand extends EditCommand {
 	protected boolean isEnabled(CommandContext context, String action) {
 		if (action == ACTION_TRANSLATE) {
 			Page page = PageCommandUtils.getPage(context);
-			Locale locale = PageCommandUtils.getParentLocale(context);
-			return PageValidationUtils.isTranslatable(page, locale);
+			Site site = PageCommandUtils.getParentSite(context);
+			return PageValidationUtils.isTranslatable(page, site);
 		}
 		return true;
 	}
@@ -92,8 +91,8 @@ public class EditPageCommand extends EditCommand {
 			return super.execute(context);
 		}
 		Page page = PageCommandUtils.getPage(context);
-		Locale locale = PageCommandUtils.getParentLocale(context);
-		pageDao.addTranslation(page, locale);
+		Site site = PageCommandUtils.getParentSite(context);
+		pageDao.addTranslation(page, site);
 		return new ShowListResult(context);
 	}
 

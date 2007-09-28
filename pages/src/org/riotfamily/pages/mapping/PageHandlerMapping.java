@@ -26,7 +26,6 @@ package org.riotfamily.pages.mapping;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,15 +37,16 @@ import org.riotfamily.common.web.controller.HttpErrorController;
 import org.riotfamily.common.web.controller.RedirectController;
 import org.riotfamily.common.web.mapping.AbstractReverseHandlerMapping;
 import org.riotfamily.common.web.mapping.AttributePattern;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
-import org.riotfamily.pages.PageLocation;
+import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.util.Assert;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -64,15 +64,15 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	
 	private PageDao pageDao;
 
-	private PageLocationResolver locationResolver;
+	private PageUrlBuilder pageUrlBuilder;
 
 	private Object defaultPageHandler;
 
 	public PageHandlerMapping(PageDao pageDao,
-			PageLocationResolver pathAndLocaleResolver) {
+			PageUrlBuilder pageUrlBuilder) {
 
 		this.pageDao = pageDao;
-		this.locationResolver = pathAndLocaleResolver;
+		this.pageUrlBuilder = pageUrlBuilder;
 	}
 
 	public void setDefaultPageHandler(Object defaultPageHandler) {
@@ -82,31 +82,37 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	protected Object getHandlerInternal(HttpServletRequest request)
 			throws Exception {
 
-		PageLocation location = locationResolver.getPageLocation(request);
-		String urlPath = location.getPath();
-		if (location == null) {
+		String hostName = request.getServerName();
+		String path = ServletUtils.getOriginatingPathWithoutServletMapping(request);
+		Site site = pageDao.findSite(hostName, path);
+		if (site == null) {
 			return null;
 		}
-		Page page = pageDao.findPage(location);
-		if (page == null) {
-			page = findWildcardPage(location, request);
+		path = site.stripPrefix(path);
+		Page page = pageDao.findPage(site, path);
+		if (page != null) {
+			exposePathWithinMapping(path, request);
 		}
 		else {
-			exposePathWithinMapping(urlPath, request);
+			page = findWildcardPage(site, path);
+			if (page != null) {
+				exposeAttributes(page.getPath(), path, request);
+				exposePathWithinMapping(pathMatcher.extractPathWithinPattern(
+						page.getPath(), path), request);
+			}
 		}
 		
 		log.debug("Page: " + page);
 		if (page != null) {
 			return getPageHandler(page, request);
 		}
-		return getPageNotFoundHandler(location);
+		return getPageNotFoundHandler(site, path);
 	}
 	
-	protected Page findWildcardPage(PageLocation location, HttpServletRequest request) {
+	protected Page findWildcardPage(Site site, String urlPath) {
 		Page page = null; 
 		String bestMatch = null;
-		String urlPath = location.getPath();
-		for (Iterator it = pageDao.getWildcardPaths(location).iterator(); it.hasNext();) {
+		for (Iterator it = pageDao.getWildcardPaths(site).iterator(); it.hasNext();) {
 			String path = (String) it.next();
 			String antPattern = AttributePattern.convertToAntPattern(path);
 			if (pathMatcher.match(antPattern, urlPath) &&
@@ -116,10 +122,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 			}
 		}
 		if (bestMatch != null) {
-			location.setPath(bestMatch);
-			page = pageDao.findPage(location);
-			exposeAttributes(bestMatch, urlPath, request);
-			exposePathWithinMapping(pathMatcher.extractPathWithinPattern(bestMatch, urlPath), request);
+			page = pageDao.findPage(site, bestMatch);
 		}
 		return page;
 	}
@@ -147,12 +150,12 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	 * Returns a Controller that sends a redirect to the request to the first 
 	 * requestable child page.
 	 */
-	protected Object getFolderHandler(Page folder) {
+	private Object getFolderHandler(Page folder) {
 		Iterator it = folder.getChildPages().iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
 			if (isRequestable(page)) {
-				String url = locationResolver.getUrl(page);
+				String url = pageUrlBuilder.getUrl(page);
 				return new RedirectController(url, true, false);
 			}
 		}
@@ -160,16 +163,15 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	}
 	
 	/**
-	 * Checks if an alias is registered for the given page and returns a 
-	 * RedirectController, or <code>null</code> in case no alias can be found.
+	 * Checks if an alias is registered for the given site and path and returns 
+	 * a RedirectController, or <code>null</code> in case no alias can be found.
 	 */
-	protected Object getPageNotFoundHandler(PageLocation location) {
-		PageAlias alias = pageDao.findPageAlias(location);
+	protected Object getPageNotFoundHandler(Site site, String path) {
+		PageAlias alias = pageDao.findPageAlias(site, path);
 		if (alias != null) {
 			Page page = alias.getPage();
 			if (page != null) {
-				String url = locationResolver.getUrl(page);
-
+				String url = pageUrlBuilder.getUrl(page);
 				return new RedirectController(url, true, false);
 			}
 			else {
@@ -209,13 +211,17 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	protected List getPatternsForHandler(String beanName, 
 			HttpServletRequest request) {
 		
-		Locale locale = RequestContextUtils.getLocale(request);
-		List pages = pageDao.findPagesForHandler(beanName, locale);
+		Page currentPage = getPage(request);
+		Assert.notNull(currentPage, "This method can only be used on pages " +
+				"whose handler was resolved by a PageHandlerMapping.");
+		
+		Site site = currentPage.getSite();
+		List pages = pageDao.findPagesForHandler(beanName, site);
 		ArrayList patterns = new ArrayList(pages.size());
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
-			patterns.add(new AttributePattern(locationResolver.getUrl(page)));
+			patterns.add(new AttributePattern(pageUrlBuilder.getUrl(page)));
 		}
 		return patterns;
 	}

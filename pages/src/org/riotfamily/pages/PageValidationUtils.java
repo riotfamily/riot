@@ -26,7 +26,6 @@ package org.riotfamily.pages;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Locale;
 
 /**
  * @author Carsten Woelk [cwoelk at neteye dot de]
@@ -42,8 +41,8 @@ public final class PageValidationUtils {
 		return !containsPathComponent(childs, page.getPathComponent());
 	}
 
-	public static boolean isTranslatable(Page page, Locale targetLocale) {
-		Collection siblings = getSiblings(page, targetLocale);
+	public static boolean isTranslatable(Page page, Site targetSite) {
+		Collection siblings = getSiblings(page, targetSite);
 		return !PageValidationUtils.containsPathComponent(siblings,
 					page.getPathComponent());
 	}
@@ -60,15 +59,15 @@ public final class PageValidationUtils {
 	}
 
 	/**
-	 * Returns all siblings of the page in the given locale. If the locale is
-	 * identical to the page's locale the page itself will be contained too.
+	 * Returns all siblings of the page in the given site. If the site is
+	 * identical to the page's site, the page itself will be contained too.
 	 */
-	public static Collection getSiblings(Page page, Locale locale) {
-		return page.getNode().getParent().getChildPages(locale);
+	public static Collection getSiblings(Page page, Site site) {
+		return page.getNode().getParent().getChildPagesWithFallback(site);
 	}
 
 	private static Collection getChildsWithoutPage(PageNode node, Page page) {
-		return without(node.getChildPages(page.getLocale()), page);
+		return without(node.getChildPagesWithFallback(page.getSite()), page);
 	}
 
 	private static Collection without(Collection collection, Object item) {

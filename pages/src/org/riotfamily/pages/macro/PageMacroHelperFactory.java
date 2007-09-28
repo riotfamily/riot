@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.view.MacroHelperFactory;
 import org.riotfamily.pages.dao.PageDao;
-import org.riotfamily.pages.mapping.PageLocationResolver;
+import org.riotfamily.pages.mapping.PageUrlBuilder;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -38,18 +38,18 @@ public class PageMacroHelperFactory implements MacroHelperFactory {
 
 	private PageDao pageDao;
 
-	private PageLocationResolver resolver;
+	private PageUrlBuilder pageUrlBuilder;
 
 	public PageMacroHelperFactory(PageDao pageDao,
-			PageLocationResolver resolver) {
+			PageUrlBuilder pageUrlBuilder) {
 
 		this.pageDao = pageDao;
-		this.resolver = resolver;
+		this.pageUrlBuilder = pageUrlBuilder;
 	}
 
 	public Object createMacroHelper(HttpServletRequest request,
 			HttpServletResponse response) {
 
-		return new PageMacroHelper(pageDao, resolver, request);
+		return new PageMacroHelper(pageDao, pageUrlBuilder, request);
 	}
 }

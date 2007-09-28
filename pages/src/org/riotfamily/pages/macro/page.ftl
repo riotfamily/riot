@@ -6,32 +6,39 @@
 </#function>
 
 <#--
+  - Returns the current Site.
+  -->
+<#function currentSite>
+	<#return currentPage().site />
+</#function>
+
+<#--
   - Returns a collection containing the given page with its siblings in the correct order.
   -->
 <#function pageAndSiblings page=currentPage()>
-	<#return visiblePages(page.node.parent.getChildPages(page.locale)) />
+	<#return visiblePages(page.node.parent.getChildPages(page.site)) />
 </#function>
 
 <#--
   - Returns the system-page with the given handlerName. There must be only
   - one PageNode with that id, otherwise an exception is thrown.
   -->
-<#function pageForHandler handlerName locale=common.locale>
-	<#return pageMacroHelper.getPageForHandler(handlerName, locale) />
+<#function pageForHandler handlerName site=currentSite()>
+	<#return pageMacroHelper.getPageForHandler(handlerName, site) />
 </#function>
 
 <#--
   - Returns all pages with the given handlerName.
   -->
-<#function pagesForHandler handlerName locale=common.locale>
-	<#return pageMacroHelper.getPagesForHandler(handlerName, locale) />
+<#function pagesForHandler handlerName site=currentSite()>
+	<#return pageMacroHelper.getPagesForHandler(handlerName, site) />
 </#function>
 
 <#--
-  - Returns all top-level pages for the current site.
+  - Returns all top-level pages.
   -->
-<#function topLevelPages locale=common.locale>
-	<#return pageMacroHelper.getTopLevelPages(locale) />
+<#function topLevelPages site=currentSite()>
+	<#return pageMacroHelper.getTopLevelPages(site) />
 </#function>
 
 <#--
@@ -60,7 +67,7 @@
   -->
 <#function property page, key>
 	<#if !page?is_hash>
-		<#local page = pageForHandler(page, common.locale) />
+		<#local page = pageForHandler(page) />
 	</#if>
 	<#return inplace.buildModel(page.versionContainer)[key] />
 </#function>

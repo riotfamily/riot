@@ -28,7 +28,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
+import org.riotfamily.common.beans.xml.ListDecorator;
 import org.riotfamily.common.beans.xml.NestedListDecorator;
+import org.riotfamily.pages.Site;
 import org.riotfamily.pages.setup.PageDefinition;
 import org.riotfamily.pages.setup.PageSetupBean;
 import org.springframework.beans.MutablePropertyValues;
@@ -55,6 +57,11 @@ public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 				.addReference("locales")
 				.addReference("tx");
 
+		registerBeanDefinitionDecorator("sites", new ListDecorator("sites"));
+		register("site", Site.class)
+				.addTranslation("host", "hostName")
+				.addTranslation("prefix", "pathPrefix");
+		
 		register("page", PageDefinition.class,
 				new NestedListDecorator("definitions"))
 				.addTranslation("system", "systemNode");

@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,72 +36,72 @@ import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
-import org.riotfamily.pages.mapping.PageLocationResolver;
-import org.springframework.util.StringUtils;
+import org.riotfamily.pages.mapping.PageUrlBuilder;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 public class PageChooserController implements Controller {
 
+	public static final String BASE_PATH_PARAM = "basePath";
+	
 	private PageDao pageDao;
 
-	private PageLocationResolver resolver;
+	private PageUrlBuilder pageUrlBuilder;
 
 	private String viewName = ResourceUtils.getPath(
 			PageChooserController.class, "PageChooserView.ftl");
 
 
-	public PageChooserController(PageDao pageDao, PageLocationResolver resolver) {
+	public PageChooserController(PageDao pageDao, PageUrlBuilder pageUrlBuilder) {
 		this.pageDao = pageDao;
-		this.resolver = resolver;
-	}
-
-	private Locale getLocale(HttpServletRequest request) {
-		String localeString = request.getParameter("locale");
-		if (localeString != null) {
-			return StringUtils.parseLocaleString(localeString);
-		}
-		List locales = pageDao.getLocales();
-		if (locales != null && !locales.isEmpty()) {
-			if (locales.size() == 1) {
-				return (Locale) locales.get(0);
-			}
-			Locale locale = RequestContextUtils.getLocale(request);
-			if (!locales.contains(locale)) {
-				locale = (Locale) locales.get(0);
-			}
-			return locale;
-		}
-		return null;
+		this.pageUrlBuilder = pageUrlBuilder;
 	}
 
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
+		List sites = pageDao.listSites();
+		Site selectedSite = null;
+		
 		Long siteId = ServletRequestUtils.getLongParameter(request, "site");
-		Site site = siteId != null
-				? pageDao.loadSite(siteId)
-				: pageDao.getDefaultSite();
-
-		Locale locale = getLocale(request);
-
+		if (siteId != null) {
+			selectedSite = pageDao.loadSite(siteId);
+		}
+				
+		String path = request.getParameter(BASE_PATH_PARAM);
+		if (path != null) {
+			String host = request.getServerName();
+			if (selectedSite == null) {
+				Iterator it = sites.iterator();
+				while (it.hasNext()) {
+					Site site = (Site) it.next();
+					if (site.matches(host, path)) {
+						selectedSite = site;
+						path = site.stripPrefix(path);
+						break;
+					}
+				}
+			}
+		}
+		
+		if (selectedSite == null) {
+			selectedSite = pageDao.getDefaultSite();
+		}
+		
 		HashMap model = new HashMap();
 		model.put("mode", ServletRequestUtils.getStringParameter(
 				request, "mode", "forms"));
 
-		model.put("locales", pageDao.getLocales());
-		model.put("selectedLocale", locale);
 		model.put("sites", pageDao.listSites());
-		model.put("selectedSite", site);
+		model.put("selectedSite", selectedSite);
 		model.put("pages", createpageLinks(
-				pageDao.findRootNode(site).getChildPages(locale)));
+				pageDao.getRootNode().getChildPages(selectedSite), path));
 
 		return new ModelAndView(viewName, model);
 	}
 
-	private List createpageLinks(Collection pages) {
+	private List createpageLinks(Collection pages, String expandedPath) {
 		ArrayList links = new ArrayList();
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
@@ -110,10 +109,13 @@ public class PageChooserController implements Controller {
 			if (!page.isWildcardInPath()) {
 				PageLink link = new PageLink();
 				link.setPathComponent(page.getPathComponent());
-				link.setLink(resolver.getUrl(page));
+				link.setLink(pageUrlBuilder.getUrl(page));
 				link.setTitle(page.getProperty("title", true));
 				link.setPublished(page.isPublished());
-				link.setChildPages(createpageLinks(page.getChildPages()));
+				if (expandedPath != null && expandedPath.startsWith(page.getPath())) {
+					link.setExpanded(true);
+				}
+				link.setChildPages(createpageLinks(page.getChildPages(), expandedPath));
 				links.add(link);
 			}
 		}

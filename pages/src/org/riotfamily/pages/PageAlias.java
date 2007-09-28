@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages;
 
+
 /**
  * Alias for a page. Aliases are created whenever a page (or one of it's 
  * ancestors) is renamed or moved.
@@ -33,24 +34,29 @@ package org.riotfamily.pages;
  */
 public class PageAlias {
 
+	private Long id;
+	
 	private Page page;
 	
-	private PageLocation location;
+	private Site site;
+	
+	private String path;
 	
 	public PageAlias() {
 	}
 	
-	public PageAlias(Page page, PageLocation location) {
+	public PageAlias(Page page, Site site, String path) {
 		this.page = page;
-		this.location = location;
+		this.site = site;
+		this.path = path;
 	}
 
-	public PageLocation getLocation() {
-		return this.location;
+	public Long getId() {
+		return this.id;
 	}
 
-	public void setLocation(PageLocation location) {
-		this.location = location;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Page getPage() {
@@ -61,8 +67,24 @@ public class PageAlias {
 		this.page = page;
 	}
 	
+	public Site getSite() {
+		return this.site;
+	}
+
+	public void setSite(Site site) {
+		this.site = site;
+	}
+
+	public String getPath() {
+		return this.path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
 	public String toString() {
-		return "PageAlias[" + page + " --> " + location + "]";
+		return "PageAlias[" + page + " --> " + path + "]";
 	}
 	
 }

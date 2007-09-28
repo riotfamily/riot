@@ -37,6 +37,8 @@ public class PageLink {
 
 	private List childPages;
 
+	private boolean expanded;
+	
 	public List getChildPages() {
 		return this.childPages;
 	}
@@ -77,4 +79,12 @@ public class PageLink {
 		this.title = title;
 	}
 
+	public boolean isExpanded() {
+		return this.expanded;
+	}
+
+	public void setExpanded(boolean expanded) {
+		this.expanded = expanded;
+	}
+	
 }

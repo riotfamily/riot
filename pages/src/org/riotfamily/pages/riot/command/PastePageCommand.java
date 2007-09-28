@@ -23,13 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
-import java.util.Locale;
-
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.PageValidationUtils;
+import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
-import org.riotfamily.pages.riot.dao.SiteLocale;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.core.Clipboard;
 import org.riotfamily.riot.list.command.core.PasteCommand;
@@ -50,10 +48,11 @@ public class PastePageCommand extends PasteCommand {
 			Page page = (Page) obj;
 			enabled &= isValidChild(context.getParent(), page);
 
-			// Only allow pasting into the same locale
-			Locale locale = PageCommandUtils.getParentLocale(context);
-			if(locale != null) {
-				enabled &= page.getLocale().equals(locale);
+			//REVISIT  
+			// Only allow pasting into the same site
+			Site site = PageCommandUtils.getParentSite(context);
+			if(site != null) {
+				enabled &= page.getSite().equals(site);
 			}
 		}
 		return enabled;
@@ -64,12 +63,8 @@ public class PastePageCommand extends PasteCommand {
 		if (parent instanceof Page) {
 			parentNode = ((Page) parent).getNode();
 		}
-		else if (parent instanceof SiteLocale) {
-			SiteLocale siteLocale = ((SiteLocale) parent);
-			parentNode = pageDao.findRootNode(siteLocale.getSite());
-		}
 		else {
-			parentNode = pageDao.findRootNode(pageDao.getDefaultSite());
+			parentNode = pageDao.getRootNode();
 		}
 		return PageValidationUtils.isValidChild(parentNode, page);
 	}

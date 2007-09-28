@@ -15,41 +15,39 @@
 		http://www.riotfamily.org/schema/forms/form-config
 		http://www.riotfamily.org/schema/forms/form-config.xsd">
 
-	<ed:list id="sitemap" list-ref="sites" icon="sitemap">
-		<ed:list list-ref="locales">
-			<ed:tree list-ref="pages-i18n">
-				<ed:form form-ref="page" label-property="pathComponent" />
-			</ed:tree>
-		</ed:list>
+	<ed:list id="sitemap" list-ref="site-chooser" icon="sitemap">
+		<ed:tree list-ref="pages-i18n">
+			<ed:form form-ref="page" label-property="pathComponent" />
+		</ed:tree>
+	</ed:list>
+	
+	<ed:list id="sites" list-ref="sites" icon="world">
+		<ed:form form-ref="site" />
 	</ed:list>
 
-	<list:list id="sites">
+	<list:list id="site-chooser">
 		<list:dao ref="siteRiotDao" />
 		<list:columns>
+			<list:column property="locale" renderer="countryFlagRenderer" />
 			<list:column property="name" />
+			<list:column property="locale.language" renderer="localeRenderer" lookup-level="2" />
+			<list:column property="locale.country" renderer="localeRenderer" lookup-level="2" />
 			<list:command id="stepInto" />
 		</list:columns>
 	</list:list>
-
-	<list:list id="editableSites">
+	
+	<list:list id="sites">
 		<list:dao ref="siteRiotDao" />
 		<list:columns>
+			<list:column property="locale" renderer="countryFlagRenderer" />
 			<list:column property="name" />
+			<list:column property="locale.language" renderer="localeRenderer" lookup-level="2" />
+			<list:column property="locale.country" renderer="localeRenderer" lookup-level="2" />
 			<list:column property="enabled" renderer="cssClassRenderer" />
 			<list:command id="edit" />
 			<list:command id="delete" />
 		</list:columns>
 		<list:command id="add" />
-	</list:list>
-
-	<list:list id="locales">
-		<list:dao ref="localeRiotDao" />
-		<list:columns>
-			<list:column property="locale" renderer="countryFlagRenderer" lookup-level="2" />
-			<list:column property="locale.language" renderer="localeRenderer" lookup-level="2" />
-			<list:column property="locale.country" renderer="localeRenderer" lookup-level="2" />
-			<list:command id="stepInto" />
-		</list:columns>
 	</list:list>
 
 	<list:list id="pages" default-command="showChildPages">
@@ -72,8 +70,9 @@
 	<list:list id="pages-i18n" default-command="showChildPages">
 		<list:dao ref="pageRiotDao" />
 		<list:columns>
-			<list:column property="locale" renderer="countryFlagRenderer" />
+			<list:column property="site.locale" renderer="countryFlagRenderer" />
 			<list:column property="pathComponent" />
+			<list:column property="site.name" />
 			<list:command id="publishPage" />
 			<list:command id="moveUpPage" />
 			<list:command id="moveDownPage" />
@@ -89,12 +88,20 @@
 
 	<form:form id="site" bean-class="org.riotfamily.pages.Site">
 		<form:group label-key="site.general">
-			<form:textfield bind="name" required="true" max-length="255" />
+			<form:textfield bind="name" max-length="255" />
+			<form:textfield bind="locale" required="true" max-length="8" />
+			<form:selectbox bind="theme">
+				<form:options ref="themes" />
+			</form:selectbox>
+			<form:selectbox bind="masterSite">
+				<form:options ref="siteRiotDao" />
+			</form:selectbox>
+		</form:group>
+		<form:group label-key="site.mapping">
+			<form:textfield bind="hostName" />
+			<form:textfield bind="pathPrefix" />
 			<form:checkbox bind="enabled" default="checked" />
 		</form:group>
-		<form:checkbox-group bind="locales" label-property="displayName">
-			<form:options ref="localesOptionsModel" />
-		</form:checkbox-group>
 	</form:form>
 
 	<form:form id="page" bean-class="org.riotfamily.pages.Page">

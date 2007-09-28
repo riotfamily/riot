@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,8 +37,7 @@ import org.riotfamily.pages.Page;
 import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
-import org.riotfamily.pages.mapping.PageLocationResolver;
-import org.springframework.util.StringUtils;
+import org.riotfamily.pages.mapping.PageUrlBuilder;
 
 /**
 	* @author Felix Gnass [fgnass at neteye dot de]
@@ -52,15 +50,15 @@ public class PageMacroHelper {
 
 	private PageDao pageDao;
 
-	private PageLocationResolver resolver;
+	private PageUrlBuilder pageUrlBuilder;
 
 	private HttpServletRequest request;
 
-	public PageMacroHelper(PageDao pageDao, PageLocationResolver resolver,
+	public PageMacroHelper(PageDao pageDao, PageUrlBuilder pageUrlBuilder,
 			HttpServletRequest request) {
 
 		this.pageDao = pageDao;
-		this.resolver = resolver;
+		this.pageUrlBuilder = pageUrlBuilder;
 		this.request = request;
 	}
 
@@ -75,27 +73,21 @@ public class PageMacroHelper {
 		return page;
 	}
 
-	public Page getPageForHandler(String handlerName, String localeString) {
-		Locale locale = StringUtils.parseLocaleString(localeString);
-		return getPageForHandler(handlerName, locale);
+	public Page getPageForHandler(String handlerName, Site site) {
+		return pageDao.findPageForHandler(handlerName, site);
 	}
 
-	public Page getPageForHandler(String handlerName, Locale locale) {
-		return pageDao.findPageForHandler(handlerName, locale);
+	public List getPagesForHandler(String handlerName, Site site) {
+		return pageDao.findPagesForHandler(handlerName, site);
 	}
 
-	public List getPagesForHandler(String handlerName, Locale locale) {
-		return pageDao.findPagesForHandler(handlerName, locale);
-	}
-
-	public Collection getTopLevelPages(Locale locale) {
-		Site site = getCurrentPage().getNode().getSite();
-		return pageDao.findRootNode(site).getChildPages(locale);
+	public Collection getTopLevelPages(Site site) {
+		return pageDao.getRootNode().getChildPages(site);
 	}
 
 	public String getUrl(Page page) {
 		if (page != null) {
-			return resolver.getUrl(page);
+			return pageUrlBuilder.getUrl(page);
 		}
 		return null;
 	}

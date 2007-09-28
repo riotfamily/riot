@@ -24,7 +24,6 @@
 package org.riotfamily.pages.mapping;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
 
 import javax.servlet.ServletException;
@@ -33,8 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.common.web.filter.PluginChain;
+import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.riot.security.AccessController;
@@ -42,6 +41,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 
 /**
  * FilterPlugin that provides folder support. Normally the website-servlet is
@@ -60,19 +61,21 @@ public class FolderFilterPlugin extends FilterPlugin {
 	private static final TransactionDefinition TX_DEF = 
 			new DefaultTransactionDefinition();
 	
+	private PathMatcher pathMatcher = new AntPathMatcher();
+	
 	private PageDao pageDao;
 	
-	private PageLocationResolver locationResolver;
+	private PageUrlBuilder pageUrlBuilder;
 	
 	private PlatformTransactionManager tx;
 	
 	
-	public FolderFilterPlugin(PageDao pageDao, 
-			PageLocationResolver locationResolver, 
+	public FolderFilterPlugin(PageDao pageDao,
+			PageUrlBuilder pageUrlBuilder, 
 			PlatformTransactionManager tx) {
 		
 		this.pageDao = pageDao;
-		this.locationResolver = locationResolver;
+		this.pageUrlBuilder = pageUrlBuilder;
 		this.tx = tx;
 	}
 
@@ -85,10 +88,10 @@ public class FolderFilterPlugin extends FilterPlugin {
 		if (uri.lastIndexOf('.') < uri.lastIndexOf('/')) {
 			TransactionStatus status = tx.getTransaction(TX_DEF);
 			try {
-				Collection indexPages = getIndexPages(request);
-				if (indexPages != null) {
+				Page folder = getFolder(request.getServerName(), uri);
+				if (folder != null) {
 					requestHandled = true;
-					sendRedirect(indexPages, request, response);
+					sendRedirect(folder, request, response);
 				}
 			}
 			catch (Exception ex) {
@@ -102,32 +105,50 @@ public class FolderFilterPlugin extends FilterPlugin {
 		}
 	}
 
+	
+	private Page getFolder(String hostName, String path) { 
+		Site site = pageDao.findSite(hostName, path);
+		if (site == null) {
+			return null;
+		}
+		path = site.stripPrefix(path);
+		Page page = pageDao.findPage(site, path);
+		if (page == null) {
+			page = findWildcardPage(site, path);
+		}
+		if (page == null || !page.isFolder()) {
+			return null;
+		}
+		return page;
+	}
+	
+	protected Page findWildcardPage(Site site, String urlPath) {
+		Page page = null; 
+		String bestMatch = null;
+		for (Iterator it = pageDao.getWildcardPaths(site).iterator(); it.hasNext();) {
+			String path = (String) it.next();
+			String antPattern = AttributePattern.convertToAntPattern(path);
+			if (pathMatcher.match(antPattern, urlPath) &&
+					(bestMatch == null || bestMatch.length() <= path.length())) {
+
+				bestMatch = path;
+			}
+		}
+		if (bestMatch != null) {
+			page = pageDao.findPage(site, bestMatch);
+		}
+		return page;
+	}
+		
 	private boolean isRequestable(Page page) {
 		return page.isEnabled() || AccessController.isAuthenticatedUser();
 	}
 	
-	private Collection getIndexPages(HttpServletRequest request) {
-		Collection childPages = null;
-		PageLocation location = locationResolver.getPageLocation(request);
-		if (location != null) {
-			if ("/".equals(location.getPath())) {
-				Site site = pageDao.getSite(location.getSiteName());
-				childPages = pageDao.findRootNode(site).getChildPages(location.getLocale());
-			}
-			else {
-				Page page = pageDao.findPage(location);
-				if (page != null && page.isFolder()) {
-					childPages = page.getChildPages();
-				}
-			}
-		}
-		return childPages;
-	}
 	
-	private void sendRedirect(Collection pages, HttpServletRequest request,
+	private void sendRedirect(Page folder, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		
-		String url = getFirstRequestableChildPageUrl(pages);
+		String url = getFirstRequestableChildPageUrl(folder);
 		if (url != null) {
 			response.sendRedirect(response.encodeRedirectURL(
 					request.getContextPath() + url));
@@ -137,12 +158,12 @@ public class FolderFilterPlugin extends FilterPlugin {
 		}
 	}
 	
-	private String getFirstRequestableChildPageUrl(Collection pages) {
-		Iterator it = pages.iterator();
+	private String getFirstRequestableChildPageUrl(Page folder) {
+		Iterator it = folder.getChildPages().iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
 			if (isRequestable(page)) {
-				return locationResolver.getUrl(page);
+				return pageUrlBuilder.getUrl(page);
 			}
 		}
 		return null;

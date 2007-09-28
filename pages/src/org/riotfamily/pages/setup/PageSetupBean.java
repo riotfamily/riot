@@ -23,13 +23,18 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.setup;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -39,15 +44,17 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PageSetupBean implements InitializingBean {
+public class PageSetupBean implements InitializingBean, ApplicationContextAware {
 
-	private String siteName = null;
+	private List sites;
 
 	private List definitions;
 
 	private PageDao pageDao;
 
 	private PlatformTransactionManager transactionManager;
+	
+	private ApplicationContext applicationContext;
 
 	public void setPageDao(PageDao pageDao) {
 		this.pageDao = pageDao;
@@ -57,11 +64,28 @@ public class PageSetupBean implements InitializingBean {
 		this.transactionManager = transactionManager;
 	}
 
+	public void setSites(List sites) {
+		this.sites = sites;
+	}
+
 	public void setDefinitions(List definitions) {
 		this.definitions = definitions;
 	}
 
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
+	
 	public void afterPropertiesSet() throws Exception {
+		if (transactionManager == null) {
+			transactionManager = (PlatformTransactionManager) 
+					BeanFactoryUtils.beanOfTypeIncludingAncestors(
+					applicationContext, PlatformTransactionManager.class);
+		}
+		if (pageDao == null) {
+			pageDao = (PageDao)	BeanFactoryUtils.beanOfTypeIncludingAncestors(
+					applicationContext, PageDao.class);
+		}
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				createNodes();
@@ -71,15 +95,29 @@ public class PageSetupBean implements InitializingBean {
 
 	protected void createNodes() {
 		if (pageDao.listSites().isEmpty()) {
-			Site site = pageDao.getSite(siteName);
-			PageNode rootNode = pageDao.findRootNode(site);
+			createSites();
+			PageNode rootNode = pageDao.getRootNode();
 			Iterator it = definitions.iterator();
 			while (it.hasNext()) {
 				PageDefinition definition = (PageDefinition) it.next();
-				PageNode childNode = definition.createNode(rootNode, pageDao);
+				PageNode childNode = definition.createNode(rootNode, sites, pageDao);
 				rootNode.addChildNode(childNode);
 			}
 			pageDao.updateNode(rootNode);
+		}
+	}
+	
+	protected void createSites() {
+		if (sites == null || sites.isEmpty()) {
+			Site site = new Site();
+			site.setLocale(Locale.ENGLISH);
+			site.setEnabled(true);
+			sites = Collections.singletonList(site);
+		}
+		Iterator it = sites.iterator();
+		while (it.hasNext()) {
+			Site site = (Site) it.next();
+			pageDao.saveSite(site);
 		}
 	}
 

@@ -30,7 +30,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import org.springframework.util.ObjectUtils;
@@ -45,8 +44,6 @@ public class PageNode {
 	private Long id;
 
 	private PageNode parent;
-
-	private Site site;
 
 	private List childNodes;
 
@@ -83,14 +80,6 @@ public class PageNode {
 		this.parent = parent;
 	}
 
-	public Site getSite() {
-		return this.site;
-	}
-
-	public void setSite(Site site) {
-		this.site = site;
-	}
-
 	public Set getPages() {
 		return pages;
 	}
@@ -109,7 +98,6 @@ public class PageNode {
 	 */
 	public void addChildNode(PageNode node) {
 		node.setParent(this);
-		node.setSite(site);
 		if (node.getHandlerName() == null) {
 			node.setHandlerName(childHandlerName);
 		}
@@ -126,13 +114,13 @@ public class PageNode {
 		return this.childNodes;
 	}
 
-	public Collection getChildPages(Locale locale) {
+	public Collection getChildPages(Site site) {
 		LinkedList pages = new LinkedList();
 		if (childNodes != null) {
 			Iterator it = childNodes.iterator();
 			while (it.hasNext()) {
 				PageNode childNode = (PageNode) it.next();
-				Page page = childNode.getPage(locale);
+				Page page = childNode.getPage(site);
 				if (page != null) {
 					pages.add(page);
 				}
@@ -141,17 +129,15 @@ public class PageNode {
 		return Collections.unmodifiableCollection(pages);
 	}
 
-	public Collection getChildPages(Locale locale, Locale fallback) {
+	public Collection getChildPagesWithFallback(Site site) {
 		LinkedList pages = new LinkedList();
 		if (childNodes != null) {
 			Iterator it = childNodes.iterator();
 			while (it.hasNext()) {
 				PageNode childNode = (PageNode) it.next();
-				Page page = childNode.getPage(locale);
-				if (page == null) {
-					page = fallback != null
-						? childNode.getPage(fallback)
-						: childNode.getFirstPage();
+				Page page = childNode.getPage(site);
+				if (page == null && site.getMasterSite() != null) {
+					page = childNode.getPage(site.getMasterSite());
 				}
 				if (page != null) {
 					pages.add(page);
@@ -161,22 +147,18 @@ public class PageNode {
 		return Collections.unmodifiableCollection(pages);
 	}
 
-	public Page getPage(Locale locale) {
+	public Page getPage(Site site) {
 		if (pages == null) {
 			return null;
 		}
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
-			if (ObjectUtils.nullSafeEquals(page.getLocale(), locale)) {
+			if (ObjectUtils.nullSafeEquals(page.getSite(), site)) {
 				return page;
 			}
 		}
 		return null;
-	}
-
-	private Page getFirstPage() {
-		return (Page) pages.iterator().next();
 	}
 
 	public void addPage(Page page) {

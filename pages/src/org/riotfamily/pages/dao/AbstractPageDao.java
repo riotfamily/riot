@@ -24,12 +24,9 @@
 package org.riotfamily.pages.dao;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,7 +34,6 @@ import org.riotfamily.components.VersionContainer;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
-import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.PageValidationUtils;
 import org.riotfamily.pages.Site;
@@ -55,13 +51,9 @@ import org.springframework.util.ObjectUtils;
 	*/
 public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
-	private static final String DEFAULT_SITE_NAME = "default";
-
 	private static final Log log = LogFactory.getLog(AbstractPageDao.class);
 
 	private ComponentDao componentDao;
-
-	private List locales;
 
 	public AbstractPageDao() {
 	}
@@ -70,13 +62,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		this.componentDao = componentDao;
 	}
 
-	public void setLocales(List locales) {
-		this.locales = locales;
-	}
-
 	public final void afterPropertiesSet() throws Exception {
 		Assert.notNull(componentDao, "A ComponentDao must be set.");
-		Assert.notEmpty(locales, "At least one Locale must be configured.");
 		initDao();
 	}
 
@@ -102,18 +89,28 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		return (Site) loadObject(Site.class, id);
 	}
 
+	public Site findSite(String hostName, String path) {
+		Iterator it = listSites().iterator();
+		while (it.hasNext()) {
+			Site site = (Site) it.next();
+			if (site.matches(hostName, path)) {
+				return site;
+			}
+		}
+		return null;
+	}
+	
 	public void saveNode(PageNode node) {
 		saveObject(node);
 	}
 	
 	public void savePage(Page parent, Page page) {
-		page.setLocale(parent.getLocale());
+		page.setSite(parent.getSite());
 		savePage(parent.getNode(), page);
 	}
 
 	public void savePage(Site site, Page page) {
-		PageNode rootNode = findRootNode(site);
-		savePage(rootNode, page);
+		savePage(getRootNode(), page);
 	}
 
 	private void savePage(PageNode parentNode, Page page) {
@@ -132,19 +129,19 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		parentNode.addChildNode(node);
 		page.setCreationDate(new Date());
 		saveNode(node);
-		deleteAlias(new PageLocation(page));
+		deleteAlias(page);
 		log.debug("Page saved: " + page);
 	}
 
-	public Page addTranslation(Page page, Locale locale) {
-		log.info("Adding translation " + page + " --> " + locale);
+	public Page addTranslation(Page page, Site site) {
+		log.info("Adding translation " + page + " --> " + site);
 		Page translation = new Page();
-		translation.setLocale(locale);
+		translation.setSite(site);
 		translation.setPathComponent(page.getPathComponent());
 		PageNode node = page.getNode(); 
 		node.addPage(translation);
 		updateNode(node);
-		deleteAlias(new PageLocation(translation));
+		deleteAlias(translation);
 		saveObject(translation);
 		
 		componentDao.copyComponentLists(PageComponentListLocator.TYPE_PAGE,
@@ -166,9 +163,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		String newPath = page.buildPath();
 		if (!ObjectUtils.nullSafeEquals(oldPath, newPath)) {
 			log.info("Path modified: " + page);
-			PageLocation oldLocation = new PageLocation(page);
 			page.setPath(newPath);
-			createAlias(page, oldLocation);
+			createAlias(page, oldPath);
 			updatePaths(page.getChildPages());
 		}
 	}
@@ -188,9 +184,9 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
-			PageLocation oldLocation = new PageLocation(page);
+			String oldPath = page.getPath();
 			page.setPath(page.buildPath());
-			createAlias(page, oldLocation);
+			createAlias(page, oldPath);
 			updateObject(page);
 			updatePaths(page.getChildPages());
 		}
@@ -198,19 +194,23 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	protected abstract void clearAliases(Page page);
 
-	protected void deleteAlias(PageLocation location) {
-		PageAlias alias = findPageAlias(location);
+	protected void deleteAlias(Page page) {
+		PageAlias alias = findPageAlias(page.getSite(), page.getPath());
 		if (alias != null) {
 			log.info("Deleting " + alias);
 			deleteObject(alias);
 		}
 	}
 
-	protected void createAlias(Page page, PageLocation location) {
-		if (page != null) {
-			deleteAlias(new PageLocation(page));
-		}
-		PageAlias alias = new PageAlias(page, location);
+	protected void createGoneAlias(Site site, String path) {
+		PageAlias alias = new PageAlias(null, site, path);
+		log.info("Creating " + alias);
+		saveObject(alias);
+	}
+	
+	protected void createAlias(Page page, String path) {
+		deleteAlias(page);
+		PageAlias alias = new PageAlias(page, page.getSite(), path);
 		log.info("Creating " + alias);
 		saveObject(alias);
 	}
@@ -253,26 +253,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		}
 	}
 
-	public Site getDefaultSite() {
-		List sites = listSites();
-		if (sites.size() > 0) {
-			return (Site) sites.get(0);
-		}
-		Site site = new Site();
-		site.setName(DEFAULT_SITE_NAME);
-		site.setEnabled(true);
-		site.setLocales(new ArrayList(locales));
-		saveSite(site);
-		flush(); // REVISIT: Flush is required here because this method is
-				 // unfortunately called in non-transactional contexts
-		return site;
-	}
-
 	public void saveSite(Site site) {
 		saveObject(site);
-		PageNode rootNode = new PageNode();
-		rootNode.setSite(site);
-		saveObject(rootNode);
 	}
 
 	public void updateSite(Site site) {
@@ -280,17 +262,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 
 	public void deleteSite(Site site) {
-		PageNode rootNode = findRootNode(site);
-		Iterator it = rootNode.getPages().iterator();
-		while (it.hasNext()) {
-			Page page = (Page) it.next();
-			deletePage(page);
-		}
+		//FIXME Delete pages etc.
 		deleteObject(site);
-	}
-
-	public List getLocales() {
-		return locales;
 	}
 
 }

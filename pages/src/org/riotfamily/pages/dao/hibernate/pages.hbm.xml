@@ -14,8 +14,6 @@
 		<!-- We have to use cascade "update" to ensure that nodes are reattached -->
 		<many-to-one name="parent" insert="false" update="false" cascade="save-update"/>
 
-		<many-to-one name="site" />
-
 		<!-- We must not use all-delete-orphan here, because otherwise nodes can not be moved to another parent -->
 		<list name="childNodes">
 			<cache usage="nonstrict-read-write" region="pages" />	
@@ -40,8 +38,8 @@
 		<id name="id" access="field">
 			<generator class="native" />
 		</id>
+		<many-to-one name="site" />
 		<many-to-one name="node" insert="false" update="false" />
-		<property name="locale" length="5"/>
 		<property name="published" />
 		<property name="creationDate" />
 		<property name="pathComponent" />
@@ -54,11 +52,11 @@
 
 	<class name="PageAlias" table="riot_page_aliases">
 		<cache usage="nonstrict-read-write" region="pages" />
-		<composite-id name="location">
-			<key-property name="siteName" />
-			<key-property name="path" column="`path`" />
-			<key-property name="locale" />
-		</composite-id>
+		<id name="id" access="field">
+			<generator class="native" />
+		</id>
+		<many-to-one name="site" />
+		<property name="path" />
 		<many-to-one name="page" />
 	</class>
 
@@ -69,12 +67,11 @@
 		</id>
 		<property name="name" unique="true" />
 		<property name="enabled" />
-		<list name="locales" table="riot_site_locales">
-			<cache usage="nonstrict-read-write" region="pages" />
-			<key column="site" />
-			<index column="pos" />
-			<element type="locale" length="5" />
-		</list>
+		<property name="locale" length="5" />
+		<property name="theme" />
+		<property name="hostName" />
+		<property name="pathPrefix" />
+		<many-to-one name="masterSite" />
 	</class>
 
 </hibernate-mapping>

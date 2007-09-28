@@ -25,7 +25,6 @@ package org.riotfamily.pages.dao.hibernate;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,12 +35,10 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
-import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.AbstractPageDao;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
-import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -90,82 +87,68 @@ public class HibernatePageDao extends AbstractPageDao {
 		return hibernate.list(c);
 	}
 
-	public Site getSite(String name) {
-		if (name == null) {
-			return getDefaultSite();
-		}
+	public Site getDefaultSite() {
 		Criteria c = hibernate.createCacheableCriteria(Site.class);
-		c.add(Restrictions.eq("name", name));
+		c.setMaxResults(1);
 		return (Site) hibernate.uniqueResult(c);
 	}
-
-	public PageNode findRootNode(Site site) {
+	
+	public PageNode getRootNode() {
 		Criteria c = hibernate.createCacheableCriteria(PageNode.class);
 		c.add(Restrictions.isNull("parent"));
-		c.add(Restrictions.eq("site", site));
-		return (PageNode) hibernate.uniqueResult(c);
+		PageNode rootNode = (PageNode) hibernate.uniqueResult(c);
+		if (rootNode == null) {
+			rootNode = new PageNode();
+			saveNode(rootNode);
+		}
+		return rootNode;
 	}
 
-	public Page findPage(PageLocation location) {
-		String siteName = location.getSiteName();
-		Site site = siteName != null ? getSite(siteName) : getDefaultSite();
+	public Page findPage(Site site, String path) {
 		Criteria c = hibernate.createCacheableCriteria(Page.class);
-		c.createCriteria("node").add(Restrictions.eq("site", site));
-		c.add(Restrictions.eq("path", location.getPath()));
-		HibernateUtils.addEqOrNull(c, "locale", location.getLocale());
+		c.add(Restrictions.eq("site", site));
+		c.add(Restrictions.eq("path", path));
 		return (Page) hibernate.uniqueResult(c);
 	}
 
 	public PageNode findNodeForHandler(String handlerName) {
-		Criteria c = hibernate.createCacheableCriteria(PageNode.class)
-				.add(Restrictions.eq("handlerName", handlerName));
-
+		Criteria c = hibernate.createCacheableCriteria(PageNode.class);
+		c.createCriteria("node").add(Restrictions.eq("handlerName", handlerName));
 		return (PageNode) hibernate.uniqueResult(c);
 	}
 
-	public Page findPageForHandler(String handlerName, Locale locale) {
-		return (Page) hibernate.uniqueResult(
-				createPageQuery(handlerName, locale));
+	public Page findPageForHandler(String handlerName, Site site) {
+		Criteria c = hibernate.createCacheableCriteria(Page.class);
+		c.add(Restrictions.eq("site", site));
+		c.createCriteria("node").add(Restrictions.eq("handlerName", handlerName));
+		return (Page) hibernate.uniqueResult(c);
 	}
 
-	public List findPagesForHandler(String handlerName, Locale locale) {
-		return hibernate.list(createPageQuery(handlerName, locale));
+	public List findPagesForHandler(String handlerName, Site site) {
+		Criteria c = hibernate.createCacheableCriteria(Page.class);
+		c.add(Restrictions.eq("site", site));
+		c.createCriteria("node").add(Restrictions.eq("handlerName", handlerName));
+		return hibernate.list(c);
 	}
 	
-	public List getWildcardPaths(PageLocation location) {
-		String siteName = location.getSiteName();
-		Site site = siteName != null ? getSite(siteName) : getDefaultSite();
+	public List getWildcardPaths(Site site) {
 		Criteria c = hibernate.createCacheableCriteria(Page.class);
 		c.setProjection(Projections.property("path"));
 		c.add(Restrictions.eq("wildcardInPath", Boolean.TRUE));
-		HibernateUtils.addEqOrNull(c, "locale", location.getLocale());
-		c.createCriteria("node").add(Restrictions.eq("site", site));
+		c.add(Restrictions.eq("site", site));
 		return hibernate.list(c);
-	}
-
-	private Query createPageQuery(String handlerName, Locale locale) {
-		StringBuffer hql = new StringBuffer("from ")
-			.append(Page.class.getName())
-			.append(" where node.handlerName = :handlerName and locale ")
-			.append(locale != null ? "= :locale" : "is null");
-
-		Query query = hibernate.createCacheableQuery(hql.toString());
-		hibernate.setParameter(query, "handlerName", handlerName);
-		hibernate.setParameter(query, "locale", locale);
-		return query;
 	}
 
 	public void refreshPage(Page page) {
 		hibernate.refresh(page);
 	}
 
-	public PageAlias findPageAlias(PageLocation location) {
-		if (location.getSiteName() == null) {
-			location.setSiteName(getDefaultSite().getName());
-		}
-		return (PageAlias) hibernate.get(PageAlias.class, location);
+	public PageAlias findPageAlias(Site site, String path) {
+		Criteria c = hibernate.createCacheableCriteria(PageAlias.class);
+		c.add(Restrictions.eq("site", site));
+		c.add(Restrictions.eq("path", path));
+		return (PageAlias) hibernate.uniqueResult(c);
 	}
-
 
 	protected void clearAliases(Page page) {
 		log.info("Clearing aliases for " + page);
@@ -174,8 +157,7 @@ public class HibernatePageDao extends AbstractPageDao {
 
 		hibernate.setParameter(query, "page", page);
 		hibernate.executeUpdate(query);
-		createAlias(null, new PageLocation(page));
+		createGoneAlias(page.getSite(), page.getPath());
 	}
-
 
 }

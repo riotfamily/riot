@@ -75,9 +75,11 @@ riot.AbstractComponent.prototype = {
 		ev = ev || window.event;
 		if (ev) Event.stop(ev);
 		if (this.form) {
-			var formUrl = riot.path + this.form;
+			var path = location.pathname.substring(riot.contextPath.length);
+			var formUrl = riot.path + this.form + '?path=' + path;
+			
 			if (riot.instantPublish) {
-				formUrl += '?live=true';
+				formUrl += '&live=true';
 			}
 			var iframe = RBuilder.node('iframe', {src: formUrl, className: 'properties', width: 1, height: 1});
 			riot.popup = new riot.Popup('${title.properties}', iframe, function() {

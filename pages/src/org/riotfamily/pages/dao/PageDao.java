@@ -24,11 +24,9 @@
 package org.riotfamily.pages.dao;
 
 import java.util.List;
-import java.util.Locale;
 
 import org.riotfamily.pages.Page;
 import org.riotfamily.pages.PageAlias;
-import org.riotfamily.pages.PageLocation;
 import org.riotfamily.pages.PageNode;
 import org.riotfamily.pages.Site;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -54,17 +52,19 @@ public interface PageDao {
 	 */
 	public void refreshPage(Page page);
 
+	public Site findSite(String hostName, String path);
+		
 	/**
-	 * Returns the Page with the given location, or <code>null</code> if
+	 * Returns the Page with the given site and path, or <code>null</code> if
 	 * no such page exists.
 	 */
-	public Page findPage(PageLocation location);
+	public Page findPage(Site site, String path);
 
 	/**
-	 * Returns the PageAlias with the given location, or <code>null</code> if
+	 * Returns the PageAlias with the given site and path, or <code>null</code> if
 	 * no such alias exists.
 	 */
-	public PageAlias findPageAlias(PageLocation location);
+	public PageAlias findPageAlias(Site site, String path);
 
 	/**
 	 * Returns the PageNode with the given handlerName, or <code>null</code> if
@@ -75,28 +75,28 @@ public interface PageDao {
 	public PageNode findNodeForHandler(String handlerName);
 
 	/**
-	 * Returns the Page with the given handlerName and locale,
+	 * Returns the Page with the given handlerName and site,
 	 * or <code>null</code> if no such page exists.
 	 * @throws IncorrectResultSizeDataAccessException if more than one page
-	 * 		   exists with the given handlerName and location
+	 * 		   exists with the given handlerName
 	 */
-	public Page findPageForHandler(String handlerName, Locale locale);
+	public Page findPageForHandler(String handlerName, Site site);
 
 	/**
-	 * Returns all pages with the given handlerName and locale,
+	 * Returns all pages with the given handlerName and site,
 	 * or an empty list if no page is found.
 	 */
-	public List findPagesForHandler(String handlerName, Locale locale);
+	public List findPagesForHandler(String handlerName, Site site);
 
 	/**
 	 * 
 	 */
-	public List getWildcardPaths(PageLocation location);
+	public List getWildcardPaths(Site site);
 	
 	/**
-	 * Returns the root node for the given site.
+	 * Returns the root node.
 	 */
-	public PageNode findRootNode(Site site);
+	public PageNode getRootNode();
 
 	public void saveNode(PageNode node);
 
@@ -104,7 +104,7 @@ public interface PageDao {
 
 	public void savePage(Page parent, Page child);
 
-	public Page addTranslation(Page page, Locale locale);
+	public Page addTranslation(Page page, Site site);
 
 	public void updatePage(Page page);
 
@@ -117,14 +117,7 @@ public interface PageDao {
 	public Site loadSite(Long id);
 
 	/**
-	 * Returns the site with the specified name. If no such site exists a new
-	 * site instance is created (and persisted).
-	 */
-	public Site getSite(String name);
-
-	/**
-	 * Returns the first site returned by listSites(). If no sites exist, a new
-	 * site instance with a default name is created.
+	 * Returns the first site returned by listSites().
 	 */
 	public Site getDefaultSite();
 
@@ -132,17 +125,11 @@ public interface PageDao {
 	 * Returns all sites.
 	 */
 	public List listSites();
-
+	
 	public void saveSite(Site site);
 
 	public void updateSite(Site site);
 
 	public void deleteSite(Site site);
-
-	/**
-	 * Returns a list containing all configured Locales. Implementors must
-	 * return a list containing at least one element. 
-	 */
-	public List getLocales();
 
 }

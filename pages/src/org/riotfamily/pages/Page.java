@@ -44,7 +44,7 @@ public class Page {
 
 	private PageNode node;
 
-	private Locale locale;
+	private Site site;
 
 	private String pathComponent;
 
@@ -65,9 +65,9 @@ public class Page {
 	public Page() {
 	}
 
-	public Page(String pathComponent, Locale locale) {
+	public Page(String pathComponent, Site site) {
 		this.pathComponent = pathComponent;
-		this.locale = locale;
+		this.site = site;
 	}
 
 	public Long getId() {
@@ -86,12 +86,16 @@ public class Page {
 		this.node = node;
 	}
 
-	public Locale getLocale() {
-		return this.locale;
+	public Site getSite() {
+		return this.site;
 	}
 
-	public void setLocale(Locale locale) {
-		this.locale = locale;
+	public void setSite(Site site) {
+		this.site = site;
+	}
+
+	public Locale getLocale() {
+		return site.getLocale();
 	}
 
 	public Date getCreationDate() {
@@ -171,15 +175,15 @@ public class Page {
 		if (parentNode == null) {
 			return null;
 		}
-		return parentNode.getPage(locale);
+		return parentNode.getPage(site);
 	}
 
 	public Collection getChildPages() {
-		return node.getChildPages(locale);
+		return node.getChildPages(site);
 	}
 
-	public Collection getChildPages(Locale fallbackLocale) {
-		return node.getChildPages(locale, fallbackLocale);
+	public Collection getChildPagesWithFallback() {
+		return node.getChildPagesWithFallback(site);
 	}
 
 	public Collection getAncestors() {
@@ -193,7 +197,7 @@ public class Page {
 	}
 
 	public void addChildPage(Page child) {
-		child.setLocale(locale);
+		child.setSite(site);
 		node.addChildNode(new PageNode(child));
 	}
 
@@ -243,11 +247,11 @@ public class Page {
 	}
 
 	public boolean isEnabled() {
-		return published && getNode().getSite().isLocaleEnabled(locale);
+		return published && site.isEnabled();
 	}
 
 	public String toString() {
-		return locale + ":" + path;
+		return site + "/" + path;
 	}
 
 	public boolean equals(Object o) {

@@ -23,13 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
-import java.util.Locale;
-
 import org.riotfamily.pages.Page;
-import org.riotfamily.pages.riot.dao.PageRiotDao;
-import org.riotfamily.pages.riot.dao.SiteLocale;
+import org.riotfamily.pages.Site;
 import org.riotfamily.riot.list.command.CommandContext;
-import org.springframework.util.ObjectUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -44,43 +40,31 @@ public final class PageCommandUtils {
 		return (Page) context.getBean();
 	}
 
-	public static Locale getLocale(CommandContext context) {
-		return getPage(context).getLocale();
+	public static Site getSite(CommandContext context) {
+		return getPage(context).getSite();
 	}
 
 	/**
 	 * If the parent cannot be determined the return will be <code>null</code>.
 	 */
-	public static Locale getParentLocale(CommandContext context) {
+	public static Site getParentSite(CommandContext context) {
 		Object parent = context.getParent();
-		Locale locale = null;
 		if (parent instanceof Page) {
-			locale = ((Page) parent).getLocale();
+			return ((Page) parent).getSite();
 		}
-		else if (parent instanceof SiteLocale) {
-			locale = ((SiteLocale) parent).getLocale();
+		else if (parent instanceof Site) {
+			return (Site) parent;
 		}
-		else {
-			Page page = getPage(context);
-			if (page != null) { // TODO: This needs to change somehow...
-				locale = page.getLocale();
-			}
-		}
-		return locale;
-	}
-
-	public static Locale getMasterLocale(CommandContext context) {
-		PageRiotDao dao = (PageRiotDao) context.getDao();
-		return dao.getMasterLocale();
+		return null;
 	}
 
 	public static boolean isMasterLocale(CommandContext context) {
-		return getLocale(context).equals(getMasterLocale(context));
+		return getSite(context).getMasterSite() == null;
 	}
 
 	public static boolean isMasterLocaleList(CommandContext context) {
-		return ObjectUtils.nullSafeEquals(getParentLocale(context),
-					getMasterLocale(context));
+		Site parentSite = getParentSite(context);
+		return parentSite == null || parentSite.getMasterSite() == null;
 	}
 
 	public static boolean hasTranslation(CommandContext context) {
@@ -89,8 +73,8 @@ public final class PageCommandUtils {
 
 	public static boolean isTranslated(CommandContext context) {
 		Page page = getPage(context);
-		Locale locale = getParentLocale(context);
-		return ObjectUtils.nullSafeEquals(page.getLocale(), locale);
+		Site parentSite = getParentSite(context);
+		return parentSite == null || parentSite.equals(page.getSite());
 	}
 
 	public static boolean isSystemPage(CommandContext context) {

@@ -20,7 +20,7 @@
 		class="org.riotfamily.pages.riot.chooser.PageChooserController">
 
 		<constructor-arg ref="pageDao" />
-		<constructor-arg ref="pageLocationResolver" />
+		<constructor-arg ref="pageUrlBuilder" />
 	</bean>
 
 
@@ -57,6 +57,13 @@
 		</bean>
 	</override:add>
 
+	<util:list id="themes">
+		<value>default</value>
+	</util:list>
+	
+	<bean id="siteOptions" class="org.riotfamily.pages.riot.form.SiteOptionsModel">
+		<constructor-arg ref="pageDao" />
+	</bean>
 
 	<!-- DAOs and models -->
 
@@ -64,16 +71,8 @@
 		<property name="pageDao" ref="pageDao" />
 	</bean>
 
-	<bean id="localeRiotDao" class="org.riotfamily.pages.riot.dao.LocaleRiotDao">
-		<property name="pageDao" ref="pageDao" />
-	</bean>
-
  	<bean id="pageRiotDao" class="org.riotfamily.pages.riot.dao.PageRiotDao">
 		<property name="pageDao" ref="pageDao" />
-	</bean>
-
-	<bean id="localesOptionsModel" class="org.riotfamily.forms.element.select.StaticOptionsModel">
-		<constructor-arg ref="websiteLocales" />
 	</bean>
 
 
@@ -98,7 +97,7 @@
 	<bean id="deletePageCommand" class="org.riotfamily.pages.riot.command.DeletePageCommand" />
 
 	<bean id="gotoPageCommand" class="org.riotfamily.pages.riot.command.GotoPageCommand">
-		<constructor-arg ref="pageLocationResolver" />
+		<constructor-arg ref="pageUrlBuilder" />
 		<property name="windowName" value="preview" />
 	</bean>
 

@@ -25,7 +25,7 @@ package org.riotfamily.pages.riot.command;
 
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.Page;
-import org.riotfamily.pages.mapping.PageLocationResolver;
+import org.riotfamily.pages.mapping.PageUrlBuilder;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.core.PopupCommand;
 
@@ -37,15 +37,15 @@ public class GotoPageCommand extends PopupCommand {
 
 	public static final String STYLE_CLASS = "link";
 	
-	private PageLocationResolver resolver;
+	private PageUrlBuilder pageUrlBuilder;
 
-	public GotoPageCommand(PageLocationResolver resolver) {
-		this.resolver = resolver;
+	public GotoPageCommand(PageUrlBuilder pageUrlBuilder) {
+		this.pageUrlBuilder = pageUrlBuilder;
 	}
 
 	protected String getUrl(CommandContext context) {
 		Page page = (Page) context.getBean();
-		String url = resolver.getUrl(page);
+		String url = pageUrlBuilder.getUrl(page);
 		return ServletUtils.resolveUrl(url, context.getRequest());
 	}
 	

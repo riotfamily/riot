@@ -17,23 +17,13 @@
 		<value>classpath:org/riotfamily/pages/dao/hibernate/pages.hbm.xml</value>
 	</override:add>
 
-	<!--
-	<bean id="pageEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
-	-->
-
+	<bean id="pageUrlBuilder" class="org.riotfamily.pages.mapping.PageUrlBuilder">
+		<constructor-arg ref="pathCompleter" />
+	</bean>
+	
 	<bean id="pageDao" class="org.riotfamily.pages.dao.hibernate.HibernatePageDao">
 		<property name="componentDao" ref="componentDao" />
-		<property name="locales" ref="websiteLocales" />
 		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-
-	<util:list id="websiteLocales" value-type="java.util.Locale">
-		<value>en_US</value>
-	</util:list>
-
-	<bean id="pageLocationResolver" class="org.riotfamily.pages.mapping.DefaultPageLocationResolver">
-		<constructor-arg ref="pathCompleter" />
-		<property name="locales" ref="websiteLocales" />
 	</bean>
 
 </beans>
