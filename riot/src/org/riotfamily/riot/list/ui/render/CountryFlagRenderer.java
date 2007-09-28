@@ -28,6 +28,7 @@ import java.util.Locale;
 
 import org.riotfamily.riot.runtime.RiotRuntime;
 import org.riotfamily.riot.runtime.RiotRuntimeAware;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -50,7 +51,7 @@ public class CountryFlagRenderer implements CellRenderer, RiotRuntimeAware {
 			if (value instanceof Locale) {
 				Locale locale = (Locale) value;
 				flag = locale.getCountry();
-				if (flag == null) {
+				if (!StringUtils.hasLength(flag)) {
 					flag = locale.getLanguage();
 				}
 				title = locale.getDisplayName();
