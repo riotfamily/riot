@@ -40,7 +40,12 @@ Tree.prototype = {
 		divB.className = 'b';
 		divC.className = 'c';
 
-		Element.addClassName(li, 'closed');
+		if (!li.hasClassName('expanded')) {
+			li.addClassName('closed');
+		}
+		else {
+			li.removeClassName('expnaded');
+		}
 
 		if (last) {
 			Element.addClassName(li, 'last');
