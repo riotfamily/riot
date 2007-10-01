@@ -63,7 +63,7 @@ public final class PageValidationUtils {
 	 * identical to the page's site, the page itself will be contained too.
 	 */
 	public static Collection getSiblings(Page page, Site site) {
-		return page.getNode().getParent().getChildPagesWithFallback(site);
+		return page.getNode().getParent().getChildPages(site);
 	}
 
 	private static Collection getChildsWithoutPage(PageNode node, Page page) {
