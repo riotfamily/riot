@@ -72,6 +72,7 @@
 		<property name="hostName" />
 		<property name="pathPrefix" />
 		<many-to-one name="masterSite" />
+		<filter name="liveMode" condition="enabled = :published"/>
 	</class>
 
 </hibernate-mapping>
