@@ -21,40 +21,42 @@
  *   Jan-Frederic Linde [jfl at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages;
+package org.riotfamily.pages.controller;
+
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.CacheableController;
+import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.pages.Page;
+import org.riotfamily.pages.PageNode;
+import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageUrlBuilder;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
-public class LocaleListController extends AbstractCacheableController {
+public class SiteListController extends AbstractCacheableController {
 
 	private PageDao pageDao;
 
 	private PageUrlBuilder pageUrlBuilder;
 
-	private String siteName;
-
 	private String viewName;
 
-	public LocaleListController(PageDao pageDao,
+	public SiteListController(PageDao pageDao,
 			PageUrlBuilder pageUrlBuilder) {
 
 		this.pageDao = pageDao;
 		this.pageUrlBuilder = pageUrlBuilder;
-	}
-
-	public void setSiteName(String siteName) {
-		this.siteName = siteName;
 	}
 
 	public void setViewName(String viewName) {
@@ -64,40 +66,21 @@ public class LocaleListController extends AbstractCacheableController {
 	public ModelAndView handleRequest(HttpServletRequest request,
 					HttpServletResponse response) throws Exception {
 
-		/*
-		Site site = null;
-		if (siteName != null) {
-			site  = pageDao.getSite(siteName);
+		List sites = pageDao.listSites();
+		if (sites.size() == 1) {
+			Site site = (Site) sites.get(0);
+			PageNode root = pageDao.getRootNode();
+			Page page = (Page) root.getChildPages(site).iterator().next();
+			String url = pageUrlBuilder.getUrl(page);
+			url = ServletUtils.resolveUrl(url, request);
+			return new ModelAndView(new RedirectView(url));
 		}
-		else {
-			site = pageDao.getDefaultSite();
-		}
-
-		if (site != null) {
-			List locales = null;
-			if (AccessController.isAuthenticatedUser()) {
-				locales = pageDao.getLocales();
-			}
-			else if (site.isEnabled()) {
-				locales = site.getLocales();
-			}
-			if (locales != null) {
-				if (locales.size() == 1) {
-					Locale locale = (Locale)locales.get(0);
-					PageNode root = pageDao.findRootNode(site);
-					Page page = (Page) root.getChildPages(locale).iterator().next();
-					String url = locationResolver.getUrl(page);
-					url = ServletUtils.resolveUrl(url, request);
-					return new ModelAndView(new RedirectView(url));
-				}
-				if (!locales.isEmpty()) {
-					return new ModelAndView(viewName, "locales", locales);
-				}
-			}
+		if (!sites.isEmpty()) {
+			TaggingContext.tag(request, Site.class.getName());
+			return new ModelAndView(viewName, "sites", sites);
 		}
 
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);
-		*/
 		return null;
 	}
 
