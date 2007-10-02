@@ -35,10 +35,10 @@ import org.riotfamily.components.ComponentListLocator;
 import org.riotfamily.components.Location;
 import org.riotfamily.components.locator.DefaultSlotResolver;
 import org.riotfamily.components.locator.SlotResolver;
-import org.riotfamily.pages.Page;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.pages.mapping.PageUrlBuilder;
+import org.riotfamily.pages.model.Page;
 
 /**
  * ComponentListLocator that uses the page-id as component-path.

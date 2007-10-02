@@ -25,8 +25,8 @@ package org.riotfamily.pages.riot.dao;
 
 import java.util.Collection;
 
-import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.support.RiotDaoAdapter;
 import org.springframework.beans.factory.InitializingBean;

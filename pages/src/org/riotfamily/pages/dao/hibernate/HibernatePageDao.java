@@ -33,11 +33,11 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageAlias;
-import org.riotfamily.pages.PageNode;
-import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.AbstractPageDao;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.PageAlias;
+import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
 import org.springframework.util.Assert;
 

@@ -21,11 +21,15 @@
  *   Carsten Woelk [cwoelk at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages;
+package org.riotfamily.pages.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.Site;
 
 /**
  * @author Carsten Woelk [cwoelk at neteye dot de]

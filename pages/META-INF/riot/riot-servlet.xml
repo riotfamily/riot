@@ -61,10 +61,6 @@
 		<value>default</value>
 	</util:list>
 	
-	<bean id="siteOptions" class="org.riotfamily.pages.riot.form.SiteOptionsModel">
-		<constructor-arg ref="pageDao" />
-	</bean>
-
 	<!-- DAOs and models -->
 
 	<bean id="siteRiotDao" class="org.riotfamily.pages.riot.dao.SiteRiotDao">

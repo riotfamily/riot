@@ -32,11 +32,11 @@ import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.CacheableController;
 import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageNode;
-import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageUrlBuilder;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.Site;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 

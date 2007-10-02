@@ -21,7 +21,7 @@
  *   flx
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.setup;
+package org.riotfamily.pages.dao;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -31,10 +31,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageNode;
-import org.riotfamily.pages.Site;
-import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.Site;
 
 /**
  * @author flx
@@ -45,8 +44,6 @@ public class PageDefinition {
 	private String pathComponent;
 
 	private String handlerName;
-
-	private String childHandlerName;
 
 	private List definitions;
 
@@ -74,10 +71,6 @@ public class PageDefinition {
 
 	public void setHandlerName(String handlerName) {
 		this.handlerName = handlerName;
-	}
-
-	public void setChildHandlerName(String childHandlerName) {
-		this.childHandlerName = childHandlerName;
 	}
 
 	public void setHidden(boolean hidden) {
@@ -117,7 +110,6 @@ public class PageDefinition {
 		node.setParent(parent);
 		node.setHandlerName(handlerName);
 		node.setSystemNode(systemNode);
-		node.setChildHandlerName(childHandlerName);
 		node.setHidden(hidden);
 		createPages(node, sites, pageDao);
 		if (definitions != null) {

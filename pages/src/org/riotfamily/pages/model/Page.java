@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages;
+package org.riotfamily.pages.model;
 
 import java.util.Collection;
 import java.util.Date;

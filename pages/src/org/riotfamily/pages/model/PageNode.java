@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages;
+package org.riotfamily.pages.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,8 +52,6 @@ public class PageNode {
 	private String handlerName;
 
 	private boolean systemNode;
-
-	private String childHandlerName;
 
 	private boolean hidden;
 
@@ -98,12 +96,6 @@ public class PageNode {
 	 */
 	public void addChildNode(PageNode node) {
 		node.setParent(this);
-		if (node.getHandlerName() == null) {
-			node.setHandlerName(childHandlerName);
-		}
-		if (node.getChildHandlerName() == null) {
-			node.setChildHandlerName(childHandlerName);
-		}
 		if (childNodes == null) {
 			childNodes = new ArrayList();
 		}
@@ -186,18 +178,6 @@ public class PageNode {
 
 	public void setHandlerName(String handlerName) {
 		this.handlerName = handlerName;
-	}
-
-	/**
-	 * Returns the handlerName that will be assigned to child nodes that
-	 * don't have an expicit handlerName set.
-	 */
-	public String getChildHandlerName() {
-		return this.childHandlerName;
-	}
-
-	public void setChildHandlerName(String childHandlerName) {
-		this.childHandlerName = childHandlerName;
 	}
 
 	/**

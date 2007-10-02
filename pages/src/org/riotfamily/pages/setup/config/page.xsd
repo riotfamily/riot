@@ -41,9 +41,8 @@
 			<xsd:element name="props" type="propsType" minOccurs="0" maxOccurs="unbounded" />
 			<xsd:element name="page" type="pageType" minOccurs="0" maxOccurs="unbounded" />
 		</xsd:sequence>
-		<xsd:attribute name="path-component" type="xsd:string" /><!-- EntwederOder use="required" /> -->
-		<xsd:attribute name="handler-name" type="xsd:string" /><!-- EntwederOder use="required" /> -->
-		<xsd:attribute name="child-handler-name" type="xsd:string" />
+		<xsd:attribute name="path-component" type="xsd:string" />
+		<xsd:attribute name="handler-name" type="xsd:string" />
 		<xsd:attribute default="false" name="hidden" type="xsd:boolean" />
 		<xsd:attribute default="true" name="published" type="xsd:boolean" />
 		<xsd:attribute default="true" name="system" type="xsd:boolean" />

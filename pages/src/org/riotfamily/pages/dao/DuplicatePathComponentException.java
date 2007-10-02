@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.dao;
 
-import org.riotfamily.pages.Page;
+import org.riotfamily.pages.model.Page;
 import org.riotfamily.riot.dao.InvalidPropertyValueException;
 
 /**

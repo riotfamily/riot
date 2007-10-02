@@ -23,8 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
-import org.riotfamily.pages.Page;
-import org.riotfamily.pages.Site;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.list.command.CommandContext;
 
 /**

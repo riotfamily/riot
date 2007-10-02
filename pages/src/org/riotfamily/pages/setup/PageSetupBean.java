@@ -28,9 +28,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import org.riotfamily.pages.PageNode;
-import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.pages.dao.PageDefinition;
+import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.Site;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;

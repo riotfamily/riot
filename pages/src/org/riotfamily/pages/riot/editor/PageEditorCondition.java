@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.editor;
 
-import org.riotfamily.pages.Page;
+import org.riotfamily.pages.model.Page;
 import org.riotfamily.riot.editor.EditorCondition;
 import org.springframework.util.ObjectUtils;
 

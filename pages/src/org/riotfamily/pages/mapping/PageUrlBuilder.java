@@ -24,8 +24,8 @@
 package org.riotfamily.pages.mapping;
 
 import org.riotfamily.common.web.util.PathCompleter;
-import org.riotfamily.pages.Page;
-import org.riotfamily.pages.Site;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

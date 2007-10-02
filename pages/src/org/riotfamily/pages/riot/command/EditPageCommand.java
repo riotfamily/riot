@@ -23,10 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
-import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageValidationUtils;
-import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.pages.dao.PageValidationUtils;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.EditCommand;

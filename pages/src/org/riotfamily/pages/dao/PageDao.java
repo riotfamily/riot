@@ -25,10 +25,10 @@ package org.riotfamily.pages.dao;
 
 import java.util.List;
 
-import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageAlias;
-import org.riotfamily.pages.PageNode;
-import org.riotfamily.pages.Site;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.PageAlias;
+import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.Site;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 /**

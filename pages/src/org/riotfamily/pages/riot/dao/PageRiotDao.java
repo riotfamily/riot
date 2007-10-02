@@ -26,10 +26,10 @@ package org.riotfamily.pages.riot.dao;
 import java.util.Collection;
 import java.util.List;
 
-import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageNode;
-import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.ParentChildDao;

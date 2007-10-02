@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
-import org.riotfamily.pages.Page;
+import org.riotfamily.pages.model.Page;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.AbstractCommand;

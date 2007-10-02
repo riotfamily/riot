@@ -33,10 +33,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.pages.Page;
-import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageUrlBuilder;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;

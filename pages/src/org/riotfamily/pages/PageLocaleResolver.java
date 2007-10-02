@@ -28,6 +28,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.pages.mapping.PageHandlerMapping;
+import org.riotfamily.pages.model.Page;
 import org.riotfamily.website.i18n.ChainedLocaleResolver;
 
 /**

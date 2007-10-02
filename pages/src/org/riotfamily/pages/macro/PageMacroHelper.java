@@ -33,11 +33,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.editor.EditModeUtils;
-import org.riotfamily.pages.Page;
-import org.riotfamily.pages.Site;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.pages.mapping.PageUrlBuilder;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 
 /**
 	* @author Felix Gnass [fgnass at neteye dot de]

@@ -24,8 +24,8 @@
 package org.riotfamily.pages.riot.command;
 
 import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.pages.Page;
 import org.riotfamily.pages.mapping.PageUrlBuilder;
+import org.riotfamily.pages.model.Page;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.core.PopupCommand;
 

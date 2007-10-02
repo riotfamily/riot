@@ -27,17 +27,17 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.components.VersionContainer;
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.pages.Page;
-import org.riotfamily.pages.PageAlias;
-import org.riotfamily.pages.PageNode;
-import org.riotfamily.pages.PageValidationUtils;
-import org.riotfamily.pages.Site;
 import org.riotfamily.pages.component.PageComponentListLocator;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.PageAlias;
+import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.Site;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -54,6 +54,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	private static final Log log = LogFactory.getLog(AbstractPageDao.class);
 
 	private ComponentDao componentDao;
+	
+	private Map childHandlerNames;
 
 	public AbstractPageDao() {
 	}
@@ -62,6 +64,17 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		this.componentDao = componentDao;
 	}
 
+	public void setChildHandlerNames(Map childHandlerNames) {
+		this.childHandlerNames = childHandlerNames;
+	}
+	
+	protected String getChildHandlerName(String parentHandlerName) {
+		if (childHandlerNames != null) {
+			return (String) childHandlerNames.get(parentHandlerName);
+		}
+		return null;
+	}
+	
 	public final void afterPropertiesSet() throws Exception {
 		Assert.notNull(componentDao, "A ComponentDao must be set.");
 		initDao();
@@ -117,6 +130,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		PageNode node = page.getNode();
 		if (node == null) {
 			node = new PageNode();
+			node.setHandlerName(getChildHandlerName(parentNode.getHandlerName()));
 		}
 		node.addPage(page); // It could be that the node does not yet contain
 							// the page itself, for example when edited nested...
