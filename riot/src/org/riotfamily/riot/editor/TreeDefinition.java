@@ -24,8 +24,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
-import java.util.List;
-
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.riot.editor.ui.EditorReference;
 import org.springframework.util.Assert;
@@ -33,8 +31,6 @@ import org.springframework.util.Assert;
 public class TreeDefinition extends ListDefinition {
 	
 	protected static final String TYPE_TREE = "tree";
-	
-	private Class branchClass;
 	
 	private FormDefinition formDefinition;
 	
@@ -62,11 +58,6 @@ public class TreeDefinition extends ListDefinition {
 			}
 		}
 		return true;
-	}
-
-	
-	public void setBranchClass(Class nodeClass) {
-		this.branchClass = nodeClass;
 	}
 
 	public ListDefinition getNodeListDefinition() {
@@ -103,28 +94,24 @@ public class TreeDefinition extends ListDefinition {
 
 		NodeListDefinition() {
 			super(TreeDefinition.this, TreeDefinition.this.getEditorRepository());
+			setCondition(TreeDefinition.this.getCondition());
 		}
 		
 		public String getId() {
 			return "node-" + super.getId();
 		}
 
-		private EditorReference stripListIfTreeIsHomogeneous(
-				EditorReference path) {
-			
-			if (formDefinition.getChildEditorDefinitions().size() == 1) {
-				EditorReference parent = path.getParent();
-				parent.setEditorUrl(path.getEditorUrl());
-				parent.setEditorType("node");
-				return parent;
-			}
-			return path;
+		private EditorReference stripList(EditorReference path) {
+			EditorReference parent = path.getParent();
+			parent.setEditorUrl(path.getEditorUrl());
+			parent.setEditorType("node");
+			return parent;
 		}
 		
 		public EditorReference createEditorPath(String objectId, 
 				String parentId, MessageResolver messageResolver) {
 			
-			return stripListIfTreeIsHomogeneous(super.createEditorPath(
+			return stripList(super.createEditorPath(
 					objectId, parentId, messageResolver));
 		}
 		
@@ -132,8 +119,7 @@ public class TreeDefinition extends ListDefinition {
 				MessageResolver messageResolver) {
 					
 			if (isNode(bean)) {
-				return stripListIfTreeIsHomogeneous(super.createEditorPath(
-						bean, messageResolver));
+				return stripList(super.createEditorPath(bean, messageResolver));
 			}
 			else {
 				return TreeDefinition.this.createEditorPath(
@@ -141,13 +127,6 @@ public class TreeDefinition extends ListDefinition {
 			}
 		}
 		
-		public void addReference(List refs, EditorDefinition parentDef, 
-				Object parent, MessageResolver messageResolver) {
-			
-			if (branchClass == null || branchClass.isInstance(parent)) {
-				super.addReference(refs, parentDef, parent, messageResolver);
-			}
-		}		
 	}
 
 }

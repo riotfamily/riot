@@ -64,11 +64,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	private static final String LIST_EDITOR = LIST + '|' + TREE;
 
 	private static final String[] LIST_ATTR = new String[] {
-		"name", "listId=list-ref", "icon", "hidden", "id"
-	};
-
-	private static final String[] TREE_ATTR = new String[] {
-		"branch-class"
+		"name", "listId=list-ref", "icon", "hidden", "id", "@condition"
 	};
 
 	private static final String FORM = "form";
@@ -80,7 +76,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	private static final String VIEW = "view";
 
 	private static final String[] VIEW_ATTR = new String[] {
-		"name", "view-name"
+		"name", "view-name", "@condition"
 	};
 
 	private static final String CUSTOM = "custom";
@@ -88,7 +84,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	private static final String CUSTOM_REF = "ref";
 	
 	private static final String[] CUSTOM_ATTR = new String[] {
-		"name", "target", "url", "icon"
+		"name", "target", "url", "icon", "@condition"
 	};
 
 	private static final String OBJECT_EDITOR = FORM + '|'
@@ -98,7 +94,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 
 
 	private static final String[] FORM_ATTR = new String[] {
-		"name", "formId=form-ref", "label-property", "hidden"
+		"name", "formId=form-ref", "label-property", "hidden", "@condition"
 	};
 
 	private static final String ANYTHING = OBJECT_EDITOR + '|' + LIST_EDITOR;
@@ -186,7 +182,6 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 		ListDefinition listDefinition;
 		if (isTreeElement(listElement)) {
 			listDefinition = new TreeDefinition(editorRepository);
-			XmlUtils.populate(listDefinition, listElement, TREE_ATTR);
 		}
 		else {
 			listDefinition = new ListDefinition(editorRepository);
@@ -201,7 +196,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	protected void initListDefinition(ListDefinition listDefinition,
 			Element listElement) {
 
-		XmlUtils.populate(listDefinition, listElement, LIST_ATTR);
+		XmlUtils.populate(listDefinition, listElement, LIST_ATTR, beanFactory);
 		addEditorDefinition(listDefinition);
 
 		Element e = XmlUtils.getFirstChildByRegex(listElement, ANYTHING);
@@ -281,7 +276,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 			EditorDefinition parentDef) {
 
 		ViewDefinition viewDefinition = new ViewDefinition(editorRepository);
-		XmlUtils.populate(viewDefinition, formElement, VIEW_ATTR);
+		XmlUtils.populate(viewDefinition, formElement, VIEW_ATTR, beanFactory);
 		viewDefinition.setParentEditorDefinition(parentDef);
 		addEditorDefinition(viewDefinition);
 		return viewDefinition;

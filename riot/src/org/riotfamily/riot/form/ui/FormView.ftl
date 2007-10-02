@@ -52,25 +52,6 @@
 			</div>
 		</div>
 		<div id="extras" class="extra">
-			<#if childLists?has_content>
-			<div id="childLists" class="box">
-				<div class="title">
-					<span class="label"><@spring.messageText "label.childLists", "Sub-Elements" /></span>
-				</div>
-				<div class="list">
-					<#list childLists as item>
-						<div class="item">
-							<#if item.enabled>
-								<a href="${common.url(item.editorUrl)}">${item.label}</a>
-							<#else>
-								${item.label}
-							</#if>
-						</div>
-					</#list>
-				</div>
-			</div>
-			</#if>
-
 			<div id="commands" class="box">
 				<div class="title">
 					<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
@@ -80,6 +61,21 @@
 				</div>
 			</div>
 
+			<#if childLists?has_content>
+				<div id="childLists" class="box">
+					<div class="title">
+						<span class="label"><@spring.messageText "label.childLists", "Sub-Elements" /></span>
+					</div>
+					<div class="list">
+						<#list childLists as item>
+							<div class="item">
+								<a href="${common.url(item.editorUrl)}">${item.label}</a>
+							</div>
+						</#list>
+					</div>
+				</div>
+			</#if>
+			
 			<script type="text/javascript" language="JavaScript">
 				TweakStyle.form();
 				var list = new RiotList('${listKey}');

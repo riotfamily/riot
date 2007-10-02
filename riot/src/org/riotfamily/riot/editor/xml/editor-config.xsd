@@ -36,11 +36,12 @@
 		<xsd:attribute name="icon" type="xsd:string" />
 		<xsd:attribute name="name" type="xsd:string" />
 		<xsd:attribute name="hidden" type="xsd:boolean" />
+		<xsd:attribute name="condition" type="xsd:string" />
 	</xsd:attributeGroup>
 
 	<xsd:element name="list">
 		<xsd:complexType>
-			<xsd:group ref="form-children" minOccurs="0" />
+			<xsd:group ref="editors" minOccurs="0" />
 			<xsd:attributeGroup ref="list-attributes" />
 		</xsd:complexType>
 	</xsd:element>
@@ -52,7 +53,6 @@
 				<xsd:element ref="form-chooser" />
 			</xsd:choice>
 			<xsd:attributeGroup ref="list-attributes" />
-			<xsd:attribute name="branch-class" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
 
@@ -61,9 +61,10 @@
 		<xsd:attribute name="icon" type="xsd:string" />
 		<xsd:attribute name="name" type="xsd:string" />
 		<xsd:attribute name="label-property" type="xsd:string" />
+		<xsd:attribute name="condition" type="xsd:string" />
 	</xsd:attributeGroup>
 
-	<xsd:group name="form-children">
+	<xsd:group name="editors">
 		<xsd:choice>
 			<xsd:element ref="form" />
 			<xsd:element ref="form-chooser" />
@@ -76,7 +77,7 @@
 
 	<xsd:element name="form">
 		<xsd:complexType>
-			<xsd:group ref="form-children" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:group ref="editors" minOccurs="0" maxOccurs="unbounded" />
 			<xsd:attributeGroup ref="form-attributes" />
 		</xsd:complexType>
 	</xsd:element>
@@ -86,14 +87,14 @@
 			<xsd:sequence>
 				<xsd:element name="form-option" minOccurs="2" maxOccurs="unbounded">
 					<xsd:complexType>
-						<xsd:group ref="form-children" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:group ref="editors" minOccurs="0" maxOccurs="unbounded" />
 						<xsd:attributeGroup ref="form-attributes" />
 						<xsd:attribute name="discriminator-value" type="xsd:string" />
 					</xsd:complexType>
 				</xsd:element>
 				<xsd:element name="common" minOccurs="0">
 					<xsd:complexType>
-						<xsd:group ref="form-children" maxOccurs="unbounded" />
+						<xsd:group ref="editors" maxOccurs="unbounded" />
 					</xsd:complexType>
 				</xsd:element>
 			</xsd:sequence>
@@ -105,12 +106,13 @@
 
 	<xsd:element name="custom">
 		<xsd:complexType>
-			<xsd:group ref="form-children" minOccurs="0" />
+			<xsd:group ref="editors" minOccurs="0" />
 			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="icon" type="xsd:string" />
 			<xsd:attribute name="target" type="xsd:string" />
 			<xsd:attribute name="url" type="xsd:string" />
 			<xsd:attribute name="ref" type="xsd:string" />
+			<xsd:attribute name="condition" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
 
@@ -119,6 +121,7 @@
 			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="view-name" type="xsd:string" />
 			<xsd:attribute name="label-property" type="xsd:string" />
+			<xsd:attribute name="condition" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
 

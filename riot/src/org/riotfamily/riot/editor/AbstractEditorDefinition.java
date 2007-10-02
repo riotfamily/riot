@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.i18n.MessageResolver;
-import org.riotfamily.riot.editor.ui.EditorReference;
 
 /**
  * Abstract base class for {@link EditorDefinition EditorDefinitions}.
@@ -48,6 +47,8 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 	private String icon;
 
 	private boolean hidden;
+	
+	private EditorCondition condition;
 
 	public void setEditorRepository(EditorRepository editorRepository) {
 		this.editorRepository = editorRepository;
@@ -91,13 +92,10 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 	public void addReference(List refs, EditorDefinition parentDef,
 			Object parent, MessageResolver messageResolver) {
 
-		String parentId = null;
-		if (parent != null) {
-			parentId = EditorDefinitionUtils.getObjectId(parentDef, parent);
+		if (parent != null && (condition == null || condition.showEditor(parent))) {
+			String parentId = EditorDefinitionUtils.getObjectId(parentDef, parent);
+			refs.add(createReference(parentId, messageResolver));
 		}
-		EditorReference ref = createReference(parentId, messageResolver);
-		ref.setEnabled(parent != null);
-		refs.add(ref);
 	}
 
 	protected EditorRepository getEditorRepository() {
@@ -118,6 +116,14 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
+	}
+	
+	public void setCondition(EditorCondition condition) {
+		this.condition = condition;
+	}
+	
+	protected EditorCondition getCondition() {
+		return this.condition;
 	}
 
 	protected StringBuffer getMessageKey() {
