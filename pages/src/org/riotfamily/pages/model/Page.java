@@ -144,6 +144,10 @@ public class Page {
 	public void setPath(String path) {
 		this.path = path;
 	}
+	
+	public String getFullPath() {
+		return site.getPathPrefix() + getPath();
+	}
 
 	public boolean isWildcard() {
 		return pathComponent.indexOf("@{") != -1;
@@ -251,7 +255,7 @@ public class Page {
 	}
 
 	public String toString() {
-		return site + "/" + path;
+		return site + ":" + path;
 	}
 
 	public boolean equals(Object o) {
