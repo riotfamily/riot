@@ -24,6 +24,7 @@
 package org.riotfamily.pages.dao;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -57,6 +58,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	
 	private Map childHandlerNames;
 
+	private Map autoCreatePages;
+	
 	public AbstractPageDao() {
 	}
 
@@ -73,6 +76,10 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 			return (String) childHandlerNames.get(parentHandlerName);
 		}
 		return null;
+	}
+	
+	public void setAutoCreatePages(Map autoCreatePages) {
+		this.autoCreatePages = autoCreatePages;
 	}
 	
 	public final void afterPropertiesSet() throws Exception {
@@ -114,6 +121,24 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 	
 	public void saveNode(PageNode node) {
+		if (node.getHandlerName() == null && node.getParent() != null) {
+			node.setHandlerName(getChildHandlerName(node.getParent().getHandlerName()));
+		}
+		
+		String handlerName = node.getHandlerName();
+		if (autoCreatePages != null && handlerName != null) {
+			PageDefinition child = (PageDefinition) autoCreatePages.get(handlerName);
+			if (child != null) {
+				ArrayList sites = new ArrayList();
+				Iterator it = node.getPages().iterator();
+				while (it.hasNext()) {
+					Page page = (Page) it.next();
+					sites.add(page.getSite());
+				}
+				child.createNode(node, sites, this);
+			}
+		}
+		
 		saveObject(node);
 	}
 	
@@ -130,7 +155,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		PageNode node = page.getNode();
 		if (node == null) {
 			node = new PageNode();
-			node.setHandlerName(getChildHandlerName(parentNode.getHandlerName()));
+			
 		}
 		node.addPage(page); // It could be that the node does not yet contain
 							// the page itself, for example when edited nested...
@@ -142,8 +167,10 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 		parentNode.addChildNode(node);
 		page.setCreationDate(new Date());
+		
 		saveNode(node);
 		deleteAlias(page);
+		
 		log.debug("Page saved: " + page);
 	}
 

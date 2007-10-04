@@ -101,8 +101,7 @@ public class PageSetupBean implements InitializingBean, ApplicationContextAware 
 			Iterator it = definitions.iterator();
 			while (it.hasNext()) {
 				PageDefinition definition = (PageDefinition) it.next();
-				PageNode childNode = definition.createNode(rootNode, sites, pageDao);
-				rootNode.addChildNode(childNode);
+				 definition.createNode(rootNode, sites, pageDao);
 			}
 			pageDao.updateNode(rootNode);
 		}

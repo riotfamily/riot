@@ -107,7 +107,7 @@ public class PageDefinition {
 
 	public PageNode createNode(PageNode parent, List sites, PageDao pageDao) {
 		PageNode node = new PageNode();
-		node.setParent(parent);
+		parent.addChildNode(node);
 		node.setHandlerName(handlerName);
 		node.setSystemNode(systemNode);
 		node.setHidden(hidden);
@@ -116,8 +116,7 @@ public class PageDefinition {
 			Iterator it = definitions.iterator();
 			while (it.hasNext()) {
 				PageDefinition childDefinition = (PageDefinition) it.next();
-				PageNode childNode = childDefinition.createNode(node, sites, pageDao);
-				node.addChildNode(childNode);
+				childDefinition.createNode(node, sites, pageDao);
 			}
 		}
 		pageDao.saveNode(node);
