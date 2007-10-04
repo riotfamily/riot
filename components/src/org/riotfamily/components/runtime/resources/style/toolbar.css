@@ -11,7 +11,7 @@ body > #riot-inspector {
 
 #riot-toolbar {
 	left: 6px;
-	z-index: 100;
+	z-index: 1000;
 	text-align: left;
 	width: 40px;
 }
@@ -239,7 +239,7 @@ div.riot-editor {
 
 div.riot-highlight {
 	position: absolute;
-	z-index: 100000;
+	z-index: 999;
 	width: 1px;
 	height: 1px;
 }
