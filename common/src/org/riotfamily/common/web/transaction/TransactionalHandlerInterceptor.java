@@ -33,6 +33,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 import org.springframework.transaction.interceptor.TransactionAttribute;
+import org.springframework.util.Assert;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -70,6 +71,10 @@ public class TransactionalHandlerInterceptor implements HandlerInterceptor {
 			HttpServletResponse response, Object handler) throws Exception {
 		
 		if (handler instanceof TransactionalHandler) {
+			Assert.isNull(request.getAttribute(TX_STATUS_ATTRIBUTE), 
+					"A TransactionStatus was already bound to the request. " +
+					"Nested TransactionalHandlers are currently not supported.");
+			
 			log.debug("Beginning transaction");
 			TransactionStatus status = transactionManager.getTransaction(
 					transactionAttribute);
@@ -87,6 +92,7 @@ public class TransactionalHandlerInterceptor implements HandlerInterceptor {
 			TransactionStatus status = (TransactionStatus) 
 					request.getAttribute(TX_STATUS_ATTRIBUTE);
 			
+			request.removeAttribute(TX_STATUS_ATTRIBUTE);
 			log.debug("Committing transaction");
 			transactionManager.commit(status);
 		}
@@ -97,14 +103,14 @@ public class TransactionalHandlerInterceptor implements HandlerInterceptor {
 			throws Exception {
 		
 		if (handler instanceof TransactionalHandler) {
-			if (ex != null) {
-				TransactionStatus status = (TransactionStatus) 
-						request.getAttribute(TX_STATUS_ATTRIBUTE);
-				
+			TransactionStatus status = (TransactionStatus) 
+					request.getAttribute(TX_STATUS_ATTRIBUTE);
+			
+			if (status != null) {
+				request.removeAttribute(TX_STATUS_ATTRIBUTE);
 				log.debug("Rolling back transaction");
 				transactionManager.rollback(status);
 			}
-			request.removeAttribute(TX_STATUS_ATTRIBUTE);
 		}
 	}
 }
