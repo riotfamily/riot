@@ -55,6 +55,11 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 	
 	private boolean whitespaceStripping = false;
 	
+	private boolean useTemplateCache = true;
+	
+	private int templateUpdateDelay = 5;
+	
+	
 	/**
 	 * Sets the macro libraries to be auto-imported, keyed by their namespace.
 	 */
@@ -86,6 +91,22 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 		this.whitespaceStripping = whitespaceStripping;
 	}
 	
+	/**
+	 * Sets whether the FreeMarker template cache should be used 
+	 * (default is <code>true</code>).
+	 */
+	public void setUseTemplateCache(boolean useTemplateCache) {
+		this.useTemplateCache = useTemplateCache;
+	}
+	
+	/**
+	 * Set the time in seconds that must elapse before checking whether there 
+	 * is a newer version of a template file. Default is <code>5</code>.
+	 */
+	public void setTemplateUpdateDelay(int templateUpdateDelay) {
+		this.templateUpdateDelay = templateUpdateDelay;
+	}
+	
 	protected void postProcessTemplateLoaders(List templateLoaders) {
 		super.postProcessTemplateLoaders(templateLoaders);
 		templateLoaders.add(new ResourceTemplateLoader(getResourceLoader()));
@@ -99,6 +120,12 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 		config.setTemplateExceptionHandler(exceptionHandler);
 		if (objectWrapper != null) {
 			config.setObjectWrapper(objectWrapper);
+		}
+		if (useTemplateCache) {
+			config.setTemplateUpdateDelay(templateUpdateDelay);
+		}
+		else {
+			config.setCacheStorage(new NoCacheStorage());
 		}
 	}
 	
