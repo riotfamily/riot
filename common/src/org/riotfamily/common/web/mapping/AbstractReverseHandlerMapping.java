@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.mapping;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.beans.MapWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 
 /**
@@ -40,6 +42,92 @@ import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 public abstract class AbstractReverseHandlerMapping 
 		extends AbstractHandlerMapping implements ReverseHandlerMapping {
 	
+	
+	public String getUrlForHandler(String handlerName, 
+			String prefix, Object attributes, HttpServletRequest request) {
+		
+		if (attributes == null) {
+			return getUrlForHandler(handlerName, prefix, request);
+		}
+		if (attributes instanceof Map) {
+			return getUrlForHandlerWithMap(handlerName, (Map) attributes, 
+					prefix, request); 
+		}
+		if (ClassUtils.isPrimitiveOrWrapper(attributes.getClass())) {
+			return getUrlForHandlerWithAttribute(handlerName, attributes, prefix, request);
+		}
+		return getUrlForHandlerWithBean(handlerName, attributes, prefix, request);
+	}
+	
+	private String getUrlForHandler(String handlerName, String prefix, 
+			HttpServletRequest request) {
+		
+		AttributePattern p = getPatternForHandler(handlerName, prefix, request, 0);
+		if (p == null) {
+			return null;
+		}
+		return addServletMappingIfNecessary(p.toString(), request);
+	}
+	
+	private String getUrlForHandlerWithAttribute(String handlerName, 
+			Object attribute, String prefix, HttpServletRequest request) {
+		
+		AttributePattern p = getPatternForHandler(handlerName, prefix, request, 1);
+		if (p == null) {
+			return null;
+		}
+		String url = p.fillInAttribute(attribute);
+		return addServletMappingIfNecessary(url, request);
+	}
+	
+	private String getUrlForHandlerWithMap(String beanName, Map attributes,
+			String prefix, HttpServletRequest request) {
+		
+		List patterns = getPatternsForHandler(beanName, prefix, request);
+		if (patterns == null || patterns.isEmpty()) {
+			return null;
+		}
+		Iterator it = patterns.iterator();
+		while (it.hasNext()) {
+			AttributePattern p = (AttributePattern) it.next();
+			if (p.matches(attributes)) {
+				String path = p.fillInAttributes(new MapWrapper(attributes));
+				return addServletMappingIfNecessary(path, request);
+			}
+		}
+		return null;
+	}
+	
+	private String getUrlForHandlerWithBean(String beanName, Object bean,
+			String prefix, HttpServletRequest request) {
+		
+		AttributePattern p = getPatternForHandler(beanName, prefix, request);
+		if (p != null) {
+			String path = p.fillInAttributes(new BeanWrapperImpl(bean));
+			return addServletMappingIfNecessary(path, request);
+		}
+		return null;
+	}
+	
+	protected List getPatternsForHandler(String beanName, String prefix, 
+			HttpServletRequest request) {
+		
+		List patterns = getPatternsForHandler(beanName, request);
+		if (patterns == null || patterns.isEmpty() 
+				|| prefix == null || prefix.length() == 0) {
+			
+			return patterns;
+		}
+		ArrayList matchingPatterns = new ArrayList();
+		Iterator it = patterns.iterator();
+		while (it.hasNext()) {
+			AttributePattern p = (AttributePattern) it.next();
+			if (p.startsWith(prefix)) {
+				matchingPatterns.add(p);
+			}
+		}
+		return matchingPatterns;
+	}
 	
 	protected abstract List getPatternsForHandler(String beanName, 
 			HttpServletRequest request);
@@ -51,9 +139,9 @@ public abstract class AbstractReverseHandlerMapping
 	}
 	
 	protected AttributePattern getPatternForHandler(String handlerName, 
-			HttpServletRequest request, int numberOfWildcards) {
+			String prefix, HttpServletRequest request, int numberOfWildcards) {
 		
-		List patterns = getPatternsForHandler(handlerName, request);
+		List patterns = getPatternsForHandler(handlerName, prefix, request);
 		if (patterns == null || patterns.isEmpty()) {
 			return null;
 		}
@@ -73,9 +161,9 @@ public abstract class AbstractReverseHandlerMapping
 	}
 	
 	protected AttributePattern getPatternForHandler(String handlerName, 
-			HttpServletRequest request) {
+			String prefix, HttpServletRequest request) {
 		
-		List patterns = getPatternsForHandler(handlerName, request);
+		List patterns = getPatternsForHandler(handlerName, prefix, request);
 		if (patterns == null || patterns.isEmpty()) {
 			return null;
 		}
@@ -84,69 +172,6 @@ public abstract class AbstractReverseHandlerMapping
 					+ "one pattern is registered for hander " + handlerName);
 		}
 		return (AttributePattern) patterns.get(0);
-	}
-	
-	public String getUrlForHandler(String handlerName, 
-			HttpServletRequest request) {
-		
-		AttributePattern p = getPatternForHandler(handlerName, request, 0);
-		if (p == null) {
-			return null;
-		}
-		return addServletMappingIfNecessary(p.toString(), request);
-	}
-	
-	public String getUrlForHandlerWithAttribute(String handlerName, 
-			Object attribute, HttpServletRequest request) {
-		
-		AttributePattern p = getPatternForHandler(handlerName, request, 1);
-		if (p == null) {
-			return null;
-		}
-		String url = p.fillInAttribute(attribute);
-		return addServletMappingIfNecessary(url, request);
-	}
-	
-	public String getUrlForHandlerWithAttributes(String handlerName, 
-			Object attributes, HttpServletRequest request) {
-		
-		if (attributes == null) {
-			return getUrlForHandler(handlerName, request);
-		}
-		if (attributes instanceof Map) {
-			return getUrlForHandlerWithMap(handlerName, 
-					(Map) attributes, request); 
-		}
-		return getUrlForHandlerWithBean(handlerName, attributes, request);
-	}
-	
-	protected String getUrlForHandlerWithMap(String beanName, 
-			Map attributes, HttpServletRequest request) {
-		
-		List patterns = getPatternsForHandler(beanName, request);
-		if (patterns == null || patterns.isEmpty()) {
-			return null;
-		}
-		Iterator it = patterns.iterator();
-		while (it.hasNext()) {
-			AttributePattern p = (AttributePattern) it.next();
-			if (p.matches(attributes)) {
-				String path = p.fillInAttributes(new MapWrapper(attributes));
-				return addServletMappingIfNecessary(path, request);
-			}
-		}
-		return null;
-	}
-	
-	protected String getUrlForHandlerWithBean(String beanName, 
-			Object bean, HttpServletRequest request) {
-		
-		AttributePattern p = getPatternForHandler(beanName, request);
-		if (p != null) {
-			String path = p.fillInAttributes(new BeanWrapperImpl(bean));
-			return addServletMappingIfNecessary(path, request);
-		}
-		return null;
 	}
 	
 	/**

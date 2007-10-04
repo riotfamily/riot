@@ -34,18 +34,8 @@
 	<#return commonMacroHelper.getAbsoluteUrl(uri) />
 </#function>
 
-<#function urlForHandler handlerName attributes...>
-	<#if attributes?size == 0>
-		<#local uri = commonMacroHelper.getUrlForHandler(handlerName) />
-	<#else>
-		<#local attributes = attributes[0] />
-		<#if attributes?is_hash>
-			<#local uri = commonMacroHelper.getUrlForHandlerWithAttributes(handlerName, attributes) />
-		<#else>
-			<#local uri = commonMacroHelper.getUrlForHandlerWithAttribute(handlerName, attributes) />
-		</#if>
-	</#if>
-	<#return url(uri) />
+<#function urlForHandler handlerName attributes={} prefix="">
+	<#return url(commonMacroHelper.getUrlForHandler(handlerName, attributes, prefix)) />
 </#function>
 
 <#function isHandler(handlerName)>

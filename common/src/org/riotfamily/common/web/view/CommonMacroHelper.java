@@ -109,38 +109,15 @@ public class CommonMacroHelper {
 				.append(request.getContextPath()).append(url).toString();
 	}
 
-	public String getUrlForHandler(String handlerName) {
-		String url = null;
-		Iterator it = mappings.iterator();
-		while (url == null && it.hasNext()) {
-			ReverseHandlerMapping mapping = (ReverseHandlerMapping) it.next();
-			url = mapping.getUrlForHandler(handlerName, request);
-		}
-		return url; 
-	}
-	
-	public String getUrlForHandlerWithAttribute(String handlerName, 
-			Object attribute) { 
+	public String getUrlForHandler(String handlerName, 
+			Object attributes, String prefix) {
 		
 		String url = null;
 		Iterator it = mappings.iterator();
 		while (url == null && it.hasNext()) {
 			ReverseHandlerMapping mapping = (ReverseHandlerMapping) it.next();
-			url = mapping.getUrlForHandlerWithAttribute(
-					handlerName, attribute, request);
-		}
-		return url; 
-	}
-	
-	public String getUrlForHandlerWithAttributes(String handlerName,
-			Object attributes) {
-		
-		String url = null;
-		Iterator it = mappings.iterator();
-		while (url == null && it.hasNext()) {
-			ReverseHandlerMapping mapping = (ReverseHandlerMapping) it.next();
-			url = mapping.getUrlForHandlerWithAttributes(
-					handlerName, attributes, request);
+			url = mapping.getUrlForHandler(
+					handlerName, prefix, attributes, request);
 		}
 		return url;
 	}

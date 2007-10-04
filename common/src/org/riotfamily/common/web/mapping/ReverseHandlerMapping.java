@@ -45,23 +45,11 @@ public interface ReverseHandlerMapping {
 	 */
 	String TOP_LEVEL_HANDLER_NAME_ATTRIBUTE = 
 			ReverseHandlerMapping.class.getName() + ".topLevelHandlerName";
-	
+
 	/**
 	 * Returns the URL of a mapped handler.
 	 */
-	public String getUrlForHandler(String handlerName,
-			HttpServletRequest request);
-	
-	/**
-	 * Returns the URL of a mapped handler.
-	 */
-	public String getUrlForHandlerWithAttribute(String handlerName, 
-			Object attribute, HttpServletRequest request);
-		
-	/**
-	 * Returns the URL of a mapped handler.
-	 */
-	public String getUrlForHandlerWithAttributes(String handlerName, 
-			Object attributes, HttpServletRequest request);
+	public String getUrlForHandler(String handlerName, 
+			String prefix, Object attributes, HttpServletRequest request);
 
 }

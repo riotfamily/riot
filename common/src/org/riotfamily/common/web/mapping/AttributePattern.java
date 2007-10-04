@@ -142,6 +142,10 @@ public class AttributePattern {
 		}
 	}
 
+	public boolean startsWith(String prefix) {
+		return attributePattern.startsWith(prefix);
+	}
+	
 	public String fillInAttributes(PropertyAccessor attributes) {
 		StringBuffer url = new StringBuffer();
 		Matcher m = ATTRIBUTE_NAME_PATTERN.matcher(attributePattern);
