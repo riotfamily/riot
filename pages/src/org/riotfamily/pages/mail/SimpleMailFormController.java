@@ -27,10 +27,12 @@ import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.util.EmailValidationUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.util.Assert;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
@@ -95,6 +97,18 @@ public class SimpleMailFormController extends SimpleFormController
 
 	public void setRequiredFields(String[] requiredFields) {
 		this.requiredFields = requiredFields;
+	}	
+	
+	protected void onBindAndValidate(HttpServletRequest request, 
+					Object command, BindException errors) throws Exception {
+		
+		if (command instanceof MailForm) {
+			MailForm form = (MailForm) command;
+			if (form.getEmail() != null && !EmailValidationUtils.isValid(form.getEmail())) {
+				errors.rejectValue("email", "error.email.invalid", "E-Mail is invalid");
+			}
+		}
+		
 	}
 
 	public void afterPropertiesSet() throws Exception {
