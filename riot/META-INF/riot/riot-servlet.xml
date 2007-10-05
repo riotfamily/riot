@@ -406,7 +406,8 @@
 	<bean id="commandDialogController"
 		name="/dialog/@{commandId}"
 		class="org.riotfamily.riot.list.command.dialog.ui.DialogFormController">
-		<constructor-arg ref="listRepository" />
+		<constructor-arg ref="listRepository" />		
+		<constructor-arg ref="transactionManager" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 

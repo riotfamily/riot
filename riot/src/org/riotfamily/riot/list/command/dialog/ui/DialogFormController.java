@@ -38,6 +38,10 @@ import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.riot.list.ListRepository;
 import org.riotfamily.riot.list.command.dialog.DialogCommand;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -47,15 +51,24 @@ import org.springframework.web.servlet.ModelAndView;
 public class DialogFormController extends AjaxFormController
 		implements FormSubmissionHandler {
 	
+	private static final DefaultTransactionDefinition TRANSACTION_DEFINITION =
+			new DefaultTransactionDefinition(
+			TransactionDefinition.PROPAGATION_REQUIRED);
+		
 	private ListRepository listRepository;
 	
 	private String commandIdAttribute = "commandId";
 	
+	private PlatformTransactionManager transactionManager;
+	
 	private String viewName = ResourceUtils.getPath(
 			DialogFormController.class, "DialogFormView.ftl");
 	
-	public DialogFormController(ListRepository listRepository) {
+	public DialogFormController(ListRepository listRepository,
+			PlatformTransactionManager transactionManager) {
+		
 		this.listRepository = listRepository;
+		this.transactionManager = transactionManager;
 		ButtonFactory buttonFactory = new ButtonFactory(this);
 		buttonFactory.setLabelKey("label.dialog.button.execute");
 		buttonFactory.setCssClass("button button-execute");
@@ -110,9 +123,19 @@ public class DialogFormController extends AjaxFormController
 	public ModelAndView handleFormSubmission(Form form, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
-		
-		Object input = form.populateBackingObject();
-		return getCommand(request).handleInput(input);
+
+		ModelAndView modelAndView;
+		TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
+		try {
+			Object input = form.populateBackingObject();
+			modelAndView = getCommand(request).handleInput(input);
+		}
+		catch (Exception e) {
+			transactionManager.rollback(status);
+			throw e;
+		}
+		transactionManager.commit(status);
+		return modelAndView;
 	}
 	
 }
