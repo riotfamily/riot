@@ -117,10 +117,7 @@ public class PageMenuBuilder implements MenuBuilder, MemberBinderAware {
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
 			if (!page.isHidden() && page.isAccessible(request, member) && (page.isPublished() || viewModeResolver.isPreviewMode(request))) {
-				MenuItem item = new PageMenuItem(page);
-				item.setLabel(page.getTitle());
-				item.setLink(page.getPath());
-				item.setStyle(StringUtils.getFilename(page.getPath()));
+				MenuItem item = createItem(page);
 				items.add(item);
 				if (page.equals(expandedPage)) {
 					item.setExpanded(true);
@@ -139,6 +136,14 @@ public class PageMenuBuilder implements MenuBuilder, MemberBinderAware {
 		}
 		
 		return items;
+	}
+	
+	protected MenuItem createItem(Page page) {
+		MenuItem item = new PageMenuItem(page);
+		item.setLabel(page.getTitle());
+		item.setLink(page.getPath());
+		item.setStyle(StringUtils.getFilename(page.getPath()));
+		return item;
 	}
 
 }
