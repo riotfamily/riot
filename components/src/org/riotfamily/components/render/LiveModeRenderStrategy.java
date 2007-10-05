@@ -107,26 +107,31 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 	}
 
 	protected void renderComponentList(ComponentList list) throws IOException {
-		listTag = list.getLocation().toString();
-		try {
-			TaggingContext.openNestedContext(request);
-			TaggingContext.tag(request, listTag);
-
-			ItemUpdater updater = new ItemUpdater(cachedList, request);
-			response = new CachiusResponseWrapper(response, updater);
-
-			super.renderComponentList(list);
-			if (!listIsCacheable) {
-				updater.discard();
-				cachedList.delete();
+		if (cachedList != null) {
+			listTag = list.getLocation().toString();
+			try {
+				TaggingContext.openNestedContext(request);
+				TaggingContext.tag(request, listTag);
+	
+				ItemUpdater updater = new ItemUpdater(cachedList, request);
+				response = new CachiusResponseWrapper(response, updater);
+	
+				super.renderComponentList(list);
+				if (!listIsCacheable) {
+					updater.discard();
+					cachedList.delete();
+				}
+	
+				response.flushBuffer();
+				updater.updateCacheItem();
+	
 			}
-
-			response.flushBuffer();
-			updater.updateCacheItem();
-
+			finally {
+				cachedList.setTags(TaggingContext.popTags(request));
+			}
 		}
-		finally {
-			cachedList.setTags(TaggingContext.popTags(request));
+		else {
+			super.renderComponentList(list);
 		}
 	}
 
@@ -135,7 +140,7 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 			throws IOException {
 
 		tagCacheItems(component, version);
-		if (component.isDynamic()) {
+		if (component.isDynamic() || cachedList == null) {
 			listIsCacheable = false;
 			super.renderComponent(component, version, positionClassName);
 		}
