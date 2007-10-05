@@ -15,8 +15,16 @@
 				<db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
 				<db:column name="name" type="VARCHAR" length="255" />
 				<db:column name="enabled" type="BIT" />
+				<db:column name="locale" type="VARCHAR" length="5" />
+				<db:column name="theme" type="VARCHAR" length="255" />
+				<db:column name="hostName" type="VARCHAR" length="255" />
+				<db:column name="pathPrefix" type="VARCHAR" length="255" />
+				<db:column name="masterSite" type="BIGINT" />
 			</db:create-table>
-
+			<db:add-foreign-key table="riot_sites" name="riot_site_master" references="riot_sites">
+				<db:ref local="masterSite" foreign="id" />
+			</db:add-foreign-key>
+			
 			<db:create-table name="riot_site_locales">
 				<db:column name="site" type="BIGINT" />
 				<db:column name="pos" type="INTEGER" />
@@ -29,9 +37,7 @@
 			<db:create-table name="riot_page_nodes">
 				<db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
 				<db:column name="parent" type="BIGINT" />
-				<db:column name="site" type="BIGINT" />
 				<db:column name="handlerName" type="VARCHAR" length="255" />
-				<db:column name="childHandlerName" type="VARCHAR" length="255" />
 				<db:column name="hidden" type="BIT" />
 				<db:column name="systemNode" type="BIT" />
 				<db:column name="pos" type="INTEGER" />
@@ -39,14 +45,11 @@
 			<db:add-foreign-key table="riot_page_nodes" name="riot_page_nodes_parent" references="riot_page_nodes">
 				<db:ref local="parent" foreign="id" />
 			</db:add-foreign-key>
-			<db:add-foreign-key table="riot_page_nodes" name="riot_page_nodes_site" references="riot_sites">
-				<db:ref local="site" foreign="id" />
-			</db:add-foreign-key>
 
 			<db:create-table name="riot_pages">
 				<db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
 				<db:column name="node" type="BIGINT" />
-				<db:column name="locale" type="VARCHAR" length="5" />
+				<db:column name="site" type="BIGINT" />
 				<db:column name="published" type="BIT" />
 				<db:column name="creationDate" type="TIMESTAMP" />
 				<db:column name="pathComponent" type="VARCHAR" length="255" />
@@ -59,16 +62,22 @@
 			<db:add-foreign-key table="riot_pages" name="riot_pages_node" references="riot_page_nodes">
 				<db:ref local="node" foreign="id" />
 			</db:add-foreign-key>
+			<db:add-foreign-key table="riot_pages" name="riot_pages_site" references="riot_sites">
+				<db:ref local="site" foreign="id" />
+			</db:add-foreign-key>
 			<db:add-foreign-key table="riot_pages" name="riot_pages_version_container" references="riot_version_containers">
 				<db:ref local="versionContainer" foreign="id" />
 			</db:add-foreign-key>
 
 			<db:create-table name="riot_page_aliases">
-				<db:column name="siteName" type="VARCHAR" length="255" primary-key="true" />
-				<db:column name="`path`" type="VARCHAR" length="255" not-null="true" primary-key="true" />
-				<db:column name="locale" type="VARCHAR" length="5" primary-key="true" />
+				<db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
+				<db:column name="site" type="BIGINT" />
+				<db:column name="`path`" type="VARCHAR" length="255" not-null="true" />
 				<db:column name="page" type="BIGINT" />
 			</db:create-table>
+			<db:add-foreign-key table="riot_page_aliases" name="riot_page_aliases_site" references="riot_sites">
+				<db:ref local="site" foreign="id" />
+			</db:add-foreign-key>
 			<db:add-foreign-key table="riot_page_aliases" name="riot_page_aliases_page" references="riot_pages">
 				<db:ref local="page" foreign="id" />
 			</db:add-foreign-key>
