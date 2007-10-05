@@ -59,17 +59,23 @@ public final class Cache implements Serializable {
 
     private transient int numberOfDirs;
     private transient int currentDir = 0;
+    private transient boolean enabled = true;
 
     /**
      * Create the cache.
      */
-    private Cache(int capacity, File cacheDir) {
+    private Cache(int capacity, File cacheDir, boolean enabled) {
         this.size = 0;
         this.cacheDir = cacheDir;
+        this.enabled = enabled;
         this.map = new HashMap(capacity);
         setCapacity(capacity);
         clear();
     }
+    
+    public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
     public File getCacheDir() {
         return cacheDir;
@@ -90,6 +96,9 @@ public final class Cache implements Serializable {
      * @return The CacheItem for the given key
      */
     public synchronized CacheItem getItem(String key) {
+    	if (!enabled) {
+    		return null;
+    	}
         CacheItem item = (CacheItem) map.get(key);
         if (item == null) {
             item = newItem(key);
@@ -254,7 +263,7 @@ public final class Cache implements Serializable {
      * new cache is created.
      */
     public static Cache newInstance(int capacity, File cacheDir,
-    		boolean restore) throws IOException {
+    		boolean restore, boolean enabled) throws IOException {
 
 		if (!cacheDir.exists() && !cacheDir.mkdirs()) {
 		    throw new IOException("Can't create cache directory: " + cacheDir);
@@ -269,8 +278,9 @@ public final class Cache implements Serializable {
 		        Cache cache = (Cache) in.readObject();
 		        in.close();
 		        f.delete();
-		        cache.setCacheDir(cacheDir);
+		        cache.setCacheDir(cacheDir);		        
 		        cache.setCapacity(capacity);
+		        cache.setEnabled(enabled);
 		        log.info("Cache has been successfully deserialized. " +
 		        		"Number of items: " + cache.size);
 
@@ -288,7 +298,7 @@ public final class Cache implements Serializable {
 		    }
 		}
 		log.info("Building new cache in: " + cacheDir);
-		return new Cache(capacity, cacheDir);
+		return new Cache(capacity, cacheDir, enabled);
 	}
 
     /**

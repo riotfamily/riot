@@ -70,20 +70,8 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
 
     private int order = 0;
 
-    private boolean enabled = true;
-
     public CacheableControllerHandlerAdapter(Cache cache) {
 		this.cache = cache;
-	}
-
-    /**
-     * Sets whether this HandlerAdapter is enabled.
-     * Default is <code>true</code>. You can set this property to
-     * <code>false</code> in order to disable caching without removing the
-     * HandlerAdapter from the context.
-     */
-    public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
 	}
 
     /**
@@ -117,7 +105,7 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
      * {@link CacheableController} interface.
      */
     public boolean supports(Object handler) {
-        return enabled && handler instanceof CacheableController;
+        return handler instanceof CacheableController;
     }
 
     /**

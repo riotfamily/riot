@@ -54,6 +54,8 @@ public class CacheFactoryBean extends AbstractFactoryBean
 	private ServletContext servletContext;
 
 	private boolean restore = true;
+	
+	private boolean enabled = true;
 
 	public void setCacheDirName(String cacheDirName) {
 		this.cacheDirName = cacheDirName;
@@ -82,6 +84,10 @@ public class CacheFactoryBean extends AbstractFactoryBean
 	public void setRestore(boolean restore) {
 		this.restore = restore;
 	}
+	
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
@@ -99,7 +105,7 @@ public class CacheFactoryBean extends AbstractFactoryBean
 			File tempDir = WebUtils.getTempDir(servletContext);
 			cacheDir = new File(tempDir, cacheDirName);
 		}
-		return Cache.newInstance(capacity, cacheDir, restore);
+		return Cache.newInstance(capacity, cacheDir, restore, enabled);
 	}
 
 }

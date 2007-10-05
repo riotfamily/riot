@@ -15,6 +15,7 @@
 	<bean id="websiteCache" class="org.riotfamily.cachius.spring.CacheFactoryBean">
 		<property name="capacity" value="${riot.websiteCache.capacity=10000}" />
 		<property name="restore" value="${riot.websiteCache.restore=true}" />
+		<property name="enabled" value="${riot.websiteCache.enabled=true}" />
     </bean>
 
     <!--
