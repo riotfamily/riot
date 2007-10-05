@@ -48,6 +48,8 @@
 
 	<override:put ref="customFormElements">
 		<entry key="internalLink" value="org.riotfamily.pages.riot.chooser.InternalLinkField" />
+		<entry key="{http://www.riotfamily.org/schema/pages/form-elements}link"
+				value="org.riotfamily.pages.riot.chooser.InternalLinkField" />
 	</override:put>
 				
 	<override:add ref="resourceController" property="mappings" append="true">			
