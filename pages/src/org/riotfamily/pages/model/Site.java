@@ -41,13 +41,14 @@ public class Site {
 	
 	private String pathPrefix;
 
-	private boolean enabled;
-
 	private Locale locale;
 	
 	private String theme;
 	
 	private Site masterSite;
+	
+	private boolean enabled = true;
+
 
 	public boolean isEnabled() {
 		return this.enabled;

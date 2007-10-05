@@ -8,46 +8,50 @@
 	<xsd:import namespace="http://www.springframework.org/schema/beans"
 		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.0.xsd" />
 
-	<xsd:element name="setup" type="setupType"/>
-
-	<xsd:complexType name="setupType">
-		<xsd:sequence>
-			<xsd:element name="sites" minOccurs="0">
-				<xsd:complexType>
-					<xsd:sequence maxOccurs="unbounded" minOccurs="1">
-						<xsd:element name="site" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:sequence maxOccurs="unbounded" minOccurs="0">
-				<xsd:element name="page" type="pageType" />
+	<xsd:element name="setup">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="sites" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence maxOccurs="unbounded" minOccurs="1">
+							<xsd:element name="site" />
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+					<xsd:element ref="page" />
+				</xsd:sequence>
 			</xsd:sequence>
-		</xsd:sequence>
-		
-		<xsd:attribute name="id" type="xsd:ID"/>
-		<xsd:attribute name="dao" type="xsd:string" />
-		<xsd:attribute name="tx" type="xsd:string" />
-	</xsd:complexType>
-
+			
+			<xsd:attribute name="id" type="xsd:ID"/>
+			<xsd:attribute name="dao" type="xsd:string" />
+			<xsd:attribute name="tx" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+	
 	<xsd:complexType name="siteType">
 		<xsd:attribute name="name" type="xsd:string" />
 		<xsd:attribute name="locale" type="xsd:string" use="required" />
+		<xsd:attribute name="theme" type="xsd:string" />
 		<xsd:attribute name="host" type="xsd:string" />
 		<xsd:attribute name="prefix" type="xsd:string" />
+		<xsd:attribute name="enabled" type="xsd:boolean" default="true" />
 	</xsd:complexType>
 	
-	<xsd:complexType name="pageType">
-		<xsd:sequence minOccurs="0" maxOccurs="1">
-			<xsd:element name="props" type="propsType" minOccurs="0" maxOccurs="unbounded" />
-			<xsd:element name="page" type="pageType" minOccurs="0" maxOccurs="unbounded" />
-		</xsd:sequence>
-		<xsd:attribute name="path-component" type="xsd:string" />
-		<xsd:attribute name="handler-name" type="xsd:string" />
-		<xsd:attribute default="false" name="hidden" type="xsd:boolean" />
-		<xsd:attribute default="true" name="published" type="xsd:boolean" />
-		<xsd:attribute default="true" name="system" type="xsd:boolean" />
-		<xsd:attribute default="false" name="folder" type="xsd:boolean" />
-	</xsd:complexType>
+	<xsd:element name="page">
+		<xsd:complexType>
+			<xsd:sequence minOccurs="0" maxOccurs="1">
+				<xsd:element name="props" type="propsType" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element ref="page" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:sequence>
+			<xsd:attribute name="path-component" type="xsd:string" />
+			<xsd:attribute name="handler-name" type="xsd:string" />
+			<xsd:attribute default="false" name="hidden" type="xsd:boolean" />
+			<xsd:attribute default="true" name="published" type="xsd:boolean" />
+			<xsd:attribute default="true" name="system" type="xsd:boolean" />
+			<xsd:attribute default="false" name="folder" type="xsd:boolean" />
+		</xsd:complexType>
+	</xsd:element>
 
 	<xsd:complexType name="propsType">
 		<xsd:sequence maxOccurs="unbounded" minOccurs="0">
