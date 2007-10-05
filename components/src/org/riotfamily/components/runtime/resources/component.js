@@ -349,6 +349,9 @@ riot.PublishWidget.prototype = {
 	
 	show: function() {
 		this.componentList.element.makePositioned();
+		if (this.componentList.element.innerHTML.empty()) {
+			this.componentList.element.innerHTML = '<div class="riot-empty-list"></div>';
+		}
 		this.componentList.element.appendChild(this.element);
 		this.scaleOverlay();
 		setTimeout(this.scaleOverlay.bind(this), 50);

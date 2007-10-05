@@ -252,6 +252,10 @@ div.riot-highlight-bottom {
 	background: url(images/ants_h.gif);
 }
 
+.riot-empty-list {
+	padding: 10px;
+}
+
 .riot-no-inheritance {
 	display: none;
 }
