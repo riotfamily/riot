@@ -180,6 +180,8 @@
 	</target>
 
 	<target name="collect-xml-schemas">
+		<delete dir="${build.dir}/schema/${module.dir.name}" />
+		<mkdir dir="${build.dir}/schema/${module.dir.name}" />	
 		<copy todir="${build.dir}/schema/${module.dir.name}" flatten="true">
 			<fileset dir="${module.src.dir}">
 				<include name="**/*.xsd" />
