@@ -16,7 +16,7 @@
 		http://www.riotfamily.org/schema/forms/form-config.xsd">
 
 	<ed:list id="sitemap" list-ref="site-chooser" icon="sitemap">
-		<ed:tree list-ref="pages-i18n">
+		<ed:tree list-ref="pages">
 			<ed:form form-ref="page" label-property="pathComponent" />
 		</ed:tree>
 	</ed:list>
@@ -67,25 +67,6 @@
 		<list:command id="pastePage" />
 	</list:list>
 	
-	<list:list id="pages-i18n" default-command="showChildPages">
-		<list:dao ref="pageRiotDao" />
-		<list:columns>
-			<list:column property="site.locale" renderer="countryFlagRenderer" />
-			<list:column property="pathComponent" />
-			<list:column property="site.name" />
-			<list:command id="publishPage" />
-			<list:command id="moveUpPage" />
-			<list:command id="moveDownPage" />
-			<list:command id="cutPage" />
-			<list:command id="editPage" />
-			<list:command id="deletePage" />
-			<list:command id="gotoPage" />
-			<list:command id="showChildPages" />
-		</list:columns>
-		<list:command id="add"/>
-		<list:command id="pastePage" />
-	</list:list>
-
 	<form:form id="site" bean-class="org.riotfamily.pages.model.Site">
 		<form:group label-key="site.general">
 			<form:textfield bind="name" max-length="255" />
@@ -106,7 +87,7 @@
 
 	<form:form id="page" bean-class="org.riotfamily.pages.model.Page">
 		<form:group label-key="page.location">
-			<form:textfield bind="pathComponent" required="true" regex="([A-Za-z0-9_.,-]*|\*)" />
+			<form:textfield bind="pathComponent" required="true" regex="([A-Za-z0-9_.,*@{}-]*)" />
 			<form:checkbox bind="folder" />
 		</form:group>
 	</form:form>

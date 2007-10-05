@@ -1,12 +1,10 @@
 table.sites th.locale,
-table.site-chooser th.locale,
-table.pages-i18n th.site-locale {
+table.site-chooser th.locale {
 	width: 20px;
 }
 
 table.sites th.locale span,
-table.site-chooser th.locale span,
-table.pages-i18n th.site-locale span {
+table.site-chooser th.locale span {
 	display: none;
 }
 
@@ -17,7 +15,7 @@ table.pages tr.foreign-page td {
 
 table.pages tr.hidden-node td,
 table.pages tr.hidden-page td {
-		color: #a4a4a4;
+	color: #a4a4a4;
 }
 
 .action-translate {
