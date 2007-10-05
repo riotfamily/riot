@@ -98,6 +98,9 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 	
 	protected String getCacheKey(String path, String key) {
 		StringBuffer sb = new StringBuffer();
+		if (parent != null) {
+			sb.append(parent.getId()).append('$');
+		}
 		sb.append(path).append('#').append(key);
 		SessionUtils.addStateToCacheKey(request, sb);
 		return sb.toString();
