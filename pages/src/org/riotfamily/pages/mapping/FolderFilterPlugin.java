@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.common.web.filter.PluginChain;
 import org.riotfamily.common.web.mapping.AttributePattern;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
@@ -84,11 +85,11 @@ public class FolderFilterPlugin extends FilterPlugin {
 			throws IOException, ServletException {
 		
 		boolean requestHandled = false;
-		String uri = request.getRequestURI();
-		if (uri.lastIndexOf('.') < uri.lastIndexOf('/')) {
+		String path = ServletUtils.getOriginatingPathWithinApplication(request);
+		if (path.lastIndexOf('.') < path.lastIndexOf('/')) {
 			TransactionStatus status = tx.getTransaction(TX_DEF);
 			try {
-				Page folder = getFolder(request.getServerName(), uri);
+				Page folder = getFolder(request.getServerName(), path);
 				if (folder != null) {
 					requestHandled = true;
 					sendRedirect(folder, request, response);
@@ -112,6 +113,9 @@ public class FolderFilterPlugin extends FilterPlugin {
 			return null;
 		}
 		path = site.stripPrefix(path);
+		if (path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
 		Page page = pageDao.findPage(site, path);
 		if (page == null) {
 			page = findWildcardPage(site, path);
