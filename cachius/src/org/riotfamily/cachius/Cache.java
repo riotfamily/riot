@@ -251,14 +251,14 @@ public final class Cache implements Serializable {
      * given directory, the method will try to deserialize it. If no file
      * is found or the deserialization fails, a new cache is created. 
      */
-    public static Cache newInstance(int capacity, File cacheDir) 
+    public static Cache newInstance(int capacity, File cacheDir, boolean restore) 
     		throws IOException {
 
 		if (!cacheDir.exists() && !cacheDir.mkdirs()) {
 		    throw new IOException("Can't create cache directory: " + cacheDir);
 		}
 		File f = new File(cacheDir, CACHE_FILE);
-		if (f.exists()) {
+		if (restore && f.exists()) {
 		    log.info("Trying to build cache from file: " + f);
 		    try {
 		        ObjectInputStream in = new ObjectInputStream(

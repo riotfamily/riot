@@ -51,11 +51,17 @@ public class CacheFactoryBean extends AbstractFactoryBean
 	
 	private String cacheDirName = DEFAULT_CACHE_DIR_NAME;
 	
+	private boolean restore = true;
+	
 	private ServletContext servletContext;
 	
 	
 	public void setCacheDirName(String cacheDirName) {
 		this.cacheDirName = cacheDirName;
+	}
+		
+	public void setRestore(boolean restore) {
+		this.restore = restore;
 	}
 
 	/**
@@ -90,7 +96,7 @@ public class CacheFactoryBean extends AbstractFactoryBean
 			File tempDir = WebUtils.getTempDir(servletContext);
 			cacheDir = new File(tempDir, cacheDirName);
 		}
-		return Cache.newInstance(capacity, cacheDir);
+		return Cache.newInstance(capacity, cacheDir, restore);
 	}
 
 }
