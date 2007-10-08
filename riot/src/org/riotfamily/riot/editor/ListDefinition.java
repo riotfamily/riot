@@ -139,7 +139,7 @@ public class ListDefinition extends AbstractEditorDefinition {
 		ref.setEditorType(getEditorType());
 		ref.setIcon(getIcon());
 
-		String defaultLabel = FormatUtils.camelToTitleCase(getListId());
+		String defaultLabel = FormatUtils.xmlToTitleCase(getName());
 		ref.setLabel(messageResolver.getMessage(
 				getMessageKey().toString(), null, defaultLabel));
 

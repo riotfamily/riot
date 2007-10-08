@@ -210,7 +210,7 @@ public abstract class AbstractObjectEditorDefinition
 		ref.setEditorType(getEditorType());
 		ref.setIcon(getIcon());
 		
-		String defaultLabel = FormatUtils.camelToTitleCase(getId());
+		String defaultLabel = FormatUtils.xmlToTitleCase(getName());
 		ref.setLabel(messageResolver.getMessage(
 				getMessageKey().toString(), null, defaultLabel));
 
