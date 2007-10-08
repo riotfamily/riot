@@ -35,8 +35,9 @@ import org.riotfamily.website.template.TemplateController;
 public class DefaultSlotResolver implements SlotResolver {
 
 	public String getSlot(HttpServletRequest request) {
-		if (TemplateController.isInTemplate(request)) {
-			return TemplateController.getSlotPath(request);	
+		String slotPath = TemplateController.getFullSlotName(request);
+		if (slotPath != null) {
+			return slotPath;	
 		}
 		return ServletUtils.getPathWithoutServletMapping(request);
 	}

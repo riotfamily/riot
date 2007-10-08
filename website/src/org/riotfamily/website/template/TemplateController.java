@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -298,7 +299,7 @@ public class TemplateController extends AbstractController
 	/**
 	 * Returns the fully qualified slot-path for the given request.
 	 */
-	public static String getSlotPath(HttpServletRequest request) {
+	private static String getSlotPath(HttpServletRequest request) {
 		String slotPath = (String) request.getAttribute(SLOT_PATH_ATTRIBUTE);
 		String slot = request.getParameter(SLOT_PARAMETER);
 		if (slot != null) {
@@ -313,23 +314,31 @@ public class TemplateController extends AbstractController
 	}
 
 	/**
-	 * Returns whether the given request is handled by a TemplateController and
-	 * no further includes have been performed.
+	 * Returns the fully qualified slot-name for the given request 
+	 * or <code>null</code> if the current request was not included via a 
+	 * TemplateController. If the slot contains multiple URLs, the index (+1) 
+	 * of the current URL is appended to the returned name.
 	 */
-	public static boolean isInTemplate(HttpServletRequest request) {
+	public static String getFullSlotName(HttpServletRequest request) {
 		Map slots = (Map) request.getAttribute(SLOTS_CONFIGURATION_ATTRIBUTE);
 		String slotName = request.getParameter(SLOT_PARAMETER);
 		if (slots == null || slotName == null) {
-			return false;
+			return null;
 		}
 		Object content = slots.get(slotName);
 		String uri = ServletUtils.getPathWithinApplication(request);
-		if (content instanceof Collection) {
-			Collection c = (Collection) content;
-			return c.contains(uri);
+		if (content instanceof List) {
+			List list = (List) content;
+			int i = list.indexOf(uri);
+			if (i == -1) {
+				return null;
+			}
+			return getSlotPath(request) + "#" + (i + 1);
+			
 		}
-		else {
-			return uri.equals(content);
+		else if (uri.equals(content)) {
+			return getSlotPath(request);
 		}
+		return null;
 	}
 }

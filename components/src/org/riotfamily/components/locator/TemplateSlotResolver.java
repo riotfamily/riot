@@ -37,10 +37,10 @@ import org.riotfamily.website.template.TemplateController;
 public class TemplateSlotResolver implements SlotResolver {
 
 	/**
-	 * @see TemplateController#getSlotPath(HttpServletRequest)
+	 * @see TemplateController#getFullSlotName(HttpServletRequest)
 	 */
 	public String getSlot(HttpServletRequest request) {
-		return TemplateController.getSlotPath(request);
+		return TemplateController.getFullSlotName(request);
 	}
 
 }
