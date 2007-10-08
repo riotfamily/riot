@@ -13,6 +13,13 @@
 </#function>
 
 <#--
+  - Returns a collection containing the visible child-pages of the given (or current) page.
+  -->
+<#function childPages page=currentPage()>
+	<#return visiblePages(page.childPages) />
+</#function>
+
+<#--
   - Returns a collection containing the given page with its siblings in the correct order.
   -->
 <#function pageAndSiblings page=currentPage()>
