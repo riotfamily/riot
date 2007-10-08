@@ -162,25 +162,37 @@ var RElement = {
 	    return el;
 	},
 
-	disableHandlers: function(el, name) {
+	disableClicks: function(el) {
 		if (!(el = $(el))) return;
-		el.descendants().each(function(e) {
-			if (e[name]) {
-				e['riot_' + name] = e[name];
-				e[name] = null;
+		var a = el.ancestors().concat([el]).concat(el.descendants());
+		for (var i = 0; i < a.length; i++) {
+			var e = a[i];
+			if (e.onlick) {
+				e.riot_onclick = e.onclick;
+				e.onclick = null;
 			}
-		});
+			if (e.tagName == 'A' && e.href) {
+				e.riot_href = e.href;
+				e.href = 'javascript://';
+			}
+		}
 		return el;
 	},
 
-	restoreHandlers: function(el, name) {
+	restoreClicks: function(el) {
 		if (!(el = $(el))) return;
-		$(el).descendants().each(function(e) {
-			if (e['riot_' + name]) {
-				e[name] = e['riot_' + name];
-				e['riot_' + name] = null;
+		var a = el.ancestors().concat([el]).concat(el.descendants());
+		for (var i = 0; i < a.length; i++) {
+			var e = a[i];
+			if (e.riot_onlick) {
+				e.onclick = e.riot_onclick;
+				e.riot_onclick = null;
 			}
-		});
+			if (e.tagName == 'A' && e.riot_href) {
+				e.href = e.riot_href;
+				e.riot_href = null;
+			}
+		}
 		return el;
 	},
 

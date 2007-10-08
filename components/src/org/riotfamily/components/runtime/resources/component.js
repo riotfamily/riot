@@ -27,7 +27,7 @@ riot.AbstractComponent.prototype = {
 				this.mode = null;
 				return;
 			}
-			this.element.disableHandlers('onclick');
+			this.element.disableClicks();
 			Event.observe(this.element, 'click', riot.stopEvent, true);
 			Event.observe(this.element, 'mouseup', this.handlers[mode]);
 			Event.observe(this.element, 'mouseover', this.onMouseOver, true);
@@ -35,7 +35,7 @@ riot.AbstractComponent.prototype = {
 		}
 		else {
 			if (this.mode) {
-				this.element.restoreHandlers('onclick');
+				this.element.restoreClicks();
 				Event.stopObserving(this.element, 'click', riot.stopEvent, true);
 				Event.stopObserving(this.element, 'mouseup', this.handlers[this.mode]);
 				Event.stopObserving(this.element, 'mouseover', this.onMouseOver, true);
@@ -708,13 +708,13 @@ riot.ComponentList = Class.extend(riot.AbstractWrapper, {
 				};
 				Sortable.create(this.element, options);
 				this.getComponents().each(function(component) {
-					component.element.addClassName('riot-moveable-component').observe('click', riot.stopEvent, true).disableHandlers('onclick');
+					component.element.addClassName('riot-moveable-component').observe('click', riot.stopEvent, true).disableClicks();
 				});
 				Draggables.addObserver(new riot.ComponentDragObserver(this));
 			}
 			else {
 				this.getComponents().each(function(component) {
-					component.element.removeClassName('riot-moveable-component').stopObserving('click', riot.stopEvent, true).restoreHandlers('onclick');
+					component.element.removeClassName('riot-moveable-component').stopObserving('click', riot.stopEvent, true).restoreClicks();
 					component.element.style.position = '';
 				});
 				Sortable.destroy(this.element);

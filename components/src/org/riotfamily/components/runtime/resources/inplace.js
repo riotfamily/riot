@@ -49,7 +49,7 @@ riot.InplaceEditor.prototype = {
 	setEnabled: function(enabled) {
 		this.enabled = enabled;
 		if (enabled) {
-			this.originalOnclickHandler = this.element.onclick;
+			this.element.disableClicks();
 			this.element.onclick = this.onclickHandler;
 			this.element.addClassName('riot-editable-text');
 			this.element.observe('mouseover', this.onMouseOver);
@@ -59,7 +59,8 @@ riot.InplaceEditor.prototype = {
 			if (riot.activeEditor == this) {
 				this.close();
 			}
-			this.element.onclick = this.originalOnclickHandler;
+			this.element.onclick = null;
+			this.element.restoreClicks();
 			this.element.removeClassName('riot-editable-text');
 			this.element.stopObserving('mouseover', this.onMouseOver);
 			this.element.stopObserving('mouseout', riot.outline.scheduleHide);
@@ -698,7 +699,7 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 
 var Cropper = {
 	elementPos: function(el) {
-		var p = Position.positionedOffset(el);
+		var p = Position.cumulativeOffset(el);
 		return new Cropper.Pos(p[0], p[1]);
 	},
 	elementSize: function(el) {
@@ -798,12 +799,14 @@ Cropper.UI.prototype = {
 		Event.observe(document, 'mouseup', this.mouseUpHandler = this.onMouseUp.bindAsEventListener(this));
 		
 		this.img.style.width = 'auto';
+		this.img.style.height = 'auto';
+		
 		this.img.src = riot.contextPath + src;
 	},
 	
 	onLoadImage: function() {
 		this.imageSize = new Cropper.Pos(this.img.width, this.img.height);
-
+		
 		// Make sure min and max are not greater than the image dimensions:
 		this.min = new Cropper.Pos(this.editor.options.minWidth || 10, this.editor.options.minHeight || 10);
 		this.min.keepWithin(0, 0, this.imageSize.x, this.imageSize.y);
@@ -813,6 +816,9 @@ Cropper.UI.prototype = {
 		this.max = new Cropper.Pos(this.editor.options.maxWidth || 10000, this.editor.options.maxHeight || 10000);
 		this.max.keepWithin(0, 0, this.imageSize.x, this.imageSize.y);
 		
+		if (this.min.x == this.max.x && this.min.y == this.max.y) {
+			this.resizeHandle.hide();
+		}
 		this.setSize(this.initialSize);
 	},
 
