@@ -99,6 +99,9 @@ public class ComponentListController implements Controller,
 
 	public void setInitialComponentTypes(String[] initialComponentTypes) {
 		this.initialComponentTypes = initialComponentTypes;
+		if (validComponentTypes == null) {
+			validComponentTypes = initialComponentTypes;
+		}
 	}
 
 	public Integer getMinComponents() {
