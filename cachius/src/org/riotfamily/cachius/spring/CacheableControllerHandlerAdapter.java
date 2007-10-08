@@ -169,13 +169,9 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
         if (encodedUrls) {
             cacheKey += ";jsessionid";
         }
-
         log.debug("Getting cache item for key " + cacheKey);
         CacheItem cacheItem = cache.getItem(cacheKey);
-        if (cacheItem == null) {
-            log.warn("Failed to create cache item");
-        }
-        else if (cacheItem.isNew() || !cacheItem.exists()) {
+        if (cacheItem != null && (cacheItem.isNew() || !cacheItem.exists())) {
         	cacheItem.setFilterSessionId(encodedUrls);
         }
         return cacheItem;
