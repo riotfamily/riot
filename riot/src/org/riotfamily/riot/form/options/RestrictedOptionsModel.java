@@ -29,7 +29,6 @@ import java.util.Iterator;
 
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.options.FormAwareOptionsModel;
-import org.riotfamily.forms.options.OptionsModel;
 import org.riotfamily.riot.security.AccessController;
 
 /**
