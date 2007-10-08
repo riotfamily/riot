@@ -23,11 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.form.element;
 
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.forms.element.select.AbstractChooser;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.ListDefinition;
+import org.riotfamily.riot.form.ui.FormUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -40,11 +42,17 @@ public class ObjectChooser extends AbstractChooser
 
 	private String targetEditorId;
 		
+	private String rootEditorId;
+	
+	private String rootProperty;
+	
+	private String rootId;
+	
 	private BeanFactory beanFactory;
 	
 	private EditorRepository editorRepository;
 	
-	private ListDefinition targetListDefinition;
+	private ListDefinition rootListDefinition;
 	
 	private EditorDefinition targetEditorDefinition;
 	
@@ -53,6 +61,14 @@ public class ObjectChooser extends AbstractChooser
 		this.targetEditorId = targetEditorId;
 	}
 
+	public void setRootEditorId(String rootEditorId) {
+		this.rootEditorId = rootEditorId;
+	}
+	
+	public void setRootProperty(String rootProperty) {
+		this.rootProperty = rootProperty;
+	}
+	
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
 	}
@@ -78,18 +94,25 @@ public class ObjectChooser extends AbstractChooser
 		Assert.notNull(targetEditorDefinition, "No such EditorDefinition: "
 					+ targetEditorId);
 
-		if (targetEditorDefinition instanceof ListDefinition) {
-			targetListDefinition = (ListDefinition) targetEditorDefinition;
-			targetEditorDefinition = targetListDefinition.getDisplayDefinition();
+		if (rootEditorId != null) {
+			rootListDefinition = editorRepository.getListDefinition(rootEditorId);
+			Assert.notNull(rootListDefinition, "No such ListDefinition: "
+					+ rootEditorId);
+			
+			if (rootProperty != null) {
+				Object parent = FormUtils.loadParent(getForm());
+				Object root = PropertyUtils.getProperty(parent, rootProperty);
+				rootId = EditorDefinitionUtils.getObjectId(rootListDefinition, root);
+			}
 		}
 		else {
-			targetListDefinition = EditorDefinitionUtils
-					.getParentListDefinition(targetEditorDefinition);
+			rootListDefinition = EditorDefinitionUtils.getRootListDefinition(
+					targetEditorDefinition);
 		}
 	}
 
 	protected Object loadBean(String objectId) {
-		return EditorDefinitionUtils.loadBean(targetListDefinition, objectId);
+		return EditorDefinitionUtils.loadBean(targetEditorDefinition, objectId);
 	}
 	
 	protected String getDisplayName(Object object) {
@@ -97,7 +120,7 @@ public class ObjectChooser extends AbstractChooser
 	}
 
 	protected String getChooserUrl() {
-		return targetListDefinition.getEditorUrl(null, null) 
+		return rootListDefinition.getEditorUrl(null, rootId) 
 				+ "?choose=" + targetEditorDefinition.getId();
 	}
 	

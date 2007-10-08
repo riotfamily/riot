@@ -24,6 +24,7 @@
 package org.riotfamily.riot.form.ui;
 
 import org.riotfamily.forms.Form;
+import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.ObjectEditorDefinition;
 import org.riotfamily.riot.editor.EditorConstants;
 
@@ -53,6 +54,12 @@ public class FormUtils {
 
 	public static ObjectEditorDefinition getEditorDefinition(Form form) {
 		return (ObjectEditorDefinition) form.getAttribute("editorDefinition");
+	}
+	
+	public static Object loadParent(Form form) {
+		return EditorDefinitionUtils.loadParent(EditorDefinitionUtils
+				.getParentListDefinition(getEditorDefinition(form)), 
+				getParentId(form));
 	}
 
 }

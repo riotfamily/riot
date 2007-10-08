@@ -24,10 +24,7 @@
 package org.riotfamily.riot.editor;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.i18n.MessageResolver;
 
 /**
@@ -60,13 +57,13 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 
 	public void setId(String id) {
 		this.id = id;
+		if (name == null) {
+			name = id;
+		}
 	}
 
 	public final void setName(String name) {
 		this.name = name;
-		if (id == null) {
-			id = name;
-		}
 	}
 
 	public final String getName() {
@@ -92,10 +89,14 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 	public void addReference(List refs, EditorDefinition parentDef,
 			Object parent, MessageResolver messageResolver) {
 
-		if (parent != null && (condition == null || condition.showEditor(parent))) {
+		if (show(parent)) {
 			String parentId = EditorDefinitionUtils.getObjectId(parentDef, parent);
 			refs.add(createReference(parentId, messageResolver));
 		}
+	}
+	
+	public boolean show(Object parent) {
+		return !hidden && parent != null && (condition == null || condition.showEditor(parent));
 	}
 
 	protected EditorRepository getEditorRepository() {
@@ -134,31 +135,8 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 		return key;
 	}
 
-	public String getLabelProperty() {
-		return null;
-	}
-
 	public String getLabel(Object object) {
-		if (object == null) {
-			return "New"; //TODO I18nize this
-		}
-		if (getLabelProperty() != null) {
-			StringBuffer label = new StringBuffer();
-			Pattern p = Pattern.compile("(\\w+)(\\W*)");
-			Matcher m = p.matcher(getLabelProperty());
-			while (m.find()) {
-				String property = m.group(1);
-				Object value = PropertyUtils.getProperty(object, property);
-				if (value != null) {
-					label.append(value);
-					label.append(m.group(2));
-				}
-			}
-			if (label.length() > 0) {
-				return label.toString();
-			}
-		}
-		return object.toString();
+		return null;
 	}
 
 }

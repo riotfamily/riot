@@ -107,7 +107,7 @@ public class GroupDefinition extends AbstractEditorDefinition {
 		ref.setEditorType(TYPE_GROUP);
 		ref.setIcon(getIcon());
 
-		String defaultLabel = FormatUtils.camelToTitleCase(getId());
+		String defaultLabel = FormatUtils.xmlToTitleCase(getId());
 		ref.setLabel(messageResolver.getMessage(getMessageKey().toString(),
 				null, defaultLabel));
 

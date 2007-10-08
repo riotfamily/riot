@@ -13,6 +13,8 @@
 			<xsd:complexContent>
 				<xsd:extension base="form:simple-editor">
 					<xsd:attribute name="target-editor-id" type="xsd:string" />
+					<xsd:attribute name="root-editor-id" type="xsd:string" />
+					<xsd:attribute name="root-property" type="xsd:string" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

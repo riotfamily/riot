@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
+import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.riot.editor.ui.EditorReference;
@@ -68,6 +69,11 @@ public class ListDefinition extends AbstractEditorDefinition {
 	public void setListId(String listId) {
 		this.listId = listId;
 		Assert.notNull(getListConfig(), "No such list: " + listId);
+	}
+	
+	public String getLabel(Object object) {
+		String labelProperty = getListConfig().getFirstProperty();
+		return PropertyUtils.getPropertyAsString(object, labelProperty);
 	}
 
 	public Class getBeanClass() {

@@ -119,7 +119,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 		GroupDefinition group = editorRepository.getRootGroupDefinition();
 		if (group == null) {
 			group = new GroupDefinition(editorRepository);
-			group.setName("start"); //REVISIT
+			group.setId("start");
 			editorRepository.addEditorDefinition(group);
 			editorRepository.setRootGroupDefinition(group);
 		}

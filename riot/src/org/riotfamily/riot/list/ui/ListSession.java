@@ -178,8 +178,13 @@ public class ListSession implements RenderContext {
 		listCommands = Collections.EMPTY_LIST;
 		itemCommands = new ArrayList();
 
-		ListDefinition targetList = EditorDefinitionUtils
-				.getParentListDefinition(target);
+		ListDefinition targetList = null;
+		if (target instanceof ListDefinition) {
+			targetList = (ListDefinition) target;
+		}
+		else {
+			targetList = EditorDefinitionUtils.getParentListDefinition(target);
+		}
 
 		if (targetList != listDefinition
 				|| targetList instanceof TreeDefinition) {
@@ -188,10 +193,6 @@ public class ListSession implements RenderContext {
 			if (listDefinition != targetList) {
 				nextList = EditorDefinitionUtils.getNextListDefinition(
 						listDefinition, targetList);
-			}
-			if (nextList instanceof TreeDefinition) {
-				TreeDefinition tree = (TreeDefinition) nextList;
-				nextList = tree.getNodeListDefinition();
 			}
 			itemCommands.add(new DescendCommand(nextList, target));
 		}

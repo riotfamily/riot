@@ -23,10 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.core;
 
+import java.util.List;
+
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.RiotDao;
+import org.riotfamily.riot.editor.AbstractObjectEditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.ListDefinition;
+import org.riotfamily.riot.editor.TreeList;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
@@ -56,8 +60,22 @@ public class DescendCommand extends AbstractCommand {
 		return ID;
 	}
 	
+	protected ListDefinition getNextListDefinition(CommandContext context) {
+		ListDefinition listDef = context.getListDefinition();
+		if (listDef instanceof TreeList) {
+			AbstractObjectEditorDefinition def = (AbstractObjectEditorDefinition) listDef.getDisplayDefinition();
+			List childDefs = def.getChildEditorDefinitions();
+			if (!(childDefs.contains(nextListDefinition) 
+					&& nextListDefinition.show(context.getBean()))) {
+				
+				return ((TreeList) listDef).getNodeListDefinition();
+			}
+		}
+		return nextListDefinition;
+	}
+	
 	protected boolean isEnabled(CommandContext context, String action) {
-		RiotDao dao = nextListDefinition.getListConfig().getDao();
+		RiotDao dao = getNextListDefinition(context).getListConfig().getDao();
 		int size = dao.getListSize(context.getBean(), params);
 		if (size == -1) {
 			size = dao.list(context.getBean(), params).size();
@@ -66,8 +84,8 @@ public class DescendCommand extends AbstractCommand {
 	}
 	
 	public CommandResult execute(CommandContext context) {
-		return new GotoUrlResult(context, nextListDefinition.getEditorUrl(
-				null, context.getObjectId()) + "?choose=" 
+		return new GotoUrlResult(context, getNextListDefinition(context)
+				.getEditorUrl(null, context.getObjectId()) + "?choose=" 
 				+ targetDefinition.getId());
 	}
 }

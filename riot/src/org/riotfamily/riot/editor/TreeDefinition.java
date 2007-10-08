@@ -28,7 +28,7 @@ import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.riot.editor.ui.EditorReference;
 import org.springframework.util.Assert;
 
-public class TreeDefinition extends ListDefinition {
+public class TreeDefinition extends ListDefinition implements TreeList {
 	
 	protected static final String TYPE_TREE = "tree";
 	
@@ -90,7 +90,7 @@ public class TreeDefinition extends ListDefinition {
 		return super.createEditorPath(bean, messageResolver);
 	}
 
-	private class NodeListDefinition extends ListDefinition {
+	public class NodeListDefinition extends ListDefinition implements TreeList {
 
 		NodeListDefinition() {
 			super(TreeDefinition.this, TreeDefinition.this.getEditorRepository());
@@ -101,6 +101,14 @@ public class TreeDefinition extends ListDefinition {
 			return "node-" + super.getId();
 		}
 
+		public TreeDefinition getTreeDefinition() {
+			return TreeDefinition.this;
+		}
+		
+		public ListDefinition getNodeListDefinition() {
+			return this;
+		}
+		
 		private EditorReference stripList(EditorReference path) {
 			EditorReference parent = path.getParent();
 			parent.setEditorUrl(path.getEditorUrl());

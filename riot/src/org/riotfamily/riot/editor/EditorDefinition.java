@@ -92,4 +92,6 @@ public interface EditorDefinition {
 	 */
 	public boolean isHidden();
 	
+	public boolean show(Object parent);
+	
 }

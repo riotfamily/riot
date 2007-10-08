@@ -57,6 +57,7 @@
 	</xsd:element>
 
 	<xsd:attributeGroup name="form-attributes">
+		<xsd:attribute name="id" type="xsd:string" />
 		<xsd:attribute name="form-ref" type="xsd:string" use="required" />
 		<xsd:attribute name="icon" type="xsd:string" />
 		<xsd:attribute name="name" type="xsd:string" />

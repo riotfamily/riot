@@ -65,9 +65,22 @@ public final class EditorDefinitionUtils {
 		return null;
 	}
 	
+	public static ListDefinition getRootListDefinition(EditorDefinition def) {
+		ListDefinition list = getListDefinition(def);
+		ListDefinition parent = list;
+		while (parent != null) {
+			list = parent;
+			parent = getParentListDefinition(parent);
+		}
+		return list;
+	}
+	
 	public static ListDefinition getNextListDefinition(
 			ListDefinition start, ListDefinition destination) {
 		
+		if (start instanceof TreeDefinition.NodeListDefinition) {
+			start = ((TreeDefinition.NodeListDefinition) start).getTreeDefinition();
+		}
 		ListDefinition def = destination;
 		ListDefinition parent = getParentListDefinition(def); 
 		while (parent != start && parent != null) {
