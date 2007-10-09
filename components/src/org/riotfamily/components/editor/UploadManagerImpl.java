@@ -29,6 +29,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.util.PasswordGenerator;
 import org.riotfamily.common.web.file.FileStore;
@@ -39,6 +41,8 @@ import org.riotfamily.common.web.file.FileStore;
  */
 public class UploadManagerImpl implements UploadManager {
 
+	private static Log log = LogFactory.getLog(UploadManagerImpl.class);
+	
 	private PasswordGenerator tokenGenerator = 
 			new PasswordGenerator(16, true, true, true);
 	
@@ -60,7 +64,11 @@ public class UploadManagerImpl implements UploadManager {
 	}
 	
 	public String getFilePath(String token) {
-		return (String) filePaths.get(token);
+		String path = (String) filePaths.get(token);
+		if (path == null) {
+			log.warn("Unknown token: " + token);
+		}
+		return path;
 	}
 	
 	boolean isValidToken(String token) {
@@ -71,11 +79,12 @@ public class UploadManagerImpl implements UploadManager {
 		filePaths.remove(token);
 	}
 	
-	void storeFile(String uploadId, File file, String originalFileName) 
+	void storeFile(String token, File file, String originalFileName) 
 			throws IOException {
 		
 		String path = fileStore.store(file, originalFileName);
-		filePaths.put(uploadId, path);
+		log.debug("File uploaded - token: " + token + ", path: " + path);
+		filePaths.put(token, path);
 	}
 	
 	public String cropImage(String path, int width, int height, int x, int y, 
