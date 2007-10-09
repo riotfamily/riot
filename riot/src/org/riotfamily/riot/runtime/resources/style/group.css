@@ -90,9 +90,9 @@ background-color:#ebebeb;
 	background: url(icons/commands/stepInto.gif) 0 -32px no-repeat;
 }
 #status a:hover {
-	color: #cb0038;
+	color: ${highlight};
 }
 
 #status a:hover .icon {
-	background-color: #cb0038;
+	background-color: ${highlight};
 }
