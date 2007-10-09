@@ -209,6 +209,12 @@ public class ImageGenerator implements InitializingBean {
 	public void generate(String text, int maxWidth, String color, OutputStream os) 
 			throws IOException {
 		
+        BufferedImage image = generate(text, maxWidth, color) ;
+       	ImageIO.write(image, "png", os);
+       	image.flush();
+	}
+	
+	public BufferedImage generate(String text, int maxWidth, String color) {
 		if (this.maxWidth != null) {
 			maxWidth = this.maxWidth.intValue();
 		}
@@ -216,20 +222,18 @@ public class ImageGenerator implements InitializingBean {
 			maxWidth *= scale;
 		}
 		Dimension size = getSize(text, maxWidth);
-        BufferedImage image = createImage(size);
-        drawText(text, maxWidth, color, image);
-        if (resample) {
-        	int w = (int) (size.getWidth() / scale);
-        	int h = (int) (size.getHeight() / scale);
-        	Image scaledImage = image.getScaledInstance(w, h, Image.SCALE_SMOOTH);
-        	image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        	Graphics g = image.getGraphics();
-        	g.drawImage(scaledImage, 0, 0, w, h, null);
-        	g.dispose();
-        }
-        
-       	ImageIO.write(image, "png", os);
-       	image.flush();
+		BufferedImage image = createImage(size);
+		drawText(text, maxWidth, color, image);
+		if (resample) {
+			int w = (int) (size.getWidth() / scale);
+			int h = (int) (size.getHeight() / scale);
+			Image scaledImage = image.getScaledInstance(w, h, Image.SCALE_SMOOTH);
+			image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+			Graphics g = image.getGraphics();
+			g.drawImage(scaledImage, 0, 0, w, h, null);
+			g.dispose();
+		}
+		return image;
 	}
 	
 	protected Dimension getSize(String text, float maxWidth) {
