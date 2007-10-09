@@ -56,9 +56,9 @@
 	<#global currentListId = "" />
 </#macro>
 
-<#macro componentSet>
+<#macro componentSet attributes...>
 	<#if editMode && inplaceMacroHelper.storeContext()>
-		<div class="riot-components" riot:wrapper="componentSet" riot:controllerId="${common.includeUri}">
+		<div class="riot-components" riot:wrapper="componentSet" riot:controllerId="${common.includeUri}"${join(attributes)}>
 			<#nested>
 		</div>
 	<#else>

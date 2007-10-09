@@ -155,8 +155,7 @@ riot.AbstractComponent.prototype = {
 				// getAttribute('riot:editorType') fails in IE for TABLE elements (and maybe others?)
 			}
 		}
-		// Adopt float and clear styles from the first child element
-		riot.adoptFloatAndClear(this.element);
+		
 		if (this.editing) {
 			this.edit(true);
 		}
@@ -205,6 +204,12 @@ riot.Component = Class.extend(riot.AbstractComponent, {
 		return this.SUPER(e, editorType);
 	},
 
+	setupElement: function() {
+		this.SUPER();
+		// Adopt float and clear styles from the first child element
+		riot.adoptFloatAndClear(this.element);
+	},
+	
 	updatePositionClasses: function(position, last) {
 		if (this.type != 'inherit') {
 			this.element.descendants().each(function(el) {
@@ -633,15 +638,9 @@ riot.ComponentSet = Class.extend(riot.AbstractWrapper, {
 	initialize: function(el) {
 		this.SUPER(el);
 		this.id = null;
-		riot.adoptFloatAndClear(this.element);
 		this.setDirty(this.getComponents().pluck('element').any(function(e) {
 			return e.readAttribute('riot:dirty') != null;
 		}));
-	},
-
-	onUpdate: function() {
-		this.SUPER();
-		riot.adoptFloatAndClear(this.element);
 	},
 
 	getDirtyContainerIds: function() {
