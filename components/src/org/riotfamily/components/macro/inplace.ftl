@@ -164,7 +164,7 @@
 	</#compress>
 </#macro>
 
-<#macro image key minWidth="10" maxWidth="1000" minHeight="10" maxHeight="1000" width="" height="" defaultWidth="100" defaultHeight="100" transform=common.url attributes... >
+<#macro image key default="" minWidth="10" maxWidth="1000" minHeight="10" maxHeight="1000" width="" height="" defaultWidth="100" defaultHeight="100" transform=common.url attributes... >
 	<#compress>
 		<#if width?has_content>
 			<#local minWidth = width />
@@ -176,7 +176,7 @@
 			<#local maxHeight = height />
 			<#local defaultHeight = height />
 		</#if>
-		<#local value = currentComponentScope[key]?if_exists>
+		<#local value = currentComponentScope[key]!default>
 		<#if value?has_content>
 			<#local attributes = attributes + {"src": transform(value)} />
 		<#elseif editMode>
@@ -192,6 +192,7 @@
 				"class": ("riot-editor " + attributes["class"]?if_exists)?trim,
 				"riot:editorType": "image",
 				"riot:key": key,
+				"riot:srcTemplate": transform("#" + "{path}"),
 				"riot:minWidth": minWidth,
 				"riot:maxWidth": maxWidth,
 				"riot:minHeight": minHeight,

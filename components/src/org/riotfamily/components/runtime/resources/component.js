@@ -124,6 +124,7 @@ riot.AbstractComponent.prototype = {
 		}
 		if (editorType == 'image') {
 			return new riot.ImageEditor(e, this, {
+				srcTemplate: e.readAttribute('riot:srcTemplate'),
 				minWidth: e.readAttribute('riot:minWidth'),
 				maxWidth: e.readAttribute('riot:maxWidth'),
 				minHeight: e.readAttribute('riot:minHeight'),

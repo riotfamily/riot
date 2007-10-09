@@ -691,7 +691,12 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 		this.component.updateText(this.key, path);
 		this.element.width = img.width;
 		this.element.height = img.height;
-		this.element.src = img.src;
+		if (this.options.srcTemplate) {
+			this.element.src = new Template(this.options.srcTemplate).evaluate({path: path});
+		}
+		else {
+			this.element.src = img.src;
+		}
 		this.cropper.destroy();		
 		this.cropper = null;
 	}
@@ -928,9 +933,12 @@ Cropper.UI.prototype = {
 
 	crop: function() {
 		this.resizeHandle.hide();
-		UploadManager.cropImage(this.src, parseInt(this.preview.style.width),
-				parseInt(this.preview.style.height), this.offset.x, this.offset.y,
-				this.img.width, this.onCrop.bind(this));
+		var w = parseInt(this.preview.style.width);
+		var h = parseInt(this.preview.style.height);
+		if (isFinite(w) && isFinite(h)) {
+			UploadManager.cropImage(this.src, w, h, this.offset.x, this.offset.y,
+					this.img.width, this.onCrop.bind(this));
+		}
 	},
 
 	onCrop: function(path) {
