@@ -689,13 +689,19 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 	update: function(img, path) {
 		riot.outline.suspended = false;
 		this.component.updateText(this.key, path);
-		this.element.width = img.width;
-		this.element.height = img.height;
-		if (this.options.srcTemplate) {
-			this.element.src = new Template(this.options.srcTemplate).evaluate({path: path});
+		var src = this.options.srcTemplate 
+				? new Template(this.options.srcTemplate).evaluate({path: path})
+				: img.src;
+				
+		if (this.element.tagName == 'IMG') {   
+			this.element.width = img.width;
+			this.element.height = img.height;
+			this.element.src = src;
 		}
 		else {
-			this.element.src = img.src;
+			this.element.style.width = img.width + 'px';
+			this.element.style.height = img.height + 'px';
+			this.element.style.backgroundImage = 'url(' + src + ')';
 		}
 		this.cropper.destroy();		
 		this.cropper = null;

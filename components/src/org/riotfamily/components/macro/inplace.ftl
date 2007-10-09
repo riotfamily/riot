@@ -164,7 +164,7 @@
 	</#compress>
 </#macro>
 
-<#macro image key default="" minWidth="10" maxWidth="1000" minHeight="10" maxHeight="1000" width="" height="" defaultWidth="100" defaultHeight="100" transform=common.url attributes... >
+<#macro image key default="" tag="img" minWidth="10" maxWidth="1000" minHeight="10" maxHeight="1000" width="" height="" defaultWidth="100" defaultHeight="100" transform=common.url attributes... >
 	<#compress>
 		<#if width?has_content>
 			<#local minWidth = width />
@@ -178,18 +178,28 @@
 		</#if>
 		<#local value = currentComponentScope[key]!default>
 		<#if value?has_content>
-			<#local attributes = attributes + {"src": transform(value)} />
+			<#if tag == "img">
+				<#local attributes = attributes + {"src": transform(value)} />
+			<#else>
+				<#local attributes = attributes + {"style": "background-image:url(" + transform(value) + ");" + attributes.style!} />
+			</#if>
 		<#elseif editMode>
-			<#local attributes = attributes + {
-				"src": riot.resource('style/images/pixel.gif'),
-				"class": ("nosrc " + attributes["class"]?if_exists)?trim,
-				"width": defaultWidth,
-				"height": defaultHeight		
-				} />	
+			<#if tag == "img">
+				<#local attributes = attributes + {
+					"src": riot.resource("style/images/pixel.gif"),
+					"class": ("nosrc " + attributes["class"]!)?trim,
+					"width": defaultWidth,
+					"height": defaultHeight		
+					} />
+			<#else>
+				<#local attributes = attributes + {
+					"class": ("nosrc " + attributes["class"]!)?trim
+					} />
+			</#if>	
 		</#if>
 		<#if editMode>
 			<#local attributes = attributes + {
-				"class": ("riot-editor " + attributes["class"]?if_exists)?trim,
+				"class": ("riot-editor " + attributes["class"]!)?trim,
 				"riot:editorType": "image",
 				"riot:key": key,
 				"riot:srcTemplate": transform("#" + "{path}"),
@@ -199,8 +209,12 @@
 				"riot:maxHeight": maxHeight 
 				} />
 		</#if>
-		<#if value?has_content || editMode>	
-			<img ${join(attributes)} />
+		<#if value?has_content || editMode>
+			<#if tag == "img">	
+				<img${join(attributes)} />
+			<#else>
+				<${tag}${join(attributes)}><#nested /></${tag}>
+			</#if>
 		</#if>
 	</#compress>
 </#macro>
