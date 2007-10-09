@@ -278,10 +278,12 @@
 
 <#function join attributes>
 	<#local attrs = "" />
-	<#list attributes?keys as attributeName>
-		<#if attributes[attributeName]?has_content>
-			<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName]?html + "\"" />
-		</#if>
-	</#list>
+	<#if attributes?is_hash>
+		<#list attributes?keys as attributeName>
+			<#if attributes[attributeName]?has_content>
+				<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName]?html + "\"" />
+			</#if>
+		</#list>
+	</#if>
 	<#return attrs />
 </#function>
