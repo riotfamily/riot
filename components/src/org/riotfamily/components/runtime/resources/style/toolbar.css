@@ -246,10 +246,12 @@ div.riot-highlight {
 div.riot-highlight-left, 
 div.riot-highlight-right {
 	background: url(images/ants_v.gif);
+	overflow: hidden;
 }
 div.riot-highlight-top, 
 div.riot-highlight-bottom {
 	background: url(images/ants_h.gif);
+	overflow: hidden;
 }
 
 .riot-empty-list {

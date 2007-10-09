@@ -10,7 +10,7 @@ riot.outline = {
 	left: RBuilder.node('div', {className: 'riot-highlight riot-highlight-left'}).hide().appendTo(document.body),
 	
 	show: function(el, onclick, excludes) {
-		if (!riot || riot.outline.suspended) return;
+		if (!window.riot || riot.outline.suspended) return;
 		riot.outline.top.copyPosFrom(el, {setHeight: false, offsetTop: -1, offsetLeft: -1, offsetWidth: 2}).show();
 		riot.outline.right.copyPosFrom(el, {setWidth: false, offsetLeft: el.offsetWidth}).show();
 		riot.outline.bottom.copyPosFrom(el, {setHeight: false, offsetLeft: -1, offsetTop: el.offsetHeight, offsetWidth: 2}).show();
