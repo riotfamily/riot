@@ -690,7 +690,7 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 		riot.outline.suspended = false;
 		this.component.updateText(this.key, path);
 		var src = this.options.srcTemplate 
-				? new Template(this.options.srcTemplate).evaluate({path: path})
+				? this.options.srcTemplate.replace('*', path)
 				: img.src;
 				
 		if (this.element.tagName == 'IMG') {   

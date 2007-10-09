@@ -178,10 +178,15 @@
 		</#if>
 		<#local value = currentComponentScope[key]!default>
 		<#if value?has_content>
-			<#if tag == "img">
-				<#local attributes = attributes + {"src": transform(value)} />
+			<#if transform?is_string>
+				<#local src = transform?replace("*", value) />
 			<#else>
-				<#local attributes = attributes + {"style": "background-image:url(" + transform(value) + ");" + attributes.style!} />
+				<#local src = transform(value) />
+			</#if>
+			<#if tag == "img">
+				<#local attributes = attributes + {"src": src} />
+			<#else>
+				<#local attributes = attributes + {"style": "background-image:url(" + src + ");" + attributes.style!} />
 			</#if>
 		<#elseif editMode>
 			<#if tag == "img">
@@ -198,11 +203,16 @@
 			</#if>	
 		</#if>
 		<#if editMode>
+			<#if transform?is_string>
+				<#local srcTemplate = transform />
+			<#else>
+				<#local srcTemplate = transform("*") />
+			</#if>
 			<#local attributes = attributes + {
 				"class": ("riot-editor " + attributes["class"]!)?trim,
 				"riot:editorType": "image",
 				"riot:key": key,
-				"riot:srcTemplate": transform("#" + "{path}"),
+				"riot:srcTemplate": srcTemplate,
 				"riot:minWidth": minWidth,
 				"riot:maxWidth": maxWidth,
 				"riot:minHeight": minHeight,
