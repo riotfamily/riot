@@ -214,6 +214,7 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
 	            // the handleRequest() method, too. Note: For new items
 	            // lastModified is set by the CacheItem.update() method.
 	            cacheItem.setLastModified(now);
+	        	log.debug("Item is expired");
 	            return false;
 	        }
         }
