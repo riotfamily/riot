@@ -370,7 +370,7 @@ public class ListSession implements RenderContext {
 			updateFilterFormHtml();
 		}
 		params.setPage(1);
-		ListModel result = getModel(request);
+		ListModel result = getItems(request);
 		result.setFilterFormHtml(filterFormHtml);
 		return result;
 	}
