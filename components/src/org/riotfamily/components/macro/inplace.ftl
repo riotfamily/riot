@@ -135,9 +135,7 @@
 
 <#macro editable key editor="text" tag="" alwaysUseNested=false attributes... >
 	<#compress>
-		<#if attributes.attributes?exists>
-			<#local attributes=attributes.attributes />
-		</#if>
+		<#local attributes = unwrap(attributes) />
 		<#if alwaysUseNested>
 			<#local value><#nested /></#local>
 		<#else>
@@ -240,11 +238,7 @@
   -
   -->
 <#macro use container form="" tag="" attributes...>
-	<#if attributes?is_sequence>
-		<#local attributes = {} />
-	<#elseif attributes.attributes?exists>
-		<#local attributes = attributes.attributes />
-	</#if>
+	<#local attributes = unwrap(attributes) />
 	<#local previousComponentScope = currentComponentScope />
 	<#global currentComponentScope = buildModel(container) />
 	${inplaceMacroHelper.tag(container)}
@@ -265,9 +259,7 @@
 </#macro>
 
 <#function addContainerAttributes attributes versionContainer form="">
-	<#if attributes.attributes?exists>
-		<#local attributes = attributes.attributes />
-	</#if>
+	<#local attributes = unwrap(attributes) />
 	<#if versionContainer?has_content && editMode>
 		<#local attributes = attributes + {
 				"riot:containerId": versionContainer.id?c,
@@ -282,6 +274,15 @@
 		<#if versionContainer.dirty>
 			<#local attributes = attributes + {"riot:dirty": "true"} />
 		</#if>
+	</#if>
+	<#return attributes />
+</#function>
+
+<#function unwrap attributes>
+	<#if attributes?is_sequence>
+		<#return {} />
+	<#elseif attributes.attributes?exists>
+		<#return attributes.attributes />
 	</#if>
 	<#return attributes />
 </#function>
