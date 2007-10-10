@@ -57,7 +57,7 @@ public class ImageGenerator implements InitializingBean {
 
 	private Font font = Font.getFont("Serif");
 	
-	private float size = 22;
+	private float fontSize = 22;
 	
 	private int paddingTop = 0;
 	
@@ -71,6 +71,8 @@ public class ImageGenerator implements InitializingBean {
 	
 	private Integer maxWidth;
 	
+	private boolean shrinkToFit;
+	
 	private Color color = Color.BLACK;
 	
 	private boolean antiAlias = true;
@@ -80,8 +82,6 @@ public class ImageGenerator implements InitializingBean {
 	private int internalFontSize = 120;
 	
 	private int scale = 1;
-	
-	private FlatMap attributes = new FlatMap();
 	
 	/**
 	 * Sets the font file to use. The resource must either point to a Type 1
@@ -116,7 +116,7 @@ public class ImageGenerator implements InitializingBean {
 	 * Sets the font size.
 	 */
 	public void setSize(float size) {
-		this.size = size;
+		this.fontSize = size;
 	}
 
 	/**
@@ -139,6 +139,14 @@ public class ImageGenerator implements InitializingBean {
 	 */
 	public void setMaxWidth(Integer maxWidth) {
 		this.maxWidth = maxWidth;
+	}
+	
+	/**
+	 * Sets whether the font-size should be reduced if the text does not
+	 * fit within the max-width.
+	 */
+	public void setShrinkToFit(boolean shrinkToFit) {
+		this.shrinkToFit = shrinkToFit;
 	}
 	
 	/**
@@ -191,8 +199,8 @@ public class ImageGenerator implements InitializingBean {
 	
 	public void afterPropertiesSet() {
 		if (resample) {
-			scale = Math.round(internalFontSize / size);
-			size *= scale;
+			scale = Math.round(internalFontSize / fontSize);
+			fontSize *= scale;
 			paddingTop *= scale;
 			paddingRight *= scale;
 			paddingBottom *= scale;
@@ -202,8 +210,6 @@ public class ImageGenerator implements InitializingBean {
 				maxWidth = new Integer(maxWidth.intValue() * scale);
 			}
 		}
-		attributes.put(TextAttribute.FONT, font.deriveFont(size));
-		attributes.put(TextAttribute.FOREGROUND, color);
 	}
 	
 	public void generate(String text, int maxWidth, String color, OutputStream os) 
@@ -221,9 +227,26 @@ public class ImageGenerator implements InitializingBean {
 		else if (resample && maxWidth < Integer.MAX_VALUE) {
 			maxWidth *= scale;
 		}
-		Dimension size = getSize(text, maxWidth);
+		
+		float fontSize = this.fontSize;
+		Dimension size;
+		
+		if (shrinkToFit) {
+			size = getSize(text, fontSize, Integer.MAX_VALUE);
+			while (size.getWidth() > maxWidth) {
+				double delta = fontSize - fontSize * (maxWidth / size.getWidth());
+				fontSize -= Math.max(Math.round(delta), 1);
+				size = getSize(text, fontSize, Integer.MAX_VALUE);
+			}
+			size.setSize(maxWidth, size.getHeight());
+			maxWidth = Integer.MAX_VALUE;
+		}
+		else {
+			size = getSize(text, fontSize, maxWidth);
+		}
+		
 		BufferedImage image = createImage(size);
-		drawText(text, maxWidth, color, image);
+		drawText(text, maxWidth, color, fontSize, image);
 		if (resample) {
 			int w = (int) (size.getWidth() / scale);
 			int h = (int) (size.getHeight() / scale);
@@ -236,24 +259,27 @@ public class ImageGenerator implements InitializingBean {
 		return image;
 	}
 	
-	protected Dimension getSize(String text, float maxWidth) {
-	    return layout(text, maxWidth, null, createImage(new Dimension(1, 1)), false);
+	protected Dimension getSize(String text, float fontSize, float maxWidth) {
+	    return layout(text, maxWidth, null, fontSize, 
+	    		createImage(new Dimension(1, 1)), false);
 	}
 	
 	protected void drawText(String text, float maxWidth, String color, 
-			BufferedImage image) {
+			float fontSize, BufferedImage image) {
 		
-	    layout(text, maxWidth, color, image, true);
+	    layout(text, maxWidth, color, fontSize, image, true);
 	}
 	
 	protected Dimension layout(String text, float maxWidth, String color, 
-			BufferedImage image, boolean draw) {
+			float fontSize, BufferedImage image, boolean draw) {
 		
-		FlatMap attrs = attributes;
-		if (draw && color != null) {
-			attrs = new FlatMap(attributes);
-			attrs.put(TextAttribute.FOREGROUND, ColorUtils.parseColor(color));
-		}
+		FlatMap attrs = new FlatMap();
+		attrs.put(TextAttribute.FOREGROUND, color != null 
+				? ColorUtils.parseColor(color)
+				: this.color);
+		
+		attrs.put(TextAttribute.FONT, font.deriveFont(fontSize));
+		
 		AttributedString as = new AttributedString(text, attrs);
 		Graphics2D graphics = createGraphics(image);
         FontRenderContext fc = graphics.getFontRenderContext();

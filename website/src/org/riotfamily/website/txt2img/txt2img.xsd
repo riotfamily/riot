@@ -22,6 +22,7 @@
 						<xsd:attribute name="padding-left" type="xsd:integer" />
 						<xsd:attribute name="line-spacing" type="xsd:integer" />
 						<xsd:attribute name="max-width" type="xsd:positiveInteger" />
+						<xsd:attribute name="shrink-to-fit" type="xsd:boolean" default="false" />
 						<xsd:attribute name="internal-font-size" type="xsd:integer" />
 					</xsd:complexType>
 				</xsd:element>
