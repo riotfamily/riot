@@ -112,6 +112,7 @@ public class PageDefinition {
 		node.setSystemNode(systemNode);
 		node.setHidden(hidden);
 		createPages(node, sites, pageDao);
+		pageDao.saveNode(node);
 		if (definitions != null) {
 			Iterator it = definitions.iterator();
 			while (it.hasNext()) {
@@ -119,7 +120,6 @@ public class PageDefinition {
 				childDefinition.createNode(node, sites, pageDao);
 			}
 		}
-		pageDao.saveNode(node);
 		return node;
 	}
 
