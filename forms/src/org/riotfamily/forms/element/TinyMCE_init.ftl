@@ -10,7 +10,8 @@ tinyMCE.init({
 	theme_advanced_containers_default_align: 'left',
 	theme_advanced_container_buttons1: 'formatselect,bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap,fullscreen',
 	theme_advanced_containers: 'buttons1, mceEditor',
-	theme_advanced_blockformats: 'p,h3,h4'
+	theme_advanced_blockformats: 'p,h3,h4',
+	forced_root_block: 'p'
 });
 
 tinyMCE.addControl('${element.id}');
