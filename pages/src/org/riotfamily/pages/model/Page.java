@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.components.ComponentVersion;
 import org.riotfamily.components.VersionContainer;
 
@@ -40,6 +41,8 @@ import org.riotfamily.components.VersionContainer;
  */
 public class Page {
 
+	public static final String TITLE_PROPERTY = "title";
+	
 	private Long id;
 
 	private PageNode node;
@@ -238,6 +241,14 @@ public class Page {
 		return version != null ? version.getProperty(key) : null;
 	}
 
+	public String getTitle(boolean preview) {
+		String title = getProperty(TITLE_PROPERTY, preview);
+		if (title == null) {
+			title = FormatUtils.xmlToTitleCase(pathComponent);
+		}
+		return title;
+	}
+	
 	public boolean isDirty() {
 		return getVersionContainer().isDirty();
 	}
@@ -254,6 +265,10 @@ public class Page {
 		return published && site.isEnabled();
 	}
 
+	public boolean isVisible(boolean preview) {
+		return !isHidden() && !node.isHidden() && (isEnabled() || preview);
+	}
+	
 	public String toString() {
 		return site + ":" + path;
 	}
