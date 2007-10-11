@@ -167,11 +167,11 @@ var RElement = {
 		var a = el.ancestors().concat([el]).concat(el.descendants());
 		for (var i = 0; i < a.length; i++) {
 			var e = a[i];
-			if (e.onlick) {
+			if (e.onlick && !e.riot_onclick) {
 				e.riot_onclick = e.onclick;
 				e.onclick = null;
 			}
-			if (e.tagName == 'A' && e.href) {
+			if (e.tagName == 'A' && e.href && !e.riot_href) {
 				e.riot_href = e.href;
 				e.href = 'javascript://';
 			}
