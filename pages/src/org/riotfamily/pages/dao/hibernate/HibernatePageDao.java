@@ -63,7 +63,7 @@ public class HibernatePageDao extends AbstractPageDao {
 	}
 
 	protected Object loadObject(Class clazz, Serializable id) {
-		return hibernate.load(clazz, id);
+		return hibernate.get(clazz, id);
 	}
 
 	protected void saveObject(Object object) {
