@@ -59,7 +59,7 @@
 		<many-to-one name="page" />
 	</class>
 
-	<class name="Site" table="riot_sites">
+	<class name="Site" table="riot_sites" lazy="false">
 		<cache usage="nonstrict-read-write" region="pages" />
 		<id name="id" access="field">
 			<generator class="native" />
