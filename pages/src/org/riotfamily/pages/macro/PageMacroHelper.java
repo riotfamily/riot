@@ -32,7 +32,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.components.context.PageRequestUtils;
-import org.riotfamily.components.editor.EditModeUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.pages.mapping.PageUrlBuilder;
@@ -44,9 +43,6 @@ import org.riotfamily.pages.model.Site;
 	* @since 6.5
 	*/
 public class PageMacroHelper {
-
-	private static final String PAGE_REFRESHED = PageMacroHelper.class.getName()
-			+ ".refreshedPage";
 
 	private PageDao pageDao;
 
@@ -64,11 +60,8 @@ public class PageMacroHelper {
 
 	public Page getCurrentPage() {
 		Page page = PageHandlerMapping.getPage(request);
-		if (PageRequestUtils.isPartialRequest(request)
-				&& request.getAttribute(PAGE_REFRESHED) == null) {
-
-			pageDao.refreshPage(page);
-			request.setAttribute(PAGE_REFRESHED, Boolean.TRUE);
+		if (PageRequestUtils.isPartialRequest(request)) {
+			return pageDao.loadPage(page.getId());
 		}
 		return page;
 	}
@@ -92,38 +85,16 @@ public class PageMacroHelper {
 		return null;
 	}
 
-	public boolean isVisible(Page page) {
-		return !page.isHidden() && !page.getNode().isHidden()
-				&& (page.isEnabled() || EditModeUtils.isEditMode(request));
-	}
-
-	public Collection getVisiblePages(Collection pages) {
+	public Collection getVisiblePages(Collection pages, boolean preview) {
 		ArrayList result = new ArrayList();
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
-			if (isVisible(page)) {
+			if (page.isVisible(preview)) {
 				result.add(page);
 			}
 		}
 		return result;
 	}
 
-	public List group(Collection pages, int size) {
-		ArrayList groups = new ArrayList();
-		int i = 0;
-		ArrayList group = null;
-		Iterator it = pages.iterator();
-		while (it.hasNext()) {
-			Page page = (Page) it.next();
-			if (isVisible(page)) {
-				if (i++ % size == 0) {
-					group = new ArrayList();
-					groups.add(group);
-				}
-				group.add(page);
-			}
-		}
-		return groups;
-	}
 }

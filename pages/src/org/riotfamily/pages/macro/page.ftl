@@ -61,14 +61,14 @@
   - Returns whether the given Page is visible and should be displayed in menus.
   -->
 <#function visible page>
-	<#return pageMacroHelper.isVisible(page) />
+	<#return page.isVisible(inplace.editMode) />
 </#function>
 
 <#--
   - Returns the given collection of pages containing only visible pages.
   -->
 <#function visiblePages pages>
-	<#return pageMacroHelper.getVisiblePages(pages) />
+	<#return pageMacroHelper.getVisiblePages(pages, inplace.editMode) />
 </#function>
 
 <#--

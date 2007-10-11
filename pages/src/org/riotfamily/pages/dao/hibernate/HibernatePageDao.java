@@ -139,10 +139,6 @@ public class HibernatePageDao extends AbstractPageDao {
 		return hibernate.list(c);
 	}
 
-	public void refreshPage(Page page) {
-		hibernate.refresh(page);
-	}
-
 	public PageAlias findPageAlias(Site site, String path) {
 		Criteria c = hibernate.createCacheableCriteria(PageAlias.class);
 		c.add(Restrictions.eq("site", site));

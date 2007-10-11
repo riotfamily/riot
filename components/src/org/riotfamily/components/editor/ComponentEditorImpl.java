@@ -212,14 +212,12 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		}
 	}
 
-	public String getLiveListHtml(String controllerId, Long listId)
-			throws RequestContextExpiredException {
-
-		Object contextKey = listId;
-		if (contextKey == null) {
-			contextKey = controllerId;
+	public List getLiveListHtml(ListRef[] ref) throws RequestContextExpiredException {
+		ArrayList html = new ArrayList();
+		for (int i = 0; i < ref.length; i++) {
+			html.add(getHtml(ref[i].getControllerId(), ref[i].getContextKey(), true));
 		}
-		return getHtml(controllerId, contextKey, true);
+		return html;
 	}
 
 	public String getPreviewListHtml(String controllerId, Long listId)

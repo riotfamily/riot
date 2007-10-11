@@ -18,7 +18,7 @@ riot.outline = {
 	},
 
 	hide: function(ev) {
-		if (riot && riot.outline) { 
+		if (window.riot && riot.outline) { 
 			riot.outline.top.hide();
 			riot.outline.right.hide();
 			riot.outline.bottom.hide();

@@ -329,8 +329,6 @@ riot.TypeInspector.prototype = {
 	}
 }
 
-riot.publishWidgets = [];
-
 riot.PublishWidget = Class.create();
 riot.PublishWidget.prototype = {
 	initialize: function(componentList, mode) {
@@ -344,7 +342,10 @@ riot.PublishWidget.prototype = {
 		this.live = false;
 		this.updateUI();
 		this.element.observe('click', this.toggleVersion.bind(this), true);
+		
+		this.index = riot.publishWidgets.length; 
 		riot.publishWidgets.push(this);
+		
 		riot.toolbar.applyButton.enable();
 		if (document.addEventListener) {
 			this.domListener = this.scaleOverlay.bind(this);
@@ -352,6 +353,10 @@ riot.PublishWidget.prototype = {
 		}		
 		this.show();		
 	},	
+	
+	getReference: function() {
+		return this.componentList.getReference();
+	},
 	
 	show: function() {
 		this.componentList.element.makePositioned();
@@ -407,19 +412,12 @@ riot.PublishWidget.prototype = {
 	showLive: function() {
 		if (this.live) return;
 		this.live = true;
-		if (!this.liveHtml) {
-			ComponentEditor.getLiveListHtml(this.componentList.controllerId,
-					this.componentList.id, this.setLiveHtml.bind(this));
-		}
-		else {
-			this.setHtml(this.liveHtml);
-		}
+		this.setHtml(this.liveHtml);
 		this.updateUI();
 	},	
 
 	setLiveHtml: function(html) {
 		this.liveHtml = html;
-		this.setHtml(html);
 	},
 
 	setHtml: function(html) {
@@ -454,7 +452,12 @@ riot.DiscardWidget = Class.extend(riot.PublishWidget, {
 	changesAvailable: function(instance) {
 		return instance.live;
 	},
-
+	
+	setLiveHtml: function(html) {
+		this.liveHtml = html;
+		this.setHtml(html);
+	},
+	
 	apply: function() {
 		if (this.live) {
 			this.previewHtml = this.liveHtml;
@@ -469,6 +472,7 @@ riot.AbstractWrapper = Class.create();
 riot.AbstractWrapper.prototype = {
 	initialize: function(el) {
 		this.element = el;
+		this.id = null;
 		el.componentList = this;
 		if (!el.id) el.id = 'riot-components-' + riot.listCount++;
 		this.controllerId = el.readAttribute('riot:controllerId');
@@ -479,7 +483,11 @@ riot.AbstractWrapper.prototype = {
 			this.parentList.childLists.push(this);
 		}
 	},
-
+	
+	getReference: function() {
+		return { controllerId: this.controllerId, listId: this.id };
+	},
+	
 	getComponents: function() {
 		if (!this.components) {
 			this.components = [];
@@ -567,19 +575,11 @@ riot.AbstractWrapper.prototype = {
 		if (enable) {
 			if (this.dirty && !this.parentList) this.publishWidget = new riot.DiscardWidget(this);
 		}
-		else {
-			if (this.publishWidget) this.publishWidget.destroy();
-			riot.toolbar.applyButton.disable();
-		}
 	},
 
 	publish: function(enable) {
 		if (enable) {
 			if (this.dirty && !this.parentList) this.publishWidget = new riot.PublishWidget(this);
-		}
-		else  {
-			if (this.publishWidget) this.publishWidget.destroy();
-			riot.toolbar.applyButton.disable();
 		}
 	},
 
@@ -637,7 +637,6 @@ riot.EntityList = Class.extend(riot.Entity, {
 riot.ComponentSet = Class.extend(riot.AbstractWrapper, {
 	initialize: function(el) {
 		this.SUPER(el);
-		this.id = null;
 		this.setDirty(this.getComponents().pluck('element').any(function(e) {
 			return e.readAttribute('riot:dirty') != null;
 		}));
@@ -651,7 +650,7 @@ riot.ComponentSet = Class.extend(riot.AbstractWrapper, {
 riot.ComponentList = Class.extend(riot.AbstractWrapper, {
 	initialize: function(el) {
 		this.SUPER(el);
-		this.id = el.readAttribute('riot:listId');;
+		this.id = el.readAttribute('riot:listId');
 		this.setDirty(el.readAttribute('riot:dirty'));		
 		this.maxComponents = el.readAttribute('riot:maxComponents');
 		this.minComponents = el.readAttribute('riot:minComponents');
@@ -839,4 +838,29 @@ dwr.engine.setErrorHandler(function(err, ex) {
 	}
 });
 
+riot.setLiveHtml = function(html) {
+	for (var i = 0; i < riot.publishWidgets.length; i++) {
+		riot.publishWidgets[i].setLiveHtml(html[i]);
+	}
+}
+
+if (riot.toolbar.buttons.publish) {
+	riot.toolbar.buttons.publish.beforeApply = 
+	riot.toolbar.buttons.discard.beforeApply = function(enable) {
+		if (enable) {
+			riot.publishWidgets = [];
+		}
+	};
+	riot.toolbar.buttons.publish.afterApply = 
+	riot.toolbar.buttons.discard.afterApply = function(enable) {
+		if (enable) {
+			var refs = riot.publishWidgets.invoke('getReference');
+			ComponentEditor.getLiveListHtml(refs, riot.setLiveHtml);
+		}
+		else {
+			riot.publishWidgets.invoke('destroy');
+			riot.toolbar.applyButton.disable();
+		}
+	};
+} 
 riot.toolbar.activate();

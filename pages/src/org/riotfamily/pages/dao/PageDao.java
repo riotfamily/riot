@@ -47,10 +47,6 @@ public interface PageDao {
 	 */
 	public Page loadPage(Long id);
 
-	/**
-	 * Re-loads the given Page from the database.
-	 */
-	public void refreshPage(Page page);
 
 	public Site findSite(String hostName, String path);
 		

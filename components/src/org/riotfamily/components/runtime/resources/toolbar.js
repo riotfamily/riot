@@ -226,11 +226,17 @@ riot.ToolbarButton.prototype = {
 	},
 
 	applyHandler: function(enable) {
+		if (this.beforeApply) {
+			this.beforeApply(enable);
+		}
 		var targets = this.getHandlerTargets();
 		for (var i = 0; i < targets.length; i++) {
 			if (targets[i][this.handler]) {
 				targets[i][this.handler](enable);
 			}
+		}
+		if (this.afterApply) {
+			this.afterApply(enable);
 		}
 	}
 
