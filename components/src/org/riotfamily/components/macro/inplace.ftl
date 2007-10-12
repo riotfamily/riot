@@ -1,5 +1,5 @@
-<#global currentComponentScope = .data_model />
-<#global currentListId = "" />
+<#assign scope = .data_model />
+<#assign currentListId = "" />
 <#assign editMode = inplaceMacroHelper.isEditMode() />
 
 <#--
@@ -45,7 +45,7 @@
 </#macro>
 
 <#macro entityList listId>
-	<#global currentListId = listId />
+	<#assign currentListId = listId />
 	<#if editMode && inplaceMacroHelper.storeContext()>
 		<div class="riot-components" riot:wrapper="entityList" riot:listId="${listId}" riot:controllerId="${common.includeUri}">
 			<#nested>
@@ -53,12 +53,12 @@
 	<#else>
 		<#nested />
 	</#if>
-	<#global currentListId = "" />
+	<#assign currentListId = "" />
 </#macro>
 
 <#macro componentSet attributes...>
 	<#if editMode && inplaceMacroHelper.storeContext()>
-		<div class="riot-components" riot:wrapper="componentSet" riot:controllerId="${common.includeUri}"${join(attributes)}>
+		<div class="riot-components" riot:wrapper="componentSet" riot:controllerId="${common.includeUri}"${common.joinAttributes(attributes)}>
 			<#nested>
 		</div>
 	<#else>
@@ -67,8 +67,8 @@
 </#macro>
 
 <#macro entity object form="">
-	<#local previousComponentScope = currentComponentScope />
-	<#global currentComponentScope = object />
+	<#local previousScope = scope />
+	<#assign scope = object />
 	<#if editMode>
 		<#local listId = currentListId />
 		<#if !listId?has_content>
@@ -89,13 +89,13 @@
 				"riot:listId": listId,
 				"riot:controllerId": common.includeUri} />
 		</#if>
-		<div ${join(attributes)}>
+		<div ${common.joinAttributes(attributes)}>
 			<#nested />
 		</div>
 	<#else>
 		<#nested />
 	</#if>
-	<#global currentComponentScope = previousComponentScope />
+	<#assign scope = previousScope />
 </#macro>
 
 <#--
@@ -107,7 +107,10 @@
   - See: <@editable> for a description of the supported parameters.
   -->
 <#macro text key tag="" alwaysUseNested=false textTransform=true attributes...>
-	<#local attributes = attributes + {'riot:textTransform': textTransform?string} />
+	<#local attributes = common.unwrapAttributes(attributes) />
+	<#if editMode>
+		<#local attributes = attributes + {'riot:textTransform': textTransform?string} />
+	</#if>
 	<@editable key=key editor="text" tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
 </#macro>
 
@@ -135,11 +138,11 @@
 
 <#macro editable key editor="text" tag="" alwaysUseNested=false attributes... >
 	<#compress>
-		<#local attributes = unwrap(attributes) />
+		<#local attributes = common.unwrapAttributes(attributes) />
 		<#if alwaysUseNested>
 			<#local value><#nested /></#local>
 		<#else>
-			<#local value = currentComponentScope[key]?if_exists />
+			<#local value = scope[key]?if_exists />
 			<#if !value?has_content>
 				<#local value><#nested /></#local>
 			</#if>
@@ -153,9 +156,9 @@
 				<#local element="div" />
 				<#local attributes = attributes + {"class" : ("riot-editor " + attributes["class"]?if_exists)?trim} />
 			</#if>
-			<${element} riot:key="${key}" riot:editorType="${editor}"${join(attributes)}>${value}</${element}>
+			<${element} riot:key="${key}" riot:editorType="${editor}"${common.joinAttributes(attributes)}>${value}</${element}>
 		<#elseif tag?has_content>
-			<${tag}${join(attributes)}>${value}</${tag}>
+			<${tag}${common.joinAttributes(attributes)}>${value}</${tag}>
 		<#else>
 			${value}
 		</#if>
@@ -174,7 +177,7 @@
 			<#local maxHeight = height />
 			<#local defaultHeight = height />
 		</#if>
-		<#local value = currentComponentScope[key]!default>
+		<#local value = scope[key]!default>
 		<#if value?has_content>
 			<#if transform?is_string>
 				<#local src = transform?replace("*", value) />
@@ -219,12 +222,23 @@
 		</#if>
 		<#if value?has_content || editMode>
 			<#if tag == "img">	
-				<img${join(attributes)} />
+				<img${common.joinAttributes(attributes)} />
 			<#else>
-				<${tag}${join(attributes)}><#nested /></${tag}>
+				<${tag}${common.joinAttributes(attributes)}><#nested /></${tag}>
 			</#if>
 		</#if>
 	</#compress>
+</#macro>
+
+<#macro link key href tag="a" externalClass="externalLink" externalTarget="_blank" alwaysUseNested=false textTransform=true attributes...>
+	<#local attributes = common.unwrapAttributes(attributes) + {"href": href} />
+	<#if common.isExternalUrl(href)>
+		<#local attributes = attributes + {
+			"target": externalTarget,
+			"class": ((attributes.class!) + " " + externalClass)?trim
+		} />
+	</#if>
+	<@text key=key tag=tag alwaysUseNested=alwaysUseNested textTransform=textTransform attributes=attributes><#nested /></@text>
 </#macro>
 
 <#--
@@ -238,63 +252,32 @@
   -
   -->
 <#macro use container form="" tag="" attributes...>
-	<#local attributes = unwrap(attributes) />
-	<#local previousComponentScope = currentComponentScope />
-	<#global currentComponentScope = buildModel(container) />
+	<#local attributes = common.unwrapAttributes(attributes) />
+	<#local previousScope = scope />
+	<#assign scope = buildModel(container) />
 	${inplaceMacroHelper.tag(container)}
 	<#if editMode>
 		<#if !tag?has_content>
 			<#local tag = "div" />
 		</#if>
-		<#local attributes = addContainerAttributes(attributes, container, form) />
-	</#if>
-	<#if tag?has_content>
-		<${tag}${join(attributes)}>
-			<#nested currentComponentScope>
-		</${tag}>
-	<#else>
-		<#nested currentComponentScope>
-	</#if>
-	<#global currentComponentScope = previousComponentScope />
-</#macro>
-
-<#function addContainerAttributes attributes versionContainer form="">
-	<#local attributes = unwrap(attributes) />
-	<#if versionContainer?has_content && editMode>
 		<#local attributes = attributes + {
-				"riot:containerId": versionContainer.id?c,
-				"class": ("riot-component " + attributes["class"]?if_exists)?trim
+				"riot:containerId": container.id?c,
+				"class": ("riot-component " + attributes["class"]!)?trim
 		} />
 		<#if form?has_content>
-			<#local formUrl = inplaceMacroHelper.getFormUrl(form, versionContainer.id)?if_exists />
-			<#if formUrl?has_content>
-				<#local attributes = attributes + {"riot:form": formUrl} />
-			</#if>
+			<#local formUrl = inplaceMacroHelper.getFormUrl(form, container.id)! />
+			<#local attributes = attributes + {"riot:form": formUrl} />
 		</#if>
-		<#if versionContainer.dirty>
+		<#if container.dirty>
 			<#local attributes = attributes + {"riot:dirty": "true"} />
 		</#if>
 	</#if>
-	<#return attributes />
-</#function>
-
-<#function unwrap attributes>
-	<#if attributes?is_sequence>
-		<#return {} />
-	<#elseif attributes.attributes?exists>
-		<#return attributes.attributes />
+	<#if tag?has_content>
+		<${tag}${common.joinAttributes(attributes)}>
+			<#nested>
+		</${tag}>
+	<#else>
+		<#nested>
 	</#if>
-	<#return attributes />
-</#function>
-
-<#function join attributes>
-	<#local attrs = "" />
-	<#if attributes?is_hash>
-		<#list attributes?keys as attributeName>
-			<#if attributes[attributeName]?has_content>
-				<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName]?html + "\"" />
-			</#if>
-		</#list>
-	</#if>
-	<#return attrs />
-</#function>
+	<#assign scope = previousScope />
+</#macro>

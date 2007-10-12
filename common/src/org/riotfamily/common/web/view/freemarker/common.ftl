@@ -4,7 +4,8 @@
 <#assign topLevelHandlerName = commonMacroHelper.getTopLevelHandlerName()?if_exists />
 
 <#--
-  - Macro that includes the given URI using a RequestDispatcher.
+  - Includes the given URI using a RequestDispatcher. The argument may also be
+  - a sequence of URIs, in which case multiple includes are performed.  
   -->
 <#macro include uri="">
 <#compress>
@@ -19,21 +20,41 @@
 </#macro>
 
 <#macro setAttribute name value>
-	${request.setAttribute(name, value)?if_exists}
+	${request.setAttribute(name, value)!}
 </#macro>
 
+<#--
+  - Adds the contextPath and sessionId to the given URI if necessary. 
+  -->
 <#function url uri>
 	<#return commonMacroHelper.resolveAndEncodeUrl(uri) />
 </#function>
 
+<#--
+  - Adds the contextPath and a timestamp to the given URI.
+  -->
+<#function resource uri>
+	<#return url(commonMacroHelper.addTimestamp(uri)) />
+</#function>
+
+<#--
+  - Returns whether the given URL is external, i.e. has a schema part.
+  -->
 <#function isExternalUrl url>
 	<#return commonMacroHelper.isExternalUrl(url) />
 </#function>
 
-<#function absoluteUrl uri>
-	<#return commonMacroHelper.getAbsoluteUrl(uri) />
+<#--
+  - Converts the given path into an absolute URL by adding the protocol,
+  - server-name, port and contextPath of the current request.
+  -->
+<#function absoluteUrl path>
+	<#return commonMacroHelper.getAbsoluteUrl(path) />
 </#function>
 
+<#--
+  - Returns the URL for the given handlerName. 
+  -->
 <#function urlForHandler handlerName attributes={} prefix="">
 	<#return url(commonMacroHelper.getUrlForHandler(handlerName, attributes, prefix)) />
 </#function>
@@ -42,18 +63,24 @@
 	<#return handlerName == topLevelHandlerName />
 </#function>
 
-<#function resource uri>
-	<#return url(commonMacroHelper.addTimestamp(uri)) />
-</#function>
-
-<#function partition collection property>
-	<#return commonMacroHelper.partition(collection, property) />
-</#function>
-
+<#--
+  - Returns a random item from the given collection.
+  -->
 <#function randomItem(collection)>
 	<#local index = commonMacroHelper.random.nextInt(collection?size) />
 	<#return collection[index] />
 </#function>
+
+<#--
+  - Partitions a collection by inspecting the specified property
+  - of the contained items. If the property value is different than the 
+  - previous one, a new group is created and added to the returned sequence. 
+  - Each group consists of a hash with a 'title' and an 'items' property.    
+  -->
+<#function partition collection property>
+	<#return commonMacroHelper.partition(collection, property) />
+</#function>
+
 
 <#function baseName url>
 	<#return commonMacroHelper.baseName(url) />
@@ -81,3 +108,44 @@
 </#function>
 
 <#macro message code args=[] default=code>${commonMacroHelper.getMessage(code, args, default)}</#macro>
+
+
+<#function unwrapAttributes attributes>
+	<#if attributes?is_sequence>
+		<#return {} />
+	<#elseif attributes.attributes?exists>
+		<#return attributes.attributes />
+	</#if>
+	<#return attributes />
+</#function>
+
+<#function joinAttributes attributes>
+	<#local attrs = "" />
+	<#if attributes?is_hash>
+		<#list attributes?keys as attributeName>
+			<#if attributes[attributeName]?has_content>
+				<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName]?html + "\"" />
+			</#if>
+		</#list>
+	</#if>
+	<#return attrs />
+</#function>
+
+<#macro if value="">
+	<#if !(value?is_string && !value?has_content)><#nested value /></#if>
+</#macro>
+
+<#macro link href="" tag="a" externalClass="externalLink" externalTarget="_blank" attributes...>
+	<#if href?has_content>
+		<#local attributes = unwrapAttributes(attributes) + {"href": href} />
+		<#if isExternalUrl(href)>
+			<#local attributes = attributes + {
+				"target": externalTarget,
+				"class": ((attributes.class!) + " " + externalClass)?trim
+			} />
+		</#if>
+		<${tag}${joinAttributes(attributes)}><#nested /></${tag}>
+	<#else>
+		<#nested />
+	</#if>
+</#macro>

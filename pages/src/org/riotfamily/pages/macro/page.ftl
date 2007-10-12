@@ -1,4 +1,11 @@
-<#global currentPageScope = pageMacroHelper.getCurrentPage()! />
+<#assign scope = false />
+
+<#function currentScope>
+	<#if scope?is_boolean>
+		<#return currentPage() />
+	</#if>
+	<#return scope />
+</#function>
 
 <#--
   - Returns the current Page as resolved by the PageHandlerMapping.
@@ -15,17 +22,10 @@
 </#function>
 
 <#--
-  - Returns a collection containing the visible child-pages of the given (or current) page.
+  - Returns all top-level pages.
   -->
-<#function childPages page=currentPageScope>
-	<#return visiblePages(page.childPages) />
-</#function>
-
-<#--
-  - Returns a collection containing the given page with its siblings in the correct order.
-  -->
-<#function pageAndSiblings page=currentPageScope>
-	<#return visiblePages(page.node.parent.getChildPages(page.site)) />
+<#function topLevelPages site=currentSite()>
+	<#return pageMacroHelper.getTopLevelPages(site) />
 </#function>
 
 <#--
@@ -44,23 +44,16 @@
 </#function>
 
 <#--
-  - Returns all top-level pages.
-  -->
-<#function topLevelPages site=currentSite()>
-	<#return pageMacroHelper.getTopLevelPages(site) />
-</#function>
-
-<#--
   - Returns the URL of the given page.
   -->
-<#function url page>
+<#function url page=currentScope()>
 	<#return common.url(pageMacroHelper.getUrl(page)) />
 </#function>
 
 <#--
   - Returns whether the given Page is visible and should be displayed in menus.
   -->
-<#function visible page>
+<#function visible page=currentScope()>
 	<#return page.isVisible(inplace.editMode) />
 </#function>
 
@@ -72,61 +65,66 @@
 </#function>
 
 <#--
-  - Returns the page property with the given key.
+  - Returns a collection containing the visible child-pages of the given (or current) page.
   -->
-<#function property page key>
-	<#if !page?is_hash>
-		<#local page = pageForHandler(page) />
-	</#if>
-	<#return inplace.buildModel(page.versionContainer)[key] />
+<#function childPages page=currentScope()>
+	<#return visiblePages(page.childPages) />
 </#function>
 
 <#--
-  - Returns the page property with the given key, falling back to the
-  - pathComponent (converted to title-case) if the property is not set.
+  - Returns a collection containing the given page with its siblings in the correct order.
   -->
-<#function title page=currentPageScope key="title">
-	<#local title = page.getProperty(key, inplace.editMode)?if_exists />
-	<#if !title?has_content>
-		<#local title = common.toTitleCase(page.pathComponent) />
-	</#if>
-	<#return title />
+<#function pageAndSiblings page=currentScope()>
+	<#return visiblePages(page.node.parent.getChildPages(page.site)) />
 </#function>
 
-<#macro use page=currentPage() form="" tag="" attributes...>
-	<#local previousPageScope = currentPageScope />
-	<#global currentPageScope = page />
-	<#local container = page.versionContainer />
-	<#local attributes = inplace.unwrap(attributes) />
-	<#local previousComponentScope = currentComponentScope />
-	<#global currentComponentScope = inplace.buildModel(container) />
-	${inplaceMacroHelper.tag(container)}
-	<#if inplace.editMode>
-		<#if !tag?has_content>
-			<#local tag = "div" />
-		</#if>
-		<#local attributes = inplace.addContainerAttributes(attributes, container, form) />
-	</#if>
-	<#if tag?has_content>
-		<${tag}${inplace.join(attributes)}>
-			<#nested currentComponentScope>
-		</${tag}>
-	<#else>
-		<#nested currentComponentScope>
-	</#if>
-	<#global currentComponentScope = previousComponentScope />
-	<#global currentPageScope = previousPageScope />
-</#macro>
+<#--
+  - Returns a sequence containing the page itself (as last element) 
+  - preceded by its ancestors.  
+  -->
+<#function ancestors page=currentScope()>
+	<#return page.ancestors />
+</#function>
 
+<#--
+  - Returns the page property 'title', falling back to the
+  - pathComponent (converted to title-case) if the property is not set.
+  -->
+<#function title page=currentScope()>
+	<#return page.getTitle(inplace.editMode)! />
+</#function>
+
+
+<#function properties>
+	<#if !propertyScope??>
+		<#assign propertyScope = inplace.buildModel(currentPage().versionContainer) />
+	</#if>
+	<#return propertyScope />
+</#function>
+
+<#macro use page=currentScope() form="" tag="" attributes...>
+	<#if !tag?has_content && !scope?is_boolean && scope == page>
+		<#nested />
+	<#else>
+		<#local attributes = common.unwrapAttributes(attributes) />
+		<#local previousScope = scope />
+		<#local previousPropertyScope = properties() />
+		<#assign scope = page />
+		<@inplace.use container=page.versionContainer form=form tag=tag attributes=attributes>
+			<#assign propertyScope = inplace.scope />
+			<#nested />
+		</@inplace.use>
+		<#assign propertyScope = previousPropertyScope />
+		<#assign scope = previousScope />
+	</#if>
+</#macro>
 
 <#--
   - Renders an editable HTML link to the given Page.
   -->
-<#macro link page=currentPageScope tag="a" form="" titleKey="title" href="" attributes ...>
-	<#local attributes = inplace.addContainerAttributes(attributes, page.versionContainer, form) />
-	<#local attributes = attributes + {"href" : href?has_content?string(href, url(page))} />
-	<#local previousComponentScope = currentComponentScope />
-	<#global currentComponentScope = inplace.buildModel(page.versionContainer) />
-	<@inplace.editable editor="text" key=titleKey tag=tag attributes=attributes>${title(page, titleProperty)}</@inplace.editable>
-	<#global currentComponentScope = previousComponentScope />
+<#macro link page=currentScope() tag="a" labelKey="title" attributes...>
+	<#local attributes = common.unwrapAttributes(attributes) />
+	<@use page=page>
+		<@inplace.link key=labelKey href=url() tag=tag attributes=attributes>${title()}</@inplace.link>
+	</@use>
 </#macro>
