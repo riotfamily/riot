@@ -61,6 +61,7 @@
 							</xsd:choice>
 							<xsd:attribute name="slot" use="required" />
 							<xsd:attribute name="url" />
+							<xsd:attribute name="data" />
 							<xsd:attribute name="push-up" type="xsd:positiveInteger" />
 						</xsd:complexType>
 					</xsd:element>

@@ -275,13 +275,18 @@ public class TemplateController extends AbstractController
 	 * given slot name.
 	 */
 	protected String getSlotUrl(String location, String slot) {
-		StringBuffer url = new StringBuffer();
-		url.append(location);
-		url.append((url.indexOf("?") != -1) ? '&' : '?');
-		url.append(SLOT_PARAMETER);
-		url.append('=');
-		url.append(slot);
-		return url.toString();
+		if (location.startsWith("data://")) {
+			return location.substring(7);
+		}
+		else {
+			StringBuffer url = new StringBuffer();
+			url.append(location);
+			url.append((url.indexOf("?") != -1) ? '&' : '?');
+			url.append(SLOT_PARAMETER);
+			url.append('=');
+			url.append(slot);
+			return url.toString();
+		}
 	}
 
 	protected ModelAndView handleRequestInternal(HttpServletRequest request,

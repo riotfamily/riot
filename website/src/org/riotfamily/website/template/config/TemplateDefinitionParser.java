@@ -72,17 +72,23 @@ public class TemplateDefinitionParser extends GenericBeanDefinitionParser {
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();
 			String slot = XmlUtils.getAttribute(ele, "slot");
-			Object url = XmlUtils.getAttribute(ele, "url");
-			if (url == null) {
+			Object value = XmlUtils.getAttribute(ele, "url");
+			if (value == null) {
+				value = XmlUtils.getAttribute(ele, "data");
+				if (value != null) {
+					value = "data://" + value;
+				}
+			}
+			if (value == null) {
 				String templateId = XmlUtils.getAttribute(element, "id");
 				List handlersElements = XmlUtils.getChildElements(ele);
 				if (handlersElements.size() == 1) {
-					url = getHandlerUrl(templateId, slot, 
+					value = getHandlerUrl(templateId, slot, 
 							(Element) handlersElements.get(0), 
 							parserContext);
 				}
 				else if (handlersElements.size() > 1) {
-					url = getHandlerUrls(templateId, slot, 
+					value = getHandlerUrls(templateId, slot, 
 							handlersElements, parserContext);
 				}
 			}
@@ -94,7 +100,7 @@ public class TemplateDefinitionParser extends GenericBeanDefinitionParser {
 				}
 				pushUpSlots.add(slot);
 			}
-			configuration.put(slot, url);
+			configuration.put(slot, value);
 		}
 
 		it = DomUtils.getChildElementsByTagName(element, "remove").iterator();
