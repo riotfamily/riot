@@ -14,7 +14,6 @@
 		<!-- We have to use cascade "update" to ensure that nodes are reattached -->
 		<many-to-one name="parent" insert="false" update="false" cascade="save-update"/>
 
-		<!-- We must not use all-delete-orphan here, because otherwise nodes can not be moved to another parent -->
 		<list name="childNodes">
 			<cache usage="nonstrict-read-write" region="pages" />	
 			<key column="parent" />
@@ -38,7 +37,8 @@
 			<generator class="native" />
 		</id>
 		<many-to-one name="site" />
-		<many-to-one name="node" insert="false" update="false" />
+		<!-- We have to use cascade "update" to ensure getParentPage() can be invoked after an update -->
+		<many-to-one name="node" insert="false" update="false" cascade="save-update" />
 		<property name="published" />
 		<property name="creationDate" />
 		<property name="pathComponent" />
