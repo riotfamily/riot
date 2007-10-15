@@ -87,6 +87,13 @@
 </#function>
 
 <#--
+  - Returns the handlerName or an empty String, if null.
+  -->
+<#function handlerName page=currentScope()>
+	<#return page.handlerName! />
+</#function>
+
+<#--
   - Returns the page property 'title', falling back to the
   - pathComponent (converted to title-case) if the property is not set.
   -->
