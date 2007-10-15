@@ -202,6 +202,10 @@ var RElement = {
 		var options = Object.extend({
 			setWidth: true,
 		    setHeight: true,
+		    setLeft: true,
+		    setTop: true,
+		    offsetLeft: 0,
+		    offsetTop: 0,
 	    	offsetWidth: 0,
 	    	offsetHeight: 0
 	    }, arguments[2] || {});
@@ -215,9 +219,18 @@ var RElement = {
 	    	}
 	    	el.style.height = source.offsetHeight + options.offsetHeight + 'px';
 	    }
-		Position.clone(source, el, Object.extend(options, {
-			setWidth: false, setHeight: false
-		}));
+	    if (Position.offsetParent(el) == document.body) {
+	    	// Shortcut, if the target offsetParent is document.body
+	    	// Works around a Prototype/Safari 3.0.3+ bug with with Position.page()
+	    	var p = Position.cumulativeOffset(source);
+	    	if(options.setLeft) el.style.left = (p[0] + options.offsetLeft) + 'px';
+    		if(options.setTop) el.style.top = (p[1] + options.offsetTop) + 'px';
+	    }
+	    else {
+			Position.clone(source, el, Object.extend(options, {
+				setWidth: false, setHeight: false
+			}));
+		}
 		return el;
 	},
 
