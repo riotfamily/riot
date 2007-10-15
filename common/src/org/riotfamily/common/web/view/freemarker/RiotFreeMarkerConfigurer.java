@@ -59,6 +59,8 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 	
 	private int templateUpdateDelay = 5;
 	
+	private String urlEscapingCharset = "UTF-8";
+	
 	
 	/**
 	 * Sets the macro libraries to be auto-imported, keyed by their namespace.
@@ -92,6 +94,15 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 	}
 	
 	/**
+	 * Sets the URL escaping charset. Allows null, which means that the 
+	 * output encoding will be used for URL escaping.
+	 * Default is <code>UTF-8</code>.
+	 */
+	public void setUrlEscapingCharset(String urlEscapingCharset) {
+		this.urlEscapingCharset = urlEscapingCharset;
+	}
+	
+	/**
 	 * Sets whether the FreeMarker template cache should be used 
 	 * (default is <code>true</code>).
 	 */
@@ -115,6 +126,7 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 	protected void postProcessConfiguration(Configuration config) 
 			throws IOException, TemplateException {
 		
+		config.setURLEscapingCharset(urlEscapingCharset);
 		config.setWhitespaceStripping(whitespaceStripping);
 		importMacroLibraries(config);
 		config.setTemplateExceptionHandler(exceptionHandler);
