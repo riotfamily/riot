@@ -25,6 +25,7 @@ package org.riotfamily.components.editor;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,7 +43,7 @@ public class FileUploadController implements Controller {
 
 	private String fileParam = "Filedata";
 	
-	private String tokenParam = "token";
+	private String tokenAttribute = "token";
 	
 	private UploadManagerImpl uploadManager;
 	
@@ -56,13 +57,16 @@ public class FileUploadController implements Controller {
 		if (request instanceof MultipartHttpServletRequest) {
 			handleMultipartRequest((MultipartHttpServletRequest) request, response);
 		}
+		else {
+			response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+		}
 		return null;
 	}
 	
 	protected void handleMultipartRequest(MultipartHttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 
-		String token = request.getParameter(tokenParam);
+		String token = (String) request.getAttribute(tokenAttribute);
 		if (uploadManager.isValidToken(token)) {
 			MultipartFile multipartFile = request.getFile(fileParam);
 			if ((multipartFile != null) && (!multipartFile.isEmpty())) {
@@ -70,10 +74,14 @@ public class FileUploadController implements Controller {
 				File tempFile = File.createTempFile("upload", ".bin");
 				multipartFile.transferTo(tempFile);
 				uploadManager.storeFile(token, tempFile, fileName);
+				PrintWriter out = response.getWriter();
+				out.println(" ");
+				out.flush();
 			}
 		}
 		else {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+			response.getWriter().print("Invalid token");
 		}
 	}
 	

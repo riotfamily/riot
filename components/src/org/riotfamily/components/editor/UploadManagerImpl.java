@@ -60,6 +60,7 @@ public class UploadManagerImpl implements UploadManager {
 	public String generateToken() {
 		String token = tokenGenerator.generate();
 		filePaths.put(token, null);
+		log.debug("Generated token: " + token);
 		return token;
 	}
 	
@@ -72,7 +73,9 @@ public class UploadManagerImpl implements UploadManager {
 	}
 	
 	boolean isValidToken(String token) {
-		return filePaths.containsKey(token);
+		boolean valid = filePaths.containsKey(token);
+		log.debug((valid ? "Valid" : "Invalid") + " token: " + token);
+		return valid;
 	}
 	
 	public void invalidateToken(String token) {

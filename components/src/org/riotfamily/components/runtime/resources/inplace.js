@@ -652,7 +652,7 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 	setToken: function(token) {
 		this.token = token;
 		this.upload = new SWFUpload({
-			upload_script: riot.path + '/components/upload?token=' + token,
+			upload_script: riot.path + '/components/upload/' + token,
 			flash_path: Resources.basePath + 'swfupload/SWFUpload.swf',
 			allowed_filetypes: '*.jpg;*.gif;*.png',
 			allowed_filetypes_description: 'Images',
@@ -672,12 +672,14 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 			UploadManager.invalidateToken(this.token);
 		}
 	},
-
+	
 	edit: function() {
+		riot.outline.hide();
 		this.upload.browse();
 	},	
 	
-	uploadFileComplete: function() {
+	uploadFileComplete: function(file) {
+		SWFUpload.debug('Upload complete.');
 		UploadManager.getFilePath(this.token, this.setPath.bind(this));
 	},
 	
