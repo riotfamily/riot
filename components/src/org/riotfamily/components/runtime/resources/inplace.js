@@ -11,6 +11,12 @@ riot.outline = {
 	
 	show: function(el, onclick, excludes) {
 		if (!window.riot || riot.outline.suspended) return;
+		if (el.offsetHeight == 0) {
+			// Firefox wrongly reports the offsetHeight as 0, when an
+			// inline element contains images but no text nodes ...
+			var img = el.down('img');
+			if (img) el = img;
+		}
 		riot.outline.top.copyPosFrom(el, {setHeight: false, offsetTop: -1, offsetLeft: -1, offsetWidth: 2}).show();
 		riot.outline.right.copyPosFrom(el, {setWidth: false, offsetLeft: el.offsetWidth}).show();
 		riot.outline.bottom.copyPosFrom(el, {setHeight: false, offsetLeft: -1, offsetTop: el.offsetHeight, offsetWidth: 2}).show();
