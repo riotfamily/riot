@@ -24,6 +24,7 @@
 package org.riotfamily.pages.mapping;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
 
 import javax.servlet.ServletException;
@@ -70,6 +71,7 @@ public class FolderFilterPlugin extends FilterPlugin {
 	
 	private PlatformTransactionManager tx;
 	
+	private String siteChooserUrl;
 	
 	public FolderFilterPlugin(PageDao pageDao,
 			PageUrlBuilder pageUrlBuilder, 
@@ -78,6 +80,16 @@ public class FolderFilterPlugin extends FilterPlugin {
 		this.pageDao = pageDao;
 		this.pageUrlBuilder = pageUrlBuilder;
 		this.tx = tx;
+	}
+	
+	/**
+	 * Sets an URL to which the user will be redirected if no site matches.
+	 * Default is <code>null</code>, which means that no redirect is sent and 
+	 * the request is handed on to the next plugin in the chain.  
+	 * @param  url A context-relative URL
+	 */
+	public void setSiteChooserUrl(String url) {
+		this.siteChooserUrl = url;
 	}
 
 	public void doFilter(HttpServletRequest request, 
@@ -89,11 +101,8 @@ public class FolderFilterPlugin extends FilterPlugin {
 		if (path.lastIndexOf('.') < path.lastIndexOf('/')) {
 			TransactionStatus status = tx.getTransaction(TX_DEF);
 			try {
-				Page folder = getFolder(request.getServerName(), path);
-				if (folder != null) {
-					requestHandled = true;
-					sendRedirect(folder, request, response);
-				}
+				requestHandled = sendRedirect(request.getServerName(), path, 
+						request, response);
 			}
 			catch (Exception ex) {
 				tx.rollback(status);
@@ -106,24 +115,41 @@ public class FolderFilterPlugin extends FilterPlugin {
 		}
 	}
 
-	
-	private Page getFolder(String hostName, String path) { 
+	private boolean sendRedirect(String hostName, String path, 
+			HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
+		
 		Site site = pageDao.findSite(hostName, path);
 		if (site == null) {
-			return null;
+			if (siteChooserUrl != null) {
+				response.sendRedirect(response.encodeRedirectURL(
+						request.getContextPath() + siteChooserUrl));
+				
+				return true;
+			}
+			return false;
 		}
 		path = site.stripPrefix(path);
 		if (path.endsWith("/")) {
 			path = path.substring(0, path.length() - 1);
 		}
+		if (path.length() == 0) {
+			Collection topLevelPages = pageDao.getRootNode().getChildPages(site);
+			sendRedirect(topLevelPages, request, response);
+			return true;
+		}
+		
 		Page page = pageDao.findPage(site, path);
 		if (page == null) {
 			page = findWildcardPage(site, path);
 		}
 		if (page == null || !page.isFolder()) {
-			return null;
+			return false;
 		}
-		return page;
+		
+		sendRedirect(page.getChildPages(), request, response);
+		
+		return true;
 	}
 	
 	protected Page findWildcardPage(Site site, String urlPath) {
@@ -143,16 +169,11 @@ public class FolderFilterPlugin extends FilterPlugin {
 		}
 		return page;
 	}
-		
-	private boolean isRequestable(Page page) {
-		return page.isEnabled() || AccessController.isAuthenticatedUser();
-	}
 	
-	
-	private void sendRedirect(Page folder, HttpServletRequest request,
+	private void sendRedirect(Collection pages, HttpServletRequest request, 
 			HttpServletResponse response) throws IOException {
 		
-		String url = getFirstRequestableChildPageUrl(folder);
+		String url = getFirstRequestablePageUrl(pages);
 		if (url != null) {
 			response.sendRedirect(response.encodeRedirectURL(
 					request.getContextPath() + url));
@@ -162,8 +183,12 @@ public class FolderFilterPlugin extends FilterPlugin {
 		}
 	}
 	
-	private String getFirstRequestableChildPageUrl(Page folder) {
-		Iterator it = folder.getChildPages().iterator();
+	private boolean isRequestable(Page page) {
+		return page.isEnabled() || AccessController.isAuthenticatedUser();
+	}
+		
+	private String getFirstRequestablePageUrl(Collection pages) {
+		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
 			if (isRequestable(page)) {
@@ -172,4 +197,5 @@ public class FolderFilterPlugin extends FilterPlugin {
 		}
 		return null;
 	}
+
 }
