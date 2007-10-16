@@ -808,8 +808,9 @@ riot.ComponentDragObserver.prototype = {
 
 riot.adoptFloatAndClear = function(el) {
 	if (!el) return;
-	var child = el.down();
-	if (child) {
+	var c = el.childElements();
+	if (c.length == 1) {
+		var child = c[0];
 		var cssFloat = child.getStyle('float');
 		if (cssFloat != 'none') {
 			el.style.zIndex = 1;
