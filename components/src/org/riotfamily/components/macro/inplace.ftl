@@ -154,7 +154,7 @@
 				<#local element=tag />
 			<#else>
 				<#local element="div" />
-				<#local attributes = attributes + {"class" : ("riot-editor " + attributes["class"]?if_exists)?trim} />
+				<#local attributes = attributes + {"class" : ("riot-editor " + attributes.class?if_exists)?trim} />
 			</#if>
 			<${element} riot:key="${key}" riot:editorType="${editor}"${common.joinAttributes(attributes)}>${value}</${element}>
 		<#elseif tag?has_content>
@@ -193,13 +193,13 @@
 			<#if tag == "img">
 				<#local attributes = attributes + {
 					"src": riot.resource("style/images/pixel.gif"),
-					"class": ("nosrc " + attributes["class"]!)?trim,
+					"class": ("nosrc " + attributes.class!)?trim,
 					"width": defaultWidth,
 					"height": defaultHeight		
 					} />
 			<#else>
 				<#local attributes = attributes + {
-					"class": ("nosrc " + attributes["class"]!)?trim
+					"class": ("nosrc " + attributes.class!)?trim
 					} />
 			</#if>	
 		</#if>
@@ -207,10 +207,10 @@
 			<#if transform?is_string>
 				<#local srcTemplate = transform />
 			<#else>
-				<#local srcTemplate = transform("*") />
+				<#local srcTemplate = transform("/*") />
 			</#if>
 			<#local attributes = attributes + {
-				"class": ("riot-editor " + attributes["class"]!)?trim,
+				"class": ("riot-editor " + attributes.class!)?trim,
 				"riot:editorType": "image",
 				"riot:key": key,
 				"riot:srcTemplate": srcTemplate,
@@ -258,11 +258,14 @@
 	${inplaceMacroHelper.tag(container)}
 	<#if editMode>
 		<#if !tag?has_content>
-			<#local tag = "div" />
+			<#local tag = "span" />
+			<#local attributes = attributes + {
+				"class": ("riot-phantom " + attributes.class!)?trim
+			} />
 		</#if>
 		<#local attributes = attributes + {
 				"riot:containerId": container.id?c,
-				"class": ("riot-component " + attributes["class"]!)?trim
+				"class": ("riot-component " + attributes.class!)?trim
 		} />
 		<#if form?has_content>
 			<#local formUrl = inplaceMacroHelper.getFormUrl(form, container.id)! />
