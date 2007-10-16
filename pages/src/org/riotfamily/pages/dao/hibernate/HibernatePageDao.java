@@ -146,6 +146,16 @@ public class HibernatePageDao extends AbstractPageDao {
 		return (PageAlias) hibernate.uniqueResult(c);
 	}
 
+	protected void deleteAliases(Site site) {
+		log.info("Deleting aliases for " + site);
+		Query query = hibernate.createQuery("delete " 
+				+ PageAlias.class.getName()
+				+  " alias where alias.site = :site");
+
+		hibernate.setParameter(query, "site", site);
+		hibernate.executeUpdate(query);
+	}
+	
 	protected void clearAliases(Page page) {
 		log.info("Clearing aliases for " + page);
 		Query query = hibernate.createQuery("update " + PageAlias.class.getName()

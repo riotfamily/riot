@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -234,6 +235,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 
 	protected abstract void clearAliases(Page page);
+	
+	protected abstract void deleteAliases(Site site);
 
 	protected void deleteAlias(Page page) {
 		PageAlias alias = findPageAlias(page.getSite(), page.getPath());
@@ -296,6 +299,25 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	public void saveSite(Site site) {
 		saveObject(site);
+		Site masterSite = site.getMasterSite();
+		if (masterSite == null) {
+			masterSite = getDefaultSite();
+		}
+		translateSystemPages(getRootNode(), masterSite, site);
+	}
+	
+	private void translateSystemPages(PageNode node, Site masterSite, Site site) {
+		List childNodes = node.getChildNodes();
+		if (childNodes != null) {
+			Iterator it = childNodes.iterator();
+			while (it.hasNext()) {
+				PageNode childNode = (PageNode) it.next();
+				if (childNode.isSystemNode()) {
+					addTranslation(childNode.getPage(masterSite), site);
+					translateSystemPages(childNode, masterSite, site);
+				}
+			}
+		}
 	}
 
 	public void updateSite(Site site) {
@@ -303,7 +325,12 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 
 	public void deleteSite(Site site) {
-		//FIXME Delete pages etc.
+		Iterator it = getRootNode().getChildPages(site).iterator();
+		while (it.hasNext()) {
+			Page page = (Page) it.next();
+			deletePage(page);
+		}
+		deleteAliases(site);
 		deleteObject(site);
 	}
 
