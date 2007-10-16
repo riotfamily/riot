@@ -77,40 +77,47 @@ body > #riot-inspector {
 	background-position: -128px -32px;
 }
 
-#riot-toolbar-button-properties {
+#riot-toolbar-button-editImages {
 	background-position: -160px 0;
 }
-#riot-toolbar-button-properties.toolbar-button-active {
+#riot-toolbar-button-editImages.toolbar-button-active {
 	background-position: -160px -32px;
 }
 
-#riot-toolbar-button-move {
+#riot-toolbar-button-properties {
 	background-position: -192px 0;
 }
-#riot-toolbar-button-move.toolbar-button-active {
+#riot-toolbar-button-properties.toolbar-button-active {
 	background-position: -192px -32px;
 }
 
-#riot-toolbar-button-logout {
+#riot-toolbar-button-move {
 	background-position: -224px 0;
+}
+#riot-toolbar-button-move.toolbar-button-active {
+	background-position: -224px -32px;
+}
+
+#riot-toolbar-button-logout {
+	background-position: -256px 0;
 }
 
 #riot-toolbar-button-discard {
-	background-position: -256px 0;
-}
-#riot-toolbar-button-discard.toolbar-button-active {
-	background-position: -256px -32px;
-}
-
-#riot-toolbar-button-publish {
 	background-position: -288px 0;
 }
-#riot-toolbar-button-publish.toolbar-button-active {
+#riot-toolbar-button-discard.toolbar-button-active {
 	background-position: -288px -32px;
 }
 
+#riot-toolbar-button-publish {
+	background-position: -320px 0;
+}
+#riot-toolbar-button-publish.toolbar-button-active {
+	background-position: -320px -32px;
+}
+
 #riot-toolbar #riot-toolbar-button-apply {
-	background-position: -320px -32px; 
+	background-position: -352px -32px; 
 	background-color: ${highlight};
 	border: 3px solid ${toolbarOutline};
 	margin:8px auto;

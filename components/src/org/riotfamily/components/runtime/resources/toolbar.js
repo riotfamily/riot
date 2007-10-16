@@ -8,6 +8,7 @@ riot.Toolbar.prototype = {
 			insert: new riot.ToolbarButton('insert', '${toolbarButton.insert}'),
 			remove: new riot.ToolbarButton('remove', '${toolbarButton.remove}'),
 			edit: new riot.ToolbarButton('edit', '${toolbarButton.edit}'),
+			editImages: new riot.ToolbarButton('editImages', '${toolbarButton.editImages}'),
 			properties: new riot.ToolbarButton('properties', '${toolbarButton.properties}'),
 			move: new riot.ToolbarButton('move', '${toolbarButton.move}'),
 			logout: new riot.ToolbarButton('logout', '${toolbarButton.logout}')

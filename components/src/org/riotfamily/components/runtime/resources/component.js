@@ -16,9 +16,12 @@ riot.AbstractComponent.prototype = {
 
 	edit: function(enable) {
 		this.editing = enable;
-		this.editors.each(function(editor) {
-			editor.setEnabled(enable);
-		});
+		this.editors.invoke('setEnabled', enable);
+	},
+	
+	editImages: function(enable) {
+		this.editingImages = enable;
+		this.imageEditors.invoke('setEnabled', enable);
 	},
 
 	setMode: function(mode) {
@@ -122,20 +125,12 @@ riot.AbstractComponent.prototype = {
 		if (editorType == 'richtext-chunks') {
 			return new riot.RichtextEditor(e, this, {split: true, useInnerHtmlAsDefault: true});
 		}
-		if (editorType == 'image') {
-			return new riot.ImageEditor(e, this, {
-				srcTemplate: e.readAttribute('riot:srcTemplate'),
-				minWidth: e.readAttribute('riot:minWidth'),
-				maxWidth: e.readAttribute('riot:maxWidth'),
-				minHeight: e.readAttribute('riot:minHeight'),
-				maxHeight: e.readAttribute('riot:maxHeight')
-			});
-		}
 		return null;
 	},
 					
 	setupElement: function() {
 		this.editors = [];
+		this.imageEditors = [];
 		var desc = this.element.descendants();
 		desc.push(this.element);
 		for (var i = 0, len = desc.length; i < len; i++) {
@@ -144,9 +139,20 @@ riot.AbstractComponent.prototype = {
 				var editorType = e.readAttribute('riot:editorType');
 				if (editorType) {
 					if (e == this.element || (!e.component && this.element == Element.up(e, '.riot-component'))) {
-						var editor = this.createEditor(e, editorType);
-						if (editor) {
-							this.editors.push(editor);
+						if (editorType == 'image') {
+							this.imageEditors.push(new riot.ImageEditor(e, this, {
+								srcTemplate: e.readAttribute('riot:srcTemplate'),
+								minWidth: e.readAttribute('riot:minWidth'),
+								maxWidth: e.readAttribute('riot:maxWidth'),
+								minHeight: e.readAttribute('riot:minHeight'),
+								maxHeight: e.readAttribute('riot:maxHeight')
+							}));
+						}
+						else {
+							var editor = this.createEditor(e, editorType);
+							if (editor) {
+								this.editors.push(editor);
+							}
 						}
 					}
 				}
@@ -158,6 +164,9 @@ riot.AbstractComponent.prototype = {
 		
 		if (this.editing) {
 			this.edit(true);
+		}
+		else if (this.editingImages) {
+			this.editImages(true);
 		}
 
 		this.element.toggleClassName('riot-component-with-form', this.form);
@@ -546,6 +555,10 @@ riot.AbstractWrapper.prototype = {
 
 	edit: function(enable) {
 		this.getComponents().invoke('edit', enable);
+	},
+	
+	editImages: function(enable) {
+		this.getComponents().invoke('editImages', enable);
 	},
 
 	properties: function(enable) {
