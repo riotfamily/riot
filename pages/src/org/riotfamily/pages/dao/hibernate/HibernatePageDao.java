@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.riotfamily.pages.dao.AbstractPageDao;
@@ -84,6 +85,7 @@ public class HibernatePageDao extends AbstractPageDao {
 	
 	public List listSites() {
 		Criteria c = hibernate.createCacheableCriteria(Site.class);
+		c.addOrder(Order.asc("position"));
 		return hibernate.list(c);
 	}
 

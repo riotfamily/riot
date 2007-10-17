@@ -70,6 +70,7 @@
 		<property name="theme" />
 		<property name="hostName" />
 		<property name="pathPrefix" />
+		<property name="position" column="pos" />
 		<many-to-one name="masterSite" />
 		<filter name="liveMode" condition="enabled = :published"/>
 	</class>

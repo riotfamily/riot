@@ -24,10 +24,12 @@
 package org.riotfamily.pages.riot.dao;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.dao.ListParams;
+import org.riotfamily.riot.dao.SwappableItemDao;
 import org.riotfamily.riot.dao.support.RiotDaoAdapter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
@@ -37,7 +39,8 @@ import org.springframework.util.Assert;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class SiteRiotDao extends RiotDaoAdapter implements InitializingBean {
+public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao, 
+		InitializingBean {
 
 	private PageDao pageDao;
 
@@ -78,6 +81,20 @@ public class SiteRiotDao extends RiotDaoAdapter implements InitializingBean {
 
 	public Object load(String id) throws DataAccessException {
 		return pageDao.loadSite(new Long(id));
+	}
+	
+	public void swapEntity(Object entity, Object parent, ListParams params, 
+			int swapWith) {
+		
+		Site site = (Site) entity;
+		List sites = pageDao.listSites();
+		int index = sites.indexOf(site);
+		Site other = (Site) sites.get(index + swapWith);
+		long pos = site.getPosition();
+		site.setPosition(other.getPosition());
+		other.setPosition(pos);
+		pageDao.updateSite(site);
+		pageDao.updateSite(other);
 	}
 
 }

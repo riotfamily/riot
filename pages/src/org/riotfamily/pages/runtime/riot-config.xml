@@ -36,7 +36,7 @@
 		</list:columns>
 	</list:list>
 	
-	<list:list id="sites">
+	<list:list id="sites" default-command="edit">
 		<list:dao ref="siteRiotDao" />
 		<list:columns>
 			<list:column property="locale" renderer="countryFlagRenderer" />
@@ -44,6 +44,8 @@
 			<list:column property="locale.language" renderer="localeRenderer" lookup-level="2" />
 			<list:column property="locale.country" renderer="localeRenderer" lookup-level="2" />
 			<list:column property="enabled" renderer="cssClassRenderer" />
+			<list:command id="moveUp" />
+			<list:command id="moveDown" />
 			<list:command id="edit" />
 			<list:command id="delete" />
 		</list:columns>

@@ -26,6 +26,7 @@ package org.riotfamily.pages.model;
 import java.util.Locale;
 
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -49,7 +50,8 @@ public class Site {
 	
 	private boolean enabled = true;
 
-
+	private long position;
+	
 	public boolean isEnabled() {
 		return this.enabled;
 	}
@@ -119,7 +121,25 @@ public class Site {
 	}
 
 	public void setPathPrefix(String pathPrefix) {
-		this.pathPrefix = pathPrefix;
+		this.pathPrefix = normalizePrefix(pathPrefix);
+	}
+	
+	private String normalizePrefix(String prefix) {
+		if (prefix != null) {
+			// Strip trailing slash
+			if (prefix.endsWith("/")) {
+				prefix = prefix.substring(0, prefix.length() - 1);
+			}
+			// represent empty prefixes to null
+			if (!StringUtils.hasText(prefix)) {
+				return null;
+			}
+			// Add leading slash
+			if (!prefix.startsWith("/")) {
+				prefix = "/" + prefix;
+			}
+		}
+		return prefix;
 	}
 	
 	public String stripPrefix(String path) {
@@ -131,7 +151,7 @@ public class Site {
 	
 	public boolean matches(String hostName, String path) {
 		return (this.hostName == null || this.hostName.equals(hostName))
-				&& (pathPrefix == null || path.startsWith(pathPrefix));
+				&& (pathPrefix == null || path.startsWith(pathPrefix + "/"));
 	}
 
 	public Site getMasterSite() {
@@ -142,6 +162,17 @@ public class Site {
 		this.masterSite = masterSite;
 	}
 	
+	public long getPosition() {
+		if (position == 0) {
+			position = System.currentTimeMillis();
+		}
+		return position;
+	}
+
+	public void setPosition(long position) {
+		this.position = position;
+	}
+
 	public String toString() {
 		return getName();
 	}
