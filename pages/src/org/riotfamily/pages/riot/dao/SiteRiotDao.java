@@ -24,7 +24,6 @@
 package org.riotfamily.pages.riot.dao;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Site;
@@ -87,9 +86,7 @@ public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
 			int swapWith) {
 		
 		Site site = (Site) entity;
-		List sites = pageDao.listSites();
-		int index = sites.indexOf(site);
-		Site other = (Site) sites.get(index + swapWith);
+		Site other = (Site) pageDao.listSites().get(swapWith);
 		long pos = site.getPosition();
 		site.setPosition(other.getPosition());
 		other.setPosition(pos);
