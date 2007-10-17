@@ -49,7 +49,12 @@ riot.AbstractComponent.prototype = {
 	},
 
 	showOutline: function(event) {
-		riot.outline.show(this.element);
+		var el = this.element;
+		var c = el.childElements();
+		if (c.length == 1) {
+			el = c[0];
+		}
+		riot.outline.show(el);
 	},
 
 	removeComponent: function(event) {
