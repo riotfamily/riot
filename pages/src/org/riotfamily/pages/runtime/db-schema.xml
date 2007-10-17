@@ -20,6 +20,7 @@
 				<db:column name="hostName" type="VARCHAR" length="255" />
 				<db:column name="pathPrefix" type="VARCHAR" length="255" />
 				<db:column name="masterSite" type="BIGINT" />
+				<db:column name="pos" type="BIGINT" />
 			</db:create-table>
 			<db:add-foreign-key table="riot_sites" name="riot_site_master" references="riot_sites">
 				<db:ref local="masterSite" foreign="id" />
