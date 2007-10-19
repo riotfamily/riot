@@ -2,6 +2,7 @@
 <#assign documentUri = commonMacroHelper.getOriginatingRequestUri() />
 <#assign includeUri = commonMacroHelper.getPathWithinApplication() />
 <#assign topLevelHandlerName = commonMacroHelper.getTopLevelHandlerName()?if_exists />
+<#assign templateName = .data_model['org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView.templateName']! />
 
 <#--
   - Includes the given URI using a RequestDispatcher. The argument may also be

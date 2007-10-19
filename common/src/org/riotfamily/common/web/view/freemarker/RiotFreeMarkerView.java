@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.view.freemarker;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -36,6 +37,8 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
 
 import freemarker.ext.servlet.FreemarkerServlet;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 /**
  * Differences to Spring's FreeMarkerView:
@@ -50,16 +53,21 @@ import freemarker.ext.servlet.FreemarkerServlet;
  */
 public class RiotFreeMarkerView extends FreeMarkerView {	
 	
-	public static final String REQUEST_ATTRIBUTE = "request";
+	public static final String REQUEST_KEY = "request";
+
+	public static final Object TEMPLATE_NAME_KEY = 
+			RiotFreeMarkerView.class.getName() + ".templateName";
 	
 	public static final String MODEL_ATTRIBUTE = 
 			RiotFreeMarkerView.class.getName() + ".model";
+
 	
 	private boolean allowModelOverride = true;
 	
 	private boolean freeMarkerServletMode = false;
-	
+
 	private Map macroHelperFactories;
+
 	
 	/**
 	 * Sets whether the model may contain keys that are also present as request
@@ -127,7 +135,7 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 			throws Exception {
 
 		unwrapModel(model);
-		model.put(REQUEST_ATTRIBUTE, request);
+		model.put(REQUEST_KEY, request);
 		if (macroHelperFactories != null) {
 			Iterator it = macroHelperFactories.entrySet().iterator();
 			while (it.hasNext()) {
@@ -147,6 +155,14 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 			Locale locale = RequestContextUtils.getLocale(request);
 			processTemplate(getTemplate(locale), model, response);
 		}
+	}
+	
+	protected void processTemplate(Template template, Map model, 
+			HttpServletResponse response) throws IOException,
+			TemplateException {
+		
+		model.put(TEMPLATE_NAME_KEY, template.getName());
+		super.processTemplate(template, model, response);
 	}
 
 }
