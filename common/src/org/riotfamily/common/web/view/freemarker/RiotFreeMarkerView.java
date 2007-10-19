@@ -35,13 +35,17 @@ import org.riotfamily.common.web.view.MacroHelperFactory;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
 
+import freemarker.ext.servlet.FreemarkerServlet;
+
 /**
  * Differences to Spring's FreeMarkerView:
  * <ul>
  * <li>Model attributes may override attributes from the request or the session</li>
- * <li>The HttpServletRequest is exposed under the key "request"</li>
- * <li>The model is only exposed to the request if freeMarkerServletMode is enabled</li>
- * <li>Provides the possibility to expose objects created by a {@link MacroHelperFactory}</li>
+ * <li>The plain HttpServletRequest object is exposed under the key "request"</li>
+ * <li>The model is not exposed to the request, unless the 
+ * {@link #setFreeMarkerServletMode(boolean) freeMarkeServletMode} is enabled</li>
+ * <li>Provides the possibility to create stateful macro helpers via the 
+ * {@link MacroHelperFactory} interface</li>
  * </ul> 
  */
 public class RiotFreeMarkerView extends FreeMarkerView {	
@@ -57,19 +61,38 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 	
 	private Map macroHelperFactories;
 	
+	/**
+	 * Sets whether the model may contain keys that are also present as request
+	 * or session attributes. Otherwise an exception will be thrown when Spring
+	 * tries to expose an attribute that conflicts with a key in the model. 	   
+	 */
 	public void setAllowModelOverride(boolean allowModelOverride) {
 		this.allowModelOverride = allowModelOverride;
 	}
 	
+	/**
+	 * Sets whether the view should mimic the behavior of the 
+	 * {@link FreemarkerServlet}, i.e. provide support JSP tag libraries, the
+	 * "Request", "Session" and "Application" HashModels. By default this 
+	 * mode is disabled, mainly because JSP support requires exposure of the
+	 * model as separate request attributes, which can be quite confusing when
+	 * working with nested views.
+	 * 
+	 * @param freeMarkerServletMode
+	 */
 	public void setFreeMarkerServletMode(boolean freeMarkerServletMode) {
 		this.freeMarkerServletMode = freeMarkerServletMode;
 	}
 	
+	/**
+	 * Sets a Map of {@link MacroHelperFactory} instances keyed by the 
+	 * variable name under which the created helper should be exposed.
+	 */
 	public void setMacroHelperFactories(Map macroHelperFactories) {
 		this.macroHelperFactories = macroHelperFactories;
 	}
 
-	public void render(Map model, HttpServletRequest request, 
+	public final void render(Map model, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 	
 		if (allowModelOverride) {
@@ -77,7 +100,18 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 			emptyModel.put(MODEL_ATTRIBUTE, model);
 			model = emptyModel;
 		}
-		super.render(model, request, response);
+		super.render(model, request, wrapResponse(request, response));
+	}
+
+	/**
+	 * Subclasses may override this method in order to wrap the 
+	 * HttpServletResponse before it is passed on to the render method.
+	 * The default implementation simply returns the given response. 
+	 */
+	protected HttpServletResponse wrapResponse(HttpServletRequest request, 
+			HttpServletResponse response) {
+		
+		return response;
 	}
 	
 	private void unwrapModel(Map model) {
