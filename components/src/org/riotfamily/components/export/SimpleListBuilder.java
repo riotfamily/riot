@@ -29,11 +29,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.riotfamily.components.Component;
-import org.riotfamily.components.ComponentList;
-import org.riotfamily.components.ComponentRepository;
-import org.riotfamily.components.ComponentVersion;
-import org.riotfamily.components.VersionContainer;
+import org.riotfamily.components.config.ComponentRepository;
+import org.riotfamily.components.config.component.Component;
+import org.riotfamily.components.model.ComponentList;
+import org.riotfamily.components.model.ComponentVersion;
+import org.riotfamily.components.model.VersionContainer;
 
 
 /**

@@ -25,7 +25,6 @@ package org.riotfamily.components.property;
 
 import java.util.Map;
 
-import org.riotfamily.components.PropertyProcessor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 

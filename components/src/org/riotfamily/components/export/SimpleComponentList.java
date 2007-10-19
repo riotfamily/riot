@@ -25,7 +25,7 @@ package org.riotfamily.components.export;
 
 import java.util.List;
 
-import org.riotfamily.components.Location;
+import org.riotfamily.components.model.Location;
 
 /**
  * Class that holds a list of SimpleComponent instances. Unlike a ComponentList

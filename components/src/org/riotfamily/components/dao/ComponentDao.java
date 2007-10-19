@@ -26,10 +26,10 @@ package org.riotfamily.components.dao;
 import java.util.List;
 import java.util.Map;
 
-import org.riotfamily.components.ComponentList;
-import org.riotfamily.components.ComponentVersion;
-import org.riotfamily.components.Location;
-import org.riotfamily.components.VersionContainer;
+import org.riotfamily.components.model.ComponentList;
+import org.riotfamily.components.model.ComponentVersion;
+import org.riotfamily.components.model.Location;
+import org.riotfamily.components.model.VersionContainer;
 
 /**
  * DAO interface that provides methods to access

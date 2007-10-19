@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.components.editor.EditModeUtils;
+import org.riotfamily.components.EditModeUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;

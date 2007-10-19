@@ -37,7 +37,7 @@
 	<override:put ref="freemarkerConfig" property="macroLibraries">
 		<entry key="page" value="classpath:org/riotfamily/pages/macro/page.ftl" />
 	</override:put>
-	
+		
 	<override:add ref="inplaceMacroHelper" property="toolbarScripts" append="true">
 		<value>tiny_mce/page-chooser.js</value>
 	</override:add>

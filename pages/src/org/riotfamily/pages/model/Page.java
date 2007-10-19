@@ -30,8 +30,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.components.ComponentVersion;
-import org.riotfamily.components.VersionContainer;
+import org.riotfamily.components.model.ComponentVersion;
+import org.riotfamily.components.model.VersionContainer;
 
 
 /**

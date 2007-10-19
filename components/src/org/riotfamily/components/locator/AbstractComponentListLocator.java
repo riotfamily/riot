@@ -25,8 +25,7 @@ package org.riotfamily.components.locator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.components.ComponentListLocator;
-import org.riotfamily.components.Location;
+import org.riotfamily.components.model.Location;
 
 /**
  * Abstract base-class that delegates the resolution of the

@@ -27,15 +27,15 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.riotfamily.components.ComponentList;
-import org.riotfamily.components.Location;
-import org.riotfamily.components.VersionContainer;
 import org.riotfamily.components.dao.AbstractComponentDao;
+import org.riotfamily.components.model.ComponentList;
+import org.riotfamily.components.model.Location;
+import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
 import org.springframework.util.Assert;
 
 /**
- * Default ComponentDAO implementation that uses Hibernate. All mappings
+ * Default ComponentDao implementation that uses Hibernate. All mappings
  * a specified in <code>component.hbm.xml</code> which can be found in the
  * same package.
  */
@@ -103,7 +103,6 @@ public class HibernateComponentDao extends AbstractComponentDao {
 
 	protected void updateObject(Object object) {
 		hibernate.update(object);
-		//hibernate.flush();
 	}
 
 	protected void deleteObject(Object object) {

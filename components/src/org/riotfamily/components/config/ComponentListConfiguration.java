@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.config;
 
-import org.riotfamily.components.ComponentListLocator;
+import org.riotfamily.components.locator.ComponentListLocator;
 
 
 public interface ComponentListConfiguration {

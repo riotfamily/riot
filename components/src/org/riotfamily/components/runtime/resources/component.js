@@ -240,16 +240,17 @@ riot.Component = Class.extend(riot.AbstractComponent, {
 riot.EntityComponent = Class.extend(riot.AbstractComponent, {
 
 	initialize: function(componentList, el) {
+		this.listId = el.readAttribute('riot:listId');
 		this.objectId = el.readAttribute('riot:objectId');
 		this.SUPER(componentList, el);
 	},
 	
 	retrieveText: function(key, callback) {
-		EntityEditor.getText(this.componentList.listId, this.objectId, key, callback);
+		EntityEditor.getText(this.listId, this.objectId, key, callback);
 	},
 
 	updateText: function(key, value, updateFromServer) {
-		EntityEditor.updateText(this.componentList.listId, this.objectId, key, value, 
+		EntityEditor.updateText(this.listId, this.objectId, key, value, 
 				updateFromServer ? this.onupdate.bind(this) : Prototype.emptyFunction);
 	}
 });
@@ -489,13 +490,21 @@ riot.AbstractWrapper.prototype = {
 		this.id = null;
 		el.componentList = this;
 		if (!el.id) el.id = 'riot-components-' + riot.listCount++;
-		this.controllerId = el.readAttribute('riot:controllerId');
+		
+		this.controllerElement = this.findControllerElement(el);
+		this.controllerId = this.controllerElement.readAttribute('riot:controllerId');
+				
 		this.childLists = [];
 		var parent = el.up('.riot-components');
 		if (parent) {
 			this.parentList = parent.componentList;
 			this.parentList.childLists.push(this);
 		}
+	},
+	
+	findControllerElement: function(el) {
+		if (el.readAttribute('riot:controllerId')) return el;
+		return el.up('*[riot:controllerId]');
 	},
 	
 	getReference: function() {
@@ -521,6 +530,9 @@ riot.AbstractWrapper.prototype = {
 	},
 	
 	createComponent: function(e) {
+		if (e.readAttribute('riot:objectId')) {
+			return new riot.EntityComponent(this, e);
+		}
 		return new riot.Component(this, e);
 	},
 
@@ -529,7 +541,7 @@ riot.AbstractWrapper.prototype = {
 	},
 
 	replaceHtml: function(html) {
-		this.element.update(html);
+		this.controllerElement.update(html);
 		this.updateComponents();
 		this.onUpdate();
 		riot.toolbar.restoreMode(this);
@@ -618,20 +630,13 @@ riot.AbstractWrapper.prototype = {
 	}
 }
 
-riot.Entity = Class.extend(riot.AbstractWrapper, {
+riot.EntityList = Class.extend(riot.Entity, {
+	
 	initialize: function(el) {
 		this.SUPER(el);
 		this.listId = el.readAttribute('riot:listId');
 		this.getComponents();
 	},
-	
-	createComponent: function(e) {
-		return new riot.EntityComponent(this, e);
-	}
-		
-});
-
-riot.EntityList = Class.extend(riot.Entity, {
 	
 	insert: function(enable) {
 		if (enable) {
@@ -675,7 +680,7 @@ riot.ComponentList = Class.extend(riot.AbstractWrapper, {
 		ComponentEditor.getValidTypes(this.controllerId,
 				this.setValidTypes.bind(this));
 	},
-
+	
 	setValidTypes: function(types) {
 		this.types = types;
 		if (types.length == 1) {
@@ -758,17 +763,13 @@ riot.ComponentList = Class.extend(riot.AbstractWrapper, {
 });
 
 riot.createWrapper = function(el) {
-	var wrapper = el.readAttribute('riot:wrapper');
-	if (wrapper == 'entity') {
-		return new riot.Entity(el);
-	}
-	if (wrapper == 'entityList') {
+	if (el.hasClassName('riot-entity-list')) {
 		return new riot.EntityList(el);
 	}
-	if (wrapper == 'componentSet') {
-		return new riot.ComponentSet(el);
+	if (el.hasClassName('riot-component-list')) {
+		return new riot.ComponentList(el);
 	}
-	return new riot.ComponentList(el);
+	return new riot.ComponentSet(el);
 }
 
 riot.createWrappers = function(el) {

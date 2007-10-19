@@ -26,7 +26,7 @@ package org.riotfamily.components.config;
 import org.riotfamily.common.beans.xml.GenericBeanDefinitionParser;
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
 import org.riotfamily.common.beans.xml.NestedPropertyDecorator;
-import org.riotfamily.components.ComponentListController;
+import org.riotfamily.components.controller.ComponentListController;
 
 /**
  * NamespaceHandler that handles the <code>controller</code> namspace as

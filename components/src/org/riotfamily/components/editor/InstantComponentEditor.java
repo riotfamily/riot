@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.editor;
 
-import org.riotfamily.components.ComponentRepository;
+import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.dao.ComponentDao;
 
 /**

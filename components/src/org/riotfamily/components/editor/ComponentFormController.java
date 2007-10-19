@@ -27,11 +27,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.components.Component;
-import org.riotfamily.components.ComponentRepository;
-import org.riotfamily.components.ComponentVersion;
-import org.riotfamily.components.VersionContainer;
+import org.riotfamily.components.config.ComponentRepository;
+import org.riotfamily.components.config.component.Component;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.model.ComponentVersion;
+import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.factory.FormRepository;
 import org.springframework.web.bind.ServletRequestUtils;

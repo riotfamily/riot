@@ -15,7 +15,7 @@
 		<constructor-arg ref="pathCompleter" />
 	</bean>
 
-	<bean class="org.riotfamily.components.config.ControllerConfigurer">
+	<bean class="org.riotfamily.components.controller.ControllerConfigurer">
 		<property name="componentDao" ref="componentDao" />
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="repository" ref="componentRepository" />
@@ -24,12 +24,10 @@
 	</bean>
 
 	<override:put ref="freemarkerConfig" property="macroLibraries">
-		<entry key="inplace" value="classpath:org/riotfamily/components/macro/inplace.ftl" />
-		<!-- The same ftl is aliased as 'component' for backwards compatibility: -->
-		<entry key="component" value="classpath:org/riotfamily/components/macro/inplace.ftl" />
+		<entry key="inplace" value="classpath:org/riotfamily/components/view/inplace.ftl" />
 	</override:put>
 	
-	<bean id="inplaceMacroHelper" class="org.riotfamily.components.macro.InplaceMacroHelperFactory">
+	<bean id="inplaceMacroHelper" class="org.riotfamily.components.view.InplaceMacroHelperFactory">
 		<constructor-arg ref="componentRepository" />
 		<constructor-arg ref="riotDaoService" />
 		<property name="toolbarScripts">
@@ -45,5 +43,9 @@
 	<override:bean ref="cachiusHandlerAdapter" class="org.riotfamily.components.context.PartialRequestHandlerAdapter">
 		<constructor-arg ref="websiteCache" />
 	</override:bean>
+	
+	<override:properties ref="viewResolver">
+		<property name="viewClass" value="org.riotfamily.components.view.ComponentFreeMarkerView" />
+	</override:properties>
 	
 </beans>

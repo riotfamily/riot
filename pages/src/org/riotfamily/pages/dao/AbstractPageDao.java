@@ -33,8 +33,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.components.VersionContainer;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.pages.component.PageComponentListLocator;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;

@@ -51,7 +51,7 @@
 	<!--
 	  - FormRepository providing component property forms.
 	  -->
-	<bean id="componentFormRepository" class="org.riotfamily.components.editor.ComponentFormRepository">
+	<bean id="componentFormRepository" class="org.riotfamily.components.config.ComponentFormRepository">
 		<constructor-arg ref="componentRepository" />
 		<property name="config" value="/WEB-INF/website-config/component-forms.xml" />
 		<property name="customElements" ref="customFormElements" />
@@ -185,11 +185,11 @@
 	<!--
 	  - RiotDao to list dirty ComponentLists.
 	  -->
-	<bean id="dirtyComponentListDao" class="org.riotfamily.components.dao.DirtyComponentListDao">
+	<bean id="dirtyComponentListDao" class="org.riotfamily.components.riot.dao.DirtyComponentListDao">
 		<property name="componentDao" ref="componentDao" />
 	</bean>
 
-	<bean id="gotoComponentListCommand" class="org.riotfamily.components.command.GotoListCommand">
+	<bean id="gotoComponentListCommand" class="org.riotfamily.components.riot.command.GotoListCommand">
 		<constructor-arg ref="componentRepository" />
 		<property name="windowName" value="preview" />
 	</bean>

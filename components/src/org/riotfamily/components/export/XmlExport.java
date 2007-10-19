@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.riotfamily.common.xml.XmlUtils;
-import org.riotfamily.components.ComponentList;
+import org.riotfamily.components.model.ComponentList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

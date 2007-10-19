@@ -31,10 +31,10 @@ import net.sf.json.JSONObject;
 
 import org.riotfamily.common.beans.MapWrapper;
 import org.riotfamily.common.web.mapping.AttributePattern;
-import org.riotfamily.components.ComponentListLocator;
-import org.riotfamily.components.Location;
+import org.riotfamily.components.locator.ComponentListLocator;
 import org.riotfamily.components.locator.DefaultSlotResolver;
 import org.riotfamily.components.locator.SlotResolver;
+import org.riotfamily.components.model.Location;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.pages.mapping.PageUrlBuilder;

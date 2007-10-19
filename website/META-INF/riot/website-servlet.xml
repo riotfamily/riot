@@ -61,6 +61,10 @@
 	
 	<bean id="freemarkerObjectWrapper" class="org.riotfamily.common.web.view.freemarker.LocalizedObjectWrapper" />
 	
+	<bean id="viewResolver" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerViewResolver">
+		<property name="exposeRequestAttributes" value="true" />
+	</bean>
+	
 	<bean id="commonMacroHelper" class="org.riotfamily.common.web.view.CommonMacroHelperFactory">
 		<property name="stamper" ref="resourceStamper" />
 	</bean>

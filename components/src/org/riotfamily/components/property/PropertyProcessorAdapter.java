@@ -25,7 +25,6 @@ package org.riotfamily.components.property;
 
 import java.util.Map;
 
-import org.riotfamily.components.PropertyProcessor;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
