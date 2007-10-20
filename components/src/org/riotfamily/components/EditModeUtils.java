@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.riot.security.AccessController;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -47,8 +49,18 @@ public final class EditModeUtils {
 		return AccessController.isAuthenticatedUser() && !isLiveMode(request);
 	}
 	
+	public static boolean isEditMode() {
+		return AccessController.isAuthenticatedUser() && !isLiveMode();
+	}
+	
 	public static boolean isLiveMode(HttpServletRequest request) {
 		return request.getAttribute(LIVE_MODE_ATTRIBUTE) == Boolean.TRUE;
+	}
+	
+	public static boolean isLiveMode() {
+		return RequestContextHolder.getRequestAttributes()
+				.getAttribute(LIVE_MODE_ATTRIBUTE, 
+				RequestAttributes.SCOPE_REQUEST) == Boolean.TRUE;
 	}
 	
 	public static void setLiveMode(HttpServletRequest request, boolean liveMode) {
