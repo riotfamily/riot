@@ -30,7 +30,6 @@ import org.springframework.core.GenericCollectionTypeResolver;
 import org.springframework.core.JdkVersion;
 
 import freemarker.core.Environment;
-import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 
@@ -42,7 +41,7 @@ import freemarker.template.TemplateModelException;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class LocalizedObjectWrapper extends DefaultObjectWrapper {
+public class LocalizedObjectWrapper implements ObjectWrapperPlugin {
 
 	private boolean exact = false;
 
@@ -64,15 +63,23 @@ public class LocalizedObjectWrapper extends DefaultObjectWrapper {
 	public void setFallbackLocale(Locale fallbackLocale) {
 		this.fallbackLocale = fallbackLocale;
 	}
-
-	public TemplateModel wrap(Object obj) throws TemplateModelException {
+	
+	public boolean supports(Object obj) {
 		if (obj instanceof Map) {
 			Map map = (Map) obj;
-			if (hasLocaleKey(map)) {
-				return wrapLocalizedEntry(map);
-			}
+			return hasLocaleKey(map);
 		}
-		return super.wrap(obj);
+		return false;
+	}
+	
+	public TemplateModel wrapSupportedObject(Object obj, 
+			PluginObjectWrapper wrapper)
+			throws TemplateModelException {
+		
+		Environment env = Environment.getCurrentEnvironment();
+		Locale locale = env.getLocale();
+		Object localizedEntry = getLocalizedEntry((Map) obj, locale);
+		return wrapper.wrap(localizedEntry);
 	}
 
 	private boolean hasLocaleKey(Map map) {
@@ -89,14 +96,6 @@ public class LocalizedObjectWrapper extends DefaultObjectWrapper {
 			return firstKey instanceof Locale;
 		}
 		return false;
-	}
-
-	private TemplateModel wrapLocalizedEntry(Map map)
-			throws TemplateModelException {
-
-		Environment env = Environment.getCurrentEnvironment();
-		Locale locale = env.getLocale();
-		return super.wrap(getLocalizedEntry(map, locale));
 	}
 
 	private Object getLocalizedEntry(Map map, Locale locale) {

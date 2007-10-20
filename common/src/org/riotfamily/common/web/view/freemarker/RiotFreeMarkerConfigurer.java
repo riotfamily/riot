@@ -24,16 +24,21 @@
 package org.riotfamily.common.web.view.freemarker;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
+import freemarker.template.SimpleHash;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
@@ -41,7 +46,8 @@ import freemarker.template.TemplateExceptionHandler;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
+public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer 
+		implements ApplicationContextAware {
 
 	private static final Log log = LogFactory
 			.getLog(RiotFreeMarkerConfigurer.class);
@@ -53,6 +59,8 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 	
 	private ObjectWrapper objectWrapper;
 	
+	private Map sharedVariables;
+		
 	private boolean whitespaceStripping = false;
 	
 	private boolean useTemplateCache = true;
@@ -60,6 +68,8 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 	private int templateUpdateDelay = 5;
 	
 	private String urlEscapingCharset = "UTF-8";
+
+	private ApplicationContext applicationContext;
 	
 	
 	/**
@@ -85,6 +95,20 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 		this.objectWrapper = objectWrapper;
 	}
 
+	/**
+	 * Set a Map that contains well-known FreeMarker objects which will be passed
+	 * to FreeMarker's <code>Configuration.setAllSharedVariables()</code> method.
+	 * <p>
+	 * Riot overrides this setter in order to set the variables in 
+	 * {@link #postProcessConfiguration(Configuration)}, after the custom
+	 * {@link ObjectWrapper} has been set.
+	 * </p>
+	 * @see freemarker.template.Configuration#setAllSharedVariables
+	 */
+	public void setFreemarkerVariables(Map variables) {
+		sharedVariables = variables;
+	}
+	
 	/**
 	 * Sets whether the FTL parser will try to remove superfluous
 	 * white-space around certain FTL tags.
@@ -117,6 +141,22 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 	public void setTemplateUpdateDelay(int templateUpdateDelay) {
 		this.templateUpdateDelay = templateUpdateDelay;
 	}
+
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
+	
+	public void afterPropertiesSet() throws IOException, TemplateException {
+		if (objectWrapper == null) {
+			Collection plugins = applicationContext.getBeansOfType(
+					ObjectWrapperPlugin.class).values();
+			
+			if (!plugins.isEmpty()) {
+				objectWrapper = new PluginObjectWrapper(plugins);
+			}
+		}
+		super.afterPropertiesSet();
+	}
 	
 	protected void postProcessTemplateLoaders(List templateLoaders) {
 		super.postProcessTemplateLoaders(templateLoaders);
@@ -133,6 +173,10 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer {
 		if (objectWrapper != null) {
 			config.setObjectWrapper(objectWrapper);
 		}
+		
+		config.setAllSharedVariables(
+				new SimpleHash(sharedVariables, objectWrapper));
+		
 		if (useTemplateCache) {
 			config.setTemplateUpdateDelay(templateUpdateDelay);
 		}

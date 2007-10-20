@@ -55,11 +55,10 @@
 				<prop key="riot">classpath:org/riotfamily/riot/runtime/macro/riot.ftl</prop>
 			</props>
 		</property>
-		<property name="objectWrapper" ref="freemarkerObjectWrapper" />
 		<property name="whitespaceStripping" value="true" />
 	</bean>
 	
-	<bean id="freemarkerObjectWrapper" class="org.riotfamily.common.web.view.freemarker.LocalizedObjectWrapper" />
+	<bean id="localizedObjectWrapper" class="org.riotfamily.common.web.view.freemarker.LocalizedObjectWrapper" />
 	
 	<bean id="viewResolver" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerViewResolver">
 		<property name="exposeRequestAttributes" value="true" />
