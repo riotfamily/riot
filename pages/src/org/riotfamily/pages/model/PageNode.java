@@ -106,7 +106,7 @@ public class PageNode {
 		return this.childNodes;
 	}
 
-	public Collection getChildPages(Site site) {
+	public List getChildPages(Site site) {
 		LinkedList pages = new LinkedList();
 		if (childNodes != null) {
 			Iterator it = childNodes.iterator();
@@ -118,7 +118,7 @@ public class PageNode {
 				}
 			}
 		}
-		return Collections.unmodifiableCollection(pages);
+		return Collections.unmodifiableList(pages);
 	}
 
 	public Collection getChildPagesWithFallback(Site site) {

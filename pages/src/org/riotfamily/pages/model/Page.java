@@ -26,6 +26,7 @@ package org.riotfamily.pages.model;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -185,7 +186,7 @@ public class Page {
 		return parentNode.getPage(site);
 	}
 
-	public Collection getChildPages() {
+	public List getChildPages() {
 		return node.getChildPages(site);
 	}
 
@@ -225,19 +226,18 @@ public class Page {
 		this.versionContainer = versionContainer;
 	}
 
+	public ComponentVersion getComponentVersion(boolean preview) {
+		return preview ? getVersionContainer().getLatestVersion()
+				: getVersionContainer().getLiveVersion();
+	}
+	
 	public Map getProperties(boolean preview) {
-		if (preview) {
-			return getVersionContainer().getLatestVersion().getProperties();
-		}
-		ComponentVersion version = getVersionContainer().getLiveVersion();
+		ComponentVersion version = getComponentVersion(preview);
 		return version != null ? version.getProperties() : null;
 	}
 
 	public String getProperty(String key, boolean preview) {
-		ComponentVersion version = preview
-				? getVersionContainer().getLatestVersion()
-				: getVersionContainer().getLiveVersion();
-
+		ComponentVersion version = getComponentVersion(preview);
 		return version != null ? version.getProperty(key) : null;
 	}
 
@@ -266,7 +266,10 @@ public class Page {
 	}
 
 	public boolean isVisible(boolean preview) {
-		return !isHidden() && !node.isHidden() && (isEnabled() || preview);
+		return !isHidden() 
+				&& !node.isHidden() 
+				&& !isWildcard() 
+				&& (isEnabled() || preview);
 	}
 	
 	public String toString() {
