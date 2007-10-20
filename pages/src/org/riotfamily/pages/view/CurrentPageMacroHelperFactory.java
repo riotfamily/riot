@@ -21,35 +21,36 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.macro;
+package org.riotfamily.pages.view;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.view.MacroHelperFactory;
+import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.pages.dao.PageDao;
-import org.riotfamily.pages.mapping.PageUrlBuilder;
+import org.riotfamily.pages.mapping.PageHandlerMapping;
+import org.riotfamily.pages.model.Page;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PageMacroHelperFactory implements MacroHelperFactory {
+public class CurrentPageMacroHelperFactory implements MacroHelperFactory {
 
 	private PageDao pageDao;
 
-	private PageUrlBuilder pageUrlBuilder;
-
-	public PageMacroHelperFactory(PageDao pageDao,
-			PageUrlBuilder pageUrlBuilder) {
-
+	public CurrentPageMacroHelperFactory(PageDao pageDao) {
 		this.pageDao = pageDao;
-		this.pageUrlBuilder = pageUrlBuilder;
 	}
 
 	public Object createMacroHelper(HttpServletRequest request,
 			HttpServletResponse response) {
 
-		return new PageMacroHelper(pageDao, pageUrlBuilder, request);
+		Page page = PageHandlerMapping.getPage(request);
+		if (page != null && PageRequestUtils.isPartialRequest(request)) {
+			return pageDao.loadPage(page.getId());
+		}
+		return page;
 	}
 }
