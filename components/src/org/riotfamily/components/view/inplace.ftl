@@ -256,10 +256,10 @@
 <#--
   -
   -->
-<#macro use container form="" tag="" attributes...>
+<#macro use container model=buildModel(container) form="" tag="" attributes...>
 	<#local attributes = common.unwrapAttributes(attributes) />
 	<#local previousScope = scope />
-	<#assign scope = buildModel(container) />
+	<#assign scope =  model />
 	${inplaceMacroHelper.tag(container)}
 	<#if editMode>
 		${inplaceMacroHelper.enableOutputWrapping()}
