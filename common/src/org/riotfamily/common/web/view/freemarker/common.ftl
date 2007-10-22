@@ -20,6 +20,12 @@
 </#compress>
 </#macro>
 
+
+<#function capture uri="">
+	<#return commonMacroHelper.capture(uri) />
+</#function>
+
+
 <#macro setAttribute name value>
 	${request.setAttribute(name, value)!}
 </#macro>

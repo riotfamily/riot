@@ -43,6 +43,7 @@ import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.mapping.ReverseHandlerMapping;
 import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.web.util.StringCapturingResponseWrapper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.util.StringUtils;
@@ -159,6 +160,14 @@ public class CommonMacroHelper {
 	public String include(String url) throws ServletException, IOException {
 		request.getRequestDispatcher(url).include(request, response);
 		return "";
+	}
+	
+	public String capture(String url) throws ServletException, IOException {
+		StringCapturingResponseWrapper wrapper = 
+				new StringCapturingResponseWrapper(response);
+		
+		request.getRequestDispatcher(url).include(request, wrapper);
+		return wrapper.getCapturedData();
 	}
 
 	public String addTimestamp(String s) {
