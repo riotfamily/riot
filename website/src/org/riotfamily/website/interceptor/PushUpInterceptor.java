@@ -21,13 +21,14 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.website.interceptor.pushup;
+package org.riotfamily.website.interceptor;
 
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.web.util.DeferredRenderingResponseWrapper;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 

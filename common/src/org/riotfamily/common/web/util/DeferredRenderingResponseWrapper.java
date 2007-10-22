@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.website.interceptor.pushup;
+package org.riotfamily.common.web.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,14 +33,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.riotfamily.common.web.util.DelegatingServletOutputStream;
 import org.springframework.util.FileCopyUtils;
 
 /**
  * ResponseWrapper that buffers the output and defers the rendering until 
  * {@link #renderResponse()} is invoked.
  * 
- * @see PushUpInterceptor
  * @author Felix Gnass [fgnass at neteye dot de]
  */
 public class DeferredRenderingResponseWrapper extends HttpServletResponseWrapper {	
@@ -125,6 +123,5 @@ public class DeferredRenderingResponseWrapper extends HttpServletResponseWrapper
 			super.flushBuffer();
 		}
 	}
-	
 	
 }

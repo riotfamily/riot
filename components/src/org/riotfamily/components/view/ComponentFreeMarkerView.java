@@ -31,13 +31,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.web.util.DeferredRenderingResponseWrapper;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.component.AbstractComponent;
 import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.context.StoreContextInterceptor;
-import org.riotfamily.website.interceptor.pushup.DeferredRenderingResponseWrapper;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
