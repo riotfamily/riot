@@ -249,13 +249,16 @@ riot.ComponentList.prototype = {
 	},
 	
 	moveOff: function() {
-		this.componentElements.each(function(el) {
-			el.removeClassName('riot-moveable-component');
-			el.restoreClicks();
-			el.style.position = '';
-		});
-		Sortable.destroy(this.element);
-		Draggables.removeObserver(this.element);
+		if (this.componentElements.length > 1) {
+			this.element.removeClassName('riot-mode-move');
+			this.componentElements.each(function(el) {
+				el.removeClassName('riot-moveable-component');
+				el.restoreClicks();
+				el.style.position = '';
+			});
+			Sortable.destroy(this.element);
+			Draggables.removeObserver(this.element);
+		}
 	},
 	
 	updatePositionClasses: function() {
@@ -395,15 +398,17 @@ riot.Component.prototype = {
 	
 	hideOutline: function(ev) {
 		Event.stop(ev);
-		riot.outline.hide();
+		riot.outline.scheduleHide();
 	},
 	
 	setClickHandler: function(clickHandler) {
-		this.element.disableClicks();
 		this.clickHandler = clickHandler;
-		Event.observe(this.element, 'click', this.bOnClick);
-		Event.observe(this.element, 'mouseover', this.bShowOutline);
-		Event.observe(this.element, 'mouseout', this.bHideOutline);
+		var c = this.element.childElements();
+		this.targetElement = c.length == 1 ? c[0] : this.element;
+		this.targetElement.disableClicks();
+		Event.observe(this.targetElement, 'click', this.bOnClick);
+		Event.observe(this.targetElement, 'mouseover', this.bShowOutline);
+		Event.observe(this.targetElement, 'mouseout', this.bHideOutline);
 	},
 	
 	onClick: function(ev) {
@@ -412,10 +417,10 @@ riot.Component.prototype = {
 	},
 	
 	removeClickHandler: function() {
-		this.element.restoreClicks();
-		Event.stopObserving(this.element, 'click', this.bOnClick);
-		Event.stopObserving(this.element, 'mouseover', this.bShowOutline);
-		Event.stopObserving(this.element, 'mouseout', this.bHideOutline);
+		this.targetElement.restoreClicks();
+		Event.stopObserving(this.targetElement, 'click', this.bOnClick);
+		Event.stopObserving(this.targetElement, 'mouseover', this.bShowOutline);
+		Event.stopObserving(this.targetElement, 'mouseout', this.bHideOutline);
 		this.clickHandler = null;
 	},
 	
@@ -436,10 +441,12 @@ riot.Component.prototype = {
 	},
 	
 	propertiesOn: function() {
+		this.element.parentNode.addClassName('riot-mode-properties');
 		this.setClickHandler(this.editProperties.bind(this));
 	},
 	
 	propertiesOff: function() {
+		this.element.parentNode.removeClassName('riot-mode-properties');
 		this.removeClickHandler();
 	},
 	

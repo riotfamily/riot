@@ -13,7 +13,8 @@ riot.outline = {
 	
 	show: function(el, onclick, excludes) {
 		if (!window.riot || riot.outline.suspended) return;
-
+		riot.outline.cancelHide();
+		
 		// el.offsetHeight may be 0, descend until an element with a height is found. 
 		var offsetTop = el.offsetHeight;
 		while (el && offsetTop == 0) {
@@ -33,6 +34,17 @@ riot.outline = {
 	hide: function(ev) {
 		if (window.riot && riot.outline) { 
 			riot.outline.elements.values().invoke('hide');
+		}
+	},
+	
+	scheduleHide: function(ev) {
+		riot.outline.timeout = setTimeout(riot.outline.hide, 1);
+	},
+
+	cancelHide: function() {
+		if (riot.outline.timeout) {
+			clearTimeout(riot.outline.timeout);
+			riot.outline.timeout = null;
 		}
 	}
 }
@@ -81,7 +93,7 @@ riot.InplaceEditor.prototype = {
 	
 	hideOutline: function(ev) {
 		if (ev) Event.stop(ev);
-		if (window.riot) riot.outline.hide();
+		if (window.riot) riot.outline.scheduleHide();
 	},
 
 	/* Handler that is invoked when an enabled editor is clicked */
