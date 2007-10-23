@@ -215,7 +215,7 @@
 			<#if transform?is_string>
 				<#local srcTemplate = transform />
 			<#else>
-				<#local srcTemplate = transform("/*") />
+				<#local srcTemplate = transform("/*")?replace("/*", "*") />
 			</#if>
 			<#local attributes = attributes + {
 				"class": ("riot-image-editor " + attributes.class!)?trim,
