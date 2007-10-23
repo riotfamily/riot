@@ -193,7 +193,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		dao.updateComponentVersion(version);
 	}
 
-	private String getHtml(String url, Object key, boolean live)
+	private String getHtml(String url, String key, boolean live)
 			throws RequestContextExpiredException {
 
 		try {
@@ -221,12 +221,13 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		return html;
 	}
 
+	//TODO Use ListRef as argument
 	public String getPreviewListHtml(String controllerId, Long listId)
 			throws RequestContextExpiredException {
 
-		Object contextKey = listId;
-		if (contextKey == null) {
-			contextKey = controllerId;
+		String contextKey = controllerId;
+		if (listId != null) {
+			contextKey = listId.toString();
 		}
 		return getHtml(controllerId, contextKey, false);
 	}
@@ -268,18 +269,18 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		}
 	}
 
-	public void publish(Long listId, Long[] containerIds) {
-		if (listId != null) {
-			publishList(listId);
+	public void publish(Long[] listIds, Long[] containerIds) {
+		if (listIds != null) {
+			publishLists(listIds);
 		}
 		if (containerIds != null) {
 			publishContainers(containerIds);
 		}
 	}
 
-	public void discard(Long listId, Long[] containerIds) {
-		if (listId != null) {
-			discardList(listId);
+	public void discard(Long[] listIds, Long[] containerIds) {
+		if (listIds != null) {
+			discardLists(listIds);
 		}
 		if (containerIds != null) {
 			discardContainers(containerIds);
@@ -298,12 +299,14 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	}
 
 	/**
-	 * Discards all changes made to the ComponentList identified by the
-	 * given ID.
+	 * Discards all changes made to the ComponentLists identified by the
+	 * given IDs.
 	 */
-	private void discardList(Long listId) {
-		ComponentList componentList = dao.loadComponentList(listId);
-		dao.discardList(componentList);
+	private void discardLists(Long[] listIds) {
+		for (int i = 0; i < listIds.length; i++) {
+			ComponentList componentList = dao.loadComponentList(listIds[i]);
+			dao.discardList(componentList);
+		}
 	}
 
 	/**
@@ -320,14 +323,16 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	/**
 	 * Publishes the ComponentList identified by the given ID.
 	 */
-	public void publishList(Long listId) {
-		ComponentList list = dao.loadComponentList(listId);
-		if (AccessController.isGranted("publish", list.getLocation())) {
-			dao.publishList(list);
-		}
-		else {
-			throw new RuntimeException(messageSource.getMessage(
-				"components.error.publishNotGranted", null, getLocale()));
+	public void publishLists(Long[] listIds) {
+		for (int i = 0; i < listIds.length; i++) {
+			ComponentList list = dao.loadComponentList(listIds[i]);
+			if (AccessController.isGranted("publish", list.getLocation())) {
+				dao.publishList(list);
+			}
+			else {
+				throw new RuntimeException(messageSource.getMessage(
+					"components.error.publishNotGranted", null, getLocale()));
+			}
 		}
 	}
 
@@ -353,7 +358,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 	/* Utility methods */
 
-	private HttpServletRequest getWrappedRequest(Object key)
+	private HttpServletRequest getWrappedRequest(String key)
 			throws RequestContextExpiredException {
 
 		WebContext ctx = WebContextFactory.get();

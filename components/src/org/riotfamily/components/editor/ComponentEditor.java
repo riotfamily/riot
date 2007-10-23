@@ -64,9 +64,9 @@ public interface ComponentEditor {
 
 	public void deleteComponent(Long containerId);
 
-	public void publish(Long listId, Long[] containerIds);
+	public void publish(Long[] listIds, Long[] containerIds);
 
-	public void discard(Long listId, Long[] containerIds);
+	public void discard(Long[] listIds, Long[] containerIds);
 
 	public void keepAlive();
 

@@ -29,7 +29,7 @@ Resources.loadScriptSequence([
 	{src: 'riot-js/viewport.js'},
 	{src: 'riot-js/window-callback.js'},
 	{src: 'inplace.js', test: 'riot.InplaceEditor'},
-	{src: 'component.js'}
+	{src: 'components.js'}
 ]);
 
 

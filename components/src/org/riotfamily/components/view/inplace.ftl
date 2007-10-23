@@ -48,7 +48,7 @@
 	<#assign currentListId = listId />
 	<#if editMode>
 		${inplaceMacroHelper.enableOutputWrapping()}
-		<div class="riot-components riot-entity-list" riot:listId="${listId}">
+		<div class="riot-list riot-entity-list" riot:listId="${listId}">
 			<#nested>
 		</div>
 	<#else>
@@ -83,13 +83,16 @@
 		<#local objectId = inplaceMacroHelper.getObjectId(listId, object) />
 		
 		<#local attributes = {
-			"class": "riot-component",
+			"class": "riot-component riot-entity-component",
 			"riot:listId": listId,
 			"riot:objectId": objectId
 		} />
 		
 		<#if form?has_content>
-			<#local attributes = attributes + {"riot:form": "/components/entity-form/" + listId + "/" + form + "/" + objectId} />
+			<#local attributes = attributes + {
+					"class": attributes.class + " riot-form",
+					"riot:form": "/components/entity-form/" + listId + "/" + form + "/" + objectId
+			} />
 		</#if>
 		
 		<div ${common.joinAttributes(attributes)}>
@@ -158,8 +161,8 @@
 				<#local element=tag />
 			<#else>
 				<#local element="div" />
-				<#local attributes = attributes + {"class" : ("riot-editor " + attributes.class?if_exists)?trim} />
 			</#if>
+			<#local attributes = attributes + {"class" : ("riot-text-editor " + attributes.class?if_exists)?trim} />
 			<${element} riot:key="${key}" riot:editorType="${editor}"${common.joinAttributes(attributes)}>${value}</${element}>
 		<#elseif tag?has_content>
 			<${tag}${common.joinAttributes(attributes)}>${value}</${tag}>
@@ -215,7 +218,7 @@
 				<#local srcTemplate = transform("/*") />
 			</#if>
 			<#local attributes = attributes + {
-				"class": ("riot-editor " + attributes.class!)?trim,
+				"class": ("riot-image-editor " + attributes.class!)?trim,
 				"riot:editorType": "image",
 				"riot:key": key,
 				"riot:srcTemplate": srcTemplate,
@@ -265,20 +268,22 @@
 		${inplaceMacroHelper.enableOutputWrapping()}
 		<#if !tag?has_content>
 			<#local tag = "span" />
-			<#local attributes = attributes + {
-				"class": ("riot-phantom " + attributes.class!)?trim
-			} />
 		</#if>
 		<#local attributes = attributes + {
 				"riot:containerId": container.id?c,
-				"class": ("riot-component " + attributes.class!)?trim
+				"class": ("riot-component riot-single-component " + attributes.class!)?trim
 		} />
 		<#if form?has_content>
 			<#local formUrl = inplaceMacroHelper.getFormUrl(form, container.id)! />
-			<#local attributes = attributes + {"riot:form": formUrl} />
+			<#local attributes = attributes + {
+					"class": attributes.class + " riot-form",
+					"riot:form": formUrl					
+			} />
 		</#if>
 		<#if container.dirty>
-			<#local attributes = attributes + {"riot:dirty": "true"} />
+			<#local attributes = attributes + {
+					"class": attributes.class + " riot-dirty"
+			} />
 		</#if>
 	</#if>
 	<#if tag?has_content>

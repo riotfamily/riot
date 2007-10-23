@@ -31,7 +31,7 @@ public class ListRef {
 
 	private String controllerId;
 	
-	private Long listId;
+	private String contextKey;
 
 	public String getControllerId() {
 		return this.controllerId;
@@ -41,17 +41,13 @@ public class ListRef {
 		this.controllerId = controllerId;
 	}
 
-	public Long getListId() {
-		return this.listId;
+	public void setContextKey(String contextKey) {
+		this.contextKey = contextKey;
 	}
 
-	public void setListId(Long listId) {
-		this.listId = listId;
-	}
-	
-	public Object getContextKey() {
-		if (listId != null) {
-			return listId;
+	public String getContextKey() {
+		if (contextKey != null) {
+			return contextKey;
 		}
 		return controllerId;
 	}

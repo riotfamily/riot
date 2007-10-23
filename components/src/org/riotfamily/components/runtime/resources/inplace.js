@@ -4,10 +4,12 @@ riot.stopEvent = function(ev) {
 }
 
 riot.outline = {
-	top: RBuilder.node('div', {className: 'riot-highlight riot-highlight-top'}).hide().appendTo(document.body),
-	right: RBuilder.node('div', {className: 'riot-highlight riot-highlight-right'}).hide().appendTo(document.body),
-	bottom: RBuilder.node('div', {className: 'riot-highlight riot-highlight-bottom'}).hide().appendTo(document.body),
-	left: RBuilder.node('div', {className: 'riot-highlight riot-highlight-left'}).hide().appendTo(document.body),
+	elements: $H({
+		top: RBuilder.node('div', {className: 'riot-highlight riot-highlight-top'}).hide().appendTo(document.body),
+		right: RBuilder.node('div', {className: 'riot-highlight riot-highlight-right'}).hide().appendTo(document.body),
+		bottom: RBuilder.node('div', {className: 'riot-highlight riot-highlight-bottom'}).hide().appendTo(document.body),
+		left: RBuilder.node('div', {className: 'riot-highlight riot-highlight-left'}).hide().appendTo(document.body)
+	}),
 	
 	show: function(el, onclick, excludes) {
 		if (!window.riot || riot.outline.suspended) return;
@@ -20,18 +22,17 @@ riot.outline = {
 		}
 		if (!el) return;
 		
-		riot.outline.top.copyPosFrom(el, {setHeight: false, offsetTop: -1, offsetLeft: -1, offsetWidth: 2}).show();
-		riot.outline.right.copyPosFrom(el, {setWidth: false, offsetLeft: el.offsetWidth}).show();
-		riot.outline.bottom.copyPosFrom(el, {setHeight: false, offsetLeft: -1, offsetTop: offsetTop, offsetWidth: 2}).show();
-		riot.outline.left.copyPosFrom(el, {setWidth: false, offsetLeft: -1}).show();
+		riot.outline.elements.top.copyPosFrom(el, {setHeight: false, offsetTop: -1, offsetLeft: -1, offsetWidth: 2});
+		riot.outline.elements.left.copyPosFrom(el, {setWidth: false, offsetLeft: -1});
+		riot.outline.elements.bottom.copyPosFrom(el, {setHeight: false, offsetLeft: -1, offsetTop: offsetTop, offsetWidth: 2});
+		riot.outline.elements.right.copyPosFrom(el, {setWidth: false, offsetLeft: el.offsetWidth});
+		
+		riot.outline.elements.values().invoke('show');
 	},
 
 	hide: function(ev) {
 		if (window.riot && riot.outline) { 
-			riot.outline.top.hide();
-			riot.outline.right.hide();
-			riot.outline.bottom.hide();
-			riot.outline.left.hide();
+			riot.outline.elements.values().invoke('hide');
 		}
 	}
 }
@@ -43,10 +44,10 @@ riot.InplaceEditor.prototype = {
 		this.element = $(element);
 		this.component = component;
 		this.key = this.element.readAttribute('riot:key');
-		this.enabled = false;
 		this.onclickHandler = this.onclick.bindAsEventListener(this);
 		this.oninit(options);
-		this.onMouseOver = this.showOutline.bindAsEventListener(this);
+		this.bShowOutline = this.showOutline.bindAsEventListener(this);
+		this.bHideOutline = this.hideOutline.bindAsEventListener(this);
 	},
 
 	/* Subclasses may override this method to perform initalization upon creation */
@@ -54,30 +55,33 @@ riot.InplaceEditor.prototype = {
 		this.options = options || {};
 	},
 
-	/* Enables or disables the editor by adding (or removing) an onclick listener */
-	setEnabled: function(enabled) {
-		this.enabled = enabled;
-		if (enabled) {
-			this.element.disableClicks();
-			this.element.onclick = this.onclickHandler;
-			this.element.addClassName('riot-editable-text');
-			this.element.observe('mouseover', this.onMouseOver);
-			this.element.observe('mouseout', riot.outline.hide);
+	editOn: function() {
+		this.element.disableClicks();
+		this.element.onclick = this.onclickHandler;
+		this.element.addClassName('riot-editable-text');
+		this.element.observe('mouseover', this.bShowOutline);
+		this.element.observe('mouseout', this.bHideOutline);
+	},
+	
+	editOff: function() {
+		if (riot.activeEditor == this) {
+			this.close();
 		}
-		else {
-			if (riot.activeEditor == this) {
-				this.close();
-			}
-			this.element.onclick = null;
-			this.element.restoreClicks();
-			this.element.removeClassName('riot-editable-text');
-			this.element.stopObserving('mouseover', this.onMouseOver);
-			this.element.stopObserving('mouseout', riot.outline.scheduleHide);
-		}
+		this.element.onclick = null;
+		this.element.restoreClicks();
+		this.element.removeClassName('riot-editable-text');
+		this.element.stopObserving('mouseover', this.bShowOutline);
+		this.element.stopObserving('mouseout', this.bHideOutline);
 	},
 
-	showOutline: function(event) {
-		riot.outline.show(this.element);
+	showOutline: function(ev) {
+		Event.stop(ev);
+		if (window.riot) riot.outline.show(this.element);
+	},
+	
+	hideOutline: function(ev) {
+		if (ev) Event.stop(ev);
+		if (window.riot) riot.outline.hide();
 	},
 
 	/* Handler that is invoked when an enabled editor is clicked */
@@ -663,6 +667,7 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 		this.upload = new SWFUpload({
 			upload_script: riot.path + '/components/upload/' + token,
 			flash_path: Resources.basePath + 'swfupload/SWFUpload.swf',
+			flash_loaded_callback: this.globalRef + '.editOn',
 			allowed_filetypes: '*.jpg;*.gif;*.png',
 			allowed_filetypes_description: 'Images',
 			allowed_filesize: '30000',
@@ -671,15 +676,15 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 		});
 	},
 	
-	setEnabled: function(enabled) {
-		this.SUPER(enabled);
-		if (enabled) {
-			UploadManager.generateToken(this.setToken.bind(this));
-		} 
-		else {
-			Element.remove(this.upload.movieElement);
-			UploadManager.invalidateToken(this.token);
-		}
+	editImagesOn: function() {
+		this.element.disableClicks();
+		UploadManager.generateToken(this.setToken.bind(this));
+	},
+	
+	editImagesOff: function() {
+		this.editOff(); 
+		Element.remove(this.upload.movieElement);
+		UploadManager.invalidateToken(this.token);
 	},
 	
 	edit: function() {

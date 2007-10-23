@@ -32,6 +32,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.markup.DocumentWriter;
+import org.riotfamily.common.markup.Html;
+import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
@@ -71,38 +74,43 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	 * Riot toolbar JavaScript.
 	 */
 	protected void renderComponentList(ComponentList list) throws IOException {
+		DocumentWriter wrapper = new DocumentWriter(out);
+		
 		boolean renderOuterDiv = PageRequestUtils.createAndStoreContext(
-				request, list.getId(), 120000);
+				request, list.getId().toString(), 120000);
 
 		if (renderOuterDiv) {
-			out.print("<div riot:listId=\"");
-			out.print(list.getId());
-			out.print("\" riot:controllerId=\"");
-			//REVISIT Why not pathWithinApplication?
-			String uri = ServletUtils.getRequestUri(request);
-			uri = uri.substring(request.getContextPath().length());
-			out.print(uri);
-			out.print('"');
-			if (config.getMinComponents() != null) {
-				out.print(" riot:minComponents=\"");
-				out.print(config.getMinComponents());
-				out.print('"');
-			}
-			if (config.getMaxComponents() != null) {
-				out.print(" riot:maxComponents=\"");
-				out.print(config.getMaxComponents());
-				out.print('"');
-			}
-			if (list.isDirty()) {
-				out.print(" riot:dirty=\"true\"");
-			}
-			out.print(" class=\"riot-components riot-component-list\">");
-			super.renderComponentList(list);
-			out.print("</div>");
+			wrapper.start(Html.DIV)
+				.attribute(Html.COMMON_CLASS, "riot-controller")
+				.attribute("riot:contextKey", list.getId().toString())
+				.attribute("riot:controllerId", 
+						ServletUtils.getPathWithinApplication(request));
 		}
-		else {
-			super.renderComponentList(list);
+		
+		String className = "riot-list riot-component-list";
+		if (parent == null) {
+			className += " riot-toplevel-list";
 		}
+		if (list.isDirty()) {
+			className += " riot-dirty";
+		}
+		
+		wrapper.start(Html.DIV)
+			.attribute(Html.COMMON_CLASS, className)
+			.attribute("riot:listId", list.getId().toString());
+		
+		if (config.getMinComponents() != null) {
+			wrapper.attribute("riot:minComponents", 
+					config.getMinComponents().intValue());
+		}
+		if (config.getMaxComponents() != null) {
+			wrapper.attribute("riot:maxComponents", 
+					config.getMaxComponents().intValue());
+		}
+		
+		wrapper.body();
+		super.renderComponentList(list);
+		wrapper.closeAll();
 	}
 
 	/**
@@ -155,25 +163,26 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 			String positionClassName) throws IOException {
 
 		ComponentVersion version = getVersionToRender(container);
-		out.print("<div riot:containerId=\"");
-		out.print(container.getId());
-		out.print("\" riot:componentType=\"");
-		out.print(version.getType());
-		out.print('"');
-
 		String type = version.getType();
 		String formUrl = repository.getFormUrl(type, container.getId());
+		
+		String className = "riot-list-component riot-component " +
+				"riot-component-" + type;
+		
 		if (formUrl != null) {
-			out.print(" riot:form=\"");
-			out.print(formUrl);
-			out.print('"');
+			className += " riot-form";
 		}
+		
+		TagWriter wrapper = new TagWriter(out);
+		wrapper.start(Html.DIV)
+				.attribute(Html.COMMON_CLASS, className)
+				.attribute("riot:containerId", container.getId().toString())
+				.attribute("riot:componentType", type)
+				.attribute("riot:form", formUrl)
+				.body();
 
-		out.print(" class=\"riot-component riot-component-");
-		out.print(version.getType());
-		out.print("\">");
 		renderComponentVersion(version, positionClassName);
-		out.print("</div>");
+		wrapper.end();
 	}
 
 	protected RenderStrategy getStrategyForParentList() throws IOException {

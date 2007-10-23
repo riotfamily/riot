@@ -87,7 +87,7 @@ public class ComponentFreeMarkerView extends RiotFreeMarkerView {
 				PrintWriter out = deferredResponse.getResponse().getWriter();
 				TagWriter wrapper = new TagWriter(out);
 				wrapper.start(Html.DIV)
-					.attribute(Html.COMMON_CLASS, "riot-components")
+					.attribute(Html.COMMON_CLASS, "riot-controller")
 					.attribute("riot:controllerId", path)
 					.body();
 			

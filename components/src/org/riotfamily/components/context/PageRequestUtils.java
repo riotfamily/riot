@@ -88,14 +88,14 @@ public final class PageRequestUtils {
 	}
 	
 	public static HttpServletRequest wrapRequest(
-			HttpServletRequest request, String pageUri, Object contextKey) 
+			HttpServletRequest request, String pageUri, String contextKey) 
 			throws RequestContextExpiredException {
 		
 		log.debug("Wrapping context for key " + contextKey);
 		ContextMap contexts = getContextMap(request);
 		PageRequestContext context = contexts.get(pageUri, contextKey);
 		if (context == null) {
-			throw new RequestContextExpiredException();
+			throw new RequestContextExpiredException(pageUri, contextKey);
 		}
 		return new PartialPageRequest(request, context);
 	}

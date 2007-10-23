@@ -25,10 +25,13 @@ package org.riotfamily.components.context;
 
 public class RequestContextExpiredException extends Exception {
 
-	private static final String MESSAGE = "Request context has expired";
-	
 	public RequestContextExpiredException() {
-		super(MESSAGE);
+		super("Request context has expired.");
+	}
+
+	public RequestContextExpiredException(String pageUri, String contextKey) {
+		super("Request context for " + pageUri + " (key: " + contextKey 
+				+ ") has expired.");
 	}
 
 }

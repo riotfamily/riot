@@ -3,20 +3,20 @@ riot.Toolbar.prototype = {
 
 	initialize: function() {
 		this.buttons = $H({
-			gotoRiot: new riot.ToolbarButton('gotoRiot', '${toolbarButton.gotoRiot}', riot.path),
+			gotoRiot: new riot.ToolbarButton('gotoRiot', '${toolbarButton.gotoRiot}', null, riot.path),
 			browse: new riot.ToolbarButton('browse', '${toolbarButton.browse}'),
-			insert: new riot.ToolbarButton('insert', '${toolbarButton.insert}'),
-			remove: new riot.ToolbarButton('remove', '${toolbarButton.remove}'),
-			edit: new riot.ToolbarButton('edit', '${toolbarButton.edit}'),
-			editImages: new riot.ToolbarButton('editImages', '${toolbarButton.editImages}'),
-			properties: new riot.ToolbarButton('properties', '${toolbarButton.properties}'),
-			move: new riot.ToolbarButton('move', '${toolbarButton.move}'),
+			insert: new riot.ToolbarButton('insert', '${toolbarButton.insert}', '.riot-list'),
+			remove: new riot.ToolbarButton('remove', '${toolbarButton.remove}', '.riot-component-list'),
+			edit: new riot.ToolbarButton('edit', '${toolbarButton.edit}', '.riot-text-editor'),
+			editImages: new riot.ToolbarButton('editImages', '${toolbarButton.editImages}', '.riot-image-editor'),
+			properties: new riot.ToolbarButton('properties', '${toolbarButton.properties}', '.riot-form'),
+			move: new riot.ToolbarButton('move', '${toolbarButton.move}', '.riot-component-list'),
 			logout: new riot.ToolbarButton('logout', '${toolbarButton.logout}')
 		});
 
 		if (!riot.instantPublish) {
-			this.buttons.discard = new riot.ToolbarButton('discard', '${toolbarButton.discard}');
-			this.buttons.publish = new riot.ToolbarButton('publish', '${toolbarButton.publish}');
+			this.buttons.discard = new riot.ToolbarButton('discard', '${toolbarButton.discard}', '.riot-controller');
+			this.buttons.publish = new riot.ToolbarButton('publish', '${toolbarButton.publish}', '.riot-controller');
 		}
 
 		this.buttons.logout.applyHandler = this.logout;
@@ -28,7 +28,7 @@ riot.Toolbar.prototype = {
 		document.body.appendChild(this.inspectorPanel = RBuilder.node('div', {id: 'riot-inspector'}));
 
 		if (!riot.instantPublish) {
-			this.applyButton = new riot.ToolbarButton('apply', '${toolbarButton.apply}').activate();
+			this.applyButton = new riot.ToolbarButton('apply', '${toolbarButton.apply}', '.riot-controller').activate();
 			this.applyButton.enable = function() {
 				this.enabled = true;
 				new Effect.Appear(this.element, {duration: 0.4});
@@ -38,23 +38,34 @@ riot.Toolbar.prototype = {
 				this.element.hide();
 			}
 			this.applyButton.click = function() {
-				this.getHandlerTargets().invoke('apply');
+				riot.publishWidgets.invoke('applyChanges');
 				riot.toolbar.buttons.browse.click();
 			}
 			this.applyButton.element.hide();
 			this.element.appendChild(this.applyButton.element);
 		}
-
-		this.componentLists = [];
 	},
 
 	activate: function() {
-		this.updateComponentLists();
+		if (!riot.instantPublish) {
+			var dirty = typeof document.body.down('.riot-dirty') != 'undefined';
+			if (!dirty) this.disablePublishButtons();
+		}
 		this.buttons.values().invoke('activate');
 		this.buttons.browse.click();
 		this.keepAliveTimer = setInterval(this.keepAlive.bind(this), 60000);
 	},
 
+	enablePublishButtons: function() {
+		this.buttons.publish.enable();
+		this.buttons.discard.enable();
+	},
+	
+	disablePublishButtons: function() {
+		this.buttons.publish.disable();
+		this.buttons.discard.disable();
+	},
+	
 	buttonClicked: function(button) {
 		if (this.selectedButton) {
 			this.selectedButton.reset();
@@ -99,45 +110,12 @@ riot.Toolbar.prototype = {
 		this.inspectorPanel.style.display = 'none';
 	},
 
-	updateComponentLists: function() {
-		// We have to reverse the list, otherwise moving nested components won't work
-		this.componentLists = riot.createWrappers().reverse();
-		this.dirtyCheck();
-	},
-
-	evictComponentLists: function(orphanedLists) {
-		if (orphanedLists && orphanedLists.length > 0) {
-			this.componentLists = this.componentLists.findAll(function(list) {
-				return !orphanedLists.include(list);
-			});
-		}
-	},
-
-	registerComponentLists: function(lists) {
-		lists.each(this.restoreMode.bind(this));
-		this.componentLists = lists.concat(this.componentLists);
-	},
-
-	restoreMode: function(componentList) {
+	restoreMode: function(el) {
 		if (this.selectedButton &&
 				this.selectedButton != this.buttons.publish &&
-				this.selectedButton != this.buttons.discard &&
-				componentList[this.selectedButton.handler]) {
+				this.selectedButton != this.buttons.discard) {
 
-			componentList[this.selectedButton.handler](true);
-		}
-	},
-
-	dirtyCheck: function(callerIsDirty) {
-		if (!riot.instantPublish) {
-			if (callerIsDirty || this.componentLists.pluck('dirty').any()) {				
-				this.buttons.publish.enable();			
-				this.buttons.discard.enable();				
-			}
-			else {
-				this.buttons.publish.disable();
-				this.buttons.discard.disable();
-			}
+			this.selectedButton.reApplyHandler(el);
 		}
 	},
 
@@ -157,13 +135,14 @@ riot.Toolbar.prototype = {
 riot.ToolbarButton = Class.create();
 riot.ToolbarButton.prototype = {
 
-	initialize: function(handler, title, href) {
+	initialize: function(handler, title, selector, href) {
 		this.handler = handler;
 		this.element = RBuilder.node('a', {
 			id: 'riot-toolbar-button-' + handler,
 			className: 'toolbar-button-disabled',
 			title: title
 		});
+		this.selector = selector;
 		if (href) {
 			this.element.href = href;
 			this.element.target = 'riot';
@@ -222,23 +201,33 @@ riot.ToolbarButton.prototype = {
 		return this;
 	},
 
-	getHandlerTargets: function() {
-		return riot.toolbar.componentLists;
+	getHandlerTargets: function(root) {
+		return Selector.findChildElements(root, [this.selector]);
 	},
 
 	applyHandler: function(enable) {
 		if (this.beforeApply) {
 			this.beforeApply(enable);
 		}
-		var targets = this.getHandlerTargets();
-		for (var i = 0; i < targets.length; i++) {
-			if (targets[i][this.handler]) {
-				targets[i][this.handler](enable);
-			}
-		}
+		this.applyHandlerInternal(document, enable);
 		if (this.afterApply) {
 			this.afterApply(enable);
 		}
+	},
+	
+	applyHandlerInternal: function(root, enable) {
+		var targets = this.getHandlerTargets(root);
+		for (var i = 0; i < targets.length; i++) {
+			var target = riot.getWrapper(targets[i], this.selector)
+			var method = this.handler + (enable ? 'On' : 'Off');
+			if (target[method]) {
+				target[method]();
+			}
+		}
+	},
+	
+	reApplyHandler: function(root) {
+		this.applyHandlerInternal(root, true);
 	}
 
 }
