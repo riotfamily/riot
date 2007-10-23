@@ -254,12 +254,18 @@ var RElement = {
 				left += el.offsetLeft - el.scrollLeft;
 			}
 		}
-		if (Prototype.Browser.IE) {
-			left -= parseInt(document.body.getStyle('border-left-width'));
-		}
-		else if (Prototype.Browser.Gecko) {
-			left += parseInt(document.body.getStyle('border-left-width'));
-		}      		
+		var body = $(document.body);
+		if (body.getStyle('border-left-style') != 'none') {
+			var border = parseInt(body.getStyle('border-left-width'));
+			if (!isNaN(border)) {
+				if (Prototype.Browser.IE) {
+					left -= border;
+				}
+				else if (Prototype.Browser.Gecko) {
+					left += border;
+				}
+			}
+		}		
         return left;
 	},
 	
@@ -275,11 +281,17 @@ var RElement = {
 				top += el.offsetTop - el.scrollTop;
 			}
 		}
-		if (Prototype.Browser.IE) {
-			top -= parseInt(document.body.getStyle('border-top-width'));
-		}
-		else if (Prototype.Browser.Gecko) {
-			top += parseInt(document.body.getStyle('border-top-width'));
+		var body = $(document.body);
+		if (body.getStyle('border-left-style') != 'none') {
+			var border = parseInt(body.getStyle('border-top-width'));
+			if (!isNaN(border)) {
+				if (Prototype.Browser.IE) {
+					top -= border;
+				}
+				else if (Prototype.Browser.Gecko) {
+					top += border;
+				}
+			}
 		}
         return top;
 	}

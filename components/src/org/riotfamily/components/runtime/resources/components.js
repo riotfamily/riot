@@ -387,13 +387,18 @@ riot.Component.prototype = {
 	},
 	
 	showOutline: function(ev) {
-		Event.stop(ev);
-		riot.outline.show(this.element);
+		// Check to work around "Event.stop is not a function" error upon unload ...
+		if (Event.stop) {
+			Event.stop(ev);
+			riot.outline.show(this.targetElement);
+		}
 	},
 	
 	hideOutline: function(ev) {
-		Event.stop(ev);
-		riot.outline.scheduleHide();
+		if (Event.stop) { 
+			Event.stop(ev);
+			riot.outline.scheduleHide();
+		}
 	},
 	
 	setClickHandler: function(clickHandler) {

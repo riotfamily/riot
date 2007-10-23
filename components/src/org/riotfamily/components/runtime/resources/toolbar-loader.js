@@ -15,6 +15,7 @@ Resources.loadStyleSheet('style/edit-mode.css');
 Resources.loadScriptSequence([
 	{src: 'prototype/prototype.js', test: 'Prototype'},
 	{src: 'riot-js/inheritance.js', test: 'Class.extend'},
+	{src: 'riot-js/viewport.js'},
 	{src: 'riot-js/util.js', test: 'RElement'},
 	{src: 'scriptaculous/effects.js', test: 'Effect'},
 	{src: 'toolbar.js', test: 'riot.toolbar'},
@@ -26,7 +27,6 @@ Resources.loadScriptSequence([
 	{src: 'swfupload/SWFUpload.js', test: 'SWFUpload'},
 	{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
 	{src: 'riot-js/effects.js'},
-	{src: 'riot-js/viewport.js'},
 	{src: 'riot-js/window-callback.js'},
 	{src: 'inplace.js', test: 'riot.InplaceEditor'},
 	{src: 'components.js'}
