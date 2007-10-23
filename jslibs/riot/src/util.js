@@ -222,9 +222,8 @@ var RElement = {
 	    if (Position.offsetParent(el) == document.body) {
 	    	// Shortcut, if the target offsetParent is document.body
 	    	// Works around a Prototype/Safari 3.0.3+ bug with with Position.page()
-	    	var p = Position.cumulativeOffset(source);
-	    	if(options.setLeft) el.style.left = (p[0] + options.offsetLeft) + 'px';
-    		if(options.setTop) el.style.top = (p[1] + options.offsetTop) + 'px';
+	    	if(options.setLeft) el.style.left = (source.leftPos() + options.offsetLeft) + 'px';
+    		if(options.setTop) el.style.top = (source.topPos() + options.offsetTop) + 'px';
 	    }
 	    else {
 			Position.clone(source, el, Object.extend(options, {
@@ -237,6 +236,52 @@ var RElement = {
 	copyPosTo: function(el, target) {
 		$(target).copyPosFrom(el);
 		return el;
+	},
+	
+	//Prototype's Position.cumulativeOffset() method to too naive, 
+	//see http://qooxdoo.org/documentation/general/compute_element_position
+	//and http://www.koders.com/javascript/fidEA3E9D9152F06207EBED4D57045EFC0F2629593B.aspx?s=array
+	
+    leftPos: function(el) {
+    	var left;
+    	if (Prototype.Browser.IE) {
+        	left = el.getBoundingClientRect().left + Viewport.getScrollLeft();
+      	}
+      	else {
+    		left = el.offsetLeft;
+			while (el.tagName.toLowerCase() != 'body') {
+				el = el.offsetParent;
+				left += el.offsetLeft - el.scrollLeft;
+			}
+		}
+		if (Prototype.Browser.IE) {
+			left -= parseInt(document.body.getStyle('border-left-width'));
+		}
+		else if (Prototype.Browser.Gecko) {
+			left += parseInt(document.body.getStyle('border-left-width'));
+		}      		
+        return left;
+	},
+	
+	topPos: function(el) {
+		var top;
+    	if (Prototype.Browser.IE) {
+        	top = el.getBoundingClientRect().top + Viewport.getScrollTop();
+      	}
+      	else {
+    		top = el.offsetTop;
+			while (el.tagName.toLowerCase() != 'body') {
+				el = el.offsetParent;
+				top += el.offsetTop - el.scrollTop;
+			}
+		}
+		if (Prototype.Browser.IE) {
+			top -= parseInt(document.body.getStyle('border-top-width'));
+		}
+		else if (Prototype.Browser.Gecko) {
+			top += parseInt(document.body.getStyle('border-top-width'));
+		}
+        return top;
 	}
 }
 

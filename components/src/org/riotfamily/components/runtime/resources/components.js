@@ -388,12 +388,7 @@ riot.Component.prototype = {
 	
 	showOutline: function(ev) {
 		Event.stop(ev);
-		var el = this.element;
-		var c = el.childElements();
-		if (c.length == 1) {
-			el = c[0];
-		}
-		riot.outline.show(el);
+		riot.outline.show(this.element);
 	},
 	
 	hideOutline: function(ev) {
