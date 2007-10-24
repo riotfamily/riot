@@ -2,6 +2,7 @@
 
 Version history
 
+1.0.2.1 - Removed wmode="transparent" and display="none"
 1.0.2 - row 86 - added "escape" to the querystring to keep all the parameters intact
 
 */
