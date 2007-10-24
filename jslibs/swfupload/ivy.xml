@@ -2,7 +2,7 @@
     <info
     	organisation="riotfamily"
     	module="swfupload-js"
-    	revision="1.0.2.1"
+    	revision="1.0.2.2"
     	status="release">
 
 	    <license name="MIT" url="http://www.opensource.org/licenses/mit-license.php" />

@@ -1,10 +1,9 @@
 /*
-
 Version history
 
+1.0.2.2 - Sticking to wmode="transparent" for IE
 1.0.2.1 - Removed wmode="transparent" and display="none"
 1.0.2 - row 86 - added "escape" to the querystring to keep all the parameters intact
-
 */
 
 function SWFUpload(settings) {
@@ -95,40 +94,42 @@ SWFUpload.prototype.init = function(settings) {
 
 SWFUpload.prototype.loadFlash = function() {
 	
-	var html = "";
+	// Build the DOM nodes to hold the flash;
+	var container = document.createElement("div");
+	container.style.width = "1px";
+	container.style.height = "1px";
+	container.style.position = "absolute";
+	
 	var sb = new stringBuilder();
 	
 	// Create Mozilla Embed HTML
 	if (navigator.plugins && navigator.mimeTypes && navigator.mimeTypes.length) {
-		
+
 		// Build the basic embed html
 		sb.append('<embed type="application/x-shockwave-flash" src="' + this.getSetting("flash_path") + '" width="' + this.getSetting("flash_width") + '" height="' + this.getSetting("flash_height") + '"');
 		sb.append(' id="' + this.movieName + '" name="' + this.movieName + '" ');
 		sb.append('bgcolor="' + this.getSetting["flash_color"] + '" quality="high" menu="false" flashvars="');
 		sb.append(this._getFlashVars());
 		sb.append('" />');
+		
+		// Set the visibility to "hidden" instead of wmode="transparent"
+		container.style.visibility = "hidden";
 	
 	// Create IE Object HTML
-	} else {
+	} 
+	else {
 	
 		// Build the basic Object tag
 		sb.append('<object id="' + this.movieName + '" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="' + this.getSetting("flash_width") + '" height="' + this.getSetting("flash_height") + '">');
 		sb.append('<param name="movie" value="' + this.getSetting("flash_path") + '" />');
 		sb.append('<param name="bgcolor" value="#000000" />');
 		sb.append('<param name="quality" value="high" />');
+		sb.append('<param name="wmode" value="transparent" />');
 		sb.append('<param name="menu" value="false" />');
 		sb.append('<param name="flashvars" value="' + this._getFlashVars() + '" />');
 		sb.append('</object>');
-
 	}
 	
-	// Build the DOM nodes to hold the flash;
-	var container = document.createElement("div");
-	container.style.width = "1px";
-	container.style.height = "1px";
-	container.style.position = "absolute";
-	container.style.visibility = "hidden";
-
 	var target_element = document.body;
 		
 	if (typeof(target_element) == "undefined" || target_element == null)
@@ -169,9 +170,7 @@ SWFUpload.prototype._getFlashVars = function() {
 // This should Load the UI parts.
 SWFUpload.prototype.flashLoaded = function(bool) {
 	this.loadUI();
-
-	if (this.debug) 
-		SWFUpload.debug("Flash called home and is ready.");	
+	if (this.debug)	SWFUpload.debug("Flash called home and is ready.");	
 };
 
 // Load the UI elements.  Show the UI Target, build the "link" according to the settings, and hide the Degraded Target
