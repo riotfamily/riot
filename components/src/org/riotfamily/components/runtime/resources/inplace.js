@@ -705,7 +705,6 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 	},	
 	
 	uploadFileComplete: function(file) {
-		SWFUpload.debug('Upload complete.');
 		UploadManager.getFilePath(this.token, this.setPath.bind(this));
 	},
 	
@@ -822,15 +821,17 @@ Cropper.UI.prototype = {
 		this.click = new Cropper.Pos();
 		this.offset = new Cropper.Pos();
 
-		this.img = RBuilder.node('img', {unselectable: 'on', onload: this.onLoadImage.bind(this)})
+		this.img = RBuilder.node('img', {unselectable: 'on'})
 				.setStyle({position: 'absolute'}).appendTo(this.preview);
 		
 		// Enable zooming using the mouse wheel:
-		if (this.img.addEventListener) {
-			this.img.addEventListener("DOMMouseScroll", this.onMouseWheel.bindAsEventListener(this), true);
+		var bOnMouseWheel = this.onMouseWheel.bindAsEventListener(this);
+		if (Prototype.Browser.Gecko) {
+			this.img.addEventListener("DOMMouseScroll", bOnMouseWheel, true);
 		}
-		else if (this.img.attachEvent) {
-			this.img.attachEvent("onmousewheel", this.onMouseWheel.bindAsEventListener(this));
+		else {
+			this.img.onmousewheel = bOnMouseWheel;
+			window.focus(); // Fix for IE6 
 		}
 
 		Event.observe(this.img, 'mousedown', this.mouseDownHandler = this.onMouseDown.bindAsEventListener(this));
@@ -840,11 +841,14 @@ Cropper.UI.prototype = {
 		this.img.style.width = 'auto';
 		this.img.style.height = 'auto';
 		
-		this.img.src = riot.contextPath + src;
+		var image = new Image();
+		image.onload = this.onLoadImage.bind(this, image);
+		image.src = riot.contextPath + src;
 	},
 	
-	onLoadImage: function() {
-		this.imageSize = new Cropper.Pos(this.img.width, this.img.height);
+	onLoadImage: function(image) {
+		this.img.src = image.src; 
+		this.imageSize = new Cropper.Pos(image.width, image.height);
 		
 		// Make sure min and max are not greater than the image dimensions:
 		this.min = new Cropper.Pos(this.editor.options.minWidth || 10, this.editor.options.minHeight || 10);
@@ -861,13 +865,13 @@ Cropper.UI.prototype = {
 		this.setSize(this.initialSize);
 	},
 
-	onMouseWheel: function(event) {
+	onMouseWheel: function(ev) {
 		var delta;
-		if (event.wheelDelta) {
-			delta = -event.wheelDelta / 40;
+		if (ev.wheelDelta) {
+			delta = -ev.wheelDelta / 40;
 		}
 		else {
-			delta = event.detail || 0;
+			delta = ev.detail || 0;
 			if (delta < -3) delta = -3;
 			if (delta > 3) delta = 3;
 		}
@@ -877,7 +881,7 @@ Cropper.UI.prototype = {
 		z = Math.min(this.imageSize.x, z);
 		this.zoom(z);
 		this.zoomToPointer = false;
-		Event.stop(event);
+		Event.stop(ev);
 	},
 
 	setSize: function(size) {
