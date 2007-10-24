@@ -245,13 +245,13 @@ var RElement = {
     leftPos: function(el) {
     	var left;
     	if (Prototype.Browser.IE) {
-        	left = el.getBoundingClientRect().left + Viewport.getScrollLeft();
+        	left = el.getBoundingClientRect().left - 2 + Viewport.getScrollLeft();
       	}
       	else {
     		left = el.offsetLeft;
 			while (el.tagName.toLowerCase() != 'body') {
 				el = el.offsetParent;
-				left += el.offsetLeft - el.scrollLeft;
+				left += el.offsetLeft;
 			}
 		}
 		var body = $(document.body);
@@ -272,13 +272,13 @@ var RElement = {
 	topPos: function(el) {
 		var top;
     	if (Prototype.Browser.IE) {
-        	top = el.getBoundingClientRect().top + Viewport.getScrollTop();
+        	top = el.getBoundingClientRect().top - 2 + Viewport.getScrollTop();
       	}
       	else {
     		top = el.offsetTop;
 			while (el.tagName.toLowerCase() != 'body') {
 				el = el.offsetParent;
-				top += el.offsetTop - el.scrollTop;
+				top += el.offsetTop;
 			}
 		}
 		var body = $(document.body);
