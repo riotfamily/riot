@@ -70,6 +70,7 @@
 		</xsd:choice>
 		<xsd:attribute name="id" type="xsd:ID" />
 		<xsd:attribute name="hql" use="required" />
+		<xsd:attribute name="max" type="xsd:positiveInteger" />
 		<xsd:attribute name="model-key" />
 		<xsd:attribute name="time-to-live" type="xsd:string" default="eternal" />
 		<xsd:attribute name="tag-cache-items" type="xsd:boolean" default="true" />

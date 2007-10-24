@@ -34,7 +34,16 @@ import org.riotfamily.cachius.TaggingContext;
  */
 public class HqlListModelBuilder extends AbstractHqlModelBuilder {
 
+	private Integer maxResults;
+	
+	public void setMaxResults(Integer maxResults) {
+		this.maxResults = maxResults;
+	}
+	
 	protected Object getResult(Query query) {
+		if (maxResults != null) {
+			query.setMaxResults(maxResults.intValue());
+		}
 		return query.list();
 	}
 	

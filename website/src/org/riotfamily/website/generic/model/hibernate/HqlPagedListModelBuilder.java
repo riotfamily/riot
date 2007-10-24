@@ -100,6 +100,15 @@ public class HqlPagedListModelBuilder extends HqlListModelBuilder {
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
 	}
+	
+	/**
+	 * Does the same as {@link #setPageSize(int)}.
+	 */
+	public void setMaxResults(Integer maxResults) {
+		if (maxResults != null) {
+			setPageSize(maxResults.intValue());
+		}
+	}
 
 	/**
 	 * Sets the name of the HTTP parameter that determines the page size.
