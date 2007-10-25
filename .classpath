@@ -41,5 +41,6 @@
 	<classpathentry kind="lib" path="lib/spring-mock.jar" sourcepath="lib/spring-src.zip"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/yuicompressor.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

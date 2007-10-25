@@ -21,10 +21,11 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.resource;
+package org.riotfamily.riot.resource;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.SocketException;
@@ -47,18 +48,13 @@ import org.springframework.web.servlet.mvc.LastModified;
 
 /**
  * Controller that serves an internal resource.
- * <p>
- * Note: This will only work when a prefix mapping is used for the 
- * DispatcherServlet (like <tt>/riot/*</tt>) since 
- * <code>request.getPathInfo()</code> is used.
- * </p>
  */
-public class ResourceController extends WebApplicationObjectSupport
+public class AbstractResourceController extends WebApplicationObjectSupport
 		implements Controller, LastModified {
 
 	private static final String HEADER_EXPIRES = "Expires";
 	
-	private Log log = LogFactory.getLog(ResourceController.class);
+	private Log log = LogFactory.getLog(AbstractResourceController.class);
 	
 	private FileTypeMap fileTypeMap = FileTypeMap.getDefaultFileTypeMap();
 	
@@ -72,15 +68,26 @@ public class ResourceController extends WebApplicationObjectSupport
 	
 	private String pathAttribute;
 	
+	private String pathParameter;
+	
 	public void setExpiresAfter(String s) {
 		this.expiresAfter = FormatUtils.parseMillis(s);
 	}
 	        
 	/**
-	 * @param pathAttribute The pathAttribute to set.
+	 * Sets the name of the request attribute that will contain the 
+	 * resource path. 
 	 */
 	public void setPathAttribute(String pathAttribute) {
 		this.pathAttribute = pathAttribute;
+	}
+	
+	/**
+	 * Sets the name of the request parameter that will contain the 
+	 * resource path.
+	 */
+	public void setPathParameter(String pathParameter) {
+		this.pathParameter = pathParameter;
 	}
 	
     public void setFileTypeMap(FileTypeMap fileTypeMap) {
@@ -99,58 +106,77 @@ public class ResourceController extends WebApplicationObjectSupport
 		return lastModified;
 	}
 
-	public ModelAndView handleRequest(HttpServletRequest request, 
-            HttpServletResponse response) throws IOException {
-        
-    	String path;
-    	if (pathAttribute != null) {
-    		path = "/" + request.getAttribute(pathAttribute); 
-    	}
-    	else {
-    		path = request.getPathInfo();
-    	}
-    	log.debug("Looking up resource " + path);
-    	Iterator it = mappings.iterator();
+	protected Resource lookupResource(String path) throws IOException {
+		Iterator it = mappings.iterator();
     	while (it.hasNext()) {
     		ResourceMapping mapping = (ResourceMapping) it.next();
 			Resource res = mapping.getResource(path);
 			if (res != null) {
-				response.addDateHeader(HEADER_EXPIRES, 
-						System.currentTimeMillis() + expiresAfter);
-
-				String contentType = fileTypeMap.getContentType(
-						res.getFilename());
-				
-				response.setContentType(contentType);
-				if (contentType.startsWith("text/")) {
-					serveText(path, res, request, response);
-				}
-				else {
-					try {
-						FileCopyUtils.copy(res.getInputStream(), 
-								response.getOutputStream());
-					}
-					catch (IOException e) {
-						if (!SocketException.class.isInstance(e.getCause())) {
-							throw e;
-						}
-					}
-				}
-				return null;
+				return res;
 			}
-		}
-		response.sendError(HttpServletResponse.SC_NOT_FOUND);
+    	}
     	return null;
 	}
 	
-	protected void serveText(String path, Resource res,
-			HttpServletRequest request, HttpServletResponse response) 
-			throws IOException {
+	protected String getContentType(Resource resource) {
+		return fileTypeMap.getContentType(resource.getFilename());
+	}
+	
+	protected String getResourcePath(HttpServletRequest request) {
+		if (pathAttribute != null) {
+    		return "/" + request.getAttribute(pathAttribute); 
+    	}
+		else if (pathParameter != null) {
+			return "/" + request.getParameter(pathParameter);
+		}
+   		return request.getPathInfo();
+	}
+	
+	public ModelAndView handleRequest(HttpServletRequest request, 
+            HttpServletResponse response) throws IOException {
+        
+    	String path = getResourcePath(request);
+    	response.addDateHeader(HEADER_EXPIRES, 
+				System.currentTimeMillis() + expiresAfter);
+    	
+    	if (!serveResource(path, request, response)) {
+    		response.sendError(HttpServletResponse.SC_NOT_FOUND);	
+    	}
+    	return null;
+	}
+	
+	protected boolean serveResource(String path, HttpServletRequest request, 
+			HttpServletResponse response) throws IOException {
+		
+		log.debug("Looking up resource " + path);
+    	Resource res = lookupResource(path);
+		if (res != null) {
+			String contentType = getContentType(res);
+			response.setContentType(contentType);
+			if (contentType.startsWith("text/")) {
+				serveText(res, path, contentType, request, response.getWriter());
+			}
+			else {
+				serveBinary(res, contentType, response.getOutputStream());
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	protected void serveText(Resource res, String path, String contentType,
+			HttpServletRequest request, Writer out)	throws IOException {
 		
 		log.debug("Serving text resource: " + path);
-		Reader in = new InputStreamReader(res.getInputStream());
-		Writer out = response.getWriter();
 		
+		Reader in = getReader(res, path, contentType, request);
+		FileCopyUtils.copy(in, out);
+	}
+
+	protected Reader getReader(Resource res, String path, String contentType,
+			HttpServletRequest request) throws IOException {
+		
+		Reader in = new InputStreamReader(res.getInputStream());
 		if (filters != null) {
 			Iterator it = filters.iterator();
 			while (it.hasNext()) {
@@ -163,7 +189,20 @@ public class ResourceController extends WebApplicationObjectSupport
 				log.debug("Filter " + filter + " does not match.");
 			}
 		}
-		FileCopyUtils.copy(in, out);
+		return in;
+	}
+	
+	protected void serveBinary(Resource res, String contentType, 
+			OutputStream out) throws IOException {
+		
+		try {
+			FileCopyUtils.copy(res.getInputStream(), out);
+		}
+		catch (IOException e) {
+			if (!SocketException.class.isInstance(e.getCause())) {
+				throw e;
+			}
+		}
 	}
 
 }

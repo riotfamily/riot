@@ -21,30 +21,37 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.resource;
+package org.riotfamily.riot.resource;
 
-import java.io.FilterReader;
-import java.io.Reader;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 
-import javax.servlet.http.HttpServletRequest;
+public abstract class AbstractPathMatchingResourceFilter 
+		implements ResourceFilter {
 
-/**
- * Interface that allows to filter resources that are served by a 
- * ResourceController.
- * 
- * @see org.riotfamily.common.web.resource.ResourceController#setFilters
- */
-public interface ResourceFilter {
-
-	/**
-	 * Returns whether the filter should be applied to the resource denoted
-	 * by the given path.
-	 */
-	public boolean matches(String path);
+	private String[] matches;
 	
-	/**
-	 * Returns a FilterReader that does the actual filtering.
-	 */
-	public FilterReader createFilterReader(Reader in, HttpServletRequest request);
+	private PathMatcher pathMatcher = new AntPathMatcher();
+	
+	public void setMatch(String match) {
+		this.matches = new String[] { match };
+	}
+	
+	public void setMatches(String[] matches) {
+		this.matches = matches;
+	}
+
+	public void setPathMatcher(PathMatcher pathMatcher) {
+		this.pathMatcher = pathMatcher;
+	}
+	
+	public boolean matches(String path) {
+		for (int i = 0; i < matches.length; i++) {
+			if (pathMatcher.match(matches[i], path)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

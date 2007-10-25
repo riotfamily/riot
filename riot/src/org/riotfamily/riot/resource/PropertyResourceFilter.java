@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.resource;
+package org.riotfamily.riot.resource;
 
 import java.io.FilterReader;
 import java.io.Reader;

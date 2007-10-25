@@ -52,8 +52,8 @@
 				value="org.riotfamily.pages.riot.chooser.InternalLinkField" />
 	</override:put>
 				
-	<override:add ref="resourceController" property="mappings" append="true">			
-		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
+	<override:add ref="resourceMappings" append="true">			
+		<bean class="org.riotfamily.riot.resource.ResourceMapping">
 			<property name="path" value="/" />
 			<property name="location" value="classpath:/org/riotfamily/pages/runtime/resources/" />
 		</bean>

@@ -292,53 +292,90 @@
 		</property>
 	</bean>
 
-	<bean id="resourceController" name="/resources/*/@{resource*}" class="org.riotfamily.common.web.resource.ResourceController">
+	<util:list id="resourceFilters">
+		<bean class="org.riotfamily.riot.resource.PropertyResourceFilter">
+			<property name="match" value="/**/*.css" />
+			<property name="properties" ref="cssProperties" />
+		</bean>
+		<bean class="org.riotfamily.riot.resource.PropertyResourceFilter">
+			<property name="match" value="/**/frameset.js" />
+			<property name="propertiesMap">
+				<map>
+					<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
+				</map>
+			</property>
+		</bean>
+	</util:list>
+	
+	<util:list id="resourceMappings">
+		<!-- Allow styles to be overwritten in WEB-INF/style -->
+		<bean class="org.riotfamily.riot.resource.ResourceMapping">
+			<property name="path" value="/style/" />
+			<property name="location" value="/WEB-INF/riot-config/style/" />
+		</bean>
+		<!-- Allow any resource to be overwritten in WEB-INF/resources -->
+		<bean class="org.riotfamily.riot.resource.ResourceMapping">
+			<property name="path" value="/" />
+			<property name="location" value="/WEB-INF/riot-config/resources/" />
+		</bean>
+		<!-- Riot resources -->
+		<bean class="org.riotfamily.riot.resource.ResourceMapping">
+			<property name="path" value="/" />
+			<property name="location" value="classpath:/org/riotfamily/riot/runtime/resources/" />
+		</bean>
+		<!-- Resources from the jslib jars -->
+		<bean class="org.riotfamily.riot.resource.ResourceMapping">
+			<property name="path" value="/" />
+			<property name="location" value="classpath:/org/riotfamily/resources/" />
+		</bean>
+		<!-- Form resources -->
+		<bean class="org.riotfamily.riot.resource.ResourceMapping">
+			<property name="path" value="/form/" />
+			<property name="location" value="classpath:/org/riotfamily/forms/runtime/resources/" />
+		</bean>
+	</util:list>
+	
+	<bean id="abstractResourceController" abstract="true" class="org.riotfamily.riot.resource.AbstractResourceController">
+	</bean>
+	
+	<bean name="/resources/*/@{resource*}" class="org.riotfamily.riot.resource.ResourceController">
 		<property name="pathAttribute" value="resource" />
 		<property name="fileTypeMap" ref="fileTypeMap" />
-		<property name="filters">
-			<list>
-				<bean class="org.riotfamily.common.web.resource.PropertyResourceFilter">
-					<property name="match" value="/**/*.css" />
-					<property name="properties" ref="cssProperties" />
-				</bean>
-				<bean class="org.riotfamily.common.web.resource.PropertyResourceFilter">
-					<property name="match" value="/**/frameset.js" />
-					<property name="propertiesMap">
-						<map>
-							<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
-						</map>
-					</property>
-				</bean>
-			</list>
+		<property name="filters" ref="resourceFilters" />
+		<property name="mappings" ref="resourceMappings" />
+		<property name="compressors">
+			<map>
+				<entry key="text/css">
+					<bean class="org.riotfamily.common.web.compressor.YUICssCompressor" />
+				</entry>
+				<entry key="text/javascript">
+					<bean class="org.riotfamily.common.web.compressor.YUIJavaScriptCompressor" />
+				</entry>
+			</map>
 		</property>
-		<property name="mappings">
-			<list>
-				<!-- Allow styles to be overwritten in WEB-INF/style -->
-				<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-					<property name="path" value="/style/" />
-					<property name="location" value="/WEB-INF/riot-config/style/" />
-				</bean>
-				<!-- Allow any resource to be overwritten in WEB-INF/resources -->
-				<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-					<property name="path" value="/" />
-					<property name="location" value="/WEB-INF/riot-config/resources/" />
-				</bean>
-				<!-- Riot resources -->
-				<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-					<property name="path" value="/" />
-					<property name="location" value="classpath:/org/riotfamily/riot/runtime/resources/" />
-				</bean>
-				<!-- Resources from the jslib jars -->
-				<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-					<property name="path" value="/" />
-					<property name="location" value="classpath:/org/riotfamily/resources/" />
-				</bean>
-				<!-- Form resources -->
-				<bean class="org.riotfamily.common.web.resource.ResourceMapping">
-					<property name="path" value="/form/" />
-					<property name="location" value="classpath:/org/riotfamily/forms/runtime/resources/" />
-				</bean>
-			</list>
+	</bean>
+	
+	<bean name="/joined/*/joined-script.js" class="org.riotfamily.riot.resource.JoiningResourceController">
+		<property name="pathParameter" value="files" />
+		<property name="fileTypeMap" ref="fileTypeMap" />
+		<property name="filters" ref="resourceFilters" />
+		<property name="mappings" ref="resourceMappings" />
+		<property name="contentType" value="text/javascript" />
+		<property name="compressor">
+			<bean class="org.riotfamily.common.web.compressor.YUIJavaScriptCompressor">
+				<property name="linebreak" value="1000" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean name="/joined/*/joined-style.js" class="org.riotfamily.riot.resource.JoiningResourceController">
+		<property name="pathParameter" value="files" />
+		<property name="fileTypeMap" ref="fileTypeMap" />
+		<property name="filters" ref="resourceFilters" />
+		<property name="mappings" ref="resourceMappings" />
+		<property name="contentType" value="text/css" />
+		<property name="compressor">
+			<bean class="org.riotfamily.common.web.compressor.YUICssCompressor" />
 		</property>
 	</bean>
 

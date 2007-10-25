@@ -128,8 +128,8 @@
 		<value>/components/upload/*</value>
 	</override:add>
 	
-	<override:add ref="resourceController" property="filters">
-		<bean class="org.riotfamily.common.web.resource.PropertyResourceFilter">
+	<override:add ref="resourceFilters">
+		<bean class="org.riotfamily.riot.resource.PropertyResourceFilter">
 			<property name="match" value="/**/toolbar-loader.js" />
 			<property name="propertiesMap">
 				<map>
@@ -137,7 +137,7 @@
 				</map>
 			</property>
 		</bean>
-		<bean class="org.riotfamily.common.web.resource.MessageResourceFilter">
+		<bean class="org.riotfamily.riot.resource.MessageResourceFilter">
 			<property name="prefix" value="components." />
 			<property name="matches">
 				<list>
@@ -149,8 +149,8 @@
 		</bean>
 	</override:add>
 	
-	<override:add ref="resourceController" property="mappings" append="true">
-		<bean class="org.riotfamily.common.web.resource.ResourceMapping">
+	<override:add ref="resourceMappings" append="true">
+		<bean class="org.riotfamily.riot.resource.ResourceMapping">
 			<property name="path" value="/" />
 			<property name="location" value="classpath:/org/riotfamily/components/runtime/resources/" />
 		</bean>

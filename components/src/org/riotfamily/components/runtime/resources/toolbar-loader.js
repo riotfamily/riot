@@ -13,23 +13,29 @@ Resources.loadStyleSheet('style/toolbar.css');
 Resources.loadStyleSheet('style/edit-mode.css');
 
 Resources.loadScriptSequence([
-	{src: 'prototype/prototype.js', test: 'Prototype'},
-	{src: 'riot-js/inheritance.js', test: 'Class.extend'},
-	{src: 'riot-js/viewport.js'},
-	{src: 'riot-js/util.js', test: 'RElement'},
-	{src: 'scriptaculous/effects.js', test: 'Effect'},
-	{src: 'toolbar.js', test: 'riot.toolbar'},
 	{src: 'dwr/engine.js', test: 'dwr.engine'},
 	{src: 'dwr/util.js', test: 'dwr.util'},
 	riot.componentEditorResource,
 	{src: 'dwr/interface/EntityEditor.js', test: 'EntityEditor'},
-	{src: 'dwr/interface/UploadManager.js', test: 'UploadManager'},
-	{src: 'swfupload/SWFUpload.js', test: 'SWFUpload'},
-	{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
-	{src: 'riot-js/effects.js'},
-	{src: 'riot-js/window-callback.js'},
-	{src: 'inplace.js', test: 'riot.InplaceEditor'},
-	{src: 'components.js'}
+	{src: 'dwr/interface/UploadManager.js', test: 'UploadManager', onload: loadToolbarScripts}
 ]);
 
-
+function loadToolbarScripts() {
+	var scripts = Resources.getRequiredSources([	
+		{src: 'prototype/prototype.js', test: 'Prototype'},
+		{src: 'riot-js/inheritance.js', test: 'Class.extend'},
+		{src: 'riot-js/viewport.js', test: 'Viewport'},
+		{src: 'riot-js/util.js', test: 'RElement'},
+		{src: 'scriptaculous/effects.js', test: 'Effect'},
+		{src: 'toolbar.js'},
+		{src: 'swfupload/SWFUpload.js', test: 'SWFUpload'},
+		{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
+		{src: 'riot-js/effects.js'},
+		{src: 'riot-js/window-callback.js'},
+		{src: 'inplace.js'},
+		{src: 'components.js'}
+	]);
+	Resources.insertScript(riot.path + '/joined/' 
+			+ new Date().getTime() + '/joined-script.js?files=' 
+			+ scripts.join(',')); 
+}

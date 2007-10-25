@@ -21,39 +21,30 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.resource;
+package org.riotfamily.riot.resource;
 
 import java.io.FilterReader;
 import java.io.Reader;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.io.MessageFilterReader;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.web.servlet.support.RequestContextUtils;
+/**
+ * Interface that allows to filter resources that are served by a 
+ * ResourceController.
+ * 
+ * @see org.riotfamily.riot.resource.ResourceController#setFilters
+ */
+public interface ResourceFilter {
 
-public class MessageResourceFilter extends AbstractPathMatchingResourceFilter 
-		implements MessageSourceAware {
+	/**
+	 * Returns whether the filter should be applied to the resource denoted
+	 * by the given path.
+	 */
+	public boolean matches(String path);
 	
-	private MessageSource messageSource;
-	
-	private String prefix;
-	
-	public void setMessageSource(MessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
-	
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
-
-	public FilterReader createFilterReader(Reader in, 
-			HttpServletRequest request) {
-		
-		Locale locale = RequestContextUtils.getLocale(request);
-		return new MessageFilterReader(in, messageSource, locale, prefix);
-	}
+	/**
+	 * Returns a FilterReader that does the actual filtering.
+	 */
+	public FilterReader createFilterReader(Reader in, HttpServletRequest request);
 
 }

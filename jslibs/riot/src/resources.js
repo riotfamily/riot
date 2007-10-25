@@ -44,15 +44,29 @@ var Resources = {
 				Resources._debug('No test for script: ' + src);
 				Resources._loaded(src);
 			}
-
-			var head = document.getElementsByTagName('head')[0];
-			var script = document.createElement('script');
-			script.type = 'text/javascript';
-			script.src = src;
-			head.appendChild(script);
+			Resources.insertScript(src);	
 		}
 	},
+	
+	insertScript: function(src) {
+		var head = document.getElementsByTagName('head')[0];
+		var script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src = src;
+		head.appendChild(script);
+	},
 
+	getRequiredSources: function(scripts) {
+		var result = [];
+		for (var i = 0; i < scripts.length; i++) {
+			var script = scripts[i];
+			if (!(script.test && Resources._isExpressionDefined(script.test))) {
+				result.push(script.src);
+			}
+		}
+		return result;
+	},
+	
 	loadScriptSequence: function(scripts) {
 		if (Resources._STOP_LOADING) return;
 		if (scripts.length > 0) {
