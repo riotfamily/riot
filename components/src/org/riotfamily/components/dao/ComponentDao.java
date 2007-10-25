@@ -150,6 +150,11 @@ public interface ComponentDao {
 	public void copyComponentLists(String type, String oldPath, String newPath);
 
 	/**
+	 * Creates a copy of the given VersionContainer.
+	 */
+	public VersionContainer copyVersionContainer(VersionContainer container);
+			
+	/**
 	 * Publishes all changes made to the given list.
 	 */
 	public boolean publishList(ComponentList componentList);

@@ -512,7 +512,7 @@ public abstract class AbstractComponentDao implements ComponentDao,
 		return dest;
 	}
 
-	private VersionContainer copyVersionContainer(VersionContainer container, String path) {
+	public VersionContainer copyVersionContainer(VersionContainer container) {
 		VersionContainer copy = new VersionContainer();
 		if (container.getLiveVersion() != null) {
 			copy.setLiveVersion(copyComponentVersion(
@@ -522,6 +522,11 @@ public abstract class AbstractComponentDao implements ComponentDao,
 			copy.setPreviewVersion(copyComponentVersion(
 					container.getPreviewVersion()));
 		}
+		return copy;
+	}
+	
+	private VersionContainer copyVersionContainer(VersionContainer container, String path) {
+		VersionContainer copy = copyVersionContainer(container);
 		Set childLists = container.getChildLists();
 		if (childLists != null) {
 			HashSet clonedLists = new HashSet();
