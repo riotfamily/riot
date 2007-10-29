@@ -24,6 +24,8 @@
 package org.riotfamily.forms.element;
 
 import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.List;
 
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
@@ -78,6 +80,10 @@ public abstract class AbstractConditionalElement extends AbstractElement
 		if (element == editor) {
 			setEditor(null);
 		}
+	}
+	
+	public List getElements() {
+		return Collections.singletonList(editor);
 	}
 
 	public void processRequest(FormRequest request) {
