@@ -131,13 +131,27 @@ public class ListEditor extends TemplateElement implements Editor,
 	 */
 	public void setCollectionClass(Class collectionClass) {
 		this.collectionClass = collectionClass;
-	}	
+	}
+	
+	/**
+	 * Returns the class set via {@link #setCollectionClass(Class)}.
+	 */
+	public Class getCollectionClass() {
+		return this.collectionClass;
+	}
 	
 	/**
 	 * Sets the factory that is used to create an element for each list item. 
 	 */
 	public void setItemElementFactory(ElementFactory itemElementFactory) {
 		this.itemElementFactory = itemElementFactory;
+	}
+	
+	/**
+	 * Returns the factory that is used to create elements for the list items.
+	 */
+	public ElementFactory getItemElementFactory() {
+		return this.itemElementFactory;
 	}
 	
 	/**
