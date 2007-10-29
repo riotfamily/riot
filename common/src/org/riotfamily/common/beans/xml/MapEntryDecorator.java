@@ -23,24 +23,27 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.xml;
 
-import java.util.Collection;
+import java.util.Map;
 
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.support.ManagedList;
+import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class NestedListDecorator implements BeanDefinitionDecorator {
+public class MapEntryDecorator implements BeanDefinitionDecorator {
 
-	private String listPropertyName;
+	private String mapPropertyName;
 
-	public NestedListDecorator(String listPropertyName) {
-		this.listPropertyName = listPropertyName;
+	private String keyAttribute;
+	
+	public MapEntryDecorator(String mapPropertyName, String keyAttribute) {
+		this.mapPropertyName = mapPropertyName;
+		this.keyAttribute = keyAttribute;
 	}
 
 	public BeanDefinitionHolder decorate(Node node,
@@ -48,16 +51,18 @@ public class NestedListDecorator implements BeanDefinitionDecorator {
 
 		BeanDefinition bd = definition.getBeanDefinition();
 		MutablePropertyValues pvs = bd.getPropertyValues();
-		Collection c = null;
-		PropertyValue pv = pvs.getPropertyValue(listPropertyName);
+		Map map = null;
+		PropertyValue pv = pvs.getPropertyValue(mapPropertyName);
 		if (pv != null) {
-			c = (Collection) pv.getValue();
+			map = (Map) pv.getValue();
 		}
-		if (c == null) {
-			c = new ManagedList();
-			pvs.addPropertyValue(listPropertyName, c);
+		if (map == null) {
+			map = new ManagedMap();
+			pvs.addPropertyValue(mapPropertyName, map);
 		}
-		c.add(parserContext.getDelegate().parsePropertySubElement((Element) node, bd));
+		Element ele = (Element) node;
+		String key = ele.getAttribute(keyAttribute);
+		map.put(key, parserContext.getDelegate().parsePropertySubElement(ele, bd));
 		return definition;
 	}
 }

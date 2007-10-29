@@ -26,7 +26,7 @@ package org.riotfamily.website.generic.config;
 
 
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
-import org.riotfamily.common.beans.xml.NestedListDecorator;
+import org.riotfamily.common.beans.xml.ListItemDecorator;
 import org.riotfamily.common.beans.xml.NestedPropertyDecorator;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 
@@ -53,7 +53,7 @@ public class GenericNamespaceHandler extends GenericNamespaceHandlerSupport {
 		
 		registerSpringBeanDefinitionParser("model-builder", setModelBuilder);
 
-		BeanDefinitionDecorator addParameterResolver = new NestedListDecorator("parameterResolvers");
+		BeanDefinitionDecorator addParameterResolver = new ListItemDecorator("parameterResolvers");
 		register("attribute", "org.riotfamily.website.generic.model.hibernate.DefaultParameterResolver", addParameterResolver);
 		register("current-date", "org.riotfamily.website.generic.model.hibernate.CurrentDateResolver", addParameterResolver);
 		register("current-locale", "org.riotfamily.website.generic.model.hibernate.CurrentLocaleResolver", addParameterResolver);

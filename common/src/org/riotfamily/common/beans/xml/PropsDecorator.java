@@ -21,19 +21,35 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.website.txt2img;
+package org.riotfamily.common.beans.xml;
 
-import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
-import org.riotfamily.common.beans.xml.ListItemDecorator;
+import java.util.Properties;
+
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanDefinitionHolder;
+import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class Txt2ImgNamespaceHandler extends GenericNamespaceHandlerSupport {
+public class PropsDecorator implements BeanDefinitionDecorator {
 
-	public void init() {
-		register("config", Txt2ImgConfigurer.class);
-		register("rule", ReplacementRule.class, new ListItemDecorator("rules"));
+	private String propertyName;
+
+	public PropsDecorator(String propertyName) {
+		this.propertyName = propertyName;
+	}
+
+	public BeanDefinitionHolder decorate(Node node,
+			BeanDefinitionHolder definition, ParserContext parserContext) {
+
+		BeanDefinition bd = definition.getBeanDefinition();
+		Properties props = parserContext.getDelegate().parsePropsElement((Element) node);
+		bd.getPropertyValues().addPropertyValue(propertyName, props);
+		return definition;
 	}
 }

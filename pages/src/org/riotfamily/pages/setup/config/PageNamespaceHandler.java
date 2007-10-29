@@ -29,7 +29,7 @@ import java.util.Properties;
 
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
 import org.riotfamily.common.beans.xml.ListDecorator;
-import org.riotfamily.common.beans.xml.NestedListDecorator;
+import org.riotfamily.common.beans.xml.ListItemDecorator;
 import org.riotfamily.pages.dao.PageDefinition;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.setup.PageSetupBean;
@@ -63,7 +63,7 @@ public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 				.addTranslation("prefix", "pathPrefix");
 		
 		register("page", PageDefinition.class,
-				new NestedListDecorator("definitions"))
+				new ListItemDecorator("definitions"))
 				.addTranslation("system", "systemNode");
 
 		registerBeanDefinitionDecorator("props", new PropsDecorator());
