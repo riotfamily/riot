@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element;
 
+import java.util.List;
+
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.BeanEditor;
 import org.riotfamily.forms.Container;
@@ -75,6 +77,10 @@ public class NestedForm extends TemplateElement implements
 	public void setBeanClass(Class beanClass) {
 		EditorBinder editorBinder = new EditorBinder(new MapOrBeanWrapper(beanClass));
 		setEditorBinder(editorBinder);
+	}
+	
+	public Class getBeanClass() {
+		return editorBinder != null ? editorBinder.getBeanClass() : null; 
 	}
 	
 	/**
@@ -137,7 +143,6 @@ public class NestedForm extends TemplateElement implements
 	 * @see org.riotfamily.forms.Editor#getValue()
 	 */
 	public Object getValue() {
-		// TODO: Revisit, present is false if used as DynamicList Element
 		if (present || isRequired()) {			
 			return editorBinder.populateBackingObject();
 		}
@@ -163,6 +168,10 @@ public class NestedForm extends TemplateElement implements
 	
 	public void removeElement(Element element) {
 		elements.removeElement(element);
+	}
+	
+	public List getElements() {
+		return elements.getElements();
 	}
 
 	public String getProperty() {
