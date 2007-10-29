@@ -162,6 +162,14 @@ public class PageFacade {
 		return page.getVersionContainer();
 	}
 
+	public ComponentVersion getComponentVersion() {
+		return page.getComponentVersion(preview);
+	}
+	
+	public Map getRawProperties() {
+		return page.getProperties(preview);
+	}
+	
 	public Map getProperties() {
 		if (properties == null) {
 			ComponentVersion version = page.getComponentVersion(preview);
