@@ -38,19 +38,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.context.support.WebApplicationObjectSupport;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.LastModified;
 
 /**
  * Controller that serves an internal resource.
  */
-public class AbstractResourceController extends WebApplicationObjectSupport
-		implements Controller, LastModified {
+public class AbstractResourceController extends AbstractCacheableController
+		implements LastModified {
 
 	private static final String HEADER_EXPIRES = "Expires";
 	
@@ -69,6 +68,7 @@ public class AbstractResourceController extends WebApplicationObjectSupport
 	private String pathAttribute;
 	
 	private String pathParameter;
+	
 	
 	public void setExpiresAfter(String s) {
 		this.expiresAfter = FormatUtils.parseMillis(s);
@@ -102,10 +102,6 @@ public class AbstractResourceController extends WebApplicationObjectSupport
 		this.filters = filters;
 	}
 
-	public long getLastModified(HttpServletRequest request) {
-		return lastModified;
-	}
-
 	protected Resource lookupResource(String path) throws IOException {
 		Iterator it = mappings.iterator();
     	while (it.hasNext()) {
@@ -130,6 +126,24 @@ public class AbstractResourceController extends WebApplicationObjectSupport
 			return "/" + request.getParameter(pathParameter);
 		}
    		return request.getPathInfo();
+	}
+	
+	public long getLastModified(HttpServletRequest request) {
+		return lastModified;
+	}
+	
+	public long getTimeToLive() {
+		return CACHE_ETERNALLY;
+	}
+	
+	protected String getCacheKeyInternal(HttpServletRequest request) {
+		StringBuffer key = new StringBuffer();
+		key.append(getResourcePath(request));
+		String lang = request.getParameter("lang");
+		if (lang != null) {
+			key.append(';').append(lang);
+		}
+		return key.toString();
 	}
 	
 	public ModelAndView handleRequest(HttpServletRequest request, 
