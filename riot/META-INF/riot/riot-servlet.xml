@@ -77,6 +77,23 @@
 		<property name="defaultErrorView" value="classpath:/org/riotfamily/riot/runtime/view/error.ftl" />
 	</bean>
 
+	<!--
+	  - A Cachius cache instance to cache riot resources.
+	  -->
+	<bean id="riotCache" class="org.riotfamily.cachius.spring.CacheFactoryBean">
+		<property name="restore" value="false" />
+	</bean>
+    
+	<!-- 
+	  - HandlerAdapter that handles CacheableControllers.
+	  -->
+	<bean class="org.riotfamily.website.cache.RiotAwareCacheableControllerHandlerAdapter">
+		<constructor-arg ref="riotCache" />
+	</bean>
+	
+	<!-- 
+	  - HandlerAdapter that handles regular (non-cacheable) Controllers.
+	  -->
 	<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
 
 	<!--
