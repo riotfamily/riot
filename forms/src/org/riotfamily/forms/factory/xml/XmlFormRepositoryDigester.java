@@ -50,10 +50,8 @@ import org.riotfamily.forms.element.PasswordField;
 import org.riotfamily.forms.element.TextField;
 import org.riotfamily.forms.element.Textarea;
 import org.riotfamily.forms.element.TinyMCE;
-import org.riotfamily.forms.element.XmlElement;
 import org.riotfamily.forms.element.collection.ListEditor;
 import org.riotfamily.forms.element.collection.MapEditor;
-import org.riotfamily.forms.element.collection.XmlSequence;
 import org.riotfamily.forms.element.select.CheckboxGroup;
 import org.riotfamily.forms.element.select.ImageCheckboxGroup;
 import org.riotfamily.forms.element.select.MultiSelectBox;
@@ -135,8 +133,6 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		elementClasses.put("image-upload", ImageUpload.class);
 		elementClasses.put("flash-upload", FlashUpload.class);
 		elementClasses.put("editable-if-new", EditableIfNew.class);
-		elementClasses.put("xml-element", XmlElement.class);
-		elementClasses.put("xml-sequence", XmlSequence.class);
 		elementClasses.put("autocomplete", AutocompleteTextField.class);
 	}
 
