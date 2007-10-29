@@ -93,7 +93,7 @@ public class AttributePattern {
 			String s = m.group(i + 1);
 			String type = (String) attributeTypes.get(i);
 			String name = (String) attributeNames.get(i);
-			Object value = convert(s, type);
+			Object value = convert(FormatUtils.uriUnescape(s), type);
 			request.setAttribute(name, value);
 			attributes.put(name, value);
 		}
@@ -156,7 +156,7 @@ public class AttributePattern {
 				return null;
 			}
 			String replacement = StringUtils.replace(value.toString(), "$", "\\$");
-			m.appendReplacement(url, replacement);
+			m.appendReplacement(url, FormatUtils.uriEscape(replacement));
 		}
 		m.appendTail(url);
 		return url.toString();
@@ -167,6 +167,7 @@ public class AttributePattern {
 				"Pattern must contain exactly one wildcard.");
 		
 		String replacement = StringUtils.replace(value.toString(), "$", "\\$");
+		replacement = FormatUtils.uriEscape(replacement);
 		Matcher m = ATTRIBUTE_NAME_PATTERN.matcher(attributePattern);
 		return m.replaceFirst(replacement);
 	}
