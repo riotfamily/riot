@@ -13,7 +13,7 @@
 			</script>
 		</#if>
 		<#list inplaceMacroHelper.toolbarScripts as src>
-			<@riot.script src=src />
+			<@riot.script src = src + "?lang=" + .lang />
 		</#list>
 	<#else>
 		<script type="text/javascript" language="JavaScript">

@@ -35,7 +35,7 @@ function loadToolbarScripts() {
 		{src: 'inplace.js'},
 		{src: 'components.js'}
 	]);
-	Resources.insertScript(riot.path + '/joined/' 
-			+ new Date().getTime() + '/joined-script.js?files=' 
-			+ scripts.join(',')); 
+	Resources.insertScript(riot.path + 
+			'/joined/${riotVersion}/joined-script.js?files=' 
+			+ scripts.join(',') + '&lang=' + riot.language); 
 }

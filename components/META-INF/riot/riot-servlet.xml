@@ -134,6 +134,7 @@
 			<property name="propertiesMap">
 				<map>
 					<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
+					<entry key="riotVersion" value-ref="riotVersion" />
 				</map>
 			</property>
 		</bean>

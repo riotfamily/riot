@@ -183,6 +183,10 @@ public class Form implements BeanEditor {
 	public void addElement(Element element) {
 		elements.addElement(element);
 	}
+	
+	public List getElements() {
+		return this.elements.getComponents();
+	}
 
 	public String getHint() {
 		if (hint == null) {

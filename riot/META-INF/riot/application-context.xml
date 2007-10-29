@@ -21,6 +21,8 @@
 	<bean id="riotServletPrefix" factory-bean="riotRuntime" factory-method="getServletPrefix" />
 
 	<bean id="riotResourcePath" factory-bean="riotRuntime" factory-method="getResourcePath" />
+	
+	<bean id="riotVersion" factory-bean="riotRuntime" factory-method="getVersionString" />
 
 	<bean id="notificationDao" class="org.riotfamily.riot.workflow.notification.support.DefaultNotificationDao" />
 
