@@ -33,14 +33,17 @@ import java.util.Map;
 import org.riotfamily.common.beans.propertyeditors.BooleanEditor;
 import org.riotfamily.components.config.component.Component;
 import org.riotfamily.components.property.FileStoreProperyProcessor;
+import org.riotfamily.components.property.JSONArrayPropertyProcessor;
+import org.riotfamily.components.property.JSONObjectPropertyProcessor;
 import org.riotfamily.components.property.PropertyEditorProcessor;
-import org.riotfamily.components.property.XmlPropertyProcessor;
+import org.riotfamily.components.property.PropertyProcessorRegistry;
+import org.riotfamily.forms.ContainerElement;
 import org.riotfamily.forms.Editor;
-import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.Checkbox;
+import org.riotfamily.forms.element.NestedForm;
 import org.riotfamily.forms.element.NumberField;
-import org.riotfamily.forms.element.collection.XmlSequence;
+import org.riotfamily.forms.element.collection.ListEditor;
 import org.riotfamily.forms.element.upload.FileUpload;
 import org.riotfamily.forms.element.upload.FlashUpload;
 import org.riotfamily.forms.element.upload.ImageUpload;
@@ -79,7 +82,7 @@ public class ComponentFormRepository extends XmlFormRepository {
 		super.registerFormFactory(formId, formFactory);
 		Component component = componentRepository.getComponent(type);
 		Form form = formFactory.createForm();
-		getElementList(component).addAll(form.getRegisteredElements());
+		getElementList(component).addAll(form.getElements());
 	}
 	
 	private List getElementList(Component component) {
@@ -101,7 +104,9 @@ public class ComponentFormRepository extends XmlFormRepository {
 		}
 	}
 	
-	private void registerPropertyProcessors(Component component, List elements) {
+	private void registerPropertyProcessors(
+			PropertyProcessorRegistry registry, List elements) {
+		
 		HashSet processedProperties = new HashSet();
 		Iterator it = elements.iterator();
 		while (it.hasNext()) {
@@ -110,88 +115,129 @@ public class ComponentFormRepository extends XmlFormRepository {
 				Editor editor = (Editor) element;
 				String property = editor.getEditorBinding().getProperty();
 				if (!processedProperties.contains(property)) {
-					registerPropertyProcessors(component, editor);
+					registerPropertyProcessors(registry, editor);
 					processedProperties.add(editor);
 				}
+			}
+			else if (element instanceof ContainerElement) {
+				ContainerElement ce = (ContainerElement) element;
+				registerPropertyProcessors(registry, ce.getElements());
 			}
 		}
 	}
 
-	private void registerPropertyProcessors(Component component, Element e) {
+	private void registerPropertyProcessors(
+			PropertyProcessorRegistry registry, Editor e) {
+		
+		String property = e.getEditorBinding() != null 
+				? e.getEditorBinding().getProperty() : null;
+				
 		if (e instanceof FileUpload) {
-			FileUpload upload = (FileUpload) e;
-			component.addPropertyProcessor(
-					new FileStoreProperyProcessor(
-					upload.getEditorBinding().getProperty(),
-					upload.getFileStore()));
-
-			if (upload.getSizeProperty() != null) {
-				component.addPropertyProcessor(
-						new PropertyEditorProcessor(
-						upload.getSizeProperty(),
-						new CustomNumberEditor(Long.class, true)));
-			}
-			if (upload instanceof ImageUpload) {
-				ImageUpload imageUpload = (ImageUpload) upload;
-				if (imageUpload.getWidthProperty() != null) {
-					component.addPropertyProcessor(
-							new PropertyEditorProcessor(
-							imageUpload.getWidthProperty(),
-							new CustomNumberEditor(Integer.class, true)));
-				}
-				if (imageUpload.getHeightProperty() != null) {
-					component.addPropertyProcessor(
-							new PropertyEditorProcessor(
-							imageUpload.getHeightProperty(),
-							new CustomNumberEditor(Integer.class, true)));
-				}
-			}
-			if (upload instanceof FlashUpload) {
-				FlashUpload flashUpload = (FlashUpload) upload;
-				if (flashUpload.getWidthProperty() != null) {
-					component.addPropertyProcessor(
-							new PropertyEditorProcessor(
-							flashUpload.getWidthProperty(),
-							new CustomNumberEditor(Integer.class, true)));
-				}
-				if (flashUpload.getHeightProperty() != null) {
-					component.addPropertyProcessor(
-							new PropertyEditorProcessor(
-							flashUpload.getHeightProperty(),
-							new CustomNumberEditor(Integer.class, true)));
-				}
-				if (flashUpload.getVersionProperty() != null) {
-					component.addPropertyProcessor(
-							new PropertyEditorProcessor(
-							flashUpload.getVersionProperty(),
-							new CustomNumberEditor(Integer.class, true)));
-				}
-			}
+			registerFileUploadProcessor(registry, property, (FileUpload) e);
 		}
 		else if (e instanceof Checkbox) {
-			Checkbox cb = (Checkbox) e;
-			component.addPropertyProcessor(
-					new PropertyEditorProcessor(
-					cb.getEditorBinding().getProperty(),
-					new BooleanEditor(),
-					Boolean.toString(cb.isCheckedByDefault())));
+			registerCheckboxProcessor(registry, property, (Checkbox) e);
 		}
 		else if (e instanceof NumberField) {
-			NumberField nf = (NumberField) e;
-			Class numberClass = nf.getEditorBinding().getPropertyType();
-			if (!(Number.class.isAssignableFrom(numberClass))) {
-				numberClass = Integer.class;
-			}
-			component.addPropertyProcessor(
+			registerNumberFieldProcessor(registry, property, (NumberField) e);
+		}
+		else if (e instanceof NestedForm) {
+			registerNestedFormProcessor(registry, property, (NestedForm) e);
+		}
+		else if (e instanceof ListEditor) {
+			registerListProcessor(registry, property, (ListEditor) e);
+		}
+	}
+
+	private void registerFileUploadProcessor(PropertyProcessorRegistry registry,
+			String property, FileUpload upload) {
+		
+		registry.registerPropertyProcessor(property,
+				new FileStoreProperyProcessor(upload.getFileStore()));
+
+		if (upload.getSizeProperty() != null) {
+			registry.registerPropertyProcessor(upload.getSizeProperty(),
 					new PropertyEditorProcessor(
-					nf.getEditorBinding().getProperty(),
-					new CustomNumberEditor(numberClass, false)));
+					new CustomNumberEditor(Long.class, true)));
 		}
-		else if (e instanceof XmlSequence) {
-			XmlSequence xs = (XmlSequence) e;
-			component.addPropertyProcessor(new XmlPropertyProcessor(
-					xs.getEditorBinding().getProperty()));
+		if (upload instanceof ImageUpload) {
+			ImageUpload imageUpload = (ImageUpload) upload;
+			if (imageUpload.getWidthProperty() != null) {
+				registry.registerPropertyProcessor(
+						imageUpload.getWidthProperty(),
+						new PropertyEditorProcessor(
+						new CustomNumberEditor(Integer.class, true)));
+			}
+			if (imageUpload.getHeightProperty() != null) {
+				registry.registerPropertyProcessor(
+						imageUpload.getHeightProperty(),
+						new PropertyEditorProcessor(
+						new CustomNumberEditor(Integer.class, true)));
+			}
 		}
+		if (upload instanceof FlashUpload) {
+			FlashUpload flashUpload = (FlashUpload) upload;
+			if (flashUpload.getWidthProperty() != null) {
+				registry.registerPropertyProcessor(
+						flashUpload.getWidthProperty(),
+						new PropertyEditorProcessor(
+						new CustomNumberEditor(Integer.class, true)));
+			}
+			if (flashUpload.getHeightProperty() != null) {
+				registry.registerPropertyProcessor(
+						flashUpload.getHeightProperty(),
+						new PropertyEditorProcessor(
+						new CustomNumberEditor(Integer.class, true)));
+			}
+			if (flashUpload.getVersionProperty() != null) {
+				registry.registerPropertyProcessor(
+						flashUpload.getVersionProperty(),							new PropertyEditorProcessor(
+						new CustomNumberEditor(Integer.class, true)));
+			}
+		}
+	}
+	
+	private void registerCheckboxProcessor(PropertyProcessorRegistry registry, 
+			String property, Checkbox checkbox) {
+		
+		registry.registerPropertyProcessor(property,
+				new PropertyEditorProcessor(
+				new BooleanEditor(),
+				Boolean.toString(checkbox.isCheckedByDefault())));
+	}
+	
+	private void registerNumberFieldProcessor(
+			PropertyProcessorRegistry registry, String property, 
+			NumberField numberField) {
+		
+		Class numberClass = numberField.getEditorBinding().getPropertyType();
+		if (!(Number.class.isAssignableFrom(numberClass))) {
+			numberClass = Integer.class;
+		}
+		registry.registerPropertyProcessor(property,
+				new PropertyEditorProcessor(
+				new CustomNumberEditor(numberClass, false)));
+	}
+	
+	private void registerNestedFormProcessor(PropertyProcessorRegistry registry,
+			String property, NestedForm nestedForm) {
+		
+		JSONObjectPropertyProcessor pp = new JSONObjectPropertyProcessor();
+		pp.setBeanClass(nestedForm.getBeanClass());
+		registerPropertyProcessors(pp, nestedForm.getElements());
+		registry.registerPropertyProcessor(property, pp);
+	}
+
+	private void registerListProcessor(PropertyProcessorRegistry registry, 
+			String property, ListEditor listEditor) {
+		
+		JSONArrayPropertyProcessor pp = new JSONArrayPropertyProcessor();
+		pp.setCollectionClass(listEditor.getCollectionClass());
+		Editor itemEditor = (Editor) listEditor.getItemElementFactory()
+				.createElement(listEditor, listEditor.getForm());
+		
+		registerPropertyProcessors(pp, itemEditor);
+		registry.registerPropertyProcessor(property, pp);
 	}
 
 }

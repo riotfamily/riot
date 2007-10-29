@@ -136,7 +136,7 @@ public class ComponentRepository implements ServletContextAware,
 		Iterator it = componentMap.values().iterator();
 		while (it.hasNext()) {
 			Component component = (Component) it.next();
-			configuredPropertyProcessors.put(component, new ArrayList(
+			configuredPropertyProcessors.put(component, new HashMap(
 					component.getPropertyProcessors()));
 		}
 	}
@@ -146,9 +146,9 @@ public class ComponentRepository implements ServletContextAware,
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();
 			Component component = (Component) entry.getKey();
-			List processors = (List) entry.getValue();
+			Map processors = (Map) entry.getValue();
 			if (processors == null) {
-				processors = new ArrayList();
+				processors = new HashMap();
 			}
 			component.setPropertyProcessors(processors);
 		}

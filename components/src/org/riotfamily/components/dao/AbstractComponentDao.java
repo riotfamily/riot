@@ -41,7 +41,6 @@ import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ComponentVersion;
 import org.riotfamily.components.model.Location;
 import org.riotfamily.components.model.VersionContainer;
-import org.riotfamily.components.property.PropertyProcessor;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.event.ApplicationEventMulticaster;
@@ -327,11 +326,7 @@ public abstract class AbstractComponentDao implements ComponentDao,
 	public void deleteComponentVersion(ComponentVersion version) {
 		if (version != null) {
 			Component component = repository.getComponent(version);
-			Iterator it = component.getPropertyProcessors().iterator();
-			while (it.hasNext()) {
-				PropertyProcessor pp = (PropertyProcessor) it.next();
-				pp.delete(version.getProperties());
-			}
+			component.onDelete(version);
 			deleteObject(version);
 		}
 	}
@@ -545,13 +540,7 @@ public abstract class AbstractComponentDao implements ComponentDao,
 	private ComponentVersion copyComponentVersion(ComponentVersion version) {
 		Component component = repository.getComponent(version);
 		ComponentVersion copy = new ComponentVersion(version);
-		if (component.getPropertyProcessors() != null) {
-			Iterator it = component.getPropertyProcessors().iterator();
-			while (it.hasNext()) {
-				PropertyProcessor pp = (PropertyProcessor) it.next();
-				pp.copy(version.getProperties(), copy.getProperties());
-			}
-		}
+		component.onCopy(version, copy);
 		return copy;
 	}
 

@@ -43,8 +43,6 @@ public class ThumbnailPropertyProcessor extends PropertyProcessorAdapter {
 	
 	private static final String MTIME_SUFFIX = "-mtime";
 	
-	private String source;
-	
 	private String dest;
 	
 	private int width;
@@ -58,10 +56,6 @@ public class ThumbnailPropertyProcessor extends PropertyProcessorAdapter {
 	private Thumbnailer thumbnailer;
 	
 	private File tempDir;
-	
-	public void setSource(String source) {
-		this.source = source;
-	}
 	
 	public void setDest(String dest) {
 		this.dest = dest;
@@ -87,9 +81,9 @@ public class ThumbnailPropertyProcessor extends PropertyProcessorAdapter {
 		this.height = height;
 	}
 
-	public void convertToStrings(Map map) {
+	public void addExtraStrings(Object object, Map map) {
 		try {
-			String sourceUri = (String) map.get(source);
+			String sourceUri = (String) object;
 			File sourceFile = fileStore.retrieve(sourceUri);
 			
 			String mtime = (String) map.get(dest + MTIME_SUFFIX);

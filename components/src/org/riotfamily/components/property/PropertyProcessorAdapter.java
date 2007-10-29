@@ -26,40 +26,44 @@ package org.riotfamily.components.property;
 import java.util.Map;
 
 
+
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
 public class PropertyProcessorAdapter implements PropertyProcessor {
 
-	/**
-	 * Does nothing.
-	 */
-	public void resolveStrings(Map map) {
+	public Object resolveString(String s) {
+		return s;
 	}
 	
-	/**
-	 * Does nothing.
-	 */
-	public void convertToStrings(Map map) {
+	public String convertToString(Object object) {
+		if (object == null) {
+			return null;
+		}
+		return object.toString();
 	}
 
-	/**
-	 * Does nothing.
-	 */
-	public void copy(Map source, Map dest) {
+	public String copy(String s) {
+		return s;
 	}
 
-	/**
-	 * Does nothing.
-	 */
-	public void delete(Map map) {
+	public void delete(String s) {
 	}
-	
-	/**
-	 * Always returns <code>null</code>.
-	 */
-	public String[] getCacheTags(Map map) {
+
+	public String getCacheTag(String s) {
 		return null;
 	}
+	
+	public void onUpdate(Object object, Map map) {
+	}
+	
+	public Object fromJSON(Object object) {
+		return resolveString((String) object);
+	}
+	
+	public Object toJSON(Object object) {
+		return convertToString(object);
+	}
+
 }

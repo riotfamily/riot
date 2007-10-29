@@ -23,17 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.config;
 
-import org.riotfamily.common.beans.xml.AbstractGenericBeanDefinitionParser;
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
-import org.riotfamily.common.beans.xml.NestedListDecorator;
+import org.riotfamily.common.beans.xml.MapEntryDecorator;
+import org.riotfamily.common.beans.xml.PropsDecorator;
 import org.riotfamily.components.config.component.IncludeComponent;
 import org.riotfamily.components.config.component.StaticComponent;
 import org.riotfamily.components.config.component.ViewComponent;
-import org.riotfamily.components.property.DefaultValuePropertyProcessor;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
 
 /**
  * NamespaceHandler that handles the <code>component</code>
@@ -47,28 +43,14 @@ public class ComponentNamespaceHandler extends GenericNamespaceHandlerSupport {
 		register("view-component", ViewComponent.class);
 		register("include-component", IncludeComponent.class);
 
+		registerBeanDefinitionDecorator("defaults", new PropsDecorator("defaults"));
+		
 		BeanDefinitionDecorator addPropertyProcessor =
-				new NestedListDecorator("propertyProcessors");
+				new MapEntryDecorator("propertyProcessors", "property");
 
 		registerSpringBeanDefinitionParser("property-processor",
 				addPropertyProcessor);
 
-		register("defaults", new DefaultValueParser(), addPropertyProcessor);
 	}
 
-	private static class DefaultValueParser extends
-			AbstractGenericBeanDefinitionParser {
-
-		public DefaultValueParser() {
-			super(DefaultValuePropertyProcessor.class);
-		}
-
-		protected void doParse(Element element, ParserContext parserContext,
-				BeanDefinitionBuilder builder) {
-
-			builder.addPropertyValue("values", parserContext.getDelegate()
-					.parsePropsElement(element));
-		}
-
-	}
 }

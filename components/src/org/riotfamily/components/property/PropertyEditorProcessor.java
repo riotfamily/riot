@@ -29,7 +29,7 @@ import java.beans.PropertyEditor;
  * PropertyProcessor implementation that performs conversions using a
  * PropertyEditor.
  */
-public class PropertyEditorProcessor extends AbstractSinglePropertyProcessor {
+public class PropertyEditorProcessor extends PropertyProcessorAdapter {
 
 	private PropertyEditor propertyEditor;
 	
@@ -38,17 +38,14 @@ public class PropertyEditorProcessor extends AbstractSinglePropertyProcessor {
 	public PropertyEditorProcessor() {
 	}
 
-	public PropertyEditorProcessor(String property, 
-			PropertyEditor propertyEditor) {
-		
-		this(property, propertyEditor, null);
+	public PropertyEditorProcessor(PropertyEditor propertyEditor) {
+		this(propertyEditor, null);
 	}
 			
-	public PropertyEditorProcessor(String property, 
-			PropertyEditor propertyEditor, String defaultValue) {
+	public PropertyEditorProcessor(PropertyEditor propertyEditor, 
+			String defaultValue) {
 		
 		this.propertyEditor = propertyEditor;
-		setProperty(property);
 		setDefaultValue(defaultValue);
 	}
 
@@ -77,13 +74,6 @@ public class PropertyEditorProcessor extends AbstractSinglePropertyProcessor {
 		}
 		propertyEditor.setValue(object);
 		return propertyEditor.getAsText();
-	}
-
-	public String copy(String value) {
-		return value;
-	}
-
-	public void delete(String value) {
 	}
 
 }

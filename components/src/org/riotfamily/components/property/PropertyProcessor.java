@@ -25,43 +25,69 @@ package org.riotfamily.components.property;
 
 import java.util.Map;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+import org.riotfamily.cachius.TaggingContext;
+
+
 
 public interface PropertyProcessor {
 
 	/**
-	 * Replaces strings in the map by objects suitable for rendering or
-	 * editing. The method is invoked before a component is rendered or edited
-	 * using a form.
+	 * Converts the given Object into a String representation suitable for
+	 * storing it in a flat key-value table.
 	 */
-	public void resolveStrings(Map map);
+	public String convertToString(Object object);
 	
 	/**
-	 * Replaces objects in the map by their string representation. The method
-	 * is invoked after a component model has been edited using a form and
-	 * before it is persisted. 
+	 * Converts a String created by the {@link #convertToString(Object)} method
+	 * back into an Object of the original type.
 	 */
-	public void convertToStrings(Map map);
+	public Object resolveString(String s);
 	
 	/**
-	 * Copies strings from one map to another. The method is invoked when a
-	 * copy of a component model needs to be created. Implementors can use this
-	 * hook to clone referenced objects. See {@link FileStoreProperyProcessor}
-	 * for an example.
+	 * Converts the given instance into an object suitable for JSON 
+	 * serialization. Implementors must return an object that can be passed to
+	 * {@link JSONObject#fromObject(Object)}.  
 	 */
-	public void copy(Map source, Map dest);
+	public Object toJSON(Object object);
 	
 	/**
-	 * Deletes orphaned resources. The method is invoked when a component model
-	 * is deleted. Implementors can use this hook to delete referenced objects
-	 * or resources. See {@link FileStoreProperyProcessor}
-	 * for an example.
+	 * Converts an Object returned by {@link JSONObject#get(Object)} or
+	 * {@link JSONArray#get(int)} back to its original type.
 	 */
-	public void delete(Map map);
+	public Object fromJSON(Object object);
 	
 	/**
-	 * Implementors may return an array of Strings that are used to tag the 
-	 * CacheItem that contains the rendered component markup.
+	 * Creates a copy of the given String. This is useful for PropertyProcessors
+	 * that store a reference to an external resource. This hook allows 
+	 * implementors to create a copy of the referenced resource and return the 
+	 * new reference. 
 	 */
-	public String[] getCacheTags(Map map);
+	public String copy(String s);
+	
+	/**
+	 * Invoked when a ComponentVersion is deleted. This hook is useful for 
+	 * PropertyProcessors that store a reference rather than a value, as it 
+	 * allows implementors to delete the associated resource.
+	 */
+	public void delete(String s);
+	
+	/**
+	 * Implementors may return a String that is used to {@link 
+	 * TaggingContext#tag(javax.servlet.http.HttpServletRequest, String) tag}
+	 * views displaying this property. This is useful when the stored value is
+	 * a reference to an external resource, as allows cache items to be 
+	 * invalidated when the associated resource is modified. 
+	 */
+	public String getCacheTag(String s);
+	
+	/**
+	 * This method is invoked after {@link #convertToString(Object)} and allows
+	 * implementors to store additional values in the model. Make sure not to 
+	 * add any non-String values.
+	 */
+	public void onUpdate(Object object, Map map);
 	
 }

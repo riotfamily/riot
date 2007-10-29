@@ -32,7 +32,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.util.Assert;
 
-public class HibernatePropertyProcessor extends AbstractSinglePropertyProcessor 
+public class HibernatePropertyProcessor extends PropertyProcessorAdapter 
 		implements ApplicationContextAware {
 
 	private ApplicationContext applicationContext;
@@ -44,12 +44,11 @@ public class HibernatePropertyProcessor extends AbstractSinglePropertyProcessor
 	public HibernatePropertyProcessor() {
 	}
 
-	public HibernatePropertyProcessor(String property, Class entityClass,
+	public HibernatePropertyProcessor(Class entityClass,
 			SessionFactory sessionFactory) {
 		
 		this.entityClass = entityClass;
 		this.sessionFactory = sessionFactory;
-		setProperty(property);
 	}
 
 	public void setEntityClass(Class entityClass) {
@@ -72,14 +71,14 @@ public class HibernatePropertyProcessor extends AbstractSinglePropertyProcessor
 		Assert.notNull(entityClass, "The property 'entityClass' must be set.");
 	}
 	
-	protected String convertToString(Object object) {
+	public String convertToString(Object object) {
 		if (object == null) {
 			return null;
 		}
 		return HibernateUtils.getIdAsString(sessionFactory, object);
 	}
 	
-	protected Object resolveString(String s) {
+	public Object resolveString(String s) {
 		if (s == null) {
 			return null;
 		}
@@ -89,7 +88,7 @@ public class HibernatePropertyProcessor extends AbstractSinglePropertyProcessor
 		return new HibernateTemplate(sessionFactory).get(entityClass, sid);
 	}
 	
-	protected String getCacheTag(String s) {
+	public String getCacheTag(String s) {
 		if (s == null) {
 			return null;
 		}

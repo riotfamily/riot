@@ -35,7 +35,7 @@ import org.riotfamily.common.web.file.FileUtils;
  * component model is copied, the referenced file is also copied and the new
  * file URI is put into the target model. Upon deletion the file is also deleted. 
  */
-public class FileStoreProperyProcessor extends AbstractSinglePropertyProcessor {
+public class FileStoreProperyProcessor extends PropertyProcessorAdapter {
 
 	private static Log log = LogFactory.getLog(FileStoreProperyProcessor.class);
 	
@@ -44,19 +44,18 @@ public class FileStoreProperyProcessor extends AbstractSinglePropertyProcessor {
 	public FileStoreProperyProcessor() {
 	}
 
-	public FileStoreProperyProcessor(String property, FileStore fileStore) {
+	public FileStoreProperyProcessor(FileStore fileStore) {
 		this.fileStore = fileStore;
-		setProperty(property);
 	}
 
 	public void setFileStore(FileStore fileStore) {
 		this.fileStore = fileStore;
 	}
 
-	protected String copy(String s) {
-		if (s != null) {
+	public Object copy(Object object) {
+		if (object != null) {
 			try {
-				return FileUtils.copy(fileStore, s);
+				return FileUtils.copy(fileStore, (String) object);
 			}
 			catch (IOException e) {
 				log.error("Error copying file", e);
@@ -65,18 +64,10 @@ public class FileStoreProperyProcessor extends AbstractSinglePropertyProcessor {
 		return null;
 	}
 
-	protected void delete(String s) {
-		if (s != null) {
-			fileStore.delete(s);
+	public void delete(Object object) {
+		if (object != null) {
+			fileStore.delete((String) object);
 		}
-	}
-
-	protected Object resolveString(String s) {
-		return s;
-	}
-	
-	protected String convertToString(Object object) {
-		return (String) object;
 	}
 
 }

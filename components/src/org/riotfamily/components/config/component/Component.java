@@ -25,19 +25,18 @@ package org.riotfamily.components.config.component;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.property.PropertyProcessor;
+import org.riotfamily.components.property.PropertyProcessorRegistry;
 
 
 
 
-public interface Component {
+public interface Component extends PropertyProcessorRegistry {
 
 	/**
 	 * Indicates whether the content rendered by the component depends on
@@ -45,15 +44,13 @@ public interface Component {
 	 */
 	public boolean isDynamic();
 
-	public void setPropertyProcessors(List propertyProcessors);
-
-	public void addPropertyProcessor(PropertyProcessor propertyProcessor);
+	public Map getPropertyProcessors();
+	
+	public void setPropertyProcessors(Map propertyProcessors);
 
 	public Map buildModel(ComponentVersion version);
 
 	public void updateProperties(ComponentVersion version, Map model);
-
-	public List getPropertyProcessors();
 
 	/**
 	 * Renders the given ComponentVersion.
@@ -67,5 +64,9 @@ public interface Component {
 	 * CacheItem containing the rendered component.
 	 */
 	public Collection getCacheTags(ComponentVersion version);
+	
+	public void onDelete(ComponentVersion version);
+	
+	public void onCopy(ComponentVersion source, ComponentVersion dest);
 
 }
