@@ -39,6 +39,7 @@ import org.riotfamily.riot.dao.SortableDao;
 import org.riotfamily.riot.dao.SwappableItemDao;
 import org.riotfamily.riot.hibernate.support.HibernateSupport;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
+import org.riotfamily.riot.list.support.EmptyListParams;
 import org.springframework.util.Assert;
 
 /**
@@ -56,6 +57,8 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     private String where;
 
     private String positionProperty;
+    
+    private boolean setPositionOnSave;
 
 	/**
      * @return Returns the itemClass.
@@ -165,6 +168,20 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     }
 
     /**
+     * Builds a HQL query string to retrieve the maximal position property value
+     */
+    protected String buildMaxPositionHql(Object parent) {
+    	StringBuffer hql = new StringBuffer();
+    	hql.append("select max(").append(positionProperty).append(") from ");
+    	hql.append(entityClass.getName());
+    	hql.append(" as this");
+    	HibernateUtils.appendHql(
+    		hql, "where", getWhereClause(parent, new EmptyListParams()));
+    	log.info(hql);
+        return hql.toString();
+    }
+
+    /**
      * Builds a HQL query string to retrieve the total number of items.
      */
     protected String buildCountHql(Object parent, ListParams params) {
@@ -241,8 +258,19 @@ public class HqlDao extends HibernateSupport implements RiotDao,
         }
         return sb.toString();
     }
+    
+    protected void setPositionIfNeeded(Object entity, Object parent) {
+    	if (setPositionOnSave) {
+    		Query query = createQuery(buildMaxPositionHql(parent));
+    		Number maxPosition = (Number) query.uniqueResult();
+    		
+    		PropertyUtils.setProperty(entity, positionProperty,
+    			new Integer(maxPosition != null? maxPosition.intValue() + 1: 0)); 
+    	}
+    }
 
     public void save(Object entity, Object parent) {
+    	setPositionIfNeeded(entity, parent);
     	getSession().save(entity);
     }
 
@@ -276,5 +304,16 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     	getSession().update(item);
     	getSession().update(nextItem);
     }
+
+	/**
+	 * @param setPositionOnSave the setPositionOnSave to set
+	 */
+	public void setSetPositionOnSave(boolean setPositionOnSave) {
+		this.setPositionOnSave = setPositionOnSave;
+	}
+	
+	protected boolean isSetPositionOnSave() {
+		return setPositionOnSave;
+	}
 
 }

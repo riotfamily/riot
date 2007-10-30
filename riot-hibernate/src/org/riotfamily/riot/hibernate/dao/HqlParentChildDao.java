@@ -54,12 +54,12 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
 	
 	public void save(Object entity, Object parent) {
 		PropertyUtils.setProperty(entity, parentProperty, parent);
-		getSession().save(entity);
+		super.save(entity, parent);
 	}
 	
 	public void delete(Object entity, Object parent) {
 		PropertyUtils.setProperty(entity, parentProperty, null);
-		getSession().delete(entity);
+		super.delete(entity, parent);
 	}
 	
 	protected void setQueryParameters(Query query, Object parent, 
@@ -89,6 +89,7 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
     
     public void addChild(Object entity, Object parent) {
     	PropertyUtils.setProperty(entity, parentProperty, parent);
+    	setPositionIfNeeded(entity, parent);
     	update(entity);
     }
     
