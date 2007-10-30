@@ -15,12 +15,18 @@
 		<constructor-arg ref="pathCompleter" />
 	</bean>
 
-	<bean class="org.riotfamily.components.controller.ControllerConfigurer">
+	<bean class="org.riotfamily.components.controller.ComponentListControllerPostProcessor">
 		<property name="componentDao" ref="componentDao" />
-		<property name="transactionManager" ref="transactionManager" />
 		<property name="repository" ref="componentRepository" />
+		<property name="transactionManager" ref="transactionManager" />
 		<property name="locator" ref="defaultComponentListLocator" />
-		<property name="cache" ref="websiteCache" />
+		<property name="cacheService" ref="cacheService" />
+	</bean>
+	
+	<bean class="org.riotfamily.components.controller.ComponentControllerPostProcessor">
+		<property name="componentDao" ref="componentDao" />
+		<property name="repository" ref="componentRepository" />
+		<property name="transactionManager" ref="transactionManager" />
 	</bean>
 
 	<override:put ref="freemarkerConfig" property="macroLibraries">
@@ -40,9 +46,11 @@
 	
 	<bean id="storeContextInterceptor" class="org.riotfamily.components.context.StoreContextInterceptor" />
 
-	<override:bean ref="cachiusHandlerAdapter" class="org.riotfamily.components.context.PartialRequestHandlerAdapter">
-		<constructor-arg ref="websiteCache" />
-	</override:bean>
+	<override:properties ref="cachiusHandlerAdapter">
+		<property name="cacheKeyProvider">
+			<bean class="org.riotfamily.components.context.PartialRequestCacheKeyProvider" />
+		</property>
+	</override:properties>
 	
 	<override:properties ref="viewResolver">
 		<property name="viewClass" value="org.riotfamily.components.view.ComponentFreeMarkerView" />

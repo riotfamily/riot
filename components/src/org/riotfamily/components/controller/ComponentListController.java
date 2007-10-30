@@ -23,14 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.controller;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.riotfamily.cachius.Cache;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
@@ -40,6 +36,7 @@ import org.riotfamily.components.controller.render.RenderStrategy;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.locator.ComponentListLocator;
 import org.riotfamily.riot.security.AccessController;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -52,12 +49,9 @@ import org.springframework.web.servlet.mvc.Controller;
  * determined using a {@link ComponentListLocator}.
  */
 public class ComponentListController implements Controller,
-		ComponentListConfiguration {
+		ComponentListConfiguration, InitializingBean {
 
-	private static final Log log = LogFactory.getLog(
-			ComponentListController.class);
-
-	private Cache cache;
+	private CacheService cacheService;
 
 	private ComponentDao componentDao;
 
@@ -74,13 +68,17 @@ public class ComponentListController implements Controller,
 	private String[] validComponentTypes;
 
 	private PlatformTransactionManager transactionManager;
+	
+	private RenderStrategy liveModeRenderStrategy;
+	
+	private RenderStrategy editModeRenderStrategy;
 
-	public void setCache(Cache cache) {
-		this.cache = cache;
+	public void setCacheService(CacheService cacheService) {
+		this.cacheService = cacheService;
 	}
 
-	public Cache getCache() {
-		return this.cache;
+	public CacheService getCacheService() {
+		return this.cacheService;
 	}
 
 	public void setComponentDao(ComponentDao componentDao) {
@@ -146,28 +144,29 @@ public class ComponentListController implements Controller,
 		this.locator = locator;
 	}
 
-	public ModelAndView handleRequest(HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-
-		final RenderStrategy strategy;
-		if (EditModeUtils.isEditMode(request) &&
-			AccessController.isGranted("edit", locator.getLocation(request))) {
-
-			log.debug("Authenticated user - rendering list in edit-mode");
-			strategy = new EditModeRenderStrategy(componentDao,
-					componentRepository, this, request, response);
-		}
-		else {
-			strategy = new LiveModeRenderStrategy(componentDao, componentRepository,
-					this, request, response, cache);
-		}
+	public void afterPropertiesSet() throws Exception {
+		editModeRenderStrategy = new EditModeRenderStrategy(componentDao,
+				componentRepository, this);
+		
+		liveModeRenderStrategy = new LiveModeRenderStrategy(componentDao, 
+				componentRepository, this, cacheService);
+	}
+	
+	public ModelAndView handleRequest(final HttpServletRequest request,
+			final HttpServletResponse response) throws Exception {
 
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				try {
-					strategy.render();
+					RenderStrategy strategy = liveModeRenderStrategy;
+					if (EditModeUtils.isEditMode(request) &&
+							AccessController.isGranted("edit", locator.getLocation(request))) {
+						
+						strategy = editModeRenderStrategy;
+					}
+					strategy.render(request, response);
 				}
-				catch (IOException e) {
+				catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			}
@@ -175,7 +174,6 @@ public class ComponentListController implements Controller,
 
 		return null;
 	}
-
 
 
 }
