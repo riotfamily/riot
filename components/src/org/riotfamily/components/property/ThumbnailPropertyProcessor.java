@@ -43,7 +43,7 @@ public class ThumbnailPropertyProcessor extends PropertyProcessorAdapter {
 	
 	private static final String MTIME_SUFFIX = "-mtime";
 	
-	private String dest;
+	private String source;
 	
 	private int width;
 	
@@ -57,8 +57,8 @@ public class ThumbnailPropertyProcessor extends PropertyProcessorAdapter {
 	
 	private File tempDir;
 	
-	public void setDest(String dest) {
-		this.dest = dest;
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 	public void setFileStore(FileStore fileStore) {
@@ -81,22 +81,24 @@ public class ThumbnailPropertyProcessor extends PropertyProcessorAdapter {
 		this.height = height;
 	}
 
-	public void addExtraStrings(Object object, Map map) {
+	public void onUpdate(String property, Object object, Map map) {
 		try {
-			String sourceUri = (String) object;
-			File sourceFile = fileStore.retrieve(sourceUri);
-			
-			String mtime = (String) map.get(dest + MTIME_SUFFIX);
-			if (mtime == null || Long.parseLong(mtime) < sourceFile.lastModified()) {
-				File tempFile = File.createTempFile("thumb", "." + format, tempDir);
-				thumbnailer.renderThumbnail(sourceFile, tempFile, width, height);
-				String destUri = (String) map.get(dest);
-				if (destUri != null) {
-					fileStore.delete(destUri);
+			String sourceUri = (String) map.get(source);
+			if (sourceUri != null) {
+				File sourceFile = fileStore.retrieve(sourceUri);
+				
+				String mtime = (String) map.get(property + MTIME_SUFFIX);
+				if (mtime == null || Long.parseLong(mtime) < sourceFile.lastModified()) {
+					File tempFile = File.createTempFile("thumb", "." + format, tempDir);
+					thumbnailer.renderThumbnail(sourceFile, tempFile, width, height);
+					String destUri = (String) map.get(property);
+					if (destUri != null) {
+						fileStore.delete(destUri);
+					}
+					destUri = fileStore.store(tempFile, null);
+					map.put(property, destUri);
+					map.put(property + MTIME_SUFFIX, String.valueOf(System.currentTimeMillis()));
 				}
-				destUri = fileStore.store(tempFile, null);
-				map.put(dest, destUri);
-				map.put(dest + MTIME_SUFFIX, String.valueOf(System.currentTimeMillis()));
 			}
 		}
 		catch (IOException e) {

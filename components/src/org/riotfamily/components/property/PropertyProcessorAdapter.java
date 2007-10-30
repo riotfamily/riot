@@ -55,7 +55,7 @@ public class PropertyProcessorAdapter implements PropertyProcessor {
 		return null;
 	}
 	
-	public void onUpdate(Object object, Map map) {
+	public void onUpdate(String property, Object object, Map map) {
 	}
 	
 	public Object fromJSON(Object object) {

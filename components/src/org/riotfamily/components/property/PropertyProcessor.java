@@ -88,6 +88,6 @@ public interface PropertyProcessor {
 	 * implementors to store additional values in the model. Make sure not to 
 	 * add any non-String values.
 	 */
-	public void onUpdate(Object object, Map map);
+	public void onUpdate(String property, Object object, Map map);
 	
 }

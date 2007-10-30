@@ -72,11 +72,15 @@ public abstract class AbstractComponent implements Component {
 	
 	public void setPropertyProcessors(Map propertyProcessors) {
 		Assert.notNull(propertyProcessors);
+		log.debug("PropertyProcessors: " + propertyProcessors);
 		this.propertyProcessors = propertyProcessors;
 	}
 
 	public void registerPropertyProcessor(String property, 
 			PropertyProcessor propertyProcessor) {
+		
+		log.debug("Registering " + propertyProcessor.getClass().getName() 
+				+ " for property " + property);
 		
 		propertyProcessors.put(property, propertyProcessor);
 	}
@@ -145,7 +149,7 @@ public abstract class AbstractComponent implements Component {
 			PropertyProcessor pp = (PropertyProcessor) entry.getValue();
 			Object object = model.get(key);
 			model.put(key, pp.convertToString(object));
-			pp.onUpdate(object, model);
+			pp.onUpdate(key, object, model);
 		}
 		version.setProperties(model);
 	}
