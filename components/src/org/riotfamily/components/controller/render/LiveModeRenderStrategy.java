@@ -23,19 +23,17 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.controller.render;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.Cache;
-import org.riotfamily.cachius.CacheItem;
+import org.riotfamily.cachius.CacheService;
+import org.riotfamily.cachius.CacheableRequestProcessor;
 import org.riotfamily.cachius.CachiusResponseWrapper;
-import org.riotfamily.cachius.ItemUpdater;
 import org.riotfamily.cachius.TaggingContext;
-import org.riotfamily.cachius.support.SessionUtils;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.config.component.Component;
@@ -43,158 +41,177 @@ import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ComponentVersion;
 import org.riotfamily.components.model.Location;
+import org.riotfamily.components.model.VersionContainer;
 
 public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 
-	protected Cache cache;
-
-	protected String listTag;
-
-	protected CacheItem cachedList;
-
-	protected boolean listIsCacheable = true;
+	private CacheService cacheService;
 
 	public LiveModeRenderStrategy(ComponentDao dao,
 			ComponentRepository repository, ComponentListConfiguration config,
-			HttpServletRequest request, HttpServletResponse response,
-			Cache cache) throws IOException {
+			CacheService cacheService) {
 
-		super(dao, repository, config, request, response);
-		this.cache = cache;
+		super(dao, repository, config);
+		this.cacheService = cacheService;
 	}
 
+	protected boolean isCacheable(Location location, 
+			HttpServletRequest request) {
+		
+		String cacheKey = location.toString();
+		if (cacheService.isCached(cacheKey)) {
+			return true;
+		}
+		ComponentList list = getComponentList(location, request);
+		if (list != null) {
+			List containers = getComponentsToRender(list);
+			if (containers != null) {
+				Iterator it = containers.iterator();
+				while (it.hasNext()) {
+					VersionContainer container = (VersionContainer) it.next();
+					ComponentVersion version = getVersionToRender(container);
+					if (!INHERTING_COMPONENT.equals(version.getType())) {
+						if (repository.getComponent(version).isDynamic()) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * Overrides the default implementation to render the cached version of
 	 * the list (if present).
+	 * @param request, 
 	 */
-	public void render(Location location) throws IOException {
-		String cacheKey = getCacheKey(location);
-		cachedList = cache.getItem(cacheKey);
-		if (cachedList != null && cachedList.exists() && !cachedList.isNew()) {
-			log.debug("Serving cached list: " + location);
-			cachedList.writeTo(request, response);
+	public void render(Location location, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		
+		if (isCacheable(location, request)) {
+			cacheService.serve(request, response, new ListProcessor(location));
 		}
 		else {
-			// List was invalidated or this is the 1st request
-			super.render(location);
+			renderInternal(location, request, response);
 		}
 	}
-
-	public void render(ComponentList list) throws IOException {
-		String cacheKey = getCacheKey(list.getLocation());
-		cachedList = cache.getItem(cacheKey);
-		if (cachedList != null && cachedList.exists() && !cachedList.isNew()) {
-			log.debug("Serving cached list: " + list.getLocation());
-			cachedList.writeTo(request, response);
-		}
-		else {
-			// List was invalidated or this is the 1st request
-			super.render(list);
-		}
+	
+	protected void renderInternal(Location location, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		
+		super.render(location, request, response);
 	}
-
-	protected String getCacheKey(Location location) {
-		StringBuffer sb = new StringBuffer("ComponentList ");
-		if (parent != null) {
-			sb.append(parent.getId()).append('$');
-			sb.append(location.getSlot());
-		}
-		else {
-			sb.append(location);
-		}
-		SessionUtils.addStateToCacheKey(request, sb);
-		return sb.toString();
-	}
-
-	protected void renderComponentList(ComponentList list) throws IOException {
-		if (cachedList != null) {
-			listTag = list.getLocation().toString();
-			try {
-				TaggingContext.openNestedContext(request);
-				TaggingContext.tag(request, listTag);
 	
-				ItemUpdater updater = new ItemUpdater(cachedList, request);
-				response = new CachiusResponseWrapper(response, updater);
-	
-				super.renderComponentList(list);
-				if (!listIsCacheable) {
-					updater.discard();
-					cachedList.delete();
-				}
-	
-				response.flushBuffer();
-				updater.updateCacheItem();
-	
-			}
-			finally {
-				cachedList.setTags(TaggingContext.popTags(request));
-			}
-		}
-		else {
-			super.renderComponentList(list);
-		}
-	}
-
 	protected void renderComponent(Component component,
-			ComponentVersion version, String positionClassName)
-			throws IOException {
+			ComponentVersion version, String positionClassName, 
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 
-		tagCacheItems(component, version);
-		if (component.isDynamic() || cachedList == null) {
-			listIsCacheable = false;
-			super.renderComponent(component, version, positionClassName);
+		if (component.isDynamic() || response instanceof CachiusResponseWrapper) {
+			renderComponentInternal(component, version, positionClassName, 
+					request, response);
 		}
 		else {
-			renderCacheableComponent(component, version, positionClassName);
+			cacheService.serve(request, response, new ComponentProcessor(
+					component, version, positionClassName));
 		}
 	}
+	
+	protected void renderComponentInternal(Component component,
+			ComponentVersion version, String positionClassName, 
+			HttpServletRequest request, HttpServletResponse response) 
+			throws Exception {
+		
+		super.renderComponent(component, version, positionClassName, 
+				request, response);
+	}
 
-	private void tagCacheItems(Component component, ComponentVersion version) {
-		Collection tags = component.getCacheTags(version);
-		if (tags != null) {
-			Iterator it = tags.iterator();
-			while (it.hasNext()) {
-				String tag = (String) it.next();
-				TaggingContext.tag(request, tag);
+	private class ListProcessor implements CacheableRequestProcessor {
+		
+		private Location location;
+		
+		public ListProcessor(Location location) {
+			this.location = location;
+		}
+
+		public String getCacheKey(HttpServletRequest request) {
+			StringBuffer sb = new StringBuffer("ComponentList ");
+			VersionContainer parent = getParentContainer(request);
+			if (parent != null) {
+				sb.append(parent.getId()).append('$');
+				sb.append(location.getSlot());
 			}
+			else {
+				sb.append(location);
+			}
+			return sb.toString();
 		}
+		
+		public long getTimeToLive() {
+			return -1;
+		}
+		
+		public long getLastModified(HttpServletRequest request) {
+			return 0;
+		}
+		
+		public void processRequest(HttpServletRequest request, 
+				HttpServletResponse response) throws Exception {
+			
+			TaggingContext.tag(request, location.toString());
+			renderInternal(location, request, response);
+		}
+		
 	}
-
-	protected void renderCacheableComponent(Component component,
-			ComponentVersion version, String positionClassName)
-			throws IOException {
-
-		String key = getComponentCacheKey(version);
-		CacheItem cachedComponent = cache.getItem(key);
-		if (cachedComponent.exists() && !cachedComponent.isNew()) {
-			cachedComponent.writeTo(request, response);
-			return;
+	
+	private class ComponentProcessor implements CacheableRequestProcessor {
+		
+		private Component component;
+		
+		private ComponentVersion version;
+		
+		private String positionClassName;
+		
+		public ComponentProcessor(Component component, ComponentVersion version, 
+				String positionClassName) {
+			
+			this.component = component;
+			this.version = version;
+			this.positionClassName = positionClassName;
 		}
-		try {
-			TaggingContext.openNestedContext(request);
-			TaggingContext.tag(request, listTag);
 
-			ItemUpdater updater = new ItemUpdater(cachedComponent, request);
-			CachiusResponseWrapper wrapper = new CachiusResponseWrapper(
-					response, updater);
-
-			component.render(version, positionClassName, request, wrapper);
-
-			wrapper.flushBuffer();
-			updater.updateCacheItem();
+		public String getCacheKey(HttpServletRequest request) {
+			StringBuffer key = new StringBuffer();
+			key.append(version.getClass().getName());
+			key.append('#');
+			key.append(version.getId());
+			return key.toString();
 		}
-		finally {
-			cachedComponent.setTags(TaggingContext.popTags(request));
+		
+		public long getTimeToLive() {
+			return -1;
 		}
+		
+		public long getLastModified(HttpServletRequest request) {
+			return 0;
+		}
+		
+		public void processRequest(HttpServletRequest request, 
+				HttpServletResponse response) throws Exception {
+			
+			Collection tags = component.getCacheTags(version);
+			if (tags != null) {
+				Iterator it = tags.iterator();
+				while (it.hasNext()) {
+					String tag = (String) it.next();
+					TaggingContext.tag(request, tag);
+				}
+			}
+			
+			renderComponentInternal(component, version, positionClassName, 
+					request, response);
+		}
+		
 	}
-
-	protected String getComponentCacheKey(ComponentVersion version) {
-		StringBuffer key = new StringBuffer();
-		key.append(version.getClass().getName());
-		key.append('#');
-		key.append(version.getId());
-		SessionUtils.addStateToCacheKey(request, key);
-		return key.toString();
-	}
-
 }

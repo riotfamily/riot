@@ -23,14 +23,17 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.controller.render;
 
-import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.components.model.ComponentList;
 
 public interface RenderStrategy {
 
-	public void render() throws IOException;
+	public void render(HttpServletRequest request, 
+			HttpServletResponse response) throws Exception;
 	
-	public void render(ComponentList list) throws IOException;
+	public void render(ComponentList list, HttpServletRequest request, 
+			HttpServletResponse response) throws Exception;
 	
 }

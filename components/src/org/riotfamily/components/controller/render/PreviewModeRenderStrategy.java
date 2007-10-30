@@ -23,11 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.controller.render;
 
-import java.io.IOException;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
@@ -39,11 +35,9 @@ import org.riotfamily.components.model.VersionContainer;
 public class PreviewModeRenderStrategy extends AbstractRenderStrategy {
 
 	public PreviewModeRenderStrategy(ComponentDao dao, 
-			ComponentRepository repository, ComponentListConfiguration config,
-			HttpServletRequest request, HttpServletResponse response)
-			throws IOException {
+			ComponentRepository repository, ComponentListConfiguration config) {
 		
-		super(dao, repository, config, request, response);
+		super(dao, repository, config);
 	}
 	
 	/**

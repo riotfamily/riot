@@ -23,12 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.controller.render;
 
-import java.io.IOException;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.markup.Html;
+import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
@@ -43,39 +44,47 @@ public class InheritingRenderStrategy extends PreviewModeRenderStrategy {
 	private MessageSource messageSource;
 
 	public InheritingRenderStrategy(ComponentDao dao,
-			ComponentRepository repository, ComponentListConfiguration config,
-			HttpServletRequest request, HttpServletResponse response)
-			throws IOException {
+			ComponentRepository repository, ComponentListConfiguration config) {
 
-		super(dao, repository, config, request, response);
+		super(dao, repository, config);
 		this.messageSource = repository.getMessageSource();
 	}
 
-	protected void renderComponentList(ComponentList list) throws IOException {
+	protected void renderComponentList(ComponentList list, 
+			HttpServletRequest request, HttpServletResponse response) 
+			throws Exception {
+		
 		boolean live = EditModeUtils.isEditMode(request);
 		EditModeUtils.setLiveMode(request, true);
-		super.renderComponentList(list);
+		super.renderComponentList(list, request, response);
 		EditModeUtils.setLiveMode(request, live);
 	}
 
-	protected void onListNotFound(Location location) throws IOException {
+	protected void onListNotFound(Location location, 
+			HttpServletRequest request, HttpServletResponse response) 
+			throws Exception {
+		
 		Locale locale = RequestContextUtils.getLocale(request);
-		out.print("<div class=\"riot-no-inheritance\">");
-		out.print(messageSource.getMessage(
+		TagWriter tag = new TagWriter(response.getWriter());
+		tag.start(Html.DIV)
+				.attribute(Html.COMMON_CLASS, "riot-no-inheritance")
+				.body(messageSource.getMessage(
 				"components.inheritance.noParentList", null,
-				"No parent list available", locale));
-
-		out.print("</div>");
+				"No parent list available", locale))
+				.end();
 	}
 
-	protected void onEmptyComponentList() throws IOException {
+	protected void onEmptyComponentList(HttpServletRequest request, 
+			HttpServletResponse response) throws Exception {
+		
 		Locale locale = RequestContextUtils.getLocale(request);
-		out.print("<div class=\"riot-no-inheritance\">");
-		out.print(messageSource.getMessage(
+		TagWriter tag = new TagWriter(response.getWriter());
+		tag.start(Html.DIV)
+				.attribute(Html.COMMON_CLASS, "riot-no-inheritance")
+				.body(messageSource.getMessage(
 				"components.inheritance.emptyParentList", null,
-				"The parent list does not contain any components", locale));
-
-		out.print("</div>");
+				"The parent list does not contain any components", locale))
+				.end();
 	}
 
 }

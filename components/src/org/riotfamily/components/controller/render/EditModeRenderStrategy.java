@@ -49,23 +49,14 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 
 	private static final Log log = LogFactory.getLog(EditModeRenderStrategy.class);
 
+	private RenderStrategy parentStrategy;
+	
 	public EditModeRenderStrategy(ComponentDao dao,
 			ComponentRepository repository, 
-			ComponentListConfiguration config,
-			HttpServletRequest request, HttpServletResponse response)
-			throws IOException {
+			ComponentListConfiguration config) {
 
-		super(dao, repository, config, request, response);
-	}
-
-	public void renderComponentVersion(ComponentVersion version)
-			throws IOException {
-
-		VersionContainer c = version.getContainer();
-		List components = getComponentsToRender(c.getList());
-		int position = components.indexOf(c);
-		boolean last = position == components.size() - 1;
-		renderComponentVersion(version, getPositionalClassName(position, last));
+		super(dao, repository, config);
+		parentStrategy = new InheritingRenderStrategy(dao, repository, config);
 	}
 
 	/**
@@ -73,8 +64,11 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	 * actual list. The DIV has attributes that are required for the
 	 * Riot toolbar JavaScript.
 	 */
-	protected void renderComponentList(ComponentList list) throws IOException {
-		DocumentWriter wrapper = new DocumentWriter(out);
+	protected void renderComponentList(ComponentList list, 
+			HttpServletRequest request, HttpServletResponse response) 
+			throws Exception {
+		
+		DocumentWriter wrapper = new DocumentWriter(response.getWriter());
 		
 		boolean renderOuterDiv = PageRequestUtils.createAndStoreContext(
 				request, list.getId().toString(), 120000);
@@ -88,7 +82,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		}
 		
 		String className = "riot-list riot-component-list";
-		if (parent == null) {
+		if (getParentContainer(request) == null) {
 			className += " riot-toplevel-list";
 		}
 		if (list.isDirty()) {
@@ -109,7 +103,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		}
 		
 		wrapper.body();
-		super.renderComponentList(list);
+		super.renderComponentList(list, request, response);
 		wrapper.closeAll();
 	}
 
@@ -119,10 +113,12 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	 *
 	 * @see #createNewList(Location)
 	 */
-	protected ComponentList getComponentList(Location location) {
-		ComponentList list = super.getComponentList(location);
+	protected ComponentList getComponentList(Location location, 
+			HttpServletRequest request) {
+		
+		ComponentList list = super.getComponentList(location, request);
 		if (list == null) {
-			list = createNewList(location);
+			list = createNewList(location, request);
 		}
 		return list;
 	}
@@ -130,11 +126,14 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	/**
 	 * Creates a new ComponentList with an initial component set as defined by
 	 * the controller.
+	 * @param request 
 	 */
-	protected ComponentList createNewList(Location location) {
+	protected ComponentList createNewList(Location location,
+			HttpServletRequest request) {
+		
 		ComponentList list = new ComponentList();
 		list.setLocation(new Location(location));
-		list.setParent(parent);
+		list.setParent(getParentContainer(request));
 		String[] initialTypes = config.getInitialComponentTypes();
 		if (initialTypes != null) {
 			List containers = new ArrayList();
@@ -156,11 +155,12 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	/**
 	 * Overrides the default implementation to render a DIV tag around the
 	 * actual component. The DIV has attributes that are required for the
-	 * Riot-Toolbar JavaScript.
+	 * Riot toolbar JavaScript.
 	 * @throws IOException
 	 */
 	protected void renderContainer(VersionContainer container,
-			String positionClassName) throws IOException {
+			String positionClassName, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
 		ComponentVersion version = getVersionToRender(container);
 		String type = version.getType();
@@ -173,7 +173,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 			className += " riot-form";
 		}
 		
-		TagWriter wrapper = new TagWriter(out);
+		TagWriter wrapper = new TagWriter(response.getWriter());
 		wrapper.start(Html.DIV)
 				.attribute(Html.COMMON_CLASS, className)
 				.attribute("riot:containerId", container.getId().toString())
@@ -181,13 +181,12 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 				.attribute("riot:form", formUrl)
 				.body();
 
-		renderComponentVersion(version, positionClassName);
+		renderComponentVersion(version, positionClassName, request, response);
 		wrapper.end();
 	}
 
-	protected RenderStrategy getStrategyForParentList() throws IOException {
-		return new InheritingRenderStrategy(dao, repository, config,
-				request, response);
+	protected RenderStrategy getStrategyForParentList() {
+		return parentStrategy;
 	}
 
 }
