@@ -16,7 +16,6 @@
 		<config>components/META-INF/riot/website-servlet.xml</config>
 		<config>website/META-INF/riot/application-context.xml</config>
 		<config>website/META-INF/riot/website-servlet.xml</config>
-		<config>components/src/org/riotfamily/components/runtime/riot-config.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
