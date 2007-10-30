@@ -88,6 +88,10 @@ public final class Cache implements Serializable {
         this.cacheDir = cacheDir;
     }
 
+    public boolean containsKey(String key) {
+    	return map.containsKey(key);
+    }
+    
     /**
      * Returns the CacheItem with the given key or creates a new one, if no
      * entry with that key exists.

@@ -28,16 +28,19 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Arrays;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
@@ -72,9 +75,7 @@ public class CacheItem implements Serializable {
 	
     private static final String ITEM_PREFIX = "item";
     
-    private static final String TEMP_PREFIX = "tmp";
-    
-    private static final String TEMPFILE_SUFFIX = "";
+    private static final String ITEM_SUFFIX = "";
                    
     private static final long NOT_YET = -1L;
     
@@ -99,6 +100,9 @@ public class CacheItem implements Serializable {
     
     /** The file containing the actual data */
     private File file = null;
+    
+    /** File containing the gzipped data */
+    //private File compressedFile = null;
     
     /** The content type (may be null) */
     private String contentType = null;
@@ -139,7 +143,7 @@ public class CacheItem implements Serializable {
     
     public CacheItem(String key, File cacheDir) throws IOException {
         this.key = key;
-        file = File.createTempFile(ITEM_PREFIX, TEMPFILE_SUFFIX, cacheDir);
+        file = File.createTempFile(ITEM_PREFIX, ITEM_SUFFIX, cacheDir);
         lastModified = NOT_YET;
     }
         
@@ -150,7 +154,11 @@ public class CacheItem implements Serializable {
     public void setKey(String key) {
         this.key = key;
     }
-     
+    
+	protected ReaderWriterLock getLock() {
+		return this.lock;
+	}
+	
     public void setTags(String[] tags) {
     	if (tags != null) {
     		Arrays.sort(tags);
@@ -233,32 +241,20 @@ public class CacheItem implements Serializable {
         return file != null && file.isFile();
     }
     
-    public File createTempFile() throws IOException {
-    	File dir = file.getParentFile();
-    	dir.mkdirs();
-    	return File.createTempFile(TEMP_PREFIX, TEMPFILE_SUFFIX, dir);
+    public OutputStream getOutputStream() throws FileNotFoundException {
+    	return new FileOutputStream(file);
     }
     
-    public void update(File tempFile, boolean binary) {
-   		log.debug("Updating cached version of " + key);
-    	try {
-            lock.lockForWriting();
-            lastModified = System.currentTimeMillis();
-            delete();
-            IOUtils.move(tempFile, file);
-            this.binary = binary;
-        }
-        finally {
-            lock.releaseWriterLock();
-        }
+    public Writer getWriter() throws UnsupportedEncodingException, FileNotFoundException {
+    	binary = false;
+    	return new OutputStreamWriter(getOutputStream(), FILE_ENCODING);
     }
+
     
-    public void writeTo(HttpServletRequest request, 
-            HttpServletResponse response) throws IOException {
+    public void writeTo(HttpServletResponse response, String sessionId) 
+    		throws IOException {
             
-   		log.debug("Serving cached version of " + key);
         try {
-            lock.lockForReading();
             if (contentType != null) {
                 response.setContentType(contentType);
             }
@@ -268,23 +264,26 @@ public class CacheItem implements Serializable {
             if (cacheControl != null) {
             	response.setHeader(HEADER_CACHE_CONTROL, cacheControl);
             }
-            if (binary) {
-                InputStream in = new BufferedInputStream(
-                        new FileInputStream(file));
-                        
-                IOUtils.copy(in, response.getOutputStream());
-            }
-            else {
-                Reader in = new BufferedReader(new InputStreamReader(
-                        new FileInputStream(file), FILE_ENCODING));
-                
-                Writer out = response.getWriter();
-                if (filterSessionId) {
-                    out = new TokenFilterWriter("${jsessionid}", 
-                            request.getSession().getId(), out);
-                }
-                
-                IOUtils.copy(in, out);
+            
+            if (file.length() > 0) {
+	            if (binary) {
+	                InputStream in = new BufferedInputStream(
+	                        new FileInputStream(file));
+	                        
+	                IOUtils.copy(in, response.getOutputStream());
+	            }
+	            else {
+	                Reader in = new BufferedReader(new InputStreamReader(
+	                        new FileInputStream(file), FILE_ENCODING));
+	                
+	                Writer out = response.getWriter();
+	                if (filterSessionId) {
+	                    out = new TokenFilterWriter("${jsessionid}", 
+	                            sessionId, out);
+	                }
+	                
+	                IOUtils.copy(in, out);
+	            }
             }
         }
         catch (FileNotFoundException e) {
@@ -293,22 +292,24 @@ public class CacheItem implements Serializable {
             
             lastModified = NOT_YET;
         }
-        finally {
-            lock.releaseReaderLock();
-        }
     }
     
     public void invalidate() {
     	lastModified = NOT_YET;
-    	delete();
     }
     
-    public void delete() {
-    	if (file.exists()) {
-    		if (!file.delete()) {
-    			log.warn("Failed to delete cache file: " + file);
-    		}
-    	}
+    protected void delete() {
+    	try {
+            lock.lockForWriting();
+            if (file.exists()) {
+        		if (!file.delete()) {
+        			log.warn("Failed to delete cache file: " + file);
+        		}
+        	}
+        }
+        finally {
+            lock.releaseWriterLock();
+        }
     }
          
     /**

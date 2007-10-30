@@ -21,33 +21,17 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.context;
+package org.riotfamily.cachius.spring;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.Cache;
-import org.riotfamily.cachius.CacheItem;
-import org.riotfamily.website.cache.RiotAwareCacheableControllerHandlerAdapter;
-
 /**
- * CacheableControllerHandlerAdapter that prevents partial requests from 
- * being cached.
- * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PartialRequestHandlerAdapter extends 
-		RiotAwareCacheableControllerHandlerAdapter {
+public interface CacheKeyProvider {
 
-	public PartialRequestHandlerAdapter(Cache cache) {
-		super(cache);
-	}
+	public String getCacheKey(CacheableController controller, 
+			HttpServletRequest request);
 
-	protected CacheItem getCacheItem(String cacheKey, HttpServletRequest request) {
-		if (PageRequestUtils.isPartialRequest(request)) {
-			return null;
-		}
-		return super.getCacheItem(cacheKey, request);
-	}
-	
 }

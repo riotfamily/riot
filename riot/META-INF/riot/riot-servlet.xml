@@ -78,17 +78,24 @@
 	</bean>
 
 	<!--
-	  - A Cachius cache instance to cache riot resources.
+	  - A Cachius cache to cache riot resources.
 	  -->
-	<bean id="riotCache" class="org.riotfamily.cachius.spring.CacheFactoryBean">
+	<bean id="riotCacheFactory" class="org.riotfamily.cachius.spring.CacheFactory">
+		<property name="cacheDirName" value="riot-cache" />
 		<property name="restore" value="false" />
 	</bean>
     
-	<!-- 
+    <!-- 
 	  - HandlerAdapter that handles CacheableControllers.
 	  -->
-	<bean class="org.riotfamily.website.cache.RiotAwareCacheableControllerHandlerAdapter">
-		<constructor-arg ref="riotCache" />
+    <bean class="org.riotfamily.cachius.spring.CacheableControllerHandlerAdapter">
+		<constructor-arg>
+			<bean class="org.riotfamily.cachius.CacheService">
+				<constructor-arg>
+					<bean factory-bean="riotCacheFactory" factory-method="createInstance" />
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
 	</bean>
 	
 	<!-- 

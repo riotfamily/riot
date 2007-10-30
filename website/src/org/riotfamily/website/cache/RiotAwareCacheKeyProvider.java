@@ -25,41 +25,25 @@ package org.riotfamily.website.cache;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.Cache;
-import org.riotfamily.cachius.CacheItem;
-import org.riotfamily.cachius.spring.CacheableControllerHandlerAdapter;
+import org.riotfamily.cachius.spring.DefaultCacheKeyProvider;
+import org.riotfamily.cachius.spring.CacheableController;
 import org.riotfamily.riot.security.AccessController;
 
 /**
- * CacheableControllerHandlerAdapter subclass that adds a prefix to the 
- * cache-key when a request is performed by an authenticated Riot user.
- *   
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class RiotAwareCacheableControllerHandlerAdapter 
-		extends CacheableControllerHandlerAdapter {
+public class RiotAwareCacheKeyProvider extends DefaultCacheKeyProvider {
 
 	private String riotCacheKeyPrefix = "riot:";
 	
-	public RiotAwareCacheableControllerHandlerAdapter(Cache cache) {
-		super(cache);
-	}
-
-	/**
-	 * Sets the prefix that is added to the cache-key if the request is 
-	 * performed by an authenticated Riot user.
-	 */
-	public void setRiotCacheKeyPrefix(String riotCacheKeyPrefix) {
-		this.riotCacheKeyPrefix = riotCacheKeyPrefix;
-	}
-
-	protected CacheItem getCacheItem(String cacheKey, 
+	public String getCacheKey(CacheableController controller, 
 			HttpServletRequest request) {
-		
+	
+		String cacheKey = super.getCacheKey(controller, request);
 		if (cacheKey != null && AccessController.isAuthenticatedUser()) {
 			cacheKey = riotCacheKeyPrefix + cacheKey;
 		}
-		return super.getCacheItem(cacheKey, request);
+		return cacheKey;
 	}
 }

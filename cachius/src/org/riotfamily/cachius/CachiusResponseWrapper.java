@@ -24,7 +24,6 @@
 package org.riotfamily.cachius;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 
@@ -32,8 +31,11 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.riotfamily.cachius.support.MultiplexPrintWriter;
-import org.riotfamily.cachius.support.MultiplexServletOutputStream;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.riotfamily.cachius.support.SessionIdEncoder;
+import org.riotfamily.cachius.support.TokenFilterWriter;
+import org.riotfamily.common.web.util.DelegatingServletOutputStream;
 
 
 /**
@@ -44,11 +46,15 @@ import org.riotfamily.cachius.support.MultiplexServletOutputStream;
  */
 public class CachiusResponseWrapper extends HttpServletResponseWrapper {
 
+	private static Log log = LogFactory.getLog(CachiusResponseWrapper.class);
+	
 	private static final String HEADER_EXPIRES = "Expires";
 	
 	private static final String HEADER_CACHE_CONTROL = "Cache-Control";
 	
-    private ItemUpdater cacheItemUpdate;
+    private CacheItem cacheItem;
+    
+    private SessionIdEncoder sessionIdEncoder;
     
     private ServletOutputStream outputStream;
     
@@ -56,10 +62,11 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
         
  
     public CachiusResponseWrapper(HttpServletResponse response, 
-            ItemUpdater cacheItemUpdate) {
-        
+    		CacheItem cacheItem, SessionIdEncoder sessionIdEncoder) {
+    	
         super(response);
-        this.cacheItemUpdate = cacheItemUpdate;
+        this.cacheItem = cacheItem;
+        this.sessionIdEncoder = sessionIdEncoder;
     }
 	    
     /**
@@ -70,14 +77,14 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
     public void setStatus(int sc) {
         super.setStatus(sc);
         if (sc != 0 && sc != HttpServletResponse.SC_OK) {
-        	cacheItemUpdate.discard();
+        	cacheItem.setLastModified(-1);
         }
     }
        
     
     public void setContentType(String contentType) {
         super.setContentType(contentType);
-        cacheItemUpdate.setContentType(contentType);
+        cacheItem.setContentType(contentType);
     }
     
     public void setDateHeader(String name, long date) {
@@ -92,7 +99,7 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
     
     private void checkExpires(String name, long date) {
     	if (HEADER_EXPIRES.equalsIgnoreCase(name)) {
-    		cacheItemUpdate.setExpires(date);
+    		cacheItem.setExpires(date);
     	}
     }
     
@@ -108,7 +115,7 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
     
     private void checkCacheControl(String name, String value) {
     	if (HEADER_CACHE_CONTROL.equalsIgnoreCase(name)) {
-    		cacheItemUpdate.setCacheControl(value);
+    		cacheItem.setCacheControl(value);
     	}
     }
     
@@ -123,12 +130,12 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
             throw new IllegalStateException();
         }
         if (outputStream == null) {
-        	OutputStream captureStream = cacheItemUpdate.getOutputStream();
-        	if (captureStream != null) {
-	            outputStream = new MultiplexServletOutputStream(
-	            		captureStream, super.getOutputStream());
+        	try {
+        		outputStream = new DelegatingServletOutputStream( 
+        				cacheItem.getOutputStream());
         	}
-        	else {
+        	catch (IOException e) {
+        		log.warn(e);
         		// Fail gracefully - continue without caching
         		outputStream = super.getOutputStream();
         	}
@@ -147,13 +154,18 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
             if (outputStream != null) {
                 throw new IllegalStateException();
             }
-            Writer captureWriter = cacheItemUpdate.getWriter();
-            if (captureWriter != null) {
-	            writer = new MultiplexPrintWriter(
-	            		captureWriter, 
-	            		super.getWriter());
+            try {
+            	Writer itemWriter = cacheItem.getWriter();
+		        if (cacheItem.isFilterSessionId()) {
+		        	itemWriter = new TokenFilterWriter(
+		        			sessionIdEncoder.getSessionId(),
+		                    "${jsessionid}", itemWriter);
+		        }
+		        writer = new PrintWriter(itemWriter);
+		        
             }
-            else {
+            catch (IOException e) {
+            	log.warn(e);
             	// Fail gracefully - continue without caching
             	writer = super.getWriter(); 
             }
@@ -169,5 +181,46 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
     		outputStream.flush();
     	}
     }
+    
+    public void stopCapturing() throws IOException {
+    	flushBuffer();
+    	if (writer != null) {
+    		writer.close();
+    	}
+    	else if (outputStream != null) {
+    		outputStream.close();
+    	}
+    }
+    
+    /**
+     * Delegates the call to {@link SessionIdEncoder#encodeRedirectURL(String)}
+     * to ensure that the session state remains the same during processing.
+     */
+    public String encodeRedirectURL(String url) {
+        return sessionIdEncoder.encodeRedirectURL(url);
+    }
+
+    /**
+     * Delegates the call to {@link #encodeRedirectURL(String)}.
+     */
+    public String encodeRedirectUrl(String url) {
+        return encodeRedirectURL(url);
+    }
+
+    /**
+     * Delegates the call to {@link SessionIdEncoder#encodeURL(String)}
+     * to ensure that the session state remains the same during processing.
+     */
+    public String encodeURL(String url) {
+        return sessionIdEncoder.encodeURL(url);
+    }
+
+    /**
+     * Delegates the call to {@link #encodeURL(String)}.
+     */
+    public String encodeUrl(String url) {
+        return encodeURL(url);
+    }
+
     
 }

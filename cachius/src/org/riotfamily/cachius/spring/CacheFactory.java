@@ -29,17 +29,16 @@ import java.io.IOException;
 import javax.servlet.ServletContext;
 
 import org.riotfamily.cachius.Cache;
-import org.springframework.beans.factory.config.AbstractFactoryBean;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.core.io.Resource;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.util.WebUtils;
 
 /**
- * Factory bean that creates a new {@link Cache Cache} instance in the
+ * Factory that creates a new {@link Cache Cache} instance in the
  * specified directory.
  */
-public class CacheFactoryBean extends AbstractFactoryBean
-		implements ServletContextAware {
+public class CacheFactory implements ServletContextAware, BeanNameAware {
 
 	public static final int DEFAULT_CAPACITY = 10000;
 
@@ -49,7 +48,9 @@ public class CacheFactoryBean extends AbstractFactoryBean
 
 	private File cacheDir;
 
-	private String cacheDirName = DEFAULT_CACHE_DIR_NAME;
+	private String beanName;
+	
+	private String cacheDirName;
 
 	private ServletContext servletContext;
 
@@ -57,6 +58,11 @@ public class CacheFactoryBean extends AbstractFactoryBean
 	
 	private boolean enabled = true;
 
+
+	public void setBeanName(String name) {
+		this.beanName = name;
+	}
+	
 	public void setCacheDirName(String cacheDirName) {
 		this.cacheDirName = cacheDirName;
 	}
@@ -93,16 +99,15 @@ public class CacheFactoryBean extends AbstractFactoryBean
 		this.servletContext = servletContext;
 	}
 
-	/**
-	 * Returns <code>Cache.class</code>.
-	 */
-	public Class getObjectType() {
-		return Cache.class;
-	}
-
-	protected Object createInstance() throws Exception {
+	public Object createInstance() throws Exception {
 		if (cacheDir == null) {
 			File tempDir = WebUtils.getTempDir(servletContext);
+			if (cacheDirName == null) {
+				cacheDirName = beanName;
+				if (cacheDirName == null) {
+					cacheDirName = DEFAULT_CACHE_DIR_NAME;
+				}
+			}
 			cacheDir = new File(tempDir, cacheDirName);
 		}
 		return Cache.newInstance(capacity, cacheDir, restore, enabled);
