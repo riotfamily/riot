@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="riot/src"/>
-	<classpathentry kind="src" path="components/src"/>
-	<classpathentry kind="src" path="website/src"/>
-	<classpathentry kind="src" path="riot-hibernate/src"/>
 	<classpathentry kind="src" path="cachius/src"/>
-	<classpathentry kind="src" path="pages/src"/>
-	<classpathentry kind="src" path="forms/src"/>
 	<classpathentry kind="src" path="common/src"/>
+	<classpathentry kind="src" path="components/src"/>
+	<classpathentry kind="src" path="forms/src"/>
+	<classpathentry kind="src" path="pages/src"/>
 	<classpathentry kind="src" path="revolt/src"/>
 	<classpathentry kind="src" path="revolt/test"/>
+	<classpathentry kind="src" path="riot/src"/>
+	<classpathentry kind="src" path="riot-hibernate/src"/>
+	<classpathentry kind="src" path="website/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
