@@ -30,6 +30,7 @@ import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.core.Ordered;
 
 /**
  * BeanFactoryPostProcessor that overrides properties of a bean that has been
@@ -39,13 +40,16 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PropertyOverrideProcessor implements BeanFactoryPostProcessor {
+public class PropertyOverrideProcessor implements BeanFactoryPostProcessor, 
+		Ordered {
 
 	private static Log log = LogFactory.getLog(PropertyOverrideProcessor.class);
 	
 	private String ref;
 
 	private PropertyValues propertyValues;
+	
+	private int order = Ordered.LOWEST_PRECEDENCE;
 		
 	public void setRef(String ref) {
 		this.ref = ref;
@@ -55,6 +59,13 @@ public class PropertyOverrideProcessor implements BeanFactoryPostProcessor {
 		this.propertyValues = propertyValues;
 	}
 	
+	public int getOrder() {
+		return this.order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
 
 	public void postProcessBeanFactory(
 			ConfigurableListableBeanFactory beanFactory) 

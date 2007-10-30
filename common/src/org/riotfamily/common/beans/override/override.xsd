@@ -13,6 +13,7 @@
 				<xsd:element ref="beans:property" />
 			</xsd:sequence>
 			<xsd:attribute name="ref" type="xsd:string" use="required" />
+			<xsd:attribute name="order" type="xsd:integer" />
 		</xsd:complexType>
 	</xsd:element>
 	
