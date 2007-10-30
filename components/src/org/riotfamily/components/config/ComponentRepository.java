@@ -129,6 +129,9 @@ public class ComponentRepository implements ServletContextAware,
 		componentMap = context.getBeansOfType(Component.class);
 		log.debug("Components: " + componentMap);
 		storeConfiguredPropertyProcessors();
+		if (formRepository != null) {
+			formRepository.registerPropertyProcessors();
+		}
 	}
 
 	private void storeConfiguredPropertyProcessors() {

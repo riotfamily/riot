@@ -72,7 +72,6 @@ public class ComponentFormRepository extends XmlFormRepository {
 		componentElements = new HashMap();
 		super.configure();
 		registerPropertyProcessors();
-		componentElements = null;
 	}
 
 	public void registerFormFactory(String id, FormFactory formFactory) {
@@ -94,7 +93,7 @@ public class ComponentFormRepository extends XmlFormRepository {
 		return list;
 	}
 	
-	private void registerPropertyProcessors() {
+	public void registerPropertyProcessors() {
 		Iterator it = componentElements.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();
