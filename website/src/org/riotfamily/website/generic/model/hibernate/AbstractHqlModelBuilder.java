@@ -80,6 +80,10 @@ public abstract class AbstractHqlModelBuilder extends HibernateSupport
 	private boolean tagCacheItems = true;
 
 	private long timeToLive = CacheableController.CACHE_ETERNALLY;
+	
+	private boolean useQueryCache = false;
+	
+	private String hibernateCacheRegion = null;
 
 	public AbstractHqlModelBuilder() {
 	}
@@ -222,6 +226,15 @@ public abstract class AbstractHqlModelBuilder extends HibernateSupport
 		HibernateUtils.enableLiveModeFilterIfNecessary(getSession());
 		Query query = createQuery(hql);
 		log.debug("Query: " + query.getQueryString());
+		
+		if (useQueryCache) {
+			query.setCacheable(true);
+		}
+		
+		if (hibernateCacheRegion != null) {
+			query.setCacheRegion(hibernateCacheRegion);
+		}
+		
 		setParameters(query, request);
 		Object result = getResult(query);
 		if (tagCacheItems) {
@@ -278,6 +291,20 @@ public abstract class AbstractHqlModelBuilder extends HibernateSupport
 		Object getValue(HttpServletRequest request) {
 			return resolver.getValue(request);
 		}
+	}
+
+	/**
+	 * @param useQueryCache the useQueryCache to set
+	 */
+	public void setUseQueryCache(boolean useQueryCache) {
+		this.useQueryCache = useQueryCache;
+	}
+
+	/**
+	 * @param hibernateCacheRegion the hibernateCacheRegion to set
+	 */
+	public void setHibernateCacheRegion(String hibernateCacheRegion) {
+		this.hibernateCacheRegion = hibernateCacheRegion;
 	}
 
 }

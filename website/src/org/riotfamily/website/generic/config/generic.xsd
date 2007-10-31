@@ -74,6 +74,8 @@
 		<xsd:attribute name="model-key" />
 		<xsd:attribute name="time-to-live" type="xsd:string" default="eternal" />
 		<xsd:attribute name="tag-cache-items" type="xsd:boolean" default="true" />
+        <xsd:attribute name="query-cache" type="xsd:boolean" default="false" />
+        <xsd:attribute name="hibernate-cache-region" type="xsd:string" />
 	</xsd:complexType>
 
 	<xsd:element name="hql" type="hql" />

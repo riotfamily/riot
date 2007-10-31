@@ -42,14 +42,20 @@ public class GenericNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 		BeanDefinitionDecorator setModelBuilder = new NestedPropertyDecorator("modelBuilder");
 		register("hql", "org.riotfamily.website.generic.model.hibernate.HqlModelBuilder", setModelBuilder)
-				.addTranslation("time-to-live", "ttlPeriod");
+				.addTranslation("time-to-live", "ttlPeriod")
+				.addTranslation("query-cache", "useQueryCache")
+				.addTranslation("hibernate-cache-region", "hibernateCacheRegion");
 		
 		register("hql-list", "org.riotfamily.website.generic.model.hibernate.HqlListModelBuilder", setModelBuilder)
 				.addTranslation("time-to-live", "ttlPeriod")
-				.addTranslation("max", "maxResults");
+				.addTranslation("max", "maxResults")
+				.addTranslation("query-cache", "useQueryCache")
+				.addTranslation("hibernate-cache-region", "hibernateCacheRegion");
 		
 		register("hql-paged-list", "org.riotfamily.website.generic.model.hibernate.HqlPagedListModelBuilder", setModelBuilder)
-				.addTranslation("time-to-live", "ttlPeriod");
+				.addTranslation("time-to-live", "ttlPeriod")
+				.addTranslation("query-cache", "useQueryCache")
+				.addTranslation("hibernate-cache-region", "hibernateCacheRegion");
 		
 		registerSpringBeanDefinitionParser("model-builder", setModelBuilder);
 
