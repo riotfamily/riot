@@ -38,7 +38,7 @@ riot.getTextEditor = function(el) {
 			});
 		}
 		if (editorType == 'textarea') {
-			el.textEditor = new riot.PopupTextEditor(el, component);
+			el.textEditor = new riot.PopupTextEditor(el, component, {useInnerHtmlAsDefault: true});
 		}
 		if (editorType == 'richtext') {
 			el.textEditor = new riot.RichtextEditor(el, component, {useInnerHtmlAsDefault: true});
