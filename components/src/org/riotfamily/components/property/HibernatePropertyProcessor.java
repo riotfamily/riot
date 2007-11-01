@@ -27,13 +27,14 @@ import java.io.Serializable;
 
 import org.hibernate.SessionFactory;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.util.Assert;
 
 public class HibernatePropertyProcessor extends PropertyProcessorAdapter 
-		implements ApplicationContextAware {
+		implements ApplicationContextAware, InitializingBean {
 
 	private ApplicationContext applicationContext;
 	
@@ -63,7 +64,7 @@ public class HibernatePropertyProcessor extends PropertyProcessorAdapter
 		this.applicationContext = applicationContext;
 	}
 	
-	protected void initialize() {
+	public void afterPropertiesSet() throws Exception {
 		if (sessionFactory == null) {
 			sessionFactory = (SessionFactory) applicationContext.getBean(
 					"sessionFactory", SessionFactory.class);
