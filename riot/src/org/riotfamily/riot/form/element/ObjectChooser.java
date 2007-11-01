@@ -25,6 +25,7 @@ package org.riotfamily.riot.form.element;
 
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.forms.element.select.AbstractChooser;
+import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
@@ -111,6 +112,11 @@ public class ObjectChooser extends AbstractChooser
 		}
 	}
 
+	public RiotDao getRiotDao() {
+		return EditorDefinitionUtils.getListDefinition(targetEditorDefinition)
+				.getListConfig().getDao();
+	}
+	
 	protected Object loadBean(String objectId) {
 		return EditorDefinitionUtils.loadBean(targetEditorDefinition, objectId);
 	}

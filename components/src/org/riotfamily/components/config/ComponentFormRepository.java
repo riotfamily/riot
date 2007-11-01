@@ -37,6 +37,7 @@ import org.riotfamily.components.property.JSONArrayPropertyProcessor;
 import org.riotfamily.components.property.JSONObjectPropertyProcessor;
 import org.riotfamily.components.property.PropertyEditorProcessor;
 import org.riotfamily.components.property.PropertyProcessorRegistry;
+import org.riotfamily.components.property.RiotDaoPropertyProcessor;
 import org.riotfamily.forms.ContainerElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Form;
@@ -49,6 +50,7 @@ import org.riotfamily.forms.element.upload.FlashUpload;
 import org.riotfamily.forms.element.upload.ImageUpload;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.xml.XmlFormRepository;
+import org.riotfamily.riot.form.element.ObjectChooser;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 
 /**
@@ -146,6 +148,9 @@ public class ComponentFormRepository extends XmlFormRepository {
 		else if (e instanceof ListEditor) {
 			registerListProcessor(registry, property, (ListEditor) e);
 		}
+		else if (e instanceof ObjectChooser) {
+			registerObjectChooserProcessor(registry, property, (ObjectChooser) e);
+		}
 	}
 
 	private void registerFileUploadProcessor(PropertyProcessorRegistry registry,
@@ -236,6 +241,16 @@ public class ComponentFormRepository extends XmlFormRepository {
 				.createElement(listEditor, listEditor.getForm());
 		
 		registerPropertyProcessors(pp, itemEditor);
+		registry.registerPropertyProcessor(property, pp);
+	}
+	
+	private void registerObjectChooserProcessor(
+			PropertyProcessorRegistry registry, String property, 
+			ObjectChooser chooser) {
+		
+		RiotDaoPropertyProcessor pp = new RiotDaoPropertyProcessor(
+				chooser.getRiotDao());
+		
 		registry.registerPropertyProcessor(property, pp);
 	}
 
