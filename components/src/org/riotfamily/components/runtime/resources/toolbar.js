@@ -57,13 +57,17 @@ riot.Toolbar.prototype = {
 	},
 
 	enablePublishButtons: function() {
-		this.buttons.publish.enable();
-		this.buttons.discard.enable();
+		if (!riot.instantPublish) {
+			this.buttons.publish.enable();
+			this.buttons.discard.enable();
+		}
 	},
 	
 	disablePublishButtons: function() {
-		this.buttons.publish.disable();
-		this.buttons.discard.disable();
+		if (!riot.instantPublish) {
+			this.buttons.publish.disable();
+			this.buttons.discard.disable();
+		}
 	},
 	
 	buttonClicked: function(button) {
