@@ -233,11 +233,16 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 	},
 
 	getText: function() {
-		return this.input.value
+		var newText = this.input.value
 			.replace(/&/g, '&amp;')
 			.replace(/</g, '&lt;')
 			.replace(/>/g, '&gt;')
 			.replace(/\n/g, '<br />');
+			
+		if (newText.blank()) {
+			return this.text;
+		}
+		return newText;
 	},
 
 	onsave: function(text) {
@@ -298,6 +303,14 @@ riot.PopupTextEditor = Class.extend(riot.InplaceEditor, {
 
 	getText: function() {
 		return this.popup.getText();
+	},
+	
+	save: function() {
+		var text = this.getText();
+		if (this.text != text) {
+			this.component.updateText(this.key, text, true);
+		}
+		this.onsave(text);
 	},
 
 	onsave: function() {
@@ -400,7 +413,7 @@ riot.Popup.prototype = {
 		this.hideElements('object');
 		this.hideElements('embed');
 
-		var top = Math.round(Viewport.getInnerHeight() / 2 - this.div.clientHeight / 2);
+		var top = Math.max(5, Math.round(Viewport.getInnerHeight() / 2 - this.div.clientHeight / 2));
 		var left = Math.round(Viewport.getInnerWidth() / 2 - this.div.clientWidth / 2);
 
 		this.div.hide();
@@ -449,6 +462,10 @@ riot.TextareaPopup = Class.extend(riot.Popup, {
 	initialize: function(editor) {
 		this.textarea = RBuilder.node('textarea', {value: editor.text || ''}),
 		this.SUPER('${title.editorPopup}', this.textarea, editor.save.bind(editor), editor.help);
+		var availableTextareaHeight = Viewport.getInnerHeight() - 82;
+		if (availableTextareaHeight < this.textarea.getHeight()) {
+			this.textarea.style.height = availableTextareaHeight + 'px';
+		}
 	},
 
 	setText: function(text) {
