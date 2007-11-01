@@ -114,6 +114,7 @@
 				<value>/login</value>
 				<value>/logout</value>
 				<value>/resources/**</value>
+				<value>/joined/**</value>
 			</list>
 		</property>
 		<property name="includes">

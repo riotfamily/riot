@@ -50,6 +50,7 @@ public class JoiningResourceController extends AbstractResourceController {
 	
 	private String contentType;
 	
+	private boolean shouldBeZipped;
 	
 	public void setCompressor(Compressor compressor) {
 		this.compressor = compressor;
@@ -57,8 +58,13 @@ public class JoiningResourceController extends AbstractResourceController {
 
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
+		shouldBeZipped = contentTypeShouldBeZipped(contentType);
 	}
 
+	public boolean compressResponse(HttpServletRequest request) {
+		return shouldBeZipped;
+	}
+	
 	protected boolean serveResource(String path, HttpServletRequest request, 
 			HttpServletResponse response)
 			throws IOException {

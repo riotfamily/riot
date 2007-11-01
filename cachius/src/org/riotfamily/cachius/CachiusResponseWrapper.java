@@ -25,33 +25,26 @@ package org.riotfamily.cachius;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.cachius.support.Cookies;
+import org.riotfamily.cachius.support.Headers;
 import org.riotfamily.cachius.support.SessionIdEncoder;
-import org.riotfamily.cachius.support.TokenFilterWriter;
 import org.riotfamily.common.web.util.DelegatingServletOutputStream;
 
 
 /**
  * A HttpServletResponseWrapper that captures the response and updates
- * the associated CacheItem in case no error occurs during request processing.
+ * the associated CacheItem.
  *
  * @author Felix Gnass
  */
 public class CachiusResponseWrapper extends HttpServletResponseWrapper {
 
-	private static Log log = LogFactory.getLog(CachiusResponseWrapper.class);
-	
-	private static final String HEADER_EXPIRES = "Expires";
-	
-	private static final String HEADER_CACHE_CONTROL = "Cache-Control";
-	
     private CacheItem cacheItem;
     
     private SessionIdEncoder sessionIdEncoder;
@@ -59,8 +52,16 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
     private ServletOutputStream outputStream;
     
     private PrintWriter writer;
-        
- 
+    
+    private int status = 0;
+    
+    private String contentType;
+    
+    private Headers headers = new Headers();
+    
+    private Cookies cookies = new Cookies();
+    
+        	
     public CachiusResponseWrapper(HttpServletResponse response, 
     		CacheItem cacheItem, SessionIdEncoder sessionIdEncoder) {
     	
@@ -69,58 +70,54 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
         this.sessionIdEncoder = sessionIdEncoder;
     }
 	    
-    /**
-     * Set the HTTP status code
-     *
-     * @param sc The status
-     */
-    public void setStatus(int sc) {
-        super.setStatus(sc);
-        if (sc != 0 && sc != HttpServletResponse.SC_OK) {
-        	cacheItem.setLastModified(-1);
-        }
-    }
-       
-    
-    public void setContentType(String contentType) {
-        super.setContentType(contentType);
-        cacheItem.setContentType(contentType);
+    public void setStatus(int status) {
+        super.setStatus(status);
+        this.status = status;
     }
     
-    public void setDateHeader(String name, long date) {
-       	super.setDateHeader(name, date);
-       	checkExpires(name, date);
+    public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public void setContentLength(int len) {
     }
     
     public void addDateHeader(String name, long date) {
-    	super.addDateHeader(name, date);
-    	checkExpires(name, date);
+    	headers.addDate(name, date);
     }
     
-    private void checkExpires(String name, long date) {
-    	if (HEADER_EXPIRES.equalsIgnoreCase(name)) {
-    		cacheItem.setExpires(date);
-    	}
+    public void setDateHeader(String name, long date) {
+    	headers.setDate(name, date);
     }
     
-    public void setHeader(String name, String value) {
-    	super.setHeader(name, value);
-    	checkCacheControl(name, value);
+    public void addIntHeader(String name, int value) {
+    	headers.addInt(name, value);
+    }
+    
+    public void setIntHeader(String name, int value) {
+    	headers.setInt(name, value);
     }
     
     public void addHeader(String name, String value) {
-    	super.addHeader(name, value);
-    	checkCacheControl(name, value);
+        headers.add(name, value);
     }
-    
-    private void checkCacheControl(String name, String value) {
-    	if (HEADER_CACHE_CONTROL.equalsIgnoreCase(name)) {
-    		cacheItem.setCacheControl(value);
-    	}
+
+    public void setHeader(String name, String value) {
+        headers.set(name, value);
     }
+
+    public void addCookie(Cookie cookie) {
+        cookies.add(cookie);
+    }    
     
     /**
-     * Get an OutputStream
+     * Returns an ServletOutputStream that writes into the OutputStream
+     * provided by the CacheItem. All output is redirected so nothing will be 
+     * sent to the client.
      *
      * @throws IllegalStateException If getWriter() has been called before
      * @throws IOException
@@ -130,21 +127,16 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
             throw new IllegalStateException();
         }
         if (outputStream == null) {
-        	try {
-        		outputStream = new DelegatingServletOutputStream( 
+        		outputStream = new DelegatingServletOutputStream(
         				cacheItem.getOutputStream());
-        	}
-        	catch (IOException e) {
-        		log.warn(e);
-        		// Fail gracefully - continue without caching
-        		outputStream = super.getOutputStream();
-        	}
         }
         return outputStream;
     }
 
     /**
-     * Get a PrintWriter
+     * Returns a PrintWriter that writes into the Writer provided by the 
+     * CacheItem. All output is redirected so nothing will be 
+     * sent to the client.
      *
      * @throws IllegalStateExcepion If getOutputStream() has been called before
      * @throws IOException
@@ -154,22 +146,9 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
             if (outputStream != null) {
                 throw new IllegalStateException();
             }
-            try {
-            	Writer itemWriter = cacheItem.getWriter();
-		        if (cacheItem.isFilterSessionId()) {
-		        	itemWriter = new TokenFilterWriter(
-		        			sessionIdEncoder.getSessionId(),
-		                    "${jsessionid}", itemWriter);
-		        }
-		        writer = new PrintWriter(itemWriter);
-		        
-            }
-            catch (IOException e) {
-            	log.warn(e);
-            	// Fail gracefully - continue without caching
-            	writer = super.getWriter(); 
-            }
-        }
+	        writer = new PrintWriter(cacheItem.getWriter(
+	        		sessionIdEncoder.getSessionId()));
+	    }
         return writer;
     }
     
@@ -182,7 +161,7 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
     	}
     }
     
-    public void stopCapturing() throws IOException {
+    public void stopCapturing(long lastModified) throws IOException {
     	flushBuffer();
     	if (writer != null) {
     		writer.close();
@@ -190,6 +169,21 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
     	else if (outputStream != null) {
     		outputStream.close();
     	}
+    	if (status == 0 || status == HttpServletResponse.SC_OK) {
+        	cacheItem.setLastModified(lastModified);
+        }
+    	else {
+    		cacheItem.invalidate();
+    	}
+    }
+    
+    /**
+     * Sets the captured headers on the CacheItem.
+     */
+    public void updateHeaders() {
+    	cacheItem.setContentType(contentType);
+    	cacheItem.setHeaders(headers);
+    	cacheItem.setCookies(cookies);
     }
     
     /**

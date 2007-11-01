@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
+import org.riotfamily.cachius.spring.Compressable;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
@@ -49,7 +50,7 @@ import org.springframework.web.servlet.mvc.LastModified;
  * Controller that serves an internal resource.
  */
 public class AbstractResourceController extends AbstractCacheableController
-		implements LastModified {
+		implements LastModified, Compressable {
 
 	private static final String HEADER_EXPIRES = "Expires";
 	
@@ -115,6 +116,9 @@ public class AbstractResourceController extends AbstractCacheableController
 	}
 	
 	protected String getContentType(Resource resource) {
+		if (resource == null) {
+			return null;
+		}
 		return fileTypeMap.getContentType(resource.getFilename());
 	}
 	
@@ -146,6 +150,22 @@ public class AbstractResourceController extends AbstractCacheableController
 		return key.toString();
 	}
 	
+	protected boolean contentTypeShouldBeZipped(String contentType) {
+		return contentType != null && ( 
+				contentType.equals("text/css") || 
+				contentType.equals("text/javascript"));
+	}
+
+	public boolean compressResponse(HttpServletRequest request) {
+		try {
+			Resource resource = lookupResource(getResourcePath(request));
+			return contentTypeShouldBeZipped(getContentType(resource));
+		}
+		catch (IOException e) {
+			return false;
+		}
+	}
+	
 	public ModelAndView handleRequest(HttpServletRequest request, 
             HttpServletResponse response) throws IOException {
         
@@ -162,7 +182,6 @@ public class AbstractResourceController extends AbstractCacheableController
 	protected boolean serveResource(String path, HttpServletRequest request, 
 			HttpServletResponse response) throws IOException {
 		
-		log.debug("Looking up resource " + path);
     	Resource res = lookupResource(path);
 		if (res != null) {
 			String contentType = getContentType(res);

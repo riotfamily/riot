@@ -3,5 +3,5 @@
 		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<body onload="parent.location.reload()"></body>
+	<body onload="top.location.reload()"></body>
 </html>

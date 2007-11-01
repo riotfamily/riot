@@ -21,26 +21,16 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.cachius;
+package org.riotfamily.cachius.spring;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public interface CacheableRequestProcessor {
+public interface Compressable {
 
-	public String getCacheKey(HttpServletRequest request);
-	
-	public long getTimeToLive();
-	
-	public long getLastModified(HttpServletRequest request) throws Exception;
-	
-	public void processRequest(HttpServletRequest request, 
-			HttpServletResponse response) throws Exception;
-
-	public boolean responseShouldBeZipped(HttpServletRequest request);
+	public boolean compressResponse(HttpServletRequest request);
 
 }

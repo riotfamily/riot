@@ -84,5 +84,14 @@ public class CapturingResponseWrapper extends HttpServletResponseWrapper {
 		}
 		return writer;
 	}
+	
+	public void flush() throws IOException {
+		if (outputStream != null) {
+			outputStream.flush();
+		}
+		if (writer != null) {
+			writer.flush();
+		}
+	}
 
 }

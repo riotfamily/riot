@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
+import org.riotfamily.cachius.spring.Compressable;
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
@@ -77,7 +78,8 @@ import freemarker.template.TemplateException;
  * </p>
  */
 public class CssTemplateController extends AbstractCacheableController
-		implements LastModified, ServletContextAware, InitializingBean {
+		implements ServletContextAware, InitializingBean, 
+		LastModified, Compressable {
 
 	public static final String KEY_PROPERTY = "key";
 
@@ -149,9 +151,17 @@ public class CssTemplateController extends AbstractCacheableController
 				new File(servletContext.getRealPath("/")));
 	}
 
+	public boolean compressResponse(HttpServletRequest request) {
+		return true;
+	}
+	
 	public long getLastModified(HttpServletRequest request) {
 		DynamicStylesheet stylesheet = lookup(request);
 		return stylesheet.lastModified();
+	}
+	
+	protected String getCacheKeyInternal(HttpServletRequest request) {
+		return request.getRequestURI();
 	}
 
 	public ModelAndView handleRequest(HttpServletRequest request,

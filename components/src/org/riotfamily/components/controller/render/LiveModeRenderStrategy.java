@@ -156,6 +156,10 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 			return 0;
 		}
 		
+		public boolean responseShouldBeZipped(HttpServletRequest request) {
+			return false;
+		}
+		
 		public void processRequest(HttpServletRequest request, 
 				HttpServletResponse response) throws Exception {
 			
@@ -195,6 +199,10 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		
 		public long getLastModified(HttpServletRequest request) {
 			return 0;
+		}
+		
+		public boolean responseShouldBeZipped(HttpServletRequest request) {
+			return false;
 		}
 		
 		public void processRequest(HttpServletRequest request, 

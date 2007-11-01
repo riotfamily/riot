@@ -21,26 +21,37 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.cachius;
+package org.riotfamily.cachius.support;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpSession;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public interface CacheableRequestProcessor {
-
-	public String getCacheKey(HttpServletRequest request);
+public class SessionCreationPreventingRequestWrapper 
+		extends HttpServletRequestWrapper {
 	
-	public long getTimeToLive();
+	private boolean sessionExists;
 	
-	public long getLastModified(HttpServletRequest request) throws Exception;
+	public SessionCreationPreventingRequestWrapper(HttpServletRequest request) {
+		super(request);
+		sessionExists = request.getSession(false) != null;
+	}
 	
-	public void processRequest(HttpServletRequest request, 
-			HttpServletResponse response) throws Exception;
-
-	public boolean responseShouldBeZipped(HttpServletRequest request);
+	public HttpSession getSession() {
+		return getSession(true);
+	}
+	
+	public HttpSession getSession(boolean create) {
+		if (create && !sessionExists) {
+			throw new IllegalStateException("CacheableControllers must not " +
+					"create new HTTP sessions. Make sure that the session " +
+					"exists before you invoke the Controller.");
+		}
+		return super.getSession(create);
+	}
 
 }

@@ -21,26 +21,37 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.cachius;
+package org.riotfamily.cachius.support;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public interface CacheableRequestProcessor {
+public class Cookies implements Serializable {
 
-	public String getCacheKey(HttpServletRequest request);
+	private ArrayList cookies;
 	
-	public long getTimeToLive();
+	public void add(Cookie cookie) {
+		if (cookies == null) {
+			cookies = new ArrayList();
+		}
+		cookies.add(new SerializableCookie(cookie));
+	}
 	
-	public long getLastModified(HttpServletRequest request) throws Exception;
-	
-	public void processRequest(HttpServletRequest request, 
-			HttpServletResponse response) throws Exception;
-
-	public boolean responseShouldBeZipped(HttpServletRequest request);
-
+	public void addToResponse(HttpServletResponse response) {
+		if (cookies != null) {
+			Iterator it = cookies.iterator();
+			while (it.hasNext()) {
+				SerializableCookie cookie = (SerializableCookie) it.next();
+				response.addCookie(cookie.create());
+			}
+		}
+	}
 }

@@ -65,6 +65,13 @@ public class CacheableControllerProcessor implements CacheableRequestProcessor {
 		return controller.getTimeToLive();
 	}
 
+	public boolean responseShouldBeZipped(HttpServletRequest request) {
+		if (controller instanceof Compressable) {
+			return ((Compressable) controller).compressResponse(request);
+		}
+		return false;
+	}
+	
 	public void processRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		

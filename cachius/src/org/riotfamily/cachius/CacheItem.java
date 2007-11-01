@@ -40,22 +40,25 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.cachius.support.Cookies;
+import org.riotfamily.cachius.support.Headers;
 import org.riotfamily.cachius.support.ReaderWriterLock;
 import org.riotfamily.cachius.support.TokenFilterWriter;
 import org.riotfamily.common.io.IOUtils;
+import org.springframework.util.FileCopyUtils;
 
 
 /**
- * Representation of cached item that is backed by a file. The 
- * <code>lastModified</code> and the <code>contentType</code> properties
- * are kept in memory and are serialized by the default java serialization
- * mechanism. The actual content is read from a file to avoid the overhead
- * of object deserialization on each request.
+ * Representation of cached item that is backed by a file. The captured 
+ * HTTP headers are kept in memory and are serialized by the default java 
+ * serialization mechanism. The actual content is read from a file to avoid 
+ * the overhead of object deserialization on each request.
  * <br>
  * If URL rewriting is used to track the session, the sessionId is
  * replaced by a special token in the cache file. When such an item is
@@ -67,12 +70,8 @@ import org.riotfamily.common.io.IOUtils;
  *
  * @author Felix Gnass
  */
-public class CacheItem implements Serializable {
-    
-	private static final String HEADER_EXPIRES = "Expires";
-	
-	private static final String HEADER_CACHE_CONTROL = "Cache-Control";
-	
+class CacheItem implements Serializable {
+    	
     private static final String ITEM_PREFIX = "item";
     
     private static final String ITEM_SUFFIX = "";
@@ -99,29 +98,18 @@ public class CacheItem implements Serializable {
     private boolean filterSessionId;
     
     /** The file containing the actual data */
-    private File file = null;
+    private File file;
+
+    /** The Content-Type of the cached data */
+    private String contentType;
     
-    /** File containing the gzipped data */
-    //private File compressedFile = null;
+    /** Captured HTTP headers that will be sent */
+    private Headers headers;
     
-    /** The content type (may be null) */
-    private String contentType = null;
+    /** Captured cookies that will be sent */
+    private Cookies cookies;
     
-    /**
-     * The Cache-Control header to be sent (may be null).
-     */
-    private String cacheControl;
-    
-    /**
-     * The Expires header to be sent.
-     */
-    private long expires = -1;
-    
-    
-    /** 
-     * Flag indicating whether the cached content is binary 
-     * or character data.
-     */
+    /** Flag indicating whether the content is binary or character data */
     private boolean binary = true;
     
     /** 
@@ -130,142 +118,211 @@ public class CacheItem implements Serializable {
      */
     private transient ReaderWriterLock lock = new ReaderWriterLock();
     
-    /**
-     * Time of the last modification.
-     */
+    /** Time of the last modification */
     private long lastModified;
     
-    /**
-     * Time of the last up-to-date check.
-     */
+    /** Time of the last up-to-date check */
     private long lastCheck;
     
     
-    public CacheItem(String key, File cacheDir) throws IOException {
+    /**
+     * Creates a new CacheItem with the given key in the specified directory.
+     */
+    protected CacheItem(String key, File cacheDir) throws IOException {
         this.key = key;
         file = File.createTempFile(ITEM_PREFIX, ITEM_SUFFIX, cacheDir);
         lastModified = NOT_YET;
     }
         
-    public String getKey() {
+    /**
+     * Returns the key.
+     */
+    protected String getKey() {
         return key;
     }
    
-    public void setKey(String key) {
-        this.key = key;
+    /**
+     * Returns the previous item. Cache items are linked and form a double 
+     * linked list. 
+     */
+    protected CacheItem getPrevious() {
+        return previous;
     }
     
-	protected ReaderWriterLock getLock() {
-		return this.lock;
-	}
-	
-    public void setTags(String[] tags) {
+    /**
+     * Sets the previous item.
+     */
+    protected void setPrevious(CacheItem previous) {
+        this.previous = previous;
+    }
+
+    /**
+     * Returns the next item. Cache items are linked and form a double 
+     * linked list.
+     */
+    protected CacheItem getNext() {
+        return next;
+    }
+
+    /**
+     * Sets the next item.
+     */
+    protected void setNext(CacheItem next) {
+        this.next = next;
+    }
+    
+    /**
+     * Sets tags which can be used to look up the item for invalidation.
+     */
+    protected void setTags(String[] tags) {
     	if (tags != null) {
     		Arrays.sort(tags);
     	}
     	this.tags = tags;
     }
     
-    public String[] getTags() {
-    	return tags;
-    }
-    
-    public boolean hasTag(String tag) {
+    /**
+     * Returns whether the item is tagged with the given String.
+     */
+	protected boolean hasTag(String tag) {
     	return tags != null && Arrays.binarySearch(tags, tag) >= 0;
     }
     
-    public CacheItem getPrevious() {
-        return previous;
-    }
-   
-    public void setPrevious(CacheItem previous) {
-        this.previous = previous;
-    }
-
-    public CacheItem getNext() {
-        return next;
-    }
-   
-    public void setNext(CacheItem next) {
-        this.next = next;
-    }
-    
-    public int hashCode() {
-        return key.hashCode();
-    }
-
-    public boolean isFilterSessionId() {
-		return filterSessionId;
-	}
-	
-	public void setFilterSessionId(boolean filterSessionId) {
-		this.filterSessionId = filterSessionId;
-	}
-	
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-        
-    public void setCacheControl(String cacheControl) {
-		this.cacheControl = cacheControl;
-	}
-
-	public void setExpires(long expires) {
-		this.expires = expires;
-	}
-
-	public long getLastModified() {
-        return lastModified;
-    }
-  
-    public void setLastModified(long lastModified) {
-        this.lastModified = lastModified;
-    }
-
-    public long getLastCheck() {
-		return this.lastCheck;
-	}
-
-	public void setLastCheck(long lastCheck) {
-		this.lastCheck = lastCheck;
-	}
-
-	public boolean isNew() {
+	/**
+	 * Returns whether the item is new. An item is considered as new if the
+	 * {@link #getLastModified() lastModified} timestamp is set to 
+	 * {@value #NOT_YET}.  
+	 */
+    protected boolean isNew() {
         return lastModified == NOT_YET;
     }
     
     /**
+     * Returns the last modification time.
+     */
+    protected long getLastModified() {
+        return lastModified;
+    }
+  
+    /**
+     * Sets the last modification time.
+     */
+	protected void setLastModified(long lastModified) {
+        this.lastModified = lastModified;
+    }
+
+	/**
+	 * Invalidates the item by setting the {@link #setLastModified(long) 
+	 * lastModified} timestamp to {@value #NOT_YET}.
+	 */
+	protected void invalidate() {
+    	lastModified = NOT_YET;
+    }
+	
+	/**
+	 * Returns the time when the last up-to-date check was performed.
+	 */
+	protected long getLastCheck() {
+		return this.lastCheck;
+	}
+
+	/**
+	 * Sets the time of the last up-to-date check.
+	 */
+	protected void setLastCheck(long lastCheck) {
+		this.lastCheck = lastCheck;
+	}
+
+    /**
      * Checks whether the cache file exists an is a regular file.
      */
-    public boolean exists() {
+	protected boolean exists() {
         return file != null && file.isFile();
     }
     
-    public OutputStream getOutputStream() throws FileNotFoundException {
+	/**
+	 * Returns the size of the cached data in bytes.
+	 */
+	protected int getSize() {
+		return file != null ? (int) file.length() : 0;
+	}
+    
+	/**
+	 * Sets the Content-Type.
+	 */
+	protected void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+	
+	/**
+	 * Sets HTTP headers. 
+	 */
+	protected void setHeaders(Headers headers) {
+		this.headers = headers;
+	}
+	
+	/**
+	 * Sets cookies.
+	 */
+	protected void setCookies(Cookies cookies) {
+		this.cookies = cookies;
+	}
+
+	/**
+	 * Returns the lock. 
+	 */
+	protected ReaderWriterLock getLock() {
+		return this.lock;
+	}
+	
+	/**
+	 * Sets whether to filter jsessionid tokens.
+	 */
+    protected void setFilterSessionId(boolean filterSessionId) {
+		this.filterSessionId = filterSessionId;
+	}
+    
+    protected Writer getWriter(String sessionId) 
+    		throws UnsupportedEncodingException, FileNotFoundException {
+    	
+    	binary = false;
+    	Writer writer = new OutputStreamWriter(getOutputStream(), FILE_ENCODING);
+    	if (filterSessionId) {
+        	writer = new TokenFilterWriter(sessionId, "${jsessionid}", writer);
+        }
+    	return writer;
+    }
+
+    protected OutputStream getOutputStream() throws FileNotFoundException {
     	return new FileOutputStream(file);
     }
     
-    public Writer getWriter() throws UnsupportedEncodingException, FileNotFoundException {
-    	binary = false;
-    	return new OutputStreamWriter(getOutputStream(), FILE_ENCODING);
+    protected void gzipContent() throws IOException {
+    	InputStream in = new BufferedInputStream(new FileInputStream(file));
+    	File zipFile = new File(file.getParentFile(), file.getName() + ".gz");
+    	OutputStream out = new GZIPOutputStream(new FileOutputStream(zipFile));
+    	FileCopyUtils.copy(in, out);
+    	binary = true;
+    	file.delete();
+    	zipFile.renameTo(file);
     }
-
     
-    public void writeTo(HttpServletResponse response, String sessionId) 
+    protected void writeTo(HttpServletResponse response, String sessionId) 
     		throws IOException {
             
         try {
-            if (contentType != null) {
-                response.setContentType(contentType);
+        	if (contentType != null) {
+        		response.setContentType(contentType);
+        	}
+            if (headers != null) {
+                headers.addToResponse(response);
             }
-            if (expires >= 0) {
-            	response.setDateHeader(HEADER_EXPIRES, expires);
+            if (cookies != null) {
+            	cookies.addToResponse(response);
             }
-            if (cacheControl != null) {
-            	response.setHeader(HEADER_CACHE_CONTROL, cacheControl);
-            }
-            
-            if (file.length() > 0) {
+            int contentLength = getSize();
+            if (contentLength > 0) {
+            	response.setContentLength(contentLength);
 	            if (binary) {
 	                InputStream in = new BufferedInputStream(
 	                        new FileInputStream(file));
@@ -287,15 +344,11 @@ public class CacheItem implements Serializable {
             }
         }
         catch (FileNotFoundException e) {
-            log.warn("Cache file not found. Resetting modification time " +
-                    "to trigger update on next request.");
+            log.warn("Cache file not found. Invalidating item to trigger " +
+                    "an update on the next request.");
             
-            lastModified = NOT_YET;
+            invalidate();
         }
-    }
-    
-    public void invalidate() {
-    	lastModified = NOT_YET;
     }
     
     protected void delete() {
@@ -320,6 +373,21 @@ public class CacheItem implements Serializable {
          
          in.defaultReadObject();
          lock = new ReaderWriterLock();
+    }
+    
+    public int hashCode() {
+        return key.hashCode();
+    }
+    
+    public boolean equals(Object obj) {
+    	if (obj == this) {
+    		return true;
+    	}
+    	if (obj instanceof CacheItem) {
+    		CacheItem other = (CacheItem) obj;
+    		return key.equals(other.key);
+    	}
+    	return false;
     }
   
 }
