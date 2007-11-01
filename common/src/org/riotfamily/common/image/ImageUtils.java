@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketException;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -111,6 +112,11 @@ public final class ImageUtils {
 	        writer.write(null, new IIOImage(im, null, null), iwparam);
 	        ios.flush();
         }
+        catch (IOException e) {
+			if (!SocketException.class.isInstance(e.getCause())) {
+				throw e;
+			}
+		}
         finally {
         	if (writer != null) {
         		writer.dispose();
