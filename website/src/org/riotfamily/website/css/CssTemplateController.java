@@ -25,6 +25,7 @@ package org.riotfamily.website.css;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.Compressable;
+import org.riotfamily.common.web.compressor.YUICssCompressor;
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
@@ -109,6 +111,8 @@ public class CssTemplateController extends AbstractCacheableController
 	private ColorTool colorTool = new ColorTool();
 	
 	private boolean addContextPathToUrls = false;
+	
+	private YUICssCompressor compressor = new YUICssCompressor();
 
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
@@ -246,8 +250,11 @@ public class CssTemplateController extends AbstractCacheableController
 			Template template = freeMarkerConfig.getTemplate(path);
 			StringWriter sw = new StringWriter();
 			template.process(model, sw);
-			response.getWriter().print(
-					processUrls(sw.toString(), request.getContextPath()));
+			
+			StringReader in = new StringReader(processUrls(
+					sw.toString(), request.getContextPath()));
+			
+			compressor.compress(in, response.getWriter());
 		}
 
 		private Map buildModel() {
