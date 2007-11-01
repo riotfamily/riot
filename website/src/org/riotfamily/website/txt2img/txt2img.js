@@ -4,11 +4,7 @@ RiotImageReplacement.prototype = {
 		this.selectors = selectors;
 		this.generatorUrl = generatorUrl;
 		this.useFilter = false;
-		/*@cc_on
-		/*@if (@_jscript_version < 5.7)
-			this.useFilter = true;
-		/*@end
-		@*/
+		this.IE = false;
 		this.pixelImage = new Image();
 		this.pixelImage.src = pixelUrl;
 		this.createHoverRules();
@@ -172,13 +168,13 @@ if (!Event.onDOMReady) {
 					document.addEventListener("DOMContentLoaded", domReady, false);
 				}
 				else {
-				/*@cc_on @*/
-					/*@if (@_win32)
+					if (this.IE) {
 						document.write('<script id="__ie_onload" defer src="' + IEDOMReadyScript + '"><\/script>');
 						document.getElementById("__ie_onload").onreadystatechange = function() {
 							if (this.readyState == "complete") domReady();
 						};
-					@else @*/
+					}
+					else {
 						if (Prototype.Browser.WebKit) {
 							this._timer = setInterval(function() {
 								if (/loaded|complete/.test(document.readyState)) domReady();
@@ -187,14 +183,22 @@ if (!Event.onDOMReady) {
 						else {
 							Event.observe(window, 'load', domReady);
 						}
-					/*@end
-				@*/
+					}
 				}
 			}
 			Event._readyCallbacks.push(f);
 		}
 	});
 }
+
+/*@cc_on
+/*@if (@_win32)
+	RiotImageReplacement.prototype.IE = true;
+/*@end
+/*@if (@_jscript_version < 5.7)
+	RiotImageReplacement.prototype.useFilter = true;
+/*@end
+@*/
 
 var ElementMatcher = Class.create();
 ElementMatcher.prototype = {

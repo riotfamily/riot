@@ -25,7 +25,8 @@ package org.riotfamily.website.txt2img;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,8 +39,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
+import org.riotfamily.cachius.spring.Compressable;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.compressor.YUIJavaScriptCompressor;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -56,7 +59,7 @@ import org.springframework.web.util.HtmlUtils;
  * @since 6.5
  */
 public class Txt2ImgController extends AbstractCacheableController
-		implements LastModified {
+		implements LastModified, Compressable {
 
 	private static final Resource SCRIPT_RESOURCE = new ClassPathResource(
 			"txt2img.js", Txt2ImgController.class);
@@ -73,6 +76,8 @@ public class Txt2ImgController extends AbstractCacheableController
 
 	private ImageGenerator defaultGenerator = new ImageGenerator();
 
+	private YUIJavaScriptCompressor compressor = new YUIJavaScriptCompressor();
+	
 	private Pattern refererPattern;
 
 	/**
@@ -109,6 +114,11 @@ public class Txt2ImgController extends AbstractCacheableController
 		}
 	}
 
+	public boolean compressResponse(HttpServletRequest request) {
+		String extension = FormatUtils.getExtension(request.getRequestURI());
+		return extension.equals("js");
+	}
+	
 	public long getLastModified(HttpServletRequest request) {
 		return lastModified;
 	}
@@ -221,29 +231,32 @@ public class Txt2ImgController extends AbstractCacheableController
 
 		response.setContentType("text/javascript");
 		ServletUtils.setCacheHeaders(response, "10Y");
-		PrintWriter out = response.getWriter();
-		out.println("var IEDOMReadyScript = '" + request.getRequestURI() + "?empty=true';");
+		StringWriter out = new StringWriter(); 
+		
+		out.write("var IEDOMReadyScript = '" + request.getRequestURI() + "?empty=true';");
 
 		IOUtils.copy(new InputStreamReader(
 				SCRIPT_RESOURCE.getInputStream(), "UTF-8"), out);
 
-		out.print("var txt2img = new RiotImageReplacement('");
-		out.print(getGeneratorUrl(request));
-		out.print("?locale=");
-		out.print(RequestContextUtils.getLocale(request));
-		out.print("', '");
-		out.print(getPixelUrl(request));
-		out.print("', [");
+		out.write("var txt2img = new RiotImageReplacement('");
+		out.write(getGeneratorUrl(request));
+		out.write("?locale=");
+		out.write(RequestContextUtils.getLocale(request).toString());
+		out.write("', '");
+		out.write(getPixelUrl(request));
+		out.write("', [");
 		Iterator it = selectors.iterator();
 		while (it.hasNext()) {
-			out.print("'");
-			out.print(it.next());
-			out.print("'");
+			out.write("'");
+			out.write((String) it.next());
+			out.write("'");
 			if (it.hasNext()) {
-				out.print(", ");
+				out.write(", ");
 			}
 		}
-		out.print("]);");
+		out.write("]);");
+		compressor.compress(new StringReader(out.toString()), 
+				response.getWriter());
 	}
 
 	private String getGeneratorUrl(HttpServletRequest request) {
