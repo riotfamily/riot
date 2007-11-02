@@ -62,7 +62,7 @@ public class CountryFlagRenderer implements CellRenderer, RiotRuntimeAware {
 			writer.print("<img src=\"");
 			writer.print(context.getContextPath());
 			writer.print(runtime.getResourcePath());
-			writer.print("/style/icons/flags/");
+			writer.print("style/icons/flags/");
 			writer.print(flag.toLowerCase());
 			writer.print(".gif\"");
 			if (title != null) {
