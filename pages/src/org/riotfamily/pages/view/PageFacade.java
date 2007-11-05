@@ -32,10 +32,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.config.component.Component;
 import org.riotfamily.components.model.ComponentVersion;
 import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.mapping.PageUrlBuilder;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
@@ -57,6 +59,8 @@ public class PageFacade {
 	
 	private Map properties = null;
 	
+	private TaggingContext taggingContext;
+	
 	public PageFacade(Page page, boolean preview, 
 			PageUrlBuilder pageUrlBuilder, 
 			ComponentRepository componentRepository) {
@@ -65,6 +69,8 @@ public class PageFacade {
 		this.preview = preview;
 		this.pageUrlBuilder = pageUrlBuilder;
 		this.componentRepository = componentRepository;
+		this.taggingContext = TaggingContext.getContext();
+		PageCacheUtils.addPageTag(taggingContext, page);
 	}
 	
 	public Long getId() {
@@ -124,15 +130,18 @@ public class PageFacade {
 	}
 
 	public Collection getChildPages() {
+		PageCacheUtils.addChildPagesTag(taggingContext, page);
 		return getVisiblePages(page.getChildPages());
 	}
 
 	public List getSiblings() {
+		PageCacheUtils.addSiblingsTag(taggingContext, page);
 		PageNode parentNode = page.getNode().getParent();
 		return getVisiblePages(parentNode.getChildPages(page.getSite()));
 	}
 	
 	public Page getPreviousSibling() {
+		PageCacheUtils.addChildPagesTag(taggingContext, page);
 		List siblings = getSiblings();
 		int i = siblings.indexOf(page);
 		if (i > 0) {
@@ -142,6 +151,7 @@ public class PageFacade {
 	}
 	
 	public Page getNextSibling() {
+		PageCacheUtils.addChildPagesTag(taggingContext, page);
 		List siblings = getSiblings();
 		int i = siblings.indexOf(page);
 		if (i < siblings.size() - 1) {

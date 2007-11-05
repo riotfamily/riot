@@ -26,6 +26,8 @@ package org.riotfamily.pages.riot.dao;
 import java.util.Collection;
 import java.util.List;
 
+import org.riotfamily.cachius.Cache;
+import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
@@ -47,11 +49,17 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 
 	private PageDao pageDao;
 
+	private Cache cache;
+	
 	public PageRiotDao() {
 	}
 
 	public void setPageDao(PageDao pageDao) {
 		this.pageDao = pageDao;
+	}
+	
+	public void setCache(Cache cache) {
+		this.cache = cache;
 	}
 
 	public void afterPropertiesSet() throws Exception {
@@ -69,6 +77,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 
 	public void delete(Object entity, Object parent) throws DataAccessException {
 		Page page = (Page) entity;
+		invalidateCacheItems(page);
 		pageDao.deletePage(page);
 	}
 
@@ -127,10 +136,13 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 			page.setSite(site);
 			pageDao.savePage(site, page);
 		}
+		invalidateCacheItems(page);
 	}
 
 	public void update(Object entity) throws DataAccessException {
-		pageDao.updatePage((Page) entity);
+		Page page = (Page) entity;
+		pageDao.updatePage(page);
+		invalidateCacheItems(page);
 	}
 
 	public void swapEntity(Object entity, Object parent, ListParams params,
@@ -157,6 +169,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 		}
 
 		pageDao.updateNode(parentNode);
+		invalidateCacheItems(page);
 	}
 
 	public void addChild(Object entity, Object parent) {
@@ -171,9 +184,15 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 			parentNode = pageDao.getRootNode();
 		}
 		pageDao.moveNode(node, parentNode);
+		invalidateCacheItems(page);
 	}
 
 	public void removeChild(Object entity, Object parent) {
+		invalidateCacheItems((Page) entity);
+	}
+	
+	private void invalidateCacheItems(Page page) {
+		PageCacheUtils.invalidateSiblings(cache, page);
 	}
 
 }

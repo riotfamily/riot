@@ -151,18 +151,18 @@ riot.Controller.prototype = {
 		riot.toolbar.restoreMode(this.element);
 	},
 	
-	setTempHtml: function(html) {
+	setTempHtml: function(html, live) {
 		this.element.update(html);
-		this.onUpdate();
+		this.onUpdate(live);
 	},
 	
-	onUpdate: function() {
+	onUpdate: function(live) {
 		riot.adoptFloatsAndClears(this.element);
 		if (window.riotEditCallbacks) {
 			var el = this.element;
 			riotEditCallbacks.each(
 				function(callback) {
-					callback(el);
+					callback(el, live || false);
 			});
 		}
 	},
@@ -675,7 +675,7 @@ riot.PublishWidget.prototype = {
 			this.domListener = this.show.bind(this);
 			this.controller.element.removeEventListener('DOMNodeInserted', this.domListener, false);
 		}		
-		this.controller.element.innerHTML = this.previewHtml;
+		this.showPreview();
 		this.controller.element.style.overflow = '';
 		if (this.element.parentNode) this.element.remove();
 		return this.controller.dirty;
@@ -717,7 +717,7 @@ riot.PublishWidget.prototype = {
 	},
 
 	setHtml: function(html) {
-		this.controller.setTempHtml(html);
+		this.controller.setTempHtml(html, this.live);
 		this.show();
 	},
 

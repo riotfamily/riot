@@ -26,12 +26,11 @@ package org.riotfamily.components.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
+import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.config.component.Component;
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ComponentVersion;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -122,9 +121,7 @@ public class ComponentController extends AbstractCacheableController {
 		Long id = getVersionId(request);
 		ComponentVersion version = componentDao.loadComponentVersion(id);
 		Assert.notNull(version, "No such component: " + id);
-
-		ComponentList list = version.getContainer().getList();
-		TaggingContext.tag(request, list.getLocation().toString());
+		ComponentCacheUtils.addListTags(request, version.getContainer());
 
 		Component component = componentRepository.getComponent(version);
 

@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.cachius.Cache;
 import org.riotfamily.common.web.event.ContentChangedEvent;
+import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.config.component.Component;
 import org.riotfamily.components.model.ComponentList;
@@ -142,6 +143,9 @@ public abstract class AbstractComponentDao implements ComponentDao,
 	 */
 	public void updateComponentVersion(ComponentVersion version) {
 		if (version.getId() != null) {
+			ComponentCacheUtils.invalidateContainer(
+					cache, version.getContainer(), true);
+
 			updateObject(version);
 		}
 	}
@@ -356,8 +360,7 @@ public abstract class AbstractComponentDao implements ComponentDao,
 			updateVersionContainer(container);
 			published = true;
 			if (container.getList() == null) {
-				cache.invalidateTaggedItems(VersionContainer.class.getName()
-						+ '#' + container.getId());
+				ComponentCacheUtils.invalidateContainer(cache, container, false);
 			}
 		}
 		return published;
@@ -406,9 +409,7 @@ public abstract class AbstractComponentDao implements ComponentDao,
 		}
 
 		if (published && cache != null) {
-			String tag = componentList.getLocation().toString();
-			log.debug("Invalidating items tagged as " + tag);
-			cache.invalidateTaggedItems(tag);
+			ComponentCacheUtils.invalidateList(cache, componentList);
 		}
 
 		return published;

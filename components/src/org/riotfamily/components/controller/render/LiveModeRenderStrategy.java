@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.controller.render;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.CacheableRequestProcessor;
 import org.riotfamily.cachius.CachiusResponseWrapper;
-import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.config.component.Component;
@@ -163,7 +162,7 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		public void processRequest(HttpServletRequest request, 
 				HttpServletResponse response) throws Exception {
 			
-			TaggingContext.tag(request, location.toString());
+			ComponentCacheUtils.addListTags(request, location);
 			renderInternal(location, request, response);
 		}
 		
@@ -208,15 +207,7 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		public void processRequest(HttpServletRequest request, 
 				HttpServletResponse response) throws Exception {
 			
-			Collection tags = component.getCacheTags(version);
-			if (tags != null) {
-				Iterator it = tags.iterator();
-				while (it.hasNext()) {
-					String tag = (String) it.next();
-					TaggingContext.tag(request, tag);
-				}
-			}
-			
+			ComponentCacheUtils.addComponentTags(request, component, version);
 			renderComponentInternal(component, version, positionClassName, 
 					request, response);
 		}

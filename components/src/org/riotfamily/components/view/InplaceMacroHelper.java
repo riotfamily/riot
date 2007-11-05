@@ -28,8 +28,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.components.EditModeUtils;
+import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.config.component.Component;
 import org.riotfamily.components.model.ComponentVersion;
@@ -75,14 +75,7 @@ public class InplaceMacroHelper {
 	}
 
 	public String tag(VersionContainer container) {
-		ComponentVersion version = isEditMode()
-				? container.getLatestVersion()
-				: container.getLiveVersion();
-
-		TaggingContext.tag(request, version.getType());
-		TaggingContext.tag(request, VersionContainer.class.getName()
-				+ '#' + container.getId());
-
+		ComponentCacheUtils.addContainerTags(request, container, isEditMode());
 		return "";
 	}
 	
