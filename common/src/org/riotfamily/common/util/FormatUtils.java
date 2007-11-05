@@ -572,7 +572,7 @@ public final class FormatUtils {
 			return URLEncoder.encode(input, "UTF-8");
 		}
 		catch (UnsupportedEncodingException e) {
-			throw new IllegalStateException(e.getMessage(), e);
+			throw new IllegalStateException(e.getMessage());
 		}
 	}
 
@@ -585,7 +585,7 @@ public final class FormatUtils {
 			return URLDecoder.decode(input, "UTF-8");
 		}
 		catch (UnsupportedEncodingException e) {
-			throw new IllegalStateException(e.getMessage(), e);
+			throw new IllegalStateException(e.getMessage());
 		}
 	}
 
