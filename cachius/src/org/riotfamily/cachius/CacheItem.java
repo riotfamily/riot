@@ -39,7 +39,7 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.util.Arrays;
+import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
@@ -82,17 +82,11 @@ class CacheItem implements Serializable {
     
     private Log log = LogFactory.getLog(CacheItem.class);
     
-    /** The previous item in the linked list */
-    private transient CacheItem previous;
-    
-    /** The next item in the linked list */
-    private transient CacheItem next;
-    
     /** The key used for lookups */
     private String key;
     
-    /** List of tags to categorize the item */
-    private String[] tags;
+    /** Set of tags to categorize the item */
+    private Set tags;
     
     /** Flag indicating whether session IDs are filtered */  
     private boolean filterSessionId;
@@ -118,6 +112,9 @@ class CacheItem implements Serializable {
      */
     private transient ReaderWriterLock lock = new ReaderWriterLock();
     
+    /** Time of the last usage */
+    private long lastUsed;
+    
     /** Time of the last modification */
     private long lastModified;
     
@@ -140,54 +137,21 @@ class CacheItem implements Serializable {
     protected String getKey() {
         return key;
     }
-   
-    /**
-     * Returns the previous item. Cache items are linked and form a double 
-     * linked list. 
-     */
-    protected CacheItem getPrevious() {
-        return previous;
-    }
-    
-    /**
-     * Sets the previous item.
-     */
-    protected void setPrevious(CacheItem previous) {
-        this.previous = previous;
-    }
-
-    /**
-     * Returns the next item. Cache items are linked and form a double 
-     * linked list.
-     */
-    protected CacheItem getNext() {
-        return next;
-    }
-
-    /**
-     * Sets the next item.
-     */
-    protected void setNext(CacheItem next) {
-        this.next = next;
-    }
-    
+       
     /**
      * Sets tags which can be used to look up the item for invalidation.
      */
-    protected void setTags(String[] tags) {
-    	if (tags != null) {
-    		Arrays.sort(tags);
-    	}
+    protected void setTags(Set tags) {
     	this.tags = tags;
     }
     
     /**
-     * Returns whether the item is tagged with the given String.
-     */
-	protected boolean hasTag(String tag) {
-    	return tags != null && Arrays.binarySearch(tags, tag) >= 0;
-    }
-    
+	 * Returns the item's tags.
+	 */
+	public Set getTags() {
+		return this.tags;
+	}
+	
 	/**
 	 * Returns whether the item is new. An item is considered as new if the
 	 * {@link #getLastModified() lastModified} timestamp is set to 
@@ -196,6 +160,17 @@ class CacheItem implements Serializable {
     protected boolean isNew() {
         return lastModified == NOT_YET;
     }
+    
+    protected void touch() {
+    	this.lastUsed = System.currentTimeMillis();
+    }
+    
+    /**
+	 * Returns the last usage time.
+	 */
+	public long getLastUsed() {
+		return this.lastUsed;
+	}
     
     /**
      * Returns the last modification time.

@@ -23,12 +23,16 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.cachius;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 /**
  * Provides static methods to tag cache items.
@@ -42,7 +46,7 @@ public class TaggingContext {
 	
 	private TaggingContext parent;
 		
-	private String[] tags;
+	private HashSet tags;
 			
 	private TaggingContext(TaggingContext parent) {
 		this.parent = parent;
@@ -54,11 +58,9 @@ public class TaggingContext {
 
 	public void addTag(String tag) {
 		if (tags == null) {
-			tags = new String[] { tag };
+			tags = new HashSet();
 		}
-		else {
-			tags = StringUtils.addStringToArray(tags, tag);
-		}
+		tags.add(tag);
 		if (parent != null) {
 			parent.addTag(tag);
 		}
@@ -67,7 +69,7 @@ public class TaggingContext {
 		}
 	}
 	
-	public String[] getTags() {
+	public Set getTags() {
 		return this.tags;
 	}
 
@@ -84,7 +86,7 @@ public class TaggingContext {
 		setContext(request, new TaggingContext(parent));
 	}
 	
-	public static String[] popTags(HttpServletRequest request) {
+	public static Set popTags(HttpServletRequest request) {
 		TaggingContext top = getContext(request);
 		if (top != null) {
 			setContext(request, top.getParent());
@@ -93,8 +95,14 @@ public class TaggingContext {
 		return null;
 	}
 	
-	private static TaggingContext getContext(HttpServletRequest request) {
+	public static TaggingContext getContext(HttpServletRequest request) {
 		return (TaggingContext) request.getAttribute(REQUEST_ATTRIBUTE);
+	}
+	
+	public static TaggingContext getContext() {
+		return (TaggingContext) RequestContextHolder.getRequestAttributes()
+				.getAttribute(REQUEST_ATTRIBUTE, 
+				RequestAttributes.SCOPE_REQUEST);
 	}
 	
 	private static void setContext(HttpServletRequest request, 

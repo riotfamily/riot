@@ -24,17 +24,23 @@
 package org.riotfamily.cachius;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.io.IOUtils;
+import org.springframework.core.CollectionFactory;
 
 /**
  * The cachius cache.
@@ -43,51 +49,109 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class Cache implements Serializable {
 
-    private static final String CACHE_FILE = "cache-info";
-
     private static Log log = LogFactory.getLog(Cache.class);
-
+    
+    private static Comparator itemUsageComparator = new ItemUsageComparator();
+    
     private int size;
-    private int capacity;
 
-    private transient CacheItem first;
-    private transient CacheItem last;
+    private Map map;
+    
+    private Map taggedItems;
+    
+    private File cacheDir = null;
 
-    private transient HashMap map;
-    private transient File cacheDir = null;
+    private int currentDir = 0;
+    
+    private double evictionFactor = 0.2;
+    
+    private boolean enabled = true;
+
+    private transient int capacity;
+    
     private transient File[] dirs = null;
 
     private transient int numberOfDirs;
-    private transient int currentDir = 0;
-    private transient boolean enabled = true;
-
+    
+    private transient Object addItemlock;
+    
+    private transient Thread cleanUpThread;
+    
     /**
      * Create the cache.
      */
-    private Cache(int capacity, File cacheDir, boolean enabled) {
-        this.size = 0;
+    public Cache(File cacheDir, int capacity, boolean enabled) {
         this.cacheDir = cacheDir;
         this.enabled = enabled;
-        this.map = new HashMap(capacity);
+        
+        int mapCapacity = (int) (capacity / 0.75f) + 1;
+        if (mapCapacity % 2 == 0) {
+        	mapCapacity++;
+        }
+        
+        this.map = CollectionFactory.createConcurrentMapIfPossible(mapCapacity); 
+        this.taggedItems = new HashMap();
+
+        init();
         setCapacity(capacity);
-        clear();
+        setCacheDir(cacheDir);
+    }
+    
+    private void readObject(ObjectInputStream in)
+    		throws ClassNotFoundException, IOException {
+    	
+  	     in.defaultReadObject();
+  	     init();
+    }
+    
+    /**
+     * Initializes the instance upon creation or deserialization.
+     */
+    private void init() {
+    	addItemlock = new Object();
+    	cleanUpThread = new CleanUpTread();
+    	cleanUpThread.start();
+    }
+    
+    /**
+     * Sets the directory where the cache items are stored. If a different
+     * directory is already set, the old directory is emptied.
+     * 
+     * The method is not thread-safe and therefore protected.
+     */
+	protected final void setCacheDir(File cacheDir) {
+		if (this.cacheDir != null) {
+			clear();
+		}
+		this.cacheDir = cacheDir;
+	}
+	
+    /**
+     * Sets the cache capacity.
+     * 
+     * The method is not thread-safe and therefore protected.
+     */
+    protected final void setCapacity(int capacity) {
+        this.capacity = capacity;
+        numberOfDirs = capacity / 1000;
+        dirs = new File[numberOfDirs];
+    }
+
+    private void clear() {
+        log.info("Removing all cache entries ...");
+        map.clear();
+        taggedItems.clear();
+        size = 0;
+        IOUtils.clearDirectory(cacheDir);
     }
     
     public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
 
-    public File getCacheDir() {
-        return cacheDir;
-    }
-
-    public void setCacheDir(File cacheDir) {
-        if (this.cacheDir != null) {
-            clear();
-        }
-        this.cacheDir = cacheDir;
-    }
-
+    /**
+     * Returns whether an item with the given key exists.
+     */
     public boolean containsKey(String key) {
     	return map.containsKey(key);
     }
@@ -99,116 +163,37 @@ public final class Cache implements Serializable {
      * @param key The cache key
      * @return The CacheItem for the given key
      */
-    public synchronized CacheItem getItem(String key) {
+    public CacheItem getItem(String key) {
     	if (!enabled) {
     		return null;
     	}
         CacheItem item = (CacheItem) map.get(key);
         if (item == null) {
-            item = newItem(key);
+        	synchronized (addItemlock) {
+        		item = (CacheItem) map.get(key);
+                if (item == null) {
+                	try {
+	                	item = new CacheItem(key, getNextDir());
+	                	map.put(key, item);
+	                	size++;
+	                	checkCapacity();
+                	}
+                	catch (Exception e) {
+						log.error("Error creating CacheItem", e);
+						return null;
+					}
+                }
+        	}
         }
-        else {
-            touch(item);
-        }
+        item.touch();
         return item;
     }
-
+    
     /**
-     * Sets the cache capacity. If <code>capacity</code> is lower than the
-     * current capacity, items are removed to fit the new size.
+     * Returns the directory where the next cache item should be created.
+     * Note: Access to this method must be synchronized externally.
      */
-    public synchronized void setCapacity(int capacity) {
-        this.capacity = capacity;
-        numberOfDirs = capacity / 1000;
-        dirs = new File[numberOfDirs];
-        while (size > capacity) {
-            map.remove(last.getKey());
-            unlink(last);
-            size--;
-        }
-    }
-
-    /**
-     * Touches the given item, i.e. unlinks it and re-inserts it as the first
-     * element of the list.
-     */
-    private void touch(CacheItem item) {
-        unlink(item);
-        link(item);
-    }
-
-    /**
-     * Creates a new item for the given key and adds it to the cache. If due
-     * to that operation the capacity is exeeded, the last item is removed.
-     */
-    private CacheItem newItem(String key) {
-        try {
-        	if (capacity == 0) {
-        		return null;
-        	}
-            log.debug("Creating new cache item for " + key);
-            CacheItem item = createCacheItem(key);
-
-            if (size >= capacity) {
-                log.debug("Maximum size exceeded. Removing: " + last.getKey());
-                map.remove(last.getKey());
-                last.delete();
-                unlink(last);
-            }
-            else {
-                size++;
-            }
-
-            link(item);
-            map.put(key, item);
-
-            return item;
-        }
-        catch (IOException e) {
-            log.error("Error creating item.", e);
-            return null;
-        }
-    }
-
-    /**
-     * Inserts the given item at the begining of the item list.
-     */
-    private void link(CacheItem item) {
-        item.setPrevious(null);
-        item.setNext(first);
-        if (first == null) {
-            last = item;
-        }
-        else {
-            first.setPrevious(item);
-        }
-
-        first = item;
-    }
-
-    /**
-     * Removes the give item from the item list.
-     */
-    private void unlink(CacheItem item) {
-        CacheItem previous = item.getPrevious();
-        CacheItem next = item.getNext();
-
-        if (previous != null) {
-            previous.setNext(next);
-        }
-        else {
-            first = next;
-        }
-
-        if (next != null) {
-            next.setPrevious(previous);
-        }
-        else {
-            last = previous;
-        }
-    }
-
-    protected File getNextDir() {
+    private File getNextDir() {
     	cacheDir.mkdirs();
         if (numberOfDirs <= 1) {
             return cacheDir;
@@ -225,134 +210,165 @@ public final class Cache implements Serializable {
         currentDir++;
         return dir;
     }
-
-    public CacheItem createCacheItem(String key) throws IOException {
-        return new CacheItem(key, getNextDir());
-    }
-
-    private synchronized void clear() {
-        log.info("Removing all cache entries ...");
-        File[] entries = cacheDir.listFiles();
-        for (int i = 0; i < entries.length; i++) {
-            deleteFile(entries[i]);
+    
+    /**
+     * Notifies the clean-up thread when the capacity is exceeded.
+     */
+    private void checkCapacity() {
+        if (size >= capacity) {
+        	synchronized(cleanUpThread) {
+        		cleanUpThread.notify();
+        	}
         }
     }
-
-    private void deleteFile(File f) {
-        if (f.isDirectory()) {
-            File[] entries = f.listFiles();
-            for (int i = 0; i < entries.length; i++) {
-                deleteFile(entries[i]);
-            }
-        }
-        f.delete();
+    
+    /**
+     * Removes items from the cache that havn't been used for a long time.
+     * The number of items removed is <code>capacity * evictionFactor</code>.
+     */
+    private void cleanup() {
+    	log.info("Cache capacity exceeded. Performing cleanup ...");
+		ArrayList items = new ArrayList(map.values());
+		Collections.sort(items, itemUsageComparator);
+		int i = (int) Math.ceil(capacity * evictionFactor);
+		Iterator it = items.iterator();
+		while (it.hasNext() && i > 0) {
+			CacheItem item = (CacheItem) it.next();
+			removeItem(item);
+			i--;
+		}
+    }
+    
+    /**
+     * Removes the given item from the cache.
+     */
+    private void removeItem(CacheItem item) {
+    	synchronized (addItemlock) {
+	    	map.remove(item.getKey());
+	    	size--;
+	   		removeTags(item, item.getTags());			
+	    	item.delete();
+    	}
     }
 
-    public void invalidateTaggedItems(String tag) {
-    	log.debug("Invalidating items taged as " + tag);
-    	CacheItem item = first;
-    	while (item != null) {
-    		if (item.hasTag(tag)) {
-				log.debug("Deleting CacheItem " + item.getKey());
-				item.invalidate();
+    /**
+     * Returns a list of items tagged with the given String.
+     */
+    private List getTaggedItems(String tag) {
+    	return (List) taggedItems.get(tag);
+    }
+    
+    /**
+     * Removes the given item from all specified tag lists. If item is the last
+     * entry in a tag-list, the whole list is removed from the taggedItems map.
+     */
+    private void removeTags(CacheItem item, Set tags) {
+    	if (tags != null) {
+    		synchronized (taggedItems) {
+		    	Iterator it = tags.iterator();
+		    	while (it.hasNext()) {
+					String tag = (String) it.next();
+			    	List items = getTaggedItems(tag);
+			    	if (items != null) {
+			    		items.remove(item);
+			    		if (items.isEmpty()) {
+			    			taggedItems.remove(tag);
+			    		}
+			    	}
+		    	}
     		}
-    		item = item.getNext();
+    	}
+    }
+    
+    /**
+     * Adds the given item to the specified tag lists.
+     */
+    private void addTags(CacheItem item, Set tags) {
+    	if (tags != null) {
+    		synchronized (taggedItems) {
+		    	Iterator it = tags.iterator();
+		    	while (it.hasNext()) {
+					String tag = (String) it.next();
+			    	List items = getTaggedItems(tag);
+			    	if (items == null) {
+			    		items = new ArrayList();
+			    		taggedItems.put(tag, items);
+			    	}
+			    	items.add(item);
+		    	}
+    		}
     	}
     }
 
     /**
-     * Factory method to create a new cache. If restore is <code>true</code>
-     * and a cache file exists in the given directory, the method will try to
-     * deserialize it. If no file is found or the deserialization fails, a
-     * new cache is created.
+     * Updates the tags of the given CacheItem.
      */
-    public static Cache newInstance(int capacity, File cacheDir,
-    		boolean restore, boolean enabled) throws IOException {
-
-		if (!cacheDir.exists() && !cacheDir.mkdirs()) {
-		    throw new IOException("Can't create cache directory: " + cacheDir);
-		}
-		File f = new File(cacheDir, CACHE_FILE);
-		if (restore && f.exists()) {
-		    log.info("Trying to build cache from file: " + f);
-		    try {
-		        ObjectInputStream in = new ObjectInputStream(
-		                 new FileInputStream(f));
-
-		        Cache cache = (Cache) in.readObject();
-		        in.close();
-		        f.delete();
-		        cache.setCacheDir(cacheDir);		        
-		        cache.setCapacity(capacity);
-		        cache.setEnabled(enabled);
-		        log.info("Cache has been successfully deserialized. " +
-		        		"Number of items: " + cache.size);
-
-		        return cache;
-		    }
-		    catch (InvalidClassException e) {
-		    	log.info("Serialized cache has been discarded due to " +
-		    			"version incompatibilies.");
-		    }
-		    catch (IOException e) {
-		        log.warn("Deserialization failed.");
-		    }
-		    catch (ClassNotFoundException e) {
-		        log.warn("Deserialization failed.", e);
-		    }
-		}
-		log.info("Building new cache in: " + cacheDir);
-		return new Cache(capacity, cacheDir, enabled);
-	}
-
-    /**
-     * Serializes the cache state to disk.
-     */
-    public synchronized void persist() {
-        File f = new File(cacheDir, CACHE_FILE);
-        if (!f.exists()) {
-            try {
-                 log.info("Persisting the cache state ...");
-                 ObjectOutputStream out = new ObjectOutputStream(
-                         new FileOutputStream(f));
-
-                 out.writeObject(this);
-                 out.close();
-                 log.info("Cache state saved in " + f);
-            }
-            catch (IOException e) {
-                log.error("Can't save cache state", e);
-            }
-        }
+    public void tagItem(CacheItem item, Set newTags) {
+    	Set tagsToRemove = new HashSet();
+    	Set existingTags = item.getTags();
+    	if (existingTags != null) {
+    		tagsToRemove.addAll(existingTags);
+    	}
+    	if (newTags != null) {
+	    	Set tagsToAdd = new HashSet();
+	    	Iterator it = newTags.iterator();
+	    	while (it.hasNext()) {
+				String tag = (String) it.next();
+				if (!tagsToRemove.remove(tag)) {
+					tagsToAdd.add(tag);
+				}
+			}
+	    	addTags(item, tagsToAdd);
+    	}
+  		removeTags(item, tagsToRemove);
+    	item.setTags(newTags);
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-    	out.defaultWriteObject();
-    	CacheItem item = first;
-    	while (item != null) {
-    		out.writeObject(item);
-    		item = item.getNext();
+    /**
+     * Invalidates all items tagged with the given String.
+     */
+    public void invalidateTaggedItems(String tag) {
+    	log.debug("Invalidating items tagged as " + tag);
+    	List items = getTaggedItems(tag);
+    	if (items != null) {
+    		Iterator it = items.iterator();
+    		while (it.hasNext()) {
+				CacheItem item = (CacheItem) it.next();
+				item.invalidate();
+			}
     	}
     }
 
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
-        in.defaultReadObject();
-        map = new HashMap(capacity);
-        if (size > 0) {
-	        CacheItem item = (CacheItem) in.readObject();
-	        first = item;
-	        CacheItem prev = item;
-	        for (int i = 1; i < size; i++) {
-	        	item = (CacheItem) in.readObject();
-	        	item.setPrevious(prev);
-	    		prev.setNext(item);
-	        	map.put(item.getKey(), item);
-	        	prev = item;
-	        }
-	        last = item;
-        }
+    /**
+     * Comparator that compares items by their {@link CacheItem#getLastUsed() 
+     * last-used} date.
+     */
+    private static class ItemUsageComparator implements Comparator {
+    	public int compare(Object obj1, Object obj2) {
+    		CacheItem item1 = (CacheItem) obj1;
+    		CacheItem item2 = (CacheItem) obj2;
+    		long l1 = item1.getLastUsed();
+    		long l2 = item2.getLastUsed();
+    		return (l1 < l2 ? -1 : (l1 == l2 ? 0 : 1));
+    	}
+    }
+    
+    /**
+     * Thread that performs a clean-up upon notification.
+     */
+    private class CleanUpTread extends Thread {
+    	public void run() {
+    		while (true) {
+	    		synchronized (this) {
+					try {
+						wait();
+					}
+					catch (InterruptedException e) {
+					}
+				}
+	    		cleanup();
+    		}
+    	};
     }
 
 }

@@ -37,6 +37,7 @@ import org.riotfamily.cachius.spring.CacheableController;
 import org.riotfamily.cachius.support.ReaderWriterLock;
 import org.riotfamily.cachius.support.SessionCreationPreventingRequestWrapper;
 import org.riotfamily.cachius.support.SessionIdEncoder;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
@@ -100,6 +101,10 @@ public class CacheService {
 		CacheItem cacheItem = getCacheItem(cacheKey, sessionIdEncoder, zip);
 		
         if (cacheItem == null) {
+        	log.debug("No CacheItem for " 
+        			+ ServletUtils.getRequestUri(request) 
+        			+ " - Response won't be cached.");
+        	
             processor.processRequest(request, response);
         }
         else {
@@ -108,7 +113,10 @@ public class CacheService {
         		capture(cacheItem, request, response, sessionIdEncoder, mtime, processor, shouldZip, zip);
         	}
         	else {
-        		serve(cacheItem, request, response, sessionIdEncoder);
+        		if (!serve(cacheItem, request, response, sessionIdEncoder)) {
+        			// The rare case, that the item was deleted due to a cleanup
+       				capture(cacheItem, request, response, sessionIdEncoder, mtime, processor, shouldZip, zip);        			
+        		}
         	}
         }
 	}
@@ -117,7 +125,6 @@ public class CacheService {
 			SessionIdEncoder sessionIdEncoder, boolean zip) {
 		
         if (cacheKey == null) {
-            log.debug("Cache key is null - Response won't be cached");
             return null;
         }
 
@@ -188,7 +195,7 @@ public class CacheService {
 				TaggingContext.openNestedContext(request);
 				request = new SessionCreationPreventingRequestWrapper(request);
 				processor.processRequest(request, wrapper);
-				cacheItem.setTags(TaggingContext.popTags(request));
+				cache.tagItem(cacheItem, TaggingContext.popTags(request));
 				wrapper.stopCapturing(mtime);
 				if (cacheItem.getSize() > 0) {
 					if (shouldZip) {
@@ -211,7 +218,7 @@ public class CacheService {
 		}
     }
    
-    private void serve(CacheItem cacheItem, HttpServletRequest request, 
+    private boolean serve(CacheItem cacheItem, HttpServletRequest request, 
             HttpServletResponse response, SessionIdEncoder sessionIdEncoder) 
     		throws IOException {
     	
@@ -220,6 +227,9 @@ public class CacheService {
     	}
     	
     	ReaderWriterLock lock = cacheItem.getLock();
+    	if (!cacheItem.exists()) {
+    		return false;
+    	}
     	try {
     		// Acquire a reader lock and serve the cached version
     		lock.lockForReading();
@@ -228,6 +238,7 @@ public class CacheService {
     	finally {
     		lock.releaseReaderLock();
     	}
+    	return true;
     }
     
     public boolean isCached(String key) {
