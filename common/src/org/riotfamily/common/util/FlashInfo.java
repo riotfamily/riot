@@ -4,8 +4,12 @@
  */
 package org.riotfamily.common.util;
 
-import java.io.*;
-import java.util.zip.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -142,16 +146,16 @@ public class FlashInfo {
 	}
 
 	public int readSize(byte[] bytes) {
-		int size = 0;
+		long size = 0;
 		for (int i = 0; i < 4; i++) {
-			size = (size << 8) + bytes[i + 4];
+			size |= bytes[7 - i] & 0xFF;
+			if (i < 3) {
+				size <<= 8;
+			}
 		}
-
-		size = Integer.reverseBytes(size);
-
-		return size;
+		return new Long(size).intValue();
 	}
-
+	
 	public PackedBitObj readPackedBits(byte[] bytes, int byteMarker, int bitMarker, int length) {
 		int total = 0;
 		int shift = 7 - bitMarker;
