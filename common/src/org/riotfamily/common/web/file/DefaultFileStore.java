@@ -30,6 +30,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
@@ -186,6 +187,7 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 		if (fileName == null) {
 			fileName = file.getName();
 		}
+		fileName = FormatUtils.toFilename(fileName);
 		File dest = new File(getUniqueDir(), fileName); 
 		if (!file.renameTo(dest)) {
 			FileCopyUtils.copy(file, dest);

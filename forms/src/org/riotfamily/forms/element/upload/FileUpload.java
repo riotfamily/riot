@@ -251,7 +251,7 @@ public class FileUpload extends CompositeElement implements Editor,
 						fileStore.delete(uri);
 					}
 					if (file != null) {
-						uri = fileStore.store(file, FormatUtils.toFilename(fileName));
+						uri = fileStore.store(file, fileName);
 						file = fileStore.retrieve(uri);
 						returnedFile = file;
 					}
