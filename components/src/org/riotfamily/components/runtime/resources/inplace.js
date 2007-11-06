@@ -916,8 +916,8 @@ Cropper.UI.prototype = {
 	zoom: function(newWidth) {
 		if (isNaN(newWidth)) return;
 		newWidth = Math.round(newWidth);
-		var scale = newWidth / this.img.width;
-		var newHeight = this.img.height * scale;
+		var scale = newWidth / this.imageSize.x;
+		var newHeight = Math.round(this.imageSize.y * scale);
 
 		if (this.mode != 'resize') {
 			this.elementPos = Cropper.elementPos(this.element);
@@ -931,6 +931,7 @@ Cropper.UI.prototype = {
 		this.offset.keepWithin(0, 0, newWidth - this.preview.offsetWidth, newHeight - this.preview.offsetHeight);
 		this.offset.applyOffset(this.img);
 		this.img.style.width = newWidth + 'px';
+		this.img.style.height = newHeight + 'px';
 	},
 
 	onMouseDown: function(event) {
