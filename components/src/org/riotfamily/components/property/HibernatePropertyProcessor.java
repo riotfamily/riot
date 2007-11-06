@@ -56,10 +56,18 @@ public class HibernatePropertyProcessor extends PropertyProcessorAdapter
 		this.entityClass = entityClass;
 	}
 
+	protected Class getEntityClass() {
+		return this.entityClass;
+	}
+	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
 
+	protected SessionFactory getSessionFactory() {
+		return this.sessionFactory;
+	}
+	
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 	}
