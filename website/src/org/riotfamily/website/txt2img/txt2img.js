@@ -1,10 +1,12 @@
 var RiotImageReplacement = Class.create();
 RiotImageReplacement.prototype = {
+
+	useFilter: false,
+	IE: false,
+		
 	initialize: function(generatorUrl, pixelUrl, selectors) {
 		this.selectors = selectors;
 		this.generatorUrl = generatorUrl;
-		this.useFilter = false;
-		this.IE = false;
 		this.pixelImage = new Image();
 		this.pixelImage.src = pixelUrl;
 		this.createHoverRules();
