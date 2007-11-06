@@ -365,7 +365,7 @@ riot.Popup.prototype = {
 		this.hideElements('object');
 		this.hideElements('embed');
 
-		var top = Math.round(Viewport.getInnerHeight() / 2 - this.div.clientHeight / 2);
+		var top = Math.max(5, Math.round(Viewport.getInnerHeight() / 2 - this.div.clientHeight / 2));
 		var left = Math.round(Viewport.getInnerWidth() / 2 - this.div.clientWidth / 2);
 		
 		this.div.hide();
@@ -401,6 +401,10 @@ riot.TextareaPopup = riot.Popup.extend({
 	initialize: function(editor) {
 		this.textarea = RBuilder.node('textarea', {value: editor.text || ''}),
 		this.SUPER('${editor-popup.title}', this.textarea, editor.save.bind(editor), editor.help);
+		var availableTextareaHeight = Viewport.getInnerHeight() - 82;
+		if (availableTextareaHeight < this.textarea.getHeight()) {
+			this.textarea.style.height = availableTextareaHeight + 'px';
+		}
 	},
 	
 	setText: function(text) {
