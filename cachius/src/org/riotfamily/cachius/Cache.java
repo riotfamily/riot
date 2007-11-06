@@ -75,7 +75,7 @@ public final class Cache implements Serializable {
     
     private transient Object addItemlock;
     
-    private transient Thread cleanUpThread;
+    private transient CleanUpThread cleanUpThread;
     
     /**
      * Create the cache.
@@ -109,7 +109,7 @@ public final class Cache implements Serializable {
      */
     private void init() {
     	addItemlock = new Object();
-    	cleanUpThread = new CleanUpTread();
+    	cleanUpThread = new CleanUpThread();
     	cleanUpThread.start();
     }
     
@@ -353,22 +353,42 @@ public final class Cache implements Serializable {
     	}
     }
     
+    public void shutdown() {
+    	cleanUpThread.shutdown();
+    }
+    
     /**
      * Thread that performs a clean-up upon notification.
      */
-    private class CleanUpTread extends Thread {
+    private class CleanUpThread extends Thread {
+    	
+    	private Log log = LogFactory.getLog(CleanUpThread.class);
+    	
+    	private boolean running = true;
+    	
     	public void run() {
-    		while (true) {
+    		while (running) {
 	    		synchronized (this) {
 					try {
 						wait();
 					}
 					catch (InterruptedException e) {
+						log.info("CleanUpThread interrupted.");
+						break;
 					}
+					if (running) {
+		    			cleanup();
+		    		}
 				}
-	    		cleanup();
     		}
-    	};
+    		log.info("CleanUpThread finished.");
+    	}
+    	
+    	public synchronized void shutdown() {
+    		log.info("Stopping CleanUpThread ...");
+    		running = false;
+    		notify();
+    	}
     }
 
 }

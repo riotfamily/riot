@@ -91,8 +91,11 @@ public class CacheFactoryBean extends CacheFactory
 	}
 	
 	public void destroy() throws Exception {
-		if (cache != null && isRestore()) {
-			persist(cache);
+		if (cache != null) {
+			cache.shutdown();
+			if (isRestore()) {
+				persist(cache);	
+			}
 		}
 	}
 
