@@ -43,6 +43,8 @@ public class CsvExportCommand extends AbstractCommand implements
 	
 	private RiotRuntime runtime;
 	
+	private boolean appendStringDelimiter = true;
+	
 	public void setApplicationContext(ApplicationContext context) {
 		runtime = (RiotRuntime) BeanFactoryUtils.beanOfTypeIncludingAncestors(
 				context, RiotRuntime.class);
@@ -64,6 +66,14 @@ public class CsvExportCommand extends AbstractCommand implements
 		return this.properties;
 	}
 	
+	public boolean isAppendStringDelimiter() {
+		return this.appendStringDelimiter;
+	}
+
+	public void setAppendStringDelimiter(boolean appendStringDelimiter) {
+		this.appendStringDelimiter = appendStringDelimiter;
+	}
+
 	public CommandResult execute(CommandContext context) {
 		StringBuffer url = new StringBuffer();
 		url.append(runtime.getServletPrefix())

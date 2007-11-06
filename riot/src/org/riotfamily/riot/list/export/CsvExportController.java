@@ -155,18 +155,26 @@ public class CsvExportController implements Controller {
 				}
 				
 				if (value instanceof Collection) {
-					out.print(stringDelimiter);
+					if (command.isAppendStringDelimiter()) {
+						out.print(stringDelimiter);
+					}
 					Iterator it = ((Collection)value).iterator();
 					while (it.hasNext()) {
 						out.print(it.next());
 						out.print(' ');
 					}
-					out.print(stringDelimiter);
+					if (command.isAppendStringDelimiter()) {
+						out.print(stringDelimiter);
+					}
 				}
 				else if (value != null) {
-					out.print(stringDelimiter);
+					if (command.isAppendStringDelimiter()) {
+						out.print(stringDelimiter);
+					}
 					out.print(value);
-					out.print(stringDelimiter);
+					if (command.isAppendStringDelimiter()) {
+						out.print(stringDelimiter);
+					}
 				}				
 				out.print(fieldDelimiter);
 			}
