@@ -27,7 +27,6 @@ package org.riotfamily.website.generic.config;
 
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
 import org.riotfamily.common.beans.xml.ListItemDecorator;
-import org.riotfamily.common.beans.xml.NestedPropertyDecorator;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 
 /**
@@ -37,10 +36,10 @@ import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 public class GenericNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
-		register("controller", "org.riotfamily.website.generic.GenericController").addReference("model-builder");
+		register("controller", "org.riotfamily.website.generic.GenericController");
 		register("view", "org.riotfamily.website.generic.GenericViewController");
 
-		BeanDefinitionDecorator setModelBuilder = new NestedPropertyDecorator("modelBuilder");
+		BeanDefinitionDecorator setModelBuilder = new ListItemDecorator("modelBuilders");
 		register("hql", "org.riotfamily.website.generic.model.hibernate.HqlModelBuilder", setModelBuilder)
 				.addTranslation("time-to-live", "ttlPeriod")
 				.addTranslation("query-cache", "useQueryCache")

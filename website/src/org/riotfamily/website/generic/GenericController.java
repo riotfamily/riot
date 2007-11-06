@@ -30,9 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.website.generic.model.CacheableModelBuilder;
 import org.riotfamily.website.generic.model.ModelBuilder;
-import org.riotfamily.website.generic.model.ModelPostProcessor;
+import org.riotfamily.website.generic.model.ModelBuilderStack;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -42,14 +41,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class GenericController extends AbstractCacheableController {
 
-	/** The ModelBuilder */
-	private ModelBuilder modelBuilder;
-
-	/** Set if modelBuilder is cacheable to reduce number of casts */
-	private CacheableModelBuilder cacheableModelBuilder;
-
-	/** ModelPostProcessors */
-	private ModelPostProcessor[] postProcessors;
+	private ModelBuilderStack modelBuilderStack = new ModelBuilderStack();
 
 	/** View name to use */
 	private String viewName;
@@ -62,23 +54,8 @@ public class GenericController extends AbstractCacheableController {
 	public GenericController() {
 	}
 
-	public GenericController(ModelBuilder modelBuilder) {
-		setModelBuilder(modelBuilder);
-	}
-
-	public void setModelBuilder(ModelBuilder modelBuilder) {
-		this.modelBuilder = modelBuilder;
-		if (modelBuilder instanceof CacheableModelBuilder) {
-			cacheableModelBuilder = (CacheableModelBuilder) modelBuilder;
-		}
-	}
-
-	public void setPostProcessors(ModelPostProcessor[] postProcessors) {
-		this.postProcessors = postProcessors;
-	}
-
-	public void setPostProcessor(ModelPostProcessor postProcessor) {
-		this.postProcessors = new ModelPostProcessor[] { postProcessor };
+	public GenericController(ModelBuilder[] modelBuilders) {
+		setModelBuilders(modelBuilders);
 	}
 
 	public void setViewName(String viewName) {
@@ -96,12 +73,8 @@ public class GenericController extends AbstractCacheableController {
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		Map model = modelBuilder.buildModel(request);
-		if (postProcessors != null) {
-			for (int i = 0; i < postProcessors.length; i++) {
-				postProcessors[i].postProcess(model, request);
-			}
-		}
+		Map model = modelBuilderStack.buildModel(request);
+
 		if (contentType != null) {
 			response.setContentType(contentType);
 		}
@@ -109,19 +82,22 @@ public class GenericController extends AbstractCacheableController {
 	}
 
 	protected boolean bypassCache(HttpServletRequest request) {
-		return bypassCache || cacheableModelBuilder == null;
+		return bypassCache || !modelBuilderStack.isCacheable();
 	}
 
 	public long getTimeToLive() {
-		return cacheableModelBuilder.getTimeToLive();
+		return modelBuilderStack.getTimeToLive();
 	}
 
 	public long getLastModified(HttpServletRequest request) {
-		return cacheableModelBuilder.getLastModified(request);
+		return modelBuilderStack.getLastModified(request);
 	}
 
 	protected void appendCacheKey(StringBuffer key,	HttpServletRequest request) {
-		cacheableModelBuilder.appendCacheKey(key, request);
+		modelBuilderStack.appendCacheKey(key, request);
 	}
 
+	public void setModelBuilders(ModelBuilder[] modelBuilders) {
+		modelBuilderStack.setModelBuilders(modelBuilders);
+	}
 }
