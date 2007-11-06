@@ -169,7 +169,7 @@ var RElement = {
 			var e = a[i];
 			if (!e.riot_onclick) {
 				if (e.tagName == 'A' && e.href) {
-					e.riot_onclick = e.onclick;
+					e.riot_onclick = e.onclick || null;
 					e.onclick = function() { return false; }
 				}
 				else if (e.onlick) {
@@ -186,7 +186,7 @@ var RElement = {
 		var a = el.ancestors().concat([el]).concat(el.descendants());
 		for (var i = 0; i < a.length; i++) {
 			var e = a[i];
-			if (e.riot_onlick) {
+			if (typeof e.riot_onclick != 'undefined') {
 				e.onclick = e.riot_onclick;
 				e.riot_onclick = null;
 			}
