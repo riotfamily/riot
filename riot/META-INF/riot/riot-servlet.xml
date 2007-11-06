@@ -369,10 +369,14 @@
 		<property name="compressors">
 			<map>
 				<entry key="text/css">
-					<bean class="org.riotfamily.common.web.compressor.YUICssCompressor" />
+					<bean class="org.riotfamily.common.web.compressor.YUICssCompressor">
+						<property name="enabled" value="${riot.resources.compress=true}" />
+					</bean>
 				</entry>
 				<entry key="text/javascript">
-					<bean class="org.riotfamily.common.web.compressor.YUIJavaScriptCompressor" />
+					<bean class="org.riotfamily.common.web.compressor.YUIJavaScriptCompressor">
+						<property name="enabled" value="${riot.resources.compress=true}" />
+					</bean>					
 				</entry>
 			</map>
 		</property>
@@ -386,6 +390,7 @@
 		<property name="contentType" value="text/javascript" />
 		<property name="compressor">
 			<bean class="org.riotfamily.common.web.compressor.YUIJavaScriptCompressor">
+				<property name="enabled" value="${riot.resources.compress=true}" />
 				<property name="linebreak" value="1000" />
 			</bean>
 		</property>
@@ -398,7 +403,9 @@
 		<property name="mappings" ref="resourceMappings" />
 		<property name="contentType" value="text/css" />
 		<property name="compressor">
-			<bean class="org.riotfamily.common.web.compressor.YUICssCompressor" />
+			<bean class="org.riotfamily.common.web.compressor.YUICssCompressor">
+				<property name="enabled" value="${riot.resources.compress=true}" />
+			</bean>			
 		</property>
 	</bean>
 

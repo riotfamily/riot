@@ -42,6 +42,7 @@ import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.Compressable;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.compressor.Compressor;
 import org.riotfamily.common.web.compressor.YUIJavaScriptCompressor;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.core.io.ClassPathResource;
@@ -76,10 +77,18 @@ public class Txt2ImgController extends AbstractCacheableController
 
 	private ImageGenerator defaultGenerator = new ImageGenerator();
 
-	private YUIJavaScriptCompressor compressor = new YUIJavaScriptCompressor();
+	private Compressor compressor = new YUIJavaScriptCompressor();
 	
 	private Pattern refererPattern;
 
+	
+	/**
+	 * @param compressor the compressor to set
+	 */
+	public void setCompressor(Compressor compressor) {
+		this.compressor = compressor;
+	}
+	
 	/**
 	 * Sets a List of {@link ReplacementRule} objects.
 	 */

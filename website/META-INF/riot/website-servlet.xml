@@ -79,6 +79,12 @@
 		<constructor-arg ref="riotRuntime" />
 	</bean>
 	
-	<bean id="txt2ImgController" name="/riot-utils/txt2img.*" class="org.riotfamily.website.txt2img.Txt2ImgController" />
+	<bean id="txt2ImgController" name="/riot-utils/txt2img.*" class="org.riotfamily.website.txt2img.Txt2ImgController">
+		<property name="compressor">
+			<bean class="org.riotfamily.common.web.compressor.YUIJavaScriptCompressor">
+				<property name="enabled" value="${riot.resources.compress=true}" />
+			</bean>			
+		</property>
+	</bean>
 
 </beans>

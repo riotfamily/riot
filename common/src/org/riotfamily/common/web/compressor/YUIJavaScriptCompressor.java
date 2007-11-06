@@ -59,6 +59,16 @@ public class YUIJavaScriptCompressor implements Compressor {
 	
 	private boolean failsafe = false;
 	
+	private boolean enabled = true;
+
+
+	/**
+	 * Enables the Compressor. Per default the compressor is enabled. 
+	 * @param enabled true to enabled, false to disable this compressor
+	 */
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 	
 	/**
 	 * Sets the column number after which a line break should be inserted.
@@ -146,21 +156,29 @@ public class YUIJavaScriptCompressor implements Compressor {
 	public void compress(Reader in, Writer out, ErrorReporter errorReporter) 
 			throws IOException {
 	
-		if (failsafe) {
-			StringWriter buffer = new StringWriter();
-			FileCopyUtils.copy(in, buffer);
-			in = new StringReader(buffer.toString());
-			try {
+		if (enabled) {
+		
+			if (failsafe) {
+				StringWriter buffer = new StringWriter();
+				FileCopyUtils.copy(in, buffer);
+				in = new StringReader(buffer.toString());
+				try {
+					compressInternal(in, out, errorReporter);
+				}
+				catch (EvaluatorException e) {
+					log.warn("JavaScript compression failed, serving uncompressed script.");
+					out.write(buffer.toString());
+				}
+			}
+			else {
 				compressInternal(in, out, errorReporter);
 			}
-			catch (EvaluatorException e) {
-				log.warn("JavaScript compression failed, serving uncompressed script.");
-				out.write(buffer.toString());
-			}
+		
 		}
 		else {
-			compressInternal(in, out, errorReporter);
+			FileCopyUtils.copy(in, out);
 		}
+		
 	}
 	
 	/**
