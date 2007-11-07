@@ -411,6 +411,7 @@ Cropper.UI.prototype = {
 
 	handleResponse: function(response) {
 		this.showCroppedImage(response.responseText);
+		if (this.options.onCrop) this.options.onCrop(this);
 	},
 
 	showCroppedImage: function(src) {
@@ -433,6 +434,7 @@ Cropper.UI.prototype = {
 		if (this.resizeable) this.resizeHandle.show();
 		this.preview.removeChild(this.croppedImg);
 		this.preview.appendChild(this.img);
+		if (this.options.onUndo) this.options.onUndo(this);
 	}
 
 }

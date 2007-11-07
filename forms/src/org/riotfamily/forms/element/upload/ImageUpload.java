@@ -366,6 +366,10 @@ public class ImageUpload extends FileUpload {
 			return getFormContext().getContentUrl(this)
 					+ "&cropped=true&time=" + System.currentTimeMillis();
 		}
+		
+		public String getParentId() {
+			return ImageUpload.this.getId();
+		}
 
 		public String getInitScript() {
 			return TemplateUtils.getInitScript(this);

@@ -1,22 +1,29 @@
-<div id="${group.id}" class="indent group<#if !group.labelItems>-items-label-less</#if>">
-	<#list group.elements as element>
-		<div class="item<#if element.styleClass?exists> ${element.styleClass}-element</#if>">
-			<#if group.labelItems>
-				<div class="label">
-					<label for="${element.id}" class="field <#if element.form.errors.hasErrors(element)> error</#if>">
-						${element.label?if_exists}<#if element.required>* </#if>
+<div id="${group.id}" class="group">
+	<#if group.collapsible>
+		${expandButton.render()}
+	</#if>
+	<#if !group.collapsible || group.expanded>
+		<div id="${group.id}-elements" class="indent<#if !group.labelItems> unlabeled</#if><#if group.styleClass??> ${group.styleClass}</#if>">
+			<#list group.elements as element>
+				<div class="item<#if element.styleClass?exists> ${element.styleClass}-element</#if>">
+					<#if group.labelItems>
+						<div class="label">
+							<label for="${element.id}" class="field <#if element.form.errors.hasErrors(element)> error</#if>">
+								${element.label?if_exists}<#if element.required>* </#if>
+								<#if element.hint?exists>
+									<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')"></span>
+								</#if>
+							</label>
+						</div>
+					</#if>
+					<div class="element">
 						<#if element.hint?exists>
-							<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')"></span>
+							<div id="${element.id}-hint" class="hint">${element.hint}</div>
 						</#if>
-					</label>
+						${element.render()} ${element.form.errors.renderErrors(element)}
+					</div>
 				</div>
-			</#if>
-			<div class="element">
-				<#if element.hint?exists>
-					<div id="${element.id}-hint" class="hint">${element.hint}</div>
-				</#if>
-				${element.render()} ${element.form.errors.renderErrors(element)}
-			</div>
+			</#list>
 		</div>
-	</#list>
+	</#if>
 </div>

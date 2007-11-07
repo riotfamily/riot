@@ -29,14 +29,14 @@ package org.riotfamily.forms.event;
 
 /**
  * Interface to be implemented by elements that want to be notified of 
- * clientside JavaScript events.
+ * client-side JavaScript events.
  */
 public interface JavaScriptEventAdapter {
 
 	public String getId();
 	
 	/**
-	 * Returns a bitmask describing which clientside events should be 
+	 * Returns a bitmask describing which client-side events should be 
 	 * propagated to the server.
 	 */
 	public int getEventTypes();

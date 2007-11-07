@@ -31,7 +31,7 @@ import org.riotfamily.forms.request.FormRequest;
 
 
 /**
- * Convinient superclass for element implementations. 
+ * Convenient superclass for element implementations. 
  */
 public abstract class AbstractElement implements Element {
 
@@ -151,7 +151,7 @@ public abstract class AbstractElement implements Element {
 	 */
 	public void processRequest(FormRequest request) {
 	}
-	
+		
 	/**
 	 * Returns <code>true</code>, if the element as well as its parent is
 	 * enabled.

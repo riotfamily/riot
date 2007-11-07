@@ -200,7 +200,7 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 
 	public void processRequest(FormRequest request) {
 		text = request.getParameter(getParamName());
-		validate(true);
+		validate();
 		if (!ErrorUtils.hasErrors(this)) {
 			setValueFromText();
 		}
@@ -210,7 +210,7 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		if (event.getType() == JavaScriptEvent.ON_CHANGE) {
 			text = event.getValue();
 			ErrorUtils.removeErrors(this);
-			validate(false);
+			validateSyntax();
 			if (!ErrorUtils.hasErrors(this)) {
 				setValueFromText();
 			}
@@ -236,10 +236,14 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		}
 	}
 
-	protected void validate(boolean formSubmitted) {
+	protected void validate() {
 		if (isRequired() && !StringUtils.hasLength(text)) {
 			ErrorUtils.reject(this, "required");
 		}
+		validateSyntax();
+	}
+	
+	protected void validateSyntax() {
 	}
 
 	protected String getDesiredParamName() {

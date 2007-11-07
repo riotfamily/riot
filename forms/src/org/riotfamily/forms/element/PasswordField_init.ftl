@@ -1,5 +1,4 @@
-var cb = document.getElementById('${element.buttonId}');
-cb.onclick = function() {
+$('${element.buttonId}').onclick = function() {
 	var div = this.parentNode.parentNode;
 	var input = div.getElementsByTagName('input');
 	for (var i = 0; i < input.length; i++) {

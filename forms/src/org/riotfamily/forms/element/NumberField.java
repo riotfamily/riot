@@ -24,13 +24,11 @@
 package org.riotfamily.forms.element;
 
 import org.riotfamily.forms.DHTMLElement;
-import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 public class NumberField extends TextField implements DHTMLElement,
 		ResourceElement {
@@ -139,18 +137,10 @@ public class NumberField extends TextField implements DHTMLElement,
 
 			allowFloats = true;
 		}
+		if (type.isPrimitive()) {
+			setRequired(true);
+		}
 		super.afterBindingSet();
 	}
-
-	protected void validate(boolean formSubmitted) {
-		super.validate(formSubmitted);
-		if (getEditorBinding().getPropertyType().isPrimitive()
-				&& !StringUtils.hasLength(getText())) {
-
-			ErrorUtils.reject(this, "required");
-		}
-	}
-
-
 
 }

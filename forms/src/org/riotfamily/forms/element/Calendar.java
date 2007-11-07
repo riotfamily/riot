@@ -153,8 +153,8 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
 		super.setValue(value);
 	}
 
-	protected void validate(boolean formSubmitted) {
-		super.validate(formSubmitted);
+	public void validate() {
+		super.validate();
 		if (StringUtils.hasText(getText())) {
 			try {
 				dateFormat.parse(getText());

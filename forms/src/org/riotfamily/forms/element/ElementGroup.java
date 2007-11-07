@@ -23,19 +23,30 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element;
 
+import java.io.PrintWriter;
+import java.util.Iterator;
 import java.util.List;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.ContainerElement;
+import org.riotfamily.forms.DHTMLElement;
+import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Element;
+import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.MessageUtils;
+import org.riotfamily.forms.TemplateUtils;
+import org.riotfamily.forms.event.Button;
+import org.riotfamily.forms.event.JavaScriptEvent;
+import org.riotfamily.forms.request.FormRequest;
 
 
 
 /**
  * Element that visually groups other elements.
  */
-public class ElementGroup extends TemplateElement implements ContainerElement {
+public class ElementGroup extends TemplateElement implements ContainerElement,
+		DHTMLElement {
 
 	private Container container = new Container();
 
@@ -43,9 +54,16 @@ public class ElementGroup extends TemplateElement implements ContainerElement {
 	
 	private boolean labelItems = true;
 
+	private boolean collapsible;
+	
+	private boolean expanded;
+	
+	private boolean clientHasExpandedState;
+	
 	public ElementGroup() {
 		super("group");
 		addComponent("elements", container);
+		addComponent("expandButton", new ExpandButton());
 	}
 
 	public List getElements() {
@@ -77,5 +95,89 @@ public class ElementGroup extends TemplateElement implements ContainerElement {
 			return "";
 		}
 		return MessageUtils.getMessage(this, labelKey);
+	}
+	
+	public String getStyleClass() {
+		if (labelKey != null) {
+			return FormatUtils.toCssClass(labelKey);
+		}
+		return null;
+	}
+	
+	public void setCollapsible(boolean collapsible) {
+		this.collapsible = collapsible;
+	}
+	
+	public boolean isCollapsible() {
+		return this.collapsible;
+	}
+	
+	public boolean isExpanded() {
+		return this.expanded;
+	}
+	
+	protected void processRequestCompontents(FormRequest request) {
+		if (expanded) {
+			super.processRequestCompontents(request);
+		}
+	}
+	
+	protected void renderComponents(PrintWriter writer) {
+		if (!expanded) {
+			Iterator it = getElements().iterator();
+			while (it.hasNext()) {
+				Element element = (Element) it.next();
+				if (ErrorUtils.hasErrors(element)) {
+					expanded = true;
+					break;
+				}
+				if (element.isRequired() && element instanceof Editor) {
+					Editor editor = (Editor) element;
+					if (editor.getValue() == null) {
+						expanded = true;
+						break;
+					}
+				}
+			}
+		}
+		clientHasExpandedState = expanded;
+		super.renderComponents(writer);
+	}
+	
+	protected void toggle() {
+		expanded = !expanded;
+		if (expanded && !clientHasExpandedState) {
+			if (getFormListener() != null) {
+				getFormListener().elementChanged(this);			
+			}
+		}
+	}
+	
+	public String getInitScript() {
+		return expanded ? TemplateUtils.getInitScript(this) : null;
+	}
+	
+	private class ExpandButton extends Button {
+		
+		private ExpandButton() {
+		}
+		
+		public String getLabel() {
+			return "toggle";
+		}
+
+		public String getCssClass() {
+			return expanded 
+					? "button button-collapse" 
+					: "button button-expand";
+		}
+		
+		protected void onClick() {
+			toggle();
+		}
+		
+		public int getEventTypes() {
+			return JavaScriptEvent.ON_CLICK;
+		}
 	}
 }

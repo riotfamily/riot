@@ -164,7 +164,24 @@ public class FileUpload extends CompositeElement implements Editor,
 	protected void setFile(File file) {
 		this.file = file;
 		this.size = new Long(file.length());
-		revalidate();
+		validate();
+	}
+	
+	protected void processRequestInternal(FormRequest request) {
+		validate();
+	}
+	
+	private void validate() {
+		ErrorUtils.removeErrors(this);
+		if (file != null) {
+			validateFile(file);
+		}
+		else if (isRequired()) {
+			ErrorUtils.rejectRequired(this);
+		}
+	}
+
+	protected void validateFile(File file) {
 	}
 
 	protected void afterFileUploaded() {
@@ -283,18 +300,6 @@ public class FileUpload extends CompositeElement implements Editor,
 		destroy();
 	}
 
-	protected final void validate() {
-		if (isRequired() && file == null) {
-			ErrorUtils.rejectRequired(this);
-		}
-		if (file != null) {
-			validateFile(file);
-		}
-	}
-
-	protected void validateFile(File file) {
-	}
-
 	/**
 	 * Though this is a composite element we want it to be treated as a
 	 * single widget.
@@ -358,16 +363,10 @@ public class FileUpload extends CompositeElement implements Editor,
 			}
 		}
 
-		/**
-		 * @see org.riotfamily.forms.event.JavaScriptEventAdapter#getEventTypes()
-		 */
 		public int getEventTypes() {
-			return 0;
+			return JavaScriptEvent.NONE;
 		}
 
-		/**
-		 *
-		 */
 		public void handleJavaScriptEvent(JavaScriptEvent event) {
 			status = UploadStatus.getStatus(uploadId);
 			if (getFormListener() != null) {

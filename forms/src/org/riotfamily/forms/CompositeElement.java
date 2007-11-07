@@ -115,21 +115,12 @@ public abstract class CompositeElement extends AbstractEditorBase {
 	public void processRequest(FormRequest request) {
 		processRequestInternal(request);		
 		processRequestCompontents(request);
-		revalidate();
 	}
-
-	protected final void revalidate() {
-		ErrorUtils.removeErrors(this);
-		validate();
-	}
-	
-	protected void validate() {		
-	}
-	
+		
 	/**
 	 * Processes the request for all the components
 	 */
-	protected final void processRequestCompontents(FormRequest request) {
+	protected void processRequestCompontents(FormRequest request) {
 		// Temporary list to allow concurrent modification
 		List tempList = new ArrayList(components);
 		Iterator it = tempList.iterator();

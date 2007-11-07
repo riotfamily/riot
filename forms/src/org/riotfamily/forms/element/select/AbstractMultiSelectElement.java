@@ -136,7 +136,7 @@ public abstract class AbstractMultiSelectElement
 		validate();
 	}
 	
-	protected void validate() {
+	public void validate() {
 		super.validate();
 		if (maxSelection != null && selectedValues.size() > maxSelection.intValue()) {
 			ErrorUtils.reject(this, "tooManyValuesSelected", maxSelection);

@@ -125,19 +125,21 @@ public class TextField extends AbstractTextElement {
 		super.processRequest(request);
 	}
 
-	protected void validate(boolean formSubmitted) {		
-		super.validate(formSubmitted);
-		if (formSubmitted && confirm) {
+	public void validate() {		
+		super.validate();
+		if (confirm) {
 			if (!ObjectUtils.nullSafeEquals(getText(), confirmText)) {
 				ErrorUtils.reject(this, "error.textField.confirmationFailed");
 			}
 		}
+	}
+	
+	protected void validateSyntax() {
 		if (pattern != null && StringUtils.hasLength(getText())) {
 			if (!pattern.matcher(getText()).matches()) {
 				getForm().getErrors().rejectValue(getFieldName(), 
 						regexMismatchMessageKey, regexMismatchMessageText);
 			}
-			
 		}
 	}
 

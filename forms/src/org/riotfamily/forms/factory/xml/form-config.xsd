@@ -293,6 +293,7 @@
 	<xsd:element name="group">
 		<xsd:complexType>
 			<xsd:group ref="elements" maxOccurs="unbounded" />
+			<xsd:attribute name="collapsible" type="xsd:boolean" default="false" />
 			<xsd:attribute name="template" type="xsd:string" />
 			<xsd:attribute name="label-key" type="xsd:string" />
 			<xsd:attribute name="label-items" type="xsd:boolean" default="true" />

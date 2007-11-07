@@ -80,7 +80,7 @@ public interface Element {
 	
 	/**
 	 * This method is invoked whenever a HTTP request needs to be processed.
-	 * Elements may impelement this method to change their internal state 
+	 * Elements may implement this method to change their internal state 
 	 * according to parameters found in the request. 
 	 */
 	public void processRequest(FormRequest request);

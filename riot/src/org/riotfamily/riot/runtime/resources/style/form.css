@@ -214,15 +214,13 @@ ul.radioButtonGroup input {
 }
 
 .indent {
-	margin: 20px 0 0 36px;
+	margin: 0 0 0 36px;
+	padding-top: 20px;
 }
 .indent .indent {
-	margin: 10px 0 0 0;
+	margin: 0;
+	padding-top: 10px;
 }
-.optional .indent {
-	margin-top: -12px;
-}
-
 .indent .element {
 	margin-bottom: 17px;
 }
@@ -348,7 +346,9 @@ table.item .indent {
 
 .listEditor .button-add,
 .button-remove,
-.button-toggle {
+.button-toggle,
+.button-expand,
+.button-collapse {
 	margin: 0;
 	border: none;
 	text-indent: 32px;
@@ -363,7 +363,9 @@ table.item .indent {
 
 * html .listEditor .button-add,
 * html .button-remove,
-* html .button-toggle {
+* html .button-toggle,
+* html .button-expand,
+* html .button-collapse {
 	padding: 32px 0 0 0;
 	text-indent: 0;
 }
@@ -371,6 +373,9 @@ table.item .indent {
 .listEditor .button-add, 
 .nestedForm .not-present .button-toggle {
 	background-image: url(images/add.gif);
+}
+.nestedForm .present {
+	float: left;
 }
 
 
@@ -385,6 +390,13 @@ table.item .indent {
 .button-remove,
 .nestedForm .button-toggle {
 	background-image: url(images/remove.gif);
+}
+.button-expand {
+	background-image: url(images/expand.gif);
+}
+.button-collapse {
+	background-image: url(images/collapse.gif);
+	float: left;
 }
 
 .calendar-button {

@@ -57,7 +57,7 @@ public class TemplateElement extends CompositeElement {
 		setAttribute(key, element);
 	}
 	
-	protected Map getRenderModel() {
+	public Map getRenderModel() {
 		return renderModel;
 	}
 	
