@@ -58,6 +58,8 @@ public class ComponentController extends AbstractCacheableController {
 
 	private String viewName;
 
+	private String contentType;
+	
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
@@ -86,6 +88,11 @@ public class ComponentController extends AbstractCacheableController {
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
 	}
+	
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+	
 
 	protected Long getVersionId(HttpServletRequest request) {
 		String s = request.getParameter("id");
@@ -128,6 +135,10 @@ public class ComponentController extends AbstractCacheableController {
 		Assert.isTrue(requiredType == null ||
 				version.getType().equals(requiredType),
 				"Component must be of type " + requiredType);
+
+		if (contentType != null) {
+			response.setContentType(contentType);
+		}
 
 		return new ModelAndView(viewName, component.buildModel(version));
 	}
