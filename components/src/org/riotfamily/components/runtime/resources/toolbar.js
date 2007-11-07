@@ -210,12 +210,17 @@ riot.ToolbarButton.prototype = {
 	},
 
 	applyHandler: function(enable) {
-		if (this.beforeApply) {
-			this.beforeApply(enable);
+		if (enable && this.precondition) {
+			this.precondition(this.applyHandlerInternal.bind(this, document, true));
 		}
-		this.applyHandlerInternal(document, enable);
-		if (this.afterApply) {
-			this.afterApply(enable);
+		else {
+			if (this.beforeApply) {
+				this.beforeApply(enable);
+			}
+			this.applyHandlerInternal(document, enable);
+			if (this.afterApply) {
+				this.afterApply(enable);
+			}
 		}
 	},
 	

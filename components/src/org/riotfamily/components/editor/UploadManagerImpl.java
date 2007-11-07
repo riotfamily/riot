@@ -26,8 +26,8 @@ package org.riotfamily.components.editor;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,7 +46,7 @@ public class UploadManagerImpl implements UploadManager {
 	private PasswordGenerator tokenGenerator = 
 			new PasswordGenerator(16, true, true, true);
 	
-	private Map filePaths = Collections.synchronizedMap(new HashMap());
+	private Set validTokens = Collections.synchronizedSet(new HashSet());
 
 	private FileStore fileStore;
 	
@@ -59,35 +59,27 @@ public class UploadManagerImpl implements UploadManager {
 
 	public String generateToken() {
 		String token = tokenGenerator.generate();
-		filePaths.put(token, null);
+		validTokens.add(token);
 		log.debug("Generated token: " + token);
 		return token;
 	}
 	
-	public String getFilePath(String token) {
-		String path = (String) filePaths.get(token);
-		if (path == null) {
-			log.warn("Unknown token: " + token);
-		}
-		return path;
-	}
-	
 	boolean isValidToken(String token) {
-		boolean valid = filePaths.containsKey(token);
+		boolean valid = validTokens.contains(token);
 		log.debug((valid ? "Valid" : "Invalid") + " token: " + token);
 		return valid;
 	}
 	
 	public void invalidateToken(String token) {
-		filePaths.remove(token);
+		validTokens.remove(token);
 	}
 	
-	void storeFile(String token, File file, String originalFileName) 
+	String storeFile(String token, File file, String originalFileName) 
 			throws IOException {
 		
 		String path = fileStore.store(file, originalFileName);
 		log.debug("File uploaded - token: " + token + ", path: " + path);
-		filePaths.put(token, path);
+		return path;
 	}
 	
 	public String cropImage(String path, int width, int height, int x, int y, 

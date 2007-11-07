@@ -791,6 +791,8 @@ if (riot.toolbar.buttons.publish) {
 	};
 }
 
+riot.toolbar.buttons.editImages.precondition = riot.initSwfUpload;
+
 dwr.engine.setErrorHandler(function(err, ex) {
 	if (ex.javaClassName == 'org.riotfamily.components.context.RequestContextExpiredException') {
 		location.reload();

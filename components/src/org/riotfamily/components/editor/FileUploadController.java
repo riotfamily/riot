@@ -43,7 +43,7 @@ public class FileUploadController implements Controller {
 
 	private String fileParam = "Filedata";
 	
-	private String tokenAttribute = "token";
+	private String tokenParameter = "token";
 	
 	private UploadManagerImpl uploadManager;
 	
@@ -66,16 +66,16 @@ public class FileUploadController implements Controller {
 	protected void handleMultipartRequest(MultipartHttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 
-		String token = (String) request.getAttribute(tokenAttribute);
+		String token = request.getParameter(tokenParameter);
 		if (uploadManager.isValidToken(token)) {
 			MultipartFile multipartFile = request.getFile(fileParam);
 			if ((multipartFile != null) && (!multipartFile.isEmpty())) {
 				String fileName = multipartFile.getOriginalFilename();
 				File tempFile = File.createTempFile("upload", ".bin");
 				multipartFile.transferTo(tempFile);
-				uploadManager.storeFile(token, tempFile, fileName);
+				String path = uploadManager.storeFile(token, tempFile, fileName);
 				PrintWriter out = response.getWriter();
-				out.println(" ");
+				out.print(path);
 				out.flush();
 			}
 		}

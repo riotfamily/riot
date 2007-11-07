@@ -2,14 +2,14 @@
     <info
     	organisation="riotfamily"
     	module="swfupload-js"
-    	revision="1.0.2.2"
+    	revision="7.0-beta3"
     	status="release">
 
 	    <license name="MIT" url="http://www.opensource.org/licenses/mit-license.php" />
-	    <description homepage="http://swfupload.mammon.se/">
-			A small javascript/flash library to get the best of both 
-			worlds - The great upload capabilitys of flash and the 
-			accessibility and ease of html/css.
+	    <description homepage="http://www.swfupload.org/">
+			SWFUpload is a small JavaScript/Flash library to get the best of 
+			both worlds. It features the great upload capabilities of Flash 
+			and the accessibility and ease of HTML/CSS.
 	    </description>
     </info>
     <publications>

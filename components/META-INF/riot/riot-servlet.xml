@@ -112,7 +112,7 @@
 		<constructor-arg ref="imageCropper" />
 	</bean>
 	
-	<bean name="/components/upload/@{token}" class="org.riotfamily.components.editor.FileUploadController">
+	<bean name="/components/upload" class="org.riotfamily.components.editor.FileUploadController">
 		<constructor-arg ref="uploadManager" />
 	</bean>
 	
@@ -125,7 +125,7 @@
 
 	<override:add ref="loginInterceptor" property="excludes">
 		<value>/pages/login</value>
-		<value>/components/upload/*</value>
+		<value>/components/upload</value>
 	</override:add>
 	
 	<override:add ref="resourceFilters">

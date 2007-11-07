@@ -28,7 +28,7 @@ function loadToolbarScripts() {
 		{src: 'riot-js/util.js', test: 'RElement'},
 		{src: 'scriptaculous/effects.js', test: 'Effect'},
 		{src: 'toolbar.js'},
-		{src: 'swfupload/SWFUpload.js', test: 'SWFUpload'},
+		{src: 'swfupload/swfupload.js', test: 'SWFUpload'},
 		{src: 'scriptaculous/dragdrop.js', test: 'Droppables'},
 		{src: 'riot-js/effects.js'},
 		{src: 'riot-js/window-callback.js'},

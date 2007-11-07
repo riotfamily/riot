@@ -87,7 +87,7 @@ riot.InplaceEditor.prototype = {
 	},
 
 	showOutline: function(ev) {
-		Event.stop(ev);
+		if (window.Event) Event.stop(ev);
 		if (window.riot) riot.outline.show(this.element);
 	},
 	
@@ -677,8 +677,24 @@ ComponentEditor.getEditorConfigs(function(configs) {
 	}
 });
 
-
-riot.imageEditors = [];
+riot.initSwfUpload = function(readyCallback) {
+	if (!riot.swfUpload) {
+		riot.swfUpload = new SWFUpload({
+			upload_url: riot.path + '/components/upload',
+			flash_url: Resources.basePath + 'swfupload/swfupload.swf',
+			file_types: '*.jpg;*.gif;*.png',
+			file_types_description: 'Images',
+			file_size_limit: 0,
+			swfupload_loaded_handler: readyCallback,
+			file_queued_handler: function() {
+				riot.swfUpload.startUpload();
+			}
+		});
+	}
+	else {
+		readyCallback();
+	}
+}
 
 riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 	initialize: function(el, component, options) {
@@ -687,22 +703,11 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 		var aw = el.parentNode.offsetWidth;
 		if (this.options.maxWidth == 'auto') this.options.maxWidth = aw;
 		if (this.options.minWidth == 'auto') this.options.minWidth = aw;
-		this.globalRef = 'riot.imageEditors[' + riot.imageEditors.length + ']';
-		riot.imageEditors.push(this);
 	},
 	
 	setToken: function(token) {
 		this.token = token;
-		this.upload = new SWFUpload({
-			upload_script: riot.path + '/components/upload/' + token,
-			flash_path: Resources.basePath + 'swfupload/SWFUpload.swf',
-			flash_loaded_callback: this.globalRef + '.editOn',
-			allowed_filetypes: '*.jpg;*.gif;*.png',
-			allowed_filetypes_description: 'Images',
-			allowed_filesize: '30000',
-			auto_upload: true,
-			upload_file_complete_callback: this.globalRef + '.uploadFileComplete'
-		});
+		this.editOn();
 	},
 	
 	editImagesOn: function() {
@@ -712,24 +717,21 @@ riot.ImageEditor = Class.extend(riot.InplaceEditor, {
 	
 	editImagesOff: function() {
 		this.editOff(); 
-		Element.remove(this.upload.movieElement);
 		UploadManager.invalidateToken(this.token);
 	},
 	
 	edit: function() {
 		riot.outline.hide();
-		this.upload.browse();
+		riot.swfUpload.setPostParams({token: this.token});
+		riot.swfUpload.uploadComplete_handler = this.uploadComplete.bind(this);
+		riot.swfUpload.selectFile();
 	},	
 	
-	uploadFileComplete: function(file) {
-		UploadManager.getFilePath(this.token, this.setPath.bind(this));
-	},
-	
-	setPath: function(path) {
+	uploadComplete: function(file, response) {
 		riot.outline.suspended = true;
-		this.cropper = new Cropper.UI(this, path);
+		this.cropper = new Cropper.UI(this, response);
 	},
-	
+		
 	update: function(img, path) {
 		riot.outline.suspended = false;
 		this.component.updateText(this.key, path);

@@ -33,8 +33,6 @@ public interface UploadManager {
 
 	public String generateToken();
 	
-	public String getFilePath(String token);
-	
 	public void invalidateToken(String token);
 			
 	public String cropImage(String path, int width, int height,
