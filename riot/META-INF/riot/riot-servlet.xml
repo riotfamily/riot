@@ -358,12 +358,10 @@
 		</bean>
 	</util:list>
 	
-	<bean id="abstractResourceController" abstract="true" class="org.riotfamily.riot.resource.AbstractResourceController">
-	</bean>
-	
 	<bean name="/resources/*/@{resource*}" class="org.riotfamily.riot.resource.ResourceController">
 		<property name="pathAttribute" value="resource" />
 		<property name="fileTypeMap" ref="fileTypeMap" />
+		<property name="checkForModifications" value="${riot.resources.reloadable=false}" />
 		<property name="filters" ref="resourceFilters" />
 		<property name="mappings" ref="resourceMappings" />
 		<property name="compressors">
@@ -385,6 +383,7 @@
 	<bean name="/joined/*/joined-script.js" class="org.riotfamily.riot.resource.JoiningResourceController">
 		<property name="pathParameter" value="files" />
 		<property name="fileTypeMap" ref="fileTypeMap" />
+		<property name="checkForModifications" value="${riot.resources.reloadable=false}" />
 		<property name="filters" ref="resourceFilters" />
 		<property name="mappings" ref="resourceMappings" />
 		<property name="contentType" value="text/javascript" />
@@ -399,6 +398,7 @@
 	<bean name="/joined/*/joined-style.js" class="org.riotfamily.riot.resource.JoiningResourceController">
 		<property name="pathParameter" value="files" />
 		<property name="fileTypeMap" ref="fileTypeMap" />
+		<property name="checkForModifications" value="${riot.resources.reloadable=false}" />
 		<property name="filters" ref="resourceFilters" />
 		<property name="mappings" ref="resourceMappings" />
 		<property name="contentType" value="text/css" />

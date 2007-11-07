@@ -65,6 +65,25 @@ public class JoiningResourceController extends AbstractResourceController {
 		return shouldBeZipped;
 	}
 	
+	private String normalizePath(String path) {
+		if (path.startsWith("/")) {
+			return path;
+		}
+		return "/" + path;
+	}
+	
+	protected long getLastModified(String path) {
+		long lastModified = -1;
+		String[] paths = StringUtils.commaDelimitedListToStringArray(path);
+		for (int i = 0; i < paths.length; i++) {
+			long mtime = super.getLastModified(normalizePath(paths[i]));
+			if (mtime > lastModified) {
+				lastModified = mtime;
+			}
+		}
+		return lastModified;
+	}
+	
 	protected boolean serveResource(String path, HttpServletRequest request, 
 			HttpServletResponse response)
 			throws IOException {
@@ -73,12 +92,7 @@ public class JoiningResourceController extends AbstractResourceController {
 		StringWriter buffer = new StringWriter();
 		String[] paths = StringUtils.commaDelimitedListToStringArray(path);
 		for (int i = 0; i < paths.length; i++) {
-			if (!paths[i].startsWith("/")) {
-				path = "/" + paths[i];
-			}
-			else {
-				path = paths[i];
-			}
+			path = normalizePath(paths[i]);
 			Resource res = lookupResource(path);
 			if (res != null) {
 				if (!contentType.equals(getContentType(res))) {

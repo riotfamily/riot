@@ -66,6 +66,8 @@ public class AbstractResourceController extends AbstractCacheableController
 	
 	private long lastModified = System.currentTimeMillis();
 	
+	private boolean checkForModifications = false;
+	
 	private String pathAttribute;
 	
 	private String pathParameter;
@@ -103,6 +105,13 @@ public class AbstractResourceController extends AbstractCacheableController
 		this.filters = filters;
 	}
 
+	/**
+	 * Sets whether the controller check for file modifications.
+	 */
+	public void setCheckForModifications(boolean checkForModifications) {
+		this.checkForModifications = checkForModifications;
+	}
+	
 	protected Resource lookupResource(String path) throws IOException {
 		Iterator it = mappings.iterator();
     	while (it.hasNext()) {
@@ -133,11 +142,26 @@ public class AbstractResourceController extends AbstractCacheableController
 	}
 	
 	public long getLastModified(HttpServletRequest request) {
+		if (checkForModifications) {
+			String path = getResourcePath(request);
+			long mtime = getLastModified(path);
+			return mtime >= 0 ? mtime : lastModified;
+		}
 		return lastModified;
 	}
 	
+	protected long getLastModified(String path) {
+		try {
+			Resource res = lookupResource(path);
+			return res.getFile().lastModified();
+		}
+		catch (IOException e) {
+			return -1;
+		}
+	}
+	
 	public long getTimeToLive() {
-		return CACHE_ETERNALLY;
+		return checkForModifications ? 0 : CACHE_ETERNALLY;
 	}
 	
 	protected String getCacheKeyInternal(HttpServletRequest request) {
