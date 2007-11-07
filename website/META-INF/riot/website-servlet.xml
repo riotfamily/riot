@@ -66,6 +66,8 @@
 	</bean>
 	
 	<bean id="localizedObjectWrapper" class="org.riotfamily.common.web.view.freemarker.LocalizedObjectWrapper" />
+    
+    <bean id="dynamicModelWrapper" class="org.riotfamily.common.web.view.freemarker.DynamicModelWrapper" />
 	
 	<bean id="viewResolver" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerViewResolver">
 		<property name="exposeRequestAttributes" value="true" />
