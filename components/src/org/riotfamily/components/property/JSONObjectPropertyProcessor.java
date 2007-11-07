@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
 
 /**
@@ -98,7 +99,19 @@ public class JSONObjectPropertyProcessor extends PropertyProcessorAdapter
 		if (beanClass != null && !Map.class.isAssignableFrom(beanClass)) {
 			return JSONObject.toBean(json, beanClass);
 		}
-		return new HashMap(json);
+		
+		// Build HashMap and set JSONNull's to null
+		HashMap result = new HashMap();
+		it = json.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			Object value = entry.getValue();
+			if (JSONNull.getInstance() == value) {
+				value = null;
+			}
+			result.put(entry.getKey(), value);
+		}
+		return result;
 	}
 
 }
