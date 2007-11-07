@@ -120,6 +120,8 @@ class CacheItem implements Serializable {
     
     /** Time of the last up-to-date check */
     private long lastCheck;
+
+	private boolean setContentLength;
     
     
     /**
@@ -229,6 +231,10 @@ class CacheItem implements Serializable {
 		this.contentType = contentType;
 	}
 	
+	public void setSetContentLength(boolean setContentLength) {
+		this.setContentLength = setContentLength;
+	}
+	
 	/**
 	 * Sets HTTP headers. 
 	 */
@@ -297,7 +303,9 @@ class CacheItem implements Serializable {
             }
             int contentLength = getSize();
             if (contentLength > 0) {
-            	response.setContentLength(contentLength);
+            	if (setContentLength) {
+            		response.setContentLength(contentLength);
+            	}
 	            if (binary) {
 	                InputStream in = new BufferedInputStream(
 	                        new FileInputStream(file));
@@ -364,5 +372,5 @@ class CacheItem implements Serializable {
     	}
     	return false;
     }
-  
+
 }

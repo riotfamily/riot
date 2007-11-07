@@ -120,7 +120,7 @@ public class DeferredRenderingResponseWrapper extends HttpServletResponseWrapper
 			response.getWriter().write(writer.toString());
 		}
 		if (flush) {
-			super.flushBuffer();
+			response.flushBuffer();
 		}
 	}
 	
