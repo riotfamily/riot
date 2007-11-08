@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -150,21 +151,25 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 
 		Page page = (Page) entity;
 		PageNode node = page.getNode();
+		
+		ArrayList pages = new ArrayList(list(parent, params));
+		PageNode otherNode = ((Page) pages.get(swapWith)).getNode();
+		
 		PageNode parentNode = node.getParent();
 		List nodes = parentNode.getChildNodes();
 
 		int pos = nodes.indexOf(node);
-		Object otherNode = nodes.get(swapWith);
+		int otherPos = nodes.indexOf(otherNode);
 
 		nodes.remove(node);
 		nodes.remove(otherNode);
 
-		if (pos < swapWith) {
+		if (pos < otherPos) {
 			nodes.add(pos, otherNode);
-			nodes.add(swapWith, node);
+			nodes.add(otherPos, node);
 		}
 		else {
-			nodes.add(swapWith, node);
+			nodes.add(otherPos, node);
 			nodes.add(pos, otherNode);
 		}
 
