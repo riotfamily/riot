@@ -117,7 +117,7 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 	}
 	
 	protected void processRequestCompontents(FormRequest request) {
-		if (expanded) {
+		if (!collapsible || expanded) {
 			super.processRequestCompontents(request);
 		}
 	}
