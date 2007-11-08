@@ -56,7 +56,7 @@ var state;
 function updateJob(job) {
 	if (!state) {
 		$('name').update(job.name || '');
-		$('description').update(job.description || 'Please wait ...');
+		$('description').update(job.description || '<@spring.messageText "job.description.loading", "Please wait ..." />');
 	}
 	if (job.estimatedTime) {
 		if (job.state == 0) {
