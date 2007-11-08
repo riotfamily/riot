@@ -28,14 +28,21 @@ import org.riotfamily.riot.job.Job;
 import org.riotfamily.riot.job.JobContext;
 import org.riotfamily.riot.job.JobCreationException;
 import org.riotfamily.riot.job.JobDescription;
+import org.riotfamily.riot.job.JobInterruptedException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 public abstract class AbstractJob implements Job, BeanNameAware {
 
+	private static final DefaultTransactionDefinition TRANSACTION_DEFINITION =
+		new DefaultTransactionDefinition(
+		TransactionDefinition.PROPAGATION_REQUIRED);
+	
 	private String beanName;
 	
 	private RiotDao dao;
@@ -67,16 +74,21 @@ public abstract class AbstractJob implements Job, BeanNameAware {
 	}
 
 	public JobDescription setup(final String objectId) {
+		JobDescription jd = null;
 		if (transactionManager != null) {
-			return (JobDescription) new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
-				public Object doInTransaction(TransactionStatus status) {
-					return setupInternal(objectId);
-				}
-			});
+			TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
+			try {
+				 jd = setupInternal(objectId);
+			}
+			catch (Exception e) {
+				transactionManager.rollback(status);				
+			}
+			transactionManager.commit(status);			
 		}
 		else {
-			return setupInternal(objectId);
+			jd = setupInternal(objectId);
 		}
+		return jd;
 	}
 	
 	protected final JobDescription setupInternal(String objectId) {
@@ -96,12 +108,17 @@ public abstract class AbstractJob implements Job, BeanNameAware {
 	
 	public final void execute(final JobContext context) {
 		if (transactionManager != null) {
-			new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
-				public Object doInTransaction(TransactionStatus status) {
-					execute(context, loadObject(context.getObjectId()));
-					return null;
-				}
-			});
+			
+			TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
+			try {
+				execute(context, loadObject(context.getObjectId()));
+			}
+			catch (JobInterruptedException e) {				
+			}
+			catch (Exception e) {
+				transactionManager.rollback(status);				
+			}
+			transactionManager.commit(status);			
 		}
 		else {
 			execute(context, loadObject(context.getObjectId()));
