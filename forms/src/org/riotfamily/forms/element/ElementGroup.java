@@ -154,7 +154,9 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 	}
 	
 	public String getInitScript() {
-		return expanded ? TemplateUtils.getInitScript(this) : null;
+		return collapsible && expanded 
+				? TemplateUtils.getInitScript(this) 
+				: null;
 	}
 	
 	private class ExpandButton extends Button {
