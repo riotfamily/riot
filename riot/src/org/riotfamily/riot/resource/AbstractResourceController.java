@@ -153,11 +153,13 @@ public class AbstractResourceController extends AbstractCacheableController
 	protected long getLastModified(String path) {
 		try {
 			Resource res = lookupResource(path);
-			return res.getFile().lastModified();
+			if (res != null) {
+				return res.getFile().lastModified();
+			}
 		}
 		catch (IOException e) {
-			return -1;
 		}
+		return -1;
 	}
 	
 	public long getTimeToLive() {
