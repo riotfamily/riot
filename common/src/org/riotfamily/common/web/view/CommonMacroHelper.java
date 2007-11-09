@@ -40,6 +40,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.collaboration.SharedProperties;
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.mapping.ReverseHandlerMapping;
 import org.riotfamily.common.web.util.ServletUtils;
@@ -100,7 +101,16 @@ public class CommonMacroHelper {
 	public String getMessage(MessageSourceResolvable resolvable) {
 		return ctx.getMessage(resolvable, getLocale());
 	}
-
+	
+	public String getSharedProperty(String key) {
+		return SharedProperties.getProperty(request, key);
+	}
+	
+	public String setSharedProperty(String key, String value) {
+		SharedProperties.setProperty(request, key, value);
+		return "";
+	}
+	
 	public String resolveAndEncodeUrl(String url) {
 		return ServletUtils.resolveAndEncodeUrl(url, request, response);
 	}

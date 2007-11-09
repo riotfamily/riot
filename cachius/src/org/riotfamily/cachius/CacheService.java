@@ -25,6 +25,7 @@ package org.riotfamily.cachius;
 
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +38,7 @@ import org.riotfamily.cachius.spring.CacheableController;
 import org.riotfamily.cachius.support.ReaderWriterLock;
 import org.riotfamily.cachius.support.SessionCreationPreventingRequestWrapper;
 import org.riotfamily.cachius.support.SessionIdEncoder;
+import org.riotfamily.common.web.collaboration.SharedProperties;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
@@ -193,8 +195,10 @@ public class CacheService {
 			// Check if another writer has already updated the item
 			if (mtime > cacheItem.getLastModified()) {
 				TaggingContext.openNestedContext(request);
+				Map propertySnapshot = SharedProperties.getSnapshot(request);
 				request = new SessionCreationPreventingRequestWrapper(request);
 				processor.processRequest(request, wrapper);
+				cacheItem.setProperties(SharedProperties.getDiff(request, propertySnapshot));
 				cache.tagItem(cacheItem, TaggingContext.popTags(request));
 				wrapper.stopCapturing(mtime);
 				if (cacheItem.getSize() > 0) {
@@ -234,6 +238,7 @@ public class CacheService {
     		// Acquire a reader lock and serve the cached version
     		lock.lockForReading();
         	cacheItem.writeTo(response, sessionIdEncoder.getSessionId());
+        	SharedProperties.setProperties(request, cacheItem.getProperties());
     	}
     	finally {
     		lock.releaseReaderLock();

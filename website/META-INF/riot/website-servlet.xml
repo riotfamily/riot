@@ -21,8 +21,6 @@
 		<property name="filterName" value="website-filter" />
 	</bean>
 		
-	<bean id="noCacheInterceptor" class="org.riotfamily.website.interceptor.NoCacheHeaderInterceptor" />
-	
 	<bean id="cacheService" class="org.riotfamily.cachius.CacheService">
 		<constructor-arg ref="websiteCache" />
 	</bean>
@@ -41,7 +39,27 @@
 	  - HandlerAdapter that handles regular (non-cacheable) Controllers.
 	  -->
 	<bean id="simpleControllerHandlerAdapter" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
-			
+	
+	<!-- 
+	  - ChainedHandlerInterceptor that combines all interceptors that are required
+	  - by Riot or one of its modules. Modules should use the override:add tag and
+	  - add their interceptors to this bean definition. 
+	  -->
+	<bean id="riotInterceptors" class="org.riotfamily.common.web.interceptor.ChainedHandlerInterceptor">
+		<property name="interceptors">
+			<list>
+				<ref local="noCacheInterceptor" />
+				<bean class="org.riotfamily.common.web.collaboration.SharedPropertiesInterceptor" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 
+	  - Deprecated. Projects should use the "riotInterceptors" instead which 
+	  - also contains this interceptor.
+	  -->	
+	<bean id="noCacheInterceptor" class="org.riotfamily.website.interceptor.NoCacheHeaderInterceptor" />
+	
 	<bean id="resourceStamper" class="org.riotfamily.common.web.filter.ResourceStamper" />
 
 	<bean id="cssTemplateController" name="/**/*.css" 

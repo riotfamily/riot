@@ -39,6 +39,7 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
@@ -103,6 +104,9 @@ class CacheItem implements Serializable {
     /** Captured cookies that will be sent */
     private Cookies cookies;
     
+    /** Map with extra properties */
+    private Map properties;
+    
     /** Flag indicating whether the content is binary or character data */
     private boolean binary = true;
     
@@ -121,6 +125,7 @@ class CacheItem implements Serializable {
     /** Time of the last up-to-date check */
     private long lastCheck;
 
+    /** Whether to set Content-Length header or not */
 	private boolean setContentLength;
     
     
@@ -163,6 +168,9 @@ class CacheItem implements Serializable {
         return lastModified == NOT_YET;
     }
     
+    /**
+     * Sets the lastUsed timestamp to the current time.
+     */
     protected void touch() {
     	this.lastUsed = System.currentTimeMillis();
     }
@@ -231,6 +239,9 @@ class CacheItem implements Serializable {
 		this.contentType = contentType;
 	}
 	
+	/**
+	 * Sets whether a Content-Length header should be set.
+	 */
 	public void setSetContentLength(boolean setContentLength) {
 		this.setContentLength = setContentLength;
 	}
@@ -249,6 +260,21 @@ class CacheItem implements Serializable {
 		this.cookies = cookies;
 	}
 
+	/**
+	 * Sets shared properties.
+	 * @see org.riotfamily.common.web.collaboration.SharedProperties
+	 */
+	protected void setProperties(Map properties) {
+		this.properties = properties;
+	}
+	
+	/**
+	 * Returns the properties.
+	 */
+	public Map getProperties() {
+		return properties;
+	}
+	
 	/**
 	 * Returns the lock. 
 	 */

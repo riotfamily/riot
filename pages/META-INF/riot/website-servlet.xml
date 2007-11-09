@@ -17,7 +17,7 @@
 		<constructor-arg ref="pageUrlBuilder" />
 		<property name="interceptors">
 			<list>
-				<ref bean="noCacheInterceptor" />
+				<ref bean="riotInterceptors" />
 			</list>
 		</property>
 	</bean>

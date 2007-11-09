@@ -26,9 +26,13 @@
 </#function>
 
 
-<#macro setAttribute name value>
-	${request.setAttribute(name, value)!}
+<#macro setSharedProperty key value>
+	<#local x = commonMacroHelper.setSharedProperty(key, value) />
 </#macro>
+
+<#function getSharedProperty key>
+	<#return commonMacroHelper.getSharedProperty(key) />
+</#function>
 
 <#--
   - Adds the contextPath and sessionId to the given URI if necessary. 

@@ -14,43 +14,35 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.website.interceptor;
+package org.riotfamily.common.web.collaboration;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.web.interceptor.PathMatchingInterceptor;
-import org.springframework.web.util.WebUtils;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
- * HandlerInterceptor that sends a 404 error if the request is not an 
- * include request, i.e. was not dispatched by a {@link RequestDispatcher}.
+ * HandlerInterceptor that exposes a {@link SharedProperties} instance as
+ * request attribute.
  * 
+ * @see SharedProperties
  * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 6.5
  */
-public class IncludeOnlyInterceptor extends PathMatchingInterceptor {
+public class SharedPropertiesInterceptor extends HandlerInterceptorAdapter {
 
-	private static Log log = LogFactory.getLog(IncludeOnlyInterceptor.class);
-	
-	protected boolean doPreHandle(HttpServletRequest request, 
+	public boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler) throws Exception {
 		
-		if (!WebUtils.isIncludeRequest(request)) {
-			response.sendError(HttpServletResponse.SC_NOT_FOUND);
-			log.warn("Direct access prevented by IncludeOnlyInterceptor");
-			return false;
-		}
+		SharedProperties.exposeTo(request);
 		return true;
 	}
-
+	
 }

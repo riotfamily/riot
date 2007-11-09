@@ -23,9 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.cache;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.riotfamily.cachius.Cache;
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -35,7 +38,7 @@ public final class PageCacheUtils {
 
 	private static final String PAGE_PREFIX = Page.class.getName() + '#';
 	
-	private static final String TOP_LEVEL_PAGES_PREFIX = Page.class.getName() 
+	private static final String TOP_LEVEL_PAGES_PREFIX = Site.class.getName() 
 			+ ":topLevelPages#";
 	
 	private static final String CHILD_PAGE_PREFIX = Page.class.getName() 
@@ -44,37 +47,159 @@ public final class PageCacheUtils {
 	private PageCacheUtils() {
 	}
 	
-	private static String getPageTag(Page page) {
+	/**
+	 * Returns the tag for the specified page. The generated tag will be
+	 * "<code>org.riotfamily.pages.model.Page#<i>&lt;id&gt;</i></code>",
+	 * where <i>&lt;id&gt;</i> is the id of the given page.
+	 */
+	public static String getPageTag(Page page) {
 		return PAGE_PREFIX + page.getId();
 	}
 	
-	private static String getSiblingsTag(Page page) {
+	/**
+	 * Returns the tag for the top-level pages of the specified site. 
+	 * The generated tag will be 
+	 * "<code>org.riotfamily.pages.model.Site:topLevelPages#&lt;id&gt;</code>",
+	 * where <i>&lt;id&gt;</i> is the id of the given site.
+	 */
+	public static String getTopLevelPagesTag(Site site) {
+		return TOP_LEVEL_PAGES_PREFIX + site.getId();
+	}
+
+	/**
+	 * Returns the tag for the child pages of the specified page. 
+	 * The generated tag will be 
+	 * "<code>org.riotfamily.pages.model.Page:childPages#&lt;id&gt;</code>",
+	 * where <i>&lt;id&gt;</i> is the id of the given parent page.
+	 */
+	public static String getChildPagesTag(Page page) {
+		return CHILD_PAGE_PREFIX + page.getId();
+	}
+	
+	/**
+	 * Returns the tag for the siblings of the specified page. The call is 
+	 * delegated to {@link #getChildPagesTag(Page) 
+	 * getChildPagesTag(page.getParentPage())}, or 
+	 * {@link #getTopLevelPagesTag(Site) getTopLevelPagesTag(page.getSite())}
+	 * in case the page has no parent.
+	 */
+	public static String getSiblingsTag(Page page) {
 		if (page.getParentPage() == null) {
-			return TOP_LEVEL_PAGES_PREFIX + page.getSite().getId();
+			return getTopLevelPagesTag(page.getSite());
 		}
 		return getChildPagesTag(page.getParentPage());
 	}
 	
-	private static String getChildPagesTag(Page page) {
-		return CHILD_PAGE_PREFIX + page.getId();
-	}
-	
-	public static void addPageTag(TaggingContext taggingContext, Page page) {
-		if (taggingContext != null) {
-			taggingContext.addTag(getPageTag(page));
+	/**
+	 * Adds the {@link #getTopLevelPagesTag(Site) top-level-pages} tag for the
+	 * given site to the specified TaggingContext.
+	 */
+	public static void addTopLevelPagesTag(TaggingContext context, Site site) {
+		if (context != null) {
+			context.addTag(getTopLevelPagesTag(site));
 		}
 	}
 	
-	public static void addChildPagesTag(TaggingContext taggingContext, Page page) {
-		if (taggingContext != null) {
-			taggingContext.addTag(getChildPagesTag(page));
+	/**
+	 * Adds the {@link #getTopLevelPagesTag(Site) top-level-pages} tag for the
+	 * given site to the current TaggingContext of the specified request.
+	 * @see TaggingContext#tag(HttpServletRequest, String)
+	 */
+	public static void addTopLevelPagesTag(HttpServletRequest request, Site site) {
+		TaggingContext.tag(request, getTopLevelPagesTag(site));
+	}
+	
+	/**
+	 * Adds the {@link #getTopLevelPagesTag(Site) top-level-pages} tag for the
+	 * given site to the current TaggingContext.
+	 * @see TaggingContext#tag(String)
+	 */
+	public static void addTopLevelPagesTag(Site site) {
+		TaggingContext.tag(getTopLevelPagesTag(site));
+	}
+	
+	/**
+	 * Adds the {@link #getPageTag(Site) page} tag for the given page to the 
+	 * specified TaggingContext.
+	 */
+	public static void addPageTag(TaggingContext context, Page page) {
+		if (context != null) {
+			context.addTag(getPageTag(page));
 		}
 	}
 	
-	public static void addSiblingsTag(TaggingContext taggingContext, Page page) {
-		if (taggingContext != null) {
-			taggingContext.addTag(getSiblingsTag(page));
+	/**
+	 * Adds the {@link #getPageTag(Site) page} tag for the given page to the 
+	 * current TaggingContext of the specified request.
+	 * @see TaggingContext#tag(HttpServletRequest, String)
+	 */
+	public static void addPageTag(HttpServletRequest request, Page page) {
+		TaggingContext.tag(request, getPageTag(page));
+	}
+	
+	/**
+	 * Adds the {@link #getPageTag(Site) page} tag for the given page to the 
+	 * current TaggingContext.
+	 * @see TaggingContext#tag(String)
+	 */
+	public static void addPageTag(Page page) {
+		TaggingContext.tag(getPageTag(page));
+	}
+	
+	/**
+	 * Adds the {@link #getChildPagesTag(Site) child-pages} tag for the 
+	 * given parent page to the specified TaggingContext.
+	 */
+	public static void addChildPagesTag(TaggingContext context, Page page) {
+		if (context != null) {
+			context.addTag(getChildPagesTag(page));
 		}
+	}
+	
+	/**
+	 * Adds the {@link #getChildPagesTag(Site) child-pages} tag for the 
+	 * given parent page to the TaggingContext of the specified request.
+	 * @see TaggingContext#tag(HttpServletRequest, String)
+	 */
+	public static void addChildPagesTag(HttpServletRequest request, Page page) {
+		TaggingContext.tag(request, getChildPagesTag(page));
+	}
+	
+	/**
+	 * Adds the {@link #getChildPagesTag(Site) child-pages} tag for the 
+	 * given parent page to the current TaggingContext.
+	 * @see TaggingContext#tag(String)
+	 */
+	public static void addChildPagesTag(Page page) {
+		TaggingContext.tag(getChildPagesTag(page));
+	}
+	
+	/**
+	 * Adds the {@link #getSiblingsTag(Site) siblings} tag for the 
+	 * given page to the specified TaggingContext.
+	 */
+	public static void addSiblingsTag(TaggingContext context, Page page) {
+		if (context != null) {
+			context.addTag(getSiblingsTag(page));
+		}
+	}
+	
+	/**
+	 * Adds the {@link #getSiblingsTag(Site) siblings} tag for the 
+	 * given page to the TaggingContext of the specified request.
+	 * @see TaggingContext#tag(HttpServletRequest, String)
+	 */
+	public static void addSiblingsTag(HttpServletRequest request, Page page) {
+		TaggingContext.tag(request, getSiblingsTag(page));
+	}
+	
+	/**
+	 * Adds the {@link #getSiblingsTag(Site) siblings} tag for the 
+	 * given page to the current TaggingContext.
+	 * @see TaggingContext#tag(String)
+	 */
+	public static void addSiblingsTag(Page page) {
+		TaggingContext.tag(getSiblingsTag(page));
 	}
 	
 	public static void invalidateSiblings(Cache cache, Page page) {

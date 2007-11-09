@@ -32,5 +32,7 @@
   -->
 <#macro link page tag="a" labelKey="title" attributes...>
 	<#local attributes = common.unwrapAttributes(attributes) />
-	<@inplace.link key=labelKey href=common.url(page.url) tag=tag attributes=attributes>${page.title}</@inplace.link>
+	<@inplace.use container=page.versionContainer model=page.properties>
+		<@inplace.link key=labelKey href=common.url(page.url) tag=tag attributes=attributes>${page.title}</@inplace.link>
+	</@inplace.use>
 </#macro>
