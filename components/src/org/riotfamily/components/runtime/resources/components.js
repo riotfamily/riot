@@ -417,10 +417,12 @@ riot.Component.prototype = {
 	},
 	
 	removeClickHandler: function() {
-		this.targetElement.restoreClicks();
-		Event.stopObserving(this.targetElement, 'click', this.bOnClick);
-		Event.stopObserving(this.targetElement, 'mouseover', this.bShowOutline);
-		Event.stopObserving(this.targetElement, 'mouseout', this.bHideOutline);
+		if (this.targetElement) {
+			this.targetElement.restoreClicks();
+			Event.stopObserving(this.targetElement, 'click', this.bOnClick);
+			Event.stopObserving(this.targetElement, 'mouseover', this.bShowOutline);
+			Event.stopObserving(this.targetElement, 'mouseout', this.bHideOutline);
+		}
 		this.clickHandler = null;
 	},
 	
