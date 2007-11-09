@@ -15,6 +15,10 @@
 		<#list inplaceMacroHelper.toolbarScripts as src>
 			<@riot.script src = src + "?lang=" + .lang />
 		</#list>
+		<script type="text/javascript" language="JavaScript">
+			var riotComponentFormParams = {};
+			${inplaceMacroHelper.initScript}
+		</script>
 	<#else>
 		<script type="text/javascript" language="JavaScript">
 			// This variable is read by the login-bookmarklet:

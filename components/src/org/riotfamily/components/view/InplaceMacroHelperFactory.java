@@ -23,8 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.view;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +39,9 @@ import org.riotfamily.riot.list.RiotDaoService;
  */
 public class InplaceMacroHelperFactory implements MacroHelperFactory {
 
-	private Collection toolbarScripts = Collections.EMPTY_LIST;
+	private List toolbarScripts = Collections.EMPTY_LIST;
+	
+	private List dynamicToolbarScripts = Collections.EMPTY_LIST;
 
 	private ComponentRepository componentRepository;
 
@@ -52,14 +54,18 @@ public class InplaceMacroHelperFactory implements MacroHelperFactory {
 		this.riotDaoService = riotDaoService;
 	}
 
-	public void setToolbarScripts(Collection toolbarScripts) {
+	public void setToolbarScripts(List toolbarScripts) {
 		this.toolbarScripts = toolbarScripts;
+	}
+	
+	public void setDynamicToolbarScripts(List dynamicToolbarScripts) {
+		this.dynamicToolbarScripts = dynamicToolbarScripts;
 	}
 
 	public Object createMacroHelper(HttpServletRequest request,
 			HttpServletResponse response) {
 
 		return new InplaceMacroHelper(request, toolbarScripts, 
-				componentRepository, riotDaoService);
+				dynamicToolbarScripts, componentRepository, riotDaoService);
 	}
 }

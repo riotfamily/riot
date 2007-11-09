@@ -47,6 +47,8 @@ public class ObjectChooser extends AbstractChooser
 	
 	private String rootProperty;
 	
+	private String rootIdAttribute;
+	
 	private String rootId;
 	
 	private BeanFactory beanFactory;
@@ -68,6 +70,10 @@ public class ObjectChooser extends AbstractChooser
 	
 	public void setRootProperty(String rootProperty) {
 		this.rootProperty = rootProperty;
+	}
+	
+	public void setRootIdAttribute(String rootIdAttribute) {
+		this.rootIdAttribute = rootIdAttribute;
 	}
 	
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
@@ -104,6 +110,9 @@ public class ObjectChooser extends AbstractChooser
 				Object parent = FormUtils.loadParent(getForm());
 				Object root = PropertyUtils.getProperty(parent, rootProperty);
 				rootId = EditorDefinitionUtils.getObjectId(rootListDefinition, root);
+			}
+			else if (rootIdAttribute != null) {
+				rootId = (String) getForm().getAttribute(rootIdAttribute);
 			}
 		}
 		else {

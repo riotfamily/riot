@@ -23,7 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.view;
 
-import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,18 +47,22 @@ public class InplaceMacroHelper {
 
 	private HttpServletRequest request;
 
-	private Collection toolbarScripts;
+	private List toolbarScripts;
 
+	private List dynamicToolbarScripts;
+	
 	private ComponentRepository componentRepository;
 	
 	private RiotDaoService riotDaoService;
 
 	public InplaceMacroHelper(HttpServletRequest request,
-			Collection toolbarScripts, ComponentRepository repository,
+			List toolbarScripts, List dynamicToolbarScripts, 
+			ComponentRepository repository,
 			RiotDaoService riotDaoService) {
 
 		this.request = request;
 		this.toolbarScripts = toolbarScripts;
+		this.dynamicToolbarScripts = dynamicToolbarScripts;
 		this.componentRepository = repository;
 		this.riotDaoService = riotDaoService;
 	}
@@ -66,10 +71,23 @@ public class InplaceMacroHelper {
 		return EditModeUtils.isEditMode(request);
 	}
 
-	public Collection getToolbarScripts() {
+	public List getToolbarScripts() {
 		return this.toolbarScripts;
 	}
 
+	public String getInitScript() {
+		StringBuffer sb = new StringBuffer();
+		Iterator it = dynamicToolbarScripts.iterator();
+		while (it.hasNext()) {
+			DynamicToolbarScript script = (DynamicToolbarScript) it.next();
+			String js = script.generateJavaScript(request);
+			if (js != null) {
+				sb.append(js).append('\n');
+			}
+		}
+		return sb.toString();
+	}
+	
 	public String getFormUrl(String formId, Long containerId) {
 		return componentRepository.getFormUrl(formId, containerId);
 	}

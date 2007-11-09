@@ -371,7 +371,6 @@ riot.EntityList.prototype = {
 
 }
 
-
 riot.Component = Class.create();
 riot.Component.prototype = {
 
@@ -454,7 +453,7 @@ riot.Component.prototype = {
 	
 	editProperties: function() {
 		var path = location.pathname.substring(riot.contextPath.length);
-		var formUrl = riot.path + this.form + '?path=' + path;
+		var formUrl = riot.path + this.form + '?' + $H(riotComponentFormParams).toQueryString();
 		
 		if (riot.instantPublish) {
 			formUrl += '&live=true';

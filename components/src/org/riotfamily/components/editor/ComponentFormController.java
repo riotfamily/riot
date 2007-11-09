@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.editor;
 
+import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,8 +45,6 @@ import org.springframework.web.bind.ServletRequestUtils;
  */
 public class ComponentFormController extends AbstractComponentFormController {
 
-	public static final String BASE_PATH_ATTRIBUTE = "basePath";
-	
 	private ComponentDao componentDao;
 
 	private ComponentRepository componentRepository;
@@ -63,7 +62,11 @@ public class ComponentFormController extends AbstractComponentFormController {
 	
 	protected void initForm(Form form, HttpServletRequest request) {
 		super.initForm(form, request);
-		form.setAttribute(BASE_PATH_ATTRIBUTE, request.getParameter("path"));
+		Enumeration names = request.getParameterNames();
+		while (names.hasMoreElements()) {
+			String name = (String) names.nextElement();
+			form.setAttribute(name, request.getParameter(name));
+		}
 	}
 
 	protected ComponentVersion getVersion(HttpServletRequest request) {

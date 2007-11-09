@@ -43,7 +43,7 @@ import org.springframework.web.servlet.mvc.Controller;
 
 public class PageChooserController implements Controller {
 
-	public static final String BASE_PATH_PARAM = "basePath";
+	public static final String PAGE_ID_PARAM = "pageId";
 	
 	private PageDao pageDao;
 
@@ -61,31 +61,23 @@ public class PageChooserController implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		List sites = pageDao.listSites();
 		Site selectedSite = null;
-		
 		Long siteId = ServletRequestUtils.getLongParameter(request, "site");
 		if (siteId != null) {
 			selectedSite = pageDao.loadSite(siteId);
 		}
-				
-		String path = request.getParameter(BASE_PATH_PARAM);
-		if (path != null) {
-			String host = request.getServerName();
+		
+		String path = null;
+		Page currentPage = null;
+		Long pageId = ServletRequestUtils.getLongParameter(request, "pageId");
+		if (pageId != null) {
+			currentPage = pageDao.loadPage(pageId);
+			path = currentPage.getPath();
 			if (selectedSite == null) {
-				Iterator it = sites.iterator();
-				while (it.hasNext()) {
-					Site site = (Site) it.next();
-					if (site.matches(host, path)) {
-						selectedSite = site;
-						path = site.stripPrefix(path);
-						break;
-					}
-				}
+				selectedSite = currentPage.getSite();
 			}
 		}
-		
-		if (selectedSite == null) {
+		else if (selectedSite == null) {
 			selectedSite = pageDao.getDefaultSite();
 		}
 		

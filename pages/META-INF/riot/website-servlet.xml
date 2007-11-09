@@ -50,6 +50,10 @@
 	<override:add ref="inplaceMacroHelper" property="toolbarScripts" append="true">
 		<value>tiny_mce/page-chooser.js</value>
 	</override:add>
+	
+	<override:add ref="inplaceMacroHelper" property="dynamicToolbarScripts" append="true">
+		<bean class="org.riotfamily.pages.view.PageToolbarScript" />
+	</override:add>
 
 	<bean id="currentPage" class="org.riotfamily.pages.view.CurrentPageMacroHelperFactory">
 		<constructor-arg ref="pageDao" />
