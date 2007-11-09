@@ -24,7 +24,7 @@
 					</div>
 				<#else>
 					<label for="${element.id}">
-						${element.label}
+						${element.label}<#if element.required>* </#if>
 						<#if element.hint?exists>
 							<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')"></span>
 						</#if>
