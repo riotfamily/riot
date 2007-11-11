@@ -577,6 +577,32 @@ public final class FormatUtils {
 	}
 
 	/**
+	 * Translates the given path into application/x-www-form-urlencoded
+	 * format using UTF-8 as encoding scheme. This method differs from
+	 * {@link #uriEscape(String)}} that path component separators (/) are
+	 * not encoded.
+	 * 
+	 * @see #uriEscape(String)
+	 */
+	public static String uriEscapePath(String input) {
+		StringBuffer result = new StringBuffer();
+		
+		int p = 0;
+		int q = input.indexOf('/');
+		
+		while (q >= 0) {
+			result.append(uriEscape(input.substring(p, q)));
+			p = q + 1;
+			result.append('/');
+			
+			q = input.indexOf('/', p);
+		}
+		
+		result.append(uriEscape(input.substring(p, input.length())));
+		return result.toString();
+	}
+
+	/**
 	 * Decodes the given application/x-www-form-urlencoded string using
 	 * UTF-8 as encoding scheme.
 	 */

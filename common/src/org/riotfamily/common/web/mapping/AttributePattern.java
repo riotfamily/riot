@@ -50,6 +50,8 @@ public class AttributePattern {
 
 	private static final Pattern DOUBLE_STAR_PATTERN =
 			Pattern.compile("\\\\\\*\\\\\\*");
+	
+	private static final String STAR = "*";
 
 	private String attributePattern;
 	
@@ -156,7 +158,11 @@ public class AttributePattern {
 				return null;
 			}
 			String replacement = StringUtils.replace(value.toString(), "$", "\\$");
-			m.appendReplacement(url, FormatUtils.uriEscape(replacement));
+			if (STAR.equals(m.group(2))) {
+				m.appendReplacement(url, FormatUtils.uriEscapePath(replacement));
+			} else {
+				m.appendReplacement(url, FormatUtils.uriEscape(replacement));
+			}
 		}
 		m.appendTail(url);
 		return url.toString();
@@ -166,9 +172,16 @@ public class AttributePattern {
 		Assert.state(getNumberOfWildcards() == 1, 
 				"Pattern must contain exactly one wildcard.");
 		
-		String replacement = StringUtils.replace(value.toString(), "$", "\\$");
-		replacement = FormatUtils.uriEscape(replacement);
 		Matcher m = ATTRIBUTE_NAME_PATTERN.matcher(attributePattern);
+		String replacement = StringUtils.replace(value.toString(), "$", "\\$");
+		
+		m.find();
+		if (STAR.equals(m.group(2))) {
+			replacement = FormatUtils.uriEscapePath(replacement);
+		} else {
+			replacement = FormatUtils.uriEscape(replacement);
+		}
+		
 		return m.replaceFirst(replacement);
 	}
 	
