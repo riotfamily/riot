@@ -174,8 +174,10 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 			config.setObjectWrapper(objectWrapper);
 		}
 		
-		config.setAllSharedVariables(
-				new SimpleHash(sharedVariables, objectWrapper));
+		if (sharedVariables != null) {
+			config.setAllSharedVariables(
+					new SimpleHash(sharedVariables, objectWrapper));
+		}
 		
 		if (useTemplateCache) {
 			config.setTemplateUpdateDelay(templateUpdateDelay);
