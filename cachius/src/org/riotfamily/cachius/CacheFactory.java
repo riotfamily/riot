@@ -118,7 +118,7 @@ public class CacheFactory {
                  ObjectOutputStream out = new ObjectOutputStream(
                          new FileOutputStream(f));
 
-                 out.writeObject(this);
+                 out.writeObject(cache);
                  out.close();
                  log.info("Cache state saved in " + f);
             }
