@@ -24,6 +24,7 @@
 package org.riotfamily.riot.form.element;
 
 import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.select.AbstractChooser;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.editor.EditorDefinition;
@@ -59,19 +60,56 @@ public class ObjectChooser extends AbstractChooser
 	
 	private EditorDefinition targetEditorDefinition;
 	
-	
+	/**
+	 * Sets the id of an editor that will be used to list the target objects.
+	 * If the specified editor is nested within another list, Riot will display
+	 * the root list and let the user descend down to the target list.
+	 */
 	public void setTargetEditorId(String targetEditorId) {
 		this.targetEditorId = targetEditorId;
 	}
 
+	/**
+	 * Sets the id of the list that that is initially displayed. When you 
+	 * specify a nested {@link #setTargetEditorId(String) target editor}, the
+	 * choosing process will start with the root list.
+	 * <p>
+	 * This property allows you to select another list as starting point. 
+	 * Since any non-root list will require a parent id, you have to specify a 
+	 * {@link #setRootProperty(String) root property} or a 
+	 * {@link #setRootIdAttribute(String) root id attribute}.
+	 */
 	public void setRootEditorId(String rootEditorId) {
 		this.rootEditorId = rootEditorId;
 	}
 	
+	/**
+	 * Sets the name of a property on the <b>parent</b> object that refers to 
+	 * the parent object of the {@link #setRootEditorId(String) root list}.
+	 * <p>
+	 * <b>Example:</b> Lets say we had three classes (Foo, Bar, Baz) and the Riot navigation 
+	 * path looked like this: 
+	 * <pre> 
+	 * Foo: foo1 | Bar: bar1 | Baz: new
+	 * </pre>
+	 * The Baz class has a property "otherBaz" and we want to configure a 
+	 * chooser that lets the user select another Baz object with the same 
+	 * parent (<code>foo1</code>). The configuration would look like this: 
+	 * <pre>
+	 * &lt;riot:chooser bind="otherBaz" rootEditorId="bars" rootProperty="foo" /&gt;
+	 * </pre>
+	 * This instructs Riot to invoke the <code>getFoo()</code> method on the
+	 * <code>bar1</code> object and use the returned value (<code>foo1</code>)
+	 * as parent for the "bars" list.
+	 */
 	public void setRootProperty(String rootProperty) {
 		this.rootProperty = rootProperty;
 	}
 	
+	/**
+	 * Sets the name of a {@link Form#getAttribute(String) form attribute} that
+	 * contains the String which should be used as parentId for the root list. 
+	 */
 	public void setRootIdAttribute(String rootIdAttribute) {
 		this.rootIdAttribute = rootIdAttribute;
 	}
