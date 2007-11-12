@@ -1,82 +1,3 @@
-
-
-if (document.importNode && !(/Konqueror|Safari|KHTML/.test(navigator.userAgent))) {
-	function importNode(node, deep) {
-		return document.importNode(node, deep);
-	}
-}
-else {
-	importNode = function (node, deep) {
-		var target = null;		
-		var root = node;
-		while (node != null) {
-			
-			// Skip script and noscript tags ...
-			var skipNode = node.nodeName.toLowerCase().indexOf('script') != -1;
-			
-			if (!skipNode) {	
-				var importedNode = importSingleNode(node);
-				if (target == null) {
-					target = importedNode;
-				}			
-				else {
-					target.appendChild(importedNode);
-				}
-			}
-						
-			if (deep && !skipNode && node.hasChildNodes()) {						
-				target = importedNode;				
-				node = node.firstChild;
-			}									
-			else if (node != root) {
-				// go up until we find a node with a nextSibling ...
-				while (node.nextSibling == null && node.parentNode != root) {
-					target = target.parentNode;
-					node = node.parentNode;
-				}
-				node = node.nextSibling;
-			}
-			else {
-				// We've reached the root element - exit the loop ...
-				node = null;
-			}				
-		}
-		return target;
-	}
-	
-	function importSingleNode(node) {
-		var clone;	
-		if (node.nodeType == 1) {
-			clone = document.createElement(node.nodeName);
-			for (var i = 0; i < node.attributes.length; i++) {
-	            var attr = node.attributes[i];
-	            if (attr.nodeValue != null && attr.nodeValue != '') {                    
-	                if (attr.name == 'class') {
-	                    clone.className = attr.nodeValue;
-	                }
-	                else if (attr.name == 'style') {
-	                	if (typeof clone.style != 'undefined') {
-		                    clone.style.cssText = attr.nodeValue;
-		                }
-	                }
-	                else if (attr.name.indexOf('on') == 0) {
-	                	eval('clone.' + attr.name + ' = function() {'
-	                		+	attr.nodeValue + '}');
-	                }
-	                else  {               
-	                	clone.setAttribute(attr.name, attr.nodeValue);                	
-	                }
-	            }
-	        }
-		} 
-		else if (node.nodeType == 3) {
-			clone = document.createTextNode(node.nodeValue);
-		}
-		return clone;
-	}
-	
-}
-
 function ChangeEvent(source) {
 	this.type = 'change';
 	this.srcElement = source;
@@ -164,48 +85,46 @@ function submitElement(id, clickedButton) {
 }
 
 function processAjaxResponse(transport) {
-	var doc = transport.responseXML.documentElement;
-	var e = doc.firstChild;
-	while (e) {
-		try {
-			if (e.nodeName == 'remove') {
-				getRef(e).remove();
-			}
-			else if (e.nodeName == 'insert') {
-				getRef(e).appendChild(importNode(getFirstChildElement(e), true));
-			}
-			else if (e.nodeName == 'replace') {
-				var ref = getRef(e);
-				var newNode = importNode(getFirstChildElement(e), true);
-				ref.parentNode.replaceChild(newNode, ref);
-			}
-			else if (e.nodeName == 'error') {						
-				setValid(getRef(e), parseInt(e.getAttribute('valid')));
-				var newEl = importNode(getFirstChildElement(e), true);				
-				var oldEl = $(newEl.id);
-				if (oldEl) oldEl.parentNode.replaceChild(newEl, oldEl);								
-			}
-			else if (e.nodeName == 'focus') {		
-				focusElement(getRef(e));
-			}
-			else if (e.nodeName == 'enable') {				
-				setEnabled(getRef(e), parseInt(e.getAttribute('state')));
-			}
-			else if (e.nodeName == 'propagate') {
-				propagate(e.getAttribute('ref'), e.getAttribute('type'));
-			}
-			else if (e.nodeName == 'refresh') {
-				var ev = new ChangeEvent(getRef(e));
-				setTimeout(function() { submitEvent(ev) }, '1000');
-			}
-			else if (e.nodeName == 'eval') {
-				if (e.firstChild) eval(e.firstChild.nodeValue);
-			}		
+	transport.responseJSON.each(performAction);
+}
+
+function performAction(action) {
+	try {
+		if (action.command == 'remove') {
+			$(action.element).remove();
 		}
-		catch (err) {
-			alert(err);
+		else if (action.command == 'insert') {
+			$(action.element).insert(action.value);
 		}
-		e = e.nextSibling;
+		else if (action.command == 'replace') {
+			$(action.element).replace(action.value);
+		}
+		else if (action.command == 'error') {						
+			var errors = $(action.element + '-error');
+			if (errors) errors.replace(action.value);								
+		}
+		else if (action.command == 'valid') {						
+			setValid($(action.element), action.value == 'true');
+		}
+		else if (action.command == 'focus') {		
+			focusElement($(action.element));
+		}
+		else if (action.command == 'enable') {				
+			setEnabled($(action.element), action.value == 'true');
+		}
+		else if (action.command == 'propagate') {
+			propagate(action.element, action.value);
+		}
+		else if (action.command == 'refresh') {
+			var ev = new ChangeEvent($(action.element));
+			setTimeout(function() { submitEvent(ev) }, '1000');
+		}
+		else if (action.command == 'eval') {
+			eval(action.value);
+		}		
+	}
+	catch (err) {
+		alert(err);
 	}
 }
 
@@ -215,10 +134,6 @@ function focusElement(e) {
 		return true;
 	}
 	return e.immediateDescendants().any(focusElement);
-}
-
-function getRef(e) {
-	return $(e.getAttribute('ref'));
 }
 
 function setValid(e, valid) {

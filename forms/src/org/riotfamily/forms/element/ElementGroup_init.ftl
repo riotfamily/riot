@@ -17,6 +17,8 @@
 			if (e) e.focus(); else this.blur();
 		}
 	}.bind(button));
-	var e = $('${element.id}-elements').down('input');
-	if (e) e.focus();
+	<#if !element.expanded>
+		var e = $('${element.id}-elements').down('input');
+		if (e) e.focus();
+	</#if>
 })();

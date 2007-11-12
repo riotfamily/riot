@@ -1,0 +1,188 @@
+/* Reset */
+.riotSkin table, .riotSkin tbody, .riotSkin a, .riotSkin img, .riotSkin tr, .riotSkin div, .riotSkin td, .riotSkin iframe, .riotSkin span, .riotSkin * {border:0; margin:0; padding:0; background:transparent; white-space:nowrap; text-decoration:none; font-weight:normal; cursor:default; color:#000}
+
+/* Containers */
+.riotSkin {position:relative}
+.riotSkin table {background:#fff}
+.riotSkin iframe {display:block; background:#FFF}
+.riotSkin .mceToolbar {padding: 3px 0}
+.riotSkin .left {text-align:left}
+.riotSkin .right {text-align:right}
+
+/* External */
+.riotSkin .mceExternalToolbar {position:absolute; border:1px solid #E0E0E0; border-bottom:0; display:none}
+.riotSkin .mceExternalClose {position:absolute; top:3px; right:3px; width:7px; height:7px; background:url(../../img/icons.gif) -820px 0}
+
+/* Layout */
+.riotSkin table.mceLayout {border-left:1px solid #E0E0E0; border-right:1px solid #E0E0E0}
+.riotSkin table.mceLayout tr.first td {border-top:1px solid #E0E0E0}
+.riotSkin table.mceLayout tr.last td {border-bottom:1px solid #E0E0E0}
+.riotSkin table.mceToolbar, .riotSkin tr.first .mceToolbar tr td, .riotSkin tr.last .mceToolbar tr td {border:0; margin:0; padding:0}
+.riotSkin .mceIframeContainer {border-top:1px solid #E0E0E0; border-bottom:1px solid #E0E0E0}
+.riotSkin .mceStatusbar {position:relative; font-family:'MS Sans Serif',sans-serif,Verdana,Arial; font-size:9pt; line-height:16px; overflow:visible; padding:2px; color:#000; display:block}
+.riotSkin .mceStatusbar a.resize {display:block; position:absolute; top:0; right:0; background:url(../../img/icons.gif) -800px 0; width:20px; height:20px}
+.riotSkin .mceStatusbar a:hover {text-decoration:underline}
+.riotSkin table.mceToolbar {margin-left:3px}
+.riotSkin span.icon, .riotSkin img.icon {display:block; width:20px; height:20px}
+.riotSkin .icon {background:#cb0038 url(img/icons.gif) no-repeat 20px 20px}
+.riotSkin .mceToolbar .mceButton, .riotSkin .mceToolbar span.icon  {padding:0}
+/* Button */
+.riotSkin .mceButton {display:block; border:1px solid #fff; width:20px; height:20px; margin-right:1px;}
+.riotSkin a.mceButtonEnabled:hover {border:1px solid #3d3d3d}
+.riotSkin a.mceButtonActive {border:1px solid #0A246A; background-color:#3d3d3d}
+.riotSkin .mceButtonDisabled span {opacity:0.3; filter:alpha(opacity=30)}
+
+/* Separator */
+.riotSkin .mceSeparator {display:block; background:url(../../img/icons.gif) -180px 0; width:2px; height:20px; margin:0 2px 0 4px}
+
+/* ListBox */
+.riotSkin .mceListBox, .riotSkin .mceListBox a {display:block}
+.riotSkin .mceListBox .text {padding-left:4px; width:70px; text-align:left; border:1px solid #E0E0E0; border-right:0; background:#FFF; font-family:Tahoma,Verdana,Arial,Helvetica; font-size:11px; height:20px; line-height:20px; overflow:hidden}
+.riotSkin .mceListBox .open {width:9px; height:20px; background:url(../../img/icons.gif) -741px 0; margin-right:2px; border:1px solid #E0E0E0;}
+.riotSkin table.mceListBoxEnabled:hover .text, .riotSkin .mceListBoxHover .text, .riotSkin .mceListBoxSelected .text {border:1px solid #3d3d3d; border-right:0; background:#FFF}
+.riotSkin table.mceListBoxEnabled:hover .open, .riotSkin .mceListBoxHover .open, .riotSkin .mceListBoxSelected .open {background-color:#FFF; border:1px solid #3d3d3d}
+.riotSkin .mceListBoxDisabled a.text {color:gray; background-color:transparent;}
+.riotSkin .mceListBoxMenu {overflow:auto; overflow-x:hidden}
+.riotSkin .mceOldBoxModel .mceListBox .text {height:22px}
+.riotSkin .mceOldBoxModel .mceListBox .open {width:11px; height:22px;}
+.riotSkin select.mceNativeListBox {font-family:'MS Sans Serif',sans-serif,Verdana,Arial; font-size:7pt; background:#F0F0EE; border:1px solid gray; margin-right:2px;}
+
+/* SplitButton */
+.riotSkin .mceSplitButton {width:32px}
+.riotSkin .mceSplitButton, .riotSkin .mceSplitButton a, .riotSkin .mceSplitButton span {display:block; height:20px}
+.riotSkin .mceSplitButton a.action {width:20px; border:1px solid #F0F0EE; border-right:0;}
+.riotSkin .mceSplitButton span.action {width:20px; background:url(../../img/icons.gif) 20px 20px;}
+.riotSkin .mceSplitButton a.open {width:9px; border:1px solid #F0F0EE;}
+.riotSkin .mceSplitButton span.open {width:9px; background:url(../../img/icons.gif) -741px 0;}
+.riotSkin table.mceSplitButtonEnabled:hover a.action, .riotSkin .mceSplitButtonHover a.action, .riotSkin .mceSplitButtonSelected a.action {border:1px solid #0A246A; border-right:0; background-color:#B2BBD0}
+.riotSkin table.mceSplitButtonEnabled:hover a.open, .riotSkin .mceSplitButtonHover a.open, .riotSkin .mceSplitButtonSelected a.open {border:1px solid #0A246A;}
+.riotSkin table.mceSplitButtonEnabled:hover span.open, .riotSkin .mceSplitButtonHover span.open, .riotSkin .mceSplitButtonSelected span.open {background-color:#B2BBD0}
+.riotSkin .mceSplitButtonDisabled span.action, .riotSkin .mceSplitButtonDisabled span.open {opacity:0.3; filter:alpha(opacity=30)}
+.riotSkin .mceSplitButtonActive a.action {border:1px solid #0A246A; border-right:0; background-color:#3d3d3d}
+.riotSkin .mceSplitButtonActive a.open {border:1px solid #0A246A;}
+.riotSkin .mceSplitButtonActive span.open {background-color:#3d3d3d}
+.riotSkin .mceSplitButtonMenu {display:none; position:absolute}
+
+/* ColorSplitButton */
+.riotSkin div.mceColorSplitMenu table {background:#FFF; border:1px solid gray}
+.riotSkin .mceColorSplitMenu td {padding:2px}
+.riotSkin .mceColorSplitMenu a {display:block; width:9px; height:9px; overflow:hidden; border:1px solid #808080}
+.riotSkin .mceColorSplitMenu td.morecolors {padding:1px 3px 1px 1px}
+.riotSkin .mceColorSplitMenu a.morecolors {width:100%; height:auto; text-align:center; font-family:Tahoma,Verdana,Arial,Helvetica; font-size:11px; line-height:20px; border:1px solid #FFF}
+.riotSkin .mceColorSplitMenu a.morecolors:hover {border:1px solid #0A246A; background-color:#B6BDD2}
+.riotSkin a.mceMoreColors:hover {border:1px solid #0A246A}
+.riotSkin .mceColorPreview {position:absolute; top:15px; left:2px; width:16px; height:4px; overflow:hidden}
+
+/* Menu */
+.riotSkin .mceMenu {position:absolute; left:0; top:0; z-index:1000; border:1px solid #D4D0C8}
+.riotSkin .noIcons span.icon {display:none;}
+.riotSkin .noIcons a .text {padding-left:10px}
+.riotSkin .mceMenu table {background:#FFF}
+.riotSkin .mceMenu a, .riotSkin .mceMenu span, .riotSkin .mceMenu {display:block}
+.riotSkin .mceMenu td {height:20px}
+.riotSkin .mceMenu a {position:relative;padding:3px 0 4px 0}
+.riotSkin .mceMenu .text {position:relative; display:block; font-family:Tahoma,Verdana,Arial,Helvetica; color:#000; cursor:default; margin:0; padding:0 25px 0 25px; display:block}
+.riotSkin .mceMenu span.text, .riotSkin .mceMenu .preview {font-size:11px}
+.riotSkin .mceMenu pre.text {font-family:Monospace}
+.riotSkin .mceMenu .icon {position:absolute; top:0; left:0; width:22px;}
+.riotSkin .mceMenu .mceMenuItemEnabled a:hover, .riotSkin .mceMenu .mceMenuItemActive {background-color:#dbecf3}
+.riotSkin td.mceMenuItemSeparator {background:#DDD; height:1px}
+.riotSkin .mceMenuItemTitle a {border:0; background:#EEE; border-bottom:1px solid #DDD}
+.riotSkin .mceMenuItemTitle span.text {color:#000; font-weight:bold; padding-left:4px}
+.riotSkin .mceMenuItemDisabled .text {color:#888}
+.riotSkin .mceMenuItemSelected .icon {background:url(img/menu_check.gif)}
+.riotSkin .noIcons .mceMenuItemSelected a {background:url(img/menu_arrow.gif) no-repeat -6px center}
+.riotSkin .mceMenu span.mceMenuLine {display:none}
+.riotSkin .mceMenuItemSub a {background:url(img/menu_arrow.gif) no-repeat top right;}
+
+/* Progress,Resize */
+.riotSkin .mceBlocker {position:absolute; left:0; top:0; z-index:1000; opacity:0.3; filter:alpha(opacity=30); background:#FFF}
+.riotSkin .mceProgress {position:absolute; left:0; top:0; z-index:1001; background:url(img/progress.gif) no-repeat; width:32px; height:32px; margin:-16px 0 0 -16px}
+.riotSkin .mcePlaceHolder {border:1px dotted gray}
+
+/* Theme */
+.riotSkin span.bold {background-position:0 0}
+.riotSkin span.italic {background-position:-20px 0}
+.riotSkin span.underline {background-position:-40px 0}
+.riotSkin span.strikethrough {background-position:-60px 0}
+.riotSkin span.undo {background-position:-520px 0}
+.riotSkin span.redo {background-position:-540px 0}
+.riotSkin span.cleanup {background-position:-600px 0}
+.riotSkin span.bullist {background-position:-180px 0}
+.riotSkin span.numlist {background-position:-200px 0}
+.riotSkin span.justifyleft {background-position:-380px 0}
+.riotSkin span.justifyright {background-position:-440px 0}
+.riotSkin span.justifycenter {background-position:-400px 0}
+.riotSkin span.justifyfull {background-position:-420px 0}
+.riotSkin span.anchor {background-position:-300px 0}
+.riotSkin span.indent {background-position:-220px 0}
+.riotSkin span.outdent {background-position:-240px 0}
+.riotSkin span.link {background-position:-260px 0}
+.riotSkin span.unlink {background-position:-280px 0}
+.riotSkin span.sub {background-position:-100px 0}
+.riotSkin span.sup {background-position:-80px 0}
+.riotSkin span.removeformat {background-position:-160px 0}
+.riotSkin span.image {background-position:-320px 0}
+.riotSkin span.code {background-position:-580px 0}
+.riotSkin span.hr {background-position:-340px 0}
+.riotSkin span.visualaid {background-position:-360px 0}
+.riotSkin span.charmap {background-position:-560px 0}
+.riotSkin span.paste {background-position:-500px 0}
+.riotSkin span.copy {background-position:-480px 0}
+.riotSkin span.cut {background-position:-460px 0}
+.riotSkin span.blockquote {background-position:-620px 0}
+.riotSkin .forecolor span.action {background-position:-120px 0}
+.riotSkin .backcolor span.action {background-position:-140px 0}
+
+/* Plugins */
+.riotSkin span.advhr {background-position:-0px -20px}
+.riotSkin span.ltr {background-position:-20px -20px}
+.riotSkin span.rtl {background-position:-40px -20px}
+.riotSkin span.emotions {background-position:-60px -20px}
+.riotSkin span.fullpage {background-position:-80px -20px}
+.riotSkin span.fullscreen {background-position:-100px -20px}
+.riotSkin span.iespell {background-position:-120px -20px}
+.riotSkin span.insertdate {background-position:-140px -20px}
+.riotSkin span.inserttime {background-position:-160px -20px}
+.riotSkin span.absolute {background-position:-180px -20px}
+.riotSkin span.backward {background-position:-200px -20px}
+.riotSkin span.forward {background-position:-220px -20px}
+.riotSkin span.insert_layer {background-position:-240px -20px}
+.riotSkin span.insertlayer {background-position:-260px -20px}
+.riotSkin span.movebackward {background-position:-280px -20px}
+.riotSkin span.moveforward {background-position:-300px -20px}
+.riotSkin span.media {background-position:-320px -20px}
+.riotSkin span.nonbreaking {background-position:-340px -20px}
+.riotSkin span.pastetext {background-position:-360px -20px}
+.riotSkin span.pasteword {background-position:-380px -20px}
+.riotSkin span.selectall {background-position:-400px -20px}
+.riotSkin span.preview {background-position:-420px -20px}
+.riotSkin span.print {background-position:-440px -20px}
+.riotSkin span.cancel {background-position:-460px -20px}
+.riotSkin span.save {background-position:-480px -20px}
+.riotSkin span.replace {background-position:-500px -20px}
+.riotSkin span.search {background-position:-520px -20px}
+.riotSkin span.styleprops {background-position:-560px -20px}
+.riotSkin span.table {background-position:-580px -20px}
+.riotSkin span.cell_props {background-position:-600px -20px}
+.riotSkin span.delete_table {background-position:-620px -20px}
+.riotSkin span.delete_col {background-position:-640px -20px}
+.riotSkin span.delete_row {background-position:-660px -20px}
+.riotSkin span.col_after {background-position:-680px -20px}
+.riotSkin span.col_before {background-position:-700px -20px}
+.riotSkin span.row_after {background-position:-720px -20px}
+.riotSkin span.row_before {background-position:-740px -20px}
+.riotSkin span.merge_cells {background-position:-760px -20px}
+.riotSkin span.table_props {background-position:-980px -20px}
+.riotSkin span.row_props {background-position:-780px -20px}
+.riotSkin span.split_cells {background-position:-800px -20px}
+.riotSkin span.template {background-position:-820px -20px}
+.riotSkin span.visualchars {background-position:-840px -20px}
+.riotSkin span.abbr {background-position:-860px -20px}
+.riotSkin span.acronym {background-position:-880px -20px}
+.riotSkin span.attribs {background-position:-900px -20px}
+.riotSkin span.cite {background-position:-920px -20px}
+.riotSkin span.del {background-position:-940px -20px}
+.riotSkin span.ins {background-position:-960px -20px}
+.riotSkin span.pagebreak {background-position:0 -40px}
+.riotSkin .spellchecker span.action {background-position:-540px -20px}

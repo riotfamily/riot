@@ -84,7 +84,7 @@
 	  - using the resource.mapper (which defaults to the identity mapper).
 	  -->
 	<target name="-overlay" if="overlay">
-		<copy todir="${jar.package.dir}">
+		<copy todir="${jar.package.dir}" overwrite="true">
 			<fileset dir="${overlay.dir}" />
 			<mapper refid="resource.mapper" />
 		</copy>

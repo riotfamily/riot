@@ -24,7 +24,6 @@
 package org.riotfamily.forms.element;
 
 import java.io.PrintWriter;
-import java.net.URL;
 
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
@@ -62,19 +61,11 @@ public class TinyMCE extends AbstractTextElement
 	}
 
 	public FormResource getResource() {
-		return new ScriptResource("tiny_mce/strict_mode_fix.js", "tinyMCE.addControl",
-				new ScriptResource("tiny_mce/tiny_mce_src.js", "tinyMCE"));
+		return new ScriptResource("tiny_mce/tiny_mce_src.js", "tinymce.WindowManager");
 	}
 
 	public String getLanguage() {
-		String lang = getFormContext().getLocale().getLanguage().toLowerCase();
-		URL languageScript = getClass().getResource(
-				"/org/riotfamily/resources/tiny_mce/langs/"	+ lang + ".js");
-
-		if (languageScript == null) {
-			lang = "en";
-		}
-		return lang;
+		return getFormContext().getLocale().getLanguage().toLowerCase();
 	}
 
 	public String getInitScript() {

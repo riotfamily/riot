@@ -243,7 +243,7 @@ var RElement = {
     leftPos: function(el) {
     	var left;
     	if (Prototype.Browser.IE) {
-        	left = el.getBoundingClientRect().left - 2 + Viewport.getScrollLeft();
+        	left = el.getBoundingClientRect().left - 2 + document.viewport.getScrollOffsets().left;
       	}
       	else {
     		left = el.offsetLeft;
@@ -270,7 +270,7 @@ var RElement = {
 	topPos: function(el) {
 		var top;
     	if (Prototype.Browser.IE) {
-        	top = el.getBoundingClientRect().top - 2 + Viewport.getScrollTop();
+        	top = el.getBoundingClientRect().top - 2 + document.viewport.getScrollOffsets().top;
       	}
       	else {
     		top = el.offsetTop;
@@ -297,10 +297,10 @@ var RElement = {
 
 Element.addMethods(RElement);
 if (Prototype.Browser.IE) {
-	// Reset the _extended flag, inn case $() was already invoked before this point
+	// Reset the _extendedByPrototype flag, inn case $() was already invoked before this point
 	for (var i = 0, len = document.all.length; i < len; i++) {
 		var el = document.all[i];
-		if (el._extended) el._extended = false;
+		if (el._extendedByPrototype) el._extendedByPrototype = false;
 	}
 }
 

@@ -22,7 +22,7 @@
 		<script type="text/javascript" language="JavaScript">
 			updatePath('${editorId}', '${objectId?if_exists}', '${parentId?if_exists}');
 			function save() {
-				$$('input.button-save').first().click();
+				$('form').down('form').submit();
 			}
 		</script>
 	</head>

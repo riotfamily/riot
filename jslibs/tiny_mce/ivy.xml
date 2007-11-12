@@ -2,8 +2,8 @@
     <info
     	organisation="riotfamily"
     	module="tinymce-js"
-    	revision="2.1.1.1.1"
-    	status="release">
+    	revision="3.0-dev-a2.3"
+    	status="integration">
 
     	<license name="LGPL" url="http://www.gnu.org/licenses/lgpl.html" />
     	<description homepage="http://tinymce.moxiecode.com/">

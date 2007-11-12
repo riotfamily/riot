@@ -4,12 +4,12 @@ riot.stopEvent = function(ev) {
 }
 
 riot.outline = {
-	elements: $H({
+	elements: {
 		top: RBuilder.node('div', {className: 'riot-highlight riot-highlight-top'}).hide().appendTo(document.body),
 		right: RBuilder.node('div', {className: 'riot-highlight riot-highlight-right'}).hide().appendTo(document.body),
 		bottom: RBuilder.node('div', {className: 'riot-highlight riot-highlight-bottom'}).hide().appendTo(document.body),
 		left: RBuilder.node('div', {className: 'riot-highlight riot-highlight-left'}).hide().appendTo(document.body)
-	}),
+	},
 	
 	show: function(el, onclick, excludes) {
 		if (!window.riot || riot.outline.suspended) return;
@@ -28,12 +28,12 @@ riot.outline = {
 		riot.outline.elements.bottom.copyPosFrom(el, {setHeight: false, offsetLeft: -1, offsetTop: offsetTop, offsetWidth: 2});
 		riot.outline.elements.right.copyPosFrom(el, {setWidth: false, offsetLeft: el.offsetWidth});
 		
-		riot.outline.elements.values().invoke('show');
+		riot.outline.divs.invoke('show');
 	},
 
 	hide: function(ev) {
 		if (window.riot && riot.outline) { 
-			riot.outline.elements.values().invoke('hide');
+			riot.outline.divs.invoke('hide');
 		}
 	},
 	
@@ -48,10 +48,9 @@ riot.outline = {
 		}
 	}
 }
+riot.outline.divs = $H(riot.outline.elements).values();
 
-riot.InplaceEditor = Class.create();
-riot.InplaceEditor.prototype = {
-
+riot.InplaceEditor = Class.create({
 	initialize: function(element, component, options) {
 		this.element = $(element);
 		this.component = component;
@@ -156,9 +155,9 @@ riot.InplaceEditor.prototype = {
 	onclose: function() {
 		if (this.element.onedit) this.element.onedit();
 	}
-}
+});
 
-riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
+riot.InplaceTextEditor = Class.create(riot.InplaceEditor, {
 
 	oninit: function(options) {
 		this.options = options || {};
@@ -226,8 +225,8 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 		this.updateElement();
 	},
 
-	close: function() {
-		this.SUPER();
+	close: function($super) {
+		$super();
 		this.input.remove();
 		this.lastText = null;
 	},
@@ -275,7 +274,7 @@ riot.InplaceTextEditor = Class.extend(riot.InplaceEditor, {
 });
 
 
-riot.PopupTextEditor = Class.extend(riot.InplaceEditor, {
+riot.PopupTextEditor = Class.create(riot.InplaceEditor, {
 
 	edit: function() {
 		if (!riot.activePopup) {
@@ -283,11 +282,11 @@ riot.PopupTextEditor = Class.extend(riot.InplaceEditor, {
 		}
 	},
 
-	setText: function(text) {
+	setText: function($super, text) {
 		if ((!text || text.length == 0) && this.options.useInnerHtmlAsDefault) {
 			text = this.element.innerHTML;
 		}
-		this.SUPER(text);
+		$super(text);
 	},
 
 	showEditor: function() {
@@ -318,7 +317,7 @@ riot.PopupTextEditor = Class.extend(riot.InplaceEditor, {
 	}
 });
 
-riot.RichtextEditor = Class.extend(riot.PopupTextEditor, {
+riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 	showEditor: function() {
 		Resources.loadScriptSequence([
 			{src: 'tiny_mce/tiny_mce_src.js', test: 'tinyMCE'},
@@ -363,8 +362,7 @@ riot.RichtextEditor = Class.extend(riot.PopupTextEditor, {
 
 });
 
-riot.Popup = Class.create();
-riot.Popup.prototype = {
+riot.Popup = Class.create({
 	initialize: function(title, content, ok, help) {
 		this.ok = ok;
 		this.overlay = RBuilder.node('div', {id: 'riot-overlay', style: {display: 'none'}});
@@ -413,18 +411,20 @@ riot.Popup.prototype = {
 		this.hideElements('object');
 		this.hideElements('embed');
 
-		var top = Math.max(5, Math.round(Viewport.getInnerHeight() / 2 - this.div.clientHeight / 2));
-		var left = Math.round(Viewport.getInnerWidth() / 2 - this.div.clientWidth / 2);
+		var top = Math.max(5, Math.round(document.viewport.getHeight() / 2 - this.div.clientHeight / 2));
+		var left = Math.round(document.viewport.getWidth() / 2 - this.div.clientWidth / 2);
 
 		this.div.hide();
 		this.div.style.position = '';
 		if (this.div.getStyle('position') != 'fixed') {
-			top += Viewport.getScrollTop();
-			left += Viewport.getScrollLeft();
+			var scroll = document.viewport.getScrollOffsets();
+			top += scroll.top;
+			left += scroll.left;
 		}
 		this.div.style.top = top + 'px';
 		this.div.style.left = left + 'px';
-		this.overlay.style.height = Viewport.getPageHeight() + 'px';
+		var h = Math.max(document.viewport.getHeight(), document.body.getHeight());
+		this.overlay.style.height = h + 'px';
 		this.overlay.show();
 		riot.outline.suspended = true;
 		riot.outline.hide();
@@ -455,14 +455,14 @@ riot.Popup.prototype = {
 		}
 	}
 
-}
+});
 
-riot.TextareaPopup = Class.extend(riot.Popup, {
+riot.TextareaPopup = Class.create(riot.Popup, {
 
-	initialize: function(editor) {
+	initialize: function($super, editor) {
 		this.textarea = RBuilder.node('textarea', {value: editor.text || ''}),
-		this.SUPER('${title.editorPopup}', this.textarea, editor.save.bind(editor), editor.help);
-		var availableTextareaHeight = Viewport.getInnerHeight() - 82;
+		$super('${title.editorPopup}', this.textarea, editor.save.bind(editor), editor.help);
+		var availableTextareaHeight = document.viewport.getHeight() - 82;
 		if (availableTextareaHeight < this.textarea.getHeight()) {
 			this.textarea.style.height = availableTextareaHeight + 'px';
 		}
@@ -479,9 +479,9 @@ riot.TextareaPopup = Class.extend(riot.Popup, {
 
 });
 
-riot.TinyMCEPopup = Class.extend(riot.TextareaPopup, {
-	initialize: function(editor) {
-		this.SUPER(editor);
+riot.TinyMCEPopup = Class.create(riot.TextareaPopup, {
+	initialize: function($super, editor) {
+		$super(editor);
 		this.div.addClassName('riot-richtext');
 		if (this.textarea.value == '') {
 			this.textarea.value = '<p>&nbsp;</p>';
@@ -498,10 +498,10 @@ riot.TinyMCEPopup = Class.extend(riot.TextareaPopup, {
 		this.ready = true;
 	},
 
-	close: function() {
+	close: function($super) {
 		tinyMCE.instances = tinyMCE.instances.without(tinyMCE.selectedInstance);
 		tinyMCE.selectedInstance = null;
-		this.SUPER();
+		$super();
 	},
 
 	setText: function(text) {
@@ -696,9 +696,9 @@ riot.initSwfUpload = function(readyCallback) {
 	}
 }
 
-riot.ImageEditor = Class.extend(riot.InplaceEditor, {
-	initialize: function(el, component, options) {
-		this.SUPER(el, component, options);
+riot.ImageEditor = Class.create(riot.InplaceEditor, {
+	initialize: function($super, el, component, options) {
+		$super(el, component, options);
 		this.key = this.element.readAttribute('riot:key');
 		var aw = el.parentNode.offsetWidth;
 		if (this.options.maxWidth == 'auto') this.options.maxWidth = aw;
@@ -764,8 +764,7 @@ var Cropper = {
 	}
 };
 
-Cropper.Pos = Class.create();
-Cropper.Pos.prototype = {
+Cropper.Pos = Class.create({
 	initialize: function(x, y) {
 		this.x = Math.round(x || 0);
 		this.y = Math.round(y || 0);
@@ -804,10 +803,9 @@ Cropper.Pos.prototype = {
 		el.style.width = this.x + 'px';
 		el.style.height = this.y + 'px';
 	}
-}
+});
 
-Cropper.UI = Class.create();
-Cropper.UI.prototype = {
+Cropper.UI = Class.create({
 
 	initialize: function(editor, src) {
 		this.editor = editor;
@@ -1005,5 +1003,5 @@ Cropper.UI.prototype = {
 		img.src = riot.contextPath + path;
 	}
 	
-}
+});
 

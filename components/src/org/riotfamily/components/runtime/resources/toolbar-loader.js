@@ -23,8 +23,6 @@ Resources.loadScriptSequence([
 function loadToolbarScripts() {
 	var scripts = Resources.getRequiredSources([	
 		{src: 'prototype/prototype.js', test: 'Prototype'},
-		{src: 'riot-js/inheritance.js', test: 'Class.extend'},
-		{src: 'riot-js/viewport.js', test: 'Viewport'},
 		{src: 'riot-js/util.js', test: 'RElement'},
 		{src: 'scriptaculous/effects.js', test: 'Effect'},
 		{src: 'toolbar.js'},

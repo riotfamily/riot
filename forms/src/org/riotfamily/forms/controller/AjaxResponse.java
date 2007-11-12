@@ -25,6 +25,7 @@ package org.riotfamily.forms.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -33,11 +34,14 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Element;
+import org.riotfamily.forms.FormContext;
 import org.riotfamily.forms.FormListener;
 import org.riotfamily.forms.event.EventPropagation;
 import org.riotfamily.forms.event.JavaScriptEventAdapter;
@@ -49,7 +53,7 @@ import org.riotfamily.forms.resource.ResourceElement;
 /**
  * FormListener implementation used by the 
  * {@link org.riotfamily.forms.controller.AjaxFormController AjaxFormController} to
- * notify the client of structural changes. It creates an XML document that
+ * notify the client of structural changes. It creates a JSON response that
  * contains the modifications to be performed on the client side DOM.
  */
 public class AjaxResponse implements FormListener {
@@ -68,34 +72,27 @@ public class AjaxResponse implements FormListener {
 	
 	private Element focusedElement;
 	
+	private JSONArray json = new JSONArray();
+	
 	public AjaxResponse(HttpServletResponse response) throws IOException {
-		response.setContentType("text/xml;charset=UTF-8");
+		response.setContentType("application/json;charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
-		setCacheControlHeaders(response);
+		ServletUtils.setNoCacheHeaders(response);
 		this.writer = response.getWriter();
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		
-		writer.println("<!DOCTYPE html " +
-				"PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" " +
-				"\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
-				
-		writer.print("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
 	}
 	
-	protected void setCacheControlHeaders(HttpServletResponse response) {
-		response.setHeader("Pragma", "no-cache");
-		response.setHeader("Expires", "0");
-		response.setHeader("Cache-Control", "no-store");
+	private String renderElement(Element element) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		FormContext context = element.getForm().getFormContext();
+		context.setWriter(pw);
+		element.render(pw);
+		context.setWriter(writer);
+		return sw.toString();
 	}
-		
+	
 	public void elementChanged(Element element) {
-		TagWriter tag = new TagWriter(writer);
-		tag.start("replace");
-		log.debug("Replacing element " + element.getId());
-		tag.attribute("ref", element.getId());
-		tag.body();		
-		element.render(writer);		
-		tag.end();		
+		json.add(new Action("replace", element.getId(), renderElement(element)));
 		validatedElements.add(element);
 	}
 
@@ -104,19 +101,11 @@ public class AjaxResponse implements FormListener {
 	}
 	
 	public void elementRemoved(Element element) {
-		TagWriter tag = new TagWriter(writer);
-		tag.startEmpty("remove");
-		tag.attribute("ref", element.getId());
-		tag.end();
+		json.add(new Action("remove", element.getId()));
 	}
 
 	public void elementAdded(Element element) {
-		TagWriter tag = new TagWriter(writer);
-		tag.start("insert");
-		tag.attribute("ref", element.getParent().getId());
-		tag.body();
-		element.render(writer);
-		tag.end();
+		json.add(new Action("insert", element.getParent().getId(), renderElement(element)));
 	}
 	
 	public void elementFocused(Element element) {
@@ -125,11 +114,7 @@ public class AjaxResponse implements FormListener {
 	}
 	
 	public void elementEnabled(Element element) {
-		TagWriter tag = new TagWriter(writer);
-		tag.startEmpty("enable");
-		tag.attribute("ref", element.getId());
-		tag.attribute("state", element.isEnabled() ? 1 : 0);
-		tag.end();
+		json.add(new Action("enable", element.getId(), String.valueOf(element.isEnabled())));
 	}
 	
 	public void elementRendered(Element element) {
@@ -152,20 +137,14 @@ public class AjaxResponse implements FormListener {
 	}
 	
 	public void refresh(Element element) {
-		TagWriter tag = new TagWriter(writer);
-		tag.startEmpty("refresh");
-		tag.attribute("ref", element.getId());
-		tag.end();
+		json.add(new Action("refresh", element.getId()));
 	}
 	
 	public void alert(String message) {
-		TagWriter tag = new TagWriter(writer);
-		tag.start("eval");
-		tag.body("alert('" + message + "');");
-		tag.end();
+		json.add(new Action("eval", null, "alert('" + message + "');"));
 	}
 	
-	protected void renderPropagations() {
+	private void renderPropagations() {
 		Iterator it = propagations.iterator();
 		while (it.hasNext()) {
 			EventPropagation p = (EventPropagation) it.next();
@@ -173,82 +152,72 @@ public class AjaxResponse implements FormListener {
 		}
 	}
 	
-	protected void renderPropagation(EventPropagation propagation) {
+	private void renderPropagation(EventPropagation propagation) {
 		log.debug("Propagating " + propagation.getType() + 
 				" events for element " + propagation.getId());
 		
-		TagWriter tag = new TagWriter(writer);
-		tag.startEmpty("propagate");
-		tag.attribute("ref", propagation.getId());
-		tag.attribute("type", propagation.getType());
-		tag.end();
+		json.add(new Action("propagate", propagation.getId(), propagation.getType())); 
 	}
 	
-	protected void renderScripts() {
+	private void renderScripts() {
 		Iterator it = dhtmlElements.iterator();
 		while (it.hasNext()) {
 			DHTMLElement e = (DHTMLElement) it.next();
 			String script = e.getInitScript();
 			if (script != null) {
 				log.debug("Evaluating init script ...");
-				TagWriter tag = new TagWriter(writer);
-				tag.start("eval").body();
 				if (e instanceof ResourceElement) {
 					ResourceElement resEle = (ResourceElement) e;
 					FormResource res = resEle.getResource();
+					StringBuffer sb = new StringBuffer();
 					if (res != null) {
-						tag.print("Resources.execWhenLoaded(['");
-						tag.print(res.getUrl());
-						tag.print("'], function() {");
-						tag.print(script);
-						tag.print("})");
-					}
-					else {
-						tag.print(script);
+						sb.append("Resources.execWhenLoaded(['");
+						sb.append(res.getUrl());
+						sb.append("'], function() {");
+						sb.append(script);
+						sb.append("})");
+						script = sb.toString();
 					}
 				}
-				else {
-					tag.print(script);
-				}
-				tag.end();
+				json.add(new Action("eval", null, script));
 			}
 		}
 	}
 	
-	protected void renderResources() {
-		TagWriter tag = new TagWriter(writer);
-		tag.start("eval").body();
-		LoadingCodeGenerator.renderLoadingCode(resources, writer);
-		tag.end();
+	private void renderResources() {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		LoadingCodeGenerator.renderLoadingCode(resources, pw);
+		json.add(new Action("eval", null, sw.toString()));
 	}
 	
-	protected void renderFocus() {
+	private void renderFocus() {
 		if (focusedElement != null) {
 			log.debug("Focusing element " + focusedElement.getId());
-			TagWriter tag = new TagWriter(writer);
-			tag.startEmpty("focus");
-			tag.attribute("ref", focusedElement.getId());
-			tag.end();
+			json.add(new Action("focus", focusedElement.getId()));
 		}
 	}
 	
-	protected void renderErrors() {
+	private void renderErrors() {
 		Iterator it = validatedElements.iterator();
 		while (it.hasNext()) {
 			Element element = (Element) it.next();
 			if (element.getForm().getErrors().getErrors(element) != null) {
-				TagWriter tag = new TagWriter(writer);
-				tag.start("error");
-				tag.attribute("ref", element.getId());
-				tag.attribute("valid", element.getForm().getErrors().hasErrors(element) ? 0 : 1);
-				tag.body();	
-				element.getForm().getErrors().renderErrors(element);		
-				tag.end();		
+				boolean valid = element.getForm().getErrors().hasErrors(element);
+				json.add(new Action("valid", element.getId(), String.valueOf(valid)));
+				
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				FormContext context = element.getForm().getFormContext();
+				context.setWriter(pw);
+				element.getForm().getErrors().renderErrors(element);
+				context.setWriter(writer);
+				json.add(new Action("error", element.getId(), sw.toString()));
 			}
 		}
 	}
 	
-	protected void onClose() {
+	private void onClose() {
 		renderResources();
 		renderFocus();
 		renderPropagations();
@@ -258,9 +227,39 @@ public class AjaxResponse implements FormListener {
 	
 	public void close() {
 		onClose();
-		writer.println("</html>");
-		writer.flush();
-		writer.close();
+		writer.print(json.toString());
+	}
+	
+	public static class Action {
+		
+		private String command;
+		
+		private String element;
+		
+		private String value;
+
+		public Action(String command, String element) {
+			this(command, element, null);
+		}
+		
+		public Action(String command, String element, String value) {
+			this.command = command;
+			this.element = element;
+			this.value = value;
+		}
+
+		public String getCommand() {
+			return this.command;
+		}
+
+		public String getElement() {
+			return this.element;
+		}
+
+		public String getValue() {
+			return this.value;
+		}
+
 	}
 	
 }

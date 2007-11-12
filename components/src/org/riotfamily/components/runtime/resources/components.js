@@ -114,8 +114,7 @@ riot.getComponentList = function(el) {
 	return el.componentList;
 }
 
-riot.Controller = Class.create();
-riot.Controller.prototype = {
+riot.Controller = Class.create({
 	initialize: function(el) {
 		this.element = el;
 		this.id = el.readAttribute('riot:controllerId');
@@ -179,11 +178,10 @@ riot.Controller.prototype = {
 		}
 	}
 		
-}
+});
 
 
-riot.ComponentList = Class.create();
-riot.ComponentList.prototype = { 
+riot.ComponentList = Class.create({ 
 	initialize: function(el) {
 		this.element = el;
 		this.controller = riot.findController(el);
@@ -265,7 +263,7 @@ riot.ComponentList.prototype = {
 		var last = this.componentElements.length - 1;
 		this.componentElements.each(function(componentEl, index) {
 			componentEl.descendants().each(function(el) {
-				if (el.hasClassName('component-\\w*') && el.up('.riot-component') == componentElement) {
+				if (el.hasClassName('component-\\w*') && el.up('.riot-component') == componentEl) {
 					el.className = el.className.replace(/component-\w*/, 'component-' + (index + 1));
 					el.toggleClassName('last-component', index == last);
 				}
@@ -305,11 +303,10 @@ riot.ComponentList.prototype = {
 		} 
 	}
 	
-}
+});
 
 
-riot.ComponentDragObserver = Class.create();
-riot.ComponentDragObserver.prototype = {
+riot.ComponentDragObserver = Class.create({
 	initialize: function(componentList) {
 		this.componentList = componentList;
 		this.element = componentList.element;
@@ -337,10 +334,9 @@ riot.ComponentDragObserver.prototype = {
 		}
 		this.nextEl = null;
 	}
-}
+});
 
-riot.EntityList = Class.create();
-riot.EntityList.prototype = {
+riot.EntityList = Class.create({
 
 	initialize: function(el) {
 		this.element = el;
@@ -366,13 +362,12 @@ riot.EntityList.prototype = {
 	
 	createObject: function() {
 		EntityEditor.createObject(this.id, this.update.bind(this));
-		riot.toolbar.buttons.browse.click();
+		riot.toolbar.buttons.get('browse').click();
 	}
 
-}
+});
 
-riot.Component = Class.create();
-riot.Component.prototype = {
+riot.Component = Class.create({
 
 	initialize: function(el) {
 		this.element = el;
@@ -481,9 +476,9 @@ riot.Component.prototype = {
 	update: function() {
 		this.controller.update();
 	}
-}
+});
 
-riot.ListComponent = Class.extend(riot.Component, {
+riot.ListComponent = Class.create(riot.Component, {
 
 	updateTextChunks: function(key, chunks) {
 		ComponentEditor.updateTextChunks(this.id, key, chunks, this.update.bind(this));
@@ -500,10 +495,10 @@ riot.ListComponent = Class.extend(riot.Component, {
 });
 
 
-riot.EntityComponent = Class.extend(riot.Component, {
+riot.EntityComponent = Class.create(riot.Component, {
 
-	initialize: function(el) {
-		this.SUPER(el);
+	initialize: function($super, el) {
+		$super(el);
 		this.listId = el.readAttribute('riot:listId');
 		this.objectId = el.readAttribute('riot:objectId');
 	},
@@ -522,8 +517,7 @@ riot.EntityComponent = Class.extend(riot.Component, {
 	}
 });
 
-riot.InsertButton = Class.create();
-riot.InsertButton.prototype = {
+riot.InsertButton = Class.create({
 
 	initialize: function(componentList) {
 		this.componentList = componentList;
@@ -582,10 +576,9 @@ riot.InsertButton.prototype = {
 	changeType: function(type) {
 		ComponentEditor.setType(this.componentId, type, this.updateList.bind(this));
 	}
-};
+});
 
-riot.TypeInspector = Class.create();
-riot.TypeInspector.prototype = {
+riot.TypeInspector = Class.create({
 
 	initialize: function(types, activeType, onchange) {
 		this.onchange = onchange;
@@ -617,11 +610,10 @@ riot.TypeInspector.prototype = {
 			select
 		);
 	}
-}
+});
 
 
-riot.PublishWidget = Class.create();
-riot.PublishWidget.prototype = {
+riot.PublishWidget = Class.create({
 	initialize: function(controller, mode) {
 		mode = mode || 'publish';
 		this.className = 'riot-' + mode + '-outline';
@@ -737,11 +729,11 @@ riot.PublishWidget.prototype = {
 			this.controller.dirty = false;
 		}
 	}
-}
+});
 
-riot.DiscardWidget = Class.extend(riot.PublishWidget, {
-	initialize: function(controller) {
-		this.SUPER(controller, 'discard');
+riot.DiscardWidget = Class.create(riot.PublishWidget, {
+	initialize: function($super, controller) {
+		$super(controller, 'discard');
 	},	
 
 	changesAvailable: function(instance) {
@@ -768,15 +760,15 @@ riot.setLiveHtml = function(html) {
 	}
 }
 
-if (riot.toolbar.buttons.publish) {
-	riot.toolbar.buttons.publish.beforeApply = 
-	riot.toolbar.buttons.discard.beforeApply = function(enable) {
+if (riot.toolbar.buttons.get('publish')) {
+	riot.toolbar.buttons.get('publish').beforeApply = 
+	riot.toolbar.buttons.get('discard').beforeApply = function(enable) {
 		if (enable) {
 			riot.publishWidgets = [];
 		}
 	};
-	riot.toolbar.buttons.publish.afterApply = 
-	riot.toolbar.buttons.discard.afterApply = function(enable) {
+	riot.toolbar.buttons.get('publish').afterApply = 
+	riot.toolbar.buttons.get('discard').afterApply = function(enable) {
 		if (enable) {
 			var refs = riot.publishWidgets.invoke('getReference');
 			ComponentEditor.getLiveListHtml(refs, riot.setLiveHtml);
@@ -792,7 +784,7 @@ if (riot.toolbar.buttons.publish) {
 	};
 }
 
-riot.toolbar.buttons.editImages.precondition = riot.initSwfUpload;
+riot.toolbar.buttons.get('editImages').precondition = riot.initSwfUpload;
 
 dwr.engine.setErrorHandler(function(err, ex) {
 	if (ex.javaClassName == 'org.riotfamily.components.context.RequestContextExpiredException') {
