@@ -380,16 +380,11 @@ body > #riot-popup {
 	background: url(icons/dialogs/close.gif) center center no-repeat;
 }
 
-#riot-popup .mceEditor td.container {
-	border-bottom:1px solid #3d3d3d;
-	padding-left: 20px;
-}
-
 #riot-popup .mceEditor img {
 	margin: 0;
 }
 
-table.mceEditor {
+#riot-popup table.mceLayout {
 	border-spacing: 0;
 	border-collapse: collapse;
 	border: none;

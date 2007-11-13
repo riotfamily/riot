@@ -319,16 +319,12 @@ riot.PopupTextEditor = Class.create(riot.InplaceEditor, {
 
 riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 	showEditor: function() {
-		Resources.loadScriptSequence([
-			{src: 'tiny_mce/tiny_mce_src.js', test: 'tinyMCE'},
-			{src: 'tiny_mce/strict_mode_fix.js', test: 'tinyMCE.strictModeFixed'}
-		]);
-		Resources.waitFor('tinyMCE.strictModeFixed', this.openPopup.bind(this));
+		Resources.loadScript('tiny_mce/tiny_mce_src.js');
+		Resources.waitFor('tinymce.WindowManager', this.openPopup.bind(this));
 	},
 
 	openPopup: function() {
-		var p = this.popup = new riot.TinyMCEPopup(this);
-		Resources.waitFor(function() { return p.ready }, p.open.bind(p));
+		this.popup = new riot.TinyMCEPopup(this);
 	},
 
 	save: function() {
@@ -487,29 +483,25 @@ riot.TinyMCEPopup = Class.create(riot.TextareaPopup, {
 			this.textarea.value = '<p>&nbsp;</p>';
 		}
 		this.textarea.makeInvisible();
-		this.textarea.style.position = 'absolute';
-		riot.initTinyMCE();
-		Resources.waitFor('tinyMCELang["lang_theme_block"]',
-				this.addMCEControl.bind(this));
-	},
-
-	addMCEControl: function() {
-		tinyMCE.addMCEControl(this.textarea);
-		this.ready = true;
+		//this.textarea.style.position = 'absolute';
+		this.open();
+		tinymce.dom.Event.domLoaded = true;
+		this.tinymce = new tinymce.Editor(this.textarea, riot.tinyMCEConfig);
+		//this.tinymce.settings.init_instance_callback = this.open.bind(this);
+		this.tinymce.render();
 	},
 
 	close: function($super) {
-		tinyMCE.instances = tinyMCE.instances.without(tinyMCE.selectedInstance);
-		tinyMCE.selectedInstance = null;
+		tinymce.EditorManager.remove(this.tinymce);
 		$super();
 	},
 
 	setText: function(text) {
-		tinyMCE.setContent(text);
+		this.tinymce.setContent(text);
 	},
 
 	getText: function() {
-		return tinyMCE.getContent().strip();
+		return this.tinymce.getContent().strip();
 	}
 
 });
@@ -595,6 +587,7 @@ riot.stylesheetMaker = {
 }
 
 riot.setupTinyMCEContent = function(editorId, body, doc) {
+	var inst = tinymce.EditorManager.editors[editorId];
 	var style = doc.createElement('style');
 	style.type = 'text/css';
 	var head = doc.getElementsByTagName('head')[0];
@@ -621,7 +614,7 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	}
 	var bgImage = brightness > 227 ? 'margin.gif' : 'margin_hi.gif';
 
-	var editorWidth = tinyMCE.isMSIE ? body.scrollWidth : riot.activeEditor.width;
+	var editorWidth = tinyMCE.isIE ? body.scrollWidth : inst.contentWindow.innerWidth;
 	var componentWidth = riot.activeEditor.element.offsetWidth;
 	var margin = editorWidth - componentWidth;
 	if (margin > 0) {
@@ -633,41 +626,39 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	}
 }
 
+/*
 riot.initTinyMCEInstance = function(inst) {
 	//Reset -5px margin set by TinyMCE in strict_loading_mode
 	riot.activeEditor.width = inst.iframeElement.offsetWidth;
 	inst.iframeElement.style.marginBottom = '0';
 }
-
-riot.initTinyMCE = function() {
-	if (!riot.tinyMCEInitialized) {
-		tinyMCE.init(riot.tinyMCEConfig);
-		riot.tinyMCEInitialized = true;
-	}
-}
+*/
 
 riot.tinyMCEConfig = {
-	mode: 'none',
 	add_unload_trigger: false,
 	strict_loading_mode: true,
+	use_native_selects: true,
 	setupcontent_callback: riot.setupTinyMCEContent,
-	init_instance_callback: riot.initTinyMCEInstance,
+	//init_instance_callback: riot.initTinyMCEInstance,
 	relative_urls: false,
 	gecko_spellcheck: true,
 	hide_selects_on_submit: false,
 	language: riot.language,
+	width: '100%',
 	theme: 'advanced',
+	skin: 'riot',
 	theme_advanced_layout_manager: 'RowLayout',
 	theme_advanced_containers_default_align: 'left',
-	theme_advanced_containers: 'buttons1, mceEditor, mceStatusbar',
 	theme_advanced_container_buttons1: 'formatselect,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap',
+	theme_advanced_container_mceeditor: 'mceeditor',
+	theme_advanced_containers: 'buttons1,mceeditor',
 	theme_advanced_blockformats: 'p,h3,h4',
 	valid_elements: '+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote,sub,sup,span[class<mailto]'
 }
 
 ComponentEditor.getEditorConfigs(function(configs) {
 	if (configs && configs.tinyMCE) {
-		Object.extend(riot.tinyMCEConfig, configs.tinyMCE);
+		//Object.extend(riot.tinyMCEConfig, configs.tinyMCE);
 		var styles = riot.tinyMCEConfig.theme_advanced_styles;
 		if (styles) {
 			riot.tinyMCEStyles = styles.split(';').collect(function(pair) {
