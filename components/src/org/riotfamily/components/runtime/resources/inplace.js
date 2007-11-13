@@ -483,14 +483,19 @@ riot.TinyMCEPopup = Class.create(riot.TextareaPopup, {
 			this.textarea.value = '<p>&nbsp;</p>';
 		}
 		this.textarea.makeInvisible();
-		//this.textarea.style.position = 'absolute';
 		this.open();
+		
 		tinymce.dom.Event.domLoaded = true;
-		this.tinymce = new tinymce.Editor(this.textarea, riot.tinyMCEConfig);
-		//this.tinymce.settings.init_instance_callback = this.open.bind(this);
-		this.tinymce.render();
+		tinyMCE.init(Object.extend({
+			elements: this.textarea.identify(),
+			init_instance_callback: this.setInstance.bind(this)
+		}, riot.tinyMCEConfig));
 	},
 
+	setInstance: function(tinymce) {
+		this.tinymce = tinymce;
+	},
+	
 	close: function($super) {
 		tinymce.EditorManager.remove(this.tinymce);
 		$super();
@@ -614,7 +619,7 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	}
 	var bgImage = brightness > 227 ? 'margin.gif' : 'margin_hi.gif';
 
-	var editorWidth = tinyMCE.isIE ? body.scrollWidth : inst.contentWindow.innerWidth;
+	var editorWidth = body.scrollWidth ? body.scrollWidth : inst.contentWindow.innerWidth;
 	var componentWidth = riot.activeEditor.element.offsetWidth;
 	var margin = editorWidth - componentWidth;
 	if (margin > 0) {
@@ -626,39 +631,28 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	}
 }
 
-/*
-riot.initTinyMCEInstance = function(inst) {
-	//Reset -5px margin set by TinyMCE in strict_loading_mode
-	riot.activeEditor.width = inst.iframeElement.offsetWidth;
-	inst.iframeElement.style.marginBottom = '0';
-}
-*/
-
 riot.tinyMCEConfig = {
+	mode: 'exact',
 	add_unload_trigger: false,
 	strict_loading_mode: true,
 	use_native_selects: true,
 	setupcontent_callback: riot.setupTinyMCEContent,
-	//init_instance_callback: riot.initTinyMCEInstance,
 	relative_urls: false,
 	gecko_spellcheck: true,
 	hide_selects_on_submit: false,
-	language: riot.language,
+	language: 'en', //riot.language,
 	width: '100%',
 	theme: 'advanced',
 	skin: 'riot',
 	theme_advanced_layout_manager: 'RowLayout',
 	theme_advanced_containers_default_align: 'left',
-	theme_advanced_container_buttons1: 'formatselect,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap',
 	theme_advanced_container_mceeditor: 'mceeditor',
-	theme_advanced_containers: 'buttons1,mceeditor',
-	theme_advanced_blockformats: 'p,h3,h4',
-	valid_elements: '+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote,sub,sup,span[class<mailto]'
+	theme_advanced_containers: 'buttons,mceeditor'
 }
 
 ComponentEditor.getEditorConfigs(function(configs) {
 	if (configs && configs.tinyMCE) {
-		//Object.extend(riot.tinyMCEConfig, configs.tinyMCE);
+		Object.extend(riot.tinyMCEConfig, configs.tinyMCE);
 		var styles = riot.tinyMCEConfig.theme_advanced_styles;
 		if (styles) {
 			riot.tinyMCEStyles = styles.split(';').collect(function(pair) {
