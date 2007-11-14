@@ -18,6 +18,7 @@
 		<script type="text/javascript" language="JavaScript">
 			var riotComponentFormParams = {};
 			${inplaceMacroHelper.initScript}
+			<#nested />
 		</script>
 	<#else>
 		<script type="text/javascript" language="JavaScript">
