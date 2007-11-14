@@ -54,22 +54,27 @@ public class PageUrlBuilder {
 		Site site = page.getSite();
 		
 		StringBuffer url = new StringBuffer();
-		if (secure) {
-			url.append(ServletUtils.SCHEME_HTTPS);
-		}
-		else {
-			url.append(ServletUtils.SCHEME_HTTP);
-		}
-		url.append("://");
-		if (site.getHostName() != null) {
+		url.append(secure
+				? ServletUtils.SCHEME_HTTPS 
+				: ServletUtils.SCHEME_HTTP);
+		
+        url.append("://");
+        if (site.getHostName() != null) {
 			url.append(site.getHostName());
 		}
 		else {
 			url.append(request.getServerName());
+	        int port = request.getServerPort();
+	        if (port <= 0) {
+	            port = 80;
+	        }
+	        if ((!secure && port != 80) || (secure && port != 443)) {
+	            url.append(':');
+	            url.append(port);
+	        }
 		}
 		url.append(request.getContextPath());
 		url.append(getUrl(page));
-		
 		return url.toString();
 	}
 	
