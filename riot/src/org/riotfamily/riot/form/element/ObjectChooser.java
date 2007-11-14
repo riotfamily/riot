@@ -50,8 +50,6 @@ public class ObjectChooser extends AbstractChooser
 	
 	private String rootIdAttribute;
 	
-	private String rootId;
-	
 	private BeanFactory beanFactory;
 	
 	private EditorRepository editorRepository;
@@ -141,17 +139,7 @@ public class ObjectChooser extends AbstractChooser
 
 		if (rootEditorId != null) {
 			rootListDefinition = editorRepository.getListDefinition(rootEditorId);
-			Assert.notNull(rootListDefinition, "No such ListDefinition: "
-					+ rootEditorId);
-			
-			if (rootProperty != null) {
-				Object parent = FormUtils.loadParent(getForm());
-				Object root = PropertyUtils.getProperty(parent, rootProperty);
-				rootId = EditorDefinitionUtils.getObjectId(rootListDefinition, root);
-			}
-			else if (rootIdAttribute != null) {
-				rootId = (String) getForm().getAttribute(rootIdAttribute);
-			}
+			Assert.notNull(rootListDefinition, "No such ListDefinition: " + rootEditorId);
 		}
 		else {
 			rootListDefinition = EditorDefinitionUtils.getRootListDefinition(
@@ -173,6 +161,15 @@ public class ObjectChooser extends AbstractChooser
 	}
 
 	protected String getChooserUrl() {
+		String rootId = null;
+		if (rootProperty != null) {
+			Object parent = FormUtils.loadParent(getForm());
+			Object root = PropertyUtils.getProperty(parent, rootProperty);
+			rootId = EditorDefinitionUtils.getObjectId(rootListDefinition, root);
+		}
+		else if (rootIdAttribute != null) {
+			rootId = (String) getForm().getAttribute(rootIdAttribute);
+		}
 		return rootListDefinition.getEditorUrl(null, rootId) 
 				+ "?choose=" + targetEditorDefinition.getId();
 	}
