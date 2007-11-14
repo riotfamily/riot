@@ -220,8 +220,9 @@ var RElement = {
 	    if (Position.offsetParent(el) == document.body) {
 	    	// Shortcut, if the target offsetParent is document.body
 	    	// Works around a Prototype/Safari 3.0.3+ bug with with Position.page()
-	    	if(options.setLeft) el.style.left = (source.leftPos() + options.offsetLeft) + 'px';
-    		if(options.setTop) el.style.top = (source.topPos() + options.offsetTop) + 'px';
+	    	var pos = source.cumulativeOffset();
+	    	if(options.setLeft) el.style.left = (pos.left + options.offsetLeft) + 'px';
+    		if(options.setTop) el.style.top = (pos.top + options.offsetTop) + 'px';
 	    }
 	    else {
 			Position.clone(source, el, Object.extend(options, {
@@ -236,20 +237,25 @@ var RElement = {
 		return el;
 	},
 	
-	//Prototype's Position.cumulativeOffset() method to too naive, 
+	//Prototype's cumulativeOffset() method is too simple, 
 	//see http://qooxdoo.org/documentation/general/compute_element_position
 	//and http://www.koders.com/javascript/fidEA3E9D9152F06207EBED4D57045EFC0F2629593B.aspx?s=array
 	
-    leftPos: function(el) {
-    	var left;
+	cumulativeOffset: function(el) {
+    	var left, top;
     	if (Prototype.Browser.IE) {
-        	left = el.getBoundingClientRect().left - 2 + document.viewport.getScrollOffsets().left;
+    		var rect = el.getBoundingClientRect();
+    		var scroll = document.viewport.getScrollOffsets();
+        	left = rect.left - 2 + scroll.left;
+        	top = rect.top - 2 + scroll.top;
       	}
       	else {
+    		top = el.offsetTop;
     		left = el.offsetLeft;
 			while (el.tagName.toLowerCase() != 'body') {
 				el = el.offsetParent;
 				left += el.offsetLeft;
+				top += el.offsetTop;
 			}
 		}
 		var body = $(document.body);
@@ -263,23 +269,7 @@ var RElement = {
 					left += border;
 				}
 			}
-		}		
-        return left;
-	},
-	
-	topPos: function(el) {
-		var top;
-    	if (Prototype.Browser.IE) {
-        	top = el.getBoundingClientRect().top - 2 + document.viewport.getScrollOffsets().top;
-      	}
-      	else {
-    		top = el.offsetTop;
-			while (el.tagName.toLowerCase() != 'body') {
-				el = el.offsetParent;
-				top += el.offsetTop;
-			}
 		}
-		var body = $(document.body);
 		if (body.getStyle('border-left-style') != 'none') {
 			var border = parseInt(body.getStyle('border-top-width'));
 			if (!isNaN(border)) {
@@ -291,7 +281,7 @@ var RElement = {
 				}
 			}
 		}
-        return top;
+        return Element._returnOffset(left, top);
 	}
 }
 
@@ -303,6 +293,8 @@ if (Prototype.Browser.IE) {
 		if (el._extendedByPrototype) el._extendedByPrototype = false;
 	}
 }
+
+Position.cumulativeOffset = RElement.cumulativeOffset;
 
 var RForm = {
 	getValues: function(form) {
