@@ -189,8 +189,17 @@ public class Site {
 			return false;
 		}
 		Site other = (Site) obj;
-		return ObjectUtils.nullSafeEquals(this.locale, other.getLocale())
-				&& ObjectUtils.nullSafeEquals(this.theme, other.getTheme());
+		
+		if (ObjectUtils.nullSafeEquals(this.name, other.name)
+				&& ObjectUtils.nullSafeEquals(this.hostName, other.hostName)
+				&& ObjectUtils.nullSafeEquals(this.pathPrefix, other.pathPrefix)
+				&& ObjectUtils.nullSafeEquals(this.locale, other.locale)
+				&& ObjectUtils.nullSafeEquals(this.theme, other.theme)
+				&& ObjectUtils.nullSafeEquals(this.masterSite, other.masterSite)
+		) {
+			return true;
+		}
+		return false;
 	}
-	
+
 }

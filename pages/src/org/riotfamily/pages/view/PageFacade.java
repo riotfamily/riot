@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.config.component.Component;
@@ -109,12 +111,20 @@ public class PageFacade {
 		return page.getPath();
 	}
 
+	public String getFullPath() {
+		return page.getFullPath();
+	}
+
 	public String getUrl() {
 		return pageUrlBuilder.getUrl(page);
 	}
+
+	public String getAbsoluteUrl(HttpServletRequest request) {
+		return getAbsoluteUrl(request, request.isSecure());
+	}
 	
-	public String getFullPath() {
-		return page.getFullPath();
+	public String getAbsoluteUrl(HttpServletRequest request, boolean secure) {
+		return pageUrlBuilder.getAbsoluteUrl(page, request, secure);
 	}
 
 	public boolean isWildcard() {

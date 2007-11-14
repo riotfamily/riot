@@ -150,7 +150,10 @@ public class Page {
 	}
 	
 	public String getFullPath() {
-		return site.getPathPrefix() + getPath();
+		if (site.getPathPrefix() != null) {
+			return site.getPathPrefix() + getPath();
+		}
+		return getPath();
 	}
 
 	public boolean isWildcard() {

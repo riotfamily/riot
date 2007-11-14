@@ -23,7 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.mapping;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.riotfamily.common.web.util.PathCompleter;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 
@@ -40,15 +43,34 @@ public class PageUrlBuilder {
 	}
 	
 	public String getUrl(Page page) {
-		StringBuffer url = new StringBuffer();
-		Site site = page.getSite();
-		if (site.getPathPrefix() != null) {
-			url.append(site.getPathPrefix());
-		}
-		url.append(page.getPath());
+		StringBuffer url = new StringBuffer(page.getFullPath());
 		if (!page.isFolder() || pathCompleter.isPrefixMapping()) {
 			pathCompleter.addServletMapping(url);
 		}
 		return url.toString();
 	}
+
+	public String getAbsoluteUrl(Page page, HttpServletRequest request, boolean secure) {
+		Site site = page.getSite();
+		
+		StringBuffer url = new StringBuffer();
+		if (secure) {
+			url.append(ServletUtils.SCHEME_HTTPS);
+		}
+		else {
+			url.append(ServletUtils.SCHEME_HTTP);
+		}
+		url.append("://");
+		if (site.getHostName() != null) {
+			url.append(site.getHostName());
+		}
+		else {
+			url.append(request.getServerName());
+		}
+		url.append(request.getContextPath());
+		url.append(getUrl(page));
+		
+		return url.toString();
+	}
+	
 }
