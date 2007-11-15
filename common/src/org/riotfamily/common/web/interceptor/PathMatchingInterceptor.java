@@ -57,10 +57,10 @@ public class PathMatchingInterceptor extends HandlerInterceptorAdapter {
 			HttpServletResponse response, Object handler) throws Exception {
 		
 		String lookupPath = urlPathHelper.getLookupPathForRequest(request);
-		if (anyMatch(excludes, lookupPath) && !anyMatch(includes, lookupPath)) {
-			return true;
+		if (anyMatch(includes, lookupPath) && !anyMatch(excludes, lookupPath)) {
+			return doPreHandle(request, response, handler);
 		}
-		return doPreHandle(request, response, handler);
+		return true;
 	}
 	
 	protected boolean doPreHandle(HttpServletRequest request, 
@@ -71,7 +71,7 @@ public class PathMatchingInterceptor extends HandlerInterceptorAdapter {
 	
 	protected boolean anyMatch(String[] patterns, String path) {
 		if (patterns == null) {
-			return false;
+			return true;
 		}
 		for (int i = 0; i < patterns.length; i++) {
 			if (pathMatcher.match(patterns[i], path)) {

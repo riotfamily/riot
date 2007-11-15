@@ -36,13 +36,22 @@ import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 
 /**
+ * Abstract base class for mappings that support reverse look-ups.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
 public abstract class AbstractReverseHandlerMapping 
 		extends AbstractHandlerMapping implements ReverseHandlerMapping {
 	
-	
+	/**
+	 * Returns the URL of a mapped handler.
+	 * @param handlerName The name of the handler
+	 * @param prefix Optional prefix to sort out ambiguities
+	 * @param attributes Optional attributes to fill out wildcards. Can either 
+	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
+	 * @param request The current request
+	 */
 	public String getUrlForHandler(String handlerName, 
 			String prefix, Object attributes, HttpServletRequest request) {
 		
@@ -58,7 +67,10 @@ public abstract class AbstractReverseHandlerMapping
 		}
 		return getUrlForHandlerWithBean(handlerName, attributes, prefix, request);
 	}
-	
+
+	/**
+	 * Returns the URL for a handler that is mapped without any wildcards.
+	 */
 	private String getUrlForHandler(String handlerName, String prefix, 
 			HttpServletRequest request) {
 		
@@ -69,6 +81,9 @@ public abstract class AbstractReverseHandlerMapping
 		return addServletMappingIfNecessary(p.toString(), request);
 	}
 	
+	/**
+	 * Returns the URL for a handler that is mapped with exactly one wildcard.
+	 */
 	private String getUrlForHandlerWithAttribute(String handlerName, 
 			Object attribute, String prefix, HttpServletRequest request) {
 		
@@ -80,6 +95,10 @@ public abstract class AbstractReverseHandlerMapping
 		return addServletMappingIfNecessary(url, request);
 	}
 	
+	/**
+	 * Returns the URL for a handler that is mapped with multiple wildcards.
+	 * The wildcard replacements are taken from the given Map.
+	 */
 	private String getUrlForHandlerWithMap(String beanName, Map attributes,
 			String prefix, HttpServletRequest request) {
 		
@@ -98,6 +117,10 @@ public abstract class AbstractReverseHandlerMapping
 		return null;
 	}
 	
+	/**
+	 * Returns the URL for a handler that is mapped with multiple wildcards.
+	 * The wildcard replacements are taken from the given bean.
+	 */
 	private String getUrlForHandlerWithBean(String beanName, Object bean,
 			String prefix, HttpServletRequest request) {
 		
@@ -109,10 +132,18 @@ public abstract class AbstractReverseHandlerMapping
 		return null;
 	}
 	
-	protected List getPatternsForHandler(String beanName, String prefix, 
+	/**
+	 * Returns all {@link AttributePattern patterns} for the handler with the
+	 * specified name that start with the given prefix.
+	 *  
+	 * @param handlerName Name of the handler
+	 * @param prefix Optional prefix to narrow the the result
+	 * @param request The current request
+	 */
+	protected List getPatternsForHandler(String handlerName, String prefix, 
 			HttpServletRequest request) {
 		
-		List patterns = getPatternsForHandler(beanName, request);
+		List patterns = getPatternsForHandler(handlerName, request);
 		if (patterns == null || patterns.isEmpty() 
 				|| prefix == null || prefix.length() == 0) {
 			
@@ -129,6 +160,11 @@ public abstract class AbstractReverseHandlerMapping
 		return matchingPatterns;
 	}
 	
+	/**
+	 * Subclasses must implement this method and return all 
+	 * {@link AttributePattern patterns} for the handler with the specified
+	 * name.
+	 */
 	protected abstract List getPatternsForHandler(String beanName, 
 			HttpServletRequest request);
 	
@@ -138,6 +174,11 @@ public abstract class AbstractReverseHandlerMapping
 		return path;
 	}
 	
+	/**
+	 * Returns the pattern for the handler with the given name and the specified
+	 * number of wildcards. 
+	 * @throws IllegalArgumentException if more than one mapping is registered
+	 */
 	protected AttributePattern getPatternForHandler(String handlerName, 
 			String prefix, HttpServletRequest request, int numberOfWildcards) {
 		
@@ -160,6 +201,10 @@ public abstract class AbstractReverseHandlerMapping
 		return (AttributePattern) patterns.get(0);
 	}
 	
+	/**
+	 * Returns the pattern for the handler with the given name.
+	 * @throws IllegalArgumentException if more than one mapping is registered
+	 */
 	protected AttributePattern getPatternForHandler(String handlerName, 
 			String prefix, HttpServletRequest request) {
 		
@@ -167,7 +212,7 @@ public abstract class AbstractReverseHandlerMapping
 		if (patterns == null || patterns.isEmpty()) {
 			return null;
 		}
-		if (patterns.size() > 1) {
+		if (patterns.size() != 1) {
 			throw new IllegalArgumentException("Ambigious mapping - more than " 
 					+ "one pattern is registered for hander " + handlerName);
 		}

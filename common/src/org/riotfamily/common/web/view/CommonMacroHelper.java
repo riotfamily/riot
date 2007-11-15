@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -42,6 +41,7 @@ import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.collaboration.SharedProperties;
 import org.riotfamily.common.web.filter.ResourceStamper;
+import org.riotfamily.common.web.mapping.HandlerUrlResolver;
 import org.riotfamily.common.web.mapping.ReverseHandlerMapping;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.util.StringCapturingResponseWrapper;
@@ -68,19 +68,19 @@ public class CommonMacroHelper {
 
 	private ResourceStamper stamper;
 
-	private List mappings;
+	private HandlerUrlResolver handlerUrlResolver;
 	
 	private Locale requestLocale = null;
 
 	public CommonMacroHelper(ApplicationContext ctx,
 			HttpServletRequest request, HttpServletResponse response, 
-			ResourceStamper stamper, List mappings) {
+			ResourceStamper stamper, HandlerUrlResolver handlerUrlResolver) {
 
 		this.ctx = ctx;
 		this.request = request;
 		this.response = response;
 		this.stamper = stamper;
-		this.mappings = mappings;
+		this.handlerUrlResolver = handlerUrlResolver;
 	}
 
 	public Random getRandom() {
@@ -123,14 +123,8 @@ public class CommonMacroHelper {
 	public String getUrlForHandler(String handlerName, 
 			Object attributes, String prefix) {
 		
-		String url = null;
-		Iterator it = mappings.iterator();
-		while (url == null && it.hasNext()) {
-			ReverseHandlerMapping mapping = (ReverseHandlerMapping) it.next();
-			url = mapping.getUrlForHandler(
-					handlerName, prefix, attributes, request);
-		}
-		return url;
+		return handlerUrlResolver.getUrlForHandler(request, handlerName, 
+				attributes, prefix);
 	}
 		
 	public String getOriginatingRequestUri() {

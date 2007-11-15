@@ -91,8 +91,11 @@
 		<property name="exposeRequestAttributes" value="true" />
 	</bean>
 	
+	<bean id="handlerUrlResolver" class="org.riotfamily.common.web.mapping.HandlerUrlResolver" />
+	
 	<bean id="commonMacroHelper" class="org.riotfamily.common.web.view.CommonMacroHelperFactory">
 		<property name="stamper" ref="resourceStamper" />
+		<property name="handlerUrlResolver" ref="handlerUrlResolver" />
 	</bean>
 	
 	<bean id="riotMacroHelper" class="org.riotfamily.riot.runtime.macro.RiotMacroHelperFactory">

@@ -23,44 +23,28 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.view;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.filter.ResourceStamper;
-import org.riotfamily.common.web.mapping.HandlerUrlResolver;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.riotfamily.common.web.util.ServletUtils;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
+ * View that sends a redirect to the originating request URI.
+ *  
+ * @see ServletUtils#getOriginatingRequestUri(HttpServletRequest)
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class CommonMacroHelperFactory implements MacroHelperFactory, 
-		ApplicationContextAware {
+public class RedirectAfterPostView extends RedirectView {
 
-	private ApplicationContext applicationContext;
-	
-	private ResourceStamper stamper;
-	
-	private HandlerUrlResolver handlerUrlResolver;
-	
-	public void setApplicationContext(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
-	}
-
-	public void setStamper(ResourceStamper stamper) {
-		this.stamper = stamper;
-	}
-	
-	public void setHandlerUrlResolver(HandlerUrlResolver handlerUrlResolver) {
-		this.handlerUrlResolver = handlerUrlResolver;
-	}
-
-	public Object createMacroHelper(HttpServletRequest request, 
-			HttpServletResponse response) {
+	public void render(Map model, HttpServletRequest request, 
+			HttpServletResponse response) throws Exception {
 		
-		return new CommonMacroHelper(applicationContext, request, response, 
-				stamper, handlerUrlResolver);
+		setUrl(ServletUtils.getOriginatingRequestUri(request));
+		super.render(model, request, response);
 	}
-
+	
 }

@@ -23,44 +23,53 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.view;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.mapping.HandlerUrlResolver;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.Assert;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
+ * View that sends a redirect to a named handler.
+ * 
+ * @see HandlerUrlResolver
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class CommonMacroHelperFactory implements MacroHelperFactory, 
-		ApplicationContextAware {
+public class NamedHandlerRedirectView extends RedirectView {
 
-	private ApplicationContext applicationContext;
-	
-	private ResourceStamper stamper;
-	
 	private HandlerUrlResolver handlerUrlResolver;
 	
-	public void setApplicationContext(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
-	}
-
-	public void setStamper(ResourceStamper stamper) {
-		this.stamper = stamper;
+	private String handlerName;
+	
+	public NamedHandlerRedirectView(String handlerName) {
+		this(handlerName, null);
 	}
 	
-	public void setHandlerUrlResolver(HandlerUrlResolver handlerUrlResolver) {
+	public NamedHandlerRedirectView(String handlerName, 
+			HandlerUrlResolver handlerUrlResolver) {
+		
+		this.handlerName = handlerName;
 		this.handlerUrlResolver = handlerUrlResolver;
 	}
-
-	public Object createMacroHelper(HttpServletRequest request, 
-			HttpServletResponse response) {
+	
+	public void render(Map model, HttpServletRequest request, 
+			HttpServletResponse response) throws Exception {
 		
-		return new CommonMacroHelper(applicationContext, request, response, 
-				stamper, handlerUrlResolver);
+		if (handlerUrlResolver == null) {
+			WebApplicationContext context = RequestContextUtils.getWebApplicationContext(request);
+			handlerUrlResolver = (HandlerUrlResolver) context.getBean("handlerUrlResolver");
+		}
+		String handlerUrl = handlerUrlResolver.getUrlForHandler(request, handlerName, model, null);
+		Assert.notNull(handlerUrl, "Can't resolve URL for handler " + handlerName);
+		setUrl(handlerUrl);
+		setContextRelative(true);
+		super.render(model, request, response);
 	}
 
 }
