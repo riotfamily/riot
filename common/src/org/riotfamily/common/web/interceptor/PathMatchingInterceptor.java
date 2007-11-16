@@ -41,6 +41,8 @@ public class PathMatchingInterceptor extends HandlerInterceptorAdapter {
 	
 	private String[] excludes;
 	
+	private boolean includesOverwriteExcludes = false;
+	
 	public void setExcludes(String[] excludes) {
 		this.excludes = excludes;
 	}
@@ -52,13 +54,17 @@ public class PathMatchingInterceptor extends HandlerInterceptorAdapter {
 	public void setPathMatcher(PathMatcher pathMatcher) {
 		this.pathMatcher = pathMatcher;
 	}
+	
+	public void setIncludesOverwriteExcludes(boolean includesOverwriteExcludes) {
+		this.includesOverwriteExcludes = includesOverwriteExcludes;
+	}
 
 	public final boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler) throws Exception {
 		
 		String lookupPath = urlPathHelper.getLookupPathForRequest(request);
-		if (anyMatch(includes, lookupPath) && !anyMatch(excludes, lookupPath)) {
-			return doPreHandle(request, response, handler);
+		if (include(lookupPath)) {
+			return doPreHandle(request, response, handler);	
 		}
 		return true;
 	}
@@ -67,6 +73,13 @@ public class PathMatchingInterceptor extends HandlerInterceptorAdapter {
 			HttpServletResponse response, Object handler) throws Exception {
 		
 		return true;
+	}
+	
+	private boolean include(String path) {
+		if (includesOverwriteExcludes) {
+			return !anyMatch(excludes, path) || anyMatch(includes, path);
+		}
+		return anyMatch(includes, path) && !anyMatch(excludes, path);
 	}
 	
 	protected boolean anyMatch(String[] patterns, String path) {

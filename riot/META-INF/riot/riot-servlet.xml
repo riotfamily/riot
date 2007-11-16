@@ -107,6 +107,7 @@
 	  -->
 	<bean id="loginInterceptor" class="org.riotfamily.riot.security.session.LoginInterceptor">
 		<property name="loginUrl" value="/login" />
+		<property name="includesOverwriteExcludes" value="true" />
 		<property name="excludes">
 			<list>
 				<value>/login</value>
