@@ -235,7 +235,7 @@ public class AbstractResourceController extends AbstractCacheableController
 	protected Reader getReader(Resource res, String path, String contentType,
 			HttpServletRequest request) throws IOException {
 		
-		Reader in = new InputStreamReader(res.getInputStream());
+		Reader in = new InputStreamReader(res.getInputStream(), "UTF-8");
 		if (filters != null) {
 			Iterator it = filters.iterator();
 			while (it.hasNext()) {
