@@ -4,12 +4,6 @@
 	<@riot.stylesheet href="tree/tree.css" />
 	<@riot.script src="prototype/prototype.js" />
 	<@riot.script src="tree/tree.js" />
-	<#if mode == "tinyMCE">
-		<@riot.script src="tiny_mce/tiny_mce_popup.js" />
-		<script>
-			tinyMCE.setWindowArg('mce_replacevariables', false);
-		</script>
-	</#if>
 </head>
 <body>
 	<form action="?" method="GET">
@@ -30,12 +24,13 @@
 	<script>
 		new Tree('tree', function(href) {
 			<#if mode == "tinyMCE">
-				tinyMCE.getWindowArg('window').document.getElementById(tinyMCE.getWindowArg('input')).value = '${request.contextPath}' + href;
-				tinyMCEPopup.close();
+				var win = window.dialogArguments || opener || parent || top;
+				var input = win.tinyMCE.activeEditor.windowManager.getParam('input');
+				input.value = '${request.contextPath}' + href;
 			<#else>
 				opener.WindowCallback.invoke(self, href);
-				close();
 			</#if>
+				close();
 		});
 	</script>
 </body>

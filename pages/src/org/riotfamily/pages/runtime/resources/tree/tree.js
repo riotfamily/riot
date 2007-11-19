@@ -3,21 +3,20 @@
  * See http://www.silverstripe.com/downloads/tree/
  * The code has been refactored and now uses prototype.js.
  */
-var Tree = Class.create();
-Tree.prototype = {
+var Tree = Class.create({
 
 	initialize: function(el, linkHandler) {
 		el = $(el);
 		this.linkHandler = linkHandler;
 		this.initUl(el);
-		var a = el.getElementsByTagName('A');
-		for (var i = 0, len = a.length; i < len; i++) {
-			Event.observe(a[i], 'click', this.handleClick.bindAsEventListener(this, a[i]));
+		var a = el.select('a');
+		for (var i = 0; i < a.length; i++) {
+			a[i].observe('click', this.handleClick.bindAsEventListener(this, a[i]));
 		}
 	},
 
 	handleClick: function(ev, a) {
-		Event.stop(ev);
+		ev.stop();
 		this.linkHandler(a.getAttribute('href'));
 	},
 
@@ -94,4 +93,4 @@ Tree.prototype = {
 			Element.addClassName(divA, 'children');
 		}
 	}
-}
+});
