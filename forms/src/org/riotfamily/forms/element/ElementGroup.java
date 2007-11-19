@@ -150,6 +150,7 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 			if (getFormListener() != null) {
 				getFormListener().elementChanged(this);			
 			}
+			focus();
 		}
 	}
 	
