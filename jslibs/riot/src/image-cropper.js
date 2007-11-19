@@ -312,10 +312,11 @@ Cropper.UI.prototype = {
 
 	zoom: function(newWidth) {
 		if (isNaN(newWidth)) return;
+		var scale = newWidth / this.img.width;
+		var originalScale = newWidth / this.imageSize.x;
+		var newHeight = Math.round(this.imageSize.y * originalScale);
 		newWidth = Math.round(newWidth);
-		var scale = newWidth / this.imageSize.x;
-		var newHeight = Math.round(this.imageSize.y * scale);
-
+		
 		if (this.mode != 'resize') {
 			this.elementPos = Cropper.elementPos(this.element);
 			var center = this.zoomToPointer

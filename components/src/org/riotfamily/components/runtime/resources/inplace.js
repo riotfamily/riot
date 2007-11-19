@@ -740,7 +740,7 @@ riot.ImageEditor = Class.create(riot.InplaceEditor, {
 });
 
 var Cropper = {
-	elementPos: function(el) {
+	elementOffset: function(el) {
 		var p = Position.cumulativeOffset(el);
 		return new Cropper.Pos(p[0], p[1]);
 	},
@@ -797,7 +797,9 @@ Cropper.UI = Class.create({
 		this.src = src;
 		
 		this.initialSize = Cropper.elementSize(editor.element);
-		this.element = RBuilder.node('div', {className:'cropper'}).cloneStyle(editor.element, ['margin']);
+		this.element = RBuilder.node('div', {className:'cropper'})
+			.cloneStyle(editor.element, ['margin', 'position', 'top', 'left']);
+			
 		this.editor.element.replaceBy(this.element);
 		
 		this.preview = RBuilder.node('div')
@@ -818,7 +820,7 @@ Cropper.UI = Class.create({
 		this.resizeHandle.appendTo(this.preview);
 		Event.observe(this.resizeHandle, 'mousedown', this.onMouseDownResize.bindAsEventListener(this));
 
-		this.elementPos = Cropper.elementPos(this.element);
+		this.elementPos = Cropper.elementOffset(this.element);
 		this.mousePos = new Cropper.Pos();
 		this.click = new Cropper.Pos();
 		this.offset = new Cropper.Pos();
@@ -877,12 +879,10 @@ Cropper.UI = Class.create({
 			if (delta < -3) delta = -3;
 			if (delta > 3) delta = 3;
 		}
-		this.zoomToPointer = true;
 		var z = this.img.width + this.imageSize.x / 100 * delta;
 		z = Math.max(this.minZoom, z);
 		z = Math.min(this.imageSize.x, z);
 		this.zoom(z);
-		this.zoomToPointer = false;
 		Event.stop(ev);
 	},
 
@@ -900,16 +900,14 @@ Cropper.UI = Class.create({
 
 	zoom: function(newWidth) {
 		if (isNaN(newWidth)) return;
+		var scale = newWidth / this.img.width;
+		var originalScale = newWidth / this.imageSize.x;
+		var newHeight = Math.round(this.imageSize.y * originalScale);
 		newWidth = Math.round(newWidth);
-		var scale = newWidth / this.imageSize.x;
-		var newHeight = Math.round(this.imageSize.y * scale);
-
+		
 		if (this.mode != 'resize') {
-			this.elementPos = Cropper.elementPos(this.element);
-			var center = this.zoomToPointer
-					? new Cropper.Pos(this.mousePos.x - this.elementPos.x, this.mousePos.y - this.elementPos.y)
-					: new Cropper.Pos(this.preview.offsetWidth / 2, this.preview.offsetHeight / 2);
-
+			this.elementPos = Cropper.elementOffset(this.element);
+			var center = new Cropper.Pos(this.mousePos.x - this.elementPos.x, this.mousePos.y - this.elementPos.y);
 			var g = new Cropper.Pos(this.offset.x + center.x, this.offset.y + center.y);
 			this.offset.moveBy(g.x * scale - g.x, g.y * scale - g.y);
 		}
@@ -926,7 +924,7 @@ Cropper.UI = Class.create({
 
 	onMouseDownResize: function(event) {
 		this.mode = 'resize';
-		this.elementPos = Cropper.elementPos(this.element);
+		this.elementPos = Cropper.elementOffset(this.element);
 		if (this.rightAligned) this.elementPos.x += this.preview.offsetWidth;
 		if (document.all) {
 			this.resizeHandle.style.cursor = 'auto';
