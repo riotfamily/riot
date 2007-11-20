@@ -38,7 +38,7 @@
   - Adds the contextPath and sessionId to the given URI if necessary. 
   -->
 <#function url uri>
-	<#return commonMacroHelper.resolveAndEncodeUrl(uri) />
+	<#return commonMacroHelper.resolveAndEncodeUrl(uri?trim) />
 </#function>
 
 <#--
@@ -52,7 +52,7 @@
   - Returns whether the given URL is external, i.e. has a schema part.
   -->
 <#function isExternalUrl url>
-	<#return commonMacroHelper.isExternalUrl(url) />
+	<#return commonMacroHelper.isExternalUrl(url?trim) />
 </#function>
 
 <#--
@@ -60,7 +60,7 @@
   - server-name, port and contextPath of the current request.
   -->
 <#function absoluteUrl path>
-	<#return commonMacroHelper.getAbsoluteUrl(path) />
+	<#return commonMacroHelper.getAbsoluteUrl(path?trim) />
 </#function>
 
 <#--
