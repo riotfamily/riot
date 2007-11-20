@@ -114,6 +114,13 @@ public class CssTemplateController extends AbstractCacheableController
 	
 	private YUICssCompressor compressor = new YUICssCompressor();
 
+	/**
+	 * @param compressor the compressor to set
+	 */
+	public void setCompressor(YUICssCompressor compressor) {
+		this.compressor = compressor;
+	}
+	
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
 	}

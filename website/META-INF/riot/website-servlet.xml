@@ -67,6 +67,11 @@
 			
 		<property name="addContextPathToUrls" value="true" />
 		<property name="stamper" ref="resourceStamper" />
+		<property name="compressor">
+			<bean class="org.riotfamily.common.web.compressor.YUICssCompressor">
+				<property name="enabled" value="${riot.resources.compress=true}" />
+			</bean>			
+		</property>
 	</bean>
 	
 	<bean id="freemarkerConfig" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerConfigurer">
