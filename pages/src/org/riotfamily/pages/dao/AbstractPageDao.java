@@ -33,8 +33,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.components.service.ComponentService;
 import org.riotfamily.pages.component.PageComponentListLocator;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
@@ -55,7 +55,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	private static final Log log = LogFactory.getLog(AbstractPageDao.class);
 
-	private ComponentDao componentDao;
+	private ComponentService componentService;
 	
 	private Map childHandlerNames;
 
@@ -64,8 +64,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	public AbstractPageDao() {
 	}
 
-	public void setComponentDao(ComponentDao componentDao) {
-		this.componentDao = componentDao;
+	public void setComponentService(ComponentService componentService) {
+		this.componentService = componentService;
 	}
 
 	public void setChildHandlerNames(Map childHandlerNames) {
@@ -84,7 +84,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 	
 	public final void afterPropertiesSet() throws Exception {
-		Assert.notNull(componentDao, "A ComponentDao must be set.");
+		Assert.notNull(componentService, "A ComponentDao must be set.");
 		initDao();
 	}
 
@@ -184,7 +184,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		if (node.isSystemNode()) {
 			translation.setPublished(page.isPublished());
 		}
-		translation.setVersionContainer(componentDao.copyVersionContainer(
+		translation.setVersionContainer(componentService.copyVersionContainer(
 				page.getVersionContainer()));
 		
 		node.addPage(translation);
@@ -192,7 +192,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		deleteAlias(translation);
 		saveObject(translation);
 		
-		componentDao.copyComponentLists(PageComponentListLocator.TYPE_PAGE,
+		componentService.copyComponentLists(PageComponentListLocator.TYPE_PAGE,
 				page.getId().toString(), translation.getId().toString());
 
 		return translation;
@@ -276,7 +276,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 				deletePage(child);
 			}
 		}
-		componentDao.deleteComponentLists(PageComponentListLocator.TYPE_PAGE,
+		componentService.deleteComponentLists(PageComponentListLocator.TYPE_PAGE,
 				page.getId().toString());
 
 		clearAliases(page);
@@ -287,7 +287,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		
 		VersionContainer vc = page.getVersionContainer();
 		page.setVersionContainer(null);
-		componentDao.deleteVersionContainer(vc);
+		componentService.deleteVersionContainer(vc);
 
 		if (node.hasPages()) {
 			updateNode(node);

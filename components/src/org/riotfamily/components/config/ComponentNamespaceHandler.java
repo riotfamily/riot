@@ -24,6 +24,7 @@
 package org.riotfamily.components.config;
 
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
+import org.riotfamily.common.beans.xml.ListDecorator;
 import org.riotfamily.common.beans.xml.MapEntryDecorator;
 import org.riotfamily.common.beans.xml.PropsDecorator;
 import org.riotfamily.components.config.component.IncludeComponent;
@@ -44,6 +45,7 @@ public class ComponentNamespaceHandler extends GenericNamespaceHandlerSupport {
 		register("include-component", IncludeComponent.class);
 
 		registerBeanDefinitionDecorator("defaults", new PropsDecorator("defaults"));
+		registerBeanDefinitionDecorator("listeners", new ListDecorator("updateListeners"));
 		
 		BeanDefinitionDecorator addPropertyProcessor =
 				new MapEntryDecorator("propertyProcessors", "property");

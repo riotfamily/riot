@@ -78,6 +78,10 @@ public class FileUpload extends CompositeElement implements Editor,
 
 	private MimetypesFileTypeMap mimetypesMap;
 
+	private boolean useFileStore = true;
+	
+	private String store;
+	
 	private FileStore fileStore;
 
 	private String uri;
@@ -102,20 +106,31 @@ public class FileUpload extends CompositeElement implements Editor,
 		setSurroundBySpan(true);
 	}
 
+	public FormResource getResource() {
+		return RESOURCE;
+	}
+	
 	protected Element createPreviewElement() {
 		return new PreviewElement();
 	}
 
-	public FileStore getFileStore() {
-		return this.fileStore;
+	public void setUseFileStore(boolean useFileStore) {
+		this.useFileStore = useFileStore;
+	}
+	
+	public String getStore() {
+		return this.store;
 	}
 
-	public void setFileStore(FileStore fileStore) {
-		this.fileStore = fileStore;
+	public void setStore(String store) {
+		this.store = store;
 	}
 
-	public FormResource getResource() {
-		return RESOURCE;
+	protected void afterFormContextSet() {
+		if (useFileStore) {
+			fileStore = getFormContext().getFileStore(store);
+			Assert.notNull(fileStore, "No FileStore configured");
+		}
 	}
 
 	public void setFilenameProperty(String property) {

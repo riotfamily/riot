@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -65,6 +66,8 @@ public abstract class AbstractComponent implements Component {
 	private Properties defaults;
 	
 	private Map propertyProcessors = new HashMap();
+	
+	private List updateListeners;
 
 	public void setDefaults(Properties defaults) {
 		this.defaults = defaults;
@@ -87,6 +90,14 @@ public abstract class AbstractComponent implements Component {
 
 	public Map getPropertyProcessors() {
 		return propertyProcessors;
+	}
+	
+	public void setUpdateListeners(List updateListeners) {
+		this.updateListeners = updateListeners;
+	}
+	
+	public List getUpdateListeners() {
+		return this.updateListeners;
 	}
 
 	public final void render(ComponentVersion componentVersion,
@@ -141,19 +152,6 @@ public abstract class AbstractComponent implements Component {
 		return model;
 	}
 
-	public void updateProperties(ComponentVersion version, Map model) {
-		Iterator it = propertyProcessors.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			String key = (String) entry.getKey();
-			PropertyProcessor pp = (PropertyProcessor) entry.getValue();
-			Object object = model.get(key);
-			model.put(key, pp.convertToString(object));
-			pp.onUpdate(key, object, model);
-		}
-		version.setProperties(model);
-	}
-
 	protected abstract void renderInternal(ComponentVersion componentVersion,
 			String positionClassName, HttpServletRequest request,
 			HttpServletResponse response) throws Exception;
@@ -174,6 +172,7 @@ public abstract class AbstractComponent implements Component {
 		return result;
 	}
 
+	/*
 	public void onCopy(ComponentVersion source, ComponentVersion dest) {
 		Iterator it = propertyProcessors.entrySet().iterator();
 		while (it.hasNext()) {
@@ -194,5 +193,6 @@ public abstract class AbstractComponent implements Component {
 			pp.delete(version.getProperty(key));
 		}
 	}
-
+	*/
+	
 }

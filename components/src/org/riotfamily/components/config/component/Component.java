@@ -25,6 +25,7 @@ package org.riotfamily.components.config.component;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,11 +47,11 @@ public interface Component extends PropertyProcessorRegistry {
 
 	public Map getPropertyProcessors();
 	
+	public List getUpdateListeners();
+	
 	public void setPropertyProcessors(Map propertyProcessors);
 
 	public Map buildModel(ComponentVersion version);
-
-	public void updateProperties(ComponentVersion version, Map model);
 
 	/**
 	 * Renders the given ComponentVersion.
@@ -65,8 +66,4 @@ public interface Component extends PropertyProcessorRegistry {
 	 */
 	public Collection getCacheTags(ComponentVersion version);
 	
-	public void onDelete(ComponentVersion version);
-	
-	public void onCopy(ComponentVersion source, ComponentVersion dest);
-
 }

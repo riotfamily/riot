@@ -25,6 +25,13 @@
 					<xsd:attributeGroup ref="beans:beanAttributes"/>
 				</xsd:complexType>
 			</xsd:element>
+			<xsd:element name="listeners">
+				<xsd:complexType>
+					<xsd:sequence maxOccurs="unbounded">
+						<xsd:element ref="beans:bean" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
 			<xsd:element name="defaults">
 				<xsd:complexType>
 					<xsd:sequence maxOccurs="unbounded" minOccurs="0">

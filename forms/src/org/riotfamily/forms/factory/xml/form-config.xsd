@@ -326,6 +326,7 @@
 		<xsd:complexContent>
 			<xsd:extension base="simple-editor">
 				<xsd:attribute name="store" type="xsd:string" />
+				<xsd:attribute name="use-file-store" type="xsd:boolean" default="true" />
 				<xsd:attribute name="filename-property" type="xsd:string" />
 				<xsd:attribute name="content-type-property" type="xsd:string" />
 				<xsd:attribute name="size-property" type="xsd:string" />

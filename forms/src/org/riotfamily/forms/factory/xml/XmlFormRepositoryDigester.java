@@ -32,7 +32,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.web.file.FileStore;
 import org.riotfamily.common.xml.DocumentDigester;
 import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.forms.ContainerElement;
@@ -301,15 +300,6 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	}
 	
 	private void initFileUpload(Element ele, MutablePropertyValues pvs) {
-		pvs.removePropertyValue("store");
-		String ref = XmlUtils.getAttribute(ele, "store");
-		if (ref != null) {
-			FileStore fileStore = (FileStore) beanFactory.getBean(
-					ref, FileStore.class);
-
-			pvs.addPropertyValue("fileStore", fileStore);
-		}
-
 		if (formRepository.getMimetypesMap() != null) {
 			pvs.addPropertyValue("mimetypesMap",
 					formRepository.getMimetypesMap());

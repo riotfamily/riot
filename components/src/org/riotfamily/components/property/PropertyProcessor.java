@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.property;
 
-import java.util.Map;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -60,21 +58,6 @@ public interface PropertyProcessor {
 	public Object fromJSON(Object object);
 	
 	/**
-	 * Creates a copy of the given String. This is useful for PropertyProcessors
-	 * that store a reference to an external resource. This hook allows 
-	 * implementors to create a copy of the referenced resource and return the 
-	 * new reference. 
-	 */
-	public String copy(String s);
-	
-	/**
-	 * Invoked when a ComponentVersion is deleted. This hook is useful for 
-	 * PropertyProcessors that store a reference rather than a value, as it 
-	 * allows implementors to delete the associated resource.
-	 */
-	public void delete(String s);
-	
-	/**
 	 * Implementors may return a String that is used to {@link 
 	 * TaggingContext#tag(javax.servlet.http.HttpServletRequest, String) tag}
 	 * views displaying this property. This is useful when the stored value is
@@ -82,12 +65,5 @@ public interface PropertyProcessor {
 	 * invalidated when the associated resource is modified. 
 	 */
 	public String getCacheTag(String s);
-	
-	/**
-	 * This method is invoked after {@link #convertToString(Object)} and allows
-	 * implementors to store additional values in the model. Make sure not to 
-	 * add any non-String values.
-	 */
-	public void onUpdate(String property, Object object, Map map);
 	
 }

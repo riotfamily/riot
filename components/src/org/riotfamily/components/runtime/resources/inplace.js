@@ -707,7 +707,7 @@ riot.ImageEditor = Class.create(riot.InplaceEditor, {
 	
 	edit: function() {
 		riot.outline.hide();
-		riot.swfUpload.setPostParams({token: this.token});
+		riot.swfUpload.setPostParams({token: this.token, fileStore: this.options.fileStore});
 		riot.swfUpload.uploadComplete_handler = this.uploadComplete.bind(this);
 		riot.swfUpload.selectFile();
 	},	
@@ -719,7 +719,7 @@ riot.ImageEditor = Class.create(riot.InplaceEditor, {
 		
 	update: function(img, path) {
 		riot.outline.suspended = false;
-		this.component.updateText(this.key, path);
+		this.component.updateFile(this.key, path, this.options.fileStore);
 		var src = this.options.srcTemplate 
 				? this.options.srcTemplate.replace('*', path)
 				: img.src;

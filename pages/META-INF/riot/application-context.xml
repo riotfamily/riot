@@ -22,7 +22,7 @@
 	</bean>
 	
 	<bean id="pageDao" class="org.riotfamily.pages.dao.hibernate.HibernatePageDao">
-		<property name="componentDao" ref="componentDao" />
+		<property name="componentService" ref="componentService" />
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 

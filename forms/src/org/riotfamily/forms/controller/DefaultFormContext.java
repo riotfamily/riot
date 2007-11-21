@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.common.web.file.FileStore;
+import org.riotfamily.common.web.file.FileStoreLocator;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.FormContext;
 import org.riotfamily.forms.TemplateRenderer;
@@ -57,13 +59,16 @@ public class DefaultFormContext implements FormContext {
 	
 	private List optionValuesAdapters;
 	
+	private FileStoreLocator fileStoreLocator;
+	
+	
 	public DefaultFormContext() {
 	}
 	
 	public DefaultFormContext(MessageResolver messageResolver,
 			TemplateRenderer templateRenderer,
 			String contextPath, String resourcePath, String formUrl,
-			List optionValuesAdapters) {
+			List optionValuesAdapters, FileStoreLocator fileStoreLocator) {
 
 		this.messageResolver = messageResolver;
 		this.contextPath = contextPath;
@@ -71,6 +76,7 @@ public class DefaultFormContext implements FormContext {
 		this.templateRenderer = templateRenderer;
 		this.formUrl = formUrl;
 		this.optionValuesAdapters = optionValuesAdapters;
+		this.fileStoreLocator = fileStoreLocator;
 	}
 
 	private void setResourcePath(String path) {
@@ -150,5 +156,9 @@ public class DefaultFormContext implements FormContext {
 
 	public List getOptionValuesAdapters() {
 		return optionValuesAdapters;
+	}
+	
+	public FileStore getFileStore(String id) {
+		return fileStoreLocator.getFileStore(id);
 	}
 }

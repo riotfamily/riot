@@ -30,9 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.config.component.Component;
-import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.components.service.ComponentService;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.factory.FormRepository;
 import org.springframework.web.bind.ServletRequestUtils;
@@ -45,19 +44,19 @@ import org.springframework.web.bind.ServletRequestUtils;
  */
 public class ComponentFormController extends AbstractComponentFormController {
 
-	private ComponentDao componentDao;
-
+	private ComponentService componentService;
+	
 	private ComponentRepository componentRepository;
 
 	private String containerIdAttribute = "containerId";
 
 	public ComponentFormController(FormRepository formRepository,
 			ComponentRepository componentRepository,
-			ComponentDao componentDao) {
+			ComponentService componentService) {
 
 		super(formRepository);
 		this.componentRepository = componentRepository;
-		this.componentDao = componentDao;
+		this.componentService = componentService;
 	}
 	
 	protected void initForm(Form form, HttpServletRequest request) {
@@ -71,9 +70,8 @@ public class ComponentFormController extends AbstractComponentFormController {
 
 	protected ComponentVersion getVersion(HttpServletRequest request) {
 		Long id = new Long((String) request.getAttribute(containerIdAttribute));
-		VersionContainer container = componentDao.loadVersionContainer(id);
 		boolean live = ServletRequestUtils.getBooleanParameter(request, "live", false);
-		return componentDao.getOrCreateVersion(container, null, live);
+		return componentService.getOrCreateVersion(id, live);
 	}
 
 	protected Object getFormBackingObject(HttpServletRequest request) {
@@ -84,10 +82,8 @@ public class ComponentFormController extends AbstractComponentFormController {
 
 	protected void onSave(Object object, HttpServletRequest request) {
 		ComponentVersion version = getVersion(request);
-		Component component = componentRepository.getComponent(version);
 		Map properties = (Map) object;
-		component.updateProperties(version, properties);
-		componentDao.updateComponentVersion(version);
+		componentService.updateComponentProperties(version, properties);
 	}
 
 }

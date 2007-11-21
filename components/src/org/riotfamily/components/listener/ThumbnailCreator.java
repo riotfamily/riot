@@ -21,29 +21,25 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.property;
+package org.riotfamily.components.listener;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.image.Thumbnailer;
-import org.riotfamily.common.web.file.FileStore;
+import org.riotfamily.components.service.UpdateListener;
+import org.riotfamily.components.service.ComponentUpdate;
 
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.4
+ * @since 6.5
  */
-public class ThumbnailPropertyProcessor extends PropertyProcessorAdapter {
+public class ThumbnailCreator implements UpdateListener {
 
-	private static final Log log = LogFactory.getLog(ThumbnailPropertyProcessor.class);
-	
-	private static final String MTIME_SUFFIX = "-mtime";
-	
 	private String source;
+	
+	private String property;
 	
 	private int width;
 	
@@ -51,18 +47,22 @@ public class ThumbnailPropertyProcessor extends PropertyProcessorAdapter {
 	
 	private String format = "jpg";
 	
-	private FileStore fileStore;
+	private String fileStoreId;
 	
 	private Thumbnailer thumbnailer;
 	
 	private File tempDir;
 	
+	public void setProperty(String property) {
+		this.property = property;
+	}
+	
 	public void setSource(String source) {
 		this.source = source;
 	}
 
-	public void setFileStore(FileStore fileStore) {
-		this.fileStore = fileStore;
+	public void setFileStoreId(String fileStoreId) {
+		this.fileStoreId = fileStoreId;
 	}
 
 	public void setThumbnailer(Thumbnailer thumbnailer) {
@@ -81,28 +81,18 @@ public class ThumbnailPropertyProcessor extends PropertyProcessorAdapter {
 		this.height = height;
 	}
 
-	public void onUpdate(String property, Object object, Map map) {
-		try {
-			String sourceUri = (String) map.get(source);
-			if (sourceUri != null) {
-				File sourceFile = fileStore.retrieve(sourceUri);
-				
-				String mtime = (String) map.get(property + MTIME_SUFFIX);
-				if (mtime == null || Long.parseLong(mtime) < sourceFile.lastModified()) {
-					File tempFile = File.createTempFile("thumb", "." + format, tempDir);
-					thumbnailer.renderThumbnail(sourceFile, tempFile, width, height);
-					String destUri = (String) map.get(property);
-					if (destUri != null) {
-						fileStore.delete(destUri);
-					}
-					destUri = fileStore.store(tempFile, null);
-					map.put(property, destUri);
-					map.put(property + MTIME_SUFFIX, String.valueOf(System.currentTimeMillis()));
-				}
+	public void onUpdate(ComponentUpdate model) throws IOException {
+		File imageFile = model.getFile(source);
+		File thumbFile = model.getFile(property);
+		if (imageFile != null) {
+			if (thumbFile == null || thumbFile.lastModified() < imageFile.lastModified()) {
+				File tempFile = File.createTempFile("thumb", "." + format, tempDir);
+				thumbnailer.renderThumbnail(imageFile, tempFile, width, height);
+				model.setFile(property, tempFile, fileStoreId);
 			}
 		}
-		catch (IOException e) {
-			log.error(e);
+		else {
+			model.setFile(property, null, fileStoreId);
 		}
 	}
 	

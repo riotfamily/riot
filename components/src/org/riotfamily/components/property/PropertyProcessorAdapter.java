@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.property;
 
-import java.util.Map;
 
 
 
@@ -44,18 +43,8 @@ public class PropertyProcessorAdapter implements PropertyProcessor {
 		return object.toString();
 	}
 
-	public String copy(String s) {
-		return s;
-	}
-
-	public void delete(String s) {
-	}
-
 	public String getCacheTag(String s) {
 		return null;
-	}
-	
-	public void onUpdate(String property, Object object, Map map) {
 	}
 	
 	public Object fromJSON(Object object) {

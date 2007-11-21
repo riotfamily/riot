@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.common.web.file.FileStore;
 import org.springframework.beans.PropertyEditorRegistrar;
 
 public interface FormContext {
@@ -55,5 +56,7 @@ public interface FormContext {
 	public PropertyEditorRegistrar[] getPropertyEditorRegistrars();
 
 	public List getOptionValuesAdapters();
+	
+	public FileStore getFileStore(String id);
 
 }

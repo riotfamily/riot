@@ -23,15 +23,19 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.dao.hibernate;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.riotfamily.components.dao.AbstractComponentDao;
+import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.ComponentList;
+import org.riotfamily.components.model.ComponentVersion;
+import org.riotfamily.components.model.FileStorageInfo;
 import org.riotfamily.components.model.Location;
 import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.util.Assert;
 
 /**
@@ -39,7 +43,7 @@ import org.springframework.util.Assert;
  * a specified in <code>component.hbm.xml</code> which can be found in the
  * same package.
  */
-public class HibernateComponentDao extends AbstractComponentDao {
+public class HibernateComponentDao implements ComponentDao {
 
 	private HibernateHelper hibernate;
 
@@ -93,20 +97,79 @@ public class HibernateComponentDao extends AbstractComponentDao {
 		return hibernate.list(query);
 	}
 
-	protected Object loadObject(Class clazz, Long id) {
-		return hibernate.load(clazz, id);
+	public void saveFileStorageInfo(String type, String property, 
+			String fileStoreId) {
+		
+		hibernate.saveOrUpdate(new FileStorageInfo(type, property, fileStoreId));
+	}
+	
+	public List getFileStorageInfos(String type) {
+		// We select a projection here so that the FileStorageInfo entities
+		// don't get associated with the session. This way we can safely invoke
+		// saveOrUpdate() without causing a NonUniqueObjectException.
+		Query query = hibernate.createQuery("select new "
+				+ FileStorageInfo.class.getName() 
+				+ "(type, property, fileStoreId) from "
+				+ FileStorageInfo.class.getName()
+				+ " where type = :type");
+		
+		query.setParameter("type", type);
+		return query.list();
+	}
+	
+	public void deleteComponentList(ComponentList list) {
+		hibernate.delete(list);
 	}
 
-	protected void saveObject(Object object) {
-		hibernate.save(object);
+	public void deleteComponentVersion(ComponentVersion version) {
+		hibernate.delete(version);
 	}
 
-	protected void updateObject(Object object) {
-		hibernate.update(object);
+	public void deleteVersionContainer(VersionContainer container) {
+		hibernate.delete(container);
 	}
 
-	protected void deleteObject(Object object) {
-		hibernate.delete(object);
+	public ComponentList loadComponentList(Long id) {
+		return (ComponentList) hibernate.load(ComponentList.class, id);
+	}
+
+	public ComponentVersion loadComponentVersion(Long id) {
+		return (ComponentVersion) hibernate.load(ComponentVersion.class, id);
+	}
+
+	public VersionContainer loadVersionContainer(Long id) {
+		return (VersionContainer) hibernate.load(VersionContainer.class, id);
+	}
+
+	public void saveComponentList(ComponentList list) {
+		list.setLastModified(new Date());
+		list.setLastModifiedBy(AccessController.getCurrentUser().getUserId());
+		hibernate.save(list);
+	}
+
+	public void saveVersionContainer(VersionContainer container) {
+		hibernate.save(container);
+	}
+	
+	public void saveComponentVersion(ComponentVersion version) {
+		hibernate.save(version);
+	}
+	
+	public void updateComponentList(ComponentList list) {
+		list.setLastModified(new Date());
+		list.setLastModifiedBy(AccessController.getCurrentUser().getUserId());
+		hibernate.update(list);
+		
+	}
+
+	public void updateComponentVersion(ComponentVersion version) {
+		hibernate.update(version);
+	}
+
+	public void updateVersionContainer(VersionContainer container) {
+		if (container.getId() != null) {
+			hibernate.update(container);
+		}
 	}
 
 }

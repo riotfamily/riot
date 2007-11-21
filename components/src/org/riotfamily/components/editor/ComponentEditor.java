@@ -43,6 +43,9 @@ public interface ComponentEditor {
 	public String getText(Long containerId, String property);
 
 	public void updateText(Long containerId, String property, String text);
+	
+	public void updateFile(Long containerId, String property, String path, 
+			String fileStoreId);
 
 	public void updateTextChunks(Long containerId, String property,
 			String[] chunks);

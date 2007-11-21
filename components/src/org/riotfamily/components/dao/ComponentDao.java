@@ -24,7 +24,6 @@
 package org.riotfamily.components.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ComponentVersion;
@@ -80,7 +79,17 @@ public interface ComponentDao {
 	 * Saves the given ComponentList.
 	 */
 	public void saveComponentList(ComponentList list);
+	
+	/**
+	 * Saves the given VersionContainer.
+	 */
+	public void saveVersionContainer(VersionContainer container);
 
+	/**
+	 * Saves the given ComponentVersion.
+	 */
+	public void saveComponentVersion(ComponentVersion version);
+	
 	/**
 	 * Updates the given ComponentList.
 	 */
@@ -95,13 +104,7 @@ public interface ComponentDao {
 	 * Updates the given ComponentVersion.
 	 */
 	public void updateComponentVersion(ComponentVersion version);
-
-	/**
-	 * Deletes all {@link ComponentList ComponentLists} with the given path.
-	 * @since 6.4
-	 */
-	public void deleteComponentLists(String type, String path);
-
+	
 	/**
 	 * Deletes the given ComponentList.
 	 */
@@ -118,60 +121,11 @@ public interface ComponentDao {
 	public void deleteVersionContainer(VersionContainer container);
 
 	/**
-	 * Returns a list of {@link VersionContainer containers} that can be
-	 * modified without affecting the live list. If the preview list does not
-	 * already exist a new list is created and populated with the containers
-	 * from the live list. This method does not create any copys since the
-	 * containers themself are responisble for managing the different versions.
+	 * Persists the information that the given property contains a reference 
+	 * to a file. 
 	 */
-	public List getOrCreatePreviewContainers(ComponentList list);
+	public void saveFileStorageInfo(String type, String property, String fileStoreId);
 
-	/**
-	 * Returns a ComponentVersion and creates it if it does not already exist.
-	 * Whether the live or preview version is returned is controlled by the
-	 * <code>live</code> parameter.
-	 * @param container The VersionContainer to use
-	 * @param type The type assigned to newly created versions
-	 * @param live Whether to return the live version
-	 */
-	public ComponentVersion getOrCreateVersion(
-			VersionContainer container, String type, boolean live);
-
-	/**
-	 * Inserts a container into a list.
-	 */
-	public VersionContainer insertContainer(ComponentList componentList,
-			String type, Map properties, int position, boolean live);
-
-	/**
-	 * Creates copys of all ComponentLists under the given path and sets
-	 * their path to the specified <code>newPath</code>.
-	 */
-	public void copyComponentLists(String type, String oldPath, String newPath);
-
-	/**
-	 * Creates a copy of the given VersionContainer.
-	 */
-	public VersionContainer copyVersionContainer(VersionContainer container);
-			
-	/**
-	 * Publishes all changes made to the given list.
-	 */
-	public boolean publishList(ComponentList componentList);
-
-	/**
-	 * Published all changes made to the given container.
-	 */
-	public boolean publishContainer(VersionContainer container);
-
-	/**
-	 * Discards all changes made to the given list.
-	 */
-	public boolean discardList(ComponentList componentList);
-
-	/**
-	 * Discards all changes made to the given container.
-	 */
-	public boolean discardContainer(VersionContainer container);
-
+	public List getFileStorageInfos(String type);
+	
 }

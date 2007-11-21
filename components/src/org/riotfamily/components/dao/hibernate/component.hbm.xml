@@ -73,5 +73,13 @@
 		<many-to-one name="container" />
 		<property name="dirty" />
 	</class>
+	
+	<class name="FileStorageInfo" table="riot_component_file_storage_info" lazy="false">
+		<composite-id>
+			<key-property name="type" column="`type`" />
+			<key-property name="property" />
+		</composite-id>
+		<property name="fileStoreId" />
+	</class>
 
 </hibernate-mapping>

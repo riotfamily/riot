@@ -32,7 +32,7 @@ import java.util.Map;
 
 import org.riotfamily.common.beans.propertyeditors.BooleanEditor;
 import org.riotfamily.components.config.component.Component;
-import org.riotfamily.components.property.FileStoreProperyProcessor;
+import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.property.JSONArrayPropertyProcessor;
 import org.riotfamily.components.property.JSONObjectPropertyProcessor;
 import org.riotfamily.components.property.PropertyEditorProcessor;
@@ -61,10 +61,15 @@ public class ComponentFormRepository extends XmlFormRepository {
 
 	private ComponentRepository componentRepository;
 
+	private ComponentDao componentDao;
+	
 	private HashMap componentElements;
 	
-	public ComponentFormRepository(ComponentRepository componentRepository) {
+	public ComponentFormRepository(ComponentRepository componentRepository, 
+			ComponentDao componentDao) {
+		
 		this.componentRepository = componentRepository;
+		this.componentDao = componentDao;
 		componentRepository.setFormRepository(this);
 		setDefaultBeanClass(HashMap.class);
 	}
@@ -81,16 +86,15 @@ public class ComponentFormRepository extends XmlFormRepository {
 		String type = s[0];
 		String formId = s[s.length - 1];
 		super.registerFormFactory(formId, formFactory);
-		Component component = componentRepository.getComponent(type);
 		Form form = formFactory.createForm();
-		getElementList(component).addAll(form.getElements());
+		getElementList(type).addAll(form.getElements());
 	}
 	
-	private List getElementList(Component component) {
-		List list = (List) componentElements.get(component);
+	private List getElementList(String componentType) {
+		List list = (List) componentElements.get(componentType);
 		if (list == null) {
 			list = new ArrayList();
-			componentElements.put(component, list);
+			componentElements.put(componentType, list);
 		}
 		return list;
 	}
@@ -99,13 +103,14 @@ public class ComponentFormRepository extends XmlFormRepository {
 		Iterator it = componentElements.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();
-			Component component = (Component) entry.getKey();
+			String type = (String) entry.getKey();
 			List elements = (List) entry.getValue();
-			registerPropertyProcessors(component, elements);
+			Component component = componentRepository.getComponent(type);
+			registerPropertyProcessors(type, component, elements);
 		}
 	}
 	
-	private void registerPropertyProcessors(
+	private void registerPropertyProcessors(String componentType,
 			PropertyProcessorRegistry registry, List elements) {
 		
 		HashSet processedProperties = new HashSet();
@@ -116,25 +121,25 @@ public class ComponentFormRepository extends XmlFormRepository {
 				Editor editor = (Editor) element;
 				String property = editor.getEditorBinding().getProperty();
 				if (!processedProperties.contains(property)) {
-					registerPropertyProcessors(registry, editor);
+					registerPropertyProcessors(componentType, registry, editor);
 					processedProperties.add(editor);
 				}
 			}
 			else if (element instanceof ContainerElement) {
 				ContainerElement ce = (ContainerElement) element;
-				registerPropertyProcessors(registry, ce.getElements());
+				registerPropertyProcessors(componentType, registry, ce.getElements());
 			}
 		}
 	}
 
-	private void registerPropertyProcessors(
+	private void registerPropertyProcessors(String componentType,
 			PropertyProcessorRegistry registry, Editor e) {
 		
 		String property = e.getEditorBinding() != null 
 				? e.getEditorBinding().getProperty() : null;
 				
 		if (e instanceof FileUpload) {
-			registerFileUploadProcessor(registry, property, (FileUpload) e);
+			registerFileUploadProcessor(componentType, registry, property, (FileUpload) e);
 		}
 		else if (e instanceof Checkbox) {
 			registerCheckboxProcessor(registry, property, (Checkbox) e);
@@ -143,22 +148,27 @@ public class ComponentFormRepository extends XmlFormRepository {
 			registerNumberFieldProcessor(registry, property, (NumberField) e);
 		}
 		else if (e instanceof NestedForm) {
-			registerNestedFormProcessor(registry, property, (NestedForm) e);
+			registerNestedFormProcessor(componentType, registry, property, (NestedForm) e);
 		}
 		else if (e instanceof ListEditor) {
-			registerListProcessor(registry, property, (ListEditor) e);
+			registerListProcessor(componentType, registry, property, (ListEditor) e);
 		}
 		else if (e instanceof ObjectChooser) {
 			registerObjectChooserProcessor(registry, property, (ObjectChooser) e);
 		}
 	}
 
-	private void registerFileUploadProcessor(PropertyProcessorRegistry registry,
+	private void registerFileUploadProcessor(String componentType, 
+			PropertyProcessorRegistry registry,
 			String property, FileUpload upload) {
-		
+
+		/*
 		registry.registerPropertyProcessor(property,
 				new FileStoreProperyProcessor(upload.getFileStore()));
-
+		*/
+		
+		componentDao.saveFileStorageInfo(componentType, property, upload.getStore());
+		
 		if (upload.getSizeProperty() != null) {
 			registry.registerPropertyProcessor(upload.getSizeProperty(),
 					new PropertyEditorProcessor(
@@ -223,16 +233,18 @@ public class ComponentFormRepository extends XmlFormRepository {
 				new CustomNumberEditor(numberClass, false)));
 	}
 	
-	private void registerNestedFormProcessor(PropertyProcessorRegistry registry,
+	private void registerNestedFormProcessor(String componentType,
+			PropertyProcessorRegistry registry,
 			String property, NestedForm nestedForm) {
 		
 		JSONObjectPropertyProcessor pp = new JSONObjectPropertyProcessor();
 		pp.setBeanClass(nestedForm.getBeanClass());
-		registerPropertyProcessors(pp, nestedForm.getElements());
+		registerPropertyProcessors(componentType, pp, nestedForm.getElements());
 		registry.registerPropertyProcessor(property, pp);
 	}
 
-	private void registerListProcessor(PropertyProcessorRegistry registry, 
+	private void registerListProcessor(String componentType,
+			PropertyProcessorRegistry registry, 
 			String property, ListEditor listEditor) {
 		
 		JSONArrayPropertyProcessor pp = new JSONArrayPropertyProcessor();
@@ -240,7 +252,7 @@ public class ComponentFormRepository extends XmlFormRepository {
 		Editor itemEditor = (Editor) listEditor.getItemElementFactory()
 				.createElement(listEditor, listEditor.getForm());
 		
-		registerPropertyProcessors(pp, itemEditor);
+		registerPropertyProcessors(componentType, pp, itemEditor);
 		registry.registerPropertyProcessor(property, pp);
 	}
 	

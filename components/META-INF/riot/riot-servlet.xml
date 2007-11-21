@@ -21,6 +21,7 @@
 
 	<bean id="componentEditorTarget" class="org.riotfamily.components.editor.ComponentEditorImpl">
 		<constructor-arg ref="componentDao" />
+		<constructor-arg ref="componentService" />
 		<constructor-arg ref="componentRepository" />
 		<property name="editorConfigs">
 			<map>
@@ -55,6 +56,7 @@
 	  -->
 	<bean id="componentFormRepository" class="org.riotfamily.components.config.ComponentFormRepository">
 		<constructor-arg ref="componentRepository" />
+		<constructor-arg ref="componentDao" />
 		<property name="config" value="/WEB-INF/website-config/component-forms.xml" />
 		<property name="customElements" ref="customFormElements" />
 		<property name="mimetypesMap" ref="fileTypeMap" />
@@ -69,7 +71,7 @@
 		class="org.riotfamily.components.editor.ComponentFormController">
 		<constructor-arg ref="componentFormRepository" />
 		<constructor-arg ref="componentRepository" />
-		<constructor-arg ref="componentDao" />
+		<constructor-arg ref="componentService" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 	

@@ -64,6 +64,12 @@
 				<db:column name="`key`" type="VARCHAR" length="255" not-null="true" primary-key="true" />
 				<db:column name="elt" type="LONGVARCHAR" />
 			</db:create-table>
+			
+			<db:create-table name="riot_component_file_storage_info">
+				<db:column name="`type`" type="VARCHAR" length="255" not-null="true" primary-key="true" />
+				<db:column name="property" type="VARCHAR" length="255" not-null="true" primary-key="true" />
+				<db:column name="fileStoreId" type="VARCHAR" length="255" />
+			</db:create-table>
 		</db:change-set>
 
 

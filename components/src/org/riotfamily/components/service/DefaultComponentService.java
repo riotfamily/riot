@@ -21,10 +21,10 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.dao;
+package org.riotfamily.components.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -35,36 +35,41 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.cachius.Cache;
 import org.riotfamily.common.web.event.ContentChangedEvent;
+import org.riotfamily.common.web.file.FileStore;
+import org.riotfamily.common.web.file.FileStoreLocator;
+import org.riotfamily.common.web.file.FileUtils;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.config.component.Component;
+import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ComponentVersion;
+import org.riotfamily.components.model.FileStorageInfo;
 import org.riotfamily.components.model.Location;
 import org.riotfamily.components.model.VersionContainer;
-import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.components.property.PropertyProcessor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.util.Assert;
 
 /**
- * Abstract base class for {@link Component} implementations that delegates
- * the various CRUD methods to generic load, save, update and delete methods.
- *
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public abstract class AbstractComponentDao implements ComponentDao,
-		InitializingBean {
+public class DefaultComponentService implements InitializingBean, ComponentService {
 
-	private static final Log log = LogFactory.getLog(AbstractComponentDao.class);
+	private static final Log log = LogFactory.getLog(DefaultComponentService.class);
 
 	private ComponentRepository repository;
 
 	private Cache cache;
+	
+	private ComponentDao dao;
 
 	private ApplicationEventMulticaster eventMulticaster;
 
-	public AbstractComponentDao() {
+	private FileStoreLocator fileStoreLocator;
+	
+	public DefaultComponentService() {
 	}
 
 	public void setRepository(ComponentRepository repository) {
@@ -74,88 +79,70 @@ public abstract class AbstractComponentDao implements ComponentDao,
 	public void setCache(Cache cache) {
 		this.cache = cache;
 	}
+	
+	public void setComponentDao(ComponentDao dao) {
+		this.dao = dao;
+	}
 
 	public void setEventMulticaster(ApplicationEventMulticaster eventMulticaster) {
 		this.eventMulticaster = eventMulticaster;
 	}
-
+	
+	public void setFileStoreLocator(FileStoreLocator fileStoreLocator) {
+		this.fileStoreLocator = fileStoreLocator;
+	}
+	
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(repository, "A ComponentRepository must be set.");
-		initDao();
 	}
 
-	protected void initDao() {
-	}
-
-	/**
-	 * Loads the ComponentList specified  by the given id.
-	 */
-	public ComponentList loadComponentList(Long id) {
-		return (ComponentList) loadObject(ComponentList.class, id);
-	}
-
-	/**
-	 * Loads the VersionContainer specified  by the given id.
-	 */
-	public VersionContainer loadVersionContainer(Long id) {
-		return (VersionContainer) loadObject(VersionContainer.class, id);
-	}
-
-	/**
-	 * Loads the ComponentVersion specified  by the given id.
-	 * @since 6.4
-	 */
-	public ComponentVersion loadComponentVersion(Long id) {
-		return (ComponentVersion) loadObject(ComponentVersion.class, id);
-	}
-
-	/**
-	 * Saves the given ComponentList.
-	 */
-	public void saveComponentList(ComponentList list) {
-		list.setLastModified(new Date());
-		list.setLastModifiedBy(AccessController.getCurrentUser().getUserId());
-		saveObject(list);
-	}
-
-	/**
-	 * Updates the given ComponentList.
-	 */
-	public void updateComponentList(ComponentList list) {
-		if (list.getId() != null) {
-			list.setLastModified(new Date());
-			list.setLastModifiedBy(AccessController.getCurrentUser().getUserId());
-			updateObject(list);
-		}
-	}
-
-	/**
-	 * Updates the given VersionContainer.
-	 */
-	public void updateVersionContainer(VersionContainer container) {
-		if (container.getId() != null) {
-			updateObject(container);
-		}
-	}
-
-	/**
-	 * Updates the given ComponentVersion.
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#updateComponentVersion(org.riotfamily.components.model.ComponentVersion)
 	 */
 	public void updateComponentVersion(ComponentVersion version) {
 		if (version.getId() != null) {
 			ComponentCacheUtils.invalidateContainer(
 					cache, version.getContainer(), true);
 
-			updateObject(version);
+			dao.updateComponentVersion(version);
 		}
 	}
 
-	/**
-	 * Returns a list of {@link VersionContainer containers} that can be
-	 * modified without affecting the live list. If the preview list does not
-	 * already exist a new list is created and populated with the containers
-	 * from the live list. This method does not create any copies since the
-	 * containers themselves are responsible for managing the different versions.
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#updateComponentProperties(org.riotfamily.components.model.ComponentVersion, java.util.Map)
+	 */
+	public void updateComponentProperties(ComponentVersion version, Map properties) {
+		Component component = repository.getComponent(version);
+		Iterator it = component.getPropertyProcessors().entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			String key = (String) entry.getKey();
+			PropertyProcessor pp = (PropertyProcessor) entry.getValue();
+			Object object = properties.get(key);
+			properties.put(key, pp.convertToString(object));
+		}
+		version.setProperties(properties);
+		
+		List listeners = component.getUpdateListeners();
+		if (listeners != null) {
+			ComponentUpdate update = new ComponentUpdate(dao, version, fileStoreLocator);
+			it = listeners.iterator();
+			while (it.hasNext()) {
+				UpdateListener listener = (UpdateListener) it.next();
+				try {
+					listener.onUpdate(update);
+				}
+				catch (Exception e) {
+					log.error("Error in UpdateListener", e);
+				}
+			}
+		}
+		updateComponentVersion(version);
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#getOrCreatePreviewContainers(org.riotfamily.components.model.ComponentList)
 	 */
 	public List getOrCreatePreviewContainers(ComponentList list) {
 		List previewContainers = list.getPreviewContainers();
@@ -176,12 +163,16 @@ public abstract class AbstractComponentDao implements ComponentDao,
 		return previewContainers;
 	}
 
-	/**
-	 * Returns the preview version from the given container. If there is only
-	 * a live version, a new preview is created automatically.
-	 *
-	 * @param container The container to use
-	 * @param type The type to use when creating an initial preview version.
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#getOrCreateVersion(java.lang.Long, boolean)
+	 */
+	public ComponentVersion getOrCreateVersion(Long containerId, boolean live) {
+		VersionContainer container = dao.loadVersionContainer(containerId);
+		return getOrCreateVersion(container, null, live);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#getOrCreateVersion(org.riotfamily.components.model.VersionContainer, java.lang.String, boolean)
 	 */
 	public ComponentVersion getOrCreateVersion(
 			VersionContainer container, String type, boolean live) {
@@ -191,8 +182,8 @@ public abstract class AbstractComponentDao implements ComponentDao,
 			if (liveVersion == null) {
 				liveVersion = new ComponentVersion(type);
 				container.setLiveVersion(liveVersion);
-				saveObject(liveVersion);
-				updateVersionContainer(container);
+				dao.saveComponentVersion(liveVersion);
+				dao.updateVersionContainer(container);
 			}
 			return liveVersion;
 		}
@@ -200,7 +191,7 @@ public abstract class AbstractComponentDao implements ComponentDao,
 			ComponentList list = container.getList();
 			if (list != null && !list.isDirty()) {
 				getOrCreatePreviewContainers(list);
-				updateComponentList(list);
+				dao.updateComponentList(list);
 			}
 			ComponentVersion previewVersion = container.getPreviewVersion();
 			if (previewVersion == null) {
@@ -210,17 +201,17 @@ public abstract class AbstractComponentDao implements ComponentDao,
 				}
 				else {
 					previewVersion = new ComponentVersion(type);
-					saveObject(previewVersion);
+					dao.saveComponentVersion(previewVersion);
 				}
 				container.setPreviewVersion(previewVersion);
-				updateVersionContainer(container);
+				dao.updateVersionContainer(container);
 			}
 			return previewVersion;
 		}
 	}
 
-	/**
-	 * Inserts a container into a list.
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#insertContainer(org.riotfamily.components.model.ComponentList, java.lang.String, java.util.Map, int, boolean)
 	 */
 	public VersionContainer insertContainer(ComponentList componentList,
 			String type, Map properties, int position, boolean live) {
@@ -243,7 +234,7 @@ public abstract class AbstractComponentDao implements ComponentDao,
 			componentList.setDirty(true);
 		}
 
-		updateComponentList(componentList);
+		dao.updateComponentList(componentList);
 		return container;
 	}
 
@@ -261,23 +252,22 @@ public abstract class AbstractComponentDao implements ComponentDao,
 		VersionContainer container = new VersionContainer();
 		ComponentVersion version = new ComponentVersion(type);
 		version.setProperties(properties);
-		saveObject(version);
+		dao.saveComponentVersion(version);
 		if (live) {
 			container.setLiveVersion(version);
 		}
 		else {
 			container.setPreviewVersion(version);
 		}
-		saveObject(container);
+		dao.saveVersionContainer(container);
 		return container;
 	}
 
-	/**
-	 * Delete all ComponentLists for the given path
-	 * @since 6.4
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#deleteComponentLists(java.lang.String, java.lang.String)
 	 */
 	public void deleteComponentLists(String type, String path) {
-		List componentLists = findComponentLists(type, path);
+		List componentLists = dao.findComponentLists(type, path);
 		Iterator it = componentLists.iterator();
 		while (it.hasNext()) {
 			ComponentList list = (ComponentList) it.next();
@@ -285,8 +275,8 @@ public abstract class AbstractComponentDao implements ComponentDao,
 		}
 	}
 
-	/**
-	 * Deletes the given ComponentList.
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#deleteComponentList(org.riotfamily.components.model.ComponentList)
 	 */
 	public void deleteComponentList(ComponentList list) {
 		List previewList = list.getPreviewContainers();
@@ -308,11 +298,11 @@ public abstract class AbstractComponentDao implements ComponentDao,
 				it.remove();
 			}
 		}
-		deleteObject(list);
+		dao.deleteComponentList(list);
 	}
 
-	/**
-	 * Deletes the given VersionContainer.
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#deleteVersionContainer(org.riotfamily.components.model.VersionContainer)
 	 */
 	public void deleteVersionContainer(VersionContainer container) {
 		Iterator it = container.getChildLists().iterator();
@@ -321,23 +311,29 @@ public abstract class AbstractComponentDao implements ComponentDao,
 		}
 		deleteComponentVersion(container.getLiveVersion());
 		deleteComponentVersion(container.getPreviewVersion());
-		deleteObject(container);
+		dao.deleteVersionContainer(container);
 	}
 
-	/**
-	 * Deletes the given ComponentVersion.
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#deleteComponentVersion(org.riotfamily.components.model.ComponentVersion)
 	 */
 	public void deleteComponentVersion(ComponentVersion version) {
 		if (version != null) {
-			Component component = repository.getComponent(version);
-			component.onDelete(version);
-			deleteObject(version);
+			Iterator it = dao.getFileStorageInfos(version.getType()).iterator();
+			while (it.hasNext()) {
+				FileStorageInfo fsi = (FileStorageInfo) it.next();
+				String path = version.getProperty(fsi.getProperty());
+				if (path != null) {
+					FileStore store = fileStoreLocator.getFileStore(fsi.getFileStoreId());
+					store.delete(path);
+				}
+			}
+			dao.deleteComponentVersion(version);
 		}
 	}
 
-	/**
-	 * Publishes the given VersionContainer.
-	 * @return <code>true</code> if there was anything to publish.
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#publishContainer(org.riotfamily.components.model.VersionContainer)
 	 */
 	public boolean publishContainer(VersionContainer container) {
 		boolean published = false;
@@ -357,7 +353,7 @@ public abstract class AbstractComponentDao implements ComponentDao,
 			}
 			container.setLiveVersion(preview);
 			container.setPreviewVersion(null);
-			updateVersionContainer(container);
+			dao.updateVersionContainer(container);
 			published = true;
 			if (container.getList() == null) {
 				ComponentCacheUtils.invalidateContainer(cache, container, false);
@@ -366,9 +362,8 @@ public abstract class AbstractComponentDao implements ComponentDao,
 		return published;
 	}
 
-	/**
-	 * Publishes the given list.
-	 * @return <code>true</code> if there was anything to publish
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#publishList(org.riotfamily.components.model.ComponentList)
 	 */
 	public boolean publishList(ComponentList componentList) {
 		boolean published = false;
@@ -394,7 +389,7 @@ public abstract class AbstractComponentDao implements ComponentDao,
 			liveList.addAll(previewList);
 			previewList.clear();
 			componentList.setDirty(false);
-			updateComponentList(componentList);
+			dao.updateComponentList(componentList);
 		}
 
 		Iterator it = componentList.getLiveContainers().iterator();
@@ -415,8 +410,8 @@ public abstract class AbstractComponentDao implements ComponentDao,
 		return published;
 	}
 
-	/**
-	 * Discards all changes made to the given list.
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#discardList(org.riotfamily.components.model.ComponentList)
 	 */
 	public boolean discardList(ComponentList componentList) {
 		boolean discarded = false;
@@ -434,7 +429,7 @@ public abstract class AbstractComponentDao implements ComponentDao,
 					it.remove();
 				}
 			}
-			updateComponentList(componentList);
+			dao.updateComponentList(componentList);
 		}
 		Iterator it = liveList.iterator();
 		while (it.hasNext()) {
@@ -444,9 +439,8 @@ public abstract class AbstractComponentDao implements ComponentDao,
 		return discarded;
 	}
 
-	/**
-	 * Discards all changes made to the given VersionContainer.
-	 * @return <code>true</code> if there was anything to discard.
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#discardContainer(org.riotfamily.components.model.VersionContainer)
 	 */
 	public boolean discardContainer(VersionContainer container) {		
 		boolean discarded = false;
@@ -461,25 +455,24 @@ public abstract class AbstractComponentDao implements ComponentDao,
 		ComponentVersion preview = container.getPreviewVersion();
 		if (preview != null) {
 			container.setPreviewVersion(null);
-			updateVersionContainer(container);
+			dao.updateVersionContainer(container);
 			deleteComponentVersion(preview);
 			discarded = true;
 		}
 		return discarded;
 	}
 
-	/**
-	 * Creates copies of all ComponentLists under the given path and sets
-	 * their path to the specified <code>newPath</code>.
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#copyComponentLists(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public void copyComponentLists(String type, String oldPath, String newPath) {
-		List lists = findComponentLists(type, oldPath);
+		List lists = dao.findComponentLists(type, oldPath);
 		if (lists != null) {
 			Iterator it = lists.iterator();
 			while (it.hasNext()) {
 				ComponentList list = (ComponentList) it.next();
 				ComponentList copy = copyComponentList(list, newPath);
-				saveComponentList(copy);
+				dao.saveComponentList(copy);
 			}
 		}
 	}
@@ -508,6 +501,9 @@ public abstract class AbstractComponentDao implements ComponentDao,
 		return dest;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.riotfamily.components.service.ComponentService#copyVersionContainer(org.riotfamily.components.model.VersionContainer)
+	 */
 	public VersionContainer copyVersionContainer(VersionContainer container) {
 		VersionContainer copy = new VersionContainer();
 		if (container.getLiveVersion() != null) {
@@ -539,18 +535,23 @@ public abstract class AbstractComponentDao implements ComponentDao,
 	}
 
 	private ComponentVersion copyComponentVersion(ComponentVersion version) {
-		Component component = repository.getComponent(version);
 		ComponentVersion copy = new ComponentVersion(version);
-		component.onCopy(version, copy);
+		Iterator it = dao.getFileStorageInfos(version.getType()).iterator();
+		while (it.hasNext()) {
+			FileStorageInfo fsi = (FileStorageInfo) it.next();
+			String path = copy.getProperty(fsi.getProperty());
+			if (path != null) {
+				FileStore store = fileStoreLocator.getFileStore(fsi.getFileStoreId());
+				try {
+					copy.setProperty(fsi.getProperty(), FileUtils.copy(store, path));
+				}
+				catch (IOException e) {
+					log.error("Error copying file.");
+					copy.setProperty(fsi.getProperty(), null);
+				}
+			}
+		}
 		return copy;
 	}
-
-	protected abstract Object loadObject(Class clazz, Long id);
-
-	protected abstract void saveObject(Object object);
-
-	protected abstract void updateObject(Object object);
-
-	protected abstract void deleteObject(Object object);
-
+	
 }
