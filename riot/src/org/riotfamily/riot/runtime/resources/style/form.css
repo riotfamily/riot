@@ -122,7 +122,9 @@ textarea, input.text, input.password {
 }
 
 input.text, input.number, input.password {
-	line-height: 26px;
+	height: 16px;
+	line-height: 16px;
+	_overflow: visible;
 }
 
 span.read-only {
@@ -350,23 +352,18 @@ table.item .indent {
 .button-collapse {
 	margin: 0;
 	border: none;
-	text-indent: 32px;
-	overflow: hidden;
 	background-color: #fff;
 	background-repeat: no-repeat;
 	background-position: center center;
 	padding: 0;
 	width: 32px;
 	height: 32px;
-}
-
-* html .listEditor .button-add,
-* html .button-remove,
-* html .button-toggle,
-* html .button-expand,
-* html .button-collapse {
-	padding: 32px 0 0 0;
-	text-indent: 0;
+	display: block;
+	overflow: hidden;
+	text-indent: -9999em;
+	padding-left: 256px;	
+    -moz-padding-start: 0;
+    -webkit-padding-start: 0;	
 }
 
 .listEditor .button-add, 
@@ -402,6 +399,7 @@ table.item .indent {
 	width: 23px;
 	height: 26px;
 	padding: 0;
+	*margin-top: 1px;
 	overflow: hidden;
 	border: 0;
 	vertical-align: top;

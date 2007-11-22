@@ -29,13 +29,17 @@ form {
 
 label {
 	width: 80px;
+	height: 18px;
+	*height: 16px;
+	line-height: 16px;
+	_overflow: visible;	
 	display: block;
-	float:left;
-	margin-right:10px;
+	float: left;
+	clear: left;
+	padding: 5px 0;
 	margin-bottom: 10px;
-	clear:both;
-	line-height:26px;
-	text-align:right;
+	margin-right: 10px;
+	text-align: right;
 }
 
 .error {
@@ -47,15 +51,17 @@ label {
 
 #username, 
 #password {
+	width: 167px;
+	height: 16px;
+	line-height: 16px;
+	_overflow: visible;	
 	display: block;
-	width: 180px;
-	float:right;
-	font-size: 12px;
-	padding: 4px;
+	float: right;
+	font-size: 11px;
 	margin-bottom: 10px;
-	height: 26px;
-	-moz-box-sizing: border-box;
 	border: 1px solid #ebebeb;
+	padding: 5px 4px 4px 4px;	
+	*padding: 4px 4px 4px 3px;
 }
 
 #submit {

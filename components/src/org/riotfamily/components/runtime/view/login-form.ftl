@@ -24,14 +24,14 @@
 		<div id="login">
 			<div id="logo"></div>
 			<div id="form">
-				<form method="post">
+				<form method="post" action="${request.getRequestURI()}">
 					<#if username?exists>
 						<div class="error">
 							<@spring.messageText "error.login.invalidCredentials", "Invalid username or password" />
 						</div>
 					</#if>
 					<label for="username"><@spring.messageText "label.login.username", "Username" /></label>
-					<input id="username" type="text" name="riot-username" value="${username?if_exists}" />
+					<input id="username" type="text" name="riot-username" value="${username!?html}" />
 					<label for="password"><@spring.messageText "label.login.password", "Password" /></label>
 					<input id="password" type="password" name="riot-password" />
 					<input id="submit" type="submit" class="button-login" value="${springMacroRequestContext.getMessage("label.login.submit", "Login")?html}" />
