@@ -56,7 +56,7 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 
 	private boolean collapsible;
 	
-	private boolean expanded;
+	private boolean expanded = true;
 	
 	private boolean clientHasExpandedState;
 	
@@ -106,6 +106,7 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 	
 	public void setCollapsible(boolean collapsible) {
 		this.collapsible = collapsible;
+		this.expanded = !collapsible;
 	}
 	
 	public boolean isCollapsible() {
@@ -117,7 +118,7 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 	}
 	
 	protected void processRequestCompontents(FormRequest request) {
-		if (!collapsible || expanded) {
+		if (clientHasExpandedState) {
 			super.processRequestCompontents(request);
 		}
 	}
