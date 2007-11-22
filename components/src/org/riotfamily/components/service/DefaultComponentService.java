@@ -96,9 +96,6 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		Assert.notNull(repository, "A ComponentRepository must be set.");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#updateComponentVersion(org.riotfamily.components.model.ComponentVersion)
-	 */
 	public void updateComponentVersion(ComponentVersion version) {
 		if (version.getId() != null) {
 			ComponentCacheUtils.invalidateContainer(
@@ -108,9 +105,6 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#updateComponentProperties(org.riotfamily.components.model.ComponentVersion, java.util.Map)
-	 */
 	public void updateComponentProperties(ComponentVersion version, Map properties) {
 		Component component = repository.getComponent(version);
 		Iterator it = component.getPropertyProcessors().entrySet().iterator();
@@ -141,9 +135,6 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#getOrCreatePreviewContainers(org.riotfamily.components.model.ComponentList)
-	 */
 	public List getOrCreatePreviewContainers(ComponentList list) {
 		List previewContainers = list.getPreviewContainers();
 		if (!list.isDirty()) {
@@ -163,17 +154,11 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		return previewContainers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#getOrCreateVersion(java.lang.Long, boolean)
-	 */
 	public ComponentVersion getOrCreateVersion(Long containerId, boolean live) {
 		VersionContainer container = dao.loadVersionContainer(containerId);
 		return getOrCreateVersion(container, null, live);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#getOrCreateVersion(org.riotfamily.components.model.VersionContainer, java.lang.String, boolean)
-	 */
 	public ComponentVersion getOrCreateVersion(
 			VersionContainer container, String type, boolean live) {
 
@@ -210,9 +195,6 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#insertContainer(org.riotfamily.components.model.ComponentList, java.lang.String, java.util.Map, int, boolean)
-	 */
 	public VersionContainer insertContainer(ComponentList componentList,
 			String type, Map properties, int position, boolean live) {
 
@@ -263,9 +245,6 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		return container;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#deleteComponentLists(java.lang.String, java.lang.String)
-	 */
 	public void deleteComponentLists(String type, String path) {
 		List componentLists = dao.findComponentLists(type, path);
 		Iterator it = componentLists.iterator();
@@ -275,9 +254,6 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#deleteComponentList(org.riotfamily.components.model.ComponentList)
-	 */
 	public void deleteComponentList(ComponentList list) {
 		List previewList = list.getPreviewContainers();
 		List liveList = list.getLiveContainers();
@@ -307,16 +283,15 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 	public void deleteVersionContainer(VersionContainer container) {
 		Iterator it = container.getChildLists().iterator();
 		while (it.hasNext()) {
-			deleteComponentList((ComponentList) it.next());
+			ComponentList list = (ComponentList) it.next();
+			it.remove();
+			deleteComponentList(list);
 		}
 		deleteComponentVersion(container.getLiveVersion());
 		deleteComponentVersion(container.getPreviewVersion());
 		dao.deleteVersionContainer(container);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#deleteComponentVersion(org.riotfamily.components.model.ComponentVersion)
-	 */
 	public void deleteComponentVersion(ComponentVersion version) {
 		if (version != null) {
 			Iterator it = dao.getFileStorageInfos(version.getType()).iterator();
@@ -362,9 +337,6 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		return published;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#publishList(org.riotfamily.components.model.ComponentList)
-	 */
 	public boolean publishList(ComponentList componentList) {
 		boolean published = false;
 		if (componentList.isDirty()) {
@@ -410,9 +382,6 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		return published;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#discardList(org.riotfamily.components.model.ComponentList)
-	 */
 	public boolean discardList(ComponentList componentList) {
 		boolean discarded = false;
 		List previewList = componentList.getPreviewContainers();
@@ -439,9 +408,6 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		return discarded;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#discardContainer(org.riotfamily.components.model.VersionContainer)
-	 */
 	public boolean discardContainer(VersionContainer container) {		
 		boolean discarded = false;
 		Set childLists = container.getChildLists();
@@ -462,9 +428,6 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		return discarded;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#copyComponentLists(java.lang.String, java.lang.String, java.lang.String)
-	 */
 	public void copyComponentLists(String type, String oldPath, String newPath) {
 		List lists = dao.findComponentLists(type, oldPath);
 		if (lists != null) {
