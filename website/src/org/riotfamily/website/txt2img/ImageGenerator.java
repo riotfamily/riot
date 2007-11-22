@@ -41,9 +41,8 @@ import java.io.OutputStream;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 
-import javax.imageio.ImageIO;
-
 import org.riotfamily.common.collection.FlatMap;
+import org.riotfamily.common.image.ImageUtils;
 import org.riotfamily.common.util.ColorUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -216,8 +215,8 @@ public class ImageGenerator implements InitializingBean {
 			throws IOException {
 		
         BufferedImage image = generate(text, maxWidth, color) ;
-       	ImageIO.write(image, "png", os);
-       	image.flush();
+        ImageUtils.write(image, "png", os);
+        image.flush();
 	}
 	
 	public BufferedImage generate(String text, int maxWidth, String color) {
