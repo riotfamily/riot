@@ -26,6 +26,7 @@ package org.riotfamily.common.web.filter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -50,14 +51,11 @@ public class ResourceStamper implements InitializingBean {
 	
 	public void afterPropertiesSet() throws Exception {
 		SimpleDateFormat df = new SimpleDateFormat(timePattern);
-		time = "?" + df.format(new Date());
+		time = df.format(new Date());
 	}
 	
 	public String stamp(String url) {
-		if (url.indexOf('?') == -1) {
-			url += time;
-		}
-		return url;
+		return ServletUtils.addParameter(url, time, null);
 	}
 
 }

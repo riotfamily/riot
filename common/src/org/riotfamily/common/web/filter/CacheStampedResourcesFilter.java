@@ -56,7 +56,7 @@ public class CacheStampedResourcesFilter extends HttpFilterBean {
 	public static final String DEFAULT_EXPIRATION = "10Y";
 
 	public static final Pattern DEFAULT_PATTERN =
-			Pattern.compile("(.*/\\d{14}/.+)|(.+\\?[0-9]+$)");
+			Pattern.compile("(^.*/\\d{14}/.+$)|(^.+[?&][0-9]+$)");
 
 	private static final String EXPIRES_HEADER = "Expires";
 

@@ -520,7 +520,10 @@ public final class ServletUtils {
 		StringBuffer sb = new StringBuffer(url);
 		boolean first = url.indexOf('?') == -1;
 		sb.append(first ? '?' : '&');
-		sb.append(name).append('=').append(FormatUtils.uriEscape(value));
+		sb.append(name);
+		if (value != null) {
+			sb.append('=').append(FormatUtils.uriEscape(value));
+		}
 		return sb.toString();
 	}
 
