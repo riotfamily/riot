@@ -26,7 +26,9 @@ package org.riotfamily.common.web.view;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -178,8 +180,32 @@ public class CommonMacroHelper {
 		return stamper.stamp(s);
 	}
 
-	public List partition(Collection c, String titleProperty) {
-		return PropertyUtils.partition(c, titleProperty);
+	/**
+     * Partitions the given collection by inspecting the specified property
+     * of the contained items.
+     *
+     * @param c The collection to partition
+     * @param titleProperty The property to use for grouping
+     * @return A list of {@link ObjectGroup ObjectGroups}
+     */
+    public static List partition(Collection c, String titleProperty) {
+		ArrayList groups = new ArrayList();
+		Iterator it = c.iterator();
+		ObjectGroup group = null;
+		while (it.hasNext()) {
+			Object item = it.next();
+			Object title = PropertyUtils.getProperty(item, titleProperty);
+			if (group == null || (title != null
+					&& !title.equals(group.getTitle()))) {
+
+				group = new ObjectGroup(title, item);
+				groups.add(group);
+			}
+			else {
+				group.add(item);
+			}
+		}
+		return groups;
 	}
 
 	public String getFileExtension(String filename, Collection validExtensions,
@@ -216,4 +242,29 @@ public class CommonMacroHelper {
 		return FormatUtils.fileNameToTitleCase(s);
 	}
 
+	public static class ObjectGroup {
+		
+		private Object title;
+		
+		private List items;
+
+		private ObjectGroup(Object title, Object item) {
+			this.title = title;
+			this.items = new ArrayList();
+			this.items.add(item);
+		}
+
+		public void add(Object item) {
+			items.add(item);
+		}
+		
+		public Object getTitle() {
+			return this.title;
+		}
+		
+		public List getItems() {
+			return this.items;
+		}
+
+	}
 }

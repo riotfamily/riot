@@ -26,11 +26,7 @@ package org.riotfamily.common.beans;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -240,33 +236,5 @@ public final class PropertyUtils {
 			throw new FatalBeanException(e.getMessage(), e);
 		}
     }
-
-    /**
-     * Partitions the given collection by inspecting the specified property
-     * of the contained items.
-     *
-     * @param c The collection to partition
-     * @param titleProperty The property to use for grouping
-     * @return A list of {@link ObjectGroup ObjectGroups}
-     */
-    public static List partition(Collection c, String titleProperty) {
-		ArrayList groups = new ArrayList();
-		Iterator it = c.iterator();
-		ObjectGroup group = null;
-		while (it.hasNext()) {
-			Object item = it.next();
-			Object title = getProperty(item, titleProperty);
-			if (group == null || (title != null
-					&& !title.equals(group.getTitle()))) {
-
-				group = new ObjectGroup(title, item);
-				groups.add(group);
-			}
-			else {
-				group.add(item);
-			}
-		}
-		return groups;
-	}
 
 }
