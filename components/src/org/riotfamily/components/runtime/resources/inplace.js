@@ -319,7 +319,7 @@ riot.PopupTextEditor = Class.create(riot.InplaceEditor, {
 
 riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 	showEditor: function() {
-		Resources.loadScript('tiny_mce/tiny_mce_src.js');
+		Resources.loadScript('tiny_mce/tiny_mce_src.js', 'tinymce');
 		Resources.waitFor('tinymce.WindowManager', this.openPopup.bind(this));
 	},
 
