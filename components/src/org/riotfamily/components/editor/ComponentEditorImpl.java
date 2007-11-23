@@ -73,7 +73,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 	private MessageSource messageSource;
 
-	private Map editorConfigs;
+	private Map tinyMCEProfiles;
 
 	private boolean instantPublish = false;
 
@@ -91,12 +91,12 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		this.messageSource = messageSource;
 	}
 
-	public Map getEditorConfigs() {
-		return this.editorConfigs;
+	public Map getTinyMCEProfiles() {
+		return this.tinyMCEProfiles;
 	}
 
-	public void setEditorConfigs(Map editorConfigs) {
-		this.editorConfigs = editorConfigs;
+	public void setTinyMCEProfiles(Map tinyMCEProfiles) {
+		this.tinyMCEProfiles = tinyMCEProfiles;
 	}
 
 	public void setInstantPublish(boolean instantPublish) {

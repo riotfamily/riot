@@ -317,6 +317,7 @@
 			<xsd:complexContent>
 				<xsd:extension base="simple-editor">
 					<xsd:attribute name="rows" type="xsd:positiveInteger" default="10" />
+					<xsd:attribute name="config" type="xsd:string" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

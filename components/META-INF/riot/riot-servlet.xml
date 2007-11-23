@@ -23,13 +23,9 @@
 		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="componentService" />
 		<constructor-arg ref="componentRepository" />
-		<property name="editorConfigs">
-			<map>
-				<entry key="tinyMCE" value-ref="tinyMCE" />
-			</map>
-		</property>
+		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
 	</bean>
-
+	
 	<bean id="instantComponentEditor" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
 		<property name="target">
@@ -38,18 +34,6 @@
 			</bean>
 		</property>
 	</bean>
-
-	<util:properties id="tinyMCE">
-		<!--
-		<prop key="plugins">smartquotes,autocleanup,nospam</prop>
-		<prop key="smartquotes_quoteStyle">de</prop>
-		<prop key="smartquotes_cleanup">false</prop>
-		-->
-		<prop key="valid_elements">+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote,sub,sup,span[class&lt;mailto]</prop>
-		<prop key="theme_advanced_container_buttons">formatselect,bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap</prop>
-		<prop key="theme_advanced_blockformats">p,h3,h4</prop>
-		<prop key="forced_root_block">p</prop>
-	</util:properties>
 
 	<!--
 	  - FormRepository providing component property forms.

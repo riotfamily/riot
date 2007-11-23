@@ -71,6 +71,8 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	
 	private ImageCropper imageCropper;
 	
+	private Map tinyMCEProfiles;
+	
 	private HashMap customElements;
 	
 	private HashMap customElementsWithoutNS;
@@ -165,6 +167,17 @@ public class XmlFormRepository extends AbstractFormRepository implements
 
 	public void setImageCropper(ImageCropper imageCropper) {
 		this.imageCropper = imageCropper;
+	}
+
+	public Map getTinyMCEConfig(String profile) {
+		if (profile == null) {
+			profile = "default";
+		}
+		return (Map) tinyMCEProfiles.get(profile);
+	}
+
+	public void setTinyMCEProfiles(Map profiles) {
+		this.tinyMCEProfiles = profiles;
 	}
 
 	public final void afterPropertiesSet() throws Exception {

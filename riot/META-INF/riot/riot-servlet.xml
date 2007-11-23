@@ -242,6 +242,16 @@
 				value="org.riotfamily.riot.form.element.ObjectChooser" />
 	</util:map>
 
+	<util:map id="defaultTinyMCEConfig">
+		<entry key="valid_elements" value="+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote,sub,sup,span[class&lt;mailto]" />
+		<entry key="theme_advanced_container_buttons" value="bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap" />
+		<entry key="forced_root_block" value="p" />
+	</util:map>
+	
+	<util:map id="tinyMCEProfiles">
+		<entry key="default" value-ref="defaultTinyMCEConfig" />
+	</util:map>
+	
 	<bean id="formRepository" class="org.riotfamily.forms.factory.xml.XmlFormRepository">
 		<property name="configLocations">
 			<list>
@@ -250,6 +260,7 @@
 		</property>
 		<property name="mimetypesMap" ref="fileTypeMap" />
 		<property name="imageCropper" ref="imageCropper" />
+		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
 		<property name="customElements" ref="customFormElements" />
 	</bean>
 

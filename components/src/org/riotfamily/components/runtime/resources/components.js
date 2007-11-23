@@ -41,11 +41,11 @@ riot.getTextEditor = function(el) {
 			el.textEditor = new riot.PopupTextEditor(el, component, {useInnerHtmlAsDefault: true});
 		}
 		if (editorType == 'richtext') {
-			el.textEditor = new riot.RichtextEditor(el, component, {useInnerHtmlAsDefault: true});
+			el.textEditor = new riot.RichtextEditor(el, component, {useInnerHtmlAsDefault: true, config: el.readAttribute('riot:config')});
 		}
 		if (editorType == 'richtext-chunks') {
 			//TODO Check if component is a list-component!
-			el.textEditor = new riot.RichtextEditor(el, component, {split: true, useInnerHtmlAsDefault: true});
+			el.textEditor = new riot.RichtextEditor(el, component, {split: true, useInnerHtmlAsDefault: true, config: el.readAttribute('riot:config')});
 		}
 	}
 	return el.textEditor;

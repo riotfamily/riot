@@ -136,13 +136,12 @@
   - editor="richtext-chunks", depending on the chunk parameter.
   - See: <@editable> for a description of the other parameters.
   -->
-<#macro richtext key tag="" alwaysUseNested=false chunk=false attributes...>
+<#macro richtext key tag="" config="default" alwaysUseNested=false chunk=false attributes...>
 	<#compress>
-		<#if chunk>
-			<#local editor="richtext-chunks" />
-		<#else>
-			<#local editor="richtext" />
+		<#if editMode>
+			<#local attributes = common.unwrapAttributes(attributes) + {"riot:config": config} />
 		</#if>
+		<#local editor = chunk?string("richtext-chunks", "richtext") />
 		<@editable key=key editor=editor tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
 	</#compress>
 </#macro>

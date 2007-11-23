@@ -24,11 +24,14 @@
 package org.riotfamily.forms.element;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+
+import net.sf.json.JSONObject;
 
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.DHTMLElement;
-import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
@@ -40,8 +43,25 @@ import org.riotfamily.forms.resource.ScriptResource;
 public class TinyMCE extends AbstractTextElement
 		implements ResourceElement, DHTMLElement {
 
+	static Map defaults = new HashMap();
+	static {
+		defaults.put("skin", "riot");
+		defaults.put("theme", "advanced");
+		defaults.put("theme_advanced_layout_manager", "RowLayout");
+		defaults.put("theme_advanced_containers_default_align", "left");
+		defaults.put("theme_advanced_container_mceeditor", "mceeditor");
+		defaults.put("theme_advanced_containers", "buttons1,mceeditor");
+		defaults.put("theme_advanced_container_buttons1", "formatselect,bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap");
+		defaults.put("theme_advanced_blockformats", "p,h3,h4");
+		defaults.put("valid_elements", "+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote");
+	}
+	
 	private int rows = 10;
 
+	private Map config;
+	
+	private String initScript;
+	
 	public TinyMCE() {
 		setStyleClass("richtext");
 	}
@@ -49,7 +69,11 @@ public class TinyMCE extends AbstractTextElement
 	public void setRows(int rows) {
 		this.rows = rows;
 	}
-
+	
+	public void setConfig(Map config) {
+		this.config = config;
+	}
+	
 	public void renderInternal(PrintWriter writer) {
 		TagWriter tag = new TagWriter(writer);
 		tag.start(Html.TEXTAREA)
@@ -64,12 +88,29 @@ public class TinyMCE extends AbstractTextElement
 		return new ScriptResource("tiny_mce/tiny_mce_src.js", "tinymce.WindowManager");
 	}
 
-	public String getLanguage() {
-		return getFormContext().getLocale().getLanguage().toLowerCase();
+	private String getJsonConfig() {
+		JSONObject json = JSONObject.fromObject(defaults);
+		if (config != null) {
+			json.putAll(config);
+		}
+		json.element("mode", "exact");
+		json.element("elements", getId());
+		json.element("language", getFormContext().getLocale().getLanguage().toLowerCase());
+		json.element("add_unload_trigger", false);
+		json.element("submit_patch", false);
+		json.element("strict_loading_mode", true);
+		return json.toString();
 	}
-
+	
 	public String getInitScript() {
-		return TemplateUtils.getInitScript(this);
+		if (initScript == null) {
+			StringBuffer sb = new StringBuffer();
+			sb.append("tinymce.dom.Event.domLoaded = true;");
+			sb.append("tinymce.dom.Event._wait = function() {};");
+			sb.append("tinyMCE.init(").append(getJsonConfig()).append(");");
+			initScript = sb.toString();
+		}
+		return initScript;
 	}
 
 }

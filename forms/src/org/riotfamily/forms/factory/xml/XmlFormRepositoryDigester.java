@@ -271,6 +271,9 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		else if (AutocompleteTextField.class.isAssignableFrom(elementClass)) {
 			initAutocompleteTextField(ele, pvs);
 		}
+		else if (TinyMCE.class.isAssignableFrom(elementClass)) {
+			initTinyMCE(ele, pvs);
+		}
 
 		factory.setPropertyValues(pvs);
 
@@ -334,6 +337,11 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	private void initAutocompleteTextField(Element ele, MutablePropertyValues pvs) {
 		pvs.addPropertyValue("model", beanFactory.getBean(
 				XmlUtils.getAttribute(ele, "model")));
+	}
+	
+	private void initTinyMCE(Element ele, MutablePropertyValues pvs) {
+		pvs.addPropertyValue("config", formRepository.getTinyMCEConfig(
+				XmlUtils.getAttribute(ele, "config")));
 	}
 
 	protected Class getElementClass(Element ele) {

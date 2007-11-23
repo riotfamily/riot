@@ -324,7 +324,8 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 	},
 
 	openPopup: function() {
-		this.popup = new riot.TinyMCEPopup(this);
+		var settings = riot.TinyMCEProfiles[this.options.config || 'default'];
+		this.popup = new riot.TinyMCEPopup(this, settings);
 	},
 
 	save: function() {
@@ -476,7 +477,7 @@ riot.TextareaPopup = Class.create(riot.Popup, {
 });
 
 riot.TinyMCEPopup = Class.create(riot.TextareaPopup, {
-	initialize: function($super, editor) {
+	initialize: function($super, editor, settings) {
 		$super(editor);
 		this.div.addClassName('riot-richtext');
 		if (this.textarea.value == '') {
@@ -489,7 +490,7 @@ riot.TinyMCEPopup = Class.create(riot.TextareaPopup, {
 		tinyMCE.init(Object.extend({
 			elements: this.textarea.identify(),
 			init_instance_callback: this.setInstance.bind(this)
-		}, riot.tinyMCEConfig));
+		}, settings));
 	},
 
 	setInstance: function(tinymce) {
@@ -601,7 +602,13 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	var e = riot.activeEditor.element;
 	var clone = $(e.cloneNode(false));
 	clone.hide().insertSelfBefore(e);
-	riot.stylesheetMaker.copyStyles(clone, doc, riot.tinyMCEStyles);
+	
+	var styles = inst.settings.theme_advanced_styles;
+	if (styles) {
+		var classNames = styles.split(';').collect(function(pair) {return pair.split('=')[1]});
+		riot.stylesheetMaker.copyStyles(clone, doc, classNames);
+	}
+	
 	clone.remove();
 
 	body.style.paddingLeft = '5px';
@@ -631,35 +638,31 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	}
 }
 
-riot.tinyMCEConfig = {
+riot.fixedTinyMCESettings = {
 	mode: 'exact',
+	width: '100%',
+	language: 'en', //riot.language,
+	theme: 'advanced',
+	skin: 'riot',
 	add_unload_trigger: false,
 	strict_loading_mode: true,
 	use_native_selects: true,
 	setupcontent_callback: riot.setupTinyMCEContent,
+	hide_selects_on_submit: false,
 	relative_urls: false,
 	gecko_spellcheck: true,
-	hide_selects_on_submit: false,
-	language: 'en', //riot.language,
-	width: '100%',
-	theme: 'advanced',
-	skin: 'riot',
 	theme_advanced_layout_manager: 'RowLayout',
 	theme_advanced_containers_default_align: 'left',
 	theme_advanced_container_mceeditor: 'mceeditor',
 	theme_advanced_containers: 'buttons,mceeditor'
 }
 
-ComponentEditor.getEditorConfigs(function(configs) {
-	if (configs && configs.tinyMCE) {
-		Object.extend(riot.tinyMCEConfig, configs.tinyMCE);
-		var styles = riot.tinyMCEConfig.theme_advanced_styles;
-		if (styles) {
-			riot.tinyMCEStyles = styles.split(';').collect(function(pair) {
-					return pair.split('=')[1];
-				});
-		}
-	}
+riot.TinyMCEProfiles = {};
+
+ComponentEditor.getTinyMCEProfiles(function(profiles) {
+	$H(profiles).each(function(entry) {
+		riot.TinyMCEProfiles[entry.key] = Object.extend(entry.value, riot.fixedTinyMCESettings);
+	});
 });
 
 riot.initSwfUpload = function(readyCallback) {

@@ -75,6 +75,6 @@ public interface ComponentEditor {
 
 	public void logout();
 
-	public Map getEditorConfigs();
+	public Map getTinyMCEProfiles();
 
 }
