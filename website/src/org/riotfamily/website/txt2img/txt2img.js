@@ -1,8 +1,10 @@
 var RiotImageReplacement = Class.create();
 RiotImageReplacement.prototype = {
 
+	// Whether to use the alphaImageLoader or not. The flag will be set to 
+	// true in IE6 by a conditional statement below ...
+	 
 	useFilter: false,
-	IE: false,
 		
 	initialize: function(generatorUrl, pixelUrl, selectors) {
 		this.selectors = selectors;
@@ -10,7 +12,7 @@ RiotImageReplacement.prototype = {
 		this.pixelImage = new Image();
 		this.pixelImage.src = pixelUrl;
 		this.createHoverRules();
-		Event.onDOMReady(this.insertImages.bind(this));
+		document.observe("dom:loaded", this.insertImages.bind(this));
 		if (window.riotEditCallbacks) {
 			addRiotEditCallback(this.insertImages.bind(this));
 		}
@@ -151,52 +153,7 @@ RiotImageReplacement.prototype = {
 	}
 }
 
-if (!Event.onDOMReady) {
-	Object.extend(Event, {
-		_domReady: function() {
-			if (arguments.callee.done) return;
-			arguments.callee.done = true;
-			if (this._timer) clearInterval(this._timer);
-			for (var i = 0; i < this._readyCallbacks.length; i++) {
-					this._readyCallbacks[i]();
-				}
-			this._readyCallbacks = null;
-		},
-		onDOMReady: function(f) {
-			if (!this._readyCallbacks) {
-				Event._readyCallbacks = [];
-				var domReady = this._domReady.bind(this);
-				if (document.addEventListener && !Prototype.Browser.WebKit) {
-					document.addEventListener("DOMContentLoaded", domReady, false);
-				}
-				else {
-					if (this.IE) {
-						document.write('<script id="__ie_onload" defer src="' + IEDOMReadyScript + '"><\/script>');
-						document.getElementById("__ie_onload").onreadystatechange = function() {
-							if (this.readyState == "complete") domReady();
-						};
-					}
-					else {
-						if (Prototype.Browser.WebKit) {
-							this._timer = setInterval(function() {
-								if (/loaded|complete/.test(document.readyState)) domReady();
-							}, 10);
-						}
-						else {
-							Event.observe(window, 'load', domReady);
-						}
-					}
-				}
-			}
-			Event._readyCallbacks.push(f);
-		}
-	});
-}
-
 /*@cc_on
-/*@if (@_win32)
-	RiotImageReplacement.prototype.IE = true;
-/*@end
 /*@if (@_jscript_version < 5.7)
 	RiotImageReplacement.prototype.useFilter = true;
 /*@end
@@ -334,4 +291,3 @@ CssMatcher.prototype = {
 		}
 	}
 }
-
