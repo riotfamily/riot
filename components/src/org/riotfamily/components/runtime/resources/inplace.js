@@ -487,6 +487,7 @@ riot.TinyMCEPopup = Class.create(riot.TextareaPopup, {
 		this.open();
 		
 		tinymce.dom.Event.domLoaded = true;
+		tinymce.dom.Event._wait = function() {};
 		tinyMCE.init(Object.extend({
 			elements: this.textarea.identify(),
 			init_instance_callback: this.setInstance.bind(this)
@@ -641,7 +642,7 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 riot.fixedTinyMCESettings = {
 	mode: 'exact',
 	width: '100%',
-	language: 'en', //riot.language,
+	language: riot.language,
 	theme: 'advanced',
 	skin: 'riot',
 	add_unload_trigger: false,
