@@ -258,28 +258,26 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		List previewList = list.getPreviewContainers();
 		List liveList = list.getLiveContainers();
 		if (liveList != null) {
-			Iterator it = liveList.listIterator();
+			Iterator it = liveList.iterator();
 			while (it.hasNext()) {
-				VersionContainer component = (VersionContainer) it.next();
-				if (previewList == null || !previewList.contains(component)) {
-					deleteVersionContainer(component);
-				}
+				VersionContainer container = (VersionContainer) it.next();
 				it.remove();
+				if (previewList == null || !previewList.contains(container)) {
+					deleteVersionContainer(container);
+				}
 			}
 		}
 		if (previewList != null) {
-			Iterator it = previewList.listIterator();
+			Iterator it = previewList.iterator();
 			while (it.hasNext()) {
-				deleteVersionContainer((VersionContainer) it.next());
+				VersionContainer container = (VersionContainer) it.next();
 				it.remove();
+				deleteVersionContainer(container);
 			}
 		}
 		dao.deleteComponentList(list);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#deleteVersionContainer(org.riotfamily.components.model.VersionContainer)
-	 */
 	public void deleteVersionContainer(VersionContainer container) {
 		Iterator it = container.getChildLists().iterator();
 		while (it.hasNext()) {
@@ -287,13 +285,22 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 			it.remove();
 			deleteComponentList(list);
 		}
-		deleteComponentVersion(container.getLiveVersion());
-		deleteComponentVersion(container.getPreviewVersion());
+		ComponentVersion version = container.getLiveVersion();
+		if (version != null) {
+			container.setLiveVersion(null);
+			deleteComponentVersion(version);
+		}
+		version = container.getPreviewVersion();
+		if (version != null) {
+			container.setPreviewVersion(null);
+			deleteComponentVersion(version);
+		}
 		dao.deleteVersionContainer(container);
 	}
 
 	public void deleteComponentVersion(ComponentVersion version) {
 		if (version != null) {
+			dao.deleteComponentVersion(version);
 			Iterator it = dao.getFileStorageInfos(version.getType()).iterator();
 			while (it.hasNext()) {
 				FileStorageInfo fsi = (FileStorageInfo) it.next();
@@ -303,13 +310,9 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 					store.delete(path);
 				}
 			}
-			dao.deleteComponentVersion(version);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#publishContainer(org.riotfamily.components.model.VersionContainer)
-	 */
 	public boolean publishContainer(VersionContainer container) {
 		boolean published = false;
 		Set childLists = container.getChildLists();
@@ -464,9 +467,6 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		return dest;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.riotfamily.components.service.ComponentService#copyVersionContainer(org.riotfamily.components.model.VersionContainer)
-	 */
 	public VersionContainer copyVersionContainer(VersionContainer container) {
 		VersionContainer copy = new VersionContainer();
 		if (container.getLiveVersion() != null) {
