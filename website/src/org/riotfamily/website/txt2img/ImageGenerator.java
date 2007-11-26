@@ -54,6 +54,10 @@ import org.springframework.core.io.Resource;
  */
 public class ImageGenerator implements InitializingBean {
 
+	private static final int MAX_WIDTH = 1024;
+
+	private static final int MAX_HEIGHT = 600;
+
 	private Font font = Font.getFont("Serif");
 	
 	private float fontSize = 22;
@@ -230,7 +234,7 @@ public class ImageGenerator implements InitializingBean {
 		float fontSize = this.fontSize;
 		Dimension size;
 		
-		if (shrinkToFit) {
+		if (shrinkToFit && maxWidth < Integer.MAX_VALUE) {
 			size = getSize(text, fontSize, Integer.MAX_VALUE);
 			while (size.getWidth() > maxWidth) {
 				double delta = fontSize - fontSize * (maxWidth / size.getWidth());
@@ -329,8 +333,9 @@ public class ImageGenerator implements InitializingBean {
 	}
 	
 	protected BufferedImage createImage(Dimension size) {
-		return new BufferedImage((int) size.getWidth(), (int) size.getHeight(),	
-				BufferedImage.TYPE_INT_ARGB);
+		int w = Math.min((int) size.getWidth(), MAX_WIDTH);
+		int h = Math.min((int) size.getHeight(), MAX_HEIGHT);
+		return new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 	}
 	
 }
