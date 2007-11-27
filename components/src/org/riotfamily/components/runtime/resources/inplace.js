@@ -168,7 +168,7 @@ riot.InplaceTextEditor = Class.create(riot.InplaceEditor, {
 		this.input.setStyle({
 			position: 'absolute', overflow: 'hidden',
 			top: 0,	left: 0, border: 0, padding: 0, margin: 0,
-			backgroundColor: 'transparent'
+			backgroundColor: 'transparent', zIndex: 10000
 		});
 
 		this.input.onkeypress = this.input.onkeyup = this.updateElement.bindAsEventListener(this);
