@@ -241,7 +241,6 @@ public class ImageGenerator implements InitializingBean {
 				fontSize -= Math.max(Math.round(delta), 1);
 				size = getSize(text, fontSize, Integer.MAX_VALUE);
 			}
-			size.setSize(maxWidth, size.getHeight());
 			maxWidth = Integer.MAX_VALUE;
 		}
 		else {
