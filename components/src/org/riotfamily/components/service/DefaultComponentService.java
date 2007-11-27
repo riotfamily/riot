@@ -326,11 +326,11 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		ComponentVersion preview = container.getPreviewVersion();
 		if (preview != null) {
 			ComponentVersion liveVersion = container.getLiveVersion();
+			container.setLiveVersion(preview);
+			container.setPreviewVersion(null);
 			if (liveVersion != null) {
 				deleteComponentVersion(liveVersion);
 			}
-			container.setLiveVersion(preview);
-			container.setPreviewVersion(null);
 			dao.updateVersionContainer(container);
 			published = true;
 			if (container.getList() == null) {
