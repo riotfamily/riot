@@ -643,8 +643,8 @@ riot.fixedTinyMCESettings = {
 	mode: 'exact',
 	width: '100%',
 	language: riot.language,
-	theme: 'advanced',
 	skin: 'riot',
+	theme: 'advanced',
 	add_unload_trigger: false,
 	strict_loading_mode: true,
 	use_native_selects: true,
@@ -655,7 +655,7 @@ riot.fixedTinyMCESettings = {
 	theme_advanced_layout_manager: 'RowLayout',
 	theme_advanced_containers_default_align: 'left',
 	theme_advanced_container_mceeditor: 'mceeditor',
-	theme_advanced_containers: 'buttons,mceeditor'
+	theme_advanced_containers: 'buttons1,mceeditor'
 }
 
 riot.TinyMCEProfiles = {};
