@@ -85,7 +85,8 @@ public class TinyMCE extends AbstractTextElement
 	}
 
 	public FormResource getResource() {
-		return new ScriptResource("tiny_mce/tiny_mce_src.js", "tinymce.WindowManager");
+		return new ScriptResource("tiny_mce/tiny_mce_src.js", "tinymce.WindowManager",
+				new ScriptResource("tiny_mce/lazy_load_fix.js", "tinyMCE_GZ"));
 	}
 
 	private String getJsonConfig() {
@@ -105,8 +106,7 @@ public class TinyMCE extends AbstractTextElement
 	public String getInitScript() {
 		if (initScript == null) {
 			StringBuffer sb = new StringBuffer();
-			sb.append("tinymce.dom.Event.domLoaded = true;");
-			sb.append("tinymce.dom.Event._wait = function() {};");
+			sb.append("tinymce.dom.Event._pageInit();");
 			sb.append("tinyMCE.init(").append(getJsonConfig()).append(");");
 			initScript = sb.toString();
 		}

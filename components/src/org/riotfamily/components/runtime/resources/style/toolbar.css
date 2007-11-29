@@ -296,7 +296,7 @@ div.riot-highlight-bottom {
 	top: 0;
 	left: 0;
 	z-index:1000;
-	width:600px;
+	width: 600px;
 	margin: 0 auto;
 	background-color: #3d3d3d;
 	padding:3px;
@@ -378,6 +378,10 @@ body > #riot-popup {
 #riot-popup .riot-close-button {
 	right: 10px;
 	background: url(icons/dialogs/close.gif) center center no-repeat;
+}
+
+#riot-popup div.mceEditor {
+	width: 100%;
 }
 
 #riot-popup .mceEditor img {

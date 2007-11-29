@@ -45,6 +45,7 @@
 		<property name="customElements" ref="customFormElements" />
 		<property name="mimetypesMap" ref="fileTypeMap" />
 		<property name="imageCropper" ref="imageCropper" />
+		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
 	</bean>
 
 	<!--

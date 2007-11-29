@@ -319,6 +319,7 @@ riot.PopupTextEditor = Class.create(riot.InplaceEditor, {
 
 riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 	showEditor: function() {
+		tinyMCE_GZ = {loaded: true};
 		Resources.loadScript('tiny_mce/tiny_mce_src.js', 'tinymce');
 		Resources.waitFor('tinymce.WindowManager', this.openPopup.bind(this));
 	},
@@ -485,9 +486,8 @@ riot.TinyMCEPopup = Class.create(riot.TextareaPopup, {
 		}
 		this.textarea.makeInvisible();
 		this.open();
-		
-		tinymce.dom.Event.domLoaded = true;
-		tinymce.dom.Event._wait = function() {};
+
+		tinymce.dom.Event._pageInit();
 		tinyMCE.init(Object.extend({
 			elements: this.textarea.identify(),
 			init_instance_callback: this.setInstance.bind(this)
