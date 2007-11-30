@@ -34,6 +34,7 @@ import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.LastModified;
+import org.springframework.web.util.WebUtils;
 
 /**
  * Adapter that handles {@link CacheableController cacheable controllers}.
@@ -113,7 +114,7 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
      * Returns the lastModified date as reported by the CacheService.
      */
     public final long getLastModified(HttpServletRequest request, Object handler) {
-    	if (handler instanceof LastModified) {
+    	if (handler instanceof LastModified && !WebUtils.isIncludeRequest(request)) {
 	    	return cacheService.getLastModified(request, 
 	    			new CacheableControllerProcessor(
 	    			(CacheableController) handler, cacheKeyProvider, viewResolverHelper));
