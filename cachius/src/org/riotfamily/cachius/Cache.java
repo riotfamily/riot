@@ -81,7 +81,6 @@ public final class Cache implements Serializable {
      * Create the cache.
      */
     public Cache(File cacheDir, int capacity, boolean enabled) {
-        this.cacheDir = cacheDir;
         this.enabled = enabled;
         
         int mapCapacity = (int) (capacity / 0.75f) + 1;
