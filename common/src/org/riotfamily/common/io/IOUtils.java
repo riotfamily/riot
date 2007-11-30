@@ -23,11 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.io;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
 import org.apache.commons.logging.Log;
@@ -40,6 +44,15 @@ public class IOUtils {
 	
 	private static Log log = LogFactory.getLog(IOUtils.class);
 	
+	/**
+	 * Copy the contents of the given InputStream to the given OutputStream.
+	 * Unlike {@link FileCopyUtils#copy(InputStream, OutputStream)} this method
+	 * does not close the OutputStream (only the InputStream).
+	 * @param in the stream to copy from
+	 * @param out the stream to copy to
+	 * @return the number of bytes copied
+	 * @throws IOException in case of I/O errors
+	 */
 	public static int copy(InputStream in, OutputStream out) 
 			throws IOException {
 		
@@ -59,6 +72,19 @@ public class IOUtils {
 		}
 	}
 	
+	public static int copy(File file, OutputStream out) throws IOException {
+		return copy(new BufferedInputStream(new FileInputStream(file)), out);
+	}
+	
+	/**
+	 * Copy the contents of the given Reader to the given Writer.
+	 * Unlike {@link FileCopyUtils#copy(Reader, Writer)} this method does not 
+	 * close the Writer (only the Reader).
+	 * @param in the Reader to copy from
+	 * @param out the Writer to copy to
+	 * @return the number of characters copied
+	 * @throws IOException in case of I/O errors
+	 */
 	public static int copy(Reader in, Writer out) 
 			throws IOException {
 		
@@ -75,6 +101,24 @@ public class IOUtils {
 		}
 		finally {
 			closeReader(in);
+		}
+	}
+	
+	public static int copy(File file, Writer out, String encoding) 
+			throws IOException {
+		
+		return copy(new BufferedInputStream(new FileInputStream(file)), 
+				out, encoding);
+	}
+	
+	public static int copy(InputStream in, Writer out, String encoding) 
+			throws IOException {
+		
+		try {
+			return copy(new InputStreamReader(in, encoding), out);
+		}
+		catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	
