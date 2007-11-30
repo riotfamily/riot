@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.cachius.spring.Compressable;
+import org.riotfamily.cachius.spring.Compressible;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
@@ -50,7 +50,7 @@ import org.springframework.web.servlet.mvc.LastModified;
  * Controller that serves an internal resource.
  */
 public class AbstractResourceController extends AbstractCacheableController
-		implements LastModified, Compressable {
+		implements LastModified, Compressible {
 
 	private Log log = LogFactory.getLog(AbstractResourceController.class);
 	

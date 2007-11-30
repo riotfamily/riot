@@ -66,8 +66,8 @@ public class CacheableControllerProcessor implements CacheableRequestProcessor {
 	}
 
 	public boolean responseShouldBeZipped(HttpServletRequest request) {
-		if (controller instanceof Compressable) {
-			return ((Compressable) controller).gzipResponse(request);
+		if (controller instanceof Compressible) {
+			return ((Compressible) controller).gzipResponse(request);
 		}
 		return false;
 	}

@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.cachius.spring.Compressable;
+import org.riotfamily.cachius.spring.Compressible;
 import org.riotfamily.common.web.compressor.YUICssCompressor;
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.util.ServletUtils;
@@ -82,7 +82,7 @@ import freemarker.template.TemplateException;
  */
 public class CssTemplateController extends AbstractCacheableController
 		implements ServletContextAware, InitializingBean, 
-		LastModified, Compressable {
+		LastModified, Compressible {
 
 	public static final String KEY_PROPERTY = "key";
 

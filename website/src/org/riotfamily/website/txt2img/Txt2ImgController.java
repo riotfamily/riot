@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.cachius.spring.Compressable;
+import org.riotfamily.cachius.spring.Compressible;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.compressor.YUIJavaScriptCompressor;
@@ -58,7 +58,7 @@ import org.springframework.web.util.HtmlUtils;
  * @since 6.5
  */
 public class Txt2ImgController extends AbstractCacheableController
-		implements LastModified, Compressable {
+		implements LastModified, Compressible {
 
 	private static final Resource SCRIPT_RESOURCE = new ClassPathResource(
 			"txt2img.js", Txt2ImgController.class);
