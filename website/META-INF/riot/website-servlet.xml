@@ -74,6 +74,14 @@
 		</property>
 	</bean>
 	
+	<bean id="minifyCssController" name="/riot-utils/joined.css" class="org.riotfamily.website.minify.MinifyCssController">
+		<property name="developmentMode" value="${riot.resources.reloadable=false}" />
+	</bean>
+	
+	<bean id="minifyScriptController" name="/riot-utils/joined.js" class="org.riotfamily.website.minify.MinifyScriptController">
+		<property name="developmentMode" value="${riot.resources.reloadable=false}" />
+	</bean>
+		
 	<bean id="freemarkerConfig" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerConfigurer">
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="templateLoaderPath" value="/WEB-INF/view" />
