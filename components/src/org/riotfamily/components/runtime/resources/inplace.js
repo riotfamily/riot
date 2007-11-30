@@ -803,8 +803,8 @@ Cropper.UI = Class.create({
 		this.initialSize = Cropper.elementSize(editor.element);
 		this.element = RBuilder.node('div', {className:'cropper'})
 			.cloneStyle(editor.element, ['margin', 'position', 'top', 'left']);
-			
-		this.editor.element.replaceBy(this.element);
+		
+		this.element.insertSelfAfter(this.editor.element.hide());
 		
 		this.preview = RBuilder.node('div')
 			.setStyle({MozUserSelect: 'none', overflow: 'hidden', position: 'relative'})
@@ -971,7 +971,8 @@ Cropper.UI = Class.create({
 		Event.stopObserving(this.img, 'mousedown', this.mouseDownHandler);
 		Event.stopObserving(document, 'mousemove', this.mouseMoveHandler);
 		Event.stopObserving(document, 'mouseup', this.mouseUpHandler);
-		this.element.replaceBy(this.editor.element);
+		this.element.remove();
+		this.editor.element.show();
 	},
 
 	crop: function() {
