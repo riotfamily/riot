@@ -49,6 +49,8 @@ import org.w3c.dom.Element;
 
 public final class ServletUtils {
 
+	private static final long FAR_FUTURE = 307584000000L;
+
 	public static final String INCLUDE_URI_REQUEST_ATTRIBUTE =
 			"javax.servlet.include.request_uri";
 
@@ -488,6 +490,14 @@ public final class ServletUtils {
 		long millis = FormatUtils.parseMillis(period);
 		response.setDateHeader(EXPIRES_HEADER, System.currentTimeMillis() + millis);
 		response.setHeader(CACHE_CONTROL_HEADER, "max-age=" + millis / 1000L);
+	}
+	
+	/**
+	 * Sets an far future Expires header.
+	 */
+	public static void setFarFutureExpiresHeader(HttpServletResponse response) {
+		response.setDateHeader(EXPIRES_HEADER, System.currentTimeMillis() + 
+				FAR_FUTURE);
 	}
 
 	/**
