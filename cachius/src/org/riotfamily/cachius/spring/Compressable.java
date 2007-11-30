@@ -31,6 +31,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface Compressable {
 
-	public boolean compressResponse(HttpServletRequest request);
+	public boolean gzipResponse(HttpServletRequest request);
 
 }

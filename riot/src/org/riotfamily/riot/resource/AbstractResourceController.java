@@ -40,7 +40,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.Compressable;
-import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -52,8 +52,6 @@ import org.springframework.web.servlet.mvc.LastModified;
 public class AbstractResourceController extends AbstractCacheableController
 		implements LastModified, Compressable {
 
-	private static final String HEADER_EXPIRES = "Expires";
-	
 	private Log log = LogFactory.getLog(AbstractResourceController.class);
 	
 	private FileTypeMap fileTypeMap = FileTypeMap.getDefaultFileTypeMap();
@@ -62,8 +60,6 @@ public class AbstractResourceController extends AbstractCacheableController
     
     private List filters;
     
-	private long expiresAfter = FormatUtils.parseMillis("10Y");
-	
 	private long lastModified = System.currentTimeMillis();
 	
 	private boolean checkForModifications = false;
@@ -72,11 +68,7 @@ public class AbstractResourceController extends AbstractCacheableController
 	
 	private String pathParameter;
 	
-	
-	public void setExpiresAfter(String s) {
-		this.expiresAfter = FormatUtils.parseMillis(s);
-	}
-	        
+		        
 	/**
 	 * Sets the name of the request attribute that will contain the 
 	 * resource path. 
@@ -173,6 +165,7 @@ public class AbstractResourceController extends AbstractCacheableController
 		if (lang != null) {
 			key.append(';').append(lang);
 		}
+		appendCacheKey(key, request);
 		return key.toString();
 	}
 	
@@ -182,7 +175,7 @@ public class AbstractResourceController extends AbstractCacheableController
 				contentType.equals("text/javascript"));
 	}
 
-	public boolean compressResponse(HttpServletRequest request) {
+	public boolean gzipResponse(HttpServletRequest request) {
 		try {
 			Resource resource = lookupResource(getResourcePath(request));
 			return contentTypeShouldBeZipped(getContentType(resource));
@@ -196,9 +189,9 @@ public class AbstractResourceController extends AbstractCacheableController
             HttpServletResponse response) throws IOException {
         
     	String path = getResourcePath(request);
-    	response.addDateHeader(HEADER_EXPIRES, 
-				System.currentTimeMillis() + expiresAfter);
-    	
+    	if (!checkForModifications) {
+    		ServletUtils.setFarFutureExpiresHeader(response);
+    	}
     	if (!serveResource(path, request, response)) {
     		response.sendError(HttpServletResponse.SC_NOT_FOUND);	
     	}

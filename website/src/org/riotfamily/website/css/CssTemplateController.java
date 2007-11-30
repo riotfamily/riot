@@ -40,12 +40,13 @@ import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.Compressable;
 import org.riotfamily.common.web.compressor.YUICssCompressor;
 import org.riotfamily.common.web.filter.ResourceStamper;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.LastModified;
-import org.springframework.web.util.UrlPathHelper;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -90,8 +91,6 @@ public class CssTemplateController extends AbstractCacheableController
 	private static final String DEFAULT_INI_FILE_NAME = "css.ini";
 
 	private static final String CSS_SUFFIX = ".css";
-
-	private UrlPathHelper urlPathHelper = new UrlPathHelper();
 
 	private ServletContext servletContext;
 
@@ -162,7 +161,7 @@ public class CssTemplateController extends AbstractCacheableController
 				new File(servletContext.getRealPath("/")));
 	}
 
-	public boolean compressResponse(HttpServletRequest request) {
+	public boolean gzipResponse(HttpServletRequest request) {
 		return true;
 	}
 	
@@ -172,7 +171,7 @@ public class CssTemplateController extends AbstractCacheableController
 	}
 	
 	protected String getCacheKeyInternal(HttpServletRequest request) {
-		return request.getRequestURI();
+		return ServletUtils.getRequestUri(request);
 	}
 
 	public ModelAndView handleRequest(HttpServletRequest request,
@@ -184,7 +183,7 @@ public class CssTemplateController extends AbstractCacheableController
 	}
 
 	protected DynamicStylesheet lookup(HttpServletRequest request) {
-		String path = urlPathHelper.getPathWithinApplication(request);
+		String path = ServletUtils.getPathWithinApplication(request);
 		String key = null;
 		File file = new File(servletContext.getRealPath(path));
 		if (!file.exists()) {
@@ -258,9 +257,7 @@ public class CssTemplateController extends AbstractCacheableController
 			StringWriter sw = new StringWriter();
 			template.process(model, sw);
 			
-			StringReader in = new StringReader(processUrls(
-					sw.toString(), request.getContextPath()));
-			
+			StringReader in = new StringReader(processUrls(sw.toString(), request));
 			compressor.compress(in, response.getWriter());
 		}
 
@@ -281,8 +278,12 @@ public class CssTemplateController extends AbstractCacheableController
 			return model;
 		}
 
-		private String processUrls(String css, String contextPath) {
-			if (stamper == null && !addContextPathToUrls) {
+		private String processUrls(String css, HttpServletRequest request) {
+			String basePath = null;
+			if (!ServletUtils.isDirectRequest(request)) {
+				basePath = ServletUtils.getRequestUri(request);
+			}
+			if (stamper == null && basePath == null && !addContextPathToUrls) {
 				return css;
 			}
 			StringBuffer sb = new StringBuffer();
@@ -292,8 +293,16 @@ public class CssTemplateController extends AbstractCacheableController
 				if (stamper != null) {
 					url = stamper.stamp(url);
 				}
-				if (addContextPathToUrls && url.startsWith("/")) {
-					url = contextPath + url;
+
+				if (url.startsWith("/")) {
+					if (addContextPathToUrls) {
+						url = request.getContextPath() + url;
+					}	
+				}
+				else {
+					if (basePath != null) {
+						url = StringUtils.applyRelativePath(basePath, url);
+					}
 				}
 				matcher.appendReplacement(sb, "$1" + url + "$3");
 			}

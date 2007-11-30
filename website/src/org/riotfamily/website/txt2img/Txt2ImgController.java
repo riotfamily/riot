@@ -24,7 +24,6 @@
 package org.riotfamily.website.txt2img;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -122,7 +121,7 @@ public class Txt2ImgController extends AbstractCacheableController
 		}
 	}
 
-	public boolean compressResponse(HttpServletRequest request) {
+	public boolean gzipResponse(HttpServletRequest request) {
 		String extension = FormatUtils.getExtension(request.getRequestURI());
 		return extension.equals("js");
 	}
@@ -158,7 +157,7 @@ public class Txt2ImgController extends AbstractCacheableController
 		else if (extension.equals("gif")) {
 			servePixelGif(response);
 		}
-		else if (request.getParameter("empty") == null) {
+		else {
 			serveScript(request, response);
 		}
 		return null;
@@ -226,7 +225,7 @@ public class Txt2ImgController extends AbstractCacheableController
 		}
 		String color = getEncodedParam(request, "color");
 		response.setContentType("image/png");
-		ServletUtils.setCacheHeaders(response, "10Y");
+		ServletUtils.setFarFutureExpiresHeader(response);
 		generator.generate(text, maxWidth, color, response.getOutputStream());
 	}
 
@@ -238,13 +237,10 @@ public class Txt2ImgController extends AbstractCacheableController
 			HttpServletResponse response) throws IOException {
 
 		response.setContentType("text/javascript");
-		ServletUtils.setCacheHeaders(response, "10Y");
+		ServletUtils.setFarFutureExpiresHeader(response);
 		StringWriter out = new StringWriter(); 
 		
-		out.write("var IEDOMReadyScript = '" + request.getRequestURI() + "?empty=true';");
-
-		IOUtils.copy(new InputStreamReader(
-				SCRIPT_RESOURCE.getInputStream(), "UTF-8"), out);
+		IOUtils.copy(SCRIPT_RESOURCE.getInputStream(), out, "UTF-8");
 
 		out.write("var txt2img = new RiotImageReplacement('");
 		out.write(getGeneratorUrl(request));
@@ -268,11 +264,11 @@ public class Txt2ImgController extends AbstractCacheableController
 	}
 
 	private String getGeneratorUrl(HttpServletRequest request) {
-		return FormatUtils.stripExtension(request.getRequestURI()) + ".png";
+		return FormatUtils.stripExtension(ServletUtils.getRequestUri(request)) + ".png";
 	}
 	
 	private String getPixelUrl(HttpServletRequest request) {
-		return FormatUtils.stripExtension(request.getRequestURI()) + ".gif";
+		return FormatUtils.stripExtension(ServletUtils.getRequestUri(request)) + ".gif";
 	}
 
 	/**
@@ -281,7 +277,7 @@ public class Txt2ImgController extends AbstractCacheableController
 	 */
 	protected void servePixelGif(HttpServletResponse response) throws IOException {
 		response.setContentType("image/gif");
-		ServletUtils.setCacheHeaders(response, "10Y");
+		ServletUtils.setFarFutureExpiresHeader(response);
 		IOUtils.copy(PIXEL_RESOURCE.getInputStream(), response.getOutputStream());
 	}
 }

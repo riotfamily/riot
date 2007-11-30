@@ -61,7 +61,7 @@ public class JoiningResourceController extends AbstractResourceController {
 		shouldBeZipped = contentTypeShouldBeZipped(contentType);
 	}
 
-	public boolean compressResponse(HttpServletRequest request) {
+	public boolean gzipResponse(HttpServletRequest request) {
 		return shouldBeZipped;
 	}
 	
