@@ -33,13 +33,17 @@ public final class HashUtils {
 
 	private static final String MD5 = "MD5";
 	
+	private static final String SHA1 = "SHA-1";
+	
 	private static MessageDigest md5Digest;
+	
+	private static MessageDigest sha1Digest;
 	
 	private HashUtils() {
 	}
 	
 	/**
-	 * Hashes a String using the Md5 algorithm and returns the result as a
+	 * Hashes a String using the MD5 algorithm and returns the result as a
 	 * String of hexadecimal numbers. This method is synchronized to avoid
 	 * excessive MessageDigest object creation. If calling this method becomes a
 	 * bottleneck in your code, you may wish to maintain a pool of MessageDigest
@@ -59,6 +63,29 @@ public final class HashUtils {
 		}
 		md5Digest.update(data.getBytes());
 		return toHex(md5Digest.digest());
+	}
+	
+	/**
+	 * Hashes a String using the SHA-1 algorithm and returns the result as a
+	 * String of hexadecimal numbers. This method is synchronized to avoid
+	 * excessive MessageDigest object creation. If calling this method becomes a
+	 * bottleneck in your code, you may wish to maintain a pool of MessageDigest
+	 * objects instead of using this method.
+	 * 
+	 * @param data the String to compute the hash of.
+	 * @return a hashed version of the passed-in String
+	 */
+	public static synchronized String sha1(String data) {
+		if (sha1Digest == null) {
+			try {
+				sha1Digest = MessageDigest.getInstance(SHA1);
+			}
+			catch (NoSuchAlgorithmException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		sha1Digest.update(data.getBytes());
+		return toHex(sha1Digest.digest());
 	}
 	
 	/**
