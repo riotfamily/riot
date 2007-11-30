@@ -25,10 +25,13 @@ package org.riotfamily.common.web.util;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
@@ -47,6 +50,8 @@ public class CapturingResponseWrapper extends HttpServletResponseWrapper {
 	private ServletOutputStream outputStream;
 	
 	private PrintWriter writer;
+	
+	private boolean error;
 	
 	public CapturingResponseWrapper(HttpServletResponse response, 
 			OutputStream targetStream) {
@@ -79,7 +84,8 @@ public class CapturingResponseWrapper extends HttpServletResponseWrapper {
 				writer = new PrintWriter(targetWriter);
 			}
 			else {
-				writer = new PrintWriter(targetStream);
+				writer = new PrintWriter(new OutputStreamWriter(targetStream,
+						getCharacterEncoding()));
 			}
 		}
 		return writer;
@@ -93,5 +99,64 @@ public class CapturingResponseWrapper extends HttpServletResponseWrapper {
 			writer.flush();
 		}
 	}
+	
+	public void flushBuffer() throws IOException {
+		flush();
+	}
 
+	public void sendError(int sc) throws IOException {
+		error = true;
+	}
+	
+	public void sendError(int sc, String msg) throws IOException {
+		error = true;
+	}
+	
+	public void sendRedirect(String location) throws IOException {
+		error = true;
+	}
+	
+	public boolean isError() {
+		return this.error;
+	}
+	
+	public void addCookie(Cookie cookie) {
+	}
+	
+	public void addDateHeader(String name, long date) {
+	}
+	
+	public void addHeader(String name, String value) {
+	}
+	
+	public void addIntHeader(String name, int value) {
+	}
+	
+	public void setContentLength(int len) {
+	}
+	
+	public void setContentType(String type) {
+	}
+	
+	public void setCharacterEncoding(String charset) {
+	}
+	
+	public void setDateHeader(String name, long date) {
+	}
+	
+	public void setIntHeader(String name, int value) {
+	}
+	
+	public void setHeader(String name, String value) {
+	}
+	
+	public void setLocale(Locale loc) {
+	}
+
+	public void setStatus(int sc) {
+	}
+	
+	public void setStatus(int sc, String sm) {
+	}
+	
 }
