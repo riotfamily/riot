@@ -299,6 +299,7 @@ riot.ComponentList = Class.create({
 			riot.outline.suspended = false;
 		});
 		this.updatePositionClasses();
+		this.markDirty();
 		if (this.minComponents > 0 && this.componentElements.length == this.minComponents) {
 			this.removeOff();
 		} 
