@@ -6,8 +6,8 @@
     	<conf name="test" />
     </configurations>
     <dependencies>
-	    <dependency org="riotfamily" name="riot-common" rev="latest.integration" conf="*->@" changing="true" />
-	    <dependency org="riotfamily" name="riot-js" rev="latest.integration" conf="runtime->default" changing="true" />
+	    <dependency org="riotfamily" name="riot-common" rev="latest.integration" conf="*->@" />
+	    <dependency org="riotfamily" name="riot-js" rev="latest.integration" conf="*->default" />
 	    <dependency org="riotfamily" name="jscalendar-js" rev="latest.release" conf="runtime->default" />
 	    <dependency org="riotfamily" name="tinymce-js" rev="latest.integration" conf="runtime->default" />
 	    <dependency org="springframework" name="spring" rev="2.0.7" conf="build->default;runtime->web" />

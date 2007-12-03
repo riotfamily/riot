@@ -1,9 +1,5 @@
 <ivy-module version="1.3">
-    <info
-    	organisation="riotfamily"
-    	module="riot-js"
-    	status="release" />
-
+    <info organisation="riotfamily" module="riot-js" />
     <publications>
     	<artifact name="riot-js" type="jar" />
     </publications>
