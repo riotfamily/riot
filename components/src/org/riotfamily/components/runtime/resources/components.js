@@ -193,9 +193,13 @@ riot.ComponentList = Class.create({
 		}		
 		this.maxComponents = el.readAttribute('riot:maxComponents');
 		this.minComponents = el.readAttribute('riot:minComponents');
-		
+				
+		this.findComponentElements();
+	},
+	
+	findComponentElements: function() {
 		//Note: Element.findChildren is defined in dragdrop.js
-		this.componentElements = Element.findChildren(el, 'riot-component', false, 'div') || [];
+		this.componentElements = Element.findChildren(this.element, 'riot-component', false, 'div') || [];
 	},
 	
 	update: function() {
@@ -260,7 +264,7 @@ riot.ComponentList = Class.create({
 		}
 	},
 	
-	updatePositionClasses: function() {
+	updatePositionClasses: function() {		
 		var last = this.componentElements.length - 1;
 		this.componentElements.each(function(componentEl, index) {
 			componentEl.descendants().each(function(el) {
@@ -325,6 +329,7 @@ riot.ComponentDragObserver = Class.create({
 		el.removeClassName('riot-drag');
 		var nextEl = el.next('.riot-component');
 		if(el.parentNode == this.element && nextEl != this.nextEl) {
+			this.componentList.findComponentElements();
 			this.componentList.updatePositionClasses();
 			var nextId = null;
 			if (nextEl) {
