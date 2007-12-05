@@ -758,6 +758,7 @@ riot.DiscardWidget = Class.create(riot.PublishWidget, {
 		if (this.live) {
 			ComponentEditor.discard(this.dirtyListIds, this.dirtyContainerIds);
 			this.controller.dirty = false;			
+			this.previewHtml = this.liveHtml;			
 		}
 	}
 });
