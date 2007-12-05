@@ -85,9 +85,7 @@ public class ComponentFormRepository extends XmlFormRepository {
 		String[] s = id.split("#");
 		String type = s[0];
 		String formId = s[s.length - 1];
-		super.registerFormFactory(formId, formFactory);
-		Form form = formFactory.createForm();
-		getElementList(type).addAll(form.getElements());
+		super.registerFormFactory(formId, formFactory);		
 	}
 	
 	private List getElementList(String componentType) {
@@ -100,7 +98,16 @@ public class ComponentFormRepository extends XmlFormRepository {
 	}
 	
 	public void registerPropertyProcessors() {
-		Iterator it = componentElements.entrySet().iterator();
+		Iterator it = getFactories().entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			String type = (String) entry.getKey();
+			FormFactory formFactory = (FormFactory) entry.getValue();
+			Form form = formFactory.createForm();
+			getElementList(type).addAll(form.getElements());
+		}
+		
+		it = componentElements.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();
 			String type = (String) entry.getKey();
