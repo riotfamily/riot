@@ -227,7 +227,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 
 		if (DomUtils.nodeNameEquals(ele, "import")) {
 			String formId = ele.getAttribute("form");
-			imports.add(new Import(formId, parentFactory));
+			imports.add(new Import(formId, this.formId, parentFactory));
 		}
 		else {
 			ConfigurableElementFactory factory = createFactory(ele);
@@ -474,25 +474,31 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			return values;
 		}
 	}
+	
+	
 
 	private class Import {
 
 		private ContainerElementFactory parent;
 
 		private int insertAt;
-
+		
 		private String formId;
 
-		Import(String formId, ContainerElementFactory parent) {
+		private String importedFormId;
+
+		Import(String importedFormId, String formId, ContainerElementFactory parent) {
+			this.importedFormId = importedFormId;
 			this.formId = formId;
 			this.parent = parent;
 			insertAt = parent.getChildFactories().size();
 		}
 
 		public void apply() {
-			FormFactory formFactory = formRepository.getFormFactory(formId);
+			FormFactory formFactory = formRepository.getFormFactory(importedFormId);
 			parent.getChildFactories().addAll(insertAt,
 					formFactory.getChildFactories());
+			formRepository.registerImport(formId, formFactory);
 		}
 
 	}

@@ -190,6 +190,9 @@ public class XmlFormRepository extends AbstractFormRepository implements
 		return super.getFormFactory(id);
 	}
 	
+	public void registerImport(String formId, FormFactory importedFormFactory) {		
+	}
+	
 	public void configure() {
 		getFactories().clear();
 		Iterator it = configLocations.iterator();
