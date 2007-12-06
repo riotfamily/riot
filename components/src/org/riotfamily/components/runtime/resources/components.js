@@ -496,6 +496,7 @@ riot.ListComponent = Class.create(riot.Component, {
 
 	updateTextChunks: function(key, chunks) {
 		ComponentEditor.updateTextChunks(this.id, key, chunks, this.update.bind(this));
+		this.markDirty();
 	},
 	
 	markDirty: function() {
@@ -770,8 +771,11 @@ riot.DiscardWidget = Class.create(riot.PublishWidget, {
 
 
 riot.setLiveHtml = function(html) {
-	for (var i = 0; i < riot.publishWidgets.length; i++) {
-		riot.publishWidgets[i].setLiveHtml(html[i]);
+	if (riot.publishWidgets) { // If apply has been clicked quicker than the lists
+							   // have been loaded, do nothing anymore...
+		for (var i = 0; i < riot.publishWidgets.length; i++) {
+			riot.publishWidgets[i].setLiveHtml(html[i]);
+		}
 	}
 }
 
