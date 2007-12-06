@@ -188,7 +188,7 @@ riot.ComponentList = Class.create({
 		this.controller = riot.findController(el);
 		this.id = el.readAttribute('riot:listId');
 		if (!el.id) el.id = 'riot-list-' + this.id;
-		if (el.hasClassName('riot-dirty')) {
+		if (el.hasClassName('riot-dirty') || typeof el.down('.riot-dirty') != 'undefined') {
 			this.markDirty();
 		}		
 		this.maxComponents = el.readAttribute('riot:maxComponents');
