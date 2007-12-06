@@ -60,7 +60,8 @@ public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 		registerBeanDefinitionDecorator("sites", new ListDecorator("sites"));
 		register("site", Site.class)
 				.addTranslation("host", "hostName")
-				.addTranslation("prefix", "pathPrefix");
+				.addTranslation("prefix", "pathPrefix")
+				.setAliasAttribute(null);
 		
 		register("page", PageDefinition.class,
 				new ListItemDecorator("definitions"))

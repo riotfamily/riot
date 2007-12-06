@@ -14,7 +14,7 @@
 				<xsd:element name="sites" minOccurs="0">
 					<xsd:complexType>
 						<xsd:sequence maxOccurs="unbounded" minOccurs="1">
-							<xsd:element name="site" />
+							<xsd:element name="site" type="siteType" />
 						</xsd:sequence>
 					</xsd:complexType>
 				</xsd:element>

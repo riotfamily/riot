@@ -106,6 +106,8 @@ public interface PageDao {
 
 	public void deletePage(Page page);
 
+	public void deleteAlias(Page page);
+	
 	public void updateNode(PageNode node);
 
 	public void moveNode(PageNode node, PageNode newParent);

@@ -244,7 +244,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	
 	protected abstract void deleteAliases(Site site);
 
-	protected void deleteAlias(Page page) {
+	public void deleteAlias(Page page) {
 		PageAlias alias = findPageAlias(page.getSite(), page.getPath());
 		if (alias != null) {
 			log.info("Deleting " + alias);
