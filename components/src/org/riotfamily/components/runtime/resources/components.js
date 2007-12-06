@@ -639,7 +639,7 @@ riot.PublishWidget = Class.create({
 		this.live = false;
 		this.updateUI();
 		this.element.observe('click', this.toggleVersion.bind(this), true);
-		riot.toolbar.applyButton.enable();
+		
 		if (document.addEventListener) {
 			this.domListener = this.scaleOverlay.bind(this);
 			this.controller.element.addEventListener('DOMNodeInserted', this.domListener, false);
@@ -787,6 +787,7 @@ if (riot.toolbar.buttons.get('publish')) {
 		if (enable) {
 			var refs = riot.publishWidgets.invoke('getReference');
 			ComponentEditor.getLiveListHtml(refs, riot.setLiveHtml);
+			riot.toolbar.applyButton.enable();
 		}
 		else {
 			var dirty = riot.publishWidgets.invoke('destroy').any();
