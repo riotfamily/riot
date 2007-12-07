@@ -711,12 +711,12 @@ riot.ImageEditor = Class.create(riot.InplaceEditor, {
 	
 	edit: function() {
 		riot.outline.hide();
-		riot.swfUpload.setPostParams({token: this.token, fileStore: this.options.fileStore});
+		riot.swfUpload.setPostParams({token: this.token, fileStore: this.options.fileStore});		
 		riot.swfUpload.uploadComplete_handler = this.uploadComplete.bind(this);
 		riot.swfUpload.selectFile();
-	},	
+	},
 	
-	uploadComplete: function(file, response) {
+	uploadComplete: function(file, response) {		
 		riot.outline.suspended = true;
 		this.cropper = new Cropper.UI(this, response);
 	},
@@ -804,7 +804,7 @@ Cropper.UI = Class.create({
 		this.element = RBuilder.node('div', {className:'cropper'})
 			.cloneStyle(editor.element, ['margin', 'position', 'top', 'left']);
 		
-		this.element.insertSelfAfter(this.editor.element.hide());
+		this.element.insertSelfAfter(this.editor.element);
 		
 		this.preview = RBuilder.node('div')
 			.setStyle({MozUserSelect: 'none', overflow: 'hidden', position: 'relative'})
@@ -855,6 +855,7 @@ Cropper.UI = Class.create({
 	},
 	
 	onLoadImage: function(image) {
+		this.editor.element.hide();
 		this.img.src = image.src; 
 		this.imageSize = new Cropper.Pos(image.width, image.height);
 		
