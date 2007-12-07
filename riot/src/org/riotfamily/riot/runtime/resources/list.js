@@ -241,11 +241,19 @@ RiotList.prototype = {
 
 }
 
-DWREngine.setErrorHandler(function(err, ex) {
-	if (err == 'List session has expired') { // ListSessionExpiredException
+dwr.engine.setErrorHandler(function(err, ex) {
+	if (ex.javaClassName == 'org.riotfamily.riot.list.ui.ListSessionExpiredException') {
 		location.reload();
 	}
 	else {
 		alert(err);
 	}
 });
+
+dwr.engine.setPreHook(function() {
+	if (top.setLoading) top.setLoading(true);
+});
+
+dwr.engine.setPostHook(function() {
+   if (top.setLoading) top.setLoading(false);
+}); 

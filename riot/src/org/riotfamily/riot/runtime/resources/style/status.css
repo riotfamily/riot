@@ -24,3 +24,12 @@ a {
 	color: ${highlight};
 	text-decoration: none;
 }
+
+#loading {
+	visibility: hidden;
+	background-color: ${highlight};
+	color: #fff;
+	float: right;
+	padding: 2px 4px;
+	margin-right: 10px;
+}
