@@ -199,6 +199,7 @@ public class XmlFormRepository extends AbstractFormRepository implements
 		while (it.hasNext()) {
 			Resource res = (Resource) it.next();
 			if (res.exists()) {
+				log.info("Reading forms from " + res.getDescription());
 				DocumentReader reader = new ValidatingDocumentReader(res);
 				digester.digest(reader.readDocument(), res);
 			}
