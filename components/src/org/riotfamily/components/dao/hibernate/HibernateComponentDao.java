@@ -100,7 +100,10 @@ public class HibernateComponentDao implements ComponentDao {
 	public void saveFileStorageInfo(String type, String property, 
 			String fileStoreId) {
 		
-		hibernate.saveOrUpdate(new FileStorageInfo(type, property, fileStoreId));
+		FileStorageInfo fsi = new FileStorageInfo(type, property, fileStoreId);
+		if (hibernate.get(FileStorageInfo.class, fsi) == null) {
+			hibernate.save(fsi);
+		}
 	}
 	
 	public List getFileStorageInfos(String type) {
