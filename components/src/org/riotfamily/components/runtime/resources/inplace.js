@@ -14,19 +14,25 @@ riot.outline = {
 	show: function(el, onclick, excludes) {
 		if (!window.riot || riot.outline.suspended) return;
 		riot.outline.cancelHide();
-		
-		// el.offsetHeight may be 0, descend until an element with a height is found. 
-		var offsetTop = el.offsetHeight;
-		while (el && offsetTop == 0) {
+
+		// el.offsetHeight may be 0, descend until an element with a height is found.		
+		var h = el.offsetHeight;
+		while (el && h == 0) {
 			el = el.down();
-			var offsetTop = el.offsetHeight;
+			var h = el.offsetHeight;
 		}
 		if (!el) return;
 		
-		riot.outline.elements.top.copyPosFrom(el, {setHeight: false, offsetTop: -1, offsetLeft: -1, offsetWidth: 2});
-		riot.outline.elements.left.copyPosFrom(el, {setWidth: false, offsetLeft: -1});
-		riot.outline.elements.bottom.copyPosFrom(el, {setHeight: false, offsetLeft: -1, offsetTop: offsetTop, offsetWidth: 2});
-		riot.outline.elements.right.copyPosFrom(el, {setWidth: false, offsetLeft: el.offsetWidth});
+		var w = el.offsetWidth;
+		var pos = el.cumulativeOffset();
+		
+		riot.outline.elements.top.style.top = (pos.top - 1) + 'px';
+		riot.outline.elements.bottom.style.top = (pos.top + h) + 'px';
+		riot.outline.elements.right.style.left = (pos.left + w) + 'px';
+		riot.outline.elements.top.style.width =	riot.outline.elements.bottom.style.width = (w + 2) + 'px';
+		riot.outline.elements.left.style.top = riot.outline.elements.right.style.top = pos.top + 'px';
+		riot.outline.elements.left.style.height = riot.outline.elements.right.style.height = h + 'px';
+		riot.outline.elements.top.style.left = riot.outline.elements.left.style.left = riot.outline.elements.bottom.style.left = (pos.left - 1) + 'px';
 		
 		riot.outline.divs.invoke('show');
 	},
