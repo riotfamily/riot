@@ -48,6 +48,7 @@
 			<list:command id="moveDown" />
 			<list:command id="edit" />
 			<list:command id="delete" />
+			<list:command id="gotoSite" />
 		</list:columns>
 		<list:command id="add" />
 	</list:list>

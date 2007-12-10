@@ -44,15 +44,25 @@ public class PageUrlBuilder {
 	
 	public String getUrl(Page page) {
 		StringBuffer url = new StringBuffer(page.getFullPath());
-		if (!page.isFolder() || pathCompleter.isPrefixMapping()) {
-			pathCompleter.addServletMapping(url);
-		}
+		completePageUrl(page, url);
 		return url.toString();
 	}
 
 	public String getAbsoluteUrl(Page page, HttpServletRequest request, boolean secure) {
 		Site site = page.getSite();
-		
+		StringBuffer url = getAbsoluteSiteUrl(site, request, secure);
+		url.append(page.getPath());
+		completePageUrl(page, url);
+		return url.toString();
+	}
+	
+	private void completePageUrl(Page page, StringBuffer url) {
+		if (!page.isFolder() || pathCompleter.isPrefixMapping()) {
+			pathCompleter.addServletMapping(url);
+		}
+	}
+	
+	public StringBuffer getAbsoluteSiteUrl(Site site, HttpServletRequest request, boolean secure) {
 		StringBuffer url = new StringBuffer();
 		url.append(secure
 				? ServletUtils.SCHEME_HTTPS 
@@ -74,8 +84,10 @@ public class PageUrlBuilder {
 	        }
 		}
 		url.append(request.getContextPath());
-		url.append(getUrl(page));
-		return url.toString();
+		if (site.getPathPrefix() != null) {
+			url.append(site.getPathPrefix());
+		}
+		return url;
 	}
 	
 }
