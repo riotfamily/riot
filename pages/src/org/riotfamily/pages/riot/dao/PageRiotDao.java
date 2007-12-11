@@ -25,6 +25,7 @@ package org.riotfamily.pages.riot.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.riotfamily.cachius.Cache;
@@ -160,19 +161,8 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 
 		int pos = nodes.indexOf(node);
 		int otherPos = nodes.indexOf(otherNode);
-
-		nodes.remove(node);
-		nodes.remove(otherNode);
-
-		if (pos < otherPos) {
-			nodes.add(pos, otherNode);
-			nodes.add(otherPos, node);
-		}
-		else {
-			nodes.add(otherPos, node);
-			nodes.add(pos, otherNode);
-		}
-
+		
+		Collections.swap(nodes, pos, otherPos);
 		pageDao.updateNode(parentNode);
 		invalidateCacheItems(page);
 	}
