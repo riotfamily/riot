@@ -51,26 +51,25 @@ public class CountryFlagRenderer implements CellRenderer, RiotRuntimeAware {
 			if (value instanceof Locale) {
 				Locale locale = (Locale) value;
 				flag = locale.getCountry();
-				if (!StringUtils.hasLength(flag)) {
-					flag = locale.getLanguage();
-				}
 				title = locale.getDisplayName();
 			}
 			else {
 				flag = value.toString();
 			}
-			writer.print("<img src=\"");
-			writer.print(context.getContextPath());
-			writer.print(runtime.getResourcePath());
-			writer.print("style/icons/flags/");
-			writer.print(flag.toLowerCase());
-			writer.print(".gif\"");
-			if (title != null) {
-				writer.print("title=\"");
-				writer.print(title);
-				writer.print('"');
+			if (StringUtils.hasLength(flag)) {
+				writer.print("<img src=\"");
+				writer.print(context.getContextPath());
+				writer.print(runtime.getResourcePath());
+				writer.print("style/icons/flags/");
+				writer.print(flag.toLowerCase());
+				writer.print(".gif\"");
+				if (title != null) {
+					writer.print("title=\"");
+					writer.print(title);
+					writer.print('"');
+				}
+				writer.print(" />");
 			}
-			writer.print(" />");
 		}
 	}
 
