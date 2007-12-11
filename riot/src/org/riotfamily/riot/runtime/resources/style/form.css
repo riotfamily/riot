@@ -120,7 +120,6 @@ textarea, input.text, input.number, input.password {
 textarea, input.text, input.password {
 	width: 100%;
 }
-
 input.text, input.number, input.password {
 	height: 16px;
 	line-height: 16px;
@@ -131,6 +130,10 @@ span.read-only {
 	line-height: 26px;
 }
 
+#elements,
+.textarea-wrapper {
+	_height: 1px;
+}
 textarea {
 	line-height: 18px;
 }
