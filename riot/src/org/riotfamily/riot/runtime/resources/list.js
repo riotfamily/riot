@@ -192,50 +192,59 @@ RiotList.prototype = {
 	},
 
 	execCommand: function(item, commandId, confirmed) {
-		ListService.execCommand(this.key, item, commandId, confirmed,
-				this.processCommandResult.bind(this));
+		if (!this.busy) {
+			this.busy = true;
+			this.table.addClassName('busy');
+			ListService.execCommand(this.key, item, commandId, confirmed,
+					this.processCommandResult.bind(this));
+		}
 	},
 
 	processCommandResult: function(result) {
-		if (!result) return;
-		if (result.action == 'confirm') {
-			if (confirm(result.message)) {
-				this.execCommand(result.item, result.commandId, true);
-			}
-		}
-		else if (result.action == 'gotoUrl') {
-			var win = eval(result.target);
-			if (result.replace) {
-				win.location.replace(result.url);
-			}
-			else {
-				win.location.href = result.url;
-			}
-		}
-		else if (result.action == 'popup') {
-			var win = window.open(result.url, result.windowName || 'commandPopup');
-			if (!win) {
-				alert(result.popupBlockerMessage || 'The Popup has been blocked by the browser.');
-			}
-			else {
-				if (win.focusLost) {
-					win.close();
-					win = window.open(result.url, result.windowName || 'commandPopup');
-				}
-				win.focus();
-				win.onblur = function() {
-					this.focusLost = true;
+		this.busy = false;
+		if (result) {
+			if (result.action == 'confirm') {
+				if (confirm(result.message)) {
+					this.execCommand(result.item, result.commandId, true);
 				}
 			}
-		}
-		else if (result.action == 'reload') {
-			window.location.reload();
-		}
-		else if (result.action == 'eval') {
-			eval(result.script);
-		}
-		else if (result.action == 'setRowStyle') {
-			alert(result.objectId + ': ' + result.rowStyle);
+			else if (result.action == 'gotoUrl') {
+				var win = eval(result.target);
+				if (result.replace) {
+					win.location.replace(result.url);
+				}
+				else {
+					win.location.href = result.url;
+				}
+			}
+			else if (result.action == 'popup') {
+				this.table.removeClassName('busy');
+				var win = window.open(result.url, result.windowName || 'commandPopup');
+				if (!win) {
+					alert(result.popupBlockerMessage || 'The Popup has been blocked by the browser.');
+				}
+				else {
+					if (win.focusLost) {
+						win.close();
+						win = window.open(result.url, result.windowName || 'commandPopup');
+					}
+					win.focus();
+					win.onblur = function() {
+						this.focusLost = true;
+					}
+				}
+			}
+			else if (result.action == 'reload') {
+				window.location.reload();
+			}
+			else if (result.action == 'eval') {
+				this.table.removeClassName('busy');
+				eval(result.script);
+			}
+			else if (result.action == 'setRowStyle') {
+				this.table.removeClassName('busy');
+				alert(result.objectId + ': ' + result.rowStyle);
+			}
 		}
 	}
 

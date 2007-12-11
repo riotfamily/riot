@@ -148,6 +148,13 @@ tr.highlight .highlight-default .default {
 	background-position: 0 -32px;
 	background-color: ${highlight};
 }
+#list .busy .commands .enabled:hover,
+#list .busy tr.highlight .highlight-default .default {
+	background-position: 0 0;
+	background-color: transparent;
+	cursor: progress;
+}
+
 #list .commands .disabled {
 	background-position: 0 -64px;
 }
