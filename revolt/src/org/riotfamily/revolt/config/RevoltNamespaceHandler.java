@@ -135,7 +135,9 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 			refactoring = new AddForeignKey(ele.getAttribute("table"), 
 					new ForeignKey(ele.getAttribute("name"), 
 					ele.getAttribute("references"),
-					parseReferences(ele)));
+					parseReferences(ele), 
+					parseOnDelete(ele), 
+					parseOnUpdate(ele)));
 		}
 		if (DomUtils.nodeNameEquals(ele, "add-unique-constraint")) {
 			refactoring = new AddUniqueConstraint(ele.getAttribute("table"), 
@@ -197,6 +199,16 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 		return refactoring;
 	}
 	
+	private String parseOnUpdate(Element ele) {
+		Element e = DomUtils.getChildElementByTagName(ele, "on-update");
+		return  e != null ? e.getAttribute("value") : null;
+	}
+
+	private String parseOnDelete(Element ele) {
+		Element e = DomUtils.getChildElementByTagName(ele, "on-delete");
+		return  e != null ? e.getAttribute("value") : null;
+	}
+
 	private List parseColumns(Element ele) {
 		ArrayList columns = new ArrayList();
 		Iterator it = DomUtils.getChildElementsByTagName(ele, "column").iterator();
@@ -245,7 +257,7 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 		}
 		return references;
 	}
-	
+
 	private List parseEntries(Element ele) {
 		ArrayList entries = new ArrayList();
 		Iterator it = DomUtils.getChildElementsByTagName(ele, "entry").iterator();

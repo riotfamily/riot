@@ -36,6 +36,12 @@ public class ForeignKey extends Identifier {
 	private String foreignTable;
 
 	private List references;
+	
+	/* Options: NO ACTION, SET NULL, CASCADE, SET DEFAULT */
+	private String deleteOption;
+	
+	/* Options: NO ACTION, SET NULL, CASCADE, SET DEFAULT */
+	private String updateOption;
 
 	public ForeignKey() {
 	}
@@ -44,10 +50,12 @@ public class ForeignKey extends Identifier {
 		super(name);
 	}
 
-	public ForeignKey(String name, String foreignTable, List references) {
+	public ForeignKey(String name, String foreignTable, List references, String deleteOption, String updateOption) {
 		super(name);
 		this.foreignTable = foreignTable;
 		this.references = references;
+		this.deleteOption = deleteOption;
+		this.updateOption = updateOption;
 	}
 
 	public String getForeignTable() {
@@ -65,6 +73,25 @@ public class ForeignKey extends Identifier {
 	public void setReferences(List references) {
 		this.references = references;
 	}
+	
+
+	public String getDeleteOption() {
+		return this.deleteOption;
+	}
+
+	public void setDeleteOption(String deleteOption) {
+		this.deleteOption = deleteOption;
+	}
+
+	public String getUpdateOption() {
+		return this.updateOption;
+	}
+
+	public void setUpdateOption(String updateOption) {
+		this.updateOption = updateOption;
+	}
+	
+
 
 	public List getLocalColumns() {
 		List columns = new ArrayList();
@@ -85,4 +112,5 @@ public class ForeignKey extends Identifier {
 		}
 		return columns;
 	}
+
 }

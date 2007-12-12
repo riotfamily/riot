@@ -36,11 +36,39 @@
 				</xsd:element>
 				<xsd:element name="add-foreign-key">
 					<xsd:complexType>
-						<xsd:sequence minOccurs="1" maxOccurs="unbounded">
-							<xsd:element name="ref">
+						<xsd:sequence>
+							<xsd:element name="ref" minOccurs="1">
 								<xsd:complexType>
 									<xsd:attribute name="local" type="xsd:string" use="required" />
 									<xsd:attribute name="foreign" type="xsd:string" use="required" />
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="on-update" minOccurs="0">
+								<xsd:complexType>
+									<xsd:attribute name="value" use="required">
+										<xsd:simpleType>
+								            <xsd:restriction base="xsd:NMTOKEN">
+								                <xsd:enumeration value="NO ACTION" />
+								                <xsd:enumeration value="CASCADE" />
+								                <xsd:enumeration value="SET NULL" />
+								                <xsd:enumeration value="SET DEFAULT" />
+								            </xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="on-delete" minOccurs="0">
+								<xsd:complexType>
+									<xsd:attribute name="value" type="xsd:string" use="required">
+										<xsd:simpleType>
+								            <xsd:restriction base="xsd:NMTOKEN">
+								                <xsd:enumeration value="NO ACTION" />
+								                <xsd:enumeration value="CASCADE" />
+								                <xsd:enumeration value="SET NULL" />
+								                <xsd:enumeration value="SET DEFAULT" />
+								            </xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
 								</xsd:complexType>
 							</xsd:element>
 						</xsd:sequence>

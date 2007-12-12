@@ -127,7 +127,12 @@ public abstract class Sql92Dialect extends AbstractDialect {
 		addColumnNames(sql, fk.getLocalColumns());
 		sql.append("REFERENCES").append(fk.getForeignTable());
 		addColumnNames(sql, fk.getForeignColumns());
-		// TODO ON DELETE / ON UPDATE
+		if (fk.getUpdateOption() != null && fk.getUpdateOption().trim().length() > 0) {
+			sql.append("ON UPDATE").append(fk.getUpdateOption());
+		}
+		if (fk.getDeleteOption() != null && fk.getDeleteOption().trim().length() > 0) {
+			sql.append("ON DELETE").append(fk.getDeleteOption());
+		}
 		return sql;
 	}
 
