@@ -541,9 +541,12 @@ ul.radioButtonGroup {
 	background: #cdcdcd;
 }
 
-.chooser span {
-	margin-right: 10px;
+.chooser .chosen span {
 	color: #3d3d3d;
+	padding-right: 10px;
+}
+.chooser .chosen img {
+	vertical-align: middle;
 }
 
 .confirm-text p {

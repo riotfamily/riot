@@ -23,7 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.form.element;
 
+import java.io.PrintWriter;
+
 import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.beans.ProtectedBeanWrapper;
+import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.common.markup.DocumentWriter;
+import org.riotfamily.common.markup.Html;
+import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.select.AbstractChooser;
 import org.riotfamily.riot.dao.RiotDao;
@@ -32,12 +40,17 @@ import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.form.ui.FormUtils;
+import org.riotfamily.riot.list.ColumnConfig;
+import org.riotfamily.riot.list.ListConfig;
+import org.riotfamily.riot.list.ui.render.CellRenderer;
+import org.riotfamily.riot.list.ui.render.RenderContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 public class ObjectChooser extends AbstractChooser 
 		implements BeanFactoryAware {
@@ -50,6 +63,8 @@ public class ObjectChooser extends AbstractChooser
 	
 	private String rootIdAttribute;
 	
+	private String[] display;
+	
 	private BeanFactory beanFactory;
 	
 	private EditorRepository editorRepository;
@@ -58,6 +73,8 @@ public class ObjectChooser extends AbstractChooser
 	
 	private EditorDefinition targetEditorDefinition;
 	
+	private ListConfig targetListConfig;
+		
 	/**
 	 * Sets the id of an editor that will be used to list the target objects.
 	 * If the specified editor is nested within another list, Riot will display
@@ -112,6 +129,10 @@ public class ObjectChooser extends AbstractChooser
 		this.rootIdAttribute = rootIdAttribute;
 	}
 	
+	public void setDisplay(String display) {
+		this.display = StringUtils.commaDelimitedListToStringArray(display);
+	}
+	
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
 	}
@@ -137,6 +158,9 @@ public class ObjectChooser extends AbstractChooser
 		Assert.notNull(targetEditorDefinition, "No such EditorDefinition: "
 					+ targetEditorId);
 
+		targetListConfig = EditorDefinitionUtils.getListDefinition(
+				targetEditorDefinition).getListConfig();
+		
 		if (rootEditorId != null) {
 			rootListDefinition = editorRepository.getListDefinition(rootEditorId);
 			Assert.notNull(rootListDefinition, "No such ListDefinition: " + rootEditorId);
@@ -146,7 +170,7 @@ public class ObjectChooser extends AbstractChooser
 					targetEditorDefinition);
 		}
 	}
-
+	
 	public RiotDao getRiotDao() {
 		return EditorDefinitionUtils.getListDefinition(targetEditorDefinition)
 				.getListConfig().getDao();
@@ -155,11 +179,49 @@ public class ObjectChooser extends AbstractChooser
 	protected Object loadBean(String objectId) {
 		return EditorDefinitionUtils.loadBean(targetEditorDefinition, objectId);
 	}
-	
-	protected String getDisplayName(Object object) {
-		return object != null ? targetEditorDefinition.getLabel(object) : null;
-	}
 
+	protected void renderLabel(Object object, PrintWriter writer) {
+		if (object == null) {
+			return;
+		}
+		if (display == null) {
+			new TagWriter(writer).start(Html.SPAN)
+					.body(targetEditorDefinition.getLabel(object))
+					.end();
+			
+			return;
+		}
+		
+		DocumentWriter doc = new DocumentWriter(writer);
+		doc.start(Html.SPAN).attribute(Html.COMMON_CLASS, 
+				"chosen " + targetListConfig.getId());
+
+		LabelRenderContext context = new LabelRenderContext();
+		CellRenderer defaultRenderer = editorRepository.getListRepository()
+				.getDefaultCellRenderer();
+		
+		ProtectedBeanWrapper wrapper = new ProtectedBeanWrapper(object);
+		for (int i = 0; i < display.length; i++) {
+			ColumnConfig column = targetListConfig.getColumnConfig(display[i]);
+			CellRenderer renderer = null;
+			if (column != null) {
+				renderer = column.getRenderer();
+			}
+			if (renderer == null) {
+				renderer = defaultRenderer;
+			}
+			Object value = wrapper.getPropertyValue(display[i]);
+			doc.start(Html.SPAN).attribute(Html.COMMON_CLASS, 
+					FormatUtils.toCssClass(display[i])).body();
+			
+			renderer.render(display[i], value, context, writer);
+			doc.end();
+		}
+		
+		doc.end();
+	}
+	
+	
 	protected String getChooserUrl() {
 		String rootId = null;
 		if (rootProperty != null) {
@@ -172,6 +234,26 @@ public class ObjectChooser extends AbstractChooser
 		}
 		return rootListDefinition.getEditorUrl(null, rootId) 
 				+ "?choose=" + targetEditorDefinition.getId();
+	}
+	
+	private class LabelRenderContext implements RenderContext {
+
+		public String getListId() {
+			return targetListConfig.getId();
+		}
+		
+		public Class getBeanClass() {
+			return targetEditorDefinition.getBeanClass();
+		}
+		
+		public String getContextPath() {
+			return getFormContext().getContextPath();
+		}
+		
+		public MessageResolver getMessageResolver() {
+			return getFormContext().getMessageResolver();
+		}
+		
 	}
 	
 }
