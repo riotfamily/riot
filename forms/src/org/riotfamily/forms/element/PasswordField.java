@@ -27,9 +27,10 @@ import java.io.PrintWriter;
 
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
+import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.TemplateUtils;
 
-public class PasswordField extends TextField {
+public class PasswordField extends TextField implements DHTMLElement {
 
 	private static final String DEFAULT_CONFIRM_MESSAGE_KEY = 
 			"label.passwordField.confirmInput";
