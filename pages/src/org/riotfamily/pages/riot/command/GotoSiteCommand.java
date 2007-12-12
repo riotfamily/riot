@@ -17,8 +17,8 @@ public class GotoSiteCommand extends PopupCommand {
 	
 	protected String getUrl(CommandContext context) {
 		Site site = (Site) context.getBean();
-		StringBuffer url = pageUrlBuilder.getAbsoluteSiteUrl(site, context.getRequest(),
-				context.getRequest().isSecure()).append("/");
+		StringBuffer url = pageUrlBuilder.getAbsoluteSiteUrl(site,
+				context.getRequest()).append("/");
 		
 		return url.toString();
 	}

@@ -32,6 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -60,6 +62,9 @@ public class CommonMacroHelper {
 
 	private static final Log log = LogFactory.getLog(CommonMacroHelper.class);
 
+	private static final Pattern LINK_PATTERN = Pattern.compile(
+			"(\\s+href\\s*=\\s*\")(.+?)(\")", Pattern.CASE_INSENSITIVE);
+	
 	private static Random random = new Random();
 
 	private ApplicationContext ctx;
@@ -117,6 +122,18 @@ public class CommonMacroHelper {
 		return ServletUtils.resolveAndEncodeUrl(url, request, response);
 	}
 
+	public String resolveAndEncodeLinks(String html) {
+		Matcher m = LINK_PATTERN.matcher(html);
+		StringBuffer result = new StringBuffer();
+		while (m.find() && m.groupCount() == 3) {
+			String newLink = ServletUtils.resolveAndEncodeUrl(m.group(2), request, response);
+			log.debug("Replacing link '" + m.group(2) + "' with '" + newLink + "'");
+			m.appendReplacement(result, m.group(1) + newLink + m.group(3));
+		}
+		m.appendTail(result);
+		return result.toString();
+	}
+	
 	public String getAbsoluteUrl(String url) {
 		return ServletUtils.getAbsoluteUrlPrefix(request)
 				.append(request.getContextPath()).append(url).toString();

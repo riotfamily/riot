@@ -142,11 +142,11 @@
 			<#local attributes = common.unwrapAttributes(attributes) + {"riot:config": config} />
 		</#if>
 		<#local editor = chunk?string("richtext-chunks", "richtext") />
-		<@editable key=key editor=editor tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
+		<@editable key=key editor=editor tag=tag alwaysUseNested=alwaysUseNested transform=common.encodeLinks attributes=attributes><#nested /></@editable>
 	</#compress>
 </#macro>
 
-<#macro editable key editor="text" tag="" alwaysUseNested=false attributes... >
+<#macro editable key editor="text" tag="" alwaysUseNested=false transform=false attributes... >
 	<#compress>
 		<#local attributes = common.unwrapAttributes(attributes) />
 		<#if alwaysUseNested>
@@ -158,6 +158,9 @@
 			</#if>
 		</#if>
 		<#local value = value?trim />
+		<#if transform?is_macro>
+			<#local value = transform(value) />
+		</#if>
 		
 		<#if editMode>
 			${inplaceMacroHelper.enableOutputWrapping()}

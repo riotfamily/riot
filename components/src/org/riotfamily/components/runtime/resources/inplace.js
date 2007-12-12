@@ -331,7 +331,7 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 	},
 
 	openPopup: function() {
-		var settings = riot.TinyMCEProfiles[this.options.config || 'default'];
+		var settings = Object.extend(riot.TinyMCEProfiles[this.options.config || 'default'], riot.fixedTinyMCESettings); 
 		this.popup = new riot.TinyMCEPopup(this, settings);
 	},
 
@@ -667,9 +667,7 @@ riot.fixedTinyMCESettings = {
 riot.TinyMCEProfiles = {};
 
 ComponentEditor.getTinyMCEProfiles(function(profiles) {
-	$H(profiles).each(function(entry) {
-		riot.TinyMCEProfiles[entry.key] = Object.extend(entry.value, riot.fixedTinyMCESettings);
-	});
+	riot.TinyMCEProfiles = profiles;
 });
 
 riot.initSwfUpload = function(readyCallback) {

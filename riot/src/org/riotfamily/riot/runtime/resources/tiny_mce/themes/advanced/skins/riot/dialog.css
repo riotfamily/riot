@@ -1,47 +1,29 @@
 /* Generic */
 body {
-font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;
+font-family:Arial, sans-serif; font-size:12px;
 background:#fff;
 margin:8px;
 color: #3d3d3d;
 }
-
-td {font-family:Verdana, Arial, Helvetica, sans-serif; font-size:10px;}
 textarea {resize:none;outline:none;}
 a:link, a:visited {color:#3d3d3d;}
 a:hover {color:#3d3d3d;}
 
 /* Forms */
-fieldset {margin:0; padding:4px; border:1px solid #3d3d3d; font-family:Verdana, Arial; font-size:10px;}
+fieldset {margin:0; padding:4px; border:1px solid #3d3d3d;}
 legend {color:#3d3d3d; font-weight:bold;}
 label.msg {display:none;}
 label.invalid {color:#EE0000; display:inline;}
 input.invalid {border:1px solid #EE0000;}
-input, select, textarea {font-family:Verdana, Arial, Helvetica, sans-serif; font-size:10px;}
 #general_panel input, select, textarea {border:1px solid #e0e0e0;}
 input.radio {border:1px none #000000; background:transparent; vertical-align:middle;}
 input.checkbox {border:1px none #000000; background:transparent; vertical-align:middle;}
 .input_noborder {border:0;}
 
-/* Buttons */
-
-#insert, #cancel, input.button, .updateButton {
-/*
-border: 2px solid #3d3d3d; margin:0; padding:0;
-font-weight:bold;
-width:94px; height:26px;
-background: #fff;
-cursor:pointer;
-padding-bottom:2px;
-*/
-}
-
 /* Browse */
-a.browse span {display:block; width:20px; height:18px; background:url(../../img/icons.gif) -860px 0; border:1px solid #FFF; margin-left:1px;}
+a.browse span {display:block; width:20px; height:18px; background:url(img/browse.gif) no-repeat 0px 0px}; border:1px solid #FFF; margin-left:1px;}
 .mceOldBoxModel a.browse span {width:22px; height:20px;}
-a.browse:hover span {border:1px solid #0A246A; background-color:#B2BBD0;}
-a.browse span.disabled {border:1px solid white; -moz-opacity:0.3; opacity:0.3; filter:progid:DXImageTransform.Microsoft.Alpha(opacity=30);}
-a.browse:hover span.disabled {border:1px solid white; background-color:transparent;}
+a.browse span.disabled {-moz-opacity:0.3; opacity:0.3; filter:progid:DXImageTransform.Microsoft.Alpha(opacity=30);}
 a.pickcolor span {display:block; width:20px; height:16px; background:url(../../img/icons.gif) -840px 0; margin-left:2px;}
 .mceOldBoxModel a.pickcolor span {width:21px; height:17px;}
 a.pickcolor:hover span {background-color:#B2BBD0;}
@@ -84,7 +66,7 @@ h3 {font-size:14px;}
 .title {font-size:12px; font-weight:bold; color:#3d3d3d;}
 
 /* Dialog specific */
-#link .panel_wrapper, #link div.current {height:125px;}
+#link .panel_wrapper, #link div.current {height:125px;margin-top:5px}
 #image .panel_wrapper, #image div.current {height:190px;}
 #plugintable thead {font-weight:bold; background:#DDD;}
 #plugintable, #about #plugintable td {border:1px solid #3d3d3d;}
