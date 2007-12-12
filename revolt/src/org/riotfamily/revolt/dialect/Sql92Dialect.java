@@ -24,7 +24,9 @@
 package org.riotfamily.revolt.dialect;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.riotfamily.revolt.Script;
 import org.riotfamily.revolt.definition.Column;
@@ -40,6 +42,22 @@ import org.riotfamily.revolt.definition.UniqueConstraint;
  * 
  */
 public abstract class Sql92Dialect extends AbstractDialect {
+	private static final Map actions = new HashMap();
+	
+	static {
+		actions.put(ForeignKey.NO_ACTION_HANDLER, "NO ACTION");
+		actions.put(ForeignKey.CASCADE_HANDLER, "CASCADE");
+		actions.put(ForeignKey.SET_NULL_HANDLER, "SET NULL");
+		actions.put(ForeignKey.SET_DEFAULT_HANDLER, "SET DEFAULT");
+	}
+	
+	private String getDeleteAction(ForeignKey foreignKey) {
+		return (String) actions.get(foreignKey.getDeleteAction());
+	}
+	
+	private String getUpdateAction(ForeignKey foreignKey) {
+		return (String) actions.get(foreignKey.getUpdateAction());
+	}
 
 	public Sql92Dialect() {
 	}
@@ -127,15 +145,15 @@ public abstract class Sql92Dialect extends AbstractDialect {
 		addColumnNames(sql, fk.getLocalColumns());
 		sql.append("REFERENCES").append(fk.getForeignTable());
 		addColumnNames(sql, fk.getForeignColumns());
-		if (fk.getUpdateOption() != null && fk.getUpdateOption().trim().length() > 0) {
-			sql.append("ON UPDATE").append(fk.getUpdateOption());
+		if (fk.hasUpdateAction()) {
+			sql.append("ON UPDATE").append(getUpdateAction(fk));
 		}
-		if (fk.getDeleteOption() != null && fk.getDeleteOption().trim().length() > 0) {
-			sql.append("ON DELETE").append(fk.getDeleteOption());
+		if (fk.hasDeleteAction()) {
+			sql.append("ON DELETE").append(getDeleteAction(fk));
 		}
 		return sql;
 	}
-
+	
 	public Script dropForeignKey(String table, String name) {
 		return dropConstraint(table, name);
 	}

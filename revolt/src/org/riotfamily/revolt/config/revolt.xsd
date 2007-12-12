@@ -48,10 +48,10 @@
 									<xsd:attribute name="value" use="required">
 										<xsd:simpleType>
 								            <xsd:restriction base="xsd:string">
-								                <xsd:enumeration value="NO ACTION" />
-								                <xsd:enumeration value="CASCADE" />
-								                <xsd:enumeration value="SET NULL" />
-								                <xsd:enumeration value="SET DEFAULT" />
+								                <xsd:enumeration value="no-action" />
+								                <xsd:enumeration value="cascade" />
+								                <xsd:enumeration value="set-null" />
+								                <xsd:enumeration value="set-default" />
 								            </xsd:restriction>
 										</xsd:simpleType>
 									</xsd:attribute>
@@ -62,10 +62,10 @@
 									<xsd:attribute name="value" use="required">
 										<xsd:simpleType>
 								            <xsd:restriction base="xsd:string">
-								                <xsd:enumeration value="NO ACTION" />
-								                <xsd:enumeration value="CASCADE" />
-								                <xsd:enumeration value="SET NULL" />
-								                <xsd:enumeration value="SET DEFAULT" />
+                                                <xsd:enumeration value="no-action" />
+                                                <xsd:enumeration value="cascade" />
+                                                <xsd:enumeration value="set-null" />
+                                                <xsd:enumeration value="set-default" />
 								            </xsd:restriction>
 										</xsd:simpleType>
 									</xsd:attribute>

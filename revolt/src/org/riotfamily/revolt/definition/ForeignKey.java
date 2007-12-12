@@ -32,16 +32,18 @@ import java.util.List;
  * 
  */
 public class ForeignKey extends Identifier {
+	public static final String CASCADE_HANDLER = "cascade";
+	public static final String SET_NULL_HANDLER = "set-null";
+	public static final String NO_ACTION_HANDLER = "no-action";
+	public static final String SET_DEFAULT_HANDLER = "set-default";
 	
 	private String foreignTable;
 
 	private List references;
 	
-	/* Options: NO ACTION, SET NULL, CASCADE, SET DEFAULT */
-	private String deleteOption;
+	private String deleteAction;
 	
-	/* Options: NO ACTION, SET NULL, CASCADE, SET DEFAULT */
-	private String updateOption;
+	private String updateAction;
 
 	public ForeignKey() {
 	}
@@ -50,12 +52,14 @@ public class ForeignKey extends Identifier {
 		super(name);
 	}
 
-	public ForeignKey(String name, String foreignTable, List references, String deleteOption, String updateOption) {
+	public ForeignKey(String name, String foreignTable, List references,
+		String deleteAction, String updateAction) {
+		
 		super(name);
 		this.foreignTable = foreignTable;
 		this.references = references;
-		this.deleteOption = deleteOption;
-		this.updateOption = updateOption;
+		this.deleteAction = deleteAction;
+		this.updateAction = updateAction;
 	}
 
 	public String getForeignTable() {
@@ -75,20 +79,20 @@ public class ForeignKey extends Identifier {
 	}
 	
 
-	public String getDeleteOption() {
-		return this.deleteOption;
+	public String getDeleteAction() {
+		return this.deleteAction;
 	}
 
-	public void setDeleteOption(String deleteOption) {
-		this.deleteOption = deleteOption;
+	public void setDeleteAction(String deleteAction) {
+		this.deleteAction = deleteAction;
 	}
 
-	public String getUpdateOption() {
-		return this.updateOption;
+	public String getUpdateAction() {
+		return this.updateAction;
 	}
 
-	public void setUpdateOption(String updateOption) {
-		this.updateOption = updateOption;
+	public void setUpdateAction(String updateAction) {
+		this.updateAction = updateAction;
 	}
 	
 
@@ -113,4 +117,11 @@ public class ForeignKey extends Identifier {
 		return columns;
 	}
 
+	public boolean hasUpdateAction() {
+		return updateAction != null;
+	}
+
+	public boolean hasDeleteAction() {
+		return deleteAction != null;
+	}
 }
