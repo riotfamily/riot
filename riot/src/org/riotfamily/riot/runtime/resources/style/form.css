@@ -556,6 +556,12 @@ ul.radioButtonGroup {
 .toggle-plaintext {
 	margin-top: 15px;
 }
+.toggle-plaintext input {
+	margin-bottom: 1px;
+}
+.toggle-plaintext label {
+	font-weight: normal;
+}
 
 .hint-trigger {
 	display: inline;
