@@ -44,7 +44,9 @@ import org.w3c.dom.NamedNodeMap;
  */
 public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionParser {
 
-	public static final String NAME_ATTRIBUTE = "name";
+	public static final String DEFAULT_ALIAS_ATTRIBUTE = "name";
+	
+	public String aliasAttribute = DEFAULT_ALIAS_ATTRIBUTE;
 
 	private HashMap translations = new HashMap();
 
@@ -70,8 +72,14 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 		return this;
 	}
 
-	protected String resolveAlias(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
-		return element.getAttribute(NAME_ATTRIBUTE);
+	public void setAliasAttribute(String aliasAttribute) {
+		this.aliasAttribute = aliasAttribute;
+	}
+	
+	protected String resolveAlias(Element element, 
+			AbstractBeanDefinition definition, ParserContext parserContext) {
+		
+		return aliasAttribute != null ? element.getAttribute(aliasAttribute) : null;
 	}
 
 	/**
@@ -125,7 +133,7 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 	 * XML element being parsed (never <code>null</code>)
 	 */
 	protected boolean isEligibleAttribute(String attributeName) {
-		return !ID_ATTRIBUTE.equals(attributeName) && !NAME_ATTRIBUTE.equals(attributeName);
+		return !attributeName.equals(ID_ATTRIBUTE) && !attributeName.equals(aliasAttribute);
 	}
 
 	/**

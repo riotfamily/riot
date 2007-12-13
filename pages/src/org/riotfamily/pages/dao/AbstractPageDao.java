@@ -179,7 +179,10 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		log.info("Adding translation " + page + " --> " + site);
 		Page translation = new Page();
 		translation.setSite(site);
+		translation.setCreationDate(new Date());
 		translation.setPathComponent(page.getPathComponent());
+		translation.setFolder(page.isFolder());
+		translation.setHidden(page.isHidden());
 		PageNode node = page.getNode();
 		if (node.isSystemNode()) {
 			translation.setPublished(page.isPublished());
@@ -244,7 +247,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	
 	protected abstract void deleteAliases(Site site);
 
-	protected void deleteAlias(Page page) {
+	public void deleteAlias(Page page) {
 		PageAlias alias = findPageAlias(page.getSite(), page.getPath());
 		if (alias != null) {
 			log.info("Deleting " + alias);

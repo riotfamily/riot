@@ -120,7 +120,6 @@ textarea, input.text, input.number, input.password {
 textarea, input.text, input.password {
 	width: 100%;
 }
-
 input.text, input.number, input.password {
 	height: 16px;
 	line-height: 16px;
@@ -131,6 +130,10 @@ span.read-only {
 	line-height: 26px;
 }
 
+#elements,
+.textarea-wrapper {
+	_height: 1px;
+}
 textarea {
 	line-height: 18px;
 }
@@ -538,9 +541,12 @@ ul.radioButtonGroup {
 	background: #cdcdcd;
 }
 
-.chooser span {
-	margin-right: 10px;
+.chooser .chosen span {
 	color: #3d3d3d;
+	padding-right: 10px;
+}
+.chooser .chosen img {
+	vertical-align: middle;
 }
 
 .confirm-text p {
@@ -549,6 +555,12 @@ ul.radioButtonGroup {
 
 .toggle-plaintext {
 	margin-top: 15px;
+}
+.toggle-plaintext input {
+	margin-bottom: 1px;
+}
+.toggle-plaintext label {
+	font-weight: normal;
 }
 
 .hint-trigger {

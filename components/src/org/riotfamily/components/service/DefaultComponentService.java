@@ -97,10 +97,25 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 	}
 
 	public void updateComponentVersion(ComponentVersion version) {
+		Component component = repository.getComponent(version);
+		List listeners = component.getUpdateListeners();
+		if (listeners != null) {
+			ComponentUpdate update = new ComponentUpdate(dao, version, fileStoreLocator);
+			Iterator it = listeners.iterator();
+			while (it.hasNext()) {
+				UpdateListener listener = (UpdateListener) it.next();
+				try {
+					listener.onUpdate(update);
+				}
+				catch (Exception e) {
+					log.error("Error in UpdateListener", e);
+				}
+			}
+		}
 		if (version.getId() != null) {
 			ComponentCacheUtils.invalidateContainer(
 					cache, version.getContainer(), true);
-
+			
 			dao.updateComponentVersion(version);
 		}
 	}
@@ -116,21 +131,6 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 			properties.put(key, pp.convertToString(object));
 		}
 		version.setProperties(properties);
-		
-		List listeners = component.getUpdateListeners();
-		if (listeners != null) {
-			ComponentUpdate update = new ComponentUpdate(dao, version, fileStoreLocator);
-			it = listeners.iterator();
-			while (it.hasNext()) {
-				UpdateListener listener = (UpdateListener) it.next();
-				try {
-					listener.onUpdate(update);
-				}
-				catch (Exception e) {
-					log.error("Error in UpdateListener", e);
-				}
-			}
-		}
 		updateComponentVersion(version);
 	}
 	

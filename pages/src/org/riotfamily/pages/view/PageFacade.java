@@ -119,12 +119,12 @@ public class PageFacade {
 		return pageUrlBuilder.getUrl(page);
 	}
 
-	public String getAbsoluteUrl(HttpServletRequest request) {
-		return getAbsoluteUrl(request, request.isSecure());
+	public String getUrl(HttpServletRequest request) {
+		return getUrl(request, request.isSecure());
 	}
 	
-	public String getAbsoluteUrl(HttpServletRequest request, boolean secure) {
-		return pageUrlBuilder.getAbsoluteUrl(page, request, secure);
+	public String getUrl(HttpServletRequest request, boolean secure) {
+		return pageUrlBuilder.getUrl(page, request, secure);
 	}
 
 	public boolean isWildcard() {

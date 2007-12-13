@@ -134,6 +134,7 @@ public class PageDefinition {
 			page.setCreationDate(new Date());
 			addPageProps(page, site);
 			node.addPage(page);
+			pageDao.deleteAlias(page);
 		}
 	}
 

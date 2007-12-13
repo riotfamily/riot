@@ -79,7 +79,7 @@ public class BeanConfigurationWatcher {
 				mtime = Math.max(mtime, file.lastModified());
 			}
 			if (mtime > lastModified) {
-				lastModified = System.currentTimeMillis();
+				lastModified = mtime;
 				bean.configure();
 				it = listeners.iterator();
 				while (it.hasNext()) {

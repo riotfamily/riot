@@ -188,14 +188,18 @@ riot.ComponentList = Class.create({
 		this.controller = riot.findController(el);
 		this.id = el.readAttribute('riot:listId');
 		if (!el.id) el.id = 'riot-list-' + this.id;
-		if (el.hasClassName('riot-dirty')) {
+		if (el.hasClassName('riot-dirty') || typeof el.down('.riot-dirty') != 'undefined') {
 			this.markDirty();
 		}		
 		this.maxComponents = el.readAttribute('riot:maxComponents');
 		this.minComponents = el.readAttribute('riot:minComponents');
-		
+				
+		this.findComponentElements();
+	},
+	
+	findComponentElements: function() {
 		//Note: Element.findChildren is defined in dragdrop.js
-		this.componentElements = Element.findChildren(el, 'riot-component', false, 'div') || [];
+		this.componentElements = Element.findChildren(this.element, 'riot-component', false, 'div') || [];
 	},
 	
 	update: function() {
@@ -260,7 +264,7 @@ riot.ComponentList = Class.create({
 		}
 	},
 	
-	updatePositionClasses: function() {
+	updatePositionClasses: function() {		
 		var last = this.componentElements.length - 1;
 		this.componentElements.each(function(componentEl, index) {
 			componentEl.descendants().each(function(el) {
@@ -325,6 +329,7 @@ riot.ComponentDragObserver = Class.create({
 		el.removeClassName('riot-drag');
 		var nextEl = el.next('.riot-component');
 		if(el.parentNode == this.element && nextEl != this.nextEl) {
+			this.componentList.findComponentElements();
 			this.componentList.updatePositionClasses();
 			var nextId = null;
 			if (nextEl) {
@@ -476,7 +481,7 @@ riot.Component = Class.create({
 	
 	propertiesChanged: function() {
 		riot.popup.close();
-		this.controller.markDirty();
+		this.markDirty();
 		// Timeout as we othwerwise get an 0x8004005 [nsIXMLHttpRequest.open] error.
 		// See https://bugzilla.mozilla.org/show_bug.cgi?id=249843
 		setTimeout(this.update.bind(this), 1);
@@ -491,6 +496,7 @@ riot.ListComponent = Class.create(riot.Component, {
 
 	updateTextChunks: function(key, chunks) {
 		ComponentEditor.updateTextChunks(this.id, key, chunks, this.update.bind(this));
+		this.markDirty();
 	},
 	
 	markDirty: function() {
@@ -634,7 +640,7 @@ riot.PublishWidget = Class.create({
 		this.live = false;
 		this.updateUI();
 		this.element.observe('click', this.toggleVersion.bind(this), true);
-		riot.toolbar.applyButton.enable();
+		
 		if (document.addEventListener) {
 			this.domListener = this.scaleOverlay.bind(this);
 			this.controller.element.addEventListener('DOMNodeInserted', this.domListener, false);
@@ -758,14 +764,18 @@ riot.DiscardWidget = Class.create(riot.PublishWidget, {
 		if (this.live) {
 			ComponentEditor.discard(this.dirtyListIds, this.dirtyContainerIds);
 			this.controller.dirty = false;			
+			this.previewHtml = this.liveHtml;			
 		}
 	}
 });
 
 
 riot.setLiveHtml = function(html) {
-	for (var i = 0; i < riot.publishWidgets.length; i++) {
-		riot.publishWidgets[i].setLiveHtml(html[i]);
+	if (riot.publishWidgets) { // If apply has been clicked quicker than the lists
+							   // have been loaded, do nothing anymore...
+		for (var i = 0; i < riot.publishWidgets.length; i++) {
+			riot.publishWidgets[i].setLiveHtml(html[i]);
+		}
 	}
 }
 
@@ -781,6 +791,7 @@ if (riot.toolbar.buttons.get('publish')) {
 		if (enable) {
 			var refs = riot.publishWidgets.invoke('getReference');
 			ComponentEditor.getLiveListHtml(refs, riot.setLiveHtml);
+			riot.toolbar.applyButton.enable();
 		}
 		else {
 			var dirty = riot.publishWidgets.invoke('destroy').any();

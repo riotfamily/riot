@@ -1,5 +1,4 @@
-var RiotFrameset = Class.create();
-RiotFrameset.prototype = {
+var RiotFrameset = Class.create({
 
 	initialize: function(id) {
 		this.id = id;
@@ -28,6 +27,10 @@ RiotFrameset.prototype = {
 			method: 'get', onComplete: this.reloadFrames
 		});
 	}
-}
+});
 
 var frameset = new RiotFrameset('rows');
+
+function setLoading(loading) {
+	statusbar.document.getElementById('loading').style.visibility = loading ? 'visible' : 'hidden';
+}

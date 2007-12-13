@@ -273,6 +273,19 @@ public class HibernateHelper extends HibernateSupport {
 			throw SessionFactoryUtils.convertHibernateAccessException(e);
 		}
 	}
+	
+	/**
+	 * Remove this instance from the session cache.
+	 * @see Session#evict(Object)
+	 */
+	public void evict(Object object) throws DataAccessException {
+		try {
+			getSession().evict(object);
+		}
+		catch (HibernateException e) {
+			throw SessionFactoryUtils.convertHibernateAccessException(e);
+		}
+	}
 
 	public List list(Query query) throws DataAccessException {
 		try {

@@ -13,6 +13,7 @@
 	<body onload="TweakStyle.status()">
 		<div id="panel">
 			<div id="status">
+				<div id="loading"><@spring.messageText "label.status.busy", "Loading ..." /></div>
 				<span class="label"><@spring.messageText "label.status.username", "User" />:</span> <span class="value">${sessionData.userName?if_exists}</span>
 				<span class="label"><@spring.messageText "label.status.lastLogin", "Last login" />: </span><span class="value">${sessionData.lastLoginDate?if_exists} [${sessionData.lastLoginIP?if_exists}]</span>
 				<a href="${riot.href("/logout")}"><@spring.messageText "label.status.logout", "Logout" /></a>

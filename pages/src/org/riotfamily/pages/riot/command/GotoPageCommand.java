@@ -45,7 +45,8 @@ public class GotoPageCommand extends PopupCommand {
 
 	protected String getUrl(CommandContext context) {
 		Page page = (Page) context.getBean();
-		String url = pageUrlBuilder.getUrl(page);
+		String url = pageUrlBuilder.getUrl(page, context.getRequest());
+		
 		return ServletUtils.resolveUrl(url, context.getRequest());
 	}
 	

@@ -1,5 +1,4 @@
-var RiotTextArea = Class.create();
-RiotTextArea.prototype = {
+var RiotTextArea = Class.create({
 	initialize: function(el) {
 		this.el = $(el);
 	},
@@ -39,7 +38,7 @@ RiotTextArea.prototype = {
             borderStyle: 'solid',
 			position: 'absolute'
 		});
-		this.el.surroundWith(RBuilder.node('div').setStyle({position: 'relative'})).prependChild(this.measure);
+		this.el.surroundWith(RBuilder.node('div', {className: 'textarea-wrapper'}).setStyle({position: 'relative'})).prependChild(this.measure);
 		this.el.observe('keyup', this.resize.bind(this));
 		this.resize();
 		this.autoSize = true;
@@ -49,4 +48,4 @@ RiotTextArea.prototype = {
 		this.measure.innerHTML = this.el.value.gsub(/</, '&lt;').gsub(/\n/, '<br/>').gsub(/  /, '&nbsp; ') + '<br>&nbsp;';
 		this.el.style.height = Math.min(this.measure.offsetHeight, this.maxHeight) + 'px';
 	}
-}
+});

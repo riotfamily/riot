@@ -88,12 +88,14 @@ public class PageChooserController implements Controller {
 		model.put("sites", pageDao.listSites());
 		model.put("selectedSite", selectedSite);
 		model.put("pages", createpageLinks(
-				pageDao.getRootNode().getChildPages(selectedSite), path));
+				pageDao.getRootNode().getChildPages(selectedSite), path, request));
 
 		return new ModelAndView(viewName, model);
 	}
 
-	private List createpageLinks(Collection pages, String expandedPath) {
+	private List createpageLinks(Collection pages, String expandedPath,
+				HttpServletRequest request) {
+		
 		ArrayList links = new ArrayList();
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
@@ -101,13 +103,15 @@ public class PageChooserController implements Controller {
 			if (!page.isWildcardInPath()) {
 				PageLink link = new PageLink();
 				link.setPathComponent(page.getPathComponent());
-				link.setLink(pageUrlBuilder.getUrl(page));
+				link.setLink(pageUrlBuilder.getUrl(page, request));
 				link.setTitle(page.getProperty("title", true));
 				link.setPublished(page.isPublished());
 				if (expandedPath != null && expandedPath.startsWith(page.getPath())) {
 					link.setExpanded(true);
 				}
-				link.setChildPages(createpageLinks(page.getChildPages(), expandedPath));
+				link.setChildPages(createpageLinks(page.getChildPages(),
+						expandedPath, request));
+				
 				links.add(link);
 			}
 		}

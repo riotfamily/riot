@@ -99,7 +99,14 @@ public class ComponentFormRepository extends XmlFormRepository {
 		return list;
 	}
 	
-	public void registerPropertyProcessors() {
+	public void registerImport(String formId, FormFactory importedFormFactory) {
+		String[] s = formId.split("#");
+		String type = s[0];
+		Form form = importedFormFactory.createForm();
+		getElementList(type).addAll(form.getElements());		
+	}
+	
+	public void registerPropertyProcessors() {		
 		Iterator it = componentElements.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();

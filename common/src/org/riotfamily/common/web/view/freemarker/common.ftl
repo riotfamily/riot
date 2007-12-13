@@ -42,6 +42,13 @@
 </#function>
 
 <#--
+  - Adds the contextPath and sessionId to all links found in the given HTML if necessary. 
+  -->
+<#function encodeLinks html>
+	<#return commonMacroHelper.resolveAndEncodeLinks(html) />
+</#function>
+
+<#--
   - Adds the contextPath and a timestamp to the given URI.
   -->
 <#function resource uri>

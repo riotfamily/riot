@@ -401,31 +401,29 @@ public final class ServletUtils {
 
 	/**
 	 * Returns the host of the given URI. Uses {@link java.net.URI}
-	 * internally to parse the given String.
-	 *
-	 * @throws IllegalArgumentException If the given string violates RFC 2396
+	 * internally to parse the given String. If the given string violates 
+	 * RFC 2396 <code>null</code> will be returned.
 	 */
 	public static String getHost(String uri) {
 		try {
 			return new URI(uri).getHost();
 		}
 		catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e.getMessage());
+			return null;
 		}
 	}
 	
 	/**
 	 * Returns the path of the given URI. Uses {@link java.net.URI}
-	 * internally to parse the given String.
-	 *
-	 * @throws IllegalArgumentException If the given string violates RFC 2396
+	 * internally to parse the given String.  If the given string violates 
+	 * RFC 2396 <code>null</code> will be returned.
 	 */
 	public static String getPath(String uri) {
 		try {
 			return new URI(uri).getPath();
 		}
 		catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e.getMessage());
+			return null;
 		}
 	}
 

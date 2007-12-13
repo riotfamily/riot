@@ -14,19 +14,25 @@ riot.outline = {
 	show: function(el, onclick, excludes) {
 		if (!window.riot || riot.outline.suspended) return;
 		riot.outline.cancelHide();
-		
-		// el.offsetHeight may be 0, descend until an element with a height is found. 
-		var offsetTop = el.offsetHeight;
-		while (el && offsetTop == 0) {
+
+		// el.offsetHeight may be 0, descend until an element with a height is found.		
+		var h = el.offsetHeight;
+		while (el && h == 0) {
 			el = el.down();
-			var offsetTop = el.offsetHeight;
+			var h = el.offsetHeight;
 		}
 		if (!el) return;
 		
-		riot.outline.elements.top.copyPosFrom(el, {setHeight: false, offsetTop: -1, offsetLeft: -1, offsetWidth: 2});
-		riot.outline.elements.left.copyPosFrom(el, {setWidth: false, offsetLeft: -1});
-		riot.outline.elements.bottom.copyPosFrom(el, {setHeight: false, offsetLeft: -1, offsetTop: offsetTop, offsetWidth: 2});
-		riot.outline.elements.right.copyPosFrom(el, {setWidth: false, offsetLeft: el.offsetWidth});
+		var w = el.offsetWidth;
+		var pos = el.cumulativeOffset();
+		
+		riot.outline.elements.top.style.top = (pos.top - 1) + 'px';
+		riot.outline.elements.bottom.style.top = (pos.top + h) + 'px';
+		riot.outline.elements.right.style.left = (pos.left + w) + 'px';
+		riot.outline.elements.top.style.width =	riot.outline.elements.bottom.style.width = (w + 2) + 'px';
+		riot.outline.elements.left.style.top = riot.outline.elements.right.style.top = pos.top + 'px';
+		riot.outline.elements.left.style.height = riot.outline.elements.right.style.height = h + 'px';
+		riot.outline.elements.top.style.left = riot.outline.elements.left.style.left = riot.outline.elements.bottom.style.left = (pos.left - 1) + 'px';
 		
 		riot.outline.divs.invoke('show');
 	},
@@ -325,7 +331,7 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 	},
 
 	openPopup: function() {
-		var settings = riot.TinyMCEProfiles[this.options.config || 'default'];
+		var settings = Object.extend(riot.TinyMCEProfiles[this.options.config || 'default'], riot.fixedTinyMCESettings); 
 		this.popup = new riot.TinyMCEPopup(this, settings);
 	},
 
@@ -661,9 +667,7 @@ riot.fixedTinyMCESettings = {
 riot.TinyMCEProfiles = {};
 
 ComponentEditor.getTinyMCEProfiles(function(profiles) {
-	$H(profiles).each(function(entry) {
-		riot.TinyMCEProfiles[entry.key] = Object.extend(entry.value, riot.fixedTinyMCESettings);
-	});
+	riot.TinyMCEProfiles = profiles;
 });
 
 riot.initSwfUpload = function(readyCallback) {
@@ -711,12 +715,12 @@ riot.ImageEditor = Class.create(riot.InplaceEditor, {
 	
 	edit: function() {
 		riot.outline.hide();
-		riot.swfUpload.setPostParams({token: this.token, fileStore: this.options.fileStore});
+		riot.swfUpload.setPostParams({token: this.token, fileStore: this.options.fileStore});		
 		riot.swfUpload.uploadComplete_handler = this.uploadComplete.bind(this);
 		riot.swfUpload.selectFile();
-	},	
+	},
 	
-	uploadComplete: function(file, response) {
+	uploadComplete: function(file, response) {		
 		riot.outline.suspended = true;
 		this.cropper = new Cropper.UI(this, response);
 	},
@@ -804,7 +808,7 @@ Cropper.UI = Class.create({
 		this.element = RBuilder.node('div', {className:'cropper'})
 			.cloneStyle(editor.element, ['margin', 'position', 'top', 'left']);
 		
-		this.element.insertSelfAfter(this.editor.element.hide());
+		this.element.insertSelfAfter(this.editor.element);
 		
 		this.preview = RBuilder.node('div')
 			.setStyle({MozUserSelect: 'none', overflow: 'hidden', position: 'relative'})
@@ -855,6 +859,7 @@ Cropper.UI = Class.create({
 	},
 	
 	onLoadImage: function(image) {
+		this.editor.element.hide();
 		this.img.src = image.src; 
 		this.imageSize = new Cropper.Pos(image.width, image.height);
 		

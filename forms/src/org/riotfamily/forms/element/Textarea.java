@@ -25,8 +25,8 @@ package org.riotfamily.forms.element;
 
 import java.io.PrintWriter;
 
+import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
-import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
@@ -56,20 +56,26 @@ public class Textarea extends AbstractTextElement implements ResourceElement,
 	}
 
 	public void renderInternal(PrintWriter writer) {
-		TagWriter tag = new TagWriter(writer);
-		tag.start(Html.TEXTAREA)
+		DocumentWriter doc = new DocumentWriter(writer);
+		if (getMaxLength() == null && rows != null) {
+			// If no init script is rendered we surround the textarea with a 
+			// div so that we work around the IE 100% width bug via CSS:
+			// http://fplanque.net/2003/Articles/iecsstextarea/
+			doc.start(Html.DIV).attribute(Html.COMMON_CLASS, "textarea-wrapper");
+		}
+		doc.start(Html.TEXTAREA)
 			.attribute(Html.COMMON_CLASS, getStyleClass())
 			.attribute(Html.COMMON_ID, getId())
 			.attribute(Html.INPUT_NAME, getParamName());
 		
 		if (rows != null) {
-			tag.attribute(Html.TEXTAREA_ROWS, rows.intValue());
+			doc.attribute(Html.TEXTAREA_ROWS, rows.intValue());
 		}
 		if (cols != null) {
-			tag.attribute(Html.TEXTAREA_COLS, cols.intValue());
+			doc.attribute(Html.TEXTAREA_COLS, cols.intValue());
 		}
 		
-		tag.body(getText()).end();
+		doc.body(getText()).closeAll();
 	}
 	
 	public FormResource getResource() {

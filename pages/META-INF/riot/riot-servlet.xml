@@ -106,4 +106,9 @@
 		<constructor-arg ref="pageDao" />
 	</bean>
 
+	<bean id="gotoSiteCommand" class="org.riotfamily.pages.riot.command.GotoSiteCommand">
+		<constructor-arg ref="pageUrlBuilder" />
+		<property name="windowName" value="preview" />
+	</bean>
+	
 </beans>

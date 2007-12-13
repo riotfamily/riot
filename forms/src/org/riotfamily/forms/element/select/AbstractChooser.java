@@ -34,7 +34,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.forms.AbstractEditorBase;
@@ -63,11 +62,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 		implements Editor, DHTMLElement, JavaScriptEventAdapter, 
 		ResourceElement, ContentElement {
 	
-	private String displayNameProperty;
-	
 	private Object object;
-
-	private String displayName;
 
 	private List listeners;
 	
@@ -75,23 +70,19 @@ public abstract class AbstractChooser extends AbstractEditorBase
 			new ScriptResource("form/chooser.js", "Chooser");
 	
 	
-	public void setDisplayNameProperty(String displayNameProperty) {
-		this.displayNameProperty = displayNameProperty;
-	}
-
 	protected void renderInternal(PrintWriter writer) {
 		DocumentWriter doc = new DocumentWriter(writer);
-		doc.start(Html.DIV);
-		doc.attribute(Html.COMMON_ID, getId());
-		doc.attribute(Html.COMMON_CLASS, "chooser");
-		if (displayName != null) {
-			doc.start(Html.SPAN);
-			doc.body(displayName);
-			doc.end();
-		}
+		doc.start(Html.DIV)
+				.attribute(Html.COMMON_ID, getId())
+				.attribute(Html.COMMON_CLASS, "chooser")
+				.body();
+				
+		renderLabel(object, writer);
+		
 		doc.start(Html.BUTTON).attribute(Html.COMMON_CLASS, "choose");
 		doc.body("Choose");
 		doc.end();
+		
 		if (!isRequired() && getValue() != null) {
 			doc.start(Html.BUTTON);
 			doc.attribute(Html.COMMON_CLASS, "unset");
@@ -101,6 +92,8 @@ public abstract class AbstractChooser extends AbstractEditorBase
 		doc.end();
 	}
 
+	protected abstract void renderLabel(Object object, PrintWriter writer);
+	
 	public int getEventTypes() {
 		return 0;
 	}
@@ -130,17 +123,6 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	
 	protected abstract Object loadBean(String objectId);
 	
-	protected String getDisplayName(Object object) {
-		if (object == null) {
-			return null;	
-		}
-		if (displayNameProperty != null) {
-			return PropertyUtils.getPropertyAsString(
-					object, displayNameProperty);
-		}
-		return object.toString();
-	}
-	
 	protected void setObjectId(String objectId) {
 		log.debug("Setting objectId to: " + objectId);
 		Object oldObject = object;
@@ -151,12 +133,10 @@ public abstract class AbstractChooser extends AbstractEditorBase
 			object = null;
 		}
 		fireChangeEvent(object, oldObject);
-		displayName = getDisplayName(object);
 	}
 	
 	public void setValue(Object value) {
 		this.object = value;
-		displayName = getDisplayName(value);
 	}
 
 	public Object getValue() {

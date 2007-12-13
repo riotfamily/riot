@@ -7,6 +7,7 @@
     </configurations>
     <dependencies>
 	    <dependency org="springframework" name="spring" rev="2.0.7" conf="build,runtime->default;test->mock" />
+	    <dependency org="apache" name="commons-logging" rev="1.1.1" conf="*->default" />
 	    <dependency org="hsqldb" name="hsqldb" rev="latest.release" conf="test->default" />
     </dependencies>
 </ivy-module>

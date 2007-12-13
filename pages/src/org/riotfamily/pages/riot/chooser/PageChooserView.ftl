@@ -25,8 +25,8 @@
 		new Tree('tree', function(href) {
 			<#if mode == "tinyMCE">
 				var win = window.dialogArguments || opener || parent || top;
-				var input = win.tinyMCE.activeEditor.windowManager.getParam('input');
-				input.value = '${request.contextPath}' + href;
+				var input = win.tinymce.EditorManager.activeEditor.windowManager.params['input'];
+				input.value = href;
 			<#else>
 				opener.WindowCallback.invoke(self, href);
 			</#if>

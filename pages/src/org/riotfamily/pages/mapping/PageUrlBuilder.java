@@ -38,21 +38,106 @@ public class PageUrlBuilder {
 
 	private PathCompleter pathCompleter;
 
+	
 	public PageUrlBuilder(PathCompleter pathCompleter) {
 		this.pathCompleter = pathCompleter;
 	}
-	
-	public String getUrl(Page page) {
-		StringBuffer url = new StringBuffer(page.getFullPath());
+
+
+	/*
+	 * Private helper using the path completer to add the servlet mapping
+	 */
+	private void completePageUrl(Page page, StringBuffer url) {
 		if (!page.isFolder() || pathCompleter.isPrefixMapping()) {
 			pathCompleter.addServletMapping(url);
 		}
+	}
+
+	
+	/*
+	 * The internals of building the absolute url.
+	 */
+	protected String getAbsoluteUrl(Page page, HttpServletRequest request, boolean secure) {
+		Site site = page.getSite();
+		StringBuffer url = getAbsoluteSiteUrl(site, request, secure);
+		url.append(page.getPath());
+		completePageUrl(page, url);
 		return url.toString();
 	}
 
-	public String getAbsoluteUrl(Page page, HttpServletRequest request, boolean secure) {
-		Site site = page.getSite();
-		
+	
+	/**
+	 * This method returns the raw URL for the given page. This method should only
+	 * being used if the page is guaranteed to be on the same site/context. If
+	 * unsure have a look at {@link #getUrl(Page, HttpServletRequest)}
+	 * 
+	 * @param page the url is requested for
+	 * @return url for the given page
+	 */
+	public String getUrl(Page page) {
+		StringBuffer url = new StringBuffer(page.getFullPath());
+		completePageUrl(page, url);
+		return url.toString();
+	}
+
+	/**
+	 * This method returns an URL for the given page. It works exactly how
+	 * {@link #getUrl(Page, HttpServletRequest, boolean)} and determines the
+	 * secure flag whether the passed in request is.
+	 *  
+	 * @param page the url is requested for
+	 * @param request the current request
+	 * @return an url for the given page
+	 */
+	public String getUrl(Page page, HttpServletRequest request) {
+		return getUrl(page, request, request.isSecure());
+	}
+	
+	/**
+	 * This method returns an URL for the given page, but will return a full URL
+	 * including the host name if required. This is required if the given request
+	 * has been made on a different site where the given page is on and the page's
+	 * site has been configured with an host name or if the secure flag differs
+	 * from the current request.
+	 *  
+	 * @param page the url is requested for
+	 * @param request the current request
+	 * @param secure if true, the {@link ServletUtils.SCHEME_HTTPS} is being used as scheme
+	 * @return an url for the given page
+	 */
+	public String getUrl(Page page, HttpServletRequest request, boolean secure) {
+		String siteHost = page.getSite().getHostName();
+		if (secure == request.isSecure() && 
+				(siteHost == null || request.getServerName().equals(siteHost))) {
+			
+			return getUrl(page);
+		}
+		return getAbsoluteUrl(page, request, secure);
+	}
+
+	/**
+	 * Returns an absolute URL for the given site. It works exactly how
+	 * {@link #getAbsoluteSiteUrl(Site, HttpServletRequest, boolean)} and
+	 * determines the secure flag whether the passed in request is.
+	 * 
+	 * @param site the url is requested for
+	 * @param request the current request
+	 * @return an url for the given site 
+	 */
+	public StringBuffer getAbsoluteSiteUrl(Site site, HttpServletRequest request) {
+		return getAbsoluteSiteUrl(site, request, request.isSecure());
+	}
+	
+	/**
+	 * Returns an absolute URL for the given site. It the site does not have a host
+	 * name configured the server name of the given request will be used.
+	 * 
+	 * @param site the url is requested for
+	 * @param request the current request
+	 * @param secure if true, the {@link ServletUtils.SCHEME_HTTPS} is being used as scheme
+	 * @return an url for the given site 
+	 */
+	public StringBuffer getAbsoluteSiteUrl(Site site, HttpServletRequest request, boolean secure) {
 		StringBuffer url = new StringBuffer();
 		url.append(secure
 				? ServletUtils.SCHEME_HTTPS 
@@ -68,14 +153,20 @@ public class PageUrlBuilder {
 	        if (port <= 0) {
 	            port = 80;
 	        }
+	        // Append the port unless it's the protocol's default 
 	        if ((!secure && port != 80) || (secure && port != 443)) {
-	            url.append(':');
-	            url.append(port);
+	        	// If the protocol changes, we don't know the port and need to assume the default 
+	        	if (secure == request.isSecure()) {
+		            url.append(':');
+		            url.append(port);
+		        }
 	        }
 		}
 		url.append(request.getContextPath());
-		url.append(getUrl(page));
-		return url.toString();
+		if (site.getPathPrefix() != null) {
+			url.append(site.getPathPrefix());
+		}
+		return url;
 	}
 	
 }

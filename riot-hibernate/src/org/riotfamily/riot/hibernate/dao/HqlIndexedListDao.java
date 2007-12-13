@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.dao;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.riotfamily.riot.dao.ListParams;
@@ -38,10 +39,7 @@ public class HqlIndexedListDao extends HqlCollectionDao
     	Object nextItem = items.get(swapWith);
     	
     	List list = (List) getCollection(parent);
-    	list.remove(entity);
-    	int pos = list.indexOf(nextItem);
-    	list.add(pos, entity);
-    	
+    	Collections.swap(list, list.indexOf(entity), list.indexOf(nextItem));
     	getSession().update(parent);
 	}
 }
