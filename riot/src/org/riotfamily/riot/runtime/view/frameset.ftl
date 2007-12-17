@@ -13,7 +13,7 @@
     	<@riot.script src="riot-js/viewport.js" />
     	<@riot.script src="frameset.js" />
 	</head>
-	<frameset id="rows" rows="119,*,32" border="0">
+	<frameset id="rows" rows="119,*,37" border="0">
 		<frame name="path" src="${riot.href("/path")}" />
 		<frame name="editor" src="${riot.href("/group")}" />
 		<frame name="statusbar" src="${riot.href("/statusbar")}" />

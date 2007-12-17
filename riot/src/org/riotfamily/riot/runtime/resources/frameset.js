@@ -10,9 +10,10 @@ var RiotFrameset = Class.create({
 			this.rows = this.frameset.rows.split(',');
 			this.length = this.rows.length;
 		}
-		var i = $A(frames).indexOf(frame);
+		var i;
+		for (i = 0; i < frames.length && frames[i] != frame; i++);
 		var height = Viewport.getPageHeight(frame);
-		if (height != this.rows[i]) {
+		if (i < frames.length && height != this.rows[i]) {
 			this.rows[i] = height;
 			this.frameset.rows = this.rows.join(',');
 		}
