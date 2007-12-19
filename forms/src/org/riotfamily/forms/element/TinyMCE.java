@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element;
 
+
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,13 +48,9 @@ public class TinyMCE extends AbstractTextElement
 	static {
 		defaults.put("skin", "riot");
 		defaults.put("theme", "advanced");
-		defaults.put("theme_advanced_layout_manager", "RowLayout");
-		defaults.put("theme_advanced_containers_default_align", "left");
-		defaults.put("theme_advanced_container_mceeditor", "mceeditor");
-		defaults.put("theme_advanced_containers", "buttons1,mceeditor");
+		defaults.put("valid_elements", "+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote");
 		defaults.put("theme_advanced_container_buttons1", "formatselect,bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap");
 		defaults.put("theme_advanced_blockformats", "p,h3,h4");
-		defaults.put("valid_elements", "+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote");
 	}
 	
 	private int rows = 10;
@@ -100,6 +97,11 @@ public class TinyMCE extends AbstractTextElement
 		json.element("add_unload_trigger", false);
 		json.element("submit_patch", false);
 		json.element("strict_loading_mode", true);
+		json.element("relative_urls", Boolean.FALSE);
+		json.element("theme_advanced_layout_manager", "RowLayout");
+		json.element("theme_advanced_containers_default_align", "left");
+		json.element("theme_advanced_container_mceeditor", "mceeditor");
+		json.element("theme_advanced_containers", "buttons1,mceeditor");
 		return json.toString();
 	}
 	
