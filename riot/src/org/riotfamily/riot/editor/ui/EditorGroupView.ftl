@@ -19,23 +19,25 @@
 		</script>
 	</head>
 	<body>
-		<div id="wrapper">
-			<div id="editors" class="main">
-				<div class="title"><span class="label">${group.title}</span></div>
-				<#list group.editors as ref>
-					<a class="editor ${ref.styleClass?default('default')}" href="${common.url(ref.editorUrl)}" <#if ref.targetWindow?exists> target="${ref.targetWindow}"</#if>>
-						<div class="icon"<#if ref.icon?exists> style="background-image:url(${riot.resource("style/icons/editors/" + ref.icon + ".gif")})"</#if>></div>
-						<div class="text">
-							<div class="label">${ref.label}</div>
-							<div class="description">${ref.description?if_exists}</div>
-						</div>
-					</a>
-				</#list>
+		<div id="body-wrapper">
+			<div id="wrapper">
+				<div id="editors" class="main">
+					<div class="title"><span class="label">${group.title}</span></div>
+					<#list group.editors as ref>
+						<a class="editor ${ref.styleClass?default('default')}" href="${common.url(ref.editorUrl)}" <#if ref.targetWindow?exists> target="${ref.targetWindow}"</#if>>
+							<div class="icon"<#if ref.icon?exists> style="background-image:url(${riot.resource("style/icons/editors/" + ref.icon + ".gif")})"</#if>></div>
+							<div class="text">
+								<div class="label">${ref.label}</div>
+								<div class="description">${ref.description?if_exists}</div>
+							</div>
+						</a>
+					</#list>
+				</div>
 			</div>
-		</div>
-		<div class="extra">
-			<@riot.controller "/notifications" />
-			<@riot.controller "/status" />
+			<div class="extra">
+				<@riot.controller "/notifications" />
+				<@riot.controller "/status" />
+			</div>
 		</div>
 		<script>TweakStyle.group();</script>
 	</body>
