@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.0.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-6.5.xsd">
+
+	<!-- 
+	<import resource="classpath:org/riotfamily/media/runtime/db-schema.xml"/>
+    -->
+    
+	<override:add ref="sessionFactory" property="mappingLocations">
+		<value>classpath:org/riotfamily/media/dao/hibernate/media.hbm.xml</value>
+	</override:add>
+	
+	<bean id="mediaDao" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
+		<property name="target"><ref bean="mediaDaoTarget" /></property>
+	</bean>
+
+	<bean id="mediaDaoTarget" class="org.riotfamily.media.dao.hibernate.HibernateMediaDao">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+	
+	<bean id="fileStore" class="org.riotfamily.common.web.file.DefaultFileStore">
+		<property name="uriPrefix" value="${riot.media.uriPrefix=/media}" />
+	</bean>
+	
+	<bean class="org.riotfamily.media.model.FileStoreInjector">
+		<property name="fileStore" ref="fileStore" />
+	</bean>
+	
+</beans>

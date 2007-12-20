@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+		targetNamespace="http://www.riotfamily.org/schema/media/form-elements"
+		xmlns="http://www.riotfamily.org/schema/media/form-elements"
+		xmlns:form="http://www.riotfamily.org/schema/forms/form-config"
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	
+	<xsd:import namespace="http://www.riotfamily.org/schema/forms/form-config"
+		schemaLocation="http://www.riotfamily.org/schema/forms/form-config.xsd" />
+	
+	<xsd:simpleType name="commaDelimitedIntegers">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d+(\s*,\s*\d+)*" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:element name="image-upload">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="form:simple-editor">
+					<xsd:attribute name="valid-formats" type="xsd:string" />
+					<xsd:attribute name="width" type="xsd:positiveInteger" />
+					<xsd:attribute name="height" type="xsd:positiveInteger" />
+					<xsd:attribute name="widths" type="commaDelimitedIntegers" />
+					<xsd:attribute name="heights" type="commaDelimitedIntegers" />
+					<xsd:attribute name="min-width" type="xsd:positiveInteger" />
+					<xsd:attribute name="min-height" type="xsd:positiveInteger" />
+					<xsd:attribute name="max-width" type="xsd:positiveInteger" />
+					<xsd:attribute name="max-height" type="xsd:positiveInteger" />
+					<xsd:attribute name="width-property" type="xsd:string" />
+					<xsd:attribute name="height-property" type="xsd:string" />
+					<xsd:attribute name="crop" type="xsd:boolean" default="true" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="flash-upload">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="form:simple-editor">
+					<xsd:attribute name="width" type="xsd:positiveInteger" />
+					<xsd:attribute name="height" type="xsd:positiveInteger" />
+					<xsd:attribute name="width-property" type="xsd:string" />
+					<xsd:attribute name="height-property" type="xsd:string" />
+					<xsd:attribute name="version-property" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+</xsd:schema>

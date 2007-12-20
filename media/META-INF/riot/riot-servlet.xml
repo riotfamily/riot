@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.0.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-6.5.xsd">
+
+	<override:put ref="customFormElements">
+		<entry key="{http://www.riotfamily.org/schema/media/form-elements}file-upload"
+				value="org.riotfamily.media.riot.form.FileUpload" />
+		<entry key="{http://www.riotfamily.org/schema/media/form-elements}image-upload"
+				value="org.riotfamily.media.riot.form.ImageUpload" />
+		<entry key="{http://www.riotfamily.org/schema/media/form-elements}flash-upload"
+				value="org.riotfamily.media.riot.form.FlashUpload" />
+	</override:put>
+
+</beans>

@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping package="org.riotfamily.media.model" auto-import="false">
+
+	<class name="RiotFile" table="riot_media_files" discriminator-value="file">
+		<cache usage="nonstrict-read-write" region="media" />
+		<id name="id">
+			<generator class="native" />
+		</id>
+		<discriminator column="`type`" type="string" />
+		<many-to-one name="fileData" cascade="save-update" fetch="join" />
+		<subclass name="RiotImage" discriminator-value="image" />
+		<subclass name="RiotSwf" discriminator-value="swf" />
+	</class>
+	
+	<class name="FileData" table="riot_media_data" discriminator-value="file" lazy="false">
+		<cache usage="nonstrict-read-write" region="media" />
+		<id name="id">
+			<generator class="native" />
+		</id>
+		<discriminator column="`type`" type="string" />
+		<property name="fileName" />
+		<property name="contentType" />
+		<property name="size" />
+		<property name="creationDate" />
+		<property name="owner" />
+		<property name="uri" />
+		<subclass name="ImageData" discriminator-value="img">
+			<property name="width" column="imgWidth" />
+			<property name="height" column="imgHeight" />
+			<property name="format" column="imgFormat" />
+			<subclass name="CroppedImageData" discriminator-value="crop">
+				<many-to-one name="original" cascade="save-update" />
+				<property name="x" />
+				<property name="y" />
+				<property name="scaledWidth" />
+			</subclass>
+		</subclass>
+		<subclass name="SwfData" discriminator-value="swf">
+			<property name="width" column="swfWidth" />
+			<property name="height" column="swfHeight" />
+			<property name="version" column="swfVersion" />
+		</subclass>
+	</class>
+
+</hibernate-mapping>
