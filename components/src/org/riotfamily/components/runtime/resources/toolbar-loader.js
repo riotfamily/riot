@@ -1,13 +1,8 @@
 var riot = {
 	contextPath: '${contextPath}',
 	path: '${contextPath}${riotServletPrefix}',
-	language: '${language}' || 'en',
-	instantPublish: window.riotInstantPublish || false
+	language: '${language}' || 'en'
 };
-
-riot.componentEditorResource = riot.instantPublish
-		? {src: 'dwr/interface/InstantComponentEditor.js', test: 'InstantComponentEditor', onload: function() {window.ComponentEditor = InstantComponentEditor}}
-		: {src: 'dwr/interface/ComponentEditor.js', test: 'ComponentEditor'}
 
 Resources.loadStyleSheet('style/toolbar.css');
 Resources.loadStyleSheet('style/edit-mode.css');
@@ -15,7 +10,7 @@ Resources.loadStyleSheet('style/edit-mode.css');
 Resources.loadScriptSequence([
 	{src: 'dwr/engine.js', test: 'dwr.engine'},
 	{src: 'dwr/util.js', test: 'dwr.util'},
-	riot.componentEditorResource,
+	{src: 'dwr/interface/ComponentEditor.js', test: 'ComponentEditor'},
 	{src: 'dwr/interface/EntityEditor.js', test: 'EntityEditor', onload: loadToolbarScripts}
 ]);
 

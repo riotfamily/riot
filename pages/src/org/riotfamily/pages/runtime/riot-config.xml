@@ -91,17 +91,12 @@
 		</form:group>
 	</form:form>
 
-	<form:form id="page" bean-class="org.riotfamily.pages.model.Page">
+	<form:form id="page" bean-class="org.riotfamily.pages.model.Page"
+			initializer="pageFormInitializer">
 		<form:group label-key="page.location">
 			<form:textfield bind="pathComponent" required="true" regex="([A-Za-z0-9_.,*@{}-]*)" />
 			<form:checkbox bind="folder" />
 		</form:group>
-		<!-- 
-		<component:content-map bind="content">
-			<form:textfield bind="foo" />
-			<form:textfield bind="bar" />			
-		</component:content-map>
-		-->
 	</form:form>
 
 </riot-config>

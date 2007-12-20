@@ -156,11 +156,10 @@ public class HibernateComponentDao implements ComponentDao {
 		list.setLastModified(new Date());
 		list.setLastModifiedBy(AccessController.getCurrentUser().getUserId());
 		hibernate.update(list);
-		
 	}
 
-	public void updateComponentVersion(ComponentVersion version) {
-		hibernate.update(version);
+	public void saveOrUpdateComponentVersion(ComponentVersion version) {
+		hibernate.saveOrUpdate(version);
 	}
 
 	public void updateVersionContainer(VersionContainer container) {
@@ -169,40 +168,4 @@ public class HibernateComponentDao implements ComponentDao {
 		}
 	}
 	
-	public ComponentVersion getOrCreateVersion(
-			VersionContainer container, boolean live) {
-
-		if (live) {
-			ComponentVersion liveVersion = container.getLiveVersion();
-			if (liveVersion == null) {
-				liveVersion = new ComponentVersion();
-				container.setLiveVersion(liveVersion);
-				saveComponentVersion(liveVersion);
-				updateVersionContainer(container);
-			}
-			return liveVersion;
-		}
-		else {
-			ComponentList list = container.getList();
-			if (list != null && !list.isDirty()) {
-				list.getOrCreatePreviewContainers();
-				updateComponentList(list);
-			}
-			ComponentVersion previewVersion = container.getPreviewVersion();
-			if (previewVersion == null) {
-				ComponentVersion liveVersion = container.getLiveVersion();
-				if (liveVersion != null) {
-					previewVersion = new ComponentVersion(liveVersion);
-				}
-				else {
-					previewVersion = new ComponentVersion();
-				}
-				saveComponentVersion(previewVersion);
-				container.setPreviewVersion(previewVersion);
-				updateVersionContainer(container);
-			}
-			return previewVersion;
-		}
-	}
-
 }

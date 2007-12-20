@@ -72,7 +72,7 @@ public class NestedForm extends TemplateElement implements
 				indent ? null : "_noindent"));
 	}	
 	
-	protected void setEditorBinder(EditorBinder editorBinder) {
+	public void setEditorBinder(EditorBinder editorBinder) {
 		this.editorBinder = editorBinder.replace(this.editorBinder);
 	}
 	

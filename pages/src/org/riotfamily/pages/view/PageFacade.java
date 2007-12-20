@@ -25,6 +25,7 @@ package org.riotfamily.pages.view;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -186,7 +187,12 @@ public class PageFacade {
 	public Map getProperties() {
 		if (properties == null) {
 			ComponentVersion version = page.getComponentVersion(preview);
-			properties = version.getUnwrappedProperties();
+			if (version != null) {
+				properties = version.getUnwrappedProperties();
+			}
+			else {
+				properties = Collections.EMPTY_MAP;
+			}
 		}
 		return properties;
 	}

@@ -108,7 +108,7 @@ public interface ComponentDao {
 	/**
 	 * Updates the given ComponentVersion.
 	 */
-	public void updateComponentVersion(ComponentVersion version);
+	public void saveOrUpdateComponentVersion(ComponentVersion version);
 	
 	/**
 	 * Deletes the given ComponentList.
@@ -130,6 +130,4 @@ public interface ComponentDao {
 	 */
 	public void deleteVersionContainer(VersionContainer container);
 	
-	public ComponentVersion getOrCreateVersion(
-			VersionContainer container, boolean live);
 }

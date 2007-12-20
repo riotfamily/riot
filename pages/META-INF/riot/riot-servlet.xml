@@ -23,6 +23,11 @@
 		<constructor-arg ref="pageUrlBuilder" />
 	</bean>
 
+	<bean id="pageFormInitializer" class="org.riotfamily.pages.riot.form.PageFormInitializer">
+		<constructor-arg ref="pageDao" />
+		<constructor-arg ref="componentFormRepository" />
+		<constructor-arg ref="contentFactory" />
+	</bean>
 
 	<!-- Overrides -->
 

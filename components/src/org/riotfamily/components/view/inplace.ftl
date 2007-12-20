@@ -5,13 +5,8 @@
 <#--
   - Macro that renders the Riot toolbar if the page is requested in edit mode.
   -->
-<#macro toolbar instantPublish=false>
+<#macro toolbar>
 	<#if editMode>
-		<#if instantPublish>
-			<script type="text/javascript" language="JavaScript">
-				var riotInstantPublish = true;
-			</script>
-		</#if>
 		<#list inplaceMacroHelper.toolbarScripts as src>
 			<@riot.script src = src + "?lang=" + .lang />
 		</#list>

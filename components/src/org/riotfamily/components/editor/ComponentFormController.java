@@ -28,11 +28,9 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.components.model.ComponentVersion;
 import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.factory.FormRepository;
-import org.springframework.web.bind.ServletRequestUtils;
 
 /**
  * Controller that displays a form to edit the properties of a ComponentVersion.
@@ -62,20 +60,14 @@ public class ComponentFormController extends AbstractComponentFormController {
 		}
 	}
 	
-	protected ComponentVersion getVersion(HttpServletRequest request) {
-		Long id = new Long((String) request.getAttribute(containerIdAttribute));
-		VersionContainer container = componentDao.loadVersionContainer(id);
-		boolean live = ServletRequestUtils.getBooleanParameter(request, "live", false);
-		return componentDao.getOrCreateVersion(container, live);
-	}
-
 	protected Object getFormBackingObject(HttpServletRequest request) {
-		return getVersion(request);
+		Long id = new Long((String) request.getAttribute(containerIdAttribute));
+		return componentDao.loadVersionContainer(id);
 	}
 
 	protected void onSave(Object object, HttpServletRequest request) {
-		ComponentVersion version = (ComponentVersion) object;
-		componentDao.updateComponentVersion(version);
+		VersionContainer container = (VersionContainer) object;
+		componentDao.updateVersionContainer(container);
 	}
 
 }

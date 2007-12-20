@@ -162,13 +162,8 @@ public class ComponentList {
 		return sb.toString();
 	}
 	
-	public void insertContainer(VersionContainer container, 
-			int position, boolean live) {
-
-		List containers = live
-				? getLiveContainers()
-				: getOrCreatePreviewContainers();
-
+	public void insertContainer(VersionContainer container, int position) {
+		List containers = getOrCreatePreviewContainers();
 		container.setList(this);
 		if (position >= 0) {
 			containers.add(position, container);
@@ -176,9 +171,7 @@ public class ComponentList {
 		else {
 			containers.add(container);
 		}
-		if (!live) {
-			setDirty(true);
-		}
+		setDirty(true);
 	}
 	
 	public ComponentList createCopy(String path) {

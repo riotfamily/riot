@@ -99,9 +99,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 	private Map tinyMCEProfiles;
 
-	private boolean instantPublish = false;
-
-
 	public ComponentEditorImpl(ComponentDao componentDao,
 			MediaDao mediaDao, ImageCropper imageCropper,
 			ComponentRepository repository, Cache cache) {
@@ -125,32 +122,12 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		this.tinyMCEProfiles = tinyMCEProfiles;
 	}
 
-	public void setInstantPublish(boolean instantPublish) {
-		this.instantPublish = instantPublish;
-	}
-
-	protected ComponentVersion getVersionToEdit(VersionContainer container) {
-		return componentDao.getOrCreateVersion(container, instantPublish);
-	}
-
-	protected ComponentVersion getVersionToDisplay(VersionContainer container) {
-		return instantPublish
-				? container.getLiveVersion()
-				: container.getLatestVersion();
-	}
-
-	protected List getContainersToEdit(ComponentList componentList) {
-		return instantPublish
-				? componentList.getLiveContainers()
-				: componentList.getOrCreatePreviewContainers();
-	}
-
 	/**
 	 * Returns the value of the given property.
 	 */
 	public String getText(Long containerId, String property) {
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
-		ComponentVersion version = getVersionToDisplay(container);
+		ComponentVersion version = container.getLatestVersion();
 		//FIXME Unsafe cast: Value could be of any type!
 		return (String) version.getProperty(property);
 	}
@@ -160,10 +137,10 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 */
 	public void updateText(Long containerId, String property, String text) {
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
-		ComponentVersion version = getVersionToEdit(container);
+		ComponentVersion version = getOrCreatePreviewVersion(container);
 		//FIXME Reuse StringContent object ... use ContentMapWrapper code here
 		version.setProperty(property, new StringContent(text));
-		componentDao.updateComponentVersion(version);
+		componentDao.saveOrUpdateComponentVersion(version);
 		ComponentCacheUtils.invalidateContainer(
 				cache, version.getContainer(), true);
 	}
@@ -173,7 +150,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 			throws IOException {
 	
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
-		ComponentVersion version = getVersionToEdit(container);
+		ComponentVersion version = getOrCreatePreviewVersion(container);
 		
 		RiotImage original = (RiotImage) mediaDao.loadFile(imageId);
 		RiotImage croppedImage = new RiotImage(new CroppedImageData(
@@ -181,7 +158,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		
 		//FIXME Reuse FileContent object ... use ContentMapWrapper code here
 		version.setProperty(property, new FileContent(croppedImage));
-		componentDao.updateComponentVersion(version);
+		componentDao.saveOrUpdateComponentVersion(version);
 		ComponentCacheUtils.invalidateContainer(
 				cache, version.getContainer(), true);
 		return croppedImage.getUri();
@@ -190,12 +167,12 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	public String updateImage(Long containerId, String property, Long imageId) {
 	
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
-		ComponentVersion version = getVersionToEdit(container);
+		ComponentVersion version = getOrCreatePreviewVersion(container);
 		
 		RiotFile image = mediaDao.loadFile(imageId);
 		//FIXME Reuse FileContent object ... use ContentMapWrapper code here
 		version.setProperty(property, new FileContent(image));
-		componentDao.updateComponentVersion(version);
+		componentDao.saveOrUpdateComponentVersion(version);
 		ComponentCacheUtils.invalidateContainer(
 				cache, version.getContainer(), true);
 		return image.getUri();
@@ -239,15 +216,15 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 		log.debug("Inserting chunks " + StringUtils.arrayToCommaDelimitedString(chunks));
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
-		ComponentVersion version = getVersionToEdit(container);
+		ComponentVersion version = getOrCreatePreviewVersion(container);
 		//FIXME Reuse StringContent object ... use ContentMapWrapper code here
 		version.setProperty(property, new StringContent(chunks[0]));
-		componentDao.updateComponentVersion(version);
+		componentDao.saveOrUpdateComponentVersion(version);
 		ComponentCacheUtils.invalidateContainer(
 				cache, version.getContainer(), true);
 		
 		ComponentList list = container.getList();
-		int offset = getContainersToEdit(list).indexOf(container);
+		int offset = list.getOrCreatePreviewContainers().indexOf(container);
 		for (int i = 1; i < chunks.length; i++) {
 			insertComponent(list.getId(), offset + i, container.getType(),
 					Collections.singletonMap(property, chunks[i]));
@@ -285,7 +262,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		ComponentList componentList = componentDao.loadComponentList(listId);
 		
 		VersionContainer container = createVersionContainer(type, properties);
-		componentList.insertContainer(container, position, instantPublish);
+		componentList.insertContainer(container, position);
 		componentDao.updateComponentList(componentList);
 		return container.getId();
 	}
@@ -302,22 +279,14 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		ComponentVersion version = new ComponentVersion();
 		//FIXME The feature is currently unused. To support this we would need a ContentMapWrapper or so ...
 		//version.setProperties(properties);
-		componentDao.saveComponentVersion(version);
-		if (instantPublish) {
-			container.setLiveVersion(version);
-		}
-		else {
-			container.setPreviewVersion(version);
-		}
+		container.setPreviewVersion(version);
 		componentDao.saveVersionContainer(container);
 		return container;
 	}
 	
 	public void setType(Long containerId, String type) {
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
-		if (!instantPublish) {
-			Assert.isNull(container.getLiveVersion());
-		}
+		Assert.isNull(container.getLiveVersion());
 		container.setType(type);
 		componentDao.updateVersionContainer(container);
 	}
@@ -364,7 +333,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	public void moveComponent(Long containerId, Long nextContainerId) {
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
 		ComponentList componentList = container.getList();
-		List containers = getContainersToEdit(componentList);
+		List containers = componentList.getOrCreatePreviewContainers();
 		containers.remove(container);
 		if (nextContainerId != null) {
 			for (int i = 0; i < containers.size(); i++) {
@@ -378,20 +347,16 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		else {
 			containers.add(container);
 		}
-		if (!instantPublish) {
-			componentList.setDirty(true);
-		}
+		componentList.setDirty(true);
 		componentDao.updateComponentList(componentList);
 	}
 
 	public void deleteComponent(Long containerId) {
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
 		ComponentList componentList = container.getList();
-		List containers = getContainersToEdit(componentList);
+		List containers = componentList.getOrCreatePreviewContainers();
 		containers.remove(container);
-		if (!instantPublish) {
-			componentList.setDirty(true);
-		}
+		componentList.setDirty(true);
 		componentDao.updateComponentList(componentList);
 		if (!componentList.getLiveContainers().contains(container)) {
 			componentDao.deleteVersionContainer(container);
@@ -498,7 +463,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 			published |= publishContainer(container);
 		}
 
-		//FIXME Move to ComponentEditorImpl
 		/*
 		if (eventMulticaster != null) {
 			String path = repository.getUrl(componentList);
@@ -623,6 +587,27 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		WebContext ctx = WebContextFactory.get();
 		HttpServletRequest request = ctx.getHttpServletRequest();
 		return RequestContextUtils.getLocale(request);
+	}
+	
+	private ComponentVersion getOrCreatePreviewVersion(VersionContainer container) {
+		ComponentList list = container.getList();
+		if (list != null && !list.isDirty()) {
+			list.getOrCreatePreviewContainers();
+			componentDao.updateComponentList(list);
+		}
+		ComponentVersion previewVersion = container.getPreviewVersion();
+		if (previewVersion == null) {
+			ComponentVersion liveVersion = container.getLiveVersion();
+			if (liveVersion != null) {
+				previewVersion = new ComponentVersion(liveVersion);
+			}
+			else {
+				previewVersion = new ComponentVersion();
+			}
+			container.setPreviewVersion(previewVersion);
+			componentDao.updateVersionContainer(container);
+		}
+		return previewVersion;
 	}
 
 }

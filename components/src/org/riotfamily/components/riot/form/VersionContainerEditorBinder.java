@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.riotfamily.components.model.ComponentVersion;
 import org.riotfamily.components.model.Content;
+import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.components.service.ContentFactory;
 import org.riotfamily.forms.AbstractEditorBinder;
 import org.springframework.util.Assert;
@@ -35,15 +36,17 @@ import org.springframework.util.Assert;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class ComponentVersionEditorBinder extends AbstractEditorBinder {
+public class VersionContainerEditorBinder extends AbstractEditorBinder {
 
 	private ContentFactory contentFactory;
 	
-	private ComponentVersion componentVersion;
+	private VersionContainer container;
+	
+	private ComponentVersion previewVersion;
 	
 	private Map properties;
 	
-	public ComponentVersionEditorBinder(ContentFactory contentFactory) {
+	public VersionContainerEditorBinder(ContentFactory contentFactory) {
 		this.contentFactory = contentFactory;
 	}
 	
@@ -52,17 +55,33 @@ public class ComponentVersionEditorBinder extends AbstractEditorBinder {
 	}
 
 	public void setBackingObject(Object backingObject) {
-		Assert.isInstanceOf(ComponentVersion.class, backingObject);
-		componentVersion = (ComponentVersion) backingObject;
-		properties = componentVersion.getProperties();
+		if (backingObject == null) {
+			container = new VersionContainer();
+		}
+		else {
+			Assert.isInstanceOf(VersionContainer.class, backingObject);
+			container = (VersionContainer) backingObject;
+		}
+		previewVersion = container.getPreviewVersion();
+		if (previewVersion == null) {
+			ComponentVersion liveVersion = container.getLiveVersion();
+			if (liveVersion != null) {
+				previewVersion = new ComponentVersion(liveVersion);
+			}
+			else {
+				previewVersion = new ComponentVersion();
+			}
+		}
+		properties = previewVersion.getProperties();
 	}
 	
 	public Object getBackingObject() {
-		return componentVersion;
+		container.setPreviewVersion(previewVersion);
+		return container;
 	}
 
 	public Class getBeanClass() {
-		return ComponentVersion.class;
+		return VersionContainer.class;
 	}
 	
 	public Class getPropertyType(String path) {

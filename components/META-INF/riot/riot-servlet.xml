@@ -28,15 +28,6 @@
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
 	</bean>
 	
-	<bean id="instantComponentEditor" class="org.springframework.aop.framework.ProxyFactoryBean">
-		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
-		<property name="target">
-			<bean parent="componentEditorTarget">
-				<property name="instantPublish" value="true" />
-			</bean>
-		</property>
-	</bean>
-	
 	<override:put ref="customFormElements">
 		<entry key="{http://www.riotfamily.org/schema/components/form-elements}map"
 				value="org.riotfamily.components.riot.form.ContentMapEditor" />
@@ -161,7 +152,6 @@
 			<property name="serviceBeans">
 				<map>
 					<entry key="ComponentEditor" value-ref="componentEditor" />
-					<entry key="InstantComponentEditor" value-ref="instantComponentEditor" />
 					<entry key="EntityEditor" value-ref="entityEditor" />
 				</map>
 			</property>
