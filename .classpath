@@ -10,6 +10,7 @@
 	<classpathentry kind="src" path="riot/src"/>
 	<classpathentry kind="src" path="riot-hibernate/src"/>
 	<classpathentry kind="src" path="website/src"/>
+	<classpathentry kind="src" path="media/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
