@@ -93,17 +93,16 @@ public class XmlExport {
 			ele = doc.createElement("component");
 			ele.setAttribute("type", component.getType());
 		}
-		Iterator it = component.getStringProperties().entrySet().iterator();
+		Iterator it = component.getProperties().entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();
-			String key = (String) entry.getKey();
-			String value = (String) entry.getValue();
-			ele.appendChild(createPropertyElement(key, value, doc));
+			ele.appendChild(createPropertyElement((String) entry.getKey(), 
+					entry.getValue(), doc));
 		}
 		return ele;
 	}
 	
-	private Element createPropertyElement(String name, String value, Document doc) {
+	private Element createPropertyElement(String name, Object value, Document doc) {
 		Element ele;
 		if (useCustomTagNames) {
 			ele = doc.createElement(name);
@@ -112,7 +111,8 @@ public class XmlExport {
 			ele = doc.createElement("property");
 			ele.setAttribute("name", name);
 		}
-		ele.appendChild(doc.createCDATASection(value));
+		//REVISIT What about ContentMap and ContentList properties?
+		ele.appendChild(doc.createCDATASection(value.toString()));
 		return ele;
 	}
 }

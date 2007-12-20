@@ -29,8 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.config.component.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ComponentVersion;
 import org.riotfamily.components.model.VersionContainer;
@@ -43,27 +41,7 @@ import org.riotfamily.components.model.VersionContainer;
  * @since 6.5
  */
 public class SimpleListBuilder {
-
-	private ComponentRepository componentRepository;
 	
-	/**
-	 * Use this constructor if you don't need to resolve the components' string
-	 * properties. Note that invoking {@link SimpleComponent#getProperties()}
-	 * will return <code>null</code>, 
-	 * use {@link SimpleComponent#getStringProperties()} instead.
-	 */
-	public SimpleListBuilder() {
-	}
-	
-	/**
-	 * Use this constructor if you want the components' properties to be 
-	 * resolved. In this case {@link SimpleComponent#getProperties()} will
-	 * return the map created by {@link Component#buildModel(ComponentVersion)}. 
-	 */
-	public SimpleListBuilder(ComponentRepository componentRepository) {
-		this.componentRepository = componentRepository;
-	}
-
 	/**
 	 * Transforms the given ComponentList into a {@link SimpleComponentList}.
 	 * @param list the ComponentList to transform
@@ -100,12 +78,9 @@ public class SimpleListBuilder {
 			boolean preview) {
 		
 		SimpleComponent simpleComponent = new SimpleComponent();
-		simpleComponent.setType(version.getType());
-		simpleComponent.setStringProperties(version.getProperties());
-		if (componentRepository != null) {
-			Component component = componentRepository.getComponent(version);
-			simpleComponent.setProperties(component.buildModel(version));
-		}
+		simpleComponent.setType(version.getContainer().getType());
+		simpleComponent.setProperties(version.getUnwrappedProperties());
+		
 		Set childLists = version.getContainer().getChildLists();
 		if (childLists != null && !childLists.isEmpty()) {
 			simpleComponent.setChildLists(buildSimpleLists(childLists, preview));

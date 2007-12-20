@@ -4,41 +4,49 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- *
+ * 
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- *
+ * 
  * The Original Code is Riot.
- *
+ * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
- *
+ * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- *
+ * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.editor;
-
-import org.riotfamily.cachius.Cache;
-import org.riotfamily.common.image.ImageCropper;
-import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.media.dao.MediaDao;
+package org.riotfamily.components.model;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
+ * @since 6.6
  */
-public class InstantComponentEditor extends ComponentEditorImpl {
+public class StringContent extends Content {
 
-	public InstantComponentEditor(ComponentDao componentDao, MediaDao mediaDao, 
-			ImageCropper imageCropper, ComponentRepository repository, Cache cache) {
-		
-		super(componentDao, mediaDao, imageCropper, repository, cache);
+	private String string;
+
+	public StringContent() {
 	}
 
+	public StringContent(String string) {
+		this.string = string;
+	}
+
+	public Object getValue() {
+		return string;
+	}
+	
+	public void setValue(Object value) {
+		string = (String) value;
+	}
+	
+	public Content deepCopy() {
+		return new StringContent(string);
+	}
 }

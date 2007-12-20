@@ -28,8 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.components.cache.ComponentCacheUtils;
-import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.config.component.Component;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.ComponentVersion;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -52,10 +50,6 @@ public class ComponentController extends AbstractCacheableController {
 
 	private ComponentDao componentDao;
 
-	private ComponentRepository componentRepository;
-
-	private String requiredType;
-
 	private String viewName;
 
 	private String contentType;
@@ -71,18 +65,6 @@ public class ComponentController extends AbstractCacheableController {
 
 	public void setComponentDao(ComponentDao componentDao) {
 		this.componentDao = componentDao;
-	}
-
-	public ComponentRepository getComponentRepository() {
-		return this.componentRepository;
-	}
-
-	public void setComponentRepository(ComponentRepository componentRepository) {
-		this.componentRepository = componentRepository;
-	}
-
-	public void setRequiredType(String requiredType) {
-		this.requiredType = requiredType;
 	}
 
 	public void setViewName(String viewName) {
@@ -130,17 +112,10 @@ public class ComponentController extends AbstractCacheableController {
 		Assert.notNull(version, "No such component: " + id);
 		ComponentCacheUtils.addListTags(request, version.getContainer());
 
-		Component component = componentRepository.getComponent(version);
-
-		Assert.isTrue(requiredType == null ||
-				version.getType().equals(requiredType),
-				"Component must be of type " + requiredType);
-
 		if (contentType != null) {
 			response.setContentType(contentType);
 		}
-
-		return new ModelAndView(viewName, component.buildModel(version));
+		return new ModelAndView(viewName, version.getUnwrappedProperties());
 	}
 
 }

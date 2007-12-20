@@ -37,21 +37,6 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
-	<bean id="componentService" class="org.springframework.aop.framework.ProxyFactoryBean">
-		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
-		<property name="target"><ref bean="componentServiceTarget" /></property>
-	</bean>
-
-	<bean id="componentServiceTarget" class="org.riotfamily.components.service.DefaultComponentService">
-		<property name="repository" ref="componentRepository" />
-		<property name="cache" ref="websiteCache" />
-		<property name="componentDao" ref="componentDaoTarget" />
-		<property name="eventMulticaster" ref="contentEventMulticaster" />
-		<property name="fileStoreLocator">
-			<bean class="org.riotfamily.common.web.file.FileStoreLocator" />
-		</property>
-	</bean>
-
 	<bean id="contentEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
 
 </beans>

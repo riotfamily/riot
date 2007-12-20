@@ -23,12 +23,16 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.editor;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,10 +41,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
+import org.riotfamily.cachius.Cache;
+import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.PasswordGenerator;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.EditModeUtils;
+import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.context.PageRequestUtils;
@@ -48,14 +56,21 @@ import org.riotfamily.components.context.RequestContextExpiredException;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ComponentVersion;
+import org.riotfamily.components.model.FileContent;
+import org.riotfamily.components.model.StringContent;
 import org.riotfamily.components.model.VersionContainer;
-import org.riotfamily.components.service.ComponentService;
+import org.riotfamily.media.dao.MediaDao;
+import org.riotfamily.media.model.CroppedImageData;
+import org.riotfamily.media.model.ImageData;
+import org.riotfamily.media.model.RiotFile;
+import org.riotfamily.media.model.RiotImage;
 import org.riotfamily.riot.security.AccessController;
 import org.riotfamily.riot.security.session.LoginManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
@@ -67,8 +82,17 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 	private ComponentDao componentDao;
 	
-	private ComponentService componentService;
+	private Cache cache;
+	
+	private MediaDao mediaDao;
+	
+	private ImageCropper imageCropper;
+	
+	private PasswordGenerator tokenGenerator = 
+			new PasswordGenerator(16, true, true, true);
 
+	private Set validTokens = Collections.synchronizedSet(new HashSet());
+	
 	private ComponentRepository repository;
 
 	private MessageSource messageSource;
@@ -79,18 +103,20 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 
 	public ComponentEditorImpl(ComponentDao componentDao,
-			ComponentService componentService, 
-			ComponentRepository repository) {
+			MediaDao mediaDao, ImageCropper imageCropper,
+			ComponentRepository repository, Cache cache) {
 		
 		this.componentDao = componentDao;
-		this.componentService = componentService;
+		this.mediaDao = mediaDao;
+		this.imageCropper = imageCropper;
 		this.repository = repository;
+		this.cache = cache;
 	}
 
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
-
+	
 	public Map getTinyMCEProfiles() {
 		return this.tinyMCEProfiles;
 	}
@@ -104,7 +130,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	}
 
 	protected ComponentVersion getVersionToEdit(VersionContainer container) {
-		return componentService.getOrCreateVersion(container, null, instantPublish);
+		return componentDao.getOrCreateVersion(container, instantPublish);
 	}
 
 	protected ComponentVersion getVersionToDisplay(VersionContainer container) {
@@ -116,7 +142,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	protected List getContainersToEdit(ComponentList componentList) {
 		return instantPublish
 				? componentList.getLiveContainers()
-				: componentService.getOrCreatePreviewContainers(componentList);
+				: componentList.getOrCreatePreviewContainers();
 	}
 
 	/**
@@ -125,7 +151,8 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	public String getText(Long containerId, String property) {
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
 		ComponentVersion version = getVersionToDisplay(container);
-		return version.getProperty(property);
+		//FIXME Unsafe cast: Value could be of any type!
+		return (String) version.getProperty(property);
 	}
 
 	/**
@@ -134,24 +161,76 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	public void updateText(Long containerId, String property, String text) {
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
 		ComponentVersion version = getVersionToEdit(container);
-		version.setProperty(property, text);
-		componentService.updateComponentVersion(version);
+		//FIXME Reuse StringContent object ... use ContentMapWrapper code here
+		version.setProperty(property, new StringContent(text));
+		componentDao.updateComponentVersion(version);
+		ComponentCacheUtils.invalidateContainer(
+				cache, version.getContainer(), true);
 	}
 
-	/**
-	 * Sets the given property to a new value and memorizes the information
-	 * that the property contains a reference to a file.
-	 */
-	public void updateFile(Long containerId, String property, String path, 
-			String fileStoreId) {
-
+	public String cropImage(Long containerId, String property, Long imageId,
+			int width, int height, int x, int y, int scaledWidth)
+			throws IOException {
+	
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
 		ComponentVersion version = getVersionToEdit(container);
-		version.setProperty(property, path);
-		componentService.updateComponentVersion(version);
-		componentDao.saveFileStorageInfo(version.getType(), property, fileStoreId);
+		
+		RiotImage original = (RiotImage) mediaDao.loadFile(imageId);
+		RiotImage croppedImage = new RiotImage(new CroppedImageData(
+				original, imageCropper, width, height, x, y, scaledWidth));
+		
+		//FIXME Reuse FileContent object ... use ContentMapWrapper code here
+		version.setProperty(property, new FileContent(croppedImage));
+		componentDao.updateComponentVersion(version);
+		ComponentCacheUtils.invalidateContainer(
+				cache, version.getContainer(), true);
+		return croppedImage.getUri();
 	}
 	
+	public String updateImage(Long containerId, String property, Long imageId) {
+	
+		VersionContainer container = componentDao.loadVersionContainer(containerId);
+		ComponentVersion version = getVersionToEdit(container);
+		
+		RiotFile image = mediaDao.loadFile(imageId);
+		//FIXME Reuse FileContent object ... use ContentMapWrapper code here
+		version.setProperty(property, new FileContent(image));
+		componentDao.updateComponentVersion(version);
+		ComponentCacheUtils.invalidateContainer(
+				cache, version.getContainer(), true);
+		return image.getUri();
+	}
+	
+	public void discardImage(Long imageId) {
+		RiotFile image = mediaDao.loadFile(imageId);
+		mediaDao.deleteFile(image);
+	}
+	
+	public String generateToken() {
+		String token = tokenGenerator.generate();
+		validTokens.add(token);
+		log.debug("Generated token: " + token);
+		return token;
+	}
+	
+	boolean isValidToken(String token) {
+		boolean valid = validTokens.contains(token);
+		log.debug((valid ? "Valid" : "Invalid") + " token: " + token);
+		return valid;
+	}
+	
+	public void invalidateToken(String token) {
+		validTokens.remove(token);
+	}
+	
+	RiotImage storeImage(String token, MultipartFile multipartFile) 
+			throws IOException {
+		
+		RiotImage image = new RiotImage(new ImageData(multipartFile));
+		mediaDao.saveFile(image);
+		return image;
+	}
+
 	/**
 	 *
 	 */
@@ -161,13 +240,16 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		log.debug("Inserting chunks " + StringUtils.arrayToCommaDelimitedString(chunks));
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
 		ComponentVersion version = getVersionToEdit(container);
-		version.setProperty(property, chunks[0]);
-		componentService.updateComponentVersion(version);
-
+		//FIXME Reuse StringContent object ... use ContentMapWrapper code here
+		version.setProperty(property, new StringContent(chunks[0]));
+		componentDao.updateComponentVersion(version);
+		ComponentCacheUtils.invalidateContainer(
+				cache, version.getContainer(), true);
+		
 		ComponentList list = container.getList();
 		int offset = getContainersToEdit(list).indexOf(container);
 		for (int i = 1; i < chunks.length; i++) {
-			insertComponent(list.getId(), offset + i, version.getType(),
+			insertComponent(list.getId(), offset + i, container.getType(),
 					Collections.singletonMap(property, chunks[i]));
 		}
 	}
@@ -201,17 +283,43 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 			Map properties) {
 
 		ComponentList componentList = componentDao.loadComponentList(listId);
-		VersionContainer container = componentService.insertContainer(componentList, type,
-				properties, position, instantPublish);
-
+		
+		VersionContainer container = createVersionContainer(type, properties);
+		componentList.insertContainer(container, position, instantPublish);
+		componentDao.updateComponentList(componentList);
 		return container.getId();
 	}
 
+	/**
+	 * Creates a new container, containing a version of the given type.
+	 *
+	 * @param type The type of the version to create
+	 * @param properties Properties of the version to create
+	 * @return The newly created container
+	 */
+	private VersionContainer createVersionContainer(String type, Map properties) {
+		VersionContainer container = new VersionContainer(type);
+		ComponentVersion version = new ComponentVersion();
+		//FIXME The feature is currently unused. To support this we would need a ContentMapWrapper or so ...
+		//version.setProperties(properties);
+		componentDao.saveComponentVersion(version);
+		if (instantPublish) {
+			container.setLiveVersion(version);
+		}
+		else {
+			container.setPreviewVersion(version);
+		}
+		componentDao.saveVersionContainer(container);
+		return container;
+	}
+	
 	public void setType(Long containerId, String type) {
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
-		ComponentVersion version = getVersionToEdit(container);
-		version.setType(type);
-		componentService.updateComponentVersion(version);
+		if (!instantPublish) {
+			Assert.isNull(container.getLiveVersion());
+		}
+		container.setType(type);
+		componentDao.updateVersionContainer(container);
 	}
 
 	private String getHtml(String url, String key, boolean live)
@@ -286,7 +394,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		}
 		componentDao.updateComponentList(componentList);
 		if (!componentList.getLiveContainers().contains(container)) {
-			componentService.deleteVersionContainer(container);
+			componentDao.deleteVersionContainer(container);
 		}
 	}
 
@@ -315,7 +423,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	private void discardContainers(Long[] ids) {
 		for (int i = 0; i < ids.length; i++) {
 			VersionContainer container = componentDao.loadVersionContainer(ids[i]);
-			componentService.discardContainer(container);
+			discardContainer(container);
 		}
 	}
 
@@ -326,7 +434,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	private void discardLists(Long[] listIds) {
 		for (int i = 0; i < listIds.length; i++) {
 			ComponentList componentList = componentDao.loadComponentList(listIds[i]);
-			componentService.discardList(componentList);
+			discardList(componentList);
 		}
 	}
 
@@ -337,7 +445,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	private void publishContainers(Long[] ids) {
 		for (int i = 0; i < ids.length; i++) {
 			VersionContainer container = componentDao.loadVersionContainer(ids[i]);
-			componentService.publishContainer(container);
+			publishContainer(container);
 		}
 	}
 
@@ -348,7 +456,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		for (int i = 0; i < listIds.length; i++) {
 			ComponentList list = componentDao.loadComponentList(listIds[i]);
 			if (AccessController.isGranted("publish", list.getLocation())) {
-				componentService.publishList(list);
+				publishList(list);
 			}
 			else {
 				throw new RuntimeException(messageSource.getMessage(
@@ -357,6 +465,124 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		}
 	}
 
+	public boolean publishList(ComponentList componentList) {
+		boolean published = false;
+		if (componentList.isDirty()) {
+			log.debug("List " + componentList + " is dirty and will be published.");
+			published = true;
+			List previewList = componentList.getPreviewContainers();
+			List liveList = componentList.getLiveContainers();
+			if (liveList == null) {
+				liveList = new ArrayList();
+			}
+			else {
+				Iterator it = liveList.iterator();
+				while (it.hasNext()) {
+					VersionContainer container = (VersionContainer) it.next();
+					if (!previewList.contains(container)) {
+						componentDao.deleteVersionContainer(container);
+						it.remove();
+					}
+				}
+				liveList.clear();
+			}
+			liveList.addAll(previewList);
+			previewList.clear();
+			componentList.setDirty(false);
+			componentDao.updateComponentList(componentList);
+		}
+
+		Iterator it = componentList.getLiveContainers().iterator();
+		while (it.hasNext()) {
+			VersionContainer container = (VersionContainer) it.next();
+			published |= publishContainer(container);
+		}
+
+		//FIXME Move to ComponentEditorImpl
+		/*
+		if (eventMulticaster != null) {
+			String path = repository.getUrl(componentList);
+			eventMulticaster.multicastEvent(new ContentChangedEvent(this, path));
+		}
+		*/
+
+		if (published && cache != null) {
+			ComponentCacheUtils.invalidateList(cache, componentList);
+		}
+
+		return published;
+	}
+	
+	private boolean discardList(ComponentList componentList) {
+		boolean discarded = false;
+		if (componentList.isDirty()) {
+			discarded = true;
+			List previewList = componentList.getPreviewContainers();
+			List liveList = componentList.getLiveContainers();
+			Iterator it = previewList.iterator();
+			while (it.hasNext()) {
+				VersionContainer container = (VersionContainer) it.next();
+				if (liveList == null || !liveList.contains(container)) {
+					componentDao.deleteVersionContainer(container);
+					it.remove();
+				}
+			}
+			componentList.setPreviewContainers(null);
+			componentList.setDirty(false);
+			componentDao.updateComponentList(componentList);
+		}
+		Iterator it = componentList.getLiveContainers().iterator();
+		while (it.hasNext()) {
+			VersionContainer container = (VersionContainer) it.next();
+			discarded |= discardContainer(container);
+		}
+		return discarded;
+	}
+	
+	private boolean publishContainer(VersionContainer container) {
+		boolean published = false;
+		Set childLists = container.getChildLists();
+		if (childLists != null) {
+			Iterator it = childLists.iterator();
+			while (it.hasNext()) {
+				ComponentList childList = (ComponentList) it.next();
+				published |= publishList(childList);
+			}
+		}
+		ComponentVersion preview = container.getPreviewVersion();
+		if (preview != null) {
+			ComponentVersion liveVersion = container.getLiveVersion();
+			container.setLiveVersion(preview);
+			container.setPreviewVersion(null);
+			if (liveVersion != null) {
+				componentDao.deleteComponentVersion(liveVersion);
+			}
+			componentDao.updateVersionContainer(container);
+			published = true;
+		}
+		return published;
+	}
+	
+	private boolean discardContainer(VersionContainer container) {		
+		boolean discarded = false;
+		Set childLists = container.getChildLists();
+		if (childLists != null) {
+			Iterator it = childLists.iterator();
+			while (it.hasNext()) {
+				ComponentList childList = (ComponentList) it.next();
+				discarded |= discardList(childList);
+			}
+		}
+		ComponentVersion preview = container.getPreviewVersion();
+		if (preview != null) {
+			container.setPreviewVersion(null);
+			componentDao.updateVersionContainer(container);
+			componentDao.deleteComponentVersion(preview);
+			discarded = true;
+		}
+		return discarded;
+	}
+	
 	/**
 	 * This method is invoked by the Riot toolbar to inform the server that
 	 * the specified URL is still being edited.

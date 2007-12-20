@@ -191,7 +191,7 @@
 			<#local maxHeight = height />
 			<#local defaultHeight = height />
 		</#if>
-		<#local value = scope[key]!default>
+		<#local value = (scope[key].uri)!default>
 		<#if value?has_content>
 			<#if transform?is_string>
 				<#local src = transform?replace("*", value) />

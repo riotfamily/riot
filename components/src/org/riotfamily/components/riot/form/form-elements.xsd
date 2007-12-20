@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+		targetNamespace="http://www.riotfamily.org/schema/components/form-elements"
+		xmlns="http://www.riotfamily.org/schema/components/form-elements"
+		xmlns:form="http://www.riotfamily.org/schema/forms/form-config"
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	
+	<xsd:import namespace="http://www.riotfamily.org/schema/forms/form-config"
+		schemaLocation="http://www.riotfamily.org/schema/forms/form-config.xsd" />
+	
+	<xsd:element name="list">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="form:template-editor">
+					<xsd:group ref="form:elements" />
+					<xsd:attribute name="sortable" type="xsd:boolean" />
+					<xsd:attribute name="min-size" type="xsd:positiveInteger" />
+					<xsd:attribute name="max-size" type="xsd:positiveInteger" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="map">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="form:simple-editor">
+					<xsd:group ref="form:elements" maxOccurs="unbounded" />
+					<xsd:attribute name="indent" type="xsd:boolean" default="true" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+</xsd:schema>

@@ -45,7 +45,7 @@
 		<id name="id">
 			<generator class="native" />
 		</id>
-
+		<property name="type" column="`type`" />
 		<many-to-one name="liveList" column="live_list" insert="false" update="false" access="field" />
 		<many-to-one name="previewList" column="preview_list" insert="false" update="false" access="field" />
 
@@ -63,23 +63,45 @@
 		<id name="id">
 			<generator class="native" />
 		</id>
-		<property name="type" column="`type`" />
-		<map name="properties" table="riot_component_properties" lazy="false">
+		<map name="properties" table="riot_component_properties" cascade="all-delete-orphan" lazy="false">
 			<cache usage="nonstrict-read-write" region="components" />
 			<key column="component_version" />
 			<index column="`key`" type="string" />
-			<element type="text"></element>
+			<many-to-many column="content" class="Content" />
 		</map>
 		<many-to-one name="container" />
 		<property name="dirty" />
 	</class>
 	
-	<class name="FileStorageInfo" table="riot_component_file_storage_info" lazy="false">
-		<composite-id>
-			<key-property name="type" column="`type`" />
-			<key-property name="property" />
-		</composite-id>
-		<property name="fileStoreId" />
+	<class name="Content" table="riot_contents" lazy="false">
+		<cache usage="nonstrict-read-write" region="components" />
+		<id name="id">
+			<generator class="native" />
+		</id>
+		<discriminator column="`type`" type="string" />
+		<subclass name="StringContent" discriminator-value="string">
+			<property name="string" access="field" />
+		</subclass>
+		<subclass name="BooleanContent" discriminator-value="boolean">
+			<property name="bit" access="field" />
+		</subclass>
+		<subclass name="FileContent" discriminator-value="file">
+			<many-to-one name="file" access="field" fetch="join" cascade="all" />
+		</subclass>
+		<subclass name="ContentList" discriminator-value="list">
+			<list name="contentList" access="field" table="riot_content_list_items" cascade="all-delete-orphan" lazy="false">
+				<key column="list" />
+				<index column="pos" />
+				<one-to-many class="Content" />
+			</list>
+		</subclass>
+		<subclass name="ContentMap" discriminator-value="map">
+			<map name="contentMap" access="field" table="riot_content_map_entries" cascade="all-delete-orphan" lazy="false">
+				<key column="map" />
+				<index column="`key`" type="string" />
+				<one-to-many class="Content" />
+			</map>
+		</subclass>
 	</class>
 
 </hibernate-mapping>

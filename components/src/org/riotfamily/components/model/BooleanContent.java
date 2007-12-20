@@ -21,33 +21,32 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.property;
-
-import org.riotfamily.riot.dao.RiotDao;
+package org.riotfamily.components.model;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
+ * @since 7.0
  */
-public class RiotDaoPropertyProcessor extends PropertyProcessorAdapter {
+public class BooleanContent extends Content {
 
-	private RiotDao dao;
-	
-	public RiotDaoPropertyProcessor(RiotDao dao) {
-		this.dao = dao;
+	private Boolean bit;
+
+	public BooleanContent() {
 	}
 
-	public String convertToString(Object object) {
-		if (object == null) {
-			return null;
-		}
-		return dao.getObjectId(object);
+	public BooleanContent(Boolean bit) {
+		this.bit = bit;
+	}
+
+	public Object getValue() {
+		return bit;
 	}
 	
-	public Object resolveString(String s) {
-		if (s == null) {
-			return null;
-		}
-		return dao.load(s);
+	public void setValue(Object value) {
+		bit = (Boolean) value;
+	}
+	
+	public Content deepCopy() {
+		return new BooleanContent(bit);
 	}
 }

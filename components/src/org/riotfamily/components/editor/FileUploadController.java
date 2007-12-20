@@ -23,13 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.editor;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.media.model.RiotImage;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -45,10 +45,10 @@ public class FileUploadController implements Controller {
 	
 	private String tokenParameter = "token";
 	
-	private UploadManagerImpl uploadManager;
+	private ComponentEditorImpl componentEditor;
 	
-	public FileUploadController(UploadManagerImpl uploadManager) {
-		this.uploadManager = uploadManager;
+	public FileUploadController(ComponentEditorImpl componentEditor) {
+		this.componentEditor = componentEditor;
 	}
 
 	public ModelAndView handleRequest(HttpServletRequest request, 
@@ -67,15 +67,16 @@ public class FileUploadController implements Controller {
 			HttpServletResponse response) throws IOException {
 
 		String token = request.getParameter(tokenParameter);
-		if (uploadManager.isValidToken(token)) {
+		if (componentEditor.isValidToken(token)) {
 			MultipartFile multipartFile = request.getFile(fileParam);
 			if ((multipartFile != null) && (!multipartFile.isEmpty())) {
-				String fileName = multipartFile.getOriginalFilename();
-				File tempFile = File.createTempFile("upload", ".bin");
-				multipartFile.transferTo(tempFile);
-				String path = uploadManager.storeFile(token, tempFile, fileName);
+				RiotImage image = componentEditor.storeImage(token, multipartFile);
 				PrintWriter out = response.getWriter();
-				out.print(path);
+				out.print("({id: ");
+				out.print(image.getId());
+				out.print(", uri: '");
+				out.print(image.getUri());
+				out.print("'})");
 				out.flush();
 			}
 		}

@@ -138,8 +138,8 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		if (initialTypes != null) {
 			List containers = new ArrayList();
 			for (int i = 0; i < initialTypes.length; i++) {
-				VersionContainer container = new VersionContainer();
-				ComponentVersion live = new ComponentVersion(initialTypes[i]);
+				VersionContainer container = new VersionContainer(initialTypes[i]);
+				ComponentVersion live = new ComponentVersion();
 				live.setContainer(container);
 				container.setList(list);
 				container.setLiveVersion(live);
@@ -162,8 +162,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 			String positionClassName, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		ComponentVersion version = getVersionToRender(container);
-		String type = version.getType();
+		String type = container.getType();
 		String formUrl = repository.getFormUrl(type, container.getId());
 		
 		String className = "riot-list-component riot-component " +
@@ -181,6 +180,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 				.attribute("riot:form", formUrl)
 				.body();
 
+		ComponentVersion version = getVersionToRender(container);
 		renderComponentVersion(version, positionClassName, request, response);
 		wrapper.end();
 	}

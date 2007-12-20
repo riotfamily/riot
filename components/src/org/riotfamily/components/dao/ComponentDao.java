@@ -60,6 +60,11 @@ public interface ComponentDao {
 	public List findDirtyComponentLists();
 
 	/**
+	 * Copies all ComponentLists of the specified type from the oldPath to the newPath.
+	 */
+	public void copyComponentLists(String type, String oldPath, String newPath);
+	
+	/**
 	 * Loads the ComponentList specified  by the given id.
 	 */
 	public ComponentList loadComponentList(Long id);
@@ -111,6 +116,11 @@ public interface ComponentDao {
 	public void deleteComponentList(ComponentList list);
 
 	/**
+	 * Deletes all ComponentLists with the given type and path.
+	 */
+	public void deleteComponentLists(String type, String path);
+	
+	/**
 	 * Deletes the given ComponentVersion.
 	 */
 	public void deleteComponentVersion(ComponentVersion version);
@@ -119,13 +129,7 @@ public interface ComponentDao {
 	 * Deletes the given VersionContainer.
 	 */
 	public void deleteVersionContainer(VersionContainer container);
-
-	/**
-	 * Persists the information that the given property contains a reference 
-	 * to a file. 
-	 */
-	public void saveFileStorageInfo(String type, String property, String fileStoreId);
-
-	public List getFileStorageInfos(String type);
 	
+	public ComponentVersion getOrCreateVersion(
+			VersionContainer container, boolean live);
 }

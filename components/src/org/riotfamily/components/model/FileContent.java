@@ -21,38 +21,35 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.property;
+package org.riotfamily.components.model;
 
-
-
+import org.riotfamily.media.model.RiotFile;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.4
+ * @since 7.0
  */
-public class PropertyProcessorAdapter implements PropertyProcessor {
+public class FileContent extends Content {
 
-	public Object resolveString(String s) {
-		return s;
-	}
-	
-	public String convertToString(Object object) {
-		if (object == null) {
-			return null;
-		}
-		return object.toString();
+	private RiotFile file;
+
+	public FileContent() {
 	}
 
-	public String getCacheTag(String s) {
-		return null;
-	}
-	
-	public Object fromJSON(Object object) {
-		return resolveString((String) object);
-	}
-	
-	public Object toJSON(Object object) {
-		return convertToString(object);
+	public FileContent(RiotFile file) {
+		this.file = file;
 	}
 
+	public Object getValue() {
+		return file;
+	}
+
+	public void setValue(Object value) {
+		file = (RiotFile) value;
+	}
+	
+	public Content deepCopy() {
+		return new FileContent(file.createCopy());
+	}	
+	
 }

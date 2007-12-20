@@ -23,7 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -90,6 +92,22 @@ public class ComponentList {
 	public void setPreviewContainers(List list) {
 		this.previewContainers = list;
 	}
+	
+	public List getOrCreatePreviewContainers() {
+		if (!dirty) {
+			if (previewContainers == null) {
+				previewContainers = new ArrayList();
+			}
+			else {
+				previewContainers.clear();
+			}
+			if (liveContainers != null) {
+				previewContainers.addAll(liveContainers);
+			}
+			dirty = true;
+		}
+		return previewContainers;
+	}
 
 	/**
 	 * Returns whether the list has a preview-list. The flag is needed because
@@ -143,5 +161,48 @@ public class ComponentList {
 		sb.append(" (").append(id).append(')');
 		return sb.toString();
 	}
+	
+	public void insertContainer(VersionContainer container, 
+			int position, boolean live) {
+
+		List containers = live
+				? getLiveContainers()
+				: getOrCreatePreviewContainers();
+
+		container.setList(this);
+		if (position >= 0) {
+			containers.add(position, container);
+		}
+		else {
+			containers.add(container);
+		}
+		if (!live) {
+			setDirty(true);
+		}
+	}
+	
+	public ComponentList createCopy(String path) {
+		ComponentList copy = new ComponentList();
+		Location location = new Location(this.location);
+		location.setPath(path);
+		copy.setLocation(location);
+		copy.setDirty(dirty);
+		copy.setLiveContainers(copyContainers(liveContainers, path));
+		copy.setPreviewContainers(copyContainers(previewContainers, path));
+		return copy;
+	}
+	
+	private List copyContainers(List source, String path) {
+		if (source == null) {
+			return null;
+		}
+		List dest = new ArrayList(source.size());
+		Iterator it = source.iterator();
+		while (it.hasNext()) {
+			VersionContainer container = (VersionContainer) it.next();
+			dest.add(container.createCopy(path));
+		}
+		return dest;
+	}	
 
 }

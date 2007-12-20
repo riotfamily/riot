@@ -54,7 +54,6 @@ riot.getTextEditor = function(el) {
 riot.getImageEditor = function(el) {
 	if (!el.imageEditor) {
 		el.imageEditor = new riot.ImageEditor(el, riot.findComponent(el), {
-			fileStore: el.readAttribute('riot:fileStore'),
 			srcTemplate: el.readAttribute('riot:srcTemplate'),
 			minWidth: el.readAttribute('riot:minWidth'),
 			maxWidth: el.readAttribute('riot:maxWidth'),
@@ -438,13 +437,6 @@ riot.Component = Class.create({
 		this.markDirty();
 	},
 	
-	updateFile: function(key, value, fileStore, updateFromServer) {
-		ComponentEditor.updateFile(this.id, key, value, fileStore,
-				updateFromServer ? this.update.bind(this) : Prototype.emptyFunction);
-
-		this.markDirty();
-	},
-
 	markDirty: function() {
 		this.dirty = true;
 		this.controller.markDirty();

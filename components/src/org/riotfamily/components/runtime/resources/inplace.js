@@ -705,12 +705,12 @@ riot.ImageEditor = Class.create(riot.InplaceEditor, {
 	
 	editImagesOn: function() {
 		this.element.disableClicks();
-		UploadManager.generateToken(this.setToken.bind(this));
+		ComponentEditor.generateToken(this.setToken.bind(this));
 	},
 	
 	editImagesOff: function() {
 		this.editOff(); 
-		UploadManager.invalidateToken(this.token);
+		ComponentEditor.invalidateToken(this.token);
 	},
 	
 	edit: function() {
@@ -720,14 +720,27 @@ riot.ImageEditor = Class.create(riot.InplaceEditor, {
 		riot.swfUpload.selectFile();
 	},
 	
-	uploadComplete: function(file, response) {		
+	uploadComplete: function(file, json) {		
 		riot.outline.suspended = true;
-		this.cropper = new Cropper.UI(this, response);
+		var file = eval(json);
+		this.imageId = file.id;
+		this.cropper = new Cropper.UI(this, file.uri);
 	},
-		
-	update: function(img, path) {
+	
+	crop: function(w, h, x, y, sw) {
+		ComponentEditor.cropImage(this.component.id, this.key, this.imageId,
+				w, h, x, y, sw, this.update.bind(this));
+	},
+	
+	update: function(path) {
+		var img = new Image();
+		img.onload = this.onload.bind(this, img, path);
+		img.src = riot.contextPath + path;
+		this.component.markDirty();
+	},
+	
+	onload: function(img, path) {
 		riot.outline.suspended = false;
-		this.component.updateFile(this.key, path, this.options.fileStore);
 		var src = this.options.srcTemplate 
 				? this.options.srcTemplate.replace('*', path)
 				: img.src;
@@ -985,15 +998,9 @@ Cropper.UI = Class.create({
 		var w = parseInt(this.preview.style.width);
 		var h = parseInt(this.preview.style.height);
 		if (isFinite(w) && isFinite(h)) {
-			UploadManager.cropImage(this.src, w, h, this.offset.x, this.offset.y,
-					this.img.width, this.onCrop.bind(this));
+			this.editor.crop(w, h, this.offset.x, this.offset.y,
+					this.img.width);
 		}
-	},
-
-	onCrop: function(path) {
-		var img = new Image();
-		img.onload = this.editor.update.bind(this.editor, img, path);
-		img.src = riot.contextPath + path;
 	}
 	
 });

@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.config.component.Component;
 import org.riotfamily.components.model.ComponentVersion;
 import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.riot.dao.RiotDao;
@@ -107,8 +106,7 @@ public class InplaceMacroHelper {
 				? container.getLatestVersion()
 				: container.getLiveVersion();
 
-		Component component = componentRepository.getComponent(version.getType());
-		return component.buildModel(version);
+		return version.getUnwrappedProperties();
 	}
 	
 	public String getObjectId(String listId, Object object) {

@@ -24,6 +24,7 @@
 package org.riotfamily.components.dao.hibernate;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -31,12 +32,10 @@ import org.hibernate.SessionFactory;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.FileStorageInfo;
 import org.riotfamily.components.model.Location;
 import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
 import org.riotfamily.riot.security.AccessController;
-import org.springframework.util.Assert;
 
 /**
  * Default ComponentDao implementation that uses Hibernate. All mappings
@@ -46,16 +45,12 @@ import org.springframework.util.Assert;
 public class HibernateComponentDao implements ComponentDao {
 
 	private HibernateHelper hibernate;
-
+	
 	public HibernateComponentDao() {
 	}
 
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.hibernate = new HibernateHelper(sessionFactory, "components");
-	}
-
-	protected void initDao() {
-		Assert.notNull(hibernate, "A SessionFactory must be set.");
 	}
 
 	public ComponentList findComponentList(Location location) {
@@ -67,6 +62,16 @@ public class HibernateComponentDao implements ComponentDao {
 		return (ComponentList) hibernate.uniqueResult(query);
 	}
 
+	public void deleteComponentLists(String type, String path) {
+		Query query = hibernate.createQuery("delete "
+				+ ComponentList.class.getName()	+ " list join list.location l " 
+				+ "where l.type = :type and l.path = :path");
+
+		hibernate.setParameter(query, "type", type);
+		hibernate.setParameter(query, "path", path);
+		hibernate.executeUpdate(query);
+	}
+	
 	public ComponentList findComponentList(VersionContainer parent, String slot) {
 		Query query = hibernate.createCacheableQuery("from "
 				+ ComponentList.class.getName() + " list where list.parent = "
@@ -96,30 +101,19 @@ public class HibernateComponentDao implements ComponentDao {
 
 		return hibernate.list(query);
 	}
-
-	public void saveFileStorageInfo(String type, String property, 
-			String fileStoreId) {
-		
-		FileStorageInfo fsi = new FileStorageInfo(type, property, fileStoreId);
-		if (hibernate.get(FileStorageInfo.class, fsi) == null) {
-			hibernate.save(fsi);
+	
+	public void copyComponentLists(String type, String oldPath, String newPath) {
+		List lists = findComponentLists(type, oldPath);
+		if (lists != null) {
+			Iterator it = lists.iterator();
+			while (it.hasNext()) {
+				ComponentList list = (ComponentList) it.next();
+				ComponentList copy = list.createCopy(newPath);
+				saveComponentList(copy);
+			}
 		}
 	}
-	
-	public List getFileStorageInfos(String type) {
-		// We select a projection here so that the FileStorageInfo entities
-		// don't get associated with the session. This way we can safely invoke
-		// saveOrUpdate() without causing a NonUniqueObjectException.
-		Query query = hibernate.createQuery("select new "
-				+ FileStorageInfo.class.getName() 
-				+ "(type, property, fileStoreId) from "
-				+ FileStorageInfo.class.getName()
-				+ " where type = :type");
-		
-		query.setParameter("type", type);
-		return query.list();
-	}
-	
+
 	public void deleteComponentList(ComponentList list) {
 		hibernate.delete(list);
 	}
@@ -172,6 +166,42 @@ public class HibernateComponentDao implements ComponentDao {
 	public void updateVersionContainer(VersionContainer container) {
 		if (container.getId() != null) {
 			hibernate.update(container);
+		}
+	}
+	
+	public ComponentVersion getOrCreateVersion(
+			VersionContainer container, boolean live) {
+
+		if (live) {
+			ComponentVersion liveVersion = container.getLiveVersion();
+			if (liveVersion == null) {
+				liveVersion = new ComponentVersion();
+				container.setLiveVersion(liveVersion);
+				saveComponentVersion(liveVersion);
+				updateVersionContainer(container);
+			}
+			return liveVersion;
+		}
+		else {
+			ComponentList list = container.getList();
+			if (list != null && !list.isDirty()) {
+				list.getOrCreatePreviewContainers();
+				updateComponentList(list);
+			}
+			ComponentVersion previewVersion = container.getPreviewVersion();
+			if (previewVersion == null) {
+				ComponentVersion liveVersion = container.getLiveVersion();
+				if (liveVersion != null) {
+					previewVersion = new ComponentVersion(liveVersion);
+				}
+				else {
+					previewVersion = new ComponentVersion();
+				}
+				saveComponentVersion(previewVersion);
+				container.setPreviewVersion(previewVersion);
+				updateVersionContainer(container);
+			}
+			return previewVersion;
 		}
 	}
 

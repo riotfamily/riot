@@ -16,8 +16,7 @@ Resources.loadScriptSequence([
 	{src: 'dwr/engine.js', test: 'dwr.engine'},
 	{src: 'dwr/util.js', test: 'dwr.util'},
 	riot.componentEditorResource,
-	{src: 'dwr/interface/EntityEditor.js', test: 'EntityEditor'},
-	{src: 'dwr/interface/UploadManager.js', test: 'UploadManager', onload: loadToolbarScripts}
+	{src: 'dwr/interface/EntityEditor.js', test: 'EntityEditor', onload: loadToolbarScripts}
 ]);
 
 function loadToolbarScripts() {

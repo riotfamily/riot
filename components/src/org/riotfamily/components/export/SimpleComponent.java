@@ -40,8 +40,6 @@ public class SimpleComponent {
 	
 	private Map properties;
 	
-	private Map stringProperties;
-	
 	private List childLists;
 
 	public String getType() {
@@ -58,14 +56,6 @@ public class SimpleComponent {
 
 	public void setProperties(Map properties) {
 		this.properties = properties;
-	}
-
-	public Map getStringProperties() {
-		return this.stringProperties;
-	}
-
-	public void setStringProperties(Map stringProperties) {
-		this.stringProperties = stringProperties;
 	}
 
 	public List getChildLists() {

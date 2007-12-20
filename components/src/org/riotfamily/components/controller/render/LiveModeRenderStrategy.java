@@ -69,7 +69,7 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 				while (it.hasNext()) {
 					VersionContainer container = (VersionContainer) it.next();
 					ComponentVersion version = getVersionToRender(container);
-					if (!INHERTING_COMPONENT.equals(version.getType())) {
+					if (!INHERTING_COMPONENT.equals(container.getType())) {
 						if (repository.getComponent(version).isDynamic()) {
 							return false;
 						}

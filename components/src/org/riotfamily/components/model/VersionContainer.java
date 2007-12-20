@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,6 +40,8 @@ public class VersionContainer {
 
 	private Long id;
 
+	private String type;
+	
 	private ComponentList liveList;
 
 	private ComponentList previewList;
@@ -53,12 +57,24 @@ public class VersionContainer {
 	public VersionContainer() {
 	}
 
+	public VersionContainer(String type) {
+		this.type = type;
+	}
+
 	public Long getId() {
 		return this.id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getType() {
+		return this.type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public ComponentList getList() {
@@ -122,14 +138,41 @@ public class VersionContainer {
 
 	public Map getProperties(boolean preview) {
 		if (preview) {
-			return getLatestVersion().getProperties();
+			return getLatestVersion().getUnwrappedProperties();
 		}
-		return liveVersion != null ? liveVersion.getProperties() : null;
+		return liveVersion != null ? liveVersion.getUnwrappedProperties() : null;
 	}
 
-	public String getProperty(String key, boolean preview) {
+	public Object getProperty(String key, boolean preview) {
 		ComponentVersion version = preview ? getLatestVersion() : liveVersion;
 		return version != null ? version.getProperty(key) : null;
+	}
+	
+	public VersionContainer createCopy() {
+		VersionContainer copy = new VersionContainer();
+		if (liveVersion != null) {
+			copy.setLiveVersion(new ComponentVersion(liveVersion));
+		}
+		if (previewVersion != null) {
+			copy.setPreviewVersion(new ComponentVersion(previewVersion));
+		}
+		return copy;
+	}
+	
+	public VersionContainer createCopy(String path) {
+		VersionContainer copy = createCopy();
+		if (childLists != null) {
+			HashSet clonedLists = new HashSet();
+			Iterator it = childLists.iterator();
+			while (it.hasNext()) {
+				ComponentList list = (ComponentList) it.next();
+				ComponentList clonedList = list.createCopy(path);
+				clonedList.setParent(copy);
+				clonedLists.add(clonedList);
+			}
+			copy.setChildLists(clonedLists);
+		}
+		return copy;
 	}
 
 }

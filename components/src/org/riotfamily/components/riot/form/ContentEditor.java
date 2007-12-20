@@ -21,15 +21,12 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.property;
+package org.riotfamily.components.riot.form;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
+ * @since 7.0
  */
-public interface PropertyProcessorRegistry {
-
-	public void registerPropertyProcessor(String property, 
-			PropertyProcessor processor);
+public interface ContentEditor {
 
 }

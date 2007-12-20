@@ -21,20 +21,16 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.editor;
+package org.riotfamily.components.service;
 
-import java.io.IOException;
+import org.riotfamily.components.model.Content;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
+ * @since 7.0
  */
-public interface UploadManager {
+public interface ContentFactory {
 
-	public String generateToken();
+	public Content createContent(Object value);
 	
-	public void invalidateToken(String token);
-			
-	public String cropImage(String path, int width, int height,
-			int x, int y, int scaledWidth) throws IOException;
 }

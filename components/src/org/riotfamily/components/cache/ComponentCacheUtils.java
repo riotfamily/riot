@@ -84,7 +84,7 @@ public final class ComponentCacheUtils {
 	public static void addComponentTags(HttpServletRequest request, 
 			Component component, ComponentVersion version) {
 		
-		Collection tags = component.getCacheTags(version);
+		Collection tags = version.getCacheTags();
 		if (tags != null) {
 			Iterator it = tags.iterator();
 			while (it.hasNext()) {

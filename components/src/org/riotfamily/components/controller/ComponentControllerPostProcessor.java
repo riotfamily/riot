@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.controller;
 
-import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.dao.ComponentDao;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -37,8 +36,6 @@ public class ComponentControllerPostProcessor implements BeanPostProcessor {
 	
 	private ComponentDao componentDao;
 
-	private ComponentRepository repository;
-
 	private PlatformTransactionManager transactionManager;
 	
 
@@ -48,10 +45,6 @@ public class ComponentControllerPostProcessor implements BeanPostProcessor {
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
-	}
-
-	public void setRepository(ComponentRepository repository) {
-		this.repository = repository;
 	}
 
 	public Object postProcessBeforeInitialization(Object bean, String beanName)
@@ -67,9 +60,6 @@ public class ComponentControllerPostProcessor implements BeanPostProcessor {
 		controller.setTransactionManager(transactionManager);
 		if (controller.getComponentDao() == null) {
 			controller.setComponentDao(componentDao);
-		}
-		if (controller.getComponentRepository() == null) {
-			controller.setComponentRepository(repository);
 		}
 	}
 	

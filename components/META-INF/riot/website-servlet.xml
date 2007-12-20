@@ -25,7 +25,6 @@
 	
 	<bean class="org.riotfamily.components.controller.ComponentControllerPostProcessor">
 		<property name="componentDao" ref="componentDao" />
-		<property name="repository" ref="componentRepository" />
 		<property name="transactionManager" ref="transactionManager" />
 	</bean>
 

@@ -24,14 +24,12 @@
 package org.riotfamily.components.editor;
 
 import java.util.Enumeration;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.config.component.Component;
+import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.service.ComponentService;
+import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.factory.FormRepository;
 import org.springframework.web.bind.ServletRequestUtils;
@@ -44,21 +42,17 @@ import org.springframework.web.bind.ServletRequestUtils;
  */
 public class ComponentFormController extends AbstractComponentFormController {
 
-	private ComponentService componentService;
+	private ComponentDao componentDao;
 	
-	private ComponentRepository componentRepository;
-
 	private String containerIdAttribute = "containerId";
 
 	public ComponentFormController(FormRepository formRepository,
-			ComponentRepository componentRepository,
-			ComponentService componentService) {
+			ComponentDao componentDao) {
 
 		super(formRepository);
-		this.componentRepository = componentRepository;
-		this.componentService = componentService;
+		this.componentDao = componentDao;
 	}
-	
+
 	protected void initForm(Form form, HttpServletRequest request) {
 		super.initForm(form, request);
 		Enumeration names = request.getParameterNames();
@@ -67,23 +61,21 @@ public class ComponentFormController extends AbstractComponentFormController {
 			form.setAttribute(name, request.getParameter(name));
 		}
 	}
-
+	
 	protected ComponentVersion getVersion(HttpServletRequest request) {
 		Long id = new Long((String) request.getAttribute(containerIdAttribute));
+		VersionContainer container = componentDao.loadVersionContainer(id);
 		boolean live = ServletRequestUtils.getBooleanParameter(request, "live", false);
-		return componentService.getOrCreateVersion(id, live);
+		return componentDao.getOrCreateVersion(container, live);
 	}
 
 	protected Object getFormBackingObject(HttpServletRequest request) {
-		ComponentVersion version = getVersion(request);
-		Component component = componentRepository.getComponent(version);
-		return component.buildModel(version);
+		return getVersion(request);
 	}
 
 	protected void onSave(Object object, HttpServletRequest request) {
-		ComponentVersion version = getVersion(request);
-		Map properties = (Map) object;
-		componentService.updateComponentProperties(version, properties);
+		ComponentVersion version = (ComponentVersion) object;
+		componentDao.updateComponentVersion(version);
 	}
 
 }

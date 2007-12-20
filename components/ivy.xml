@@ -6,9 +6,8 @@
     	<conf name="test" />
     </configurations>
     <dependencies>
-	    <dependency org="riotfamily" name="riot-common" rev="latest.integration" conf="*->@" />
 	    <dependency org="riotfamily" name="riot-core" rev="latest.integration" conf="*->@" />
-	    <dependency org="riotfamily" name="riot-forms" rev="latest.integration" conf="*->@" />
+	    <dependency org="riotfamily" name="riot-media" rev="latest.integration" conf="*->@" />
         <dependency org="riotfamily" name="riot-hibernate" rev="latest.integration" conf="*->@" />
         <dependency org="riotfamily" name="riot-website" rev="latest.integration" conf="*->@" />
         <dependency org="riotfamily" name="swfupload-js" rev="7.0-beta3" conf="runtime->default" />

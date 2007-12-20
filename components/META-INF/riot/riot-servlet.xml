@@ -21,8 +21,10 @@
 
 	<bean id="componentEditorTarget" class="org.riotfamily.components.editor.ComponentEditorImpl">
 		<constructor-arg ref="componentDao" />
-		<constructor-arg ref="componentService" />
+		<constructor-arg ref="mediaDao" />
+		<constructor-arg ref="imageCropper" />
 		<constructor-arg ref="componentRepository" />
+		<constructor-arg ref="websiteCache" />
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
 	</bean>
 	
@@ -34,17 +36,25 @@
 			</bean>
 		</property>
 	</bean>
+	
+	<override:put ref="customFormElements">
+		<entry key="{http://www.riotfamily.org/schema/components/form-elements}map"
+				value="org.riotfamily.components.riot.form.ContentMapEditor" />
+		<entry key="{http://www.riotfamily.org/schema/components/form-elements}list"
+				value="org.riotfamily.components.riot.form.ContentListEditor" />
+	</override:put>
 
+	<bean id="contentFactory" class="org.riotfamily.components.service.DefaultContentFactory" />
+	
 	<!--
 	  - FormRepository providing component property forms.
 	  -->
 	<bean id="componentFormRepository" class="org.riotfamily.components.config.ComponentFormRepository">
 		<constructor-arg ref="componentRepository" />
-		<constructor-arg ref="componentDao" />
+		<constructor-arg ref="contentFactory" />
 		<property name="config" value="/WEB-INF/website-config/component-forms.xml" />
 		<property name="customElements" ref="customFormElements" />
 		<property name="mimetypesMap" ref="fileTypeMap" />
-		<property name="imageCropper" ref="imageCropper" />
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
 	</bean>
 
@@ -55,8 +65,7 @@
 		name="/components/form/@{formId}/@{containerId}"
 		class="org.riotfamily.components.editor.ComponentFormController">
 		<constructor-arg ref="componentFormRepository" />
-		<constructor-arg ref="componentRepository" />
-		<constructor-arg ref="componentService" />
+		<constructor-arg ref="componentDao" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 	
@@ -95,14 +104,9 @@
 		<constructor-arg ref="riotDaoService" />
 		<property name="cache" ref="websiteCache" />
 	</bean>
-	
-	<bean id="uploadManager" class="org.riotfamily.components.editor.UploadManagerImpl">
-		<constructor-arg ref="defaultFileStore" />
-		<constructor-arg ref="imageCropper" />
-	</bean>
-	
+		
 	<bean name="/components/upload" class="org.riotfamily.components.editor.FileUploadController">
-		<constructor-arg ref="uploadManager" />
+		<constructor-arg ref="componentEditorTarget" />
 	</bean>
 	
 	<!-- Overrides -->
@@ -159,14 +163,12 @@
 					<entry key="ComponentEditor" value-ref="componentEditor" />
 					<entry key="InstantComponentEditor" value-ref="instantComponentEditor" />
 					<entry key="EntityEditor" value-ref="entityEditor" />
-					<entry key="UploadManager" value-ref="uploadManager" />
 				</map>
 			</property>
 			<property name="serviceInterfaces">
 				<list>
 					<value>org.riotfamily.components.editor.ComponentEditor</value>
 					<value>org.riotfamily.components.editor.EntityEditor</value>
-					<value>org.riotfamily.components.editor.UploadManager</value>
 				</list>
 			</property>
 		</bean>

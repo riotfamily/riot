@@ -54,7 +54,7 @@ public class IncludeComponent extends AbstractComponent {
 			HttpServletResponse response) throws Exception {
 
 		Map snapshot = ServletUtils.takeAttributesSnapshot(request);
-		WebUtils.exposeRequestAttributes(request, buildModel(componentVersion));
+		WebUtils.exposeRequestAttributes(request, componentVersion.getUnwrappedProperties());
 		request.setAttribute(POSITION_CLASS, positionClassName);
 		request.setAttribute(COMPONENT_ID, String.valueOf(componentVersion.getId()));
 		request.setAttribute(THIS, componentVersion);

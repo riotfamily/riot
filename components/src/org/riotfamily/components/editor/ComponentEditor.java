@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.editor;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -44,12 +45,21 @@ public interface ComponentEditor {
 
 	public void updateText(Long containerId, String property, String text);
 	
-	public void updateFile(Long containerId, String property, String path, 
-			String fileStoreId);
-
 	public void updateTextChunks(Long containerId, String property,
 			String[] chunks);
 
+	public String generateToken();
+	
+	public void invalidateToken(String token);
+	
+	public String updateImage(Long containerId, String property, Long imageId);
+	
+	public String cropImage(Long containerId, String property, Long imageId,
+			int width, int height, int x, int y, int scaledWidth)
+			throws IOException;
+			
+	public void discardImage(Long imageId);
+			
 	public List getValidTypes(String controllerId);
 
 	public Long insertComponent(Long listId, int position, String type,

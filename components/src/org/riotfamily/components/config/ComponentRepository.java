@@ -42,6 +42,7 @@ import org.riotfamily.components.locator.ComponentListLocator;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ComponentVersion;
 import org.riotfamily.components.model.Location;
+import org.riotfamily.forms.factory.FormRepository;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -78,9 +79,7 @@ public class ComponentRepository implements ServletContextAware,
 
 	private List locators;
 
-	private Map configuredPropertyProcessors;
-
-	private ComponentFormRepository formRepository;
+	private FormRepository formRepository;
 
 	public void setConfigLocations(String[] configLocations) {
 		this.configLocations = configLocations;
@@ -98,7 +97,7 @@ public class ComponentRepository implements ServletContextAware,
 		configWatcher.addListener(listener);
 	}
 
-	public void setFormRepository(ComponentFormRepository formRepository) {
+	public void setFormRepository(FormRepository formRepository) {
 		this.formRepository = formRepository;
 	}
 	
@@ -128,33 +127,6 @@ public class ComponentRepository implements ServletContextAware,
 		context.refresh();
 		componentMap = context.getBeansOfType(Component.class);
 		log.debug("Components: " + componentMap);
-		storeConfiguredPropertyProcessors();
-		if (formRepository != null) {
-			formRepository.registerPropertyProcessors();
-		}
-	}
-
-	private void storeConfiguredPropertyProcessors() {
-		configuredPropertyProcessors = new HashMap();
-		Iterator it = componentMap.values().iterator();
-		while (it.hasNext()) {
-			Component component = (Component) it.next();
-			configuredPropertyProcessors.put(component, new HashMap(
-					component.getPropertyProcessors()));
-		}
-	}
-
-	public void resetPropertyProcessors() {
-		Iterator it = configuredPropertyProcessors.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			Component component = (Component) entry.getKey();
-			Map processors = (Map) entry.getValue();
-			if (processors == null) {
-				processors = new HashMap();
-			}
-			component.setPropertyProcessors(processors);
-		}
 	}
 
 	public void addComponent(String type, Component component) {
@@ -173,7 +145,7 @@ public class ComponentRepository implements ServletContextAware,
 	}
 
 	public Component getComponent(ComponentVersion version) {
-		return getComponent(version.getType());
+		return getComponent(version.getContainer().getType());
 	}
 
 	public void setViewNamePrefix(String defaultViewLocation) {

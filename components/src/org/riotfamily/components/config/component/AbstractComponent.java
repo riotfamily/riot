@@ -26,13 +26,6 @@ package org.riotfamily.components.config.component;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,8 +35,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.property.PropertyProcessor;
-import org.springframework.util.Assert;
 
 /**
  * Abstract base class for component implementations.
@@ -65,41 +56,14 @@ public abstract class AbstractComponent implements Component {
 
 	private Properties defaults;
 	
-	private Map propertyProcessors = new HashMap();
-	
-	private List updateListeners;
-
 	public void setDefaults(Properties defaults) {
 		this.defaults = defaults;
 	}
 	
-	public void setPropertyProcessors(Map propertyProcessors) {
-		Assert.notNull(propertyProcessors);
-		log.debug("PropertyProcessors: " + propertyProcessors);
-		this.propertyProcessors = propertyProcessors;
-	}
-
-	public void registerPropertyProcessor(String property, 
-			PropertyProcessor propertyProcessor) {
-		
-		log.debug("Registering " + propertyProcessor.getClass().getName() 
-				+ " for property " + property);
-		
-		propertyProcessors.put(property, propertyProcessor);
-	}
-
-	public Map getPropertyProcessors() {
-		return propertyProcessors;
+	public Properties getDefaults() {
+		return defaults;
 	}
 	
-	public void setUpdateListeners(List updateListeners) {
-		this.updateListeners = updateListeners;
-	}
-	
-	public List getUpdateListeners() {
-		return this.updateListeners;
-	}
-
 	public final void render(ComponentVersion componentVersion,
 			String positionClassName, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
@@ -128,71 +92,8 @@ public abstract class AbstractComponent implements Component {
 		return false;
 	}
 
-	public Map buildModel(ComponentVersion componentVersion) {
-		Map model = new HashMap();
-		model.putAll(componentVersion.getProperties());
-		if (defaults != null) {
-			Enumeration en = defaults.propertyNames();
-			while (en.hasMoreElements()) {
-				String prop = (String) en.nextElement();
-				if (!model.containsKey(prop)) {
-					model.put(prop, defaults.getProperty(prop));
-				}
-			}
-		}
-		Iterator it = propertyProcessors.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			String key = (String) entry.getKey();
-			PropertyProcessor pp = (PropertyProcessor) entry.getValue();
-			String s = (String) model.get(key);
-			model.put(key, pp.resolveString(s));
-		}
-		
-		return model;
-	}
-
 	protected abstract void renderInternal(ComponentVersion componentVersion,
 			String positionClassName, HttpServletRequest request,
 			HttpServletResponse response) throws Exception;
-
-	public Collection getCacheTags(ComponentVersion version) {
-		ArrayList result = new ArrayList();
-		
-		Iterator it = propertyProcessors.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			String key = (String) entry.getKey();
-			PropertyProcessor pp = (PropertyProcessor) entry.getValue();
-			String tag = pp.getCacheTag(version.getProperty(key));
-			if (tag != null) {
-				result.add(tag);
-			}
-		}
-		return result;
-	}
-
-	/*
-	public void onCopy(ComponentVersion source, ComponentVersion dest) {
-		Iterator it = propertyProcessors.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			String key = (String) entry.getKey();
-			PropertyProcessor pp = (PropertyProcessor) entry.getValue();
-			String s = source.getProperty(key);
-			dest.setProperty(key, pp.copy(s));
-		}
-	}
-	
-	public void onDelete(ComponentVersion version) {
-		Iterator it = propertyProcessors.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			String key = (String) entry.getKey();
-			PropertyProcessor pp = (PropertyProcessor) entry.getValue();
-			pp.delete(version.getProperty(key));
-		}
-	}
-	*/
 	
 }

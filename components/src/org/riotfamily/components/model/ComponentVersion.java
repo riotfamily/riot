@@ -23,22 +23,19 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
-
-import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.config.component.Component;
 
 /**
  * Versioned model for a component. The component properties are stored as
- * map of Strings, additionally a type information is included which is used
- * to look up a {@link Component} instance from the {@link ComponentRepository}.
+ * map of Content objects keyed by Strings.
  */
 public class ComponentVersion {
 
 	private Long id;
-
-	private String type;
 
 	private Map properties;
 
@@ -49,15 +46,16 @@ public class ComponentVersion {
 	public ComponentVersion() {
 	}
 
-	public ComponentVersion(String type) {
-		this.type = type;
-	}
-
 	public ComponentVersion(ComponentVersion prototype) {
 		if (prototype != null) {
-			this.type = prototype.getType();
 			this.container = prototype.getContainer();
-			this.properties = new HashMap(prototype.getProperties());
+			this.properties = new HashMap();
+			Iterator it = prototype.getProperties().entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry entry = (Map.Entry) it.next();
+				Content content = (Content) entry.getValue();
+				this.properties.put(entry.getKey(), content.deepCopy());
+			}
 		}
 	}
 
@@ -75,42 +73,16 @@ public class ComponentVersion {
 		this.id = id;
 	}
 
-	/**
-	 * Returns the component-type. The String returned by this method is used
-	 * to lookup a component implementation from the ComponentRepository.
-	 */
-	public String getType() {
-		return this.type;
-	}
-
-	/**
-	 * Sets the component-type.
-	 */
-	public void setType(String type) {
-		this.type = type;
-		setDirty(true);
-	}
-
-	public Map getProperties() {
-		if (properties == null) {
-			properties = new HashMap();
-		}
-		return properties;
-	}
-
-	public void setProperties(Map properties) {
-		this.properties = properties;
-	}
-
-	public String getProperty(String key) {
+	public Object getProperty(String key) {
 		if (properties == null) {
 			return null;
 		}
-		return (String) properties.get(key);
+		Content property = (Content) properties.get(key);
+		return property != null ? property.unwrap() : null;
 	}
 
-	public void setProperty(String key, String text) {
-		getProperties().put(key, text);
+	public void setProperty(String key, Content content) {
+		getProperties().put(key, content);
 		setDirty(true);
 	}
 
@@ -133,4 +105,52 @@ public class ComponentVersion {
 		this.dirty = dirty;
 	}
 
+	public Map getProperties() {
+		if (properties == null) {
+			properties = new HashMap();
+		}
+		return properties;
+	}
+
+	public void setProperties(Map properties) {
+		this.properties = properties;
+	}
+	
+	public Map getUnwrappedProperties() {
+		HashMap result = new HashMap();
+		if (properties != null) {
+			Iterator it = properties.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry entry = (Map.Entry) it.next();
+				Content content = (Content) entry.getValue();
+				if (content != null) {
+					result.put(entry.getKey(), content.unwrap());
+				}
+				else {
+					result.put(entry.getKey(), null);
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns a Collection of Strings that should be used to tag the
+	 * CacheItem containing the rendered ComponentVersion.
+	 */
+	public Collection getCacheTags() {
+		HashSet result = new HashSet();
+		Iterator it = properties.values().iterator();
+		while (it.hasNext()) {
+			Content content = (Content) it.next();
+			if (content != null) {
+				Collection tags = content.getCacheTags();
+				if (tags != null) {
+					result.addAll(tags);
+				}
+			}
+		}
+		return result;
+	}
+	
 }

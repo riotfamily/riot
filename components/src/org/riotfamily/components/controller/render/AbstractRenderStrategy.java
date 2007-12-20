@@ -201,12 +201,12 @@ public class AbstractRenderStrategy implements RenderStrategy {
 			String positionClassName, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		
-		String type = version.getType();
-		if (INHERTING_COMPONENT.equals(type)) {
-			renderParentList(version.getContainer().getList(), request, response);
+		VersionContainer container = version.getContainer();
+		if (INHERTING_COMPONENT.equals(container.getType())) {
+			renderParentList(container.getList(), request, response);
 		}
 		else {
-			Component component = repository.getComponent(type);		
+			Component component = repository.getComponent(container.getType());		
 			renderComponent(component, version, positionClassName, 
 					request, response);
 		}
