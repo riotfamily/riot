@@ -14,7 +14,7 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
@@ -24,7 +24,9 @@
 package org.riotfamily.common.web.file;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.servlet.ServletContext;
 
@@ -39,13 +41,12 @@ import org.springframework.web.context.ServletContextAware;
 
 /**
  * Default FileStore implementation.
- *  
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public class DefaultFileStore implements FileStore, ServletContextAware,
+public class DefaultFileStore implements FileStore, ServletContextAware, 
 		InitializingBean {
 
-	private Log log = LogFactory.getLog(DefaultFileStore.class);
+	private static Log log = LogFactory.getLog(DefaultFileStore.class);
 	
 	private String uriPrefix;
 	
@@ -55,7 +56,7 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 
 	private File storageDir;
 	
-	private int storageDirIndex;
+	private int storageDirIndex = 0;
 	
 	private int maxFilesPerDir = 500;
 	
@@ -179,25 +180,24 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 		throw new RuntimeException("Failed to create a unique directory name.");
 	}
 	
-	/**
-	 * Moves the given file into the store and returns an URI that can be
-	 * used to request the file via HTTP.
-	 */
-	public String store(File file, String fileName)	throws IOException {
-		if (fileName == null) {
-			fileName = file.getName();
+	public String store(InputStream in, String fileName) throws IOException {
+		File dest = new File(getUniqueDir(), FormatUtils.toFilename(fileName));
+		if (in != null) {
+			FileCopyUtils.copy(in, new FileOutputStream(dest));
+			log.debug("stored at: " + dest.getAbsolutePath());
 		}
-		fileName = FormatUtils.toFilename(fileName);
-		File dest = new File(getUniqueDir(), fileName); 
-		if (!file.renameTo(dest)) {
-			FileCopyUtils.copy(file, dest);
-			file.delete();
+		else {
+			dest.createNewFile();
 		}
-		String path = dest.getPath().substring(baseDir.getPath().length());
+		return getUri(dest);
+	}
+	
+	private String getUri(File file) {
+		String path = file.getPath().substring(baseDir.getPath().length());
 		path = StringUtils.replace(path, File.separator, "/");
 		return uriPrefix + path;
 	}
-	
+
 	/**
 	 * Retrieves a file from the store that was previously added via the
 	 * {@link #store(File, String) store()} method. 
