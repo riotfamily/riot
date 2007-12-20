@@ -33,7 +33,7 @@ import org.springframework.beans.PropertyValues;
 import org.springframework.util.Assert;
 
 /**
- * PropertyAccessor implemenation that works on maps.
+ * PropertyAccessor implementation that works on maps.
  */
 public class MapWrapper implements ObjectWrapper {
 
