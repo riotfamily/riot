@@ -1,9 +1,12 @@
 http\://www.riotfamily.org/schema/website/generic.xsd=org/riotfamily/website/generic/config/generic.xsd
 http\://www.riotfamily.org/schema/website/generic-6.5.xsd=org/riotfamily/website/generic/config/generic.xsd
+http\://www.riotfamily.org/schema/website/generic-7.0.xsd=org/riotfamily/website/generic/config/generic.xsd
 
 http\://www.riotfamily.org/schema/website/template.xsd=org/riotfamily/website/template/config/template.xsd
 http\://www.riotfamily.org/schema/website/template-6.5.xsd=org/riotfamily/website/template/config/template.xsd
+http\://www.riotfamily.org/schema/website/template-7.0.xsd=org/riotfamily/website/template/config/template.xsd
 
 http\://www.riotfamily.org/schema/website/txt2img.xsd=org/riotfamily/website/txt2img/txt2img.xsd
 http\://www.riotfamily.org/schema/website/txt2img-6.5.xsd=org/riotfamily/website/txt2img/txt2img.xsd
+http\://www.riotfamily.org/schema/website/txt2img-7.0.xsd=org/riotfamily/website/txt2img/txt2img.xsd
 
