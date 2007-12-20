@@ -4,6 +4,7 @@
 	xmlns:ed="http://www.riotfamily.org/schema/riot/editor-config"
 	xmlns:list="http://www.riotfamily.org/schema/riot/list-config"
 	xmlns:form="http://www.riotfamily.org/schema/forms/form-config"
+	xmlns:component="http://www.riotfamily.org/schema/components/form-elements"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.riotfamily.org/schema/riot/riot-config
@@ -13,7 +14,9 @@
 		http://www.riotfamily.org/schema/riot/list-config
 		http://www.riotfamily.org/schema/riot/list-config.xsd
 		http://www.riotfamily.org/schema/forms/form-config
-		http://www.riotfamily.org/schema/forms/form-config.xsd">
+		http://www.riotfamily.org/schema/forms/form-config.xsd
+		http://www.riotfamily.org/schema/components/form-elements
+		http://www.riotfamily.org/schema/components/form-elements.xsd">
 
 	<ed:list id="sitemap" list-ref="site-chooser" icon="sitemap">
 		<ed:tree id="pages" list-ref="pages">
@@ -93,6 +96,12 @@
 			<form:textfield bind="pathComponent" required="true" regex="([A-Za-z0-9_.,*@{}-]*)" />
 			<form:checkbox bind="folder" />
 		</form:group>
+		<!-- 
+		<component:content-map bind="content">
+			<form:textfield bind="foo" />
+			<form:textfield bind="bar" />			
+		</component:content-map>
+		-->
 	</form:form>
 
 </riot-config>

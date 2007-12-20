@@ -25,7 +25,6 @@ package org.riotfamily.pages.view;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -35,8 +34,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.TaggingContext;
-import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.config.component.Component;
 import org.riotfamily.components.model.ComponentVersion;
 import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.pages.cache.PageCacheUtils;
@@ -57,20 +54,16 @@ public class PageFacade {
 	
 	private PageUrlBuilder pageUrlBuilder;
 	
-	private ComponentRepository componentRepository;
-	
 	private Map properties = null;
 	
 	private TaggingContext taggingContext;
 	
 	public PageFacade(Page page, boolean preview, 
-			PageUrlBuilder pageUrlBuilder, 
-			ComponentRepository componentRepository) {
+			PageUrlBuilder pageUrlBuilder) {
 		
 		this.page = page;
 		this.preview = preview;
 		this.pageUrlBuilder = pageUrlBuilder;
-		this.componentRepository = componentRepository;
 		this.taggingContext = TaggingContext.getContext();
 		PageCacheUtils.addPageTag(taggingContext, page);
 	}
@@ -193,13 +186,7 @@ public class PageFacade {
 	public Map getProperties() {
 		if (properties == null) {
 			ComponentVersion version = page.getComponentVersion(preview);
-			if (version != null) {
-				Component component = componentRepository.getComponent(version.getType());
-				properties = component.buildModel(version);
-			}
-			else {
-				properties = Collections.EMPTY_MAP;
-			}
+			properties = version.getUnwrappedProperties();
 		}
 		return properties;
 	}

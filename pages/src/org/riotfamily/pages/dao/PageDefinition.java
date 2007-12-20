@@ -149,7 +149,8 @@ public class PageDefinition {
 				newProps.putAll(localizedMap);
 			}
 		}
-		page.getProperties(false).putAll(newProps);
+		//FIXME This doesn't work!
+		//page.getProperties(false).putAll(newProps);
 	}
 
 

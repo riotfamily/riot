@@ -65,7 +65,7 @@ public class Page {
 	private Date creationDate;
 
 	private VersionContainer versionContainer;
-
+	
 	public Page() {
 	}
 
@@ -218,8 +218,8 @@ public class Page {
 
 	public VersionContainer getVersionContainer() {
 		if (versionContainer == null) {
-			versionContainer = new VersionContainer();
-			ComponentVersion version = new ComponentVersion(Page.class.getName());
+			versionContainer = new VersionContainer(Page.class.getName());
+			ComponentVersion version = new ComponentVersion();
 			versionContainer.setLiveVersion(version);
 		}
 		return versionContainer;
@@ -236,16 +236,17 @@ public class Page {
 	
 	public Map getProperties(boolean preview) {
 		ComponentVersion version = getComponentVersion(preview);
-		return version != null ? version.getProperties() : null;
+		return version != null ? version.getUnwrappedProperties() : null;
 	}
 
-	public String getProperty(String key, boolean preview) {
+	public Object getProperty(String key, boolean preview) {
 		ComponentVersion version = getComponentVersion(preview);
 		return version != null ? version.getProperty(key) : null;
 	}
 
 	public String getTitle(boolean preview) {
-		String title = getProperty(TITLE_PROPERTY, preview);
+		//FIXME Unsafe cast
+		String title = (String) getProperty(TITLE_PROPERTY, preview);
 		if (title == null) {
 			title = FormatUtils.xmlToTitleCase(pathComponent);
 		}

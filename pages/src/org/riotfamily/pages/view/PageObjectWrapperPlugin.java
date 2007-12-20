@@ -26,7 +26,6 @@ package org.riotfamily.pages.view;
 import org.riotfamily.common.web.view.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.web.view.freemarker.PluginObjectWrapper;
 import org.riotfamily.components.EditModeUtils;
-import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.pages.mapping.PageUrlBuilder;
 import org.riotfamily.pages.model.Page;
 
@@ -42,11 +41,8 @@ public class PageObjectWrapperPlugin implements ObjectWrapperPlugin {
 
 	private PageUrlBuilder pageUrlBuilder;
 	
-	private ComponentRepository componentRepository;
-
-	public PageObjectWrapperPlugin(PageUrlBuilder pageUrlBuilder, ComponentRepository componentRepository) {
+	public PageObjectWrapperPlugin(PageUrlBuilder pageUrlBuilder) {
 		this.pageUrlBuilder = pageUrlBuilder;
-		this.componentRepository = componentRepository;
 	}
 
 	public boolean supports(Object obj) {
@@ -58,9 +54,7 @@ public class PageObjectWrapperPlugin implements ObjectWrapperPlugin {
 			throws TemplateModelException {
 		
 		Page page = (Page) obj;
-		PageFacade facade = new PageFacade(page, EditModeUtils.isEditMode(), 
-				pageUrlBuilder, componentRepository);
-		
+		PageFacade facade = new PageFacade(page, EditModeUtils.isEditMode(), pageUrlBuilder);
 		return new StringModel(facade, wrapper);
 	}
 
