@@ -259,7 +259,6 @@
 			</list>
 		</property>
 		<property name="mimetypesMap" ref="fileTypeMap" />
-		<property name="imageCropper" ref="imageCropper" />
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
 		<property name="customElements" ref="customFormElements" />
 	</bean>
