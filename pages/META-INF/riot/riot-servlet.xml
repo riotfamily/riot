@@ -47,9 +47,9 @@
 	</override:add>
 
 	<override:put ref="customFormElements">
-		<entry key="internalLink" value="org.riotfamily.pages.riot.chooser.InternalLinkField" />
+		<entry key="internalLink" value="org.riotfamily.pages.riot.form.InternalLinkField" />
 		<entry key="{http://www.riotfamily.org/schema/pages/form-elements}link"
-				value="org.riotfamily.pages.riot.chooser.InternalLinkField" />
+				value="org.riotfamily.pages.riot.form.InternalLinkField" />
 	</override:put>
 				
 	<override:add ref="resourceMappings" append="true">			
@@ -73,7 +73,6 @@
 		<property name="pageDao" ref="pageDao" />
 		<property name="cache" ref="websiteCache" />
 	</bean>
-
 
 	<!-- Customised Page Commands -->
 

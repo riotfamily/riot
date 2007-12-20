@@ -44,7 +44,6 @@
 	
 	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin">
 		<constructor-arg ref="pageUrlBuilder" />
-		<constructor-arg ref="componentRepository" />
 	</bean>
 	
 	<override:add ref="inplaceMacroHelper" property="toolbarScripts" append="true">

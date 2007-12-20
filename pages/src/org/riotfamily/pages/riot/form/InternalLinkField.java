@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.riot.chooser;
+package org.riotfamily.pages.riot.form;
 
 import java.io.PrintWriter;
 
@@ -36,6 +36,7 @@ import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.resource.StylesheetResource;
+import org.riotfamily.pages.riot.chooser.PageChooserController;
 
 public class InternalLinkField extends TextField implements ResourceElement,
 	DHTMLElement {

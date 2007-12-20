@@ -104,7 +104,7 @@ public class PageChooserController implements Controller {
 				PageLink link = new PageLink();
 				link.setPathComponent(page.getPathComponent());
 				link.setLink(pageUrlBuilder.getUrl(page, request));
-				link.setTitle(page.getProperty("title", true));
+				link.setTitle(page.getTitle(true));
 				link.setPublished(page.isPublished());
 				if (expandedPath != null && expandedPath.startsWith(page.getPath())) {
 					link.setExpanded(true);
