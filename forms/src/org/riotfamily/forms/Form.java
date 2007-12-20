@@ -46,7 +46,6 @@ import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.LoadingCodeGenerator;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.StylesheetResource;
-import org.riotfamily.forms.support.MapOrBeanWrapper;
 import org.springframework.util.Assert;
 import org.springframework.validation.Validator;
 
@@ -77,7 +76,6 @@ public class Form implements BeanEditor {
 
 	/** EditorBinder to bind toplevel elements to properties */
 	private EditorBinder editorBinder;
-
 
 	/** Set containing resources required by the form itself (not it's elements) */
 	private List globalResources = new ArrayList();
@@ -121,10 +119,19 @@ public class Form implements BeanEditor {
 	 */
 	public Form(Object object) {
 		this();
-		editorBinder = new EditorBinder(new MapOrBeanWrapper(object.getClass()));
-		editorBinder.setBackingObject(object);
+		Assert.notNull(object);
+		if (object instanceof Map) {
+			editorBinder = new MapEditorBinder((Map) object);
+		}
+		else {
+			editorBinder = new BeanEditorBinder(object);
+		}
 	}
-
+	
+	public void setEditorBinder(EditorBinder editorBinder) {
+		this.editorBinder = editorBinder.replace(this.editorBinder);
+	}
+	
 	public String getId() {
 		return this.id;
 	}
@@ -151,13 +158,16 @@ public class Form implements BeanEditor {
 
 	public void setBeanClass(Class beanClass) {
 		Assert.notNull(beanClass, "The beanClass must not be null.");
-		editorBinder = new EditorBinder(new MapOrBeanWrapper(beanClass));
+		if (Map.class.isAssignableFrom(beanClass)) {
+			editorBinder = new MapEditorBinder(beanClass);
+		}
+		else {
+			editorBinder = new BeanEditorBinder(beanClass);
+		}
 	}
 
 	public void setValue(Object backingObject) {
-		if (backingObject != null) {
-			editorBinder.setBackingObject(backingObject);
-		}
+		editorBinder.setBackingObject(backingObject);
 	}
 
 	public Object getValue() {

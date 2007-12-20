@@ -58,19 +58,18 @@ import org.riotfamily.forms.element.select.RadioButtonGroup;
 import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.element.select.SelectElement;
 import org.riotfamily.forms.element.suggest.AutocompleteTextField;
-import org.riotfamily.forms.element.upload.FileUpload;
-import org.riotfamily.forms.element.upload.FlashUpload;
-import org.riotfamily.forms.element.upload.ImageUpload;
 import org.riotfamily.forms.factory.ConfigurableElementFactory;
 import org.riotfamily.forms.factory.ContainerElementFactory;
-import org.riotfamily.forms.factory.DefaultFormFactory;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.FormRepositoryException;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.MutablePropertyValues;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.validation.Validator;
 import org.w3c.dom.Attr;
@@ -88,13 +87,11 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 
 	private Log log = LogFactory.getLog(XmlFormRepositoryDigester.class);
 
-	private BeanFactory beanFactory;
+	private ConfigurableListableBeanFactory beanFactory;
 
 	private XmlFormRepository formRepository;
 
 	private HashMap elementClasses = new HashMap();
-
-	private DefaultFormFactory formFactory;
 
 	private String formId;
 
@@ -105,7 +102,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	private Resource resource;
 
 	public XmlFormRepositoryDigester(XmlFormRepository formRepository,
-			BeanFactory beanFactory) {
+			ConfigurableListableBeanFactory beanFactory) {
 
 		this.formRepository = formRepository;
 		this.beanFactory = beanFactory;
@@ -128,9 +125,6 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		elementClasses.put("radio-group", RadioButtonGroup.class);
 		elementClasses.put("checkbox-group", CheckboxGroup.class);
 		elementClasses.put("imagecheckbox-group", ImageCheckboxGroup.class);
-		elementClasses.put("file-upload", FileUpload.class);
-		elementClasses.put("image-upload", ImageUpload.class);
-		elementClasses.put("flash-upload", FlashUpload.class);
 		elementClasses.put("editable-if-new", EditableIfNew.class);
 		elementClasses.put("autocomplete", AutocompleteTextField.class);
 	}
@@ -163,23 +157,21 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	}
 
 	protected void parseFormDefinition(Element formElement) {
-		formFactory = new DefaultFormFactory();
-		formId = formElement.getAttribute("id");
-
 		String beanClassName = XmlUtils.getAttribute(
 				formElement, "bean-class");
 
-		formFactory.setBeanClass(getBeanClass(beanClassName));
+		Class beanClass = getBeanClass(beanClassName);
+		FormInitializer initializer = (FormInitializer) getOrCreate(
+				formElement, "initializer", "initializer-class",
+				FormInitializer.class);
 
-		formFactory.setInitializer((FormInitializer) getOrCreate(formElement,
-				"initializer", "initializer-class",
-				FormInitializer.class));
-
-		formFactory.setValidator((Validator) getOrCreate(formElement,
-				"validator", "validator-class",
-				Validator.class));
-
-
+		Validator validator = (Validator) getOrCreate(formElement,
+				"validator", "validator-class", Validator.class);
+				
+		FormFactory formFactory = formRepository.createFormFactory(
+				beanClass, initializer, validator);
+		
+		formId = formElement.getAttribute("id");
 		Iterator it = XmlUtils.getChildElements(formElement).iterator();
 		while (it.hasNext()) {
 			parseElementDefinition((Element) it.next(), formFactory);
@@ -187,7 +179,6 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		formRepository.registerFormFactory(formId, formFactory);
 	}
 
-	
 	private Object getOrCreate(Element element, String refAttribute,
 			String classNameAttribute, Class requiredClass) {
 
@@ -202,9 +193,18 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 				element, classNameAttribute);
 
 			if (className != null) {
-				Object obj = PropertyUtils.newInstance(className);
-				Assert.isInstanceOf(requiredClass, obj);
-				return obj;
+				try {
+					Class beanClass = ClassUtils.forName(className);
+					Object obj = beanFactory.createBean(beanClass, 
+							AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR, 
+							false);
+					
+					Assert.isInstanceOf(requiredClass, obj);
+					return obj;
+				}
+				catch (ClassNotFoundException e) {
+					throw new FatalBeanException(e.getMessage()); 
+				}
 			}
 		}
 		return null;
@@ -256,12 +256,6 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		else if (Checkbox.class.isAssignableFrom(elementClass)) {
 			initCheckbox(ele, pvs);
 		}
-		else if (ImageUpload.class.isAssignableFrom(elementClass)) {
-			initImageUpload(ele, pvs);
-		}
-		else if (FileUpload.class.isAssignableFrom(elementClass)) {
-			initFileUpload(ele, pvs);
-		}
 		else if (MapEditor.class.isAssignableFrom(elementClass)) {
 			initMapEditor(ele, pvs);
 		}
@@ -300,18 +294,6 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		if ("checked".equals(XmlUtils.getAttribute(ele, "default"))) {
 			pvs.addPropertyValue("checkedByDefault", Boolean.TRUE);
 		}
-	}
-	
-	private void initFileUpload(Element ele, MutablePropertyValues pvs) {
-		if (formRepository.getMimetypesMap() != null) {
-			pvs.addPropertyValue("mimetypesMap",
-					formRepository.getMimetypesMap());
-		}
-	}
-	
-	private void initImageUpload(Element ele, MutablePropertyValues pvs) {
-		initFileUpload(ele, pvs);
-		pvs.addPropertyValue("cropper", formRepository.getImageCropper());
 	}
 	
 	private void initListEditor(Element ele, MutablePropertyValues pvs) {

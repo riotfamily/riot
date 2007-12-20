@@ -24,20 +24,22 @@
 package org.riotfamily.forms.element;
 
 import java.util.List;
+import java.util.Map;
 
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.BeanEditor;
+import org.riotfamily.forms.BeanEditorBinder;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.ContainerElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.EditorBinder;
 import org.riotfamily.forms.Element;
+import org.riotfamily.forms.MapEditorBinder;
 import org.riotfamily.forms.MessageUtils;
 import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.request.FormRequest;
-import org.riotfamily.forms.support.MapOrBeanWrapper;
 import org.springframework.util.Assert;
 
 /**
@@ -69,14 +71,19 @@ public class NestedForm extends TemplateElement implements
 		setTemplate(TemplateUtils.getTemplatePath(NestedForm.class, 
 				indent ? null : "_noindent"));
 	}	
-
+	
 	protected void setEditorBinder(EditorBinder editorBinder) {
-		this.editorBinder = editorBinder;
+		this.editorBinder = editorBinder.replace(this.editorBinder);
 	}
 	
 	public void setBeanClass(Class beanClass) {
-		EditorBinder editorBinder = new EditorBinder(new MapOrBeanWrapper(beanClass));
-		setEditorBinder(editorBinder);
+		Assert.notNull(beanClass, "The beanClass must not be null.");
+		if (Map.class.isAssignableFrom(beanClass)) {
+			editorBinder = new MapEditorBinder(beanClass);
+		}
+		else {
+			editorBinder = new BeanEditorBinder(beanClass);
+		}
 	}
 	
 	public Class getBeanClass() {

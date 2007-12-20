@@ -26,9 +26,9 @@ package org.riotfamily.forms.element.collection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.riotfamily.common.beans.PropertyUtils;
@@ -62,7 +62,7 @@ public class ListEditor extends TemplateElement implements Editor,
 	private String parentProperty;
 	
 	/** Factory to create elements for newly added items */
-	private ElementFactory itemElementFactory;
+	ElementFactory itemElementFactory;
 	
 	/** Container of ListItems */
 	private Container items = new Container();
@@ -154,6 +154,10 @@ public class ListEditor extends TemplateElement implements Editor,
 		return this.itemElementFactory;
 	}
 	
+	protected List getListItems() {
+		return items.getElements();
+	}
+	
 	/**
 	 * 
 	 */
@@ -188,11 +192,11 @@ public class ListEditor extends TemplateElement implements Editor,
 	
 	public Object getValue() {
 		Collection collection = createOrClearCollection();
-		Iterator it = items.getElements().iterator();
+		Iterator it = getListItems().iterator();
 		while (it.hasNext()) {
 			ListItem item = (ListItem) it.next();
-			if (item.getElement().getValue() != null) {
-				Object value = item.getElement().getValue();
+			Object value = item.getValue();
+			if (value != null) {
 				if (parentProperty != null) {
 					PropertyUtils.setProperty(value, parentProperty, 
 							getEditorBinding().getEditorBinder().getBackingObject());
@@ -215,16 +219,22 @@ public class ListEditor extends TemplateElement implements Editor,
 	}
 
 	protected ListItem addItem() {		
-		ListItem item = new ListItem();
+		ListItem item = createItem();
+		item.setEditor((Editor) itemElementFactory.createElement(
+				item, getForm()));
+		
 		items.addElement(item);
 		item.focus();
-		
 		item.setValue(null);
 		
 		return item;
 	}
 	
-	protected void removeItem(ListItem item) {		
+	protected ListItem createItem() {
+		return new ListItem(this);
+	}
+	
+	public void removeItem(ListItem item) {		
 		items.removeElement(item);				
 	}	
 	
@@ -246,7 +256,7 @@ public class ListEditor extends TemplateElement implements Editor,
 	
 	public String getInitScript() {
 		if (sortable && !items.isEmpty()) {
-			return TemplateUtils.getInitScript(this);
+			return TemplateUtils.getInitScript(this, ListEditor.class);
 		}
 		else {
 			return null;
@@ -257,77 +267,9 @@ public class ListEditor extends TemplateElement implements Editor,
 		if (sortable) {
 			String itemOrder = request.getParameter(getParamName());
 			if (StringUtils.hasLength(itemOrder)) {
-				Collections.sort(items.getElements(), 
+				Collections.sort(getListItems(), 
 						new ListItemComparator(itemOrder));
 			}
 		}
-	}
-	
-	public class ListItem extends TemplateElement implements DHTMLElement {
-		
-		private Editor element;
-		
-		private Button removeButton;	
-				
-		public ListItem() {
-			super("item");
-			setSurroundBySpan(false);
-			element = (Editor) itemElementFactory.createElement(this, getForm());
-			element.setRequired(true);
-			removeButton = new Button();
-			removeButton.setLabelKey("label.form.list.remove");
-			removeButton.setLabel("Remove");
-			removeButton.setTabIndex(2);
-			removeButton.addClickListener(new ClickListener() {
-				public void clicked(ClickEvent event) {					
-					removeItem(ListItem.this);
-				}
-			});	
-			addComponent("element", element);
-			addComponent("removeButton", removeButton);
-		}
-		
-		public Editor getElement() {
-			return element;
-		}
-		
-		public void focus() {
-			element.focus();
-		}
-		
-		public boolean isShowDragHandle() {
-			return isSortable();
-		}
-		
-		public void setValue(Object value) {
-			element.setEditorBinding(new CollectionItemEditorBinding(element, value));
-			element.setValue(value);
-		}
-		
-		public String getInitScript() {
-			if (getForm().isRendering()) {
-				return null;
-			}
-			return ListEditor.this.getInitScript();
-		}
-		
-	}
-	
-	private class ListItemComparator implements Comparator {
-
-		private String itemOrder;
-		
-		public ListItemComparator(String itemOrder) {
-			this.itemOrder = itemOrder;
-		}
-
-		public int compare(Object obj1, Object obj2) {
-			ListItem item1 = (ListItem) obj1;
-			ListItem item2 = (ListItem) obj2;
-			int pos1 = itemOrder.indexOf(item1.getId() + ',');
-			int pos2 = itemOrder.indexOf(item2.getId() + ',');
-			return pos1 - pos2;
-		}
-		
 	}
 }

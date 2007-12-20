@@ -4,8 +4,8 @@
 			<tr<#if item.showDragHandle> class="draggable"</#if>>
 				<td class="removeButton">${removeButton.render()}</td>
 				<td class="itemElement">
-					${element.render()}
-					${element.form.errors.renderErrors(element)}
+					${editor.render()}
+					${item.form.errors.renderErrors(editor)}
 				</td>
 				<#if item.showDragHandle>
 					<td class="handle"><div></div></td>

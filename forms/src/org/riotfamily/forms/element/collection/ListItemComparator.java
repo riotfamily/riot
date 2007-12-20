@@ -14,33 +14,31 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.forms.factory;
+package org.riotfamily.forms.element.collection;
 
-import java.util.Collection;
+import java.util.Comparator;
 
-import org.riotfamily.common.xml.ConfigurationEventListener;
-import org.riotfamily.forms.Form;
+class ListItemComparator implements Comparator {
 
-/**
- * Repository of form factories.
- */
-public interface FormRepository {
-
-	public boolean containsForm(String formId);
+	private String itemOrder;
 	
-	public Form createForm(String formId);
-	
-	public Class getBeanClass(String formId);
-	
-	public Collection getFormIds();
-	
-	public void addListener(ConfigurationEventListener listener);
+	public ListItemComparator(String itemOrder) {
+		this.itemOrder = itemOrder;
+	}
 
+	public int compare(Object obj1, Object obj2) {
+		ListItem item1 = (ListItem) obj1;
+		ListItem item2 = (ListItem) obj2;
+		int pos1 = itemOrder.indexOf(item1.getId() + ',');
+		int pos2 = itemOrder.indexOf(item2.getId() + ',');
+		return pos1 - pos2;
+	}
+	
 }

@@ -58,6 +58,10 @@ public abstract class AbstractMultiSelectElement
 		this.collectionClass = collectionClass;
 	}	
 	
+	public Class getCollectionClass() {
+		return this.collectionClass;
+	}
+	
 	public void setMaxSelection(Integer maxSelection) {
 		this.maxSelection = maxSelection;
 	}

@@ -36,14 +36,13 @@ import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 
 
@@ -74,7 +73,7 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 	private List childFactories = new LinkedList();
 	
 	/** BeanFactory used to lookup bean references */
-	private BeanFactory beanFactory;
+	private ConfigurableListableBeanFactory beanFactory;
 	
 	/**
 	 * Creates a new factory for the given element class.
@@ -90,7 +89,7 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 	/**
 	 * Sets the BeanFactory that is used to lookup bean references.
 	 */
-	public void setBeanFactory(BeanFactory beanFactory) {
+	public void setBeanFactory(ConfigurableListableBeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
 	}
 	
@@ -195,16 +194,17 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 	 */
 	public Element createElement(Element parent, Form form) {
 		log.debug("Creating element " + elementClass);
-		Element element = (Element) BeanUtils.instantiateClass(elementClass);
+		
+		Element element = (Element) beanFactory.createBean(elementClass, 
+				AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR, false);
+		
+		//Element element = (Element) BeanUtils.instantiateClass(elementClass);
 		element.setParent(parent);
 		if (beanClass != null) {
 			BeanEditor bee = (BeanEditor) element;
 			bee.setBeanClass(beanClass);
 		}
-		if (element instanceof BeanFactoryAware) {
-			BeanFactoryAware bfa = (BeanFactoryAware) element;
-			bfa.setBeanFactory(beanFactory);
-		}
+		
 		populateElement(element);
 		
 		if (element instanceof Editor) {
@@ -219,7 +219,9 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 		if (element instanceof ContainerElement) {
 			createChildElements((ContainerElement) element, form);
 		}
-				
+		
+		beanFactory.initializeBean(element, null);
+		
 		return element;
 	}
 	

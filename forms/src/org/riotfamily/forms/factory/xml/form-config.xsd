@@ -322,62 +322,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-
-	<xsd:complexType name="upload">
-		<xsd:complexContent>
-			<xsd:extension base="simple-editor">
-				<xsd:attribute name="store" type="xsd:string" />
-				<xsd:attribute name="use-file-store" type="xsd:boolean" default="true" />
-				<xsd:attribute name="filename-property" type="xsd:string" />
-				<xsd:attribute name="content-type-property" type="xsd:string" />
-				<xsd:attribute name="size-property" type="xsd:string" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:element name="file-upload" type="upload" />
-
-	<xsd:element name="image-upload">
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="upload">
-					<xsd:attribute name="valid-formats" type="xsd:string" />
-					<xsd:attribute name="width" type="xsd:positiveInteger" />
-					<xsd:attribute name="height" type="xsd:positiveInteger" />
-					<xsd:attribute name="widths" type="commaDelimitedIntegers" />
-					<xsd:attribute name="heights" type="commaDelimitedIntegers" />
-					<xsd:attribute name="min-width" type="xsd:positiveInteger" />
-					<xsd:attribute name="min-height" type="xsd:positiveInteger" />
-					<xsd:attribute name="max-width" type="xsd:positiveInteger" />
-					<xsd:attribute name="max-height" type="xsd:positiveInteger" />
-					<xsd:attribute name="width-property" type="xsd:string" />
-					<xsd:attribute name="height-property" type="xsd:string" />
-					<xsd:attribute name="crop" type="xsd:boolean" default="true" />
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-
-	<xsd:element name="flash-upload">
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="upload">
-					<xsd:attribute name="width" type="xsd:positiveInteger" />
-					<xsd:attribute name="height" type="xsd:positiveInteger" />
-					<xsd:attribute name="width-property" type="xsd:string" />
-					<xsd:attribute name="height-property" type="xsd:string" />
-					<xsd:attribute name="version-property" type="xsd:string" />
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-
-	<xsd:simpleType name="commaDelimitedIntegers">
-		<xsd:restriction base="xsd:string">
-			<xsd:pattern value="\d+(\s*,\s*\d+)*" />
-		</xsd:restriction>
-	</xsd:simpleType>
-
+	
 	<xsd:complexType name="autocomplete">
 		<xsd:complexContent>
 			<xsd:extension base="simple-editor">

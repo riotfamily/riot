@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.riotfamily.forms.EditorBinder;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
@@ -45,6 +46,8 @@ public class DefaultFormFactory implements FormFactory {
 	/** Class to be edited by the form */
 	private Class beanClass;
 
+	private EditorBinder editorBinder;
+	
 	/** List of factories to create child elements */
 	private List childFactories = new LinkedList();
 
@@ -52,12 +55,25 @@ public class DefaultFormFactory implements FormFactory {
 
 	private Validator validator;
 
-	public Class getBeanClass() {
-		return this.beanClass;
+
+	public DefaultFormFactory(Class beanClass, FormInitializer initializer, 
+			Validator validator) {
+		
+		this.beanClass = beanClass;
+		this.initializer = initializer;
+		this.validator = validator;
+	}
+	
+	public DefaultFormFactory(EditorBinder editorBinder, 
+			FormInitializer initializer, Validator validator) {
+		
+		this.editorBinder = editorBinder;
+		this.initializer = initializer;
+		this.validator = validator;
 	}
 
-	public void setBeanClass(Class beanClass) {
-		this.beanClass = beanClass;
+	public Class getBeanClass() {
+		return this.beanClass;
 	}
 
 	/**
@@ -71,17 +87,14 @@ public class DefaultFormFactory implements FormFactory {
 		return this.childFactories;
 	}
 
-	public void setInitializer(FormInitializer initializer) {
-		this.initializer = initializer;
-	}
-
-	public void setValidator(Validator validator) {
-		this.validator = validator;
-	}
-
 	public Form createForm() {
 		Form form = new Form();
-		form.setBeanClass(beanClass);
+		if (editorBinder != null) {
+			form.setEditorBinder(editorBinder);
+		}
+		else {
+			form.setBeanClass(beanClass);			
+		}
 		form.setInitializer(initializer);
 		form.setValidator(validator);
 		Iterator it = childFactories.iterator();

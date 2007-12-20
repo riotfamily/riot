@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.i18n.RiotMessageCodesResolver;
-import org.riotfamily.common.web.file.FileStoreLocator;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.forms.FormContext;
@@ -68,8 +67,6 @@ public final class FormContextFactory implements MessageSourceAware,
 	private String resourcePath = "/riot/resources";
 	
 	private List optionValuesAdapters = new ArrayList();
-	
-	private FileStoreLocator fileStoreLocator;
 	
 	public FormContextFactory() {
 		registerDefaultOptionValuesAdapters();
@@ -106,9 +103,6 @@ public final class FormContextFactory implements MessageSourceAware,
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		optionValuesAdapters.addAll(applicationContext.getBeansOfType(
 				OptionValuesAdapter.class).values());
-		
-		fileStoreLocator = new FileStoreLocator();
-		fileStoreLocator.setApplicationContext(applicationContext);
 	}
 	
 	private void registerDefaultOptionValuesAdapters() {
@@ -155,8 +149,7 @@ public final class FormContextFactory implements MessageSourceAware,
 			String contextPath, String formUrl) {
 		
 		return new DefaultFormContext(messageResolver, templateRenderer, 
-				contextPath, resourcePath, formUrl, optionValuesAdapters, 
-				fileStoreLocator);
+				contextPath, resourcePath, formUrl, optionValuesAdapters);
 	}
 
 }

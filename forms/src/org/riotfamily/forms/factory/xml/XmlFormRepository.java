@@ -33,18 +33,22 @@ import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.xml.BeanConfigurationWatcher;
 import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.common.xml.DocumentReader;
 import org.riotfamily.common.xml.ValidatingDocumentReader;
+import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.factory.AbstractFormRepository;
+import org.riotfamily.forms.factory.DefaultFormFactory;
 import org.riotfamily.forms.factory.FormFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.io.Resource;
+import org.springframework.util.Assert;
+import org.springframework.validation.Validator;
 
 /**
  *
@@ -63,13 +67,11 @@ public class XmlFormRepository extends AbstractFormRepository implements
 
 	private XmlFormRepositoryDigester digester;
 	
-	private BeanFactory beanFactory;
+	private ConfigurableListableBeanFactory beanFactory;
 		
 	private Class defaultBeanClass;
 	
 	private MimetypesFileTypeMap mimetypesMap;
-	
-	private ImageCropper imageCropper;
 	
 	private Map tinyMCEProfiles;
 	
@@ -150,7 +152,8 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {
-		this.beanFactory = beanFactory;
+		Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory);
+		this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
 	}
 	
 	public void setMimetypesMap(MimetypesFileTypeMap mimetypesMap) {
@@ -161,14 +164,6 @@ public class XmlFormRepository extends AbstractFormRepository implements
 		return this.mimetypesMap;
 	}
 	
-	public ImageCropper getImageCropper() {
-		return this.imageCropper;
-	}
-
-	public void setImageCropper(ImageCropper imageCropper) {
-		this.imageCropper = imageCropper;
-	}
-
 	public Map getTinyMCEConfig(String profile) {
 		if (profile == null) {
 			profile = "default";
@@ -185,6 +180,12 @@ public class XmlFormRepository extends AbstractFormRepository implements
 		configure();
 	}
 
+	public FormFactory createFormFactory(Class beanClass, 
+			FormInitializer initializer, Validator validator) {
+		
+		return new DefaultFormFactory(beanClass, initializer, validator);
+	}
+	
 	public FormFactory getFormFactory(String id) {
 		configWatcher.checkForModifications();
 		return super.getFormFactory(id);
