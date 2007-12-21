@@ -46,6 +46,10 @@ public class CollectionItemEditorBinding implements EditorBinding {
 			return value != null ? value.getClass() : null;
 		}
 
+		public void setEditor(Editor editor) {
+			this.editor = editor;
+		}
+		
 		public Editor getEditor() {
 			return editor;
 		}

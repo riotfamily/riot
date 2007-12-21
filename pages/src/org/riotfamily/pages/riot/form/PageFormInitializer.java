@@ -28,9 +28,11 @@ import java.util.Iterator;
 import org.riotfamily.components.config.ComponentFormRepository;
 import org.riotfamily.components.riot.form.VersionContainerEditorBinder;
 import org.riotfamily.components.service.ContentFactory;
+import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
+import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.element.NestedForm;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.pages.dao.PageDao;
@@ -84,11 +86,15 @@ public class PageFormInitializer implements FormInitializer {
 			NestedForm nestedForm = new NestedForm();
 			nestedForm.setRequired(true);
 			nestedForm.setIndent(false);
+			nestedForm.setTemplate(TemplateUtils.getTemplatePath(this));
 			nestedForm.setEditorBinder(new VersionContainerEditorBinder(contentFactory));
 			Iterator it = factory.getChildFactories().iterator();
 			while (it.hasNext()) {
 				ElementFactory ef = (ElementFactory) it.next();
-				nestedForm.addElement(ef.createElement(nestedForm, form));
+				Editor editor = (Editor) ef.createElement(nestedForm, form, true);
+				Editor display = (Editor) ef.createElement(nestedForm, form, false);
+				display.setValue("Test");
+				nestedForm.addElement(new PagePropertyEditor(editor, display));
 			}
 			form.addElement(nestedForm, "versionContainer");
 		}

@@ -190,15 +190,14 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 	
 	/**
 	 * Returns a new instance of the configured element class.
-	 * @see ElementFactory#createElement(Element, Form)
+	 * @see ElementFactory#createElement(Element, Form, boolean)
 	 */
-	public Element createElement(Element parent, Form form) {
+	public Element createElement(Element parent, Form form, boolean bind) {
 		log.debug("Creating element " + elementClass);
 		
 		Element element = (Element) beanFactory.createBean(elementClass, 
 				AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR, false);
 		
-		//Element element = (Element) BeanUtils.instantiateClass(elementClass);
 		element.setParent(parent);
 		if (beanClass != null) {
 			BeanEditor bee = (BeanEditor) element;
@@ -207,12 +206,11 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 		
 		populateElement(element);
 		
-		if (element instanceof Editor) {
-			if (bind != null) {
-				log.debug("Bind: " + bind);
+		if (bind && element instanceof Editor) {
+			if (this.bind != null) {
 				BeanEditor beanEditor = findEditor(parent, form);
 				Editor editor = (Editor) element;
-				beanEditor.bind(editor, bind);
+				beanEditor.bind(editor, this.bind);
 			}
 		}
 		
@@ -266,7 +264,7 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 			Iterator it = childFactories.iterator();
 			while (it.hasNext()) {
 				ElementFactory factory = (ElementFactory) it.next();
-				Element child = factory.createElement(parent, form);
+				Element child = factory.createElement(parent, form, true);
 				parent.addElement(child);
 			}
 		}

@@ -91,7 +91,7 @@ public class MapEditor extends TemplateElement implements Editor {
 	
 	protected void initCompositeElement() {
 		if (keyElementFactory != null) {
-			keyEditor = (Editor) keyElementFactory.createElement(this, getForm());
+			keyEditor = (Editor) keyElementFactory.createElement(this, getForm(), false);
 			keyEditor.setFieldName(getFieldName() + ".add");
 			if (keyEditor instanceof SelectElement) {
 				SelectElement se = (SelectElement) keyEditor;
@@ -228,7 +228,7 @@ public class MapEditor extends TemplateElement implements Editor {
 			super("item");
 			this.key = key;
 			setSurroundBySpan(false);
-			element = (Editor) itemElementFactory.createElement(this, getForm());
+			element = (Editor) itemElementFactory.createElement(this, getForm(), false);
 			addComponent("element", element);
 			if (removable) {
 				removeButton = new Button();

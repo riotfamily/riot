@@ -100,7 +100,7 @@ public class DefaultFormFactory implements FormFactory {
 		Iterator it = childFactories.iterator();
 		while (it.hasNext()) {
 			ElementFactory factory = (ElementFactory) it.next();
-			Element child = factory.createElement(null, form);
+			Element child = factory.createElement(null, form, true);
 			form.addElement(child);
 		}
 		return form;

@@ -221,7 +221,7 @@ public class ListEditor extends TemplateElement implements Editor,
 	protected ListItem addItem() {		
 		ListItem item = createItem();
 		item.setEditor((Editor) itemElementFactory.createElement(
-				item, getForm()));
+				item, getForm(), false));
 		
 		items.addElement(item);
 		item.focus();

@@ -39,16 +39,16 @@ public abstract class AbstractEditorBase extends AbstractElement {
 	
 	private String fieldName;
 	
-	public EditorBinding getEditorBinding() {
-		return binding;
-	}
-	
 	public final void setEditorBinding(EditorBinding binding) {
 		this.binding = binding;
 		afterBindingSet();
 	}	
 	
 	protected void afterBindingSet() {
+	}
+	
+	public EditorBinding getEditorBinding() {
+		return binding;
 	}
 	
 	public void setDesiredParamName(String desiredParamName) {

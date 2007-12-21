@@ -32,6 +32,6 @@ package org.riotfamily.forms;
  */
 public interface ElementFactory {
 
-	public Element createElement(Element parent, Form form);
+	public Element createElement(Element parent, Form form, boolean bind);
 	
 }

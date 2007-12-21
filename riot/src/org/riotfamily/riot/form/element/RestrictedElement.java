@@ -33,7 +33,7 @@ public class RestrictedElement extends AbstractConditionalElement {
 
 	protected boolean isEditable() {
 		return AccessController.isGranted(
-				"edit-" + getEditor().getEditorBinding().getPropertyPath(), 
+				"edit-" + getEditor().getFieldName(), 
 				getForm().getBackingObject());
 	}
 }

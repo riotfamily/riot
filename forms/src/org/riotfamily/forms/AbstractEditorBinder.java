@@ -195,6 +195,10 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 			return AbstractEditorBinder.this;
 		}
 
+		public void setEditor(Editor editor) {
+			this.editor = editor;
+		}
+		
 		public Editor getEditor() {
 			return editor;
 		}

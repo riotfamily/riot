@@ -40,6 +40,8 @@ public interface EditorBinding {
 	 */
 	public EditorBinder getEditorBinder();
 
+	public void setEditor(Editor editor);
+	
 	/**
 	 * Returns the Editor.
 	 */
