@@ -77,8 +77,11 @@ public abstract class AbstractMultiSelectElement
 					collectionClass = ArrayList.class;
 				}
 			}
-			else {
+			else if (Collection.class.isAssignableFrom(type)) {
 				collectionClass = type;
+			}
+			else {
+				collectionClass = ArrayList.class;
 			}
 		}
 	}
