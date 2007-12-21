@@ -35,7 +35,9 @@
 				value="org.riotfamily.components.riot.form.ContentListEditor" />
 	</override:put>
 
-	<bean id="contentFactory" class="org.riotfamily.components.service.DefaultContentFactory" />
+	<bean id="contentFactory" class="org.riotfamily.components.service.HibernateContentFactory">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
 	
 	<!--
 	  - FormRepository providing component property forms.
