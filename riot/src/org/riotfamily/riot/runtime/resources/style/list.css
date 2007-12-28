@@ -60,6 +60,12 @@ th {
 	text-align: left;
 	font-weight: normal;
 }
+th.col-1 {
+	background: #3d3d3d url(images/corner.gif) top left no-repeat;
+}
+th.commands {
+	background: #3d3d3d url(images/corner.gif) top right no-repeat;
+}
 th.sortable {
 	cursor: pointer;
 	cursor: hand;

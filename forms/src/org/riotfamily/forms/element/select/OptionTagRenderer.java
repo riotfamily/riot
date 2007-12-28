@@ -34,7 +34,7 @@ import org.riotfamily.common.markup.TagWriter;
  */
 public class OptionTagRenderer implements OptionRenderer {
 
-	public void renderOption(Option option, PrintWriter writer) {
+	public void renderOption(Option option, PrintWriter writer, boolean enabled) {
 		TagWriter optionTag = new TagWriter(writer);
 		optionTag.start(Html.OPTION);
 		optionTag.attribute(Html.COMMON_ID, option.getId());

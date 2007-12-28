@@ -24,7 +24,9 @@
 package org.riotfamily.pages.model;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -234,9 +236,34 @@ public class Page {
 				: getVersionContainer().getLiveVersion();
 	}
 	
+	public Page getMasterPage() {
+		Page masterPage = null;
+		Site masterSite = site.getMasterSite();
+		while (masterPage == null && masterSite != null) {
+			masterPage = node.getPage(masterSite);
+			masterSite = masterSite.getMasterSite();
+		}
+		return masterPage;
+	}
+	
+	public Map getMergedProperties(boolean preview) {
+		Map mergedProperties;
+		Page masterPage = getMasterPage();
+		if (masterPage != null) {
+			mergedProperties = masterPage.getMergedProperties(preview);
+		}
+		else {
+			mergedProperties = new HashMap();
+		}
+		mergedProperties.putAll(getProperties(preview));
+		return mergedProperties;
+	}
+	
 	public Map getProperties(boolean preview) {
 		ComponentVersion version = getComponentVersion(preview);
-		return version != null ? version.getUnwrappedProperties() : null;
+		return version != null 
+				? version.getUnwrappedProperties() 
+				: Collections.EMPTY_MAP;
 	}
 
 	public Object getProperty(String key, boolean preview) {
@@ -245,12 +272,11 @@ public class Page {
 	}
 
 	public String getTitle(boolean preview) {
-		//FIXME Unsafe cast
-		String title = (String) getProperty(TITLE_PROPERTY, preview);
-		if (title == null) {
-			title = FormatUtils.xmlToTitleCase(pathComponent);
+		Object title = getProperty(TITLE_PROPERTY, preview);
+		if (title != null) {
+			return title.toString();
 		}
-		return title;
+		return FormatUtils.xmlToTitleCase(pathComponent);
 	}
 	
 	public boolean isDirty() {

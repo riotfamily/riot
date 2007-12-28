@@ -69,7 +69,7 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 	}
 
 	public void renderOption(Option option) {
-		optionRenderer.renderOption(option, getFormContext().getWriter());
+		optionRenderer.renderOption(option, getFormContext().getWriter(), isEnabled());
 	}
 	
 	public void setValueProperty(String valueProperty) {

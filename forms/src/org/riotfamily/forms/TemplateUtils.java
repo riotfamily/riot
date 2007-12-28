@@ -29,6 +29,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.riotfamily.forms.element.TemplateElement;
+
 
 public class TemplateUtils {
 	
@@ -75,6 +77,21 @@ public class TemplateUtils {
 		String template = getTemplatePath(baseClass, "_init");
 		Map model = Collections.singletonMap("element", element);
 		context.getTemplateRenderer().render(template, model, writer);
+		
+		return sw.toString();
+	}
+	
+	public static String getInitScript(TemplateElement element) {
+		return getInitScript(element, element.getClass());
+	}
+	
+	public static String getInitScript(TemplateElement element, Class baseClass) {
+		StringWriter sw = new StringWriter();
+		PrintWriter writer = new PrintWriter(sw);
+				
+		FormContext context = element.getForm().getFormContext();
+		String template = getTemplatePath(baseClass, "_init");
+		context.getTemplateRenderer().render(template, element.getRenderModel(), writer);
 		
 		return sw.toString();
 	}

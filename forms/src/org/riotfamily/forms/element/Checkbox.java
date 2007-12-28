@@ -92,6 +92,7 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 				.attribute(Html.COMMON_ID, getId())
 				.attribute(Html.COMMON_CLASS, getStyleClass())
 				.attribute(Html.INPUT_CHECKED, checked)
+				.attribute(Html.INPUT_DISABLED, !isEnabled())
 				.end();
 	}
 

@@ -199,10 +199,12 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 	}
 
 	public void processRequest(FormRequest request) {
-		text = request.getParameter(getParamName());
-		validate();
-		if (!ErrorUtils.hasErrors(this)) {
-			setValueFromText();
+		if (isEnabled()) {
+			text = request.getParameter(getParamName());
+			validate();
+			if (!ErrorUtils.hasErrors(this)) {
+				setValueFromText();
+			}
 		}
 	}
 
@@ -260,7 +262,9 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 				.attribute(Html.COMMON_CLASS, getStyleClass())
 				.attribute(Html.COMMON_ID, getId())
 				.attribute(Html.INPUT_NAME, getParamName())
-				.attribute(Html.INPUT_VALUE, getText());
+				.attribute(Html.INPUT_VALUE, getText())
+				.attribute(Html.INPUT_DISABLED, !isEnabled());
+
 		if (getMaxLength() != null) {
 			input.attribute(Html.INPUT_MAX_LENGTH, getMaxLength().intValue());
 		}

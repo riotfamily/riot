@@ -86,15 +86,11 @@ public class PageFormInitializer implements FormInitializer {
 			NestedForm nestedForm = new NestedForm();
 			nestedForm.setRequired(true);
 			nestedForm.setIndent(false);
-			nestedForm.setTemplate(TemplateUtils.getTemplatePath(this));
 			nestedForm.setEditorBinder(new VersionContainerEditorBinder(contentFactory));
 			Iterator it = factory.getChildFactories().iterator();
 			while (it.hasNext()) {
 				ElementFactory ef = (ElementFactory) it.next();
-				Editor editor = (Editor) ef.createElement(nestedForm, form, true);
-				Editor display = (Editor) ef.createElement(nestedForm, form, false);
-				display.setValue("Test");
-				nestedForm.addElement(new PagePropertyEditor(editor, display));
+				nestedForm.addElement(new PagePropertyEditor(ef));
 			}
 			form.addElement(nestedForm, "versionContainer");
 		}

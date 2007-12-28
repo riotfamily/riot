@@ -129,6 +129,8 @@ public class Html {
 	
 	public static final String INPUT_CHECKED = "checked";
 	
+	public static final String INPUT_DISABLED = "disabled";
+	
 	public static final String TEXTAREA = "textarea";
 	
 	public static final String TEXTAREA_ROWS = "rows";

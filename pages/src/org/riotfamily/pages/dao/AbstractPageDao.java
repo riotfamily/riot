@@ -187,7 +187,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 			translation.setPublished(page.isPublished());
 		}
 		
-		translation.setVersionContainer(page.getVersionContainer().createCopy());
+		//translation.setVersionContainer(page.getVersionContainer().createCopy());
 		
 		node.addPage(translation);
 		updateNode(node);

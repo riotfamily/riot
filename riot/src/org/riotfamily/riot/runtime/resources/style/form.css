@@ -102,7 +102,7 @@ div.title .no-label {
 }
 
 .element {
-	padding-right: 4px;
+	padding-right: 2px;
 }
 .single .element {
 	margin-top: 6px;
@@ -136,6 +136,7 @@ span.read-only {
 }
 textarea {
 	line-height: 18px;
+	margin: 0px;
 }
 .counter {
 	display:inline;

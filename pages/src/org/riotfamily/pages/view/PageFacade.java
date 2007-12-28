@@ -175,24 +175,10 @@ public class PageFacade {
 	public VersionContainer getVersionContainer() {
 		return page.getVersionContainer();
 	}
-
-	public ComponentVersion getComponentVersion() {
-		return page.getComponentVersion(preview);
-	}
-	
-	public Map getRawProperties() {
-		return page.getProperties(preview);
-	}
-	
+		
 	public Map getProperties() {
 		if (properties == null) {
-			ComponentVersion version = page.getComponentVersion(preview);
-			if (version != null) {
-				properties = version.getUnwrappedProperties();
-			}
-			else {
-				properties = Collections.EMPTY_MAP;
-			}
+			properties = page.getProperties(preview);
 		}
 		return properties;
 	}

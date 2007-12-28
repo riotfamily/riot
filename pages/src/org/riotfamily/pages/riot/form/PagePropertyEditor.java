@@ -23,49 +23,76 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
-import java.beans.PropertyEditor;
-import java.io.PrintWriter;
-
-import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.Editor;
-import org.riotfamily.forms.EditorBinder;
-import org.riotfamily.forms.EditorBinding;
-import org.riotfamily.forms.Element;
+import org.riotfamily.forms.ElementFactory;
+import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.JavaScriptEvent;
-import org.riotfamily.forms.request.FormRequest;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.Site;
+import org.riotfamily.riot.form.ui.FormUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class PagePropertyEditor extends CompositeElement implements Editor {
+public class PagePropertyEditor extends TemplateElement implements Editor {
 
+	ElementFactory elementFactory;
+	
 	private Editor editor;
 	
-	private Element display;
+	private Editor display;
 	
 	private boolean overwrite;
 
 	private ToggleButton toggleButton;
 	
-	public PagePropertyEditor(Editor editor, Element display) {
-		this.editor = editor;
-		this.display = display;
+	public PagePropertyEditor(ElementFactory elementFactory) {
+		this.elementFactory = elementFactory;
 		toggleButton = new ToggleButton();
-		addComponent(editor);
-		addComponent(display);
-		addComponent(toggleButton);
-		setSurroundBySpan(true);
+		addComponent("toggleButton", toggleButton);
+	}
+	
+	protected void initCompositeElement() {
+		editor = (Editor) elementFactory.createElement(this, getForm(), true);
 		editor.getEditorBinding().setEditor(this);
-	}
-
-	public ToggleButton getToggleButton() {
-		return this.toggleButton;
-	}
+		addComponent("editor", editor);
 		
+		display = (Editor) elementFactory.createElement(this, getForm(), false);
+		display.setEnabled(false);
+		addComponent("display", display);
+		
+		Page page = (Page) getForm().getBackingObject();
+		PageNode node = page.getNode();
+		Site site = page.getSite();
+		
+		if (site == null) {
+			Object parent = FormUtils.loadParent(getForm());
+			if (parent instanceof Page) {
+				site = ((Page) parent).getSite();
+			}
+			else if (parent instanceof Site) {
+				site = (Site) parent;
+			}
+		}
+		if (site != null) {
+			Page masterPage = null;
+			Site masterSite = site.getMasterSite();
+			while (masterPage == null && masterSite != null) {
+				masterPage = node.getPage(masterSite);
+				masterSite = masterSite.getMasterSite();
+			}
+			if (masterPage != null) {
+				String property = editor.getEditorBinding().getProperty();
+				display.setValue(masterPage.getProperty(property, true));
+			}
+		}
+	}
+	
 	public String getLabel() {
-		return editor.getLabel();
+		return null;
 	}
 	
 	public void setValue(Object value) {
@@ -76,41 +103,28 @@ public class PagePropertyEditor extends CompositeElement implements Editor {
 	public Object getValue() {
 		return overwrite ? editor.getValue() : null;
 	}
-
-	protected void processRequestCompontents(FormRequest request) {
-		editor.processRequest(request);
-		toggleButton.processRequest(request);
-	}
 	
-	protected void renderComponents(PrintWriter writer) {
-		if (overwrite) {
-			editor.render(writer);
-		}
-		else {
-			display.render(writer);
-		}
+	public boolean isOverwrite() {
+		return this.overwrite;
 	}
-	
+		
 	protected void toggle() {
 		overwrite = !overwrite;
 		if (getFormListener() != null) {
 			getFormListener().elementChanged(this);			
 		}
 	}
-
+	
 	private class ToggleButton extends Button {
 				
 		public String getCssClass() {
 			return overwrite 
-					? "button button-inherit" 
-					: "button button-overwrite";
+					? "button-toggle button-inherit" 
+					: "button-toggle button-overwrite";
 		}
 		
 		protected void onClick() {
 			toggle();
-			if (getFormListener() != null) {
-				getFormListener().elementChanged(this);			
-			}
 		}
 		
 		public int getEventTypes() {

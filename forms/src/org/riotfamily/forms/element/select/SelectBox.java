@@ -93,6 +93,7 @@ public class SelectBox extends AbstractSingleSelectElement {
 		selectTag.attribute(Html.INPUT_NAME, getParamName());
 		selectTag.attribute(Html.COMMON_ID, getId());
 		selectTag.attribute(Html.SELECT_SIZE, 1);
+		selectTag.attribute(Html.INPUT_DISABLED, !isEnabled());
 		selectTag.body();
 
 		Iterator it = getOptions().iterator();
