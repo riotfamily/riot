@@ -62,7 +62,7 @@ public class MapEntryDecorator implements BeanDefinitionDecorator {
 		}
 		Element ele = (Element) node;
 		String key = ele.getAttribute(keyAttribute);
-		map.put(key, parserContext.getDelegate().parsePropertySubElement(ele, bd));
+		map.put(key, parserContext.getDelegate().parsePropertyValue(ele, bd, key));
 		return definition;
 	}
 }
