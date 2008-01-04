@@ -19,7 +19,8 @@
 		<value>classpath:org/riotfamily/media/dao/hibernate/media.hbm.xml</value>
 	</override:add>
 	
-	<bean id="mediaDao" class="org.springframework.aop.framework.ProxyFactoryBean">
+	<bean id="mediaDao" class="org.springframework.aop.framework.ProxyFactoryBean"
+			depends-on="fileDataInitializer">
 		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
 		<property name="target"><ref bean="mediaDaoTarget" /></property>
 	</bean>
@@ -32,8 +33,9 @@
 		<property name="uriPrefix" value="${riot.media.uriPrefix=/media}" />
 	</bean>
 	
-	<bean class="org.riotfamily.media.model.FileStoreInjector">
-		<property name="fileStore" ref="fileStore" />
+	<bean id="fileDataInitializer" class="org.riotfamily.common.beans.MethodInvokingBean">
+		<property name="staticMethod" value="org.riotfamily.media.model.FileData.setFileStore" />
+		<property name="argument" ref="fileStore"/>
 	</bean>
-	
+
 </beans>

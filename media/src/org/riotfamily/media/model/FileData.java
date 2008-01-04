@@ -43,6 +43,10 @@ public class FileData {
 	
 	protected static FileStore fileStore;
 
+	public static void setFileStore(FileStore fileStore) {
+		FileData.fileStore = fileStore;
+	}
+	
 	private Long id;
 	
 	private String uri;
@@ -57,10 +61,6 @@ public class FileData {
 	
 	private Date creationDate;
 	
-	public static void setFileStore(FileStore fileStore) {
-		FileData.fileStore = fileStore;
-	}
-		
 	public FileData() {
 	}
 
