@@ -83,7 +83,7 @@ public class ListEditor extends TemplateElement implements Editor,
 		addButton.setLabel("Add");
 		addButton.addClickListener(new ClickListener() {
 			public void clicked(ClickEvent event) {
-				addItem();				
+				addItem().focus();				
 			}
 		});
 		addComponent("addButton", addButton);
@@ -224,7 +224,6 @@ public class ListEditor extends TemplateElement implements Editor,
 				item, getForm(), false));
 		
 		items.addElement(item);
-		item.focus();
 		item.setValue(null);
 		
 		return item;
