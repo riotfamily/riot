@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.0.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-6.5.xsd">
+		http://www.riotfamily.org/schema/common/override-7.0.xsd">
 
 	<!-- 
 	<import resource="classpath:org/riotfamily/media/runtime/db-schema.xml"/>

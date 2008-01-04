@@ -7,13 +7,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.riotfamily.org/schema/riot/riot-config
-		http://www.riotfamily.org/schema/riot/riot-config.xsd
+		http://www.riotfamily.org/schema/riot/riot-config-7.0.xsd
 		http://www.riotfamily.org/schema/riot/editor-config
-		http://www.riotfamily.org/schema/riot/editor-config.xsd
+		http://www.riotfamily.org/schema/riot/editor-config-7.0.xsd
 		http://www.riotfamily.org/schema/riot/list-config
-		http://www.riotfamily.org/schema/riot/list-config.xsd
+		http://www.riotfamily.org/schema/riot/list-config-7.0.xsd
 		http://www.riotfamily.org/schema/forms/form-config
-		http://www.riotfamily.org/schema/forms/form-config.xsd">
+		http://www.riotfamily.org/schema/forms/form-config-7.0.xsd">
 
 	<ed:list id="riotUsers" list-ref="riotUsers" icon="users">
 		<ed:form form-ref="riotUser" />
