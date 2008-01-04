@@ -88,8 +88,10 @@ Control.ColorPicker.prototype = {
     this.updateOnClickPickerListener = this.updateSelector.bindAsEventListener(this);
     this.closeOnClickOutsideListener = this.closeIfOutside.bindAsEventListener(this);
     Event.observe(this.swatch, "click", this.toggleOnClickListener);
-    Event.observe(this.field, "change", this.updateOnChangeListener);
-    Event.observe(this.control.input, "change", this.updateOnChangeListener);
+    Event.observe(this.field, "keyup", this.updateOnChangeListener);
+    Event.observe(this.field, "blur", this.updateOnChangeListener);
+    Event.observe(this.control.input, "keyup", this.updateOnChangeListener);
+    Event.observe(this.control.input, "blur", this.updateOnChangeListener);
 
     this.updateSwatch();
   },
@@ -141,7 +143,10 @@ Control.ColorPicker.prototype = {
     this.update();
   },
   updateFromFieldValue : function(event) {
-    if (!this.isOpen) return;
+    if (!this.isOpen) {
+    	this.updateSwatch();
+    	return;
+    }
     var field = (event && Event.findElement(event, "input")) || this.field;
     var rgb = YAHOO.util.Color.hex2rgb( field.value );
     if (!YAHOO.util.Color.isValidRGB(rgb)) return;
