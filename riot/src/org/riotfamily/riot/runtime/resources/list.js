@@ -195,7 +195,7 @@ RiotList.prototype = {
 	execCommand: function(item, commandId, confirmed) {
 		if (!this.busy) {
 			this.busy = true;
-			this.table.addClassName('busy');
+			if (this.table) this.table.addClassName('busy');
 			ListService.execCommand(this.key, item, commandId, confirmed,
 					this.processCommandResult.bind(this));
 		}
@@ -219,7 +219,7 @@ RiotList.prototype = {
 				}
 			}
 			else if (result.action == 'popup') {
-				this.table.removeClassName('busy');
+				if (this.table) this.table.removeClassName('busy');
 				var win = window.open(result.url, result.windowName || 'commandPopup');
 				if (!win) {
 					alert(result.popupBlockerMessage || 'The Popup has been blocked by the browser.');
@@ -239,11 +239,11 @@ RiotList.prototype = {
 				window.location.reload();
 			}
 			else if (result.action == 'eval') {
-				this.table.removeClassName('busy');
+				if (this.table) this.table.removeClassName('busy');
 				eval(result.script);
 			}
 			else if (result.action == 'setRowStyle') {
-				this.table.removeClassName('busy');
+				if (this.table) this.table.removeClassName('busy');
 				alert(result.objectId + ': ' + result.rowStyle);
 			}
 		}
