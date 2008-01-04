@@ -139,7 +139,6 @@
 		<xsd:complexContent>
 			<xsd:extension base="simple-editor">
 				<xsd:choice>
-					<xsd:element name="model" type="model" />
 					<xsd:element name="options" type="options" />
 					<xsd:element name="option" type="option" maxOccurs="unbounded" />
 				</xsd:choice>
@@ -158,15 +157,6 @@
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
-
-	<!-- Deprecated, use options instead -->
-	<xsd:complexType name="model">
-		<xsd:choice minOccurs="0" maxOccurs="unbounded">
-			<xsd:element name="set-property" />
-		</xsd:choice>
-		<xsd:attribute name="class" type="xsd:string" />
-		<xsd:attribute name="ref" type="xsd:string" />
-	</xsd:complexType>
 	
 	<xsd:complexType name="options">
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -180,15 +170,6 @@
 		<xsd:attribute name="value" type="xsd:string" />
 		<xsd:attribute name="ref" type="xsd:string" />
 	</xsd:complexType>
-	
-	<!-- Deprecated, use property instead -->
-	<xsd:element name="set-property">
-		<xsd:complexType>
-			<xsd:attribute name="name" type="xsd:string" use="required" />
-			<xsd:attribute name="value" type="xsd:string" />
-			<xsd:attribute name="ref" type="xsd:string" />
-		</xsd:complexType>
-	</xsd:element>
 	
 	<xsd:element name="property">
 		<xsd:complexType>
