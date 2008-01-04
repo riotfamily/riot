@@ -17,21 +17,7 @@
 	</xsd:element>
 
 	<xsd:complexType name="abstract-component" abstract="true">
-		<xsd:choice minOccurs="0" maxOccurs="unbounded">
-			<xsd:element name="property-processor">
-				<xsd:complexType>
-					<xsd:group ref="beans:beanElements"/>
-					<xsd:attribute name="property" type="xsd:string" use="required" />
-					<xsd:attributeGroup ref="beans:beanAttributes"/>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="listeners">
-				<xsd:complexType>
-					<xsd:sequence maxOccurs="unbounded">
-						<xsd:element ref="beans:bean" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
+		<xsd:choice minOccurs="0">
 			<xsd:element name="defaults">
 				<xsd:complexType>
 					<xsd:sequence maxOccurs="unbounded" minOccurs="0">
