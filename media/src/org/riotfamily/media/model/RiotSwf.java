@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.model;
 
+
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0

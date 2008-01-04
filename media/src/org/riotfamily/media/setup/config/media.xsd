@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.riotfamily.org/schema/media/setup"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	attributeFormDefault="unqualified" elementFormDefault="qualified"
+	targetNamespace="http://www.riotfamily.org/schema/media/setup">
+
+	<xsd:import namespace="http://www.springframework.org/schema/beans"
+		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.0.xsd" />
+
+	<xsd:annotation>
+		<xsd:documentation><![CDATA[
+		Custom namespace to facilitate the creation of RiotFile instances
+		(and its subclasses) during setup. 
+		]]></xsd:documentation>
+	</xsd:annotation>
+	
+	<xsd:element name="file" type="mediaType" />
+	<xsd:element name="image" type="mediaType" />
+	<xsd:element name="swf" type="mediaType" />
+	
+	<xsd:complexType name="mediaType">
+		<xsd:attribute name="resource" type="xsd:string"/>
+	</xsd:complexType>
+	
+</xsd:schema>

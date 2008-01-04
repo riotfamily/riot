@@ -14,48 +14,30 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * Portions created by the Initial Developer are Copyright (C) 2008
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.media.model;
+package org.riotfamily.media.setup.config;
 
+import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
+import org.riotfamily.media.setup.RiotFileFactoryBean;
+import org.riotfamily.media.setup.RiotImageFactoryBean;
+import org.riotfamily.media.setup.RiotSwfFactoryBean;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class RiotImage extends RiotFile {
+public class MediaNamespaceHandler extends GenericNamespaceHandlerSupport {
 
-	public RiotImage() {
-		super();
-	}
-
-	public RiotImage(ImageData data) {
-		super(data);
-	}
-
-	public RiotFile createCopy() {
-		return new RiotImage(getImageData());
+	public void init() {
+		register("file", RiotFileFactoryBean.class);
+		register("image", RiotImageFactoryBean.class);
+		register("swf", RiotSwfFactoryBean.class);
 	}
 	
-	public ImageData getImageData() {
-		return (ImageData) getFileData();
-	}
-
-	public int getWidth() {
-		return getImageData().getWidth();
-	}
-	
-	public int getHeight() {
-		return getImageData().getHeight();
-	}
-
-	public String getFormat() {
-		return getImageData().getFormat();
-	}
-
 }

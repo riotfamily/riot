@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.model;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.riotfamily.common.util.FlashInfo;
@@ -48,7 +49,16 @@ public class SwfData extends FileData {
 
 	public SwfData(MultipartFile multipartFile) throws IOException {
 		super(multipartFile);
-		FlashInfo flashInfo = new FlashInfo(getFile());
+		inspect(getFile());
+	}
+	
+	public SwfData(File file) throws IOException {
+		super(file);
+		inspect(file);
+	}
+	
+	protected void inspect(File file) throws IOException {
+		FlashInfo flashInfo = new FlashInfo(file);
 		setContentType(CONTENT_TYPE);
 		if (flashInfo.isValid()) {
 			width = flashInfo.getWidth();

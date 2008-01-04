@@ -23,11 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.model;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.devlib.schmidt.imageinfo.ImageInfo;
 import org.springframework.web.multipart.MultipartFile;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -47,6 +50,11 @@ public class ImageData extends FileData {
 	public ImageData(MultipartFile multipartFile) throws IOException {
 		super(multipartFile);
 		inspect(multipartFile.getInputStream());
+	}
+	
+	public ImageData(File file) throws IOException {
+		super(file);
+		inspect(new FileInputStream(file));
 	}
 
 	protected void inspect(InputStream in) {

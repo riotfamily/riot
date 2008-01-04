@@ -74,6 +74,17 @@ public class FileData {
 		uri = fileStore.store(multipartFile.getInputStream(), fileName);
 	}
 	
+	public FileData(File file) throws IOException {
+		fileName = file.getName();
+		size = file.length ();
+		//FIXME Use static FileTypeMap
+		//contentType = file.getContentType();
+		creationDate = new Date();
+		//FIXME Does not work with SwfUpload (no session, no user)
+		//owner = AccessController.getCurrentUser().getUserId();
+		uri = fileStore.store(new FileInputStream(file), fileName);
+	}
+	
 	public Long getId() {
 		return this.id;
 	}

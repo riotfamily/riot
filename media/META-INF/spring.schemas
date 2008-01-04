@@ -1,2 +1,6 @@
 http\://www.riotfamily.org/schema/media/form-elements.xsd=org/riotfamily/media/riot/form/form-elements.xsd
 http\://www.riotfamily.org/schema/media/form-elements-7.0.xsd=org/riotfamily/media/riot/form/form-elements.xsd
+
+http\://www.riotfamily.org/schema/media/setup.xsd=org/riotfamily/media/setup/config/media.xsd
+http\://www.riotfamily.org/schema/media/setup-7.0.xsd=org/riotfamily/media/setup/config/media.xsd
+
