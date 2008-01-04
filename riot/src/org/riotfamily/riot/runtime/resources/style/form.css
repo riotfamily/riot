@@ -88,6 +88,9 @@ label {
 	color: #3d3d3d;
 	-moz-user-select: none;
 }
+label.disabled {
+	color: #888;
+}
 
 div.title {
 	background: ${highlight} url(images/list.gif) top left no-repeat;
@@ -411,7 +414,7 @@ table.item .indent {
 }
 #elements input.calendar-input,
 #elements input.color-input {
-	width: 116px;
+	width: 114px;
 	display: inline;
 	margin-right: 5px;
 }

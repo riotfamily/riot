@@ -23,11 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.riot.form;
 
-import java.util.Iterator;
-
-import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentList;
-import org.riotfamily.components.service.ContentFactory;
 import org.riotfamily.forms.element.collection.ListEditor;
 import org.riotfamily.forms.element.collection.ListItem;
 
@@ -37,50 +33,12 @@ import org.riotfamily.forms.element.collection.ListItem;
  */
 public class ContentListEditor extends ListEditor implements ContentEditor {
 
-	private ContentFactory contentFactory;
-	
-	private ContentList contentList;
-	
-	public ContentListEditor(ContentFactory contentFactory) {
-		this.contentFactory = contentFactory;
-	}
-
-	public void setValue(Object value) {
-		if (value != null) {
-			if (value instanceof ContentList) {
-				contentList = (ContentList) value;
-				Iterator it = contentList.getContents().iterator();			
-				while (it.hasNext()) {
-					ListItem item = addItem();
-					item.setValue(it.next());
-				}	
-			}
-			else {
-				throw new IllegalArgumentException("Value must be a ContentList");
-			}
-		}
-	}
-	
-	public Object getValue() {
-		if (contentList == null) {
-			contentList = new ContentList();
-		}
-		else {
-			contentList.clear();
-		}
-		Iterator it = getListItems().iterator();
-		while (it.hasNext()) {
-			ListItem item = (ListItem) it.next();
-			Object value = item.getValue();
-			if (value != null) {
-				contentList.addContent((Content) value);
-			}
-		}
-		return contentList;
+	public ContentListEditor() {
+		setCollectionClass(ContentList.class);
 	}
 	
 	protected ListItem createItem() {
-		return new ContentListItem(this, contentFactory);
+		return new ContentListItem(this);
 	}
 	
 }

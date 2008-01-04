@@ -27,16 +27,14 @@ import java.util.Iterator;
 
 import org.riotfamily.components.config.ComponentFormRepository;
 import org.riotfamily.components.riot.form.VersionContainerEditorBinder;
-import org.riotfamily.components.service.ContentFactory;
-import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
-import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.element.NestedForm;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.form.ui.FormUtils;
 
 /**
@@ -49,16 +47,11 @@ public class PageFormInitializer implements FormInitializer {
 	
 	private ComponentFormRepository repository;
 
-	private ContentFactory contentFactory;
-	
-	
 	public PageFormInitializer(PageDao pageDao, 
-			ComponentFormRepository repository, 
-			ContentFactory contentFactory) {
+			ComponentFormRepository repository) {
 		
 		this.pageDao = pageDao;
 		this.repository = repository;
-		this.contentFactory = contentFactory;
 	}
 
 	public void initForm(Form form) {
@@ -79,21 +72,58 @@ public class PageFormInitializer implements FormInitializer {
 		}
 		addComponentFormElements(form, handlerName);
 	}
-
+	
 	private void addComponentFormElements(Form form, String id) {
+		boolean present = false;
+		NestedForm nestedForm = new NestedForm();
+		nestedForm.setRequired(true);
+		nestedForm.setIndent(false);
+		nestedForm.setEditorBinder(new VersionContainerEditorBinder());
+		Page masterPage = getMasterPage(form);
+		if (masterPage == null) {
+			present |= addPagePropertyEditors(form, nestedForm, 
+					"master-" + id, null);
+		}
+		present |= addPagePropertyEditors(form, nestedForm, id, masterPage);
+		if (present) {
+			form.addElement(nestedForm, "versionContainer");
+		}
+	}
+	
+	private boolean addPagePropertyEditors(Form form, NestedForm nestedForm, String id, Page masterPage) {
+		boolean present = false;
 		if (repository.containsForm(id)) {
 			FormFactory factory = repository.getFormFactory(id);
-			NestedForm nestedForm = new NestedForm();
-			nestedForm.setRequired(true);
-			nestedForm.setIndent(false);
-			nestedForm.setEditorBinder(new VersionContainerEditorBinder(contentFactory));
 			Iterator it = factory.getChildFactories().iterator();
 			while (it.hasNext()) {
 				ElementFactory ef = (ElementFactory) it.next();
-				nestedForm.addElement(new PagePropertyEditor(ef));
+				nestedForm.addElement(new PagePropertyEditor(ef, masterPage));
+				present = true;
 			}
-			form.addElement(nestedForm, "versionContainer");
 		}
+		return present;
+	}
+	
+	
+	private Page getMasterPage(Form form) {
+		Page page = (Page) form.getBackingObject();
+		Site site = page.getSite();
+		if (site == null) {
+			Object parent = FormUtils.loadParent(form);
+			if (parent instanceof Page) {
+				site = ((Page) parent).getSite();
+			}
+			else if (parent instanceof Site) {
+				site = (Site) parent;
+			}
+		}
+		if (site != null) {
+			Site masterSite = site.getMasterSite();
+			if (masterSite != null) {
+				return page.getNode().getPage(masterSite);
+			}
+		}
+		return null;
 	}
 
 }

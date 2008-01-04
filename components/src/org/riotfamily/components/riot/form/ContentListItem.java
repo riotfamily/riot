@@ -24,7 +24,7 @@
 package org.riotfamily.components.riot.form;
 
 import org.riotfamily.components.model.Content;
-import org.riotfamily.components.service.ContentFactory;
+import org.riotfamily.components.model.ContentFactoryService;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.element.collection.ListEditor;
 import org.riotfamily.forms.element.collection.ListItem;
@@ -37,11 +37,8 @@ public class ContentListItem extends ListItem {
 
 	private Content content;
 	
-	private ContentFactory contentFactory;
-	
-	public ContentListItem(ListEditor list, ContentFactory contentFactory) {
+	public ContentListItem(ListEditor list) {
 		super(list);
-		this.contentFactory = contentFactory;
 	}
 	
 	public void setValue(Object value) {
@@ -64,13 +61,16 @@ public class ContentListItem extends ListItem {
 		if (value instanceof Content) {
 			return value;
 		}
-		if (content == null) {
-			content = contentFactory.createContent(value);
+		if (content != null) {
+			try {
+				content.setValue(value);
+				return content;
+			}
+			catch (ClassCastException e) {
+				//FIXME Implementors should throw a ContentException by contract!
+			}
 		}
-		else {
-			content.setValue(value);
-		}
-		return content;
+		return ContentFactoryService.createContent(value);
 	}
 
 }

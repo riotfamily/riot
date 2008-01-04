@@ -56,8 +56,6 @@ import org.riotfamily.components.context.RequestContextExpiredException;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.FileContent;
-import org.riotfamily.components.model.StringContent;
 import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.media.dao.MediaDao;
 import org.riotfamily.media.model.CroppedImageData;
@@ -69,6 +67,7 @@ import org.riotfamily.riot.security.session.LoginManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -128,8 +127,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	public String getText(Long containerId, String property) {
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
 		ComponentVersion version = container.getLatestVersion();
-		//FIXME Unsafe cast: Value could be of any type!
-		return (String) version.getProperty(property);
+		return ObjectUtils.nullSafeToString(version.getValue(property));
 	}
 
 	/**
@@ -138,8 +136,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	public void updateText(Long containerId, String property, String text) {
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
 		ComponentVersion version = getOrCreatePreviewVersion(container);
-		//FIXME Reuse StringContent object ... use ContentMapWrapper code here
-		version.setProperty(property, new StringContent(text));
+		version.setValue(property, text);
 		componentDao.saveOrUpdateComponentVersion(version);
 		ComponentCacheUtils.invalidateContainer(
 				cache, version.getContainer(), true);
@@ -156,8 +153,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		RiotImage croppedImage = new RiotImage(new CroppedImageData(
 				original, imageCropper, width, height, x, y, scaledWidth));
 		
-		//FIXME Reuse FileContent object ... use ContentMapWrapper code here
-		version.setProperty(property, new FileContent(croppedImage));
+		version.setValue(property, croppedImage);
 		componentDao.saveOrUpdateComponentVersion(version);
 		ComponentCacheUtils.invalidateContainer(
 				cache, version.getContainer(), true);
@@ -170,8 +166,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		ComponentVersion version = getOrCreatePreviewVersion(container);
 		
 		RiotFile image = mediaDao.loadFile(imageId);
-		//FIXME Reuse FileContent object ... use ContentMapWrapper code here
-		version.setProperty(property, new FileContent(image));
+		version.setValue(property, image);
 		componentDao.saveOrUpdateComponentVersion(version);
 		ComponentCacheUtils.invalidateContainer(
 				cache, version.getContainer(), true);
@@ -217,8 +212,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		log.debug("Inserting chunks " + StringUtils.arrayToCommaDelimitedString(chunks));
 		VersionContainer container = componentDao.loadVersionContainer(containerId);
 		ComponentVersion version = getOrCreatePreviewVersion(container);
-		//FIXME Reuse StringContent object ... use ContentMapWrapper code here
-		version.setProperty(property, new StringContent(chunks[0]));
+		version.setValue(property, chunks[0]);
 		componentDao.saveOrUpdateComponentVersion(version);
 		ComponentCacheUtils.invalidateContainer(
 				cache, version.getContainer(), true);
@@ -277,8 +271,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	private VersionContainer createVersionContainer(String type, Map properties) {
 		VersionContainer container = new VersionContainer(type);
 		ComponentVersion version = new ComponentVersion();
-		//FIXME The feature is currently unused. To support this we would need a ContentMapWrapper or so ...
-		//version.setProperties(properties);
+		version.setValues(properties);
 		container.setPreviewVersion(version);
 		componentDao.saveVersionContainer(container);
 		return container;

@@ -106,7 +106,7 @@ public class InplaceMacroHelper {
 				? container.getLatestVersion()
 				: container.getLiveVersion();
 
-		return version.getUnwrappedProperties();
+		return version.getValues();
 	}
 	
 	public String getObjectId(String listId, Object object) {

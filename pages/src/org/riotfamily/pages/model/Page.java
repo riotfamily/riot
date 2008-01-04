@@ -262,13 +262,13 @@ public class Page {
 	public Map getProperties(boolean preview) {
 		ComponentVersion version = getComponentVersion(preview);
 		return version != null 
-				? version.getUnwrappedProperties() 
+				? version.getValues() 
 				: Collections.EMPTY_MAP;
 	}
 
 	public Object getProperty(String key, boolean preview) {
 		ComponentVersion version = getComponentVersion(preview);
-		return version != null ? version.getProperty(key) : null;
+		return version != null ? version.getValue(key) : null;
 	}
 
 	public String getTitle(boolean preview) {

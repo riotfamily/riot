@@ -55,7 +55,7 @@ public class ViewComponent extends AbstractComponent {
 			String positionClassName, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		Map model = componentVersion.getUnwrappedProperties();
+		Map model = componentVersion.getValues();
 		model.put(POSITION_CLASS, positionClassName);
 		model.put(COMPONENT_ID, String.valueOf(componentVersion.getId()));
 		model.put(THIS, componentVersion);

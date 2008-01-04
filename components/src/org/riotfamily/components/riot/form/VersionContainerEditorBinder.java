@@ -23,12 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.riot.form;
 
-import java.util.Map;
-
 import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.VersionContainer;
-import org.riotfamily.components.service.ContentFactory;
 import org.riotfamily.forms.AbstractEditorBinder;
 import org.springframework.util.Assert;
 
@@ -38,18 +34,10 @@ import org.springframework.util.Assert;
  */
 public class VersionContainerEditorBinder extends AbstractEditorBinder {
 
-	private ContentFactory contentFactory;
-	
 	private VersionContainer container;
 	
 	private ComponentVersion previewVersion;
-	
-	private Map properties;
-	
-	public VersionContainerEditorBinder(ContentFactory contentFactory) {
-		this.contentFactory = contentFactory;
-	}
-	
+		
 	public boolean isEditingExistingBean() {
 		return true;
 	}
@@ -72,7 +60,6 @@ public class VersionContainerEditorBinder extends AbstractEditorBinder {
 				previewVersion = new ComponentVersion();
 			}
 		}
-		properties = previewVersion.getProperties();
 	}
 	
 	public Object getBackingObject() {
@@ -89,34 +76,11 @@ public class VersionContainerEditorBinder extends AbstractEditorBinder {
 	}
 
 	public Object getPropertyValue(String property) {
-		if (getEditor(property) instanceof ContentEditor) {
-			return properties.get(property);
-		}
-		Content content = (Content) properties.get(property);
-		return content != null ? content.getValue() : null;
+		return previewVersion.getValue(property);
 	}
 
 	public void setPropertyValue(String property, Object value) {
-		if (value == null) {
-			properties.remove(property);
-		}
-		else if (value instanceof Content) {
-			properties.put(property, value);
-		}
-		else {
-			Content content = (Content) properties.get(property);
-			if (content != null) {
-				try {
-					content.setValue(value);
-					return;
-				}
-				catch (ClassCastException e) {
-				}
-			}
-			content = contentFactory.createContent(value);
-			Assert.notNull(content, "ContentFactory returned null for value: " + value);
-			properties.put(property, content);
-		}
+		previewVersion.setValue(property, value);
 	}
 
 }

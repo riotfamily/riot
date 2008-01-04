@@ -29,69 +29,39 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class ContentMap extends Content {
+public class ContentMap extends Content implements Map {
 
 	private Map contentMap;
 	
 	public ContentMap() {
 	}
 
-	public ContentMap(Map contentMap) {
-		this.contentMap = contentMap;
+	public ContentMap(Map map) {
+		putAll(map);
 	}
 	
 	public Object getValue() {
-		return contentMap;
+		return this;
 	}
 	
 	public void setValue(Object value) {
-		contentMap = (Map) value;
+		//contentMap = (Map) value;
 	}
 	
-	public Content remove(String key) {
+	public Content getContent(String key) {
 		if (contentMap != null) {
-			return (Content) contentMap.remove(key);
+			return (Content) contentMap.get(key);
 		}
 		return null;
 	}
 	
-	public void clear() {
-		if (contentMap != null) {
-			contentMap.clear();
-		}
-	}
-	
-	public void put(String key, Content value) {
-		if (contentMap == null) {
-			contentMap = new HashMap();
-		}
-		contentMap.put(key, value);
-	}
-	
-	public Content get(String key) {
-		if (contentMap == null) {
-			return null;
-		}
-		return (Content) contentMap.get(key);
-	}
-	
-	public Object getUwrapped(String key) {
-		if (contentMap == null) {
-			return null;
-		}
-		Content content = (Content) contentMap.get(key);
-		if (content == null) {
-			return null;
-		}
-		return content.unwrap();
-	}
-
-	public Map getUnwrappedMap() {
+	public Object unwrap() {
 		if (contentMap == null) {
 			return Collections.EMPTY_MAP;
 		}
@@ -108,10 +78,6 @@ public class ContentMap extends Content {
 			}
 		}
 		return Collections.unmodifiableMap(result);
-	}
-	
-	public Object unwrap() {
-		return getUnwrappedMap();
 	}
 	
 	public Content deepCopy() {
@@ -144,4 +110,93 @@ public class ContentMap extends Content {
 		}
 		return result;
 	}
+
+	public void clear() {
+		if (contentMap != null) {
+			contentMap.clear();
+		}
+	}
+
+	public boolean containsKey(Object key) {
+		return contentMap != null && contentMap.containsKey(key);
+	}
+
+	public boolean containsValue(Object value) {
+		return contentMap != null && contentMap.containsValue(value);
+	}
+
+	public Set keySet() {
+		if (contentMap == null) {
+			return Collections.EMPTY_SET;
+		}
+		return contentMap.keySet();
+	}
+	
+	public Set entrySet() {
+		if (contentMap == null) {
+			return Collections.EMPTY_SET;
+		}
+		return contentMap.entrySet();
+	}
+	
+	public Collection values() {
+		if (contentMap == null) {
+			return Collections.EMPTY_SET;
+		}
+		return contentMap.values();
+	}
+	
+	public boolean isEmpty() {
+		return contentMap == null || contentMap.isEmpty();
+	}
+	
+	public int size() {
+		if (contentMap == null) {
+			return 0;
+		}
+		return contentMap.size();
+	}
+	
+	public Object remove(Object key) {
+		if (contentMap != null) {
+			return contentMap.remove(key);
+		}
+		return null;
+	}
+
+	public Object get(Object key) {
+		if (contentMap != null) {
+			Content content = (Content) contentMap.get(key);
+			if (content != null) {
+				return content.getValue();
+			}
+		}
+		return null;
+	}
+
+	public Object put(Object key, Object value) {
+		if (value == null) {
+			return remove(key);
+		}
+		if (contentMap == null) {
+			contentMap = new HashMap();
+		}
+		if (value instanceof Content) {
+			return contentMap.put(key, value);
+		}
+		Content oldValue = (Content) contentMap.get(key);
+		contentMap.put(key, ContentFactoryService.createOrUpdateContent(oldValue, value));
+		return oldValue;
+	}
+
+	public void putAll(Map map) {
+		if (map != null) {
+			Iterator it = map.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry entry = (Map.Entry) it.next();
+				put(entry.getKey(), entry.getValue());
+			}
+		}
+	}
+
 }

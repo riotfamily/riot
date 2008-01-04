@@ -28,7 +28,17 @@
 		<property name="viewNameSuffix" value=".ftl" />
 	</bean>
 
-	<bean id="componentDao" class="org.springframework.aop.framework.ProxyFactoryBean">
+	<bean id="contentFactory" class="org.riotfamily.components.model.HibernateContentFactory">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+	
+	<bean id="contentFactorySerivce" class="org.riotfamily.common.beans.MethodInvokingBean">
+		<property name="staticMethod" value="org.riotfamily.components.model.ContentFactoryService.setContentFactory" />
+		<property name="argument" ref="contentFactory"/>
+	</bean>
+	
+	<bean id="componentDao" class="org.springframework.aop.framework.ProxyFactoryBean"
+			depends-on="contentFactorySerivce">
 		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
 		<property name="target"><ref bean="componentDaoTarget" /></property>
 	</bean>

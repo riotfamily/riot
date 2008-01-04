@@ -37,7 +37,7 @@ public class ComponentVersion {
 
 	private Long id;
 
-	private Map properties;
+	private Map contents;
 
 	private boolean dirty;
 
@@ -49,12 +49,12 @@ public class ComponentVersion {
 	public ComponentVersion(ComponentVersion prototype) {
 		if (prototype != null) {
 			this.container = prototype.getContainer();
-			this.properties = new HashMap();
-			Iterator it = prototype.getProperties().entrySet().iterator();
+			this.contents = new HashMap();
+			Iterator it = prototype.getContents().entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry) it.next();
 				Content content = (Content) entry.getValue();
-				this.properties.put(entry.getKey(), content.deepCopy());
+				this.contents.put(entry.getKey(), content.deepCopy());
 			}
 		}
 	}
@@ -73,16 +73,34 @@ public class ComponentVersion {
 		this.id = id;
 	}
 
-	public Object getProperty(String key) {
-		if (properties == null) {
+	public Content getContent(String key) {
+		return (Content) getContents().get(key);
+	}
+	
+	public void setContent(String key, Content content) {
+		getContents().put(key, content);
+		setDirty(true);
+	}
+	
+	public Object getValue(String key) {
+		if (contents == null) {
 			return null;
 		}
-		Content property = (Content) properties.get(key);
-		return property != null ? property.unwrap() : null;
+		Content content = getContent(key);
+		return content != null ? content.getValue() : null;
 	}
-
-	public void setProperty(String key, Content content) {
-		getProperties().put(key, content);
+	
+	public void setValue(String key, Object value) {
+		if (value == null) {
+			getContents().remove(key);
+		}
+		else if (value instanceof Content) {
+			setContent(key, (Content) value);
+		}
+		else {
+			setContent(key, ContentFactoryService.createOrUpdateContent(
+					getContent(key), value));
+		}
 		setDirty(true);
 	}
 
@@ -105,21 +123,21 @@ public class ComponentVersion {
 		this.dirty = dirty;
 	}
 
-	public Map getProperties() {
-		if (properties == null) {
-			properties = new HashMap();
+	public Map getContents() {
+		if (contents == null) {
+			contents = new HashMap();
 		}
-		return properties;
+		return contents;
 	}
 
-	public void setProperties(Map properties) {
-		this.properties = properties;
+	public void setContents(Map contents) {
+		this.contents = contents;
 	}
 	
-	public Map getUnwrappedProperties() {
+	public Map getValues() {
 		HashMap result = new HashMap();
-		if (properties != null) {
-			Iterator it = properties.entrySet().iterator();
+		if (contents != null) {
+			Iterator it = contents.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry) it.next();
 				Content content = (Content) entry.getValue();
@@ -134,13 +152,37 @@ public class ComponentVersion {
 		return result;
 	}
 	
+	public void setValues(Map values) {
+		if (values != null) {
+			Iterator it = values.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry entry = (Map.Entry) it.next();
+				String key = (String) entry.getKey();
+				Object value = entry.getValue();
+				setValue(key, value);
+			}
+			it = getContents().keySet().iterator();
+			while (it.hasNext()) {
+				Object key = it.next();
+				if (!values.containsKey(key)) {
+					it.remove();
+				}
+			}
+		}
+		else {
+			getContents().clear();
+		}
+		setDirty(true);
+		
+	}
+	
 	/**
 	 * Returns a Collection of Strings that should be used to tag the
 	 * CacheItem containing the rendered ComponentVersion.
 	 */
 	public Collection getCacheTags() {
 		HashSet result = new HashSet();
-		Iterator it = properties.values().iterator();
+		Iterator it = contents.values().iterator();
 		while (it.hasNext()) {
 			Content content = (Content) it.next();
 			if (content != null) {

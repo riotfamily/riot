@@ -25,7 +25,6 @@ package org.riotfamily.pages.view;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -35,7 +34,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.TaggingContext;
-import org.riotfamily.components.model.ComponentVersion;
 import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.mapping.PageUrlBuilder;
@@ -178,7 +176,7 @@ public class PageFacade {
 		
 	public Map getProperties() {
 		if (properties == null) {
-			properties = page.getProperties(preview);
+			properties = page.getMergedProperties(preview);
 		}
 		return properties;
 	}

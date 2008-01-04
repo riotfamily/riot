@@ -79,7 +79,7 @@ public class SimpleListBuilder {
 		
 		SimpleComponent simpleComponent = new SimpleComponent();
 		simpleComponent.setType(version.getContainer().getType());
-		simpleComponent.setProperties(version.getUnwrappedProperties());
+		simpleComponent.setProperties(version.getValues());
 		
 		Set childLists = version.getContainer().getChildLists();
 		if (childLists != null && !childLists.isEmpty()) {

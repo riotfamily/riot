@@ -1,6 +1,8 @@
 <div id="${element.id}" class="composite pageProperty pageProperty${element.overwrite?string('Overwrite','Inherit')}">
 	<div class="title">
-		${toggleButton.render()}
+		<#if display??>
+			${toggleButton.render()}
+		</#if>
 		<label for="${editor.id}">
 			<#if editor.label?has_content>
 				${editor.label}
@@ -16,11 +18,11 @@
 		<#if editor.hint?exists>
 			<div id="${editor.id}-hint" class="hint">${editor.hint}</div>
 		</#if>
-		<#if element.overwrite>
+		<#if display?? && !element.overwrite>
+			${display.render()}
+		<#else>
 			${editor.render()}
 			${element.form.errors.renderErrors(editor)}
-		<#else>
-			${display.render()}
 		</#if>
 	</div>
 </div>

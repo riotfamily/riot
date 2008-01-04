@@ -138,14 +138,14 @@ public class VersionContainer {
 
 	public Map getProperties(boolean preview) {
 		if (preview) {
-			return getLatestVersion().getUnwrappedProperties();
+			return getLatestVersion().getValues();
 		}
-		return liveVersion != null ? liveVersion.getUnwrappedProperties() : null;
+		return liveVersion != null ? liveVersion.getValues() : null;
 	}
 
 	public Object getProperty(String key, boolean preview) {
 		ComponentVersion version = preview ? getLatestVersion() : liveVersion;
-		return version != null ? version.getProperty(key) : null;
+		return version != null ? version.getValue(key) : null;
 	}
 	
 	public VersionContainer createCopy() {

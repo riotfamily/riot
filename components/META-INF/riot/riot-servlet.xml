@@ -35,16 +35,11 @@
 				value="org.riotfamily.components.riot.form.ContentListEditor" />
 	</override:put>
 
-	<bean id="contentFactory" class="org.riotfamily.components.service.HibernateContentFactory">
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-	
 	<!--
 	  - FormRepository providing component property forms.
 	  -->
 	<bean id="componentFormRepository" class="org.riotfamily.components.config.ComponentFormRepository">
 		<constructor-arg ref="componentRepository" />
-		<constructor-arg ref="contentFactory" />
 		<property name="config" value="/WEB-INF/website-config/component-forms.xml" />
 		<property name="customElements" ref="customFormElements" />
 		<property name="mimetypesMap" ref="fileTypeMap" />

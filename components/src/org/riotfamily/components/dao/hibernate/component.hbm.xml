@@ -63,7 +63,7 @@
 		<id name="id">
 			<generator class="native" />
 		</id>
-		<map name="properties" table="riot_component_properties" cascade="all-delete-orphan" lazy="false">
+		<map name="contents" table="riot_component_contents" cascade="all-delete-orphan" lazy="false">
 			<cache usage="nonstrict-read-write" region="components" />
 			<key column="component_version" />
 			<index column="`key`" type="string" />

@@ -23,7 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.riot.form;
 
-import org.riotfamily.components.service.ContentFactory;
+import org.riotfamily.components.model.ContentMap;
+import org.riotfamily.forms.MapEditorBinder;
 import org.riotfamily.forms.element.NestedForm;
 
 /**
@@ -32,8 +33,8 @@ import org.riotfamily.forms.element.NestedForm;
  */
 public class ContentMapEditor extends NestedForm implements ContentEditor {
 
-	public ContentMapEditor(ContentFactory contentFactory) {
-		setEditorBinder(new ContentMapEditorBinder(contentFactory));
+	public ContentMapEditor() {
+		setEditorBinder(new MapEditorBinder(ContentMap.class));
 	}
 	
 }

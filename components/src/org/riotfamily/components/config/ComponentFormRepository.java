@@ -24,7 +24,6 @@
 package org.riotfamily.components.config;
 
 import org.riotfamily.components.riot.form.VersionContainerEditorBinder;
-import org.riotfamily.components.service.ContentFactory;
 import org.riotfamily.forms.EditorBinder;
 import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.factory.DefaultFormFactory;
@@ -38,19 +37,14 @@ import org.springframework.validation.Validator;
  */
 public class ComponentFormRepository extends XmlFormRepository {
 
-	private ContentFactory contentFactory;
-	
-	public ComponentFormRepository(ComponentRepository componentRepository, 
-			ContentFactory contentFactory) {
-		
+	public ComponentFormRepository(ComponentRepository componentRepository) {
 		componentRepository.setFormRepository(this);
-		this.contentFactory = contentFactory;
 	}
 
 	public FormFactory createFormFactory(Class beanClass, 
 			FormInitializer initializer, Validator validator) {
 		
-		EditorBinder binder = new VersionContainerEditorBinder(contentFactory);
+		EditorBinder binder = new VersionContainerEditorBinder();
 		return new DefaultFormFactory(binder, initializer, validator);
 	}
 	

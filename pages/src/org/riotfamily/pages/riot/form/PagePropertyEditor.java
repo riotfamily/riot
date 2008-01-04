@@ -23,71 +23,63 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
+import java.io.PrintWriter;
+import java.util.Map;
+
+import org.riotfamily.components.model.Content;
+import org.riotfamily.components.riot.form.ContentEditor;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.PageNode;
-import org.riotfamily.pages.model.Site;
-import org.riotfamily.riot.form.ui.FormUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class PagePropertyEditor extends TemplateElement implements Editor {
+public class PagePropertyEditor extends TemplateElement {
 
-	ElementFactory elementFactory;
+	private ElementFactory elementFactory;
+	
+	private Page masterPage;
 	
 	private Editor editor;
 	
 	private Editor display;
 	
+	private boolean initialized;
+	
 	private boolean overwrite;
 
 	private ToggleButton toggleButton;
 	
-	public PagePropertyEditor(ElementFactory elementFactory) {
+	public PagePropertyEditor(ElementFactory elementFactory, Page masterPage) {
 		this.elementFactory = elementFactory;
+		this.masterPage = masterPage;
 		toggleButton = new ToggleButton();
 		addComponent("toggleButton", toggleButton);
 	}
 	
 	protected void initCompositeElement() {
 		editor = (Editor) elementFactory.createElement(this, getForm(), true);
-		editor.getEditorBinding().setEditor(this);
 		addComponent("editor", editor);
-		
-		display = (Editor) elementFactory.createElement(this, getForm(), false);
-		display.setEnabled(false);
-		addComponent("display", display);
-		
-		Page page = (Page) getForm().getBackingObject();
-		PageNode node = page.getNode();
-		Site site = page.getSite();
-		
-		if (site == null) {
-			Object parent = FormUtils.loadParent(getForm());
-			if (parent instanceof Page) {
-				site = ((Page) parent).getSite();
+		if (masterPage != null) {
+			display = (Editor) elementFactory.createElement(this, getForm(), false);
+			String property = editor.getEditorBinding().getProperty();
+			Map properties = masterPage.getVersionContainer().getLatestVersion().getContents();
+			Content content = (Content) properties.get(property);
+			if (content != null) {
+				if (editor instanceof ContentEditor) {
+					display.setValue(content);
+				}
+				else {
+					display.setValue(content.unwrap());
+				}
 			}
-			else if (parent instanceof Site) {
-				site = (Site) parent;
-			}
-		}
-		if (site != null) {
-			Page masterPage = null;
-			Site masterSite = site.getMasterSite();
-			while (masterPage == null && masterSite != null) {
-				masterPage = node.getPage(masterSite);
-				masterSite = masterSite.getMasterSite();
-			}
-			if (masterPage != null) {
-				String property = editor.getEditorBinding().getProperty();
-				display.setValue(masterPage.getProperty(property, true));
-			}
+			display.setEnabled(false);
+			addComponent("display", display);
 		}
 	}
 	
@@ -95,15 +87,13 @@ public class PagePropertyEditor extends TemplateElement implements Editor {
 		return null;
 	}
 	
-	public void setValue(Object value) {
-		editor.setValue(value);
-		overwrite = value != null;
+	protected void renderTemplate(PrintWriter writer) {
+		if (!initialized) {
+			overwrite = display == null || editor.getValue() != null;
+			initialized = true;
+		}
+		super.renderTemplate(writer);
 	}
-	
-	public Object getValue() {
-		return overwrite ? editor.getValue() : null;
-	}
-	
 	public boolean isOverwrite() {
 		return this.overwrite;
 	}
