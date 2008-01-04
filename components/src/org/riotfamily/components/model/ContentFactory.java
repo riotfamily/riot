@@ -21,9 +21,8 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.service;
+package org.riotfamily.components.model;
 
-import org.riotfamily.components.model.Content;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

@@ -21,29 +21,41 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.service;
+package org.riotfamily.components.model;
 
+import java.util.List;
+import java.util.Map;
 
+import org.riotfamily.media.model.RiotFile;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class ContentCreationException extends RuntimeException {
+public class BuiltInContentFactory implements ContentFactory {
 
-	public ContentCreationException() {
+	public Content createContent(Object value) {
+		if (value == null) {
+			return null;
+		}
+		if (value instanceof Content) {
+			return (Content) value;
+		}
+		if (value instanceof String) {
+			return new StringContent((String) value);
+		}
+		if (value instanceof Boolean) {
+			return new BooleanContent((Boolean) value);
+		}
+		if (value instanceof RiotFile) {
+			return new FileContent((RiotFile) value);
+		}
+		if (value instanceof List) {
+			return new ContentList((List) value);
+		}
+		if (value instanceof Map) {
+			return new ContentMap((Map) value);
+		}
+		return null;
 	}
-
-	public ContentCreationException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	public ContentCreationException(String message) {
-		super(message);
-	}
-
-	public ContentCreationException(Throwable cause) {
-		super(cause);
-	}
-	
 }

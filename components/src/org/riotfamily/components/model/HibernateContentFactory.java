@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.service;
+package org.riotfamily.components.model;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -31,11 +31,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.EntityMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.riotfamily.common.collection.TypeDifferenceComparator;
-import org.riotfamily.components.model.Content;
 import org.springframework.core.GenericCollectionTypeResolver;
 import org.springframework.core.MethodParameter;
 
@@ -45,6 +46,8 @@ import org.springframework.core.MethodParameter;
  */
 public class HibernateContentFactory implements ContentFactory {
 
+	private static Log log = LogFactory.getLog(HibernateContentFactory.class);
+	
 	private ArrayList contentClassInfos = new ArrayList();
 	
 	private ArrayList collectionClassInfos = new ArrayList();
@@ -59,21 +62,26 @@ public class HibernateContentFactory implements ContentFactory {
 				for (int i = 0; i < ctors.length; i++) {
 					Class[] params = ctors[i].getParameterTypes();
 					if (params.length == 1) {
-						registerContentClass(params[0], entityClass, ctors[i]);
+						registerContentClass(params[0], ctors[i]);
 					}
 				}
 			}
 		}
 	}
 	
-	private void registerContentClass(Class contentType, Class contentClass, 
-			Constructor ctor) {
-		
+	private void registerContentClass(Class contentType, Constructor ctor) {
 		Class collectionType = getCollectionType(contentType, ctor); 
 		if (collectionType != null) {
+			log.debug("Registering " + ctor.getName() 
+					+ " as Content class for Collection<" 
+					+ collectionType + ">");
+			
 			collectionClassInfos.add(new ContentClassInfo(collectionType, ctor));
 		}
 		else {
+			log.debug("Registering " + ctor.getName() 
+					+ " as Content class for " + contentType);
+			
 			contentClassInfos.add(new ContentClassInfo(contentType, ctor));
 		}
 	}
@@ -133,6 +141,7 @@ public class HibernateContentFactory implements ContentFactory {
 		
 		private Content createContent(Object value) throws ContentCreationException {
 			try {
+				log.debug("Creating new " + constructor.getName() + " for " + value);
 				return (Content) constructor.newInstance(new Object[] {value});
 			}
 			catch (IllegalArgumentException e) {
