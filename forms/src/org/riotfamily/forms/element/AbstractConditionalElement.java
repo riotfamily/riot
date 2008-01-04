@@ -27,8 +27,6 @@ import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 
-import org.riotfamily.common.markup.Html;
-import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.AbstractElement;
 import org.riotfamily.forms.ContainerElement;
 import org.riotfamily.forms.Editor;
@@ -101,17 +99,12 @@ public abstract class AbstractConditionalElement extends AbstractElement
 	
 	protected void renderInternal(PrintWriter writer) {
 		if (isEditable()) {
+			editor.setEnabled(true);
 			editor.render(writer);
 		}
 		else if (!hide) {
-			Object value = editor.getValue();
-			if (value != null) {
-				TagWriter tag = new TagWriter(writer);
-				tag.start(Html.SPAN);
-				tag.attribute(Html.COMMON_CLASS, "read-only");
-				tag.body(value.toString());
-				tag.end();
-			}
+			editor.setEnabled(false);
+			editor.render(writer);
 		}
 	}
 
