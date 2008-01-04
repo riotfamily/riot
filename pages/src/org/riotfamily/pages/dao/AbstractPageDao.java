@@ -34,6 +34,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.model.ComponentVersion;
+import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.pages.component.PageComponentListLocator;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
@@ -217,6 +219,23 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 			createAlias(page, oldPath);
 			updatePaths(page.getChildPages());
 		}
+	}
+	
+	public void publishPage(Page page) {
+		page.setPublished(true);
+		updateObject(page);
+		VersionContainer container = page.getVersionContainer();
+		ComponentVersion preview = container.getPreviewVersion();
+		if (preview != null) {
+			ComponentVersion liveVersion = container.getLiveVersion();
+			container.setLiveVersion(preview);
+			container.setPreviewVersion(null);
+			if (liveVersion != null) {
+				componentDao.deleteComponentVersion(liveVersion);
+			}
+			componentDao.updateVersionContainer(container);
+		}
+		
 	}
 
 	public void updateNode(PageNode node) {

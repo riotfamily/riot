@@ -106,6 +106,8 @@ public interface PageDao {
 
 	public void updatePage(Page page);
 
+	public void publishPage(Page page);
+	
 	public void deletePage(Page page);
 
 	public void deleteAlias(Page page);

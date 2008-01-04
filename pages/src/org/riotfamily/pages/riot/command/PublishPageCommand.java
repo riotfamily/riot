@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
+import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
@@ -38,6 +39,13 @@ public class PublishPageCommand extends AbstractCommand {
 
 	public static final String ACTION_UNPUBLISH = "unpublishPage";
 
+	private PageDao pageDao;
+	
+	
+	public PublishPageCommand(PageDao pageDao) {
+		this.pageDao = pageDao;
+	}
+
 	protected String getAction(CommandContext context) {
 		Page page = (Page) context.getBean();
 		return page.isPublished() ? ACTION_UNPUBLISH : ACTION_PUBLISH;
@@ -50,8 +58,7 @@ public class PublishPageCommand extends AbstractCommand {
 
 	public CommandResult execute(CommandContext context) {
 		Page page = (Page) context.getBean();
-		page.setPublished(!page.isPublished());
-		context.getDao().update(page);
+		pageDao.publishPage(page);
 		return new ReloadResult();
 	}
 

@@ -26,7 +26,6 @@
 	<bean id="pageFormInitializer" class="org.riotfamily.pages.riot.form.PageFormInitializer">
 		<constructor-arg ref="pageDao" />
 		<constructor-arg ref="componentFormRepository" />
-		<constructor-arg ref="contentFactory" />
 	</bean>
 
 	<!-- Overrides -->
@@ -81,7 +80,9 @@
 
 	<!-- Customised Page Commands -->
 
-	<bean id="publishPageCommand" class="org.riotfamily.pages.riot.command.PublishPageCommand" />
+	<bean id="publishPageCommand" class="org.riotfamily.pages.riot.command.PublishPageCommand">
+		<constructor-arg ref="pageDao" />
+	</bean>
 
 	<bean id="moveUpPageCommand" class="org.riotfamily.pages.riot.command.SwapPageCommand">
 		<property name="swapWith" value="-1" />
