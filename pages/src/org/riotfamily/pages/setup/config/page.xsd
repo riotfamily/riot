@@ -11,18 +11,13 @@
 	<xsd:element name="setup">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="sites" minOccurs="0">
-					<xsd:complexType>
-						<xsd:sequence maxOccurs="unbounded" minOccurs="1">
-							<xsd:element name="site" type="siteType" />
-						</xsd:sequence>
-					</xsd:complexType>
-				</xsd:element>
-				<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+				<xsd:choice maxOccurs="unbounded" minOccurs="0">
+					<xsd:element name="site" type="siteType" />
+				</xsd:choice>
+				<xsd:choice maxOccurs="unbounded" minOccurs="0">
 					<xsd:element ref="page" />
-				</xsd:sequence>
+				</xsd:choice>
 			</xsd:sequence>
-			
 			<xsd:attribute name="id" type="xsd:ID"/>
 			<xsd:attribute name="dao" type="xsd:string" />
 			<xsd:attribute name="tx" type="xsd:string" />
@@ -30,6 +25,9 @@
 	</xsd:element>
 	
 	<xsd:complexType name="siteType">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="site" type="siteType" />
+		</xsd:choice>
 		<xsd:attribute name="name" type="xsd:string" />
 		<xsd:attribute name="locale" type="xsd:string" use="required" />
 		<xsd:attribute name="theme" type="xsd:string" />
@@ -41,7 +39,7 @@
 	<xsd:element name="page">
 		<xsd:complexType>
 			<xsd:sequence minOccurs="0" maxOccurs="1">
-				<xsd:element name="props" type="propsType" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element name="prop" type="beans:entryType" minOccurs="0" maxOccurs="unbounded" />
 				<xsd:element ref="page" minOccurs="0" maxOccurs="unbounded" />
 			</xsd:sequence>
 			<xsd:attribute name="path-component" type="xsd:string" />
@@ -52,12 +50,5 @@
 			<xsd:attribute default="false" name="folder" type="xsd:boolean" />
 		</xsd:complexType>
 	</xsd:element>
-
-	<xsd:complexType name="propsType">
-		<xsd:sequence maxOccurs="unbounded" minOccurs="0">
-			<xsd:element ref="beans:prop" />
-		</xsd:sequence>
-		<xsd:attribute name="locale" type="xsd:string" />
-	</xsd:complexType>
-
+	
 </xsd:schema>

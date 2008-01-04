@@ -24,11 +24,9 @@
 package org.riotfamily.pages.dao;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.pages.model.Page;
@@ -36,7 +34,7 @@ import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
 
 /**
- * @author flx
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
 public class PageDefinition {
@@ -45,7 +43,7 @@ public class PageDefinition {
 
 	private String handlerName;
 
-	private List definitions;
+	private List pageDefinitions;
 
 	private boolean hidden;
 
@@ -55,9 +53,7 @@ public class PageDefinition {
 
 	private boolean folder;
 
-	private Properties globalProps;
-
-	private HashMap localizedProps;
+	private Map properties;
 
 	public void setPathComponent(String pathComponent) {
 		this.pathComponent = pathComponent;
@@ -89,20 +85,16 @@ public class PageDefinition {
 		this.folder = folder;
 	}
 
-	public void setGlobalProps(Properties globalProps) {
-		this.globalProps = globalProps;
+	public void setProperties(Map properties) {
+		this.properties = properties;
 	}
 
-	public void setLocalizedProps(HashMap localizedProps) {
-		this.localizedProps = localizedProps;
+	public List getPageDefinitions() {
+		return this.pageDefinitions;
 	}
 
-	public List getDefinitions() {
-		return this.definitions;
-	}
-
-	public void setDefinitions(List definitions) {
-		this.definitions = definitions;
+	public void setPageDefinitions(List definitions) {
+		this.pageDefinitions = definitions;
 	}
 
 	public PageNode createNode(PageNode parent, List sites, PageDao pageDao) {
@@ -113,8 +105,8 @@ public class PageDefinition {
 		node.setHidden(hidden);
 		createPages(node, sites, pageDao);
 		pageDao.saveNode(node);
-		if (definitions != null) {
-			Iterator it = definitions.iterator();
+		if (pageDefinitions != null) {
+			Iterator it = pageDefinitions.iterator();
 			while (it.hasNext()) {
 				PageDefinition childDefinition = (PageDefinition) it.next();
 				childDefinition.createNode(node, sites, pageDao);
@@ -132,26 +124,10 @@ public class PageDefinition {
 			page.setPublished(published);
 			page.setFolder(folder);
 			page.setCreationDate(new Date());
-			addPageProps(page, site);
+			page.getVersionContainer().getLiveVersion().setValues(properties);
 			node.addPage(page);
 			pageDao.deleteAlias(page);
 		}
 	}
-
-	private void addPageProps(Page page, Site site) {
-		HashMap newProps = new HashMap();
-		if (globalProps != null) {
-			newProps.putAll(globalProps);
-		}
-		if (localizedProps != null) {
-			Map localizedMap = (Map) localizedProps.get(site.getLocale().toString());
-			if(localizedMap != null) {
-				newProps.putAll(localizedMap);
-			}
-		}
-		//FIXME This doesn't work!
-		//page.getProperties(false).putAll(newProps);
-	}
-
 
 }

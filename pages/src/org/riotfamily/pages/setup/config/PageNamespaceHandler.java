@@ -23,25 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.setup.config;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
-import org.riotfamily.common.beans.xml.ListDecorator;
 import org.riotfamily.common.beans.xml.ListItemDecorator;
+import org.riotfamily.common.beans.xml.MapEntryDecorator;
 import org.riotfamily.pages.dao.PageDefinition;
-import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.setup.PageSetupBean;
-import org.springframework.beans.MutablePropertyValues;
-import org.springframework.beans.PropertyValue;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.util.StringUtils;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * NamespaceHandler that handles the <code>page</code> namspace as
@@ -54,55 +40,19 @@ public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 				.addTranslation("tx", "transactionManager")
 				.addTranslation("dao", "pageDao")
 				.addReference("dao")
-				.addReference("locales")
 				.addReference("tx");
 
-		registerBeanDefinitionDecorator("sites", new ListDecorator("sites"));
-		register("site", Site.class)
+		register("site", SiteDefinition.class, 
+				new ListItemDecorator("siteDefinitions"))
 				.addTranslation("host", "hostName")
 				.addTranslation("prefix", "pathPrefix")
 				.setAliasAttribute(null);
 		
 		register("page", PageDefinition.class,
-				new ListItemDecorator("definitions"))
+				new ListItemDecorator("pageDefinitions"))
 				.addTranslation("system", "systemNode");
 
-		registerBeanDefinitionDecorator("props", new PropsDecorator());
+		registerBeanDefinitionDecorator("prop", new MapEntryDecorator("properties", "key"));
 	}
 
-	private static class PropsDecorator implements BeanDefinitionDecorator {
-
-		private static final String LOCALE_ATTRIBUTE = "locale";
-		private static final String LOCALIZED_PROPS_NAME = "localizedProps";
-		private static final String GLOBAL_PROPS_NAME = "globalProps";
-
-		public BeanDefinitionHolder decorate(Node node,
-				BeanDefinitionHolder definition, ParserContext parserContext) {
-
-			BeanDefinition bd = definition.getBeanDefinition();
-			MutablePropertyValues pvs = bd.getPropertyValues();
-
-			Element element = (Element) node;
-			Properties props = parserContext.getDelegate().parsePropsElement(element);
-
-			String locale = element.getAttribute(LOCALE_ATTRIBUTE);
-			if(StringUtils.hasText(locale)) {
-				Map map = null;
-				PropertyValue pv = pvs.getPropertyValue(LOCALIZED_PROPS_NAME);
-				if (pv != null) {
-					map = (Map) pv.getValue();
-				}
-				if (map == null) {
-					map = new HashMap();
-					pvs.addPropertyValue(LOCALIZED_PROPS_NAME, map);
-				}
-				map.put(locale, props);
-			}
-			else {
-				pvs.addPropertyValue(GLOBAL_PROPS_NAME, props);
-			}
-
-			return definition;
-		}
-	}
 }

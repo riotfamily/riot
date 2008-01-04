@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.setup;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.dao.PageDefinition;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.pages.setup.config.SiteDefinition;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -47,9 +49,9 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class PageSetupBean implements InitializingBean, ApplicationContextAware {
 
-	private List sites;
+	private List siteDefinitions;
 
-	private List definitions;
+	private List pageDefinitions;
 
 	private PageDao pageDao;
 
@@ -65,12 +67,12 @@ public class PageSetupBean implements InitializingBean, ApplicationContextAware 
 		this.transactionManager = transactionManager;
 	}
 
-	public void setSites(List sites) {
-		this.sites = sites;
+	public void setSiteDefinitions(List siteDefinitions) {
+		this.siteDefinitions = siteDefinitions;
 	}
 
-	public void setDefinitions(List definitions) {
-		this.definitions = definitions;
+	public void setPageDefinitions(List definitions) {
+		this.pageDefinitions = definitions;
 	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
@@ -96,29 +98,31 @@ public class PageSetupBean implements InitializingBean, ApplicationContextAware 
 
 	protected void createNodes() {
 		if (pageDao.listSites().isEmpty()) {
-			createSites();
+			List sites = createSites();
 			PageNode rootNode = pageDao.getRootNode();
-			Iterator it = definitions.iterator();
+			Iterator it = pageDefinitions.iterator();
 			while (it.hasNext()) {
 				PageDefinition definition = (PageDefinition) it.next();
-				 definition.createNode(rootNode, sites, pageDao);
+				definition.createNode(rootNode, sites, pageDao);
 			}
 			pageDao.updateNode(rootNode);
 		}
 	}
 	
-	protected void createSites() {
-		if (sites == null || sites.isEmpty()) {
+	protected List createSites() {
+		if (siteDefinitions == null || siteDefinitions.isEmpty()) {
 			Site site = new Site();
 			site.setLocale(Locale.ENGLISH);
 			site.setEnabled(true);
-			sites = Collections.singletonList(site);
+			return Collections.singletonList(site);
 		}
-		Iterator it = sites.iterator();
+		ArrayList result = new ArrayList();
+		Iterator it = siteDefinitions.iterator();
 		while (it.hasNext()) {
-			Site site = (Site) it.next();
-			pageDao.saveSite(site);
+			SiteDefinition definition = (SiteDefinition) it.next();
+			definition.createSites(result, pageDao, null);
 		}
+		return result;
 	}
 
 
