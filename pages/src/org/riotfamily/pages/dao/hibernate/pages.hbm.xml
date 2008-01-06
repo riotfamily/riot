@@ -7,21 +7,21 @@
 
 	<class name="PageNode" table="riot_page_nodes">
 		<cache usage="nonstrict-read-write" region="pages" />
-		<id name="id">
+		<id name="id" access="field">
 			<generator class="native" />
 		</id>
 
 		<!-- We have to use cascade "update" to ensure that nodes are reattached -->
-		<many-to-one name="parent" insert="false" update="false" cascade="save-update"/>
+		<many-to-one name="parent" access="field" insert="false" update="false" cascade="save-update"/>
 
-		<list name="childNodes">
+		<list name="childNodes" access="field">
 			<cache usage="nonstrict-read-write" region="pages" />	
 			<key column="parent" />
 			<list-index column="pos" />
 			<one-to-many class="PageNode" />
 		</list>
 		<!-- We have to use cascade "update" to ensure that pages are reattached -->
-		<set name="pages" order-by="creationDate" cascade="save-update">
+		<set name="pages" access="field" order-by="creationDate" cascade="save-update">
 			<cache usage="nonstrict-read-write" region="pages" />
 			<key column="node" />
 			<one-to-many class="Page" />
@@ -36,7 +36,7 @@
 		<id name="id" access="field">
 			<generator class="native" />
 		</id>
-		<many-to-one name="site" />
+		<many-to-one name="site" access="field" />
 		<!-- We have to use cascade "update" to ensure getParentPage() can be invoked after an update -->
 		<many-to-one name="node" insert="false" update="false" cascade="save-update" />
 		<property name="published" />

@@ -35,6 +35,7 @@ import java.util.Map;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.components.model.ComponentVersion;
 import org.riotfamily.components.model.VersionContainer;
+import org.springframework.util.Assert;
 
 
 /**
@@ -97,6 +98,9 @@ public class Page {
 	}
 
 	public void setSite(Site site) {
+		Assert.state(this.site == null, 
+				"The page is already associated with a site");
+		
 		this.site = site;
 	}
 
