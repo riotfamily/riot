@@ -87,6 +87,10 @@ public class PagePropertyEditor extends TemplateElement {
 		return null;
 	}
 	
+	public String getStyleClass() {
+		return editor.getEditorBinding().getProperty();
+	}
+	
 	protected void renderTemplate(PrintWriter writer) {
 		if (!initialized) {
 			overwrite = display == null || editor.getValue() != null;

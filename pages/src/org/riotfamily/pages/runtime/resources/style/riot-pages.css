@@ -35,17 +35,25 @@ table.pages tr.hidden-page td {
 	background-color: #a4a4a4;
 }
 .pageProperty .button-toggle {
-	position: absolute;
-	right: 5px;
 	height: 19px;
-	color: #fff;
+	position: absolute;
+	left: 1px;
+}
+.pageProperty div.title .button-toggle {
+	
 }
 .nestedForm .pageProperty .button-overwrite {
-	background-image: url(icons/edit_invert_small.gif);
-	background-color: #a4a4a4;
+	background-image: url(icons/edit_small.gif);
 }
 .nestedForm .pageProperty .button-inherit {
+	background-image: url(icons/remove_small.gif);
+}
+.nestedForm .pageProperty div.title .button-overwrite {
+	background-image: url(icons/edit_invert_small.gif);
+	background-color: ${highlight};
+}
+.nestedForm .pageProperty div.title .button-inherit {
 	background-image: url(icons/remove_invert_small.gif);
-	background-color: #3d3d3d;
+	background-color: ${highlight};
 }
 

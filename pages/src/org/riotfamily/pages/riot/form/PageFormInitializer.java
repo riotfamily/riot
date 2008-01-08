@@ -79,6 +79,7 @@ public class PageFormInitializer implements FormInitializer {
 		nestedForm.setRequired(true);
 		nestedForm.setIndent(false);
 		nestedForm.setEditorBinder(new VersionContainerEditorBinder());
+		nestedForm.setStyleClass(id);
 		Page masterPage = getMasterPage(form);
 		if (masterPage == null) {
 			present |= addPagePropertyEditors(form, nestedForm, 
