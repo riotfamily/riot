@@ -4,22 +4,22 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- *
+ * 
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- *
+ * 
  * The Original Code is Riot.
- *
+ * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * Portions created by the Initial Developer are Copyright (C) 2008
  * the Initial Developer. All Rights Reserved.
- *
+ * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- *
+ * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.component;
 
@@ -31,7 +31,6 @@ import net.sf.json.JSONObject;
 
 import org.riotfamily.common.beans.MapWrapper;
 import org.riotfamily.common.web.mapping.AttributePattern;
-import org.riotfamily.components.locator.ComponentListLocator;
 import org.riotfamily.components.locator.DefaultSlotResolver;
 import org.riotfamily.components.locator.SlotResolver;
 import org.riotfamily.components.model.Location;
@@ -39,17 +38,21 @@ import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.pages.mapping.PageUrlBuilder;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.PageNode;
 
 /**
- * ComponentListLocator that uses the page-id as component-path.
+ * ComponentListLocator that uses the page's node-id as component-path.
+ * You can use this implementation for contents that should be the same
+ * on all sites.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
+ * @since 7.0
  */
-public class PageComponentListLocator implements ComponentListLocator {
+public class PageNodeComponentListLocator {
 
-	public static final String TYPE = "page";
+	public static final String TYPE = "pageNode";
 
-	public static final String TYPE_PREFIX = "page-";
+	public static final String TYPE_PREFIX = "pageNode-";
 
 	private PageDao pageDao;
 
@@ -57,7 +60,7 @@ public class PageComponentListLocator implements ComponentListLocator {
 
 	private SlotResolver slotResolver = new DefaultSlotResolver();
 
-	public PageComponentListLocator(PageDao pageDao,
+	public PageNodeComponentListLocator(PageDao pageDao,
 			PageUrlBuilder pageUrlBuilder) {
 
 		this.pageDao = pageDao;
@@ -83,22 +86,23 @@ public class PageComponentListLocator implements ComponentListLocator {
 		}
 		else {
 			location.setType(TYPE);
-			location.setPath(page.getId().toString());
+			location.setPath(page.getNode().getId().toString());
 		}
 		location.setSlot(slotResolver.getSlot(request));
 		return location;
 	}
 
 	public Location getParentLocation(Location location) {
-		Page page = loadPage(location);
+		PageNode pageNode = loadPageNode(location);
 		Location parentLocation = new Location(location);
 		location.setType(TYPE);
-		location.setPath(page.getParentPage().getId().toString());
+		location.setPath(pageNode.getParent().getId().toString());
 		return parentLocation;
 	}
 
 	public String getUrl(Location location) {
-		Page page = loadPage(location);
+		PageNode pageNode = loadPageNode(location);
+		Page page = pageNode.getPage(pageDao.getDefaultSite());
 		String url = pageUrlBuilder.getUrl(page);
 		if (page.isWildcardInPath()) {
 			Map attributes = JSONObject.fromObject(location.getPath());
@@ -107,7 +111,7 @@ public class PageComponentListLocator implements ComponentListLocator {
 		return url;
 	}
 
-	private Page loadPage(Location location) {
+	private PageNode loadPageNode(Location location) {
 		String id;
 		if (location.getType().equals(TYPE)) {
 			 id = location.getPath();
@@ -117,7 +121,6 @@ public class PageComponentListLocator implements ComponentListLocator {
 			int i = type.indexOf('-');
 			id = type.substring(i + 1);
 		}
-		return pageDao.loadPage(new Long(id));
+		return pageDao.loadPageNode(new Long(id));
 	}
-
 }

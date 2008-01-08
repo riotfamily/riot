@@ -47,6 +47,10 @@ public interface PageDao {
 	 */
 	public Page loadPage(Long id);
 
+	/**
+	 * Loads the PageNode with the given id.
+	 */
+	public PageNode loadPageNode(Long id);
 
 	public Site findSite(String hostName, String path);
 		

@@ -37,6 +37,7 @@ import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.ComponentVersion;
 import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.pages.component.PageComponentListLocator;
+import org.riotfamily.pages.component.PageNodeComponentListLocator;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.PageNode;
@@ -105,6 +106,10 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	public Page loadPage(Long id) {
 		return (Page) loadObject(Page.class, id);
+	}
+	
+	public PageNode loadPageNode(Long id) {
+		return (PageNode) loadObject(PageNode.class, id);
 	}
 
 	public Site loadSite(Long id) {
@@ -189,14 +194,12 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 			translation.setPublished(page.isPublished());
 		}
 		
-		//translation.setVersionContainer(page.getVersionContainer().createCopy());
-		
 		node.addPage(translation);
 		updateNode(node);
 		deleteAlias(translation);
 		saveObject(translation);
 		
-		componentDao.copyComponentLists(PageComponentListLocator.TYPE_PAGE,
+		componentDao.copyComponentLists(PageComponentListLocator.TYPE,
 				page.getId().toString(), translation.getId().toString());
 
 		return translation;
@@ -297,7 +300,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 				deletePage(child);
 			}
 		}
-		componentDao.deleteComponentLists(PageComponentListLocator.TYPE_PAGE,
+		componentDao.deleteComponentLists(PageComponentListLocator.TYPE,
 				page.getId().toString());
 
 		clearAliases(page);
@@ -306,16 +309,14 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		node.removePage(page);
 		deleteObject(page);
 		
-		//Deleted by cascade now ...
-		//VersionContainer vc = page.getVersionContainer();
-		//page.setVersionContainer(null);
-		//componentService.deleteVersionContainer(vc);
-
 		if (node.hasPages()) {
 			updateNode(node);
 		}
 		else {
 			log.debug("Node has no more pages - deleting it ...");
+			componentDao.deleteComponentLists(PageNodeComponentListLocator.TYPE,
+					node.getId().toString());
+			
 			PageNode parentNode = node.getParent();
 			if (parentNode != null) {
 				parentNode.getChildNodes().remove(node);
