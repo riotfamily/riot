@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -51,6 +52,7 @@ import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
+import org.riotfamily.components.config.component.Component;
 import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.context.RequestContextExpiredException;
 import org.riotfamily.components.dao.ComponentDao;
@@ -271,7 +273,15 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	private VersionContainer createVersionContainer(String type, Map properties) {
 		VersionContainer container = new VersionContainer(type);
 		ComponentVersion version = new ComponentVersion();
-		version.setValues(properties);
+		Component component = repository.getComponent(type);
+		Map values = new HashMap();
+		if (component.getDefaults() != null) {
+			values.putAll(component.getDefaults());
+		}
+		if (properties != null) {
+			values.putAll(properties);
+		}
+		version.setValues(values);
 		container.setPreviewVersion(version);
 		componentDao.saveVersionContainer(container);
 		return container;

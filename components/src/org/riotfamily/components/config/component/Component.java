@@ -24,7 +24,7 @@
 package org.riotfamily.components.config.component;
 
 import java.io.IOException;
-import java.util.Properties;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +39,7 @@ public interface Component {
 	 */
 	public boolean isDynamic();
 
-	public Properties getDefaults();
+	public Map getDefaults();
 	
 	/**
 	 * Renders the given ComponentVersion.

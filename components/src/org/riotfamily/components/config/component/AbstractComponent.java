@@ -26,7 +26,7 @@ package org.riotfamily.components.config.component;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Properties;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,13 +54,13 @@ public abstract class AbstractComponent implements Component {
 
 	protected Log log = LogFactory.getLog(AbstractComponent.class);
 
-	private Properties defaults;
+	private Map defaults;
 	
-	public void setDefaults(Properties defaults) {
+	public void setDefaults(Map defaults) {
 		this.defaults = defaults;
 	}
 	
-	public Properties getDefaults() {
+	public Map getDefaults() {
 		return defaults;
 	}
 	

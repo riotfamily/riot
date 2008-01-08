@@ -21,7 +21,7 @@
 			<xsd:element name="defaults">
 				<xsd:complexType>
 					<xsd:sequence maxOccurs="unbounded" minOccurs="0">
-						<xsd:element ref="beans:prop" />
+						<xsd:element ref="beans:entry" />
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>

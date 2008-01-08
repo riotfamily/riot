@@ -24,13 +24,10 @@
 package org.riotfamily.components.config;
 
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
-import org.riotfamily.common.beans.xml.ListDecorator;
-import org.riotfamily.common.beans.xml.MapEntryDecorator;
-import org.riotfamily.common.beans.xml.PropsDecorator;
+import org.riotfamily.common.beans.xml.MapDecorator;
 import org.riotfamily.components.config.component.IncludeComponent;
 import org.riotfamily.components.config.component.StaticComponent;
 import org.riotfamily.components.config.component.ViewComponent;
-import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
 
 /**
  * NamespaceHandler that handles the <code>component</code>
@@ -43,16 +40,7 @@ public class ComponentNamespaceHandler extends GenericNamespaceHandlerSupport {
 		register("static-component", StaticComponent.class);
 		register("view-component", ViewComponent.class);
 		register("include-component", IncludeComponent.class);
-
-		registerBeanDefinitionDecorator("defaults", new PropsDecorator("defaults"));
-		registerBeanDefinitionDecorator("listeners", new ListDecorator("updateListeners"));
-		
-		BeanDefinitionDecorator addPropertyProcessor =
-				new MapEntryDecorator("propertyProcessors", "property");
-
-		registerSpringBeanDefinitionParser("property-processor",
-				addPropertyProcessor);
-
+		registerBeanDefinitionDecorator("defaults", new MapDecorator("defaults"));
 	}
 
 }
