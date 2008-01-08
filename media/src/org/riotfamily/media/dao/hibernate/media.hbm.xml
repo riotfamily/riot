@@ -15,6 +15,7 @@
 		<many-to-one name="fileData" cascade="save-update" fetch="join" />
 		<subclass name="RiotImage" discriminator-value="image" />
 		<subclass name="RiotSwf" discriminator-value="swf" />
+		<subclass name="RiotVideo" discriminator-value="video" />
 	</class>
 	
 	<class name="FileData" table="riot_media_data" discriminator-value="file" lazy="false">
@@ -30,8 +31,8 @@
 		<property name="owner" />
 		<property name="uri" />
 		<subclass name="ImageData" discriminator-value="img">
-			<property name="width" column="imgWidth" />
-			<property name="height" column="imgHeight" />
+			<property name="width" />
+			<property name="height" />
 			<property name="format" column="imgFormat" />
 			<subclass name="CroppedImageData" discriminator-value="crop">
 				<many-to-one name="original" cascade="save-update" />
@@ -41,9 +42,20 @@
 			</subclass>
 		</subclass>
 		<subclass name="SwfData" discriminator-value="swf">
-			<property name="width" column="swfWidth" />
-			<property name="height" column="swfHeight" />
+			<property name="width" />
+			<property name="height" />
 			<property name="version" column="swfVersion" />
+		</subclass>
+		<subclass name="VideoData" discriminator-value="video">
+			<property name="duration" />
+			<property name="width" />
+			<property name="height" />
+			<property name="bps" />
+			<property name="videoCodec" />
+			<property name="fps" />
+			<property name="audioCodec" />
+			<property name="samplingRate" />
+			<property name="stereo" />
 		</subclass>
 	</class>
 

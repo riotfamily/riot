@@ -27,8 +27,6 @@
 					<xsd:attribute name="min-height" type="xsd:positiveInteger" />
 					<xsd:attribute name="max-width" type="xsd:positiveInteger" />
 					<xsd:attribute name="max-height" type="xsd:positiveInteger" />
-					<xsd:attribute name="width-property" type="xsd:string" />
-					<xsd:attribute name="height-property" type="xsd:string" />
 					<xsd:attribute name="crop" type="xsd:boolean" default="true" />
 				</xsd:extension>
 			</xsd:complexContent>
@@ -41,9 +39,15 @@
 				<xsd:extension base="form:simple-editor">
 					<xsd:attribute name="width" type="xsd:positiveInteger" />
 					<xsd:attribute name="height" type="xsd:positiveInteger" />
-					<xsd:attribute name="width-property" type="xsd:string" />
-					<xsd:attribute name="height-property" type="xsd:string" />
-					<xsd:attribute name="version-property" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="video-upload">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="form:simple-editor">
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
