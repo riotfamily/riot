@@ -96,16 +96,7 @@ public class HibernateContentFactory implements ContentFactory {
 		
 	private Class getCollectionType(Object value) {
 		if (value instanceof Collection) {
-			Class collectionType = GenericCollectionTypeResolver
-					.getCollectionType(value.getClass());
-			
-			if (collectionType != null) {
-				return collectionType;
-			}
-			Collection c = (Collection) value;
-			if (!c.isEmpty()) {
-				return c.iterator().next().getClass();
-			}
+			return GenericCollectionTypeResolver.getCollectionType(value.getClass());
 		}
 		return null;
 	}
