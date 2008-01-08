@@ -165,7 +165,7 @@ public class FileUpload extends CompositeElement implements Editor,
 					file = createRiotFile(multipartFile);
 				}
 				catch (IOException e) {
-					log.error("error saving uploaded file");
+					log.error("error saving uploaded file", e);
 				}
 			}
 		}

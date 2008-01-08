@@ -107,8 +107,19 @@ div.title .no-label {
 .element {
 	padding-right: 2px;
 }
+
+.single {
+	margin-left: 36px;
+}
+/*
 .single .element {
 	margin-top: 6px;
+}
+*/
+
+.single, .composite {
+	clear: both;
+	margin-bottom: 30px;
 }
 
 textarea, input.text, input.number, input.password, select, option {
@@ -213,15 +224,9 @@ ul.radioButtonGroup input {
 	margin: 0 2px 2px 0;
 }
 
-
-.single, .composite {
-	clear: both;
-	margin-bottom: 30px;
-}
-
 .indent {
 	margin: 0 0 0 36px;
-	padding-top: 20px;
+	padding-top: 8px;
 }
 .indent .indent {
 	margin: 0;
@@ -451,98 +456,6 @@ ul.radioButtonGroup {
 }
 .imageCheckbox.checked div {
 	background-image: url(images/image_checkbox_checked.gif);
-}
-
-.filePreview {
-	margin: 10px 0;
-	overflow:hidden;
-}
-
-.filePreview .fileInfo {
-	margin-bottom: 10px;
-}
-.filePreview .fileInfo td {
-	padding: 0px;
-	color: #3d3d3d;
-}
-.filePreview .fileInfo td.label {
-	font-weight: bold;
-	padding: 0 4px 0 0;
-	width: auto;
-	text-align: right;
-}
-
-.filePreview .download {
-	width: 32px;
-	height: 32px;
-	float: left;
-	display: block;
-	background: url(images/download.gif) no-repeat;
-}
-
-.filePreview .view {
-	width: 32px;
-	height: 32px;
-	float: left;
-	display: block;
-	background: url(images/view.gif) no-repeat;
-}
-
-.cropper {
-	margin: 10px 0;
-	overflow: hidden;
-}
-.cropper .canvas {
-	border: 1px solid #ebebeb;
-}
-.cropper .resizeHandle {
-	width: 12px;
-	height: 12px;
-	background: url(images/resize.gif);
-}
-.cropper .controls {
-	margin-top: 10px;
-}
-.cropper .zoom {
-	background-color: #cdcdcd;
-	height:12px;
-	margin-bottom: 10px;
-}
-.cropper .zoomHandle {
-	width:5px;
-	height:12px;
-	background-color: #3d3d3d;
-}
-
-.cropper .sizeSelectors {
-	height: 19px;
-	float: left;
-	margin: 0 8px 8px 0;
-}
-.cropper .sizeSelectors span {
-	font-size: 10px;
-	color: #3d3d3d;
-	line-height: 20px;
-}
-.cropper .sizeSelectors span.times {
-	padding: 0 6px 0 6px;
-}
-.cropper select {
-	font-size: 10px !important;
-}
-.cropper .cropButton,
-.cropper .undoButton {
-	float: left;
-	padding: 2px 8px 2px;
-	margin-top: 1px;
-	font-family: sans-serif;
-	font-size: 10px;
-	color: #fff;
-	-moz-user-select: none;
-	background: ${highlight};
-}
-.cropper .no-crop .cropButton {
-	background: #cdcdcd;
 }
 
 .chooser .chosen span {
