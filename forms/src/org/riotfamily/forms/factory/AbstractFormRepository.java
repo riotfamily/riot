@@ -44,7 +44,7 @@ public abstract class AbstractFormRepository implements FormRepository {
 		return factories.containsKey(id);
 	}
 
-	protected FormFactory getFormFactory(String id) {
+	public FormFactory getFormFactory(String id) {
 		FormFactory factory = (FormFactory) factories.get(id);
 		if (factory == null) {
 			throw new FormDefinitionException("No such form: " + id);

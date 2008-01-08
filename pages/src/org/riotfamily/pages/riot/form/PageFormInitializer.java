@@ -25,13 +25,13 @@ package org.riotfamily.pages.riot.form;
 
 import java.util.Iterator;
 
-import org.riotfamily.components.config.ComponentFormRepository;
 import org.riotfamily.components.riot.form.VersionContainerEditorBinder;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.element.NestedForm;
 import org.riotfamily.forms.factory.FormFactory;
+import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
@@ -45,10 +45,10 @@ public class PageFormInitializer implements FormInitializer {
 
 	private PageDao pageDao;
 	
-	private ComponentFormRepository repository;
+	private FormRepository repository;
 
 	public PageFormInitializer(PageDao pageDao, 
-			ComponentFormRepository repository) {
+			FormRepository repository) {
 		
 		this.pageDao = pageDao;
 		this.repository = repository;
@@ -70,7 +70,7 @@ public class PageFormInitializer implements FormInitializer {
 		if (handlerName == null) {
 			handlerName = "default";
 		}
-		addComponentFormElements(form, handlerName);
+		addComponentFormElements(form, handlerName + "-page");
 	}
 	
 	private void addComponentFormElements(Form form, String id) {
