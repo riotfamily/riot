@@ -1,6 +1,6 @@
 <div id="${form.id}" class="nestedForm ${form.property?default('unbound')}">
 <#list elements.elements as element>
-	<div class="${(element.compositeElement?default(false))?string('composite','single')}<#if element.styleClass?exists> ${element.styleClass}-element</#if>">
+	<div class="${(element.compositeElement?default(false))?string('composite','single')} ${element.styleClass!}">
 		<#if element.label?exists>
 			<#if element.compositeElement?default(false)>
 				<div class="title">

@@ -7,7 +7,7 @@
 <#if form.required || form.present>
 	<div class="indent elements">
 		<#list elements.elements as element>
-	    	<div class="item<#if element.styleClass?exists> ${element.styleClass}-element</#if>">
+	    	<div class="item ${element.styleClass!}">
 	    		<div class="label">
 		    		<label for="${element.id}" class="field<#if element.form.errors.hasErrors(element)> error</#if>">
 						${element.label?if_exists}<#if element.required>* </#if>
