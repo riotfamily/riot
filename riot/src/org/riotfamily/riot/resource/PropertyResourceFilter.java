@@ -25,14 +25,12 @@ package org.riotfamily.riot.resource;
 
 import java.io.FilterReader;
 import java.io.Reader;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.io.PropertyFilterReader;
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 public class PropertyResourceFilter extends AbstractPathMatchingResourceFilter {
@@ -41,33 +39,16 @@ public class PropertyResourceFilter extends AbstractPathMatchingResourceFilter {
 
 	public static final String LANGUAGE_PROPERTY = "language";
 
-	private Properties properties;
+	private Map properties;
 	
 	private boolean exposeContextPath = true;
 	
 	private boolean exposeLanguage = true;
 	
-	public void setProperties(Properties properties) {
+	public void setProperties(Map properties) {
 		this.properties = properties;
 	}
-	
-	public void setPropertiesMap(Map map) {
-		properties = new Properties();
-		Iterator it = map.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			Assert.isInstanceOf(String.class, entry.getKey(), 
-					"Map must only contain String keys.");
-			
-			Assert.isInstanceOf(String.class, entry.getValue(), 
-					"Map must only contain String values.");
-			
-			String key = (String) entry.getKey();
-			String value = (String) entry.getValue();
-			properties.setProperty(key, value);
-		}
-	}
-	
+		
 	public void setExposeContextPath(boolean exposeContextPath) {
 		this.exposeContextPath = exposeContextPath;
 	}
@@ -77,12 +58,12 @@ public class PropertyResourceFilter extends AbstractPathMatchingResourceFilter {
 	}
 
 	public FilterReader createFilterReader(Reader in, HttpServletRequest request) {
-		Properties props = new Properties(properties);
+		Map props = new HashMap(properties);
 		if (exposeContextPath) {
-			props.setProperty(CONTEXT_PATH_PROPERTY, request.getContextPath());
+			props.put(CONTEXT_PATH_PROPERTY, request.getContextPath());
 		}
 		if (exposeLanguage) {
-			props.setProperty(LANGUAGE_PROPERTY,
+			props.put(LANGUAGE_PROPERTY,
 					RequestContextUtils.getLocale(request).getLanguage().toLowerCase());
 		}
 		return new PropertyFilterReader(in, props);

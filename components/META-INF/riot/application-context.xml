@@ -21,7 +21,7 @@
 		<property name="configLocations">
 			<list>
 				<value>classpath:/org/riotfamily/components/runtime/component-messages.xml</value>
-				<value>/WEB-INF/website-config/components.xml</value>
+				<value>/WEB-INF/riot-config/components.xml</value>
 			</list>
 		</property>
 		<property name="viewNamePrefix" value="components/" />

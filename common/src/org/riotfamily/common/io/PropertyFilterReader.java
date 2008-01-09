@@ -24,6 +24,7 @@
 package org.riotfamily.common.io;
 
 import java.io.Reader;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -31,13 +32,13 @@ import java.util.Properties;
  */
 public class PropertyFilterReader extends AbstractTokenFilterReader {
 
-	private Properties properties;
+	private Map properties;
 	
 	public PropertyFilterReader(Reader in) {
 		super(in);
 	}
 	
-	public PropertyFilterReader(Reader in, Properties properties) {
+	public PropertyFilterReader(Reader in, Map properties) {
 		super(in);
 		this.properties = properties;
 	}
@@ -47,6 +48,6 @@ public class PropertyFilterReader extends AbstractTokenFilterReader {
 	}
 
 	public String getReplacement(String key) {
-		return properties.getProperty(key);
+		return (String) properties.get(key);
 	}
 }

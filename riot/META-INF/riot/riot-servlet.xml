@@ -11,25 +11,19 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx.xsd">
 
+	<!-- Read placeholders from application.properties  -->
+	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
+		<property name="location" value="classpath:/application.properties" />
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="contextOverride" value="true" />
+	</bean>
+	
+	<!-- FixedLocaleResolver to display the Riot user interface in English -->
     <bean id="localeResolver" class="org.springframework.web.servlet.i18n.FixedLocaleResolver">
     	<property name="defaultLocale"><value>en_US</value></property>
     </bean>
-
-	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
-		<property name="location" value="classpath:/application.properties" />
-		<property name="contextOverride" value="true" />
-	</bean>
-
-	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">
-		<property name="proxyTargetClass" value="true" />
-	</bean>
-
-	<bean class="org.riotfamily.riot.runtime.RiotRuntimeBeanPostProcessor">
-		<constructor-arg ref="riotRuntime" />
-	</bean>
-
-	<util:list id="messageBasenames">
-		<value>/WEB-INF/riot-config/messages</value>
+    
+    <util:list id="messageBasenames">
 		<value>classpath:/org/riotfamily/riot/runtime/i18n/messages</value>
 	</util:list>
 	
@@ -47,6 +41,14 @@
 
 	<bean id="messageCodesResolver" class="org.riotfamily.common.i18n.RiotMessageCodesResolver" />
 
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">
+		<property name="proxyTargetClass" value="true" />
+	</bean>
+
+	<bean class="org.riotfamily.riot.runtime.RiotRuntimeBeanPostProcessor">
+		<constructor-arg ref="riotRuntime" />
+	</bean>
+	
 	<!--
 	  - MultipartResolver that provides information about the file upload progress
 	  -->
@@ -71,7 +73,7 @@
 	</bean>
 
 	<!--
-	  - Exception resolver that outputs a nicly formatted error message.
+	  - Exception resolver that outputs a nicely formatted error message.
 	  -->
 	<bean id="exceptionResolver" class="org.riotfamily.common.web.util.AdvancedMappingExceptionResolver">
 		<property name="defaultErrorView" value="classpath:/org/riotfamily/riot/runtime/view/error.ftl" />
@@ -232,7 +234,7 @@
 
 	<bean id="listRepository" class="org.riotfamily.riot.list.xml.XmlListRepository">
 		<property name="configLocations">
-			<value>/WEB-INF/riot-config/list-config.xml</value>
+			<value>/WEB-INF/riot-config/lists.xml</value>
 		</property>
 		<property name="riotDaoService" ref="riotDaoService" />
 	</bean>
@@ -255,7 +257,7 @@
 	<bean id="formRepository" class="org.riotfamily.forms.factory.xml.XmlFormRepository">
 		<property name="configLocations">
 			<list>
-				<value>/WEB-INF/riot-config/form-config.xml</value>
+				<value>/WEB-INF/riot-config/forms.xml</value>
 			</list>
 		</property>
 		<property name="mimetypesMap" ref="fileTypeMap" />
@@ -272,7 +274,7 @@
 	<bean id="editorRepository" class="org.riotfamily.riot.editor.xml.XmlEditorRepository">
 		<property name="configLocations">
 			<list>
-				<value>/WEB-INF/riot-config/editor-config.xml</value>
+				<value>/WEB-INF/riot-config/editors.xml</value>
 			</list>
 		</property>
 		<property name="listRepository" ref="listRepository" />
@@ -316,15 +318,11 @@
 	  -->
 	<bean id="logoutController" name="/logout" class="org.riotfamily.riot.security.ui.LogoutController" />
 
-	<bean id="cssProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-		<property name="properties">
-			<map>
-				<entry key="highlight" value="#cb0038" />
-				<entry key="toolbarOutline" value="#3d3d3d" />
-				<entry key="resourcePath" value-ref="riotResourcePath" />
-			</map>
-		</property>
-	</bean>
+	<util:map id="cssProperties">
+		<entry key="highlight" value="#cb0038" />
+		<entry key="toolbarOutline" value="#3d3d3d" />
+		<entry key="resourcePath" value-ref="riotResourcePath" />
+	</util:map>
 
 	<util:list id="resourceFilters">
 		<bean class="org.riotfamily.riot.resource.PropertyResourceFilter">
@@ -333,7 +331,7 @@
 		</bean>
 		<bean class="org.riotfamily.riot.resource.PropertyResourceFilter">
 			<property name="match" value="/**/frameset.js" />
-			<property name="propertiesMap">
+			<property name="properties">
 				<map>
 					<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
 				</map>

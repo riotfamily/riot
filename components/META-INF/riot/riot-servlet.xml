@@ -40,7 +40,7 @@
 	  -->
 	<bean id="componentFormRepository" class="org.riotfamily.components.config.ComponentFormRepository">
 		<constructor-arg ref="componentRepository" />
-		<property name="config" value="/WEB-INF/website-config/component-forms.xml" />
+		<property name="config" value="/WEB-INF/riot-config/component-forms.xml" />
 		<property name="customElements" ref="customFormElements" />
 		<property name="mimetypesMap" ref="fileTypeMap" />
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
@@ -101,7 +101,6 @@
 
 	<override:add ref="messageBasenames">
 		<value>classpath:/org/riotfamily/components/runtime/i18n/messages</value>
-		<value>/WEB-INF/website-config/messages</value>
 	</override:add>
 
 	<override:add ref="loginInterceptor" property="excludes">
@@ -112,7 +111,7 @@
 	<override:add ref="resourceFilters">
 		<bean class="org.riotfamily.riot.resource.PropertyResourceFilter">
 			<property name="match" value="/**/toolbar-loader.js" />
-			<property name="propertiesMap">
+			<property name="properties">
 				<map>
 					<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
 					<entry key="riotVersion" value-ref="riotVersion" />
