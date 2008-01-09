@@ -35,14 +35,14 @@ import java.util.Set;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class ContentMap extends Content implements Map {
+public class MapWrapper extends ValueWrapper implements Map {
 
 	private Map contentMap;
 	
-	public ContentMap() {
+	public MapWrapper() {
 	}
 
-	public ContentMap(Map map) {
+	public MapWrapper(Map map) {
 		putAll(map);
 	}
 	
@@ -51,12 +51,12 @@ public class ContentMap extends Content implements Map {
 	}
 	
 	public void setValue(Object value) {
-		//contentMap = (Map) value;
+		//Assert.isTrue(value == this);
 	}
 	
-	public Content getContent(String key) {
+	public ValueWrapper getContent(String key) {
 		if (contentMap != null) {
-			return (Content) contentMap.get(key);
+			return (ValueWrapper) contentMap.get(key);
 		}
 		return null;
 	}
@@ -69,7 +69,7 @@ public class ContentMap extends Content implements Map {
 		Iterator it = contentMap.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();
-			Content content = (Content) entry.getValue();
+			ValueWrapper content = (ValueWrapper) entry.getValue();
 			if (content != null) {
 				result.put(entry.getKey(), content.unwrap());
 			}
@@ -80,17 +80,17 @@ public class ContentMap extends Content implements Map {
 		return Collections.unmodifiableMap(result);
 	}
 	
-	public Content deepCopy() {
+	public ValueWrapper deepCopy() {
 		HashMap copy = new HashMap();
 		if (contentMap != null) {
 			Iterator it = contentMap.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry) it.next();
-				Content content = (Content) entry.getValue();
+				ValueWrapper content = (ValueWrapper) entry.getValue();
 				copy.put(entry.getKey(), content.deepCopy());
 			}
 		}
-		return new ContentMap(copy);
+		return new MapWrapper(copy);
 	}
 	
 	public Collection getCacheTags() {
@@ -100,7 +100,7 @@ public class ContentMap extends Content implements Map {
 		HashSet result = new HashSet();
 		Iterator it = contentMap.values().iterator();
 		while (it.hasNext()) {
-			Content content = (Content) it.next();
+			ValueWrapper content = (ValueWrapper) it.next();
 			if (content != null) {
 				Collection tags = content.getCacheTags();
 				if (tags != null) {
@@ -166,7 +166,7 @@ public class ContentMap extends Content implements Map {
 
 	public Object get(Object key) {
 		if (contentMap != null) {
-			Content content = (Content) contentMap.get(key);
+			ValueWrapper content = (ValueWrapper) contentMap.get(key);
 			if (content != null) {
 				return content.getValue();
 			}
@@ -181,11 +181,11 @@ public class ContentMap extends Content implements Map {
 		if (contentMap == null) {
 			contentMap = new HashMap();
 		}
-		if (value instanceof Content) {
+		if (value instanceof ValueWrapper) {
 			return contentMap.put(key, value);
 		}
-		Content oldValue = (Content) contentMap.get(key);
-		contentMap.put(key, ContentFactoryService.createOrUpdateContent(oldValue, value));
+		ValueWrapper oldValue = (ValueWrapper) contentMap.get(key);
+		contentMap.put(key, ValueWrapperService.createOrUpdate(oldValue, value));
 		return oldValue;
 	}
 

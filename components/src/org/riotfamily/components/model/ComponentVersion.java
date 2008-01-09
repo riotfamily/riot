@@ -53,7 +53,7 @@ public class ComponentVersion {
 			Iterator it = prototype.getContents().entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry) it.next();
-				Content content = (Content) entry.getValue();
+				ValueWrapper content = (ValueWrapper) entry.getValue();
 				this.contents.put(entry.getKey(), content.deepCopy());
 			}
 		}
@@ -73,11 +73,11 @@ public class ComponentVersion {
 		this.id = id;
 	}
 
-	public Content getContent(String key) {
-		return (Content) getContents().get(key);
+	public ValueWrapper getContent(String key) {
+		return (ValueWrapper) getContents().get(key);
 	}
 	
-	public void setContent(String key, Content content) {
+	public void setContent(String key, ValueWrapper content) {
 		getContents().put(key, content);
 		setDirty(true);
 	}
@@ -86,7 +86,7 @@ public class ComponentVersion {
 		if (contents == null) {
 			return null;
 		}
-		Content content = getContent(key);
+		ValueWrapper content = getContent(key);
 		return content != null ? content.getValue() : null;
 	}
 	
@@ -94,11 +94,11 @@ public class ComponentVersion {
 		if (value == null) {
 			getContents().remove(key);
 		}
-		else if (value instanceof Content) {
-			setContent(key, (Content) value);
+		else if (value instanceof ValueWrapper) {
+			setContent(key, (ValueWrapper) value);
 		}
 		else {
-			setContent(key, ContentFactoryService.createOrUpdateContent(
+			setContent(key, ValueWrapperService.createOrUpdate(
 					getContent(key), value));
 		}
 		setDirty(true);
@@ -140,7 +140,7 @@ public class ComponentVersion {
 			Iterator it = contents.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry) it.next();
-				Content content = (Content) entry.getValue();
+				ValueWrapper content = (ValueWrapper) entry.getValue();
 				if (content != null) {
 					result.put(entry.getKey(), content.unwrap());
 				}
@@ -184,7 +184,7 @@ public class ComponentVersion {
 		HashSet result = new HashSet();
 		Iterator it = contents.values().iterator();
 		while (it.hasNext()) {
-			Content content = (Content) it.next();
+			ValueWrapper content = (ValueWrapper) it.next();
 			if (content != null) {
 				Collection tags = content.getCacheTags();
 				if (tags != null) {

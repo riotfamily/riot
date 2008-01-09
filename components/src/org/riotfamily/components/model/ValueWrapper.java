@@ -23,27 +23,41 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
+import java.util.Collection;
 
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class ContentCreationException extends RuntimeException {
+public abstract class ValueWrapper {
 
-	public ContentCreationException() {
+	private Long id;
+	
+	public Long getId() {
+		return this.id;
 	}
 
-	public ContentCreationException(String message, Throwable cause) {
-		super(message, cause);
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public ContentCreationException(String message) {
-		super(message);
-	}
-
-	public ContentCreationException(Throwable cause) {
-		super(cause);
+	public Object unwrap() {
+		return getValue();
 	}
 	
+	/**
+	 * Returns a Collection of Strings that should be used to tag the
+	 * CacheItem containing the rendered content.
+	 */
+	public Collection getCacheTags() {
+		return null;
+	}
+	
+	public abstract Object getValue();
+	
+	public abstract void setValue(Object value);
+	
+	public abstract ValueWrapper deepCopy();
+
 }

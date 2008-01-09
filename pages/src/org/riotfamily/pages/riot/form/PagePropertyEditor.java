@@ -26,8 +26,8 @@ package org.riotfamily.pages.riot.form;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import org.riotfamily.components.model.Content;
-import org.riotfamily.components.riot.form.ContentEditor;
+import org.riotfamily.components.model.ValueWrapper;
+import org.riotfamily.components.riot.form.ValueWrapperEditor;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.element.TemplateElement;
@@ -69,9 +69,9 @@ public class PagePropertyEditor extends TemplateElement {
 			display = (Editor) elementFactory.createElement(this, getForm(), false);
 			String property = editor.getEditorBinding().getProperty();
 			Map properties = masterPage.getVersionContainer().getLatestVersion().getContents();
-			Content content = (Content) properties.get(property);
+			ValueWrapper content = (ValueWrapper) properties.get(property);
 			if (content != null) {
-				if (editor instanceof ContentEditor) {
+				if (editor instanceof ValueWrapperEditor) {
 					display.setValue(content);
 				}
 				else {

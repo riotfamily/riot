@@ -23,13 +23,30 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
-
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 7.0
+ * @since 6.6
  */
-public interface ContentFactory {
+public class StringWrapper extends ValueWrapper {
 
-	public Content createContent(Object value) throws ContentCreationException;
+	private String string;
+
+	public StringWrapper() {
+	}
+
+	public StringWrapper(String string) {
+		this.string = string;
+	}
+
+	public Object getValue() {
+		return string;
+	}
 	
+	public void setValue(Object value) {
+		string = (String) value;
+	}
+	
+	public ValueWrapper deepCopy() {
+		return new StringWrapper(string);
+	}
 }

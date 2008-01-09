@@ -23,30 +23,33 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
+import org.riotfamily.media.model.RiotFile;
+
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class BooleanContent extends Content {
+public class RiotFileWrapper extends ValueWrapper {
 
-	private Boolean bit;
+	private RiotFile file;
 
-	public BooleanContent() {
+	public RiotFileWrapper() {
 	}
 
-	public BooleanContent(Boolean bit) {
-		this.bit = bit;
+	public RiotFileWrapper(RiotFile file) {
+		this.file = file;
 	}
 
 	public Object getValue() {
-		return bit;
+		return file;
 	}
-	
+
 	public void setValue(Object value) {
-		bit = (Boolean) value;
+		file = (RiotFile) value;
 	}
 	
-	public Content deepCopy() {
-		return new BooleanContent(bit);
-	}
+	public ValueWrapper deepCopy() {
+		return new RiotFileWrapper(file.createCopy());
+	}	
+	
 }

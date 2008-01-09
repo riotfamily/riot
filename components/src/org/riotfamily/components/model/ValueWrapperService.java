@@ -14,7 +14,7 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * Portions created by the Initial Developer are Copyright (C) 2008
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
@@ -23,33 +23,40 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
-import org.riotfamily.media.model.RiotFile;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class FileContent extends Content {
+public class ValueWrapperService {
 
-	private RiotFile file;
-
-	public FileContent() {
-	}
-
-	public FileContent(RiotFile file) {
-		this.file = file;
-	}
-
-	public Object getValue() {
-		return file;
-	}
-
-	public void setValue(Object value) {
-		file = (RiotFile) value;
+	private static ValueWrapperFactory wrapperFactory = new BuiltInWrapperFactory();
+	
+	public static void setWrapperFactory(ValueWrapperFactory wrapperFactory) {
+		ValueWrapperService.wrapperFactory = wrapperFactory;
 	}
 	
-	public Content deepCopy() {
-		return new FileContent(file.createCopy());
-	}	
+	public static ValueWrapper createOrUpdate(ValueWrapper wrapper, Object value) 
+			throws ContentException {
+		
+		if (wrapper != null) {
+			try {
+				wrapper.setValue(value);
+				return wrapper;
+			}
+			catch (ClassCastException e) {
+			}
+		}
+		return wrap(value);
+	}
 	
+	public static ValueWrapper wrap(Object value) 
+			throws ContentException {
+	
+		ValueWrapper wrapper = wrapperFactory.createWapper(value);
+		if (wrapper == null) {
+			throw new ContentException("No ValueWrapper for value: " + value);
+		}
+		return wrapper;
+	}
 }

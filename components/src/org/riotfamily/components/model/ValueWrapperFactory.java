@@ -23,41 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
-import java.util.Collection;
-
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public abstract class Content {
+public interface ValueWrapperFactory {
 
-	private Long id;
+	public ValueWrapper createWapper(Object value) throws ContentException;
 	
-	public Long getId() {
-		return this.id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Object unwrap() {
-		return getValue();
-	}
-	
-	/**
-	 * Returns a Collection of Strings that should be used to tag the
-	 * CacheItem containing the rendered content.
-	 */
-	public Collection getCacheTags() {
-		return null;
-	}
-	
-	public abstract Object getValue();
-	
-	public abstract void setValue(Object value);
-	
-	public abstract Content deepCopy();
-
 }

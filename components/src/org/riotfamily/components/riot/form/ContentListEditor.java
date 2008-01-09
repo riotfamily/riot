@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.riot.form;
 
-import org.riotfamily.components.model.ContentList;
+import org.riotfamily.components.model.ListWrapper;
 import org.riotfamily.forms.element.collection.ListEditor;
 import org.riotfamily.forms.element.collection.ListItem;
 
@@ -31,10 +31,10 @@ import org.riotfamily.forms.element.collection.ListItem;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class ContentListEditor extends ListEditor implements ContentEditor {
+public class ContentListEditor extends ListEditor implements ValueWrapperEditor {
 
 	public ContentListEditor() {
-		setCollectionClass(ContentList.class);
+		setCollectionClass(ListWrapper.class);
 	}
 	
 	protected ListItem createItem() {

@@ -28,17 +28,17 @@
 		<property name="viewNameSuffix" value=".ftl" />
 	</bean>
 
-	<bean id="contentFactory" class="org.riotfamily.components.model.HibernateContentFactory">
+	<bean id="valueWrapperFactory" class="org.riotfamily.components.model.HibernateWrapperFactory">
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 	
-	<bean id="contentFactorySerivce" class="org.riotfamily.common.beans.MethodInvokingBean">
-		<property name="staticMethod" value="org.riotfamily.components.model.ContentFactoryService.setContentFactory" />
-		<property name="argument" ref="contentFactory"/>
+	<bean id="valueWrapperService" class="org.riotfamily.common.beans.MethodInvokingBean">
+		<property name="staticMethod" value="org.riotfamily.components.model.ValueWrapperService.setWrapperFactory" />
+		<property name="argument" ref="valueWrapperFactory" />
 	</bean>
 	
 	<bean id="componentDao" class="org.springframework.aop.framework.ProxyFactoryBean"
-			depends-on="contentFactorySerivce">
+			depends-on="valueWrapperService">
 		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
 		<property name="target"><ref bean="componentDaoTarget" /></property>
 	</bean>

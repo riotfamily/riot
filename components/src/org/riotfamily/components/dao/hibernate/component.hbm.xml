@@ -67,39 +67,39 @@
 			<cache usage="nonstrict-read-write" region="components" />
 			<key column="component_version" />
 			<index column="`key`" type="string" />
-			<many-to-many column="content" class="Content" />
+			<many-to-many column="content" class="ValueWrapper" />
 		</map>
 		<many-to-one name="container" />
 		<property name="dirty" />
 	</class>
 	
-	<class name="Content" table="riot_contents" lazy="false">
+	<class name="ValueWrapper" table="riot_content_values" lazy="false">
 		<cache usage="nonstrict-read-write" region="components" />
 		<id name="id">
 			<generator class="native" />
 		</id>
 		<discriminator column="`type`" type="string" />
-		<subclass name="StringContent" discriminator-value="string">
+		<subclass name="StringWrapper" discriminator-value="string">
 			<property name="string" access="field" />
 		</subclass>
-		<subclass name="BooleanContent" discriminator-value="boolean">
+		<subclass name="BooleanWrapper" discriminator-value="boolean">
 			<property name="bit" access="field" />
 		</subclass>
-		<subclass name="FileContent" discriminator-value="file">
+		<subclass name="RiotFileWrapper" discriminator-value="file">
 			<many-to-one name="file" access="field" fetch="join" cascade="all" />
 		</subclass>
-		<subclass name="ContentList" discriminator-value="list">
+		<subclass name="ListWrapper" discriminator-value="list">
 			<list name="contentList" access="field" table="riot_content_list_items" cascade="all-delete-orphan" lazy="false">
 				<key column="list" />
 				<index column="pos" />
-				<one-to-many class="Content" />
+				<one-to-many class="ValueWrapper" />
 			</list>
 		</subclass>
-		<subclass name="ContentMap" discriminator-value="map">
+		<subclass name="MapWrapper" discriminator-value="map">
 			<map name="contentMap" access="field" table="riot_content_map_entries" cascade="all-delete-orphan" lazy="false">
 				<key column="map" />
 				<index column="`key`" type="string" />
-				<one-to-many class="Content" />
+				<one-to-many class="ValueWrapper" />
 			</map>
 		</subclass>
 	</class>

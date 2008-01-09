@@ -23,39 +23,30 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
-import java.util.List;
-import java.util.Map;
-
-import org.riotfamily.media.model.RiotFile;
-
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class BuiltInContentFactory implements ContentFactory {
+public class BooleanWrapper extends ValueWrapper {
 
-	public Content createContent(Object value) {
-		if (value == null) {
-			return null;
-		}
-		if (value instanceof Content) {
-			return (Content) value;
-		}
-		if (value instanceof String) {
-			return new StringContent((String) value);
-		}
-		if (value instanceof Boolean) {
-			return new BooleanContent((Boolean) value);
-		}
-		if (value instanceof RiotFile) {
-			return new FileContent((RiotFile) value);
-		}
-		if (value instanceof List) {
-			return new ContentList((List) value);
-		}
-		if (value instanceof Map) {
-			return new ContentMap((Map) value);
-		}
-		return null;
+	private Boolean bit;
+
+	public BooleanWrapper() {
+	}
+
+	public BooleanWrapper(Boolean bit) {
+		this.bit = bit;
+	}
+
+	public Object getValue() {
+		return bit;
+	}
+	
+	public void setValue(Object value) {
+		bit = (Boolean) value;
+	}
+	
+	public ValueWrapper deepCopy() {
+		return new BooleanWrapper(bit);
 	}
 }

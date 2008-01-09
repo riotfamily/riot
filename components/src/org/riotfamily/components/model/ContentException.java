@@ -14,7 +14,7 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2008
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
@@ -24,40 +24,26 @@
 package org.riotfamily.components.model;
 
 
+
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class ContentFactoryService {
+public class ContentException extends RuntimeException {
 
-	private static ContentFactory contentFactory = new BuiltInContentFactory();
-	
-	public static void setContentFactory(ContentFactory contentFactory) {
-		ContentFactoryService.contentFactory = contentFactory;
+	public ContentException() {
+	}
+
+	public ContentException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public ContentException(String message) {
+		super(message);
+	}
+
+	public ContentException(Throwable cause) {
+		super(cause);
 	}
 	
-	public static Content createOrUpdateContent(Content content, Object value) 
-			throws ContentCreationException {
-		
-		if (content != null) {
-			try {
-				content.setValue(value);
-				return content;
-			}
-			catch (ClassCastException e) {
-			}
-		}
-		return createContent(value);
-	}
-	
-	public static Content createContent(Object value) 
-			throws ContentCreationException {
-	
-		Content content = contentFactory.createContent(value);
-		if (content == null) {
-			throw new ContentCreationException(
-					"ContentFactory returned null for value: " + value);
-		}
-		return content;
-	}
 }

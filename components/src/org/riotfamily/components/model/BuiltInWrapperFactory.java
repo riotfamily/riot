@@ -21,12 +21,41 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.riot.form;
+package org.riotfamily.components.model;
+
+import java.util.List;
+import java.util.Map;
+
+import org.riotfamily.media.model.RiotFile;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public interface ContentEditor {
+public class BuiltInWrapperFactory implements ValueWrapperFactory {
 
+	public ValueWrapper createWapper(Object value) {
+		if (value == null) {
+			return null;
+		}
+		if (value instanceof ValueWrapper) {
+			return (ValueWrapper) value;
+		}
+		if (value instanceof String) {
+			return new StringWrapper((String) value);
+		}
+		if (value instanceof Boolean) {
+			return new BooleanWrapper((Boolean) value);
+		}
+		if (value instanceof RiotFile) {
+			return new RiotFileWrapper((RiotFile) value);
+		}
+		if (value instanceof List) {
+			return new ListWrapper((List) value);
+		}
+		if (value instanceof Map) {
+			return new MapWrapper((Map) value);
+		}
+		return null;
+	}
 }

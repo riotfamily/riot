@@ -44,20 +44,20 @@ import org.springframework.core.MethodParameter;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class HibernateContentFactory implements ContentFactory {
+public class HibernateWrapperFactory implements ValueWrapperFactory {
 
-	private static Log log = LogFactory.getLog(HibernateContentFactory.class);
+	private static Log log = LogFactory.getLog(HibernateWrapperFactory.class);
 	
 	private ArrayList contentClassInfos = new ArrayList();
 	
 	private ArrayList collectionClassInfos = new ArrayList();
 	
-	public HibernateContentFactory(SessionFactory sessionFactory) {
+	public HibernateWrapperFactory(SessionFactory sessionFactory) {
 		Iterator it = sessionFactory.getAllClassMetadata().values().iterator();
 		while (it.hasNext()) {
 			ClassMetadata meta = (ClassMetadata) it.next();
 			Class entityClass = meta.getMappedClass(EntityMode.POJO);
-			if (Content.class.isAssignableFrom(entityClass)) {
+			if (ValueWrapper.class.isAssignableFrom(entityClass)) {
 				Constructor[] ctors = entityClass.getConstructors();
 				for (int i = 0; i < ctors.length; i++) {
 					Class[] params = ctors[i].getParameterTypes();
@@ -107,7 +107,7 @@ public class HibernateContentFactory implements ContentFactory {
 		return (ContentClassInfo) infos.first();
 	}
 	
-	public Content createContent(Object value) throws ContentCreationException {
+	public ValueWrapper createWapper(Object value) throws ContentException {
 		Class collectionType = getCollectionType(value);
 		ContentClassInfo info;
 		if (collectionType != null) {
@@ -130,22 +130,22 @@ public class HibernateContentFactory implements ContentFactory {
 			this.constructor = constructor;
 		}
 		
-		private Content createContent(Object value) throws ContentCreationException {
+		private ValueWrapper createContent(Object value) throws ContentException {
 			try {
 				log.debug("Creating new " + constructor.getName() + " for " + value);
-				return (Content) constructor.newInstance(new Object[] {value});
+				return (ValueWrapper) constructor.newInstance(new Object[] {value});
 			}
 			catch (IllegalArgumentException e) {
-				throw new ContentCreationException(e);
+				throw new ContentException(e);
 			}
 			catch (InstantiationException e) {
-				throw new ContentCreationException(e);
+				throw new ContentException(e);
 			}
 			catch (IllegalAccessException e) {
-				throw new ContentCreationException(e);
+				throw new ContentException(e);
 			}
 			catch (InvocationTargetException e) {
-				throw new ContentCreationException(e);
+				throw new ContentException(e);
 			}
 		}
 	}

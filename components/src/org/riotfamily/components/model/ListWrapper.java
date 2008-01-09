@@ -36,14 +36,14 @@ import java.util.ListIterator;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class ContentList extends Content implements List {
+public class ListWrapper extends ValueWrapper implements List {
 
 	private List contentList;
 
-	public ContentList() {
+	public ListWrapper() {
 	}
 
-	public ContentList(List list) {
+	public ListWrapper(List list) {
 		addAll(list);
 	}
 
@@ -62,7 +62,7 @@ public class ContentList extends Content implements List {
 		ArrayList result = new ArrayList(contentList.size());
 		Iterator it = contentList.iterator();
 		while (it.hasNext()) {
-			Content content = (Content) it.next();
+			ValueWrapper content = (ValueWrapper) it.next();
 			if (content != null) {
 				result.add(content.unwrap());
 			}
@@ -73,11 +73,11 @@ public class ContentList extends Content implements List {
 		return Collections.unmodifiableList(result);
 	}
 	
-	public Content deepCopy() {
+	public ValueWrapper deepCopy() {
 		ArrayList copy = new ArrayList(contentList.size());
 		Iterator it = contentList.iterator();
 		while (it.hasNext()) {
-			Content content = (Content) it.next();
+			ValueWrapper content = (ValueWrapper) it.next();
 			if (content != null) {
 				copy.add(content.deepCopy());
 			}
@@ -85,7 +85,7 @@ public class ContentList extends Content implements List {
 				copy.add(null);
 			}
 		}
-		return new ContentList(copy);
+		return new ListWrapper(copy);
 	}
 	
 	public Collection getCacheTags() {
@@ -95,7 +95,7 @@ public class ContentList extends Content implements List {
 		HashSet result = new HashSet();
 		Iterator it = contentList.iterator();
 		while (it.hasNext()) {
-			Content content = (Content) it.next();
+			ValueWrapper content = (ValueWrapper) it.next();
 			if (content != null) {
 				Collection tags = content.getCacheTags();
 				if (tags != null) {
@@ -121,13 +121,13 @@ public class ContentList extends Content implements List {
 		if (contentList == null) {
 			contentList = new ArrayList();
 		}
-		Content content = null;
+		ValueWrapper content = null;
 		if (item != null) { 
-			if (item instanceof Content) {
-				content = (Content) item;
+			if (item instanceof ValueWrapper) {
+				content = (ValueWrapper) item;
 			}
 			else {
-				content = ContentFactoryService.createContent(item);
+				content = ValueWrapperService.wrap(item);
 			}
 		}
 		contentList.add(index, content);

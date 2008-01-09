@@ -23,8 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.riot.form;
 
-import org.riotfamily.components.model.Content;
-import org.riotfamily.components.model.ContentFactoryService;
+import org.riotfamily.components.model.ValueWrapper;
+import org.riotfamily.components.model.ValueWrapperService;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.element.collection.ListEditor;
 import org.riotfamily.forms.element.collection.ListItem;
@@ -35,7 +35,7 @@ import org.riotfamily.forms.element.collection.ListItem;
  */
 public class ContentListItem extends ListItem {
 
-	private Content content;
+	private ValueWrapper wrapper;
 	
 	public ContentListItem(ListEditor list) {
 		super(list);
@@ -44,10 +44,8 @@ public class ContentListItem extends ListItem {
 	public void setValue(Object value) {
 		Editor editor = getEditor();
 		if (value != null) {
-			content = (Content) value;
-			if (!(editor instanceof ContentEditor)) {
-				value = content.getValue();
-			}
+			wrapper = (ValueWrapper) value;
+			value = wrapper.getValue();
 		}
 		editor.setValue(value);
 	}
@@ -58,19 +56,19 @@ public class ContentListItem extends ListItem {
 		if (value == null) {
 			return null;
 		}
-		if (value instanceof Content) {
+		if (value instanceof ValueWrapper) {
 			return value;
 		}
-		if (content != null) {
+		if (wrapper != null) {
 			try {
-				content.setValue(value);
-				return content;
+				wrapper.setValue(value);
+				return wrapper;
 			}
 			catch (ClassCastException e) {
 				//FIXME Implementors should throw a ContentException by contract!
 			}
 		}
-		return ContentFactoryService.createContent(value);
+		return ValueWrapperService.wrap(value);
 	}
 
 }

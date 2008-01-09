@@ -21,32 +21,17 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.model;
+package org.riotfamily.components.riot.form;
+
+import org.riotfamily.forms.Editor;
 
 /**
+ * Marker interface for editors that edit the ValueWrapper instead of the 
+ * wrapped value.
+ *  
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.6
+ * @since 7.0
  */
-public class StringContent extends Content {
+public interface ValueWrapperEditor extends Editor {
 
-	private String string;
-
-	public StringContent() {
-	}
-
-	public StringContent(String string) {
-		this.string = string;
-	}
-
-	public Object getValue() {
-		return string;
-	}
-	
-	public void setValue(Object value) {
-		string = (String) value;
-	}
-	
-	public Content deepCopy() {
-		return new StringContent(string);
-	}
 }
