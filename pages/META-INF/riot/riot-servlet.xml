@@ -25,7 +25,7 @@
 
 	<bean id="pageFormInitializer" class="org.riotfamily.pages.riot.form.PageFormInitializer">
 		<constructor-arg ref="pageDao" />
-		<constructor-arg ref="formRepository" />
+		<constructor-arg ref="componentFormRepository" />
 	</bean>
 
 	<!-- Overrides -->

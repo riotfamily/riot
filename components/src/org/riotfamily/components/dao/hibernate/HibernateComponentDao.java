@@ -64,8 +64,9 @@ public class HibernateComponentDao implements ComponentDao {
 
 	public void deleteComponentLists(String type, String path) {
 		Query query = hibernate.createQuery("delete "
-				+ ComponentList.class.getName()	+ " list join list.location l " 
-				+ "where l.type = :type and l.path = :path");
+				+ ComponentList.class.getName()	+ " list where " +
+						"list.location.type = :type and " +
+						"list.location.path = :path");
 
 		hibernate.setParameter(query, "type", type);
 		hibernate.setParameter(query, "path", path);
