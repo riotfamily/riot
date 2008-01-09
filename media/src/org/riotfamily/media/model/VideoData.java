@@ -67,6 +67,9 @@ public class VideoData extends FileData {
 	
 	private boolean stereo;
 	
+	public VideoData() {
+	}
+	
 	public VideoData(MultipartFile multipartFile) throws IOException {
 		super(multipartFile);
 		inspect(getFile());

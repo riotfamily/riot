@@ -44,7 +44,6 @@ public class SwfData extends FileData {
 	private int version;
 
 	public SwfData() {
-		super();
 	}
 
 	public SwfData(MultipartFile multipartFile) throws IOException {

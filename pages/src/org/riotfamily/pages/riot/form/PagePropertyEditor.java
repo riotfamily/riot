@@ -68,7 +68,7 @@ public class PagePropertyEditor extends TemplateElement {
 		if (masterPage != null) {
 			display = (Editor) elementFactory.createElement(this, getForm(), false);
 			String property = editor.getEditorBinding().getProperty();
-			Map properties = masterPage.getVersionContainer().getLatestVersion().getContents();
+			Map properties = masterPage.getVersionContainer().getLatestVersion().getWrappers();
 			ValueWrapper content = (ValueWrapper) properties.get(property);
 			if (content != null) {
 				if (editor instanceof ValueWrapperEditor) {

@@ -6,7 +6,7 @@
 
 <hibernate-mapping package="org.riotfamily.media.model" auto-import="false">
 
-	<class name="RiotFile" table="riot_media_files" discriminator-value="file">
+	<class name="RiotFile" table="riot_media_files" discriminator-value="file" lazy="false">
 		<cache usage="nonstrict-read-write" region="media" />
 		<id name="id">
 			<generator class="native" />

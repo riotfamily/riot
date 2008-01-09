@@ -31,13 +31,13 @@ import java.util.Map;
 
 /**
  * Versioned model for a component. The component properties are stored as
- * map of Content objects keyed by Strings.
+ * map of ValueWrapper objects keyed by Strings.
  */
 public class ComponentVersion {
 
 	private Long id;
 
-	private Map contents;
+	private Map wrappers;
 
 	private boolean dirty;
 
@@ -49,12 +49,12 @@ public class ComponentVersion {
 	public ComponentVersion(ComponentVersion prototype) {
 		if (prototype != null) {
 			this.container = prototype.getContainer();
-			this.contents = new HashMap();
-			Iterator it = prototype.getContents().entrySet().iterator();
+			this.wrappers = new HashMap();
+			Iterator it = prototype.getWrappers().entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry) it.next();
-				ValueWrapper content = (ValueWrapper) entry.getValue();
-				this.contents.put(entry.getKey(), content.deepCopy());
+				ValueWrapper wrapper = (ValueWrapper) entry.getValue();
+				this.wrappers.put(entry.getKey(), wrapper.deepCopy());
 			}
 		}
 	}
@@ -73,33 +73,33 @@ public class ComponentVersion {
 		this.id = id;
 	}
 
-	public ValueWrapper getContent(String key) {
-		return (ValueWrapper) getContents().get(key);
+	public ValueWrapper getWrapper(String key) {
+		return (ValueWrapper) getWrappers().get(key);
 	}
 	
-	public void setContent(String key, ValueWrapper content) {
-		getContents().put(key, content);
+	public void setWrapper(String key, ValueWrapper wrapper) {
+		getWrappers().put(key, wrapper);
 		setDirty(true);
 	}
 	
 	public Object getValue(String key) {
-		if (contents == null) {
+		if (wrappers == null) {
 			return null;
 		}
-		ValueWrapper content = getContent(key);
-		return content != null ? content.getValue() : null;
+		ValueWrapper wrapper = getWrapper(key);
+		return wrapper != null ? wrapper.getValue() : null;
 	}
 	
 	public void setValue(String key, Object value) {
 		if (value == null) {
-			getContents().remove(key);
+			getWrappers().remove(key);
 		}
 		else if (value instanceof ValueWrapper) {
-			setContent(key, (ValueWrapper) value);
+			setWrapper(key, (ValueWrapper) value);
 		}
 		else {
-			setContent(key, ValueWrapperService.createOrUpdate(
-					getContent(key), value));
+			setWrapper(key, ValueWrapperService.createOrUpdate(
+					getWrapper(key), value));
 		}
 		setDirty(true);
 	}
@@ -123,26 +123,26 @@ public class ComponentVersion {
 		this.dirty = dirty;
 	}
 
-	public Map getContents() {
-		if (contents == null) {
-			contents = new HashMap();
+	public Map getWrappers() {
+		if (wrappers == null) {
+			wrappers = new HashMap();
 		}
-		return contents;
+		return wrappers;
 	}
 
-	public void setContents(Map contents) {
-		this.contents = contents;
+	public void setWrappers(Map contents) {
+		this.wrappers = contents;
 	}
 	
 	public Map getValues() {
 		HashMap result = new HashMap();
-		if (contents != null) {
-			Iterator it = contents.entrySet().iterator();
+		if (wrappers != null) {
+			Iterator it = wrappers.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry) it.next();
-				ValueWrapper content = (ValueWrapper) entry.getValue();
-				if (content != null) {
-					result.put(entry.getKey(), content.unwrap());
+				ValueWrapper wrapper = (ValueWrapper) entry.getValue();
+				if (wrapper != null) {
+					result.put(entry.getKey(), wrapper.unwrap());
 				}
 				else {
 					result.put(entry.getKey(), null);
@@ -161,7 +161,7 @@ public class ComponentVersion {
 				Object value = entry.getValue();
 				setValue(key, value);
 			}
-			it = getContents().keySet().iterator();
+			it = getWrappers().keySet().iterator();
 			while (it.hasNext()) {
 				Object key = it.next();
 				if (!values.containsKey(key)) {
@@ -170,7 +170,7 @@ public class ComponentVersion {
 			}
 		}
 		else {
-			getContents().clear();
+			getWrappers().clear();
 		}
 		setDirty(true);
 		
@@ -182,11 +182,11 @@ public class ComponentVersion {
 	 */
 	public Collection getCacheTags() {
 		HashSet result = new HashSet();
-		Iterator it = contents.values().iterator();
+		Iterator it = wrappers.values().iterator();
 		while (it.hasNext()) {
-			ValueWrapper content = (ValueWrapper) it.next();
-			if (content != null) {
-				Collection tags = content.getCacheTags();
+			ValueWrapper wrapper = (ValueWrapper) it.next();
+			if (wrapper != null) {
+				Collection tags = wrapper.getCacheTags();
 				if (tags != null) {
 					result.addAll(tags);
 				}
