@@ -36,9 +36,9 @@ import org.springframework.validation.Validator;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class ComponentFormRepository extends XmlFormRepository {
+public class ContentFormRepository extends XmlFormRepository {
 
-	public ComponentFormRepository(ComponentRepository componentRepository) {
+	public ContentFormRepository(ComponentRepository componentRepository) {
 		componentRepository.setFormRepository(this);
 	}
 

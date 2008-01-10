@@ -38,9 +38,9 @@
 	<!--
 	  - FormRepository providing component property forms.
 	  -->
-	<bean id="componentFormRepository" class="org.riotfamily.components.config.ComponentFormRepository">
+	<bean id="contentFormRepository" class="org.riotfamily.components.config.ContentFormRepository">
 		<constructor-arg ref="componentRepository" />
-		<property name="config" value="/WEB-INF/riot-config/component-forms.xml" />
+		<property name="config" value="/WEB-INF/riot-config/content-forms.xml" />
 		<property name="customElements" ref="customFormElements" />
 		<property name="mimetypesMap" ref="fileTypeMap" />
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
@@ -52,7 +52,7 @@
 	<bean id="componentFormController"
 		name="/components/form/@{formId}/@{containerId}"
 		class="org.riotfamily.components.editor.ComponentFormController">
-		<constructor-arg ref="componentFormRepository" />
+		<constructor-arg ref="contentFormRepository" />
 		<constructor-arg ref="componentDao" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
@@ -63,7 +63,7 @@
 	<bean id="entityFormController"
 		name="/components/entity-form/@{listId}/@{formId}/@{objectId}"
 		class="org.riotfamily.components.editor.EntityFormController">
-		<constructor-arg ref="componentFormRepository" />
+		<constructor-arg ref="contentFormRepository" />
 		<constructor-arg ref="listRepository" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
