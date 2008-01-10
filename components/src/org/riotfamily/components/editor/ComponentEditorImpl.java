@@ -360,7 +360,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		components.remove(component);
 		componentList.setDirty(true);
 		componentDao.updateComponentList(componentList);
-		if (!componentList.getLiveContainers().contains(component)) {
+		if (!componentList.getLiveComponents().contains(component)) {
 			componentDao.deleteContentContainer(component);
 		}
 	}
@@ -437,8 +437,8 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		if (componentList.isDirty()) {
 			log.debug("List " + componentList + " is dirty and will be published.");
 			published = true;
-			List previewList = componentList.getPreviewContainers();
-			List liveList = componentList.getLiveContainers();
+			List previewList = componentList.getPreviewComponents();
+			List liveList = componentList.getLiveComponents();
 			if (liveList == null) {
 				liveList = new ArrayList();
 			}
@@ -459,7 +459,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 			componentDao.updateComponentList(componentList);
 		}
 
-		Iterator it = componentList.getLiveContainers().iterator();
+		Iterator it = componentList.getLiveComponents().iterator();
 		while (it.hasNext()) {
 			Component container = (Component) it.next();
 			published |= publishContainer(container);
@@ -483,8 +483,8 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		boolean discarded = false;
 		if (componentList.isDirty()) {
 			discarded = true;
-			List previewList = componentList.getPreviewContainers();
-			List liveList = componentList.getLiveContainers();
+			List previewList = componentList.getPreviewComponents();
+			List liveList = componentList.getLiveComponents();
 			Iterator it = previewList.iterator();
 			while (it.hasNext()) {
 				Component container = (Component) it.next();
@@ -493,11 +493,11 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 					it.remove();
 				}
 			}
-			componentList.setPreviewContainers(null);
+			componentList.setPreviewComponents(null);
 			componentList.setDirty(false);
 			componentDao.updateComponentList(componentList);
 		}
-		Iterator it = componentList.getLiveContainers().iterator();
+		Iterator it = componentList.getLiveComponents().iterator();
 		while (it.hasNext()) {
 			Component container = (Component) it.next();
 			discarded |= discardContainer(container);

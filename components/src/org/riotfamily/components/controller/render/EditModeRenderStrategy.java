@@ -146,7 +146,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 				container.setLiveVersion(live);
 				containers.add(container);
 			}
-			list.setLiveContainers(containers);
+			list.setLiveComponents(containers);
 		}
 		dao.saveComponentList(list);
 		log.debug("New ComponentList created: " + list);

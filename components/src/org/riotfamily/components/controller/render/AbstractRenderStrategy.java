@@ -149,8 +149,8 @@ public abstract class AbstractRenderStrategy implements RenderStrategy {
 		int i = 0;
 		Iterator it = components.iterator();
 		while (it.hasNext()) {
-			Component container = (Component) it.next();
-			renderComponent(container, 
+			Component component = (Component) it.next();
+			renderComponent(component, 
 					getPositionalClassName(i++, !it.hasNext()),
 					request, response);
 		}
@@ -166,7 +166,7 @@ public abstract class AbstractRenderStrategy implements RenderStrategy {
 	 * simply returns the list's live components.
 	 */
 	protected List getComponentsToRender(ComponentList list) {
-		return list.getLiveContainers();
+		return list.getLiveComponents();
 	}
 	
 	protected final void renderComponent(Component component, 

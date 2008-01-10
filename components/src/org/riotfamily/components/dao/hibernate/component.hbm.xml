@@ -23,17 +23,17 @@
 			<property name="slot" column="slot" length="66" unique-key="component_list_key" />
 		</component>
 		<many-to-one name="parent" unique-key="component_list_key" />
-		<list name="liveContainers" cascade="all">
+		<list name="liveComponents" cascade="all">
 			<cache usage="nonstrict-read-write" region="components" />
 			<key column="live_list" />
 			<index column="live_pos" />
-			<one-to-many class="ContentContainer" />
+			<one-to-many class="Component" />
 		</list>
-		<list name="previewContainers" cascade="all">
+		<list name="previewComponents" cascade="all">
 			<cache usage="nonstrict-read-write" region="components" />
 			<key column="preview_list" />
 			<index column="preview_pos" />
-			<one-to-many class="ContentContainer" />
+			<one-to-many class="Component" />
 		</list>
 		<property name="dirty" />
 		<property name="lastModified" />

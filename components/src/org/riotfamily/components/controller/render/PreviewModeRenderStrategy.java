@@ -50,11 +50,11 @@ public class PreviewModeRenderStrategy extends AbstractRenderStrategy {
 	protected List getComponentsToRender(ComponentList list) {
 		if (list.isDirty()) {
 			log.debug("List is dirty - rendering preview containers");
-			return list.getPreviewContainers();
+			return list.getPreviewComponents();
 		}
 		else {
 			log.debug("List is *NOT* dirty - rendering live containers");
-			return list.getLiveContainers();
+			return list.getLiveComponents();
 		}
 	}
 	

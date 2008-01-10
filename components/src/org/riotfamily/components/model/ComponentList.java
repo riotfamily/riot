@@ -41,9 +41,9 @@ public class ComponentList {
 
 	private ComponentListLocation location;
 
-	private List liveContainers;
+	private List liveComponents;
 
-	private List previewContainers;
+	private List previewComponents;
 
 	private boolean dirty;
 
@@ -61,12 +61,12 @@ public class ComponentList {
 		this.id = id;
 	}
 
-	public List getLiveContainers() {
-		return this.liveContainers;
+	public List getLiveComponents() {
+		return this.liveComponents;
 	}
 
-	public void setLiveContainers(List list) {
-		this.liveContainers = list;
+	public void setLiveComponents(List list) {
+		this.liveComponents = list;
 	}
 
 	public ComponentListLocation getLocation() {
@@ -85,28 +85,28 @@ public class ComponentList {
 		this.parent = parent;
 	}
 
-	public List getPreviewContainers() {
-		return this.previewContainers;
+	public List getPreviewComponents() {
+		return this.previewComponents;
 	}
 
-	public void setPreviewContainers(List list) {
-		this.previewContainers = list;
+	public void setPreviewComponents(List list) {
+		this.previewComponents = list;
 	}
 	
 	public List getOrCreatePreviewContainers() {
 		if (!dirty) {
-			if (previewContainers == null) {
-				previewContainers = new ArrayList();
+			if (previewComponents == null) {
+				previewComponents = new ArrayList();
 			}
 			else {
-				previewContainers.clear();
+				previewComponents.clear();
 			}
-			if (liveContainers != null) {
-				previewContainers.addAll(liveContainers);
+			if (liveComponents != null) {
+				previewComponents.addAll(liveComponents);
 			}
 			dirty = true;
 		}
-		return previewContainers;
+		return previewComponents;
 	}
 
 	/**
@@ -180,8 +180,8 @@ public class ComponentList {
 		location.setPath(path);
 		copy.setLocation(location);
 		copy.setDirty(dirty);
-		copy.setLiveContainers(copyContainers(liveContainers, path));
-		copy.setPreviewContainers(copyContainers(previewContainers, path));
+		copy.setLiveComponents(copyContainers(liveComponents, path));
+		copy.setPreviewComponents(copyContainers(previewComponents, path));
 		return copy;
 	}
 	
