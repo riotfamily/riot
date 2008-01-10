@@ -83,7 +83,7 @@
 		</id>
 		<discriminator column="value_type" type="string" />
 		<subclass name="StringWrapper" discriminator-value="string">
-			<property name="string" access="field" />
+			<property name="string" access="field" type="text" />
 		</subclass>
 		<subclass name="BooleanWrapper" discriminator-value="boolean">
 			<property name="bit" access="field" />
