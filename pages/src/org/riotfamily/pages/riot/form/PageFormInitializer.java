@@ -25,7 +25,7 @@ package org.riotfamily.pages.riot.form;
 
 import java.util.Iterator;
 
-import org.riotfamily.components.riot.form.VersionContainerEditorBinder;
+import org.riotfamily.components.riot.form.ContentContainerEditorBinder;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
@@ -34,6 +34,7 @@ import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.form.ui.FormUtils;
 
@@ -78,7 +79,7 @@ public class PageFormInitializer implements FormInitializer {
 		NestedForm nestedForm = new NestedForm();
 		nestedForm.setRequired(true);
 		nestedForm.setIndent(false);
-		nestedForm.setEditorBinder(new VersionContainerEditorBinder());
+		nestedForm.setEditorBinder(new ContentContainerEditorBinder(PageProperties.class));
 		nestedForm.setStyleClass(id);
 		Page masterPage = getMasterPage(form);
 		if (masterPage == null) {
@@ -87,7 +88,7 @@ public class PageFormInitializer implements FormInitializer {
 		}
 		present |= addPagePropertyEditors(form, nestedForm, id, masterPage);
 		if (present) {
-			form.addElement(nestedForm, "versionContainer");
+			form.addElement(nestedForm, "pageProperties");
 		}
 	}
 	

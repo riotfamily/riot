@@ -23,32 +23,42 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.riot.form;
 
-import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.Component;
+import org.riotfamily.components.model.Content;
+import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.forms.AbstractEditorBinder;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class VersionContainerEditorBinder extends AbstractEditorBinder {
+public class ContentContainerEditorBinder extends AbstractEditorBinder {
 
-	private Component container;
+	private Class containerClass = ContentContainer.class;
+	
+	private ContentContainer container;
 	
 	private Content previewVersion;
-		
+	
+	
+	public ContentContainerEditorBinder(Class containerClass) {
+		Assert.isAssignable(ContentContainer.class, containerClass);
+		this.containerClass = containerClass;
+	}
+
 	public boolean isEditingExistingBean() {
 		return true;
 	}
 
 	public void setBackingObject(Object backingObject) {
 		if (backingObject == null) {
-			container = new Component();
+			container = (ContentContainer) BeanUtils.instantiateClass(containerClass);
 		}
 		else {
-			Assert.isInstanceOf(Component.class, backingObject);
-			container = (Component) backingObject;
+			Assert.isInstanceOf(containerClass, backingObject);
+			container = (ContentContainer) backingObject;
 		}
 		previewVersion = container.getPreviewVersion();
 		if (previewVersion == null) {
