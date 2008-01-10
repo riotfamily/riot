@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping package="org.riotfamily.components.model.wrapper" auto-import="false">
+
+	<class name="ValueWrapper" table="riot_value_wrappers" lazy="false">
+		<cache usage="nonstrict-read-write" region="components" />
+		<id name="id">
+			<generator class="native" />
+		</id>
+		<discriminator column="value_type" type="string" />
+		<subclass name="StringWrapper" discriminator-value="string">
+			<property name="string" access="field" type="text" />
+		</subclass>
+		<subclass name="BooleanWrapper" discriminator-value="boolean">
+			<property name="bit" access="field" />
+		</subclass>
+		<subclass name="RiotFileWrapper" discriminator-value="file">
+			<many-to-one name="file" access="field" fetch="join" cascade="all" />
+		</subclass>
+		<subclass name="ListWrapper" discriminator-value="list">
+			<list name="contentList" access="field" table="riot_value_list_items" cascade="all-delete-orphan" lazy="false">
+				<key column="list" />
+				<index column="pos" />
+				<one-to-many class="ValueWrapper" />
+			</list>
+		</subclass>
+		<subclass name="MapWrapper" discriminator-value="map">
+			<map name="contentMap" access="field" table="riot_value_map_entries" cascade="all-delete-orphan" lazy="false">
+				<key column="map" />
+				<index column="map_key" type="string" />
+				<one-to-many class="ValueWrapper" />
+			</map>
+		</subclass>
+	</class>
+
+</hibernate-mapping>

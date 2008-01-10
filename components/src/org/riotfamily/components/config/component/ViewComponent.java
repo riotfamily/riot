@@ -56,7 +56,7 @@ public class ViewComponent extends AbstractComponent {
 			HttpServletResponse response) throws Exception {
 
 		Map model = new HashMap();
-		Map props = component.getProperties(preview);
+		Map props = component.getValues(preview);
 		if (props != null) {
 			model.putAll(props);
 		}

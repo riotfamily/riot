@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.model;
+package org.riotfamily.components.model.wrapper;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -107,7 +107,7 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 		return (ContentClassInfo) infos.first();
 	}
 	
-	public ValueWrapper createWapper(Object value) throws ContentException {
+	public ValueWrapper createWapper(Object value) throws WrappingException {
 		Class collectionType = getCollectionType(value);
 		ContentClassInfo info;
 		if (collectionType != null) {
@@ -130,22 +130,22 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 			this.constructor = constructor;
 		}
 		
-		private ValueWrapper createContent(Object value) throws ContentException {
+		private ValueWrapper createContent(Object value) throws WrappingException {
 			try {
 				log.debug("Creating new " + constructor.getName() + " for " + value);
 				return (ValueWrapper) constructor.newInstance(new Object[] {value});
 			}
 			catch (IllegalArgumentException e) {
-				throw new ContentException(e);
+				throw new WrappingException(e);
 			}
 			catch (InstantiationException e) {
-				throw new ContentException(e);
+				throw new WrappingException(e);
 			}
 			catch (IllegalAccessException e) {
-				throw new ContentException(e);
+				throw new WrappingException(e);
 			}
 			catch (InvocationTargetException e) {
-				throw new ContentException(e);
+				throw new WrappingException(e);
 			}
 		}
 	}

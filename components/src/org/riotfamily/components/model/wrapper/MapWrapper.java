@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.model;
+package org.riotfamily.components.model.wrapper;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

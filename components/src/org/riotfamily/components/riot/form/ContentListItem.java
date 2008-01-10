@@ -23,8 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.riot.form;
 
-import org.riotfamily.components.model.ValueWrapper;
-import org.riotfamily.components.model.ValueWrapperService;
+import org.riotfamily.components.model.wrapper.ValueWrapper;
+import org.riotfamily.components.model.wrapper.ValueWrapperService;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.element.collection.ListEditor;
 import org.riotfamily.forms.element.collection.ListItem;

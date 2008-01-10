@@ -8,6 +8,7 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+	<!-- 
 	<db:history module="components" data-source="riotDataSource">
 		<db:change-set id="initial">
 			<db:create-table name="riot_component_lists">
@@ -71,7 +72,7 @@
 				<db:column name="fileStoreId" type="VARCHAR" length="255" />
 			</db:create-table>
 		</db:change-set>
-
-
 	</db:history>
+	-->
+	 
 </beans>

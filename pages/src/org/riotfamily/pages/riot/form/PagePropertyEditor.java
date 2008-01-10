@@ -26,7 +26,7 @@ package org.riotfamily.pages.riot.form;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import org.riotfamily.components.model.ValueWrapper;
+import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.components.riot.form.ValueWrapperEditor;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;

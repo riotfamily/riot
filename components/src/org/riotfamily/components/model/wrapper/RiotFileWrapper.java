@@ -21,32 +21,35 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.model;
+package org.riotfamily.components.model.wrapper;
+
+import org.riotfamily.media.model.RiotFile;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class BooleanWrapper extends ValueWrapper {
+public class RiotFileWrapper extends ValueWrapper {
 
-	private Boolean bit;
+	private RiotFile file;
 
-	public BooleanWrapper() {
+	public RiotFileWrapper() {
 	}
 
-	public BooleanWrapper(Boolean bit) {
-		this.bit = bit;
+	public RiotFileWrapper(RiotFile file) {
+		this.file = file;
 	}
 
 	public Object getValue() {
-		return bit;
+		return file;
 	}
-	
+
 	public void setValue(Object value) {
-		bit = (Boolean) value;
+		file = (RiotFile) value;
 	}
 	
 	public ValueWrapper deepCopy() {
-		return new BooleanWrapper(bit);
-	}
+		return new RiotFileWrapper(file.createCopy());
+	}	
+	
 }

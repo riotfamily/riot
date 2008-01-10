@@ -31,9 +31,9 @@ import java.util.List;
 
 /**
  * List of components that can be looked up using a {@link ComponentListLocation}.
- * Actually the class consists of two lists of
- * {@link org.riotfamily.components.model.Component VersionContainers},
- * the live-list and the preview-list.
+ * The class consists of two lists of
+ * {@link org.riotfamily.components.model.Component components},
+ * the liveComponents and the previewComponents.
  */
 public class ComponentList {
 

@@ -29,6 +29,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.riotfamily.components.model.wrapper.ValueWrapper;
+import org.riotfamily.components.model.wrapper.ValueWrapperService;
+
 public class Content {
 
 	private Long id;
@@ -55,16 +58,10 @@ public class Content {
 		}
 	}
 
-	/**
-	 * Returns the entity's id set via {@link #setId(Long)}.
-	 */
 	public Long getId() {
 		return this.id;
 	}
 
-	/**
-	 * Sets the entity's id.
-	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -100,9 +97,6 @@ public class Content {
 		setDirty(true);
 	}
 
-	/**
-	 * Returns the VersionContainer this version belongs to.
-	 */
 	public ContentContainer getContainer() {
 		return container;
 	}
@@ -174,7 +168,7 @@ public class Content {
 	
 	/**
 	 * Returns a Collection of Strings that should be used to tag the
-	 * CacheItem containing the rendered ComponentVersion.
+	 * CacheItem containing the rendered Content.
 	 */
 	public Collection getCacheTags() {
 		HashSet result = new HashSet();

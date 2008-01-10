@@ -90,14 +90,14 @@ public class ContentContainer {
 		return liveVersion != null;
 	}
 
-	public Map getProperties(boolean preview) {
+	public Map getValues(boolean preview) {
 		if (preview) {
 			return getLatestVersion().getValues();
 		}
 		return liveVersion != null ? liveVersion.getValues() : null;
 	}
 
-	public Object getProperty(String key, boolean preview) {
+	public Object getValue(String key, boolean preview) {
 		Content version = preview ? getLatestVersion() : liveVersion;
 		return version != null ? version.getValue(key) : null;
 	}

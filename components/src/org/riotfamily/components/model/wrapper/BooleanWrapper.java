@@ -14,49 +14,40 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2008
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.model;
+package org.riotfamily.components.model.wrapper;
 
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class ValueWrapperService {
+public class BooleanWrapper extends ValueWrapper {
 
-	private static ValueWrapperFactory wrapperFactory = new BuiltInWrapperFactory();
-	
-	public static void setWrapperFactory(ValueWrapperFactory wrapperFactory) {
-		ValueWrapperService.wrapperFactory = wrapperFactory;
+	private Boolean bit;
+
+	public BooleanWrapper() {
+	}
+
+	public BooleanWrapper(Boolean bit) {
+		this.bit = bit;
+	}
+
+	public Object getValue() {
+		return bit;
 	}
 	
-	public static ValueWrapper createOrUpdate(ValueWrapper wrapper, Object value) 
-			throws ContentException {
-		
-		if (wrapper != null) {
-			try {
-				wrapper.setValue(value);
-				return wrapper;
-			}
-			catch (ClassCastException e) {
-			}
-		}
-		return wrap(value);
+	public void setValue(Object value) {
+		bit = (Boolean) value;
 	}
 	
-	public static ValueWrapper wrap(Object value) 
-			throws ContentException {
-	
-		ValueWrapper wrapper = wrapperFactory.createWapper(value);
-		if (wrapper == null) {
-			throw new ContentException("No ValueWrapper for value: " + value);
-		}
-		return wrapper;
+	public ValueWrapper deepCopy() {
+		return new BooleanWrapper(bit);
 	}
 }

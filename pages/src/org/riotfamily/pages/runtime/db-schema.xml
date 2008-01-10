@@ -8,6 +8,7 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+	<!--
 	<db:history module="pages" data-source="riotDataSource">
 		<db:change-set id="initial">
 
@@ -86,4 +87,6 @@
 		</db:change-set>
 
 	</db:history>
+	-->
+
 </beans>

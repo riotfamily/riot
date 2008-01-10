@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.model;
+package org.riotfamily.components.model.wrapper;
 
 
 
@@ -29,20 +29,20 @@ package org.riotfamily.components.model;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class ContentException extends RuntimeException {
+public class WrappingException extends RuntimeException {
 
-	public ContentException() {
+	public WrappingException() {
 	}
 
-	public ContentException(String message, Throwable cause) {
+	public WrappingException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public ContentException(String message) {
+	public WrappingException(String message) {
 		super(message);
 	}
 
-	public ContentException(Throwable cause) {
+	public WrappingException(Throwable cause) {
 		super(cause);
 	}
 	

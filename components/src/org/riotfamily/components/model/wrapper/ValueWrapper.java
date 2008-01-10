@@ -21,15 +21,43 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.model;
+package org.riotfamily.components.model.wrapper;
+
+import java.util.Collection;
 
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public interface ValueWrapperFactory {
+public abstract class ValueWrapper {
 
-	public ValueWrapper createWapper(Object value) throws ContentException;
+	private Long id;
 	
+	public Long getId() {
+		return this.id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Object unwrap() {
+		return getValue();
+	}
+	
+	/**
+	 * Returns a Collection of Strings that should be used to tag the
+	 * CacheItem containing the rendered content.
+	 */
+	public Collection getCacheTags() {
+		return null;
+	}
+	
+	public abstract Object getValue();
+	
+	public abstract void setValue(Object value);
+	
+	public abstract ValueWrapper deepCopy();
+
 }

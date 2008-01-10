@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.riot.form;
 
-import org.riotfamily.components.model.MapWrapper;
+import org.riotfamily.components.model.wrapper.MapWrapper;
 import org.riotfamily.forms.MapEditorBinder;
 import org.riotfamily.forms.element.NestedForm;
 

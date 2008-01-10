@@ -21,35 +21,16 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.model;
+package org.riotfamily.components.model.wrapper;
 
-import org.riotfamily.media.model.RiotFile;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class RiotFileWrapper extends ValueWrapper {
+public interface ValueWrapperFactory {
 
-	private RiotFile file;
-
-	public RiotFileWrapper() {
-	}
-
-	public RiotFileWrapper(RiotFile file) {
-		this.file = file;
-	}
-
-	public Object getValue() {
-		return file;
-	}
-
-	public void setValue(Object value) {
-		file = (RiotFile) value;
-	}
-	
-	public ValueWrapper deepCopy() {
-		return new RiotFileWrapper(file.createCopy());
-	}	
+	public ValueWrapper createWapper(Object value) throws WrappingException;
 	
 }
