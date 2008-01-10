@@ -25,11 +25,11 @@ package org.riotfamily.components.locator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.components.model.Location;
+import org.riotfamily.components.model.ComponentListLocation;
 
 /**
  * Abstract base-class that delegates the resolution of the
- * {@link Location#getSlot() location's slot property} to a {@link SlotResolver}.
+ * {@link ComponentListLocation#getSlot() location's slot property} to a {@link SlotResolver}.
  *
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
@@ -53,8 +53,8 @@ public abstract class AbstractComponentListLocator
 		return this.type.equals(type);
 	}
 
-	public Location getLocation(HttpServletRequest request) {
-		Location location = new Location();
+	public ComponentListLocation getLocation(HttpServletRequest request) {
+		ComponentListLocation location = new ComponentListLocation();
 		location.setType(getType(request));
 		location.setPath(getPath(request));
 		location.setSlot(slotResolver.getSlot(request));
@@ -67,8 +67,8 @@ public abstract class AbstractComponentListLocator
 
 	protected abstract String getPath(HttpServletRequest request);
 
-	public Location getParentLocation(Location location) {
-		Location parent = new Location();
+	public ComponentListLocation getParentLocation(ComponentListLocation location) {
+		ComponentListLocation parent = new ComponentListLocation();
 		parent.setType(type);
 		parent.setPath(getParentPath(location.getPath()));
 		parent.setSlot(location.getSlot());
@@ -77,7 +77,7 @@ public abstract class AbstractComponentListLocator
 
 	protected abstract String getParentPath(String path);
 
-	public String getUrl(Location location) {
+	public String getUrl(ComponentListLocation location) {
 		return getUrlForPath(location.getPath());
 	}
 

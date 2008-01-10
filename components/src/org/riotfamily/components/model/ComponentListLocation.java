@@ -31,7 +31,7 @@ import org.riotfamily.components.locator.ComponentListLocator;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class Location {
+public class ComponentListLocation {
 
 	private String type;
 
@@ -39,10 +39,10 @@ public class Location {
 
 	private String slot;
 
-	public Location() {
+	public ComponentListLocation() {
 	}
 
-	public Location(Location location) {
+	public ComponentListLocation(ComponentListLocation location) {
 		type = location.getType();
 		path = location.getPath();
 		slot = location.getSlot();
@@ -73,7 +73,7 @@ public class Location {
 	}
 
 	public boolean equals(Object obj) {
-		if (obj instanceof Location) {
+		if (obj instanceof ComponentListLocation) {
 			return toString().equals(obj.toString());
 		}
 		return false;

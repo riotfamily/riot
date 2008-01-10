@@ -30,10 +30,11 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.Location;
-import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.components.model.Content;
+import org.riotfamily.components.model.ComponentListLocation;
+import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
 import org.riotfamily.riot.security.AccessController;
 
@@ -53,7 +54,7 @@ public class HibernateComponentDao implements ComponentDao {
 		this.hibernate = new HibernateHelper(sessionFactory, "components");
 	}
 
-	public ComponentList findComponentList(Location location) {
+	public ComponentList findComponentList(ComponentListLocation location) {
 		Query query = hibernate.createCacheableQuery("from "
 				+ ComponentList.class.getName()	+ " list where "
 				+ "list.location = :location and list.parent is null");
@@ -73,7 +74,7 @@ public class HibernateComponentDao implements ComponentDao {
 		hibernate.executeUpdate(query);
 	}
 	
-	public ComponentList findComponentList(VersionContainer parent, String slot) {
+	public ComponentList findComponentList(Component parent, String slot) {
 		Query query = hibernate.createCacheableQuery("from "
 				+ ComponentList.class.getName() + " list where list.parent = "
 				+":parent and list.location.slot = :slot");
@@ -119,11 +120,11 @@ public class HibernateComponentDao implements ComponentDao {
 		hibernate.delete(list);
 	}
 
-	public void deleteComponentVersion(ComponentVersion version) {
+	public void deleteComponentVersion(Content version) {
 		hibernate.delete(version);
 	}
 
-	public void deleteVersionContainer(VersionContainer container) {
+	public void deleteVersionContainer(ContentContainer container) {
 		hibernate.delete(container);
 	}
 
@@ -131,12 +132,16 @@ public class HibernateComponentDao implements ComponentDao {
 		return (ComponentList) hibernate.load(ComponentList.class, id);
 	}
 
-	public ComponentVersion loadComponentVersion(Long id) {
-		return (ComponentVersion) hibernate.load(ComponentVersion.class, id);
+	public Content loadComponentVersion(Long id) {
+		return (Content) hibernate.load(Content.class, id);
 	}
 
-	public VersionContainer loadVersionContainer(Long id) {
-		return (VersionContainer) hibernate.load(VersionContainer.class, id);
+	public ContentContainer loadVersionContainer(Long id) {
+		return (ContentContainer) hibernate.get(ContentContainer.class, id);
+	}
+	
+	public Component loadComponent(Long id) {
+		return (Component) hibernate.load(Component.class, id);
 	}
 
 	public void saveComponentList(ComponentList list) {
@@ -145,11 +150,11 @@ public class HibernateComponentDao implements ComponentDao {
 		hibernate.save(list);
 	}
 
-	public void saveVersionContainer(VersionContainer container) {
+	public void saveVersionContainer(ContentContainer container) {
 		hibernate.save(container);
 	}
 	
-	public void saveComponentVersion(ComponentVersion version) {
+	public void saveComponentVersion(Content version) {
 		hibernate.save(version);
 	}
 	
@@ -159,11 +164,11 @@ public class HibernateComponentDao implements ComponentDao {
 		hibernate.update(list);
 	}
 
-	public void saveOrUpdateComponentVersion(ComponentVersion version) {
+	public void saveOrUpdateComponentVersion(Content version) {
 		hibernate.saveOrUpdate(version);
 	}
 
-	public void updateVersionContainer(VersionContainer container) {
+	public void updateVersionContainer(ContentContainer container) {
 		if (container.getId() != null) {
 			hibernate.update(container);
 		}

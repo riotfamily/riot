@@ -30,16 +30,16 @@ import java.util.List;
 
 
 /**
- * List of components that can be looked up using a {@link Location}.
+ * List of components that can be looked up using a {@link ComponentListLocation}.
  * Actually the class consists of two lists of
- * {@link org.riotfamily.components.model.VersionContainer VersionContainers},
+ * {@link org.riotfamily.components.model.Component VersionContainers},
  * the live-list and the preview-list.
  */
 public class ComponentList {
 
 	private Long id;
 
-	private Location location;
+	private ComponentListLocation location;
 
 	private List liveContainers;
 
@@ -51,7 +51,7 @@ public class ComponentList {
 
 	private String lastModifiedBy;
 
-	private VersionContainer parent;
+	private Component parent;
 
 	public Long getId() {
 		return this.id;
@@ -69,19 +69,19 @@ public class ComponentList {
 		this.liveContainers = list;
 	}
 
-	public Location getLocation() {
+	public ComponentListLocation getLocation() {
 		return this.location;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(ComponentListLocation location) {
 		this.location = location;
 	}
 
-	public VersionContainer getParent() {
+	public Component getParent() {
 		return this.parent;
 	}
 
-	public void setParent(VersionContainer parent) {
+	public void setParent(Component parent) {
 		this.parent = parent;
 	}
 
@@ -162,7 +162,7 @@ public class ComponentList {
 		return sb.toString();
 	}
 	
-	public void insertContainer(VersionContainer container, int position) {
+	public void insertContainer(Component container, int position) {
 		List containers = getOrCreatePreviewContainers();
 		container.setList(this);
 		if (position >= 0) {
@@ -176,7 +176,7 @@ public class ComponentList {
 	
 	public ComponentList createCopy(String path) {
 		ComponentList copy = new ComponentList();
-		Location location = new Location(this.location);
+		ComponentListLocation location = new ComponentListLocation(this.location);
 		location.setPath(path);
 		copy.setLocation(location);
 		copy.setDirty(dirty);
@@ -192,7 +192,7 @@ public class ComponentList {
 		List dest = new ArrayList(source.size());
 		Iterator it = source.iterator();
 		while (it.hasNext()) {
-			VersionContainer container = (VersionContainer) it.next();
+			Component container = (Component) it.next();
 			dest.add(container.createCopy(path));
 		}
 		return dest;

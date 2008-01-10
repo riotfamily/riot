@@ -30,11 +30,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.Cache;
 import org.riotfamily.cachius.TaggingContext;
-import org.riotfamily.components.config.component.Component;
+import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.Location;
-import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.components.model.Content;
+import org.riotfamily.components.model.ComponentListLocation;
+import org.riotfamily.components.model.ContentContainer;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -42,37 +42,35 @@ import org.riotfamily.components.model.VersionContainer;
  */
 public final class ComponentCacheUtils {
 
-	private static String getContainerTag(VersionContainer container, 
-			boolean editMode) {
-		
-		return VersionContainer.class.getName()
+	private static String getContainerTag(ContentContainer container, boolean preview) {
+		return ContentContainer.class.getName()
 				+ '#' + container.getId() 
-				+ (editMode ? "-preview" : "-live");
+				+ (preview ? "-preview" : "-live");
 	}
 	
 	public static void addContainerTags(HttpServletRequest request, 
-			VersionContainer container, boolean editMode) {
+			ContentContainer container, boolean preview) {
 		
-		TaggingContext.tag(request, getContainerTag(container, editMode));
+		TaggingContext.tag(request, getContainerTag(container, preview));
 	}
 	
 	public static void invalidateContainer(Cache cache, 
-			VersionContainer container, boolean editMode) {
+			ContentContainer container, boolean preview) {
 		
-		cache.invalidateTaggedItems(getContainerTag(container, editMode));
+		cache.invalidateTaggedItems(getContainerTag(container, preview));
 	}
 	
 	public static void addListTags(HttpServletRequest request, 
-			VersionContainer container) {
+			Component component) {
 		
-		ComponentList list = container.getList();
+		ComponentList list = component.getList();
 		if (list != null) {
 			addListTags(request, list.getLocation());
 		}
 	}
 	
 	public static void addListTags(HttpServletRequest request, 
-			Location location) {
+			ComponentListLocation location) {
 		
 		TaggingContext.tag(request, location.toString());
 	}
@@ -81,9 +79,9 @@ public final class ComponentCacheUtils {
 		cache.invalidateTaggedItems(list.getLocation().toString());
 	}
 	
-	public static void addComponentTags(HttpServletRequest request, 
-			Component component, ComponentVersion version) {
-		
+	public static void addContentTags(HttpServletRequest request, 
+			Content version) {
+
 		Collection tags = version.getCacheTags();
 		if (tags != null) {
 			Iterator it = tags.iterator();

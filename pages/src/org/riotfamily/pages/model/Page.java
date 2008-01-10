@@ -33,8 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.components.model.Content;
 import org.springframework.util.Assert;
 
 
@@ -67,7 +66,7 @@ public class Page {
 
 	private Date creationDate;
 
-	private VersionContainer versionContainer;
+	private PageProperties pageProperties;
 	
 	public Page() {
 	}
@@ -222,22 +221,22 @@ public class Page {
 		return node.getHandlerName();
 	}
 
-	public VersionContainer getVersionContainer() {
-		if (versionContainer == null) {
-			versionContainer = new VersionContainer(Page.class.getName());
-			ComponentVersion version = new ComponentVersion();
-			versionContainer.setLiveVersion(version);
+	public PageProperties getPageProperties() {
+		if (pageProperties == null) {
+			pageProperties = new PageProperties();
+			Content version = new Content();
+			pageProperties.setLiveVersion(version);
 		}
-		return versionContainer;
+		return pageProperties;
 	}
 
-	public void setVersionContainer(VersionContainer versionContainer) {
-		this.versionContainer = versionContainer;
+	public void setPageProperties(PageProperties versionContainer) {
+		this.pageProperties = versionContainer;
 	}
 
-	public ComponentVersion getComponentVersion(boolean preview) {
-		return preview ? getVersionContainer().getLatestVersion()
-				: getVersionContainer().getLiveVersion();
+	public Content getComponentVersion(boolean preview) {
+		return preview ? getPageProperties().getLatestVersion()
+				: getPageProperties().getLiveVersion();
 	}
 	
 	public Page getMasterPage() {
@@ -264,14 +263,14 @@ public class Page {
 	}
 	
 	public Map getProperties(boolean preview) {
-		ComponentVersion version = getComponentVersion(preview);
+		Content version = getComponentVersion(preview);
 		return version != null 
 				? version.getValues() 
 				: Collections.EMPTY_MAP;
 	}
 
 	public Object getProperty(String key, boolean preview) {
-		ComponentVersion version = getComponentVersion(preview);
+		Content version = getComponentVersion(preview);
 		return version != null ? version.getValue(key) : null;
 	}
 
@@ -284,7 +283,7 @@ public class Page {
 	}
 	
 	public boolean isDirty() {
-		return getVersionContainer().isDirty();
+		return getPageProperties().isDirty();
 	}
 
 	public boolean isPublished() {

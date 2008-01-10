@@ -26,10 +26,10 @@ package org.riotfamily.components.locator;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.components.controller.render.InheritingRenderStrategy;
-import org.riotfamily.components.model.Location;
+import org.riotfamily.components.model.ComponentListLocation;
 
 /**
- * Interface that returns the {@link Location} of the ComponentList that should
+ * Interface that returns the {@link ComponentListLocation} of the ComponentList that should
  * be rendered.
  *
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -39,24 +39,24 @@ public interface ComponentListLocator {
 
 	/**
 	 * Returns whether the locator supports the given type.
-	 * @see Location#getType()
+	 * @see ComponentListLocation#getType()
 	 */
 	public boolean supports(String type);
 
 	/**
-	 * Returns the {@link Location} for the given request.
+	 * Returns the {@link ComponentListLocation} for the given request.
 	 */
-	public Location getLocation(HttpServletRequest request);
+	public ComponentListLocation getLocation(HttpServletRequest request);
 
 	/**
 	 * Returns the location that should be used to display inherited components.
 	 * @see InheritingRenderStrategy
 	 */
-	public Location getParentLocation(Location location);
+	public ComponentListLocation getParentLocation(ComponentListLocation location);
 
 	/**
 	 * Returns the URL under which the given location can be seen.
 	 */
-	public String getUrl(Location location);
+	public String getUrl(ComponentListLocation location);
 
 }

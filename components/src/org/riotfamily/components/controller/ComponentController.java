@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.components.model.ComponentVersion;
+import org.riotfamily.components.model.Content;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -39,7 +39,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Controller that exposes the properties of the requested
- * {@link ComponentVersion} to the model.
+ * {@link Content} to the model.
  *
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
@@ -108,9 +108,11 @@ public class ComponentController extends AbstractCacheableController {
 			HttpServletRequest request, HttpServletResponse response) {
 
 		Long id = getVersionId(request);
-		ComponentVersion version = componentDao.loadComponentVersion(id);
+		Content version = componentDao.loadComponentVersion(id);
 		Assert.notNull(version, "No such component: " + id);
-		ComponentCacheUtils.addListTags(request, version.getContainer());
+		
+		//FIXME
+		//ComponentCacheUtils.addListTags(request, version.getContainer());
 
 		if (contentType != null) {
 			response.setContentType(contentType);

@@ -34,11 +34,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.TaggingContext;
-import org.riotfamily.components.model.VersionContainer;
 import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.mapping.PageUrlBuilder;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 
 /**
@@ -170,8 +170,8 @@ public class PageFacade {
 		return page.getHandlerName();
 	}
 
-	public VersionContainer getVersionContainer() {
-		return page.getVersionContainer();
+	public PageProperties getPageProperties() {
+		return page.getPageProperties();
 	}
 		
 	public Map getProperties() {

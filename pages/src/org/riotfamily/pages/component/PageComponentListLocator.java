@@ -34,7 +34,7 @@ import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.components.locator.ComponentListLocator;
 import org.riotfamily.components.locator.DefaultSlotResolver;
 import org.riotfamily.components.locator.SlotResolver;
-import org.riotfamily.components.model.Location;
+import org.riotfamily.components.model.ComponentListLocation;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
 import org.riotfamily.pages.mapping.PageUrlBuilder;
@@ -72,8 +72,8 @@ public class PageComponentListLocator implements ComponentListLocator {
 		return type.equals(TYPE) || type.startsWith(TYPE_PREFIX);
 	}
 
-	public Location getLocation(HttpServletRequest request) {
-		Location location = new Location();
+	public ComponentListLocation getLocation(HttpServletRequest request) {
+		ComponentListLocation location = new ComponentListLocation();
 		Page page = PageHandlerMapping.getPage(request);
 		if (page.isWildcardInPath()) {
 			Map attributes = PageHandlerMapping.getWildcardAttributes(request);
@@ -89,15 +89,15 @@ public class PageComponentListLocator implements ComponentListLocator {
 		return location;
 	}
 
-	public Location getParentLocation(Location location) {
+	public ComponentListLocation getParentLocation(ComponentListLocation location) {
 		Page page = loadPage(location);
-		Location parentLocation = new Location(location);
+		ComponentListLocation parentLocation = new ComponentListLocation(location);
 		location.setType(TYPE);
 		location.setPath(page.getParentPage().getId().toString());
 		return parentLocation;
 	}
 
-	public String getUrl(Location location) {
+	public String getUrl(ComponentListLocation location) {
 		Page page = loadPage(location);
 		String url = pageUrlBuilder.getUrl(page);
 		if (page.isWildcardInPath()) {
@@ -107,7 +107,7 @@ public class PageComponentListLocator implements ComponentListLocator {
 		return url;
 	}
 
-	private Page loadPage(Location location) {
+	private Page loadPage(ComponentListLocation location) {
 		String id;
 		if (location.getType().equals(TYPE)) {
 			 id = location.getPath();

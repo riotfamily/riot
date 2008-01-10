@@ -35,7 +35,7 @@ import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.Location;
+import org.riotfamily.components.model.ComponentListLocation;
 import org.springframework.context.MessageSource;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -60,7 +60,7 @@ public class InheritingRenderStrategy extends PreviewModeRenderStrategy {
 		EditModeUtils.setLiveMode(request, live);
 	}
 
-	protected void onListNotFound(Location location, 
+	protected void onListNotFound(ComponentListLocation location, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		

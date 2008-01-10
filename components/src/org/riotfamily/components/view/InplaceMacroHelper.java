@@ -25,15 +25,13 @@ package org.riotfamily.components.view;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.list.RiotDaoService;
 import org.springframework.util.ClassUtils;
@@ -91,7 +89,7 @@ public class InplaceMacroHelper {
 		return componentRepository.getFormUrl(formId, containerId);
 	}
 
-	public String tag(VersionContainer container) {
+	public String tag(ContentContainer container) {
 		ComponentCacheUtils.addContainerTags(request, container, isEditMode());
 		return "";
 	}
@@ -99,14 +97,6 @@ public class InplaceMacroHelper {
 	public String enableOutputWrapping() {
 		request.setAttribute(ComponentFreeMarkerView.WRAP_OUTPUT_ATTRIBUTE, Boolean.TRUE);
 		return "";
-	}
-
-	public Map buildModel(VersionContainer container) {
-		ComponentVersion version = EditModeUtils.isEditMode(request)
-				? container.getLatestVersion()
-				: container.getLiveVersion();
-
-		return version.getValues();
 	}
 	
 	public String getObjectId(String listId, Object object) {

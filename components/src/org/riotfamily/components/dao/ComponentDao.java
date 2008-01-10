@@ -25,28 +25,29 @@ package org.riotfamily.components.dao;
 
 import java.util.List;
 
+import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.Location;
-import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.components.model.Content;
+import org.riotfamily.components.model.ComponentListLocation;
+import org.riotfamily.components.model.ContentContainer;
 
 /**
  * DAO interface that provides methods to access
  * {@link ComponentList ComponentList}s,
- * {@link ComponentVersion ComponentVersion}s and
- * {@link VersionContainer VersionContainer}s.
+ * {@link Content ComponentVersion}s and
+ * {@link Component VersionContainer}s.
  */
 public interface ComponentDao {
 
 	/**
 	 * Returns the {@link ComponentList} with the given location.
 	 */
-	public ComponentList findComponentList(Location location);
+	public ComponentList findComponentList(ComponentListLocation location);
 
 	/**
 	 * Returns the nested {@link ComponentList} for the given parent/slot.
 	 */
-	public ComponentList findComponentList(VersionContainer parent, String slot);
+	public ComponentList findComponentList(Component parent, String slot);
 
 	/**
 	 * Returns all {@link ComponentList ComponentList} with the given type
@@ -70,15 +71,20 @@ public interface ComponentDao {
 	public ComponentList loadComponentList(Long id);
 
 	/**
+	 * Loads the Component specified  by the given id.
+	 */
+	public Component loadComponent(Long id);
+	
+	/**
 	 * Loads the VersionContainer specified  by the given id.
 	 */
-	public VersionContainer loadVersionContainer(Long id);
+	public ContentContainer loadVersionContainer(Long id);
 
 	/**
 	 * Loads the ComponentVersion specified  by the given id.
 	 * @since 6.4
 	 */
-	public ComponentVersion loadComponentVersion(Long id);
+	public Content loadComponentVersion(Long id);
 
 	/**
 	 * Saves the given ComponentList.
@@ -88,12 +94,12 @@ public interface ComponentDao {
 	/**
 	 * Saves the given VersionContainer.
 	 */
-	public void saveVersionContainer(VersionContainer container);
+	public void saveVersionContainer(ContentContainer container);
 
 	/**
 	 * Saves the given ComponentVersion.
 	 */
-	public void saveComponentVersion(ComponentVersion version);
+	public void saveComponentVersion(Content version);
 	
 	/**
 	 * Updates the given ComponentList.
@@ -103,12 +109,12 @@ public interface ComponentDao {
 	/**
 	 * Updates the given VersionContainer.
 	 */
-	public void updateVersionContainer(VersionContainer container);
+	public void updateVersionContainer(ContentContainer container);
 
 	/**
 	 * Updates the given ComponentVersion.
 	 */
-	public void saveOrUpdateComponentVersion(ComponentVersion version);
+	public void saveOrUpdateComponentVersion(Content version);
 	
 	/**
 	 * Deletes the given ComponentList.
@@ -123,11 +129,11 @@ public interface ComponentDao {
 	/**
 	 * Deletes the given ComponentVersion.
 	 */
-	public void deleteComponentVersion(ComponentVersion version);
+	public void deleteComponentVersion(Content version);
 
 	/**
 	 * Deletes the given VersionContainer.
 	 */
-	public void deleteVersionContainer(VersionContainer container);
+	public void deleteVersionContainer(ContentContainer container);
 	
 }

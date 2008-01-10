@@ -35,14 +35,13 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.config.component.AbstractComponent;
-import org.riotfamily.components.config.component.Component;
+import org.riotfamily.components.config.component.ComponentRenderer;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.Location;
-import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.components.model.ComponentListLocation;
 
-public class AbstractRenderStrategy implements RenderStrategy {
+public abstract class AbstractRenderStrategy implements RenderStrategy {
 	
 	public static final String INHERTING_COMPONENT = "inherit";
 	
@@ -65,11 +64,11 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	public final void render(HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		
-		Location location = getLocation(request);
+		ComponentListLocation location = getLocation(request);
 		render(location, request, response);
 	}
 	
-	protected void render(Location location, HttpServletRequest request, 
+	protected void render(ComponentListLocation location, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		
 		ComponentList list = getComponentList(location, request);
@@ -87,21 +86,21 @@ public class AbstractRenderStrategy implements RenderStrategy {
 		renderComponentList(list, request, response);
 	}
 	
-	protected final Location getLocation(HttpServletRequest request) {
-		Location location = config.getLocator().getLocation(request);
+	protected final ComponentListLocation getLocation(HttpServletRequest request) {
+		ComponentListLocation location = config.getLocator().getLocation(request);
 		log.debug("List location: " + location);
 		return location;
 	}
 	
-	protected void onListNotFound(Location location, 
+	protected void onListNotFound(ComponentListLocation location, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
 		log.debug("No ComponentList found for " + location); 
 	}
 	
-	protected VersionContainer getParentContainer(HttpServletRequest request) {
-		return (VersionContainer) request.getAttribute(AbstractComponent.CONTAINER);
+	protected Component getParentContainer(HttpServletRequest request) {
+		return (Component) request.getAttribute(AbstractComponent.CONTAINER);
 	}
 	
 	/**
@@ -109,10 +108,10 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	 * uses the controller's ComponentDao to look up a list for the given 
 	 * location.
 	 */
-	protected ComponentList getComponentList(Location location, 
+	protected ComponentList getComponentList(ComponentListLocation location, 
 			HttpServletRequest request) {
 		
-		VersionContainer parent = getParentContainer(request);
+		Component parent = getParentContainer(request);
 		if (parent != null) {
 			return dao.findComponentList(parent, location.getSlot());
 		}
@@ -134,7 +133,7 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	
 	/**
 	 * Renders the given list. The default implementation iterates over the 
-	 * given list and calls {@link #renderContainer(VersionContainer, String)} 
+	 * given list and calls {@link #renderContainer(Component, String)} 
 	 * for each item. If the list is empty or null, 
 	 * {@link #onEmptyComponentList(HttpServletRequest, HttpServletResponse)} is invoked.
 	 */
@@ -150,8 +149,8 @@ public class AbstractRenderStrategy implements RenderStrategy {
 		int i = 0;
 		Iterator it = components.iterator();
 		while (it.hasNext()) {
-			VersionContainer container = (VersionContainer) it.next();
-			renderContainer(container, 
+			Component container = (Component) it.next();
+			renderComponent(container, 
 					getPositionalClassName(i++, !it.hasNext()),
 					request, response);
 		}
@@ -170,54 +169,32 @@ public class AbstractRenderStrategy implements RenderStrategy {
 		return list.getLiveContainers();
 	}
 	
-	/**
-	 * Renders the given VersionContainer. The default implementation calls 
-	 * {@link #getVersionToRender(VersionContainer) getVersionToRender()} and 
-	 * passes the result to {@link #renderComponentVersion(ComponentVersion, String) 
-	 * renderComponentVersion()} (if not null). 
-	 */
-	protected void renderContainer(VersionContainer container, 
+	protected final void renderComponent(Component component, 
 			String positionClassName, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 
-		ComponentVersion version = getVersionToRender(container);
-		if (version != null) {
-			renderComponentVersion(version, positionClassName, request, response);
-		}
-	}
-		
-	/**
-	 * Returns the ComponentVersion to render. The default implementation 
-	 * simply returns the component's live version.
-	 */
-	protected ComponentVersion getVersionToRender(VersionContainer container) {
-		return container.getLiveVersion();
-	}
-	
-	/**
-	 * Renders the given ComponentVersion. 
-	 */
-	protected final void renderComponentVersion(ComponentVersion version, 
-			String positionClassName, HttpServletRequest request, 
-			HttpServletResponse response) throws Exception {
-		
-		VersionContainer container = version.getContainer();
-		if (INHERTING_COMPONENT.equals(container.getType())) {
-			renderParentList(container.getList(), request, response);
+		if (INHERTING_COMPONENT.equals(component.getType())) {
+			renderParentList(component.getList(), request, response);
 		}
 		else {
-			Component component = repository.getComponent(container.getType());		
-			renderComponent(component, version, positionClassName, 
+			ComponentRenderer renderer = repository.getComponent(component.getType());		
+			renderComponent(renderer, component, positionClassName, 
 					request, response);
 		}
 	}
+	
+	protected abstract void renderComponent(
+			ComponentRenderer renderer, Component component, 
+			String positionClassName, HttpServletRequest request, 
+			HttpServletResponse response) throws Exception;
+	
 	
 	protected final void renderParentList(ComponentList list, 
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		
-		Location location = list.getLocation();
-		Location parentLocation = config.getLocator().getParentLocation(location);
+		ComponentListLocation location = list.getLocation();
+		ComponentListLocation parentLocation = config.getLocator().getParentLocation(location);
 		log.debug("Parent location: " + parentLocation);
 		
 		if (parentLocation != null) {
@@ -237,14 +214,6 @@ public class AbstractRenderStrategy implements RenderStrategy {
 	
 	protected RenderStrategy getStrategyForParentList() throws IOException {
 		return this;
-	}
-	
-	protected void renderComponent(Component component, 
-			ComponentVersion version, String positionClassName,
-			HttpServletRequest request, HttpServletResponse response) 
-			throws Exception {
-		
-		component.render(version, positionClassName, request, response);
 	}
 	
 	protected String getPositionalClassName(int position, boolean last) {

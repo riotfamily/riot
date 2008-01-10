@@ -4,48 +4,41 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- *
+ * 
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- *
+ * 
  * The Original Code is Riot.
- *
+ * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2008
  * the Initial Developer. All Rights Reserved.
- *
+ * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- *
+ * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.config.component;
+package org.riotfamily.pages.model;
 
-import java.io.IOException;
-import java.util.Map;
+import org.riotfamily.components.model.ContentContainer;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+/**
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 7.0
+ */
+public class PageProperties extends ContentContainer {
 
-import org.riotfamily.components.model.ComponentVersion;
+	private Page page;
 
-public interface Component {
+	public Page getPage() {
+		return this.page;
+	}
 
-	/**
-	 * Indicates whether the content rendered by the component depends on
-	 * anything other but the components internal data.
-	 */
-	public boolean isDynamic();
-
-	public Map getDefaults();
+	public void setPage(Page page) {
+		this.page = page;
+	}
 	
-	/**
-	 * Renders the given ComponentVersion.
-	 */
-	public void render(ComponentVersion version, String positionClassName,
-			HttpServletRequest request, HttpServletResponse response)
-			throws IOException;
-
 }

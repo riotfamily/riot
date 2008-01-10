@@ -36,12 +36,12 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.xml.BeanConfigurationWatcher;
 import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;
-import org.riotfamily.components.config.component.Component;
+import org.riotfamily.components.config.component.ComponentRenderer;
 import org.riotfamily.components.config.component.ViewComponent;
 import org.riotfamily.components.locator.ComponentListLocator;
+import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.Location;
+import org.riotfamily.components.model.ComponentListLocation;
 import org.riotfamily.forms.factory.FormRepository;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -125,15 +125,15 @@ public class ComponentRepository implements ServletContextAware,
 
 	public void configure() {
 		context.refresh();
-		componentMap = context.getBeansOfType(Component.class);
+		componentMap = context.getBeansOfType(ComponentRenderer.class);
 		log.debug("Components: " + componentMap);
 	}
 
-	public void addComponent(String type, Component component) {
+	public void addComponent(String type, ComponentRenderer component) {
 		componentMap.put(type, component);
 	}
 
-	public Component getComponent(String type) {
+	public ComponentRenderer getComponent(String type) {
 		configWatcher.checkForModifications();
 		if (componentMap.get(type) == null) {
 			ViewComponent viewComponent = new ViewComponent();
@@ -141,11 +141,11 @@ public class ComponentRepository implements ServletContextAware,
 			viewComponent.setViewName(viewName);
 			componentMap.put(type, viewComponent);
 		}
-		return (Component) componentMap.get(type);
+		return (ComponentRenderer) componentMap.get(type);
 	}
 
-	public Component getComponent(ComponentVersion version) {
-		return getComponent(version.getContainer().getType());
+	public ComponentRenderer getComponent(Component component) {
+		return getComponent(component.getType());
 	}
 
 	public void setViewNamePrefix(String defaultViewLocation) {
@@ -172,7 +172,7 @@ public class ComponentRepository implements ServletContextAware,
 	}
 
 	public String getUrl(ComponentList componentList) {
-		Location location = componentList.getLocation();
+		ComponentListLocation location = componentList.getLocation();
 		Iterator it = locators.iterator();
 		while (it.hasNext()) {
 			ComponentListLocator locator = (ComponentListLocator) it.next();

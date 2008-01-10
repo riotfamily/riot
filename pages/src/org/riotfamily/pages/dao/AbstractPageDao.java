@@ -34,13 +34,13 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.components.model.Content;
 import org.riotfamily.pages.component.PageComponentListLocator;
 import org.riotfamily.pages.component.PageNodeComponentListLocator;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -227,10 +227,10 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	public void publishPage(Page page) {
 		page.setPublished(true);
 		updateObject(page);
-		VersionContainer container = page.getVersionContainer();
-		ComponentVersion preview = container.getPreviewVersion();
+		PageProperties container = page.getPageProperties();
+		Content preview = container.getPreviewVersion();
 		if (preview != null) {
-			ComponentVersion liveVersion = container.getLiveVersion();
+			Content liveVersion = container.getLiveVersion();
 			container.setLiveVersion(preview);
 			container.setPreviewVersion(null);
 			if (liveVersion != null) {

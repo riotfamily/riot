@@ -35,12 +35,11 @@ import org.riotfamily.cachius.CachiusResponseWrapper;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.config.component.Component;
+import org.riotfamily.components.config.component.ComponentRenderer;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.Location;
-import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.components.model.ComponentListLocation;
 
 public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 
@@ -54,7 +53,7 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		this.cacheService = cacheService;
 	}
 
-	protected boolean isCacheable(Location location, 
+	protected boolean isCacheable(ComponentListLocation location, 
 			HttpServletRequest request) {
 		
 		String cacheKey = location.toString();
@@ -67,10 +66,9 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 			if (containers != null) {
 				Iterator it = containers.iterator();
 				while (it.hasNext()) {
-					VersionContainer container = (VersionContainer) it.next();
-					ComponentVersion version = getVersionToRender(container);
+					Component container = (Component) it.next();
 					if (!INHERTING_COMPONENT.equals(container.getType())) {
-						if (repository.getComponent(version).isDynamic()) {
+						if (repository.getComponent(container).isDynamic()) {
 							return false;
 						}
 					}
@@ -85,58 +83,57 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 	 * the list (if present).
 	 * @param request, 
 	 */
-	public void render(Location location, HttpServletRequest request,
+	public void render(ComponentListLocation location, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		
 		if (isCacheable(location, request)) {
 			cacheService.serve(request, response, new ListProcessor(location));
 		}
 		else {
-			renderInternal(location, request, response);
+			renderUncached(location, request, response);
 		}
 	}
 	
-	protected void renderInternal(Location location, HttpServletRequest request,
+	protected void renderUncached(ComponentListLocation location, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		
 		super.render(location, request, response);
 	}
 	
-	protected void renderComponent(Component component,
-			ComponentVersion version, String positionClassName, 
+	protected void renderComponent(ComponentRenderer renderer,
+			Component component, String positionClassName, 
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 
-		if (component.isDynamic() || response instanceof CachiusResponseWrapper) {
-			renderComponentInternal(component, version, positionClassName, 
+		if (renderer.isDynamic() || response instanceof CachiusResponseWrapper) {
+			renderUncachedComponent(renderer, component, positionClassName, 
 					request, response);
 		}
 		else {
 			cacheService.serve(request, response, new ComponentProcessor(
-					component, version, positionClassName));
+					renderer, component, positionClassName));
 		}
 	}
 	
-	protected void renderComponentInternal(Component component,
-			ComponentVersion version, String positionClassName, 
+	private void renderUncachedComponent(ComponentRenderer renderer, 
+			Component component, String positionClassName,
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
-		super.renderComponent(component, version, positionClassName, 
-				request, response);
+		renderer.render(component, false, positionClassName, request, response);
 	}
-
+		
 	private class ListProcessor implements CacheableRequestProcessor {
 		
-		private Location location;
+		private ComponentListLocation location;
 		
-		public ListProcessor(Location location) {
+		public ListProcessor(ComponentListLocation location) {
 			this.location = location;
 		}
 
 		public String getCacheKey(HttpServletRequest request) {
 			StringBuffer sb = new StringBuffer("ComponentList ");
-			VersionContainer parent = getParentContainer(request);
+			Component parent = getParentContainer(request);
 			if (parent != null) {
 				sb.append(parent.getId()).append('$');
 				sb.append(location.getSlot());
@@ -163,32 +160,32 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 				HttpServletResponse response) throws Exception {
 			
 			ComponentCacheUtils.addListTags(request, location);
-			renderInternal(location, request, response);
+			renderUncached(location, request, response);
 		}
 		
 	}
 	
 	private class ComponentProcessor implements CacheableRequestProcessor {
 		
-		private Component component;
+		private ComponentRenderer renderer;
 		
-		private ComponentVersion version;
+		private Component component;
 		
 		private String positionClassName;
 		
-		public ComponentProcessor(Component component, ComponentVersion version, 
+		public ComponentProcessor(ComponentRenderer renderer, Component component, 
 				String positionClassName) {
 			
+			this.renderer = renderer;
 			this.component = component;
-			this.version = version;
 			this.positionClassName = positionClassName;
 		}
 
 		public String getCacheKey(HttpServletRequest request) {
 			StringBuffer key = new StringBuffer();
-			key.append(version.getClass().getName());
+			key.append(component.getClass().getName());
 			key.append('#');
-			key.append(version.getId());
+			key.append(component.getId());
 			return key.toString();
 		}
 		
@@ -207,9 +204,8 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		public void processRequest(HttpServletRequest request, 
 				HttpServletResponse response) throws Exception {
 			
-			ComponentCacheUtils.addComponentTags(request, component, version);
-			renderComponentInternal(component, version, positionClassName, 
-					request, response);
+			ComponentCacheUtils.addContentTags(request, component.getLiveVersion());
+			renderUncachedComponent(renderer, component, positionClassName, request, response);
 		}
 		
 	}

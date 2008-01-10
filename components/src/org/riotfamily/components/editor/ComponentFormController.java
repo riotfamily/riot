@@ -28,7 +28,7 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.components.model.Component;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.factory.FormRepository;
 
@@ -66,7 +66,7 @@ public class ComponentFormController extends AbstractComponentFormController {
 	}
 
 	protected void onSave(Object object, HttpServletRequest request) {
-		VersionContainer container = (VersionContainer) object;
+		Component container = (Component) object;
 		componentDao.updateVersionContainer(container);
 	}
 

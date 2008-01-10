@@ -23,8 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.riot.form;
 
-import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.components.model.Content;
+import org.riotfamily.components.model.Component;
 import org.riotfamily.forms.AbstractEditorBinder;
 import org.springframework.util.Assert;
 
@@ -34,9 +34,9 @@ import org.springframework.util.Assert;
  */
 public class VersionContainerEditorBinder extends AbstractEditorBinder {
 
-	private VersionContainer container;
+	private Component container;
 	
-	private ComponentVersion previewVersion;
+	private Content previewVersion;
 		
 	public boolean isEditingExistingBean() {
 		return true;
@@ -44,20 +44,20 @@ public class VersionContainerEditorBinder extends AbstractEditorBinder {
 
 	public void setBackingObject(Object backingObject) {
 		if (backingObject == null) {
-			container = new VersionContainer();
+			container = new Component();
 		}
 		else {
-			Assert.isInstanceOf(VersionContainer.class, backingObject);
-			container = (VersionContainer) backingObject;
+			Assert.isInstanceOf(Component.class, backingObject);
+			container = (Component) backingObject;
 		}
 		previewVersion = container.getPreviewVersion();
 		if (previewVersion == null) {
-			ComponentVersion liveVersion = container.getLiveVersion();
+			Content liveVersion = container.getLiveVersion();
 			if (liveVersion != null) {
-				previewVersion = new ComponentVersion(liveVersion);
+				previewVersion = new Content(liveVersion);
 			}
 			else {
-				previewVersion = new ComponentVersion();
+				previewVersion = new Content();
 			}
 		}
 	}
@@ -68,7 +68,7 @@ public class VersionContainerEditorBinder extends AbstractEditorBinder {
 	}
 
 	public Class getBeanClass() {
-		return VersionContainer.class;
+		return Component.class;
 	}
 	
 	public Class getPropertyType(String path) {

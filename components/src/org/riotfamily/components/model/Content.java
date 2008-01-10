@@ -29,11 +29,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * Versioned model for a component. The component properties are stored as
- * map of ValueWrapper objects keyed by Strings.
- */
-public class ComponentVersion {
+public class Content {
 
 	private Long id;
 
@@ -41,12 +37,12 @@ public class ComponentVersion {
 
 	private boolean dirty;
 
-	private VersionContainer container;
+	private ContentContainer container;
 
-	public ComponentVersion() {
+	public Content() {
 	}
 
-	public ComponentVersion(ComponentVersion prototype) {
+	public Content(Content prototype) {
 		if (prototype != null) {
 			this.container = prototype.getContainer();
 			this.wrappers = new HashMap();
@@ -107,11 +103,11 @@ public class ComponentVersion {
 	/**
 	 * Returns the VersionContainer this version belongs to.
 	 */
-	public VersionContainer getContainer() {
+	public ContentContainer getContainer() {
 		return container;
 	}
 
-	public void setContainer(VersionContainer container) {
+	public void setContainer(ContentContainer container) {
 		this.container = container;
 	}
 

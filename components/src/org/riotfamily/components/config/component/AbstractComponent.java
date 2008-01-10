@@ -34,12 +34,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.markup.TagWriter;
-import org.riotfamily.components.model.ComponentVersion;
+import org.riotfamily.components.model.Component;
 
 /**
  * Abstract base class for component implementations.
  */
-public abstract class AbstractComponent implements Component {
+public abstract class AbstractComponent implements ComponentRenderer {
 
 	public static final String CONTAINER = AbstractComponent.class.getName()
 			+ ".container";
@@ -64,13 +64,14 @@ public abstract class AbstractComponent implements Component {
 		return defaults;
 	}
 	
-	public final void render(ComponentVersion componentVersion,
+	public final void render(Component component, boolean preview,
 			String positionClassName, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 
 		try {
-			request.setAttribute(CONTAINER, componentVersion.getContainer());
-			renderInternal(componentVersion, positionClassName, request, response);
+			request.setAttribute(CONTAINER, component);
+			renderInternal(component, preview, positionClassName, 
+					request, response);
 		}
 		catch (Exception e) {
 			log.error("Error rendering component", e);
@@ -92,7 +93,7 @@ public abstract class AbstractComponent implements Component {
 		return false;
 	}
 
-	protected abstract void renderInternal(ComponentVersion componentVersion,
+	protected abstract void renderInternal(Component component, boolean preview,
 			String positionClassName, HttpServletRequest request,
 			HttpServletResponse response) throws Exception;
 	

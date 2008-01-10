@@ -23,36 +23,30 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.config.component;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.components.model.Component;
-import org.springframework.core.io.Resource;
 
-/**
- * Component implementation that renders the content of a static
- * {@link Resource}.
- */
-public class StaticComponent extends AbstractComponent {
+public interface ComponentRenderer {
 
-	private Resource location;
+	/**
+	 * Indicates whether the content rendered by the component depends on
+	 * anything other but the components internal data.
+	 */
+	public boolean isDynamic();
 
-	public void setLocation(Resource resource) {
-		this.location = resource;
-	}
-
-	protected void renderInternal(Component component, boolean preview,
-			String positionClassName, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-
-		Reader in = new InputStreamReader(location.getInputStream());
-		Writer out = response.getWriter();
-		IOUtils.copy(in, out);
-	}
+	public Map getDefaults();
+	
+	/**
+	 * Renders the given ComponentVersion.
+	 */
+	public void render(Component component, boolean preview, 
+			String positionClassName, HttpServletRequest request, 
+			HttpServletResponse response)
+			throws IOException;
 
 }

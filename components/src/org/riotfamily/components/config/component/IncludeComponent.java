@@ -29,8 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.components.model.Component;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -49,19 +48,21 @@ public class IncludeComponent extends AbstractComponent {
 		this.uri = uri;
 	}
 
-	protected void renderInternal(ComponentVersion componentVersion,
+	protected void renderInternal(Component component, boolean preview,
 			String positionClassName, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
 		Map snapshot = ServletUtils.takeAttributesSnapshot(request);
-		WebUtils.exposeRequestAttributes(request, componentVersion.getValues());
+		WebUtils.exposeRequestAttributes(request, component.getProperties(preview));
 		request.setAttribute(POSITION_CLASS, positionClassName);
-		request.setAttribute(COMPONENT_ID, String.valueOf(componentVersion.getId()));
-		request.setAttribute(THIS, componentVersion);
+		//REVISIT Should be removed:
+		request.setAttribute(COMPONENT_ID, String.valueOf(component.getId()));
+		request.setAttribute(THIS, component);
 
-		VersionContainer parentContainer = componentVersion.getContainer().getList().getParent();
-		if (parentContainer != null) {
-			request.setAttribute(PARENT_ID, String.valueOf(parentContainer.getId()));
+		Component parentComponent = component.getList().getParent();
+		if (parentComponent != null) {
+			//REVISIT Who needs this?
+			request.setAttribute(PARENT_ID, String.valueOf(parentComponent.getId()));
 		}
 
 		request.getRequestDispatcher(uri).include(request, response);

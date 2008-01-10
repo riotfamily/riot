@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.config.component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,8 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.view.ViewResolutionException;
 import org.riotfamily.common.web.view.ViewResolverHelper;
-import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.VersionContainer;
+import org.riotfamily.components.model.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -51,18 +51,24 @@ public class ViewComponent extends AbstractComponent {
 		this.viewName = viewName;
 	}
 
-	protected void renderInternal(ComponentVersion componentVersion,
+	protected void renderInternal(Component component, boolean preview,
 			String positionClassName, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		Map model = componentVersion.getValues();
+		Map model = new HashMap();
+		Map props = component.getProperties(preview);
+		if (props != null) {
+			model.putAll(props);
+		}
 		model.put(POSITION_CLASS, positionClassName);
-		model.put(COMPONENT_ID, String.valueOf(componentVersion.getId()));
-		model.put(THIS, componentVersion);
+		//REVIST Remove that one:
+		model.put(COMPONENT_ID, String.valueOf(component.getId()));
+		model.put(THIS, component);
 
-		VersionContainer parentContainer = componentVersion.getContainer().getList().getParent();
-		if (parentContainer != null) {
-			request.setAttribute(PARENT_ID, String.valueOf(parentContainer.getId()));
+		Component parentComponent = component.getList().getParent();
+		if (parentComponent != null) {
+			//REVIST Who needs this?
+			request.setAttribute(PARENT_ID, String.valueOf(parentComponent.getId()));
 		}
 
 		ModelAndView mv = new ModelAndView(viewName, model);

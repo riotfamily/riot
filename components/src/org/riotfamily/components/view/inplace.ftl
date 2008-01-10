@@ -252,16 +252,9 @@
 </#macro>
 
 <#--
-  - Returns the properties for the given container.
-  -->
-<#function buildModel container>
-	<#return inplaceMacroHelper.buildModel(container) />
-</#function>
-
-<#--
   -
   -->
-<#macro use container model=buildModel(container) form="" tag="" attributes...>
+<#macro use container model=container.getProperties(editMode) form="" tag="" attributes...>
 	<#local attributes = common.unwrapAttributes(attributes) />
 	<#local previousScope = scope />
 	<#assign scope =  model />

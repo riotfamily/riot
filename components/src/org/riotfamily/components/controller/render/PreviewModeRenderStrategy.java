@@ -25,12 +25,15 @@ package org.riotfamily.components.controller.render;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
+import org.riotfamily.components.config.component.ComponentRenderer;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.ComponentVersion;
-import org.riotfamily.components.model.VersionContainer;
 
 public class PreviewModeRenderStrategy extends AbstractRenderStrategy {
 
@@ -55,12 +58,11 @@ public class PreviewModeRenderStrategy extends AbstractRenderStrategy {
 		}
 	}
 	
-	/**
-	 * Overrides the default implementation to return the component's latest
-	 * version.
-	 */
-	protected ComponentVersion getVersionToRender(VersionContainer container) {
-		return container.getLatestVersion(); 
-	}
-	
+	protected void renderComponent(ComponentRenderer renderer, 
+			Component component, String positionClassName,
+			HttpServletRequest request, HttpServletResponse response) 
+			throws Exception {
+		
+		renderer.render(component, true, positionClassName, request, response);
+	}	
 }
