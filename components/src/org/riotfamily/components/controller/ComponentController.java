@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Content;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -76,7 +75,7 @@ public class ComponentController extends AbstractCacheableController {
 	}
 	
 
-	protected Long getVersionId(HttpServletRequest request) {
+	protected Long getContentId(HttpServletRequest request) {
 		String s = request.getParameter("id");
 		return s != null? new Long(s) : null;
 	}
@@ -85,7 +84,7 @@ public class ComponentController extends AbstractCacheableController {
 			HttpServletRequest request) {
 
 		super.appendCacheKey(key, request);
-		key.append("?id=").append(getVersionId(request));
+		key.append("?id=").append(getContentId(request));
 	}
 
 	public long getTimeToLive(HttpServletRequest request) {
@@ -107,9 +106,9 @@ public class ComponentController extends AbstractCacheableController {
 	protected ModelAndView handleRequestInTransaction(
 			HttpServletRequest request, HttpServletResponse response) {
 
-		Long id = getVersionId(request);
-		Content version = componentDao.loadComponentVersion(id);
-		Assert.notNull(version, "No such component: " + id);
+		Long id = getContentId(request);
+		Content content = componentDao.loadContent(id);
+		Assert.notNull(content, "No such Content: " + id);
 		
 		//FIXME
 		//ComponentCacheUtils.addListTags(request, version.getContainer());
@@ -117,7 +116,7 @@ public class ComponentController extends AbstractCacheableController {
 		if (contentType != null) {
 			response.setContentType(contentType);
 		}
-		return new ModelAndView(viewName, version.getValues());
+		return new ModelAndView(viewName, content.getValues());
 	}
 
 }

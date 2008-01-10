@@ -127,7 +127,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 * Returns the value of the given property.
 	 */
 	public String getText(Long containerId, String property) {
-		ContentContainer container = componentDao.loadVersionContainer(containerId);
+		ContentContainer container = componentDao.loadContentContainer(containerId);
 		Object value = container.getProperty(property, true);
 		return value != null ? value.toString() : null;
 	}
@@ -136,10 +136,10 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 * Sets the given property to a new value.
 	 */
 	public void updateText(Long containerId, String property, String text) {
-		ContentContainer container = componentDao.loadVersionContainer(containerId);
+		ContentContainer container = componentDao.loadContentContainer(containerId);
 		Content version = getOrCreatePreviewVersion(container);
 		version.setValue(property, text);
-		componentDao.saveOrUpdateComponentVersion(version);
+		componentDao.saveOrUpdateContent(version);
 		ComponentCacheUtils.invalidateContainer(
 				cache, version.getContainer(), true);
 	}
@@ -148,7 +148,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 			int width, int height, int x, int y, int scaledWidth)
 			throws IOException {
 	
-		ContentContainer container = componentDao.loadVersionContainer(containerId);
+		ContentContainer container = componentDao.loadContentContainer(containerId);
 		Content version = getOrCreatePreviewVersion(container);
 		
 		RiotImage original = (RiotImage) mediaDao.loadFile(imageId);
@@ -156,7 +156,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 				original, imageCropper, width, height, x, y, scaledWidth));
 		
 		version.setValue(property, croppedImage);
-		componentDao.saveOrUpdateComponentVersion(version);
+		componentDao.saveOrUpdateContent(version);
 		ComponentCacheUtils.invalidateContainer(
 				cache, version.getContainer(), true);
 		return croppedImage.getUri();
@@ -164,12 +164,12 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	
 	public String updateImage(Long containerId, String property, Long imageId) {
 	
-		ContentContainer container = componentDao.loadVersionContainer(containerId);
+		ContentContainer container = componentDao.loadContentContainer(containerId);
 		Content version = getOrCreatePreviewVersion(container);
 		
 		RiotFile image = mediaDao.loadFile(imageId);
 		version.setValue(property, image);
-		componentDao.saveOrUpdateComponentVersion(version);
+		componentDao.saveOrUpdateContent(version);
 		ComponentCacheUtils.invalidateContainer(
 				cache, version.getContainer(), true);
 		return image.getUri();
@@ -215,7 +215,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		Component component = componentDao.loadComponent(componentId);
 		Content version = getOrCreatePreviewVersion(component);
 		version.setValue(property, chunks[0]);
-		componentDao.saveOrUpdateComponentVersion(version);
+		componentDao.saveOrUpdateContent(version);
 		ComponentCacheUtils.invalidateContainer(
 				cache, version.getContainer(), true);
 		
@@ -283,7 +283,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		}
 		version.setValues(values);
 		container.setPreviewVersion(version);
-		componentDao.saveVersionContainer(container);
+		componentDao.saveContentContainer(container);
 		return container;
 	}
 	
@@ -361,7 +361,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		componentList.setDirty(true);
 		componentDao.updateComponentList(componentList);
 		if (!componentList.getLiveContainers().contains(component)) {
-			componentDao.deleteVersionContainer(component);
+			componentDao.deleteContentContainer(component);
 		}
 	}
 
@@ -389,7 +389,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 */
 	private void discardContainers(Long[] ids) {
 		for (int i = 0; i < ids.length; i++) {
-			ContentContainer container = componentDao.loadVersionContainer(ids[i]);
+			ContentContainer container = componentDao.loadContentContainer(ids[i]);
 			discardContainer(container);
 		}
 	}
@@ -411,7 +411,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 */
 	private void publishContainers(Long[] ids) {
 		for (int i = 0; i < ids.length; i++) {
-			ContentContainer container = componentDao.loadVersionContainer(ids[i]);
+			ContentContainer container = componentDao.loadContentContainer(ids[i]);
 			publishContainer(container);
 		}
 	}
@@ -447,7 +447,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 				while (it.hasNext()) {
 					Component container = (Component) it.next();
 					if (!previewList.contains(container)) {
-						componentDao.deleteVersionContainer(container);
+						componentDao.deleteContentContainer(container);
 						it.remove();
 					}
 				}
@@ -489,7 +489,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 			while (it.hasNext()) {
 				Component container = (Component) it.next();
 				if (liveList == null || !liveList.contains(container)) {
-					componentDao.deleteVersionContainer(container);
+					componentDao.deleteContentContainer(container);
 					it.remove();
 				}
 			}
@@ -524,9 +524,9 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 			container.setLiveVersion(preview);
 			container.setPreviewVersion(null);
 			if (liveVersion != null) {
-				componentDao.deleteComponentVersion(liveVersion);
+				componentDao.deleteContent(liveVersion);
 			}
-			componentDao.updateVersionContainer(container);
+			componentDao.updateContentContainer(container);
 			published = true;
 		}
 		return published;
@@ -548,8 +548,8 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		Content preview = container.getPreviewVersion();
 		if (preview != null) {
 			container.setPreviewVersion(null);
-			componentDao.updateVersionContainer(container);
-			componentDao.deleteComponentVersion(preview);
+			componentDao.updateContentContainer(container);
+			componentDao.deleteContent(preview);
 			discarded = true;
 		}
 		return discarded;
@@ -616,7 +616,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 				previewVersion = new Content();
 			}
 			container.setPreviewVersion(previewVersion);
-			componentDao.updateVersionContainer(container);
+			componentDao.updateContentContainer(container);
 		}
 		return previewVersion;
 	}

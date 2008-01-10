@@ -78,13 +78,12 @@ public interface ComponentDao {
 	/**
 	 * Loads the VersionContainer specified  by the given id.
 	 */
-	public ContentContainer loadVersionContainer(Long id);
+	public ContentContainer loadContentContainer(Long id);
 
 	/**
-	 * Loads the ComponentVersion specified  by the given id.
-	 * @since 6.4
+	 * Loads the Content specified  by the given id.
 	 */
-	public Content loadComponentVersion(Long id);
+	public Content loadContent(Long id);
 
 	/**
 	 * Saves the given ComponentList.
@@ -92,14 +91,14 @@ public interface ComponentDao {
 	public void saveComponentList(ComponentList list);
 	
 	/**
-	 * Saves the given VersionContainer.
+	 * Saves the given ContentContainer.
 	 */
-	public void saveVersionContainer(ContentContainer container);
+	public void saveContentContainer(ContentContainer container);
 
 	/**
-	 * Saves the given ComponentVersion.
+	 * Saves the given Content.
 	 */
-	public void saveComponentVersion(Content version);
+	public void saveContent(Content content);
 	
 	/**
 	 * Updates the given ComponentList.
@@ -107,14 +106,14 @@ public interface ComponentDao {
 	public void updateComponentList(ComponentList list);
 
 	/**
-	 * Updates the given VersionContainer.
+	 * Updates the given ContentContainer.
 	 */
-	public void updateVersionContainer(ContentContainer container);
+	public void updateContentContainer(ContentContainer container);
 
 	/**
-	 * Updates the given ComponentVersion.
+	 * Updates the given Content.
 	 */
-	public void saveOrUpdateComponentVersion(Content version);
+	public void saveOrUpdateContent(Content content);
 	
 	/**
 	 * Deletes the given ComponentList.
@@ -127,13 +126,13 @@ public interface ComponentDao {
 	public void deleteComponentLists(String type, String path);
 	
 	/**
-	 * Deletes the given ComponentVersion.
+	 * Deletes the given Content.
 	 */
-	public void deleteComponentVersion(Content version);
+	public void deleteContent(Content content);
 
 	/**
-	 * Deletes the given VersionContainer.
+	 * Deletes the given ContentContainer.
 	 */
-	public void deleteVersionContainer(ContentContainer container);
+	public void deleteContentContainer(ContentContainer container);
 	
 }

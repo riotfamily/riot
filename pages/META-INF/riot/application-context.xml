@@ -13,7 +13,7 @@
 
 	<import resource="classpath:org/riotfamily/pages/runtime/db-schema.xml"/>
 	
-	<override:add ref="sessionFactory" property="mappingLocations">
+	<override:add ref="sessionFactory" property="mappingLocations" append="true">
 		<value>classpath:org/riotfamily/pages/dao/hibernate/pages.hbm.xml</value>
 	</override:add>
 

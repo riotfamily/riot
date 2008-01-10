@@ -82,7 +82,8 @@ public class ListMergeProcessor implements BeanFactoryPostProcessor {
 			property = "sourceList";
 		}
 		
-		log.info("Adding " + values.size() + " items to " + ref + "." + property);
+		log.info("Adding " + values.size() + " items to " + ref 
+				+ "." + property + ": " + values);
 		
 		PropertyValue pv = bd.getPropertyValues().getPropertyValue(property);
 		if (pv == null) {

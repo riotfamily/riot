@@ -62,12 +62,12 @@ public class ComponentFormController extends AbstractComponentFormController {
 	
 	protected Object getFormBackingObject(HttpServletRequest request) {
 		Long id = new Long((String) request.getAttribute(containerIdAttribute));
-		return componentDao.loadVersionContainer(id);
+		return componentDao.loadContentContainer(id);
 	}
 
 	protected void onSave(Object object, HttpServletRequest request) {
 		Component container = (Component) object;
-		componentDao.updateVersionContainer(container);
+		componentDao.updateContentContainer(container);
 	}
 
 }

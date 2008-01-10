@@ -234,9 +234,9 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 			container.setLiveVersion(preview);
 			container.setPreviewVersion(null);
 			if (liveVersion != null) {
-				componentDao.deleteComponentVersion(liveVersion);
+				componentDao.deleteContent(liveVersion);
 			}
-			componentDao.updateVersionContainer(container);
+			componentDao.updateContentContainer(container);
 		}
 		
 	}
