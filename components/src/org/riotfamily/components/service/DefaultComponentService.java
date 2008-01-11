@@ -334,7 +334,7 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 			dao.updateVersionContainer(container);
 			published = true;
 			if (container.getList() == null) {
-				ComponentCacheUtils.invalidateContainer(cache, container, false);
+				ComponentCacheUtils.invalidateContainer(cache, container);
 			}
 		}
 		return published;

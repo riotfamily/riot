@@ -55,7 +55,15 @@ public final class ComponentCacheUtils {
 		
 		TaggingContext.tag(request, getContainerTag(container, editMode));
 	}
-	
+
+	/**
+	 * This method will invalidate both, the live and preview versions of the container.
+	 */
+	public static void invalidateContainer(Cache cache, VersionContainer container) {
+		cache.invalidateTaggedItems(getContainerTag(container, false));
+		cache.invalidateTaggedItems(getContainerTag(container, true));
+	}
+
 	public static void invalidateContainer(Cache cache, 
 			VersionContainer container, boolean editMode) {
 		
