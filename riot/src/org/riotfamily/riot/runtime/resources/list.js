@@ -12,7 +12,7 @@ RiotList.prototype = {
 			),
 			this.tbody = RBuilder.node('tbody')
 		);
-		this.pager = new Pager(RBuilder.node('div', {parent: $(target)}), this.gotoPage.bind(this));
+		this.pager = new Pager($(target), this.gotoPage.bind(this));
 		if (filterForm) {
 			this.filterForm = $(filterForm);
 		}
@@ -31,8 +31,9 @@ RiotList.prototype = {
 		this.table.className = model.cssClass;
 		model.columns.each(this.addColumn.bind(this));
 		var th = RBuilder.node('th', {className: 'commands', parent: this.headRow,
-			style: { width: model.itemCommandCount * 34 + 'px' }});
-
+			style: { width: model.itemCommandCount * 32 + 'px' }});
+		// Expand the column for IE browsers
+		th.innerHTML = '<div style="width: ' + model.itemCommandCount * 32 + 'px;"></div>';			
 		this.appendCommands(commandTarget, true, null, model.listCommands);
 		this.updateFilter(model);
 	},
@@ -192,16 +193,14 @@ RiotList.prototype = {
 	},
 
 	execCommand: function(item, commandId, confirmed) {
-		if (!this.busy) {
-			this.busy = true;
-			if (this.table) this.table.addClassName('busy');
+		if (this.setBusy()) {
 			ListService.execCommand(this.key, item, commandId, confirmed,
 					this.processCommandResult.bind(this));
 		}
 	},
 
 	processCommandResult: function(result) {
-		this.busy = false;
+		this.setIdle();
 		if (result) {
 			if (result.action == 'confirm') {
 				if (confirm(result.message)) {
@@ -218,7 +217,6 @@ RiotList.prototype = {
 				}
 			}
 			else if (result.action == 'popup') {
-				if (this.table) this.table.removeClassName('busy');
 				var win = window.open(result.url, result.windowName || 'commandPopup');
 				if (!win) {
 					alert(result.popupBlockerMessage || 'The Popup has been blocked by the browser.');
@@ -238,14 +236,33 @@ RiotList.prototype = {
 				window.location.reload();
 			}
 			else if (result.action == 'eval') {
-				if (this.table) this.table.removeClassName('busy');
 				eval(result.script);
 			}
 			else if (result.action == 'setRowStyle') {
-				if (this.table) this.table.removeClassName('busy');
 				alert(result.objectId + ': ' + result.rowStyle);
 			}
 		}
+	},
+	
+	setBusy: function() {
+		if (this.busy) {
+			return false;
+		}
+		this.busy = true;
+		if (this.table) {
+			this.table.addClassName('busy');
+		}
+		return true;
+	},
+	setIdle: function() {
+		if (!this.busy) {
+			return false;
+		}
+		this.busy = false;
+		if (this.table) {
+			this.table.removeClassName('busy');
+		}
+		return true;
 	}
 
 }

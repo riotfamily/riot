@@ -1,78 +1,99 @@
 var Pager = Class.create();
 Pager.prototype = {
 
-	initialize: function(el, onclick) {
-		this.el = $(el);
-		this.onclick = onclick;
-		this.clip = document.createElement('div');
-		this.clip.className = 'clip';
-		this.clip.style.position = 'relative';
-		Element.makeClipping(this.clip);
-		
-		this.reel = document.createElement('div');
-		this.reel.style.whiteSpace = 'nowrap';
-		Element.makePositioned(this.reel);
-		
-		this.clip.appendChild(this.reel);
-		this.el.appendChild(this.clip);
+	initialize: function(parent, onclick, options) {
+		this.parent = $(parent);
+		this.clickHandler = onclick;
+		this.options = Object.extend({
+			padding: 3, 
+			prevLabel: '<', 
+			nextLabel: '>',
+			gapLabel: '...'
+		}, options);
+	},
+
+	render: function() {
+		if (this.pages < 2) {
+			this.removeElement();
+			return;
+		}
+		this.createElement();
+		this.el.innerHTML = '';
+		var start = this.currentPage - this.options.padding;
+		var end = this.currentPage + this.options.padding;
+		if (start < 0) end += -1 * start + 1;
+		if (end > this.pages) start -= (end - this.pages);
+		if (start < 1) start = 1;
+		if (end > this.pages) end = this.pages;
+
+		var prevCount = Math.max(this.currentPage - start, 0);
+		if (prevCount > 0) this.appendButton(this.currentPage - 1, 'prev', this.options.prevLabel);
+		if (start > 1) this.appendButton(1);
+		if (start > 2) this.appendSpan('gap', this.options.gapLabel);
+
+		for (var i = 0; i < prevCount; i++) {
+			this.appendButton(start + i);
+		}
+
+		this.appendSpan('page current-page', this.currentPage);
+
+		var nextCount = Math.max(end - this.currentPage, 0);
+		for (var i = 0; i < nextCount; i++) {
+			this.appendButton(this.currentPage + i + 1);
+		}
+
+		if (end < this.pages - 1) this.appendSpan('gap', this.options.gapLabel);
+		if (end < this.pages) this.appendButton(this.pages);
+		if (nextCount > 0) 	this.appendButton(this.currentPage + 1, 'next', this.options.nextLabel);
+	},
+
+	onclick: function(ev, page) {
+		if (this.clickHandler) {
+			this.clickHandler(page);
+		}
+		Event.stop(ev);
 	},
 
 	update: function(currentPage, pages) {
-		if (pages != this.pages) {
-			Element.update(this.reel);
-			this.buttons = [];
-			if (pages > 1) {
-				this.el.addClassName('pager');
-				for (var i = 1; i <= pages; i++) {
-					this.buttons[i] = this.appendButton(i);
-				}
-				var end = document.createElement('span');
-				this.reel.appendChild(end);
-				this.maxOffset = end.offsetLeft - this.clip.clientWidth;
-			}
-		}
-		this.gotoPage(currentPage);
+		this.currentPage = currentPage;
+		if (typeof(pages) != 'undefined') this.pages = pages;
+		this.render();
 	},
-	
-	gotoPage: function(page) {
-		if (page >= this.buttons.length) return;
-		var prevPage = this.currentPage;
-		var p = this.buttons[page];
-		p.addClassName('current-page');
-		this.currentPage = p;
-		if (this.maxOffset > 0) {
-			if (this.effect && this.effect.state == 'running') {
-				this.effect.cancel();
-			}
 
-			var offset = p.offsetLeft - Math.round(this.clip.clientWidth / 2 - p.clientWidth / 2);
-			if (offset < 0) offset = 0;
-			if (offset > this.maxOffset) {
-				offset = this.maxOffset;
-			}
-
-			if (prevPage) {
-				prevPage.removeClassName('current-page');
-				if (offset != -parseInt(Element.getStyle(this.reel, 'left'))) {
-					this.effect = new Effect.Move(this.reel, {x: -offset, mode: 'absolute'});
-				}
-			}
-			else {
-				this.reel.style.left = -offset + 'px';
-			}
+	createElement: function() {
+		if (!this.el) {
+			this.el = document.createElement('div');
+			this.el.className = 'pager';
+			this.parent.appendChild(this.el);
 		}
 	},
 	
-	handleClick: function(page) {
-		this.onclick(page);
+	removeElement: function() {
+		if (this.el) {
+			this.parent.removeChild(this.el);
+			this.el = null;
+		}
+	},
+	
+	appendSpan: function(className, label) {
+		var span = document.createElement('span');
+		span.className = className;
+		span.appendChild(document.createTextNode(label));
+		this.el.appendChild(span);
+		this.appendSpace();
+	},
+
+	appendSpace: function() {
+		this.el.appendChild(document.createTextNode(' '));
 	},
 
 	appendButton: function(page, className, label) {
-		var a = document.createElement('span');
-		Event.observe(a, 'click', this.handleClick.bind(this, page));
+		var a = document.createElement('a');
+		a.href = '#' + page;
+		Event.observe(a, 'click', this.onclick.bindAsEventListener(this, page));
 		a.className = className || 'page';
 		a.innerHTML = label || page;
-		this.reel.appendChild(a);
-		return Element.extend(a);
+		this.el.appendChild(a);
+		this.appendSpace();
 	}
 }

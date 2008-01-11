@@ -16,9 +16,11 @@
 			path = new Path();
 		</script>
 	</head>
-	<body onload="TweakStyle.path()">
-		<div id="logo" title="Riot V${riotMacroHelper.runtime.versionString}"></div>
-		<div id="path"><@renderPath /></div>
+	<body onload="TweakStyle.path()" class="path">
+		<div id="body-wrapper">
+			<div id="logo" title="Riot V${riotMacroHelper.runtime.versionString}"></div>
+			<div id="path"><@renderPath /></div>
+		</div>
 	</body>
 </html>
 </#if>

@@ -20,6 +20,9 @@ a {
 	text-decoration: none;
 }
 
+.path #body-wrapper {
+	padding-bottom: 0;
+}
 #path .none-active {
 	color: #000;
 }

@@ -27,70 +27,73 @@
 		</script>
 	</head>
 	<body>
-		<div id="wrapper">
-			<div id="form" class="main">
-				<#if saved>
-					<div id="message">
-						<@spring.messageText "label.form.saved", "The data has been saved." />
-					</div>
-				</#if>
-				<#if options?has_content>
-					<div id="form-options">
-						<@spring.messageText "label.formChooser.choose", "Please select the kind of object you would like to create." />
-						<form method="get">
-							<#if parentId?exists><input type="hidden" name="parentId" value="${parentId}" /></#if>
-							<#if objectId?exists><input type="hidden" name="objectId" value="${objectId}" /></#if>
-							<select name="form" onchange="this.form.submit()">
-							<#list options as option>
-								<option value="${option.value}"<#if option.value == formId> selected="selected"</#if>>${option.label}</option>
-							</#list>
-							</select>
-						</form>
-					</div>
-				</#if>
-				${form}
-			</div>
-		</div>
-		<div id="extras" class="extra">
-			<div id="commands" class="box">
-				<div class="title">
-					<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
-				</div>
-				<div id="formCommands" class="list">
-					<div class="item"><a class="saveButton action" href="javascript:save()"><span class="label"><@spring.messageText "label.form.button.save", "Save" /></span></a></div>
-				</div>
-			</div>
+		<div id="body-wrapper">
 
-			<#if childLists?has_content>
-				<div id="childLists" class="box">
+			<div id="wrapper">
+				<div id="form" class="main">
+					<#if saved>
+						<div id="message">
+							<@spring.messageText "label.form.saved", "The data has been saved." />
+						</div>
+					</#if>
+					<#if options?has_content>
+						<div id="form-options">
+							<@spring.messageText "label.formChooser.choose", "Please select the kind of object you would like to create." />
+							<form method="get">
+								<#if parentId?exists><input type="hidden" name="parentId" value="${parentId}" /></#if>
+								<#if objectId?exists><input type="hidden" name="objectId" value="${objectId}" /></#if>
+								<select name="form" onchange="this.form.submit()">
+								<#list options as option>
+									<option value="${option.value}"<#if option.value == formId> selected="selected"</#if>>${option.label}</option>
+								</#list>
+								</select>
+							</form>
+						</div>
+					</#if>
+					${form}
+				</div>
+			</div>
+			<div id="extras" class="extra">
+				<div id="commands" class="box">
 					<div class="title">
-						<span class="label"><@spring.messageText "label.childLists", "Sub-Elements" /></span>
+						<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
 					</div>
-					<div class="list">
-						<#list childLists as item>
-							<div class="item">
-								<a href="${common.url(item.editorUrl)}">${item.label}</a>
-							</div>
-						</#list>
+					<div id="formCommands" class="list">
+						<div class="item"><a class="saveButton action" href="javascript:save()"><span class="label"><@spring.messageText "label.form.button.save", "Save" /></span></a></div>
 					</div>
 				</div>
-			</#if>
-			
-			<script type="text/javascript" language="JavaScript">
-				TweakStyle.form();
-				var list = new RiotList('${listKey}');
-				list.renderFormCommands(<#if objectId?exists>'${objectId}'<#else>null</#if>, 'formCommands');
-				$$('form[id]').first().observe('submit', function() {
-					Element.hide('form');
-					Element.hide('extras');
-					Element.show('saving');
-				});
-			</script>
-		</div>
+	
+				<#if childLists?has_content>
+					<div id="childLists" class="box">
+						<div class="title">
+							<span class="label"><@spring.messageText "label.childLists", "Sub-Elements" /></span>
+						</div>
+						<div class="list">
+							<#list childLists as item>
+								<div class="item">
+									<a href="${common.url(item.editorUrl)}">${item.label}</a>
+								</div>
+							</#list>
+						</div>
+					</div>
+				</#if>
+				
+				<script type="text/javascript" language="JavaScript">
+					TweakStyle.form();
+					var list = new RiotList('${listKey}');
+					list.renderFormCommands(<#if objectId?exists>'${objectId}'<#else>null</#if>, 'formCommands');
+					$$('form[id]').first().observe('submit', function() {
+						Element.hide('form');
+						Element.hide('extras');
+						Element.show('saving');
+					});
+				</script>
+			</div>
+	
+			<div id="saving" style="display:none">
+				<@spring.messageText "label.form.saving", "Saving ..." />
+			</div>
 
-		<div id="saving" style="display:none">
-			<@spring.messageText "label.form.saving", "Saving ..." />
 		</div>
-
 	</body>
 </html>

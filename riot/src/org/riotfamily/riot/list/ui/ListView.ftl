@@ -29,34 +29,39 @@
 	<#assign hasExtraColumn = hasCommands || filterForm?exists />
 
 	<body onload="TweakStyle.list()"<#if !hasExtraColumn> class="wide"</#if>>
-		<div id="wrapper">
-			<div class="main">
-				<div id="list"></div>
+		<div id="body-wrapper">
+		
+			<div id="wrapper">
+				<div class="main">
+					<div id="list"></div>
+				</div>
 			</div>
-		</div>
-		<div class="extra">
-
-			<#if filterForm?exists>
-				<div id="filter" class="box">
-					<div class="title">
-						<span class="label"><@spring.messageText "label.list.filter", "Filter" /></span>
+			<div class="extra">
+	
+				<#if filterForm?exists>
+					<div id="filter" class="box">
+						<div class="title">
+							<span class="label"><@spring.messageText "label.list.filter", "Filter" /></span>
+						</div>
+						<div id="filterForm">
+						</div>
 					</div>
-					<div id="filterForm">
+				</#if>
+	
+				<#if hasCommands>
+					<div id="commands" class="box">
+						<div class="title">
+							<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
+						</div>
+						<div id="listCommands">
+						</div>
 					</div>
-				</div>
-			</#if>
-
-			<#if hasCommands>
-				<div id="commands" class="box">
-					<div class="title">
-						<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
-					</div>
-					<div id="listCommands">
-					</div>
-				</div>
-			</#if>
-
-		</div>
+				</#if>
+	
+			</div>
+			
+		</div>		
+		
 		<script type="text/javascript" language="JavaScript">
 			var list = new RiotList('${listKey}');
 			list.render('list', 'listCommands'<#if filterForm?exists>, 'filterForm'</#if>);

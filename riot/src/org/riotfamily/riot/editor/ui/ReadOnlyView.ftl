@@ -25,24 +25,26 @@
 		</script>
 	</head>
 	<body>
-		<div id="wrapper">
-			<div id="form" class="main">
-				${form}
-			</div>
-		</div>
-		<div id="extras" class="extra">
-			<div id="commands" class="box">
-				<div class="title">
-					<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
+		<div id="body-wrapper">
+			<div id="wrapper">
+				<div id="form" class="main">
+					${form}
 				</div>
-				<div id="formCommands" class="list"></div>
 			</div>
-
-			<script type="text/javascript" language="JavaScript">
-				TweakStyle.form();
-				var list = new RiotList('${listKey}');
-				list.renderFormCommands('${objectId}', 'formCommands');
-			</script>
+			<div id="extras" class="extra">
+				<div id="commands" class="box">
+					<div class="title">
+						<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
+					</div>
+					<div id="formCommands" class="list"></div>
+				</div>
+	
+				<script type="text/javascript" language="JavaScript">
+					TweakStyle.form();
+					var list = new RiotList('${listKey}');
+					list.renderFormCommands('${objectId}', 'formCommands');
+				</script>
+			</div>
 		</div>
 	</body>
 </html>

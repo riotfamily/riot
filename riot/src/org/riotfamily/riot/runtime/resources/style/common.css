@@ -2,19 +2,19 @@
  * Common styles shared by several views
  */
 body {
-	color:#000;
-	margin:0;
-	padding: 30px 0;
+	color: #000;
+	margin: 0;
+	padding: 0;
 }
 body, a, td, th, h1, h2 {
 	font-family: "Trebuchet MS", arial, sans-serif;
-	font-size:12px;
+	font-size: 12px;
 }
 a {
 	color: ${highlight};
 }
 img {
-	border:0;
+	border: 0;
 }
 table {
 	border-spacing: 0;
@@ -24,18 +24,33 @@ td {
 	padding: 0;
 	vertical-align: top;
 }
-
-#wrapper {
+#body-wrapper {
 	width: 100%;
-	float: left;
+	/*overflow: hidden;*/
+	padding: 30px 0;
+	position: relative;
+	float: none;
+}
+#wrapper {
+	/* For IE6 */
+	_float: left;
 }
 .main {
-	margin-right: 320px;
+	margin-right: 305px;
+	/* For IE6 */
+	_width: 100%;
 }
 div.extra {
-	float:left;
 	width: 280px;
-	margin-left: -280px;
+	position: fixed;
+	top: 30px;
+	right: 0;
+	/* For IE6 */
+	_position: static;
+	_float: left;
+	_top: auto;
+	_right: auto;
+	_margin-left: -280px;
 }
 .wide .main {
 	margin-right: 0px;
@@ -75,7 +90,8 @@ div.title .label {
 
 .corner-tr,
 .corner-br {
-	margin-right: expression(-1 * (this.parentNode.offsetWidth % 2));
+	/* For IE6 as this has a rounding bug */
+	_margin-right: expression(-1 * (this.parentNode.offsetWidth % 2));
 }
 
 span.messageCode {

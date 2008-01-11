@@ -97,15 +97,15 @@ public abstract class AbstractCacheableController
      * allowing subclasses to add additional information.
      */
     protected String getCacheKeyInternal(HttpServletRequest request) {
-    	StringBuffer key = new StringBuffer();
+    	StringBuffer key;
     	if (addUriToCacheKey) {
-	    	key.append(ServletUtils.getOriginatingPathWithinApplication(request));
+    		key = request.getRequestURL();
 			if (!ServletUtils.isDirectRequest(request)) {
 				key.append('#').append(ServletUtils.getPathWithinApplication(request));
 			}
     	}
     	else {
-    		key.append(getBeanName());
+    		key = new StringBuffer(getBeanName());
     	}
 		appendCacheKey(key, request);
 		return key.toString();

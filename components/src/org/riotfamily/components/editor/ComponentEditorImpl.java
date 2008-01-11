@@ -527,6 +527,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 				componentDao.deleteContent(liveVersion);
 			}
 			componentDao.updateContentContainer(container);
+			ComponentCacheUtils.invalidateContainer(cache, container);
 			published = true;
 		}
 		return published;

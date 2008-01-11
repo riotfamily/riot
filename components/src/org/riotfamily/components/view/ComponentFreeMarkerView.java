@@ -37,7 +37,6 @@ import org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.component.AbstractComponent;
 import org.riotfamily.components.context.PageRequestUtils;
-import org.riotfamily.components.context.StoreContextInterceptor;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -82,7 +81,6 @@ public class ComponentFreeMarkerView extends RiotFreeMarkerView {
 					(DeferredRenderingResponseWrapper) response;
 			
 			if (requiresWrapping(request)) {
-				StoreContextInterceptor.storeContext(request);
 				String path = ServletUtils.getPathWithinApplication(request);
 				PrintWriter out = deferredResponse.getResponse().getWriter();
 				TagWriter wrapper = new TagWriter(out);
