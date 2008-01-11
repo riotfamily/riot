@@ -35,7 +35,7 @@
 	</bean>
 	
 	<bean id="fileDataInitializer" class="org.riotfamily.common.beans.MethodInvokingBean">
-		<property name="staticMethod" value="org.riotfamily.media.model.FileData.setFileStore" />
+		<property name="staticMethod" value="org.riotfamily.media.model.data.FileData.setFileStore" />
 		<property name="argument" ref="fileStore"/>
 	</bean>
 
