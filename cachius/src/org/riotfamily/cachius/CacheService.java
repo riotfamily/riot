@@ -183,7 +183,12 @@ public class CacheService {
     		throws Exception {
     	
     	if (log.isDebugEnabled()) {
-    		log.debug("Updating cache item " + cacheItem.getKey());
+    		if (cacheItem.isNew()) {
+    			log.debug("Creating cache item " + cacheItem.getKey());
+    		}
+    		else {
+    			log.debug("Updating cache item " + cacheItem.getKey());
+    		}
     	}
 		CachiusResponseWrapper wrapper = new CachiusResponseWrapper(
 				response, cacheItem, sessionIdEncoder);
