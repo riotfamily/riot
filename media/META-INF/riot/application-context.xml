@@ -16,7 +16,8 @@
     -->
     
 	<override:add ref="sessionFactory" property="mappingLocations">
-		<value>classpath:org/riotfamily/media/dao/hibernate/media.hbm.xml</value>
+		<value>classpath:org/riotfamily/media/dao/hibernate/file.hbm.xml</value>
+		<value>classpath:org/riotfamily/media/dao/hibernate/data.hbm.xml</value>
 	</override:add>
 	
 	<bean id="mediaDao" class="org.springframework.aop.framework.ProxyFactoryBean"

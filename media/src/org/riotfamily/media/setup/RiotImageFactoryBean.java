@@ -23,8 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.setup;
 
-import org.riotfamily.media.model.ImageData;
 import org.riotfamily.media.model.RiotImage;
+import org.riotfamily.media.model.data.ImageData;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 

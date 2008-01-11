@@ -28,6 +28,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Date;
 
+import org.riotfamily.media.model.data.FileData;
+
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0

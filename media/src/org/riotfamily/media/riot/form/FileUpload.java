@@ -44,8 +44,8 @@ import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.forms.resource.StylesheetResource;
-import org.riotfamily.media.model.FileData;
 import org.riotfamily.media.model.RiotFile;
+import org.riotfamily.media.model.data.FileData;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 

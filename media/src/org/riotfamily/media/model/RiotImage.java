@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.model;
 
+import org.riotfamily.media.model.data.ImageData;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

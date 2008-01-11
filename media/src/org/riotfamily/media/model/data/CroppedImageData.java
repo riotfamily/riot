@@ -21,12 +21,13 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.media.model;
+package org.riotfamily.media.model.data;
 
 import java.io.IOException;
 import java.util.Date;
 
 import org.riotfamily.common.image.ImageCropper;
+import org.riotfamily.media.model.RiotImage;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

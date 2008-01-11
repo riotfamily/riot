@@ -24,7 +24,7 @@
 package org.riotfamily.media.setup;
 
 import org.riotfamily.media.model.RiotSwf;
-import org.riotfamily.media.model.SwfData;
+import org.riotfamily.media.model.data.SwfData;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 

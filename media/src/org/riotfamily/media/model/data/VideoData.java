@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.media.model;
+package org.riotfamily.media.model.data;
 
 import java.io.File;
 import java.io.IOException;

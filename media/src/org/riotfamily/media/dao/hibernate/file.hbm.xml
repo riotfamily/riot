@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping package="org.riotfamily.media.model" auto-import="false">
+
+	<class name="RiotFile" table="riot_media_files" discriminator-value="file" lazy="false">
+		<cache usage="nonstrict-read-write" region="media" />
+		<id name="id">
+			<generator class="native" />
+		</id>
+		<discriminator column="`type`" type="string" />
+		<many-to-one name="fileData" cascade="save-update" fetch="join" />
+		<subclass name="RiotImage" discriminator-value="image" />
+		<subclass name="RiotSwf" discriminator-value="swf" />
+		<subclass name="RiotVideo" discriminator-value="video" />
+	</class>
+	
+</hibernate-mapping>

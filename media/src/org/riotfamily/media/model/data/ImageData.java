@@ -21,51 +21,52 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.media.model;
+package org.riotfamily.media.model.data;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
-import org.riotfamily.common.util.FlashInfo;
+import org.devlib.schmidt.imageinfo.ImageInfo;
 import org.springframework.web.multipart.MultipartFile;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class SwfData extends FileData {
+public class ImageData extends FileData {
 
-	private static final String CONTENT_TYPE = "application/x-shockwave-flash";
-	
 	private int width;
 	
 	private int height;
-	
-	private int version;
 
-	public SwfData() {
+	private String format;
+	
+	public ImageData() {
 	}
 
-	public SwfData(MultipartFile multipartFile) throws IOException {
+	public ImageData(MultipartFile multipartFile) throws IOException {
 		super(multipartFile);
-		inspect(getFile());
+		inspect(multipartFile.getInputStream());
 	}
 	
-	public SwfData(File file) throws IOException {
+	public ImageData(File file) throws IOException {
 		super(file);
-		inspect(file);
-	}
-	
-	protected void inspect(File file) throws IOException {
-		FlashInfo flashInfo = new FlashInfo(file);
-		setContentType(CONTENT_TYPE);
-		if (flashInfo.isValid()) {
-			width = flashInfo.getWidth();
-			height = flashInfo.getHeight();
-			version = flashInfo.getVersion();
-		}
+		inspect(new FileInputStream(file));
 	}
 
+	protected void inspect(InputStream in) {
+		ImageInfo info = new ImageInfo();
+		info.setInput(in);
+		info.check();
+		width = info.getWidth();
+		height = info.getHeight();
+		format = info.getFormatName();
+		setContentType("image/" + format.toLowerCase());
+	}
+	
 	public int getWidth() {
 		return this.width;
 	}
@@ -82,12 +83,12 @@ public class SwfData extends FileData {
 		this.height = height;
 	}
 
-	public int getVersion() {
-		return this.version;
+	public String getFormat() {
+		return this.format;
 	}
 
-	public void setVersion(int version) {
-		this.version = version;
+	public void setFormat(String format) {
+		this.format = format;
 	}
 	
 }
