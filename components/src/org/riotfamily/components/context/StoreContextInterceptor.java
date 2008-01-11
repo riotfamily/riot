@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.EditModeUtils;
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -38,14 +37,8 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class StoreContextInterceptor implements HandlerInterceptor {
 
-	private static final String HANDLED_ATTRIBUTE = 
-			StoreContextInterceptor.class.getName() + ".handled";
-	
 	private static final String CONTEXT_ATTRIBUTE = 
 			StoreContextInterceptor.class.getName() + ".context";
-	
-	private static final String STORE_ATTRIBUTE = 
-			StoreContextInterceptor.class.getName() + ".storeContext";
 	
 	public boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler) throws Exception {
@@ -55,7 +48,6 @@ public class StoreContextInterceptor implements HandlerInterceptor {
 			PageRequestContext context = PageRequestUtils.createContext(request, uri);
 			request.setAttribute(CONTEXT_ATTRIBUTE, context);
 		}
-		request.setAttribute(HANDLED_ATTRIBUTE, Boolean.TRUE);
 		return true;
 	}
 
@@ -68,24 +60,11 @@ public class StoreContextInterceptor implements HandlerInterceptor {
 			HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
 		
-		if (request.getAttribute(STORE_ATTRIBUTE) != null) {
-			PageRequestContext context = (PageRequestContext) 
-					request.getAttribute(CONTEXT_ATTRIBUTE);
+		PageRequestContext context = (PageRequestContext) 
+				request.getAttribute(CONTEXT_ATTRIBUTE);
 			
+		if (context != null) {
 			PageRequestUtils.storeContext(context, request, 120000);
-		}
-	}
-	
-	public static void storeContext(HttpServletRequest request) {
-		Assert.notNull(request.getAttribute(HANDLED_ATTRIBUTE), 
-				"No context found in request. Make sure you add a " 
-				+ StoreContextInterceptor.class.getName() 
-				+ " to your HandlerMapping(s).");
-		
-		if (!ServletUtils.isDirectRequest(request) 
-				&& EditModeUtils.isEditMode(request)) {
-			
-			request.setAttribute(STORE_ATTRIBUTE, Boolean.TRUE);
 		}
 	}
 
