@@ -1,9 +1,9 @@
 @import url(common.css);
 
-#editors .title {
+#editors .box-title {
 	background: #3d3d3d url(images/corner.gif) top left no-repeat;
 }
-#editors .title span {
+#editors .box-title span {
 	margin: 0 0 0 1px;
 }
 

@@ -10,7 +10,7 @@
 		<div class="${(element.compositeElement?default(false))?string('composite','single')} ${element.styleClass!}">
 			<#if element.label?exists>
 				<#if element.compositeElement?default(false)>
-					<div class="title">
+					<div class="box-title">
 						<label for="${element.id}">
 							<#if element.label?has_content>
 								${element.label}

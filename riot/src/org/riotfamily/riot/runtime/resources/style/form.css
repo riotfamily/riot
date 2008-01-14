@@ -64,7 +64,7 @@ label.error,
 .indent label.error {
 	color: ${highlight};
 }
-.title label.error {
+.box-title label.error {
 	color: #fff;
 }
 div.form-error {
@@ -92,14 +92,14 @@ label.disabled {
 	color: #888;
 }
 
-div.title {
+div.box-title {
 	background: ${highlight} url(images/list.gif) top left no-repeat;
 }
-div.title label {
+div.box-title label {
 	display: block;
 	font-weight: normal;
 }
-div.title .no-label {
+div.box-title .no-label {
 	display: block;
 	height: 15px;
 }
@@ -487,7 +487,7 @@ ul.radioButtonGroup {
 	margin: 0 2px;
 	background: url(images/hint.gif) 0 2px no-repeat;
 }
-.title .hint-trigger {
+.box-title .hint-trigger {
 	background: url(images/hint_inverse.gif) 0 2px no-repeat;
 }
 

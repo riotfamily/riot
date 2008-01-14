@@ -40,7 +40,7 @@
 	
 				<#if filterForm?exists>
 					<div id="filter" class="box">
-						<div class="title">
+						<div class="box-title">
 							<span class="label"><@spring.messageText "label.list.filter", "Filter" /></span>
 						</div>
 						<div id="filterForm">
@@ -50,7 +50,7 @@
 	
 				<#if hasCommands>
 					<div id="commands" class="box">
-						<div class="title">
+						<div class="box-title">
 							<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
 						</div>
 						<div id="listCommands">

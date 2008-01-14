@@ -1,7 +1,7 @@
 <div id="${element.id}" class="${(editor.compositeElement?default(false))?string('composite','single')}	pageProperty pageProperty${element.overwrite?string('Overwrite','Inherit')}">
 	<#if editor.label?exists>
 		<#if editor.compositeElement?default(false)>
-			<div class="title">
+			<div class="box-title">
 				<#if display??>
 					${toggleButton.render()}
 				</#if>

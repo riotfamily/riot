@@ -32,16 +32,18 @@ table.pages tr.hidden-page td {
 }
 
 
-.pagePropertyInherit div.title label {
+.pagePropertyInherit .box-title label {
 	background-color: #a4a4a4;
 }
 .pageProperty .button-toggle {
 	height: 19px;
 	position: absolute;
-	left: 1px;
+	top: 17px;	
+	left: 4px;
 }
-.pageProperty div.title .button-toggle {
-	
+.pageProperty .box-title .button-toggle {
+	top: 0;	
+	left: 1px;
 }
 .nestedForm .pageProperty .button-overwrite {
 	background-image: url(icons/edit_small.gif);
@@ -49,11 +51,11 @@ table.pages tr.hidden-page td {
 .nestedForm .pageProperty .button-inherit {
 	background-image: url(icons/remove_small.gif);
 }
-.nestedForm .pageProperty div.title .button-overwrite {
+.nestedForm .pageProperty .box-title .button-overwrite {
 	background-image: url(icons/edit_invert_small.gif);
 	background-color: ${highlight};
 }
-.nestedForm .pageProperty div.title .button-inherit {
+.nestedForm .pageProperty .box-title .button-inherit {
 	background-image: url(icons/remove_invert_small.gif);
 	background-color: ${highlight};
 }

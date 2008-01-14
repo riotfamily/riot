@@ -1,7 +1,7 @@
 <#import "/spring.ftl" as spring />
 
 <div id="notifications" class="box">
-	<div class="title">
+	<div class="box-title">
 		<span class="label"><@spring.messageText "label.notifications.title", "Messages" /></span>
 	</div>
 	<div id="notificationList">
