@@ -24,7 +24,6 @@
 		<constructor-arg ref="mediaDao" />
 		<constructor-arg ref="imageCropper" />
 		<constructor-arg ref="componentRepository" />
-		<constructor-arg ref="websiteCache" />
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
 	</bean>
 	
@@ -51,7 +50,7 @@
 	  -->
 	<bean id="componentFormController"
 		name="/components/form/@{formId}/@{containerId}"
-		class="org.riotfamily.components.editor.ComponentFormController">
+		class="org.riotfamily.components.editor.ContentFormController">
 		<constructor-arg ref="contentFormRepository" />
 		<constructor-arg ref="componentDao" />
 		<property name="formContextFactory" ref="formContextFactory" />

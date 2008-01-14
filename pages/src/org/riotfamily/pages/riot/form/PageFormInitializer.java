@@ -34,7 +34,6 @@ import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.form.ui.FormUtils;
 
@@ -79,7 +78,7 @@ public class PageFormInitializer implements FormInitializer {
 		NestedForm nestedForm = new NestedForm();
 		nestedForm.setRequired(true);
 		nestedForm.setIndent(false);
-		nestedForm.setEditorBinder(new ContentContainerEditorBinder(PageProperties.class));
+		nestedForm.setEditorBinder(new ContentContainerEditorBinder());
 		nestedForm.setStyleClass(id);
 		Page masterPage = getMasterPage(form);
 		if (masterPage == null) {
@@ -109,20 +108,22 @@ public class PageFormInitializer implements FormInitializer {
 	
 	private Page getMasterPage(Form form) {
 		Page page = (Page) form.getBackingObject();
-		Site site = page.getSite();
-		if (site == null) {
-			Object parent = FormUtils.loadParent(form);
-			if (parent instanceof Page) {
-				site = ((Page) parent).getSite();
+		if (page.getNode() != null) {
+			Site site = page.getSite();
+			if (site == null) {
+				Object parent = FormUtils.loadParent(form);
+				if (parent instanceof Page) {
+					site = ((Page) parent).getSite();
+				}
+				else if (parent instanceof Site) {
+					site = (Site) parent;
+				}
 			}
-			else if (parent instanceof Site) {
-				site = (Site) parent;
-			}
-		}
-		if (site != null) {
-			Site masterSite = site.getMasterSite();
-			if (masterSite != null) {
-				return page.getNode().getPage(masterSite);
+			if (site != null) {
+				Site masterSite = site.getMasterSite();
+				if (masterSite != null) {
+					return page.getNode().getPage(masterSite);
+				}
 			}
 		}
 		return null;
