@@ -35,14 +35,14 @@ table.pages tr.hidden-page td {
 	background-image: url(icons/commands/discard.gif);
 }
 
-.action-published {
-	background: url(icons/commands/publish-status.gif) 0 64 no-repeat;
+#list .commands .action-published {
+	background: url(icons/commands/publish_state.gif) 2px -64px no-repeat;
 }
-.action-dirty {
-	background: url(icons/commands/publish-status.gif) 0 32 no-repeat;
+#list .commands .action-dirty {
+	background: url(icons/commands/publish_state.gif) 2px -32px no-repeat;
 }
-.action-new {
-	background: url(icons/commands/publish-status.gif) 0 0 no-repeat;
+#list .commands .action-new {
+	background: url(icons/commands/publish_state.gif) 2px 0px no-repeat;
 }
 
 
