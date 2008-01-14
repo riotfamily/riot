@@ -25,7 +25,6 @@ package org.riotfamily.pages.riot.form;
 
 import java.util.Iterator;
 
-import org.riotfamily.components.riot.form.ContentContainerEditorBinder;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
@@ -78,7 +77,7 @@ public class PageFormInitializer implements FormInitializer {
 		NestedForm nestedForm = new NestedForm();
 		nestedForm.setRequired(true);
 		nestedForm.setIndent(false);
-		nestedForm.setEditorBinder(new ContentContainerEditorBinder());
+		nestedForm.setEditorBinder(new PagePeopertiesEditorBinder());
 		nestedForm.setStyleClass(id);
 		Page masterPage = getMasterPage(form);
 		if (masterPage == null) {

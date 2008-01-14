@@ -26,7 +26,6 @@ package org.riotfamily.components.riot.form;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.forms.AbstractEditorBinder;
-import org.springframework.util.Assert;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -43,8 +42,10 @@ public class ContentContainerEditorBinder extends AbstractEditorBinder {
 	}
 
 	public void setBackingObject(Object backingObject) {
-		Assert.notNull(backingObject, "This EditorBinder can only edit existing containers.");
 		container = (ContentContainer) backingObject;
+		if (container == null) {
+			container = createContainer();
+		}
 		previewVersion = container.getPreviewVersion();
 		if (previewVersion == null) {
 			Content liveVersion = container.getLiveVersion();
@@ -55,6 +56,11 @@ public class ContentContainerEditorBinder extends AbstractEditorBinder {
 				previewVersion = new Content();
 			}
 		}
+	}
+	
+	protected ContentContainer createContainer() {
+		throw new IllegalStateException(
+				"This EditorBinder can only edit existing containers.");
 	}
 	
 	public Object getBackingObject() {
