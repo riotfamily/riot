@@ -80,14 +80,5 @@ public final class PageCommandUtils {
 	public static boolean isSystemPage(CommandContext context) {
 		return getPage(context).getNode().isSystemNode();
 	}
-	public static boolean isHiddenNode(CommandContext context) {
-		return getPage(context).getNode().isHidden();
-	}
-	public static boolean isHiddenPage(CommandContext context) {
-		return getPage(context).isHidden();
-	}
-	public static boolean isFolder(CommandContext context) {
-		return getPage(context).isFolder();
-	}
 
 }

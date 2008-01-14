@@ -23,12 +23,26 @@ table.pages tr.hidden-page td {
 	background-image: url(icons/commands/add.gif);
 }
 
-.action-publishPage {
+.action-publish {
 	background-image: url(icons/commands/publish.gif);
 }
 
-.action-unpublishPage {
+.action-unpublish {
 	background-image: url(icons/commands/unpublish.gif);
+}
+
+.action-discard {
+	background-image: url(icons/commands/discard.gif);
+}
+
+.action-published {
+	background: url(icons/commands/publish-status.gif) 0 64 no-repeat;
+}
+.action-dirty {
+	background: url(icons/commands/publish-status.gif) 0 32 no-repeat;
+}
+.action-new {
+	background: url(icons/commands/publish-status.gif) 0 0 no-repeat;
 }
 
 
@@ -38,11 +52,11 @@ table.pages tr.hidden-page td {
 .pageProperty .button-toggle {
 	height: 19px;
 	position: absolute;
-	top: 17px;	
+	margin-top: 17px;	
 	left: 4px;
 }
 .pageProperty .box-title .button-toggle {
-	top: 0;	
+	margin-top: 0;
 	left: 1px;
 }
 .nestedForm .pageProperty .button-overwrite {

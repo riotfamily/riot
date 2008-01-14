@@ -112,6 +112,12 @@ public interface PageDao {
 
 	public void publishPage(Page page);
 	
+	public void unpublishPage(Page page);
+	
+	public void publishPageProperties(Page page);
+	
+	public void discardPageProperties(Page page);
+	
 	public void deletePage(Page page);
 
 	public void deleteAlias(Page page);

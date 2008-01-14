@@ -59,22 +59,26 @@ public class EditPageCommand extends EditCommand {
 	}
 
 	protected String getItemStyleClass(CommandContext context, String action) {
+		Page page = PageCommandUtils.getPage(context);
 		StringBuffer styleClasses = new StringBuffer();
 		if (action == ACTION_TRANSLATE) {
-			appendStyleClass(styleClasses, "foreign-page");
+			appendStyleClass(styleClasses, "master");
 		}
 		/* TODO: It would be better to set these styles in a different location. */
-		if (PageCommandUtils.isSystemPage(context)) {
-			appendStyleClass(styleClasses, "system-page");
+		if (page.getNode().isSystemNode()) {
+			appendStyleClass(styleClasses, "system");
 		}
-		if (PageCommandUtils.isHiddenNode(context)) {
-			appendStyleClass(styleClasses, "hidden-node");
+		if (page.isHidden()) {
+			appendStyleClass(styleClasses, "hidden");
 		}
-		if (PageCommandUtils.isHiddenPage(context)) {
-			appendStyleClass(styleClasses, "hidden-page");
-		}
-		if (PageCommandUtils.isFolder(context)) {
+		if (page.isFolder()) {
 			appendStyleClass(styleClasses, "folder");
+		}
+		if (page.isDirty()) {
+			appendStyleClass(styleClasses, "dirty");
+		}
+		if (page.isPublished()) {
+			appendStyleClass(styleClasses, "published");
 		}
 		return styleClasses.toString();
 	}

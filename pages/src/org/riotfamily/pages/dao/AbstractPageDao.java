@@ -34,13 +34,11 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.components.model.Content;
 import org.riotfamily.pages.component.PageComponentListLocator;
 import org.riotfamily.pages.component.PageNodeComponentListLocator;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.PageNode;
-import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -227,18 +225,20 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	public void publishPage(Page page) {
 		page.setPublished(true);
 		updateObject(page);
-		PageProperties container = page.getPageProperties();
-		Content preview = container.getPreviewVersion();
-		if (preview != null) {
-			Content liveVersion = container.getLiveVersion();
-			container.setLiveVersion(preview);
-			container.setPreviewVersion(null);
-			if (liveVersion != null) {
-				componentDao.deleteContent(liveVersion);
-			}
-			componentDao.updateContentContainer(container);
-		}
-		
+		publishPageProperties(page);
+	}
+	
+	public void publishPageProperties(Page page) {
+		componentDao.publishContainer(page.getPageProperties());
+	}
+	
+	public void discardPageProperties(Page page) {
+		componentDao.discardContainer(page.getPageProperties());
+	}
+	
+	public void unpublishPage(Page page) {
+		page.setPublished(false);
+		updateObject(page);
 	}
 
 	public void updateNode(PageNode node) {
