@@ -23,12 +23,16 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.dao.hibernate;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.riotfamily.cachius.Cache;
+import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
@@ -45,9 +49,12 @@ import org.riotfamily.riot.security.AccessController;
  */
 public class HibernateComponentDao implements ComponentDao {
 
+	private Cache cache;
+	
 	private HibernateHelper hibernate;
 	
-	public HibernateComponentDao() {
+	public HibernateComponentDao(Cache cache) {
+		this.cache = cache;
 	}
 
 	public void setSessionFactory(SessionFactory sessionFactory) {
@@ -166,12 +173,131 @@ public class HibernateComponentDao implements ComponentDao {
 
 	public void saveOrUpdateContent(Content version) {
 		hibernate.saveOrUpdate(version);
+		ComponentCacheUtils.invalidateContainer(
+				cache, version.getContainer(), true);
 	}
 
 	public void updateContentContainer(ContentContainer container) {
 		if (container.getId() != null) {
 			hibernate.update(container);
 		}
+	}
+	
+	public boolean publishComponentList(ComponentList componentList) {
+		boolean published = false;
+		if (componentList.isDirty()) {
+			//log.debug("List " + componentList + " is dirty and will be published.");
+			published = true;
+			List previewList = componentList.getPreviewComponents();
+			List liveList = componentList.getLiveComponents();
+			if (liveList == null) {
+				liveList = new ArrayList();
+			}
+			else {
+				Iterator it = liveList.iterator();
+				while (it.hasNext()) {
+					Component container = (Component) it.next();
+					if (!previewList.contains(container)) {
+						deleteContentContainer(container);
+						it.remove();
+					}
+				}
+				liveList.clear();
+			}
+			liveList.addAll(previewList);
+			previewList.clear();
+			componentList.setDirty(false);
+			updateComponentList(componentList);
+		}
+
+		Iterator it = componentList.getLiveComponents().iterator();
+		while (it.hasNext()) {
+			Component container = (Component) it.next();
+			published |= publishContainer(container);
+		}
+
+		if (published && cache != null) {
+			ComponentCacheUtils.invalidateList(cache, componentList);
+		}
+
+		return published;
+	}
+	
+	public boolean discardComponentList(ComponentList componentList) {
+		boolean discarded = false;
+		if (componentList.isDirty()) {
+			discarded = true;
+			List previewList = componentList.getPreviewComponents();
+			List liveList = componentList.getLiveComponents();
+			Iterator it = previewList.iterator();
+			while (it.hasNext()) {
+				Component container = (Component) it.next();
+				if (liveList == null || !liveList.contains(container)) {
+					deleteContentContainer(container);
+					it.remove();
+				}
+			}
+			componentList.setPreviewComponents(null);
+			componentList.setDirty(false);
+			updateComponentList(componentList);
+		}
+		Iterator it = componentList.getLiveComponents().iterator();
+		while (it.hasNext()) {
+			Component container = (Component) it.next();
+			discarded |= discardContainer(container);
+		}
+		return discarded;
+	}
+	
+	public boolean publishContainer(ContentContainer container) {
+		boolean published = false;
+		if (container instanceof Component) {
+			Component component = (Component) container;
+			Set childLists = component.getChildLists();
+			if (childLists != null) {
+				Iterator it = childLists.iterator();
+				while (it.hasNext()) {
+					ComponentList childList = (ComponentList) it.next();
+					published |= publishComponentList(childList);
+				}
+			}
+		}
+		Content preview = container.getPreviewVersion();
+		if (preview != null) {
+			Content liveVersion = container.getLiveVersion();
+			container.setLiveVersion(preview);
+			container.setPreviewVersion(null);
+			if (liveVersion != null) {
+				deleteContent(liveVersion);
+			}
+			updateContentContainer(container);
+			ComponentCacheUtils.invalidateContainer(cache, container);
+			published = true;
+		}
+		return published;
+	}
+	
+	public boolean discardContainer(ContentContainer container) {		
+		boolean discarded = false;
+		if (container instanceof Component) {
+			Component component = (Component) container;
+			Set childLists = component.getChildLists();
+			if (childLists != null) {
+				Iterator it = childLists.iterator();
+				while (it.hasNext()) {
+					ComponentList childList = (ComponentList) it.next();
+					discarded |= discardComponentList(childList);
+				}
+			}
+		}
+		Content preview = container.getPreviewVersion();
+		if (preview != null) {
+			container.setPreviewVersion(null);
+			updateContentContainer(container);
+			deleteContent(preview);
+			discarded = true;
+		}
+		return discarded;
 	}
 	
 }

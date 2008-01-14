@@ -135,4 +135,13 @@ public interface ComponentDao {
 	 */
 	public void deleteContentContainer(ContentContainer container);
 	
+	public boolean publishComponentList(ComponentList list);
+	
+	public boolean discardComponentList(ComponentList list);
+	
+	public boolean publishContainer(ContentContainer container);
+	
+	public boolean discardContainer(ContentContainer container);
+	
+	
 }

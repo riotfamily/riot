@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -42,14 +41,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
-import org.riotfamily.cachius.Cache;
 import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.PasswordGenerator;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.EditModeUtils;
-import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.config.component.ComponentRenderer;
@@ -83,8 +80,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 	private ComponentDao componentDao;
 	
-	private Cache cache;
-	
 	private MediaDao mediaDao;
 	
 	private ImageCropper imageCropper;
@@ -102,13 +97,12 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 	public ComponentEditorImpl(ComponentDao componentDao,
 			MediaDao mediaDao, ImageCropper imageCropper,
-			ComponentRepository repository, Cache cache) {
+			ComponentRepository repository) {
 		
 		this.componentDao = componentDao;
 		this.mediaDao = mediaDao;
 		this.imageCropper = imageCropper;
 		this.repository = repository;
-		this.cache = cache;
 	}
 
 	public void setMessageSource(MessageSource messageSource) {
@@ -140,8 +134,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		Content version = getOrCreatePreviewVersion(container);
 		version.setValue(property, text);
 		componentDao.saveOrUpdateContent(version);
-		ComponentCacheUtils.invalidateContainer(
-				cache, version.getContainer(), true);
 	}
 
 	public String cropImage(Long containerId, String property, Long imageId,
@@ -157,8 +149,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		
 		version.setValue(property, croppedImage);
 		componentDao.saveOrUpdateContent(version);
-		ComponentCacheUtils.invalidateContainer(
-				cache, version.getContainer(), true);
 		return croppedImage.getUri();
 	}
 	
@@ -170,8 +160,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		RiotFile image = mediaDao.loadFile(imageId);
 		version.setValue(property, image);
 		componentDao.saveOrUpdateContent(version);
-		ComponentCacheUtils.invalidateContainer(
-				cache, version.getContainer(), true);
 		return image.getUri();
 	}
 	
@@ -216,8 +204,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		Content version = getOrCreatePreviewVersion(component);
 		version.setValue(property, chunks[0]);
 		componentDao.saveOrUpdateContent(version);
-		ComponentCacheUtils.invalidateContainer(
-				cache, version.getContainer(), true);
 		
 		ComponentList list = component.getList();
 		int offset = list.getOrCreatePreviewContainers().indexOf(component);
@@ -390,7 +376,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	private void discardContainers(Long[] ids) {
 		for (int i = 0; i < ids.length; i++) {
 			ContentContainer container = componentDao.loadContentContainer(ids[i]);
-			discardContainer(container);
+			componentDao.discardContainer(container);
 		}
 	}
 
@@ -401,7 +387,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	private void discardLists(Long[] listIds) {
 		for (int i = 0; i < listIds.length; i++) {
 			ComponentList componentList = componentDao.loadComponentList(listIds[i]);
-			discardList(componentList);
+			componentDao.discardComponentList(componentList);
 		}
 	}
 
@@ -412,148 +398,24 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	private void publishContainers(Long[] ids) {
 		for (int i = 0; i < ids.length; i++) {
 			ContentContainer container = componentDao.loadContentContainer(ids[i]);
-			publishContainer(container);
+			componentDao.publishContainer(container);
 		}
 	}
 
 	/**
 	 * Publishes the ComponentList identified by the given ID.
 	 */
-	public void publishLists(Long[] listIds) {
+	private void publishLists(Long[] listIds) {
 		for (int i = 0; i < listIds.length; i++) {
 			ComponentList list = componentDao.loadComponentList(listIds[i]);
 			if (AccessController.isGranted("publish", list.getLocation())) {
-				publishList(list);
+				componentDao.publishComponentList(list);
 			}
 			else {
 				throw new RuntimeException(messageSource.getMessage(
 					"components.error.publishNotGranted", null, getLocale()));
 			}
 		}
-	}
-
-	public boolean publishList(ComponentList componentList) {
-		boolean published = false;
-		if (componentList.isDirty()) {
-			log.debug("List " + componentList + " is dirty and will be published.");
-			published = true;
-			List previewList = componentList.getPreviewComponents();
-			List liveList = componentList.getLiveComponents();
-			if (liveList == null) {
-				liveList = new ArrayList();
-			}
-			else {
-				Iterator it = liveList.iterator();
-				while (it.hasNext()) {
-					Component container = (Component) it.next();
-					if (!previewList.contains(container)) {
-						componentDao.deleteContentContainer(container);
-						it.remove();
-					}
-				}
-				liveList.clear();
-			}
-			liveList.addAll(previewList);
-			previewList.clear();
-			componentList.setDirty(false);
-			componentDao.updateComponentList(componentList);
-		}
-
-		Iterator it = componentList.getLiveComponents().iterator();
-		while (it.hasNext()) {
-			Component container = (Component) it.next();
-			published |= publishContainer(container);
-		}
-
-		/*
-		if (eventMulticaster != null) {
-			String path = repository.getUrl(componentList);
-			eventMulticaster.multicastEvent(new ContentChangedEvent(this, path));
-		}
-		*/
-
-		if (published && cache != null) {
-			ComponentCacheUtils.invalidateList(cache, componentList);
-		}
-
-		return published;
-	}
-	
-	private boolean discardList(ComponentList componentList) {
-		boolean discarded = false;
-		if (componentList.isDirty()) {
-			discarded = true;
-			List previewList = componentList.getPreviewComponents();
-			List liveList = componentList.getLiveComponents();
-			Iterator it = previewList.iterator();
-			while (it.hasNext()) {
-				Component container = (Component) it.next();
-				if (liveList == null || !liveList.contains(container)) {
-					componentDao.deleteContentContainer(container);
-					it.remove();
-				}
-			}
-			componentList.setPreviewComponents(null);
-			componentList.setDirty(false);
-			componentDao.updateComponentList(componentList);
-		}
-		Iterator it = componentList.getLiveComponents().iterator();
-		while (it.hasNext()) {
-			Component container = (Component) it.next();
-			discarded |= discardContainer(container);
-		}
-		return discarded;
-	}
-	
-	private boolean publishContainer(ContentContainer container) {
-		boolean published = false;
-		if (container instanceof Component) {
-			Component component = (Component) container;
-			Set childLists = component.getChildLists();
-			if (childLists != null) {
-				Iterator it = childLists.iterator();
-				while (it.hasNext()) {
-					ComponentList childList = (ComponentList) it.next();
-					published |= publishList(childList);
-				}
-			}
-		}
-		Content preview = container.getPreviewVersion();
-		if (preview != null) {
-			Content liveVersion = container.getLiveVersion();
-			container.setLiveVersion(preview);
-			container.setPreviewVersion(null);
-			if (liveVersion != null) {
-				componentDao.deleteContent(liveVersion);
-			}
-			componentDao.updateContentContainer(container);
-			ComponentCacheUtils.invalidateContainer(cache, container);
-			published = true;
-		}
-		return published;
-	}
-	
-	private boolean discardContainer(ContentContainer container) {		
-		boolean discarded = false;
-		if (container instanceof Component) {
-			Component component = (Component) container;
-			Set childLists = component.getChildLists();
-			if (childLists != null) {
-				Iterator it = childLists.iterator();
-				while (it.hasNext()) {
-					ComponentList childList = (ComponentList) it.next();
-					discarded |= discardList(childList);
-				}
-			}
-		}
-		Content preview = container.getPreviewVersion();
-		if (preview != null) {
-			container.setPreviewVersion(null);
-			componentDao.updateContentContainer(container);
-			componentDao.deleteContent(preview);
-			discarded = true;
-		}
-		return discarded;
 	}
 	
 	/**
