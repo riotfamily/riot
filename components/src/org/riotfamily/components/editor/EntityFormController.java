@@ -35,7 +35,7 @@ import org.riotfamily.riot.list.ListRepository;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class EntityFormController extends AbstractComponentFormController {
+public class EntityFormController extends AbstractFrontOfficeFormController {
 
 	private String listIdAttribute = "listId";
 

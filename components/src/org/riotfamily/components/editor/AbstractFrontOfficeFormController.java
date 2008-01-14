@@ -39,26 +39,23 @@ import org.riotfamily.forms.factory.RepositoryFormController;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * Controller that displays a form to edit the properties of a ComponentVersion.
- *
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
  */
-public abstract class AbstractComponentFormController 
+public abstract class AbstractFrontOfficeFormController 
 		extends RepositoryFormController 
 		implements FormSubmissionHandler, TransactionalHandler {
 
-	private static final String SESSION_ATTRIBUTE = "componentForm";
+	private static final String SESSION_ATTRIBUTE = "frontOfficeForm";
 
 	private String viewName = ResourceUtils.getPath(
-			AbstractComponentFormController.class, "ComponentFormView.ftl");
+			AbstractFrontOfficeFormController.class, "ComponentFormView.ftl");
 
 	private String successViewName = ResourceUtils.getPath(
-			AbstractComponentFormController.class, "ComponentFormSuccessView.ftl");
+			AbstractFrontOfficeFormController.class, "ComponentFormSuccessView.ftl");
 
 	private String formIdAttribute = "formId";
 
-	public AbstractComponentFormController(FormRepository formRepository) {
+	public AbstractFrontOfficeFormController(FormRepository formRepository) {
 		super(formRepository);
 		ButtonFactory buttonFactory = new ButtonFactory(this);
 		buttonFactory.setLabelKey("label.form.button.save");

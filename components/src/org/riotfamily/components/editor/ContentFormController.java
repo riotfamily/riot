@@ -28,7 +28,7 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.components.model.Component;
+import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.factory.FormRepository;
 
@@ -38,13 +38,13 @@ import org.riotfamily.forms.factory.FormRepository;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class ComponentFormController extends AbstractComponentFormController {
+public class ContentFormController extends AbstractFrontOfficeFormController {
 
 	private ComponentDao componentDao;
 	
 	private String containerIdAttribute = "containerId";
 
-	public ComponentFormController(FormRepository formRepository,
+	public ContentFormController(FormRepository formRepository,
 			ComponentDao componentDao) {
 
 		super(formRepository);
@@ -66,7 +66,7 @@ public class ComponentFormController extends AbstractComponentFormController {
 	}
 
 	protected void onSave(Object object, HttpServletRequest request) {
-		Component container = (Component) object;
+		ContentContainer container = (ContentContainer) object;
 		componentDao.updateContentContainer(container);
 	}
 
