@@ -20,6 +20,15 @@
 	<#return pageDao.findPagesForHandler(handlerName, site) />
 </#function>
 
+<#--
+  - Returns the page for the given url. The site is being used in case the site
+  - could not be determined from the url.
+  -->
+<#function pageForUrl url site=currentPage.site>
+	<#return pagesMacroHelper.pageForUrl(url, site) />
+</#function>
+
+
 <#macro use page=currentPage form="" tag="" attributes...>
 	<#local attributes = common.unwrapAttributes(attributes) />
 	<@inplace.use container=page.pageProperties model=page.properties form=form tag=tag attributes=attributes>

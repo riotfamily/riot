@@ -57,5 +57,10 @@
 	<bean id="currentPage" class="org.riotfamily.pages.view.CurrentPageMacroHelperFactory">
 		<constructor-arg ref="pageDao" />
 	</bean>
+	
+	<bean id="pagesMacroHelper" class="org.riotfamily.pages.view.PagesMacroHelperFactory">
+		<constructor-arg ref="pageDao" />
+		<constructor-arg ref="pathCompleter" />
+	</bean>
 
 </beans>
