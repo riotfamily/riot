@@ -101,8 +101,16 @@ public class PathCompleter implements ServletContextAware, InitializingBean {
 		return this.prefixMapping;
 	}
 	
+	public String getServletPrefix() {
+		return this.servletPrefix;
+	}
+	
 	public boolean isSuffixMapping() {
 		return this.suffixMapping;
+	}
+	
+	public String getServletSuffix() {
+		return this.servletSuffix;
 	}
 	
 	public String addServletMapping(String path) {
