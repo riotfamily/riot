@@ -73,12 +73,15 @@ public class PageFormInitializer implements FormInitializer {
 	}
 	
 	private void addComponentFormElements(Form form, String id) {
-		boolean present = false;
 		NestedForm nestedForm = new NestedForm();
 		nestedForm.setRequired(true);
 		nestedForm.setIndent(false);
 		nestedForm.setEditorBinder(new PagePeopertiesEditorBinder());
 		nestedForm.setStyleClass(id);
+		
+		boolean present = addPagePropertyEditors(form, nestedForm, 
+				"all-pages", null);
+		
 		Page masterPage = getMasterPage(form);
 		if (masterPage == null) {
 			present |= addPagePropertyEditors(form, nestedForm, 
