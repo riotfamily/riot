@@ -66,6 +66,10 @@ public class SwfData extends FileData {
 		}
 	}
 
+	public boolean isValid() {
+		return version > 0;
+	}
+	
 	public int getWidth() {
 		return this.width;
 	}

@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Element;
+import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.resource.FormResource;
@@ -66,19 +67,12 @@ public class FlashUpload extends FileUpload {
 		return new PreviewElement();
 	}
 
-	/*
-	protected void validateFile(File file) {
-		try {
-			parseFlashMovie(file);
-			if (!isValidSwf) {
-				ErrorUtils.reject(this, "flash.invalidFormat");
-			}
-		}
-		catch (IOException e) {
-			ErrorUtils.reject(this, "unexpected");
+	protected void validateFile(RiotFile file) {
+		RiotSwf swf = (RiotSwf) file;
+		if (!swf.isValid()) {
+			ErrorUtils.reject(this, "flash.invalidFormat");
 		}
 	}
-	*/
 	
 	public class PreviewElement extends TemplateElement
 			implements ContentElement, ResourceElement, DHTMLElement {

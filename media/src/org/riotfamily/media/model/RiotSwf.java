@@ -48,6 +48,10 @@ public class RiotSwf extends RiotFile {
 		return new RiotSwf(getSwfData());
 	}
 	
+	public boolean isValid() {
+		return getSwfData().isValid();
+	}
+	
 	public int getWidth() {
 		return getSwfData().getWidth();
 	}

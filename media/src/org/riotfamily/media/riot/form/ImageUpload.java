@@ -38,6 +38,7 @@ import org.riotfamily.forms.AbstractElement;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Element;
+import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
@@ -151,8 +152,8 @@ public class ImageUpload extends FileUpload {
 		return new RiotImage(data);
 	}
 	
-	/*
-	private void validate(ImageMetaData image) {
+	protected void validateFile(RiotFile file) {
+		RiotImage image = (RiotImage) file;
 		if (validFormats != null) {
 			if (validFormats.indexOf(image.getFormat()) == -1) {
 				ErrorUtils.reject(this, "image.invalidFormat",
@@ -196,7 +197,6 @@ public class ImageUpload extends FileUpload {
 			ErrorUtils.reject(this, "image.size.mismatch");
 		}
 	}
-	*/
 	
 	protected void cropImage(int width, int height, int x, int y,
 			int scaledWidth) throws IOException {

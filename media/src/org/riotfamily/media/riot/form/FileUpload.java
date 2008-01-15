@@ -77,26 +77,8 @@ public class FileUpload extends CompositeElement implements Editor,
 		return new PreviewElement();
 	}
 	
-	/*
-	
-	protected void processRequestInternal(FormRequest request) {
-		validate();
+	protected void validateFile(RiotFile file) {
 	}
-	
-	private void validate() {
-		ErrorUtils.removeErrors(this);
-		if (file != null) {
-			validateFile(file);
-		}
-		else if (isRequired()) {
-			ErrorUtils.rejectRequired(this);
-		}
-	}
-
-	protected void validateFile(File file) {
-	}
-
-	*/
 
 	public void setValue(Object value) {
 		log.debug("Value set to: " + value);
@@ -134,6 +116,19 @@ public class FileUpload extends CompositeElement implements Editor,
 		return new RiotFile(data);
 	}
 
+	private void setNewFile(RiotFile file) {
+		ErrorUtils.removeErrors(this);
+		if (file != null) {
+			validateFile(file);
+			if (!ErrorUtils.hasErrors(this)) {
+				this.file = file;
+			}
+		}
+		else if (isRequired()) {
+			ErrorUtils.rejectRequired(this);
+		}		
+	}
+	
 	public class UploadElement extends TemplateElement
 			implements JavaScriptEventAdapter {
 
@@ -162,7 +157,7 @@ public class FileUpload extends CompositeElement implements Editor,
 			MultipartFile multipartFile = request.getFile(getParamName());
 			if ((multipartFile != null) && (!multipartFile.isEmpty())) {
 				try {
-					file = createRiotFile(multipartFile);
+					setNewFile(createRiotFile(multipartFile));
 				}
 				catch (IOException e) {
 					log.error("error saving uploaded file", e);
