@@ -1,5 +1,6 @@
 var riot = {
 	contextPath: '${contextPath}',
+	resourcePath: '${contextPath}${resourcePath}',
 	path: '${contextPath}${riotServletPrefix}',
 	language: '${language}' || 'en',
 	instantPublish: window.riotInstantPublish || false
@@ -9,6 +10,7 @@ riot.componentEditorResource = riot.instantPublish
 		? {src: 'dwr/interface/InstantComponentEditor.js', test: 'InstantComponentEditor', onload: function() {window.ComponentEditor = InstantComponentEditor}}
 		: {src: 'dwr/interface/ComponentEditor.js', test: 'ComponentEditor'}
 
+Resources.basePath = riot.resourcePath;
 Resources.loadStyleSheet('style/toolbar.css');
 Resources.loadStyleSheet('style/edit-mode.css');
 
