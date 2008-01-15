@@ -61,6 +61,8 @@ public class FileUpload extends CompositeElement implements Editor,
 			new StylesheetResource("form/fileupload/progress.css"));
 
 	private RiotFile file;
+	
+	private RiotFile rejectedFile;
 
 	public FileUpload() {
 		addComponent(new UploadElement());
@@ -77,9 +79,6 @@ public class FileUpload extends CompositeElement implements Editor,
 		return new PreviewElement();
 	}
 	
-	protected void validateFile(RiotFile file) {
-	}
-
 	public void setValue(Object value) {
 		log.debug("Value set to: " + value);
 		if (value == null) {
@@ -98,7 +97,15 @@ public class FileUpload extends CompositeElement implements Editor,
 	}
 
 	protected RiotFile getFile() {
-		return this.file;
+		return file;
+	}
+	
+	protected RiotFile getRejectedFile() {
+		return rejectedFile;
+	}
+	
+	protected RiotFile getPreviewFile() {
+		return rejectedFile != null ? rejectedFile : file;
 	}
 	
 	/**
@@ -115,18 +122,34 @@ public class FileUpload extends CompositeElement implements Editor,
 		FileData data = new FileData(multipartFile);
 		return new RiotFile(data);
 	}
-
-	private void setNewFile(RiotFile file) {
+	
+	protected void processRequestInternal(FormRequest request) {
+		validate(getPreviewFile());
+	}
+	
+	private void validate(RiotFile file) {
 		ErrorUtils.removeErrors(this);
 		if (file != null) {
 			validateFile(file);
-			if (!ErrorUtils.hasErrors(this)) {
-				this.file = file;
-			}
 		}
 		else if (isRequired()) {
 			ErrorUtils.rejectRequired(this);
-		}		
+		}
+	}
+	
+	protected void validateFile(RiotFile file) {
+	}
+	
+	protected void setNewFile(RiotFile file) {
+		validate(file);
+		if (!ErrorUtils.hasErrors(this)) {
+			this.file = file;
+			this.rejectedFile = null;
+		}
+		else {
+			this.rejectedFile = file;
+			this.file = null;
+		}
 	}
 	
 	public class UploadElement extends TemplateElement

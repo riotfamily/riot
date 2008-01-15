@@ -201,16 +201,16 @@ public class ImageUpload extends FileUpload {
 	protected void cropImage(int width, int height, int x, int y,
 			int scaledWidth) throws IOException {
 
-		RiotImage original = (RiotImage) getFile();
+		RiotImage original = (RiotImage) getPreviewFile();
 		CroppedImageData data = new CroppedImageData(original, cropper, 
 				width, height, x, y, scaledWidth);
 		
-		setValue(new RiotImage(data));
+		setNewFile(new RiotImage(data));
 	}
 
 	protected void undoCrop() {
 		CroppedImageData imageData = (CroppedImageData) getFile().getFileData();
-		setValue(imageData.getOriginal());
+		setNewFile(imageData.getOriginal());
 	}
 	
 	public class PreviewElement extends AbstractElement
@@ -237,7 +237,8 @@ public class ImageUpload extends FileUpload {
 		public void handleContentRequest(HttpServletRequest request,
 				HttpServletResponse response) throws IOException {
 
-			if (getFile() != null) {
+			RiotFile file = getPreviewFile();
+			if (file != null) {
 				if ("crop".equals(request.getParameter("action"))) {
 					cropImage(
 							getIntParameter(request, "width"),
@@ -253,11 +254,11 @@ public class ImageUpload extends FileUpload {
 				}
 				else {
 					ServletUtils.setNoCacheHeaders(response);
-					response.setHeader("Content-Type", getFile().getContentType());
-					response.setContentLength((int) getFile().getSize());
+					response.setHeader("Content-Type", file.getContentType());
+					response.setContentLength((int) file.getSize());
 
 					try {
-						FileCopyUtils.copy(getFile().getInputStream(),
+						FileCopyUtils.copy(file.getInputStream(),
 								response.getOutputStream());
 					}
 					catch (IOException e) {
@@ -274,7 +275,7 @@ public class ImageUpload extends FileUpload {
 		}
 	
 		public String getImageUrl() {
-			if (getFile() != null) {
+			if (getPreviewFile() != null) {
 				return getFormContext().getContentUrl(this)
 						+ "&time=" + System.currentTimeMillis();
 			}
