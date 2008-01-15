@@ -34,6 +34,8 @@ import org.riotfamily.riot.list.command.result.ShowListResult;
 
 public class EditPageCommand extends EditCommand {
 
+	public static final String ACTION_EDIT = "edit";
+
 	public static final String ACTION_TRANSLATE = "translate";
 
 	private PageDao pageDao;
@@ -45,7 +47,7 @@ public class EditPageCommand extends EditCommand {
 
 	protected String getAction(CommandContext context) {
 		return PageCommandUtils.isTranslated(context)
-				? super.getAction(context)
+				? ACTION_EDIT
 				: ACTION_TRANSLATE;
 	}
 

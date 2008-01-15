@@ -172,12 +172,6 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 		return getListSession(key, request).getFilterFormHtml();
 	}
 
-	public List getListCommands(String key,	HttpServletRequest request)
-			throws ListSessionExpiredException {
-
-		return getListSession(key, request).getListCommands(request);
-	}
-
 	public List getFormCommands(String key, String objectId,
 			HttpServletRequest request) throws ListSessionExpiredException {
 

@@ -220,6 +220,10 @@ public class ListSession implements RenderContext {
 		Object parent = EditorDefinitionUtils.loadParent(
 				listDefinition, parentId);
 
+		return getItems(request, parent);
+	}
+		
+	private ListModel getItems(HttpServletRequest request, Object parent) {
 		int itemsTotal = listConfig.getDao().getListSize(parent, params);
 		int pageSize = params.getPageSize();
 		Collection beans = listConfig.getDao().list(parent, params);
@@ -279,12 +283,15 @@ public class ListSession implements RenderContext {
 	}
 
 	public ListModel getModel(HttpServletRequest request) {
-		ListModel model = getItems(request);
+		Object parent = EditorDefinitionUtils.loadParent(
+				listDefinition, parentId);
 
+		ListModel model = getItems(request, parent);
+		
 		model.setEditorId(listDefinition.getId());
 		model.setParentId(parentId);
 		model.setItemCommandCount(itemCommands.size());
-		model.setListCommands(getListCommands(request));
+		model.setListCommands(getListCommands(request, parent));
 		model.setCssClass(listConfig.getId());
 
 		boolean sortableDao = listConfig.getDao() instanceof SortableDao;
@@ -384,9 +391,9 @@ public class ListSession implements RenderContext {
 		return !listCommands.isEmpty();
 	}
 
-	public List getListCommands(HttpServletRequest request) {
+	private List getListCommands(HttpServletRequest request, Object parent) {
 		//REVISIT: Should we pass the correct item count here?
-		return getCommandStates(listCommands, null, null, -1, request);
+		return getCommandStates(listCommands, null, parent, -1, request);
 	}
 
 	public List getFormCommands(String objectId, HttpServletRequest request) {

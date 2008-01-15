@@ -55,9 +55,6 @@ public interface ListService {
 	public List getFormCommands(String key, String objectId, 
 			HttpServletRequest request) throws ListSessionExpiredException;
 	
-	public List getListCommands(String key,	HttpServletRequest request)
-			throws ListSessionExpiredException;
-	
 	public CommandResult execCommand(String key, ListItem item, 
 			String commandId, boolean confirmed, 
 			HttpServletRequest request, HttpServletResponse response)
