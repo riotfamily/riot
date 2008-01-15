@@ -70,17 +70,6 @@ public class HibernateComponentDao implements ComponentDao {
 		return (ComponentList) hibernate.uniqueResult(query);
 	}
 
-	public void deleteComponentLists(String type, String path) {
-		Query query = hibernate.createQuery("delete "
-				+ ComponentList.class.getName()	+ " list where " +
-						"list.location.type = :type and " +
-						"list.location.path = :path");
-
-		hibernate.setParameter(query, "type", type);
-		hibernate.setParameter(query, "path", path);
-		hibernate.executeUpdate(query);
-	}
-	
 	public ComponentList findComponentList(Component parent, String slot) {
 		Query query = hibernate.createCacheableQuery("from "
 				+ ComponentList.class.getName() + " list where list.parent = "

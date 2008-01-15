@@ -121,11 +121,6 @@ public interface ComponentDao {
 	public void deleteComponentList(ComponentList list);
 
 	/**
-	 * Deletes all ComponentLists with the given type and path.
-	 */
-	public void deleteComponentLists(String type, String path);
-	
-	/**
 	 * Deletes the given Content.
 	 */
 	public void deleteContent(Content content);

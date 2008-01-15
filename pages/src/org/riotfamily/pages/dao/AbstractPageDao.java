@@ -34,6 +34,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.pages.component.PageComponentListLocator;
 import org.riotfamily.pages.component.PageNodeComponentListLocator;
 import org.riotfamily.pages.model.Page;
@@ -300,7 +301,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 				deletePage(child);
 			}
 		}
-		componentDao.deleteComponentLists(PageComponentListLocator.TYPE,
+		deleteComponentLists(PageComponentListLocator.TYPE,
 				page.getId().toString());
 
 		clearAliases(page);
@@ -314,7 +315,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		}
 		else {
 			log.debug("Node has no more pages - deleting it ...");
-			componentDao.deleteComponentLists(PageNodeComponentListLocator.TYPE,
+			deleteComponentLists(PageNodeComponentListLocator.TYPE,
 					node.getId().toString());
 			
 			PageNode parentNode = node.getParent();
@@ -326,6 +327,15 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		}
 	}
 
+	private void deleteComponentLists(String type, String path) {
+		List lists = componentDao.findComponentLists(type, path);
+		Iterator it = lists.iterator();
+		while (it.hasNext()) {
+			ComponentList list = (ComponentList) it.next();
+			componentDao.deleteComponentList(list);
+		}
+	}
+	
 	public void saveSite(Site site) {
 		saveObject(site);
 		Site masterSite = site.getMasterSite();
