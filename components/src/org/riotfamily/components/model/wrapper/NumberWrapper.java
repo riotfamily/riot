@@ -23,46 +23,31 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model.wrapper;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.riotfamily.media.model.RiotFile;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 7.0
+ * @since 6.6
  */
-public class BuiltInWrapperFactory implements ValueWrapperFactory {
+public class NumberWrapper extends ValueWrapper {
 
-	public ValueWrapper createWapper(Object value) {
-		if (value == null) {
-			return null;
-		}
-		if (value instanceof ValueWrapper) {
-			return (ValueWrapper) value;
-		}
-		if (value instanceof String) {
-			return new StringWrapper((String) value);
-		}
-		if (value instanceof Number) {
-			return new NumberWrapper((Number) value);
-		}
-		if (value instanceof Boolean) {
-			return new BooleanWrapper((Boolean) value);
-		}
-		if (value instanceof Date) {
-			return new DateWrapper((Date) value);
-		}
-		if (value instanceof RiotFile) {
-			return new RiotFileWrapper((RiotFile) value);
-		}
-		if (value instanceof List) {
-			return new ListWrapper((List) value);
-		}
-		if (value instanceof Map) {
-			return new MapWrapper((Map) value);
-		}
-		return null;
+	private Number number;
+
+	public NumberWrapper() {
+	}
+
+	public NumberWrapper(Number number) {
+		this.number = number;
+	}
+
+	public Object getValue() {
+		return number;
+	}
+	
+	public void setValue(Object value) {
+		number = (Number) value;
+	}
+	
+	public ValueWrapper deepCopy() {
+		return new NumberWrapper(number);
 	}
 }

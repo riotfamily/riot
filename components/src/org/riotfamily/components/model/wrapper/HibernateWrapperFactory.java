@@ -104,7 +104,11 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 	private ContentClassInfo getContentClassInfo(List classInfos, Class contentType) {
 		TreeSet infos = new TreeSet(new ContentClassInfoComparator(contentType));
 		infos.addAll(classInfos);
-		return (ContentClassInfo) infos.first();
+		ContentClassInfo bestMatch = (ContentClassInfo) infos.first();
+		if (bestMatch.contentType.isAssignableFrom(contentType)) {
+			return bestMatch;	
+		}
+		return null;
 	}
 	
 	public ValueWrapper createWapper(Object value) throws WrappingException {
@@ -112,9 +116,18 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 		ContentClassInfo info;
 		if (collectionType != null) {
 			info = getContentClassInfo(collectionClassInfos, collectionType);
+			if (info == null) {
+				throw new WrappingException(
+						"No ValueWrapper found for collections of " 
+						+ collectionType);
+			}
 		}
 		else {
 			info = getContentClassInfo(contentClassInfos, value.getClass());
+			if (info == null) {
+				throw new WrappingException("No ValueWrapper found for type " 
+						+ value.getClass());
+			}
 		}
 		return info.createContent(value);
 	}

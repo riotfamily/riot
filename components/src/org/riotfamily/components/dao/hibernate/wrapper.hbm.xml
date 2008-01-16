@@ -18,6 +18,12 @@
 		<subclass name="BooleanWrapper" discriminator-value="boolean">
 			<property name="bit" access="field" />
 		</subclass>
+		<subclass name="NumberWrapper" discriminator-value="number">
+			<property name="number" access="field" />
+		</subclass>
+		<subclass name="DateWrapper" discriminator-value="date">
+			<property name="date" access="field" />
+		</subclass>
 		<subclass name="RiotFileWrapper" discriminator-value="file">
 			<many-to-one name="file" access="field" fetch="join" cascade="all" />
 		</subclass>
