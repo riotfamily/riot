@@ -1,5 +1,5 @@
 <ivy-module version="1.3">
-    <info organisation="riotfamily" module="riot-hibernate" />
+    <info organisation="riotfamily" module="riot-hibernate" revision="${riot.revision}" />
     <configurations>
     	<conf name="build" />
     	<conf name="runtime" />
@@ -10,8 +10,8 @@
     	<artifact name="riot-hibernate-context" conf="runtime" />
     </publications>
     <dependencies>
-        <dependency org="riotfamily" name="riot-core" rev="latest.integration" conf="*->@" />
-        <dependency org="riotfamily" name="revolt" rev="latest.integration" conf="*->@" />
+        <dependency org="riotfamily" name="riot-core" rev="${dep.riot.revision}" conf="*->@" />
+        <dependency org="riotfamily" name="revolt" rev="${dep.riot.revision}" conf="*->@" />
         <dependency org="springframework" name="spring" rev="2.0.7" conf="build->default;runtime->aop" />
 		<dependency org="hibernate" name="hibernate" rev="3.2.5.ga" conf="build->core;runtime->standalone,c3p0" />
 		<dependency org="c3p0" name="c3p0" rev="0.9.1.1" conf="*->default" />
