@@ -40,6 +40,7 @@
 			<fileset refid="js-build.files" />
 			<fileset refid="module-build.files" />
 		</ivy:buildlist>
+		<echo>Installing modules with version ${riot.revision} in the following order: ${ivy.sorted.modules}</echo>
 		<subant target="install" buildpathref="resolved-build.files" />
 	</target>
 

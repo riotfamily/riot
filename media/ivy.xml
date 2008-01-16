@@ -1,12 +1,12 @@
 <ivy-module version="1.3">
-    <info organisation="riotfamily" module="riot-media" />
+    <info organisation="riotfamily" module="riot-media" revision="${riot.revision}" />
     <configurations>
     	<conf name="build" />
     	<conf name="runtime" />
     	<conf name="test" />
     </configurations>
     <dependencies>
-	    <dependency org="riotfamily" name="riot-core" rev="latest.integration" conf="*->@" />
-        <dependency org="riotfamily" name="riot-hibernate" rev="latest.integration" conf="*->@" />
+	    <dependency org="riotfamily" name="riot-core" rev="${dep.riot.revision}" conf="*->@" />
+        <dependency org="riotfamily" name="riot-hibernate" rev="${dep.riot.revision}" conf="*->@" />
     </dependencies>
 </ivy-module>

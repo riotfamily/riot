@@ -1,5 +1,5 @@
 <ivy-module version="1.3">
-    <info organisation="riotfamily" module="riot-common" />
+    <info organisation="riotfamily" module="riot-common" revision="${riot.revision}" />
     <configurations>
     	<conf name="build" />
     	<conf name="runtime" />

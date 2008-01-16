@@ -1,15 +1,15 @@
 <ivy-module version="1.3">
-    <info organisation="riotfamily" module="riot-forms" />
+    <info organisation="riotfamily" module="riot-forms" revision="${riot.revision}" />
     <configurations>
     	<conf name="build" />
     	<conf name="runtime" />
     	<conf name="test" />
     </configurations>
     <dependencies>
-	    <dependency org="riotfamily" name="riot-common" rev="latest.integration" conf="*->@" />
-	    <dependency org="riotfamily" name="riot-js" rev="latest.integration" conf="*->default" />
-	    <dependency org="riotfamily" name="jscalendar-js" rev="latest.release" conf="runtime->default" />
-	    <dependency org="riotfamily" name="tinymce-js" rev="latest.integration" conf="runtime->default" />
+	    <dependency org="riotfamily" name="riot-common" rev="${dep.riot.revision}" conf="*->@" />
+	    <dependency org="riotfamily" name="riot-js" rev="${dep.riot.revision}" conf="*->default" />
+	    <dependency org="riotfamily" name="jscalendar-js" rev="1.0" conf="runtime->default" />
+	    <dependency org="riotfamily" name="tinymce-js" rev="3.0-dev-b2" conf="runtime->default" />
 	    <dependency org="springframework" name="spring" rev="2.0.7" conf="build->default;runtime->web" />
 	    <dependency org="devlib" name="imageinfo" rev="latest.release" />
 	    <dependency org="apache" name="commons-fileupload" rev="1.2" conf="runtime->default" />
