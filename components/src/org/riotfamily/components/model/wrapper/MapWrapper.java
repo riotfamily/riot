@@ -70,9 +70,9 @@ public class MapWrapper extends ValueWrapper implements Map {
 		Iterator it = contentMap.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();
-			ValueWrapper content = (ValueWrapper) entry.getValue();
-			if (content != null) {
-				result.put(entry.getKey(), content.unwrap());
+			ValueWrapper wrapper = (ValueWrapper) entry.getValue();
+			if (wrapper != null) {
+				result.put(entry.getKey(), wrapper.unwrap());
 			}
 			else {
 				result.put(entry.getKey(), null);
@@ -87,8 +87,8 @@ public class MapWrapper extends ValueWrapper implements Map {
 			Iterator it = contentMap.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry) it.next();
-				ValueWrapper content = (ValueWrapper) entry.getValue();
-				copy.put(entry.getKey(), content.deepCopy());
+				ValueWrapper wrapper = (ValueWrapper) entry.getValue();
+				copy.put(entry.getKey(), wrapper.deepCopy());
 			}
 		}
 		return new MapWrapper(copy);
@@ -101,9 +101,9 @@ public class MapWrapper extends ValueWrapper implements Map {
 		HashSet result = new HashSet();
 		Iterator it = contentMap.values().iterator();
 		while (it.hasNext()) {
-			ValueWrapper content = (ValueWrapper) it.next();
-			if (content != null) {
-				Collection tags = content.getCacheTags();
+			ValueWrapper wrapper = (ValueWrapper) it.next();
+			if (wrapper != null) {
+				Collection tags = wrapper.getCacheTags();
 				if (tags != null) {
 					result.addAll(tags);
 				}
@@ -167,9 +167,9 @@ public class MapWrapper extends ValueWrapper implements Map {
 
 	public Object get(Object key) {
 		if (contentMap != null) {
-			ValueWrapper content = (ValueWrapper) contentMap.get(key);
-			if (content != null) {
-				return content.getValue();
+			ValueWrapper wrapper = (ValueWrapper) contentMap.get(key);
+			if (wrapper != null) {
+				return wrapper.getValue();
 			}
 		}
 		return null;

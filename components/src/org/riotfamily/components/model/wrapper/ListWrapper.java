@@ -63,9 +63,9 @@ public class ListWrapper extends ValueWrapper implements List {
 		ArrayList result = new ArrayList(contentList.size());
 		Iterator it = contentList.iterator();
 		while (it.hasNext()) {
-			ValueWrapper content = (ValueWrapper) it.next();
-			if (content != null) {
-				result.add(content.unwrap());
+			ValueWrapper wrapper = (ValueWrapper) it.next();
+			if (wrapper != null) {
+				result.add(wrapper.unwrap());
 			}
 			else {
 				result.add(null);
@@ -78,9 +78,9 @@ public class ListWrapper extends ValueWrapper implements List {
 		ArrayList copy = new ArrayList(contentList.size());
 		Iterator it = contentList.iterator();
 		while (it.hasNext()) {
-			ValueWrapper content = (ValueWrapper) it.next();
-			if (content != null) {
-				copy.add(content.deepCopy());
+			ValueWrapper wrapper = (ValueWrapper) it.next();
+			if (wrapper != null) {
+				copy.add(wrapper.deepCopy());
 			}
 			else {
 				copy.add(null);
@@ -96,9 +96,9 @@ public class ListWrapper extends ValueWrapper implements List {
 		HashSet result = new HashSet();
 		Iterator it = contentList.iterator();
 		while (it.hasNext()) {
-			ValueWrapper content = (ValueWrapper) it.next();
-			if (content != null) {
-				Collection tags = content.getCacheTags();
+			ValueWrapper wrapper = (ValueWrapper) it.next();
+			if (wrapper != null) {
+				Collection tags = wrapper.getCacheTags();
 				if (tags != null) {
 					result.addAll(tags);
 				}
@@ -122,16 +122,16 @@ public class ListWrapper extends ValueWrapper implements List {
 		if (contentList == null) {
 			contentList = new ArrayList();
 		}
-		ValueWrapper content = null;
+		ValueWrapper wrapper = null;
 		if (item != null) { 
 			if (item instanceof ValueWrapper) {
-				content = (ValueWrapper) item;
+				wrapper = (ValueWrapper) item;
 			}
 			else {
-				content = ValueWrapperService.wrap(item);
+				wrapper = ValueWrapperService.wrap(item);
 			}
 		}
-		contentList.add(index, content);
+		contentList.add(index, wrapper);
 		
 	}
 
