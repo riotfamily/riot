@@ -320,6 +320,9 @@ public class Form implements BeanEditor {
 		doc.end();
 
 		doc.start(Html.SCRIPT).body();
+		writer.write("Resources.basePath='" + formContext.getContextPath() 
+				+ formContext.getResourcePath()	+ "';");
+		
 		LoadingCodeGenerator.renderLoadingCode(getResources(), writer);
 		doc.end();
 
