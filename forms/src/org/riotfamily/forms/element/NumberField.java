@@ -28,7 +28,6 @@ import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
-import org.springframework.util.Assert;
 
 public class NumberField extends TextField implements DHTMLElement,
 		ResourceElement {
@@ -37,9 +36,7 @@ public class NumberField extends TextField implements DHTMLElement,
 
 	private Float maxValue;
 
-	private int precision = 2;
-
-	private boolean allowFloats;
+	private Integer precision;
 
 	private boolean spinner;
 
@@ -59,7 +56,7 @@ public class NumberField extends TextField implements DHTMLElement,
 		this.minValue = minValue;
 	}
 
-	public void setPrecision(int precision) {
+	public void setPrecision(Integer precision) {
 		this.precision = precision;
 	}
 
@@ -92,7 +89,7 @@ public class NumberField extends TextField implements DHTMLElement,
 		sb.append("required:").append(isRequired()).append(',');
 		appendValue(sb, "minValue", minValue);
 		appendValue(sb, "maxValue", maxValue);
-		if (allowFloats) {
+		if (precision != null && precision.intValue() > 0) {
 			sb.append("allowFloats:true,");
 			sb.append("precision:").append(precision).append(',');
 		}
@@ -100,12 +97,7 @@ public class NumberField extends TextField implements DHTMLElement,
 			sb.append("unit:'").append(unit).append("',");
 		}
 		if (spinner) {
-			if (allowFloats) {
-				sb.append("stepSize:").append(stepSize).append(',');
-			}
-			else {
-				sb.append("stepSize:").append((int)stepSize).append(',');
-			}
+			sb.append("stepSize:").append(stepSize).append(',');
 			sb.append("spinButtonTag:'div'");
 		}
 		else {
@@ -129,13 +121,12 @@ public class NumberField extends TextField implements DHTMLElement,
 
 	protected void afterBindingSet() {
 		Class type = getEditorBinding().getPropertyType();
-		Assert.notNull(type, "Unable to determine type of property '" +
-				getEditorBinding().getProperty() + "'");
-
-		if (type.equals(Float.class) || type.equals(Double.class)
-				|| type.equals(float.class)	|| type.equals(double.class)) {
-
-			allowFloats = true;
+		if (precision == null && (type.equals(Float.class) 
+				|| type.equals(Double.class)
+				|| type.equals(float.class)	
+				|| type.equals(double.class))) {
+		
+			precision = new Integer(2);
 		}
 		if (type.isPrimitive()) {
 			setRequired(true);

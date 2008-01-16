@@ -86,7 +86,7 @@
 					<xsd:attribute name="style-class" type="xsd:string" />
 					<xsd:attribute name="min-value" type="xsd:decimal" />
 					<xsd:attribute name="max-value" type="xsd:decimal" />
-					<xsd:attribute name="precision" type="xsd:positiveInteger" />
+					<xsd:attribute name="precision" type="xsd:integer" />
 					<xsd:attribute name="spinner" type="xsd:boolean" default="true" />
 					<xsd:attribute name="step-size" type="xsd:decimal" />
 					<xsd:attribute name="unit" type="xsd:string" />
