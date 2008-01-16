@@ -28,6 +28,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -67,6 +68,8 @@ public class CommonMacroHelper {
 	
 	private static Random random = new Random();
 
+	private Date currentTime;
+	
 	private ApplicationContext ctx;
 	
 	private HttpServletRequest request;
@@ -94,6 +97,13 @@ public class CommonMacroHelper {
 		return random;
 	}
 
+	public Date getCurrentTime() {
+		if (currentTime == null) {
+			currentTime = new Date();
+		}
+		return currentTime;
+	}
+	
 	public Locale getLocale() {
 		if (requestLocale == null) {
 			requestLocale = RequestContextUtils.getLocale(request);

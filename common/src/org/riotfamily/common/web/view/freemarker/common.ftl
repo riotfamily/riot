@@ -77,16 +77,31 @@
 	<#return url(commonMacroHelper.getUrlForHandler(handlerName, attributes, prefix)) />
 </#function>
 
-<#function isHandler(handlerName)>
+<#function isHandler handlerName>
 	<#return handlerName == topLevelHandlerName />
 </#function>
 
 <#--
   - Returns a random item from the given collection.
   -->
-<#function randomItem(collection)>
+<#function randomItem collection>
 	<#local index = commonMacroHelper.random.nextInt(collection?size) />
 	<#return collection[index] />
+</#function>
+
+<#--
+  - Returns the current time as datetime value. The value does not change 
+  - during template processing. 
+  -->
+<#function currentTime>
+	<#return commonMacroHelper.getCurrentTime()?datetime />
+</#function>
+
+<#-- 
+  - Returns whether the given date is in the future. 
+  -->
+<#function isInFuture date="">
+	<#return (date?is_date && date?datetime > currentTime()) />
 </#function>
 
 <#--
