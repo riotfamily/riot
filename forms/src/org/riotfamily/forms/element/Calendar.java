@@ -184,11 +184,11 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
 	}
 
 	public FormResource getResource() {
-		return resource;
+		return isEnabled() ? resource : null;
 	}
 
 	public String getInitScript() {
-		return TemplateUtils.getInitScript(this);
+		return isEnabled() ? TemplateUtils.getInitScript(this) : null;
 	}
 
 	protected Date getDefaultDate() {
