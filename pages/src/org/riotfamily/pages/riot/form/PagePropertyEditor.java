@@ -27,8 +27,8 @@ import java.io.PrintWriter;
 import java.util.Map;
 
 import org.riotfamily.components.model.wrapper.ValueWrapper;
-import org.riotfamily.components.riot.form.ValueWrapperEditor;
 import org.riotfamily.forms.Editor;
+import org.riotfamily.forms.EditorBinding;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.event.Button;
@@ -55,6 +55,8 @@ public class PagePropertyEditor extends TemplateElement {
 
 	private ToggleButton toggleButton;
 	
+	private ValueWrapper masterValue; 
+	
 	public PagePropertyEditor(ElementFactory elementFactory, Page masterPage) {
 		this.elementFactory = elementFactory;
 		this.masterPage = masterPage;
@@ -67,19 +69,16 @@ public class PagePropertyEditor extends TemplateElement {
 		addComponent("editor", editor);
 		if (masterPage != null) {
 			display = (Editor) elementFactory.createElement(this, getForm(), false);
-			String property = editor.getEditorBinding().getProperty();
-			Map properties = masterPage.getPageProperties().getLatestVersion().getWrappers();
-			ValueWrapper content = (ValueWrapper) properties.get(property);
-			if (content != null) {
-				if (editor instanceof ValueWrapperEditor) {
-					display.setValue(content);
-				}
-				else {
-					display.setValue(content.unwrap());
-				}
-			}
 			display.setEnabled(false);
+			EditorBinding binding = editor.getEditorBinding();
+			display.setEditorBinding(binding);
 			addComponent("display", display);
+			String property = binding.getProperty();
+			Map properties = masterPage.getPageProperties().getLatestVersion().getWrappers();
+			masterValue = (ValueWrapper) properties.get(property);
+			if (masterValue != null) {
+				display.setValue(masterValue.getValue());
+			}
 		}
 	}
 	
@@ -93,11 +92,15 @@ public class PagePropertyEditor extends TemplateElement {
 	
 	protected void renderTemplate(PrintWriter writer) {
 		if (!initialized) {
-			overwrite = display == null || editor.getValue() != null;
+			overwrite = display == null || editor.getEditorBinding().getValue() != null;
+			if (!overwrite && masterValue != null) {
+				editor.setValue(masterValue.deepCopy().getValue());
+			}
 			initialized = true;
 		}
 		super.renderTemplate(writer);
 	}
+
 	public boolean isOverwrite() {
 		return this.overwrite;
 	}
