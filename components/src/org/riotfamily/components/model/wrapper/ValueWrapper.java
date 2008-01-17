@@ -60,4 +60,30 @@ public abstract class ValueWrapper {
 	
 	public abstract ValueWrapper deepCopy();
 
+	public int hashCode() {
+		Object value = getValue();
+		if (value == this || value == null) {
+			return super.hashCode();
+		}
+		return value.hashCode();
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof ValueWrapper) {
+			Object otherValue = ((ValueWrapper) obj).getValue();
+			if (otherValue != null) {
+				return otherValue.equals(getValue());
+			}
+		}
+		return super.equals(obj);
+	}
+	
+	public String toString() {
+		Object value = getValue();
+		if (value == this || value == null) {
+			return super.toString();
+		}
+		return value.toString();
+	}
+	
 }
