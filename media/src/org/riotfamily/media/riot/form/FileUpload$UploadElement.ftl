@@ -7,9 +7,12 @@
 </div>
 <#else>
 <input type="file" id="${element.id}" class="file" name="${element.paramName}" 
-	onchange="uploadInline(this, '${element.uploadUrl}')" />
-
-<noscript>
-	<input type="submit" value="Upload" />
-</noscript>	
+	<#if element.enabled>onchange="uploadInline(this, '${element.uploadUrl}')"
+	<#else>disabled="disabled"
+	</#if> />
+	<#if element.enabled>
+		<noscript>
+			<input type="submit" value="Upload" />
+		</noscript>
+	</#if>	
 </#if>

@@ -139,10 +139,11 @@ public class Button extends AbstractEditorBase
 				.attribute(Html.COMMON_CLASS, getCssClass())
 				.attribute(Html.COMMON_ID, getId())
 				.attribute(Html.COMMON_TABINDEX, tabIndex)
+				.attribute(Html.INPUT_DISABLED, !isEnabled())
 				.attribute(Html.INPUT_NAME, getParamName())
 				.attribute(Html.INPUT_VALUE, getLabel());
 		
-		if (partitialSubmit != null) {
+		if (partitialSubmit != null && isEnabled()) {
 			tag.attribute(Html.COMMON_ONCLICK, "submitElement('" + 
 					partitialSubmit + "', this); return false;");
 		}

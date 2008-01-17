@@ -254,7 +254,7 @@ public class ListEditor extends TemplateElement implements Editor,
 	}
 	
 	public String getInitScript() {
-		if (sortable && !items.isEmpty()) {
+		if (sortable && isEnabled() && !items.isEmpty()) {
 			return TemplateUtils.getInitScript(this, ListEditor.class);
 		}
 		else {
