@@ -1,3 +1,28 @@
+.uploadProgress {
+	margin-bottom: 3px;
+}
+
+.uploadProgress .gauge {
+	width: 153px;
+	height: 19px;
+	background-color: #fff;
+	border: 2px solid; 
+	border-color: #888 #fff #fff #888; 
+	float: left;
+	margin-right: 12px;
+}
+
+.uploadProgress .gauge .bar {
+	background-color: ${highlight};
+	background-image: url(images/progress.gif);
+	height: 100%;
+}
+
+.uploadProgress .stats {
+	position: relative;
+	top: 4px;
+}
+
 .filePreview {
 	margin: 10px 0;
 	overflow:hidden;

@@ -283,7 +283,7 @@ public class ImageUpload extends FileUpload {
 		}
 
 		public String getCropUrl() {
-			if (cropper != null && crop) {
+			if (isEnabled() && cropper != null && crop) {
 				return getFormContext().getContentUrl(this) + "&action=crop";
 			}
 			return null;
