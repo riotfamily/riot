@@ -38,6 +38,8 @@ public class Pager {
 	private int currentPage;
 
 	private int pages;
+	
+	private long itemCount;
 
 	private PagerItem firstPage;
 
@@ -71,6 +73,11 @@ public class Pager {
 		if (itemCount % pageSize == 0) {
 			pages--;
 		}
+		this.itemCount = itemCount;
+	}
+	
+	public long getItemCount() {
+		return itemCount;
 	}
 
 	public void setCopyParameters(boolean copyParameters) {
