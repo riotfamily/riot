@@ -26,6 +26,7 @@ package org.riotfamily.common.web.view;
 import java.util.Locale;
 import java.util.Map;
 
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
@@ -37,7 +38,8 @@ import org.springframework.web.servlet.view.RedirectView;
  * <tt>someView.jsp</tt> would be delegated to the ViewResolver
  * registered for the <tt>jsp</tt> suffix.
  */
-public class SuffixViewResolver extends AbstractCachingViewResolver {
+public class SuffixViewResolver extends AbstractCachingViewResolver 
+		implements Ordered {
 
 	/**
 	 * Prefix for special view names that specify a redirect URL (usually
@@ -64,6 +66,8 @@ public class SuffixViewResolver extends AbstractCachingViewResolver {
 	private boolean redirectContextRelative = true;
 
 	private boolean redirectHttp10Compatible = true;
+	
+	private int order = Ordered.LOWEST_PRECEDENCE;
 	
 	/**
 	 * @param resolvers ViewResolvers keyed by suffix (without dots).
@@ -113,6 +117,22 @@ public class SuffixViewResolver extends AbstractCachingViewResolver {
 	 */
 	public void setRedirectHttp10Compatible(boolean redirectHttp10Compatible) {
 		this.redirectHttp10Compatible = redirectHttp10Compatible;
+	}
+	
+	/**
+	 * Set the order in which this {@link org.springframework.web.servlet.ViewResolver}
+	 * is evaluated. Default is {@link Ordered#LOWEST_PRECEDENCE}.
+	 */
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
+	/**
+	 * Return the order in which this {@link org.springframework.web.servlet.ViewResolver}
+	 * is evaluated.
+	 */
+	public int getOrder() {
+		return this.order;
 	}
 	
 	protected View loadView(String viewName, Locale locale) throws Exception {
