@@ -60,6 +60,11 @@ public class PageFormInitializer implements FormInitializer {
 			if (parent instanceof Page) {
 				Page parentPage = (Page) parent;
 				handlerName = pageDao.getChildHandlerName(parentPage.getHandlerName());
+				/*
+				SelectBox sb = new SelectBox();
+				sb.setOptionsModel(new String[] {"foo", "bar"});
+				form.addElement(sb, "handlerName");
+				*/
 			}
 		}
 		else {
@@ -78,16 +83,19 @@ public class PageFormInitializer implements FormInitializer {
 		nestedForm.setIndent(false);
 		nestedForm.setEditorBinder(new PagePeopertiesEditorBinder());
 		nestedForm.setStyleClass(id);
+
+		Page masterPage = getMasterPage(form);
 		
 		boolean present = addPagePropertyEditors(form, nestedForm, 
-				"all-pages", null);
+				"all-pages", masterPage);
 		
-		Page masterPage = getMasterPage(form);
+		present |= addPagePropertyEditors(form, nestedForm, id, masterPage);
+		
 		if (masterPage == null) {
 			present |= addPagePropertyEditors(form, nestedForm, 
 					"master-" + id, null);
 		}
-		present |= addPagePropertyEditors(form, nestedForm, id, masterPage);
+		
 		if (present) {
 			form.addElement(nestedForm, "pageProperties");
 		}
