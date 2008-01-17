@@ -56,6 +56,11 @@ public class PagesMacroHelper {
 		log.debug("Host is '" + host + "'.");
 		log.debug("Path is '" + path + "'.");
 		
+		if (path == null) {
+			log.warn("The path is null. Can't continue.");
+			return null;
+		}
+		
 		path = stripServletMapping(path);
 		log.debug("Path is now '" + path + "'.");
 		
@@ -71,7 +76,9 @@ public class PagesMacroHelper {
 		if (page == null) {
 			log.debug("Haven't found a page for '" + site + path + "'. Trying to find a page through an alias.");
 			 PageAlias alias = pageDao.findPageAlias(site, path);
-			 page = alias.getPage();
+			 if (alias != null) {
+				 page = alias.getPage();
+			 }
 		}
 		
 		log.debug("Page: " + page);
@@ -83,13 +90,17 @@ public class PagesMacroHelper {
 	private String stripServletMapping(String path) {
 		if (pathCompleter.isPrefixMapping()) {
 			String prefix = pathCompleter.getServletPrefix();
-			log.debug("Stripping servletPrefix '" + prefix + "'.");
-			return path.substring(prefix.length());
+			if (path.startsWith(prefix)) {
+				log.debug("Stripping servletPrefix '" + prefix + "'.");
+				return path.substring(prefix.length());
+			}
 		}
 		if (pathCompleter.isSuffixMapping()) {
 			String suffix = pathCompleter.getServletSuffix();
-			log.debug("Stripping servletSuffix '" + suffix + "'.");
-			return path.substring(0, path.length() - suffix.length());
+			if (path.endsWith(suffix)) {
+				log.debug("Stripping servletSuffix '" + suffix + "'.");
+				return path.substring(0, path.length() - suffix.length());
+			}
 		}
 		return path;
 	}
