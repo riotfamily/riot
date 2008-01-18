@@ -37,8 +37,8 @@ public class DateWrapper extends ValueWrapper {
 	public DateWrapper() {
 	}
 
-	public DateWrapper(Date date) {
-		this.date = date;
+	public void wrap(Object value) {
+		this.date = (Date) value;
 	}
 
 	public Object getValue() {
@@ -50,6 +50,8 @@ public class DateWrapper extends ValueWrapper {
 	}
 	
 	public ValueWrapper deepCopy() {
-		return new DateWrapper(date);
+		DateWrapper copy = new DateWrapper();
+		copy.wrap(date);
+		return copy;
 	}
 }

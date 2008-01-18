@@ -38,20 +38,10 @@ public abstract class ValueWrapper {
 		return this.id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
+	public abstract void wrap(Object value);
+	
 	public Object unwrap() {
 		return getValue();
-	}
-	
-	/**
-	 * Returns a Collection of Strings that should be used to tag the
-	 * CacheItem containing the rendered content.
-	 */
-	public Collection getCacheTags() {
-		return null;
 	}
 	
 	public abstract Object getValue();
@@ -59,6 +49,14 @@ public abstract class ValueWrapper {
 	public abstract void setValue(Object value);
 	
 	public abstract ValueWrapper deepCopy();
+
+	/**
+	 * Returns a Collection of Strings that should be used to tag the
+	 * CacheItem containing the rendered content.
+	 */
+	public Collection getCacheTags() {
+		return null;
+	}
 
 	public int hashCode() {
 		Object value = getValue();

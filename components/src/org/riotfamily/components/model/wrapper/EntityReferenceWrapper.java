@@ -14,7 +14,7 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * Portions created by the Initial Developer are Copyright (C) 2008
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
@@ -23,33 +23,41 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model.wrapper;
 
-
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class BooleanWrapper extends ValueWrapper {
+public class EntityReferenceWrapper extends ValueWrapper {
 
-	private Boolean bit;
+	private Object reference;
 
-	public BooleanWrapper() {
+	public EntityReferenceWrapper() {
 	}
 
 	public void wrap(Object value) {
-		this.bit = (Boolean) value;
+		this.reference = value;
 	}
 
-	public Object getValue() {
-		return bit;
+	public Object getReference() {
+		return this.reference;
+	}
+
+	public void setReference(Object reference) {
+		this.reference = reference;
 	}
 	
 	public void setValue(Object value) {
-		bit = (Boolean) value;
+		this.reference = value;
 	}
 	
+	public Object getValue() {
+		return reference;
+	}
+
 	public ValueWrapper deepCopy() {
-		BooleanWrapper copy = new BooleanWrapper();
-		copy.wrap(bit);
+		EntityReferenceWrapper copy = new EntityReferenceWrapper();
+		copy.wrap(reference);
 		return copy;
 	}
+
 }

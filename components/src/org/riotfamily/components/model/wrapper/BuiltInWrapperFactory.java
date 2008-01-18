@@ -42,27 +42,32 @@ public class BuiltInWrapperFactory implements ValueWrapperFactory {
 		if (value instanceof ValueWrapper) {
 			return (ValueWrapper) value;
 		}
+		ValueWrapper wrapper = null;
 		if (value instanceof String) {
-			return new StringWrapper((String) value);
+			wrapper = new StringWrapper();
 		}
 		if (value instanceof Number) {
-			return new NumberWrapper((Number) value);
+			wrapper = new NumberWrapper();
 		}
 		if (value instanceof Boolean) {
-			return new BooleanWrapper((Boolean) value);
+			wrapper = new BooleanWrapper();
 		}
 		if (value instanceof Date) {
-			return new DateWrapper((Date) value);
+			wrapper = new DateWrapper();
 		}
 		if (value instanceof RiotFile) {
-			return new RiotFileWrapper((RiotFile) value);
+			wrapper = new RiotFileWrapper();
 		}
 		if (value instanceof List) {
-			return new ListWrapper((List) value);
+			wrapper = new ListWrapper();
 		}
 		if (value instanceof Map) {
-			return new MapWrapper((Map) value);
+			wrapper = new MapWrapper();
 		}
-		return null;
+		if (wrapper != null) {
+			wrapper.wrap(value);
+		}
+		return wrapper;
 	}
+	
 }

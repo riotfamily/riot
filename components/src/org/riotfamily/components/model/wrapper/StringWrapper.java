@@ -35,8 +35,8 @@ public class StringWrapper extends ValueWrapper {
 	public StringWrapper() {
 	}
 
-	public StringWrapper(String string) {
-		this.string = string;
+	public void wrap(Object value) {
+		this.string = (String) value;
 	}
 
 	public Object getValue() {
@@ -48,6 +48,8 @@ public class StringWrapper extends ValueWrapper {
 	}
 	
 	public ValueWrapper deepCopy() {
-		return new StringWrapper(string);
+		StringWrapper copy = new StringWrapper();
+		copy.wrap(string);
+		return copy;
 	}
 }

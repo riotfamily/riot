@@ -38,13 +38,13 @@ import java.util.Set;
  */
 public class MapWrapper extends ValueWrapper implements Map {
 
-	private Map contentMap;
+	private Map wrapperMap;
 	
 	public MapWrapper() {
 	}
 
-	public MapWrapper(Map map) {
-		putAll(map);
+	public void wrap(Object value) {
+		putAll((Map) value);
 	}
 	
 	public Object getValue() {
@@ -52,22 +52,21 @@ public class MapWrapper extends ValueWrapper implements Map {
 	}
 	
 	public void setValue(Object value) {
-		//Assert.isTrue(value == this);
 	}
 	
-	public ValueWrapper getContent(String key) {
-		if (contentMap != null) {
-			return (ValueWrapper) contentMap.get(key);
+	public ValueWrapper getWrapper(String key) {
+		if (wrapperMap != null) {
+			return (ValueWrapper) wrapperMap.get(key);
 		}
 		return null;
 	}
 	
 	public Object unwrap() {
-		if (contentMap == null) {
+		if (wrapperMap == null) {
 			return Collections.EMPTY_MAP;
 		}
 		HashMap result = new HashMap();
-		Iterator it = contentMap.entrySet().iterator();
+		Iterator it = wrapperMap.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();
 			ValueWrapper wrapper = (ValueWrapper) entry.getValue();
@@ -82,24 +81,26 @@ public class MapWrapper extends ValueWrapper implements Map {
 	}
 	
 	public ValueWrapper deepCopy() {
-		HashMap copy = new HashMap();
-		if (contentMap != null) {
-			Iterator it = contentMap.entrySet().iterator();
+		HashMap map = new HashMap();
+		if (wrapperMap != null) {
+			Iterator it = wrapperMap.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry) it.next();
 				ValueWrapper wrapper = (ValueWrapper) entry.getValue();
-				copy.put(entry.getKey(), wrapper.deepCopy());
+				map.put(entry.getKey(), wrapper.deepCopy());
 			}
 		}
-		return new MapWrapper(copy);
+		MapWrapper copy = new MapWrapper();
+		copy.wrap(map);
+		return copy;
 	}
 	
 	public Collection getCacheTags() {
-		if (contentMap == null) {
+		if (wrapperMap == null) {
 			return null;
 		}
 		HashSet result = new HashSet();
-		Iterator it = contentMap.values().iterator();
+		Iterator it = wrapperMap.values().iterator();
 		while (it.hasNext()) {
 			ValueWrapper wrapper = (ValueWrapper) it.next();
 			if (wrapper != null) {
@@ -113,61 +114,61 @@ public class MapWrapper extends ValueWrapper implements Map {
 	}
 
 	public void clear() {
-		if (contentMap != null) {
-			contentMap.clear();
+		if (wrapperMap != null) {
+			wrapperMap.clear();
 		}
 	}
 
 	public boolean containsKey(Object key) {
-		return contentMap != null && contentMap.containsKey(key);
+		return wrapperMap != null && wrapperMap.containsKey(key);
 	}
 
 	public boolean containsValue(Object value) {
-		return contentMap != null && contentMap.containsValue(value);
+		return wrapperMap != null && wrapperMap.containsValue(value);
 	}
 
 	public Set keySet() {
-		if (contentMap == null) {
+		if (wrapperMap == null) {
 			return Collections.EMPTY_SET;
 		}
-		return contentMap.keySet();
+		return wrapperMap.keySet();
 	}
 	
 	public Set entrySet() {
-		if (contentMap == null) {
+		if (wrapperMap == null) {
 			return Collections.EMPTY_SET;
 		}
-		return contentMap.entrySet();
+		return wrapperMap.entrySet();
 	}
 	
 	public Collection values() {
-		if (contentMap == null) {
+		if (wrapperMap == null) {
 			return Collections.EMPTY_SET;
 		}
-		return contentMap.values();
+		return wrapperMap.values();
 	}
 	
 	public boolean isEmpty() {
-		return contentMap == null || contentMap.isEmpty();
+		return wrapperMap == null || wrapperMap.isEmpty();
 	}
 	
 	public int size() {
-		if (contentMap == null) {
+		if (wrapperMap == null) {
 			return 0;
 		}
-		return contentMap.size();
+		return wrapperMap.size();
 	}
 	
 	public Object remove(Object key) {
-		if (contentMap != null) {
-			return contentMap.remove(key);
+		if (wrapperMap != null) {
+			return wrapperMap.remove(key);
 		}
 		return null;
 	}
 
 	public Object get(Object key) {
-		if (contentMap != null) {
-			ValueWrapper wrapper = (ValueWrapper) contentMap.get(key);
+		if (wrapperMap != null) {
+			ValueWrapper wrapper = (ValueWrapper) wrapperMap.get(key);
 			if (wrapper != null) {
 				return wrapper.getValue();
 			}
@@ -179,14 +180,14 @@ public class MapWrapper extends ValueWrapper implements Map {
 		if (value == null) {
 			return remove(key);
 		}
-		if (contentMap == null) {
-			contentMap = new HashMap();
+		if (wrapperMap == null) {
+			wrapperMap = new HashMap();
 		}
 		if (value instanceof ValueWrapper) {
-			return contentMap.put(key, value);
+			return wrapperMap.put(key, value);
 		}
-		ValueWrapper oldValue = (ValueWrapper) contentMap.get(key);
-		contentMap.put(key, ValueWrapperService.createOrUpdate(oldValue, value));
+		ValueWrapper oldValue = (ValueWrapper) wrapperMap.get(key);
+		wrapperMap.put(key, ValueWrapperService.createOrUpdate(oldValue, value));
 		return oldValue;
 	}
 

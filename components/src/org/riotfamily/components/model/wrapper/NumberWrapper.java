@@ -35,8 +35,8 @@ public class NumberWrapper extends ValueWrapper {
 	public NumberWrapper() {
 	}
 
-	public NumberWrapper(Number number) {
-		this.number = number;
+	public void wrap(Object value) {
+		this.number = (Number) value;
 	}
 
 	public Object getValue() {
@@ -48,6 +48,8 @@ public class NumberWrapper extends ValueWrapper {
 	}
 	
 	public ValueWrapper deepCopy() {
-		return new NumberWrapper(number);
+		NumberWrapper copy = new NumberWrapper();
+		copy.wrap(number);
+		return copy;
 	}
 }

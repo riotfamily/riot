@@ -39,13 +39,13 @@ import java.util.ListIterator;
  */
 public class ListWrapper extends ValueWrapper implements List {
 
-	private List contentList;
+	private List wrapperList;
 
 	public ListWrapper() {
 	}
 
-	public ListWrapper(List list) {
-		addAll(list);
+	public void wrap(Object value) {
+		addAll((Collection) value);
 	}
 
 	public Object getValue() {
@@ -53,15 +53,18 @@ public class ListWrapper extends ValueWrapper implements List {
 	}
 	
 	public void setValue(Object value) {
-		//contentList = (List) value;
 	}
 
+	public List getWrapperList() {
+		return wrapperList;
+	}
+	
 	public Object unwrap() {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			return null;
 		}
-		ArrayList result = new ArrayList(contentList.size());
-		Iterator it = contentList.iterator();
+		ArrayList result = new ArrayList(wrapperList.size());
+		Iterator it = wrapperList.iterator();
 		while (it.hasNext()) {
 			ValueWrapper wrapper = (ValueWrapper) it.next();
 			if (wrapper != null) {
@@ -75,26 +78,28 @@ public class ListWrapper extends ValueWrapper implements List {
 	}
 	
 	public ValueWrapper deepCopy() {
-		ArrayList copy = new ArrayList(contentList.size());
-		Iterator it = contentList.iterator();
+		ArrayList list = new ArrayList(wrapperList.size());
+		Iterator it = wrapperList.iterator();
 		while (it.hasNext()) {
 			ValueWrapper wrapper = (ValueWrapper) it.next();
 			if (wrapper != null) {
-				copy.add(wrapper.deepCopy());
+				list.add(wrapper.deepCopy());
 			}
 			else {
-				copy.add(null);
+				list.add(null);
 			}
 		}
-		return new ListWrapper(copy);
+		ListWrapper copy = new ListWrapper();
+		copy.wrap(list);
+		return copy;
 	}
 	
 	public Collection getCacheTags() {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			return null;
 		}
 		HashSet result = new HashSet();
-		Iterator it = contentList.iterator();
+		Iterator it = wrapperList.iterator();
 		while (it.hasNext()) {
 			ValueWrapper wrapper = (ValueWrapper) it.next();
 			if (wrapper != null) {
@@ -108,8 +113,8 @@ public class ListWrapper extends ValueWrapper implements List {
 	}
 
 	public void clear() {
-		if (contentList != null) {
-			contentList.clear();
+		if (wrapperList != null) {
+			wrapperList.clear();
 		}
 	}
 
@@ -119,8 +124,8 @@ public class ListWrapper extends ValueWrapper implements List {
 	}
 
 	public void add(int index, Object item) {
-		if (contentList == null) {
-			contentList = new ArrayList();
+		if (wrapperList == null) {
+			wrapperList = new ArrayList();
 		}
 		ValueWrapper wrapper = null;
 		if (item != null) { 
@@ -131,7 +136,7 @@ public class ListWrapper extends ValueWrapper implements List {
 				wrapper = ValueWrapperService.wrap(item);
 			}
 		}
-		contentList.add(index, wrapper);
+		wrapperList.add(index, wrapper);
 		
 	}
 
@@ -152,121 +157,121 @@ public class ListWrapper extends ValueWrapper implements List {
 	}
 
 	public boolean contains(Object o) {
-		return contentList != null && contentList.contains(o);
+		return wrapperList != null && wrapperList.contains(o);
 	}
 
 	public boolean containsAll(Collection items) {
-		return contentList != null && contentList.containsAll(items);
+		return wrapperList != null && wrapperList.containsAll(items);
 	}
 
 	public Object get(int index) {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			throw new IndexOutOfBoundsException();
 		}
-		return contentList.get(index);
+		return wrapperList.get(index);
 	}
 
 	public int indexOf(Object o) {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			return 0;	
 		}
-		return contentList.indexOf(o);
+		return wrapperList.indexOf(o);
 	}
 	
 	public int lastIndexOf(Object o) {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			return 0;	
 		}
-		return contentList.lastIndexOf(o);
+		return wrapperList.lastIndexOf(o);
 	}
 
 	public boolean isEmpty() {
-		return contentList == null || contentList.isEmpty();
+		return wrapperList == null || wrapperList.isEmpty();
 	}
 
 	public Iterator iterator() {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			return Collections.EMPTY_LIST.iterator();
 		}
-		return contentList.iterator();
+		return wrapperList.iterator();
 	}
 
 	public ListIterator listIterator() {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			return Collections.EMPTY_LIST.listIterator();
 		}
-		return contentList.listIterator();
+		return wrapperList.listIterator();
 	}
 
 	public ListIterator listIterator(int index) {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			return Collections.EMPTY_LIST.listIterator(index);
 		}
-		return contentList.listIterator(index);
+		return wrapperList.listIterator(index);
 	}
 
 	public boolean remove(Object o) {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			return false;	
 		}
-		return contentList.remove(o);
+		return wrapperList.remove(o);
 	}
 
 	public Object remove(int index) {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			throw new IndexOutOfBoundsException();
 		}
-		return contentList.remove(index);
+		return wrapperList.remove(index);
 	}
 
 	public boolean removeAll(Collection items) {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			return false;
 		}
-		return contentList.removeAll(items);
+		return wrapperList.removeAll(items);
 	}
 
 	public boolean retainAll(Collection items) {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			return false;
 		}
-		return contentList.retainAll(items);
+		return wrapperList.retainAll(items);
 	}
 
 	public Object set(int index, Object o) {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			throw new IndexOutOfBoundsException();
 		}
-		return contentList.set(index, o);
+		return wrapperList.set(index, o);
 	}
 
 	public int size() {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			return 0;
 		}
-		return contentList.size();
+		return wrapperList.size();
 	}
 
 	public List subList(int fromIndex, int toIndex) {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			throw new IndexOutOfBoundsException();
 		}
-		return contentList.subList(fromIndex, toIndex);
+		return wrapperList.subList(fromIndex, toIndex);
 	}
 
 	public Object[] toArray() {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			return new Object[0];
 		}
-		return contentList.toArray();
+		return wrapperList.toArray();
 	}
 
 	public Object[] toArray(Object[] a) {
-		if (contentList == null) {
+		if (wrapperList == null) {
 			return (Object[]) Array.newInstance(
 					a.getClass().getComponentType(), 0);
 		}
-		return contentList.toArray(a);
+		return wrapperList.toArray(a);
 	}
 	
 }

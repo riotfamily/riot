@@ -23,12 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model.wrapper;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
@@ -37,8 +33,8 @@ import org.hibernate.EntityMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.riotfamily.common.collection.TypeDifferenceComparator;
-import org.springframework.core.GenericCollectionTypeResolver;
-import org.springframework.core.MethodParameter;
+import org.springframework.beans.BeanInstantiationException;
+import org.springframework.beans.BeanUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -48,132 +44,95 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 
 	private static Log log = LogFactory.getLog(HibernateWrapperFactory.class);
 	
-	private ArrayList contentClassInfos = new ArrayList();
-	
-	private ArrayList collectionClassInfos = new ArrayList();
-	
+	private ArrayList wrapperClassInfos = new ArrayList();
+		
 	public HibernateWrapperFactory(SessionFactory sessionFactory) {
 		Iterator it = sessionFactory.getAllClassMetadata().values().iterator();
 		while (it.hasNext()) {
 			ClassMetadata meta = (ClassMetadata) it.next();
-			Class entityClass = meta.getMappedClass(EntityMode.POJO);
-			if (ValueWrapper.class.isAssignableFrom(entityClass)) {
-				Constructor[] ctors = entityClass.getConstructors();
-				for (int i = 0; i < ctors.length; i++) {
-					Class[] params = ctors[i].getParameterTypes();
-					if (params.length == 1) {
-						registerContentClass(params[0], ctors[i]);
-					}
+			Class wrapperClass = meta.getMappedClass(EntityMode.POJO);
+			if (ValueWrapper.class.isAssignableFrom(wrapperClass)) {
+				String[] properties = meta.getPropertyNames();
+				if (properties.length > 0) {
+					String valueProperty = properties[0];
+					Class valueClass = meta.getPropertyType(valueProperty).getReturnedClass();
+					log.debug("Registering " + wrapperClass	+ " as wrapper for " + valueClass);
+					wrapperClassInfos.add(new WrapperClassInfo(wrapperClass, valueClass, valueProperty));
 				}
 			}
 		}
 	}
 	
-	private void registerContentClass(Class contentType, Constructor ctor) {
-		Class collectionType = getCollectionType(contentType, ctor); 
-		if (collectionType != null) {
-			log.debug("Registering " + ctor.getName() 
-					+ " as Content class for Collection<" 
-					+ collectionType + ">");
-			
-			collectionClassInfos.add(new ContentClassInfo(collectionType, ctor));
-		}
-		else {
-			log.debug("Registering " + ctor.getName() 
-					+ " as Content class for " + contentType);
-			
-			contentClassInfos.add(new ContentClassInfo(contentType, ctor));
-		}
-	}
-	
-	private Class getCollectionType(Class contentType, Constructor ctor) {
-		if (Collection.class.isAssignableFrom(contentType)) {
-			return GenericCollectionTypeResolver.getCollectionParameterType(
-					new MethodParameter(ctor, 0));
-		}
-		return null;
-	}
-		
-	private Class getCollectionType(Object value) {
-		if (value instanceof Collection) {
-			return GenericCollectionTypeResolver.getCollectionType(value.getClass());
-		}
-		return null;
-	}
-	
-	private ContentClassInfo getContentClassInfo(List classInfos, Class contentType) {
-		TreeSet infos = new TreeSet(new ContentClassInfoComparator(contentType));
-		infos.addAll(classInfos);
-		ContentClassInfo bestMatch = (ContentClassInfo) infos.first();
-		if (bestMatch.contentType.isAssignableFrom(contentType)) {
+	private WrapperClassInfo getWrapperClassInfo(Class valueClass) {
+		TreeSet infos = new TreeSet(new WrapperClassInfoComparator(valueClass));
+		infos.addAll(wrapperClassInfos);
+		WrapperClassInfo bestMatch = (WrapperClassInfo) infos.first();
+		if (bestMatch.getValueClass().isAssignableFrom(valueClass)) {
 			return bestMatch;	
 		}
 		return null;
 	}
 	
 	public ValueWrapper createWapper(Object value) throws WrappingException {
-		Class collectionType = getCollectionType(value);
-		ContentClassInfo info;
-		if (collectionType != null) {
-			info = getContentClassInfo(collectionClassInfos, collectionType);
-			if (info == null) {
-				throw new WrappingException(
-						"No ValueWrapper found for collections of " 
-						+ collectionType);
-			}
+		WrapperClassInfo info = getWrapperClassInfo(value.getClass());
+		if (info == null) {
+			throw new WrappingException("No ValueWrapper found for type " 
+					+ value.getClass());
 		}
-		else {
-			info = getContentClassInfo(contentClassInfos, value.getClass());
-			if (info == null) {
-				throw new WrappingException("No ValueWrapper found for type " 
-						+ value.getClass());
-			}
-		}
-		return info.createContent(value);
+		return info.createWrapper(value);
 	}
 	
-	private static class ContentClassInfo {
+	private static class WrapperClassInfo {
 		
-		private Class contentType;
+		private Class wrapperClass;
 		
-		private Constructor constructor;
+		private Class valueClass;
+		
+		private String valueProperty;
 
-		public ContentClassInfo(Class contentType,  Constructor constructor) {
-			this.contentType = contentType;
-			this.constructor = constructor;
+		public WrapperClassInfo(Class wrapperClass, Class valueClass, 
+				String valueProperty) {
+			
+			this.wrapperClass = wrapperClass;
+			this.valueClass = valueClass;
+			this.valueProperty = valueProperty;
 		}
-		
-		private ValueWrapper createContent(Object value) throws WrappingException {
+
+		public Class getWrapperClass() {
+			return this.wrapperClass;
+		}
+
+		public Class getValueClass() {
+			return this.valueClass;
+		}
+
+		public String getValueProperty() {
+			return this.valueProperty;
+		}
+
+		public ValueWrapper createWrapper(Object value) throws WrappingException {
 			try {
-				log.debug("Creating new " + constructor.getName() + " for " + value);
-				return (ValueWrapper) constructor.newInstance(new Object[] {value});
+				ValueWrapper wrapper = (ValueWrapper) BeanUtils.instantiateClass(wrapperClass);
+				wrapper.wrap(value);
+				return wrapper;
 			}
-			catch (IllegalArgumentException e) {
-				throw new WrappingException(e);
-			}
-			catch (InstantiationException e) {
-				throw new WrappingException(e);
-			}
-			catch (IllegalAccessException e) {
-				throw new WrappingException(e);
-			}
-			catch (InvocationTargetException e) {
+			catch (BeanInstantiationException e) {
 				throw new WrappingException(e);
 			}
 		}
 	}
 	
-	private static class ContentClassInfoComparator
+	private static class WrapperClassInfoComparator
 			extends TypeDifferenceComparator {
 	
-		public ContentClassInfoComparator(Class contentType) {
+		public WrapperClassInfoComparator(Class contentType) {
 			super(contentType);
 		}
 		
 		public int compare(Object o1, Object o2) {
-			ContentClassInfo cc1 = (ContentClassInfo) o1;
-			ContentClassInfo cc2 = (ContentClassInfo) o2;
-			return super.compare(cc1.contentType, cc2.contentType);
+			WrapperClassInfo cc1 = (WrapperClassInfo) o1;
+			WrapperClassInfo cc2 = (WrapperClassInfo) o2;
+			return super.compare(cc1.getValueClass(), cc2.getValueClass());
 		}
 	}
 }
