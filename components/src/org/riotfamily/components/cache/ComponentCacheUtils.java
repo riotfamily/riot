@@ -42,30 +42,43 @@ import org.riotfamily.components.model.ContentContainer;
  */
 public final class ComponentCacheUtils {
 
-	private static String getContainerTag(ContentContainer container, boolean preview) {
-		return ContentContainer.class.getName()
-				+ '#' + container.getId() 
-				+ (preview ? "-preview" : "-live");
+	private static String getContentTag(ContentContainer container, boolean preview) {
+		Content content = preview 
+				? container.getLatestVersion() 
+				: container.getLiveVersion();
+				
+		if (content != null) {
+			return getContentTag(content);
+		}
+		return null;
+	}
+	
+	private static String getContentTag(Content content) {
+		return Content.class.getName() + '#' + content.getId();
 	}
 	
 	public static void addContainerTags(HttpServletRequest request, 
 			ContentContainer container, boolean preview) {
 		
-		TaggingContext.tag(request, getContainerTag(container, preview));
+		TaggingContext.tag(request, getContentTag(container, preview));
 	}
 
+	public static void invalidateContent(Cache cache, Content content) {
+		cache.invalidateTaggedItems(getContentTag(content));
+	}
+	
 	/**
 	 * This method will invalidate both, the live and preview versions of the container.
 	 */
 	public static void invalidateContainer(Cache cache, ContentContainer container) {
-		cache.invalidateTaggedItems(getContainerTag(container, false));
-		cache.invalidateTaggedItems(getContainerTag(container, true));
+		cache.invalidateTaggedItems(getContentTag(container, false));
+		cache.invalidateTaggedItems(getContentTag(container, true));
 	}
 
 	public static void invalidateContainer(Cache cache, 
 			ContentContainer container, boolean preview) {
 		
-		cache.invalidateTaggedItems(getContainerTag(container, preview));
+		cache.invalidateTaggedItems(getContentTag(container, preview));
 	}
 	
 	public static void addListTags(HttpServletRequest request, 

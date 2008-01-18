@@ -40,14 +40,11 @@ public class Content {
 
 	private boolean dirty;
 
-	private ContentContainer container;
-
 	public Content() {
 	}
 
 	public Content(Content prototype) {
 		if (prototype != null) {
-			this.container = prototype.getContainer();
 			this.wrappers = new HashMap();
 			Iterator it = prototype.getWrappers().entrySet().iterator();
 			while (it.hasNext()) {
@@ -95,14 +92,6 @@ public class Content {
 					getWrapper(key), value));
 		}
 		setDirty(true);
-	}
-
-	public ContentContainer getContainer() {
-		return container;
-	}
-
-	public void setContainer(ContentContainer container) {
-		this.container = container;
 	}
 
 	public boolean isDirty() {

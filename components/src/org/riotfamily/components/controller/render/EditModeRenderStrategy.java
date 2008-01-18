@@ -141,7 +141,6 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 			for (int i = 0; i < initialTypes.length; i++) {
 				Component container = new Component(initialTypes[i]);
 				Content live = new Content();
-				live.setContainer(container);
 				container.setList(list);
 				container.setLiveVersion(live);
 				containers.add(container);

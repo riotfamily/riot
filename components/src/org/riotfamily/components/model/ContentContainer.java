@@ -54,9 +54,6 @@ public class ContentContainer {
 
 	public void setLiveVersion(Content liveVersion) {
 		this.liveVersion = liveVersion;
-		if (liveVersion != null) {
-			liveVersion.setContainer(this);
-		}
 	}
 
 	public Content getPreviewVersion() {
@@ -65,9 +62,6 @@ public class ContentContainer {
 
 	public void setPreviewVersion(Content previewVersion) {
 		this.previewVersion = previewVersion;
-		if (previewVersion != null) {
-			previewVersion.setContainer(this);
-		}
 	}
 
 	public Set getVersions() {
