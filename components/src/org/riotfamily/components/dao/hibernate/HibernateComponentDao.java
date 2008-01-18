@@ -36,9 +36,10 @@ import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ComponentListLocation;
+import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
+import org.riotfamily.components.model.ContentOptions;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
 import org.riotfamily.riot.security.AccessController;
 
@@ -162,8 +163,7 @@ public class HibernateComponentDao implements ComponentDao {
 
 	public void saveOrUpdateContent(Content version) {
 		hibernate.saveOrUpdate(version);
-		ComponentCacheUtils.invalidateContainer(
-				cache, version.getContainer(), true);
+		ComponentCacheUtils.invalidateContent(cache, version);
 	}
 
 	public void updateContentContainer(ContentContainer container) {
@@ -288,5 +288,13 @@ public class HibernateComponentDao implements ComponentDao {
 		}
 		return discarded;
 	}
-	
+
+	public ContentOptions loadContentOptions(String id) {
+		return (ContentOptions) hibernate.get(ContentOptions.class, id);
+	}
+
+	public void saveContentOptions(ContentOptions options) {
+		hibernate.save(options);
+	}
+		
 }

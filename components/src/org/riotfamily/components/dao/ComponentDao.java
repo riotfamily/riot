@@ -27,9 +27,10 @@ import java.util.List;
 
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ComponentListLocation;
+import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
+import org.riotfamily.components.model.ContentOptions;
 
 /**
  * DAO interface that provides methods to access
@@ -138,5 +139,7 @@ public interface ComponentDao {
 	
 	public boolean discardContainer(ContentContainer container);
 	
+	public ContentOptions loadContentOptions(String id);
 	
+	public void saveContentOptions(ContentOptions options);
 }
