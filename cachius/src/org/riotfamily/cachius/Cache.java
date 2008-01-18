@@ -327,14 +327,16 @@ public final class Cache implements Serializable {
      * Invalidates all items tagged with the given String.
      */
     public void invalidateTaggedItems(String tag) {
-    	log.debug("Invalidating items tagged as " + tag);
-    	List items = getTaggedItems(tag);
-    	if (items != null) {
-    		Iterator it = items.iterator();
-    		while (it.hasNext()) {
-				CacheItem item = (CacheItem) it.next();
-				item.invalidate();
-			}
+    	if (tag != null) {
+	    	log.debug("Invalidating items tagged as " + tag);
+	    	List items = getTaggedItems(tag);
+	    	if (items != null) {
+	    		Iterator it = items.iterator();
+	    		while (it.hasNext()) {
+					CacheItem item = (CacheItem) it.next();
+					item.invalidate();
+				}
+	    	}
     	}
     }
 
