@@ -119,7 +119,8 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 			Component component, String positionClassName,
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
-		
+
+		ComponentCacheUtils.addContentTags(request, component.getLiveVersion());		
 		renderer.render(component, false, positionClassName, request, response);
 	}
 		
@@ -204,7 +205,6 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		public void processRequest(HttpServletRequest request, 
 				HttpServletResponse response) throws Exception {
 			
-			ComponentCacheUtils.addContentTags(request, component.getLiveVersion());
 			renderUncachedComponent(renderer, component, positionClassName, request, response);
 		}
 		
