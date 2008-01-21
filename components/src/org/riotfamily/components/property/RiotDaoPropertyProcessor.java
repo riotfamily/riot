@@ -50,4 +50,12 @@ public class RiotDaoPropertyProcessor extends PropertyProcessorAdapter {
 		}
 		return dao.load(s);
 	}
+
+	public String getCacheTag(String s) {
+		if (s == null) {
+			return null;
+		}
+		return dao.getEntityClass().getName() + '#' + s;
+	}
+	
 }
