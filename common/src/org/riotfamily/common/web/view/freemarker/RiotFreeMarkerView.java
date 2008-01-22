@@ -61,6 +61,9 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 	public static final String MODEL_ATTRIBUTE = 
 			RiotFreeMarkerView.class.getName() + ".model";
 
+	private static ThreadLocal requestHolder = new ThreadLocal();
+	
+	private static ThreadLocal responseHolder = new ThreadLocal();
 	
 	private boolean allowModelOverride = true;
 	
@@ -68,7 +71,6 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 
 	private Map macroHelperFactories;
 
-	
 	/**
 	 * Sets whether the model may contain keys that are also present as request
 	 * or session attributes. Otherwise an exception will be thrown when Spring
@@ -134,26 +136,34 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 			final HttpServletResponse response) 
 			throws Exception {
 
-		unwrapModel(model);
-		model.put(REQUEST_KEY, request);
-		if (macroHelperFactories != null) {
-			Iterator it = macroHelperFactories.entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry) it.next();
-				MacroHelperFactory factory = (MacroHelperFactory) entry.getValue();
-				model.put(entry.getKey(), factory.createMacroHelper(request, response));
+		try {
+			requestHolder.set(request);
+			responseHolder.set(response);
+			unwrapModel(model);
+			model.put(REQUEST_KEY, request);
+			if (macroHelperFactories != null) {
+				Iterator it = macroHelperFactories.entrySet().iterator();
+				while (it.hasNext()) {
+					Map.Entry entry = (Map.Entry) it.next();
+					MacroHelperFactory factory = (MacroHelperFactory) entry.getValue();
+					model.put(entry.getKey(), factory.createMacroHelper(request, response));
+				}
+			}
+			if (freeMarkerServletMode) {
+				super.doRender(model, request, response);
+			}
+			else {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Rendering FreeMarker template [" + getUrl() 
+							+ "] in FreeMarkerView '" + getBeanName() + "'");
+				}
+				Locale locale = RequestContextUtils.getLocale(request);
+				processTemplate(getTemplate(locale), model, response);
 			}
 		}
-		if (freeMarkerServletMode) {
-			super.doRender(model, request, response);
-		}
-		else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Rendering FreeMarker template [" + getUrl() 
-						+ "] in FreeMarkerView '" + getBeanName() + "'");
-			}
-			Locale locale = RequestContextUtils.getLocale(request);
-			processTemplate(getTemplate(locale), model, response);
+		finally {
+			requestHolder.set(null);
+			responseHolder.set(null);
 		}
 	}
 	
@@ -163,6 +173,14 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 		
 		model.put(TEMPLATE_NAME_KEY, template.getName());
 		super.processTemplate(template, model, response);
+	}
+	
+	public static HttpServletRequest getRequest() {
+		return (HttpServletRequest) requestHolder.get();
+	}
+	
+	public static HttpServletResponse getResponse() {
+		return (HttpServletResponse) responseHolder.get();
 	}
 
 }
