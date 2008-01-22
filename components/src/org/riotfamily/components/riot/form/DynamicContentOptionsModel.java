@@ -26,32 +26,24 @@ package org.riotfamily.components.riot.form;
 import java.util.Collection;
 
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.forms.options.OptionsModel;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class StaticContentOptionsModel extends AbstractContentOptionsModel {
+public class DynamicContentOptionsModel extends AbstractContentOptionsModel {
 
-	private Collection values;
+	private OptionsModel model;
 	
-	private boolean updated;
-	
-	public StaticContentOptionsModel(ComponentDao componentDao) {
+	public DynamicContentOptionsModel(ComponentDao componentDao, 
+			OptionsModel model) {
+		
 		super(componentDao);
+		this.model = model;
 	}
 
-	public void setValues(Collection values) {
-		this.values = values;
-	}
-	
 	protected Collection getValues() {
-		return values;
-	}
-	
-	protected boolean updateRequired() {
-		boolean firstTime = !updated;
-		updated = true;
-		return firstTime;
+		return model.getOptionValues();
 	}
 }

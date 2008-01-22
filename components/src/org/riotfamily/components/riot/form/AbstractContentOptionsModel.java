@@ -26,32 +26,45 @@ package org.riotfamily.components.riot.form;
 import java.util.Collection;
 
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.model.ContentOptions;
+import org.riotfamily.forms.options.OptionsModel;
+import org.springframework.beans.factory.BeanNameAware;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class StaticContentOptionsModel extends AbstractContentOptionsModel {
+public abstract class AbstractContentOptionsModel implements OptionsModel, BeanNameAware {
 
-	private Collection values;
+	private String beanName;
 	
-	private boolean updated;
+	private ComponentDao componentDao;
 	
-	public StaticContentOptionsModel(ComponentDao componentDao) {
-		super(componentDao);
+	public AbstractContentOptionsModel(ComponentDao componentDao) {
+		this.componentDao = componentDao;
 	}
 
-	public void setValues(Collection values) {
-		this.values = values;
+	public final void setBeanName(String beanName) {
+		this.beanName = beanName;
 	}
 	
-	protected Collection getValues() {
-		return values;
+	public final Collection getOptionValues() {
+		ContentOptions options = componentDao.loadContentOptions(beanName);
+		Collection values = getValues();
+		if (options == null) {
+			options = new ContentOptions(beanName, values);
+			componentDao.saveContentOptions(options);
+		}
+		else if (updateRequired()) {
+			options.update(values);
+		}
+		return options.getValues();
 	}
 	
 	protected boolean updateRequired() {
-		boolean firstTime = !updated;
-		updated = true;
-		return firstTime;
+		return true;
 	}
+	
+	protected abstract Collection getValues();
+
 }
