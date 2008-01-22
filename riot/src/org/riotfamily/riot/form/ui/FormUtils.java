@@ -24,6 +24,7 @@
 package org.riotfamily.riot.form.ui;
 
 import org.riotfamily.forms.Form;
+import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.ObjectEditorDefinition;
 import org.riotfamily.riot.editor.EditorConstants;
@@ -43,9 +44,16 @@ public class FormUtils {
 	}
 
 	public static String getParentId(Form form) {
-		return (String) form.getAttribute(EditorConstants.PARENT_ID);
+		String parentId = (String) form.getAttribute(EditorConstants.PARENT_ID);
+		String objectId = getObjectId(form);
+		if (parentId == null && objectId != null) {
+			EditorDefinition def = getEditorDefinition(form);
+			Object bean = EditorDefinitionUtils.loadBean(def, objectId);
+			parentId = EditorDefinitionUtils.getParentId(def, bean);
+		}
+		return parentId;
 	}
-
+	
 	public static void setEditorDefinition(Form form,
 			ObjectEditorDefinition editorDefinition) {
 
