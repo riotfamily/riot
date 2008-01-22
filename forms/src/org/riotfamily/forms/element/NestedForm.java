@@ -169,8 +169,8 @@ public class NestedForm extends TemplateElement implements
 	}
 	
 	public void addElement(Editor element, String property) {
-		addElement(element);
 		bind(element, property);
+		addElement(element);
 	}
 	
 	public void removeElement(Element element) {

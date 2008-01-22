@@ -209,8 +209,8 @@ public class Form implements BeanEditor {
 	 * Convenience method to add and bind an element in a single step.
 	 */
 	public void addElement(Editor element, String property) {
-		addElement(element);
 		bind(element, property);
+		addElement(element);
 	}
 
 	public Container createContainer(String name) {
