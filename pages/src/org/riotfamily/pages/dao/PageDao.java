@@ -98,8 +98,6 @@ public interface PageDao {
 	 */
 	public PageNode getRootNode();
 
-	public String getChildHandlerName(String parentHandlerName);
-	
 	public void saveNode(PageNode node);
 
 	public void savePage(Site site, Page page);

@@ -51,4 +51,11 @@
 		</xsd:complexType>
 	</xsd:element>
 	
+	<xsd:element name="handler-name">
+		<xsd:complexType>
+			<xsd:attribute name="parent" type="xsd:string" />
+			<xsd:attribute name="child" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+	
 </xsd:schema>

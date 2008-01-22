@@ -20,11 +20,11 @@
 		class="org.riotfamily.pages.riot.chooser.PageChooserController">
 
 		<constructor-arg ref="pageDao" />
-		<constructor-arg ref="pageUrlBuilder" />
+		<constructor-arg ref="pathCompleter" />
 	</bean>
 
 	<bean id="pageFormInitializer" class="org.riotfamily.pages.riot.form.PageFormInitializer">
-		<constructor-arg ref="pageDao" />
+		<constructor-arg ref="handlerNameHierarchy" />
 		<constructor-arg ref="contentFormRepository" />
 	</bean>
 
@@ -77,6 +77,12 @@
 		<property name="pageDao" ref="pageDao" />
 		<property name="cache" ref="websiteCache" />
 	</bean>
+	
+	<bean id="pageAliasRiotDao" class="org.riotfamily.riot.hibernate.dao.HqlParentChildDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="entityClass" value="org.riotfamily.pages.model.PageAlias" />
+		<property name="parentProperty" value="site" />
+	</bean>
 
 	<!-- Customised Page Commands -->
 
@@ -105,7 +111,7 @@
 	</bean>
 
 	<bean id="gotoPageCommand" class="org.riotfamily.pages.riot.command.GotoPageCommand">
-		<constructor-arg ref="pageUrlBuilder" />
+		<constructor-arg ref="pathCompleter" />
 		<property name="windowName" value="preview" />
 	</bean>
 
@@ -116,7 +122,6 @@
 	</bean>
 
 	<bean id="gotoSiteCommand" class="org.riotfamily.pages.riot.command.GotoSiteCommand">
-		<constructor-arg ref="pageUrlBuilder" />
 		<property name="windowName" value="preview" />
 	</bean>
 	

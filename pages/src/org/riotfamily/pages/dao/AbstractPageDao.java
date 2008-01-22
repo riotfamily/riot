@@ -41,6 +41,7 @@ import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.pages.setup.HandlerNameHierarchy;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -58,7 +59,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	private ComponentDao componentDao;
 	
-	private Map childHandlerNames;
+	private HandlerNameHierarchy handlerNameHierarchy;
 
 	private Map autoCreatePages;
 	
@@ -69,17 +70,14 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		this.componentDao = componentDao;
 	}
 
-	public void setChildHandlerNames(Map childHandlerNames) {
-		this.childHandlerNames = childHandlerNames;
+	public void setHandlerNameHierarchy(HandlerNameHierarchy handlerNameHierarchy) {
+		this.handlerNameHierarchy = handlerNameHierarchy;
 	}
 	
-	public String getChildHandlerName(String parentHandlerName) {
-		if (childHandlerNames != null) {
-			return (String) childHandlerNames.get(parentHandlerName);
-		}
-		return null;
+	protected HandlerNameHierarchy getHandlerNameHierarchy() {
+		return this.handlerNameHierarchy;
 	}
-	
+
 	public void setAutoCreatePages(Map autoCreatePages) {
 		this.autoCreatePages = autoCreatePages;
 	}
@@ -127,11 +125,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 	
 	public void saveNode(PageNode node) {
-		if (node.getHandlerName() == null && node.getParent() != null) {
-			node.setHandlerName(getChildHandlerName(node.getParent().getHandlerName()));
-		}
-		
-		String handlerName = node.getHandlerName();
+		String handlerName = handlerNameHierarchy.initHandlerName(node);
 		if (autoCreatePages != null && handlerName != null) {
 			PageDefinition child = (PageDefinition) autoCreatePages.get(handlerName);
 			if (child != null) {

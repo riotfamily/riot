@@ -28,6 +28,10 @@ import org.riotfamily.common.beans.xml.ListItemDecorator;
 import org.riotfamily.common.beans.xml.MapEntryDecorator;
 import org.riotfamily.pages.dao.PageDefinition;
 import org.riotfamily.pages.setup.PageSetupBean;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
 /**
  * NamespaceHandler that handles the <code>page</code> namspace as
@@ -53,6 +57,8 @@ public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 				.addTranslation("system", "systemNode");
 
 		registerBeanDefinitionDecorator("prop", new MapEntryDecorator("properties", "key"));
+		
+		register("handler-name", ChildHandlerNameDefinition.class);
 	}
-
+	
 }
