@@ -23,17 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
-import java.util.Iterator;
-
-import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.element.NestedForm;
-import org.riotfamily.forms.factory.FormFactory;
+import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.factory.FormRepository;
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.pages.setup.HandlerNameHierarchy;
 import org.riotfamily.riot.form.ui.FormUtils;
 
 /**
@@ -42,79 +39,61 @@ import org.riotfamily.riot.form.ui.FormUtils;
  */
 public class PageFormInitializer implements FormInitializer {
 
-	private PageDao pageDao;
+	private HandlerNameHierarchy handlerNameHierarchy;
 	
 	private FormRepository repository;
 
-	public PageFormInitializer(PageDao pageDao, 
+	public PageFormInitializer(HandlerNameHierarchy handlerNameHierarchy, 
 			FormRepository repository) {
 		
-		this.pageDao = pageDao;
+		this.handlerNameHierarchy = handlerNameHierarchy;
 		this.repository = repository;
 	}
 
 	public void initForm(Form form) {
+		
 		String handlerName = null;
+		Page parentPage = null;
 		if (form.isNew())  {
 			Object parent = FormUtils.loadParent(form);
 			if (parent instanceof Page) {
-				Page parentPage = (Page) parent;
-				handlerName = pageDao.getChildHandlerName(parentPage.getHandlerName());
-				/*
-				SelectBox sb = new SelectBox();
-				sb.setOptionsModel(new String[] {"foo", "bar"});
-				form.addElement(sb, "handlerName");
-				*/
+				parentPage = (Page) parent;
 			}
 		}
 		else {
 			Page page = (Page) form.getBackingObject();
+			parentPage = page.getParentPage();
 			handlerName = page.getHandlerName();
 		}
+		
+		SelectBox sb = null;
+		String[] handlerNames = handlerNameHierarchy.getChildHandlerNameOptions(parentPage);
+		if (handlerNames.length > 1) {
+			sb = new SelectBox();
+			sb.setRequired(true);
+			sb.setOptionsModel(handlerNames);
+			NestedForm nodeForm = new NestedForm();
+			nodeForm.setIndent(false);
+			nodeForm.setRequired(true);
+			form.addElement(nodeForm, "node");
+			nodeForm.addElement(sb, "handlerName");
+		}
+		
 		if (handlerName == null) {
-			handlerName = "default";
-		}
-		addComponentFormElements(form, handlerName + "-page");
-	}
-	
-	private void addComponentFormElements(Form form, String id) {
-		NestedForm nestedForm = new NestedForm();
-		nestedForm.setRequired(true);
-		nestedForm.setIndent(false);
-		nestedForm.setEditorBinder(new PagePeopertiesEditorBinder());
-		nestedForm.setStyleClass(id);
-
-		Page masterPage = getMasterPage(form);
-		
-		boolean present = addPagePropertyEditors(form, nestedForm, 
-				"all-pages", masterPage);
-		
-		present |= addPagePropertyEditors(form, nestedForm, id, masterPage);
-		
-		if (masterPage == null) {
-			present |= addPagePropertyEditors(form, nestedForm, 
-					"master-" + id, null);
-		}
-		
-		if (present) {
-			form.addElement(nestedForm, "pageProperties");
-		}
-	}
-	
-	private boolean addPagePropertyEditors(Form form, NestedForm nestedForm, String id, Page masterPage) {
-		boolean present = false;
-		if (repository.containsForm(id)) {
-			FormFactory factory = repository.getFormFactory(id);
-			Iterator it = factory.getChildFactories().iterator();
-			while (it.hasNext()) {
-				ElementFactory ef = (ElementFactory) it.next();
-				nestedForm.addElement(new PagePropertyEditor(ef, masterPage));
-				present = true;
+			if (handlerNames.length > 0) {
+				handlerName = handlerNames[0];
+			}
+			else {
+				handlerName = "default";
 			}
 		}
-		return present;
+		
+		PagePropertiesEditor ppe = new PagePropertiesEditor(repository, getMasterPage(form), handlerName);
+		if (sb != null) {
+			sb.addChangeListener(ppe);
+		}
+		form.addElement(ppe, "pageProperties");
 	}
-	
 	
 	private Page getMasterPage(Form form) {
 		Page page = (Page) form.getBackingObject();
@@ -139,4 +118,5 @@ public class PageFormInitializer implements FormInitializer {
 		return null;
 	}
 
+	
 }

@@ -33,6 +33,10 @@ import org.riotfamily.pages.model.PageProperties;
  */
 public class PagePeopertiesEditorBinder extends ContentContainerEditorBinder {
 
+	public Class getBeanClass() {
+		return PageProperties.class;
+	}
+	
 	protected ContentContainer createContainer() {
 		return new PageProperties();
 	}
