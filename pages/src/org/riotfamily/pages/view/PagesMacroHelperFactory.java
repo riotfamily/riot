@@ -26,7 +26,7 @@ package org.riotfamily.pages.view;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.util.PathCompleter;
+import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.view.MacroHelperFactory;
 import org.riotfamily.pages.dao.PageDao;
 

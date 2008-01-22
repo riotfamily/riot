@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.components.model.Content;
 import org.springframework.util.Assert;
 
@@ -154,13 +155,21 @@ public class Page {
 		this.path = path;
 	}
 	
-	public String getFullPath() {
+	private String getFullPath() {
 		if (site.getPathPrefix() != null) {
 			return site.getPathPrefix() + getPath();
 		}
 		return getPath();
 	}
-
+	
+	public String getUrl(PathCompleter pathCompleter) {
+		return pathCompleter.addServletMapping(getFullPath());
+	}
+	
+	public String getAbsoluteUrl(PathCompleter pathCompleter, boolean secure) {
+		return site.getAbsoluteUrl(secure).append(getUrl(pathCompleter)).toString();
+	}
+	
 	public boolean isWildcard() {
 		return pathComponent.indexOf("@{") != -1;
 	}

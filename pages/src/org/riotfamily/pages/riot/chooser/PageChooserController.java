@@ -33,8 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.pages.dao.PageDao;
-import org.riotfamily.pages.mapping.PageUrlBuilder;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 import org.springframework.web.bind.ServletRequestUtils;
@@ -47,15 +47,15 @@ public class PageChooserController implements Controller {
 	
 	private PageDao pageDao;
 
-	private PageUrlBuilder pageUrlBuilder;
+	private PathCompleter pathCompleter;
 
 	private String viewName = ResourceUtils.getPath(
 			PageChooserController.class, "PageChooserView.ftl");
 
 
-	public PageChooserController(PageDao pageDao, PageUrlBuilder pageUrlBuilder) {
+	public PageChooserController(PageDao pageDao, PathCompleter pathCompleter) {
 		this.pageDao = pageDao;
-		this.pageUrlBuilder = pageUrlBuilder;
+		this.pathCompleter = pathCompleter;
 	}
 
 	public ModelAndView handleRequest(HttpServletRequest request,
@@ -68,6 +68,7 @@ public class PageChooserController implements Controller {
 		}
 		
 		String path = null;
+		boolean absolute = false;
 		Page currentPage = null;
 		Long pageId = ServletRequestUtils.getLongParameter(request, "pageId");
 		if (pageId != null) {
@@ -81,6 +82,10 @@ public class PageChooserController implements Controller {
 			selectedSite = pageDao.getDefaultSite();
 		}
 		
+		if (currentPage != null && selectedSite.getHostName() != null) {
+			absolute = !selectedSite.getHostName().equals(currentPage.getSite().getHostName());
+		}
+		
 		HashMap model = new HashMap();
 		model.put("mode", ServletRequestUtils.getStringParameter(
 				request, "mode", "forms"));
@@ -88,13 +93,13 @@ public class PageChooserController implements Controller {
 		model.put("sites", pageDao.listSites());
 		model.put("selectedSite", selectedSite);
 		model.put("pages", createpageLinks(
-				pageDao.getRootNode().getChildPages(selectedSite), path, request));
+				pageDao.getRootNode().getChildPages(selectedSite), path, absolute));
 
 		return new ModelAndView(viewName, model);
 	}
 
 	private List createpageLinks(Collection pages, String expandedPath,
-				HttpServletRequest request) {
+				boolean absolute) {
 		
 		ArrayList links = new ArrayList();
 		Iterator it = pages.iterator();
@@ -103,14 +108,19 @@ public class PageChooserController implements Controller {
 			if (!page.isWildcardInPath()) {
 				PageLink link = new PageLink();
 				link.setPathComponent(page.getPathComponent());
-				link.setLink(pageUrlBuilder.getUrl(page, request));
+				if (absolute) {
+					link.setLink(page.getAbsoluteUrl(pathCompleter, false));
+				}
+				else {
+					link.setLink(page.getUrl(pathCompleter));
+				}
 				link.setTitle(page.getTitle(true));
 				link.setPublished(page.isPublished());
 				if (expandedPath != null && expandedPath.startsWith(page.getPath())) {
 					link.setExpanded(true);
 				}
 				link.setChildPages(createpageLinks(page.getChildPages(),
-						expandedPath, request));
+						expandedPath, absolute));
 				
 				links.add(link);
 			}

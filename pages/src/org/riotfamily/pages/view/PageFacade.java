@@ -34,8 +34,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.common.web.servlet.PathCompleter;
+import org.riotfamily.common.web.servlet.RequestPathCompleter;
+import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.pages.cache.PageCacheUtils;
-import org.riotfamily.pages.mapping.PageUrlBuilder;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.PageProperties;
@@ -48,21 +50,22 @@ import org.riotfamily.pages.model.Site;
 public class PageFacade {
 
 	private Page page;
+
+	private HttpServletRequest request;
 	
 	private boolean preview;
 	
-	private PageUrlBuilder pageUrlBuilder;
+	private PathCompleter pathCompleter;
 	
 	private Map properties = null;
 	
 	private TaggingContext taggingContext;
 	
-	public PageFacade(Page page, boolean preview, 
-			PageUrlBuilder pageUrlBuilder) {
-		
+	public PageFacade(Page page, HttpServletRequest request) {
 		this.page = page;
-		this.preview = preview;
-		this.pageUrlBuilder = pageUrlBuilder;
+		this.request = request;
+		this.preview = EditModeUtils.isEditMode(request);
+		this.pathCompleter = new RequestPathCompleter(request);
 		this.taggingContext = TaggingContext.getContext();
 		PageCacheUtils.addPageTag(taggingContext, page);
 	}
@@ -103,20 +106,21 @@ public class PageFacade {
 		return page.getPath();
 	}
 
-	public String getFullPath() {
-		return page.getFullPath();
-	}
-
 	public String getUrl() {
-		return pageUrlBuilder.getUrl(page);
+		String host = page.getSite().getHostName();
+		if (host != null && !host.equals(request.getServerName())) {
+			return page.getAbsoluteUrl(pathCompleter, request.isSecure());
+		}
+		return page.getUrl(pathCompleter);
 	}
 
-	public String getUrl(HttpServletRequest request) {
-		return getUrl(request, request.isSecure());
-	}
-	
-	public String getUrl(HttpServletRequest request, boolean secure) {
-		return pageUrlBuilder.getUrl(page, request, secure);
+	public String getSecureUrl() {
+		if (request.isSecure() && request.getServerName().equals(
+				page.getSite().getHostName())) {
+			
+			return getUrl();
+		}
+		return page.getAbsoluteUrl(pathCompleter, true);
 	}
 
 	public boolean isWildcard() {

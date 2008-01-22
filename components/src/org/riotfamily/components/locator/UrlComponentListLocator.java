@@ -25,7 +25,7 @@ package org.riotfamily.components.locator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.web.util.PathCompleter;
+import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 
 /**

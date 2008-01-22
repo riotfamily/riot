@@ -37,6 +37,7 @@ import org.riotfamily.common.web.controller.HttpErrorController;
 import org.riotfamily.common.web.controller.RedirectController;
 import org.riotfamily.common.web.mapping.AbstractReverseHandlerMapping;
 import org.riotfamily.common.web.mapping.AttributePattern;
+import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
@@ -64,15 +65,15 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	
 	private PageDao pageDao;
 
-	private PageUrlBuilder pageUrlBuilder;
-
+	private PathCompleter pathCompleter;
+	
 	private Object defaultPageHandler;
 
 	public PageHandlerMapping(PageDao pageDao,
-			PageUrlBuilder pageUrlBuilder) {
+			PathCompleter pathCompleter) {
 
 		this.pageDao = pageDao;
-		this.pageUrlBuilder = pageUrlBuilder;
+		this.pathCompleter = pathCompleter;
 	}
 
 	public void setDefaultPageHandler(Object defaultPageHandler) {
@@ -155,7 +156,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
 			if (isRequestable(page)) {
-				String url = pageUrlBuilder.getUrl(page);
+				String url = page.getUrl(pathCompleter);
 				return new RedirectController(url, true, false);
 			}
 		}
@@ -171,7 +172,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		if (alias != null) {
 			Page page = alias.getPage();
 			if (page != null) {
-				String url = pageUrlBuilder.getUrl(page);
+				String url = page.getUrl(pathCompleter);
 				return new RedirectController(url, true, false);
 			}
 			else {
@@ -221,7 +222,8 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
-			patterns.add(new AttributePattern(pageUrlBuilder.getUrl(page)));
+			String url = page.getUrl(pathCompleter);
+			patterns.add(new AttributePattern(url));
 		}
 		return patterns;
 	}

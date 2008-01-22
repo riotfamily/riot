@@ -4,51 +4,36 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.view;
+package org.riotfamily.common.web.servlet;
 
-import org.riotfamily.common.web.view.freemarker.ObjectWrapperPlugin;
-import org.riotfamily.common.web.view.freemarker.PluginObjectWrapper;
-import org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView;
-import org.riotfamily.pages.model.Page;
 
-import freemarker.ext.beans.StringModel;
-import freemarker.template.TemplateModel;
-import freemarker.template.TemplateModelException;
 
 /**
+ * Interface to add or remove the servlet mapping from a path.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
  */
-public class PageObjectWrapperPlugin implements ObjectWrapperPlugin {
+public interface PathCompleter {
 
-	public boolean supports(Object obj) {
-		return obj instanceof Page;
-	}
-
-	public TemplateModel wrapSupportedObject(Object obj, 
-			PluginObjectWrapper wrapper) 
-			throws TemplateModelException {
-		
-		Page page = (Page) obj;
-		PageFacade facade = new PageFacade(page, RiotFreeMarkerView.getRequest());
-		return new StringModel(facade, wrapper);
-	}
+	public String addServletMapping(String path);
+	
+	public String stripServletMapping(String path);
 
 }

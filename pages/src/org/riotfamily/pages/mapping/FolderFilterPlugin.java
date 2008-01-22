@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.common.web.filter.PluginChain;
 import org.riotfamily.common.web.mapping.AttributePattern;
+import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
@@ -67,18 +68,18 @@ public class FolderFilterPlugin extends FilterPlugin {
 	
 	private PageDao pageDao;
 	
-	private PageUrlBuilder pageUrlBuilder;
+	private PathCompleter pathCompleter;
 	
 	private PlatformTransactionManager tx;
 	
 	private String siteChooserUrl;
 	
 	public FolderFilterPlugin(PageDao pageDao,
-			PageUrlBuilder pageUrlBuilder, 
+			PathCompleter pathCompleter, 
 			PlatformTransactionManager tx) {
 		
 		this.pageDao = pageDao;
-		this.pageUrlBuilder = pageUrlBuilder;
+		this.pathCompleter = pathCompleter;
 		this.tx = tx;
 	}
 	
@@ -192,7 +193,7 @@ public class FolderFilterPlugin extends FilterPlugin {
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
 			if (isRequestable(page)) {
-				return pageUrlBuilder.getUrl(page);
+				return page.getUrl(pathCompleter);
 			}
 		}
 		return null;

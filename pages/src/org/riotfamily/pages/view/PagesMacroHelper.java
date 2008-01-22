@@ -25,7 +25,7 @@ package org.riotfamily.pages.view;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.web.util.PathCompleter;
+import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
@@ -61,7 +61,7 @@ public class PagesMacroHelper {
 			return null;
 		}
 		
-		path = stripServletMapping(path);
+		path = pathCompleter.stripServletMapping(path);
 		log.debug("Path is now '" + path + "'.");
 		
 		Site site = pageDao.findSite(host, path);
@@ -86,24 +86,6 @@ public class PagesMacroHelper {
 		return page;
 	}
 
-	
-	private String stripServletMapping(String path) {
-		if (pathCompleter.isPrefixMapping()) {
-			String prefix = pathCompleter.getServletPrefix();
-			if (path.startsWith(prefix)) {
-				log.debug("Stripping servletPrefix '" + prefix + "'.");
-				return path.substring(prefix.length());
-			}
-		}
-		if (pathCompleter.isSuffixMapping()) {
-			String suffix = pathCompleter.getServletSuffix();
-			if (path.endsWith(suffix)) {
-				log.debug("Stripping servletSuffix '" + suffix + "'.");
-				return path.substring(0, path.length() - suffix.length());
-			}
-		}
-		return path;
-	}
 	
 	public String stripSitePrefix(Site site, String path) {
 		String pathPrefix = site.getPathPrefix();

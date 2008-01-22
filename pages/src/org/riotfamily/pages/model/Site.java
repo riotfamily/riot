@@ -25,6 +25,10 @@ package org.riotfamily.pages.model;
 
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.riotfamily.common.web.util.ServletUtils;
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -196,6 +200,75 @@ public class Site {
 				&& ObjectUtils.nullSafeEquals(this.locale, other.locale)
 				&& ObjectUtils.nullSafeEquals(this.theme, other.theme)
 				&& ObjectUtils.nullSafeEquals(this.masterSite, other.masterSite);
+	}
+	
+	public StringBuffer getAbsoluteUrl(boolean secure) {
+		Assert.state(hostName != null, "Can't build an absolute URL because " +
+				"no hostName is set for the Site " + getName());
+		
+		StringBuffer url = new StringBuffer();
+		url.append(secure
+				? ServletUtils.SCHEME_HTTPS 
+				: ServletUtils.SCHEME_HTTP);
+		
+        url.append("://");
+		url.append(hostName);
+		if (pathPrefix != null) {
+			url.append(pathPrefix);
+		}
+		return url;
+	}
+	
+	/**
+	 * Returns an absolute URL for the Site. It works exactly like
+	 * {@link #getAbsoluteSiteUrl(Site, HttpServletRequest, boolean)} and
+	 * determines the secure flag from the passed in request.
+	 * 
+	 * @param request the current request
+	 * @return an url for the given site 
+	 */
+	public StringBuffer getAbsoluteUrl(HttpServletRequest request) {
+		return getAbsoluteUrl(request, request.isSecure());
+	}
+	
+	/**
+	 * Returns an absolute URL for the Site. If the site does not have a host
+	 * name configured the server name of the given request will be used.
+	 * 
+	 * @param request the current request
+	 * @param secure whether to use the https scheme
+	 * @return an url for the given site 
+	 */
+	public StringBuffer getAbsoluteUrl(HttpServletRequest request, boolean secure) {
+		StringBuffer url = new StringBuffer();
+		url.append(secure
+				? ServletUtils.SCHEME_HTTPS 
+				: ServletUtils.SCHEME_HTTP);
+		
+        url.append("://");
+        if (hostName != null) {
+			url.append(hostName);
+		}
+		else {
+			url.append(request.getServerName());
+	        int port = request.getServerPort();
+	        if (port <= 0) {
+	            port = 80;
+	        }
+	        // Append the port unless it's the protocol's default 
+	        if ((!secure && port != 80) || (secure && port != 443)) {
+	        	// If the protocol changes, we don't know the port and need to assume the default 
+	        	if (secure == request.isSecure()) {
+		            url.append(':');
+		            url.append(port);
+		        }
+	        }
+		}
+		url.append(request.getContextPath());
+		if (pathPrefix != null) {
+			url.append(pathPrefix);
+		}
+		return url;
 	}
 
 }

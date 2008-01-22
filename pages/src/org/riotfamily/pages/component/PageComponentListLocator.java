@@ -31,13 +31,13 @@ import net.sf.json.JSONObject;
 
 import org.riotfamily.common.beans.MapWrapper;
 import org.riotfamily.common.web.mapping.AttributePattern;
+import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.components.locator.ComponentListLocator;
 import org.riotfamily.components.locator.DefaultSlotResolver;
 import org.riotfamily.components.locator.SlotResolver;
 import org.riotfamily.components.model.ComponentListLocation;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
-import org.riotfamily.pages.mapping.PageUrlBuilder;
 import org.riotfamily.pages.model.Page;
 
 /**
@@ -53,15 +53,15 @@ public class PageComponentListLocator implements ComponentListLocator {
 
 	private PageDao pageDao;
 
-	private PageUrlBuilder pageUrlBuilder;
+	private PathCompleter pathCompleter;
 
 	private SlotResolver slotResolver = new DefaultSlotResolver();
 
 	public PageComponentListLocator(PageDao pageDao,
-			PageUrlBuilder pageUrlBuilder) {
+			PathCompleter pathCompleter) {
 
 		this.pageDao = pageDao;
-		this.pageUrlBuilder = pageUrlBuilder;
+		this.pathCompleter = pathCompleter;
 	}
 
 	public void setSlotResolver(SlotResolver slotResolver) {
@@ -99,7 +99,7 @@ public class PageComponentListLocator implements ComponentListLocator {
 
 	public String getUrl(ComponentListLocation location) {
 		Page page = loadPage(location);
-		String url = pageUrlBuilder.getUrl(page);
+		String url = page.getUrl(pathCompleter);
 		if (page.isWildcardInPath()) {
 			Map attributes = JSONObject.fromObject(location.getPath());
 			url = new AttributePattern(url).fillInAttributes(new MapWrapper(attributes));

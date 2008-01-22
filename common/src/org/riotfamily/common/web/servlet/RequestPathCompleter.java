@@ -14,43 +14,28 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * Portions created by the Initial Developer are Copyright (C) 2008
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.riot.command;
+package org.riotfamily.common.web.servlet;
 
-import org.riotfamily.common.web.servlet.PathCompleter;
+import javax.servlet.http.HttpServletRequest;
+
 import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.core.PopupCommand;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.4
+ * @since 7.0
  */
-public class GotoPageCommand extends PopupCommand {
+public class RequestPathCompleter extends AbstractPathCompleter {
 
-	public static final String STYLE_CLASS = "link";
-	
-	private PathCompleter pathCompleter;
-
-	public GotoPageCommand(PathCompleter pathCompleter) {
-		this.pathCompleter = pathCompleter;
-	}
-
-	protected String getUrl(CommandContext context) {
-		Page page = (Page) context.getBean();
-		String url = page.getUrl(pathCompleter); 
-		return ServletUtils.resolveUrl(url, context.getRequest());
-	}
-	
-	protected String getStyleClass(CommandContext context, String action) {
-		return STYLE_CLASS;
+	public RequestPathCompleter(HttpServletRequest request) {
+		setServletPrefix(ServletUtils.getServletPrefix(request));
+		setServletSuffix(ServletUtils.getServletSuffix(request));
 	}
 
 }
