@@ -232,6 +232,9 @@ public class ObjectChooser extends AbstractChooser
 		else if (rootIdAttribute != null) {
 			rootId = (String) getForm().getAttribute(rootIdAttribute);
 		}
+		else if (rootEditorId != null) {
+			rootId = FormUtils.getParentId(getForm());
+		}
 		return rootListDefinition.getEditorUrl(null, rootId) 
 				+ "?choose=" + targetEditorDefinition.getId();
 	}
