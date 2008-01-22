@@ -227,7 +227,7 @@ public class MapEditor extends TemplateElement implements Editor {
 		public MapItem(Object key, boolean removable) {
 			super("item");
 			this.key = key;
-			setSurroundBySpan(false);
+			setSurroundByDiv(false);
 			element = (Editor) itemElementFactory.createElement(this, getForm(), false);
 			addComponent("element", element);
 			if (removable) {

@@ -66,7 +66,7 @@ public class FileUpload extends CompositeElement implements Editor,
 		addComponent(new UploadElement());
 		addComponent(new RemoveButton());
 		addComponent(createPreviewElement());
-		setSurroundBySpan(true);
+		setSurroundByDiv(true);
 	}
 		
 	public FormResource getResource() {

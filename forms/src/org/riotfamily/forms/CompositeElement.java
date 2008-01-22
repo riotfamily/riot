@@ -44,7 +44,7 @@ public abstract class CompositeElement extends AbstractEditorBase {
 
 	private List components = new ArrayList();
 	
-	private boolean surroundBySpan;
+	private boolean surroundByDiv;
 	
 	/**
 	 * Empty default constructor.
@@ -152,20 +152,20 @@ public abstract class CompositeElement extends AbstractEditorBase {
 	protected void processRequestInternal(FormRequest request) {
 	}
 
-	protected boolean isSurroundBySpan() {
-		return this.surroundBySpan;
+	protected boolean isSurroundByDiv() {
+		return this.surroundByDiv;
 	}
 
-	protected void setSurroundBySpan(boolean surroundBySpan) {
-		this.surroundBySpan = surroundBySpan;
+	protected void setSurroundByDiv(boolean surroundByDiv) {
+		this.surroundByDiv = surroundByDiv;
 	}
 
 	protected void renderInternal(PrintWriter writer) {		
-		if (surroundBySpan) {
-			TagWriter spanTag = new TagWriter(writer);
-			spanTag.start(Html.SPAN).attribute(Html.COMMON_ID, getId()).body();
+		if (surroundByDiv) {
+			TagWriter divTag = new TagWriter(writer);
+			divTag.start(Html.DIV).attribute(Html.COMMON_ID, getId()).body();
 			renderComponents(writer);
-			spanTag.end();
+			divTag.end();
 		}
 		else {
 			renderComponents(writer);

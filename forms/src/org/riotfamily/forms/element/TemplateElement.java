@@ -88,7 +88,7 @@ public class TemplateElement extends CompositeElement {
 	}
 	
 	protected void renderComponents(PrintWriter writer) {
-		if (isSurroundBySpan()) {
+		if (isSurroundByDiv()) {
 			TagWriter spanTag = new TagWriter(writer);
 			spanTag.start(Html.SPAN).attribute(Html.COMMON_ID, getId()).body();
 			renderTemplate(writer);

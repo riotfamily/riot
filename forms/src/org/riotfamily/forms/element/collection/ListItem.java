@@ -42,7 +42,7 @@ public class ListItem extends TemplateElement implements DHTMLElement, ClickList
 	public ListItem(ListEditor list) {
 		super("item");
 		this.list = list;
-		setSurroundBySpan(false);
+		setSurroundByDiv(false);
 		setTemplate(TemplateUtils.getTemplatePath(ListItem.class));
 		removeButton = new Button();
 		removeButton.setLabelKey("label.form.list.remove");
