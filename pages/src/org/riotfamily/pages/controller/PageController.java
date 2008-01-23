@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
+ *   Carsten Woelk [cwoelk at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.controller;
@@ -26,42 +26,46 @@ package org.riotfamily.pages.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.cachius.spring.AbstractCacheableController;
+import org.riotfamily.cachius.spring.CacheableController;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * Inspects the current page and delegates requests to the nodeController
- * if the page has child-pages or the leafController otherwise.
- *
- * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
+ * @author Carsten Woelk [cwoelk at neteye dot de]
+ * @since 7.0
  */
-public class LeafSwitchController implements Controller {
+public class PageController extends AbstractCacheableController {
 
-	private Controller nodeController;
+	private PageResolver pageResolver;
 	
-	private Controller leafController;
-	
-	public void setLeafController(Controller leafController) {
-		this.leafController = leafController;
+	private String viewName;
+
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
 	}
-
-	public void setNodeController(Controller nodeController) {
-		this.nodeController = nodeController;
+	
+	public PageController(PageResolver pageResolver) {
+		this.pageResolver = pageResolver;
 	}
 
 	public ModelAndView handleRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		
-		Page page = PageResolver.getResolvedPage(request);
-		if (page.getChildPages().isEmpty()) {
-			return leafController.handleRequest(request, response);
+		Page page = pageResolver.getPage(request);
+		if (page != null) {
+			TaggingContext.tag(request, Page.class.getName());
+			return new ModelAndView(viewName, "page", page);
 		}
-		else {
-			return nodeController.handleRequest(request, response);
-		}
+		
+		response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		return null;
+	}
+
+	public long getTimeToLive(HttpServletRequest request) {
+		return CacheableController.CACHE_ETERNALLY;
 	}
 
 }

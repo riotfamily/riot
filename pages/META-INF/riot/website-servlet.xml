@@ -12,8 +12,13 @@
 		http://www.riotfamily.org/schema/common/override-7.0.xsd">
 
 
+	<bean id="pageResolver" class="org.riotfamily.pages.mapping.PageResolver">
+		<constructor-arg ref="pageDao" />
+	</bean>
+
 	<bean id="pageHandlerMapping" class="org.riotfamily.pages.mapping.PageHandlerMapping">
 		<constructor-arg ref="pageDao" />
+		<constructor-arg ref="pageResolver" />
 		<constructor-arg ref="pathCompleter" />
 		<property name="interceptors">
 			<list>
@@ -24,6 +29,7 @@
 	
 	<bean id="folderFilterPlugin" class="org.riotfamily.pages.mapping.FolderFilterPlugin">
 		<constructor-arg ref="pageDao" />
+		<constructor-arg ref="pageResolver" />
 		<constructor-arg ref="pathCompleter" />
 		<constructor-arg ref="transactionManager" />
 		<property name="filterName" value="website-filter" />
@@ -52,7 +58,12 @@
 		<bean class="org.riotfamily.pages.view.PageToolbarScript" />
 	</override:add>
 
+	<bean id="currentSite" class="org.riotfamily.pages.view.CurrentSiteMacroHelperFactory">
+		<constructor-arg ref="pageResolver" />
+	</bean>
+
 	<bean id="currentPage" class="org.riotfamily.pages.view.CurrentPageMacroHelperFactory">
+		<constructor-arg ref="pageResolver" />
 		<constructor-arg ref="pageDao" />
 	</bean>
 	

@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.common.web.filter.PluginChain;
-import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
@@ -44,8 +43,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
 
 /**
  * FilterPlugin that provides folder support. Normally the website-servlet is
@@ -64,9 +61,10 @@ public class FolderFilterPlugin extends FilterPlugin {
 	private static final TransactionDefinition TX_DEF = 
 			new DefaultTransactionDefinition();
 	
-	private PathMatcher pathMatcher = new AntPathMatcher();
-	
+
 	private PageDao pageDao;
+	
+	private PageResolver pageResolver;
 	
 	private PathCompleter pathCompleter;
 	
@@ -75,10 +73,12 @@ public class FolderFilterPlugin extends FilterPlugin {
 	private String siteChooserUrl;
 	
 	public FolderFilterPlugin(PageDao pageDao,
+			PageResolver pageResolver,
 			PathCompleter pathCompleter, 
 			PlatformTransactionManager tx) {
 		
 		this.pageDao = pageDao;
+		this.pageResolver = pageResolver;
 		this.pathCompleter = pathCompleter;
 		this.tx = tx;
 	}
@@ -102,8 +102,9 @@ public class FolderFilterPlugin extends FilterPlugin {
 		if (path.lastIndexOf('.') < path.lastIndexOf('/')) {
 			TransactionStatus status = tx.getTransaction(TX_DEF);
 			try {
-				requestHandled = sendRedirect(request.getServerName(), path, 
-						request, response);
+				//requestHandled = sendRedirect(request.getServerName(), path, 
+				//		request, response);
+				requestHandled = sendRedirect(request, response);
 			}
 			catch (Exception ex) {
 				tx.rollback(status);
@@ -116,11 +117,10 @@ public class FolderFilterPlugin extends FilterPlugin {
 		}
 	}
 
-	private boolean sendRedirect(String hostName, String path, 
-			HttpServletRequest request, HttpServletResponse response)
-			throws IOException {
+	private boolean sendRedirect(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
 		
-		Site site = pageDao.findSite(hostName, path);
+		Site site = pageResolver.getSite(request);
 		if (site == null) {
 			if (siteChooserUrl != null) {
 				response.sendRedirect(response.encodeRedirectURL(
@@ -130,20 +130,14 @@ public class FolderFilterPlugin extends FilterPlugin {
 			}
 			return false;
 		}
-		path = site.stripPrefix(path);
-		if (path.endsWith("/")) {
-			path = path.substring(0, path.length() - 1);
-		}
+		String path = pageResolver.getPathWithinSite(request);
 		if (path.length() == 0) {
 			Collection topLevelPages = pageDao.getRootNode().getChildPages(site);
 			sendRedirect(topLevelPages, request, response);
 			return true;
 		}
 		
-		Page page = pageDao.findPage(site, path);
-		if (page == null) {
-			page = findWildcardPage(site, path);
-		}
+		Page page = pageResolver.getPage(request);
 		if (page == null || !page.isFolder()) {
 			return false;
 		}
@@ -152,25 +146,7 @@ public class FolderFilterPlugin extends FilterPlugin {
 		
 		return true;
 	}
-	
-	protected Page findWildcardPage(Site site, String urlPath) {
-		Page page = null; 
-		String bestMatch = null;
-		for (Iterator it = pageDao.getWildcardPaths(site).iterator(); it.hasNext();) {
-			String path = (String) it.next();
-			String antPattern = AttributePattern.convertToAntPattern(path);
-			if (pathMatcher.match(antPattern, urlPath) &&
-					(bestMatch == null || bestMatch.length() <= path.length())) {
 
-				bestMatch = path;
-			}
-		}
-		if (bestMatch != null) {
-			page = pageDao.findPage(site, bestMatch);
-		}
-		return page;
-	}
-	
 	private void sendRedirect(Collection pages, HttpServletRequest request, 
 			HttpServletResponse response) throws IOException {
 		

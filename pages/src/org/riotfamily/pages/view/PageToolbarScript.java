@@ -26,7 +26,7 @@ package org.riotfamily.pages.view;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.components.view.DynamicToolbarScript;
-import org.riotfamily.pages.mapping.PageHandlerMapping;
+import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 
 /**
@@ -36,7 +36,7 @@ import org.riotfamily.pages.model.Page;
 public class PageToolbarScript implements DynamicToolbarScript {
 
 	public String generateJavaScript(HttpServletRequest request) {
-		Page page = PageHandlerMapping.getPage(request);
+		Page page = PageResolver.getResolvedPage(request);
 		if (page != null) {
 			return "riotComponentFormParams.pageId = " + page.getId();
 		}

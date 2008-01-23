@@ -31,14 +31,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.web.controller.HttpErrorController;
 import org.riotfamily.common.web.controller.RedirectController;
 import org.riotfamily.common.web.mapping.AbstractReverseHandlerMapping;
 import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.common.web.servlet.PathCompleter;
-import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
@@ -59,20 +56,22 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	private static final String PAGE_ATTRIBUTE =
 			PageHandlerMapping.class.getName() + ".page";
 
-	private static final Log log = LogFactory.getLog(PageHandlerMapping.class);
+	private PageDao pageDao;
+
+	private PageResolver pageResolver;
+	
+	private PathCompleter pathCompleter;
+
+	private Object defaultPageHandler;
 
 	private PathMatcher pathMatcher = new AntPathMatcher();
 	
-	private PageDao pageDao;
 
-	private PathCompleter pathCompleter;
-	
-	private Object defaultPageHandler;
-
-	public PageHandlerMapping(PageDao pageDao,
+	public PageHandlerMapping(PageDao pageDao, PageResolver pageResolver,
 			PathCompleter pathCompleter) {
 
 		this.pageDao = pageDao;
+		this.pageResolver = pageResolver;
 		this.pathCompleter = pathCompleter;
 	}
 
@@ -83,50 +82,29 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	protected Object getHandlerInternal(HttpServletRequest request)
 			throws Exception {
 
-		String hostName = request.getServerName();
-		String path = ServletUtils.getOriginatingPathWithoutServletMapping(request);
-		Site site = pageDao.findSite(hostName, path);
-		if (site == null) {
-			return null;
+		Page page = pageResolver.getPage(request);
+		String path = pageResolver.getPathWithinSite(request);
+		if (page == null) {
+			Site site = pageResolver.getSite(request);
+			if (site == null) {
+				return null;
+			}
+			
+			return getPageNotFoundHandler(site, path);
 		}
-		path = site.stripPrefix(path);
-		Page page = pageDao.findPage(site, path);
-		if (page != null) {
+		
+		if (!page.isWildcardInPath()) {
 			exposePathWithinMapping(path, request);
 		}
 		else {
-			page = findWildcardPage(site, path);
-			if (page != null) {
-				exposeAttributes(page.getPath(), path, request);
-				exposePathWithinMapping(pathMatcher.extractPathWithinPattern(
-						page.getPath(), path), request);
-			}
+			exposeAttributes(page.getPath(), path, request);
+			exposePathWithinMapping(pathMatcher.extractPathWithinPattern(
+					page.getPath(), path), request);
 		}
 		
-		log.debug("Page: " + page);
-		if (page != null) {
-			return getPageHandler(page, request);
-		}
-		return getPageNotFoundHandler(site, path);
+		return getPageHandler(page, request);
 	}
 	
-	protected Page findWildcardPage(Site site, String urlPath) {
-		Page page = null; 
-		String bestMatch = null;
-		for (Iterator it = pageDao.getWildcardPaths(site).iterator(); it.hasNext();) {
-			String path = (String) it.next();
-			String antPattern = AttributePattern.convertToAntPattern(path);
-			if (pathMatcher.match(antPattern, urlPath) &&
-					(bestMatch == null || bestMatch.length() <= path.length())) {
-
-				bestMatch = path;
-			}
-		}
-		if (bestMatch != null) {
-			page = pageDao.findPage(site, bestMatch);
-		}
-		return page;
-	}
 	
 	/**
 	 * Returns the handler for the given page.
@@ -204,26 +182,17 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		return page.isEnabled() || AccessController.isAuthenticatedUser();
 	}
 
-	public static Page getPage(HttpServletRequest request) {
-		return (Page) request.getAttribute(PAGE_ATTRIBUTE);
-	}
-	
-
 	protected List getPatternsForHandler(String beanName, 
 			HttpServletRequest request) {
 		
-		Page currentPage = getPage(request);
-		Assert.notNull(currentPage, "This method can only be used on pages " +
-				"whose handler was resolved by a PageHandlerMapping.");
-		
-		Site site = currentPage.getSite();
+		Site site = pageResolver.getSite(request);
+		Assert.state(site != null, "The current Site could not be resolved");
 		List pages = pageDao.findPagesForHandler(beanName, site);
 		ArrayList patterns = new ArrayList(pages.size());
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
-			String url = page.getUrl(pathCompleter);
-			patterns.add(new AttributePattern(url));
+			patterns.add(new AttributePattern(page.getUrl(pathCompleter)));
 		}
 		return patterns;
 	}

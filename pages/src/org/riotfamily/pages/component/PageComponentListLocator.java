@@ -38,6 +38,7 @@ import org.riotfamily.components.locator.SlotResolver;
 import org.riotfamily.components.model.ComponentListLocation;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageHandlerMapping;
+import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 
 /**
@@ -74,7 +75,7 @@ public class PageComponentListLocator implements ComponentListLocator {
 
 	public ComponentListLocation getLocation(HttpServletRequest request) {
 		ComponentListLocation location = new ComponentListLocation();
-		Page page = PageHandlerMapping.getPage(request);
+		Page page = PageResolver.getResolvedPage(request);
 		if (page.isWildcardInPath()) {
 			Map attributes = PageHandlerMapping.getWildcardAttributes(request);
 			String jsonString = JSONObject.fromObject(attributes).toString();
