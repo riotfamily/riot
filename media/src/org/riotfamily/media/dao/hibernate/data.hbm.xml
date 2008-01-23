@@ -21,7 +21,7 @@
 		<property name="size" />
 		<property name="creationDate" />
 		<property name="owner" />
-		<property name="md5" />
+		<property name="md5" length="32" />
 		<property name="uri" unique="true" />
 		<subclass name="ImageData" discriminator-value="img">
 			<property name="width" />
