@@ -32,6 +32,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.web.util.RequestHolder;
 import org.riotfamily.common.web.view.MacroHelperFactory;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
@@ -61,10 +62,6 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 	public static final String MODEL_ATTRIBUTE = 
 			RiotFreeMarkerView.class.getName() + ".model";
 
-	private static ThreadLocal requestHolder = new ThreadLocal();
-	
-	private static ThreadLocal responseHolder = new ThreadLocal();
-	
 	private boolean allowModelOverride = true;
 	
 	private boolean freeMarkerServletMode = false;
@@ -137,8 +134,7 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 			throws Exception {
 
 		try {
-			requestHolder.set(request);
-			responseHolder.set(response);
+			RequestHolder.set(request, response);
 			unwrapModel(model);
 			model.put(REQUEST_KEY, request);
 			if (macroHelperFactories != null) {
@@ -162,8 +158,7 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 			}
 		}
 		finally {
-			requestHolder.set(null);
-			responseHolder.set(null);
+			RequestHolder.unset();
 		}
 	}
 	
@@ -173,14 +168,6 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 		
 		model.put(TEMPLATE_NAME_KEY, template.getName());
 		super.processTemplate(template, model, response);
-	}
-	
-	public static HttpServletRequest getRequest() {
-		return (HttpServletRequest) requestHolder.get();
-	}
-	
-	public static HttpServletResponse getResponse() {
-		return (HttpServletResponse) responseHolder.get();
 	}
 
 }

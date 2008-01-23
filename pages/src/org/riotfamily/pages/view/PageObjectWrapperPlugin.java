@@ -23,9 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.view;
 
+import org.riotfamily.common.web.util.RequestHolder;
 import org.riotfamily.common.web.view.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.web.view.freemarker.PluginObjectWrapper;
-import org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView;
 import org.riotfamily.pages.model.Page;
 
 import freemarker.ext.beans.StringModel;
@@ -47,7 +47,7 @@ public class PageObjectWrapperPlugin implements ObjectWrapperPlugin {
 			throws TemplateModelException {
 		
 		Page page = (Page) obj;
-		PageFacade facade = new PageFacade(page, RiotFreeMarkerView.getRequest());
+		PageFacade facade = new PageFacade(page, RequestHolder.getRequest());
 		return new StringModel(facade, wrapper);
 	}
 
