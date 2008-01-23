@@ -23,69 +23,92 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.util;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Utility class that simplifies the generation of MD5 fingerprints. 
+ * Utility class that simplifies the generation of MD5 and SHA-1 hashes. 
  */
 public final class HashUtils {
 
-	private static final String MD5 = "MD5";
+	public static final String MD5 = "MD5";
 	
-	private static final String SHA1 = "SHA-1";
-	
-	private static MessageDigest md5Digest;
-	
-	private static MessageDigest sha1Digest;
+	public static final String SHA1 = "SHA-1";
 	
 	private HashUtils() {
 	}
 	
-	/**
+	/** 
 	 * Hashes a String using the MD5 algorithm and returns the result as a
-	 * String of hexadecimal numbers. This method is synchronized to avoid
-	 * excessive MessageDigest object creation. If calling this method becomes a
-	 * bottleneck in your code, you may wish to maintain a pool of MessageDigest
-	 * objects instead of using this method.
-	 * 
-	 * @param data the String to compute the hash of.
-	 * @return a hashed version of the passed-in String
+	 * String of hexadecimal numbers.
 	 */
-	public static synchronized String md5(String data) {
-		if (md5Digest == null) {
-			try {
-				md5Digest = MessageDigest.getInstance(MD5);
-			}
-			catch (NoSuchAlgorithmException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		md5Digest.update(data.getBytes());
-		return toHex(md5Digest.digest());
+	public static String md5(String data) {
+		return hash(data, MD5);
+	}
+	
+	/** 
+	 * Hashes an InputStream using the MD5 algorithm and returns the result as 
+	 * a String of hexadecimal numbers.
+	 */
+	public static String md5(InputStream in) throws IOException {
+		return hash(in, MD5);
+	}
+	
+	/** 
+	 * Hashes a String using the SHA-1 algorithm and returns the result as a
+	 * String of hexadecimal numbers.
+	 */
+	public static String sha1(String data) {
+		return hash(data, SHA1);
 	}
 	
 	/**
-	 * Hashes a String using the SHA-1 algorithm and returns the result as a
-	 * String of hexadecimal numbers. This method is synchronized to avoid
-	 * excessive MessageDigest object creation. If calling this method becomes a
-	 * bottleneck in your code, you may wish to maintain a pool of MessageDigest
-	 * objects instead of using this method.
+	 * Hashes a String using the specified algorithm and returns the result as 
+	 * a String of hexadecimal numbers.
 	 * 
-	 * @param data the String to compute the hash of.
-	 * @return a hashed version of the passed-in String
+	 * @param data the String to compute the hash of
+	 * @return the computed hash
 	 */
-	public static synchronized String sha1(String data) {
-		if (sha1Digest == null) {
-			try {
-				sha1Digest = MessageDigest.getInstance(SHA1);
-			}
-			catch (NoSuchAlgorithmException e) {
-				throw new RuntimeException(e);
-			}
+	public static String hash(String data, String algorithm) {
+		MessageDigest digest = createDigest(algorithm);
+		digest.update(data.getBytes());
+		return toHex(digest.digest());
+	}
+	
+	/**
+	 * Hashes data read from an InputStream using the specified algorithm 
+	 * and returns the result as a String of hexadecimal numbers.
+	 * 
+	 * @param in the stream to read the data from
+	 * @return the computed hash
+	 */
+	public static String hash(InputStream in, String algorithm)
+			throws IOException {
+		
+		MessageDigest digest = createDigest(algorithm);
+		byte[] buffer = new byte[8192];
+		int i = 0;
+		while( (i = in.read(buffer)) > 0) {
+			digest.update(buffer, 0, i);
 		}
-		sha1Digest.update(data.getBytes());
-		return toHex(sha1Digest.digest());
+		in.close();
+		return toHex(digest.digest());
+	}
+	
+	/**
+	 * Creates a MessageDigest for the given algorithm. 
+	 * NoSuchAlgorithmExceptions are caught and re-thrown as RuntimeExceptions.
+	 */
+	private static MessageDigest createDigest(String algorithm) {
+		try {
+			return MessageDigest.getInstance(algorithm);
+		}
+		catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	/**
@@ -95,17 +118,9 @@ public final class HashUtils {
 	 * @param buffer array of bytes to convert
 	 * @return generated hex string
 	 */
-	public static String toHex(byte[] buffer) {
-		StringBuffer sb = new StringBuffer();
-		String s = null;
-		for (int i = 0; i < buffer.length; i++) {
-			s = Integer.toHexString(buffer[i] & 0xff);
-			if (s.length() < 2) {
-				sb.append('0');
-			}
-			sb.append(s);
-		}
-		return sb.toString();
+	private static String toHex(byte[] buffer) {
+		BigInteger bigInt = new BigInteger(1, buffer);
+		return bigInt.toString(16);
 	}
-
+	
 }
