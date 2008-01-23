@@ -30,7 +30,7 @@
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 	
-	<bean id="fileStore" class="org.riotfamily.common.web.file.DefaultFileStore">
+	<bean id="fileStore" class="org.riotfamily.media.store.DefaultFileStore">
 		<property name="uriPrefix" value="${riot.media.uriPrefix=/media}" />
 	</bean>
 	

@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.file;
+package org.riotfamily.media.store;
 
 import java.io.File;
 import java.io.IOException;

@@ -42,20 +42,18 @@ public class SwfData extends FileData {
 	private int height;
 	
 	private int version;
-
+	
 	public SwfData() {
-	}
-
-	public SwfData(MultipartFile multipartFile) throws IOException {
-		super(multipartFile);
-		inspect(getFile());
 	}
 	
 	public SwfData(File file) throws IOException {
 		super(file);
-		inspect(file);
 	}
-	
+
+	public SwfData(MultipartFile multipartFile) throws IOException {
+		super(multipartFile);
+	}
+
 	protected void inspect(File file) throws IOException {
 		FlashInfo flashInfo = new FlashInfo(file);
 		setContentType(CONTENT_TYPE);

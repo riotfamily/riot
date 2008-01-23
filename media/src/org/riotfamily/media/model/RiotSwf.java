@@ -23,7 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.model;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.riotfamily.media.model.data.SwfData;
+import org.springframework.web.multipart.MultipartFile;
 
 
 /**
@@ -38,6 +42,14 @@ public class RiotSwf extends RiotFile {
 
 	public RiotSwf(SwfData data) {
 		super(data);
+	}
+	
+	public RiotSwf(File file) throws IOException {
+		super(new SwfData(file));
+	}
+	
+	public RiotSwf(MultipartFile multipartFile) throws IOException {
+		super(new SwfData(multipartFile));
 	}
 
 	public SwfData getSwfData() {

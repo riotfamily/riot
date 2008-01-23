@@ -21,29 +21,31 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.media.setup;
+package org.riotfamily.media.cleanup;
 
-import org.riotfamily.media.model.RiotSwf;
-import org.springframework.beans.factory.config.AbstractFactoryBean;
-import org.springframework.core.io.Resource;
+import java.util.Iterator;
+
+import org.riotfamily.media.dao.MediaDao;
+import org.riotfamily.media.model.data.FileData;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class RiotSwfFactoryBean extends AbstractFactoryBean {
+public class CleanUp {
 
-	private Resource resource;
+	private MediaDao mediaDao;
 	
-	public void setResource(Resource resource) {
-		this.resource = resource;
+	public CleanUp(MediaDao mediaDao) {
+		this.mediaDao = mediaDao;
 	}
-	
-	public Class getObjectType() {
-		return RiotSwf.class;
-	}
-	
-	protected Object createInstance() throws Exception {
-		return new RiotSwf(resource.getFile());
+
+	public void foo() {
+		Iterator it = mediaDao.findStaleData().iterator();
+		while (it.hasNext()) {
+			FileData data = (FileData) it.next();
+			data.deleteFile();
+			mediaDao.deleteData(data);
+		}
 	}
 }

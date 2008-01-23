@@ -25,10 +25,12 @@ package org.riotfamily.media.model;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
 import org.riotfamily.media.model.data.FileData;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -45,6 +47,14 @@ public class RiotFile {
 
 	public RiotFile(FileData data) {
 		this.fileData = data;
+	}
+	
+	public RiotFile(File file) throws IOException {
+		this(new FileData(file));
+	}
+	
+	public RiotFile(MultipartFile multipartFile) throws IOException {
+		this(new FileData(multipartFile));
 	}
 	
 	public RiotFile createCopy() {

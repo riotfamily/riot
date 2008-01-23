@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.model.data;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
@@ -57,11 +58,12 @@ public class CroppedImageData extends ImageData {
 		setFileName(original.getFileName());
 		setUri(fileStore.store(null, original.getFileName()));
 		
-		cropper.cropImage(original.getFile(), getFile(), width, height, x, y, 
+		File croppedFile = getFile();
+		cropper.cropImage(original.getFile(), croppedFile, width, height, x, y, 
 				scaledWidth);
 
-		inspect(getInputStream());
-		setSize(getFile().length());
+		setSize(croppedFile.length());
+		inspect(croppedFile);
 	}
 
 	public RiotImage getOriginal() {

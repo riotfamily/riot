@@ -24,7 +24,6 @@
 package org.riotfamily.media.setup;
 
 import org.riotfamily.media.model.RiotImage;
-import org.riotfamily.media.model.data.ImageData;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
@@ -45,6 +44,6 @@ public class RiotImageFactoryBean extends AbstractFactoryBean {
 	}
 	
 	protected Object createInstance() throws Exception {
-		return new RiotImage(new ImageData(resource.getFile()));
+		return new RiotImage(resource.getFile());
 	}
 }

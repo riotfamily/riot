@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.file;
+package org.riotfamily.media.store;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -192,10 +192,14 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 		return getUri(dest);
 	}
 	
-	private String getUri(File file) {
-		String path = file.getPath().substring(baseDir.getPath().length());
-		path = StringUtils.replace(path, File.separator, "/");
-		return uriPrefix + path;
+	public String getUri(File file) {
+		String path = file.getPath();
+		if (path.startsWith(storagePath)) {
+			path = path.substring(storagePath.length());
+			path = StringUtils.replace(path, File.separator, "/");
+			return uriPrefix + path;
+		}
+		return null;
 	}
 
 	/**

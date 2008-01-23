@@ -23,7 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.model;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.riotfamily.media.model.data.ImageData;
+import org.springframework.web.multipart.MultipartFile;
 
 
 /**
@@ -40,6 +44,14 @@ public class RiotImage extends RiotFile {
 		super(data);
 	}
 
+	public RiotImage(File file) throws IOException {
+		super(new ImageData(file));
+	}
+	
+	public RiotImage(MultipartFile multipartFile) throws IOException {
+		super(new ImageData(multipartFile));
+	}
+	
 	public RiotFile createCopy() {
 		return new RiotImage(getImageData());
 	}

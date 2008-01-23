@@ -29,9 +29,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Set;
 
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.web.file.FileStore;
+import org.riotfamily.common.util.HashUtils;
+import org.riotfamily.media.store.FileStore;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -57,32 +59,52 @@ public class FileData {
 	
 	private long size;
 	
+	private String md5;
+	
 	private String owner;
 	
 	private Date creationDate;
 	
+	private Set files;
+	
+	
 	public FileData() {
 	}
-
+	
+	public FileData(File file) throws IOException {
+		setFile(file);
+	}
+	
 	public FileData(MultipartFile multipartFile) throws IOException {
+		setMultipartFile(multipartFile);
+	}
+
+	public void setMultipartFile(MultipartFile multipartFile) throws IOException {
 		fileName = multipartFile.getOriginalFilename();
 		size = multipartFile.getSize();
 		contentType = multipartFile.getContentType();
 		creationDate = new Date();
+		md5 = HashUtils.md5(multipartFile.getInputStream());
 		//FIXME Does not work with SwfUpload (no session, no user)
 		//owner = AccessController.getCurrentUser().getUserId();
 		uri = fileStore.store(multipartFile.getInputStream(), fileName);
+		inspect(getFile());
 	}
 	
-	public FileData(File file) throws IOException {
+	public void setFile(File file) throws IOException {
 		fileName = file.getName();
-		size = file.length ();
+		size = file.length();
 		//FIXME Use static FileTypeMap
 		//contentType = file.getContentType();
 		creationDate = new Date();
 		//FIXME Does not work with SwfUpload (no session, no user)
 		//owner = AccessController.getCurrentUser().getUserId();
 		uri = fileStore.store(new FileInputStream(file), fileName);
+		md5 = HashUtils.md5(new FileInputStream(file));
+		inspect(file);
+	}
+	
+	protected void inspect(File file) throws IOException {
 	}
 	
 	public Long getId() {
@@ -103,6 +125,10 @@ public class FileData {
 	
 	public File getFile() {
 		return fileStore.retrieve(uri);
+	}
+	
+	public void deleteFile() {
+		fileStore.delete(uri);
 	}
 
 	public InputStream getInputStream() throws FileNotFoundException {
@@ -151,6 +177,22 @@ public class FileData {
 
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public String getMd5() {
+		return this.md5;
+	}
+
+	public void setMd5(String md5) {
+		this.md5 = md5;
+	}
+
+	public Set getFiles() {
+		return this.files;
+	}
+
+	public void setFiles(Set files) {
+		this.files = files;
 	}
 
 }

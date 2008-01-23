@@ -23,10 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.dao.hibernate;
 
+import java.util.List;
+
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.media.dao.MediaDao;
 import org.riotfamily.media.model.RiotFile;
+import org.riotfamily.media.model.data.FileData;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
+import org.springframework.util.Assert;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -43,6 +48,29 @@ public class HibernateMediaDao implements MediaDao {
 	public RiotFile loadFile(Long id) {
 		return (RiotFile) hibernate.get(RiotFile.class, id);
 	}
+		
+	public FileData findDataByUri(String uri) {
+		Query query = hibernate.createQuery("from " + FileData.class.getName() 
+				+ " data where data.uri = :uri");
+		
+		hibernate.setParameter(query, "uri", uri);
+		return (FileData) hibernate.uniqueResult(query);
+	}
+	
+	public FileData findDataByMd5(String md5) {
+		Query query = hibernate.createQuery("from " + FileData.class.getName() 
+				+ " data where data.md5 = :md5");
+		
+		hibernate.setParameter(query, "md5", md5);
+		return (FileData) hibernate.uniqueResult(query);
+	}
+	
+	public List findStaleData() {
+		Query query = hibernate.createQuery("from " + FileData.class.getName() 
+				+ " data where data.files is empty");
+		
+		return hibernate.list(query);
+	}
 	
 	public void saveFile(RiotFile file) {
 		hibernate.save(file);
@@ -50,5 +78,12 @@ public class HibernateMediaDao implements MediaDao {
 	
 	public void deleteFile(RiotFile file) {
 		hibernate.delete(file);
+	}
+	
+	public void deleteData(FileData data) {
+		Assert.isTrue(data.getFiles().isEmpty(), "Can't delete FileData " +
+				"because it is still in use.");
+		
+		hibernate.delete(data);
 	}
 }

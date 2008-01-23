@@ -44,7 +44,6 @@ import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.media.model.RiotFile;
-import org.riotfamily.media.model.data.FileData;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -117,8 +116,7 @@ public class FileUpload extends CompositeElement implements Editor,
 	protected RiotFile createRiotFile(MultipartFile multipartFile) 
 			throws IOException {
 		
-		FileData data = new FileData(multipartFile);
-		return new RiotFile(data);
+		return new RiotFile(multipartFile);
 	}
 	
 	protected void processRequestInternal(FormRequest request) {

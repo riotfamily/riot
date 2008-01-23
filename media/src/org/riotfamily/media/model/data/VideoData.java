@@ -67,19 +67,18 @@ public class VideoData extends FileData {
 	
 	private boolean stereo;
 	
-	public VideoData() {
-	}
 	
-	public VideoData(MultipartFile multipartFile) throws IOException {
-		super(multipartFile);
-		inspect(getFile());
+	public VideoData() {
 	}
 	
 	public VideoData(File file) throws IOException {
 		super(file);
-		inspect(file);
 	}
-	
+
+	public VideoData(MultipartFile multipartFile) throws IOException {
+		super(multipartFile);
+	}
+
 	protected void inspect(File file) throws IOException {
 		RuntimeCommand cmd = new RuntimeCommand(new String[] {"ffmpeg", "-i", 
 				file.getAbsolutePath()});

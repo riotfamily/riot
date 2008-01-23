@@ -47,7 +47,6 @@ import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
 import org.riotfamily.media.model.data.CroppedImageData;
-import org.riotfamily.media.model.data.ImageData;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -148,8 +147,7 @@ public class ImageUpload extends FileUpload {
 	}
 
 	protected RiotFile createRiotFile(MultipartFile multipartFile) throws IOException {
-		ImageData data = new ImageData(multipartFile);
-		return new RiotImage(data);
+		return new RiotImage(multipartFile);
 	}
 	
 	protected void validateFile(RiotFile file) {

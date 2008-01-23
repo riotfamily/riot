@@ -12,12 +12,17 @@
 			<generator class="native" />
 		</id>
 		<discriminator column="`type`" type="string" />
+		<set name="files" inverse="true" lazy="true">
+			<key column="fileData" />
+			<one-to-many class="org.riotfamily.media.model.RiotFile" />
+		</set>
 		<property name="fileName" />
 		<property name="contentType" />
 		<property name="size" />
 		<property name="creationDate" />
 		<property name="owner" />
-		<property name="uri" />
+		<property name="md5" />
+		<property name="uri" unique="true" />
 		<subclass name="ImageData" discriminator-value="img">
 			<property name="width" />
 			<property name="height" />

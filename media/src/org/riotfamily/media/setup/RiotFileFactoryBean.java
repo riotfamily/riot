@@ -24,7 +24,6 @@
 package org.riotfamily.media.setup;
 
 import org.riotfamily.media.model.RiotFile;
-import org.riotfamily.media.model.data.FileData;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
@@ -45,6 +44,6 @@ public class RiotFileFactoryBean extends AbstractFactoryBean {
 	}
 	
 	protected Object createInstance() throws Exception {
-		return new RiotFile(new FileData(resource.getFile()));
+		return new RiotFile(resource.getFile());
 	}
 }

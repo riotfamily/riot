@@ -23,7 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.model;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.riotfamily.media.model.data.VideoData;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -37,6 +41,14 @@ public class RiotVideo extends RiotFile {
 
 	public RiotVideo(VideoData data) {
 		super(data);
+	}
+	
+	public RiotVideo(File file) throws IOException {
+		super(new VideoData(file));
+	}
+	
+	public RiotVideo(MultipartFile multipartFile) throws IOException {
+		super(new VideoData(multipartFile));
 	}
 	
 	public RiotFile createCopy() {
