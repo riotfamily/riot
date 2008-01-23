@@ -218,7 +218,7 @@ public final class ServletUtils {
 				return "/";
 			}
 			int dotIndex = path.lastIndexOf('.');
-			if (dotIndex >= 0) {
+			if (dotIndex >= 0 && dotIndex > path.lastIndexOf('/')) {
 				path = path.substring(0, dotIndex);
 			}
 		}
