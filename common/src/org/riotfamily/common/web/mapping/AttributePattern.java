@@ -49,7 +49,7 @@ public class AttributePattern {
 			Pattern.compile("\\\\\\*");
 
 	private static final Pattern DOUBLE_STAR_PATTERN =
-			Pattern.compile("\\\\\\*\\\\\\*");
+			Pattern.compile("\\\\\\*\\\\\\*(?:/\\\\\\*)?");
 	
 	private static final String STAR = "*";
 
@@ -83,7 +83,7 @@ public class AttributePattern {
 		regex = ATTRIBUTE_NAME_PATTERN.matcher(antPattern).replaceAll("(*$3)"); // /resources/*/(**)
 		regex = "^" + FormatUtils.escapeChars(regex, ".+*?{^$", '\\') + "$"; // ^/resources/\*/(\*\*)$
 		regex = DOUBLE_STAR_PATTERN.matcher(regex).replaceAll(".*?"); // ^/resources/\*/(.*?)$
-		regex = STAR_PATTERN.matcher(regex).replaceAll("[^/]*"); // ^/resources/[^/]*/.*?$
+		regex = STAR_PATTERN.matcher(regex).replaceAll("[^/]*"); // ^/resources/[^/]*/(.*?)$
 		return regex;
 	}
 
