@@ -35,16 +35,12 @@ public class BooleanWrapper extends ValueWrapper {
 	public BooleanWrapper() {
 	}
 
-	public void wrap(Object value) {
+	public void setValue(Object value) {
 		this.bit = (Boolean) value;
 	}
 
 	public Object getValue() {
 		return bit;
-	}
-	
-	public void setValue(Object value) {
-		bit = (Boolean) value;
 	}
 	
 	public ValueWrapper deepCopy() {

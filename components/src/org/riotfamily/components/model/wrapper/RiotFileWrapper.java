@@ -36,7 +36,7 @@ public class RiotFileWrapper extends ValueWrapper {
 	public RiotFileWrapper() {
 	}
 
-	public void wrap(Object object) {
+	public void setValue(Object object) {
 		this.file = (RiotFile) object;
 	}
 
@@ -44,10 +44,6 @@ public class RiotFileWrapper extends ValueWrapper {
 		return file;
 	}
 
-	public void setValue(Object value) {
-		file = (RiotFile) value;
-	}
-	
 	public ValueWrapper deepCopy() {
 		RiotFileWrapper copy = new RiotFileWrapper();
 		copy.wrap(file.createCopy());

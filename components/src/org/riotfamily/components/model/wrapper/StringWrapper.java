@@ -26,7 +26,7 @@ package org.riotfamily.components.model.wrapper;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.6
+ * @since 7.0
  */
 public class StringWrapper extends ValueWrapper {
 
@@ -35,16 +35,12 @@ public class StringWrapper extends ValueWrapper {
 	public StringWrapper() {
 	}
 
-	public void wrap(Object value) {
+	public void setValue(Object value) {
 		this.string = (String) value;
 	}
 
 	public Object getValue() {
 		return string;
-	}
-	
-	public void setValue(Object value) {
-		string = (String) value;
 	}
 	
 	public ValueWrapper deepCopy() {

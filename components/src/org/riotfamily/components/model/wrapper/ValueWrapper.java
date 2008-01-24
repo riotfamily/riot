@@ -38,7 +38,9 @@ public abstract class ValueWrapper {
 		return this.id;
 	}
 
-	public abstract void wrap(Object value);
+	public void wrap(Object value) {
+		setValue(value);
+	}
 	
 	public Object unwrap() {
 		return getValue();

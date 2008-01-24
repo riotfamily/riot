@@ -23,28 +23,44 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model.wrapper;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.6
+ * @since 7.0
  */
 public class NumberWrapper extends ValueWrapper {
 
-	private Number number;
+	private BigDecimal number;
 
-	public NumberWrapper() {
-	}
-
-	public void wrap(Object value) {
-		this.number = (Number) value;
+	public void setValue(Object value) {
+		if (value instanceof BigDecimal) {
+			this.number = (BigDecimal) value;
+		}
+		else if (value instanceof BigInteger) {
+			this.number = new BigDecimal((BigInteger) value);
+		}
+		else if (value instanceof Integer) {
+			this.number = new BigDecimal(((Integer) value).intValue());
+		}
+		else if (value instanceof Short) {
+			this.number = new BigDecimal(((Short) value).intValue());
+		}
+		else if (value instanceof Long) {
+			this.number = new BigDecimal(((Long) value).longValue());
+		}
+		else if (value instanceof Double) {
+			this.number = new BigDecimal(((Double) value).doubleValue());
+		}
+		else if (value instanceof Float) {
+			this.number = new BigDecimal(((Float) value).doubleValue());
+		}
 	}
 
 	public Object getValue() {
 		return number;
-	}
-	
-	public void setValue(Object value) {
-		number = (Number) value;
 	}
 	
 	public ValueWrapper deepCopy() {

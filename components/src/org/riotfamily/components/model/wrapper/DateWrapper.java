@@ -28,7 +28,7 @@ import java.util.Date;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.6
+ * @since 7.0
  */
 public class DateWrapper extends ValueWrapper {
 
@@ -37,16 +37,12 @@ public class DateWrapper extends ValueWrapper {
 	public DateWrapper() {
 	}
 
-	public void wrap(Object value) {
+	public void setValue(Object value) {
 		this.date = (Date) value;
 	}
 
 	public Object getValue() {
 		return date;
-	}
-	
-	public void setValue(Object value) {
-		date = (Date) value;
 	}
 	
 	public ValueWrapper deepCopy() {
