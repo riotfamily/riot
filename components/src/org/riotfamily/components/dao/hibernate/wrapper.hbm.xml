@@ -30,7 +30,7 @@
 		<subclass name="ListWrapper" discriminator-value="list">
 			<list name="wrapperList" access="field" table="riot_value_list_items" cascade="all-delete-orphan" lazy="false">
 				<key column="list" />
-				<index column="pos" />
+				<index column="list_pos" />
 				<one-to-many class="ValueWrapper" />
 			</list>
 		</subclass>
@@ -40,12 +40,6 @@
 				<index column="map_key" type="string" />
 				<one-to-many class="ValueWrapper" />
 			</map>
-		</subclass>
-		<subclass name="EntityReferenceWrapper" discriminator-value="any">
-			<any name="reference" id-type="serializable">
-				<column name="table_name" />
-				<column name="ref" />
-			</any>
 		</subclass>
 	</class>
 
