@@ -7,13 +7,12 @@
 <wb-resource deploy-path="/" source-path="/pages/src"/>
 <wb-resource deploy-path="/" source-path="/forms/src"/>
 <wb-resource deploy-path="/" source-path="/common/src"/>
-<wb-resource deploy-path="/" source-path="/ant/src"/>
-<wb-resource deploy-path="/" source-path="/forms/tiger"/>
 <wb-resource deploy-path="/" source-path="/revolt/src"/>
 <wb-resource deploy-path="/" source-path="/revolt/test"/>
 <wb-resource deploy-path="/" source-path="/website/src"/>
 <wb-resource deploy-path="/" source-path="/components/src"/>
-<wb-resource deploy-path="/" source-path="/test"/>
 <wb-resource deploy-path="/" source-path="/media/src"/>
+<wb-resource deploy-path="/" source-path="/crawler/src"/>
+<wb-resource deploy-path="/" source-path="/search/src"/>
 </wb-module>
 </project-modules>

@@ -1,0 +1,7 @@
+<project name="riot-crawler" default="compile">
+
+	<property name="module.title" value="Riot Crawler Module" />
+	
+	<import file="../module-build.xml" />
+
+</project>

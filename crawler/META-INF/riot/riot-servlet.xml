@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	
+	<bean id="crawler" class="org.riotfamily.crawler.Crawler">
+		<property name="startPage" value="${riot.crawler.startPage}" />
+	</bean>
+	
+	<bean name="/crawler/status" class="org.riotfamily.crawler.CrawlerController">
+		<constructor-arg ref="crawler" />
+	</bean>
+			
+	<bean id="crawlerJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="crawler" />
+		<property name="targetMethod" value="run" />
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	    <property name="triggers">
+			<list>
+				<bean class="org.riotfamily.crawler.scheduling.SwitchableSimpleTriggerBean">
+					<property name="jobDetail" ref="crawlerJobDetail" />
+					<property name="repeatCount" value="0" />
+					<property name="startDelay" value="${riot.crawler.startDelay=60000}" />
+				</bean>
+				<bean class="org.springframework.scheduling.quartz.CronTriggerBean">
+					<property name="jobDetail" ref="crawlerJobDetail" />
+					<property name="cronExpression" value="${riot.crawler.cronExpression=0 0 4 * * ?}" />
+				</bean>
+			</list>
+	    </property>
+    </bean>
+ 	
+</beans>

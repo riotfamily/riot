@@ -11,6 +11,8 @@
 	<classpathentry kind="src" path="riot-hibernate/src"/>
 	<classpathentry kind="src" path="website/src"/>
 	<classpathentry kind="src" path="media/src"/>
+	<classpathentry kind="src" path="crawler/src"/>
+	<classpathentry kind="src" path="search/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
@@ -43,5 +45,12 @@
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
 	<classpathentry kind="lib" path="lib/yuicompressor.jar"/>
+	<classpathentry kind="lib" path="lib/quartz.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-analyzers.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-core.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-highlighter.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-snowball.jar"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient.jar"/>
+	<classpathentry kind="lib" path="lib/htmlparser.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
