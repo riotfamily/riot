@@ -46,4 +46,17 @@
 		</xsd:complexType>
 	</xsd:element>
 	
+	<xsd:element name="if-present">
+		<xsd:complexType>
+			<xsd:choice minOccurs="1" maxOccurs="unbounded">
+				<xsd:element ref="properties" />
+				<xsd:element ref="bean" />
+				<xsd:element ref="put" />
+				<xsd:element ref="add" />
+				<xsd:element ref="beans:bean" />
+			</xsd:choice>
+			<xsd:attribute name="ref" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+	
 </xsd:schema>

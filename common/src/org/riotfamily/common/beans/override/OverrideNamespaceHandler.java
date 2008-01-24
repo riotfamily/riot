@@ -25,14 +25,20 @@ package org.riotfamily.common.beans.override;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.riotfamily.common.beans.xml.GenericBeanDefinitionParser;
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
+import org.riotfamily.common.xml.XmlUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
+import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -43,10 +49,38 @@ import org.w3c.dom.Element;
 public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 	public void init() {
+		registerBeanDefinitionParser("if-present", new ConditionalParser());
 		registerBeanDefinitionParser("properties", new PropertyOverrideParser());
 		registerBeanDefinitionParser("put", new MapMergeParser());
 		registerBeanDefinitionParser("add", new ListMergeParser());
 		registerBeanDefinitionParser("bean", new BeanOverrideParser());
+	}
+	
+	private static class ConditionalParser implements BeanDefinitionParser {
+
+		public BeanDefinition parse(Element element, ParserContext parserContext) {
+			BeanDefinitionParserDelegate delegate = parserContext.getDelegate();
+			BeanDefinitionRegistry registry = parserContext.getRegistry();
+			String ref = element.getAttribute("ref");
+			if (registry.containsBeanDefinition(ref)) {
+				Iterator it = XmlUtils.getChildElements(element).iterator();
+				while (it.hasNext()) {
+					Element child = (Element) it.next();
+					if (delegate.isDefaultNamespace(child.getNamespaceURI())) {
+						BeanDefinitionHolder bdh = delegate.parseBeanDefinitionElement(child);
+						String id = bdh.getBeanName();
+						if (id != null) {
+							registry.registerBeanDefinition(id, bdh.getBeanDefinition());
+						}
+					}
+					else {
+						BeanDefinition bd = delegate.parseCustomElement(child);
+					}
+				}
+			}
+			return null;
+		}
+		
 	}
 	
 	private static class PropertyOverrideParser extends GenericBeanDefinitionParser {
