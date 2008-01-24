@@ -113,16 +113,13 @@ public class PageResolver {
 				// REVISIT: Müssen wir das wirklich hier nochmal machen?
 				path = ServletUtils.getOriginatingPathWithoutServletMapping(request);
 				path = site.stripPrefix(path);
-				// REVISIT: Ist das gefährlich? Für Folder requests wie /products/ ...
 				if (path.endsWith("/")) {
 					path = path.substring(0, path.length() - 1);
 				}
-
+				log.debug("Resolved Path: " + path);
 				request.setAttribute(PATH_ATTRIBUTE, path);
 			}
 		}
-
-		log.debug("Path: " + path);
 		return path;
 	}
 	
@@ -130,10 +127,9 @@ public class PageResolver {
 		Site site = (Site) request.getAttribute(SITE_ATTRIBUTE);
 		if (site == null) {
 			site = resolveSite(request);
+			log.debug("Resolved Site: " + site);
 			request.setAttribute(SITE_ATTRIBUTE, site);
 		}
-
-		log.debug("Site: " + site);
 		return site; 
 	}
 
@@ -141,10 +137,9 @@ public class PageResolver {
 		Page page = (Page) request.getAttribute(PAGE_ATTRIBUTE);
 		if (page == null) {
 			page = resolvePage(request);
+			log.debug("Reolved Page: " + page);
 			request.setAttribute(PAGE_ATTRIBUTE, page);
 		}
-
-		log.debug("Page: " + page);
 		return page;
 	}
 	
