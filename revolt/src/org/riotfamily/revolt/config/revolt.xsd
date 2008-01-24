@@ -22,6 +22,7 @@
 			</xsd:sequence>
 			<xsd:attribute name="module" type="xsd:string" use="required" />
 			<xsd:attribute name="data-source" type="xsd:string" use="required" />
+			<xsd:attribute name="depends" type="xsd:string" use="optional" />
 		</xsd:complexType>		
 	</xsd:element>
 	

@@ -11,9 +11,7 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-7.0.xsd">
 
-	<!-- 
 	<import resource="classpath:org/riotfamily/media/runtime/db-schema.xml"/>
-    -->
     
 	<override:add ref="sessionFactory" property="mappingLocations">
 		<value>classpath:org/riotfamily/media/dao/hibernate/file.hbm.xml</value>

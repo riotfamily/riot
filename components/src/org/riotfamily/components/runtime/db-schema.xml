@@ -8,8 +8,7 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-	<!-- 
-	<db:history module="components" data-source="riotDataSource">
+	<db:history module="components" data-source="riotDataSource" depends="media">
 		<db:change-set id="initial">
 			<db:create-table name="riot_component_lists">
 				<db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
@@ -22,57 +21,90 @@
 				<db:column name="lastModified" type="TIMESTAMP" />
 			</db:create-table>
 			<db:add-unique-constraint table="riot_component_lists" name="riot_components_list_key" on="`type`,`path`,slot,parent" />
-
-			<db:create-table name="riot_version_containers">
+			
+			<db:create-table name="riot_content_containers">
 				<db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
-				<db:column name="live_list" type="BIGINT" />
-				<db:column name="live_pos" type="INTEGER" />
-				<db:column name="preview_list" type="BIGINT" />
-				<db:column name="preview_pos" type="INTEGER" />
+				<db:column name="container_type" type="VARCHAR" length="255" not-null="true" />
 				<db:column name="live_version" type="BIGINT" />
 				<db:column name="preview_version" type="BIGINT" />
+                <db:column name="component_type" type="VARCHAR" length="255" />
+				<db:column name="live_list" type="BIGINT" />
+				<db:column name="preview_list" type="BIGINT" />
+				<db:column name="live_pos" type="INTEGER" />
+				<db:column name="preview_pos" type="INTEGER" />
 			</db:create-table>
-
-			<db:add-foreign-key table="riot_version_containers" name="riot_components_live_list" references="riot_component_lists">
+			
+			<db:add-foreign-key name="riot_component_list_content_containers" table="riot_component_lists" references="riot_content_containers">
+			    <db:ref local="parent" foreign="id" />
+			</db:add-foreign-key>
+			
+			<db:add-foreign-key name="riot_content_container_live_component_list" table="riot_content_containers" references="riot_component_lists">
 				<db:ref local="live_list" foreign="id" />
 			</db:add-foreign-key>
-			<db:add-foreign-key table="riot_version_containers" name="riot_components_preview_list" references="riot_component_lists">
+			<db:add-foreign-key name="riot_content_container_preview_component_list" table="riot_content_containers" references="riot_component_lists">
 				<db:ref local="preview_list" foreign="id" />
 			</db:add-foreign-key>
 
-			<db:add-foreign-key table="riot_component_lists" name="riot_components_lists_parent" references="riot_version_containers">
-				<db:ref local="parent" foreign="id" />
-			</db:add-foreign-key>
-
-			<db:create-table name="riot_component_versions">
-				<db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
-				<db:column name="`type`" type="VARCHAR" length="255" />
-				<db:column name="container" type="BIGINT" />
-				<db:column name="dirty" type="BIT" />
+			<db:create-table name="riot_content_values">
+				<db:column name="content" type="BIGINT" not-null="true" primary-key="true" />
+                <db:column name="wrapper" type="BIGINT" not-null="true" primary-key="true" />
+				<db:column name="property" type="VARCHAR" length="255" not-null="true" />
 			</db:create-table>
-			<db:add-foreign-key table="riot_component_versions" name="riot_components_versions_container" references="riot_version_containers">
-				<db:ref local="container" foreign="id" />
-			</db:add-foreign-key>
-			<db:add-foreign-key table="riot_version_containers" name="riot_components_live_version" references="riot_component_versions">
-				<db:ref local="live_version" foreign="id" />
-			</db:add-foreign-key>
-			<db:add-foreign-key table="riot_version_containers" name="riot_components_preview_version" references="riot_component_versions">
-				<db:ref local="preview_version" foreign="id" />
-			</db:add-foreign-key>
 
-			<db:create-table name="riot_component_properties">
-				<db:column name="component_version" type="BIGINT" not-null="true" primary-key="true" />
-				<db:column name="`key`" type="VARCHAR" length="255" not-null="true" primary-key="true" />
-				<db:column name="elt" type="LONGVARCHAR" />
+			<db:create-table name="riot_contents">
+                <db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
+                <db:column name="container" type="BIGINT" />
+                <db:column name="dirty" type="BIT" />
 			</db:create-table>
 			
-			<db:create-table name="riot_component_file_storage_info">
-				<db:column name="`type`" type="VARCHAR" length="255" not-null="true" primary-key="true" />
-				<db:column name="property" type="VARCHAR" length="255" not-null="true" primary-key="true" />
-				<db:column name="fileStoreId" type="VARCHAR" length="255" />
-			</db:create-table>
+            <db:add-foreign-key name="riot_content_container_live_contents" table="riot_content_containers" references="riot_contents">
+                <db:ref local="live_version" foreign="id" />
+            </db:add-foreign-key>
+            <db:add-foreign-key name="riot_content_container_preview_contents" table="riot_content_containers" references="riot_contents">
+                <db:ref local="preview_version" foreign="id" />
+            </db:add-foreign-key>
+
+			<db:add-foreign-key name="riot_content_value_contents" table="riot_content_values" references="riot_contents">
+			    <db:ref local="content" foreign="id" />
+			</db:add-foreign-key>
+
+            <db:create-table name="riot_value_wrappers">
+                <db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
+                <db:column name="value_type" type="VARCHAR" length="255" not-null="true" />
+                <db:column name="string" type="LONGVARCHAR" />
+                <db:column name="bit" type="BIT" />
+                <db:column name="number" type="VARBINARY" length="255" />
+                <db:column name="date" type="TIMESTAMP" />
+                <db:column name="file" type="BIGINT" />
+                <db:column name="table_name" type="VARCHAR" length="255" />
+                <db:column name="ref" type="VARBINARY" length="255" />
+                <db:column name="list" type="BIGINT" />
+                <db:column name="pos" type="BIGINT" />
+                <db:column name="map" type="BIGINT" />
+                <db:column name="map_key" type="VARCHAR" length="255" />
+            </db:create-table>
+			
+			<db:add-foreign-key name="riot_content_value_wrappers" table="riot_content_values" references="riot_value_wrappers">
+                <db:ref local="wrapper" foreign="id" />
+            </db:add-foreign-key>
+
+			<db:add-foreign-key name="riot_content_containers" table="riot_contents" references="riot_content_containers">
+			    <db:ref local="container" foreign="id" />
+			</db:add-foreign-key>
+			
+			<db:add-foreign-key name="riot_list_wrapper" table="riot_value_wrappers" references="riot_value_wrappers">
+			    <db:ref local="list" foreign="id" />
+			</db:add-foreign-key>
+
+			<db:add-foreign-key name="riot_list_wrapper" table="riot_value_wrappers" references="riot_value_wrappers">
+			    <db:ref local="map" foreign="id" />
+			</db:add-foreign-key>
+            
+            <db:add-foreign-key name="riot_list_wrapper" table="riot_value_wrappers" references="riot_media_files">
+                <db:ref local="file" foreign="id" />
+            </db:add-foreign-key>
+            
 		</db:change-set>
 	</db:history>
-	-->
 	 
 </beans>

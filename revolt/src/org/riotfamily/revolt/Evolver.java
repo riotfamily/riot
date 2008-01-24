@@ -23,9 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -74,7 +78,7 @@ public class Evolver implements ApplicationContextAware {
 				applicationContext, EvolutionHistory.class).values();
 		
 		if (enabled) {
-			Iterator it = evolutions.iterator();
+			Iterator it = new EvolutionHistoryList(evolutions).iterator();
 			
 			while (it.hasNext()) {
 				EvolutionHistory history = (EvolutionHistory) it.next();
@@ -156,5 +160,4 @@ public class Evolver implements ApplicationContextAware {
 		}
 		return sb.toString();
 	}
-	
 }

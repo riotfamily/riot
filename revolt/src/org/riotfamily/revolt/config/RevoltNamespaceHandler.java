@@ -90,9 +90,17 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 			definition.setConstructorArgumentValues(ctorArgs);
 			MutablePropertyValues pv = new MutablePropertyValues();
 			pv.addPropertyValue("changeSets", parseChangeSets(element));
+			
+			String depends = element.getAttribute("depends");
+			if (depends != null) {
+				pv.addPropertyValue("depends",
+					StringUtils.tokenizeToStringArray(depends, ","));
+			}
+			
 			definition.setPropertyValues(pv);
 			BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, element.getAttribute("module"));
 			BeanDefinitionReaderUtils.registerBeanDefinition(holder, parserContext.getRegistry());
+			
 			return definition;
 		}
 		throw new IllegalArgumentException(

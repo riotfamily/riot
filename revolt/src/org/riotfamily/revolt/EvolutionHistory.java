@@ -24,6 +24,7 @@
 package org.riotfamily.revolt;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -45,6 +46,8 @@ import org.springframework.beans.factory.BeanNameAware;
 public class EvolutionHistory implements BeanNameAware {
 
 	private static final Log log = LogFactory.getLog(EvolutionHistory.class);
+	
+	private String[] depends = new String[0];
 	
 	private String moduleName;
 	
@@ -208,5 +211,12 @@ public class EvolutionHistory implements BeanNameAware {
 		appliedIds.add(changeSet.getId());
 		return logTable.getInsertScript(changeSet);
 	}
-		
+
+	public void setDepends(String[] depends) {
+		this.depends = depends;
+	}
+
+	public boolean dependsOn(EvolutionHistory history) {
+		return Arrays.asList(depends).contains(history.getModuleName());
+	}
 }

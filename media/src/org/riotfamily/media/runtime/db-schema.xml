@@ -1,0 +1,59 @@
+<beans
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:db="http://www.riotfamily.org/schema/revolt"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.riotfamily.org/schema/revolt
+        http://www.riotfamily.org/schema/revolt/revolt.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <db:history module="media" data-source="riotDataSource">
+        <db:change-set id="initial">
+        
+            <db:create-table name="riot_media_data">
+                <db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
+                <db:column name="`type`" type="VARCHAR" length="255" not-null="true" />
+                <db:column name="fileName" type="VARCHAR" length="255" />
+                <db:column name="contentType" type="VARCHAR" length="255" />
+                <db:column name="size" type="BIGINT" />
+                <db:column name="creationDate" type="TIMESTAMP" />
+                <db:column name="owner" type="VARCHAR" length="255" />
+                <db:column name="md5" type="VARCHAR" length="32" />
+                <db:column name="uri" type="VARCHAR" length="255" />
+                <db:column name="width" type="INTEGER" />
+                <db:column name="height" type="INTEGER" />
+                <db:column name="imgFormat" type="VARCHAR" length="255" />
+                <db:column name="original" type="BIGINT" />
+                <db:column name="x" type="INTEGER" />
+                <db:column name="y" type="INTEGER" />
+                <db:column name="scaledWidth" type="INTEGER" />
+                <db:column name="swfVersion" type="INTEGER" />
+                <db:column name="duration" type="BIGINT" />
+                <db:column name="bps" type="INTEGER" />
+                <db:column name="videoCodec" type="VARCHAR" length="255" />
+                <db:column name="fps" type="FLOAT" />
+                <db:column name="audioCodec" type="VARCHAR" length="255" />
+                <db:column name="samplingRate" type="INTEGER" />
+                <db:column name="stereo" type="BIT" />
+            </db:create-table>
+            
+            <db:add-unique-constraint name="riot_media_data_uri" table="riot_media_data" on="uri"/>
+            
+            <db:create-table name="riot_media_files">
+                <db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
+                <db:column name="`type`" type="VARCHAR" length="255" not-null="true" />
+                <db:column name="fileData" type="BIGINT" />
+            </db:create-table>
+            
+            <db:add-foreign-key name="riot_media_data_file" table="riot_media_data" references="riot_media_files" >
+                <db:ref local="original" foreign="id" />
+            </db:add-foreign-key>
+            <db:add-foreign-key name="riot_media_file_data" table="riot_media_files" references="riot_media_data" >
+                <db:ref local="fileData" foreign="id" />
+            </db:add-foreign-key>
+
+        </db:change-set>
+    </db:history>
+     
+</beans>
