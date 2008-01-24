@@ -26,6 +26,7 @@
 		<xsd:complexType>
 			<xsd:group ref="form:elements" />
 			<xsd:attribute name="hide" type="xsd:boolean" />
+			<xsd:attribute name="read-only" type="xsd:boolean" />
 		</xsd:complexType>
 	</xsd:element>
 
