@@ -45,6 +45,9 @@ public class SearchResult {
 	
 	private long searchDuration;
 	
+	private int page;
+	
+	private int pageSize;
 	
 	public void setHits(Hits hits, int offset, int maxResults, 
 			HighlightingContext highlightingContext) 
@@ -116,6 +119,22 @@ public class SearchResult {
 		public Object get(String key) {
 			return doc.get(key);
 		}
+	}
+
+	public int getPage() {
+		return this.page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	public int getPageSize() {
+		return this.pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
 	}
 	
 }

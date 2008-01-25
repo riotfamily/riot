@@ -138,9 +138,11 @@ public class SearchController implements Controller, InitializingBean {
 
 		SearchResult result = new SearchResult();
 		result.setOriginalQuery(queryString);
+		result.setPage(page);
+		result.setPageSize(pageSize);
 
 		if (!IndexReader.indexExists(indexDir)) {
-			return onEmptyIndex(queryString, request);
+			return onEmptyIndex(result, request);
 		}
 			
 		Query query = createQuery(queryString, request);
@@ -149,7 +151,7 @@ public class SearchController implements Controller, InitializingBean {
 			Filter filter = createFilter(request);
 			Hits hits = indexSearcher.search(query, filter);
 			if (hits.length() == 0) {
-				return onEmptyResult(queryString, request);
+				return onEmptyResult(result, request);
 			}
 			HighlightingContext highlightingContext =
 					resultHighlighter.createContext(indexSearcher, query);
@@ -157,28 +159,33 @@ public class SearchController implements Controller, InitializingBean {
 			result.setHits(hits, offset, pageSize, highlightingContext);
 			indexSearcher.close();
 			
-			Pager pager = new Pager(page, pageSize, result.getTotalHitCount());
-			pager.initialize(request, pagerPadding, pageParam);
-
-			return new ModelAndView(viewName)
-					.addObject(RESULT_MODEL_KEY, result)
-					.addObject(PAGER_MODEL_KEY, pager);
+			return onResultView(result, request);
 		}
 		else {
-			return onEmptyQuery(queryString, request);
+			return onEmptyQuery(result, request);
 		}
 	}
 
-	protected ModelAndView onEmptyIndex(String queryString, HttpServletRequest request) {
-		return onEmptyResult(queryString, request);
+	protected ModelAndView onResultView(SearchResult result, HttpServletRequest request) {
+		Pager pager = new Pager(result.getPage(), result.getPageSize(),
+			result.getTotalHitCount());
+		pager.initialize(request, pagerPadding, pageParam);
+
+		return new ModelAndView(viewName)
+			.addObject(RESULT_MODEL_KEY, result)
+			.addObject(PAGER_MODEL_KEY, pager);
 	}
 	
-	protected ModelAndView onEmptyQuery(String queryString, HttpServletRequest request) {
-		return onEmptyResult(queryString, request);
+	protected ModelAndView onEmptyIndex(SearchResult result, HttpServletRequest request) {
+		return onEmptyResult(result, request);
 	}
 	
-	protected ModelAndView onEmptyResult(String queryString, HttpServletRequest request) {
-		return new ModelAndView(viewName);
+	protected ModelAndView onEmptyQuery(SearchResult result, HttpServletRequest request) {
+		return onEmptyResult(result, request);
+	}
+	
+	protected ModelAndView onEmptyResult(SearchResult result, HttpServletRequest request) {
+		return new ModelAndView(viewName).addObject(RESULT_MODEL_KEY, result);
 	}
 	
 	protected Analyzer getAnalyzer(HttpServletRequest request) {

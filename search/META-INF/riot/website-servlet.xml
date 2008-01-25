@@ -1,13 +1,21 @@
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
+    xmlns:override="http://www.riotfamily.org/schema/common/override"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.riotfamily.org/schema/common/override
+        http://www.riotfamily.org/schema/common/override-7.0.xsd">
 
 	<bean id="riotSearchController" class="org.riotfamily.search.SearchController">
 		<property name="indexDir" value="${riot.index.location=/WEB-INF/temp/index}" />
 		<property name="analyzerFactory" ref="riotSearchAnalyzerFactory" />
 	</bean>
+	
+	<override:if-present ref="pageResolver">
+	    <override:bean ref="riotSearchController"
+	       class="org.riotfamily.search.site.SiteSearchController" merge="true" />
+	</override:if-present>
 
 </beans>
