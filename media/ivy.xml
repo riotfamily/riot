@@ -8,5 +8,6 @@
     <dependencies>
 	    <dependency org="riotfamily" name="riot-core" rev="${dep.riot.revision}" conf="*->@" />
         <dependency org="riotfamily" name="riot-hibernate" rev="${dep.riot.revision}" conf="*->@" />
+        <dependency org="opensymphony" name="quartz" rev="1.6.0" conf="runtime->default" />
     </dependencies>
 </ivy-module>

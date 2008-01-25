@@ -32,5 +32,25 @@
 			<property name="location" value="classpath:/org/riotfamily/media/runtime/resources/" />
 		</bean>
 	</override:add>
+	
+	<bean id="mediaCleanUpJobDetail" class="org.riotfamily.common.scheduling.TransactionalJobDetailFactoryBean">
+		<property name="callback">
+			<bean class="org.riotfamily.media.cleanup.CleanUpCallback">
+				<constructor-arg ref="mediaDao" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	    <property name="triggers">
+			<list>
+				<bean class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+					<property name="jobDetail" ref="mediaCleanUpJobDetail" />
+					<property name="repeatInterval" value="3600000" />
+					<property name="startDelay" value="60000" />
+				</bean>
+			</list>
+	    </property>
+    </bean>
 
 </beans>
