@@ -83,6 +83,10 @@ public class ContentContainer {
 		return liveVersion;
 	}
 	
+	public Map unwrapValues(boolean preview) {
+		return getContent(preview).unwrapValues();
+	}
+	
 	public boolean isDirty() {
 		return previewVersion != null;
 	}
@@ -91,16 +95,4 @@ public class ContentContainer {
 		return liveVersion != null;
 	}
 
-	public Map getValues(boolean preview) {
-		if (preview) {
-			return getLatestVersion().getValues();
-		}
-		return liveVersion != null ? liveVersion.getValues() : null;
-	}
-
-	public Object getValue(String key, boolean preview) {
-		Content version = preview ? getLatestVersion() : liveVersion;
-		return version != null ? version.getValue(key) : null;
-	}
-	
 }

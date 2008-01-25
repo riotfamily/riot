@@ -35,6 +35,7 @@ import java.util.Map;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.components.model.Content;
+import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.springframework.util.Assert;
 
 
@@ -243,7 +244,7 @@ public class Page {
 		this.pageProperties = versionContainer;
 	}
 
-	public Content getComponentVersion(boolean preview) {
+	public Content getContent(boolean preview) {
 		return preview ? getPageProperties().getLatestVersion()
 				: getPageProperties().getLiveVersion();
 	}
@@ -272,15 +273,19 @@ public class Page {
 	}
 	
 	public Map getLocalProperties(boolean preview) {
-		Content version = getComponentVersion(preview);
-		return version != null 
-				? version.getValues() 
+		Content content = getContent(preview);
+		return content != null 
+				? content.unwrapValues() 
 				: Collections.EMPTY_MAP;
 	}
 
 	public Object getProperty(String key, boolean preview) {
-		Content version = getComponentVersion(preview);
-		Object value = version.getValue(key);
+		Content version = getContent(preview);
+		Object value = null;
+		ValueWrapper wrapper = version.getWrapper(key);
+		if (wrapper != null) {
+			value = wrapper.unwrap();
+		}
 		if (value == null && getMasterPage() != null) {
 			value = getMasterPage().getProperty(key, preview);
 		}

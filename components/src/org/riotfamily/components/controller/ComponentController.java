@@ -116,7 +116,7 @@ public class ComponentController extends AbstractCacheableController {
 		if (contentType != null) {
 			response.setContentType(contentType);
 		}
-		return new ModelAndView(viewName, content.getValues());
+		return new ModelAndView(viewName, content.unwrapValues());
 	}
 
 }

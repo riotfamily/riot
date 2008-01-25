@@ -122,7 +122,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 */
 	public String getText(Long containerId, String property) {
 		ContentContainer container = componentDao.loadContentContainer(containerId);
-		Object value = container.getValue(property, true);
+		Object value = container.getContent(true).getValue(property);
 		return value != null ? value.toString() : null;
 	}
 
@@ -267,7 +267,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		if (properties != null) {
 			values.putAll(properties);
 		}
-		version.setValues(values);
+		version.wrapValues(values);
 		container.setPreviewVersion(version);
 		componentDao.saveContentContainer(container);
 		return container;

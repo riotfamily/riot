@@ -113,7 +113,7 @@ public class Content {
 		this.wrappers = contents;
 	}
 	
-	public Map getValues() {
+	public Map unwrapValues() {
 		HashMap result = new HashMap();
 		if (wrappers != null) {
 			Iterator it = wrappers.entrySet().iterator();
@@ -131,7 +131,7 @@ public class Content {
 		return result;
 	}
 	
-	public void setValues(Map values) {
+	public void wrapValues(Map values) {
 		if (values != null) {
 			Iterator it = values.entrySet().iterator();
 			while (it.hasNext()) {
