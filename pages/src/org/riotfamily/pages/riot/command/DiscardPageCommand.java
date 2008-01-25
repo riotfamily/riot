@@ -77,6 +77,12 @@ public class DiscardPageCommand extends AbstractCommand {
 					"Do you really want to delete '"
 					 + page.getTitle(true) + "'?");
 		}
+		else if (page.isDirty()) {
+			return context.getMessageResolver().getMessage("confirm.discard",
+					new Object[] {page.getTitle(true)},
+					"Do you really want to discard the changes made to '"
+					 + page.getTitle(true) + "'?");
+		}
 		return null;
 	}
 	
