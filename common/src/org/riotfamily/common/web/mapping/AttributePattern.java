@@ -49,7 +49,7 @@ public class AttributePattern {
 			Pattern.compile("\\\\\\*");
 
 	private static final Pattern DOUBLE_STAR_PATTERN =
-			Pattern.compile("\\\\\\*\\\\\\*(?:/\\\\\\*)?");
+			Pattern.compile("/?\\\\\\*\\\\\\*");
 	
 	private static final String STAR = "*";
 
