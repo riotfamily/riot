@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.cachius.Cache;
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
 
 /**
@@ -36,24 +37,24 @@ import org.riotfamily.pages.model.Site;
  */
 public final class PageCacheUtils {
 
-	private static final String PAGE_PREFIX = Page.class.getName() + '#';
+	private static final String PAGE_PREFIX = PageNode.class.getName() + '#';
 	
 	private static final String TOP_LEVEL_PAGES_PREFIX = Site.class.getName() 
-			+ ":topLevelPages#";
+			+ ".topLevelPages#";
 	
-	private static final String CHILD_PAGE_PREFIX = Page.class.getName() 
-			+ ":childPages#";
+	private static final String CHILD_PAGE_PREFIX = PageNode.class.getName() 
+			+ ".childPages#";
 	
 	private PageCacheUtils() {
 	}
 	
 	/**
 	 * Returns the tag for the specified page. The generated tag will be
-	 * "<code>org.riotfamily.pages.model.Page#<i>&lt;id&gt;</i></code>",
-	 * where <i>&lt;id&gt;</i> is the id of the given page.
+	 * "<code>org.riotfamily.pages.model.PageNode#<i>&lt;id&gt;</i></code>",
+	 * where <i>&lt;id&gt;</i> is the id of the page's node.
 	 */
 	public static String getPageTag(Page page) {
-		return PAGE_PREFIX + page.getId();
+		return PAGE_PREFIX + page.getNode().getId();
 	}
 	
 	/**
@@ -69,11 +70,11 @@ public final class PageCacheUtils {
 	/**
 	 * Returns the tag for the child pages of the specified page. 
 	 * The generated tag will be 
-	 * "<code>org.riotfamily.pages.model.Page:childPages#&lt;id&gt;</code>",
-	 * where <i>&lt;id&gt;</i> is the id of the given parent page.
+	 * "<code>org.riotfamily.pages.model.PageNode:childPages#&lt;id&gt;</code>",
+	 * where <i>&lt;id&gt;</i> is the id of the given parent page's node.
 	 */
 	public static String getChildPagesTag(Page page) {
-		return CHILD_PAGE_PREFIX + page.getId();
+		return CHILD_PAGE_PREFIX + page.getNode().getId();
 	}
 	
 	/**
@@ -205,6 +206,12 @@ public final class PageCacheUtils {
 	public static void invalidateSiblings(Cache cache, Page page) {
 		if (cache != null) {
 			cache.invalidateTaggedItems(getSiblingsTag(page));
+		}
+	}
+	
+	public static void invalidatePage(Cache cache, Page page) {
+		if (cache != null) {
+			cache.invalidateTaggedItems(getPageTag(page));
 		}
 	}
 	

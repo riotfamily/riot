@@ -187,6 +187,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 	}
 	
 	private void invalidateCacheItems(Page page) {
+		PageCacheUtils.invalidatePage(cache, page);
 		PageCacheUtils.invalidateSiblings(cache, page);
 	}
 
