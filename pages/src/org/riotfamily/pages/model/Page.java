@@ -258,20 +258,20 @@ public class Page {
 		return masterPage;
 	}
 	
-	public Map getMergedProperties(boolean preview) {
+	public Map getProperties(boolean preview) {
 		Map mergedProperties;
 		Page masterPage = getMasterPage();
 		if (masterPage != null) {
-			mergedProperties = masterPage.getMergedProperties(preview);
+			mergedProperties = masterPage.getProperties(preview);
 		}
 		else {
 			mergedProperties = new HashMap();
 		}
-		mergedProperties.putAll(getProperties(preview));
+		mergedProperties.putAll(getLocalProperties(preview));
 		return mergedProperties;
 	}
 	
-	public Map getProperties(boolean preview) {
+	public Map getLocalProperties(boolean preview) {
 		Content version = getComponentVersion(preview);
 		return version != null 
 				? version.getValues() 
@@ -280,7 +280,11 @@ public class Page {
 
 	public Object getProperty(String key, boolean preview) {
 		Content version = getComponentVersion(preview);
-		return version != null ? version.getValue(key) : null;
+		Object value = version.getValue(key);
+		if (value == null && getMasterPage() != null) {
+			value = getMasterPage().getProperty(key, preview);
+		}
+		return value;
 	}
 
 	public String getTitle(boolean preview) {

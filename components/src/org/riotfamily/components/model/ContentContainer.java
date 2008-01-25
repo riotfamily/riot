@@ -76,6 +76,13 @@ public class ContentContainer {
 		return previewVersion != null ? previewVersion : liveVersion;
 	}
 
+	public Content getContent(boolean preview) {
+		if (preview && previewVersion != null) {
+			return previewVersion;
+		}
+		return liveVersion;
+	}
+	
 	public boolean isDirty() {
 		return previewVersion != null;
 	}

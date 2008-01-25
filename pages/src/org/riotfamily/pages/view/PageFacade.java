@@ -37,10 +37,10 @@ import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.servlet.RequestPathCompleter;
 import org.riotfamily.components.EditModeUtils;
+import org.riotfamily.components.model.Content;
 import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
-import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 
 /**
@@ -174,15 +174,23 @@ public class PageFacade {
 		return page.getHandlerName();
 	}
 
-	public PageProperties getPageProperties() {
-		return page.getPageProperties();
+	public Long getContentId() {
+		Content content = page.getPageProperties().getContent(preview);
+		return content != null ? content.getId() : null;
 	}
 		
 	public Map getProperties() {
 		if (properties == null) {
-			properties = page.getMergedProperties(preview);
+			properties = page.getProperties(preview);
 		}
 		return properties;
+	}
+	
+	/**
+	 * @see http://freemarker.org/docs/api/freemarker/ext/beans/BeanModel.html#get(java.lang.String)
+	 */
+	public Object get(String key) {
+		return page.getProperty(key, preview);
 	}
 
 	public String getTitle() {
@@ -228,4 +236,5 @@ public class PageFacade {
 	public int hashCode() {
 		return page.hashCode() + (preview ? 1 : 0);
 	}
+
 }
