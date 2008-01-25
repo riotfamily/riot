@@ -26,6 +26,7 @@ package org.riotfamily.forms.element.select;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -102,10 +103,19 @@ public abstract class AbstractMultiSelectElement
 		if (collection == null) {
 			collection = (Collection) BeanUtils.instantiateClass(collectionClass);
 		}
-		else {
-			collection.clear();
+
+		ArrayList oldValues = new ArrayList(collection);
+		collection.clear();
+		
+		Iterator it = selectedValues.iterator();
+		while (it.hasNext()) {
+			Object value = (Object) it.next();
+			int i = oldValues.indexOf(value);
+			if (i >= 0) {
+				value = oldValues.get(i);
+			}
+			collection.add(value);
 		}
-		collection.addAll(selectedValues);
 		return collection;
 	}
 

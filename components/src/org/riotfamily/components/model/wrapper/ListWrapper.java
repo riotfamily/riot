@@ -173,14 +173,14 @@ public class ListWrapper extends ValueWrapper implements List {
 
 	public int indexOf(Object o) {
 		if (wrapperList == null) {
-			return 0;	
+			return -1;	
 		}
 		return wrapperList.indexOf(o);
 	}
 	
 	public int lastIndexOf(Object o) {
 		if (wrapperList == null) {
-			return 0;	
+			return -1;	
 		}
 		return wrapperList.lastIndexOf(o);
 	}

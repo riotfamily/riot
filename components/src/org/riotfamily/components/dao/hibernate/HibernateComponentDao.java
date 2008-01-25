@@ -39,7 +39,6 @@ import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ComponentListLocation;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
-import org.riotfamily.components.model.ContentOptions;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
 import org.riotfamily.riot.security.AccessController;
 
@@ -289,12 +288,4 @@ public class HibernateComponentDao implements ComponentDao {
 		return discarded;
 	}
 
-	public ContentOptions loadContentOptions(String id) {
-		return (ContentOptions) hibernate.get(ContentOptions.class, id);
-	}
-
-	public void saveContentOptions(ContentOptions options) {
-		hibernate.save(options);
-	}
-		
 }

@@ -28,14 +28,14 @@
 			<many-to-one name="file" access="field" fetch="join" cascade="all" />
 		</subclass>
 		<subclass name="ListWrapper" discriminator-value="list">
-			<list name="wrapperList" access="field" table="riot_value_list_items" cascade="all-delete-orphan" lazy="false">
+			<list name="wrapperList" access="field" cascade="all-delete-orphan" lazy="false">
 				<key column="list" />
 				<index column="list_pos" />
 				<one-to-many class="ValueWrapper" />
 			</list>
 		</subclass>
 		<subclass name="MapWrapper" discriminator-value="map">
-			<map name="wrapperMap" access="field" table="riot_value_map_entries" cascade="all-delete-orphan" lazy="false">
+			<map name="wrapperMap" access="field" cascade="all-delete-orphan" lazy="false">
 				<key column="map" />
 				<index column="map_key" type="string" />
 				<one-to-many class="ValueWrapper" />

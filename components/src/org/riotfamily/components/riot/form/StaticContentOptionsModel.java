@@ -23,35 +23,36 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.riot.form;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
-import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.model.wrapper.ValueWrapper;
+import org.riotfamily.components.model.wrapper.ValueWrapperService;
+import org.riotfamily.forms.options.OptionsModel;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class StaticContentOptionsModel extends AbstractContentOptionsModel {
+public class StaticContentOptionsModel implements OptionsModel {
 
 	private Collection values;
-	
-	private boolean updated;
-	
-	public StaticContentOptionsModel(ComponentDao componentDao) {
-		super(componentDao);
-	}
-
+		
 	public void setValues(Collection values) {
 		this.values = values;
 	}
-	
-	protected Collection getValues() {
-		return values;
+
+	public Collection getOptionValues() {
+		ArrayList optionValues = new ArrayList();
+		Iterator it = values.iterator();
+		while (it.hasNext()) {
+			ValueWrapper wrapper = ValueWrapperService.wrap(it.next());
+			optionValues.add(wrapper);
+		}
+		return optionValues;
 	}
 	
-	protected boolean updateRequired() {
-		boolean firstTime = !updated;
-		updated = true;
-		return firstTime;
-	}
+	
+	
 }

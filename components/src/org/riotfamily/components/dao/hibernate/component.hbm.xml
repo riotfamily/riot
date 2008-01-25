@@ -75,11 +75,4 @@
 		<property name="dirty" />
 	</class>
 	
-	<class name="ContentOptions" table="riot_content_options">
-		<id name="id">
-			<generator class="assigned" />
-		</id>
-		<many-to-one name="listWrapper" column="list" access="field" cascade="save-update" />
-	</class>
-	
 </hibernate-mapping>
