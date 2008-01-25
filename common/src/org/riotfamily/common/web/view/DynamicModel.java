@@ -26,6 +26,9 @@ package org.riotfamily.common.web.view;
 /**
  * @author Alf Werder <alf dot werder at artundweise dot de>
  * @since 6.5
+ * @deprecated This interface is not needed as FreeMarker invokes the 
+ * get(String) method by convention if no matching property is found.
+ * @see http://freemarker.org/docs/api/freemarker/ext/beans/BeanModel.html#get(java.lang.String)
  */
 public interface DynamicModel {
 	public Object get(String key);

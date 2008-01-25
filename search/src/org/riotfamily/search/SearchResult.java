@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Hits;
-import org.riotfamily.common.web.view.DynamicModel;
 import org.riotfamily.search.ResultHighlighter.HighlightingContext;
 import org.riotfamily.search.index.DocumentBuilder;
 import org.springframework.util.StringUtils;
@@ -85,7 +84,7 @@ public class SearchResult {
 		return this.totalHitCount;
 	}
 	
-	public class Item implements DynamicModel {
+	public class Item {
 		
 		private Document doc;
 		
