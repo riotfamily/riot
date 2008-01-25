@@ -73,13 +73,11 @@
                 <db:column name="value_type" type="VARCHAR" length="255" not-null="true" />
                 <db:column name="string" type="LONGVARCHAR" />
                 <db:column name="bit" type="BIT" />
-                <db:column name="number" type="VARBINARY" length="255" />
+                <db:column name="number" type="NUMERIC" length="255" />
                 <db:column name="date" type="TIMESTAMP" />
                 <db:column name="file" type="BIGINT" />
-                <db:column name="table_name" type="VARCHAR" length="255" />
-                <db:column name="ref" type="VARBINARY" length="255" />
                 <db:column name="list" type="BIGINT" />
-                <db:column name="pos" type="BIGINT" />
+                <db:column name="list_pos" type="BIGINT" />
                 <db:column name="map" type="BIGINT" />
                 <db:column name="map_key" type="VARCHAR" length="255" />
             </db:create-table>
