@@ -41,6 +41,7 @@ import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.media.model.RiotFile;
+import org.riotfamily.media.model.RiotImage;
 import org.riotfamily.media.model.RiotSwf;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,6 +57,18 @@ public class FlashUpload extends FileUpload {
 			"swfobject/1.5/swfobject.js", "deconcept.SWFObject", 
 			Resources.SCRIPTACULOUS_EFFECTS);
 	
+	private int[] widths;
+
+	private int[] heights;
+
+	private int minWidth;
+
+	private int maxWidth;
+
+	private int minHeight;
+
+	private int maxHeight;
+
 	protected RiotFile createRiotFile(MultipartFile multipartFile) 
 			throws IOException {
 		
@@ -66,10 +79,99 @@ public class FlashUpload extends FileUpload {
 		return new PreviewElement();
 	}
 
+	public void setWidths(int[] widths) {
+		this.widths = widths;
+		if (widths != null) {
+			int min = Integer.MAX_VALUE;
+			int max = 0;
+			for (int i = 0; i < widths.length; i++) {
+				min = Math.min(min, widths[i]);
+				max = Math.max(max, widths[i]);
+			}
+			setMinWidth(min);
+			setMaxWidth(max);
+		}
+	}
+
+	public void setWidth(int width) {
+		setWidths(new int[] { width });
+	}
+
+	public void setHeights(int[] heights) {
+		this.heights = heights;
+		if (heights != null) {
+			int min = Integer.MAX_VALUE;
+			int max = 0;
+			for (int i = 0; i < heights.length; i++) {
+				min = Math.min(min, heights[i]);
+				max = Math.max(max, heights[i]);
+			}
+			setMinHeight(min);
+			setMaxHeight(max);
+		}
+	}
+
+	public void setHeight(int height) {
+		setHeights(new int[] {height});
+	}
+
+	public void setMinWidth(int minWidth) {
+		this.minWidth = minWidth;
+	}
+
+	public void setMaxWidth(int maxWidth) {
+		this.maxWidth = maxWidth;
+	}
+
+	public void setMinHeight(int minHeight) {
+		this.minHeight = minHeight;
+	}
+
+	public void setMaxHeight(int maxHeight) {
+		this.maxHeight = maxHeight;
+	}
+
 	protected void validateFile(RiotFile file) {
 		RiotSwf swf = (RiotSwf) file;
 		if (!swf.isValid()) {
 			ErrorUtils.reject(this, "flash.invalidFormat");
+		}
+		
+		int swfHeight = swf.getHeight();
+		int swfWidth = swf.getWidth();
+
+		if (widths != null) {
+			boolean match = false;
+			for (int i = 0; i < widths.length; i++) {
+				if (swfWidth == widths[i]) {
+					match = true;
+					break;
+				}
+			}
+			if (!match) {
+				ErrorUtils.reject(this, "flash.size.mismatch");
+				return;
+			}
+		}
+		else if (swfWidth < minWidth || (maxWidth > 0 && swfWidth > maxWidth)) {
+			ErrorUtils.reject(this, "flash.size.mismatch");
+			return;
+		}
+
+		if (heights != null) {
+			boolean match = false;
+			for (int i = 0; i < heights.length; i++) {
+				if (swfHeight == heights[i]) {
+					match = true;
+					break;
+				}
+			}
+			if (!match) {
+				ErrorUtils.reject(this, "flash.size.mismatch");
+			}
+		}
+		else if (swfHeight < minHeight || (maxHeight > 0 && swfHeight > maxHeight)) {
+			ErrorUtils.reject(this, "flash.size.mismatch");
 		}
 	}
 	
