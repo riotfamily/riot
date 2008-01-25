@@ -15,5 +15,6 @@
 		<dependency org="getahead" name="dwr" rev="2.0.1" conf="*->default" />
 		<dependency org="sun" name="jaf" rev="latest.release" conf="*->default" />
 		<dependency org="yahoo" name="yuicompressor" rev="2.2.5" conf="*->default" />
+		<dependency org="opensymphony" name="quartz" rev="1.6.0" conf="build->default" />
     </dependencies>
 </ivy-module>

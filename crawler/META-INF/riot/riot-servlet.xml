@@ -22,7 +22,7 @@
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 	    <property name="triggers">
 			<list>
-				<bean class="org.riotfamily.crawler.scheduling.SwitchableSimpleTriggerBean">
+				<bean class="org.riotfamily.common.scheduling.SwitchableSimpleTriggerBean">
 					<property name="jobDetail" ref="crawlerJobDetail" />
 					<property name="repeatCount" value="0" />
 					<property name="startDelay" value="${riot.crawler.startDelay=60000}" />

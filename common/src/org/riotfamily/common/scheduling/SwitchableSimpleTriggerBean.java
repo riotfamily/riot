@@ -1,4 +1,4 @@
-package org.riotfamily.crawler.scheduling;
+package org.riotfamily.common.scheduling;
 
 import java.text.ParseException;
 import java.util.Date;
