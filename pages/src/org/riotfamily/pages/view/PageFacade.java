@@ -41,6 +41,7 @@ import org.riotfamily.components.model.Content;
 import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 
 /**
@@ -179,6 +180,10 @@ public class PageFacade {
 		return content != null ? content.getId() : null;
 	}
 		
+	public PageProperties getPageProperties() {
+		return page.getPageProperties();
+	}
+
 	public Map getProperties() {
 		if (properties == null) {
 			properties = page.getProperties(preview);
