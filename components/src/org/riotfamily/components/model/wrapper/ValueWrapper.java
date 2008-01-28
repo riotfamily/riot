@@ -38,18 +38,40 @@ public abstract class ValueWrapper {
 		return this.id;
 	}
 
+	/**
+	 * Wraps the given value. The default implementation delegates the call to
+	 * {@link #setValue(Object)}.
+	 */
 	public void wrap(Object value) {
 		setValue(value);
 	}
 	
+	/**
+	 * Returns the wrapped value. The default implementation delegates the 
+	 * call to {@link #getValue()}. Subclasses that wrap complex values (values
+	 * with nested wrappers) must overwrite this method to perform a 
+	 * "deep-unwrapping".
+	 */
 	public Object unwrap() {
 		return getValue();
 	}
 	
+	/**
+	 * Returns the value that is passed to the form element when the value 
+	 * is edited. Subclasses will usually return the wrapped value, except for
+	 * complex wrappers (like {@link ListWrapper} and {@link MapWrapper}) which
+	 * return a self-reference.
+	 */
 	public abstract Object getValue();
 	
 	public abstract void setValue(Object value);
 	
+	/**
+	 * Creates a deep copy. Subclasses will usually just create a new wrapper 
+	 * instance and and invoke {@link #setValue(Object)} with the value returned
+	 * by {@link #getValue()}. Complex wrappers have to make sure that the 
+	 * deepCopy method is invoked for all nested values too. 
+	 */
 	public abstract ValueWrapper deepCopy();
 
 	/**
@@ -60,6 +82,9 @@ public abstract class ValueWrapper {
 		return null;
 	}
 
+	/**
+	 * Delegates the call to the hashCode method of the wrapped object. 
+	 */
 	public int hashCode() {
 		Object value = getValue();
 		if (value == this || value == null) {
@@ -68,6 +93,9 @@ public abstract class ValueWrapper {
 		return value.hashCode();
 	}
 	
+	/**
+	 * Delegates the call to the equals method of the wrapped object. 
+	 */
 	public boolean equals(Object obj) {
 		if (obj instanceof ValueWrapper) {
 			Object otherValue = ((ValueWrapper) obj).getValue();
@@ -78,6 +106,9 @@ public abstract class ValueWrapper {
 		return super.equals(obj);
 	}
 	
+	/**
+	 * Delegates the call to the toString method of the wrapped object. 
+	 */
 	public String toString() {
 		Object value = getValue();
 		if (value == this || value == null) {
