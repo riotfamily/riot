@@ -51,25 +51,40 @@ public class PageFormInitializer implements FormInitializer {
 	}
 
 	public void initForm(Form form) {
-		
 		String handlerName = null;
+		SelectBox sb = null;
 		Page parentPage = null;
 		if (form.isNew())  {
 			Object parent = FormUtils.loadParent(form);
 			if (parent instanceof Page) {
 				parentPage = (Page) parent;
 			}
+			String[] handlerNames = handlerNameHierarchy.getChildHandlerNameOptions(parentPage);
+			if (handlerNames.length > 0) {
+				sb = createHandlerNameBox(form, handlerNames);
+				handlerName = handlerNames[0];
+			}
+			else {
+				handlerName = "default";
+			}
 		}
 		else {
 			Page page = (Page) form.getBackingObject();
-			parentPage = page.getParentPage();
 			handlerName = page.getHandlerName();
 		}
 		
-		SelectBox sb = null;
-		String[] handlerNames = handlerNameHierarchy.getChildHandlerNameOptions(parentPage);
+		PagePropertiesEditor ppe = new PagePropertiesEditor(repository, 
+				getMasterPage(form), handlerName);
+		
+		if (sb != null) {
+			sb.addChangeListener(ppe);
+		}
+		form.addElement(ppe, "pageProperties");
+	}
+	
+	private SelectBox createHandlerNameBox(Form form, String[] handlerNames) {
 		if (handlerNames.length > 1) {
-			sb = new SelectBox();
+			SelectBox sb = new SelectBox();
 			sb.setRequired(true);
 			sb.setOptionsModel(handlerNames);
 			sb.setLabelMessageKey("page.handlerName.");
@@ -79,22 +94,9 @@ public class PageFormInitializer implements FormInitializer {
 			nodeForm.setRequired(true);
 			form.addElement(nodeForm, "node");
 			nodeForm.addElement(sb, "handlerName");
+			return sb;
 		}
-		
-		if (handlerName == null) {
-			if (handlerNames.length > 0) {
-				handlerName = handlerNames[0];
-			}
-			else {
-				handlerName = "default";
-			}
-		}
-		
-		PagePropertiesEditor ppe = new PagePropertiesEditor(repository, getMasterPage(form), handlerName);
-		if (sb != null) {
-			sb.addChangeListener(ppe);
-		}
-		form.addElement(ppe, "pageProperties");
+		return null;
 	}
 	
 	private Page getMasterPage(Form form) {

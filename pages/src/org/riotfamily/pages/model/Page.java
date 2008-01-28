@@ -292,6 +292,10 @@ public class Page {
 		return value;
 	}
 
+	public String getTitle() {
+		return getTitle(true);
+	}
+	
 	public String getTitle(boolean preview) {
 		Object title = getProperty(TITLE_PROPERTY, preview);
 		if (title != null) {
