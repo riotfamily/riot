@@ -8,6 +8,14 @@
 	<xsd:import namespace="http://www.riotfamily.org/schema/forms/form-config"
 		schemaLocation="http://www.riotfamily.org/schema/forms/form-config.xsd" />
 	
-	<xsd:element name="link" type="form:simple-editor" />
+	<xsd:element name="link">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="form:simple-editor">
+					<xsd:attribute name="cross-site" type="xsd:boolean" default="false" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
 	
 </xsd:schema>

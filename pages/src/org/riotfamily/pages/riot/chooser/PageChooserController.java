@@ -47,6 +47,8 @@ public class PageChooserController implements Controller {
 	
 	public static final String SITE_ID_PARAM = "site";
 	
+	public static final String CROSS_SITE_PARAM = "crossSite";
+	
 	private PageDao pageDao;
 
 	private PathCompleter pathCompleter;
@@ -92,7 +94,12 @@ public class PageChooserController implements Controller {
 		model.put("mode", ServletRequestUtils.getStringParameter(
 				request, "mode", "forms"));
 
-		model.put("sites", pageDao.listSites());
+		boolean crossSite = ServletRequestUtils.getBooleanParameter(
+				request, CROSS_SITE_PARAM, false);
+		
+		if (crossSite) {
+			model.put("sites", pageDao.listSites());
+		}
 		model.put("selectedSite", selectedSite);
 		model.put("pages", createpageLinks(
 				pageDao.getRootNode().getChildPages(selectedSite), path, absolute));

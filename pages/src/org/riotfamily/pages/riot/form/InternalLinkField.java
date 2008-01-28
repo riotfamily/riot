@@ -51,25 +51,37 @@ public class InternalLinkField extends TextField implements ResourceElement,
 
 	private String chooserUrl = "/riot/pages/chooser";
 
+	private boolean crossSite = false;
 
 	public InternalLinkField() {
 		setStyleClass("text internal-link");
 	}
 
+	public void setCrossSite(boolean crossSite) {
+		this.crossSite = crossSite;
+	}
+	
 	public String getChooserUrl() {
 		return this.chooserUrl;
 	}
 	
 	public String getChooserQueryString() {
+		StringBuffer sb = new StringBuffer();
 		Object pageId = getForm().getAttribute("pageId");
-		if (pageId != null) {
-			return "?" + PageChooserController.PAGE_ID_PARAM + "=" + pageId;
-		}
 		Object siteId = getForm().getAttribute("siteId");
-		if (siteId != null) {
-			return "?" + PageChooserController.SITE_ID_PARAM + "=" + siteId;
+		if (pageId == null && siteId == null && !crossSite) {
+			crossSite = true;
 		}
-		return "";
+		sb.append("?crossSite=").append(crossSite);
+		if (pageId != null) {
+			sb.append('&').append(PageChooserController.PAGE_ID_PARAM)
+					.append('=').append(pageId);
+		}
+		else if (siteId != null) {
+			sb.append('&').append(PageChooserController.SITE_ID_PARAM)
+					.append('=').append(siteId);
+		}
+		return sb.toString();
 	}
 
 	public void setChooserUrl(String chooserUrl) {
