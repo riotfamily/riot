@@ -49,6 +49,7 @@ public class TinyMCE extends AbstractTextElement
 		defaults.put("skin", "riot");
 		defaults.put("theme", "advanced");
 		defaults.put("valid_elements", "+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote");
+		defaults.put("theme_advanced_containers", "buttons1,mceeditor");
 		defaults.put("theme_advanced_container_buttons1", "formatselect,bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap");
 		defaults.put("theme_advanced_blockformats", "p,h3,h4");
 	}
@@ -101,7 +102,6 @@ public class TinyMCE extends AbstractTextElement
 		json.element("theme_advanced_layout_manager", "RowLayout");
 		json.element("theme_advanced_containers_default_align", "left");
 		json.element("theme_advanced_container_mceeditor", "mceeditor");
-		json.element("theme_advanced_containers", "buttons1,mceeditor");
 		return json.toString();
 	}
 	
