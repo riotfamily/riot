@@ -101,6 +101,7 @@
             <db:add-foreign-key name="riot_list_wrapper" table="riot_value_wrappers" references="riot_media_files">
                 <db:ref local="file" foreign="id" />
             </db:add-foreign-key>
+            <db:add-column table="riot_value_wrappers" name="page" type="BIGINT" />
             
 		</db:change-set>
 	</db:history>

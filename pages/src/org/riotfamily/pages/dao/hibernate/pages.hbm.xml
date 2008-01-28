@@ -78,5 +78,10 @@
 		<many-to-one name="masterSite" />
 		<filter name="liveMode" condition="enabled = :published"/>
 	</class>
+	
+	<joined-subclass name="org.riotfamily.pages.model.wrapper.PageWrapper" table="riot_page_wrappers" extends="org.riotfamily.components.model.wrapper.ValueWrapper">
+	   <key column="id" foreign-key="id" not-null="true" unique="true" />
+	   <many-to-one name="page" class="Page" />
+	</joined-subclass>
 
 </hibernate-mapping>

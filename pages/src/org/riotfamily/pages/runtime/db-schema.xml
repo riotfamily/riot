@@ -80,7 +80,20 @@
 			<db:add-foreign-key name="riot_page_content_container" table="riot_pages" references="riot_content_containers">
 			     <db:ref local="pageProperties" foreign="id"/>
 			</db:add-foreign-key>
-
+			
+			<db:create-table name="riot_page_wrappers">
+			     <db:column name="id" type="BIGINT" primary-key="true" />
+			     <db:column name="page" type="BIGINT" />
+			</db:create-table>
+            
+            <db:add-foreign-key name="riot_page_wrapper_id" references="riot_value_wrappers" table="riot_page_wrappers">
+                 <db:ref local="id" foreign="id" />
+            </db:add-foreign-key>
+			
+            <db:add-foreign-key name="riot_page_wrapper_page" references="riot_pages" table="riot_page_wrappers">
+                 <db:ref local="page" foreign="id" />
+            </db:add-foreign-key>
+            
 		</db:change-set>
 
 	</db:history>
