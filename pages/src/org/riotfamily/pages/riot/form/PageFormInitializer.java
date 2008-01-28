@@ -53,11 +53,18 @@ public class PageFormInitializer implements FormInitializer {
 	public void initForm(Form form) {
 		String handlerName = null;
 		SelectBox sb = null;
-		Page parentPage = null;
 		if (form.isNew())  {
+			Page parentPage = null;
 			Object parent = FormUtils.loadParent(form);
 			if (parent instanceof Page) {
 				parentPage = (Page) parent;
+				//Make the parent id available for the InternalLinkField:
+				form.setAttribute("pageId", parentPage.getId());
+			}
+			else if (parent instanceof Site) {
+				//Make the site id available for the InternalLinkField:
+				Site site = (Site) parent;
+				form.setAttribute("siteId", site.getId());
 			}
 			String[] handlerNames = handlerNameHierarchy.getChildHandlerNameOptions(parentPage);
 			if (handlerNames.length > 0) {
@@ -70,6 +77,7 @@ public class PageFormInitializer implements FormInitializer {
 		}
 		else {
 			Page page = (Page) form.getBackingObject();
+			form.setAttribute("pageId", page.getId());
 			handlerName = page.getHandlerName();
 		}
 		

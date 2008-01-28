@@ -61,11 +61,15 @@ public class InternalLinkField extends TextField implements ResourceElement,
 	}
 	
 	public String getChooserQueryString() {
-		String pageId = (String) getForm().getAttribute("pageId");
-		if (pageId == null) {
-			return "";
+		Object pageId = getForm().getAttribute("pageId");
+		if (pageId != null) {
+			return "?" + PageChooserController.PAGE_ID_PARAM + "=" + pageId;
 		}
-		return "?" + PageChooserController.PAGE_ID_PARAM + "=" + pageId;
+		Object siteId = getForm().getAttribute("siteId");
+		if (siteId != null) {
+			return "?" + PageChooserController.SITE_ID_PARAM + "=" + siteId;
+		}
+		return "";
 	}
 
 	public void setChooserUrl(String chooserUrl) {
@@ -99,6 +103,7 @@ public class InternalLinkField extends TextField implements ResourceElement,
 		doc.startEmpty(Html.INPUT)
 				.attribute(Html.INPUT_TYPE, "button")
 				.attribute(Html.INPUT_VALUE, buttonLabel)
+				.attribute(Html.INPUT_DISABLED, !isEnabled())
 				.attribute(Html.COMMON_ID, getButtonId())
 				.attribute(Html.COMMON_CLASS, "button")
 				.closeAll();

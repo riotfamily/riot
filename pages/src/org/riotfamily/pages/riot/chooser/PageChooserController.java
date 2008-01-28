@@ -45,6 +45,8 @@ public class PageChooserController implements Controller {
 
 	public static final String PAGE_ID_PARAM = "pageId";
 	
+	public static final String SITE_ID_PARAM = "site";
+	
 	private PageDao pageDao;
 
 	private PathCompleter pathCompleter;
@@ -62,7 +64,7 @@ public class PageChooserController implements Controller {
 			HttpServletResponse response) throws Exception {
 
 		Site selectedSite = null;
-		Long siteId = ServletRequestUtils.getLongParameter(request, "site");
+		Long siteId = ServletRequestUtils.getLongParameter(request, SITE_ID_PARAM);
 		if (siteId != null) {
 			selectedSite = pageDao.loadSite(siteId);
 		}
@@ -70,7 +72,7 @@ public class PageChooserController implements Controller {
 		String path = null;
 		boolean absolute = false;
 		Page currentPage = null;
-		Long pageId = ServletRequestUtils.getLongParameter(request, "pageId");
+		Long pageId = ServletRequestUtils.getLongParameter(request, PAGE_ID_PARAM);
 		if (pageId != null) {
 			currentPage = pageDao.loadPage(pageId);
 			path = currentPage.getPath();
