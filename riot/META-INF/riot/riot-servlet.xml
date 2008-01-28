@@ -25,6 +25,7 @@
     
     <util:list id="messageBasenames">
     	<value>/WEB-INF/i18n/messages</value>
+    	<value>/WEB-INF/riot-config/messages</value>
 		<value>classpath:/org/riotfamily/riot/runtime/i18n/messages</value>
 	</util:list>
 	
