@@ -79,9 +79,13 @@
 		<filter name="liveMode" condition="enabled = :published"/>
 	</class>
 	
-	<joined-subclass name="org.riotfamily.pages.model.wrapper.PageWrapper" table="riot_page_wrappers" extends="org.riotfamily.components.model.wrapper.ValueWrapper">
-	   <key column="id" foreign-key="id" not-null="true" unique="true" />
-	   <many-to-one name="page" class="Page" />
-	</joined-subclass>
-
+	<subclass name="org.riotfamily.pages.model.wrapper.PageWrapper" 
+		extends="org.riotfamily.components.model.wrapper.ValueWrapper"
+		discriminator-value="page">
+	    <join table="riot_page_wrappers">
+	    	<key column="id" />
+            <many-to-one name="page" class="Page" />
+        </join>
+	</subclass>
+ 	
 </hibernate-mapping>
