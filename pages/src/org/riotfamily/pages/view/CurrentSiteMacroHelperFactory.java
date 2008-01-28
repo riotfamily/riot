@@ -27,10 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.view.MacroHelperFactory;
-import org.riotfamily.components.context.PageRequestUtils;
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageResolver;
-import org.riotfamily.pages.model.Page;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
