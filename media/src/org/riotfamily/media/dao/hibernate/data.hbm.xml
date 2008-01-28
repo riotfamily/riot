@@ -13,6 +13,7 @@
 		</id>
 		<discriminator column="`type`" type="string" />
 		<set name="files" inverse="true" lazy="true">
+			<cache usage="nonstrict-read-write" region="media" />
 			<key column="fileData" />
 			<one-to-many class="org.riotfamily.media.model.RiotFile" />
 		</set>

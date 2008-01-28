@@ -6,7 +6,7 @@
 
 <hibernate-mapping package="org.riotfamily.components.model.wrapper" auto-import="false">
 
-	<class name="ValueWrapper" table="riot_value_wrappers" lazy="false">
+	<class name="ValueWrapper" table="riot_value_wrappers">
 		<cache usage="nonstrict-read-write" region="components" />
 		<id name="id" access="field">
 			<generator class="native" />
@@ -25,10 +25,11 @@
 			<property name="date" access="field" />
 		</subclass>
 		<subclass name="RiotFileWrapper" discriminator-value="file">
-			<many-to-one name="file" access="field" cascade="all" />
+			<many-to-one name="file" access="field" cascade="all" lazy="false" />
 		</subclass>
 		<subclass name="ListWrapper" discriminator-value="list">
 			<list name="wrapperList" access="field" cascade="all-delete-orphan" lazy="false">
+				<cache usage="nonstrict-read-write" region="components" />
 				<key column="list" />
 				<index column="list_pos" />
 				<one-to-many class="ValueWrapper" />
@@ -36,6 +37,7 @@
 		</subclass>
 		<subclass name="MapWrapper" discriminator-value="map">
 			<map name="wrapperMap" access="field" cascade="all-delete-orphan" lazy="false">
+				<cache usage="nonstrict-read-write" region="components" />
 				<key column="map" />
 				<index column="map_key" type="string" />
 				<one-to-many class="ValueWrapper" />
