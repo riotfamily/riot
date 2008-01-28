@@ -25,7 +25,7 @@
 			<property name="date" access="field" />
 		</subclass>
 		<subclass name="RiotFileWrapper" discriminator-value="file">
-			<many-to-one name="file" access="field" fetch="join" cascade="all" />
+			<many-to-one name="file" access="field" cascade="all" />
 		</subclass>
 		<subclass name="ListWrapper" discriminator-value="list">
 			<list name="wrapperList" access="field" cascade="all-delete-orphan" lazy="false">
