@@ -272,6 +272,7 @@ dwr.engine.setErrorHandler(function(err, ex) {
 		location.reload();
 	}
 	else {
+		list.setIdle();
 		alert(err);
 	}
 });
