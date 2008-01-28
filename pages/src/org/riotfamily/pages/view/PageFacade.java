@@ -197,6 +197,10 @@ public class PageFacade {
 	public Object get(String key) {
 		return page.getProperty(key, preview);
 	}
+	
+	public Map getLocal() {
+		return page.getLocalProperties(preview);
+	}
 
 	public String getTitle() {
 		return page.getTitle(preview);
