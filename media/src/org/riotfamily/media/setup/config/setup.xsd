@@ -18,6 +18,7 @@
 	<xsd:element name="file" type="mediaType" />
 	<xsd:element name="image" type="mediaType" />
 	<xsd:element name="swf" type="mediaType" />
+	<xsd:element name="video" type="mediaType" />
 	
 	<xsd:complexType name="mediaType">
 		<xsd:attribute name="resource" type="xsd:string"/>

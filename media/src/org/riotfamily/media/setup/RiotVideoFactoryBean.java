@@ -18,28 +18,33 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
+ *   Jan-Frederic Linde [jfl at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.media.setup.config;
+package org.riotfamily.media.setup;
 
-import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
-import org.riotfamily.media.setup.RiotFileFactoryBean;
-import org.riotfamily.media.setup.RiotImageFactoryBean;
-import org.riotfamily.media.setup.RiotSwfFactoryBean;
-import org.riotfamily.media.setup.RiotVideoFactoryBean;
+import org.riotfamily.media.model.RiotVideo;
+import org.springframework.beans.factory.config.AbstractFactoryBean;
+import org.springframework.core.io.Resource;
 
 /**
- * @author Felix Gnass [fgnass at neteye dot de]
+ * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 7.0
  */
-public class MediaNamespaceHandler extends GenericNamespaceHandlerSupport {
+public class RiotVideoFactoryBean extends AbstractFactoryBean {
 
-	public void init() {
-		register("file", RiotFileFactoryBean.class);
-		register("image", RiotImageFactoryBean.class);
-		register("swf", RiotSwfFactoryBean.class);
-		register("video", RiotVideoFactoryBean.class);
+	private Resource resource;
+	
+	public void setResource(Resource resource) {
+		this.resource = resource;
 	}
 	
+	public Class getObjectType() {
+		return RiotVideo.class;
+	}
+	
+	protected Object createInstance() throws Exception {
+		return new RiotVideo(resource.getFile());
+	}
+
 }
