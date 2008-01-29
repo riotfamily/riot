@@ -74,7 +74,7 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 						}
 					}
 					else {
-						BeanDefinition bd = delegate.parseCustomElement(child);
+						delegate.parseCustomElement(child);
 					}
 				}
 			}
