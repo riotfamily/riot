@@ -31,6 +31,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.common.web.filter.PluginChain;
 import org.riotfamily.common.web.servlet.PathCompleter;
@@ -57,6 +59,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  * @since 6.5
  */
 public class FolderFilterPlugin extends FilterPlugin {
+
+	private static final Log log = LogFactory.getLog(FolderFilterPlugin.class);
 
 	private static final TransactionDefinition TX_DEF = 
 			new DefaultTransactionDefinition();
@@ -102,8 +106,6 @@ public class FolderFilterPlugin extends FilterPlugin {
 		if (path.lastIndexOf('.') < path.lastIndexOf('/')) {
 			TransactionStatus status = tx.getTransaction(TX_DEF);
 			try {
-				//requestHandled = sendRedirect(request.getServerName(), path, 
-				//		request, response);
 				requestHandled = sendRedirect(request, response);
 			}
 			catch (Exception ex) {
@@ -120,7 +122,7 @@ public class FolderFilterPlugin extends FilterPlugin {
 	private boolean sendRedirect(HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		
-		Site site = pageResolver.getSite(request);
+		Site site = pageResolver.getSite(request, pathCompleter);
 		if (site == null) {
 			if (siteChooserUrl != null) {
 				response.sendRedirect(response.encodeRedirectURL(
@@ -152,8 +154,9 @@ public class FolderFilterPlugin extends FilterPlugin {
 		
 		String url = getFirstRequestablePageUrl(pages);
 		if (url != null) {
-			response.sendRedirect(response.encodeRedirectURL(
-					request.getContextPath() + url));
+			url = response.encodeRedirectURL(request.getContextPath() + url);
+			log.debug("Sending redirect to '" + url + "'");
+			response.sendRedirect(url);
 		}
 		else {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);

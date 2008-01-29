@@ -18,6 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
+ *   Felix Gnass [fgnass at neteye dot de]
  *   Carsten Woelk [cwoelk at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.web.mapping.AttributePattern;
+import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
@@ -51,6 +53,8 @@ public class PageResolver {
 
 	private static final String PAGE_ATTRIBUTE = PageResolver.class.getName() + ".page";
 
+	private static final Object NOT_FOUND = new Object();
+	
 	private PageDao pageDao;
 
 	private PathMatcher pathMatcher = new AntPathMatcher();
@@ -61,27 +65,34 @@ public class PageResolver {
 	}
 
 
-	private Site resolveSite(HttpServletRequest request) {
+	private Site resolveSite(HttpServletRequest request, PathCompleter pathCompleter) {
 		String hostName = request.getServerName();
-		String path = ServletUtils.getOriginatingPathWithoutServletMapping(request);
-		return pageDao.findSite(hostName, path);
+		String path;
+		if (pathCompleter == null) {
+			path = ServletUtils.getOriginatingPathWithoutServletMapping(request);
+			log.debug("Path without a PathCompleter resolved to '" + path + "'.");
+		}
+		else {
+			path = ServletUtils.getOriginatingPathWithinApplication(request);
+			path = pathCompleter.stripServletMapping(path);
+			log.debug("Path with a PathCompleter resolved to '" + path + "'.");
+		}
+		Site site = pageDao.findSite(hostName, path);
+		exposePathWithingSite(request, path, site);
+		return site;
 	}
 
 
 	private Page resolvePage(HttpServletRequest request) {
 		Site site = getSite(request);
-		
 		if (site == null) {
 			return null;
 		}
-
 		String path = getPathWithinSite(request);
-
 		Page page = pageDao.findPage(site, path);
 		if (page == null) {
 			page = findWildcardPage(site, path);
 		}
-
 		return page;
 	}
 	
@@ -100,51 +111,88 @@ public class PageResolver {
 		if (bestMatch != null) {
 			page = pageDao.findPage(site, bestMatch);
 		}
-
 		return page;
 	}
 
+	private void exposePathWithingSite(HttpServletRequest request, String path,
+			Site site) {
 
-	public String getPathWithinSite(HttpServletRequest request) {
-		String path = (String) request.getAttribute(PATH_ATTRIBUTE);
-		if (path == null) {
-			Site site = getSite(request);
-			if (site != null) {
-				// REVISIT: Müssen wir das wirklich hier nochmal machen?
-				path = ServletUtils.getOriginatingPathWithoutServletMapping(request);
-				path = site.stripPrefix(path);
-				if (path.endsWith("/")) {
-					path = path.substring(0, path.length() - 1);
-				}
-				log.debug("Resolved Path: " + path);
-				request.setAttribute(PATH_ATTRIBUTE, path);
-			}
+		if (site == null) {
+			path = null;
+			//log.debug("Not exposing the Path as we have no Site.");
 		}
-		return path;
+		else {
+			path = site.stripPrefix(path);
+			if (path.endsWith("/")) {
+				path = path.substring(0, path.length() - 1);
+			}
+			//log.info("Exposing Path: " + path);
+		}
+		expose(path, request, PATH_ATTRIBUTE);
+	}
+
+	private void expose(Object object, HttpServletRequest request,
+			String attributeName) {
+		
+		if (object == null) {
+			object = NOT_FOUND;
+		}
+		log.info("Exposing '" + object + "' as '" + attributeName + "'");
+		request.setAttribute(attributeName, object);
 	}
 	
-	public Site getSite(HttpServletRequest request) {
-		Site site = (Site) request.getAttribute(SITE_ATTRIBUTE);
-		if (site == null) {
-			site = resolveSite(request);
-			log.debug("Resolved Site: " + site);
-			request.setAttribute(SITE_ATTRIBUTE, site);
-		}
-		return site; 
+	
+
+	public String getPathWithinSite(HttpServletRequest request) {
+		return getPathWithinSite(request, null);
 	}
 
+	
+	// For Filters where we can't know about the ServletMapping and the ServletPath yet...
+	public String getPathWithinSite(HttpServletRequest request, PathCompleter pathCompleter) {
+		Object path = request.getAttribute(PATH_ATTRIBUTE);
+		if (path == null) {
+			// The resolveSite exposes the path Attribute
+			Site site = getSite(request, pathCompleter);
+			if (site != null) {
+				path = request.getAttribute(PATH_ATTRIBUTE);
+			}
+		}
+		return path != NOT_FOUND ? (String) path : null;
+	}
+
+
+	public Site getSite(HttpServletRequest request) {
+		return getSite(request, null);
+	}
+
+	
+	// For Filters where we can't know about the ServletMapping and the ServletPath yet...
+	public Site getSite(HttpServletRequest request, PathCompleter pathCompleter) {
+		Object site = request.getAttribute(SITE_ATTRIBUTE);
+		if (site == null) {
+			site = resolveSite(request, pathCompleter);
+			//log.info("Exposing Site: " + site);
+			expose(site, request, SITE_ATTRIBUTE);
+		}
+		return site != NOT_FOUND ? (Site) site : null; 
+	}
+
+	
 	public Page getPage(HttpServletRequest request) {
-		Page page = (Page) request.getAttribute(PAGE_ATTRIBUTE);
+		Object page = request.getAttribute(PAGE_ATTRIBUTE);
 		if (page == null) {
 			page = resolvePage(request);
-			log.debug("Reolved Page: " + page);
-			request.setAttribute(PAGE_ATTRIBUTE, page);
+			//log.info("Exposing Page: " + page);
+			expose(page, request, PAGE_ATTRIBUTE);
 		}
-		return page;
+		return page != NOT_FOUND ? (Page) page : null;
 	}
+	
 	
 	public static Page getResolvedPage(HttpServletRequest request) {
 		return (Page) request.getAttribute(PAGE_ATTRIBUTE);
 	}
+	
 	
 }
