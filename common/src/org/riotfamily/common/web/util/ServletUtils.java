@@ -248,7 +248,7 @@ public final class ServletUtils {
 		String path = urlPathHelper.getPathWithinApplication(request);
 		if (path.equals(urlPathHelper.getServletPath(request))) {
 			int dotIndex = path.lastIndexOf('.');
-			if (dotIndex >= 0) {
+			if (dotIndex >= 0 && dotIndex > path.lastIndexOf('/')) {
 				return path.substring(dotIndex);
 			}
 		}
