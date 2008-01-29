@@ -88,15 +88,16 @@ public class ThumbnailCreator extends AbstractFileProcessor
 	}
 	
 	protected RiotFile createVariant(FileData data) throws IOException {
-		ImageData thumbNail = new ImageData();
+		ImageData thumbnail = new ImageData();
 		String thumbName = data.getFileName();
 		if (format != null) {
 			thumbName = FormatUtils.stripExtension(thumbName);
 			thumbName += "." + format.toLowerCase();
 		}
-		File dest = thumbNail.createEmptyFile(thumbName);
+		File dest = thumbnail.createEmptyFile(thumbName);
 		thumbnailer.renderThumbnail(data.getFile(), dest, width, height);
-		return new RiotImage(thumbNail);
+		thumbnail.update();
+		return new RiotImage(thumbnail);
 	}
 	
 }
