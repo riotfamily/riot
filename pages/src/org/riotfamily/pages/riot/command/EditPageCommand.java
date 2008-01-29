@@ -68,6 +68,9 @@ public class EditPageCommand extends EditCommand {
 		if (page.getNode().isSystemNode()) {
 			appendStyleClass(styleClasses, "system");
 		}
+		if (page.getNode().isHidden()) {
+			appendStyleClass(styleClasses, "hidden-node");
+		}
 		if (page.isHidden()) {
 			appendStyleClass(styleClasses, "hidden");
 		}
