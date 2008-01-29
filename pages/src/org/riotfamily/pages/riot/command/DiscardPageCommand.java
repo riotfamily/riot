@@ -73,13 +73,13 @@ public class DiscardPageCommand extends AbstractCommand {
 		Page page = (Page) context.getBean();
 		if (!page.isPublished()) {
 			return context.getMessageResolver().getMessage("confirm.delete",
-					new Object[] {page.getTitle(true)},
+					new Object[] {page.getTitle()},
 					"Do you really want to delete '"
 					 + page.getTitle(true) + "'?");
 		}
 		else if (page.isDirty()) {
 			return context.getMessageResolver().getMessage("confirm.discard",
-					new Object[] {page.getTitle(true)},
+					new Object[] {page.getTitle()},
 					"Do you really want to discard the changes made to '"
 					 + page.getTitle(true) + "'?");
 		}

@@ -113,7 +113,14 @@ public final class EditorDefinitionUtils {
 	public static String getParentId(EditorDefinition def, Object bean) {
 		Object parent = getParent(def, bean);
 		if (parent != null) {
-			return getObjectId(def.getParentEditorDefinition(), parent);
+			EditorDefinition parentDef = def.getParentEditorDefinition();
+			if (parentDef instanceof TreeDefinition) {
+				TreeDefinition tree = (TreeDefinition) parentDef;
+				if (!tree.isNode(parent)) {
+					parentDef = parentDef.getParentEditorDefinition();
+				}
+			}
+			return getObjectId(parentDef, parent);
 		}
 		return null;
 	}

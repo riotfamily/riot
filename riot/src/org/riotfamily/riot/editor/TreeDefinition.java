@@ -41,7 +41,7 @@ public class TreeDefinition extends ListDefinition implements TreeList {
 		super(editorRepository);
 	}
 	
-	private boolean isNode(Object bean) {
+	public boolean isNode(Object bean) {
 		if (bean == null) {
 			return false;
 		}
