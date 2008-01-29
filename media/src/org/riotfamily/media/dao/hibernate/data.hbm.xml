@@ -17,6 +17,12 @@
 			<key column="fileData" />
 			<one-to-many class="org.riotfamily.media.model.RiotFile" />
 		</set>
+		<map name="variants" lazy="true" cascade="all-delete-orphan">
+			<cache usage="nonstrict-read-write" region="media" />
+			<key column="variantOf" />
+			<index column="variantName" type="string" />
+			<one-to-many class="org.riotfamily.media.model.RiotFile" />
+		</map>
 		<property name="fileName" />
 		<property name="contentType" />
 		<property name="size" />

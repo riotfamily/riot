@@ -29,11 +29,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.HashUtils;
+import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.store.FileStore;
+import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.riot.security.auth.RiotUser;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -67,6 +73,9 @@ public class FileData {
 	
 	private Set files;
 	
+	private Map variants;
+	
+	private transient boolean emptyFileCreated;
 	
 	public FileData() {
 	}
@@ -83,11 +92,9 @@ public class FileData {
 		fileName = multipartFile.getOriginalFilename();
 		size = multipartFile.getSize();
 		contentType = multipartFile.getContentType();
-		creationDate = new Date();
-		md5 = HashUtils.md5(multipartFile.getInputStream());
-		//FIXME Does not work with SwfUpload (no session, no user)
-		//owner = AccessController.getCurrentUser().getUserId();
+		initCreationInfo();
 		uri = fileStore.store(multipartFile.getInputStream(), fileName);
+		md5 = HashUtils.md5(multipartFile.getInputStream());
 		inspect(getFile());
 	}
 	
@@ -96,12 +103,35 @@ public class FileData {
 		size = file.length();
 		//FIXME Use static FileTypeMap
 		//contentType = file.getContentType();
-		creationDate = new Date();
-		//FIXME Does not work with SwfUpload (no session, no user)
-		//owner = AccessController.getCurrentUser().getUserId();
+		initCreationInfo();
 		uri = fileStore.store(new FileInputStream(file), fileName);
 		md5 = HashUtils.md5(new FileInputStream(file));
 		inspect(file);
+	}
+	
+	public File createEmptyFile(String name) throws IOException {
+		fileName = name;
+		uri = fileStore.store(null, name);
+		emptyFileCreated = true;
+		initCreationInfo();
+		return getFile();
+	}
+	
+	public void update() throws IOException {
+		Assert.state(emptyFileCreated == true, "update() must only be called " +
+				"after createEmptyFile() has been invoked!");
+		
+		size = getFile().length();
+		md5 = HashUtils.md5(getInputStream());
+	}
+	
+	private void initCreationInfo() {
+		creationDate = new Date();
+		RiotUser user = AccessController.getCurrentUser();
+		//FIXME Does not work with swfupload.js (no session, no user)
+		if (user != null) {
+			owner = user.getUserId();
+		}
 	}
 	
 	protected void inspect(File file) throws IOException {
@@ -194,5 +224,32 @@ public class FileData {
 	public void setFiles(Set files) {
 		this.files = files;
 	}
+	
+	public Map getVariants() {
+		return this.variants;
+	}
 
+	public void setVariants(Map variants) {
+		this.variants = variants;
+	}
+	
+	public void addVariant(String name, RiotFile variant) {
+		if (variants == null) {
+			variants = new HashMap();
+		}
+		variants.put(name, variant);
+	}
+	
+	public RiotFile getVariant(String name) {
+		if (variants == null) {
+			return null;
+		}
+		return (RiotFile) variants.get(name);
+	}
+
+	protected void finalize() throws Throwable {
+		if (id == null && uri != null) {
+			fileStore.delete(uri);
+		}
+	}
 }

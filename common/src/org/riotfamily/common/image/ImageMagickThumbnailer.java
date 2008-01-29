@@ -27,8 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.riotfamily.common.io.CommandUtils;
-
 /**
  * Thumbnailer that uses ImageMagick.
  *  
@@ -36,20 +34,20 @@ import org.riotfamily.common.io.CommandUtils;
  */
 public class ImageMagickThumbnailer implements Thumbnailer {
 
-	private String convertCommand = "convert";
+	private ImageMagick imageMagick;
 		
 	private boolean crop;
 	
 	private String backgroundColor;
 	
-	public void setConvertCommand(String convertCommand) {
-		this.convertCommand = convertCommand;
-	}
-
 	public void setCrop(boolean crop) {
 		this.crop = crop;
 	}
 	
+	public ImageMagickThumbnailer(ImageMagick imageMagick) {
+		this.imageMagick = imageMagick;
+	}
+
 	/**
 	 * If a background color is specified, the image will be exactly resized to 
 	 * <code>maxWidth x maxHeight</code>, unused space will be filled with the
@@ -82,36 +80,35 @@ public class ImageMagickThumbnailer implements Thumbnailer {
 	public void renderThumbnail(File source, File dest, int width, int height)
 			throws IOException {
 		
-		ArrayList cmd = new ArrayList();
-		cmd.add(convertCommand);
-		cmd.add(source.getAbsolutePath());
-		cmd.add("-resize");
+		ArrayList args = new ArrayList();
+		args.add(source.getAbsolutePath());
+		args.add("-resize");
 		if (crop) {
-			cmd.add("x" + height * 2);
-			cmd.add("-resize");
-			cmd.add(width * 2 + "x<");
-			cmd.add("-resize");
-			cmd.add("50%");
-			cmd.add("-crop");
-			cmd.add(width + "x" + height + "+0+0");
-			cmd.add("+repage");
+			args.add("x" + height * 2);
+			args.add("-resize");
+			args.add(width * 2 + "x<");
+			args.add("-resize");
+			args.add("50%");
+			args.add("-crop");
+			args.add(width + "x" + height + "+0+0");
+			args.add("+repage");
 		}
 		else {
-			cmd.add(width + "x" + height + ">");
+			args.add(width + "x" + height + ">");
 			if (backgroundColor != null) {
-				cmd.add("-size");
-				cmd.add(width + "x" + height);
-				cmd.add("xc:" + backgroundColor);
-				cmd.add("+swap");
-				cmd.add("-gravity");
-				cmd.add("center");
-				cmd.add("-composite");
+				args.add("-size");
+				args.add(width + "x" + height);
+				args.add("xc:" + backgroundColor);
+				args.add("+swap");
+				args.add("-gravity");
+				args.add("center");
+				args.add("-composite");
 			}
 		}
-		cmd.add("-colorspace");
-		cmd.add("RGB");
-		cmd.add(dest.getAbsolutePath());
-		CommandUtils.exec(cmd);
+		args.add("-colorspace");
+		args.add("RGB");
+		args.add(dest.getAbsolutePath());
+		imageMagick.invoke(args);
 	}
 
 }

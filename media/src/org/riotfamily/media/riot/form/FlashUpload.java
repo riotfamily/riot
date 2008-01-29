@@ -41,8 +41,8 @@ import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.media.model.RiotFile;
-import org.riotfamily.media.model.RiotImage;
 import org.riotfamily.media.model.RiotSwf;
+import org.riotfamily.media.processing.ProcessingService;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -68,6 +68,10 @@ public class FlashUpload extends FileUpload {
 	private int minHeight;
 
 	private int maxHeight;
+
+	public FlashUpload(ProcessingService processingService) {
+		super(processingService);
+	}
 
 	protected RiotFile createRiotFile(MultipartFile multipartFile) 
 			throws IOException {

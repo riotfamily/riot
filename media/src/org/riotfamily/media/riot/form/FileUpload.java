@@ -44,6 +44,7 @@ import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.media.model.RiotFile;
+import org.riotfamily.media.processing.ProcessingService;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,17 +58,28 @@ public class FileUpload extends CompositeElement implements Editor,
 	protected static FormResource RESOURCE = new ScriptResource(
 			"inline-upload.js", null);
 
+	private ProcessingService processingService;
+	
+	private String processor;
+	
 	private RiotFile file;
 	
 	private RiotFile rejectedFile;
 
-	public FileUpload() {
+	private boolean fileUploaded;
+	
+	public FileUpload(ProcessingService processingService) {
+		this.processingService = processingService;
 		addComponent(new UploadElement());
 		addComponent(new RemoveButton());
 		addComponent(createPreviewElement());
 		setSurroundByDiv(true);
 	}
-		
+	
+	public void setProcessor(String processor) {
+		this.processor = processor;
+	}
+
 	public FormResource getResource() {
 		return RESOURCE;
 	}
@@ -90,6 +102,9 @@ public class FileUpload extends CompositeElement implements Editor,
 	}
 
 	public Object getValue() {
+		if (fileUploaded && processor != null) {
+			processingService.process(file.getFileData(), processor);
+		}
 		return file;
 	}
 
@@ -141,11 +156,16 @@ public class FileUpload extends CompositeElement implements Editor,
 		if (!ErrorUtils.hasErrors(this)) {
 			this.file = file;
 			this.rejectedFile = null;
+			this.fileUploaded = true;
 		}
 		else {
 			this.rejectedFile = file;
 			this.file = null;
 		}
+	}
+	
+	public boolean isFileUploaded() {
+		return this.fileUploaded;
 	}
 	
 	public class UploadElement extends TemplateElement

@@ -55,4 +55,6 @@
 
 	<bean id="riotAccessControlInterceptor" class="org.riotfamily.riot.security.session.AccessControlInterceptor" />
 
+	<bean id="imageMagick" class="org.riotfamily.common.image.ImageMagick" />
+
 </beans>

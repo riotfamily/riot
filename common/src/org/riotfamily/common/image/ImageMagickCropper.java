@@ -27,54 +27,39 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.riotfamily.common.io.CommandUtils;
-import org.springframework.util.StringUtils;
-
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  *
  */
 public class ImageMagickCropper implements ImageCropper {
 
-	private String convertCommand = "convert";
+	private ImageMagick imageMagick;
 	
-	private boolean repage = true;
-
-	public void setConvertCommand(String convertCommand) {
-		this.convertCommand = convertCommand;
-	}
-	
-	/**
-	 * Sets whether the "+repage" operation should be used. If set to 
-	 * <code>false</code>, "-page +0+0" is used instead (for IM 5 and earlier).
-	 * Default is <code>true</code> 
-	 */
-	public void setRepage(boolean repage) {
-		this.repage = repage;
+	public ImageMagickCropper(ImageMagick imageMagick) {
+		this.imageMagick = imageMagick;
 	}
 
 	public void cropImage(File source, File dest, int width, int height,
 			int x, int y, int scaledWidth) throws IOException {
 		
-		ArrayList cmd = new ArrayList();
-		cmd.add(convertCommand);
-		cmd.add(source.getAbsolutePath());
-		cmd.add("-resize");
-		cmd.add(scaledWidth + "x>");
-		cmd.add("-crop");
-		cmd.add(width + "x" + height + "+" + x + "+" + y);
-		if (repage) {
-			cmd.add("+repage");
+		ArrayList args = new ArrayList();
+		args.add(source.getAbsolutePath());
+		args.add("-resize");
+		args.add(scaledWidth + "x>");
+		args.add("-crop");
+		args.add(width + "x" + height + "+" + x + "+" + y);
+		if (imageMagick.getMajorVersion() < 6) {
+			args.add("+repage");
 		}
 		else {
-			cmd.add("-page");
-			cmd.add("+0+0");
+			args.add("-page");
+			args.add("+0+0");
 		}
-		cmd.add("-quality");
-		cmd.add("100");
+		args.add("-quality");
+		args.add("100");
 		
-		cmd.add(dest.getAbsolutePath());
-		CommandUtils.exec(StringUtils.toStringArray(cmd));
+		args.add(dest.getAbsolutePath());
+		imageMagick.invoke(args);
 	}
 	
 }

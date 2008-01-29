@@ -14,10 +14,20 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 	
+	<xsd:complexType name="file-upload">
+		<xsd:complexContent>
+			<xsd:extension base="form:simple-editor">
+				<xsd:attribute name="processor" type="xsd:string" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:element name="file-upload" type="file-upload" />
+	
 	<xsd:element name="image-upload">
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="form:simple-editor">
+				<xsd:extension base="file-upload">
 					<xsd:attribute name="valid-formats" type="xsd:string" />
 					<xsd:attribute name="width" type="xsd:positiveInteger" />
 					<xsd:attribute name="height" type="xsd:positiveInteger" />
@@ -36,7 +46,7 @@
 	<xsd:element name="flash-upload">
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="form:simple-editor">
+				<xsd:extension base="file-upload">
 					<xsd:attribute name="width" type="xsd:positiveInteger" />
 					<xsd:attribute name="height" type="xsd:positiveInteger" />
 				</xsd:extension>
@@ -44,13 +54,6 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="video-upload">
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="form:simple-editor">
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
+	<xsd:element name="video-upload" type="file-upload" />
 	
 </xsd:schema>

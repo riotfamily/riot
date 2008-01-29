@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Map;
 
 import org.riotfamily.media.model.data.FileData;
 import org.springframework.web.multipart.MultipartFile;
@@ -113,4 +114,11 @@ public class RiotFile {
 		return getFileData().getOwner();
 	}
 
+	public Map getVariants() {
+		return getFileData().getVariants();
+	}
+	
+	public RiotFile get(String name) {
+		return getFileData().getVariant(name) ;
+	}
 }

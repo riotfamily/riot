@@ -273,9 +273,9 @@
 	</bean>
 
 	<bean id="riotDaoOptionValuesAdapter" class="org.riotfamily.riot.form.options.RiotDaoOptionValuesAdapter" />
-	
-	<bean id="imageCropper" class="org.riotfamily.common.image.ImageMagickCropperFactoryBean">
-		<property name="convertCommand" value="${imageMagick.convertCommand=convert}" />
+
+	<bean id="imageCropper" class="org.riotfamily.common.image.ImageMagickCropper">
+		<constructor-arg ref="imageMagick" />
 	</bean>
 
 	<bean id="editorRepository" class="org.riotfamily.riot.editor.xml.XmlEditorRepository">
