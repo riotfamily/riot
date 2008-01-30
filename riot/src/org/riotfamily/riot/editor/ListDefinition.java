@@ -136,6 +136,7 @@ public class ListDefinition extends AbstractEditorDefinition {
 			MessageResolver messageResolver) {
 
 		EditorReference ref = new EditorReference();
+		ref.setEditorId(getId());
 		ref.setEditorType(getEditorType());
 		ref.setIcon(getIcon());
 

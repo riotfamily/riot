@@ -189,6 +189,7 @@ public abstract class AbstractObjectEditorDefinition
 	public EditorReference createPathComponent(Object bean, String parentId) {
 		EditorReference component = new EditorReference();
 		component.setEditorType(getEditorType());
+		component.setEditorId(getId());
 		component.setLabel(getLabel(bean));
 		component.setBean(bean);
 		String objectId = null;
@@ -208,6 +209,7 @@ public abstract class AbstractObjectEditorDefinition
 
 		EditorReference ref = new EditorReference();
 		ref.setEditorType(getEditorType());
+		ref.setEditorId(getId());
 		ref.setIcon(getIcon());
 		
 		String defaultLabel = FormatUtils.xmlToTitleCase(getName());

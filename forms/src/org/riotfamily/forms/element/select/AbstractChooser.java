@@ -166,6 +166,10 @@ public abstract class AbstractChooser extends AbstractEditorBase
 
 		response.setContentType("text/html");
 		Map model = new HashMap();
+		String pathUrl = getPathUrl();
+		if (pathUrl != null) {
+			model.put("pathUrl", request.getContextPath() + pathUrl);
+		}
 		model.put("chooserUrl", request.getContextPath() + getChooserUrl());
 		String template = TemplateUtils.getTemplatePath(AbstractChooser.class, 
 				"_content");
@@ -175,5 +179,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	}
 	
 	protected abstract String getChooserUrl();
+	
+	protected abstract String getPathUrl();
 	
 }

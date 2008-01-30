@@ -10,7 +10,8 @@
 			}
 		</script>
 	</head>
-	<frameset rows="*">
-		<frame src="${chooserUrl}" />
+	<frameset rows="<#if pathUrl??>32,</#if>*" border="0">
+		<#if pathUrl??><frame name="path" src="${pathUrl}" scrolling="no" /></#if>
+		<frame name="chooserList" src="${chooserUrl}" />
 	</frameset>
 </html>

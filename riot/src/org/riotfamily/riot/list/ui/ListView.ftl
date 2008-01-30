@@ -28,7 +28,7 @@
 
 	<#assign hasExtraColumn = hasCommands || filterForm?exists />
 
-	<body onload="TweakStyle.list()"<#if !hasExtraColumn> class="wide"</#if>>
+	<body<#if choose??> id="chooser"</#if> onload="TweakStyle.list()"<#if !hasExtraColumn> class="wide"</#if>>
 		<div id="body-wrapper">
 		
 			<div id="wrapper">

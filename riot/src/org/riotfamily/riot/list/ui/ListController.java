@@ -72,6 +72,7 @@ public class ListController implements Controller {
 		HashMap model = new HashMap();
 		model.put(EditorConstants.EDITOR_ID, editorId);
 		model.put(EditorConstants.PARENT_ID, parentId);
+		model.put("choose", choose);
 		model.put("filterForm", session.getFilterFormHtml());
 		model.put("search", session.getSearchProperties());
 		model.put("searchQuery", session.getSearchQuery());

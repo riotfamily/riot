@@ -239,6 +239,18 @@ public class ObjectChooser extends AbstractChooser
 				+ "?choose=" + targetEditorDefinition.getId();
 	}
 	
+	protected String getPathUrl() {
+		StringBuffer sb = new StringBuffer();
+		//FIXME /riot is hard-coded here ...
+		sb.append("/riot");
+		sb.append("/chooser-path/");
+		sb.append(targetEditorDefinition.getId());
+		if (rootEditorId != null) {
+			sb.append("/").append(rootEditorId);
+		}
+		return sb.toString();
+	}
+	
 	private class LabelRenderContext implements RenderContext {
 
 		public String getListId() {

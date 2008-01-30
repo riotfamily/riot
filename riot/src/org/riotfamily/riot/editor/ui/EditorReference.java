@@ -32,6 +32,8 @@ public class EditorReference {
 
 	private Object bean;
 	
+	private String editorId;
+	
 	private String objectId;
 	
 	private String label;
@@ -48,6 +50,7 @@ public class EditorReference {
 
 	private boolean enabled = true;
 
+	
 	public EditorReference getParent() {
 		return parent;
 	}
@@ -74,6 +77,14 @@ public class EditorReference {
 
 	public void setBean(Object bean) {
 		this.bean = bean;
+	}
+
+	public String getEditorId() {
+		return this.editorId;
+	}
+
+	public void setEditorId(String editorId) {
+		this.editorId = editorId;
 	}
 
 	public String getEditorUrl() {

@@ -36,6 +36,10 @@
 	background-image: url(images/search.gif);
 }
 
+#chooser #body-wrapper {
+	padding-top: 10px;
+}
+
 div#list {
 	overflow: auto;
 	overflow-y: hidden;

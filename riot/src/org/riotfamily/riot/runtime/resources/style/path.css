@@ -34,6 +34,17 @@ a {
 	overflow: hidden;
 }
 
+#chooser.path #path {
+	margin-top: 0;
+	background-color: #fff;
+}
+#chooser.path #path a {
+	padding-right: 0;
+}
+#chooser.path #body-wrapper {
+	padding: 10px 0 0 18px;
+}
+
 .group, .list, .tree, .form, .node, .none {
 	padding-top: 4px;
 	padding-bottom: 4px;

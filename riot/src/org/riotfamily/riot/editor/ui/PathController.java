@@ -46,9 +46,6 @@ public class PathController implements Controller, MessageSourceAware {
 
 	private MessageSource messageSource;
 
-	private String viewName = ResourceUtils.getPath(
-			PathController.class, "PathView.ftl");
-
 	private String modelKey = "path";
 
 	public PathController(EditorRepository repository) {
@@ -67,12 +64,8 @@ public class PathController implements Controller, MessageSourceAware {
 		this.modelKey = modelKey;
 	}
 
-	public String getViewName() {
-		return viewName;
-	}
-
-	public void setViewName(String viewName) {
-		this.viewName = viewName;
+	protected String getViewName() {
+		return ResourceUtils.getPath(PathController.class, "PathView.ftl");
 	}
 
 	public EditorRepository getRepository() {
@@ -103,8 +96,8 @@ public class PathController implements Controller, MessageSourceAware {
 
 		path.setSubPage(request.getParameter("subPage"));
 		path.encodeUrls(response);
-
-		return new ModelAndView(viewName, modelKey, path);
+		processPath(path, request);
+		return new ModelAndView(getViewName(), modelKey, path);
 	}
 
 	protected EditorReference createLastPathComponent(
@@ -112,5 +105,8 @@ public class PathController implements Controller, MessageSourceAware {
 			final String parentId, final MessageResolver messageResolver) {
 
 		return editor.createEditorPath(objectId, parentId, messageResolver);
+	}
+	
+	protected void processPath(EditorPath path, HttpServletRequest request) {
 	}
 }

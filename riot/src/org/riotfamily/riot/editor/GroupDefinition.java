@@ -105,6 +105,7 @@ public class GroupDefinition extends AbstractEditorDefinition {
 	private EditorReference createReference(MessageResolver messageResolver) {
 		EditorReference ref = new EditorReference();
 		ref.setEditorType(TYPE_GROUP);
+		ref.setEditorId(getId());
 		ref.setIcon(getIcon());
 
 		String defaultLabel = FormatUtils.xmlToTitleCase(getId());
