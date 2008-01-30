@@ -41,7 +41,7 @@
 		</property>
 	</bean>
 
-	<bean id="mediaProcessingService" class="org.riotfamily.media.processing.ProcessingService" />
+	<bean id="mediaProcessingService" class="org.riotfamily.media.service.ProcessingService" />
 	
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 	    <property name="triggers">

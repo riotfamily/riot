@@ -44,7 +44,7 @@ import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.media.model.RiotFile;
-import org.riotfamily.media.processing.ProcessingService;
+import org.riotfamily.media.service.ProcessingService;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -174,6 +174,8 @@ public class FileUpload extends CompositeElement implements Editor,
 		private String uploadId;
 
 		private UploadStatus status;
+		
+		private volatile boolean processing;
 
 		public UploadElement() {
 			this.uploadId = UploadStatus.createUploadId();
@@ -190,17 +192,23 @@ public class FileUpload extends CompositeElement implements Editor,
 		public UploadStatus getStatus() {
 			return status;
 		}
+		
+		public boolean isProcessing() {
+			return processing;
+		}
 
 		public void processRequestInternal(FormRequest request) {
 			log.debug("Processing " + getParamName());
 			MultipartFile multipartFile = request.getFile(getParamName());
 			if ((multipartFile != null) && (!multipartFile.isEmpty())) {
 				try {
+					processing = true;
 					setNewFile(createRiotFile(multipartFile));
 				}
 				catch (IOException e) {
 					log.error("error saving uploaded file", e);
 				}
+				processing = false;
 			}
 		}
 

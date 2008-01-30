@@ -32,9 +32,17 @@
 		<property name="uriPrefix" value="${riot.media.uriPrefix=/media}" />
 	</bean>
 	
+	<bean id="ffmpeg" class="org.riotfamily.media.service.FFmpeg" />
+	
+	<bean id="mediaService" class="org.riotfamily.media.service.MediaService">
+		<constructor-arg ref="fileStore" />
+		<constructor-arg ref="fileTypeMap" />
+		<constructor-arg ref="ffmpeg" />
+	</bean>
+	
 	<bean id="fileDataInitializer" class="org.riotfamily.common.beans.MethodInvokingBean">
-		<property name="staticMethod" value="org.riotfamily.media.model.data.FileData.setFileStore" />
-		<property name="argument" ref="fileStore"/>
+		<property name="staticMethod" value="org.riotfamily.media.model.data.FileData.setMediaService" />
+		<property name="argument" ref="mediaService"/>
 	</bean>
 
 </beans>

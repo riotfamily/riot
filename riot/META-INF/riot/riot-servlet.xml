@@ -61,20 +61,6 @@
 	</bean>
 
 	<!--
-      - The default JDK map lacks some important web-related mimetypes ...
-	  -->
-	<bean id="fileTypeMap" class="org.riotfamily.common.io.MimetypesFileTypeMapFactoryBean">
-		<property name="types">
-			<list>
-				<value>text/css css</value>
-				<value>text/xml xml</value>
-				<value>text/javascript js</value>
-				<value>image/png png</value>
-			</list>
-		</property>
-	</bean>
-
-	<!--
 	  - Exception resolver that outputs a nicely formatted error message.
 	  -->
 	<bean id="exceptionResolver" class="org.riotfamily.common.web.util.AdvancedMappingExceptionResolver">

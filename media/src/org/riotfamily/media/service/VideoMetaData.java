@@ -21,19 +21,13 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.media.model.data;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.riotfamily.media.service.VideoMetaData;
-import org.springframework.web.multipart.MultipartFile;
+package org.riotfamily.media.service;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class VideoData extends FileData {
+public class VideoMetaData {
 
 	private int width;
 	
@@ -52,32 +46,6 @@ public class VideoData extends FileData {
 	private int samplingRate;
 	
 	private boolean stereo;
-	
-	
-	public VideoData() {
-	}
-	
-	public VideoData(File file) throws IOException {
-		super(file);
-	}
-
-	public VideoData(MultipartFile multipartFile) throws IOException {
-		super(multipartFile);
-	}
-
-	protected void inspect(File file) throws IOException {
-		VideoMetaData meta = mediaService.identifyVideo(file);
-		setContentType("video/mpeg");
-		setDuration(meta.getDuration());
-		setBps(meta.getBps());
-		setVideoCodec(meta.getVideoCodec());
-		setWidth(meta.getWidth());
-		setHeight(meta.getHeight());
-		setFps(meta.getFps());
-		setAudioCodec(meta.getAudioCodec());
-		setSamplingRate(meta.getSamplingRate());
-		setStereo(meta.isStereo());
-	}
 
 	public int getWidth() {
 		return this.width;

@@ -3,11 +3,9 @@
 }
 
 .uploadProgress .gauge {
-	width: 153px;
+	width: 150px;
 	height: 19px;
-	background-color: #fff;
-	border: 2px solid; 
-	border-color: #888 #fff #fff #888; 
+	background: url(images/progress.gif) #ebebeb;
 	float: left;
 	margin-right: 12px;
 }

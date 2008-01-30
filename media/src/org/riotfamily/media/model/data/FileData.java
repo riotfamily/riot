@@ -36,7 +36,7 @@ import java.util.Set;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.HashUtils;
 import org.riotfamily.media.model.RiotFile;
-import org.riotfamily.media.store.FileStore;
+import org.riotfamily.media.service.MediaService;
 import org.riotfamily.riot.security.AccessController;
 import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.util.Assert;
@@ -49,10 +49,10 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class FileData {
 	
-	protected static FileStore fileStore;
+	protected static MediaService mediaService;
 
-	public static void setFileStore(FileStore fileStore) {
-		FileData.fileStore = fileStore;
+	public static void setMediaService(MediaService mediaService) {
+		FileData.mediaService = mediaService;
 	}
 	
 	private Long id;
@@ -93,7 +93,7 @@ public class FileData {
 		size = multipartFile.getSize();
 		contentType = multipartFile.getContentType();
 		initCreationInfo();
-		uri = fileStore.store(multipartFile.getInputStream(), fileName);
+		uri = mediaService.store(multipartFile.getInputStream(), fileName);
 		md5 = HashUtils.md5(multipartFile.getInputStream());
 		inspect(getFile());
 	}
@@ -101,17 +101,16 @@ public class FileData {
 	public void setFile(File file) throws IOException {
 		fileName = file.getName();
 		size = file.length();
-		//FIXME Use static FileTypeMap
-		//contentType = file.getContentType();
+		contentType = mediaService.getContentType(file);
 		initCreationInfo();
-		uri = fileStore.store(new FileInputStream(file), fileName);
+		uri = mediaService.store(new FileInputStream(file), fileName);
 		md5 = HashUtils.md5(new FileInputStream(file));
 		inspect(file);
 	}
 	
 	public File createEmptyFile(String name) throws IOException {
 		fileName = name;
-		uri = fileStore.store(null, name);
+		uri = mediaService.store(null, name);
 		emptyFileCreated = true;
 		initCreationInfo();
 		return getFile();
@@ -154,11 +153,11 @@ public class FileData {
 	}
 	
 	public File getFile() {
-		return fileStore.retrieve(uri);
+		return mediaService.retrieve(uri);
 	}
 	
 	public void deleteFile() {
-		fileStore.delete(uri);
+		mediaService.delete(uri);
 	}
 
 	public InputStream getInputStream() throws FileNotFoundException {
@@ -249,7 +248,7 @@ public class FileData {
 
 	protected void finalize() throws Throwable {
 		if (id == null && uri != null) {
-			fileStore.delete(uri);
+			mediaService.delete(uri);
 		}
 	}
 }

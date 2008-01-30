@@ -75,7 +75,7 @@ public class UploadStatus {
 	}
 	
 	public String getTransferRate() {
-		if (getTimeElapsed() == 0) {
+		if (getTimeElapsed() == 0 || inputStream.getBytesRead() == bytesTotal) {
 			return "";
 		}
 		return FormatUtils.formatByteSize(inputStream.getBytesRead() / 

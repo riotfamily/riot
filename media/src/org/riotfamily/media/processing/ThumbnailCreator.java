@@ -34,15 +34,13 @@ import org.riotfamily.media.model.RiotImage;
 import org.riotfamily.media.model.data.FileData;
 import org.riotfamily.media.model.data.ImageData;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
 public class ThumbnailCreator extends AbstractFileProcessor 
-		implements ApplicationContextAware, InitializingBean {
+		implements InitializingBean {
 
 	private ImageMagickThumbnailer thumbnailer;
 	
@@ -57,6 +55,10 @@ public class ThumbnailCreator extends AbstractFileProcessor
 	private int height;
 	
 
+	public ThumbnailCreator(ImageMagick imageMagick) {
+		thumbnailer = new ImageMagickThumbnailer(imageMagick);
+	}
+	
 	public void setCrop(boolean crop) {
 		this.crop = crop;
 	}
@@ -76,12 +78,7 @@ public class ThumbnailCreator extends AbstractFileProcessor
 	public void setHeight(int height) {
 		this.height = height;
 	}
-	
-	public void setApplicationContext(ApplicationContext applicationContext) {
-		ImageMagick imageMagick = ImageMagick.getInstance(applicationContext);
-		thumbnailer = new ImageMagickThumbnailer(imageMagick);
-	}
-	
+		
 	public void afterPropertiesSet() {
 		thumbnailer.setBackgroundColor(backgroundColor);
 		thumbnailer.setCrop(crop);

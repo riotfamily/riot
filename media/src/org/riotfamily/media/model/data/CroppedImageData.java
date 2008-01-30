@@ -56,7 +56,7 @@ public class CroppedImageData extends ImageData {
 		this.scaledWidth = scaledWidth;
 		setCreationDate(new Date());
 		setFileName(original.getFileName());
-		setUri(fileStore.store(null, original.getFileName()));
+		setUri(mediaService.store(null, original.getFileName()));
 		
 		File croppedFile = getFile();
 		cropper.cropImage(original.getFile(), croppedFile, width, height, x, y, 

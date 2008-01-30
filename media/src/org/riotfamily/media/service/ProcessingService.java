@@ -21,9 +21,10 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.media.processing;
+package org.riotfamily.media.service;
 
 import org.riotfamily.media.model.data.FileData;
+import org.riotfamily.media.processing.FileProcessor;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 

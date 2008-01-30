@@ -41,7 +41,7 @@ import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotVideo;
-import org.riotfamily.media.processing.ProcessingService;
+import org.riotfamily.media.service.ProcessingService;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 

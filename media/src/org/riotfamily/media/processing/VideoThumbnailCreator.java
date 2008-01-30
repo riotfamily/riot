@@ -25,12 +25,12 @@ package org.riotfamily.media.processing;
 
 import java.util.ArrayList;
 
-import org.riotfamily.common.io.CommandUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotVideo;
 import org.riotfamily.media.model.data.FileData;
 import org.riotfamily.media.model.data.VideoData;
+import org.riotfamily.media.service.FFmpeg;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -38,13 +38,18 @@ import org.riotfamily.media.model.data.VideoData;
  */
 public class VideoThumbnailCreator extends AbstractFileProcessor {
 
+	private FFmpeg ffmpeg;
+	
 	private int width;
 	
 	private int height;
 	
 	private boolean fill;
 	
-	
+	public VideoThumbnailCreator(FFmpeg ffmpeg) {
+		this.ffmpeg = ffmpeg;
+	}
+
 	public void setWidth(int width) {
 		this.width = width;
 	}
@@ -61,7 +66,6 @@ public class VideoThumbnailCreator extends AbstractFileProcessor {
 		VideoData video = (VideoData) data;
 		VideoData thumb = new VideoData();
 		ArrayList args = new ArrayList();
-		args.add("ffmpeg");
 		args.add("-i");
 		args.add(video.getFile().getAbsolutePath());
 		args.add("-an");
@@ -101,7 +105,7 @@ public class VideoThumbnailCreator extends AbstractFileProcessor {
 		args.add("-y");
 		String thumbName = FormatUtils.stripExtension(data.getFileName()) + ".jpg";
 		args.add(thumb.createEmptyFile(thumbName).getAbsolutePath());
-		CommandUtils.exec(args);
+		ffmpeg.invoke(args);
 		thumb.update();
 		return new RiotVideo(thumb);
 	}

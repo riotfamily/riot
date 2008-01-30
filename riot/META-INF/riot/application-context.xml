@@ -55,6 +55,20 @@
 
 	<bean id="riotAccessControlInterceptor" class="org.riotfamily.riot.security.session.AccessControlInterceptor" />
 
+	<!--
+      - The default JDK map lacks some important web-related mimetypes ...
+	  -->
+	<bean id="fileTypeMap" class="org.riotfamily.common.io.MimetypesFileTypeMapFactoryBean">
+		<property name="types">
+			<list>
+				<value>text/css css</value>
+				<value>text/xml xml</value>
+				<value>text/javascript js</value>
+				<value>image/png png</value>
+			</list>
+		</property>
+	</bean>
+	
 	<bean id="imageMagick" class="org.riotfamily.common.image.ImageMagick" />
 
 </beans>
