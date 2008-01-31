@@ -48,6 +48,7 @@ public class TinyMCE extends AbstractTextElement
 	static {
 		defaults.put("skin", "riot");
 		defaults.put("theme", "advanced");
+		defaults.put("entity_encoding", "raw");
 		defaults.put("valid_elements", "+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote");
 		defaults.put("theme_advanced_containers", "buttons1,mceeditor");
 		defaults.put("theme_advanced_container_buttons1", "formatselect,bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap");
