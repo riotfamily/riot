@@ -150,16 +150,8 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 		Iterator it = bindings.iterator();
 		while (it.hasNext()) {
 			EditorBinding binding = (EditorBinding) it.next();
-			Object oldValue = binding.getValue();
-			Object newValue = binding.getEditor().getValue();
-
-			// Only set the property if it has been changed. This prevents
-			// BeanWrapperImpl to perform type conversions which would fail
-			// for collections managed by Hibernate.
-
-			if (newValue != oldValue) {
-				setPropertyValue(binding.getProperty(), newValue);
-			}
+			Object value = binding.getEditor().getValue();
+			setPropertyValue(binding.getProperty(), value);
 		}
 		return getBackingObject();
 	}
