@@ -26,6 +26,7 @@ package org.riotfamily.common.web.view;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -265,6 +266,14 @@ public class CommonMacroHelper {
 		return FormatUtils.formatMillis(millis);
 	}
 
+	public String formatNumber(Number number, String pattern, String localeString) {
+		Locale locale = StringUtils.hasText(localeString) 
+				? StringUtils.parseLocaleString(localeString)
+				: Locale.US;
+				
+		return NumberFormat.getNumberInstance(locale).format(number);
+	}
+	
 	public String toTitleCase(String s) {
 		return FormatUtils.fileNameToTitleCase(s);
 	}

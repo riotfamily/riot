@@ -131,6 +131,10 @@
 	<#return commonMacroHelper.formatMillis(millis) />
 </#function>
 
+<#function formatNumber number pattern="#0.#" locale="en_US">
+	<#return commonMacroHelper.formatNumber(number, pattern, locale) />
+</#function>
+
 <#function toTitleCase s>
 	<#return commonMacroHelper.toTitleCase(s) />
 </#function>
