@@ -23,11 +23,16 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 
 public class NumberField extends TextField implements DHTMLElement,
 		ResourceElement {
@@ -119,19 +124,31 @@ public class NumberField extends TextField implements DHTMLElement,
 		sb.append(',');
 	}
 
-	protected void afterBindingSet() {
+	protected void afterFormContextSet() {
 		Class type = getEditorBinding().getPropertyType();
-		if (precision == null && (type.equals(Float.class) 
-				|| type.equals(Double.class)
-				|| type.equals(float.class)	
-				|| type.equals(double.class))) {
+		if (type == null || Object.class.equals(type)) {
+			// Use BigDecimal for untyped properties 
+			type = BigDecimal.class;
+		}
+		else {
+			// Use a default precision of 2 for floating point types
+			if (precision == null && (type.equals(Float.class) 
+					|| type.equals(Double.class)
+					|| type.equals(float.class)	
+					|| type.equals(double.class))) {
+			
+				precision = new Integer(2);
+			}
+			if (type.isPrimitive()) {
+				setRequired(true);
+			}
+		}
 		
-			precision = new Integer(2);
+		if (Number.class.isAssignableFrom(type)) {
+			Locale locale = getFormContext().getLocale();
+			NumberFormat nf = NumberFormat.getNumberInstance(locale);
+			setPropertyEditor(new CustomNumberEditor(type, nf, true));
 		}
-		if (type.isPrimitive()) {
-			setRequired(true);
-		}
-		super.afterBindingSet();
 	}
-
+	
 }

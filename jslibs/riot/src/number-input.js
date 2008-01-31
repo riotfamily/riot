@@ -11,7 +11,7 @@ NumberInput.Field.prototype = {
 		this.element = $(element);
 		this.options = Object.extend({
 			required: false,
-			minValue: 0,
+			minValue: false,
 			maxValue: false,
 			allowFloats: false,
 			precision: 2,
@@ -78,8 +78,8 @@ NumberInput.Field.prototype = {
 		var valid = /^-?[0-9]*([.,][0-9]*)?$/.test(value);
 		if (valid) value = parseFloat(value);
 		return empty || (valid && 
-				(!this.options.minValue || value >= this.options.minValue) && 
-				(!this.options.maxValue || value <= this.options.maxValue));
+				(isNaN(this.options.minValue) || value >= this.options.minValue) && 
+				(isNaN(this.options.maxValue) || value <= this.options.maxValue));
 	},
 	
 	validate: function() {
@@ -151,8 +151,8 @@ NumberInput.Field.prototype = {
 
 		// Allow miuns, if negative values are allowed, the current value is positive
 		// and the cursor is at the beginning ...
-		if (c == '-' && this.options.minValue < 0 && this.getValue() >= 0 
-				&& this.getSelectionStart() == 0) {
+		if (c == '-' && (isNaN(this.options.minValue) || this.options.minValue < 0) 
+				&& this.getValue() >= 0 && this.getSelectionStart() == 0) {
 
 			return true;
 		}
