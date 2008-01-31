@@ -39,9 +39,11 @@ import org.riotfamily.pages.model.Page;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class PagePropertyEditor extends TemplateElement {
+public class PagePropertyElement extends TemplateElement {
 
 	private ElementFactory elementFactory;
+	
+	private PagePropertiesEditorBinder binder;
 	
 	private Page masterPage;
 	
@@ -57,8 +59,11 @@ public class PagePropertyEditor extends TemplateElement {
 	
 	private ValueWrapper masterValue; 
 	
-	public PagePropertyEditor(ElementFactory elementFactory, Page masterPage) {
+	public PagePropertyElement(ElementFactory elementFactory, 
+			PagePropertiesEditorBinder binder, Page masterPage) {
+		
 		this.elementFactory = elementFactory;
+		this.binder = binder;
 		this.masterPage = masterPage;
 		toggleButton = new ToggleButton();
 		addComponent("toggleButton", toggleButton);
@@ -67,10 +72,11 @@ public class PagePropertyEditor extends TemplateElement {
 	protected void initCompositeElement() {
 		editor = (Editor) elementFactory.createElement(this, getForm(), true);
 		addComponent("editor", editor);
+		EditorBinding binding = editor.getEditorBinding();
+		binder.registerElement(binding, this);
 		if (masterPage != null) {
 			display = (Editor) elementFactory.createElement(this, getForm(), false);
 			display.setEnabled(false);
-			EditorBinding binding = editor.getEditorBinding();
 			display.setEditorBinding(binding);
 			addComponent("display", display);
 			String property = binding.getProperty();

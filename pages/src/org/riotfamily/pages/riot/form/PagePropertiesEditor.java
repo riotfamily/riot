@@ -55,43 +55,11 @@ public class PagePropertiesEditor extends CompositeElement
 		
 		this.repository = repository;
 		this.masterPage = masterPage;
-		this.currentForm = createNestedForm(handlerName);
+		this.currentForm = new PropertiesForm(handlerName);
 		addComponent(currentForm);
 		setSurroundByDiv(true);
 	}
-
-	private NestedForm createNestedForm(String handlerName) {
-		String id = handlerName + "-page";
-		NestedForm nestedForm = new NestedForm();
-		nestedForm.setRequired(true);
-		nestedForm.setIndent(false);
-		nestedForm.setEditorBinder(new PagePeopertiesEditorBinder());
-		nestedForm.setStyleClass(id);
-		
-		addPagePropertyEditors(nestedForm, "all-pages", masterPage);
-		addPagePropertyEditors(nestedForm, id, masterPage);
-		
-		if (masterPage == null) {
-			addPagePropertyEditors(nestedForm, "master-" + id, null);
-		}
-		nestedForm.setValue(initialValue);
-		return nestedForm;
-	}
 	
-	private boolean addPagePropertyEditors(NestedForm nestedForm, String id, Page masterPage) {
-		boolean present = false;
-		if (repository.containsForm(id)) {
-			FormFactory factory = repository.getFormFactory(id);
-			Iterator it = factory.getChildFactories().iterator();
-			while (it.hasNext()) {
-				ElementFactory ef = (ElementFactory) it.next();
-				nestedForm.addElement(new PagePropertyEditor(ef, masterPage));
-				present = true;
-			}
-		}
-		return present;
-	}
-
 	public String getLabel() {
 		return null;
 	}
@@ -108,9 +76,41 @@ public class PagePropertiesEditor extends CompositeElement
 	public void valueChanged(ChangeEvent event) {
 		String handlerName = (String) event.getNewValue();
 		removeComponent(currentForm);
-		currentForm = createNestedForm(handlerName);
+		currentForm = new PropertiesForm(handlerName); 
 		addComponent(currentForm);
 		getFormListener().elementChanged(this);
+	}
+	
+	private class PropertiesForm extends NestedForm {
+		
+		private PagePropertiesEditorBinder binder = new PagePropertiesEditorBinder();
+		
+		public PropertiesForm(String handlerName) {
+			String id = handlerName + "-page";
+			setRequired(true);
+			setIndent(false);
+			setEditorBinder(binder);
+			setStyleClass(id);
+			
+			addPagePropertyElements("all-pages");
+			addPagePropertyElements(id);
+			
+			if (masterPage == null) {
+				addPagePropertyElements("master-" + id);
+			}
+			setValue(initialValue);
+		}
+		
+		private void addPagePropertyElements(String id) {
+			if (repository.containsForm(id)) {
+				FormFactory factory = repository.getFormFactory(id);
+				Iterator it = factory.getChildFactories().iterator();
+				while (it.hasNext()) {
+					ElementFactory ef = (ElementFactory) it.next();
+					addElement(new PagePropertyElement(ef, binder, masterPage));
+				}
+			}
+		}
 	}
 	
 }

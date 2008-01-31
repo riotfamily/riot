@@ -23,22 +23,53 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.riot.form.ContentContainerEditorBinder;
+import org.riotfamily.forms.EditorBinding;
 import org.riotfamily.pages.model.PageProperties;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class PagePeopertiesEditorBinder extends ContentContainerEditorBinder {
+public class PagePropertiesEditorBinder extends ContentContainerEditorBinder {
 
+	private Map elements = new HashMap();
+	
 	public Class getBeanClass() {
 		return PageProperties.class;
 	}
 	
 	protected ContentContainer createContainer() {
 		return new PageProperties();
+	}
+	
+	public void registerElement(EditorBinding binding, 
+			PagePropertyElement editor) {
+		
+		elements.put(binding, editor);
+	}
+	
+	private boolean isOverwrite(EditorBinding binding) {
+		PagePropertyElement ele = (PagePropertyElement) elements.get(binding);
+		return ele.isOverwrite();
+	}
+	
+	private Object getValue(EditorBinding binding) {
+		return isOverwrite(binding) ? binding.getEditor().getValue() : null;
+	}
+	
+	public Object populateBackingObject() {
+		Iterator it = getBindings().iterator();
+		while (it.hasNext()) {
+			EditorBinding binding = (EditorBinding) it.next();
+			setPropertyValue(binding.getProperty(), getValue(binding));
+		}
+		return getBackingObject();
 	}
 	
 }
