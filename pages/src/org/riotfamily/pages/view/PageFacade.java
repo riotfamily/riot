@@ -110,11 +110,15 @@ public class PageFacade {
 	public String getUrl() {
 		String host = page.getSite().getHostName();
 		if (host != null && !host.equals(request.getServerName())) {
-			return page.getAbsoluteUrl(pathCompleter, request.isSecure());
+			return getAbsoluteUrl();
 		}
 		return page.getUrl(pathCompleter);
 	}
 
+	public String getAbsoluteUrl() {
+		return page.getAbsoluteUrl(pathCompleter, request.isSecure());
+	}
+		
 	public String getSecureUrl() {
 		if (request.isSecure() && request.getServerName().equals(
 				page.getSite().getHostName())) {
