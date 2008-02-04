@@ -24,6 +24,7 @@
 package org.riotfamily.pages.model;
 
 import java.util.Locale;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -52,9 +53,13 @@ public class Site {
 	
 	private Site masterSite;
 	
+	private Set derivedSites;
+	
 	private boolean enabled = true;
 
 	private long position;
+	
+	private Set aliases;
 	
 	public boolean isEnabled() {
 		return this.enabled;
@@ -153,9 +158,17 @@ public class Site {
 		return path;
 	}
 	
+	public boolean hostNameMatches(String hostName) {
+		return this.hostName == null || this.hostName.equals(hostName)
+				|| (this.aliases != null && this.aliases.contains(hostName));
+	}
+	
+	public boolean prefixMatches(String path) {
+		return pathPrefix == null || path.startsWith(pathPrefix + "/");
+	}
+			
 	public boolean matches(String hostName, String path) {
-		return (this.hostName == null || this.hostName.equals(hostName))
-				&& (pathPrefix == null || path.startsWith(pathPrefix + "/"));
+			return hostNameMatches(hostName) && prefixMatches(path);
 	}
 
 	public Site getMasterSite() {
@@ -166,6 +179,14 @@ public class Site {
 		this.masterSite = masterSite;
 	}
 	
+	public Set getDerivedSites() {
+		return this.derivedSites;
+	}
+
+	public void setDerivedSites(Set derivedSites) {
+		this.derivedSites = derivedSites;
+	}
+
 	public long getPosition() {
 		if (position == 0) {
 			position = System.currentTimeMillis();
@@ -176,32 +197,15 @@ public class Site {
 	public void setPosition(long position) {
 		this.position = position;
 	}
+	
+	public Set getAliases() {
+		return this.aliases;
+	}
 
-	public String toString() {
-		return getName();
+	public void setAliases(Set aliases) {
+		this.aliases = aliases;
 	}
-	
-	public int hashCode() {
-		return getName().hashCode();
-	}
-	
-	public boolean equals(Object obj) {
-		if (obj == this) {
-			return true;
-		}
-		if (!(obj instanceof Site)) {
-			return false;
-		}
-		Site other = (Site) obj;
-		
-		return ObjectUtils.nullSafeEquals(this.name, other.name)
-				&& ObjectUtils.nullSafeEquals(this.hostName, other.hostName)
-				&& ObjectUtils.nullSafeEquals(this.pathPrefix, other.pathPrefix)
-				&& ObjectUtils.nullSafeEquals(this.locale, other.locale)
-				&& ObjectUtils.nullSafeEquals(this.theme, other.theme)
-				&& ObjectUtils.nullSafeEquals(this.masterSite, other.masterSite);
-	}
-	
+
 	public StringBuffer getAbsoluteUrl(boolean secure) {
 		Assert.state(hostName != null, "Can't build an absolute URL because " +
 				"no hostName is set for the Site " + getName());
@@ -271,4 +275,28 @@ public class Site {
 		return url;
 	}
 
+	public String toString() {
+		return getName();
+	}
+	
+	public int hashCode() {
+		return getName().hashCode();
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof Site)) {
+			return false;
+		}
+		Site other = (Site) obj;
+		
+		return ObjectUtils.nullSafeEquals(this.name, other.name)
+				&& ObjectUtils.nullSafeEquals(this.hostName, other.hostName)
+				&& ObjectUtils.nullSafeEquals(this.pathPrefix, other.pathPrefix)
+				&& ObjectUtils.nullSafeEquals(this.locale, other.locale)
+				&& ObjectUtils.nullSafeEquals(this.theme, other.theme)
+				&& ObjectUtils.nullSafeEquals(this.masterSite, other.masterSite);
+	}
 }

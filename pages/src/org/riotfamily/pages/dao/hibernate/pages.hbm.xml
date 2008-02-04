@@ -76,6 +76,14 @@
 		<property name="pathPrefix" />
 		<property name="position" column="pos" />
 		<many-to-one name="masterSite" />
+		<set name="derivedSites" inverse="true" lazy="true">
+			<key column="masterSite" />
+			<one-to-many class="Site" />
+		</set>
+		<set name="aliases" table="riot_site_aliases" lazy="false">
+			<key column="site" />
+			<element column="hostName" type="string" />
+		</set>
 		<filter name="liveMode" condition="enabled = :published"/>
 	</class>
 	

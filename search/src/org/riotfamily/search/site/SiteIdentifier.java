@@ -84,7 +84,7 @@ public class SiteIdentifier {
 		Iterator it = sites.iterator();
 		while (it.hasNext()) {
 			Site site = (Site) it.next();
-			if (site.getHostName() != null && site.getHostName().equals(hostName)) {
+			if (site.hostNameMatches(hostName)) {
 				return true;
 			}
 		}

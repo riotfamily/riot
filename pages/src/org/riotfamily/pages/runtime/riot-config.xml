@@ -4,6 +4,7 @@
 	xmlns:ed="http://www.riotfamily.org/schema/riot/editor-config"
 	xmlns:list="http://www.riotfamily.org/schema/riot/list-config"
 	xmlns:form="http://www.riotfamily.org/schema/forms/form-config"
+	xmlns:riot="http://www.riotfamily.org/schema/riot/form-elements"
 	xmlns:component="http://www.riotfamily.org/schema/components/form-elements"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
@@ -15,6 +16,8 @@
 		http://www.riotfamily.org/schema/riot/list-config-7.0.xsd
 		http://www.riotfamily.org/schema/forms/form-config
 		http://www.riotfamily.org/schema/forms/form-config-7.0.xsd
+		http://www.riotfamily.org/schema/riot/form-elements
+		http://www.riotfamily.org/schema/riot/form-elements-7.0.xsd
 		http://www.riotfamily.org/schema/components/form-elements
 		http://www.riotfamily.org/schema/components/form-elements-7.0.xsd">
 
@@ -25,7 +28,13 @@
 	</ed:list>
 	
 	<ed:list id="sites" list-ref="sites" icon="world">
-		<ed:form form-ref="site" />
+		<ed:form form-ref="site">
+			<!--
+			<ed:list list-ref="pageAliases">
+				<ed:form form-ref="pageAlias" />
+			</ed:list>
+			-->
+		</ed:form>
 	</ed:list>
 
 	<list:list id="site-chooser">
@@ -55,10 +64,22 @@
 		</list:columns>
 		<list:command id="add" />
 	</list:list>
+	
+	<list:list id="pageAliases">
+		<list:dao ref="pageAliasRiotDao" />
+		<list:columns>
+			<list:column property="path" />
+			<list:column property="page.path" />
+			<list:command id="edit" />
+			<list:command id="delete" />
+		</list:columns>
+		<list:command id="add" />
+	</list:list>
 
 	<list:list id="pages" default-command="showChildPages">
 		<list:dao ref="pageRiotDao" />
 		<list:columns>
+			<list:column property="title" />
 			<list:column property="pathComponent" />
 			<list:command id="discardPage" />
 			<list:command id="publishStatus" />
@@ -90,6 +111,9 @@
 			<form:textfield bind="pathPrefix" />
 			<form:checkbox bind="enabled" default="checked" />
 		</form:group>
+		<form:list bind="aliases" sortable="false">
+			<form:textfield />
+		</form:list>
 	</form:form>
 
 	<form:form id="page" bean-class="org.riotfamily.pages.model.Page"
@@ -98,6 +122,11 @@
 			<form:textfield bind="pathComponent" required="true" regex="([A-Za-z0-9_.,*@{}-]*)" />
 			<form:checkbox bind="folder" />
 		</form:group>
+	</form:form>
+	
+	<form:form id="pageAlias" bean-class="org.riotfamily.pages.model.PageAlias">
+		<form:textfield bind="path" />
+		<riot:chooser bind="page" display="path" target-editor-id="page" root-editor-id="pages" />
 	</form:form>
 
 </riot-config>
