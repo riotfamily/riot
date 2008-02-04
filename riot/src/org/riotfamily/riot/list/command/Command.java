@@ -24,6 +24,7 @@
 package org.riotfamily.riot.list.command;
 
 
+
 /**
  * Interface to be implemented by classes that perform operations on lists
  * or list items.
@@ -60,4 +61,5 @@ public interface Command {
 	 * Returns whether the command should be shown beside the form.
 	 */
 	public boolean isShowOnForm();
+	
 }

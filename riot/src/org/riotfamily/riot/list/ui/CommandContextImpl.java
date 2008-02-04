@@ -54,6 +54,7 @@ class CommandContextImpl implements CommandContext {
 
 	public void setItem(ListItem item) {
 		this.item = item;
+		this.bean = null;
 	}
 
 	public Class getBeanClass() {

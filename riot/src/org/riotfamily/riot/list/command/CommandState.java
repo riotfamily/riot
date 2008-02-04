@@ -38,7 +38,7 @@ public class CommandState {
 	
 	private String itemStyleClass;
 	
-	private boolean enabled;
+	private boolean enabled = true;
 	
 	private String label;
 	

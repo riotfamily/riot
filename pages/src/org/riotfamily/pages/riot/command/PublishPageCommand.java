@@ -23,8 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
@@ -33,19 +37,22 @@ import org.riotfamily.riot.list.command.result.ReloadResult;
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public class PublishPageCommand extends AbstractCommand {
+public class PublishPageCommand extends AbstractCommand implements BatchCommand {
 
 	public static final String ACTION_PUBLISH = "publish";
-
-	private PageDao pageDao;
 	
+	private PageDao pageDao;
 	
 	public PublishPageCommand(PageDao pageDao) {
 		this.pageDao = pageDao;
 	}
-
+	
 	protected String getAction(CommandContext context) {
 		return ACTION_PUBLISH;
+	}
+	
+	public boolean isBatchCommand() {
+		return true;
 	}
 	
 	protected boolean isEnabled(CommandContext context, String action) {
@@ -65,6 +72,15 @@ public class PublishPageCommand extends AbstractCommand {
 		return context.getMessageResolver().getMessage("confirm.publishPage",
 				new Object[] {page.getTitle(true)},
 				"Do you really want to publish this page?");
+	}
+
+	public String getBatchConfirmationMessage(CommandContext context, String action) {
+		return context.getMessageResolver().getMessage("confirm.publishPage.selected",
+				"Do you really want to publish the selected pages?");
+	}
+	
+	public List getBatchStates(CommandContext context) {
+		return Collections.singletonList(getState(context, ACTION_PUBLISH));
 	}
 
 }

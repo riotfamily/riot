@@ -66,7 +66,8 @@ th {
 	text-align: left;
 	font-weight: normal;
 }
-th.col-1 {
+th.col-1,
+.selectable th.check {
 	background: #3d3d3d url(images/corner.gif) top left no-repeat;
 }
 th.commands {
@@ -160,6 +161,24 @@ td div.false {
 
 #list .commands .action {
 	float: left;
+}
+
+#list .check {
+	padding: 0 0 0 5px;
+	width: 12px;
+}
+
+.selectable th.col-1 {
+	background-image: none;
+}
+.selectable .col-1 {
+	padding-left: 9px;
+}
+
+#list div.batchCommands {
+	overflow: hidden;
+	background: #ebebeb url(images/arrow_batch.gif) 15px center no-repeat;
+	padding-left: 32px;
 }
 
 #list .commands .enabled:hover,

@@ -23,8 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
@@ -35,7 +39,7 @@ import org.riotfamily.riot.list.command.result.ShowListResult;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class DiscardPageCommand extends AbstractCommand {
+public class DiscardPageCommand extends AbstractCommand implements BatchCommand {
 
 	public static final String ACTION_DELETE = "delete";
 	
@@ -86,6 +90,26 @@ public class DiscardPageCommand extends AbstractCommand {
 		return null;
 	}
 	
+	public String getBatchConfirmationMessage(CommandContext context, String action) {
+		if (ACTION_DELETE.equals(action)) {
+			return context.getMessageResolver().getMessage("confirm.delete.selected", 
+					"Do you really want to delete all selected pages?'");
+		}
+		else if (ACTION_DISCARD.equals(action)) {
+			return context.getMessageResolver().getMessage("confirm.discard.selected",
+					"Do you really want to discard all selected changes?");
+		}
+		return null;
+	}
+	
+	public List getBatchStates(CommandContext context) {
+		List states = new ArrayList();
+		states.add(getState(context, ACTION_DISCARD));
+		states.add(getState(context, ACTION_UNPUBLISH));
+		states.add(getState(context, ACTION_DELETE));
+		return states;
+	}
+	
 	public CommandResult execute(CommandContext context) {
 		Page page = (Page) context.getBean();
 		if (!page.isPublished()) {
@@ -100,4 +124,5 @@ public class DiscardPageCommand extends AbstractCommand {
 		}
 		return new ReloadResult();
 	}
+	
 }

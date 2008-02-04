@@ -115,11 +115,16 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 	 *
 	 */
 	public CommandState getState(CommandContext context) {
+		String action = getAction(context);
+		CommandState state = getState(context, action);
+		state.setEnabled(isEnabled(context, action));
+		return state;
+	}
+	
+	protected CommandState getState(CommandContext context, String action) {
 		CommandState state = new CommandState();
 		state.setId(getId());
-		String action = getAction(context);
 		state.setAction(action);
-		state.setEnabled(isEnabled(context, action));
 		state.setLabel(getLabel(context, action));
 		state.setStyleClass(getStyleClass(context, action));
 		state.setItemStyleClass(getItemStyleClass(context, action));
@@ -159,10 +164,10 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 	/**
 	 * Returns the CSS class that is assigned to command's HTML element and
 	 * therefore defines which icon is displayed. The default implementation
-	 * delegates the call to {@link #getAction(CommandContext)}.
+	 * returns the given action.
 	 */
 	protected String getStyleClass(CommandContext context, String action) {
-		return getAction(context);
+		return action;
 	}
 
 	/**

@@ -54,11 +54,13 @@ import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.TreeDefinition;
 import org.riotfamily.riot.list.ColumnConfig;
 import org.riotfamily.riot.list.ListConfig;
+import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.list.command.core.ChooseCommand;
 import org.riotfamily.riot.list.command.core.DescendCommand;
+import org.riotfamily.riot.list.command.result.ConfirmBatchResult;
 import org.riotfamily.riot.list.command.result.ConfirmResult;
 import org.riotfamily.riot.list.support.ListParamsImpl;
 import org.riotfamily.riot.list.ui.render.RenderContext;
@@ -126,6 +128,7 @@ public class ListSession implements RenderContext {
 
 		listCommands = listConfig.getCommands();
 		itemCommands = listConfig.getColumnCommands();
+		
 		defaultCommandIds = listConfig.getDefaultCommandIds();
 		title = listDefinition.createReference(parentId, messageResolver).getLabel();
 		params = new ListParamsImpl();
@@ -219,7 +222,11 @@ public class ListSession implements RenderContext {
 	public ListModel getItems(HttpServletRequest request) {
 		Object parent = EditorDefinitionUtils.loadParent(
 				listDefinition, parentId);
-
+		
+		return getItems(request, parent);
+	}
+	
+	private ListModel getItems(HttpServletRequest request, Object parent) {
 		int itemsTotal = listConfig.getDao().getListSize(parent, params);
 		int pageSize = params.getPageSize();
 		Collection beans = listConfig.getDao().list(parent, params);
@@ -279,12 +286,15 @@ public class ListSession implements RenderContext {
 	}
 
 	public ListModel getModel(HttpServletRequest request) {
-		ListModel model = getItems(request);
-
+		Object parent = EditorDefinitionUtils.loadParent(
+				listDefinition, parentId);
+		
+		ListModel model = getItems(request, parent);
 		model.setEditorId(listDefinition.getId());
 		model.setParentId(parentId);
 		model.setItemCommandCount(itemCommands.size());
-		model.setListCommands(getListCommands(request));
+		model.setListCommands(getCommandStates(listCommands, null, parent, model.getItemsTotal(), request));
+		model.setBatchCommands(getBatchStates(itemCommands, parent, model.getItemsTotal(), request));
 		model.setCssClass(listConfig.getId());
 
 		boolean sortableDao = listConfig.getDao() instanceof SortableDao;
@@ -384,11 +394,6 @@ public class ListSession implements RenderContext {
 		return !listCommands.isEmpty();
 	}
 
-	public List getListCommands(HttpServletRequest request) {
-		//REVISIT: Should we pass the correct item count here?
-		return getCommandStates(listCommands, null, null, -1, request);
-	}
-
 	public List getFormCommands(String objectId, HttpServletRequest request) {
 		Object bean = null;
 		if (objectId != null) {
@@ -401,7 +406,7 @@ public class ListSession implements RenderContext {
 	private List getCommandStates(List commands, ListItem item, Object bean,
 			int itemsTotal, HttpServletRequest request) {
 
-		ArrayList result = new ArrayList();
+		ArrayList states = new ArrayList();
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		context.setBean(bean);
 		context.setItem(item);
@@ -409,22 +414,48 @@ public class ListSession implements RenderContext {
 		Iterator it = commands.iterator();
 		while (it.hasNext()) {
 			Command command = (Command) it.next();
-			CommandState state = command.getState(context);
+			states.add(command.getState(context));
+		}
+		checkPermissions(states, bean);
+		return states;
+	}
+	
+	private List getBatchStates(List commands, Object bean,
+			int itemsTotal, HttpServletRequest request) {
+
+		ArrayList states = new ArrayList();
+		CommandContextImpl context = new CommandContextImpl(this, request);
+		context.setBean(bean);
+		context.setItemsTotal(itemsTotal);
+		Iterator it = commands.iterator();
+		while (it.hasNext()) {
+			Object command = it.next();
+			if (command instanceof BatchCommand) {
+				BatchCommand bc = (BatchCommand) command;
+				states.addAll(bc.getBatchStates(context));
+			}
+		}
+		checkPermissions(states, bean);
+		return states;
+	}
+	
+	private void checkPermissions(List states, Object bean) {
+		Iterator it = states.iterator();
+		while (it.hasNext()) {
+			CommandState state = (CommandState) it.next();
 			boolean granted = AccessController.isGranted(
 					state.getAction(), bean);
 
 			state.setEnabled(state.isEnabled() && granted);
-			result.add(state);
 		}
-		return result;
 	}
 
-	public CommandResult execCommand(ListItem item, String commandId,
+	public CommandResult execCommand(ListItem item, CommandState commandState,
 			boolean confirmed, HttpServletRequest request,
 			HttpServletResponse response) {
 
 		Collection commands = item != null ? itemCommands : listCommands;
-		Command command = getCommand(commands, commandId);
+		Command command = getCommand(commands, commandState.getId());
 		Object bean = null;
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		if (item != null) {
@@ -439,7 +470,7 @@ public class ListSession implements RenderContext {
 			if (!confirmed) {
 				String message = command.getConfirmationMessage(context);
 				if (message != null) {
-					return new ConfirmResult(item, commandId, message);
+					return new ConfirmResult(item, commandState, message);
 				}
 			}
 			TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
@@ -457,6 +488,39 @@ public class ListSession implements RenderContext {
 		else {
 			return null;
 		}
+	}
+	
+	public CommandResult execBatchCommand(List items, CommandState commandState,
+			boolean confirmed, HttpServletRequest request,
+			HttpServletResponse response) {
+
+		BatchCommand command = (BatchCommand) getCommand(itemCommands, commandState.getId());
+		CommandContextImpl context = new CommandContextImpl(this, request);
+		context.setItemsTotal(items.size());
+		if (!confirmed) {
+			String message = command.getBatchConfirmationMessage(context, commandState.getAction());
+			if (message != null) {
+				return new ConfirmBatchResult(commandState, message);
+			}
+		}
+		TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
+		CommandResult result = null;
+		try {
+			Iterator it = items.iterator();
+			while (it.hasNext()) {
+				ListItem item = (ListItem) it.next();
+				if (AccessController.isGranted(commandState.getAction(), item)) {
+					context.setItem(item);
+					result = command.execute(context);
+				}
+			}
+		}
+		catch (RuntimeException e) {
+			transactionManager.rollback(status);
+			throw e;
+		}
+		transactionManager.commit(status);
+		return result; 
 	}
 	
 	private Command getCommand(Collection commands, String id) {

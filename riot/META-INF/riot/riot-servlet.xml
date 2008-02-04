@@ -594,6 +594,7 @@
 							ListItem.setColumns(List&lt;String&gt;);
 							ListItem.setCommands(List&lt;CommandState&gt;);
 							ListService.filter(String, Map&lt;String, List&gt;, HttpServletRequest);
+							ListService.execBatchCommand(String, List&lt;ListItem&gt;, CommandState, boolean, HttpServletRequest, HttpServletResponse);
 						</value>
 					</property>
 				</bean>

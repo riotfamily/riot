@@ -23,8 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.core;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.ListDefinition;
+import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.ShowListResult;
@@ -34,14 +38,14 @@ import org.springframework.web.util.HtmlUtils;
  * Command that deletes an item. To prevent accidental deletion a confirmation
  * message is displayed.
  */
-public class DeleteCommand extends AbstractCommand {
+public class DeleteCommand extends AbstractCommand implements BatchCommand {
 
 	public static final String ACTION_DELETE = "delete";
 	
 	public DeleteCommand() {
 		setShowOnForm(true);
 	}
-	
+		
 	protected String getAction(CommandContext context) {
 		return ACTION_DELETE;
 	}
@@ -64,6 +68,15 @@ public class DeleteCommand extends AbstractCommand {
 		return context.getMessageResolver().getMessage("confirm.delete", args, 
 				"Do you really want to delete this element?");
 	}
+
+	public String getBatchConfirmationMessage(CommandContext context, String action) {
+		return context.getMessageResolver().getMessage("confirm.delete.selected", 
+				"Do you really want to delete all selected elements?");
+	}
+	
+	public List getBatchStates(CommandContext context) {
+		return Collections.singletonList(getState(context, ACTION_DELETE));
+	}
 	
 	public CommandResult execute(CommandContext context) {
 		ListDefinition listDef = context.getListDefinition();
@@ -74,5 +87,5 @@ public class DeleteCommand extends AbstractCommand {
 		context.getDao().delete(item, parent);
 		return new ShowListResult(context);
 	}
-
+	
 }

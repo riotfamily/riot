@@ -40,6 +40,8 @@ public class ListModel {
 	private List items;
 
 	private List listCommands;
+	
+	private List batchCommands;
 
 	private int itemCommandCount;
 
@@ -105,6 +107,14 @@ public class ListModel {
 
 	public void setListCommands(List listCommands) {
 		this.listCommands = listCommands;
+	}
+	
+	public List getBatchCommands() {
+		return this.batchCommands;
+	}
+
+	public void setBatchCommands(List batchCommands) {
+		this.batchCommands = batchCommands;
 	}
 
 	public int getItemCommandCount() {

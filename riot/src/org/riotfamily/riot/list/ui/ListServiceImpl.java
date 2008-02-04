@@ -44,6 +44,7 @@ import org.riotfamily.forms.controller.FormContextFactory;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandResult;
+import org.riotfamily.riot.list.command.CommandState;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -172,12 +173,6 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 		return getListSession(key, request).getFilterFormHtml();
 	}
 
-	public List getListCommands(String key,	HttpServletRequest request)
-			throws ListSessionExpiredException {
-
-		return getListSession(key, request).getListCommands(request);
-	}
-
 	public List getFormCommands(String key, String objectId,
 			HttpServletRequest request) throws ListSessionExpiredException {
 
@@ -185,12 +180,21 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 	}
 
 	public CommandResult execCommand(String key, ListItem item,
-			String commandId, boolean confirmed,
+			CommandState command, boolean confirmed,
 			HttpServletRequest request, HttpServletResponse response)
 			throws ListSessionExpiredException {
 
 		return getListSession(key, request).execCommand(
-				item, commandId, confirmed, request, response);
+				item, command, confirmed, request, response);
+	}
+	
+	public CommandResult execBatchCommand(String key, List items,
+			CommandState command, boolean confirmed,
+			HttpServletRequest request, HttpServletResponse response)
+			throws ListSessionExpiredException {
+
+		return getListSession(key, request).execBatchCommand(
+				items, command, confirmed, request, response);
 	}
 
 	public ListModel filter(String key, Map filter, HttpServletRequest request)

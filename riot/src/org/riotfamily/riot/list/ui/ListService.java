@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.riot.list.command.CommandResult;
+import org.riotfamily.riot.list.command.CommandState;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -55,11 +56,13 @@ public interface ListService {
 	public List getFormCommands(String key, String objectId, 
 			HttpServletRequest request) throws ListSessionExpiredException;
 	
-	public List getListCommands(String key,	HttpServletRequest request)
+	public CommandResult execCommand(String key, ListItem item, 
+			CommandState command, boolean confirmed, 
+			HttpServletRequest request, HttpServletResponse response)
 			throws ListSessionExpiredException;
 	
-	public CommandResult execCommand(String key, ListItem item, 
-			String commandId, boolean confirmed, 
+	public CommandResult execBatchCommand(String key, List items, 
+			CommandState command, boolean confirmed, 
 			HttpServletRequest request, HttpServletResponse response)
 			throws ListSessionExpiredException;
 	
