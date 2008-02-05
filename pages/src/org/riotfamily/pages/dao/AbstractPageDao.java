@@ -364,6 +364,13 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 			deletePage(page);
 		}
 		deleteAliases(site);
+		if (site.getDerivedSites() != null) {
+			it = site.getDerivedSites().iterator();
+			while (it.hasNext()) {
+				Site derivedSite = (Site) it.next();
+				derivedSite.setMasterSite(null);
+			}
+		}
 		deleteObject(site);
 	}
 
