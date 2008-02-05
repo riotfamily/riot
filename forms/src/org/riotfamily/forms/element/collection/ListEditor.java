@@ -270,5 +270,6 @@ public class ListEditor extends TemplateElement implements Editor,
 						new ListItemComparator(itemOrder));
 			}
 		}
+		validate();
 	}
 }
