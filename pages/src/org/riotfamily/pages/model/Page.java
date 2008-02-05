@@ -36,6 +36,7 @@ import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.util.Assert;
 
 
@@ -316,15 +317,16 @@ public class Page {
 		this.published = published;
 	}
 
-	public boolean isEnabled() {
-		return published && site.isEnabled();
+	public boolean isRequestable() {
+		return (published && site.isEnabled())
+			|| AccessController.isAuthenticatedUser();
 	}
 
 	public boolean isVisible(boolean preview) {
 		return !isHidden() 
 				&& !node.isHidden() 
 				&& !isWildcard() 
-				&& (isEnabled() || preview);
+				&& (published || preview);
 	}
 	
 	public String toString() {

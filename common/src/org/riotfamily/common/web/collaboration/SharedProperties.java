@@ -125,11 +125,11 @@ public class SharedProperties {
 	/**
 	 * Sets multiple shared property at once. The given map must contain String
 	 * keys and String (or null) values.
-	 * @throws IllegalStateException if no properties map is found in the request
 	 */
 	public static void setProperties(HttpServletRequest request, Map properties) {
 		if (properties != null) {
-			Map map = getProperties(request);
+			Map map = (Map) request.getAttribute(PROPERTIES_ATTRIBUTE);
+			if (map != null) {
 			Iterator it = properties.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry) it.next();
@@ -142,6 +142,7 @@ public class SharedProperties {
 						"Map must only contain String (or null) values.");
 				
 				map.put(key, value);
+				}
 			}
 		}
 	}
@@ -168,7 +169,10 @@ public class SharedProperties {
 	 */
 	public static Map getDiff(HttpServletRequest request, Map snapshot) {
 		Map diff = getSnapshot(request);
-		if (diff != null && snapshot != null) {
+		if (diff == null || diff.isEmpty()) {
+			return null;
+		}
+		if (snapshot != null) {
 			Iterator it = diff.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry) it.next();

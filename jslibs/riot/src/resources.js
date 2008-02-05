@@ -133,19 +133,6 @@ var Resources = {
 		Resources.waitFor(test, callback);
 	},
 
-	useBasePathFromScript: function(scriptName) {
-		var scriptTags = document.getElementsByTagName('script');
-		for (var s = 0; s < scriptTags.length; s++) {
-			var src = scriptTags[s].src;
-			var i = src.indexOf(scriptName);
-			if (i != -1) {
-				Resources.basePath = src.substring(0, i);
-				return;
-			}
-		}
-		alert('Script not found: ' + scriptName);
-	},
-
 	waitFor: function(test, callback) {
 		var testPassed;
 		if (typeof test == 'function') {
@@ -216,5 +203,4 @@ else if (window.attachEvent) {
     window.attachEvent('onunload', Resources.stopLoading);
 }
 
-Resources.useBasePathFromScript('riot-js/resources.js');
 Resources.debugEnabled = top.location.href.indexOf('debug-resources') != -1;

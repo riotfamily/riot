@@ -666,8 +666,8 @@ riot.PublishWidget = Class.create({
 	},
 
 	scaleOverlay: function() {
-		this.overlay.style.width = (this.controller.element.offsetWidth - 4) + 'px';
-		this.overlay.style.height = (this.controller.element.offsetHeight - 4) + 'px';
+		this.element.style.width = this.overlay.style.width = (this.controller.element.offsetWidth - 4) + 'px';
+		this.element.style.height = this.overlay.style.height = (this.controller.element.offsetHeight - 4) + 'px';
 	},
 
 	destroy: function() {

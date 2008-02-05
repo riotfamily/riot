@@ -114,6 +114,7 @@
 				<map>
 					<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
 					<entry key="riotVersion" value-ref="riotVersion" />
+					<entry key="resourcePath" value-ref="riotResourcePath" />
 				</map>
 			</property>
 		</bean>

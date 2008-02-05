@@ -2,7 +2,7 @@
   - Returns all top-level pages.
   -->
 <#function topLevelPages site=currentPage.site>
-	<#return pageDao.getRootNode().getChildPages(site) />
+	<#return pagesMacroHelper.getTopLevelPages(site) />
 </#function>
 
 <#--
@@ -10,14 +10,14 @@
   - one PageNode with that id, otherwise an exception is thrown.
   -->
 <#function pageForHandler handlerName site=currentPage.site>
-	<#return pageDao.findPageForHandler(handlerName, site) />
+	<#return pagesMacroHelper.getPageForHandler(handlerName, site) />
 </#function>
 
 <#--
   - Returns all pages with the given handlerName.
   -->
 <#function pagesForHandler handlerName site=currentPage.site>
-	<#return pageDao.findPagesForHandler(handlerName, site) />
+	<#return pagesMacroHelper.getPagesForHandler(handlerName, site) />
 </#function>
 
 <#--
@@ -25,7 +25,7 @@
   - could not be determined from the url.
   -->
 <#function pageForUrl url site=currentPage.site>
-	<#return pagesMacroHelper.pageForUrl(url, site) />
+	<#return pagesMacroHelper.getPageForUrl(url, site) />
 </#function>
 
 

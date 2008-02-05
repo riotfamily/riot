@@ -125,7 +125,7 @@ public class LoginManager implements ServletContextAware {
 	/**
 	 * Returns the user associated with the given request.
 	 */
-	static RiotUser getUser(HttpServletRequest request) {
+	protected static RiotUser getUser(HttpServletRequest request) {
 		UserHolder holder = UserHolder.getInstance(request);
 		return holder != null ? holder.getUser() : null;
 	}

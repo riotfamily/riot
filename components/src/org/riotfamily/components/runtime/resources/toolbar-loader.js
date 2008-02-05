@@ -1,9 +1,11 @@
 var riot = {
 	contextPath: '${contextPath}',
+	resourcePath: '${contextPath}${resourcePath}',
 	path: '${contextPath}${riotServletPrefix}',
 	language: '${language}' || 'en'
 };
 
+Resources.basePath = riot.resourcePath;
 Resources.loadStyleSheet('style/toolbar.css');
 Resources.loadStyleSheet('style/edit-mode.css');
 

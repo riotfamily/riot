@@ -60,4 +60,10 @@
 		<property name="viewClass" value="org.riotfamily.components.view.ComponentFreeMarkerView" />
 	</override:properties>
 	
+	<override:properties ref="cachiusHandlerAdapter">
+		<property name="cacheKeyProvider">
+			<bean class="org.riotfamily.components.cache.EditModeAwareCacheKeyProvider" />
+		</property>
+	</override:properties>
+
 </beans>

@@ -139,6 +139,8 @@ public class PushUpTemplateController extends TemplateController {
 			new DeferredRenderingResponseWrapper(response);
 
 		getResponseWrappers(request).put(slot, responseWrapper);
+		
+		Map snapshot = ServletUtils.takeAttributesSnapshot(request);
 		request.setAttribute(SLOT_PATH_ATTRIBUTE, slot);
 
 		String url = (String) getMergedConfiguration().get(slot);
@@ -147,6 +149,7 @@ public class PushUpTemplateController extends TemplateController {
 		request.getRequestDispatcher(url).forward(
 				request, responseWrapper);
 		
+		ServletUtils.restoreAttributes(request, snapshot);
 		return responseWrapper.isRedirectSent();
 	}
 

@@ -23,13 +23,17 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.SwappableItemDao;
 import org.riotfamily.riot.dao.support.RiotDaoAdapter;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
@@ -59,7 +63,16 @@ public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
 	}
 
 	public Collection list(Object parent, ListParams params) throws DataAccessException {
-		return pageDao.listSites();
+		List allSites = pageDao.listSites();
+		ArrayList result = new ArrayList(allSites.size());
+		Iterator it = allSites.iterator();
+		while (it.hasNext()) {
+			Site site = (Site) it.next();
+			if (AccessController.isGranted("list", site)) {
+				result.add(site);
+			}
+		}
+		return result;
 	}
 
 	public void save(Object entity, Object parent) throws DataAccessException {

@@ -161,7 +161,7 @@
 	<#if attributes?is_hash>
 		<#list attributes?keys as attributeName>
 			<#if attributes[attributeName]?has_content>
-				<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName]?html + "\"" />
+				<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName]?trim?html + "\"" />
 			</#if>
 		</#list>
 	</#if>
