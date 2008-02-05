@@ -69,11 +69,15 @@
 	<target name="-configure-ivy" depends="-setup-ivy">
 		<available classname="com.jcraft.jsch.JSchException" property="ivy.settings" value="ivysettings-ssh.xml" />
 		<property name="ivy.settings" value="ivysettings.xml" />
+		<!--
+		<ivy:settings id="ivy.instance" file="${root.dir}/${ivy.settings}" />
+		-->
 		<ivy:configure file="${root.dir}/${ivy.settings}" />
 	</target>
 
 	<target name="-setup-ivy" depends="-install-ivy">
-		<available resource="org/apache/ivy/ant/antlib.xml" property="ivy.available" />
+		<available resource="org/apache/ivy/ant/antlib.xml" 
+			classpathref="ivy-classpath" property="ivy.available" />
 	</target>
 
 	<!--
