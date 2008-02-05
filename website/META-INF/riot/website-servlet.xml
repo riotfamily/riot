@@ -127,5 +127,12 @@
 			</bean>			
 		</property>
 	</bean>
+	
+	<bean id="countryFlagController" name="/riot-utils/country/@{locale}.gif" class="org.riotfamily.website.misc.CountryFlagController">
+		<constructor-arg ref="fileTypeMap" />
+		<property name="location" value="classpath:/org/riotfamily/riot/runtime/resources/style/icons/flags/" />
+		<property name="defaultFlag" value="europeanunion" />
+		<property name="suffix" value=".gif" />
+	</bean>
 
 </beans>
