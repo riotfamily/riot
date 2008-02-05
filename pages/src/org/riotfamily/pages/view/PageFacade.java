@@ -212,10 +212,6 @@ public class PageFacade {
 		return page.isPublished();
 	}
 
-	public boolean isEnabled() {
-		return page.isEnabled();
-	}
-
 	public boolean isVisible() {
 		return page.isVisible(preview);
 	}

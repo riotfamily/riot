@@ -42,7 +42,6 @@ import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.riot.security.AccessController;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.Assert;
 import org.springframework.util.PathMatcher;
@@ -134,7 +133,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		if (page.isFolder()) {
 			return getFolderHandler(page);
 		}
-		if (isRequestable(page)) {
+		if (page.isRequestable()) {
 			request.setAttribute(PAGE_ATTRIBUTE, page);
 			String handlerName = page.getHandlerName();
 			if (handlerName != null) {
@@ -154,7 +153,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		Iterator it = folder.getChildPages().iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
-			if (isRequestable(page)) {
+			if (page.isRequestable()) {
 				String url = pageUrlBuilder.getUrl(page);
 				return new RedirectController(url, true, false);
 			}
@@ -199,10 +198,6 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		return (Map) request.getAttribute(AttributePattern.EXPOSED_ATTRIBUTES);
 	}
 	
-	private boolean isRequestable(Page page) {
-		return page.isEnabled() || AccessController.isAuthenticatedUser();
-	}
-
 	public static Page getPage(HttpServletRequest request) {
 		return (Page) request.getAttribute(PAGE_ATTRIBUTE);
 	}

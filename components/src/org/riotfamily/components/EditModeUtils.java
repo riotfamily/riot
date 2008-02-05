@@ -28,6 +28,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.web.context.request.RequestAttributes;
@@ -54,13 +55,28 @@ public final class EditModeUtils {
 	}
 	
 	public static boolean isLiveMode(HttpServletRequest request) {
-		return request.getAttribute(LIVE_MODE_ATTRIBUTE) == Boolean.TRUE;
+		Boolean liveMode = (Boolean) request.getAttribute(LIVE_MODE_ATTRIBUTE);
+		
+		if (liveMode == null) {
+			HttpSession session = request.getSession(false);
+			if (session != null) {
+				liveMode = (Boolean) session.getAttribute(LIVE_MODE_ATTRIBUTE);
+			}
+		}
+		
+		return liveMode == Boolean.TRUE;
 	}
 	
 	public static boolean isLiveMode() {
-		return RequestContextHolder.getRequestAttributes()
-				.getAttribute(LIVE_MODE_ATTRIBUTE, 
-				RequestAttributes.SCOPE_REQUEST) == Boolean.TRUE;
+		Boolean liveMode = (Boolean) RequestContextHolder.getRequestAttributes()
+				.getAttribute(LIVE_MODE_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
+		
+		if (liveMode == null) {
+			liveMode = (Boolean) RequestContextHolder.getRequestAttributes()
+				.getAttribute(LIVE_MODE_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
+		}
+		
+		return liveMode == Boolean.TRUE;
 	}
 	
 	public static void setLiveMode(HttpServletRequest request, boolean liveMode) {
@@ -69,6 +85,15 @@ public final class EditModeUtils {
 		}
 		else {
 			request.removeAttribute(LIVE_MODE_ATTRIBUTE);
+		}
+	}
+
+	public static void setLiveMode(HttpSession session, boolean liveMode) {
+		if (liveMode) {
+			session.setAttribute(LIVE_MODE_ATTRIBUTE, Boolean.TRUE);
+		}
+		else {
+			session.removeAttribute(LIVE_MODE_ATTRIBUTE);
 		}
 	}
 	

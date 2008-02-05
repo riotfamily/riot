@@ -183,15 +183,11 @@ public class FolderFilterPlugin extends FilterPlugin {
 		}
 	}
 	
-	private boolean isRequestable(Page page) {
-		return page.isEnabled() || AccessController.isAuthenticatedUser();
-	}
-		
 	private String getFirstRequestablePageUrl(Collection pages) {
 		Iterator it = pages.iterator();
 		while (it.hasNext()) {
 			Page page = (Page) it.next();
-			if (isRequestable(page)) {
+			if (page.isRequestable()) {
 				return pageUrlBuilder.getUrl(page);
 			}
 		}
