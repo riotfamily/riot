@@ -119,14 +119,12 @@ public class PageResolver {
 
 		if (site == null) {
 			path = null;
-			//log.debug("Not exposing the Path as we have no Site.");
 		}
 		else {
 			path = site.stripPrefix(path);
 			if (path.endsWith("/")) {
 				path = path.substring(0, path.length() - 1);
 			}
-			//log.info("Exposing Path: " + path);
 		}
 		expose(path, request, PATH_ATTRIBUTE);
 	}
@@ -136,8 +134,11 @@ public class PageResolver {
 		
 		if (object == null) {
 			object = NOT_FOUND;
+			log.debug("Exposing 'NOT_FOUND' as '" + attributeName + "'");
 		}
-		log.info("Exposing '" + object + "' as '" + attributeName + "'");
+		else {
+			log.debug("Exposing '" + object + "' as '" + attributeName + "'");
+		}
 		request.setAttribute(attributeName, object);
 	}
 	
@@ -172,7 +173,6 @@ public class PageResolver {
 		Object site = request.getAttribute(SITE_ATTRIBUTE);
 		if (site == null) {
 			site = resolveSite(request, pathCompleter);
-			//log.info("Exposing Site: " + site);
 			expose(site, request, SITE_ATTRIBUTE);
 		}
 		return site != NOT_FOUND ? (Site) site : null; 
@@ -183,7 +183,6 @@ public class PageResolver {
 		Object page = request.getAttribute(PAGE_ATTRIBUTE);
 		if (page == null) {
 			page = resolvePage(request);
-			//log.info("Exposing Page: " + page);
 			expose(page, request, PAGE_ATTRIBUTE);
 		}
 		return page != NOT_FOUND ? (Page) page : null;
