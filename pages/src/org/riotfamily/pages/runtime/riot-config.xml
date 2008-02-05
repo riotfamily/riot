@@ -86,6 +86,9 @@
 			<form:textfield bind="pathPrefix" />
 			<form:checkbox bind="enabled" default="checked" />
 		</form:group>
+		<form:list bind="aliases" sortable="false">
+			<form:textfield />
+		</form:list>
 	</form:form>
 
 	<form:form id="page" bean-class="org.riotfamily.pages.model.Page">

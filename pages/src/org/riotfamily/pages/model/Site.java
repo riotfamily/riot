@@ -24,6 +24,7 @@
 package org.riotfamily.pages.model;
 
 import java.util.Locale;
+import java.util.Set;
 
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -48,6 +49,8 @@ public class Site {
 	
 	private Site masterSite;
 	
+	private Set aliases;
+
 	private boolean enabled = true;
 
 	private long position;
@@ -149,9 +152,17 @@ public class Site {
 		return path;
 	}
 	
+	public boolean hostNameMatches(String hostName) {
+		return this.hostName == null || this.hostName.equals(hostName)
+				|| (this.aliases != null && this.aliases.contains(hostName));
+	}
+	
+	public boolean prefixMatches(String path) {
+		return pathPrefix == null || path.startsWith(pathPrefix + "/");
+	}
+			
 	public boolean matches(String hostName, String path) {
-		return (this.hostName == null || this.hostName.equals(hostName))
-				&& (pathPrefix == null || path.startsWith(pathPrefix + "/"));
+			return hostNameMatches(hostName) && prefixMatches(path);
 	}
 
 	public Site getMasterSite() {
@@ -173,6 +184,14 @@ public class Site {
 		this.position = position;
 	}
 
+	public Set getAliases() {
+		return this.aliases;
+	}
+
+	public void setAliases(Set aliases) {
+		this.aliases = aliases;
+	}
+	
 	public String toString() {
 		return getName();
 	}
@@ -190,16 +209,12 @@ public class Site {
 		}
 		Site other = (Site) obj;
 		
-		if (ObjectUtils.nullSafeEquals(this.name, other.name)
+		return ObjectUtils.nullSafeEquals(this.name, other.name)
 				&& ObjectUtils.nullSafeEquals(this.hostName, other.hostName)
 				&& ObjectUtils.nullSafeEquals(this.pathPrefix, other.pathPrefix)
 				&& ObjectUtils.nullSafeEquals(this.locale, other.locale)
 				&& ObjectUtils.nullSafeEquals(this.theme, other.theme)
-				&& ObjectUtils.nullSafeEquals(this.masterSite, other.masterSite)
-		) {
-			return true;
-		}
-		return false;
+				&& ObjectUtils.nullSafeEquals(this.masterSite, other.masterSite);
 	}
 
 }

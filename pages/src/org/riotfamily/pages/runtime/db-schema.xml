@@ -25,6 +25,15 @@
 			<db:add-foreign-key table="riot_sites" name="riot_site_master" references="riot_sites">
 				<db:ref local="masterSite" foreign="id" />
 			</db:add-foreign-key>
+
+			<db:create-table name="riot_site_aliases">
+				<db:column name="site" type="BIGINT" not-null="true" />
+				<db:column name="hostName" type="VARCHAR" length="255" />
+			</db:create-table>
+			
+			<db:add-foreign-key table="riot_site_aliases" name="riot_site_alias_site" references="riot_sites">
+				<db:ref local="site" foreign="id" />
+			</db:add-foreign-key>
 			
 			<db:create-table name="riot_site_locales">
 				<db:column name="site" type="BIGINT" />
