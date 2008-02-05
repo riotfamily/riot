@@ -42,7 +42,6 @@ import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.util.Assert;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerMapping;
 
@@ -186,7 +185,9 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 			HttpServletRequest request) {
 		
 		Site site = pageResolver.getSite(request);
-		Assert.state(site != null, "The current Site could not be resolved");
+		if (site == null) {
+			return null;
+		}
 		List pages = pageDao.findPagesForHandler(beanName, site);
 		ArrayList patterns = new ArrayList(pages.size());
 		Iterator it = pages.iterator();
