@@ -44,14 +44,6 @@
 		<entry key="pages" value="classpath:org/riotfamily/pages/view/pages.ftl" />
 	</override:put>
 	
-	<bean id="pagesMacroHelper" class="org.riotfamily.common.web.view.StatelessMacroHelperFactory">
-		<constructor-arg>
-			<bean class="org.riotfamily.pages.view.PagesMacroHelper">
-				<constructor-arg ref="pageDao" />
-			</bean>
-		</constructor-arg>
-	</bean>
-	
 	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin" />
 	
 	<override:add ref="inplaceMacroHelper" property="toolbarScripts" append="true">
@@ -69,6 +61,14 @@
 	<bean id="currentPage" class="org.riotfamily.pages.view.CurrentPageMacroHelperFactory">
 		<constructor-arg ref="pageResolver" />
 		<constructor-arg ref="pageDao" />
+	</bean>
+
+	<bean id="pagesMacroHelper" class="org.riotfamily.common.web.view.StatelessMacroHelperFactory">
+		<constructor-arg>
+			<bean class="org.riotfamily.pages.view.PagesMacroHelper">
+				<constructor-arg ref="pageDao" />
+			</bean>
+		</constructor-arg>
 	</bean>
 
 </beans>
