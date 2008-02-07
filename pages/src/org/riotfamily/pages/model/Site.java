@@ -158,8 +158,23 @@ public class Site {
 		return path;
 	}
 	
+	/**
+	 * Returns whether the given hostName matches the configured one.
+	 * Sites without a hostName will match any host.
+	 */
 	public boolean hostNameMatches(String hostName) {
-		return this.hostName == null || this.hostName.equals(hostName)
+		return hostNameMatches(hostName, true);
+	}
+	
+	/**
+	 * Returns whether the given hostName matches the configured one.
+	 * @param hostName The hostName to match
+	 * @param greedy Whether a <code>null</code> hostName should match any host
+	 * @return <code>true</code> if the hostName matches, <code>false</code> otherwise
+	 */
+	public boolean hostNameMatches(String hostName, boolean greedy) {
+		return (this.hostName == null && greedy) 
+				|| (this.hostName != null && this.hostName.equals(hostName))
 				|| (this.aliases != null && this.aliases.contains(hostName));
 	}
 	
