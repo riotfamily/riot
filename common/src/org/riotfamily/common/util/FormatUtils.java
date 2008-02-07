@@ -387,6 +387,17 @@ public final class FormatUtils {
 		return filename
 				.substring(0, filename.length() - extension.length() - 1);
 	}
+	
+	/**
+	 * Returns the the path without a trailing slash.
+	 * @since 7.0
+	 */
+	public static String stripTrailingSlash(String path) {
+		if (path != null && path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
+		return path;
+	}
 
 	/**
 	 * Parses a formatted String and returns the date. The date to parse starts
