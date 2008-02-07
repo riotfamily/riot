@@ -49,7 +49,7 @@ public class PropertyOverrideProcessor implements BeanFactoryPostProcessor,
 
 	private PropertyValues propertyValues;
 	
-	private int order = Ordered.LOWEST_PRECEDENCE;
+	private int order = 1;
 		
 	public void setRef(String ref) {
 		this.ref = ref;

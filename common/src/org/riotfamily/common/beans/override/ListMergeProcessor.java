@@ -36,13 +36,14 @@ import org.springframework.beans.factory.config.ListFactoryBean;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.ManagedList;
+import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class ListMergeProcessor implements BeanFactoryPostProcessor {
+public class ListMergeProcessor implements BeanFactoryPostProcessor, Ordered {
 
 	private static Log log = LogFactory.getLog(ListMergeProcessor.class);
 			
@@ -53,6 +54,16 @@ public class ListMergeProcessor implements BeanFactoryPostProcessor {
 	private List values;
 	
 	private boolean append = false;
+	
+	private int order = 1;
+	
+	public int getOrder() {
+		return this.order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
 	
 	public void setRef(String ref) {
 		this.ref = ref;

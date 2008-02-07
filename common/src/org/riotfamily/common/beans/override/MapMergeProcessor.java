@@ -35,6 +35,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.MapFactoryBean;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.ManagedMap;
+import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -42,7 +43,7 @@ import org.springframework.util.StringUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class MapMergeProcessor implements BeanFactoryPostProcessor {
+public class MapMergeProcessor implements BeanFactoryPostProcessor, Ordered {
 
 	private static Log log = LogFactory.getLog(MapMergeProcessor.class);
 			
@@ -51,6 +52,16 @@ public class MapMergeProcessor implements BeanFactoryPostProcessor {
 	private String property;
 	
 	private Map entries;
+	
+	private int order = 1;
+	
+	public int getOrder() {
+		return this.order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
 	
 	public void setRef(String ref) {
 		this.ref = ref;

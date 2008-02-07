@@ -54,7 +54,7 @@ public class BeanOverrideProcessor implements BeanFactoryPostProcessor, Ordered 
 	
 	private boolean merge;
 	
-	private int order = Ordered.LOWEST_PRECEDENCE;
+	private int order = 1;
 	
 	public void setRef(String ref) {
 		this.ref = ref;
