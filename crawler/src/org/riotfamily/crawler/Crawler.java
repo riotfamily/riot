@@ -48,6 +48,8 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 	private PageLoader pageLoader;
 
 	private LinkExtractor linkExtractor;
+	
+	private LinkFilter linkFilter;
 
 	private List pageHandlers;
 
@@ -101,6 +103,14 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 		this.linkExtractor = linkExtractor;
 	}
 	
+	/**
+	 * Sets the {@link LinkFilter} that decides whether a link should be 
+	 * followed.
+	 */
+	public void setLinkFilter(LinkFilter linkFilter) {
+		this.linkFilter = linkFilter;
+	}
+	
 	public void setContentEventMulticaster(ApplicationEventMulticaster mc) {
 		mc.addApplicationListener(this);
 	}
@@ -114,6 +124,9 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 		}
 		if (linkExtractor == null) {
 			linkExtractor = new DefaultLinkExtractor();
+		}
+		if (linkFilter == null) {
+			linkFilter = new LocalLinkFilter();
 		}
 	}
 
@@ -204,7 +217,9 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 	        		Iterator it = linkExtractor.extractLinks(pageData).iterator();
 	        		while (it.hasNext()) {
 	        			String link = (String) it.next();
-						hrefs.add(pageData.getUrl(), link);
+	        			if (linkFilter.accept(pageData.getUrl(), link)) {
+	        				hrefs.add(pageData.getUrl(), link);
+	        			}
 		            }
 	        	}
 	        	catch (ParserException e) {
@@ -213,7 +228,9 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 	        }
 	        else if (pageData.isRedirect()) {
 	        	log.debug("Redirect: " + pageData.getRedirectUrl());
-	        	hrefs.add(pageData.getUrl(), pageData.getRedirectUrl());
+	        	if (linkFilter.accept(pageData.getUrl(), pageData.getRedirectUrl())) {
+	        		hrefs.add(pageData.getUrl(), pageData.getRedirectUrl());
+	        	}
 	        }
 
 	        Iterator it = pageHandlers.iterator();

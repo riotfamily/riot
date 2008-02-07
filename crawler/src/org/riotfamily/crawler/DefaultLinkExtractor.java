@@ -9,7 +9,6 @@ import org.htmlparser.NodeFilter;
 import org.htmlparser.Tag;
 import org.htmlparser.util.NodeList;
 import org.htmlparser.util.SimpleNodeIterator;
-import org.riotfamily.common.web.util.ServletUtils;
 
 /**
  * Default LinkExtractor implementation that extracts the href attributes
@@ -21,7 +20,7 @@ import org.riotfamily.common.web.util.ServletUtils;
 public class DefaultLinkExtractor implements LinkExtractor {
 
 	private NodeFilter nodeFilter = new LinkNodeFilter();
-		
+	
 	public List extractLinks(PageData pageData) {
 		NodeList nodes = pageData.getNodes();
 		if (nodes == null) {
@@ -34,31 +33,9 @@ public class DefaultLinkExtractor implements LinkExtractor {
 			Tag tag = (Tag) it.nextNode();
 			String href = tag.getAttribute("href");
 			href = href.trim().replaceAll("&amp;", "&");
-			if (accept(pageData.getUrl(), href)) {
-				links.add(href);
-			}
+			links.add(href);
 		}
 		return links;
-	}
-	
-	protected boolean accept(String base, String uri) {
-		if (!ServletUtils.isAbsoluteUrl(uri)) {
-			// Always follow relative links
-			return true;
-		}
-		String host = ServletUtils.getHost(uri);
-		if (host == null) {
-			// Scheme but no host - must be something link javascript: or mailto:
-			return false;
-		}
-		if (base != null) {
-			String baseHost = ServletUtils.getHost(base);
-			if (host.equals(baseHost)) {
-				// Absolute link to same host so we follow it ...
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	private static class LinkNodeFilter implements NodeFilter {

@@ -7,7 +7,10 @@
 	
 	<bean id="crawler" class="org.riotfamily.crawler.Crawler">
 		<property name="startPage" value="${riot.crawler.startPage}" />
+		<property name="linkExtractor" ref="linkExtractor" />
 	</bean>
+	
+	<bean id="linkExtractor" class="org.riotfamily.crawler.DefaultLinkExtractor" />
 	
 	<bean name="/crawler/status" class="org.riotfamily.crawler.CrawlerController">
 		<constructor-arg ref="crawler" />

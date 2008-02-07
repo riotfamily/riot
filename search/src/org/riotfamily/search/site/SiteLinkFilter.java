@@ -1,28 +1,27 @@
 package org.riotfamily.search.site;
 
 import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.crawler.DefaultLinkExtractor;
-import org.riotfamily.crawler.LinkExtractor;
+import org.riotfamily.crawler.LinkFilter;
 import org.riotfamily.pages.model.Site;
 
 /**
- * {@link LinkExtractor} that only returns links that refer to a {@link Site}.
+ * {@link LinkFilter} that only accepts links that refer to a {@link Site}.
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public class SiteLinkExtractor extends DefaultLinkExtractor {
+public class SiteLinkFilter implements LinkFilter {
 
 	private SiteIdentifier siteIdentifier;
 	
-	public SiteLinkExtractor(SiteIdentifier siteIdentifier) {
+	public SiteLinkFilter(SiteIdentifier siteIdentifier) {
 		this.siteIdentifier = siteIdentifier;
 	}
 
-	protected boolean accept(String base, String uri) {
-		if (!ServletUtils.isAbsoluteUrl(uri)) {
+	public boolean accept(String base, String href) {
+		if (!ServletUtils.isAbsoluteUrl(href)) {
 			// Always follow relative links
 			return true;
 		}
-		String host = ServletUtils.getHost(uri);
+		String host = ServletUtils.getHost(href);
 		if (host == null) {
 			// Scheme but no host - must be something link javascript: or mailto:
 			return false;

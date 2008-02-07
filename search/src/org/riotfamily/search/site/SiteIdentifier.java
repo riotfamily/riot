@@ -35,6 +35,10 @@ public class SiteIdentifier {
 		this.pageDao = pageDao;
 	}
 	
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
+	}
+	
 	public void updateSiteList() {
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus ts) {
@@ -42,7 +46,24 @@ public class SiteIdentifier {
 			}
 		});
 	}
-		
+	
+	/**
+	 * Returns the first Site that matches the given URL.
+	 * <p>
+	 * <strong>Note:</strong> If no contextPath has been  
+	 * {@link #setContextPath(String) set manually}, the method will try to
+	 * guess the contextPath using the following strategy: If no matching Site
+	 * is found in the first pass, the leading directory name is stripped from
+	 * the URL and the lookup is performed again with the modified path. If 
+	 * this yields a result, {@link #setContextPath(String)} is invoked with the
+	 * assumed prefix. This behavior might lead to unexpected results in certain 
+	 * scenarios, for example when you have a Site that doesn't specify a
+	 * hostName (only a prefix) and you invoke this method with an URL that
+	 * contains this prefix as second directory name <em>before</em> you 
+	 * called it with a valid (resolvable) URL. This is very unlikely to 
+	 * happen. If you run into this problem nevertheless, you can set the 
+	 * contextPath {@link #setContextPath(String) manually}. 
+	 */	
 	public Site getSiteForUrl(String url) {
 		String hostName = ServletUtils.getHost(url);
 		String path = ServletUtils.getPath(url);
@@ -80,11 +101,15 @@ public class SiteIdentifier {
 		return null;
 	}
 	
+	/**
+	 * Returns whether the given hostName belongs to any of the configured
+	 * Sites.
+	 */
 	public boolean isSiteHost(String hostName) {
 		Iterator it = sites.iterator();
 		while (it.hasNext()) {
 			Site site = (Site) it.next();
-			if (site.hostNameMatches(hostName)) {
+			if (site.hostNameMatches(hostName, false)) {
 				return true;
 			}
 		}

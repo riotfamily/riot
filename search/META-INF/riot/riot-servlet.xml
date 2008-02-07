@@ -30,7 +30,7 @@
 	</override:add>
 	
 	
-	<!-- Site search stuff ... -->
+	<!-- The following overrides are only applied when the riot-pages module is present -->
 	
 	<override:if-present ref="pageRiotDao">
 		<!--
@@ -50,12 +50,12 @@
 		</override:bean>
 		
 		<!--
-		  - We inject a LinkExtractor that only returns links that refer to on 
+		  - We inject a LinkFilter that only returns links that refer to one 
 		  - of our sites. 
 		  -->
 		<override:properties ref="crawler">	
-			<property name="linkExtractor">
-				<bean class="org.riotfamily.search.site.SiteLinkExtractor">
+			<property name="linkFilter">
+				<bean class="org.riotfamily.search.site.SiteLinkFilter">
 					<constructor-arg ref="siteIdentifer" />
 				</bean>
 			</property>
