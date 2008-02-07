@@ -43,28 +43,18 @@ import org.riotfamily.components.model.ContentContainer;
 public final class ComponentCacheUtils {
 
 	private static String getContentTag(ContentContainer container, boolean preview) {
-		Content content = preview 
-				? container.getLatestVersion() 
-				: container.getLiveVersion();
-				
-		if (content != null) {
-			return getContentTag(content);
-		}
-		return null;
+		return ContentContainer.class.getName() + '#' + container.getId() 
+				+ (preview ? "-preview" : "-live");
 	}
-	
-	private static String getContentTag(Content content) {
-		return Content.class.getName() + '#' + content.getId();
-	}
-	
+			
 	public static void addContainerTags(HttpServletRequest request, 
 			ContentContainer container, boolean preview) {
 		
 		TaggingContext.tag(request, getContentTag(container, preview));
 	}
 
-	public static void invalidateContent(Cache cache, Content content) {
-		cache.invalidateTaggedItems(getContentTag(content));
+	public static void invalidatePreviewVersion(Cache cache, ContentContainer container) {
+		cache.invalidateTaggedItems(getContentTag(container, true));
 	}
 	
 	/**

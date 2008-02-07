@@ -113,7 +113,7 @@ public interface ComponentDao {
 	/**
 	 * Updates the given Content.
 	 */
-	public void saveOrUpdateContent(Content content);
+	public void saveOrUpdatePreviewVersion(ContentContainer container);
 	
 	/**
 	 * Deletes the given ComponentList.

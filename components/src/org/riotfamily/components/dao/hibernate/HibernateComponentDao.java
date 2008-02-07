@@ -160,9 +160,9 @@ public class HibernateComponentDao implements ComponentDao {
 		hibernate.update(list);
 	}
 
-	public void saveOrUpdateContent(Content version) {
-		hibernate.saveOrUpdate(version);
-		ComponentCacheUtils.invalidateContent(cache, version);
+	public void saveOrUpdatePreviewVersion(ContentContainer container) {
+		hibernate.saveOrUpdate(container.getPreviewVersion());
+		ComponentCacheUtils.invalidatePreviewVersion(cache, container);
 	}
 
 	public void updateContentContainer(ContentContainer container) {

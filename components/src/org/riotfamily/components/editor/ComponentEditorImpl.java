@@ -133,7 +133,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		ContentContainer container = componentDao.loadContentContainer(containerId);
 		Content version = getOrCreatePreviewVersion(container);
 		version.setValue(property, text);
-		componentDao.saveOrUpdateContent(version);
+		componentDao.saveOrUpdatePreviewVersion(container);
 	}
 
 	public String cropImage(Long containerId, String property, Long imageId,
@@ -148,7 +148,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 				original, imageCropper, width, height, x, y, scaledWidth));
 		
 		version.setValue(property, croppedImage);
-		componentDao.saveOrUpdateContent(version);
+		componentDao.saveOrUpdatePreviewVersion(container);
 		return croppedImage.getUri();
 	}
 	
@@ -159,7 +159,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		
 		RiotFile image = mediaDao.loadFile(imageId);
 		version.setValue(property, image);
-		componentDao.saveOrUpdateContent(version);
+		componentDao.saveOrUpdatePreviewVersion(container);
 		return image.getUri();
 	}
 	
@@ -203,7 +203,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		Component component = componentDao.loadComponent(componentId);
 		Content version = getOrCreatePreviewVersion(component);
 		version.setValue(property, chunks[0]);
-		componentDao.saveOrUpdateContent(version);
+		componentDao.saveOrUpdatePreviewVersion(component);
 		
 		ComponentList list = component.getList();
 		int offset = list.getOrCreatePreviewContainers().indexOf(component);
