@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
@@ -41,6 +42,7 @@ import org.springframework.util.PathMatcher;
 
 /**
  * @author Carsten Woelk [cwoelk at neteye dot de]
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
 public class PageResolver {
@@ -59,12 +61,109 @@ public class PageResolver {
 
 	private PathMatcher pathMatcher = new AntPathMatcher();
 	
-
 	public PageResolver(PageDao pageDao) {
 		this.pageDao = pageDao;
 	}
+	
+	/**
+	 * Returns the first Site that matches the given request.
+	 * <p>
+	 * <strong>Important:</strong> This method can only be used <em>after</em> 
+	 * the servlet container has selected a servlet to handle the the request. 
+	 * In other words this method must not be used within a servlet filter 
+	 * because it's impossible to determine the servlet mapping at this point.
+	 * If you need to resolve the Site in a filter use 
+	 * {@link #getSite(HttpServletRequest, PathCompleter) this method} instead.
+	 * @return The first matching Site, or <code>null</code> if no match is found
+	 */
+	public Site getSite(HttpServletRequest request) {
+		return getSite(request, null);
+	}
 
+	/**
+	 * Returns the first Site that matches the given request. The PathCompleter
+	 * is used to strip the servlet mapping from the request URI.
+	 * <p>
+	 * This method is intended for use inside a servlet filter, because in
+	 * that phase of request processing the servlet mapping is not known yet.
+	 * @return The first matching Site, or <code>null</code> if no match is found
+	 */
+	public Site getSite(HttpServletRequest request, PathCompleter pathCompleter) {
+		Object site = request.getAttribute(SITE_ATTRIBUTE);
+		if (site == null) {
+			site = resolveSite(request, pathCompleter);
+			expose(site, request, SITE_ATTRIBUTE);
+		}
+		return site != NOT_FOUND ? (Site) site : null; 
+	}
+		
+	/**
+	 * Returns the path within the resolved Site. That is the requestURI 
+	 * without the contextPath, without the servlet prefix or suffix and 
+	 * without the Site's {@link Site#getPathPrefix() pathPrefix}.
+	 * <p>
+	 * <strong>Important:</strong> This method can only be used <em>after</em> 
+	 * the servlet container has selected a servlet to handle the the request
+	 * <em>or</em> {@link #getSite(HttpServletRequest, PathCompleter)} has been
+	 * invoked before.
+	 * In other words this method should not be used within a servlet filter 
+	 * unless you can assert the above. If you are unsure use 
+	 * {@link #getPathWithinSite(HttpServletRequest, PathCompleter)} instead.
+	 */
+	public String getPathWithinSite(HttpServletRequest request) {
+		return getPathWithinSite(request, null);
+	}
 
+	/**
+	 * Returns the path within the resolved Site.
+	 * <p>
+	 * This method is intended for use inside a servlet filter, because in
+	 * that phase of request processing the servlet mapping is not known yet.
+	 * @see #getPathWithinSite(HttpServletRequest)
+	 */
+	public String getPathWithinSite(HttpServletRequest request, PathCompleter pathCompleter) {
+		Object path = request.getAttribute(PATH_ATTRIBUTE);
+		if (path == null) {
+			// This will exposes the path attribute as side effect:
+			Site site = getSite(request, pathCompleter);
+			if (site != null) {
+				path = request.getAttribute(PATH_ATTRIBUTE);
+			}
+		}
+		return path != NOT_FOUND ? (String) path : null;
+	}
+	
+	/**
+	 * Returns the Page for the given request.
+	 * <p>
+	 * <strong>Important:</strong> This method can only be used <em>after</em> 
+	 * the servlet container has selected a servlet to handle the the request
+	 * <em>or</em> {@link #getSite(HttpServletRequest, PathCompleter)} has been
+	 * invoked before.
+	 * In other words this method should not be used within a servlet filter 
+	 * unless you can assert the above.
+	 */
+	public Page getPage(HttpServletRequest request) {
+		Object page = request.getAttribute(PAGE_ATTRIBUTE);
+		if (page == null) {
+			page = resolvePage(request);
+			expose(page, request, PAGE_ATTRIBUTE);
+		}
+		return page != NOT_FOUND ? (Page) page : null;
+	}
+	
+	/**
+	 * Returns the previously resolved Page for the given request.
+	 * <p>
+	 * <strong>Note:</strong> This method does not perform any lookups itself.
+	 * Only use this method if you are sure that 
+	 * {@link #getPage(HttpServletRequest)} has been invoked before. 
+	 */
+	public static Page getResolvedPage(HttpServletRequest request) {
+		return (Page) request.getAttribute(PAGE_ATTRIBUTE);
+	}
+	
+	
 	private Site resolveSite(HttpServletRequest request, PathCompleter pathCompleter) {
 		String hostName = request.getServerName();
 		String path;
@@ -78,7 +177,11 @@ public class PageResolver {
 			log.debug("Path with a PathCompleter resolved to '" + path + "'.");
 		}
 		Site site = pageDao.findSite(hostName, path);
-		exposePathWithingSite(request, path, site);
+		String pathWithinSite = null;
+		if (site != null) {
+			pathWithinSite = FormatUtils.stripTrailingSlash(site.stripPrefix(path));
+		}
+		expose(pathWithinSite, request, PATH_ATTRIBUTE);
 		return site;
 	}
 
@@ -114,21 +217,6 @@ public class PageResolver {
 		return page;
 	}
 
-	private void exposePathWithingSite(HttpServletRequest request, String path,
-			Site site) {
-
-		if (site == null) {
-			path = null;
-		}
-		else {
-			path = site.stripPrefix(path);
-			if (path.endsWith("/")) {
-				path = path.substring(0, path.length() - 1);
-			}
-		}
-		expose(path, request, PATH_ATTRIBUTE);
-	}
-
 	private void expose(Object object, HttpServletRequest request,
 			String attributeName) {
 		
@@ -140,57 +228,6 @@ public class PageResolver {
 			log.debug("Exposing '" + object + "' as '" + attributeName + "'");
 		}
 		request.setAttribute(attributeName, object);
-	}
-	
-	
-
-	public String getPathWithinSite(HttpServletRequest request) {
-		return getPathWithinSite(request, null);
-	}
-
-	
-	// For Filters where we can't know about the ServletMapping and the ServletPath yet...
-	public String getPathWithinSite(HttpServletRequest request, PathCompleter pathCompleter) {
-		Object path = request.getAttribute(PATH_ATTRIBUTE);
-		if (path == null) {
-			// The resolveSite exposes the path Attribute
-			Site site = getSite(request, pathCompleter);
-			if (site != null) {
-				path = request.getAttribute(PATH_ATTRIBUTE);
-			}
-		}
-		return path != NOT_FOUND ? (String) path : null;
-	}
-
-
-	public Site getSite(HttpServletRequest request) {
-		return getSite(request, null);
-	}
-
-	
-	// For Filters where we can't know about the ServletMapping and the ServletPath yet...
-	public Site getSite(HttpServletRequest request, PathCompleter pathCompleter) {
-		Object site = request.getAttribute(SITE_ATTRIBUTE);
-		if (site == null) {
-			site = resolveSite(request, pathCompleter);
-			expose(site, request, SITE_ATTRIBUTE);
-		}
-		return site != NOT_FOUND ? (Site) site : null; 
-	}
-
-	
-	public Page getPage(HttpServletRequest request) {
-		Object page = request.getAttribute(PAGE_ATTRIBUTE);
-		if (page == null) {
-			page = resolvePage(request);
-			expose(page, request, PAGE_ATTRIBUTE);
-		}
-		return page != NOT_FOUND ? (Page) page : null;
-	}
-	
-	
-	public static Page getResolvedPage(HttpServletRequest request) {
-		return (Page) request.getAttribute(PAGE_ATTRIBUTE);
 	}
 	
 	
