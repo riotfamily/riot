@@ -194,13 +194,21 @@ public class CacheService {
 			lock.lockForWriting();
 			// Check if another writer has already updated the item
 			if (mtime > cacheItem.getLastModified()) {
-				TaggingContext.openNestedContext(request);
+				TaggingContext ctx = TaggingContext.openNestedContext(request);
 				Map propertySnapshot = SharedProperties.getSnapshot(request);
 				request = new SessionCreationPreventingRequestWrapper(request);
 				processor.processRequest(request, wrapper);
-				cacheItem.setProperties(SharedProperties.getDiff(request, propertySnapshot));
-				cache.tagItem(cacheItem, TaggingContext.popTags(request));
-				wrapper.stopCapturing(mtime);
+				ctx.close();
+				Map props = SharedProperties.getDiff(request, propertySnapshot);
+				cacheItem.setProperties(props);
+				cache.tagItem(cacheItem, ctx.getTags());
+				wrapper.stopCapturing();
+				if (wrapper.isOk() && !ctx.isPreventCaching()) {
+					cacheItem.setLastModified(mtime);
+				}
+				else {
+					cacheItem.invalidate();
+				}
 				if (cacheItem.getSize() > 0) {
 					if (shouldZip) {
 						wrapper.setHeader("Vary", "Accept-Encoding, User-Agent");

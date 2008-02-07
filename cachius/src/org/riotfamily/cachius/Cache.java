@@ -43,7 +43,7 @@ import org.riotfamily.common.io.IOUtils;
 import org.springframework.core.CollectionFactory;
 
 /**
- * The cachius cache.
+ * The Cachius cache.
  *
  * @author Felix Gnass
  */

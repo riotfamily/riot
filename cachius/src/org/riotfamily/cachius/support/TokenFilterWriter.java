@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * A FilterWriter that replaces all occurences of a given token with a 
+ * A FilterWriter that replaces all occurrences of a given token with a 
  * replacement string.
  *
  * @author Felix Gnass

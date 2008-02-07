@@ -101,6 +101,9 @@
 			</props>
 		</property>
 		<property name="whitespaceStripping" value="true" />
+		<property name="exceptionHandler">
+			<bean class="org.riotfamily.website.freemarker.RiotTemplateExceptionHandler" />
+		</property>
 	</bean>
 	
 	<bean id="localizedObjectWrapper" class="org.riotfamily.common.web.view.freemarker.LocalizedObjectWrapper" />
