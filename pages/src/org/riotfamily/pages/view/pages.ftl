@@ -31,7 +31,7 @@
 
 <#macro use page=currentPage form="" tag="" attributes...>
 	<#local attributes = common.unwrapAttributes(attributes) />
-	<@inplace.use container=page.pageProperties model=page.properties form=form tag=tag attributes=attributes>
+	<@inplace.use container=page.contentContainer model=page.properties form=form tag=tag attributes=attributes>
 		<#nested />
 	</@inplace.use>
 </#macro>
@@ -41,7 +41,7 @@
   -->
 <#macro link page tag="a" labelKey="title" attributes...>
 	<#local attributes = common.unwrapAttributes(attributes) />
-	<@inplace.use container=page.pageProperties model=page.properties>
+	<@inplace.use container=page.contentContainer model=page.properties>
 		<@inplace.link key=labelKey href=common.url(page.url) tag=tag attributes=attributes>${page.title}</@inplace.link>
 	</@inplace.use>
 </#macro>

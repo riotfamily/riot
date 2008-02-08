@@ -46,12 +46,8 @@
 		<property name="folder" />
 		<property name="path" column="`path`" />
 		<property name="wildcardInPath" />
-		<many-to-one name="pageProperties" cascade="all" />
+		<many-to-one name="contentContainer" cascade="all" />
 	</class>
-
-	<subclass name="PageProperties" extends="org.riotfamily.components.model.ContentContainer" discriminator-value="PageProperties">
-		<one-to-one name="page" class="Page" property-ref="pageProperties" />
-	</subclass>
 	
 	<class name="PageAlias" table="riot_page_aliases">
 		<cache usage="nonstrict-read-write" region="pages" />

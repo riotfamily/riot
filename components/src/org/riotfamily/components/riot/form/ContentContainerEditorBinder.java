@@ -44,7 +44,7 @@ public class ContentContainerEditorBinder extends AbstractEditorBinder {
 	public void setBackingObject(Object backingObject) {
 		container = (ContentContainer) backingObject;
 		if (container == null) {
-			container = createContainer();
+			container = new ContentContainer();
 		}
 		previewVersion = container.getPreviewVersion();
 		if (previewVersion == null) {
@@ -57,12 +57,7 @@ public class ContentContainerEditorBinder extends AbstractEditorBinder {
 			}
 		}
 	}
-	
-	protected ContentContainer createContainer() {
-		throw new IllegalStateException(
-				"This EditorBinder can only edit existing containers.");
-	}
-	
+		
 	public Object getBackingObject() {
 		container.setPreviewVersion(previewVersion);
 		return container;

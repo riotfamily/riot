@@ -35,6 +35,7 @@ import java.util.Map;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.components.model.Content;
+import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.util.Assert;
@@ -69,7 +70,7 @@ public class Page {
 
 	private Date creationDate;
 
-	private PageProperties pageProperties;
+	private ContentContainer contentContainer;
 	
 	public Page() {
 	}
@@ -232,22 +233,22 @@ public class Page {
 		return node.getHandlerName();
 	}
 
-	public PageProperties getPageProperties() {
-		if (pageProperties == null) {
-			pageProperties = new PageProperties();
+	public ContentContainer getContentContainer() {
+		if (contentContainer == null) {
+			contentContainer = new ContentContainer();
 			Content version = new Content();
-			pageProperties.setLiveVersion(version);
+			contentContainer.setLiveVersion(version);
 		}
-		return pageProperties;
+		return contentContainer;
 	}
 
-	public void setPageProperties(PageProperties versionContainer) {
-		this.pageProperties = versionContainer;
+	public void setContentContainer(ContentContainer contentContainer) {
+		this.contentContainer = contentContainer;
 	}
 
 	public Content getContent(boolean preview) {
-		return preview ? getPageProperties().getLatestVersion()
-				: getPageProperties().getLiveVersion();
+		return preview ? getContentContainer().getLatestVersion()
+				: getContentContainer().getLiveVersion();
 	}
 	
 	public Page getMasterPage() {
@@ -306,7 +307,7 @@ public class Page {
 	}
 	
 	public boolean isDirty() {
-		return getPageProperties().isDirty();
+		return getContentContainer().isDirty();
 	}
 
 	public boolean isPublished() {

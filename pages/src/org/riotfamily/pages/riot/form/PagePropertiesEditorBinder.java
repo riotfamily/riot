@@ -27,10 +27,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.riot.form.ContentContainerEditorBinder;
 import org.riotfamily.forms.EditorBinding;
-import org.riotfamily.pages.model.PageProperties;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -39,14 +37,6 @@ import org.riotfamily.pages.model.PageProperties;
 public class PagePropertiesEditorBinder extends ContentContainerEditorBinder {
 
 	private Map elements = new HashMap();
-	
-	public Class getBeanClass() {
-		return PageProperties.class;
-	}
-	
-	protected ContentContainer createContainer() {
-		return new PageProperties();
-	}
 	
 	public void registerElement(EditorBinding binding, 
 			PagePropertyElement editor) {

@@ -80,7 +80,7 @@ public class PagePropertyElement extends TemplateElement {
 			display.setEditorBinding(binding);
 			addComponent("display", display);
 			String property = binding.getProperty();
-			Map properties = masterPage.getPageProperties().getLatestVersion().getWrappers();
+			Map properties = masterPage.getContentContainer().getLatestVersion().getWrappers();
 			masterValue = (ValueWrapper) properties.get(property);
 			if (masterValue != null) {
 				display.setValue(masterValue.getValue());

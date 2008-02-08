@@ -38,10 +38,10 @@ import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.servlet.RequestPathCompleter;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.model.Content;
+import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
-import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 
 /**
@@ -180,12 +180,12 @@ public class PageFacade {
 	}
 
 	public Long getContentId() {
-		Content content = page.getPageProperties().getContent(preview);
+		Content content = page.getContentContainer().getContent(preview);
 		return content != null ? content.getId() : null;
 	}
 		
-	public PageProperties getPageProperties() {
-		return page.getPageProperties();
+	public ContentContainer getPageProperties() {
+		return page.getContentContainer();
 	}
 
 	public Map getProperties() {

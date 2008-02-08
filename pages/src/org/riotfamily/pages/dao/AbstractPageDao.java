@@ -224,11 +224,11 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 	
 	public void publishPageProperties(Page page) {
-		componentDao.publishContainer(page.getPageProperties());
+		componentDao.publishContainer(page.getContentContainer());
 	}
 	
 	public void discardPageProperties(Page page) {
-		componentDao.discardContainer(page.getPageProperties());
+		componentDao.discardContainer(page.getContentContainer());
 	}
 	
 	public void unpublishPage(Page page) {
