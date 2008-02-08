@@ -4,9 +4,14 @@
     	<conf name="build" />
     	<conf name="runtime" />
     	<conf name="test" />
+    	<conf name="src" />
     </configurations>
+    <publications>
+    	<artifact />
+    	<artifact type="source" ext="src.zip" conf="src" />
+    </publications>
     <dependencies>
-	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build,runtime->default;test->mock" />
+	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build,runtime->default;test->mock;src->src" />
 	    <dependency org="apache" name="commons-logging" rev="${dep.commons-logging.revision}" conf="*->default" />
 	    <dependency org="hsqldb" name="hsqldb" rev="latest.release" conf="test->default" />
     </dependencies>

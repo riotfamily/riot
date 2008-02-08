@@ -33,7 +33,7 @@
 	<patternset id="module.jar.resource.patterns">
 		<exclude name="**/*.java" />
 	</patternset>
-
+	
 	<target name="usage">
 		<fail>This file is only intended for inclusion by sub-projects.</fail>
 	</target>
@@ -58,6 +58,9 @@
 
 		<!-- Location of the jar artifact published by the module -->
 		<property name="module.jar" value="${module.build.dir}/${module.name}.jar" />
+		
+		<!-- Location of the src artifact published by the module -->
+		<property name="module.src.zip" value="${module.build.dir}/${module.name}.src.zip" />
 
 		<!-- Set module.status to the one specified in the ivy.xml unless it is integration -->
 		<condition property="module.status" value="${ivy.status}">
@@ -75,6 +78,11 @@
 		
 		<!-- Set module.revision to value from ivy.xml -->
 		<property name="module.revision" value="${ivy.revision}" />
+		
+		<!-- Set a property if the module has a 'src' configuration -->
+		<condition property="module.src-conf.exists">
+			<contains string="${ivy.configurations}" substring="src" />
+		</condition>
 	</target>
 
 	<target name="resolve" depends="-init-module">
@@ -104,7 +112,7 @@
     	</copy>
 	</target>
 
-	<target name="publish-build" depends="jar">
+	<target name="publish-build" depends="jar,src-zip">
 		<delete dir="${build.repo.dir}/${module.name}" />
 		<copy file="${module.dir}/ivy.xml" todir="${module.build.dir}" />
 		<ivy:publish resolver="build"
@@ -159,6 +167,15 @@
 			    <attribute name="Implementation-Vendor" value="${module.vendor}" />
 			</manifest>
 		</jar>
+	</target>
+
+	<!--
+	  - Creates a zip file containing all source files
+	  -->
+	<target name="src-zip" if="module.src-conf.exists" depends="-init-module"
+		description="Creates a zip file containing the sources">
+		<echo message="Creating src-zip" />
+		<zip basedir="${module.src.dir}" destfile="${module.src.zip}" />
 	</target>
 
 	<target name="collect-xml-schemas">

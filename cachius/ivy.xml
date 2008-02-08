@@ -4,10 +4,15 @@
     	<conf name="build" />
     	<conf name="runtime" />
     	<conf name="test" />
+    	<conf name="src" />
     </configurations>
+    <publications>
+    	<artifact />
+    	<artifact type="source" ext="src.zip" conf="src" />
+    </publications>
     <dependencies>
 		<dependency org="riotfamily" name="riot-common" rev="${dep.riot.revision}" conf="*->@" />
 		<dependency org="apache" name="commons-logging" rev="${dep.commons-logging.revision}" conf="*->default" />
-		<dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->web" />
+		<dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->web;src->src" />
     </dependencies>
 </ivy-module>

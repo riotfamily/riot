@@ -4,7 +4,12 @@
     	<conf name="build" />
     	<conf name="runtime" />
     	<conf name="test" />
+    	<conf name="src" />
     </configurations>
+    <publications>
+    	<artifact />
+    	<artifact type="source" ext="src.zip" conf="src" />
+    </publications>
     <dependencies>
 	    <dependency org="riotfamily" name="riot-common" rev="${dep.riot.revision}" conf="*->@" />
 	    <dependency org="riotfamily" name="riot-website" rev="${dep.riot.revision}" conf="*->@" />
