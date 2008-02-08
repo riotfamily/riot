@@ -170,10 +170,6 @@ public class CssTemplateController extends AbstractCacheableController
 		return stylesheet.lastModified();
 	}
 	
-	protected String getCacheKeyInternal(HttpServletRequest request) {
-		return ServletUtils.getRequestUri(request);
-	}
-
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
