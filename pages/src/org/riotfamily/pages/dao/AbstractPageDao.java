@@ -26,6 +26,7 @@ package org.riotfamily.pages.dao;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -191,6 +192,16 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 				page.getVersionContainer()));
 		
 		node.addPage(translation);
+
+		String handlerName = node.getHandlerName();
+		if (autoCreatePages != null && handlerName != null) {
+			PageDefinition child = (PageDefinition) autoCreatePages.get(handlerName);
+			if (child != null) {
+				List sites = Collections.singletonList(site);
+				child.createNode(node, sites, this);
+			}
+		}
+		
 		updateNode(node);
 		deleteAlias(translation);
 		saveObject(translation);
