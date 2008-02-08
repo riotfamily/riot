@@ -151,6 +151,7 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 		}
 		try {
 			running = true;
+			log.info("Starting to crawl...");
 			Iterator it = pageHandlers.iterator();
 	        while (it.hasNext()) {
 	        	PageHandler handler = (PageHandler) it.next();
@@ -165,6 +166,7 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 		}
 		finally {
 			running = false;
+			log.info("Crawler is finished.");
 		}
 	}
 
