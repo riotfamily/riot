@@ -9,6 +9,6 @@
 	    <dependency org="riotfamily" name="riot-common" rev="${dep.riot.revision}" conf="*->@" />
 	    <dependency org="riotfamily" name="riot-forms" rev="${dep.riot.revision}" conf="*->@" />
 	    <dependency org="riotfamily" name="cachius" rev="${dep.riot.revision}" conf="*->@" />
-	    <dependency org="springframework" name="spring" rev="2.0.7" conf="build,test->default;runtime->web,mail,aop" />
+	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build,test->default;runtime->web,mail,aop" />
     </dependencies>
 </ivy-module>

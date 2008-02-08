@@ -26,6 +26,14 @@
 	</condition>
 	<property name="dep.riot.revision" value="${project.version}" />
 
+	<!--
+	  - Revisions of 3rd party libraries used by more than one module
+	  -->
+	<property name="dep.commons-logging.revision" value="1.1.1" />
+	<property name="dep.spring.revision" value="2.0.8" />
+	<property name="dep.quartz.revision" value="1.6.0" />
+	<property name="dep.freemarker.revision" value="2.3.10" />
+	
 	<!-- Location of this buildfile -->
 	<dirname property="root.dir" file="${ant.file.common}" />
 
