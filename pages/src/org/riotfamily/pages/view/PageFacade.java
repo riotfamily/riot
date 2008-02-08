@@ -184,7 +184,7 @@ public class PageFacade {
 		return content != null ? content.getId() : null;
 	}
 		
-	public ContentContainer getPageProperties() {
+	public ContentContainer getContentContainer() {
 		return page.getContentContainer();
 	}
 
