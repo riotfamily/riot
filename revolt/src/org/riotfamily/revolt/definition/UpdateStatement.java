@@ -39,14 +39,16 @@ public class UpdateStatement {
 	private String sql;
 
 	public UpdateStatement(String dialects, String sql) {
-		this.supportedDialectNames = StringUtils.commaDelimitedListToSet(
-				dialects.toLowerCase());
-		
+		if (StringUtils.hasText(dialects)) {
+			this.supportedDialectNames = StringUtils.commaDelimitedListToSet(
+					dialects.toLowerCase());
+		}
 		this.sql = sql;
 	}
 	
 	public boolean supports(Dialect dialect) {
-		return supportedDialectNames.contains(dialect.getName().toLowerCase());
+		return supportedDialectNames == null || supportedDialectNames.contains(
+				dialect.getName().toLowerCase());
 	}
 	
 	public String getSql() {
