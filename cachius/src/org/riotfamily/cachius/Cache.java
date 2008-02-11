@@ -30,7 +30,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -89,7 +88,7 @@ public final class Cache implements Serializable {
         }
         
         this.map = CollectionFactory.createConcurrentMapIfPossible(mapCapacity); 
-        this.taggedItems = new HashMap();
+        this.taggedItems = CollectionFactory.createConcurrentMapIfPossible(mapCapacity);
 
         init();
         setCapacity(capacity);
@@ -175,7 +174,6 @@ public final class Cache implements Serializable {
 	                	item = new CacheItem(key, getNextDir());
 	                	map.put(key, item);
 	                	size++;
-	                	checkCapacity();
                 	}
                 	catch (Exception e) {
 						log.error("Error creating CacheItem", e);
@@ -183,6 +181,7 @@ public final class Cache implements Serializable {
 					}
                 }
         	}
+        	checkCapacity();
         }
         item.touch();
         return item;
@@ -263,19 +262,17 @@ public final class Cache implements Serializable {
      */
     private void removeTags(CacheItem item, Set tags) {
     	if (tags != null) {
-    		synchronized (taggedItems) {
-		    	Iterator it = tags.iterator();
-		    	while (it.hasNext()) {
-					String tag = (String) it.next();
-			    	List items = getTaggedItems(tag);
-			    	if (items != null) {
-			    		items.remove(item);
-			    		if (items.isEmpty()) {
-			    			taggedItems.remove(tag);
-			    		}
-			    	}
+	    	Iterator it = tags.iterator();
+	    	while (it.hasNext()) {
+				String tag = (String) it.next();
+		    	List items = getTaggedItems(tag);
+		    	if (items != null) {
+		    		items.remove(item);
+		    		if (items.isEmpty()) {
+		    			taggedItems.remove(tag);
+		    		}
 		    	}
-    		}
+	    	}
     	}
     }
     
@@ -284,18 +281,16 @@ public final class Cache implements Serializable {
      */
     private void addTags(CacheItem item, Set tags) {
     	if (tags != null) {
-    		synchronized (taggedItems) {
-		    	Iterator it = tags.iterator();
-		    	while (it.hasNext()) {
-					String tag = (String) it.next();
-			    	List items = getTaggedItems(tag);
-			    	if (items == null) {
-			    		items = new ArrayList();
-			    		taggedItems.put(tag, items);
-			    	}
-			    	items.add(item);
+	    	Iterator it = tags.iterator();
+	    	while (it.hasNext()) {
+				String tag = (String) it.next();
+		    	List items = getTaggedItems(tag);
+		    	if (items == null) {
+		    		items = new ArrayList();
+		    		taggedItems.put(tag, items);
 		    	}
-    		}
+		    	items.add(item);
+	    	}
     	}
     }
 
@@ -377,10 +372,10 @@ public final class Cache implements Serializable {
 						log.info("CleanUpThread interrupted.");
 						break;
 					}
-					if (running) {
-		    			cleanup();
-		    		}
 				}
+	    		if (running) {
+	    			cleanup();
+	    		}
     		}
     		log.info("CleanUpThread finished.");
     	}

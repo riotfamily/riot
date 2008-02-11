@@ -239,12 +239,12 @@ public class CacheService {
     	}
     	
     	ReaderWriterLock lock = cacheItem.getLock();
-    	if (!cacheItem.exists()) {
-    		return false;
-    	}
     	try {
     		// Acquire a reader lock and serve the cached version
     		lock.lockForReading();
+    		if (!cacheItem.exists()) {
+        		return false;
+        	}
         	cacheItem.writeTo(response, sessionIdEncoder.getSessionId());
         	SharedProperties.setProperties(request, cacheItem.getProperties());
     	}
