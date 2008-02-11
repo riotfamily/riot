@@ -265,10 +265,10 @@ public class FileUpload extends CompositeElement implements Editor,
 	public class PreviewElement extends TemplateElement
 			implements ContentElement {
 
-		public PreviewElement() {
-			setAttribute("file", file);
+		public RiotFile getFile() {
+			return file;
 		}
-
+		
 		public void handleContentRequest(HttpServletRequest request,
 				HttpServletResponse response) throws IOException {
 
