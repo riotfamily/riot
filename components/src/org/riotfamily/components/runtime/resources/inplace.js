@@ -726,7 +726,7 @@ riot.ImageEditor = Class.create(riot.InplaceEditor, {
 	},
 	
 	crop: function(w, h, x, y, sw) {
-		ComponentEditor.cropImage(this.component.id, this.key, this.imageId,
+		this.component.cropImage(this.key, this.imageId,
 				w, h, x, y, sw, this.update.bind(this));
 	},
 	

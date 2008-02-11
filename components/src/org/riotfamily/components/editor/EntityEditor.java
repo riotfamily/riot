@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.editor;
 
+import java.io.IOException;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -39,4 +41,7 @@ public interface EntityEditor {
 	public void updateText(String editorId, String objectId, 
 			String property, String value);
 	
+	public String cropImage(String listId, String objectId, String property, 
+			Long imageId, int width, int height, int x, int y, int scaledWidth)
+			throws IOException;
 }

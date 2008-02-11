@@ -23,8 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.editor;
 
+import java.io.IOException;
+
 import org.riotfamily.cachius.Cache;
 import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.image.ImageCropper;
+import org.riotfamily.media.dao.MediaDao;
+import org.riotfamily.media.model.RiotImage;
+import org.riotfamily.media.model.data.CroppedImageData;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.list.RiotDaoService;
 import org.riotfamily.riot.security.AccessController;
@@ -39,8 +45,12 @@ import org.springframework.beans.BeanWrapperImpl;
 public class EntityEditorImpl implements EntityEditor {
 
 	private RiotDaoService daoService;
-	
+
 	private Cache cache;
+	
+	private MediaDao mediaDao;
+	
+	private ImageCropper imageCropper;
 	
 	public EntityEditorImpl(RiotDaoService daoService) {
 		this.daoService = daoService;
@@ -48,6 +58,14 @@ public class EntityEditorImpl implements EntityEditor {
 	
 	public void setCache(Cache cache) {
 		this.cache = cache;
+	}
+	
+	public void setMediaDao(MediaDao mediaDao) {
+		this.mediaDao = mediaDao;
+	}
+
+	public void setImageCropper(ImageCropper imageCropper) {
+		this.imageCropper = imageCropper;
 	}
 
 	public String createObject(String listId) {
@@ -84,5 +102,24 @@ public class EntityEditorImpl implements EntityEditor {
 		wrapper.setPropertyValue(property, value);
 		dao.update(entity);
 		CacheInvalidationUtils.invalidate(cache, dao, entity);
+	}
+	
+	public String cropImage(String listId, String objectId, String property, 
+			Long imageId, int width, int height, int x, int y, int scaledWidth)
+			throws IOException {
+	
+		
+		RiotImage original = (RiotImage) mediaDao.loadFile(imageId);
+		RiotImage croppedImage = new RiotImage(new CroppedImageData(
+				original, imageCropper, width, height, x, y, scaledWidth));
+		
+		RiotDao dao = daoService.getDao(listId);
+		Object entity = dao.load(objectId);
+		AccessController.checkPermission("edit", entity);
+		BeanWrapper wrapper = new BeanWrapperImpl(entity);
+		wrapper.setPropertyValue(property, croppedImage);
+		dao.update(entity);
+		CacheInvalidationUtils.invalidate(cache, dao, entity);
+		return croppedImage.getUri();
 	}
 }

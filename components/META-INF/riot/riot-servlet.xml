@@ -90,6 +90,8 @@
 	<bean id="entityEditorTarget" class="org.riotfamily.components.editor.EntityEditorImpl">
 		<constructor-arg ref="riotDaoService" />
 		<property name="cache" ref="websiteCache" />
+		<property name="mediaDao" ref="mediaDao" />
+		<property name="imageCropper" ref="imageCropper" />
 	</bean>
 		
 	<bean name="/components/upload" class="org.riotfamily.components.editor.FileUploadController">

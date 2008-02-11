@@ -437,6 +437,11 @@ riot.Component = Class.create({
 		this.markDirty();
 	},
 	
+	cropImage: function(key, imageId, w, h, x, y, sw, callback) {
+		ComponentEditor.cropImage(this.id, key, imageId,
+				w, h, x, y, sw, callback);
+	},
+	
 	markDirty: function() {
 		this.dirty = true;
 		this.controller.markDirty();
@@ -517,6 +522,11 @@ riot.EntityComponent = Class.create(riot.Component, {
 	updateText: function(key, value, updateFromServer) {
 		EntityEditor.updateText(this.listId, this.objectId, key, value, 
 				updateFromServer ? this.update.bind(this) : Prototype.emptyFunction);
+	},
+	
+	cropImage: function(key, imageId, w, h, x, y, sw, callback) {
+		EntityEditor.cropImage(this.listId, this.objectId, key, imageId,
+				w, h, x, y, sw, callback);
 	},
 	
 	update: function() {
