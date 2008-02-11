@@ -30,6 +30,7 @@
 	
 	<bean id="fileStore" class="org.riotfamily.media.store.DefaultFileStore">
 		<property name="uriPrefix" value="${riot.media.uriPrefix=/media}" />
+		<property name="storagePath" value="${riot.media.storagePath=}" />
 	</bean>
 	
 	<bean id="ffmpeg" class="org.riotfamily.media.service.FFmpeg" />
