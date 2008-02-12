@@ -34,12 +34,12 @@
 			}
 			
 			<#--
-			  - Function invoked by save() and ajaxSubmit(). It performs 
-			  - all actions that would be done by 'onsubmit' listeners if
-			  - the form was submitted via a regular submit button. Currently
-			  - this is a dirty hack as TinyMCE is the only element that 
-			  - requires special 'onsubmit' handling. Once another element needs
-			  - this functionality it will be added to the riot-forms API.
+			  - Function invoked by ajaxSubmit(). It performs all actions that 
+			  - would be done by 'onsubmit' listeners if the form was submitted
+			  - via a regular submit button. Currently this is a dirty hack, 
+			  - which is quite okay, as TinyMCE is the only element that 
+			  - requires special 'onsubmit'-handling. Once another element 
+			  - needs this functionality it will be added to the riot-forms API.
 			  -->
 			function onSubmit() {
 				if (window.tinymce) {
@@ -48,13 +48,12 @@
 			}
 			
 			<#--
-			  - Submits the form. This function is invoked by the 'Save' button
+			  - Submits the form by clicking on the submit button. 
+			  - This function is invoked by the 'Save' button
 			  - in the right-hand column.
 			  -->
 			function save() {
-				hideFormForSaving();
-				onSubmit();
-				$('${formId}').submit();
+				$('${formId}').down('input.button-save').click();
 			}
 			
 			<#--
