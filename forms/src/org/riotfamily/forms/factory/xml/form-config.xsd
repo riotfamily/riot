@@ -15,6 +15,7 @@
 	<xsd:complexType name="simple-editor">
 		<xsd:attribute name="bind" type="xsd:string" />
 		<xsd:attribute name="required" type="xsd:boolean" />
+		<xsd:attribute name="read-only" type="xsd:boolean" default="false" />
 	</xsd:complexType>
 
 	<xsd:complexType name="template-editor">

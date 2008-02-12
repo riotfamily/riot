@@ -176,6 +176,14 @@ public abstract class AbstractElement implements Element {
 	}
 	
 	/**
+	 * Setting an element to read-only is the same as invoking
+	 * {@link #setEnabled(boolean) setEnabled(false)}.
+	 */
+	public void setReadOnly(boolean readOnly) {
+		setEnabled(!readOnly);
+	}
+	
+	/**
 	 * Returns whether the element is mandatory and must be filled out by 
 	 * the user.
 	 */
