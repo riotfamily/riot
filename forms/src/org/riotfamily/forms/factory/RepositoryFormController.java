@@ -59,11 +59,22 @@ public abstract class RepositoryFormController extends AjaxFormController {
 		this.formIdParam = formIdParam;
 	}
 
+	/**
+	 * Returns the name of the attribute under which the {@link Form} is
+	 * stored in the HTTP session. This implementation returns the 
+	 * {@link #getFormId(HttpServletRequest) formId} with the controller's
+	 * class name as prefix.  
+	 */
 	protected String getSessionAttribute(HttpServletRequest request) {
 		return RepositoryFormController.class.getName()	
 				+ '.' + getFormId(request);
 	}
 
+	/**
+	 * Returns the id of the form to be used. The default implementation 
+	 * returns the value of the {@link #setFormIdParam(String) formIdParam}
+	 * request parameter.
+	 */
 	protected String getFormId(HttpServletRequest request) {
 		return request.getParameter(formIdParam);
 	}

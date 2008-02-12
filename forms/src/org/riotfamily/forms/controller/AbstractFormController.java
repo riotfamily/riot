@@ -294,6 +294,10 @@ public abstract class AbstractFormController implements Controller {
 		return showForm(form, request, response);
 	}
 	
+	/**
+	 * Returns the name of the attribute under which the {@link Form} is
+	 * stored in the HTTP session. 
+	 */
 	protected String getSessionAttribute(HttpServletRequest request) {
 		return AbstractFormController.class.getName() + ".form";
 	}
