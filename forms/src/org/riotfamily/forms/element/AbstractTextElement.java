@@ -239,6 +239,7 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 	}
 
 	protected void validate() {
+		ErrorUtils.removeErrors(this);
 		if (isRequired() && !StringUtils.hasLength(text)) {
 			ErrorUtils.reject(this, "required");
 		}
