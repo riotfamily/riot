@@ -144,6 +144,18 @@ span.read-only {
 	line-height: 26px;
 }
 
+div.tinymce-disabled {
+	font-family: verdana, arial, sans-serif;
+	font-size: 10px;
+	padding: 4px 0;
+	color: #3d3d3d;
+	background-color: ButtonFace;
+	border: 1px solid #e0e0e0;
+}
+div.tinymce-disabled a {
+	color: #3d3d3d;
+}
+
 #elements,
 .textarea-wrapper {
 	_height: 1px;
@@ -165,7 +177,7 @@ textarea {
 textarea,
 input.text,
 input.number,
-input.password {
+input.password{
 	border: 1px solid #e0e0e0;
 }
 

@@ -88,7 +88,7 @@ public class TinyMCE extends AbstractTextElement
 			tag.start(Html.DIV)
 				.attribute(Html.COMMON_CLASS, "tinymce-disabled")
 				.attribute(Html.COMMON_ID, getId())
-				.body(getText()).end();
+				.body(getText(), false).end();
 		}
 	}
 
@@ -120,6 +120,9 @@ public class TinyMCE extends AbstractTextElement
 	}
 	
 	public String getInitScript() {
+		if (!isEnabled()) {
+			return null;
+		}
 		if (initScript == null) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("tinymce.dom.Event._pageInit();");
