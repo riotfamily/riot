@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.json.JSONFunction;
 import net.sf.json.JSONObject;
 
 import org.riotfamily.common.markup.Html;
@@ -75,12 +76,20 @@ public class TinyMCE extends AbstractTextElement
 	
 	public void renderInternal(PrintWriter writer) {
 		TagWriter tag = new TagWriter(writer);
-		tag.start(Html.TEXTAREA)
-			.attribute(Html.COMMON_CLASS, getStyleClass())
-			.attribute(Html.COMMON_ID, getId())
-			.attribute(Html.INPUT_NAME, getParamName())
-			.attribute(Html.TEXTAREA_ROWS, rows)
-			.body(getText()).end();
+		if (isEnabled()) {
+			tag.start(Html.TEXTAREA)
+				.attribute(Html.COMMON_CLASS, getStyleClass())
+				.attribute(Html.COMMON_ID, getId())
+				.attribute(Html.INPUT_NAME, getParamName())
+				.attribute(Html.TEXTAREA_ROWS, rows)
+				.body(getText()).end();
+		}
+		else {
+			tag.start(Html.DIV)
+				.attribute(Html.COMMON_CLASS, "tinymce-disabled")
+				.attribute(Html.COMMON_ID, getId())
+				.body(getText()).end();
+		}
 	}
 
 	public FormResource getResource() {
@@ -103,6 +112,10 @@ public class TinyMCE extends AbstractTextElement
 		json.element("theme_advanced_layout_manager", "RowLayout");
 		json.element("theme_advanced_containers_default_align", "left");
 		json.element("theme_advanced_container_mceeditor", "mceeditor");
+		json.element("setupcontent_callback", 
+				new JSONFunction(new String[] {"id", "body", "doc"},
+				"if (window.registerKeyHandler) registerKeyHandler(doc);"));
+		
 		return json.toString();
 	}
 	

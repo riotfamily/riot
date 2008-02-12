@@ -21,9 +21,67 @@
 		<@riot.script src="style/tweak.js" />
 		<script type="text/javascript" language="JavaScript">
 			updatePath('${editorId}', '${objectId?if_exists}', '${parentId?if_exists}');
-			function save() {
-				$$('input.button-save').first().click();
+			
+			<#--
+			  - Hides the form and displays a 'Saving ...' message.
+			  - The function is invoked by save() or when the form is submitted
+			  - via a submit button.
+			  -->
+			function hideFormForSaving() {
+				Element.hide('form');
+				Element.hide('extras');
+				Element.show('saving');
 			}
+			
+			<#--
+			  - Function invoked by save() and ajaxSubmit(). It performs 
+			  - all actions that would be done by 'onsubmit' listeners if
+			  - the form was submitted via a regular submit button. Currently
+			  - this is a dirty hack as TinyMCE is the only element that 
+			  - requires special 'onsubmit' handling. Once another element needs
+			  - this functionality it will be added to the riot-forms API.
+			  -->
+			function onSubmit() {
+				if (window.tinymce) {
+					tinymce.EditorManager.triggerSave();
+				}
+			}
+			
+			<#--
+			  - Submits the form. This function is invoked by the 'Save' button
+			  - in the right-hand column.
+			  -->
+			function save() {
+				hideFormForSaving();
+				onSubmit();
+				$('${formId}').submit();
+			}
+			
+			<#--
+			  - Submits the form via AJAX. The function is invoked when Ctrl+S
+			  - is pressed.
+			  -->
+			function ajaxSubmit() {
+				onSubmit();
+				submitForm('${formId}');
+			}
+			
+			<#--
+			  - Registers a keypress listener on the given document. Note: 
+			  - this function is also invoked by the setupcontent_callback of
+			  - TinyMCE elements.
+			  -->
+			function registerKeyHandler(doc) {
+				Event.observe(doc, 'keypress', function(e) {
+					var key = String.fromCharCode(e.charCode ? e.charCode : e.keyCode).toUpperCase();
+					if (key == 'S' && e.ctrlKey) {
+						ajaxSubmit();
+						e.stop();
+					}
+				});
+			}
+			
+			registerKeyHandler(document);
 		</script>
 	</head>
 	<body>
@@ -82,11 +140,7 @@
 					TweakStyle.form();
 					var list = new RiotList('${listKey}');
 					list.renderFormCommands(<#if objectId?exists>'${objectId}'<#else>null</#if>, 'formCommands');
-					$$('form[id]').first().observe('submit', function() {
-						Element.hide('form');
-						Element.hide('extras');
-						Element.show('saving');
-					});
+					$('${formId}').observe('submit', hideFormForSaving);
 				</script>
 			</div>
 	

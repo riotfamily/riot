@@ -90,11 +90,19 @@ public abstract class BaseFormController extends RepositoryFormController
 		this.viewName = viewName;
 	}
 
+	/**
+	 * Returns the name of the attribute under which the {@link Form} is
+	 * stored in the HTTP session. This implementation returns the 
+	 * <em>editorId</em> with the controller's class name as prefix. 
+	 */
 	protected String getSessionAttribute(HttpServletRequest request) {
 		return BaseFormController.class.getName()
 				+ request.getAttribute(EditorConstants.EDITOR_ID);
 	}
 
+	/**
+	 * Returns the EditorDefinition for the given request.
+	 */
 	protected ObjectEditorDefinition getObjectEditorDefinition(HttpServletRequest request) {
 		ObjectEditorDefinition editorDefinition = (ObjectEditorDefinition)
 				request.getAttribute(EDITOR_DEFINITION_ATTR);
@@ -109,14 +117,28 @@ public abstract class BaseFormController extends RepositoryFormController
 		return editorDefinition;
 	}
 
+	/**
+	 * Returns the id of the object to be edited. 
+	 */
 	protected String getObjectId(HttpServletRequest request) {
 		return (String) request.getAttribute(EditorConstants.OBJECT_ID);
 	}
 
+	/**
+	 * Returns the id of the parent object. Note: The method returns the
+	 * request parameter <em>parentId</em> which is only set when a new object
+	 * is created, i.e. {@link #getObjectId(HttpServletRequest)} 
+	 * returns <code>null</code>.
+	 */
 	protected String getParentId(HttpServletRequest request) {
 		return request.getParameter(EditorConstants.PARENT_ID);
 	}
 
+	/**
+	 * Returns the id of the form to be used. This implementation returns
+	 * the formId specified by the 
+	 * {@link #getObjectEditorDefinition(HttpServletRequest) FormDefinition}.
+	 */
 	protected String getFormId(HttpServletRequest request) {
 		FormReference ref = (FormReference) getObjectEditorDefinition(request);
 		return ref.getFormId();
@@ -165,6 +187,7 @@ public abstract class BaseFormController extends RepositoryFormController
 				request, response);
 
 		model.put("form", sw.toString());
+		model.put("formId", form.getId());
 		return new ModelAndView(viewName, model);
 	}
 
@@ -192,13 +215,42 @@ public abstract class BaseFormController extends RepositoryFormController
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		
-		Object bean = form.populateBackingObject();
 		ObjectEditorDefinition editorDef = getObjectEditorDefinition(request);
-
-		ListDefinition listDef = EditorDefinitionUtils.getParentListDefinition(editorDef);
+		boolean save = form.isNew();
+		saveOrUpdate(form, editorDef);
+		if (save) {
+			return afterSave(form, editorDef, request, response);
+		}
+		return afterUpdate(form, editorDef, request, response);
+	}
+	
+	protected void processForm(Form form, HttpServletRequest request) {
+		super.processForm(form, request);
+		if (request.getParameter("ajaxSave") != null && !form.hasErrors()) {
+			ObjectEditorDefinition editor = getObjectEditorDefinition(request);
+			try {
+				saveOrUpdate(form, editor);
+			}
+			catch (InvalidPropertyValueException e) {
+				form.getErrors().rejectValue(e.getField(), e.getCode(),
+						e.getArguments(), e.getMessage());
+			}
+			catch (RioDaoException e) {
+				form.getErrors().reject(e.getCode(), e.getArguments(), e.getMessage());
+			}
+			catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+	
+	protected void saveOrUpdate(Form form, ObjectEditorDefinition editor)
+			throws Exception {
+		
+		Object bean = form.populateBackingObject();
+		ListDefinition listDef = EditorDefinitionUtils.getParentListDefinition(editor);
 		RiotDao dao = listDef.getListConfig().getDao();
 		
-		ModelAndView modelAndView;
 		TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
 		try {
 			if (form.isNew()) {
@@ -208,12 +260,10 @@ public abstract class BaseFormController extends RepositoryFormController
 				dao.save(bean, parent);
 				FormUtils.setObjectId(form, dao.getObjectId(bean));
 				form.setValue(bean);
-				modelAndView = afterSave(form, editorDef, request, response);
 			}
 			else {
 				log.debug("Updating entity ...");
 				dao.update(bean);
-				modelAndView = afterUpdate(form, editorDef, request, response);
 			}
 		}
 		catch (Exception e) {
@@ -221,11 +271,8 @@ public abstract class BaseFormController extends RepositoryFormController
 			throw e;
 		}
 		transactionManager.commit(status);
-		return modelAndView;
 	}
 	
-	
-
 	protected abstract ModelAndView afterSave(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response);
 

@@ -203,7 +203,7 @@ public class AjaxResponse implements FormListener {
 		while (it.hasNext()) {
 			Element element = (Element) it.next();
 			if (element.getForm().getErrors().getErrors(element) != null) {
-				boolean valid = element.getForm().getErrors().hasErrors(element);
+				boolean valid = !element.getForm().getErrors().hasErrors(element);
 				json.add(new Action("valid", element.getId(), String.valueOf(valid)));
 				
 				StringWriter sw = new StringWriter();

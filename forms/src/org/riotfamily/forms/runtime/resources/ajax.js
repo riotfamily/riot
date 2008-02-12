@@ -84,6 +84,15 @@ function submitElement(id, clickedButton) {
 	});
 }
 
+function submitForm(form) {
+	form = $(form);
+	var url = (form.ajaxUrl) ? form.ajaxUrl : window.loction.href;
+	var request = new Ajax.Request(url, {
+		onSuccess: processAjaxResponse,
+		parameters: Object.extend({ajaxSave: 'true'}, form.serialize(true))
+	});
+}
+				
 function processAjaxResponse(transport) {
 	transport.responseJSON.each(performAction);
 }
