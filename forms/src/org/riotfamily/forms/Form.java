@@ -315,23 +315,21 @@ public class Form implements BeanEditor {
 
 		doc.start(Html.SCRIPT);
 		doc.attribute(Html.SCRIPT_SRC, formContext.getContextPath()
-				+ formContext.getResourcePath() + "riot-js/resources.js");
-
-		doc.attribute(Html.SCRIPT_TYPE, "text/javascript");
-		doc.attribute(Html.SCRIPT_LANGUAGE, "JavaScript");
-		doc.end();
-
-		doc.start(Html.SCRIPT);
-		doc.attribute(Html.SCRIPT_SRC, formContext.getContextPath()
 				+ formContext.getResourcePath() + "form/hint.js");
 
 		doc.attribute(Html.SCRIPT_TYPE, "text/javascript");
 		doc.attribute(Html.SCRIPT_LANGUAGE, "JavaScript");
 		doc.end();
-
+		
+		doc.start(Html.SCRIPT).body();
+		writer.write("if (!window.Resources) document.write('" 
+				+ "<script src=\"" + formContext.getContextPath()
+				+ formContext.getResourcePath() + "riot-js/resources.js"
+				+ "\"></scr'+'ipt>');\n");
+		doc.end();
 		doc.start(Html.SCRIPT).body();
 		writer.write("Resources.basePath='" + formContext.getContextPath() 
-				+ formContext.getResourcePath()	+ "';");
+				+ formContext.getResourcePath()	+ "';\n");
 		
 		LoadingCodeGenerator.renderLoadingCode(getResources(), writer);
 		doc.end();
