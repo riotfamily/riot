@@ -15,6 +15,7 @@
 		<@riot.script src="scriptaculous/effects.js" />
 		<@riot.script src="riot-js/util.js" />
 		<@riot.script src="riot-js/pager.js" />
+		<@riot.script src="riot-js/resources.js" />
 		<@riot.script src="dwr/engine.js" />
 		<@riot.script src="dwr/util.js" />
 		<@riot.script src="dwr/interface/ListService.js" />
