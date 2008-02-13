@@ -101,43 +101,38 @@ function processAjaxResponse(transport) {
 }
 
 function performAction(action) {
-	try {
-		if (action.command == 'remove') {
-			$(action.element).remove();
-		}
-		else if (action.command == 'insert') {
-			$(action.element).insert(action.value);
-		}
-		else if (action.command == 'replace') {
-			$(action.element).replace(action.value);
-		}
-		else if (action.command == 'error') {						
-			var errors = $(action.element + '-error');
-			if (errors) errors.replace(action.value);								
-		}
-		else if (action.command == 'valid') {						
-			setValid($(action.element), action.value == 'true');
-		}
-		else if (action.command == 'focus') {		
-			focusElement($(action.element));
-		}
-		else if (action.command == 'enable') {				
-			setEnabled($(action.element), action.value == 'true');
-		}
-		else if (action.command == 'propagate') {
-			propagate(action.element, action.value);
-		}
-		else if (action.command == 'refresh') {
-			var ev = new ChangeEvent($(action.element));
-			setTimeout(function() { submitEvent(ev) }, '1000');
-		}
-		else if (action.command == 'eval') {
-			eval(action.value);
-		}		
+	if (action.command == 'remove') {
+		$(action.element).remove();
 	}
-	catch (err) {
-		alert(err);
+	else if (action.command == 'insert') {
+		$(action.element).insert(action.value);
 	}
+	else if (action.command == 'replace') {
+		$(action.element).replace(action.value);
+	}
+	else if (action.command == 'error') {						
+		var errors = $(action.element + '-error');
+		if (errors) errors.replace(action.value);								
+	}
+	else if (action.command == 'valid') {						
+		setValid($(action.element), action.value == 'true');
+	}
+	else if (action.command == 'focus') {		
+		focusElement($(action.element));
+	}
+	else if (action.command == 'enable') {				
+		setEnabled($(action.element), action.value == 'true');
+	}
+	else if (action.command == 'propagate') {
+		propagate(action.element, action.value);
+	}
+	else if (action.command == 'refresh') {
+		var ev = new ChangeEvent($(action.element));
+		setTimeout(function() { submitEvent(ev) }, '1000');
+	}
+	else if (action.command == 'eval') {
+		eval(action.value);
+	}		
 }
 
 function focusElement(e) {
