@@ -87,9 +87,12 @@ function submitElement(id, clickedButton) {
 function submitForm(form) {
 	form = $(form);
 	var url = (form.ajaxUrl) ? form.ajaxUrl : window.loction.href;
+	var elements = form.select('textarea','input:not(input[type="submit"])');
+	var params = Form.serializeElements(elements, true);
+	params.ajaxSave = 'true';
 	var request = new Ajax.Request(url, {
 		onSuccess: processAjaxResponse,
-		parameters: Object.extend({ajaxSave: 'true'}, form.serialize(true))
+		parameters: params
 	});
 }
 				
