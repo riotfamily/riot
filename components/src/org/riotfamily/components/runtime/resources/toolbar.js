@@ -9,15 +9,17 @@ riot.Toolbar = Class.create({
 			editImages: new riot.ToolbarButton('editImages', '${toolbarButton.editImages}', '.riot-image-editor'),
 			properties: new riot.ToolbarButton('properties', '${toolbarButton.properties}', '.riot-form'),
 			move: new riot.ToolbarButton('move', '${toolbarButton.move}', '.riot-component-list'),
-			logout: new riot.ToolbarButton('logout', '${toolbarButton.logout}')
+			logout: new riot.ToolbarButton('logout', '${toolbarButton.logout}'),
+			discard: new riot.ToolbarButton('discard', '${toolbarButton.discard}', '.riot-controller'),
+			publish: new riot.ToolbarButton('publish', '${toolbarButton.publish}', '.riot-controller')
 		});
 
-		if (!riot.instantPublish) {
-			this.buttons.set('discard', new riot.ToolbarButton('discard', '${toolbarButton.discard}', '.riot-controller'));
-			this.buttons.set('publish', new riot.ToolbarButton('publish', '${toolbarButton.publish}', '.riot-controller'));
-		}
-
 		this.buttons.get('logout').applyHandler = this.logout;
+		
+		var flashVersion = deconcept.SWFObjectUtil.getPlayerVersion();
+		if (!flashVersion.versionIsValid(new deconcept.PlayerVersion([9,0,28]))) {
+			this.buttons.get('editImages').disable().element.title = "This feature requires Flash 9.0.28 or higher";
+		}
 
 		var buttonElements = this.buttons.values().pluck('element');
 		document.body.appendChild(this.element = RBuilder.node('div', {id: 'riot-toolbar'},
@@ -25,47 +27,39 @@ riot.Toolbar = Class.create({
 		));
 		document.body.appendChild(this.inspectorPanel = RBuilder.node('div', {id: 'riot-inspector'}));
 
-		if (!riot.instantPublish) {
-			this.applyButton = new riot.ToolbarButton('apply', '${toolbarButton.apply}', '.riot-controller').activate();
-			this.applyButton.enable = function() {
-				this.enabled = true;
-				new Effect.Appear(this.element, {duration: 0.4});
-			}
-			this.applyButton.disable = function() {
-				this.enabled = false;
-				this.element.hide();
-			}
-			this.applyButton.click = function() {
-				riot.publishWidgets.invoke('applyChanges');
-				riot.toolbar.buttons.get('browse').click();
-			}
-			this.applyButton.element.hide();
-			this.element.appendChild(this.applyButton.element);
+		this.applyButton = new riot.ToolbarButton('apply', '${toolbarButton.apply}', '.riot-controller').activate();
+		this.applyButton.enable = function() {
+			this.enabled = true;
+			new Effect.Appear(this.element, {duration: 0.4});
 		}
+		this.applyButton.disable = function() {
+			this.enabled = false;
+			this.element.hide();
+		}
+		this.applyButton.click = function() {
+			riot.publishWidgets.invoke('applyChanges');
+			riot.toolbar.buttons.get('browse').click();
+		}
+		this.applyButton.element.hide();
+		this.element.appendChild(this.applyButton.element);
 	},
 
 	activate: function() {
-		if (!riot.instantPublish) {
-			var dirty = typeof document.body.down('.riot-dirty') != 'undefined';
-			if (!dirty) this.disablePublishButtons();
-		}
+		var dirty = typeof document.body.down('.riot-dirty') != 'undefined';
+		if (!dirty) this.disablePublishButtons();
 		this.buttons.values().invoke('activate');
 		this.buttons.get('browse').click();
 		this.keepAliveTimer = setInterval(this.keepAlive.bind(this), 60000);
 	},
 
 	enablePublishButtons: function() {
-		if (!riot.instantPublish) {
-			this.buttons.get('publish').enable();
-			this.buttons.get('discard').enable();
-		}
+		this.buttons.get('publish').enable();
+		this.buttons.get('discard').enable();
 	},
 	
 	disablePublishButtons: function() {
-		if (!riot.instantPublish) {
-			this.buttons.get('publish').disable();
-			this.buttons.get('discard').disable();
-		}
+		this.buttons.get('publish').disable();
+		this.buttons.get('discard').disable();
 	},
 	
 	buttonClicked: function(button) {

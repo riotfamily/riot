@@ -52,7 +52,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class VideoUpload extends FileUpload {
 
 	private static final FormResource PREVIEW_RESOURCE = new ScriptResource(
-			"swfobject/1.5/swfobject.js", "deconcept.SWFObject", 
+			"swfobject/swfobject.js", "deconcept.SWFObject", 
 			Resources.SCRIPTACULOUS_EFFECTS);
 	
 	

@@ -15,6 +15,7 @@
 	    <dependency org="riotfamily" name="riot-media" rev="${dep.riot.revision}" conf="*->@" />
         <dependency org="riotfamily" name="riot-hibernate" rev="${dep.riot.revision}" conf="*->@" />
         <dependency org="riotfamily" name="riot-website" rev="${dep.riot.revision}" conf="*->@" />
+        <dependency org="riotfamily" name="swfobject-js" rev="1.5" conf="runtime->default" />
         <dependency org="riotfamily" name="swfupload-js" rev="7.0-beta3" conf="runtime->default" />
         <dependency org="freemarker" name="freemarker" rev="${dep.freemarker.revision}" conf="runtime->default" />
         <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->web;src->src" />
