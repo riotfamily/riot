@@ -108,7 +108,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 			listSession = getListSession(key, request);
 		}
 		catch (ListSessionExpiredException e) {
-			log.info("Session expired - creating a new one ...");
+			log.debug("Session expired - creating a new one ...");
 		}
 		if (listSession == null) {
 			ListDefinition listDef = editorRepository.getListDefinition(editorId);
