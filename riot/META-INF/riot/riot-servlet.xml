@@ -203,6 +203,8 @@
 	<bean id="copyCommand" class="org.riotfamily.riot.list.command.core.CopyCommand" />
 
 	<bean id="pasteCommand" class="org.riotfamily.riot.list.command.core.PasteCommand" />
+	
+	<bean id="previewCommand" class="org.riotfamily.riot.list.command.core.PreviewCommand" />
 
 	<!-- Alternative cell renderer  -->
 
