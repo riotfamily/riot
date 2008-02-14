@@ -113,7 +113,7 @@ public class AdvancedBeanNameHandlerMapping
 					patterns.add(p);
 					
 				}
-				patternsByBeanName.put(beanNames[i], patterns);
+				registerPatterns(beanNames[i], patterns);
 			}
 			else {
 				if (logger.isDebugEnabled()) {
@@ -134,14 +134,28 @@ public class AdvancedBeanNameHandlerMapping
 			urls.add(beanName);
 		}
 		String[] aliases = getApplicationContext().getAliases(beanName);
-		for (int j = 0; j < aliases.length; j++) {
-			if (aliases[j].startsWith("/")) {
-				urls.add(aliases[j]);
+		for (int i = 0; i < aliases.length; i++) {
+			if (aliases[i].startsWith("/")) {
+				urls.add(aliases[i]);
 			}
 		}
 		return StringUtils.toStringArray(urls);
 	}
-		
+	
+	/**
+	 * Registers the list of patterns for the given beanName and all aliases
+	 * not starting with "/".
+	 */
+	private void registerPatterns(String beanName, List patterns) {
+		patternsByBeanName.put(beanName, patterns);
+		String[] aliases = getApplicationContext().getAliases(beanName);
+		for (int i = 0; i < aliases.length; i++) {
+			if (!aliases[i].startsWith("/")) {
+				patternsByBeanName.put(aliases[i], patterns);		
+			}
+		}
+	}
+	
 	/**
 	 * Register the given handler instance for the given URL path.
 	 * <p><strong>Copied from AbstractUrlHandlerMapping</strong>
