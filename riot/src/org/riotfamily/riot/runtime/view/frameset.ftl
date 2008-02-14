@@ -16,6 +16,6 @@
 	<frameset id="rows" rows="119,*,37" border="0">
 		<frame name="path" src="${riot.href("/path")}" />
 		<frame name="editor" src="${riot.href("/group")}" />
-		<frame name="statusbar" src="${riot.href("/statusbar")}" />
+		<frame name="statusBar" src="${riot.href("/statusbar")}" />
 	</frameset>
 </html>
