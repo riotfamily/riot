@@ -93,9 +93,13 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
     	update(entity);
     }
     
+    /**
+     * This method does nothing. Before the parentProperty was set to null here.
+     * But since the only call is from the Clipboard's pasteCut method, which
+     * calls this after the addChild is called, setting the parentProperty to
+     * null won't have the desired effect.
+     */
     public void removeChild(Object entity, Object parent) {
-    	PropertyUtils.setProperty(entity, parentProperty, null);
-    	update(entity);
     }
-
+    
 }
