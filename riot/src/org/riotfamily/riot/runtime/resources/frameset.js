@@ -48,5 +48,5 @@ var RiotFrameset = Class.create({
 var frameset = new RiotFrameset('rows');
 
 function setLoading(loading) {
-	statusbar.document.getElementById('loading').style.visibility = loading ? 'visible' : 'hidden';
+	statusBar.document.getElementById('loading').style.visibility = loading ? 'visible' : 'hidden';
 }
