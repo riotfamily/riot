@@ -143,7 +143,7 @@ public class HqlCollectionDao extends HibernateSupport
         hql.append(getOrderBy(params));
     }
 
-	public final Collection list(Object parent, ListParams params) {
+	public Collection list(Object parent, ListParams params) {
         return listInternal(parent, params);
 	}
 	
