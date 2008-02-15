@@ -152,7 +152,7 @@ public class Site {
 	}
 	
 	public String stripPrefix(String path) {
-		if (pathPrefix != null) {
+		if (pathPrefix != null && path != null && path.startsWith(pathPrefix)) {
 			return path.substring(pathPrefix.length());
 		}
 		return path;
