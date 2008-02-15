@@ -41,6 +41,10 @@ class CommandContextImpl implements CommandContext {
 
 	private int itemsTotal;
 
+	private int batchSize;
+
+	private int batchIndex;
+
 	private Object bean;
 
 	private Object parent;
@@ -84,14 +88,30 @@ class CommandContextImpl implements CommandContext {
 		return parent;
 	}
 
-	public void setItemsTotal(int itemsTotal) {
-		this.itemsTotal = itemsTotal;
-	}
-
 	public int getItemsTotal() {
 		return itemsTotal;
 	}
 
+	public void setItemsTotal(int itemsTotal) {
+		this.itemsTotal = itemsTotal;
+	}
+
+	public int getBatchSize() {
+		return batchSize;
+	}
+	
+	public void setBatchSize(int batchSize) {
+		this.batchSize = batchSize;
+	}
+	
+	public int getBatchIndex() {
+		return batchIndex;
+	}
+
+	public void setBatchIndex(int batchIndex) {
+		this.batchIndex = batchIndex;
+	} 
+	
 	public ListDefinition getListDefinition() {
 		return session.getListDefinition();
 	}

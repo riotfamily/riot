@@ -23,11 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.core;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.ShowListResult;
 
-public class CutCommand extends AbstractCommand {
+public class CutCommand extends AbstractCommand implements BatchCommand {
 
 	public static final String ACTION_CUT = "cut";
 
@@ -46,5 +50,13 @@ public class CutCommand extends AbstractCommand {
 	public CommandResult execute(CommandContext context) {
 		Clipboard.get(context).cut(context);
 		return new ShowListResult(context);
+	}
+
+	public String getBatchConfirmationMessage(CommandContext context, String action) {
+		return null;
+	}
+
+	public List getBatchStates(CommandContext context) {
+		return Collections.singletonList(getState(context, ACTION_CUT));
 	}
 }

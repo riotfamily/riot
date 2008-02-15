@@ -59,5 +59,9 @@ public interface CommandContext {
 	public HttpServletRequest getRequest();
 
 	public int getItemsTotal();
+	
+	public int getBatchSize();
+
+	public int getBatchIndex();
 
 }

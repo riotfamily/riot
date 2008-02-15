@@ -23,6 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.dao.PageValidationUtils;
 import org.riotfamily.pages.model.Page;
@@ -43,16 +46,19 @@ public class PastePageCommand extends PasteCommand {
 	protected boolean isEnabled(CommandContext context, String action) {
 		boolean enabled = super.isEnabled(context, action);
 		Clipboard cb = Clipboard.get(context);
-		Object obj = cb.getObject();
-		if (obj instanceof Page) {
-			Page page = (Page) obj;
-			enabled &= isValidChild(context.getParent(), page);
+		List objects = cb.getObjects();
+		for (Iterator iterator = objects.iterator(); iterator.hasNext();) {
+			Object object = (Object) iterator.next();
+			if (object instanceof Page) {
+				Page page = (Page) object;
+				enabled &= isValidChild(context.getParent(), page);
 
-			//REVISIT  
-			// Only allow pasting into the same site
-			Site site = PageCommandUtils.getParentSite(context);
-			if(site != null) {
-				enabled &= page.getSite().equals(site);
+				//REVISIT  
+				// Only allow pasting into the same site
+				Site site = PageCommandUtils.getParentSite(context);
+				if(site != null) {
+					enabled &= page.getSite().equals(site);
+				}
 			}
 		}
 		return enabled;

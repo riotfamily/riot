@@ -23,6 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.core;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.riotfamily.riot.dao.CopyAndPasteEnabledDao;
@@ -47,11 +51,13 @@ public class Clipboard {
 
 	private int mode;
 
-	private String objectId;
+	private int itemsTotal;
 
-	private String parentId;
+	private List objectIds = new ArrayList();
 
-	private ListDefinition listDefinition;
+	private List parentIds = new ArrayList();
+
+	private List listDefinitions = new ArrayList();
 
 	public static Clipboard get(CommandContext context) {
 		return get(context.getRequest().getSession());
@@ -71,31 +77,44 @@ public class Clipboard {
 	}
 
 	private void put(CommandContext context, int mode) {
+		if (context.getBatchIndex() == 0) {
+			clear();
+		}
 		this.mode = mode;
-		objectId = context.getObjectId();
-		parentId = context.getParentId();
-		listDefinition = context.getListDefinition();
+		itemsTotal++;
+		objectIds.add(context.getObjectId());
+		parentIds.add(context.getParentId());
+		listDefinitions.add(context.getListDefinition());
 	}
 
 	public void clear() {
+		itemsTotal = 0;
 		mode = MODE_EMPTY;
-		objectId = null;
-		parentId = null;
-		listDefinition = null;
+		objectIds.clear();
+		parentIds.clear();
+		listDefinitions.clear();
 	}
 
 	public boolean isEmpty() {
 		return mode == MODE_EMPTY;
 	}
 
-	public Object getObject() {
-		if (!isEmpty()) {
-			return listDefinition.getListConfig().getDao().load(objectId);
+	public List getObjects() {
+		if (isEmpty()) {
+			return Collections.EMPTY_LIST;
 		}
-		return null;
+		List result = new ArrayList(itemsTotal);
+		for (int index = 0; index < itemsTotal; index++) {
+			ListDefinition listDefinition = (ListDefinition)
+					listDefinitions.get(index);
+			
+			String objectId = (String) objectIds.get(index);
+			result.add(listDefinition.getListConfig().getDao().load(objectId));
+		}
+		return result;
 	}
-
-
+	
+	
 	public boolean canCopy(CommandContext context) {
 		return context.getDao() instanceof CopyAndPasteEnabledDao;
 	}
@@ -125,40 +144,64 @@ public class Clipboard {
 
 	private void pasteCut(CommandContext context) {
 		CutAndPasteEnabledDao dao = (CutAndPasteEnabledDao) context.getDao();
-		Object item = dao.load(objectId);
-		Object parent = context.getBean();
-		dao.addChild(item, parent);
-		if (parentId != null) {
-			Object previousParent = EditorDefinitionUtils.loadParent(
-					listDefinition, parentId);
+		for (int index = 0; index < itemsTotal; index++) {
+			Object item = dao.load((String) objectIds.get(index));
+			Object parent = context.getBean();
+			dao.addChild(item, parent);
+			String parentId = (String) parentIds.get(index);
+			if (parentId != null) {
+				ListDefinition listDefinition = (ListDefinition)
+						listDefinitions.get(index);
+				
+				Object previousParent = EditorDefinitionUtils.loadParent(
+						listDefinition, parentId);
 
-			CutAndPasteEnabledDao previousDao = (CutAndPasteEnabledDao)
-					listDefinition.getListConfig().getDao();
+				CutAndPasteEnabledDao previousDao = (CutAndPasteEnabledDao)
+						listDefinition.getListConfig().getDao();
 
-			previousDao.removeChild(item, previousParent);
+				previousDao.removeChild(item, previousParent);
+			}
 		}
 	}
 
 	private void pasteCopied(CommandContext context) {
 		CopyAndPasteEnabledDao dao = (CopyAndPasteEnabledDao) context.getDao();
-		Object item = dao.load(objectId);
-		Object parent = context.getBean();
-		dao.addCopy(item, parent);
+		for (int index = 0; index < itemsTotal; index++) {
+			Object item = dao.load((String) objectIds.get(index));
+			Object parent = context.getBean();
+			dao.addCopy(item, parent);
+		}
 	}
 
 
 	public boolean isCut(CommandContext context) {
-		return mode == MODE_CUT && ObjectUtils.nullSafeEquals(
-				objectId, context.getObjectId());
+		return mode == MODE_CUT && isInClipboard(context);
 	}
 
 	public boolean isCopied(CommandContext context) {
-		return mode == MODE_COPY && ObjectUtils.nullSafeEquals(
-				objectId, context.getObjectId());
+		return mode == MODE_COPY && isInClipboard(context);
+	}
+	
+	private boolean isInClipboard(CommandContext context) {
+		for (int index = 0; index < itemsTotal; index++) {
+			if (ObjectUtils.nullSafeEquals((String) objectIds.get(index),
+					context.getObjectId())) {
+				
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean isSameParent(CommandContext context) {
-		return ObjectUtils.nullSafeEquals(parentId, context.getParentId());
+		for (int index = 0; index < itemsTotal; index++) {
+			if (!ObjectUtils.nullSafeEquals(parentIds.get(index),
+					context.getParentId())) {
+
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private boolean isCutObjectAncestor(CommandContext context) {
@@ -167,11 +210,16 @@ public class Clipboard {
 					null, context.getParentId(),
 					context.getMessageResolver()).getParent();
 
-			while (ref != null) {
-				if (objectId.equals(ref.getObjectId())) {
-					return true;
+			for (int index = 0; index < itemsTotal; index++) {
+				String objectId = (String) objectIds.get(index);
+				EditorReference itemRef = ref; 
+			
+				while (itemRef != null) {
+					if (objectId.equals(itemRef.getObjectId())) {
+						return true;
+					}
+					itemRef = itemRef.getParent();
 				}
-				ref = ref.getParent();
 			}
 		}
 		return false;
@@ -184,9 +232,17 @@ public class Clipboard {
 	}
 
 	private boolean isCompatibleEntityClass(CommandContext context) {
-		RiotDao sourceDao = listDefinition.getListConfig().getDao();
-		RiotDao dao = context.getDao();
-		return dao.getEntityClass().equals(sourceDao.getEntityClass());
+		Class daoEntityClass = context.getDao().getEntityClass();
+		for (int index = 0; index < itemsTotal; index++) {
+			ListDefinition listDefinition = (ListDefinition)
+					listDefinitions.get(index);
+			
+			RiotDao sourceDao = listDefinition.getListConfig().getDao();
+			if (!daoEntityClass.equals(sourceDao.getEntityClass())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

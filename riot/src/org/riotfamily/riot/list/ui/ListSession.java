@@ -496,7 +496,7 @@ public class ListSession implements RenderContext {
 
 		BatchCommand command = (BatchCommand) getCommand(itemCommands, commandState.getId());
 		CommandContextImpl context = new CommandContextImpl(this, request);
-		context.setItemsTotal(items.size());
+		context.setBatchSize(items.size());
 		if (!confirmed) {
 			String message = command.getBatchConfirmationMessage(context, commandState.getAction());
 			if (message != null) {
@@ -507,12 +507,15 @@ public class ListSession implements RenderContext {
 		CommandResult result = null;
 		try {
 			Iterator it = items.iterator();
+			int batchIndex = 0;
 			while (it.hasNext()) {
 				ListItem item = (ListItem) it.next();
 				if (AccessController.isGranted(commandState.getAction(), item)) {
 					context.setItem(item);
+					context.setBatchIndex(batchIndex);
 					result = command.execute(context);
 				}
+				batchIndex++;
 			}
 		}
 		catch (RuntimeException e) {
