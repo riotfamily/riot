@@ -8,14 +8,13 @@
 		<title><@spring.messageText "title.riot", "Riot V6" /></title>
 		<link rel="icon" href="${riot.resource("/style/images/favicon.ico")}" type="image/x-icon" />
     	<link rel="shortcut icon" href="${riot.resource("/style/images/favicon.ico")}" type="image/x-icon" />
-    	<@riot.stylesheet href="style/frameset.css" />
     	<@riot.script src="prototype/prototype.js" />
     	<@riot.script src="riot-js/viewport.js" />
     	<@riot.script src="frameset.js" />
 	</head>
 	<frameset id="rows" rows="119,*,37" border="0">
-		<frame name="path" src="${riot.href("/path")}" />
-		<frame name="editor" src="${riot.href("/group")}" />
-		<frame name="statusBar" src="${riot.href("/statusbar")}" />
+		<frame name="path" src="${riot.href("/path")}" scrolling="no" />
+		<frame name="editor" src="${riot.href("/group")}" scrolling="auto" />
+		<frame name="statusBar" src="${riot.href("/statusbar")}" scrolling="no" />
 	</frameset>
 </html>
