@@ -76,15 +76,17 @@ public class PublishCommand extends AbstractCommand implements BatchCommand {
 		}
 		return sb.toString();
 	}
-
+	
 	public String getConfirmationMessage(CommandContext context) {
-		String key = getMessageKey(getAction(context), true);
-		return context.getMessageResolver().getMessage(key,	null, key);
+		String action = getAction(context);
+		String key = getMessageKey(action, false);
+		Object[] args = getDefaultMessageArgs(context);
+		return context.getMessageResolver().getMessage(key,	args, key);
 	}
 	
 	public String getBatchConfirmationMessage(CommandContext context, String action) {
 		String key = getMessageKey(action, true);
-		return context.getMessageResolver().getMessage(key,	null, key);
+		return context.getMessageResolver().getMessage(key,	key);
 	}
 	
 	public List getBatchStates(CommandContext context) {

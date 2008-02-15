@@ -205,6 +205,8 @@
 	<bean id="pasteCommand" class="org.riotfamily.riot.list.command.core.PasteCommand" />
 	
 	<bean id="previewCommand" class="org.riotfamily.riot.list.command.core.PreviewCommand" />
+	
+	<bean id="publishCommand" class="org.riotfamily.riot.list.command.core.PublishCommand" />
 
 	<!-- Alternative cell renderer  -->
 

@@ -32,6 +32,7 @@ import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.runtime.RiotRuntime;
 import org.riotfamily.riot.runtime.RiotRuntimeAware;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * Abstract baseclass for commands.
@@ -101,6 +102,16 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 	 */
 	public String getConfirmationMessage(CommandContext context) {
 		return null;
+	}
+	
+	protected Object[] getDefaultMessageArgs(CommandContext context) {
+		Class clazz = context.getListDefinition().getBeanClass();
+		Object item = context.getBean();
+		String type = context.getMessageResolver().getClassLabel(null, clazz);
+		String label = HtmlUtils.htmlEscape(context.getListDefinition()
+				.getDisplayDefinition().getLabel(item));
+		
+		return new Object[] {label, type, context.getObjectId()};
 	}
 
 	public boolean isShowOnForm() {

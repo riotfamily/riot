@@ -32,7 +32,6 @@ import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.ShowListResult;
-import org.springframework.web.util.HtmlUtils;
 
 /**
  * Command that deletes an item. To prevent accidental deletion a confirmation
@@ -55,16 +54,7 @@ public class DeleteCommand extends AbstractCommand implements BatchCommand {
 	}
 		
 	public String getConfirmationMessage(CommandContext context) {
-		
-		Class clazz = context.getListDefinition().getBeanClass();
-		Object item = context.getBean();
-		
-		String type = context.getMessageResolver().getClassLabel(null, clazz);
-		String label = HtmlUtils.htmlEscape(context.getListDefinition()
-				.getDisplayDefinition().getLabel(item));
-		
-		Object[] args = new Object[] {label, type, context.getObjectId()};
-		
+		Object[] args = getDefaultMessageArgs(context);
 		return context.getMessageResolver().getMessage("confirm.delete", args, 
 				"Do you really want to delete this element?");
 	}
