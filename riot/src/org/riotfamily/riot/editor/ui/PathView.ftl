@@ -19,7 +19,7 @@
 	<body onload="TweakStyle.path()" class="path">
 		<div id="body-wrapper">
 			<div id="logo" title="Riot V${riotMacroHelper.runtime.versionString}"></div>
-			<div id="path"><@renderPath /></div>
+			<div id="pathWrapper"><div id="path"><@renderPath /></div></div>
 		</div>
 	</body>
 </html>

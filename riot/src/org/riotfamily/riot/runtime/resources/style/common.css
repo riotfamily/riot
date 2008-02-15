@@ -26,17 +26,17 @@ td {
 }
 #body-wrapper {
 	width: 100%;
-	/*overflow: hidden;*/
 	padding: 30px 0;
 	position: relative;
 	float: none;
 }
 #wrapper {
+	padding: 0 22px;
 	/* For IE6 */
 	_float: left;
 }
 .main {
-	margin-right: 305px;
+	margin-right: 280px;
 	/* For IE6 */
 	_width: 100%;
 }
