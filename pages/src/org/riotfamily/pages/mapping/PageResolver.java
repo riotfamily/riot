@@ -36,9 +36,11 @@ import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Carsten Woelk [cwoelk at neteye dot de]
@@ -164,15 +166,59 @@ public class PageResolver {
 	}
 	
 	
+	public Page getResolvePage(String url, String contextPath, Site fallbackSite,
+			PathCompleter pathCompleter) {
+		
+		String host = ServletUtils.getHost(url);
+		String path = ServletUtils.getPath(url);
+
+		// Strip the contextPath if known
+		if (StringUtils.startsWithIgnoreCase(path, contextPath)) {
+			path = path.substring(contextPath.length());
+		}
+		log.debug("Path is '" + path + "'.");
+		
+		if (path == null) {
+			log.warn("The path is null. Can't continue.");
+			return null;
+		}
+
+		path = pathCompleter.stripServletMapping(path);
+		log.debug("Path is now '" + path + "'.");
+		log.debug("Host is '" + host + "'.");
+
+		Site site = pageDao.findSite(host, path);
+		if (site == null) {
+			log.warn("Could not find site for url '" + url + "'. Using fallback.");
+			site = fallbackSite;
+		}
+		path = site.stripPrefix(path);
+		log.debug("Path is now '" + path + "'.");
+
+		Page page = pageDao.findPage(site, path);
+		if (page == null) {
+			log.debug("Haven't found a page for '" + site + path + "'. Trying to find a page through an alias.");
+			PageAlias alias = pageDao.findPageAlias(site, path);
+			if (alias != null) {
+				page = alias.getPage();
+			}
+		}
+		
+		log.debug("Page: " + page);
+
+		return page;
+	}	
+
+	
 	private Site resolveSite(HttpServletRequest request, PathCompleter pathCompleter) {
 		String hostName = request.getServerName();
 		String path;
 		if (pathCompleter == null) {
-			path = ServletUtils.getOriginatingPathWithoutServletMapping(request);
+			path = ServletUtils.getPathWithoutServletMapping(request);
 			log.debug("Path without a PathCompleter resolved to '" + path + "'.");
 		}
 		else {
-			path = ServletUtils.getOriginatingPathWithinApplication(request);
+			path = ServletUtils.getPathWithinApplication(request);
 			path = pathCompleter.stripServletMapping(path);
 			log.debug("Path with a PathCompleter resolved to '" + path + "'.");
 		}

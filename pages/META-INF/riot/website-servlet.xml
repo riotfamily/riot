@@ -63,12 +63,10 @@
 		<constructor-arg ref="pageDao" />
 	</bean>
 
-	<bean id="pagesMacroHelper" class="org.riotfamily.common.web.view.StatelessMacroHelperFactory">
-		<constructor-arg>
-			<bean class="org.riotfamily.pages.view.PagesMacroHelper">
-				<constructor-arg ref="pageDao" />
-			</bean>
-		</constructor-arg>
+	<bean id="pagesMacroHelper" class="org.riotfamily.pages.view.PagesMacroHelperFactory">
+		<constructor-arg ref="pageDao" />
+		<constructor-arg ref="pageResolver" />
+		<constructor-arg ref="pathCompleter" />
 	</bean>
 
 </beans>
