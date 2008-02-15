@@ -111,10 +111,10 @@ public class PageSetupBean implements InitializingBean, ApplicationContextAware 
 	
 	protected List createSites() {
 		if (siteDefinitions == null || siteDefinitions.isEmpty()) {
-			Site site = new Site();
-			site.setLocale(Locale.ENGLISH);
-			site.setEnabled(true);
-			return Collections.singletonList(site);
+			SiteDefinition definition = new SiteDefinition();
+			definition.setLocale(Locale.ENGLISH);
+			definition.setEnabled(true);
+			siteDefinitions = Collections.singletonList(definition);
 		}
 		ArrayList result = new ArrayList();
 		Iterator it = siteDefinitions.iterator();
