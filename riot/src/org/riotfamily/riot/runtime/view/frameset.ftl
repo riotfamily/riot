@@ -8,7 +8,6 @@
 		<title><@spring.messageText "title.riot", "Riot V6" /></title>
 		<link rel="icon" href="${riot.resource("/style/images/favicon.ico")}" type="image/x-icon" />
     	<link rel="shortcut icon" href="${riot.resource("/style/images/favicon.ico")}" type="image/x-icon" />
-    	<@riot.stylesheet href="style/frameset.css" />
     	<@riot.script src="prototype/prototype.js" />
     	<@riot.script src="riot-js/viewport.js" />
     	<@riot.script src="frameset.js" />

@@ -27,11 +27,14 @@ a {
 	color: #000;
 }
 
-#path {
-	width: 100%;
+#pathWrapper {
 	margin-top: 20px;
+	padding: 0;
 	background-color: #ebebeb;
-	overflow: hidden;
+}
+#path {
+	margin: 0 0 0 22px;
+	border-left: 1px solid #fff;
 }
 
 .group, .list, .tree, .form, .node, .none {
@@ -58,4 +61,8 @@ a {
 .none {
 	padding-right: 9px;
 	border-right: 1px solid #fff;
+}
+
+#logo {
+	margin: 0 34px 0 18px;
 }
