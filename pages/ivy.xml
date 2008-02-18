@@ -3,11 +3,11 @@
 	<configurations>
 		<conf name="build" />
 		<conf name="runtime" />
-		<conf name="test" />
+		<conf name="test" extends="runtime" />
 		<conf name="src" />
 	</configurations>
 	<publications>
-    	<artifact />
+    	<artifact conf="build,runtime,test" />
     	<artifact type="source" ext="src.zip" conf="src" />
     </publications>
 	<dependencies>
@@ -17,6 +17,6 @@
 		<dependency org="riotfamily" name="riot-website" rev="${dep.riot.revision}" conf="*->@" />
 		<dependency org="riotfamily" name="riot-components" rev="${dep.riot.revision}" conf="*->@" />
 		<dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->web;src->src" />
-		<dependency org="json" name="json-lib" rev="2.0" conf="*->default" />
+		<dependency org="json" name="json-lib" rev="2.0" conf="build,runtime->default" />
 	</dependencies>
 </ivy-module>

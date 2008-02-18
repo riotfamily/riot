@@ -3,23 +3,23 @@
     <configurations>
     	<conf name="build" />
     	<conf name="runtime" />
-    	<conf name="test" />
+    	<conf name="test" extends="runtime" />
     	<conf name="src" />
     </configurations>
     <publications>
-    	<artifact />
+    	<artifact conf="build,runtime,test" />
     	<artifact type="source" ext="src.zip" conf="src" />
     </publications>
     <dependencies>
 	    <dependency org="sun" name="servlet-api" rev="2.4" conf="build->default" />
         <dependency org="apache" name="log4j" rev="1.2.15" conf="build->default" />
-        <dependency org="apache" name="commons-logging" rev="${dep.commons-logging.revision}" conf="*->default" />
+        <dependency org="apache" name="commons-logging" rev="${dep.commons-logging.revision}" conf="build,runtime->default" />
         <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->web,mail,aop;src->src" />
 		<dependency org="freemarker" name="freemarker" rev="${dep.freemarker.revision}" conf="src->src;%->default" />
-		<dependency org="json" name="json-lib" rev="2.0" conf="*->default" />
-		<dependency org="getahead" name="dwr" rev="2.0.1" conf="*->default" />
-		<dependency org="sun" name="jaf" rev="latest.release" conf="*->default" />
-		<dependency org="yahoo" name="yuicompressor" rev="2.2.5" conf="*->default" />
+		<dependency org="json" name="json-lib" rev="2.0" conf="build,runtime->default" />
+		<dependency org="getahead" name="dwr" rev="2.0.1" conf="build,runtime->default" />
+		<dependency org="sun" name="jaf" rev="latest.release" conf="build,runtime->default" />
+		<dependency org="yahoo" name="yuicompressor" rev="2.2.5" conf="build,runtime->default" />
 		<dependency org="opensymphony" name="quartz" rev="${dep.quartz.revision}" conf="build->default" />
     </dependencies>
 </ivy-module>

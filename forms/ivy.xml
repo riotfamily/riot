@@ -3,11 +3,11 @@
     <configurations>
     	<conf name="build" />
     	<conf name="runtime" />
-    	<conf name="test" />
+    	<conf name="test" extends="runtime" />
     	<conf name="src" />
     </configurations>
     <publications>
-    	<artifact />
+    	<artifact conf="build,runtime,test" />
     	<artifact type="source" ext="src.zip" conf="src" />
     </publications>
     <dependencies>
@@ -18,6 +18,6 @@
 	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->web;src->src" />
 	    <dependency org="devlib" name="imageinfo" rev="latest.release" conf="build,runtime,test->default" />
 	    <dependency org="apache" name="commons-fileupload" rev="1.2" conf="runtime->default" />
-	    <dependency org="json" name="json-lib" rev="2.0" conf="*->default" />
+	    <dependency org="json" name="json-lib" rev="2.0" conf="build,runtime->default" />
     </dependencies>
 </ivy-module>

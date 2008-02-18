@@ -3,11 +3,11 @@
     <configurations>
     	<conf name="build" />
     	<conf name="runtime" />
-    	<conf name="test" />
+    	<conf name="test" extends="runtime" />
     	<conf name="src" />
     </configurations>
     <publications>
-    	<artifact />
+    	<artifact conf="build,runtime,test" />
     	<artifact name="riot-hibernate-context" conf="runtime" />
     	<artifact type="source" ext="src.zip" conf="src" />
     </publications>
@@ -16,6 +16,6 @@
         <dependency org="riotfamily" name="revolt" rev="${dep.riot.revision}" conf="*->@" />
         <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->aop;src->src" />
 		<dependency org="hibernate" name="hibernate" rev="3.2.5.ga" conf="build->core;runtime->standalone,c3p0;src->src" />
-		<dependency org="c3p0" name="c3p0" rev="0.9.1.1" conf="*->default" />
+		<dependency org="c3p0" name="c3p0" rev="0.9.1.1" conf="build,runtime->default" />
     </dependencies>
 </ivy-module>
