@@ -92,6 +92,9 @@ public final class EditorDefinitionUtils {
 
 	public static String getObjectId(EditorDefinition def, Object item) {
 		ListDefinition listDef = getListDefinition(def);
+		if (listDef == null) {
+			return null;
+		}
 		return listDef.getListConfig().getDao().getObjectId(item);
 	}
 	
