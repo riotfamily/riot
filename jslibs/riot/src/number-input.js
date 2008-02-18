@@ -73,13 +73,14 @@ NumberInput.Field.prototype = {
 	},
 
 	isValid: function(v) {
-		var value = v || this.element.value;
+		var value = v;
+		if (typeof value == 'undefined') value = this.element.value;
 		var empty = /^-?$/.test(value);
 		var valid = /^-?[0-9]*([.,][0-9]*)?$/.test(value);
 		if (valid) value = parseFloat(value);
 		return empty || (valid && 
-				(isNaN(this.options.minValue) || value >= this.options.minValue) && 
-				(isNaN(this.options.maxValue) || value <= this.options.maxValue));
+				(this.options.minValue === false || value >= this.options.minValue) && 
+				(this.options.maxValue === false || value <= this.options.maxValue));
 	},
 	
 	validate: function() {
@@ -151,7 +152,7 @@ NumberInput.Field.prototype = {
 
 		// Allow miuns, if negative values are allowed, the current value is positive
 		// and the cursor is at the beginning ...
-		if (c == '-' && (isNaN(this.options.minValue) || this.options.minValue < 0) 
+		if (c == '-' && (this.options.minValue === false || this.options.minValue < 0) 
 				&& this.getValue() >= 0 && this.getSelectionStart() == 0) {
 
 			return true;
@@ -182,7 +183,7 @@ NumberInput.Field.prototype = {
 			}
 
 			if (this.getValue() >= 0) {
-				if (!isNaN(this.options.maxValue)) {
+				if (!this.options.minValue === false) {
 					// Check if the current value already has the maximum string length ...
 					if (this.options.maxValue && 
 							Math.floor(this.getValue()).toString().length == 
@@ -194,7 +195,7 @@ NumberInput.Field.prototype = {
 			}
 			else {
 				// For negative values we need to check the minValue
-				if (!isNaN(this.options.minValue)) {
+				if (!this.options.minValue === false) {
 					if (Math.ceil(this.getValue()).toString().length == 
 							Math.ceil(this.options.minValue).toString().length) {
 
