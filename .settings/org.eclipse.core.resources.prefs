@@ -1,9 +1,0 @@
-#Wed Apr 04 22:13:27 CEST 2007
-eclipse.preferences.version=1
-encoding//components/src/org/riotfamily/components/runtime/i18n/messages.properties=UTF-8
-encoding//components/src/org/riotfamily/components/runtime/i18n/messages_de.properties=UTF-8
-encoding//revolt/src/org/riotfamily/revolt/config/revolt.xsd=UTF8
-encoding//riot/src/org/riotfamily/riot/editor/xml/editor-config.xsd=UTF8
-encoding//riot/src/org/riotfamily/riot/list/xml/list-config.xsd=UTF8
-encoding//riot/src/org/riotfamily/riot/runtime/i18n/messages.properties=UTF-8
-encoding//riot/src/org/riotfamily/riot/runtime/i18n/messages_de.properties=UTF-8
