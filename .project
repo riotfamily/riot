@@ -7,7 +7,7 @@
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-			<triggers>full,incremental,clean,</triggers>
+			<triggers>auto</triggers>
 			<arguments>
 				<dictionary>
 					<key>LaunchConfigHandle</key>
