@@ -32,7 +32,6 @@ import java.util.Locale;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.dao.PageDefinition;
 import org.riotfamily.pages.model.PageNode;
-import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.setup.config.SiteDefinition;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
