@@ -19,6 +19,7 @@
 	
 	<target name="setup" depends="-libs-available" unless="skip-setup">
 		<antcall target="resolve" />
+		<touch file="${root.dir}/.classpath" />
 	</target>
 		
 	<target name="resolve" depends="-configure-ivy">
