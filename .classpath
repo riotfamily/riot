@@ -41,7 +41,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/c3p0.jar"/>
-	<classpathentry kind="lib" path="lib/spring-mock.jar" sourcepath="lib/spring-src.zip"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
 	<classpathentry kind="lib" path="lib/yuicompressor.jar"/>
@@ -53,5 +52,6 @@
 	<classpathentry kind="lib" path="lib/commons-httpclient.jar"/>
 	<classpathentry kind="lib" path="lib/htmlparser.jar"/>
 	<classpathentry kind="lib" path="lib/spring-webmvc.jar"/>
+	<classpathentry kind="lib" path="lib/spring-test.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
