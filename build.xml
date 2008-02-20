@@ -1,4 +1,4 @@
-<project name="riotfamily" default="install" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="riotfamily" default="setup" xmlns:ivy="antlib:org.apache.ivy.ant">
 
 	<import file="common.xml" />
 
@@ -13,6 +13,14 @@
 		<include name="jslibs/*/build.xml" />
 	</fileset>
 
+	<target name="-libs-available">
+		<available property="skip-setup" file="${lib.dir}" type="dir" />
+	</target>
+	
+	<target name="setup" depends="-libs-available" unless="skip-setup">
+		<antcall target="resolve" />
+	</target>
+		
 	<target name="resolve" depends="-configure-ivy">
 		<ivy:buildlist reference="resolved-build.files">
 			<fileset refid="module-build.files" />

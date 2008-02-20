@@ -7,11 +7,11 @@
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-			<triggers>full</triggers>
+			<triggers>auto,full</triggers>
 			<arguments>
 				<dictionary>
 					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/ant resolve.launch</value>
+					<value>&lt;project&gt;/.externalToolBuilders/setup.launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
