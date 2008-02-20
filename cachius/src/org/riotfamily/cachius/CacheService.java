@@ -183,12 +183,7 @@ public class CacheService {
     		throws Exception {
     	
     	if (log.isDebugEnabled()) {
-    		if (cacheItem.isNew()) {
-    			log.debug("Creating cache item " + cacheItem.getKey());
-    		}
-    		else {
-    			log.debug("Updating cache item " + cacheItem.getKey());
-    		}
+    		log.debug("Updating cache item " + cacheItem.getKey());
     	}
 		CachiusResponseWrapper wrapper = new CachiusResponseWrapper(
 				response, cacheItem, sessionIdEncoder);
@@ -199,13 +194,21 @@ public class CacheService {
 			lock.lockForWriting();
 			// Check if another writer has already updated the item
 			if (mtime > cacheItem.getLastModified()) {
-				TaggingContext.openNestedContext(request);
+				TaggingContext ctx = TaggingContext.openNestedContext(request);
 				Map propertySnapshot = SharedProperties.getSnapshot(request);
 				request = new SessionCreationPreventingRequestWrapper(request);
 				processor.processRequest(request, wrapper);
-				cacheItem.setProperties(SharedProperties.getDiff(request, propertySnapshot));
-				cache.tagItem(cacheItem, TaggingContext.popTags(request));
-				wrapper.stopCapturing(mtime);
+				ctx.close();
+				Map props = SharedProperties.getDiff(request, propertySnapshot);
+				cacheItem.setProperties(props);
+				cache.tagItem(cacheItem, ctx.getTags());
+				wrapper.stopCapturing();
+				if (wrapper.isOk() && !ctx.isPreventCaching()) {
+					cacheItem.setLastModified(mtime);
+				}
+				else {
+					cacheItem.invalidate();
+				}
 				if (cacheItem.getSize() > 0) {
 					if (shouldZip) {
 						wrapper.setHeader("Vary", "Accept-Encoding, User-Agent");
@@ -236,12 +239,12 @@ public class CacheService {
     	}
     	
     	ReaderWriterLock lock = cacheItem.getLock();
-    	if (!cacheItem.exists()) {
-    		return false;
-    	}
     	try {
     		// Acquire a reader lock and serve the cached version
     		lock.lockForReading();
+    		if (!cacheItem.exists()) {
+        		return false;
+        	}
         	cacheItem.writeTo(response, sessionIdEncoder.getSessionId());
         	SharedProperties.setProperties(request, cacheItem.getProperties());
     	}
