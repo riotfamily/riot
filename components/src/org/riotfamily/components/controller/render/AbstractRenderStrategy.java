@@ -147,12 +147,14 @@ public abstract class AbstractRenderStrategy implements RenderStrategy {
 		}
 		
 		int i = 0;
+		Component previous = null;
 		Iterator it = components.iterator();
 		while (it.hasNext()) {
 			Component component = (Component) it.next();
-			renderComponent(component, 
-					getPositionalClassName(i++, !it.hasNext()),
-					request, response);
+			renderComponent(component, getPositionalClassName(component, i++, 
+					previous, !it.hasNext()), request, response);
+			
+			previous = component;
 		}
 	}
 	
@@ -216,8 +218,14 @@ public abstract class AbstractRenderStrategy implements RenderStrategy {
 		return this;
 	}
 	
-	protected String getPositionalClassName(int position, boolean last) {
+	protected String getPositionalClassName(Component component, int position, 
+			Component previous, boolean last) {
+		
 		StringBuffer sb = new StringBuffer("component-").append(position + 1);
+		if (previous != null) {
+			sb.append(" ").append(component.getType());
+			sb.append("-after-").append(previous.getType());
+		}
 		if (last) {
 			sb.append(" last-component");
 		}

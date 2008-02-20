@@ -245,7 +245,13 @@ riot.ComponentList = Class.create({
 			this.componentElements.each(function(el) {
 				el.addClassName('riot-moveable-component')
 				el.disableClicks();
+				Droppables.drops.find(function(drop) {
+					if (drop.element == el) {
+						drop.onHover = riot.onHover;
+					}
+				});
 			});
+			
 			Draggables.addObserver(new riot.ComponentDragObserver(this));
 		}
 	},
@@ -265,14 +271,29 @@ riot.ComponentList = Class.create({
 	
 	updatePositionClasses: function() {		
 		var last = this.componentElements.length - 1;
-		this.componentElements.each(function(componentEl, index) {
-			componentEl.descendants().each(function(el) {
-				if (el.hasClassName('component-\\w*') && el.up('.riot-component') == componentEl) {
-					el.className = el.className.replace(/component-\w*/, 'component-' + (index + 1));
-					el.toggleClassName('last-component', index == last);
+		var prev = null;
+		for (var i = 0; i <= last; i++) {
+			var el = this.componentElements[i];
+			el.floatStyle = null;
+			var type = el.readAttribute('riot:componentType');
+			el.descendants().each(function(desc) {
+				//Note: This code exploits the fact that proptotype's className
+				//manipulation methods use regular expressions internally. This
+				//is an undocumented feature and might change in future releases.  
+				if (desc.hasClassName('component-\\w*') && desc.up('.riot-component') == el) {
+					desc.className = desc.className.replace(/component-\w*/, 'component-' + (i + 1));
+					desc.removeClassName(type + '-after-\\w*');
+					if (prev) {
+						desc.addClassName(type + '-after-' + prev);
+					}
+					else {
+					}
+					desc.toggleClassName('last-component', i == last);
 				}
 			});
-		});
+			prev = type;
+		}
+		riot.adoptFloatsAndClears(this.element);
 	},
 	
 	removeOn: function() {
@@ -310,26 +331,61 @@ riot.ComponentList = Class.create({
 	
 });
 
+riot.onHover = function(element, dropon, overlap) {
+	var x = parseInt(element.style.left);
+	var y = parseInt(element.style.top);
+	var w = element.offsetWidth;
+	var h = element.offsetHeight;
+	var outside = y > h || x > w || y < -h || x < -w;
+	if (!outside) {
+		return;
+	} 
+
+    if (!dropon.floatStyle) dropon.floatStyle = dropon.getStyle('float');
+    if (dropon.floatStyle != 'none') {
+    	overlap = Position.overlap('horizontal', dropon);
+    }
+    
+    Sortable.onHover(element, dropon, overlap);
+}
 
 riot.ComponentDragObserver = Class.create({
 	initialize: function(componentList) {
 		this.componentList = componentList;
 		this.element = componentList.element;
 	},
+	
 	onStart: function(eventName, draggable, event) {
-		draggable.element.addClassName('riot-drag');
-		if (draggable.element.getStyle('clear') == 'none') {
+		var el = draggable.element;
+		el.addClassName('riot-drag');
+		
+		// Remove x-after-y classes
+		var after = el.readAttribute('riot:componentType') + '-after-\\w*';
+		el.descendants().each(function(desc) {
+			if (desc.hasClassName(after) && desc.up('.riot-component') == el) {
+				desc.removeClassName(after);
+			}
+		});
+		
+		// The previous class removal can lead to changes of float/clear 
+		// properties, so we have to re-adopt the styles ...
+		riot.adoptFloatsAndClears(this.element);
+		
+		// If the dragged element is floating, remove the vertical movement constraint
+		//el.floatStyle = el.getStyle('float'); 
+		if (el.getStyle('float') != 'none') {
 			draggable.options.constraint = false;
 		}
+		
 		this.nextEl = draggable.element.next('.riot-component');
 	},
+	
 	onEnd: function(eventName, draggable, event) {
 		var el = draggable.element;
 		el.removeClassName('riot-drag');
 		var nextEl = el.next('.riot-component');
 		if(el.parentNode == this.element && nextEl != this.nextEl) {
 			this.componentList.findComponentElements();
-			this.componentList.updatePositionClasses();
 			var nextId = null;
 			if (nextEl) {
 				nextEl.forceRerendering();
@@ -338,6 +394,7 @@ riot.ComponentDragObserver = Class.create({
 			ComponentEditor.moveComponent(riot.getComponent(el).id, nextId);
 			this.componentList.markDirty();
 		}
+		this.componentList.updatePositionClasses();
 		this.nextEl = null;
 	}
 });
@@ -534,6 +591,9 @@ riot.EntityComponent = Class.create(riot.Component, {
 	}
 });
 
+/**
+ * Button to append components to a list.
+ */
 riot.InsertButton = Class.create({
 
 	initialize: function(componentList) {
@@ -595,6 +655,9 @@ riot.InsertButton = Class.create({
 	}
 });
 
+/**
+ * Inpector panel to choose a component type.
+ */
 riot.TypeInspector = Class.create({
 
 	initialize: function(types, activeType, onchange) {
@@ -773,8 +836,8 @@ riot.DiscardWidget = Class.create(riot.PublishWidget, {
 
 
 riot.setLiveHtml = function(html) {
-	if (riot.publishWidgets) { // If apply has been clicked quicker than the lists
-							   // have been loaded, do nothing anymore...
+	if (riot.publishWidgets) { 
+		// If apply has been clicked quicker than the lists have been loaded, do nothing ...
 		for (var i = 0; i < riot.publishWidgets.length; i++) {
 			riot.publishWidgets[i].setLiveHtml(html[i]);
 		}
@@ -808,6 +871,9 @@ if (riot.toolbar.buttons.get('publish')) {
 
 riot.toolbar.buttons.get('editImages').precondition = riot.initSwfUpload;
 
+/**
+ * DWR error handler that reloads the page if the RequestContext has expired
+ */ 
 dwr.engine.setErrorHandler(function(err, ex) {
 	if (ex.javaClassName == 'org.riotfamily.components.context.RequestContextExpiredException') {
 		location.reload();
@@ -817,22 +883,29 @@ dwr.engine.setErrorHandler(function(err, ex) {
 	}
 });
 
+/**
+ * Moves the float and clear style of the component's one and only child element
+ * to the the component's div.
+ */
 riot.adoptFloatsAndClears = function(root) {
 	Selector.findChildElements(root || document, ['.riot-component']).each(function(el) {
 		var c = el.childElements();
 		if (c.length == 1) {
 			var child = c[0];
+			if (child.originalFloat) {
+				// Styles were already adopted. Reset the float as it might 
+				// have changed meanwhile
+				child.style.cssFloat = child.style.styleFloat = '';
+			}
 			var cssFloat = child.getStyle('float');
 			if (cssFloat != 'none') {
-				el.style.zIndex = 1;
+				if (!el.style.zIndex) el.style.zIndex = 1;
 				el.style.cssFloat = el.style.styleFloat = cssFloat;
 				child.style.cssFloat = child.style.styleFloat = 'none';
 				child.originalFloat = cssFloat;
 			}
 			var cssClear = child.getStyle('clear');
-			if (cssClear != 'none') {
-				el.style.clear = cssClear;
-			}
+			el.style.clear = cssClear;
 		}
 	});
 }
