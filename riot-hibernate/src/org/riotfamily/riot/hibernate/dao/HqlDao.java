@@ -102,12 +102,6 @@ public class HqlDao extends HibernateSupport implements RiotDao,
         this.where = where;
     }
 
-    /**
-     * @deprecated The objectId is now obtained using Hibernate meta data.
-     */
-	public void setIdProperty(String idProperty) {
-	}
-
 	public void setPositionProperty(String positionProperty) {
 		this.positionProperty = positionProperty;
 	}
@@ -177,7 +171,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     	hql.append(" as this");
     	HibernateUtils.appendHql(
     		hql, "where", getWhereClause(parent, new EmptyListParams()));
-    	log.info(hql);
+    	log.debug(hql);
         return hql.toString();
     }
 
@@ -190,7 +184,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     	hql.append(entityClass.getName());
     	hql.append(" as this");
     	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
-    	log.info(hql);
+    	log.debug(hql);
         return hql.toString();
     }
 
@@ -204,7 +198,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     	hql.append(" as this");
     	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
     	HibernateUtils.appendHql(hql, "order by", getOrderBy(params));
-    	log.info(hql);
+    	log.debug(hql);
         return hql.toString();
     }
 
