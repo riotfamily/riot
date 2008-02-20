@@ -77,6 +77,10 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
         this.status = status;
     }
     
+    public boolean isOk() {
+    	return status == 0 || status == HttpServletResponse.SC_OK;
+    }
+    
     public String getContentType() {
 		return contentType;
 	}
@@ -164,19 +168,13 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
     	}
     }
     
-    public void stopCapturing(long lastModified) throws IOException {
+    public void stopCapturing() throws IOException {
     	flushBuffer();
     	if (writer != null) {
     		writer.close();
     	}
     	else if (outputStream != null) {
     		outputStream.close();
-    	}
-    	if (status == 0 || status == HttpServletResponse.SC_OK) {
-        	cacheItem.setLastModified(lastModified);
-        }
-    	else {
-    		cacheItem.invalidate();
     	}
     }
     

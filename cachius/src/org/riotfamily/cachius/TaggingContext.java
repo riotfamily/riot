@@ -43,14 +43,19 @@ public class TaggingContext {
 
 	private Log log = LogFactory.getLog(TaggingContext.class);
 
+	private HttpServletRequest request;
+	
 	private TaggingContext parent;
 
 	private HashSet tags;
+	
+	private boolean preventCaching;
 
 	/**
 	 * Private constructor that creates a nested context.
 	 */
-	private TaggingContext(TaggingContext parent) {
+	private TaggingContext(HttpServletRequest request, TaggingContext parent) {
+		this.request = request;
 		this.parent = parent;
 	}
 
@@ -83,6 +88,21 @@ public class TaggingContext {
 			}
 		}
 	}
+	
+	/**
+	 * Sets whether caching should be prevented, i.e. the CacheItem should
+	 * be discarded.
+	 */
+	public void setPreventCaching(boolean preventCaching) {
+		this.preventCaching = preventCaching;
+		if (parent != null) {
+			parent.setPreventCaching(preventCaching);
+		}
+	}
+	
+	public boolean isPreventCaching() {
+		return preventCaching;
+	}
 
 	/**
 	 * Returns the tags assigned via the {@link #addTag(String)} method.
@@ -90,7 +110,13 @@ public class TaggingContext {
 	public Set getTags() {
 		return this.tags;
 	}
-
+	
+	/**
+	 * Closes the context making its parent the new current context. 
+	 */
+	public void close() {
+		request.setAttribute(REQUEST_ATTRIBUTE, parent);
+	}
 	
 	// -- Static methods ------------------------------------------------------
 
@@ -108,30 +134,29 @@ public class TaggingContext {
 			context.addTag(tag);
 		}
 	}
-
-	/**
-	 * Opens a nested context.
-	 * @see #popTags(HttpServletRequest) 
-	 */
-	public static void openNestedContext(HttpServletRequest request) {
-		TaggingContext parent = getContext(request);
-		request.setAttribute(REQUEST_ATTRIBUTE, new TaggingContext(parent));
+	
+	public static void preventCaching(HttpServletRequest request) {
+		TaggingContext context = getContext(request);
+		if (context != null) {
+			context.setPreventCaching(true);
+		}
+	}
+	
+	public static void preventCaching() {
+		TaggingContext context = getContext();
+		if (context != null) {
+			context.setPreventCaching(true);
+		}
 	}
 
 	/**
-	 * Closes the current context and returns the tags that have been assigned.
-	 * The method may return <code>null</code> if no tags were set or no open 
-	 * context exists.
-	 * <p><b>Note:</b> Only invoke this method if you opened a nested context
-	 * before. 
+	 * Opens a nested context.
 	 */
-	public static Set popTags(HttpServletRequest request) {
-		TaggingContext top = getContext(request);
-		if (top != null) {
-			request.setAttribute(REQUEST_ATTRIBUTE, top.getParent());
-			return top.getTags();
-		}
-		return null;
+	public static TaggingContext openNestedContext(HttpServletRequest request) {
+		TaggingContext parent = getContext(request);
+		TaggingContext context = new TaggingContext(request, parent);
+		request.setAttribute(REQUEST_ATTRIBUTE, context);
+		return context;
 	}
 
 	/**
