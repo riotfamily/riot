@@ -45,7 +45,7 @@ public interface ComponentRenderer {
 	 * Renders the given ComponentVersion.
 	 */
 	public void render(Component component, boolean preview, 
-			String positionClassName, HttpServletRequest request, 
+			int position, int listSize, HttpServletRequest request, 
 			HttpServletResponse response)
 			throws IOException;
 

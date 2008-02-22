@@ -59,10 +59,10 @@ public class PreviewModeRenderStrategy extends AbstractRenderStrategy {
 	}
 	
 	protected void renderComponent(ComponentRenderer renderer, 
-			Component component, String positionClassName,
+			Component component, int position, int listSize, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
-		renderer.render(component, true, positionClassName, request, response);
+		renderer.render(component, true, position, listSize, request, response);
 	}	
 }

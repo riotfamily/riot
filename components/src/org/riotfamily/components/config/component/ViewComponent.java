@@ -52,7 +52,7 @@ public class ViewComponent extends AbstractComponent {
 	}
 
 	protected void renderInternal(Component component, boolean preview,
-			String positionClassName, HttpServletRequest request,
+			int position, int listSize, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
 		Map model = new HashMap();
@@ -60,15 +60,14 @@ public class ViewComponent extends AbstractComponent {
 		if (props != null) {
 			model.putAll(props);
 		}
-		model.put(POSITION_CLASS, positionClassName);
-		//REVIST Remove that one:
-		model.put(COMPONENT_ID, String.valueOf(component.getId()));
+		
 		model.put(THIS, component);
+		model.put(POSITION, new Integer(position));
+		model.put(LIST_SIZE, new Integer(listSize));
 
 		Component parentComponent = component.getList().getParent();
 		if (parentComponent != null) {
-			//REVIST Who needs this?
-			request.setAttribute(PARENT_ID, String.valueOf(parentComponent.getId()));
+			request.setAttribute(PARENT, parentComponent);
 		}
 
 		ModelAndView mv = new ModelAndView(viewName, model);

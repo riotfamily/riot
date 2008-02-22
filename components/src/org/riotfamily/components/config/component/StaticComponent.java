@@ -47,7 +47,7 @@ public class StaticComponent extends AbstractComponent {
 	}
 
 	protected void renderInternal(Component component, boolean preview,
-			String positionClassName, HttpServletRequest request,
+			int position, int listSize, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
 		Reader in = new InputStreamReader(location.getInputStream());

@@ -159,7 +159,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	 * @throws IOException
 	 */
 	protected void renderComponent(ComponentRenderer renderer, 
-			Component component, String positionClassName, 
+			Component component, int position, int listSize, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 
@@ -181,7 +181,9 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 				.attribute("riot:form", formUrl)
 				.body();
 
-		super.renderComponent(renderer, component, positionClassName, request, response);
+		super.renderComponent(renderer, component, position, listSize, 
+				request, response);
+		
 		wrapper.end();
 	}
 

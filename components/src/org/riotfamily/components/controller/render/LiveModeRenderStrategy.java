@@ -101,27 +101,27 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 	}
 	
 	protected void renderComponent(ComponentRenderer renderer,
-			Component component, String positionClassName, 
+			Component component, int position, int listSize, 
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 
 		if (renderer.isDynamic() || response instanceof CachiusResponseWrapper) {
-			renderUncachedComponent(renderer, component, positionClassName, 
+			renderUncachedComponent(renderer, component, position, listSize,
 					request, response);
 		}
 		else {
 			cacheService.serve(request, response, new ComponentProcessor(
-					renderer, component, positionClassName));
+					renderer, component, position, listSize));
 		}
 	}
 	
 	private void renderUncachedComponent(ComponentRenderer renderer, 
-			Component component, String positionClassName,
+			Component component, int position, int listSize,
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 
 		ComponentCacheUtils.addContentTags(request, component.getLiveVersion());		
-		renderer.render(component, false, positionClassName, request, response);
+		renderer.render(component, false, position, listSize, request, response);
 	}
 		
 	private class ListProcessor implements CacheableRequestProcessor {
@@ -172,14 +172,17 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		
 		private Component component;
 		
-		private String positionClassName;
+		private int position;
+		
+		private int listSize;
 		
 		public ComponentProcessor(ComponentRenderer renderer, Component component, 
-				String positionClassName) {
+				int position, int listSize) {
 			
 			this.renderer = renderer;
 			this.component = component;
-			this.positionClassName = positionClassName;
+			this.position = position;
+			this.listSize = listSize;
 		}
 
 		public String getCacheKey(HttpServletRequest request) {
@@ -205,7 +208,8 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		public void processRequest(HttpServletRequest request, 
 				HttpServletResponse response) throws Exception {
 			
-			renderUncachedComponent(renderer, component, positionClassName, request, response);
+			renderUncachedComponent(renderer, component, position, listSize, 
+					request, response);
 		}
 		
 	}

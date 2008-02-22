@@ -147,14 +147,10 @@ public abstract class AbstractRenderStrategy implements RenderStrategy {
 		}
 		
 		int i = 0;
-		Component previous = null;
 		Iterator it = components.iterator();
 		while (it.hasNext()) {
 			Component component = (Component) it.next();
-			renderComponent(component, getPositionalClassName(component, i++, 
-					previous, !it.hasNext()), request, response);
-			
-			previous = component;
+			renderComponent(component, i++, components.size(), request, response);
 		}
 	}
 	
@@ -172,7 +168,7 @@ public abstract class AbstractRenderStrategy implements RenderStrategy {
 	}
 	
 	protected final void renderComponent(Component component, 
-			String positionClassName, HttpServletRequest request, 
+			int position, int listSize, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 
 		if (INHERTING_COMPONENT.equals(component.getType())) {
@@ -180,15 +176,15 @@ public abstract class AbstractRenderStrategy implements RenderStrategy {
 		}
 		else {
 			ComponentRenderer renderer = repository.getComponent(component.getType());		
-			renderComponent(renderer, component, positionClassName, 
+			renderComponent(renderer, component, position, listSize, 
 					request, response);
 		}
 	}
 	
-	protected abstract void renderComponent(
-			ComponentRenderer renderer, Component component, 
-			String positionClassName, HttpServletRequest request, 
-			HttpServletResponse response) throws Exception;
+	protected abstract void renderComponent(ComponentRenderer renderer, 
+			Component component, int position, int listSize, 
+			HttpServletRequest request, HttpServletResponse response) 
+			throws Exception;
 	
 	
 	protected final void renderParentList(ComponentList list, 
@@ -216,20 +212,6 @@ public abstract class AbstractRenderStrategy implements RenderStrategy {
 	
 	protected RenderStrategy getStrategyForParentList() throws IOException {
 		return this;
-	}
-	
-	protected String getPositionalClassName(Component component, int position, 
-			Component previous, boolean last) {
-		
-		StringBuffer sb = new StringBuffer("component-").append(position + 1);
-		if (previous != null) {
-			sb.append(" ").append(component.getType());
-			sb.append("-after-").append(previous.getType());
-		}
-		if (last) {
-			sb.append(" last-component");
-		}
-		return sb.toString();
 	}
 
 }

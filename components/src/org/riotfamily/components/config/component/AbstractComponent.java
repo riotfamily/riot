@@ -48,9 +48,11 @@ public abstract class AbstractComponent implements ComponentRenderer {
 
 	public static final String THIS = "this";
 
-	public static final String PARENT_ID = "parentId";
+	public static final String PARENT = "parent";
 
-	public static final String POSITION_CLASS = "positionClass";
+	public static final String POSITION = "position";
+	
+	public static final String LIST_SIZE = "listSize";
 
 	protected Log log = LogFactory.getLog(AbstractComponent.class);
 
@@ -65,12 +67,12 @@ public abstract class AbstractComponent implements ComponentRenderer {
 	}
 	
 	public final void render(Component component, boolean preview,
-			String positionClassName, HttpServletRequest request,
+			int position, int listSize, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 
 		try {
 			request.setAttribute(CONTAINER, component);
-			renderInternal(component, preview, positionClassName, 
+			renderInternal(component, preview, position, listSize, 
 					request, response);
 		}
 		catch (Exception e) {
@@ -94,7 +96,7 @@ public abstract class AbstractComponent implements ComponentRenderer {
 	}
 
 	protected abstract void renderInternal(Component component, boolean preview,
-			String positionClassName, HttpServletRequest request,
+			int position, int listSize, HttpServletRequest request,
 			HttpServletResponse response) throws Exception;
 	
 }

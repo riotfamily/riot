@@ -49,20 +49,19 @@ public class IncludeComponent extends AbstractComponent {
 	}
 
 	protected void renderInternal(Component component, boolean preview,
-			String positionClassName, HttpServletRequest request,
+			int position, int listSize, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
 		Map snapshot = ServletUtils.takeAttributesSnapshot(request);
 		WebUtils.exposeRequestAttributes(request, component.unwrapValues(preview));
-		request.setAttribute(POSITION_CLASS, positionClassName);
-		//REVISIT Should be removed:
-		request.setAttribute(COMPONENT_ID, String.valueOf(component.getId()));
+		
 		request.setAttribute(THIS, component);
+		request.setAttribute(POSITION, new Integer(position));
+		request.setAttribute(LIST_SIZE, new Integer(listSize));
 
 		Component parentComponent = component.getList().getParent();
 		if (parentComponent != null) {
-			//REVISIT Who needs this?
-			request.setAttribute(PARENT_ID, String.valueOf(parentComponent.getId()));
+			request.setAttribute(PARENT, parentComponent);
 		}
 
 		request.getRequestDispatcher(uri).include(request, response);
