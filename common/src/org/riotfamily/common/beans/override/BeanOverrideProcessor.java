@@ -32,7 +32,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
-import org.springframework.core.Ordered;
+import org.springframework.core.PriorityOrdered;
 
 /**
  * BeanFactoryPostProcessor that can be used to replace beans that have been
@@ -44,7 +44,7 @@ import org.springframework.core.Ordered;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class BeanOverrideProcessor implements BeanFactoryPostProcessor, Ordered {
+public class BeanOverrideProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
 
 	private static Log log = LogFactory.getLog(BeanOverrideProcessor.class);
 	

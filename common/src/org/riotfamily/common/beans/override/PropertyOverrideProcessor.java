@@ -30,7 +30,7 @@ import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.core.Ordered;
+import org.springframework.core.PriorityOrdered;
 
 /**
  * BeanFactoryPostProcessor that overrides properties of a bean that has been
@@ -41,7 +41,7 @@ import org.springframework.core.Ordered;
  * @since 6.5
  */
 public class PropertyOverrideProcessor implements BeanFactoryPostProcessor, 
-		Ordered {
+		PriorityOrdered {
 
 	private static Log log = LogFactory.getLog(PropertyOverrideProcessor.class);
 	
