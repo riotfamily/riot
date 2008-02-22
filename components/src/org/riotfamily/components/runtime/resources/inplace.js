@@ -610,11 +610,12 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	var clone = $(e.cloneNode(false));
 	clone.hide().insertSelfBefore(e);
 	
+	var classNames = null;
 	var styles = inst.settings.theme_advanced_styles;
 	if (styles) {
-		var classNames = styles.split(';').collect(function(pair) {return pair.split('=')[1]});
-		riot.stylesheetMaker.copyStyles(clone, doc, classNames);
+		classNames = styles.split(';').collect(function(pair) {return pair.split('=')[1]});
 	}
+	riot.stylesheetMaker.copyStyles(clone, doc, classNames);
 	
 	clone.remove();
 
