@@ -54,10 +54,11 @@ RiotImageReplacement.prototype = {
 
 	processElement: function(el, sel) {
 		el = Element.extend(el);
-		if (el.down('img.replacement') || el.className == 'print-text') {
-			return;
-		}
-		el.onedit = this.processElement.bind(this, el, sel);
+
+		if (el.className == 'print-text') return;
+		if (!el.onedit) el.onedit = this.processElement.bind(this, el, sel);
+		if (el.down('img.replacement')) return;
+		
 		var text = el.innerHTML;
 		text = text.strip().gsub(/<br\/?>/i, '\n').stripTags();
 		if (text.length > 0) {
