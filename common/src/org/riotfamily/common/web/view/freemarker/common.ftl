@@ -8,21 +8,21 @@
   - Includes the given URI using a RequestDispatcher. The argument may also be
   - a sequence of URIs, in which case multiple includes are performed.  
   -->
-<#macro include uri="">
+<#macro include path="">
 <#compress>
-	<#if uri?is_sequence>
-		<#list uri as item>
+	<#if path?is_sequence>
+		<#list path as item>
 			${commonMacroHelper.include(item)}
 		</#list>
-	<#elseif uri?has_content>
-		${commonMacroHelper.include(uri)}
+	<#elseif path?has_content>
+		${commonMacroHelper.include(path)}
 	</#if>
 </#compress>
 </#macro>
 
 
-<#function capture uri="">
-	<#return commonMacroHelper.capture(uri) />
+<#function capture path="">
+	<#return commonMacroHelper.capture(path) />
 </#function>
 
 
@@ -37,8 +37,8 @@
 <#--
   - Adds the contextPath and sessionId to the given URI if necessary. 
   -->
-<#function url uri>
-	<#return commonMacroHelper.resolveAndEncodeUrl(uri?trim) />
+<#function url href>
+	<#return commonMacroHelper.resolveAndEncodeUrl(href?trim) />
 </#function>
 
 <#--
@@ -51,23 +51,23 @@
 <#--
   - Adds the contextPath and a timestamp to the given URI.
   -->
-<#function resource uri>
-	<#return url(commonMacroHelper.addTimestamp(uri)) />
+<#function resource href>
+	<#return url(commonMacroHelper.addTimestamp(href)) />
 </#function>
 
 <#--
   - Returns whether the given URL is external, i.e. has a schema part.
   -->
-<#function isExternalUrl url>
-	<#return commonMacroHelper.isExternalUrl(url?trim) />
+<#function isExternalUrl href>
+	<#return commonMacroHelper.isExternalUrl(href?trim) />
 </#function>
 
 <#--
   - Converts the given path into an absolute URL by adding the protocol,
   - server-name, port and contextPath of the current request.
   -->
-<#function absoluteUrl path>
-	<#return commonMacroHelper.getAbsoluteUrl(path?trim) />
+<#function absoluteUrl href>
+	<#return commonMacroHelper.getAbsoluteUrl(href?trim) />
 </#function>
 
 <#--
@@ -115,8 +115,8 @@
 </#function>
 
 
-<#function baseName url>
-	<#return commonMacroHelper.baseName(url) />
+<#function baseName path>
+	<#return commonMacroHelper.baseName(path) />
 </#function>
 
 <#function fileExtension filename validExtension=[] defaultExtension="">
@@ -167,6 +167,8 @@
 	</#if>
 	<#return attrs />
 </#function>
+
+<#macro attribute name value=""><#if value!?trim?has_content> ${name}="${value?trim}"</#if></#macro>
 
 <#macro if value="">
 	<#if !(value?is_string && !value?has_content)><#nested value /></#if>
