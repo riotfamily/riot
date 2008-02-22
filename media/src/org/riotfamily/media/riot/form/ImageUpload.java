@@ -25,12 +25,12 @@ package org.riotfamily.media.riot.form;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.SocketException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.image.ImageCropper;
+import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.web.util.ServletUtils;
@@ -48,7 +48,6 @@ import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
 import org.riotfamily.media.model.data.CroppedImageData;
 import org.riotfamily.media.service.ProcessingService;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -258,17 +257,7 @@ public class ImageUpload extends FileUpload {
 					ServletUtils.setNoCacheHeaders(response);
 					response.setHeader("Content-Type", file.getContentType());
 					response.setContentLength((int) file.getSize());
-
-					try {
-						FileCopyUtils.copy(file.getInputStream(),
-								response.getOutputStream());
-					}
-					catch (IOException e) {
-						// Ignore exceptions caused by client abortion:
-						if (!SocketException.class.isInstance(e.getCause())) {
-							throw e;
-						}
-					}
+					IOUtils.serve(file.getInputStream(), response.getOutputStream());
 				}
 			}
 			else {

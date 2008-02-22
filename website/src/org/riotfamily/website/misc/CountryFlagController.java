@@ -23,16 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.misc;
 
-import java.io.IOException;
-import java.net.SocketException;
 import java.util.Locale;
 
 import javax.activation.FileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.io.IOUtils;
 import org.springframework.core.io.Resource;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -88,14 +86,7 @@ public class CountryFlagController implements Controller {
 		 		
 		if (res.exists()) {			
 			response.setContentType(getContentType(res));
-			try {
-				FileCopyUtils.copy(res.getInputStream(), response.getOutputStream());
-			}
-			catch (IOException e) {
-				if (!SocketException.class.isInstance(e.getCause())) {
-					throw e;
-				}
-			}
+			IOUtils.serve(res.getInputStream(), response.getOutputStream());
 		}		
 		return null;
 	}

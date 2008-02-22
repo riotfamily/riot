@@ -28,7 +28,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.SocketException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,9 +39,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.Compressible;
+import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.core.io.Resource;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.LastModified;
 
@@ -222,7 +221,7 @@ public class AbstractResourceController extends AbstractCacheableController
 		log.debug("Serving text resource: " + path);
 		
 		Reader in = getReader(res, path, contentType, request);
-		FileCopyUtils.copy(in, out);
+		IOUtils.serve(in, out);
 	}
 
 	protected Reader getReader(Resource res, String path, String contentType,
@@ -247,14 +246,7 @@ public class AbstractResourceController extends AbstractCacheableController
 	protected void serveBinary(Resource res, String contentType, 
 			OutputStream out) throws IOException {
 		
-		try {
-			FileCopyUtils.copy(res.getInputStream(), out);
-		}
-		catch (IOException e) {
-			if (!SocketException.class.isInstance(e.getCause())) {
-				throw e;
-			}
-		}
+		IOUtils.serve(res.getInputStream(), out);
 	}
 
 }

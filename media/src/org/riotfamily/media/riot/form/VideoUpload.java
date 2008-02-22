@@ -30,6 +30,7 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Element;
@@ -94,8 +95,7 @@ public class VideoUpload extends FileUpload {
 		        		"attachment;filename=" + getFile().getFileName());
 
 				response.setContentLength((int) getFile().getSize());
-				
-				FileCopyUtils.copy(getFile().getInputStream(), 
+				IOUtils.serve(getFile().getInputStream(), 
 						response.getOutputStream());
 			}
 			else {

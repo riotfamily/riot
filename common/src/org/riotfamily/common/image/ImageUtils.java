@@ -112,6 +112,8 @@ public final class ImageUtils {
 	        writer.write(null, new IIOImage(im, null, null), iwparam);
 	        ios.flush();
         }
+        catch (SocketException e) {
+        }
         catch (IOException e) {
 			if (!SocketException.class.isInstance(e.getCause())) {
 				throw e;

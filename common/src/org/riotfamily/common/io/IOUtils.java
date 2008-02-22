@@ -33,6 +33,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.net.SocketException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,7 +46,7 @@ public class IOUtils {
 	private static Log log = LogFactory.getLog(IOUtils.class);
 	
 	/**
-	 * Copy the contents of the given InputStream to the given OutputStream.
+	 * Copies the content of the given InputStream to an OutputStream.
 	 * Unlike {@link FileCopyUtils#copy(InputStream, OutputStream)} this method
 	 * does not close the OutputStream (only the InputStream).
 	 * @param in the stream to copy from
@@ -72,12 +73,59 @@ public class IOUtils {
 		}
 	}
 	
+	/**
+	 * Copies the content of the given InputStream to an OutputStream,
+	 * swallowing exceptions caused by a ClientAbortException.
+	 * 
+	 * @see #copy(InputStream, OutputStream)
+	 */
+	public static int serve(InputStream in, OutputStream out) 
+			throws IOException {
+	
+		try {
+			return copy(in, out);
+		}
+		catch (SocketException e) {
+		}
+		catch (IOException e) {
+			if (!SocketException.class.isInstance(e.getCause())) {
+				throw e;
+			}
+		}
+		return -1;
+	}
+	
+	/**
+	 * Copies the content of the given File to an OutputStream.
+	 *  
+	 * @see #copy(InputStream, OutputStream)
+	 */
 	public static int copy(File file, OutputStream out) throws IOException {
 		return copy(new BufferedInputStream(new FileInputStream(file)), out);
 	}
 	
 	/**
-	 * Copy the contents of the given Reader to the given Writer.
+	 * Copies the content of the given File to an OutputStream,
+	 * swallowing exceptions caused by a ClientAbortException.
+	 *  
+	 * @see #copy(File, OutputStream)
+	 */
+	public static int serve(File file, OutputStream out) throws IOException {
+		try {
+			return copy(file, out);
+		}
+		catch (SocketException e) {
+		}
+		catch (IOException e) {
+			if (!SocketException.class.isInstance(e.getCause())) {
+				throw e;
+			}
+		}
+		return -1;
+	}
+	
+	/**
+	 * Copies the content of the given Reader to a Writer.
 	 * Unlike {@link FileCopyUtils#copy(Reader, Writer)} this method does not 
 	 * close the Writer (only the Reader).
 	 * @param in the Reader to copy from
@@ -85,9 +133,7 @@ public class IOUtils {
 	 * @return the number of characters copied
 	 * @throws IOException in case of I/O errors
 	 */
-	public static int copy(Reader in, Writer out) 
-			throws IOException {
-		
+	public static int copy(Reader in, Writer out) throws IOException {
 		try {
 			int byteCount = 0;
 			char[] buffer = new char[BUFFER_SIZE];
@@ -104,13 +150,31 @@ public class IOUtils {
 		}
 	}
 	
-	public static int copy(File file, Writer out, String encoding) 
-			throws IOException {
-		
-		return copy(new BufferedInputStream(new FileInputStream(file)), 
-				out, encoding);
+	/**
+	 * Copies the content of the given Reader to a Writer,
+	 * swallowing exceptions caused by a ClientAbortException.
+	 * 
+	 * @see #copy(Reader, Writer)
+	 */
+	public static int serve(Reader in, Writer out) throws IOException {
+		try {
+			return copy(in, out);
+		}
+		catch (SocketException e) {
+		}
+		catch (IOException e) {
+			if (!SocketException.class.isInstance(e.getCause())) {
+				throw e;
+			}
+		}
+		return -1;
 	}
 	
+	/**
+	 * Copies the content of the given InputStream to a Writer.
+	 * 
+	 * @see #copy(Reader, Writer)
+	 */
 	public static int copy(InputStream in, Writer out, String encoding) 
 			throws IOException {
 		
@@ -120,6 +184,62 @@ public class IOUtils {
 		catch (UnsupportedEncodingException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
+	}
+	
+	/**
+	 * Copies the content of the given InputStream to a Writer,
+	 * swallowing exceptions caused by a ClientAbortException.
+	 * 
+	 * @see #copy(InputStream, Writer, String)
+	 */
+	public static int serve(InputStream in, Writer out, String encoding) 
+			throws IOException {
+
+		try {
+			return copy(in, out, encoding);
+		}
+		catch (SocketException e) {
+		}
+		catch (IOException e) {
+			if (!SocketException.class.isInstance(e.getCause())) {
+				throw e;
+			}
+		}
+		return -1;
+	}
+	
+	/**
+	 * Copies the content of the given File to a Writer.
+	 * 
+	 * @see #copy(InputStream, Writer, String)
+	 */
+	public static int copy(File file, Writer out, String encoding) 
+			throws IOException {
+		
+		return copy(new BufferedInputStream(new FileInputStream(file)), 
+				out, encoding);
+	}
+	
+	/**
+	 * Copies the content of the given File to a Writer,
+	 * swallowing exceptions caused by a ClientAbortException.
+	 * 
+	 * @see #copy(File, Writer, String)
+	 */
+	public static int serve(File file, Writer out, String encoding) 
+			throws IOException {
+
+		try {
+			return copy(file, out, encoding);
+		}
+		catch (SocketException e) {
+		}
+		catch (IOException e) {
+			if (!SocketException.class.isInstance(e.getCause())) {
+				throw e;
+			}
+		}
+		return -1;
 	}
 	
 	public static void closeStream(InputStream in) {
