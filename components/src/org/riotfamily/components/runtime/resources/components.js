@@ -233,6 +233,17 @@ riot.ComponentList = Class.create({
 	moveOn: function() {
 		if (this.componentElements.length > 1) {
 			this.element.addClassName('riot-mode-move');
+			this.element.style.position = 'relative';
+			this.componentElements.each(function(el) {
+				if (!el.down('.riot-component-list')) {
+					el.disableEvents();
+				}
+			});
+		}
+	},
+	
+	makeSortable: function() {
+		if (this.componentElements.length > 1) {
 			var options = {
 				tag: 'div',
 				only: 'riot-component',
@@ -243,15 +254,14 @@ riot.ComponentList = Class.create({
 			};
 			Sortable.create(this.element, options);
 			this.componentElements.each(function(el) {
-				el.addClassName('riot-moveable-component')
-				el.disableClicks();
+				el.addClassName('riot-moveable-component');
 				Droppables.drops.find(function(drop) {
 					if (drop.element == el) {
 						drop.onHover = riot.onHover;
 					}
 				});
 			});
-			
+									
 			Draggables.addObserver(new riot.ComponentDragObserver(this));
 		}
 	},
@@ -259,13 +269,15 @@ riot.ComponentList = Class.create({
 	moveOff: function() {
 		if (this.componentElements.length > 1) {
 			this.element.removeClassName('riot-mode-move');
-			this.componentElements.each(function(el) {
-				el.removeClassName('riot-moveable-component');
-				el.restoreClicks();
-				el.style.position = '';
-			});
 			Sortable.destroy(this.element);
 			Draggables.removeObserver(this.element);
+			this.componentElements.each(function(el) {
+				el.removeClassName('riot-moveable-component');
+				if (!el.down('.riot-component-list')) {
+					el.enableEvents();
+				}
+			});
+			this.updatePositionClasses();
 		}
 	},
 	
@@ -275,23 +287,36 @@ riot.ComponentList = Class.create({
 		for (var i = 0; i <= last; i++) {
 			var el = this.componentElements[i];
 			el.floatStyle = null;
-			var type = el.readAttribute('riot:componentType');
 			el.descendants().each(function(desc) {
-				//Note: This code exploits the fact that proptotype's className
-				//manipulation methods use regular expressions internally. This
-				//is an undocumented feature and might change in future releases.  
-				if (desc.hasClassName('component-\\w*') && desc.up('.riot-component') == el) {
-					desc.className = desc.className.replace(/component-\w*/, 'component-' + (i + 1));
-					desc.removeClassName(type + '-after-\\w*');
-					if (prev) {
-						desc.addClassName(type + '-after-' + prev);
+				if (desc.className && desc.up('.riot-component') == el) {
+					// Set "first" or "not-first" class					
+					var firstExp = /(^|\s)(not-)?first(\s|$)/; 
+					if (firstExp.test(desc.className)) {
+						var firstClass = (i == 0) ? 'first' : 'not-first'; 
+						desc.className = desc.className.replace(firstExp, '$1' + firstClass + '$3');
 					}
-					else {
+					// Set "last" or "not-last" class
+					var lastExp = /(^|\s)(not-)?last(\s|$)/; 
+					if (lastExp.test(desc.className)) {
+						var lastClass = (i == last) ? 'last' : 'not-last'; 
+						desc.className = desc.className.replace(lastExp, '$1' + lastClass + '$3');
 					}
-					desc.toggleClassName('last-component', i == last);
+					// Set "even" or "odd" class
+					var zebraExp = /(^|\s)(even|odd)(\s|$)/; 
+					if (zebraExp.test(desc.className)) {
+						var zebraClass = (i % 2 == 0) ? 'even' : 'odd'; 
+						desc.className = desc.className.replace(zebraExp, '$1' + zebraClass + '$3');
+					}
+					// Set "every-nth" or "not-every-nth" class
+					var modExp = /(^|\s)(not-)?every-(\d+)(nd|rd|th)(\s|$)/;
+					var match = desc.className.match(modExp);
+					if (match) {
+						var nth = match[3];
+						var every = ((i + 1) % nth == 0) ? 'every' : 'not-every';
+						desc.className = desc.className.replace(modExp, '$1' + every + '-$3$4$5');
+					}
 				}
 			});
-			prev = type;
 		}
 		riot.adoptFloatsAndClears(this.element);
 	},
@@ -318,11 +343,12 @@ riot.ComponentList = Class.create({
 		this.componentElements = this.componentElements.without(c.element);
 		riot.outline.hide();
 		riot.outline.suspended = true;
+		var list = this;
 		new Effect.Remove(c.element, function(el) {
 			el.remove();
+			list.updatePositionClasses();
 			riot.outline.suspended = false;
 		});
-		this.updatePositionClasses();
 		this.markDirty();
 		if (this.minComponents > 0 && this.componentElements.length == this.minComponents) {
 			this.removeOff();
@@ -358,25 +384,10 @@ riot.ComponentDragObserver = Class.create({
 	onStart: function(eventName, draggable, event) {
 		var el = draggable.element;
 		el.addClassName('riot-drag');
-		
-		// Remove x-after-y classes
-		var after = el.readAttribute('riot:componentType') + '-after-\\w*';
-		el.descendants().each(function(desc) {
-			if (desc.hasClassName(after) && desc.up('.riot-component') == el) {
-				desc.removeClassName(after);
-			}
-		});
-		
-		// The previous class removal can lead to changes of float/clear 
-		// properties, so we have to re-adopt the styles ...
-		riot.adoptFloatsAndClears(this.element);
-		
 		// If the dragged element is floating, remove the vertical movement constraint
-		//el.floatStyle = el.getStyle('float'); 
 		if (el.getStyle('float') != 'none') {
 			draggable.options.constraint = false;
 		}
-		
 		this.nextEl = draggable.element.next('.riot-component');
 	},
 	
@@ -388,8 +399,8 @@ riot.ComponentDragObserver = Class.create({
 			this.componentList.findComponentElements();
 			var nextId = null;
 			if (nextEl) {
-				nextEl.forceRerendering();
 				nextId = riot.getComponent(nextEl).id;
+				nextEl.forceRerendering();
 			}
 			ComponentEditor.moveComponent(riot.getComponent(el).id, nextId);
 			this.componentList.markDirty();
@@ -460,9 +471,9 @@ riot.Component = Class.create({
 	
 	setClickHandler: function(clickHandler) {
 		this.clickHandler = clickHandler;
+		this.element.disableEvents();
 		var c = this.element.childElements();
 		this.targetElement = c.length == 1 ? c[0] : this.element;
-		this.targetElement.disableClicks();
 		Event.observe(this.targetElement, 'click', this.bOnClick);
 		Event.observe(this.targetElement, 'mouseover', this.bShowOutline);
 		Event.observe(this.targetElement, 'mouseout', this.bHideOutline);
@@ -475,7 +486,7 @@ riot.Component = Class.create({
 	
 	removeClickHandler: function() {
 		if (this.targetElement) {
-			this.targetElement.restoreClicks();
+			this.element.enableEvents();
 			Event.stopObserving(this.targetElement, 'click', this.bOnClick);
 			Event.stopObserving(this.targetElement, 'mouseover', this.bShowOutline);
 			Event.stopObserving(this.targetElement, 'mouseout', this.bHideOutline);
@@ -517,10 +528,6 @@ riot.Component = Class.create({
 	editProperties: function() {
 		var path = location.pathname.substring(riot.contextPath.length);
 		var formUrl = riot.path + this.form + '?' + $H(riotComponentFormParams).toQueryString();
-		
-		if (riot.instantPublish) {
-			formUrl += '&live=true';
-		}
 		var iframe = RBuilder.node('iframe', {src: formUrl, className: 'properties', width: 1, height: 1});
 		riot.popup = new riot.Popup('${title.properties}', iframe, function() {
 			var win = iframe.contentWindow ? iframe.contentWindow : iframe.window;
@@ -844,33 +851,6 @@ riot.setLiveHtml = function(html) {
 	}
 }
 
-if (riot.toolbar.buttons.get('publish')) {
-	riot.toolbar.buttons.get('publish').beforeApply = 
-	riot.toolbar.buttons.get('discard').beforeApply = function(enable) {
-		if (enable) {
-			riot.publishWidgets = [];
-		}
-	};
-	riot.toolbar.buttons.get('publish').afterApply = 
-	riot.toolbar.buttons.get('discard').afterApply = function(enable) {
-		if (enable) {
-			var refs = riot.publishWidgets.invoke('getReference');
-			ComponentEditor.getLiveListHtml(refs, riot.setLiveHtml);
-			riot.toolbar.applyButton.enable();
-		}
-		else {
-			var dirty = riot.publishWidgets.invoke('destroy').any();
-			riot.publishWidgets = null;
-			riot.toolbar.applyButton.disable();
-			if (!dirty) {
-				riot.toolbar.disablePublishButtons();
-			}
-		}
-	};
-}
-
-riot.toolbar.buttons.get('editImages').precondition = riot.initSwfUpload;
-
 /**
  * DWR error handler that reloads the page if the RequestContext has expired
  */ 
@@ -902,6 +882,7 @@ riot.adoptFloatsAndClears = function(root) {
 				if (!el.style.zIndex) el.style.zIndex = 1;
 				el.style.cssFloat = el.style.styleFloat = cssFloat;
 				child.style.cssFloat = child.style.styleFloat = 'none';
+				// Store the original float which is used by inplace.js ...
 				child.originalFloat = cssFloat;
 			}
 			var cssClear = child.getStyle('clear');
@@ -910,7 +891,41 @@ riot.adoptFloatsAndClears = function(root) {
 	});
 }
 
+riot.init = function() {
+	var b = riot.toolbar.buttons; 
+	b.get('move').afterApply = function(enable) {
+		if (enable) {
+			$$('.riot-component-list').reverse().each(function(el) {
+				riot.getComponentList(el).makeSortable();
+			});
+		}
+	};
+	b.get('publish').beforeApply = 
+	b.get('discard').beforeApply = function(enable) {
+		if (enable) {
+			riot.publishWidgets = [];
+		}
+	};
+	b.get('publish').afterApply = 
+	b.get('discard').afterApply = function(enable) {
+		if (enable) {
+			var refs = riot.publishWidgets.invoke('getReference');
+			ComponentEditor.getLiveListHtml(refs, riot.setLiveHtml);
+			riot.toolbar.applyButton.enable();
+		}
+		else {
+			var dirty = riot.publishWidgets.invoke('destroy').any();
+			riot.publishWidgets = null;
+			riot.toolbar.applyButton.disable();
+			if (!dirty) {
+				riot.toolbar.disablePublishButtons();
+			}
+		}
+	};
+	
+	b.get('editImages').precondition = riot.initSwfUpload;
+};
+
+riot.init();
 riot.adoptFloatsAndClears();
 riot.toolbar.activate();
-
-

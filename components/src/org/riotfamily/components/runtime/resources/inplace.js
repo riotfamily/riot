@@ -73,7 +73,7 @@ riot.InplaceEditor = Class.create({
 	},
 
 	editOn: function() {
-		this.element.disableClicks();
+		this.element.disableLinks();
 		this.element.onclick = this.onclickHandler;
 		this.element.addClassName('riot-editable-text');
 		this.element.observe('mouseover', this.bShowOutline);
@@ -85,7 +85,7 @@ riot.InplaceEditor = Class.create({
 			this.close();
 		}
 		this.element.onclick = null;
-		this.element.restoreClicks();
+		this.element.enableLinks();
 		this.element.removeClassName('riot-editable-text');
 		this.element.stopObserving('mouseover', this.bShowOutline);
 		this.element.stopObserving('mouseout', this.bHideOutline);
@@ -702,7 +702,7 @@ riot.ImageEditor = Class.create(riot.InplaceEditor, {
 	},
 	
 	editImagesOn: function() {
-		this.element.disableClicks();
+		this.element.disableLinks();
 		ComponentEditor.generateToken(this.setToken.bind(this));
 	},
 	

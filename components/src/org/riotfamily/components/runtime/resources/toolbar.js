@@ -196,8 +196,7 @@ riot.ToolbarButton = Class.create({
 	},
 
 	getHandlerTargets: function(root) {
-		// The reverse is required for the Sortable of nested lists
-		return Selector.findChildElements(root, [this.selector]).reverse();
+		return Selector.findChildElements(root, [this.selector]);
 	},
 
 	applyHandler: function(enable) {
