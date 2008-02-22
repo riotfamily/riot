@@ -293,3 +293,49 @@
 	</#if>
 	<#assign scope = previousScope />
 </#macro>
+
+
+<#function zebraClass>
+	<#if position % 2 == 0>
+		<#return "even" />
+	<#else>
+		<#return "odd" />
+	</#if>
+</#function>
+
+<#function moduloClass pos>
+	<#if pos == 2>
+		<#local indicator = "nd" />
+	<#elseif pos == 3>
+		<#local indicator = "rd" />
+	<#else>
+		<#local indicator = "th" />
+	</#if>
+	<#if (position + 1) % pos == 0>
+		<#return "every-" + pos + indicator />
+	<#elseif editMode>
+		<#return "not-every-" + pos + indicator />
+	<#else>
+		<#return "" />
+	</#if>
+</#function>
+
+<#function firstClass>
+	<#if position == 0>
+		<#return "first" />
+	<#elseif editMode>
+		<#return "not-first" />
+	<#else>
+		<#return "" />
+	</#if>
+</#function>
+
+<#function lastClass>
+	<#if position == listSize>
+		<#return "last" />
+	<#elseif editMode>
+		<#return "not-last" />
+	<#else>
+		<#return "" />
+	</#if>
+</#function>
