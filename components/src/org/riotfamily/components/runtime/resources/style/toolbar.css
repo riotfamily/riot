@@ -269,8 +269,8 @@ div.riot-highlight-bottom {
 	display: none;
 }
 
+.riot-mode-insert .riot-no-inheritance,
 .riot-mode-remove .riot-no-inheritance,
-.riot-mode-changeType .riot-no-inheritance,
 .riot-moveable-component .riot-no-inheritance {
 	display: block;
 	padding: 6px;

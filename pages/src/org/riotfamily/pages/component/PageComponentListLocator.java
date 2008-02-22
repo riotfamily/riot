@@ -92,9 +92,13 @@ public class PageComponentListLocator implements ComponentListLocator {
 
 	public ComponentListLocation getParentLocation(ComponentListLocation location) {
 		Page page = loadPage(location);
+		Page parentPage = page.getParentPage();
+		if (parentPage == null) {
+			return null;
+		}
 		ComponentListLocation parentLocation = new ComponentListLocation(location);
-		location.setType(TYPE);
-		location.setPath(page.getParentPage().getId().toString());
+		parentLocation.setType(TYPE);
+		parentLocation.setPath(parentPage.getId().toString());
 		return parentLocation;
 	}
 

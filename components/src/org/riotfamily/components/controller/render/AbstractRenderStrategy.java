@@ -26,6 +26,7 @@ package org.riotfamily.components.controller.render;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,22 +69,18 @@ public abstract class AbstractRenderStrategy implements RenderStrategy {
 		render(location, request, response);
 	}
 	
-	protected void render(ComponentListLocation location, HttpServletRequest request, 
-			HttpServletResponse response) throws Exception {
-		
-		ComponentList list = getComponentList(location, request);
-		if (list != null) {
-			renderComponentList(list, request, response);
+	public void render(ComponentListLocation location, 
+			HttpServletRequest request, HttpServletResponse response) 
+			throws Exception {
+
+		if (location != null) {
+			ComponentList list = getComponentList(location, request);
+			if (list != null) {
+				renderComponentList(list, request, response);
+				return;
+			}
 		}
-		else {
-			onListNotFound(location, request, response);
-		}
-	}
-	
-	public void render(ComponentList list, HttpServletRequest request, 
-			HttpServletResponse response) throws Exception {
-		
-		renderComponentList(list, request, response);
+		onListNotFound(location, request, response);
 	}
 	
 	protected final ComponentListLocation getLocation(HttpServletRequest request) {
@@ -105,8 +102,7 @@ public abstract class AbstractRenderStrategy implements RenderStrategy {
 	
 	/**
 	 * Returns the ComponentList to be rendered. The default implementation
-	 * uses the controller's ComponentDao to look up a list for the given 
-	 * location.
+	 * uses the ComponentDao to look up a list for the given location.
 	 */
 	protected ComponentList getComponentList(ComponentListLocation location, 
 			HttpServletRequest request) {
@@ -171,47 +167,58 @@ public abstract class AbstractRenderStrategy implements RenderStrategy {
 			int position, int listSize, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 
+		ComponentRenderer renderer;
 		if (INHERTING_COMPONENT.equals(component.getType())) {
-			renderParentList(component.getList(), request, response);
+			ComponentListLocation location = component.getList().getLocation();
+			ComponentListLocation parentLocation = config.getLocator().getParentLocation(location);
+			if (location.equals(parentLocation)) {
+				parentLocation = null;
+			}
+			renderer = new ParentListRenderer(getStrategyForParentList(), parentLocation);
 		}
 		else {
-			ComponentRenderer renderer = repository.getComponent(component.getType());		
-			renderComponent(renderer, component, position, listSize, 
-					request, response);
+			renderer = repository.getComponent(component.getType());		
 		}
+		renderComponent(renderer, component, position, listSize, request, response);
 	}
 	
 	protected abstract void renderComponent(ComponentRenderer renderer, 
 			Component component, int position, int listSize, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception;
-	
-	
-	protected final void renderParentList(ComponentList list, 
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		
-		ComponentListLocation location = list.getLocation();
-		ComponentListLocation parentLocation = config.getLocator().getParentLocation(location);
-		log.debug("Parent location: " + parentLocation);
-		
-		if (parentLocation != null) {
-			if (location.equals(parentLocation)) {
-				log.warn("Parent location is the same");
-				return;
-			}
-			ComponentList parentList = getComponentList(parentLocation, request);
-			if (parentList != null) {
-				getStrategyForParentList().render(parentList, request, response);
-			}
-			else {
-				onListNotFound(parentLocation, request, response);
-			}
-		}
-	}
+
 	
 	protected RenderStrategy getStrategyForParentList() throws IOException {
 		return this;
+	}
+	
+	private static class ParentListRenderer implements ComponentRenderer {
+
+		private RenderStrategy renderStrategy;
+		
+		private ComponentListLocation location;
+		
+		private ParentListRenderer(RenderStrategy renderStrategy, 
+				ComponentListLocation location) {
+			
+			this.renderStrategy = renderStrategy;
+			this.location = location;
+		}
+
+		public Map getDefaults() {
+			return null;
+		}
+
+		public boolean isDynamic() {
+			return true;
+		}
+
+		public void render(Component component, boolean preview, int position,
+				int listSize, HttpServletRequest request,
+				HttpServletResponse response) throws Exception {
+			
+			renderStrategy.render(location, request, response);
+		}
 	}
 
 }

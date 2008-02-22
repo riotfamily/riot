@@ -217,6 +217,7 @@ riot.ComponentList = Class.create({
 	
 	insertOn: function() {
 		if (!this.maxComponents || this.componentElements.length < this.maxComponents) {
+			this.element.addClassName('riot-mode-insert');
 			this.insertButton = new riot.InsertButton(this);
 			riot.activeInsertButton = null;
 		}
@@ -224,6 +225,7 @@ riot.ComponentList = Class.create({
 	
 	insertOff: function() {
 		if (this.insertButton) {
+			this.element.removeClassName('riot-mode-insert');
 			this.insertButton.remove();
 			this.insertButton = null;
 			riot.activeInsertButton = null;
@@ -322,8 +324,8 @@ riot.ComponentList = Class.create({
 	},
 	
 	removeOn: function() {
+		this.element.addClassName('riot-mode-remove');
 		if (this.componentElements.length > this.minComponents) {
-			this.element.addClassName('riot-mode-remove');
 			var list = this;
 			this.componentElements.each(function(el) {
 				riot.getComponent(el).setClickHandler(list.removeComponent.bind(list));

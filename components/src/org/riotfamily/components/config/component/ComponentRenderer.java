@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.config.component;
 
-import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +46,6 @@ public interface ComponentRenderer {
 	public void render(Component component, boolean preview, 
 			int position, int listSize, HttpServletRequest request, 
 			HttpServletResponse response)
-			throws IOException;
+			throws Exception;
 
 }

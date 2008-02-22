@@ -95,9 +95,13 @@ public class PageNodeComponentListLocator {
 
 	public ComponentListLocation getParentLocation(ComponentListLocation location) {
 		PageNode pageNode = loadPageNode(location);
+		PageNode parentNode = pageNode.getParent();
+		if (parentNode == null) {
+			return null;
+		}
 		ComponentListLocation parentLocation = new ComponentListLocation(location);
-		location.setType(TYPE);
-		location.setPath(pageNode.getParent().getId().toString());
+		parentLocation.setType(TYPE);
+		parentLocation.setPath(parentNode.getId().toString());
 		return parentLocation;
 	}
 
