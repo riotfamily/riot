@@ -162,11 +162,24 @@ public class PageResolver {
 	 * {@link #getPage(HttpServletRequest)} has been invoked before. 
 	 */
 	public static Page getResolvedPage(HttpServletRequest request) {
-		return (Page) request.getAttribute(PAGE_ATTRIBUTE);
+		Object page = request.getAttribute(PAGE_ATTRIBUTE);
+		return page != NOT_FOUND ? (Page) page : null;
 	}
 	
+	/**
+	 * Returns the previously resolved Site for the given request.
+	 * <p>
+	 * <strong>Note:</strong> This method does not perform any lookups itself.
+	 * Only use this method if you are sure that 
+	 * {@link #getSite(HttpServletRequest)} has been invoked before. 
+	 */
+	public static Site getResolvedSite(HttpServletRequest request) {
+		Object site = request.getAttribute(SITE_ATTRIBUTE);
+		return site != NOT_FOUND ? (Site) site : null; 
+	}
+
 	
-	public Page getResolvePage(String url, String contextPath, Site fallbackSite,
+	public Page resolvePage(String url, String contextPath, Site fallbackSite,
 			PathCompleter pathCompleter) {
 		
 		String host = ServletUtils.getHost(url);

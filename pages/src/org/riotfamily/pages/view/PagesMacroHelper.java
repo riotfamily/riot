@@ -67,7 +67,7 @@ public class PagesMacroHelper {
 	}
 
 	public Page getPageForUrl(String url, Site site) {
-		return pageResolver.getResolvePage(url, request.getContextPath(),
+		return pageResolver.resolvePage(url, request.getContextPath(),
 				site, pathCompleter);
 	}
 	
