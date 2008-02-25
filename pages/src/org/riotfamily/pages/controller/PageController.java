@@ -55,7 +55,7 @@ public class PageController extends AbstractCacheableController {
 			HttpServletResponse response) throws Exception {
 		
 		Page page = pageResolver.getPage(request);
-		if (page != null) {
+		if (page != null && page.isRequestable()) {
 			TaggingContext.tag(request, Page.class.getName());
 			return new ModelAndView(viewName, "page", page);
 		}
