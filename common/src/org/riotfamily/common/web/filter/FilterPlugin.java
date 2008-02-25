@@ -60,7 +60,7 @@ public abstract class FilterPlugin implements ServletContextAware,
 	
 	private String filterName;
 	
-	private int order = Integer.MAX_VALUE;
+	private int order = Ordered.LOWEST_PRECEDENCE;
 	
 	private boolean ignoreFilterNotPresent;
 	
