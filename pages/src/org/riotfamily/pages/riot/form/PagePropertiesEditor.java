@@ -78,6 +78,7 @@ public class PagePropertiesEditor extends CompositeElement
 		removeComponent(currentForm);
 		currentForm = new PropertiesForm(handlerName); 
 		addComponent(currentForm);
+		currentForm.setValue(initialValue);
 		getFormListener().elementChanged(this);
 	}
 	
@@ -98,7 +99,6 @@ public class PagePropertiesEditor extends CompositeElement
 			if (masterPage == null) {
 				addPagePropertyElements("master-" + id);
 			}
-			setValue(initialValue);
 		}
 		
 		private void addPagePropertyElements(String id) {

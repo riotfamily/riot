@@ -66,8 +66,10 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 
 	private List listeners;
 
-	private String text;
+	private String defaultText;
 
+	private String text;
+	
 	private Object value;
 
 	private PropertyEditor propertyEditor;
@@ -153,6 +155,18 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		initPropertyEditor();
 	}
 
+	public Object getDefaultValue() {
+		return getDefaultText();
+	}
+
+	public String getDefaultText() {
+		return defaultText;
+	}
+	
+	public void setDefaultText(String defaultText) {
+		this.defaultText = defaultText;
+	}
+	
 	public final String getText() {
 		return text;
 	}
@@ -175,6 +189,9 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 	}
 
 	public void setValue(Object value) {
+		if (value == null && getForm().isNew()) {
+			value = getDefaultValue();
+		}
 		this.value = value;
 		setTextFromValue();
 	}

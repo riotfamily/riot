@@ -49,12 +49,21 @@
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:element name="color-picker" type="simple-editor" />
+	<xsd:element name="color-picker">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="simple-editor">
+					<xsd:attribute name="default" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
 
 	<xsd:complexType name="textfield">
 		<xsd:complexContent>
 			<xsd:extension base="simple-editor">
 				<xsd:attribute name="style-class" type="xsd:string" />
+				<xsd:attribute name="default" type="xsd:string" />
 				<xsd:attribute name="max-length" type="xsd:positiveInteger" />
 				<xsd:attribute name="trim" type="xsd:boolean" default="true" />
 				<xsd:attribute name="random-param-name" type="xsd:boolean" />
@@ -85,6 +94,7 @@
 			<xsd:complexContent>
 				<xsd:extension base="simple-editor">
 					<xsd:attribute name="style-class" type="xsd:string" />
+					<xsd:attribute name="default" type="xsd:string" />
 					<xsd:attribute name="min-value" type="xsd:decimal" />
 					<xsd:attribute name="max-value" type="xsd:decimal" />
 					<xsd:attribute name="precision" type="xsd:integer" />
@@ -286,7 +296,7 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="simple-editor">
-					<xsd:attribute name="default-value" type="xsd:string" />
+					<xsd:attribute name="default" type="xsd:string" />
 					<xsd:attribute name="format-pattern" type="xsd:string" />
 					<xsd:attribute name="format-key" type="xsd:string" />
 				</xsd:extension>

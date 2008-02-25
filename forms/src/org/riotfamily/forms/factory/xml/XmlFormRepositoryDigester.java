@@ -37,6 +37,7 @@ import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.forms.ContainerElement;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.FormInitializer;
+import org.riotfamily.forms.element.AbstractTextElement;
 import org.riotfamily.forms.element.Calendar;
 import org.riotfamily.forms.element.Checkbox;
 import org.riotfamily.forms.element.ColorPicker;
@@ -65,6 +66,7 @@ import org.riotfamily.forms.factory.FormRepositoryException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.io.Resource;
@@ -269,6 +271,10 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			initTinyMCE(ele, pvs);
 		}
 
+		if (AbstractTextElement.class.isAssignableFrom(elementClass)) {
+			renameProperty("default", "defaultText", pvs);
+		}
+		
 		factory.setPropertyValues(pvs);
 
 		if (ContainerElement.class.isAssignableFrom(elementClass)) {
@@ -279,6 +285,14 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		}
 
 		return factory;
+	}
+
+	private void renameProperty(String name, String newName, MutablePropertyValues pvs) {
+		PropertyValue pv = pvs.getPropertyValue(name);
+		if (pv != null) {
+			pvs.removePropertyValue(pv);
+			pvs.addPropertyValue(newName, pv.getValue());
+		}
 	}
 
 	private void initSelectElement(Element ele, MutablePropertyValues pvs) {

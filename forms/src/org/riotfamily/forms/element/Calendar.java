@@ -88,8 +88,6 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
 
 	private String formatKey;
 
-	private String defaultValue;
-
 	private String jsFormatPattern;
 
 	private DateFormat dateFormat;
@@ -124,10 +122,6 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
 		this.formatKey = formatKey;
 	}
 
-	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
-	}
-
 	protected void afterFormSet() {
 		if (formatKey != null) {
 			formatPattern = MessageUtils.getMessage(this, formatKey);
@@ -146,13 +140,22 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
 				formatPattern.indexOf('h') != -1);
 	}
 
-	public void setValue(Object value) {
-		if (value == null && defaultValue != null) {
-			value = getDefaultDate();
+	public Object getDefaultValue() {
+		String defaultText = getDefaultText();
+		if (defaultText != null) {
+			Date date = FormatUtils.parseDate(defaultText);
+			if (date == null) {
+				try {
+					date = dateFormat.parse(defaultText);
+				}
+				catch (ParseException e) {
+				}
+			}
+			return date;
 		}
-		super.setValue(value);
+		return null;
 	}
-
+	
 	public void validate() {
 		super.validate();
 		if (StringUtils.hasText(getText())) {
@@ -191,15 +194,4 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
 		return isEnabled() ? TemplateUtils.getInitScript(this) : null;
 	}
 
-	protected Date getDefaultDate() {
-		Date date = FormatUtils.parseDate(defaultValue);
-		if (date == null) {
-			try {
-				date = dateFormat.parse(defaultValue);
-			}
-			catch (ParseException e) {
-			}
-		}
-		return date;
-	}
 }
