@@ -20,6 +20,7 @@
 	<bean id="handlerNameHierarchy" class="org.riotfamily.pages.setup.HandlerNameHierarchy" />
 	
 	<bean id="pageDao" class="org.riotfamily.pages.dao.hibernate.HibernatePageDao">
+		<property name="cache" ref="websiteCache" />
 		<property name="componentDao" ref="componentDao" />
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="handlerNameHierarchy" ref="handlerNameHierarchy" />

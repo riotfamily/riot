@@ -33,8 +33,10 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.cachius.Cache;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.ComponentList;
+import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.component.PageComponentListLocator;
 import org.riotfamily.pages.component.PageNodeComponentListLocator;
 import org.riotfamily.pages.model.Page;
@@ -57,6 +59,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	private static final Log log = LogFactory.getLog(AbstractPageDao.class);
 
+	private Cache cache;
+	
 	private ComponentDao componentDao;
 	
 	private HandlerNameHierarchy handlerNameHierarchy;
@@ -66,6 +70,10 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	public AbstractPageDao() {
 	}
 
+	public void setCache(Cache cache) {
+		this.cache = cache;
+	}
+	
 	public void setComponentDao(ComponentDao componentDao) {
 		this.componentDao = componentDao;
 	}
@@ -83,6 +91,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 	
 	public final void afterPropertiesSet() throws Exception {
+		Assert.notNull(cache, "A Cache must be set.");
 		Assert.notNull(componentDao, "A ComponentDao must be set.");
 		initDao();
 	}
@@ -170,7 +179,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		
 		saveNode(node);
 		deleteAlias(page);
-		
+		PageCacheUtils.invalidateNode(cache, parentNode);
 		log.debug("Page saved: " + page);
 	}
 
@@ -188,9 +197,10 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		}
 		
 		node.addPage(translation);
-		updateNode(node);
+		updateObject(node);
 		deleteAlias(translation);
 		saveObject(translation);
+		PageCacheUtils.invalidateNode(cache, node.getParent());
 		
 		componentDao.copyComponentLists(PageComponentListLocator.TYPE,
 				page.getId().toString(), translation.getId().toString());
@@ -199,13 +209,16 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 
 	public void updatePage(Page page) {
-		updateNode(page.getNode());
+		PageNode node = page.getNode();
+		updateNode(node);
 		updateObject(page);
-
-		if (!PageValidationUtils.isValidChild(page.getNode().getParent(), page)) {
+		
+		if (!PageValidationUtils.isValidChild(node.getParent(), page)) {
 			log.warn("Page not saved because not valid: " + page);
 			throw new DuplicatePathComponentException("Page '{0}' did not validate", page.toString());
 		}
+		
+		PageCacheUtils.invalidateNode(cache, node.getParent());
 
 		String oldPath = page.getPath();
 		String newPath = page.buildPath();
@@ -220,6 +233,9 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	public void publishPage(Page page) {
 		page.setPublished(true);
 		updateObject(page);
+		PageNode node = page.getNode();
+		PageCacheUtils.invalidateNode(cache, node);
+		PageCacheUtils.invalidateNode(cache, node.getParent());
 		publishPageProperties(page);
 	}
 	
@@ -234,10 +250,14 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	public void unpublishPage(Page page) {
 		page.setPublished(false);
 		updateObject(page);
+		PageNode node = page.getNode();
+		PageCacheUtils.invalidateNode(cache, node);
+		PageCacheUtils.invalidateNode(cache, node.getParent());
 	}
 
 	public void updateNode(PageNode node) {
 		updateObject(node);
+		PageCacheUtils.invalidateNode(cache, node);
 	}
 
 	public void moveNode(PageNode node, PageNode newParent) {
@@ -245,6 +265,9 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		parentNode.getChildNodes().remove(node);
 		newParent.addChildNode(node);
 		updatePaths(node.getPages());
+		PageCacheUtils.invalidateNode(cache, node);
+		PageCacheUtils.invalidateNode(cache, parentNode);
+		PageCacheUtils.invalidateNode(cache, newParent);
 	}
 
 	private void updatePaths(Collection pages) {
@@ -301,7 +324,12 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		clearAliases(page);
 
 		PageNode node = page.getNode();
+		PageNode parentNode = node.getParent();
+		
 		node.removePage(page);
+		
+		PageCacheUtils.invalidateNode(cache, parentNode);
+		
 		deleteObject(page);
 		
 		if (node.hasPages()) {
@@ -312,13 +340,13 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 			deleteComponentLists(PageNodeComponentListLocator.TYPE,
 					node.getId().toString());
 			
-			PageNode parentNode = node.getParent();
 			if (parentNode != null) {
 				parentNode.getChildNodes().remove(node);
 				updateNode(parentNode);
 			}
 			deleteObject(node);
 		}
+		
 	}
 
 	private void deleteComponentLists(String type, String path) {

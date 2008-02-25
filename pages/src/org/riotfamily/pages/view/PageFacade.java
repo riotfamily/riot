@@ -68,7 +68,7 @@ public class PageFacade {
 		this.preview = EditModeUtils.isEditMode(request);
 		this.pathCompleter = new RequestPathCompleter(request);
 		this.taggingContext = TaggingContext.getContext();
-		PageCacheUtils.addPageTag(taggingContext, page);
+		PageCacheUtils.addNodeTag(taggingContext, page.getNode());
 	}
 	
 	public Long getId() {
@@ -141,18 +141,17 @@ public class PageFacade {
 	}
 
 	public Collection getChildPages() {
-		PageCacheUtils.addChildPagesTag(taggingContext, page);
+		PageCacheUtils.addNodeTag(taggingContext, page.getNode());
 		return getVisiblePages(page.getChildPages());
 	}
 
 	public List getSiblings() {
-		PageCacheUtils.addSiblingsTag(taggingContext, page);
 		PageNode parentNode = page.getNode().getParent();
+		PageCacheUtils.addNodeTag(taggingContext, parentNode);
 		return getVisiblePages(parentNode.getChildPages(page.getSite()));
 	}
 	
 	public Page getPreviousSibling() {
-		PageCacheUtils.addChildPagesTag(taggingContext, page);
 		List siblings = getSiblings();
 		int i = siblings.indexOf(page);
 		if (i > 0) {
@@ -162,7 +161,6 @@ public class PageFacade {
 	}
 	
 	public Page getNextSibling() {
-		PageCacheUtils.addChildPagesTag(taggingContext, page);
 		List siblings = getSiblings();
 		int i = siblings.indexOf(page);
 		if (i < siblings.size() - 1) {
