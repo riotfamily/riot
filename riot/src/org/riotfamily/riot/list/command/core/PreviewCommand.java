@@ -31,6 +31,7 @@ import javax.servlet.ServletContext;
 
 import org.riotfamily.common.web.mapping.HandlerUrlResolver;
 import org.riotfamily.common.web.mapping.ReverseHandlerMapping;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.springframework.beans.BeanWrapper;
@@ -137,7 +138,21 @@ public class PreviewCommand extends PopupCommand
 		Assert.notNull(url, "Could not resolve the URL for handler '" 
 				+ handlerName + "'");
 		
-		return context.getRequest().getContextPath() + url;
+		return ServletUtils.resolveUrl(processUrl(context, url),
+				context.getRequest());
+	}
+	
+	/**
+	 * This method is being called with the resolved url. This can be overridden
+	 * by subclasses in order to tweak the returning url. The default implementation
+	 * is just to return the url.
+	 * 
+	 * @param context of this command execution 
+	 * @param url which has been resolved
+	 * @return the url which should be opened
+	 */
+	protected String processUrl(CommandContext context, String url) {
+		return url;
 	}
 	
 	protected Object getAttributes(Object bean) {
