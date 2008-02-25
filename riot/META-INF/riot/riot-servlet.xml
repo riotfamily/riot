@@ -71,6 +71,7 @@
 	  - A Cachius cache to cache riot resources.
 	  -->
 	<bean id="riotCache" class="org.riotfamily.cachius.spring.CacheFactoryBean">
+		<property name="cacheDir" value="${riot.riotCache.cacheDir=}" />
 		<property name="cacheDirName" value="riot-cache" />
 		<property name="restore" value="false" />
 	</bean>
