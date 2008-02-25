@@ -307,6 +307,9 @@ var RiotList = Class.create({
 					}
 				}
 			}
+			else if (result.action == 'message') {
+				alert(result.message);
+			}
 			else if (result.action == 'reload') {
 				window.location.reload();
 			}
