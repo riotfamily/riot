@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
@@ -43,8 +44,8 @@ import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ComponentListLocation;
+import org.riotfamily.components.model.Content;
 
 public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 
@@ -53,19 +54,23 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	private RenderStrategy parentStrategy;
 	
 	public EditModeRenderStrategy(ComponentDao dao,
-			ComponentRepository repository, 
-			ComponentListConfiguration config) {
+			ComponentRepository repository,	CacheService cacheService) {
 
-		super(dao, repository, config);
-		parentStrategy = new InheritingRenderStrategy(dao, repository, config);
+		super(dao, repository, cacheService);
+		parentStrategy = new InheritingRenderStrategy(dao, repository);
 	}
 
+	protected void appendModeToCacheKey(StringBuffer cacheKey) {
+		cacheKey.append("edit:");
+	}
+	
 	/**
 	 * Overrides the default implementation to render a DIV tag around the
 	 * actual list. The DIV has attributes that are required for the
 	 * Riot toolbar JavaScript.
 	 */
 	protected void renderComponentList(ComponentList list, 
+			ComponentListConfiguration config,
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
@@ -104,7 +109,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		}
 		
 		wrapper.body();
-		super.renderComponentList(list, request, response);
+		super.renderComponentList(list, config, request, response);
 		wrapper.closeAll();
 	}
 
@@ -115,11 +120,11 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	 * @see #createNewList(ComponentListLocation)
 	 */
 	protected ComponentList getComponentList(ComponentListLocation location, 
-			HttpServletRequest request) {
+			ComponentListConfiguration config, HttpServletRequest request) {
 		
-		ComponentList list = super.getComponentList(location, request);
+		ComponentList list = super.getComponentList(location, config, request);
 		if (list == null) {
-			list = createNewList(location, request);
+			list = createNewList(location, config, request);
 		}
 		return list;
 	}
@@ -130,7 +135,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	 * @param request 
 	 */
 	protected ComponentList createNewList(ComponentListLocation location,
-			HttpServletRequest request) {
+			ComponentListConfiguration config, HttpServletRequest request) {
 		
 		ComponentList list = new ComponentList();
 		list.setLocation(new ComponentListLocation(location));
@@ -158,8 +163,9 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	 * Riot toolbar JavaScript.
 	 * @throws IOException
 	 */
-	protected void renderComponent(ComponentRenderer renderer, 
-			Component component, int position, int listSize, 
+	protected void renderComponentInternal(ComponentRenderer renderer, 
+			Component component, int position, int listSize,
+			ComponentListConfiguration config, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 
@@ -181,8 +187,8 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 				.attribute("riot:form", formUrl)
 				.body();
 
-		super.renderComponent(renderer, component, position, listSize, 
-				request, response);
+		super.renderComponentInternal(renderer, component, position, listSize, 
+				config, request, response);
 		
 		wrapper.end();
 	}

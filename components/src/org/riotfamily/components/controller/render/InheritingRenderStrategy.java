@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.controller.render;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,34 +34,57 @@ import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
+import org.riotfamily.components.config.component.ComponentRenderer;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ComponentListLocation;
 import org.springframework.context.MessageSource;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-public class InheritingRenderStrategy extends PreviewModeRenderStrategy {
+public class InheritingRenderStrategy extends AbstractRenderStrategy {
 
 	private MessageSource messageSource;
 
 	public InheritingRenderStrategy(ComponentDao dao,
-			ComponentRepository repository, ComponentListConfiguration config) {
+			ComponentRepository repository) {
 
-		super(dao, repository, config);
+		super(dao, repository);
 		this.messageSource = repository.getMessageSource();
 	}
 
-	protected void renderComponentList(ComponentList list, 
+	/**
+	 * Return the preview components in case the list is marked as dirty,
+	 * the live components otherwise.
+	 */
+	protected List getComponentsToRender(ComponentList list) {
+		if (list.isDirty()) {
+			return list.getPreviewComponents();
+		}
+		return list.getLiveComponents();
+	}
+
+	protected void renderComponent(ComponentRenderer renderer,
+			Component component, int position, int listSize,
+			ComponentListConfiguration config, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+
+		renderer.render(component, true, position, listSize, request, response);
+	}
+
+	protected void renderComponentList(ComponentList list,
+			ComponentListConfiguration config,
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
 		boolean live = EditModeUtils.isEditMode(request);
 		EditModeUtils.setLiveMode(request, true);
-		super.renderComponentList(list, request, response);
+		super.renderComponentList(list, config, request, response);
 		EditModeUtils.setLiveMode(request, live);
 	}
 
-	protected void onListNotFound(ComponentListLocation location, 
+	protected void onListNotFound(ComponentListLocation location,
+			ComponentListConfiguration config, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
@@ -74,8 +98,9 @@ public class InheritingRenderStrategy extends PreviewModeRenderStrategy {
 				.end();
 	}
 
-	protected void onEmptyComponentList(HttpServletRequest request, 
-			HttpServletResponse response) throws Exception {
+	protected void onEmptyComponentList(ComponentListConfiguration config, 
+			HttpServletRequest request, HttpServletResponse response) 
+			throws Exception {
 		
 		Locale locale = RequestContextUtils.getLocale(request);
 		TagWriter tag = new TagWriter(response.getWriter());

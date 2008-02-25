@@ -25,27 +25,26 @@ package org.riotfamily.components.controller.render;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.riotfamily.components.config.ComponentListConfiguration;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.config.component.ComponentRenderer;
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 
-public class PreviewModeRenderStrategy extends AbstractRenderStrategy {
+public class PreviewModeRenderStrategy extends CachingRenderStrategy {
 
 	public PreviewModeRenderStrategy(ComponentDao dao, 
-			ComponentRepository repository, ComponentListConfiguration config) {
+			ComponentRepository repository,	CacheService cacheService) {
 		
-		super(dao, repository, config);
+		super(dao, repository, cacheService);
+	}
+
+	protected boolean isPreview() {
+		return true;
 	}
 	
 	/**
-	 * Overrides the default implementation to return the preview components 
-	 * in case the list is marked as dirty.
+	 * Return the preview components in case the list is marked as dirty,
+	 * the live components otherwise.
 	 */
 	protected List getComponentsToRender(ComponentList list) {
 		if (list.isDirty()) {
@@ -57,12 +56,5 @@ public class PreviewModeRenderStrategy extends AbstractRenderStrategy {
 			return list.getLiveComponents();
 		}
 	}
-	
-	protected void renderComponent(ComponentRenderer renderer, 
-			Component component, int position, int listSize, 
-			HttpServletRequest request, HttpServletResponse response) 
-			throws Exception {
-		
-		renderer.render(component, true, position, listSize, request, response);
-	}	
+
 }

@@ -25,9 +25,13 @@ package org.riotfamily.components.controller;
 
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.config.ComponentRepository;
+import org.riotfamily.components.controller.render.EditModeRenderStrategy;
+import org.riotfamily.components.controller.render.LiveModeRenderStrategy;
+import org.riotfamily.components.controller.render.RenderStrategy;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.locator.ComponentListLocator;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -38,7 +42,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  * @since 6.5
  */
 public class ComponentListControllerPostProcessor 
-		implements ApplicationContextAware, BeanPostProcessor {
+		implements ApplicationContextAware, InitializingBean, BeanPostProcessor {
 	
 	
 	private ApplicationContext applicationContext;
@@ -51,6 +55,10 @@ public class ComponentListControllerPostProcessor
 
 	private ComponentRepository repository;
 
+	private RenderStrategy liveModeRenderStrategy;
+	
+	private RenderStrategy editModeRenderStrategy;
+	
 	private PlatformTransactionManager transactionManager;
 	
 
@@ -78,6 +86,25 @@ public class ComponentListControllerPostProcessor
 		this.repository = repository;
 		repository.clearControllers();
 	}
+	
+	public void setLiveModeRenderStrategy(RenderStrategy liveModeRenderStrategy) {
+		this.liveModeRenderStrategy = liveModeRenderStrategy;
+	}
+
+	public void setEditModeRenderStrategy(RenderStrategy editModeRenderStrategy) {
+		this.editModeRenderStrategy = editModeRenderStrategy;
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		if (editModeRenderStrategy == null) {
+			editModeRenderStrategy = new EditModeRenderStrategy(
+					componentDao, repository, cacheService);
+		}
+		if (liveModeRenderStrategy == null) {
+			liveModeRenderStrategy = new LiveModeRenderStrategy(
+					componentDao, repository, cacheService);
+		}
+	}
 
 	public Object postProcessBeforeInitialization(Object bean, String beanName)
 			throws BeansException {
@@ -103,6 +130,12 @@ public class ComponentListControllerPostProcessor
 		}
 		if (controller.getLocator() == null) {
 			controller.setLocator(locator);
+		}
+		if (controller.getLiveModeRenderStrategy() == null) {
+			controller.setLiveModeRenderStrategy(liveModeRenderStrategy);
+		}
+		if (controller.getEditModeRenderStrategy() == null) {
+			controller.setEditModeRenderStrategy(editModeRenderStrategy);
 		}
 
 		repository.registerController(beanName, controller);

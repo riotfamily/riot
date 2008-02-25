@@ -157,6 +157,7 @@ public class HibernateComponentDao implements ComponentDao {
 	public void updateComponentList(ComponentList list) {
 		list.setLastModified(new Date());
 		list.setLastModifiedBy(AccessController.getCurrentUser().getUserId());
+		ComponentCacheUtils.invalidatePreviewList(cache, list);
 		hibernate.update(list);
 	}
 
@@ -204,7 +205,7 @@ public class HibernateComponentDao implements ComponentDao {
 			published |= publishContainer(container);
 		}
 
-		if (published && cache != null) {
+		if (published) {
 			ComponentCacheUtils.invalidateList(cache, componentList);
 		}
 
@@ -233,6 +234,9 @@ public class HibernateComponentDao implements ComponentDao {
 		while (it.hasNext()) {
 			Component container = (Component) it.next();
 			discarded |= discardContainer(container);
+		}
+		if (discarded) {
+			ComponentCacheUtils.invalidatePreviewList(cache, componentList);
 		}
 		return discarded;
 	}

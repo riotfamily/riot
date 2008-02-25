@@ -26,14 +26,14 @@ package org.riotfamily.components.controller.render;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.model.ComponentListLocation;
 
 public interface RenderStrategy {
-
-	public void render(HttpServletRequest request, 
-			HttpServletResponse response) throws Exception;
 	
-	public void render(ComponentListLocation location, HttpServletRequest request, 
-			HttpServletResponse response) throws Exception;
+	public void render(ComponentListLocation location, 
+			ComponentListConfiguration config, 
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception;
 	
 }

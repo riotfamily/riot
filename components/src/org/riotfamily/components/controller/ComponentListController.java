@@ -30,13 +30,11 @@ import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.controller.render.EditModeRenderStrategy;
-import org.riotfamily.components.controller.render.LiveModeRenderStrategy;
 import org.riotfamily.components.controller.render.RenderStrategy;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.locator.ComponentListLocator;
+import org.riotfamily.components.model.ComponentListLocation;
 import org.riotfamily.riot.security.AccessController;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -49,7 +47,7 @@ import org.springframework.web.servlet.mvc.Controller;
  * determined using a {@link ComponentListLocator}.
  */
 public class ComponentListController implements Controller,
-		ComponentListConfiguration, InitializingBean {
+		ComponentListConfiguration {
 
 	private CacheService cacheService;
 
@@ -143,13 +141,21 @@ public class ComponentListController implements Controller,
 	public void setLocator(ComponentListLocator locator) {
 		this.locator = locator;
 	}
+	
+	public RenderStrategy getLiveModeRenderStrategy() {
+		return liveModeRenderStrategy;
+	}
 
-	public void afterPropertiesSet() throws Exception {
-		editModeRenderStrategy = new EditModeRenderStrategy(componentDao,
-				componentRepository, this);
-		
-		liveModeRenderStrategy = new LiveModeRenderStrategy(componentDao, 
-				componentRepository, this, cacheService);
+	public void setLiveModeRenderStrategy(RenderStrategy liveModeRenderStrategy) {
+		this.liveModeRenderStrategy = liveModeRenderStrategy;
+	}
+
+	public RenderStrategy getEditModeRenderStrategy() {
+		return editModeRenderStrategy;
+	}
+
+	public void setEditModeRenderStrategy(RenderStrategy editModeRenderStrategy) {
+		this.editModeRenderStrategy = editModeRenderStrategy;
 	}
 	
 	public ModelAndView handleRequest(final HttpServletRequest request,
@@ -158,13 +164,15 @@ public class ComponentListController implements Controller,
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				try {
+					ComponentListLocation location = locator.getLocation(request);
 					RenderStrategy strategy = liveModeRenderStrategy;
 					if (EditModeUtils.isEditMode(request) &&
-							AccessController.isGranted("edit", locator.getLocation(request))) {
+							AccessController.isGranted("edit", location)) {
 						
 						strategy = editModeRenderStrategy;
 					}
-					strategy.render(request, response);
+					strategy.render(location, ComponentListController.this, 
+							request, response);
 				}
 				catch (Exception e) {
 					throw new RuntimeException(e);

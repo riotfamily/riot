@@ -30,10 +30,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.Cache;
 import org.riotfamily.cachius.TaggingContext;
-import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ComponentListLocation;
+import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 
 /**
@@ -42,55 +41,27 @@ import org.riotfamily.components.model.ContentContainer;
  */
 public final class ComponentCacheUtils {
 
-	private static String getContentTag(ContentContainer container, boolean preview) {
-		return ContentContainer.class.getName() + '#' + container.getId() 
-				+ (preview ? "-preview" : "-live");
-	}
-			
-	public static void addContainerTags(HttpServletRequest request, 
-			ContentContainer container, boolean preview) {
-		
-		TaggingContext.tag(request, getContentTag(container, preview));
-	}
-
-	public static void invalidatePreviewVersion(Cache cache, ContentContainer container) {
-		cache.invalidateTaggedItems(getContentTag(container, true));
+	private ComponentCacheUtils() {
 	}
 	
 	/**
-	 * This method will invalidate both, the live and preview versions of the container.
+	 * Returns the tag for the given container.
 	 */
-	public static void invalidateContainer(Cache cache, ContentContainer container) {
-		cache.invalidateTaggedItems(getContentTag(container, false));
-		cache.invalidateTaggedItems(getContentTag(container, true));
+	private static String getContainerTag(ContentContainer container, 
+			boolean preview) {
+		
+		return ContentContainer.class.getName() + '#' + container.getId() 
+				+ (preview ? "-preview" : "-live");
 	}
-
-	public static void invalidateContainer(Cache cache, 
+	
+	public static void addContainerTags(HttpServletRequest request, 
 			ContentContainer container, boolean preview) {
 		
-		cache.invalidateTaggedItems(getContentTag(container, preview));
+		TaggingContext.tag(request, getContainerTag(container, preview));
+		addContentTags(request, container.getContent(preview));
 	}
-	
-	public static void addListTags(HttpServletRequest request, 
-			Component component) {
-		
-		ComponentList list = component.getList();
-		if (list != null) {
-			addListTags(request, list.getLocation());
-		}
-	}
-	
-	public static void addListTags(HttpServletRequest request, 
-			ComponentListLocation location) {
-		
-		TaggingContext.tag(request, location.toString());
-	}
-	
-	public static void invalidateList(Cache cache, ComponentList list) {
-		cache.invalidateTaggedItems(list.getLocation().toString());
-	}
-	
-	public static void addContentTags(HttpServletRequest request, 
+
+	private static void addContentTags(HttpServletRequest request, 
 			Content version) {
 
 		Collection tags = version.getCacheTags();
@@ -102,4 +73,55 @@ public final class ComponentCacheUtils {
 			}
 		}
 	}
+	
+	/**
+	 * Invalidates the live and preview version of the container.
+	 */
+	public static void invalidateContainer(Cache cache, ContentContainer container) {
+		cache.invalidateTaggedItems(getContainerTag(container, false));
+		cache.invalidateTaggedItems(getContainerTag(container, true));
+	}
+	
+	/**
+	 * Invalidates the preview version of the container.
+	 */
+	public static void invalidatePreviewVersion(Cache cache, ContentContainer container) {
+		cache.invalidateTaggedItems(getContainerTag(container, true));
+	}
+	
+	/**
+	 * Returns the tag for the given list.
+	 */
+	private static String getListTag(ComponentList list, boolean preview) {
+		return getListTag(list.getLocation(), preview);
+	}
+	
+	/**
+	 * Returns the tag for the given list location.
+	 */
+	private static String getListTag(ComponentListLocation location, boolean preview) {
+		return location.toString() + (preview ? "-preview" : "-live");
+	}
+	
+	public static void addListTag(HttpServletRequest request, 
+			ComponentListLocation location, boolean preview) {
+		
+		TaggingContext.tag(request, getListTag(location, preview));
+	}
+
+	/**
+	 * Invalidates the live and preview version of the given list.
+	 */
+	public static void invalidateList(Cache cache, ComponentList list) {
+		cache.invalidateTaggedItems(getListTag(list, true));
+		cache.invalidateTaggedItems(getListTag(list, false));
+	}
+	
+	/**
+	 * Invalidates the preview version of the given list.
+	 */
+	public static void invalidatePreviewList(Cache cache, ComponentList list) {
+		cache.invalidateTaggedItems(getListTag(list, true));
+	}
+	
 }
