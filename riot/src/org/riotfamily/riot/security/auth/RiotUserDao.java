@@ -33,4 +33,6 @@ public interface RiotUserDao extends RiotDao {
 
 	public RiotUser findUserByCredentials(String username, String password);
 	
+	public RiotUser findUserById(String userId);
+	
 }

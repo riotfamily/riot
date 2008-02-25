@@ -26,6 +26,8 @@ package org.riotfamily.riot.security.session;
 import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
+ * Class that associates a RiotUser with the current thread.
+ *  
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */

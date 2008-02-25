@@ -61,10 +61,19 @@ public class StaticRiotUserDao extends RiotDaoAdapter implements RiotUserDao,
 		return null;
 	}
 	
+	public RiotUser findUserById(String userId) {
+		if (RootUser.ID.equals(userId)) {
+			return ROOT;
+		}
+		return null;
+	}
+	
 	private static class RootUser implements RiotUser {
 
+		private static final String ID = "root";
+		
 		public String getUserId() {
-			return "root";
+			return ID;
 		}
 	}
 }

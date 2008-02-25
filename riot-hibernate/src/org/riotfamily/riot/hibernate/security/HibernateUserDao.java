@@ -35,7 +35,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
- * RiotUserDao that performs look-ups vie Hibernate.
+ * RiotUserDao that performs look-ups via Hibernate.
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
@@ -88,7 +88,9 @@ public class HibernateUserDao extends HqlDao implements RiotUserDao,
 	}
 	
 	/**
-	 * Sets whether MD5 hashes should be used instead of plain text passwords.
+	 * Sets whether hashed passwords should be used instead of plain text.
+	 * Default is <code>true</code>.
+	 * @see #hashPassword(String)
 	 */
 	public void setHashPasswords(boolean hashPasswords) {
 		this.hashPasswords = hashPasswords;
@@ -113,6 +115,16 @@ public class HibernateUserDao extends HqlDao implements RiotUserDao,
 		this.initialUser = initialUser;
 	}
 	
+	/**
+	 * Creates (or validates) the initial user.
+	 * <p>
+	 * Note: The user is not saved to the database at this point, as this 
+	 * method is not invoked within a transaction. The user will be persisted
+	 * when {@link #findUserByCredentials(String, String)} or 
+	 * {@link #findUserById(String)} is called and the database does not 
+	 * contain any user objects.
+	 * </p> 
+	 */
 	public void afterPropertiesSet() throws Exception {
 		if (initialUser != null) {
 			Assert.isInstanceOf(getEntityClass(), initialUser);
@@ -130,48 +142,114 @@ public class HibernateUserDao extends HqlDao implements RiotUserDao,
 		}
 	}
 	
+	/**
+	 * Hashes the given password. The default implementation creates a MD5
+	 * sum. Subclasses may overwrite this method to use a different algorithm
+	 * or add a salt.
+	 */
+	protected String hashPassword(String plainText) {
+		return HashUtils.md5(plainText);
+	}
+	
+	/**
+	 * Performs a database lookup with the given credentials. If no matching 
+	 * user is found, {@link #findInitialUser(String, String)} is called.
+	 */
 	public RiotUser findUserByCredentials(String username, String password) {
 		if (hashPasswords) {
-			password = HashUtils.md5(password);
+			password = hashPassword(password);
 		}
 		Criteria c = createCriteria(getEntityClass())
 			.add(Restrictions.eq(usernameProperty, username))
 			.add(Restrictions.eq(passwordProperty, password));
 			
 		RiotUser user = (RiotUser) c.uniqueResult();
-		if (user == null && !anyUserExists()) {
-			save(initialUser, null);
-			String initialUsername = PropertyUtils.getPropertyAsString(initialUser, usernameProperty);
-			String initialPassword = PropertyUtils.getPropertyAsString(initialUser, passwordProperty);
-			if (initialUsername.equals(username) 
-					&& initialPassword.equals(password)) {
-				
-				return initialUser;
-			}
+		if (user == null) {
+			user = findInitialUser(username, password);
 		}
 		return user;
 	}
 	
+	/**
+	 * If no user exists, the given credentials are compared with the ones of 
+	 * the initial user. If username and password match, the initial user is 
+	 * persisted and returned. 
+	 */
+	protected RiotUser findInitialUser(String username, String password) {
+		if (!anyUserExists()) {
+			String initialUsername = PropertyUtils.getPropertyAsString(initialUser, usernameProperty);
+			String initialPassword = PropertyUtils.getPropertyAsString(initialUser, passwordProperty);
+			if (initialUsername.equals(username) && initialPassword.equals(password)) {
+				save(initialUser, null);
+				return initialUser;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Performs a database lookup with the given userId. If no matching 
+	 * user is found, {@link #findInitialUser(String)} is called.
+	 */
+	public RiotUser findUserById(String userId) {
+		RiotUser user = (RiotUser) load(userId);
+		if (user == null) {
+			user = findInitialUser(userId);
+		}
+		return user;
+	}
+	
+	/**
+	 * If no user exists, the given userId is compared with the one of the 
+	 * initial user. If the id matches, the initial user is persisted and 
+	 * returned. 
+	 */
+	protected RiotUser findInitialUser(String userId) {
+		if (!anyUserExists() && userId.equals(initialUser.getUserId())) {
+			save(initialUser, null);
+			return initialUser;
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns whether any user exists in the database.
+	 */
 	protected boolean anyUserExists() {
 		return getListSize(null, new ListParamsImpl()) > 0;
 	}
 	
-	protected void hashNewPassword(Object user) {
+	/**
+	 * If {@link #setHashPasswords(boolean) hashed passwords} are enabled,
+	 * this method checks whether the {@link #setNewPasswordProperty(String)
+	 * newPassword} property contains a non-null value and sets the value of
+	 * the {@link #setPasswordProperty(String) password} property to the
+	 * {@link #hashPassword(String) hashed value}.
+	 */
+	private void hashNewPassword(Object user) {
 		if (hashPasswords) {
 			String newPassword = PropertyUtils.getPropertyAsString(user, newPasswordProperty);
 			if (newPassword != null) {
-				String hash = HashUtils.md5(newPassword);
+				String hash = hashPassword(newPassword);
 				PropertyUtils.setProperty(user, passwordProperty, hash);
 				PropertyUtils.setProperty(user, newPasswordProperty, null);
 			}
 		}
 	}
-	
+
+	/**
+	 * Invokes {@link #hashNewPassword(Object)} and delegates the call to the
+	 * super method.
+	 */
 	public void save(Object entity, Object parent) {
 		hashNewPassword(entity);
 		super.save(entity, parent);
 	}
 	
+	/**
+	 * Invokes {@link #hashNewPassword(Object)} and delegates the call to the
+	 * super method.
+	 */
 	public void update(Object entity) {
 		hashNewPassword(entity);
 		super.update(entity);

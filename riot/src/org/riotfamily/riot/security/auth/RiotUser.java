@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.security.auth;
 
-import java.io.Serializable;
 
 
 /**
@@ -32,7 +31,7 @@ import java.io.Serializable;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public interface RiotUser extends Serializable {
+public interface RiotUser {
 
 	public String getUserId();
 

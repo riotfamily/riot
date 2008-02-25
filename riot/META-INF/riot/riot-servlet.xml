@@ -115,7 +115,9 @@
 	</bean>
 
 	<!-- BeanPostProcessor that wraps all RiotUserDao beans -->
-	<bean class="org.riotfamily.riot.security.session.RiotUserDaoProcessor" />
+	<bean class="org.riotfamily.riot.security.session.RiotUserDaoProcessor">
+		<constructor-arg ref="transactionManager" />
+	</bean>
 		
 	<!-- A RiotUserDao-based AuthenticationService -->
 	<bean id="authenticationService" class="org.riotfamily.riot.security.auth.StaticAuthenticationService">

@@ -31,7 +31,8 @@ package org.riotfamily.riot.security.auth;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class UserDaoAuthenticationService implements AuthenticationService {
+public class UserDaoAuthenticationService 
+		implements UserLookupAuthenticationService {
 
 	private RiotUserDao userDao;
 	
@@ -41,6 +42,10 @@ public class UserDaoAuthenticationService implements AuthenticationService {
 
 	public RiotUser authenticate(String username, String password) {
 		return userDao.findUserByCredentials(username, password);
+	}
+	
+	public RiotUser getUserById(String userId) {
+		return userDao.findUserById(userId);
 	}
 	
 }

@@ -37,17 +37,13 @@ import org.riotfamily.riot.security.auth.RiotUser;
  * Servlet filter that binds the authenticated user (if present) to the
  * current thread. 
  * 
- * @see AccessController
+ * @see LoginManager#getUser(HttpServletRequest)
+ * @see SecurityContext#bindUserToCurrentThread(RiotUser)
  */
 public final class AccessControlFilterPlugin extends FilterPlugin {
-	public static final int ORDER = 0;
-	
-	public int getOrder() {
-		return ORDER;
-	}
 
-	public void setOrder(int order) {
-		throw new UnsupportedOperationException();
+	public AccessControlFilterPlugin() {
+		setOrder(0);
 	}
 
 	public void doFilter(HttpServletRequest request,
@@ -55,7 +51,8 @@ public final class AccessControlFilterPlugin extends FilterPlugin {
 		throws IOException, ServletException {
 		
 		try {
-			RiotUser user = LoginManager.getUser(request);
+			LoginManager loginManager = LoginManager.getInstance(getServletContext());
+			RiotUser user = loginManager.getUser(request);
 			SecurityContext.bindUserToCurrentThread(user);
 			pluginChain.doFilter(request, response);
 		}

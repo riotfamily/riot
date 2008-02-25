@@ -25,8 +25,11 @@ package org.riotfamily.riot.security.session;
 
 import org.riotfamily.riot.security.auth.RiotUser;
 
-
-
+/**
+ * SessionMetaDataStore implementation that doesn't store anything.
+ *  
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class TransientSessionMetaDataStore implements SessionMetaDataStore {
 
 	public SessionMetaData loadSessionMetaData(RiotUser user) {

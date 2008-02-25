@@ -25,7 +25,11 @@ package org.riotfamily.riot.security.session;
 
 import org.riotfamily.riot.security.auth.RiotUser;
 
-
+/**
+ * Interface to load and persist {@link SessionMetaData}.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public interface SessionMetaDataStore {
 
 	public SessionMetaData loadSessionMetaData(RiotUser user);

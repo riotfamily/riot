@@ -29,7 +29,8 @@ import org.springframework.util.Assert;
  * AuthenticationService that uses a fixed username/password combination.
  * This class is intended for development purposes only.
  */
-public class StaticAuthenticationService implements AuthenticationService {
+public class StaticAuthenticationService 
+		implements UserLookupAuthenticationService {
 
 	public static final String DEFAULT_USERNAME = "root";
 	
@@ -55,11 +56,20 @@ public class StaticAuthenticationService implements AuthenticationService {
 		}
 		return null;
 	}
+	
+	public RiotUser getUserById(String userId) {
+		if (RootUser.ID.equals(userId)) {
+			return ROOT;
+		}
+		return null;
+	}
 
 	private static class RootUser implements RiotUser {
 
+		private static String ID = "root";
+		
 		public String getUserId() {
-			return "root";
+			return ID;
 		}
 	}
 }

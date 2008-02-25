@@ -23,11 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.security.session;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.interceptor.OncePerRequestInterceptor;
 import org.riotfamily.riot.security.auth.RiotUser;
+import org.springframework.web.context.ServletContextAware;
 
 /**
  * HandlerInterceptor that binds the authenticated user (if present) to the
@@ -35,12 +37,20 @@ import org.riotfamily.riot.security.auth.RiotUser;
  * 
  * @see AccessController
  */
-public class AccessControlInterceptor extends OncePerRequestInterceptor {
+public class AccessControlInterceptor extends OncePerRequestInterceptor
+		implements ServletContextAware {
 
+	private ServletContext servletContext;
+
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;
+	}
+	
 	public boolean preHandleOnce(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
 		
-		RiotUser user = LoginManager.getUser(request);
+		LoginManager loginManager = LoginManager.getInstance(servletContext);
+		RiotUser user = loginManager.getUser(request);
 		SecurityContext.bindUserToCurrentThread(user);
 		return isAuthorized(request, response, user);
 	}

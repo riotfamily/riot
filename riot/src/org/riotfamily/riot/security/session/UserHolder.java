@@ -24,7 +24,7 @@
 package org.riotfamily.riot.security.session;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.servlet.ServletContext;
@@ -34,11 +34,13 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
 import org.riotfamily.riot.security.auth.RiotUser;
+import org.riotfamily.riot.security.auth.UserLookupAuthenticationService;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Class that holds a reference to a RiotUser. An instance of this class is
  * stored in the HttpSession. Additionally each instance is placed in a static
- * list which allows us to access/update all currently logged in users. 
+ * set which allows us to access/update all currently logged in users. 
  * <p>
  * The class also implements the HttpSessionBindingListener interface and
  * persists the SessionMetaData as soon as the session expires.
@@ -50,62 +52,92 @@ public class UserHolder implements Serializable, HttpSessionBindingListener {
 
 	private static final String SESSION_KEY = UserHolder.class.getName();
 	
-	private static ArrayList users = new ArrayList();
+	private static HashSet users = new HashSet();
 	
-	private RiotUser user;
+	private transient RiotUser user;
+	
+	private String userId;
 	
 	private SessionMetaData metaData;
 	
 	
-	public UserHolder(RiotUser user, SessionMetaData metaData) {
+	private UserHolder(RiotUser user, SessionMetaData metaData) {
 		this.user = user;
+		this.userId = user.getUserId();
 		this.metaData = metaData;
 	}
 	
 	public RiotUser getUser() {
 		return this.user;
 	}
-
-	public void setUser(RiotUser user) {
-		this.user = user;
-	}	
+	
+	public String getUserId() {
+		return userId;
+	}
 	
 	public SessionMetaData getSessionMetaData() {
 		return this.metaData;
 	}
 	
+	/**
+	 * Adds itself to the static set of users.
+	 * 
+	 * @see HttpSessionBindingListener#valueBound(HttpSessionBindingEvent)
+	 */
 	public void valueBound(HttpSessionBindingEvent event) {
-		users.add(this);
+		addToStaticUsersSet();
 	}
 	
+	/**
+	 * Removes itself from the static set of users and persists the 
+	 * SessionMetaData.
+	 * 
+	 * @see HttpSessionBindingListener#valueUnbound(HttpSessionBindingEvent)
+	 */
 	public void valueUnbound(HttpSessionBindingEvent event) {
-		users.remove(user.getUserId());
+		users.remove(this);
 		metaData.sessionEnded();
 		ServletContext sc = event.getSession().getServletContext();
 		LoginManager.getInstance(sc).storeSessionMetaData(metaData);
 	}
 	
-	static void updateUser(String userId, RiotUser user) {
-		Iterator it = users.iterator();		
-		while (it.hasNext()) {
-			UserHolder holder = (UserHolder) it.next();
-			if (holder.getUser() != null 
-					&& userId.equals(holder.getUser().getUserId())) {
-				
-				holder.setUser(user);
-			}
+	/**
+	 * Reloads the transient user object.
+	 */
+	protected RiotUser reloadUser(UserLookupAuthenticationService lookupService) {
+		if (lookupService != null) {
+			user = lookupService.getUserById(userId);
+			addToStaticUsersSet();
+			return user;
 		}
+		return null;
 	}
 	
-	void storeInSession(HttpSession session) {
-		session.setAttribute(SESSION_KEY, this);
+	private void addToStaticUsersSet() {
+		users.add(this);
 	}
 	
-	static void removeFromSession(HttpServletRequest request) {
-		HttpSession session = request.getSession(false);
-		if (session != null) {
-			session.removeAttribute(SESSION_KEY);
+	public int hashCode() {
+		return userId != null ? userId.hashCode() : 0;
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
 		}
+		if (obj instanceof UserHolder) {
+			UserHolder other = (UserHolder) obj;
+			return ObjectUtils.nullSafeEquals(userId, other.userId);
+		}
+		return false;
+	}
+	
+	// --- Static methods -----------------------------------------------------
+	
+	static void storeInSession(RiotUser user, SessionMetaData metaData, 
+			HttpSession session) {
+		
+		session.setAttribute(SESSION_KEY, new UserHolder(user, metaData));
 	}
 	
 	static UserHolder getInstance(HttpServletRequest request) {
@@ -115,5 +147,21 @@ public class UserHolder implements Serializable, HttpSessionBindingListener {
 		}
 		return (UserHolder) session.getAttribute(SESSION_KEY);
 	}
-
+	
+	/**
+	 * Looks up the {@link UserHolder} for the specified userId and replaces 
+	 * the user with the given instance.
+	 */
+	static void updateUser(String userId, RiotUser user) {
+		Iterator it = users.iterator();		
+		while (it.hasNext()) {
+			UserHolder holder = (UserHolder) it.next();
+			if (holder.getUser() != null 
+					&& userId.equals(holder.getUserId())) {
+				
+				holder.user = user;
+			}
+		}
+	}
+		
 }

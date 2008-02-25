@@ -26,9 +26,11 @@ package org.riotfamily.riot.security.session;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.riotfamily.riot.security.auth.AuthenticationService;
 import org.riotfamily.riot.security.auth.RiotUser;
+import org.riotfamily.riot.security.auth.UserLookupAuthenticationService;
 import org.springframework.web.context.ServletContextAware;
 
 public class LoginManager implements ServletContextAware {
@@ -37,29 +39,40 @@ public class LoginManager implements ServletContextAware {
 		
 	private AuthenticationService authenticationService;
 
-	private SessionMetaDataStore metaDataStore; 
+	private UserLookupAuthenticationService userLookupService;
+	
+	private SessionMetaDataStore metaDataStore;
 	
 	
 	public LoginManager(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
+		if (authenticationService instanceof UserLookupAuthenticationService) {
+			userLookupService = (UserLookupAuthenticationService) authenticationService;
+		}
 	}
 	
 	public void setMetaDataStore(SessionMetaDataStore metaDataStore) {
 		this.metaDataStore = metaDataStore;
 	}
 
+	/**
+	 * Stores a reference to itself in the ServletContext.
+	 * @see ServletContextAware
+	 */
 	public void setServletContext(ServletContext servletContext) {
 		servletContext.setAttribute(CONTEXT_KEY, this);
 	}
 	
+	/**
+	 * Returns the LoginManager for the given ServletContext.
+	 */
 	public static LoginManager getInstance(ServletContext servletContext) {
 		return (LoginManager) servletContext.getAttribute(CONTEXT_KEY);
 	}
-	
+		
 	/**
 	 * Tries to authenticate the user with the given credentials. If the 
-	 * authentication succeeds the RiotUser object is stored in the 
-	 * HTTP session.
+	 * authentication succeeds the RiotUser is stored in the HTTP session.
 	 */
 	public boolean login(HttpServletRequest request, String userName, 
 			String password) {
@@ -73,13 +86,15 @@ public class LoginManager implements ServletContextAware {
 	}
 	
 	/**
-	 * Performs a logout. This is done by removing the {@link UserHolder} 
-	 * object from the session. 
+	 * Performs a logout by invalidating the session. 
 	 */
 	public static void logout(HttpServletRequest request, 
 			HttpServletResponse response) {
 		
-		UserHolder.removeFromSession(request);
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			session.invalidate();
+		}
 	}
 	
 	/**
@@ -118,16 +133,22 @@ public class LoginManager implements ServletContextAware {
 			HttpServletRequest request) {
 		
 		SessionMetaData sessionData = getOrCreateMetaData(userName, user, request);
-		UserHolder holder = new UserHolder(user, sessionData);
-		holder.storeInSession(request.getSession());
+		UserHolder.storeInSession(user, sessionData, request.getSession());
 	}
 
 	/**
 	 * Returns the user associated with the given request.
 	 */
-	protected static RiotUser getUser(HttpServletRequest request) {
+	protected RiotUser getUser(HttpServletRequest request) {
 		UserHolder holder = UserHolder.getInstance(request);
-		return holder != null ? holder.getUser() : null;
+		if (holder != null) {
+			RiotUser user = holder.getUser();
+			if (user == null) {
+				user = holder.reloadUser(userLookupService);
+			}
+			return user;
+		}
+		return null;
 	}
 
 	/**
