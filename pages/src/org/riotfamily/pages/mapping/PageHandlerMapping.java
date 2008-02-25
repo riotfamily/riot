@@ -82,7 +82,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 
 		Page page = pageResolver.getPage(request);
 		String path = pageResolver.getPathWithinSite(request);
-		if (page == null) {
+		if (page == null || !page.isRequestable()) {
 			Site site = pageResolver.getSite(request);
 			if (site == null) {
 				return null;
