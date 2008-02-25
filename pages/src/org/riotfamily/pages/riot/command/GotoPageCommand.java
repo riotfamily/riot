@@ -23,9 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.core.PopupCommand;
 
@@ -36,7 +39,7 @@ import org.riotfamily.riot.list.command.core.PopupCommand;
 public class GotoPageCommand extends PopupCommand {
 
 	public static final String STYLE_CLASS = "link";
-	
+
 	private PathCompleter pathCompleter;
 
 	public GotoPageCommand(PathCompleter pathCompleter) {
@@ -44,11 +47,14 @@ public class GotoPageCommand extends PopupCommand {
 	}
 
 	protected String getUrl(CommandContext context) {
+		HttpServletRequest request = context.getRequest();
 		Page page = (Page) context.getBean();
-		String url = page.getUrl(pathCompleter); 
-		return ServletUtils.resolveUrl(url, context.getRequest());
+		Site site = page.getSite();
+		StringBuffer url = site.getAbsoluteUrl(request);
+		url.append(pathCompleter.addServletMapping(page.getPath())); 
+		return ServletUtils.resolveUrl(url.toString(), request);
 	}
-	
+
 	protected String getStyleClass(CommandContext context, String action) {
 		return STYLE_CLASS;
 	}
