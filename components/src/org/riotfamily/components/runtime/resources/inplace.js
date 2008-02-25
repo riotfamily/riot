@@ -342,26 +342,32 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 				var chunks = [];
 				var n = RBuilder.node('div');
 				n.innerHTML = text;
-				$A(n.childNodes).each(function(c) {
+				for (var i = 0; i < n.childNodes.length; i++) { 
+					var c = n.childNodes[i];
 					if (c.nodeType == 1) {
 						chunks.push('<' + c.nodeName.toLowerCase() + '>'
-								+ c.innerHTML
+								+ this.cleanUp(c.innerHTML)
 								+ '</' + c.nodeName.toLowerCase() + '>');
 					}
 					else if (c.nodeType == 3) {
 						chunks.push('<p>' + c.nodeValue + '</p>');
 					}
-				});
+				}
 				if (chunks.length == 0) {
 					chunks.push('<p></p>');
 				}
 				this.component.updateTextChunks(this.key, chunks);
 			}
 			else {
-				this.component.updateText(this.key, text, true);
+				this.component.updateText(this.key, this.cleanUp(text), true);
 			}
 			this.onsave(text);
 		}
+	},
+	
+	cleanUp: function(str) {
+ 		str = str.replace(/<!(?:--[\s\S]*?--\s*)?>\s*/g, '');
+ 		return str.replace(/<\s*?br\s*?>/ig, '<br />');
 	}
 
 });
@@ -615,7 +621,7 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	if (styles) {
 		classNames = styles.split(';').collect(function(pair) {return pair.split('=')[1]});
 	}
-	riot.stylesheetMaker.copyStyles(clone, doc, classNames);
+		riot.stylesheetMaker.copyStyles(clone, doc, classNames);
 	
 	clone.remove();
 
