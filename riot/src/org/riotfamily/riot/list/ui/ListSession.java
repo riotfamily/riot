@@ -456,17 +456,15 @@ public class ListSession implements RenderContext {
 
 		Collection commands = item != null ? itemCommands : listCommands;
 		Command command = getCommand(commands, commandState.getId());
-		Object bean = null;
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		if (item != null) {
 			context.setItem(item);
 		}
 		else {
-			bean = EditorDefinitionUtils.loadParent(listDefinition, parentId);
-			context.setBean(bean);
+			context.setBean(EditorDefinitionUtils.loadParent(listDefinition, parentId));
 		}
 		String action = command.getState(context).getAction();
-		if (AccessController.isGranted(action, bean)) {
+		if (AccessController.isGranted(action, context.getBean())) {
 			if (!confirmed) {
 				String message = command.getConfirmationMessage(context);
 				if (message != null) {
@@ -510,8 +508,8 @@ public class ListSession implements RenderContext {
 			int batchIndex = 0;
 			while (it.hasNext()) {
 				ListItem item = (ListItem) it.next();
-				if (AccessController.isGranted(commandState.getAction(), item)) {
-					context.setItem(item);
+				context.setItem(item);
+				if (AccessController.isGranted(commandState.getAction(), context.getBean())) {
 					context.setBatchIndex(batchIndex);
 					result = command.execute(context);
 				}
