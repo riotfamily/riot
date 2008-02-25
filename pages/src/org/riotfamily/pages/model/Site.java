@@ -97,8 +97,8 @@ public class Site {
 		return name;
 	}
 
-	public void setName(String serverName) {
-		this.name = serverName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Locale getLocale() {
@@ -307,8 +307,7 @@ public class Site {
 		}
 		Site other = (Site) obj;
 		
-		return ObjectUtils.nullSafeEquals(this.name, other.name)
-				&& ObjectUtils.nullSafeEquals(this.hostName, other.hostName)
+		return ObjectUtils.nullSafeEquals(this.hostName, other.hostName)
 				&& ObjectUtils.nullSafeEquals(this.pathPrefix, other.pathPrefix)
 				&& ObjectUtils.nullSafeEquals(this.locale, other.locale)
 				&& ObjectUtils.nullSafeEquals(this.theme, other.theme)
