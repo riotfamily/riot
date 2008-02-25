@@ -92,6 +92,10 @@ public class PagePropertyElement extends TemplateElement {
 		return null;
 	}
 	
+	public boolean isRequired() {
+		return editor.isRequired();
+	}
+	
 	public String getStyleClass() {
 		return editor.getEditorBinding().getProperty();
 	}
