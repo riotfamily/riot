@@ -257,26 +257,28 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 * @return The newly created container
 	 */
 	private Component createVersionContainer(String type, Map properties) {
-		Component container = new Component(type);
+		Component component = new Component(type);
 		Content version = new Content();
-		ComponentRenderer component = repository.getComponent(type);
+		ComponentRenderer renderer = repository.getComponent(type);
 		Map values = new HashMap();
-		if (component.getDefaults() != null) {
-			values.putAll(component.getDefaults());
+		if (renderer.getDefaults() != null) {
+			values.putAll(renderer.getDefaults());
 		}
 		if (properties != null) {
 			values.putAll(properties);
 		}
 		version.wrapValues(values);
-		container.setPreviewVersion(version);
-		componentDao.saveContentContainer(container);
-		return container;
+		component.setPreviewVersion(version);
+		componentDao.saveContentContainer(component);
+		return component;
 	}
 	
 	public void setType(Long containerId, String type) {
 		Component component = componentDao.loadComponent(containerId);
 		component.setType(type);
-		//componentDao.updateVersionContainer(component);
+		ComponentRenderer renderer = repository.getComponent(type);
+		component.getPreviewVersion().wrapValues(renderer.getDefaults());
+		componentDao.saveOrUpdatePreviewVersion(component);
 	}
 
 	private String getHtml(String url, String key, boolean live)

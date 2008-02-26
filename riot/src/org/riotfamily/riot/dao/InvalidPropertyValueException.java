@@ -25,6 +25,10 @@ package org.riotfamily.riot.dao;
 
 
 /**
+ * Exception that can be thrown by a RiotDao to indicate that a property 
+ * contains an invalid value. This allows the DAO layer to perform validation
+ * checks upon save or update operations. 
+ * 
  * @author Carsten Woelk [cwoelk at neteye dot de]
  * @since 6.5
  */

@@ -52,6 +52,7 @@
 		name="/components/form/@{formId}/@{containerId}"
 		class="org.riotfamily.components.editor.ContentFormController">
 		<constructor-arg ref="contentFormRepository" />
+		<constructor-arg ref="transactionManager" />
 		<constructor-arg ref="componentDao" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
@@ -63,6 +64,7 @@
 		name="/components/entity-form/@{listId}/@{formId}/@{objectId}"
 		class="org.riotfamily.components.editor.EntityFormController">
 		<constructor-arg ref="contentFormRepository" />
+		<constructor-arg ref="transactionManager" />
 		<constructor-arg ref="listRepository" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>

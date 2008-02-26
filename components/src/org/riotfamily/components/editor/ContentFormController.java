@@ -31,6 +31,7 @@ import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.factory.FormRepository;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Controller that displays a form to edit the properties of a ComponentVersion.
@@ -45,9 +46,10 @@ public class ContentFormController extends AbstractFrontOfficeFormController {
 	private String containerIdAttribute = "containerId";
 
 	public ContentFormController(FormRepository formRepository,
+			PlatformTransactionManager transactionManager,
 			ComponentDao componentDao) {
 
-		super(formRepository);
+		super(formRepository, transactionManager);
 		this.componentDao = componentDao;
 	}
 
@@ -65,9 +67,12 @@ public class ContentFormController extends AbstractFrontOfficeFormController {
 		return componentDao.loadContentContainer(id);
 	}
 
-	protected void onSave(Object object, HttpServletRequest request) {
+	protected void reattach(Object object, HttpServletRequest request) {
 		ContentContainer container = (ContentContainer) object;
-		componentDao.updateContentContainer(container);
+		componentDao.saveOrUpdatePreviewVersion(container);
+	}
+	
+	protected void update(Object object, HttpServletRequest request) {
 	}
 
 }

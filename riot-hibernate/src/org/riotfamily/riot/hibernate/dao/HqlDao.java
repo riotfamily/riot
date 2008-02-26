@@ -277,8 +277,11 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 		return HibernateUtils.get(getSession(), entityClass, objectId);
     }
 
-    public void update(Object entity) {
+    public void reattach(Object entity) {
 		getSession().update(entity);
+	}
+    
+    public void update(Object entity) {
 	}
 
     public void swapEntity(Object item, Object parent, ListParams params,

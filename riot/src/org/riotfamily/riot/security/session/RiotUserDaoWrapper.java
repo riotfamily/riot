@@ -101,6 +101,10 @@ public class RiotUserDaoWrapper implements RiotUserDao {
 		wrappedInstance.save(entity, parent);		
 	}
 	
+	public void reattach(Object entity) {		
+		wrappedInstance.reattach(entity);
+	}
+	
 	public void update(Object entity) {		
 		wrappedInstance.update(entity);
 		RiotUser user = (RiotUser) entity;

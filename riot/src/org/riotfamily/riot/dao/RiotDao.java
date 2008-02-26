@@ -51,7 +51,19 @@ public interface RiotDao {
 	public Object load(String id) throws DataAccessException;
 	
 	/**
-	 * Updates the given entity.
+	 * Reattaches the given entity. This method is invoked before an object
+	 * that has been loaded in a previous request is modified. Implementors
+	 * can use this method to perform modification checks or to reattach the
+	 * object to a persistence session.  
+	 */
+	public void reattach(Object entity) throws DataAccessException;
+	
+	/**
+	 * Updates the given entity. This method is invoked after an object has
+	 * been modified. Session-based implementations (like Hibernate or JPA)
+	 * will usually do nothing in this method, as changes are automatically
+	 * written to the database when an object has been modified within a 
+	 * transaction.
 	 */
 	public void update(Object entity) throws DataAccessException;
 

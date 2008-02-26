@@ -247,7 +247,6 @@ public abstract class BaseFormController extends RepositoryFormController
 	protected void saveOrUpdate(Form form, ObjectEditorDefinition editor)
 			throws Exception {
 		
-		Object bean = form.populateBackingObject();
 		ListDefinition listDef = EditorDefinitionUtils.getParentListDefinition(editor);
 		RiotDao dao = listDef.getListConfig().getDao();
 		
@@ -257,12 +256,16 @@ public abstract class BaseFormController extends RepositoryFormController
 				log.debug("Saving entity ...");
 				String parentId = FormUtils.getParentId(form);
 				Object parent = EditorDefinitionUtils.loadParent(listDef, parentId);
+				Object bean = form.populateBackingObject();
 				dao.save(bean, parent);
 				FormUtils.setObjectId(form, dao.getObjectId(bean));
 				form.setValue(bean);
 			}
 			else {
 				log.debug("Updating entity ...");
+				Object bean = form.getBackingObject();
+				dao.reattach(bean);
+				form.populateBackingObject();
 				dao.update(bean);
 			}
 		}

@@ -30,12 +30,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.transaction.TransactionalHandler;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.forms.factory.RepositoryFormController;
+import org.riotfamily.riot.dao.InvalidPropertyValueException;
+import org.riotfamily.riot.dao.RioDaoException;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -43,10 +48,16 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public abstract class AbstractFrontOfficeFormController 
 		extends RepositoryFormController 
-		implements FormSubmissionHandler, TransactionalHandler {
+		implements FormSubmissionHandler {
 
 	private static final String SESSION_ATTRIBUTE = "frontOfficeForm";
 
+	private static final DefaultTransactionDefinition TRANSACTION_DEFINITION =
+			new DefaultTransactionDefinition(
+			TransactionDefinition.PROPAGATION_REQUIRED);
+	
+	private PlatformTransactionManager transactionManager;
+	
 	private String viewName = ResourceUtils.getPath(
 			AbstractFrontOfficeFormController.class, "ComponentFormView.ftl");
 
@@ -55,8 +66,11 @@ public abstract class AbstractFrontOfficeFormController
 
 	private String formIdAttribute = "formId";
 
-	public AbstractFrontOfficeFormController(FormRepository formRepository) {
+	public AbstractFrontOfficeFormController(FormRepository formRepository,
+			PlatformTransactionManager transactionManager) {
+		
 		super(formRepository);
+		this.transactionManager = transactionManager;
 		ButtonFactory buttonFactory = new ButtonFactory(this);
 		buttonFactory.setLabelKey("label.form.button.save");
 		buttonFactory.setCssClass("button button-save");
@@ -88,14 +102,46 @@ public abstract class AbstractFrontOfficeFormController
 		return new ModelAndView(viewName, "form", sw.toString());
 	}
 
-	public ModelAndView handleFormSubmission(Form form,
+	public final ModelAndView handleFormSubmission(Form form,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 
-		onSave(form.populateBackingObject(), request);
-		return new ModelAndView(successViewName);
+		try {
+			handleFormSubmissionInternal(form, request, response);
+			return new ModelAndView(successViewName);
+		}
+		catch (InvalidPropertyValueException e) {
+			form.getErrors().rejectValue(e.getField(), e.getCode(),
+					e.getArguments(), e.getMessage());
+
+			return showForm(form, request, response);
+		}
+		catch (RioDaoException e) {
+			form.getErrors().reject(e.getCode(), e.getArguments(), e.getMessage());
+			return showForm(form, request, response);
+		}
+	}
+
+	protected void handleFormSubmissionInternal(Form form, 
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		
+		TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
+		try {
+			Object bean = form.getBackingObject();
+			reattach(bean, request);
+			form.populateBackingObject();
+			update(bean, request);
+		}
+		catch (Exception e) {
+			transactionManager.rollback(status);
+			throw e;
+		}
+		transactionManager.commit(status);
 	}
 	
-	protected abstract void onSave(Object object, HttpServletRequest request);
+	protected abstract void reattach(Object object, HttpServletRequest request);
+	
+	protected abstract void update(Object object, HttpServletRequest request);
 
 }

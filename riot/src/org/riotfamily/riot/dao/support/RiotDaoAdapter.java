@@ -85,6 +85,14 @@ public class RiotDaoAdapter implements RiotDao {
 	/**
 	 * Always throws an InvalidDataAccessApiUsageException.
 	 */
+	public void reattach(Object entity) throws DataAccessException {
+		throw new InvalidDataAccessApiUsageException(
+				"Update operations are not supported by this DAO.");
+	}
+	
+	/**
+	 * Always throws an InvalidDataAccessApiUsageException.
+	 */
 	public void update(Object entity) throws DataAccessException {
 		throw new InvalidDataAccessApiUsageException(
 				"Update operations are not supported by this DAO.");

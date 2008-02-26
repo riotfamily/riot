@@ -131,9 +131,12 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 		}
 	}
 
-	public void update(Object entity) throws DataAccessException {
+	public void reattach(Object entity) throws DataAccessException {
 		Page page = (Page) entity;
 		pageDao.updatePage(page);
+	}
+	
+	public void update(Object entity) throws DataAccessException {
 	}
 
 	public void swapEntity(Object entity, Object parent, ListParams params,

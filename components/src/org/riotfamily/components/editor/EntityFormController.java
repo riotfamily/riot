@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.list.ListRepository;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Controller that displays a form to edit the properties of a ComponentVersion.
@@ -44,9 +45,10 @@ public class EntityFormController extends AbstractFrontOfficeFormController {
 	private ListRepository listRepository;
 	
 	public EntityFormController(FormRepository formRepository,
+			PlatformTransactionManager transactionManager,
 			ListRepository listRepository) {
 
-		super(formRepository);
+		super(formRepository, transactionManager);
 		this.listRepository = listRepository;
 	}
 
@@ -60,7 +62,11 @@ public class EntityFormController extends AbstractFrontOfficeFormController {
 		return getDao(request).load(objectId);
 	}
 
-	protected void onSave(Object entity, HttpServletRequest request) {
+	protected void reattach(Object entity, HttpServletRequest request) {
+		getDao(request).reattach(entity);
+	}
+	
+	protected void update(Object entity, HttpServletRequest request) {
 		getDao(request).update(entity);
 	}
 

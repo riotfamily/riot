@@ -212,8 +212,11 @@ public class HqlCollectionDao extends HibernateSupport
 		return HibernateUtils.get(getSession(), entityClass, objectId);
     }
     
-    public void update(Object entity) {
+    public void reattach(Object entity) {
 		getSession().update(entity);
+	}
+    
+    public void update(Object entity) {
 	}
     
     public void addChild(Object entity, Object parent) {
