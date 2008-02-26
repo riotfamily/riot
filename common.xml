@@ -10,6 +10,21 @@
 		<format property="build.date" pattern="yyyy-MM-dd" />
 		<format property="publish.date" pattern="yyyyMMddHHmmss" />
 	</tstamp>
+	
+	<property name="publish.status" value="integration" />
+	
+	<condition property="riot.revision" value="${project.version}-dev-${publish.date}">
+		<equals arg1="${publish.status}" arg2="integration" />
+	</condition>
+	<property name="riot.revision" value="${project.version}" />
+	
+	<!--
+	  - Revision pattern used in Ivy files to express Riot internal dependencies
+	  -->
+	<condition property="dep.riot.revision" value="${project.version}-dev-+">
+		<equals arg1="${publish.status}" arg2="integration" />
+	</condition>
+	<property name="dep.riot.revision" value="${project.version}" />
 
 	<!-- Location of this buildfile -->
 	<dirname property="root.dir" file="${ant.file.common}" />
