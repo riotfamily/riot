@@ -21,11 +21,7 @@
 		<entry key="{http://www.riotfamily.org/schema/media/form-elements}video-upload"
 				value="org.riotfamily.media.riot.form.VideoUpload" />
 	</override:put>
-	
-	<override:add ref="customStyleSheets">
-		<value>style/riot-media.css</value>
-	</override:add>
-	
+		
 	<override:add ref="resourceMappings" append="true">			
 		<bean class="org.riotfamily.riot.resource.ResourceMapping">
 			<property name="path" value="/" />

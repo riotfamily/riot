@@ -43,6 +43,7 @@ import org.riotfamily.forms.request.FormRequest;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.ScriptResource;
+import org.riotfamily.forms.resource.StylesheetResource;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.service.ProcessingService;
 import org.springframework.util.FileCopyUtils;
@@ -56,7 +57,8 @@ public class FileUpload extends CompositeElement implements Editor,
 		ResourceElement {
 
 	protected static FormResource RESOURCE = new ScriptResource(
-			"inline-upload.js", null);
+			"inline-upload.js", null, 
+			new StylesheetResource("style/riot-media.css"));
 
 	private ProcessingService processingService;
 	
