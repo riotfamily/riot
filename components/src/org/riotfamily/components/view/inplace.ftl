@@ -200,6 +200,9 @@
 			</#if>
 			<#if tag == "img">
 				<#local attributes = attributes + {"src": src} />
+				<#if !attributes.alt?has_content>
+					<#local attributes = attributes + {"alt": " "} />
+				</#if>				
 			<#else>
 				<#local attributes = attributes + {"style": "background-image:url(" + src + ");" + attributes.style!} />
 			</#if>
