@@ -69,6 +69,7 @@ public class ContentFormController extends AbstractFrontOfficeFormController {
 
 	protected void reattach(Object object, HttpServletRequest request) {
 		ContentContainer container = (ContentContainer) object;
+		componentDao.updateContentContainer(container);
 		componentDao.saveOrUpdatePreviewVersion(container);
 	}
 	
