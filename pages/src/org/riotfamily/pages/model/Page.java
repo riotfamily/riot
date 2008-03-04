@@ -32,13 +32,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.riotfamily.common.beans.MapWrapper;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.riot.security.AccessController;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 
 
 /**
@@ -164,13 +170,56 @@ public class Page {
 		}
 		return getPath();
 	}
-	
+
 	public String getUrl(PathCompleter pathCompleter) {
 		return pathCompleter.addServletMapping(getFullPath());
 	}
 	
+	public String getUrl(PathCompleter pathCompleter, Object attributes) {
+		String pagePath = getUrl(pathCompleter);
+		if (isWildcardInPath()) {
+			pagePath = fillInWildcards(pagePath, null, attributes);
+		}
+		return pagePath;
+	}	
+	
 	public String getAbsoluteUrl(PathCompleter pathCompleter, boolean secure) {
-		return site.getAbsoluteUrl(secure).append(getUrl(pathCompleter)).toString();
+		return getAbsoluteUrl(pathCompleter, secure, null, null);
+	}
+
+	public String getAbsoluteUrl(PathCompleter pathCompleter, boolean secure,
+			HttpServletRequest request, Object attributes) {
+		
+		String pagePath =  pathCompleter.addServletMapping(getPath());
+		if (isWildcardInPath()) {
+			pagePath = fillInWildcards(pagePath, request, attributes);
+		}
+		return site.getAbsoluteUrl(request, secure).append(pagePath).toString();
+	}
+	
+	private String fillInWildcards(String pattern, HttpServletRequest request,
+			Object attributes) {
+		
+		AttributePattern p = new AttributePattern(pattern);
+		if (attributes == null) {
+			if (request == null) {
+				return pattern;
+			}
+			return p.fillInAttributes(new MapWrapper(request.getParameterMap()));
+		}
+		if (attributes instanceof Map) {
+			Map map = (Map) attributes;
+			if (p.matches(map)) {
+				return p.fillInAttributes(new MapWrapper(map));
+			}
+			return null;
+		}
+		if (ClassUtils.isAssignable(String.class, attributes.getClass()) ||
+				ClassUtils.isPrimitiveOrWrapper(attributes.getClass())) {
+			
+			return p.fillInAttribute(attributes);
+		}
+		return p.fillInAttributes(new BeanWrapperImpl(attributes));
 	}
 	
 	public boolean isWildcard() {

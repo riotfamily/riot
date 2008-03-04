@@ -108,24 +108,32 @@ public class PageFacade {
 	}
 
 	public String getUrl() {
-		String host = page.getSite().getHostName();
-		if (host != null && !host.equals(request.getServerName())) {
-			return getAbsoluteUrl();
-		}
-		return page.getUrl(pathCompleter);
+		return getWildcardUrl(null);
 	}
 
-	public String getAbsoluteUrl() {
-		return page.getAbsoluteUrl(pathCompleter, request.isSecure());
+	public String getWildcardUrl(Object attributes) {
+		String host = page.getSite().getHostName();
+		if (host != null && !host.equals(request.getServerName())) {
+			return getAbsoluteWildcardUrl(attributes);
+		}
+		return page.getUrl(pathCompleter, attributes);
 	}
-		
+	
+	public String getAbsoluteUrl() {
+		return getAbsoluteWildcardUrl(null);
+	}
+
+	public String getAbsoluteWildcardUrl(Object attributes) {
+		return page.getAbsoluteUrl(pathCompleter, request.isSecure(), request, attributes);
+	}
+
 	public String getSecureUrl() {
 		if (request.isSecure() && request.getServerName().equals(
 				page.getSite().getHostName())) {
 			
 			return getUrl();
 		}
-		return page.getAbsoluteUrl(pathCompleter, true);
+		return page.getAbsoluteUrl(pathCompleter, true, request, null);
 	}
 
 	public boolean isWildcard() {
