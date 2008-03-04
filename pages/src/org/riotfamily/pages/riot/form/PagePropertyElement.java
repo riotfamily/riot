@@ -33,6 +33,7 @@ import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.JavaScriptEvent;
+import org.riotfamily.forms.request.FormRequest;
 import org.riotfamily.pages.model.Page;
 
 /**
@@ -98,6 +99,12 @@ public class PagePropertyElement extends TemplateElement {
 	
 	public String getStyleClass() {
 		return editor.getEditorBinding().getProperty();
+	}
+	
+	public void processRequest(FormRequest request) {
+		if (overwrite) {
+			super.processRequest(request);
+		}
 	}
 	
 	protected void renderTemplate(PrintWriter writer) {
