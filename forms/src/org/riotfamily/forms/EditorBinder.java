@@ -87,10 +87,6 @@ public interface EditorBinder extends PropertyEditorRegistry {
 	 * @return the populated backingObject
 	 */
 	public Object populateBackingObject();
-
-	public EditorBinding getParent();
-
-	public void setParent(EditorBinding parent);
 	
 	public void registerPropertyEditors(PropertyEditorRegistrar[] registrars);
 

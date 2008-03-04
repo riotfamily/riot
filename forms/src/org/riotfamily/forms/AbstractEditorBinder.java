@@ -52,8 +52,6 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 	/** List of {@link EditorBinding editor bindings} */
 	private List bindings = new LinkedList();
 
-	private EditorBinding parent;
-	
 	public AbstractEditorBinder() {
 		registerDefaultEditors();
 		registerCustomEditor(java.sql.Date.class,new SqlDateEditor());
@@ -156,14 +154,6 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 		return getBackingObject();
 	}
 
-	public EditorBinding getParent() {
-		return this.parent;
-	}
-
-	public void setParent(EditorBinding parent) {
-		this.parent = parent;
-	}
-
 	public PropertyEditor getPropertyEditor(Class type, String propertyPath) {
 		PropertyEditor pe = findCustomEditor(type, propertyPath);
 		if (pe == null) {
@@ -208,11 +198,25 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 		}
 		
 		public String getPropertyPath() {
-			if (getParent() != null) {
-				return getParent().getPropertyPath() 
-						+ '.' + getProperty(); 
+			EditorBinding parentBinding = findParentBinding();
+			if (parentBinding != null) {
+				return parentBinding.getPropertyPath() + '.' + getProperty();
 			}
 			return getProperty();
+		}
+		
+		private EditorBinding findParentBinding() {
+			Element parent = editor.getParent();
+			while (parent != null) {
+				if (parent instanceof Editor) {
+					Editor parentEditor = (Editor) parent;
+					if (parentEditor.getEditorBinding() != null) {
+						return parentEditor.getEditorBinding(); 
+					}
+				}
+				parent = parent.getParent();
+			}
+			return null;
 		}
 		
 		public Class getPropertyType() {

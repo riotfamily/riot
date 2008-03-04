@@ -98,7 +98,6 @@ public class NestedForm extends TemplateElement implements
 		if (editorBinder == null) {
 			setBeanClass(getEditorBinding().getPropertyType());
 		}
-		editorBinder.setParent(getEditorBinding());
 	}
 	
 	public Editor getEditor(String property) {

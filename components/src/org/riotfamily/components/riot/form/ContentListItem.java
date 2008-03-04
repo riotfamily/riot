@@ -42,12 +42,11 @@ public class ContentListItem extends ListItem {
 	}
 	
 	public void setValue(Object value) {
-		Editor editor = getEditor();
 		if (value != null) {
 			wrapper = (ValueWrapper) value;
 			value = wrapper.getValue();
 		}
-		editor.setValue(value);
+		super.setValue(value);
 	}
 	
 	public Object getValue() {
