@@ -177,10 +177,15 @@ public class HibernateUserDao extends HqlDao implements RiotUserDao,
 	 */
 	protected RiotUser findInitialUser(String username, String password) {
 		if (!anyUserExists()) {
+			save(initialUser, null);
+			
 			String initialUsername = PropertyUtils.getPropertyAsString(initialUser, usernameProperty);
+			Assert.notNull(initialUsername, "The initial user's '" + usernameProperty + "' property must not be null.");
+			
 			String initialPassword = PropertyUtils.getPropertyAsString(initialUser, passwordProperty);
+			Assert.notNull(initialPassword, "The initial user's '" + passwordProperty + "' property  must not be null.");
+			
 			if (initialUsername.equals(username) && initialPassword.equals(password)) {
-				save(initialUser, null);
 				return initialUser;
 			}
 		}
