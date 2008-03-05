@@ -31,6 +31,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
@@ -524,6 +526,17 @@ public final class ServletUtils {
 		return null;
 	}
 
+	public static String setParameter(String url, String name, String value) {
+		Pattern pattern = Pattern.compile("([?&]" + name + "=)(.*)?(&|$)");
+		Matcher m = pattern.matcher(url);
+		if (m.find()) {
+			return m.replaceFirst("$1" + value + "$3");
+		}
+		else {
+			return addParameter(url, name, value);
+		}
+	}
+	
 	public static String addParameter(String url, String name, String value) {
 		StringBuffer sb = new StringBuffer(url);
 		boolean first = url.indexOf('?') == -1;
