@@ -90,7 +90,7 @@ public class PageNode {
 	 * Sets the parent node. To establish a parent-child use the 
 	 * {@link #addChildNode(PageNode)} method.  
 	 */
-	private void setParent(PageNode parent) {
+	protected void setParent(PageNode parent) {
 		this.parent = parent;
 	}
 
