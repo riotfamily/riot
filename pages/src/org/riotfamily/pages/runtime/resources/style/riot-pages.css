@@ -35,6 +35,9 @@ table.pages tr.hidden-page td {
 	background-image: url(icons/commands/discard.gif);
 }
 
+#list .commands .action-translatable {
+	background: url(icons/commands/publish_state.gif) 2px -96px no-repeat;
+}
 #list .commands .action-published {
 	background: url(icons/commands/publish_state.gif) 2px -64px no-repeat;
 }

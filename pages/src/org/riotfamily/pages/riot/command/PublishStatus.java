@@ -39,14 +39,17 @@ public class PublishStatus extends AbstractCommand {
 	}
 	
 	protected String getStyleClass(CommandContext context, String action) {
-		Page page = PageCommandUtils.getPage(context);
-		if (!page.isPublished()) {
-			return "new";
+		if (PageCommandUtils.isTranslated(context)) {
+			Page page = PageCommandUtils.getPage(context);
+			if (!page.isPublished()) {
+				return "new";
+			}
+			if (page.isDirty()) {
+				return "dirty";
+			}
+			return "published";
 		}
-		if (page.isDirty()) {
-			return "dirty";
-		}
-		return "published";
+		return "translatable";
 	}
 	
 	public CommandResult execute(CommandContext context) {
