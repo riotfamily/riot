@@ -12,7 +12,7 @@
 		</id>
 		<property name="type" />
 		<property name="name" />
-		<property name="description" />
+		<property name="description" type="text" />
 		<property name="state" />
 		<property name="objectId" />
 		<property name="stepsTotal" />
