@@ -245,6 +245,10 @@ public class Page {
 		return version != null ? version.getProperty(key) : null;
 	}
 
+	public String getTitle() {
+		return getTitle(true);
+	}
+
 	public String getTitle(boolean preview) {
 		String title = getProperty(TITLE_PROPERTY, preview);
 		if (title == null) {
