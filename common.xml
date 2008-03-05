@@ -75,12 +75,18 @@
 	  - Configures Ivy.
 	  -->
 	<target name="-configure-ivy" depends="-setup-ivy">
-		<available classname="com.jcraft.jsch.JSchException" property="ivy.settings" value="ivysettings-ssh.xml" />
-		<property name="ivy.settings" value="ivysettings.xml" />
+		<available classname="com.jcraft.jsch.JSchException" property="ivysettings-default" value="${root.dir}/ivysettings-ssh.xml" />
+		<property name="ivysettings-default" value="${root.dir}/ivysettings.xml" />
+
+		<available file="${root.dir}/ivysettings-local.xml" property="ivysettings" value="${root.dir}/ivysettings-local.xml" />
+		<property name="ivysettings" value="${ivysettings-default}" />
+
+		<echo>${ivysettings-default}</echo>
+		<echo>${ivysettings}</echo>
 		<!--
-		<ivy:settings id="ivy.instance" file="${root.dir}/${ivy.settings}" />
+		<ivy:settings id="ivy.instance" file="${ivysettings}" />
 		-->
-		<ivy:configure file="${root.dir}/${ivy.settings}" />
+		<ivy:configure file="${ivysettings}" />
 	</target>
 
 	<target name="-setup-ivy" depends="-install-ivy">
