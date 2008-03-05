@@ -162,6 +162,13 @@ var RElement = {
 	    return el;
 	},
 
+	setHoverClass: function(el, className) {
+		if (!(el = $(el))) return;
+		el.observe('mouseover', el.addClassName.bind(el, className));
+		el.observe('mouseout', el.removeClassName.bind(el, className));
+		return el;
+	},
+	
 	disableEvents: function(el) {
 		if (!(el = $(el))) return;
 		if (el.childDump) return;
