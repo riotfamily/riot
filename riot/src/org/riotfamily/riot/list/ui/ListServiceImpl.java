@@ -71,7 +71,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 	private PlatformTransactionManager transactionManager;
 
 	private Collection sessions = new ArrayList();
-
+	
 	public void setMessageCodesResolver(AdvancedMessageCodesResolver codesResolver) {
 		this.messageCodesResolver = codesResolver;
 	}
@@ -161,10 +161,10 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 		}
 	}
 
-	public ListModel getModel(String key,HttpServletRequest request)
+	public ListModel getModel(String key, String expandedId, HttpServletRequest request)
 			throws ListSessionExpiredException {
 
-		return getListSession(key, request).getModel(request);
+		return getListSession(key, request).getModel(expandedId, request);
 	}
 
 	public String getFilterFormHtml(String key,	HttpServletRequest request)
@@ -179,12 +179,21 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 		return getListSession(key, request).getFormCommands(objectId, request);
 	}
 
-	public CommandResult execCommand(String key, ListItem item,
+	public CommandResult execListCommand(String key, String parentId, 
 			CommandState command, boolean confirmed,
 			HttpServletRequest request, HttpServletResponse response)
 			throws ListSessionExpiredException {
 
-		return getListSession(key, request).execCommand(
+		return getListSession(key, request).execListCommand(
+				parentId, command, confirmed, request, response);
+	}
+	
+	public CommandResult execItemCommand(String key, ListItem item,
+			CommandState command, boolean confirmed,
+			HttpServletRequest request, HttpServletResponse response)
+			throws ListSessionExpiredException {
+
+		return getListSession(key, request).execItemCommand(
 				item, command, confirmed, request, response);
 	}
 	
@@ -212,5 +221,11 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 			HttpServletRequest request) throws ListSessionExpiredException {
 
 		return getListSession(key, request).sort(property, request);
+	}
+	
+	public ListModel getChildren(String key, String parentId,
+			HttpServletRequest request) throws ListSessionExpiredException {
+		
+		return getListSession(key, request).getChildren(parentId, request);
 	}
 }

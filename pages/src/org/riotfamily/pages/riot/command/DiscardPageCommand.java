@@ -32,8 +32,7 @@ import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
-import org.riotfamily.riot.list.command.result.ReloadResult;
-import org.riotfamily.riot.list.command.result.ShowListResult;
+import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -114,7 +113,7 @@ public class DiscardPageCommand extends AbstractCommand implements BatchCommand 
 		Page page = (Page) context.getBean();
 		if (!page.isPublished()) {
 			pageDao.deletePage(page);
-			return new ShowListResult(context);
+			return new RefreshSiblingsResult(context);
 		}
 		if (page.isDirty()) {
 			pageDao.discardPageProperties(page);
@@ -122,7 +121,7 @@ public class DiscardPageCommand extends AbstractCommand implements BatchCommand 
 		else {
 			pageDao.unpublishPage(page);
 		}
-		return new ReloadResult();
+		return new RefreshSiblingsResult(context);
 	}
 	
 }

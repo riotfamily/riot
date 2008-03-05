@@ -32,7 +32,7 @@ import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
-import org.riotfamily.riot.list.command.result.ReloadResult;
+import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -64,7 +64,7 @@ public class PublishPageCommand extends AbstractCommand implements BatchCommand 
 	public CommandResult execute(CommandContext context) {
 		Page page = (Page) context.getBean();
 		pageDao.publishPage(page);
-		return new ReloadResult();
+		return new RefreshSiblingsResult(context);
 	}
 
 	public String getConfirmationMessage(CommandContext context) {

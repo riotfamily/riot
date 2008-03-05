@@ -6,9 +6,9 @@ var RiotList = Class.create({
 		this.itemCommandClickHandler = this.onItemCommandClick.bindAsEventListener(this);
 	},
 
-	render: function(target, commandTarget, filterForm) {
+	render: function(target, commandTarget, expandedId, filterForm) {
 		target = $(target);
-		this.table = RBuilder.node('table', {parent: target},
+		this.table = RBuilder.node('table', {className: 'view-mode', parent: target},
 			RBuilder.node('thead', null,
 				this.headRow = RBuilder.node('tr')
 			),
@@ -20,7 +20,7 @@ var RiotList = Class.create({
 			this.filterForm = $(filterForm);
 		}
 		Event.observe(window, 'resize', this.resizeColumns.bind(this));
-		ListService.getModel(this.key, this.renderTable.bind(this, commandTarget));
+		ListService.getModel(this.key, expandedId, this.renderTable.bind(this, commandTarget));
 	},
 
 	renderFormCommands: function(objectId, target) {
@@ -31,12 +31,10 @@ var RiotList = Class.create({
 	renderTable: function(commandTarget, model) {
 		this.columns = [];
 		this.headings = {};
-		this.table.className = model.cssClass;
+		this.tree = model.tree;
+		this.table.addClassName(model.cssClass);
 		this.hasBatchCommands = model.batchCommands && model.batchCommands.length > 0; 
-		if (this.hasBatchCommands) {
-			RBuilder.node('th', {className: 'check', parent: this.headRow, style: { width: '12px' }});
-		}
-		model.columns.each(this.addColumn.bind(this));
+		model.columns.each(this.addColumnHeading.bind(this));
 		var th = RBuilder.node('th', {className: 'commands', parent: this.headRow,
 			style: { width: model.itemCommandCount * 32 + 'px' }});
 		// Expand the column for IE browsers
@@ -62,7 +60,7 @@ var RiotList = Class.create({
 		this.pager.update(model.currentPage, model.pages);
 	},
 
-	addColumn: function(col) {
+	addColumnHeading: function(col) {
 		var label;
 		var className = 'col-' + (this.columns.length + 1) + ' ' + col.cssClass;
 		var th = RBuilder.node('th', {property: col.property, className: className},
@@ -134,62 +132,58 @@ var RiotList = Class.create({
 
 	updateRows: function(model) {
 		this.tbody.update();
-		model.items.each(this.addRow.bind(this, model));
-	},
-
-	addRow: function(model, row) {
-		var tr = RBuilder.node('tr', {item: row});
-		Event.observe(tr, 'mouseover', tr.addClassName.bind(tr, 'highlight'));
-		Event.observe(tr, 'mouseout', tr.removeClassName.bind(tr, 'highlight'));
-		if (row.cssClass) {
-			tr.addClassName(row.cssClass);
+		for (var i = 0; i < model.items.length; i++) {
+			ListRow.create(this, model, null, model.items[i]); 
 		}
-		if (row.lastOnPage) {
-			tr.addClassName('last');
+		if (this.tree) {
+			this.tbody.appendChild(ListRow.createCommandRow(this, 0, model.listCommands, null));
 		}
-		
-		if (this.hasBatchCommands) {
-			tr.cb = RBuilder.node('input', {type: 'checkbox'});
-			tr.cb.observe('click', this.toggleItem.bindAsEventListener(this, tr));
-			RBuilder.node('td', {parent: tr, className: 'check'}, tr.cb).observe('click', this.toggleItem.bindAsEventListener(this, tr));
-		}
-		
-		for (var i = 0; i < row.columns.length; i++) {
-			var cell = RBuilder.node('td', {innerHTML: row.columns[i], parent: tr, className: this.columns[i].className});
-			if (row.defaultCommand) {
-				cell.observe('click', this.execCommand.bind(this, row, row.defaultCommand, false));
-			}
-		}
-
-		var td = RBuilder.node('td', {className: 'commands highlight-default'});
-		Event.observe(td, 'mouseover', td.removeClassName.bind(td, 'highlight-default'));
-		Event.observe(td, 'mouseout', td.addClassName.bind(td, 'highlight-default'));
-
-		this.appendCommands(td, false, row, this.itemCommandClickHandler, row.commands);
-
-		row.commands.each(function(command) {
-			if (command.itemStyleClass) {
-				tr.addClassName(command.itemStyleClass);
-			}
-		});
-
-		tr.appendChild(td);
-		this.tbody.appendChild(tr);
 	},
 
 	appendCommands: function(el, renderLabel, item, handler, commands) {
 		el = $(el);
+		var alwaysOn = item == null && this.tree;
 		return commands.collect(function(command) {
-			var button = new CommandButton(item, command, handler, renderLabel);
+			var button = new CommandButton(item, command, handler, renderLabel, alwaysOn);
 			el.appendChild(button.element);
 			return button;
 		});
 	},
 
 	onItemCommandClick: function(event) {
-		var a = event.findElement('a');
-		this.execCommand(a.item, a.command, false);
 		event.stop();
+		var a = event.findElement('a');
+		if (!this.selectParentMode) {
+			if (this.tree && !a.item) {
+				this.selectParent(a.command);
+				var cancel = RBuilder.node('button', {}, 'Cancel');
+				this.dialog = RBuilder.node('div', {className: 'select-parent'}, 
+					'Please select a target on the left.', cancel
+				).hide().insertSelfAfter(a);
+				cancel.observe('click', this.cancelParentSelection.bind(this));
+				new Effect.BlindDown(this.dialog, {duration: 0.3});
+			}
+			else {
+				this.execCommand(a.item, null, a.command, false);
+			}
+		}
+	},
+	
+	selectParent: function(command) {
+		this.selectParentMode = true;
+		this.parentCommand = command;
+		this.table.removeClassName('view-mode');
+		this.table.addClassName('select-parent-mode');
+		this.table.select('.parent-command').invoke('setup', command);
+	},
+	
+	cancelParentSelection: function() {
+		this.table.addClassName('view-mode');
+		this.table.removeClassName('select-parent-mode');
+		this.tbody.select('tr.leaf').invoke('collapse');
+		this.dialog.remove();
+		this.dialog = null;
+		this.selectParentMode = false;
 	},
 	
 	onBatchCommandClick: function(event) {
@@ -205,22 +199,41 @@ var RiotList = Class.create({
 		}
 	},
 
-	execCommand: function(item, command, confirmed) {
-		if (this.setBusy()) {
-			ListService.execCommand(this.key, item, command, confirmed,
-					this.processCommandResult.bind(this));
-		}
+	execParentCommand: function(parentId) {
+		this.cancelParentSelection();
+		this.execCommand(null, parentId, this.parentCommand, true);
 	},
 	
-	toggleItem: function(event, tr) {
+	execCommand: function(item, parentId, command, confirmed) {
+		if (this.setBusy()) {
+			if (item) {
+				ListService.execItemCommand(this.key, item, command, confirmed,
+						this.processCommandResult.bind(this));
+			}
+			else {
+				ListService.execListCommand(this.key, parentId, command, confirmed,
+						this.processCommandResult.bind(this));
+			}
+		}
+	},
+		
+	refreshSiblings: function(objectId) {
+		if (objectId) {
+			var tr = $('item-' + objectId);
+			if (tr.parentRow) {
+				tr.parentRow.refreshChildren();
+				return;
+			}
+		}
+		ListService.getModel(this.key, null, this.updateRowsAndPager.bind(this));
+	},
+		
+	toggleSelection: function(tr) {
 		var cb = tr.cb;
 		var item = tr.item; 
 		var it = function(i) {
 			return i.objectId == item.objectId;
 		};
-		if (!event || event.element() != cb) {
-			cb.checked = !cb.checked;
-		}
 		if (cb.checked) {
 			if (!this.selection.find(it)) {
 				this.selection.push(item);
@@ -272,12 +285,18 @@ var RiotList = Class.create({
 	processCommandResult: function(result) {
 		this.setIdle();
 		if (result) {
-			if (result.action == 'confirm') {
+			if (result.action == 'batch') {
+				result.batch.each(this.processCommandResult.bind(this));
+			}
+			else if (result.action == 'refreshSiblings') {
+				this.refreshSiblings(result.objectId);
+			}
+			else if (result.action == 'confirm') {
 				if (confirm(result.message)) {
-					this.execCommand(result.item, result.command, true);
+					this.execCommand(result.item, result.item.parentId, result.command, true);
 				}
 			}
-			if (result.action == 'confirmBatch') {
+			else if (result.action == 'confirmBatch') {
 				if (confirm(result.message)) {
 					this.execBatchCommand(result.command, true);
 				}
@@ -332,6 +351,7 @@ var RiotList = Class.create({
 		}
 		return true;
 	},
+	
 	setIdle: function() {
 		if (!this.busy) {
 			return false;
@@ -345,8 +365,188 @@ var RiotList = Class.create({
 
 });
 
+var ListRow = {
+	create: function(list, model, parentRow, row) {
+		var tr = RBuilder.node('tr', {
+			list: list, 
+			item: row, 
+			id: 'item-' + row.objectId,
+			parentRow: parentRow,
+			level: parentRow ? parentRow.level + 1 : 0
+		});
+		Object.extend(tr, ListRow.Methods);
+		tr.setHoverClass('highlight');
+		if (row.cssClass) {
+			tr.addClassName(row.cssClass);
+		}
+		if (row.expandable) {
+			tr.addClassName('expandable');
+		}
+		else {
+			tr.addClassName('leaf');
+		}
+		
+		for (var i = 0; i < row.columns.length; i++) {
+			var cell = RBuilder.node('td', {innerHTML: row.columns[i], className: list.columns[i].className}).appendTo(tr);
+			if (list.hasBatchCommands && i == 0) {
+				tr.cb = RBuilder.node('input', {type: 'checkbox', className: 'check'})
+					.observe('click', list.toggleSelection.bind(list, tr));
+				cell.prependChild(tr.cb);
+			}
+			if (list.tree && i == 0) {
+				var arrow = RBuilder.node('div', {
+					parent: tr, className: 'expand', style: 'margin-left:' + (tr.level * 22) + 'px'
+				});
+				cell.prependChild(arrow);
+				arrow.observe('click', tr.toggleChildren.bindAsEventListener(tr));
+			}
+		}
+
+		var td = RBuilder.node('td', {className: 'commands'});
+
+		list.appendCommands(td, false, row, list.itemCommandClickHandler, row.commands);
+
+		row.commands.each(function(command) {
+			if (command.itemStyleClass) {
+				tr.addClassName(command.itemStyleClass);
+			}
+		});
+
+		if (row.defaultCommand) {
+			tr.observe('click', tr.execDefaultCommand.bindAsEventListener(tr));
+		}
+			
+		tr.appendChild(td);
+		if (parentRow) {
+			tr.insertSelfAfter(parentRow);
+			parentRow.childRows.push(tr);
+		}
+		else {
+			tr.appendTo(list.tbody);
+		}
+		
+		if (row.children) {
+			tr.expanded = true;
+			tr.addClassName('expanded');
+			tr.addChildren(row.children);
+			row.children = null;
+		}
+	},
+	
+	createCommandRow: function(list, level, commands, parentId) {
+		var arrow = RBuilder.node('div', {
+			className: 'expand', 
+			style: 'margin-left:' + ((level) * 22) + 'px;'
+		});
+		
+		var icon = RBuilder.node('a', {
+			href: '#', 
+			style: 'float:right'
+		}).observe('click', list.execParentCommand.bind(list, parentId));
+		
+		var cb = null;				
+		if (list.hasBatchCommands) {
+			cb = RBuilder.node('input', {
+				type: 'checkbox', className: 'check', disabled: 'disabled'
+			});
+		}
+		
+		var label = RBuilder.node('span', {className: 'label'});
+		
+		return RBuilder.node('tr', {
+				className: 'parent-command', 
+				level: level,
+				commands: commands,
+				label: label,
+				icon: icon,
+				setup: function(cmd) {
+					if (cmd) {
+						cmd = this.commands.find(function(c) {return c.action == cmd.action});
+						this.label.innerHTML = cmd.label + ' ...';
+						this.icon.className = 'action action-' + cmd.styleClass;
+						this.label.parentNode.className = this.icon.parentNode.className = cmd.enabled ? 'enabled' : 'disabled';
+					}
+					return this;
+				}
+			}, 
+			RBuilder.node('td', {colSpan: list.columns.length}, arrow, label),
+			RBuilder.node('td', {}, icon)
+		).setHoverClass('highlight-parent');
+	},
+	
+	Methods: {
+	
+		remove: function() {
+			this.removeChildren();
+			this.parentNode.removeChild(this);
+		},
+		
+		removeChildren: function() {
+			if (this.childRows) {
+				this.childRows.invoke('remove');
+				this.commandRow.remove();
+				this.childRows = null;
+			}
+		},
+				
+		addChildren: function(model) {
+			this.childRows = [];
+			this.commandRow = ListRow.createCommandRow(
+					this.list, this.level+1, model.listCommands, this.item.objectId) 
+					.insertSelfAfter(this).setup(this.list.parentCommand);
+						
+			for (var i = model.items.length - 1; i >= 0; i--) {
+				ListRow.create(this.list, model, this, model.items[i]);
+			}
+		},
+		
+		toggleChildren: function(event) {
+			event.stop();
+			if (this.item.expandable || this.list.selectParentMode) {
+				if (this.expanded) {
+					this.collapse();
+				}
+				else {
+					this.expand();
+				}
+			}
+		},
+		
+		expand: function() {
+			if (!this.expanded) {
+				this.expanded = true;
+				this.addClassName('expanded');
+				ListService.getChildren(this.list.key, this.item.objectId, this.addChildren.bind(this));
+			}
+		},
+		
+		collapse: function() {
+			if (this.expanded) {
+				this.expanded = false;
+				this.removeClassName('expanded');
+				this.removeChildren();
+			}
+		},
+				
+		replaceChildren: function(model) {
+			this.removeChildren();
+			this.addChildren(model);
+		},
+		
+		refreshChildren: function() {
+			ListService.getChildren(this.list.key, this.item.objectId, this.replaceChildren.bind(this));
+		},
+		
+		execDefaultCommand: function(event) {
+			if (event.element() != this.cb) {
+				this.list.execCommand(this.item, null, this.item.defaultCommand, false);
+			}
+		}
+	}
+}
+
 var CommandButton = Class.create({
-	initialize: function(item, command, handler, renderLabel) {
+	initialize: function(item, command, handler, renderLabel, enabled) {
 		this.item = item;
 		this.command = command;
 		this.handler = handler;
@@ -363,7 +563,7 @@ var CommandButton = Class.create({
 			this.element.title = command.label.stripTags();
 		}
 		this.element.observe('click', this.onclick.bindAsEventListener(this));
-		this.setEnabled(command.enabled);
+		this.setEnabled(enabled || command.enabled);
 	},
 	
 	setEnabled: function(enabled) {
@@ -394,7 +594,7 @@ dwr.engine.setErrorHandler(function(err, ex) {
 	}
 	else {
 		list.setIdle();
-		alert(err);
+		throw ex;
 	}
 });
 

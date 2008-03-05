@@ -38,6 +38,8 @@ public class ListItem {
 	
 	private String objectId;
 	
+	private String parentId;
+	
 	private String cssClass;
 	
 	private List columns;
@@ -46,7 +48,9 @@ public class ListItem {
 
 	private CommandState defaultCommand;
 		
-	private boolean lastOnPage;
+	private boolean expandable;
+	
+	private ListModel children;
 	
 	public ListItem() {
 	}
@@ -87,6 +91,14 @@ public class ListItem {
 		this.objectId = objectId;
 	}
 
+	public String getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+
 	public int getRowIndex() {
 		return this.rowIndex;
 	}
@@ -95,12 +107,20 @@ public class ListItem {
 		this.rowIndex = rowIndex;
 	}
 
-	public boolean isLastOnPage() {
-		return this.lastOnPage;
+	public boolean isExpandable() {
+		return expandable;
 	}
 
-	public void setLastOnPage(boolean lastOnPage) {
-		this.lastOnPage = lastOnPage;
+	public void setExpandable(boolean expandable) {
+		this.expandable = expandable;
+	}
+
+	public ListModel getChildren() {
+		return children;
+	}
+
+	public void setChildren(ListModel children) {
+		this.children = children;
 	}
 
 	void setDefaultCommandIds(String[] defaultCommandIds) {
@@ -132,6 +152,21 @@ public class ListItem {
 	
 	public CommandState getDefaultCommand() {
 		return defaultCommand;
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj instanceof ListItem) {
+			ListItem other = (ListItem) obj;
+			return objectId != null && objectId.equals(other.objectId); 
+		}
+		return false;
+	}
+	
+	public int hashCode() {
+		return objectId != null ? objectId.hashCode() : 0;
 	}
 		
 }

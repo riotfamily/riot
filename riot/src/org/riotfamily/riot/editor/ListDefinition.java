@@ -37,7 +37,7 @@ public class ListDefinition extends AbstractEditorDefinition {
 
 	protected static final String TYPE_LIST = "list";
 
-	private EditorDefinition displayDefinition;
+	private ObjectEditorDefinition displayDefinition;
 
 	private String listId;
 
@@ -80,11 +80,11 @@ public class ListDefinition extends AbstractEditorDefinition {
 		return getListConfig().getItemClass();
 	}
 
-	public EditorDefinition getDisplayDefinition() {
+	public ObjectEditorDefinition getDisplayDefinition() {
 		return displayDefinition;
 	}
 
-	public void setDisplayDefinition(EditorDefinition editorDef) {
+	public void setDisplayDefinition(ObjectEditorDefinition editorDef) {
 		this.displayDefinition = editorDef;
 	}
 

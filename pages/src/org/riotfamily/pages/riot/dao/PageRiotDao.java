@@ -36,6 +36,7 @@ import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.ParentChildDao;
 import org.riotfamily.riot.dao.SwappableItemDao;
+import org.riotfamily.riot.dao.TreeHintDao;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
@@ -44,8 +45,8 @@ import org.springframework.util.Assert;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PageRiotDao implements ParentChildDao, SwappableItemDao,
-		CutAndPasteEnabledDao, InitializingBean {
+public class PageRiotDao implements ParentChildDao, TreeHintDao, 
+		SwappableItemDao, CutAndPasteEnabledDao, InitializingBean {
 
 	private PageDao pageDao;
 
@@ -94,6 +95,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 
 		if (parent instanceof Page) {
 			Page parentPage = (Page) parent;
+			
 			return parentPage.getChildPagesWithFallback();
 		}
 		else {
@@ -108,6 +110,15 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 		}
 	}
 
+	public boolean hasChildren(Object parent, Object root, ListParams params) {
+		Site site = (Site) root;
+		Page page = (Page) parent;
+		if (!page.getSite().equals(site)) {
+			return false;
+		}
+		return page.getChildPagesWithFallback().size() > 0;
+	}
+	
 	public Object load(String id) throws DataAccessException {
 		return pageDao.loadPage(new Long(id));
 	}

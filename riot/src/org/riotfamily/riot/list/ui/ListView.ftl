@@ -65,7 +65,7 @@
 		
 		<script type="text/javascript" language="JavaScript">
 			var list = new RiotList('${listKey}');
-			list.render('list', 'listCommands'<#if filterForm?exists>, 'filterForm'</#if>);
+			list.render('list', 'listCommands', <#if expand??>'${expand}'<#else>null</#if><#if filterForm?exists>, 'filterForm'</#if>);
 		</script>
 	</body>
 </html>

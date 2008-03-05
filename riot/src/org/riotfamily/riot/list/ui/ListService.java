@@ -41,8 +41,8 @@ public interface ListService {
 	public ListSession getOrCreateListSession(String editorId, String parentId, 
 			String choose, HttpServletRequest request);
 	
-	public ListModel getModel(String key, HttpServletRequest request)
-			throws ListSessionExpiredException;
+	public ListModel getModel(String key, String expandedId, 
+			HttpServletRequest request) throws ListSessionExpiredException;
 	
 	public ListModel gotoPage(String key, int page,	HttpServletRequest request)
 			throws ListSessionExpiredException;
@@ -56,7 +56,12 @@ public interface ListService {
 	public List getFormCommands(String key, String objectId, 
 			HttpServletRequest request) throws ListSessionExpiredException;
 	
-	public CommandResult execCommand(String key, ListItem item, 
+	public CommandResult execListCommand(String key, String parentId,
+			CommandState command, boolean confirmed, 
+			HttpServletRequest request, HttpServletResponse response)
+			throws ListSessionExpiredException;
+	
+	public CommandResult execItemCommand(String key, ListItem item,
 			CommandState command, boolean confirmed, 
 			HttpServletRequest request, HttpServletResponse response)
 			throws ListSessionExpiredException;
@@ -69,4 +74,7 @@ public interface ListService {
 	public String getFilterFormHtml(String key,	HttpServletRequest request)
 			throws ListSessionExpiredException;
 	
+	public ListModel getChildren(String key, String parentId, 
+			HttpServletRequest request)
+			throws ListSessionExpiredException;
 }

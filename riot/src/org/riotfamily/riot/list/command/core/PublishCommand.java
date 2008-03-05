@@ -30,7 +30,7 @@ import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.result.ReloadResult;
+import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -101,7 +101,7 @@ public class PublishCommand extends AbstractCommand implements BatchCommand {
 		Object value = isPublished(bean) ? unpublishedValue : publishedValue;
 		PropertyUtils.setProperty(bean, publishedProperty, value);
 		context.getDao().update(bean);
-		return new ReloadResult();
+		return new RefreshSiblingsResult(context);
 	}
 
 	protected boolean isPublished(Object bean) {

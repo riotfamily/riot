@@ -47,7 +47,10 @@ import org.riotfamily.forms.controller.FormContextFactory;
 import org.riotfamily.forms.element.TextField;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.forms.request.SimpleFormRequest;
+import org.riotfamily.riot.dao.ParentChildDao;
+import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.dao.SortableDao;
+import org.riotfamily.riot.dao.TreeHintDao;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.ListDefinition;
@@ -56,6 +59,7 @@ import org.riotfamily.riot.list.ColumnConfig;
 import org.riotfamily.riot.list.ListConfig;
 import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.Command;
+import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.list.command.core.ChooseCommand;
@@ -77,12 +81,18 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 public class ListSession implements RenderContext {
 
 	private static final DefaultTransactionDefinition TRANSACTION_DEFINITION =
-		new DefaultTransactionDefinition(
-		TransactionDefinition.PROPAGATION_REQUIRED);
+			new DefaultTransactionDefinition(
+			TransactionDefinition.PROPAGATION_REQUIRED);
 
 	private String key;
 
 	private ListDefinition listDefinition;
+	
+	private TreeDefinition treeDefinition;
+	
+	private boolean tree;
+	
+	private TreeHintDao treeHintDao;
 
 	private String parentId;
 
@@ -102,6 +112,8 @@ public class ListSession implements RenderContext {
 
 	private ListConfig listConfig;
 
+	private boolean sortable;
+	
 	private List listCommands;
 
 	private List itemCommands;
@@ -125,7 +137,17 @@ public class ListSession implements RenderContext {
 		this.contextPath = contextPath;
 		this.transactionManager = transactionManager;
 		this.listConfig = listDefinition.getListConfig();
-
+		this.sortable = listConfig.getDao() instanceof SortableDao;
+		
+		if (listDefinition instanceof TreeDefinition) {
+			treeDefinition = (TreeDefinition) listDefinition;
+			tree = !treeDefinition.isColored();
+			RiotDao dao = treeDefinition.getListConfig().getDao();
+			if (dao instanceof TreeHintDao) {
+				treeHintDao = (TreeHintDao) dao;
+			}
+		}
+		
 		listCommands = listConfig.getCommands();
 		itemCommands = listConfig.getColumnCommands();
 		
@@ -218,15 +240,21 @@ public class ListSession implements RenderContext {
 		filterForm.render(new PrintWriter(writer));
 		filterFormHtml = writer.toString();
 	}
-
-	public ListModel getItems(HttpServletRequest request) {
-		Object parent = EditorDefinitionUtils.loadParent(
-				listDefinition, parentId);
-		
-		return getItems(request, parent);
+	
+	public ListModel getChildren(String parentId, HttpServletRequest request) {
+		return getChildren(loadBean(parentId), request);
 	}
 	
-	private ListModel getItems(HttpServletRequest request, Object parent) {
+	private ListModel getChildren(Object parent, HttpServletRequest request) {
+		ListModel model = getItems(parent, loadParent(), request);
+		CommandContextImpl context = new CommandContextImpl(this, request);
+		context.setParent(parent, getObjectId(parent));
+		context.setItemsTotal(model.getItemsTotal());
+		model.setListCommands(getListCommandStates(listCommands, context, request));
+		return model;
+	}
+	
+	private ListModel getItems(Object parent, Object root, HttpServletRequest request) {
 		int itemsTotal = listConfig.getDao().getListSize(parent, params);
 		int pageSize = params.getPageSize();
 		Collection beans = listConfig.getDao().list(parent, params);
@@ -234,9 +262,20 @@ public class ListSession implements RenderContext {
 			itemsTotal = beans.size();
 			pageSize = itemsTotal;
 		}
-
 		ListModel model = new ListModel(itemsTotal, pageSize, params.getPage());
+		if (tree && treeDefinition.isNode(parent)) {
+			model.setParentId(getObjectId(parent));
+		}
+		fillInItems(model, beans, root, request);
+		return model;
+	}
 
+	/**
+	 * Sets a List of ListItem objects on the given model.
+	 */
+	private void fillInItems(ListModel model, Collection beans, Object root,
+			HttpServletRequest request) {
+		
 		ArrayList items = new ArrayList(beans.size());
 		int rowIndex = 0;
 		Iterator it = beans.iterator();
@@ -244,11 +283,11 @@ public class ListSession implements RenderContext {
 			Object bean = it.next();
 			ListItem item = new ListItem();
 			item.setRowIndex(rowIndex++);
-			item.setLastOnPage(!it.hasNext());
 			item.setObjectId(EditorDefinitionUtils.getObjectId(listDefinition, bean));
+			item.setParentId(model.getParentId());
 			item.setColumns(getColumns(bean));
 			item.setCommands(getCommandStates(itemCommands,
-					item, bean, itemsTotal, request));
+					item, bean, model.getItemsTotal(), request));
 
 			if (listConfig.getRowStyleProperty() != null) {
 				item.setCssClass(FormatUtils.toCssClass(
@@ -256,12 +295,29 @@ public class ListSession implements RenderContext {
 						listConfig.getRowStyleProperty())));
 			}
 			item.setDefaultCommandIds(defaultCommandIds);
+			item.setExpandable(isExpandable(bean, root));
 			items.add(item);
 		}
 		model.setItems(items);
-		return model;
 	}
-
+	
+	private boolean isExpandable(Object bean, Object root) {
+		if (treeHintDao != null) {
+			return treeHintDao.hasChildren(bean, root, params);
+		}
+		if (treeDefinition != null) {
+			int listSize = listConfig.getDao().getListSize(bean, params);
+			if (listSize == -1) {
+				listSize = listConfig.getDao().list(bean, params).size();
+			}
+			return listSize > 0;
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns a List of HTML markup for each column.
+	 */
 	private List getColumns(Object bean) {
 		ArrayList result = new ArrayList();
 		Iterator it = listConfig.getColumnConfigs().iterator();
@@ -285,20 +341,57 @@ public class ListSession implements RenderContext {
 		return result;
 	}
 
-	public ListModel getModel(HttpServletRequest request) {
-		Object parent = EditorDefinitionUtils.loadParent(
-				listDefinition, parentId);
-		
-		ListModel model = getItems(request, parent);
+	public ListModel getModel(String expandedId, HttpServletRequest request) {
+		ListModel model;
+		Object parent = loadParent();
+		if (expandedId != null) {
+			model = buildTree(loadBean(expandedId), null, request);
+		}
+		else {
+			model = getItems(parent, parent, request);
+		}
 		model.setEditorId(listDefinition.getId());
-		model.setParentId(parentId);
 		model.setItemCommandCount(itemCommands.size());
-		model.setListCommands(getCommandStates(listCommands, null, parent, model.getItemsTotal(), request));
-		model.setBatchCommands(getBatchStates(itemCommands, parent, model.getItemsTotal(), request));
+		
+		CommandContextImpl context = new CommandContextImpl(this, request);
+		context.setParent(parent, this.parentId);
+		context.setItemsTotal(model.getItemsTotal());
+		model.setListCommands(getListCommandStates(listCommands, context, request));
+		model.setBatchCommands(getBatchStates(itemCommands, context, request));
+		
 		model.setCssClass(listConfig.getId());
+		model.setTree(tree);
+		fillInColumnConfigs(model);
+		model.setFilterFormHtml(filterFormHtml);
+		return model;
+	}
 
-		boolean sortableDao = listConfig.getDao() instanceof SortableDao;
-
+	private ListModel buildTree(Object expanded, ListModel subTree, HttpServletRequest request) {
+		ListModel children;
+		if (treeDefinition.isNode(expanded)) {
+			children = getChildren(expanded, request);
+			if (subTree != null) {
+				ListItem item = children.findItem(subTree.getParentId());
+				item.setChildren(subTree);
+			}
+			
+			ParentChildDao dao = (ParentChildDao) listConfig.getDao();
+			Object parent = dao.getParent(expanded);
+			
+			return buildTree(parent, children, request);
+		}
+		else {
+			Object root = loadParent();
+			children = getItems(root, root, request);
+			if (subTree != null) {
+				ListItem item = children.findItem(subTree.getParentId());
+				item.setChildren(subTree);
+			}
+			return children;
+		}
+	}
+	
+	private void fillInColumnConfigs(ListModel model) {
 		ArrayList columns = new ArrayList();
 		Iterator it = listConfig.getColumnConfigs().iterator();
 		while (it.hasNext()) {
@@ -308,7 +401,7 @@ public class ListSession implements RenderContext {
 			column.setHeading(getHeading(config.getProperty(),
 					config.getLookupLevel()));
 
-			column.setSortable(sortableDao && config.isSortable());
+			column.setSortable(sortable && config.isSortable());
 			column.setCssClass(FormatUtils.toCssClass(config.getProperty()));
 			if (params.hasOrder() && params.getPrimaryOrder()
 					.getProperty().equals(config.getProperty())) {
@@ -319,10 +412,8 @@ public class ListSession implements RenderContext {
 			columns.add(column);
 		}
 		model.setColumns(columns);
-		model.setFilterFormHtml(filterFormHtml);
-		return model;
 	}
-
+	
 	private String getHeading(String property, int lookupLevel) {
 		return getHeading(getBeanClass(), property, lookupLevel);
 	}
@@ -355,7 +446,7 @@ public class ListSession implements RenderContext {
 	public ListModel sort(String property, HttpServletRequest request) {
 		ColumnConfig col = listConfig.getColumnConfig(property);
 		params.orderBy(property, col.isAscending(), col.isCaseSensitive());
-		return getModel(request);
+		return getModel(null, request);
 	}
 
 	public String[] getSearchProperties() {
@@ -380,14 +471,16 @@ public class ListSession implements RenderContext {
 			updateFilterFormHtml();
 		}
 		params.setPage(1);
-		ListModel result = getItems(request);
+		Object root = loadParent();
+		ListModel result = getItems(root, root, request);
 		result.setFilterFormHtml(filterFormHtml);
 		return result;
 	}
 
 	public ListModel gotoPage(int page, HttpServletRequest request) {
 		params.setPage(page);
-		return getItems(request);
+		Object root = loadParent();
+		return getItems(root, root, request);
 	}
 
 	public boolean hasListCommands() {
@@ -397,7 +490,7 @@ public class ListSession implements RenderContext {
 	public List getFormCommands(String objectId, HttpServletRequest request) {
 		Object bean = null;
 		if (objectId != null) {
-			bean = listConfig.getDao().load(objectId);
+			bean = loadBean(objectId);
 		}
 		return getCommandStates(listConfig.getFormCommands(),
 				new ListItem(objectId), bean, 1, request);
@@ -408,9 +501,10 @@ public class ListSession implements RenderContext {
 
 		ArrayList states = new ArrayList();
 		CommandContextImpl context = new CommandContextImpl(this, request);
-		context.setBean(bean);
-		context.setItem(item);
+		context.setBean(bean, item.getObjectId());
+		context.setParent(null, item.getParentId());
 		context.setItemsTotal(itemsTotal);
+		context.setRowIndex(item.getRowIndex());
 		Iterator it = commands.iterator();
 		while (it.hasNext()) {
 			Command command = (Command) it.next();
@@ -420,13 +514,24 @@ public class ListSession implements RenderContext {
 		return states;
 	}
 	
-	private List getBatchStates(List commands, Object bean,
-			int itemsTotal, HttpServletRequest request) {
+	private List getListCommandStates(List commands, CommandContext context,
+			HttpServletRequest request) {
 
 		ArrayList states = new ArrayList();
-		CommandContextImpl context = new CommandContextImpl(this, request);
-		context.setBean(bean);
-		context.setItemsTotal(itemsTotal);
+		Iterator it = commands.iterator();
+		while (it.hasNext()) {
+			Command command = (Command) it.next();
+			CommandState state = command.getState(context);
+			states.add(state);
+		}
+		checkPermissions(states, context.getParent());
+		return states;
+	}
+	
+	private List getBatchStates(List commands, CommandContext context, 
+			HttpServletRequest request) {
+
+		ArrayList states = new ArrayList();
 		Iterator it = commands.iterator();
 		while (it.hasNext()) {
 			Object command = it.next();
@@ -435,7 +540,7 @@ public class ListSession implements RenderContext {
 				states.addAll(bc.getBatchStates(context));
 			}
 		}
-		checkPermissions(states, bean);
+		checkPermissions(states, context.getParent());
 		return states;
 	}
 	
@@ -450,21 +555,46 @@ public class ListSession implements RenderContext {
 		}
 	}
 
-	public CommandResult execCommand(ListItem item, CommandState commandState,
-			boolean confirmed, HttpServletRequest request,
-			HttpServletResponse response) {
-
-		Collection commands = item != null ? itemCommands : listCommands;
-		Command command = getCommand(commands, commandState.getId());
+	public CommandResult execListCommand(String parentId, 
+			CommandState commandState, boolean confirmed,
+			HttpServletRequest request, HttpServletResponse response) {
+		
+		Command command = getCommand(listCommands, commandState.getId());
 		CommandContextImpl context = new CommandContextImpl(this, request);
-		if (item != null) {
-			context.setItem(item);
+		Object target = null;
+		if (parentId != null) {
+			target = loadBean(parentId);
+			context.setParent(target, parentId);
 		}
 		else {
-			context.setBean(EditorDefinitionUtils.loadParent(listDefinition, parentId));
+			target = loadParent();
+			context.setParent(target, null);
 		}
+		return execCommand(null, command, context, target, 
+				commandState, confirmed, request, response);
+	}
+	
+	public CommandResult execItemCommand(ListItem item, 
+			CommandState commandState, boolean confirmed,
+			HttpServletRequest request, HttpServletResponse response) {
+		
+		Command command = getCommand(itemCommands, commandState.getId());
+		CommandContextImpl context = new CommandContextImpl(this, request);
+		Object target = loadBean(item.getObjectId());
+		context.setBean(target, item.getObjectId());
+		context.setParent(null, item.getParentId());
+		context.setRowIndex(item.getRowIndex());
+		return execCommand(item, command, context, target, 
+				commandState, confirmed, request, response);
+	}
+	
+	private CommandResult execCommand(ListItem item, Command command, 
+			CommandContext context, Object target, 
+			CommandState commandState, boolean confirmed,
+			HttpServletRequest request, HttpServletResponse response) {
+		
 		String action = command.getState(context).getAction();
-		if (AccessController.isGranted(action, context.getBean())) {
+		if (AccessController.isGranted(action, target)) {
 			if (!confirmed) {
 				String message = command.getConfirmationMessage(context);
 				if (message != null) {
@@ -508,8 +638,11 @@ public class ListSession implements RenderContext {
 			int batchIndex = 0;
 			while (it.hasNext()) {
 				ListItem item = (ListItem) it.next();
-				context.setItem(item);
-				if (AccessController.isGranted(commandState.getAction(), context.getBean())) {
+				Object bean = loadBean(item.getObjectId());
+				context.setBean(bean, item.getObjectId());
+				context.setParent(null, item.getParentId());
+				context.setRowIndex(item.getRowIndex());
+				if (AccessController.isGranted(commandState.getAction(), bean)) {
 					context.setBatchIndex(batchIndex);
 					result = command.execute(context);
 				}
@@ -536,13 +669,24 @@ public class ListSession implements RenderContext {
 	}
 
 	public Object loadBean(String objectId) {
-		return listDefinition.getListConfig().getDao().load(objectId);
+		return listConfig.getDao().load(objectId);
+	}
+	
+	public String getObjectId(Object bean) {
+		return listConfig.getDao().getObjectId(bean);
+	}
+	
+	public Object loadParent() {
+		return EditorDefinitionUtils.loadParent(listDefinition, parentId);
 	}
 
-	public ListDefinition getListDefinition() {
+	public ListDefinition getListDefinition(String parentId) {
+		if (parentId != null && treeDefinition != null) {
+			return treeDefinition.getNodeListDefinition();
+		}
 		return listDefinition;
 	}
-
+	
 	public String getListId() {
 		return listDefinition.getListId();
 	}

@@ -59,7 +59,7 @@ public class ConfirmResult implements CommandResult {
 	public ListItem getItem() {
 		return this.item;
 	}
-
+	
 	public String getMessage() {
 		return this.message;
 	}

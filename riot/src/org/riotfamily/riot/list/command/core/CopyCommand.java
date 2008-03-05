@@ -25,7 +25,7 @@ package org.riotfamily.riot.list.command.core;
 
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.result.ShowListResult;
+import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
 public class CopyCommand extends AbstractCommand {
 
@@ -39,7 +39,7 @@ public class CopyCommand extends AbstractCommand {
 
 	public CommandResult execute(CommandContext context) {
 		Clipboard.get(context).copy(context);
-		return new ShowListResult(context);
+		return new RefreshSiblingsResult(context);
 	}
 
 }

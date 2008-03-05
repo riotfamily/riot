@@ -30,7 +30,7 @@ import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.EditCommand;
-import org.riotfamily.riot.list.command.result.ShowListResult;
+import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
 public class EditPageCommand extends EditCommand {
 
@@ -102,7 +102,7 @@ public class EditPageCommand extends EditCommand {
 		Page page = PageCommandUtils.getPage(context);
 		Site site = PageCommandUtils.getParentSite(context);
 		pageDao.addTranslation(page, site);
-		return new ShowListResult(context);
+		return new RefreshSiblingsResult(context);
 	}
 
 }

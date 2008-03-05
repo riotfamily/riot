@@ -28,25 +28,28 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.RiotDao;
-import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.ListConfig;
 import org.riotfamily.riot.list.command.CommandContext;
 
-class CommandContextImpl implements CommandContext {
+public class CommandContextImpl implements CommandContext {
 
 	private ListSession session;
-
-	private ListItem item;
 
 	private int itemsTotal;
 
 	private int batchSize;
 
 	private int batchIndex;
+	
+	private int rowIndex;
 
+	private String objectId;
+	
 	private Object bean;
 
+	private String parentId;
+	
 	private Object parent;
 
 	private HttpServletRequest request;
@@ -56,38 +59,43 @@ class CommandContextImpl implements CommandContext {
 		this.request = request;
 	}
 
-	public void setItem(ListItem item) {
-		this.item = item;
-		this.bean = null;
-	}
-
 	public Class getBeanClass() {
 		return session.getBeanClass();
 	}
 
 	public RiotDao getDao() {
-		return session.getListDefinition().getListConfig().getDao();
+		return getListDefinition().getListConfig().getDao();
 	}
 
 	public Object getBean() {
-		if (bean == null && getObjectId() != null) {
-			bean = session.loadBean(getObjectId());
+		if (bean == null && objectId != null) {
+			bean = session.loadBean(objectId);
 		}
 		return bean;
 	}
 
-	public void setBean(Object bean) {
+	public void setBean(Object bean, String objectId) {
 		this.bean = bean;
+		this.objectId = objectId;
 	}
 
 	public Object getParent() {
-		if (parent == null && getParentId() != null) {
-			ListDefinition listDef = getListDefinition();
-			parent = EditorDefinitionUtils.loadParent(listDef, getParentId());
+		if (parent == null) {
+			if (parentId != null) {
+				parent = session.loadBean(parentId);
+			}
+			else {
+				parent = session.loadParent();
+			}
 		}
 		return parent;
 	}
 
+	public void setParent(Object parent, String parentId) {
+		this.parent = parent;
+		this.parentId = parentId;
+	}
+	
 	public int getItemsTotal() {
 		return itemsTotal;
 	}
@@ -113,7 +121,7 @@ class CommandContextImpl implements CommandContext {
 	} 
 	
 	public ListDefinition getListDefinition() {
-		return session.getListDefinition();
+		return session.getListDefinition(parentId);
 	}
 
 	public ListConfig getListConfig() {
@@ -125,7 +133,7 @@ class CommandContextImpl implements CommandContext {
 	}
 
 	public String getObjectId() {
-		return item != null ? item.getObjectId() : null;
+		return objectId;
 	}
 
 	public ListParams getParams() {
@@ -133,7 +141,7 @@ class CommandContextImpl implements CommandContext {
 	}
 
 	public String getParentId() {
-		return session.getParentId();
+		return parentId != null ? parentId : session.getParentId();
 	}
 
 	public HttpServletRequest getRequest() {
@@ -141,7 +149,11 @@ class CommandContextImpl implements CommandContext {
 	}
 
 	public int getRowIndex() {
-		return item.getRowIndex();
+		return rowIndex;
+	}
+	
+	public void setRowIndex(int rowIndex) {
+		this.rowIndex = rowIndex;
 	}
 
 }

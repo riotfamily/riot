@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.ui;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -35,6 +36,8 @@ public class ListModel {
 
 	private String parentId;
 
+	private boolean tree;
+	
 	private List columns;
 
 	private List items;
@@ -85,6 +88,14 @@ public class ListModel {
 		this.parentId = parentId;
 	}
 
+	public boolean isTree() {
+		return tree;
+	}
+
+	public void setTree(boolean tree) {
+		this.tree = tree;
+	}
+
 	public List getColumns() {
 		return this.columns;
 	}
@@ -101,6 +112,19 @@ public class ListModel {
 		this.items = items;
 	}
 
+	public ListItem findItem(String objectId) {
+		if (items != null && objectId != null) {
+			Iterator it = items.iterator();
+			while (it.hasNext()) {
+				ListItem item = (ListItem) it.next();
+				if (objectId.equals(item.getObjectId())) {
+					return item;
+				}
+			}
+		}
+		return null;
+	}
+	
 	public List getListCommands() {
 		return this.listCommands;
 	}

@@ -25,6 +25,7 @@
 package org.riotfamily.riot.editor;
 
 import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.editor.ui.EditorReference;
 import org.springframework.util.Assert;
 
@@ -36,9 +37,14 @@ public class TreeDefinition extends ListDefinition implements TreeList {
 	
 	private ListDefinition nodeListDefinition;
 	
+	private boolean colored;
 	
 	public TreeDefinition(EditorRepository editorRepository) {
 		super(editorRepository);
+	}
+	
+	public boolean isColored() {
+		return colored;
 	}
 	
 	public boolean isNode(Object bean) {
@@ -64,16 +70,18 @@ public class TreeDefinition extends ListDefinition implements TreeList {
 		return this.nodeListDefinition;
 	}
 
-	public void setDisplayDefinition(final EditorDefinition def) {
+	public void setDisplayDefinition(final ObjectEditorDefinition def) {
 		Assert.isInstanceOf(FormDefinition.class, def);
 		super.setDisplayDefinition(def);
 		
 		formDefinition = (FormDefinition) def;
 		nodeListDefinition = new NodeListDefinition();
+		colored = true; //formDefinition.getChildEditorDefinitions().size() > 0;
 		
 		getEditorRepository().addEditorDefinition(nodeListDefinition);
-		formDefinition.getChildEditorDefinitions().add(0, nodeListDefinition);
-		
+		if (colored) {
+			formDefinition.getChildEditorDefinitions().add(0, nodeListDefinition);
+		}
 		FormDefinition nodeForm = formDefinition.copy("node-");
 		nodeForm.setParentEditorDefinition(nodeListDefinition);
 		nodeListDefinition.setDisplayDefinition(nodeForm);
@@ -94,7 +102,6 @@ public class TreeDefinition extends ListDefinition implements TreeList {
 
 		NodeListDefinition() {
 			super(TreeDefinition.this, TreeDefinition.this.getEditorRepository());
-			setCondition(TreeDefinition.this.getCondition());
 		}
 		
 		public String getId() {
@@ -111,7 +118,21 @@ public class TreeDefinition extends ListDefinition implements TreeList {
 		
 		private EditorReference stripList(EditorReference path) {
 			EditorReference parent = path.getParent();
-			parent.setEditorUrl(path.getEditorUrl());
+			if (colored) {
+				parent.setEditorUrl(path.getEditorUrl());
+			}
+			else {
+				EditorReference formRef = parent;
+				EditorReference listRef = formRef.getParent();
+				if (listRef.getEditorType().equals("list")) {
+					formRef.setEditorId(formDefinition.getId());
+					formRef.setEditorUrl(formDefinition.getEditorUrl(formRef.getObjectId(), null));	
+				}
+				while (!listRef.getEditorType().equals("list")) {
+					listRef = listRef.getParent();	
+				}
+				listRef.setEditorUrl(ServletUtils.setParameter(listRef.getEditorUrl(), "expand", path.getParent().getObjectId()));
+			}
 			parent.setEditorType("node");
 			return parent;
 		}

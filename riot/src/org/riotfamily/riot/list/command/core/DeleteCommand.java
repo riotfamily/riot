@@ -31,7 +31,7 @@ import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.result.ShowListResult;
+import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
 /**
  * Command that deletes an item. To prevent accidental deletion a confirmation
@@ -75,7 +75,7 @@ public class DeleteCommand extends AbstractCommand implements BatchCommand {
 		
 		Object item = context.getBean();
 		context.getDao().delete(item, parent);
-		return new ShowListResult(context);
+		return new RefreshSiblingsResult(context);
 	}
 	
 }

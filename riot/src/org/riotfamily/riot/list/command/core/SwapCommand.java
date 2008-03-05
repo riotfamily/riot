@@ -28,7 +28,7 @@ import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.result.ReloadResult;
+import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
 /**
  * Command that swaps two items in a list.
@@ -65,8 +65,8 @@ public class SwapCommand extends AbstractCommand {
 
 		dao.swapEntity(context.getBean(), parent, context.getParams(),
 				context.getRowIndex() + swapWith);
-
-		return new ReloadResult();
+		
+		return new RefreshSiblingsResult(context);
 	}
 
 }

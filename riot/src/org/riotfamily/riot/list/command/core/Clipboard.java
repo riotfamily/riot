@@ -25,6 +25,8 @@ package org.riotfamily.riot.list.command.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -36,6 +38,9 @@ import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.ui.EditorReference;
 import org.riotfamily.riot.list.command.CommandContext;
+import org.riotfamily.riot.list.command.CommandResult;
+import org.riotfamily.riot.list.command.result.BatchResult;
+import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.util.WebUtils;
 
@@ -51,13 +56,8 @@ public class Clipboard {
 
 	private int mode;
 
-	private int itemsTotal;
-
-	private List objectIds = new ArrayList();
-
-	private List parentIds = new ArrayList();
-
-	private List listDefinitions = new ArrayList();
+	private LinkedHashSet items = new LinkedHashSet();
+	
 
 	public static Clipboard get(CommandContext context) {
 		return get(context.getRequest().getSession());
@@ -81,18 +81,12 @@ public class Clipboard {
 			clear();
 		}
 		this.mode = mode;
-		itemsTotal++;
-		objectIds.add(context.getObjectId());
-		parentIds.add(context.getParentId());
-		listDefinitions.add(context.getListDefinition());
+		items.add(new ClipboardItem(context));
 	}
 
 	public void clear() {
-		itemsTotal = 0;
 		mode = MODE_EMPTY;
-		objectIds.clear();
-		parentIds.clear();
-		listDefinitions.clear();
+		items.clear();
 	}
 
 	public boolean isEmpty() {
@@ -103,17 +97,14 @@ public class Clipboard {
 		if (isEmpty()) {
 			return Collections.EMPTY_LIST;
 		}
-		List result = new ArrayList(itemsTotal);
-		for (int index = 0; index < itemsTotal; index++) {
-			ListDefinition listDefinition = (ListDefinition)
-					listDefinitions.get(index);
-			
-			String objectId = (String) objectIds.get(index);
-			result.add(listDefinition.getListConfig().getDao().load(objectId));
+		List result = new ArrayList(items.size());
+		Iterator it = items.iterator();
+		while (it.hasNext()) {
+			ClipboardItem item = (ClipboardItem) it.next();
+			result.add(EditorDefinitionUtils.loadBean(item.listDefinition, item.objectId));
 		}
 		return result;
 	}
-	
 	
 	public boolean canCopy(CommandContext context) {
 		return context.getDao() instanceof CopyAndPasteEnabledDao;
@@ -132,45 +123,56 @@ public class Clipboard {
 				&& !isCutObjectAncestor(context);
 	}
 
-	public void paste(CommandContext context) {
+	public CommandResult paste(CommandContext context) {
 		if (mode == MODE_CUT) {
-			pasteCut(context);
+			return pasteCut(context);
 		}
 		else if (mode == MODE_COPY) {
-			pasteCopied(context);
+			return pasteCopied(context);
 		}
-		clear();
+		return null;
 	}
 
-	private void pasteCut(CommandContext context) {
+	private CommandResult pasteCut(CommandContext context) {
+		BatchResult result = new BatchResult();
 		CutAndPasteEnabledDao dao = (CutAndPasteEnabledDao) context.getDao();
-		for (int index = 0; index < itemsTotal; index++) {
-			Object item = dao.load((String) objectIds.get(index));
-			Object parent = context.getBean();
-			dao.addChild(item, parent);
-			String parentId = (String) parentIds.get(index);
-			if (parentId != null) {
-				ListDefinition listDefinition = (ListDefinition)
-						listDefinitions.get(index);
-				
+		Object parent = context.getParent();
+		Iterator it = items.iterator();
+		while (it.hasNext()) {
+			ClipboardItem item = (ClipboardItem) it.next();
+			Object bean = dao.load(item.objectId);
+			dao.addChild(bean, parent);
+			result.add(new RefreshSiblingsResult(item.objectId));
+			
+			if (item.parentId != null) {
 				Object previousParent = EditorDefinitionUtils.loadParent(
-						listDefinition, parentId);
+						item.listDefinition, item.parentId);
 
 				CutAndPasteEnabledDao previousDao = (CutAndPasteEnabledDao)
-						listDefinition.getListConfig().getDao();
+						item.listDefinition.getListConfig().getDao();
 
 				previousDao.removeChild(item, previousParent);
+				result.add(new RefreshSiblingsResult(item.parentId));	
+			}
+			else {
+				result.add(new RefreshSiblingsResult());
 			}
 		}
+		clear();
+		return result;
 	}
 
-	private void pasteCopied(CommandContext context) {
+	private CommandResult pasteCopied(CommandContext context) {
+		Object parent = context.getParent();
 		CopyAndPasteEnabledDao dao = (CopyAndPasteEnabledDao) context.getDao();
-		for (int index = 0; index < itemsTotal; index++) {
-			Object item = dao.load((String) objectIds.get(index));
-			Object parent = context.getBean();
-			dao.addCopy(item, parent);
+		Iterator it = items.iterator();
+		while (it.hasNext()) {
+			ClipboardItem item = (ClipboardItem) it.next();
+			Object bean = dao.load(item.objectId);
+			dao.addCopy(bean, parent);
 		}
+		clear();
+		return new RefreshSiblingsResult(context);
 	}
 
 
@@ -183,39 +185,32 @@ public class Clipboard {
 	}
 	
 	private boolean isInClipboard(CommandContext context) {
-		for (int index = 0; index < itemsTotal; index++) {
-			if (ObjectUtils.nullSafeEquals((String) objectIds.get(index),
-					context.getObjectId())) {
-				
+		return items.contains(new ClipboardItem(context));
+	}
+
+	private boolean isSameParent(CommandContext context) {
+		Iterator it = items.iterator();
+		while (it.hasNext()) {
+			ClipboardItem item = (ClipboardItem) it.next();
+			if (ObjectUtils.nullSafeEquals(context.getParentId(), item.parentId)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private boolean isSameParent(CommandContext context) {
-		for (int index = 0; index < itemsTotal; index++) {
-			if (!ObjectUtils.nullSafeEquals(parentIds.get(index),
-					context.getParentId())) {
-
-				return false;
-			}
-		}
-		return true;
-	}
-
 	private boolean isCutObjectAncestor(CommandContext context) {
 		if (mode == MODE_CUT) {
 			EditorReference ref = context.getListDefinition().createEditorPath(
-					null, context.getParentId(),
-					context.getMessageResolver()).getParent();
+					null, context.getParentId(), context.getMessageResolver());
 
-			for (int index = 0; index < itemsTotal; index++) {
-				String objectId = (String) objectIds.get(index);
-				EditorReference itemRef = ref; 
-			
+			Iterator it = items.iterator();
+			while (it.hasNext()) {
+				ClipboardItem item = (ClipboardItem) it.next();
+				EditorReference itemRef = ref;
+				//FIXME Break if itemRef belongs to another list
 				while (itemRef != null) {
-					if (objectId.equals(itemRef.getObjectId())) {
+					if (item.objectId.equals(itemRef.getObjectId())) {
 						return true;
 					}
 					itemRef = itemRef.getParent();
@@ -233,16 +228,61 @@ public class Clipboard {
 
 	private boolean isCompatibleEntityClass(CommandContext context) {
 		Class daoEntityClass = context.getDao().getEntityClass();
-		for (int index = 0; index < itemsTotal; index++) {
-			ListDefinition listDefinition = (ListDefinition)
-					listDefinitions.get(index);
-			
-			RiotDao sourceDao = listDefinition.getListConfig().getDao();
+		Iterator it = items.iterator();
+		while (it.hasNext()) {
+			ClipboardItem item = (ClipboardItem) it.next();
+			RiotDao sourceDao = item.listDefinition.getListConfig().getDao();
 			if (!daoEntityClass.equals(sourceDao.getEntityClass())) {
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	private static class ClipboardItem {
+
+		private String objectId;
+		
+		private String parentId;
+		
+		private ListDefinition listDefinition;
+
+		public ClipboardItem(CommandContext context) {
+			this (context.getObjectId(), context.getParentId(), context.getListDefinition());
+		}
+		
+		public ClipboardItem(String objectId, String parentId,
+				ListDefinition listDefinition) {
+			
+			this.objectId = objectId;
+			this.parentId = parentId;
+			this.listDefinition = listDefinition;
+		}
+		
+		public int hashCode() {
+			int hashCode = 0;
+			if (objectId != null) {
+				hashCode += objectId.hashCode();
+			}
+			if (listDefinition != null) {
+				hashCode += listDefinition.hashCode();
+			}
+			return hashCode;
+		}
+		
+		public boolean equals(Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (obj instanceof ClipboardItem) {
+				ClipboardItem other = (ClipboardItem) obj;
+				return ObjectUtils.nullSafeEquals(objectId, other.objectId)
+						&& ObjectUtils.nullSafeEquals(parentId, other.parentId)
+						&& ObjectUtils.nullSafeEquals(listDefinition, other.listDefinition);
+			}
+			return false;
+		}
+		
 	}
 
 }
