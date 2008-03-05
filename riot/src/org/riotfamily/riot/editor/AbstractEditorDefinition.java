@@ -45,8 +45,6 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 
 	private boolean hidden;
 	
-	private EditorCondition condition;
-
 	public void setEditorRepository(EditorRepository editorRepository) {
 		this.editorRepository = editorRepository;
 	}
@@ -96,7 +94,7 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 	}
 	
 	public boolean show(Object parent) {
-		return !hidden && parent != null && (condition == null || condition.showEditor(parent));
+		return !hidden && parent != null;
 	}
 
 	protected EditorRepository getEditorRepository() {
@@ -119,14 +117,6 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 		this.hidden = hidden;
 	}
 	
-	public void setCondition(EditorCondition condition) {
-		this.condition = condition;
-	}
-	
-	protected EditorCondition getCondition() {
-		return this.condition;
-	}
-
 	protected StringBuffer getMessageKey() {
 		StringBuffer key = new StringBuffer();
 		key.append(getEditorType());
@@ -139,4 +129,18 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 		return null;
 	}
 
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (id != null && obj instanceof EditorDefinition) {
+			EditorDefinition other = (EditorDefinition) obj;
+			return id.equals(other.getId());
+		}
+		return false;
+	}
 }

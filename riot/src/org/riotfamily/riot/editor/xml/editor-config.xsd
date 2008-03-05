@@ -36,7 +36,6 @@
 		<xsd:attribute name="icon" type="xsd:string" />
 		<xsd:attribute name="name" type="xsd:string" />
 		<xsd:attribute name="hidden" type="xsd:boolean" />
-		<xsd:attribute name="condition" type="xsd:string" />
 	</xsd:attributeGroup>
 
 	<xsd:element name="list">
@@ -62,7 +61,6 @@
 		<xsd:attribute name="icon" type="xsd:string" />
 		<xsd:attribute name="name" type="xsd:string" />
 		<xsd:attribute name="label-property" type="xsd:string" />
-		<xsd:attribute name="condition" type="xsd:string" />
 	</xsd:attributeGroup>
 
 	<xsd:group name="editors">
@@ -113,7 +111,6 @@
 			<xsd:attribute name="target" type="xsd:string" />
 			<xsd:attribute name="url" type="xsd:string" />
 			<xsd:attribute name="ref" type="xsd:string" />
-			<xsd:attribute name="condition" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
 
@@ -122,7 +119,6 @@
 			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="view-name" type="xsd:string" />
 			<xsd:attribute name="label-property" type="xsd:string" />
-			<xsd:attribute name="condition" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
 

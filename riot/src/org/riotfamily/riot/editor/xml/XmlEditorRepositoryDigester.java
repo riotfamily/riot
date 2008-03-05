@@ -64,7 +64,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	private static final String LIST_EDITOR = LIST + '|' + TREE;
 
 	private static final String[] LIST_ATTR = new String[] {
-		"name", "listId=list-ref", "icon", "hidden", "id", "@condition"
+		"name", "listId=list-ref", "icon", "hidden", "id"
 	};
 
 	private static final String FORM = "form";
@@ -76,7 +76,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	private static final String VIEW = "view";
 
 	private static final String[] VIEW_ATTR = new String[] {
-		"name", "view-name", "@condition"
+		"name", "view-name"
 	};
 
 	private static final String CUSTOM = "custom";
@@ -84,7 +84,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	private static final String CUSTOM_REF = "ref";
 	
 	private static final String[] CUSTOM_ATTR = new String[] {
-		"name", "target", "url", "icon", "@condition"
+		"name", "target", "url", "icon"
 	};
 
 	private static final String OBJECT_EDITOR = FORM + '|'
@@ -94,7 +94,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 
 
 	private static final String[] FORM_ATTR = new String[] {
-		"name", "formId=form-ref", "label-property", "hidden", "@condition"
+		"name", "formId=form-ref", "label-property", "hidden"
 	};
 
 	private static final String ANYTHING = OBJECT_EDITOR + '|' + LIST_EDITOR;
@@ -201,7 +201,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 
 		Element e = XmlUtils.getFirstChildByRegex(listElement, ANYTHING);
 		if (e != null) {
-			EditorDefinition def = null;
+			ObjectEditorDefinition def = null;
 			if (isListElement(e) || isTreeElement(e)) {
 				def = new IntermediateDefinition(
 						listDefinition, digestListOrTreeDefinition(e));
@@ -215,7 +215,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	}
 
 
-	protected EditorDefinition digestObjectEditorDefinition(
+	protected ObjectEditorDefinition digestObjectEditorDefinition(
 			Element ele, EditorDefinition parentDef) {
 
 		if (isFormElement(ele)) {
@@ -228,7 +228,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 			return digestViewDefinition(ele, parentDef);
 		}
 		else if (isCustomElement(ele)) {
-			return digestCustomDefinition(ele, parentDef);
+			return (ObjectEditorDefinition) digestCustomDefinition(ele, parentDef);
 		}
 		else {
 			throw new RuntimeException("Expected " + OBJECT_EDITOR);
