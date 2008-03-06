@@ -28,6 +28,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.ui.EditorPath;
 import org.riotfamily.riot.editor.ui.EditorReference;
@@ -49,7 +50,6 @@ public class ChooserPathController extends PathController {
 	}
 	
 	protected void processPath(EditorPath path, HttpServletRequest request) {
-		String queryString = "?choose=" + request.getAttribute("targetEditorId");
 		String root = (String) request.getAttribute("rootEditorId");
 		EditorReference prev = null;
 		Iterator it = path.getComponents().iterator();
@@ -60,7 +60,9 @@ public class ChooserPathController extends PathController {
 			}
 			else {
 				root = null;
-				ref.setEditorUrl(ref.getEditorUrl() + queryString);
+				ref.setEditorUrl(ServletUtils.addParameter(ref.getEditorUrl(), 
+						"choose", (String) request.getAttribute("targetEditorId")));
+				
 				if (ref.getEditorType().equals("list")) {
 					if (prev != null) {
 						ref.setLabel(prev.getLabel());

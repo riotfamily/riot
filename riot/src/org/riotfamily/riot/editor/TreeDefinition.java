@@ -76,7 +76,7 @@ public class TreeDefinition extends ListDefinition implements TreeList {
 		
 		formDefinition = (FormDefinition) def;
 		nodeListDefinition = new NodeListDefinition();
-		colored = true; //formDefinition.getChildEditorDefinitions().size() > 0;
+		colored = false; //formDefinition.getChildEditorDefinitions().size() > 0;
 		
 		getEditorRepository().addEditorDefinition(nodeListDefinition);
 		if (colored) {
@@ -120,6 +120,8 @@ public class TreeDefinition extends ListDefinition implements TreeList {
 			EditorReference parent = path.getParent();
 			if (colored) {
 				parent.setEditorUrl(path.getEditorUrl());
+				parent.setEditorType("node");
+				return parent;
 			}
 			else {
 				EditorReference formRef = parent;
@@ -128,13 +130,20 @@ public class TreeDefinition extends ListDefinition implements TreeList {
 					formRef.setEditorId(formDefinition.getId());
 					formRef.setEditorUrl(formDefinition.getEditorUrl(formRef.getObjectId(), null));	
 				}
+				
+				path.setEditorType("node");
+				path.setLabel(formRef.getLabel());
+				
 				while (!listRef.getEditorType().equals("list")) {
 					listRef = listRef.getParent();	
 				}
-				listRef.setEditorUrl(ServletUtils.setParameter(listRef.getEditorUrl(), "expand", path.getParent().getObjectId()));
+				
+				String treeUrl = ServletUtils.setParameter(listRef.getEditorUrl(), "expand", path.getParent().getObjectId());
+				path.setEditorUrl(treeUrl);
+				listRef.setEditorUrl(treeUrl);
+				
+				return path;
 			}
-			parent.setEditorType("node");
-			return parent;
 		}
 		
 		public EditorReference createEditorPath(String objectId, 

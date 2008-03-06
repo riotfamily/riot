@@ -211,8 +211,8 @@ public class ListSession implements RenderContext {
 			targetList = EditorDefinitionUtils.getParentListDefinition(target);
 		}
 
-		if (targetList != listDefinition
-				|| targetList instanceof TreeDefinition) {
+		if (targetList != listDefinition) {
+				//|| targetList instanceof TreeDefinition) {
 
 			ListDefinition nextList = targetList;
 			if (listDefinition != targetList) {

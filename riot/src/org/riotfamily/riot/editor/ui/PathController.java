@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor.ui;
 
+import java.util.Iterator;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -108,5 +110,12 @@ public class PathController implements Controller, MessageSourceAware {
 	}
 	
 	protected void processPath(EditorPath path, HttpServletRequest request) {
+		Iterator it = path.getComponents().iterator();
+		while (it.hasNext()) {
+			EditorReference ref = (EditorReference) it.next();
+			if (ref.getEditorType().equals("node")) {
+				it.remove();
+			}
+		}
 	}
 }
