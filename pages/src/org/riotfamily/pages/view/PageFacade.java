@@ -37,6 +37,7 @@ import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.servlet.RequestPathCompleter;
 import org.riotfamily.components.EditModeUtils;
+import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.pages.cache.PageCacheUtils;
@@ -186,12 +187,14 @@ public class PageFacade {
 	}
 
 	public Long getContentId() {
-		Content content = page.getContentContainer().getContent(preview);
+		Content content = getContentContainer().getContent(preview);
 		return content != null ? content.getId() : null;
 	}
 		
 	public ContentContainer getContentContainer() {
-		return page.getContentContainer();
+		ContentContainer container = page.getContentContainer(); 
+		ComponentCacheUtils.addContainerTags(request, container, preview);
+		return container;
 	}
 
 	public Map getProperties() {

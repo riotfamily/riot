@@ -261,7 +261,6 @@
 	<#local attributes = common.unwrapAttributes(attributes) />
 	<#local previousScope = scope />
 	<#assign scope =  model />
-	${inplaceMacroHelper.tag(container)}
 	<#if editMode>
 		${inplaceMacroHelper.enableOutputWrapping()}
 		<#if !tag?has_content>

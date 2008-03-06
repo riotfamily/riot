@@ -29,9 +29,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.components.EditModeUtils;
-import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.list.RiotDaoService;
 import org.springframework.util.ClassUtils;
@@ -87,11 +85,6 @@ public class InplaceMacroHelper {
 	
 	public String getFormUrl(String formId, Long containerId) {
 		return componentRepository.getFormUrl(formId, containerId);
-	}
-
-	public String tag(ContentContainer container) {
-		ComponentCacheUtils.addContainerTags(request, container, isEditMode());
-		return "";
 	}
 	
 	public String enableOutputWrapping() {
