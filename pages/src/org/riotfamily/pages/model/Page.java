@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -376,7 +377,19 @@ public class Page {
 		return !isHidden() 
 				&& !node.isHidden() 
 				&& !isWildcard() 
-				&& (published || preview);
+				&& (published || preview)
+				&& (!folder || hasVisibleChildPage(preview));
+	}
+	
+	private boolean hasVisibleChildPage(boolean preview) {
+		Iterator it = getChildPages().iterator();
+		while (it.hasNext()) {
+			Page page = (Page) it.next();
+			if (page.isVisible(preview)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public String toString() {
