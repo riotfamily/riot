@@ -56,6 +56,14 @@ public final class ComponentCacheUtils {
 		TaggingContext.tag(request, getContainerTag(container, editMode));
 	}
 
+	public static void addContainerTags(TaggingContext context, 
+			VersionContainer container, boolean editMode) {
+		
+		if (context != null) {
+			context.addTag(getContainerTag(container, editMode));
+		}
+	}
+	
 	/**
 	 * This method will invalidate both, the live and preview versions of the container.
 	 */

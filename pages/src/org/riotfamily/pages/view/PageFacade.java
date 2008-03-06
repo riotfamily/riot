@@ -35,6 +35,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.config.component.Component;
 import org.riotfamily.components.model.ComponentVersion;
@@ -179,11 +180,14 @@ public class PageFacade {
 	}
 
 	public VersionContainer getVersionContainer() {
-		return page.getVersionContainer();
+		VersionContainer container = page.getVersionContainer(); 
+		ComponentCacheUtils.addContainerTags(taggingContext, container, preview);
+		return container;
 	}
 
 	public ComponentVersion getComponentVersion() {
-		return page.getComponentVersion(preview);
+		return preview ? getVersionContainer().getLatestVersion()
+				: getVersionContainer().getLiveVersion();
 	}
 	
 	public Map getRawProperties() {
