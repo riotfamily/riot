@@ -54,7 +54,7 @@ public class Component extends ContentContainer {
 	}
 
 	public void setType(String type) {
-		Assert.isTrue(this.type == null || getLiveVersion() == null, 
+		Assert.isTrue(this.type == null || this.type.equals(type) || getLiveVersion() == null, 
 				"Can't change the type of a live Component");
 		
 		this.type = type;
@@ -78,7 +78,7 @@ public class Component extends ContentContainer {
 	}
 	
 	public Component createCopy() {
-		Component copy = new Component();
+		Component copy = new Component(type);
 		if (getLiveVersion() != null) {
 			copy.setLiveVersion(new Content(getLiveVersion()));
 		}
