@@ -44,16 +44,11 @@
 	<property name="build.repo.dir" value="${build.dir}/repo" />
 	<property name="build.tstamp" value="${build.dir}/.timestamp" />
 
-	<property name="ivy.download" value="http://riotfamily.org/ivy/ivy-2.0.0-alpha-1-incubating.jar" />
-	<property name="ivy.jar" value="${lib.dir}/ivy.jar" />
-
-	<path id="ivy-classpath">
-		<pathelement path="${java.class.path}" />
-		<pathelement path="${ivy.jar}"/>
-	</path>
+	<property name="ivy.download" value="http://riotfamily.org/ivy/ivy-2.0.0-beta2.jar" />
+	<property name="ivy.jar" value="${lib.dir}/ivy2.jar" />
 
 	<taskdef resource="org/apache/ivy/ant/antlib.xml"
-		uri="antlib:org.apache.ivy.ant" classpathref="ivy-classpath"
+		uri="antlib:org.apache.ivy.ant" classpath="${ivy.jar}"
 		onerror="ignore" />
 
 	<!--
@@ -74,7 +69,7 @@
 	<!--
 	  - Configures Ivy.
 	  -->
-	<target name="-configure-ivy" depends="-setup-ivy">
+	<target name="-configure-ivy" depends="-install-ivy">
 		<available classname="com.jcraft.jsch.JSchException" property="ivysettings-default" value="${root.dir}/ivysettings-ssh.xml" />
 		<property name="ivysettings-default" value="${root.dir}/ivysettings.xml" />
 
@@ -83,15 +78,8 @@
 
 		<echo>${ivysettings-default}</echo>
 		<echo>${ivysettings}</echo>
-		<!--
-		<ivy:settings id="ivy.instance" file="${ivysettings}" />
-		-->
-		<ivy:configure file="${ivysettings}" />
-	</target>
 
-	<target name="-setup-ivy" depends="-install-ivy">
-		<available resource="org/apache/ivy/ant/antlib.xml" 
-			classpathref="ivy-classpath" property="ivy.available" />
+		<ivy:settings id="ivy.instance" file="${ivysettings}" override="true" />
 	</target>
 
 	<!--
@@ -99,15 +87,15 @@
 	  -->
 	<target name="-install-ivy" depends="-download-ivy" if="ivy.downloaded">
 		<taskdef resource="org/apache/ivy/ant/antlib.xml"
-			uri="antlib:org.apache.ivy.ant" classpathref="ivy-classpath" />
+			uri="antlib:org.apache.ivy.ant" classpath="${ivy.jar}" />
 	</target>
 
 	<!--
 	  - Downloads the Ivy jar file from riotfamily.org.
 	  -->
 	<target name="-download-ivy" depends="-check-ivy" unless="ivy.available">
-		<echo>This project uses Ivy (http://incubator.apache.org/ivy/) to manage dependencies.</echo>
-		<echo>Since Ivy was not found in the classpath the JAR file will now be downloaded ...</echo>
+		<echo>This project uses Ivy (http://ant.apache.org/ivy/) to manage dependencies.</echo>
+		<echo>Ivy was not found in the classpath the JAR file will now be downloaded ...</echo>
 		<delete dir="${lib.dir}" />
 		<mkdir dir="${lib.dir}" />
 		<get src="${ivy.download}" dest="${ivy.jar}" verbose="true" />
@@ -115,13 +103,10 @@
 	</target>
 
 	<!--
-	  - Checks whether Ivy is available in the classpath.
+	  - Checks whether Ivy is present in the lib dir.
 	  -->
 	<target name="-check-ivy">
-		<mkdir dir="${lib.dir}" />
-		<available property="ivy.available"
-			resource="org/apache/ivy/ant/antlib.xml"
-			classpathref="classpath" />
+		<available property="ivy.available" file="${ivy.jar}"/>
 	</target>
 
 </project>
