@@ -211,15 +211,14 @@ input.checkbox {
 	margin: 0;
 }
 
-.checkbox-element {
+div.checkbox {
 	position: relative;
 	_height: 1px;
-	margin-bottom: 10px;
 }
-.checkbox-element label {
+div.checkbox label {
 	padding-left: 20px;
 }
-.checkbox-element .element {
+div.checkbox .element {
 	position: absolute;
 	left: 0px;
 	top: 0;

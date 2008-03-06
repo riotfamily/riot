@@ -108,6 +108,13 @@ public abstract class AbstractConditionalElement extends AbstractElement
 		}
 	}
 
+	public String getStyleClass() {
+		if (!hide) {
+			return editor.getStyleClass();
+		}
+		return null;
+	}
+
 	public boolean isCompositeElement() {
 		return editor.isCompositeElement();
 	}

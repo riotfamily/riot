@@ -89,7 +89,12 @@ public interface Element {
 	 * Renders the element to the given writer.
 	 */
 	public void render(PrintWriter writer);
-	
+
+	/**
+	 * Returns the elements style class.  
+	 */
+	public String getStyleClass();
+
 	/**
 	 * Focuses the element.
 	 */
