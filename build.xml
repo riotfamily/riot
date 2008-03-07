@@ -91,7 +91,7 @@
 		</javadoc>
 	</target>
 
-	<target name="dist" depends="jar,javadoc">
+	<target name="dist" depends="js-jar,jar,javadoc">
 		<delete file="${dist.zip.file}" />
 		<mkdir dir="${build.dir}/tmp" />
 		<copy todir="${build.dir}/tmp" flatten="true">
