@@ -1,4 +1,4 @@
-<project name="tiny_mce" default="jar">
+<project name="tinymce-js" default="jar">
 
 	<import file="../js.xml" />
 	

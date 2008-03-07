@@ -1,4 +1,4 @@
-<project name="prototype" default="jar">
+<project name="prototype-js" default="jar">
 
 	<import file="../js.xml" />
 	

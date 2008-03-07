@@ -26,7 +26,6 @@
 			<fileset refid="module-build.files" />
 		</ivy:buildlist>
 		<subant target="resolve" buildpathref="resolved-build.files" />
-		<echo file="${lib.dir}/.cvsignore" message="*" />
 	</target>
 
 	<target name="jar" depends="-configure-ivy">
@@ -49,9 +48,9 @@
 			<fileset refid="module-build.files" />
 		</ivy:buildlist>
 		<echo>Installing modules with version ${riot.revision} in the following order: ${ivy.sorted.modules}</echo>
-		<subant target="install" buildpathref="resolved-build.files" />
+		<subant target="install-if-modified" buildpathref="resolved-build.files" />
 	</target>
-
+	
 	<target name="publish-schemas">
 		<subant target="collect-xml-schemas">
 			<fileset refid="module-build.files" />
@@ -74,7 +73,6 @@
 
 	<target name="javadoc">
 		<javadoc destdir="${build.dir}/api" classpathref="classpath" breakiterator="true">
-
 			<packageset dir="common/src" />
 			<packageset dir="cachius/src" />
 			<packageset dir="components/src" />

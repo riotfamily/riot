@@ -1,4 +1,4 @@
-<project name="swfupload" default="jar">
+<project name="swfupload-js" default="jar">
 
 	<import file="../js.xml" />
 	

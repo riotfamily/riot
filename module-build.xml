@@ -7,14 +7,17 @@
 
 	<import file="common.xml" />
 
+	<property name="install.resolver" value="local" />
+
+	<property name="resolve.conf" value="build,test" />
+
+	<!-- Module configuration -->
+	<property name="module.name" value="${ant.project.name}" />
+
 	<!-- Module location -->
 	<dirname property="module.dir" file="${ant.file}" />
 
 	<basename property="module.dir.name" file="${module.dir}" />
-
-	<property name="install.resolver" value="local" />
-
-	<property name="resolve.conf" value="build,test" />
 
 	<!-- Directory where source (and resource) files are located -->
 	<property name="module.src.dir" value="src" />
@@ -25,6 +28,18 @@
 	  -->
 	<property name="module.meta-inf.dir" value="META-INF" />
 
+	<!-- Module build directory - artifacts will be placed here -->
+	<property name="module.build.dir" value="${build.modules.dir}/${module.name}" />
+
+	<!-- Directory where class files will be created upon compilation -->
+	<property name="module.build.classes.dir" value="${module.build.dir}/classes" />
+
+	<!-- Location of the jar artifact published by the module -->
+	<property name="module.jar" value="${module.build.dir}/${module.name}.jar" />
+	
+	<!-- Location of the src artifact published by the module -->
+	<property name="module.src.zip" value="${module.build.dir}/${module.name}.src.zip" />
+
 	<!--
 	  - Resource files to be included in the jar. By default all files found
 	  - the source directory are included except for .java files and Ant's
@@ -33,7 +48,7 @@
 	<patternset id="module.jar.resource.patterns">
 		<exclude name="**/*.java" />
 	</patternset>
-	
+
 	<target name="usage">
 		<fail>This file is only intended for inclusion by sub-projects.</fail>
 	</target>
@@ -41,32 +56,18 @@
 	<target name="-init-module" depends="-configure-ivy">
 
 		<echo>=================================================================</echo>
-		<echo>Entering module *${ant.project.name}*</echo>
+		<echo>Entering module *${module.name}*</echo>
 		<echo>=================================================================</echo>
 
-		<ivy:info file="ivy.xml" />
-
-		<!-- Module name as defined by the module's ivy file -->
-		<property name="module.name" value="${ivy.module}" />
-
-		<!-- Module build directory - artifacts will be placed here -->
-		<property name="module.build.dir" value="${build.modules.dir}/${module.name}" />
 		<mkdir dir="${module.build.dir}" />
 
-		<!-- Directory where class files will be created upon compilation -->
-		<property name="module.build.classes.dir" value="${module.build.dir}/classes" />
-
-		<!-- Location of the jar artifact published by the module -->
-		<property name="module.jar" value="${module.build.dir}/${module.name}.jar" />
-		
-		<!-- Location of the src artifact published by the module -->
-		<property name="module.src.zip" value="${module.build.dir}/${module.name}.src.zip" />
+		<ivy:info file="ivy.xml" />
 
 		<!-- Set module.status to the one specified in the ivy.xml unless it is integration -->
 		<condition property="module.status" value="${ivy.status}">
 			<not><equals arg1="${ivy.status}" arg2="integration" /></not>
 		</condition>		
-			
+
 		<!-- If no revision is specified, set module.status to publish.status -->
 		<property name="module.status" value="${publish.status}" />
 
@@ -75,16 +76,23 @@
 			<equals arg1="${module.status}" arg2="integration" />
 		</condition>
 		<property name="publish.replacedynamicrev" value="true" />
-		
+
 		<!-- Set module.revision to value from ivy.xml -->
 		<property name="module.revision" value="${ivy.revision}" />
-		
+
 		<!-- Set a property if the module has a 'src' configuration -->
 		<condition property="module.src-conf.exists">
 			<contains string="${ivy.configurations}" substring="src" />
 		</condition>
 	</target>
 
+	<target name="-check-uptodate">
+		<echo>Checking for modified files for ${module.name} in ${module.dir}/${module.src.dir}</echo>
+		<uptodate property="module.jar.uptodate" targetfile="${module.jar}">
+			<srcfiles dir="${module.src.dir}" includes="**" />
+		</uptodate>
+	</target>
+	
 	<target name="resolve" depends="-init-module">
 		<echo message="Retrieving module dependencies" />
 		<ivy:resolve conf="${resolve.conf}" showprogress="false" />
@@ -129,6 +137,10 @@
 			revision="${module.revision}" overwrite="true" />
 	</target>
 
+	<target name="install-if-modified" depends="-check-uptodate" unless="module.jar.uptodate">
+		<antcall target="install" />
+	</target>
+	
 	<!--
 	  - Creates a jar file ${jar.path} containing all files in ${classes.dir}
 	  -->
@@ -173,7 +185,8 @@
 	  - Creates a zip file containing all source files
 	  -->
 	<target name="src-zip" if="module.src-conf.exists" depends="-init-module"
-		description="Creates a zip file containing the sources">
+			description="Creates a zip file containing the sources">
+		
 		<echo message="Creating src-zip" />
 		<zip basedir="${module.src.dir}" destfile="${module.src.zip}" />
 	</target>
@@ -195,9 +208,7 @@
 	<!--
 	  - Removes the module's build directory.
 	  -->
-	<target name="clean" depends="-init-module"
-			description="Removes the module's build directory">
-
+	<target name="clean" description="Removes the module's build directory">
 		<echo message="Removing the build directory" />
 		<delete dir="${module.build.dir}" />
 	</target>

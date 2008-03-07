@@ -1,4 +1,4 @@
-<project name="swfobject" default="jar">
+<project name="swfobject-js" default="jar">
 
 	<import file="../js.xml" />
 	

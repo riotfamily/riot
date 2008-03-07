@@ -1,4 +1,4 @@
-<project name="jscalendar" default="jar">
+<project name="jscalendar-js" default="jar">
 
 	<import file="../js.xml" />
 

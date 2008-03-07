@@ -1,4 +1,4 @@
-<project name="scriptaculous" default="jar">
+<project name="scriptaculous-js" default="jar">
 
 	<property name="module.status" value="release" />
 	

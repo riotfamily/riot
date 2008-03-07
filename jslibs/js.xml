@@ -18,16 +18,13 @@
 	
 	<import file="../module-build.xml" />
 
-	<!--
-	  - Creates a jar file.
-	  -->
-	<target name="jar" depends="resolve">
-		<uptodate property="jar.uptodate" targetfile="${module.jar}">
+	<target name="-check-uptodate">
+		<echo>Checking for modified files for ${module.name}</echo>
+		<uptodate property="module.jar.uptodate" targetfile="${module.jar}">
 			<srcfiles dir="." includes="*.zip" />
 			<srcfiles dir="." includes="${patch.file}" />
 			<srcfiles dir="." includes="${overlay.dir}/**" />
 		</uptodate>
-		<antcall target="-jar" />
 	</target>
 	
 	<!--
@@ -36,7 +33,7 @@
 	  - target if any zip-, overlay- or patch-file is newer than the existing
 	  - jar.
 	  -->
-	<target name="-jar" unless="jar.uptodate" depends="-resource-fileset">
+	<target name="jar" depends="resolve,-resource-fileset">
 		<echo message="Creating jar file" />
 		<property name="jar.base.dir" value="${module.build.dir}/jar" />
 		<property name="jar.package.dir" value="${jar.base.dir}/${package}" />
