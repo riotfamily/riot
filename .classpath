@@ -35,7 +35,7 @@
 			<attribute name="javadoc_location" value="http://tomcat.apache.org/tomcat-5.5-doc/servletapi/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/spring.jar" sourcepath="lib/spring-src.zip">
+	<classpathentry kind="lib" path="lib/spring.jar" sourcepath="lib/spring.src.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="http://static.springframework.org/spring/docs/2.0.x/api/"/>
 		</attributes>
