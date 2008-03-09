@@ -1,5 +1,7 @@
 <project name="tinymce-js" default="jar">
 
+	<property name="lib.name" value="tiny_mce" />
+	
 	<import file="../js.xml" />
 	
 	<target name="-resource-fileset" depends="-unpack">

@@ -1,5 +1,7 @@
 <project name="prototype-js" default="jar">
 
+	<property name="lib.name" value="prototype" />
+	
 	<import file="../js.xml" />
 	
 	<target name="-resource-fileset">

@@ -1,5 +1,7 @@
 <project name="scriptaculous-js" default="jar">
 
+	<property name="lib.name" value="scriptaculous" />
+	
 	<property name="module.status" value="release" />
 	
 	<import file="../js.xml" />

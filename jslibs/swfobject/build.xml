@@ -1,5 +1,7 @@
 <project name="swfobject-js" default="jar">
 
+	<property name="lib.name" value="swfobject" />
+	
 	<import file="../js.xml" />
 	
 	<target name="-resource-fileset">
