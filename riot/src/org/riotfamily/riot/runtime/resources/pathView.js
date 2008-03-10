@@ -10,7 +10,7 @@ Path.prototype = {
 	},
 	
 	getQueryString: function(args) {
-		var names = ['editorId', 'objectId', 'parentId', 'subPage'];
+		var names = ['editorId', 'objectId', 'parentId', 'parentEditorId'];
 		return names.collect(function(name, i) {
 			if (i < args.length) {
 				val = args[i];
@@ -27,7 +27,7 @@ Path.prototype = {
 		}
 	},
 
-	update: function(editorId, objectId, parentId, subPage) {
+	update: function(editorId, objectId, parentId, parentEditorId) {
 		this.reload(this.getQueryString(arguments));
 	},
 	

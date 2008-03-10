@@ -7,9 +7,9 @@ function getPath() {
 	}
 }
 
-function updatePath(editorId, objectId, parentId) {
+function updatePath(editorId, objectId, parentId, parentEditorId) {
 	var path = getPath();
-	if (path != null) path.update(editorId, objectId, parentId);
+	if (path != null) path.update(editorId, objectId, parentId, parentEditorId);
 }
 
 function subPage(title) {

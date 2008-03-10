@@ -46,6 +46,8 @@ public interface CommandContext {
 
 	public int getRowIndex();
 
+	public String getParentEditorId();
+	
 	public String getParentId();
 
 	public String getObjectId();
