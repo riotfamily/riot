@@ -116,10 +116,12 @@ public class FormChooserDefinition extends FormDefinition {
 		return (FormDefinition) forms.first();
 	}
 
-	public String getEditorUrl(String objectId, String parentId) {
+	public String getEditorUrl(String objectId, String parentId, 
+			String parentEditorId) {
+		
 		if (objectId != null) {
 			FormDefinition formDefinition = getFormDefinition(objectId);
-			return formDefinition.getEditorUrl(objectId, parentId);
+			return formDefinition.getEditorUrl(objectId, parentId, parentEditorId);
 		}
 		else {
 			StringBuffer sb = new StringBuffer();
@@ -147,19 +149,6 @@ public class FormChooserDefinition extends FormDefinition {
 			options.add(new FormOption(label, option.getFormId()));
 		}
 		return options;
-	}
-
-	public FormDefinition copy(String idPrefix) {
-		FormChooserDefinition copy = (FormChooserDefinition)
-				super.copy(idPrefix);
-
-		copy.formDefinitions = new ArrayList();
-		Iterator it = formDefinitions.iterator();
-		while (it.hasNext()) {
-			FormDefinition formDefinition = (FormDefinition) it.next();
-			copy.formDefinitions.add(formDefinition.copy(idPrefix));
-		}
-		return copy;
 	}
 
 	protected static class FormDefinitionComparator

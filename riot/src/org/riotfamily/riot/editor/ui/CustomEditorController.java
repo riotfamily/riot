@@ -61,17 +61,21 @@ public class CustomEditorController implements Controller {
 
 		String objectId = request.getParameter(EditorConstants.OBJECT_ID);
 		String parentId = request.getParameter(EditorConstants.PARENT_ID);
+		String parentEditorId = request.getParameter(EditorConstants.PARENT_EDITOR_ID);
 
 		HashMap model = new HashMap();
 		model.put(EditorConstants.EDITOR_ID, editorId);
 		model.put(EditorConstants.OBJECT_ID, objectId);
 		model.put(EditorConstants.PARENT_ID, parentId);
-		model.put("editorUrl", editorDef.getTargetUrl(objectId, parentId));
+		model.put(EditorConstants.PARENT_EDITOR_ID, parentEditorId);
+		model.put("editorUrl", editorDef.getTargetUrl(objectId, parentId, parentEditorId));
 
 		return new ModelAndView(viewName, model);
 	}
 	
-	public static String getUrl(String editorId, String objectId, String parentId) {
+	public static String getUrl(String editorId, String objectId, 
+			String parentId, String parentEditorId) {
+		
 		StringBuffer sb = new StringBuffer();
 		sb.append("/custom/").append(editorId);
 		if (objectId != null) {
@@ -79,6 +83,9 @@ public class CustomEditorController implements Controller {
 		}
 		else if (parentId != null) {
 			sb.append("?parentId=").append(parentId);
+			if (parentEditorId != null) {
+				sb.append("&parentEditorId=").append(parentEditorId);
+			}
 		}
 		return sb.toString();
 	}

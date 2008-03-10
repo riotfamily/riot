@@ -34,4 +34,6 @@ public interface EditorConstants {
 	public String OBJECT_ID = "objectId";
 
 	public String PARENT_ID = "parentId";
+	
+	public String PARENT_EDITOR_ID = "parentEditorId";
 }

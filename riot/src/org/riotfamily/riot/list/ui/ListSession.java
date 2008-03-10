@@ -90,11 +90,11 @@ public class ListSession implements RenderContext {
 	
 	private TreeDefinition treeDefinition;
 	
-	private boolean tree;
-	
 	private TreeHintDao treeHintDao;
 
 	private String parentId;
+	
+	private String parentEditorId;
 
 	private MessageResolver messageResolver;
 
@@ -125,7 +125,8 @@ public class ListSession implements RenderContext {
 	private boolean expired;
 
 	public ListSession(String key, ListDefinition listDefinition,
-			String parentId, MessageResolver messageResolver, String contextPath,
+			String parentId, String parentEditorId,
+			MessageResolver messageResolver, String contextPath,
 			FormRepository formRepository,
 			FormContextFactory formContextFactory,
 			PlatformTransactionManager transactionManager) {
@@ -139,9 +140,18 @@ public class ListSession implements RenderContext {
 		this.listConfig = listDefinition.getListConfig();
 		this.sortable = listConfig.getDao() instanceof SortableDao;
 		
+		if (parentEditorId == null) {
+			EditorDefinition parentList = EditorDefinitionUtils.getParentListDefinition(listDefinition);
+			if (parentList != null) {
+				this.parentEditorId =  parentList.getId();
+			}
+		}
+		else {
+			this.parentEditorId = parentEditorId;
+		}
+		
 		if (listDefinition instanceof TreeDefinition) {
 			treeDefinition = (TreeDefinition) listDefinition;
-			tree = !treeDefinition.isColored();
 			RiotDao dao = treeDefinition.getListConfig().getDao();
 			if (dao instanceof TreeHintDao) {
 				treeHintDao = (TreeHintDao) dao;
@@ -192,7 +202,6 @@ public class ListSession implements RenderContext {
 		params.setSearchProperties(listConfig.getSearchProperties());
 		params.setPageSize(listConfig.getPageSize());
 		params.setOrder(listConfig.getDefaultOrder());
-
 	}
 
 	public String getKey() {
@@ -212,8 +221,6 @@ public class ListSession implements RenderContext {
 		}
 
 		if (targetList != listDefinition) {
-				//|| targetList instanceof TreeDefinition) {
-
 			ListDefinition nextList = targetList;
 			if (listDefinition != targetList) {
 				nextList = EditorDefinitionUtils.getNextListDefinition(
@@ -246,15 +253,19 @@ public class ListSession implements RenderContext {
 	}
 	
 	private ListModel getChildren(Object parent, HttpServletRequest request) {
-		ListModel model = getItems(parent, loadParent(), request);
+		ListModel model = getItems(parent, getObjectId(parent), 
+				this.listDefinition.getId(), loadParent(), request);
+		
 		CommandContextImpl context = new CommandContextImpl(this, request);
-		context.setParent(parent, getObjectId(parent));
+		context.setParent(parent, getObjectId(parent), listDefinition.getId());
 		context.setItemsTotal(model.getItemsTotal());
 		model.setListCommands(getListCommandStates(listCommands, context, request));
 		return model;
 	}
 	
-	private ListModel getItems(Object parent, Object root, HttpServletRequest request) {
+	private ListModel getItems(Object parent, String parentId, 
+			String parentEditorId, Object root, HttpServletRequest request) {
+		
 		int itemsTotal = listConfig.getDao().getListSize(parent, params);
 		int pageSize = params.getPageSize();
 		Collection beans = listConfig.getDao().list(parent, params);
@@ -263,9 +274,8 @@ public class ListSession implements RenderContext {
 			pageSize = itemsTotal;
 		}
 		ListModel model = new ListModel(itemsTotal, pageSize, params.getPage());
-		if (tree && treeDefinition.isNode(parent)) {
-			model.setParentId(getObjectId(parent));
-		}
+		model.setParentId(parentId);
+		model.setParentEditorId(parentEditorId);
 		fillInItems(model, beans, root, request);
 		return model;
 	}
@@ -285,6 +295,7 @@ public class ListSession implements RenderContext {
 			item.setRowIndex(rowIndex++);
 			item.setObjectId(EditorDefinitionUtils.getObjectId(listDefinition, bean));
 			item.setParentId(model.getParentId());
+			item.setParentEditorId(model.getParentEditorId());
 			item.setColumns(getColumns(bean));
 			item.setCommands(getCommandStates(itemCommands,
 					item, bean, model.getItemsTotal(), request));
@@ -348,19 +359,19 @@ public class ListSession implements RenderContext {
 			model = buildTree(loadBean(expandedId), null, request);
 		}
 		else {
-			model = getItems(parent, parent, request);
+			model = getItems(parent, this.parentId, this.parentEditorId, parent, request);
 		}
 		model.setEditorId(listDefinition.getId());
 		model.setItemCommandCount(itemCommands.size());
 		
 		CommandContextImpl context = new CommandContextImpl(this, request);
-		context.setParent(parent, this.parentId);
+		context.setParent(parent, this.parentId, this.parentEditorId);
 		context.setItemsTotal(model.getItemsTotal());
 		model.setListCommands(getListCommandStates(listCommands, context, request));
 		model.setBatchCommands(getBatchStates(itemCommands, context, request));
 		
 		model.setCssClass(listConfig.getId());
-		model.setTree(tree);
+		model.setTree(treeDefinition != null);
 		fillInColumnConfigs(model);
 		model.setFilterFormHtml(filterFormHtml);
 		return model;
@@ -382,7 +393,7 @@ public class ListSession implements RenderContext {
 		}
 		else {
 			Object root = loadParent();
-			children = getItems(root, root, request);
+			children = getItems(root, this.parentId, this.parentEditorId, root, request);
 			if (subTree != null) {
 				ListItem item = children.findItem(subTree.getParentId());
 				item.setChildren(subTree);
@@ -472,7 +483,7 @@ public class ListSession implements RenderContext {
 		}
 		params.setPage(1);
 		Object root = loadParent();
-		ListModel result = getItems(root, root, request);
+		ListModel result = getItems(root, this.parentId, this.parentEditorId, root, request);
 		result.setFilterFormHtml(filterFormHtml);
 		return result;
 	}
@@ -480,7 +491,7 @@ public class ListSession implements RenderContext {
 	public ListModel gotoPage(int page, HttpServletRequest request) {
 		params.setPage(page);
 		Object root = loadParent();
-		return getItems(root, root, request);
+		return getItems(root, this.parentId, this.parentEditorId, root, request);
 	}
 
 	public boolean hasListCommands() {
@@ -502,7 +513,7 @@ public class ListSession implements RenderContext {
 		ArrayList states = new ArrayList();
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		context.setBean(bean, item.getObjectId());
-		context.setParent(null, item.getParentId());
+		context.setParent(null, item.getParentId(), item.getParentEditorId());
 		context.setItemsTotal(itemsTotal);
 		context.setRowIndex(item.getRowIndex());
 		Iterator it = commands.iterator();
@@ -564,11 +575,11 @@ public class ListSession implements RenderContext {
 		Object target = null;
 		if (parentId != null) {
 			target = loadBean(parentId);
-			context.setParent(target, parentId);
+			context.setParent(target, parentId, listDefinition.getId());
 		}
 		else {
 			target = loadParent();
-			context.setParent(target, null);
+			context.setParent(target, this.parentId, this.parentEditorId);
 		}
 		return execCommand(null, command, context, target, 
 				commandState, confirmed, request, response);
@@ -582,7 +593,7 @@ public class ListSession implements RenderContext {
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		Object target = loadBean(item.getObjectId());
 		context.setBean(target, item.getObjectId());
-		context.setParent(null, item.getParentId());
+		context.setParent(null, item.getParentId(), item.getParentEditorId());
 		context.setRowIndex(item.getRowIndex());
 		return execCommand(item, command, context, target, 
 				commandState, confirmed, request, response);
@@ -640,7 +651,7 @@ public class ListSession implements RenderContext {
 				ListItem item = (ListItem) it.next();
 				Object bean = loadBean(item.getObjectId());
 				context.setBean(bean, item.getObjectId());
-				context.setParent(null, item.getParentId());
+				context.setParent(null, item.getParentId(), item.getParentEditorId());
 				context.setRowIndex(item.getRowIndex());
 				if (AccessController.isGranted(commandState.getAction(), bean)) {
 					context.setBatchIndex(batchIndex);
@@ -676,14 +687,18 @@ public class ListSession implements RenderContext {
 		return listConfig.getDao().getObjectId(bean);
 	}
 	
-	public Object loadParent() {
+	public Object loadParent(String parentId, String parentEditorId) {
+		if (listDefinition.getId().equals(parentEditorId)) {
+			return loadBean(parentId);
+		}
 		return EditorDefinitionUtils.loadParent(listDefinition, parentId);
+	}
+	
+	private Object loadParent() {
+		return loadParent(this.parentId, this.parentEditorId);
 	}
 
 	public ListDefinition getListDefinition(String parentId) {
-		if (parentId != null && treeDefinition != null) {
-			return treeDefinition.getNodeListDefinition();
-		}
 		return listDefinition;
 	}
 	

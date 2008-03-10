@@ -62,7 +62,7 @@ public class StepIntoCommand extends AbstractCommand {
 
 		if (def instanceof IntermediateDefinition) {
 			ListDefinition listDef = ((IntermediateDefinition) def).getNestedListDefinition();
-			return listDef.getEditorUrl(null, context.getObjectId());
+			return listDef.getEditorUrl(null, context.getObjectId(), context.getListDefinition().getId());
 		}
 		else {
 			Assert.isInstanceOf(AbstractObjectEditorDefinition.class, def);

@@ -124,7 +124,7 @@ public class ViewController implements Controller,
 			ListSession session = listService.getOrCreateListSession(
 				parentListDef.getId(),
 				EditorDefinitionUtils.getParentId(editorDef, object),
-				null, request);
+				null, null, request);
 
 			model.put("listKey", session.getKey());
 		}

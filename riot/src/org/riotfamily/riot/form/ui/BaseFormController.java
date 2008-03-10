@@ -41,6 +41,7 @@ import org.riotfamily.riot.dao.InvalidPropertyValueException;
 import org.riotfamily.riot.dao.RioDaoException;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.editor.EditorConstants;
+import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.FormReference;
@@ -133,6 +134,16 @@ public abstract class BaseFormController extends RepositoryFormController
 	protected String getParentId(HttpServletRequest request) {
 		return request.getParameter(EditorConstants.PARENT_ID);
 	}
+	
+	/**
+	 * Returns the id of the parent editor. Note: The method returns the
+	 * request parameter <em>parentEditorId</em> which is only set when a new 
+	 * object is created, i.e. {@link #getObjectId(HttpServletRequest)} 
+	 * returns <code>null</code>.
+	 */
+	protected String getParentEditorId(HttpServletRequest request) {
+		return request.getParameter(EditorConstants.PARENT_EDITOR_ID);
+	}
 
 	/**
 	 * Returns the id of the form to be used. This implementation returns
@@ -148,6 +159,7 @@ public abstract class BaseFormController extends RepositoryFormController
 		Form form = super.createForm(request);
 		FormUtils.setObjectId(form, getObjectId(request));
 		FormUtils.setParentId(form, getParentId(request));
+		FormUtils.setParentEditorId(form, getParentEditorId(request));
 		FormUtils.setEditorDefinition(form, getObjectEditorDefinition(request));
 		return form;
 	}
@@ -169,6 +181,7 @@ public abstract class BaseFormController extends RepositoryFormController
 
 		HashMap model = new HashMap();
 		model.put(EditorConstants.EDITOR_ID, formDefinition.getId());
+		model.put(EditorConstants.PARENT_EDITOR_ID, FormUtils.getParentEditorId(form));
 		model.put(EditorConstants.PARENT_ID, FormUtils.getParentId(form));
 		model.put(EditorConstants.OBJECT_ID, FormUtils.getObjectId(form));
 		model.put("formId", form.getId());
@@ -254,9 +267,14 @@ public abstract class BaseFormController extends RepositoryFormController
 		try {
 			if (form.isNew()) {
 				log.debug("Saving entity ...");
+				Object parent = null;
 				String parentId = FormUtils.getParentId(form);
-				Object parent = EditorDefinitionUtils.loadParent(listDef, parentId);
-				Object bean = form.populateBackingObject();
+				if (parentId != null) {
+					String parentEditorId = FormUtils.getParentEditorId(form);
+					EditorDefinition parentDef = editorRepository.getEditorDefinition(parentEditorId);
+					parent = EditorDefinitionUtils.loadBean(parentDef, parentId);
+				}
+				Object bean = form.populateBackingObject();				
 				dao.save(bean, parent);
 				FormUtils.setObjectId(form, dao.getObjectId(bean));
 				form.setValue(bean);

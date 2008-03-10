@@ -35,6 +35,8 @@ public class ListModel {
 	private String editorId;
 
 	private String parentId;
+	
+	private String parentEditorId;
 
 	private boolean tree;
 	
@@ -86,6 +88,14 @@ public class ListModel {
 
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
+	}
+	
+	public String getParentEditorId() {
+		return parentEditorId;
+	}
+
+	public void setParentEditorId(String parentEditorId) {
+		this.parentEditorId = parentEditorId;
 	}
 
 	public boolean isTree() {

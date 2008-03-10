@@ -48,6 +48,8 @@ public class CommandContextImpl implements CommandContext {
 	
 	private Object bean;
 
+	private String parentEditorId;
+	
 	private String parentId;
 	
 	private Object parent;
@@ -82,18 +84,20 @@ public class CommandContextImpl implements CommandContext {
 	public Object getParent() {
 		if (parent == null) {
 			if (parentId != null) {
-				parent = session.loadBean(parentId);
-			}
-			else {
-				parent = session.loadParent();
+				parent = session.loadParent(parentId, parentEditorId);
 			}
 		}
 		return parent;
 	}
 
-	public void setParent(Object parent, String parentId) {
+	public void setParent(Object parent, String parentId, String parentEditorId) {
 		this.parent = parent;
 		this.parentId = parentId;
+		this.parentEditorId = parentEditorId;
+	}
+	
+	public String getParentEditorId() {
+		return parentEditorId;
 	}
 	
 	public int getItemsTotal() {
@@ -141,7 +145,7 @@ public class CommandContextImpl implements CommandContext {
 	}
 
 	public String getParentId() {
-		return parentId != null ? parentId : session.getParentId();
+		return parentId;
 	}
 
 	public HttpServletRequest getRequest() {

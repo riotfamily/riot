@@ -65,12 +65,12 @@ public class GroupDefinition extends AbstractEditorDefinition {
 	}
 
 	public EditorReference createEditorPath(String objectId, String parentId,
-			MessageResolver messageResolver) {
+			String parentEditorId, MessageResolver messageResolver) {
 
 		EditorReference parent = null;
 		if (getParentEditorDefinition() != null) {
 			parent = getParentEditorDefinition().createEditorPath(
-					parentId, null, messageResolver);
+					parentId, null, null, messageResolver);
 		}
 		EditorReference component = createReference(messageResolver);
 
@@ -115,11 +115,13 @@ public class GroupDefinition extends AbstractEditorDefinition {
 		ref.setDescription(messageResolver.getMessage(
 				getMessageKey().append(".description").toString(), null, null));
 
-		ref.setEditorUrl(getEditorUrl(null, null));
+		ref.setEditorUrl(getEditorUrl(null, null, null));
 		return ref;
 	}
 
-	public String getEditorUrl(String objectId, String parentId) {
+	public String getEditorUrl(String objectId, String parentId, 
+			String parentEditorId) {
+		
 		StringBuffer sb = new StringBuffer();
 		sb.append(getEditorRepository().getRiotServletPrefix());
 		sb.append("/group/").append(getId());

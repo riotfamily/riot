@@ -39,10 +39,10 @@ public class FormUtils {
 		return (String) form.getAttribute(EditorConstants.OBJECT_ID);
 	}
 
-	public static void setParentId(Form form, String objectId) {
-		form.setAttribute(EditorConstants.PARENT_ID, objectId);
+	public static void setParentId(Form form, String parentId) {
+		form.setAttribute(EditorConstants.PARENT_ID, parentId);
 	}
-
+	
 	public static String getParentId(Form form) {
 		String parentId = (String) form.getAttribute(EditorConstants.PARENT_ID);
 		String objectId = getObjectId(form);
@@ -52,6 +52,14 @@ public class FormUtils {
 			parentId = EditorDefinitionUtils.getParentId(def, bean);
 		}
 		return parentId;
+	}
+
+	public static void setParentEditorId(Form form, String parentEditorId) {
+		form.setAttribute(EditorConstants.PARENT_EDITOR_ID, parentEditorId);
+	}
+	
+	public static String getParentEditorId(Form form) {
+		return (String) form.getAttribute(EditorConstants.PARENT_EDITOR_ID);
 	}
 	
 	public static void setEditorDefinition(Form form,

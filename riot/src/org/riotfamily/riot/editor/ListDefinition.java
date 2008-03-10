@@ -89,13 +89,13 @@ public class ListDefinition extends AbstractEditorDefinition {
 	}
 
 	public EditorReference createEditorPath(String objectId, String parentId,
-			MessageResolver messageResolver) {
+			String parentEditorId, MessageResolver messageResolver) {
 
 		EditorReference parent = null;
 		if (getParentEditorDefinition() != null) {
 			// Delegate call to parent editor passing the parentId as objectId
 			parent = getParentEditorDefinition().createEditorPath(
-					parentId, null, messageResolver);
+					parentId, null, null, messageResolver);
 		}
 
 		EditorReference component = createReference(parentId, messageResolver);
@@ -119,7 +119,7 @@ public class ListDefinition extends AbstractEditorDefinition {
 			component = createReference(null, messageResolver);
 			if (getParentEditorDefinition() != null) {
 				parent = getParentEditorDefinition().createEditorPath(
-						null, null, messageResolver);
+						null, null, null, messageResolver);
 
 				component.setParent(parent);
 			}
@@ -147,7 +147,7 @@ public class ListDefinition extends AbstractEditorDefinition {
 		ref.setDescription(messageResolver.getMessage(
 				getMessageKey().append(".description").toString(), null, null));
 
-		ref.setEditorUrl(getEditorUrl(null, parentId));
+		ref.setEditorUrl(getEditorUrl(null, parentId, null));
 		return ref;
 	}
 
@@ -155,12 +155,17 @@ public class ListDefinition extends AbstractEditorDefinition {
 		return getEditorRepository().getListRepository().getListConfig(listId);
 	}
 
-	public String getEditorUrl(String objectId, String parentId) {
+	public String getEditorUrl(String objectId, String parentId, 
+			String parentEditorId) {
+		
 		StringBuffer sb = new StringBuffer();
 		sb.append(getEditorRepository().getRiotServletPrefix());
 		sb.append("/list/").append(getId());
 		if (parentId != null) {
 			sb.append('/').append(parentId);
+			if (parentEditorId != null) {
+				sb.append("?parentEditorId=").append(parentEditorId);
+			}
 		}
 		return sb.toString();
 	}

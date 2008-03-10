@@ -55,7 +55,7 @@ public interface EditorDefinition {
 	 * editor in order to build a breadcrumb navigation.
 	 */
 	public EditorReference createEditorPath(
-			String objectId, String parentId, MessageResolver messageResolver);
+			String objectId, String parentId, String parentEditorId, MessageResolver messageResolver);
 	
 	/**
 	 * Returns a PathComponent for the given bean that represents the complete
@@ -82,7 +82,7 @@ public interface EditorDefinition {
 	/**
 	 * 
 	 */
-	public String getEditorUrl(String objectId, String parentId);
+	public String getEditorUrl(String objectId, String parentId, String parentEditorId);
 	
 	/**
 	 * Editors that are only used in choosers may return <code>true</code>

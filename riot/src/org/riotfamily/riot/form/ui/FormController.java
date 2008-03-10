@@ -93,7 +93,7 @@ public class FormController extends BaseFormController {
 		if (parentListDef != null) {
 			ListSession session = listService.getOrCreateListSession(
 				parentListDef.getId(), FormUtils.getParentId(form),
-				null, request);
+				FormUtils.getParentEditorId(form), null, request);
 
 			model.put("listKey", session.getKey());
 		}
@@ -141,7 +141,9 @@ public class FormController extends BaseFormController {
 		return new ModelAndView(new RedirectView(formUrl, true));
 	}
 	
-	public static String getUrl(String editorId, String objectId, String parentId) {
+	public static String getUrl(String editorId, String objectId, 
+			String parentId, String parentEditorId) {
+		
 		StringBuffer sb = new StringBuffer();
 		sb.append("/form/").append(editorId);
 		if (objectId != null) {
@@ -149,6 +151,9 @@ public class FormController extends BaseFormController {
 		}
 		if (parentId != null) {
 			sb.append("?parentId=").append(parentId);
+			if (parentEditorId != null) {
+				sb.append("&parentEditorId=").append(parentEditorId);
+			}
 		}
 		return sb.toString();
 	}

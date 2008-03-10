@@ -202,7 +202,8 @@ public class Clipboard {
 	private boolean isCutObjectAncestor(CommandContext context) {
 		if (mode == MODE_CUT) {
 			EditorReference ref = context.getListDefinition().createEditorPath(
-					null, context.getParentId(), context.getMessageResolver());
+					null, context.getParentId(), context.getParentEditorId(),
+					context.getMessageResolver());
 
 			Iterator it = items.iterator();
 			while (it.hasNext()) {

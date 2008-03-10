@@ -39,6 +39,9 @@
 #chooser #body-wrapper {
 	padding-top: 10px;
 }
+#chooser div.extra {
+	top: 10px;
+}
 
 div#list {
 	overflow: auto;

@@ -32,6 +32,7 @@ import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.select.AbstractChooser;
 import org.riotfamily.riot.dao.RiotDao;
@@ -235,8 +236,9 @@ public class ObjectChooser extends AbstractChooser
 		else if (rootEditorId != null) {
 			rootId = FormUtils.getParentId(getForm());
 		}
-		return rootListDefinition.getEditorUrl(null, rootId) 
-				+ "?choose=" + targetEditorDefinition.getId();
+		return ServletUtils.addParameter(rootListDefinition.getEditorUrl(
+				null, rootId, rootEditorId), "choose", 
+				targetEditorDefinition.getId());
 	}
 	
 	protected String getPathUrl() {

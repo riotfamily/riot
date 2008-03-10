@@ -40,6 +40,8 @@ public class ListItem {
 	
 	private String parentId;
 	
+	private String parentEditorId;
+	
 	private String cssClass;
 	
 	private List columns;
@@ -97,6 +99,14 @@ public class ListItem {
 
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
+	}
+	
+	public String getParentEditorId() {
+		return parentEditorId;
+	}
+
+	public void setParentEditorId(String parentEditorId) {
+		this.parentEditorId = parentEditorId;
 	}
 
 	public int getRowIndex() {

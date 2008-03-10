@@ -48,13 +48,19 @@ public class IntermediateDefinition extends AbstractObjectEditorDefinition {
 		return this.nestedListDefinition;
 	}
 
-	public EditorReference createPathComponent(Object bean, String parentId) {
-		EditorReference reference = super.createPathComponent(bean, parentId);
+	public EditorReference createPathComponent(Object bean, String parentId, 
+			String parentEditorId) {
+		
+		EditorReference reference = super.createPathComponent(
+				bean, parentId, parentEditorId);
+		
 		reference.setEnabled(false);
 		return reference;
 	}
 
-	protected String getEditorUrlWithinServlet(String objectId, String parentId) {
+	protected String getEditorUrlWithinServlet(String objectId, String parentId,
+			String parentEditorId) {
+		
 		return null;
 	}
 }

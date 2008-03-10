@@ -130,7 +130,7 @@ public abstract class AbstractObjectEditorDefinition
 	 *        root list
 	 */
 	public EditorReference createEditorPath(String objectId, String parentId,
-			MessageResolver messageResolver) {
+			String parentEditorId, MessageResolver messageResolver) {
 
 		if (objectId != null) {
 			//Editing an existing object
@@ -140,9 +140,10 @@ public abstract class AbstractObjectEditorDefinition
 		else {
 			//Creating a new object - delegate the call to the parent editor
 			EditorReference parent = getParentEditorDefinition()
-					.createEditorPath(null, parentId, messageResolver);
+					.createEditorPath(null, parentId, parentEditorId, 
+					messageResolver);
 
-			EditorReference component = createPathComponent(null, parentId);
+			EditorReference component = createPathComponent(null, parentId, parentEditorId);
 			component.setParent(parent);
 			return component;
 		}
@@ -163,7 +164,7 @@ public abstract class AbstractObjectEditorDefinition
 			parentBean = bean;
 		}
 		else {
-			component = createPathComponent(bean, null);
+			component = createPathComponent(bean, null, null);
 			parentBean = EditorDefinitionUtils.getParent(this, bean);
 		}
 
@@ -174,7 +175,7 @@ public abstract class AbstractObjectEditorDefinition
 		component.setParent(parent);
 		return component;
 	}
-
+	
 	/**
 	 * Creates a PathComponent for the given bean (or parentId). This method is
 	 * not recursive and {@link EditorReference#getParent() getParent()} will
@@ -185,8 +186,12 @@ public abstract class AbstractObjectEditorDefinition
 	 * @param parentId Id of the the parent object or <code>null</code> if
 	 *        either an existing object is to be edited or the form belongs to a
 	 *        root list
+	 * @param parentEditorId Id of the parent editor or <code>null</code> if
+	 *        no parentId is specified
 	 */
-	public EditorReference createPathComponent(Object bean, String parentId) {
+	public EditorReference createPathComponent(Object bean, String parentId,
+			String parentEditorId) {
+		
 		EditorReference component = new EditorReference();
 		component.setEditorType(getEditorType());
 		component.setEditorId(getId());
@@ -197,7 +202,7 @@ public abstract class AbstractObjectEditorDefinition
 			 objectId = EditorDefinitionUtils.getObjectId(this, bean);
 			 component.setObjectId(objectId);
 		}
-		component.setEditorUrl(getEditorUrl(objectId, parentId));
+		component.setEditorUrl(getEditorUrl(objectId, parentId, parentEditorId));
 		return component;
 	}
 
@@ -217,16 +222,24 @@ public abstract class AbstractObjectEditorDefinition
 				getMessageKey().toString(), null, defaultLabel));
 
 		ref.setObjectId(objectId);
-		ref.setEditorUrl(getEditorUrl(objectId, null));
+		ref.setEditorUrl(getEditorUrl(objectId, null, null));
 		return ref;
 	}
 	
-	public String getEditorUrl(String objectId, String parentId) {
+	public String getEditorUrl(String objectId, String parentId, 
+			String parentEditorId) {
+		
 		return getEditorRepository().getRiotServletPrefix() 
-				+ getEditorUrlWithinServlet(objectId, parentId);
+				+ getEditorUrlWithinServlet(objectId, parentId, parentEditorId);
+	}
+	
+	protected final String getEditorUrlWithinServlet(
+			String objectId, String parentId) {
+		
+		return null;
 	}
 	
 	protected abstract String getEditorUrlWithinServlet(
-			String objectId, String parentId);
+			String objectId, String parentId, String parentEditorId);
 	
 }

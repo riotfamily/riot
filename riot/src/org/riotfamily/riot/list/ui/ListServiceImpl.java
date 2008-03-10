@@ -96,7 +96,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 	}
 	
 	public ListSession getOrCreateListSession(String editorId, String parentId,
-			String choose, HttpServletRequest request) {
+			String parentEditorId, String choose, HttpServletRequest request) {
 
 		String key = "list-" + editorId + "#" + parentId;
 		if (choose != null) {
@@ -117,8 +117,9 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 			MessageResolver messageResolver = new MessageResolver(messageSource,
 					messageCodesResolver, RequestContextUtils.getLocale(request));
 
-			listSession = new ListSession(key, listDef, parentId, messageResolver,
-					request.getContextPath(), editorRepository.getFormRepository(),
+			listSession = new ListSession(key, listDef, parentId, parentEditorId,
+					messageResolver, request.getContextPath(), 
+					editorRepository.getFormRepository(),
 					formContextFactory, transactionManager);
 
 			if (choose != null) {

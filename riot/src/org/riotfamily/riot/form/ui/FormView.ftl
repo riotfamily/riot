@@ -20,7 +20,7 @@
 		<@riot.script src="list.js" />
 		<@riot.script src="style/tweak.js" />
 		<script type="text/javascript" language="JavaScript">
-			updatePath('${editorId}', '${objectId?if_exists}', '${parentId?if_exists}');
+			updatePath('${editorId}', '${objectId?if_exists}', '${parentId?if_exists}', '${parentEditorId?if_exists}');
 			
 			<#--
 			  - Hides the form and displays a 'Saving ...' message.

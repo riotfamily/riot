@@ -86,9 +86,10 @@ public class PathController implements Controller, MessageSourceAware {
 
 		String objectId = request.getParameter(EditorConstants.OBJECT_ID);
 		String parentId = request.getParameter(EditorConstants.PARENT_ID);
+		String parentEditorId = request.getParameter(EditorConstants.PARENT_EDITOR_ID);
 
 		EditorReference lastComponent = createLastPathComponent(
-				editor, objectId, parentId,
+				editor, objectId, parentId, parentEditorId,
 				new MessageResolver(messageSource,
 				repository.getMessageCodesResolver(),
 				RequestContextUtils.getLocale(request)));
@@ -103,10 +104,12 @@ public class PathController implements Controller, MessageSourceAware {
 	}
 
 	protected EditorReference createLastPathComponent(
-			final EditorDefinition editor, final String objectId,
-			final String parentId, final MessageResolver messageResolver) {
+			EditorDefinition editor, String objectId,
+			String parentId, String parentEditorId, 
+			MessageResolver messageResolver) {
 
-		return editor.createEditorPath(objectId, parentId, messageResolver);
+		return editor.createEditorPath(objectId, parentId, parentEditorId, 
+				messageResolver);
 	}
 	
 	protected void processPath(EditorPath path, HttpServletRequest request) {

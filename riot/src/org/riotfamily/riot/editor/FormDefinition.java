@@ -76,21 +76,11 @@ public class FormDefinition extends AbstractObjectEditorDefinition
 	public void setDiscriminatorValue(String discriminatorValue) {
 		this.discriminatorValue = discriminatorValue;
 	}
-
-	public FormDefinition copy(String idPrefix) {
-		try {
-			FormDefinition copy = (FormDefinition) clone();
-			copy.setId(idPrefix + getId());
-			getEditorRepository().addEditorDefinition(copy);
-			return copy;
-		}
-		catch (CloneNotSupportedException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected String getEditorUrlWithinServlet(String objectId, String parentId) {
-		return FormController.getUrl(getId(), objectId, parentId);
+	
+	protected String getEditorUrlWithinServlet(String objectId, String parentId,
+			String parentEditorId) {
+		
+		return FormController.getUrl(getId(), objectId, parentId, parentEditorId);
 	}
 
 }

@@ -57,19 +57,26 @@ public class CustomEditorDefinition extends AbstractObjectEditorDefinition {
 		return ref;
 	}
 
-	public String getTargetUrl(String objectId, String parentId) {
+	public String getTargetUrl(String objectId, String parentId, 
+			String parentEditorId) {
+		
 		return url;
 	}
 
-	public String getEditorUrl(String objectId, String parentId) {
+	public String getEditorUrl(String objectId, String parentId, 
+			String parentEditorId) {
+		
 		if (target != null) {
-			return getTargetUrl(objectId, parentId);
+			return getTargetUrl(objectId, parentId, parentEditorId);
 		}
-		return super.getEditorUrl(objectId, parentId);
+		return super.getEditorUrl(objectId, parentId, parentEditorId);
 	}
 	
-	protected String getEditorUrlWithinServlet(String objectId, String parentId) {
-		return CustomEditorController.getUrl(getId(), objectId, parentId);
+	protected String getEditorUrlWithinServlet(String objectId, String parentId,
+			String parentEditorId) {
+		
+		return CustomEditorController.getUrl(getId(), objectId, parentId, 
+				parentEditorId);
 	}
 
 }

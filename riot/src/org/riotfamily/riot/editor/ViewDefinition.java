@@ -50,7 +50,9 @@ public class ViewDefinition extends AbstractObjectEditorDefinition
 		this.template = template;
 	}
 
-	public String getEditorUrlWithinServlet(String objectId, String parentId) {
+	public String getEditorUrlWithinServlet(String objectId, String parentId,
+			String parentEditorId) {
+		
 		return ViewController.getUrl(getId(), objectId);
 	}
 

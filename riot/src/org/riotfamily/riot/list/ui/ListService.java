@@ -39,7 +39,7 @@ import org.riotfamily.riot.list.command.CommandState;
 public interface ListService {
 
 	public ListSession getOrCreateListSession(String editorId, String parentId, 
-			String choose, HttpServletRequest request);
+			String parentEditorId, String choose, HttpServletRequest request);
 	
 	public ListModel getModel(String key, String expandedId, 
 			HttpServletRequest request) throws ListSessionExpiredException;

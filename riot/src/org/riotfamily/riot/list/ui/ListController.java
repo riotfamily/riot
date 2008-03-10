@@ -64,10 +64,11 @@ public class ListController implements Controller {
 
 		String editorId = (String) request.getAttribute(EditorConstants.EDITOR_ID);
 		String parentId = (String) request.getAttribute(EditorConstants.PARENT_ID);
+		String parentEditorId = request.getParameter(EditorConstants.PARENT_EDITOR_ID);
 		String choose = request.getParameter("choose");
 
 		ListSession session = listService.getOrCreateListSession(
-				editorId, parentId, choose, request);
+				editorId, parentId, parentEditorId, choose, request);
 
 		HashMap model = new HashMap();
 		model.put(EditorConstants.EDITOR_ID, editorId);
