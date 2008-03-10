@@ -189,7 +189,7 @@ public abstract class AbstractObjectEditorDefinition
 	 * @param parentEditorId Id of the parent editor or <code>null</code> if
 	 *        no parentId is specified
 	 */
-	public EditorReference createPathComponent(Object bean, String parentId,
+	protected EditorReference createPathComponent(Object bean, String parentId,
 			String parentEditorId) {
 		
 		EditorReference component = new EditorReference();

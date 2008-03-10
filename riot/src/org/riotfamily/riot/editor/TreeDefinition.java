@@ -59,16 +59,23 @@ public class TreeDefinition extends ListDefinition {
 		MessageResolver messageResolver) {
 		
 		if (isNode(bean)) {
-			EditorReference path = getDisplayDefinition().createEditorPath(bean, messageResolver);
+			EditorReference parent = getDisplayDefinition().createEditorPath(bean, messageResolver);
+			String objectId = EditorDefinitionUtils.getObjectId(this, bean);
+			
+			EditorReference path = createReference(objectId, getId(), messageResolver);
+			path.setEditorType("node");
+			
+			path.setParent(parent);
+			
 			EditorReference ref = path;
 			while (!ref.getEditorType().equals("list")) {
 				ref = ref.getParent();
 			}
-			String objectId = EditorDefinitionUtils.getObjectId(this, bean);
 			ref.setEditorUrl(ServletUtils.setParameter(ref.getEditorUrl(), "expand", objectId));
+			
 			return path;
 		}
 		return super.createEditorPath(bean, messageResolver);
 	}
-
+	
 }

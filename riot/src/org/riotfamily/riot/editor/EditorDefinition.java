@@ -62,7 +62,7 @@ public interface EditorDefinition {
 	 * path to the editor. 
 	 * 
 	 * This method is usually invoked by descendant editors to create a
-	 * complete path recursivly.
+	 * complete path recursively.
 	 */
 	public EditorReference createEditorPath(Object bean, 
 			MessageResolver messageResolver);

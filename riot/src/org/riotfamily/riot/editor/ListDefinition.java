@@ -132,8 +132,14 @@ public class ListDefinition extends AbstractEditorDefinition {
 	 * org.riotfamily.riot.form.ui.FormController FormController} to create
 	 * links pointing to the child lists.
 	 */
-	public EditorReference createReference(String parentId,
+	public EditorReference createReference(String parentId, 
 			MessageResolver messageResolver) {
+
+		return createReference(parentId, null, messageResolver);
+	}
+	
+	protected EditorReference createReference(String parentId, 
+			String parentEditorId, MessageResolver messageResolver) {
 
 		EditorReference ref = new EditorReference();
 		ref.setEditorId(getId());
@@ -147,7 +153,7 @@ public class ListDefinition extends AbstractEditorDefinition {
 		ref.setDescription(messageResolver.getMessage(
 				getMessageKey().append(".description").toString(), null, null));
 
-		ref.setEditorUrl(getEditorUrl(null, parentId, null));
+		ref.setEditorUrl(getEditorUrl(null, parentId, parentEditorId));
 		return ref;
 	}
 

@@ -116,7 +116,7 @@ public class PathController implements Controller, MessageSourceAware {
 		Iterator it = path.getComponents().iterator();
 		while (it.hasNext()) {
 			EditorReference ref = (EditorReference) it.next();
-			if (ref.getEditorType().equals("node")) {
+			if ("node".equals(ref.getEditorType())) {
 				it.remove();
 			}
 		}

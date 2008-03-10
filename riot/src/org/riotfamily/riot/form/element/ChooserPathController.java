@@ -51,7 +51,9 @@ public class ChooserPathController extends PathController {
 	
 	protected void processPath(EditorPath path, HttpServletRequest request) {
 		String root = (String) request.getAttribute("rootEditorId");
+		
 		EditorReference prev = null;
+		//EditorReference listRef = null;
 		Iterator it = path.getComponents().iterator();
 		while (it.hasNext()) {
 			EditorReference ref = (EditorReference) it.next();
@@ -60,22 +62,32 @@ public class ChooserPathController extends PathController {
 			}
 			else {
 				root = null;
-				ref.setEditorUrl(ServletUtils.addParameter(ref.getEditorUrl(), 
-						"choose", (String) request.getAttribute("targetEditorId")));
 				
-				if (ref.getEditorType().equals("list")) {
+				String url = ref.getEditorUrl();
+				
+				// Add choose parameter ...
+				url = ServletUtils.addParameter(url, "choose", 
+						(String) request.getAttribute("targetEditorId"));
+				
+				// Add riootEditorId parameter ...
+				if (root != null) { 
+					url = ServletUtils.addParameter(url, "rootEditorId", root);
+				}
+				ref.setEditorUrl(url);
+				
+				
+				if (ref.getEditorType().equals("list")
+						|| ref.getEditorType().equals("node")) {
+					
+					//listRef = ref;
 					if (prev != null) {
 						ref.setLabel(prev.getLabel());
 						prev = null;
 					}
 				}
 				else {
-					if (!ref.getEditorType().equals("group")) {
-						prev = ref;
-					}
-					if (!ref.getEditorType().equals("node")) {
-						it.remove();
-					}
+					prev = ref;
+					it.remove();
 				}
 			}
 		}
