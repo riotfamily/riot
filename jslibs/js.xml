@@ -24,6 +24,7 @@
 			<srcfiles dir="." includes="*.zip" />
 			<srcfiles dir="." includes="${patch.file}" />
 			<srcfiles dir="." includes="${overlay.dir}/**" />
+			<srcfiles dir="." includes="${module.src.dir}/**" />
 		</uptodate>
 	</target>
 	
