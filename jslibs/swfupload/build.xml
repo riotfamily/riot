@@ -5,7 +5,7 @@
 	<import file="../js.xml" />
 	
 	<target name="-resource-fileset">
-		<fileset id="resource.files" dir="src" />
+		<fileset id="resource.files" dir="${module.src.dir}" />
 	</target>
 
 </project>
