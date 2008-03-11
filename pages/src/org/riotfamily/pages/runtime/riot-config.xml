@@ -89,7 +89,6 @@
 			<list:command id="cutPage" />
 			<list:command id="editPage" />
 			<list:command id="gotoPage" />
-			<list:command id="showChildPages" />
 		</list:columns>
 		<list:command id="add"/>
 		<list:command id="pastePage" />
