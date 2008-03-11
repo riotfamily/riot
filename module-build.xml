@@ -89,7 +89,9 @@
 	<target name="-check-uptodate">
 		<echo>Checking for modified files for ${module.name} in ${module.dir}/${module.src.dir}</echo>
 		<uptodate property="module.jar.uptodate" targetfile="${module.jar}">
-			<srcfiles dir="${module.src.dir}" includes="**" />
+			<srcfiles dir="." includes="${module.src.dir}/**" />
+			<srcfiles dir="." includes="${module.meta-inf.dir}/**" />
+			<srcfiles file="ivy.xml" />
 		</uptodate>
 	</target>
 	
