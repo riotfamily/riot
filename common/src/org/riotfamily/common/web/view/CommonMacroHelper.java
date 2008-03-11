@@ -168,6 +168,18 @@ public class CommonMacroHelper {
 	public String getPathWithinApplication() {
 		return ServletUtils.getPathWithinApplication(request);
 	}
+
+	public String setParameter(String url, String name, String value) {
+		return ServletUtils.setParameter(url, name, value);
+	}
+
+	public String addParameter(String url, String name, String value) {
+		return ServletUtils.addParameter(url, name, value);
+	}
+
+	public String addRequestParameters(String url) {
+		return ServletUtils.addRequestParameters(url, request);
+	}
 	
 	public String getTopLevelHandlerName() {
 		return (String) request.getAttribute(

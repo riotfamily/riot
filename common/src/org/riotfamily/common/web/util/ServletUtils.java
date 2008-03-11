@@ -526,17 +526,25 @@ public final class ServletUtils {
 		return null;
 	}
 
+	/**
+	 * This method tries to replace the given parameter's value in the given URL's
+	 * query string with the given new value or adds the parameter if it is not
+	 * yet contained. The modified URL then is returned. 
+	 */
 	public static String setParameter(String url, String name, String value) {
 		Pattern pattern = Pattern.compile("([?&]" + name + "=)(.*)?(&|$)");
 		Matcher m = pattern.matcher(url);
 		if (m.find()) {
-			return m.replaceFirst("$1" + value + "$3");
+			return m.replaceFirst("$1" + FormatUtils.uriEscape(value) + "$3");
 		}
 		else {
 			return addParameter(url, name, value);
 		}
 	}
 	
+	/**
+	 * Returns an URL with the given parameter added to the given URL's query string.
+	 */
 	public static String addParameter(String url, String name, String value) {
 		StringBuffer sb = new StringBuffer(url);
 		boolean first = url.indexOf('?') == -1;
@@ -547,6 +555,23 @@ public final class ServletUtils {
 		}
 		return sb.toString();
 	}
+
+	/**
+	 * Returns an URL with all of the given request's parameters added to the
+	 * given URL's query string.
+	 */
+	public static String addRequestParameters(String url, HttpServletRequest request) {
+		Enumeration e = request.getParameterNames();
+		while (e.hasMoreElements()) {
+			String name = (String) e.nextElement();
+			String[] values = request.getParameterValues(name);
+			for (int i=0; i < values.length; i++) {
+				url = addParameter(url, name, values[i]);
+			}
+		}
+		return url;
+	}
+	
 
 	public static String getRequestUrlWithQueryString(
 			HttpServletRequest request) {

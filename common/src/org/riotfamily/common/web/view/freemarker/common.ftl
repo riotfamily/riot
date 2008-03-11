@@ -82,6 +82,28 @@
 </#function>
 
 <#--
+  - Tries to replace the given parameter's value in the given URL's query string
+  - with the given new value or adds the parameter if it is not yet contained. 
+  -->
+<#function setParameter url name value>
+	<#return commonMacroHelper.setParameter(url, name, value) />
+</#function>
+
+<#--
+  - Adds the given parameter to the given URL's query string.
+  -->
+<#function addParameter url name value>
+	<#return commonMacroHelper.addParameter(url, name, value) />
+</#function>
+
+<#--
+  - Adds all request parameters to the given URLs query string.
+  -->
+<#function addRequestParameters url>
+	<#return commonMacroHelper.addRequestParameters(url) />
+</#function>
+
+<#--
   - Returns a random item from the given collection.
   -->
 <#function randomItem collection>
