@@ -396,7 +396,9 @@ public class ListSession implements RenderContext {
 			children = getItems(root, this.parentId, this.parentEditorId, root, request);
 			if (subTree != null) {
 				ListItem item = children.findItem(subTree.getParentId());
-				item.setChildren(subTree);
+				if (item != null) {
+					item.setChildren(subTree);
+				}
 			}
 			return children;
 		}

@@ -438,6 +438,7 @@
 	</bean>
 	<alias name="chooserPathController" alias="/chooser-path/@{targetEditorId}" />
 	<alias name="chooserPathController" alias="/chooser-path/@{targetEditorId}/@{rootEditorId}" />
+	<alias name="chooserPathController" alias="/chooser-path/@{targetEditorId}/@{rootEditorId}/@{rootId}" />
 
 	<bean id="formContextFactory" class="org.riotfamily.forms.controller.FormContextFactory">
 		<property name="messageCodesResolver" ref="messageCodesResolver" />

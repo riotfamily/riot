@@ -50,45 +50,60 @@ public class ChooserPathController extends PathController {
 	}
 	
 	protected void processPath(EditorPath path, HttpServletRequest request) {
-		String root = (String) request.getAttribute("rootEditorId");
-		
+		String rootEditorId = (String) request.getAttribute("rootEditorId");
+		String rootId = (String) request.getAttribute("rootId");
+
+		EditorReference rootRef = null;
 		EditorReference prev = null;
-		//EditorReference listRef = null;
+		
 		Iterator it = path.getComponents().iterator();
-		while (it.hasNext()) {
-			EditorReference ref = (EditorReference) it.next();
-			if (root != null && !root.equals(ref.getEditorId())) {
+		
+		if (rootEditorId != null) {
+			while (it.hasNext()) {
+				EditorReference ref = (EditorReference) it.next();
+				if (rootEditorId.equals(ref.getEditorId()) 
+						&& (rootId == null || rootId.equals(ref.getObjectId()))) {
+					
+					rootRef = ref;
+					break;
+				}
+				prev = ref;
 				it.remove();
 			}
+		}
+		
+		it = path.getComponents().iterator();
+		while (it.hasNext()) {
+			EditorReference ref = (EditorReference) it.next();
+			String url = ref.getEditorUrl();
+			
+			if (rootRef != null && ref.getEditorType().equals("node")) {
+				url = rootRef.getEditorUrl();
+			}
+				
+			// Add choose parameter ...
+			url = ServletUtils.setParameter(url, "choose", 
+					(String) request.getAttribute("targetEditorId"));
+			
+			// Add riootEditorId parameter ...
+			if (rootEditorId != null) { 
+				url = ServletUtils.setParameter(url, "rootEditorId", rootEditorId);
+			}
+			
+			ref.setEditorUrl(url);
+			
+			
+			if (ref.getEditorType().equals("list")
+					|| ref.getEditorType().equals("node")) {
+				
+				if (prev != null) {
+					ref.setLabel(prev.getLabel());
+					prev = null;
+				}
+			}
 			else {
-				root = null;
-				
-				String url = ref.getEditorUrl();
-				
-				// Add choose parameter ...
-				url = ServletUtils.addParameter(url, "choose", 
-						(String) request.getAttribute("targetEditorId"));
-				
-				// Add riootEditorId parameter ...
-				if (root != null) { 
-					url = ServletUtils.addParameter(url, "rootEditorId", root);
-				}
-				ref.setEditorUrl(url);
-				
-				
-				if (ref.getEditorType().equals("list")
-						|| ref.getEditorType().equals("node")) {
-					
-					//listRef = ref;
-					if (prev != null) {
-						ref.setLabel(prev.getLabel());
-						prev = null;
-					}
-				}
-				else {
-					prev = ref;
-					it.remove();
-				}
+				prev = ref;
+				it.remove();
 			}
 		}
 	}

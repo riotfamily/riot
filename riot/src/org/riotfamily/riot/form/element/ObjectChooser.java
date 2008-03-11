@@ -64,6 +64,8 @@ public class ObjectChooser extends AbstractChooser
 	
 	private String rootIdAttribute;
 	
+	private String rootId;
+	
 	private String[] display;
 	
 	private BeanFactory beanFactory;
@@ -172,6 +174,22 @@ public class ObjectChooser extends AbstractChooser
 		}
 	}
 	
+	private void initRootId() {
+		if (rootId == null) {
+			if (rootProperty != null) {
+				Object parent = FormUtils.loadParent(getForm());
+				Object root = PropertyUtils.getProperty(parent, rootProperty);
+				rootId = EditorDefinitionUtils.getObjectId(rootListDefinition, root);
+			}
+			else if (rootIdAttribute != null) {
+				rootId = (String) getForm().getAttribute(rootIdAttribute);
+			}
+			else if (rootEditorId != null) {
+				rootId = FormUtils.getParentId(getForm());
+			}
+		}
+	}
+	
 	public RiotDao getRiotDao() {
 		return EditorDefinitionUtils.getListDefinition(targetEditorDefinition)
 				.getListConfig().getDao();
@@ -222,26 +240,15 @@ public class ObjectChooser extends AbstractChooser
 		doc.end();
 	}
 	
-	
 	protected String getChooserUrl() {
-		String rootId = null;
-		if (rootProperty != null) {
-			Object parent = FormUtils.loadParent(getForm());
-			Object root = PropertyUtils.getProperty(parent, rootProperty);
-			rootId = EditorDefinitionUtils.getObjectId(rootListDefinition, root);
-		}
-		else if (rootIdAttribute != null) {
-			rootId = (String) getForm().getAttribute(rootIdAttribute);
-		}
-		else if (rootEditorId != null) {
-			rootId = FormUtils.getParentId(getForm());
-		}
+		initRootId();
 		return ServletUtils.addParameter(rootListDefinition.getEditorUrl(
 				null, rootId, rootEditorId), "choose", 
 				targetEditorDefinition.getId());
 	}
 	
 	protected String getPathUrl() {
+		initRootId();
 		StringBuffer sb = new StringBuffer();
 		//FIXME /riot is hard-coded here ...
 		sb.append("/riot");
@@ -249,6 +256,9 @@ public class ObjectChooser extends AbstractChooser
 		sb.append(targetEditorDefinition.getId());
 		if (rootEditorId != null) {
 			sb.append("/").append(rootEditorId);
+			if (rootId != null) {
+				sb.append("/").append(rootId);
+			}
 		}
 		return sb.toString();
 	}

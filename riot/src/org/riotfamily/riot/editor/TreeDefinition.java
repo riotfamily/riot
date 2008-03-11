@@ -55,6 +55,16 @@ public class TreeDefinition extends ListDefinition {
 		return true;
 	}
 
+	public EditorReference createEditorPath(String objectId, String parentId,
+			String parentEditorId, MessageResolver messageResolver) {
+
+		if (getId().equals(parentEditorId)) {
+			Object bean = EditorDefinitionUtils.loadBean(this, parentId);
+			return createEditorPath(bean, messageResolver);
+		}
+		return super.createEditorPath(objectId, parentId, parentEditorId, messageResolver);
+	}
+	
 	public EditorReference createEditorPath(Object bean,
 		MessageResolver messageResolver) {
 		
@@ -64,11 +74,15 @@ public class TreeDefinition extends ListDefinition {
 			
 			EditorReference path = createReference(objectId, getId(), messageResolver);
 			path.setEditorType("node");
+			path.setObjectId(objectId);
 			
 			path.setParent(parent);
 			
 			EditorReference ref = path;
 			while (!ref.getEditorType().equals("list")) {
+				if (ref.getEditorType().equals("node")) {
+					ref.setEditorUrl(ServletUtils.setParameter(ref.getEditorUrl(), "expand", objectId));
+				}
 				ref = ref.getParent();
 			}
 			ref.setEditorUrl(ServletUtils.setParameter(ref.getEditorUrl(), "expand", objectId));
