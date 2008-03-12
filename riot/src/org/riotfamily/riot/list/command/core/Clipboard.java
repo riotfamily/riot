@@ -34,7 +34,6 @@ import javax.servlet.http.HttpSession;
 import org.riotfamily.riot.dao.CopyAndPasteEnabledDao;
 import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.RiotDao;
-import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.ui.EditorReference;
 import org.riotfamily.riot.list.command.CommandContext;
@@ -101,7 +100,20 @@ public class Clipboard {
 		Iterator it = items.iterator();
 		while (it.hasNext()) {
 			ClipboardItem item = (ClipboardItem) it.next();
-			result.add(EditorDefinitionUtils.loadBean(item.listDefinition, item.objectId));
+			result.add(item.loadObject());
+		}
+		return result;
+	}
+	
+	public List getObjectIds() {
+		if (isEmpty()) {
+			return Collections.EMPTY_LIST;
+		}
+		List result = new ArrayList(items.size());
+		Iterator it = items.iterator();
+		while (it.hasNext()) {
+			ClipboardItem item = (ClipboardItem) it.next();
+			result.add(item.objectId);
 		}
 		return result;
 	}
@@ -135,23 +147,18 @@ public class Clipboard {
 
 	private CommandResult pasteCut(CommandContext context) {
 		BatchResult result = new BatchResult();
-		CutAndPasteEnabledDao dao = (CutAndPasteEnabledDao) context.getDao();
-		Object parent = context.getParent();
 		Iterator it = items.iterator();
 		while (it.hasNext()) {
 			ClipboardItem item = (ClipboardItem) it.next();
-			Object bean = dao.load(item.objectId);
-			dao.addChild(bean, parent);
+			Object bean = item.loadObject();
+			CutAndPasteEnabledDao dao = (CutAndPasteEnabledDao) context.getDao();
+			dao.addChild(bean, context.getParent());
 			result.add(new RefreshSiblingsResult(item.objectId));
 			
 			if (item.parentId != null) {
-				Object previousParent = EditorDefinitionUtils.loadParent(
-						item.listDefinition, item.parentId);
-
-				CutAndPasteEnabledDao previousDao = (CutAndPasteEnabledDao)
-						item.listDefinition.getListConfig().getDao();
-
-				previousDao.removeChild(item, previousParent);
+				CutAndPasteEnabledDao parentDao = item.getParentDao();
+				Object parent = parentDao.load(item.parentId);
+				parentDao.removeChild(bean, parent);
 				result.add(new RefreshSiblingsResult(item.parentId));	
 			}
 			else {
@@ -247,19 +254,24 @@ public class Clipboard {
 		private String parentId;
 		
 		private ListDefinition listDefinition;
+		
+		private ListDefinition parentListDefinition;
 
 		public ClipboardItem(CommandContext context) {
-			this (context.getObjectId(), context.getParentId(), context.getListDefinition());
+			this.objectId = context.getObjectId();
+			this.parentId = context.getParentId();
+			this.listDefinition = context.getListDefinition();
+			this.parentListDefinition = context.getParentListDefinition();
 		}
 		
-		public ClipboardItem(String objectId, String parentId,
-				ListDefinition listDefinition) {
-			
-			this.objectId = objectId;
-			this.parentId = parentId;
-			this.listDefinition = listDefinition;
+		public Object loadObject() {
+			return listDefinition.getDao().load(objectId);
 		}
 		
+		public CutAndPasteEnabledDao getParentDao() {
+			return (CutAndPasteEnabledDao) parentListDefinition.getDao();
+		}
+						
 		public int hashCode() {
 			int hashCode = 0;
 			if (objectId != null) {

@@ -36,12 +36,14 @@ import org.riotfamily.riot.list.ListConfig;
  */
 public interface CommandContext {
 
+	public ListDefinition getParentListDefinition();
+	
 	public ListDefinition getListDefinition();
-
+	
 	public ListConfig getListConfig();
 
 	public RiotDao getDao();
-
+	
 	public ListParams getParams();
 
 	public int getRowIndex();

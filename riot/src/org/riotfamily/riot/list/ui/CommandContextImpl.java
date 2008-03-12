@@ -66,12 +66,12 @@ public class CommandContextImpl implements CommandContext {
 	}
 
 	public RiotDao getDao() {
-		return getListDefinition().getListConfig().getDao();
+		return getListDefinition().getDao();
 	}
-
+	
 	public Object getBean() {
 		if (bean == null && objectId != null) {
-			bean = session.loadBean(objectId);
+			bean = getListDefinition().getDao().load(objectId);
 		}
 		return bean;
 	}
@@ -84,7 +84,7 @@ public class CommandContextImpl implements CommandContext {
 	public Object getParent() {
 		if (parent == null) {
 			if (parentId != null) {
-				parent = session.loadParent(parentId, parentEditorId);
+				parent = getParentListDefinition().getDao().load(parentId);
 			}
 		}
 		return parent;
@@ -125,7 +125,11 @@ public class CommandContextImpl implements CommandContext {
 	} 
 	
 	public ListDefinition getListDefinition() {
-		return session.getListDefinition(parentId);
+		return session.getListDefinition();
+	}
+	
+	public ListDefinition getParentListDefinition() {
+		return session.getParentListDefinition(parentEditorId);
 	}
 
 	public ListConfig getListConfig() {

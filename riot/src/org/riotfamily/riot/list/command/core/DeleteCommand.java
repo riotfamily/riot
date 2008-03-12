@@ -26,8 +26,6 @@ package org.riotfamily.riot.list.command.core;
 import java.util.Collections;
 import java.util.List;
 
-import org.riotfamily.riot.editor.EditorDefinitionUtils;
-import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
@@ -69,12 +67,8 @@ public class DeleteCommand extends AbstractCommand implements BatchCommand {
 	}
 	
 	public CommandResult execute(CommandContext context) {
-		ListDefinition listDef = context.getListDefinition();
-		String parentId = context.getParentId();
-		Object parent = EditorDefinitionUtils.loadParent(listDef, parentId);
-		
 		Object item = context.getBean();
-		context.getDao().delete(item, parent);
+		context.getDao().delete(item, context.getParent());
 		return new RefreshSiblingsResult(context);
 	}
 	

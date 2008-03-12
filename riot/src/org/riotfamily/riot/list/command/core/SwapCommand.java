@@ -24,8 +24,6 @@
 package org.riotfamily.riot.list.command.core;
 
 import org.riotfamily.riot.dao.SwappableItemDao;
-import org.riotfamily.riot.editor.EditorDefinitionUtils;
-import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
@@ -59,11 +57,7 @@ public class SwapCommand extends AbstractCommand {
 
 	public CommandResult execute(CommandContext context) {
 		SwappableItemDao dao = (SwappableItemDao) context.getDao();
-		ListDefinition listDef = context.getListDefinition();
-		String parentId = context.getParentId();
-		Object parent = EditorDefinitionUtils.loadParent(listDef, parentId);
-
-		dao.swapEntity(context.getBean(), parent, context.getParams(),
+		dao.swapEntity(context.getBean(), context.getParent(), context.getParams(),
 				context.getRowIndex() + swapWith);
 		
 		return new RefreshSiblingsResult(context);

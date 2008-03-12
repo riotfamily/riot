@@ -136,7 +136,7 @@ var RiotList = Class.create({
 			ListRow.create(this, model, null, model.items[i]); 
 		}
 		if (this.tree) {
-			this.tbody.appendChild(ListRow.createCommandRow(this, 0, model.listCommands, null));
+			this.tbody.appendChild(ListRow.createCommandRow(this, 0, null));
 		}
 	},
 
@@ -174,7 +174,9 @@ var RiotList = Class.create({
 		this.parentCommand = command;
 		this.table.removeClassName('view-mode');
 		this.table.addClassName('select-parent-mode');
-		this.table.select('.parent-command').invoke('setup', command);
+		DWREngine.beginBatch();
+		this.table.select('.parent-command').invoke('setup', command.id);
+		DWREngine.endBatch();
 	},
 	
 	cancelParentSelection: function() {
@@ -433,7 +435,9 @@ var ListRow = {
 		}
 	},
 	
-	createCommandRow: function(list, level, commands, parentId) {
+	createCommandRow: function(list, level, item) {
+		var parentId = item ? item.objectId : null;
+		
 		var arrow = RBuilder.node('div', {
 			className: 'expand', 
 			style: 'margin-left:' + ((level) * 22) + 'px;'
@@ -444,57 +448,55 @@ var ListRow = {
 			style: 'float:right'
 		}).observe('click', list.execParentCommand.bind(list, parentId));
 		
-		var cb = null;				
-		if (list.hasBatchCommands) {
-			cb = RBuilder.node('input', {
-				type: 'checkbox', className: 'check', disabled: 'disabled'
-			});
-		}
-		
 		var label = RBuilder.node('span', {className: 'label'});
 		
-		return RBuilder.node('tr', {
+		var tr = RBuilder.node('tr', {
 				className: 'parent-command', 
 				level: level,
-				commands: commands,
 				label: label,
 				icon: icon,
-				setup: function(cmd) {
-					if (cmd) {
-						cmd = this.commands.find(function(c) {return c.action == cmd.action});
-						this.label.innerHTML = cmd.label + ' ...';
-						this.icon.className = 'action action-' + cmd.styleClass;
-						this.label.parentNode.className = this.icon.parentNode.className = cmd.enabled ? 'enabled' : 'disabled';
+				list: list,
+				item: item,
+				setup: function(commandId) {
+					if (commandId) {
+						ListService.getParentCommandState(this.list.key, commandId, this.item, this.foo.bind(this));
 					}
-					return this;
+				},
+				foo: function(cmd) {
+					this.label.innerHTML = cmd.label + ' ...';
+					this.icon.className = 'action action-' + cmd.styleClass;
+					this.label.parentNode.className = this.icon.parentNode.className = cmd.enabled ? 'enabled' : 'disabled';
 				}
 			}, 
 			RBuilder.node('td', {colSpan: list.columns.length}, arrow, label),
 			RBuilder.node('td', {}, icon)
 		).setHoverClass('highlight-parent');
+		
+		if (list.parentCommand) {
+			tr.setup(list.parentCommand.id);
+		}
+		return tr;
 	},
 	
 	Methods: {
 	
 		remove: function() {
 			this.removeChildren();
+			if (this.commandRow) {
+				this.commandRow.remove();
+			}
 			this.parentNode.removeChild(this);
 		},
 		
 		removeChildren: function() {
 			if (this.childRows) {
 				this.childRows.invoke('remove');
-				this.commandRow.remove();
 				this.childRows = null;
 			}
 		},
 				
 		addChildren: function(model) {
 			this.childRows = [];
-			this.commandRow = ListRow.createCommandRow(
-					this.list, this.level+1, model.listCommands, this.item.objectId) 
-					.insertSelfAfter(this).setup(this.list.parentCommand);
-						
 			for (var i = model.items.length - 1; i >= 0; i--) {
 				ListRow.create(this.list, model, this, model.items[i]);
 			}
@@ -516,6 +518,12 @@ var ListRow = {
 			if (!this.expanded) {
 				this.expanded = true;
 				this.addClassName('expanded');
+				if (this.commandRow) {
+					this.commandRow.show();	
+				}
+				else {
+					this.commandRow = ListRow.createCommandRow(this.list, this.level+1, this.item).insertSelfAfter(this);
+				}
 				ListService.getChildren(this.list.key, this.item.objectId, this.addChildren.bind(this));
 			}
 		},
@@ -525,6 +533,9 @@ var ListRow = {
 				this.expanded = false;
 				this.removeClassName('expanded');
 				this.removeChildren();
+				if (this.commandRow) {
+					this.commandRow.hide();
+				}
 			}
 		},
 				

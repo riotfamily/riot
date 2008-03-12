@@ -259,7 +259,6 @@ public class ListSession implements RenderContext {
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		context.setParent(parent, getObjectId(parent), listDefinition.getId());
 		context.setItemsTotal(model.getItemsTotal());
-		model.setListCommands(getListCommandStates(listCommands, context, request));
 		return model;
 	}
 	
@@ -509,6 +508,30 @@ public class ListSession implements RenderContext {
 				new ListItem(objectId), bean, 1, request);
 	}
 
+	public CommandState getParentCommandState(String commandId, ListItem item,
+			HttpServletRequest request) {
+
+		Command command = getCommand(listCommands, commandId);
+		CommandContextImpl context = new CommandContextImpl(this, request);
+		Object parent;
+		if (item != null) {
+			parent = loadBean(item.getObjectId());
+			context.setParent(parent, item.getObjectId(), listDefinition.getId());
+			context.setRowIndex(item.getRowIndex());
+		}
+		else {
+			parent = loadParent();
+			context.setParent(parent, this.parentId, this.parentEditorId);
+		}
+		
+		CommandState state = command.getState(context);
+		boolean granted = AccessController.isGranted(
+				state.getAction(), parent);
+
+		state.setEnabled(state.isEnabled() && granted);
+		return state;
+	}
+	
 	private List getCommandStates(List commands, ListItem item, Object bean,
 			int itemsTotal, HttpServletRequest request) {
 
@@ -681,27 +704,35 @@ public class ListSession implements RenderContext {
 		throw new IllegalArgumentException("No such command: " + id);
 	}
 
-	public Object loadBean(String objectId) {
+	private Object loadBean(String objectId) {
 		return listConfig.getDao().load(objectId);
 	}
 	
-	public String getObjectId(Object bean) {
+	private String getObjectId(Object bean) {
 		return listConfig.getDao().getObjectId(bean);
 	}
 	
-	public Object loadParent(String parentId, String parentEditorId) {
-		if (listDefinition.getId().equals(parentEditorId)) {
-			return loadBean(parentId);
+	private Object loadParent(String parentId, String parentEditorId) {
+		ListDefinition listDef = getParentListDefinition(parentEditorId);
+		if (listDef != null) {
+			return listDef.getDao().load(parentId);	
 		}
-		return EditorDefinitionUtils.loadParent(listDefinition, parentId);
+		return null;
 	}
 	
 	private Object loadParent() {
 		return loadParent(this.parentId, this.parentEditorId);
 	}
 
-	public ListDefinition getListDefinition(String parentId) {
+	public ListDefinition getListDefinition() {
 		return listDefinition;
+	}
+	
+	public ListDefinition getParentListDefinition(String parentEditorId) {
+		if (listDefinition.getId().equals(parentEditorId)) {
+			return listDefinition;
+		}
+		return EditorDefinitionUtils.getParentListDefinition(listDefinition);
 	}
 	
 	public String getListId() {
