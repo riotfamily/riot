@@ -58,7 +58,7 @@ public class DescendCommand extends AbstractCommand {
 	}
 		
 	protected boolean isEnabled(CommandContext context, String action) {
-		RiotDao dao = nextListDefinition.getListConfig().getDao();
+		RiotDao dao = nextListDefinition.getDao();
 		int size = dao.getListSize(context.getBean(), params);
 		if (size == -1) {
 			size = dao.list(context.getBean(), params).size();
