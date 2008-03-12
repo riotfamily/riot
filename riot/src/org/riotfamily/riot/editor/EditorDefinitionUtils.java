@@ -92,17 +92,17 @@ public final class EditorDefinitionUtils {
 		if (listDef == null) {
 			return null;
 		}
-		return listDef.getListConfig().getDao().getObjectId(item);
+		return listDef.getDao().getObjectId(item);
 	}
 	
 	public static Object loadBean(EditorDefinition def, String objectId) {
 		ListDefinition listDef = getListDefinition(def);
-		return listDef.getListConfig().getDao().load(objectId);
+		return listDef.getDao().load(objectId);
 	}
 
 	public static Object getParent(EditorDefinition def, Object bean) {
 		ListDefinition listDef = getListDefinition(def);
-		RiotDao dao = listDef.getListConfig().getDao();
+		RiotDao dao = listDef.getDao();
 		if (dao instanceof ParentChildDao) {
 			ParentChildDao parentChildDao = (ParentChildDao) dao;
 			return parentChildDao.getParent(bean);

@@ -191,8 +191,7 @@ public class ObjectChooser extends AbstractChooser
 	}
 	
 	public RiotDao getRiotDao() {
-		return EditorDefinitionUtils.getListDefinition(targetEditorDefinition)
-				.getListConfig().getDao();
+		return EditorDefinitionUtils.getListDefinition(targetEditorDefinition).getDao();
 	}
 	
 	protected Object loadBean(String objectId) {

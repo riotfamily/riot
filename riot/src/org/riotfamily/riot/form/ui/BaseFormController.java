@@ -261,7 +261,7 @@ public abstract class BaseFormController extends RepositoryFormController
 			throws Exception {
 		
 		ListDefinition listDef = EditorDefinitionUtils.getParentListDefinition(editor);
-		RiotDao dao = listDef.getListConfig().getDao();
+		RiotDao dao = listDef.getDao();
 		
 		TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
 		try {

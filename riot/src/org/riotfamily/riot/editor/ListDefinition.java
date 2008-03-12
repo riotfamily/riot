@@ -26,6 +26,7 @@ package org.riotfamily.riot.editor;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.editor.ui.EditorReference;
 import org.riotfamily.riot.list.ListConfig;
 import org.springframework.util.Assert;
@@ -159,6 +160,10 @@ public class ListDefinition extends AbstractEditorDefinition {
 
 	public ListConfig getListConfig() {
 		return getEditorRepository().getListRepository().getListConfig(listId);
+	}
+	
+	public RiotDao getDao() {
+		return getListConfig().getDao();
 	}
 
 	public String getEditorUrl(String objectId, String parentId, 
