@@ -13,6 +13,7 @@
 			<xsd:complexContent>
 				<xsd:extension base="form:simple-editor">
 					<xsd:attribute name="cross-site" type="xsd:boolean" default="false" />
+					<xsd:attribute name="default" type="xsd:string" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
