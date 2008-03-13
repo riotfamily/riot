@@ -443,11 +443,7 @@ var ListRow = {
 			style: 'margin-left:' + ((level) * 22) + 'px;'
 		});
 		
-		var icon = RBuilder.node('a', {
-			href: '#', 
-			style: 'float:right'
-		}).observe('click', list.execParentCommand.bind(list, parentId));
-		
+		var icon = RBuilder.node('a', {href: '#', style: 'float:right'});
 		var label = RBuilder.node('span', {className: 'label'});
 		
 		var tr = RBuilder.node('tr', {
@@ -470,7 +466,7 @@ var ListRow = {
 			}, 
 			RBuilder.node('td', {colSpan: list.columns.length}, arrow, label),
 			RBuilder.node('td', {}, icon)
-		).setHoverClass('highlight-parent');
+		).setHoverClass('highlight-parent').observe('click', list.execParentCommand.bind(list, parentId));
 		
 		if (list.parentCommand) {
 			tr.setup(list.parentCommand.id);
