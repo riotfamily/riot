@@ -136,11 +136,14 @@ function performAction(action) {
 }
 
 function focusElement(e) {
-	if (e.nodeName.match(/(input|textarea|button)/i)) {
-		e.focus();
-		return true;
+	if (e) {
+		if (e.nodeName.match(/(input|textarea|button)/i)) {
+			e.focus();
+			return true;
+		}
+		return e.immediateDescendants().any(focusElement);
 	}
-	return e.immediateDescendants().any(focusElement);
+	return false;
 }
 
 function setValid(e, valid) {
@@ -156,11 +159,14 @@ function setErrorClass(e, valid) {
 }
 
 function setEnabled(e, enabled) {
-	$(e).descendants().push(e).each(function(node) {
-		if (typeof node.disabled != 'undefined') {									
-			node.disabled = !enabled;
-		}
-	});
+	e = $(e);
+	if (e) {
+		e.descendants().push(e).each(function(node) {
+			if (typeof node.disabled != 'undefined') {									
+				node.disabled = !enabled;
+			}
+		});
+	}
 }
 
 function propagate(e, type) {
