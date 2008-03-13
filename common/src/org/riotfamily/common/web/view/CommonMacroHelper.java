@@ -129,6 +129,10 @@ public class CommonMacroHelper {
 		return "";
 	}
 	
+	public String resolveUrl(String url) {
+		return ServletUtils.resolveUrl(url, request);
+	}
+	
 	public String resolveAndEncodeUrl(String url) {
 		return ServletUtils.resolveAndEncodeUrl(url, request, response);
 	}

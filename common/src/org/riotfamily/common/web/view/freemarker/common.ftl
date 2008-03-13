@@ -5,8 +5,8 @@
 <#assign templateName = .data_model['org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView.templateName']! />
 
 <#--
-  - Includes the given URI using a RequestDispatcher. The argument may also be
-  - a sequence of URIs, in which case multiple includes are performed.  
+  - Includes the given path using a RequestDispatcher. The argument may also be
+  - a sequence of paths, in which case multiple includes are performed.  
   -->
 <#macro include path="">
 <#compress>
@@ -20,29 +20,49 @@
 </#compress>
 </#macro>
 
-
+<#--
+  - Performs a request using a RequestDispatcher and returns the captured output.
+  -->
 <#function capture path="">
 	<#return commonMacroHelper.capture(path) />
 </#function>
 
-
+<#--
+  - Sets a shared property. The concept and purpose of shared properties is 
+  - described at http://www.riotfamily.org/docs/push-ups.html#collaboration
+  -->
 <#macro setSharedProperty key value>
 	<#local x = commonMacroHelper.setSharedProperty(key, value) />
 </#macro>
+
+<#--
+  - Gets a shared property. The concept and purpose of shared properties is 
+  - described at http://www.riotfamily.org/docs/push-ups.html#collaboration
+  -->
 
 <#function getSharedProperty key>
 	<#return commonMacroHelper.getSharedProperty(key) />
 </#function>
 
 <#--
-  - Adds the contextPath and sessionId to the given URI if necessary. 
+  - Adds the contextPath and sessionId to the given URI if necessary.
+  - ${url('/foo.html')} => /context/foo.html;jsessionid=... 
   -->
 <#function url href>
 	<#return commonMacroHelper.resolveAndEncodeUrl(href?trim) />
 </#function>
 
 <#--
-  - Adds the contextPath and sessionId to all links found in the given HTML if necessary. 
+  - Adds the contextPath to the given path.
+  - ${url('/foo.html')} => /context/foo.html 
+  -->
+<#function resolve href>
+	<#return commonMacroHelper.resolveUrl(href?trim) />
+</#function>
+
+<#--
+  - Adds the contextPath and sessionId to all links found in the given HTML if necessary.
+  - ${encodeLinks('Hello <a href="/world.html">World</a>')} => Hello <a href="/context/world.html;jsessionid=...">World</a> 
   -->
 <#function encodeLinks html>
 	<#return commonMacroHelper.resolveAndEncodeLinks(html) />
@@ -50,6 +70,7 @@
 
 <#--
   - Adds the contextPath and a timestamp to the given URI.
+  - ${resource('/style/main.css')} => /context/style/main.css?121345
   -->
 <#function resource href>
 	<#return url(commonMacroHelper.addTimestamp(href)) />
@@ -136,23 +157,44 @@
 	<#return commonMacroHelper.partition(collection, property) />
 </#function>
 
-
+<#--
+  - Strips directory names and the query-string from a path.
+  - ${baseName('/hello/world.html?foo=bar')} => world.html  
+  -->
 <#function baseName path>
 	<#return commonMacroHelper.baseName(path) />
 </#function>
 
+<#--
+  - Returns the extension of the given file-name. If the validExtensions 
+  - parameter is specified, the defaultExtension will be returned if the actual
+  - extension is invalid.
+  - ${fileExtension('foo.html')} => html
+   -${fileExtension('foo.bar', ['gif', 'jpg'], 'unknown')} => unknown
+  -->
 <#function fileExtension filename validExtension=[] defaultExtension="">
 	<#return commonMacroHelper.getFileExtension(filename, validExtension, defaultExtension) />
 </#function>
 
+<#--
+  - Returns a formatted string using an appropriate unit (Bytes, KB or MB).
+  -->
 <#function formatByteSize bytes>
 	<#return commonMacroHelper.formatByteSize(bytes) />
 </#function>
 
+<#--
+  - Returns a formatted string using the pattern hh:mm:ss. The hours are
+  - omitted if they are zero, the minutes are padded with a '0' character
+  - if they are less than 10.
+  -->
 <#function formatMillis millis>
 	<#return commonMacroHelper.formatMillis(millis) />
 </#function>
 
+<#--
+  - Formats the given number using a custom pattern and locale.
+  -->
 <#function formatNumber number pattern="#0.#" locale="en_US">
 	<#return commonMacroHelper.formatNumber(number, pattern, locale) />
 </#function>
