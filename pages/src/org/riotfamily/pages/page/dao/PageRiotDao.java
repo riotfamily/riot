@@ -250,6 +250,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 		log.debug("New path: " + newPath);
 		if (!newPath.equals(oldPath)) {
 			dao.deleteAlias(newPath);
+			dao.deleteAlias(oldPath);
 			dao.addAlias(oldPath, page);
 			moveComponentLists(oldPath, newPath);
 			Collection childPages = page.getPersistentChildPages();
