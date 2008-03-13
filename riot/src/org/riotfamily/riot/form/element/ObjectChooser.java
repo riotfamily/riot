@@ -66,6 +66,8 @@ public class ObjectChooser extends AbstractChooser
 	
 	private String rootId;
 	
+	private String parentEditorId;
+	
 	private String[] display;
 	
 	private BeanFactory beanFactory;
@@ -186,6 +188,7 @@ public class ObjectChooser extends AbstractChooser
 			}
 			else if (rootEditorId != null) {
 				rootId = FormUtils.getParentId(getForm());
+				parentEditorId = FormUtils.getParentEditorId(getForm());
 			}
 		}
 	}
@@ -242,7 +245,7 @@ public class ObjectChooser extends AbstractChooser
 	protected String getChooserUrl() {
 		initRootId();
 		return ServletUtils.addParameter(rootListDefinition.getEditorUrl(
-				null, rootId, rootEditorId), "choose", 
+				null, rootId, parentEditorId), "choose", 
 				targetEditorDefinition.getId());
 	}
 	
@@ -257,6 +260,9 @@ public class ObjectChooser extends AbstractChooser
 			sb.append("/").append(rootEditorId);
 			if (rootId != null) {
 				sb.append("/").append(rootId);
+				if (parentEditorId != null) {
+					sb.append("?parentEditorId=").append(parentEditorId);
+				}
 			}
 		}
 		return sb.toString();
