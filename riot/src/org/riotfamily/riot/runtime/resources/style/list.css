@@ -228,6 +228,19 @@ td div.false {
 	padding-left: 32px;
 }
 
+#list div.batchCommands .selectionStatus {
+	float: right;
+	margin-right: 8px;
+	line-height: 32px;
+	overflow: hidden;
+}
+#list div.batchCommands .selectionStatus .itemCount {
+	margin-right: 8px;
+}
+#list div.batchCommands .selectionStatus .clear {
+	text-decoration: underline;
+}
+
 #list .commands .enabled:hover,
 tr.highlight .highlight-default .default {
 	background-position: 0 -32px;

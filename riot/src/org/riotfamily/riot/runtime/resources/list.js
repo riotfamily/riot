@@ -32,6 +32,7 @@ var RiotList = Class.create({
 		this.columns = [];
 		this.headings = {};
 		this.tree = model.tree;
+		this.texts = model.texts;
 		this.table.addClassName(model.cssClass);
 		this.hasBatchCommands = model.batchCommands && model.batchCommands.length > 0; 
 		model.columns.each(this.addColumnHeading.bind(this));
@@ -46,6 +47,12 @@ var RiotList = Class.create({
 			this.table.addClassName('selectable');
 			var handler = this.onBatchCommandClick.bindAsEventListener(this);
 			this.batchButtons = this.appendCommands(this.batchContainer, false, null, handler, model.batchCommands);
+			
+			RBuilder.node('div', {className: 'selectionStatus'},
+				this.selectionStatus = RBuilder.node('span', {className: 'itemCount'}),
+				RBuilder.node('span', {className: 'clear'}, '[', this.texts['label.selection.clear'], ']').observe('click', this.clearSelection.bind(this))
+			).appendTo(this.batchContainer);	
+			
 			this.updateBatchStates();
 		}
 	},
@@ -156,9 +163,9 @@ var RiotList = Class.create({
 		if (!this.selectParentMode) {
 			if (this.tree && !a.item) {
 				this.selectParent(a.command);
-				var cancel = RBuilder.node('button', {}, 'Cancel');
+				var cancel = RBuilder.node('button', {}, this.texts['label.tree.cancelCommand']);
 				this.dialog = RBuilder.node('div', {className: 'select-parent'}, 
-					'Please select a target on the left.', cancel
+					this.texts['label.tree.selectTarget'], cancel
 				).hide().insertSelfAfter(a);
 				cancel.observe('click', this.cancelParentSelection.bind(this));
 				new Effect.BlindDown(this.dialog, {duration: 0.3});
@@ -252,6 +259,14 @@ var RiotList = Class.create({
 		this.updateBatchStates();
 	},
 	
+	clearSelection: function() {
+		this.selection = [];
+		this.tbody.select('input.check').each(function(cb) {
+			cb.checked = false;
+		});
+		this.updateBatchStates();
+	},
+	
 	isActionEnabled: function(action, item) {
 		for (var i = 0; i < item.commands.length; i++) {
 			var cmd = item.commands[i];
@@ -281,12 +296,21 @@ var RiotList = Class.create({
 			var enabled = this.isActionEnabledForSelection(button.command.action);
 			button.setEnabled(enabled);
 		}
+		
+		if (this.selection.length > 1) {
+			this.selectionStatus.update(this.texts['label.selection.count'].interpolate(this.selection));	
+		}
+		else {
+			this.selectionStatus.update();
+		}
+		
+		
 		if (this.selection.length > 0 && !this.batchContainer.visible()) {
 			new Effect.Appear(this.batchContainer, {duration: 0.3});
 		}	
 		else if (this.selection.length == 0 && this.batchContainer.visible()) {
 			new Effect.Fade(this.batchContainer, {duration: 0.3});
-		}	
+		}
 	},
 	
 	processCommandResult: function(result) {

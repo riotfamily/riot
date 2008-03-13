@@ -203,6 +203,19 @@ public class ListSession implements RenderContext {
 		params.setPageSize(listConfig.getPageSize());
 		params.setOrder(listConfig.getDefaultOrder());
 	}
+	
+	private Map getTexts() {
+		HashMap texts = new HashMap();
+		addText(texts, "label.tree.selectTarget");
+		addText(texts, "label.tree.cancelCommand");
+		addText(texts, "label.selection.clear");
+		addText(texts, "label.selection.count");
+		return texts;
+	}
+	
+	private void addText(Map map, String key) {
+		map.put(key, messageResolver.getMessage(key, key));
+	}
 
 	public String getKey() {
 		return key;
@@ -368,7 +381,7 @@ public class ListSession implements RenderContext {
 		context.setItemsTotal(model.getItemsTotal());
 		model.setListCommands(getListCommandStates(listCommands, context, request));
 		model.setBatchCommands(getBatchStates(itemCommands, context, request));
-		
+		model.setTexts(getTexts());
 		model.setCssClass(listConfig.getId());
 		model.setTree(treeDefinition != null);
 		fillInColumnConfigs(model);

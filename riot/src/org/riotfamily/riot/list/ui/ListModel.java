@@ -25,6 +25,7 @@ package org.riotfamily.riot.list.ui;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -61,6 +62,8 @@ public class ListModel {
 	private String filterFormHtml;
 
 	private String cssClass;
+	
+	private Map texts;
 
 	public ListModel(int itemsTotal, int pageSize, int currentPage) {
 		this.itemsTotal = itemsTotal;
@@ -189,6 +192,14 @@ public class ListModel {
 
 	public void setCssClass(String cssClass) {
 		this.cssClass = cssClass;
+	}
+
+	public Map getTexts() {
+		return texts;
+	}
+
+	public void setTexts(Map texts) {
+		this.texts = texts;
 	}
 
 }
