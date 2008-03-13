@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
-import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.riot.dao.RiotDao;
@@ -73,8 +72,7 @@ public class ListDefinition extends AbstractEditorDefinition {
 	}
 	
 	public String getLabel(Object object) {
-		String labelProperty = getListConfig().getFirstProperty();
-		return PropertyUtils.getPropertyAsString(object, labelProperty);
+		return getLabel(object, getListConfig().getLabelProperty());
 	}
 
 	public Class getBeanClass() {

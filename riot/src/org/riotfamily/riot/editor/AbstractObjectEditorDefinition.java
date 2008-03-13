@@ -27,10 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.riot.editor.ui.EditorReference;
@@ -76,20 +73,7 @@ public abstract class AbstractObjectEditorDefinition
 			return "New"; //TODO I18nize this
 		}
 		if (labelProperty != null) {
-			StringBuffer label = new StringBuffer();
-			Pattern p = Pattern.compile("(\\w+)(\\W*)");
-			Matcher m = p.matcher(labelProperty);
-			while (m.find()) {
-				String property = m.group(1);
-				Object value = PropertyUtils.getProperty(object, property);
-				if (value != null) {
-					label.append(value);
-					label.append(m.group(2));
-				}
-			}
-			if (label.length() > 0) {
-				return label.toString();
-			}
+			return getLabel(object, labelProperty);
 		}
 		return getParentEditorDefinition().getLabel(object);
 	}

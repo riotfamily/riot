@@ -25,6 +25,7 @@
 	    	<xsd:attribute name="filter-form" type="xsd:string" />
 	    	<xsd:attribute name="order-by" type="xsd:string" />
 	    	<xsd:attribute name="row-style-property" type="xsd:string" />
+	    	<xsd:attribute name="label-property" type="xsd:string" />
 	    	<xsd:attribute name="search" type="xsd:string" />
 	    </xsd:complexType>
 	</xsd:element>

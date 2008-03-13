@@ -64,6 +64,8 @@ public class ListConfig {
 	private Order defaultOrder;
 	
 	private String[] searchProperties;
+	
+	private String labelProperty;
 
 	public String getId() {
 		return id;
@@ -87,6 +89,10 @@ public class ListConfig {
 
 	public void setRowStyleProperty(String rowStyleProperty) {
 		this.rowStyleProperty = rowStyleProperty;
+	}
+	
+	public void setLabelProperty(String labelProperty) {
+		this.labelProperty = labelProperty;
 	}
 
 	public void setDao(RiotDao dao) {
@@ -141,6 +147,13 @@ public class ListConfig {
 		return dao.getEntityClass();
 	}
 
+	public String getLabelProperty() {
+		if (labelProperty == null) {
+			labelProperty = getFirstProperty();
+		}
+		return labelProperty;
+	}
+	
 	public String getFirstProperty() {
 		if (!columnConfigs.isEmpty()) {
 			ColumnConfig columnConfig = (ColumnConfig) columnConfigs.get(0);

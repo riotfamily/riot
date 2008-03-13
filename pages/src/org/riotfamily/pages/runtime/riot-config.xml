@@ -23,7 +23,7 @@
 
 	<ed:list id="sitemap" list-ref="site-chooser" icon="sitemap">
 		<ed:tree id="pages" list-ref="pages">
-			<ed:form id="page" form-ref="page" label-property="pathComponent" />
+			<ed:form id="page" form-ref="page" />
 		</ed:tree>
 	</ed:list>
 	
@@ -37,7 +37,7 @@
 		</ed:form>
 	</ed:list>
 
-	<list:list id="site-chooser">
+	<list:list id="site-chooser" label-property="name">
 		<list:dao ref="siteRiotDao" />
 		<list:columns>
 			<list:column property="locale" renderer="countryFlagRenderer" />
@@ -48,7 +48,7 @@
 		</list:columns>
 	</list:list>
 	
-	<list:list id="sites" default-command="edit">
+	<list:list id="sites" label-property="name" default-command="edit">
 		<list:dao ref="siteRiotDao" />
 		<list:columns>
 			<list:column property="locale" renderer="countryFlagRenderer" />
