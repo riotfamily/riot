@@ -298,6 +298,7 @@ public class PageMap implements InitializingBean, ApplicationContextAware,
 		if (event == PageMappingEvent.MAPPINGS_MODIFIED) {
 			log.info("Mappings modified. Reloading ...");
 			initMappings();
+			log.info("... done, mappings reloaded");
 		}
 	}
 
