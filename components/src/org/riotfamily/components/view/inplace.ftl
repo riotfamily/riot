@@ -195,9 +195,15 @@
 			</#if>
 			<#if tag == "img">
 				<#local attributes = attributes + {"src": src} />
+				<#if !attributes.width?has_content>
+					<#local attributes = attributes + {"width": scope[key].width?c} />
+				</#if>
+				<#if !attributes.height?has_content>
+					<#local attributes = attributes + {"height": scope[key].height?c} />
+				</#if>
 				<#if !attributes.alt?has_content>
 					<#local attributes = attributes + {"alt": " "} />
-				</#if>				
+				</#if>
 			<#else>
 				<#local attributes = attributes + {"style": "background-image:url(" + src + ");" + attributes.style!} />
 			</#if>
