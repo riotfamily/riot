@@ -387,7 +387,18 @@ public final class FormatUtils {
 		return filename
 				.substring(0, filename.length() - extension.length() - 1);
 	}
-	
+
+	/**
+	 * Returns the the path without a leading slash.
+	 * @since 7.0
+	 */
+	public static String stripLeadingSlash(String path) {
+		if (path != null && path.startsWith("/")) {
+			path = path.substring(1);
+		}
+		return path;
+	}
+
 	/**
 	 * Returns the the path without a trailing slash.
 	 * @since 7.0
@@ -398,7 +409,7 @@ public final class FormatUtils {
 		}
 		return path;
 	}
-
+	
 	/**
 	 * Parses a formatted String and returns the date. The date to parse starts
 	 * with today. You can use one of the following sufixes:
