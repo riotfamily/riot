@@ -229,20 +229,25 @@ var RiotList = Class.create({
 		}
 		ListService.getModel(this.key, null, this.updateRowsAndPager.bind(this));
 	},
-		
+	
+	isSelected: function(item) {
+		return this.selection.find(function(i) {
+			return i.objectId == item.objectId;
+		});
+	},
+	
 	toggleSelection: function(tr) {
 		var cb = tr.cb;
 		var item = tr.item; 
-		var it = function(i) {
-			return i.objectId == item.objectId;
-		};
 		if (cb.checked) {
-			if (!this.selection.find(it)) {
+			if (!this.isSelected(item)) {
 				this.selection.push(item);
 			}
 		}
 		else {
-			this.selection = this.selection.reject(it);
+			this.selection = this.selection.reject(function(i) {
+				return i.objectId == item.objectId;
+			});
 		}
 		this.updateBatchStates();
 	},
@@ -391,7 +396,7 @@ var ListRow = {
 		for (var i = 0; i < row.columns.length; i++) {
 			var cell = RBuilder.node('td', {innerHTML: row.columns[i], className: list.columns[i].className}).appendTo(tr);
 			if (list.hasBatchCommands && i == 0) {
-				tr.cb = RBuilder.node('input', {type: 'checkbox', className: 'check'})
+				tr.cb = RBuilder.node('input', {type: 'checkbox', className: 'check', checked: list.isSelected(row)})
 					.observe('click', list.toggleSelection.bind(list, tr));
 				cell.prependChild(tr.cb);
 			}
@@ -443,7 +448,7 @@ var ListRow = {
 			style: 'margin-left:' + ((level) * 22) + 'px;'
 		});
 		
-		var icon = RBuilder.node('a', {href: '#', style: 'float:right'});
+		var icon = RBuilder.node('a', { href: '#', style: 'float:right'});
 		var label = RBuilder.node('span', {className: 'label'});
 		
 		var tr = RBuilder.node('tr', {
