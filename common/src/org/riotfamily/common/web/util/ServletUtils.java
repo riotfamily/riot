@@ -334,19 +334,6 @@ public final class ServletUtils {
 		url = resolveUrl(url, request);
 		return response.encodeURL(url);
 	}
-
-	/**
-	 * @deprecated Use getRequestUri instead
-	 */
-	public static String getIncludeUri(HttpServletRequest request) {
-		String uri = (String) request.getAttribute(
-				INCLUDE_URI_REQUEST_ATTRIBUTE);
-
-		if (uri == null) {
-			uri = request.getRequestURI();
-		}
-		return uri;
-	}
 	
 	public static Map takeAttributesSnapshot(HttpServletRequest request) {
 		Map snapshot = new HashMap();
