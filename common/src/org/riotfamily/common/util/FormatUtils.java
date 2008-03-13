@@ -351,7 +351,7 @@ public final class FormatUtils {
 	 * Returns the extension of the given filename. Examples:
 	 *
 	 * <pre>
-	 *   $quot;foo.bar&quot; - &quot;bar&quot;
+	 *   &quot;foo.bar&quot; - &quot;bar&quot;
 	 *   &quot;/some/file.name.foo&quot; - &quot;foo&quot;
 	 * </pre>
 	 *
