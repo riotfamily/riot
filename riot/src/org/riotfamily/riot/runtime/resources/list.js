@@ -238,7 +238,7 @@ var RiotList = Class.create({
 	},
 	
 	isSelected: function(item) {
-		return this.selection.find(function(i) {
+		return this.selection.any(function(i) {
 			return i.objectId == item.objectId;
 		});
 	},
@@ -420,9 +420,10 @@ var ListRow = {
 		for (var i = 0; i < row.columns.length; i++) {
 			var cell = RBuilder.node('td', {innerHTML: row.columns[i], className: list.columns[i].className}).appendTo(tr);
 			if (list.hasBatchCommands && i == 0) {
-				tr.cb = RBuilder.node('input', {type: 'checkbox', className: 'check', checked: list.isSelected(row)})
-					.observe('click', list.toggleSelection.bind(list, tr));
+				tr.cb = RBuilder.node('input', {type: 'checkbox', className: 'check'});
 				cell.prependChild(tr.cb);
+				tr.cb.checked = tr.cb.defaultChecked = list.isSelected(row);
+				tr.cb.observe('click', list.toggleSelection.bind(list, tr));
 			}
 			if (list.tree && i == 0) {
 				var arrow = RBuilder.node('div', {
