@@ -283,6 +283,9 @@ public abstract class AbstractFormController implements Controller {
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
+		if (isExclusiveRequest(request)) {
+			return null;
+		}
 		FormSubmissionHandler handler = (FormSubmissionHandler) 
 				form.getAttribute(FORM_SUBMISSION_HANDLER);
 		
