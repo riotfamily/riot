@@ -29,6 +29,10 @@
 		</bean>
 	</override:add>
 	
+	<override:add ref="messageBasenames">
+		<value>classpath:/org/riotfamily/media/runtime/i18n/messages</value>
+	</override:add>
+	
 	<bean id="mediaCleanUpJobDetail" class="org.riotfamily.common.scheduling.TransactionalJobDetailFactoryBean">
 		<property name="callback">
 			<bean class="org.riotfamily.media.cleanup.CleanUpCallback">

@@ -1,4 +1,6 @@
-#Thu Mar 13 20:49:20 GMT+01:00 2008
+#Mon Mar 17 15:10:22 GMT+01:00 2008
 eclipse.preferences.version=1
+encoding//media/src/org/riotfamily/media/runtime/i18n/messages.properties=UTF-8
+encoding//media/src/org/riotfamily/media/runtime/i18n/messages_de.properties=UTF-8
 encoding//riot/src/org/riotfamily/riot/runtime/i18n/messages.properties=UTF-8
 encoding//riot/src/org/riotfamily/riot/runtime/i18n/messages_de.properties=UTF-8

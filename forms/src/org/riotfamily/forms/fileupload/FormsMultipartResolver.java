@@ -40,9 +40,6 @@ import org.springframework.web.multipart.MultipartResolver;
  */
 public class FormsMultipartResolver implements MultipartResolver {
 
-	private static final String UPLOAD_ID_ATTR = 
-			FormsMultipartResolver.class.getName() + ".uploadId";
-	
 	private Log log = LogFactory.getLog(FormsMultipartResolver.class);
 	
 	private MultipartResolver resolver;
@@ -67,13 +64,17 @@ public class FormsMultipartResolver implements MultipartResolver {
 		}
 		log.debug("Upload: " + uploadId);
 		HttpUploadRequest uploadRequest = new HttpUploadRequest(request);
-		request.setAttribute(UPLOAD_ID_ATTR, uploadId);
-		UploadStatus.add(uploadId, uploadRequest);		
-		return resolver.resolveMultipart(uploadRequest);
+		UploadStatus status = UploadStatus.add(uploadId, uploadRequest);
+		try {
+			return resolver.resolveMultipart(uploadRequest);
+		}
+		catch (MultipartException e) {
+			status.setException(e);
+			throw e;
+		}
 	}
 
 	public void cleanupMultipart(MultipartHttpServletRequest request) {
-		UploadStatus.clearStatus(request.getAttribute(UPLOAD_ID_ATTR));
 		resolver.cleanupMultipart(request);
 	}
 

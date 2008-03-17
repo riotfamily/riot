@@ -178,6 +178,8 @@ public class FileUpload extends CompositeElement implements Editor,
 		private UploadStatus status;
 		
 		private volatile boolean processing;
+		
+		private volatile boolean completed;
 
 		public UploadElement() {
 			this.uploadId = UploadStatus.createUploadId();
@@ -211,6 +213,7 @@ public class FileUpload extends CompositeElement implements Editor,
 					log.error("error saving uploaded file", e);
 				}
 				processing = false;
+				completed = true;
 			}
 		}
 
@@ -221,14 +224,25 @@ public class FileUpload extends CompositeElement implements Editor,
 		public void handleJavaScriptEvent(JavaScriptEvent event) {
 			status = UploadStatus.getStatus(uploadId);
 			if (getFormListener() != null) {
-				getFormListener().elementChanged(this);
 				if (status != null) {
-					log.debug("Progress: " + status.getProgress());
-					getFormListener().refresh(this);
+					if (status.isError()) {
+						ErrorUtils.reject(FileUpload.this, "error.uploadFailed");
+						getFormListener().elementChanged(FileUpload.this);
+					}
+					else if (completed) {
+						status.clear();
+						status = null;
+						completed = false;
+						getFormListener().elementChanged(FileUpload.this);
+					}
+					else {
+						log.debug("Progress: " + status.getProgress());
+						getFormListener().elementChanged(this);
+						getFormListener().refresh(this);
+					}
 				}
 				else {
-					log.debug("No status.");
-					getFormListener().elementChanged(FileUpload.this);
+					getFormListener().refresh(this);
 				}
 			}
 		}
