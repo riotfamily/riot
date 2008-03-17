@@ -31,6 +31,10 @@ import java.util.List;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.request.FormRequest;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.util.Assert;
 
 
 /**
@@ -40,11 +44,14 @@ import org.riotfamily.forms.request.FormRequest;
  * initialized, i.e. <code>setParent()</code>, <code>setForm()</code> and 
  * <code>Form.registerElement()</code> are called.  
  */
-public abstract class CompositeElement extends AbstractEditorBase {
+public abstract class CompositeElement extends AbstractEditorBase 
+		implements BeanFactoryAware {
 
 	private List components = new ArrayList();
 	
 	private boolean surroundByDiv;
+	
+	private AutowireCapableBeanFactory beanFactory;
 	
 	/**
 	 * Empty default constructor.
@@ -52,6 +59,11 @@ public abstract class CompositeElement extends AbstractEditorBase {
 	public CompositeElement() {
 	}
 
+	public void setBeanFactory(BeanFactory beanFactory) {
+		if (beanFactory instanceof AutowireCapableBeanFactory) {
+			this.beanFactory = (AutowireCapableBeanFactory) beanFactory;
+		}
+	}
 	
 	protected List getComponents() {
 		return components;
@@ -138,8 +150,9 @@ public abstract class CompositeElement extends AbstractEditorBase {
 	 * @throws IllegalStateException if form is null
 	 */
 	protected void initComponent(Element element) {
-		if (getForm() == null) {
-			throw new IllegalStateException("Form not set");
+		Assert.state(getForm() != null, "The form must be set");
+		if (beanFactory != null) {
+			beanFactory.initializeBean(element, null);
 		}
 		getForm().registerElement(element);
 	}
