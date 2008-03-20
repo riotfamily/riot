@@ -173,7 +173,7 @@ var RElement = {
 		if (!(el = $(el))) return;
 		if (el.childDump) return;
 		var html = el.innerHTML;
-		el.childDump = RBuilder.node('div').setStyle({display: 'none'}).appendTo(document.body);
+		el.childDump = RBuilder.node('div', {className: 'riot-child-dump'}).setStyle({display: 'none'}).appendTo(document.body);
 		el.childElements().each(function(c) {c.remove(); el.childDump.appendChild(c)});
 		el.innerHTML = html;
 		el.disableLinks();

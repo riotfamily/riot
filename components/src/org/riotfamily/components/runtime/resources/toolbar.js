@@ -111,7 +111,7 @@ riot.Toolbar = Class.create({
 				this.selectedButton != this.buttons.get('publish') &&
 				this.selectedButton != this.buttons.get('discard')) {
 
-			this.selectedButton.reApplyHandler(el);
+			this.selectedButton.reApplyHandler();
 		}
 	},
 
@@ -195,27 +195,29 @@ riot.ToolbarButton = Class.create({
 		return this;
 	},
 
-	getHandlerTargets: function(root) {
-		return Selector.findChildElements(root, [this.selector]);
+	getHandlerTargets: function() {
+		return document.body.select(this.selector).reject(function(el) {
+			return el.up('.riot-child-dump');
+		});
 	},
 
 	applyHandler: function(enable) {
 		if (enable && this.precondition) {
-			this.precondition(this.applyHandlerInternal.bind(this, document, true));
+			this.precondition(this.applyHandlerInternal.bind(this, true));
 		}
 		else {
 			if (this.beforeApply) {
 				this.beforeApply(enable);
 			}
-			this.applyHandlerInternal(document, enable);
+			this.applyHandlerInternal(enable);
 			if (this.afterApply) {
 				this.afterApply(enable);
 			}
 		}
 	},
 	
-	applyHandlerInternal: function(root, enable) {
-		var targets = this.getHandlerTargets(root);
+	applyHandlerInternal: function(enable) {
+		var targets = this.getHandlerTargets();
 		for (var i = 0; i < targets.length; i++) {
 			var target = riot.getWrapper(targets[i], this.selector)
 			var method = this.handler + (enable ? 'On' : 'Off');
@@ -225,8 +227,9 @@ riot.ToolbarButton = Class.create({
 		}
 	},
 	
-	reApplyHandler: function(root) {
-		this.applyHandlerInternal(root, true);
+	reApplyHandler: function() {
+		this.applyHandler(false);
+		this.applyHandler(true);
 	}
 });
 

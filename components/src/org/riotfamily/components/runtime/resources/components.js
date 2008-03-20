@@ -116,7 +116,7 @@ riot.getComponentList = function(el) {
 
 riot.Controller = Class.create({
 	initialize: function(el) {
-		this.element = el;
+		this.elementId = el.id;
 		this.id = el.readAttribute('riot:controllerId');
 		this.contextKey = el.readAttribute('riot:contextKey'); 
 		this.parentController = riot.findController(el);
@@ -127,6 +127,10 @@ riot.Controller = Class.create({
 	
 	getReference: function() {
 		return { controllerId: this.id, contextKey: this.contextKey };
+	},
+	
+	getElement: function() {
+		return $(this.elementId);
 	},
 	
 	markDirty: function() {
@@ -140,28 +144,30 @@ riot.Controller = Class.create({
 	},
 	
 	update: function() {
+		riot.toolbar.selectedButton.applyHandler(false);
 		ComponentEditor.getPreviewListHtml(this.id, this.contextKey, 
 				this.replaceHtml.bind(this));
 	},
 
 	replaceHtml: function(html) {
-		this.element.update(html);
+		this.getElement().update(html);
 		this.onUpdate();
-		riot.toolbar.restoreMode(this.element);
+		riot.toolbar.selectedButton.applyHandler(true);
 	},
 	
 	setTempHtml: function(html, live) {
-		this.element.update(html);
+		this.getElement().update(html);
 		this.onUpdate(live);
 	},
 	
 	onUpdate: function(live) {
-		riot.adoptFloatsAndClears(this.element);
+		var el = this.getElement();
+		riot.adoptFloatsAndClears(el);
+		el.select('.riot-controller').invoke('identify');
+		el.select('.riot-component').invoke('identify');
 		if (window.riotEditCallbacks) {
-			var el = this.element;
-			riotEditCallbacks.each(
-				function(callback) {
-					callback(el, live || false);
+			riotEditCallbacks.each(function(callback) {
+				callback(el, live || false);
 			});
 		}
 	},
@@ -348,6 +354,7 @@ riot.ComponentList = Class.create({
 		var list = this;
 		new Effect.Remove(c.element, function(el) {
 			el.remove();
+			$(el.id).remove();
 			list.updatePositionClasses();
 			riot.outline.suspended = false;
 		});
@@ -473,7 +480,6 @@ riot.Component = Class.create({
 	
 	setClickHandler: function(clickHandler) {
 		this.clickHandler = clickHandler;
-		this.element.disableEvents();
 		var c = this.element.childElements();
 		this.targetElement = c.length == 1 ? c[0] : this.element;
 		Event.observe(this.targetElement, 'click', this.bOnClick);
@@ -488,7 +494,6 @@ riot.Component = Class.create({
 	
 	removeClickHandler: function() {
 		if (this.targetElement) {
-			this.element.enableEvents();
 			Event.stopObserving(this.targetElement, 'click', this.bOnClick);
 			Event.stopObserving(this.targetElement, 'mouseover', this.bShowOutline);
 			Event.stopObserving(this.targetElement, 'mouseout', this.bHideOutline);
@@ -706,8 +711,9 @@ riot.PublishWidget = Class.create({
 	initialize: function(controller, mode) {
 		mode = mode || 'publish';
 		this.className = 'riot-' + mode + '-outline';
-		this.controller = controller;		
-		this.previewHtml = controller.element.innerHTML;
+		this.controller = controller;
+		this.controllerElement = controller.getElement();
+		this.previewHtml = this.controllerElement.innerHTML;
 		this.element = RBuilder.node('div', {className: this.className, style: {position: 'absolute', display: 'none'}},
 			this.overlay = RBuilder.node('div')
 		);
@@ -717,15 +723,15 @@ riot.PublishWidget = Class.create({
 		
 		if (document.addEventListener) {
 			this.domListener = this.scaleOverlay.bind(this);
-			this.controller.element.addEventListener('DOMNodeInserted', this.domListener, false);
+			this.controllerElement.addEventListener('DOMNodeInserted', this.domListener, false);
 		}
 		
-		this.dirtyListIds = controller.element.getElementsBySelector('.riot-toplevel-list')
+		this.dirtyListIds = this.controllerElement.getElementsBySelector('.riot-toplevel-list')
 				.collect(riot.getComponentList)
 				.select(function(l) { return l.dirty })
 				.pluck('id');
 				
-		this.dirtyContainerIds = controller.element.getElementsBySelector('.riot-single-component')
+		this.dirtyContainerIds = this.controllerElement.getElementsBySelector('.riot-single-component')
 				.collect(riot.getComponent)
 				.select(function(c) { return c.dirty })
 				.pluck('id'); 
@@ -736,29 +742,29 @@ riot.PublishWidget = Class.create({
 	},
 	
 	show: function() {
-		this.controller.element.makePositioned();
-		if (this.controller.element.innerHTML.empty()) {
-			this.controller.element.innerHTML = '<div class="riot-empty-list"></div>';
+		this.controllerElement.makePositioned();
+		if (this.controllerElement.innerHTML.empty()) {
+			this.controllerElement.innerHTML = '<div class="riot-empty-list"></div>';
 		}
-		this.controller.element.style.overflow = 'hidden';
-		this.controller.element.appendChild(this.element);
+		this.controllerElement.style.overflow = 'hidden';
+		this.controllerElement.appendChild(this.element);
 		this.scaleOverlay();
 		setTimeout(this.scaleOverlay.bind(this), 50);
 		this.element.show();
 	},
 
 	scaleOverlay: function() {
-		this.element.style.width = this.overlay.style.width = (this.controller.element.offsetWidth - 4) + 'px';
-		this.element.style.height = this.overlay.style.height = (this.controller.element.offsetHeight - 4) + 'px';
+		this.element.style.width = this.overlay.style.width = (this.controllerElement.offsetWidth - 4) + 'px';
+		this.element.style.height = this.overlay.style.height = (this.controllerElement.offsetHeight - 4) + 'px';
 	},
 
 	destroy: function() {
 		if (document.removeEventListener) {
 			this.domListener = this.show.bind(this);
-			this.controller.element.removeEventListener('DOMNodeInserted', this.domListener, false);
+			this.controllerElement.removeEventListener('DOMNodeInserted', this.domListener, false);
 		}		
 		this.showPreview();
-		this.controller.element.style.overflow = '';
+		this.controllerElement.style.overflow = '';
 		if (this.element.parentNode) this.element.remove();
 		return this.controller.dirty;
 	},
@@ -894,7 +900,20 @@ riot.adoptFloatsAndClears = function(root) {
 }
 
 riot.init = function() {
-	var b = riot.toolbar.buttons; 
+	$$('.riot-controller').invoke('identify');
+	$$('.riot-component').invoke('identify');
+	var b = riot.toolbar.buttons;
+	b.get('properties').beforeApply = 
+	b.get('remove').beforeApply = function(enable) {
+		if (enable) {
+			$$('.riot-controller').reject(function(e) { 
+				return e.up('.riot-controller');
+			}).invoke('disableEvents');
+		}
+		else {
+			$$('.riot-controller').invoke('enableEvents');
+		}
+	};
 	b.get('move').afterApply = function(enable) {
 		if (enable) {
 			$$('.riot-component-list').reverse().each(function(el) {
