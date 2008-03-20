@@ -39,6 +39,7 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
@@ -149,7 +150,10 @@ class CacheItem implements Serializable {
      * Sets tags which can be used to look up the item for invalidation.
      */
     protected void setTags(Set tags) {
-    	this.tags = tags;
+    	this.tags = tags != null ? new HashSet(tags) : null;
+    	if (log.isDebugEnabled() && tags != null) {
+    		log.debug("Tagging item " + this + " with " + tags);
+    	}
     }
     
     /**
@@ -202,6 +206,9 @@ class CacheItem implements Serializable {
 	 */
 	protected void invalidate() {
     	lastModified = NOT_YET;
+    	if (log.isDebugEnabled()) {
+    		log.debug(this + " has been invalidated");
+    	}
     }
 	
 	/**
@@ -397,6 +404,10 @@ class CacheItem implements Serializable {
     		return key.equals(other.key);
     	}
     	return false;
+    }
+    
+    public String toString() {
+    	return key;
     }
 
 }
