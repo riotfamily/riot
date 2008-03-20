@@ -102,13 +102,14 @@ public class PageChooserController implements Controller {
 		}
 		model.put("selectedSite", selectedSite);
 		model.put("pages", createpageLinks(
-				pageDao.getRootNode().getChildPages(selectedSite), path, absolute));
+				pageDao.getRootNode().getChildPages(selectedSite), 
+				path, absolute, request));
 
 		return new ModelAndView(viewName, model);
 	}
 
 	private List createpageLinks(Collection pages, String expandedPath,
-				boolean absolute) {
+				boolean absolute, HttpServletRequest request) {
 		
 		ArrayList links = new ArrayList();
 		Iterator it = pages.iterator();
@@ -118,7 +119,10 @@ public class PageChooserController implements Controller {
 				PageLink link = new PageLink();
 				link.setPathComponent(page.getPathComponent());
 				if (absolute) {
-					link.setLink(page.getAbsoluteUrl(pathCompleter, false));
+					//FIXME!
+					link.setLink(page.getAbsoluteUrl(pathCompleter, false,
+							request.getServerName(), request.getContextPath(), 
+							null));
 				}
 				else {
 					link.setLink(page.getUrl(pathCompleter));
@@ -129,7 +133,7 @@ public class PageChooserController implements Controller {
 					link.setExpanded(true);
 				}
 				link.setChildPages(createpageLinks(page.getChildPages(),
-						expandedPath, absolute));
+						expandedPath, absolute, request));
 				
 				links.add(link);
 			}

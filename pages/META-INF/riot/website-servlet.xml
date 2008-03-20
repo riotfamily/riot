@@ -44,6 +44,7 @@
 		<entry key="pages" value="classpath:org/riotfamily/pages/view/pages.ftl" />
 	</override:put>
 	
+	<bean id="siteObjectWrapperPlugin" class="org.riotfamily.pages.view.SiteObjectWrapperPlugin" />
 	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin" />
 	
 	<override:add ref="inplaceMacroHelper" property="toolbarScripts" append="true">

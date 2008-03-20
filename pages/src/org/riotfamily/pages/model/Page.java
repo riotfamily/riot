@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.riotfamily.common.beans.MapWrapper;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.mapping.AttributePattern;
@@ -173,44 +171,35 @@ public class Page {
 	}
 
 	public String getUrl(PathCompleter pathCompleter) {
-		return pathCompleter.addServletMapping(getFullPath());
+		return getUrl(pathCompleter, null);
 	}
 	
 	public String getUrl(PathCompleter pathCompleter, Object attributes) {
-		String pagePath = getUrl(pathCompleter);
+		String pagePath = pathCompleter.addServletMapping(getFullPath());
 		if (isWildcardInPath()) {
-			pagePath = fillInWildcards(pagePath, null, attributes);
+			pagePath = fillInWildcards(pagePath, attributes);
 		}
 		return pagePath;
 	}	
 	
-	public String getAbsoluteUrl(PathCompleter pathCompleter, boolean secure) {
-		return getAbsoluteUrl(pathCompleter, secure, null, null);
-	}
-
 	public String getAbsoluteUrl(PathCompleter pathCompleter, boolean secure,
-			HttpServletRequest request, Object attributes) {
+			String defaultHost, String contextPath, Object attributes) {
 		
 		String pagePath =  pathCompleter.addServletMapping(getPath());
 		if (isWildcardInPath()) {
-			pagePath = fillInWildcards(pagePath, request, attributes);
+			pagePath = fillInWildcards(pagePath, attributes);
 		}
-		return site.getAbsoluteUrl(request, secure).append(pagePath).toString();
+		return site.makeAbsolute(secure, defaultHost, contextPath, pagePath);
 	}
 	
-	private String fillInWildcards(String pattern, HttpServletRequest request,
-			Object attributes) {
-		
-		AttributePattern p = new AttributePattern(pattern);
+	private String fillInWildcards(String pattern, Object attributes) {
 		if (attributes == null) {
-			if (request == null) {
-				return pattern;
-			}
-			return p.fillInAttributes(new MapWrapper(request.getParameterMap()));
+			return pattern;
 		}
+		AttributePattern p = new AttributePattern(pattern);
 		if (attributes instanceof Map) {
 			Map map = (Map) attributes;
-			if (p.matches(map)) {
+			if (p.canFillIn(map.keySet(), 0)) {
 				return p.fillInAttributes(new MapWrapper(map));
 			}
 			return null;

@@ -34,7 +34,6 @@ import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.Site;
 
 /**
  * @author Carsten Woelk [cwoelk at neteye dot de]
@@ -61,22 +60,22 @@ public class PagesMacroHelper {
 	}
 	
 	
-	public List getTopLevelPages(Site site) {
-		return getVisiblePages(pageDao.getRootNode().getChildPages(site),
+	public List getTopLevelPages(SiteFacade facade) {
+		return getVisiblePages(pageDao.getRootNode().getChildPages(facade.getSite()),
 				EditModeUtils.isEditMode());
 	}
 
-	public Page getPageForUrl(String url, Site site) {
+	public Page getPageForUrl(String url, SiteFacade facade) {
 		return pageResolver.resolvePage(url, request.getContextPath(),
-				site, pathCompleter);
+				facade.getSite(), pathCompleter);
 	}
 	
-	public Page getPageForHandler(String handlerName, Site site) {
-		return pageDao.findPageForHandler(handlerName, site);
+	public Page getPageForHandler(String handlerName, SiteFacade facade) {
+		return pageDao.findPageForHandler(handlerName, facade.getSite());
 	}
 
-	public List getPagesForHandler(String handlerName, Site site) {
-		return pageDao.findPagesForHandler(handlerName, site);
+	public List getPagesForHandler(String handlerName, SiteFacade facade) {
+		return pageDao.findPagesForHandler(handlerName, facade.getSite());
 	}
 
 	private List getVisiblePages(List pages, boolean preview) {

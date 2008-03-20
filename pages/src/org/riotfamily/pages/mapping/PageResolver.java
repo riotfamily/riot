@@ -38,8 +38,6 @@ import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
 import org.springframework.util.StringUtils;
 
 /**
@@ -61,8 +59,6 @@ public class PageResolver {
 	
 	private PageDao pageDao;
 
-	private PathMatcher pathMatcher = new AntPathMatcher();
-	
 	public PageResolver(PageDao pageDao) {
 		this.pageDao = pageDao;
 	}
@@ -260,18 +256,16 @@ public class PageResolver {
 	
 	private Page findWildcardPage(Site site, String urlPath) {
 		Page page = null; 
-		String bestMatch = null;
+		AttributePattern bestMatch = null;
 		for (Iterator it = pageDao.getWildcardPaths(site).iterator(); it.hasNext();) {
 			String path = (String) it.next();
-			String antPattern = AttributePattern.convertToAntPattern(path);
-			if (pathMatcher.match(antPattern, urlPath) &&
-					(bestMatch == null || bestMatch.length() <= path.length())) {
-
-				bestMatch = path;
+			AttributePattern p = new AttributePattern(path);
+			if (p.matches(urlPath) && p.isMoreSpecific(bestMatch)) {
+				bestMatch = p;
 			}
 		}
 		if (bestMatch != null) {
-			page = pageDao.findPage(site, bestMatch);
+			page = pageDao.findPage(site, bestMatch.toString());
 		}
 		return page;
 	}

@@ -64,10 +64,16 @@ public class PageFacade {
 	private TaggingContext taggingContext;
 	
 	public PageFacade(Page page, HttpServletRequest request) {
+		this(page, request, new RequestPathCompleter(request));
+	}
+	
+	public PageFacade(Page page, HttpServletRequest request, 
+			PathCompleter pathCompleter) {
+		
 		this.page = page;
 		this.request = request;
+		this.pathCompleter = pathCompleter;
 		this.preview = EditModeUtils.isEditMode(request);
-		this.pathCompleter = new RequestPathCompleter(request);
 		this.taggingContext = TaggingContext.getContext();
 		PageCacheUtils.addNodeTag(taggingContext, page.getNode());
 	}
@@ -125,18 +131,26 @@ public class PageFacade {
 	}
 
 	public String getAbsoluteWildcardUrl(Object attributes) {
-		return page.getAbsoluteUrl(pathCompleter, request.isSecure(), request, attributes);
+		//FIXME Add port if not default!
+		return page.getAbsoluteUrl(pathCompleter, request.isSecure(), 
+				request.getServerName(), request.getContextPath(), attributes);
 	}
 
 	public String getSecureUrl() {
+		return getSecureWildcardUrl(null);
+	}
+	
+	public String getSecureWildcardUrl(Object attributes) {
+		//FIXME Site.getHostName() may return host+port! 
 		if (request.isSecure() && request.getServerName().equals(
 				page.getSite().getHostName())) {
 			
 			return getUrl();
 		}
-		return page.getAbsoluteUrl(pathCompleter, true, request, null);
+		return page.getAbsoluteUrl(pathCompleter, true, request.getServerName(),
+				request.getContextPath(), attributes);
 	}
-
+	
 	public boolean isWildcard() {
 		return page.isWildcard();
 	}

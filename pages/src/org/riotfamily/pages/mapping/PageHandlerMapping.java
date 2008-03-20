@@ -26,7 +26,6 @@ package org.riotfamily.pages.mapping;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -172,10 +171,6 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		pattern.expose(urlPath, request);
 	}
 	
-	public static Map getWildcardAttributes(HttpServletRequest request) {
-		return (Map) request.getAttribute(AttributePattern.EXPOSED_ATTRIBUTES);
-	}
-
 	protected List getPatternsForHandler(String beanName, 
 			HttpServletRequest request) {
 		

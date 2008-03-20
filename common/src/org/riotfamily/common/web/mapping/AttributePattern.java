@@ -24,9 +24,11 @@
 package org.riotfamily.common.web.mapping;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,6 +53,9 @@ public class AttributePattern {
 	private static final Pattern DOUBLE_STAR_PATTERN =
 			Pattern.compile("/?\\\\\\*\\\\\\*");
 	
+	private static final Pattern WILDCARD_PATTERN = Pattern.compile(
+			"(" + STAR_PATTERN + "|" + ATTRIBUTE_NAME_PATTERN + ")");
+	
 	private static final String STAR = "*";
 
 	private String attributePattern;
@@ -60,6 +65,8 @@ public class AttributePattern {
 	private ArrayList attributeNames;
 	
 	private ArrayList attributeTypes;
+	
+	private int precision;
 
 	public AttributePattern(String attributePattern) {
 		this.attributePattern = attributePattern;
@@ -71,19 +78,20 @@ public class AttributePattern {
 			attributeTypes.add(m.group(4));
 		}
 		pattern = Pattern.compile(convertAttributePatternToRegex(attributePattern));
+		precision = WILDCARD_PATTERN.matcher(attributePattern).replaceAll("").length();
 	}
 
-	public int getNumberOfWildcards() {
-		return attributeNames.size();
+	public ArrayList getAttributeNames() {
+		return attributeNames;
 	}
-	
-	// Example pattern: /resources/*/@{resource*}
+
+	// Example pattern: @{sitePrefix*}/resources/*/@{resource*}
 	private String convertAttributePatternToRegex(final String antPattern) {
 		String regex = FormatUtils.escapeChars(antPattern, "()", '\\'); // ... just in case
-		regex = ATTRIBUTE_NAME_PATTERN.matcher(antPattern).replaceAll("(*$3)"); // /resources/*/(**)
-		regex = "^" + FormatUtils.escapeChars(regex, ".+*?{^$", '\\') + "$"; // ^/resources/\*/(\*\*)$
-		regex = DOUBLE_STAR_PATTERN.matcher(regex).replaceAll(".*?"); // ^/resources/\*/(.*?)$
-		regex = STAR_PATTERN.matcher(regex).replaceAll("[^/]*"); // ^/resources/[^/]*/(.*?)$
+		regex = ATTRIBUTE_NAME_PATTERN.matcher(antPattern).replaceAll("(*$3)"); // (**)/resources/*/(**)
+		regex = "^" + FormatUtils.escapeChars(regex, ".+*?{^$", '\\') + "$"; // ^(\*\*)/resources/\*/(\*\*)$
+		regex = DOUBLE_STAR_PATTERN.matcher(regex).replaceAll(".*?"); // ^(.*?)/resources/\*/(.*?)$
+		regex = STAR_PATTERN.matcher(regex).replaceAll("[^/]*"); // ^(.*?)/resources/[^/]*/(.*?)$
 		return regex;
 	}
 
@@ -91,11 +99,14 @@ public class AttributePattern {
 		Map attributes = new HashMap();
 		Matcher m = pattern.matcher(urlPath);
 		Assert.isTrue(m.matches());
-		for (int i = 0; i < getNumberOfWildcards(); i++) {
-			String s = m.group(i + 1);
-			String type = (String) attributeTypes.get(i);
+		for (int i = 0; i < attributeNames.size(); i++) {
 			String name = (String) attributeNames.get(i);
-			Object value = convert(FormatUtils.uriUnescape(s), type);
+			Object value = null;
+			String s = m.group(i + 1);
+			if (s.length() > 0) {
+				String type = (String) attributeTypes.get(i);
+				value = convert(FormatUtils.uriUnescape(s), type);
+			}
 			request.setAttribute(name, value);
 			attributes.put(name, value);
 		}
@@ -133,34 +144,66 @@ public class AttributePattern {
 					+ " Boolean or Character");
 		}
 	}
-	public boolean matches(Map attributes) {
-		if (attributes != null) {
-			Collection names = attributes.keySet();
-			return names.size() == getNumberOfWildcards() &&
-				attributeNames.containsAll(names);
+	
+	public boolean canFillIn(Set attributeNames, int anonymousAttributes) {
+		if (attributeNames != null) {
+			int unmatched = 0;
+			Iterator it = this.attributeNames.iterator();
+			while (it.hasNext()) {
+				if (!attributeNames.contains(it.next())) {
+					if (++unmatched > anonymousAttributes) {
+						return false;
+					}
+				}
+			}
+			return unmatched <= anonymousAttributes;
 		}
 		else {
-			return attributeNames.isEmpty();
+			return this.attributeNames.size() <= anonymousAttributes;
 		}
 	}
 
+	public boolean matches(String path) {
+		return pattern.matcher(path).matches();
+	}
+	
 	public boolean startsWith(String prefix) {
 		return attributePattern.startsWith(prefix);
 	}
 	
+	public boolean isMoreSpecific(AttributePattern other) {
+		return precision > other.precision;
+	}
+	
 	public String fillInAttributes(PropertyAccessor attributes) {
+		return fillInAttributes(attributes, null);
+	}
+	
+	public String fillInAttributes(PropertyAccessor attributes, Map defaults) {
 		StringBuffer url = new StringBuffer();
 		Matcher m = ATTRIBUTE_NAME_PATTERN.matcher(attributePattern);
 		while (m.find()) {
 			String name = m.group(1);
-			Object value = attributes.getPropertyValue(name);
-			if (value == null) {
-				return null;
+			Object value = null;
+			if (attributes != null && attributes.isReadableProperty(name)) {
+				value = attributes.getPropertyValue(name);
 			}
-			String replacement = StringUtils.replace(value.toString(), "$", "\\$");
+			if (value == null && defaults != null) {
+				value = defaults.get(value);
+			}
+			String replacement = value != null
+					? StringUtils.replace(value.toString(), "$", "\\$")
+					: null;
+					
 			if (STAR.equals(m.group(2))) {
-				m.appendReplacement(url, FormatUtils.uriEscapePath(replacement));
-			} else {
+				if (replacement != null) {
+					m.appendReplacement(url, FormatUtils.uriEscapePath(replacement));
+				}
+			} 
+			else {
+				if (replacement == null) {
+					return null;
+				}
 				m.appendReplacement(url, FormatUtils.uriEscape(replacement));
 			}
 		}
@@ -169,28 +212,41 @@ public class AttributePattern {
 	}
 	
 	public String fillInAttribute(Object value) {
-		Assert.state(getNumberOfWildcards() == 1, 
-				"Pattern must contain exactly one wildcard.");
-		
+		return fillInAttribute(value, null);
+	}
+	
+	public String fillInAttribute(Object value, Map defaults) {
 		Matcher m = ATTRIBUTE_NAME_PATTERN.matcher(attributePattern);
-		String replacement = StringUtils.replace(value.toString(), "$", "\\$");
-		
-		m.find();
-		if (STAR.equals(m.group(2))) {
-			replacement = FormatUtils.uriEscapePath(replacement);
-		} else {
-			replacement = FormatUtils.uriEscape(replacement);
+		String unmatched = null;
+		while (m.find()) {
+			String name = m.group(1);
+			if (defaults == null || !defaults.containsKey(name)) {
+				if (unmatched != null) {
+					throw new IllegalStateException("Pattern has more than one " 
+							+ "unmatched wildcard.");
+				}
+				unmatched = name;
+			}
 		}
 		
-		return m.replaceFirst(replacement);
+		Map map;
+		if (unmatched == null) {
+			if (attributeNames.size() != 1) {
+				throw new IllegalStateException("No unmatched wildcard, "
+						+ "don't know which default should be overwritten.");
+			}
+			String name = (String) attributeNames.get(0);
+			map = Collections.singletonMap(name, value);
+		}
+		else {
+			map = new HashMap(defaults);
+			map.put(unmatched, value);
+		}
+		return fillInAttributes(null, map);
 	}
 	
 	public String toString() {
 		return attributePattern;
-	}
-	
-	public static String convertToAntPattern(String urlPattern) {
-		return ATTRIBUTE_NAME_PATTERN.matcher(urlPattern).replaceAll("*$3");
 	}
 
 }

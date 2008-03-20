@@ -24,9 +24,11 @@
 package org.riotfamily.common.web.mapping;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -52,29 +54,60 @@ public abstract class AbstractReverseHandlerMapping
 	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
 	 * @param request The current request
 	 */
-	public String getUrlForHandler(String handlerName, 
-			String prefix, Object attributes, HttpServletRequest request) {
+	public String getUrlForHandler(String handlerName, String prefix, 
+			Object attributes, HttpServletRequest request) {
+		
+		Map defaults = getDefaults(request);
+		return getUrlForHandler(handlerName, prefix, attributes, defaults, request);
+	}
+	
+	protected Map getDefaults(HttpServletRequest request) {
+		return null;
+	}
+	
+	/**
+	 * Returns the URL of a mapped handler.
+	 * @param handlerName The name of the handler
+	 * @param prefix Optional prefix to sort out ambiguities
+	 * @param attributes Optional attributes to fill out wildcards. Can either 
+	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
+	 * @param request The current request
+	 */
+	protected String getUrlForHandler(String handlerName, String prefix, 
+			Object attributes, Map defaults, HttpServletRequest request) {
 		
 		if (attributes == null) {
-			return getUrlForHandler(handlerName, prefix, request);
+			return getUrlForHandler(handlerName, defaults, prefix, request);
 		}
 		if (attributes instanceof Map) {
-			return getUrlForHandlerWithMap(handlerName, (Map) attributes, 
-					prefix, request); 
+			Map map;
+			if (defaults != null) {
+				map = new HashMap();
+				map.putAll(defaults);
+				map.putAll((Map) attributes);
+			}
+			else {
+				map = (Map) attributes;
+			}
+			return getUrlForHandlerWithMap(handlerName, map, prefix, request); 
 		}
 		if (ClassUtils.isPrimitiveOrWrapper(attributes.getClass())) {
-			return getUrlForHandlerWithAttribute(handlerName, attributes, prefix, request);
+			return getUrlForHandlerWithAttribute(handlerName, attributes, 
+					defaults, prefix, request);
 		}
-		return getUrlForHandlerWithBean(handlerName, attributes, prefix, request);
+		return getUrlForHandlerWithBean(handlerName, attributes, defaults, 
+				prefix, request);
 	}
 
 	/**
 	 * Returns the URL for a handler that is mapped without any wildcards.
 	 */
-	private String getUrlForHandler(String handlerName, String prefix, 
-			HttpServletRequest request) {
+	private String getUrlForHandler(String handlerName, Map defaults, 
+			String prefix, HttpServletRequest request) {
 		
-		AttributePattern p = getPatternForHandler(handlerName, prefix, request, 0);
+		AttributePattern p = getPatternForHandler(handlerName, prefix, request, 
+				defaults.keySet(), 0);
+		
 		if (p == null) {
 			return null;
 		}
@@ -85,13 +118,16 @@ public abstract class AbstractReverseHandlerMapping
 	 * Returns the URL for a handler that is mapped with exactly one wildcard.
 	 */
 	private String getUrlForHandlerWithAttribute(String handlerName, 
-			Object attribute, String prefix, HttpServletRequest request) {
+			Object attribute, Map defaults, String prefix, 
+			HttpServletRequest request) {
 		
-		AttributePattern p = getPatternForHandler(handlerName, prefix, request, 1);
+		AttributePattern p = getPatternForHandler(handlerName, prefix, request, 
+				defaults.keySet(), 1);
+		
 		if (p == null) {
 			return null;
 		}
-		String url = p.fillInAttribute(attribute);
+		String url = p.fillInAttribute(attribute, defaults);
 		return addServletMappingIfNecessary(url, request);
 	}
 	
@@ -109,8 +145,8 @@ public abstract class AbstractReverseHandlerMapping
 		Iterator it = patterns.iterator();
 		while (it.hasNext()) {
 			AttributePattern p = (AttributePattern) it.next();
-			if (p.matches(attributes)) {
-				String path = p.fillInAttributes(new MapWrapper(attributes));
+			if (p.canFillIn(attributes.keySet(), 0)) {
+				String path = p.fillInAttributes(new MapWrapper(attributes), null);
 				return addServletMappingIfNecessary(path, request);
 			}
 		}
@@ -122,11 +158,11 @@ public abstract class AbstractReverseHandlerMapping
 	 * The wildcard replacements are taken from the given bean.
 	 */
 	private String getUrlForHandlerWithBean(String beanName, Object bean,
-			String prefix, HttpServletRequest request) {
+			Map defaults, String prefix, HttpServletRequest request) {
 		
 		AttributePattern p = getPatternForHandler(beanName, prefix, request);
 		if (p != null) {
-			String path = p.fillInAttributes(new BeanWrapperImpl(bean));
+			String path = p.fillInAttributes(new BeanWrapperImpl(bean), defaults);
 			return addServletMappingIfNecessary(path, request);
 		}
 		return null;
@@ -180,7 +216,8 @@ public abstract class AbstractReverseHandlerMapping
 	 * @throws IllegalArgumentException if more than one mapping is registered
 	 */
 	protected AttributePattern getPatternForHandler(String handlerName, 
-			String prefix, HttpServletRequest request, int numberOfWildcards) {
+			String prefix, HttpServletRequest request, Set attributeNames, 
+			int anonymousWildcards) {
 		
 		List patterns = getPatternsForHandler(handlerName, prefix, request);
 		if (patterns == null || patterns.isEmpty()) {
@@ -189,14 +226,14 @@ public abstract class AbstractReverseHandlerMapping
 		Iterator it = patterns.iterator();
 		while (it.hasNext()) {
 			AttributePattern p = (AttributePattern) it.next();
-			if (p.getNumberOfWildcards() != numberOfWildcards) {
+			if (!p.canFillIn(attributeNames, anonymousWildcards)) {
 				it.remove();
 			}
 		}
 		if (patterns.size() != 1) {
 			throw new IllegalArgumentException("Exactly one mapping with "
-					+ numberOfWildcards + " wildcards required for hander " 
-					+ handlerName);
+					+ anonymousWildcards + " anonymous wildcards required "
+					+ "for hander "	+ handlerName);
 		}
 		return (AttributePattern) patterns.get(0);
 	}
@@ -230,4 +267,7 @@ public abstract class AbstractReverseHandlerMapping
 		}
 	}
 
+	public static Map getWildcardAttributes(HttpServletRequest request) {
+		return (Map) request.getAttribute(AttributePattern.EXPOSED_ATTRIBUTES);
+	}
 }
