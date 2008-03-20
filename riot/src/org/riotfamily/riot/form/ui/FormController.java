@@ -121,10 +121,10 @@ public class FormController extends BaseFormController {
 	protected ModelAndView showParentList(Form form,
 			ObjectEditorDefinition editorDefinition) {
 
-		String listUrl = editorDefinition.createEditorPath(
-				form.getBackingObject(),
-				form.getFormContext().getMessageResolver())
-				.getParent().getEditorUrl();
+		String listUrl = EditorDefinitionUtils.getListUrl(
+				editorDefinition,
+				form.getBackingObject(), 
+				form.getFormContext().getMessageResolver());
 
 		return new ModelAndView(new RedirectView(listUrl, true));
 	}

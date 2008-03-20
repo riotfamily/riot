@@ -23,8 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
+import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.riot.dao.ParentChildDao;
 import org.riotfamily.riot.dao.RiotDao;
+import org.riotfamily.riot.editor.ui.EditorReference;
 import org.springframework.util.Assert;
 
 /**
@@ -134,5 +136,15 @@ public final class EditorDefinitionUtils {
 			return loadBean(listDef, parentId);
 		}
 		return null;
+	}
+	
+	public static String getListUrl(EditorDefinition def, Object bean, 
+			MessageResolver messageResolver) {
+		
+		EditorReference ref = def.createEditorPath(bean, messageResolver);
+		while (!ref.getEditorType().equals("list")) {
+			ref = ref.getParent();
+		}
+		return ref.getEditorUrl();
 	}
 }
