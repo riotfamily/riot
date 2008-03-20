@@ -54,12 +54,20 @@ public class FormUtils {
 		return parentId;
 	}
 
-	public static void setParentEditorId(Form form, String parentEditorId) {
-		form.setAttribute(EditorConstants.PARENT_EDITOR_ID, parentEditorId);
+	public static void setParentEditor(Form form, EditorDefinition parentEditor) {
+		form.setAttribute(EditorConstants.PARENT_EDITOR, parentEditor);
+	}
+	
+	public static EditorDefinition getParentEditor(Form form) {
+		return (EditorDefinition) form.getAttribute(EditorConstants.PARENT_EDITOR);
 	}
 	
 	public static String getParentEditorId(Form form) {
-		return (String) form.getAttribute(EditorConstants.PARENT_EDITOR_ID);
+		EditorDefinition parentEditor = getParentEditor(form);
+		if (parentEditor != null) {
+			return parentEditor.getId();
+		}
+		return null;
 	}
 	
 	public static void setEditorDefinition(Form form,
@@ -73,9 +81,12 @@ public class FormUtils {
 	}
 	
 	public static Object loadParent(Form form) {
-		return EditorDefinitionUtils.loadParent(EditorDefinitionUtils
-				.getParentListDefinition(getEditorDefinition(form)), 
-				getParentId(form));
+		String parentId = getParentId(form);
+		EditorDefinition parentEditor = getParentEditor(form);
+		if (parentId != null && parentEditor != null) {
+			return EditorDefinitionUtils.loadBean(parentEditor, parentId);
+		}
+		return null;		
 	}
 
 }

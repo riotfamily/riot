@@ -136,13 +136,16 @@ public abstract class BaseFormController extends RepositoryFormController
 	}
 	
 	/**
-	 * Returns the id of the parent editor. Note: The method returns the
-	 * request parameter <em>parentEditorId</em> which is only set when a new 
-	 * object is created, i.e. {@link #getObjectId(HttpServletRequest)} 
-	 * returns <code>null</code>.
+	 * Returns the parent editor. Note: The method uses the request parameter 
+	 * <em>parentEditorId</em> which is only set when a new object is created, 
+	 * i.e. {@link #getObjectId(HttpServletRequest)} returns <code>null</code>.
 	 */
-	protected String getParentEditorId(HttpServletRequest request) {
-		return request.getParameter(EditorConstants.PARENT_EDITOR_ID);
+	protected EditorDefinition getParentEditor(HttpServletRequest request) {
+		String id = request.getParameter(EditorConstants.PARENT_EDITOR_ID);
+		if (id != null) {
+			return editorRepository.getEditorDefinition(id);
+		}
+		return null;
 	}
 
 	/**
@@ -159,7 +162,7 @@ public abstract class BaseFormController extends RepositoryFormController
 		Form form = super.createForm(request);
 		FormUtils.setObjectId(form, getObjectId(request));
 		FormUtils.setParentId(form, getParentId(request));
-		FormUtils.setParentEditorId(form, getParentEditorId(request));
+		FormUtils.setParentEditor(form, getParentEditor(request));
 		FormUtils.setEditorDefinition(form, getObjectEditorDefinition(request));
 		return form;
 	}

@@ -111,17 +111,19 @@ public class PageRiotDao implements ParentChildDao, TreeHintDao,
 	}
 
 	public boolean hasChildren(Object parent, Object root, ListParams params) {
-		Site rootSite;
-		if (root instanceof Site) {
-			rootSite = (Site) root;
-		}
-		else {
-			Page rootPage = (Page) root;
-			rootSite = rootPage.getSite();
-		}
 		Page page = (Page) parent;
-		if (!page.getSite().equals(rootSite)) {
-			return false;
+		if (root != null) {
+			Site rootSite;
+			if (root instanceof Site) {
+				rootSite = (Site) root;
+			}
+			else {
+				Page rootPage = (Page) root;
+				rootSite = rootPage.getSite();
+			}
+			if (!page.getSite().equals(rootSite)) {
+				return false;
+			}
 		}
 		return page.getChildPagesWithFallback().size() > 0;
 	}
