@@ -1,7 +1,7 @@
 <#--
   - Returns all top-level pages.
   -->
-<#function topLevelPages site=currentPage.site>
+<#function topLevelPages site=currentSite>
 	<#return pagesMacroHelper.getTopLevelPages(site) />
 </#function>
 
@@ -9,14 +9,14 @@
   - Returns the system-page with the given handlerName. There must be only
   - one PageNode with that id, otherwise an exception is thrown.
   -->
-<#function pageForHandler handlerName site=currentPage.site>
+<#function pageForHandler handlerName site=currentSite>
 	<#return pagesMacroHelper.getPageForHandler(handlerName, site) />
 </#function>
 
 <#--
   - Returns all pages with the given handlerName.
   -->
-<#function pagesForHandler handlerName site=currentPage.site>
+<#function pagesForHandler handlerName site=currentSite>
 	<#return pagesMacroHelper.getPagesForHandler(handlerName, site) />
 </#function>
 
@@ -24,7 +24,7 @@
   - Returns the page for the given url. The site is being used in case the site
   - could not be determined from the url.
   -->
-<#function pageForUrl url site=currentPage.site>
+<#function pageForUrl url site=currentSite>
 	<#return pagesMacroHelper.getPageForUrl(url, site) />
 </#function>
 
