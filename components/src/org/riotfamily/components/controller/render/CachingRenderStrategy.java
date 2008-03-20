@@ -68,6 +68,7 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 			ComponentListConfiguration config, HttpServletRequest request) {
 		
 		String cacheKey = location.toString();
+		//FIXME We should also check if the item is still valid, in case a dynamic component has been added
 		if (cacheService.isCached(cacheKey)) {
 			return true;
 		}
@@ -113,6 +114,7 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
+		ComponentCacheUtils.addListTag(request, location, isPreview());
 		super.render(location, config, request, response);
 	}
 	
@@ -198,7 +200,6 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 		public void processRequest(HttpServletRequest request, 
 				HttpServletResponse response) throws Exception {
 			
-			ComponentCacheUtils.addListTag(request, location, isPreview());
 			renderUncached(location, config, request, response);
 		}
 		
