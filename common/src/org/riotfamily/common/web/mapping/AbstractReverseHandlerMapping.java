@@ -105,8 +105,12 @@ public abstract class AbstractReverseHandlerMapping
 	private String getUrlForHandler(String handlerName, Map defaults, 
 			String prefix, HttpServletRequest request) {
 		
+		Set attributeNames = null;
+		if (defaults != null) {
+			attributeNames = defaults.keySet();
+		}
 		AttributePattern p = getPatternForHandler(handlerName, prefix, request, 
-				defaults.keySet(), 0);
+				attributeNames, 0);
 		
 		if (p == null) {
 			return null;
