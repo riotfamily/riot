@@ -28,32 +28,39 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.GZIPOutputStream;
 
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.cachius.support.Cookies;
+import org.riotfamily.cachius.support.Headers;
 import org.riotfamily.cachius.support.IOUtils;
 import org.riotfamily.cachius.support.ReaderWriterLock;
 import org.riotfamily.cachius.support.TokenFilterWriter;
+import org.springframework.util.FileCopyUtils;
 
 
 /**
- * Representation of cached item that is backed by a file. The 
- * <code>lastModified</code> and the <code>contentType</code> properties
- * are kept in memory and are serialized by the default java serialization
- * mechanism. The actual content is read from a file to avoid the overhead
- * of object deserialization on each request.
+ * Representation of cached item that is backed by a file. The captured 
+ * HTTP headers are kept in memory and are serialized by the default java 
+ * serialization mechanism. The actual content is read from a file to avoid 
+ * the overhead of object deserialization on each request.
  * <br>
  * If URL rewriting is used to track the session, the sessionId is
  * replaced by a special token in the cache file. When such an item is
@@ -66,12 +73,10 @@ import org.riotfamily.cachius.support.TokenFilterWriter;
  * @author Felix Gnass
  */
 public class CacheItem implements Serializable {
-    
+    	
     private static final String ITEM_PREFIX = "item";
     
-    private static final String TEMP_PREFIX = "tmp";
-    
-    private static final String TEMPFILE_SUFFIX = "";
+    private static final String ITEM_SUFFIX = "";
                    
     private static final long NOT_YET = -1L;
     
@@ -79,31 +84,31 @@ public class CacheItem implements Serializable {
     
     private Log log = LogFactory.getLog(CacheItem.class);
     
-    /** The previous item in the linked list */
-    private transient CacheItem previous;
-    
-    /** The next item in the linked list */
-    private transient CacheItem next;
-    
     /** The key used for lookups */
     private String key;
     
-    /** List of tags to categorize the item */
-    private String[] tags;
+    /** Set of tags to categorize the item */
+    private Set tags;
     
     /** Flag indicating whether session IDs are filtered */  
     private boolean filterSessionId;
     
     /** The file containing the actual data */
-    private File file = null;
+    private File file;
+
+    /** The Content-Type of the cached data */
+    private String contentType;
     
-    /** The content type (may be null) */
-    private String contentType = null;
+    /** Captured HTTP headers that will be sent */
+    private Headers headers;
     
-    /** 
-     * Flag indicating wheather the cached content is binary 
-     * or character data.
-     */
+    /** Captured cookies that will be sent */
+    private Cookies cookies;
+    
+    /** Map with extra properties */
+    private Map properties;
+    
+    /** Flag indicating whether the content is binary or character data */
     private boolean binary = true;
     
     /** 
@@ -112,210 +117,293 @@ public class CacheItem implements Serializable {
      */
     private transient ReaderWriterLock lock = new ReaderWriterLock();
     
-    /**
-     * Timestamp indicating the last modifcation. On object 
-     * serialization/deserialization this property is mapped to the
-     * file's mtime.
-     */
-    private transient long lastModified;
+    /** Time of the last usage */
+    private long lastUsed;
     
-        
-    public CacheItem(String key, File cacheDir) throws IOException {
+    /** Time of the last modification */
+    private long lastModified;
+    
+    /** Time of the last up-to-date check */
+    private long lastCheck;
+
+    /** Whether to set Content-Length header or not */
+	private boolean setContentLength;
+    
+    
+    /**
+     * Creates a new CacheItem with the given key in the specified directory.
+     */
+    protected CacheItem(String key, File cacheDir) throws IOException {
         this.key = key;
-        file = File.createTempFile(ITEM_PREFIX, TEMPFILE_SUFFIX, cacheDir);
+        file = File.createTempFile(ITEM_PREFIX, ITEM_SUFFIX, cacheDir);
         lastModified = NOT_YET;
     }
         
-    public String getKey() {
+    /**
+     * Returns the key.
+     */
+    protected String getKey() {
         return key;
     }
-   
-    public void setKey(String key) {
-        this.key = key;
-    }
-     
-    public void setTags(String[] tags) {
-    	if (tags != null) {
-    		Arrays.sort(tags);
+       
+    /**
+     * Sets tags which can be used to look up the item for invalidation.
+     */
+    protected void setTags(Set tags) {
+    	this.tags = tags != null ? new HashSet(tags) : null;
+    	if (log.isDebugEnabled() && tags != null) {
+    		log.debug("Tagging item " + this + " with " + tags);
     	}
-    	this.tags = tags;
     }
     
-    public String[] getTags() {
-    	return tags;
-    }
-    
-    public boolean hasTag(String tag) {
-    	return tags != null && Arrays.binarySearch(tags, tag) >= 0;
-    }
-    
-    public CacheItem getPrevious() {
-        return previous;
-    }
-
-   
-    public void setPrevious(CacheItem previous) {
-        this.previous = previous;
-    }
-
-   
-    public CacheItem getNext() {
-        return next;
-    }
-
-   
-    public void setNext(CacheItem next) {
-        this.next = next;
-    }
-    
-    
-    public int hashCode() {
-        return key.hashCode();
-    }
-
-
-    public boolean isFilterSessionId() {
-		return filterSessionId;
+    /**
+	 * Returns the item's tags.
+	 */
+	public Set getTags() {
+		return this.tags;
 	}
 	
-	public void setFilterSessionId(boolean filterSessionId) {
-		this.filterSessionId = filterSessionId;
-	}
-	
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-    
-    
-    public String getContentType() {
-        return contentType;
-    }
-            
-        
-    public long getLastModified() {
-        return lastModified;
-    }
-  
-  
-    public void setLastModified(long lastModified) {
-        this.lastModified = lastModified;
-    }
-  
-  
-    public boolean isNew() {
+	/**
+	 * Returns whether the item is new. An item is considered as new if the
+	 * {@link #getLastModified() lastModified} timestamp is set to 
+	 * {@value #NOT_YET}.  
+	 */
+    protected boolean isNew() {
         return lastModified == NOT_YET;
     }
     
     /**
+     * Sets the lastUsed timestamp to the current time.
+     */
+    protected void touch() {
+    	this.lastUsed = System.currentTimeMillis();
+    }
+    
+    /**
+	 * Returns the last usage time.
+	 */
+	public long getLastUsed() {
+		return this.lastUsed;
+	}
+    
+    /**
+     * Returns the last modification time.
+     */
+    protected long getLastModified() {
+        return lastModified;
+    }
+  
+    /**
+     * Sets the last modification time.
+     */
+	protected void setLastModified(long lastModified) {
+        this.lastModified = lastModified;
+    }
+
+	/**
+	 * Invalidates the item by setting the {@link #setLastModified(long) 
+	 * lastModified} timestamp to {@value #NOT_YET}.
+	 */
+	protected void invalidate() {
+    	lastModified = NOT_YET;
+    	if (log.isDebugEnabled()) {
+    		log.debug(this + " has been invalidated");
+    	}
+	}
+	
+	/**
+	 * Returns the time when the last up-to-date check was performed.
+	 */
+	protected long getLastCheck() {
+		return this.lastCheck;
+	}
+
+	/**
+	 * Sets the time of the last up-to-date check.
+	 */
+	protected void setLastCheck(long lastCheck) {
+		this.lastCheck = lastCheck;
+	}
+
+    /**
      * Checks whether the cache file exists an is a regular file.
      */
-    public boolean exists() {
+	protected boolean exists() {
         return file != null && file.isFile();
     }
     
-    public File createTempFile() throws IOException {
-    	File dir = file.getParentFile();
-    	dir.mkdirs();
-    	return File.createTempFile(TEMP_PREFIX, TEMPFILE_SUFFIX, dir);
+	/**
+	 * Returns the size of the cached data in bytes.
+	 */
+	protected int getSize() {
+		return file != null ? (int) file.length() : 0;
+	}
+    
+	/**
+	 * Sets the Content-Type.
+	 */
+	protected void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+	
+	/**
+	 * Sets whether a Content-Length header should be set.
+	 */
+	public void setSetContentLength(boolean setContentLength) {
+		this.setContentLength = setContentLength;
+	}
+	
+	/**
+	 * Sets HTTP headers. 
+	 */
+	protected void setHeaders(Headers headers) {
+		this.headers = headers;
+	}
+	
+	/**
+	 * Sets cookies.
+	 */
+	protected void setCookies(Cookies cookies) {
+		this.cookies = cookies;
+	}
+
+	/**
+	 * Sets shared properties.
+	 * @see org.riotfamily.common.web.collaboration.SharedProperties
+	 */
+	protected void setProperties(Map properties) {
+		this.properties = properties;
+	}
+	
+	/**
+	 * Returns the properties.
+	 */
+	public Map getProperties() {
+		return properties;
+	}
+	
+	/**
+	 * Returns the lock. 
+	 */
+	protected ReaderWriterLock getLock() {
+		return this.lock;
+	}
+	
+	/**
+	 * Sets whether to filter jsessionid tokens.
+	 */
+    protected void setFilterSessionId(boolean filterSessionId) {
+		this.filterSessionId = filterSessionId;
+	}
+    
+    protected Writer getWriter(String sessionId) 
+    		throws UnsupportedEncodingException, FileNotFoundException {
+    	
+    	binary = false;
+    	Writer writer = new OutputStreamWriter(getOutputStream(), FILE_ENCODING);
+    	if (filterSessionId) {
+        	writer = new TokenFilterWriter(sessionId, "${jsessionid}", writer);
+        }
+    	return writer;
+    }
+
+    protected OutputStream getOutputStream() throws FileNotFoundException {
+    	return new FileOutputStream(file);
     }
     
-    public void update(File tempFile, boolean binary) {
-   		log.debug("Updating cached version of " + key);
+    protected void gzipContent() throws IOException {
+    	InputStream in = new BufferedInputStream(new FileInputStream(file));
+    	File zipFile = new File(file.getParentFile(), file.getName() + ".gz");
+    	OutputStream out = new GZIPOutputStream(new FileOutputStream(zipFile));
+    	FileCopyUtils.copy(in, out);
+    	binary = true;
+    	file.delete();
+    	zipFile.renameTo(file);
+    }
+    
+    protected void writeTo(HttpServletResponse response, String sessionId) 
+    		throws IOException {
+            
+        try {
+        	if (contentType != null) {
+        		response.setContentType(contentType);
+        	}
+            if (headers != null) {
+                headers.addToResponse(response);
+            }
+            if (cookies != null) {
+            	cookies.addToResponse(response);
+            }
+            int contentLength = getSize();
+            if (contentLength > 0) {
+            	if (setContentLength) {
+            		response.setContentLength(contentLength);
+            	}
+	            if (binary) {
+	                InputStream in = new BufferedInputStream(
+	                        new FileInputStream(file));
+	                        
+	                IOUtils.copy(in, response.getOutputStream());
+	            }
+	            else {
+	                Reader in = new BufferedReader(new InputStreamReader(
+	                        new FileInputStream(file), FILE_ENCODING));
+	                
+	                Writer out = response.getWriter();
+	                if (filterSessionId) {
+	                    out = new TokenFilterWriter("${jsessionid}", 
+	                            sessionId, out);
+	                }
+	                
+	                IOUtils.copy(in, out);
+	            }
+            }
+        }
+        catch (FileNotFoundException e) {
+            log.warn("Cache file not found. Invalidating item to trigger " +
+                    "an update on the next request.");
+            
+            invalidate();
+        }
+    }
+    
+    protected void delete() {
     	try {
             lock.lockForWriting();
-            lastModified = System.currentTimeMillis();
-            delete();
-            IOUtils.move(tempFile, file);
-            this.binary = binary;
+            if (file.exists()) {
+        		if (!file.delete()) {
+        			log.warn("Failed to delete cache file: " + file);
+        		}
+        	}
         }
         finally {
             lock.releaseWriterLock();
         }
     }
-    
-    public void writeTo(HttpServletRequest request, 
-            ServletResponse response) throws IOException {
-            
-   		log.debug("Serving cached version of " + key);
-        try {
-            lock.lockForReading();
-            if (contentType != null) {
-                response.setContentType(contentType);
-            }
-            
-            if (binary) {
-                InputStream in = new BufferedInputStream(
-                        new FileInputStream(file));
-                        
-                IOUtils.copy(in, response.getOutputStream());
-            }
-            else {
-                Reader in = new BufferedReader(new InputStreamReader(
-                        new FileInputStream(file), FILE_ENCODING));
-                
-                Writer out = response.getWriter();
-                if (filterSessionId) {
-                    out = new TokenFilterWriter("${jsessionid}", 
-                            request.getSession().getId(), out);
-                }
-                
-                IOUtils.copy(in, out);
-            }
-        }
-        catch (FileNotFoundException e) {
-            log.warn("Cache file not found. Resetting modification time " +
-                    "to trigger update on next request.");
-            
-            lastModified = NOT_YET;
-        }
-        finally {
-            lock.releaseReaderLock();
-        }
-    }
-    
-    public void invalidate() {
-    	lastModified = NOT_YET;
-    	delete();
-    }
-    
-    public void delete() {
-    	if (file.exists()) {
-    		if (!file.delete()) {
-    			log.warn("Failed to delete cache file: " + file);
-    		}
-    	}
-    }
-  
-    
+         
     /**
-     * Calls <code>out.defaultWriteObject()</code> and sets the mtime of 
-     * <code>file</code> to reflect the <code>lastModified</code> property.
-     */ 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-        if (lastModified >= 0) {
-        	file.setLastModified(lastModified);
-        }
-    }
-     
-    /**
-     * Calls <code>in.defaultReadObject()</code> and initializes the 
-     * <code>lastModified</code> property with the file's mtime. If the 
-     * tempfile doesn't exist or is empty, <code>lastModified</code> is 
-     * set to <code>NOT_YET</code> (-1).
+     * Calls <code>in.defaultReadObject()</code> and creates a new lock.
      */ 
     private void readObject(ObjectInputStream in) throws IOException, 
             ClassNotFoundException {
          
          in.defaultReadObject();
          lock = new ReaderWriterLock();
-         if (file.exists() && file.length() > 0) {
-         	// Initialize lastModified with the file's mtime
-            lastModified = file.lastModified();
-         }
-         else {
-             lastModified = NOT_YET;
-         }
     }
-  
+    
+    public int hashCode() {
+        return key.hashCode();
+    }
+    
+    public boolean equals(Object obj) {
+    	if (obj == this) {
+    		return true;
+    	}
+    	if (obj instanceof CacheItem) {
+    		CacheItem other = (CacheItem) obj;
+    		return key.equals(other.key);
+    	}
+    	return false;
+    }
+
 }

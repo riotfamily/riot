@@ -28,10 +28,13 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.Cache;
+import org.riotfamily.cachius.CacheService;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.pages.component.config.ComponentListConfiguration;
 import org.riotfamily.pages.component.dao.ComponentDao;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
+import org.riotfamily.pages.component.render.ComponentListCacheKeyProvider;
+import org.riotfamily.pages.component.render.DefaultComponentListCacheKeyProvider;
 import org.riotfamily.pages.component.render.EditModeRenderStrategy;
 import org.riotfamily.pages.component.render.LiveModeRenderStrategy;
 import org.riotfamily.pages.component.render.RenderStrategy;
@@ -56,7 +59,7 @@ import org.springframework.web.servlet.mvc.Controller;
 public class ComponentListController implements Controller, BeanNameAware,
 		ComponentListConfiguration {	
 	
-	private Cache cache;
+	private CacheService cacheService;
 
 	private ComponentDao componentDao;
 
@@ -69,6 +72,11 @@ public class ComponentListController implements Controller, BeanNameAware,
 	private Integer minComponents;
 	
 	private Integer maxComponents;
+	
+	private long timeToLive = ComponentListConfiguration.NO_TIME_TO_LIVE;
+	
+	private ComponentListCacheKeyProvider cacheKeyProvider =
+		new DefaultComponentListCacheKeyProvider();
 
 	private ComponentRepository componentRepository;
 
@@ -80,12 +88,12 @@ public class ComponentListController implements Controller, BeanNameAware,
 	
 	private PlatformTransactionManager transactionManager;
 	
-	public void setCache(Cache cache) {
-		this.cache = cache;
+	public void setCacheService(CacheService cacheService) {
+		this.cacheService = cacheService;
 	}
 
-	public Cache getCache() {
-		return this.cache;
+	public CacheService getCacheService() {
+		return this.cacheService;
 	}
 
 	public void setComponentDao(ComponentDao componentDao) {
@@ -189,11 +197,11 @@ public class ComponentListController implements Controller, BeanNameAware,
 		final RenderStrategy strategy;
 		if (preview && AccessController.isGranted("edit", getLocation(request), null)) {
 			strategy = new EditModeRenderStrategy(componentDao, componentRepository, 
-					this, request, response);
+					this, request, response, cacheService);
 		}
 		else {
 			strategy = new LiveModeRenderStrategy(componentDao, componentRepository, 
-					this, request, response, cache);
+					this, request, response, cacheService);
 		}
 		
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
@@ -214,5 +222,22 @@ public class ComponentListController implements Controller, BeanNameAware,
 		return new Location(componentPathResolver.getComponentPath(request),
 			componentKeyResolver.getComponentKey(request));
 	}
+	
+	public long getTimeToLive() {
+		return timeToLive;
+	}
 
+	public void setTtl(String ttl) {
+		timeToLive = FormatUtils.parseMillis(ttl);
+	}
+
+	public ComponentListCacheKeyProvider getCacheKeyProvider() {
+		return this.cacheKeyProvider;
+	}
+
+	public void setCacheKeyProvider(
+		ComponentListCacheKeyProvider cacheKeyProvider) {
+		
+		this.cacheKeyProvider = cacheKeyProvider;
+	}
 }

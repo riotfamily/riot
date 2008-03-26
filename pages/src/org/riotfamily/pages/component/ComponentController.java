@@ -26,8 +26,8 @@ package org.riotfamily.pages.component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.cachius.spring.TaggingContext;
 import org.riotfamily.pages.component.dao.ComponentDao;
 import org.riotfamily.pages.component.preview.ViewModeResolver;
 import org.springframework.transaction.PlatformTransactionManager;
