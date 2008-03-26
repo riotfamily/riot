@@ -21,5 +21,6 @@
 		<dependency org="sun" name="jaf" rev="latest.release" conf="build,runtime->default" />
 		<dependency org="yahoo" name="yuicompressor" rev="2.2.5" conf="build,runtime->default" />
 		<dependency org="opensymphony" name="quartz" rev="${dep.quartz.revision}" conf="build->default" />
+		<dependency org="dom4j" name="dom4j" rev="1.6.1" conf="build,runtime->default" />
     </dependencies>
 </ivy-module>
