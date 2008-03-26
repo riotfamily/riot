@@ -195,10 +195,10 @@
 			</#if>
 			<#if tag == "img">
 				<#local attributes = attributes + {"src": src} />
-				<#if !attributes.width?has_content>
+				<#if !attributes.width?has_content && scope[key]??>
 					<#local attributes = attributes + {"width": scope[key].width?c} />
 				</#if>
-				<#if !attributes.height?has_content>
+				<#if !attributes.height?has_content && scope[key]??>
 					<#local attributes = attributes + {"height": scope[key].height?c} />
 				</#if>
 				<#if !attributes.alt?has_content>
