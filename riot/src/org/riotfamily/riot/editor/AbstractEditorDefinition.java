@@ -134,7 +134,7 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 
 	protected String getLabel(Object object, String labelProperty) {
 		StringBuffer label = new StringBuffer();
-		Pattern p = Pattern.compile("(\\w+)(\\W*)");
+		Pattern p = Pattern.compile("([\\w.]+)(\\W*)");
 		Matcher m = p.matcher(labelProperty);
 		while (m.find()) {
 			String property = m.group(1);
