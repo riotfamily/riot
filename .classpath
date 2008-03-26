@@ -53,5 +53,6 @@
 	<classpathentry kind="lib" path="lib/htmlparser.jar"/>
 	<classpathentry kind="lib" path="lib/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib/spring-test.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
