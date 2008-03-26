@@ -40,6 +40,7 @@ import org.riotfamily.media.service.MediaService;
 import org.riotfamily.riot.security.AccessController;
 import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.util.Assert;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -87,7 +88,11 @@ public class FileData {
 	public FileData(MultipartFile multipartFile) throws IOException {
 		setMultipartFile(multipartFile);
 	}
-
+	
+	public FileData(byte[] bytes, String fileName) throws IOException {
+		setBytes(bytes, fileName);
+	}
+	
 	public void setMultipartFile(MultipartFile multipartFile) throws IOException {
 		fileName = multipartFile.getOriginalFilename();
 		size = multipartFile.getSize();
@@ -108,6 +113,13 @@ public class FileData {
 		inspect(file);
 	}
 	
+	public void setBytes(byte[] bytes, String fileName) throws IOException {
+		File f = createEmptyFile(fileName);
+		FileCopyUtils.copy(bytes, f);
+		contentType = mediaService.getContentType(f);		
+		update();
+	}
+	
 	public File createEmptyFile(String name) throws IOException {
 		fileName = name;
 		uri = mediaService.store(null, name);
@@ -122,6 +134,7 @@ public class FileData {
 		
 		size = getFile().length();
 		md5 = HashUtils.md5(getInputStream());
+		inspect(getFile());
 	}
 	
 	private void initCreationInfo() {

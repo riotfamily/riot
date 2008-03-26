@@ -52,6 +52,10 @@ public class RiotImage extends RiotFile {
 		super(new ImageData(multipartFile));
 	}
 	
+	public RiotImage(byte[] bytes, String fileName) throws IOException {
+		super(new ImageData(bytes, fileName));
+	}
+	
 	public RiotFile createCopy() {
 		return new RiotImage(getImageData());
 	}

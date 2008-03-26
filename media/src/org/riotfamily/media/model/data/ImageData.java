@@ -54,6 +54,10 @@ public class ImageData extends FileData {
 		super(multipartFile);
 	}
 
+	public ImageData(byte[] bytes, String fileName) throws IOException {
+		super(bytes, fileName);
+	}
+
 	protected void inspect(File file) throws IOException {
 		ImageInfo info = new ImageInfo();
 		info.setInput(new FileInputStream(file));
