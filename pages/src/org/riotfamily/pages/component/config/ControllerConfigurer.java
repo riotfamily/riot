@@ -26,7 +26,7 @@ package org.riotfamily.pages.component.config;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.riotfamily.cachius.Cache;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.pages.component.ComponentController;
 import org.riotfamily.pages.component.ComponentListController;
 import org.riotfamily.pages.component.ComponentRepository;
@@ -55,7 +55,7 @@ public class ControllerConfigurer implements BeanFactoryAware,
 	
 	private ListableBeanFactory beanFactory;
 	
-	private Cache cache;
+	private CacheService cacheService;
 
 	private ComponentDao componentDao;
 	
@@ -79,8 +79,8 @@ public class ControllerConfigurer implements BeanFactoryAware,
 		}
 	}
 	
-	public void setCache(Cache cache) {
-		this.cache = cache;
+	public void setCacheService(CacheService cacheService) {
+		this.cacheService = cacheService;
 	}
 
 	public void setComponentDao(ComponentDao componentDao) {
@@ -149,8 +149,8 @@ public class ControllerConfigurer implements BeanFactoryAware,
 			
 			controller.setTransactionManager(transactionManager);
 			
-			if (controller.getCache() == null) {
-				controller.setCache(cache);
+			if (controller.getCacheService() == null) {
+				controller.setCacheService(cacheService);
 			}
 			if (controller.getComponentDao() == null) {
 				controller.setComponentDao(componentDao);

@@ -60,12 +60,21 @@
 						<xsd:attribute name="ref" type="xsd:string" />
 					</xsd:complexType>
 				</xsd:element>								
+                <xsd:element name="cache-key-provider" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs="0">
+                            <xsd:element name="bean" type="ref" />
+                        </xsd:sequence>
+                        <xsd:attribute name="ref" type="xsd:string" />
+                    </xsd:complexType>
+                </xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="initialComponentTypes" type="xsd:string" />
 			<xsd:attribute name="validComponentTypes" type="xsd:string" />
 			<xsd:attribute name="minComponents" type="xsd:positiveInteger"/>
-			<xsd:attribute name="maxComponents" type="xsd:positiveInteger"/>			
+			<xsd:attribute name="maxComponents" type="xsd:positiveInteger"/>
+			<xsd:attribute name="ttl" type="xsd:string"/>			
 		</xsd:complexType>
 	</xsd:element>
 	

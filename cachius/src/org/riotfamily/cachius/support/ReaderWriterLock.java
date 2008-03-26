@@ -39,7 +39,7 @@ public class ReaderWriterLock {
     private final LinkedList writerLocks = new LinkedList();
 
     /**
-     * Aquire a read lock. A call to this method will block until the
+     * Acquire a read lock. A call to this method will block until the
      * current writer (if any) has finished.
      */ 
     public synchronized void lockForReading() {
@@ -111,7 +111,7 @@ public class ReaderWriterLock {
 
 
     /**
-     * Aquire a write lock (non-blocking). 
+     * Acquire a write lock (non-blocking). 
      */
     public synchronized boolean tryLockForWriting() {
         if (writerLocks.size() == 0  && activeReaders == 0 

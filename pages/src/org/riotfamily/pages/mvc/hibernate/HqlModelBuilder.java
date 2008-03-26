@@ -43,7 +43,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.riotfamily.cachius.spring.TaggingContext;
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.pages.mvc.cache.CacheInvalidationAdvice;
 import org.riotfamily.pages.mvc.cache.CacheableModelBuilder;

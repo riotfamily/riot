@@ -14,7 +14,7 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
@@ -23,18 +23,16 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.cachius.spring;
 
-import org.riotfamily.cachius.Cache;
+import javax.servlet.http.HttpServletRequest;
 
 /**
- * @deprecated Use {@link CacheableControllerHandlerAdapter} instead.
- * 
- * The original class has been renamed to CacheableControllerHandlerAdapter
- * to match Spring's naming scheme.
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @author Alf Werder [alf dot werder at artundweise dot de]
+ * @since 6.4.4
  */
-public class CachiusHandlerAdapter extends CacheableControllerHandlerAdapter {
+public interface CacheKeyProvider {
 
-	public CachiusHandlerAdapter(Cache cache) {
-		super(cache);
-	}
+	public String getCacheKey(CacheableController controller, 
+			HttpServletRequest request);
 
 }

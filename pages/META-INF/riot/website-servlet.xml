@@ -109,10 +109,15 @@
 	<!-- 
 	  - HandlerAdapter that handles CacheableControllers.
 	  -->
-	<bean id="cachiusHandlerAdapter" class="org.riotfamily.cachius.spring.CachiusHandlerAdapter">
-		<constructor-arg ref="websiteCache" />
+	<bean id="cachiusHandlerAdapter" class="org.riotfamily.cachius.spring.CacheableControllerHandlerAdapter">
+		<constructor-arg ref="websiteCacheService" />
 	</bean>
 	
+    <!-- 
+      - HandlerAdapter that handles regular (non-cacheable) Controllers.
+      -->
+    <bean id="simpleControllerHandlerAdapter" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+
 	<!-- 
 	  - The default CachingPolicy used by AbstractCachingPolicyControllers.
 	  -->
@@ -126,7 +131,7 @@
 		<property name="componentDao" ref="componentDao" />
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="repository" ref="componentRepository" />
-		<property name="cache" ref="websiteCache" />
+		<property name="cacheService" ref="websiteCacheService" />
 		<property name="viewModeResolver" ref="viewModeResolver" />		
 		<property name="componentPathResolver">
 			<bean class="org.riotfamily.pages.component.resolver.PageComponentPathResolver" />

@@ -139,4 +139,23 @@ public class IOUtils {
 			}
 		}
 	}
+
+	public static void clearDirectory(File f) {
+        if (f.isDirectory()) {
+            File[] entries = f.listFiles();
+            for (int i = 0; i < entries.length; i++) {
+            	deleteRecursive(entries[i]);
+            }
+        }
+    }
+	
+	public static void deleteRecursive(File f) {
+        if (f.isDirectory()) {
+            File[] entries = f.listFiles();
+            for (int i = 0; i < entries.length; i++) {
+            	deleteRecursive(entries[i]);
+            }
+        }
+        f.delete();
+    }
 }

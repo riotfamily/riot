@@ -251,4 +251,7 @@ public class AbstractRenderStrategy implements RenderStrategy {
 		return sb.toString();
 	}
 
+	protected String getListTag(String path, String key) {
+		return path + ':' + key;
+	}
 }

@@ -37,7 +37,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
-import org.riotfamily.cachius.Cache;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.common.web.util.ServletUtils;
@@ -74,14 +74,14 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 	
 	private Map editorConfigs;
 	
-	private Cache cache;
+	private CacheService cacheService;
 
 	public void setLoginManager(LoginManager loginManager) {
 		this.loginManager = loginManager;
 	}
 	
-	public void setCache(Cache cache) {
-		this.cache = cache;
+	public void setCacheService(CacheService cacheService) {
+		this.cacheService = cacheService;
 	}
 
 	public void setMessageSource(MessageSource messageSource) {
@@ -234,7 +234,8 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			HttpServletResponse response = getCapturingResponse(sw);
 			
 			EditModeRenderStrategy strategy = new EditModeRenderStrategy(
-					getDao(), getRepository(), config, request, response);
+					getDao(), getRepository(), config, request, response,
+					cacheService);
 			
 			strategy.renderComponentVersion(version);
 			return sw.toString();
@@ -260,7 +261,7 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			
 			LiveModeRenderStrategy strategy = new LiveModeRenderStrategy(
 					getDao(), getRepository(), config, request, response,
-					cache);
+					cacheService);
 			
 			strategy.render(componentList);
 			return sw.toString();
@@ -281,7 +282,8 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 			HttpServletResponse response = getCapturingResponse(sw);
 			
 			EditModeRenderStrategy strategy = new EditModeRenderStrategy(
-					getDao(), getRepository(), config, request, response);
+					getDao(), getRepository(), config, request, response,
+					cacheService);
 			
 			strategy.setRenderOuterDiv(false);
 			strategy.render(componentList);
@@ -404,12 +406,12 @@ public class ComponentEditorImpl extends WebsiteConfigSupport
 		if (AccessController.isGranted("publish", componentList, null)) {
 			if (getDao().publishList(componentList)) {
 				log.debug("Changes published for ComponentList " + listId);
-				if (cache != null) {
+				if (cacheService != null) {
 					String tag = componentList.getPath() 
 							+ ':' + componentList.getKey();
 					
 					log.debug("Invalidating items tagged as " + tag);
-					cache.invalidateTaggedItems(tag);
+					cacheService.invalidateTaggedItems(tag);
 				}
 			}
 		} else {

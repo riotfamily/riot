@@ -26,125 +26,159 @@ package org.riotfamily.pages.component.render;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.Cache;
 import org.riotfamily.cachius.CacheItem;
-import org.riotfamily.cachius.CachiusResponseWrapper;
-import org.riotfamily.cachius.ItemUpdater;
-import org.riotfamily.cachius.spring.TaggingContext;
-import org.riotfamily.cachius.support.SessionUtils;
+import org.riotfamily.cachius.CacheService;
+import org.riotfamily.cachius.CacheableRequestProcessor;
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.pages.component.Component;
 import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
+import org.riotfamily.pages.component.VersionContainer;
 import org.riotfamily.pages.component.config.ComponentListConfiguration;
 import org.riotfamily.pages.component.dao.ComponentDao;
+import org.springframework.util.Assert;
+
 
 public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 
-	protected Cache cache;
+	protected CacheService cacheService;
 	
 	protected String listTag;
 	
 	protected CacheItem cachedList;
 	
-	protected boolean listIsCacheable = true;
+	protected boolean cacheIndividualComponents = true;
+	
+	protected ComponentListCacheKeyProvider cacheKeyProvider;
 	
 	public LiveModeRenderStrategy(ComponentDao dao, 
 			ComponentRepository repository, ComponentListConfiguration config,
 			HttpServletRequest request, HttpServletResponse response, 
-			Cache cache) throws IOException {
+			CacheService cacheService) throws IOException {
 		
 		super(dao, repository, config, request, response);
-		this.cache = cache;
+		this.cacheService = cacheService;
+		this.cacheKeyProvider = config.getCacheKeyProvider();
 	}
 	
-	/**
-	 * Overrides the default implementation to render the cached version of
-	 * the list (if present).
-	 */
-	public void render(String path, String key) throws IOException {
-		String cacheKey = getCacheKey(path, key);
-		cachedList = cache.getItem(cacheKey);
-		if (cachedList != null && cachedList.exists() && !cachedList.isNew()) {
-			log.debug("Serving cached list: " + path + '#' + key);
-			cachedList.writeTo(request, response);
-		}
-		else {
-			// List was invalidated or this is the 1st request
-			log.debug("Serving dynamic list: " + path + '#' + key);
-			super.render(path, key);
-		}
+	private boolean hasTimeToLive() {
+		return getTimeToLive() != ComponentListConfiguration.NO_TIME_TO_LIVE;
 	}
 	
-	public void render(ComponentList list) throws IOException {
-		String path = list.getPath();
-		String key = list.getKey();
-		String cacheKey = getCacheKey(path, key);
-		cachedList = cache.getItem(cacheKey);
-		if (cachedList != null && cachedList.exists() && !cachedList.isNew()) {
-			log.debug("Serving cached list: " + path + '#' + key);
-			cachedList.writeTo(request, response);
-		}
-		else {
-			// List was invalidated or this is the 1st request
-			log.debug("Serving dynamic list: " + path + '#' + key);
-			super.render(list);
-		}
+	private long getTimeToLive() {
+		return config.getTimeToLive();
 	}
 	
 	protected String getCacheKey(String path, String key) {
-		StringBuffer sb = new StringBuffer();
-		if (parent != null) {
-			sb.append(parent.getId()).append('$');
-		}
-		sb.append(path).append('#').append(key);
-		SessionUtils.addStateToCacheKey(request, sb);
-		return sb.toString();
+		return cacheKeyProvider.getComponentListCacheKey(
+			request, parent, path, key);
 	}
 	
-	protected void renderComponentList(ComponentList list) throws IOException {
-		listTag = list.getPath() + ':' + list.getKey();
-		try {
-			TaggingContext.openNestedContext(request);
-			TaggingContext.tag(request, listTag);
+	protected void render(String path, String key) throws IOException {
+		render(new ListHolder(path, key));
+	}
+	
+	public void render(ComponentList list) throws IOException {
+		render(new ListHolder(list));
+	}
+	
+	private void render(ListHolder listHolder) throws IOException {
+		String path = listHolder.getPath();
+		String key = listHolder.getKey();
+		listTag = getListTag(path, key);
+		
+		if (hasTimeToLive()) {
+			log.debug("Serving component list " + path + "#" + key + ". " +
+					"List has time-to-live. List will be cached as a whole " +
+					"AND individual components may be cached.");
+				
+			cacheIndividualComponents = true;
+			renderCached(listHolder);
+		} else if (isCacheable(listHolder, config, request)) {
+			log.debug("Serving component list " + path + "#" + key + ". " +
+				"List has no dynamic components. " +
+				"List will be cached as a whole.");
 			
-			ItemUpdater updater = new ItemUpdater(cachedList, request);
-			response = new CachiusResponseWrapper(response, updater);
-			
-			super.renderComponentList(list);
-			if (!listIsCacheable) {
-				updater.discard();
-				cachedList.delete();
-			}
-			
-			response.flushBuffer();
-			updater.updateCacheItem();
-			
+			cacheIndividualComponents = false;
+			renderCached(listHolder);
+		} else {
+			log.debug("Serving component list " + path + "#" + key + ". " +
+				"List has dynamic components. " +
+				"List will NOT be cached as a whole, BUT individual " +
+				"components may be cached.");
+
+			cacheIndividualComponents = true;
+			listHolder.render();
 		}
-		finally {
-			cachedList.setTags(TaggingContext.popTags(request));
+	}
+	
+	protected boolean isCacheable(ListHolder listHolder,
+		ComponentListConfiguration config, HttpServletRequest request) {
+		
+		String cacheKey = listHolder.getCacheKey();
+		if (cacheService.isCached(cacheKey)) {
+			return true;
+		}
+		
+		ComponentList list = listHolder.getList();
+		if (list != null) {
+			List containers= getComponentsToRender(list);
+			if (containers != null) {
+				Iterator it = containers.iterator();
+				while (it.hasNext()) {
+					VersionContainer container = (VersionContainer) it.next();
+					ComponentVersion version = getVersionToRender(container);
+					Component component = repository.getComponent(version);
+					
+					if (!INHERTING_COMPONENT.equals(version.getType())) {
+						if (component.isDynamic()) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	private void renderCached(ListHolder listHolder)
+		throws IOException {
+		
+		try {
+			cacheService.serve(request, response, new ListProcessor(listHolder));
+		}
+		catch (RuntimeException e) {
+			throw e;
+		}
+		catch (IOException e) {
+			throw e;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 
 	protected void renderComponent(Component component, 
-			ComponentVersion version, String positionClassName) 
-			throws IOException {
+		ComponentVersion version, String positionClassName) 
+		throws IOException {
 		
 		tagCacheItems(component, version);
-		if (component.isDynamic()) {
-			listIsCacheable = false;
-			log.debug("Component " + version.getType() 
-					+ " is dynamic and will NOT be cached.");
+		if (!cacheIndividualComponents || component.isDynamic()) {
+			log.debug("Rendering component of type " + version.getType() +
+					". Component will NOT be cached.");
 			
 			super.renderComponent(component, version, positionClassName);
 		}
 		else {
-			log.debug("Component " + version.getType() 
-					+ " is static and will be cached.");
+			log.debug("Rendering component of type " + version.getType() + 
+				". Component will be cached.");
 			
 			renderCacheableComponent(component, version, positionClassName);
 		}
@@ -162,41 +196,158 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 	}
 	
 	protected void renderCacheableComponent(Component component, 
-			ComponentVersion version, String positionClassName) 
-			throws IOException {
-	
-		String key = getComponentCacheKey(version);
-		CacheItem cachedComponent = cache.getItem(key);
-		if (cachedComponent.exists() && !cachedComponent.isNew()) {
-			cachedComponent.writeTo(request, response);
-			return;
-		}
+		ComponentVersion version, String positionClassName) 
+		throws IOException {
+		
 		try {
-			log.debug("No cache item found, rendering component ...");
-			TaggingContext.openNestedContext(request);
-			TaggingContext.tag(request, listTag);
-			
-			ItemUpdater updater = new ItemUpdater(cachedComponent, request);
-			CachiusResponseWrapper wrapper = new CachiusResponseWrapper(
-					response, updater);
-			
-			component.render(version, positionClassName, request, wrapper);
-			
-			wrapper.flushBuffer();
-			updater.updateCacheItem();
+			cacheService.serve(request, response,
+				new ComponentProcessor(component, version, positionClassName));
 		}
-		finally {
-			cachedComponent.setTags(TaggingContext.popTags(request));
+		catch (RuntimeException e) {
+			throw e;
+		}
+		catch (IOException e) {
+			throw e;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 	
 	protected String getComponentCacheKey(ComponentVersion version) {
-		StringBuffer key = new StringBuffer();
-		key.append(version.getClass().getName());
-		key.append('#');
-		key.append(version.getId());
-		SessionUtils.addStateToCacheKey(request, key);
-		return key.toString();
+		return cacheKeyProvider.getComponentCacheKey(request, version);
 	}
+	
+	private class ListHolder {
+		private ComponentList list = null;
+		private boolean listIsNull = false;
+		private String path;
+		private String key;
+		
+		public ListHolder(ComponentList list) {
+			Assert.notNull(list);
+			
+			this.list = list;
+			this.path = list.getPath();
+			this.key = list.getKey();
+			
+			this.listIsNull = false;
+		}
 
+		public ListHolder(String path, String key) {
+			this.path = path;
+			this.key = key;
+			
+			this.listIsNull = false;
+		}
+		
+		protected String getCacheKey() {
+			return LiveModeRenderStrategy.this.getCacheKey(path, key);
+		}
+
+		public ComponentList getList() {
+			if (list == null && !listIsNull) {
+				log.debug("Loading component list " + path + "#" + key);
+				this.list = getComponentList(path, key);
+				this.listIsNull = (this.list == null);
+			}
+			
+			return this.list;
+		}
+
+		public String getPath() {
+			return this.path;
+		}
+
+		public String getKey() {
+			return this.key;
+		}
+
+		public void render() throws IOException {
+			if (list != null) {
+				LiveModeRenderStrategy.super.render(list);
+			} else {
+				LiveModeRenderStrategy.super.render(path, key);
+			}
+		}
+	}
+	
+	private class ListProcessor implements CacheableRequestProcessor {
+		private ListHolder listHolder;
+
+		public ListProcessor(ListHolder listHolder) {
+			this.listHolder = listHolder;
+		}
+
+		public String getCacheKey(HttpServletRequest request) {
+			return LiveModeRenderStrategy.this.getCacheKey(
+				listHolder.getPath(), listHolder.getKey());
+		}
+
+		public long getLastModified(HttpServletRequest request) throws Exception {
+			return hasTimeToLive()? System.currentTimeMillis(): 0;
+		}
+
+		public long getTimeToLive() {
+			return LiveModeRenderStrategy.this.getTimeToLive();
+		}
+
+		public void processRequest(HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+			
+			
+			HttpServletRequest oldRequest = LiveModeRenderStrategy.this.request;
+			HttpServletResponse oldResponse = LiveModeRenderStrategy.this.response;
+			
+			LiveModeRenderStrategy.this.request = request;
+			LiveModeRenderStrategy.this.response = response;
+			TaggingContext.tag(request, listTag);
+			listHolder.render();
+			LiveModeRenderStrategy.this.request = oldRequest;
+			LiveModeRenderStrategy.this.response = oldResponse;
+		}
+
+		public boolean responseShouldBeZipped(HttpServletRequest request) {
+			return false;
+		}
+	}
+	
+	private class ComponentProcessor implements CacheableRequestProcessor {
+		
+		private Component component;
+		private ComponentVersion version;
+		private String positionClassName;
+		
+		public ComponentProcessor(Component component, ComponentVersion version,
+			String positionClassName) {
+			
+			this.component = component;
+			this.version = version;
+			this.positionClassName = positionClassName;
+		}
+
+		public String getCacheKey(HttpServletRequest request) {
+			return getComponentCacheKey(version);
+		}
+
+		public long getLastModified(HttpServletRequest request) throws Exception {
+			return 0;
+		}
+
+		public long getTimeToLive() {
+			return -1;
+		}
+
+		public void processRequest(HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+			
+			log.debug("No cache item found, rendering component ...");
+			TaggingContext.tag(request, listTag);
+			component.render(version, positionClassName, request, response);
+		}
+
+		public boolean responseShouldBeZipped(HttpServletRequest request) {
+			return false;
+		}
+	}
 }

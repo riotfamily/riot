@@ -54,6 +54,11 @@
 		<property name="restore" value="${riot.websiteCache.restore=true}" />
     </bean>
     
+    <bean id="websiteCacheService" class="org.riotfamily.cachius.CacheService">
+        <constructor-arg ref="websiteCache" />
+    </bean>
+    
+    
     <!-- 
 	  - AOP advisor that can be added to RiotDao instances in order to invalidate 
 	  - the website cache, when an object is saved, updated or deleted.

@@ -30,6 +30,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.pages.component.ComponentList;
 import org.riotfamily.pages.component.ComponentRepository;
 import org.riotfamily.pages.component.ComponentVersion;
@@ -40,14 +41,18 @@ import org.riotfamily.pages.component.dao.ComponentDao;
 
 public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	
+	private CacheService cacheService;
+	
 	private boolean renderOuterDiv = true;
 	
 	public EditModeRenderStrategy(ComponentDao dao, 
-			ComponentRepository repository, ComponentListConfiguration config,
-			HttpServletRequest request, HttpServletResponse response) 
-			throws IOException {
+		ComponentRepository repository, ComponentListConfiguration config,
+		HttpServletRequest request, HttpServletResponse response,
+		CacheService cacheService) throws IOException {
 		
 		super(dao, repository, config, request, response);
+		
+		this.cacheService = cacheService;
 	}
 
 	public void renderComponentVersion(ComponentVersion version) 
@@ -136,6 +141,8 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 			list.setLiveContainers(containers);
 			dao.updateComponentList(list);
 		}
+		
+		cacheService.invalidateTaggedItems(getListTag(path, key));
 		return list;
 	}
 	

@@ -23,11 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.component.config;
 
+import org.riotfamily.pages.component.render.ComponentListCacheKeyProvider;
 import org.riotfamily.pages.component.resolver.ComponentKeyResolver;
 import org.riotfamily.pages.component.resolver.ComponentPathResolver;
 
 
 public interface ComponentListConfiguration {
+	public static final long NO_TIME_TO_LIVE = -1L;
 
 	public String getControllerId();
 	
@@ -42,5 +44,9 @@ public interface ComponentListConfiguration {
 	public String[] getValidComponentTypes();
 	
 	public String[] getInitialComponentTypes();
+	
+	public long getTimeToLive();
+	
+	public ComponentListCacheKeyProvider getCacheKeyProvider();
 	
 }
