@@ -159,7 +159,7 @@ public class AttributePattern {
 			return unmatched <= anonymousAttributes;
 		}
 		else {
-			return this.attributeNames.size() <= anonymousAttributes;
+			return this.attributeNames.size() == anonymousAttributes;
 		}
 	}
 
@@ -172,7 +172,7 @@ public class AttributePattern {
 	}
 	
 	public boolean isMoreSpecific(AttributePattern other) {
-		return precision > other.precision;
+		return other == null || precision > other.precision;
 	}
 	
 	public String fillInAttributes(PropertyAccessor attributes) {
@@ -189,7 +189,7 @@ public class AttributePattern {
 				value = attributes.getPropertyValue(name);
 			}
 			if (value == null && defaults != null) {
-				value = defaults.get(value);
+				value = defaults.get(name);
 			}
 			String replacement = value != null
 					? StringUtils.replace(value.toString(), "$", "\\$")
@@ -239,8 +239,13 @@ public class AttributePattern {
 			map = Collections.singletonMap(name, value);
 		}
 		else {
-			map = new HashMap(defaults);
-			map.put(unmatched, value);
+			if (defaults != null) {
+				map = new HashMap(defaults);
+				map.put(unmatched, value);
+			}
+			else {
+				map = Collections.singletonMap(unmatched, value);
+			}
 		}
 		return fillInAttributes(null, map);
 	}
