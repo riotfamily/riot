@@ -64,6 +64,8 @@ public final class FormatUtils {
 
 	private static final String ENTITY_QUOT = "&quot;";
 
+	private static final Pattern TAG_PATTERN = Pattern.compile("</?[^>]+>");
+	
 	private FormatUtils() {
 	}
 
@@ -721,6 +723,13 @@ public final class FormatUtils {
 			in.close();
 		}
 		return sb.toString();
+	}
+	
+	public static String stripTags(String s) {
+		if (s == null) {
+			return null;
+		}
+		return TAG_PATTERN.matcher(s).replaceAll("");
 	}
 
 }
