@@ -23,53 +23,48 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
-import org.riotfamily.common.web.servlet.PathCompleter;
-import org.riotfamily.forms.CompositeElement;
-import org.riotfamily.forms.Editor;
+import java.io.PrintWriter;
+
+import org.riotfamily.common.markup.DocumentWriter;
+import org.riotfamily.common.markup.Html;
+import org.riotfamily.forms.DHTMLElement;
+import org.riotfamily.forms.MessageUtils;
+import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.element.TextField;
-import org.riotfamily.forms.event.ChangeEvent;
-import org.riotfamily.forms.event.ChangeListener;
-import org.riotfamily.pages.model.Page;
-import org.riotfamily.riot.form.element.ObjectChooser;
+import org.riotfamily.forms.resource.FormResource;
+import org.riotfamily.forms.resource.ResourceElement;
+import org.riotfamily.forms.resource.Resources;
+import org.riotfamily.forms.resource.ScriptResource;
+import org.riotfamily.forms.resource.StylesheetResource;
+import org.riotfamily.pages.riot.chooser.PageChooserController;
 
-public class InternalLinkField extends CompositeElement 
-		implements Editor, ChangeListener {
+public class InternalLinkField extends TextField implements ResourceElement,
+	DHTMLElement {
 
-	private PathCompleter pathCompleter;
-	
-	private TextField textField;
-	
-	private ObjectChooser chooser;
-	
-	public InternalLinkField(PathCompleter pathCompleter) {
-		this.pathCompleter = pathCompleter;
-		textField = new TextField();
-		chooser = new ObjectChooser();
-		chooser.setTargetEditorId("page");
-		chooser.addChangeListener(this);
-		addComponent(textField);
-		addComponent(chooser);
+	private static final ScriptResource RESOURCE = new ScriptResource(
+			"riot-js/window-callback.js", "WindowCallback",
+			new FormResource[] {
+				Resources.PROTOTYPE,
+				new StylesheetResource("style/internal-link-field.css")
+			}
+	);
+
+	private String chooserUrl = "/riot/pages/chooser";
+
+	private boolean crossSite = false;
+
+	public InternalLinkField() {
+		setStyleClass("text internal-link");
 	}
 
 	public void setCrossSite(boolean crossSite) {
-		//FIXME
+		this.crossSite = crossSite;
 	}
 	
-	public void valueChanged(ChangeEvent event) {
-		Page page = (Page) event.getNewValue();
-		textField.setValue(page.getUrl(pathCompleter));
-		getFormListener().elementChanged(textField);
-	}
-
-	public Object getValue() {
-		return textField.getValue();
-	}
-
-	public void setValue(Object value) {
-		textField.setValue(value);
+	public String getChooserUrl() {
+		return this.chooserUrl;
 	}
 	
-	/*
 	public String getChooserQueryString() {
 		StringBuffer sb = new StringBuffer();
 		Object pageId = getForm().getAttribute("pageId");
@@ -88,6 +83,42 @@ public class InternalLinkField extends CompositeElement
 		}
 		return sb.toString();
 	}
-	*/
+
+	public void setChooserUrl(String chooserUrl) {
+		this.chooserUrl = chooserUrl;
+	}
+
+	public FormResource getResource() {
+		return RESOURCE;
+	}
+
+	public String getInitScript() {
+		return TemplateUtils.getInitScript(this);
+	}
+
+	public String getButtonId() {
+		return getId() + "-button";
+	}
+
+	public void renderInternal(PrintWriter writer) {
+		DocumentWriter doc = new DocumentWriter(writer);
+		doc.start(Html.DIV).attribute(Html.COMMON_CLASS, "internal-link");
+		doc.start(Html.DIV).attribute(Html.COMMON_CLASS, "input-wrapper");
+		doc.body();
+
+		super.renderInternal(writer);
+
+		doc.end();
+		String buttonLabel = MessageUtils.getMessage(this,
+				"internalLinkField.buttonLabel", null, "...");
+
+		doc.startEmpty(Html.INPUT)
+				.attribute(Html.INPUT_TYPE, "button")
+				.attribute(Html.INPUT_VALUE, buttonLabel)
+				.attribute(Html.INPUT_DISABLED, !isEnabled())
+				.attribute(Html.COMMON_ID, getButtonId())
+				.attribute(Html.COMMON_CLASS, "button")
+				.closeAll();
+	}
 
 }
