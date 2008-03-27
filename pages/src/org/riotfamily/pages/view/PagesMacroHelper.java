@@ -31,9 +31,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.components.EditModeUtils;
+import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.PageNode;
 
 /**
  * @author Carsten Woelk [cwoelk at neteye dot de]
@@ -61,7 +63,9 @@ public class PagesMacroHelper {
 	
 	
 	public List getTopLevelPages(SiteFacade facade) {
-		return getVisiblePages(pageDao.getRootNode().getChildPages(facade.getSite()),
+		PageNode rootNode = pageDao.getRootNode();
+		PageCacheUtils.addNodeTag(request, rootNode);
+		return getVisiblePages(rootNode.getChildPages(facade.getSite()),
 				EditModeUtils.isEditMode());
 	}
 
