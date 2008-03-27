@@ -33,7 +33,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.cachius.Cache;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.web.event.ContentChangedEvent;
 import org.riotfamily.common.web.file.FileStore;
 import org.riotfamily.common.web.file.FileStoreLocator;
@@ -61,7 +61,7 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 
 	private ComponentRepository repository;
 
-	private Cache cache;
+	private CacheService cacheService;
 	
 	private ComponentDao dao;
 
@@ -76,8 +76,8 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		this.repository = repository;
 	}
 
-	public void setCache(Cache cache) {
-		this.cache = cache;
+	public void setCacheService(CacheService cacheService) {
+		this.cacheService = cacheService;
 	}
 	
 	public void setComponentDao(ComponentDao dao) {
@@ -114,7 +114,7 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 		}
 		if (version.getId() != null) {
 			ComponentCacheUtils.invalidateContainer(
-					cache, version.getContainer(), true);
+					cacheService, version.getContainer(), true);
 			
 			dao.updateComponentVersion(version);
 		}
@@ -334,7 +334,7 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 			dao.updateVersionContainer(container);
 			published = true;
 			if (container.getList() == null) {
-				ComponentCacheUtils.invalidateContainer(cache, container);
+				ComponentCacheUtils.invalidateContainer(cacheService, container);
 			}
 		}
 		return published;
@@ -378,8 +378,8 @@ public class DefaultComponentService implements InitializingBean, ComponentServi
 			eventMulticaster.multicastEvent(new ContentChangedEvent(this, path));
 		}
 
-		if (published && cache != null) {
-			ComponentCacheUtils.invalidateList(cache, componentList);
+		if (published && cacheService != null) {
+			ComponentCacheUtils.invalidateList(cacheService, componentList);
 		}
 
 		return published;

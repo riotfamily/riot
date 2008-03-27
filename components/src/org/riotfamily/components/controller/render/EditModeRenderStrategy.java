@@ -32,10 +32,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.context.PageRequestUtils;
@@ -51,12 +53,16 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 
 	private RenderStrategy parentStrategy;
 	
+	private CacheService cacheService;
+	
 	public EditModeRenderStrategy(ComponentDao dao,
 			ComponentRepository repository, 
-			ComponentListConfiguration config) {
+			ComponentListConfiguration config,
+			CacheService cacheService) {
 
 		super(dao, repository, config);
 		parentStrategy = new InheritingRenderStrategy(dao, repository, config);
+		this.cacheService = cacheService;
 	}
 
 	/**
@@ -149,6 +155,8 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		}
 		dao.saveComponentList(list);
 		log.debug("New ComponentList created: " + list);
+		
+		ComponentCacheUtils.invalidateList(cacheService, list);
 		return list;
 	}
 

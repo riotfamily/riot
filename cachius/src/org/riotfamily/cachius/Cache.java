@@ -148,10 +148,13 @@ public final class Cache implements Serializable {
 	}
 
     /**
-     * Returns whether an item with the given key exists.
+     * Returns whether an item with the given key exists nd was not invalidated.
      */
-    public boolean containsKey(String key) {
-    	return map.containsKey(key);
+    public boolean containsValidKey(String key) {
+        if (map.containsKey(key)) {
+            return !((CacheItem) map.get(key)).isNew();
+        }
+    	return false;
     }
     
     /**
@@ -321,7 +324,7 @@ public final class Cache implements Serializable {
     /**
      * Invalidates all items tagged with the given String.
      */
-    public void invalidateTaggedItems(String tag) {
+    protected void invalidateTaggedItems(String tag) {
     	if (tag != null) {
 	    	log.debug("Invalidating items tagged as " + tag);
 	    	List items = getTaggedItems(tag);

@@ -93,7 +93,7 @@
 
 	<bean id="entityEditorTarget" class="org.riotfamily.components.editor.EntityEditorImpl">
 		<constructor-arg ref="riotDaoService" />
-		<property name="cache" ref="websiteCache" />
+		<property name="cacheService" ref="cacheService" />
 	</bean>
 	
 	<bean id="uploadManager" class="org.riotfamily.components.editor.UploadManagerImpl">

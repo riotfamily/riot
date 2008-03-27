@@ -28,7 +28,7 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.Cache;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.components.config.component.Component;
 import org.riotfamily.components.model.ComponentList;
@@ -59,15 +59,17 @@ public final class ComponentCacheUtils {
 	/**
 	 * This method will invalidate both, the live and preview versions of the container.
 	 */
-	public static void invalidateContainer(Cache cache, VersionContainer container) {
-		cache.invalidateTaggedItems(getContainerTag(container, false));
-		cache.invalidateTaggedItems(getContainerTag(container, true));
+	public static void invalidateContainer(CacheService cacheService,
+		VersionContainer container) {
+		
+		cacheService.invalidateTaggedItems(getContainerTag(container, false));
+		cacheService.invalidateTaggedItems(getContainerTag(container, true));
 	}
 
-	public static void invalidateContainer(Cache cache, 
+	public static void invalidateContainer(CacheService cacheService, 
 			VersionContainer container, boolean editMode) {
 		
-		cache.invalidateTaggedItems(getContainerTag(container, editMode));
+		cacheService.invalidateTaggedItems(getContainerTag(container, editMode));
 	}
 	
 	public static void addListTags(HttpServletRequest request, 
@@ -85,8 +87,10 @@ public final class ComponentCacheUtils {
 		TaggingContext.tag(request, location.toString());
 	}
 	
-	public static void invalidateList(Cache cache, ComponentList list) {
-		cache.invalidateTaggedItems(list.getLocation().toString());
+	public static void invalidateList(CacheService cacheService,
+		ComponentList list) {
+		
+		cacheService.invalidateTaggedItems(list.getLocation().toString());
 	}
 	
 	public static void addComponentTags(HttpServletRequest request, 

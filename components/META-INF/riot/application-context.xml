@@ -44,7 +44,7 @@
 
 	<bean id="componentServiceTarget" class="org.riotfamily.components.service.DefaultComponentService">
 		<property name="repository" ref="componentRepository" />
-		<property name="cache" ref="websiteCache" />
+		<property name="cacheService" ref="cacheService" />
 		<property name="componentDao" ref="componentDaoTarget" />
 		<property name="eventMulticaster" ref="contentEventMulticaster" />
 		<property name="fileStoreLocator">

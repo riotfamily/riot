@@ -71,7 +71,7 @@
 
  	<bean id="pageRiotDao" class="org.riotfamily.pages.riot.dao.PageRiotDao">
 		<property name="pageDao" ref="pageDao" />
-		<property name="cache" ref="websiteCache" />
+		<property name="cacheService" ref="cacheService" />
 	</bean>
 
 

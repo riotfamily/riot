@@ -21,10 +21,6 @@
 		<property name="filterName" value="website-filter" />
 	</bean>
 		
-	<bean id="cacheService" class="org.riotfamily.cachius.CacheService">
-		<constructor-arg ref="websiteCache" />
-	</bean>
-	
 	<!-- 
 	  - HandlerAdapter that handles CacheableControllers.
 	  -->

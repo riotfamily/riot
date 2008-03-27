@@ -146,7 +146,7 @@ public class ComponentListController implements Controller,
 
 	public void afterPropertiesSet() throws Exception {
 		editModeRenderStrategy = new EditModeRenderStrategy(componentDao,
-				componentRepository, this);
+				componentRepository, this, cacheService);
 		
 		liveModeRenderStrategy = new LiveModeRenderStrategy(componentDao, 
 				componentRepository, this, cacheService);

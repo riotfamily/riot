@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.riotfamily.cachius.Cache;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
@@ -51,7 +51,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 
 	private PageDao pageDao;
 
-	private Cache cache;
+	private CacheService cacheService;
 	
 	public PageRiotDao() {
 	}
@@ -60,8 +60,8 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 		this.pageDao = pageDao;
 	}
 	
-	public void setCache(Cache cache) {
-		this.cache = cache;
+	public void setCacheService(CacheService cacheService) {
+		this.cacheService = cacheService;
 	}
 
 	public void afterPropertiesSet() throws Exception {
@@ -187,7 +187,7 @@ public class PageRiotDao implements ParentChildDao, SwappableItemDao,
 	}
 	
 	private void invalidateCacheItems(Page page) {
-		PageCacheUtils.invalidateSiblings(cache, page);
+		PageCacheUtils.invalidateSiblings(cacheService, page);
 	}
 
 }

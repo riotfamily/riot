@@ -54,10 +54,23 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		this.cacheService = cacheService;
 	}
 
+	protected String getCacheKey(HttpServletRequest request, Location location) {
+		StringBuffer sb = new StringBuffer("ComponentList ");
+		VersionContainer parent = getParentContainer(request);
+		if (parent != null) {
+			sb.append(parent.getId()).append('$');
+			sb.append(location.getSlot());
+		}
+		else {
+			sb.append(location);
+		}
+		return sb.toString();
+	}
+	
 	protected boolean isCacheable(Location location, 
 			HttpServletRequest request) {
 		
-		String cacheKey = location.toString();
+		String cacheKey = getCacheKey(request, location);
 		if (cacheService.isCached(cacheKey)) {
 			return true;
 		}
@@ -97,8 +110,9 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 	}
 	
 	protected void renderInternal(Location location, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+		HttpServletResponse response) throws Exception {
 		
+		ComponentCacheUtils.addListTags(request, location);
 		super.render(location, request, response);
 	}
 	
@@ -136,16 +150,7 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		}
 
 		public String getCacheKey(HttpServletRequest request) {
-			StringBuffer sb = new StringBuffer("ComponentList ");
-			VersionContainer parent = getParentContainer(request);
-			if (parent != null) {
-				sb.append(parent.getId()).append('$');
-				sb.append(location.getSlot());
-			}
-			else {
-				sb.append(location);
-			}
-			return sb.toString();
+			return LiveModeRenderStrategy.this.getCacheKey(request, location);
 		}
 		
 		public long getTimeToLive() {
@@ -163,7 +168,6 @@ public class LiveModeRenderStrategy extends AbstractRenderStrategy {
 		public void processRequest(HttpServletRequest request, 
 				HttpServletResponse response) throws Exception {
 			
-			ComponentCacheUtils.addListTags(request, location);
 			renderInternal(location, request, response);
 		}
 		
