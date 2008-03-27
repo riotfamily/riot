@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.model.Site;
 
 public class SiteFacade {
@@ -13,26 +14,22 @@ public class SiteFacade {
 
 	private HttpServletRequest request;
 	
-	private String defaultHost;
-	
 	public SiteFacade(Site site, HttpServletRequest request) {
 		this.site = site;
 		this.request = request;
-		defaultHost = request.getServerName();
-		if (request.getServerPort() != 0 
-				&& request.getServerPort() != 80
-				&& request.getServerPort() != 443) {
-			
-			defaultHost += ":" + request.getServerPort();
-		}
 	}
 	
 	public Site getSite() {
 		return site;
 	}
 	
+	public String getAbsoluteUrl() {
+		return makeAbsolute("");
+	}
+	
 	public String makeAbsolute(String path) {
-		return site.makeAbsolute(request.isSecure(), defaultHost, 
+		return site.makeAbsolute(request.isSecure(),
+				ServletUtils.getServerNameAndPort(request), 
 				request.getContextPath(), path);
 	}
 

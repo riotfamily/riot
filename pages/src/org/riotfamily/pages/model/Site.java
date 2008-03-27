@@ -224,16 +224,19 @@ public class Site {
 			String contextPath, String path) {
 		
 		StringBuffer url = new StringBuffer();
-		url.append(secure
-				? ServletUtils.SCHEME_HTTPS 
-				: ServletUtils.SCHEME_HTTP);
 		
-        url.append("://");
-        if (hostName != null) {
-			url.append(hostName);
-		}
-		else {
-			url.append(defaultHost);
+		if (hostName != null || defaultHost != null) {
+			url.append(secure
+					? ServletUtils.SCHEME_HTTPS 
+					: ServletUtils.SCHEME_HTTP);
+			
+	        url.append("://");
+	        if (hostName != null) {
+				url.append(hostName);
+			}
+			else {
+				url.append(defaultHost);
+			}
 		}
         
         if (contextPath.length() > 0 && !path.startsWith(contextPath)) {

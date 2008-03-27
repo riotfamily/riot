@@ -422,23 +422,25 @@ public final class ServletUtils {
 	 */
 	public static StringBuffer getAbsoluteUrlPrefix(HttpServletRequest request) {
 		StringBuffer url = new StringBuffer();
-        String scheme = request.getScheme();
-        int port = request.getServerPort();
-        if (port <= 0) {
-            port = 80;
-        }
-        url.append(scheme);
+        url.append(request.getScheme());
         url.append("://");
-        url.append(request.getServerName());
-        if ((scheme.equals(SCHEME_HTTP) && port != 80)
-        		|| (scheme.equals(SCHEME_HTTPS) && port != 443)) {
-
-            url.append(':');
-            url.append(port);
-        }
+        url.append(getServerNameAndPort(request));
         return url;
 	}
 
+	/**
+	 * Returns the serverName and port (if applicable) for the given request. 
+	 */
+	public static String getServerNameAndPort(HttpServletRequest request) {
+		if (request.getServerPort() != 0 
+				&& request.getServerPort() != 80
+				&& request.getServerPort() != 443) {
+			
+			return request.getServerName() + ":" + request.getServerPort();
+		}
+		return request.getServerName();
+	}
+	
 	/**
 	 * Returns whether the <code>X-Requested-With</code> header is set to
 	 * <code>XMLHttpRequest</code> as done by prototype.js.

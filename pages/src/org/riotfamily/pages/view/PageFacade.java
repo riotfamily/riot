@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.servlet.RequestPathCompleter;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
@@ -131,9 +132,9 @@ public class PageFacade {
 	}
 
 	public String getAbsoluteWildcardUrl(Object attributes) {
-		//FIXME Add port if not default!
 		return page.getAbsoluteUrl(pathCompleter, request.isSecure(), 
-				request.getServerName(), request.getContextPath(), attributes);
+				ServletUtils.getServerNameAndPort(request),
+				request.getContextPath(), attributes);
 	}
 
 	public String getSecureUrl() {
@@ -141,13 +142,13 @@ public class PageFacade {
 	}
 	
 	public String getSecureWildcardUrl(Object attributes) {
-		//FIXME Site.getHostName() may return host+port! 
 		if (request.isSecure() && request.getServerName().equals(
 				page.getSite().getHostName())) {
 			
 			return getUrl();
 		}
-		return page.getAbsoluteUrl(pathCompleter, true, request.getServerName(),
+		return page.getAbsoluteUrl(pathCompleter, true,
+				ServletUtils.getServerNameAndPort(request),
 				request.getContextPath(), attributes);
 	}
 	
