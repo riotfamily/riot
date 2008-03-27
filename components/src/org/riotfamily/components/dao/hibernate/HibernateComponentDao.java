@@ -31,7 +31,6 @@ import java.util.Set;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.riotfamily.cachius.Cache;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.dao.ComponentDao;

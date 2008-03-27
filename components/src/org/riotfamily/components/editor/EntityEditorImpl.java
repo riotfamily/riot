@@ -25,7 +25,6 @@ package org.riotfamily.components.editor;
 
 import java.io.IOException;
 
-import org.riotfamily.cachius.Cache;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.image.ImageCropper;
