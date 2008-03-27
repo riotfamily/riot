@@ -28,7 +28,7 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.Cache;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ComponentListLocation;
@@ -77,16 +77,16 @@ public final class ComponentCacheUtils {
 	/**
 	 * Invalidates the live and preview version of the container.
 	 */
-	public static void invalidateContainer(Cache cache, ContentContainer container) {
-		cache.invalidateTaggedItems(getContainerTag(container, false));
-		cache.invalidateTaggedItems(getContainerTag(container, true));
+	public static void invalidateContainer(CacheService cacheService, ContentContainer container) {
+		cacheService.invalidateTaggedItems(getContainerTag(container, false));
+		cacheService.invalidateTaggedItems(getContainerTag(container, true));
 	}
 	
 	/**
 	 * Invalidates the preview version of the container.
 	 */
-	public static void invalidatePreviewVersion(Cache cache, ContentContainer container) {
-		cache.invalidateTaggedItems(getContainerTag(container, true));
+	public static void invalidatePreviewVersion(CacheService cacheService, ContentContainer container) {
+		cacheService.invalidateTaggedItems(getContainerTag(container, true));
 	}
 	
 	/**
@@ -112,16 +112,16 @@ public final class ComponentCacheUtils {
 	/**
 	 * Invalidates the live and preview version of the given list.
 	 */
-	public static void invalidateList(Cache cache, ComponentList list) {
-		cache.invalidateTaggedItems(getListTag(list, true));
-		cache.invalidateTaggedItems(getListTag(list, false));
+	public static void invalidateList(CacheService cacheService, ComponentList list) {
+		cacheService.invalidateTaggedItems(getListTag(list, true));
+		cacheService.invalidateTaggedItems(getListTag(list, false));
 	}
 	
 	/**
 	 * Invalidates the preview version of the given list.
 	 */
-	public static void invalidatePreviewList(Cache cache, ComponentList list) {
-		cache.invalidateTaggedItems(getListTag(list, true));
+	public static void invalidatePreviewList(CacheService cacheService, ComponentList list) {
+		cacheService.invalidateTaggedItems(getListTag(list, true));
 	}
 	
 }

@@ -91,7 +91,7 @@
 
 	<bean id="entityEditorTarget" class="org.riotfamily.components.editor.EntityEditorImpl">
 		<constructor-arg ref="riotDaoService" />
-		<property name="cache" ref="websiteCache" />
+		<property name="cacheService" ref="cacheService" />
 		<property name="mediaDao" ref="mediaDao" />
 		<property name="imageCropper" ref="imageCropper" />
 	</bean>

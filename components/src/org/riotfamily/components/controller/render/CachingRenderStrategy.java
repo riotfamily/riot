@@ -44,7 +44,7 @@ import org.riotfamily.components.model.ComponentListLocation;
 
 public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 
-	private CacheService cacheService;
+	protected CacheService cacheService;
 
 	public CachingRenderStrategy(ComponentDao dao,
 			ComponentRepository repository,	CacheService cacheService) {
@@ -63,12 +63,32 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 			cacheKey.append("live:");
 		}
 	}
+    
+	protected String getCacheKey(HttpServletRequest request,
+	    ComponentListLocation location) {
+        
+	    StringBuffer key = new StringBuffer();
+        appendModeToCacheKey(key);      
+        key.append("ComponentList ");
+        Component parent = getParentContainer(request);
+        if (parent != null) {
+            key.append(parent.getId()).append('$');
+            key.append(location.getSlot());
+        }
+        else {
+            key.append(location);
+        }
+        if (PageRequestUtils.isPartialRequest(request)) {
+            key.append("-partial"); 
+        }
+        return key.toString();
+    }
+    
 	
 	protected boolean isCacheable(ComponentListLocation location,
 			ComponentListConfiguration config, HttpServletRequest request) {
 		
-		String cacheKey = location.toString();
-		//FIXME We should also check if the item is still valid, in case a dynamic component has been added
+		String cacheKey = getCacheKey(request, location);
 		if (cacheService.isCached(cacheKey)) {
 			return true;
 		}
@@ -168,21 +188,7 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 		}
 
 		public String getCacheKey(HttpServletRequest request) {
-			StringBuffer key = new StringBuffer();
-			appendModeToCacheKey(key);		
-			key.append("ComponentList ");
-			Component parent = getParentContainer(request);
-			if (parent != null) {
-				key.append(parent.getId()).append('$');
-				key.append(location.getSlot());
-			}
-			else {
-				key.append(location);
-			}
-			if (PageRequestUtils.isPartialRequest(request)) {
-				key.append("-partial");	
-			}
-			return key.toString();
+			return CachingRenderStrategy.this.getCacheKey(request, location);
 		}
 		
 		public long getTimeToLive() {

@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.cache;
 
-import org.riotfamily.cachius.Cache;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.riot.dao.RiotDao;
 
 /**
@@ -35,25 +35,25 @@ public final class CacheInvalidationUtils {
 	private CacheInvalidationUtils() {
 	}
 		
-	public static void invalidate(Cache cache, Class clazz) {
-		if (cache != null) {
-			cache.invalidateTaggedItems(clazz.getName());
+	public static void invalidate(CacheService cacheService, Class clazz) {
+		if (cacheService != null) {
+		    cacheService.invalidateTaggedItems(clazz.getName());
 		}
 	}
 	
-	public static void invalidate(Cache cache, Class clazz, Object objectId) {
-		if (cache != null) {
-			cache.invalidateTaggedItems(clazz.getName());
-			cache.invalidateTaggedItems(clazz.getName() + '#' + objectId);
+	public static void invalidate(CacheService cacheService, Class clazz, Object objectId) {
+		if (cacheService != null) {
+		    cacheService.invalidateTaggedItems(clazz.getName());
+		    cacheService.invalidateTaggedItems(clazz.getName() + '#' + objectId);
 		}
 	}
 	
-	public static void invalidate(Cache cache, RiotDao dao) {
-		invalidate(cache, dao.getEntityClass());
+	public static void invalidate(CacheService cacheService, RiotDao dao) {
+		invalidate(cacheService, dao.getEntityClass());
 	}
 	
-	public static void invalidate(Cache cache, RiotDao dao, Object object) {
-		invalidate(cache, dao.getEntityClass(), dao.getObjectId(object));
+	public static void invalidate(CacheService cacheService, RiotDao dao, Object object) {
+		invalidate(cacheService, dao.getEntityClass(), dao.getObjectId(object));
 	}
 	
 }

@@ -32,6 +32,7 @@ import java.util.Set;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.cachius.Cache;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
@@ -49,12 +50,12 @@ import org.riotfamily.riot.security.AccessController;
  */
 public class HibernateComponentDao implements ComponentDao {
 
-	private Cache cache;
+	private CacheService cacheService;
 	
 	private HibernateHelper hibernate;
 	
-	public HibernateComponentDao(Cache cache) {
-		this.cache = cache;
+	public HibernateComponentDao(CacheService cacheService) {
+		this.cacheService = cacheService;
 	}
 
 	public void setSessionFactory(SessionFactory sessionFactory) {
@@ -157,13 +158,13 @@ public class HibernateComponentDao implements ComponentDao {
 	public void updateComponentList(ComponentList list) {
 		list.setLastModified(new Date());
 		list.setLastModifiedBy(AccessController.getCurrentUser().getUserId());
-		ComponentCacheUtils.invalidatePreviewList(cache, list);
+		ComponentCacheUtils.invalidatePreviewList(cacheService, list);
 		hibernate.update(list);
 	}
 
 	public void saveOrUpdatePreviewVersion(ContentContainer container) {
 		hibernate.saveOrUpdate(container.getPreviewVersion());
-		ComponentCacheUtils.invalidatePreviewVersion(cache, container);
+		ComponentCacheUtils.invalidatePreviewVersion(cacheService, container);
 	}
 
 	public void updateContentContainer(ContentContainer container) {
@@ -206,7 +207,7 @@ public class HibernateComponentDao implements ComponentDao {
 		}
 
 		if (published) {
-			ComponentCacheUtils.invalidateList(cache, componentList);
+			ComponentCacheUtils.invalidateList(cacheService, componentList);
 		}
 
 		return published;
@@ -236,7 +237,7 @@ public class HibernateComponentDao implements ComponentDao {
 			discarded |= discardContainer(container);
 		}
 		if (discarded) {
-			ComponentCacheUtils.invalidatePreviewList(cache, componentList);
+			ComponentCacheUtils.invalidatePreviewList(cacheService, componentList);
 		}
 		return discarded;
 	}
@@ -263,7 +264,7 @@ public class HibernateComponentDao implements ComponentDao {
 				deleteContent(liveVersion);
 			}
 			updateContentContainer(container);
-			ComponentCacheUtils.invalidateContainer(cache, container);
+			ComponentCacheUtils.invalidateContainer(cacheService, container);
 			published = true;
 		}
 		return published;

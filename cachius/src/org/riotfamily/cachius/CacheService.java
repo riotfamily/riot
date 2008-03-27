@@ -255,7 +255,7 @@ public class CacheService {
     }
     
     public boolean isCached(String key) {
-    	return cache.containsKey(key);
+    	return cache.containsValidKey(key);
     }
     
     /**
@@ -320,4 +320,10 @@ public class CacheService {
 		return BUGGY_NETSCAPE_PATTERN.matcher(ua).find();
 	}
 	
+    /**
+     * Invalidates all items tagged with the given String.
+     */
+    public void invalidateTaggedItems(String tag) {
+        cache.invalidateTaggedItems(tag);
+    }
 }

@@ -45,7 +45,7 @@
 	</bean>
 
 	<bean id="componentDaoTarget" class="org.riotfamily.components.dao.hibernate.HibernateComponentDao">
-		<constructor-arg ref="websiteCache" />
+		<constructor-arg ref="cacheService" />
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	

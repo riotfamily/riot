@@ -20,6 +20,11 @@
 		<property name="enabled" value="${riot.websiteCache.enabled=true}" />
     </bean>
 	
+	 <bean id="cacheService" class="org.riotfamily.cachius.CacheService">
+        <constructor-arg ref="websiteCache" />
+    </bean>
+    
+	
     <!--
 	  - AOP advisor that can be added to RiotDao instances in order to invalidate
 	  - the website cache, when an object is saved, updated or deleted.
@@ -28,7 +33,7 @@
 		<constructor-arg ref="riotDaoPointcut" />
 		<constructor-arg>
 			<bean class="org.riotfamily.website.cache.CacheInvalidationAdvice">
-				<property name="cache" ref="websiteCache" />
+				<property name="cacheService" ref="cacheService" />
 			</bean>
 		</constructor-arg>
 	</bean>

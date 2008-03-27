@@ -37,6 +37,7 @@ import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentListConfiguration;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.config.component.ComponentRenderer;
@@ -154,6 +155,8 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		}
 		dao.saveComponentList(list);
 		log.debug("New ComponentList created: " + list);
+		
+		ComponentCacheUtils.invalidateList(cacheService, list);
 		return list;
 	}
 

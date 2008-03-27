@@ -25,7 +25,7 @@ package org.riotfamily.pages.cache;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.Cache;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.pages.model.PageNode;
 
@@ -58,9 +58,9 @@ public final class PageCacheUtils {
 		TaggingContext.tag(getNodeTag(node));
 	}
 		
-	public static void invalidateNode(Cache cache, PageNode node) {
-		if (cache != null) {
-			cache.invalidateTaggedItems(getNodeTag(node));
+	public static void invalidateNode(CacheService cacheService, PageNode node) {
+		if (cacheService != null) {
+		    cacheService.invalidateTaggedItems(getNodeTag(node));
 		}
 	}
 	

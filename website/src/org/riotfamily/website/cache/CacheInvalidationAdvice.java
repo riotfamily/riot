@@ -25,17 +25,17 @@ package org.riotfamily.website.cache;
 
 import java.lang.reflect.Method;
 
-import org.riotfamily.cachius.Cache;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.riot.dao.RiotDao;
 import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.util.Assert;
 
 public class CacheInvalidationAdvice implements AfterReturningAdvice {
 
-	private Cache cache;
+	private CacheService cacheService;
 
-	public void setCache(Cache cache) {
-		this.cache = cache;
+	public void setCacheService(CacheService cacheService) {
+		this.cacheService = cacheService;
 	}
 
 	public void afterReturning(Object returnValue, Method method,
@@ -44,7 +44,7 @@ public class CacheInvalidationAdvice implements AfterReturningAdvice {
 		Assert.isInstanceOf(RiotDao.class, target);
 		RiotDao dao = (RiotDao) target;
 		Object item = args[0];
-		CacheInvalidationUtils.invalidate(cache, dao, item);
+		CacheInvalidationUtils.invalidate(cacheService, dao, item);
 	}
 
 }

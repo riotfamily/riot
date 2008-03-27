@@ -26,6 +26,7 @@ package org.riotfamily.components.editor;
 import java.io.IOException;
 
 import org.riotfamily.cachius.Cache;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.media.dao.MediaDao;
@@ -46,7 +47,7 @@ public class EntityEditorImpl implements EntityEditor {
 
 	private RiotDaoService daoService;
 
-	private Cache cache;
+	private CacheService cacheService;
 	
 	private MediaDao mediaDao;
 	
@@ -56,8 +57,8 @@ public class EntityEditorImpl implements EntityEditor {
 		this.daoService = daoService;
 	}
 	
-	public void setCache(Cache cache) {
-		this.cache = cache;
+	public void setCacheService(CacheService cacheService) {
+		this.cacheService = cacheService;
 	}
 	
 	public void setMediaDao(MediaDao mediaDao) {
@@ -74,7 +75,7 @@ public class EntityEditorImpl implements EntityEditor {
 		Object entity = wrapper.getWrappedInstance();
 		AccessController.checkPermission("edit", entity);
 		dao.save(entity, null);
-		CacheInvalidationUtils.invalidate(cache, dao);
+		CacheInvalidationUtils.invalidate(cacheService, dao);
 		return dao.getObjectId(entity);
 	}
 	
@@ -83,7 +84,7 @@ public class EntityEditorImpl implements EntityEditor {
 		Object entity = dao.load(objectId);
 		AccessController.checkPermission("delete", entity);
 		dao.delete(entity, null);
-		CacheInvalidationUtils.invalidate(cache, dao, entity);
+		CacheInvalidationUtils.invalidate(cacheService, dao, entity);
 	}
 	
 	public String getText(String listId, String objectId, String property) {
@@ -101,7 +102,7 @@ public class EntityEditorImpl implements EntityEditor {
 		BeanWrapper wrapper = new BeanWrapperImpl(entity);
 		wrapper.setPropertyValue(property, value);
 		dao.update(entity);
-		CacheInvalidationUtils.invalidate(cache, dao, entity);
+		CacheInvalidationUtils.invalidate(cacheService, dao, entity);
 	}
 	
 	public String cropImage(String listId, String objectId, String property, 
@@ -119,7 +120,7 @@ public class EntityEditorImpl implements EntityEditor {
 		BeanWrapper wrapper = new BeanWrapperImpl(entity);
 		wrapper.setPropertyValue(property, croppedImage);
 		dao.update(entity);
-		CacheInvalidationUtils.invalidate(cache, dao, entity);
+		CacheInvalidationUtils.invalidate(cacheService, dao, entity);
 		return croppedImage.getUri();
 	}
 }
