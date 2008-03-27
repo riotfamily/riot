@@ -95,7 +95,7 @@ public class Component extends ContentContainer {
 			Iterator it = childLists.iterator();
 			while (it.hasNext()) {
 				ComponentList list = (ComponentList) it.next();
-				ComponentList clonedList = list.createCopy(path);
+				ComponentList clonedList = list.createCopy(null);
 				clonedList.setParent(copy);
 				clonedLists.add(clonedList);
 			}

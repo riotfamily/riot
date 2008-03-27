@@ -139,8 +139,9 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 			ComponentListConfiguration config, HttpServletRequest request) {
 		
 		ComponentList list = new ComponentList();
-		list.setLocation(new ComponentListLocation(location));
-		list.setParent(getParentContainer(request));
+		Component parent = getParentContainer(request);
+		list.setLocation(new ComponentListLocation(location, parent));
+		list.setParent(parent);
 		String[] initialTypes = config.getInitialComponentTypes();
 		if (initialTypes != null) {
 			List containers = new ArrayList();

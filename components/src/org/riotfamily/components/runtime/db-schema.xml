@@ -20,7 +20,8 @@
 				<db:column name="lastModifiedBy" type="VARCHAR" length="255" />
 				<db:column name="lastModified" type="TIMESTAMP" />
 			</db:create-table>
-			<db:add-unique-constraint table="riot_component_lists" name="riot_components_list_key" on="`type`,`path`,slot,parent" />
+			<db:add-unique-constraint table="riot_component_lists" name="riot_components_list_location" on="`type`,`path`,slot" />
+			<db:add-unique-constraint table="riot_component_lists" name="riot_components_list_parent_slot" on="parent,slot" />
 			
 			<db:create-table name="riot_content_containers">
 				<db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />

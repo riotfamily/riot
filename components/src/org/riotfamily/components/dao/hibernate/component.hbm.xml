@@ -18,11 +18,11 @@
 			  - 66 * 3 + 66 * 3 + 200 * 3 = 996
 			  - NOTE: This might be still too long for InnoDB tables ...
 			  -->
-			<property name="type" column="`type`" length="66" unique-key="component_list_key" />
-			<property name="path" column="`path`" length="200" unique-key="component_list_key" />
-			<property name="slot" column="slot" length="66" unique-key="component_list_key" />
+			<property name="type" column="`type`" length="66" unique-key="location" />
+			<property name="path" column="`path`" length="200" unique-key="location" />
+			<property name="slot" column="slot" length="66" unique-key="location,parent_slot" />
 		</component>
-		<many-to-one name="parent" unique-key="component_list_key" />
+		<many-to-one name="parent" unique-key="parent_slot" />
 		<list name="liveComponents" cascade="all">
 			<cache usage="nonstrict-read-write" region="components" />
 			<key column="live_list" />

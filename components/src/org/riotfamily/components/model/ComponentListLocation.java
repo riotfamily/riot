@@ -33,6 +33,8 @@ import org.riotfamily.components.locator.ComponentListLocator;
  */
 public class ComponentListLocation {
 
+	public static final String CHILD_TYPE = "child";
+	
 	private String type;
 
 	private String path;
@@ -46,6 +48,19 @@ public class ComponentListLocation {
 		type = location.getType();
 		path = location.getPath();
 		slot = location.getSlot();
+	}
+	
+	public ComponentListLocation(ComponentListLocation location, Component parent) {
+		if (parent != null) {
+			type = CHILD_TYPE;
+			path = null;
+			slot = location.getSlot();
+		}
+		else {
+			type = location.getType();
+			path = location.getPath();
+			slot = location.getSlot();
+		}
 	}
 
 	public String getPath() {
