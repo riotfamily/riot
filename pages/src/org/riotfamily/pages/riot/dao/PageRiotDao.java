@@ -153,10 +153,12 @@ public class PageRiotDao implements ParentChildDao, TreeHintDao,
 
 	public void reattach(Object entity) throws DataAccessException {
 		Page page = (Page) entity;
-		pageDao.updatePage(page);
+		pageDao.reattachPage(page);
 	}
 	
 	public void update(Object entity) throws DataAccessException {
+		Page page = (Page) entity;
+		pageDao.updatePage(page);
 	}
 
 	public void swapEntity(Object entity, Object parent, ListParams params,

@@ -208,10 +208,14 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		return translation;
 	}
 
-	public void updatePage(Page page) {
+	public void reattachPage(Page page) {
 		PageNode node = page.getNode();
 		updateNode(node);
 		updateObject(page);
+	}
+	
+	public void updatePage(Page page) {
+		PageNode node = page.getNode();
 		
 		if (!PageValidationUtils.isValidChild(node.getParent(), page)) {
 			log.warn("Page not saved because not valid: " + page);

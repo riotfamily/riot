@@ -106,6 +106,8 @@ public interface PageDao {
 
 	public Page addTranslation(Page page, Site site);
 
+	public void reattachPage(Page page);
+
 	public void updatePage(Page page);
 
 	public void publishPage(Page page);
