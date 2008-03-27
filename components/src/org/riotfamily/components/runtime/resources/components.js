@@ -1,3 +1,9 @@
+/**
+ * Returns a wrapper for the given element. A wrapper is either a Controller,
+ * EntityList, ComponentList, Component or an editor. What kind of wrapper
+ * is returned depends on the given CSS selector. The function is invoked by
+ * ToolbarButton.getHandlerTargets() when a button's handler is to be applied.
+ */
 riot.getWrapper = function(el, selector) {
 	if (selector == '.riot-controller') {
 		if (!el.controller) {
@@ -28,6 +34,10 @@ riot.getWrapper = function(el, selector) {
 	return null;
 }
 
+/**
+ * Returns a text editor for the given element. What kind of editor is returned
+ * depends on the element's riot:editorType attribute.
+ */
 riot.getTextEditor = function(el) {
 	if (!el.textEditor) {
 		var editorType = el.readAttribute('riot:editorType');
@@ -51,6 +61,9 @@ riot.getTextEditor = function(el) {
 	return el.textEditor;
 }
 
+/**
+ * Retruns an image editor for the given element.
+ */
 riot.getImageEditor = function(el) {
 	if (!el.imageEditor) {
 		el.imageEditor = new riot.ImageEditor(el, riot.findComponent(el), {
@@ -64,7 +77,11 @@ riot.getImageEditor = function(el) {
 	return el.imageEditor;
 }
 
-
+/**
+ * Returns either an EntityComponent, ListComponent or Component wrapper for
+ * the given element. What type of wrapper is returned depends on the element's
+ * CSS class.
+ */
 riot.getComponent = function(el) {
 	if (!el.component) {
 		if (el.hasClassName('riot-entity-component')) {
@@ -80,6 +97,11 @@ riot.getComponent = function(el) {
 	return el.component;
 }
 
+/**
+ * Searches the element's ancestors (including the element itself) for an
+ * element with the class 'riot-component' and returns the wrapper for that
+ * element.
+ */
 riot.findComponent = function(el) {
 	if (!el.hasClassName('riot-component')) {
 		el = el.up('.riot-component');
@@ -88,6 +110,11 @@ riot.findComponent = function(el) {
 	return riot.getComponent(el);
 }
 
+/**
+ * Searches the element's ancestors (including the element itself) for an
+ * element with the class 'riot-controller' and returns the wrapper for that
+ * element.
+ */
 riot.findController = function(el) {
 	el = el.up('.riot-controller');
 	if (el) {
@@ -99,6 +126,11 @@ riot.findController = function(el) {
 	return null;
 }
 
+/**
+ * Searches the element's ancestors (including the element itself) for an
+ * element with the class 'riot-component-list' and returns the wrapper for that
+ * element.
+ */
 riot.findComponentList = function(el) {
 	el = el.up('.riot-component-list');
 	if (el) {
@@ -107,6 +139,9 @@ riot.findComponentList = function(el) {
 	return null;
 }
 
+/**
+ * Returns the ComponentList wrapper for the given element.
+ */
 riot.getComponentList = function(el) {
 	if (!el.componentList) {
 		el.componentList = new riot.ComponentList(el);
@@ -130,6 +165,9 @@ riot.Controller = Class.create({
 	},
 	
 	getElement: function() {
+		// Returns the controller's root element. The reference to the DOM
+		// element is not stored, as calls to disableEvents() or enableEvents()
+		// will eventually replace the element by a clone.
 		return $(this.elementId);
 	},
 	
@@ -900,9 +938,17 @@ riot.adoptFloatsAndClears = function(root) {
 }
 
 riot.init = function() {
+	// Assign IDs to all controller- and component-elements. We need to do this
+	// so that we can still look up elements after they have been replaced by
+	// clones in the disableEvents() function.
 	$$('.riot-controller').invoke('identify');
 	$$('.riot-component').invoke('identify');
+	
+	// Add pre- and post-apply hooks to the toolbar buttons ...
+	
 	var b = riot.toolbar.buttons;
+	
+	// Disable events if the remove or properties tool is activated
 	b.get('properties').beforeApply = 
 	b.get('remove').beforeApply = function(enable) {
 		if (enable) {
@@ -914,6 +960,9 @@ riot.init = function() {
 			$$('.riot-controller').invoke('enableEvents');
 		}
 	};
+	
+	// Make lists sortable after moveOn() has been invoked. This has to be
+	// done in reverse order to support nested sortable lists.
 	b.get('move').afterApply = function(enable) {
 		if (enable) {
 			$$('.riot-component-list').reverse().each(function(el) {

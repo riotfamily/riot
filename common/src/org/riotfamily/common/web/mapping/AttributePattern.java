@@ -41,31 +41,61 @@ import org.springframework.util.StringUtils;
 
 public class AttributePattern {
 	
+	/**
+	 * Name of the request attribute under which a Map of matched wildcards is exposed.
+	 */
 	public static final String EXPOSED_ATTRIBUTES = 
 			AttributePattern.class.getName() + ".exposedAttributes";
 
+	/**
+	 * Pattern to match wildcards of the form <code>@{name:type}</code>.
+	 */
 	private static final Pattern ATTRIBUTE_NAME_PATTERN =
 			Pattern.compile("@\\{(.+?)((\\*)|\\:(.*?))?\\}");
 
+	/**
+	 * Pattern to match a single star.
+	 */
 	private static final Pattern STAR_PATTERN =
 			Pattern.compile("\\\\\\*");
 
+	/**
+	 * Pattern to match two stars.
+	 */
 	private static final Pattern DOUBLE_STAR_PATTERN =
 			Pattern.compile("/?\\\\\\*\\\\\\*");
 	
+	/**
+	 * Pattern that matches named and unanmed wildcards (stars). This pattern is used
+	 * to determine how precise a match is.
+	 */
 	private static final Pattern WILDCARD_PATTERN = Pattern.compile(
 			"(" + STAR_PATTERN + "|" + ATTRIBUTE_NAME_PATTERN + ")");
 	
-	private static final String STAR = "*";
-
+	/**
+	 * The string that was used to construct the pattern.
+	 */
 	private String attributePattern;
 	
+	/**
+	 * A regular expression built from the string pattern.
+	 */
 	private Pattern pattern;
 
+	/**
+	 * List of attribute names contained in the pattern.
+	 */
 	private ArrayList attributeNames;
 	
+	/**
+	 * List of types.
+	 */
 	private ArrayList attributeTypes;
 	
+	/**
+	 * Precision of the pattern. The more non-wildcard characters a pattern contains,
+	 * the more precise it is.
+	 */
 	private int precision;
 
 	public AttributePattern(String attributePattern) {
@@ -195,7 +225,7 @@ public class AttributePattern {
 					? StringUtils.replace(value.toString(), "$", "\\$")
 					: null;
 					
-			if (STAR.equals(m.group(2))) {
+			if ("*".equals(m.group(2))) {
 				if (replacement != null) {
 					m.appendReplacement(url, FormatUtils.uriEscapePath(replacement));
 				}

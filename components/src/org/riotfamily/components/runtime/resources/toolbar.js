@@ -106,15 +106,6 @@ riot.Toolbar = Class.create({
 		this.inspectorPanel.style.display = 'none';
 	},
 
-	restoreMode: function(el) {
-		if (this.selectedButton &&
-				this.selectedButton != this.buttons.get('publish') &&
-				this.selectedButton != this.buttons.get('discard')) {
-
-			this.selectedButton.reApplyHandler();
-		}
-	},
-
 	keepAlive: function() {
 		ComponentEditor.keepAlive({
 			errorHandler: Prototype.emptyFunction

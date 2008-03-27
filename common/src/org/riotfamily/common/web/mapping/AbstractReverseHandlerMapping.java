@@ -61,6 +61,10 @@ public abstract class AbstractReverseHandlerMapping
 		return getUrlForHandler(handlerName, prefix, attributes, defaults, request);
 	}
 	
+	/**
+	 * Returns a Map of default values that are used to build URLs. The default
+	 * implementation return <code>null</code>.
+	 */
 	protected Map getDefaults(HttpServletRequest request) {
 		return null;
 	}
@@ -71,6 +75,8 @@ public abstract class AbstractReverseHandlerMapping
 	 * @param prefix Optional prefix to sort out ambiguities
 	 * @param attributes Optional attributes to fill out wildcards. Can either 
 	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
+	 * @param defaults Optional Map of default values that are used when no
+	 * 		  attribute value was provided for a certain wildcard.
 	 * @param request The current request
 	 */
 	protected String getUrlForHandler(String handlerName, String prefix, 
@@ -100,7 +106,8 @@ public abstract class AbstractReverseHandlerMapping
 	}
 
 	/**
-	 * Returns the URL for a handler that is mapped without any wildcards.
+	 * Returns the URL for a handler without any extra wildcards. If the pattern
+	 * contains wildcards all of them must be present in the defaults map.
 	 */
 	private String getUrlForHandler(String handlerName, Map defaults, 
 			String prefix, HttpServletRequest request) {
@@ -119,7 +126,8 @@ public abstract class AbstractReverseHandlerMapping
 	}
 	
 	/**
-	 * Returns the URL for a handler that is mapped with exactly one wildcard.
+	 * Returns the URL for a handler with one custom wildcard. If the pattern
+	 * contains wildcards all of them must be present in the defaults map.
 	 */
 	private String getUrlForHandlerWithAttribute(String handlerName, 
 			Object attribute, Map defaults, String prefix, 
@@ -163,7 +171,10 @@ public abstract class AbstractReverseHandlerMapping
 	
 	/**
 	 * Returns the URL for a handler that is mapped with multiple wildcards.
-	 * The wildcard replacements are taken from the given bean.
+	 * The wildcard replacements are taken from the given bean or the map
+	 * of defaults, in case the bean has no matching property or the property
+	 * value is <code>null</code>.
+	 * @throws IllegalArgumentException if more than one mapping is registered
 	 */
 	private String getUrlForHandlerWithBean(String beanName, Object bean,
 			Map defaults, String prefix, HttpServletRequest request) {
@@ -219,8 +230,10 @@ public abstract class AbstractReverseHandlerMapping
 	}
 	
 	/**
-	 * Returns the pattern for the handler with the given name and the specified
-	 * number of wildcards. 
+	 * Returns the pattern for the handler with the given name that contains
+	 * all the given wildcard names and exactly 
+	 * <code>attributeNames.size() + anonymousWildcards</code> wildcards
+	 * in total.
 	 * @throws IllegalArgumentException if more than one mapping is registered
 	 */
 	protected AttributePattern getPatternForHandler(String handlerName, 
