@@ -726,10 +726,10 @@ riot.ImageEditor = Class.create(riot.InplaceEditor, {
 	update: function(img, path) {
 		riot.outline.suspended = false;
 		this.component.updateFile(this.key, path, this.options.fileStore);
-		var src = this.options.srcTemplate 
-				? this.options.srcTemplate.replace('*', path)
-				: img.src;
-				
+		var src = img.src;
+		if (this.options.srcTemplate && path.indexOf('http') != 0) { 
+			src = this.options.srcTemplate.replace('*', path);
+		}
 		if (this.element.tagName == 'IMG') {   
 			this.element.width = img.width;
 			this.element.height = img.height;
@@ -853,7 +853,13 @@ Cropper.UI = Class.create({
 		
 		var image = new Image();
 		image.onload = this.onLoadImage.bind(this, image);
-		image.src = riot.contextPath + src;
+		
+		if (src.indexOf('http') == 0) {
+			image.src = src;
+		}
+		else {
+			image.src = riot.contextPath + src;
+		}
 	},
 	
 	onLoadImage: function(image) {
