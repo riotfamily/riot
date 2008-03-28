@@ -174,7 +174,7 @@
 	</#compress>
 </#macro>
 
-<#macro image key default="" tag="img" minWidth="10" maxWidth="1000" minHeight="10" maxHeight="1000" width="" height="" defaultWidth="100" defaultHeight="100" transform=common.url attributes... >
+<#macro image key default="" tag="img" minWidth="10" maxWidth="1000" minHeight="10" maxHeight="1000" width="" height="" defaultWidth="100" defaultHeight="100" transform=common.url updateFromServer=false attributes... >
 	<#compress>
 		<#if width?has_content>
 			<#local minWidth = width />
@@ -238,6 +238,11 @@
 				"riot:minHeight": minHeight,
 				"riot:maxHeight": maxHeight 
 				} />
+			<#if updateFromServer>
+				<#local attributes = attributes + {
+					"riot:updateFromServer": "true"
+				} />
+			</#if>
 		</#if>
 		<#if value?has_content || editMode>
 			<#if tag == "img">	

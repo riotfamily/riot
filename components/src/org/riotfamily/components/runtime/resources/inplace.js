@@ -738,10 +738,18 @@ riot.ImageEditor = Class.create(riot.InplaceEditor, {
 	},
 	
 	update: function(path) {
-		var img = new Image();
-		img.onload = this.onload.bind(this, img, path);
-		img.src = riot.contextPath + path;
-		this.component.markDirty();
+		if (this.options.updateFromServer) {
+			riot.outline.suspended = false;
+			this.cropper.destroy();		
+			this.cropper = null;
+			this.component.update();			
+		}
+		else {
+			var img = new Image();
+			img.onload = this.onload.bind(this, img, path);
+			img.src = riot.contextPath + path;
+			this.component.markDirty();
+		}
 	},
 	
 	onload: function(img, path) {

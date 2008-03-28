@@ -71,7 +71,8 @@ riot.getImageEditor = function(el) {
 			minWidth: el.readAttribute('riot:minWidth'),
 			maxWidth: el.readAttribute('riot:maxWidth'),
 			minHeight: el.readAttribute('riot:minHeight'),
-			maxHeight: el.readAttribute('riot:maxHeight')
+			maxHeight: el.readAttribute('riot:maxHeight'),
+			updateFromServer: el.readAttribute('riot:updateFromServer')
 		});
 	}
 	return el.imageEditor;
