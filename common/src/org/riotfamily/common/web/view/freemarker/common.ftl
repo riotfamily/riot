@@ -199,6 +199,13 @@
 	<#return commonMacroHelper.formatNumber(number, pattern, locale) />
 </#function>
 
+<#--
+  - Rounds the number to a decimal number
+  -->
+<#function round number>
+	<#return commonMacroHelper.round(number) />
+</#function>
+
 <#function toTitleCase s>
 	<#return commonMacroHelper.toTitleCase(s) />
 </#function>

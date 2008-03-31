@@ -290,6 +290,10 @@ public class CommonMacroHelper {
 		return NumberFormat.getNumberInstance(locale).format(number);
 	}
 	
+	public int round(float number) {
+		return Math.round(number);
+	}	
+	
 	public String toTitleCase(String s) {
 		return FormatUtils.fileNameToTitleCase(s);
 	}
