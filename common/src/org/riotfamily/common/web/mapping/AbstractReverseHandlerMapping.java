@@ -62,7 +62,9 @@ public abstract class AbstractReverseHandlerMapping
 			return getUrlForHandlerWithMap(handlerName, (Map) attributes, 
 					prefix, request); 
 		}
-		if (ClassUtils.isPrimitiveOrWrapper(attributes.getClass())) {
+		if (ClassUtils.isAssignable(String.class, attributes.getClass()) ||
+				ClassUtils.isPrimitiveOrWrapper(attributes.getClass())) {
+
 			return getUrlForHandlerWithAttribute(handlerName, attributes, prefix, request);
 		}
 		return getUrlForHandlerWithBean(handlerName, attributes, prefix, request);
