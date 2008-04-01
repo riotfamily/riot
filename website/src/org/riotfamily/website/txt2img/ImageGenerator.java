@@ -272,16 +272,22 @@ public class ImageGenerator implements InitializingBean {
 	protected Dimension layout(String text, float maxWidth, String color, 
 			float fontSize, BufferedImage image, boolean draw) {
 		
-		FlatMap attrs = new FlatMap();
-		attrs.put(TextAttribute.FOREGROUND, color != null 
+		Color fg = color != null 
 				? ColorUtils.parseColor(color)
-				: this.color);
+				: this.color;
+				
+		FlatMap attrs = new FlatMap();
+		attrs.put(TextAttribute.FOREGROUND, fg);
 		
-		attrs.put(TextAttribute.FONT, font.deriveFont(fontSize));
-		
+		Font font = this.font.deriveFont(fontSize);
+		attrs.put(TextAttribute.FONT, font);
 		AttributedString as = new AttributedString(text, attrs);
+
 		Graphics2D graphics = createGraphics(image);
+		graphics.setFont(font);
+		graphics.setColor(fg);
         FontRenderContext fc = graphics.getFontRenderContext();
+
         AttributedCharacterIterator it = as.getIterator();
 	    LineBreakMeasurer measurer = new LineBreakMeasurer(it, fc);
 	    int y = paddingTop;
@@ -296,11 +302,18 @@ public class ImageGenerator implements InitializingBean {
 	    		layout = measurer.nextLayout(maxWidth);
 	    	}
 			y += layout.getAscent();
+			int x = paddingLeft + (int) layout.getVisibleAdvance();
 			if (draw) {
 				layout.draw(graphics, paddingLeft, y);
 			}
+			if (text.charAt(measurer.getPosition() - 1) == '\t') {
+				if (draw) {
+					graphics.drawString("-", x, y);
+				}
+				x += font.getStringBounds("-", fc).getWidth();
+			}
 			y += layout.getDescent();
-			maxX = Math.max(maxX, paddingLeft + (int) layout.getVisibleAdvance() + paddingRight);
+			maxX = Math.max(maxX, x + paddingRight);
 			y += layout.getLeading();
 			if (measurer.getPosition() < it.getEndIndex()) {
 				y += lineSpacing;

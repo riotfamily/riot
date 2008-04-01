@@ -189,6 +189,8 @@ public class Txt2ImgController extends AbstractCacheableController
 	protected String getText(HttpServletRequest request) {
 		String text = getEncodedParam(request, "text");
 		if (text != null) {
+			text = FormatUtils.stripWhitespaces(text, true);
+			text = text.replaceAll("&(shy|#173);", "\t");
 			text = HtmlUtils.htmlUnescape(text);
 			String transform = request.getParameter("transform");
 			if (StringUtils.hasText(transform)) {
@@ -218,7 +220,6 @@ public class Txt2ImgController extends AbstractCacheableController
 		Assert.notNull(generator, "No ImageGenerator found for selector '"
 				+ selector + "' and no default generator is set.");
 
-		text = FormatUtils.stripWhitespaces(text, true);
 		int maxWidth = ServletRequestUtils.getIntParameter(request, "width", 0);
 		if (maxWidth <= 0) {
 			maxWidth = Integer.MAX_VALUE;
