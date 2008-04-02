@@ -26,7 +26,6 @@ package org.riotfamily.common.web.view;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -287,7 +286,7 @@ public class CommonMacroHelper {
 				? StringUtils.parseLocaleString(localeString)
 				: Locale.US;
 				
-		return NumberFormat.getNumberInstance(locale).format(number);
+		return FormatUtils.formatNumber(number, pattern, locale);
 	}
 	
 	public int round(float number) {
