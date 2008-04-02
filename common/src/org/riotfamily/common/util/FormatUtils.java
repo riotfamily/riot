@@ -33,6 +33,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,6 +70,14 @@ public final class FormatUtils {
 	private FormatUtils() {
 	}
 
+	public static String formatNumber(Number number, String pattern, Locale locale) {
+		 NumberFormat f = NumberFormat.getInstance(locale);
+		 if (f instanceof DecimalFormat) {
+		     ((DecimalFormat) f).applyPattern(pattern);
+		 }
+		 return f.format(number);
+	}
+	
 	/**
 	 * Returns a formatted string using an appropriate unit (Bytes, KB or MB).
 	 */
