@@ -26,6 +26,7 @@ package org.riotfamily.common.io;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -175,6 +176,10 @@ public class IOUtils {
 	    }
 	}
 	
+	public static void clear(File file) throws IOException {
+    	new FileOutputStream(file).close();
+	}
+
 	public static void delete(File file) {
 		if (file != null && file.exists()) {
 			boolean deleted = file.delete();
