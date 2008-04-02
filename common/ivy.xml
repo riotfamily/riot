@@ -5,13 +5,13 @@
     	<conf name="runtime" />
     </configurations>
     <dependencies>
-	    <dependency org="sun" name="servlet-api" rev="latest.release" conf="build->default" />
-        <dependency org="apache" name="log4j" rev="latest.release" />
-        <dependency org="apache" name="commons-logging" rev="latest.release" />
+	    <dependency org="sun" name="servlet-api" rev="2.4" conf="build->default" />
+        <dependency org="apache" name="log4j" rev="" />
+        <dependency org="apache" name="commons-logging" rev="1.1.1" />
         <dependency org="springframework" name="spring" rev="2.0.3" conf="build->default;runtime->web,mail,aop" />
 		<dependency org="freemarker" name="freemarker" rev="2.3.9" />
 		<dependency org="json" name="json-lib" rev="0.9" />
 		<dependency org="getahead" name="dwr" rev="2.0-RC2" />
-		<dependency org="sun" name="jaf" rev="latest.release" />
+		<dependency org="sun" name="jaf" rev="1.1" />
     </dependencies>
 </ivy-module>
