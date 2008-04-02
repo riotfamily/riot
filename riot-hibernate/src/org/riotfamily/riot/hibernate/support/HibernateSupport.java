@@ -59,5 +59,9 @@ public class HibernateSupport {
 	protected Query createQuery(String hql) {
 		return getSession().createQuery(hql);
 	}
+	
+	protected Query createFilter(Object object, String hql) {
+		return getSession().createFilter(object, hql);
+	}
 
 }

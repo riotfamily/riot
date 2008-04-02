@@ -143,6 +143,18 @@ public class HibernateHelper extends HibernateSupport {
 	}
 
 	/**
+	 * Creates filter for the given object.
+	 */
+	public Query createFilter(Object object, String hql) {
+		try {
+			return super.createFilter(object, hql);
+		}
+		catch (HibernateException e) {
+			throw SessionFactoryUtils.convertHibernateAccessException(e);
+		}
+	}
+	
+	/**
 	 * Returns the persistent instance of the given Class, assuming that the
 	 * instance exists.
 	 * @see Session#load(Class, Serializable)
