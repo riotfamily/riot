@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.FatalBeanException;
+import org.springframework.beans.NullValueInNestedPathException;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
@@ -57,7 +58,12 @@ public final class PropertyUtils {
 			return null;
 		}
 		ProtectedBeanWrapper wrapper = new ProtectedBeanWrapper(bean);
-		return wrapper.getPropertyValue(name);
+		try {
+			return wrapper.getPropertyValue(name);	
+		}
+		catch (NullValueInNestedPathException e) {
+		}
+		return null;
 	}
 	
 	public static Object getProperty(Object bean, String name, 
