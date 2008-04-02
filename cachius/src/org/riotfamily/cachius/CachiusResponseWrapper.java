@@ -176,6 +176,9 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
     	else if (outputStream != null) {
     		outputStream.close();
     	}
+    	else {
+    		cacheItem.clear();
+    	}
     }
     
     /**

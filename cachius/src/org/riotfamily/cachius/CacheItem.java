@@ -360,6 +360,10 @@ class CacheItem implements Serializable {
         }
     }
     
+    public void clear() throws IOException {
+    	new FileOutputStream(file).close();
+    }
+    
     protected void delete() {
     	try {
             lock.lockForWriting();
