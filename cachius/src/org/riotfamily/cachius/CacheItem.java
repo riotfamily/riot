@@ -366,7 +366,11 @@ class CacheItem implements Serializable {
             invalidate();
         }
     }
-    
+
+    protected void clear() throws IOException {
+    	IOUtils.clear(file);
+    }
+
     protected void delete() {
     	try {
             lock.lockForWriting();

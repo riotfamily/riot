@@ -176,6 +176,11 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
     	else if (outputStream != null) {
     		outputStream.close();
     	}
+    	else {
+        	// If never getWriter() nor getOutputStream() have been called, the
+        	// content is empty and the cacheItem will be emptied.
+    		cacheItem.clear();
+    	}
     }
     
     /**
