@@ -13,6 +13,6 @@
     <dependencies>
 	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build,runtime->default;test->test;src->src" />
 	    <dependency org="apache" name="commons-logging" rev="${dep.commons-logging.revision}" conf="build,runtime->default" />
-	    <dependency org="hsqldb" name="hsqldb" rev="latest.release" conf="test->default" />
+	    <dependency org="hsqldb" name="hsqldb" rev="1.8.0.8" conf="test->default" />
     </dependencies>
 </ivy-module>

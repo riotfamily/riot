@@ -16,7 +16,7 @@
 	    <dependency org="riotfamily" name="jscalendar-js" rev="1.0.1" conf="runtime->default" />
 	    <dependency org="riotfamily" name="tinymce-js" rev="3.0" conf="runtime->default" />
 	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->web;src->src" />
-	    <dependency org="devlib" name="imageinfo" rev="latest.release" conf="build,runtime,test->default" />
+	    <dependency org="devlib" name="imageinfo" rev="1.7" conf="build,runtime,test->default" />
 	    <dependency org="apache" name="commons-fileupload" rev="1.2" conf="runtime->default" />
 	    <dependency org="json" name="json-lib" rev="2.0" conf="build,runtime->default" />
     </dependencies>
