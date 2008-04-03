@@ -32,6 +32,16 @@ public class SiteBeanNameHandlerMapping extends AdvancedBeanNameHandlerMapping {
 	public SiteBeanNameHandlerMapping(PageResolver pageResolver) {
 		this.pageResolver = pageResolver;
 	}
+	
+	public Object getHandlerInternal(HttpServletRequest request)
+			throws Exception {
+
+		Object handler = super.getHandlerInternal(request);
+		if (handler != null) {
+			pageResolver.getSite(request);
+		}
+		return handler;
+	}
 
 	protected Map getDefaults(HttpServletRequest request) {
 		Site site = pageResolver.getSite(request);
