@@ -30,12 +30,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 import org.springframework.transaction.interceptor.TransactionAttribute;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.ModelAndViewDefiningException;
 
 /**
  * HandlerInterceptor that executes the handler within a transactional context. 
@@ -94,7 +96,20 @@ public class TransactionalHandlerInterceptor implements HandlerInterceptor {
 			
 			request.removeAttribute(TX_STATUS_ATTRIBUTE);
 			log.debug("Committing transaction");
-			transactionManager.commit(status);
+			try {
+				transactionManager.commit(status);
+			}
+			catch (TransactionException tx) {
+				if (handler instanceof TransactionExceptionHandler) {
+					ModelAndView mv = ((TransactionExceptionHandler) handler)
+							.commitFailed(tx, modelAndView, request, response);
+					
+					if (mv != null) {
+						throw new ModelAndViewDefiningException(mv);
+					}
+				}
+				throw tx;
+			}
 		}
 	}
 	
@@ -109,7 +124,20 @@ public class TransactionalHandlerInterceptor implements HandlerInterceptor {
 			if (status != null) {
 				request.removeAttribute(TX_STATUS_ATTRIBUTE);
 				log.debug("Rolling back transaction");
-				transactionManager.rollback(status);
+				try {
+					transactionManager.rollback(status);
+				}
+				catch (TransactionException tx) {
+					if (handler instanceof TransactionExceptionHandler) {
+						ModelAndView mv = ((TransactionExceptionHandler) handler)
+								.rollbackFailed(tx, ex, request, response);
+						
+						if (mv != null) {
+							throw new ModelAndViewDefiningException(mv);
+						}
+					}
+					throw tx;
+				}
 			}
 		}
 	}
