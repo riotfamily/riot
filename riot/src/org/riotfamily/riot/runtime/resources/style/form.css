@@ -233,6 +233,7 @@ ul.radioButtonGroup li {
 ul.checkboxGroup input,
 ul.radioButtonGroup input {
 	margin: 0 2px 2px 0;
+	vertical-align: middle;
 }
 
 .indent {
