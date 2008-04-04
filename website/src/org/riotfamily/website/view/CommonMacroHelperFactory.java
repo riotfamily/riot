@@ -21,13 +21,15 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.view;
+package org.riotfamily.website.view;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.mapping.HandlerUrlResolver;
+import org.riotfamily.common.web.view.MacroHelperFactory;
+import org.riotfamily.website.hyphenate.RiotHyphenator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -44,6 +46,8 @@ public class CommonMacroHelperFactory implements MacroHelperFactory,
 	
 	private HandlerUrlResolver handlerUrlResolver;
 	
+	private RiotHyphenator hyphenator; 
+	
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 	}
@@ -55,12 +59,16 @@ public class CommonMacroHelperFactory implements MacroHelperFactory,
 	public void setHandlerUrlResolver(HandlerUrlResolver handlerUrlResolver) {
 		this.handlerUrlResolver = handlerUrlResolver;
 	}
+	
+	public void setHyphenator(RiotHyphenator hyphenator) {
+		this.hyphenator = hyphenator;
+	}
 
 	public Object createMacroHelper(HttpServletRequest request, 
 			HttpServletResponse response) {
 		
 		return new CommonMacroHelper(applicationContext, request, response, 
-				stamper, handlerUrlResolver);
+				stamper, handlerUrlResolver, hyphenator);
 	}
 
 }

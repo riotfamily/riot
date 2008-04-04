@@ -110,9 +110,14 @@
 	
 	<bean id="handlerUrlResolver" class="org.riotfamily.common.web.mapping.HandlerUrlResolver" />
 	
-	<bean id="commonMacroHelper" class="org.riotfamily.common.web.view.CommonMacroHelperFactory">
+	<bean id="commonMacroHelper" class="org.riotfamily.website.view.CommonMacroHelperFactory">
 		<property name="stamper" ref="resourceStamper" />
 		<property name="handlerUrlResolver" ref="handlerUrlResolver" />
+		<property name="hyphenator" ref="riotHyphenator" />
+	</bean>
+	
+	<bean id="riotHyphenator" class="org.riotfamily.website.hyphenate.RiotHyphenator">
+		<property name="baseDir" value="/WEB-INF/hyphenation" />
 	</bean>
 	
 	<bean id="riotMacroHelper" class="org.riotfamily.riot.runtime.macro.RiotMacroHelperFactory">

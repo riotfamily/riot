@@ -128,7 +128,7 @@
 						<div class="list">
 							<#list childLists as item>
 								<div class="item">
-									<a href="${common.url(item.editorUrl)}">${item.label}</a>
+									<a href="${riot.url(item.editorUrl)}">${item.label}</a>
 								</div>
 							</#list>
 						</div>

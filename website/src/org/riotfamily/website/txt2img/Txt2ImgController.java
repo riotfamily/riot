@@ -190,7 +190,7 @@ public class Txt2ImgController extends AbstractCacheableController
 		String text = getEncodedParam(request, "text");
 		if (text != null) {
 			text = FormatUtils.stripWhitespaces(text, true);
-			text = text.replaceAll("&(shy|#173);", "\t");
+			text = text.replaceAll("(\u00AD|&shy;|&#173;)", "\t");
 			text = HtmlUtils.htmlUnescape(text);
 			String transform = request.getParameter("transform");
 			if (StringUtils.hasText(transform)) {

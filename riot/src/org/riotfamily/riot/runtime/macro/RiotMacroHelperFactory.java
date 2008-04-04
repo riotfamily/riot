@@ -35,15 +35,15 @@ import org.riotfamily.riot.runtime.RiotRuntime;
  */
 public class RiotMacroHelperFactory implements MacroHelperFactory {
 
-	private RiotMacroHelper riotMacroHelper;
+	private RiotRuntime runtime;
 	
 	public RiotMacroHelperFactory(RiotRuntime runtime) {
-		this.riotMacroHelper = new RiotMacroHelper(runtime);
+		this.runtime = runtime;
 	}
 	
 	public Object createMacroHelper(HttpServletRequest request, 
 			HttpServletResponse response) {
 		
-		return riotMacroHelper;
+		return new RiotMacroHelper(runtime, request, response);
 	}
 }

@@ -26,7 +26,7 @@
 <#macro renderPath>
 	<#list path.components as comp>
 		<#if comp.enabled>
-			<a href="${common.url(comp.editorUrl)}" target="chooserList" class="node">${comp.label?default('[untitled]')}</a>
+			<a href="${riot.url(comp.editorUrl)}" target="chooserList" class="node">${comp.label?default('[untitled]')}</a>
 		<#else>
 			<span class="node active node-active">${comp.label?default('[untitled]')}</span>
 		</#if>

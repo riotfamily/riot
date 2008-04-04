@@ -23,8 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.runtime.macro;
 
+import java.io.IOException;
+
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.runtime.RiotRuntime;
 import org.riotfamily.riot.security.AccessController;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -34,8 +41,14 @@ public class RiotMacroHelper {
 
 	private RiotRuntime runtime;
 	
-	public RiotMacroHelper(RiotRuntime runtime) {
+	private HttpServletRequest request;
+
+	private HttpServletResponse response;
+	
+	public RiotMacroHelper(RiotRuntime runtime, HttpServletRequest request, HttpServletResponse response) {
 		this.runtime = runtime;
+		this.request = request;
+		this.response = response;
 	}
 
 	public boolean isAuthenticatedUser() {
@@ -45,5 +58,14 @@ public class RiotMacroHelper {
 	public RiotRuntime getRuntime() {
 		return this.runtime;
 	}
+	
+	public String resolveAndEncodeUrl(String url) {
+		return ServletUtils.resolveAndEncodeUrl(url, request, response);
+	}
+	
+	public String include(String url) throws ServletException, IOException {
+		request.getRequestDispatcher(url).include(request, response);
+		return "";
+	}	
 	
 }

@@ -28,7 +28,7 @@
 <#macro renderPath>
 	<#list path.components as comp>
 		<#if comp.enabled>
-			<a href="${common.url(comp.editorUrl)}" target="editor" class="${comp.editorType}">${comp.label?default('[untitled]')}<#if comp.editorType == "list">:</#if></a>
+			<a href="${riot.url(comp.editorUrl)}" target="editor" class="${comp.editorType}">${comp.label?default('[untitled]')}<#if comp.editorType == "list">:</#if></a>
 		<#else>
 			<span class="${comp.editorType} active ${comp.editorType}-active">${comp.label?default('[untitled]')}</span>
 		</#if>

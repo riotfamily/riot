@@ -9,7 +9,7 @@
 		setTimeout(function() {
 			updatePath('${editorId}', '${objectId?if_exists}', '${parentId?if_exists}');
 		}, 1);
-		window.location.replace('${common.url(editorUrl)}');
+		window.location.replace('${riot.url(editorUrl)}');
 	</script>
 </head>
 <body>

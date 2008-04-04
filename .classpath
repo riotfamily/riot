@@ -54,5 +54,7 @@
 	<classpathentry kind="lib" path="lib/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib/spring-test.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="lib" path="lib/texhyphj.jar" sourcepath="/home/ybl/Desktop/texhyphj-1.1.zip"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

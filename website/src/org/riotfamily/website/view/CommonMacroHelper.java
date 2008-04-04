@@ -21,7 +21,7 @@
 	*   Felix Gnass [fgnass at neteye dot de]
 	*
 	* ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.view;
+package org.riotfamily.website.view;
 
 import java.io.IOException;
 import java.net.URI;
@@ -50,6 +50,7 @@ import org.riotfamily.common.web.mapping.HandlerUrlResolver;
 import org.riotfamily.common.web.mapping.ReverseHandlerMapping;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.util.StringCapturingResponseWrapper;
+import org.riotfamily.website.hyphenate.RiotHyphenator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.util.StringUtils;
@@ -80,17 +81,21 @@ public class CommonMacroHelper {
 
 	private HandlerUrlResolver handlerUrlResolver;
 	
+	private RiotHyphenator hyphenator;
+	
 	private Locale requestLocale = null;
 
 	public CommonMacroHelper(ApplicationContext ctx,
 			HttpServletRequest request, HttpServletResponse response, 
-			ResourceStamper stamper, HandlerUrlResolver handlerUrlResolver) {
+			ResourceStamper stamper, HandlerUrlResolver handlerUrlResolver,
+			RiotHyphenator hyphenator) {
 
 		this.ctx = ctx;
 		this.request = request;
 		this.response = response;
 		this.stamper = stamper;
 		this.handlerUrlResolver = handlerUrlResolver;
+		this.hyphenator = hyphenator;
 	}
 
 	public Random getRandom() {
@@ -289,9 +294,14 @@ public class CommonMacroHelper {
 		return FormatUtils.formatNumber(number, pattern, locale);
 	}
 	
+	
 	public int round(float number) {
 		return Math.round(number);
-	}	
+	}
+	
+	public String hyphenate(String text) {
+		return hyphenator.hyphenate(getLocale(), text);
+	}
 	
 	public String toTitleCase(String s) {
 		return FormatUtils.fileNameToTitleCase(s);
