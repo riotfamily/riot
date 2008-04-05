@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
+import java.io.Serializable;
+
 import org.riotfamily.components.locator.ComponentListLocator;
 
 /**
@@ -31,7 +33,7 @@ import org.riotfamily.components.locator.ComponentListLocator;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class ComponentListLocation {
+public class ComponentListLocation implements Serializable {
 
 	public static final String CHILD_TYPE = "child";
 	

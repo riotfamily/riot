@@ -72,10 +72,11 @@ public class HibernateComponentDao implements ComponentDao {
 
 	public ComponentList findComponentList(Component parent, String slot) {
 		Query query = hibernate.createCacheableQuery("from "
-				+ ComponentList.class.getName() + " list where list.parent = "
-				+":parent and list.location.slot = :slot");
+				+ ComponentList.class.getName() 
+				+ " list where list.parent.id = :parentId and" 
+				+ " list.location.slot = :slot");
 
-		hibernate.setParameter(query, "parent", parent);
+		hibernate.setParameter(query, "parentId", parent.getId());
 		hibernate.setParameter(query, "slot", slot);
 		return (ComponentList) query.uniqueResult();
 	}
