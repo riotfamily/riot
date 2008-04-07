@@ -50,6 +50,14 @@ public final class HashUtils {
 	}
 	
 	/** 
+	 * Hashes a byte array using the MD5 algorithm and returns the result as a
+	 * String of hexadecimal numbers.
+	 */
+	public static String md5(byte[] data) {
+		return hash(data, MD5);
+	}
+	
+	/** 
 	 * Hashes an InputStream using the MD5 algorithm and returns the result as 
 	 * a String of hexadecimal numbers.
 	 */
@@ -65,6 +73,14 @@ public final class HashUtils {
 		return hash(data, SHA1);
 	}
 	
+	/** 
+	 * Hashes a byte array using the SHA-1 algorithm and returns the result as 
+	 * a String of hexadecimal numbers.
+	 */
+	public static String sha1(byte[] data) {
+		return hash(data, SHA1);
+	}
+	
 	/**
 	 * Hashes a String using the specified algorithm and returns the result as 
 	 * a String of hexadecimal numbers.
@@ -73,8 +89,19 @@ public final class HashUtils {
 	 * @return the computed hash
 	 */
 	public static String hash(String data, String algorithm) {
+		return hash(data.getBytes(), algorithm);
+	}
+	
+	/**
+	 * Hashes a byte array using the specified algorithm and returns the 
+	 * result as a String of hexadecimal numbers.
+	 * 
+	 * @param data the bytes to compute the hash of
+	 * @return the computed hash
+	 */
+	public static String hash(byte[] data, String algorithm) {
 		MessageDigest digest = createDigest(algorithm);
-		digest.update(data.getBytes());
+		digest.update(data);
 		return toHex(digest.digest());
 	}
 	
