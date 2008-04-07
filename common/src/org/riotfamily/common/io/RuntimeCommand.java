@@ -134,7 +134,9 @@ public class RuntimeCommand {
 			return stdOut.toString();
 		}
 		else {
-			throw new IOException(stdErr.toString());
+			throw new IOException(
+					StringUtils.arrayToDelimitedString(commandLine, " ") 
+					+ "\n" + stdErr.toString());
 		}
 	}
 
