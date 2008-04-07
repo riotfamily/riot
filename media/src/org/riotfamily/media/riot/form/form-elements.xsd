@@ -37,6 +37,8 @@
 					<xsd:attribute name="min-height" type="xsd:positiveInteger" />
 					<xsd:attribute name="max-width" type="xsd:positiveInteger" />
 					<xsd:attribute name="max-height" type="xsd:positiveInteger" />
+					<xsd:attribute name="preview-width" type="xsd:positiveInteger" />
+					<xsd:attribute name="preview-height" type="xsd:positiveInteger" />
 					<xsd:attribute name="crop" type="xsd:boolean" default="true" />
 				</xsd:extension>
 			</xsd:complexContent>

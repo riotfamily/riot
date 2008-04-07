@@ -56,11 +56,14 @@ Cropper.UI.prototype = {
 	initialize: function(el, src, cropUrl, options) {
 		this.element = $(el).addClassName('cropper');
 		this.cropUrl = this.resizeable = cropUrl;
-		var o = this.options = options || {};
+		var o = this.options = Object.extend({
+			previewWidth: 263,
+			previewHeight: 100
+		}, options || {});
 
 		this.canvas = Cropper.appendDiv(this.element, 'canvas');
-		this.canvasSize = new Cropper.Pos(o.canvasWidth || o.maxWidth || 263,
-				o.canvasHeight || o.maxHeight || 150);
+		this.canvasSize = new Cropper.Pos(o.canvasWidth || o.maxWidth || o.previewWidth,
+				o.canvasHeight || o.maxHeight || o.previewHeight);
 
 		this.preview = Cropper.appendDiv(this.canvas, 'preview').setStyle({
 			MozUserSelect: 'none',	overflow: 'hidden',	position: 'relative'

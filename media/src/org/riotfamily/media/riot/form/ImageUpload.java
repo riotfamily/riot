@@ -71,6 +71,10 @@ public class ImageUpload extends FileUpload {
 	private int minHeight;
 
 	private int maxHeight;
+	
+	private int previewWidth = 263;
+	
+	private int previewHeight = 100;
 
 	private String validFormats = "GIF,JPEG,PNG";
 
@@ -143,6 +147,14 @@ public class ImageUpload extends FileUpload {
 
 	public void setMaxHeight(int maxHeight) {
 		this.maxHeight = maxHeight;
+	}
+	
+	public void setPreviewWidth(int previewWidth) {
+		this.previewWidth = previewWidth;
+	}
+
+	public void setPreviewHeight(int previewHeight) {
+		this.previewHeight = previewHeight;
 	}
 
 	public void setValidFormats(String validFormats) {
@@ -222,8 +234,8 @@ public class ImageUpload extends FileUpload {
 		}
 
 		protected void renderInternal(PrintWriter writer) {
-			int w = crop && maxWidth > 0 ? maxWidth : 263;
-			int h = (maxHeight > 0 ? maxHeight : 100) + 50;
+			int w = crop && maxWidth > 0 ? maxWidth : previewWidth;
+			int h = (maxHeight > 0 ? maxHeight : previewHeight) + 50;
 			new TagWriter(writer).start(Html.DIV)
 					.attribute(Html.COMMON_ID, getId())
 					.attribute(Html.COMMON_STYLE,
@@ -322,6 +334,14 @@ public class ImageUpload extends FileUpload {
 
 		public int[] getHeights() {
 			return heights;
+		}
+		
+		public int getPreviewWidth() {
+			return previewWidth;
+		}
+		
+		public int getPreviewHeight() {
+			return previewHeight;
 		}
 
 	}
