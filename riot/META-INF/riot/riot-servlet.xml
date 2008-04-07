@@ -178,8 +178,6 @@
 		<property name="cache" value="true" />
     </bean>
 
-	<bean id="commonMacroHelper" class="org.riotfamily.website.view.CommonMacroHelperFactory" />
-
 	<!-- Core list commands -->
 
 	<bean id="editCommand" class="org.riotfamily.riot.list.command.core.EditCommand" />
