@@ -67,6 +67,9 @@ public class CommonMacroHelper {
 	private static final Pattern LINK_PATTERN = Pattern.compile(
 			"(\\s+href\\s*=\\s*\")(.+?)(\")", Pattern.CASE_INSENSITIVE);
 	
+	private static final Pattern TEXT_PATTERN = Pattern.compile(
+			"([^<]*)(<[^>]+>|$)");
+	
 	private static Random random = new Random();
 
 	private Date currentTime;
@@ -299,8 +302,21 @@ public class CommonMacroHelper {
 		return Math.round(number);
 	}
 	
-	public String hyphenate(String text) {
+	public String hyphenatePlainText(String text) {
 		return hyphenator.hyphenate(getLocale(), text);
+	}
+	
+	public String hyphenate(String markup) {
+		StringBuffer sb = new StringBuffer();
+		Matcher matcher = TEXT_PATTERN.matcher(markup);
+		while (matcher.find()) {
+			String text = matcher.group(1);
+			if (text.length() > 0) {
+				sb.append(hyphenatePlainText(text));
+			}
+			sb.append(matcher.group(2));
+		}
+		return sb.toString();
 	}
 	
 	public String toTitleCase(String s) {

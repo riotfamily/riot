@@ -62,7 +62,7 @@ public class RiotHyphenator implements InitializingBean {
 		}
 		
 		if (hyphenator != null) {
-			String result = hyphenator.hyphenate(text);
+			String result = hyphenator.hyphenate(text, 2, 2);
 			if (log.isDebugEnabled()) {
 				log.debug("Hyphenator result: " + result.replaceAll("\u00AD", "-"));
 			}

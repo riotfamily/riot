@@ -112,12 +112,17 @@
   - The call delegated to the editable macro, using editor="text".
   - See: <@editable> for a description of the supported parameters.
   -->
-<#macro text key tag="" alwaysUseNested=false textTransform=true attributes...>
+<#macro text key tag="" alwaysUseNested=false textTransform=true hyphenate=false attributes...>
 	<#local attributes = common.unwrapAttributes(attributes) />
 	<#if editMode>
 		<#local attributes = attributes + {'riot:textTransform': textTransform?string} />
 	</#if>
-	<@editable key=key editor="text" tag=tag alwaysUseNested=alwaysUseNested attributes=attributes><#nested /></@editable>
+	<#if hyphenate>
+		<#local transform = common.hyphenate />
+	<#else>
+		<#local transform = false />
+	</#if>
+	<@editable key=key editor="text" tag=tag alwaysUseNested=alwaysUseNested transform=transform attributes=attributes><#nested /></@editable>
 </#macro>
 
 <#--
@@ -131,13 +136,18 @@
   - editor="richtext-chunks", depending on the chunk parameter.
   - See: <@editable> for a description of the other parameters.
   -->
-<#macro richtext key tag="" config="default" alwaysUseNested=false chunk=false attributes...>
+<#macro richtext key tag="" config="default" alwaysUseNested=false chunk=false hyphenate=false attributes...>
 	<#compress>
 		<#if editMode>
 			<#local attributes = common.unwrapAttributes(attributes) + {"riot:config": config} />
 		</#if>
 		<#local editor = chunk?string("richtext-chunks", "richtext") />
-		<@editable key=key editor=editor tag=tag alwaysUseNested=alwaysUseNested transform=common.encodeLinks attributes=attributes><#nested /></@editable>
+		<#if hyphenate>
+			<#local transform = common.hyphenateAndEncode />
+		<#else>
+			<#local transform = common.encodeLinks />
+		</#if>
+		<@editable key=key editor=editor tag=tag alwaysUseNested=alwaysUseNested transform=transform attributes=attributes><#nested /></@editable>
 	</#compress>
 </#macro>
 
