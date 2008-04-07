@@ -259,3 +259,15 @@
 		<#nested />
 	</#if>
 </#macro>
+
+<#function hyphenate html>
+	<#return commonMacroHelper.hyphenate(html) />
+</#function>
+
+<#function hyphenateAndEncode html>
+	<#return encodeLinks(commonMacroHelper.hyphenate(html)) />
+</#function>
+
+<#function hyphenatePlainText text>
+	<#return commonMacroHelper.hyphenatePlainText(text) />
+</#function>
