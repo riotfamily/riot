@@ -335,6 +335,17 @@ public final class ServletUtils {
 		return response.encodeURL(url);
 	}
 	
+	public static String resolveToAbsoluteUrl(String url, 
+			HttpServletRequest request) {
+		
+		if (url == null || isAbsoluteUrl(url)) {
+			return url;
+		}
+		StringBuffer sb = getAbsoluteUrlPrefix(request);
+		sb.append(resolveUrl(url, request));
+		return sb.toString();
+	}
+	
 	public static Map takeAttributesSnapshot(HttpServletRequest request) {
 		Map snapshot = new HashMap();
 		Enumeration attrNames = request.getAttributeNames();
