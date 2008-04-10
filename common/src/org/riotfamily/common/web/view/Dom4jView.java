@@ -22,6 +22,7 @@ public class Dom4jView extends AbstractView {
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		
+		response.setContentType(getContentType());
 		XMLWriter xmlWriter = new XMLWriter(response.getWriter());
 		xmlWriter.write(document);
 	}
