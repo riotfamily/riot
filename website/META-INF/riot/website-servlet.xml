@@ -20,6 +20,8 @@
 		<property name="contextOverride" value="true" />
 	</bean>
 	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+	
 	<bean class="org.riotfamily.common.web.servlet.ReloadableDispatcherServletConfig">
 		<property name="reloadable" value="${website-servlet.reloadable=false}" />
 	</bean>
