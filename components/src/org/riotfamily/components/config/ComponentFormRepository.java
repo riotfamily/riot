@@ -258,7 +258,8 @@ public class ComponentFormRepository extends XmlFormRepository {
 		pp.setCollectionClass(listEditor.getCollectionClass());
 		Editor itemEditor = (Editor) listEditor.getItemElementFactory()
 				.createElement(listEditor, listEditor.getForm());
-		
+
+		itemEditor.setForm(listEditor.getForm());
 		registerPropertyProcessors(componentType, pp, itemEditor);
 		registry.registerPropertyProcessor(property, pp);
 	}
