@@ -393,7 +393,11 @@ riot.ComponentList = Class.create({
 		var list = this;
 		new Effect.Remove(c.element, function(el) {
 			el.remove();
-			$(el.id).remove();
+			// Hack to mark dumped ComponentList diry. List is dumped to 
+			// disable Events
+			var dump = $(el.id);
+			riot.getComponentList(dump.up('.riot-toplevel-list')).dirty = true; 
+			dump.remove();
 			list.updatePositionClasses();
 			riot.outline.suspended = false;
 		});
