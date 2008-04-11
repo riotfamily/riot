@@ -89,6 +89,8 @@ public class ImageMagickThumbnailer implements Thumbnailer {
 			args.add(width * 2 + "x<");
 			args.add("-resize");
 			args.add("50%");
+			args.add("-gravity");
+			args.add("center");
 			args.add("-crop");
 			args.add(width + "x" + height + "+0+0");
 			args.add("+repage");
