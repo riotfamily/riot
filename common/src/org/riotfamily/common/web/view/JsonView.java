@@ -38,8 +38,7 @@ import org.springframework.web.servlet.view.AbstractView;
  */
 public class JsonView extends AbstractView {
 	
-	private static final String DEFAULT_CONTENT_TYPE = 
-			"text/plain; charset=UTF-8";
+	private static final String DEFAULT_CONTENT_TYPE = "application/json";
 	
 	private static final String JSON_HEADER = "X-JSON";
 
@@ -73,7 +72,8 @@ public class JsonView extends AbstractView {
 	protected void renderMergedOutputModel(Map model,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-		
+
+		response.setContentType(getContentType());
 		response.setCharacterEncoding(characterEncoding);
 		JSONObject jsonObject = JSONObject.fromObject(model);
 		if (sendAsHeader) {
