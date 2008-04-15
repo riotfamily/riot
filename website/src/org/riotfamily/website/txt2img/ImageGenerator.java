@@ -220,6 +220,7 @@ public class ImageGenerator implements InitializingBean {
 	}
 	
 	public BufferedImage generate(String text, int maxWidth, String color) {
+		text = text.replace('\u00AD', '\t');
 		if (this.maxWidth != null) {
 			maxWidth = this.maxWidth.intValue();
 		}

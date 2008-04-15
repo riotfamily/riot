@@ -264,7 +264,7 @@
 	</#compress>
 </#macro>
 
-<#macro link key href tag="a" externalClass="externalLink" externalTarget="_blank" alwaysUseNested=false textTransform=true attributes...>
+<#macro link key href tag="a" externalClass="externalLink" externalTarget="_blank" alwaysUseNested=false textTransform=true hyphenate=false attributes...>
 	<#local attributes = common.unwrapAttributes(attributes) + {"href": href} />
 	<#if common.isExternalUrl(href)>
 		<#local attributes = attributes + {
@@ -272,7 +272,7 @@
 			"class": ((attributes.class!) + " " + externalClass)?trim
 		} />
 	</#if>
-	<@text key=key tag=tag alwaysUseNested=alwaysUseNested textTransform=textTransform attributes=attributes><#nested /></@text>
+	<@text key=key tag=tag alwaysUseNested=alwaysUseNested textTransform=textTransform hyphenate=hyphenate attributes=attributes><#nested /></@text>
 </#macro>
 
 <#--
