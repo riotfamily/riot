@@ -30,6 +30,7 @@ import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.riot.security.session.LoginManager;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
+import org.springframework.web.servlet.view.RedirectView;
 
 public class LogoutController implements Controller {
 
@@ -44,6 +45,11 @@ public class LogoutController implements Controller {
 			HttpServletResponse response) throws Exception {
 
 		LoginManager.logout(request, response);
+
+		String url = request.getParameter("redirect");
+		if (url != null) {
+			return new ModelAndView(new RedirectView(url));
+		}
 		return new ModelAndView(viewName);
 	}
 
