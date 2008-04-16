@@ -21,19 +21,14 @@
 		http://www.riotfamily.org/schema/components/form-elements
 		http://www.riotfamily.org/schema/components/form-elements-7.0.xsd">
 
-	<ed:list id="sitemap" list-ref="site-chooser" icon="sitemap">
-		<ed:tree id="pages" list-ref="pages">
+	<ed:list id="localContent" list-ref="site-chooser" icon="world">
+		<ed:tree id="sitemap" list-ref="pages" icon="sitemap">
 			<ed:form id="page" form-ref="page" />
 		</ed:tree>
 	</ed:list>
 	
-	<ed:list id="sites" list-ref="sites" icon="world">
+	<ed:list id="manageSites" list-ref="sites" icon="world">
 		<ed:form form-ref="site">
-			<!--
-			<ed:list list-ref="pageAliases">
-				<ed:form form-ref="pageAlias" />
-			</ed:list>
-			-->
 		</ed:form>
 	</ed:list>
 
@@ -44,7 +39,7 @@
 			<list:column property="name" />
 			<list:column property="locale.language" renderer="localeRenderer" lookup-level="2" />
 			<list:column property="locale.country" renderer="localeRenderer" lookup-level="2" />
-			<list:command id="stepInto" />
+			<list:command id="edit" />
 		</list:columns>
 	</list:list>
 	
