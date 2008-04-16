@@ -25,7 +25,9 @@ package org.riotfamily.components.controller.render;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -145,12 +147,18 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		String[] initialTypes = config.getInitialComponentTypes();
 		if (initialTypes != null) {
 			List containers = new ArrayList();
-			for (int i = 0; i < initialTypes.length; i++) {
-				Component container = new Component(initialTypes[i]);
-				Content live = new Content();
-				container.setList(list);
-				container.setLiveVersion(live);
-				containers.add(container);
+			for (int i = 0; i < initialTypes.length; i++) {				
+				Component component = new Component(initialTypes[i]);
+				Content version = new Content();
+				ComponentRenderer renderer = repository.getComponent(initialTypes[i]);
+				Map values = new HashMap();
+				if (renderer.getDefaults() != null) {
+					values.putAll(renderer.getDefaults());
+				}				
+				version.wrapValues(values);
+				component.setLiveVersion(version);
+				component.setList(list);
+				containers.add(component);
 			}
 			list.setLiveComponents(containers);
 		}
