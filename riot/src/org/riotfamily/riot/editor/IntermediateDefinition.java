@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
-import org.riotfamily.riot.editor.ui.EditorReference;
 
 public class IntermediateDefinition extends AbstractObjectEditorDefinition {
 
@@ -46,16 +45,6 @@ public class IntermediateDefinition extends AbstractObjectEditorDefinition {
 	
 	public ListDefinition getNestedListDefinition() {
 		return this.nestedListDefinition;
-	}
-
-	public EditorReference createPathComponent(Object bean, String parentId, 
-			String parentEditorId) {
-		
-		EditorReference reference = super.createPathComponent(
-				bean, parentId, parentEditorId);
-		
-		reference.setEnabled(false);
-		return reference;
 	}
 
 	protected String getEditorUrlWithinServlet(String objectId, String parentId,

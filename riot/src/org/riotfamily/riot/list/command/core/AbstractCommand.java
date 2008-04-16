@@ -108,7 +108,9 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 		Class clazz = context.getListDefinition().getBeanClass();
 		Object item = context.getBean();
 		String type = context.getMessageResolver().getClassLabel(null, clazz);
-		String label = HtmlUtils.htmlEscape(context.getListDefinition().getLabel(item));
+		String label = HtmlUtils.htmlEscape(context.getListDefinition()
+				.getLabel(item, context.getMessageResolver()));
+		
 		return new Object[] {label, type, context.getObjectId()};
 	}
 

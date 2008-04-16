@@ -15,14 +15,14 @@
 		<@riot.script src="style/tweak.js" />
 		<@riot.script src="riot-js/util.js" />
 		<script type="text/javascript" language="JavaScript">
-			updatePath('${group.id}');
+			updatePath('${group.id}', '${group.objectId?if_exists}');
 		</script>
 	</head>
 	<body>
 		<div id="body-wrapper">
 			<div id="wrapper">
 				<div id="editors" class="main">
-					<div class="box-title"><span class="label">${group.title}</span></div>
+					<div class="box-title"><span class="label">${group.title?if_exists}</span></div>
 					<#list group.editors as ref>
 						<a class="editor ${ref.styleClass?default('default')}" href="${riot.url(ref.editorUrl)}" <#if ref.targetWindow?exists> target="${ref.targetWindow}"</#if>>
 							<div class="icon"<#if ref.icon?exists> style="background-image:url(${riot.resource("style/icons/editors/" + ref.icon + ".gif")})"</#if>></div>

@@ -127,8 +127,8 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 		key.append(getName());
 		return key;
 	}
-
-	public String getLabel(Object object) {
+	
+	public String getLabel(Object object, MessageResolver messageResolver) {
 		return null;
 	}
 

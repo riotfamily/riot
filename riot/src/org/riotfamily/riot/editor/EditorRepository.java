@@ -83,7 +83,7 @@ public class EditorRepository implements RiotRuntimeAware {
 			log.info("Overwriting editor " + id);
 			if (existingEditor.getParentEditorDefinition() instanceof GroupDefinition) {
 				GroupDefinition oldGroup = (GroupDefinition) existingEditor.getParentEditorDefinition();
-				oldGroup.getEditorDefinitions().remove(existingEditor);
+				oldGroup.getChildEditorDefinitions().remove(existingEditor);
 			}
 		}
 		editorDefinitions.put(id, editorDefinition);

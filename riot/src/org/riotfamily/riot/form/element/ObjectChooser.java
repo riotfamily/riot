@@ -207,8 +207,8 @@ public class ObjectChooser extends AbstractChooser
 		}
 		if (display == null) {
 			new TagWriter(writer).start(Html.SPAN)
-					.body(targetEditorDefinition.getLabel(object))
-					.end();
+					.body(targetEditorDefinition.getLabel(object, 
+							getFormContext().getMessageResolver())).end();
 			
 			return;
 		}

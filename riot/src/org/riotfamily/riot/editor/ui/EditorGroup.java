@@ -36,6 +36,8 @@ public class EditorGroup {
 	
 	private String title;
 
+	private String objectId;
+	
 	private List editors = new LinkedList();
 
 	
@@ -55,6 +57,14 @@ public class EditorGroup {
 		this.title = title;
 	}
 	
+	public String getObjectId() {
+		return objectId;
+	}
+
+	public void setObjectId(String objectId) {
+		this.objectId = objectId;
+	}
+
 	public void addReference(EditorReference reference) {
 		editors.add(reference);
 	}

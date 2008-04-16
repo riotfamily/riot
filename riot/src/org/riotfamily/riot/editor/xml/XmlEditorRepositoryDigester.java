@@ -40,6 +40,7 @@ import org.riotfamily.riot.editor.TreeDefinition;
 import org.riotfamily.riot.editor.ViewDefinition;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.io.Resource;
+import org.springframework.util.Assert;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -74,6 +75,10 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	private static final String FORM_CHOOSER_COMMON = "common";
 
 	private static final String VIEW = "view";
+	
+	private static final String REF = "ref";
+	
+	private static final String REF_EDITOR = "editor";
 
 	private static final String[] VIEW_ATTR = new String[] {
 		"name", "view-name"
@@ -88,7 +93,8 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	};
 
 	private static final String OBJECT_EDITOR = FORM + '|'
-			+ FORM_CHOOSER + '|' + VIEW + '|' + CUSTOM;
+			+ FORM_CHOOSER + '|' + VIEW + '|' + GROUP + '|' + CUSTOM
+			+ '|' + REF;
 
 	private static final String FORM_OPTION = "form-option";
 
@@ -140,29 +146,9 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 			String namespace = ele.getNamespaceURI();
 			if (namespace == null || namespace.equals(NAMESPACE)) {
 				EditorDefinition ed = digestEditorDefinition(ele);
-				group.addEditorDefinition(ed);
+				group.addChildEditorDefinition(ed);
 			}
 		}
-	}
-
-	/**
-	 * Creates an EditorDefinition.
-	 */
-	protected EditorDefinition digestEditorDefinition(Element ele) {
-		EditorDefinition ed = null;
-		if (isListElement(ele) || isTreeElement(ele)) {
-			ed = digestListOrTreeDefinition(ele);
-		}
-		else if (isGroupElement(ele)) {
-			ed = digestGroupDefinition(ele);
-		}
-		else if (isFormElement(ele)) {
-			ed = digestFormDefinition(ele, null);
-		}
-		else if (isCustomElement(ele)) {
-			ed = digestCustomDefinition(ele, null);
-		}
-		return ed;
 	}
 
 	/**
@@ -170,9 +156,12 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	 * EditorDefinitions will be digested by calling
 	 * {@link #digestEditorDefinition(Element) digestEditorDefinition()}.
 	 */
-	protected GroupDefinition digestGroupDefinition(Element groupElement) {
+	protected GroupDefinition digestGroupDefinition(Element groupElement,
+			EditorDefinition parentDef) {
+		
 		GroupDefinition group = new GroupDefinition(editorRepository);
 		XmlUtils.populate(group, groupElement, GROUP_ATTR);
+		group.setParentEditorDefinition(parentDef);
 		addEditorDefinition(group);
 		digestGroupEntries(groupElement, group);
 		return group;
@@ -180,7 +169,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 
 	protected ListDefinition digestListOrTreeDefinition(Element listElement) {
 		ListDefinition listDefinition;
-		if (isTreeElement(listElement)) {
+		if (hasName(listElement, TREE)) {
 			listDefinition = new TreeDefinition(editorRepository);
 		}
 		else {
@@ -202,7 +191,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 		Element e = XmlUtils.getFirstChildByRegex(listElement, ANYTHING);
 		if (e != null) {
 			ObjectEditorDefinition def = null;
-			if (isListElement(e) || isTreeElement(e)) {
+			if (hasName(e, LIST) || hasName(e, TREE)) {
 				def = new IntermediateDefinition(
 						listDefinition, digestListOrTreeDefinition(e));
 			}
@@ -218,21 +207,57 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	protected ObjectEditorDefinition digestObjectEditorDefinition(
 			Element ele, EditorDefinition parentDef) {
 
-		if (isFormElement(ele)) {
+		if (hasName(ele,  REF)) {
+			EditorDefinition ed = getRef(ele);
+			Assert.isInstanceOf(ObjectEditorDefinition.class, ed);
+			ed.setParentEditorDefinition(parentDef);
+			return (ObjectEditorDefinition) ed;
+		}
+		if (hasName(ele, FORM)) {
 			return digestFormDefinition(ele, parentDef);
 		}
-		else if (isFormChooserElement(ele)) {
+		else if (hasName(ele, FORM_CHOOSER)) {
 			return digestFormChooserDefinition(ele, parentDef);
 		}
-		else if (isViewElement(ele)) {
+		else if (hasName(ele, VIEW)) {
 			return digestViewDefinition(ele, parentDef);
 		}
-		else if (isCustomElement(ele)) {
+		else if (hasName(ele, GROUP)) {
+			return digestGroupDefinition(ele, parentDef);
+		}
+		else if (hasName(ele, CUSTOM)) {
 			return (ObjectEditorDefinition) digestCustomDefinition(ele, parentDef);
 		}
 		else {
 			throw new RuntimeException("Expected " + OBJECT_EDITOR);
 		}
+	}
+	
+	/**
+	 * Creates an EditorDefinition.
+	 */
+	protected EditorDefinition digestEditorDefinition(Element ele) {
+		EditorDefinition ed = null;
+		if (hasName(ele, REF)) {
+			ed = getRef(ele);
+		}
+		else if (hasName(ele, LIST) || hasName(ele, TREE)) {
+			ed = digestListOrTreeDefinition(ele);
+		}
+		else {
+			ed = digestObjectEditorDefinition(ele, null);
+		}
+		return ed;
+	}
+	
+	protected EditorDefinition getRef(Element ele) {
+		String editorId = XmlUtils.getAttribute(ele, REF_EDITOR);
+		EditorDefinition ed = editorRepository.getEditorDefinition(editorId);
+		if (ed.getParentEditorDefinition() instanceof ObjectEditorDefinition) {
+			ObjectEditorDefinition parent = (ObjectEditorDefinition) ed.getParentEditorDefinition();
+			parent.getChildEditorDefinitions().remove(ed);
+		}
+		return ed;
 	}
 
 	/**
@@ -266,7 +291,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	protected EditorDefinition digestChildEditorDefinition(Element ele,
 			EditorDefinition parentDef) {
 
-		if (isListElement(ele) || isTreeElement(ele)) {
+		if (hasName(ele, LIST) || hasName(ele, TREE)) {
 			return digestListOrTreeDefinition(ele);
 		}
 		return digestObjectEditorDefinition(ele, parentDef);
@@ -351,32 +376,8 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 		return custom;
 	}
 
-	private static boolean isFormElement(Element ele) {
-		return ele != null && DomUtils.nodeNameEquals(ele, FORM);
-	}
-
-	private static boolean isFormChooserElement(Element ele) {
-		return ele != null && DomUtils.nodeNameEquals(ele, FORM_CHOOSER);
-	}
-
-	private static boolean isViewElement(Element ele) {
-		return ele != null && DomUtils.nodeNameEquals(ele, VIEW);
-	}
-
-	private static boolean isListElement(Element ele) {
-		return ele != null && DomUtils.nodeNameEquals(ele, LIST);
-	}
-
-	private static boolean isTreeElement(Element ele) {
-		return ele != null && DomUtils.nodeNameEquals(ele, TREE);
-	}
-
-	private static boolean isGroupElement(Element ele) {
-		return ele != null && DomUtils.nodeNameEquals(ele, GROUP);
-	}
-
-	private static boolean isCustomElement(Element ele) {
-		return ele != null && DomUtils.nodeNameEquals(ele, CUSTOM);
+	private static boolean hasName(Element ele, String name) {
+		return ele != null && DomUtils.nodeNameEquals(ele, name);
 	}
 
 }

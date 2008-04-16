@@ -69,7 +69,8 @@ public class EditorGroupController implements Controller, MessageSourceAware {
 			HttpServletResponse response) throws Exception {
 
 		String editorId = (String) request.getAttribute(EditorConstants.EDITOR_ID);
-
+		String objectId = request.getParameter("objectId");
+		
 		GroupDefinition groupDefinition =
 				editorRepository.getGroupDefinition(editorId);
 
@@ -85,13 +86,14 @@ public class EditorGroupController implements Controller, MessageSourceAware {
 
 		EditorGroup group = new EditorGroup();
 		group.setId(groupDefinition.getId());
-		group.setTitle(groupDefinition.createReference(null, messageResolver).getLabel());
-
-		Iterator ed = groupDefinition.getEditorDefinitions().iterator();
+		group.setTitle(groupDefinition.getLabel(objectId, messageResolver));
+		group.setObjectId(objectId);
+		
+		Iterator ed = groupDefinition.getChildEditorDefinitions().iterator();
 		while (ed.hasNext()) {
 			EditorDefinition editor = (EditorDefinition) ed.next();
 			if (!editor.isHidden() && AccessController.isGranted("use-editor", editor)) {
-				group.addReference(editor.createReference(null, messageResolver));
+				group.addReference(editor.createReference(objectId, messageResolver));
 			}
 		}
 

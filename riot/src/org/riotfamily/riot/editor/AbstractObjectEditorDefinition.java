@@ -68,14 +68,14 @@ public abstract class AbstractObjectEditorDefinition
 		return labelProperty;
 	}
 	
-	public String getLabel(Object object) {
+	public String getLabel(Object object, MessageResolver messageResolver) {
 		if (object == null) {
 			return "New"; //TODO I18nize this
 		}
 		if (labelProperty != null) {
 			return getLabel(object, labelProperty);
 		}
-		return getParentEditorDefinition().getLabel(object);
+		return getParentEditorDefinition().getLabel(object, messageResolver);
 	}
 
 	public List getChildEditorDefinitions() {
@@ -123,11 +123,15 @@ public abstract class AbstractObjectEditorDefinition
 		}
 		else {
 			//Creating a new object - delegate the call to the parent editor
-			EditorReference parent = getParentEditorDefinition()
-					.createEditorPath(null, parentId, parentEditorId, 
-					messageResolver);
-
-			EditorReference component = createPathComponent(null, parentId, parentEditorId);
+			EditorReference parent = null;
+			if (getParentEditorDefinition() != null) {
+				parent = getParentEditorDefinition()
+						.createEditorPath(null, parentId, parentEditorId, 
+						messageResolver);
+			}
+			EditorReference component = createPathComponent(null, parentId, 
+					parentEditorId, messageResolver);
+			
 			component.setParent(parent);
 			return component;
 		}
@@ -148,15 +152,18 @@ public abstract class AbstractObjectEditorDefinition
 			parentBean = bean;
 		}
 		else {
-			component = createPathComponent(bean, null, null);
+			component = createPathComponent(bean, null, null, messageResolver);
 			parentBean = EditorDefinitionUtils.getParent(this, bean);
 		}
 
 		//Create ancestors
-		EditorReference parent = getParentEditorDefinition()
-				.createEditorPath(parentBean, messageResolver);
-
+		EditorReference parent = null;
+		if (getParentEditorDefinition() != null) {
+			parent = getParentEditorDefinition().createEditorPath(
+					parentBean, messageResolver);
+		}
 		component.setParent(parent);
+		
 		return component;
 	}
 	
@@ -174,12 +181,12 @@ public abstract class AbstractObjectEditorDefinition
 	 *        no parentId is specified
 	 */
 	protected EditorReference createPathComponent(Object bean, String parentId,
-			String parentEditorId) {
+			String parentEditorId, MessageResolver messageResolver) {
 		
 		EditorReference component = new EditorReference();
 		component.setEditorType(getEditorType());
 		component.setEditorId(getId());
-		component.setLabel(getLabel(bean));
+		component.setLabel(getLabel(bean, messageResolver));
 		component.setBean(bean);
 		String objectId = null;
 		if (bean != null) {

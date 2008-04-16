@@ -71,7 +71,7 @@ public class ListDefinition extends AbstractEditorDefinition {
 		Assert.notNull(getListConfig(), "No such list: " + listId);
 	}
 	
-	public String getLabel(Object object) {
+	public String getLabel(Object object, MessageResolver messageResolver) {
 		return getLabel(object, getListConfig().getLabelProperty());
 	}
 

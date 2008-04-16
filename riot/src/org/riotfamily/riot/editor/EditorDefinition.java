@@ -41,7 +41,7 @@ public interface EditorDefinition {
 	
 	public Class getBeanClass();
 	
-	public String getLabel(Object bean);
+	public String getLabel(Object bean, MessageResolver messageResolver);
 	
 	public void setParentEditorDefinition(EditorDefinition parent);	
 
