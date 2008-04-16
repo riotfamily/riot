@@ -42,6 +42,7 @@ import org.riotfamily.pages.model.Site;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.util.WebUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -79,6 +80,9 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	protected Object getHandlerInternal(HttpServletRequest request)
 			throws Exception {
 
+		if (WebUtils.isIncludeRequest(request)) {
+			return null;
+		}
 		Page page = pageResolver.getPage(request);
 		String path = pageResolver.getPathWithinSite(request);
 		if (page == null || !page.isRequestable()) {
