@@ -351,7 +351,7 @@
 </#function>
 
 <#function lastClass>
-	<#if position == listSize>
+	<#if position == listSize - 1>
 		<#return "last" />
 	<#elseif editMode>
 		<#return "not-last" />
