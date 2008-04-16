@@ -142,5 +142,8 @@ public class EditorReference {
 	public void setObjectId(String objectId) {
 		this.objectId = objectId;
 	}
-	
+
+	public String toString() {
+		return editorUrl;
+	}
 }
