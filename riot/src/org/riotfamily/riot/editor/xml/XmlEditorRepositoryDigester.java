@@ -253,6 +253,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	protected EditorDefinition getRef(Element ele) {
 		String editorId = XmlUtils.getAttribute(ele, REF_EDITOR);
 		EditorDefinition ed = editorRepository.getEditorDefinition(editorId);
+		Assert.notNull(ed, "No such editor: " + editorId);
 		if (ed.getParentEditorDefinition() instanceof ObjectEditorDefinition) {
 			ObjectEditorDefinition parent = (ObjectEditorDefinition) ed.getParentEditorDefinition();
 			parent.getChildEditorDefinitions().remove(ed);
