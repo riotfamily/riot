@@ -39,7 +39,12 @@ public class EditCommand extends AbstractCommand {
 	
 	private static final String ACTION_EDIT = "edit";
 	
+	private static final String ACTION_ADD = "add";
+	
 	protected String getAction(CommandContext context) {
+		if (context.getObjectId() == null) {
+			return ACTION_ADD;
+		}
 		ObjectEditorDefinition def = context.getListDefinition().getDisplayDefinition();
 		if (def instanceof FormDefinition) {
 			return ACTION_EDIT;
