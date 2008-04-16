@@ -24,6 +24,8 @@
 package org.riotfamily.riot.list.command.core;
 
 import org.riotfamily.riot.editor.EditorDefinition;
+import org.riotfamily.riot.editor.FormDefinition;
+import org.riotfamily.riot.editor.ObjectEditorDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
@@ -34,6 +36,16 @@ import org.springframework.util.Assert;
  * Command that displays the editor associated with the current list.
  */
 public class EditCommand extends AbstractCommand {
+	
+	private static final String ACTION_EDIT = "edit";
+	
+	protected String getAction(CommandContext context) {
+		ObjectEditorDefinition def = context.getListDefinition().getDisplayDefinition();
+		if (def instanceof FormDefinition) {
+			return ACTION_EDIT;
+		}
+		return StepIntoCommand.ACTION_STEP_INTO;
+	}
 	
 	public CommandResult execute(CommandContext context) {
 		EditorDefinition def = context.getListDefinition().getDisplayDefinition();
