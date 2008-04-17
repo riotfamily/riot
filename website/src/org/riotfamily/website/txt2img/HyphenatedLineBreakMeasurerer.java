@@ -53,16 +53,18 @@ public class HyphenatedLineBreakMeasurerer {
     }
     
     private boolean isWhitespace(int i) {
-    	if (i >= 0 && i < sb.length()) {
-    		char c = sb.charAt(i);
-    		return Character.isWhitespace(c) && c != '\t';
-    	}
-    	return true;
+    	char c = sb.charAt(i);
+    	return Character.isWhitespace(c) && c != '\t';
+    }
+    
+    private boolean isWhitespaceOrHyphen(int i) {
+    	char c = sb.charAt(i);
+    	return c == '-' || (Character.isWhitespace(c) && c != '\t');
     }
     
     private int lastWhitespace() {
     	for (int i = end - 1; i > start; i--) {
-    		if (isWhitespace(i)) {
+    		if (isWhitespaceOrHyphen(i)) {
     			return i;
     		}
     	}
@@ -78,11 +80,7 @@ public class HyphenatedLineBreakMeasurerer {
     }
     
     private boolean isBreakAtWhitespace() {
-    	return isWhitespace(end - 1) && !isWhitespace(end);
-    }
-    
-    private boolean hasMoreText() {
-    	return end <= last;
+    	return end > last || isWhitespaceOrHyphen(end - 1) || isWhitespace(end);
     }
     
     public boolean hasNext() {
@@ -104,18 +102,15 @@ public class HyphenatedLineBreakMeasurerer {
     		end = nextBreak - 1;
     	}
     	else {
-    		// No hard break in this line
-    		if (hasMoreText()) {
-    			if (!isBreakAtWhitespace()) {
-    				int i = lastWhitespace();
-		    		if (i != -1) {
-		    			end = i;
-		    		}
-		    		else {
-		    			breakAtSoftHyphen(wrappingWidth);
-		    		}
-    			}
-    		}
+			if (!isBreakAtWhitespace()) {
+				int i = lastWhitespace();
+	    		if (i != -1) {
+	    			end = i + 1;
+	    		}
+	    		else {
+	    			breakAtSoftHyphen(wrappingWidth);
+	    		}
+			}
     	}
     	return measurer.getLayout(start, end);
     }
