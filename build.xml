@@ -27,6 +27,13 @@
 		</ivy:buildlist>
 		<subant target="resolve" buildpathref="resolved-build.files" />
 	</target>
+	
+	<target name="retrieve-sources" depends="-configure-ivy">
+		<ivy:buildlist reference="resolved-build.files">
+			<fileset refid="module-build.files" />
+		</ivy:buildlist>
+		<subant target="retrieve-sources" buildpathref="resolved-build.files" />
+	</target>
 
 	<target name="jar" depends="-configure-ivy">
 		<ivy:buildlist reference="resolved-build.files">

@@ -100,6 +100,12 @@
 		<ivy:resolve conf="${resolve.conf}" showprogress="false" />
 		<ivy:retrieve pattern="${lib.dir}/[artifact].[ext]" />
 	</target>
+	
+	<target name="retrieve-sources" depends="-init-module">
+		<echo message="Retrieving sources" />
+		<ivy:resolve conf="src" showprogress="false" />
+		<ivy:retrieve pattern="${lib.dir}/[artifact].[ext]" />
+	</target>
 
 	<target name="report" depends="resolve">
 		<ivy:report todir="${build.dir}/reports" graph="false" conf="runtime" />
