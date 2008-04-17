@@ -220,7 +220,6 @@ public class ImageGenerator implements InitializingBean {
 	}
 	
 	public BufferedImage generate(String text, int maxWidth, String color) {
-		text = text.replace('\u00AD', '\t');
 		if (this.maxWidth != null) {
 			maxWidth = this.maxWidth.intValue();
 		}
@@ -277,46 +276,25 @@ public class ImageGenerator implements InitializingBean {
 				? ColorUtils.parseColor(color)
 				: this.color;
 				
-		FlatMap attrs = new FlatMap();
-		attrs.put(TextAttribute.FOREGROUND, fg);
-		
 		Font font = this.font.deriveFont(fontSize);
-		attrs.put(TextAttribute.FONT, font);
-		AttributedString as = new AttributedString(text, attrs);
-
+		
 		Graphics2D graphics = createGraphics(image);
-		graphics.setFont(font);
-		graphics.setColor(fg);
-        FontRenderContext fc = graphics.getFontRenderContext();
+		FontRenderContext fc = graphics.getFontRenderContext();
 
-        AttributedCharacterIterator it = as.getIterator();
-	    LineBreakMeasurer measurer = new LineBreakMeasurer(it, fc);
+        HyphenatedLineBreakMeasurerer measurer = new HyphenatedLineBreakMeasurerer(text, font, fg, fc);
 	    int y = paddingTop;
 	    int maxX = 0;
-	    while (measurer.getPosition() < it.getEndIndex()) {
-	    	TextLayout layout;
-	    	int nextBreak = text.indexOf('\n', measurer.getPosition() + 1); 
-	    	if (nextBreak != -1) {
-	    		layout = measurer.nextLayout(maxWidth, nextBreak, false);
-	    	}
-	    	else {
-	    		layout = measurer.nextLayout(maxWidth);
-	    	}
+	    while (measurer.hasNext()) {
+	    	TextLayout layout = measurer.nextLayout(maxWidth);
 			y += layout.getAscent();
 			int x = paddingLeft + (int) layout.getVisibleAdvance();
 			if (draw) {
 				layout.draw(graphics, paddingLeft, y);
 			}
-			if (text.charAt(measurer.getPosition() - 1) == '\t') {
-				if (draw) {
-					graphics.drawString("-", x, y);
-				}
-				x += font.getStringBounds("-", fc).getWidth();
-			}
 			y += layout.getDescent();
 			maxX = Math.max(maxX, x + paddingRight);
 			y += layout.getLeading();
-			if (measurer.getPosition() < it.getEndIndex()) {
+			if (measurer.hasNext()) {
 				y += lineSpacing;
 			}
 	    }
