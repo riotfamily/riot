@@ -28,6 +28,8 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.collection.TypeDifferenceComparator;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.riot.security.auth.RiotUser;
@@ -48,6 +50,8 @@ import org.springframework.util.StringUtils;
  */
 public class ReflectionPolicy implements AuthorizationPolicy {
 
+	private static final Log log = LogFactory.getLog(ReflectionPolicy.class);
+	
 	private Object delegate = this;
 	
 	private Map methods = new HashMap();
@@ -69,9 +73,10 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 	
 	public int checkPermission(RiotUser user, String action, Object object) {
 		Method method = getMethod(action, object);
-		if (method != null) {
+		if (method != null) {			
 			Object[] args = new Object[] {user, object};
-			ReflectionUtils.invokeMethod(method, delegate, args);
+			Integer result = (Integer)ReflectionUtils.invokeMethod(method, delegate, args);
+			return result.intValue();
 		}
 		return ACCESS_ABSTAIN;
 	}
@@ -79,36 +84,43 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 	private Method getMethod(String action, Object object) {
 		ActionAndClass aac = new ActionAndClass(action, object);
 		Method method = (Method) methods.get(aac);
-		if (aac == null) {
+		if (method == null) {
 			if (!methods.containsKey(aac)) {
 				method = findMethod(aac);
 				methods.put(aac, method);
-			}
+			}			
 		}
 		return method;
 	}
 	
 	private Method findMethod(ActionAndClass aac) {
+		Method bestMatch = null;
 		if (aac.clazz != null) {
-			Method bestMatch = null;
 			int smallestDiff = Integer.MAX_VALUE;
 			Method[] methods = delegate.getClass().getMethods();
 			for (int i = 0; i < methods.length; i++) {
 				Method method = methods[i];
 				if (signatureMatches(method, aac.action, aac.clazz)) {
 					Class type = method.getParameterTypes()[1];
-					int diff = TypeDifferenceComparator.getTypeDifference(aac.clazz, type);
+					int diff = TypeDifferenceComparator.getTypeDifference(type, aac.clazz);
 					if (diff < smallestDiff) {
 						smallestDiff = diff;
 						bestMatch = method;
 					}
 				}
 			}
-			if (bestMatch != null) {
-				return bestMatch;
-			}	
 		}
-		return findSingleParamMethod(aac.action);
+		if (bestMatch == null) {
+			bestMatch = findSingleParamMethod(aac.action);
+		}
+		if (bestMatch != null) {
+			log.info("Using " + bestMatch + " for " + aac);
+		}
+		else {
+			log.warn("No method found for " + aac);
+		}
+		return bestMatch;
+		
 	}
 	
 	
@@ -134,7 +146,7 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 			}
 		}
 		return null;
-	}
+	}	
 	
 	private static class ActionAndClass {
 		
@@ -146,9 +158,18 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 			this.action = StringUtils.uncapitalize(FormatUtils.xmlToCamelCase(action));
 			this.clazz = obj != null ? ClassUtils.getUserClass(obj) : null;
 		}
+
+		public String toString() {
+			StringBuffer sb = new StringBuffer(action);
+			if (clazz != null) {
+				sb.append(' ');
+				sb.append(clazz.getName());
+			}
+			return sb.toString();
+		}
 		
 		public int hashCode() {
-			return (action + clazz).hashCode();
+			return toString().hashCode();
 		}
 		
 		public boolean equals(Object obj) {
