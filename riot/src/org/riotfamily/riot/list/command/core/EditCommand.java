@@ -25,6 +25,8 @@ package org.riotfamily.riot.list.command.core;
 
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.FormDefinition;
+import org.riotfamily.riot.editor.IntermediateDefinition;
+import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.ObjectEditorDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
@@ -55,8 +57,16 @@ public class EditCommand extends AbstractCommand {
 	public CommandResult execute(CommandContext context) {
 		EditorDefinition def = context.getListDefinition().getDisplayDefinition();
 		Assert.notNull(def, "A DisplayDefinition must be set in order to use the EditCommand.");
-		return new GotoUrlResult(context, def.getEditorUrl(
-				context.getObjectId(), context.getParentId(), 
-				context.getParentEditorId()));
+		
+		String editorUrl;
+		if (def instanceof IntermediateDefinition) {
+			ListDefinition listDef = ((IntermediateDefinition) def).getNestedListDefinition();
+			editorUrl = listDef.getEditorUrl(null, context.getObjectId(), context.getListDefinition().getId());
+		}
+		else {
+			editorUrl = def.getEditorUrl(context.getObjectId(), 
+					context.getParentId(), context.getParentEditorId());
+		}
+		return new GotoUrlResult(context, editorUrl);
 	}
 }
