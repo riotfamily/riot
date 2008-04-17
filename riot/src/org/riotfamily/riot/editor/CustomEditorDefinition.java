@@ -24,6 +24,7 @@
 package org.riotfamily.riot.editor;
 
 import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.editor.ui.CustomEditorController;
 import org.riotfamily.riot.editor.ui.EditorReference;
 
@@ -60,6 +61,9 @@ public class CustomEditorDefinition extends AbstractObjectEditorDefinition {
 	public String getTargetUrl(String objectId, String parentId, 
 			String parentEditorId) {
 		
+		if (objectId != null) {
+			return ServletUtils.addParameter(url, "objectId", objectId);
+		}
 		return url;
 	}
 
