@@ -111,6 +111,10 @@
 		<property name="handlerUrlResolver" ref="handlerUrlResolver" />
 	</bean>
 	
+	<bean id="riotHyphenator" class="org.riotfamily.website.hyphenate.RiotHyphenator">
+ 		<property name="baseDir" value="/WEB-INF/hyphenation" />
+ 	</bean>
+	
 	<bean id="riotMacroHelper" class="org.riotfamily.riot.runtime.macro.RiotMacroHelperFactory">
 		<constructor-arg ref="riotRuntime" />
 	</bean>

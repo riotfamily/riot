@@ -42,5 +42,6 @@
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
 	<classpathentry kind="lib" path="lib/yuicompressor.jar"/>
+	<classpathentry kind="lib" path="lib/texhyphj.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
