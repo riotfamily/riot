@@ -5,6 +5,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title></title>
+		<#list customStyleSheets as item>
+			<@riot.stylesheet href=item />
+		</#list>
 		<@riot.stylesheet href="style/form.css" />
 		<@riot.stylesheet href="style/form-custom.css" />
 		<@riot.stylesheet href="style/component-form.css" />
