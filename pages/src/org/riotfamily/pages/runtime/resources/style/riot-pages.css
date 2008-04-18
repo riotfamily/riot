@@ -52,27 +52,27 @@ table.pages tr.hidden-page td {
 .pagePropertyInherit .box-title label {
 	background-color: #a4a4a4;
 }
-.pageProperty .button-toggle {
+.pageProperty input.button-toggle {
 	height: 19px;
 	position: absolute;
 	margin-top: 17px;	
 	left: 4px;
 }
-.pageProperty .box-title .button-toggle {
+.pageProperty .box-title input.button-toggle {
 	margin-top: 0;
 	left: 1px;
 }
-.nestedForm .pageProperty .button-overwrite {
+.pageProperty input.button-overwrite {
 	background-image: url(icons/edit_small.gif);
 }
-.nestedForm .pageProperty .button-inherit {
+.pageProperty input.button-inherit {
 	background-image: url(icons/remove_small.gif);
 }
-.nestedForm .pageProperty .box-title .button-overwrite {
+.pageProperty .box-title input.button-overwrite {
 	background-image: url(icons/edit_invert_small.gif);
 	background-color: ${highlight};
 }
-.nestedForm .pageProperty .box-title .button-inherit {
+.pageProperty .box-title input.button-inherit {
 	background-image: url(icons/remove_invert_small.gif);
 	background-color: ${highlight};
 }
