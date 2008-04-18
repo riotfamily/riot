@@ -220,8 +220,11 @@ public abstract class AbstractObjectEditorDefinition
 	public String getEditorUrl(String objectId, String parentId, 
 			String parentEditorId) {
 		
-		return getEditorRepository().getRiotServletPrefix() 
-				+ getEditorUrlWithinServlet(objectId, parentId, parentEditorId);
+		String url = getEditorUrlWithinServlet(objectId, parentId, parentEditorId);
+		if (url != null) {
+			return getEditorRepository().getRiotServletPrefix() + url;
+		}
+		return null;
 	}
 	
 	protected final String getEditorUrlWithinServlet(

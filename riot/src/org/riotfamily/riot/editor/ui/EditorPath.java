@@ -64,7 +64,7 @@ public class EditorPath {
 	}
 
 	public void addComponent(EditorReference reference) {
-		if (components.isEmpty()) {
+		if (components.isEmpty() || reference.getEditorUrl() == null) {
 			reference.setEnabled(false);
 		}
 		components.addFirst(reference);
