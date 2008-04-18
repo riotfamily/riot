@@ -25,42 +25,37 @@ package org.riotfamily.pages.riot.form;
 
 import java.util.Iterator;
 
-import org.riotfamily.components.riot.form.ContentContainerEditorBinder;
+import org.riotfamily.components.riot.form.ContentEditorBinder;
 import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.element.NestedForm;
-import org.riotfamily.forms.event.ChangeEvent;
-import org.riotfamily.forms.event.ChangeListener;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.FormRepository;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class PagePropertiesEditor extends CompositeElement 
-		implements Editor, ChangeListener {
+public class SitePropertiesEditor extends CompositeElement 
+		implements Editor {
 
 	private FormRepository repository;
 	
-	private Page masterPage;
-	
-	private NestedForm currentForm;
-	
-	private Object initialValue;
+	private Site masterSite;
 	
 	private LocalizedEditorBinder binder;
 	
-	public PagePropertiesEditor(FormRepository repository, Page masterPage, 
-			String handlerName) {
-		
+	private PropertiesForm propertiesForm;
+	
+	public SitePropertiesEditor(FormRepository repository, Site masterSite) {
 		this.repository = repository;
-		this.masterPage = masterPage;
-		this.binder = new LocalizedEditorBinder(new ContentContainerEditorBinder());
-		this.currentForm = new PropertiesForm(handlerName);
-		addComponent(currentForm);
+		this.masterSite = masterSite;
+		this.binder = new LocalizedEditorBinder(new ContentEditorBinder());
+		
+		propertiesForm = new PropertiesForm();
+		addComponent(propertiesForm);
 		setSurroundByDiv(true);
 	}
 	
@@ -69,37 +64,25 @@ public class PagePropertiesEditor extends CompositeElement
 	}
 	
 	public Object getValue() {
-		return currentForm.getValue();
+		return propertiesForm.getValue();
 	}
 
 	public void setValue(Object value) {
-		initialValue = value;
-		currentForm.setValue(value);
-	}
-
-	public void valueChanged(ChangeEvent event) {
-		String handlerName = (String) event.getNewValue();
-		removeComponent(currentForm);
-		currentForm = new PropertiesForm(handlerName); 
-		addComponent(currentForm);
-		currentForm.setValue(initialValue);
-		getFormListener().elementChanged(this);
+		propertiesForm.setValue(value);
 	}
 	
 	private class PropertiesForm extends NestedForm {
 		
-		public PropertiesForm(String handlerName) {
-			String id = handlerName + "-page";
+		public PropertiesForm() {
+			String id = "sites-Properties";
 			setRequired(true);
 			setIndent(false);
 			setEditorBinder(binder);
 			setStyleClass(id);
 			
-			addPagePropertyElements("all-pages");
-			addPagePropertyElements(id);
-			
-			if (masterPage == null) {
-				addPagePropertyElements("master-" + id);
+			addPagePropertyElements("all-sites");
+			if (masterSite == null) {
+				addPagePropertyElements("master-sites");
 			}
 		}
 		
@@ -109,7 +92,7 @@ public class PagePropertiesEditor extends CompositeElement
 				Iterator it = factory.getChildFactories().iterator();
 				while (it.hasNext()) {
 					ElementFactory ef = (ElementFactory) it.next();
-					addElement(new PagePropertyElement(ef, binder, masterPage));
+					addElement(new SitePropertyElement(ef, binder, masterSite));
 				}
 			}
 		}

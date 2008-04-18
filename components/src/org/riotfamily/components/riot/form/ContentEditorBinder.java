@@ -21,36 +21,48 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.riot.form;
+package org.riotfamily.components.riot.form;
 
-import java.util.Map;
-
-import org.riotfamily.components.model.wrapper.ValueWrapper;
-import org.riotfamily.forms.ElementFactory;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.components.model.Content;
+import org.riotfamily.forms.AbstractEditorBinder;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class PagePropertyElement extends AbstractLocalizedElement {
+public class ContentEditorBinder extends AbstractEditorBinder {
 
-	private Page masterPage;
+	private Content content;
 	
-	public PagePropertyElement(ElementFactory elementFactory,
-			LocalizedEditorBinder binder, Page masterPage) {
+	public boolean isEditingExistingBean() {
+		return true;
+	}
+
+	public void setBackingObject(Object backingObject) {
+		content = (Content) backingObject;
+		if (content == null) {
+			content = new Content();
+		}
+	}
 		
-		super(elementFactory, binder);
-		this.masterPage = masterPage;
+	public Object getBackingObject() {
+		return content;
 	}
 
-	protected boolean isLocalized() {
-		return masterPage != null;
+	public Class getBeanClass() {
+		return content.getClass();
 	}
 	
-	protected ValueWrapper getMasterValue(String property) {
-		Map properties = masterPage.getContentContainer().getLatestVersion().getWrappers();
-		return (ValueWrapper) properties.get(property);
+	public Class getPropertyType(String path) {
+		return Object.class;
 	}
-	
+
+	public Object getPropertyValue(String property) {
+		return content.getValue(property);
+	}
+
+	public void setPropertyValue(String property, Object value) {
+		content.setValue(property, value);
+	}
+
 }

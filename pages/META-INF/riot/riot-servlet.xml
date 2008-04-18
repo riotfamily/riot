@@ -28,8 +28,19 @@
 		<constructor-arg ref="contentFormRepository" />
 	</bean>
 
+	<bean id="sitePropertiesFormInitializer" class="org.riotfamily.pages.riot.form.SiteFormInitializer">
+		<constructor-arg ref="contentFormRepository" />
+	</bean>
+
 	<!-- Overrides -->
 
+	<override:bean ref="componentFormController" class="org.riotfamily.pages.riot.form.PagePropertiesFormController">
+		<constructor-arg ref="contentFormRepository" />
+		<constructor-arg ref="transactionManager" />
+		<constructor-arg ref="componentDao" />
+		<property name="formContextFactory" ref="formContextFactory" />
+	</override:bean>
+	
 	<override:add ref="messageBasenames">
 		<value>classpath:/org/riotfamily/pages/runtime/i18n/messages</value>
 	</override:add>

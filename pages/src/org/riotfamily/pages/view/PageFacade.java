@@ -214,7 +214,7 @@ public class PageFacade {
 
 	public Map getProperties() {
 		if (properties == null) {
-			properties = page.getProperties(preview);
+			properties = page.getPropertiesMap(preview);
 		}
 		return properties;
 	}
@@ -227,7 +227,7 @@ public class PageFacade {
 	}
 	
 	public Map getLocal() {
-		return page.getLocalProperties(preview);
+		return page.getLocalPropertiesMap(preview);
 	}
 
 	public String getTitle() {

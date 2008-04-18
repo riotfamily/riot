@@ -1,6 +1,7 @@
 package org.riotfamily.pages.view;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,8 @@ public class SiteFacade {
 	private Site site;
 
 	private HttpServletRequest request;
+	
+	private Map properties = null;
 	
 	public SiteFacade(Site site, HttpServletRequest request) {
 		this.site = site;
@@ -71,6 +74,20 @@ public class SiteFacade {
 
 	public boolean isEnabled() {
 		return site.isEnabled();
+	}
+	
+	public Map getProperties() {
+		if (properties == null) {
+			properties = site.getPropertiesMap();
+		}
+		return properties;
+	}
+	
+	/**
+	 * @see http://freemarker.org/docs/api/freemarker/ext/beans/BeanModel.html#get(java.lang.String)
+	 */
+	public Object get(String key) {
+		return site.getProperty(key);
 	}
 
 	public String toString() {

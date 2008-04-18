@@ -80,8 +80,13 @@
 			<key column="site" />
 			<element column="hostName" type="string" />
 		</set>
+		<many-to-one name="properties" cascade="all" unique="true" />
 		<filter name="liveMode" condition="enabled = :published"/>
 	</class>
+	
+	<subclass name="PageProperties" extends="org.riotfamily.components.model.ContentContainer" discriminator-value="PageProperties">
+		<one-to-one name="page" class="Page" property-ref="contentContainer" />
+	</subclass>
 	
 	<subclass name="org.riotfamily.pages.model.wrapper.PageWrapper" 
 		extends="org.riotfamily.components.model.wrapper.ValueWrapper"

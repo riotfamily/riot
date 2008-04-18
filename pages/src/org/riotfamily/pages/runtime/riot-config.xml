@@ -29,6 +29,7 @@
 	
 	<ed:list id="manageSites" list-ref="sites" icon="world">
 		<ed:form form-ref="site">
+			<ed:form form-ref="siteProperties" />
 		</ed:form>
 	</ed:list>
 
@@ -109,10 +110,14 @@
 			<form:textfield />
 		</form:list>
 	</form:form>
+	
+	<form:form id="siteProperties" bean-class="org.riotfamily.pages.model.Site"
+			initializer="sitePropertiesFormInitializer">
+	</form:form>
 
 	<form:form id="page" bean-class="org.riotfamily.pages.model.Page"
 			initializer="pageFormInitializer">
-		<form:group label-key="page.location">
+		<form:group label-key="page.preferences">
 			<form:textfield bind="pathComponent" required="true" regex="([A-Za-z0-9_.,*@{}-]*)" />
 			<form:checkbox bind="folder" />
 		</form:group>

@@ -23,10 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.model;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.components.model.Content;
+import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -57,6 +62,8 @@ public class Site {
 	private long position;
 	
 	private Set aliases;
+	
+	private Content properties;
 	
 	public boolean isEnabled() {
 		return this.enabled;
@@ -216,6 +223,46 @@ public class Site {
 
 	public void setAliases(Set aliases) {
 		this.aliases = aliases;
+	}
+	
+	public Content getProperties() {
+		return properties;
+	}
+
+	public void setProperties(Content properties) {
+		this.properties = properties;
+	}
+
+	public Object getProperty(String key) {
+		Object value = null;
+		if (properties != null) {
+			ValueWrapper wrapper = properties.getWrapper(key);
+			if (wrapper != null) {
+				value = wrapper.unwrap();
+			}
+		}
+		if (value == null && masterSite != null) {
+			value = masterSite.getProperty(key);
+		}
+		return value;
+	}
+	
+	public Map getLocalPropertiesMap() {
+		return properties != null 
+				? properties.unwrapValues() 
+				: Collections.EMPTY_MAP;
+	}
+	
+	public Map getPropertiesMap() {
+		Map mergedProperties;
+		if (masterSite != null) {
+			mergedProperties = masterSite.getPropertiesMap();
+		}
+		else {
+			mergedProperties = new HashMap();
+		}
+		mergedProperties.putAll(getLocalPropertiesMap());
+		return mergedProperties;
 	}
 	
 	/**

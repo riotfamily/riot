@@ -23,34 +23,29 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
-import java.util.Map;
-
-import org.riotfamily.components.model.wrapper.ValueWrapper;
-import org.riotfamily.forms.ElementFactory;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.forms.Form;
+import org.riotfamily.forms.FormInitializer;
+import org.riotfamily.forms.factory.FormRepository;
+import org.riotfamily.pages.model.Site;
 
 /**
+ * FormInitializer that imports form fields defined in content-forms.xml.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class PagePropertyElement extends AbstractLocalizedElement {
+public class SiteFormInitializer implements FormInitializer {
 
-	private Page masterPage;
-	
-	public PagePropertyElement(ElementFactory elementFactory,
-			LocalizedEditorBinder binder, Page masterPage) {
-		
-		super(elementFactory, binder);
-		this.masterPage = masterPage;
+	private FormRepository repository;
+
+	public SiteFormInitializer(FormRepository repository) {
+		this.repository = repository;
 	}
 
-	protected boolean isLocalized() {
-		return masterPage != null;
+	public void initForm(Form form) {
+		Site site = (Site) form.getBackingObject();
+		SitePropertiesEditor spe = new SitePropertiesEditor(repository, site.getMasterSite());
+		form.addElement(spe, "properties");
 	}
-	
-	protected ValueWrapper getMasterValue(String property) {
-		Map properties = masterPage.getContentContainer().getLatestVersion().getWrappers();
-		return (ValueWrapper) properties.get(property);
-	}
-	
+
 }

@@ -34,6 +34,11 @@ import org.riotfamily.pages.setup.HandlerNameHierarchy;
 import org.riotfamily.riot.form.ui.FormUtils;
 
 /**
+ * FormInitializer that imports form fields defined in content-forms.xml.
+ * If a new page is edited, the {@link HandlerNameHierarchy} is asked for
+ * possible handler-names. If more than one handler-name is configured, a
+ * dropdown is added that lets the user select a page-type.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.6
  */

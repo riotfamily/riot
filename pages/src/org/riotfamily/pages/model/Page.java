@@ -75,7 +75,7 @@ public class Page {
 
 	private Date creationDate;
 
-	private ContentContainer contentContainer;
+	private PageProperties contentContainer;
 	
 	public Page() {
 	}
@@ -274,14 +274,14 @@ public class Page {
 
 	public ContentContainer getContentContainer() {
 		if (contentContainer == null) {
-			contentContainer = new ContentContainer();
+			contentContainer = new PageProperties();
 			Content version = new Content();
 			contentContainer.setLiveVersion(version);
 		}
 		return contentContainer;
 	}
 
-	public void setContentContainer(ContentContainer contentContainer) {
+	public void setContentContainer(PageProperties contentContainer) {
 		this.contentContainer = contentContainer;
 	}
 
@@ -300,20 +300,20 @@ public class Page {
 		return masterPage;
 	}
 	
-	public Map getProperties(boolean preview) {
+	public Map getPropertiesMap(boolean preview) {
 		Map mergedProperties;
 		Page masterPage = getMasterPage();
 		if (masterPage != null) {
-			mergedProperties = masterPage.getProperties(preview);
+			mergedProperties = masterPage.getPropertiesMap(preview);
 		}
 		else {
 			mergedProperties = new HashMap();
 		}
-		mergedProperties.putAll(getLocalProperties(preview));
+		mergedProperties.putAll(getLocalPropertiesMap(preview));
 		return mergedProperties;
 	}
 	
-	public Map getLocalProperties(boolean preview) {
+	public Map getLocalPropertiesMap(boolean preview) {
 		Content content = getContent(preview);
 		return content != null 
 				? content.unwrapValues() 

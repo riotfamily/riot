@@ -27,30 +27,33 @@ import java.util.Map;
 
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.forms.ElementFactory;
-import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class PagePropertyElement extends AbstractLocalizedElement {
+public class SitePropertyElement extends AbstractLocalizedElement {
 
-	private Page masterPage;
+	private Site masterSite;
 	
-	public PagePropertyElement(ElementFactory elementFactory,
-			LocalizedEditorBinder binder, Page masterPage) {
+	public SitePropertyElement(ElementFactory elementFactory,
+			LocalizedEditorBinder binder, Site masterSite) {
 		
 		super(elementFactory, binder);
-		this.masterPage = masterPage;
+		this.masterSite = masterSite;
 	}
 
 	protected boolean isLocalized() {
-		return masterPage != null;
+		return masterSite != null;
 	}
 	
 	protected ValueWrapper getMasterValue(String property) {
-		Map properties = masterPage.getContentContainer().getLatestVersion().getWrappers();
-		return (ValueWrapper) properties.get(property);
+		if (masterSite.getProperties() != null) {
+			Map properties = masterSite.getProperties().getWrappers();
+			return (ValueWrapper) properties.get(property);
+		}
+		return null;
 	}
 	
 }
