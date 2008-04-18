@@ -356,7 +356,7 @@
 
 	<xsd:element name="form">
 		<xsd:complexType>
-			<xsd:group ref="elements" maxOccurs="unbounded" />
+			<xsd:group ref="elements" minOccurs="0" maxOccurs="unbounded" />
 			<xsd:attribute name="id" type="xsd:string" use="required" />
 			<xsd:attribute name="bean-class" type="xsd:string" />
 			<xsd:attribute name="initializer" type="xsd:string" />
