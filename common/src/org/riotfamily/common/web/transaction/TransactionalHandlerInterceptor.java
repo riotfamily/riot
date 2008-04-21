@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
@@ -99,18 +100,29 @@ public class TransactionalHandlerInterceptor implements HandlerInterceptor {
 			try {
 				transactionManager.commit(status);
 			}
-			catch (TransactionException tx) {
-				if (handler instanceof TransactionExceptionHandler) {
-					ModelAndView mv = ((TransactionExceptionHandler) handler)
-							.commitFailed(tx, modelAndView, request, response);
-					
-					if (mv != null) {
-						throw new ModelAndViewDefiningException(mv);
-					}
-				}
-				throw tx;
+			catch (TransactionException ex) {
+				handleCommitException(request, response, handler, modelAndView, ex);
+			}
+			catch (DataAccessException ex) {
+				handleCommitException(request, response, handler, modelAndView, ex);
 			}
 		}
+	}
+	
+	private void handleCommitException(HttpServletRequest request, 
+			HttpServletResponse response, Object handler,
+			ModelAndView modelAndView, Exception ex)
+			throws Exception {
+		
+		if (handler instanceof TransactionExceptionHandler) {
+			ModelAndView mv = ((TransactionExceptionHandler) handler)
+					.commitFailed(ex, modelAndView, request, response);
+			
+			if (mv != null) {
+				throw new ModelAndViewDefiningException(mv);
+			}
+		}
+		throw ex;
 	}
 	
 	public void afterCompletion(HttpServletRequest request, 

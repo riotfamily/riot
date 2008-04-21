@@ -16,10 +16,9 @@ import org.springframework.web.servlet.ModelAndView;
 public interface TransactionExceptionHandler extends TransactionalHandler {
 
 	/**
-	 * Invoked by the {@link TransactionalHandlerInterceptor} when a 
-	 * {@link TransactionException} occurs during commit. Implementors may
-	 * return a ModelAndView or <code>null</code> in which case the exception
-	 * is re-thrown.
+	 * Invoked by the {@link TransactionalHandlerInterceptor} when an 
+	 * Exception occurs during commit. Implementors may return a ModelAndView 
+	 * or <code>null</code> in which case the exception is re-thrown.
 	 * 
 	 * @param ex The exception thrown by the PlatformTransactionManager
 	 * @param modelAndView The original ModelAndView
@@ -27,9 +26,8 @@ public interface TransactionExceptionHandler extends TransactionalHandler {
 	 * @param response The response
 	 * @return A ModelAndView or <code>null</code>
 	 */
-	public ModelAndView commitFailed(TransactionException ex,
-			ModelAndView modelAndView, HttpServletRequest request, 
-			HttpServletResponse response);
+	public ModelAndView commitFailed(Exception ex, ModelAndView modelAndView, 
+			HttpServletRequest request, HttpServletResponse response);
 	
 	/**
 	 * Invoked by the {@link TransactionalHandlerInterceptor} when a 
