@@ -38,7 +38,6 @@ import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.components.model.Content;
-import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.beans.BeanWrapperImpl;
@@ -272,7 +271,7 @@ public class Page {
 		return node.getHandlerName();
 	}
 
-	public ContentContainer getContentContainer() {
+	public PageProperties getContentContainer() {
 		if (contentContainer == null) {
 			contentContainer = new PageProperties();
 			Content version = new Content();
