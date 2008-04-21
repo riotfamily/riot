@@ -99,7 +99,13 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 	 */
 	public String getStyleClass() {
 		String styleClass = super.getStyleClass();
-		return styleClass != null ? styleClass : type;
+		if (styleClass == null) {
+			styleClass = type;
+		}
+		if (!isEnabled()) {
+			styleClass += " disabled";
+		}
+		return styleClass; 
 	}
 
 	public Integer getMaxLength() {

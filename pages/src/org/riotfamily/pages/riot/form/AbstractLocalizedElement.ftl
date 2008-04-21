@@ -12,7 +12,7 @@
 						<span class="no-label"></span>
 					</#if>
 					<#if editor.hint?exists>
-						<span class="hint-trigger" onclick="toggleHint('${editor.id}-hint')"></span>
+						<span class="hint-trigger" onclick="toggleHint('${editor.id}-hint')">&nbsp;</span>
 					</#if>
 				</label>
 			</div>
@@ -23,7 +23,7 @@
 			<label for="${editor.id}">
 				${editor.label}<#if element.required>* </#if>
 				<#if element.hint?exists>
-					<span class="hint-trigger" onclick="toggleHint('${editor.id}-hint')"></span>
+					<span class="hint-trigger" onclick="toggleHint('${editor.id}-hint')">&nbsp;</span>
 				</#if>
 			</label>
 		</#if>

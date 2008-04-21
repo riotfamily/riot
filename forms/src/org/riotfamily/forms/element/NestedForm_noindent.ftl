@@ -11,7 +11,7 @@
 							<span class="no-label"></span>
 						</#if>
 						<#if element.hint?exists>
-							<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')"></span>
+							<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')">&nbsp;</span>
 						</#if>
 					</label>
 				</div>
@@ -19,7 +19,7 @@
 				<label for="${element.id}">
 					${element.label}<#if element.required>* </#if>
 					<#if element.hint?exists>
-						<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')"></span>
+						<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')">&nbsp;</span>
 					</#if>
 				</label>
 			</#if>

@@ -48,15 +48,17 @@ table.pages tr.hidden-page td {
 	background: url(icons/commands/publish_state.gif) 2px 0px no-repeat;
 }
 
-
+.pageProperty {
+	position: relative;
+}
 .pagePropertyInherit .box-title label {
 	background-color: #a4a4a4;
 }
 .pageProperty input.button-toggle {
 	height: 19px;
 	position: absolute;
-	margin-top: 17px;	
-	left: 4px;
+	top: 17px;	
+	left: -34px;
 }
 .pageProperty .box-title input.button-toggle {
 	margin-top: 0;

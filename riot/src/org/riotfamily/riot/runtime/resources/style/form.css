@@ -131,13 +131,12 @@ textarea, input.text, input.number, input.password {
 	display: block;
 	padding: 4px 0;
 }
+textarea.disabled, input.disabled, select.disabled {
+	background-color: ButtonFace;
+}
+
 textarea, input.text, input.password {
 	width: 100%;
-}
-input.text, input.number, input.password {
-	line-height: 16px;
-	_height: 16px;
-	_overflow: visible;
 }
 
 span.read-only {

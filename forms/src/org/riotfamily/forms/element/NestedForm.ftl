@@ -12,7 +12,7 @@
 		    		<label for="${element.id}" class="field<#if element.form.errors.hasErrors(element)> error</#if>">
 						${element.label?if_exists}<#if element.required>* </#if>
 						<#if element.hint?exists>
-							<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')"></span>
+							<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')">i</span>
 						</#if>
 					</label> 
 				</div>
