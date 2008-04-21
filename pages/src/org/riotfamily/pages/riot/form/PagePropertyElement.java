@@ -49,7 +49,7 @@ public class PagePropertyElement extends AbstractLocalizedElement {
 	}
 	
 	protected ValueWrapper getMasterValue(String property) {
-		Map properties = masterPage.getContentContainer().getLatestVersion().getWrappers();
+		Map properties = masterPage.getPageProperties().getLatestVersion().getWrappers();
 		return (ValueWrapper) properties.get(property);
 	}
 	

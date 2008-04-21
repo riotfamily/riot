@@ -207,7 +207,7 @@ public class PageFacade {
 	}
 		
 	public ContentContainer getContentContainer() {
-		ContentContainer container = page.getContentContainer(); 
+		ContentContainer container = page.getPageProperties(); 
 		ComponentCacheUtils.addContainerTags(request, container, preview);
 		return container;
 	}

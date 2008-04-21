@@ -74,7 +74,7 @@ public class Page {
 
 	private Date creationDate;
 
-	private PageProperties contentContainer;
+	private PageProperties pageProperties;
 	
 	public Page() {
 	}
@@ -271,22 +271,22 @@ public class Page {
 		return node.getHandlerName();
 	}
 
-	public PageProperties getContentContainer() {
-		if (contentContainer == null) {
-			contentContainer = new PageProperties();
+	public PageProperties getPageProperties() {
+		if (pageProperties == null) {
+			pageProperties = new PageProperties();
 			Content version = new Content();
-			contentContainer.setLiveVersion(version);
+			pageProperties.setLiveVersion(version);
 		}
-		return contentContainer;
+		return pageProperties;
 	}
 
-	public void setContentContainer(PageProperties contentContainer) {
-		this.contentContainer = contentContainer;
+	public void setPageProperties(PageProperties contentContainer) {
+		this.pageProperties = contentContainer;
 	}
 
 	public Content getContent(boolean preview) {
-		return preview ? getContentContainer().getLatestVersion()
-				: getContentContainer().getLiveVersion();
+		return preview ? getPageProperties().getLatestVersion()
+				: getPageProperties().getLiveVersion();
 	}
 	
 	public Page getMasterPage() {
@@ -345,7 +345,7 @@ public class Page {
 	}
 	
 	public boolean isDirty() {
-		return getContentContainer().isDirty();
+		return getPageProperties().isDirty();
 	}
 
 	public boolean isPublished() {

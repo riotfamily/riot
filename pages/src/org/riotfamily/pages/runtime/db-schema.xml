@@ -21,12 +21,16 @@
 				<db:column name="pathPrefix" type="VARCHAR" length="255" />
 				<db:column name="masterSite" type="BIGINT" />
 				<db:column name="pos" type="BIGINT" />
+				<db:column name="properties" type="BIGINT" />
 			</db:create-table>
 			
 			<db:add-unique-constraint name="riot_site_name" table="riot_sites" on="name" />
 			
 			<db:add-foreign-key table="riot_sites" name="riot_site_master" references="riot_sites">
 				<db:ref local="masterSite" foreign="id" />
+			</db:add-foreign-key>
+			<db:add-foreign-key table="riot_sites" name="riot_site_properties" references="riot_contents">
+            	<db:ref local="properties" foreign="id" />
 			</db:add-foreign-key>
 			
 			<db:create-table name="riot_site_aliases">

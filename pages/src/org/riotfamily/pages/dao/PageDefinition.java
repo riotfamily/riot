@@ -125,7 +125,7 @@ public class PageDefinition {
 			page.setFolder(folder);
 			page.setCreationDate(new Date());
 			if (site.getMasterSite() == null) {
-				page.getContentContainer().getLiveVersion().wrapValues(properties);
+				page.getPageProperties().getLiveVersion().wrapValues(properties);
 			}
 			node.addPage(page);
 			pageDao.deleteAlias(page);
