@@ -135,8 +135,8 @@ textarea, input.text, input.password {
 	width: 100%;
 }
 input.text, input.number, input.password {
-	height: 16px;
 	line-height: 16px;
+	_height: 16px;
 	_overflow: visible;
 }
 
@@ -147,7 +147,7 @@ span.read-only {
 div.tinymce-disabled {
 	font-family: verdana, arial, sans-serif;
 	font-size: 10px;
-	padding: 4px 0;
+	padding: 24px 0 4px 0;
 	color: #3d3d3d;
 	background-color: ButtonFace;
 	border: 1px solid #e0e0e0;
@@ -495,9 +495,10 @@ ul.radioButtonGroup {
 .hint-trigger {
 	display: inline;
 	padding-left: 12px;
+	height: 12px;
 	cursor: help;
-	margin: 0 2px;
-	background: url(images/hint.gif) 0 2px no-repeat;
+	margin: 0 3px;
+	background: url(images/hint.gif) left center no-repeat;
 }
 .box-title .hint-trigger {
 	background: url(images/hint_inverse.gif) 0 2px no-repeat;
