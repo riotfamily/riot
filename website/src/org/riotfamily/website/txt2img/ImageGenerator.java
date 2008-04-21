@@ -32,16 +32,11 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
-import java.awt.font.LineBreakMeasurer;
-import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.AttributedCharacterIterator;
-import java.text.AttributedString;
 
-import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.image.ImageUtils;
 import org.riotfamily.common.util.ColorUtils;
 import org.riotfamily.common.util.FormatUtils;
