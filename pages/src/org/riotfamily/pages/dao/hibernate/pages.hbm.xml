@@ -85,7 +85,7 @@
 	</class>
 	
 	<subclass name="PageProperties" extends="org.riotfamily.components.model.ContentContainer" discriminator-value="PageProperties">
-		<one-to-one name="page" class="Page" property-ref="contentContainer" />
+		<one-to-one name="page" class="Page" property-ref="pageProperties" />
 	</subclass>
 	
 	<subclass name="org.riotfamily.pages.model.wrapper.PageWrapper" 
