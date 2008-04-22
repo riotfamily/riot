@@ -55,6 +55,9 @@ public class CustomEditorDefinition extends AbstractObjectEditorDefinition {
 
 		EditorReference ref = super.createReference(objectId, messageResolver);
 		ref.setTargetWindow(target);
+		ref.setDescription(messageResolver.getMessage(
+				getMessageKey().append(".description").toString(), null, null));
+		
 		return ref;
 	}
 

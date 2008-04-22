@@ -25,6 +25,7 @@ package org.riotfamily.riot.editor;
 
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.riot.editor.ui.EditorReference;
 
 public class GroupDefinition extends AbstractObjectEditorDefinition {
 
@@ -52,6 +53,16 @@ public class GroupDefinition extends AbstractObjectEditorDefinition {
 					null, defaultLabel);
 		}
 		return super.getLabel(object, messageResolver);
+	}
+	
+	public EditorReference createReference(String objectId,
+			MessageResolver messageResolver) {
+		
+		EditorReference ref = super.createReference(objectId, messageResolver);
+		ref.setDescription(messageResolver.getMessage(
+				getMessageKey().append(".description").toString(), null, null));
+		
+		return ref;
 	}
 	
 	protected String getEditorUrlWithinServlet(String objectId,
