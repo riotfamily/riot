@@ -25,7 +25,6 @@ package org.riotfamily.pages.riot.form;
 
 import java.util.Iterator;
 
-import org.riotfamily.components.riot.form.ContentContainerEditorBinder;
 import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;
@@ -58,7 +57,7 @@ public class PagePropertiesEditor extends CompositeElement
 		
 		this.repository = repository;
 		this.masterPage = masterPage;
-		this.binder = new LocalizedEditorBinder(new ContentContainerEditorBinder());
+		this.binder = new LocalizedEditorBinder(new PagePropertiesEditorBinder());
 		this.currentForm = new PropertiesForm(handlerName);
 		addComponent(currentForm);
 		setSurroundByDiv(true);

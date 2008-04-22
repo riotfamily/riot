@@ -44,7 +44,7 @@ public class ContentContainerEditorBinder extends AbstractEditorBinder {
 	public void setBackingObject(Object backingObject) {
 		container = (ContentContainer) backingObject;
 		if (container == null) {
-			container = new ContentContainer();
+			container = createContainer();
 		}
 		previewVersion = container.getPreviewVersion();
 		if (previewVersion == null) {
@@ -56,6 +56,10 @@ public class ContentContainerEditorBinder extends AbstractEditorBinder {
 				previewVersion = new Content();
 			}
 		}
+	}
+	
+	protected ContentContainer createContainer() {
+		return new ContentContainer();
 	}
 		
 	public Object getBackingObject() {
