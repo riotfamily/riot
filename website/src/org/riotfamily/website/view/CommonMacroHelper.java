@@ -28,6 +28,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -258,6 +259,18 @@ public class CommonMacroHelper {
 		}
 		return groups;
 	}
+
+    /**
+     * Shuffles the given collection
+     * 
+     * @param collection The collection to shuffle
+     * @return The shuffled collection
+     */
+	public List shuffle(Collection collection) {
+		List result = new ArrayList(collection);
+		Collections.shuffle(result);
+		return result;
+	}    
 
 	public String getFileExtension(String filename, Collection validExtensions,
 			String defaultExtension) {

@@ -158,6 +158,13 @@
 </#function>
 
 <#--
+  - Shuffles the given collection
+-->
+<#function shuffle collection>
+	<#return commonMacroHelper.shuffle(collection) />
+</#function>
+
+<#--
   - Strips directory names and the query-string from a path.
   - ${baseName('/hello/world.html?foo=bar')} => world.html  
   -->
