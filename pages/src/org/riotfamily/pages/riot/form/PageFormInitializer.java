@@ -92,7 +92,7 @@ public class PageFormInitializer implements FormInitializer {
 		if (sb != null) {
 			sb.addChangeListener(ppe);
 		}
-		form.addElement(ppe, "contentContainer");
+		form.addElement(ppe, "pageProperties");
 	}
 	
 	private SelectBox createHandlerNameBox(Form form, String[] handlerNames) {
