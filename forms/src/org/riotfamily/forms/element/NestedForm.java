@@ -56,10 +56,6 @@ public class NestedForm extends TemplateElement implements
 	
 	private boolean indent = true;
 	
-	private String buttonLabelKeySet = "form.nestedForm.set";
-	
-	private String buttonLabelKeyRemove = "form.nestedForm.remove";
-	
 	public NestedForm() {
 		super("form");
 		addComponent("elements", elements);
@@ -104,7 +100,8 @@ public class NestedForm extends TemplateElement implements
 		return editorBinder.getEditor(property);
 	}
 	
-	protected void afterFormContextSet() {		
+	protected void afterFormContextSet() {
+		super.afterFormContextSet();
 		editorBinder.registerPropertyEditors(
 				getFormContext().getPropertyEditorRegistrars());
 	}
@@ -195,7 +192,7 @@ public class NestedForm extends TemplateElement implements
 		}
 		
 		public String getLabel() {
-			String key = present ? buttonLabelKeyRemove : buttonLabelKeySet;
+			String key = present ? "label.nestedForm.remove" : "label.nestedForm.set";
 			String label = MessageUtils.getMessage(this, key);
 			if (label == null) {
 				label = present ? "Remove" : "Set";

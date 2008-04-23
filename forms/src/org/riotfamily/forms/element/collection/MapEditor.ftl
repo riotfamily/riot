@@ -8,7 +8,7 @@
 		<div class="addKey">
 			${keyEditor.render()}
 			${addButton.render()}
-			${element.form.errors.renderErrors(keyEditor)}
+			${errors.renderErrors(keyEditor)}
 		</div>
 	</#if>
 </div>

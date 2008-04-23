@@ -20,7 +20,7 @@
 	    			<#if element.hint?exists>
 						<div id="${element.id}-hint" class="hint">${element.hint}</div>
 					</#if>
-	    			${element.render()} ${element.form.errors.renderErrors(element)}
+	    			${element.render()} ${errors.renderErrors(element)}
     			</div>
 	    	</div>
 		</#list>			

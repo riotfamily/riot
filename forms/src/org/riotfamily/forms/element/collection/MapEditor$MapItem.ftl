@@ -8,7 +8,7 @@
 				<td class="itemElement">
 					<label for="${element.id}">${item.label}<#if element.required && !element.compositeElement?default(false)>* </#if></label>
 					${element.render()}
-					${element.form.errors.renderErrors(element)}
+					${errors.renderErrors(element)}
 				</td>
 			</tr>
 		</tbody>
