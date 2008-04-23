@@ -78,6 +78,10 @@ public abstract class AbstractBindingResultSupport implements BindingResult {
 		}
 	}
 	
+	public void removeAllErrors() {
+		errors.clear();
+	}
+	
 	public String[] resolveMessageCodes(String errorCode) {
 		return getMessageCodesResolver().resolveMessageCodes(errorCode, getObjectName());
 	}

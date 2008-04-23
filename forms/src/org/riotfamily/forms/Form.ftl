@@ -1,4 +1,4 @@
-<form id="${form.id}" method="post" enctype="multipart/form-data">
+<form id="${form.id}" action="${form.action}" method="post" enctype="multipart/form-data">
 <div id="elements">
 	<#if form.hint?exists>
 		<div class="form-hint">${form.hint}</div>

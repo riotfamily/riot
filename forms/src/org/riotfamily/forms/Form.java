@@ -404,7 +404,7 @@ public class Form implements BeanEditor {
 	}
 
 	public void processRequest(FormRequest request) {
-		errors = new FormErrors(this);
+		errors.removeAllErrors();
 		Iterator it = containers.iterator();
 		while (it.hasNext()) {
 			Container container = (Container) it.next();
@@ -422,7 +422,7 @@ public class Form implements BeanEditor {
 	}
 	
 	public void processExclusiveRequest(String elementId, FormRequest request) {
-		errors = new FormErrors(this);
+		errors.removeAllErrors();
 		Element element = getElementById(elementId);
 		element.processRequest(request);
 	}
@@ -461,6 +461,10 @@ public class Form implements BeanEditor {
 			Element element = (Element) it.next();
 			element.setFormContext(formContext);
 		}
+	}
+	
+	public String getAction() {
+		return formContext.getFormUrl();
 	}
 
 	public FormErrors getErrors() {

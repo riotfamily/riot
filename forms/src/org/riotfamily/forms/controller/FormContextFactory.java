@@ -141,7 +141,7 @@ public final class FormContextFactory implements MessageSourceAware,
 				messageCodesResolver, locale);
 		
 		String contextPath = request.getContextPath();
-		String formUrl = response.encodeURL(ServletUtils.getRequestUri(request));
+		String formUrl = ServletUtils.getOriginatingRequestUri(request);
 		return createFormContext(messageResolver, contextPath, formUrl);
 	}
 	

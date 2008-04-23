@@ -29,12 +29,9 @@ function submitEvent(e) {
 		return;
 	}
 
-	var url;
-	if (source.form && source.form.ajaxUrl) {
-		url = source.form.ajaxUrl;
-	}
-	else {
-		url = window.location.href;	
+	var url = window.location.href;
+	if (source.form && source.form.action) {
+		url = source.form.action;
 	}
 	
 	var body = 'event.type=' + e.type + '&event.source=' + source.id;
@@ -60,7 +57,7 @@ function submitEvent(e) {
 function submitElement(id, clickedButton) {
 	var e = $(id);
 	var form = e.up('form');
-	var url = (form && form.ajaxUrl) ? form.ajaxUrl : window.loction.href;
+	var url = form.action || window.loction.href;
 	var elements = e.descendants(); elements.push(e);
 	var data = elements.inject({_exclusive: id}, function(result, element) {
 		if (!element.disabled && element.form && element.name
@@ -86,7 +83,7 @@ function submitElement(id, clickedButton) {
 
 function submitForm(form) {
 	form = $(form);
-	var url = (form.ajaxUrl) ? form.ajaxUrl : window.loction.href;
+	var url = form.action || window.loction.href;
 	var elements = form.select('textarea','input:not(input[type="submit"])');
 	var params = Form.serializeElements(elements, true);
 	params.ajaxSave = 'true';
@@ -161,7 +158,9 @@ function setErrorClass(e, valid) {
 function setEnabled(e, enabled) {
 	e = $(e);
 	if (e) {
-		e.descendants().push(e).each(function(node) {
+		var nodes = e.descendants();
+		nodes.push(e);
+		nodes.each(function(node) {
 			if (typeof node.disabled != 'undefined') {									
 				node.disabled = !enabled;
 			}

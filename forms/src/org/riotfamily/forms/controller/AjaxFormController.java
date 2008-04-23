@@ -129,14 +129,7 @@ public abstract class AjaxFormController extends AbstractFormController
 	
 	protected void renderForm(Form form, PrintWriter writer) {
 		form.render(writer);
-		
 		writer.print("<script>");
-		writer.print("document.getElementById('");
-		writer.print(form.getId());
-		writer.print("').ajaxUrl = '");
-		writer.print(form.getFormContext().getFormUrl());
-		writer.print("';\n");
-		
 		ArrayList propagations = new ArrayList();
 		Iterator it = form.getRegisteredElements().iterator();
 		while (it.hasNext()) {
