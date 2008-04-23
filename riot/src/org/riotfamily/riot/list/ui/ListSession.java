@@ -69,6 +69,7 @@ import org.riotfamily.riot.list.command.result.ConfirmResult;
 import org.riotfamily.riot.list.support.ListParamsImpl;
 import org.riotfamily.riot.list.ui.render.RenderContext;
 import org.riotfamily.riot.security.AccessController;
+import org.springframework.beans.NullValueInNestedPathException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -348,9 +349,13 @@ public class ListSession implements RenderContext {
 		while (it.hasNext()) {
 			ColumnConfig col = (ColumnConfig) it.next();
 			String propertyName = col.getProperty();
-			Object value;
+			Object value = null;
 			if (propertyName != null) {
-				value = wrapper.getPropertyValue(propertyName);
+				try {
+					value = wrapper.getPropertyValue(propertyName);
+				}
+				catch (NullValueInNestedPathException ex) {
+				}
 			}
 			else {
 				value = bean;
