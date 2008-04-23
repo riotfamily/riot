@@ -67,15 +67,13 @@ public class Button extends AbstractEditorBase
 	}
 	
 	public String getLabel() {
-		if (label == null) {
-			if (labelKey != null) {
-				label = MessageUtils.getMessage(this, labelKey);
-			}
-			else {
-				label = "Submit";
-			}
+		if (label != null) {
+			return label;
 		}
-		return label;
+		if (getLabelKey() != null) {
+			return MessageUtils.getMessage(this, getLabelKey());
+		}
+		return "Submit";
 	}
 	
 	public void setLabel(String label) {
@@ -83,17 +81,15 @@ public class Button extends AbstractEditorBase
 	}
 	
 	public String getCssClass() {
-		if (cssClass == null) {
-			if (labelKey != null) {
-				int i = labelKey.lastIndexOf('.');
-				String s = i != -1 ? labelKey.substring(i + 1) : labelKey;
-				cssClass = "button button-" + FormatUtils.toCssClass(s);
-			}
-			else {
-				cssClass = "button button-" + FormatUtils.toCssClass(getLabel());
-			}
+		if (cssClass != null) {
+			return cssClass;
 		}
-		return cssClass;
+		if (getLabelKey() != null) {
+			int i = getLabelKey().lastIndexOf('.');
+			String s = i != -1 ? getLabelKey().substring(i + 1) : getLabelKey();
+			return "button button-" + FormatUtils.toCssClass(s);
+		}
+		return "button button-" + FormatUtils.toCssClass(getLabel());
 	}
 
 	public void setCssClass(String cssClass) {
