@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.forms.MessageUtils;
 
 
 /**
@@ -72,8 +73,7 @@ public class SelectBox extends AbstractSingleSelectElement {
 	protected List createOptions() {
 		List options = super.createOptions();
 		if (chooseLabelKey != null) {
-			chooseLabel = getFormContext().getMessageResolver()
-					.getMessage(chooseLabelKey);
+			chooseLabel = MessageUtils.getMessage(this, chooseLabelKey);
 		}
 		if (chooseLabel != null) {
 			Option chooseOption = new Option(null, null, chooseLabel, this);
