@@ -30,22 +30,22 @@ import org.springframework.dao.DataAccessException;
  * @author Carsten Woelk [cwoelk at neteye dot de]
  * @since 6.5
  */
-public class RioDaoException extends DataAccessException
+public class RiotDaoException extends DataAccessException
 		implements MessageSourceResolvable {
 
 	private String code;
 
 	private Object[] arguments;
 
-	public RioDaoException(String code, String msg) {
+	public RiotDaoException(String code, String msg) {
 		this(code, new Object[] {}, msg);
 	}
 
-	public RioDaoException(String code, Object[] arguments, String msg) {
+	public RiotDaoException(String code, Object[] arguments, String msg) {
 		this(code, arguments, msg, null);
 	}
 
-	public RioDaoException(String code, Object[] arguments, String msg, Throwable cause) {
+	public RiotDaoException(String code, Object[] arguments, String msg, Throwable cause) {
 		super(msg, cause);
 		this.code = code;
 		this.arguments = arguments;

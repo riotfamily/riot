@@ -32,7 +32,7 @@ package org.riotfamily.riot.dao;
  * @author Carsten Woelk [cwoelk at neteye dot de]
  * @since 6.5
  */
-public class InvalidPropertyValueException extends RioDaoException {
+public class InvalidPropertyValueException extends RiotDaoException {
 
 	private String field;
 

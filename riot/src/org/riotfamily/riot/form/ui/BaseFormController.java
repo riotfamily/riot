@@ -38,8 +38,8 @@ import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.forms.factory.RepositoryFormController;
 import org.riotfamily.riot.dao.InvalidPropertyValueException;
-import org.riotfamily.riot.dao.RioDaoException;
 import org.riotfamily.riot.dao.RiotDao;
+import org.riotfamily.riot.dao.RiotDaoException;
 import org.riotfamily.riot.editor.EditorConstants;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
@@ -221,7 +221,7 @@ public abstract class BaseFormController extends RepositoryFormController
 
 			return showForm(form, request, response);
 		}
-		catch (RioDaoException e) {
+		catch (RiotDaoException e) {
 			form.getErrors().reject(e.getCode(), e.getArguments(), e.getMessage());
 			return showForm(form, request, response);
 		}
@@ -251,7 +251,7 @@ public abstract class BaseFormController extends RepositoryFormController
 				form.getErrors().rejectValue(e.getField(), e.getCode(),
 						e.getArguments(), e.getMessage());
 			}
-			catch (RioDaoException e) {
+			catch (RiotDaoException e) {
 				form.getErrors().reject(e.getCode(), e.getArguments(), e.getMessage());
 			}
 			catch (Exception e) {

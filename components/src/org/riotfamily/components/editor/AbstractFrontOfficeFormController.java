@@ -36,7 +36,7 @@ import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.forms.factory.RepositoryFormController;
 import org.riotfamily.riot.dao.InvalidPropertyValueException;
-import org.riotfamily.riot.dao.RioDaoException;
+import org.riotfamily.riot.dao.RiotDaoException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -116,7 +116,7 @@ public abstract class AbstractFrontOfficeFormController
 
 			return showForm(form, request, response);
 		}
-		catch (RioDaoException e) {
+		catch (RiotDaoException e) {
 			form.getErrors().reject(e.getCode(), e.getArguments(), e.getMessage());
 			return showForm(form, request, response);
 		}
