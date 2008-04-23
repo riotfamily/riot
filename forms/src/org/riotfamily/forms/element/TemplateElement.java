@@ -27,8 +27,6 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.riotfamily.common.markup.Html;
-import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.TemplateUtils;
@@ -87,16 +85,13 @@ public class TemplateElement extends CompositeElement {
 		this.template = name;
 	}
 	
+	protected void afterFormContextSet() {
+		setAttribute("messageResolver", getFormContext().getMessageResolver());
+		setAttribute("errors", getForm().getErrors());
+	}
+	
 	protected void renderComponents(PrintWriter writer) {
-		if (isSurroundByDiv()) {
-			TagWriter spanTag = new TagWriter(writer);
-			spanTag.start(Html.SPAN).attribute(Html.COMMON_ID, getId()).body();
-			renderTemplate(writer);
-			spanTag.end();
-		}
-		else {
-			renderTemplate(writer);
-		}
+		renderTemplate(writer);
 	}
 	
 	protected void renderTemplate(PrintWriter writer) {
