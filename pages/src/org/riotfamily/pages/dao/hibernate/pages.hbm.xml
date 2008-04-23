@@ -76,7 +76,8 @@
 			<key column="masterSite" />
 			<one-to-many class="Site" />
 		</set>
-		<set name="aliases" table="riot_site_aliases" lazy="false">
+		<set name="aliases" table="riot_site_aliases">
+			<cache usage="nonstrict-read-write" region="pages" />
 			<key column="site" />
 			<element column="hostName" type="string" />
 		</set>
@@ -85,7 +86,13 @@
 	</class>
 	
 	<subclass name="PageProperties" extends="org.riotfamily.components.model.ContentContainer" discriminator-value="PageProperties">
-		<one-to-one name="page" class="Page" property-ref="pageProperties" />
+		<!-- <one-to-one name="page" class="Page" property-ref="pageProperties" /> -->
+		<!-- The mapping above would be correct but is not cacheable -->
+		<set name="pages" access="field" inverse="true" lazy="true">
+			<cache usage="nonstrict-read-write" region="pages" />
+			<key column="pageProperties" />
+			<one-to-many class="Page" />
+		</set>
 	</subclass>
 	
 	<subclass name="org.riotfamily.pages.model.wrapper.PageWrapper" 

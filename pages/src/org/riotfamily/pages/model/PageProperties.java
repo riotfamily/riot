@@ -1,17 +1,20 @@
 package org.riotfamily.pages.model;
 
+import java.util.Set;
+
 import org.riotfamily.components.model.ContentContainer;
 
 public class PageProperties extends ContentContainer {
 
-	private Page page;
+	private Set pages;
 
+	/*
+	 * NOTE: PageProperties actually have a ont-to-one relation to a Page.
+	 * It is mapped as a Set though, so that we can take advantage of 
+	 * Hibernate's second level cache and lazy loading.
+	 */
 	public Page getPage() {
-		return page;
-	}
-
-	public void setPage(Page page) {
-		this.page = page;
+		return (Page) pages.iterator().next();
 	}
 	
 }
