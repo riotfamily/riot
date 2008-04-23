@@ -23,66 +23,112 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element;
 
-import java.io.PrintWriter;
-
-import org.riotfamily.common.markup.DocumentWriter;
-import org.riotfamily.common.markup.Html;
+import org.riotfamily.common.util.HashUtils;
 import org.riotfamily.forms.DHTMLElement;
+import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.TemplateUtils;
+import org.riotfamily.forms.event.Button;
+import org.riotfamily.forms.event.JavaScriptEvent;
 
-public class PasswordField extends TextField implements DHTMLElement {
+public class PasswordField extends TemplateElement implements Editor, DHTMLElement {
 
-	private static final String DEFAULT_CONFIRM_MESSAGE_KEY = 
-			"label.passwordField.confirmInput";
-	
-	private static final String TOGGLE_PLAINTEXT_MESSAGE_KEY = 
-			"label.passwordField.togglePlaintext";
-	
 	private boolean togglePlaintext;
 	
+	private String hash;
+	
+	private TextField textField;
+	
+	private String initialValue;
+	
+	private boolean showInput = true;
+	
 	public PasswordField() {
-		super("password");
+		textField = new TextField("password");
+		textField.setConfirmMessageKey("label.passwordField.confirmInput");
+		addComponent("input", textField);
+		addComponent("toggleButton", new ToggleButton());
+	}
+	
+	public boolean isCompositeElement() {
+		return false;
 	}
 
+	public void setConfirm(boolean confirm) {
+		textField.setConfirm(confirm);
+	}
+	
+	public void setRequired(boolean required) {
+		super.setRequired(required);
+		textField.setRequired(required);
+	}
+	
 	public void setTogglePlaintext(boolean togglePlaintext) {
 		this.togglePlaintext = togglePlaintext;
 	}
 
-	protected String getDefaultConfirmMessageKey() {
-		return DEFAULT_CONFIRM_MESSAGE_KEY;
+	public boolean isTogglePlaintext() {
+		return togglePlaintext;
 	}
 	
-	public String getButtonId() {
-		return getId() + "-toggleButton";
-	}
-	
-	public void renderInternal(PrintWriter writer) {
-		if (togglePlaintext) {
-			DocumentWriter doc = new DocumentWriter(writer);
-			doc.start(Html.DIV).body();
-			super.renderInternal(writer);
-			doc.start(Html.DIV)
-					.attribute(Html.COMMON_CLASS, "toggle-plaintext")
-					.body();
-			
-			doc.startEmpty(Html.INPUT)
-				.attribute(Html.INPUT_TYPE, "checkbox")
-				.attribute(Html.COMMON_ID, getButtonId())
-				.end();
-			
-			String label = getFormContext().getMessageResolver().getMessage(
-					TOGGLE_PLAINTEXT_MESSAGE_KEY);
-			
-			doc.start(Html.LABEL).attribute(Html.LABEL_FOR, getButtonId())
-					.body(label).closeAll();
-		}
-		else {
-			super.renderInternal(writer);
-		}
+	public void setHash(String hash) {
+		this.hash = hash;
 	}
 	
 	public String getInitScript() {
-		return togglePlaintext ? TemplateUtils.getInitScript(this) : null;
+		return showInput && togglePlaintext ? TemplateUtils.getInitScript(this) : null;
+	}
+
+	public Object getValue() {
+		if (!showInput) {
+			return initialValue;
+		}
+		String value = (String) textField.getValue();
+		if (hash != null && !hash.equalsIgnoreCase("plain") 
+				&& !hash.equalsIgnoreCase("false")) {
+			
+			value = HashUtils.hash(value, hash);
+		}
+		return value;
+	}
+
+	public void setValue(Object value) {
+		initialValue = (String) value;
+		if (isPasswordSet() && showInput) {
+			toggle();
+		}
+	}
+	
+	public boolean isPasswordSet() {
+		return initialValue != null;
+	}
+	
+	public boolean isShowInput() {
+		return showInput;
+	}
+	
+	protected void toggle() {
+		showInput = !showInput;
+		textField.setEnabled(showInput);
+		if (getFormListener() != null) {
+			getFormListener().elementChanged(this);			
+		}
+	}
+	
+	private class ToggleButton extends Button {
+		
+		public String getLabelKey() {
+			return showInput 
+					? "label.passwordField.keep" 
+					: "label.passwordField.change";
+		}
+
+		protected void onClick() {
+			toggle();
+		}
+		
+		public int getEventTypes() {
+			return JavaScriptEvent.ON_CLICK;
+		}
 	}
 	
 }

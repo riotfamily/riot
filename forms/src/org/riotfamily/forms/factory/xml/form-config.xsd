@@ -82,8 +82,10 @@
 	<xsd:element name="passwordfield">
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="textfield">
+				<xsd:extension base="simple-editor">
+					<xsd:attribute name="confirm" type="xsd:boolean" />
 					<xsd:attribute name="toggle-plaintext" type="xsd:boolean" />
+					<xsd:attribute name="hash" type="xsd:string" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

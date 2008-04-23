@@ -98,9 +98,23 @@ public class TextField extends AbstractTextElement {
 	public void renderInternal(PrintWriter writer) {
 		if (confirm) {
 			DocumentWriter doc = new DocumentWriter(writer);
-			doc.start(Html.DIV).attribute(Html.COMMON_CLASS, "confirm-text");
-			doc.body();
-			super.renderInternal(writer);
+			doc.start(Html.DIV)
+					.attribute(Html.COMMON_CLASS, "confirm-text")
+					.attribute(Html.COMMON_ID, getId())
+					.body();
+			
+			doc.startEmpty(Html.INPUT)
+				.attribute(Html.INPUT_TYPE, getType())
+				.attribute(Html.COMMON_CLASS, getStyleClass())
+				.attribute(Html.INPUT_NAME, getParamName())
+				.attribute(Html.INPUT_DISABLED, !isEnabled())
+				.attribute(Html.INPUT_VALUE, getText());
+
+			if (getMaxLength() != null) {
+				doc.attribute(Html.INPUT_MAX_LENGTH, getMaxLength().intValue());
+			}
+			doc.end();
+			
 			String msg = MessageUtils.getMessage(this, getConfirmMessage());
 			doc.start(Html.P).body(msg).end();
 			
@@ -108,6 +122,7 @@ public class TextField extends AbstractTextElement {
 					.attribute(Html.INPUT_TYPE, getType())
 					.attribute(Html.COMMON_CLASS, getStyleClass())
 					.attribute(Html.INPUT_NAME, getConfirmParamName())
+					.attribute(Html.INPUT_DISABLED, !isEnabled())
 					.attribute(Html.INPUT_VALUE, 
 					confirmText != null ? confirmText : getText());
 			

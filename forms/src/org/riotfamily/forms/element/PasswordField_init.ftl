@@ -1,5 +1,6 @@
-$('${element.buttonId}').onclick = function() {
-	var s = $('${element.id}');
-    var type = this.checked ? 'text' : 'password';
-    s.replace(new Element('input', {name: s.name, id: s.id, value: s.value, className: s.className, type: type}));
+$('${element.id}-toggle').onclick = function() {
+	var type = this.checked ? 'text' : 'password';
+	$('${input.id}').select('input').each(function(i) {
+   		i.replace(new Element('input', {name: i.name, id: i.id, value: i.value, className: i.className, type: type}));
+	});
 }

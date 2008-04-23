@@ -480,15 +480,21 @@ ul.radioButtonGroup {
 .confirm-text p {
 	margin: 10px 0 5px 0;
 }
-
+.password .button-change {
+	margin-top: 5px; 
+}
+.password .button-keep {
+	margin: 5px 0 10px 0;
+}
 .toggle-plaintext {
 	margin-top: 15px;
 }
 .toggle-plaintext input {
-	margin-bottom: 1px;
+	vertical-align: middle;
 }
 .toggle-plaintext label {
 	font-weight: normal;
+	vertical-align: middle;
 }
 
 .hint-trigger {
