@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Utility class that provides some simple text formatting methods.
@@ -66,6 +67,8 @@ public final class FormatUtils {
 	private static final String ENTITY_QUOT = "&quot;";
 
 	private static final Pattern TAG_PATTERN = Pattern.compile("</?[^>]+>");
+	
+	private static final Pattern PARENT_DIR_PATTERN = Pattern.compile("\\.\\./");
 	
 	private FormatUtils() {
 	}
@@ -734,11 +737,28 @@ public final class FormatUtils {
 		return sb.toString();
 	}
 	
+	/**
+	 * Removes all markup from the given String using the pattern
+	 * <code>"&lt;/?[^&gt;]+&gt;"</code>.
+	 * @since 7.0
+	 */
 	public static String stripTags(String s) {
 		if (s == null) {
 			return null;
 		}
 		return TAG_PATTERN.matcher(s).replaceAll("");
+	}
+	
+	/**
+	 * Calls {@link StringUtils#cleanPath(String)} and removes all occurrences
+	 * of "../".
+	 * @since 7.0
+	 */
+	public static String sanitizePath(String s) {
+		if (s == null) {
+			return null;
+		}
+		return PARENT_DIR_PATTERN.matcher(StringUtils.cleanPath(s)).replaceAll("");
 	}
 
 }
