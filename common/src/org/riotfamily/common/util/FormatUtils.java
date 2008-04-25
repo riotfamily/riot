@@ -533,6 +533,15 @@ public final class FormatUtils {
 		return null;
 	}
 
+	public static String formatDate(Date date, String pattern, Locale locale) {
+		return new SimpleDateFormat(pattern, locale).format(date);
+	}
+	
+	public static String formatMediumDate(Date date, Locale locale) {
+		return SimpleDateFormat.getDateInstance(
+				SimpleDateFormat.MEDIUM, locale).format(date);
+	}
+	
 	public static String formatIsoDate(Date date) {
 		return dateFormat.format(date);
 	}
