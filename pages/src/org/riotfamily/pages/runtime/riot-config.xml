@@ -57,6 +57,7 @@
 			<list:command id="edit" />
 			<list:command id="delete" />
 			<list:command id="gotoSite" />
+			<list:command id="stepInto" />
 		</list:columns>
 		<list:command id="add" />
 	</list:list>
