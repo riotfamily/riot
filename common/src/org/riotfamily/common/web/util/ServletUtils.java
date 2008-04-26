@@ -576,7 +576,6 @@ public final class ServletUtils {
 	public static String getRequestUrlWithQueryString(
 			HttpServletRequest request) {
 
-		request.getRequestURI();
 		StringBuffer sb = request.getRequestURL();
 		String queryString = request.getQueryString();
 		if (queryString != null) {
