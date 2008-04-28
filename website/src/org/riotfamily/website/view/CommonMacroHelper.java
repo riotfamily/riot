@@ -168,7 +168,7 @@ public class CommonMacroHelper {
 		return handlerUrlResolver.getUrlForHandler(request, handlerName, 
 				attributes, prefix);
 	}
-		
+
 	public String getOriginatingRequestUri() {
 		String uri = ServletUtils.getOriginatingRequestUri(request);
 		if (StringUtils.hasText(request.getQueryString())) {
