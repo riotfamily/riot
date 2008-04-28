@@ -77,7 +77,7 @@ public class InheritingRenderStrategy extends AbstractRenderStrategy {
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
-		boolean live = EditModeUtils.isEditMode(request);
+		boolean live = EditModeUtils.isLiveMode(request);
 		EditModeUtils.setLiveMode(request, true);
 		super.renderComponentList(list, config, request, response);
 		EditModeUtils.setLiveMode(request, live);

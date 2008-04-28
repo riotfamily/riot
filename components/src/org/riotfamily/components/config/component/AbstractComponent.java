@@ -70,8 +70,9 @@ public abstract class AbstractComponent implements ComponentRenderer {
 			int position, int listSize, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 
+		Object outerContainer = request.getAttribute(CONTAINER);
+		request.setAttribute(CONTAINER, component);
 		try {
-			request.setAttribute(CONTAINER, component);
 			renderInternal(component, preview, position, listSize, 
 					request, response);
 		}
@@ -89,6 +90,7 @@ public abstract class AbstractComponent implements ComponentRenderer {
 
 			pre.end();
 		}
+		request.setAttribute(CONTAINER, outerContainer);
 	}
 
 	public boolean isDynamic() {
