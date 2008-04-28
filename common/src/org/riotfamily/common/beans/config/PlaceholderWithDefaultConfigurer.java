@@ -23,14 +23,16 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.config;
 
+import java.util.HashSet;
 import java.util.Properties;
 
 import org.springframework.beans.BeansException;
-import org.springframework.beans.MutablePropertyValues;
-import org.springframework.beans.PropertyValue;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanDefinitionVisitor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.TypedStringValue;
+import org.springframework.util.StringValueResolver;
 
 /**
  * PropertyPlaceholderConfigurer that allows to define inline default values.
@@ -61,33 +63,48 @@ public class PlaceholderWithDefaultConfigurer
 	
 	private String valueSeparator = DEFAULT_VALUE_SEPARATOR;
 	
+	private String beanName;
+
+	private BeanFactory beanFactory;
+	
 	public void setValueSeparator(String valueSeparator) {
 		this.valueSeparator = valueSeparator;
+	}
+	
+	public void setBeanName(String beanName) {
+		this.beanName = beanName;
+		super.setBeanName(beanName);
+	}
+
+	public void setBeanFactory(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
+		super.setBeanFactory(beanFactory);
 	}
 	
 	protected void processProperties(
 			ConfigurableListableBeanFactory beanFactoryToProcess, 
 			Properties props) throws BeansException {
-
-		super.processProperties(beanFactoryToProcess, props);
+	
+		StringValueResolver valueResolver = new PlaceholderResolvingStringValueResolver(props);
+		BeanDefinitionVisitor visitor = new BeanDefinitionVisitor(valueResolver);
+		
 		String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames();
 		for (int i = 0; i < beanNames.length; i++) {
-			BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(beanNames[i]);
-			resolveNullDefaults(bd.getPropertyValues());
-		}
-	}
-
-	private void resolveNullDefaults(MutablePropertyValues pvs) {
-		PropertyValue[] pvArray = pvs.getPropertyValues();
-		for (int i = 0; i < pvArray.length; i++) {
-			PropertyValue pv = pvArray[i];
-			if (pv.getValue() instanceof TypedStringValue) {
-				TypedStringValue value = (TypedStringValue) pv.getValue();
-				if (NULL_DEFAULT.equals(value.getValue())) {
-					pvs.addPropertyValue(pv.getName(), null);
+			// Check that we're not parsing our own bean definition,
+			// to avoid failing on unresolvable placeholders in properties file locations.
+			if (!(beanNames[i].equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
+				BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(beanNames[i]);
+				try {
+					visitor.visitBeanDefinition(bd);
+				}
+				catch (BeanDefinitionStoreException ex) {
+					throw new BeanDefinitionStoreException(bd.getResourceDescription(), beanNames[i], ex.getMessage());
 				}
 			}
 		}
+		
+		// New in Spring 2.5: resolve placeholders in alias target names and aliases as well.
+		beanFactoryToProcess.resolveAliases(valueResolver);
 	}
 	
 	protected String resolvePlaceholder(String placeholder, Properties props, 
@@ -112,6 +129,28 @@ public class PlaceholderWithDefaultConfigurer
 		}
 		
 		return value;
+	}
+	
+	/**
+	 * BeanDefinitionVisitor that resolves placeholders in String values,
+	 * delegating to the <code>parseStringValue</code> method of the
+	 * containing class.
+	 */
+	private class PlaceholderResolvingStringValueResolver implements StringValueResolver {
+
+		private final Properties props;
+
+		public PlaceholderResolvingStringValueResolver(Properties props) {
+			this.props = props;
+		}
+
+		public String resolveStringValue(String strVal) throws BeansException {
+			String value = parseStringValue(strVal, this.props, new HashSet());
+			if (NULL_DEFAULT.equals(value)) {
+				return null;
+			}
+			return value;
+		}
 	}
 
 }
