@@ -26,7 +26,9 @@ package org.riotfamily.pages.setup.config;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import org.riotfamily.components.model.Content;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Site;
 
@@ -44,9 +46,9 @@ public class SiteDefinition {
 
 	private Locale locale;
 	
-	private String theme;
-	
 	private boolean enabled = true;
+
+	private Map properties;
 	
 	private List siteDefinitions;
 
@@ -66,14 +68,14 @@ public class SiteDefinition {
 		this.locale = locale;
 	}
 
-	public void setTheme(String theme) {
-		this.theme = theme;
-	}
-
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
 
+	public void setProperties(Map properties) {
+		this.properties = properties;
+	}
+	
 	public void setSiteDefinitions(List sites) {
 		this.siteDefinitions = sites;
 	}
@@ -84,9 +86,13 @@ public class SiteDefinition {
 		site.setHostName(hostName);
 		site.setPathPrefix(pathPrefix);
 		site.setLocale(locale);
-		site.setTheme(theme);
 		site.setEnabled(enabled);
 		site.setMasterSite(masterSite);
+		if (properties != null) {
+			Content props = new Content();
+			props.wrapValues(properties);
+			site.setProperties(props);
+		}
 		pageDao.saveSite(site);
 		list.add(site);
 		if (siteDefinitions != null) {

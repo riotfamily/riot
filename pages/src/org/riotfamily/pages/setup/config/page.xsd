@@ -25,12 +25,12 @@
 	</xsd:element>
 	
 	<xsd:complexType name="siteType">
-		<xsd:choice minOccurs="0" maxOccurs="unbounded">
-			<xsd:element name="site" type="siteType" />
-		</xsd:choice>
+		<xsd:sequence minOccurs="0" maxOccurs="1">
+			<xsd:element name="prop" type="beans:entryType" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="site" type="siteType" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string" />
 		<xsd:attribute name="locale" type="xsd:string" use="required" />
-		<xsd:attribute name="theme" type="xsd:string" />
 		<xsd:attribute name="host" type="xsd:string" />
 		<xsd:attribute name="prefix" type="xsd:string" />
 		<xsd:attribute name="enabled" type="xsd:boolean" default="true" />
