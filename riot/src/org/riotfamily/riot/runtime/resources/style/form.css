@@ -486,6 +486,18 @@ ul.radioButtonGroup {
 .password .button-keep {
 	margin: 5px 0 10px 0;
 }
+.password .strength {
+	margin-top: 5px;
+}
+.password .strength .weak {
+	color: #cb0038;
+}
+.password .strength .fair {
+	color: #f57900;
+}
+.password .strength .strong {
+	color: #73d216;
+}
 .toggle-plaintext {
 	margin-top: 15px;
 }

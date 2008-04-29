@@ -29,12 +29,18 @@ import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.JavaScriptEvent;
+import org.riotfamily.forms.resource.FormResource;
+import org.riotfamily.forms.resource.ResourceElement;
+import org.riotfamily.forms.resource.ScriptResource;
 
-public class PasswordField extends TemplateElement implements Editor, DHTMLElement {
+public class PasswordField extends TemplateElement 
+		implements Editor, DHTMLElement, ResourceElement {
 
 	private boolean togglePlaintext;
 	
 	private String hash;
+	
+	private boolean strengthMeter;
 	
 	private TextField textField;
 	
@@ -74,8 +80,23 @@ public class PasswordField extends TemplateElement implements Editor, DHTMLEleme
 		this.hash = hash;
 	}
 	
+	public boolean isStrengthMeter() {
+		return strengthMeter;
+	}
+
+	public void setStrengthMeter(boolean strengthMeter) {
+		this.strengthMeter = strengthMeter;
+	}
+
 	public String getInitScript() {
 		return showInput && togglePlaintext ? TemplateUtils.getInitScript(this) : null;
+	}
+	
+	public FormResource getResource() {
+		if (strengthMeter) {
+			return new ScriptResource("riot-js/pw-strength.js", "PasswordStrengthMeter");
+		}
+		return null;
 	}
 
 	public Object getValue() {
