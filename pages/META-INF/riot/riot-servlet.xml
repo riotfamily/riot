@@ -73,10 +73,6 @@
 			<property name="location" value="classpath:/org/riotfamily/pages/runtime/resources/" />
 		</bean>
 	</override:add>
-
-	<util:list id="themes">
-		<value>default</value>
-	</util:list>
 	
 	<!-- DAOs and models -->
 

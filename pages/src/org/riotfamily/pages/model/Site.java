@@ -51,8 +51,6 @@ public class Site {
 
 	private Locale locale;
 	
-	private String theme;
-	
 	private Site masterSite;
 	
 	private Set derivedSites;
@@ -92,9 +90,6 @@ public class Site {
 			}
 			else {
 				sb.append(locale);
-				if (theme != null) {
-					sb.append(" (").append(theme).append(')');
-				}
 			}
 			name = sb.toString();
 		}
@@ -111,14 +106,6 @@ public class Site {
 
 	public void setLocale(Locale locale) {
 		this.locale = locale;
-	}
-
-	public String getTheme() {
-		return this.theme;
-	}
-
-	public void setTheme(String theme) {
-		this.theme = theme;
 	}
 
 	public String getHostName() {
@@ -316,7 +303,6 @@ public class Site {
 		return ObjectUtils.nullSafeEquals(this.hostName, other.hostName)
 				&& ObjectUtils.nullSafeEquals(this.pathPrefix, other.pathPrefix)
 				&& ObjectUtils.nullSafeEquals(this.locale, other.locale)
-				&& ObjectUtils.nullSafeEquals(this.theme, other.theme)
 				&& ObjectUtils.nullSafeEquals(this.masterSite, other.masterSite);
 	}
 }

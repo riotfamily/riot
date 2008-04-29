@@ -16,7 +16,6 @@
 				<db:column name="name" type="VARCHAR" length="255" />
 				<db:column name="enabled" type="BIT" />
 				<db:column name="locale" type="VARCHAR" length="5" />
-				<db:column name="theme" type="VARCHAR" length="255" />
 				<db:column name="hostName" type="VARCHAR" length="255" />
 				<db:column name="pathPrefix" type="VARCHAR" length="255" />
 				<db:column name="masterSite" type="BIGINT" />

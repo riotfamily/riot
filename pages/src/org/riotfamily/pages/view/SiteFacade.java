@@ -68,10 +68,6 @@ public class SiteFacade {
 		return site.getPathPrefix();
 	}
 
-	public String getTheme() {
-		return site.getTheme();
-	}
-
 	public boolean isEnabled() {
 		return site.isEnabled();
 	}

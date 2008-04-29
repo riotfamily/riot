@@ -67,7 +67,6 @@
 		<property name="name" unique="true" />
 		<property name="enabled" />
 		<property name="locale" length="5" />
-		<property name="theme" />
 		<property name="hostName" />
 		<property name="pathPrefix" />
 		<property name="position" column="pos" />
