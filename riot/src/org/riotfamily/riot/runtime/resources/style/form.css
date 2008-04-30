@@ -111,11 +111,6 @@ div.box-title .no-label {
 .single {
 	margin-left: 36px;
 }
-/*
-.single .element {
-	margin-top: 6px;
-}
-*/
 
 .single, .composite {
 	clear: both;
@@ -137,6 +132,10 @@ textarea.disabled, input.disabled, select.disabled {
 
 textarea, input.text, input.password {
 	width: 100%;
+}
+input.text, input.number, input.password {
+	_height: 16px;
+	_overflow: visible;
 }
 
 span.read-only {
