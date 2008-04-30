@@ -89,7 +89,8 @@ public class PasswordField extends TemplateElement
 	}
 
 	public String getInitScript() {
-		return showInput && togglePlaintext ? TemplateUtils.getInitScript(this) : null;
+		return showInput && (togglePlaintext || strengthMeter) 
+				? TemplateUtils.getInitScript(this) : null;
 	}
 	
 	public FormResource getResource() {
