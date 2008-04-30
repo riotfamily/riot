@@ -31,7 +31,7 @@
 			if (parent && parent.riot) {
 				Event.observe(window, 'load', function() {
 					var p = parent.riot.popup;
-					if (!p.isOpen) {
+					if (parent.riot.activePopup != p) {
 						var h = Math.min(
 								Math.round(Viewport.getInnerHeight(parent) * 0.8),
 								Viewport.getBodyHeight() + 32);
