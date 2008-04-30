@@ -113,7 +113,7 @@ public class MapEditor extends TemplateElement implements Editor {
 						ErrorUtils.reject(keyEditor, "map.duplicateKey");
 					}
 					else {
-						addItem(key, null);
+						addItem(key, null, true);
 						keyEditor.setValue(null);
 						getFormListener().elementChanged(keyEditor);
 					}
@@ -165,7 +165,7 @@ public class MapEditor extends TemplateElement implements Editor {
 			while (it.hasNext()) {
 				Object key = it.next();
 				Object obj = map != null ? map.get(key) : null;
-				addItem(key, obj);			
+				addItem(key, obj, false);			
 			}
 		}
 	}
@@ -201,11 +201,11 @@ public class MapEditor extends TemplateElement implements Editor {
 		return keys;
 	}
 	
-	protected void addItem(Object key, Object value) {		
+	protected void addItem(Object key, Object value, boolean newItem) {		
 		MapItem item = new MapItem(key, keyEditor != null);
 		items.addElement(item);
 		item.focus();
-		item.setValue(value);
+		item.setValue(value, newItem);
 	}
 	
 	protected void removeItem(MapItem item) {
@@ -220,16 +220,18 @@ public class MapEditor extends TemplateElement implements Editor {
 		
 		private Object key;
 		
-		private Editor element;
+		private Editor editor;
 		
 		private Button removeButton;
+		
+		private CollectionItemEditorBinding binding = new CollectionItemEditorBinding();
 		
 		public MapItem(Object key, boolean removable) {
 			super("item");
 			this.key = key;
 			setSurroundByDiv(false);
-			element = (Editor) itemElementFactory.createElement(this, getForm(), false);
-			addComponent("element", element);
+			editor = (Editor) itemElementFactory.createElement(this, getForm(), false);
+			addComponent("element", editor);
 			if (removable) {
 				removeButton = new Button();
 				removeButton.setLabelKey("label.form.map.remove");
@@ -252,7 +254,7 @@ public class MapEditor extends TemplateElement implements Editor {
 		}
 		
 		public Editor getElement() {
-			return element;
+			return editor;
 		}
 		
 		public Object getKey() {
@@ -260,16 +262,17 @@ public class MapEditor extends TemplateElement implements Editor {
 		}
 		
 		public Object getValue() {
-			return element.getValue();
+			return editor.getValue();
 		}
 		
-		public void setValue(Object value) {
-			element.setEditorBinding(new CollectionItemEditorBinding(element, value));
-			element.setValue(value);
+		public void setValue(Object value, boolean newItem) {
+			binding.setExistingItem(!newItem);
+			binding.setValue(value);
+			editor.setValue(value);
 		}
 		
 		public void focus() {
-			element.focus();
+			editor.focus();
 		}
 				
 	}

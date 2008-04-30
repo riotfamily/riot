@@ -197,6 +197,10 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 			return AbstractEditorBinder.this.getBeanClass();
 		}
 		
+		public boolean isEditingExistingBean() {
+			return AbstractEditorBinder.this.isEditingExistingBean();
+		}
+		
 		public String getPropertyPath() {
 			EditorBinding parentBinding = findParentBinding();
 			if (parentBinding != null) {

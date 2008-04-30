@@ -83,7 +83,7 @@ public class ListEditor extends TemplateElement implements Editor,
 		addButton.setLabel("Add");
 		addButton.addClickListener(new ClickListener() {
 			public void clicked(ClickEvent event) {
-				addItem().focus();				
+				addItem(null, true).focus();				
 			}
 		});
 		addComponent("addButton", addButton);
@@ -184,8 +184,7 @@ public class ListEditor extends TemplateElement implements Editor,
 			Collection collection = (Collection) value;
 			Iterator it = collection.iterator();			
 			while (it.hasNext()) {
-				ListItem item = addItem();
-				item.setValue(it.next());
+				addItem(it.next(), false);
 			}
 		}
 	}
@@ -218,14 +217,14 @@ public class ListEditor extends TemplateElement implements Editor,
 		return collection;
 	}
 
-	protected ListItem addItem() {		
+	protected ListItem addItem(Object value, boolean newItem) {		
 		ListItem item = createItem();
-		item.setEditor((Editor) itemElementFactory.createElement(
-				item, getForm(), false));
+		Editor editor = (Editor) itemElementFactory.createElement(
+				item, getForm(), false);
 		
-		items.addElement(item);
-		item.setValue(null);
-		
+		item.setEditor(editor);
+		item.setValue(value, newItem);
+		items.addElement(item);		
 		return item;
 	}
 	

@@ -41,12 +41,12 @@ public class ContentListItem extends ListItem {
 		super(list);
 	}
 	
-	public void setValue(Object value) {
+	public void setValue(Object value, boolean newItem) {
 		if (value != null) {
 			wrapper = (ValueWrapper) value;
 			value = wrapper.getValue();
 		}
-		super.setValue(value);
+		super.setValue(value, newItem);
 	}
 	
 	public Object getValue() {

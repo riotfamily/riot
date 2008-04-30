@@ -75,4 +75,10 @@ public interface EditorBinding {
 	 */
 	public PropertyEditor getPropertyEditor();
 	
+	/**
+	 * Returns whether the edited bean existed before, or whether it was 
+	 * created by the current form.
+	 */
+	public boolean isEditingExistingBean();
+	
 }

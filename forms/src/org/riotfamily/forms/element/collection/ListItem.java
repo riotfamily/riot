@@ -37,7 +37,9 @@ public class ListItem extends TemplateElement implements DHTMLElement, ClickList
 
 	private Editor editor;
 	
-	private Button removeButton;	
+	private Button removeButton;
+	
+	private CollectionItemEditorBinding binding = new CollectionItemEditorBinding();
 			
 	public ListItem(ListEditor list) {
 		super("item");
@@ -59,6 +61,8 @@ public class ListItem extends TemplateElement implements DHTMLElement, ClickList
 	public void setEditor(Editor editor) {
 		this.editor = editor;
 		editor.setRequired(true);
+		editor.setEditorBinding(binding);
+		binding.setEditor(editor);
 		addComponent("editor", editor);
 	}
 	
@@ -66,8 +70,9 @@ public class ListItem extends TemplateElement implements DHTMLElement, ClickList
 		return editor;
 	}
 	
-	public void setValue(Object value) {
-		editor.setEditorBinding(new CollectionItemEditorBinding(editor, value));
+	public void setValue(Object value, boolean newItem) {
+		binding.setExistingItem(!newItem);
+		binding.setValue(value);
 		editor.setValue(value);
 	}
 	

@@ -37,15 +37,20 @@ public class CollectionItemEditorBinding implements EditorBinding {
 		
 		private Object value;
 		
-		public CollectionItemEditorBinding(Editor editor, Object value) {
-			this.editor = editor;
-			this.value = value;
-		}
+		private boolean existingItem;
 		
 		public Class getBeanClass() {
 			return value != null ? value.getClass() : null;
 		}
 
+		public boolean isEditingExistingBean() {
+			return existingItem;
+		}
+		
+		public void setExistingItem(boolean existingItem) {
+			this.existingItem = existingItem;
+		}
+		
 		public void setEditor(Editor editor) {
 			this.editor = editor;
 		}
@@ -76,6 +81,10 @@ public class CollectionItemEditorBinding implements EditorBinding {
 
 		public Object getValue() {
 			return value;
+		}
+		
+		public void setValue(Object value) {
+			this.value = value;
 		}
 		
 		
