@@ -97,6 +97,13 @@ public abstract class AbstractConditionalElement extends AbstractElement
 		return editor.getLabel();
 	}
 	
+	public boolean isRequired() {
+		if (isEditable()) {
+			return editor.isRequired();
+		}
+		return false;
+	}
+	
 	protected void renderInternal(PrintWriter writer) {
 		if (isEditable()) {
 			editor.setEnabled(true);
