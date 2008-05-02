@@ -253,7 +253,10 @@ riot.ComponentList = Class.create({
 	markDirty: function() {
 		if (this.element.hasClassName('riot-toplevel-list')) {
 			this.dirty = true;
-			this.controller.markDirty();
+			if (this.controller) {
+				// Controller can be null if the function is invoked for a dumped list (fixes RIOT-62)
+				this.controller.markDirty();
+			}
 		}
 		else {
 			riot.findComponentList(this.element).markDirty();
