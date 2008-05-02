@@ -29,10 +29,10 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.web.ui.StringRenderer;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.riot.list.command.Command;
-import org.riotfamily.riot.list.ui.render.CellRenderer;
-import org.riotfamily.riot.list.ui.render.ObjectRenderer;
+import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -51,12 +51,12 @@ public class ListRepository implements ApplicationContextAware {
 	
 	private ApplicationContext applicationContext;
 	
-	private CellRenderer defaultCellRenderer;
+	private ObjectRenderer defaultCellRenderer;
 	
 	private int defaultPageSize = 50;
 
 	public ListRepository() {
-		setDefaultCellRenderer(new ObjectRenderer());
+		setDefaultCellRenderer(new StringRenderer());
 	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
@@ -116,11 +116,11 @@ public class ListRepository implements ApplicationContextAware {
 		return listConfigs;
 	}
 	
-	public CellRenderer getDefaultCellRenderer() {
+	public ObjectRenderer getDefaultCellRenderer() {
 		return defaultCellRenderer;
 	}
 
-	public void setDefaultCellRenderer(CellRenderer defaultCellRenderer) {
+	public void setDefaultCellRenderer(ObjectRenderer defaultCellRenderer) {
 		this.defaultCellRenderer = defaultCellRenderer;
 	}
 	

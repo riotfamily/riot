@@ -21,22 +21,22 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.list.ui.render;
+package org.riotfamily.riot.ui;
 
-import org.riotfamily.common.i18n.MessageResolver;
+import java.io.PrintWriter;
 
-/**
- * Context passed to a {@link org.riotfamily.riot.list.ui.render.CellRenderer
- * CellRenderer} when rendering a list cell.
- */
-public interface RenderContext {
+import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.ui.RenderContext;
+import org.riotfamily.common.web.ui.StringRenderer;
 
-	public String getListId();
-	
-	public Class getBeanClass();
-	
-	public MessageResolver getMessageResolver();
-	
-	public String getContextPath();
+public class CssClassRenderer extends StringRenderer {
+
+	protected void renderString(String string, RenderContext context, 
+			PrintWriter writer) {
+		
+		writer.print("<div class=\"css-cell ");
+		writer.print(FormatUtils.toCssClass(string));
+		writer.print("\"></div>");
+	}
 
 }

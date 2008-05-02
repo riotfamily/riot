@@ -32,6 +32,7 @@ import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.ui.RenderContext;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.select.AbstractChooser;
@@ -43,8 +44,7 @@ import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.form.ui.FormUtils;
 import org.riotfamily.riot.list.ColumnConfig;
 import org.riotfamily.riot.list.ListConfig;
-import org.riotfamily.riot.list.ui.render.CellRenderer;
-import org.riotfamily.riot.list.ui.render.RenderContext;
+import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -218,13 +218,13 @@ public class ObjectChooser extends AbstractChooser
 				"chosen " + targetListConfig.getId());
 
 		LabelRenderContext context = new LabelRenderContext();
-		CellRenderer defaultRenderer = editorRepository.getListRepository()
+		ObjectRenderer defaultRenderer = editorRepository.getListRepository()
 				.getDefaultCellRenderer();
 		
 		ProtectedBeanWrapper wrapper = new ProtectedBeanWrapper(object);
 		for (int i = 0; i < display.length; i++) {
 			ColumnConfig column = targetListConfig.getColumnConfig(display[i]);
-			CellRenderer renderer = null;
+			ObjectRenderer renderer = null;
 			if (column != null) {
 				renderer = column.getRenderer();
 			}
@@ -235,7 +235,7 @@ public class ObjectChooser extends AbstractChooser
 			doc.start(Html.SPAN).attribute(Html.COMMON_CLASS, 
 					FormatUtils.toCssClass(display[i])).body();
 			
-			renderer.render(display[i], value, context, writer);
+			renderer.render(value, context, writer);
 			doc.end();
 		}
 		
@@ -269,14 +269,6 @@ public class ObjectChooser extends AbstractChooser
 	}
 	
 	private class LabelRenderContext implements RenderContext {
-
-		public String getListId() {
-			return targetListConfig.getId();
-		}
-		
-		public Class getBeanClass() {
-			return targetEditorDefinition.getBeanClass();
-		}
 		
 		public String getContextPath() {
 			return getFormContext().getContextPath();

@@ -38,8 +38,6 @@
 		<list:columns>
 			<list:column property="locale" renderer="countryFlagRenderer" />
 			<list:column property="name" />
-			<list:column property="locale.language" renderer="localeRenderer" lookup-level="2" />
-			<list:column property="locale.country" renderer="localeRenderer" lookup-level="2" />
 			<list:command id="edit" />
 		</list:columns>
 	</list:list>
@@ -49,8 +47,6 @@
 		<list:columns>
 			<list:column property="locale" renderer="countryFlagRenderer" />
 			<list:column property="name" />
-			<list:column property="locale.language" renderer="localeRenderer" lookup-level="2" />
-			<list:column property="locale.country" renderer="localeRenderer" lookup-level="2" />
 			<list:column property="enabled" renderer="cssClassRenderer" />
 			<list:command id="moveUp" />
 			<list:command id="moveDown" />

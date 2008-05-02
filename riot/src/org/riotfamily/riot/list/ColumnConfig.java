@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list;
 
-import org.riotfamily.riot.list.ui.render.CellRenderer;
+import org.riotfamily.common.web.ui.ObjectRenderer;
 
 /**
  *
@@ -40,14 +40,14 @@ public class ColumnConfig {
 	
 	private boolean caseSensitive = true;
 
-	private CellRenderer renderer;
+	private ObjectRenderer renderer;
 
 	private String cssClass;
 
 	public ColumnConfig() {
 	}
 	
-	public ColumnConfig(CellRenderer renderer) {
+	public ColumnConfig(ObjectRenderer renderer) {
 		this.renderer = renderer;
 	}
 
@@ -91,11 +91,11 @@ public class ColumnConfig {
 		this.sortable = sortable;
 	}
 
-	public CellRenderer getRenderer() {
+	public ObjectRenderer getRenderer() {
 		return renderer;
 	}
 
-	public void setRenderer(CellRenderer renderer) {
+	public void setRenderer(ObjectRenderer renderer) {
 		this.renderer = renderer;
 	}
 

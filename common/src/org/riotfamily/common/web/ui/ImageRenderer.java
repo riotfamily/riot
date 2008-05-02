@@ -21,19 +21,19 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.list.ui.render;
+package org.riotfamily.common.web.ui;
 
 import java.io.PrintWriter;
 
-public class ImageRenderer extends ObjectRenderer {
+public class ImageRenderer extends StringRenderer {
 
-	protected void renderValue(RenderContext context, PrintWriter writer, 
-			String value) {
+	protected void renderString(String string, RenderContext context, 
+			PrintWriter writer) {
 		
-		if (value != null) {
+		if (string != null) {
 			writer.print("<img src=\"");
 			writer.print(context.getContextPath());
-			writer.print(value);
+			writer.print(string);
 			writer.print("\" />");
 		}
 	}

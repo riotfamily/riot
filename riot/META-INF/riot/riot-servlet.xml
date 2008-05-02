@@ -208,19 +208,17 @@
 	
 	<bean id="publishCommand" class="org.riotfamily.riot.list.command.core.PublishCommand" />
 
-	<!-- Alternative cell renderer  -->
+	<!-- Alternative renderers -->
 
-	<bean id="imageRenderer" class="org.riotfamily.riot.list.ui.render.ImageRenderer" />
+	<bean id="imageRenderer" class="org.riotfamily.common.web.ui.ImageRenderer" />
 
-	<bean id="cssClassRenderer" class="org.riotfamily.riot.list.ui.render.CssClassRenderer" />
+	<bean id="mediumDateRenderer" class="org.riotfamily.common.web.ui.DateRenderer" />
 
-	<bean id="messageRenderer" class="org.riotfamily.riot.list.ui.render.MessageRenderer" />
+	<bean id="localeRenderer" class="org.riotfamily.common.web.ui.LocaleRenderer" />
 
-	<bean id="mediumDateRenderer" class="org.riotfamily.riot.list.ui.render.DateRenderer" />
+	<bean id="cssClassRenderer" class="org.riotfamily.riot.ui.CssClassRenderer" />
 
-	<bean id="localeRenderer" class="org.riotfamily.riot.list.ui.render.LocaleRenderer" />
-
-	<bean id="countryFlagRenderer" class="org.riotfamily.riot.list.ui.render.CountryFlagRenderer" />
+	<bean id="countryFlagRenderer" class="org.riotfamily.riot.ui.CountryFlagRenderer" />
 
 	<!-- Repositories -->
 

@@ -21,16 +21,16 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.list.ui.render;
+package org.riotfamily.common.web.ui;
 
 import java.io.PrintWriter;
 
 
 /**
- * Renders a list cell to the given writer.
+ * Renders an object to the given writer.
  */
-public interface CellRenderer {
+public interface ObjectRenderer {
 
-	public void render(String propertyName, Object value, RenderContext context, PrintWriter writer);
+	public void render(Object obj, RenderContext context, PrintWriter writer);
 
 }

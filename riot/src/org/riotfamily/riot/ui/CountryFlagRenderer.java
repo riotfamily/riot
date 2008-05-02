@@ -21,11 +21,13 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.list.ui.render;
+package org.riotfamily.riot.ui;
 
 import java.io.PrintWriter;
 import java.util.Locale;
 
+import org.riotfamily.common.web.ui.ObjectRenderer;
+import org.riotfamily.common.web.ui.RenderContext;
 import org.riotfamily.riot.runtime.RiotRuntime;
 import org.riotfamily.riot.runtime.RiotRuntimeAware;
 import org.springframework.util.StringUtils;
@@ -34,7 +36,7 @@ import org.springframework.util.StringUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class CountryFlagRenderer implements CellRenderer, RiotRuntimeAware {
+public class CountryFlagRenderer implements ObjectRenderer, RiotRuntimeAware {
 
 	private RiotRuntime runtime;
 
@@ -42,19 +44,17 @@ public class CountryFlagRenderer implements CellRenderer, RiotRuntimeAware {
 		this.runtime = runtime;
 	}
 
-	public void render(String propertyName, Object value,
-			RenderContext context, PrintWriter writer) {
-
-		if (value != null) {
+	public void render(Object obj, RenderContext context, PrintWriter writer) {
+		if (obj != null) {
 			String flag = null;
 			String title = null;
-			if (value instanceof Locale) {
-				Locale locale = (Locale) value;
+			if (obj instanceof Locale) {
+				Locale locale = (Locale) obj;
 				flag = locale.getCountry();
 				title = locale.getDisplayName();
 			}
 			else {
-				flag = value.toString();
+				flag = obj.toString();
 			}
 			if (StringUtils.hasLength(flag)) {
 				writer.print("<img src=\"");

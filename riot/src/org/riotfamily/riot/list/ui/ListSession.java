@@ -41,6 +41,7 @@ import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.common.web.ui.RenderContext;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.FormContextFactory;
@@ -67,7 +68,6 @@ import org.riotfamily.riot.list.command.core.DescendCommand;
 import org.riotfamily.riot.list.command.result.ConfirmBatchResult;
 import org.riotfamily.riot.list.command.result.ConfirmResult;
 import org.riotfamily.riot.list.support.ListParamsImpl;
-import org.riotfamily.riot.list.ui.render.RenderContext;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.beans.NullValueInNestedPathException;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -361,9 +361,7 @@ public class ListSession implements RenderContext {
 				value = bean;
 			}
 			StringWriter writer = new StringWriter();
-			col.getRenderer().render(propertyName, value, this,
-					new PrintWriter(writer));
-
+			col.getRenderer().render(value, this, new PrintWriter(writer));
 			result.add(writer.toString());
 		}
 		return result;

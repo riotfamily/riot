@@ -21,14 +21,14 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.list.ui.render;
+package org.riotfamily.common.web.ui;
 
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class DateRenderer implements CellRenderer {
+public class DateRenderer implements ObjectRenderer {
 
 	private static final String SHORT = "short";
 	
@@ -54,10 +54,8 @@ public class DateRenderer implements CellRenderer {
 		}
 	}
 	
-	public void render(String propertyName, Object value, RenderContext context, 
-			PrintWriter writer) {
-		
-		Date date = (Date) value;
+	public void render(Object obj, RenderContext context, PrintWriter writer) {
+		Date date = (Date) obj;
 		if (date != null) {
 			DateFormat format = SimpleDateFormat.getDateInstance(
 					style, context.getMessageResolver().getLocale());
