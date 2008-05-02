@@ -231,6 +231,8 @@ public class MapEditor extends TemplateElement implements Editor {
 			this.key = key;
 			setSurroundByDiv(false);
 			editor = (Editor) itemElementFactory.createElement(this, getForm(), false);
+			editor.setEditorBinding(binding);
+			binding.setEditor(editor);
 			addComponent("element", editor);
 			if (removable) {
 				removeButton = new Button();
