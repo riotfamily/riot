@@ -25,6 +25,7 @@ package org.riotfamily.media.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.riotfamily.media.model.data.VideoData;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,6 +50,14 @@ public class RiotVideo extends RiotFile {
 	
 	public RiotVideo(MultipartFile multipartFile) throws IOException {
 		super(new VideoData(multipartFile));
+	}
+	
+	public RiotVideo(InputStream in, String fileName) throws IOException {
+		super(new VideoData(in, fileName));
+	}
+	
+	public RiotVideo(byte[] bytes, String fileName) throws IOException {
+		super(new VideoData(bytes, fileName));
 	}
 	
 	public RiotFile createCopy() {

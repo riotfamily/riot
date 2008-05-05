@@ -25,6 +25,7 @@ package org.riotfamily.media.model.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.riotfamily.media.service.VideoMetaData;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,6 +64,14 @@ public class VideoData extends FileData {
 
 	public VideoData(MultipartFile multipartFile) throws IOException {
 		super(multipartFile);
+	}
+
+	public VideoData(InputStream in, String fileName) throws IOException {
+		super(in, fileName);
+	}
+	
+	public VideoData(byte[] bytes, String fileName) throws IOException {
+		super(bytes, fileName);
 	}
 
 	protected void inspect(File file) throws IOException {

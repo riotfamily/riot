@@ -58,6 +58,10 @@ public class RiotFile {
 		this(new FileData(multipartFile));
 	}
 	
+	public RiotFile(InputStream in, String fileName) throws IOException {
+		this(new FileData(in, fileName));
+	}
+	
 	public RiotFile(byte[] bytes, String fileName) throws IOException {
 		this(new FileData(bytes, fileName));
 	}

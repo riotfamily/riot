@@ -26,6 +26,7 @@ package org.riotfamily.media.model.data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -89,6 +90,10 @@ public class FileData {
 		setMultipartFile(multipartFile);
 	}
 	
+	public FileData(InputStream in, String fileName) throws IOException {
+		setInputStream(in, fileName);
+	}
+	
 	public FileData(byte[] bytes, String fileName) throws IOException {
 		setBytes(bytes, fileName);
 	}
@@ -111,6 +116,13 @@ public class FileData {
 		uri = mediaService.store(new FileInputStream(file), fileName);
 		md5 = HashUtils.md5(new FileInputStream(file));
 		inspect(file);
+	}
+	
+	public void setInputStream(InputStream in, String fileName) throws IOException {
+		File f = createEmptyFile(fileName);
+		FileCopyUtils.copy(in, new FileOutputStream(f));
+		contentType = mediaService.getContentType(f);		
+		update();
 	}
 	
 	public void setBytes(byte[] bytes, String fileName) throws IOException {

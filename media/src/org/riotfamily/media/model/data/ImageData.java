@@ -26,6 +26,7 @@ package org.riotfamily.media.model.data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.devlib.schmidt.imageinfo.ImageInfo;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,6 +53,10 @@ public class ImageData extends FileData {
 
 	public ImageData(MultipartFile multipartFile) throws IOException {
 		super(multipartFile);
+	}
+	
+	public ImageData(InputStream in, String fileName) throws IOException {
+		super(in, fileName);
 	}
 
 	public ImageData(byte[] bytes, String fileName) throws IOException {

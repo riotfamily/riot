@@ -25,6 +25,7 @@ package org.riotfamily.media.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.riotfamily.media.model.data.SwfData;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,6 +51,14 @@ public class RiotSwf extends RiotFile {
 	
 	public RiotSwf(MultipartFile multipartFile) throws IOException {
 		super(new SwfData(multipartFile));
+	}
+	
+	public RiotSwf(InputStream in, String fileName) throws IOException {
+		super(new SwfData(in, fileName));
+	}
+	
+	public RiotSwf(byte[] bytes, String fileName) throws IOException {
+		super(new SwfData(bytes, fileName));
 	}
 
 	public SwfData getSwfData() {
