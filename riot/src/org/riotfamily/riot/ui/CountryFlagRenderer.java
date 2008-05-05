@@ -30,7 +30,6 @@ import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.RenderContext;
 import org.riotfamily.riot.runtime.RiotRuntime;
 import org.riotfamily.riot.runtime.RiotRuntimeAware;
-import org.springframework.util.StringUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -44,6 +43,30 @@ public class CountryFlagRenderer implements ObjectRenderer, RiotRuntimeAware {
 		this.runtime = runtime;
 	}
 
+	protected boolean flagExists(String flag) {
+		return getClass().getResourceAsStream(
+				"/org/riotfamily/riot/runtime/resources/style/icons/flags/"
+				+ flag.toLowerCase() + ".gif") != null;
+		
+	}
+	
+	protected void renderFlag(String flag, String title, 
+			RenderContext context, PrintWriter writer) {
+		
+		writer.print("<img src=\"");
+		writer.print(context.getContextPath());
+		writer.print(runtime.getResourcePath());
+		writer.print("style/icons/flags/");
+		writer.print(flag.toLowerCase());
+		writer.print(".gif\"");
+		if (title != null) {
+			writer.print("title=\"");
+			writer.print(title);
+			writer.print('"');
+		}
+		writer.print(" />");
+	}
+	
 	public void render(Object obj, RenderContext context, PrintWriter writer) {
 		if (obj != null) {
 			String flag = null;
@@ -56,19 +79,8 @@ public class CountryFlagRenderer implements ObjectRenderer, RiotRuntimeAware {
 			else {
 				flag = obj.toString();
 			}
-			if (StringUtils.hasLength(flag)) {
-				writer.print("<img src=\"");
-				writer.print(context.getContextPath());
-				writer.print(runtime.getResourcePath());
-				writer.print("style/icons/flags/");
-				writer.print(flag.toLowerCase());
-				writer.print(".gif\"");
-				if (title != null) {
-					writer.print("title=\"");
-					writer.print(title);
-					writer.print('"');
-				}
-				writer.print(" />");
+			if (flagExists(flag)) {
+				renderFlag(flag, title, context, writer);
 			}
 		}
 	}
