@@ -99,10 +99,12 @@ public class PageSetupBean implements InitializingBean, ApplicationContextAware 
 		if (pageDao.listSites().isEmpty()) {
 			List sites = createSites();
 			PageNode rootNode = pageDao.getRootNode();
-			Iterator it = pageDefinitions.iterator();
-			while (it.hasNext()) {
-				PageDefinition definition = (PageDefinition) it.next();
-				definition.createNode(rootNode, sites, pageDao);
+			if (pageDefinitions != null) {
+				Iterator it = pageDefinitions.iterator();
+				while (it.hasNext()) {
+					PageDefinition definition = (PageDefinition) it.next();
+					definition.createNode(rootNode, sites, pageDao);
+				}
 			}
 			pageDao.updateNode(rootNode);
 		}
