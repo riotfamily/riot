@@ -34,9 +34,11 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.beans.MapWrapper;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.PropertyAccessor;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 public class AttributePattern {
@@ -175,22 +177,40 @@ public class AttributePattern {
 		}
 	}
 	
-	public boolean canFillIn(Set attributeNames, int anonymousAttributes) {
-		if (attributeNames != null) {
-			int unmatched = 0;
-			Iterator it = this.attributeNames.iterator();
-			while (it.hasNext()) {
-				if (!attributeNames.contains(it.next())) {
-					if (++unmatched > anonymousAttributes) {
-						return false;
-					}
+	public boolean canFillIn(Map required, Map optional, int anonymous) {
+		if (required == null) {
+			required = Collections.EMPTY_MAP;
+		}
+		if (optional == null) {
+			optional = Collections.EMPTY_MAP;
+		}
+		return canFillIn(required.keySet(), optional.keySet(), anonymous);
+	}
+	
+	public boolean canFillIn(Set required, Set optional, int anonymous) {
+		if (required == null) {
+			required = Collections.EMPTY_SET;
+		}
+		if (optional == null) {
+			optional = Collections.EMPTY_SET;
+		}
+		if (CollectionUtils.isEmpty(attributeNames)) {
+			return required.isEmpty() && anonymous == 0;
+		}
+		if (!attributeNames.containsAll(required)) {
+			return false;
+		}
+		int unmatched = 0;
+		Iterator it = attributeNames.iterator();
+		while (it.hasNext()) {
+			String name = (String) it.next();
+			if (!(required.contains(name) || optional.contains(name))) {
+				if (++unmatched > anonymous) {
+					return false;
 				}
 			}
-			return unmatched <= anonymousAttributes;
 		}
-		else {
-			return this.attributeNames.size() == anonymousAttributes;
-		}
+		return true;
 	}
 
 	public boolean matches(String path) {
@@ -207,6 +227,10 @@ public class AttributePattern {
 	
 	public String fillInAttributes(PropertyAccessor attributes) {
 		return fillInAttributes(attributes, null);
+	}
+	
+	public String fillInAttributes(Map attributes, Map defaults) {
+		return fillInAttributes(new MapWrapper(attributes), defaults);
 	}
 	
 	public String fillInAttributes(PropertyAccessor attributes, Map defaults) {
@@ -269,15 +293,9 @@ public class AttributePattern {
 			map = Collections.singletonMap(name, value);
 		}
 		else {
-			if (defaults != null) {
-				map = new HashMap(defaults);
-				map.put(unmatched, value);
-			}
-			else {
-				map = Collections.singletonMap(unmatched, value);
-			}
+			map = Collections.singletonMap(unmatched, value);
 		}
-		return fillInAttributes(null, map);
+		return fillInAttributes(map, defaults);
 	}
 	
 	public String toString() {

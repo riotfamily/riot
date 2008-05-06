@@ -24,11 +24,9 @@
 package org.riotfamily.common.web.mapping;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -86,16 +84,8 @@ public abstract class AbstractReverseHandlerMapping
 			return getUrlForHandler(handlerName, defaults, prefix, request);
 		}
 		if (attributes instanceof Map) {
-			Map map;
-			if (defaults != null) {
-				map = new HashMap();
-				map.putAll(defaults);
-				map.putAll((Map) attributes);
-			}
-			else {
-				map = (Map) attributes;
-			}
-			return getUrlForHandlerWithMap(handlerName, map, prefix, request); 
+			return getUrlForHandlerWithMap(handlerName, (Map) attributes, 
+					defaults, prefix, request); 
 		}
 		if (ClassUtils.isAssignable(String.class, attributes.getClass()) ||
 				ClassUtils.isPrimitiveOrWrapper(attributes.getClass())) {
@@ -114,12 +104,8 @@ public abstract class AbstractReverseHandlerMapping
 	private String getUrlForHandler(String handlerName, Map defaults, 
 			String prefix, HttpServletRequest request) {
 		
-		Set attributeNames = null;
-		if (defaults != null) {
-			attributeNames = defaults.keySet();
-		}
 		AttributePattern p = getPatternForHandler(handlerName, prefix, request, 
-				attributeNames, 0);
+				null, defaults, 0);
 		
 		if (p == null) {
 			return null;
@@ -135,12 +121,8 @@ public abstract class AbstractReverseHandlerMapping
 			Object attribute, Map defaults, String prefix, 
 			HttpServletRequest request) {
 		
-		Set attributeNames = null;
-		if (defaults != null) {
-			attributeNames = defaults.keySet();
-		}
 		AttributePattern p = getPatternForHandler(handlerName, prefix, request, 
-				attributeNames, 1);
+				null, defaults, 1);
 		
 		if (p == null) {
 			return null;
@@ -154,7 +136,7 @@ public abstract class AbstractReverseHandlerMapping
 	 * The wildcard replacements are taken from the given Map.
 	 */
 	private String getUrlForHandlerWithMap(String beanName, Map attributes,
-			String prefix, HttpServletRequest request) {
+			Map defaults, String prefix, HttpServletRequest request) {
 		
 		List patterns = getPatternsForHandler(beanName, prefix, request);
 		if (patterns == null || patterns.isEmpty()) {
@@ -163,8 +145,8 @@ public abstract class AbstractReverseHandlerMapping
 		Iterator it = patterns.iterator();
 		while (it.hasNext()) {
 			AttributePattern p = (AttributePattern) it.next();
-			if (p.canFillIn(attributes.keySet(), 0)) {
-				String path = p.fillInAttributes(new MapWrapper(attributes), null);
+			if (p.canFillIn(attributes, defaults, 0)) {
+				String path = p.fillInAttributes(new MapWrapper(attributes), defaults);
 				return addServletMappingIfNecessary(path, request);
 			}
 		}
@@ -233,14 +215,12 @@ public abstract class AbstractReverseHandlerMapping
 	
 	/**
 	 * Returns the pattern for the handler with the given name that contains
-	 * all the given wildcard names and exactly 
-	 * <code>attributeNames.size() + anonymousWildcards</code> wildcards
-	 * in total.
+	 * all the given wildcards.
 	 * @throws IllegalArgumentException if more than one mapping is registered
 	 */
 	protected AttributePattern getPatternForHandler(String handlerName, 
-			String prefix, HttpServletRequest request, Set attributeNames, 
-			int anonymousWildcards) {
+			String prefix, HttpServletRequest request, Map attributes,
+			Map defaults, int anonymousWildcards) {
 		
 		List patterns = getPatternsForHandler(handlerName, prefix, request);
 		if (patterns == null || patterns.isEmpty()) {
@@ -249,7 +229,7 @@ public abstract class AbstractReverseHandlerMapping
 		Iterator it = patterns.iterator();
 		while (it.hasNext()) {
 			AttributePattern p = (AttributePattern) it.next();
-			if (!p.canFillIn(attributeNames, anonymousWildcards)) {
+			if (!p.canFillIn(attributes, defaults, anonymousWildcards)) {
 				it.remove();
 			}
 		}
