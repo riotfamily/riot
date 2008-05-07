@@ -219,9 +219,7 @@ public class AdvancedBeanNameHandlerMapping
 		return path;
 	}
 	
-	protected List getPatternsForHandler(String beanName, 
-			HttpServletRequest request) {
-		
+	protected List getPatternsForHandler(String beanName, UrlResolverContext context) {
 		return (List) patternsByBeanName.get(beanName);
 	}
 	

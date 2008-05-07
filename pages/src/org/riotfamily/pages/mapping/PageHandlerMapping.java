@@ -34,6 +34,7 @@ import org.riotfamily.common.web.controller.HttpErrorController;
 import org.riotfamily.common.web.controller.RedirectController;
 import org.riotfamily.common.web.mapping.AbstractReverseHandlerMapping;
 import org.riotfamily.common.web.mapping.AttributePattern;
+import org.riotfamily.common.web.mapping.UrlResolverContext;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
@@ -176,9 +177,9 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	}
 	
 	protected List getPatternsForHandler(String beanName, 
-			HttpServletRequest request) {
+			UrlResolverContext context) {
 		
-		Site site = pageResolver.getSite(request);
+		Site site = (Site) context.getAttribute(PageResolver.SITE_ATTRIBUTE);
 		if (site == null) {
 			return null;
 		}

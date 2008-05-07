@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.mapping.AdvancedBeanNameHandlerMapping;
+import org.riotfamily.common.web.mapping.UrlResolverContext;
 import org.riotfamily.pages.model.Site;
 
 /**
@@ -43,8 +44,8 @@ public class SiteBeanNameHandlerMapping extends AdvancedBeanNameHandlerMapping {
 		return handler;
 	}
 
-	protected Map getDefaults(HttpServletRequest request) {
-		Site site = pageResolver.getSite(request);
+	protected Map getDefaults(UrlResolverContext context) {
+		Site site = (Site) context.getAttribute(PageResolver.SITE_ATTRIBUTE);
 		Map defaults = null;
 		if (site != null) {
 			String sitePrefix = site.getPathPrefix();
