@@ -529,8 +529,8 @@
 		<constructor-arg ref="jobUIUpdater" />
 	</bean>
 
-	<bean id="jobUIController" name="/job" class="org.riotfamily.common.web.controller.ParameterViewController">
-		<property name="viewName" value="classpath:/org/riotfamily/riot/job/ui/JobView.ftl" />
+	<bean id="jobUIController" name="/job" class="org.riotfamily.riot.job.ui.JobUIController">
+		<property name="jobManager" ref="jobManager" />
 	</bean>
 
 	<bean id="org.directwebremoting.PageNormalizer"
