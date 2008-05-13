@@ -10,6 +10,16 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+/**
+ * FactoryBean that imports a bean from another WebApplicationContext.
+ * <p>
+ * In order to work, the other context must be initialized before this bean is 
+ * processed. You can control the initialization order via the 
+ * <code>&lt;load-on-startup&gt;</code> tag in the web.xml descriptor.  
+ * </p>
+ * @since 7.0.1
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class WebApplicationContextBeanImporter implements ServletContextAware, 
 		BeanNameAware, FactoryBean, InitializingBean {
 
@@ -28,6 +38,10 @@ public class WebApplicationContextBeanImporter implements ServletContextAware,
 		this.servletName = servletName;
 	}
 	
+	/**
+	 * Sets the name of the bean to be imported. If not specified, the name
+	 * defaults to the local bean name.
+	 */
 	public void setBeanName(String beanName) {
 		if (this.beanName == null) {
 			this.beanName = beanName;
