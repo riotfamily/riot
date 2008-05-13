@@ -80,5 +80,9 @@ public class RiotImage extends RiotFile {
 	public String getFormat() {
 		return getImageData().getFormat();
 	}
+	
+	public boolean isValid() {
+		return getImageData().isValid();
+	}
 
 }
