@@ -343,7 +343,7 @@ class CacheItem implements Serializable {
 	                InputStream in = new BufferedInputStream(
 	                        new FileInputStream(file));
 	                        
-	                IOUtils.copy(in, response.getOutputStream());
+	                IOUtils.serve(in, response.getOutputStream());
 	            }
 	            else {
 	                Reader in = new BufferedReader(new InputStreamReader(
@@ -355,7 +355,7 @@ class CacheItem implements Serializable {
 	                            sessionId, out);
 	                }
 	                
-	                IOUtils.copy(in, out);
+	                IOUtils.serve(in, out);
 	            }
             }
         }
