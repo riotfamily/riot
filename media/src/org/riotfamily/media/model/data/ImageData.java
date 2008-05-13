@@ -66,11 +66,12 @@ public class ImageData extends FileData {
 	protected void inspect(File file) throws IOException {
 		ImageInfo info = new ImageInfo();
 		info.setInput(new FileInputStream(file));
-		info.check();
-		width = info.getWidth();
-		height = info.getHeight();
-		format = info.getFormatName();
-		setContentType("image/" + format.toLowerCase());
+		if (info.check()) {
+			width = info.getWidth();
+			height = info.getHeight();
+			format = info.getFormatName();
+			setContentType("image/" + format.toLowerCase());
+		}
 	}
 	
 	public int getWidth() {
@@ -97,4 +98,7 @@ public class ImageData extends FileData {
 		this.format = format;
 	}
 	
+	public boolean isValid() {
+		return format != null;
+	}
 }
