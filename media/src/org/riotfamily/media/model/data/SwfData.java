@@ -25,6 +25,7 @@ package org.riotfamily.media.model.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.riotfamily.common.util.FlashInfo;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,6 +53,14 @@ public class SwfData extends FileData {
 
 	public SwfData(MultipartFile multipartFile) throws IOException {
 		super(multipartFile);
+	}
+	
+	public SwfData(InputStream in, String fileName) throws IOException {
+		super(in, fileName);
+	}
+	
+	public SwfData(byte[] bytes, String fileName) throws IOException {
+		super(bytes, fileName);
 	}
 
 	protected void inspect(File file) throws IOException {

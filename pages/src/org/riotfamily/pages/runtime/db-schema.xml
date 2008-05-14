@@ -6,7 +6,7 @@
 		http://www.riotfamily.org/schema/revolt
 		http://www.riotfamily.org/schema/revolt/revolt.xsd
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
 	<db:history module="pages" data-source="riotDataSource" depends="components">
 		<db:change-set id="initial">

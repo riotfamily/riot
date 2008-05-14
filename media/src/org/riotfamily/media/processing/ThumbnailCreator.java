@@ -94,6 +94,9 @@ public class ThumbnailCreator extends AbstractFileProcessor
 		File dest = thumbnail.createEmptyFile(thumbName);
 		thumbnailer.renderThumbnail(data.getFile(), dest, width, height);
 		thumbnail.update();
+		if (!thumbnail.isValid()) {
+			throw new IOException("Thumbnail creation failed");
+		}
 		return new RiotImage(thumbnail);
 	}
 	

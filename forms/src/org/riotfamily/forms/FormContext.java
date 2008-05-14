@@ -27,16 +27,12 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Locale;
 
-import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.common.web.ui.RenderContext;
 import org.springframework.beans.PropertyEditorRegistrar;
 
-public interface FormContext {
+public interface FormContext extends RenderContext {
 		
 	public Locale getLocale();
-	
-	public MessageResolver getMessageResolver();
-	
-	public String getContextPath();
 	
 	public String getResourcePath();
 

@@ -198,7 +198,7 @@ public class Page {
 		AttributePattern p = new AttributePattern(pattern);
 		if (attributes instanceof Map) {
 			Map map = (Map) attributes;
-			if (p.canFillIn(map.keySet(), 0)) {
+			if (p.canFillIn(map, null, 0)) {
 				return p.fillInAttributes(new MapWrapper(map));
 			}
 			return null;

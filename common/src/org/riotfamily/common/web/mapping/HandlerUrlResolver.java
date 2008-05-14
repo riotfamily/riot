@@ -58,21 +58,47 @@ public class HandlerUrlResolver implements ApplicationContextAware {
 	/**
 	 * Returns the URL of a mapped handler.
 	 * @param handlerName The name of the handler
-	 * @param prefix Optional prefix to sort out ambiguities
 	 * @param attributes Optional attributes to fill out wildcards. Can either 
 	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
 	 * @param request The current request
 	 */
 	public String getUrlForHandler(HttpServletRequest request, 
+			String handlerName, Object attributes) {
+		
+		return getUrlForHandler(request, handlerName, attributes, null);
+	}
+	
+	/**
+	 * Returns the URL of a mapped handler.
+	 * @param handlerName The name of the handler
+	 * @param attributes Optional attributes to fill out wildcards. Can either 
+	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
+	 * @param request The current request
+	 * @param prefix Optional prefix to sort out ambiguities
+	 */
+	public String getUrlForHandler(HttpServletRequest request, 
 			String handlerName, Object attributes, String prefix) {
 		
-		Assert.notNull(mappings, "The ApplicationContext must be set first");
+		UrlResolverContext context = new UrlResolverContext(request);
+		return getUrlForHandler(context, handlerName, attributes, prefix);
+	}
+	
+	public String getUrlForHandler(UrlResolverContext context,
+			String handlerName, Object attributes) {
+		
+		return getUrlForHandler(context, handlerName, attributes, null);
+	}
+		
+	public String getUrlForHandler(UrlResolverContext context, 
+			String handlerName, Object attributes, String prefix) {
+		
 		String url = null;
+		Assert.notNull(mappings, "The ApplicationContext must be set first");
 		Iterator it = mappings.iterator();
 		while (url == null && it.hasNext()) {
 			ReverseHandlerMapping mapping = (ReverseHandlerMapping) it.next();
 			url = mapping.getUrlForHandler(
-					handlerName, prefix, attributes, request);
+					handlerName, prefix, attributes, context);
 		}
 		return url;
 	}

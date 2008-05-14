@@ -49,11 +49,11 @@ public class PageResolver {
 	
 	private static final Log log = LogFactory.getLog(PageResolver.class);
 
-	private static final String PATH_ATTRIBUTE = PageResolver.class.getName() + ".path";
+	public static final String PATH_ATTRIBUTE = PageResolver.class.getName() + ".path";
 
-	private static final String SITE_ATTRIBUTE = PageResolver.class.getName() + ".site";
+	public static final String SITE_ATTRIBUTE = PageResolver.class.getName() + ".site";
 
-	private static final String PAGE_ATTRIBUTE = PageResolver.class.getName() + ".page";
+	public static final String PAGE_ATTRIBUTE = PageResolver.class.getName() + ".page";
 
 	private static final Object NOT_FOUND = new Object();
 	
