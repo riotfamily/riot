@@ -112,6 +112,16 @@
 			<link href="http://static.springframework.org/spring/docs/2.0.x/api" />
 		</javadoc>
 	</target>
+	
+	<target name="fmdoc" depends="-configure-ivy">
+		<ivy:retrieve organisation="riotfamily" module="fmdoc" revision="1.0" inline="true" log="quiet" pattern="${lib.dir}/[artifact].[ext]" />
+		<taskdef name="fmdoc" classpathref="classpath" classname="org.riotfamily.fmdoc.ant.FreeMarkerDocTask" />
+		<fmdoc destdir="${build.dir}/fmdoc">
+			<fileset dir=".">
+        		<include name="*/src/**/*.ftl" />		
+        	</fileset>
+		</fmdoc>
+	</target>
 
 	<target name="dist" depends="js-jar,jar,javadoc">
 		<delete file="${dist.zip.file}" />
