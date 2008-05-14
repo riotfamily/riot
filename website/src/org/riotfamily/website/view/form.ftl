@@ -1,6 +1,14 @@
+<#---
+  - Alternative to Spring's form macros.
+  - @namespace form 
+ -->
+ 
+<#---
+  - @internal
+  -->
 <#assign command = "command" />
 
-<#--
+<#---
   - Renders a form tag for the command object with the specified name.
   - The macro also sets the command variable which is required by the
   - getStatus() function (which in turn is used internally in many places).
@@ -15,7 +23,7 @@
 	</form>
 </#macro>
 
-<#--
+<#---
   - Returns whether a field or the whole form contains an error.
   -->
 <#function hasErrors field="">
@@ -30,7 +38,7 @@
 	</#if>
 </#function>
 
-<#-- 
+<#--- 
   - Loops over the errors of the specified field. In case no fieldname is given, 
   - the macro will loop over all errors.
   - Use this macro with two loop variables, which will make the error message
@@ -52,7 +60,7 @@
 	</#if>
 </#macro>
 
-<#-- 
+<#---
   - Renders a label for a field. If no nested content is present, the macro
   - will look up the message with the given code, or 
   - &lt;command&gt;.&lt;field&gt; if no code is explicitly specified.
@@ -75,7 +83,7 @@
 	<#return getStatus(field).value?if_exists?string?html />
 </#function>
 
-<#--
+<#---
   - Renders an input element for the specified field.
   -->
 <#macro input type field id=field errorClass="error" attributes...>
@@ -86,7 +94,7 @@
     <input id="${id}" type="${type}" name="${field}" value="${getValue(field)}"${join(attributes)} />
 </#macro>
 
-<#--
+<#---
   - Renders a textarea for the specified field.
   -->
 <#macro textarea field id=field errorClass="error" attributes...>
@@ -94,7 +102,7 @@
     <textarea id="${id}" name="${field}"${join(attributes)}>${getValue(field)}</textarea>
 </#macro>
 
-<#--
+<#---
   - Renders a select element. See also #listOptions.
   -
   - @param field The field name
@@ -123,7 +131,7 @@
     </select>
 </#macro>
 
-<#--
+<#---
   - Renders a checkbox. 
   -->
 <#macro checkbox field id=field errorClass="error" value="on" attributes...>
@@ -132,7 +140,7 @@
 	<input type="hidden" name="_${field}" value="on"/>
 </#macro>
 
-<#--
+<#---
   - Renders a list of checkboxes for the given options. See also #listOptions.
   -->
 <#macro checkboxes field options>
@@ -143,7 +151,7 @@
 	<input type="hidden" name="_${field}" value="on" />
 </#macro>
 
-<#--
+<#---
   - Renders a list of radio buttons for the given options. See also #listOptions.
   -->
 <#macro radioButtons field options>
@@ -153,7 +161,7 @@
 	</@listOptions>
 </#macro>
 
-<#--
+<#---
   - Macro that loops over an iterable containing options and evaluates the 
   - nested content for each option, passing several useful loop variables.
   -
@@ -217,7 +225,7 @@
 	</#if>
 </#macro>
 
-<#--
+<#---
   - Macro that renders an option tag.
   -
   - @param value The value for the value attribute.
