@@ -1,4 +1,5 @@
 <#---
+  - Macros to edit texts and images via the frontoffice.
   - @namespace inplace
   -->
 
@@ -23,8 +24,11 @@
 
 <#---
   - Macro that renders the Riot toolbar if the page is requested in edit-mode.
+  - If no user is logged in, a JavaScript block is rendered that identifies the
+  - page as Riot page, hence enables the use of the login bookmarklet.
+  - @param bookmarklet Whether bookmarklet support should be enabled 
   -->
-<#macro toolbar>
+<#macro toolbar bookmarklet=true>
 	<#if editMode>
 		<#list inplaceMacroHelper.toolbarScripts as src>
 			<@riot.script src = src + "?lang=" + .lang />
@@ -34,7 +38,7 @@
 			${inplaceMacroHelper.initScript}
 			<#nested />
 		</script>
-	<#else>
+	<#elseif bookmarklet>
 		<script type="text/javascript" language="JavaScript">
 			// This variable is read by the login-bookmarklet:
 			var riotPagesUrl = '${riot.href("/pages")}';

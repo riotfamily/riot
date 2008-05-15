@@ -214,7 +214,10 @@
 
 <#---
   - Strips directory names and the query-string from a path.
-  - ${baseName('/hello/world.html?foo=bar')} => world.html  
+  - <h4>Example:</h4>
+  - <pre>${baseName('/hello/world.html?foo=bar')}
+  - ==> world.html
+  - </pre>  
   -->
 <#function baseName path>
 	<#return commonMacroHelper.baseName(path) />
@@ -224,8 +227,10 @@
   - Returns the extension of the given file-name. If the validExtensions 
   - parameter is specified, the defaultExtension will be returned if the actual
   - extension is invalid.
-  - ${fileExtension('foo.html')} => html
-   -${fileExtension('foo.bar', ['gif', 'jpg'], 'unknown')} => unknown
+  - <h4>Example:</h4>
+  - <pre>${fileExtension('foo.html')} ==> html
+  - ${fileExtension('foo.bar', ['gif', 'jpg'], 'unknown')} ==> unknown
+  - </pre>
   -->
 <#function fileExtension filename validExtension=[] defaultExtension="">
 	<#return commonMacroHelper.getFileExtension(filename, validExtension, defaultExtension) />
