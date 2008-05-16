@@ -25,9 +25,16 @@
 package org.riotfamily.website.generic.config;
 
 
+import java.util.Map;
+
+import org.riotfamily.common.beans.xml.GenericBeanDefinitionParser;
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
 import org.riotfamily.common.beans.xml.ListItemDecorator;
+import org.riotfamily.website.generic.model.StaticModelBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
 /**
  * NamespaceHandler that handles the <code>generic</code> namespace as
@@ -56,6 +63,8 @@ public class GenericNamespaceHandler extends GenericNamespaceHandlerSupport {
 				.addTranslation("query-cache", "useQueryCache")
 				.addTranslation("hibernate-cache-region", "hibernateCacheRegion");
 		
+		register("model", new StaticModelBuilderParser(), setModelBuilder);
+		
 		registerSpringBeanDefinitionParser("model-builder", setModelBuilder);
 
 		BeanDefinitionDecorator addParameterResolver = new ListItemDecorator("parameterResolvers");
@@ -69,4 +78,20 @@ public class GenericNamespaceHandler extends GenericNamespaceHandlerSupport {
 		registerSpringBeanDefinitionParser("custom-resolver", addParameterResolver);
 	}
 
+	private static class StaticModelBuilderParser extends GenericBeanDefinitionParser {
+
+		public StaticModelBuilderParser() {
+			super(StaticModelBuilder.class);
+		}
+		
+		protected void postProcess(BeanDefinitionBuilder beanDefinition,
+				ParserContext parserContext, Element element) {
+			
+			Map model = parserContext.getDelegate().parseMapElement(
+					element, beanDefinition.getBeanDefinition());
+			
+			beanDefinition.addPropertyValue("model", model);
+		}
+		
+	}
 }
