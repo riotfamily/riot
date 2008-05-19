@@ -206,7 +206,7 @@
 </#function>
 
 <#---
-  - Shuffles the given collection
+  - Shuffles the given collection.
 -->
 <#function shuffle collection>
 	<#return commonMacroHelper.shuffle(collection) />
@@ -214,7 +214,10 @@
 
 <#---
   - Strips directory names and the query-string from a path.
-  - ${baseName('/hello/world.html?foo=bar')} => world.html  
+  - <h4>Example:</h4>
+  - <pre>${baseName('/hello/world.html?foo=bar')}
+  - ==> world.html
+  - </pre>  
   -->
 <#function baseName path>
 	<#return commonMacroHelper.baseName(path) />
@@ -224,8 +227,10 @@
   - Returns the extension of the given file-name. If the validExtensions 
   - parameter is specified, the defaultExtension will be returned if the actual
   - extension is invalid.
-  - ${fileExtension('foo.html')} => html
-   -${fileExtension('foo.bar', ['gif', 'jpg'], 'unknown')} => unknown
+  - <h4>Example:</h4>
+  - <pre>${fileExtension('foo.html')} ==> html
+  - ${fileExtension('foo.bar', ['gif', 'jpg'], 'unknown')} ==> unknown
+  - </pre>
   -->
 <#function fileExtension filename validExtension=[] defaultExtension="">
 	<#return commonMacroHelper.getFileExtension(filename, validExtension, defaultExtension) />
@@ -255,7 +260,7 @@
 </#function>
 
 <#---
-  - Rounds the number to a decimal number
+  - Rounds the number to a decimal number.
   -->
 <#function round number>
 	<#return commonMacroHelper.round(number) />
@@ -299,12 +304,24 @@
 	<#return attrs />
 </#function>
 
+<#---
+  - Renders an attribute in XML syntax. If the value is an empty string or 
+  - contains only whitespaces nothing is rendered. 
+  -->
 <#macro attribute name value=""><#if value!?trim?has_content> ${name}="${value?trim}"</#if></#macro>
 
+<#---
+  - Renders the nested content if the given value is a string and has content.
+  - The given value can be accessed in the nested block with ${value}. 
+  -->
 <#macro if value="">
 	<#if !(value?is_string && !value?has_content)><#nested value /></#if>
 </#macro>
 
+<#---
+  - Wraps the nested content inside an &lt;a&gt;-tag if the href parameter 
+  - has any content.
+  -->
 <#macro link href="" tag="a" externalClass="externalLink" externalTarget="_blank" attributes...>
 	<#if href?has_content>
 		<#local attributes = unwrapAttributes(attributes) + {"href": href} />
@@ -317,6 +334,42 @@
 		<${tag}${joinAttributes(attributes)}><#nested /></${tag}>
 	<#else>
 		<#nested />
+	</#if>
+</#macro>
+
+<#--- 
+  - Renders a pager.
+  - @see <a href="http://www.riotfamily.org/api/latest/org/riotfamily/website/generic/view/Pager.html">Pager</a>
+  -->
+<#macro pager prev="&lt;&lt;" next="&gt;&gt;" gap="...">
+	<#if pager.pages gt 1>
+		<#if pager.prevPage?exists>
+			<a class="prev-page" href="${pager.prevPage.link}">${prev}</a>
+		</#if>
+		
+		<#if pager.firstPage?exists>
+			<a class="page" href="${pager.firstPage.link}">1</a>
+			<#if pager.gapToFirstPage><span class="gap">${gap}</span></#if>
+		</#if>
+		
+		<#list pager.prevPages as page>
+			<a class="page" href="${page.link}">${page.number}</a>
+		</#list>
+		
+		<span class="current-page">${pager.currentPage}</span>
+		
+		<#list pager.nextPages as page>
+			<a class="page" href="${page.link}">${page.number}</a>
+		</#list>
+		
+		<#if pager.lastPage?exists>
+			<#if pager.gapToLastPage><span class="gap">${gap}</span></#if>
+			<a class="page" href="${pager.lastPage.link}">${pager.lastPage.number}</a>
+		</#if>
+		
+		<#if pager.nextPage?exists>
+			<a class="next-page" href="${pager.nextPage.link}">${next}</a>
+		</#if>
 	</#if>
 </#macro>
 
