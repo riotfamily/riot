@@ -225,7 +225,7 @@
 </#function>
 
 <#---
-  - Shuffles the given collection
+  - Shuffles the given collection.
 -->
 <#function shuffle collection>
 	<#return commonMacroHelper.shuffle(collection) />
@@ -279,7 +279,7 @@
 </#function>
 
 <#---
-  - Rounds the number to a decimal number
+  - Rounds the number to a decimal number.
   -->
 <#function round number>
 	<#return commonMacroHelper.round(number) />
@@ -326,12 +326,24 @@
 	<#return attrs />
 </#function>
 
+<#---
+  - Renders an attribute in XML syntax. If the value is an empty string or 
+  - contains only whitespaces nothing is rendered. 
+  -->
 <#macro attribute name value=""><#if value!?trim?has_content> ${name}="${value?trim}"</#if></#macro>
 
+<#---
+  - Renders the nested content if the given value is a string and has content.
+  - The given value can be accessed in the nested block with ${value}. 
+  -->
 <#macro if value="">
 	<#if !(value?is_string && !value?has_content)><#nested value /></#if>
 </#macro>
 
+<#---
+  - Wraps the nested content inside an &lt;a&gt;-tag if the href parameter 
+  - has any content.
+  -->
 <#macro link href="" tag="a" externalClass="externalLink" externalTarget="_blank" attributes...>
 	<#if href?has_content>
 		<#local attributes = unwrapAttributes(attributes) + {"href": href} />
@@ -361,6 +373,42 @@
 		<#list hrefs as href>
 			<link rel="stylesheet" type="text/css" href="${resource(href)}" />
 		</#list>
+	</#if>
+</#macro>
+
+<#--- 
+  - Renders a pager.
+  - @see <a href="http://www.riotfamily.org/api/latest/org/riotfamily/website/generic/view/Pager.html">Pager</a>
+  -->
+<#macro pager prev="&lt;&lt;" next="&gt;&gt;" gap="...">
+	<#if pager.pages gt 1>
+		<#if pager.prevPage?exists>
+			<a class="prev-page" href="${pager.prevPage.link}">${prev}</a>
+		</#if>
+		
+		<#if pager.firstPage?exists>
+			<a class="page" href="${pager.firstPage.link}">1</a>
+			<#if pager.gapToFirstPage><span class="gap">${gap}</span></#if>
+		</#if>
+		
+		<#list pager.prevPages as page>
+			<a class="page" href="${page.link}">${page.number}</a>
+		</#list>
+		
+		<span class="current-page">${pager.currentPage}</span>
+		
+		<#list pager.nextPages as page>
+			<a class="page" href="${page.link}">${page.number}</a>
+		</#list>
+		
+		<#if pager.lastPage?exists>
+			<#if pager.gapToLastPage><span class="gap">${gap}</span></#if>
+			<a class="page" href="${pager.lastPage.link}">${pager.lastPage.number}</a>
+		</#if>
+		
+		<#if pager.nextPage?exists>
+			<a class="next-page" href="${pager.nextPage.link}">${next}</a>
+		</#if>
 	</#if>
 </#macro>
 
