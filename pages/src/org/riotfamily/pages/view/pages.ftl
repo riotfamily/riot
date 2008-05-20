@@ -37,7 +37,7 @@
   - @see <a href="inplace.html#use">inplace.use</a>
   -->
 <#macro use page=currentPage form="" tag="" attributes...>
-	<#local attributes = common.unwrapAttributes(attributes) />
+	<#local attributes = c.unwrapAttributes(attributes) />
 	<@inplace.use container=page.contentContainer model=page.properties form=form tag=tag attributes=attributes>
 		<#nested />
 	</@inplace.use>
@@ -47,8 +47,8 @@
   - Renders an editable HTML link to the given Page.
   -->
 <#macro link page tag="a" labelKey="title" form="" attributes...>
-	<#local attributes = common.unwrapAttributes(attributes) />
+	<#local attributes = c.unwrapAttributes(attributes) />
 	<@inplace.use container=page.contentContainer model=page.properties form=form>
-		<@inplace.link key=labelKey href=common.url(page.url) tag=tag attributes=attributes>${page.title}</@inplace.link>
+		<@inplace.link key=labelKey href=c.url(page.url) tag=tag attributes=attributes>${page.title}</@inplace.link>
 	</@inplace.use>
 </#macro>

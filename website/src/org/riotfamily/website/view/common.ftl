@@ -1,6 +1,6 @@
 <#---
   - Provides common utility macros and functions.
-  - @namespace common
+  - @namespace c
   -->
 
 <#--- The locale resolved by Spring's LocaleResolver. -->
@@ -114,8 +114,20 @@
   - </pre>
   -->
 <#function resource href>
-	<#return url(commonMacroHelper.addTimestamp(href)) />
+	<#return resolve(stamp(href)) />
 </#function>
+
+<#---
+  - Adds a timestamp to the given URI.
+  - <h4>Example:</h4>
+  - <pre>${stamp('main.css')}
+  - ==> main.css?121345
+  - </pre>
+  -->
+<#function stamp href>
+	<#return commonMacroHelper.addTimestamp(href) />
+</#function>
+
 
 <#---
   - Returns whether the given URL is external, i.e. has a schema part.
@@ -133,17 +145,24 @@
 </#function>
 
 <#---
+  - Returns the path for the given handlerName. 
+  -->
+<#function pathForHandler handlerName attributes={} prefix="">
+	<#return commonMacroHelper.getUrlForHandler(handlerName, attributes, prefix) />
+</#function>
+
+<#---
   - Returns the URL for the given handlerName. 
   -->
 <#function urlForHandler handlerName attributes={} prefix="">
-	<#return url(commonMacroHelper.getUrlForHandler(handlerName, attributes, prefix)) />
+	<#return url(pathForHandler(handlerName, attributes, prefix)) />
 </#function>
 
 <#---
   - Returns the absolute URL for the given handlerName. 
   -->
 <#function absoluteUrlForHandler handlerName attributes={} prefix="">
-	<#return absoluteUrl(commonMacroHelper.getUrlForHandler(handlerName, attributes, prefix)) />
+	<#return absoluteUrl(pathForHandler(handlerName, attributes, prefix)) />
 </#function>
 
 <#function isHandler handlerName>
@@ -270,6 +289,9 @@
 	<#return commonMacroHelper.toTitleCase(s) />
 </#function>
 
+<#function toDelimitedString collection delim=",">
+	<#return commonMacroHelper.toDelimitedString(collection, delim) />
+</#function>
 
 <#function getMessage code args=[] default=code>
 	<#return commonMacroHelper.getMessage(code, args, default) />
@@ -322,6 +344,23 @@
 		<${tag}${joinAttributes(attributes)}><#nested /></${tag}>
 	<#else>
 		<#nested />
+	</#if>
+</#macro>
+
+<#---
+  - Writes a script tag that loads the txt2img.js file.
+  -->
+<#macro txt2img>
+	<script src="${resource(pathForHandler("txt2ImgController", "js") + '?locale=' + .locale)}" type="text/javascript"></script>
+</#macro>
+
+<#macro stylesheets hrefs>
+	<#if commonMacroHelper.compressResources>
+		<link rel="stylesheet" type="text/css" href="${resolve(pathForHandler("minifyCssController"))}?files=${toDelimitedString(hrefs)}" />
+	<#else>
+		<#list hrefs as href>
+			<link rel="stylesheet" type="text/css" href="${resource(href)}" />
+		</#list>
 	</#if>
 </#macro>
 

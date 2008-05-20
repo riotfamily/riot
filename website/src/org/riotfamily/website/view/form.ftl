@@ -73,7 +73,7 @@
 		<#if !code?has_content>
 			<#local code = command + '.' + field />
 		</#if>
-		<#local text = common.getMessage(code) />
+		<#local text = c.getMessage(code) />
 	</#if>
 	<#local attributes = addErrorClass(attributes, field, errorClass) />
 	<label for="${for}"${join(attributes)}>${text}</label>
@@ -212,7 +212,7 @@
 	    	</#if>
 
 	    	<#if messagePrefix?has_content>
-	    		<#local optionLabel = common.getMessage(messagePrefix + optionLabel) />
+	    		<#local optionLabel = c.getMessage(messagePrefix + optionLabel) />
 	    	</#if>
 	    	
 	    	<#if value?is_sequence>

@@ -46,7 +46,9 @@ public class CommonMacroHelperFactory implements MacroHelperFactory,
 	
 	private HandlerUrlResolver handlerUrlResolver;
 	
-	private RiotHyphenator hyphenator; 
+	private RiotHyphenator hyphenator;
+	
+	private boolean compressResources = false;
 	
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
@@ -64,11 +66,15 @@ public class CommonMacroHelperFactory implements MacroHelperFactory,
 		this.hyphenator = hyphenator;
 	}
 
+	public void setCompressResources(boolean compressResources) {
+		this.compressResources = compressResources;
+	}
+	
 	public Object createMacroHelper(HttpServletRequest request, 
 			HttpServletResponse response) {
 		
 		return new CommonMacroHelper(applicationContext, request, response, 
-				stamper, handlerUrlResolver, hyphenator);
+				stamper, handlerUrlResolver, hyphenator, compressResources);
 	}
 
 }

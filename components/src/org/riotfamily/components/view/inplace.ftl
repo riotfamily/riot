@@ -89,7 +89,7 @@
 		<div style="border:3px solid red">
 			<div style="background:red;color:#fff">
 				The &lt;@inplace.componentSet&gt; macro is not needed any longer.
-				Please remove it from ${common.templateName}.
+				Please remove it from ${c.templateName}.
 			</div>
 			<#nested />
 		</div>
@@ -122,7 +122,7 @@
 			} />
 		</#if>
 		
-		<div ${common.joinAttributes(attributes)}>
+		<div ${c.joinAttributes(attributes)}>
 			<#nested />
 		</div>
 	<#else>
@@ -151,12 +151,12 @@
   - @param hyphenate Whether soft hyphens should be inserted automatically. 
   -->
 <#macro text key tag="" alwaysUseNested=false textTransform=true hyphenate=false attributes...>
-	<#local attributes = common.unwrapAttributes(attributes) />
+	<#local attributes = c.unwrapAttributes(attributes) />
 	<#if editMode>
 		<#local attributes = attributes + {'riot:textTransform': textTransform?string} />
 	</#if>
 	<#if hyphenate>
-		<#local transform = common.hyphenate />
+		<#local transform = c.hyphenate />
 	<#else>
 		<#local transform = false />
 	</#if>
@@ -183,13 +183,13 @@
 <#macro richtext key tag="" config="default" alwaysUseNested=false chunk=false hyphenate=false attributes...>
 	<#compress>
 		<#if editMode>
-			<#local attributes = common.unwrapAttributes(attributes) + {"riot:config": config} />
+			<#local attributes = c.unwrapAttributes(attributes) + {"riot:config": config} />
 		</#if>
 		<#local editor = chunk?string("richtext-chunks", "richtext") />
 		<#if hyphenate>
-			<#local transform = common.hyphenateAndEncode />
+			<#local transform = c.hyphenateAndEncode />
 		<#else>
-			<#local transform = common.encodeLinks />
+			<#local transform = c.encodeLinks />
 		</#if>
 		<@editable key=key editor=editor tag=tag alwaysUseNested=alwaysUseNested transform=transform attributes=attributes><#nested /></@editable>
 	</#compress>
@@ -198,7 +198,7 @@
 <#--- @internal -->
 <#macro editable key editor="text" tag="" alwaysUseNested=false transform=false attributes... >
 	<#compress>
-		<#local attributes = common.unwrapAttributes(attributes) />
+		<#local attributes = c.unwrapAttributes(attributes) />
 		<#if alwaysUseNested>
 			<#local value><#nested /></#local>
 		<#else>
@@ -220,16 +220,16 @@
 				<#local element="div" />
 			</#if>
 			<#local attributes = attributes + {"class" : ("riot-text-editor " + attributes.class?if_exists)?trim} />
-			<${element} riot:key="${key}" riot:editorType="${editor}"${common.joinAttributes(attributes)}>${value}</${element}>
+			<${element} riot:key="${key}" riot:editorType="${editor}"${c.joinAttributes(attributes)}>${value}</${element}>
 		<#elseif tag?has_content>
-			<${tag}${common.joinAttributes(attributes)}>${value}</${tag}>
+			<${tag}${c.joinAttributes(attributes)}>${value}</${tag}>
 		<#else>
 			${value}
 		</#if>
 	</#compress>
 </#macro>
 
-<#macro image key default="" tag="img" minWidth="10" maxWidth="1000" minHeight="10" maxHeight="1000" width="" height="" defaultWidth="100" defaultHeight="100" transform=common.url updateFromServer=false attributes... >
+<#macro image key default="" tag="img" minWidth="10" maxWidth="1000" minHeight="10" maxHeight="1000" width="" height="" defaultWidth="100" defaultHeight="100" transform=c.url updateFromServer=false attributes... >
 	<#compress>
 		<#if width?has_content>
 			<#local minWidth = width />
@@ -301,17 +301,17 @@
 		</#if>
 		<#if value?has_content || editMode>
 			<#if tag == "img">	
-				<img${common.joinAttributes(attributes)} />
+				<img${c.joinAttributes(attributes)} />
 			<#else>
-				<${tag}${common.joinAttributes(attributes)}><#nested /></${tag}>
+				<${tag}${c.joinAttributes(attributes)}><#nested /></${tag}>
 			</#if>
 		</#if>
 	</#compress>
 </#macro>
 
 <#macro link key href tag="a" externalClass="externalLink" externalTarget="_blank" alwaysUseNested=false textTransform=true hyphenate=false attributes...>
-	<#local attributes = common.unwrapAttributes(attributes) + {"href": href} />
-	<#if common.isExternalUrl(href)>
+	<#local attributes = c.unwrapAttributes(attributes) + {"href": href} />
+	<#if c.isExternalUrl(href)>
 		<#local attributes = attributes + {
 			"target": externalTarget,
 			"class": ((attributes.class!) + " " + externalClass)?trim
@@ -324,7 +324,7 @@
   -
   -->
 <#macro use container model=container.getProperties(editMode) form="" tag="" attributes...>
-	<#local attributes = common.unwrapAttributes(attributes) />
+	<#local attributes = c.unwrapAttributes(attributes) />
 	<#local previousScope = scope />
 	<#assign scope =  model />
 	<#if editMode>
@@ -350,7 +350,7 @@
 		</#if>
 	</#if>
 	<#if tag?has_content>
-		<${tag}${common.joinAttributes(attributes)}>
+		<${tag}${c.joinAttributes(attributes)}>
 			<#nested>
 		</${tag}>
 	<#else>

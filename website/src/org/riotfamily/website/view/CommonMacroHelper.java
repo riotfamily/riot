@@ -87,12 +87,14 @@ public class CommonMacroHelper {
 	
 	private RiotHyphenator hyphenator;
 	
+	private boolean compressResources;
+	
 	private Locale requestLocale = null;
 
 	public CommonMacroHelper(ApplicationContext ctx,
 			HttpServletRequest request, HttpServletResponse response, 
 			ResourceStamper stamper, HandlerUrlResolver handlerUrlResolver,
-			RiotHyphenator hyphenator) {
+			RiotHyphenator hyphenator, boolean compressResources) {
 
 		this.ctx = ctx;
 		this.request = request;
@@ -100,10 +102,15 @@ public class CommonMacroHelper {
 		this.stamper = stamper;
 		this.handlerUrlResolver = handlerUrlResolver;
 		this.hyphenator = hyphenator;
+		this.compressResources = compressResources;
 	}
 
 	public Random getRandom() {
 		return random;
+	}
+	
+	public boolean isCompressResources() {
+		return compressResources;
 	}
 
 	public Date getCurrentTime() {
@@ -240,7 +247,7 @@ public class CommonMacroHelper {
      * @param titleProperty The property to use for grouping
      * @return A list of {@link ObjectGroup ObjectGroups}
      */
-    public static List partition(Collection c, String titleProperty) {
+    public List partition(Collection c, String titleProperty) {
 		ArrayList groups = new ArrayList();
 		Iterator it = c.iterator();
 		ObjectGroup group = null;
@@ -259,6 +266,10 @@ public class CommonMacroHelper {
 		}
 		return groups;
 	}
+    
+    public String toDelimitedString(Collection c, String delim) {
+    	return StringUtils.collectionToDelimitedString(c, delim);
+    }
 
     /**
      * Shuffles the given collection
@@ -309,7 +320,6 @@ public class CommonMacroHelper {
 				
 		return FormatUtils.formatNumber(number, pattern, locale);
 	}
-	
 	
 	public int round(float number) {
 		return Math.round(number);
