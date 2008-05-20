@@ -280,6 +280,8 @@
 					</xsd:sequence>
 					<xsd:attribute name="map-class" type="xsd:string" />
 					<xsd:attribute name="label-property" type="xsd:string" />
+					<xsd:attribute name="label-renderer" type="xsd:string" />
+					<xsd:attribute name="label-renderer-class" type="xsd:string" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

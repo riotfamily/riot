@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.web.ui.ObjectRenderer;
+import org.riotfamily.common.web.ui.StringRenderer;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;
@@ -59,6 +61,8 @@ public class MapEditor extends TemplateElement implements Editor {
 	
 	private String labelProperty;
 	
+	private ObjectRenderer labelRenderer;
+	
 	private Container items = new Container();
 
 	private ElementFactory keyElementFactory;
@@ -80,6 +84,10 @@ public class MapEditor extends TemplateElement implements Editor {
 
 	public void setLabelProperty(String labelProperty) {
 		this.labelProperty = labelProperty;
+	}
+	
+	public void setLabelRenderer(ObjectRenderer labelRenderer) {
+		this.labelRenderer = labelRenderer;
 	}
 	
 	/**
@@ -233,7 +241,7 @@ public class MapEditor extends TemplateElement implements Editor {
 			editor = (Editor) itemElementFactory.createElement(this, getForm(), false);
 			editor.setEditorBinding(binding);
 			binding.setEditor(editor);
-			addComponent("element", editor);
+			addComponent("editor", editor);
 			if (removable) {
 				removeButton = new Button();
 				removeButton.setLabelKey("label.form.map.remove");
@@ -248,14 +256,18 @@ public class MapEditor extends TemplateElement implements Editor {
 			}
 		}
 		
-		public String getLabel() {
+		public void renderLabel() {
+			Object label = key;
 			if (labelProperty != null) {
-				return PropertyUtils.getPropertyAsString(key, labelProperty);
+				label = PropertyUtils.getProperty(key, labelProperty);
 			}
-			return String.valueOf(key);
+			if (labelRenderer == null) {
+				labelRenderer = new StringRenderer();
+			}
+			labelRenderer.render(label, getFormContext(), getFormContext().getWriter());
 		}
 		
-		public Editor getElement() {
+		public Editor getEditor() {
 			return editor;
 		}
 		

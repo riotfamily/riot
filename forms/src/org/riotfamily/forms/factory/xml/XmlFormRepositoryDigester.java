@@ -32,6 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.xml.DocumentDigester;
 import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.forms.ContainerElement;
@@ -317,6 +318,15 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	}
 	
 	private void initMapEditor(Element ele, MutablePropertyValues pvs) {
+		ObjectRenderer renderer = (ObjectRenderer) getOrCreate(
+				ele, "label-renderer", "label-renderer-class",
+				ObjectRenderer.class);
+		
+		if (renderer != null) {
+			pvs.removePropertyValue("labelRenderer");
+			pvs.removePropertyValue("labelRendererClass");
+			pvs.addPropertyValue("labelRenderer", renderer);
+		}
 		Element keyElement = XmlUtils.getFirstChildElement(ele);
 		if (DomUtils.nodeNameEquals(keyElement, "key-element")) {
 			ElementFactory factory = createFactory(XmlUtils.getFirstChildElement(keyElement));
