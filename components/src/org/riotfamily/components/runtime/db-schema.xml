@@ -53,8 +53,7 @@
 			</db:create-table>
 
 			<db:create-table name="riot_contents">
-                <db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
-                <db:column name="container" type="BIGINT" />
+                <db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />                
                 <db:column name="dirty" type="BIT" />
 			</db:create-table>
 			
@@ -102,7 +101,7 @@
             <db:add-foreign-key name="riot_list_wrapper" table="riot_value_wrappers" references="riot_media_files">
                 <db:ref local="file" foreign="id" />
             </db:add-foreign-key>
-            <db:add-column table="riot_value_wrappers" name="page" type="BIGINT" />
+            
             
 		</db:change-set>
 	</db:history>

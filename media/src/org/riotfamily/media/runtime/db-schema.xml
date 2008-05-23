@@ -44,6 +44,8 @@
                 <db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
                 <db:column name="`type`" type="VARCHAR" length="255" not-null="true" />
                 <db:column name="fileData" type="BIGINT" />
+                <db:column name="variantof" type="BIGINT" />
+                <db:column name="variantname" type="VARCHAR" length="255" />
             </db:create-table>
             
             <db:add-foreign-key name="riot_media_data_file" table="riot_media_data" references="riot_media_files" >
@@ -51,6 +53,9 @@
             </db:add-foreign-key>
             <db:add-foreign-key name="riot_media_file_data" table="riot_media_files" references="riot_media_data" >
                 <db:ref local="fileData" foreign="id" />
+            </db:add-foreign-key>
+            <db:add-foreign-key name="riot_media_file_data" table="riot_media_files" references="riot_media_data" >
+                <db:ref local="variantof" foreign="id" />
             </db:add-foreign-key>
 
         </db:change-set>
