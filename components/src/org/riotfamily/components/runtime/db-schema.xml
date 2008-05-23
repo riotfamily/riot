@@ -53,8 +53,7 @@
 			</db:create-table>
 
 			<db:create-table name="riot_contents">
-                <db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
-                <db:column name="container" type="BIGINT" />
+                <db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />                
                 <db:column name="dirty" type="BIT" />
 			</db:create-table>
 			
