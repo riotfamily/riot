@@ -8,7 +8,7 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-	<db:history module="pages" data-source="riotDataSource" depends="components">
+	<db:history module="pages" data-source="riotDataSource" depends="components,riot">
 		<db:change-set id="initial">
 
  			<db:create-table name="riot_sites">
@@ -106,6 +106,23 @@
                  <db:ref local="page" foreign="id" />
             </db:add-foreign-key>
             
+		</db:change-set>
+		<db:change-set id="siteUser">			
+			<db:update-data>
+				<db:statement 
+					dialects="hsql,postgresql,postgresql8,mysql" 
+					sql="update riot_users set type = 'siteUser'" />
+			</db:update-data>
+			<db:create-table name="riot_site_user_sites">
+				<db:column name="user_id" type="VARCHAR" length="255" not-null="true" />
+				<db:column name="site_id" type="BIGINT" not-null="true" />				
+			</db:create-table>
+			<db:add-foreign-key name="riot_site_user_sites_user" table="riot_site_user_sites" references="riot_users">
+                 <db:ref local="user_id" foreign="id" />
+            </db:add-foreign-key>	
+            <db:add-foreign-key name="riot_site_user_sites_site" table="riot_site_user_sites" references="riot_sites">
+                 <db:ref local="site_id" foreign="id" />
+            </db:add-foreign-key>				
 		</db:change-set>
 
 	</db:history>

@@ -13,8 +13,9 @@
 
 	<import resource="classpath:org/riotfamily/pages/runtime/db-schema.xml"/>
 	
-	<override:add ref="sessionFactory" property="mappingLocations" append="true">
+	<override:add ref="sessionFactory" property="mappingLocations" append="true">		
 		<value>classpath:org/riotfamily/pages/dao/hibernate/pages.hbm.xml</value>
+		<value>classpath:org/riotfamily/pages/riot/security/security.hbm.xml</value>
 	</override:add>
 
 	<bean id="handlerNameHierarchy" class="org.riotfamily.pages.setup.HandlerNameHierarchy" />

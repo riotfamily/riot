@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping auto-import="false">		
+	
+	<subclass name="org.riotfamily.pages.riot.security.SiteUser" extends="org.riotfamily.riot.hibernate.security.User" lazy="false" discriminator-value="siteUser">		
+		<set name="sites" table="riot_site_user_sites" lazy="false">
+			<key column="user_id" />
+			<many-to-many class="org.riotfamily.pages.model.Site" column="site_id" />
+		</set>
+	</subclass>
+
+</hibernate-mapping>

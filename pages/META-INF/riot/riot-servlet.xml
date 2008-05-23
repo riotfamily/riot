@@ -53,7 +53,7 @@
 		<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
 	</override:add>
 	
-	<override:add ref="formRepository" property="configLocations">
+	<override:add ref="formRepository" property="configLocations" append="true">
 		<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
 	</override:add>
 	
@@ -73,6 +73,21 @@
 			<property name="location" value="classpath:/org/riotfamily/pages/runtime/resources/" />
 		</bean>
 	</override:add>
+	
+	<override:properties ref="riotUserDao">
+		<property name="entityClass" value="org.riotfamily.pages.riot.security.SiteUser" />
+		<property name="initialUser">
+			<bean class="org.riotfamily.pages.riot.security.SiteUser">
+				<property name="id" value="admin" />
+				<property name="newPassword" value="admin" />
+				<property name="role" value="admin" />				
+			</bean>
+		</property>
+	</override:properties>
+	
+	<override:add ref="roles" append="true">
+     	<value>siteUser</value>
+    </override:add>     
 	
 	<!-- DAOs and models -->
 
@@ -133,6 +148,12 @@
 
 	<bean id="gotoSiteCommand" class="org.riotfamily.pages.riot.command.GotoSiteCommand">
 		<property name="windowName" value="preview" />
+	</bean>
+	
+	<!-- Policy -->
+	
+	<bean class="org.riotfamily.pages.riot.security.SiteUserPolicy">
+		<constructor-arg ref="pageDao" />
 	</bean>
 	
 </beans>

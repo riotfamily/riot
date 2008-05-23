@@ -14,10 +14,11 @@
 		<property name="lastLoginIP" />
 	</class>
 	
-	<class name="org.riotfamily.riot.hibernate.security.User" table="riot_users" lazy="false">
+	<class name="org.riotfamily.riot.hibernate.security.User" table="riot_users" lazy="false" discriminator-value="user">
 		<id name="id">
 			<generator class="assigned" />
 		</id>
+		<discriminator column="type" type="string" />
 		<property name="password" column="`password`" />
 		<property name="role" />
 		<property name="name" />

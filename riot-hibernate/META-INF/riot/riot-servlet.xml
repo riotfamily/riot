@@ -48,6 +48,13 @@
 	<bean id="riotUserDao" class="org.riotfamily.riot.hibernate.security.HibernateUserDao">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="entityClass" value="org.riotfamily.riot.hibernate.security.User" />
+		<property name="initialUser">
+			<bean class="org.riotfamily.riot.hibernate.security.User">
+				<property name="id" value="admin" />
+				<property name="newPassword" value="admin" />
+				<property name="role" value="admin" />				
+			</bean>
+		</property>
 	</bean>
  
  	<util:list id="roles">

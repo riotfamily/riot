@@ -71,6 +71,20 @@
 		<db:change-set id="longJobDescription">
 			<db:modify-column table="riot_jobs" name="description" type="LONGVARCHAR" />
 		</db:change-set>
+		<db:change-set id="userDiscriminator">
+			<db:add-column table="riot_users" name="type" type="VARCHAR" length="255" />
+			<db:update-data>
+				<db:statement 
+					dialects="hsql,postgresql,postgresql8,mysql" 
+					sql="update riot_users set type = 'user'" />
+			</db:update-data>
+			<db:modify-column table="riot_users" name="type" type="VARCHAR" length="255" not-null="true" />
+			<db:update-data>
+				<db:statement 
+					dialects="hsql,postgresql,postgresql8,mysql" 
+					sql="update riot_users set role = 'admin' where role is null" />
+			</db:update-data>	
+		</db:change-set>
 	</db:history>
 	
 </beans>
