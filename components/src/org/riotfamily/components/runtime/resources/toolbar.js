@@ -1,5 +1,7 @@
 riot.Toolbar = Class.create({
 	initialize: function() {
+		this.edit = true;
+		this.publish = true;
 		this.buttons = $H({
 			gotoRiot: new riot.ToolbarButton('gotoRiot', '${toolbarButton.gotoRiot}', null, riot.path),
 			browse: new riot.ToolbarButton('browse', '${toolbarButton.browse}'),
@@ -45,16 +47,20 @@ riot.Toolbar = Class.create({
 	},
 
 	activate: function() {
-		var dirty = typeof document.body.down('.riot-dirty') != 'undefined';
-		if (!dirty) this.disablePublishButtons();
-		this.buttons.values().invoke('activate');
-		this.buttons.get('browse').click();
+		if (this.edit) { 
+			var dirty = typeof document.body.down('.riot-dirty') != 'undefined';
+			if (!dirty || !this.publish) this.disablePublishButtons();
+			this.buttons.values().invoke('activate');
+			this.buttons.get('browse').click();
+		}
 		this.keepAliveTimer = setInterval(this.keepAlive.bind(this), 60000);
 	},
 
 	enablePublishButtons: function() {
-		this.buttons.get('publish').enable();
-		this.buttons.get('discard').enable();
+		if (this.publish) {
+			this.buttons.get('publish').enable();
+			this.buttons.get('discard').enable();
+		}
 	},
 	
 	disablePublishButtons: function() {

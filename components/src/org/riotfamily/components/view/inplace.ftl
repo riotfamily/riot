@@ -37,6 +37,10 @@
 			var riotComponentFormParams = {};
 			${inplaceMacroHelper.initScript}
 			<#nested />
+			function onToolbarLoaded() {						
+				riot.toolbar.edit = ${inplaceMacroHelper.isEditGranted()?string};
+				riot.toolbar.publish = ${inplaceMacroHelper.isPublishGranted()?string};
+			}
 		</script>
 	<#elseif bookmarklet>
 		<script type="text/javascript" language="JavaScript">

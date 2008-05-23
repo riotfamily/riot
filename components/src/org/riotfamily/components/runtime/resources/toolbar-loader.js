@@ -30,7 +30,14 @@ function loadToolbarScripts() {
 		{src: 'inplace.js'},
 		{src: 'components.js'}
 	]);
-	Resources.insertScript(riot.path + 
+	Resources.loadScript(riot.path + 
 			'/joined/${riotVersion}/joined-script.js?files=' 
-			+ scripts.join(',') + '&lang=' + riot.language); 
+			+ scripts.join(',') + '&lang=' + riot.language, 'riot.toolbar', toolbarScriptsLoaded); 
+}
+
+function toolbarScriptsLoaded() {
+	if (window.onToolbarLoaded) {
+		onToolbarLoaded()
+	}
+	riot.toolbar.activate();
 }

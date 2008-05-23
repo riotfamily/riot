@@ -710,7 +710,7 @@ riot.ImageEditor = Class.create(riot.InplaceEditor, {
 	
 	editImagesOn: function() {
 		this.element.disableLinks();
-		ComponentEditor.generateToken(this.setToken.bind(this));
+		ComponentEditor.generateToken(this.component.controller.contextKey, this.setToken.bind(this));
 	},
 	
 	editImagesOff: function() {

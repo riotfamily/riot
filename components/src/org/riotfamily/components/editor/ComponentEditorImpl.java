@@ -129,11 +129,15 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	/**
 	 * Sets the given property to a new value.
 	 */
-	public void updateText(Long containerId, String property, String text) {
+	public void updateText(Long containerId, String property, String text, String contextKey) 
+			throws RequestContextExpiredException {
+		
+		checkEditGranted(contextKey);		
 		ContentContainer container = componentDao.loadContentContainer(containerId);
 		Content version = getOrCreatePreviewVersion(container);
 		version.setValue(property, text);
 		componentDao.saveOrUpdatePreviewVersion(container);
+		
 	}
 
 	public String cropImage(Long containerId, String property, Long imageId,
@@ -168,7 +172,8 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		mediaDao.deleteFile(image);
 	}
 	
-	public String generateToken() {
+	public String generateToken(String contextKey) throws RequestContextExpiredException {
+		checkEditGranted(contextKey);
 		String token = tokenGenerator.generate();
 		validTokens.add(token);
 		log.debug("Generated token: " + token);
@@ -194,10 +199,13 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	}
 
 	/**
+	 * @throws SecurityException 
 	 *
 	 */
 	public void updateTextChunks(Long componentId, String property,
-			String[] chunks) {
+			String[] chunks, String contextKey) throws RequestContextExpiredException {
+		
+		checkEditGranted(contextKey);
 
 		log.debug("Inserting chunks " + StringUtils.arrayToCommaDelimitedString(chunks));
 		Component component = componentDao.loadComponent(componentId);
@@ -209,8 +217,8 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		int offset = list.getOrCreatePreviewContainers().indexOf(component);
 		for (int i = 1; i < chunks.length; i++) {
 			insertComponent(list.getId(), offset + i, component.getType(),
-					Collections.singletonMap(property, chunks[i]));
-		}
+					Collections.singletonMap(property, chunks[i]), contextKey);
+		}		
 	}
 
 	/**
@@ -237,16 +245,21 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	/**
 	 * Creates a new VersionContainer and inserts it in the list identified
 	 * by the given id.
+	 * @throws RequestContextExpiredException 
+	 * @throws SecurityException 
 	 */
 	public Long insertComponent(Long listId, int position, String type,
-			Map properties) {
+			Map properties, String contextKey) throws RequestContextExpiredException {
 
+		checkEditGranted(contextKey);
+		
 		ComponentList componentList = componentDao.loadComponentList(listId);
 		
 		Component container = createVersionContainer(type, properties);
 		componentList.insertContainer(container, position);
 		componentDao.updateComponentList(componentList);
 		return container.getId();
+		
 	}
 
 	/**
@@ -273,12 +286,17 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		return component;
 	}
 	
-	public void setType(Long containerId, String type) {
+	public void setType(Long containerId, String type, String contextKey) 
+			throws RequestContextExpiredException {
+		
+		checkEditGranted(contextKey);
+		
 		Component component = componentDao.loadComponent(containerId);
 		component.setType(type);
 		ComponentRenderer renderer = repository.getComponent(type);
 		component.getPreviewVersion().wrapValues(renderer.getDefaults());
 		componentDao.saveOrUpdatePreviewVersion(component);
+		
 	}
 
 	private String getHtml(String url, String key, boolean live)
@@ -320,7 +338,11 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		return getHtml(controllerId, contextKey, false);
 	}
 
-	public void moveComponent(Long componentId, Long nextComponentId) {
+	public void moveComponent(Long componentId, Long nextComponentId, 
+				String contextKey) throws RequestContextExpiredException {
+		
+		checkEditGranted(contextKey);
+		
 		Component component = componentDao.loadComponent(componentId);
 		ComponentList componentList = component.getList();
 		List components = componentList.getOrCreatePreviewContainers();
@@ -339,9 +361,15 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		}
 		componentList.setDirty(true);
 		componentDao.updateComponentList(componentList);
+		
+		
 	}
 
-	public void deleteComponent(Long componentId) {
+	public void deleteComponent(Long componentId, String contextKey) 
+			throws RequestContextExpiredException {
+		
+		checkEditGranted(contextKey);
+		
 		Component component = componentDao.loadComponent(componentId);
 		ComponentList componentList = component.getList();
 		List components = componentList.getOrCreatePreviewContainers();
@@ -351,24 +379,36 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		if (!componentList.getLiveComponents().contains(component)) {
 			componentDao.deleteContentContainer(component);
 		}
+		
 	}
 
-	public void publish(Long[] listIds, Long[] containerIds) {
+	public void publish(Long[] listIds, Long[] containerIds, String contextKey) 
+			throws RequestContextExpiredException, SecurityException {
+		
+		checkPublishGranted(contextKey);
+		
 		if (listIds != null) {
 			publishLists(listIds);
 		}
 		if (containerIds != null) {
 			publishContainers(containerIds);
 		}
+		
+		
 	}
 
-	public void discard(Long[] listIds, Long[] containerIds) {
+	public void discard(Long[] listIds, Long[] containerIds, String contextKey) 
+			throws RequestContextExpiredException {
+		
+		checkPublishGranted(contextKey);
+		
 		if (listIds != null) {
 			discardLists(listIds);
 		}
 		if (containerIds != null) {
 			discardContainers(containerIds);
 		}
+		
 	}
 
 	/**
@@ -441,6 +481,18 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	}
 
 	/* Utility methods */
+	
+	private void checkEditGranted(String contextKey) 
+			throws RequestContextExpiredException {
+		
+		AccessController.checkPermission("toolbarEdit", getWrappedRequest(contextKey));
+	}
+	
+	private void checkPublishGranted(String contextKey) 
+			throws RequestContextExpiredException {
+
+		AccessController.checkPermission("toolbarPublish", getWrappedRequest(contextKey));
+	}
 
 	private HttpServletRequest getWrappedRequest(String key)
 			throws RequestContextExpiredException {

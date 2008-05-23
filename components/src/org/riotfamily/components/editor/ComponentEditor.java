@@ -43,12 +43,13 @@ public interface ComponentEditor {
 
 	public String getText(Long containerId, String property);
 
-	public void updateText(Long containerId, String property, String text);
+	public void updateText(Long containerId, String property, String text, 
+			String contextKey) throws RequestContextExpiredException;
 	
 	public void updateTextChunks(Long containerId, String property,
-			String[] chunks);
+			String[] chunks, String contextKey) throws RequestContextExpiredException;
 
-	public String generateToken();
+	public String generateToken(String contextKey) throws RequestContextExpiredException;
 	
 	public void invalidateToken(String token);
 	
@@ -63,9 +64,10 @@ public interface ComponentEditor {
 	public List getValidTypes(String controllerId);
 
 	public Long insertComponent(Long listId, int position, String type,
-			Map properties);
+			Map properties, String contextKey) throws RequestContextExpiredException;
 
-	public void setType(Long containerId, String type);
+	public void setType(Long containerId, String type, String contextKey) 
+		throws RequestContextExpiredException;
 
 	public List getLiveListHtml(ListRef[] ref)
 			throws RequestContextExpiredException;
@@ -73,13 +75,17 @@ public interface ComponentEditor {
 	public String getPreviewListHtml(String controllerId, Long listId)
 			throws RequestContextExpiredException;
 
-	public void moveComponent(Long containerId, Long nextContainerId);
+	public void moveComponent(Long containerId, Long nextContainerId,
+			String contextKey) throws RequestContextExpiredException; 
 
-	public void deleteComponent(Long containerId);
+	public void deleteComponent(Long containerId, String contextKey)
+			throws RequestContextExpiredException;
 
-	public void publish(Long[] listIds, Long[] containerIds);
+	public void publish(Long[] listIds, Long[] containerIds, String contextKey) 
+			throws RequestContextExpiredException, SecurityException;
 
-	public void discard(Long[] listIds, Long[] containerIds);
+	public void discard(Long[] listIds, Long[] containerIds, String contextKey) 
+			throws RequestContextExpiredException;
 
 	public void keepAlive();
 

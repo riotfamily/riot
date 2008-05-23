@@ -32,6 +32,7 @@ import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.list.RiotDaoService;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.util.ClassUtils;
 
 /**
@@ -100,5 +101,13 @@ public class InplaceMacroHelper {
 	public String getDefaultListId(Object object) {
 		return riotDaoService.getDefaultListId(
 				ClassUtils.getUserClass(object));
+	}
+	
+	public boolean isEditGranted() {
+		return AccessController.isGranted("toolbarEdit", request);
+	}
+	
+	public boolean isPublishGranted() {
+		return AccessController.isGranted("toolbarPublish", request);
 	}
 }

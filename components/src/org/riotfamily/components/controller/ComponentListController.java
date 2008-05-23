@@ -166,9 +166,7 @@ public class ComponentListController implements Controller,
 				try {
 					ComponentListLocation location = locator.getLocation(request);
 					RenderStrategy strategy = liveModeRenderStrategy;
-					if (EditModeUtils.isEditMode(request) &&
-							AccessController.isGranted("edit", location)) {
-						
+					if (EditModeUtils.isEditMode(request)) {						
 						strategy = editModeRenderStrategy;
 					}
 					strategy.render(location, ComponentListController.this, 

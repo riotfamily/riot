@@ -389,7 +389,7 @@ riot.ComponentList = Class.create({
 	},
 	
 	removeComponent: function(c) {
-		ComponentEditor.deleteComponent(c.id);
+		ComponentEditor.deleteComponent(c.id, this.controller.contextKey);
 		this.componentElements = this.componentElements.without(c.element);
 		riot.outline.hide();
 		riot.outline.suspended = true;
@@ -457,7 +457,7 @@ riot.ComponentDragObserver = Class.create({
 				nextId = riot.getComponent(nextEl).id;
 				nextEl.forceRerendering();
 			}
-			ComponentEditor.moveComponent(riot.getComponent(el).id, nextId);
+			ComponentEditor.moveComponent(riot.getComponent(el).id, nextId, this.componentList.controller.contextKey);
 			this.componentList.markDirty();
 		}
 		this.componentList.updatePositionClasses();
@@ -552,8 +552,8 @@ riot.Component = Class.create({
 	},
 	
 	updateText: function(key, value, updateFromServer) {
-		ComponentEditor.updateText(this.id, key, value, updateFromServer
-				? this.update.bind(this) : Prototype.emptyFunction);
+		ComponentEditor.updateText(this.id, key, value, this.controller.contextKey, 
+			updateFromServer ? this.update.bind(this) : Prototype.emptyFunction);
 
 		this.markDirty();
 	},
@@ -609,7 +609,7 @@ riot.Component = Class.create({
 riot.ListComponent = Class.create(riot.Component, {
 
 	updateTextChunks: function(key, chunks) {
-		ComponentEditor.updateTextChunks(this.id, key, chunks, this.update.bind(this));
+		ComponentEditor.updateTextChunks(this.id, key, chunks, this.controller.contextKey, this.update.bind(this));
 		this.markDirty();
 	},
 	
@@ -694,7 +694,7 @@ riot.InsertButton = Class.create({
 
 	insert: function(type) {
 		ComponentEditor.insertComponent(this.componentList.id, -1, type, null,
-				this.oninsert.bind(this));
+				this.componentList.controller.contextKey, this.oninsert.bind(this));
 
 		if (this.inspector) {
 			this.inspector.onchange = this.changeType.bind(this);
@@ -702,8 +702,10 @@ riot.InsertButton = Class.create({
 	},
 
 	oninsert: function(id) {
-		this.componentId = id;
-		this.componentList.update();
+		if (id) {
+			this.componentId = id;
+			this.componentList.update();
+		}
 	},
 
 	updateList: function() {
@@ -711,7 +713,7 @@ riot.InsertButton = Class.create({
 	},
 	
 	changeType: function(type) {
-		ComponentEditor.setType(this.componentId, type, this.updateList.bind(this));
+		ComponentEditor.setType(this.componentId, type, this.componentList.controller.contextKey,this.updateList.bind(this));
 	}
 });
 
@@ -866,7 +868,7 @@ riot.PublishWidget = Class.create({
 
 	applyChanges: function() {
 		if (!this.live) {
-			ComponentEditor.publish(this.dirtyListIds, this.dirtyContainerIds);
+			ComponentEditor.publish(this.dirtyListIds, this.dirtyContainerIds, this.controller.contextKey);
 			this.controller.dirty = false;
 		}
 	}
@@ -888,7 +890,7 @@ riot.DiscardWidget = Class.create(riot.PublishWidget, {
 	
 	applyChanges: function() {
 		if (this.live) {
-			ComponentEditor.discard(this.dirtyListIds, this.dirtyContainerIds);
+			ComponentEditor.discard(this.dirtyListIds, this.dirtyContainerIds, this.controller.contextKey);
 			this.controller.dirty = false;			
 			this.previewHtml = this.liveHtml;			
 		}
@@ -910,6 +912,10 @@ riot.setLiveHtml = function(html) {
  */ 
 dwr.engine.setErrorHandler(function(err, ex) {
 	if (ex.javaClassName == 'org.riotfamily.components.context.RequestContextExpiredException') {
+		location.reload();
+	}
+	else if (ex.javaClassName == 'org.riotfamily.riot.security.AccessDeniedException') {
+		alert(err);
 		location.reload();
 	}
 	else {
@@ -1006,4 +1012,3 @@ riot.init = function() {
 
 riot.init();
 riot.adoptFloatsAndClears();
-riot.toolbar.activate();

@@ -65,4 +65,8 @@ public class AccessDeniedException extends RuntimeException {
 		return this.policy;
 	}
 	
+	public String getMessage() {		
+		return "Action " + action + " not permitted";
+	}
+	
 }
