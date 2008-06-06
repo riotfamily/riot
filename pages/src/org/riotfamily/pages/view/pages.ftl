@@ -57,3 +57,7 @@
 		<@c.link href=c.url(page.url) attributes=attributes>${page[labelKey]}</@c.link>
 	</#if>
 </#macro>
+
+<#macro componentList key page=currentPage min=0 max=1000 initial=[] valid=[]>
+	<@inplace.componentList page.contentContainer key min max initial valid />
+</#macro>

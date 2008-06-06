@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.view;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,9 +48,9 @@ public class InplaceMacroHelper {
 	
 	private HttpServletResponse response;
 
-	private List toolbarScripts;
+	private List<String> toolbarScripts;
 
-	private List dynamicToolbarScripts;
+	private List<DynamicToolbarScript> dynamicToolbarScripts;
 	
 	private ComponentRepository componentRepository;
 	
@@ -61,7 +60,8 @@ public class InplaceMacroHelper {
 
 	public InplaceMacroHelper(HttpServletRequest request,
 			HttpServletResponse response, 
-			List toolbarScripts, List dynamicToolbarScripts, 
+			List<String> toolbarScripts,
+			List<DynamicToolbarScript> dynamicToolbarScripts, 
 			ComponentRepository repository,
 			ComponentListRenderer componentListRenderer,
 			RiotDaoService riotDaoService) {
@@ -83,15 +83,13 @@ public class InplaceMacroHelper {
 		return EditModeUtils.isLiveModePreview(request);
 	}
 
-	public List getToolbarScripts() {
+	public List<String> getToolbarScripts() {
 		return this.toolbarScripts;
 	}
 
 	public String getInitScript() {
 		StringBuffer sb = new StringBuffer();
-		Iterator it = dynamicToolbarScripts.iterator();
-		while (it.hasNext()) {
-			DynamicToolbarScript script = (DynamicToolbarScript) it.next();
+		for (DynamicToolbarScript script : dynamicToolbarScripts) {
 			String js = script.generateJavaScript(request);
 			if (js != null) {
 				sb.append(js).append('\n');
@@ -128,6 +126,7 @@ public class InplaceMacroHelper {
 		
 		ComponentListConfig config = new ComponentListConfig(minComponents,
 				maxComponents, initalComponentTypes, validComponentTypes);
+		
 		componentListRenderer.renderComponentList(container, key, config, 
 				request, response);
 		
@@ -142,6 +141,7 @@ public class InplaceMacroHelper {
 		
 		ComponentListConfig config = new ComponentListConfig(minComponents,
 				maxComponents, initalComponentTypes, validComponentTypes);
+		
 		componentListRenderer.renderNestedComponentList(parent, key, config, 
 				request, response);
 		

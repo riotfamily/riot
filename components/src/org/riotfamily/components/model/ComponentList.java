@@ -86,6 +86,10 @@ public class ComponentList {
 		container.setDirty(true);
 	}
 	
+	public void appendComponent(Component component) {
+		insertComponent(component, -1);
+	}
+	
 	public ComponentList createCopy() {
 		ComponentList copy = new ComponentList();
 		copy.setContainer(container);

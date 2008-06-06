@@ -79,6 +79,17 @@
 	</#if>
 </#macro>
 
+<#macro componentList container key min=0 max=1000 initial=[] valid=[]>
+	${inplaceMacroHelper.renderComponentList(container, key, min, max, initial, valid)!}
+</#macro>
+
+<#macro nestedComponentList key min=0 max=1000 initial=[] valid=[]>
+	<#if !this??>
+		<#stop "Nested lists can only be used inside a component view">
+	</#if>
+	${inplaceMacroHelper.renderNestedComponentList(this, key, min, max, initial, valid)!}
+</#macro>
+
 <#macro entityList listId>
 	<#assign currentListId = listId />
 	<#if editMode>

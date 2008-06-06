@@ -81,7 +81,7 @@ public class ComponentListRenderer {
 		content.setValue(key, list);
 		for (String type : config.getInitialComponentTypes()) {
 			Component component = componentRepository.createComponent(type, null);
-			list.insertComponent(component, -1);
+			list.appendComponent(component);
 		}
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus status) {

@@ -40,9 +40,9 @@ import org.riotfamily.riot.list.RiotDaoService;
  */
 public class InplaceMacroHelperFactory implements MacroHelperFactory {
 
-	private List toolbarScripts = Collections.EMPTY_LIST;
+	private List<String> toolbarScripts = Collections.emptyList();
 	
-	private List dynamicToolbarScripts = Collections.EMPTY_LIST;
+	private List<DynamicToolbarScript> dynamicToolbarScripts = Collections.emptyList();
 
 	private ComponentRepository componentRepository;
 	
@@ -59,11 +59,11 @@ public class InplaceMacroHelperFactory implements MacroHelperFactory {
 		this.riotDaoService = riotDaoService;
 	}
 
-	public void setToolbarScripts(List toolbarScripts) {
+	public void setToolbarScripts(List<String> toolbarScripts) {
 		this.toolbarScripts = toolbarScripts;
 	}
 	
-	public void setDynamicToolbarScripts(List dynamicToolbarScripts) {
+	public void setDynamicToolbarScripts(List<DynamicToolbarScript> dynamicToolbarScripts) {
 		this.dynamicToolbarScripts = dynamicToolbarScripts;
 	}
 
