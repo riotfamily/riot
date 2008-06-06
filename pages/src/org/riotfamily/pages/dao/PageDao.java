@@ -24,6 +24,7 @@
 package org.riotfamily.pages.dao;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
@@ -52,6 +53,8 @@ public interface PageDao {
 	 */
 	public PageNode loadPageNode(Long id);
 
+	public Site findSite(Locale locale);
+	
 	public Site findSite(String hostName, String path);
 		
 	/**

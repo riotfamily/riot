@@ -25,6 +25,7 @@ package org.riotfamily.pages.dao.hibernate;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +41,7 @@ import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.util.Assert;
 
 /**
@@ -104,6 +106,22 @@ public class HibernatePageDao extends AbstractPageDao {
 			saveNode(rootNode);
 		}
 		return rootNode;
+	}
+	
+	public Site findSite(Locale locale) {
+		Criteria c = hibernate.createCacheableCriteria(Site.class);
+		c.add(Restrictions.eq("locale", locale));
+		List sites = hibernate.list(c);
+		if (sites.size() == 0) {
+			return null;
+		}
+		else if (sites.size() == 1) {
+			return (Site) sites.get(0);
+		}	
+		else {			
+			throw new IncorrectResultSizeDataAccessException(
+						"More than one site found for locale " + locale, 1);
+		}				
 	}
 
 	public Page findPage(Site site, String path) {
