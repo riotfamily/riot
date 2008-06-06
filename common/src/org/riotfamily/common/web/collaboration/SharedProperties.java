@@ -97,7 +97,7 @@ public class SharedProperties {
 	 */
 	static void exposeTo(HttpServletRequest request) {
 		if (request.getAttribute(PROPERTIES_ATTRIBUTE) == null) {
-			request.setAttribute(PROPERTIES_ATTRIBUTE, new HashMap());
+			request.setAttribute(PROPERTIES_ATTRIBUTE, new HashMap<String, String>());
 		}
 	}
 	
@@ -105,8 +105,9 @@ public class SharedProperties {
 	 * Returns the properties map for the given request.
 	 * @throws IllegalStateException if no properties map is found in the request
 	 */
-	private static Map getProperties(HttpServletRequest request) {
-		Map properties = (Map) request.getAttribute(PROPERTIES_ATTRIBUTE);
+	@SuppressWarnings("unchecked")
+	private static Map<String, String> getProperties(HttpServletRequest request) {
+		Map<String, String> properties = (Map<String, String>) request.getAttribute(PROPERTIES_ATTRIBUTE);
 		Assert.state(properties != null, "No shared properties found in the " +
 				"request. Please register a SharedPropertiesInterceptor " +
 				"in order to use this feature.");
@@ -123,26 +124,14 @@ public class SharedProperties {
 	}
 	
 	/**
-	 * Sets multiple shared property at once. The given map must contain String
-	 * keys and String (or null) values.
+	 * Sets multiple shared property at once.
 	 */
-	public static void setProperties(HttpServletRequest request, Map properties) {
+	@SuppressWarnings("unchecked")
+	public static void setProperties(HttpServletRequest request, Map<String, String> properties) {
 		if (properties != null) {
-			Map map = (Map) request.getAttribute(PROPERTIES_ATTRIBUTE);
+			Map<String, String> map = (Map<String, String>) request.getAttribute(PROPERTIES_ATTRIBUTE);
 			if (map != null) {
-			Iterator it = properties.entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry) it.next();
-				Object key = entry.getKey();
-				Object value = entry.getValue();
-				Assert.isInstanceOf(String.class, key, 
-						"Map must only contain String keys");
-				
-				Assert.isTrue(value == null || value instanceof String, 
-						"Map must only contain String (or null) values.");
-				
-				map.put(key, value);
-				}
+				map.putAll(properties);
 			}
 		}
 	}
@@ -158,27 +147,30 @@ public class SharedProperties {
 	/**
 	 * Returns all shared properties currently set.
 	 */
-	public static Map getSnapshot(HttpServletRequest request) {
-		Map properties = (Map) request.getAttribute(PROPERTIES_ATTRIBUTE);
-		return properties != null ? new HashMap(properties) : null;
+	@SuppressWarnings("unchecked")
+	public static Map<String, String> getSnapshot(HttpServletRequest request) {
+		Map<String, String> properties = (Map<String, String>) request.getAttribute(PROPERTIES_ATTRIBUTE);
+		return properties != null ? new HashMap<String, String>(properties) : null;
 	}
 	
 	/**
 	 * Returns a map containing all properties that have been added or modified
 	 * since the snapshot was made. 
 	 */
-	public static Map getDiff(HttpServletRequest request, Map snapshot) {
-		Map diff = getSnapshot(request);
+	public static Map<String, String> getDiff(HttpServletRequest request,
+			Map<String, String> snapshot) {
+		
+		Map<String, String> diff = getSnapshot(request);
 		if (diff == null || diff.isEmpty()) {
 			return null;
 		}
 		if (snapshot != null) {
-			Iterator it = diff.entrySet().iterator();
+			Iterator<Map.Entry<String, String>> it = diff.entrySet().iterator();
 			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry) it.next();
-				String key = (String) entry.getKey();
-				String value = (String) entry.getValue();
-				String oldValue = (String) snapshot.get(key);
+				Map.Entry<String, String> entry = it.next();
+				String key = entry.getKey();
+				String value = entry.getValue();
+				String oldValue = snapshot.get(key);
 				if (ObjectUtils.nullSafeEquals(value, oldValue)) {
 					it.remove();
 				}

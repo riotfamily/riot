@@ -7,14 +7,13 @@ import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.font.TextMeasurer;
 import java.text.AttributedString;
-
-import org.riotfamily.common.collection.FlatMap;
+import java.util.HashMap;
 
 public class HyphenatedLineBreakMeasurerer {
 
 	private StringBuffer sb;
 	
-	private FlatMap attrs;
+	private HashMap attrs;
 	
 	private FontRenderContext fc;
 	
@@ -32,7 +31,7 @@ public class HyphenatedLineBreakMeasurerer {
     		FontRenderContext fc) {
     
     	this.sb = new StringBuffer(text.replace('\u00AD', '\t'));
-    	this.attrs = new FlatMap();
+    	this.attrs = new HashMap();
     	this.attrs.put(TextAttribute.FOREGROUND, color);
     	this.attrs.put(TextAttribute.FONT, font);
     	this.fc = fc;

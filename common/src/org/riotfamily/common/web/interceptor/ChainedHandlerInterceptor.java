@@ -45,7 +45,7 @@ import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapt
 public class ChainedHandlerInterceptor implements HandlerInterceptor, 
 		InitializingBean {
 
-	private List interceptors;
+	private List<HandlerInterceptor> interceptors;
 	
 	private HandlerInterceptor[] adaptedInterceptors;
 	
@@ -56,7 +56,7 @@ public class ChainedHandlerInterceptor implements HandlerInterceptor,
 	 * @see org.springframework.web.servlet.HandlerInterceptor
 	 * @see org.springframework.web.context.request.WebRequestInterceptor
 	 */
-	public void setInterceptors(List interceptors) {
+	public void setInterceptors(List<HandlerInterceptor> interceptors) {
 		this.interceptors = interceptors;
 	}
 	

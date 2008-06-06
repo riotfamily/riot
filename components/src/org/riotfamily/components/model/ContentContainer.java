@@ -24,7 +24,6 @@
 package org.riotfamily.components.model;
 
 import java.util.Map;
-import java.util.Set;
 
 
 public class ContentContainer {
@@ -34,9 +33,7 @@ public class ContentContainer {
 	private Content liveVersion;
 
 	private Content previewVersion;
-
-	private Set versions;
-
+	
 	public ContentContainer() {
 	}
 
@@ -64,14 +61,6 @@ public class ContentContainer {
 		this.previewVersion = previewVersion;
 	}
 
-	public Set getVersions() {
-		return this.versions;
-	}
-
-	public void setVersions(Set versions) {
-		this.versions = versions;
-	}
-
 	public Content getLatestVersion() {
 		return previewVersion != null ? previewVersion : liveVersion;
 	}
@@ -83,16 +72,20 @@ public class ContentContainer {
 		return liveVersion;
 	}
 	
-	public Map unwrapValues(boolean preview) {
+	public Map<String, Object> unwrapValues(boolean preview) {
 		return getContent(preview).unwrapValues();
 	}
 	
 	public boolean isDirty() {
-		return previewVersion != null;
+		return previewVersion != null && previewVersion.isDirty();
 	}
-
+	
 	public boolean isPublished() {
 		return liveVersion != null;
 	}
 
+	public void setDirty(boolean dirty) {
+		previewVersion.setDirty(dirty);
+	}
+	
 }

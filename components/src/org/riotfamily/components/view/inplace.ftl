@@ -30,6 +30,7 @@
   -->
 <#macro toolbar bookmarklet=true>
 	<#if editMode>
+		<iframe name="riotPreviewFrame" id="riotPreviewFrame" width="1" height="1" style="border:none;visibility:hidden;position:absolute;top:0;left:0;z-index:99999;width:100%;height:100%"></iframe>
 		<#list inplaceMacroHelper.toolbarScripts as src>
 			<@riot.script src = src + "?lang=" + .lang />
 		</#list>
@@ -38,11 +39,18 @@
 			${inplaceMacroHelper.initScript}
 			<#nested />
 		</script>
-	<#elseif bookmarklet>
-		<script type="text/javascript" language="JavaScript">
-			// This variable is read by the login-bookmarklet:
-			var riotPagesUrl = '${riot.href("/pages")}';
-		</script>
+	<#else>
+		<#if inplaceMacroHelper.isLiveModePreview()>
+			<@riot.stylesheet href="style/toolbar.css" />
+			<script type="text/javascript" language="JavaScript">
+				parent.riot.toolbar.renderProxy(document);
+			</script>
+		<#elseif bookmarklet>
+			<script type="text/javascript" language="JavaScript">
+				// This variable is read by the login-bookmarklet:
+				var riotPagesUrl = '${riot.href("/pages")}';
+			</script>
+		</#if>
 	</#if>
 </#macro>
 
@@ -82,20 +90,6 @@
 		<#nested />
 	</#if>
 	<#assign currentListId = "" />
-</#macro>
-
-<#macro componentSet attributes...>
-	<#if editMode>
-		<div style="border:3px solid red">
-			<div style="background:red;color:#fff">
-				The &lt;@inplace.componentSet&gt; macro is not needed any longer.
-				Please remove it from ${c.templateName}.
-			</div>
-			<#nested />
-		</div>
-	<#else>
-		<#nested />
-	</#if>
 </#macro>
 
 <#macro entity object form="">
@@ -337,7 +331,7 @@
 				"class": ("riot-component riot-single-component " + attributes.class!)?trim
 		} />
 		<#if form?has_content>
-			<#local formUrl = inplaceMacroHelper.getFormUrl(form, container.id)! />
+			<#local formUrl = inplaceMacroHelper.getFormUrl(form, container)! />
 			<#local attributes = attributes + {
 					"class": attributes.class + " riot-form",
 					"riot:form": formUrl					

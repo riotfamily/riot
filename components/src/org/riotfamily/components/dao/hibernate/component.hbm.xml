@@ -11,33 +11,13 @@
 		<id name="id">
 			<generator class="native" />
 		</id>
-		<component name="location">
-			<!--
-			  - We have to use these short string lengths, as MySQL has a limit of
-			  - 1000 bytes for indexes and UTF-8 strings take up to 3 bytes per char:
-			  - 66 * 3 + 66 * 3 + 200 * 3 = 996
-			  - NOTE: This might be still too long for InnoDB tables ...
-			  -->
-			<property name="type" column="`type`" length="66" unique-key="location" />
-			<property name="path" column="`path`" length="200" unique-key="location" />
-			<property name="slot" column="slot" length="66" unique-key="location,parent_slot" />
-		</component>
-		<many-to-one name="parent" unique-key="parent_slot" />
-		<list name="liveComponents" cascade="all">
+		<list name="components" cascade="all">
 			<cache usage="nonstrict-read-write" region="components" />
-			<key column="live_list" />
-			<index column="live_pos" />
+			<key column="list" />
+			<index column="list_pos" />
 			<one-to-many class="Component" />
 		</list>
-		<list name="previewComponents" cascade="all">
-			<cache usage="nonstrict-read-write" region="components" />
-			<key column="preview_list" />
-			<index column="preview_pos" />
-			<one-to-many class="Component" />
-		</list>
-		<property name="dirty" />
-		<property name="lastModified" />
-		<property name="lastModifiedBy" />
+		<many-to-one name="container" cascade="save-update" />
 	</class>
 
 	<class name="ContentContainer" table="riot_content_containers" lazy="false" discriminator-value="ContentContainer">
@@ -46,33 +26,27 @@
 			<generator class="native" />
 		</id>
 		<discriminator column="container_type" type="string" />
-
 		<many-to-one name="liveVersion" column="live_version" cascade="all" />
 		<many-to-one name="previewVersion" column="preview_version" cascade="all" />
-
-		<subclass name="Component" discriminator-value="Component">
-			<property name="type" column="component_type" />
-			<many-to-one name="liveList" column="live_list" insert="false" update="false" access="field" />
-			<many-to-one name="previewList" column="preview_list" insert="false" update="false" access="field" />
-			<set name="childLists" inverse="true" cascade="all">
-				<key column="parent" />
-				<one-to-many class="ComponentList" />
-			</set>
-		</subclass>
 	</class>
 
-	<class name="Content" table="riot_contents" lazy="false">
+	<class name="Content" table="riot_contents" lazy="false" discriminator-value="Content">
 		<cache usage="nonstrict-read-write" region="components" />
 		<id name="id">
 			<generator class="native" />
 		</id>
+		<discriminator column="content_type" type="string" />
+		<property name="dirty" />
 		<map name="wrappers" table="riot_content_values" cascade="all-delete-orphan" lazy="false">
 			<cache usage="nonstrict-read-write" region="components" />
 			<key column="content" />
 			<index column="property" type="string" />
 			<many-to-many column="wrapper" class="org.riotfamily.components.model.wrapper.ValueWrapper" />
 		</map>
-		<property name="dirty" />
+		<subclass name="Component" discriminator-value="Component">
+			<property name="type" column="component_type" />
+			<many-to-one name="list" column="list" insert="false" update="false" access="field" />
+		</subclass>
 	</class>
 	
 </hibernate-mapping>

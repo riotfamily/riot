@@ -38,7 +38,8 @@ public final class RequestHolder {
 	
 	private int level;
 
-	private static ThreadLocal threadLocal = new ThreadLocal();
+	private static ThreadLocal<RequestHolder> threadLocal = 
+			new ThreadLocal<RequestHolder>();
 	
 	private RequestHolder(HttpServletRequest request, HttpServletResponse response) {
 		this.request = request;
@@ -57,17 +58,15 @@ public final class RequestHolder {
 	}
 	
 	public static HttpServletRequest getRequest() {
-		RequestHolder holder = (RequestHolder) threadLocal.get();
-		return holder.request;
+		return threadLocal.get().request;
 	}
 	
 	public static HttpServletResponse getResponse() {
-		RequestHolder holder = (RequestHolder) threadLocal.get();
-		return holder.response;
+		return threadLocal.get().response;
 	}
 	
 	public static void unset() {
-		RequestHolder holder = (RequestHolder) threadLocal.get();
+		RequestHolder holder = threadLocal.get();
 		if (--holder.level == 0) {
 			threadLocal.set(null);
 		}

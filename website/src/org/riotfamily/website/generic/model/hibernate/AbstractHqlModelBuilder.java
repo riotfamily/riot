@@ -25,6 +25,7 @@ package org.riotfamily.website.generic.model.hibernate;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,6 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.cachius.spring.CacheableController;
-import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.riot.hibernate.support.HibernateSupport;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
@@ -240,7 +240,7 @@ public abstract class AbstractHqlModelBuilder extends HibernateSupport
 		if (tagCacheItems) {
 			tagResult(query, result, request);
 		}
-		FlatMap model = new FlatMap();
+		HashMap<String, Object> model = new HashMap<String, Object>();
 		model.put(getModelKey(query), result);
 		return model;
 	}

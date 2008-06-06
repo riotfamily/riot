@@ -80,7 +80,7 @@ public class ImageMagickThumbnailer implements Thumbnailer {
 	public void renderThumbnail(File source, File dest, int width, int height)
 			throws IOException {
 		
-		ArrayList args = new ArrayList();
+		ArrayList<String> args = new ArrayList<String>();
 		args.add(source.getAbsolutePath());
 		args.add("-resize");
 		if (crop) {

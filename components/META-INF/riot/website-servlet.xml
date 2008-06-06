@@ -11,29 +11,34 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-7.0.xsd">
 
-	<bean id="defaultComponentListLocator" class="org.riotfamily.components.locator.UrlComponentListLocator">
-		<constructor-arg ref="pathCompleter" />
-	</bean>
-
-	<bean class="org.riotfamily.components.controller.ComponentListControllerPostProcessor">
-		<property name="componentDao" ref="componentDao" />
-		<property name="repository" ref="componentRepository" />
-		<property name="transactionManager" ref="transactionManager" />
-		<property name="locator" ref="defaultComponentListLocator" />
-		<property name="cacheService" ref="cacheService" />
+	<bean id="componentListRenderer" class="org.riotfamily.components.render.list.ComponentListRenderer">
+		<constructor-arg ref="cacheService" />
+		<constructor-arg ref="componentDao" />
+		<constructor-arg ref="componentRepository" />
+		<constructor-arg ref="transactionManager" />
+		<property name="liveModeRenderStrategy">
+			<bean class="org.riotfamily.components.render.list.LiveModeRenderStrategy">
+				<constructor-arg ref="cacheService" />
+				<constructor-arg ref="componentDao" />
+				<constructor-arg ref="componentRepository" />
+			</bean>
+		</property>
+		<property name="editModeRenderStrategy">
+			<bean class="org.riotfamily.components.render.list.EditModeRenderStrategy">
+				<constructor-arg ref="cacheService" />
+				<constructor-arg ref="componentDao" />
+				<constructor-arg ref="componentRepository" />
+			</bean>
+		</property>
 	</bean>
 	
-	<bean class="org.riotfamily.components.controller.ComponentControllerPostProcessor">
-		<property name="componentDao" ref="componentDao" />
-		<property name="transactionManager" ref="transactionManager" />
-	</bean>
-
 	<override:put ref="freemarkerConfig" property="macroLibraries">
 		<entry key="inplace" value="classpath:org/riotfamily/components/view/inplace.ftl" />
 	</override:put>
 	
 	<bean id="inplaceMacroHelper" class="org.riotfamily.components.view.InplaceMacroHelperFactory">
 		<constructor-arg ref="componentRepository" />
+		<constructor-arg ref="componentListRenderer" />
 		<constructor-arg ref="riotDaoService" />
 		<property name="toolbarScripts">
 			<list>

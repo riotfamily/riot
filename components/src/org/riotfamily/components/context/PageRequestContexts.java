@@ -24,6 +24,7 @@
 package org.riotfamily.components.context;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -35,7 +36,8 @@ public class PageRequestContexts {
 	
 	private long timeToLive;
 	
-	private HashMap map = new HashMap();
+	private Map<Object, PageRequestContext> contexts = 
+			new HashMap<Object, PageRequestContext>();
 	
 	public PageRequestContexts(long timeToLive) {
 		this.timestamp = System.currentTimeMillis();
@@ -51,10 +53,11 @@ public class PageRequestContexts {
 	}
 	
 	public void put(Object key, PageRequestContext context) {
-		map.put(key, context);
+		contexts.put(key, context);
 	}
 	
 	public PageRequestContext get(Object key) {
-		return (PageRequestContext) map.get(key);
+		return contexts.get(key);
 	}
+	
 }

@@ -35,11 +35,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.io.IOUtils;
-import org.springframework.core.CollectionFactory;
 
 /**
  * The Cachius cache.
@@ -50,13 +50,13 @@ public final class Cache implements Serializable {
 
     private static Log log = LogFactory.getLog(Cache.class);
     
-    private static Comparator itemUsageComparator = new ItemUsageComparator();
+    private static ItemUsageComparator itemUsageComparator = new ItemUsageComparator();
     
     private int size;
 
-    private Map map;
+    private Map<String, CacheItem> map;
     
-    private Map taggedItems;
+    private Map<String, List<CacheItem>> taggedItems;
     
     private File cacheDir = null;
 
@@ -87,8 +87,8 @@ public final class Cache implements Serializable {
         	mapCapacity++;
         }
         
-        this.map = CollectionFactory.createConcurrentMapIfPossible(mapCapacity); 
-        this.taggedItems = CollectionFactory.createConcurrentMapIfPossible(mapCapacity);
+        this.map = new ConcurrentHashMap<String, CacheItem>(mapCapacity); 
+        this.taggedItems = new ConcurrentHashMap<String, List<CacheItem>>(mapCapacity);
 
         init();
         setCapacity(capacity);
@@ -152,7 +152,7 @@ public final class Cache implements Serializable {
      */
     public boolean containsValidKey(String key) {
         if (map.containsKey(key)) {
-            return !((CacheItem) map.get(key)).isNew();
+            return !map.get(key).isNew();
         }
     	return false;
     }
@@ -168,10 +168,10 @@ public final class Cache implements Serializable {
     	if (!enabled) {
     		return null;
     	}
-        CacheItem item = (CacheItem) map.get(key);
+        CacheItem item = map.get(key);
         if (item == null) {
         	synchronized (addItemlock) {
-        		item = (CacheItem) map.get(key);
+        		item = map.get(key);
                 if (item == null) {
                 	try {
 	                	item = new CacheItem(key, getNextDir());
@@ -229,13 +229,12 @@ public final class Cache implements Serializable {
      */
     private void cleanup() {
     	log.info("Cache capacity exceeded. Performing cleanup ...");
-		ArrayList items = new ArrayList(map.values());
+		ArrayList<CacheItem> items = new ArrayList<CacheItem>(map.values());
 		Collections.sort(items, itemUsageComparator);
 		int i = (int) Math.ceil(capacity * evictionFactor);
-		Iterator it = items.iterator();
+		Iterator<CacheItem> it = items.iterator();
 		while (it.hasNext() && i > 0) {
-			CacheItem item = (CacheItem) it.next();
-			removeItem(item);
+			removeItem(it.next());
 			i--;
 		}
     }
@@ -255,20 +254,18 @@ public final class Cache implements Serializable {
     /**
      * Returns a list of items tagged with the given String.
      */
-    private List getTaggedItems(String tag) {
-    	return (List) taggedItems.get(tag);
+    private List<CacheItem> getTaggedItems(String tag) {
+    	return taggedItems.get(tag);
     }
     
     /**
      * Removes the given item from all specified tag lists. If item is the last
      * entry in a tag-list, the whole list is removed from the taggedItems map.
      */
-    private void removeTags(CacheItem item, Set tags) {
+    private void removeTags(CacheItem item, Set<String> tags) {
     	if (tags != null) {
-	    	Iterator it = tags.iterator();
-	    	while (it.hasNext()) {
-				String tag = (String) it.next();
-		    	List items = getTaggedItems(tag);
+    		for (String tag : tags) {
+		    	List<CacheItem> items = getTaggedItems(tag);
 		    	if (items != null) {
 		    		items.remove(item);
 		    		if (items.isEmpty()) {
@@ -282,14 +279,12 @@ public final class Cache implements Serializable {
     /**
      * Adds the given item to the specified tag lists.
      */
-    private void addTags(CacheItem item, Set tags) {
+    private void addTags(CacheItem item, Set<String> tags) {
     	if (tags != null) {
-	    	Iterator it = tags.iterator();
-	    	while (it.hasNext()) {
-				String tag = (String) it.next();
-		    	List items = getTaggedItems(tag);
+    		for (String tag : tags) {
+		    	List<CacheItem> items = getTaggedItems(tag);
 		    	if (items == null) {
-		    		items = new ArrayList();
+		    		items = new ArrayList<CacheItem>();
 		    		taggedItems.put(tag, items);
 		    	}
 		    	items.add(item);
@@ -300,17 +295,15 @@ public final class Cache implements Serializable {
     /**
      * Updates the tags of the given CacheItem.
      */
-    public void tagItem(CacheItem item, Set newTags) {
-    	Set tagsToRemove = new HashSet();
-    	Set existingTags = item.getTags();
+    public void tagItem(CacheItem item, Set<String> newTags) {
+    	Set<String> tagsToRemove = new HashSet<String>();
+    	Set<String> existingTags = item.getTags();
     	if (existingTags != null) {
     		tagsToRemove.addAll(existingTags);
     	}
     	if (newTags != null) {
-	    	Set tagsToAdd = new HashSet();
-	    	Iterator it = newTags.iterator();
-	    	while (it.hasNext()) {
-				String tag = (String) it.next();
+	    	Set<String> tagsToAdd = new HashSet<String>();
+	    	for (String tag : newTags) {
 				if (!tagsToRemove.remove(tag)) {
 					tagsToAdd.add(tag);
 				}
@@ -327,11 +320,9 @@ public final class Cache implements Serializable {
     protected void invalidateTaggedItems(String tag) {
     	if (tag != null) {
 	    	log.debug("Invalidating items tagged as " + tag);
-	    	List items = getTaggedItems(tag);
+	    	List<CacheItem> items = getTaggedItems(tag);
 	    	if (items != null) {
-	    		Iterator it = items.iterator();
-	    		while (it.hasNext()) {
-					CacheItem item = (CacheItem) it.next();
+	    		for (CacheItem item : items) {
 					item.invalidate();
 				}
 	    	}
@@ -342,10 +333,8 @@ public final class Cache implements Serializable {
      * Comparator that compares items by their {@link CacheItem#getLastUsed() 
      * last-used} date.
      */
-    private static class ItemUsageComparator implements Comparator {
-    	public int compare(Object obj1, Object obj2) {
-    		CacheItem item1 = (CacheItem) obj1;
-    		CacheItem item2 = (CacheItem) obj2;
+    private static class ItemUsageComparator implements Comparator<CacheItem> {
+    	public int compare(CacheItem item1, CacheItem item2) {
     		long l1 = item1.getLastUsed();
     		long l2 = item2.getLastUsed();
     		return (l1 < l2 ? -1 : (l1 == l2 ? 0 : 1));

@@ -35,8 +35,8 @@ import org.riotfamily.common.web.util.DeferredRenderingResponseWrapper;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView;
 import org.riotfamily.components.EditModeUtils;
-import org.riotfamily.components.config.component.AbstractComponent;
 import org.riotfamily.components.context.PageRequestUtils;
+import org.riotfamily.components.render.component.AbstractComponent;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

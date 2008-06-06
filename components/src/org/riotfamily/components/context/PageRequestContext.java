@@ -29,14 +29,19 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.components.config.ComponentListConfig;
 
 public class PageRequestContext {
 
 	private Object key;
 	
-	private Map parameters;
+	private Map<String, String[]> parameters;
 	
-	private Map attributes;
+	private Map<String, Object> attributes;
+	
+	private Map<Long, ComponentListConfig> componentListConfigs =
+		new HashMap<Long, ComponentListConfig>();
+
 	
 	private String method;
 	
@@ -48,6 +53,7 @@ public class PageRequestContext {
 	
 	private String requestURI;
 	
+	@SuppressWarnings("unchecked")
 	public PageRequestContext(Object key, HttpServletRequest request) {
 		this.key = key;
 		this.method = request.getMethod();
@@ -57,14 +63,14 @@ public class PageRequestContext {
 		this.requestURI = request.getRequestURI();
 		
 		this.attributes = ServletUtils.takeAttributesSnapshot(request);
-		this.parameters = new HashMap(request.getParameterMap());	
+		this.parameters = new HashMap<String, String[]>(request.getParameterMap());	
 	}
 
 	public Object getKey() {
 		return this.key;
 	}
 	
-	public Map getAttributes() {
+	public Map<String, Object> getAttributes() {
 		return this.attributes;
 	}
 
@@ -72,7 +78,7 @@ public class PageRequestContext {
 		return this.method;
 	}
 
-	public Map getParameters() {
+	public Map<String, String[]> getParameters() {
 		return this.parameters;
 	}
 
@@ -90,6 +96,14 @@ public class PageRequestContext {
 
 	public String getServletPath() {
 		return this.servletPath;
+	}
+	
+	public void setComponentListConfig(Long listId, ComponentListConfig config) {
+		componentListConfigs.put(listId, config);
+	}
+	
+	public ComponentListConfig getComponentListConfig(Long listId) {
+		return componentListConfigs.get(listId);
 	}
 
 }

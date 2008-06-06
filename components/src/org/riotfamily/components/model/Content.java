@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.components.model.wrapper.ValueWrapperService;
@@ -36,22 +37,23 @@ public class Content {
 
 	private Long id;
 
-	private Map wrappers;
+	private Map<String, ValueWrapper> wrappers;
 
 	private boolean dirty;
 
 	public Content() {
 	}
 
-	public Content(Content prototype) {
-		if (prototype != null) {
-			this.wrappers = new HashMap();
-			Iterator it = prototype.getWrappers().entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry) it.next();
-				ValueWrapper wrapper = (ValueWrapper) entry.getValue();
-				this.wrappers.put(entry.getKey(), wrapper.deepCopy());
-			}
+	public Content createCopy() {
+		Content copy = new Content();
+		copyValues(copy);
+		return copy;
+	}
+	
+	protected final void copyValues(Content dest) {
+		for (Entry<String, ValueWrapper> entry : getWrappers().entrySet()) {
+			ValueWrapper copy = entry.getValue().deepCopy();
+			dest.getWrappers().put(entry.getKey(), copy);
 		}
 	}
 
@@ -102,24 +104,22 @@ public class Content {
 		this.dirty = dirty;
 	}
 
-	public Map getWrappers() {
+	public Map<String, ValueWrapper> getWrappers() {
 		if (wrappers == null) {
-			wrappers = new HashMap();
+			wrappers = new HashMap<String, ValueWrapper>();
 		}
 		return wrappers;
 	}
 
-	public void setWrappers(Map contents) {
-		this.wrappers = contents;
+	public void setWrappers(Map<String, ValueWrapper> wrappers) {
+		this.wrappers = wrappers;
 	}
 	
-	public Map unwrapValues() {
-		HashMap result = new HashMap();
+	public Map<String, Object> unwrapValues() {
+		HashMap<String, Object> result = new HashMap<String, Object>();
 		if (wrappers != null) {
-			Iterator it = wrappers.entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry) it.next();
-				ValueWrapper wrapper = (ValueWrapper) entry.getValue();
+			for (Entry<String, ValueWrapper> entry : wrappers.entrySet()) {
+				ValueWrapper wrapper = entry.getValue();
 				if (wrapper != null) {
 					result.put(entry.getKey(), wrapper.unwrap());
 				}
@@ -131,18 +131,14 @@ public class Content {
 		return result;
 	}
 	
-	public void wrapValues(Map values) {
+	public void wrapValues(Map<String, Object> values) {
 		if (values != null) {
-			Iterator it = values.entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry) it.next();
-				String key = (String) entry.getKey();
-				Object value = entry.getValue();
-				setValue(key, value);
+			for (Entry<String, Object> entry : values.entrySet()) {
+				setValue(entry.getKey(), entry.getValue());
 			}
-			it = getWrappers().keySet().iterator();
+			Iterator<String> it = getWrappers().keySet().iterator();
 			while (it.hasNext()) {
-				Object key = it.next();
+				String key = it.next();
 				if (!values.containsKey(key)) {
 					it.remove();
 				}
@@ -159,13 +155,11 @@ public class Content {
 	 * Returns a Collection of Strings that should be used to tag the
 	 * CacheItem containing the rendered Content.
 	 */
-	public Collection getCacheTags() {
-		HashSet result = new HashSet();
-		Iterator it = wrappers.values().iterator();
-		while (it.hasNext()) {
-			ValueWrapper wrapper = (ValueWrapper) it.next();
+	public Collection<String> getCacheTags() {
+		HashSet<String> result = new HashSet<String>();
+		for (ValueWrapper wrapper : wrappers.values()) {
 			if (wrapper != null) {
-				Collection tags = wrapper.getCacheTags();
+				Collection<String> tags = wrapper.getCacheTags();
 				if (tags != null) {
 					result.addAll(tags);
 				}

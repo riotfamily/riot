@@ -75,7 +75,7 @@ public class CacheFactoryBean extends CacheFactory
 		
 	}
 	
-	public Class getObjectType() {
+	public Class<?> getObjectType() {
 		return Cache.class;
 	}
 	

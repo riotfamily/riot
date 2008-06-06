@@ -30,13 +30,13 @@ import java.util.Map;
 
 public class ContextMap implements Serializable {
 
-	private transient Map map;
+	private transient Map<String, PageRequestContexts> map;
 	
 	public void removeExpiredContexts() {
 		if (map != null) {
-			Iterator it = map.values().iterator();
+			Iterator<PageRequestContexts> it = map.values().iterator();
 			while (it.hasNext()) {
-				PageRequestContexts contexts = (PageRequestContexts) it.next();
+				PageRequestContexts contexts = it.next();
 				if (contexts.isExpired()) {
 					it.remove();
 				}
@@ -46,7 +46,7 @@ public class ContextMap implements Serializable {
 	
 	public void touch(String pageUri) {
 		if (map != null) {
-			PageRequestContexts contexts = (PageRequestContexts) map.get(pageUri);
+			PageRequestContexts contexts = map.get(pageUri);
 			if (contexts != null) {
 				contexts.touch();
 			}
@@ -57,9 +57,9 @@ public class ContextMap implements Serializable {
 			PageRequestContext context, long timeToLive) {
 		
 		if (map == null) {
-			 map = new HashMap();
+			 map = new HashMap<String, PageRequestContexts>();
 		}
-		PageRequestContexts contexts = (PageRequestContexts) map.get(pageUri);
+		PageRequestContexts contexts = map.get(pageUri);
 		if (contexts == null) {
 			contexts = new PageRequestContexts(timeToLive);
 			map.put(pageUri, contexts);
@@ -67,15 +67,16 @@ public class ContextMap implements Serializable {
 		contexts.put(contextKey, context);
 	}
 	
-	public PageRequestContext get(String pageUri, Object contextKey) {
+	private PageRequestContexts getContexts(String pageUri) {
 		if (map == null) {
 			return null;
 		}
-		PageRequestContexts contexts = (PageRequestContexts) map.get(pageUri);
-		if (contexts == null) {
-			return null;
-		}
-		return contexts.get(contextKey);
+		return map.get(pageUri);
+	}
+	
+	public PageRequestContext get(String pageUri, Object contextKey) {
+		PageRequestContexts contexts = getContexts(pageUri);
+		return contexts != null ? contexts.get(contextKey) : null;
 	}
 
 }

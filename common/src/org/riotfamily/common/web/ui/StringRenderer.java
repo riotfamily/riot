@@ -29,7 +29,7 @@ public class StringRenderer implements ObjectRenderer {
 	protected String convertToString(Object obj) {
 		PropertyEditor editor = this.propertyEditor;
 		if (editor == null) {
-			Class type = obj.getClass();
+			Class<?> type = obj.getClass();
 			editor = PropertyEditorManager.findEditor(type);
 			if (editor == null) {
 				editor = DEFAULT_EDITOR;

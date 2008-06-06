@@ -4,10 +4,12 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.editor.ContentFormController;
+import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
-import org.riotfamily.components.riot.form.ContentContainerEditorBinder;
+import org.riotfamily.components.riot.form.ContentEditorBinder;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.factory.FormFactory;
@@ -29,16 +31,19 @@ public class PagePropertiesFormController extends ContentFormController {
 
 	public PagePropertiesFormController(FormRepository formRepository,
 			PlatformTransactionManager transactionManager,
-			ComponentDao componentDao) {
+			ComponentDao componentDao, CacheService cacheService) {
 		
-		super(formRepository, transactionManager, componentDao);
+		super(formRepository, transactionManager, componentDao, cacheService);
 	}
 
 	protected Form createForm(HttpServletRequest request) {
-		Object backingObject = getFormBackingObject(request);
-		if (backingObject instanceof PageProperties) {
-			return createPagePropertiesForm(request,
-					(PageProperties) backingObject);
+		ContentContainer container = getContainer(request);
+		Content content = (Content) getFormBackingObject(request);
+		if (container instanceof PageProperties) {
+			if (container.getPreviewVersion().equals(content)) {
+				return createPagePropertiesForm(request,
+						(PageProperties) container);
+			}
 		}
 		return super.createForm(request);
 	}
@@ -50,7 +55,7 @@ public class PagePropertiesFormController extends ContentFormController {
 		
 		Form form = new Form(props);
 		LocalizedEditorBinder binder = new LocalizedEditorBinder(
-				new ContentContainerEditorBinder());
+				new ContentEditorBinder());
 		
 		form.setEditorBinder(binder);
 		

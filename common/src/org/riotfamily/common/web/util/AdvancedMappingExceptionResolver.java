@@ -41,6 +41,7 @@ public class AdvancedMappingExceptionResolver
 		this.rootCaseAttribute = rootCaseAttribute;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected ModelAndView getModelAndView(String viewName, Exception ex) {
 		logger.error("Unhandled exception", ex);
 		ModelAndView mv = super.getModelAndView(viewName, ex);

@@ -14,33 +14,29 @@
  *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.locator;
+package org.riotfamily.components.render.list;
 
-import javax.servlet.http.HttpServletRequest;
+import org.riotfamily.cachius.CacheService;
+import org.riotfamily.components.config.ComponentRepository;
+import org.riotfamily.components.dao.ComponentDao;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.web.util.ServletUtils;
+public class LiveModeRenderStrategy extends CachingRenderStrategy {
 
-/**
- * @author Felix Gnass [fgnass at neteye dot de]
- * @deprecated Use a {@link DefaultSlotResolver} instead
- */
-public class UrlSlotResolver implements SlotResolver {
+	public LiveModeRenderStrategy(ComponentDao dao,
+			ComponentRepository repository,	CacheService cacheService) {
 
-	private static Log log = LogFactory.getLog(UrlSlotResolver.class);
+		super(dao, repository, cacheService);
+	}
 
-	public String getSlot(HttpServletRequest request) {
-		String slot = ServletUtils.getPathWithoutServletMapping(request);
-		log.debug("Slot: " + slot);
-		return slot;
+	protected boolean isPreview() {
+		return false;
 	}
 
 }

@@ -47,7 +47,7 @@ public final class ResourceUtils {
 		return getPath(object.getClass(), name);
 	}
 
-	public static String getPath(Class clazz, String name) {
+	public static String getPath(Class<?> clazz, String name) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(CLASSPATH_PREFIX).append('/');
 		String s = clazz.getName();

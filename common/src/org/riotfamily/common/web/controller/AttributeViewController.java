@@ -43,7 +43,7 @@ public class AttributeViewController extends ParameterizableViewController {
 	protected ModelAndView handleRequestInternal(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		Map attributes = ServletUtils.takeAttributesSnapshot(request);
+		Map<String, Object> attributes = ServletUtils.takeAttributesSnapshot(request);
 		return new ModelAndView(getViewName(), attributes);
 	}
 }

@@ -46,7 +46,7 @@ public final class CommandUtils {
 		return new RuntimeCommand(new String[] {executable, arg}).exec().getResult();
 	}
 
-	public static String exec(List commandLine) throws IOException {
+	public static String exec(List<String> commandLine) throws IOException {
 		return new RuntimeCommand(StringUtils.toStringArray(commandLine)).exec().getResult();
 	}
 

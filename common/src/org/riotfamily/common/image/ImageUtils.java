@@ -91,9 +91,9 @@ public final class ImageUtils {
     	ImageWriter writer = null;
         ImageOutputStream ios = null;
         try {
-	        Iterator it = ImageIO.getImageWritersByFormatName(formatName);
+	        Iterator<ImageWriter> it = ImageIO.getImageWritersByFormatName(formatName);
 	        if (it.hasNext()) {
-	            writer = (ImageWriter) it.next();
+	            writer = it.next();
 	        }
 	        Assert.notNull(writer, "No ImageWriter available for format " 
 	        		+ formatName);

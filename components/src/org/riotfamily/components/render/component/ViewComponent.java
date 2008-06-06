@@ -21,51 +21,61 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.config.component;
+package org.riotfamily.components.render.component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.common.web.view.ViewResolutionException;
+import org.riotfamily.common.web.view.ViewResolverHelper;
 import org.riotfamily.components.model.Component;
-import org.springframework.web.util.WebUtils;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
- * Component implementation that uses a RequestDispatcher to perform the
- * rendering. The configured url will be included and the properties of
- * the ComponentVersion that is to be rendered will be exposed as request
- * attributes.
+ * Component implementation that resolves a view-name just like Spring's
+ * DispatcherServlet and renders the view passing the ComponentVersion's
+ * properties as model.
  */
-public class IncludeComponent extends AbstractComponent {
+public class ViewComponent extends AbstractComponent {
 
-	private String uri;
+	private String viewName;
 
-	private boolean dynamic = true;
+	private boolean dynamic = false;
 
-	public void setUri(String uri) {
-		this.uri = uri;
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
 	}
 
 	protected void renderInternal(Component component, boolean preview,
 			int position, int listSize, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		Map snapshot = ServletUtils.takeAttributesSnapshot(request);
-		WebUtils.exposeRequestAttributes(request, component.unwrapValues(preview));
-		
-		request.setAttribute(THIS, component);
-		request.setAttribute(POSITION, new Integer(position));
-		request.setAttribute(LIST_SIZE, new Integer(listSize));
-
-		Component parentComponent = component.getList().getParent();
-		if (parentComponent != null) {
-			request.setAttribute(PARENT, parentComponent);
+		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, Object> props = component.unwrapValues();
+		if (props != null) {
+			model.putAll(props);
 		}
+		
+		model.put(THIS, component);
+		model.put(POSITION, new Integer(position));
+		model.put(LIST_SIZE, new Integer(listSize));
 
-		request.getRequestDispatcher(uri).include(request, response);
-		ServletUtils.restoreAttributes(request, snapshot);
+		ModelAndView mv = new ModelAndView(viewName, model);
+		try {
+			View view = new ViewResolverHelper(
+					RequestContextUtils.getWebApplicationContext(request))
+					.resolveView(request, mv);
+
+			view.render(model, request, response);
+		}
+		catch (ViewResolutionException e) {
+			log.warn("ViewResolutionException - Skipping component ...", e);
+		}
 	}
 
 	public boolean isDynamic() {

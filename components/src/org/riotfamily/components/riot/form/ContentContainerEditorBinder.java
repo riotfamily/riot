@@ -47,15 +47,6 @@ public class ContentContainerEditorBinder extends AbstractEditorBinder {
 			container = createContainer();
 		}
 		previewVersion = container.getPreviewVersion();
-		if (previewVersion == null) {
-			Content liveVersion = container.getLiveVersion();
-			if (liveVersion != null) {
-				previewVersion = new Content(liveVersion);
-			}
-			else {
-				previewVersion = new Content();
-			}
-		}
 	}
 	
 	protected ContentContainer createContainer() {
@@ -67,11 +58,11 @@ public class ContentContainerEditorBinder extends AbstractEditorBinder {
 		return container;
 	}
 
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		return container.getClass();
 	}
 	
-	public Class getPropertyType(String path) {
+	public Class<?> getPropertyType(String path) {
 		return Object.class;
 	}
 

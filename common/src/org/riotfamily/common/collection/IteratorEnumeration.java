@@ -31,11 +31,11 @@ import java.util.Iterator;
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public class IteratorEnumeration implements Enumeration {
+public class IteratorEnumeration<T> implements Enumeration<T> {
 
-	private Iterator iterator;
+	private Iterator<T> iterator;
 	
-	public IteratorEnumeration(Iterator iterator) {
+	public IteratorEnumeration(Iterator<T> iterator) {
 		this.iterator = iterator;
 	}
 
@@ -43,7 +43,7 @@ public class IteratorEnumeration implements Enumeration {
 		return iterator.hasNext();
 	}
 	
-	public Object nextElement() {
+	public T nextElement() {
 		return iterator.next();
 	}
 

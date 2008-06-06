@@ -42,7 +42,7 @@ public class ImageMagickCropper implements ImageCropper {
 	public void cropImage(File source, File dest, int width, int height,
 			int x, int y, int scaledWidth) throws IOException {
 		
-		ArrayList args = new ArrayList();
+		ArrayList<String> args = new ArrayList<String>();
 		args.add(source.getAbsolutePath());
 		args.add("-resize");
 		args.add(scaledWidth + "x>");

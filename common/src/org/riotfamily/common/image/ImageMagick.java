@@ -80,7 +80,7 @@ public class ImageMagick implements InitializingBean {
 		return this.majorVersion;
 	}
 	
-	public String invoke(List args) throws IOException {
+	public String invoke(List<String> args) throws IOException {
 		Assert.state(isAvailable(), "ImageMagick binary '" 
 				+ convertCommand + "' not found in path.");
 		

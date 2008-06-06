@@ -73,7 +73,7 @@ public class MimetypesFileTypeMapFactoryBean implements FactoryBean {
 		return map;
 	}
 
-	public Class getObjectType() {
+	public Class<?> getObjectType() {
 		return MimetypesFileTypeMap.class;
 	}
 

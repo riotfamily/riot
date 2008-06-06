@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -47,9 +46,8 @@ import org.riotfamily.common.util.PasswordGenerator;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.EditModeUtils;
-import org.riotfamily.components.config.ComponentListConfiguration;
+import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.config.component.ComponentRenderer;
 import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.context.RequestContextExpiredException;
 import org.riotfamily.components.dao.ComponentDao;
@@ -57,16 +55,15 @@ import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
+import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.media.dao.MediaDao;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
 import org.riotfamily.media.model.data.CroppedImageData;
 import org.riotfamily.media.model.data.ImageData;
-import org.riotfamily.riot.security.AccessController;
 import org.riotfamily.riot.security.session.LoginManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -120,46 +117,40 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	/**
 	 * Returns the value of the given property.
 	 */
-	public String getText(Long containerId, String property) {
-		ContentContainer container = componentDao.loadContentContainer(containerId);
-		Object value = container.getContent(true).getValue(property);
+	public String getText(Long contentId, String property) {
+		Content content = componentDao.loadContent(contentId);
+		Object value = content.getValue(property);
 		return value != null ? value.toString() : null;
 	}
 
 	/**
 	 * Sets the given property to a new value.
 	 */
-	public void updateText(Long containerId, String property, String text) {
-		ContentContainer container = componentDao.loadContentContainer(containerId);
-		Content version = getOrCreatePreviewVersion(container);
-		version.setValue(property, text);
-		componentDao.saveOrUpdatePreviewVersion(container);
+	public void updateText(Long contentId, String property, String text) {
+		Content content = componentDao.loadContent(contentId);
+		content.setValue(property, text);
+		//componentDao.saveOrUpdatePreviewVersion(container);
 	}
 
-	public String cropImage(Long containerId, String property, Long imageId,
+	public String cropImage(Long contentId, String property, Long imageId,
 			int width, int height, int x, int y, int scaledWidth)
 			throws IOException {
 	
-		ContentContainer container = componentDao.loadContentContainer(containerId);
-		Content version = getOrCreatePreviewVersion(container);
-		
+		Content content = componentDao.loadContent(contentId);
 		RiotImage original = (RiotImage) mediaDao.loadFile(imageId);
 		RiotImage croppedImage = new RiotImage(new CroppedImageData(
 				original, imageCropper, width, height, x, y, scaledWidth));
 		
-		version.setValue(property, croppedImage);
-		componentDao.saveOrUpdatePreviewVersion(container);
+		content.setValue(property, croppedImage);
+		//componentDao.saveOrUpdatePreviewVersion(container);
 		return croppedImage.getUri();
 	}
 	
-	public String updateImage(Long containerId, String property, Long imageId) {
-	
-		ContentContainer container = componentDao.loadContentContainer(containerId);
-		Content version = getOrCreatePreviewVersion(container);
-		
+	public String updateImage(Long contentId, String property, Long imageId) {
+		Content content = componentDao.loadContent(contentId);
 		RiotFile image = mediaDao.loadFile(imageId);
-		version.setValue(property, image);
-		componentDao.saveOrUpdatePreviewVersion(container);
+		content.setValue(property, image);
+		//componentDao.saveOrUpdatePreviewVersion(container);
 		return image.getUri();
 	}
 	
@@ -201,12 +192,11 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 		log.debug("Inserting chunks " + StringUtils.arrayToCommaDelimitedString(chunks));
 		Component component = componentDao.loadComponent(componentId);
-		Content version = getOrCreatePreviewVersion(component);
-		version.setValue(property, chunks[0]);
-		componentDao.saveOrUpdatePreviewVersion(component);
+		component.setValue(property, chunks[0]);
+		//componentDao.saveOrUpdatePreviewVersion(component);
 		
 		ComponentList list = component.getList();
-		int offset = list.getOrCreatePreviewContainers().indexOf(component);
+		int offset = list.getComponents().indexOf(component);
 		for (int i = 1; i < chunks.length; i++) {
 			insertComponent(list.getId(), offset + i, component.getType(),
 					Collections.singletonMap(property, chunks[i]));
@@ -217,68 +207,54 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 * Returns a list of TypeInfo beans indicating which component types are
 	 * valid for the given controller.
 	 */
-	public List getValidTypes(String controllerId) {
-		ComponentListConfiguration cfg = repository.getListConfiguration(controllerId);
-		Assert.notNull(cfg, "No such controller: " + controllerId);
-		String[] types = cfg.getValidComponentTypes();
-
+	public List<TypeInfo> getValidTypes(String controllerId, Long listId) {
+		ComponentListConfig cfg = getComponentListConfig(controllerId, listId);
+		
+		List<String> types = cfg.getValidComponentTypes();
 		Locale locale = getLocale();
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < types.length; i++) {
-			String id = types[i];
-			String description = messageSource.getMessage("component." + id,
-					null, FormatUtils.xmlToTitleCase(id), locale);
+		ArrayList<TypeInfo> result = new ArrayList<TypeInfo>();
+		for (String type : types) {
+			String description = messageSource.getMessage("component." + type,
+					null, FormatUtils.xmlToTitleCase(type), locale);
 
-			result.add(new TypeInfo(id, description));
+			result.add(new TypeInfo(type, description));
 		}
 		return result;
 	}
 
 	/**
-	 * Creates a new VersionContainer and inserts it in the list identified
+	 * Creates a new Component and inserts it in the list identified
 	 * by the given id.
 	 */
 	public Long insertComponent(Long listId, int position, String type,
 			Map properties) {
 
 		ComponentList componentList = componentDao.loadComponentList(listId);
-		
-		Component container = createVersionContainer(type, properties);
-		componentList.insertContainer(container, position);
+		Component component = createComponent(type, properties);
+		componentList.insertComponent(component, position);
 		componentDao.updateComponentList(componentList);
-		return container.getId();
+		return component.getId();
 	}
 
 	/**
-	 * Creates a new container, containing a version of the given type.
+	 * Creates a new Component of the given type.
 	 *
 	 * @param type The type of the version to create
 	 * @param properties Properties of the version to create
-	 * @return The newly created container
+	 * @return The newly created component
 	 */
-	private Component createVersionContainer(String type, Map properties) {
-		Component component = new Component(type);
-		Content version = new Content();
-		ComponentRenderer renderer = repository.getComponent(type);
-		Map values = new HashMap();
-		if (renderer.getDefaults() != null) {
-			values.putAll(renderer.getDefaults());
-		}
-		if (properties != null) {
-			values.putAll(properties);
-		}
-		version.wrapValues(values);
-		component.setPreviewVersion(version);
-		componentDao.saveContentContainer(component);
+	private Component createComponent(String type, Map properties) {
+		Component component = repository.createComponent(type, properties);
+		componentDao.saveContent(component);
 		return component;
 	}
 	
 	public void setType(Long containerId, String type) {
 		Component component = componentDao.loadComponent(containerId);
 		component.setType(type);
-		ComponentRenderer renderer = repository.getComponent(type);
-		component.getPreviewVersion().wrapValues(renderer.getDefaults());
-		componentDao.saveOrUpdatePreviewVersion(component);
+		ComponentRenderer renderer = repository.getRenderer(type);
+		component.wrapValues(renderer.getDefaults());
+		//componentDao.updateContent(component);
 	}
 
 	private String getHtml(String url, String key, boolean live)
@@ -323,7 +299,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	public void moveComponent(Long componentId, Long nextComponentId) {
 		Component component = componentDao.loadComponent(componentId);
 		ComponentList componentList = component.getList();
-		List components = componentList.getOrCreatePreviewContainers();
+		List components = componentList.getComponents();
 		components.remove(component);
 		if (nextComponentId != null) {
 			for (int i = 0; i < components.size(); i++) {
@@ -337,89 +313,63 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		else {
 			components.add(component);
 		}
-		componentList.setDirty(true);
+		componentList.getContainer().setDirty(true);
 		componentDao.updateComponentList(componentList);
 	}
 
 	public void deleteComponent(Long componentId) {
 		Component component = componentDao.loadComponent(componentId);
 		ComponentList componentList = component.getList();
-		List components = componentList.getOrCreatePreviewContainers();
+		List components = componentList.getComponents();
 		components.remove(component);
-		componentList.setDirty(true);
+		componentList.getContainer().setDirty(true);
 		componentDao.updateComponentList(componentList);
-		if (!componentList.getLiveComponents().contains(component)) {
-			componentDao.deleteContentContainer(component);
-		}
 	}
 
 	public void publish(Long[] listIds, Long[] containerIds) {
-		if (listIds != null) {
-			publishLists(listIds);
-		}
+		HashSet<ContentContainer> containers = new HashSet<ContentContainer>();
 		if (containerIds != null) {
-			publishContainers(containerIds);
+			for (Long id : containerIds) {
+				if (id != null) {
+					containers.add(componentDao.loadContentContainer(id));
+				}
+			}
 		}
-	}
-
-	public void discard(Long[] listIds, Long[] containerIds) {
 		if (listIds != null) {
-			discardLists(listIds);
+			for (Long id : listIds) {
+				if (id != null) {
+					ComponentList list = componentDao.loadComponentList(id);
+					containers.add(list.getContainer());
+				}
+			}
 		}
-		if (containerIds != null) {
-			discardContainers(containerIds);
-		}
-	}
-
-	/**
-	 * Discards all changes made to the VersionContainers identified by the
-	 * given IDs.
-	 */
-	private void discardContainers(Long[] ids) {
-		for (int i = 0; i < ids.length; i++) {
-			ContentContainer container = componentDao.loadContentContainer(ids[i]);
-			componentDao.discardContainer(container);
-		}
-	}
-
-	/**
-	 * Discards all changes made to the ComponentLists identified by the
-	 * given IDs.
-	 */
-	private void discardLists(Long[] listIds) {
-		for (int i = 0; i < listIds.length; i++) {
-			ComponentList componentList = componentDao.loadComponentList(listIds[i]);
-			componentDao.discardComponentList(componentList);
-		}
-	}
-
-	/**
-	 * Publishes all changes made to the VersionContainers identified by the
-	 * given IDs.
-	 */
-	private void publishContainers(Long[] ids) {
-		for (int i = 0; i < ids.length; i++) {
-			ContentContainer container = componentDao.loadContentContainer(ids[i]);
+		for (ContentContainer container : containers) {
 			componentDao.publishContainer(container);
 		}
 	}
 
-	/**
-	 * Publishes the ComponentList identified by the given ID.
-	 */
-	private void publishLists(Long[] listIds) {
-		for (int i = 0; i < listIds.length; i++) {
-			ComponentList list = componentDao.loadComponentList(listIds[i]);
-			if (AccessController.isGranted("publish", list.getLocation())) {
-				componentDao.publishComponentList(list);
-			}
-			else {
-				throw new RuntimeException(messageSource.getMessage(
-					"components.error.publishNotGranted", null, getLocale()));
+	public void discard(Long[] listIds, Long[] containerIds) {
+		HashSet<ContentContainer> containers = new HashSet<ContentContainer>();
+		if (containerIds != null) {
+			for (Long id : containerIds) {
+				if (id != null) {
+					containers.add(componentDao.loadContentContainer(id));
+				}
 			}
 		}
+		if (listIds != null) {
+			for (Long id : listIds) {
+				if (id != null) {
+					ComponentList list = componentDao.loadComponentList(id);
+					containers.add(list.getContainer());
+				}
+			}
+		}
+		for (ContentContainer container : containers) {
+			componentDao.discardContainer(container);
+		}
 	}
-	
+
 	/**
 	 * This method is invoked by the Riot toolbar to inform the server that
 	 * the specified URL is still being edited.
@@ -450,6 +400,13 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		String path = ServletUtils.getPath(ctx.getCurrentPage());
 		return PageRequestUtils.wrapRequest(request, path, key);
 	}
+	
+	private ComponentListConfig getComponentListConfig(String key, Long listId) {
+		WebContext ctx = WebContextFactory.get();
+		HttpServletRequest request = ctx.getHttpServletRequest();
+		String path = ServletUtils.getPath(ctx.getCurrentPage());
+		return PageRequestUtils.getContext(request, path, key).getComponentListConfig(listId);
+	}
 
 	private HttpServletResponse getCapturingResponse(StringWriter sw) {
 		WebContext ctx = WebContextFactory.get();
@@ -460,30 +417,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		WebContext ctx = WebContextFactory.get();
 		HttpServletRequest request = ctx.getHttpServletRequest();
 		return RequestContextUtils.getLocale(request);
-	}
-	
-	private Content getOrCreatePreviewVersion(ContentContainer container) {
-		if (container instanceof Component) {
-			Component component = (Component) container;
-			ComponentList list = component.getList();
-			if (list != null && !list.isDirty()) {
-				list.getOrCreatePreviewContainers();
-				componentDao.updateComponentList(list);
-			}
-		}
-		Content previewVersion = container.getPreviewVersion();
-		if (previewVersion == null) {
-			Content liveVersion = container.getLiveVersion();
-			if (liveVersion != null) {
-				previewVersion = new Content(liveVersion);
-			}
-			else {
-				previewVersion = new Content();
-			}
-			container.setPreviewVersion(previewVersion);
-			componentDao.updateContentContainer(container);
-		}
-		return previewVersion;
 	}
 
 }

@@ -23,24 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import org.springframework.util.Assert;
 
 
 /**
  */
-public class Component extends ContentContainer {
+public class Component extends Content {
 
 	private String type;
 	
-	private ComponentList liveList;
-
-	private ComponentList previewList;
-
-	private Set childLists;
+	private ComponentList list;
 
 	public Component() {
 	}
@@ -48,60 +39,31 @@ public class Component extends ContentContainer {
 	public Component(String type) {
 		this.type = type;
 	}
-
+	
 	public String getType() {
 		return this.type;
 	}
-
+	
 	public void setType(String type) {
-		Assert.isTrue(this.type == null || this.type.equals(type) || getLiveVersion() == null, 
-				"Can't change the type of a live Component");
-		
 		this.type = type;
 	}
 
 	public ComponentList getList() {
-		return this.previewList != null ? previewList : liveList;
+		return list;
 	}
 
 	public void setList(ComponentList list) {
-		this.liveList = list;
-		this.previewList = list;
+		this.list = list;
 	}
 
-	public Set getChildLists() {
-		return this.childLists;
-	}
-
-	public void setChildLists(Set childLists) {
-		this.childLists = childLists;
-	}
-	
-	public Component createCopy() {
+	public Content createCopy() {
 		Component copy = new Component(type);
-		if (getLiveVersion() != null) {
-			copy.setLiveVersion(new Content(getLiveVersion()));
-		}
-		if (getPreviewVersion() != null) {
-			copy.setPreviewVersion(new Content(getPreviewVersion()));
-		}
+		copyValues(copy);
 		return copy;
 	}
 	
-	public Component createCopy(String path) {
-		Component copy = createCopy();
-		if (childLists != null) {
-			HashSet clonedLists = new HashSet();
-			Iterator it = childLists.iterator();
-			while (it.hasNext()) {
-				ComponentList list = (ComponentList) it.next();
-				ComponentList clonedList = list.createCopy(null);
-				clonedList.setParent(copy);
-				clonedLists.add(clonedList);
-			}
-			copy.setChildLists(clonedLists);
-		}
-		return copy;
+	public Long getContainerId() {
+		return list.getContainer().getId();
 	}
-
+	
 }

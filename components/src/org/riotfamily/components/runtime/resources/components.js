@@ -189,40 +189,18 @@ riot.Controller = Class.create({
 	},
 
 	replaceHtml: function(html) {
-		this.getElement().update(html);
-		this.onUpdate();
-		riot.toolbar.selectedButton.applyHandler(true);
-	},
-	
-	setTempHtml: function(html, live) {
-		this.getElement().update(html);
-		this.onUpdate(live);
-	},
-	
-	onUpdate: function(live) {
 		var el = this.getElement();
+		el.update(html);
 		riot.adoptFloatsAndClears(el);
 		el.select('.riot-controller').invoke('identify');
 		el.select('.riot-component').invoke('identify');
 		if (window.riotEditCallbacks) {
 			riotEditCallbacks.each(function(callback) {
-				callback(el, live || false);
+				callback(el);
 			});
 		}
-	},
-	
-	publishOn: function() {
-		if (this.dirty && !this.parentController) {
-			riot.publishWidgets.push(new riot.PublishWidget(this));
-		}
-	},
-	
-	discardOn: function() {
-		if (this.dirty && !this.parentController) {
-			riot.publishWidgets.push(new riot.DiscardWidget(this));
-		}
+		riot.toolbar.selectedButton.applyHandler(true);
 	}
-		
 });
 
 
@@ -251,15 +229,10 @@ riot.ComponentList = Class.create({
 	},
 	
 	markDirty: function() {
-		if (this.element.hasClassName('riot-toplevel-list')) {
-			this.dirty = true;
-			if (this.controller) {
-				// Controller can be null if the function is invoked for a dumped list (fixes RIOT-62)
-				this.controller.markDirty();
-			}
-		}
-		else {
-			riot.findComponentList(this.element).markDirty();
+		this.dirty = true;
+		if (this.controller) {
+			// Controller can be null if the function is invoked for a dumped list (fixes RIOT-62)
+			this.controller.markDirty();
 		}
 	},
 	
@@ -399,7 +372,7 @@ riot.ComponentList = Class.create({
 			// Hack to mark dumped ComponentList diry. List is dumped to 
 			// disable Events
 			var dump = $(el.id);
-			riot.getComponentList(dump.up('.riot-toplevel-list')).dirty = true; 
+			//riot.getComponentList(dump.up('.riot-toplevel-list')).dirty = true; 
 			dump.remove();
 			list.updatePositionClasses();
 			riot.outline.suspended = false;
@@ -500,7 +473,7 @@ riot.Component = Class.create({
 
 	initialize: function(el) {
 		this.element = el;
-		this.id = el.readAttribute('riot:containerId');
+		this.id = el.readAttribute('riot:componentId');
 		this.controller = riot.findController(el);
 		this.form = el.readAttribute('riot:form');
 		this.dirty = el.hasClassName('riot-dirty');
@@ -662,7 +635,7 @@ riot.InsertButton = Class.create({
 				onclick: this.onclick.bindAsEventListener(this)});
 
 		ComponentEditor.getValidTypes(this.componentList.controller.id,
-				this.setValidTypes.bind(this));
+				componentList.id, this.setValidTypes.bind(this));
 	},
 	
 	setValidTypes: function(types) {
@@ -752,7 +725,7 @@ riot.TypeInspector = Class.create({
 	}
 });
 
-
+/*
 riot.PublishWidget = Class.create({
 	initialize: function(controller, mode) {
 		mode = mode || 'publish';
@@ -772,7 +745,7 @@ riot.PublishWidget = Class.create({
 			this.controllerElement.addEventListener('DOMNodeInserted', this.domListener, false);
 		}
 		
-		this.dirtyListIds = this.controllerElement.getElementsBySelector('.riot-toplevel-list')
+		this.dirtyListIds = this.controllerElement.getElementsBySelector('.riot-component-list')
 				.collect(riot.getComponentList)
 				.select(function(l) { return l.dirty })
 				.pluck('id');
@@ -894,7 +867,7 @@ riot.DiscardWidget = Class.create(riot.PublishWidget, {
 		}
 	}
 });
-
+*/
 
 riot.setLiveHtml = function(html) {
 	if (riot.publishWidgets) { 
@@ -978,6 +951,7 @@ riot.init = function() {
 			});
 		}
 	};
+	/*
 	b.get('publish').beforeApply = 
 	b.get('discard').beforeApply = function(enable) {
 		if (enable) {
@@ -1000,9 +974,37 @@ riot.init = function() {
 			}
 		}
 	};
-	
+	*/
 	b.get('editImages').precondition = riot.initSwfUpload;
 };
+
+riot.discardOn = function() {
+	var params = $H(window.location.search.parseQuery());
+	params.set('org.riotfamily.components.EditModeUtils.liveMode', 'true');
+	riotPreviewFrame.location.href = window.location.pathname + '?' + params.toQueryString();
+	$('riotPreviewFrame').setStyle({
+		display: 'block',
+		visibility: 'visible'
+	}); 
+	$$('body > *:not(#riotPreviewFrame)').invoke('hide');
+}
+
+riot.discardOff = function() {
+	$('riotPreviewFrame').hide();
+	$$('body > *:not(#riotPreviewFrame)').invoke('show');
+}
+
+riot.publishOn = function() {
+	riot.toolbar.applyButton.enable();
+}
+
+riot.publishOff = function() {
+	riot.toolbar.applyButton.disable();
+}
+
+riot.applyOn = function() {
+	riot.toolbar.buttons.get('browse').click();
+}
 
 riot.init();
 riot.adoptFloatsAndClears();

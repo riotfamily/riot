@@ -60,12 +60,13 @@ public class StoreContextInterceptor implements HandlerInterceptor {
 			HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
 		
-		PageRequestContext context = (PageRequestContext) 
-				request.getAttribute(CONTEXT_ATTRIBUTE);
-			
+		PageRequestContext context = getCurrentContext(request); 
 		if (context != null) {
 			PageRequestUtils.storeContext(context, request, 120000);
 		}
 	}
 
+	public static PageRequestContext getCurrentContext(HttpServletRequest request) {
+		return (PageRequestContext) request.getAttribute(CONTEXT_ATTRIBUTE);
+	}
 }

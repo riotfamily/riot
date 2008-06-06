@@ -27,6 +27,9 @@
 		<subclass name="RiotFileWrapper" discriminator-value="file">
 			<many-to-one name="file" access="field" cascade="all" lazy="false" />
 		</subclass>
+		<subclass name="ComponentListWrapper" discriminator-value="componentList">
+			<many-to-one name="componentList" access="field" cascade="all" lazy="false" />
+		</subclass>
 		<subclass name="ListWrapper" discriminator-value="list">
 			<list name="wrapperList" access="field" cascade="all-delete-orphan" lazy="false">
 				<cache usage="nonstrict-read-write" region="components" />

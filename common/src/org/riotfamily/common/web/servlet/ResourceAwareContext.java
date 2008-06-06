@@ -21,12 +21,12 @@ import org.xml.sax.InputSource;
  */
 public class ResourceAwareContext extends XmlWebApplicationContext {
 
-	private ArrayList configResources;
+	private ArrayList<Resource> configResources;
 	
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) 
 			throws IOException {
 		
-		configResources = new ArrayList();
+		configResources = new ArrayList<Resource>();
 		
 		XmlBeanDefinitionReader beanDefinitionReader = 
 				new XmlBeanDefinitionReader(beanFactory) {
@@ -45,7 +45,7 @@ public class ResourceAwareContext extends XmlWebApplicationContext {
 		loadBeanDefinitions(beanDefinitionReader);
 	}
 	
-	public List getConfigResources() {
+	public List<Resource> getConfigResources() {
 		return configResources;
 	}
 	

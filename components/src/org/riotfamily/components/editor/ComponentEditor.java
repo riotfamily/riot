@@ -41,41 +41,41 @@ public interface ComponentEditor {
 
 	public static final String LAST_COMPONENT_CLASS = "last-component";
 
-	public String getText(Long containerId, String property);
+	public String getText(Long contentId, String property);
 
-	public void updateText(Long containerId, String property, String text);
+	public void updateText(Long contentId, String property, String text);
 	
-	public void updateTextChunks(Long containerId, String property,
+	public void updateTextChunks(Long componentId, String property,
 			String[] chunks);
 
 	public String generateToken();
 	
 	public void invalidateToken(String token);
 	
-	public String updateImage(Long containerId, String property, Long imageId);
+	public String updateImage(Long contentId, String property, Long imageId);
 	
-	public String cropImage(Long containerId, String property, Long imageId,
+	public String cropImage(Long contentId, String property, Long imageId,
 			int width, int height, int x, int y, int scaledWidth)
 			throws IOException;
 			
 	public void discardImage(Long imageId);
 			
-	public List getValidTypes(String controllerId);
+	public List<TypeInfo> getValidTypes(String controllerId, Long listId);
 
 	public Long insertComponent(Long listId, int position, String type,
-			Map properties);
+			Map<String, String> properties);
 
-	public void setType(Long containerId, String type);
+	public void setType(Long componentId, String type);
 
-	public List getLiveListHtml(ListRef[] ref)
+	public List<String> getLiveListHtml(ListRef[] ref)
 			throws RequestContextExpiredException;
 
 	public String getPreviewListHtml(String controllerId, Long listId)
 			throws RequestContextExpiredException;
 
-	public void moveComponent(Long containerId, Long nextContainerId);
+	public void moveComponent(Long componentId, Long nextComponentId);
 
-	public void deleteComponent(Long containerId);
+	public void deleteComponent(Long componentId);
 
 	public void publish(Long[] listIds, Long[] containerIds);
 

@@ -35,11 +35,6 @@
 		<property name="filterName" value="website-filter" />
 	</bean>
 	
-	<override:bean ref="defaultComponentListLocator" class="org.riotfamily.pages.component.PageComponentListLocator">
-		<constructor-arg ref="pageDao" />
-		<constructor-arg ref="pathCompleter" />
-	</override:bean>
-
 	<override:put ref="freemarkerConfig" property="macroLibraries">
 		<entry key="pages" value="classpath:org/riotfamily/pages/view/pages.ftl" />
 	</override:put>

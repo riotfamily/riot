@@ -21,14 +21,11 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.controller.render;
-
-import java.util.List;
+package org.riotfamily.components.render.list;
 
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.components.model.ComponentList;
 
 public class PreviewModeRenderStrategy extends CachingRenderStrategy {
 
@@ -40,21 +37,6 @@ public class PreviewModeRenderStrategy extends CachingRenderStrategy {
 
 	protected boolean isPreview() {
 		return true;
-	}
-	
-	/**
-	 * Return the preview components in case the list is marked as dirty,
-	 * the live components otherwise.
-	 */
-	protected List getComponentsToRender(ComponentList list) {
-		if (list.isDirty()) {
-			log.debug("List is dirty - rendering preview containers");
-			return list.getPreviewComponents();
-		}
-		else {
-			log.debug("List is *NOT* dirty - rendering live containers");
-			return list.getLiveComponents();
-		}
 	}
 
 }

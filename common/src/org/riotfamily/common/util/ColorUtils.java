@@ -38,7 +38,7 @@ public final class ColorUtils {
 			"rgb\\(\\s?(\\d{1,3})%?\\s?,\\s?(\\d{1,3})%?\\s?," +
 			"\\s?(\\d{1,3})(%?)\\s?\\)");
 
-	private static HashMap namedColors = new HashMap();
+	private static HashMap<String, Color> namedColors = new HashMap<String, Color>();
 
 	static {
 		namedColors.put("aliceblue", new Color(0xf0, 0xf8, 0xff));

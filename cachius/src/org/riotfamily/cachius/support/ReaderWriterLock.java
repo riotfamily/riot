@@ -36,7 +36,7 @@ public class ReaderWriterLock {
     private int waitingReaders;
     private int activeWriters;
 
-    private final LinkedList writerLocks = new LinkedList();
+    private final LinkedList<Object> writerLocks = new LinkedList<Object>();
 
     /**
      * Acquire a read lock. A call to this method will block until the

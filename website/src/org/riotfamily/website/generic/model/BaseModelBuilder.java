@@ -23,11 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.generic.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.riotfamily.common.collection.FlatMap;
 
 /**
  * Abstract base class for ModelBuilders that expose only a single object. 
@@ -42,7 +41,7 @@ public abstract class BaseModelBuilder implements ModelBuilder {
 	}
 
 	public final Map buildModel(HttpServletRequest request) throws Exception {
-		FlatMap model = new FlatMap();
+		HashMap<String, Object> model = new HashMap<String, Object>();
 		model.put(modelKey, buildModelObject(request));
 		return model;
 	}

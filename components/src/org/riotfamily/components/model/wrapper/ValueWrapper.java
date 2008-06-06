@@ -78,7 +78,7 @@ public abstract class ValueWrapper {
 	 * Returns a Collection of Strings that should be used to tag the
 	 * CacheItem containing the rendered content.
 	 */
-	public Collection getCacheTags() {
+	public Collection<String> getCacheTags() {
 		return null;
 	}
 

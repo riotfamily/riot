@@ -49,11 +49,11 @@ public class ContentEditorBinder extends AbstractEditorBinder {
 		return content;
 	}
 
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		return content.getClass();
 	}
 	
-	public Class getPropertyType(String path) {
+	public Class<?> getPropertyType(String path) {
 		return Object.class;
 	}
 

@@ -21,9 +21,8 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.controller.render;
+package org.riotfamily.components.render.list;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,14 +32,13 @@ import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.CacheableRequestProcessor;
 import org.riotfamily.cachius.CachiusResponseWrapper;
 import org.riotfamily.components.cache.ComponentCacheUtils;
-import org.riotfamily.components.config.ComponentListConfiguration;
+import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.config.component.ComponentRenderer;
 import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.ComponentListLocation;
+import org.riotfamily.components.render.component.ComponentRenderer;
 
 public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 
@@ -65,19 +63,12 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 	}
     
 	protected String getCacheKey(HttpServletRequest request,
-	    ComponentListLocation location) {
+	    ComponentList list) {
         
 	    StringBuffer key = new StringBuffer();
         appendModeToCacheKey(key);      
         key.append("ComponentList ");
-        Component parent = getParentContainer(request);
-        if (parent != null) {
-            key.append(parent.getId()).append('$');
-            key.append(location.getSlot());
-        }
-        else {
-            key.append(location);
-        }
+        key.append(list.getId()); //REVIST
         if (PageRequestUtils.isPartialRequest(request)) {
             key.append("-partial"); 
         }
@@ -85,25 +76,18 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
     }
     
 	
-	protected boolean isCacheable(ComponentListLocation location,
-			ComponentListConfiguration config, HttpServletRequest request) {
+	protected boolean isCacheable(ComponentList list,
+			ComponentListConfig config, HttpServletRequest request) {
 		
-		String cacheKey = getCacheKey(request, location);
+		String cacheKey = getCacheKey(request, list);
 		if (cacheService.isCached(cacheKey)) {
 			return true;
 		}
-		ComponentList list = getComponentList(location, config, request);
 		if (list != null) {
-			List containers = getComponentsToRender(list);
-			if (containers != null) {
-				Iterator it = containers.iterator();
-				while (it.hasNext()) {
-					Component container = (Component) it.next();
-					if (!INHERTING_COMPONENT.equals(container.getType())) {
-						if (repository.getComponent(container).isDynamic()) {
-							return false;
-						}
-					}
+			List<Component> components = list.getComponents();
+			for (Component component : components) {
+				if (repository.getRenderer(component).isDynamic()) {
+					return false;
 				}
 			}
 		}
@@ -115,40 +99,32 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 	 * the list (if present).
 	 * @param request, 
 	 */
-	public void render(ComponentListLocation location, 
-			ComponentListConfiguration config,
+	public void render(ComponentList list, 
+			ComponentListConfig config,
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
-		if (isCacheable(location, config, request)) {
-			ListProcessor processor = new ListProcessor(location, config);
+		if (isCacheable(list, config, request)) {
+			ListProcessor processor = new ListProcessor(list, config);
 			cacheService.serve(request, response, processor);
 		}
 		else {
-			renderUncached(location, config, request, response);
+			renderUncached(list, config, request, response);
 		}
 	}
 	
-	protected void renderUncached(ComponentListLocation location, 
-			ComponentListConfiguration config, 
+	protected void renderUncached(ComponentList list, 
+			ComponentListConfig config, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
-		super.render(location, config, request, response);
-	}
-	
-	protected void renderComponentList(ComponentList list,
-			ComponentListConfiguration config,
-			HttpServletRequest request, HttpServletResponse response) 
-			throws Exception {
-		
-		ComponentCacheUtils.addListTag(request, list, isPreview());
-		super.renderComponentList(list, config, request, response);
+		ComponentCacheUtils.addContainerTags(request, list.getContainer(), isPreview());
+		super.render(list, config, request, response);
 	}
 	
 	protected final void renderComponent(ComponentRenderer renderer,
 			Component component, int position, int listSize,
-			ComponentListConfiguration config, 
+			ComponentListConfig config, 
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 
@@ -164,18 +140,19 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 	
 	private void renderUncachedComponent(ComponentRenderer renderer, 
 			Component component, int position, int listSize,
-			ComponentListConfiguration config, 
+			ComponentListConfig config, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 
-		ComponentCacheUtils.addContainerTags(request, component, isPreview());
+		//REVISIT
+		//ComponentCacheUtils.addContainerTags(request, component, isPreview());
 		renderComponentInternal(renderer, component, position, listSize, 
 				config, request, response);
 	}
 	
 	protected void renderComponentInternal(ComponentRenderer renderer, 
 			Component component, int position, int listSize,
-			ComponentListConfiguration config, 
+			ComponentListConfig config, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
@@ -184,19 +161,19 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 		
 	private class ListProcessor implements CacheableRequestProcessor {
 		
-		private ComponentListLocation location;
+		private ComponentList list;
 		
-		private ComponentListConfiguration config;
+		private ComponentListConfig config;
 		
-		private ListProcessor(ComponentListLocation location,
-				ComponentListConfiguration config) {
+		private ListProcessor(ComponentList list,
+				ComponentListConfig config) {
 			
-			this.location = location;
+			this.list = list;
 			this.config = config;
 		}
 
 		public String getCacheKey(HttpServletRequest request) {
-			return CachingRenderStrategy.this.getCacheKey(request, location);
+			return CachingRenderStrategy.this.getCacheKey(request, list);
 		}
 		
 		public long getTimeToLive() {
@@ -214,7 +191,7 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 		public void processRequest(HttpServletRequest request, 
 				HttpServletResponse response) throws Exception {
 			
-			renderUncached(location, config, request, response);
+			renderUncached(list, config, request, response);
 		}
 		
 	}
@@ -229,10 +206,10 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 		
 		private int listSize;
 		
-		private ComponentListConfiguration config; 
+		private ComponentListConfig config; 
 		
 		public ComponentProcessor(ComponentRenderer renderer, Component component, 
-				int position, int listSize, ComponentListConfiguration config) {
+				int position, int listSize, ComponentListConfig config) {
 			
 			this.renderer = renderer;
 			this.component = component;

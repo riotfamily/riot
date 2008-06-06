@@ -118,7 +118,7 @@
     	<echo message="Compiling java sources" />
 		<mkdir dir="${module.build.classes.dir}" />
 		<javac srcdir="${module.src.dir}" destdir="${module.build.classes.dir}"
-			source="1.4" target="1.4" deprecation="off" debug="on">
+			source="1.5" target="1.5" deprecation="off" debug="on">
 			<classpath refid="classpath" />
 		</javac>
     	<copy todir="${module.build.classes.dir}">

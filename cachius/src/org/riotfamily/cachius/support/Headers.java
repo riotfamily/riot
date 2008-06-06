@@ -27,7 +27,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -42,7 +41,7 @@ public class Headers implements Serializable {
 	private SimpleDateFormat format = new SimpleDateFormat(
 			"EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
 	
-	private ArrayList headers = new ArrayList();
+	private ArrayList<Header> headers = new ArrayList<Header>();
 	
 	public Headers() {
 		format.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -73,17 +72,13 @@ public class Headers implements Serializable {
 	}
 
 	public void addToResponse(HttpServletResponse response) {
-		Iterator it = headers.iterator();
-		while (it.hasNext()) {
-			Header header = (Header) it.next();
+		for (Header header : headers) {
 			header.addToResponse(response);
 		}
 	}
 	
 	private Header getHeader(String name) {
-		Iterator it = headers.iterator();
-		while (it.hasNext()) {
-			Header header = (Header) it.next();
+		for (Header header : headers) {
 			if (header.getName().equals(name)) {
 				return header;
 			}
@@ -97,7 +92,7 @@ public class Headers implements Serializable {
 		
 		private String name;
 		
-		private ArrayList values = new ArrayList();
+		private ArrayList<String> values = new ArrayList<String>();
 
 		public Header(String name) {
 			this.name = name;
@@ -117,9 +112,7 @@ public class Headers implements Serializable {
 		}
 		
 		public void addToResponse(HttpServletResponse response) {
-			Iterator it = values.iterator();
-			while (it.hasNext()) {
-				String value = (String) it.next();
+			for (String value : values) {
 				response.addHeader(name, value);	
 			}
 		}

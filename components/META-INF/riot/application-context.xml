@@ -19,12 +19,6 @@
 	</override:add>
 	
 	<bean id="componentRepository" class="org.riotfamily.components.config.ComponentRepository">
-		<property name="configLocations">
-			<list>
-				<value>classpath:/org/riotfamily/components/runtime/component-messages.xml</value>
-				<value>/WEB-INF/riot-config/components.xml</value>
-			</list>
-		</property>
 		<property name="viewNamePrefix" value="components/" />
 		<property name="viewNameSuffix" value=".ftl" />
 	</bean>

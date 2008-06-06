@@ -31,8 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.riotfamily.riot.security.AccessController;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -40,7 +38,7 @@ import org.springframework.web.context.request.RequestContextHolder;
  */
 public final class EditModeUtils {
 
-	private static final String LIVE_MODE_ATTRIBUTE = 
+	public static final String LIVE_MODE_ATTRIBUTE = 
 			EditModeUtils.class.getName() + ".liveMode";
 	
 	private EditModeUtils() {
@@ -50,33 +48,16 @@ public final class EditModeUtils {
 		return AccessController.isAuthenticatedUser() && !isLiveMode(request);
 	}
 	
-	public static boolean isEditMode() {
-		return AccessController.isAuthenticatedUser() && !isLiveMode();
-	}
-	
 	public static boolean isLiveMode(HttpServletRequest request) {
 		Boolean liveMode = (Boolean) request.getAttribute(LIVE_MODE_ATTRIBUTE);
-		
 		if (liveMode == null) {
-			HttpSession session = request.getSession(false);
-			if (session != null) {
-				liveMode = (Boolean) session.getAttribute(LIVE_MODE_ATTRIBUTE);
-			}
+			liveMode = Boolean.valueOf(request.getParameter(LIVE_MODE_ATTRIBUTE));
 		}
-		
 		return liveMode == Boolean.TRUE;
 	}
 	
-	public static boolean isLiveMode() {
-		Boolean liveMode = (Boolean) RequestContextHolder.getRequestAttributes()
-				.getAttribute(LIVE_MODE_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
-		
-		if (liveMode == null) {
-			liveMode = (Boolean) RequestContextHolder.getRequestAttributes()
-				.getAttribute(LIVE_MODE_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
-		}
-		
-		return liveMode == Boolean.TRUE;
+	public static boolean isLiveModePreview(HttpServletRequest request) {
+		return Boolean.parseBoolean(request.getParameter(LIVE_MODE_ATTRIBUTE));
 	}
 	
 	public static void setLiveMode(HttpServletRequest request, boolean liveMode) {

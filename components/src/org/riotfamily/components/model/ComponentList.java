@@ -24,35 +24,22 @@
 package org.riotfamily.components.model;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 
-/**
- * List of components that can be looked up using a {@link ComponentListLocation}.
- * The class consists of two lists of
- * {@link org.riotfamily.components.model.Component components},
- * the liveComponents and the previewComponents.
- */
 public class ComponentList {
 
 	private Long id;
 
-	private ComponentListLocation location;
+	private String type;
+	
+	private ContentContainer container;
+	
+	private List<Component> components;
 
-	private List liveComponents;
-
-	private List previewComponents;
-
-	private boolean dirty;
-
-	private Date lastModified;
-
-	private String lastModifiedBy;
-
-	private Component parent;
-
+	public ComponentList() {
+	}
+	
 	public Long getId() {
 		return this.id;
 	}
@@ -61,139 +48,58 @@ public class ComponentList {
 		this.id = id;
 	}
 
-	public List getLiveComponents() {
-		return this.liveComponents;
+	public String getType() {
+		return type;
 	}
 
-	public void setLiveComponents(List list) {
-		this.liveComponents = list;
+	public void setType(String type) {
+		this.type = type;
 	}
 
-	public ComponentListLocation getLocation() {
-		return this.location;
-	}
-
-	public void setLocation(ComponentListLocation location) {
-		this.location = location;
-	}
-
-	public Component getParent() {
-		return this.parent;
-	}
-
-	public void setParent(Component parent) {
-		this.parent = parent;
-	}
-
-	public List getPreviewComponents() {
-		return this.previewComponents;
-	}
-
-	public void setPreviewComponents(List list) {
-		this.previewComponents = list;
+	public ContentContainer getContainer() {
+		return container;
 	}
 	
-	public List getOrCreatePreviewContainers() {
-		if (!dirty) {
-			if (previewComponents == null) {
-				previewComponents = new ArrayList();
-			}
-			else {
-				previewComponents.clear();
-			}
-			if (liveComponents != null) {
-				previewComponents.addAll(liveComponents);
-			}
-			dirty = true;
+	public void setContainer(ContentContainer container) {
+		this.container = container;
+	}
+
+	public List<Component> getComponents() {
+		if (components == null) {
+			components = new ArrayList<Component>();
 		}
-		return previewComponents;
+		return components;
 	}
 
-	/**
-	 * Returns whether the list has a preview-list. The flag is needed because
-	 * Hibernate does not distinguish between a null collection reference and
-	 * an empty collection.
-	 */
-	public boolean isDirty() {
-		return this.dirty;
+	public void setComponents(List<Component> list) {
+		this.components = list;
 	}
 
-	public void setDirty(boolean dirty) {
-		this.dirty = dirty;
-	}
-
-	/**
-	 * Returns the date of the last modification.
-	 * @since 6.4
-	 */
-	public Date getLastModified() {
-		return this.lastModified;
-	}
-
-	/**
-	 * Sets the date of the last modification.
-	 * @since 6.4
-	 */
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
-
-	/**
-	 * Returns the principal that made the last modification.
-	 * @since 6.4
-	 */
-	public String getLastModifiedBy() {
-		return this.lastModifiedBy;
-	}
-
-	/**
-	 * Sets the principal that made the last modification.
-	 * @since 6.4
-	 */
-	public void setLastModifiedBy(String lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
-	}
-
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("ComponentList ");
-		sb.append(location);
-		sb.append(" (").append(id).append(')');
-		return sb.toString();
-	}
-	
-	public void insertContainer(Component container, int position) {
-		List containers = getOrCreatePreviewContainers();
-		container.setList(this);
+	public void insertComponent(Component component, int position) {
+		component.setList(this);
 		if (position >= 0) {
-			containers.add(position, container);
+			getComponents().add(position, component);
 		}
 		else {
-			containers.add(container);
+			getComponents().add(component);
 		}
-		setDirty(true);
+		container.setDirty(true);
 	}
 	
-	public ComponentList createCopy(String path) {
+	public ComponentList createCopy() {
 		ComponentList copy = new ComponentList();
-		ComponentListLocation location = new ComponentListLocation(this.location);
-		location.setPath(path);
-		copy.setLocation(location);
-		copy.setDirty(dirty);
-		copy.setLiveComponents(copyContainers(liveComponents, path));
-		copy.setPreviewComponents(copyContainers(previewComponents, path));
+		copy.setContainer(container);
+		copy.setComponents(copyComponents(components));
 		return copy;
 	}
 	
-	private List copyContainers(List source, String path) {
+	private List<Component> copyComponents(List<Component> source) {
 		if (source == null) {
 			return null;
 		}
-		List dest = new ArrayList(source.size());
-		Iterator it = source.iterator();
-		while (it.hasNext()) {
-			Component container = (Component) it.next();
-			dest.add(container.createCopy(path));
+		List<Component> dest = new ArrayList<Component>(source.size());
+		for (Component component : source) {
+			dest.add((Component) component.createCopy());
 		}
 		return dest;
 	}	

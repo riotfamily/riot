@@ -88,7 +88,7 @@ class CacheItem implements Serializable {
     private String key;
     
     /** Set of tags to categorize the item */
-    private Set tags;
+    private Set<String> tags;
     
     /** Flag indicating whether session IDs are filtered */  
     private boolean filterSessionId;
@@ -106,7 +106,7 @@ class CacheItem implements Serializable {
     private Cookies cookies;
     
     /** Map with extra properties */
-    private Map properties;
+    private Map<String, String> properties;
     
     /** Flag indicating whether the content is binary or character data */
     private boolean binary = true;
@@ -149,8 +149,8 @@ class CacheItem implements Serializable {
     /**
      * Sets tags which can be used to look up the item for invalidation.
      */
-    protected void setTags(Set tags) {
-    	this.tags = tags != null ? new HashSet(tags) : null;
+    protected void setTags(Set<String> tags) {
+    	this.tags = tags != null ? new HashSet<String>(tags) : null;
     	if (log.isDebugEnabled() && tags != null) {
     		log.debug("Tagging item " + this + " with " + tags);
     	}
@@ -159,7 +159,7 @@ class CacheItem implements Serializable {
     /**
 	 * Returns the item's tags.
 	 */
-	public Set getTags() {
+	public Set<String> getTags() {
 		return this.tags;
 	}
 	
@@ -271,14 +271,14 @@ class CacheItem implements Serializable {
 	 * Sets shared properties.
 	 * @see org.riotfamily.common.web.collaboration.SharedProperties
 	 */
-	protected void setProperties(Map properties) {
+	protected void setProperties(Map<String, String> properties) {
 		this.properties = properties;
 	}
 	
 	/**
 	 * Returns the properties.
 	 */
-	public Map getProperties() {
+	public Map<String, String> getProperties() {
 		return properties;
 	}
 	

@@ -25,12 +25,11 @@ package org.riotfamily.riot.list.command.dialog.ui;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.AjaxFormController;
@@ -113,7 +112,7 @@ public class DialogFormController extends AjaxFormController
 		StringWriter sw = new StringWriter();
 		renderForm(form, new PrintWriter(sw));
 		
-		Map model = new FlatMap();
+		HashMap<String, Object> model = new HashMap<String, Object>();
 		model.put("form", sw.toString());
 		model.put("title", getTitle(form, request));
 		return new ModelAndView(viewName, model);

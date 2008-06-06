@@ -49,11 +49,12 @@
 	  - Controller that renders forms to edit component properties.
 	  -->
 	<bean id="componentFormController"
-		name="/components/form/@{formId}/@{containerId}"
+		name="/components/form/@{formId}/@{containerId}/@{contentId}"
 		class="org.riotfamily.components.editor.ContentFormController">
 		<constructor-arg ref="contentFormRepository" />
 		<constructor-arg ref="transactionManager" />
 		<constructor-arg ref="componentDao" />
+		<constructor-arg ref="cacheService" /> 
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 	
@@ -164,16 +165,4 @@
 		</bean>
 	</override:add>
 	
-	<!--
-	  - RiotDao to list dirty ComponentLists.
-	  -->
-	<bean id="dirtyComponentListDao" class="org.riotfamily.components.riot.dao.DirtyComponentListDao">
-		<property name="componentDao" ref="componentDao" />
-	</bean>
-
-	<bean id="gotoComponentListCommand" class="org.riotfamily.components.riot.command.GotoListCommand">
-		<constructor-arg ref="componentRepository" />
-		<property name="windowName" value="preview" />
-	</bean>
-
 </beans>

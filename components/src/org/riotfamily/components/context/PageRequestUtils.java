@@ -44,17 +44,6 @@ public final class PageRequestUtils {
 		return PartialPageRequest.isWrapped(request);
 	}
 	
-	public static boolean createAndStoreContext(HttpServletRequest request, 
-			Object contextKey, int timeToLive) {
-		
-		PageRequestContext context = createContext(request, contextKey);
-		if (context != null) {
-			storeContext(context, request, timeToLive);
-			return true;
-		}
-		return false;
-	}
-	
 	public static PageRequestContext createContext(HttpServletRequest request, 
 			Object contextKey) {
 		
@@ -87,13 +76,20 @@ public final class PageRequestUtils {
 		return contexts.get(pageUri, contextKey);
 	}
 	
+	public static PageRequestContext getCurrentContext(HttpServletRequest request) {
+		PageRequestContext context = PartialPageRequest.getContext(request);
+		if (context == null) {
+			context = StoreContextInterceptor.getCurrentContext(request);
+		}
+		return context;
+	}
+	
 	public static HttpServletRequest wrapRequest(
 			HttpServletRequest request, String pageUri, String contextKey) 
 			throws RequestContextExpiredException {
 		
 		log.debug("Wrapping context for key " + contextKey);
-		ContextMap contexts = getContextMap(request);
-		PageRequestContext context = contexts.get(pageUri, contextKey);
+		PageRequestContext context = getContext(request, pageUri, contextKey);
 		if (context == null) {
 			throw new RequestContextExpiredException(pageUri, contextKey);
 		}

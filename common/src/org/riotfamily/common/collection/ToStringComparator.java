@@ -2,7 +2,7 @@ package org.riotfamily.common.collection;
 
 import java.util.Comparator;
 
-public class ToStringComparator implements Comparator {
+public class ToStringComparator implements Comparator<Object> {
 	
 	public int compare(Object obj1, Object obj2) {
 		if (obj1 == null) {

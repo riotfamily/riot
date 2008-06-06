@@ -25,7 +25,6 @@ package org.riotfamily.cachius.support;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -36,20 +35,18 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class Cookies implements Serializable {
 
-	private ArrayList cookies;
+	private ArrayList<SerializableCookie> cookies;
 	
 	public void add(Cookie cookie) {
 		if (cookies == null) {
-			cookies = new ArrayList();
+			cookies = new ArrayList<SerializableCookie>();
 		}
 		cookies.add(new SerializableCookie(cookie));
 	}
 	
 	public void addToResponse(HttpServletResponse response) {
 		if (cookies != null) {
-			Iterator it = cookies.iterator();
-			while (it.hasNext()) {
-				SerializableCookie cookie = (SerializableCookie) it.next();
+			for (SerializableCookie cookie : cookies) {
 				response.addCookie(cookie.create());
 			}
 		}

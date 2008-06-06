@@ -25,12 +25,10 @@ package org.riotfamily.riot.editor.ui;
 
 import java.io.StringWriter;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.riot.editor.EditorConstants;
@@ -101,7 +99,7 @@ public class ViewController implements Controller,
 		StringWriter sw = new StringWriter();
 
 		Object object = EditorDefinitionUtils.loadBean(editorDef, objectId);
-		Map model = new FlatMap();
+		HashMap<String, Object> model = new HashMap<String, Object>();
 		model.put("object", object);
 		model.put("request", request);
 		try {

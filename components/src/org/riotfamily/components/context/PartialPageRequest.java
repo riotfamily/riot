@@ -43,7 +43,7 @@ public class PartialPageRequest extends HttpServletRequestWrapper {
 
 	private PageRequestContext context;
 
-	private HashMap attributes = new HashMap();
+	private HashMap<String, Object> attributes = new HashMap<String, Object>();
 
 	public PartialPageRequest(HttpServletRequest request,
 			PageRequestContext context) {
@@ -89,6 +89,7 @@ public class PartialPageRequest extends HttpServletRequestWrapper {
 		return (arr != null && arr.length > 0 ? arr[0] : null);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Enumeration getParameterNames() {
 		return Collections.enumeration(getParameterMap().keySet());
 	}
@@ -98,6 +99,7 @@ public class PartialPageRequest extends HttpServletRequestWrapper {
 		return (String[]) getParameterMap().get(name);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Map getParameterMap() {
 		HashMap params = new HashMap();
 		params.putAll(context.getParameters());
@@ -156,6 +158,14 @@ public class PartialPageRequest extends HttpServletRequestWrapper {
 			Object contextKey) {
 
 		return contextKey.equals(request.getAttribute(CONTEXT_KEY));
+	}
+	
+	public static PageRequestContext getContext(HttpServletRequest request) {
+		if (request instanceof PartialPageRequest) {
+			PartialPageRequest pr = (PartialPageRequest) request;
+			return pr.context;
+		}
+		return null;
 	}
 
 }

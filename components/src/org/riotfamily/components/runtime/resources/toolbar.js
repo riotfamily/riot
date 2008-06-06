@@ -10,8 +10,8 @@ riot.Toolbar = Class.create({
 			properties: new riot.ToolbarButton('properties', '${toolbarButton.properties}', '.riot-form'),
 			move: new riot.ToolbarButton('move', '${toolbarButton.move}', '.riot-component-list'),
 			logout: new riot.ToolbarButton('logout', '${toolbarButton.logout}'),
-			discard: new riot.ToolbarButton('discard', '${toolbarButton.discard}', '.riot-controller'),
-			publish: new riot.ToolbarButton('publish', '${toolbarButton.publish}', '.riot-controller')
+			discard: new riot.ToolbarButton('discard', '${toolbarButton.discard}'),
+			publish: new riot.ToolbarButton('publish', '${toolbarButton.publish}')
 		});
 
 		this.buttons.get('logout').applyHandler = this.logout;
@@ -27,7 +27,7 @@ riot.Toolbar = Class.create({
 		));
 		document.body.appendChild(this.inspectorPanel = RBuilder.node('div', {id: 'riot-inspector'}));
 
-		this.applyButton = new riot.ToolbarButton('apply', '${toolbarButton.apply}', '.riot-controller').activate();
+		this.applyButton = new riot.ToolbarButton('apply', '${toolbarButton.apply}').activate();
 		this.applyButton.enable = function() {
 			this.enabled = true;
 			new Effect.Appear(this.element, {duration: 0.4});
@@ -35,10 +35,6 @@ riot.Toolbar = Class.create({
 		this.applyButton.disable = function() {
 			this.enabled = false;
 			this.element.hide();
-		}
-		this.applyButton.click = function() {
-			riot.publishWidgets.invoke('applyChanges');
-			riot.toolbar.buttons.get('browse').click();
 		}
 		this.applyButton.element.hide();
 		this.element.appendChild(this.applyButton.element);
@@ -116,18 +112,25 @@ riot.Toolbar = Class.create({
 		ComponentEditor.logout(function() {
 			location.reload();
 		});
+	},
+	
+	renderProxy: function(doc) {
+		var buttonElements = this.buttons.values().invoke('createProxyElement');
+		var el = RBuilder.node('div', {id: 'riot-toolbar'},
+			RBuilder.node('div', {id: 'riot-toolbar-buttons'}, buttonElements)
+		);
+		doc.body.appendChild(el);
+		el.appendChild(this.applyButton.createProxyElement().show());
 	}
-});
+})
 
 riot.ToolbarButton = Class.create({
 	initialize: function(handler, title, selector, href) {
 		this.handler = handler;
-		this.element = RBuilder.node('a', {
-			id: 'riot-toolbar-button-' + handler,
-			className: 'toolbar-button-disabled',
-			title: title
-		});
+		this.title = title;
 		this.selector = selector;
+		this.element = this.createElement();
+		
 		if (href) {
 			this.element.href = href;
 			this.element.target = 'riot';
@@ -138,7 +141,32 @@ riot.ToolbarButton = Class.create({
 		}
 		this.enabled = true;
 	},
-
+	
+	createElement: function() {
+		return RBuilder.node('a', {
+			id: 'riot-toolbar-button-' + this.handler,
+			className: this.getClassName(),
+			title: this.title
+		});
+	},
+	
+	createProxyElement: function() {
+		var el = this.createElement();
+		el.onclick = this.click.bind(this);
+		return el;
+	},
+	
+	getClassName: function() {
+		var className = 'toolbar-button';
+		if (this.selected) {
+			className += '-active';
+		}
+		else if (!this.enabled) {
+			className += '-disabled';
+		}
+		return className;
+	},
+	
 	onclick: function() {
 		if (this.active) this.click();
 		return false;
@@ -147,7 +175,7 @@ riot.ToolbarButton = Class.create({
 	click: function() {
 		if (this.enabled && !this.selected) {
 			this.selected = true;
-			this.element.className = 'toolbar-button-active';
+			this.element.className = this.getClassName();
 			riot.toolbar.buttonClicked(this);
 			this.applyHandler(true);
 		}
@@ -156,14 +184,14 @@ riot.ToolbarButton = Class.create({
 
 	activate: function() {
 		this.active = true;
-		this.element.className = this.enabled ? 'toolbar-button' : 'toolbar-button-disabled';
+		this.element.className = this.getClassName();
 		return this;
 	},
 
 	enable: function() {
 		if (!this.enabled) {		
-			this.element.className = 'toolbar-button';
 			this.enabled = true;
+			this.element.className = this.getClassName();
 		}		
 		return this;
 	},
@@ -180,9 +208,7 @@ riot.ToolbarButton = Class.create({
 			this.selected = false;
 			this.applyHandler(false);
 		}
-		this.element.className = this.enabled ?
-				'toolbar-button' : 'toolbar-button-disabled';
-
+		this.element.className = this.getClassName();
 		return this;
 	},
 
@@ -208,12 +234,20 @@ riot.ToolbarButton = Class.create({
 	},
 	
 	applyHandlerInternal: function(enable) {
-		var targets = this.getHandlerTargets();
-		for (var i = 0; i < targets.length; i++) {
-			var target = riot.getWrapper(targets[i], this.selector)
+		if (this.selector) {
+			var targets = this.getHandlerTargets();
+			for (var i = 0; i < targets.length; i++) {
+				var target = riot.getWrapper(targets[i], this.selector)
+				var method = this.handler + (enable ? 'On' : 'Off');
+				if (target[method]) {
+					target[method]();
+				}
+			}
+		}
+		else {
 			var method = this.handler + (enable ? 'On' : 'Off');
-			if (target[method]) {
-				target[method]();
+			if (riot[method]) {
+				riot[method]();
 			}
 		}
 	},

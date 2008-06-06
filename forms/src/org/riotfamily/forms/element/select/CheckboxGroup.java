@@ -24,8 +24,8 @@
 package org.riotfamily.forms.element.select;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
 
-import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.resource.FormResource;
@@ -61,7 +61,7 @@ public class CheckboxGroup extends AbstractMultiSelectElement
 	}
 
 	public void renderInternal(PrintWriter writer) {
-		FlatMap model = new FlatMap();
+		HashMap<String, Object> model = new HashMap<String, Object>();
 		model.put("element", this);
 		model.put("options", getOptions());
 		getFormContext().getTemplateRenderer().render(template, model, writer);

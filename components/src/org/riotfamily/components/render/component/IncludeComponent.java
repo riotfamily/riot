@@ -21,38 +21,54 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.config.component;
+package org.riotfamily.components.render.component;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.Writer;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.io.IOUtils;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.model.Component;
-import org.springframework.core.io.Resource;
+import org.springframework.web.util.WebUtils;
 
 /**
- * Component implementation that renders the content of a static
- * {@link Resource}.
+ * Component implementation that uses a RequestDispatcher to perform the
+ * rendering. The configured url will be included and the properties of
+ * the ComponentVersion that is to be rendered will be exposed as request
+ * attributes.
  */
-public class StaticComponent extends AbstractComponent {
+public class IncludeComponent extends AbstractComponent {
 
-	private Resource location;
+	private String uri;
 
-	public void setLocation(Resource resource) {
-		this.location = resource;
+	private boolean dynamic = true;
+
+	public void setUri(String uri) {
+		this.uri = uri;
 	}
 
 	protected void renderInternal(Component component, boolean preview,
 			int position, int listSize, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		Reader in = new InputStreamReader(location.getInputStream());
-		Writer out = response.getWriter();
-		IOUtils.copy(in, out);
+		Map<String, Object> snapshot = ServletUtils.takeAttributesSnapshot(request);
+		WebUtils.exposeRequestAttributes(request, component.unwrapValues());
+		
+		request.setAttribute(THIS, component);
+		request.setAttribute(POSITION, new Integer(position));
+		request.setAttribute(LIST_SIZE, new Integer(listSize));
+
+		request.getRequestDispatcher(uri).include(request, response);
+		ServletUtils.restoreAttributes(request, snapshot);
+	}
+
+	public boolean isDynamic() {
+		return this.dynamic;
+	}
+
+	public void setDynamic(boolean dynamic) {
+		this.dynamic = dynamic;
 	}
 
 }

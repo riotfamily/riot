@@ -23,13 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.generic.model.hibernate;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Query;
-import org.riotfamily.common.collection.FlatMap;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.riotfamily.website.generic.view.Pager;
 import org.springframework.beans.factory.BeanCreationException;
@@ -167,7 +167,7 @@ public class HqlPagedListModelBuilder extends HqlListModelBuilder {
 
 		tagResult(query, items, request);
 		
-		FlatMap model = new FlatMap();
+		HashMap<String, Object> model = new HashMap<String, Object>();
 		model.put(getModelKey(query), items);
 		model.put(pagerModelKey, pager);
 		return model;

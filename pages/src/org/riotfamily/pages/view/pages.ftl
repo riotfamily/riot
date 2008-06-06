@@ -44,11 +44,16 @@
 </#macro>
 
 <#---
-  - Renders an editable HTML link to the given Page.
+  - Renders an HTML link to the given Page. The link text will be inplace 
+  - editable if the page is the current page.
   -->
-<#macro link page tag="a" labelKey="title" form="" attributes...>
+<#macro link page tag="a" editable=page==currentPage labelKey="title" form="" attributes...>
 	<#local attributes = c.unwrapAttributes(attributes) />
-	<@inplace.use container=page.contentContainer model=page.properties form=form>
-		<@inplace.link key=labelKey href=c.url(page.url) tag=tag attributes=attributes>${page.title}</@inplace.link>
-	</@inplace.use>
+	<#if editable>
+		<@inplace.use container=page.contentContainer model=page.properties form=form>
+			<@inplace.link key=labelKey href=c.url(page.url) tag=tag attributes=attributes>${page[labelKey]}</@inplace.link>
+		</@inplace.use>
+	<#else>
+		<@c.link href=c.url(page.url) attributes=attributes>${page[labelKey]}</@c.link>
+	</#if>
 </#macro>

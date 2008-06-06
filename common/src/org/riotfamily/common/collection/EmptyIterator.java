@@ -29,10 +29,8 @@ import java.util.NoSuchElementException;
 /**
  * An iterator with no elements.
  */
-public class EmptyIterator implements Iterator {
+public class EmptyIterator<T> implements Iterator<T> {
 
-	public static final Iterator INSTANCE = new EmptyIterator();
-	
 	protected EmptyIterator() {
 	}
 	
@@ -40,7 +38,7 @@ public class EmptyIterator implements Iterator {
 		return false;
 	}
 
-	public Object next() {
+	public T next() {
 		throw new NoSuchElementException("Iterator contains no elements");
 	}
 

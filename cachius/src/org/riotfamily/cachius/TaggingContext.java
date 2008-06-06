@@ -47,7 +47,7 @@ public class TaggingContext {
 	
 	private TaggingContext parent;
 
-	private HashSet tags;
+	private HashSet<String> tags;
 	
 	private boolean preventCaching;
 
@@ -76,7 +76,7 @@ public class TaggingContext {
 	public void addTag(String tag) {
 		Assert.notNull(tag, "Tag must not be null.");
 		if (tags == null) {
-			tags = new HashSet();
+			tags = new HashSet<String>();
 		}
 		tags.add(tag);
 		if (parent != null) {
@@ -107,7 +107,7 @@ public class TaggingContext {
 	/**
 	 * Returns the tags assigned via the {@link #addTag(String)} method.
 	 */
-	public Set getTags() {
+	public Set<String> getTags() {
 		return this.tags;
 	}
 	

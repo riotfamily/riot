@@ -27,9 +27,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.components.EditModeUtils;
+import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.config.ComponentRepository;
+import org.riotfamily.components.model.Component;
+import org.riotfamily.components.model.ContentContainer;
+import org.riotfamily.components.render.list.ComponentListRenderer;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.list.RiotDaoService;
 import org.springframework.util.ClassUtils;
@@ -41,6 +46,8 @@ import org.springframework.util.ClassUtils;
 public class InplaceMacroHelper {
 
 	private HttpServletRequest request;
+	
+	private HttpServletResponse response;
 
 	private List toolbarScripts;
 
@@ -48,22 +55,32 @@ public class InplaceMacroHelper {
 	
 	private ComponentRepository componentRepository;
 	
+	private ComponentListRenderer componentListRenderer;
+	
 	private RiotDaoService riotDaoService;
 
 	public InplaceMacroHelper(HttpServletRequest request,
+			HttpServletResponse response, 
 			List toolbarScripts, List dynamicToolbarScripts, 
 			ComponentRepository repository,
+			ComponentListRenderer componentListRenderer,
 			RiotDaoService riotDaoService) {
 
 		this.request = request;
+		this.response = response;
 		this.toolbarScripts = toolbarScripts;
 		this.dynamicToolbarScripts = dynamicToolbarScripts;
 		this.componentRepository = repository;
+		this.componentListRenderer = componentListRenderer;
 		this.riotDaoService = riotDaoService;
 	}
 
 	public boolean isEditMode() {
 		return EditModeUtils.isEditMode(request);
+	}
+	
+	public boolean isLiveModePreview() {
+		return EditModeUtils.isLiveModePreview(request);
 	}
 
 	public List getToolbarScripts() {
@@ -83,8 +100,9 @@ public class InplaceMacroHelper {
 		return sb.toString();
 	}
 	
-	public String getFormUrl(String formId, Long containerId) {
-		return componentRepository.getFormUrl(formId, containerId);
+	public String getFormUrl(String formId, ContentContainer container) {
+		return componentRepository.getFormUrl(formId, container.getId(), 
+				container.getPreviewVersion().getId());
 	}
 	
 	public String enableOutputWrapping() {
@@ -100,5 +118,33 @@ public class InplaceMacroHelper {
 	public String getDefaultListId(Object object) {
 		return riotDaoService.getDefaultListId(
 				ClassUtils.getUserClass(object));
+	}
+	
+	public String renderComponentList(ContentContainer container, 
+			String key, Integer minComponents, Integer maxComponents,
+			List<String> initalComponentTypes, 
+			List<String> validComponentTypes)
+			throws Exception {
+		
+		ComponentListConfig config = new ComponentListConfig(minComponents,
+				maxComponents, initalComponentTypes, validComponentTypes);
+		componentListRenderer.renderComponentList(container, key, config, 
+				request, response);
+		
+		return "";
+	}
+	
+	public String renderNestedComponentList(Component parent, 
+			String key, Integer minComponents, Integer maxComponents,
+			List<String> initalComponentTypes, 
+			List<String> validComponentTypes)
+			throws Exception {
+		
+		ComponentListConfig config = new ComponentListConfig(minComponents,
+				maxComponents, initalComponentTypes, validComponentTypes);
+		componentListRenderer.renderNestedComponentList(parent, key, config, 
+				request, response);
+		
+		return "";
 	}
 }

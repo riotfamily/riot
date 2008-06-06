@@ -25,9 +25,9 @@ package org.riotfamily.components.config;
 
 import org.riotfamily.common.beans.xml.GenericNamespaceHandlerSupport;
 import org.riotfamily.common.beans.xml.MapDecorator;
-import org.riotfamily.components.config.component.IncludeComponent;
-import org.riotfamily.components.config.component.StaticComponent;
-import org.riotfamily.components.config.component.ViewComponent;
+import org.riotfamily.components.render.component.IncludeComponent;
+import org.riotfamily.components.render.component.StaticComponent;
+import org.riotfamily.components.render.component.ViewComponent;
 
 /**
  * NamespaceHandler that handles the <code>component</code>

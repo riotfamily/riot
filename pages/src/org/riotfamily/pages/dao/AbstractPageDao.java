@@ -35,10 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.pages.cache.PageCacheUtils;
-import org.riotfamily.pages.component.PageComponentListLocator;
-import org.riotfamily.pages.component.PageNodeComponentListLocator;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.PageNode;
@@ -201,10 +198,6 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		deleteAlias(translation);
 		saveObject(translation);
 		PageCacheUtils.invalidateNode(cacheService, node.getParent());
-		
-		componentDao.copyComponentLists(PageComponentListLocator.TYPE,
-				page.getId().toString(), translation.getId().toString());
-
 		return translation;
 	}
 
@@ -322,8 +315,6 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 				deletePage(child);
 			}
 		}
-		deleteComponentLists(PageComponentListLocator.TYPE,
-				page.getId().toString());
 
 		clearAliases(page);
 
@@ -341,24 +332,11 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		}
 		else {
 			log.debug("Node has no more pages - deleting it ...");
-			deleteComponentLists(PageNodeComponentListLocator.TYPE,
-					node.getId().toString());
-			
 			if (parentNode != null) {
 				parentNode.getChildNodes().remove(node);
 				updateNode(parentNode);
 			}
 			deleteObject(node);
-		}
-		
-	}
-
-	private void deleteComponentLists(String type, String path) {
-		List lists = componentDao.findComponentLists(type, path);
-		Iterator it = lists.iterator();
-		while (it.hasNext()) {
-			ComponentList list = (ComponentList) it.next();
-			componentDao.deleteComponentList(list);
 		}
 	}
 	

@@ -56,7 +56,7 @@ public class ReloadableDispatcherServlet extends DispatcherServlet
 
 	private BeanConfigurationWatcher watcher = new BeanConfigurationWatcher(this);
 
-	public Class getContextClass() {
+	public Class<? extends ApplicationContext> getContextClass() {
 		return ResourceAwareContext.class;
 	}
 

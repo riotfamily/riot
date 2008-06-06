@@ -23,19 +23,44 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.config;
 
-import org.riotfamily.components.locator.ComponentListLocator;
+import java.util.List;
 
+public class ComponentListConfig {
 
-public interface ComponentListConfiguration {
+	private Integer minComponents;
+	
+	private Integer maxComponents;
+	
+	private List<String> validComponentTypes;
+	
+	private List<String> initialComponentTypes;
 
-	public ComponentListLocator getLocator();
 	
-	public Integer getMinComponents();
-	
-	public Integer getMaxComponents();
-	
-	public String[] getValidComponentTypes();
-	
-	public String[] getInitialComponentTypes();
-	
+	public ComponentListConfig(Integer minComponents, Integer maxComponents,
+			List<String> initialComponentTypes, 
+			List<String> validComponentTypes) {
+
+		this.minComponents = minComponents;
+		this.maxComponents = maxComponents;
+		this.initialComponentTypes = initialComponentTypes;
+		this.validComponentTypes = validComponentTypes != null 
+				? validComponentTypes : initialComponentTypes;
+	}
+
+	public Integer getMinComponents() {
+		return minComponents;
+	}
+
+	public Integer getMaxComponents() {
+		return maxComponents;
+	}
+
+	public List<String> getValidComponentTypes() {
+		return validComponentTypes;
+	}
+
+	public List<String> getInitialComponentTypes() {
+		return initialComponentTypes;
+	}
+
 }

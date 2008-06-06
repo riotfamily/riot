@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.config.component;
+package org.riotfamily.components.render.component;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -48,21 +48,19 @@ public abstract class AbstractComponent implements ComponentRenderer {
 
 	public static final String THIS = "this";
 
-	public static final String PARENT = "parent";
-
 	public static final String POSITION = "position";
 	
 	public static final String LIST_SIZE = "listSize";
 
 	protected Log log = LogFactory.getLog(AbstractComponent.class);
 
-	private Map defaults;
+	private Map<String, Object> defaults;
 	
-	public void setDefaults(Map defaults) {
+	public void setDefaults(Map<String, Object> defaults) {
 		this.defaults = defaults;
 	}
 	
-	public Map getDefaults() {
+	public Map<String, Object> getDefaults() {
 		return defaults;
 	}
 	

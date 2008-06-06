@@ -27,7 +27,10 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.cachius.CacheService;
+import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.factory.FormRepository;
@@ -43,34 +46,41 @@ public class ContentFormController extends AbstractFrontOfficeFormController {
 
 	private ComponentDao componentDao;
 	
-	private String containerIdAttribute = "containerId";
-
+	private CacheService cacheService;
+	
 	public ContentFormController(FormRepository formRepository,
 			PlatformTransactionManager transactionManager,
-			ComponentDao componentDao) {
+			ComponentDao componentDao, CacheService cacheService) {
 
 		super(formRepository, transactionManager);
 		this.componentDao = componentDao;
+		this.cacheService = cacheService;
 	}
 
 	protected void initForm(Form form, HttpServletRequest request) {
 		super.initForm(form, request);
-		Enumeration names = request.getParameterNames();
+		Enumeration<String> names = request.getParameterNames();
 		while (names.hasMoreElements()) {
-			String name = (String) names.nextElement();
+			String name = names.nextElement();
 			form.setAttribute(name, request.getParameter(name));
 		}
 	}
 	
 	protected Object getFormBackingObject(HttpServletRequest request) {
-		Long id = new Long((String) request.getAttribute(containerIdAttribute));
-		return componentDao.loadContentContainer(id);
+		Long id = new Long((String) request.getAttribute("contentId"));
+		return componentDao.loadContent(id);
 	}
 
+	protected ContentContainer getContainer(HttpServletRequest request) {
+		Long id = new Long((String) request.getAttribute("containerId"));
+		return componentDao.loadContentContainer(id);
+		
+	}
 	protected void reattach(Object object, HttpServletRequest request) {
-		ContentContainer container = (ContentContainer) object;
-		componentDao.updateContentContainer(container);
-		componentDao.saveOrUpdatePreviewVersion(container);
+		Content content = (Content) object;
+		componentDao.updateContent(content);
+		
+		ComponentCacheUtils.invalidatePreviewVersion(cacheService, getContainer(request));
 	}
 	
 	protected void update(Object object, HttpServletRequest request) {

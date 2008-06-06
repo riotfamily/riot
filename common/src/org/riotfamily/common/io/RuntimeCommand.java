@@ -61,7 +61,7 @@ public class RuntimeCommand {
 		this(new String[] {executable, arg});
 	}
 
-	public RuntimeCommand(List commandLine) {
+	public RuntimeCommand(List<String> commandLine) {
 		this(StringUtils.toStringArray(commandLine));
 	}
 

@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.TaggingContext;
-import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 
@@ -44,7 +43,7 @@ public final class ComponentCacheUtils {
 	}
 	
 	/**
-	 * Returns the tag for the given container.
+	 * Returns the tag for the given container id.
 	 */
 	private static String getContainerTag(ContentContainer container, 
 			boolean preview) {
@@ -87,38 +86,5 @@ public final class ComponentCacheUtils {
 	public static void invalidatePreviewVersion(CacheService cacheService, ContentContainer container) {
 		cacheService.invalidateTaggedItems(getContainerTag(container, true));
 	}
-	
-	/**
-	 * Returns the tag for the given list.
-	 */
-	private static String getListTag(ComponentList list, boolean preview) {
-		if (list.getParent() != null) {
-			return "child://" + list.getParent().getId() + "#" 
-					+ list.getLocation().getSlot()
-					+ (preview ? "-preview" : "-live");
-		}
-		return list.getLocation().toString() + (preview ? "-preview" : "-live");
-	}
-	
-	public static void addListTag(HttpServletRequest request, 
-			ComponentList list, boolean preview) {
-		
-		TaggingContext.tag(request, getListTag(list, preview));
-	}
 
-	/**
-	 * Invalidates the live and preview version of the given list.
-	 */
-	public static void invalidateList(CacheService cacheService, ComponentList list) {
-		cacheService.invalidateTaggedItems(getListTag(list, true));
-		cacheService.invalidateTaggedItems(getListTag(list, false));
-	}
-	
-	/**
-	 * Invalidates the preview version of the given list.
-	 */
-	public static void invalidatePreviewList(CacheService cacheService, ComponentList list) {
-		cacheService.invalidateTaggedItems(getListTag(list, true));
-	}
-	
 }

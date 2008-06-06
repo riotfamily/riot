@@ -195,11 +195,11 @@ public class CacheService {
 			// Check if another writer has already updated the item
 			if (mtime > cacheItem.getLastModified()) {
 				TaggingContext ctx = TaggingContext.openNestedContext(request);
-				Map propertySnapshot = SharedProperties.getSnapshot(request);
+				Map<String, String> propertySnapshot = SharedProperties.getSnapshot(request);
 				request = new SessionCreationPreventingRequestWrapper(request);
 				processor.processRequest(request, wrapper);
 				ctx.close();
-				Map props = SharedProperties.getDiff(request, propertySnapshot);
+				Map<String, String> props = SharedProperties.getDiff(request, propertySnapshot);
 				cacheItem.setProperties(props);
 				cache.tagItem(cacheItem, ctx.getTags());
 				wrapper.stopCapturing();
@@ -275,6 +275,7 @@ public class CacheService {
 	/**
 	 * Returns whether the Accept-Encoding header contains "gzip".
 	 */
+	@SuppressWarnings("unchecked")
 	protected boolean clientAcceptsGzip(HttpServletRequest request) {
 		Enumeration values = request.getHeaders("Accept-Encoding");
 		if (values != null) {

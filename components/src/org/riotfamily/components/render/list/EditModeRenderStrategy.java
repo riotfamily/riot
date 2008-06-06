@@ -21,46 +21,30 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.controller.render;
+package org.riotfamily.components.render.list;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
-import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.components.cache.ComponentCacheUtils;
-import org.riotfamily.components.config.ComponentListConfiguration;
+import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.config.component.ComponentRenderer;
-import org.riotfamily.components.context.PageRequestUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.ComponentListLocation;
-import org.riotfamily.components.model.Content;
+import org.riotfamily.components.render.component.ComponentRenderer;
 
 public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 
-	private static final Log log = LogFactory.getLog(EditModeRenderStrategy.class);
-
-	private RenderStrategy parentStrategy;
-	
 	public EditModeRenderStrategy(ComponentDao dao,
 			ComponentRepository repository,	CacheService cacheService) {
 
 		super(dao, repository, cacheService);
-		parentStrategy = new InheritingRenderStrategy(dao, repository);
 	}
 
 	protected void appendModeToCacheKey(StringBuffer cacheKey) {
@@ -72,29 +56,20 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	 * actual list. The DIV has attributes that are required for the
 	 * Riot toolbar JavaScript.
 	 */
-	protected void renderComponentList(ComponentList list, 
-			ComponentListConfiguration config,
+	public void render(ComponentList list, 
+			ComponentListConfig config,
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
 		DocumentWriter wrapper = new DocumentWriter(response.getWriter());
 		
-		boolean renderOuterDiv = PageRequestUtils.createAndStoreContext(
-				request, list.getId().toString(), 120000);
-
-		if (renderOuterDiv) {
-			wrapper.start(Html.DIV)
-				.attribute(Html.COMMON_CLASS, "riot-controller")
-				.attribute("riot:contextKey", list.getId().toString())
-				.attribute("riot:controllerId", 
-						ServletUtils.getPathWithinApplication(request));
-		}
-		
 		String className = "riot-list riot-component-list";
+		/*
 		if (getParentContainer(request) == null) {
 			className += " riot-toplevel-list";
 		}
-		if (list.isDirty()) {
+		*/
+		if (list.getContainer().isDirty()) {
 			className += " riot-dirty";
 		}
 		
@@ -112,61 +87,8 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		}
 		
 		wrapper.body();
-		super.renderComponentList(list, config, request, response);
+		super.render(list, config, request, response);
 		wrapper.closeAll();
-	}
-
-	/**
-	 * Overrides the default implementation to create a new list if no existing
-	 * list is found.
-	 *
-	 * @see #createNewList(ComponentListLocation)
-	 */
-	protected ComponentList getComponentList(ComponentListLocation location, 
-			ComponentListConfiguration config, HttpServletRequest request) {
-		
-		ComponentList list = super.getComponentList(location, config, request);
-		if (list == null) {
-			list = createNewList(location, config, request);
-		}
-		return list;
-	}
-
-	/**
-	 * Creates a new ComponentList with an initial component set as defined by
-	 * the controller.
-	 * @param request 
-	 */
-	protected ComponentList createNewList(ComponentListLocation location,
-			ComponentListConfiguration config, HttpServletRequest request) {
-		
-		ComponentList list = new ComponentList();
-		Component parent = getParentContainer(request);
-		list.setLocation(new ComponentListLocation(location, parent));
-		list.setParent(parent);
-		String[] initialTypes = config.getInitialComponentTypes();
-		if (initialTypes != null) {
-			List containers = new ArrayList();
-			for (int i = 0; i < initialTypes.length; i++) {				
-				Component component = new Component(initialTypes[i]);
-				Content version = new Content();
-				ComponentRenderer renderer = repository.getComponent(initialTypes[i]);
-				Map values = new HashMap();
-				if (renderer.getDefaults() != null) {
-					values.putAll(renderer.getDefaults());
-				}				
-				version.wrapValues(values);
-				component.setLiveVersion(version);
-				component.setList(list);
-				containers.add(component);
-			}
-			list.setLiveComponents(containers);
-		}
-		dao.saveComponentList(list);
-		log.debug("New ComponentList created: " + list);
-		
-		ComponentCacheUtils.invalidateList(cacheService, list);
-		return list;
 	}
 
 	/**
@@ -177,12 +99,13 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	 */
 	protected void renderComponentInternal(ComponentRenderer renderer, 
 			Component component, int position, int listSize,
-			ComponentListConfiguration config, 
+			ComponentListConfig config, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 
 		String type = component.getType();
-		String formUrl = repository.getFormUrl(type, component.getId());
+		String formUrl = repository.getFormUrl(type, 
+				component.getList().getContainer().getId() , component.getId());
 		
 		String className = "riot-list-component riot-component " +
 				"riot-component-" + type;
@@ -194,7 +117,7 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		TagWriter wrapper = new TagWriter(response.getWriter());
 		wrapper.start(Html.DIV)
 				.attribute(Html.COMMON_CLASS, className)
-				.attribute("riot:containerId", component.getId().toString())
+				.attribute("riot:componentId", component.getId().toString())
 				.attribute("riot:componentType", type)
 				.attribute("riot:form", formUrl)
 				.body();
@@ -203,10 +126,6 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 				config, request, response);
 		
 		wrapper.end();
-	}
-
-	protected RenderStrategy getStrategyForParentList() {
-		return parentStrategy;
 	}
 
 }

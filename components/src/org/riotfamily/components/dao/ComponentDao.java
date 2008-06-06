@@ -23,11 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.dao;
 
-import java.util.List;
-
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
-import org.riotfamily.components.model.ComponentListLocation;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 
@@ -39,32 +36,6 @@ import org.riotfamily.components.model.ContentContainer;
  */
 public interface ComponentDao {
 
-	/**
-	 * Returns the {@link ComponentList} with the given location.
-	 */
-	public ComponentList findComponentList(ComponentListLocation location);
-
-	/**
-	 * Returns the nested {@link ComponentList} for the given parent/slot.
-	 */
-	public ComponentList findComponentList(Component parent, String slot);
-
-	/**
-	 * Returns all {@link ComponentList ComponentList} with the given type
-	 * and path.
-	 */
-	public List findComponentLists(String type, String path);
-
-	/**
-	 * Returns all {@link ComponentList ComponentLists} marked as dirty.
-	 */
-	public List findDirtyComponentLists();
-
-	/**
-	 * Copies all ComponentLists of the specified type from the oldPath to the newPath.
-	 */
-	public void copyComponentLists(String type, String oldPath, String newPath);
-	
 	/**
 	 * Loads the ComponentList specified  by the given id.
 	 */
@@ -113,7 +84,7 @@ public interface ComponentDao {
 	/**
 	 * Updates the given Content.
 	 */
-	public void saveOrUpdatePreviewVersion(ContentContainer container);
+	public void updateContent(Content content);
 	
 	/**
 	 * Deletes the given ComponentList.
@@ -129,10 +100,6 @@ public interface ComponentDao {
 	 * Deletes the given ContentContainer.
 	 */
 	public void deleteContentContainer(ContentContainer container);
-	
-	public boolean publishComponentList(ComponentList list);
-	
-	public boolean discardComponentList(ComponentList list);
 	
 	public boolean publishContainer(ContentContainer container);
 	

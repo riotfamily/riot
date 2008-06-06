@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.config;
 
-import org.riotfamily.components.riot.form.ContentContainerEditorBinder;
+import org.riotfamily.components.riot.form.ContentEditorBinder;
 import org.riotfamily.forms.EditorBinder;
 import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.factory.DefaultFormFactory;
@@ -45,7 +45,7 @@ public class ContentFormRepository extends XmlFormRepository {
 			FormInitializer initializer, Validator validator) {
 		
 		if (beanClass == null) {
-			EditorBinder binder = new ContentContainerEditorBinder();
+			EditorBinder binder = new ContentEditorBinder();
 			return new DefaultFormFactory(binder, initializer, validator);
 		}
 		return super.createFormFactory(beanClass, initializer, validator);

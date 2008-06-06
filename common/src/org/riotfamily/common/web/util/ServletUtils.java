@@ -346,8 +346,9 @@ public final class ServletUtils {
 		return sb.toString();
 	}
 	
-	public static Map takeAttributesSnapshot(HttpServletRequest request) {
-		Map snapshot = new HashMap();
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> takeAttributesSnapshot(HttpServletRequest request) {
+		Map<String, Object> snapshot = new HashMap<String, Object>();
 		Enumeration attrNames = request.getAttributeNames();
 		while (attrNames.hasMoreElements()) {
 			String attrName = (String) attrNames.nextElement();
@@ -359,20 +360,19 @@ public final class ServletUtils {
 	/**
 	 * Restores request attributes from the given map.
 	 */
+	@SuppressWarnings("unchecked")
 	public static void restoreAttributes(HttpServletRequest request,
-			Map attributesSnapshot) {
+			Map<String, Object> attributesSnapshot) {
 
 		// Copy into separate Collection to avoid side upon removal
-		Set attrsToCheck = new HashSet();
-		Enumeration attrNames = request.getAttributeNames();
+		Set<String> attrsToCheck = new HashSet<String>();
+		Enumeration<String> attrNames = request.getAttributeNames();
 		while (attrNames.hasMoreElements()) {
-			String attrName = (String) attrNames.nextElement();
+			String attrName = attrNames.nextElement();
 			attrsToCheck.add(attrName);
 		}
 
-		Iterator it = attrsToCheck.iterator();
-		while (it.hasNext()) {
-			String attrName = (String) it.next();
+		for (String attrName : attrsToCheck) {
 			Object attrValue = attributesSnapshot.get(attrName);
 			if (attrValue != null) {
 				request.setAttribute(attrName, attrValue);
@@ -389,8 +389,9 @@ public final class ServletUtils {
 	 * instead of String arrays. When more than one parameter with the same
 	 * name is present, only the first value is put into the map.
 	 */
-	public static Map getSingularParameterMap(HttpServletRequest request) {
-		HashMap params = new HashMap();
+	@SuppressWarnings("unchecked")
+	public static Map<String, String> getSingularParameterMap(HttpServletRequest request) {
+		HashMap<String, String> params = new HashMap<String, String>();
 		Enumeration names = request.getParameterNames();
 		while (names.hasMoreElements()) {
 			String name = (String) names.nextElement();
@@ -560,10 +561,11 @@ public final class ServletUtils {
 	 * Returns an URL with all of the given request's parameters added to the
 	 * given URL's query string.
 	 */
+	@SuppressWarnings("unchecked")
 	public static String addRequestParameters(String url, HttpServletRequest request) {
-		Enumeration e = request.getParameterNames();
+		Enumeration<String> e = request.getParameterNames();
 		while (e.hasMoreElements()) {
-			String name = (String) e.nextElement();
+			String name = e.nextElement();
 			String[] values = request.getParameterValues(name);
 			for (int i=0; i < values.length; i++) {
 				url = addParameter(url, name, values[i]);
