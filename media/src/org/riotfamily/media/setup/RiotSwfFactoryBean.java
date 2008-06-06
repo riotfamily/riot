@@ -23,27 +23,23 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.setup;
 
+import java.io.IOException;
+
+import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotSwf;
-import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class RiotSwfFactoryBean extends AbstractFactoryBean {
-
-	private Resource resource;
-	
-	public void setResource(Resource resource) {
-		this.resource = resource;
-	}
+public class RiotSwfFactoryBean extends AbstractRiotFileFactoryBean {
 	
 	public Class getObjectType() {
 		return RiotSwf.class;
 	}
 	
-	protected Object createInstance() throws Exception {
+	protected RiotFile createRiotFile(Resource resource) throws IOException {
 		return new RiotSwf(resource.getFile());
 	}
 }

@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
+ *   Jan-Frederic Linde [jfl at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.setup;
@@ -26,21 +26,36 @@ package org.riotfamily.media.setup;
 import java.io.IOException;
 
 import org.riotfamily.media.model.RiotFile;
-import org.riotfamily.media.model.RiotImage;
+import org.riotfamily.media.processing.FileProcessor;
+import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
 /**
- * @author Felix Gnass [fgnass at neteye dot de]
- * @since 7.0
+ * @author Jan-Frederic Linde [jfl at neteye dot de]
+ * @since 7.1
  */
-public class RiotImageFactoryBean extends AbstractRiotFileFactoryBean {
-		
-	public Class getObjectType() {
-		return RiotImage.class;
+public abstract class AbstractRiotFileFactoryBean extends AbstractFactoryBean {
+
+	private Resource resource;	
+	
+	private FileProcessor processor;
+	
+	public void setResource(Resource resource) {
+		this.resource = resource;
 	}
 	
-	protected RiotFile createRiotFile(Resource resource) throws IOException {
-		return new RiotImage(resource.getFile());
+	public void setProcessor(FileProcessor processor) {
+		this.processor = processor;
 	}
 	
+	protected Object createInstance() throws Exception {
+		RiotFile file = createRiotFile(resource);
+		if (processor != null) {
+			processor.process(file.getFileData());
+		}
+		return file;
+	}
+	
+	protected abstract RiotFile createRiotFile(Resource resource) throws IOException;
+
 }
