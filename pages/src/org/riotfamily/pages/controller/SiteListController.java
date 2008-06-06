@@ -66,9 +66,9 @@ public class SiteListController extends AbstractCacheableController {
 	public ModelAndView handleRequest(HttpServletRequest request,
 					HttpServletResponse response) throws Exception {
 
-		List sites = pageDao.listSites();
+		List<Site> sites = pageDao.listSites();
 		if (sites.size() == 1) {
-			Site site = (Site) sites.get(0);
+			Site site = sites.get(0);
 			PageNode root = pageDao.getRootNode();
 			Page page = (Page) root.getChildPages(site).iterator().next();
 			String url = ServletUtils.resolveUrl(page.getUrl(pathCompleter), request);

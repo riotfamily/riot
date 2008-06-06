@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -191,13 +190,14 @@ public class Page {
 		return site.makeAbsolute(secure, defaultHost, contextPath, pagePath);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private String fillInWildcards(String pattern, Object attributes) {
 		if (attributes == null) {
 			return pattern;
 		}
 		AttributePattern p = new AttributePattern(pattern);
 		if (attributes instanceof Map) {
-			Map map = (Map) attributes;
+			Map<String, Object> map = (Map<String, Object>) attributes;
 			if (p.canFillIn(map, null, 0)) {
 				return p.fillInAttributes(new MapWrapper(map));
 			}
@@ -244,16 +244,16 @@ public class Page {
 		return parentNode.getPage(site);
 	}
 
-	public List getChildPages() {
+	public List<Page> getChildPages() {
 		return node.getChildPages(site);
 	}
 
-	public Collection getChildPagesWithFallback() {
+	public Collection<Page> getChildPagesWithFallback() {
 		return node.getChildPagesWithFallback(site);
 	}
 
-	public Collection getAncestors() {
-		LinkedList pages = new LinkedList();
+	public Collection<Page> getAncestors() {
+		LinkedList<Page> pages = new LinkedList<Page>();
 		Page page = this;
 		while (page != null) {
 			pages.addFirst(page);
@@ -299,24 +299,25 @@ public class Page {
 		return masterPage;
 	}
 	
-	public Map getPropertiesMap(boolean preview) {
-		Map mergedProperties;
+	public Map<String, Object> getPropertiesMap(boolean preview) {
+		Map<String, Object> mergedProperties;
 		Page masterPage = getMasterPage();
 		if (masterPage != null) {
 			mergedProperties = masterPage.getPropertiesMap(preview);
 		}
 		else {
-			mergedProperties = new HashMap();
+			mergedProperties = new HashMap<String, Object>();
 		}
 		mergedProperties.putAll(getLocalPropertiesMap(preview));
 		return mergedProperties;
 	}
 	
-	public Map getLocalPropertiesMap(boolean preview) {
+	public Map<String, Object> getLocalPropertiesMap(boolean preview) {
 		Content content = getContent(preview);
-		return content != null 
-				? content.unwrapValues() 
-				: Collections.EMPTY_MAP;
+		if (content != null) { 
+			return content.unwrapValues();
+		}
+		return Collections.emptyMap();
 	}
 
 	public Object getProperty(String key, boolean preview) {
@@ -370,9 +371,7 @@ public class Page {
 	}
 	
 	private boolean hasVisibleChildPage(boolean preview) {
-		Iterator it = getChildPages().iterator();
-		while (it.hasNext()) {
-			Page page = (Page) it.next();
+		for (Page page : getChildPages()) {
 			if (page.isVisible(preview)) {
 				return true;
 			}

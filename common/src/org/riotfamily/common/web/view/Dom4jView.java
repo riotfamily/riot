@@ -18,6 +18,7 @@ public class Dom4jView extends AbstractView {
 		this.document = document;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void renderMergedOutputModel(Map model,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {

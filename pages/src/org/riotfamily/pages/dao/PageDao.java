@@ -89,12 +89,12 @@ public interface PageDao {
 	 * Returns all pages with the given handlerName and site,
 	 * or an empty list if no page is found.
 	 */
-	public List findPagesForHandler(String handlerName, Site site);
+	public List<Page> findPagesForHandler(String handlerName, Site site);
 
 	/**
 	 * 
 	 */
-	public List getWildcardPaths(Site site);
+	public List<String> getWildcardPaths(Site site);
 	
 	/**
 	 * Returns the root node.
@@ -139,7 +139,7 @@ public interface PageDao {
 	/**
 	 * Returns all sites.
 	 */
-	public List listSites();
+	public List<Site> listSites();
 	
 	public void saveSite(Site site);
 

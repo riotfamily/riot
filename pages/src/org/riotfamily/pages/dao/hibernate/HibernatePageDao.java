@@ -85,7 +85,7 @@ public class HibernatePageDao extends AbstractPageDao {
 		hibernate.flush();
 	}
 	
-	public List listSites() {
+	public List<Site> listSites() {
 		Criteria c = hibernate.createCacheableCriteria(Site.class);
 		c.addOrder(Order.asc("position"));
 		return hibernate.list(c);

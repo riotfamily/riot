@@ -42,7 +42,7 @@ public class ParameterViewController extends ParameterizableViewController {
 	protected ModelAndView handleRequestInternal(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		Map params = ServletUtils.getSingularParameterMap(request);
+		Map<String, String> params = ServletUtils.getSingularParameterMap(request);
 		return new ModelAndView(getViewName(), params);
 	}
 }

@@ -26,7 +26,6 @@ package org.riotfamily.common.xml;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -77,25 +76,25 @@ public class XmlUtils {
 		return name != null ? name : node.getNodeName();
 	}
 
-	public static List getChildElements(Element ele) {
+	public static List<Element> getChildElements(Element ele) {
 		NodeList nl = ele.getChildNodes();
-		List childEles = new LinkedList();
+		List<Element> childEles = new LinkedList<Element>();
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
 			if (node instanceof Element) {
-				childEles.add(node);
+				childEles.add((Element) node);
 			}
 		}
 		return childEles;
 	}
 
-	public static List getChildElementsByRegex(Element ele, String pattern) {
+	public static List<Element> getChildElementsByRegex(Element ele, String pattern) {
 		NodeList nl = ele.getChildNodes();
-		List childEles = new LinkedList();
+		List<Element> childEles = new LinkedList<Element>();
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
 			if (node instanceof Element && getLocalName(node).matches(pattern)) {
-				childEles.add(node);
+				childEles.add((Element) node);
 			}
 		}
 		return childEles;
@@ -261,13 +260,11 @@ public class XmlUtils {
 		return null;
 	}
 
-	public static void populate(Object bean, List elements,
+	public static void populate(Object bean, List<Element> elements,
 			BeanFactory beanFactory) {
 
 		BeanWrapper beanWrapper = new BeanWrapperImpl(bean);
-		Iterator it = elements.iterator();
-		while (it.hasNext()) {
-			Element ele = (Element) it.next();
+		for (Element ele : elements) {
 			String name = getAttribute(ele, PROPERTY_NAME);
 			Object value = getAttribute(ele, PROPERTY_VALUE);
 			if (value == null) {

@@ -53,13 +53,13 @@ public class Site {
 	
 	private Site masterSite;
 	
-	private Set derivedSites;
+	private Set<Site> derivedSites;
 	
 	private boolean enabled = true;
 
 	private long position;
 	
-	private Set aliases;
+	private Set<String> aliases;
 	
 	private Content properties;
 	
@@ -185,11 +185,11 @@ public class Site {
 		this.masterSite = masterSite;
 	}
 	
-	public Set getDerivedSites() {
+	public Set<Site> getDerivedSites() {
 		return this.derivedSites;
 	}
 
-	public void setDerivedSites(Set derivedSites) {
+	public void setDerivedSites(Set<Site> derivedSites) {
 		this.derivedSites = derivedSites;
 	}
 
@@ -204,11 +204,11 @@ public class Site {
 		this.position = position;
 	}
 	
-	public Set getAliases() {
+	public Set<String> getAliases() {
 		return this.aliases;
 	}
 
-	public void setAliases(Set aliases) {
+	public void setAliases(Set<String> aliases) {
 		this.aliases = aliases;
 	}
 	
@@ -234,19 +234,20 @@ public class Site {
 		return value;
 	}
 	
-	public Map getLocalPropertiesMap() {
-		return properties != null 
-				? properties.unwrapValues() 
-				: Collections.EMPTY_MAP;
+	public Map<String, Object> getLocalPropertiesMap() {
+		if (properties != null) { 
+			return properties.unwrapValues();
+		}
+		return Collections.emptyMap();
 	}
 	
-	public Map getPropertiesMap() {
-		Map mergedProperties;
+	public Map<String, Object> getPropertiesMap() {
+		Map<String, Object> mergedProperties;
 		if (masterSite != null) {
 			mergedProperties = masterSite.getPropertiesMap();
 		}
 		else {
-			mergedProperties = new HashMap();
+			mergedProperties = new HashMap<String, Object>();
 		}
 		mergedProperties.putAll(getLocalPropertiesMap());
 		return mergedProperties;

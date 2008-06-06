@@ -11,7 +11,7 @@ import org.springframework.util.Assert;
 
 public class UrlResolverContext {
 
-	private Map attributes;
+	private Map<String, Object> attributes;
 	
 	private PathCompleter pathCompleter;
 
@@ -20,7 +20,7 @@ public class UrlResolverContext {
 		this.pathCompleter = new RequestPathCompleter(request);
 	}
 	
-	public UrlResolverContext(Map attributes, PathCompleter pathCompleter) {
+	public UrlResolverContext(Map<String, Object> attributes, PathCompleter pathCompleter) {
 		this.attributes = attributes;
 		this.pathCompleter = pathCompleter;
 	}

@@ -40,6 +40,7 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 public class RedirectAfterPostView extends RedirectView {
 
+	@SuppressWarnings("unchecked")
 	public void render(Map model, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		

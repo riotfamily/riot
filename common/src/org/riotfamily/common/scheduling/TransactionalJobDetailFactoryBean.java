@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.scheduling;
 
+import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -137,7 +138,7 @@ public class TransactionalJobDetailFactoryBean implements
 		String name = (this.name != null ? this.name : this.beanName);
 		
 		// Consider the concurrent flag to choose between stateful and stateless job.
-		Class jobClass = (this.concurrent ? (Class) TransactionalJob.class : StatefulTransactionalJob.class);
+		Class<? extends Job> jobClass = (this.concurrent ? TransactionalJob.class : StatefulTransactionalJob.class);
 		
 		this.jobDetail = new JobDetail(name, this.group, jobClass);
 		this.jobDetail.getJobDataMap().put("transactionManager", transactionManager);
@@ -157,7 +158,7 @@ public class TransactionalJobDetailFactoryBean implements
 		return this.jobDetail;
 	}
 
-	public Class getObjectType() {
+	public Class<?> getObjectType() {
 		return JobDetail.class;
 	}
 

@@ -55,7 +55,7 @@ public abstract class AbstractReverseHandlerMapping
 	public String getUrlForHandler(String handlerName, String prefix, 
 			Object attributes, UrlResolverContext context) {
 		
-		Map defaults = getDefaults(context);
+		Map<String, Object> defaults = getDefaults(context);
 		return getUrlForHandler(handlerName, prefix, attributes, defaults, context);
 	}
 	
@@ -63,7 +63,7 @@ public abstract class AbstractReverseHandlerMapping
 	 * Returns a Map of default values that are used to build URLs. The default
 	 * implementation return <code>null</code>.
 	 */
-	protected Map getDefaults(UrlResolverContext context) {
+	protected Map<String, Object> getDefaults(UrlResolverContext context) {
 		return null;
 	}
 	
@@ -77,14 +77,17 @@ public abstract class AbstractReverseHandlerMapping
 	 * 		  attribute value was provided for a certain wildcard.
 	 * @param request The current request
 	 */
+	@SuppressWarnings("unchecked")
 	protected String getUrlForHandler(String handlerName, String prefix, 
-			Object attributes, Map defaults, UrlResolverContext context) {
+			Object attributes, Map<String, Object> defaults, 
+			UrlResolverContext context) {
 		
 		if (attributes == null) {
 			return getUrlForHandler(handlerName, defaults, prefix, context);
 		}
 		if (attributes instanceof Map) {
-			return getUrlForHandlerWithMap(handlerName, (Map) attributes, 
+			return getUrlForHandlerWithMap(handlerName, 
+					(Map<String, Object>) attributes, 
 					defaults, prefix, context); 
 		}
 		if (ClassUtils.isAssignable(String.class, attributes.getClass()) ||
@@ -101,8 +104,9 @@ public abstract class AbstractReverseHandlerMapping
 	 * Returns the URL for a handler without any extra wildcards. If the pattern
 	 * contains wildcards all of them must be present in the defaults map.
 	 */
-	private String getUrlForHandler(String handlerName, Map defaults, 
-			String prefix, UrlResolverContext context) {
+	private String getUrlForHandler(String handlerName, 
+			Map<String, Object> defaults, String prefix, 
+			UrlResolverContext context) {
 		
 		AttributePattern p = getPatternForHandler(handlerName, prefix, context, 
 				null, defaults, 0);
@@ -118,7 +122,8 @@ public abstract class AbstractReverseHandlerMapping
 	 * contains wildcards all of them must be present in the defaults map.
 	 */
 	private String getUrlForHandlerWithAttribute(String handlerName, 
-			Object attribute, Map defaults, String prefix, UrlResolverContext context) {
+			Object attribute, Map<String, Object> defaults, String prefix, 
+			UrlResolverContext context) {
 		
 		AttributePattern p = getPatternForHandler(handlerName, prefix, context, 
 				null, defaults, 1);
@@ -134,16 +139,15 @@ public abstract class AbstractReverseHandlerMapping
 	 * Returns the URL for a handler that is mapped with multiple wildcards.
 	 * The wildcard replacements are taken from the given Map.
 	 */
-	private String getUrlForHandlerWithMap(String beanName, Map attributes,
-			Map defaults, String prefix, UrlResolverContext context) {
+	private String getUrlForHandlerWithMap(String beanName, 
+			Map<String, Object> attributes, Map<String, Object> defaults, 
+			String prefix, UrlResolverContext context) {
 		
-		List patterns = getPatternsForHandler(beanName, prefix, context);
+		List<AttributePattern> patterns = getPatternsForHandler(beanName, prefix, context);
 		if (patterns == null || patterns.isEmpty()) {
 			return null;
 		}
-		Iterator it = patterns.iterator();
-		while (it.hasNext()) {
-			AttributePattern p = (AttributePattern) it.next();
+		for (AttributePattern p : patterns) {
 			if (p.canFillIn(attributes, defaults, 0)) {
 				String path = p.fillInAttributes(new MapWrapper(attributes), defaults);
 				return addServletMappingIfNecessary(path, context);
@@ -160,7 +164,8 @@ public abstract class AbstractReverseHandlerMapping
 	 * @throws IllegalArgumentException if more than one mapping is registered
 	 */
 	private String getUrlForHandlerWithBean(String beanName, Object bean,
-			Map defaults, String prefix, UrlResolverContext context) {
+			Map<String, Object> defaults, String prefix, 
+			UrlResolverContext context) {
 		
 		AttributePattern p = getPatternForHandler(beanName, prefix, context);
 		if (p != null) {
@@ -178,19 +183,17 @@ public abstract class AbstractReverseHandlerMapping
 	 * @param prefix Optional prefix to narrow the the result
 	 * @param request The current request
 	 */
-	protected List getPatternsForHandler(String handlerName, String prefix, 
+	protected List<AttributePattern> getPatternsForHandler(String handlerName, String prefix, 
 			UrlResolverContext context) {
 		
-		List patterns = getPatternsForHandler(handlerName, context);
+		List<AttributePattern> patterns = getPatternsForHandler(handlerName, context);
 		if (patterns == null || patterns.isEmpty() 
 				|| prefix == null || prefix.length() == 0) {
 			
 			return patterns;
 		}
-		ArrayList matchingPatterns = new ArrayList();
-		Iterator it = patterns.iterator();
-		while (it.hasNext()) {
-			AttributePattern p = (AttributePattern) it.next();
+		ArrayList<AttributePattern> matchingPatterns = new ArrayList<AttributePattern>();
+		for (AttributePattern p : patterns) {
 			if (p.startsWith(prefix)) {
 				matchingPatterns.add(p);
 			}
@@ -203,7 +206,8 @@ public abstract class AbstractReverseHandlerMapping
 	 * {@link AttributePattern patterns} for the handler with the specified
 	 * name.
 	 */
-	protected abstract List getPatternsForHandler(String beanName, UrlResolverContext context);
+	protected abstract List<AttributePattern> getPatternsForHandler(
+			String beanName, UrlResolverContext context);
 	
 	protected String addServletMappingIfNecessary(String path, 
 			UrlResolverContext context) {
@@ -217,16 +221,17 @@ public abstract class AbstractReverseHandlerMapping
 	 * @throws IllegalArgumentException if more than one mapping is registered
 	 */
 	protected AttributePattern getPatternForHandler(String handlerName, 
-			String prefix, UrlResolverContext context, Map attributes,
-			Map defaults, int anonymousWildcards) {
+			String prefix, UrlResolverContext context, 
+			Map<String, Object> attributes, Map<String, Object> defaults, 
+			int anonymousWildcards) {
 		
-		List patterns = getPatternsForHandler(handlerName, prefix, context);
+		List<AttributePattern> patterns = getPatternsForHandler(handlerName, prefix, context);
 		if (patterns == null || patterns.isEmpty()) {
 			return null;
 		}
-		Iterator it = patterns.iterator();
+		Iterator<AttributePattern> it = patterns.iterator();
 		while (it.hasNext()) {
-			AttributePattern p = (AttributePattern) it.next();
+			AttributePattern p = it.next();
 			if (!p.canFillIn(attributes, defaults, anonymousWildcards)) {
 				it.remove();
 			}
@@ -236,7 +241,7 @@ public abstract class AbstractReverseHandlerMapping
 					+ anonymousWildcards + " anonymous wildcards required "
 					+ "for hander "	+ handlerName);
 		}
-		return (AttributePattern) patterns.get(0);
+		return patterns.get(0);
 	}
 	
 	/**
@@ -246,7 +251,7 @@ public abstract class AbstractReverseHandlerMapping
 	protected AttributePattern getPatternForHandler(String handlerName, 
 			String prefix, UrlResolverContext context) {
 		
-		List patterns = getPatternsForHandler(handlerName, prefix, context);
+		List<AttributePattern> patterns = getPatternsForHandler(handlerName, prefix, context);
 		if (patterns == null || patterns.isEmpty()) {
 			return null;
 		}
@@ -254,7 +259,7 @@ public abstract class AbstractReverseHandlerMapping
 			throw new IllegalArgumentException("Ambigious mapping - more than " 
 					+ "one pattern is registered for hander " + handlerName);
 		}
-		return (AttributePattern) patterns.get(0);
+		return patterns.get(0);
 	}
 	
 	/**
@@ -268,7 +273,8 @@ public abstract class AbstractReverseHandlerMapping
 		}
 	}
 
-	public static Map getWildcardAttributes(HttpServletRequest request) {
-		return (Map) request.getAttribute(AttributePattern.EXPOSED_ATTRIBUTES);
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> getWildcardAttributes(HttpServletRequest request) {
+		return (Map<String, Object>) request.getAttribute(AttributePattern.EXPOSED_ATTRIBUTES);
 	}
 }

@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -50,9 +49,9 @@ public class PageNode {
 
 	private PageNode parent;
 
-	private List childNodes;
+	private List<PageNode> childNodes;
 
-	private Set pages;
+	private Set<Page> pages;
 
 	private String handlerName;
 
@@ -97,7 +96,7 @@ public class PageNode {
 	/**
 	 * Returns the set of {@link Page pages} associated with this node.
 	 */
-	public Set getPages() {
+	public Set<Page> getPages() {
 		return pages;
 	}
 
@@ -108,7 +107,7 @@ public class PageNode {
 	public void addChildNode(PageNode node) {
 		node.setParent(this);
 		if (childNodes == null) {
-			childNodes = new ArrayList();
+			childNodes = new ArrayList<PageNode>();
 		}
 		childNodes.add(node);
 	}
@@ -116,7 +115,7 @@ public class PageNode {
 	/**
 	 * Returns the child nodes. 
 	 */
-	public List getChildNodes() {
+	public List<PageNode> getChildNodes() {
 		return this.childNodes;
 	}
 
@@ -124,12 +123,10 @@ public class PageNode {
 	 * Returns an unmodifiable list of all child pages that are available in
 	 * the given site.
 	 */
-	public List getChildPages(Site site) {
-		LinkedList pages = new LinkedList();
+	public List<Page> getChildPages(Site site) {
+		LinkedList<Page> pages = new LinkedList<Page>();
 		if (childNodes != null) {
-			Iterator it = childNodes.iterator();
-			while (it.hasNext()) {
-				PageNode childNode = (PageNode) it.next();
+			for (PageNode childNode : childNodes) {
 				Page page = childNode.getPage(site);
 				if (page != null) {
 					pages.add(page);
@@ -145,12 +142,10 @@ public class PageNode {
 	 * by the PageRiotDao to list all pages are already localized or can be
 	 * translated. 
 	 */
-	public Collection getChildPagesWithFallback(Site site) {
-		LinkedList pages = new LinkedList();
+	public Collection<Page> getChildPagesWithFallback(Site site) {
+		LinkedList<Page> pages = new LinkedList<Page>();
 		if (childNodes != null) {
-			Iterator it = childNodes.iterator();
-			while (it.hasNext()) {
-				PageNode childNode = (PageNode) it.next();
+			for (PageNode childNode : childNodes) {
 				Page page = childNode.getPage(site);
 				if (page == null && site.getMasterSite() != null) {
 					page = childNode.getPage(site.getMasterSite());
@@ -171,9 +166,7 @@ public class PageNode {
 		if (pages == null) {
 			return null;
 		}
-		Iterator it = pages.iterator();
-		while (it.hasNext()) {
-			Page page = (Page) it.next();
+		for (Page page : pages) {
 			if (ObjectUtils.nullSafeEquals(page.getSite(), site)) {
 				return page;
 			}
@@ -198,7 +191,7 @@ public class PageNode {
 		
 		page.setNode(this);
 		if (pages == null) {
-			pages = new HashSet();
+			pages = new HashSet<Page>();
 		}
 		pages.add(page);
 	}

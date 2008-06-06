@@ -12,7 +12,6 @@
 		http://www.riotfamily.org/schema/common/override-7.0.xsd">
 
 	<bean id="componentListRenderer" class="org.riotfamily.components.render.list.ComponentListRenderer">
-		<constructor-arg ref="cacheService" />
 		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="componentRepository" />
 		<constructor-arg ref="transactionManager" />

@@ -24,7 +24,6 @@
 package org.riotfamily.components.cache;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -62,11 +61,9 @@ public final class ComponentCacheUtils {
 	private static void addContentTags(HttpServletRequest request, 
 			Content version) {
 
-		Collection tags = version.getCacheTags();
+		Collection<String> tags = version.getCacheTags();
 		if (tags != null) {
-			Iterator it = tags.iterator();
-			while (it.hasNext()) {
-				String tag = (String) it.next();
+			for (String tag : tags) {
 				TaggingContext.tag(request, tag);
 			}
 		}

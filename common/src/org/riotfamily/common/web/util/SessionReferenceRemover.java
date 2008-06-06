@@ -25,7 +25,6 @@ package org.riotfamily.common.web.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -52,13 +51,13 @@ public class SessionReferenceRemover implements HttpSessionBindingListener {
 	private static final String SESSION_KEY = 
 			SessionReferenceRemover.class.getName();
 	
-	private ArrayList references = new ArrayList();
+	private ArrayList<SessionReference> references = new ArrayList<SessionReference>();
 	
 	
 	private SessionReferenceRemover() {
 	}
 	
-	private void addReference(Collection collection, Object value) {
+	private void addReference(Collection<?> collection, Object value) {
 		references.add(new SessionReference(collection, value));
 	}
 
@@ -69,9 +68,7 @@ public class SessionReferenceRemover implements HttpSessionBindingListener {
 		log.info("Session invalidated - removing " + references.size() 
 				+ " references.");
 		
-		Iterator it = references.iterator();
-		while (it.hasNext()) {
-			SessionReference ref = (SessionReference) it.next();
+		for (SessionReference ref : references) {
 			ref.remove();
 		}
 		references.clear();
@@ -82,7 +79,7 @@ public class SessionReferenceRemover implements HttpSessionBindingListener {
 	 * invalidated.
 	 */
 	public static void removeFromCollectionOnInvalidation(
-			HttpSession session, Collection collection, Object value) {
+			HttpSession session, Collection<?> collection, Object value) {
 		
 		SessionReferenceRemover remover = (SessionReferenceRemover) 
 				session.getAttribute(SESSION_KEY);
@@ -96,11 +93,11 @@ public class SessionReferenceRemover implements HttpSessionBindingListener {
 	
 	private static class SessionReference {
 
-		private Collection collection;
+		private Collection<?> collection;
 		
 		private Object value;
 
-		public SessionReference(Collection collection, Object value) {
+		public SessionReference(Collection<?> collection, Object value) {
 			this.collection = collection;
 			this.value = value;
 		}

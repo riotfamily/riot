@@ -25,7 +25,6 @@ package org.riotfamily.common.web.mapping;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,9 +43,10 @@ import org.springframework.util.StringUtils;
 public class AdvancedBeanNameHandlerMapping 
 		extends AbstractReverseHandlerMapping {
 
-	private ArrayList mappings = new ArrayList();
+	private ArrayList<Mapping> mappings = new ArrayList<Mapping>();
 	
-    private HashMap patternsByBeanName = new HashMap();
+    private HashMap<String, List<AttributePattern>> patternsByBeanName = 
+    		new HashMap<String, List<AttributePattern>>();
     
 	private boolean stripServletMapping = true;
 	
@@ -83,20 +83,20 @@ public class AdvancedBeanNameHandlerMapping
 	public void initApplicationContext() throws ApplicationContextException {
 		super.initApplicationContext();
     	String[] beanNames = getApplicationContext().getBeanDefinitionNames();
-		for (int i = 0; i < beanNames.length; i++) {
+		for (String beanName : beanNames) {
 			// Get all URL-like aliases ...
-			String[] urls = checkForUrl(beanNames[i]);
+			String[] urls = checkForUrl(beanName);
 			if (urls.length > 0) {
-				ArrayList patterns = new ArrayList();
+				ArrayList<AttributePattern> patterns = new ArrayList<AttributePattern>();
 				// Create a mapping for each alias
 				for (int j = 0; j < urls.length; j++) {
 					String attributePattern = urls[j];
 					AttributePattern p = new AttributePattern(attributePattern);
-					registerHandler(p, beanNames[i]);
+					registerHandler(p, beanName);
 					patterns.add(p);
 					
 				}
-				registerPatterns(beanNames[i], patterns);
+				registerPatterns(beanName, patterns);
 			}
 		}
 	}
@@ -107,14 +107,14 @@ public class AdvancedBeanNameHandlerMapping
 	 * <p><strong>Copied from BeanNameUrlHandlerMapping</strong>
 	 */
 	private String[] checkForUrl(String beanName) {
-		List urls = new ArrayList();
+		List<String> urls = new ArrayList<String>();
 		if (isMapping(beanName)) {
 			urls.add(beanName);
 		}
 		String[] aliases = getApplicationContext().getAliases(beanName);
-		for (int i = 0; i < aliases.length; i++) {
-			if (isMapping(aliases[i])) {
-				urls.add(aliases[i]);
+		for (String alias : aliases) {
+			if (isMapping(alias)) {
+				urls.add(alias);
 			}
 		}
 		return StringUtils.toStringArray(urls);
@@ -128,12 +128,12 @@ public class AdvancedBeanNameHandlerMapping
 	 * Registers the list of patterns for the given beanName and all aliases
 	 * not starting with "/".
 	 */
-	private void registerPatterns(String beanName, List patterns) {
+	private void registerPatterns(String beanName, List<AttributePattern> patterns) {
 		patternsByBeanName.put(beanName, patterns);
 		String[] aliases = getApplicationContext().getAliases(beanName);
-		for (int i = 0; i < aliases.length; i++) {
-			if (!isMapping(aliases[i])) {
-				patternsByBeanName.put(aliases[i], patterns);		
+		for (String alias : aliases) {
+			if (!isMapping(alias)) {
+				patternsByBeanName.put(alias, patterns);		
 			}
 		}
 	}
@@ -194,10 +194,8 @@ public class AdvancedBeanNameHandlerMapping
 		if (rootHandler != null && urlPath.equals("/")) {
 			return rootHandler;
 		}
-		Iterator it = mappings.iterator();
 		Mapping bestMatch = null;
-		while (it.hasNext()) {
-			Mapping mapping = (Mapping) it.next();
+		for (Mapping mapping : mappings) {
 			if (mapping.matches(urlPath) && mapping.isMoreSpecific(bestMatch)) {
 				bestMatch = mapping;
 			}
@@ -219,8 +217,8 @@ public class AdvancedBeanNameHandlerMapping
 		return path;
 	}
 	
-	protected List getPatternsForHandler(String beanName, UrlResolverContext context) {
-		return (List) patternsByBeanName.get(beanName);
+	protected List<AttributePattern> getPatternsForHandler(String beanName, UrlResolverContext context) {
+		return patternsByBeanName.get(beanName);
 	}
 	
 	private static class Mapping {

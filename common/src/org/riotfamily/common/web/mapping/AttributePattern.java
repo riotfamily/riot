@@ -26,7 +26,7 @@ package org.riotfamily.common.web.mapping;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -87,12 +87,12 @@ public class AttributePattern {
 	/**
 	 * List of attribute names contained in the pattern.
 	 */
-	private ArrayList attributeNames;
+	private ArrayList<String> attributeNames;
 	
 	/**
 	 * List of types.
 	 */
-	private ArrayList attributeTypes;
+	private ArrayList<String> attributeTypes;
 	
 	/**
 	 * Precision of the pattern. The more non-wildcard characters a pattern contains,
@@ -102,8 +102,8 @@ public class AttributePattern {
 
 	public AttributePattern(String attributePattern) {
 		this.attributePattern = attributePattern;
-		attributeNames = new ArrayList();
-		attributeTypes = new ArrayList();
+		attributeNames = new ArrayList<String>();
+		attributeTypes = new ArrayList<String>();
 		Matcher m = ATTRIBUTE_NAME_PATTERN.matcher(attributePattern);
 		while (m.find()) {
 			attributeNames.add(m.group(1));
@@ -113,7 +113,7 @@ public class AttributePattern {
 		precision = WILDCARD_PATTERN.matcher(attributePattern).replaceAll("").length();
 	}
 
-	public ArrayList getAttributeNames() {
+	public List<String> getAttributeNames() {
 		return attributeNames;
 	}
 
@@ -128,15 +128,15 @@ public class AttributePattern {
 	}
 
 	public void expose(String urlPath, HttpServletRequest request) {
-		Map attributes = new HashMap();
+		Map<String, Object> attributes = new HashMap<String, Object>();
 		Matcher m = pattern.matcher(urlPath);
 		Assert.isTrue(m.matches());
 		for (int i = 0; i < attributeNames.size(); i++) {
-			String name = (String) attributeNames.get(i);
+			String name = attributeNames.get(i);
 			Object value = null;
 			String s = m.group(i + 1);
 			if (s.length() > 0) {
-				String type = (String) attributeTypes.get(i);
+				String type = attributeTypes.get(i);
 				value = convert(FormatUtils.uriUnescape(s), type);
 			}
 			request.setAttribute(name, value);
@@ -177,22 +177,22 @@ public class AttributePattern {
 		}
 	}
 	
-	public boolean canFillIn(Map required, Map optional, int anonymous) {
+	public boolean canFillIn(Map<String, Object> required, Map<String, Object> optional, int anonymous) {
 		if (required == null) {
-			required = Collections.EMPTY_MAP;
+			required = Collections.emptyMap();
 		}
 		if (optional == null) {
-			optional = Collections.EMPTY_MAP;
+			optional = Collections.emptyMap();
 		}
 		return canFillIn(required.keySet(), optional.keySet(), anonymous);
 	}
 	
-	public boolean canFillIn(Set required, Set optional, int anonymous) {
+	public boolean canFillIn(Set<String> required, Set<String> optional, int anonymous) {
 		if (required == null) {
-			required = Collections.EMPTY_SET;
+			required = Collections.emptySet();
 		}
 		if (optional == null) {
-			optional = Collections.EMPTY_SET;
+			optional = Collections.emptySet();
 		}
 		if (CollectionUtils.isEmpty(attributeNames)) {
 			return required.isEmpty() && anonymous == 0;
@@ -201,9 +201,7 @@ public class AttributePattern {
 			return false;
 		}
 		int unmatched = 0;
-		Iterator it = attributeNames.iterator();
-		while (it.hasNext()) {
-			String name = (String) it.next();
+		for (String name : attributeNames) { 
 			if (!(required.contains(name) || optional.contains(name))) {
 				if (++unmatched > anonymous) {
 					return false;
@@ -229,11 +227,11 @@ public class AttributePattern {
 		return fillInAttributes(attributes, null);
 	}
 	
-	public String fillInAttributes(Map attributes, Map defaults) {
+	public String fillInAttributes(Map<String, Object> attributes, Map<String, Object> defaults) {
 		return fillInAttributes(new MapWrapper(attributes), defaults);
 	}
 	
-	public String fillInAttributes(PropertyAccessor attributes, Map defaults) {
+	public String fillInAttributes(PropertyAccessor attributes, Map<String, Object> defaults) {
 		StringBuffer url = new StringBuffer();
 		Matcher m = ATTRIBUTE_NAME_PATTERN.matcher(attributePattern);
 		while (m.find()) {
@@ -269,7 +267,7 @@ public class AttributePattern {
 		return fillInAttribute(value, null);
 	}
 	
-	public String fillInAttribute(Object value, Map defaults) {
+	public String fillInAttribute(Object value, Map<String, Object> defaults) {
 		Matcher m = ATTRIBUTE_NAME_PATTERN.matcher(attributePattern);
 		String unmatched = null;
 		while (m.find()) {
@@ -283,13 +281,13 @@ public class AttributePattern {
 			}
 		}
 		
-		Map map;
+		Map<String, Object> map;
 		if (unmatched == null) {
 			if (attributeNames.size() != 1) {
 				throw new IllegalStateException("No unmatched wildcard, "
 						+ "don't know which default should be overwritten.");
 			}
-			String name = (String) attributeNames.get(0);
+			String name = attributeNames.get(0);
 			map = Collections.singletonMap(name, value);
 		}
 		else {

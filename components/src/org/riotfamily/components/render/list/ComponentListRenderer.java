@@ -26,13 +26,11 @@ package org.riotfamily.components.render.list;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.context.PageRequestContext;
 import org.riotfamily.components.context.PageRequestUtils;
-import org.riotfamily.components.context.StoreContextInterceptor;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
@@ -46,8 +44,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 public class ComponentListRenderer {
 
-	private CacheService cacheService;
-
 	private ComponentDao componentDao;
 
 	private ComponentRepository componentRepository;
@@ -59,11 +55,10 @@ public class ComponentListRenderer {
 	private RenderStrategy editModeRenderStrategy;
 
 	
-	public ComponentListRenderer(CacheService cacheService,
-			ComponentDao componentDao, ComponentRepository componentRepository,
+	public ComponentListRenderer(ComponentDao componentDao, 
+			ComponentRepository componentRepository,
 			PlatformTransactionManager transactionManager) {
 		
-		this.cacheService = cacheService;
 		this.componentDao = componentDao;
 		this.componentRepository = componentRepository;
 		this.transactionManager = transactionManager;

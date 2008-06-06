@@ -40,10 +40,10 @@ import freemarker.template.TemplateModelException;
  */
 public class PluginObjectWrapper extends DefaultObjectWrapper {
 
-	private ArrayList plugins;
+	private ArrayList<ObjectWrapperPlugin> plugins;
 	
-	public PluginObjectWrapper(Collection plugins) {
-		this.plugins = new ArrayList(plugins);
+	public PluginObjectWrapper(Collection<ObjectWrapperPlugin> plugins) {
+		this.plugins = new ArrayList<ObjectWrapperPlugin>(plugins);
 		Collections.sort(this.plugins, new OrderComparator());
 	}
 	
@@ -54,9 +54,7 @@ public class PluginObjectWrapper extends DefaultObjectWrapper {
 		if (obj instanceof TemplateModel) {
 			return (TemplateModel) obj;
 		}
-		Iterator it = plugins.iterator();
-		while (it.hasNext()) {
-			ObjectWrapperPlugin plugin = (ObjectWrapperPlugin) it.next();
+		for (ObjectWrapperPlugin plugin : plugins) {
 			if (plugin.supports(obj)) {
 				return plugin.wrapSupportedObject(obj, this);
 			}

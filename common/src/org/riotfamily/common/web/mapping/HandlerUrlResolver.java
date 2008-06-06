@@ -44,10 +44,12 @@ import org.springframework.util.Assert;
  */
 public class HandlerUrlResolver implements ApplicationContextAware {
 
-	private List mappings;
+	private List<ReverseHandlerMapping> mappings;
 	
+	@SuppressWarnings("unchecked")
 	public void setApplicationContext(ApplicationContext applicationContext) {
-		mappings = new ArrayList(applicationContext.getBeansOfType(
+		mappings = new ArrayList<ReverseHandlerMapping>(
+				applicationContext.getBeansOfType(
 				ReverseHandlerMapping.class).values());
 		
 		if (!mappings.isEmpty()) {
@@ -94,9 +96,9 @@ public class HandlerUrlResolver implements ApplicationContextAware {
 		
 		String url = null;
 		Assert.notNull(mappings, "The ApplicationContext must be set first");
-		Iterator it = mappings.iterator();
+		Iterator<ReverseHandlerMapping> it = mappings.iterator();
 		while (url == null && it.hasNext()) {
-			ReverseHandlerMapping mapping = (ReverseHandlerMapping) it.next();
+			ReverseHandlerMapping mapping = it.next();
 			url = mapping.getUrlForHandler(
 					handlerName, prefix, attributes, context);
 		}

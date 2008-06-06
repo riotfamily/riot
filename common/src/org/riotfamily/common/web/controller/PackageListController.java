@@ -51,7 +51,7 @@ public class PackageListController implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 
-		Collection packages = PackageLister.listPackages(patterns);
+		Collection<Package> packages = PackageLister.listPackages(patterns);
 		return new ModelAndView(viewName, MODEL_NAME, packages);
 	}
 }

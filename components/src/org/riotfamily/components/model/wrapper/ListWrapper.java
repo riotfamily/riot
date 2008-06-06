@@ -39,7 +39,7 @@ import java.util.ListIterator;
  */
 public class ListWrapper extends ValueWrapper implements List {
 
-	private List wrapperList;
+	private List<ValueWrapper> wrapperList;
 
 	public ListWrapper() {
 	}
@@ -55,7 +55,7 @@ public class ListWrapper extends ValueWrapper implements List {
 	public void setValue(Object value) {
 	}
 
-	public List getWrapperList() {
+	public List<ValueWrapper> getWrapperList() {
 		return wrapperList;
 	}
 	
@@ -63,10 +63,8 @@ public class ListWrapper extends ValueWrapper implements List {
 		if (wrapperList == null) {
 			return null;
 		}
-		ArrayList result = new ArrayList(wrapperList.size());
-		Iterator it = wrapperList.iterator();
-		while (it.hasNext()) {
-			ValueWrapper wrapper = (ValueWrapper) it.next();
+		ArrayList<Object> result = new ArrayList<Object>(wrapperList.size());
+		for (ValueWrapper wrapper : wrapperList) {
 			if (wrapper != null) {
 				result.add(wrapper.unwrap());
 			}
@@ -78,10 +76,8 @@ public class ListWrapper extends ValueWrapper implements List {
 	}
 	
 	public ValueWrapper deepCopy() {
-		ArrayList list = new ArrayList(wrapperList.size());
-		Iterator it = wrapperList.iterator();
-		while (it.hasNext()) {
-			ValueWrapper wrapper = (ValueWrapper) it.next();
+		ArrayList<ValueWrapper> list = new ArrayList<ValueWrapper>(wrapperList.size());
+		for (ValueWrapper wrapper : wrapperList) {
 			if (wrapper != null) {
 				list.add(wrapper.deepCopy());
 			}
@@ -94,16 +90,14 @@ public class ListWrapper extends ValueWrapper implements List {
 		return copy;
 	}
 	
-	public Collection getCacheTags() {
+	public Collection<String> getCacheTags() {
 		if (wrapperList == null) {
 			return null;
 		}
-		HashSet result = new HashSet();
-		Iterator it = wrapperList.iterator();
-		while (it.hasNext()) {
-			ValueWrapper wrapper = (ValueWrapper) it.next();
+		HashSet<String> result = new HashSet<String>();
+		for (ValueWrapper wrapper : wrapperList) {
 			if (wrapper != null) {
-				Collection tags = wrapper.getCacheTags();
+				Collection<String> tags = wrapper.getCacheTags();
 				if (tags != null) {
 					result.addAll(tags);
 				}
@@ -125,7 +119,7 @@ public class ListWrapper extends ValueWrapper implements List {
 
 	public void add(int index, Object item) {
 		if (wrapperList == null) {
-			wrapperList = new ArrayList();
+			wrapperList = new ArrayList<ValueWrapper>();
 		}
 		ValueWrapper wrapper = null;
 		if (item != null) { 
@@ -242,7 +236,7 @@ public class ListWrapper extends ValueWrapper implements List {
 		if (wrapperList == null) {
 			throw new IndexOutOfBoundsException();
 		}
-		return wrapperList.set(index, o);
+		return wrapperList.set(index, (ValueWrapper) o);
 	}
 
 	public int size() {

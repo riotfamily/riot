@@ -39,8 +39,8 @@ public final class PackageLister {
 	private PackageLister() {
 	}
 
-	public static Collection listPackages(String[] patterns) {
-		HashMap map = new HashMap();
+	public static Collection<Package> listPackages(String[] patterns) {
+		HashMap<String, Package> map = new HashMap<String, Package>();
 		Package[] packages = Package.getPackages();
 	    for (int i = 0; i < packages.length; i++) {
 	    	String name = packages[i].getImplementationTitle(); 
@@ -48,7 +48,7 @@ public final class PackageLister {
 	        	map.put(name, packages[i]);
 	        }
 	    }
-	    ArrayList result = new ArrayList(map.values());
+	    ArrayList<Package> result = new ArrayList<Package>(map.values());
 	    Collections.sort(result, PACKAGE_COMPARATOR);
 	    return result;
 	}
