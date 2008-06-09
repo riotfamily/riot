@@ -31,20 +31,23 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
-import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.render.component.ComponentRenderer;
+import org.riotfamily.components.render.component.EditModeComponentRenderer;
 
 public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 
+	private EditModeComponentRenderer editModeRenderer;
+	
 	public EditModeRenderStrategy(ComponentDao dao,
 			ComponentRepository repository,	CacheService cacheService) {
 
 		super(dao, repository, cacheService);
+		editModeRenderer = new EditModeComponentRenderer(repository);
 	}
 
 	protected void appendModeToCacheKey(StringBuffer cacheKey) {
@@ -103,29 +106,8 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 
-		String type = component.getType();
-		String formUrl = repository.getFormUrl(type, 
-				component.getList().getContainer().getId() , component.getId());
-		
-		String className = "riot-list-component riot-component " +
-				"riot-component-" + type;
-		
-		if (formUrl != null) {
-			className += " riot-form";
-		}
-		
-		TagWriter wrapper = new TagWriter(response.getWriter());
-		wrapper.start(Html.DIV)
-				.attribute(Html.COMMON_CLASS, className)
-				.attribute("riot:componentId", component.getId().toString())
-				.attribute("riot:componentType", type)
-				.attribute("riot:form", formUrl)
-				.body();
-
-		super.renderComponentInternal(renderer, component, position, listSize, 
-				config, request, response);
-		
-		wrapper.end();
+		editModeRenderer.renderComponent(renderer, component, position, 
+				listSize, request, response);
 	}
 
 }

@@ -102,12 +102,7 @@ public class InplaceMacroHelper {
 		return componentRepository.getFormUrl(formId, container.getId(), 
 				container.getPreviewVersion().getId());
 	}
-	
-	public String enableOutputWrapping() {
-		request.setAttribute(ComponentFreeMarkerView.WRAP_OUTPUT_ATTRIBUTE, Boolean.TRUE);
-		return "";
-	}
-	
+		
 	public String getObjectId(String listId, Object object) {
 		RiotDao dao = riotDaoService.getDao(listId);
 		return dao.getObjectId(object);

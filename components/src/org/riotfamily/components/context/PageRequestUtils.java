@@ -76,14 +76,6 @@ public final class PageRequestUtils {
 		return contexts.get(pageUri, contextKey);
 	}
 	
-	public static PageRequestContext getCurrentContext(HttpServletRequest request) {
-		PageRequestContext context = PartialPageRequest.getContext(request);
-		if (context == null) {
-			context = StoreContextInterceptor.getCurrentContext(request);
-		}
-		return context;
-	}
-	
 	public static HttpServletRequest wrapRequest(
 			HttpServletRequest request, String pageUri, String contextKey) 
 			throws RequestContextExpiredException {

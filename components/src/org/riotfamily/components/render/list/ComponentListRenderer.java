@@ -104,10 +104,15 @@ public class ComponentListRenderer {
 			if (list == null) {
 				list = createList(container, container.getPreviewVersion(), key, config);
 			}
+			
 			if (AccessController.isGranted("edit", list.getContainer())) {
 				strategy = editModeRenderStrategy;
-				PageRequestContext context = PageRequestUtils.getCurrentContext(request);
+			}
+			
+			PageRequestContext context = PageRequestUtils.createContext(request, list.getId().toString());
+			if (context != null) {
 				context.setComponentListConfig(list.getId(), config);
+				PageRequestUtils.storeContext(context, request, 120000);
 			}
 		}
 		else {
@@ -133,8 +138,11 @@ public class ComponentListRenderer {
 			}
 			if (AccessController.isGranted("edit", list.getContainer())) {
 				strategy = editModeRenderStrategy;
-				PageRequestContext context = PageRequestUtils.getCurrentContext(request);
+			}
+			PageRequestContext context = PageRequestUtils.createContext(request, list.getId().toString());
+			if (context != null) {
 				context.setComponentListConfig(list.getId(), config);
+				PageRequestUtils.storeContext(context, request, 120000);
 			}
 		}
 		else {

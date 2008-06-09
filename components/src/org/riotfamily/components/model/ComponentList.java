@@ -90,6 +90,14 @@ public class ComponentList {
 		insertComponent(component, -1);
 	}
 	
+	public int getSize() {
+		return getComponents().size();
+	}
+	
+	public int indexOf(Component component) {
+		return getComponents().indexOf(component);
+	}
+	
 	public ComponentList createCopy() {
 		ComponentList copy = new ComponentList();
 		copy.setContainer(container);

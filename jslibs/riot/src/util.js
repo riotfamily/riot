@@ -116,6 +116,13 @@ var RElement = {
 		return wrapper;
 	},
 
+	appendHtml: function(el, html) {
+		el = $(el);
+		var wrapper = RBuilder.node('div');
+		wrapper.update(html);
+		wrapper.childElements().invoke('appendTo', el);
+	},
+	
 	makeBlock: function(el) {
 		el = $(el);
 		el.style.display = 'block';

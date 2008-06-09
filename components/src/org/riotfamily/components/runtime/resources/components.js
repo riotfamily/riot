@@ -1,16 +1,10 @@
 /**
- * Returns a wrapper for the given element. A wrapper is either a Controller,
- * EntityList, ComponentList, Component or an editor. What kind of wrapper
+ * Returns a wrapper for the given element. A wrapper is either an  EntityList, 
+ * ComponentList, Component or an editor. What kind of wrapper
  * is returned depends on the given CSS selector. The function is invoked by
  * ToolbarButton.getHandlerTargets() when a button's handler is to be applied.
  */
 riot.getWrapper = function(el, selector) {
-	if (selector == '.riot-controller') {
-		if (!el.controller) {
-			el.controller = new riot.Controller(el);
-		}
-		return el.controller;
-	}
 	if (selector == '.riot-list' || selector == '.riot-component-list') {
 		if (el.hasClassName('riot-entity-list')) {
 			if (!el.entityList) {
@@ -113,22 +107,6 @@ riot.findComponent = function(el) {
 
 /**
  * Searches the element's ancestors (including the element itself) for an
- * element with the class 'riot-controller' and returns the wrapper for that
- * element.
- */
-riot.findController = function(el) {
-	el = el.up('.riot-controller');
-	if (el) {
-		if (!el.controller) {
-			el.controller = new riot.Controller(el);
-		}
-		return el.controller;
-	}
-	return null;
-}
-
-/**
- * Searches the element's ancestors (including the element itself) for an
  * element with the class 'riot-component-list' and returns the wrapper for that
  * element.
  */
@@ -150,64 +128,9 @@ riot.getComponentList = function(el) {
 	return el.componentList;
 }
 
-riot.Controller = Class.create({
-	initialize: function(el) {
-		this.elementId = el.id;
-		this.id = el.readAttribute('riot:controllerId');
-		this.contextKey = el.readAttribute('riot:contextKey'); 
-		this.parentController = riot.findController(el);
-		if (!this.parentController) {
-			this.dirty = typeof el.down('.riot-dirty') != 'undefined';
-		}
-	},
-	
-	getReference: function() {
-		return { controllerId: this.id, contextKey: this.contextKey };
-	},
-	
-	getElement: function() {
-		// Returns the controller's root element. The reference to the DOM
-		// element is not stored, as calls to disableEvents() or enableEvents()
-		// will eventually replace the element by a clone.
-		return $(this.elementId);
-	},
-	
-	markDirty: function() {
-		if (!this.parentController) {
-			this.dirty = true;
-			riot.toolbar.enablePublishButtons();
-		}
-		else {
-			this.parentController.markDirty();
-		}
-	},
-	
-	update: function() {
-		riot.toolbar.selectedButton.applyHandler(false);
-		ComponentEditor.getPreviewListHtml(this.id, this.contextKey, 
-				this.replaceHtml.bind(this));
-	},
-
-	replaceHtml: function(html) {
-		var el = this.getElement();
-		el.update(html);
-		riot.adoptFloatsAndClears(el);
-		el.select('.riot-controller').invoke('identify');
-		el.select('.riot-component').invoke('identify');
-		if (window.riotEditCallbacks) {
-			riotEditCallbacks.each(function(callback) {
-				callback(el);
-			});
-		}
-		riot.toolbar.selectedButton.applyHandler(true);
-	}
-});
-
-
 riot.ComponentList = Class.create({ 
 	initialize: function(el) {
 		this.element = el;
-		this.controller = riot.findController(el);
 		this.id = el.readAttribute('riot:listId');
 		if (!el.id) el.id = 'riot-list-' + this.id;
 		if (el.hasClassName('riot-dirty') || typeof el.down('.riot-dirty') != 'undefined') {
@@ -223,17 +146,9 @@ riot.ComponentList = Class.create({
 		//Note: Element.findChildren is defined in dragdrop.js
 		this.componentElements = Element.findChildren(this.element, 'riot-component', false, 'div') || [];
 	},
-	
-	update: function() {
-		this.controller.update();
-	},
-	
+		
 	markDirty: function() {
 		this.dirty = true;
-		if (this.controller) {
-			// Controller can be null if the function is invoked for a dumped list (fixes RIOT-62)
-			this.controller.markDirty();
-		}
 	},
 	
 	insertOn: function() {
@@ -259,7 +174,7 @@ riot.ComponentList = Class.create({
 			this.element.style.position = 'relative';
 			this.componentElements.each(function(el) {
 				if (!el.down('.riot-component-list')) {
-					el.disableEvents();
+					//el.disableEvents();
 				}
 			});
 		}
@@ -297,7 +212,7 @@ riot.ComponentList = Class.create({
 			this.componentElements.each(function(el) {
 				el.removeClassName('riot-moveable-component');
 				if (!el.down('.riot-component-list')) {
-					el.enableEvents();
+					//el.enableEvents();
 				}
 			});
 			this.updatePositionClasses();
@@ -369,11 +284,6 @@ riot.ComponentList = Class.create({
 		var list = this;
 		new Effect.Remove(c.element, function(el) {
 			el.remove();
-			// Hack to mark dumped ComponentList diry. List is dumped to 
-			// disable Events
-			var dump = $(el.id);
-			//riot.getComponentList(dump.up('.riot-toplevel-list')).dirty = true; 
-			dump.remove();
 			list.updatePositionClasses();
 			riot.outline.suspended = false;
 		});
@@ -443,13 +353,8 @@ riot.EntityList = Class.create({
 	initialize: function(el) {
 		this.element = el;
 		this.id = el.readAttribute('riot:listId');
-		this.controller = riot.findController(el);
 	},
 
-	update: function() {
-		this.controller.update();
-	},
-		
 	insertOn: function() {
 		this.insertButton = RBuilder.node('div', {
 			className: 'riot-insert-button',
@@ -474,7 +379,6 @@ riot.Component = Class.create({
 	initialize: function(el) {
 		this.element = el;
 		this.id = el.readAttribute('riot:componentId');
-		this.controller = riot.findController(el);
 		this.form = el.readAttribute('riot:form');
 		this.dirty = el.hasClassName('riot-dirty');
 		this.bShowOutline = this.showOutline.bindAsEventListener(this);
@@ -538,7 +442,6 @@ riot.Component = Class.create({
 	
 	markDirty: function() {
 		this.dirty = true;
-		this.controller.markDirty();
 	},
 	
 	propertiesOn: function() {
@@ -575,7 +478,7 @@ riot.Component = Class.create({
 	},
 	
 	update: function() {
-		this.controller.update();
+		window.location.reload();
 	}
 });
 
@@ -584,6 +487,23 @@ riot.ListComponent = Class.create(riot.Component, {
 	updateTextChunks: function(key, chunks) {
 		ComponentEditor.updateTextChunks(this.id, key, chunks, this.update.bind(this));
 		this.markDirty();
+	},
+	
+	update: function() {
+		ComponentEditor.renderComponent(this.id, this.replaceHtml.bind(this));
+	},
+	
+	replaceHtml: function(html) {
+		var tmp = RBuilder.node('div');
+		tmp.update(html);
+		var el = tmp.down();
+		this.element.replaceBy(el);
+		this.element = el;
+		if (window.riotEditCallbacks) {
+			riotEditCallbacks.each(function(callback) {
+				callback(el);
+			});
+		}
 	},
 	
 	markDirty: function() {
@@ -620,7 +540,7 @@ riot.EntityComponent = Class.create(riot.Component, {
 	},
 	
 	update: function() {
-		riot.findController(this.element).update(this.listId);
+		window.location.reload();
 	}
 });
 
@@ -634,13 +554,12 @@ riot.InsertButton = Class.create({
 		this.element = RBuilder.node('div', {className: 'riot-insert-button',
 				onclick: this.onclick.bindAsEventListener(this)});
 
-		ComponentEditor.getValidTypes(this.componentList.controller.id,
-				componentList.id, this.setValidTypes.bind(this));
+		ComponentEditor.getValidTypes(componentList.id, this.setValidTypes.bind(this));
 	},
 	
 	setValidTypes: function(types) {
 		this.types = types;
-		this.componentList.element.appendChild(this.element);
+		this.element.insertSelfAfter(this.componentList.element);
 	},
 
 	remove: function() {
@@ -674,17 +593,37 @@ riot.InsertButton = Class.create({
 		}
 	},
 
-	oninsert: function(id) {
-		this.componentId = id;
-		this.componentList.update();
+	oninsert: function(html) {
+		var tmp = RBuilder.node('div');
+		tmp.update(html);
+		var el = this.componentElement = tmp.down();
+		this.componentList.element.appendChild(el);
+		this.componentList.findComponentElements();
+		this.componentList.updatePositionClasses();
+		this.componentId = el.readAttribute('riot:componentId');
+		if (window.riotEditCallbacks) {
+			riotEditCallbacks.each(function(callback) {
+				callback(el);
+			});
+		}
 	},
 
-	updateList: function() {
-		this.componentList.update();
+	onupdate: function(html) {
+		var tmp = RBuilder.node('div');
+		tmp.update(html);
+		var el = tmp.down();
+		this.componentElement.replaceBy(el);
+		this.componentList.findComponentElements();
+		this.componentElement = el;
+		if (window.riotEditCallbacks) {
+			riotEditCallbacks.each(function(callback) {
+				callback(el);
+			});
+		}
 	},
 	
 	changeType: function(type) {
-		ComponentEditor.setType(this.componentId, type, this.updateList.bind(this));
+		ComponentEditor.setType(this.componentId, type, this.onupdate.bind(this));
 	}
 });
 
@@ -724,150 +663,6 @@ riot.TypeInspector = Class.create({
 		);
 	}
 });
-
-/*
-riot.PublishWidget = Class.create({
-	initialize: function(controller, mode) {
-		mode = mode || 'publish';
-		this.className = 'riot-' + mode + '-outline';
-		this.controller = controller;
-		this.controllerElement = controller.getElement();
-		this.previewHtml = this.controllerElement.innerHTML;
-		this.element = RBuilder.node('div', {className: this.className, style: {position: 'absolute', display: 'none'}},
-			this.overlay = RBuilder.node('div')
-		);
-		this.live = false;
-		this.updateUI();
-		this.element.observe('click', this.toggleVersion.bind(this), true);
-		
-		if (document.addEventListener) {
-			this.domListener = this.scaleOverlay.bind(this);
-			this.controllerElement.addEventListener('DOMNodeInserted', this.domListener, false);
-		}
-		
-		this.dirtyListIds = this.controllerElement.getElementsBySelector('.riot-component-list')
-				.collect(riot.getComponentList)
-				.select(function(l) { return l.dirty })
-				.pluck('id');
-				
-		this.dirtyContainerIds = this.controllerElement.getElementsBySelector('.riot-single-component')
-				.collect(riot.getComponent)
-				.select(function(c) { return c.dirty })
-				.pluck('id'); 
-	},	
-		
-	getReference: function() {
-		return this.controller.getReference();
-	},
-	
-	show: function() {
-		this.controllerElement.makePositioned();
-		if (this.controllerElement.innerHTML.empty()) {
-			this.controllerElement.innerHTML = '<div class="riot-empty-list"></div>';
-		}
-		this.controllerElement.style.overflow = 'hidden';
-		this.controllerElement.appendChild(this.element);
-		this.scaleOverlay();
-		setTimeout(this.scaleOverlay.bind(this), 50);
-		this.element.show();
-	},
-
-	scaleOverlay: function() {
-		this.element.style.width = this.overlay.style.width = (this.controllerElement.offsetWidth - 4) + 'px';
-		this.element.style.height = this.overlay.style.height = (this.controllerElement.offsetHeight - 4) + 'px';
-	},
-
-	destroy: function() {
-		if (document.removeEventListener) {
-			this.domListener = this.show.bind(this);
-			this.controllerElement.removeEventListener('DOMNodeInserted', this.domListener, false);
-		}		
-		this.showPreview();
-		this.controllerElement.style.overflow = '';
-		if (this.element.parentNode) this.element.remove();
-		return this.controller.dirty;
-	},
-
-	toggleVersion: function(ev) {
-		if (ev) Event.stop(ev);
-		if (!this.live) {
-			this.showLive();
-		}
-		else {
-			this.showPreview();
-		}
-		if (riot.publishWidgets.any(this.changesAvailable)) {
-			riot.toolbar.applyButton.enable();
-		}
-		else {
-			riot.toolbar.applyButton.disable();
-		}
-	},
-
-	showPreview: function() {
-		if (!this.live) return;
-		this.live = false;
-		this.setHtml(this.previewHtml);
-		this.updateUI();
-	},
-
-	showLive: function() {
-		if (this.live) return;
-		this.live = true;
-		this.setHtml(this.liveHtml);
-		this.updateUI();
-	},	
-
-	setLiveHtml: function(html) {
-		this.liveHtml = html;
-		this.show();
-	},
-
-	setHtml: function(html) {
-		this.controller.setTempHtml(html, this.live);
-		this.show();
-	},
-
-	updateUI: function() {
-		this.element.toggleClassName(this.className + '-live', this.live);
-		this.element.toggleClassName(this.className + '-preview', !this.live);
-	},
-
-	changesAvailable: function(instance) {
-		return !instance.live;
-	},
-
-	applyChanges: function() {
-		if (!this.live) {
-			ComponentEditor.publish(this.dirtyListIds, this.dirtyContainerIds);
-			this.controller.dirty = false;
-		}
-	}
-});
-
-riot.DiscardWidget = Class.create(riot.PublishWidget, {
-	initialize: function($super, controller) {
-		$super(controller, 'discard');
-	},	
-
-	changesAvailable: function(instance) {
-		return instance.live;
-	},
-	
-	setLiveHtml: function(html) {
-		this.liveHtml = html;
-		this.showLive();
-	},
-	
-	applyChanges: function() {
-		if (this.live) {
-			ComponentEditor.discard(this.dirtyListIds, this.dirtyContainerIds);
-			this.controller.dirty = false;			
-			this.previewHtml = this.liveHtml;			
-		}
-	}
-});
-*/
 
 riot.setLiveHtml = function(html) {
 	if (riot.publishWidgets) { 
@@ -919,15 +714,13 @@ riot.adoptFloatsAndClears = function(root) {
 }
 
 riot.init = function() {
-	// Assign IDs to all controller- and component-elements. We need to do this
+	/*
+	// Assign IDs to all component-elements. We need to do this
 	// so that we can still look up elements after they have been replaced by
 	// clones in the disableEvents() function.
-	$$('.riot-controller').invoke('identify');
 	$$('.riot-component').invoke('identify');
 	
 	// Add pre- and post-apply hooks to the toolbar buttons ...
-	
-	var b = riot.toolbar.buttons;
 	
 	// Disable events if the remove or properties tool is activated
 	b.get('properties').beforeApply = 
@@ -941,6 +734,9 @@ riot.init = function() {
 			$$('.riot-controller').invoke('enableEvents');
 		}
 	};
+	*/
+	
+	var b = riot.toolbar.buttons;
 	
 	// Make lists sortable after moveOn() has been invoked. This has to be
 	// done in reverse order to support nested sortable lists.
@@ -951,30 +747,7 @@ riot.init = function() {
 			});
 		}
 	};
-	/*
-	b.get('publish').beforeApply = 
-	b.get('discard').beforeApply = function(enable) {
-		if (enable) {
-			riot.publishWidgets = [];
-		}
-	};
-	b.get('publish').afterApply = 
-	b.get('discard').afterApply = function(enable) {
-		if (enable) {
-			var refs = riot.publishWidgets.invoke('getReference');
-			ComponentEditor.getLiveListHtml(refs, riot.setLiveHtml);
-			riot.toolbar.applyButton.enable();
-		}
-		else {
-			var dirty = riot.publishWidgets.invoke('destroy').any();
-			riot.publishWidgets = null;
-			riot.toolbar.applyButton.disable();
-			if (!dirty) {
-				riot.toolbar.disablePublishButtons();
-			}
-		}
-	};
-	*/
+	
 	b.get('editImages').precondition = riot.initSwfUpload;
 };
 
@@ -987,6 +760,7 @@ riot.discardOn = function() {
 		visibility: 'visible'
 	}); 
 	$$('body > *:not(#riotPreviewFrame)').invoke('hide');
+	riot.applyFunction = ComponentEditor.discard;
 }
 
 riot.discardOff = function() {
@@ -996,6 +770,7 @@ riot.discardOff = function() {
 
 riot.publishOn = function() {
 	riot.toolbar.applyButton.enable();
+	riot.applyFunction = ComponentEditor.publish;
 }
 
 riot.publishOff = function() {
@@ -1004,6 +779,15 @@ riot.publishOff = function() {
 
 riot.applyOn = function() {
 	riot.toolbar.buttons.get('browse').click();
+	var listIds = $$('.riot-component-list')
+		.collect(riot.getComponentList)
+		.pluck('id');
+			
+	var containerIds = $$('.riot-single-component')
+		.collect(riot.getComponent)
+		.pluck('id'); 
+	
+	riot.applyFunction(listIds, containerIds);
 }
 
 riot.init();

@@ -45,7 +45,6 @@ import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.PasswordGenerator;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.context.PageRequestUtils;
@@ -56,6 +55,7 @@ import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.render.component.ComponentRenderer;
+import org.riotfamily.components.render.component.EditModeComponentRenderer;
 import org.riotfamily.media.dao.MediaDao;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
@@ -84,7 +84,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	private PasswordGenerator tokenGenerator = 
 			new PasswordGenerator(16, true, true, true);
 
-	private Set validTokens = Collections.synchronizedSet(new HashSet());
+	private Set<String> validTokens = Collections.synchronizedSet(new HashSet<String>());
 	
 	private ComponentRepository repository;
 
@@ -92,6 +92,8 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 	private Map tinyMCEProfiles;
 
+	private EditModeComponentRenderer editModeRenderer;
+	
 	public ComponentEditorImpl(ComponentDao componentDao,
 			MediaDao mediaDao, ImageCropper imageCropper,
 			ComponentRepository repository) {
@@ -100,6 +102,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		this.mediaDao = mediaDao;
 		this.imageCropper = imageCropper;
 		this.repository = repository;
+		editModeRenderer = new EditModeComponentRenderer(repository);
 	}
 
 	public void setMessageSource(MessageSource messageSource) {
@@ -188,7 +191,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 *
 	 */
 	public void updateTextChunks(Long componentId, String property,
-			String[] chunks) {
+			String[] chunks) throws RequestContextExpiredException {
 
 		log.debug("Inserting chunks " + StringUtils.arrayToCommaDelimitedString(chunks));
 		Component component = componentDao.loadComponent(componentId);
@@ -205,10 +208,10 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 	/**
 	 * Returns a list of TypeInfo beans indicating which component types are
-	 * valid for the given controller.
+	 * valid for the list with the given id.
 	 */
-	public List<TypeInfo> getValidTypes(String controllerId, Long listId) {
-		ComponentListConfig cfg = getComponentListConfig(controllerId, listId);
+	public List<TypeInfo> getValidTypes(Long listId) {
+		ComponentListConfig cfg = getComponentListConfig(listId);
 		
 		List<String> types = cfg.getValidComponentTypes();
 		Locale locale = getLocale();
@@ -226,14 +229,15 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 * Creates a new Component and inserts it in the list identified
 	 * by the given id.
 	 */
-	public Long insertComponent(Long listId, int position, String type,
-			Map properties) {
+	public String insertComponent(Long listId, int position, String type,
+			Map<String, String> properties) 
+			throws RequestContextExpiredException {
 
 		ComponentList componentList = componentDao.loadComponentList(listId);
 		Component component = createComponent(type, properties);
 		componentList.insertComponent(component, position);
 		componentDao.updateComponentList(componentList);
-		return component.getId();
+		return renderComponent(component);
 	}
 
 	/**
@@ -243,30 +247,44 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	 * @param properties Properties of the version to create
 	 * @return The newly created component
 	 */
-	private Component createComponent(String type, Map properties) {
+	private Component createComponent(String type, Map<String, String> properties) {
 		Component component = repository.createComponent(type, properties);
 		componentDao.saveContent(component);
 		return component;
 	}
 	
-	public void setType(Long containerId, String type) {
-		Component component = componentDao.loadComponent(containerId);
+	public String setType(Long componentId, String type) 
+			throws RequestContextExpiredException {
+		
+		Component component = componentDao.loadComponent(componentId);
 		component.setType(type);
 		ComponentRenderer renderer = repository.getRenderer(type);
 		component.wrapValues(renderer.getDefaults());
-		//componentDao.updateContent(component);
+		return renderComponent(component);
+	}
+	
+	public String renderComponent(Long componentId) 
+			throws RequestContextExpiredException {
+		
+		Component component = componentDao.loadComponent(componentId);
+		return renderComponent(component);
 	}
 
-	private String getHtml(String url, String key, boolean live)
+	private String renderComponent(Component component)
 			throws RequestContextExpiredException {
 
 		try {
+			ComponentRenderer renderer = repository.getRenderer(component);
+			ComponentList list = component.getList();
+			
 			StringWriter sw = new StringWriter();
-			HttpServletRequest request = getWrappedRequest(key);
+			HttpServletRequest request = getWrappedRequest(list.getId().toString());
 			HttpServletResponse response = getCapturingResponse(sw);
-			EditModeUtils.include(request, response, url, live);
+			
+			editModeRenderer.renderComponent(renderer, component,
+					list.indexOf(component), list.getSize(), request, response);
+			
 			return sw.toString();
-
 		}
 		catch (RequestContextExpiredException e) {
 			throw e;
@@ -277,34 +295,14 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		}
 	}
 
-	public List getLiveListHtml(ListRef[] ref) throws RequestContextExpiredException {
-		ArrayList html = new ArrayList();
-		for (int i = 0; i < ref.length; i++) {
-			html.add(getHtml(ref[i].getControllerId(), ref[i].getContextKey(), true));
-		}
-		return html;
-	}
-
-	//TODO Use ListRef as argument
-	public String getPreviewListHtml(String controllerId, Long listId)
-			throws RequestContextExpiredException {
-
-		String contextKey = controllerId;
-		if (listId != null) {
-			contextKey = listId.toString();
-		}
-		return getHtml(controllerId, contextKey, false);
-	}
-
 	public void moveComponent(Long componentId, Long nextComponentId) {
 		Component component = componentDao.loadComponent(componentId);
 		ComponentList componentList = component.getList();
-		List components = componentList.getComponents();
+		List<Component> components = componentList.getComponents();
 		components.remove(component);
 		if (nextComponentId != null) {
 			for (int i = 0; i < components.size(); i++) {
-				Component c = (Component) components.get(i);
-				if (c.getId().equals(nextComponentId)) {
+				if (components.get(i).getId().equals(nextComponentId)) {
 					components.add(i, component);
 					break;
 				}
@@ -320,7 +318,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	public void deleteComponent(Long componentId) {
 		Component component = componentDao.loadComponent(componentId);
 		ComponentList componentList = component.getList();
-		List components = componentList.getComponents();
+		List<Component> components = componentList.getComponents();
 		components.remove(component);
 		componentList.getContainer().setDirty(true);
 		componentDao.updateComponentList(componentList);
@@ -401,11 +399,11 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		return PageRequestUtils.wrapRequest(request, path, key);
 	}
 	
-	private ComponentListConfig getComponentListConfig(String key, Long listId) {
+	private ComponentListConfig getComponentListConfig(Long listId) {
 		WebContext ctx = WebContextFactory.get();
 		HttpServletRequest request = ctx.getHttpServletRequest();
 		String path = ServletUtils.getPath(ctx.getCurrentPage());
-		return PageRequestUtils.getContext(request, path, key).getComponentListConfig(listId);
+		return PageRequestUtils.getContext(request, path, listId.toString()).getComponentListConfig(listId);
 	}
 
 	private HttpServletResponse getCapturingResponse(StringWriter sw) {

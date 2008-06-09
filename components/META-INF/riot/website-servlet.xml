@@ -46,24 +46,13 @@
 			</list>
 		</property>
 	</bean>
-	
-	<!-- Deprecated. Projects should use the "riotInterceptors" bean instead. -->
-	<bean id="storeContextInterceptor" class="org.riotfamily.components.context.StoreContextInterceptor" />
-
-	<override:add ref="riotInterceptors" property="interceptors">
-		<ref local="storeContextInterceptor" />
-	</override:add>
-	
+		
 	<override:properties ref="cachiusHandlerAdapter">
 		<property name="cacheKeyProvider">
 			<bean class="org.riotfamily.components.context.PartialRequestCacheKeyProvider" />
 		</property>
 	</override:properties>
-	
-	<override:properties ref="viewResolver">
-		<property name="viewClass" value="org.riotfamily.components.view.ComponentFreeMarkerView" />
-	</override:properties>
-	
+		
 	<override:properties ref="cachiusHandlerAdapter">
 		<property name="cacheKeyProvider">
 			<bean class="org.riotfamily.components.cache.EditModeAwareCacheKeyProvider" />

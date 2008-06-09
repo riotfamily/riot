@@ -46,7 +46,7 @@ public interface ComponentEditor {
 	public void updateText(Long contentId, String property, String text);
 	
 	public void updateTextChunks(Long componentId, String property,
-			String[] chunks);
+			String[] chunks) throws RequestContextExpiredException;
 
 	public String generateToken();
 	
@@ -60,17 +60,16 @@ public interface ComponentEditor {
 			
 	public void discardImage(Long imageId);
 			
-	public List<TypeInfo> getValidTypes(String controllerId, Long listId);
+	public List<TypeInfo> getValidTypes(Long listId);
 
-	public Long insertComponent(Long listId, int position, String type,
-			Map<String, String> properties);
-
-	public void setType(Long componentId, String type);
-
-	public List<String> getLiveListHtml(ListRef[] ref)
+	public String insertComponent(Long listId, int position, String type,
+			Map<String, String> properties)
 			throws RequestContextExpiredException;
 
-	public String getPreviewListHtml(String controllerId, Long listId)
+	public String setType(Long componentId, String type)
+			throws RequestContextExpiredException;
+	
+	public String renderComponent(Long componentId)
 			throws RequestContextExpiredException;
 
 	public void moveComponent(Long componentId, Long nextComponentId);

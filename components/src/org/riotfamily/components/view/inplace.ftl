@@ -93,7 +93,6 @@
 <#macro entityList listId>
 	<#assign currentListId = listId />
 	<#if editMode>
-		${inplaceMacroHelper.enableOutputWrapping()}
 		<div class="riot-list riot-entity-list" riot:listId="${listId}">
 			<#nested>
 		</div>
@@ -107,7 +106,6 @@
 	<#local previousScope = scope />
 	<#assign scope = object />
 	<#if editMode>
-		${inplaceMacroHelper.enableOutputWrapping()}
 		<#local listId = currentListId />
 		<#if !listId?has_content>
 			<#local listId = inplaceMacroHelper.getDefaultListId(object) />
@@ -218,7 +216,6 @@
 		</#if>
 		
 		<#if editMode>
-			${inplaceMacroHelper.enableOutputWrapping()}
 			<#if tag?has_content>
 				<#local element=tag />
 			<#else>
@@ -282,7 +279,6 @@
 			</#if>	
 		</#if>
 		<#if editMode>
-			${inplaceMacroHelper.enableOutputWrapping()}
 			<#if transform?is_string>
 				<#local srcTemplate = transform />
 			<#else>
@@ -333,7 +329,6 @@
 	<#local previousScope = scope />
 	<#assign scope =  model />
 	<#if editMode>
-		${inplaceMacroHelper.enableOutputWrapping()}
 		<#if !tag?has_content>
 			<#local tag = "span" />
 		</#if>
