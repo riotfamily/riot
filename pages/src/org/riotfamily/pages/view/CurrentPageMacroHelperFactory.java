@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.view.MacroHelperFactory;
-import org.riotfamily.components.context.PageRequestUtils;
+import org.riotfamily.components.context.ComponentRequestUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
@@ -51,7 +51,7 @@ public class CurrentPageMacroHelperFactory implements MacroHelperFactory {
 			HttpServletResponse response) {
 
 		Page page = pageResolver.getPage(request);
-		if (page != null && PageRequestUtils.isPartialRequest(request)) {
+		if (page != null && ComponentRequestUtils.isComponentRequest(request)) {
 			return pageDao.loadPage(page.getId());
 		}
 		return page;

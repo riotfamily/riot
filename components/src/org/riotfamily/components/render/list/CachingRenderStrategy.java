@@ -34,7 +34,7 @@ import org.riotfamily.cachius.CachiusResponseWrapper;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.context.PageRequestUtils;
+import org.riotfamily.components.context.ComponentRequestUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
@@ -69,7 +69,7 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
         appendModeToCacheKey(key);      
         key.append("ComponentList ");
         key.append(list.getId()); //REVIST
-        if (PageRequestUtils.isPartialRequest(request)) {
+        if (ComponentRequestUtils.isComponentRequest(request)) {
             key.append("-partial"); 
         }
         return key.toString();

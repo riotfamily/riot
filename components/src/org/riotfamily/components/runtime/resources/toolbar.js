@@ -44,7 +44,7 @@ riot.Toolbar = Class.create({
 		var dirty = typeof document.body.down('.riot-dirty') != 'undefined';
 		if (!dirty) this.disablePublishButtons();
 		this.buttons.values().invoke('activate');
-		this.buttons.get('browse').click();
+		this.buttons.get('browse').select();
 		this.keepAliveTimer = setInterval(this.keepAlive.bind(this), 60000);
 	},
 
@@ -58,7 +58,7 @@ riot.Toolbar = Class.create({
 		this.buttons.get('discard').disable();
 	},
 	
-	buttonClicked: function(button) {
+	buttonSelected: function(button) {
 		if (this.selectedButton) {
 			this.selectedButton.reset();
 			this.setInspector(null);
@@ -172,14 +172,20 @@ riot.ToolbarButton = Class.create({
 		return false;
 	},
 
-	click: function() {
+	select: function() {
 		if (this.enabled && !this.selected) {
 			this.selected = true;
 			this.element.className = this.getClassName();
-			riot.toolbar.buttonClicked(this);
-			this.applyHandler(true);
+			riot.toolbar.buttonSelected(this);
+			return true;
 		}
 		return false;
+	},
+
+	click: function() {
+		if (this.select()) {
+			this.applyHandler(true);
+		}
 	},
 
 	activate: function() {
@@ -229,6 +235,9 @@ riot.ToolbarButton = Class.create({
 			this.applyHandlerInternal(enable);
 			if (this.afterApply) {
 				this.afterApply(enable);
+			}
+			if (enable && window.onRiotToolbarClick) {
+				onRiotToolbarClick(this.handler);
 			}
 		}
 	},

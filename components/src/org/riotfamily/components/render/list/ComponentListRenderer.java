@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.context.PageRequestContext;
-import org.riotfamily.components.context.PageRequestUtils;
+import org.riotfamily.components.context.ComponentListRequestContext;
+import org.riotfamily.components.context.ComponentRequestUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
@@ -44,6 +44,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 public class ComponentListRenderer {
 
+	public static final String PARENT_ATTRIBUTE = 
+			ComponentListRenderer.class.getName() + ".parent";
+	
 	private ComponentDao componentDao;
 
 	private ComponentRepository componentRepository;
@@ -109,10 +112,10 @@ public class ComponentListRenderer {
 				strategy = editModeRenderStrategy;
 			}
 			
-			PageRequestContext context = PageRequestUtils.createContext(request, list.getId().toString());
+			ComponentListRequestContext context = ComponentRequestUtils.createContext(request, list.getId());
 			if (context != null) {
-				context.setComponentListConfig(list.getId(), config);
-				PageRequestUtils.storeContext(context, request, 120000);
+				context.setComponentListConfig(config);
+				ComponentRequestUtils.storeContext(context, request, 120000);
 			}
 		}
 		else {
@@ -131,6 +134,7 @@ public class ComponentListRenderer {
 
 		ComponentList list;
 		RenderStrategy strategy = liveModeRenderStrategy;
+		request.setAttribute(PARENT_ATTRIBUTE, component);
 		if (EditModeUtils.isEditMode(request)) {
 			list = (ComponentList) component.getValue(key);
 			if (list == null) {
@@ -139,10 +143,10 @@ public class ComponentListRenderer {
 			if (AccessController.isGranted("edit", list.getContainer())) {
 				strategy = editModeRenderStrategy;
 			}
-			PageRequestContext context = PageRequestUtils.createContext(request, list.getId().toString());
+			ComponentListRequestContext context = ComponentRequestUtils.createContext(request, list.getId());
 			if (context != null) {
-				context.setComponentListConfig(list.getId(), config);
-				PageRequestUtils.storeContext(context, request, 120000);
+				context.setComponentListConfig(config);
+				ComponentRequestUtils.storeContext(context, request, 120000);
 			}
 		}
 		else {
@@ -151,7 +155,7 @@ public class ComponentListRenderer {
 		if (list != null) {
 			strategy.render(list, config, request, response);
 		}
+		request.removeAttribute(PARENT_ATTRIBUTE);
 	}
-
 
 }

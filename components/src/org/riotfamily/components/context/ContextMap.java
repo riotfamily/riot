@@ -30,13 +30,13 @@ import java.util.Map;
 
 public class ContextMap implements Serializable {
 
-	private transient Map<String, PageRequestContexts> map;
+	private transient Map<String, ComponentListRequestContexts> map;
 	
 	public void removeExpiredContexts() {
 		if (map != null) {
-			Iterator<PageRequestContexts> it = map.values().iterator();
+			Iterator<ComponentListRequestContexts> it = map.values().iterator();
 			while (it.hasNext()) {
-				PageRequestContexts contexts = it.next();
+				ComponentListRequestContexts contexts = it.next();
 				if (contexts.isExpired()) {
 					it.remove();
 				}
@@ -46,37 +46,37 @@ public class ContextMap implements Serializable {
 	
 	public void touch(String pageUri) {
 		if (map != null) {
-			PageRequestContexts contexts = map.get(pageUri);
+			ComponentListRequestContexts contexts = map.get(pageUri);
 			if (contexts != null) {
 				contexts.touch();
 			}
 		}
 	}
 	
-	public void put(String pageUri, Object contextKey, 
-			PageRequestContext context, long timeToLive) {
+	public void put(String pageUri, Long listId, 
+			ComponentListRequestContext context, long timeToLive) {
 		
 		if (map == null) {
-			 map = new HashMap<String, PageRequestContexts>();
+			 map = new HashMap<String, ComponentListRequestContexts>();
 		}
-		PageRequestContexts contexts = map.get(pageUri);
+		ComponentListRequestContexts contexts = map.get(pageUri);
 		if (contexts == null) {
-			contexts = new PageRequestContexts(timeToLive);
+			contexts = new ComponentListRequestContexts(timeToLive);
 			map.put(pageUri, contexts);
 		}
-		contexts.put(contextKey, context);
+		contexts.put(listId, context);
 	}
 	
-	private PageRequestContexts getContexts(String pageUri) {
+	private ComponentListRequestContexts getContexts(String pageUri) {
 		if (map == null) {
 			return null;
 		}
 		return map.get(pageUri);
 	}
 	
-	public PageRequestContext get(String pageUri, Object contextKey) {
-		PageRequestContexts contexts = getContexts(pageUri);
-		return contexts != null ? contexts.get(contextKey) : null;
+	public ComponentListRequestContext get(String pageUri, Long listId) {
+		ComponentListRequestContexts contexts = getContexts(pageUri);
+		return contexts != null ? contexts.get(listId) : null;
 	}
 
 }

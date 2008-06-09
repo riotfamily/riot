@@ -30,37 +30,37 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.web.util.ServletUtils;
 
-public final class PageRequestUtils {
+public final class ComponentRequestUtils {
 
 	private static final String CONTEXT_MAP_ATTRIBUTE =
-			PageRequestUtils.class.getName() + ".contextMap";
+			ComponentRequestUtils.class.getName() + ".contextMap";
 
-	private static Log log = LogFactory.getLog(PageRequestUtils.class);
+	private static Log log = LogFactory.getLog(ComponentRequestUtils.class);
 	
-	private PageRequestUtils() {
+	private ComponentRequestUtils() {
 	}
 	
-	public static boolean isPartialRequest(HttpServletRequest request) {
-		return PartialPageRequest.isWrapped(request);
+	public static boolean isComponentRequest(HttpServletRequest request) {
+		return ComponentRequest.isWrapped(request);
 	}
 	
-	public static PageRequestContext createContext(HttpServletRequest request, 
-			Object contextKey) {
+	public static ComponentListRequestContext createContext(HttpServletRequest request, 
+			Long listId) {
 		
-		if (PartialPageRequest.isWrapped(request, contextKey)) {
+		if (ComponentRequest.isWrapped(request, listId)) {
 			log.debug("Request is already wrapped - ignoring it ...");
 			return null;
 		}
-		return new PageRequestContext(contextKey, request);
+		return new ComponentListRequestContext(listId, request);
 	}
 	
-	public static void storeContext(PageRequestContext context,
+	public static void storeContext(ComponentListRequestContext context,
 			HttpServletRequest request, int timeToLive) {
 		
 		String uri = ServletUtils.getOriginatingRequestUri(request);
-		log.debug("Storing context for " + uri + "#" + context.getKey());
+		log.debug("Storing context for " + uri + "#" + context.getListId());
 		ContextMap contextMap = getContextMap(request);
-		contextMap.put(uri, context.getKey(), context, timeToLive);
+		contextMap.put(uri, context.getListId(), context, timeToLive);
 	}
 	
 	public static void touchContext(HttpServletRequest request, String pageUri) {
@@ -69,23 +69,23 @@ public final class PageRequestUtils {
 		contextMap.removeExpiredContexts();
 	}
 
-	public static PageRequestContext getContext(HttpServletRequest request, 
-			String pageUri, Object contextKey) {
+	public static ComponentListRequestContext getContext(HttpServletRequest request, 
+			String pageUri, Long listId) {
 		
 		ContextMap contexts = getContextMap(request);
-		return contexts.get(pageUri, contextKey);
+		return contexts.get(pageUri, listId);
 	}
 	
 	public static HttpServletRequest wrapRequest(
-			HttpServletRequest request, String pageUri, String contextKey) 
+			HttpServletRequest request, String pageUri, Long listId) 
 			throws RequestContextExpiredException {
 		
-		log.debug("Wrapping context for key " + contextKey);
-		PageRequestContext context = getContext(request, pageUri, contextKey);
+		log.debug("Wrapping context for list " + listId);
+		ComponentListRequestContext context = getContext(request, pageUri, listId);
 		if (context == null) {
-			throw new RequestContextExpiredException(pageUri, contextKey);
+			throw new RequestContextExpiredException(pageUri, listId);
 		}
-		return new PartialPageRequest(request, context);
+		return new ComponentRequest(request, context);
 	}
 	
 	private static ContextMap getContextMap(HttpServletRequest request) {

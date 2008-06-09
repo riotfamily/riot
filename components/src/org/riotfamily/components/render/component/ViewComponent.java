@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.web.view.ViewResolutionException;
 import org.riotfamily.common.web.view.ViewResolverHelper;
 import org.riotfamily.components.model.Component;
+import org.riotfamily.components.render.list.ComponentListRenderer;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -64,7 +65,8 @@ public class ViewComponent extends AbstractComponent {
 		model.put(THIS, component);
 		model.put(POSITION, new Integer(position));
 		model.put(LIST_SIZE, new Integer(listSize));
-
+		model.put(PARENT, request.getAttribute(ComponentListRenderer.PARENT_ATTRIBUTE));
+		
 		ModelAndView mv = new ModelAndView(viewName, model);
 		try {
 			View view = new ViewResolverHelper(

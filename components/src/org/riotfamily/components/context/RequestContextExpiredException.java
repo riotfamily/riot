@@ -29,8 +29,8 @@ public class RequestContextExpiredException extends Exception {
 		super("Request context has expired.");
 	}
 
-	public RequestContextExpiredException(String pageUri, String contextKey) {
-		super("Request context for " + pageUri + " (key: " + contextKey 
+	public RequestContextExpiredException(String pageUri, Long listId) {
+		super("Request context for " + pageUri + " (listId: " + listId 
 				+ ") has expired.");
 	}
 

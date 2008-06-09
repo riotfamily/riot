@@ -37,7 +37,7 @@ public class PartialRequestCacheKeyProvider extends RiotAwareCacheKeyProvider {
 	public String getCacheKey(CacheableController controller, 
 			HttpServletRequest request) {
 		
-		if (PageRequestUtils.isPartialRequest(request)) {
+		if (ComponentRequestUtils.isComponentRequest(request)) {
 			return null;
 		}
 		return super.getCacheKey(controller, request);

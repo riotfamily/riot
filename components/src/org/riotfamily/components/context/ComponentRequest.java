@@ -36,17 +36,17 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import org.riotfamily.common.collection.IteratorEnumeration;
 import org.springframework.util.Assert;
 
-public class PartialPageRequest extends HttpServletRequestWrapper {
+public class ComponentRequest extends HttpServletRequestWrapper {
 
 	private static final String CONTEXT_KEY =
-			PartialPageRequest.class.getName() + ".contextKey";
+			ComponentRequest.class.getName() + ".contextKey";
 
-	private PageRequestContext context;
+	private ComponentListRequestContext context;
 
 	private HashMap<String, Object> attributes = new HashMap<String, Object>();
 
-	public PartialPageRequest(HttpServletRequest request,
-			PageRequestContext context) {
+	public ComponentRequest(HttpServletRequest request,
+			ComponentListRequestContext context) {
 
 		super(request);
 		this.context = context;
@@ -109,7 +109,7 @@ public class PartialPageRequest extends HttpServletRequestWrapper {
 
 	public Object getAttribute(String name) {
 		if (name.equals(CONTEXT_KEY)) {
-			return context.getKey();
+			return context.getListId();
 		}
 		if (name.startsWith("javax.servlet.")) {
 			return super.getAttribute(name);
@@ -160,9 +160,9 @@ public class PartialPageRequest extends HttpServletRequestWrapper {
 		return contextKey.equals(request.getAttribute(CONTEXT_KEY));
 	}
 	
-	public static PageRequestContext getContext(HttpServletRequest request) {
-		if (request instanceof PartialPageRequest) {
-			PartialPageRequest pr = (PartialPageRequest) request;
+	public static ComponentListRequestContext getContext(HttpServletRequest request) {
+		if (request instanceof ComponentRequest) {
+			ComponentRequest pr = (ComponentRequest) request;
 			return pr.context;
 		}
 		return null;

@@ -47,6 +47,8 @@ public abstract class AbstractComponent implements ComponentRenderer {
 	public static final String COMPONENT_ID = "componentId";
 
 	public static final String THIS = "this";
+	
+	public static final String PARENT = "parent";
 
 	public static final String POSITION = "position";
 	

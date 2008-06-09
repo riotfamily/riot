@@ -47,7 +47,7 @@ import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.config.ComponentRepository;
-import org.riotfamily.components.context.PageRequestUtils;
+import org.riotfamily.components.context.ComponentRequestUtils;
 import org.riotfamily.components.context.RequestContextExpiredException;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
@@ -278,7 +278,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 			ComponentList list = component.getList();
 			
 			StringWriter sw = new StringWriter();
-			HttpServletRequest request = getWrappedRequest(list.getId().toString());
+			HttpServletRequest request = getWrappedRequest(list.getId());
 			HttpServletResponse response = getCapturingResponse(sw);
 			
 			editModeRenderer.renderComponent(renderer, component,
@@ -376,7 +376,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		WebContext ctx = WebContextFactory.get();
 		HttpServletRequest request = ctx.getHttpServletRequest();
 		String path = ServletUtils.getPath(ctx.getCurrentPage());
-		PageRequestUtils.touchContext(request, path);
+		ComponentRequestUtils.touchContext(request, path);
 	}
 
 	/**
@@ -390,20 +390,20 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 	/* Utility methods */
 
-	private HttpServletRequest getWrappedRequest(String key)
+	private HttpServletRequest getWrappedRequest(Long listId)
 			throws RequestContextExpiredException {
 
 		WebContext ctx = WebContextFactory.get();
 		HttpServletRequest request = ctx.getHttpServletRequest();
 		String path = ServletUtils.getPath(ctx.getCurrentPage());
-		return PageRequestUtils.wrapRequest(request, path, key);
+		return ComponentRequestUtils.wrapRequest(request, path, listId);
 	}
 	
 	private ComponentListConfig getComponentListConfig(Long listId) {
 		WebContext ctx = WebContextFactory.get();
 		HttpServletRequest request = ctx.getHttpServletRequest();
 		String path = ServletUtils.getPath(ctx.getCurrentPage());
-		return PageRequestUtils.getContext(request, path, listId.toString()).getComponentListConfig(listId);
+		return ComponentRequestUtils.getContext(request, path, listId).getComponentListConfig();
 	}
 
 	private HttpServletResponse getCapturingResponse(StringWriter sw) {

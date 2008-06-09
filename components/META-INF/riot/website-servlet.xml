@@ -49,7 +49,7 @@
 		
 	<override:properties ref="cachiusHandlerAdapter">
 		<property name="cacheKeyProvider">
-			<bean class="org.riotfamily.components.context.PartialRequestCacheKeyProvider" />
+			<bean class="org.riotfamily.components.context.ComponentRequestCacheKeyProvider" />
 		</property>
 	</override:properties>
 		

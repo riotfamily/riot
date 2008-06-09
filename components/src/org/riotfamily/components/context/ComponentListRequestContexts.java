@@ -30,16 +30,16 @@ import java.util.Map;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PageRequestContexts {
+public class ComponentListRequestContexts {
 
 	private long timestamp;
 	
 	private long timeToLive;
 	
-	private Map<Object, PageRequestContext> contexts = 
-			new HashMap<Object, PageRequestContext>();
+	private Map<Long, ComponentListRequestContext> contexts = 
+			new HashMap<Long, ComponentListRequestContext>();
 	
-	public PageRequestContexts(long timeToLive) {
+	public ComponentListRequestContexts(long timeToLive) {
 		this.timestamp = System.currentTimeMillis();
 		this.timeToLive = timeToLive;
 	}
@@ -52,11 +52,11 @@ public class PageRequestContexts {
 		timestamp = System.currentTimeMillis();
 	}
 	
-	public void put(Object key, PageRequestContext context) {
-		contexts.put(key, context);
+	public void put(Long listId, ComponentListRequestContext context) {
+		contexts.put(listId, context);
 	}
 	
-	public PageRequestContext get(Object key) {
+	public ComponentListRequestContext get(Object key) {
 		return contexts.get(key);
 	}
 	
