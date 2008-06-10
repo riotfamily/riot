@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.io.CommandUtils;
+import org.riotfamily.common.io.RuntimeCommand;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -62,7 +63,7 @@ public class ImageMagick implements InitializingBean {
 				convertCommand = getDefaultConvertCommand();
 			}
 			log.info("Looking for ImageMagick binary: " + convertCommand);
-			String version = CommandUtils.exec(convertCommand, "-version");
+			String version = new RuntimeCommand(new String[] {convertCommand, "-version"}).exec().getOutput();
 			log.info(version);
 			majorVersion = FormatUtils.extractInt(version, "ImageMagick ([0-9])");
 			log.info("Major version: " + majorVersion);
