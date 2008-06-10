@@ -63,7 +63,7 @@ public interface ListParams {
 	 * Returns a list of {@link Order} objects that should be used to sort
 	 * the list.
 	 */
-	public List getOrder();
+	public List<Order> getOrder();
 
 	/**
 	 * Returns the maximum number of objects that should be displayed on

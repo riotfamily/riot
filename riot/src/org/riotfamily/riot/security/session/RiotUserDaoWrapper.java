@@ -73,7 +73,7 @@ public class RiotUserDaoWrapper implements RiotUserDao {
 		});
 	}
 
-	public Class getEntityClass() {
+	public Class<?> getEntityClass() {
 		return wrappedInstance.getEntityClass();
 	}
 
@@ -83,7 +83,7 @@ public class RiotUserDaoWrapper implements RiotUserDao {
 		return wrappedInstance.getListSize(parent, params);
 	}
 	
-	public Collection list(Object parent, ListParams params) 
+	public Collection<?> list(Object parent, ListParams params) 
 			throws DataAccessException {
 		
 		return wrappedInstance.list(parent, params);

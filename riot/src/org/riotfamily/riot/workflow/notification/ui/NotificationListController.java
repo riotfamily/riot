@@ -32,6 +32,7 @@ import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.view.JsonView;
 import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.riot.workflow.notification.Notification;
 import org.riotfamily.riot.workflow.notification.NotificationDao;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -66,7 +67,7 @@ public class NotificationListController implements Controller {
 			return null;
 		}
 		
-		List notifications = dao.getNotifications(userId);
+		List<Notification> notifications = dao.getNotifications(userId);
 		
 		if (ServletUtils.isXmlHttpRequest(request)) {
 			return new ModelAndView(new JsonView(), 

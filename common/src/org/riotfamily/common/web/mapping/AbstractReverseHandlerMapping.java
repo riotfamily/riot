@@ -55,7 +55,7 @@ public abstract class AbstractReverseHandlerMapping
 	public String getUrlForHandler(String handlerName, String prefix, 
 			Object attributes, UrlResolverContext context) {
 		
-		Map<String, Object> defaults = getDefaults(context);
+		Map<String, ?> defaults = getDefaults(context);
 		return getUrlForHandler(handlerName, prefix, attributes, defaults, context);
 	}
 	
@@ -63,7 +63,7 @@ public abstract class AbstractReverseHandlerMapping
 	 * Returns a Map of default values that are used to build URLs. The default
 	 * implementation return <code>null</code>.
 	 */
-	protected Map<String, Object> getDefaults(UrlResolverContext context) {
+	protected Map<String, ?> getDefaults(UrlResolverContext context) {
 		return null;
 	}
 	
@@ -79,7 +79,7 @@ public abstract class AbstractReverseHandlerMapping
 	 */
 	@SuppressWarnings("unchecked")
 	protected String getUrlForHandler(String handlerName, String prefix, 
-			Object attributes, Map<String, Object> defaults, 
+			Object attributes, Map<String, ?> defaults, 
 			UrlResolverContext context) {
 		
 		if (attributes == null) {
@@ -87,7 +87,7 @@ public abstract class AbstractReverseHandlerMapping
 		}
 		if (attributes instanceof Map) {
 			return getUrlForHandlerWithMap(handlerName, 
-					(Map<String, Object>) attributes, 
+					(Map<String, ?>) attributes, 
 					defaults, prefix, context); 
 		}
 		if (ClassUtils.isAssignable(String.class, attributes.getClass()) ||
@@ -105,7 +105,7 @@ public abstract class AbstractReverseHandlerMapping
 	 * contains wildcards all of them must be present in the defaults map.
 	 */
 	private String getUrlForHandler(String handlerName, 
-			Map<String, Object> defaults, String prefix, 
+			Map<String, ?> defaults, String prefix, 
 			UrlResolverContext context) {
 		
 		AttributePattern p = getPatternForHandler(handlerName, prefix, context, 
@@ -122,7 +122,7 @@ public abstract class AbstractReverseHandlerMapping
 	 * contains wildcards all of them must be present in the defaults map.
 	 */
 	private String getUrlForHandlerWithAttribute(String handlerName, 
-			Object attribute, Map<String, Object> defaults, String prefix, 
+			Object attribute, Map<String, ?> defaults, String prefix, 
 			UrlResolverContext context) {
 		
 		AttributePattern p = getPatternForHandler(handlerName, prefix, context, 
@@ -140,7 +140,7 @@ public abstract class AbstractReverseHandlerMapping
 	 * The wildcard replacements are taken from the given Map.
 	 */
 	private String getUrlForHandlerWithMap(String beanName, 
-			Map<String, Object> attributes, Map<String, Object> defaults, 
+			Map<String, ?> attributes, Map<String, ?> defaults, 
 			String prefix, UrlResolverContext context) {
 		
 		List<AttributePattern> patterns = getPatternsForHandler(beanName, prefix, context);
@@ -164,7 +164,7 @@ public abstract class AbstractReverseHandlerMapping
 	 * @throws IllegalArgumentException if more than one mapping is registered
 	 */
 	private String getUrlForHandlerWithBean(String beanName, Object bean,
-			Map<String, Object> defaults, String prefix, 
+			Map<String, ?> defaults, String prefix, 
 			UrlResolverContext context) {
 		
 		AttributePattern p = getPatternForHandler(beanName, prefix, context);
@@ -222,7 +222,7 @@ public abstract class AbstractReverseHandlerMapping
 	 */
 	protected AttributePattern getPatternForHandler(String handlerName, 
 			String prefix, UrlResolverContext context, 
-			Map<String, Object> attributes, Map<String, Object> defaults, 
+			Map<String, Object> attributes, Map<String, ?> defaults, 
 			int anonymousWildcards) {
 		
 		List<AttributePattern> patterns = getPatternsForHandler(handlerName, prefix, context);

@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.security;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.riot.security.auth.RiotUser;
@@ -46,14 +45,14 @@ public final class AccessController {
 	private AccessController() {
 	}
 	
-	private static List policies;
+	private static List<AuthorizationPolicy> policies;
 
 	/**
 	 * The {@link AccessControlInitializer} sets a list of 
 	 * {@link AuthorizationPolicy policies} so that they can be accessed 
 	 * from a static context.
 	 */
-	static void setPolicies(List policies) {
+	static void setPolicies(List<AuthorizationPolicy> policies) {
 		AccessController.policies = policies;
 	}
 		
@@ -72,9 +71,7 @@ public final class AccessController {
 	public static void checkPermission(String action, Object object) {
 		RiotUser subject = getCurrentUser();
 		if (subject != null) {
-			Iterator it = policies.iterator();
-			while (it.hasNext()) {
-				AuthorizationPolicy policy = (AuthorizationPolicy) it.next();
+			for (AuthorizationPolicy policy : policies) {
 				int access = policy.checkPermission(subject, action, object);
 				if (access == AuthorizationPolicy.ACCESS_GRANTED) {
 					return;
@@ -89,9 +86,7 @@ public final class AccessController {
 
 	public static boolean isGranted(RiotUser user, String action, Object object) {
 		if (user != null) {
-			Iterator it = policies.iterator();
-			while (it.hasNext()) {
-				AuthorizationPolicy policy = (AuthorizationPolicy) it.next();
+			for (AuthorizationPolicy policy : policies) {
 				int access = policy.checkPermission(user, action, object);
 				if (access == AuthorizationPolicy.ACCESS_GRANTED) {
 					return true;

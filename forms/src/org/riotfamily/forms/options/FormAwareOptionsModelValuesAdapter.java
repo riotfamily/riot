@@ -38,7 +38,7 @@ public class FormAwareOptionsModelValuesAdapter implements OptionValuesAdapter {
 		return model instanceof FormAwareOptionsModel;
 	}
 	
-	public Collection getValues(Object model, Form form) {
+	public Collection<?> getValues(Object model, Form form) {
 		FormAwareOptionsModel optionsModel = (FormAwareOptionsModel) model;
 		return optionsModel.getOptionsValues(form);
 	}

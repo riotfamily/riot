@@ -24,7 +24,6 @@
 package org.riotfamily.riot.list.support;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.riot.dao.RiotDao;
@@ -38,11 +37,11 @@ public class ListSetupBean implements InitializingBean {
 
 	private RiotDao dao;
 	
-	private List items;
+	private List<?> items;
 
 	private PlatformTransactionManager transactionManager;
 	
-	public void setItems(List items) {
+	public void setItems(List<?> items) {
 		this.items = items;
 	}
 
@@ -56,7 +55,7 @@ public class ListSetupBean implements InitializingBean {
 
 	public void afterPropertiesSet() throws Exception {
 		ListParamsImpl params = new ListParamsImpl();
-		Collection c = dao.list(null, params);
+		Collection<?> c = dao.list(null, params);
 		if (c.isEmpty()) {
 			new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 				protected void doInTransactionWithoutResult(TransactionStatus ts) {
@@ -67,9 +66,7 @@ public class ListSetupBean implements InitializingBean {
 	}	
 	
 	protected void saveItems() {
-		Iterator it = items.iterator();
-		while (it.hasNext()) {
-			Object item = it.next();
+		for (Object item : items) {
 			dao.save(item, null);
 		}
 	}

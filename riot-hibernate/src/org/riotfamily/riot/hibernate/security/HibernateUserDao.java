@@ -62,7 +62,7 @@ public class HibernateUserDao extends HqlDao implements RiotUserDao,
 	 * @throws IllegalArgumentException if the given class does not implement 
 	 *         the {@link RiotUser} interface.
 	 */
-	public void setEntityClass(Class entityClass) {
+	public void setEntityClass(Class<?> entityClass) {
 		Assert.isAssignable(RiotUser.class, entityClass);
 		super.setEntityClass(entityClass);
 	}

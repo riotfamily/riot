@@ -33,6 +33,6 @@ import org.riotfamily.forms.Form;
  */
 public interface FormAwareOptionsModel {
 
-	public Collection getOptionsValues(Form form);
+	public Collection<?> getOptionsValues(Form form);
 
 }

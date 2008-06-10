@@ -36,7 +36,7 @@ public class HqlOptionsModel extends HibernateSupport implements OptionsModel {
 		this.hql = hql;
 	}
 
-	public Collection getOptionValues() {
+	public Collection<?> getOptionValues() {
 		return getSession().createQuery(hql).list();
 	}
 

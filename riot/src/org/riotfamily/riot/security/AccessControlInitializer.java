@@ -40,6 +40,7 @@ import org.springframework.core.OrderComparator;
  */
 public class AccessControlInitializer implements ApplicationContextAware {
 	
+	@SuppressWarnings("unchecked")
 	public void setApplicationContext(ApplicationContext context) {
 		ArrayList policies = new ArrayList();
 		policies.addAll(BeanFactoryUtils.beansOfTypeIncludingAncestors(

@@ -35,16 +35,17 @@ import org.riotfamily.riot.workflow.notification.NotificationDao;
 
 public class DefaultNotificationDao implements NotificationDao {
 	
-	private List notifications = new ArrayList();
+	private List<Notification> notifications = new ArrayList<Notification>();
 	
-	private Map notificationsReadByUser = new HashMap();
+	private Map<String, Set<Long>> notificationsReadByUser = 
+			new HashMap<String, Set<Long>>();
 	
 	
 	public DefaultNotificationDao() {
 	}
 	
-	public List getNotifications(String userId) {
-		Set readNotificationIds = (Set) notificationsReadByUser.get(userId);
+	public List<Notification> getNotifications(String userId) {
+		Set<Long> readNotificationIds = notificationsReadByUser.get(userId);
 		if (readNotificationIds == null) {
 			return notifications;
 		}
@@ -53,10 +54,9 @@ public class DefaultNotificationDao implements NotificationDao {
 		}		
 	}
 	
-	private List getUnreadNotifications(Set readNotificationIds) {
-		List unreadNotifications = new ArrayList();
-		for (int i = 0; i < notifications.size(); i++) {
-			Notification notification = (Notification) notifications.get(i);
+	private List<Notification> getUnreadNotifications(Set<Long> readNotificationIds) {
+		List<Notification> unreadNotifications = new ArrayList<Notification>();
+		for (Notification notification : notifications) {
 			if (!readNotificationIds.contains(notification.getId())) {
 				unreadNotifications.add(notification);
 			}
@@ -65,9 +65,9 @@ public class DefaultNotificationDao implements NotificationDao {
 	}
 
 	public void markAsRead(String userId, Long notificationId) {
-		Set readNotifications = (Set) notificationsReadByUser.get(userId);
+		Set<Long> readNotifications = notificationsReadByUser.get(userId);
 		if (readNotifications == null) {
-			readNotifications = new HashSet();
+			readNotifications = new HashSet<Long>();
 			notificationsReadByUser.put(userId, readNotifications);
 		}
 		readNotifications.add(notificationId);		

@@ -26,6 +26,7 @@ package org.riotfamily.riot.list.support;
 import java.util.List;
 
 import org.riotfamily.riot.dao.ListParams;
+import org.riotfamily.riot.dao.Order;
 
 /**
  * @author alf
@@ -45,7 +46,7 @@ public class EmptyListParams implements ListParams {
 		return 0;
 	}
 
-	public List getOrder() {
+	public List<Order> getOrder() {
 		return null;
 	}
 

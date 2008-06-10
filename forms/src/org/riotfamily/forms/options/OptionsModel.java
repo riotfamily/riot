@@ -30,6 +30,6 @@ import java.util.Collection;
  */
 public interface OptionsModel {
 	
-	public Collection getOptionValues();
+	public Collection<?> getOptionValues();
 
 }

@@ -38,7 +38,7 @@ public class CollectionOptionValuesAdapter implements OptionValuesAdapter {
 		return model instanceof Collection;
 	}
 	
-	public Collection getValues(Object model, Form form) {
-		return (Collection) model;
+	public Collection<?> getValues(Object model, Form form) {
+		return (Collection<?>) model;
 	}
 }

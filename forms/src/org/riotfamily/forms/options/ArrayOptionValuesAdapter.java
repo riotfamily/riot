@@ -39,7 +39,7 @@ public class ArrayOptionValuesAdapter implements OptionValuesAdapter {
 		return model.getClass().isArray();
 	}
 	
-	public Collection getValues(Object model, Form form) {
+	public Collection<?> getValues(Object model, Form form) {
 		return CollectionUtils.arrayToList(model);
 	}
 }

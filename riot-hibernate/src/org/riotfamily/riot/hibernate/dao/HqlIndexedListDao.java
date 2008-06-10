@@ -35,10 +35,10 @@ public class HqlIndexedListDao extends HqlCollectionDao
 	public void swapEntity(Object entity, Object parent, 
     		ListParams params, int swapWith) {
     	
-    	List items = listInternal(parent, params);
+    	List<?> items = listInternal(parent, params);
     	Object nextItem = items.get(swapWith);
     	
-    	List list = (List) getCollection(parent);
+    	List<?> list = (List<?>) getCollection(parent);
     	Collections.swap(list, list.indexOf(entity), list.indexOf(nextItem));
     	getSession().update(parent);
 	}

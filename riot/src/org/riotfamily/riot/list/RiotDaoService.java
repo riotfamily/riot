@@ -41,7 +41,7 @@ public class RiotDaoService {
 		return listRepository.getListConfig(listId).getDao();
 	}
 	
-	public String getDefaultListId(Class entityClass) {
+	public String getDefaultListId(Class<?> entityClass) {
 		return listRepository.getListConfig(entityClass).getId();
 	}
 

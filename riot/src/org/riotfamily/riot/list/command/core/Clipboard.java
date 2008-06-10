@@ -25,7 +25,6 @@ package org.riotfamily.riot.list.command.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -55,7 +54,7 @@ public class Clipboard {
 
 	private int mode;
 
-	private LinkedHashSet items = new LinkedHashSet();
+	private LinkedHashSet<ClipboardItem> items = new LinkedHashSet<ClipboardItem>();
 	
 
 	public static Clipboard get(CommandContext context) {
@@ -92,27 +91,23 @@ public class Clipboard {
 		return mode == MODE_EMPTY;
 	}
 
-	public List getObjects() {
+	public List<Object> getObjects() {
 		if (isEmpty()) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
-		List result = new ArrayList(items.size());
-		Iterator it = items.iterator();
-		while (it.hasNext()) {
-			ClipboardItem item = (ClipboardItem) it.next();
+		List<Object> result = new ArrayList<Object>(items.size());
+		for (ClipboardItem item : items) {
 			result.add(item.loadObject());
 		}
 		return result;
 	}
 	
-	public List getObjectIds() {
+	public List<String> getObjectIds() {
 		if (isEmpty()) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
-		List result = new ArrayList(items.size());
-		Iterator it = items.iterator();
-		while (it.hasNext()) {
-			ClipboardItem item = (ClipboardItem) it.next();
+		List<String> result = new ArrayList<String>(items.size());
+		for (ClipboardItem item : items) {
 			result.add(item.objectId);
 		}
 		return result;
@@ -147,9 +142,7 @@ public class Clipboard {
 
 	private CommandResult pasteCut(CommandContext context) {
 		BatchResult result = new BatchResult();
-		Iterator it = items.iterator();
-		while (it.hasNext()) {
-			ClipboardItem item = (ClipboardItem) it.next();
+		for (ClipboardItem item : items) {
 			Object bean = item.loadObject();
 			CutAndPasteEnabledDao dao = (CutAndPasteEnabledDao) context.getDao();
 			dao.addChild(bean, context.getParent());
@@ -172,9 +165,7 @@ public class Clipboard {
 	private CommandResult pasteCopied(CommandContext context) {
 		Object parent = context.getParent();
 		CopyAndPasteEnabledDao dao = (CopyAndPasteEnabledDao) context.getDao();
-		Iterator it = items.iterator();
-		while (it.hasNext()) {
-			ClipboardItem item = (ClipboardItem) it.next();
+		for (ClipboardItem item : items) {
 			Object bean = dao.load(item.objectId);
 			dao.addCopy(bean, parent);
 		}
@@ -196,9 +187,7 @@ public class Clipboard {
 	}
 
 	private boolean isSameParent(CommandContext context) {
-		Iterator it = items.iterator();
-		while (it.hasNext()) {
-			ClipboardItem item = (ClipboardItem) it.next();
+		for (ClipboardItem item : items) {
 			if (ObjectUtils.nullSafeEquals(context.getParentId(), item.parentId)) {
 				return true;
 			}
@@ -212,9 +201,7 @@ public class Clipboard {
 					null, context.getParentId(), context.getParentEditorId(),
 					context.getMessageResolver());
 
-			Iterator it = items.iterator();
-			while (it.hasNext()) {
-				ClipboardItem item = (ClipboardItem) it.next();
+			for (ClipboardItem item : items) {
 				EditorReference itemRef = ref;
 				//FIXME Break if itemRef belongs to another list
 				while (itemRef != null) {
@@ -235,10 +222,8 @@ public class Clipboard {
 	}
 
 	private boolean isCompatibleEntityClass(CommandContext context) {
-		Class daoEntityClass = context.getDao().getEntityClass();
-		Iterator it = items.iterator();
-		while (it.hasNext()) {
-			ClipboardItem item = (ClipboardItem) it.next();
+		Class<?> daoEntityClass = context.getDao().getEntityClass();
+		for (ClipboardItem item : items) {
 			RiotDao sourceDao = item.listDefinition.getListConfig().getDao();
 			if (!daoEntityClass.equals(sourceDao.getEntityClass())) {
 				return false;

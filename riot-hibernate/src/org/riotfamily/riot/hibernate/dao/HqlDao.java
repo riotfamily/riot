@@ -50,7 +50,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 
 	private static final Log log = LogFactory.getLog(HqlDao.class);
 
-    private Class entityClass;
+    private Class<?> entityClass;
 
     private boolean polymorph = true;
 
@@ -63,14 +63,14 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 	/**
      * @return Returns the itemClass.
      */
-    public Class getEntityClass() {
+    public Class<?> getEntityClass() {
         return entityClass;
     }
 
     /**
      * @param itemClass The itemClass to set.
      */
-    public void setEntityClass(Class itemClass) {
+    public void setEntityClass(Class<?> itemClass) {
         this.entityClass = itemClass;
     }
 
@@ -113,11 +113,11 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 	/**
      * Returns a list of items.
      */
-    public Collection list(Object parent, ListParams params) {
+    public Collection<?> list(Object parent, ListParams params) {
         return listInternal(parent, params);
     }
 
-    protected List listInternal(Object parent, ListParams params) {
+    protected List<?> listInternal(Object parent, ListParams params) {
     	Query query = createQuery(buildHql(parent, params));
     	setQueryParameters(query, parent, params);
         if (params.getPageSize() > 0) {
@@ -232,9 +232,9 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     protected String getOrderBy(ListParams params) {
         StringBuffer sb = new StringBuffer();
         if (params.hasOrder()) {
-        	Iterator it = params.getOrder().iterator();
+        	Iterator<Order> it = params.getOrder().iterator();
         	while (it.hasNext()) {
-        		Order order = (Order) it.next();
+        		Order order = it.next();
         		if (!order.isCaseSensitive()) {
         			sb.append(" lower(");
         		}
@@ -289,7 +289,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 
     	Assert.notNull(positionProperty, "A positionProperty must be specified.");
 
-    	List items = listInternal(parent, params);
+    	List<?> items = listInternal(parent, params);
     	Object nextItem = items.get(swapWith);
 
     	Object pos1 = PropertyUtils.getProperty(item, positionProperty);

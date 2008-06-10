@@ -24,12 +24,12 @@
 package org.riotfamily.riot.list.command.core;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
+import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.list.command.result.BatchResult;
 import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
@@ -52,9 +52,7 @@ public class CutCommand extends AbstractCommand implements BatchCommand {
 	public CommandResult execute(CommandContext context) {
 		BatchResult result = new BatchResult();
 		Clipboard clipboard = Clipboard.get(context);
-		Iterator it = clipboard.getObjectIds().iterator();
-		while (it.hasNext()) {
-			String objectId = (String) it.next();
+		for (String objectId : clipboard.getObjectIds()) {
 			result.add(new RefreshSiblingsResult(objectId));
 		}
 		clipboard.cut(context);
@@ -66,7 +64,7 @@ public class CutCommand extends AbstractCommand implements BatchCommand {
 		return null;
 	}
 
-	public List getBatchStates(CommandContext context) {
+	public List<CommandState> getBatchStates(CommandContext context) {
 		return Collections.singletonList(getState(context, ACTION_CUT));
 	}
 }

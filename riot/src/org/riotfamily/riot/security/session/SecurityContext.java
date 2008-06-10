@@ -33,14 +33,14 @@ import org.riotfamily.riot.security.auth.RiotUser;
  */
 public class SecurityContext {
 
-	private static ThreadLocal threadLocal = new ThreadLocal();
+	private static ThreadLocal<RiotUser> threadLocal = new ThreadLocal<RiotUser>();
 	
 	public static void bindUserToCurrentThread(RiotUser user) {
 		threadLocal.set(user);
 	}
 	
 	public static RiotUser getCurrentUser() {
-		return (RiotUser) threadLocal.get();
+		return threadLocal.get();
 	}
 	
 	public static void resetUser() {

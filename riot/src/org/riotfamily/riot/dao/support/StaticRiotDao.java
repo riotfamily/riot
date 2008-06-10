@@ -36,27 +36,27 @@ import org.springframework.util.Assert;
  */
 public class StaticRiotDao extends RiotDaoAdapter {
 
-	private List items;
+	private List<?> items;
 	
-	private Class entityClass;
+	private Class<?> entityClass;
 	
-	public StaticRiotDao(List items) {
+	public StaticRiotDao(List<?> items) {
 		Assert.notEmpty(items);
 		this.items = items;
 	}
 
-	public void setEntityClass(Class entityClass) {
+	public void setEntityClass(Class<?> entityClass) {
 		this.entityClass = entityClass;
 	}
 	
-	public Class getEntityClass() {
+	public Class<?> getEntityClass() {
 		if (entityClass == null) {
 			entityClass = items.get(0).getClass(); 
 		}
 		return entityClass;
 	}
 	
-	public Collection list(Object parent, ListParams params) {
+	public Collection<?> list(Object parent, ListParams params) {
 		return items;
 	}
 	

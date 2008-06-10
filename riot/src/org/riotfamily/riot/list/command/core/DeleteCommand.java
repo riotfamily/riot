@@ -29,6 +29,7 @@ import java.util.List;
 import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
+import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
 /**
@@ -62,7 +63,7 @@ public class DeleteCommand extends AbstractCommand implements BatchCommand {
 				"Do you really want to delete all selected elements?");
 	}
 	
-	public List getBatchStates(CommandContext context) {
+	public List<CommandState> getBatchStates(CommandContext context) {
 		return Collections.singletonList(getState(context, ACTION_DELETE));
 	}
 	

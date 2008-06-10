@@ -35,7 +35,7 @@ public interface RiotDao {
 	/**
 	 * Returns the class that is accessed by the dao.
 	 */
-	public Class getEntityClass();
+	public Class<?> getEntityClass();
 
 	/**
 	 * Returns the id of the given entity. Implementors will most likely need
@@ -80,7 +80,7 @@ public interface RiotDao {
 	/**
 	 * Returns a list of entities.
 	 */
-	public Collection list(Object parent, ListParams params) throws DataAccessException;
+	public Collection<?> list(Object parent, ListParams params) throws DataAccessException;
 	
 	/**
 	 * Returns the total number of entities.

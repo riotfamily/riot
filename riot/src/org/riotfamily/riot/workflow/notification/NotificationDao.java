@@ -28,7 +28,7 @@ import java.util.List;
 
 public interface NotificationDao {
 	
-	public List getNotifications(String userId);
+	public List<Notification> getNotifications(String userId);
 	
 	public void markAsRead(String userId, Long notificationId);
 	

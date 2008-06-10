@@ -39,6 +39,6 @@ public interface StatusMonitor {
 	 * Make sure that you properly escape all parts of the message that could 
 	 * contain user-generated content to prevent XSS attacks.  
 	 */
-	public Collection getMessages(Locale locale);
+	public Collection<StatusMessage> getMessages(Locale locale);
 		
 }

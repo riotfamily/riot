@@ -86,7 +86,7 @@ public abstract class AbstractStatusMonitor implements StatusMonitor,
 		cacheMillis = FormatUtils.parseMillis(period);
 	}
 	
-	public Collection getMessages(Locale locale) {
+	public Collection<StatusMessage> getMessages(Locale locale) {
 		updateArgs();
 		if (isVisible(args)) {
 			String message = messageSource.getMessage(messageKey, args, locale);

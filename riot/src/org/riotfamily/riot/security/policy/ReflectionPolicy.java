@@ -54,7 +54,7 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 	
 	private Object delegate = this;
 	
-	private Map methods = new HashMap();
+	private Map<ActionAndClass, Method> methods = new HashMap<ActionAndClass, Method>();
 	
 	private int order;
 	
@@ -101,7 +101,7 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 			for (int i = 0; i < methods.length; i++) {
 				Method method = methods[i];
 				if (signatureMatches(method, aac.action, aac.clazz)) {
-					Class type = method.getParameterTypes()[1];
+					Class<?> type = method.getParameterTypes()[1];
 					int diff = TypeComparatorUtils.getTypeDifference(type, aac.clazz);
 					if (diff < smallestDiff) {
 						smallestDiff = diff;
@@ -124,9 +124,9 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 	}
 	
 	
-	private boolean signatureMatches(Method method, String action, Class type) {
+	private boolean signatureMatches(Method method, String action, Class<?> type) {
 		if (method.getName().equals(action) && Modifier.isPublic(method.getModifiers())) {
-			Class[] types = method.getParameterTypes();
+			Class<?>[] types = method.getParameterTypes();
 			if (types.length > 0 && RiotUser.class.isAssignableFrom(types[0])) {
 				if (type == null) {
 					return types.length == 1;
@@ -152,7 +152,7 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 		
 		private String action;
 		
-		private Class clazz;
+		private Class<?> clazz;
 		
 		public ActionAndClass(String action, Object obj) {
 			this.action = StringUtils.uncapitalize(FormatUtils.xmlToCamelCase(action));

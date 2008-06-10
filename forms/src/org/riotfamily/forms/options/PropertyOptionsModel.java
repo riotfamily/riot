@@ -42,7 +42,7 @@ public class PropertyOptionsModel implements FormAwareOptionsModel {
 		this.propertyName = propertyName;
 	}
 
-	public Collection getOptionsValues(Form form) {
+	public Collection<?> getOptionsValues(Form form) {
 		Assert.notNull(propertyName, "A propertyName must be set.");
 		if (form.isNew()) {
 			return null;	
@@ -51,7 +51,7 @@ public class PropertyOptionsModel implements FormAwareOptionsModel {
 				propertyName);
 		
 		if (value instanceof Collection) {
-			return (Collection) value;
+			return (Collection<?>) value;
 		}
 		return CollectionUtils.arrayToList(value);
 	}

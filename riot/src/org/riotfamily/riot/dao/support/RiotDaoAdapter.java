@@ -37,7 +37,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
  */
 public class RiotDaoAdapter implements RiotDao {
 
-	public Class getEntityClass() {
+	public Class<?> getEntityClass() {
 		return null;
 	}
 
@@ -60,7 +60,7 @@ public class RiotDaoAdapter implements RiotDao {
 	/**
 	 * Always returns <code>Collections.EMPTY_LIST</code>.
 	 */
-	public Collection list(Object parent, ListParams params) 
+	public Collection<?> list(Object parent, ListParams params) 
 			throws DataAccessException {
 		
 		return Collections.EMPTY_LIST;

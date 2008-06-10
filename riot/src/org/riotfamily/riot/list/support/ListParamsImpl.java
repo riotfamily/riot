@@ -43,7 +43,7 @@ public class ListParamsImpl implements ListParams {
 	
 	private String[] searchProperties;
 	
-	private List order;
+	private List<Order> order;
 	
 	private int pageSize;
 	
@@ -101,16 +101,16 @@ public class ListParamsImpl implements ListParams {
 		offset = (page - 1) * pageSize;
 	}
 
-	public List getOrder() {
+	public List<Order> getOrder() {
 		return order;
 	}
 
-	public void setOrder(List order) {
+	public void setOrder(List<Order> order) {
 		this.order = order;
 	}
 	
 	public void setOrder(Order order) {
-		this.order = new LinkedList();
+		this.order = new LinkedList<Order>();
 		if (order != null) {
 			this.order.add(order);
 		}
@@ -135,7 +135,7 @@ public class ListParamsImpl implements ListParams {
 	 */
 	public void orderBy(String property, boolean ascending, boolean caseSensitive) {
 		if (getOrder() == null) {
-			setOrder(new LinkedList());
+			setOrder(new LinkedList<Order>());
 		}
 		else {
 			Order primary = getPrimaryOrder();
@@ -143,9 +143,9 @@ public class ListParamsImpl implements ListParams {
 				primary.toggleDirection();
 				return;
 			}
-			Iterator it = getOrder().iterator();
+			Iterator<Order> it = getOrder().iterator();
 			while (it.hasNext()) {
-				Order order = (Order) it.next();
+				Order order = it.next();
 				if (order.isProperty(property)) {
 					it.remove();
 				}

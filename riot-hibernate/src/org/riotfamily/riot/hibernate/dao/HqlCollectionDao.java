@@ -50,23 +50,23 @@ public class HqlCollectionDao extends HibernateSupport
 
 	private Log log = LogFactory.getLog(HqlCollectionDao.class);
 	
-	private Class entityClass;
+	private Class<?> entityClass;
     
 	private boolean polymorph = true;
         
     private String where;
     
-    private Class parentClass;
+    private Class<?> parentClass;
     
     private String parentProperty;
     
     private String collectionProperty; 
     
-	public Class getEntityClass() {
+	public Class<?> getEntityClass() {
         return entityClass;
     }
      
-    public void setEntityClass(Class itemClass) {
+    public void setEntityClass(Class<?> itemClass) {
         this.entityClass = itemClass;
     }
     
@@ -78,7 +78,7 @@ public class HqlCollectionDao extends HibernateSupport
         where = string;
     }
     
-	public void setParentClass(Class parentClass) {
+	public void setParentClass(Class<?> parentClass) {
         this.parentClass = parentClass;
     }
     
@@ -124,8 +124,9 @@ public class HqlCollectionDao extends HibernateSupport
     	getSession().update(parent);
     }
        
-    protected Collection getCollection(Object parent) {
-		return (Collection) PropertyUtils.getProperty(parent, collectionProperty);
+    @SuppressWarnings("unchecked")
+	protected Collection<Object> getCollection(Object parent) {
+		return (Collection<Object>) PropertyUtils.getProperty(parent, collectionProperty);
 	}
     
     protected void buildQueryString(StringBuffer hql, ListParams params) {
@@ -143,15 +144,15 @@ public class HqlCollectionDao extends HibernateSupport
         hql.append(getOrderBy(params));
     }
 
-	public Collection list(Object parent, ListParams params) {
+	public Collection<?> list(Object parent, ListParams params) {
         return listInternal(parent, params);
 	}
 	
-	protected List listInternal(Object parent, ListParams params) {
+	protected List<?> listInternal(Object parent, ListParams params) {
 		StringBuffer hql = new StringBuffer("select this ");
         buildQueryString(hql, params);	                    
         
-        Collection c = getCollection(parent);
+        Collection<?> c = getCollection(parent);
         Query query = getSession().createFilter(c, hql.toString());     
         
         if (params.getPageSize() > 0) {
@@ -178,7 +179,7 @@ public class HqlCollectionDao extends HibernateSupport
             hql.append(where);
         }
 
-        Collection c = getCollection(parent);
+        Collection<?> c = getCollection(parent);
         Query query = getSession().createFilter(c, hql.toString());
 
         if (params.getFilter() != null) {
@@ -192,7 +193,7 @@ public class HqlCollectionDao extends HibernateSupport
         StringBuffer sb = new StringBuffer();
         if (params.hasOrder()) {
         	sb.append(" order by");
-        	Iterator it = params.getOrder().iterator();
+        	Iterator<?> it = params.getOrder().iterator();
         	while (it.hasNext()) {
         		Order order = (Order) it.next(); 
         		sb.append(" this.");

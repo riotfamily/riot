@@ -24,8 +24,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.mapping;
 
-import java.util.Iterator;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -257,8 +255,7 @@ public class PageResolver {
 	private Page findWildcardPage(Site site, String urlPath) {
 		Page page = null; 
 		AttributePattern bestMatch = null;
-		for (Iterator it = pageDao.getWildcardPaths(site).iterator(); it.hasNext();) {
-			String path = (String) it.next();
+		for (String path : pageDao.getWildcardPaths(site)) {
 			AttributePattern p = new AttributePattern(path);
 			if (p.matches(urlPath) && p.isMoreSpecific(bestMatch)) {
 				bestMatch = p;

@@ -42,10 +42,10 @@ public class HqlSortedCollectionDao extends HqlCollectionDao
 	public void swapEntity(Object entity, Object parent, ListParams params, 
 			int swapWith) {
 		
-		List items = listInternal(parent, params);
+		List<?> items = listInternal(parent, params);
     	Object nextItem = items.get(swapWith);
     	
-    	Collection c = getCollection(parent);
+    	Collection<Object> c = getCollection(parent);
     	c.remove(entity);
     	c.remove(nextItem);
     	

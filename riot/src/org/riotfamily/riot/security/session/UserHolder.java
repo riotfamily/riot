@@ -25,7 +25,6 @@ package org.riotfamily.riot.security.session;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +51,7 @@ public class UserHolder implements Serializable, HttpSessionBindingListener {
 
 	private static final String SESSION_KEY = UserHolder.class.getName();
 	
-	private static HashSet users = new HashSet();
+	private static HashSet<UserHolder> users = new HashSet<UserHolder>();
 	
 	private transient RiotUser user;
 	
@@ -153,9 +152,7 @@ public class UserHolder implements Serializable, HttpSessionBindingListener {
 	 * the user with the given instance.
 	 */
 	static void updateUser(String userId, RiotUser user) {
-		Iterator it = users.iterator();		
-		while (it.hasNext()) {
-			UserHolder holder = (UserHolder) it.next();
+		for (UserHolder holder : users) {
 			if (holder.getUser() != null 
 					&& userId.equals(holder.getUserId())) {
 				

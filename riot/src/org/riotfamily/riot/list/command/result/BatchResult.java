@@ -10,7 +10,7 @@ public class BatchResult implements CommandResult {
 
 	public static final String ACTION = "batch";
 	
-	private LinkedHashSet batch = new LinkedHashSet();
+	private LinkedHashSet<CommandResult> batch = new LinkedHashSet<CommandResult>();
 	
 	public String getAction() {
 		return ACTION;
@@ -19,7 +19,7 @@ public class BatchResult implements CommandResult {
 	public BatchResult() {
 	}
 	
-	public BatchResult(Collection results) {
+	public BatchResult(Collection<CommandResult> results) {
 		this.batch.addAll(results);
 	}
 	
@@ -34,9 +34,9 @@ public class BatchResult implements CommandResult {
 	
 	public CommandResult[] getBatch() {
 		CommandResult[] results = new CommandResult[batch.size()];
-		Iterator it = batch.iterator();
+		Iterator<CommandResult> it = batch.iterator();
 		for (int i = 0; it.hasNext(); i++) {
-			results[i] = (CommandResult) it.next();
+			results[i] = it.next();
 		}
 		return results;
 	}

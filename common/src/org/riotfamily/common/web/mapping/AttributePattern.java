@@ -177,7 +177,7 @@ public class AttributePattern {
 		}
 	}
 	
-	public boolean canFillIn(Map<String, Object> required, Map<String, Object> optional, int anonymous) {
+	public boolean canFillIn(Map<String, ?> required, Map<String, ?> optional, int anonymous) {
 		if (required == null) {
 			required = Collections.emptyMap();
 		}
@@ -227,11 +227,11 @@ public class AttributePattern {
 		return fillInAttributes(attributes, null);
 	}
 	
-	public String fillInAttributes(Map<String, Object> attributes, Map<String, Object> defaults) {
+	public String fillInAttributes(Map<String, ?> attributes, Map<String, ?> defaults) {
 		return fillInAttributes(new MapWrapper(attributes), defaults);
 	}
 	
-	public String fillInAttributes(PropertyAccessor attributes, Map<String, Object> defaults) {
+	public String fillInAttributes(PropertyAccessor attributes, Map<String, ?> defaults) {
 		StringBuffer url = new StringBuffer();
 		Matcher m = ATTRIBUTE_NAME_PATTERN.matcher(attributePattern);
 		while (m.find()) {
@@ -267,7 +267,7 @@ public class AttributePattern {
 		return fillInAttribute(value, null);
 	}
 	
-	public String fillInAttribute(Object value, Map<String, Object> defaults) {
+	public String fillInAttribute(Object value, Map<String, ?> defaults) {
 		Matcher m = ATTRIBUTE_NAME_PATTERN.matcher(attributePattern);
 		String unmatched = null;
 		while (m.find()) {

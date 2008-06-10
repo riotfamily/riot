@@ -27,7 +27,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -96,7 +95,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	protected void initDao() {
 	}
 
-	protected abstract Object loadObject(Class clazz, Serializable id);
+	protected abstract Object loadObject(Class<?> clazz, Serializable id);
 
 	protected abstract void saveObject(Object object);
 
@@ -120,9 +119,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 
 	public Site findSite(String hostName, String path) {
-		Iterator it = listSites().iterator();
-		while (it.hasNext()) {
-			Site site = (Site) it.next();
+		for (Site site : listSites()) {
 			if (site.matches(hostName, path)) {
 				return site;
 			}
@@ -135,10 +132,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		if (autoCreatePages != null && handlerName != null) {
 			PageDefinition child = (PageDefinition) autoCreatePages.get(handlerName);
 			if (child != null) {
-				ArrayList sites = new ArrayList();
-				Iterator it = node.getPages().iterator();
-				while (it.hasNext()) {
-					Page page = (Page) it.next();
+				ArrayList<Site> sites = new ArrayList<Site>();
+				for (Page page : node.getPages()) { 
 					sites.add(page.getSite());
 				}
 				child.createNode(node, sites, this);
@@ -161,7 +156,6 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		PageNode node = page.getNode();
 		if (node == null) {
 			node = new PageNode();
-			
 		}
 		node.addPage(page); // It could be that the node does not yet contain
 							// the page itself, for example when edited nested...
@@ -267,10 +261,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		PageCacheUtils.invalidateNode(cacheService, newParent);
 	}
 
-	private void updatePaths(Collection pages) {
-		Iterator it = pages.iterator();
-		while (it.hasNext()) {
-			Page page = (Page) it.next();
+	private void updatePaths(Collection<Page> pages) {
+		for (Page page : pages) {
 			String oldPath = page.getPath();
 			page.setPath(page.buildPath());
 			createAlias(page, oldPath);
@@ -307,11 +299,9 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	public void deletePage(Page page) {
 		log.info("Deleting page " + page);
-		Collection childPages = page.getChildPages();
+		List<Page> childPages = page.getChildPages();
 		if (childPages != null) {
-			Iterator it = childPages.iterator();
-			while (it.hasNext()) {
-				Page child = (Page) it.next();
+			for (Page child : childPages) {
 				deletePage(child);
 			}
 		}
@@ -350,11 +340,9 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 	
 	private void translateSystemPages(PageNode node, Site masterSite, Site site) {
-		List childNodes = node.getChildNodes();
+		List<PageNode> childNodes = node.getChildNodes();
 		if (childNodes != null) {
-			Iterator it = childNodes.iterator();
-			while (it.hasNext()) {
-				PageNode childNode = (PageNode) it.next();
+			for (PageNode childNode : childNodes) {
 				if (childNode.isSystemNode()) {
 					addTranslation(childNode.getPage(masterSite), site);
 					translateSystemPages(childNode, masterSite, site);
@@ -368,16 +356,12 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 
 	public void deleteSite(Site site) {
-		Iterator it = getRootNode().getChildPages(site).iterator();
-		while (it.hasNext()) {
-			Page page = (Page) it.next();
+		for (Page page : getRootNode().getChildPages(site)) {
 			deletePage(page);
 		}
 		deleteAliases(site);
 		if (site.getDerivedSites() != null) {
-			it = site.getDerivedSites().iterator();
-			while (it.hasNext()) {
-				Site derivedSite = (Site) it.next();
+			for (Site derivedSite : site.getDerivedSites()) {
 				derivedSite.setMasterSite(null);
 			}
 		}

@@ -31,7 +31,7 @@ import java.util.List;
  */
 public interface BatchCommand extends Command {
 
-	public List getBatchStates(CommandContext context);
+	public List<CommandState> getBatchStates(CommandContext context);
 
 	public String getBatchConfirmationMessage(CommandContext context, String action);
 
