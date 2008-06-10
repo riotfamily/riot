@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.io.CommandUtils;
 import org.riotfamily.common.io.RuntimeCommand;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -93,7 +92,7 @@ public class FFmpeg implements InitializingBean {
 		return this.version;
 	}
 
-	public String invoke(List args) throws IOException {
+	public String invoke(List<String> args) throws IOException {
 		Assert.state(isAvailable(), "FFmpeg binary '" 
 				+ command + "' not found in path.");
 		
@@ -102,7 +101,7 @@ public class FFmpeg implements InitializingBean {
 		for (int i = 0; i < args.size(); i++) {
 			cmd[i + 1] = (String) args.get(i);
 		}
-		return CommandUtils.exec(cmd);
+		return new RuntimeCommand(cmd).exec().getResult();
 	}
 	
 	public VideoMetaData identify(File file) throws IOException {

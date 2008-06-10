@@ -26,7 +26,6 @@ package org.riotfamily.common.io;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -53,19 +52,7 @@ public class RuntimeCommand {
 
 	private Integer exitCode;
 
-	public RuntimeCommand(String executable) {
-		this(new String[] {executable});
-	}
-
-	public RuntimeCommand(String executable, String arg) {
-		this(new String[] {executable, arg});
-	}
-
-	public RuntimeCommand(List<String> commandLine) {
-		this(StringUtils.toStringArray(commandLine));
-	}
-
-	public RuntimeCommand(String[] commandLine) {
+	public RuntimeCommand(String... commandLine) {
 		this.commandLine = commandLine;
 	}
 
