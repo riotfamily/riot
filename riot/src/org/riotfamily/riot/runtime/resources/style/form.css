@@ -35,7 +35,7 @@
 	float: right;
 	width: 144px;
 	height: 56px;
-	background-color: ${highlight};
+	background-color: ${highlight_color};
 	background-position: 10px 10px;
 	background-repeat: no-repeat;
 }
@@ -62,7 +62,7 @@
 div.form-error,
 label.error,
 .indent label.error {
-	color: ${highlight};
+	color: ${error_color};
 }
 .box-title label.error {
 	color: #fff;
@@ -78,14 +78,14 @@ ul.errors {
 ul.errors li {
 	margin: 5px 0;
 	list-style-type: none;
-	color: ${highlight};
+	color: ${highlight_color};
 	font-weight: normal;
 }
 
 label {
 	font-size: 12px;
 	font-weight: bold;
-	color: #3d3d3d;
+	color: ${label_color};
 	-moz-user-select: none;
 }
 label.disabled {
@@ -93,7 +93,7 @@ label.disabled {
 }
 
 div.box-title {
-	background: ${highlight} url(images/list.gif) top left no-repeat;
+	background: ${highlight_color} url(images/list.gif) top left no-repeat;
 }
 div.box-title label {
 	display: block;
@@ -190,7 +190,7 @@ input.password{
 }
 .spinButtons .increase:hover,
 .spinButtons .decrease:hover {
-	background-color: ${highlight};
+	background-color: ${highlight_color};
 	background-position: -13px center;
 }
 
@@ -255,7 +255,7 @@ ul.radioButtonGroup input {
 .indent label {
 	display: block;
 	font-weight: bold;
-	color: #363636;
+	color: ${label_color};
 	margin: 0 0 4px 0;
 }
 
@@ -401,7 +401,7 @@ table.item .indent {
 	background: #fff url(images/remove_invert.gif) no-repeat;
 }
 .collectionEditor .button-remove:hover {
-	background-color: ${highlight};
+	background-color: ${highlight_color};
 }
 
 
@@ -425,7 +425,7 @@ table.item .indent {
 	overflow: hidden;
 	border: 0;
 	vertical-align: top;
-	background: ${highlight} url(images/calendar.gif) no-repeat center center;
+	background: ${highlight_color} url(images/calendar.gif) no-repeat center center;
 }
 #elements input.calendar-input,
 #elements input.color-input {

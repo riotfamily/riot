@@ -25,12 +25,13 @@ package org.riotfamily.riot.editor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
 import org.riotfamily.common.beans.PropertyUtils;
-import org.riotfamily.common.collection.TypeDifferenceComparator;
+import org.riotfamily.common.collection.TypeComparatorUtils;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.riot.form.ui.FormOption;
@@ -152,16 +153,17 @@ public class FormChooserDefinition extends FormDefinition {
 	}
 
 	protected static class FormDefinitionComparator
-			extends TypeDifferenceComparator {
+			implements Comparator<FormDefinition> {
 
+		private Class<?> beanClass;
+		
 		public FormDefinitionComparator(Object bean) {
-			super(bean.getClass());
+			this.beanClass = bean.getClass();
 		}
 
-		public int compare(Object o1, Object o2) {
-			FormDefinition fd1 = (FormDefinition) o1;
-			FormDefinition fd2 = (FormDefinition) o2;
-			return super.compare(fd1.getBeanClass(), fd2.getBeanClass());
+		public int compare(FormDefinition fd1, FormDefinition fd2) {
+			return TypeComparatorUtils.compare(fd1.getBeanClass(), 
+					fd2.getBeanClass(), beanClass);
 		}
 	}
 }

@@ -11,7 +11,7 @@ body, a, td, th, h1, h2 {
 	font-size: 12px;
 }
 a {
-	color: ${highlight};
+	color: ${highlight_color};
 }
 img {
 	border: 0;
@@ -69,7 +69,7 @@ div.extra {
 }
 
 .extra .box-title {
-	background: ${highlight} url(images/list.gif) top left no-repeat;
+	background: ${highlight_color} url(images/list.gif) top left no-repeat;
 }
 
 div.box-title,
@@ -84,7 +84,7 @@ div.box-title .label {
 	display: block;
 	margin-left: 32px;
 	padding: 2px 0 2px 6px;
-	background: #3d3d3d url(images/corner.gif) top right no-repeat;
+	background: ${title_bg_color} url(images/corner.gif) top right no-repeat;
 }
 * html .box-title {height: 1%;}
 

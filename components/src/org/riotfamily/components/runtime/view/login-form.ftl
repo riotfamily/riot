@@ -15,6 +15,7 @@
 			}
 		</script>
 		<@riot.stylesheet href="style/login.css" />
+		<@riot.stylesheet href="style/login-custom.css" />
 		<link rel="icon" href="${riot.resource("/style/images/favicon.ico")}" type="image/x-icon" />
     	<link rel="shortcut icon" href="${riot.resource("/style/images/favicon.ico")}" type="image/x-icon" />
     	<@riot.script src="prototype/prototype.js" />

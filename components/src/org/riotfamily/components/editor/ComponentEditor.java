@@ -37,15 +37,11 @@ import org.riotfamily.components.context.RequestContextExpiredException;
  */
 public interface ComponentEditor {
 
-	public static final String POSTION_CLASS_PREFIX = "component-";
-
-	public static final String LAST_COMPONENT_CLASS = "last-component";
-
 	public String getText(Long contentId, String property);
 
 	public void updateText(Long contentId, String property, String text);
 	
-	public void updateTextChunks(Long componentId, String property,
+	public String[] updateTextChunks(Long componentId, String property,
 			String[] chunks) throws RequestContextExpiredException;
 
 	public String generateToken();
@@ -84,6 +80,6 @@ public interface ComponentEditor {
 
 	public void logout();
 
-	public Map getTinyMCEProfiles();
+	public Map<String, Map<String, Object>> getTinyMCEProfiles();
 
 }

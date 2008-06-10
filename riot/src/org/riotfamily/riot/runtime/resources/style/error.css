@@ -1,7 +1,7 @@
 @import url(common.css);
 
 h1 {
-	color: ${highlight};
+	color: ${error_color};
 }
 
 h2 {

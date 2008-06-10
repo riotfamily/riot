@@ -24,7 +24,6 @@
 package org.riotfamily.pages.dao;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +42,7 @@ public class PageDefinition {
 
 	private String handlerName;
 
-	private List pageDefinitions;
+	private List<PageDefinition> pageDefinitions;
 
 	private boolean hidden;
 
@@ -53,7 +52,7 @@ public class PageDefinition {
 
 	private boolean folder;
 
-	private Map properties;
+	private Map<String, Object> properties;
 
 	public void setPathComponent(String pathComponent) {
 		this.pathComponent = pathComponent;
@@ -85,19 +84,19 @@ public class PageDefinition {
 		this.folder = folder;
 	}
 
-	public void setProperties(Map properties) {
+	public void setProperties(Map<String, Object> properties) {
 		this.properties = properties;
 	}
 
-	public List getPageDefinitions() {
+	public List<PageDefinition> getPageDefinitions() {
 		return this.pageDefinitions;
 	}
 
-	public void setPageDefinitions(List definitions) {
+	public void setPageDefinitions(List<PageDefinition> definitions) {
 		this.pageDefinitions = definitions;
 	}
 
-	public PageNode createNode(PageNode parent, List sites, PageDao pageDao) {
+	public PageNode createNode(PageNode parent, List<Site> sites, PageDao pageDao) {
 		PageNode node = new PageNode();
 		parent.addChildNode(node);
 		node.setHandlerName(handlerName);
@@ -105,27 +104,26 @@ public class PageDefinition {
 		node.setHidden(hidden);
 		createPages(node, sites, pageDao);
 		pageDao.saveNode(node);
+		for (Page page : node.getPages()) {
+			pageDao.publishPageProperties(page);
+		}
 		if (pageDefinitions != null) {
-			Iterator it = pageDefinitions.iterator();
-			while (it.hasNext()) {
-				PageDefinition childDefinition = (PageDefinition) it.next();
+			for (PageDefinition childDefinition : pageDefinitions) {
 				childDefinition.createNode(node, sites, pageDao);
 			}
 		}
 		return node;
 	}
 
-	private void createPages(PageNode node, List sites, PageDao pageDao) {
-		Iterator it = sites.iterator();
-		while (it.hasNext()) {
-			Site site = (Site) it.next();
+	private void createPages(PageNode node, List<Site> sites, PageDao pageDao) {
+		for (Site site : sites) {
 			Page page = new Page(getPathComponent(), site);
 			page.setNode(node);
 			page.setPublished(published);
 			page.setFolder(folder);
 			page.setCreationDate(new Date());
 			if (site.getMasterSite() == null) {
-				page.getPageProperties().getLiveVersion().wrapValues(properties);
+				page.getPageProperties().getPreviewVersion().wrapValues(properties);
 			}
 			node.addPage(page);
 			pageDao.deleteAlias(page);

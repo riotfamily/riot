@@ -24,6 +24,7 @@
 package org.riotfamily.components.model.wrapper;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -32,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.EntityMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
-import org.riotfamily.common.collection.TypeDifferenceComparator;
+import org.riotfamily.common.collection.TypeComparatorUtils;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.BeanUtils;
 
@@ -47,15 +48,15 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 	private ArrayList<WrapperClassInfo> wrapperClassInfos = new ArrayList<WrapperClassInfo>();
 		
 	public HibernateWrapperFactory(SessionFactory sessionFactory) {
-		Iterator it = sessionFactory.getAllClassMetadata().values().iterator();
+		Iterator<?> it = sessionFactory.getAllClassMetadata().values().iterator();
 		while (it.hasNext()) {
 			ClassMetadata meta = (ClassMetadata) it.next();
-			Class wrapperClass = meta.getMappedClass(EntityMode.POJO);
+			Class<?> wrapperClass = meta.getMappedClass(EntityMode.POJO);
 			if (ValueWrapper.class.isAssignableFrom(wrapperClass)) {
 				String[] properties = meta.getPropertyNames();
 				if (properties.length > 0) {
 					String valueProperty = properties[0];
-					Class valueClass = meta.getPropertyType(valueProperty).getReturnedClass();
+					Class<?> valueClass = meta.getPropertyType(valueProperty).getReturnedClass();
 					log.debug("Registering " + wrapperClass	+ " as wrapper for " + valueClass);
 					wrapperClassInfos.add(new WrapperClassInfo(wrapperClass, valueClass, valueProperty));
 				}
@@ -63,10 +64,12 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 		}
 	}
 	
-	private WrapperClassInfo getWrapperClassInfo(Class valueClass) {
-		TreeSet infos = new TreeSet(new WrapperClassInfoComparator(valueClass));
+	private WrapperClassInfo getWrapperClassInfo(Class<?> valueClass) {
+		TreeSet<WrapperClassInfo> infos = new TreeSet<WrapperClassInfo>(
+				new WrapperClassInfoComparator(valueClass));
+		
 		infos.addAll(wrapperClassInfos);
-		WrapperClassInfo bestMatch = (WrapperClassInfo) infos.first();
+		WrapperClassInfo bestMatch = infos.first();
 		if (bestMatch.getValueClass().isAssignableFrom(valueClass)) {
 			return bestMatch;	
 		}
@@ -84,13 +87,13 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 	
 	private static class WrapperClassInfo {
 		
-		private Class wrapperClass;
+		private Class<?> wrapperClass;
 		
-		private Class valueClass;
+		private Class<?> valueClass;
 		
 		private String valueProperty;
 
-		public WrapperClassInfo(Class wrapperClass, Class valueClass, 
+		public WrapperClassInfo(Class<?> wrapperClass, Class<?> valueClass, 
 				String valueProperty) {
 			
 			this.wrapperClass = wrapperClass;
@@ -98,11 +101,11 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 			this.valueProperty = valueProperty;
 		}
 
-		public Class getWrapperClass() {
+		public Class<?> getWrapperClass() {
 			return this.wrapperClass;
 		}
 
-		public Class getValueClass() {
+		public Class<?> getValueClass() {
 			return this.valueClass;
 		}
 
@@ -123,16 +126,16 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 	}
 	
 	private static class WrapperClassInfoComparator
-			extends TypeDifferenceComparator {
+			implements Comparator<WrapperClassInfo> {
 	
-		public WrapperClassInfoComparator(Class contentType) {
-			super(contentType);
+		private Class<?> valueType;
+		
+		public WrapperClassInfoComparator(Class<?> valueType) {
+			this.valueType = valueType;
 		}
 		
-		public int compare(Object o1, Object o2) {
-			WrapperClassInfo cc1 = (WrapperClassInfo) o1;
-			WrapperClassInfo cc2 = (WrapperClassInfo) o2;
-			return super.compare(cc1.getValueClass(), cc2.getValueClass());
+		public int compare(WrapperClassInfo w1, WrapperClassInfo w2) {
+			return TypeComparatorUtils.compare(w1.getValueClass(), w2.getValueClass(), valueType);
 		}
 	}
 }

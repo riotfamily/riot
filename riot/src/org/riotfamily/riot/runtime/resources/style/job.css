@@ -20,7 +20,7 @@
 	height: 50px;
 	margin: 0 10px 0 0;
 	float: left;
-	background-color: ${highlight};
+	background-color: ${highlight_color};
 	background-position: 10px 10px;
 	background-repeat: no-repeat;
 	cursor: pointer;
@@ -72,7 +72,7 @@
 	position: absolute;
 	bottom: 6px;
 	text-align: right;
-	color: ${highlight};
+	color: ${highlight_color};
 	font-family: arial;
 	font-size: 14px;
 	font-weight: bold;
@@ -80,7 +80,7 @@
 #progressBar {
 	height: 100%;
 	width: 0px;
-	background-color: ${highlight};
+	background-color: ${highlight_color};
 }
 
 #logTitle {
@@ -98,7 +98,7 @@
 	margin: 0;
 }
 .prio2 {
-	color: ${highlight};
+	color: ${highlight_color};
 }
 #log.errorsOnly .prio1 {
 	display: none;

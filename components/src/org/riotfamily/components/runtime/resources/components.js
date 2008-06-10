@@ -714,28 +714,6 @@ riot.adoptFloatsAndClears = function(root) {
 }
 
 riot.init = function() {
-	/*
-	// Assign IDs to all component-elements. We need to do this
-	// so that we can still look up elements after they have been replaced by
-	// clones in the disableEvents() function.
-	$$('.riot-component').invoke('identify');
-	
-	// Add pre- and post-apply hooks to the toolbar buttons ...
-	
-	// Disable events if the remove or properties tool is activated
-	b.get('properties').beforeApply = 
-	b.get('remove').beforeApply = function(enable) {
-		if (enable) {
-			$$('.riot-controller').reject(function(e) { 
-				return e.up('.riot-controller');
-			}).invoke('disableEvents');
-		}
-		else {
-			$$('.riot-controller').invoke('enableEvents');
-		}
-	};
-	*/
-	
 	var b = riot.toolbar.buttons;
 	
 	// Make lists sortable after moveOn() has been invoked. This has to be
@@ -752,10 +730,13 @@ riot.init = function() {
 };
 
 riot.discardOn = function() {
-	var params = $H(window.location.search.parseQuery());
-	params.set('org.riotfamily.components.EditModeUtils.liveMode', 'true');
-	riotPreviewFrame.location.href = window.location.pathname + '?' + params.toQueryString();
-	$('riotPreviewFrame').setStyle({
+	if (!riot.previewFrame.initialized) {
+		var params = $H(window.location.search.parseQuery());
+		params.set('org.riotfamily.components.EditModeUtils.liveMode', 'true');
+		riotPreviewFrame.location.href = window.location.pathname + '?' + params.toQueryString();
+		riot.previewFrame.initialized = true;
+	}
+	riot.previewFrame.setStyle({
 		display: 'block',
 		visibility: 'visible'
 	}); 
@@ -764,7 +745,7 @@ riot.discardOn = function() {
 }
 
 riot.discardOff = function() {
-	$('riotPreviewFrame').hide();
+	riot.previewFrame.hide();
 	$$('body > *:not(#riotPreviewFrame)').invoke('show');
 }
 
@@ -788,8 +769,10 @@ riot.applyOn = function() {
 		.pluck('id'); 
 	
 	riot.applyFunction(listIds, containerIds);
+	riot.previewFrame.initialized = false;
 }
 
+riot.previewFrame = RBuilder.node('iframe', {name: 'riotPreviewFrame', id: 'riotPreviewFrame'}).appendTo(document.body);
 riot.init();
 riot.adoptFloatsAndClears();
 riot.toolbar.activate();

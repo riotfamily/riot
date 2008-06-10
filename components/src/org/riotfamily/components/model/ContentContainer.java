@@ -54,7 +54,10 @@ public class ContentContainer {
 	}
 
 	public Content getPreviewVersion() {
-		return this.previewVersion;
+		if (previewVersion == null) {
+			previewVersion = new Content();
+		}
+		return previewVersion;
 	}
 
 	public void setPreviewVersion(Content previewVersion) {

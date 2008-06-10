@@ -73,11 +73,11 @@ table.pages tr.hidden-page td {
 }
 .pageProperty .box-title input.button-overwrite {
 	background-image: url(icons/edit_invert_small.gif);
-	background-color: ${highlight};
+	background-color: ${highlight_color};
 }
 .pageProperty .box-title input.button-inherit {
 	background-image: url(icons/remove_invert_small.gif);
-	background-color: ${highlight};
+	background-color: ${highlight_color};
 }
 .pagePropertyInherit .listEditor .button-add, 
 .pagePropertyInherit .nestedForm .not-present .button-toggle {

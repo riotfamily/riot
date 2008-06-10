@@ -17,7 +17,7 @@ body > #riot-inspector {
 }
 
 #riot-toolbar-buttons {
-	background-color: ${toolbarOutline};
+	background-color: ${toolbar_border_color};
 	width: 38px;
 	padding: 3px 0;
 	margin: auto;
@@ -41,7 +41,7 @@ body > #riot-inspector {
 }
 
 #riot-toolbar a.toolbar-button:hover {
-	background-color: ${highlight};
+	background-color: ${highlight_color};
 }
 
 #riot-toolbar a.toolbar-button-active {
@@ -118,8 +118,8 @@ body > #riot-inspector {
 
 #riot-toolbar #riot-toolbar-button-apply {
 	background-position: -352px -32px; 
-	background-color: ${highlight};
-	border: 3px solid ${toolbarOutline};
+	background-color: ${highlight_color};
+	border: 3px solid ${toolbar_border_color};
 	margin:8px auto;
 }
 
@@ -133,14 +133,14 @@ body > #riot-inspector {
 	width: 460px;
 	z-index: 100;
 	background-color: #fff;
-	border: 3px solid ${toolbarOutline};
+	border: 3px solid ${toolbar_border_color};
 	display: none;
 }
 
 #riot-inspector .headline {
 	color: #3d3d3d;
 	background-color: #ebebeb;
-	border-bottom: 1px solid ${toolbarOutline};
+	border-bottom: 1px solid ${toolbar_border_color};
 	padding: 5px 20px;
 	font-family: "Trebuchet MS", arial, sans-serif;
 	font-size:12px;
@@ -185,7 +185,7 @@ body > #riot-inspector {
 	font-size: 11px;
 	text-align: left;
 	color: #fff;
-	background: ${highlight} url(icons/dialogs/componentType_hi.gif) top left no-repeat;
+	background: ${highlight_color} url(icons/dialogs/componentType_hi.gif) top left no-repeat;
 }
 
 .riot-insert-button {
@@ -194,7 +194,7 @@ body > #riot-inspector {
 	position:relative;
 	height: 16px;
 	color: #fff;
-	border: 2px solid ${toolbarOutline};
+	border: 2px solid ${toolbar_border_color};
 	background: #fff url(images/insert_bg.gif) center 0px no-repeat;
 	margin: 4px;
 }
@@ -277,7 +277,7 @@ div.riot-highlight-bottom {
 	margin-bottom: 8px;
 	color: #3d3d3d;
 	background-color: #fff;
-	border: 2px solid ${toolbarOutline};
+	border: 2px solid ${toolbar_border_color};
 }
 
 
@@ -414,26 +414,15 @@ body > #riot-overlay {
 	position: fixed;
 }
 
-.riot-publish-outline,
-.riot-discard-outline {
+#riotPreviewFrame {
+	border: none;
+	visibility: hidden;
+	position: absolute;
 	top: 0;
 	left: 0;
-	background: url(images/pixel.gif);
-}
-.riot-publish-outline-preview,
-.riot-discard-outline-live {
-	border: 2px dotted ${highlight};
-}
-.riot-publish-outline-live,
-.riot-discard-outline-preview {
-	border: 2px dotted #cdcdcd;
-}
-.riot-publish-outline-live div,
-.riot-discard-outline-preview div {
-	background-color: #fff;
-	filter: alpha(opacity=60);
-	-moz-opacity: 0.6;
-	opacity: 0.6;
+	z-index: 99999;
+	width: 100%;
+	height:100%;
 }
 
 .cropper .se-resize {

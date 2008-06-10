@@ -30,7 +30,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.common.collection.TypeDifferenceComparator;
+import org.riotfamily.common.collection.TypeComparatorUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.util.ClassUtils;
@@ -102,7 +102,7 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 				Method method = methods[i];
 				if (signatureMatches(method, aac.action, aac.clazz)) {
 					Class type = method.getParameterTypes()[1];
-					int diff = TypeDifferenceComparator.getTypeDifference(type, aac.clazz);
+					int diff = TypeComparatorUtils.getTypeDifference(type, aac.clazz);
 					if (diff < smallestDiff) {
 						smallestDiff = diff;
 						bestMatch = method;

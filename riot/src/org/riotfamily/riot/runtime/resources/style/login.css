@@ -44,7 +44,7 @@ label {
 
 .error {
 	text-align: left;
-	color: ${highlight};
+	color: ${highlight_color};
 	margin-left: 92px;
 	padding-bottom: 10px;
 }
@@ -74,7 +74,7 @@ label {
 	margin-left: 138px;
 	width: 133px;
 	height: 46px;
-	background: ${highlight} url(images/login.gif) 10px 10px no-repeat;
+	background: ${highlight_color} url(images/login.gif) 10px 10px no-repeat;
 }
 .button-login .face {
 	text-align: left;

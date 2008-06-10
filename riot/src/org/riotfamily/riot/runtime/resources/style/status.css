@@ -21,13 +21,13 @@ body, a {
 }
 
 a {
-	color: ${highlight};
+	color: ${highlight_color};
 	text-decoration: none;
 }
 
 #loading {
 	visibility: hidden;
-	background-color: ${highlight};
+	background-color: ${highlight_color};
 	color: #fff;
 	float: right;
 	padding: 2px 4px;

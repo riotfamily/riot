@@ -1,7 +1,7 @@
 @import url(common.css);
 
 #editors .box-title {
-	background: #3d3d3d url(images/corner.gif) top left no-repeat;
+	background: ${title_bg_color} url(images/corner.gif) top left no-repeat;
 }
 #editors .box-title span {
 	margin: 0 0 0 1px;
@@ -25,7 +25,7 @@ background-color:#ebebeb;
 	float: left;
 	width: 80px;
 	height: 80px;
-	background: ${highlight} url(icons/editors/arrow.gif) no-repeat;
+	background: ${highlight_color} url(icons/editors/arrow.gif) no-repeat;
 	margin: 1px 9px 1px 1px;
 }
 
@@ -40,6 +40,7 @@ background-color:#ebebeb;
 #editors a.editor .label {
 	font-size: 14px;
 	font-weight: bold;
+	color: ${label_color};
 }
 
 #notificationList {
@@ -90,9 +91,9 @@ background-color:#ebebeb;
 	background: url(icons/commands/stepInto.gif) 0 -32px no-repeat;
 }
 #status a:hover {
-	color: ${highlight};
+	color: ${highlight_color};
 }
 
 #status a:hover .icon {
-	background-color: ${highlight};
+	background-color: ${highlight_color};
 }

@@ -51,7 +51,7 @@ div.calendar {
 }
 
 .calendar thead .weekend { /* How a weekend day name shows in header */
-  color: ${highlight};
+  color: ${highlight_color};
 }
 
 .calendar thead .headrow .hilite { /* How do the buttons in header appear when hover */
@@ -101,7 +101,7 @@ div.calendar {
 .calendar tbody td.hilite { /* Hovered cells <TD> */
   background: #fff;
   padding: 1px 3px 1px 1px;
-  border: 1px solid ${highlight};
+  border: 1px solid ${highlight_color};
 }
 
 /* Active (pressed) cells <TD> */
@@ -112,15 +112,15 @@ div.calendar {
 */
 
 .calendar tbody td.weekend { /* Cells showing weekend days */
-  color: ${highlight};
+  color: ${highlight_color};
 }
 
 .calendar tbody td.selected { /* Cell showing today date */
   font-weight: bold;
   color: #fff;
   padding: 1px 3px 1px 1px;
-  background: ${highlight};
-  border: 1px solid ${highlight};
+  background: ${highlight_color};
+  border: 1px solid ${highlight_color};
 }
 
 .calendar tbody td.today {
@@ -151,13 +151,13 @@ div.calendar {
 }
 
 .calendar tfoot .hilite { /* Hover style for buttons in footer */
-  background: ${highlight};
-  border: 1px solid ${highlight};
+  background: ${highlight_color};
+  border: 1px solid ${highlight_color};
   padding: 1px;
 }
 
 .calendar tfoot .active { /* Active (pressed) style for buttons in footer */
-  background: ${highlight};
+  background: ${highlight_color};
   padding: 2px 0px 0px 2px;
 }
 
@@ -190,7 +190,7 @@ div.calendar {
 }
 
 .calendar .combo .hilite {
-  background: ${highlight};
+  background: ${highlight_color};
   color: #fff;
 }
 
@@ -223,6 +223,6 @@ div.calendar {
 
 .calendar td.time span.hilite,
 .calendar td.time span.active {
-  border-color: ${highlight};
+  border-color: ${highlight_color};
   background-color: #fff;
 }

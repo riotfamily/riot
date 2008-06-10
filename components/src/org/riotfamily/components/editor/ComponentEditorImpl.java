@@ -90,7 +90,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 
 	private MessageSource messageSource;
 
-	private Map tinyMCEProfiles;
+	private Map<String, Map<String, Object>> tinyMCEProfiles;
 
 	private EditModeComponentRenderer editModeRenderer;
 	
@@ -109,11 +109,11 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		this.messageSource = messageSource;
 	}
 	
-	public Map getTinyMCEProfiles() {
+	public Map<String, Map<String, Object>> getTinyMCEProfiles() {
 		return this.tinyMCEProfiles;
 	}
 
-	public void setTinyMCEProfiles(Map tinyMCEProfiles) {
+	public void setTinyMCEProfiles(Map<String, Map<String, Object>> tinyMCEProfiles) {
 		this.tinyMCEProfiles = tinyMCEProfiles;
 	}
 
@@ -132,7 +132,6 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	public void updateText(Long contentId, String property, String text) {
 		Content content = componentDao.loadContent(contentId);
 		content.setValue(property, text);
-		//componentDao.saveOrUpdatePreviewVersion(container);
 	}
 
 	public String cropImage(Long contentId, String property, Long imageId,
@@ -190,20 +189,22 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	/**
 	 *
 	 */
-	public void updateTextChunks(Long componentId, String property,
+	public String[] updateTextChunks(Long componentId, String property,
 			String[] chunks) throws RequestContextExpiredException {
 
-		log.debug("Inserting chunks " + StringUtils.arrayToCommaDelimitedString(chunks));
+		String[] html = new String[chunks.length];
 		Component component = componentDao.loadComponent(componentId);
 		component.setValue(property, chunks[0]);
-		//componentDao.saveOrUpdatePreviewVersion(component);
+		html[0] = renderComponent(component);
 		
 		ComponentList list = component.getList();
-		int offset = list.getComponents().indexOf(component);
+		int offset = list.indexOf(component);
 		for (int i = 1; i < chunks.length; i++) {
-			insertComponent(list.getId(), offset + i, component.getType(),
+			html[i] = insertComponent(list.getId(), offset + i, 
+					component.getType(),
 					Collections.singletonMap(property, chunks[i]));
 		}
+		return html;
 	}
 
 	/**

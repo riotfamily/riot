@@ -14,7 +14,7 @@ a {
 	color: #000;
 }
 .active {
-	color: ${highlight};
+	color: ${highlight_color};
 }
 .start-active {
 	text-decoration: none;

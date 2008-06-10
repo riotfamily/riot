@@ -24,7 +24,7 @@
 .riotSkin .mceStatusbar a:hover {text-decoration:underline}
 .riotSkin table.mceToolbar {margin-left:3px}
 .riotSkin span.icon, .riotSkin img.icon {display:block; width:20px; height:20px}
-.riotSkin .icon {background:${highlight} url(img/icons.gif) no-repeat 20px 20px}
+.riotSkin .icon {background:${highlight_color} url(img/icons.gif) no-repeat 20px 20px}
 .riotSkin .mceToolbar .mceButton, .riotSkin .mceToolbar span.icon  {padding:0}
 /* Button */
 .riotSkin .mceButton {display:block; border:1px solid #fff; width:20px; height:20px; margin-right:1px;}

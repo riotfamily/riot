@@ -315,8 +315,11 @@
 	<bean id="logoutController" name="/logout" class="org.riotfamily.riot.security.ui.LogoutController" />
 
 	<util:map id="cssProperties">
-		<entry key="highlight" value="#cb0038" />
-		<entry key="toolbarOutline" value="#3d3d3d" />
+		<entry key="highlight_color" value="#cb0038" />
+		<entry key="title_bg_color" value="#3d3d3d" />
+		<entry key="label_color" value="#3d3d3d" />
+		<entry key="error_color" value="#cb0038" />
+		<entry key="toolbar_border_color" value="#3d3d3d" />
 		<entry key="resourcePath" value-ref="riotResourcePath" />
 	</util:map>
 

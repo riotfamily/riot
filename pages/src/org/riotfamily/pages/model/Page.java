@@ -274,8 +274,6 @@ public class Page {
 	public PageProperties getPageProperties() {
 		if (pageProperties == null) {
 			pageProperties = new PageProperties();
-			pageProperties.setPreviewVersion(new Content());
-			pageProperties.setLiveVersion(new Content());
 		}
 		return pageProperties;
 	}

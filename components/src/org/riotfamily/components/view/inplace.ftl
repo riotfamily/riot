@@ -30,7 +30,6 @@
   -->
 <#macro toolbar bookmarklet=true>
 	<#if editMode>
-		<iframe name="riotPreviewFrame" id="riotPreviewFrame" width="1" height="1" style="border:none;visibility:hidden;position:absolute;top:0;left:0;z-index:99999;width:100%;height:100%"></iframe>
 		<#list inplaceMacroHelper.toolbarScripts as src>
 			<@riot.script src = src + "?lang=" + .lang />
 		</#list>
