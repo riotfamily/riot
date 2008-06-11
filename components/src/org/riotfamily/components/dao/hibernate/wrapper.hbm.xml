@@ -46,6 +46,12 @@
 				<one-to-many class="ValueWrapper" />
 			</map>
 		</subclass>
+		<subclass name="EntityWrapper" discriminator-value="entity">
+			<any name="entity" id-type="long" access="field">
+				<column name="entity_table" />
+			    <column name="entity_id" />
+			</any>
+		</subclass>
 	</class>
 
 </hibernate-mapping>
