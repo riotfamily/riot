@@ -48,7 +48,7 @@ public abstract class AbstractSingleSelectElement
 		return selectedValue != null;
 	}
 	
-	public boolean isSelected(Option option) {
+	public boolean isSelected(OptionItem option) {
 		return hasSelection() && selectedValue.equals(option.getValue());
 	}
 
@@ -65,7 +65,7 @@ public abstract class AbstractSingleSelectElement
 			i = Integer.parseInt(index);
 		}
 		if (i >= 0) {
-			Option option = (Option) getOptions().get(i);
+			OptionItem option = (OptionItem) getOptionItems().get(i);
 			selectedValue = option.getValue();
 		}
 		else {

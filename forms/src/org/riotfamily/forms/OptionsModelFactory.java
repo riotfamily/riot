@@ -21,25 +21,19 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.forms.options;
+package org.riotfamily.forms;
 
-import java.util.Collection;
+import org.riotfamily.forms.options.OptionsModel;
 
-import org.riotfamily.forms.Form;
-import org.riotfamily.forms.OptionValuesAdapter;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
+ * @since 8.0
  */
-public class FormAwareOptionsModelValuesAdapter implements OptionValuesAdapter {
+public interface OptionsModelFactory {
 
-	public boolean supports(Object model) {
-		return model instanceof FormAwareOptionsModel;
-	}
+	public boolean supports(Object model);
 	
-	public Collection<?> getValues(Object model, Form form) {
-		FormAwareOptionsModel optionsModel = (FormAwareOptionsModel) model;
-		return optionsModel.getOptionsValues(form);
-	}
+	public OptionsModel createOptionsModel(Object model, Element element);
+
 }

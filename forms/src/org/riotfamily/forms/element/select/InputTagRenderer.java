@@ -40,7 +40,7 @@ public class InputTagRenderer implements OptionRenderer {
 		this.type = type;
 	}
 	
-	public void renderOption(Option option, PrintWriter writer, boolean enabled) {
+	public void renderOption(OptionItem option, PrintWriter writer, boolean enabled) {
 		TagWriter optionTag = new TagWriter(writer);
 		optionTag.startEmpty(Html.INPUT);
 		optionTag.attribute(Html.INPUT_TYPE,type);

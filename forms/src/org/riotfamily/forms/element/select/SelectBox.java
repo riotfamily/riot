@@ -70,17 +70,17 @@ public class SelectBox extends AbstractSingleSelectElement {
 		this.chooseLabelKey = chooseLabelKey;
 	}
 
-	protected List createOptions() {
-		List options = super.createOptions();
+	protected List createOptionItems() {
+		List options = super.createOptionItems();
 		if (chooseLabelKey != null) {
 			chooseLabel = MessageUtils.getMessage(this, chooseLabelKey);
 		}
 		if (chooseLabel != null) {
-			Option chooseOption = new Option(null, null, chooseLabel, this);
+			OptionItem chooseOption = new OptionItem(null, null, chooseLabel, this);
 			options.add(0, chooseOption);
 		}
 		else if (!isRequired()) {
-			Option emptyOption = new Option(null, null, "", this);
+			OptionItem emptyOption = new OptionItem(null, null, "", this);
 			options.add(0, emptyOption);
 		}
 		return options;
@@ -96,9 +96,9 @@ public class SelectBox extends AbstractSingleSelectElement {
 		selectTag.attribute(Html.INPUT_DISABLED, !isEnabled());
 		selectTag.body();
 
-		Iterator it = getOptions().iterator();
+		Iterator it = getOptionItems().iterator();
 		while (it.hasNext()) {
-			((Option) it.next()).render();
+			((OptionItem) it.next()).render();
 		}
 
 		selectTag.end();

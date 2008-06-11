@@ -300,7 +300,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		Object model = getOptionsModel(ele);
 		if (model != null) {
 			log.debug("OptionsModel: " + model);
-			pvs.addPropertyValue("optionsModel", model);
+			pvs.addPropertyValue("options", model);
 		}
 	}
 	

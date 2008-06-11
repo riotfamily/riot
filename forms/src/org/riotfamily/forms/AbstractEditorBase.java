@@ -23,6 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.riotfamily.forms.event.ChangeEvent;
+import org.riotfamily.forms.event.ChangeListener;
+
 
 /**
  * Abstract base class for editor elements.
@@ -38,6 +44,8 @@ public abstract class AbstractEditorBase extends AbstractElement {
 	private EditorBinding binding;
 	
 	private String fieldName;
+	
+	private List<ChangeListener> listeners;
 	
 	public final void setEditorBinding(EditorBinding binding) {
 		this.binding = binding;
@@ -107,5 +115,25 @@ public abstract class AbstractEditorBase extends AbstractElement {
 			super.setHint(hint);
 		}		
 		return hint;
+	}
+	
+	public final void addChangeListener(ChangeListener listener) {
+		if (listeners == null) {
+			listeners = new ArrayList<ChangeListener>();
+		}
+		listeners.add(listener);
+	}
+
+	protected final void fireChangeEvent(Object newValue, Object oldValue) {
+		if (listeners != null) {
+			ChangeEvent event = new ChangeEvent(this, newValue, oldValue);
+			for (ChangeListener listener : listeners) {
+				listener.valueChanged(event);
+			}
+		}
+	}
+	
+	protected boolean hasListeners() {
+		return listeners != null;
 	}
 }

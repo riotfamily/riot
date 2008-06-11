@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms;
 
+import org.riotfamily.forms.event.ChangeListener;
+
 /**
  * Interface to be implemented by form elements that are capable of editing
  * a property value.
@@ -64,5 +66,7 @@ public interface Editor extends Element {
 	 * Returns the set (or computed) fieldName.
 	 */
 	public String getFieldName();
+	
+	public void addChangeListener(ChangeListener listener);
 	
 }

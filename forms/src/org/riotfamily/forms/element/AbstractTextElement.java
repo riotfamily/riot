@@ -64,8 +64,6 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 
 	private boolean randomParamName;
 
-	private List listeners;
-
 	private String defaultText;
 
 	private String text;
@@ -295,26 +293,8 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		input.end();
 	}
 
-	public void addChangeListener(ChangeListener listener) {
-		if (listeners == null) {
-			listeners = new ArrayList();
-		}
-		listeners.add(listener);
-	}
-
-	protected void fireChangeEvent(Object newValue, Object oldValue) {
-		if (listeners != null) {
-			ChangeEvent event = new ChangeEvent(this, newValue, oldValue);
-			Iterator it = listeners.iterator();
-			while (it.hasNext()) {
-				ChangeListener listener = (ChangeListener) it.next();
-				listener.valueChanged(event);
-			}
-		}
-	}
-
 	public int getEventTypes() {
-		if (validateOnChange || listeners != null) {
+		if (validateOnChange || hasListeners()) {
 			return JavaScriptEvent.ON_CHANGE;
 		}
 		return JavaScriptEvent.NONE;

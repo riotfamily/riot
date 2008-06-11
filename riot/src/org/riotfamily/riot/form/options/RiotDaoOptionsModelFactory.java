@@ -26,8 +26,11 @@ package org.riotfamily.riot.form.options;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
-import org.riotfamily.forms.OptionValuesAdapter;
+import org.riotfamily.forms.OptionsModelFactory;
+import org.riotfamily.forms.options.OptionsModel;
+import org.riotfamily.forms.options.StaticOptionsModel;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.list.support.ListParamsImpl;
 
@@ -35,16 +38,16 @@ import org.riotfamily.riot.list.support.ListParamsImpl;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class RiotDaoOptionValuesAdapter implements OptionValuesAdapter {
+public class RiotDaoOptionsModelFactory implements OptionsModelFactory {
 
 	public boolean supports(Object model) {
 		return model instanceof RiotDao;
 	}
 	
-	public Collection getValues(Object model, Form form) {
+	public OptionsModel createOptionsModel(Object model, Element element) {
 		RiotDao dao = (RiotDao) model;
 		Collection values = dao.list(null, new ListParamsImpl());
-		
+		Form form = element.getForm();
 		//Remove the object being edited from the collection to prevent circular 
 		//references. This is only done when editing an existing object and 
 		//classes are assignment compatible.
@@ -53,8 +56,8 @@ public class RiotDaoOptionValuesAdapter implements OptionValuesAdapter {
 			
 			ArrayList copy = new ArrayList(values);
 			copy.remove(form.getBackingObject());
-			return copy;
+			return new StaticOptionsModel(copy);
 		}
-		return values;
+		return new StaticOptionsModel(values);
 	}
 }

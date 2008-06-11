@@ -23,25 +23,28 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.select;
 
-import org.riotfamily.forms.Element;
+import org.riotfamily.forms.Editor;
+import org.riotfamily.forms.event.ChangeListener;
 
 
 /**
  * Interface to be implemented by elements that provide options the user
  * can choose from.
  */
-public interface SelectElement extends Element {
+public interface SelectElement extends Editor {
 		
 	public String getParamName();
 	
-	public void renderOption(Option option);
+	public void renderOption(OptionItem option);
 
-	public boolean isSelected(Option option);
+	public boolean isSelected(OptionItem option);
 	
-	public Object getOptionsModel();
+	public Object getOptions();
 	
-	public void setOptionsModel(Object model);
+	public void setOptions(Object model);
 	
-	public int getOptionIndex(Option option);
+	public int getOptionIndex(OptionItem option);
+
+	public void reset();
 
 }

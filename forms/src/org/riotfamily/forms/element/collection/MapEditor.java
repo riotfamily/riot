@@ -36,6 +36,7 @@ import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.StringRenderer;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.Editor;
+import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.TemplateUtils;
@@ -45,6 +46,7 @@ import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.ClickEvent;
 import org.riotfamily.forms.event.ClickListener;
 import org.riotfamily.forms.options.OptionsModel;
+import org.riotfamily.forms.options.OptionsModelUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 
@@ -103,7 +105,7 @@ public class MapEditor extends TemplateElement implements Editor {
 			keyEditor.setFieldName(getFieldName() + ".add");
 			if (keyEditor instanceof SelectElement) {
 				SelectElement se = (SelectElement) keyEditor;
-				se.setOptionsModel(new MapOptionsModel(se));
+				se.setOptions(new MapOptionsModel(se));
 			}
 			addComponent("keyEditor", keyEditor);
 			
@@ -162,7 +164,7 @@ public class MapEditor extends TemplateElement implements Editor {
 		
 		Collection keys = null;
 		if (keyOptionsModel != null) {
-			keys = getForm().getOptionValues(keyOptionsModel);
+			keys = OptionsModelUtils.getOptionValues(keyOptionsModel, this);
 		}
 		else if (map != null) {
 			keys = map.keySet();
@@ -296,13 +298,13 @@ public class MapEditor extends TemplateElement implements Editor {
 		private Object model;
 		
 		public MapOptionsModel(SelectElement keyElement) {
-			this.model = keyElement.getOptionsModel();
+			this.model = keyElement.getOptions();
 		}
 
-		public Collection getOptionValues() {
+		public Collection getOptionValues(Element element) {
 			Collection keys = getKeys();
 			ArrayList result = new ArrayList();
-			Iterator it = getForm().getOptionValues(model).iterator();
+			Iterator it = OptionsModelUtils.getOptionValues(model, element).iterator();
 			while (it.hasNext()) {
 				Object key = (Object) it.next();
 				if (!keys.contains(key)) {

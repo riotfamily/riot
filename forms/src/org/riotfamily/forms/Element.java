@@ -68,6 +68,11 @@ public interface Element {
 	public void setFormContext(FormContext formContext);
 	
 	/**
+	 * Returns the FormContext.
+	 */
+	public FormContext getFormContext();
+	
+	/**
 	 * Sets the element's parent. E.g. the parent element is taken into account
 	 * to determine the enabled state of the element.  
 	 */

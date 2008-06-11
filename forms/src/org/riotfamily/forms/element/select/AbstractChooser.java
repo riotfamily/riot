@@ -143,24 +143,6 @@ public abstract class AbstractChooser extends AbstractEditorBase
 		return object;
 	}
 	
-	public void addChangeListener(ChangeListener listener) {
-		if (listeners == null) {
-			listeners = new ArrayList();
-		}
-		listeners.add(listener);
-	}
-
-	protected void fireChangeEvent(Object newValue, Object oldValue) {
-		if (listeners != null) {
-			ChangeEvent event = new ChangeEvent(this, newValue, oldValue);
-			Iterator it = listeners.iterator();
-			while (it.hasNext()) {
-				ChangeListener listener = (ChangeListener) it.next();
-				listener.valueChanged(event);
-			}
-		}
-	}
-	
 	public void handleContentRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws IOException {
 

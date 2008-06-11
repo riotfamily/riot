@@ -36,12 +36,11 @@ import org.riotfamily.common.i18n.RiotMessageCodesResolver;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.forms.FormContext;
-import org.riotfamily.forms.OptionValuesAdapter;
+import org.riotfamily.forms.OptionsModelFactory;
 import org.riotfamily.forms.TemplateRenderer;
-import org.riotfamily.forms.options.ArrayOptionValuesAdapter;
-import org.riotfamily.forms.options.CollectionOptionValuesAdapter;
-import org.riotfamily.forms.options.FormAwareOptionsModelValuesAdapter;
-import org.riotfamily.forms.options.OptionsModelValuesAdapter;
+import org.riotfamily.forms.options.ArrayOptionsModelFactory;
+import org.riotfamily.forms.options.CollectionOptionsModelFactory;
+import org.riotfamily.forms.options.DependentOptionsModelFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -102,14 +101,13 @@ public final class FormContextFactory implements MessageSourceAware,
 	
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		optionValuesAdapters.addAll(applicationContext.getBeansOfType(
-				OptionValuesAdapter.class).values());
+				OptionsModelFactory.class).values());
 	}
 	
 	private void registerDefaultOptionValuesAdapters() {
-		optionValuesAdapters.add(new CollectionOptionValuesAdapter());
-		optionValuesAdapters.add(new OptionsModelValuesAdapter());
-		optionValuesAdapters.add(new FormAwareOptionsModelValuesAdapter());
-		optionValuesAdapters.add(new ArrayOptionValuesAdapter());
+		optionValuesAdapters.add(new CollectionOptionsModelFactory());
+		optionValuesAdapters.add(new ArrayOptionsModelFactory());
+		optionValuesAdapters.add(new DependentOptionsModelFactory());
 	}
 	
 	public void setResourcePath(String resourcePath) {

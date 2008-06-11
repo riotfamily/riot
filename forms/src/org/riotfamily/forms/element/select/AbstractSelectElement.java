@@ -37,6 +37,8 @@ import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.event.JavaScriptEventAdapter;
+import org.riotfamily.forms.options.OptionsModel;
+import org.riotfamily.forms.options.OptionsModelUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -47,7 +49,7 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 		Editor, SelectElement, JavaScriptEventAdapter {
 
 	
-	private Object optionsModel;
+	private Object options;
 	
 	private String valueProperty;
 	
@@ -59,16 +61,15 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 
 	private OptionRenderer optionRenderer;
 	
-	private List options;
+	private OptionsModel optionsModel;
 	
-	private List listeners;
+	private List<OptionItem> optionItems;
 	
-
 	public void setOptionRenderer(OptionRenderer optionRenderer) {
 		this.optionRenderer = optionRenderer;
 	}
 
-	public void renderOption(Option option) {
+	public void renderOption(OptionItem option) {
 		optionRenderer.renderOption(option, getFormContext().getWriter(), isEnabled());
 	}
 	
@@ -88,47 +89,54 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 		this.appendLabel = appendLabelToMessageKey;
 	}
 
-	public void setOptionsModel(Object optionsModel) {
-		this.optionsModel = optionsModel;
-		resetOptions();
+	public void setOptions(Object options) {
+		this.options = options;
+		reset();
+	}
+	
+	public Object getOptions() {
+		return options;
+	}
+
+	public void render(PrintWriter writer) {
+		resetOptionItems();
+		super.render(writer);
+	}
+	
+	public void reset() {
+		resetOptionItems();
 		setValue(null);
 		if (getFormListener() != null) {
 			getFormListener().elementChanged(this);
 		}
 	}
 	
-	public Object getOptionsModel() {
-		return optionsModel;
-	}
-
-	public void render(PrintWriter writer) {
-		resetOptions();
-		super.render(writer);
+	protected void resetOptionItems() {
+		optionItems = null;
 	}
 	
-	protected void resetOptions() {
-		options = null;
-	}
-	
-	protected final List getOptions() {
-		if (options == null) {
-			options = createOptions();
+	protected final List<OptionItem> getOptionItems() {
+		if (optionItems == null) {
+			optionItems = createOptionItems();
 		}
-		return options;
+		return optionItems;
 	}
 	
-	protected List createOptions() {
-		List options = new ArrayList();
-		if (optionsModel != null) {			
-			Iterator it = getForm().getOptionValues(optionsModel).iterator();
+	protected List<OptionItem> createOptionItems() {
+		if (optionsModel == null) {
+			optionsModel = OptionsModelUtils.createOptionsModel(options, this);
+		}
+		List<OptionItem> items = new ArrayList<OptionItem>();
+		if (options != null) {			
+			Iterator it = optionsModel.getOptionValues(this).iterator();
 			for (int i = 0; it.hasNext(); i++) {
 				Object item = it.next();
 				String label = getOptionLabel(item);
 				Object value = getOptionValue(item);
-				options.add(new Option(item, value, label, this));
+				items.add(new OptionItem(item, value, label, this));
 			}
 		}
-		return options;
+		return items;
 	}
 	
 	protected String getOptionLabel(Object item) {
@@ -164,9 +172,9 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 		}
 	}
 	
-	public int getOptionIndex(Option option) {
-		Assert.notNull(options);
-		return options.indexOf(option);
+	public int getOptionIndex(OptionItem option) {
+		Assert.notNull(optionItems);
+		return optionItems.indexOf(option);
 	}
 	
 	protected abstract boolean hasSelection();
@@ -178,28 +186,10 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 	}
 	
 	public int getEventTypes() {
-		if (listeners != null) {
+		if (hasListeners()) {
 			return JavaScriptEvent.ON_CHANGE;
 		}
 		return 0;
-	}
-
-	public void addChangeListener(ChangeListener listener) {
-		if (listeners == null) {
-			listeners = new ArrayList();
-		}
-		listeners.add(listener);
-	}
-
-	protected void fireChangeEvent(Object newValue, Object oldValue) {
-		if (listeners != null) {
-			ChangeEvent event = new ChangeEvent(this, newValue, oldValue);
-			Iterator it = listeners.iterator();
-			while (it.hasNext()) {
-				ChangeListener listener = (ChangeListener) it.next();
-				listener.valueChanged(event);
-			}
-		}
 	}
 
 }

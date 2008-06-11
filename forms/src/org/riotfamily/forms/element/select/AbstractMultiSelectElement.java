@@ -127,7 +127,7 @@ public abstract class AbstractMultiSelectElement
 		return !selectedValues.isEmpty();
 	}
 	
-	public boolean isSelected(Option option) {
+	public boolean isSelected(OptionItem option) {
 		return selectedValues != null && 
 				selectedValues.contains(option.getValue());
 	}
@@ -140,13 +140,13 @@ public abstract class AbstractMultiSelectElement
 	}
 	
 	private void updateSelection(String[] indexes) {
-		List options = getOptions();
+		List options = getOptionItems();
 		selectedValues = new ArrayList();
 		if (indexes != null) {
 			for (int i = 0; i < indexes.length; i++) {
 				int index = Integer.parseInt(indexes[i]);
 				if (index != -1) {
-					selectedValues.add(((Option) options.get(index)).getValue());
+					selectedValues.add(((OptionItem) options.get(index)).getValue());
 				}
 			}
 		}

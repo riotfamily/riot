@@ -261,7 +261,7 @@
 		<property name="customElements" ref="customFormElements" />
 	</bean>
 
-	<bean id="riotDaoOptionValuesAdapter" class="org.riotfamily.riot.form.options.RiotDaoOptionValuesAdapter" />
+	<bean id="riotDaoOptionValuesAdapter" class="org.riotfamily.riot.form.options.RiotDaoOptionsModelFactory" />
 
 	<bean id="imageCropper" class="org.riotfamily.common.image.ImageMagickCropper">
 		<constructor-arg ref="imageMagick" />

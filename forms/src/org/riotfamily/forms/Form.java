@@ -475,14 +475,4 @@ public class Form implements BeanEditor {
 		return errors.hasErrors();
 	}
 	
-	public Collection getOptionValues(Object model) {
-		Iterator it = formContext.getOptionValuesAdapters().iterator();
-		while (it.hasNext()) {
-			OptionValuesAdapter adapter = (OptionValuesAdapter) it.next();
-			if (adapter.supports(model)) {
-				return adapter.getValues(model, this);
-			}
-		}
-		throw new IllegalStateException("No adapter registered for " + model);
-	}
 }

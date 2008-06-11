@@ -53,7 +53,7 @@ public class MultiSelectBox extends AbstractMultiSelectElement {
 	public void renderInternal(PrintWriter writer) {
 		TagWriter selectTag = new TagWriter(writer);
 
-		List options = getOptions();
+		List options = getOptionItems();
 		selectTag.start(Html.SELECT);
 		selectTag.attribute(Html.INPUT_NAME, getParamName());
 		selectTag.attribute(Html.COMMON_ID, getId());
@@ -63,7 +63,7 @@ public class MultiSelectBox extends AbstractMultiSelectElement {
 
 		Iterator it = options.iterator();
 		while (it.hasNext()) {
-			((Option) it.next()).render();
+			((OptionItem) it.next()).render();
 		}
 
 		selectTag.end();

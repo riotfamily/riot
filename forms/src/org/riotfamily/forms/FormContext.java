@@ -50,6 +50,6 @@ public interface FormContext extends RenderContext {
 
 	public PropertyEditorRegistrar[] getPropertyEditorRegistrars();
 
-	public List getOptionValuesAdapters();
+	public List<OptionsModelFactory> getOptionValuesAdapters();
 	
 }

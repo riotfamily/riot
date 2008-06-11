@@ -26,6 +26,7 @@ package org.riotfamily.forms.options;
 import java.util.Collection;
 
 import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -34,7 +35,7 @@ import org.springframework.util.CollectionUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PropertyOptionsModel implements FormAwareOptionsModel {
+public class PropertyOptionsModel implements OptionsModel {
 
 	private String propertyName;
 
@@ -42,8 +43,9 @@ public class PropertyOptionsModel implements FormAwareOptionsModel {
 		this.propertyName = propertyName;
 	}
 
-	public Collection<?> getOptionsValues(Form form) {
+	public Collection<?> getOptionValues(Element element) {
 		Assert.notNull(propertyName, "A propertyName must be set.");
+		Form form = element.getForm();
 		if (form.isNew()) {
 			return null;	
 		}

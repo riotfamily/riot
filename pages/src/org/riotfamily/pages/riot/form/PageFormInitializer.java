@@ -99,7 +99,7 @@ public class PageFormInitializer implements FormInitializer {
 		if (handlerNames.length > 1) {
 			SelectBox sb = new SelectBox();
 			sb.setRequired(true);
-			sb.setOptionsModel(handlerNames);
+			sb.setOptions(handlerNames);
 			sb.setLabelMessageKey("page.handlerName.");
 			sb.setAppendLabel(true);
 			NestedForm nodeForm = new NestedForm();

@@ -35,6 +35,6 @@ import java.io.PrintWriter;
  */
 public interface OptionRenderer {
 
-	public void renderOption(Option option, PrintWriter writer, boolean enabled);
+	public void renderOption(OptionItem option, PrintWriter writer, boolean enabled);
 
 }

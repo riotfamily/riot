@@ -41,9 +41,9 @@ public class ImageCheckboxGroup extends CheckboxGroup {
 	
 	public String getInitScript() {
 		StringBuffer sb = new StringBuffer(super.getInitScript());
-		Iterator it = getOptions().iterator();
+		Iterator it = getOptionItems().iterator();
 		while (it.hasNext()) {
-			Option option = (Option) it.next();
+			OptionItem option = (OptionItem) it.next();
 			String image = PropertyUtils.getPropertyAsString(
 					option.getObject(), imageProperty);
 			

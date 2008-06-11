@@ -27,15 +27,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.riotfamily.forms.Form;
-import org.riotfamily.forms.options.FormAwareOptionsModel;
+import org.riotfamily.forms.Element;
+import org.riotfamily.forms.options.OptionsModel;
+import org.riotfamily.forms.options.OptionsModelUtils;
 import org.riotfamily.riot.security.AccessController;
 
 /**
  * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
-public class RestrictedOptionsModel implements FormAwareOptionsModel {
+public class RestrictedOptionsModel implements OptionsModel {
 	
 	private Object model;
 	
@@ -43,8 +44,8 @@ public class RestrictedOptionsModel implements FormAwareOptionsModel {
 		this.model = model;
 	}
 
-	public Collection getOptionsValues(Form form) {
-		Collection sourceOptions = form.getOptionValues(model);
+	public Collection<?> getOptionValues(Element element) {
+		Collection<?> sourceOptions = OptionsModelUtils.createOptionsModel(model, element).getOptionValues(element);
 		ArrayList result = new ArrayList();
 		Iterator it = sourceOptions.iterator();
 		while (it.hasNext()) {

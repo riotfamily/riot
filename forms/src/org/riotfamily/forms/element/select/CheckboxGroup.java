@@ -63,7 +63,7 @@ public class CheckboxGroup extends AbstractMultiSelectElement
 	public void renderInternal(PrintWriter writer) {
 		HashMap<String, Object> model = new HashMap<String, Object>();
 		model.put("element", this);
-		model.put("options", getOptions());
+		model.put("options", getOptionItems());
 		getFormContext().getTemplateRenderer().render(template, model, writer);
 	}
 	

@@ -25,14 +25,20 @@ package org.riotfamily.forms.options;
 
 import java.util.Collection;
 
-import org.riotfamily.forms.Form;
+import org.riotfamily.forms.Element;
+import org.riotfamily.forms.OptionsModelFactory;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public interface FormAwareOptionsModel {
+public class CollectionOptionsModelFactory implements OptionsModelFactory {
 
-	public Collection<?> getOptionsValues(Form form);
-
+	public boolean supports(Object model) {
+		return model instanceof Collection;
+	}
+	
+	public OptionsModel createOptionsModel(Object model, Element element) {
+		return new StaticOptionsModel((Collection<?>) model);
+	}
 }

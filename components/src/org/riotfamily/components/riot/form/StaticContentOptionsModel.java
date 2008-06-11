@@ -29,6 +29,7 @@ import java.util.Iterator;
 
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.components.model.wrapper.ValueWrapperService;
+import org.riotfamily.forms.Element;
 import org.riotfamily.forms.options.OptionsModel;
 
 /**
@@ -43,7 +44,7 @@ public class StaticContentOptionsModel implements OptionsModel {
 		this.values = values;
 	}
 
-	public Collection getOptionValues() {
+	public Collection getOptionValues(Element element) {
 		ArrayList optionValues = new ArrayList();
 		Iterator it = values.iterator();
 		while (it.hasNext()) {

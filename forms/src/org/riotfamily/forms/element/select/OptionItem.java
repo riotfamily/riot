@@ -26,7 +26,7 @@ package org.riotfamily.forms.element.select;
 /**
  *
  */
-public class Option {
+public class OptionItem {
 
 	private Object object;
 	
@@ -36,7 +36,7 @@ public class Option {
 
 	private SelectElement parent;
 	
-	public Option(Object object, Object value, String label, SelectElement parent) {
+	public OptionItem(Object object, Object value, String label, SelectElement parent) {
 		this.object = object;
 		this.value = value;
 		this.label = label;
