@@ -24,7 +24,6 @@
 package org.riotfamily.components.config;
 
 import org.riotfamily.components.riot.form.ContentEditorBinder;
-import org.riotfamily.forms.EditorBinder;
 import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.factory.DefaultFormFactory;
 import org.riotfamily.forms.factory.FormFactory;
@@ -41,12 +40,13 @@ public class ContentFormRepository extends XmlFormRepository {
 		componentRepository.setFormRepository(this);
 	}
 
-	public FormFactory createFormFactory(Class beanClass, 
+	public FormFactory createFormFactory(Class<?> beanClass, 
 			FormInitializer initializer, Validator validator) {
 		
 		if (beanClass == null) {
-			EditorBinder binder = new ContentEditorBinder();
-			return new DefaultFormFactory(binder, initializer, validator);
+			DefaultFormFactory factory = new DefaultFormFactory(initializer, validator);
+			factory.setEditorBinderClass(ContentEditorBinder.class);
+			return factory;
 		}
 		return super.createFormFactory(beanClass, initializer, validator);
 	}

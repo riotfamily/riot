@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.factory;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,6 +31,8 @@ import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.util.Assert;
 import org.springframework.validation.Validator;
 
 
@@ -44,35 +45,42 @@ import org.springframework.validation.Validator;
 public class DefaultFormFactory implements FormFactory {
 
 	/** Class to be edited by the form */
-	private Class beanClass;
+	private Class<?> beanClass;
 
-	private EditorBinder editorBinder;
+	private Class<? extends EditorBinder> editorBinderClass;
 	
 	/** List of factories to create child elements */
-	private List childFactories = new LinkedList();
+	private List<ElementFactory> childFactories = new LinkedList<ElementFactory>();
 
 	private FormInitializer initializer;
 
 	private Validator validator;
 
 
-	public DefaultFormFactory(Class beanClass, FormInitializer initializer, 
+	public DefaultFormFactory(FormInitializer initializer, 
 			Validator validator) {
 		
-		this.beanClass = beanClass;
 		this.initializer = initializer;
 		this.validator = validator;
 	}
 	
-	public DefaultFormFactory(EditorBinder editorBinder, 
-			FormInitializer initializer, Validator validator) {
+	public DefaultFormFactory(FormInitializer initializer, 
+			Validator validator, Class<?> beanClass) {
 		
-		this.editorBinder = editorBinder;
 		this.initializer = initializer;
 		this.validator = validator;
+		this.beanClass = beanClass;
 	}
-
-	public Class getBeanClass() {
+	
+	public void setBeanClass(Class<?> beanClass) {
+		this.beanClass = beanClass;
+	}
+	
+	public void setEditorBinderClass(Class<? extends EditorBinder> editorBinderClass) {
+		this.editorBinderClass = editorBinderClass;
+	}
+	
+	public Class<?> getBeanClass() {
 		return this.beanClass;
 	}
 
@@ -83,23 +91,30 @@ public class DefaultFormFactory implements FormFactory {
 		childFactories.add(factory);
 	}
 
-	public List getChildFactories() {
+	public List<ElementFactory> getChildFactories() {
 		return this.childFactories;
 	}
 
 	public Form createForm() {
 		Form form = new Form();
-		if (editorBinder != null) {
-			form.setEditorBinder(editorBinder);
+		if (editorBinderClass != null) {
+			try {
+				form.setEditorBinder(editorBinderClass.newInstance());
+			} 
+			catch (InstantiationException e) {
+				throw new BeanCreationException("Error creating EditorBinder", e);
+			}
+			catch (IllegalAccessException e) {
+				throw new BeanCreationException("Error creating EditorBinder", e);
+			}
 		}
 		else {
+			Assert.notNull(beanClass, "Either a beanClass or a editorBinderClass must be set");
 			form.setBeanClass(beanClass);			
 		}
 		form.setInitializer(initializer);
 		form.setValidator(validator);
-		Iterator it = childFactories.iterator();
-		while (it.hasNext()) {
-			ElementFactory factory = (ElementFactory) it.next();
+		for (ElementFactory factory : childFactories) { 
 			Element child = factory.createElement(null, form, true);
 			form.addElement(child);
 		}
