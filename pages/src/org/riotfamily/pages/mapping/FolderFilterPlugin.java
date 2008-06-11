@@ -25,7 +25,6 @@ package org.riotfamily.pages.mapping;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -134,7 +133,7 @@ public class FolderFilterPlugin extends FilterPlugin {
 		}
 		String path = pageResolver.getPathWithinSite(request);
 		if (path.length() == 0) {
-			Collection topLevelPages = pageDao.getRootNode().getChildPages(site);
+			Collection<Page> topLevelPages = pageDao.getRootNode().getChildPages(site);
 			sendRedirect(topLevelPages, request, response);
 			return true;
 		}
@@ -149,7 +148,7 @@ public class FolderFilterPlugin extends FilterPlugin {
 		return true;
 	}
 
-	private void sendRedirect(Collection pages, HttpServletRequest request, 
+	private void sendRedirect(Collection<Page> pages, HttpServletRequest request, 
 			HttpServletResponse response) throws IOException {
 		
 		String url = getFirstRequestablePageUrl(pages);
@@ -163,10 +162,8 @@ public class FolderFilterPlugin extends FilterPlugin {
 		}
 	}
 	
-	private String getFirstRequestablePageUrl(Collection pages) {
-		Iterator it = pages.iterator();
-		while (it.hasNext()) {
-			Page page = (Page) it.next();
+	private String getFirstRequestablePageUrl(Collection<Page> pages) {
+		for (Page page : pages) {
 			if (page.isRequestable()) {
 				return page.getUrl(pathCompleter);
 			}
