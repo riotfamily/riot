@@ -293,11 +293,11 @@
 	<#return commonMacroHelper.toDelimitedString(collection, delim) />
 </#function>
 
-<#function getMessage code args=[] default=code>
-	<#return commonMacroHelper.getMessage(code, args, default) />
+<#function getMessage code args...>
+	<#return commonMacroHelper.getMessage(code, args) />
 </#function>
 
-<#macro message code args=[] default=code>${commonMacroHelper.getMessage(code, args, default)}</#macro>
+<#macro message code args...><#local default><#nested></#local><#if !default?has_content><#local default=code /></#if>${commonMacroHelper.getMessage(code, args)!default}</#macro>
 
 <#---
   - @internal

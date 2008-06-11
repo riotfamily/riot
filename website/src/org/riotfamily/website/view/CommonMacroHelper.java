@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -127,8 +126,8 @@ public class CommonMacroHelper {
 		return requestLocale;
 	}
 	
-	public String getMessage(String code, List args, String defaultMessage) {
-		return ctx.getMessage(code, args.toArray(), defaultMessage, getLocale());
+	public String getMessage(String code, List<?> args) {
+		return ctx.getMessage(code, args.toArray(), null, getLocale());
 	}
 	
 	public String getMessage(MessageSourceResolvable resolvable) {
@@ -247,12 +246,10 @@ public class CommonMacroHelper {
      * @param titleProperty The property to use for grouping
      * @return A list of {@link ObjectGroup ObjectGroups}
      */
-    public List partition(Collection c, String titleProperty) {
-		ArrayList groups = new ArrayList();
-		Iterator it = c.iterator();
+    public List<ObjectGroup> partition(Collection<?> c, String titleProperty) {
+		ArrayList<ObjectGroup> groups = new ArrayList<ObjectGroup>();
 		ObjectGroup group = null;
-		while (it.hasNext()) {
-			Object item = it.next();
+		for (Object item : c) {
 			Object title = PropertyUtils.getProperty(item, titleProperty);
 			if (group == null || (title != null
 					&& !title.equals(group.getTitle()))) {
@@ -267,7 +264,7 @@ public class CommonMacroHelper {
 		return groups;
 	}
     
-    public String toDelimitedString(Collection c, String delim) {
+    public String toDelimitedString(Collection<?> c, String delim) {
     	return StringUtils.collectionToDelimitedString(c, delim);
     }
 
@@ -277,13 +274,14 @@ public class CommonMacroHelper {
      * @param collection The collection to shuffle
      * @return The shuffled collection
      */
-	public List shuffle(Collection collection) {
-		List result = new ArrayList(collection);
+	public List<?> shuffle(Collection<?> collection) {
+		List<?> result = new ArrayList<Object>(collection);
 		Collections.shuffle(result);
 		return result;
 	}    
 
-	public String getFileExtension(String filename, Collection validExtensions,
+	public String getFileExtension(String filename, 
+			Collection<String> validExtensions,
 			String defaultExtension) {
 
 		String ext = FormatUtils.getExtension(filename);
@@ -350,11 +348,11 @@ public class CommonMacroHelper {
 		
 		private Object title;
 		
-		private List items;
+		private List<Object> items;
 
 		private ObjectGroup(Object title, Object item) {
 			this.title = title;
-			this.items = new ArrayList();
+			this.items = new ArrayList<Object>();
 			this.items.add(item);
 		}
 
@@ -366,7 +364,7 @@ public class CommonMacroHelper {
 			return this.title;
 		}
 		
-		public List getItems() {
+		public List<Object> getItems() {
 			return this.items;
 		}
 
