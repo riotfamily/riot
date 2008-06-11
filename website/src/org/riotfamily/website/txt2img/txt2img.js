@@ -26,8 +26,7 @@ if (typeof Prototype=='undefined') {
 	throw("Txt2img requires the Prototype JavaScript library");
 }
 
-var RiotImageReplacement = Class.create();
-RiotImageReplacement.prototype = {
+var RiotImageReplacement = Class.create({
 
 	// Whether to use the alphaImageLoader or not. The flag will be set to 
 	// true in IE6 by a conditional statement below ...
@@ -71,13 +70,6 @@ RiotImageReplacement.prototype = {
 
 	insertImages: function(el) {
 		new CssMatcher(this.selectors, this.processElement.bind(this)).match(document.body);
-	},
-
-	processSelector: function(el, sel) {
-		var elements = new Selector(sel).findElements(el);
-		for (var i = 0, len = elements.length; i < len; i++) {
-			this.processElement(elements[i], sel);
-		}
 	},
 
 	processElement: function(el, sel) {
@@ -179,8 +171,9 @@ RiotImageReplacement.prototype = {
 		el.innerHTML = '';
 		el.appendChild(img);
 		el.appendChild(printText);
+		el.style.visibility = 'visible';
 	}
-}
+});
 
 /*@cc_on
 /*@if (@_jscript_version < 5.7)
@@ -188,8 +181,7 @@ RiotImageReplacement.prototype = {
 /*@end
 @*/
 
-var ElementMatcher = Class.create();
-ElementMatcher.prototype = {
+var ElementMatcher = Class.create({
 	initialize: function(s) {
 		var m = /([^.#]*)#?([^.]*)\.?(.*)/.exec(s);
 		this.tagName = m[1] != '' ? m[1].toUpperCase() : null;
@@ -214,10 +206,9 @@ ElementMatcher.prototype = {
 	inspect: function() {
 			return this.tagName + '#' + this.id + '.' + this.className;
 	}
-};
+});
 
-var CssSelector = Class.create();
-CssSelector.prototype = {
+var CssSelector = Class.create({
 	initialize: function(sel) {
 		this.text = sel;
 		this.matchers = [];
@@ -248,10 +239,9 @@ CssSelector.prototype = {
 			this.matcher = this.matchers[--this.level];
 		}
 	}
-}
+});
 
-var CssMatcher = Class.create();
-CssMatcher.prototype = {
+var CssMatcher = Class.create({
 	initialize: function(selectors, handler) {
 		this.sel = selectors.collect(function(s) {return new CssSelector(s)});
 		this.handler = handler;
@@ -319,4 +309,4 @@ CssMatcher.prototype = {
 			}
 		}
 	}
-}
+});

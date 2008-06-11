@@ -24,6 +24,7 @@
 package org.riotfamily.website.txt2img;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public class Txt2ImgController extends AbstractCacheableController
 	
 	private Map generators = new HashMap();
 	
-	private List selectors = new ArrayList();
+	private List<String> selectors = new ArrayList<String>();
 
 	private ImageGenerator defaultGenerator = new ImageGenerator();
 
@@ -90,10 +91,8 @@ public class Txt2ImgController extends AbstractCacheableController
 	/**
 	 * Sets a List of {@link ReplacementRule} objects.
 	 */
-	public void setRules(List rules) {
-		Iterator it = rules.iterator();
-		while (it.hasNext()) {
-			ReplacementRule rule = (ReplacementRule) it.next();
+	public void setRules(List<ReplacementRule> rules) {
+		for (ReplacementRule rule : rules) {
 			addRule(rule);
 		}
 	}
@@ -156,6 +155,9 @@ public class Txt2ImgController extends AbstractCacheableController
 		}
 		else if (extension.equals("gif")) {
 			servePixelGif(response);
+		}
+		else if (extension.equals("css")) {
+			serveStyleSheet(request, response);
 		}
 		else {
 			serveScript(request, response);
@@ -250,10 +252,10 @@ public class Txt2ImgController extends AbstractCacheableController
 		out.write("', '");
 		out.write(getPixelUrl(request));
 		out.write("', [");
-		Iterator it = selectors.iterator();
+		Iterator<String> it = selectors.iterator();
 		while (it.hasNext()) {
 			out.write("'");
-			out.write((String) it.next());
+			out.write(it.next());
 			out.write("'");
 			if (it.hasNext()) {
 				out.write(", ");
@@ -262,6 +264,18 @@ public class Txt2ImgController extends AbstractCacheableController
 		out.write("]);");
 		compressor.compress(new StringReader(out.toString()), 
 				response.getWriter());
+	}
+	
+	protected void serveStyleSheet(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+
+		response.setContentType("text/css");
+		ServletUtils.setFarFutureExpiresHeader(response);
+		PrintWriter out = response.getWriter(); 
+		for (String selector : selectors) {
+			out.write(selector);
+			out.write("{visibility: hidden}\n");
+		}
 	}
 
 	private String getGeneratorUrl(HttpServletRequest request) {

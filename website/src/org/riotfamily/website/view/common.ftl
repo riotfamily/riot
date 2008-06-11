@@ -362,12 +362,16 @@
 <#---
   - Writes a script tag that loads the txt2img.js file.
   -->
-<#macro txt2img>
+<#macro txt2img loadPrototype=true>
+	<link rel="stylesheet" type="text/css" href="${resource(pathForHandler("txt2ImgController", "css"))}" />
+	<#if loadPrototype>
+		<@riot.script src="prototype/prototype.js" />
+	</#if>
 	<script src="${resource(pathForHandler("txt2ImgController", "js") + '?locale=' + .locale)}" type="text/javascript"></script>
 </#macro>
 
-<#macro stylesheets hrefs>
-	<#if commonMacroHelper.compressResources>
+<#macro stylesheets hrefs compress=commonMacroHelper.compressResources>
+	<#if compress>
 		<link rel="stylesheet" type="text/css" href="${resolve(pathForHandler("minifyCssController"))}?files=${toDelimitedString(hrefs)}" />
 	<#else>
 		<#list hrefs as href>
