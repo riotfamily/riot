@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.mapping.AttributePattern;
+import org.riotfamily.common.web.mapping.UrlResolverContext;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
@@ -161,6 +162,18 @@ public class PageResolver {
 	}
 	
 	/**
+	 * Returns the previously resolved Page for the given context.
+	 * <p>
+	 * <strong>Note:</strong> This method does not perform any lookups itself.
+	 * Only use this method if you are sure that 
+	 * {@link #getPage(HttpServletRequest)} has been invoked before. 
+	 */
+	public static Page getResolvedPage(UrlResolverContext context) {
+		Object page = context.getAttribute(PAGE_ATTRIBUTE);
+		return page != NOT_FOUND ? (Page) page : null;
+	}
+	
+	/**
 	 * Returns the previously resolved Site for the given request.
 	 * <p>
 	 * <strong>Note:</strong> This method does not perform any lookups itself.
@@ -171,8 +184,19 @@ public class PageResolver {
 		Object site = request.getAttribute(SITE_ATTRIBUTE);
 		return site != NOT_FOUND ? (Site) site : null; 
 	}
-
 	
+	/**
+	 * Returns the previously resolved Site for the given context.
+	 * <p>
+	 * <strong>Note:</strong> This method does not perform any lookups itself.
+	 * Only use this method if you are sure that 
+	 * {@link #getSite(HttpServletRequest)} has been invoked before. 
+	 */
+	public static Site getResolvedSite(UrlResolverContext context) {
+		Object site = context.getAttribute(SITE_ATTRIBUTE);
+		return site != NOT_FOUND ? (Site) site : null; 
+	}
+
 	public Page resolvePage(String url, String contextPath, Site fallbackSite,
 			PathCompleter pathCompleter) {
 		

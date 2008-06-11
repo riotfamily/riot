@@ -24,7 +24,6 @@
 package org.riotfamily.pages.mapping;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -132,9 +131,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	 * requestable child page.
 	 */
 	private Object getFolderHandler(Page folder) {
-		Iterator it = folder.getChildPages().iterator();
-		while (it.hasNext()) {
-			Page page = (Page) it.next();
+		for (Page page : folder.getChildPages()) {
 			if (page.isRequestable()) {
 				String url = page.getUrl(pathCompleter);
 				return new RedirectController(url, true, false);
@@ -176,18 +173,16 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		pattern.expose(urlPath, request);
 	}
 	
-	protected List getPatternsForHandler(String beanName, 
+	protected List<AttributePattern> getPatternsForHandler(String beanName, 
 			UrlResolverContext context) {
 		
-		Site site = (Site) context.getAttribute(PageResolver.SITE_ATTRIBUTE);
+		Site site = PageResolver.getResolvedSite(context);
 		if (site == null) {
 			return null;
 		}
-		List pages = pageDao.findPagesForHandler(beanName, site);
-		ArrayList patterns = new ArrayList(pages.size());
-		Iterator it = pages.iterator();
-		while (it.hasNext()) {
-			Page page = (Page) it.next();
+		List<Page> pages = pageDao.findPagesForHandler(beanName, site);
+		ArrayList<AttributePattern> patterns = new ArrayList<AttributePattern>(pages.size());
+		for (Page page : pages) {
 			patterns.add(new AttributePattern(page.getUrl(pathCompleter)));
 		}
 		return patterns;
