@@ -5,7 +5,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title><@spring.messageText "title.riot", "Riot V6" /></title>
+		<title><@spring.messageText "title.riot", "Riot V8" /></title>
 		<link rel="icon" href="${riot.resource("/style/images/favicon.ico")}" type="image/x-icon" />
     	<link rel="shortcut icon" href="${riot.resource("/style/images/favicon.ico")}" type="image/x-icon" />
     	<@riot.script src="prototype/prototype.js" />

@@ -78,7 +78,7 @@ ul.errors {
 ul.errors li {
 	margin: 5px 0;
 	list-style-type: none;
-	color: ${highlight_color};
+	color: ${error_color};
 	font-weight: normal;
 }
 
