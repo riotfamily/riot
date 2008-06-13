@@ -197,6 +197,17 @@ public class PageResolver {
 		return site != NOT_FOUND ? (Site) site : null; 
 	}
 
+	/**
+	 * Returns the Page which is requestable at the given URL. This may return
+	 * <code>null</code> in case the given parameters do not match a page.
+	 * 
+	 * @param url url  of the requestable page
+	 * @param contextPath of the application in order to strip it
+	 * @param fallbackSite in case the site can't be looked up, this site will
+	 * 			be used to find the page
+	 * @param pathCompleter in order to strip the servlet mapping
+	 * @return the page matching the parameters or null if no page was found
+	 */
 	public Page resolvePage(String url, String contextPath, Site fallbackSite,
 			PathCompleter pathCompleter) {
 		
