@@ -49,11 +49,7 @@ public class SiteIdentifier {
 				if (sites != null) {
 				    Iterator i = sites.iterator();
 				    while (i.hasNext()) {
-                        Site site = (Site) i.next();
-                        
-                        Hibernate.initialize(site.getAliases());
-                        
-                        System.out.println("Fetching aliases for site " + site.getName());
+                        Hibernate.initialize(((Site) i.next()).getAliases());
                     }
 				}
 			}
