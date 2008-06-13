@@ -106,7 +106,7 @@ public class CharacterEncodingFilter extends OncePerRequestFilter {
 
 		public void setCharacterEncoding(String encoding) {
 			if (forceResponseEncoding) {
-				super.setCharacterEncoding(encoding);	
+				super.setCharacterEncoding(CharacterEncodingFilter.this.encoding);	
 			}
 			else {
 				super.setCharacterEncoding(encoding);
