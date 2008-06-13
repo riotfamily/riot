@@ -23,6 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.txt2img;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.riotfamily.common.image.ImageUtils;
+import org.springframework.core.io.Resource;
+
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
@@ -30,6 +37,12 @@ package org.riotfamily.website.txt2img;
 public class ReplacementRule extends ImageGenerator {
 
 	private String selector;
+	
+	private BufferedImage bulletIcon;
+	
+	private BufferedImage hoverBulletIcon;
+	
+	private int bulletTop = 0;
 	
 	public String getSelector() {
 		return this.selector;
@@ -39,4 +52,40 @@ public class ReplacementRule extends ImageGenerator {
 		this.selector = selector;
 	}
 
+	public void setBulletIcon(Resource res) throws IOException {
+		this.bulletIcon = ImageUtils.read(res);
+	}
+	
+	public void setHoverBulletIcon(Resource res) throws IOException {
+		this.hoverBulletIcon = ImageUtils.read(res);
+	}
+	
+	public void setBulletTop(int bulletTop) {
+		this.bulletTop = bulletTop;
+	}
+	
+	@Override
+	public void afterPropertiesSet() {
+		if (bulletIcon != null) {
+			setPaddingLeft(getPaddingLeft() + bulletIcon.getWidth());
+		}
+		else if (hoverBulletIcon != null) {
+			setPaddingLeft(getPaddingLeft() + hoverBulletIcon.getWidth());
+		}
+		super.afterPropertiesSet();
+	}
+	
+	public void generate(String text, int maxWidth, String color, boolean hover, 
+			OutputStream os) throws IOException {
+	
+		BufferedImage image = generate(text, maxWidth, color);
+		if (bulletIcon != null && !hover) {
+			image.getGraphics().drawImage(bulletIcon, 0, bulletTop, null);
+		}
+		if (hoverBulletIcon != null && hover) {
+			image.getGraphics().drawImage(hoverBulletIcon, 0, bulletTop, null);
+		}
+		ImageUtils.write(image, "png", os);
+		image.flush();
+	}
 }

@@ -71,7 +71,7 @@ public class ImageGenerator implements InitializingBean {
 	
 	private boolean antiAlias = true;
 	
-	private boolean resample = false;
+	private boolean resample = true;
 	
 	private int internalFontSize = 120;
 	
@@ -151,12 +151,20 @@ public class ImageGenerator implements InitializingBean {
 		this.paddingTop = paddingTop;
 	}
 	
+	protected int getPaddingTop() {
+		return paddingTop;
+	}
+	
 	/**
 	 * Sets the padding at the right side of the image in pixels. 
 	 * The default value is <code>0</code>.
 	 */
 	public void setPaddingRight(int paddingRight) {
 		this.paddingRight = paddingRight;
+	}
+	
+	protected int getPaddingRight() {
+		return paddingRight;
 	}
 	
 	/**
@@ -167,12 +175,20 @@ public class ImageGenerator implements InitializingBean {
 		this.paddingBottom = paddingBottom;
 	}
 	
+	protected int getPaddingBottom() {
+		return paddingBottom;
+	}
+	
 	/**
 	 * Sets the padding at the left side of the image in pixels. 
 	 * The default value is <code>0</code>.
 	 */
 	public void setPaddingLeft(int paddingLeft) {
 		this.paddingLeft = paddingLeft;
+	}
+	
+	protected int getPaddingLeft() {
+		return paddingLeft;
 	}
 	
 	/**
@@ -209,7 +225,7 @@ public class ImageGenerator implements InitializingBean {
 	public void generate(String text, int maxWidth, String color, OutputStream os) 
 			throws IOException {
 		
-        BufferedImage image = generate(text, maxWidth, color) ;
+        BufferedImage image = generate(text, maxWidth, color);
         ImageUtils.write(image, "png", os);
         image.flush();
 	}

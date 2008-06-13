@@ -70,17 +70,14 @@ public class Txt2ImgController extends AbstractCacheableController
 	private long lastModified = System.currentTimeMillis();
 
 	
-	private Map generators = new HashMap();
+	private Map<String, ReplacementRule> rules = new HashMap<String, ReplacementRule>();
 	
 	private List<String> selectors = new ArrayList<String>();
-
-	private ImageGenerator defaultGenerator = new ImageGenerator();
 
 	private YUIJavaScriptCompressor compressor = new YUIJavaScriptCompressor();
 	
 	private Pattern refererPattern;
 
-	
 	/**
 	 * @param compressor the compressor to set
 	 */
@@ -98,21 +95,13 @@ public class Txt2ImgController extends AbstractCacheableController
 	}
 
 	public void addRule(ReplacementRule rule) {
-		String[] sel = StringUtils.commaDelimitedListToStringArray(rule.getSelector());
+		String[] sel = StringUtils.tokenizeToStringArray(rule.getSelector(), ",");
 		for (int i = 0; i < sel.length; i++) {
 			selectors.add(sel[i]);
-			generators.put(sel[i], rule);
+			rules.put(sel[i], rule);
 		}
 	}
 	
-	/**
-	 * Sets the generator to be used if no generator is found for a given
-	 * CSS selector.
-	 */
-	public void setDefaultGenerator(ImageGenerator defaultGenerator) {
-		this.defaultGenerator = defaultGenerator;
-	}
-
 	protected void appendCacheKey(StringBuffer key, HttpServletRequest request) {
 		String queryString = request.getQueryString();
 		if (queryString != null) {
@@ -214,22 +203,18 @@ public class Txt2ImgController extends AbstractCacheableController
 	protected void serveImage(String text, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 
-		ImageGenerator generator = defaultGenerator;
 		String selector = getEncodedParam(request, "selector");
-		if (selector != null) {
-			generator = (ImageGenerator) generators.get(selector);
-		}
-		Assert.notNull(generator, "No ImageGenerator found for selector '"
-				+ selector + "' and no default generator is set.");
-
+		ReplacementRule rule = rules.get(selector);
+		Assert.notNull(rule, "No ReplacementRule found for selector '" + selector);
 		int maxWidth = ServletRequestUtils.getIntParameter(request, "width", 0);
 		if (maxWidth <= 0) {
 			maxWidth = Integer.MAX_VALUE;
 		}
 		String color = getEncodedParam(request, "color");
+		boolean hover = ServletRequestUtils.getBooleanParameter(request, "hover", false);
 		response.setContentType("image/png");
 		ServletUtils.setFarFutureExpiresHeader(response);
-		generator.generate(text, maxWidth, color, response.getOutputStream());
+		rule.generate(text, maxWidth, color, hover, response.getOutputStream());
 	}
 
 	/**

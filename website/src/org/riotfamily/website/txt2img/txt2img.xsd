@@ -14,7 +14,7 @@
 						<xsd:attribute name="font" type="xsd:string" use="required" />
 						<xsd:attribute name="size" type="xsd:positiveInteger" use="required" />
 						<xsd:attribute name="anti-alias" type="xsd:boolean" default="true" />
-						<xsd:attribute name="resample" type="xsd:boolean" default="false" />
+						<xsd:attribute name="resample" type="xsd:boolean" default="true" />
 						<xsd:attribute name="color" type="xsd:string" />
 						<xsd:attribute name="padding-top" type="xsd:integer" />
 						<xsd:attribute name="padding-right" type="xsd:integer" />
@@ -24,6 +24,9 @@
 						<xsd:attribute name="max-width" type="xsd:positiveInteger" />
 						<xsd:attribute name="shrink-to-fit" type="xsd:boolean" default="false" />
 						<xsd:attribute name="internal-font-size" type="xsd:integer" />
+						<xsd:attribute name="bullet-icon" type="xsd:string" />
+						<xsd:attribute name="hover-bullet-icon" type="xsd:string" />
+						<xsd:attribute name="bullet-top" type="xsd:positiveInteger" />
 					</xsd:complexType>
 				</xsd:element>
 			</xsd:choice>

@@ -99,7 +99,7 @@ var RiotImageReplacement = Class.create({
 			var hover = null;
 			if (hoverColor != color) {
 				hover = new Image();
-				hover.src = this.getImageUrl(text, transform, width, sel, hoverColor);
+				hover.src = this.getImageUrl(text, transform, width, sel, hoverColor, true);
 			}
 			
 			var img = new Image();
@@ -108,12 +108,17 @@ var RiotImageReplacement = Class.create({
 		}
 	},
 	
-	getImageUrl: function(text, transform, width, sel, color) {
+	getImageUrl: function(text, transform, width, sel, color, hover) {
 		var url = this.generatorUrl;
 		url += url.include('?') ? '&' : '?';
-		return url + 'text=' + this.encode(text) + '&transform=' + transform
+		url += 'text=' + this.encode(text) + '&transform=' + transform
 				+ '&width=' + width + '&selector=' + this.encode(sel)
 				+ '&color=' + this.encode(color);
+				
+		if (hover) {
+			url += '&hover=true';
+		}
+		return url;
 	},
 
 	encode: function(s) {

@@ -38,14 +38,14 @@ public class Txt2ImgConfigurer implements BeanFactoryAware, InitializingBean {
 
 	private Txt2ImgController controller;
 	
-	private List rules;
+	private List<ReplacementRule> rules;
 	
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		controller = (Txt2ImgController) beanFactory.getBean(
 				"txt2ImgController", Txt2ImgController.class);
 	}
 	
-	public void setRules(List rules) {
+	public void setRules(List<ReplacementRule> rules) {
 		this.rules = rules;
 	}
 	
