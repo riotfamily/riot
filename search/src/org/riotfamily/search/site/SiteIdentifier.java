@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Hibernate;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Site;
@@ -43,6 +44,12 @@ public class SiteIdentifier {
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus ts) {
 				sites = pageDao.listSites();
+				if (sites != null) {
+				    Iterator i = sites.iterator();
+				    while (i.hasNext()) {
+				        Hibernate.initialize(((Site) i.next()).getAliases());
+				    }
+				}
 			}
 		});
 	}
