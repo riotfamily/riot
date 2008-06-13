@@ -176,28 +176,6 @@ var RElement = {
 		return el;
 	},
 	
-	disableEvents: function(el) {
-		if (!(el = $(el))) return;
-		if (el.childDump) return;
-		var html = el.innerHTML;
-		el.childDump = RBuilder.node('div', {className: 'riot-child-dump'}).setStyle({display: 'none'}).appendTo(document.body);
-		el.childElements().each(function(c) {c.remove(); el.childDump.appendChild(c)});
-		el.innerHTML = html;
-		el.disableLinks();
-		return el;
-	},
-
-	enableEvents: function(el) {
-		if (!(el = $(el))) return;
-		if (!el.childDump) return;
-		el.update();
-		el.childDump.childElements().each(function(c) {c.remove(); el.appendChild(c)});
-		el.childDump.remove();
-		el.childDump = null;
-		el.enableLinks();
-		return el;
-	},
-	
 	disableLinks: function(el) {
 		if (!(el = $(el))) return;
 		var a = el.ancestors().concat([el]).concat(el.descendants());

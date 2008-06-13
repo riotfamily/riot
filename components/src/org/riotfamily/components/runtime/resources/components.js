@@ -174,7 +174,7 @@ riot.ComponentList = Class.create({
 			this.element.style.position = 'relative';
 			this.componentElements.each(function(el) {
 				if (!el.down('.riot-component-list')) {
-					//el.disableEvents();
+					el.disableLinks();
 				}
 			});
 		}
@@ -212,7 +212,7 @@ riot.ComponentList = Class.create({
 			this.componentElements.each(function(el) {
 				el.removeClassName('riot-moveable-component');
 				if (!el.down('.riot-component-list')) {
-					//el.enableEvents();
+					el.enableLinks();
 				}
 			});
 			this.updatePositionClasses();
@@ -402,6 +402,7 @@ riot.Component = Class.create({
 	},
 	
 	setClickHandler: function(clickHandler) {
+		this.element.disableLinks();
 		this.clickHandler = clickHandler;
 		var c = this.element.childElements();
 		this.targetElement = c.length == 1 ? c[0] : this.element;
@@ -422,6 +423,7 @@ riot.Component = Class.create({
 			Event.stopObserving(this.targetElement, 'mouseout', this.bHideOutline);
 		}
 		this.clickHandler = null;
+		this.element.enableLinks();
 	},
 	
 	retrieveText: function(key, callback) {
