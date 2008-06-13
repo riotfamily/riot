@@ -29,26 +29,28 @@ public class SiteUserPolicy implements AuthorizationPolicy {
 	}
 	
 	public int checkPermission(RiotUser riotUser, String action, Object object) {
-		SiteUser user = (SiteUser) riotUser;
-		
-		if (!"admin".equals(user.getRole())) {		
-			if (object instanceof EditorDefinition) {
-				EditorDefinition editor = (EditorDefinition) object;				
-				if ("systemPreferences".equals(editor.getId())) {
-					return ACCESS_DENIED;
+		if (riotUser instanceof SiteUser) {
+			SiteUser user = (SiteUser) riotUser;
+			
+			if (!"admin".equals(user.getRole())) {		
+				if (object instanceof EditorDefinition) {
+					EditorDefinition editor = (EditorDefinition) object;				
+					if ("systemPreferences".equals(editor.getId())) {
+						return ACCESS_DENIED;
+					}
 				}
-			}
-			if (object instanceof Site) {
-				Site site = (Site) object;
-				if (!user.getSites().contains(site)) {
-					return ACCESS_DENIED;
+				if (object instanceof Site) {
+					Site site = (Site) object;
+					if (!user.getSites().contains(site)) {
+						return ACCESS_DENIED;
+					}
 				}
-			}
-			if (object instanceof HttpServletRequest) {
-				HttpServletRequest request = (HttpServletRequest) object;
-				Page page = pageResolver.getPage(request);
-				if (page != null && !user.getSites().contains(page.getSite())) {
-					return ACCESS_DENIED;
+				if (object instanceof HttpServletRequest) {
+					HttpServletRequest request = (HttpServletRequest) object;
+					Page page = pageResolver.getPage(request);
+					if (page != null && !user.getSites().contains(page.getSite())) {
+						return ACCESS_DENIED;
+					}
 				}
 			}
 		}
