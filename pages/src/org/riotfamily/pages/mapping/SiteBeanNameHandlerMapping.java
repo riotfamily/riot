@@ -45,7 +45,7 @@ public class SiteBeanNameHandlerMapping extends AdvancedBeanNameHandlerMapping {
 	}
 
 	protected Map getDefaults(UrlResolverContext context) {
-		Site site = (Site) context.getAttribute(PageResolver.SITE_ATTRIBUTE);
+		Site site = PageResolver.getResolvedSite(context);
 		Map defaults = null;
 		if (site != null) {
 			String sitePrefix = site.getPathPrefix();
