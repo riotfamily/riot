@@ -363,7 +363,9 @@
   - Writes a script tag that loads the txt2img.js file.
   -->
 <#macro txt2img loadPrototype=true>
-	<link rel="stylesheet" type="text/css" href="${resource(pathForHandler("txt2ImgController", "css"))}" />
+	<script type="text/javascript">
+		document.write('<link rel="stylesheet" type="text/css" href="${resource(pathForHandler("txt2ImgController", "css"))}" />');
+	</script>
 	<#if loadPrototype>
 		<@riot.script src="prototype/prototype.js" />
 	</#if>
