@@ -41,6 +41,7 @@ import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.riotfamily.common.util.FormatUtils;
+import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
 /**
@@ -62,6 +63,13 @@ public final class ImageUtils {
     
     public static BufferedImage readImage(File f) throws IOException {
     	return read(new FileInputStream(f));
+    }
+    
+    public static BufferedImage read(Resource res) throws IOException {
+    	if (res != null) {
+    		return read(res.getInputStream());
+    	}
+    	return null;
     }
     
     public static BufferedImage read(InputStream in) throws IOException {
