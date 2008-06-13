@@ -13,12 +13,15 @@
 		<@riot.script src="style/tweak.js" />
 	</head>
 	<body>
-		<div id="form" class="main">
-			${form}
+		<div id="body-wrapper">
+			<div id="wrapper">
+			<div id="form" class="main">
+				${form}
+			</div>
+			<script>
+				subPage('${title}');
+				TweakStyle.dialogForm();
+			</script>
 		</div>
-		<script>
-			subPage('${title}');
-			TweakStyle.dialogForm();
-		</script>
 	</body>
 </html>
