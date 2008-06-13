@@ -43,6 +43,12 @@ public class SiteIdentifier {
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus ts) {
 				sites = pageDao.listSites();
+				if (sites != null) {
+				    Iterator i = sites.iterator();
+				    while (i.hasNext()) {
+				        Hibernate.initialize(((Site) i.next()).getAliases());
+				    }
+				}
 			}
 		});
 	}
