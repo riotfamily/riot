@@ -5,9 +5,12 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Site;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -43,6 +46,16 @@ public class SiteIdentifier {
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus ts) {
 				sites = pageDao.listSites();
+				if (sites != null) {
+				    Iterator i = sites.iterator();
+				    while (i.hasNext()) {
+                        Site site = (Site) i.next();
+                        
+                        Hibernate.initialize(site.getAliases());
+                        
+                        System.out.println("Fetching aliases for site " + site.getName());
+                    }
+				}
 			}
 		});
 	}
