@@ -23,11 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms;
 
-import java.io.PrintWriter;
 import java.util.List;
-
-import org.riotfamily.common.markup.Html;
-import org.riotfamily.common.markup.TagWriter;
 
 
 /**
@@ -65,17 +61,6 @@ public class Container extends CompositeElement implements ContainerElement {
 		if (getFormListener() != null) {
 			getFormListener().elementRemoved(element);
 		}
-	}
-
-	/**
-	 * Renders the container's components surrounded by a <tt>span</tt> tag 
-	 * with the id of the container.
-	 */
-	public void renderInternal(PrintWriter writer) {
-		TagWriter div = new TagWriter(writer);
-		div.start(Html.DIV).attribute(Html.COMMON_ID, getId()).body();
-		renderComponents(writer);
-		div.end();
 	}
 	
 }

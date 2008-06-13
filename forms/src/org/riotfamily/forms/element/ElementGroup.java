@@ -123,7 +123,7 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 		}
 	}
 	
-	protected void renderComponents(PrintWriter writer) {
+	protected void renderInternal(PrintWriter writer) {
 		if (!expanded) {
 			Iterator it = getElements().iterator();
 			while (it.hasNext()) {
@@ -142,7 +142,7 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 			}
 		}
 		clientHasExpandedState = expanded;
-		super.renderComponents(writer);
+		super.renderInternal(writer);
 	}
 	
 	protected void toggle() {

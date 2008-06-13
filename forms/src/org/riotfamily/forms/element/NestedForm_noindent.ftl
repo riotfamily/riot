@@ -1,6 +1,6 @@
-<div id="${form.id}" class="nestedForm ${form.property?default('unbound')}">
+<div class="nestedForm ${form.property?default('unbound')}">
 <#list elements.elements as element>
-	<div class="${(element.compositeElement?default(false))?string('composite','single')} ${element.styleClass!}">
+	<div id="container-${element.id}" class="${(element.compositeElement?default(false))?string('composite','single')} ${element.styleClass!}"<#if !element.visible> style="display: none"</#if>>
 		<#if element.label?exists>
 			<#if element.compositeElement?default(false)>
 				<div class="box-title">

@@ -1,11 +1,11 @@
-<div id="${group.id}" class="group">
+<div class="group">
 	<#if group.collapsible>
 		${expandButton.render()}
 	</#if>
 	<#if !group.collapsible || group.expanded>
 		<div id="${group.id}-elements" class="indent<#if !group.labelItems> unlabeled</#if><#if group.styleClass??> ${group.styleClass}</#if>">
 			<#list group.elements as element>
-				<div class="item<#if element.styleClass?exists> ${element.styleClass}-element</#if>">
+				<div id="container-${element.id}" class="item<#if element.styleClass?exists> ${element.styleClass}-element</#if>"<#if !element.visible> style="display: none"</#if>>
 					<#if group.labelItems>
 						<div class="label">
 							<label for="${element.id}" class="field <#if element.form.errors.hasErrors(element)> error</#if>">

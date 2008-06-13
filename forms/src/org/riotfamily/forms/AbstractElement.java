@@ -27,6 +27,8 @@ import java.io.PrintWriter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.markup.Html;
+import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.request.FormRequest;
 
 
@@ -55,6 +57,10 @@ public abstract class AbstractElement implements Element {
 	
 	private boolean enabled = true;
 	
+	private boolean visible = true;
+	
+	private boolean surroundByDiv = true;
+	
 	public String getId() {
 		return id;
 	}
@@ -69,6 +75,10 @@ public abstract class AbstractElement implements Element {
 	
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
+	}
+	
+	public void setSurroundByDiv(boolean surroundByDiv) {
+		this.surroundByDiv = surroundByDiv;
 	}
 		
 	public Form getForm() {
@@ -138,8 +148,20 @@ public abstract class AbstractElement implements Element {
 		render(writer);
 	}
 
-	public void render(PrintWriter writer) {
-		renderInternal(writer);
+	public final void render(PrintWriter writer) {
+		if (surroundByDiv) {
+			TagWriter div = new TagWriter(writer);
+			div.start(Html.DIV);
+			div.attribute(Html.COMMON_ID, getId());
+			div.body();
+			if (isVisible()) {
+				renderInternal(writer);
+			}
+			div.closeAll();
+		}
+		else {			
+			renderInternal(writer);
+		}		
 		form.elementRendered(this);
 	}
 	
@@ -198,6 +220,14 @@ public abstract class AbstractElement implements Element {
 		this.required = required;
 	}
 	
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
 	public boolean isCompositeElement() {
 		return false;
 	}

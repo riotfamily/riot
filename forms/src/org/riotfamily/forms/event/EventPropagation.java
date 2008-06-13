@@ -38,17 +38,24 @@ public class EventPropagation {
 	
 	public static final String ON_CHANGE = "change";
 	
-	private String id;
+	private String triggerId;
 	
 	private String type;
 	
-	public EventPropagation(String id, String type) {
-		this.id = id;
+	private String sourceId;
+	
+	public EventPropagation(String triggerId, String type, String sourceId) {
+		this.triggerId = triggerId;
 		this.type = type;
+		this.sourceId = sourceId;
 	}
 	
-	public String getId() {
-		return id;
+	public String getTriggerId() {
+		return triggerId;
+	}
+	
+	public String getSourceId() {
+		return sourceId;
 	}
 	
 	public String getType() {
@@ -58,10 +65,10 @@ public class EventPropagation {
 	public static void addPropagations(JavaScriptEventAdapter adapter, List list) {
 		int types = adapter.getEventTypes();
 		if ((types & JavaScriptEvent.ON_CLICK) > 0) {
-			list.add(new EventPropagation(adapter.getId(), ON_CLICK));
+			list.add(new EventPropagation(adapter.getEventTriggerId(), ON_CLICK, adapter.getId()));
 		}
 		if ((types & JavaScriptEvent.ON_CHANGE) > 0) {
-			list.add(new EventPropagation(adapter.getId(), ON_CHANGE));
+			list.add(new EventPropagation(adapter.getEventTriggerId(), ON_CHANGE, adapter.getId()));
 		}
 	}
 	

@@ -1,4 +1,4 @@
-<div id="${element.id}" class="mapEditor collectionEditor">
+<div class="mapEditor collectionEditor">
 	<ul id="${items.id}" class="items">
 		<#list items.elements as item>
 			${item.render()}

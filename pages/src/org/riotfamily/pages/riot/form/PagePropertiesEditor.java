@@ -60,7 +60,6 @@ public class PagePropertiesEditor extends CompositeElement
 		this.binder = new LocalizedEditorBinder(new PagePropertiesEditorBinder());
 		this.currentForm = new PropertiesForm(handlerName);
 		addComponent(currentForm);
-		setSurroundByDiv(true);
 	}
 	
 	public String getLabel() {

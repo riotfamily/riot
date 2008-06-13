@@ -64,8 +64,7 @@ public class Textarea extends AbstractTextElement implements ResourceElement,
 			doc.start(Html.DIV).attribute(Html.COMMON_CLASS, "textarea-wrapper");
 		}
 		doc.start(Html.TEXTAREA)
-			.attribute(Html.COMMON_CLASS, getStyleClass())
-			.attribute(Html.COMMON_ID, getId())
+			.attribute(Html.COMMON_CLASS, getStyleClass())			
 			.attribute(Html.INPUT_NAME, getParamName())
 			.attribute(Html.INPUT_DISABLED, !isEnabled());
 		

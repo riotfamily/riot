@@ -160,6 +160,7 @@
 				<xsd:attribute name="value-property" type="xsd:string" />
 				<xsd:attribute name="label-message-key" type="xsd:string" />
 				<xsd:attribute name="append-label" type="xsd:boolean" />
+				<xsd:attribute name="hide-if-empty" type="xsd:boolean" default="false"/>
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>

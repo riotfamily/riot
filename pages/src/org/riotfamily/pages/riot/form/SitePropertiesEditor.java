@@ -56,7 +56,6 @@ public class SitePropertiesEditor extends CompositeElement
 		
 		propertiesForm = new PropertiesForm();
 		addComponent(propertiesForm);
-		setSurroundByDiv(true);
 	}
 	
 	public String getLabel() {

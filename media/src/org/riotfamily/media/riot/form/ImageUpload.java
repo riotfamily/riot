@@ -86,7 +86,7 @@ public class ImageUpload extends FileUpload {
 			ImageCropper cropper) {
 		
 		super(processingService);
-		this.cropper = cropper;
+		this.cropper = cropper;	
 	}
 
 	protected Element createPreviewElement() {
@@ -229,6 +229,10 @@ public class ImageUpload extends FileUpload {
 	public class PreviewElement extends AbstractElement
 			implements ContentElement, DHTMLElement, ResourceElement {
 
+		public PreviewElement() {
+			setSurroundByDiv(false);
+		}
+		
 		public FormResource getResource() {
 			return PREVIEW_RESOURCE;
 		}

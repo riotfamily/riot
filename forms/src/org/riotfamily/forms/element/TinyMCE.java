@@ -78,16 +78,14 @@ public class TinyMCE extends AbstractTextElement
 		TagWriter tag = new TagWriter(writer);
 		if (isEnabled()) {
 			tag.start(Html.TEXTAREA)
-				.attribute(Html.COMMON_CLASS, getStyleClass())
-				.attribute(Html.COMMON_ID, getId())
+				.attribute(Html.COMMON_CLASS, getStyleClass())				
 				.attribute(Html.INPUT_NAME, getParamName())
 				.attribute(Html.TEXTAREA_ROWS, rows)
 				.body(getText()).end();
 		}
 		else {
 			tag.start(Html.DIV)
-				.attribute(Html.COMMON_CLASS, "tinymce-disabled")
-				.attribute(Html.COMMON_ID, getId())
+				.attribute(Html.COMMON_CLASS, "tinymce-disabled")				
 				.body(getText(), false).end();
 		}
 	}

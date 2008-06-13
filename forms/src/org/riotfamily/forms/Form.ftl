@@ -7,7 +7,7 @@
 		<div class="form-error">${form.errors.generalFormError}</div>
 	</#if>
 	<#list elements.elements as element>
-		<div class="${(element.compositeElement?default(false))?string('composite','single')} ${element.styleClass!}">
+		<div id="container-${element.id}" class="${(element.compositeElement?default(false))?string('composite','single')} ${element.styleClass!}"<#if !element.visible> style="display: none"</#if>>
 			<#if element.label?exists>
 				<#if element.compositeElement?default(false)>
 					<div class="box-title">

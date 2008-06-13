@@ -50,13 +50,13 @@ public class MultiSelectBox extends AbstractMultiSelectElement {
 		this.maxSize = maxSize;
 	}
 
-	public void renderInternal(PrintWriter writer) {
+	public void renderSelectElement(PrintWriter writer) {
 		TagWriter selectTag = new TagWriter(writer);
 
 		List options = getOptionItems();
 		selectTag.start(Html.SELECT);
+		selectTag.attribute(Html.COMMON_ID, getEventTriggerId());
 		selectTag.attribute(Html.INPUT_NAME, getParamName());
-		selectTag.attribute(Html.COMMON_ID, getId());
 		selectTag.attribute(Html.SELECT_SIZE, Math.min(options.size(), maxSize));
 		selectTag.attribute(Html.SELECT_MULTIPLE, true);
 		selectTag.body();

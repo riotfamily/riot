@@ -25,6 +25,7 @@ package org.riotfamily.forms.element.select;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,8 +34,6 @@ import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.MessageUtils;
-import org.riotfamily.forms.event.ChangeEvent;
-import org.riotfamily.forms.event.ChangeListener;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.options.OptionsModel;
@@ -63,7 +62,15 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 	
 	private OptionsModel optionsModel;
 	
+	private Collection<?> optionValues;
+	
 	private List<OptionItem> optionItems;
+	
+	private boolean hideIfEmpty = false;	
+	
+	public String getEventTriggerId() {		
+		return getId() + "-event-source";
+	}
 	
 	public void setOptionRenderer(OptionRenderer optionRenderer) {
 		this.optionRenderer = optionRenderer;
@@ -94,17 +101,44 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 		reset();
 	}
 	
+	public void setHideIfEmpty(boolean hideIfEmpty) {
+		this.hideIfEmpty = hideIfEmpty;
+	}
+	
 	public Object getOptions() {
 		return options;
 	}
-
-	public void render(PrintWriter writer) {
-		resetOptionItems();
-		super.render(writer);
+	
+	protected boolean hasOptionValues() {
+		if (optionValues == null) {
+			if (optionsModel == null) {
+				optionsModel = OptionsModelUtils.createOptionsModel(options, this);
+			}
+			optionValues = optionsModel.getOptionValues(this);
+		}
+		return !optionValues.isEmpty();
 	}
+	
+	@Override
+	public boolean isRequired() {		
+		return super.isRequired() && hasOptionValues();
+	}
+	
+	@Override
+	public boolean isVisible() {		
+		return super.isVisible() && !(hideIfEmpty && !hasOptionValues());
+	}
+
+	public final void renderInternal(PrintWriter writer) {
+		resetOptionItems();
+		renderSelectElement(writer);
+	}
+	
+	protected abstract void renderSelectElement(PrintWriter writer);
 	
 	public void reset() {
 		resetOptionItems();
+		resetOptionValues();
 		setValue(null);
 		if (getFormListener() != null) {
 			getFormListener().elementChanged(this);
@@ -113,6 +147,10 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 	
 	protected void resetOptionItems() {
 		optionItems = null;
+	}
+	
+	protected void resetOptionValues() {
+		optionValues = null;
 	}
 	
 	protected final List<OptionItem> getOptionItems() {
@@ -128,7 +166,8 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 		}
 		List<OptionItem> items = new ArrayList<OptionItem>();
 		if (options != null) {			
-			Iterator it = optionsModel.getOptionValues(this).iterator();
+			optionValues = optionsModel.getOptionValues(this);			
+			Iterator it = optionValues.iterator();
 			for (int i = 0; it.hasNext(); i++) {
 				Object item = it.next();
 				String label = getOptionLabel(item);

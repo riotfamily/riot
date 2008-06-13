@@ -1,4 +1,4 @@
-<div id="${element.id}" class="password">
+<div class="password">
 	<#if element.passwordSet>${toggleButton.render()}</#if>
 	<#if element.showInput>
 		${input.render()}

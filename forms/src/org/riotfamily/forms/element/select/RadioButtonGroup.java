@@ -46,7 +46,7 @@ public class RadioButtonGroup extends AbstractSingleSelectElement {
 		this.template = template;
 	}
 
-	public void renderInternal(PrintWriter writer) {
+	public void renderSelectElement(PrintWriter writer) {
 		HashMap<String, Object> model = new HashMap<String, Object>();
 		model.put("element", this);
 		model.put("options", getOptionItems());

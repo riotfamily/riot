@@ -90,7 +90,7 @@ public class TemplateElement extends CompositeElement {
 		setAttribute("errors", getForm().getErrors());
 	}
 	
-	protected void renderComponents(PrintWriter writer) {
+	protected void renderInternal(PrintWriter writer) {
 		renderTemplate(writer);
 	}
 	

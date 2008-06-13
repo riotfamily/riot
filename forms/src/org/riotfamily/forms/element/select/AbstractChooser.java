@@ -25,10 +25,7 @@ package org.riotfamily.forms.element.select;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,8 +39,6 @@ import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.TemplateUtils;
-import org.riotfamily.forms.event.ChangeEvent;
-import org.riotfamily.forms.event.ChangeListener;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.request.FormRequest;
@@ -64,16 +59,17 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	
 	private Object object;
 
-	private List listeners;
-	
 	private static FormResource RESOURCE = 
 			new ScriptResource("form/chooser.js", "Chooser");
+	
+	public String getEventTriggerId() {		
+		return getId();
+	}
 	
 	
 	protected void renderInternal(PrintWriter writer) {
 		DocumentWriter doc = new DocumentWriter(writer);
-		doc.start(Html.DIV)
-				.attribute(Html.COMMON_ID, getId())
+		doc.start(Html.DIV)				
 				.attribute(Html.COMMON_CLASS, "chooser")
 				.body();
 				
@@ -94,7 +90,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 
 	protected abstract void renderLabel(Object object, PrintWriter writer);
 	
-	public int getEventTypes() {
+	public int getEventTypes() {		
 		return 0;
 	}
 	

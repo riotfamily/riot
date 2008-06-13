@@ -127,6 +127,8 @@ public interface Element {
 	 * Sets whether the element is required.
 	 */
 	public void setRequired(boolean required);
+	
+	public boolean isVisible();
 		
 	/**
 	 * Returns whether the element is composed of multiple widgets. 

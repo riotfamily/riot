@@ -88,8 +88,7 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 		TagWriter inputTag = new TagWriter(writer);
 		inputTag.startEmpty(Html.INPUT)
 				.attribute(Html.INPUT_TYPE, TYPE_CHECKBOX)
-				.attribute(Html.INPUT_NAME, getParamName())
-				.attribute(Html.COMMON_ID, getId())
+				.attribute(Html.INPUT_NAME, getParamName())				
 				.attribute(Html.COMMON_CLASS, getStyleClass())
 				.attribute(Html.INPUT_CHECKED, checked)
 				.attribute(Html.INPUT_DISABLED, !isEnabled())

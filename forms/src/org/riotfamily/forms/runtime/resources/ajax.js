@@ -34,7 +34,8 @@ function submitEvent(e) {
 		url = source.form.action;
 	}
 	
-	var body = 'event.type=' + e.type + '&event.source=' + source.id;
+	var sourceId = source.sourceId || source.id;
+	var body = 'event.type=' + e.type + '&event.source=' + sourceId; 
 	
 	if (source.options) {
 		for (var i = 0; i < source.options.length; i++) {
@@ -120,8 +121,11 @@ function performAction(action) {
 	else if (action.command == 'enable') {				
 		setEnabled($(action.element), action.value == 'true');
 	}
+	else if (action.command == 'setVisible') {				
+		setVisible(action.element, action.value == 'true');
+	}
 	else if (action.command == 'propagate') {
-		propagate(action.element, action.value);
+		propagate(action.trigger, action.value, action.element);
 	}
 	else if (action.command == 'refresh') {
 		var ev = new ChangeEvent($(action.element));
@@ -168,11 +172,22 @@ function setEnabled(e, enabled) {
 	}
 }
 
-function propagate(e, type) {
+function setVisible(id, visible) {
+	var el = $('container-' + id) || $(id);
+	if (visible) {
+		el.show();
+	}
+	else {
+		el.hide();
+	}
+}
+
+function propagate(e, type, sourceId) {
 	e = $(e);
 	if (!e) return;
+	e.sourceId = sourceId;
 	var tag = e.nodeName.toLowerCase();
-	if (tag == 'input' || tag == 'button' || tag == 'select' || tag == 'textarea') {
+	if (tag == 'input' || tag == 'button' || tag == 'select' || tag == 'textarea') {		
 		if (type == 'click') {
 			e.onclick = submitEvent;
 		}

@@ -75,7 +75,6 @@ public class FileUpload extends CompositeElement implements Editor,
 		addComponent(new UploadElement());
 		addComponent(new RemoveButton());
 		addComponent(createPreviewElement());
-		setSurroundByDiv(true);
 	}
 	
 	public void setProcessor(String processor) {
@@ -184,6 +183,10 @@ public class FileUpload extends CompositeElement implements Editor,
 		public UploadElement() {
 			this.uploadId = UploadStatus.createUploadId();
 		}
+		
+		public String getEventTriggerId() {		
+			return getId();
+		}
 
 		public String getUploadId() {
 			return uploadId;
@@ -267,9 +270,9 @@ public class FileUpload extends CompositeElement implements Editor,
 			}
 		}
 
-		public void render(PrintWriter writer) {
+		public void renderInternal(PrintWriter writer) {
 			if (!FileUpload.this.isRequired() && file != null) {
-				super.render(writer);
+				super.renderInternal(writer);
 			}
 		}
 

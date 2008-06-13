@@ -93,6 +93,7 @@ public class AjaxResponse implements FormListener {
 	
 	public void elementChanged(Element element) {
 		json.add(new Action("replace", element.getId(), renderElement(element)));
+		json.add(new Action("setVisible", element.getId(), String.valueOf(element.isVisible())));
 		validatedElements.add(element);
 	}
 
@@ -106,6 +107,7 @@ public class AjaxResponse implements FormListener {
 
 	public void elementAdded(Element element) {
 		json.add(new Action("insert", element.getParent().getId(), renderElement(element)));
+		json.add(new Action("setVisible", element.getId(), String.valueOf(element.isVisible())));
 	}
 	
 	public void elementFocused(Element element) {
@@ -154,9 +156,9 @@ public class AjaxResponse implements FormListener {
 	
 	private void renderPropagation(EventPropagation propagation) {
 		log.debug("Propagating " + propagation.getType() + 
-				" events for element " + propagation.getId());
+				" events for element " + propagation.getTriggerId());
 		
-		json.add(new Action("propagate", propagation.getId(), propagation.getType())); 
+		json.add(new Action("propagate", propagation.getSourceId(), propagation.getType(), propagation.getTriggerId())); 
 	}
 	
 	private void renderScripts() {
@@ -237,15 +239,22 @@ public class AjaxResponse implements FormListener {
 		private String element;
 		
 		private String value;
+		
+		private String trigger;
 
 		public Action(String command, String element) {
 			this(command, element, null);
 		}
 		
 		public Action(String command, String element, String value) {
+			this(command, element, value, null);
+		}
+		
+		public Action(String command, String element, String value, String trigger) {
 			this.command = command;
 			this.element = element;
 			this.value = value;
+			this.trigger = trigger;
 		}
 
 		public String getCommand() {
@@ -258,6 +267,10 @@ public class AjaxResponse implements FormListener {
 
 		public String getValue() {
 			return this.value;
+		}
+		
+		public String getTrigger() {
+			return trigger;
 		}
 
 	}

@@ -146,9 +146,11 @@ public abstract class AjaxFormController extends AbstractFormController
 			while (it.hasNext()) {
 				EventPropagation p = (EventPropagation) it.next();
 				writer.print("propagate('");
-				writer.print(p.getId());
+				writer.print(p.getTriggerId());
 				writer.print("', '");
 				writer.print(p.getType());
+				writer.print("', '");
+				writer.print(p.getSourceId());
 				writer.print("');\n");
 			}
 			writer.print("});");

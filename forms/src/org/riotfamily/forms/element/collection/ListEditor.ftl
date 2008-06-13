@@ -1,4 +1,4 @@
-<div id="${element.id}" class="listEditor collectionEditor">
+<div class="listEditor collectionEditor">
 	<ul id="${items.id}" class="items">
 		<#list items.elements as item>
 			${item.render()}

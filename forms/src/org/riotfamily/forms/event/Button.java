@@ -57,6 +57,10 @@ public class Button extends AbstractEditorBase
 	private boolean clicked;
 	
 	private int tabIndex;
+	
+	public String getEventTriggerId() {		
+		return getId() + "-event-source";
+	}
 
 	public String getLabelKey() {
 		return labelKey;
@@ -132,8 +136,8 @@ public class Button extends AbstractEditorBase
 		TagWriter tag = new TagWriter(writer);
 		tag.startEmpty(Html.INPUT)
 				.attribute(Html.INPUT_TYPE, "submit")
-				.attribute(Html.COMMON_CLASS, getCssClass())
-				.attribute(Html.COMMON_ID, getId())
+				.attribute(Html.COMMON_ID, getEventTriggerId())
+				.attribute(Html.COMMON_CLASS, getCssClass())				
 				.attribute(Html.COMMON_TABINDEX, tabIndex)
 				.attribute(Html.INPUT_DISABLED, !isEnabled())
 				.attribute(Html.INPUT_NAME, getParamName())

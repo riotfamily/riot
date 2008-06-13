@@ -49,8 +49,6 @@ public abstract class CompositeElement extends AbstractEditorBase
 
 	private List components = new ArrayList();
 	
-	private boolean surroundByDiv;
-	
 	private AutowireCapableBeanFactory beanFactory;
 	
 	/**
@@ -165,34 +163,14 @@ public abstract class CompositeElement extends AbstractEditorBase
 	protected void processRequestInternal(FormRequest request) {
 	}
 
-	protected boolean isSurroundByDiv() {
-		return this.surroundByDiv;
-	}
-
-	protected void setSurroundByDiv(boolean surroundByDiv) {
-		this.surroundByDiv = surroundByDiv;
-	}
-
 	protected void renderInternal(PrintWriter writer) {		
-		if (surroundByDiv) {
-			TagWriter divTag = new TagWriter(writer);
-			divTag.start(Html.DIV).attribute(Html.COMMON_ID, getId()).body();
-			renderComponents(writer);
-			divTag.end();
-		}
-		else {
-			renderComponents(writer);
-		}
-	}
-	
-	protected void renderComponents(PrintWriter writer) {
 		Iterator it = components.iterator();
 		while (it.hasNext()) {
 			Element element = (Element) it.next();
 			log.debug("Rendering component " + element);
 			element.render(writer);
-		}
-	}
+		}	
+	}	
 	
 	/**
 	 * Delegates the call to the first component.

@@ -24,7 +24,6 @@
 package org.riotfamily.forms.element.select;
 
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.common.markup.Html;
@@ -69,39 +68,49 @@ public class SelectBox extends AbstractSingleSelectElement {
 	public void setChooseLabelKey(String chooseLabelKey) {
 		this.chooseLabelKey = chooseLabelKey;
 	}
-
-	protected List createOptionItems() {
-		List options = super.createOptionItems();
+	
+	protected List<OptionItem> createOptionItems() {
+		List<OptionItem> optionItems = super.createOptionItems();
 		if (chooseLabelKey != null) {
 			chooseLabel = MessageUtils.getMessage(this, chooseLabelKey);
 		}
 		if (chooseLabel != null) {
 			OptionItem chooseOption = new OptionItem(null, null, chooseLabel, this);
-			options.add(0, chooseOption);
+			optionItems.add(0, chooseOption);
 		}
 		else if (!isRequired()) {
 			OptionItem emptyOption = new OptionItem(null, null, "", this);
-			options.add(0, emptyOption);
+			optionItems.add(0, emptyOption);
 		}
-		return options;
+		return optionItems;
 	}
 	
-	public void renderInternal(PrintWriter writer) {
+	public Object getValue() {
+		List<OptionItem> optionItems = getOptionItems();
+		if (optionItems.size() == 1 && isRequired()) {
+			return optionItems.get(0).getValue();
+		}
+		return super.getValue();
+	}
+			
+	public void renderSelectElement(PrintWriter writer) {
+		List<OptionItem> optionItems = getOptionItems();
+		
 		TagWriter selectTag = new TagWriter(writer);
 
 		selectTag.start(Html.SELECT);
-		selectTag.attribute(Html.INPUT_NAME, getParamName());
-		selectTag.attribute(Html.COMMON_ID, getId());
+		selectTag.attribute(Html.COMMON_ID, getEventTriggerId());
+		selectTag.attribute(Html.INPUT_NAME, getParamName());			
 		selectTag.attribute(Html.SELECT_SIZE, 1);
 		selectTag.attribute(Html.INPUT_DISABLED, !isEnabled());
 		selectTag.body();
 
-		Iterator it = getOptionItems().iterator();
-		while (it.hasNext()) {
-			((OptionItem) it.next()).render();
+		for (OptionItem item: getOptionItems()) {
+			item.render();
 		}
 
 		selectTag.end();
+		
 	}
 
 }

@@ -35,6 +35,8 @@ public interface JavaScriptEventAdapter {
 
 	public String getId();
 	
+	public String getEventTriggerId();
+	
 	/**
 	 * Returns a bitmask describing which client-side events should be 
 	 * propagated to the server.

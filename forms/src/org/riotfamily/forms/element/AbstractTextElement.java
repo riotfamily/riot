@@ -25,9 +25,6 @@ package org.riotfamily.forms.element;
 
 import java.beans.PropertyEditor;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
@@ -36,8 +33,6 @@ import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.AbstractElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ErrorUtils;
-import org.riotfamily.forms.event.ChangeEvent;
-import org.riotfamily.forms.event.ChangeListener;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.request.FormRequest;
@@ -87,6 +82,10 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	public String getEventTriggerId() {		
+		return getId() + "-event-source";
 	}
 
 	/**
@@ -281,8 +280,8 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		TagWriter input = new TagWriter(writer);
 		input.startEmpty(Html.INPUT)
 				.attribute(Html.INPUT_TYPE, getType())
-				.attribute(Html.COMMON_CLASS, getStyleClass())
-				.attribute(Html.COMMON_ID, getId())
+				.attribute(Html.COMMON_ID, getEventTriggerId())
+				.attribute(Html.COMMON_CLASS, getStyleClass())				
 				.attribute(Html.INPUT_NAME, getParamName())
 				.attribute(Html.INPUT_VALUE, getText())
 				.attribute(Html.INPUT_DISABLED, !isEnabled());
