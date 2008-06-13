@@ -206,17 +206,20 @@ select {
 }
 
 input.checkbox {
-	margin: 0;
+	margin: 0 0 3px;
 }
 
-div.checkbox {
+div.checkbox,
+div.checkbox-element {
 	position: relative;
 	_height: 1px;
 }
-div.checkbox label {
+div.checkbox label,
+div.checkbox-element label {
 	padding-left: 20px;
 }
-div.checkbox .element {
+div.checkbox .element,
+div.checkbox-element .element {
 	position: absolute;
 	left: 0px;
 	top: 0;
