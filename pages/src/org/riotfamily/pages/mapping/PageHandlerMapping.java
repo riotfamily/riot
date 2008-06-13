@@ -179,7 +179,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	protected List getPatternsForHandler(String beanName, 
 			UrlResolverContext context) {
 		
-		Site site = (Site) context.getAttribute(PageResolver.SITE_ATTRIBUTE);
+		Site site = PageResolver.getResolvedSite(context);
 		if (site == null) {
 			return null;
 		}
