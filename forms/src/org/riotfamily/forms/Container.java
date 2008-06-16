@@ -41,7 +41,7 @@ public class Container extends CompositeElement implements ContainerElement {
 	public Container() {
 	}
 
-	public List getElements() {
+	public List<Element> getElements() {
 		return getComponents();
 	}
 

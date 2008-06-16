@@ -58,7 +58,7 @@ public abstract class AbstractLocalizedElement extends TemplateElement {
 
 	private ToggleButton toggleButton;
 	
-	private ValueWrapper masterValue; 
+	private ValueWrapper<?> masterValue; 
 	
 	public AbstractLocalizedElement(ElementFactory elementFactory, 
 			LocalizedEditorBinder binder) {
@@ -72,7 +72,7 @@ public abstract class AbstractLocalizedElement extends TemplateElement {
 	
 	protected abstract boolean isLocalized();
 	
-	protected abstract ValueWrapper getMasterValue(String property);
+	protected abstract ValueWrapper<?> getMasterValue(String property);
 	
 	protected void initCompositeElement() {
 		editor = (Editor) elementFactory.createElement(this, getForm(), true);

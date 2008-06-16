@@ -128,6 +128,7 @@ public class RedirectController implements Controller {
 		return url;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void appendParameters(StringBuffer targetUrl, 
 			HttpServletRequest request)	throws UnsupportedEncodingException {
 

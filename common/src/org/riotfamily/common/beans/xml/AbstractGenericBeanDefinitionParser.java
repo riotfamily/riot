@@ -58,13 +58,13 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 
 	private static Log log = LogFactory.getLog(AbstractGenericBeanDefinitionParser.class);
 	
-	private Class beanClass;
+	private Class<?> beanClass;
 
 	private boolean decorate = true;
 	
 	private boolean enabled = true;
 
-	public AbstractGenericBeanDefinitionParser(Class beanClass) {
+	public AbstractGenericBeanDefinitionParser(Class<?> beanClass) {
 		Assert.notNull(beanClass, "The beanClass must not be null");
 		this.beanClass = beanClass;
 	}

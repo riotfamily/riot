@@ -34,7 +34,7 @@ import org.springframework.web.multipart.MultipartException;
  */
 public class UploadStatus {
 	
-	private static HashMap statusMap = new HashMap();
+	private static HashMap<String, UploadStatus> statusMap = new HashMap<String, UploadStatus>();
 
 	private String uploadId;
 	

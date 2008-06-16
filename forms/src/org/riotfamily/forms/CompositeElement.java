@@ -25,11 +25,8 @@ package org.riotfamily.forms;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.riotfamily.common.markup.Html;
-import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.request.FormRequest;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -47,7 +44,7 @@ import org.springframework.util.Assert;
 public abstract class CompositeElement extends AbstractEditorBase 
 		implements BeanFactoryAware {
 
-	private List components = new ArrayList();
+	private List<Element> components = new ArrayList<Element>();
 	
 	private AutowireCapableBeanFactory beanFactory;
 	
@@ -63,7 +60,7 @@ public abstract class CompositeElement extends AbstractEditorBase
 		}
 	}
 	
-	protected List getComponents() {
+	protected List<Element> getComponents() {
 		return components;
 	}
 
@@ -100,9 +97,7 @@ public abstract class CompositeElement extends AbstractEditorBase
 	 * finally calls <code>initCompositeElement()</code>.
 	 */
 	protected final void afterFormSet() {
-		Iterator it = components.iterator();
-		while (it.hasNext()) {
-			Element element = (Element) it.next();
+		for (Element element : components) {
 			initComponent(element);
 		}
 		initCompositeElement();
@@ -132,12 +127,10 @@ public abstract class CompositeElement extends AbstractEditorBase
 	 */
 	protected void processRequestCompontents(FormRequest request) {
 		// Temporary list to allow concurrent modification
-		List tempList = new ArrayList(components);
-		Iterator it = tempList.iterator();
-		while (it.hasNext()) {
-			Element element = (Element) it.next();
-			log.debug("Processing component: " + element);
-			element.processRequest(request);
+		List<Element> tempList = new ArrayList<Element>(components);
+		for (Element component : tempList) {
+			log.debug("Processing component: " + component);
+			component.processRequest(request);
 		}
 	}
 	
@@ -164,11 +157,9 @@ public abstract class CompositeElement extends AbstractEditorBase
 	}
 
 	protected void renderInternal(PrintWriter writer) {		
-		Iterator it = components.iterator();
-		while (it.hasNext()) {
-			Element element = (Element) it.next();
-			log.debug("Rendering component " + element);
-			element.render(writer);
+		for (Element component : components) {
+			log.debug("Rendering component " + component);
+			component.render(writer);
 		}	
 	}	
 	
@@ -177,7 +168,7 @@ public abstract class CompositeElement extends AbstractEditorBase
 	 */
 	public void focus() {
 		if (!components.isEmpty()) {
-			((Element) components.get(0)).focus();
+			components.get(0).focus();
 		}
 	}
 	

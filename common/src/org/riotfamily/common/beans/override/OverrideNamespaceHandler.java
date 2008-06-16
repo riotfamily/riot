@@ -25,7 +25,6 @@ package org.riotfamily.common.beans.override;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -63,9 +62,7 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 			BeanDefinitionRegistry registry = parserContext.getRegistry();
 			String ref = element.getAttribute("ref");
 			if (registry.containsBeanDefinition(ref)) {
-				Iterator it = XmlUtils.getChildElements(element).iterator();
-				while (it.hasNext()) {
-					Element child = (Element) it.next();
+				for (Element child : XmlUtils.getChildElements(element)) {
 					if (delegate.isDefaultNamespace(child.getNamespaceURI())) {
 						BeanDefinitionHolder bdh = delegate.parseBeanDefinitionElement(child);
 						String id = bdh.getBeanName();

@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.factory;
 
-import java.util.Collection;
-
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.forms.Form;
 
@@ -39,9 +37,7 @@ public interface FormRepository {
 	
 	public Form createForm(String formId);
 	
-	public Class getBeanClass(String formId);
-	
-	public Collection getFormIds();
+	public Class<?> getBeanClass(String formId);
 	
 	public void addListener(ConfigurationEventListener listener);
 

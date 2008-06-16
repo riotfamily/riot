@@ -65,7 +65,7 @@ public class HibernateMediaDao implements MediaDao {
 		return (FileData) hibernate.uniqueResult(query);
 	}
 	
-	public List findStaleData() {
+	public List<FileData> findStaleData() {
 		Query query = hibernate.createQuery("from " + FileData.class.getName() 
 				+ " data where data.files is empty");
 		

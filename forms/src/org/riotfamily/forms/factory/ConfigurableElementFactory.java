@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.factory;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,19 +57,19 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 	private Log log = LogFactory.getLog(ConfigurableElementFactory.class);
 	
 	/** The class to create */
-	private Class elementClass;
+	private Class<? extends Element> elementClass;
 	
 	/** Property name the element should be bound to */
 	private String bind;
 	
 	/** Class to be edited by a BeanEditor */
-	private Class beanClass;
+	private Class<?> beanClass;
 	
 	/** Properties to be set after element creation */
 	private PropertyValues propertyValues;
 	
 	/** List of factories to create optional child elements */
-	private List childFactories = new LinkedList();
+	private List<ElementFactory> childFactories = new LinkedList<ElementFactory>();
 	
 	/** BeanFactory used to lookup bean references */
 	private ConfigurableListableBeanFactory beanFactory;
@@ -78,11 +77,11 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 	/**
 	 * Creates a new factory for the given element class.
 	 */
-	public ConfigurableElementFactory(Class elementClass) {
+	public ConfigurableElementFactory(Class<? extends Element> elementClass) {
 		this.elementClass = elementClass;
 	}
 	
-	public Class getElementClass() {
+	public Class<? extends Element> getElementClass() {
 		return this.elementClass;
 	}
 
@@ -107,7 +106,7 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 	 * @throws FormDefinitionException if the element does not implement
 	 * 		{@link BeanEditor}
 	 */
-	public void setBeanClass(Class beanClass) {
+	public void setBeanClass(Class<?> beanClass) {
 		if (beanClass != null && !BeanEditor.class
 				.isAssignableFrom(elementClass)) {
 			
@@ -120,7 +119,7 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 	/**
 	 * @return Returns the beanClass.
 	 */
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		return beanClass;
 	}
 
@@ -158,7 +157,7 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 	 * @throws FormDefinitionException if the element does not implement
 	 * 		{@link ContainerElement}
 	 */
-	public void setChildFactories(List childFactories) {
+	public void setChildFactories(List<ElementFactory> childFactories) {
 		if (childFactories != null && !ContainerElement.class
 				.isAssignableFrom(elementClass)) {
 			
@@ -184,7 +183,7 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 	 * Returns a list of element factories used to create nested elements.
 	 * @see #setChildFactories(List)
 	 */
-	public List getChildFactories() {
+	public List<ElementFactory> getChildFactories() {
 		return childFactories;
 	}
 	
@@ -261,9 +260,7 @@ public class ConfigurableElementFactory implements ContainerElementFactory,
 	
 	protected void createChildElements(ContainerElement parent, Form form) {
 		if (childFactories != null) {
-			Iterator it = childFactories.iterator();
-			while (it.hasNext()) {
-				ElementFactory factory = (ElementFactory) it.next();
+			for (ElementFactory factory : childFactories) {
 				Element child = factory.createElement(parent, form, true);
 				parent.addElement(child);
 			}

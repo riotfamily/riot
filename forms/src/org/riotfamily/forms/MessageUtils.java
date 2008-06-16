@@ -54,7 +54,7 @@ public class MessageUtils {
 				binding.getProperty());
 	}
 	
-	public static String getHint(Form form, Class beanClass) {
+	public static String getHint(Form form, Class<?> beanClass) {
 		FormContext context = form.getFormContext();
 		return context.getMessageResolver().getPropertyHint(
 				form.getId(), beanClass, null);

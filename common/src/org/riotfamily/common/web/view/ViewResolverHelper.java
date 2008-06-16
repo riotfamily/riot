@@ -25,7 +25,6 @@ package org.riotfamily.common.web.view;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -48,10 +47,11 @@ import org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator;
  */
 public class ViewResolverHelper {
 
-    private ArrayList viewResolvers;
+    private ArrayList<ViewResolver> viewResolvers;
 
     private RequestToViewNameTranslator viewNameTranslator;
 
+	@SuppressWarnings("unchecked")
 	public ViewResolverHelper(ListableBeanFactory beanFactory) {
 		Map matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(
 				beanFactory, ViewResolver.class, true, false);
@@ -87,9 +87,7 @@ public class ViewResolverHelper {
 			if (viewName == null) {
 				viewName = viewNameTranslator.getViewName(request);
 			}
-			Iterator i = viewResolvers.iterator();
-			while (i.hasNext()) {
-			    ViewResolver viewResolver = (ViewResolver) i.next();
+			for (ViewResolver viewResolver : viewResolvers) {
 			    Locale locale = RequestContextUtils.getLocale(request);
 			    View view = viewResolver.resolveViewName(viewName, locale);
 			    if (view != null) {

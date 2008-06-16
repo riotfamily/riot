@@ -31,6 +31,7 @@ import org.riotfamily.pages.model.Page;
 import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
+import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
 import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
@@ -79,7 +80,7 @@ public class PublishPageCommand extends AbstractCommand implements BatchCommand 
 				"Do you really want to publish the selected pages?");
 	}
 	
-	public List getBatchStates(CommandContext context) {
+	public List<CommandState> getBatchStates(CommandContext context) {
 		return Collections.singletonList(getState(context, ACTION_PUBLISH));
 	}
 

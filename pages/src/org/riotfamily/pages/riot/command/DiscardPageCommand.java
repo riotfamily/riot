@@ -31,6 +31,7 @@ import org.riotfamily.pages.model.Page;
 import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
+import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
 import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
@@ -101,8 +102,8 @@ public class DiscardPageCommand extends AbstractCommand implements BatchCommand 
 		return null;
 	}
 	
-	public List getBatchStates(CommandContext context) {
-		List states = new ArrayList();
+	public List<CommandState> getBatchStates(CommandContext context) {
+		List<CommandState> states = new ArrayList<CommandState>();
 		states.add(getState(context, ACTION_DISCARD));
 		states.add(getState(context, ACTION_UNPUBLISH));
 		states.add(getState(context, ACTION_DELETE));

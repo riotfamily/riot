@@ -8,6 +8,6 @@ import java.util.List;
  */
 public interface LinkExtractor {
 
-	public List extractLinks(PageData pageData);
+	public List<String> extractLinks(PageData pageData);
 
 }

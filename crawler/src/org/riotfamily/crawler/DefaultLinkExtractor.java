@@ -21,13 +21,13 @@ public class DefaultLinkExtractor implements LinkExtractor {
 
 	private NodeFilter nodeFilter = new LinkNodeFilter();
 	
-	public List extractLinks(PageData pageData) {
+	public List<String> extractLinks(PageData pageData) {
 		NodeList nodes = pageData.getNodes();
 		if (nodes == null) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		NodeList linkNodes = nodes.extractAllNodesThatMatch(nodeFilter, true);
-		ArrayList links = new ArrayList(linkNodes.size());
+		ArrayList<String> links = new ArrayList<String>(linkNodes.size());
 		SimpleNodeIterator it = linkNodes.elements();
 		while (it.hasMoreNodes()) {
 			Tag tag = (Tag) it.nextNode();

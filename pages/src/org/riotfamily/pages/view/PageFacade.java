@@ -164,36 +164,36 @@ public class PageFacade {
 		return page.getParentPage();
 	}
 
-	public Collection getChildPages() {
+	public Collection<Page> getChildPages() {
 		PageCacheUtils.addNodeTag(taggingContext, page.getNode());
 		return getVisiblePages(page.getChildPages());
 	}
 
-	public List getSiblings() {
+	public List<Page> getSiblings() {
 		PageNode parentNode = page.getNode().getParent();
 		PageCacheUtils.addNodeTag(taggingContext, parentNode);
 		return getVisiblePages(parentNode.getChildPages(page.getSite()));
 	}
 	
 	public Page getPreviousSibling() {
-		List siblings = getSiblings();
+		List<Page> siblings = getSiblings();
 		int i = siblings.indexOf(page);
 		if (i > 0) {
-			return (Page) siblings.get(i - 1);
+			return siblings.get(i - 1);
 		}
 		return null;
 	}
 	
 	public Page getNextSibling() {
-		List siblings = getSiblings();
+		List<Page> siblings = getSiblings();
 		int i = siblings.indexOf(page);
 		if (i < siblings.size() - 1) {
-			return (Page) siblings.get(i + 1);
+			return siblings.get(i + 1);
 		}
 		return null;
 	}
 	
-	public Collection getAncestors() {
+	public Collection<Page> getAncestors() {
 		return page.getAncestors();
 	}
 
@@ -242,11 +242,9 @@ public class PageFacade {
 		return page.isVisible(preview);
 	}
 
-	private List getVisiblePages(List pages) {
-		ArrayList result = new ArrayList();
-		Iterator it = pages.iterator();
-		while (it.hasNext()) {
-			Page page = (Page) it.next();
+	private List<Page> getVisiblePages(List<Page> pages) {
+		ArrayList<Page> result = new ArrayList<Page>();
+		for (Page page : pages) {
 			if (page.isVisible(preview)) {
 				result.add(page);
 			}

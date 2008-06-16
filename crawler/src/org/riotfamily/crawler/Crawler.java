@@ -24,7 +24,6 @@
 package org.riotfamily.crawler;
 
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -51,7 +50,7 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 	
 	private LinkFilter linkFilter;
 
-	private List pageHandlers;
+	private List<PageHandler> pageHandlers;
 
 	private long delay;
 	
@@ -91,7 +90,7 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 	/**
 	 * Sets a list of {@link PageHandler} instances.
 	 */
-	public void setPageHandlers(List pageHandlers) {
+	public void setPageHandlers(List<PageHandler> pageHandlers) {
 		this.pageHandlers = pageHandlers;
 	}
 
@@ -152,15 +151,11 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 		try {
 			running = true;
 			log.info("Starting to crawl...");
-			Iterator it = pageHandlers.iterator();
-	        while (it.hasNext()) {
-	        	PageHandler handler = (PageHandler) it.next();
+	        for (PageHandler handler : pageHandlers) {
 	        	handler.crawlerStarted();
 	        }
 			crawl();
-			it = pageHandlers.iterator();
-	        while (it.hasNext()) {
-	        	PageHandler handler = (PageHandler) it.next();
+			for (PageHandler handler : pageHandlers) {
 	        	handler.crawlerFinished();
 	        }
 		}
@@ -186,9 +181,7 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 	        		log.error(e);
 	        	}
 	        }
-	        Iterator it = pageHandlers.iterator();
-	        while (it.hasNext()) {
-	        	PageHandler handler = (PageHandler) it.next();
+	        for (PageHandler handler : pageHandlers) {
 	        	handler.handlePage(pageData);
 	        }
 		}
@@ -216,9 +209,7 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 	        if (pageData.isOk()) {
 	        	try {
 		        	pageData.parse();
-	        		Iterator it = linkExtractor.extractLinks(pageData).iterator();
-	        		while (it.hasNext()) {
-	        			String link = (String) it.next();
+	        		for (String link : linkExtractor.extractLinks(pageData)) { 
 	        			if (linkFilter.accept(pageData.getUrl(), link)) {
 	        				hrefs.add(pageData.getUrl(), link);
 	        			}
@@ -235,9 +226,7 @@ public class Crawler implements InitializingBean, ApplicationListener, Runnable 
 	        	}
 	        }
 
-	        Iterator it = pageHandlers.iterator();
-	        while (it.hasNext()) {
-	        	PageHandler handler = (PageHandler) it.next();
+	        for (PageHandler handler : pageHandlers) {
 	        	handler.handlePage(pageData);
 	        }
 	        pageCount++;

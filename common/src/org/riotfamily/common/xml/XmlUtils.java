@@ -50,6 +50,7 @@ import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -82,6 +83,18 @@ public class XmlUtils {
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
 			if (node instanceof Element) {
+				childEles.add((Element) node);
+			}
+		}
+		return childEles;
+	}
+	
+	public static List<Element> getChildElementsByTagName(Element ele, String name) {
+		NodeList nl = ele.getChildNodes();
+		List<Element> childEles = new LinkedList<Element>();
+		for (int i = 0; i < nl.getLength(); i++) {
+			Node node = nl.item(i);
+			if (DomUtils.nodeNameEquals(node, name)) {
 				childEles.add((Element) node);
 			}
 		}

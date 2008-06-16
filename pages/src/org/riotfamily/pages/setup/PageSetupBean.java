@@ -25,13 +25,13 @@ package org.riotfamily.pages.setup;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.dao.PageDefinition;
 import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.setup.config.SiteDefinition;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -48,9 +48,9 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class PageSetupBean implements InitializingBean, ApplicationContextAware {
 
-	private List siteDefinitions;
+	private List<SiteDefinition> siteDefinitions;
 
-	private List pageDefinitions;
+	private List<PageDefinition> pageDefinitions;
 
 	private PageDao pageDao;
 
@@ -66,11 +66,11 @@ public class PageSetupBean implements InitializingBean, ApplicationContextAware 
 		this.transactionManager = transactionManager;
 	}
 
-	public void setSiteDefinitions(List siteDefinitions) {
+	public void setSiteDefinitions(List<SiteDefinition> siteDefinitions) {
 		this.siteDefinitions = siteDefinitions;
 	}
 
-	public void setPageDefinitions(List definitions) {
+	public void setPageDefinitions(List<PageDefinition> definitions) {
 		this.pageDefinitions = definitions;
 	}
 
@@ -97,12 +97,10 @@ public class PageSetupBean implements InitializingBean, ApplicationContextAware 
 
 	protected void createNodes() {
 		if (pageDao.listSites().isEmpty()) {
-			List sites = createSites();
+			List<Site> sites = createSites();
 			PageNode rootNode = pageDao.getRootNode();
 			if (pageDefinitions != null) {
-				Iterator it = pageDefinitions.iterator();
-				while (it.hasNext()) {
-					PageDefinition definition = (PageDefinition) it.next();
+				for (PageDefinition definition : pageDefinitions) {
 					definition.createNode(rootNode, sites, pageDao);
 				}
 			}
@@ -110,17 +108,15 @@ public class PageSetupBean implements InitializingBean, ApplicationContextAware 
 		}
 	}
 	
-	protected List createSites() {
+	protected List<Site> createSites() {
 		if (siteDefinitions == null || siteDefinitions.isEmpty()) {
 			SiteDefinition definition = new SiteDefinition();
 			definition.setLocale(Locale.ENGLISH);
 			definition.setEnabled(true);
 			siteDefinitions = Collections.singletonList(definition);
 		}
-		ArrayList result = new ArrayList();
-		Iterator it = siteDefinitions.iterator();
-		while (it.hasNext()) {
-			SiteDefinition definition = (SiteDefinition) it.next();
+		ArrayList<Site> result = new ArrayList<Site>();
+		for (SiteDefinition definition : siteDefinitions) { 
 			definition.createSites(result, pageDao, null);
 		}
 		return result;

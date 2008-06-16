@@ -32,7 +32,7 @@ package org.riotfamily.forms;
  */
 public interface BeanEditor {
 
-	public void setBeanClass(Class beanClass);
+	public void setBeanClass(Class<?> beanClass);
 	
 	public void bind(Editor editor, String property);
 	

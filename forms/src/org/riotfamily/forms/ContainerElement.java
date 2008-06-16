@@ -36,6 +36,6 @@ public interface ContainerElement extends Element {
 	
 	public void removeElement(Element element);
 	
-	public List getElements();
+	public List<Element> getElements();
 
 }

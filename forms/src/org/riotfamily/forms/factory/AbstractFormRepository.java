@@ -23,22 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.factory;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.riotfamily.forms.Form;
 
-
-
-/**
- *
- */
 public abstract class AbstractFormRepository implements FormRepository {
 
-	private HashMap factories = new HashMap();
+	private HashMap<String, FormFactory> factories = new HashMap<String, FormFactory>();
 
 	public boolean containsForm(String id) {
 		return factories.containsKey(id);
@@ -58,25 +49,15 @@ public abstract class AbstractFormRepository implements FormRepository {
 		return form;
 	}
 
-	public Class getBeanClass(String id) {
+	public Class<?> getBeanClass(String id) {
 		return getFormFactory(id).getBeanClass();
-	}
-
-	public Collection getFormIds() {
-		ArrayList ids = new ArrayList();
-		Iterator it = factories.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			ids.add(entry.getKey());
-		}
-		return ids;
 	}
 
 	public void registerFormFactory(String id, FormFactory formFactory) {
 		factories.put(id, formFactory);
 	}
 
-	protected HashMap getFactories() {
+	protected HashMap<String, FormFactory> getFactories() {
 		return this.factories;
 	}
 

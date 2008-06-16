@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.activation.MimetypesFileTypeMap;
 
@@ -38,6 +40,7 @@ import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.common.xml.DocumentReader;
 import org.riotfamily.common.xml.ValidatingDocumentReader;
+import org.riotfamily.forms.Element;
 import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.factory.AbstractFormRepository;
 import org.riotfamily.forms.factory.DefaultFormFactory;
@@ -58,7 +61,7 @@ public class XmlFormRepository extends AbstractFormRepository implements
 
 	private Log log = LogFactory.getLog(XmlFormRepository.class);
 	
-	private List configLocations;
+	private List<Resource> configLocations;
 	
 	private boolean reloadable = true;
 
@@ -69,47 +72,43 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	
 	private ConfigurableListableBeanFactory beanFactory;
 		
-	private Class defaultBeanClass;
+	private Class<?> defaultBeanClass;
 	
 	private MimetypesFileTypeMap mimetypesMap;
 	
 	private Map tinyMCEProfiles;
 	
-	private HashMap customElements;
+	private HashMap<String, Class<? extends Element>> customElements;
 	
-	private HashMap customElementsWithoutNS;
+	private HashMap<String, Class<? extends Element>> customElementsWithoutNS;
 	
 	
-	public void setCustomElements(Map elements) 
+	public void setCustomElements(Map<String, Class<? extends Element>> elements) 
 			throws ClassNotFoundException {
 		
-		customElements = new HashMap();
-		customElementsWithoutNS = new HashMap();
+		customElements = new HashMap<String, Class<? extends Element>>();
+		customElementsWithoutNS = new HashMap<String, Class<? extends Element>>();
 		
-		Iterator it = elements.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry prop = (Map.Entry) it.next();
-			String className = (String) prop.getValue();
-			if (className != null) {
-				String type = (String) prop.getKey();
-				Class elementClass = Class.forName(className);
-				customElements.put(type, elementClass);
+		for (Entry<String, Class<? extends Element>> entry : elements.entrySet()) {
+			if (entry.getValue() != null) {
+				String type = entry.getKey();
+				customElements.put(type, entry.getValue());
 				int i = type.indexOf('}');
 				if (i != -1 && i < type.length() - 1) {
 					type = type.substring(i + 1);
-					customElementsWithoutNS.put(type, elementClass);
+					customElementsWithoutNS.put(type, entry.getValue());
 				}
 			}
 		}
 	}
 
-	public Class getElementClass(String type) {
+	public Class<? extends Element> getElementClass(String type) {
 		if (customElements == null) {
 			return null;
 		}
-		Class elementClass = (Class) customElements.get(type);
+		Class<? extends Element> elementClass = customElements.get(type);
 		if (elementClass == null) {
-			elementClass = (Class) customElementsWithoutNS.get(type);
+			elementClass = customElementsWithoutNS.get(type);
 		}
 		return elementClass;
 	}
@@ -119,7 +118,7 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	}
 	
 	public void setConfigLocations(Resource[] configLocations) {
-		this.configLocations = new ArrayList();
+		this.configLocations = new ArrayList<Resource>();
 		if (configLocations != null) {
 			for (int i = 0; i < configLocations.length; i++) {
 				this.configLocations.add(configLocations[i]);
@@ -128,11 +127,11 @@ public class XmlFormRepository extends AbstractFormRepository implements
 		configWatcher.setResources(this.configLocations);
 	}
 
-	public Class getDefaultBeanClass() {
+	public Class<?> getDefaultBeanClass() {
 		return this.defaultBeanClass;
 	}
 
-	public void setDefaultBeanClass(Class defaultBeanClass) {
+	public void setDefaultBeanClass(Class<?> defaultBeanClass) {
 		this.defaultBeanClass = defaultBeanClass;
 	}
 
@@ -196,9 +195,7 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	
 	public void configure() {
 		getFactories().clear();
-		Iterator it = configLocations.iterator();
-		while (it.hasNext()) {
-			Resource res = (Resource) it.next();
+		for (Resource res : configLocations) {
 			if (res.exists()) {
 				log.info("Reading forms from " + res.getDescription());
 				DocumentReader reader = new ValidatingDocumentReader(res);

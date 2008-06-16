@@ -76,7 +76,7 @@ public class WebApplicationContextBeanImporter implements ServletContextAware,
 		return bean;
 	}
 
-	public Class getObjectType() {
+	public Class<?> getObjectType() {
 		return null;
 	}
 

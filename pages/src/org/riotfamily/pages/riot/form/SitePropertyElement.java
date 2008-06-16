@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
-import java.util.Map;
-
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.pages.model.Site;
@@ -48,10 +46,9 @@ public class SitePropertyElement extends AbstractLocalizedElement {
 		return masterSite != null;
 	}
 	
-	protected ValueWrapper getMasterValue(String property) {
+	protected ValueWrapper<?> getMasterValue(String property) {
 		if (masterSite.getProperties() != null) {
-			Map properties = masterSite.getProperties().getWrappers();
-			return (ValueWrapper) properties.get(property);
+			return masterSite.getProperties().getWrappers().get(property);
 		}
 		return null;
 	}

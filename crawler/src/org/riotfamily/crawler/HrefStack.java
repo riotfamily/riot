@@ -36,17 +36,16 @@ import java.util.Stack;
  */
 public class HrefStack {
 	
-	private HashSet knownHrefs = new HashSet();
+	private HashSet<Href> knownHrefs = new HashSet<Href>();
 
-	private Stack stack = new Stack();
+	private Stack<Href> stack = new Stack<Href>();
 
 	public boolean hasNext() {
 		return !stack.isEmpty();
 	}
 
 	public Href next() {
-		Href href = (Href) stack.pop();
-		return href;
+		return stack.pop();
 	}
 
 	public void add(String baseUri, String uri) {

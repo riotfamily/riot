@@ -1,7 +1,5 @@
 package org.riotfamily.pages.riot.form;
 
-import java.util.Iterator;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.CacheService;
@@ -62,9 +60,7 @@ public class PagePropertiesFormController extends ContentFormController {
 		String formId = getFormId(request);
 		FormFactory factory = getFormRepository().getFormFactory(formId);
 		
-		Iterator it = factory.getChildFactories().iterator();
-		while (it.hasNext()) {
-			ElementFactory ef = (ElementFactory) it.next();
+		for (ElementFactory ef : factory.getChildFactories()) {
 			form.addElement(new PagePropertyElement(ef, binder, masterPage));
 		}
 		return form;

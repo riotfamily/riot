@@ -38,7 +38,7 @@ public class TemplateUtils {
 		return getTemplatePath(object, null);
 	}
 	
-	public static String getTemplatePath(Class clazz) {
+	public static String getTemplatePath(Class<?> clazz) {
 		return getTemplatePath(clazz, null);
 	}
 	
@@ -46,7 +46,7 @@ public class TemplateUtils {
 		return getTemplatePath(object.getClass(), suffix);
 	}
 	
-	public static String getTemplatePath(Class clazz, String suffix) {
+	public static String getTemplatePath(Class<?> clazz, String suffix) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("classpath:/");
 		sb.append(clazz.getName().replace('.', '/'));
@@ -69,7 +69,7 @@ public class TemplateUtils {
 		return getInitScript(element, element.getClass());
 	}
 	
-	public static String getInitScript(Element element, Class baseClass) {
+	public static String getInitScript(Element element, Class<?> baseClass) {
 		StringWriter sw = new StringWriter();
 		PrintWriter writer = new PrintWriter(sw);
 				
@@ -85,7 +85,7 @@ public class TemplateUtils {
 		return getInitScript(element, element.getClass());
 	}
 	
-	public static String getInitScript(TemplateElement element, Class baseClass) {
+	public static String getInitScript(TemplateElement element, Class<?> baseClass) {
 		StringWriter sw = new StringWriter();
 		PrintWriter writer = new PrintWriter(sw);
 				

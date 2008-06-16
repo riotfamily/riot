@@ -57,6 +57,7 @@ public class ContentFormController extends AbstractFrontOfficeFormController {
 		this.cacheService = cacheService;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void initForm(Form form, HttpServletRequest request) {
 		super.initForm(form, request);
 		Enumeration<String> names = request.getParameterNames();

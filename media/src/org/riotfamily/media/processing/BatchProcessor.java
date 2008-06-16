@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.processing;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.media.model.data.FileData;
@@ -34,17 +33,15 @@ import org.riotfamily.media.model.data.FileData;
  */
 public class BatchProcessor implements FileProcessor {
 
-	private List processors;
+	private List<FileProcessor> processors;
 	
-	public void setProcessors(List processors) {
+	public void setProcessors(List<FileProcessor> processors) {
 		this.processors = processors;
 	}
 
 	public void process(FileData data) {
 		if (processors != null) {
-			Iterator it = processors.iterator();
-			while (it.hasNext()) {
-				FileProcessor processor = (FileProcessor) it.next();
+			for (FileProcessor processor : processors) {
 				processor.process(data);
 			}
 		}

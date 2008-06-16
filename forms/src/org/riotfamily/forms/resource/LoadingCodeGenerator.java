@@ -34,26 +34,24 @@ import java.util.LinkedHashSet;
  */
 public class LoadingCodeGenerator implements ResourceVisitor {
 
-	private LinkedHashSet scripts = new LinkedHashSet();
+	private LinkedHashSet<ScriptResource> scripts = new LinkedHashSet<ScriptResource>();
 	
-	private LinkedHashSet stylesheets = new LinkedHashSet();
+	private LinkedHashSet<StylesheetResource> stylesheets = new LinkedHashSet<StylesheetResource>();
 
 	private LoadingCodeGenerator() {
 	}
 	
-	public static void renderLoadingCode(Collection resources, 
+	public static void renderLoadingCode(Collection<FormResource> resources, 
 			PrintWriter writer) {
 		
 		new LoadingCodeGenerator().render(resources, writer);
 	}
 	
-	private void loadResources(Collection resources) {
+	private void loadResources(Collection<FormResource> resources) {
 		if (resources == null) {
 			return;
 		}
-		Iterator it = resources.iterator();
-		while (it.hasNext()) {
-			FormResource resource = (FormResource) it.next();
+		for (FormResource resource : resources) {
 			if (resource != null) {
 				resource.accept(this);
 			}
@@ -73,11 +71,9 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 		}
 	}
 
-	private void render(Collection resources, PrintWriter writer) {
+	private void render(Collection<FormResource> resources, PrintWriter writer) {
 		loadResources(resources);
-		Iterator it = stylesheets.iterator();
-		while (it.hasNext()) {
-			StylesheetResource stylesheet = (StylesheetResource) it.next();
+		for (StylesheetResource stylesheet : stylesheets) {
 			writer.print("Resources.loadStyleSheet('");
 			writer.print(stylesheet.getUrl());
 			writer.print("');");
@@ -85,9 +81,9 @@ public class LoadingCodeGenerator implements ResourceVisitor {
 		
 		if (!scripts.isEmpty()) {
 			writer.print("Resources.loadScriptSequence([");
-			it = scripts.iterator();
+			Iterator<ScriptResource> it = scripts.iterator();
 			while (it.hasNext()) {
-				ScriptResource script = (ScriptResource) it.next();
+				ScriptResource script = it.next();
 				writer.print("{src:'");
 				writer.print(script.getUrl());
 				writer.print('\'');

@@ -26,7 +26,6 @@ package org.riotfamily.common.xml;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.core.io.Resource;
@@ -38,26 +37,25 @@ public class BeanConfigurationWatcher {
 
 	private ConfigurableBean bean;
 	
-	private List files;
+	private List<File> files;
 	
 	private long lastModified;
 	
-	private ArrayList listeners = new ArrayList();
+	private ArrayList<ConfigurationEventListener> listeners = 
+			new ArrayList<ConfigurationEventListener>();
 	
 	public BeanConfigurationWatcher(ConfigurableBean bean) {
 		this.bean = bean;
 		this.lastModified = System.currentTimeMillis();
 	}
 
-	public void setFiles(List files) {
+	public void setFiles(List<File> files) {
 		this.files = files;
 	}
 
-	public void setResources(List resources) {
-		files = new ArrayList();
-		Iterator it = resources.iterator();
-		while (it.hasNext()) {
-			Resource res = (Resource) it.next();
+	public void setResources(List<Resource> resources) {
+		files = new ArrayList<File>();
+		for (Resource res : resources) {
 			try {
 				files.add(res.getFile());
 			}
@@ -73,17 +71,13 @@ public class BeanConfigurationWatcher {
 	public synchronized void checkForModifications() {
 		if (bean.isReloadable()) {
 			long mtime = 0;
-			Iterator it = files.iterator();
-			while (it.hasNext()) {
-				File file = (File) it.next();
+			for (File file : files) {
 				mtime = Math.max(mtime, file.lastModified());
 			}
 			if (mtime > lastModified) {
 				lastModified = mtime;
 				bean.configure();
-				it = listeners.iterator();
-				while (it.hasNext()) {
-					ConfigurationEventListener listener = (ConfigurationEventListener) it.next();
+				for (ConfigurationEventListener listener : listeners) {
 					listener.beanReconfigured(bean);
 				}
 			}

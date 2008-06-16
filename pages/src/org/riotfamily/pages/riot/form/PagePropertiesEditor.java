@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
-import java.util.Iterator;
-
 import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;
@@ -104,9 +102,7 @@ public class PagePropertiesEditor extends CompositeElement
 		private void addPagePropertyElements(String id) {
 			if (repository.containsForm(id)) {
 				FormFactory factory = repository.getFormFactory(id);
-				Iterator it = factory.getChildFactories().iterator();
-				while (it.hasNext()) {
-					ElementFactory ef = (ElementFactory) it.next();
+				for (ElementFactory ef : factory.getChildFactories()) {
 					addElement(new PagePropertyElement(ef, binder, masterPage));
 				}
 			}

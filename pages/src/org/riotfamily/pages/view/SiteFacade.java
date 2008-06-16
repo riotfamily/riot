@@ -36,11 +36,11 @@ public class SiteFacade {
 				request.getContextPath(), path);
 	}
 
-	public Set getAliases() {
+	public Set<String> getAliases() {
 		return site.getAliases();
 	}
 
-	public Set getDerivedSites() {
+	public Set<Site> getDerivedSites() {
 		return site.getDerivedSites();
 	}
 

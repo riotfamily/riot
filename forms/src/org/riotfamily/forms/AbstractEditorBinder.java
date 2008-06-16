@@ -50,7 +50,7 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 	private Log log = LogFactory.getLog(AbstractEditorBinder.class);
 
 	/** List of {@link EditorBinding editor bindings} */
-	private List bindings = new LinkedList();
+	private List<EditorBinding> bindings = new LinkedList<EditorBinding>();
 
 	public AbstractEditorBinder() {
 		registerDefaultEditors();
@@ -59,9 +59,9 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 				new SimpleDateFormat("yyyy-MM-dd"), false));
 	}
 	
-	public abstract Class getPropertyType(String path);
+	public abstract Class<?> getPropertyType(String path);
 	
-	public List getBindings() {
+	public List<EditorBinding> getBindings() {
 		return this.bindings;
 	}
 
@@ -102,9 +102,7 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 	}
 
 	protected Editor findEditorByProperty(String property) {
-		Iterator it = bindings.iterator();
-		while (it.hasNext()) {
-			EditorBinding binding = (EditorBinding) it.next();
+		for (EditorBinding binding : bindings) {;
 			if (property.equals(binding.getProperty())) {
 				return binding.getEditor();
 			}
@@ -115,9 +113,9 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 
 	public String[] getBoundProperties() {
 		String[] props = new String[bindings.size()];
-		Iterator it = bindings.iterator();
+		Iterator<EditorBinding> it = bindings.iterator();
 		for (int i = 0; it.hasNext(); i++) {
-			EditorBinding binding = (EditorBinding) it.next();
+			EditorBinding binding = it.next();
 			props[i] = binding.getProperty();
 		}
 		return props;
@@ -132,9 +130,7 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 	}
 
 	public void initEditors() {
-		Iterator it = bindings.iterator();
-		while (it.hasNext()) {
-			EditorBinding binding = (EditorBinding) it.next();
+		for (EditorBinding binding  : bindings) {
 			Editor editor = binding.getEditor();
 			Object value = null;
 			if (isEditingExistingBean()) {
@@ -145,16 +141,14 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 	}
 
 	public Object populateBackingObject() {
-		Iterator it = bindings.iterator();
-		while (it.hasNext()) {
-			EditorBinding binding = (EditorBinding) it.next();
+		for (EditorBinding binding : bindings) {
 			Object value = binding.getEditor().getValue();
 			setPropertyValue(binding.getProperty(), value);
 		}
 		return getBackingObject();
 	}
 
-	public PropertyEditor getPropertyEditor(Class type, String propertyPath) {
+	public PropertyEditor getPropertyEditor(Class<?> type, String propertyPath) {
 		PropertyEditor pe = findCustomEditor(type, propertyPath);
 		if (pe == null) {
 			pe = getDefaultEditor(type);
@@ -193,7 +187,7 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 			return getPropertyValue(property);
 		}
 		
-		public Class getBeanClass() {
+		public Class<?> getBeanClass() {
 			return AbstractEditorBinder.this.getBeanClass();
 		}
 		
@@ -223,7 +217,7 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 			return null;
 		}
 		
-		public Class getPropertyType() {
+		public Class<?> getPropertyType() {
 			return AbstractEditorBinder.this.getPropertyType(property);
 		}
 		

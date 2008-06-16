@@ -2,7 +2,6 @@ package org.riotfamily.pages.riot.form;
 
 import java.beans.PropertyEditor;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +19,8 @@ public class LocalizedEditorBinder implements EditorBinder {
 
 	private EditorBinder delegate;
 	
-	private Map elements = new HashMap();
+	private Map<EditorBinding, AbstractLocalizedElement> elements = 
+			new HashMap<EditorBinding, AbstractLocalizedElement>();
 	
 	public LocalizedEditorBinder(EditorBinder delegate) {
 		this.delegate = delegate;
@@ -33,7 +33,7 @@ public class LocalizedEditorBinder implements EditorBinder {
 	}
 	
 	private boolean isOverwrite(EditorBinding binding) {
-		AbstractLocalizedElement ele = (AbstractLocalizedElement) elements.get(binding);
+		AbstractLocalizedElement ele = elements.get(binding);
 		return ele.isOverwrite();
 	}
 	
@@ -42,9 +42,7 @@ public class LocalizedEditorBinder implements EditorBinder {
 	}
 	
 	public Object populateBackingObject() {
-		Iterator it = getBindings().iterator();
-		while (it.hasNext()) {
-			EditorBinding binding = (EditorBinding) it.next();
+		for (EditorBinding binding : getBindings()) {
 			setPropertyValue(binding.getProperty(), getValue(binding));
 		}
 		return getBackingObject();
@@ -63,11 +61,11 @@ public class LocalizedEditorBinder implements EditorBinder {
 		return delegate.getBackingObject();
 	}
 
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		return delegate.getBeanClass();
 	}
 
-	public List getBindings() {
+	public List<EditorBinding> getBindings() {
 		return delegate.getBindings();
 	}
 
@@ -79,7 +77,7 @@ public class LocalizedEditorBinder implements EditorBinder {
 		return delegate.getEditor(property);
 	}
 
-	public Class getPropertyType(String property) {
+	public Class<?> getPropertyType(String property) {
 		return delegate.getPropertyType(property);
 	}
 

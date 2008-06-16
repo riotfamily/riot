@@ -69,10 +69,10 @@ public class ComponentRepository {
 		return getRenderer(component.getType());
 	}
 
-	public Component createComponent(String type, Map properties) {
+	public Component createComponent(String type, Map<String, ?> properties) {
 		Component component = new Component(type);
 		ComponentRenderer renderer = getRenderer(type);
-		Map values = new HashMap();
+		Map<String, Object> values = new HashMap<String, Object>();
 		if (renderer.getDefaults() != null) {
 			values.putAll(renderer.getDefaults());
 		}

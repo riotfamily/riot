@@ -33,7 +33,7 @@ import org.riotfamily.forms.Form;
  */
 public interface FormFactory extends ContainerElementFactory {
 
-	public Class getBeanClass();
+	public Class<?> getBeanClass();
 
 	public Form createForm();
 	

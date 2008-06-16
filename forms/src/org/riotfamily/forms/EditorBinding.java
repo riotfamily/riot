@@ -58,7 +58,7 @@ public interface EditorBinding {
 	/**
 	 * Returns the type of the bean the property belongs to.
 	 */
-	public Class getBeanClass();
+	public Class<?> getBeanClass();
 	
 	/**
 	 * Returns the property path.
@@ -68,7 +68,7 @@ public interface EditorBinding {
 	/**
 	 * Returns the type of the property. 
 	 */
-	public Class getPropertyType();
+	public Class<?> getPropertyType();
 	
 	/**
 	 * Returns a PropertyEditor capable of handling the property type.

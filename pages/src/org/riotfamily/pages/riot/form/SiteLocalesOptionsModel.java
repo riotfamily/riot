@@ -1,7 +1,7 @@
 package org.riotfamily.pages.riot.form;
 
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,11 +19,9 @@ public class SiteLocalesOptionsModel implements OptionsModel {
 		this.dao = dao;
 	}
 
-	public Collection getOptionValues(Element element) {
-		Set locales = new TreeSet(new ToStringComparator());
-		Iterator it = dao.listSites().iterator();
-		while (it.hasNext()) {
-			Site site = (Site) it.next();
+	public Collection<?> getOptionValues(Element element) {
+		Set<Locale> locales = new TreeSet<Locale>(new ToStringComparator());
+		for (Site site : dao.listSites()) {
 			locales.add(site.getLocale());
 		}
 		return locales;

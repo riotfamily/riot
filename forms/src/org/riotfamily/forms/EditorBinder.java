@@ -34,11 +34,11 @@ import org.springframework.beans.PropertyEditorRegistry;
  */
 public interface EditorBinder extends PropertyEditorRegistry {
 
-	public List getBindings();
+	public List<EditorBinding> getBindings();
 
 	public EditorBinder replace(EditorBinder previousBinder);
 	
-	public Class getBeanClass();
+	public Class<?> getBeanClass();
 	
 	public Object getBackingObject();
 
@@ -50,7 +50,7 @@ public interface EditorBinder extends PropertyEditorRegistry {
 
 	public void setPropertyValue(String property, Object value);
 
-	public Class getPropertyType(String property);
+	public Class<?> getPropertyType(String property);
 
 	/**
 	 * Binds the given editor to the property with the specified name.

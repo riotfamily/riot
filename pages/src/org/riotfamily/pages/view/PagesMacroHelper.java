@@ -24,7 +24,6 @@
 package org.riotfamily.pages.view;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,7 +61,7 @@ public class PagesMacroHelper {
 	}
 	
 	
-	public List getTopLevelPages(SiteFacade facade) {
+	public List<Page> getTopLevelPages(SiteFacade facade) {
 		PageNode rootNode = pageDao.getRootNode();
 		PageCacheUtils.addNodeTag(request, rootNode);
 		return getVisiblePages(rootNode.getChildPages(facade.getSite()),
@@ -78,15 +77,13 @@ public class PagesMacroHelper {
 		return pageDao.findPageForHandler(handlerName, facade.getSite());
 	}
 
-	public List getPagesForHandler(String handlerName, SiteFacade facade) {
+	public List<Page> getPagesForHandler(String handlerName, SiteFacade facade) {
 		return pageDao.findPagesForHandler(handlerName, facade.getSite());
 	}
 
-	private List getVisiblePages(List pages, boolean preview) {
-		ArrayList result = new ArrayList();
-		Iterator it = pages.iterator();
-		while (it.hasNext()) {
-			Page page = (Page) it.next();
+	private List<Page> getVisiblePages(List<Page> pages, boolean preview) {
+		ArrayList<Page> result = new ArrayList<Page>();
+		for (Page page : pages) {
 			if (page.isVisible(preview)) {
 				result.add(page);
 			}

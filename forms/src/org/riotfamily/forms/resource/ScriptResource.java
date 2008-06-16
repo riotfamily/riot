@@ -37,7 +37,7 @@ public class ScriptResource implements FormResource {
 	
 	private String test;
 	
-	private Collection dependencies;
+	private Collection<FormResource> dependencies;
 	
 	public ScriptResource(String url) {
 		this(url, null);
@@ -70,7 +70,7 @@ public class ScriptResource implements FormResource {
 		return this.test;
 	}
 
-	public Collection getDependencies() {
+	public Collection<FormResource> getDependencies() {
 		return this.dependencies;
 	}
 

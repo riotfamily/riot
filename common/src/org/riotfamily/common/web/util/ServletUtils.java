@@ -513,7 +513,7 @@ public final class ServletUtils {
 				servletContext,	"/WEB-INF/web.xml"));
 
 		Document doc = reader.readDocument();
-		Iterator it = DomUtils.getChildElementsByTagName(
+		Iterator<?> it = DomUtils.getChildElementsByTagName(
 				doc.getDocumentElement(), "servlet-mapping").iterator();
 
 		while (it.hasNext()) {

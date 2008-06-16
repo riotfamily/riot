@@ -40,7 +40,7 @@ public interface MediaDao {
 	
 	public FileData findDataByMd5(String md5);
 	
-	public List findStaleData();
+	public List<FileData> findStaleData();
 	
 	public void saveFile(RiotFile file);
 	

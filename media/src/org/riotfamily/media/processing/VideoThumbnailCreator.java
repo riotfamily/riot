@@ -65,7 +65,7 @@ public class VideoThumbnailCreator extends AbstractFileProcessor {
 	protected RiotFile createVariant(FileData data) throws Exception {
 		VideoData video = (VideoData) data;
 		VideoData thumb = new VideoData();
-		ArrayList args = new ArrayList();
+		ArrayList<String> args = new ArrayList<String>();
 		args.add("-i");
 		args.add(video.getFile().getAbsolutePath());
 		args.add("-an");

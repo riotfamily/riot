@@ -50,7 +50,7 @@ public class PageData {
     
     private int statusCode;
     
-    private HashMap headers = new HashMap();
+    private HashMap<String, String> headers = new HashMap<String, String>();
     
     private NodeList nodes;
     
@@ -63,7 +63,7 @@ public class PageData {
     }
     
     public String getHeader(String name) {
-    	return (String) headers.get(name.toLowerCase()); 
+    	return headers.get(name.toLowerCase()); 
     }
     
 	public void setContent(InputStream in, String charset) throws IOException {

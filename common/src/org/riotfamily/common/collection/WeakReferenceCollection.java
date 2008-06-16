@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.collection;
 
-import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
@@ -39,17 +38,17 @@ import org.apache.commons.logging.LogFactory;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public class WeakReferenceCollection extends AbstractCollection {
+public class WeakReferenceCollection<T> extends AbstractCollection<T> {
 
 	private static final Log log = LogFactory
 			.getLog(WeakReferenceCollection.class);
 	
-	private Collection references = new ArrayList();
+	private Collection<WeakReference<T>> references = new ArrayList<WeakReference<T>>();
 	
 	/**
 	 * Returns an iterator over all non-cleared values. 
 	 */
-	public Iterator iterator() {
+	public Iterator<T> iterator() {
 		return new ReferentIterator();
 	}
 
@@ -66,8 +65,8 @@ public class WeakReferenceCollection extends AbstractCollection {
 	 * Adds a {@link WeakReference} referring to the given value to the internal
 	 * collection of references.
 	 */
-	public boolean add(Object value) {
-		references.add(new WeakReference(value));
+	public boolean add(T value) {
+		references.add(new WeakReference<T>(value));
 		return true;
 	}
 	
@@ -82,21 +81,21 @@ public class WeakReferenceCollection extends AbstractCollection {
 	 * Removes all cleared references from the internal collection.
 	 */
 	public void purge() {
-		Iterator it = iterator();
+		Iterator<T> it = iterator();
 		while (it.hasNext()) {
 			it.next();
 		}
 	}
 
-	private class ReferentIterator implements Iterator {
+	private class ReferentIterator implements Iterator<T> {
 
-		private Iterator it = references.iterator();
+		private Iterator<WeakReference<T>> it = references.iterator();
 		
-		private Object nextValue = null;
+		private T nextValue = null;
 		
 		public boolean hasNext() {
 			while (it.hasNext()) {
-				Reference ref = (Reference) it.next();
+				WeakReference<T> ref = it.next();
 				nextValue = ref.get();
 				if (nextValue == null) {
 					log.debug("Item cleared, removing reference.");
@@ -109,7 +108,7 @@ public class WeakReferenceCollection extends AbstractCollection {
 			return false;
 		}
 
-		public Object next() {
+		public T next() {
 			return nextValue;
 		}
 

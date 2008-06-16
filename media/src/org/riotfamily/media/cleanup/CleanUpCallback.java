@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.cleanup;
 
-import java.util.Iterator;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.media.dao.MediaDao;
@@ -47,9 +45,7 @@ public class CleanUpCallback extends TransactionCallbackWithoutResult {
 	}
 
 	protected void doInTransactionWithoutResult(TransactionStatus status) {
-		Iterator it = mediaDao.findStaleData().iterator();
-		while (it.hasNext()) {
-			FileData data = (FileData) it.next();
+		for (FileData data : mediaDao.findStaleData()) {
 			log.info("Deleting orphaned file " + data.getUri());
 			data.deleteFile();
 			mediaDao.deleteData(data);

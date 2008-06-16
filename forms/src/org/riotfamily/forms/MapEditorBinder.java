@@ -38,9 +38,9 @@ public class MapEditorBinder extends AbstractEditorBinder {
 
 	private Map map;
 	
-	private Class mapClass = HashMap.class;
+	private Class<? extends Map> mapClass = HashMap.class;
 	
-	private Class valueClass = null;
+	private Class<?> valueClass = null;
 
 	private boolean editingExisitingMap;
 	
@@ -52,7 +52,7 @@ public class MapEditorBinder extends AbstractEditorBinder {
 		editingExisitingMap = true;
 	}
 	
-	public MapEditorBinder(Class mapClass) {
+	public MapEditorBinder(Class<? extends Map> mapClass) {
 		Assert.isAssignable(Map.class, mapClass);
 		this.mapClass = mapClass; 
 		this.valueClass = GenericCollectionTypeResolver.getMapValueType(mapClass);
@@ -79,11 +79,11 @@ public class MapEditorBinder extends AbstractEditorBinder {
 		return map;
 	}
 
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		return mapClass;
 	}
 
-	public Class getPropertyType(String propertyName) {
+	public Class<?> getPropertyType(String propertyName) {
 		if (valueClass != null) {
 			return valueClass;
 		}

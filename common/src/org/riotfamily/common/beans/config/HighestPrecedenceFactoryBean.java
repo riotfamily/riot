@@ -43,11 +43,11 @@ import org.springframework.util.Assert;
 public class HighestPrecedenceFactoryBean implements FactoryBean, 
 		ApplicationContextAware {
 
-	private Class type;
+	private Class<? extends Ordered> type;
 	
 	private ApplicationContext applicationContext;
 	
-	public void setType(Class type) {
+	public void setType(Class<? extends Ordered> type) {
 		Assert.isAssignable(Ordered.class, type, "Type must implement the " +
 				"'org.springframework.core.Ordered' interface.");
 		
@@ -72,7 +72,7 @@ public class HighestPrecedenceFactoryBean implements FactoryBean,
 		return beans.get(0);
 	}
 
-	public Class getObjectType() {
+	public Class<? extends Ordered> getObjectType() {
 		return type;
 	}
 

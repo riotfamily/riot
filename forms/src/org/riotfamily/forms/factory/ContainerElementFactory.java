@@ -36,6 +36,6 @@ public interface ContainerElementFactory {
 
 	public void addChildFactory(ElementFactory factory);
 	
-	public List getChildFactories();
+	public List<ElementFactory> getChildFactories();
 	
 }

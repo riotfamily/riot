@@ -41,7 +41,7 @@ import org.springframework.util.StringUtils;
  */
 public class HandlerNameHierarchy implements ApplicationContextAware {
 
-	private Map childHandlerNames = new HashMap();
+	private Map<String, String> childHandlerNames = new HashMap<String, String>();
 	
 	public void setApplicationContext(ApplicationContext ctx) {
 		Iterator it = BeanFactoryUtils.beansOfTypeIncludingAncestors(ctx, 

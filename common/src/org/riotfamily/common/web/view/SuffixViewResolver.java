@@ -57,7 +57,7 @@ public class SuffixViewResolver extends AbstractCachingViewResolver
 	 */
 	public static final String FORWARD_URL_PREFIX = "forward:";
 	
-	private Map resolvers;
+	private Map<String, ViewResolver> resolvers;
 
 	private String defaultSuffix;
 
@@ -72,7 +72,7 @@ public class SuffixViewResolver extends AbstractCachingViewResolver
 	/**
 	 * @param resolvers ViewResolvers keyed by suffix (without dots).
 	 */
-	public void setResolvers(Map resolvers) {
+	public void setResolvers(Map<String, ViewResolver> resolvers) {
 		this.resolvers = resolvers;
 	}
 	
@@ -155,7 +155,7 @@ public class SuffixViewResolver extends AbstractCachingViewResolver
 		int i = viewName.lastIndexOf('.');
 		if (i > 0) {
 			suffix = viewName.substring(i + 1);
-			resolver = (ViewResolver) resolvers.get(suffix);
+			resolver = resolvers.get(suffix);
 			if (logger.isDebugEnabled()) {
 				if (resolver != null) {
 					logger.debug("Using " + resolver + " for suffix [" 

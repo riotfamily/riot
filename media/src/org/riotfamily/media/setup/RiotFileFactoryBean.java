@@ -34,7 +34,7 @@ import org.springframework.core.io.Resource;
  */
 public class RiotFileFactoryBean extends AbstractRiotFileFactoryBean {
 	
-	public Class getObjectType() {
+	public Class<?> getObjectType() {
 		return RiotFile.class;
 	}
 	

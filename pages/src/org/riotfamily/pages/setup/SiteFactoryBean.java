@@ -54,7 +54,7 @@ public class SiteFactoryBean implements FactoryBean, InitializingBean, Applicati
 		this.locale = locale;		
 	}
 
-	public Class getObjectType() {		
+	public Class<?> getObjectType() {		
 		return Site.class;
 	}
 	

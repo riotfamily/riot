@@ -79,7 +79,7 @@ public class PropertiesPlaceholderConfigurer extends
 	
 	protected String resolveAll(Properties props, String prefix) {
 		StringBuffer sb = new StringBuffer();
-		Enumeration names = props.propertyNames();
+		Enumeration<?> names = props.propertyNames();
 		while (names.hasMoreElements()) {
 			String name = (String) names.nextElement();
 			if (name.startsWith(prefix) && name.length() > prefix.length()) {

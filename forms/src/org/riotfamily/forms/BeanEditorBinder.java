@@ -43,7 +43,7 @@ public class BeanEditorBinder extends AbstractEditorBinder {
 		editingExistingBean = true;
 	}
 	
-	public BeanEditorBinder(Class beanClass) {
+	public BeanEditorBinder(Class<?> beanClass) {
 		beanWrapper = new ProtectedBeanWrapper(beanClass);
 	}
 
@@ -65,11 +65,11 @@ public class BeanEditorBinder extends AbstractEditorBinder {
 		return editingExistingBean;
 	}
 	
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		return beanWrapper.getWrappedClass();
 	}
 
-	public Class getPropertyType(String propertyName) {
+	public Class<?> getPropertyType(String propertyName) {
 		return beanWrapper.getPropertyType(propertyName);
 	}
 	

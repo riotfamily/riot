@@ -94,11 +94,12 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 
 	private XmlFormRepository formRepository;
 
-	private HashMap elementClasses = new HashMap();
+	private HashMap<String, Class<? extends org.riotfamily.forms.Element>> elementClasses = 
+			new HashMap<String, Class<? extends org.riotfamily.forms.Element>>();
 
 	private String formId;
 
-	private ArrayList imports;
+	private ArrayList<Import> imports;
 
 	private String currentPackage;
 
@@ -135,13 +136,11 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	public void digest(Document doc, Resource resource) {
 		this.resource = resource;
 		formId = null;
-		imports = new ArrayList();
+		imports = new ArrayList<Import>();
 		currentPackage = null;
 
 		Element root = doc.getDocumentElement();
-		Iterator it = XmlUtils.getChildElements(root).iterator();
-		while (it.hasNext()) {
-			Element ele = (Element) it.next();
+		for (Element ele : XmlUtils.getChildElements(root)) { 
 			String namespace = ele.getNamespaceURI();
 			if (namespace == null || namespace.equals(NAMESPACE)) {
 				if (DomUtils.nodeNameEquals(ele, "form")) {
@@ -153,9 +152,8 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			}
 		}
 
-		it = imports.iterator();
-		while (it.hasNext()) {
-			((Import) it.next()).apply();
+		for (Import imp : imports) {
+			imp.apply();
 		}
 	}
 
@@ -163,7 +161,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		String beanClassName = XmlUtils.getAttribute(
 				formElement, "bean-class");
 
-		Class beanClass = getBeanClass(beanClassName);
+		Class<?> beanClass = getBeanClass(beanClassName);
 		FormInitializer initializer = (FormInitializer) getOrCreate(
 				formElement, "initializer", "initializer-class",
 				FormInitializer.class);
@@ -175,15 +173,14 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 				beanClass, initializer, validator);
 		
 		formId = formElement.getAttribute("id");
-		Iterator it = XmlUtils.getChildElements(formElement).iterator();
-		while (it.hasNext()) {
-			parseElementDefinition((Element) it.next(), formFactory);
+		for (Element ele : XmlUtils.getChildElements(formElement)) {
+			parseElementDefinition(ele, formFactory);
 		}
 		formRepository.registerFormFactory(formId, formFactory);
 	}
 
 	private Object getOrCreate(Element element, String refAttribute,
-			String classNameAttribute, Class requiredClass) {
+			String classNameAttribute, Class<?> requiredClass) {
 
 		String ref = XmlUtils.getAttribute(
 				element, refAttribute);
@@ -197,7 +194,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 
 			if (className != null) {
 				try {
-					Class beanClass = ClassUtils.forName(className);
+					Class<?> beanClass = ClassUtils.forName(className);
 					Object obj = beanFactory.createBean(beanClass, 
 							AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR, 
 							false);
@@ -213,17 +210,12 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		return null;
 	}
 
-	
-	protected void parsePackageDefinition(Element ele) {
-		currentPackage = XmlUtils.getAttribute(ele, "name");
-		Iterator it = DomUtils.getChildElementsByTagName(
-				ele, "form").iterator();
-
-		while (it.hasNext()) {
-			parseFormDefinition((Element) it.next());
+	protected void parsePackageDefinition(Element element) {
+		currentPackage = XmlUtils.getAttribute(element, "name");
+		for (Element ele : XmlUtils.getChildElementsByTagName(element, "form")) {
+			parseFormDefinition(ele);
 		}
 	}
-
 	
 	protected void parseElementDefinition(Element ele,
 			ContainerElementFactory parentFactory) {
@@ -237,13 +229,10 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			parentFactory.addChildFactory(factory);
 		}
 	}
-
 	
 	protected ConfigurableElementFactory createFactory(Element ele) {
-		Class elementClass = getElementClass(ele);
-		ConfigurableElementFactory factory =
-				new ConfigurableElementFactory(elementClass);
-
+		Class<? extends org.riotfamily.forms.Element> elementClass = getElementClass(ele);
+		ConfigurableElementFactory factory = new ConfigurableElementFactory(elementClass);
 		factory.setBeanFactory(beanFactory);
 		String beanClassName = XmlUtils.getAttribute(ele, "bean-class");
 		if (beanClassName != null) {
@@ -350,7 +339,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 				XmlUtils.getAttribute(ele, "config")));
 	}
 
-	protected Class getElementClass(Element ele) {
+	protected Class<? extends org.riotfamily.forms.Element> getElementClass(Element ele) {
 		String type = null;
 		if (DomUtils.nodeNameEquals(ele, "element")) {
 			type = XmlUtils.getAttribute(ele, "type");
@@ -367,8 +356,8 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		return getElementClass(type);
 	}
 
-	protected Class getElementClass(String type) {
-		Class elementClass = (Class) elementClasses.get(type);
+	protected Class<? extends org.riotfamily.forms.Element> getElementClass(String type) {
+		Class<? extends org.riotfamily.forms.Element> elementClass = elementClasses.get(type);
 		if (elementClass == null) {
 			elementClass = formRepository.getElementClass(type);
 		}
@@ -379,7 +368,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		return elementClass;
 	}
 
-	protected Class getBeanClass(String beanClassName) {
+	protected Class<?> getBeanClass(String beanClassName) {
 		if (beanClassName == null) {
 			return formRepository.getDefaultBeanClass();
 		}
