@@ -30,6 +30,19 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Cascade;
 import org.riotfamily.media.model.data.FileData;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +50,10 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
+@Entity
+@Table(name="riot_files")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorValue("file")
 public class RiotFile {
 
 	private Long id;
@@ -70,6 +87,7 @@ public class RiotFile {
 		return new RiotFile(fileData);
 	}
 
+	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return this.id;
 	}
@@ -78,6 +96,8 @@ public class RiotFile {
 		this.id = id;
 	}
 
+	@ManyToOne(cascade=CascadeType.PERSIST)
+	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	public FileData getFileData() {
 		return fileData;
 	}
@@ -86,43 +106,53 @@ public class RiotFile {
 		this.fileData = fileData;
 	}
 
+	@Transient
 	public String getUri() {
 		return getFileData().getUri();
 	}
 
+	@Transient
 	public InputStream getInputStream() throws FileNotFoundException {
 		return getFileData().getInputStream();
 	}
 	
+	@Transient
 	public File getFile() {
 		return getFileData().getFile();
 	}
 	
+	@Transient
 	public String getContentType() {
 		return getFileData().getContentType();
 	}
 
+	@Transient
 	public Date getCreationDate() {
 		return getFileData().getCreationDate();
 	}
 
+	@Transient
 	public String getFileName() {
 		return getFileData().getFileName();
 	}
 
+	@Transient
 	public String getFormatedSize() {
 		return getFileData().getFormatedSize();
 	}
 
+	@Transient
 	public long getSize() {
 		return getFileData().getSize();
 	}
 
+	@Transient
 	public String getUploadedBy() {
 		return getFileData().getOwner();
 	}
 
-	public Map getVariants() {
+	@Transient
+	public Map<String, RiotFile> getVariants() {
 		return getFileData().getVariants();
 	}
 	

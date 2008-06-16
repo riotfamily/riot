@@ -32,39 +32,54 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Cascade;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class ListWrapper extends ValueWrapper implements List {
+@Entity
+@DiscriminatorValue("List")
+public class ListWrapper extends ValueWrapper<List<?>> 
+		implements List<Object> {
 
-	private List<ValueWrapper> wrapperList;
-
-	public ListWrapper() {
-	}
+	private List<ValueWrapper<?>> wrapperList;
 
 	public void wrap(Object value) {
-		addAll((Collection) value);
+		addAll((Collection<?>) value);
 	}
 
-	public Object getValue() {
+	@Transient
+	public List<?> getValue() {
 		return this;
 	}
 	
-	public void setValue(Object value) {
+	public void setValue(List<?> value) {
 	}
 
-	public List<ValueWrapper> getWrapperList() {
+	@OneToMany(cascade=CascadeType.ALL)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	public List<ValueWrapper<?>> getWrapperList() {
 		return wrapperList;
 	}
 	
-	public Object unwrap() {
+	public void setWrapperList(List<ValueWrapper<?>> wrapperList) {
+		this.wrapperList = wrapperList;
+	}
+	
+	public List<?> unwrap() {
 		if (wrapperList == null) {
 			return null;
 		}
 		ArrayList<Object> result = new ArrayList<Object>(wrapperList.size());
-		for (ValueWrapper wrapper : wrapperList) {
+		for (ValueWrapper<?> wrapper : wrapperList) {
 			if (wrapper != null) {
 				result.add(wrapper.unwrap());
 			}
@@ -75,9 +90,9 @@ public class ListWrapper extends ValueWrapper implements List {
 		return Collections.unmodifiableList(result);
 	}
 	
-	public ValueWrapper deepCopy() {
-		ArrayList<ValueWrapper> list = new ArrayList<ValueWrapper>(wrapperList.size());
-		for (ValueWrapper wrapper : wrapperList) {
+	public ListWrapper deepCopy() {
+		ArrayList<ValueWrapper<?>> list = new ArrayList<ValueWrapper<?>>(wrapperList.size());
+		for (ValueWrapper<?> wrapper : wrapperList) {
 			if (wrapper != null) {
 				list.add(wrapper.deepCopy());
 			}
@@ -90,12 +105,13 @@ public class ListWrapper extends ValueWrapper implements List {
 		return copy;
 	}
 	
+	@Transient
 	public Collection<String> getCacheTags() {
 		if (wrapperList == null) {
 			return null;
 		}
 		HashSet<String> result = new HashSet<String>();
-		for (ValueWrapper wrapper : wrapperList) {
+		for (ValueWrapper<?> wrapper : wrapperList) {
 			if (wrapper != null) {
 				Collection<String> tags = wrapper.getCacheTags();
 				if (tags != null) {
@@ -119,12 +135,12 @@ public class ListWrapper extends ValueWrapper implements List {
 
 	public void add(int index, Object item) {
 		if (wrapperList == null) {
-			wrapperList = new ArrayList<ValueWrapper>();
+			wrapperList = new ArrayList<ValueWrapper<?>>();
 		}
-		ValueWrapper wrapper = null;
+		ValueWrapper<?> wrapper = null;
 		if (item != null) { 
 			if (item instanceof ValueWrapper) {
-				wrapper = (ValueWrapper) item;
+				wrapper = (ValueWrapper<?>) item;
 			}
 			else {
 				wrapper = ValueWrapperService.wrap(item);
@@ -134,15 +150,15 @@ public class ListWrapper extends ValueWrapper implements List {
 		
 	}
 
-	public boolean addAll(Collection items) {
+	public boolean addAll(Collection<?> items) {
 		return addAll(size(), items);
 	}
 
-	public boolean addAll(int index, Collection items) {
+	public boolean addAll(int index, Collection<?> items) {
 		if (items == null || items.isEmpty()) {
 			return false;
 		}
-		Iterator it = items.iterator();
+		Iterator<?> it = items.iterator();
 		while (it.hasNext()) {
 			Object item = it.next();
 			add(index++, item);
@@ -154,7 +170,7 @@ public class ListWrapper extends ValueWrapper implements List {
 		return wrapperList != null && wrapperList.contains(o);
 	}
 
-	public boolean containsAll(Collection items) {
+	public boolean containsAll(Collection<?> items) {
 		return wrapperList != null && wrapperList.containsAll(items);
 	}
 
@@ -179,27 +195,28 @@ public class ListWrapper extends ValueWrapper implements List {
 		return wrapperList.lastIndexOf(o);
 	}
 
+	@Transient
 	public boolean isEmpty() {
 		return wrapperList == null || wrapperList.isEmpty();
 	}
 
 	public Iterator iterator() {
 		if (wrapperList == null) {
-			return Collections.EMPTY_LIST.iterator();
+			return Collections.emptyList().iterator();
 		}
 		return wrapperList.iterator();
 	}
 
 	public ListIterator listIterator() {
 		if (wrapperList == null) {
-			return Collections.EMPTY_LIST.listIterator();
+			return Collections.emptyList().listIterator();
 		}
 		return wrapperList.listIterator();
 	}
 
 	public ListIterator listIterator(int index) {
 		if (wrapperList == null) {
-			return Collections.EMPTY_LIST.listIterator(index);
+			return Collections.emptyList().listIterator(index);
 		}
 		return wrapperList.listIterator(index);
 	}
@@ -218,14 +235,14 @@ public class ListWrapper extends ValueWrapper implements List {
 		return wrapperList.remove(index);
 	}
 
-	public boolean removeAll(Collection items) {
+	public boolean removeAll(Collection<?> items) {
 		if (wrapperList == null) {
 			return false;
 		}
 		return wrapperList.removeAll(items);
 	}
 
-	public boolean retainAll(Collection items) {
+	public boolean retainAll(Collection<?> items) {
 		if (wrapperList == null) {
 			return false;
 		}
@@ -236,7 +253,7 @@ public class ListWrapper extends ValueWrapper implements List {
 		if (wrapperList == null) {
 			throw new IndexOutOfBoundsException();
 		}
-		return wrapperList.set(index, (ValueWrapper) o);
+		return wrapperList.set(index, (ValueWrapper<?>) o);
 	}
 
 	public int size() {

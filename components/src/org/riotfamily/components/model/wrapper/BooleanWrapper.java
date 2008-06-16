@@ -23,29 +23,33 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model.wrapper;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class BooleanWrapper extends ValueWrapper {
+@Entity
+@DiscriminatorValue("Boolean")
+public class BooleanWrapper extends ValueWrapper<Boolean> {
 
-	private Boolean bit;
-
-	public BooleanWrapper() {
-	}
-
-	public void setValue(Object value) {
-		this.bit = (Boolean) value;
-	}
-
-	public Object getValue() {
-		return bit;
-	}
+	private Boolean value;
 	
-	public ValueWrapper deepCopy() {
+	@Column(name="boolean_Value")
+	public Boolean getValue() {
+		return value;
+	}
+
+	public void setValue(Boolean value) {
+		this.value = value;
+	}
+
+	public BooleanWrapper deepCopy() {
 		BooleanWrapper copy = new BooleanWrapper();
-		copy.wrap(bit);
+		copy.wrap(value);
 		return copy;
 	}
 }

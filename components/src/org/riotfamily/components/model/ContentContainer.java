@@ -25,7 +25,21 @@ package org.riotfamily.components.model;
 
 import java.util.Map;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
+@Entity
+@Table(name="riot_content_containers")
+@Inheritance(strategy=InheritanceType.JOINED)
 public class ContentContainer {
 
 	private Long id;
@@ -37,6 +51,7 @@ public class ContentContainer {
 	public ContentContainer() {
 	}
 
+	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return this.id;
 	}
@@ -45,6 +60,8 @@ public class ContentContainer {
 		this.id = id;
 	}
 
+	@ManyToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name="live_version")
 	public Content getLiveVersion() {
 		return this.liveVersion;
 	}
@@ -53,6 +70,8 @@ public class ContentContainer {
 		this.liveVersion = liveVersion;
 	}
 
+	@ManyToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name="preview_version")
 	public Content getPreviewVersion() {
 		if (previewVersion == null) {
 			previewVersion = new Content();
@@ -64,10 +83,12 @@ public class ContentContainer {
 		this.previewVersion = previewVersion;
 	}
 
+	@Transient
 	public Content getLatestVersion() {
 		return previewVersion != null ? previewVersion : liveVersion;
 	}
 
+	@Transient
 	public Content getContent(boolean preview) {
 		if (preview && previewVersion != null) {
 			return previewVersion;
@@ -79,10 +100,12 @@ public class ContentContainer {
 		return getContent(preview).unwrapValues();
 	}
 	
+	@Transient
 	public boolean isDirty() {
 		return previewVersion != null && previewVersion.isDirty();
 	}
 	
+	@Transient
 	public boolean isPublished() {
 		return liveVersion != null;
 	}

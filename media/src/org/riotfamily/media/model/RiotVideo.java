@@ -27,6 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
+
 import org.riotfamily.media.model.data.VideoData;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +38,8 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
+@Entity
+@DiscriminatorValue("video")
 public class RiotVideo extends RiotFile {
 
 	public RiotVideo() {
@@ -64,42 +70,52 @@ public class RiotVideo extends RiotFile {
 		return new RiotVideo(getVideoData());
 	}
 	
+	@Transient
 	public VideoData getVideoData() {
 		return (VideoData) getFileData();
 	}
 	
+	@Transient
 	public int getWidth() {
 		return getVideoData().getWidth();
 	}
 
+	@Transient
 	public int getHeight() {
 		return getVideoData().getHeight();
 	}
 
+	@Transient
 	public long getDuration() {
 		return getVideoData().getDuration();
 	}
 
+	@Transient
 	public int getBps() {
 		return getVideoData().getBps();
 	}
 
+	@Transient
 	public String getVideoCodec() {
 		return getVideoData().getVideoCodec();
 	}
 
+	@Transient
 	public float getFps() {
 		return getVideoData().getFps();
 	}
 
+	@Transient
 	public String getAudioCodec() {
 		return getVideoData().getAudioCodec();
 	}
 
+	@Transient
 	public int getSamplingRate() {
 		return getVideoData().getSamplingRate();
 	}
 
+	@Transient
 	public boolean isStereo() {
 		return getVideoData().isStereo();
 	}

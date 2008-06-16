@@ -22,11 +22,6 @@
 			<attribute name="javadoc_location" value="http://freemarker.org/docs/api/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/hibernate.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://www.hibernate.org/hib_docs/v3/api/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/imageinfo.jar"/>
 	<classpathentry kind="lib" path="lib/json-lib.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
@@ -54,7 +49,10 @@
 	<classpathentry kind="lib" path="lib/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib/spring-test.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j.jar"/>
-	<classpathentry kind="lib" path="lib/texhyphj.jar"/>	
+	<classpathentry kind="lib" path="lib/texhyphj.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="lib" path="/8x4/webapp/WEB-INF/lib/persistence.jar"/>
+	<classpathentry kind="lib" path="/8x4/webapp/WEB-INF/lib/hibernate.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-annotations.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

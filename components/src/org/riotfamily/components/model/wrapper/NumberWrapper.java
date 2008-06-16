@@ -26,46 +26,53 @@ package org.riotfamily.components.model.wrapper;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class NumberWrapper extends ValueWrapper {
+@Entity
+@DiscriminatorValue("Number")
+public class NumberWrapper extends ValueWrapper<Number> {
 
-	private BigDecimal number;
+	private BigDecimal value;
 
-	public void setValue(Object value) {
-		if (value instanceof BigDecimal) {
-			this.number = (BigDecimal) value;
-		}
-		else if (value instanceof BigInteger) {
-			this.number = new BigDecimal((BigInteger) value);
-		}
-		else if (value instanceof Integer) {
-			this.number = new BigDecimal(((Integer) value).intValue());
-		}
-		else if (value instanceof Short) {
-			this.number = new BigDecimal(((Short) value).intValue());
-		}
-		else if (value instanceof Long) {
-			this.number = new BigDecimal(((Long) value).longValue());
-		}
-		else if (value instanceof Double) {
-			this.number = new BigDecimal(((Double) value).doubleValue());
-		}
-		else if (value instanceof Float) {
-			this.number = new BigDecimal(((Float) value).doubleValue());
-		}
-	}
-
-	public Object getValue() {
-		return number;
+	@Column(name="number_value")
+	public Number getValue() {
+		return value;
 	}
 	
-	public ValueWrapper deepCopy() {
+	public void setValue(Number value) {
+		if (value instanceof BigDecimal) {
+			this.value = (BigDecimal) value;
+		}
+		else if (value instanceof BigInteger) {
+			this.value = new BigDecimal((BigInteger) value);
+		}
+		else if (value instanceof Integer) {
+			this.value = new BigDecimal(((Integer) value).intValue());
+		}
+		else if (value instanceof Short) {
+			this.value = new BigDecimal(((Short) value).intValue());
+		}
+		else if (value instanceof Long) {
+			this.value = new BigDecimal(((Long) value).longValue());
+		}
+		else if (value instanceof Double) {
+			this.value = new BigDecimal(((Double) value).doubleValue());
+		}
+		else if (value instanceof Float) {
+			this.value = new BigDecimal(((Float) value).doubleValue());
+		}
+	}
+
+	public NumberWrapper deepCopy() {
 		NumberWrapper copy = new NumberWrapper();
-		copy.wrap(number);
+		copy.wrap(value);
 		return copy;
 	}
 }

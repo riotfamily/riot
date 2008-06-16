@@ -23,42 +23,48 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.model.wrapper;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SecondaryTable;
+
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.pages.model.Page;
-import org.springframework.util.Assert;
 
 /**
  * @author Alf Werder <alf dot werder at artundweise dot de>
  * @since 7.0
  */
-public class PageWrapper extends ValueWrapper {
-	private Page page;
+@Entity
+@DiscriminatorValue("Page")
+@SecondaryTable(
+	name="riot_page_wrappers", 
+	pkJoinColumns=@PrimaryKeyJoinColumn(name="wrapper_id")
+)
+public class PageWrapper extends ValueWrapper<Page> {
 	
-	public PageWrapper() {}
+	private Page value;
+	
+	public PageWrapper() {
+	}
 	
 	public PageWrapper(Page page) {
-		this.page = page;
+		this.value = page;
 	}
 
-	public ValueWrapper deepCopy() {
-		return new PageWrapper(page);
+	@ManyToOne
+	@JoinColumn(table="riot_page_wrappers", name="id")
+	public Page getValue() {
+		return this.value;
 	}
 
-	public Object getValue() {
-		return page;
+	public void setValue(Page value) {
+		this.value = value;
 	}
-
-	public void setValue(Object value) {
-		Assert.isInstanceOf(Page.class, value);
-		
-		page = (Page) value;
-	}
-
-	public Page getPage() {
-		return this.page;
-	}
-
-	public void setPage(Page page) {
-		this.page = page;
+	
+	public PageWrapper deepCopy() {
+		return new PageWrapper(value);
 	}
 }

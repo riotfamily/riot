@@ -23,10 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
-
-/**
- */
+@Entity
+@DiscriminatorValue("Component")
 public class Component extends Content {
 
 	private String type;
@@ -48,6 +53,8 @@ public class Component extends Content {
 		this.type = type;
 	}
 
+	@ManyToOne(cascade=CascadeType.MERGE)
+	@JoinColumn(name="list", insertable=false, updatable=false)
 	public ComponentList getList() {
 		return list;
 	}
@@ -62,6 +69,7 @@ public class Component extends Content {
 		return copy;
 	}
 	
+	@Transient
 	public Long getContainerId() {
 		return list.getContainer().getId();
 	}

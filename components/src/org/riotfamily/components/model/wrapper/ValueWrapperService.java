@@ -31,13 +31,13 @@ package org.riotfamily.components.model.wrapper;
  */
 public class ValueWrapperService {
 
-	private static ValueWrapperFactory wrapperFactory = new BuiltInWrapperFactory();
+	private static ValueWrapperFactory wrapperFactory;
 	
 	public static void setWrapperFactory(ValueWrapperFactory wrapperFactory) {
 		ValueWrapperService.wrapperFactory = wrapperFactory;
 	}
 	
-	public static ValueWrapper createOrUpdate(ValueWrapper wrapper, Object value) 
+	public static<T> ValueWrapper<?> createOrUpdate(ValueWrapper<T> wrapper, T value) 
 			throws WrappingException {
 		
 		if (wrapper != null) {
@@ -51,10 +51,10 @@ public class ValueWrapperService {
 		return wrap(value);
 	}
 	
-	public static ValueWrapper wrap(Object value) 
+	public static ValueWrapper<?> wrap(Object value) 
 			throws WrappingException {
 	
-		ValueWrapper wrapper = wrapperFactory.createWapper(value);
+		ValueWrapper<?> wrapper = wrapperFactory.createWapper(value);
 		if (wrapper == null) {
 			throw new WrappingException("No ValueWrapper for value: " + value);
 		}

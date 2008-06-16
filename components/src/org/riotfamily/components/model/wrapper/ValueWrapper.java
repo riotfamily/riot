@@ -25,25 +25,43 @@ package org.riotfamily.components.model.wrapper;
 
 import java.util.Collection;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public abstract class ValueWrapper {
+@Entity
+@Table(name="riot_value_wrappers")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+public abstract class ValueWrapper<T> {
 
 	private Long id;
 	
+	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return this.id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	/**
 	 * Wraps the given value. The default implementation delegates the call to
 	 * {@link #setValue(Object)}.
 	 */
+	@SuppressWarnings("unchecked")
 	public void wrap(Object value) {
-		setValue(value);
+		setValue((T) value);
 	}
 	
 	/**
@@ -52,7 +70,7 @@ public abstract class ValueWrapper {
 	 * with nested wrappers) must overwrite this method to perform a 
 	 * "deep-unwrapping".
 	 */
-	public Object unwrap() {
+	public T unwrap() {
 		return getValue();
 	}
 	
@@ -62,9 +80,10 @@ public abstract class ValueWrapper {
 	 * complex wrappers (like {@link ListWrapper} and {@link MapWrapper}) which
 	 * return a self-reference.
 	 */
-	public abstract Object getValue();
+	@Transient
+	public abstract T getValue();
 	
-	public abstract void setValue(Object value);
+	public abstract void setValue(T value);
 	
 	/**
 	 * Creates a deep copy. Subclasses will usually just create a new wrapper 
@@ -72,12 +91,13 @@ public abstract class ValueWrapper {
 	 * by {@link #getValue()}. Complex wrappers have to make sure that the 
 	 * deepCopy method is invoked for all nested values too. 
 	 */
-	public abstract ValueWrapper deepCopy();
+	public abstract ValueWrapper<T> deepCopy();
 
 	/**
 	 * Returns a Collection of Strings that should be used to tag the
 	 * CacheItem containing the rendered content.
 	 */
+	@Transient
 	public Collection<String> getCacheTags() {
 		return null;
 	}
@@ -96,14 +116,12 @@ public abstract class ValueWrapper {
 	/**
 	 * Delegates the call to the equals method of the wrapped object. 
 	 */
-	public boolean equals(Object obj) {
-		if (obj instanceof ValueWrapper) {
-			Object otherValue = ((ValueWrapper) obj).getValue();
-			if (otherValue != null) {
-				return otherValue.equals(getValue());
-			}
+	public boolean equals(ValueWrapper<T> obj) {
+		T otherValue = obj.getValue();
+		if (otherValue != null) {
+			return otherValue.equals(getValue());
 		}
-		return super.equals(obj);
+		return false;
 	}
 	
 	/**

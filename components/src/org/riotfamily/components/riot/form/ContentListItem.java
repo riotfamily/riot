@@ -35,7 +35,7 @@ import org.riotfamily.forms.element.collection.ListItem;
  */
 public class ContentListItem extends ListItem {
 
-	private ValueWrapper wrapper;
+	private ValueWrapper<Object> wrapper;
 	
 	public ContentListItem(ListEditor list) {
 		super(list);
@@ -43,7 +43,7 @@ public class ContentListItem extends ListItem {
 	
 	public void setValue(Object value, boolean newItem) {
 		if (value != null) {
-			wrapper = (ValueWrapper) value;
+			wrapper = (ValueWrapper<Object>) value;
 			value = wrapper.getValue();
 		}
 		super.setValue(value, newItem);

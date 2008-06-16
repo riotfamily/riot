@@ -28,6 +28,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
+
 import org.devlib.schmidt.imageinfo.ImageInfo;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,6 +40,8 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
+@Entity
+@DiscriminatorValue("image")
 public class ImageData extends FileData {
 
 	private int width;
@@ -98,6 +104,7 @@ public class ImageData extends FileData {
 		this.format = format;
 	}
 	
+	@Transient
 	public boolean isValid() {
 		return format != null;
 	}

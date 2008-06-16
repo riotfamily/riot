@@ -27,6 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+
 import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.media.model.RiotImage;
 
@@ -34,6 +38,8 @@ import org.riotfamily.media.model.RiotImage;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
+@Entity
+@DiscriminatorValue("crop")
 public class CroppedImageData extends ImageData {
 
 	private RiotImage original;
@@ -66,6 +72,7 @@ public class CroppedImageData extends ImageData {
 		inspect(croppedFile);
 	}
 
+	@ManyToOne
 	public RiotImage getOriginal() {
 		return this.original;
 	}

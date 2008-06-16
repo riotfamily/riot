@@ -25,29 +25,33 @@ package org.riotfamily.components.model.wrapper;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class DateWrapper extends ValueWrapper {
+@Entity
+@DiscriminatorValue("Date")
+public class DateWrapper extends ValueWrapper<Date> {
 
-	private Date date;
+	private Date value;
 
-	public DateWrapper() {
-	}
-
-	public void setValue(Object value) {
-		this.date = (Date) value;
-	}
-
-	public Object getValue() {
-		return date;
+	@Column(name="date_value")
+	public Date getValue() {
+		return value;
 	}
 	
-	public ValueWrapper deepCopy() {
+	public void setValue(Date value) {
+		this.value = value;
+	}
+
+	public DateWrapper deepCopy() {
 		DateWrapper copy = new DateWrapper();
-		copy.wrap(date);
+		copy.wrap(value);
 		return copy;
 	}
 }

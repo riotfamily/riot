@@ -23,6 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 
 
 /**
@@ -33,6 +40,8 @@ package org.riotfamily.pages.model;
  * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
+@Entity
+@Table(name="riot_page_aliases")
 public class PageAlias {
 
 	private Long id;
@@ -52,6 +61,7 @@ public class PageAlias {
 		this.path = path;
 	}
 
+	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return this.id;
 	}
@@ -60,6 +70,7 @@ public class PageAlias {
 		this.id = id;
 	}
 
+	@ManyToOne
 	public Page getPage() {
 		return this.page;
 	}
@@ -68,6 +79,7 @@ public class PageAlias {
 		this.page = page;
 	}
 	
+	@ManyToOne
 	public Site getSite() {
 		return this.site;
 	}

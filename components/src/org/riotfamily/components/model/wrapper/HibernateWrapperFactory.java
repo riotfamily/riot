@@ -34,8 +34,6 @@ import org.hibernate.EntityMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.riotfamily.common.collection.TypeComparatorUtils;
-import org.springframework.beans.BeanInstantiationException;
-import org.springframework.beans.BeanUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -58,7 +56,7 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 					String valueProperty = properties[0];
 					Class<?> valueClass = meta.getPropertyType(valueProperty).getReturnedClass();
 					log.debug("Registering " + wrapperClass	+ " as wrapper for " + valueClass);
-					wrapperClassInfos.add(new WrapperClassInfo(wrapperClass, valueClass, valueProperty));
+					wrapperClassInfos.add(new WrapperClassInfo((Class<ValueWrapper<?>>) wrapperClass, valueClass));
 				}
 			}
 		}
@@ -76,7 +74,7 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 		return null;
 	}
 	
-	public ValueWrapper createWapper(Object value) throws WrappingException {
+	public ValueWrapper<?> createWapper(Object value) throws WrappingException {
 		WrapperClassInfo info = getWrapperClassInfo(value.getClass());
 		if (info == null) {
 			throw new WrappingException("No ValueWrapper found for type " 
@@ -87,21 +85,18 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 	
 	private static class WrapperClassInfo {
 		
-		private Class<?> wrapperClass;
+		private Class<? extends ValueWrapper<?>> wrapperClass;
 		
 		private Class<?> valueClass;
 		
-		private String valueProperty;
-
-		public WrapperClassInfo(Class<?> wrapperClass, Class<?> valueClass, 
-				String valueProperty) {
+		public WrapperClassInfo(Class<? extends ValueWrapper<?>> wrapperClass, 
+				Class<?> valueClass) {
 			
 			this.wrapperClass = wrapperClass;
 			this.valueClass = valueClass;
-			this.valueProperty = valueProperty;
 		}
 
-		public Class<?> getWrapperClass() {
+		public Class<? extends ValueWrapper<?>> getWrapperClass() {
 			return this.wrapperClass;
 		}
 
@@ -109,17 +104,16 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 			return this.valueClass;
 		}
 
-		public String getValueProperty() {
-			return this.valueProperty;
-		}
-
-		public ValueWrapper createWrapper(Object value) throws WrappingException {
+		public ValueWrapper<?> createWrapper(Object value) throws WrappingException {
 			try {
-				ValueWrapper wrapper = (ValueWrapper) BeanUtils.instantiateClass(wrapperClass);
+				ValueWrapper<?> wrapper = wrapperClass.newInstance();
 				wrapper.wrap(value);
 				return wrapper;
 			}
-			catch (BeanInstantiationException e) {
+			catch (InstantiationException e) {
+				throw new WrappingException(e);
+			} 
+			catch (IllegalAccessException e) {
 				throw new WrappingException(e);
 			}
 		}

@@ -15,7 +15,8 @@
         <dependency org="riotfamily" name="riot-core" rev="${dep.riot.revision}" conf="*->@" />
         <dependency org="riotfamily" name="revolt" rev="${dep.riot.revision}" conf="*->@" />
         <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->aop;src->src" />
-		<dependency org="hibernate" name="hibernate" rev="3.2.5.ga" conf="build->core;runtime->standalone,c3p0;src->src" />
+		<!-- <dependency org="hibernate" name="hibernate" rev="3.2.5.ga" conf="build->core;runtime->standalone,c3p0;src->src" /> -->
+		<dependency org="hibernate" name="hibernate-annotations" rev="3.3.1.ga" conf="*->default" />
 		<dependency org="c3p0" name="c3p0" rev="0.9.1.1" conf="build,runtime->default" />
     </dependencies>
 </ivy-module>

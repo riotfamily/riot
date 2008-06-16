@@ -31,27 +31,51 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.IndexColumn;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class MapWrapper extends ValueWrapper implements Map {
+@Entity
+@DiscriminatorValue("Map")
+public class MapWrapper extends ValueWrapper<Map<String, Object>> 
+		implements Map<String, Object> {
 
-	private Map wrapperMap;
-	
-	public MapWrapper() {
+	private Map<String, Object> wrapperMap;
+		
+	@OneToMany(targetEntity=ValueWrapper.class, cascade=CascadeType.ALL)
+	@JoinColumn(name="map_value")
+	@IndexColumn(name="map_key")
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	public Map<String, Object> getWrapperMap() {
+		return wrapperMap;
 	}
+
+	public void setWrapperMap(Map<String, Object> wrapperMap) {
+		this.wrapperMap = wrapperMap;
+	}
+
 
 	public void wrap(Object value) {
 		putAll((Map) value);
 	}
 	
-	public Object getValue() {
+	@Transient
+	public Map<String, Object> getValue() {
 		return this;
 	}
 	
-	public void setValue(Object value) {
+	public void setValue(Map<String, Object> value) {
 	}
 	
 	public ValueWrapper getWrapper(String key) {
@@ -61,14 +85,12 @@ public class MapWrapper extends ValueWrapper implements Map {
 		return null;
 	}
 	
-	public Object unwrap() {
+	public Map<String, Object> unwrap() {
 		if (wrapperMap == null) {
-			return Collections.EMPTY_MAP;
+			return Collections.emptyMap();
 		}
-		HashMap result = new HashMap();
-		Iterator it = wrapperMap.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
+		HashMap<String, Object> result = new HashMap<String, Object>();
+		for (Map.Entry<String, Object> entry : wrapperMap.entrySet()) {
 			ValueWrapper wrapper = (ValueWrapper) entry.getValue();
 			if (wrapper != null) {
 				result.put(entry.getKey(), wrapper.unwrap());
@@ -80,7 +102,7 @@ public class MapWrapper extends ValueWrapper implements Map {
 		return Collections.unmodifiableMap(result);
 	}
 	
-	public ValueWrapper deepCopy() {
+	public MapWrapper deepCopy() {
 		HashMap map = new HashMap();
 		if (wrapperMap != null) {
 			Iterator it = wrapperMap.entrySet().iterator();
@@ -95,11 +117,12 @@ public class MapWrapper extends ValueWrapper implements Map {
 		return copy;
 	}
 	
-	public Collection getCacheTags() {
+	@Transient
+	public Collection<String> getCacheTags() {
 		if (wrapperMap == null) {
 			return null;
 		}
-		HashSet result = new HashSet();
+		HashSet<String> result = new HashSet<String>();
 		Iterator it = wrapperMap.values().iterator();
 		while (it.hasNext()) {
 			ValueWrapper wrapper = (ValueWrapper) it.next();
@@ -127,27 +150,28 @@ public class MapWrapper extends ValueWrapper implements Map {
 		return wrapperMap != null && wrapperMap.containsValue(value);
 	}
 
-	public Set keySet() {
+	public Set<String> keySet() {
 		if (wrapperMap == null) {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 		return wrapperMap.keySet();
 	}
 	
-	public Set entrySet() {
+	public Set<Map.Entry<String, Object>> entrySet() {
 		if (wrapperMap == null) {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 		return wrapperMap.entrySet();
 	}
 	
-	public Collection values() {
+	public Collection<Object> values() {
 		if (wrapperMap == null) {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 		return wrapperMap.values();
 	}
 	
+	@Transient
 	public boolean isEmpty() {
 		return wrapperMap == null || wrapperMap.isEmpty();
 	}
@@ -168,7 +192,7 @@ public class MapWrapper extends ValueWrapper implements Map {
 
 	public Object get(Object key) {
 		if (wrapperMap != null) {
-			ValueWrapper wrapper = (ValueWrapper) wrapperMap.get(key);
+			ValueWrapper<?> wrapper = (ValueWrapper<?>) wrapperMap.get(key);
 			if (wrapper != null) {
 				return wrapper.getValue();
 			}
@@ -176,28 +200,26 @@ public class MapWrapper extends ValueWrapper implements Map {
 		return null;
 	}
 
-	public Object put(Object key, Object value) {
+	public Object put(String key, Object value) {
 		if (value == null) {
 			return remove(key);
 		}
 		if (wrapperMap == null) {
-			wrapperMap = new HashMap();
+			wrapperMap = new HashMap<String, Object>();
 		}
 		if (value instanceof ValueWrapper) {
 			return wrapperMap.put(key, value);
 		}
-		ValueWrapper oldValue = (ValueWrapper) wrapperMap.get(key);
+		ValueWrapper<Object> oldValue = (ValueWrapper<Object>) wrapperMap.get(key);
 		wrapperMap.put(key, ValueWrapperService.createOrUpdate(oldValue, value));
 		return oldValue;
 	}
 
-	public void putAll(Map map) {
-		if (map != null) {
-			Iterator it = map.entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry) it.next();
-				put(entry.getKey(), entry.getValue());
-			}
+	public void putAll(Map<? extends String, ?> map) {
+		Iterator<? extends Entry<? extends String, ?>> i = map.entrySet().iterator();
+		while (i.hasNext()) {
+		    Entry<? extends String, ?> e = i.next();
+		    put(e.getKey(), e.getValue());
 		}
 	}
 

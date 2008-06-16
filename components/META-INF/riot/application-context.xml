@@ -13,11 +13,23 @@
 
 	<import resource="classpath:org/riotfamily/components/runtime/db-schema.xml"/>
 
-	<override:add ref="sessionFactory" property="mappingLocations">
-		<value>classpath:org/riotfamily/components/dao/hibernate/component.hbm.xml</value>
-		<value>classpath:org/riotfamily/components/dao/hibernate/wrapper.hbm.xml</value>
+	<override:add ref="sessionFactory" property="annotatedClasses">
+		<value>org.riotfamily.components.model.Component</value>
+		<value>org.riotfamily.components.model.ComponentList</value>
+		<value>org.riotfamily.components.model.Content</value>
+		<value>org.riotfamily.components.model.ContentContainer</value>
+		<value>org.riotfamily.components.model.wrapper.ValueWrapper</value>
+		<value>org.riotfamily.components.model.wrapper.BooleanWrapper</value>
+		<value>org.riotfamily.components.model.wrapper.ComponentListWrapper</value>
+		<value>org.riotfamily.components.model.wrapper.DateWrapper</value>
+		<value>org.riotfamily.components.model.wrapper.EntityWrapper</value>
+		<value>org.riotfamily.components.model.wrapper.ListWrapper</value>
+		<value>org.riotfamily.components.model.wrapper.MapWrapper</value>
+		<value>org.riotfamily.components.model.wrapper.NumberWrapper</value>
+		<value>org.riotfamily.components.model.wrapper.RiotFileWrapper</value>
+		<value>org.riotfamily.components.model.wrapper.StringWrapper</value>
 	</override:add>
-	
+		
 	<bean id="componentRepository" class="org.riotfamily.components.config.ComponentRepository">
 		<property name="viewNamePrefix" value="components/" />
 		<property name="viewNameSuffix" value=".ftl" />

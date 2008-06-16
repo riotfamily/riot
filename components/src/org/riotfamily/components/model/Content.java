@@ -30,14 +30,39 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.IndexColumn;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.components.model.wrapper.ValueWrapperService;
 
+@Entity
+@Table(name="riot_contents")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(
+    name="content_type",
+    discriminatorType=DiscriminatorType.STRING
+)
+@DiscriminatorValue("Content")
 public class Content {
 
 	private Long id;
 
-	private Map<String, ValueWrapper> wrappers;
+	private Map<String, ValueWrapper<?>> wrappers;
 
 	private boolean dirty;
 
@@ -51,12 +76,13 @@ public class Content {
 	}
 	
 	protected final void copyValues(Content dest) {
-		for (Entry<String, ValueWrapper> entry : getWrappers().entrySet()) {
-			ValueWrapper copy = entry.getValue().deepCopy();
+		for (Entry<String, ValueWrapper<?>> entry : getWrappers().entrySet()) {
+			ValueWrapper<?> copy = entry.getValue().deepCopy();
 			dest.getWrappers().put(entry.getKey(), copy);
 		}
 	}
 
+	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return this.id;
 	}
@@ -65,11 +91,11 @@ public class Content {
 		this.id = id;
 	}
 
-	public ValueWrapper getWrapper(String key) {
-		return (ValueWrapper) getWrappers().get(key);
+	public ValueWrapper<?> getWrapper(String key) {
+		return getWrappers().get(key);
 	}
 	
-	public void setWrapper(String key, ValueWrapper wrapper) {
+	public void setWrapper(String key, ValueWrapper<?> wrapper) {
 		getWrappers().put(key, wrapper);
 		setDirty(true);
 	}
@@ -78,7 +104,7 @@ public class Content {
 		if (wrappers == null) {
 			return null;
 		}
-		ValueWrapper wrapper = getWrapper(key);
+		ValueWrapper<?> wrapper = getWrapper(key);
 		return wrapper != null ? wrapper.getValue() : null;
 	}
 	
@@ -87,11 +113,11 @@ public class Content {
 			getWrappers().remove(key);
 		}
 		else if (value instanceof ValueWrapper) {
-			setWrapper(key, (ValueWrapper) value);
+			setWrapper(key, (ValueWrapper<?>) value);
 		}
 		else {
-			setWrapper(key, ValueWrapperService.createOrUpdate(
-					getWrapper(key), value));
+			ValueWrapper<Object> wrapper = (ValueWrapper<Object>) getWrapper(key);
+			setWrapper(key, ValueWrapperService.createOrUpdate(wrapper, value));
 		}
 		setDirty(true);
 	}
@@ -104,22 +130,26 @@ public class Content {
 		this.dirty = dirty;
 	}
 
-	public Map<String, ValueWrapper> getWrappers() {
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="content")
+	@IndexColumn(name="property")
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	public Map<String, ValueWrapper<?>> getWrappers() {
 		if (wrappers == null) {
-			wrappers = new HashMap<String, ValueWrapper>();
+			wrappers = new HashMap<String, ValueWrapper<?>>();
 		}
 		return wrappers;
 	}
 
-	public void setWrappers(Map<String, ValueWrapper> wrappers) {
+	public void setWrappers(Map<String, ValueWrapper<?>> wrappers) {
 		this.wrappers = wrappers;
 	}
 	
 	public Map<String, Object> unwrapValues() {
 		HashMap<String, Object> result = new HashMap<String, Object>();
 		if (wrappers != null) {
-			for (Entry<String, ValueWrapper> entry : wrappers.entrySet()) {
-				ValueWrapper wrapper = entry.getValue();
+			for (Entry<String, ValueWrapper<?>> entry : wrappers.entrySet()) {
+				ValueWrapper<?> wrapper = entry.getValue();
 				if (wrapper != null) {
 					result.put(entry.getKey(), wrapper.unwrap());
 				}
@@ -155,9 +185,10 @@ public class Content {
 	 * Returns a Collection of Strings that should be used to tag the
 	 * CacheItem containing the rendered Content.
 	 */
+	@Transient
 	public Collection<String> getCacheTags() {
 		HashSet<String> result = new HashSet<String>();
-		for (ValueWrapper wrapper : wrappers.values()) {
+		for (ValueWrapper<?> wrapper : wrappers.values()) {
 			if (wrapper != null) {
 				Collection<String> tags = wrapper.getCacheTags();
 				if (tags != null) {

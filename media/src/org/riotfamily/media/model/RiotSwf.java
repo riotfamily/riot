@@ -27,6 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
+
 import org.riotfamily.media.model.data.SwfData;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +39,8 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
+@Entity
+@DiscriminatorValue("swf")
 public class RiotSwf extends RiotFile {
 	
 	public RiotSwf() {
@@ -61,6 +67,7 @@ public class RiotSwf extends RiotFile {
 		super(new SwfData(bytes, fileName));
 	}
 
+	@Transient
 	public SwfData getSwfData() {
 		return (SwfData) getFileData();
 	}
@@ -69,18 +76,22 @@ public class RiotSwf extends RiotFile {
 		return new RiotSwf(getSwfData());
 	}
 	
+	@Transient
 	public boolean isValid() {
 		return getSwfData().isValid();
 	}
 	
+	@Transient
 	public int getWidth() {
 		return getSwfData().getWidth();
 	}
 	
+	@Transient
 	public int getHeight() {
 		return getSwfData().getHeight();
 	}
 
+	@Transient
 	public int getVersion() {
 		return getSwfData().getVersion();
 	}

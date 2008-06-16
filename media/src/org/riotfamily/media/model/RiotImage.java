@@ -27,6 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
+
 import org.riotfamily.media.model.data.ImageData;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +39,8 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
+@Entity
+@DiscriminatorValue("image")
 public class RiotImage extends RiotFile {
 
 	public RiotImage() {
@@ -65,22 +71,27 @@ public class RiotImage extends RiotFile {
 		return new RiotImage(getImageData());
 	}
 	
+	@Transient
 	public ImageData getImageData() {
 		return (ImageData) getFileData();
 	}
 
+	@Transient
 	public int getWidth() {
 		return getImageData().getWidth();
 	}
 	
+	@Transient
 	public int getHeight() {
 		return getImageData().getHeight();
 	}
 
+	@Transient
 	public String getFormat() {
 		return getImageData().getFormat();
 	}
 	
+	@Transient
 	public boolean isValid() {
 		return getImageData().isValid();
 	}

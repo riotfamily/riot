@@ -27,6 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
+
 import org.riotfamily.common.util.FlashInfo;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +38,8 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
+@Entity
+@DiscriminatorValue("swf")
 public class SwfData extends FileData {
 
 	private static final String CONTENT_TYPE = "application/x-shockwave-flash";
@@ -73,6 +79,7 @@ public class SwfData extends FileData {
 		}
 	}
 
+	@Transient
 	public boolean isValid() {
 		return version > 0;
 	}

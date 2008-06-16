@@ -33,7 +33,7 @@
 
 	<!-- The Hibernate SessionFactory -->
 	<bean id="sessionFactory" depends-on="revolt"
-			class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+			class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 
 		<property name="dataSource" ref="riotDataSource" />
 		<property name="mappingLocations">

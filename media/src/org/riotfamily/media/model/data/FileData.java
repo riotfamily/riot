@@ -34,6 +34,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Cascade;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.HashUtils;
 import org.riotfamily.media.model.RiotFile;
@@ -49,6 +62,10 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
+@Entity
+@Table(name="riot_file_data")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorValue("file")
 public class FileData {
 	
 	protected static MediaService mediaService;
@@ -73,9 +90,9 @@ public class FileData {
 	
 	private Date creationDate;
 	
-	private Set files;
+	private Set<RiotFile> files;
 	
-	private Map variants;
+	private Map<String, RiotFile> variants;
 	
 	private transient boolean emptyFileCreated;
 	
@@ -97,7 +114,8 @@ public class FileData {
 	public FileData(byte[] bytes, String fileName) throws IOException {
 		setBytes(bytes, fileName);
 	}
-	
+
+	@Transient
 	public void setMultipartFile(MultipartFile multipartFile) throws IOException {
 		fileName = multipartFile.getOriginalFilename();
 		size = multipartFile.getSize();
@@ -108,6 +126,7 @@ public class FileData {
 		inspect(getFile());
 	}
 	
+	@Transient
 	public void setFile(File file) throws IOException {
 		fileName = file.getName();
 		size = file.length();
@@ -118,6 +137,7 @@ public class FileData {
 		inspect(file);
 	}
 	
+	@Transient
 	public void setInputStream(InputStream in, String fileName) throws IOException {
 		File f = createEmptyFile(fileName);
 		FileCopyUtils.copy(in, new FileOutputStream(f));
@@ -125,6 +145,7 @@ public class FileData {
 		update();
 	}
 	
+	@Transient
 	public void setBytes(byte[] bytes, String fileName) throws IOException {
 		File f = createEmptyFile(fileName);
 		FileCopyUtils.copy(bytes, f);
@@ -161,6 +182,7 @@ public class FileData {
 	protected void inspect(File file) throws IOException {
 	}
 	
+	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return this.id;
 	}
@@ -177,6 +199,7 @@ public class FileData {
 		this.uri = uri;
 	}
 	
+	@Transient
 	public File getFile() {
 		return mediaService.retrieve(uri);
 	}
@@ -185,6 +208,7 @@ public class FileData {
 		mediaService.delete(uri);
 	}
 
+	@Transient
 	public InputStream getInputStream() throws FileNotFoundException {
 		return new FileInputStream(getFile());
 	}
@@ -213,6 +237,7 @@ public class FileData {
 		this.size = size;
 	}
 	
+	@Transient
 	public String getFormatedSize() {
 		return FormatUtils.formatByteSize(size);
 	}
@@ -241,25 +266,28 @@ public class FileData {
 		this.md5 = md5;
 	}
 
-	public Set getFiles() {
+	@OneToMany(mappedBy="fileData")
+	public Set<RiotFile> getFiles() {
 		return this.files;
 	}
 
-	public void setFiles(Set files) {
+	public void setFiles(Set<RiotFile> files) {
 		this.files = files;
 	}
 	
-	public Map getVariants() {
+	@OneToMany(cascade=CascadeType.PERSIST)
+	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	public Map<String, RiotFile> getVariants() {
 		return this.variants;
 	}
 
-	public void setVariants(Map variants) {
+	public void setVariants(Map<String, RiotFile> variants) {
 		this.variants = variants;
 	}
 	
 	public void addVariant(String name, RiotFile variant) {
 		if (variants == null) {
-			variants = new HashMap();
+			variants = new HashMap<String, RiotFile>();
 		}
 		variants.put(name, variant);
 	}

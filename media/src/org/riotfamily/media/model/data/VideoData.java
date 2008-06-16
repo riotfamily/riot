@@ -27,6 +27,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 import org.riotfamily.media.service.VideoMetaData;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +37,8 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
+@Entity
+@DiscriminatorValue("video")
 public class VideoData extends FileData {
 
 	private int width;

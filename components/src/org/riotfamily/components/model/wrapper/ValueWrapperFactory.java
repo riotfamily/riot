@@ -31,6 +31,6 @@ package org.riotfamily.components.model.wrapper;
  */
 public interface ValueWrapperFactory {
 
-	public ValueWrapper createWapper(Object value) throws WrappingException;
+	public ValueWrapper<?> createWapper(Object value) throws WrappingException;
 	
 }

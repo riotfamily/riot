@@ -29,6 +29,19 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
@@ -39,6 +52,8 @@ import org.springframework.util.StringUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
+@Entity
+@Table(name="riot_sites")
 public class Site {
 
 	private Long id;
@@ -71,6 +86,7 @@ public class Site {
 		this.enabled = enabled;
 	}
 
+	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return this.id;
 	}
@@ -177,6 +193,7 @@ public class Site {
 			return hostNameMatches(hostName) && prefixMatches(path);
 	}
 
+	@ManyToOne
 	public Site getMasterSite() {
 		return this.masterSite;
 	}
@@ -185,6 +202,7 @@ public class Site {
 		this.masterSite = masterSite;
 	}
 	
+	@OneToMany(mappedBy="masterSite")
 	public Set<Site> getDerivedSites() {
 		return this.derivedSites;
 	}
@@ -193,6 +211,7 @@ public class Site {
 		this.derivedSites = derivedSites;
 	}
 
+	@Column(name="pos")
 	public long getPosition() {
 		if (position == 0) {
 			position = System.currentTimeMillis();
@@ -204,6 +223,7 @@ public class Site {
 		this.position = position;
 	}
 	
+	@CollectionOfElements
 	public Set<String> getAliases() {
 		return this.aliases;
 	}
@@ -212,6 +232,8 @@ public class Site {
 		this.aliases = aliases;
 	}
 	
+	@ManyToOne(cascade=CascadeType.ALL)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	public Content getProperties() {
 		return properties;
 	}
@@ -223,7 +245,7 @@ public class Site {
 	public Object getProperty(String key) {
 		Object value = null;
 		if (properties != null) {
-			ValueWrapper wrapper = properties.getWrapper(key);
+			ValueWrapper<?> wrapper = properties.getWrapper(key);
 			if (wrapper != null) {
 				value = wrapper.unwrap();
 			}
@@ -234,6 +256,7 @@ public class Site {
 		return value;
 	}
 	
+	@Transient
 	public Map<String, Object> getLocalPropertiesMap() {
 		if (properties != null) { 
 			return properties.unwrapValues();
@@ -241,6 +264,7 @@ public class Site {
 		return Collections.emptyMap();
 	}
 	
+	@Transient
 	public Map<String, Object> getPropertiesMap() {
 		Map<String, Object> mergedProperties;
 		if (masterSite != null) {

@@ -31,6 +31,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
@@ -43,6 +53,8 @@ import org.springframework.util.ObjectUtils;
  * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
+@Entity
+@Table(name="riot_page_nodes")
 public class PageNode {
 
 	private Long id;
@@ -72,15 +84,22 @@ public class PageNode {
 	/**
 	 * Returns the id of the PageNode. 
 	 */
+	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
 	/**
 	 * Returns the parent node. There must be exactly one PageNode without
 	 * a parent. This node can be obtained via the getRootNode() method of
 	 * the PageDao.
 	 */
+	@ManyToOne(cascade=CascadeType.MERGE)
+	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	public PageNode getParent() {
 		return this.parent;
 	}
@@ -96,8 +115,14 @@ public class PageNode {
 	/**
 	 * Returns the set of {@link Page pages} associated with this node.
 	 */
+	@OneToMany(mappedBy="node", cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	public Set<Page> getPages() {
 		return pages;
+	}
+	
+	public void setPages(Set<Page> pages) {
+		this.pages = pages;
 	}
 
 	/**
@@ -115,10 +140,15 @@ public class PageNode {
 	/**
 	 * Returns the child nodes. 
 	 */
+	@OneToMany(mappedBy="parent")
 	public List<PageNode> getChildNodes() {
 		return this.childNodes;
 	}
 
+	public void setChildNodes(List<PageNode> childNodes) {
+		this.childNodes = childNodes;
+	}
+	
 	/**
 	 * Returns an unmodifiable list of all child pages that are available in
 	 * the given site.

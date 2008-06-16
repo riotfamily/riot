@@ -13,9 +13,16 @@
 
 	<import resource="classpath:org/riotfamily/media/runtime/db-schema.xml"/>
     
-	<override:add ref="sessionFactory" property="mappingLocations">
-		<value>classpath:org/riotfamily/media/dao/hibernate/file.hbm.xml</value>
-		<value>classpath:org/riotfamily/media/dao/hibernate/data.hbm.xml</value>
+	<override:add ref="sessionFactory" property="annotatedClasses">
+		<value>org.riotfamily.media.model.RiotFile</value>
+		<value>org.riotfamily.media.model.RiotImage</value>
+		<value>org.riotfamily.media.model.RiotSwf</value>
+		<value>org.riotfamily.media.model.RiotVideo</value>
+		<value>org.riotfamily.media.model.data.FileData</value>
+		<value>org.riotfamily.media.model.data.ImageData</value>
+		<value>org.riotfamily.media.model.data.CroppedImageData</value>
+		<value>org.riotfamily.media.model.data.SwfData</value>
+		<value>org.riotfamily.media.model.data.VideoData</value>
 	</override:add>
 	
 	<bean id="mediaDao" class="org.springframework.aop.framework.ProxyFactoryBean"

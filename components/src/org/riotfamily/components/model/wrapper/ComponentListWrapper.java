@@ -1,25 +1,31 @@
 package org.riotfamily.components.model.wrapper;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import org.riotfamily.components.model.ComponentList;
 
-public class ComponentListWrapper extends ValueWrapper {
+@Entity
+@DiscriminatorValue("ComponentList")
+public class ComponentListWrapper extends ValueWrapper<ComponentList> {
 
-	private ComponentList componentList;
+	private ComponentList value;
 
-	public ComponentListWrapper() {
+	@ManyToOne
+	@JoinColumn(name="component_list_id")
+	public ComponentList getValue() {
+		return value;
+	}
+	
+	public void setValue(ComponentList value) {
+		this.value = value;
 	}
 
-	public void setValue(Object object) {
-		this.componentList = (ComponentList) object;
-	}
-
-	public Object getValue() {
-		return componentList;
-	}
-
-	public ValueWrapper deepCopy() {
+	public ComponentListWrapper deepCopy() {
 		ComponentListWrapper copy = new ComponentListWrapper();
-		copy.wrap(componentList.createCopy());
+		copy.wrap(value.createCopy());
 		return copy;
 	}	
 	

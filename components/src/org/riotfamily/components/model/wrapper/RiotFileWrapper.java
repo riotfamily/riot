@@ -23,30 +23,36 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model.wrapper;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import org.riotfamily.media.model.RiotFile;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class RiotFileWrapper extends ValueWrapper {
+@Entity
+@DiscriminatorValue("RiotFile")
+public class RiotFileWrapper extends ValueWrapper<RiotFile> {
 
-	private RiotFile file;
+	private RiotFile value;
 
-	public RiotFileWrapper() {
+	@ManyToOne
+	@JoinColumn(name="riot_file_id")
+	public RiotFile getValue() {
+		return value;
 	}
 
-	public void setValue(Object object) {
-		this.file = (RiotFile) object;
+	public void setValue(RiotFile value) {
+		this.value = value;
 	}
 
-	public Object getValue() {
-		return file;
-	}
-
-	public ValueWrapper deepCopy() {
+	public RiotFileWrapper deepCopy() {
 		RiotFileWrapper copy = new RiotFileWrapper();
-		copy.wrap(file.createCopy());
+		copy.wrap(value.createCopy());
 		return copy;
 	}	
 	

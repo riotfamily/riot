@@ -32,6 +32,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Cascade;
 import org.riotfamily.common.beans.MapWrapper;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.mapping.AttributePattern;
@@ -49,6 +59,8 @@ import org.springframework.util.ClassUtils;
  * @author Jan-Frederic Linde [jfl at neteye dot de]
  * @since 6.5
  */
+@Entity
+@Table(name="riot_pages")
 public class Page {
 
 	public static final String TITLE_PROPERTY = "title";
@@ -83,6 +95,7 @@ public class Page {
 		this.site = site;
 	}
 
+	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return this.id;
 	}
@@ -91,6 +104,8 @@ public class Page {
 		this.id = id;
 	}
 
+	@ManyToOne(cascade=CascadeType.MERGE)
+	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	public PageNode getNode() {
 		return this.node;
 	}
@@ -99,6 +114,7 @@ public class Page {
 		this.node = node;
 	}
 
+	@ManyToOne
 	public Site getSite() {
 		return this.site;
 	}
@@ -110,6 +126,7 @@ public class Page {
 		this.site = site;
 	}
 
+	@Transient
 	public Locale getLocale() {
 		return site.getLocale();
 	}
@@ -161,6 +178,7 @@ public class Page {
 		this.path = path;
 	}
 	
+	@Transient
 	private String getFullPath() {
 		if (site.getPathPrefix() != null) {
 			return site.getPathPrefix() + getPath();
@@ -211,6 +229,7 @@ public class Page {
 		return p.fillInAttributes(new BeanWrapperImpl(attributes));
 	}
 	
+	@Transient
 	public boolean isWildcard() {
 		return pathComponent.indexOf("@{") != -1;
 	}
@@ -236,6 +255,7 @@ public class Page {
 		return path.toString();
 	}
 
+	@Transient
 	public Page getParentPage() {
 		PageNode parentNode = node.getParent();
 		if (parentNode == null) {
@@ -244,14 +264,17 @@ public class Page {
 		return parentNode.getPage(site);
 	}
 
+	@Transient
 	public List<Page> getChildPages() {
 		return node.getChildPages(site);
 	}
 
+	@Transient
 	public Collection<Page> getChildPagesWithFallback() {
 		return node.getChildPagesWithFallback(site);
 	}
 
+	@Transient
 	public Collection<Page> getAncestors() {
 		LinkedList<Page> pages = new LinkedList<Page>();
 		Page page = this;
@@ -267,10 +290,13 @@ public class Page {
 		node.addChildNode(new PageNode(child));
 	}
 
+	@Transient
 	public String getHandlerName() {
 		return node.getHandlerName();
 	}
 
+	@ManyToOne(cascade=CascadeType.ALL)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	public PageProperties getPageProperties() {
 		if (pageProperties == null) {
 			pageProperties = new PageProperties();
@@ -287,6 +313,7 @@ public class Page {
 				: getPageProperties().getLiveVersion();
 	}
 	
+	@Transient
 	public Page getMasterPage() {
 		Page masterPage = null;
 		Site masterSite = site.getMasterSite();
@@ -321,7 +348,7 @@ public class Page {
 	public Object getProperty(String key, boolean preview) {
 		Content version = getContent(preview);
 		Object value = null;
-		ValueWrapper wrapper = version.getWrapper(key);
+		ValueWrapper<?> wrapper = version.getWrapper(key);
 		if (wrapper != null) {
 			value = wrapper.unwrap();
 		}
@@ -331,6 +358,7 @@ public class Page {
 		return value;
 	}
 
+	@Transient
 	public String getTitle() {
 		return getTitle(true);
 	}
@@ -343,6 +371,7 @@ public class Page {
 		return FormatUtils.xmlToTitleCase(pathComponent);
 	}
 	
+	@Transient
 	public boolean isDirty() {
 		return getPageProperties().isDirty();
 	}
@@ -355,6 +384,7 @@ public class Page {
 		this.published = published;
 	}
 
+	@Transient
 	public boolean isRequestable() {
 		return (published && site.isEnabled())
 			|| AccessController.isAuthenticatedUser();

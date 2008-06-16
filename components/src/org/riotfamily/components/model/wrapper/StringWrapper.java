@@ -23,29 +23,33 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model.wrapper;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class StringWrapper extends ValueWrapper {
+@Entity
+@DiscriminatorValue("String")
+public class StringWrapper extends ValueWrapper<String> {
 
-	private String string;
+	private String value;
 
-	public StringWrapper() {
-	}
-
-	public void setValue(Object value) {
-		this.string = (String) value;
-	}
-
-	public Object getValue() {
-		return string;
+	@Column(name="string_value")
+	public String getValue() {
+		return value;
 	}
 	
-	public ValueWrapper deepCopy() {
+	public void setValue(String value) {
+		this.value = (String) value;
+	}
+
+	public StringWrapper deepCopy() {
 		StringWrapper copy = new StringWrapper();
-		copy.wrap(string);
+		copy.wrap(value);
 		return copy;
 	}
 }
