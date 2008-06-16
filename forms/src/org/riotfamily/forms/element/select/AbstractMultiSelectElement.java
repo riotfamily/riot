@@ -26,14 +26,14 @@ package org.riotfamily.forms.element.select;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.request.FormRequest;
-import org.springframework.beans.BeanUtils;
 
 /**
  * Abstract superclass for elements that let the user choose from a set of
@@ -42,9 +42,9 @@ import org.springframework.beans.BeanUtils;
 public abstract class AbstractMultiSelectElement 
 		extends AbstractSelectElement {
 
-	private ArrayList selectedValues = new ArrayList();
+	private Collection<Object> selectedValues = Generics.newArrayList();
 
-	private Class collectionClass;
+	private Class<? extends Collection> collectionClass;
 
 	private Integer maxSelection;
 	
@@ -55,11 +55,11 @@ public abstract class AbstractMultiSelectElement
 	 * 
 	 * @param collectionClass the class to use for new collections
 	 */
-	public void setCollectionClass(Class collectionClass) {
+	public void setCollectionClass(Class<? extends Collection<?>> collectionClass) {
 		this.collectionClass = collectionClass;
 	}	
 	
-	public Class getCollectionClass() {
+	public Class<? extends Collection> getCollectionClass() {
 		return this.collectionClass;
 	}
 	
@@ -69,7 +69,7 @@ public abstract class AbstractMultiSelectElement
 
 	protected void afterBindingSet() {
 		if (collectionClass == null) {
-			Class type = getEditorBinding().getPropertyType();
+			Class<?> type = getEditorBinding().getPropertyType();
 			if (type.isInterface()) {
 				if (Set.class.isAssignableFrom(type)) {
 					collectionClass = HashSet.class;
@@ -79,7 +79,7 @@ public abstract class AbstractMultiSelectElement
 				}
 			}
 			else if (Collection.class.isAssignableFrom(type)) {
-				collectionClass = type;
+				collectionClass = (Class<Collection>) type;
 			}
 			else {
 				collectionClass = ArrayList.class;
@@ -88,28 +88,26 @@ public abstract class AbstractMultiSelectElement
 	}
 	
 	public final void setValue(Object value) {
-		selectedValues = new ArrayList();
+		selectedValues = Generics.newArrayList();
 		if (value != null) {
-			Collection collection = (Collection) value;
+			Collection<?> collection = (Collection<?>) value;
 			selectedValues.addAll(collection);
 		}
 	}
 	
 	public Object getValue() {
-		Collection collection = null;
+		Collection<Object> collection = null;
 		if (getEditorBinding() != null) {
-			collection = (Collection) getEditorBinding().getValue();
+			collection = (Collection<Object>) getEditorBinding().getValue();
 		}
 		if (collection == null) {
-			collection = (Collection) BeanUtils.instantiateClass(collectionClass);
+			collection = SpringUtils.newInstance(collectionClass);
 		}
 
-		ArrayList oldValues = new ArrayList(collection);
+		ArrayList<?> oldValues = Generics.newArrayList(collection);
 		collection.clear();
 		
-		Iterator it = selectedValues.iterator();
-		while (it.hasNext()) {
-			Object value = (Object) it.next();
+		for (Object value : selectedValues) {
 			int i = oldValues.indexOf(value);
 			if (i >= 0) {
 				value = oldValues.get(i);
@@ -119,7 +117,7 @@ public abstract class AbstractMultiSelectElement
 		return collection;
 	}
 
-	protected Collection getSelectedValues() {
+	protected Collection<Object> getSelectedValues() {
 		return selectedValues;
 	}
 
@@ -140,8 +138,8 @@ public abstract class AbstractMultiSelectElement
 	}
 	
 	private void updateSelection(String[] indexes) {
-		List options = getOptionItems();
-		selectedValues = new ArrayList();
+		List<OptionItem> options = getOptionItems();
+		selectedValues = Generics.newArrayList();
 		if (indexes != null) {
 			for (int i = 0; i < indexes.length; i++) {
 				int index = Integer.parseInt(indexes[i]);
@@ -162,7 +160,7 @@ public abstract class AbstractMultiSelectElement
 	
 	public void handleJavaScriptEvent(JavaScriptEvent event) {
 		if (event.getType() == JavaScriptEvent.ON_CHANGE) {
-			Collection oldValue = selectedValues;
+			Collection<Object> oldValue = selectedValues;
 			updateSelection(event.getValues());
 			fireChangeEvent(selectedValues, oldValue);
 		}

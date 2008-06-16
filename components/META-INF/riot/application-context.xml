@@ -11,8 +11,6 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-7.0.xsd">
 
-	<import resource="classpath:org/riotfamily/components/runtime/db-schema.xml"/>
-
 	<override:add ref="sessionFactory" property="annotatedClasses">
 		<value>org.riotfamily.components.model.Component</value>
 		<value>org.riotfamily.components.model.ComponentList</value>
@@ -55,6 +53,4 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
-	<bean id="contentEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
-
 </beans>

@@ -25,13 +25,12 @@ package org.riotfamily.pages.riot.chooser;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.pages.dao.PageDao;
@@ -89,32 +88,30 @@ public class PageChooserController implements Controller {
 		if (currentPage != null && selectedSite.getHostName() != null) {
 			absolute = !selectedSite.getHostName().equals(currentPage.getSite().getHostName());
 		}
-		
-		HashMap model = new HashMap();
-		model.put("mode", ServletRequestUtils.getStringParameter(
+
+		ModelAndView mv = new ModelAndView(viewName);
+		mv.addObject("mode", ServletRequestUtils.getStringParameter(
 				request, "mode", "forms"));
 
 		boolean crossSite = ServletRequestUtils.getBooleanParameter(
 				request, CROSS_SITE_PARAM, false);
 		
 		if (crossSite) {
-			model.put("sites", pageDao.listSites());
+			mv.addObject("sites", pageDao.listSites());
 		}
-		model.put("selectedSite", selectedSite);
-		model.put("pages", createpageLinks(
+		mv.addObject("selectedSite", selectedSite);
+		mv.addObject("pages", createpageLinks(
 				pageDao.getRootNode().getChildPages(selectedSite), 
 				path, absolute, request));
 
-		return new ModelAndView(viewName, model);
+		return mv;
 	}
 
-	private List createpageLinks(Collection pages, String expandedPath,
+	private List<PageLink> createpageLinks(Collection<Page> pages, String expandedPath,
 				boolean absolute, HttpServletRequest request) {
 		
-		ArrayList links = new ArrayList();
-		Iterator it = pages.iterator();
-		while (it.hasNext()) {
-			Page page = (Page) it.next();
+		ArrayList<PageLink> links = Generics.newArrayList();
+		for (Page page : pages) {
 			if (!page.isWildcardInPath()) {
 				PageLink link = new PageLink();
 				link.setPathComponent(page.getPathComponent());

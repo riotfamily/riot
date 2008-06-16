@@ -125,7 +125,7 @@ public class NumberField extends TextField implements DHTMLElement,
 	}
 
 	protected void afterFormContextSet() {
-		Class type = getEditorBinding().getPropertyType();
+		Class<?> type = getEditorBinding().getPropertyType();
 		if (type == null || Object.class.equals(type)) {
 			// Use BigDecimal for untyped properties 
 			type = BigDecimal.class;

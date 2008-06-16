@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.setup.config;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -48,9 +47,9 @@ public class SiteDefinition {
 	
 	private boolean enabled = true;
 
-	private Map properties;
+	private Map<String, Object> properties;
 	
-	private List siteDefinitions;
+	private List<SiteDefinition> siteDefinitions;
 
 	public void setName(String name) {
 		this.name = name;
@@ -72,15 +71,15 @@ public class SiteDefinition {
 		this.enabled = enabled;
 	}
 
-	public void setProperties(Map properties) {
+	public void setProperties(Map<String, Object> properties) {
 		this.properties = properties;
 	}
 	
-	public void setSiteDefinitions(List sites) {
+	public void setSiteDefinitions(List<SiteDefinition> sites) {
 		this.siteDefinitions = sites;
 	}
 	
-	public void createSites(List list, PageDao pageDao, Site masterSite) {
+	public void createSites(List<Site> list, PageDao pageDao, Site masterSite) {
 		Site site = new Site();
 		site.setName(name);
 		site.setHostName(hostName);
@@ -96,9 +95,7 @@ public class SiteDefinition {
 		pageDao.saveSite(site);
 		list.add(site);
 		if (siteDefinitions != null) {
-			Iterator it = siteDefinitions.iterator();
-			while (it.hasNext()) {
-				SiteDefinition definition = (SiteDefinition) it.next();
+			for (SiteDefinition definition : siteDefinitions) {
 				definition.createSites(list, pageDao, site);
 			}
 		}

@@ -36,7 +36,7 @@ public class TemplateRenderer {
 		this.configuration = configuration;
 	}
 
-	public void render(String templateName, Map model, PrintWriter writer) {
+	public void render(String templateName, Map<String, ?> model, PrintWriter writer) {
 		try {
 			configuration.getTemplate(templateName).process(model, writer);
 		}

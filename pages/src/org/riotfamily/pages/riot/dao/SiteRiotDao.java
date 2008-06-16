@@ -25,7 +25,6 @@ package org.riotfamily.pages.riot.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.pages.dao.PageDao;
@@ -58,16 +57,14 @@ public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
 		Assert.notNull(pageDao, "A PageDao must be set.");
 	}
 
-	public Class getEntityClass() {
+	public Class<?> getEntityClass() {
 		return Site.class;
 	}
 
-	public Collection list(Object parent, ListParams params) throws DataAccessException {
-		List allSites = pageDao.listSites();
-		ArrayList result = new ArrayList(allSites.size());
-		Iterator it = allSites.iterator();
-		while (it.hasNext()) {
-			Site site = (Site) it.next();
+	public Collection<?> list(Object parent, ListParams params) throws DataAccessException {
+		List<Site> allSites = pageDao.listSites();
+		ArrayList<Site> result = new ArrayList<Site>(allSites.size());
+		for (Site site : allSites) {
 			if (AccessController.isGranted("list", site)) {
 				result.add(site);
 			}

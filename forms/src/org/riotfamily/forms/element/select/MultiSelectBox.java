@@ -24,7 +24,6 @@
 package org.riotfamily.forms.element.select;
 
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.common.markup.Html;
@@ -53,19 +52,16 @@ public class MultiSelectBox extends AbstractMultiSelectElement {
 	public void renderSelectElement(PrintWriter writer) {
 		TagWriter selectTag = new TagWriter(writer);
 
-		List options = getOptionItems();
+		List<OptionItem> options = getOptionItems();
 		selectTag.start(Html.SELECT);
 		selectTag.attribute(Html.COMMON_ID, getEventTriggerId());
 		selectTag.attribute(Html.INPUT_NAME, getParamName());
 		selectTag.attribute(Html.SELECT_SIZE, Math.min(options.size(), maxSize));
 		selectTag.attribute(Html.SELECT_MULTIPLE, true);
 		selectTag.body();
-
-		Iterator it = options.iterator();
-		while (it.hasNext()) {
-			((OptionItem) it.next()).render();
+		for (OptionItem item : options) {
+			item.render();
 		}
-
 		selectTag.end();
 	}
 

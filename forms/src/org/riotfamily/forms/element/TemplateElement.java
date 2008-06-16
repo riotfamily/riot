@@ -24,9 +24,9 @@
 package org.riotfamily.forms.element;
 
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.Map;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.TemplateUtils;
@@ -37,7 +37,7 @@ import org.riotfamily.forms.TemplateUtils;
  */
 public class TemplateElement extends CompositeElement {
 	
-	private Map renderModel = new HashMap();
+	private Map<String, Object> renderModel = Generics.newHashMap();
 	
 	private String template;
 	
@@ -55,7 +55,7 @@ public class TemplateElement extends CompositeElement {
 		setAttribute(key, element);
 	}
 	
-	public Map getRenderModel() {
+	public Map<String, Object> getRenderModel() {
 		return renderModel;
 	}
 	

@@ -25,7 +25,6 @@ package org.riotfamily.forms.element.select;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.DHTMLElement;
@@ -143,7 +143,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 			HttpServletResponse response) throws IOException {
 
 		response.setContentType("text/html");
-		Map model = new HashMap();
+		Map<String, Object> model = Generics.newHashMap();
 		String pathUrl = getPathUrl();
 		if (pathUrl != null) {
 			model.put("pathUrl", request.getContextPath() + pathUrl);

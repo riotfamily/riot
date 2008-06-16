@@ -26,7 +26,6 @@ package org.riotfamily.forms.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -130,10 +129,8 @@ public abstract class AjaxFormController extends AbstractFormController
 	protected void renderForm(Form form, PrintWriter writer) {
 		form.render(writer);
 		writer.print("<script>");
-		ArrayList propagations = new ArrayList();
-		Iterator it = form.getRegisteredElements().iterator();
-		while (it.hasNext()) {
-			Element element = (Element) it.next();
+		ArrayList<EventPropagation> propagations = new ArrayList<EventPropagation>();
+		for (Element element : form.getRegisteredElements()) { 
 			if (element instanceof JavaScriptEventAdapter) {
 				JavaScriptEventAdapter adapter = (JavaScriptEventAdapter) element;
 				EventPropagation.addPropagations(adapter, propagations);
@@ -142,9 +139,7 @@ public abstract class AjaxFormController extends AbstractFormController
 		
 		if (!propagations.isEmpty()) {
 			writer.print("Resources.waitFor('propagate', function() {");
-			it = propagations.iterator();
-			while (it.hasNext()) {
-				EventPropagation p = (EventPropagation) it.next();
+			for (EventPropagation p : propagations) { 
 				writer.print("propagate('");
 				writer.print(p.getTriggerId());
 				writer.print("', '");

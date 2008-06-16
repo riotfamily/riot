@@ -24,7 +24,6 @@
 package org.riotfamily.forms.element;
 
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.common.util.FormatUtils;
@@ -66,7 +65,7 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 		addComponent("expandButton", new ExpandButton());
 	}
 
-	public List getElements() {
+	public List<Element> getElements() {
 		return container.getElements();
 	}
 	
@@ -125,9 +124,7 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 	
 	protected void renderInternal(PrintWriter writer) {
 		if (!expanded) {
-			Iterator it = getElements().iterator();
-			while (it.hasNext()) {
-				Element element = (Element) it.next();
+			for (Element element : getElements()) {
 				if (ErrorUtils.hasErrors(element)) {
 					expanded = true;
 					break;

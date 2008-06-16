@@ -72,17 +72,17 @@ public class NestedForm extends TemplateElement implements
 		this.editorBinder = editorBinder.replace(this.editorBinder);
 	}
 	
-	public void setBeanClass(Class beanClass) {
+	public void setBeanClass(Class<?> beanClass) {
 		Assert.notNull(beanClass, "The beanClass must not be null.");
 		if (Map.class.isAssignableFrom(beanClass)) {
-			editorBinder = new MapEditorBinder(beanClass);
+			editorBinder = new MapEditorBinder((Class<Map>) beanClass);
 		}
 		else {
 			editorBinder = new BeanEditorBinder(beanClass);
 		}
 	}
 	
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		return editorBinder != null ? editorBinder.getBeanClass() : null; 
 	}
 	
@@ -173,7 +173,7 @@ public class NestedForm extends TemplateElement implements
 		elements.removeElement(element);
 	}
 	
-	public List getElements() {
+	public List<Element> getElements() {
 		return elements.getElements();
 	}
 

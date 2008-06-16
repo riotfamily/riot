@@ -25,7 +25,6 @@ package org.riotfamily.forms.element;
 
 
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.json.JSONFunction;
@@ -33,6 +32,7 @@ import net.sf.json.JSONObject;
 
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
@@ -45,7 +45,7 @@ import org.riotfamily.forms.resource.ScriptResource;
 public class TinyMCE extends AbstractTextElement
 		implements ResourceElement, DHTMLElement {
 
-	static Map defaults = new HashMap();
+	static Map<String, String> defaults = Generics.newHashMap();
 	static {
 		defaults.put("skin", "riot");
 		defaults.put("theme", "advanced");
@@ -58,19 +58,20 @@ public class TinyMCE extends AbstractTextElement
 	
 	private int rows = 10;
 
-	private Map config;
+	private Map<String, ?> config;
 	
 	private String initScript;
 	
 	public TinyMCE() {
 		setStyleClass("richtext");
+		setSurroundByDiv(false);
 	}
 
 	public void setRows(int rows) {
 		this.rows = rows;
 	}
 	
-	public void setConfig(Map config) {
+	public void setConfig(Map<String, ?> config) {
 		this.config = config;
 	}
 	
@@ -78,13 +79,15 @@ public class TinyMCE extends AbstractTextElement
 		TagWriter tag = new TagWriter(writer);
 		if (isEnabled()) {
 			tag.start(Html.TEXTAREA)
-				.attribute(Html.COMMON_CLASS, getStyleClass())				
+				.attribute(Html.COMMON_ID, getId())
+				.attribute(Html.COMMON_CLASS, getStyleClass())			
 				.attribute(Html.INPUT_NAME, getParamName())
 				.attribute(Html.TEXTAREA_ROWS, rows)
 				.body(getText()).end();
 		}
 		else {
 			tag.start(Html.DIV)
+				.attribute(Html.COMMON_ID, getId())
 				.attribute(Html.COMMON_CLASS, "tinymce-disabled")				
 				.body(getText(), false).end();
 		}

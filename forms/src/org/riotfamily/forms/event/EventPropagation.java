@@ -62,7 +62,7 @@ public class EventPropagation {
 		return type;
 	}
 	
-	public static void addPropagations(JavaScriptEventAdapter adapter, List list) {
+	public static void addPropagations(JavaScriptEventAdapter adapter, List<EventPropagation> list) {
 		int types = adapter.getEventTypes();
 		if ((types & JavaScriptEvent.ON_CLICK) > 0) {
 			list.add(new EventPropagation(adapter.getEventTriggerId(), ON_CLICK, adapter.getId()));

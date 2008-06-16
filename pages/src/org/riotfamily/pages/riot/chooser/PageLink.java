@@ -35,15 +35,15 @@ public class PageLink {
 
 	private boolean published;
 
-	private List childPages;
+	private List<PageLink> childPages;
 
 	private boolean expanded;
 	
-	public List getChildPages() {
+	public List<PageLink> getChildPages() {
 		return this.childPages;
 	}
 
-	public void setChildPages(List childPages) {
+	public void setChildPages(List<PageLink> childPages) {
 		this.childPages = childPages;
 	}
 

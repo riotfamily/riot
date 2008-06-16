@@ -26,7 +26,6 @@ package org.riotfamily.forms.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -64,7 +63,7 @@ public abstract class AbstractFormController implements Controller {
 	
 	private boolean processNewForms;
 	
-	private List buttonFactories;
+	private List<ButtonFactory> buttonFactories;
 	
 
 	public void setFormContextFactory(FormContextFactory contextFactory) {
@@ -75,13 +74,13 @@ public abstract class AbstractFormController implements Controller {
 		this.processNewForms = processNewForms;
 	}
 	
-	public void setButtonFactories(List buttonFactories) {
+	public void setButtonFactories(List<ButtonFactory> buttonFactories) {
 		this.buttonFactories = buttonFactories;
 	}
 	
 	protected void addButton(ButtonFactory buttonFactory) {
 		if (buttonFactories == null) {
-			buttonFactories = new ArrayList();
+			buttonFactories = new ArrayList<ButtonFactory>();
 		}
 		buttonFactories.add(buttonFactory);
 	}
@@ -217,9 +216,7 @@ public abstract class AbstractFormController implements Controller {
 		
 		if (buttonFactories != null && !buttonFactories.isEmpty()) {
 			Container container = form.createContainer(BUTTON_CONTAINER_ID);
-			Iterator it = buttonFactories.iterator();
-			while (it.hasNext()) {
-				ButtonFactory buttonFactory = (ButtonFactory) it.next();
+			for (ButtonFactory buttonFactory : buttonFactories) {
 				container.addElement(buttonFactory.createButton());
 			}
 		}

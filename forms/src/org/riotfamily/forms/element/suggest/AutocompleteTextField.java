@@ -25,8 +25,6 @@ package org.riotfamily.forms.element.suggest;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -84,13 +82,9 @@ public class AutocompleteTextField extends AbstractTextElement
 			HttpServletResponse response) throws IOException {
 
 		String search = request.getParameter(getParamName());
-		Collection suggestions = model.getSuggestions(search);
-		
 		DocumentWriter doc = new DocumentWriter(response.getWriter());
 		doc.start(Html.UL);
-		Iterator it = suggestions.iterator();
-		while (it.hasNext()) {
-			String value = (String) it.next();
+		for (String value : model.getSuggestions(search)) {
 			doc.start(Html.LI).body(value).end();
 		}
 		doc.end();

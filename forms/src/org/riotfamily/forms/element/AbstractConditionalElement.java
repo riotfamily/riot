@@ -80,8 +80,8 @@ public abstract class AbstractConditionalElement extends AbstractElement
 		}
 	}
 	
-	public List getElements() {
-		return Collections.singletonList(editor);
+	public List<Element> getElements() {
+		return Collections.singletonList((Element) editor);
 	}
 
 	public void processRequest(FormRequest request) {

@@ -16,6 +16,7 @@ public class DependentOptionsModelFactory implements OptionsModelFactory {
 		return model instanceof DependentOptionsModel;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public OptionsModel createOptionsModel(Object model, Element element) {
 		Assert.isInstanceOf(SelectElement.class, element);
 		DependentOptionsModel dop = (DependentOptionsModel) model;
@@ -31,7 +32,9 @@ public class DependentOptionsModelFactory implements OptionsModelFactory {
 		
 		private DependentOptionsModel<Object> dop;
 		
-		public ChildOptionsModel(Editor parent, SelectElement child, DependentOptionsModel dop) {
+		public ChildOptionsModel(Editor parent, SelectElement child, 
+				DependentOptionsModel<Object> dop) {
+			
 			this.parent = parent;
 			this.child = child;
 			this.dop = dop;

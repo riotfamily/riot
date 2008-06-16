@@ -39,7 +39,7 @@ public class CollectionItemEditorBinding implements EditorBinding {
 		
 		private boolean existingItem;
 		
-		public Class getBeanClass() {
+		public Class<?> getBeanClass() {
 			return value != null ? value.getClass() : null;
 		}
 
@@ -75,7 +75,7 @@ public class CollectionItemEditorBinding implements EditorBinding {
 			return "[" + editor.getId() + "]";
 		}
 
-		public Class getPropertyType() {
+		public Class<?> getPropertyType() {
 			return Object.class;
 		}
 

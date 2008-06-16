@@ -26,7 +26,6 @@ package org.riotfamily.forms.element.select;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.common.beans.PropertyUtils;
@@ -167,9 +166,7 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 		List<OptionItem> items = new ArrayList<OptionItem>();
 		if (options != null) {			
 			optionValues = optionsModel.getOptionValues(this);			
-			Iterator it = optionValues.iterator();
-			for (int i = 0; it.hasNext(); i++) {
-				Object item = it.next();
+			for (Object item : optionValues) {
 				String label = getOptionLabel(item);
 				Object value = getOptionValue(item);
 				items.add(new OptionItem(item, value, label, this));

@@ -24,13 +24,12 @@
 package org.riotfamily.pages.setup;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
+import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.setup.config.ChildHandlerNameDefinition;
-import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.StringUtils;
@@ -44,11 +43,10 @@ public class HandlerNameHierarchy implements ApplicationContextAware {
 	private Map<String, String> childHandlerNames = new HashMap<String, String>();
 	
 	public void setApplicationContext(ApplicationContext ctx) {
-		Iterator it = BeanFactoryUtils.beansOfTypeIncludingAncestors(ctx, 
-				ChildHandlerNameDefinition.class).values().iterator();
+		for (ChildHandlerNameDefinition def : 
+				SpringUtils.beansOfTypeIncludingAncestors(ctx, 
+				ChildHandlerNameDefinition.class).values()) {
 		
-		while (it.hasNext()) {
-			ChildHandlerNameDefinition def = (ChildHandlerNameDefinition) it.next();
 			childHandlerNames.put(def.getParent(), def.getChild());
 		}
 	}

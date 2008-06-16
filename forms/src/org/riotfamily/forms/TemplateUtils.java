@@ -26,7 +26,6 @@ package org.riotfamily.forms;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.riotfamily.forms.element.TemplateElement;
@@ -60,8 +59,7 @@ public class TemplateUtils {
 	public static void render(FormContext context, String template, 
 			String modelKey, Object object, PrintWriter writer) {
 		
-		HashMap model = new HashMap();
-		model.put(modelKey, object);
+		Map<String, Object> model = Collections.singletonMap(modelKey, object);
 		context.getTemplateRenderer().render(template, model, writer);
 	}
 		
@@ -75,7 +73,7 @@ public class TemplateUtils {
 				
 		FormContext context = element.getForm().getFormContext();
 		String template = getTemplatePath(baseClass, "_init");
-		Map model = Collections.singletonMap("element", element);
+		Map<String, ?> model = Collections.singletonMap("element", element);
 		context.getTemplateRenderer().render(template, model, writer);
 		
 		return sw.toString();

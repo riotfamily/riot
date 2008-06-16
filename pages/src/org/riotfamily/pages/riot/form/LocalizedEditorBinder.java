@@ -52,8 +52,7 @@ public class LocalizedEditorBinder implements EditorBinder {
 		delegate.bind(editor, property);
 	}
 
-	public PropertyEditor findCustomEditor(Class requiredType,
-			String propertyPath) {
+	public PropertyEditor findCustomEditor(Class requiredType, String propertyPath) {
 		return delegate.findCustomEditor(requiredType, propertyPath);
 	}
 

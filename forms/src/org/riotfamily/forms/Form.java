@@ -40,6 +40,7 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.request.FormRequest;
 import org.riotfamily.forms.request.HttpFormRequest;
 import org.riotfamily.forms.resource.FormResource;
@@ -66,23 +67,23 @@ public class Form implements BeanEditor {
 	private String id = DEFAULT_ID;
 
 	/** Elements keyed by their id */
-	private Map elementMap = new HashMap();
+	private Map<String, Element> elementMap = new HashMap<String, Element>();
 
 	/** Counter to create unique ids */
 	private int idCount;
 
 	/** Set of used parameter names */
-	private Set paramNames = new HashSet();
+	private Set<String> paramNames = Generics.newHashSet();
 
 	/** EditorBinder to bind toplevel elements to properties */
 	private EditorBinder editorBinder;
 
 	/** Set containing resources required by the form itself (not it's elements) */
-	private List globalResources = new ArrayList();
+	private List<FormResource> globalResources = Generics.newArrayList();
 
 	private FormInitializer initializer;
 
-	private List containers = new ArrayList();
+	private List<Container> containers = Generics.newArrayList();
 
 	private Container elements;
 
@@ -100,7 +101,7 @@ public class Form implements BeanEditor {
 
 	private String template = TemplateUtils.getTemplatePath(this);
 
-	private Map renderModel = new HashMap();
+	private Map<String, Object> renderModel = Generics.newHashMap();
 
 	private String hint;
 
@@ -109,7 +110,7 @@ public class Form implements BeanEditor {
 		elements = createContainer(ELEMENT_CONTAINER_ATTR);
 	}
 
-	public Form(Class type) {
+	public Form(Class<?> type) {
 		this();
 		setBeanClass(type);
 	}
@@ -144,7 +145,7 @@ public class Form implements BeanEditor {
 		this.template = template;
 	}
 
-	public Collection getRegisteredElements() {
+	public Collection<Element> getRegisteredElements() {
 		return elementMap.values();
 	}
 
@@ -156,10 +157,10 @@ public class Form implements BeanEditor {
 		return renderModel.get(key);
 	}
 
-	public void setBeanClass(Class beanClass) {
+	public void setBeanClass(Class<?> beanClass) {
 		Assert.notNull(beanClass, "The beanClass must not be null.");
 		if (Map.class.isAssignableFrom(beanClass)) {
-			editorBinder = new MapEditorBinder(beanClass);
+			editorBinder = new MapEditorBinder((Class<? extends Map>) beanClass);
 		}
 		else {
 			editorBinder = new BeanEditorBinder(beanClass);
@@ -194,7 +195,7 @@ public class Form implements BeanEditor {
 		elements.addElement(element);
 	}
 	
-	public List getElements() {
+	public List<Element> getElements() {
 		return this.elements.getComponents();
 	}
 
@@ -225,11 +226,9 @@ public class Form implements BeanEditor {
 		globalResources.add(resource);
 	}
 
-	protected List getResources() {
-		List resources = new ArrayList(globalResources);
-		Iterator it = getRegisteredElements().iterator();
-		while (it.hasNext()) {
-			Element element = (Element) it.next();
+	protected List<FormResource> getResources() {
+		List<FormResource> resources = Generics.newArrayList(globalResources);
+		for (Element element : getRegisteredElements()) {
 			if (element instanceof ResourceElement) {
 				ResourceElement re = (ResourceElement) element;
 				FormResource res = re.getResource();

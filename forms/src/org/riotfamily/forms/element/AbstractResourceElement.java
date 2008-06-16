@@ -24,8 +24,8 @@
 package org.riotfamily.forms.element;
 
 import java.util.Collection;
-import java.util.LinkedList;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.AbstractElement;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
@@ -35,7 +35,7 @@ import org.riotfamily.forms.resource.StylesheetResource;
 public abstract class AbstractResourceElement extends AbstractElement 
 		implements ResourceElement {
 
-	private Collection resources = new LinkedList();
+	private Collection<FormResource> resources = Generics.newLinkedList();
 	
 	protected void addScriptResource(String src) {
 		addResource(new ScriptResource(src));
@@ -49,7 +49,7 @@ public abstract class AbstractResourceElement extends AbstractElement
 		resources.add(resource);
 	}
 	
-	public Collection getResources() {
+	public Collection<FormResource> getResources() {
 		return resources;
 	}
 }

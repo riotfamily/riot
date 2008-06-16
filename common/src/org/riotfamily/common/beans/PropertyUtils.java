@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.riotfamily.common.util.Generics;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.NullValueInNestedPathException;
@@ -66,14 +67,15 @@ public final class PropertyUtils {
 		return null;
 	}
 	
-	public static Object getProperty(Object bean, String name, 
-			Class requiredType) {
+	@SuppressWarnings("unchecked")
+	public static<T> T getProperty(Object bean, String name, 
+			Class<T> requiredType) {
 		
 		Object value = getProperty(bean, name);
 		if (value != null) {
 			Assert.isInstanceOf(requiredType, value);
 		}
-		return value;
+		return (T) value;
 	}
 
 	public static String getPropertyAsString(Object bean, String name) {
@@ -86,7 +88,7 @@ public final class PropertyUtils {
 	}
 
 	public static void setPropertyAsString(Object bean, String name, String s) {
-		Class type = getPropertyType(bean.getClass(), name);
+		Class<?> type = getPropertyType(bean.getClass(), name);
 		Object value = convert(s, type);
 		setProperty(bean, name, value);
 	}
@@ -95,9 +97,9 @@ public final class PropertyUtils {
 	 * Returns a Map containing the bean's properties.
 	 * @since 6.4
 	 */
-	public static Map getProperties(Object bean) {
+	public static Map<String, Object> getProperties(Object bean) {
 		PropertyDescriptor[] pd = BeanUtils.getPropertyDescriptors(bean.getClass());
-		HashMap properties = new HashMap();
+		HashMap<String, Object> properties = Generics.newHashMap();
 		for (int i = 0; i < pd.length; i++) {
 			Object value = ReflectionUtils.invokeMethod(pd[i].getReadMethod(), bean);
 			properties.put(pd[i].getName(), value);
@@ -109,8 +111,8 @@ public final class PropertyUtils {
 	 * Returns a Map containing the bean's properties.
 	 * @since 6.4
 	 */
-	public static Map getProperties(Object bean, String[] propertyNames) {
-		HashMap properties = new HashMap();
+	public static Map<String, Object> getProperties(Object bean, String[] propertyNames) {
+		HashMap<String, Object> properties = Generics.newHashMap();
 		for (int i = 0; i < propertyNames.length; i++) {
 			String name = propertyNames[i];
 			properties.put(name, getProperty(bean, name));
@@ -133,15 +135,16 @@ public final class PropertyUtils {
 		return sb.toString();
 	}
 
-	public static Object convert(String s, Class targetClass) {
+	@SuppressWarnings("unchecked")
+	public static<T> T convert(String s, Class<T> targetClass) {
 		if (targetClass.equals(String.class)) {
-			return s;
+			return (T) s;
 		}
 		PropertyEditor pe = registry.findEditor(targetClass);
 		Assert.notNull(pe, "No PropertyEditor found for class: " + targetClass);
 		synchronized (pe) {
 			pe.setAsText(s);
-			return pe.getValue();
+			return (T) pe.getValue();
 		}
 	}
 
@@ -164,16 +167,7 @@ public final class PropertyUtils {
 		return null;
 	}
 
-	/**
-	 * @deprecated as of Riot 6.4, in favor of Spring's <code>BeanUtils.getPropertyDescriptor</code>.
-	 */
-	public static PropertyDescriptor getPropertyDescriptor(
-			Class clazz, String property) {
-
-        return BeanUtils.getPropertyDescriptor(clazz, property);
-    }
-
-    public static Class getPropertyType(Class clazz, String property) {
+    public static Class<?> getPropertyType(Class<?> clazz, String property) {
         PropertyDescriptor pd = BeanUtils.getPropertyDescriptor(clazz, property);
         Assert.notNull(pd, "Property '" + property + "' not found in class " + clazz);
         return pd.getPropertyType();
@@ -182,7 +176,7 @@ public final class PropertyUtils {
     /**
 	 * @since 6.4
 	 */
-	public static Method findReadMethod(Class clazz, String property) {
+	public static Method findReadMethod(Class<?> clazz, String property) {
 		String methodName = "get" + StringUtils.capitalize(property);
 		Method readMethod = BeanUtils.findDeclaredMethod(clazz, methodName, null);
 		if (readMethod != null) {
@@ -194,7 +188,7 @@ public final class PropertyUtils {
 	/**
 	 * @since 6.4
 	 */
-	public static Method findWriteMethod(Class clazz, String property) {
+	public static Method findWriteMethod(Class<?> clazz, String property) {
 		String methodName = "set" + StringUtils.capitalize(property);
 		Method writeMethod = BeanUtils.findDeclaredMethodWithMinimalParameters(
 				clazz, methodName);
@@ -208,7 +202,7 @@ public final class PropertyUtils {
     /**
      * Returns the (super-)class where the given property is declared.
      */
-    public static Class getDeclaringClass(Class clazz,
+    public static Class<?> getDeclaringClass(Class<?> clazz,
             String property) {
 
         PropertyDescriptor[] descriptors =
@@ -233,12 +227,19 @@ public final class PropertyUtils {
      * ClassNotFoundExceptions are caught and re-thrown as
      * {@link FatalBeanException}.
      */
-    public static Object newInstance(String className) {
+    @SuppressWarnings("unchecked")
+	public static<T> T newInstance(String className) {
 		try {
-			Class clazz = ClassUtils.forName(className);
-			return BeanUtils.instantiateClass(clazz);
+			Class<T> clazz = ClassUtils.forName(className);
+			return clazz.newInstance();
 		}
 		catch (ClassNotFoundException e) {
+			throw new FatalBeanException(e.getMessage(), e);
+		} 
+		catch (InstantiationException e) {
+			throw new FatalBeanException(e.getMessage(), e);
+		}
+		catch (IllegalAccessException e) {
 			throw new FatalBeanException(e.getMessage(), e);
 		}
     }

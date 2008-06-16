@@ -35,7 +35,7 @@ import org.springframework.web.servlet.mvc.Controller;
 
 public class NamedMethodHandler implements FormSubmissionHandler {
 	
-	private static final Class[] HANDLER_PARAM_TYPES = new Class[] {
+	private static final Class<?>[] HANDLER_PARAM_TYPES = new Class[] {
 		Form.class, HttpServletRequest.class, HttpServletResponse.class
 	};
 	

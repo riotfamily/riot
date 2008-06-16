@@ -24,13 +24,12 @@
 package org.riotfamily.forms.event;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.MessageUtils;
 import org.riotfamily.forms.request.FormRequest;
@@ -42,7 +41,7 @@ import org.riotfamily.forms.request.FormRequest;
 public class Button extends AbstractEditorBase 
 		implements JavaScriptEventAdapter {
 
-	private List listeners;
+	private List<ClickListener> listeners;
 	
 	private String labelKey;
 	
@@ -115,7 +114,7 @@ public class Button extends AbstractEditorBase
 
 	public void addClickListener(ClickListener listener) {
 		if (listeners == null) {
-			listeners = new ArrayList();
+			listeners = Generics.newArrayList();
 		}
 		listeners.add(listener);
 	}
@@ -158,9 +157,7 @@ public class Button extends AbstractEditorBase
 	protected void fireClickEvent() {		
 		if (listeners != null) {
 			ClickEvent event = new ClickEvent(this);
-			Iterator it = listeners.iterator();
-			while (it.hasNext()) {
-				ClickListener listener = (ClickListener) it.next();
+			for (ClickListener listener : listeners) {
 				listener.clicked(event);				
 			}
 		}

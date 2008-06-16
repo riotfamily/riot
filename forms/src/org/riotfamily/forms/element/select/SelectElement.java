@@ -24,7 +24,6 @@
 package org.riotfamily.forms.element.select;
 
 import org.riotfamily.forms.Editor;
-import org.riotfamily.forms.event.ChangeListener;
 
 
 /**

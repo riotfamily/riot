@@ -27,9 +27,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +36,7 @@ import net.sf.json.JSONArray;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Element;
@@ -62,13 +61,13 @@ public class AjaxResponse implements FormListener {
 	
 	private PrintWriter writer;
 	
-	private LinkedHashSet resources = new LinkedHashSet();
+	private LinkedHashSet<FormResource> resources = Generics.newLinkedHashSet();
 	
-	private List propagations = new LinkedList();
+	private List<EventPropagation> propagations = Generics.newLinkedList();
 	
-	private List dhtmlElements = new LinkedList();
+	private List<DHTMLElement> dhtmlElements = Generics.newLinkedList();
 	
-	private HashSet validatedElements = new HashSet();
+	private HashSet<Element> validatedElements = Generics.newHashSet();
 	
 	private Element focusedElement;
 	
@@ -134,7 +133,7 @@ public class AjaxResponse implements FormListener {
 		}
 		if (element instanceof DHTMLElement) {
 			log.debug("DHTML element registered");
-			dhtmlElements.add(element);
+			dhtmlElements.add((DHTMLElement) element);
 		}
 	}
 	
@@ -147,9 +146,7 @@ public class AjaxResponse implements FormListener {
 	}
 	
 	private void renderPropagations() {
-		Iterator it = propagations.iterator();
-		while (it.hasNext()) {
-			EventPropagation p = (EventPropagation) it.next();
+		for (EventPropagation p : propagations) {
 			renderPropagation(p);
 		}
 	}
@@ -162,9 +159,7 @@ public class AjaxResponse implements FormListener {
 	}
 	
 	private void renderScripts() {
-		Iterator it = dhtmlElements.iterator();
-		while (it.hasNext()) {
-			DHTMLElement e = (DHTMLElement) it.next();
+		for (DHTMLElement e : dhtmlElements) {
 			String script = e.getInitScript();
 			if (script != null) {
 				log.debug("Evaluating init script ...");
@@ -201,9 +196,7 @@ public class AjaxResponse implements FormListener {
 	}
 	
 	private void renderErrors() {
-		Iterator it = validatedElements.iterator();
-		while (it.hasNext()) {
-			Element element = (Element) it.next();
+		for (Element element : validatedElements) { 
 			if (element.getForm().getErrors().getErrors(element) != null) {
 				boolean valid = !element.getForm().getErrors().hasErrors(element);
 				json.add(new Action("valid", element.getId(), String.valueOf(valid)));

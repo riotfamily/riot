@@ -95,20 +95,16 @@ public class SelectBox extends AbstractSingleSelectElement {
 			
 	public void renderSelectElement(PrintWriter writer) {
 		List<OptionItem> optionItems = getOptionItems();
-		
 		TagWriter selectTag = new TagWriter(writer);
-
 		selectTag.start(Html.SELECT);
 		selectTag.attribute(Html.COMMON_ID, getEventTriggerId());
 		selectTag.attribute(Html.INPUT_NAME, getParamName());			
 		selectTag.attribute(Html.SELECT_SIZE, 1);
 		selectTag.attribute(Html.INPUT_DISABLED, !isEnabled());
 		selectTag.body();
-
-		for (OptionItem item: getOptionItems()) {
+		for (OptionItem item : optionItems) {
 			item.render();
 		}
-
 		selectTag.end();
 		
 	}

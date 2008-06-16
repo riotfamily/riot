@@ -32,6 +32,6 @@ public interface ObjectWrapper extends PropertyAccessor {
 
 	public Object getObject();
 
-	public Class getObjectClass();
+	public Class<?> getObjectClass();
 
 }

@@ -23,14 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.config;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
-import org.springframework.beans.factory.BeanFactoryUtils;
+import org.riotfamily.common.util.SpringUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 
@@ -60,15 +58,10 @@ public class HighestPrecedenceFactoryBean implements FactoryBean,
 
 	public Object getObject() throws Exception {
 		Assert.notNull(type, "A type must be specified.");
-		
-		ArrayList beans = new ArrayList(
-				BeanFactoryUtils.beansOfTypeIncludingAncestors(
-				applicationContext, type).values());
-		
+		List<?> beans = SpringUtils.orderedBeansIncludingAncestors(applicationContext, type);
 		Assert.notEmpty(beans, "At last one bean of type '" + type.getName()
 				+ "' must be present.");
 		
-		Collections.sort(beans, new OrderComparator());
 		return beans.get(0);
 	}
 

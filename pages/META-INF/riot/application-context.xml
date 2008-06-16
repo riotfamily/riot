@@ -11,8 +11,6 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-	<import resource="classpath:org/riotfamily/pages/runtime/db-schema.xml"/>
-	
 	<override:add ref="sessionFactory" property="annotatedClasses" append="true">
 		<value>org.riotfamily.pages.model.Page</value>
 		<value>org.riotfamily.pages.model.PageAlias</value>

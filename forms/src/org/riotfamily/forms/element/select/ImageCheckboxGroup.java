@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.select;
 
-import java.util.Iterator;
-
 import org.riotfamily.common.beans.PropertyUtils;
 
 /**
@@ -41,9 +39,7 @@ public class ImageCheckboxGroup extends CheckboxGroup {
 	
 	public String getInitScript() {
 		StringBuffer sb = new StringBuffer(super.getInitScript());
-		Iterator it = getOptionItems().iterator();
-		while (it.hasNext()) {
-			OptionItem option = (OptionItem) it.next();
+		for (OptionItem option : getOptionItems()) {
 			String image = PropertyUtils.getPropertyAsString(
 					option.getObject(), imageProperty);
 			
