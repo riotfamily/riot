@@ -113,10 +113,9 @@ public class PathController implements Controller, MessageSourceAware {
 	}
 	
 	protected void processPath(EditorPath path, HttpServletRequest request) {
-		Iterator it = path.getComponents().iterator();
+		Iterator<EditorReference> it = path.getComponents().iterator();
 		while (it.hasNext()) {
-			EditorReference ref = (EditorReference) it.next();
-			if ("node".equals(ref.getEditorType())) {
+			if ("node".equals(it.next().getEditorType())) {
 				it.remove();
 			}
 		}

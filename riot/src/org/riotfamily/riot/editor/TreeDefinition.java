@@ -47,7 +47,7 @@ public class TreeDefinition extends ListDefinition {
 		EditorDefinition parentDef = getParentEditorDefinition();
 		
 		if (parentDef != null && !(parentDef instanceof GroupDefinition)) {
-			Class parentClass = parentDef.getBeanClass();
+			Class<?> parentClass = parentDef.getBeanClass();
 			if (parentClass.isInstance(bean)) {
 				return false;
 			}

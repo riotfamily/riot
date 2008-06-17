@@ -23,13 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.riot.editor.ui.EditorReference;
 
 /**
@@ -42,13 +40,13 @@ public abstract class AbstractObjectEditorDefinition
 		extends AbstractEditorDefinition
 		implements ObjectEditorDefinition {
 
-	private Class beanClass;
+	private Class<?> beanClass;
 
 	private String labelProperty;
 
-	private List childEditorDefinitions = new LinkedList();
+	private List<EditorDefinition> childEditorDefinitions = Generics.newLinkedList();
 
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		if (beanClass != null) {
 			return beanClass;
 		}
@@ -56,7 +54,7 @@ public abstract class AbstractObjectEditorDefinition
 		return parent != null ? parent.getBeanClass() : null;
 	}
 
-	public void setBeanClass(Class beanClass) {
+	public void setBeanClass(Class<?> beanClass) {
 		this.beanClass = beanClass;
 	}
 
@@ -78,17 +76,15 @@ public abstract class AbstractObjectEditorDefinition
 		return getParentEditorDefinition().getLabel(object, messageResolver);
 	}
 
-	public List getChildEditorDefinitions() {
+	public List<EditorDefinition> getChildEditorDefinitions() {
 		return childEditorDefinitions;
 	}
 
-	public List getChildEditorReferences(Object object,
+	public List<EditorReference> getChildEditorReferences(Object object,
 			MessageResolver messageResolver) {
 
-		List refs = new ArrayList();
-		Iterator it = childEditorDefinitions.iterator();
-		while (it.hasNext()) {
-			EditorDefinition editorDef = (EditorDefinition) it.next();
+		List<EditorReference> refs = Generics.newArrayList();
+		for (EditorDefinition editorDef : childEditorDefinitions) {
 			editorDef.addReference(refs, this, object, messageResolver);
 		}
 		return refs;

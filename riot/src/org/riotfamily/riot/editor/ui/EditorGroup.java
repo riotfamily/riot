@@ -23,8 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor.ui;
 
-import java.util.LinkedList;
 import java.util.List;
+
+import org.riotfamily.common.util.Generics;
 
 /**
  * Model that is passed to the view of the 
@@ -38,7 +39,7 @@ public class EditorGroup {
 
 	private String objectId;
 	
-	private List editors = new LinkedList();
+	private List<EditorReference> editors = Generics.newLinkedList();
 
 	
 	public String getId() {
@@ -69,7 +70,7 @@ public class EditorGroup {
 		editors.add(reference);
 	}
 	
-	public List getEditors() {
+	public List<EditorReference> getEditors() {
 		return editors;
 	}
 }

@@ -110,10 +110,10 @@ public class ViewController implements Controller,
 			throw new RuntimeException(e);
 		}
 
-		model = new HashMap();
-		model.put(EditorConstants.EDITOR_ID, editorId);
-		model.put(EditorConstants.OBJECT_ID, objectId);
-		model.put("form", sw.toString());
+		ModelAndView mv = new ModelAndView(viewName);
+		mv.addObject(EditorConstants.EDITOR_ID, editorId);
+		mv.addObject(EditorConstants.OBJECT_ID, objectId);
+		mv.addObject("form", sw.toString());
 
 		ListDefinition parentListDef = EditorDefinitionUtils
 				.getParentListDefinition(editorDef);
@@ -127,7 +127,7 @@ public class ViewController implements Controller,
 			model.put("listKey", session.getKey());
 		}
 
-		return new ModelAndView(viewName, model);
+		return mv;
 	}
 	
 	public static String getUrl(String editorId, String objectId) {

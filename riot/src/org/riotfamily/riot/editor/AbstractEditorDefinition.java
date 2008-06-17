@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.riot.editor.ui.EditorReference;
 
 /**
  * Abstract base class for {@link EditorDefinition EditorDefinitions}.
@@ -75,7 +76,7 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 		return null;
 	}
 
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		return null;
 	}
 
@@ -87,8 +88,9 @@ public abstract class AbstractEditorDefinition implements EditorDefinition {
 		this.parentEditorDefinition = parentEditorDefinition;
 	}
 
-	public void addReference(List refs, EditorDefinition parentDef,
-			Object parent, MessageResolver messageResolver) {
+	public void addReference(List<EditorReference> refs, 
+			EditorDefinition parentDef, Object parent, 
+			MessageResolver messageResolver) {
 
 		if (show(parent)) {
 			String parentId = EditorDefinitionUtils.getObjectId(parentDef, parent);

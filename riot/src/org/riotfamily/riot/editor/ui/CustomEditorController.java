@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor.ui;
 
-import java.util.HashMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -63,14 +61,13 @@ public class CustomEditorController implements Controller {
 		String parentId = request.getParameter(EditorConstants.PARENT_ID);
 		String parentEditorId = request.getParameter(EditorConstants.PARENT_EDITOR_ID);
 
-		HashMap model = new HashMap();
-		model.put(EditorConstants.EDITOR_ID, editorId);
-		model.put(EditorConstants.OBJECT_ID, objectId);
-		model.put(EditorConstants.PARENT_ID, parentId);
-		model.put(EditorConstants.PARENT_EDITOR_ID, parentEditorId);
-		model.put("editorUrl", editorDef.getTargetUrl(objectId, parentId, parentEditorId));
-
-		return new ModelAndView(viewName, model);
+		ModelAndView mv = new ModelAndView(viewName);
+		mv.addObject(EditorConstants.EDITOR_ID, editorId);
+		mv.addObject(EditorConstants.OBJECT_ID, objectId);
+		mv.addObject(EditorConstants.PARENT_ID, parentId);
+		mv.addObject(EditorConstants.PARENT_EDITOR_ID, parentEditorId);
+		mv.addObject("editorUrl", editorDef.getTargetUrl(objectId, parentId, parentEditorId));
+		return mv;
 	}
 	
 	public static String getUrl(String editorId, String objectId, 

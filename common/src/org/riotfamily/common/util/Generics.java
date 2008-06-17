@@ -2,11 +2,13 @@ package org.riotfamily.common.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.TreeSet;
 
 public final class Generics {
 
@@ -17,7 +19,7 @@ public final class Generics {
 		return new HashMap<K, V>();
 	}
 	
-	public static<K, V> HashMap<K, V> newHashMap(Map<K, V> m) {
+	public static<K, V> HashMap<K, V> newHashMap(Map<? extends K, ? extends V> m) {
 		return new HashMap<K, V>(m);
 	}
 	
@@ -25,7 +27,7 @@ public final class Generics {
 		return new ArrayList<V>();
 	}
 	
-	public static<V> ArrayList<V> newArrayList(Collection<V> c) {
+	public static<V> ArrayList<V> newArrayList(Collection<? extends V> c) {
 		return new ArrayList<V>(c);
 	}
 	
@@ -33,7 +35,7 @@ public final class Generics {
 		return new LinkedList<V>();
 	}
 	
-	public static<V> LinkedList<V> newLinkedList(Collection<V> c) {
+	public static<V> LinkedList<V> newLinkedList(Collection<? extends V> c) {
 		return new LinkedList<V>(c);
 	}
 	
@@ -41,7 +43,7 @@ public final class Generics {
 		return new HashSet<V>();
 	}
 	
-	public static<V> HashSet<V> newHashSet(Collection<V> c) {
+	public static<V> HashSet<V> newHashSet(Collection<? extends V> c) {
 		return new HashSet<V>(c);
 	}
 	
@@ -49,8 +51,12 @@ public final class Generics {
 		return new LinkedHashSet<V>();
 	}
 	
-	public static<V> LinkedHashSet<V> newLinkedHashSet(Collection<V> c) {
+	public static<V> LinkedHashSet<V> newLinkedHashSet(Collection<? extends V> c) {
 		return new LinkedHashSet<V>(c);
+	}
+	
+	public static<V> TreeSet<V> newTreeSet(Comparator<? super V> comparator) {
+		return new TreeSet<V>(comparator);
 	}
 
 }

@@ -60,7 +60,7 @@ public class FormDefinition extends AbstractObjectEditorDefinition
 		this.formId = formId;
 	}
 
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		Assert.notNull(formId, "A formId must be set before calling getBeanClass().");
 		return getEditorRepository().getFormRepository().getBeanClass(formId);
 	}

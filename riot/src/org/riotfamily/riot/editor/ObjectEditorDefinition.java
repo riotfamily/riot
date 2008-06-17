@@ -26,6 +26,7 @@ package org.riotfamily.riot.editor;
 import java.util.List;
 
 import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.riot.editor.ui.EditorReference;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -35,9 +36,9 @@ public interface ObjectEditorDefinition extends EditorDefinition {
 
 	public void addChildEditorDefinition(EditorDefinition editorDef);
 	
-	public List getChildEditorDefinitions();
+	public List<EditorDefinition> getChildEditorDefinitions();
 
-	public List getChildEditorReferences(Object object,
+	public List<EditorReference> getChildEditorReferences(Object object,
 			MessageResolver messageResolver);
 
 }

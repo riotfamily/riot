@@ -26,7 +26,6 @@ package org.riotfamily.riot.editor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -34,6 +33,7 @@ import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.collection.TypeComparatorUtils;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.riot.form.ui.FormOption;
 
 
@@ -41,7 +41,7 @@ public class FormChooserDefinition extends FormDefinition {
 
 	private String discriminatorProperty;
 
-	private List formDefinitions = new ArrayList();
+	private List<FormDefinition> formDefinitions = Generics.newArrayList();
 
 
 	public FormChooserDefinition(EditorRepository editorRepository) {
@@ -61,7 +61,7 @@ public class FormChooserDefinition extends FormDefinition {
 		return defaultFormDef.getFormId();
 	}
 
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		return getParentEditorDefinition().getBeanClass();
 	}
 
@@ -81,18 +81,14 @@ public class FormChooserDefinition extends FormDefinition {
 
 	public void setParentEditorDefinition(EditorDefinition editorDef) {
 		super.setParentEditorDefinition(editorDef);
-		Iterator it = formDefinitions.iterator();
-		while (it.hasNext()) {
-			FormDefinition formDef = (FormDefinition) it.next();
+		for (FormDefinition formDef : formDefinitions) {
 			formDef.setParentEditorDefinition(editorDef);
 		}
 	}
 
 	public void addChildEditorDefinition(EditorDefinition editorDef) {
 		super.addChildEditorDefinition(editorDef);
-		Iterator it = formDefinitions.iterator();
-		while (it.hasNext()) {
-			FormDefinition formDef = (FormDefinition) it.next();
+		for (FormDefinition formDef : formDefinitions) {
 			formDef.getChildEditorDefinitions().add(editorDef);
 		}
 	}
@@ -101,18 +97,16 @@ public class FormChooserDefinition extends FormDefinition {
 		String discriminator = PropertyUtils.getPropertyAsString(
 				bean, discriminatorProperty);
 
-		Iterator it = formDefinitions.iterator();
-		while (it.hasNext()) {
-			FormDefinition formDefinition = (FormDefinition) it.next();
-			if (formDefinition.getDiscriminatorValue().equals(discriminator)) {
-				return formDefinition;
+		for (FormDefinition formDef : formDefinitions) {
+			if (formDef.getDiscriminatorValue().equals(discriminator)) {
+				return formDef;
 			}
 		}
 		return null;
 	}
 
 	protected FormDefinition getNearestFormDefintionByClass(Object bean) {
-		TreeSet forms = new TreeSet(new FormDefinitionComparator(bean));
+		TreeSet<FormDefinition> forms = Generics.newTreeSet(new FormDefinitionComparator(bean));
 		forms.addAll(formDefinitions);
 		return (FormDefinition) forms.first();
 	}
@@ -136,18 +130,16 @@ public class FormChooserDefinition extends FormDefinition {
 		}
 	}
 
-	public Collection createOptions(String parentId,
+	public Collection<FormOption> createOptions(String parentId,
 			MessageResolver messageResolver) {
 
-		ArrayList options = new ArrayList();
-		Iterator it = formDefinitions.iterator();
-		while (it.hasNext()) {
-			FormDefinition option = (FormDefinition) it.next();
+		ArrayList<FormOption> options = Generics.newArrayList();
+		for (FormDefinition formDef : formDefinitions) {
 			String label = messageResolver.getMessage(
-					option.getMessageKey().toString(), null,
-					FormatUtils.camelToTitleCase(option.getFormId()));
+					formDef.getMessageKey().toString(), null,
+					FormatUtils.camelToTitleCase(formDef.getFormId()));
 
-			options.add(new FormOption(label, option.getFormId()));
+			options.add(new FormOption(label, formDef.getFormId()));
 		}
 		return options;
 	}

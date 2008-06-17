@@ -75,7 +75,7 @@ public class ListDefinition extends AbstractEditorDefinition {
 		return getLabel(object, getListConfig().getLabelProperty());
 	}
 
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		return getListConfig().getItemClass();
 	}
 

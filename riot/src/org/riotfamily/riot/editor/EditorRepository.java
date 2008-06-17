@@ -23,12 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.riot.list.ListRepository;
@@ -43,7 +43,7 @@ public class EditorRepository implements RiotRuntimeAware {
 
 	private static Log log = LogFactory.getLog(EditorRepository.class);
 
-	private Map editorDefinitions = new HashMap();
+	private Map<String, EditorDefinition> editorDefinitions = Generics.newHashMap();
 
 	private GroupDefinition rootGroupDefinition;
 
@@ -71,7 +71,7 @@ public class EditorRepository implements RiotRuntimeAware {
 		this.rootGroupDefinition = rootGroupDefinition;
 	}
 
-	protected Map getEditorDefinitions() {
+	protected Map<String, EditorDefinition> getEditorDefinitions() {
 		return this.editorDefinitions;
 	}
 
@@ -93,7 +93,7 @@ public class EditorRepository implements RiotRuntimeAware {
 		if (editorId == null) {
 			return rootGroupDefinition;
 		}
-		return (EditorDefinition) editorDefinitions.get(editorId);
+		return editorDefinitions.get(editorId);
 	}
 
 	public ListDefinition getListDefinition(String editorId) {

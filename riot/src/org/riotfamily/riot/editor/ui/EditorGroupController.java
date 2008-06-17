@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor.ui;
 
-import java.util.Iterator;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -89,9 +87,7 @@ public class EditorGroupController implements Controller, MessageSourceAware {
 		group.setTitle(groupDefinition.getLabel(objectId, messageResolver));
 		group.setObjectId(objectId);
 		
-		Iterator ed = groupDefinition.getChildEditorDefinitions().iterator();
-		while (ed.hasNext()) {
-			EditorDefinition editor = (EditorDefinition) ed.next();
+		for (EditorDefinition editor : groupDefinition.getChildEditorDefinitions()) {
 			if (!editor.isHidden() && AccessController.isGranted("use-editor", editor)) {
 				group.addReference(editor.createReference(objectId, messageResolver));
 			}

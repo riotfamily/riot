@@ -23,12 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor.ui;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.Generics;
 import org.springframework.util.Assert;
 
 /**
@@ -36,7 +36,7 @@ import org.springframework.util.Assert;
  */
 public class EditorPath {
 
-	private LinkedList components = new LinkedList();
+	private LinkedList<EditorReference> components = Generics.newLinkedList();
 
 	private String editorId;
 
@@ -109,14 +109,12 @@ public class EditorPath {
 		return subPage.getLabel();
 	}
 	
-	public List getComponents() {
+	public List<EditorReference> getComponents() {
 		return components;
 	}
 
 	public void encodeUrls(HttpServletResponse response) {
-		Iterator it = components.iterator();
-		while (it.hasNext()) {
-			EditorReference comp = (EditorReference) it.next();
+		for (EditorReference comp : components) {
 			if (comp.getEditorUrl() != null) {
 				String encodedUrl = response.encodeURL(comp.getEditorUrl());
 				comp.setEditorUrl(encodedUrl);
