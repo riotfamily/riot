@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt;
 
-import org.riotfamily.revolt.definition.Database;
 
 
 /**
@@ -32,8 +31,6 @@ import org.riotfamily.revolt.definition.Database;
  */
 public interface Refactoring {
 
-	public void alterModel(Database database);
-	
 	public Script getScript(Dialect dialect);
 
 }

@@ -31,8 +31,8 @@ import java.util.Collections;
 import javax.sql.DataSource;
 
 import org.riotfamily.revolt.ChangeSet;
-import org.riotfamily.revolt.DatabaseOutOfSyncException;
 import org.riotfamily.revolt.Dialect;
+import org.riotfamily.revolt.EvolutionException;
 import org.riotfamily.revolt.Script;
 import org.riotfamily.revolt.definition.Column;
 import org.riotfamily.revolt.definition.Table;
@@ -64,7 +64,6 @@ public class LogTable {
 		table.addColumn(new Column("change_set_id", TypeMap.VARCHAR, 255));
 		table.addColumn(new Column("module", TypeMap.VARCHAR, 255));
 		table.addColumn(new Column("seq_nr", TypeMap.INTEGER));
-		
 		exists = DatabaseUtils.tableExists(dataSource, table);
 	}
 	
@@ -72,9 +71,13 @@ public class LogTable {
 		return exists;
 	}
 	
-	public Collection getAppliedChangeSetIds(final String moduleName) {
+	public boolean tableExists(String tableName) {
+		return DatabaseUtils.tableExists(dataSource, new Table(tableName));
+	}
+	
+	public Collection<String> getAppliedChangeSetIds(final String moduleName) {
 		if (!exists) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		JdbcTemplate template = new JdbcTemplate(dataSource);
 		return template.query("select change_set_id, seq_nr from " 
@@ -87,7 +90,7 @@ public class LogTable {
 						int sequenceNumber = rs.getInt(2);
 						
 						if (sequenceNumber != rowNumber) {
-							throw new DatabaseOutOfSyncException(
+							throw new EvolutionException(
 									"Expected a ChangeSet with sequence number "
 									+ rowNumber + " for module '" + moduleName 
 									+ "' but found ChangeSet [" + changeSetId

@@ -32,11 +32,8 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.riotfamily.revolt.definition.Database;
-import org.riotfamily.revolt.support.DatabaseUtils;
 import org.riotfamily.revolt.support.DialectResolver;
 import org.riotfamily.revolt.support.LogTable;
-import org.riotfamily.revolt.support.ScriptBuilder;
 import org.springframework.beans.factory.BeanNameAware;
 
 /**
@@ -51,7 +48,9 @@ public class EvolutionHistory implements BeanNameAware {
 	
 	private String moduleName;
 	
-	private List changeSets;
+	private String checkTableName;
+	
+	private List<ChangeSet> changeSets;
 
 	private DataSource dataSource;
 	
@@ -59,9 +58,7 @@ public class EvolutionHistory implements BeanNameAware {
 	
 	private LogTable logTable;
 	
-	private ArrayList appliedIds;
-	
-	private boolean newModule;
+	private ArrayList<String> appliedIds;
 	
 	public EvolutionHistory(DataSource dataSource) {
 		this.dataSource = dataSource;
@@ -80,12 +77,16 @@ public class EvolutionHistory implements BeanNameAware {
 		this.moduleName = name;
 	}
 	
+	public void setCheckTableName(String checkTableName) {
+		this.checkTableName = checkTableName;
+	}
+	
 	public String getModuleName() {
 		return this.moduleName;
 	}
 
 	public void setChangeSets(ChangeSet[] changeSets) {
-		this.changeSets = new ArrayList();
+		this.changeSets = new ArrayList<ChangeSet>();
 		for (int i = 0; i < changeSets.length; i++) {
 			ChangeSet changeSet = changeSets[i];
 			changeSet.setHistory(this);
@@ -94,26 +95,12 @@ public class EvolutionHistory implements BeanNameAware {
 		}
 	}
 
-	public void validate() {
-		DatabaseUtils.validate(dataSource, evolveModel());
-	}
-	
-	private Database evolveModel() {
-		Database model = new Database();
-		Iterator it = changeSets.iterator();
-		while (it.hasNext()) {
-			ChangeSet changeSet = (ChangeSet) it.next();
-			changeSet.alterModel(model);
-		}
-		return model;
-	}
-	
 	/**
 	 * Initializes the history from the given log-table.
 	 */
 	public void init(LogTable logTable) {
 		this.logTable = logTable;
-		appliedIds = new ArrayList();
+		appliedIds = new ArrayList<String>();
 		appliedIds.addAll(logTable.getAppliedChangeSetIds(moduleName));
 	}
 
@@ -121,34 +108,17 @@ public class EvolutionHistory implements BeanNameAware {
 	 * Returns a script that needs to be executed in order update the schema.
 	 */
 	public Script getScript() {
-		if (appliedIds.isEmpty()) {
-			log.info("The log-table contains no entries for module '" 
-					+ moduleName + "'. Checking if schema is up-to-date ...");
-			
-			newModule = true;
-			return getEvolvedSetupScript();
+		if (!logTable.exists() || !logTable.tableExists(checkTableName)) {
+			return getInitScript();
 		}
 		else {
 			return getMigrationScript();
 		}
 	}
 	
-	private Script getEvolvedSetupScript() {
+	private Script getInitScript() {
 		Script script = new Script();
-		Database model = evolveModel();
-		try {
-			DatabaseUtils.validate(dataSource, model);
-			log.info("Schema looks okay. Marking all changes as applied.");
-		}
-		catch (DatabaseOutOfSyncException e) {
-			log.info(e.getMessage());
-			log.info("Generating setup script ...");
-			ScriptBuilder builder = new ScriptBuilder(model, dialect);
-			script.append(builder.buildScript());
-		}
-		Iterator it = changeSets.iterator();
-		while (it.hasNext()) {
-			ChangeSet changeSet = (ChangeSet) it.next();
+		for (ChangeSet changeSet : changeSets) {
 			script.append(markAsApplied(changeSet));
 		}
 		return script;
@@ -156,9 +126,7 @@ public class EvolutionHistory implements BeanNameAware {
 	
 	private Script getMigrationScript() {
 		Script script = new Script();
-		Iterator it = changeSets.iterator();
-		while (it.hasNext()) {
-			ChangeSet changeSet = (ChangeSet) it.next();
+		for (ChangeSet changeSet : changeSets) {
 			if (!isApplied(changeSet)) {
 				script.append(changeSet.getScript(dialect));
 				script.append(markAsApplied(changeSet));
@@ -166,15 +134,7 @@ public class EvolutionHistory implements BeanNameAware {
 		}
 		return script;
 	}
-	
-	/**
-	 * Returns whether the module is new or whether any entries previously 
-	 * existed in the log-table.
-	 */
-	public boolean isNewModule() {
-		return newModule;
-	}
-	
+		
 	/**
 	 * Returns whether the given changeSet has already been applied.
 	 * @throws DatabaseOutOfSyncException If the ChangeSet id in the log-table
@@ -188,7 +148,7 @@ public class EvolutionHistory implements BeanNameAware {
 			if (appliedId.equals(changeSet.getId())) {
 				return true;
 			}
-			throw new DatabaseOutOfSyncException("ChangeSet number " 
+			throw new EvolutionException("ChangeSet number " 
 					+ changeSet.getSequenceNumber() + " should be [" 
 					+ changeSet.getId() + "] but is [" + appliedId + "]");
 		}
@@ -203,7 +163,7 @@ public class EvolutionHistory implements BeanNameAware {
 	 */
 	private Script markAsApplied(ChangeSet changeSet) {
 		if (changeSet.getSequenceNumber() != appliedIds.size()) {
-			throw new DatabaseOutOfSyncException("ChangeSet [" 
+			throw new EvolutionException("ChangeSet [" 
 					+ changeSet.getId() + "] is number " 
 					+ changeSet.getSequenceNumber() + " but there are already "
 					+ appliedIds.size() + " ChangeSets applied!");

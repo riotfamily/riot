@@ -24,7 +24,6 @@
 package org.riotfamily.revolt.definition;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -39,7 +38,7 @@ public class ForeignKey extends Identifier {
 	
 	private String foreignTable;
 
-	private List references;
+	private List<Reference> references;
 	
 	private String deleteAction;
 	
@@ -52,8 +51,9 @@ public class ForeignKey extends Identifier {
 		super(name);
 	}
 
-	public ForeignKey(String name, String foreignTable, List references,
-		String deleteAction, String updateAction) {
+	public ForeignKey(String name, String foreignTable,
+			List<Reference> references, 
+			String deleteAction, String updateAction) {
 		
 		super(name);
 		this.foreignTable = foreignTable;
@@ -70,14 +70,13 @@ public class ForeignKey extends Identifier {
 		this.foreignTable = foreignTable;
 	}
 
-	public List getReferences() {
+	public List<Reference> getReferences() {
 		return this.references;
 	}
 
-	public void setReferences(List references) {
+	public void setReferences(List<Reference> references) {
 		this.references = references;
 	}
-	
 
 	public String getDeleteAction() {
 		return this.deleteAction;
@@ -95,23 +94,17 @@ public class ForeignKey extends Identifier {
 		this.updateAction = updateAction;
 	}
 	
-
-
-	public List getLocalColumns() {
-		List columns = new ArrayList();
-		Iterator it = references.iterator();
-		while (it.hasNext()) {
-			Reference reference = (Reference) it.next();
+	public List<Identifier> getLocalColumns() {
+		List<Identifier> columns = new ArrayList<Identifier>();
+		for (Reference reference : references) {
 			columns.add(reference.getLocalColumn());
 		}
 		return columns;
 	}
 
-	public List getForeignColumns() {
-		List columns = new ArrayList();
-		Iterator it = references.iterator();
-		while (it.hasNext()) {
-			Reference reference = (Reference) it.next();
+	public List<Identifier> getForeignColumns() {
+		List<Identifier> columns = new ArrayList<Identifier>();
+		for (Reference reference : references) {
 			columns.add(reference.getForeignColumn());
 		}
 		return columns;

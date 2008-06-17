@@ -40,9 +40,9 @@ public abstract class AbstractDialect implements Dialect {
 
 	private static Log log = LogFactory.getLog(AbstractDialect.class);
 	
-	private HashMap nativeTypes = new HashMap();
+	private HashMap<String, String> nativeTypes = new HashMap<String, String>();
 	
-	private HashSet typesWithLength = new HashSet();
+	private HashSet<String> typesWithLength = new HashSet<String>();
 
 	public AbstractDialect() {
 		registerTypes();

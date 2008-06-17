@@ -34,10 +34,11 @@ import org.springframework.util.StringUtils;
  */
 public class UpdateStatement {
 
-	private Set supportedDialectNames;
+	private Set<String> supportedDialectNames;
 	
 	private String sql;
 
+	@SuppressWarnings("unchecked")
 	public UpdateStatement(String dialects, String sql) {
 		if (StringUtils.hasText(dialects)) {
 			this.supportedDialectNames = StringUtils.commaDelimitedListToSet(

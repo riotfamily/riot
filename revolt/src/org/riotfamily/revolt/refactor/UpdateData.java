@@ -24,13 +24,11 @@
 package org.riotfamily.revolt.refactor;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.riotfamily.revolt.Dialect;
 import org.riotfamily.revolt.EvolutionException;
 import org.riotfamily.revolt.Refactoring;
 import org.riotfamily.revolt.Script;
-import org.riotfamily.revolt.definition.Database;
 import org.riotfamily.revolt.definition.UpdateStatement;
 
 /**
@@ -39,19 +37,14 @@ import org.riotfamily.revolt.definition.UpdateStatement;
  */
 public class UpdateData implements Refactoring {
 
-	private Collection statements;
+	private Collection<UpdateStatement> statements;
 	
-	public UpdateData(Collection statements) {
+	public UpdateData(Collection<UpdateStatement> statements) {
 		this.statements = statements;
 	}
 
-	public void alterModel(Database database) {
-	}
-	
 	public Script getScript(Dialect dialect) {
-		Iterator it = statements.iterator();
-		while (it.hasNext()) {
-			UpdateStatement statement = (UpdateStatement) it.next();
+		for (UpdateStatement statement : statements) {
 			if (statement.supports(dialect)) {
 				return new Script(statement.getSql());
 			}

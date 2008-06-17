@@ -26,7 +26,6 @@ package org.riotfamily.revolt;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -45,7 +44,7 @@ import org.springframework.util.Assert;
  */
 public class Script {
 
-	private List callbacks = new ArrayList();
+	private List<SqlCallback> callbacks = new ArrayList<SqlCallback>();
 
 	private StringBuffer buffer;
 
@@ -108,7 +107,7 @@ public class Script {
 		manualExecutionOnly = true;
 	}
 
-	public List getCallbacks() {
+	public List<SqlCallback> getCallbacks() {
 		newStatement();
 		return callbacks;
 	}
@@ -118,18 +117,14 @@ public class Script {
 				"This script must be manually executed.");
 		
 		JdbcTemplate template = new JdbcTemplate(dataSource);
-		Iterator it = getCallbacks().iterator();
-		while (it.hasNext()) {
-			StatementCallback callback = (StatementCallback) it.next();
+		for (StatementCallback callback : getCallbacks()) { 
 			template.execute(callback);
 		}
 	}
 	
 	public String getSql() {
 		StringBuffer sql = new StringBuffer();
-		Iterator it = getCallbacks().iterator();
-		while (it.hasNext()) {
-			SqlProvider provider = (SqlProvider) it.next();
+		for (SqlProvider provider : callbacks) {
 			sql.append(provider.getSql()).append(";\n");
 		}
 		return sql.toString();

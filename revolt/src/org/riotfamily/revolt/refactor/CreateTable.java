@@ -28,7 +28,7 @@ import java.util.List;
 import org.riotfamily.revolt.Dialect;
 import org.riotfamily.revolt.Refactoring;
 import org.riotfamily.revolt.Script;
-import org.riotfamily.revolt.definition.Database;
+import org.riotfamily.revolt.definition.Column;
 import org.riotfamily.revolt.definition.Table;
 
 /**
@@ -39,12 +39,12 @@ public class CreateTable implements Refactoring {
 
 	private String name;
 	
-	private List columns;
+	private List<Column> columns;
 
 	public CreateTable() {
 	}
 	
-	public CreateTable(String name, List columns) {
+	public CreateTable(String name, List<Column> columns) {
 		this.name = name;
 		this.columns = columns;
 	}
@@ -53,14 +53,6 @@ public class CreateTable implements Refactoring {
 		this.name = name;
 	}
 
-	public void setColumns(List columns) {
-		this.columns = columns;
-	}
-
-	public void alterModel(Database database) {
-		database.addTable(new Table(name, columns));
-	}
-	
 	public Script getScript(Dialect dialect) {
 		return dialect.createTable(new Table(name, columns));
 	}

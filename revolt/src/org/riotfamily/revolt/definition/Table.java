@@ -24,7 +24,6 @@
 package org.riotfamily.revolt.definition;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -33,15 +32,15 @@ import java.util.List;
  */
 public class Table extends Identifier {
 
-	private List columns = new ArrayList();
+	private List<Column> columns = new ArrayList<Column>();
 
-	private List primaryKeys = new ArrayList();
+	private List<Column> primaryKeys = new ArrayList<Column>();
 	
-	private List foreignKeys = new ArrayList();
+	private List<ForeignKey> foreignKeys = new ArrayList<ForeignKey>();
 	
-	private List uniqueConstraints = new ArrayList();
+	private List<UniqueConstraint> uniqueConstraints = new ArrayList<UniqueConstraint>();
 	
-	private List indices = new ArrayList();
+	private List<Index> indices = new ArrayList<Index>();
 
 	public Table() {
 	}
@@ -50,22 +49,20 @@ public class Table extends Identifier {
 		super(name);
 	}
 	
-	public Table(String name, List columns) {
+	public Table(String name, List<Column> columns) {
 		super(name);
 		setColumns(columns);
 	}
 
-	public List getColumns() {
+	public List<Column> getColumns() {
 		return this.columns;
 	}
 
-	public void setColumns(List columns) {
-		this.columns = new ArrayList(columns.size());
+	public void setColumns(List<Column> columns) {
+		this.columns = new ArrayList<Column>(columns.size());
 		primaryKeys.clear();
 		if (columns != null) {
-			Iterator it = columns.iterator();
-			while (it.hasNext()) {
-				Column column = (Column) it.next();
+			for (Column column : columns) {
 				Column copy = column.copy();
 				this.columns.add(copy);
 				if (column.isPrimaryKey()) {
@@ -93,7 +90,7 @@ public class Table extends Identifier {
 		return (Column) columns.get(columns.indexOf(new Identifier(name)));
 	}
 	
-	public List getPrimaryKeys() {
+	public List<Column> getPrimaryKeys() {
 		return this.primaryKeys;
 	}
 	
@@ -124,15 +121,15 @@ public class Table extends Identifier {
 		uniqueConstraints.remove(new UniqueConstraint(uc));
 	}
 
-	public List getForeignKeys() {
+	public List<ForeignKey> getForeignKeys() {
 		return this.foreignKeys;
 	}
 
-	public List getIndices() {
+	public List<Index> getIndices() {
 		return this.indices;
 	}
 
-	public List getUniqueConstraints() {
+	public List<UniqueConstraint> getUniqueConstraints() {
 		return this.uniqueConstraints;
 	}
 	

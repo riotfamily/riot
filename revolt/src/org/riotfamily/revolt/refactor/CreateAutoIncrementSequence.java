@@ -26,7 +26,6 @@ package org.riotfamily.revolt.refactor;
 import org.riotfamily.revolt.Dialect;
 import org.riotfamily.revolt.Refactoring;
 import org.riotfamily.revolt.Script;
-import org.riotfamily.revolt.definition.Database;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -46,10 +45,6 @@ public class CreateAutoIncrementSequence implements Refactoring {
 		this.name = name;
 	}
 
-	public void alterModel(Database database) {
-		database.addSequence(name);
-	}
-	
 	public Script getScript(Dialect dialect) {
 		return dialect.createAutoIncrementSequence(name);
 	}

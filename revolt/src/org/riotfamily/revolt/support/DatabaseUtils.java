@@ -27,20 +27,13 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.sql.DataSource;
 
-import org.riotfamily.revolt.DatabaseOutOfSyncException;
-import org.riotfamily.revolt.definition.Column;
-import org.riotfamily.revolt.definition.Database;
 import org.riotfamily.revolt.definition.Identifier;
-import org.riotfamily.revolt.definition.Table;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.util.StringUtils;
 
 /**
  * Utility class that retieves database meta data via JDBC.
@@ -100,24 +93,6 @@ public class DatabaseUtils {
 		return result.booleanValue();
 	}
 
-	/**
-	 * Checks whether the database schema matches the given model.
-	 */
-	public static void validate(DataSource dataSource, final Database model)
-			throws DatabaseOutOfSyncException {
-
-		JdbcTemplate template = new JdbcTemplate(dataSource);
-		template.execute(new ConnectionCallback() {
-			public Object doInConnection(Connection connection)
-					throws SQLException, DataAccessException {
-
-				DatabaseMetaData metaData = connection.getMetaData();
-				validate(metaData, model);
-				return null;
-			}
-		});
-	}
-
 	private static String getSearchPattern(DatabaseMetaData metaData,
 			Identifier identifier) throws SQLException {
 
@@ -143,36 +118,4 @@ public class DatabaseUtils {
 		return pattern;
 	}
 
-	private static void validate(DatabaseMetaData metaData, Database model)
-			throws SQLException, DatabaseOutOfSyncException {
-
-		Iterator it = model.getTables().iterator();
-		while (it.hasNext()) {
-			Table table = (Table) it.next();
-			String pattern = getSearchPattern(metaData, table);
-			ResultSet rs = metaData.getColumns(null, null, pattern, "%");
-			ArrayList columns = new ArrayList();
-			while (rs.next()) {
-				columns.add(new Column(rs.getString("COLUMN_NAME")));
-			}
-			if (columns.isEmpty()) {
-				throw new DatabaseOutOfSyncException("Table "
-						+ table.getName() + " does not exist");
-			}
-			if (!columns.containsAll(table.getColumns())) {
-				ArrayList missing = new ArrayList(table.getColumns());
-				missing.removeAll(columns);
-				throw new DatabaseOutOfSyncException("Table "+ table.getName()
-						+ " does not have the following column(s): "
-						+ StringUtils.collectionToCommaDelimitedString(missing));
-			}
-			if (!table.getColumns().containsAll(columns)) {
-				ArrayList redundant = new ArrayList(columns);
-				redundant.removeAll(table.getColumns());
-				throw new DatabaseOutOfSyncException("Table "+ table.getName()
-						+ " has additionally the following unspecified column(s): "
-						+ StringUtils.collectionToCommaDelimitedString(redundant));
-			}
-		}
-	}
 }

@@ -27,7 +27,6 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -49,10 +48,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class DialectResolver {
 
-	private List dialects;
+	private List<Dialect> dialects;
 
 	public DialectResolver() {
-		dialects = new ArrayList();
+		dialects = new ArrayList<Dialect>();
 		dialects.add(new PostgresqlDialect());
 		dialects.add(new Postgresql8Dialect());
 		dialects.add(new MySqlDialect());
@@ -77,9 +76,7 @@ public class DialectResolver {
 	}
 
 	protected Dialect getDialect(String productName, int major, int minor) {
-		Iterator it = dialects.iterator();
-		while (it.hasNext()) {
-			Dialect dialect = (Dialect) it.next();
+		for (Dialect dialect : dialects) {
 			if (dialect.supports(productName, major, minor)) {
 				return dialect;
 			}

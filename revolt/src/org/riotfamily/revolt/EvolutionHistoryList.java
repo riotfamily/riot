@@ -34,21 +34,19 @@ import org.springframework.util.Assert;
  * @author Alf Werder <alf dot werder at artundweise dot de>
  * @since 7.0
  */
-public class EvolutionHistoryList {
-	private List list;
+public class EvolutionHistoryList implements Iterable<EvolutionHistory> {
 	
-	public EvolutionHistoryList(Collection histories) {
-		list = new ArrayList();
-		
-		Iterator i = histories.iterator();
-		while (i.hasNext()) {
-			EvolutionHistory history = (EvolutionHistory) i.next();
+	private List<EvolutionHistory> list;
+	
+	public EvolutionHistoryList(Collection<EvolutionHistory> histories) {
+		list = new ArrayList<EvolutionHistory>();
+		for (EvolutionHistory history : histories) {
 			add(history);
 		}
 	}
 	
 	private void add(EvolutionHistory history) {
-		for (int i=0; i<list.size(); i++) {
+		for (int i = 0; i < list.size(); i++) {
 			if (fitsOnPosition(i, history)) {
 				list.add(i, history);
 				return;
@@ -70,7 +68,6 @@ public class EvolutionHistoryList {
 		
 		for (int j=0; j<i; j++) {
 			EvolutionHistory before = (EvolutionHistory) list.get(j);
-			
 			if (before.dependsOn(history)) {
 				return false;
 			}
@@ -78,7 +75,6 @@ public class EvolutionHistoryList {
 		
 		for (int j=i; j<list.size(); j++) {
 			EvolutionHistory after = (EvolutionHistory) list.get(j);
-			
 			if (history.dependsOn(after)) {
 				return false;
 			}
@@ -87,7 +83,7 @@ public class EvolutionHistoryList {
 		return true;
 	}
 
-	public Iterator iterator() {
+	public Iterator<EvolutionHistory> iterator() {
 		return list.iterator();
 	}
 }

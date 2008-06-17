@@ -29,7 +29,6 @@ import java.util.List;
 import org.riotfamily.revolt.Dialect;
 import org.riotfamily.revolt.Refactoring;
 import org.riotfamily.revolt.Script;
-import org.riotfamily.revolt.definition.Database;
 import org.riotfamily.revolt.definition.RecordEntry;
 import org.springframework.util.StringUtils;
 
@@ -41,7 +40,7 @@ public class InsertData implements Refactoring {
 
 	private String table;
 	
-	private List entries;
+	private List<RecordEntry> entries;
 
 	public InsertData() {
 	}
@@ -49,15 +48,15 @@ public class InsertData implements Refactoring {
 	
 	public InsertData(String table) {
 		this.table = table;
-		this.entries = new ArrayList();
+		this.entries = new ArrayList<RecordEntry>();
 	}
 
-	public InsertData(String table, List entries) {
+	public InsertData(String table, List<RecordEntry> entries) {
 		this.table = table;
 		this.entries = entries;
 	}
 
-	public void setEntries(List entries) {
+	public void setEntries(List<RecordEntry> entries) {
 		this.entries = entries;
 	}
 	
@@ -80,9 +79,6 @@ public class InsertData implements Refactoring {
 		this.table = table;
 	}
 
-	public void alterModel(Database database) {
-	}
-	
 	public Script getScript(Dialect dialect) {
 		return dialect.insert(table, entries);
 	}

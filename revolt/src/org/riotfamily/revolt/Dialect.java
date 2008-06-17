@@ -28,6 +28,7 @@ import java.util.Collection;
 import org.riotfamily.revolt.definition.Column;
 import org.riotfamily.revolt.definition.ForeignKey;
 import org.riotfamily.revolt.definition.Index;
+import org.riotfamily.revolt.definition.RecordEntry;
 import org.riotfamily.revolt.definition.Table;
 import org.riotfamily.revolt.definition.UniqueConstraint;
 
@@ -68,7 +69,7 @@ public interface Dialect {
 
 	public Script dropForeignKey(String table, String name);
 
-	public Script insert(String table, Collection data);
+	public Script insert(String table, Collection<RecordEntry> data);
 	
 	public Script createAutoIncrementSequence(String name);
 	

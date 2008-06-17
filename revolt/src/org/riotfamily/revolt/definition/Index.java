@@ -32,7 +32,7 @@ import java.util.Collection;
  */
 public class Index extends Identifier {
 
-	private Collection columns;
+	private Collection<Identifier> columns;
 
 	private boolean unique;
 
@@ -49,12 +49,12 @@ public class Index extends Identifier {
 		setColumnNames(columnNames);
 	}
 	
-	public Collection getColumns() {
+	public Collection<Identifier> getColumns() {
 		return this.columns;
 	}
 
 	public void setColumnNames(String[] names) {
-		columns = new ArrayList();
+		columns = new ArrayList<Identifier>();
 		for (int i = 0; i < names.length; i++) {
 			columns.add(new Identifier(names[i]));
 		}

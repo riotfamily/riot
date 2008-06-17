@@ -42,8 +42,8 @@ import org.riotfamily.revolt.definition.UniqueConstraint;
  * 
  */
 public abstract class Sql92Dialect extends AbstractDialect {
-	private static final Map actions = new HashMap();
 	
+	private static final Map<String, String> actions = new HashMap<String, String>();
 	static {
 		actions.put(ForeignKey.NO_ACTION_HANDLER, "NO ACTION");
 		actions.put(ForeignKey.CASCADE_HANDLER, "CASCADE");
@@ -67,9 +67,9 @@ public abstract class Sql92Dialect extends AbstractDialect {
 		Script sql = new Script("CREATE TABLE")
 				.append(quote(table)).append('(');
 
-		Iterator it = table.getColumns().iterator();
+		Iterator<Column> it = table.getColumns().iterator();
 		while (it.hasNext()) {
-			Column column = (Column) it.next();
+			Column column = it.next();
 			addColumnDefinition(sql, column);
 			if (it.hasNext()) {
 				sql.append(',');
@@ -158,15 +158,15 @@ public abstract class Sql92Dialect extends AbstractDialect {
 		return dropConstraint(table, name);
 	}
 
-	public Script insert(String table, Collection data) {
+	public Script insert(String table, Collection<RecordEntry> data) {
 		Script sql = new Script("INSERT INTO")
 				.append(quote(table));
 		
 		addColumnNames(sql, data);
 		sql.append("VALUES").append('(');
-		Iterator it = data.iterator();
+		Iterator<RecordEntry> it = data.iterator();
 		while (it.hasNext()) {
-			RecordEntry entry = (RecordEntry) it.next();
+			RecordEntry entry = it.next();
 			sql.append(convertQuotes(entry.getValue()));
 			if (it.hasNext()) {
 				sql.append(',');
@@ -198,11 +198,11 @@ public abstract class Sql92Dialect extends AbstractDialect {
 		}
 	}
 
-	protected void addColumnNames(Script sql, Collection columns) {
+	protected void addColumnNames(Script sql, Collection<? extends Identifier> columns) {
 		sql.append('(');
-		Iterator it = columns.iterator();
+		Iterator<? extends Identifier> it = columns.iterator();
 		while (it.hasNext()) {
-			sql.append(quote((Identifier) it.next()));
+			sql.append(quote(it.next()));
 			if (it.hasNext()) {
 				sql.append(',');
 			}

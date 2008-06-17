@@ -23,11 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt;
 
-import java.util.Iterator;
 import java.util.List;
-
-import org.riotfamily.revolt.definition.Database;
-import org.riotfamily.revolt.refactor.UpdateData;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -41,10 +37,10 @@ public class ChangeSet implements Refactoring {
 
 	private int sequenceNumber;
 	
-	private List refactorings;
+	private List<Refactoring> refactorings;
 
 	
-	public ChangeSet(String id, List refactorings) {
+	public ChangeSet(String id, List<Refactoring> refactorings) {
 		this.id = id;
 		this.refactorings = refactorings; 
 	}
@@ -71,27 +67,13 @@ public class ChangeSet implements Refactoring {
 
 	public Script getScript(Dialect dialect) {
 		Script script = new Script();
-		Iterator it = refactorings.iterator();
-		while (it.hasNext()) {
-			Refactoring refactoring = (Refactoring) it.next();
-			// UpdateData refactorings only need to be applied if the module 
-			// was previously in use and the database might contain data
-			if (!(history.isNewModule() && refactoring instanceof UpdateData)) {
-				Script s = refactoring.getScript(dialect);
-				if (s != null) {
-					script.append(s);
-				}
+		for (Refactoring refactoring : refactorings) {
+			Script s = refactoring.getScript(dialect);
+			if (s != null) {
+				script.append(s);
 			}
 		}
 		return script;
 	}
 	
-	public void alterModel(Database model) {
-		Iterator it = refactorings.iterator();
-		while (it.hasNext()) {
-			Refactoring refactoring = (Refactoring) it.next();
-			refactoring.alterModel(model);
-		}
-	}
-
 }

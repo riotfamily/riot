@@ -50,9 +50,9 @@ public class Evolver implements ApplicationContextAware {
 	
 	private boolean automatic;
 	
-	private HashMap scripts = new HashMap();
+	private HashMap<DataSource, Script> scripts = new HashMap<DataSource, Script>();
 	
-	private HashMap logTables = new HashMap();
+	private HashMap<DataSource, LogTable> logTables = new HashMap<DataSource, LogTable>();
 	
 	/**
 	 * Sets whether Revolt should automatically apply pending refactorings.
@@ -70,14 +70,11 @@ public class Evolver implements ApplicationContextAware {
 	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
-		Collection evolutions = BeanFactoryUtils.beansOfTypeIncludingAncestors(
+		Collection<EvolutionHistory> evolutions = BeanFactoryUtils.beansOfTypeIncludingAncestors(
 				applicationContext, EvolutionHistory.class).values();
 		
 		if (enabled) {
-			Iterator it = new EvolutionHistoryList(evolutions).iterator();
-			
-			while (it.hasNext()) {
-				EvolutionHistory history = (EvolutionHistory) it.next();
+			for (EvolutionHistory history : new EvolutionHistoryList(evolutions)) {
 				history.init(getLogTable(history));
 				getScript(history).append(history.getScript());
 			}
@@ -90,17 +87,12 @@ public class Evolver implements ApplicationContextAware {
 			if (StringUtils.hasLength(instructions)) {
 				throw new EvolutionInstructions(instructions);
 			}
-			
-			while (it.hasNext()) {
-				EvolutionHistory history = (EvolutionHistory) it.next();
-				history.validate();
-			}
 		}
 	}
 	
 	private LogTable getLogTable(EvolutionHistory history) {
 		DataSource dataSource = history.getDataSource();
-		LogTable logTable = (LogTable) logTables.get(dataSource);
+		LogTable logTable = logTables.get(dataSource);
 		if (logTable == null) {
 			logTable = new LogTable(dataSource, history.getDialect());
 			logTables.put(history.getDataSource(), logTable);

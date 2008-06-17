@@ -31,7 +31,7 @@ import java.util.Collection;
  */
 public class UniqueConstraint extends Identifier {
 
-	private Collection columns;
+	private Collection<Identifier> columns;
 
 	public UniqueConstraint() {
 	}
@@ -45,12 +45,12 @@ public class UniqueConstraint extends Identifier {
 		setColumnNames(columnNames);
 	}
 
-	public Collection getColumns() {
+	public Collection<Identifier> getColumns() {
 		return this.columns;
 	}
 
 	public void setColumnNames(String[] names) {
-		columns = new ArrayList();
+		columns = new ArrayList<Identifier>();
 		for (int i = 0; i < names.length; i++) {
 			columns.add(new Identifier(names[i]));
 		}

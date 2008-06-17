@@ -75,30 +75,30 @@ public class TypeMap {
 
 	public final static String CLOB = "CLOB";
 
-	private static HashMap jdbcTypes = new HashMap();
+	private static HashMap<String, Integer> jdbcTypes = new HashMap<String, Integer>();
 
 	static {
-		jdbcTypes.put(BIT, new Integer(Types.BIT));
-		jdbcTypes.put(TINYINT, new Integer(Types.TINYINT));
-		jdbcTypes.put(SMALLINT, new Integer(Types.SMALLINT));
-		jdbcTypes.put(INTEGER, new Integer(Types.INTEGER));
-		jdbcTypes.put(BIGINT, new Integer(Types.BIGINT));
-		jdbcTypes.put(FLOAT, new Integer(Types.FLOAT));
-		jdbcTypes.put(REAL, new Integer(Types.REAL));
-		jdbcTypes.put(DOUBLE, new Integer(Types.DOUBLE));
-		jdbcTypes.put(NUMERIC, new Integer(Types.NUMERIC));
-		jdbcTypes.put(DECIMAL, new Integer(Types.DECIMAL));
-		jdbcTypes.put(CHAR, new Integer(Types.CHAR));
-		jdbcTypes.put(VARCHAR, new Integer(Types.VARCHAR));
-		jdbcTypes.put(LONGVARCHAR, new Integer(Types.LONGVARCHAR));
-		jdbcTypes.put(DATE, new Integer(Types.DATE));
-		jdbcTypes.put(TIME, new Integer(Types.TIME));
-		jdbcTypes.put(TIMESTAMP, new Integer(Types.TIMESTAMP));
-		jdbcTypes.put(BINARY, new Integer(Types.BINARY));
-		jdbcTypes.put(VARBINARY, new Integer(Types.VARBINARY));
-		jdbcTypes.put(LONGVARBINARY, new Integer(Types.LONGVARBINARY));
-		jdbcTypes.put(BLOB, new Integer(Types.BLOB));
-		jdbcTypes.put(CLOB, new Integer(Types.CLOB));
+		jdbcTypes.put(BIT, Types.BIT);
+		jdbcTypes.put(TINYINT, Types.TINYINT);
+		jdbcTypes.put(SMALLINT, Types.SMALLINT);
+		jdbcTypes.put(INTEGER, Types.INTEGER);
+		jdbcTypes.put(BIGINT, Types.BIGINT);
+		jdbcTypes.put(FLOAT, Types.FLOAT);
+		jdbcTypes.put(REAL, Types.REAL);
+		jdbcTypes.put(DOUBLE, Types.DOUBLE);
+		jdbcTypes.put(NUMERIC, Types.NUMERIC);
+		jdbcTypes.put(DECIMAL, Types.DECIMAL);
+		jdbcTypes.put(CHAR, Types.CHAR);
+		jdbcTypes.put(VARCHAR, Types.VARCHAR);
+		jdbcTypes.put(LONGVARCHAR, Types.LONGVARCHAR);
+		jdbcTypes.put(DATE, Types.DATE);
+		jdbcTypes.put(TIME, Types.TIME);
+		jdbcTypes.put(TIMESTAMP, Types.TIMESTAMP);
+		jdbcTypes.put(BINARY, Types.BINARY);
+		jdbcTypes.put(VARBINARY, Types.VARBINARY);
+		jdbcTypes.put(LONGVARBINARY, Types.LONGVARBINARY);
+		jdbcTypes.put(BLOB, Types.BLOB);
+		jdbcTypes.put(CLOB, Types.CLOB);
 	}
 
 	public static int getJdbcType(String name) {
@@ -109,7 +109,7 @@ public class TypeMap {
 		return Types.NULL;
 	}
 	
-	public static boolean isComplete(Map map) {
+	public static boolean isComplete(Map<String, ?> map) {
 		return map.keySet().containsAll(jdbcTypes.keySet());
 	}
 }

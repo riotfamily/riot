@@ -26,7 +26,6 @@ package org.riotfamily.revolt.refactor;
 import org.riotfamily.revolt.Dialect;
 import org.riotfamily.revolt.Refactoring;
 import org.riotfamily.revolt.Script;
-import org.riotfamily.revolt.definition.Database;
 import org.riotfamily.revolt.definition.ForeignKey;
 
 /**
@@ -55,10 +54,6 @@ public class AddForeignKey implements Refactoring {
 		this.foreignKey = foreignKey;
 	}
 
-	public void alterModel(Database database) {
-		database.getTable(table).addForeignKey(foreignKey);
-	}
-	
 	public Script getScript(Dialect dialect) {
 		return dialect.addForeignKey(table, foreignKey);
 	}
