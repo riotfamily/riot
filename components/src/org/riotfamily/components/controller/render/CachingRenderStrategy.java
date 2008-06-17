@@ -133,7 +133,7 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 			ComponentListConfiguration config, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
-		
+
 		super.render(location, config, request, response);
 	}
 	
@@ -181,6 +181,15 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 		
 		renderer.render(component, isPreview(), position, listSize, request, response);
 	}
+	
+	protected void onListNotFound(ComponentListLocation location,
+	    ComponentListConfiguration config, HttpServletRequest request,
+	    HttpServletResponse response) throws Exception {
+	    
+	    ComponentCacheUtils.addListTag(request, location, isPreview());
+	    super.onListNotFound(location, config, request, response);
+	}
+	
 		
 	private class ListProcessor implements CacheableRequestProcessor {
 		
