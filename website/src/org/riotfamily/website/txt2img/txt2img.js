@@ -167,15 +167,16 @@ var RiotImageReplacement = Class.create({
 			a._txt2ImgOut = this.setImageSrc.bind(this, img, image.src);
 			a.observe('mouseover', a._txt2ImgOver);
 			a.observe('mouseout', a._txt2ImgOut);
+			a.addClassName('txt2img');
 		}
 
 		var printText = document.createElement("span");
-		printText.style.display = 'none';
 		printText.className = "print-text";
 		printText.innerHTML = el.innerHTML;
-		el.innerHTML = '';
+		el.update();
 		el.appendChild(img);
 		el.appendChild(printText);
+		el.addClassName('txt2img');
 		el.style.visibility = 'visible';
 	}
 });

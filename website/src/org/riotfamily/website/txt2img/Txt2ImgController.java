@@ -256,7 +256,8 @@ public class Txt2ImgController extends AbstractCacheableController
 
 		response.setContentType("text/css");
 		ServletUtils.setFarFutureExpiresHeader(response);
-		PrintWriter out = response.getWriter(); 
+		PrintWriter out = response.getWriter();
+		out.write(".txt2img .print-text {display: none}\n");
 		for (String selector : selectors) {
 			out.write(selector);
 			out.write("{visibility: hidden}\n");
