@@ -506,6 +506,7 @@ riot.ListComponent = Class.create(riot.Component, {
 				callback(el);
 			});
 		}
+		riot.toolbar.selectedButton.reApplyHandler();
 	},
 	
 	markDirty: function() {
