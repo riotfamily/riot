@@ -31,13 +31,13 @@ import org.riotfamily.riot.job.model.JobLogEntry;
 
 public interface JobDao {
 
-	public Collection getLogEntries(Long jobId);
+	public Collection<JobLogEntry> getLogEntries(Long jobId);
 	
 	public void log(JobLogEntry entry);
 	
-	public Collection getJobDetails();
+	public Collection<JobDetail> getJobDetails();
 	
-	public Collection getPendingJobDetails();
+	public Collection<JobDetail> getPendingJobDetails();
 	
 	public JobDetail getJobDetail(Long jobId);
 	

@@ -23,55 +23,28 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job.support;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.riot.job.Job;
 import org.riotfamily.riot.job.JobContext;
 import org.riotfamily.riot.job.context.CommonsLogginJobContext;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 public class SetupJobs implements InitializingBean {
 	
-	private List jobs;
+	private List<Job> jobs;
 	
-	private PlatformTransactionManager transactionManager;
-	
-	public void setTransactionManager(PlatformTransactionManager transactionManager) {
-		this.transactionManager = transactionManager;
-	}
-
-	public void setJobs(List jobs) {
+	public void setJobs(List<Job> jobs) {
 		this.jobs = jobs;
 	}
 	
+	@Transactional
 	public void afterPropertiesSet() throws Exception {		
 		Assert.notNull(jobs, "Jobs must not be null");
-		
-		if (transactionManager != null) {
-			new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
-				public Object doInTransaction(TransactionStatus status) {
-					executeJobs();
-					return null;
-				}
-			});
-		}
-		else {
-			executeJobs();
-		}
-		
-	}
-	
-	protected void executeJobs() {
 		JobContext context = new CommonsLogginJobContext();
-		Iterator it = jobs.iterator();
-		while (it.hasNext()) {
-			Job job = (Job) it.next();
+		for (Job job : jobs) {
 			job.execute(context);
 		}
 	}

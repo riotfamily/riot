@@ -53,23 +53,29 @@ public final class HibernateUtils {
 	private HibernateUtils() {
 	}
 
-	public static Object get(Session session, Class beanClass, String id) {
+	@SuppressWarnings("unchecked")
+	public static<T> T get(Session session, Class<T> beanClass, String id) {
 		SessionFactory sf = session.getSessionFactory();
 		Serializable serialId = convertId(beanClass, id, sf);
-		return session.get(beanClass, serialId);
+		return (T) session.get(beanClass, serialId);
 	}
 
-	public static Serializable convertId(Class beanClass, String id,
+	@SuppressWarnings("unchecked")
+	public static Class<? extends Serializable> getIdentifierClass(
+			Class<?> beanClass, SessionFactory sessionFactory) {
+		
+		return sessionFactory.getClassMetadata(beanClass)
+				.getIdentifierType().getReturnedClass();	
+	}
+	
+	public static Serializable convertId(Class<?> beanClass, String id,
 			SessionFactory sessionFactory) {
 
-		Class identifierClass = sessionFactory.getClassMetadata(beanClass)
-				.getIdentifierType().getReturnedClass();
-
-		return (Serializable) PropertyUtils.convert(id, identifierClass);
+		return PropertyUtils.convert(id, getIdentifierClass(beanClass, sessionFactory));
 	}
 
 	public static String getIdAsString(SessionFactory sessionFactory, Object bean) {
-		Class clazz = Hibernate.getClass(bean);
+		Class<?> clazz = Hibernate.getClass(bean);
 		ClassMetadata metadata = sessionFactory.getClassMetadata(clazz);
 		return metadata.getIdentifier(bean, EntityMode.POJO).toString();
 	}

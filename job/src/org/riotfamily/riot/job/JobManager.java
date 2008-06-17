@@ -23,13 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job;
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.riot.job.dao.JobDao;
 import org.riotfamily.riot.job.model.JobDetail;
 import org.riotfamily.riot.job.model.JobLogEntry;
@@ -48,7 +47,7 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 	
 	private static Log log = LogFactory.getLog(JobManager.class);
 	
-	private Map jobs;
+	private Map<String, Job> jobs;
 	
 	JobDao dao;
 	
@@ -69,7 +68,7 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 	}
 
 	public void setApplicationContext(ApplicationContext context) {
-		jobs = context.getBeansOfType(Job.class);
+		jobs = SpringUtils.beansOfType(context, Job.class);
 	}
 	
 	/**
@@ -81,10 +80,7 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 	 */
 	protected void checkForAbortedJobs() {
 		log.info("Checking for interrupted jobs ...");
-		Collection pendingJobs = dao.getPendingJobDetails();
-		Iterator it = pendingJobs.iterator();
-		while (it.hasNext()) {
-			JobDetail jd = (JobDetail) it.next();
+		for (JobDetail jd : dao.getPendingJobDetails()) { 
 			if (taskList.getJobTask(jd) == null) {
 				log.info("Job " + jd + " is not running - marking as INTERRUPTED.");
 				jd.setState(JobDetail.INTERRUPTED);
@@ -94,7 +90,7 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 	}
 	
 	protected Job getJob(String type) {
-		return (Job) jobs.get(type);
+		return jobs.get(type);
 	}
 	
 	public JobDetail getOrCreateJob(String type, String objectId) 

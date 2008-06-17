@@ -18,7 +18,7 @@
 	<!-- HQL OptionsModel prototype -->
 	
 	<bean id="hqlOptionsModel" scope="prototype" 
-		class="org.riotfamily.riot.hibernate.HqlOptionsModel">
+		class="org.riotfamily.riot.hibernate.form.HqlOptionsModel">
 		
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>

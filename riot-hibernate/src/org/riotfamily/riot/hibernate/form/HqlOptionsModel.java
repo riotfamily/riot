@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.hibernate;
+package org.riotfamily.riot.hibernate.form;
 
 import java.util.Collection;
 

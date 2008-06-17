@@ -52,7 +52,7 @@ public class HibernateSupport {
 		return sessionFactory.getCurrentSession();
 	}
 	
-	protected Criteria createCriteria(Class clazz) {
+	protected Criteria createCriteria(Class<?> clazz) {
 		return getSession().createCriteria(clazz);
 	}
 	

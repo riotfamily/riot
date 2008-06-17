@@ -25,9 +25,9 @@ package org.riotfamily.riot.job.support;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Locale;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.riot.job.dao.JobDao;
 import org.riotfamily.riot.job.model.JobDetail;
 import org.riotfamily.riot.status.StatusMessage;
@@ -51,15 +51,13 @@ public class PendingJobMonitor implements StatusMonitor, MessageSourceAware {
 		this.messageSource = messageSource;
 	}
 
-	public Collection getMessages(Locale locale) {
-		Collection jobs = dao.getPendingJobDetails();
+	public Collection<StatusMessage> getMessages(Locale locale) {
+		Collection<JobDetail> jobs = dao.getPendingJobDetails();
 		if (jobs.isEmpty()) {
 			return null;
 		}
-		ArrayList messages = new ArrayList();
-		Iterator it = jobs.iterator();
-		while (it.hasNext()) {
-			JobDetail detail = (JobDetail) it.next();
+		ArrayList<StatusMessage> messages = Generics.newArrayList();
+		for (JobDetail detail : jobs) {
 			messages.add(new StatusMessage(messageSource.getMessage(MESSAGE_KEY, 
 					new Object[] { detail.getName(), new Integer(detail.getState()) }, 
 					locale), null));

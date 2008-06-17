@@ -35,12 +35,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class HibernateJobDao extends HibernateSupport implements JobDao {
 
-	public Collection getJobDetails() {
+	public Collection<JobDetail> getJobDetails() {
 		return createQuery("from JobDetail job " +
 				"order by job.endDate desc").list();
 	}
 	
-	public Collection getPendingJobDetails() {
+	public Collection<JobDetail> getPendingJobDetails() {
 		return createQuery("from JobDetail job where " +
 				"job.state != " + JobDetail.CANCELED + " and " +
 				"job.state != " + JobDetail.COMPLETED + 
@@ -106,7 +106,7 @@ public class HibernateJobDao extends HibernateSupport implements JobDao {
 		getSession().update(job);
 	}
 
-	public Collection getLogEntries(Long jobId) {
+	public Collection<JobLogEntry> getLogEntries(Long jobId) {
 		Query query = createQuery("from JobLogEntry e where " +
 				"e.job.id = :jobId order by e.date desc");
 		

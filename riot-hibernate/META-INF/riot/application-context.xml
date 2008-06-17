@@ -37,7 +37,6 @@
 		<property name="mappingLocations">
 			<list>
 				<value>classpath:/org/riotfamily/riot/hibernate/security/security.hbm.xml</value>
-				<!-- <value>classpath:/org/riotfamily/riot/hibernate/workflow/notification/notification.hbm.xml</value> -->
 			</list>
 		</property>
 		<property name="annotatedClasses">

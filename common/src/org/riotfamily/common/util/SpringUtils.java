@@ -30,6 +30,13 @@ public final class SpringUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public static<T> Map<String, T> beansOfType(
+			ListableBeanFactory lbf, Class<T> type) {
+		
+		return lbf.getBeansOfType(type);
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static<T> Map<String, T> beansOfTypeIncludingAncestors(
 			ListableBeanFactory lbf, Class<T> type) {
 		

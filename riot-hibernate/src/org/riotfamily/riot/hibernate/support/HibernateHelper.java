@@ -73,7 +73,7 @@ public class HibernateHelper extends HibernateSupport {
 	/**
 	 * Creates a Criteria for the given Class.
 	 */
-	public Criteria createCriteria(Class clazz) {
+	public Criteria createCriteria(Class<?> clazz) {
 		try {
 			return super.createCriteria(clazz);
 		}
@@ -86,7 +86,7 @@ public class HibernateHelper extends HibernateSupport {
 	 * Creates a cacheable Criteria for the given Class, using the helper's
 	 * defaultCacheRegion.
 	 */
-	public Criteria createCacheableCriteria(Class clazz) {
+	public Criteria createCacheableCriteria(Class<?> clazz) {
 		return createCacheableCriteria(defaultCacheRegion, clazz);
 	}
 
@@ -94,7 +94,7 @@ public class HibernateHelper extends HibernateSupport {
 	 * Creates a cacheable Criteria for the given Class, using the specified
 	 * cache region.
 	 */
-	public Criteria createCacheableCriteria(String cacheRegion, Class clazz) {
+	public Criteria createCacheableCriteria(String cacheRegion, Class<?> clazz) {
 		try {
 			Criteria c = super.createCriteria(clazz);
 			c.setCacheRegion(cacheRegion);
@@ -159,9 +159,10 @@ public class HibernateHelper extends HibernateSupport {
 	 * instance exists.
 	 * @see Session#load(Class, Serializable)
 	 */
-	public Object load(Class clazz, Serializable id) throws DataAccessException {
+	@SuppressWarnings("unchecked")
+	public<T> T load(Class<T> clazz, Serializable id) throws DataAccessException {
 		try {
-			return getSession().load(clazz, id);
+			return (T) getSession().load(clazz, id);
 		}
 		catch (HibernateException e) {
 			throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -173,9 +174,10 @@ public class HibernateHelper extends HibernateSupport {
 	 * if no such instance exists.
 	 * @see Session#get(Class, Serializable)
 	 */
-	public Object get(Class clazz, Serializable id) throws DataAccessException {
+	@SuppressWarnings("unchecked")
+	public<T> T get(Class<T> clazz, Serializable id) throws DataAccessException {
 		try {
-			return getSession().get(clazz, id);
+			return (T) getSession().get(clazz, id);
 		}
 		catch (HibernateException e) {
 			throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -225,9 +227,10 @@ public class HibernateHelper extends HibernateSupport {
 	 * Merges the given detached instance.
 	 * @see Session#merge(Object)
 	 */
-	public Object merge(Object object) throws DataAccessException {
+	@SuppressWarnings("unchecked")
+	public<T> T merge(T object) throws DataAccessException {
 		try {
-			return getSession().merge(object);
+			return (T) getSession().merge(object);
 		}
 		catch (HibernateException e) {
 			throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -299,7 +302,8 @@ public class HibernateHelper extends HibernateSupport {
 		}
 	}
 
-	public List list(Query query) throws DataAccessException {
+	@SuppressWarnings("unchecked")
+	public<T> List<T> list(Query query) throws DataAccessException {
 		try {
 			return query.list();
 		}
@@ -308,16 +312,18 @@ public class HibernateHelper extends HibernateSupport {
 		}
 	}
 
-	public Object uniqueResult(Query query) throws DataAccessException {
+	@SuppressWarnings("unchecked")
+	public<T> T uniqueResult(Query query) throws DataAccessException {
 		try {
-			return query.uniqueResult();
+			return (T) query.uniqueResult();
 		}
 		catch (HibernateException e) {
 			throw SessionFactoryUtils.convertHibernateAccessException(e);
 		}
 	}
 
-	public List list(Criteria c) throws DataAccessException {
+	@SuppressWarnings("unchecked")
+	public<T> List<T> list(Criteria c) throws DataAccessException {
 		try {
 			return c.list();
 		}
@@ -326,9 +332,10 @@ public class HibernateHelper extends HibernateSupport {
 		}
 	}
 
-	public Object uniqueResult(Criteria c) throws DataAccessException {
+	@SuppressWarnings("unchecked")
+	public<T> T uniqueResult(Criteria c) throws DataAccessException {
 		try {
-			return c.uniqueResult();
+			return (T) c.uniqueResult();
 		}
 		catch (HibernateException e) {
 			throw SessionFactoryUtils.convertHibernateAccessException(e);

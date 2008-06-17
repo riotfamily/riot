@@ -29,6 +29,7 @@ import org.directwebremoting.WebContextFactory;
 import org.riotfamily.riot.job.JobManager;
 import org.riotfamily.riot.job.dao.JobDao;
 import org.riotfamily.riot.job.model.JobDetail;
+import org.riotfamily.riot.job.model.JobLogEntry;
 
 public class JobUIService {
 
@@ -49,7 +50,7 @@ public class JobUIService {
 		return dao.getJobDetail(jobId);
 	}
 	
-	public Collection getLogEntries(Long jobId) {
+	public Collection<JobLogEntry> getLogEntries(Long jobId) {
 		return dao.getLogEntries(jobId);
 	}
 	

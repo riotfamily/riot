@@ -24,26 +24,24 @@
 package org.riotfamily.riot.job.support;
 
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.riot.job.model.JobDetail;
 
 public class TaskList {
 
 	private static Log log = LogFactory.getLog(TaskList.class);
 	
-	private HashSet activeTasks = new HashSet();
+	private HashSet<JobTask> activeTasks = Generics.newHashSet();
 	
 	/**
 	 * Returns the JobTask for the given JobDetail or <code>null</code> if
 	 * no such task exists.
 	 */
 	public synchronized JobTask getJobTask(JobDetail detail) {
-		Iterator it = activeTasks.iterator();
-		while (it.hasNext()) {
-			JobTask task = (JobTask) it.next();
+		for (JobTask task : activeTasks) {
 			if (task.getDetail().getId().equals(detail.getId())) {
 				return task;
 			}
@@ -77,9 +75,7 @@ public class TaskList {
 	
 	public void interruptAll() {
 		//TODO Synchronization ...
-		Iterator it = activeTasks.iterator();
-		while (it.hasNext()) {
-			JobTask task = (JobTask) it.next();
+		for (JobTask task : activeTasks) {
 			log.info("Interrupting task " + task.getDetail().getId());
 			task.interrupt();
 		}
@@ -91,9 +87,7 @@ public class TaskList {
 	 * {@link JobTask#updateExecutionTime() task.updateExecutionTime()}.
 	 */
 	public synchronized void updateExecutionTimes() {
-		Iterator it = activeTasks.iterator();
-		while (it.hasNext()) {
-			JobTask task = (JobTask) it.next();
+		for (JobTask task : activeTasks) {
 			task.updateExecutionTime();
 		}
 	}

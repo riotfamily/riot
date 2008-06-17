@@ -1,7 +1,5 @@
 package org.riotfamily.riot.job.ui;
 
-import java.util.HashMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,12 +32,10 @@ public class JobUIController implements Controller {
 		String jobType = request.getParameter("type");
 		
 		JobDetail detail = jobManager.getOrCreateJob(jobType, objectId);
-		
-		HashMap model = new HashMap();
-		model.put("jobId", detail.getId());
-		model.put("type", jobType);
-		
-		return new ModelAndView(viewName, model);
+		ModelAndView mv = new ModelAndView(viewName);
+		mv.addObject("jobId", detail.getId());
+		mv.addObject("type", jobType);
+		return mv;
 	}
 	
 	

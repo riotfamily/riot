@@ -34,13 +34,13 @@ public class HibernatePropertyEditor extends PropertyEditorSupport {
 
 	private SessionFactory sessionFactory;
 	
-	private Class entityClass;
+	private Class<?> entityClass;
 	
 	public HibernatePropertyEditor(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
 	
-	public void setEntityClass(Class entityClass) {
+	public void setEntityClass(Class<?> entityClass) {
 		this.entityClass = entityClass;
 	}
 
