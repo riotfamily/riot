@@ -8,6 +8,8 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
+	<tx:annotation-driven />
+
 	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
 		<property name="location" value="classpath:/application.properties" />
 		<property name="ignoreResourceNotFound" value="true" />
@@ -23,16 +25,6 @@
 	<bean id="riotResourcePath" factory-bean="riotRuntime" factory-method="getResourcePath" />
 	
 	<bean id="riotVersion" factory-bean="riotRuntime" factory-method="getVersionString" />
-
-	<bean id="notificationDao" class="org.riotfamily.riot.workflow.notification.support.DefaultNotificationDao" />
-
-	<bean id="notificationFactory" class="org.riotfamily.riot.workflow.notification.support.DefaultNotificationFactory" />
-
-	<tx:advice id="matchAllTxInterceptor">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" isolation="DEFAULT" />
-		</tx:attributes>
-	</tx:advice>
 
 	<bean id="riotDaoService" class="org.riotfamily.riot.list.RiotDaoService" />
 	

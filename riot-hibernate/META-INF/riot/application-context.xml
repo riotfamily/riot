@@ -11,8 +11,6 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-7.0.xsd">
 
-	<import resource="classpath:/org/riotfamily/riot/hibernate/runtime/db-schema.xml"/>
-
 	<!-- JDBC DataSource pooled by C3P0 -->
 	<bean id="riotDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
 		<property name="driverClass" value="${jdbc.driver_class}" />
@@ -26,23 +24,28 @@
 	    <property name="checkoutTimeout" value="30000" />
 	</bean>
 
+	<!-- 
 	<bean id="revolt" class="org.riotfamily.revolt.Evolver">
 		<property name="automatic" value="${riot.revolt.automatic=false}" />
 		<property name="enabled" value="${riot.revolt.enabled=true}" />
 	</bean>
-
+ 	-->
+ 
 	<!-- The Hibernate SessionFactory -->
-	<bean id="sessionFactory" depends-on="revolt"
-			class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
-
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="dataSource" ref="riotDataSource" />
 		<property name="mappingLocations">
 			<list>
 				<value>classpath:/org/riotfamily/riot/hibernate/security/security.hbm.xml</value>
-				<value>classpath:/org/riotfamily/riot/hibernate/workflow/notification/notification.hbm.xml</value>
-				<value>classpath:/org/riotfamily/riot/hibernate/job/job.hbm.xml</value>
+				<!-- <value>classpath:/org/riotfamily/riot/hibernate/workflow/notification/notification.hbm.xml</value> -->
 			</list>
 		</property>
+		<property name="annotatedClasses">
+			<list>
+				<value>org.riotfamily.riot.hibernate.security.User</value>
+			</list>
+		</property>
+		
 		<property name="hibernateProperties">
 			<util:properties location="classpath:/application.properties" />
 		</property>
@@ -65,9 +68,5 @@
 	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-
-	<override:bean ref="notificationDao" class="org.riotfamily.riot.hibernate.workflow.notification.HibernateNotificationDao">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</override:bean>
 
 </beans>

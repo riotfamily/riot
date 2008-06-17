@@ -37,11 +37,13 @@ import org.riotfamily.riot.security.AccessController;
 import org.riotfamily.website.cache.CacheInvalidationUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
+@Transactional
 public class EntityEditorImpl implements EntityEditor {
 
 	private RiotDaoService daoService;

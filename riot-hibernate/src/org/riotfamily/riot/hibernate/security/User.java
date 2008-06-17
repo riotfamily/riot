@@ -23,8 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.security;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.riotfamily.riot.security.auth.RiotUser;
 
+@Entity
+@Table(name="riot_users")
 public class User implements RiotUser {
 
 	private String id;
@@ -39,6 +46,7 @@ public class User implements RiotUser {
 	
 	private String email;
 
+	@Id
 	public String getId() {
 		return this.id;
 	}
@@ -47,6 +55,7 @@ public class User implements RiotUser {
 		this.id = id;
 	}
 	
+	@Transient
 	public String getUserId() {
 		return getId();
 	}
@@ -83,6 +92,7 @@ public class User implements RiotUser {
 		this.password = password;
 	}
 
+	@Transient
 	public String getNewPassword() {
 		return this.newPassword;
 	}

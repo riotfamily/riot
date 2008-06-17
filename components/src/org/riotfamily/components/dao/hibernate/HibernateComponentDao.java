@@ -32,24 +32,23 @@ import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Default ComponentDao implementation that uses Hibernate. All mappings
  * a specified in <code>component.hbm.xml</code> which can be found in the
  * same package.
  */
+@Transactional
 public class HibernateComponentDao implements ComponentDao {
 
 	private CacheService cacheService;
 	
 	private HibernateHelper hibernate;
 	
-	public HibernateComponentDao(CacheService cacheService) {
-		this.cacheService = cacheService;
-	}
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
+	public HibernateComponentDao(SessionFactory sessionFactory, CacheService cacheService) {
 		this.hibernate = new HibernateHelper(sessionFactory, "components");
+		this.cacheService = cacheService;
 	}
 	
 	public void deleteComponentList(ComponentList list) {

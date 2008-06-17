@@ -11,6 +11,8 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx.xsd">
 
+	<tx:annotation-driven />
+	
 	<!-- Read placeholders from application.properties  -->
 	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
 		<property name="location" value="classpath:/application.properties" />
@@ -511,30 +513,7 @@
 
 	<bean id="messageCodeRevelationController" name="/toggle-i18n" class="org.riotfamily.common.i18n.MessageCodeRevelationController" />
 
-	<bean id="notificationListController" name="/notifications" class="org.riotfamily.riot.workflow.notification.ui.NotificationListController">
-		<constructor-arg ref="notificationDao" />
-	</bean>
-
-	<bean id="statusController" name="/status" class="org.riotfamily.riot.workflow.status.ui.StatusController" />
-
-    <bean id="jobUIUpdater" class="org.riotfamily.riot.job.ui.JobUIUpdater" />
-
-	<bean id="jobDao" class="org.riotfamily.riot.job.persistence.InMemoryJobDao" />
-	
-	<bean id="jobManager" class="org.riotfamily.riot.job.JobManager">
-		<constructor-arg ref="jobDao" />
-		<constructor-arg ref="jobUIUpdater" />
-	</bean>
-
-	<bean id="jobUIService" class="org.riotfamily.riot.job.ui.JobUIService">
-		<constructor-arg ref="jobManager" />
-		<constructor-arg ref="jobDao" />
-		<constructor-arg ref="jobUIUpdater" />
-	</bean>
-
-	<bean id="jobUIController" name="/job" class="org.riotfamily.riot.job.ui.JobUIController">
-		<property name="jobManager" ref="jobManager" />
-	</bean>
+	<bean id="statusController" name="/status" class="org.riotfamily.riot.status.StatusController" />
 
 	<bean id="org.directwebremoting.PageNormalizer"
 		class="org.riotfamily.common.web.dwr.NoOpPageNormalizer" />
@@ -575,14 +554,12 @@
 					</property>
 					<property name="converterTypes">
 						<props>
-							<prop key="org.riotfamily.riot.job.persistence.*">bean</prop>
 							<prop key="org.riotfamily.riot.list.ui.*">bean</prop>
 							<prop key="org.riotfamily.riot.list.command.*">bean</prop>
 						</props>
 					</property>
 					<property name="serviceBeans">
 						<map>
-							<entry key="JobUIService" value-ref="jobUIService" />
 							<entry key="ListService" value-ref="listService" />
 						</map>
 					</property>

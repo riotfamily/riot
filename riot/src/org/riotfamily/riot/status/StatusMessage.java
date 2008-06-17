@@ -14,45 +14,38 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.model.wrapper;
-
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
-import org.hibernate.annotations.Type;
+package org.riotfamily.riot.status;
 
 
 /**
+ * Class used for messages returned by a {@link StatusMonitor}.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 7.0
  */
-@Entity
-@DiscriminatorValue("String")
-public class StringWrapper extends ValueWrapper<String> {
+public class StatusMessage {
 
-	private String value;
-
-	@Column(name="string_value")
-	@Type(type="text")
-	public String getValue() {
-		return value;
-	}
+	private String text;
 	
-	public void setValue(String value) {
-		this.value = (String) value;
+	private String link;
+	
+	public StatusMessage(String text, String link) {		
+		this.text = text;
+		this.link = link;
 	}
 
-	public StringWrapper deepCopy() {
-		StringWrapper copy = new StringWrapper();
-		copy.wrap(value);
-		return copy;
+	public String getLink() {
+		return link;
 	}
+
+	public String getText() {
+		return text;
+	}
+
 }

@@ -58,37 +58,9 @@
  		<property name="userDao" ref="riotUserDao" />
  	</override:bean>
  	
-	<override:bean ref="sessionMetaDataStore" class="org.springframework.aop.framework.ProxyFactoryBean">
-		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
-		<property name="target">
-			<bean class="org.riotfamily.riot.hibernate.security.HibernateSessionMetaDataStore">
-				<property name="sessionFactory" ref="sessionFactory" />
-			</bean>
-		</property>
-	</override:bean>
-	
-	<!-- Jobs -->
-	
-	<tx:advice id="matchAllTxInterceptor">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" isolation="DEFAULT" />
-		</tx:attributes>
-	</tx:advice>
-	
-	<override:bean ref="jobDao" class="org.springframework.aop.framework.ProxyFactoryBean">
-		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
-		<property name="target" ref="jobDaoTarget" />
-	</override:bean>	
-	
-	<bean id="jobDaoTarget" class="org.riotfamily.riot.hibernate.job.HibernateJobDao">
+	<override:bean ref="sessionMetaDataStore" class="org.riotfamily.riot.hibernate.security.HibernateSessionMetaDataStore">
 		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-	
-	<!-- 
-	<bean class="org.riotfamily.riot.job.support.PendingJobMonitor">
-		<constructor-arg ref="jobDao" />
-	</bean>
-	-->
+	</override:bean>
 	
 	<!-- Overrides -->
 	

@@ -42,15 +42,9 @@
 		<property name="argument" ref="valueWrapperFactory" />
 	</bean>
 	
-	<bean id="componentDao" class="org.springframework.aop.framework.ProxyFactoryBean"
-			depends-on="valueWrapperService">
-		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
-		<property name="target"><ref bean="componentDaoTarget" /></property>
-	</bean>
-
-	<bean id="componentDaoTarget" class="org.riotfamily.components.dao.hibernate.HibernateComponentDao">
+	<bean id="componentDao" class="org.riotfamily.components.dao.hibernate.HibernateComponentDao">
+		<constructor-arg ref="sessionFactory" />
 		<constructor-arg ref="cacheService" />
-		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
 </beans>

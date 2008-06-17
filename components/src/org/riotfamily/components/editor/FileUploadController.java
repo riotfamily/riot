@@ -45,10 +45,10 @@ public class FileUploadController implements Controller {
 	
 	private String tokenParameter = "token";
 	
-	private ComponentEditorImpl componentEditor;
+	private UploadManager uploadManager;
 	
-	public FileUploadController(ComponentEditorImpl componentEditor) {
-		this.componentEditor = componentEditor;
+	public FileUploadController(UploadManager uploadManager) {
+		this.uploadManager = uploadManager;
 	}
 
 	public ModelAndView handleRequest(HttpServletRequest request, 
@@ -67,10 +67,10 @@ public class FileUploadController implements Controller {
 			HttpServletResponse response) throws IOException {
 
 		String token = request.getParameter(tokenParameter);
-		if (componentEditor.isValidToken(token)) {
+		if (uploadManager.isValidToken(token)) {
 			MultipartFile multipartFile = request.getFile(fileParam);
 			if ((multipartFile != null) && (!multipartFile.isEmpty())) {
-				RiotImage image = componentEditor.storeImage(token, multipartFile);
+				RiotImage image = uploadManager.storeImage(token, multipartFile);
 				PrintWriter out = response.getWriter();
 				out.print("({id: ");
 				out.print(image.getId());

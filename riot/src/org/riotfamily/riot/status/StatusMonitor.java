@@ -14,45 +14,32 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.model.wrapper;
+package org.riotfamily.riot.status;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
-import org.hibernate.annotations.Type;
+import java.util.Collection;
+import java.util.Locale;
 
 
 /**
+ * Interface that enables classes to display status messages on the Riot 
+ * dashboard.
+ *   
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 7.0
  */
-@Entity
-@DiscriminatorValue("String")
-public class StringWrapper extends ValueWrapper<String> {
+public interface StatusMonitor {
 
-	private String value;
-
-	@Column(name="string_value")
-	@Type(type="text")
-	public String getValue() {
-		return value;
-	}
-	
-	public void setValue(String value) {
-		this.value = (String) value;
-	}
-
-	public StringWrapper deepCopy() {
-		StringWrapper copy = new StringWrapper();
-		copy.wrap(value);
-		return copy;
-	}
+	/**
+	 * Implementors may return a Collection of {@link StatusMessage} instances. 
+	 * Make sure that you properly escape all parts of the message that could 
+	 * contain user-generated content to prevent XSS attacks.  
+	 */
+	public Collection<StatusMessage> getMessages(Locale locale);
+		
 }

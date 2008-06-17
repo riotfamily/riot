@@ -35,7 +35,6 @@
 				</div>
 			</div>
 			<div class="extra">
-				<@riot.controller "/notifications" />
 				<@riot.controller "/status" />
 			</div>
 		</div>

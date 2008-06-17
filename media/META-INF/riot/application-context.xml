@@ -11,8 +11,6 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-7.0.xsd">
 
-	<import resource="classpath:org/riotfamily/media/runtime/db-schema.xml"/>
-    
 	<override:add ref="sessionFactory" property="annotatedClasses">
 		<value>org.riotfamily.media.model.RiotFile</value>
 		<value>org.riotfamily.media.model.RiotImage</value>
@@ -25,13 +23,7 @@
 		<value>org.riotfamily.media.model.data.VideoData</value>
 	</override:add>
 	
-	<bean id="mediaDao" class="org.springframework.aop.framework.ProxyFactoryBean"
-			depends-on="fileDataInitializer">
-		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
-		<property name="target"><ref bean="mediaDaoTarget" /></property>
-	</bean>
-
-	<bean id="mediaDaoTarget" class="org.riotfamily.media.dao.hibernate.HibernateMediaDao">
+	<bean id="mediaDao" class="org.riotfamily.media.dao.hibernate.HibernateMediaDao">
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 	

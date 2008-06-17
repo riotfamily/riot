@@ -14,12 +14,7 @@
 	<!--
 	  - Service bean to edit components. Exposed via DWR.
 	  -->
-	<bean id="componentEditor" class="org.springframework.aop.framework.ProxyFactoryBean">
-		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
-		<property name="target"><ref bean="componentEditorTarget" /></property>
-	</bean>
-
-	<bean id="componentEditorTarget" class="org.riotfamily.components.editor.ComponentEditorImpl">
+	<bean id="componentEditor" class="org.riotfamily.components.editor.ComponentEditorImpl">
 		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="mediaDao" />
 		<constructor-arg ref="imageCropper" />
@@ -84,13 +79,7 @@
 		<property name="successViewName" value="classpath:/org/riotfamily/components/runtime/view/toolbar-login-success.ftl" />
 	</bean>
 
-
-	<bean id="entityEditor" class="org.springframework.aop.framework.ProxyFactoryBean">
-		<property name="interceptorNames"><value>matchAllTxInterceptor</value></property>
-		<property name="target"><ref bean="entityEditorTarget" /></property>
-	</bean>
-
-	<bean id="entityEditorTarget" class="org.riotfamily.components.editor.EntityEditorImpl">
+	<bean id="entityEditor" class="org.riotfamily.components.editor.EntityEditorImpl">
 		<constructor-arg ref="riotDaoService" />
 		<property name="cacheService" ref="cacheService" />
 		<property name="mediaDao" ref="mediaDao" />
@@ -98,7 +87,7 @@
 	</bean>
 		
 	<bean name="/components/upload" class="org.riotfamily.components.editor.FileUploadController">
-		<constructor-arg ref="componentEditorTarget" />
+		<constructor-arg ref="componentEditor" />
 	</bean>
 	
 	<!-- Overrides -->

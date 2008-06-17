@@ -64,13 +64,16 @@ import org.riotfamily.media.model.data.ImageData;
 import org.riotfamily.riot.security.session.LoginManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * Service bean to edit ComponentLists and ComponentVersions.
  */
-public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware {
+@Transactional
+public class ComponentEditorImpl implements ComponentEditor, UploadManager, 
+		MessageSourceAware {
 
 	private Log log = LogFactory.getLog(ComponentEditorImpl.class);
 
@@ -167,7 +170,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		return token;
 	}
 	
-	boolean isValidToken(String token) {
+	public boolean isValidToken(String token) {
 		boolean valid = validTokens.contains(token);
 		log.debug((valid ? "Valid" : "Invalid") + " token: " + token);
 		return valid;
@@ -177,7 +180,7 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 		validTokens.remove(token);
 	}
 	
-	RiotImage storeImage(String token, MultipartFile multipartFile) 
+	public RiotImage storeImage(String token, MultipartFile multipartFile) 
 			throws IOException {
 		
 		RiotImage image = new RiotImage(new ImageData(multipartFile));

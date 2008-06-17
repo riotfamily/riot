@@ -27,7 +27,9 @@ import org.riotfamily.riot.security.auth.RiotUser;
 import org.riotfamily.riot.security.session.SessionMetaData;
 import org.riotfamily.riot.security.session.SessionMetaDataStore;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class HibernateSessionMetaDataStore extends HibernateDaoSupport 
 		implements SessionMetaDataStore {
 

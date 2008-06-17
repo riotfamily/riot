@@ -31,12 +31,14 @@ import org.riotfamily.media.dao.MediaDao;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.data.FileData;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
+@Transactional
 public class HibernateMediaDao implements MediaDao {
 
 	private HibernateHelper hibernate;

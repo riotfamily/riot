@@ -1,0 +1,53 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+	<bean id="jobDao" class="org.riotfamily.riot.job.dao.HibernateJobDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<!-- 
+	<bean class="org.riotfamily.riot.job.support.PendingJobMonitor">
+		<constructor-arg ref="jobDao" />
+	</bean>
+	-->
+	
+	<bean id="jobUIUpdater" class="org.riotfamily.riot.job.ui.JobUIUpdater" />
+
+	<bean id="jobDao" class="org.riotfamily.riot.job.dao.HibernateJobDao" />
+	
+	<bean id="jobManager" class="org.riotfamily.riot.job.JobManager">
+		<constructor-arg ref="jobDao" />
+		<constructor-arg ref="jobUIUpdater" />
+	</bean>
+
+	<bean id="jobUIService" class="org.riotfamily.riot.job.ui.JobUIService">
+		<constructor-arg ref="jobManager" />
+		<constructor-arg ref="jobDao" />
+		<constructor-arg ref="jobUIUpdater" />
+	</bean>
+
+	<bean id="jobUIController" name="/job" class="org.riotfamily.riot.job.ui.JobUIController">
+		<property name="jobManager" ref="jobManager" />
+	</bean>
+
+	<override:add ref="dwrController" property="configurators">
+		<property name="converterTypes">
+			<props>
+				<prop key="org.riotfamily.riot.job.model.*">bean</prop>
+			</props>
+		</property>
+		<property name="serviceBeans">
+			<map>
+				<entry key="JobUIService" value-ref="jobUIService" />
+			</map>
+		</property>
+	</override:add>
+
+</beans>

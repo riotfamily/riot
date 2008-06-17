@@ -14,45 +14,41 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.model.wrapper;
+package org.riotfamily.riot.job.dao;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import java.util.Collection;
 
-import org.hibernate.annotations.Type;
+import org.riotfamily.riot.job.model.JobDetail;
+import org.riotfamily.riot.job.model.JobLogEntry;
 
 
-/**
- * @author Felix Gnass [fgnass at neteye dot de]
- * @since 7.0
- */
-@Entity
-@DiscriminatorValue("String")
-public class StringWrapper extends ValueWrapper<String> {
+public interface JobDao {
 
-	private String value;
-
-	@Column(name="string_value")
-	@Type(type="text")
-	public String getValue() {
-		return value;
-	}
+	public Collection getLogEntries(Long jobId);
 	
-	public void setValue(String value) {
-		this.value = (String) value;
-	}
+	public void log(JobLogEntry entry);
+	
+	public Collection getJobDetails();
+	
+	public Collection getPendingJobDetails();
+	
+	public JobDetail getJobDetail(Long jobId);
+	
+	public JobDetail getPendingJobDetail(String type, String objectId);
+	
+	public JobDetail getLastCompletedJobDetail(String type, String objectId);
+	
+	public int getAverageStepTime(String type);
+	
+	public void saveJobDetail(JobDetail detail);
+	
+	public void updateJobDetail(JobDetail detail);
 
-	public StringWrapper deepCopy() {
-		StringWrapper copy = new StringWrapper();
-		copy.wrap(value);
-		return copy;
-	}
 }

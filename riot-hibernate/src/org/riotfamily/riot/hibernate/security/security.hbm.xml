@@ -13,15 +13,5 @@
 		<property name="lastLoginDate" />
 		<property name="lastLoginIP" />
 	</class>
-	
-	<class name="org.riotfamily.riot.hibernate.security.User" table="riot_users" lazy="false">
-		<id name="id">
-			<generator class="assigned" />
-		</id>
-		<property name="password" column="`password`" />
-		<property name="role" />
-		<property name="name" />
-		<property name="email" />
-	</class>
 
 </hibernate-mapping>
