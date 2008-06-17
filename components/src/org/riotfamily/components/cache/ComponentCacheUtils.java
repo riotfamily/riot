@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.components.model.ComponentList;
+import org.riotfamily.components.model.ComponentListLocation;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 
@@ -97,14 +98,29 @@ public final class ComponentCacheUtils {
 					+ list.getLocation().getSlot()
 					+ (preview ? "-preview" : "-live");
 		}
-		return list.getLocation().toString() + (preview ? "-preview" : "-live");
+		return getListTag(list.getLocation(), preview);
 	}
 	
+    /**
+     * Returns the tag for the given list location.
+     */
+    private static String getListTag(ComponentListLocation location,
+        boolean preview) {
+
+        return location.toString() + (preview ? "-preview" : "-live");
+    }
+    
 	public static void addListTag(HttpServletRequest request, 
 			ComponentList list, boolean preview) {
 		
 		TaggingContext.tag(request, getListTag(list, preview));
 	}
+
+    public static void addListTag(HttpServletRequest request, 
+            ComponentListLocation location, boolean preview) {
+        
+        TaggingContext.tag(request, getListTag(location, preview));
+    }
 
 	/**
 	 * Invalidates the live and preview version of the given list.
