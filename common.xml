@@ -4,7 +4,7 @@
 		Build file to be included by all sub-projects (modules).
 	</description>
 
-	<property name="project.version" value="7.0.2" />
+	<property name="project.version" value="7.0.3" />
 
 	<tstamp>
 		<format property="build.date" pattern="yyyy-MM-dd" />
