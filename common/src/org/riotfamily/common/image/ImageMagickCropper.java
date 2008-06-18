@@ -48,7 +48,7 @@ public class ImageMagickCropper implements ImageCropper {
 		args.add(scaledWidth + "x>");
 		args.add("-crop");
 		args.add(width + "x" + height + "+" + x + "+" + y);
-		if (imageMagick.getMajorVersion() >= 6) {
+		if (imageMagick.supportsVersion(6, 0)) {
 			args.add("+repage");
 		}
 		else {

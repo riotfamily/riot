@@ -25,11 +25,12 @@ package org.riotfamily.common.image;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.io.RuntimeCommand;
-import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -43,9 +44,17 @@ public class ImageMagick implements InitializingBean {
 
 	private static Log log = LogFactory.getLog(ImageMagick.class);
 	
+	private static Pattern majorMinorPattern = Pattern.compile("ImageMagick ([0-9]).([0-9])");
+	
+	private static Pattern majorMinorMicroPattern = Pattern.compile("ImageMagick ([0-9]).([0-9]).([0-9])");
+	
 	private String convertCommand;
 
 	private int majorVersion;
+	
+	private int minorVersion;
+	
+	private int microVersion;
 	
 	public void setConvertCommand(String convertCommand) {
 		this.convertCommand = convertCommand;
@@ -64,8 +73,26 @@ public class ImageMagick implements InitializingBean {
 			log.info("Looking for ImageMagick binary: " + convertCommand);
 			String version = new RuntimeCommand(convertCommand, "-version").exec().getOutput();
 			log.info(version);
-			majorVersion = FormatUtils.extractInt(version, "ImageMagick ([0-9])");
-			log.info("Major version: " + majorVersion);
+			
+			Matcher matcher = majorMinorMicroPattern.matcher(version);
+			if (matcher.find()) {
+				majorVersion = Integer.parseInt(matcher.group(1));
+				minorVersion = Integer.parseInt(matcher.group(2));
+				microVersion = Integer.parseInt(matcher.group(3));
+			}
+			else {
+				matcher = majorMinorPattern.matcher(version);
+				if (matcher.find()) {
+					majorVersion = Integer.parseInt(matcher.group(1));
+					minorVersion = Integer.parseInt(matcher.group(2));
+				}
+			}
+			log.info(String.format("Major version: %d minor version: %d " 
+						+ "micro version %d",majorVersion, minorVersion, 
+						microVersion));
+		}
+		catch (NumberFormatException e) {
+			log.warn("Could not determine ImageMagick version");
 		}
 		catch (IOException e) {
 			log.warn("ImageMagick not found.");
@@ -76,10 +103,23 @@ public class ImageMagick implements InitializingBean {
 		return majorVersion > 0;
 	}
 	
-	public int getMajorVersion() {
-		return this.majorVersion;
+	public boolean supportsVersion(int majorVersion, int minorVersion) {
+		return (this.majorVersion == majorVersion 
+			&& this.minorVersion >= minorVersion)
+			|| this.majorVersion > majorVersion; 			
 	}
 	
+	public boolean supportsVersion(int majorVersion, int minorVersion, 
+				int microVersion) {
+		
+		return (this.majorVersion == majorVersion 
+				&& this.minorVersion == minorVersion 
+				&& this.microVersion >= microVersion)
+				|| (this.majorVersion == majorVersion 
+						&& this.minorVersion > minorVersion)
+				|| this.majorVersion > majorVersion;
+	}
+			
 	public String invoke(List<String> args) throws IOException {
 		Assert.state(isAvailable(), "ImageMagick binary '" 
 				+ convertCommand + "' not found in path.");
@@ -90,7 +130,7 @@ public class ImageMagick implements InitializingBean {
 			cmd[i + 1] = (String) args.get(i);
 		}
 		return new RuntimeCommand(cmd).exec().getResult();
-	}
+	}	
 	
 	public static ImageMagick getInstance(ApplicationContext ctx) {
 		return (ImageMagick) BeanFactoryUtils.beanOfTypeIncludingAncestors(
