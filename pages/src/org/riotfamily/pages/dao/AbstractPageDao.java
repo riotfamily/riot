@@ -39,7 +39,7 @@ import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.pages.setup.HandlerNameHierarchy;
+import org.riotfamily.pages.setup.PageTypeHierarchy;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -59,9 +59,9 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	
 	private ComponentDao componentDao;
 	
-	private HandlerNameHierarchy handlerNameHierarchy;
+	private PageTypeHierarchy pageTypeHierarchy;
 
-	private Map autoCreatePages;
+	private Map<String, PageDefinition> autoCreatePages;
 	
 	public AbstractPageDao() {
 	}
@@ -74,15 +74,15 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		this.componentDao = componentDao;
 	}
 
-	public void setHandlerNameHierarchy(HandlerNameHierarchy handlerNameHierarchy) {
-		this.handlerNameHierarchy = handlerNameHierarchy;
+	public void setPageTypeHierarchy(PageTypeHierarchy pageTypeHierarchy) {
+		this.pageTypeHierarchy = pageTypeHierarchy;
 	}
 	
-	protected HandlerNameHierarchy getHandlerNameHierarchy() {
-		return this.handlerNameHierarchy;
+	protected PageTypeHierarchy getPageTypeHierarchy() {
+		return this.pageTypeHierarchy;
 	}
 
-	public void setAutoCreatePages(Map autoCreatePages) {
+	public void setAutoCreatePages(Map<String, PageDefinition> autoCreatePages) {
 		this.autoCreatePages = autoCreatePages;
 	}
 	
@@ -128,9 +128,9 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 	
 	public void saveNode(PageNode node) {
-		String handlerName = handlerNameHierarchy.initHandlerName(node);
-		if (autoCreatePages != null && handlerName != null) {
-			PageDefinition child = (PageDefinition) autoCreatePages.get(handlerName);
+		String pageType = pageTypeHierarchy.initPageType(node);
+		if (autoCreatePages != null && pageType != null) {
+			PageDefinition child = autoCreatePages.get(pageType);
 			if (child != null) {
 				ArrayList<Site> sites = new ArrayList<Site>();
 				for (Page page : node.getPages()) { 

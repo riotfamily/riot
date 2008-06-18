@@ -291,8 +291,8 @@ public class Page {
 	}
 
 	@Transient
-	public String getHandlerName() {
-		return node.getHandlerName();
+	public String getPageType() {
+		return node.getPageType();
 	}
 
 	@ManyToOne(cascade=CascadeType.ALL)

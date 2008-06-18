@@ -51,12 +51,12 @@ public class PagePropertiesEditor extends CompositeElement
 	private LocalizedEditorBinder binder;
 	
 	public PagePropertiesEditor(FormRepository repository, Page masterPage, 
-			String handlerName) {
+			String pageType) {
 		
 		this.repository = repository;
 		this.masterPage = masterPage;
 		this.binder = new LocalizedEditorBinder(new PagePropertiesEditorBinder());
-		this.currentForm = new PropertiesForm(handlerName);
+		this.currentForm = new PropertiesForm(pageType);
 		addComponent(currentForm);
 	}
 	
@@ -84,8 +84,8 @@ public class PagePropertiesEditor extends CompositeElement
 	
 	private class PropertiesForm extends NestedForm {
 		
-		public PropertiesForm(String handlerName) {
-			String id = handlerName + "-page";
+		public PropertiesForm(String pageType) {
+			String id = pageType + "-page";
 			setRequired(true);
 			setIndent(false);
 			setEditorBinder(binder);

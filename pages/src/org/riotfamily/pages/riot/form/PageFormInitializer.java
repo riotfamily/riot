@@ -30,33 +30,33 @@ import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.pages.setup.HandlerNameHierarchy;
+import org.riotfamily.pages.setup.PageTypeHierarchy;
 import org.riotfamily.riot.form.ui.FormUtils;
 
 /**
  * FormInitializer that imports form fields defined in content-forms.xml.
- * If a new page is edited, the {@link HandlerNameHierarchy} is asked for
- * possible handler-names. If more than one handler-name is configured, a
- * dropdown is added that lets the user select a page-type.
+ * If a new page is edited, the {@link PageTypeHierarchy} is asked for
+ * possible page types. If more than one page type is configured, a
+ * dropdown is added that lets the user select a type.
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.6
  */
 public class PageFormInitializer implements FormInitializer {
 
-	private HandlerNameHierarchy handlerNameHierarchy;
+	private PageTypeHierarchy pageTypeHierarchy;
 	
 	private FormRepository repository;
 
-	public PageFormInitializer(HandlerNameHierarchy handlerNameHierarchy, 
+	public PageFormInitializer(PageTypeHierarchy pageTypeHierarchy, 
 			FormRepository repository) {
 		
-		this.handlerNameHierarchy = handlerNameHierarchy;
+		this.pageTypeHierarchy = pageTypeHierarchy;
 		this.repository = repository;
 	}
 
 	public void initForm(Form form) {
-		String handlerName = null;
+		String pageType = null;
 		SelectBox sb = null;
 		if (form.isNew())  {
 			Page parentPage = null;
@@ -71,23 +71,23 @@ public class PageFormInitializer implements FormInitializer {
 				Site site = (Site) parent;
 				form.setAttribute("siteId", site.getId());
 			}
-			String[] handlerNames = handlerNameHierarchy.getChildHandlerNameOptions(parentPage);
-			if (handlerNames.length > 0) {
-				sb = createHandlerNameBox(form, handlerNames);
-				handlerName = handlerNames[0];
+			String[] pageTypes = pageTypeHierarchy.getChildTypeOptions(parentPage);
+			if (pageTypes.length > 0) {
+				sb = createPageTypeBox(form, pageTypes);
+				pageType = pageTypes[0];
 			}
 			else {
-				handlerName = "default";
+				pageType = "default";
 			}
 		}
 		else {
 			Page page = (Page) form.getBackingObject();
 			form.setAttribute("pageId", page.getId());
-			handlerName = page.getHandlerName();
+			pageType = page.getPageType();
 		}
 		
 		PagePropertiesEditor ppe = new PagePropertiesEditor(repository, 
-				getMasterPage(form), handlerName);
+				getMasterPage(form), pageType);
 		
 		if (sb != null) {
 			sb.addChangeListener(ppe);
@@ -95,18 +95,18 @@ public class PageFormInitializer implements FormInitializer {
 		form.addElement(ppe, "pageProperties");
 	}
 	
-	private SelectBox createHandlerNameBox(Form form, String[] handlerNames) {
+	private SelectBox createPageTypeBox(Form form, String[] handlerNames) {
 		if (handlerNames.length > 1) {
 			SelectBox sb = new SelectBox();
 			sb.setRequired(true);
 			sb.setOptions(handlerNames);
-			sb.setLabelMessageKey("page.handlerName.");
+			sb.setLabelMessageKey("page.pageType.");
 			sb.setAppendLabel(true);
 			NestedForm nodeForm = new NestedForm();
 			nodeForm.setIndent(false);
 			nodeForm.setRequired(true);
 			form.addElement(nodeForm, "node");
-			nodeForm.addElement(sb, "handlerName");
+			nodeForm.addElement(sb, "pageType");
 			return sb;
 		}
 		return null;

@@ -197,8 +197,8 @@ public class PageFacade {
 		return page.getAncestors();
 	}
 
-	public String getHandlerName() {
-		return page.getHandlerName();
+	public String getPageType() {
+		return page.getPageType();
 	}
 
 	public Long getContentId() {

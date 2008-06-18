@@ -131,20 +131,20 @@ public class HibernatePageDao extends AbstractPageDao {
 		return (Page) hibernate.uniqueResult(c);
 	}
 
-	public PageNode findNodeForHandler(String handlerName) {
+	public PageNode findNodeOfType(String handlerName) {
 		Criteria c = hibernate.createCacheableCriteria(PageNode.class);
 		c.createCriteria("node").add(Restrictions.eq("handlerName", handlerName));
 		return (PageNode) hibernate.uniqueResult(c);
 	}
 
-	public Page findPageForHandler(String handlerName, Site site) {
+	public Page findPageOfType(String handlerName, Site site) {
 		Criteria c = hibernate.createCacheableCriteria(Page.class);
 		c.add(Restrictions.eq("site", site));
 		c.createCriteria("node").add(Restrictions.eq("handlerName", handlerName));
 		return (Page) hibernate.uniqueResult(c);
 	}
 
-	public List findPagesForHandler(String handlerName, Site site) {
+	public List findPagesOfType(String handlerName, Site site) {
 		Criteria c = hibernate.createCacheableCriteria(Page.class);
 		c.add(Restrictions.eq("site", site));
 		c.createCriteria("node").add(Restrictions.eq("handlerName", handlerName));

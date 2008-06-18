@@ -11,18 +11,18 @@
 </#function>
 
 <#---
-  - Returns the page with the given handlerName. There must be only
-  - one PageNode with that handlerName, otherwise an exception is thrown.
+  - Returns the page with the given pageType. There must be only
+  - one PageNode with that pageType, otherwise an exception is thrown.
   -->
-<#function pageForHandler handlerName site=currentSite>
-	<#return pagesMacroHelper.getPageForHandler(handlerName, site) />
+<#function pageOfType pageType site=currentSite>
+	<#return pagesMacroHelper.getPageOfType(pageType, site) />
 </#function>
 
 <#---
-  - Returns all pages with the given handlerName.
+  - Returns all pages with the given pageType.
   -->
-<#function pagesForHandler handlerName site=currentSite>
-	<#return pagesMacroHelper.getPagesForHandler(handlerName, site) />
+<#function pagesOfType pageType site=currentSite>
+	<#return pagesMacroHelper.getPagesOfType(pageType, site) />
 </#function>
 
 <#---

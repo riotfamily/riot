@@ -27,7 +27,7 @@ package org.riotfamily.pages.setup.config;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class ChildHandlerNameDefinition {
+public class ChildPageTypeDefinition {
 
 	private String parent;
 	

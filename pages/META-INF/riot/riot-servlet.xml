@@ -24,7 +24,7 @@
 	</bean>
 
 	<bean id="pageFormInitializer" class="org.riotfamily.pages.riot.form.PageFormInitializer">
-		<constructor-arg ref="handlerNameHierarchy" />
+		<constructor-arg ref="pageTypeHierarchy" />
 		<constructor-arg ref="contentFormRepository" />
 	</bean>
 

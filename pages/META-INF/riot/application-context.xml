@@ -20,13 +20,13 @@
 		<value>org.riotfamily.pages.model.wrapper.PageWrapper</value>
 	</override:add>
 
-	<bean id="handlerNameHierarchy" class="org.riotfamily.pages.setup.HandlerNameHierarchy" />
+	<bean id="pageTypeHierarchy" class="org.riotfamily.pages.setup.PageTypeHierarchy" />
 	
 	<bean id="pageDao" class="org.riotfamily.pages.dao.hibernate.HibernatePageDao">
 		<property name="cacheService" ref="cacheService" />
 		<property name="componentDao" ref="componentDao" />
 		<property name="sessionFactory" ref="sessionFactory" />
-		<property name="handlerNameHierarchy" ref="handlerNameHierarchy" />
+		<property name="pageTypeHierarchy" ref="pageTypeHierarchy" />
 	</bean>
 
 </beans>

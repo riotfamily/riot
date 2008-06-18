@@ -29,7 +29,7 @@ import java.util.Map;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
-import org.riotfamily.pages.setup.config.ChildHandlerNameDefinition;
+import org.riotfamily.pages.setup.config.ChildPageTypeDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.StringUtils;
@@ -38,38 +38,38 @@ import org.springframework.util.StringUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class HandlerNameHierarchy implements ApplicationContextAware {
+public class PageTypeHierarchy implements ApplicationContextAware {
 
-	private Map<String, String> childHandlerNames = new HashMap<String, String>();
+	private Map<String, String> childTypes = new HashMap<String, String>();
 	
 	public void setApplicationContext(ApplicationContext ctx) {
-		for (ChildHandlerNameDefinition def : 
+		for (ChildPageTypeDefinition def : 
 				SpringUtils.beansOfTypeIncludingAncestors(ctx, 
-				ChildHandlerNameDefinition.class).values()) {
+				ChildPageTypeDefinition.class).values()) {
 		
-			childHandlerNames.put(def.getParent(), def.getChild());
+			childTypes.put(def.getParent(), def.getChild());
 		}
 	}
 	
-	public String getChildHandlerName(String parent) {
-		return (String) childHandlerNames.get(parent);
+	public String getChildType(String parentType) {
+		return childTypes.get(parentType);
 	}
 	
-	public String getChildHandlerName(Page page) {
-		String parent = page != null ? page.getHandlerName() : null;
-		return (String) childHandlerNames.get(parent);
+	public String getChildType(Page page) {
+		String parent = page != null ? page.getPageType() : null;
+		return childTypes.get(parent);
 	}
 	
-	public String[] getChildHandlerNameOptions(Page page) {
-		return StringUtils.commaDelimitedListToStringArray(getChildHandlerName(page));
+	public String[] getChildTypeOptions(Page page) {
+		return StringUtils.commaDelimitedListToStringArray(getChildType(page));
 	}
 	
-	public String initHandlerName(PageNode node) {
-		String handlerName = null;
-		if (node.getHandlerName() == null && node.getParent() != null) {
-			handlerName = getChildHandlerName(node.getParent().getHandlerName());
-			node.setHandlerName(handlerName);
+	public String initPageType(PageNode node) {
+		String pageType = null;
+		if (node.getPageType() == null && node.getParent() != null) {
+			pageType = getChildType(node.getParent().getPageType());
+			node.setPageType(pageType);
 		}
-		return handlerName;
+		return pageType;
 	}
 }

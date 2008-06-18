@@ -65,7 +65,7 @@ public class PageNode {
 
 	private Set<Page> pages;
 
-	private String handlerName;
+	private String pageType;
 
 	private boolean systemNode;
 
@@ -241,14 +241,14 @@ public class PageNode {
 	}
 
 	/**
-	 * Returns the name of the handler that will be used to serve the page.
+	 * Returns the page type. The type is used to select an appropriate view.
 	 */
-	public String getHandlerName() {
-		return handlerName;
+	public String getPageType() {
+		return pageType;
 	}
 
-	public void setHandlerName(String handlerName) {
-		this.handlerName = handlerName;
+	public void setPageType(String pageType) {
+		this.pageType = pageType;
 	}
 
 	/**

@@ -99,7 +99,7 @@ public class PageDefinition {
 	public PageNode createNode(PageNode parent, List<Site> sites, PageDao pageDao) {
 		PageNode node = new PageNode();
 		parent.addChildNode(node);
-		node.setHandlerName(handlerName);
+		node.setPageType(handlerName);
 		node.setSystemNode(systemNode);
 		node.setHidden(hidden);
 		createPages(node, sites, pageDao);

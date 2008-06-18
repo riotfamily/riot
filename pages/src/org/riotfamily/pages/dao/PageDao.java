@@ -70,26 +70,26 @@ public interface PageDao {
 	public PageAlias findPageAlias(Site site, String path);
 
 	/**
-	 * Returns the PageNode with the given handlerName, or <code>null</code> if
+	 * Returns the PageNode with the given pageType, or <code>null</code> if
 	 * no such node exists.
 	 * @throws IncorrectResultSizeDataAccessException if more than one node
-	 * 		   exists with the given handlerName
+	 * 		   exists with the given pageType
 	 */
-	public PageNode findNodeForHandler(String handlerName);
+	public PageNode findNodeOfType(String pageType);
 
 	/**
-	 * Returns the Page with the given handlerName and site,
+	 * Returns the Page with the given pageType and site,
 	 * or <code>null</code> if no such page exists.
 	 * @throws IncorrectResultSizeDataAccessException if more than one page
-	 * 		   exists with the given handlerName
+	 * 		   exists with the given pageType
 	 */
-	public Page findPageForHandler(String handlerName, Site site);
+	public Page findPageOfType(String pageType, Site site);
 
 	/**
-	 * Returns all pages with the given handlerName and site,
+	 * Returns all pages with the given pageType and site,
 	 * or an empty list if no page is found.
 	 */
-	public List<Page> findPagesForHandler(String handlerName, Site site);
+	public List<Page> findPagesOfType(String pageType, Site site);
 
 	/**
 	 * 

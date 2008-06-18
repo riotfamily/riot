@@ -73,12 +73,12 @@ public class PagesMacroHelper {
 				facade.getSite(), pathCompleter);
 	}
 	
-	public Page getPageForHandler(String handlerName, SiteFacade facade) {
-		return pageDao.findPageForHandler(handlerName, facade.getSite());
+	public Page getPageOfType(String pageType, SiteFacade facade) {
+		return pageDao.findPageOfType(pageType, facade.getSite());
 	}
 
-	public List<Page> getPagesForHandler(String handlerName, SiteFacade facade) {
-		return pageDao.findPagesForHandler(handlerName, facade.getSite());
+	public List<Page> getPagesOfType(String pageType, SiteFacade facade) {
+		return pageDao.findPagesOfType(pageType, facade.getSite());
 	}
 
 	private List<Page> getVisiblePages(List<Page> pages, boolean preview) {

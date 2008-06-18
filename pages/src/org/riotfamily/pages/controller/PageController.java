@@ -26,26 +26,19 @@ package org.riotfamily.pages.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.TaggingContext;
-import org.riotfamily.cachius.spring.AbstractCacheableController;
-import org.riotfamily.cachius.spring.CacheableController;
+import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * @author Carsten Woelk [cwoelk at neteye dot de]
- * @since 7.0
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 8.0
  */
-public class PageController extends AbstractCacheableController {
+public class PageController implements Controller {
 
 	private PageResolver pageResolver;
-	
-	private String viewName;
-
-	public void setViewName(String viewName) {
-		this.viewName = viewName;
-	}
 	
 	public PageController(PageResolver pageResolver) {
 		this.pageResolver = pageResolver;
@@ -55,17 +48,28 @@ public class PageController extends AbstractCacheableController {
 			HttpServletResponse response) throws Exception {
 		
 		Page page = pageResolver.getPage(request);
-		if (page != null && page.isRequestable()) {
-			TaggingContext.tag(request, Page.class.getName());
-			return new ModelAndView(viewName, "page", page);
+		if (page == null || !page.isRequestable()) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return null;
 		}
 		
-		response.sendError(HttpServletResponse.SC_NOT_FOUND);
-		return null;
+		if (page.isWildcardInPath()) {
+			String path = pageResolver.getPathWithinSite(request);
+			exposeAttributes(page.getPath(), path, request);
+		}
+		
+		String pageType = page.getPageType();
+		if (pageType == null) {
+			pageType = "default";
+		}
+		return new ModelAndView(pageType + ".ftl");
 	}
 
-	public long getTimeToLive(HttpServletRequest request) {
-		return CacheableController.CACHE_ETERNALLY;
-	}
+	protected void exposeAttributes(String antPattern, String urlPath,
+			HttpServletRequest request) {
 
+		AttributePattern pattern = new AttributePattern(antPattern);
+		pattern.expose(urlPath, request);
+	}
+	
 }
