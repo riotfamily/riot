@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.options.OptionsModel;
 import org.riotfamily.forms.options.OptionsModelUtils;
@@ -46,8 +47,8 @@ public class RestrictedOptionsModel implements OptionsModel {
 
 	public Collection<?> getOptionValues(Element element) {
 		Collection<?> sourceOptions = OptionsModelUtils.createOptionsModel(model, element).getOptionValues(element);
-		ArrayList result = new ArrayList();
-		Iterator it = sourceOptions.iterator();
+		ArrayList<Object> result = Generics.newArrayList();
+		Iterator<?> it = sourceOptions.iterator();
 		while (it.hasNext()) {
 			Object option = it.next();
 			if (AccessController.isGranted("use-option", option)) {

@@ -40,13 +40,13 @@ import org.springframework.beans.BeansException;
 public class ProtectedBeanWrapper extends BeanWrapperImpl
 		implements ObjectWrapper {
 
-	private Class objectClass;
+	private Class<?> objectClass;
 
 	public ProtectedBeanWrapper() {
 		super();
 	}
 
-	public ProtectedBeanWrapper(Class clazz) {
+	public ProtectedBeanWrapper(Class<?> clazz) {
 		this.objectClass = clazz;
 		if (!clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers())) {
 			setObject(BeanUtils.instantiateClass(clazz));
@@ -66,7 +66,7 @@ public class ProtectedBeanWrapper extends BeanWrapperImpl
 		return getWrappedInstance();
 	}
 
-	public Class getObjectClass() {
+	public Class<?> getObjectClass() {
 		return this.objectClass;
 	}
 

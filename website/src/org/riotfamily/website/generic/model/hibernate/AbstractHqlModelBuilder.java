@@ -40,6 +40,7 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.cachius.spring.CacheableController;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.riot.hibernate.support.HibernateSupport;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.riotfamily.website.cache.CacheInvalidationAdvice;
@@ -73,9 +74,9 @@ public abstract class AbstractHqlModelBuilder extends HibernateSupport
 
 	private String hql;
 
-	private ArrayList params = new ArrayList();
+	private ArrayList<Param> params = Generics.newArrayList();
 
-	private List parameterResolvers;
+	private List<ParameterResolver> parameterResolvers;
 
 	private boolean tagCacheItems = true;
 
@@ -112,11 +113,11 @@ public abstract class AbstractHqlModelBuilder extends HibernateSupport
 	}
 	
 	protected String generateModelKey(Query query) {
-		Class clazz = getResultClass(query);
+		Class<?> clazz = getResultClass(query);
 		return StringUtils.uncapitalize(ClassUtils.getShortName(clazz));
 	}
 
-	protected Class getResultClass(Query query) {
+	protected Class<?> getResultClass(Query query) {
 		return query.getReturnTypes()[0].getReturnedClass();
 	}
 	
@@ -135,7 +136,7 @@ public abstract class AbstractHqlModelBuilder extends HibernateSupport
 	 * Sets a list of {@link ParameterResolver ParameterResolver}s which
 	 * are used to resolve named parameters found in the HQL query.
 	 */
-	public void setParameterResolvers(List parameterResolvers) {
+	public void setParameterResolvers(List<ParameterResolver> parameterResolvers) {
 		this.parameterResolvers = parameterResolvers;
 	}
 
@@ -171,7 +172,7 @@ public abstract class AbstractHqlModelBuilder extends HibernateSupport
 		}
 
 		if (parameterResolvers == null) {
-			parameterResolvers = Collections.EMPTY_LIST;
+			parameterResolvers = Collections.emptyList();
 		}
 
 		Matcher matcher = PARAM_PATTERN.matcher(hql);
@@ -187,9 +188,9 @@ public abstract class AbstractHqlModelBuilder extends HibernateSupport
 	 * is created.
 	 */
 	protected ParameterResolver getParameterResolver(String param) {
-		Iterator it = parameterResolvers.iterator();
+		Iterator<ParameterResolver> it = parameterResolvers.iterator();
 		while (it.hasNext()) {
-			ParameterResolver resolver = (ParameterResolver) it.next();
+			ParameterResolver resolver = it.next();
 			if (resolver.accept(param)) {
 				return resolver;
 			}
@@ -222,7 +223,7 @@ public abstract class AbstractHqlModelBuilder extends HibernateSupport
 		return System.currentTimeMillis();
 	}
 
-	public Map buildModel(final HttpServletRequest request) {
+	public Map<String, Object> buildModel(final HttpServletRequest request) {
 		HibernateUtils.enableLiveModeFilterIfNecessary(getSession());
 		Query query = createQuery(hql);
 		log.debug("Query: " + query.getQueryString());
@@ -253,9 +254,9 @@ public abstract class AbstractHqlModelBuilder extends HibernateSupport
 	}
 	
 	protected void setParameters(Query query, HttpServletRequest request) {
-		Iterator it = params.iterator();
+		Iterator<Param> it = params.iterator();
 		while (it.hasNext()) {
-			Param param = (Param) it.next();
+			Param param = it.next();
 			Object value = param.getValue(request);
 			log.debug("Query parameter '" + param.name + "' = " + value);
 			query.setParameter(param.name, value);
@@ -263,7 +264,7 @@ public abstract class AbstractHqlModelBuilder extends HibernateSupport
 	}
 
 	public void appendCacheKey(StringBuffer key, HttpServletRequest request) {
-		Iterator it = params.iterator();
+		Iterator<Param> it = params.iterator();
 		while (it.hasNext()) {
 			Param param = (Param) it.next();
 			param.appendToCacheKey(request, key);

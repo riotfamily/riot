@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.ui;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.util.SessionReferenceRemover;
 import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;
@@ -70,7 +70,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 	
 	private PlatformTransactionManager transactionManager;
 
-	private Collection sessions = new ArrayList();
+	private Collection<ListSession> sessions = Generics.newArrayList();
 	
 	public void setMessageCodesResolver(AdvancedMessageCodesResolver codesResolver) {
 		this.messageCodesResolver = codesResolver;
@@ -153,9 +153,9 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 	}
 
 	public void beanReconfigured(ConfigurableBean bean) {
-		Iterator it = sessions.iterator();
+		Iterator<ListSession> it = sessions.iterator();
 		while (it.hasNext()) {
-			ListSession session = (ListSession) it.next();
+			ListSession session = it.next();
 			log.info("Invalidating session " + session.getKey());
 			session.invalidate();
 			it.remove();
@@ -174,7 +174,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 		return getListSession(key, request).getFilterFormHtml();
 	}
 
-	public List getFormCommands(String key, String objectId,
+	public List<?> getFormCommands(String key, String objectId,
 			HttpServletRequest request) throws ListSessionExpiredException {
 
 		return getListSession(key, request).getFormCommands(objectId, request);

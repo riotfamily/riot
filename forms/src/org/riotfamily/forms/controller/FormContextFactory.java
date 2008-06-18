@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,6 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.i18n.RiotMessageCodesResolver;
+import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.forms.FormContext;
@@ -65,7 +66,7 @@ public final class FormContextFactory implements MessageSourceAware,
 	
 	private String resourcePath = "/riot/resources";
 	
-	private List optionValuesAdapters = new ArrayList();
+	private List<OptionsModelFactory> optionValuesAdapters = Generics.newArrayList();
 	
 	public FormContextFactory() {
 		registerDefaultOptionValuesAdapters();
@@ -100,8 +101,8 @@ public final class FormContextFactory implements MessageSourceAware,
 	}
 	
 	public void setApplicationContext(ApplicationContext applicationContext) {
-		optionValuesAdapters.addAll(applicationContext.getBeansOfType(
-				OptionsModelFactory.class).values());
+		optionValuesAdapters.addAll(SpringUtils.beansOfType(
+				applicationContext, OptionsModelFactory.class).values());
 	}
 	
 	private void registerDefaultOptionValuesAdapters() {

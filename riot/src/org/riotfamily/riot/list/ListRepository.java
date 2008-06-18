@@ -29,10 +29,12 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.SpringUtils;
+import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.StringRenderer;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.riot.list.command.Command;
-import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -43,11 +45,11 @@ public class ListRepository implements ApplicationContextAware {
 
 	private Log log = LogFactory.getLog(ListRepository.class);
 	
-	private HashMap listConfigs = new HashMap();
+	private HashMap<String, ListConfig> listConfigs = Generics.newHashMap();
 	
-	private HashMap listConfigsByClass = new HashMap();
+	private HashMap<Class<?>, ListConfig> listConfigsByClass = Generics.newHashMap();
 	
-	private HashMap commands = new HashMap();
+	private HashMap<String, Command> commands = Generics.newHashMap();
 	
 	private ApplicationContext applicationContext;
 	
@@ -62,10 +64,10 @@ public class ListRepository implements ApplicationContextAware {
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 		log.debug("Looking up command implementations ...");
-		Map commands = applicationContext.getBeansOfType(Command.class);
-		Iterator it = commands.values().iterator();
+		Map<String, Command> commands = SpringUtils.beansOfType(applicationContext, Command.class);
+		Iterator<Command> it = commands.values().iterator();
 		while (it.hasNext()) {
-			Command command = (Command) it.next();
+			Command command = it.next();
 			this.commands.put(command.getId(), command);
 		}
 	}
@@ -96,7 +98,7 @@ public class ListRepository implements ApplicationContextAware {
 		return (ListConfig) listConfigs.get(listId);
 	}
 	
-	public ListConfig getListConfig(Class entityClass) {
+	public ListConfig getListConfig(Class<?> entityClass) {
 		return (ListConfig) listConfigsByClass.get(entityClass);
 	}
 	
@@ -108,11 +110,11 @@ public class ListRepository implements ApplicationContextAware {
 		}
 	}
 	
-	protected Map getListConfigsByClass() {
+	protected Map<Class<?>, ListConfig> getListConfigsByClass() {
 		return this.listConfigsByClass;
 	}
 	
-	protected Map getListConfigs() {
+	protected Map<String, ListConfig> getListConfigs() {
 		return listConfigs;
 	}
 	

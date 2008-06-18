@@ -27,6 +27,7 @@ package org.riotfamily.common.beans.xml;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.riotfamily.common.util.Generics;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -48,11 +49,11 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 	
 	public String aliasAttribute = DEFAULT_ALIAS_ATTRIBUTE;
 
-	private HashMap translations = new HashMap();
+	private HashMap<String, String> translations = Generics.newHashMap();
 
-	private HashSet references = new HashSet();
+	private HashSet references = Generics.newHashSet();
 
-	public GenericBeanDefinitionParser(Class beanClass) {
+	public GenericBeanDefinitionParser(Class<?> beanClass) {
 		super(beanClass);
 	}
 	

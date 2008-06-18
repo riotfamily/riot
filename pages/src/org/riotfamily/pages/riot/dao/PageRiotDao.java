@@ -75,7 +75,7 @@ public class PageRiotDao implements ParentChildDao, TreeHintDao,
 		pageDao.deletePage(page);
 	}
 
-	public Class getEntityClass() {
+	public Class<?> getEntityClass() {
 		return Page.class;
 	}
 
@@ -90,7 +90,7 @@ public class PageRiotDao implements ParentChildDao, TreeHintDao,
 		return page.getId().toString();
 	}
 
-	public Collection list(Object parent, ListParams params)
+	public Collection<Page> list(Object parent, ListParams params)
 			throws DataAccessException {
 
 		if (parent instanceof Page) {
@@ -167,11 +167,11 @@ public class PageRiotDao implements ParentChildDao, TreeHintDao,
 		Page page = (Page) entity;
 		PageNode node = page.getNode();
 		
-		ArrayList pages = new ArrayList(list(parent, params));
+		ArrayList<Page> pages = new ArrayList<Page>(list(parent, params));
 		PageNode otherNode = ((Page) pages.get(swapWith)).getNode();
 		
 		PageNode parentNode = node.getParent();
-		List nodes = parentNode.getChildNodes();
+		List<PageNode> nodes = parentNode.getChildNodes();
 
 		int pos = nodes.indexOf(node);
 		int otherPos = nodes.indexOf(otherNode);

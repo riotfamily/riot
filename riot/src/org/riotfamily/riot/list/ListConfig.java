@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.riot.dao.Order;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.list.command.Command;
@@ -43,13 +44,13 @@ public class ListConfig {
 
 	private RiotDao dao;
 
-	private List columnConfigs = new ArrayList();
+	private List<ColumnConfig> columnConfigs = Generics.newArrayList();
 
-	private List commands = new ArrayList();
+	private List<Command> commands = Generics.newArrayList();
 	
-	private ArrayList columnCommands = new ArrayList();
+	private ArrayList<Command> columnCommands = Generics.newArrayList();
 	
-	private List formCommands;
+	private List<Command> formCommands;
 	
 	private String[] defaultCommandIds;
 
@@ -115,7 +116,7 @@ public class ListConfig {
 		columnConfigs.add(column);
 	}
 
-	public List getColumnConfigs() {
+	public List<ColumnConfig> getColumnConfigs() {
 		return columnConfigs;
 	}
 
@@ -125,9 +126,9 @@ public class ListConfig {
 	
 	public ColumnConfig getColumnConfig(String property) {		
 		property = property.trim();		
-		Iterator it = columnConfigs.iterator();
+		Iterator<ColumnConfig> it = columnConfigs.iterator();
 		while (it.hasNext()) {
-			ColumnConfig columnConfig = (ColumnConfig) it.next();			
+			ColumnConfig columnConfig = it.next();			
 			if (property.equals(columnConfig.getProperty())) {
 				return columnConfig;
 			}
@@ -139,11 +140,11 @@ public class ListConfig {
 		commands.add(command);
 	}
 
-	public List getCommands() {
+	public List<Command> getCommands() {
 		return commands;
 	}
 
-	public Class getItemClass() {
+	public Class<?> getItemClass() {
 		return dao.getEntityClass();
 	}
 
@@ -163,9 +164,9 @@ public class ListConfig {
 	}
 	
 	public String getFirstSortableProperty() {
-		Iterator it = columnConfigs.iterator();
+		Iterator<ColumnConfig> it = columnConfigs.iterator();
 		while (it.hasNext()) {
-			ColumnConfig columnConfig = (ColumnConfig) it.next();
+			ColumnConfig columnConfig = it.next();
 			if (columnConfig.getProperty() != null 
 					&& columnConfig.isSortable()) {
 				return columnConfig.getProperty(); 
@@ -178,16 +179,16 @@ public class ListConfig {
 		columnCommands.add(command);
 	}
 	
-	public List getColumnCommands() {
+	public List<Command> getColumnCommands() {
 		return columnCommands;
 	}
 	
-	public List getFormCommands() {
+	public List<Command> getFormCommands() {
 		if (formCommands == null) {
-			formCommands = new ArrayList();
-			Iterator it = columnCommands.iterator();
+			formCommands = Generics.newArrayList();
+			Iterator<Command> it = columnCommands.iterator();
 			while (it.hasNext()) {
-				Command command = (Command) it.next();
+				Command command = it.next();
 				if (command.isShowOnForm()) {
 					formCommands.add(command);
 				}

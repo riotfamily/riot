@@ -26,6 +26,7 @@ package org.riotfamily.riot.form.options;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.OptionsModelFactory;
@@ -46,7 +47,7 @@ public class RiotDaoOptionsModelFactory implements OptionsModelFactory {
 	
 	public OptionsModel createOptionsModel(Object model, Element element) {
 		RiotDao dao = (RiotDao) model;
-		Collection values = dao.list(null, new ListParamsImpl());
+		Collection<?> values = dao.list(null, new ListParamsImpl());
 		Form form = element.getForm();
 		//Remove the object being edited from the collection to prevent circular 
 		//references. This is only done when editing an existing object and 
@@ -54,7 +55,7 @@ public class RiotDaoOptionsModelFactory implements OptionsModelFactory {
 		if (!form.isNew() && dao.getEntityClass().isAssignableFrom(
 				form.getEditorBinder().getBeanClass())) {
 			
-			ArrayList copy = new ArrayList(values);
+			ArrayList<?> copy = Generics.newArrayList(values);
 			copy.remove(form.getBackingObject());
 			return new StaticOptionsModel(copy);
 		}

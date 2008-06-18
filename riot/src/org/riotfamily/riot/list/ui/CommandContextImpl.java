@@ -61,7 +61,7 @@ public class CommandContextImpl implements CommandContext {
 		this.request = request;
 	}
 
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		return session.getBeanClass();
 	}
 

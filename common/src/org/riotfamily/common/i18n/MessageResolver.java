@@ -55,7 +55,7 @@ public class MessageResolver {
 		this.locale = locale;
 	}
 
-	public String getObjectError(String objectName, Class clazz,
+	public String getObjectError(String objectName, Class<?> clazz,
 			String errorCode, Object[] args, String defaultMessage) {
 	
 		String[] codes = messageCodesResolver.resolveMessageCodes(errorCode, objectName);
@@ -63,10 +63,10 @@ public class MessageResolver {
 	}
 	
 	public String getPropertyError(
-			String objectName, Class clazz, String property, String errorCode, 
+			String objectName, Class<?> clazz, String property, String errorCode, 
 			Object[] args, String defaultMessage) {
 	
-		Class fieldType = PropertyUtils.getPropertyType(clazz, property);
+		Class<?> fieldType = PropertyUtils.getPropertyType(clazz, property);
 		String[] codes = messageCodesResolver.resolveMessageCodes(errorCode, objectName, 
 				property, fieldType);
 		
@@ -75,21 +75,21 @@ public class MessageResolver {
 	
 	
 	public String getPropertyLabel(String objectName, 
-			Class clazz, String property) {
+			Class<?> clazz, String property) {
 		
 		String[] codes = messageCodesResolver.resolveLabel(objectName, clazz, property);
 		String defaultMessage = FormatUtils.propertyToTitleCase(property);
 		return getMessage(codes, null, defaultMessage);
 	}
 	
-	public String getClassLabel(String objectName, Class clazz) {
+	public String getClassLabel(String objectName, Class<?> clazz) {
 		String[] codes = messageCodesResolver.resolveLabel(objectName, clazz);
 		String defaultMessage = FormatUtils.camelToTitleCase(objectName);
 		return getMessage(codes, null, defaultMessage);
 	}
 		
 	public String getPropertyHint(String objectName, 
-			Class clazz, String property) {
+			Class<?> clazz, String property) {
 		
 		String[] codes = messageCodesResolver.resolveHint(objectName, clazz, property);
 		return getMessage(codes, null, null);

@@ -32,6 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.xml.DocumentDigester;
 import org.riotfamily.common.xml.XmlUtils;
@@ -424,6 +425,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		return pvs;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Object getOptionsModel(Element ele) {
 		log.debug("Looking for OptionsModel ...");
 		Element modelElement = XmlUtils.getFirstChildByRegex(ele, "model|options|key-options");
@@ -446,7 +448,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 				}
 			}
 			if (model != null) {
-				List propertyElements = XmlUtils.getChildElementsByRegex(
+				List<Element> propertyElements = XmlUtils.getChildElementsByRegex(
 						modelElement, "property|set-property");
 
 				XmlUtils.populate(model, propertyElements, beanFactory);
@@ -454,8 +456,8 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			return model;
 		}
 		else {
-			ArrayList values = new ArrayList();
-			Iterator it = DomUtils.getChildElementsByTagName(ele, "option").iterator();
+			ArrayList<Object> values = Generics.newArrayList();
+			Iterator<Element> it = DomUtils.getChildElementsByTagName(ele, "option").iterator();
 			while (it.hasNext()) {
 				Element e = (Element) it.next();
 				String beanName = XmlUtils.getAttribute(e, "ref");

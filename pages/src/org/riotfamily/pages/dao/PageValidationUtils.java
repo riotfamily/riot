@@ -41,20 +41,20 @@ public final class PageValidationUtils {
 
 
 	public static boolean isValidChild(PageNode node, Page page) {
-		Collection childs = getChildsWithoutPage(node, page);
+		Collection<Page> childs = getChildsWithoutPage(node, page);
 		return !containsPathComponent(childs, page.getPathComponent());
 	}
 
 	public static boolean isTranslatable(Page page, Site targetSite) {
-		Collection siblings = getSiblings(page, targetSite);
+		Collection<Page> siblings = getSiblings(page, targetSite);
 		return !PageValidationUtils.containsPathComponent(siblings,
 					page.getPathComponent());
 	}
 
-	public static boolean containsPathComponent(Collection pages, String pathComponent) {
-		Iterator it = pages.iterator();
+	public static boolean containsPathComponent(Collection<Page> pages, String pathComponent) {
+		Iterator<Page> it = pages.iterator();
 		while (it.hasNext()) {
-			Page page = (Page) it.next();
+			Page page = it.next();
 			if (page.getPathComponent().equals(pathComponent)) {
 				return true;
 			}
@@ -66,16 +66,16 @@ public final class PageValidationUtils {
 	 * Returns all siblings of the page in the given site. If the site is
 	 * identical to the page's site, the page itself will be contained too.
 	 */
-	public static Collection getSiblings(Page page, Site site) {
+	public static Collection<Page> getSiblings(Page page, Site site) {
 		return page.getNode().getParent().getChildPages(site);
 	}
 
-	private static Collection getChildsWithoutPage(PageNode node, Page page) {
+	private static Collection<Page> getChildsWithoutPage(PageNode node, Page page) {
 		return without(node.getChildPagesWithFallback(page.getSite()), page);
 	}
 
-	private static Collection without(Collection collection, Object item) {
-		ArrayList result = new ArrayList(collection);
+	private static Collection<Page> without(Collection<Page> collection, Object item) {
+		ArrayList<Page> result = new ArrayList<Page>(collection);
 		result.remove(item);
 		return result;
 	}

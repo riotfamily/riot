@@ -37,10 +37,15 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class SimpleFormRequest implements FormRequest {
 
-	private Map params;
+	private Map<String,Object> params;
 	
-	public SimpleFormRequest(Map params) {
-		this.params = params != null ? params : Collections.EMPTY_MAP;
+	public SimpleFormRequest(Map<String,Object> params) {
+		if (params != null) {
+			this.params = params;
+		}
+		else {
+			this.params = Collections.emptyMap();
+		}
 	}
 
 	public MultipartFile getFile(String name) {
@@ -58,7 +63,7 @@ public class SimpleFormRequest implements FormRequest {
 			return values.length > 0 ? values[0] : null;
 		}
 		if (value instanceof Collection) {
-			Iterator it  = ((Collection) value).iterator();
+			Iterator<?> it  = ((Collection<?>) value).iterator();
 			return it.hasNext() ? (String) it.next() : null;
 		}
 		if (value instanceof String) {
@@ -73,7 +78,7 @@ public class SimpleFormRequest implements FormRequest {
 			return (String[]) value;
 		}
 		if (value instanceof Collection) {
-			return StringUtils.toStringArray((Collection) value);
+			return StringUtils.toStringArray((Collection<?>) value);
 		}
 		if (value instanceof String) {
 			return new String[] { (String) value };

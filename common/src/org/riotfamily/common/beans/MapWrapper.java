@@ -26,6 +26,7 @@ package org.riotfamily.common.beans;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.riotfamily.common.util.SpringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValue;
@@ -39,23 +40,23 @@ public class MapWrapper implements ObjectWrapper {
 
 	private Map map;
 
-	private Class valueClass;
+	private Class<?> valueClass;
 
-	private Class mapClass = HashMap.class;
+	private Class<?> mapClass = HashMap.class;
 
 	public MapWrapper(Map map) {
 		this.map = map;
 	}
 
-	public MapWrapper(Class mapClass) {
+	public MapWrapper(Class<?> mapClass) {
 		this.mapClass = mapClass;
 	}
 
-	public void setMapClass(Class mapClass) {
+	public void setMapClass(Class<?> mapClass) {
 		this.mapClass = mapClass;
 	}
 
-	public void setValueClass(Class valueClass) {
+	public void setValueClass(Class<?> valueClass) {
 		this.valueClass = valueClass;
 	}
 
@@ -67,7 +68,7 @@ public class MapWrapper implements ObjectWrapper {
 		return true;
 	}
 
-	public Class getPropertyType(String propertyName) {
+	public Class<?> getPropertyType(String propertyName) {
 		if (valueClass != null) {
 			return valueClass;
 		}
@@ -80,19 +81,20 @@ public class MapWrapper implements ObjectWrapper {
 
 	public void setObject(Object object) {
 		Assert.isInstanceOf(Map.class, object);
-		map = (Map) object;
+		map = (Map<?,?>) object;
 	}
 
 	public Object getObject() {
 		return getMap();
 	}
 
-	public Class getObjectClass() {
+	public Class<?> getObjectClass() {
 		return mapClass;
 	}
 
 	protected Map getMap() {
 		if (map == null) {
+			//map = (Map<?, ?>) SpringUtils.newInstance(mapClass);
 			map = (Map) BeanUtils.instantiateClass(mapClass);
 		}
 		return map;

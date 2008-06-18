@@ -72,8 +72,8 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 		}
 	}
 	
-	public String[] resolveLabel(String objectName, Class objectClass) {
-		ArrayList codes = new ArrayList(2);
+	public String[] resolveLabel(String objectName, Class<?> objectClass) {
+		ArrayList<String> codes = new ArrayList<String>(2);
 		if (objectName != null) {
 			codes.add(objectName);
 		}
@@ -83,10 +83,10 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 		return StringUtils.toStringArray(codes);
 	}
 
-	public String[] resolveLabel(String objectName, Class objectClass, 
+	public String[] resolveLabel(String objectName, Class<?> objectClass, 
 			String field) {
 		
-		ArrayList codes = new ArrayList(2);
+		ArrayList<String> codes = new ArrayList<String>(2);
 		if (objectName != null) {
 			codes.add(objectName + '.' + field);
 		}
@@ -97,10 +97,10 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 		return StringUtils.toStringArray(codes);
 	}
 	
-	public String[] resolveHint(String objectName, Class objectClass, 
+	public String[] resolveHint(String objectName, Class<?> objectClass, 
 			String field) {
 		
-		ArrayList codes = new ArrayList(2);
+		ArrayList<String> codes = new ArrayList<String>(2);
 		if (field == null) {
 			if (objectName != null) {
 				codes.add(objectName +  HINT_SUFFIX);

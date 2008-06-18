@@ -23,10 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor.xml;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.xml.BeanConfigurationWatcher;
 import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;
@@ -48,7 +48,7 @@ public class XmlEditorRepository extends EditorRepository
 
 	private ApplicationContext applicationContext;
 
-	private List configLocations;
+	private List<Resource> configLocations;
 
 	private boolean reloadable = true;
 
@@ -66,7 +66,7 @@ public class XmlEditorRepository extends EditorRepository
 	}
 
 	public void setConfigLocations(Resource[] configLocations) {
-		this.configLocations = new ArrayList();
+		this.configLocations = Generics.newArrayList();
 		if (configLocations != null) {
 			for (int i = 0; i < configLocations.length; i++) {
 				this.configLocations.add(configLocations[i]);
@@ -106,9 +106,9 @@ public class XmlEditorRepository extends EditorRepository
 	public void configure() {
 		setRootGroupDefinition(null);
 		getEditorDefinitions().clear();
-		Iterator it = configLocations.iterator();
+		Iterator<Resource> it = configLocations.iterator();
 		while (it.hasNext()) {
-			Resource res = (Resource) it.next();
+			Resource res = it.next();
 			DocumentReader reader = new ValidatingDocumentReader(res);
 			digester.digest(reader.readDocument(), res);
 		}

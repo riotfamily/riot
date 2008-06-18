@@ -65,8 +65,8 @@ public class LocalizedObjectWrapper implements ObjectWrapperPlugin {
 	}
 	
 	public boolean supports(Object obj) {
-		if (obj instanceof Map) {
-			Map map = (Map) obj;
+		if (obj instanceof Map<?, ?>) {
+			Map<?, ?> map = (Map<?,?>) obj;
 			return hasLocaleKey(map);
 		}
 		return false;
@@ -78,13 +78,13 @@ public class LocalizedObjectWrapper implements ObjectWrapperPlugin {
 		
 		Environment env = Environment.getCurrentEnvironment();
 		Locale locale = env.getLocale();
-		Object localizedEntry = getLocalizedEntry((Map) obj, locale);
+		Object localizedEntry = getLocalizedEntry((Map<?,?>) obj, locale);
 		return wrapper.wrap(localizedEntry);
 	}
 
-	private boolean hasLocaleKey(Map map) {
+	private boolean hasLocaleKey(Map<?,?> map) {
 		if (JdkVersion.isAtLeastJava15()) {
-			Class keyType = GenericCollectionTypeResolver.getMapKeyType(
+			Class<?> keyType = GenericCollectionTypeResolver.getMapKeyType(
 					map.getClass());
 
 			if (keyType != null) {
@@ -98,7 +98,7 @@ public class LocalizedObjectWrapper implements ObjectWrapperPlugin {
 		return false;
 	}
 
-	private Object getLocalizedEntry(Map map, Locale locale) {
+	private Object getLocalizedEntry(Map<?,?> map, Locale locale) {
 		Object value = map.get(locale);
 		if (value == null && !exact) {
 			Locale lang = new Locale(locale.getLanguage());

@@ -41,11 +41,11 @@ public class DefaultPropertyEditorRegistry
 		registerDefaultEditors();
 	}
 	
-	public PropertyEditor findEditor(Class requiredType) {
+	public PropertyEditor findEditor(Class<?> requiredType) {
 		return findEditor(requiredType, null);
 	}
 
-	public PropertyEditor findEditor(Class requiredType, String propertyPath) {
+	public PropertyEditor findEditor(Class<?> requiredType, String propertyPath) {
 		PropertyEditor pe = findCustomEditor(requiredType, propertyPath);
 		if (pe == null) {
 			pe = getDefaultEditor(requiredType);

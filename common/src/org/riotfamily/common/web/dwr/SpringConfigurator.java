@@ -43,13 +43,13 @@ import org.springframework.util.StringUtils;
 
 public class SpringConfigurator implements Configurator {
 
-	private Map serviceBeans;
+	private Map<String, Object> serviceBeans;
 
-	private Class[] serviceInterfaces;
+	private Class<?>[] serviceInterfaces;
 
 	private Properties converterTypes;
 	
-	private Map converters;
+	private Map<String, Converter> converters;
 
 	private String signatures;
 
@@ -57,7 +57,7 @@ public class SpringConfigurator implements Configurator {
 	 * Sets a map of beans to be exported keyed by their script name.
 	 * @param serviceBeans Map of beans to export
 	 */
-	public void setServiceBeans(Map serviceBeans) {
+	public void setServiceBeans(Map<String, Object> serviceBeans) {
 		this.serviceBeans = serviceBeans;
 	}
 
@@ -68,11 +68,11 @@ public class SpringConfigurator implements Configurator {
 	 * If no interfaces are configured only the default access rules apply.
 	 * @param serviceInterfaces Interfaces to export
 	 */
-	public void setServiceInterfaces(Class[] serviceInterfaces) {
+	public void setServiceInterfaces(Class<?>[] serviceInterfaces) {
 		this.serviceInterfaces = serviceInterfaces;
 	}
 
-	public void setConverters(Map converters) {
+	public void setConverters(Map<String, Converter> converters) {
 		this.converters = converters;
 	}
 	
@@ -89,11 +89,11 @@ public class SpringConfigurator implements Configurator {
 				container.getBean(ConverterManager.class.getName());
 
 		if (converters != null) {
-        	Iterator it = converters.entrySet().iterator();
+        	Iterator<Map.Entry<String, Converter>> it = converters.entrySet().iterator();
 			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry) it.next();
-				String match = (String) entry.getKey();
-				Converter converter = (Converter) entry.getValue();
+				Map.Entry<String, Converter> entry = it.next();
+				String match = entry.getKey();
+				Converter converter = entry.getValue();
 				converter.setConverterManager(converterManager);
 				converterManager.addConverter(match, converter);
 			}
@@ -102,9 +102,9 @@ public class SpringConfigurator implements Configurator {
         if (converterTypes != null) {
 			Iterator it = converterTypes.entrySet().iterator();
 			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry) it.next();
-				String match = (String) entry.getKey();
-				String type = (String) entry.getValue();
+				Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
+				String match = entry.getKey();
+				String type = entry.getValue();
 				try {
 					converterManager.addConverter(match, type, Collections.EMPTY_MAP);
 				}
@@ -125,10 +125,10 @@ public class SpringConfigurator implements Configurator {
 
 
         if (serviceBeans != null) {
-			Iterator it = serviceBeans.entrySet().iterator();
+			Iterator<Map.Entry<String, Object>> it = serviceBeans.entrySet().iterator();
 			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry) it.next();
-				String scriptName = (String) entry.getKey();
+				Map.Entry<String, Object> entry = it.next();
+				String scriptName = entry.getKey();
 				BeanCreator creator = new BeanCreator();
 				creator.setScope(Creator.APPLICATION);
 				creator.setBean(entry.getValue());
@@ -153,20 +153,20 @@ public class SpringConfigurator implements Configurator {
 	}
 
 	private void includeMethods(AccessControl accessControl,
-			Class serviceInterface) {
+			Class<?> serviceInterface) {
 
-		Iterator it = serviceBeans.entrySet().iterator();
+		Iterator<Map.Entry<String, Object>> it = serviceBeans.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
+			Map.Entry<String, Object> entry = it.next();
 			if (serviceInterface.isInstance(entry.getValue())) {
-				String scriptName = (String) entry.getKey();
+				String scriptName = entry.getKey();
 				includeMethods(accessControl, serviceInterface, scriptName);
 			}
 		}
 	}
 
 	private void includeMethods(AccessControl accessControl,
-			Class serviceInterface, String scriptName) {
+			Class<?> serviceInterface, String scriptName) {
 
 		Method[] methods = serviceInterface.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {

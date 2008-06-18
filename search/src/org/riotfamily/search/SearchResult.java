@@ -37,7 +37,7 @@ public class SearchResult {
 	
 	private HighlightingContext highlightingContext;
 	
-	private List items;
+	private List<Item> items;
 
 	private int totalHitCount;
 	
@@ -56,7 +56,7 @@ public class SearchResult {
 		this.highlightingContext = highlightingContext;
 		totalHitCount = hits.length();
 		int end = Math.min(offset + maxResults, totalHitCount);
-		items = new ArrayList(end - offset);
+		items = new ArrayList<Item>(end - offset);
 		for (int i = offset; i < end; i++) {
 			Document doc = hits.doc(i);
 			items.add(new Item(doc, hits.score(i)));
@@ -79,7 +79,7 @@ public class SearchResult {
 		this.searchDuration = searchDuration;
 	}
 
-	public List getItems() {
+	public List<Item> getItems() {
 		return this.items;
 	}
 

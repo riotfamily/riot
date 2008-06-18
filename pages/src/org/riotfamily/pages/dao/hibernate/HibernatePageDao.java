@@ -65,7 +65,7 @@ public class HibernatePageDao extends AbstractPageDao {
 		Assert.notNull(hibernate, "A SessionFactory must be  set.");
 	}
 
-	protected Object loadObject(Class clazz, Serializable id) {
+	protected Object loadObject(Class<?> clazz, Serializable id) {
 		return hibernate.get(clazz, id);
 	}
 

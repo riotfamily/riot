@@ -55,7 +55,7 @@ public abstract class GenericNamespaceHandlerSupport extends NamespaceHandlerSup
 	 * Registers a {@link GenericBeanDefinitionParser} for the given elementName
 	 * that creates BeanDefinitions for the specified class.
 	 */
-	protected GenericBeanDefinitionParser register(String elementName, Class beanClass) {
+	protected GenericBeanDefinitionParser register(String elementName, Class<?> beanClass) {
 		GenericBeanDefinitionParser parser = new GenericBeanDefinitionParser(beanClass);
 		registerBeanDefinitionParser(elementName, parser);
 		return parser;
@@ -80,7 +80,7 @@ public abstract class GenericNamespaceHandlerSupport extends NamespaceHandlerSup
 	 * decorator is registered for the elementName.
 	 */
 	protected GenericBeanDefinitionParser register(String elementName,
-			Class beanClass, BeanDefinitionDecorator decorator) {
+			Class<?> beanClass, BeanDefinitionDecorator decorator) {
 
 		registerBeanDefinitionDecorator(elementName, decorator);
 		return register(elementName, beanClass);

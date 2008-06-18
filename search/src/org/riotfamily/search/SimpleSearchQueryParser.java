@@ -37,6 +37,7 @@ import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.Query;
+import org.riotfamily.common.util.Generics;
 
 public class SimpleSearchQueryParser {
 
@@ -46,8 +47,8 @@ public class SimpleSearchQueryParser {
 		this.analyzer = analyzer;
 	}
 
-	protected List getTokens(String text) {
-		ArrayList tokens = new ArrayList();
+	protected List<Token> getTokens(String text) {
+		ArrayList<Token> tokens = Generics.newArrayList();
 		try {
 			TokenStream source = analyzer.tokenStream(null, new StringReader(text));
 			Token token;
@@ -62,7 +63,7 @@ public class SimpleSearchQueryParser {
 	}
 
 	public Query parse(String text, String[] fields)  {
-		List tokens = getTokens(text);
+		List<Token> tokens = getTokens(text);
 		BooleanQuery query = new BooleanQuery();
 		for (int i = 0; i < fields.length; i++) {
 			query.add(createFieldQuery(fields[i], tokens),
@@ -71,11 +72,11 @@ public class SimpleSearchQueryParser {
 		return query;
 	}
 
-	protected Query createFieldQuery(String field, List tokens) {
+	protected Query createFieldQuery(String field, List<Token> tokens) {
 		BooleanQuery query = new BooleanQuery();
-		Iterator it = tokens.iterator();
+		Iterator<Token> it = tokens.iterator();
 		while (it.hasNext()) {
-			Token token = (Token) it.next();
+			Token token = it.next();
 			query.add(createFieldTokenQuery(field, token),
 					BooleanClause.Occur.SHOULD);
 		}

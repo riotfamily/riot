@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.revolt.ChangeSet;
 import org.riotfamily.revolt.EvolutionHistory;
 import org.riotfamily.revolt.Refactoring;
@@ -107,18 +108,19 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 				"Expected <history> but found: " + element.getNodeName());
 	}
 	
-	private List parseChangeSets(Element element) {
-		ArrayList changeSets = new ArrayList();
-		Iterator it = DomUtils.getChildElementsByTagName(element, "change-set").iterator();
+	@SuppressWarnings("unchecked")
+	private List<ChangeSet> parseChangeSets(Element element) {
+		ArrayList<ChangeSet> changeSets = Generics.newArrayList();
+		Iterator<Element> it = DomUtils.getChildElementsByTagName(element, "change-set").iterator();
 		while (it.hasNext()) {
-			Element ele = (Element) it.next();
+			Element ele = it.next();
 			changeSets.add(new ChangeSet(ele.getAttribute("id"), parseRefactorings(ele)));
 		}
 		return changeSets;
 	}
 	
-	private List parseRefactorings(Element element) {
-		ArrayList refactorings = new ArrayList();
+	private List<Refactoring> parseRefactorings(Element element) {
+		ArrayList<Refactoring> refactorings = Generics.newArrayList();
 		NodeList childNodes = element.getChildNodes();
 		
 		for (int i = 0; i < childNodes.getLength(); i++) {
@@ -217,9 +219,9 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 		return  e != null ? e.getAttribute("value") : null;
 	}
 
-	private List parseColumns(Element ele) {
-		ArrayList columns = new ArrayList();
-		Iterator it = DomUtils.getChildElementsByTagName(ele, "column").iterator();
+	private List<Column> parseColumns(Element ele) {
+		ArrayList<Column> columns = Generics.newArrayList();
+		Iterator<Element> it = DomUtils.getChildElementsByTagName(ele, "column").iterator();
 		while (it.hasNext()) {
 			columns.add(parseColumn((Element) it.next()));
 		}
@@ -254,11 +256,11 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 		return column;
 	}
 	
-	private List parseReferences(Element ele) {
-		ArrayList references = new ArrayList();
-		Iterator it = DomUtils.getChildElementsByTagName(ele, "ref").iterator();
+	private List<Reference> parseReferences(Element ele) {
+		ArrayList<Reference> references = Generics.newArrayList();
+		Iterator<Element> it = DomUtils.getChildElementsByTagName(ele, "ref").iterator();
 		while (it.hasNext()) {
-			Element e = (Element) it.next();
+			Element e = it.next();
 			references.add(new Reference(
 					e.getAttribute("local"),
 					e.getAttribute("foreign")));
@@ -266,11 +268,11 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 		return references;
 	}
 
-	private List parseEntries(Element ele) {
-		ArrayList entries = new ArrayList();
-		Iterator it = DomUtils.getChildElementsByTagName(ele, "entry").iterator();
+	private List<RecordEntry> parseEntries(Element ele) {
+		ArrayList<RecordEntry> entries = Generics.newArrayList();
+		Iterator<Element> it = DomUtils.getChildElementsByTagName(ele, "entry").iterator();
 		while (it.hasNext()) {
-			Element e = (Element) it.next();
+			Element e = it.next();
 			entries.add(new RecordEntry(
 					e.getAttribute("column"), 
 					e.getAttribute("value")));
@@ -278,11 +280,11 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 		return entries;
 	}
 	
-	private List parseUpdateStatements(Element ele) {
-		ArrayList statements = new ArrayList();
-		Iterator it = DomUtils.getChildElementsByTagName(ele, "statement").iterator();
+	private List<UpdateStatement> parseUpdateStatements(Element ele) {
+		ArrayList<UpdateStatement> statements = Generics.newArrayList();
+		Iterator<Element> it = DomUtils.getChildElementsByTagName(ele, "statement").iterator();
 		while (it.hasNext()) {
-			Element e = (Element) it.next();
+			Element e = it.next();
 			statements.add(new UpdateStatement(
 					e.getAttribute("dialects"), 
 					e.getAttribute("sql")));

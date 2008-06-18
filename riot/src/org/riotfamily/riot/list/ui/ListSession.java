@@ -40,6 +40,7 @@ import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.ui.RenderContext;
 import org.riotfamily.forms.Element;
@@ -115,9 +116,9 @@ public class ListSession implements RenderContext {
 
 	private boolean sortable;
 	
-	private List listCommands;
+	private List<Command> listCommands;
 
-	private List itemCommands;
+	private List<Command> itemCommands;
 
 	private String[] defaultCommandIds;
 
@@ -187,7 +188,7 @@ public class ListSession implements RenderContext {
 
 			filterForm.setTemplate(ResourceUtils.getPath(getClass(), "FilterForm.ftl"));
 
-			Iterator it = filterForm.getRegisteredElements().iterator();
+			Iterator<Element> it = filterForm.getRegisteredElements().iterator();
 			while (it.hasNext()) {
 				Element e = (Element) it.next();
 				e.setRequired(false);
@@ -205,8 +206,8 @@ public class ListSession implements RenderContext {
 		params.setOrder(listConfig.getDefaultOrder());
 	}
 	
-	private Map getTexts() {
-		HashMap texts = new HashMap();
+	private Map<String,String> getTexts() {
+		HashMap<String,String> texts = Generics.newHashMap();
 		addText(texts, "label.tree.selectTarget");
 		addText(texts, "label.tree.cancelCommand");
 		addText(texts, "label.selection.clear");
@@ -214,7 +215,7 @@ public class ListSession implements RenderContext {
 		return texts;
 	}
 	
-	private void addText(Map map, String key) {
+	private void addText(Map<String,String> map, String key) {
 		map.put(key, messageResolver.getMessage(key, key));
 	}
 
@@ -223,8 +224,8 @@ public class ListSession implements RenderContext {
 	}
 
 	public void setChooserTarget(EditorDefinition target) {
-		listCommands = Collections.EMPTY_LIST;
-		itemCommands = new ArrayList();
+		listCommands = Collections.emptyList();
+		itemCommands = Generics.newArrayList();
 
 		ListDefinition targetList = null;
 		if (target instanceof ListDefinition) {
@@ -281,7 +282,7 @@ public class ListSession implements RenderContext {
 		
 		int itemsTotal = listConfig.getDao().getListSize(parent, params);
 		int pageSize = params.getPageSize();
-		Collection beans = listConfig.getDao().list(parent, params);
+		Collection<?> beans = listConfig.getDao().list(parent, params);
 		if (itemsTotal < beans.size()) {
 			itemsTotal = beans.size();
 			pageSize = itemsTotal;
@@ -296,12 +297,12 @@ public class ListSession implements RenderContext {
 	/**
 	 * Sets a List of ListItem objects on the given model.
 	 */
-	private void fillInItems(ListModel model, Collection beans, Object root,
+	private void fillInItems(ListModel model, Collection<?> beans, Object root,
 			HttpServletRequest request) {
 		
-		ArrayList items = new ArrayList(beans.size());
+		ArrayList<Object> items = new ArrayList<Object>(beans.size());
 		int rowIndex = 0;
-		Iterator it = beans.iterator();
+		Iterator<?> it = beans.iterator();
 		while (it.hasNext()) {
 			Object bean = it.next();
 			ListItem item = new ListItem();
@@ -342,9 +343,9 @@ public class ListSession implements RenderContext {
 	/**
 	 * Returns a List of HTML markup for each column.
 	 */
-	private List getColumns(Object bean) {
-		ArrayList result = new ArrayList();
-		Iterator it = listConfig.getColumnConfigs().iterator();
+	private List<String> getColumns(Object bean) {
+		ArrayList<String> result = Generics.newArrayList();
+		Iterator<ColumnConfig> it = listConfig.getColumnConfigs().iterator();
 		ProtectedBeanWrapper wrapper = new ProtectedBeanWrapper(bean);
 		while (it.hasNext()) {
 			ColumnConfig col = (ColumnConfig) it.next();
@@ -420,8 +421,8 @@ public class ListSession implements RenderContext {
 	}
 	
 	private void fillInColumnConfigs(ListModel model) {
-		ArrayList columns = new ArrayList();
-		Iterator it = listConfig.getColumnConfigs().iterator();
+		ArrayList<ListColumn> columns = Generics.newArrayList();
+		Iterator<ColumnConfig> it = listConfig.getColumnConfigs().iterator();
 		while (it.hasNext()) {
 			ColumnConfig config = (ColumnConfig) it.next();
 			ListColumn column = new ListColumn();
@@ -446,7 +447,7 @@ public class ListSession implements RenderContext {
 		return getHeading(getBeanClass(), property, lookupLevel);
 	}
 
-	private String getHeading(Class clazz, String property, int lookupLevel) {
+	private String getHeading(Class<?> clazz, String property, int lookupLevel) {
 		if (property == null) {
 			return null;
 		}
@@ -489,7 +490,7 @@ public class ListSession implements RenderContext {
 		return filterFormHtml;
 	}
 
-	public ListModel filter(Map filter, HttpServletRequest request) {
+	public ListModel filter(Map<String,Object> filter, HttpServletRequest request) {
 		if (filterForm != null) {
 			filterForm.processRequest(new SimpleFormRequest(filter));
 			params.setFilter(filterForm.populateBackingObject());
@@ -515,7 +516,7 @@ public class ListSession implements RenderContext {
 		return !listCommands.isEmpty();
 	}
 
-	public List getFormCommands(String objectId, HttpServletRequest request) {
+	public List<?> getFormCommands(String objectId, HttpServletRequest request) {
 		Object bean = null;
 		if (objectId != null) {
 			bean = loadBean(objectId);
@@ -548,31 +549,31 @@ public class ListSession implements RenderContext {
 		return state;
 	}
 	
-	private List getCommandStates(List commands, ListItem item, Object bean,
+	private List<CommandState> getCommandStates(List<Command> commands, ListItem item, Object bean,
 			int itemsTotal, HttpServletRequest request) {
 
-		ArrayList states = new ArrayList();
+		ArrayList<CommandState> states = Generics.newArrayList();
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		context.setBean(bean, item.getObjectId());
 		context.setParent(null, item.getParentId(), item.getParentEditorId());
 		context.setItemsTotal(itemsTotal);
 		context.setRowIndex(item.getRowIndex());
-		Iterator it = commands.iterator();
+		Iterator<Command> it = commands.iterator();
 		while (it.hasNext()) {
-			Command command = (Command) it.next();
+			Command command = it.next();
 			states.add(command.getState(context));
 		}
 		checkPermissions(states, bean);
 		return states;
 	}
 	
-	private List getListCommandStates(List commands, CommandContext context,
+	private List<CommandState> getListCommandStates(List<Command> commands, CommandContext context,
 			HttpServletRequest request) {
 
-		ArrayList states = new ArrayList();
-		Iterator it = commands.iterator();
+		ArrayList<CommandState> states = Generics.newArrayList();
+		Iterator<Command> it = commands.iterator();
 		while (it.hasNext()) {
-			Command command = (Command) it.next();
+			Command command = it.next();
 			CommandState state = command.getState(context);
 			states.add(state);
 		}
@@ -580,11 +581,11 @@ public class ListSession implements RenderContext {
 		return states;
 	}
 	
-	private List getBatchStates(List commands, CommandContext context, 
+	private List<CommandState> getBatchStates(List<?> commands, CommandContext context, 
 			HttpServletRequest request) {
 
-		ArrayList states = new ArrayList();
-		Iterator it = commands.iterator();
+		ArrayList<CommandState> states = Generics.newArrayList();
+		Iterator<?> it = commands.iterator();
 		while (it.hasNext()) {
 			Object command = it.next();
 			if (command instanceof BatchCommand) {
@@ -596,10 +597,10 @@ public class ListSession implements RenderContext {
 		return states;
 	}
 	
-	private void checkPermissions(List states, Object bean) {
-		Iterator it = states.iterator();
+	private void checkPermissions(List<CommandState> states, Object bean) {
+		Iterator<CommandState> it = states.iterator();
 		while (it.hasNext()) {
-			CommandState state = (CommandState) it.next();
+			CommandState state = it.next();
 			boolean granted = AccessController.isGranted(
 					state.getAction(), bean);
 
@@ -670,7 +671,7 @@ public class ListSession implements RenderContext {
 		}
 	}
 	
-	public CommandResult execBatchCommand(List items, CommandState commandState,
+	public CommandResult execBatchCommand(List<ListItem> items, CommandState commandState,
 			boolean confirmed, HttpServletRequest request,
 			HttpServletResponse response) {
 
@@ -686,10 +687,10 @@ public class ListSession implements RenderContext {
 		TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
 		CommandResult result = null;
 		try {
-			Iterator it = items.iterator();
+			Iterator<ListItem> it = items.iterator();
 			int batchIndex = 0;
 			while (it.hasNext()) {
-				ListItem item = (ListItem) it.next();
+				ListItem item = it.next();
 				Object bean = loadBean(item.getObjectId());
 				context.setBean(bean, item.getObjectId());
 				context.setParent(null, item.getParentId(), item.getParentEditorId());
@@ -709,10 +710,10 @@ public class ListSession implements RenderContext {
 		return result; 
 	}
 	
-	private Command getCommand(Collection commands, String id) {
-		Iterator it = commands.iterator();
+	private Command getCommand(Collection<Command> commands, String id) {
+		Iterator<Command> it = commands.iterator();
 		while (it.hasNext()) {
-			Command command = (Command) it.next();
+			Command command = it.next();
 			if (id.equals(command.getId())) {
 				return command;
 			}
@@ -763,7 +764,7 @@ public class ListSession implements RenderContext {
 		return parentId;
 	}
 
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		return listDefinition.getBeanClass();
 	}
 

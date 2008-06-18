@@ -24,12 +24,11 @@
 package org.riotfamily.forms.support;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.riotfamily.common.util.Generics;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
@@ -38,7 +37,7 @@ import org.springframework.validation.ObjectError;
 
 public abstract class AbstractBindingResultSupport implements BindingResult {
 	
-	private final List errors = new LinkedList();
+	private final List<ObjectError> errors = Generics.newLinkedList();
 
 	private final String objectName;
 
@@ -48,8 +47,8 @@ public abstract class AbstractBindingResultSupport implements BindingResult {
 		this.objectName = objectName;
 	}	
 
-	public Map getModel() {
-		Map model = new HashMap();
+	public Map<String,Object> getModel() {
+		Map<String,Object> model = Generics.newHashMap();
 		// Errors instance, even if no errors.
 		model.put(MODEL_KEY_PREFIX + getObjectName(), this);
 		// Mapping from name to target object.
@@ -72,7 +71,7 @@ public abstract class AbstractBindingResultSupport implements BindingResult {
 		this.errors.remove(error);
 	}
 	
-	public void removeErrors(List errors) {
+	public void removeErrors(List<?> errors) {
 		for (int i = 0; i < errors.size(); i++) {
 			removeError((ObjectError) errors.get(i));
 		}
@@ -143,6 +142,7 @@ public abstract class AbstractBindingResultSupport implements BindingResult {
 		addError(fe);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void addAllErrors(Errors errors) {
 		this.errors.addAll(errors.getAllErrors());
 	}
@@ -155,7 +155,7 @@ public abstract class AbstractBindingResultSupport implements BindingResult {
 		return this.errors.size();
 	}
 
-	public List getAllErrors() {
+	public List<ObjectError> getAllErrors() {
 		return Collections.unmodifiableList(this.errors);
 	}
 
@@ -167,10 +167,10 @@ public abstract class AbstractBindingResultSupport implements BindingResult {
 		return getGlobalErrors().size();
 	}
 
-	public List getGlobalErrors() {
-		List result = new LinkedList();
-		for (Iterator it = this.errors.iterator(); it.hasNext();) {
-			Object error = it.next();
+	public List<ObjectError> getGlobalErrors() {
+		List<ObjectError> result = Generics.newLinkedList();
+		for (Iterator<ObjectError> it = this.errors.iterator(); it.hasNext();) {
+			ObjectError error = it.next();
 			if (!(error instanceof FieldError)) {
 				result.add(error);
 			}
@@ -179,8 +179,8 @@ public abstract class AbstractBindingResultSupport implements BindingResult {
 	}
 	
 	public ObjectError getGlobalError() {
-		for (Iterator it = this.errors.iterator(); it.hasNext();) {
-			ObjectError objectError = (ObjectError) it.next();
+		for (Iterator<ObjectError> it = this.errors.iterator(); it.hasNext();) {
+			ObjectError objectError = it.next();
 			if (!(objectError instanceof FieldError)) {
 				return objectError;
 			}
@@ -196,10 +196,10 @@ public abstract class AbstractBindingResultSupport implements BindingResult {
 		return getFieldErrors().size();
 	}
 
-	public List getFieldErrors() {
-		List result = new LinkedList();
-		for (Iterator it = this.errors.iterator(); it.hasNext();) {
-			Object error = it.next();
+	public List<ObjectError> getFieldErrors() {
+		List<ObjectError> result = Generics.newLinkedList();
+		for (Iterator<ObjectError> it = this.errors.iterator(); it.hasNext();) {
+			ObjectError error = it.next();
 			if (error instanceof FieldError) {
 				result.add(error);
 			}
@@ -208,7 +208,7 @@ public abstract class AbstractBindingResultSupport implements BindingResult {
 	}
 
 	public FieldError getFieldError() {
-		for (Iterator it = this.errors.iterator(); it.hasNext();) {
+		for (Iterator<ObjectError> it = this.errors.iterator(); it.hasNext();) {
 			Object error = it.next();
 			if (error instanceof FieldError) {
 				return (FieldError) error;
@@ -225,20 +225,20 @@ public abstract class AbstractBindingResultSupport implements BindingResult {
 		return getFieldErrors(field).size();
 	}
 
-	public List getFieldErrors(String field) {
-		List result = new LinkedList();
+	public List<FieldError> getFieldErrors(String field) {
+		List<FieldError> result = Generics.newLinkedList();
 		
-		for (Iterator it = this.errors.iterator(); it.hasNext();) {
-			Object error = it.next();
+		for (Iterator<ObjectError> it = this.errors.iterator(); it.hasNext();) {
+			ObjectError error = it.next();
 			if (error instanceof FieldError && isMatchingFieldError(field, ((FieldError) error))) {
-				result.add(error);
+				result.add((FieldError) error);
 			}
 		}
 		return Collections.unmodifiableList(result);
 	}
 
 	public FieldError getFieldError(String field) {
-		for (Iterator it = this.errors.iterator(); it.hasNext();) {
+		for (Iterator<ObjectError> it = this.errors.iterator(); it.hasNext();) {
 			Object error = it.next();
 			if (error instanceof FieldError) {
 				FieldError fe = (FieldError) error;
@@ -254,7 +254,7 @@ public abstract class AbstractBindingResultSupport implements BindingResult {
 		throw new UnsupportedOperationException();
 	}
 	
-	public Class getFieldType(String field) {
+	public Class<?> getFieldType(String field) {
 		throw new UnsupportedOperationException();
 	}
 	

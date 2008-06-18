@@ -35,6 +35,7 @@ import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
+import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.TemplateUtils;
@@ -57,7 +58,7 @@ public class ListEditor extends TemplateElement implements Editor,
 		ResourceElement, DHTMLElement {
 		
 	/** Class to use for newly created collections */
-	private Class collectionClass;
+	private Class<?> collectionClass;
 		
 	private String parentProperty;
 	
@@ -129,14 +130,14 @@ public class ListEditor extends TemplateElement implements Editor,
 	 *   
 	 * @param collectionClass the class to use for new collections
 	 */
-	public void setCollectionClass(Class collectionClass) {
+	public void setCollectionClass(Class<?> collectionClass) {
 		this.collectionClass = collectionClass;
 	}
 	
 	/**
 	 * Returns the class set via {@link #setCollectionClass(Class)}.
 	 */
-	public Class getCollectionClass() {
+	public Class<?> getCollectionClass() {
 		return this.collectionClass;
 	}
 	
@@ -154,7 +155,7 @@ public class ListEditor extends TemplateElement implements Editor,
 		return this.itemElementFactory;
 	}
 	
-	protected List getListItems() {
+	protected List<Element> getListItems() {
 		return items.getElements();
 	}
 	
@@ -163,7 +164,7 @@ public class ListEditor extends TemplateElement implements Editor,
 	 */
 	public void setValue(Object value) {
 		if (collectionClass == null) {
-			Class type = getEditorBinding().getPropertyType();
+			Class<?> type = getEditorBinding().getPropertyType();
 			if (type.isInterface()) {
 				if (Set.class.isAssignableFrom(type)) {
 					collectionClass = HashSet.class;
@@ -181,8 +182,8 @@ public class ListEditor extends TemplateElement implements Editor,
 				throw new IllegalArgumentException("Value must implement " +
 						"the java.util.Collection interface");
 			}
-			Collection collection = (Collection) value;
-			Iterator it = collection.iterator();			
+			Collection<?> collection = (Collection<?>) value;
+			Iterator<?> it = collection.iterator();			
 			while (it.hasNext()) {
 				addItem(it.next(), false);
 			}
@@ -190,8 +191,8 @@ public class ListEditor extends TemplateElement implements Editor,
 	}
 	
 	public Object getValue() {
-		Collection collection = createOrClearCollection();
-		Iterator it = getListItems().iterator();
+		Collection<Object> collection = createOrClearCollection();
+		Iterator<Element> it = getListItems().iterator();
 		while (it.hasNext()) {
 			ListItem item = (ListItem) it.next();
 			Object value = item.getValue();

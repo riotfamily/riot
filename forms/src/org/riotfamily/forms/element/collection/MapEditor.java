@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.StringRenderer;
 import org.riotfamily.forms.Container;
@@ -57,7 +58,7 @@ import org.springframework.util.Assert;
 public class MapEditor extends TemplateElement implements Editor {
 	
 	/** Class to use for newly created maps */
-	private Class mapClass = HashMap.class;
+	private Class<?> mapClass = HashMap.class;
 	
 	private Object keyOptionsModel;
 	
@@ -140,7 +141,7 @@ public class MapEditor extends TemplateElement implements Editor {
 	 *   
 	 * @param mapClass the class to use for new collections
 	 */
-	public void setMapClass(Class mapClass) {
+	public void setMapClass(Class<?> mapClass) {
 		Assert.isAssignable(Map.class, mapClass);
 		this.mapClass = mapClass;
 	}	
@@ -156,13 +157,13 @@ public class MapEditor extends TemplateElement implements Editor {
 	 * 
 	 */
 	public void setValue(Object value) {
-		Map map = null;
+		Map<?,?> map = null;
 		if (value != null) {
 			Assert.isInstanceOf(Map.class, value, "Value must implement the Map interface");
-			map = (Map) value;
+			map = (Map<?,?>) value;
 		}
 		
-		Collection keys = null;
+		Collection<?> keys = null;
 		if (keyOptionsModel != null) {
 			keys = OptionsModelUtils.getOptionValues(keyOptionsModel, this);
 		}
@@ -171,7 +172,7 @@ public class MapEditor extends TemplateElement implements Editor {
 		}
 		
 		if (keys != null) {
-			Iterator it = keys.iterator();			
+			Iterator<?> it = keys.iterator();			
 			while (it.hasNext()) {
 				Object key = it.next();
 				Object obj = map != null ? map.get(key) : null;
@@ -182,7 +183,7 @@ public class MapEditor extends TemplateElement implements Editor {
 	
 	public Object getValue() {
 		Map map = createOrClearMap();
-		Iterator it = items.getElements().iterator();
+		Iterator<Element> it = items.getElements().iterator();
 		while (it.hasNext()) {
 			MapItem item = (MapItem) it.next();
 			map.put(item.getKey(), item.getValue());
@@ -301,12 +302,12 @@ public class MapEditor extends TemplateElement implements Editor {
 			this.model = keyElement.getOptions();
 		}
 
-		public Collection getOptionValues(Element element) {
-			Collection keys = getKeys();
-			ArrayList result = new ArrayList();
-			Iterator it = OptionsModelUtils.getOptionValues(model, element).iterator();
+		public Collection<?> getOptionValues(Element element) {
+			Collection<?> keys = getKeys();
+			ArrayList<Object> result = Generics.newArrayList();
+			Iterator<?> it = OptionsModelUtils.getOptionValues(model, element).iterator();
 			while (it.hasNext()) {
-				Object key = (Object) it.next();
+				Object key = it.next();
 				if (!keys.contains(key)) {
 					result.add(key);
 				}

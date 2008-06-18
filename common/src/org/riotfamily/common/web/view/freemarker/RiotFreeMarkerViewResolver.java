@@ -35,7 +35,7 @@ public class RiotFreeMarkerViewResolver extends FreeMarkerViewResolver {
 	
 	private boolean freeMarkerServletMode = false;
 	
-	private Map macroHelperFactories;
+	private Map<?,?> macroHelperFactories;
 	
 	public RiotFreeMarkerViewResolver() {
 		setExposeSpringMacroHelpers(true);
@@ -54,7 +54,7 @@ public class RiotFreeMarkerViewResolver extends FreeMarkerViewResolver {
 		macroHelperFactories = getApplicationContext().getBeansOfType(MacroHelperFactory.class);
 	}
 
-	protected Class requiredViewClass() {
+	protected Class<?> requiredViewClass() {
 		return RiotFreeMarkerView.class;
 	}
 	

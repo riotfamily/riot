@@ -123,13 +123,13 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 		protected void postProcess(BeanDefinitionBuilder beanDefinition, 
 				ParserContext parserContext, Element element) {
 			
-			List values = parserContext.getDelegate().parseListElement(
+			List<?> values = parserContext.getDelegate().parseListElement(
 					element, beanDefinition.getBeanDefinition());
 			
 			// The parsed List is a ManagedList. We put the values into an
 			// ArrayList so that the reference resolution is deferred until
 			// the actual target bean is initialized.
-			beanDefinition.addPropertyValue("values", new ArrayList(values));
+			beanDefinition.addPropertyValue("values", new ArrayList<Object>(values));
 		}
 	}
 

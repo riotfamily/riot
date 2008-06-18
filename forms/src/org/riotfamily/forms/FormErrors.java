@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.support.AbstractBindingResultSupport;
 import org.springframework.beans.PropertyEditorRegistry;
 import org.springframework.util.StringUtils;
@@ -61,30 +62,30 @@ public class FormErrors extends AbstractBindingResultSupport {
 	}
 
 	public void renderErrors(Element element) {
-		List errors = getErrors(element);
+		List<String> errors = getErrors(element);
 		if (errors != null) {
 			PrintWriter writer = element.getForm().getFormContext().getWriter();
 			DocumentWriter tag = new DocumentWriter(writer);
 			tag.start(Html.UL)
 					.attribute(Html.COMMON_ID, element.getId() + "-error")
 					.attribute(Html.COMMON_CLASS, "errors");
-			Iterator it = errors.iterator();
+			Iterator<String> it = errors.iterator();
 			while (it.hasNext()) {
 				tag.start(Html.LI)
-						.body((String) it.next())
+						.body(it.next())
 						.end();
 			}
 			tag.end();
 		}
 	}
 
-	public List getErrors(Element element) {
+	public List<String> getErrors(Element element) {
 		if (element instanceof Editor) {
-			ArrayList messages = new ArrayList();
+			ArrayList<String> messages = Generics.newArrayList();
 			Editor editor = (Editor) element;
-			List fieldErrors = getFieldErrors(editor.getFieldName());
-			for (Iterator it = fieldErrors.iterator(); it.hasNext();) {
-				FieldError error = (FieldError) it.next();
+			List<FieldError> fieldErrors = getFieldErrors(editor.getFieldName());
+			for (Iterator<FieldError> it = fieldErrors.iterator(); it.hasNext();) {
+				FieldError error = it.next();
 				String message = form.getFormContext().getMessageResolver().getMessage(error);
 				if (!StringUtils.hasLength(message)) {
 					message = StringUtils.arrayToCommaDelimitedString(error.getCodes());
