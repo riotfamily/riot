@@ -37,9 +37,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Table(name="riot_content_containers")
 @Inheritance(strategy=InheritanceType.JOINED)
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 public class ContentContainer {
 
 	private Long id;

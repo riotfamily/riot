@@ -40,6 +40,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -55,6 +57,7 @@ import org.springframework.util.ObjectUtils;
  */
 @Entity
 @Table(name="riot_page_nodes")
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 public class PageNode {
 
 	private Long id;
@@ -117,6 +120,7 @@ public class PageNode {
 	 */
 	@OneToMany(mappedBy="node", cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	public Set<Page> getPages() {
 		return pages;
 	}
@@ -141,6 +145,7 @@ public class PageNode {
 	 * Returns the child nodes. 
 	 */
 	@OneToMany(mappedBy="parent")
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	public List<PageNode> getChildNodes() {
 		return this.childNodes;
 	}

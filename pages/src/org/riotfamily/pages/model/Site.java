@@ -40,6 +40,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.riotfamily.common.web.util.ServletUtils;
@@ -54,6 +56,7 @@ import org.springframework.util.StringUtils;
  */
 @Entity
 @Table(name="riot_sites")
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 public class Site {
 
 	private Long id;
@@ -224,6 +227,7 @@ public class Site {
 	}
 	
 	@CollectionOfElements
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	public Set<String> getAliases() {
 		return this.aliases;
 	}

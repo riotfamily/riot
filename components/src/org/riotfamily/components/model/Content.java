@@ -45,6 +45,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.IndexColumn;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
@@ -58,6 +60,7 @@ import org.riotfamily.components.model.wrapper.ValueWrapperService;
     discriminatorType=DiscriminatorType.STRING
 )
 @DiscriminatorValue("Content")
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 public class Content {
 
 	private Long id;
@@ -134,6 +137,7 @@ public class Content {
 	@JoinColumn(name="content")
 	@IndexColumn(name="property")
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 	public Map<String, ValueWrapper<?>> getWrappers() {
 		if (wrappers == null) {
 			wrappers = new HashMap<String, ValueWrapper<?>>();

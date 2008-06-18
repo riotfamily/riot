@@ -38,6 +38,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.IndexColumn;
 
@@ -57,6 +59,7 @@ public class MapWrapper extends ValueWrapper<Map<String, Object>>
 	@JoinColumn(name="map_value")
 	@IndexColumn(name="map_key")
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 	public Map<String, Object> getWrapperMap() {
 		return wrapperMap;
 	}

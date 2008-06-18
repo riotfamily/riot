@@ -34,6 +34,9 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -42,6 +45,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name="riot_value_wrappers")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 public abstract class ValueWrapper<T> {
 
 	private Long id;

@@ -37,10 +37,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.IndexColumn;
 
 @Entity
 @Table(name="riot_component_lists")
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 public class ComponentList {
 
 	private Long id;
@@ -83,6 +86,7 @@ public class ComponentList {
 	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="list")
 	@IndexColumn(name="list_pos")
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 	public List<Component> getComponents() {
 		if (components == null) {
 			components = new ArrayList<Component>();

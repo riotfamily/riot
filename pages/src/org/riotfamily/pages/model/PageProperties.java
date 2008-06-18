@@ -8,6 +8,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.riotfamily.components.model.ContentContainer;
 
 @Entity
@@ -18,6 +20,7 @@ public class PageProperties extends ContentContainer {
 
 	@OneToMany
 	@JoinColumn(name="pageProperties")
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	public Set<Page> getPages() {
 		return pages;
 	}

@@ -38,6 +38,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 
 
@@ -66,6 +68,7 @@ public class ListWrapper extends ValueWrapper<List<?>>
 
 	@OneToMany(cascade=CascadeType.ALL)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 	public List<ValueWrapper<?>> getWrapperList() {
 		return wrapperList;
 	}

@@ -30,6 +30,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 
 
 /**
@@ -42,6 +45,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="riot_page_aliases")
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 public class PageAlias {
 
 	private Long id;
