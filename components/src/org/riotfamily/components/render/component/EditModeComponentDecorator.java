@@ -5,24 +5,28 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
-import org.riotfamily.components.config.ComponentRepository;
+import org.riotfamily.components.config.ContentFormUrlService;
 import org.riotfamily.components.model.Component;
 
-public class EditModeComponentRenderer {
+public class EditModeComponentDecorator implements ComponentRenderer {
 
-	private ComponentRepository repository;
+	private ContentFormUrlService contentFormUrlService;
 	
-	public EditModeComponentRenderer(ComponentRepository repository) {
-		this.repository = repository;
+	private ComponentRenderer renderer;
+	
+	public EditModeComponentDecorator(ComponentRenderer renderer, 
+			ContentFormUrlService contentFormUrlService) {
+		
+		this.renderer = renderer;
+		this.contentFormUrlService = contentFormUrlService;
 	}
 
-	public void renderComponent(ComponentRenderer renderer, 
-			Component component, int position, int listSize,
+	public void render(Component component, int position, int listSize,
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 
 		String type = component.getType();
-		String formUrl = repository.getFormUrl(type, 
+		String formUrl = contentFormUrlService.getContentFormUrl(type, 
 				component.getList().getContainer().getId() , component.getId());
 		
 		String className = "riot-list-component riot-component " +
@@ -40,7 +44,7 @@ public class EditModeComponentRenderer {
 				.attribute("riot:form", formUrl)
 				.body();
 
-		renderer.render(component, true, position, listSize, request, response);
+		renderer.render(component, position, listSize, request, response);
 		
 		wrapper.end();
 	}

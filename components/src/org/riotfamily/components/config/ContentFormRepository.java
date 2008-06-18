@@ -34,11 +34,8 @@ import org.springframework.validation.Validator;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class ContentFormRepository extends XmlFormRepository {
-
-	public ContentFormRepository(ComponentRepository componentRepository) {
-		componentRepository.setFormRepository(this);
-	}
+public class ContentFormRepository extends XmlFormRepository 
+		implements ContentFormUrlService {
 
 	public FormFactory createFormFactory(Class<?> beanClass, 
 			FormInitializer initializer, Validator validator) {
@@ -49,6 +46,17 @@ public class ContentFormRepository extends XmlFormRepository {
 			return factory;
 		}
 		return super.createFormFactory(beanClass, initializer, validator);
+	}
+	
+	public String getContentFormUrl(String formId, Long containerId, Long contentId) {
+		if (containsForm(formId)) {
+			return "/components/form/" + formId + "/" + containerId + "/" + contentId;
+		}
+		return null;
+	}
+	
+	public void setContentFormUrlService(ContentFormUrlServiceDelegate delegate) {
+		delegate.setContentFormRepository(this);
 	}
 	
 }

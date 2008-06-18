@@ -11,22 +11,27 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-7.0.xsd">
 
+	<bean id="contentFormUrlService" class="org.riotfamily.components.config.ContentFormUrlServiceDelegate" />
+
+	<bean id="componentRenderer" class="org.riotfamily.components.render.component.ViewComponentRenderer">
+		<property name="viewNamePrefix" value="components/" />
+		<property name="viewNameSuffix" value=".ftl" />
+	</bean>
+	
 	<bean id="componentListRenderer" class="org.riotfamily.components.render.list.ComponentListRenderer">
 		<constructor-arg ref="componentDao" />
-		<constructor-arg ref="componentRepository" />
 		<constructor-arg ref="transactionManager" />
 		<property name="liveModeRenderStrategy">
-			<bean class="org.riotfamily.components.render.list.LiveModeRenderStrategy">
-				<constructor-arg ref="cacheService" />
+			<bean class="org.riotfamily.components.render.list.DefaultRenderStrategy">
 				<constructor-arg ref="componentDao" />
-				<constructor-arg ref="componentRepository" />
+				<constructor-arg ref="componentRenderer" />
 			</bean>
 		</property>
 		<property name="editModeRenderStrategy">
 			<bean class="org.riotfamily.components.render.list.EditModeRenderStrategy">
-				<constructor-arg ref="cacheService" />
 				<constructor-arg ref="componentDao" />
-				<constructor-arg ref="componentRepository" />
+				<constructor-arg ref="componentRenderer" />
+				<constructor-arg ref="contentFormUrlService" />
 			</bean>
 		</property>
 	</bean>
@@ -36,7 +41,7 @@
 	</override:put>
 	
 	<bean id="inplaceMacroHelper" class="org.riotfamily.components.view.InplaceMacroHelperFactory">
-		<constructor-arg ref="componentRepository" />
+		<constructor-arg ref="contentFormUrlService" />
 		<constructor-arg ref="componentListRenderer" />
 		<constructor-arg ref="riotDaoService" />
 		<property name="toolbarScripts">
@@ -46,17 +51,20 @@
 			</list>
 		</property>
 	</bean>
-		
+	
+	<!-- REVIST -->
+	<!-- 
 	<override:properties ref="cachiusHandlerAdapter">
 		<property name="cacheKeyProvider">
 			<bean class="org.riotfamily.components.context.ComponentRequestCacheKeyProvider" />
 		</property>
 	</override:properties>
-		
+	
 	<override:properties ref="cachiusHandlerAdapter">
 		<property name="cacheKeyProvider">
 			<bean class="org.riotfamily.components.cache.EditModeAwareCacheKeyProvider" />
 		</property>
 	</override:properties>
-
+ 	-->
+ 
 </beans>

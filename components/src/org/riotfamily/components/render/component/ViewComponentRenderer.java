@@ -38,21 +38,25 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
- * Component implementation that resolves a view-name just like Spring's
- * DispatcherServlet and renders the view passing the ComponentVersion's
- * properties as model.
+ * ComponentRenderer implementation that resolves a view-name just like 
+ * Spring's DispatcherServlet and renders the view passing the 
+ * Component's properties as model.
  */
-public class ViewComponent extends AbstractComponent {
+public class ViewComponentRenderer extends AbstractComponentRenderer {
 
-	private String viewName;
-
-	private boolean dynamic = false;
-
-	public void setViewName(String viewName) {
-		this.viewName = viewName;
+	private String viewNamePrefix = "";
+	
+	private String viewNameSuffix = "";
+	
+	public void setViewNamePrefix(String viewNamePrefix) {
+		this.viewNamePrefix = viewNamePrefix;
 	}
 
-	protected void renderInternal(Component component, boolean preview,
+	public void setViewNameSuffix(String viewNameSuffix) {
+		this.viewNameSuffix = viewNameSuffix;
+	}
+
+	protected void renderInternal(Component component, 
 			int position, int listSize, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
@@ -67,6 +71,7 @@ public class ViewComponent extends AbstractComponent {
 		model.put(LIST_SIZE, new Integer(listSize));
 		model.put(PARENT, request.getAttribute(ComponentListRenderer.PARENT_ATTRIBUTE));
 		
+		String viewName = viewNamePrefix + component.getType() + viewNameSuffix;
 		ModelAndView mv = new ModelAndView(viewName, model);
 		try {
 			View view = new ViewResolverHelper(
@@ -78,14 +83,6 @@ public class ViewComponent extends AbstractComponent {
 		catch (ViewResolutionException e) {
 			log.warn("ViewResolutionException - Skipping component ...", e);
 		}
-	}
-
-	public boolean isDynamic() {
-		return this.dynamic;
-	}
-
-	public void setDynamic(boolean dynamic) {
-		this.dynamic = dynamic;
 	}
 
 }

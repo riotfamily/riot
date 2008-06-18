@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.components.EditModeUtils;
+import org.riotfamily.components.config.ContentFormUrlService;
 import org.riotfamily.components.config.ComponentListConfig;
-import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.render.list.ComponentListRenderer;
@@ -52,7 +52,7 @@ public class InplaceMacroHelper {
 
 	private List<DynamicToolbarScript> dynamicToolbarScripts;
 	
-	private ComponentRepository componentRepository;
+	private ContentFormUrlService contentFormUrlService;
 	
 	private ComponentListRenderer componentListRenderer;
 	
@@ -62,7 +62,7 @@ public class InplaceMacroHelper {
 			HttpServletResponse response, 
 			List<String> toolbarScripts,
 			List<DynamicToolbarScript> dynamicToolbarScripts, 
-			ComponentRepository repository,
+			ContentFormUrlService contentFormUrlService,
 			ComponentListRenderer componentListRenderer,
 			RiotDaoService riotDaoService) {
 
@@ -70,7 +70,7 @@ public class InplaceMacroHelper {
 		this.response = response;
 		this.toolbarScripts = toolbarScripts;
 		this.dynamicToolbarScripts = dynamicToolbarScripts;
-		this.componentRepository = repository;
+		this.contentFormUrlService = contentFormUrlService;
 		this.componentListRenderer = componentListRenderer;
 		this.riotDaoService = riotDaoService;
 	}
@@ -99,8 +99,8 @@ public class InplaceMacroHelper {
 	}
 	
 	public String getFormUrl(String formId, ContentContainer container) {
-		return componentRepository.getFormUrl(formId, container.getId(), 
-				container.getPreviewVersion().getId());
+		return contentFormUrlService.getContentFormUrl(formId, 
+				container.getId(), container.getPreviewVersion().getId());
 	}
 		
 	public String getObjectId(String listId, Object object) {
@@ -122,10 +122,8 @@ public class InplaceMacroHelper {
 		ComponentListConfig config = new ComponentListConfig(minComponents,
 				maxComponents, initalComponentTypes, validComponentTypes);
 		
-		componentListRenderer.renderComponentList(container, key, config, 
+		return componentListRenderer.renderComponentList(container, key, config, 
 				request, response);
-		
-		return "";
 	}
 	
 	public String renderNestedComponentList(Component parent, 
@@ -137,9 +135,7 @@ public class InplaceMacroHelper {
 		ComponentListConfig config = new ComponentListConfig(minComponents,
 				maxComponents, initalComponentTypes, validComponentTypes);
 		
-		componentListRenderer.renderNestedComponentList(parent, key, config, 
-				request, response);
-		
-		return "";
+		return componentListRenderer.renderNestedComponentList(parent, key, 
+				config, request, response);
 	}
 }

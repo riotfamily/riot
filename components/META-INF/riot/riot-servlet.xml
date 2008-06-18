@@ -11,6 +11,10 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-7.0.xsd">
 
+	<bean id="componentRenderer" class="org.riotfamily.common.beans.config.WebApplicationContextBeanImporter">
+		<property name="servletName" value="website" />
+	</bean>
+		
 	<!--
 	  - Service bean to edit components. Exposed via DWR.
 	  -->
@@ -18,7 +22,8 @@
 		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="mediaDao" />
 		<constructor-arg ref="imageCropper" />
-		<constructor-arg ref="componentRepository" />
+		<constructor-arg ref="componentRenderer" />
+		<constructor-arg ref="contentFormRepository" />
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
 	</bean>
 	
@@ -33,11 +38,16 @@
 	  - FormRepository providing component property forms.
 	  -->
 	<bean id="contentFormRepository" class="org.riotfamily.components.config.ContentFormRepository">
-		<constructor-arg ref="componentRepository" />
 		<property name="config" value="/WEB-INF/riot-config/content-forms.xml" />
 		<property name="customElements" ref="customFormElements" />
 		<property name="mimetypesMap" ref="fileTypeMap" />
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
+		<property name="contentFormUrlService">
+			<bean class="org.riotfamily.common.beans.config.WebApplicationContextBeanImporter">
+				<property name="servletName" value="website" />
+				<property name="beanName" value="contentFormUrlService" />
+			</bean>
+		</property>
 	</bean>
 
 	<!--

@@ -165,9 +165,9 @@ public class Content {
 		return result;
 	}
 	
-	public void wrapValues(Map<String, Object> values) {
+	public void wrapValues(Map<String, ?> values) {
 		if (values != null) {
-			for (Entry<String, Object> entry : values.entrySet()) {
+			for (Entry<String, ?> entry : values.entrySet()) {
 				setValue(entry.getKey(), entry.getValue());
 			}
 			Iterator<String> it = getWrappers().keySet().iterator();

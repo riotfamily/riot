@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.render.component;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -33,19 +31,10 @@ import org.riotfamily.components.model.Component;
 public interface ComponentRenderer {
 
 	/**
-	 * Indicates whether the content rendered by the component depends on
-	 * anything other but the components internal data.
-	 */
-	public boolean isDynamic();
-
-	public Map<String, Object> getDefaults();
-	
-	/**
 	 * Renders the given ComponentVersion.
 	 */
-	public void render(Component component, boolean preview, 
-			int position, int listSize, HttpServletRequest request, 
-			HttpServletResponse response)
+	public void render(Component component, int position, int listSize, 
+			HttpServletRequest request, HttpServletResponse response)
 			throws Exception;
 
 }

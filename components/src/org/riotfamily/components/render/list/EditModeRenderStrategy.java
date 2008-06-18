@@ -28,32 +28,27 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.components.config.ComponentListConfig;
-import org.riotfamily.components.config.ComponentRepository;
+import org.riotfamily.components.config.ContentFormUrlService;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.render.component.ComponentRenderer;
-import org.riotfamily.components.render.component.EditModeComponentRenderer;
+import org.riotfamily.components.render.component.EditModeComponentDecorator;
 
-public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
+public class EditModeRenderStrategy extends DefaultRenderStrategy {
 
-	private EditModeComponentRenderer editModeRenderer;
+	private EditModeComponentDecorator editModeRenderer;
 	
-	public EditModeRenderStrategy(ComponentDao dao,
-			ComponentRepository repository,	CacheService cacheService) {
-
-		super(dao, repository, cacheService);
-		editModeRenderer = new EditModeComponentRenderer(repository);
+	public EditModeRenderStrategy(ComponentDao dao, ComponentRenderer renderer,
+			ContentFormUrlService contentFormUrlService) {
+		
+		super(dao, renderer);
+		editModeRenderer = new EditModeComponentDecorator(renderer, contentFormUrlService);
 	}
 
-	protected void appendModeToCacheKey(StringBuffer cacheKey) {
-		cacheKey.append("edit:");
-	}
-	
 	/**
 	 * Overrides the default implementation to render a DIV tag around the
 	 * actual list. The DIV has attributes that are required for the
@@ -67,11 +62,6 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 		DocumentWriter wrapper = new DocumentWriter(response.getWriter());
 		
 		String className = "riot-list riot-component-list";
-		/*
-		if (getParentContainer(request) == null) {
-			className += " riot-toplevel-list";
-		}
-		*/
 		if (list.getContainer().isDirty()) {
 			className += " riot-dirty";
 		}
@@ -100,14 +90,12 @@ public class EditModeRenderStrategy extends PreviewModeRenderStrategy {
 	 * Riot toolbar JavaScript.
 	 * @throws IOException
 	 */
-	protected void renderComponentInternal(ComponentRenderer renderer, 
-			Component component, int position, int listSize,
-			ComponentListConfig config, 
+	protected void renderComponent(Component component, 
+			int position, int listSize, ComponentListConfig config, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 
-		editModeRenderer.renderComponent(renderer, component, position, 
-				listSize, request, response);
+		editModeRenderer.render(component, position, listSize, request, response);
 	}
 
 }

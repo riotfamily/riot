@@ -46,7 +46,7 @@ import org.riotfamily.common.util.PasswordGenerator;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.config.ComponentListConfig;
-import org.riotfamily.components.config.ComponentRepository;
+import org.riotfamily.components.config.ContentFormRepository;
 import org.riotfamily.components.context.ComponentRequestUtils;
 import org.riotfamily.components.context.RequestContextExpiredException;
 import org.riotfamily.components.dao.ComponentDao;
@@ -55,7 +55,7 @@ import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.render.component.ComponentRenderer;
-import org.riotfamily.components.render.component.EditModeComponentRenderer;
+import org.riotfamily.components.render.component.EditModeComponentDecorator;
 import org.riotfamily.media.dao.MediaDao;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
@@ -88,23 +88,20 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 
 	private Set<String> validTokens = Collections.synchronizedSet(new HashSet<String>());
 	
-	private ComponentRepository repository;
+	private ComponentRenderer renderer;
 
 	private MessageSource messageSource;
 
 	private Map<String, Map<String, Object>> tinyMCEProfiles;
 
-	private EditModeComponentRenderer editModeRenderer;
-	
 	public ComponentEditorImpl(ComponentDao componentDao,
 			MediaDao mediaDao, ImageCropper imageCropper,
-			ComponentRepository repository) {
+			ComponentRenderer renderer, ContentFormRepository formRepository) {
 		
 		this.componentDao = componentDao;
 		this.mediaDao = mediaDao;
 		this.imageCropper = imageCropper;
-		this.repository = repository;
-		editModeRenderer = new EditModeComponentRenderer(repository);
+		this.renderer = new EditModeComponentDecorator(renderer, formRepository);
 	}
 
 	public void setMessageSource(MessageSource messageSource) {
@@ -251,7 +248,10 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	 * @return The newly created component
 	 */
 	private Component createComponent(String type, Map<String, String> properties) {
-		Component component = repository.createComponent(type, properties);
+		Component component = new Component(type);
+		if (properties != null) {
+			component.wrapValues(properties);
+		}
 		componentDao.saveContent(component);
 		return component;
 	}
@@ -261,8 +261,6 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 		
 		Component component = componentDao.loadComponent(componentId);
 		component.setType(type);
-		ComponentRenderer renderer = repository.getRenderer(type);
-		component.wrapValues(renderer.getDefaults());
 		return renderComponent(component);
 	}
 	
@@ -277,16 +275,11 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 			throws RequestContextExpiredException {
 
 		try {
-			ComponentRenderer renderer = repository.getRenderer(component);
 			ComponentList list = component.getList();
-			
 			StringWriter sw = new StringWriter();
 			HttpServletRequest request = getWrappedRequest(list.getId());
 			HttpServletResponse response = getCapturingResponse(sw);
-			
-			editModeRenderer.renderComponent(renderer, component,
-					list.indexOf(component), list.getSize(), request, response);
-			
+			renderer.render(component, list.indexOf(component), list.getSize(), request, response);
 			return sw.toString();
 		}
 		catch (RequestContextExpiredException e) {

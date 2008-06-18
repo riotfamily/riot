@@ -26,7 +26,6 @@ package org.riotfamily.components.render.component;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,9 +38,9 @@ import org.riotfamily.components.model.Component;
 /**
  * Abstract base class for component implementations.
  */
-public abstract class AbstractComponent implements ComponentRenderer {
+public abstract class AbstractComponentRenderer implements ComponentRenderer {
 
-	public static final String CONTAINER = AbstractComponent.class.getName()
+	public static final String CONTAINER = AbstractComponentRenderer.class.getName()
 			+ ".container";
 
 	public static final String COMPONENT_ID = "componentId";
@@ -54,26 +53,16 @@ public abstract class AbstractComponent implements ComponentRenderer {
 	
 	public static final String LIST_SIZE = "listSize";
 
-	protected Log log = LogFactory.getLog(AbstractComponent.class);
+	protected Log log = LogFactory.getLog(AbstractComponentRenderer.class);
 
-	private Map<String, Object> defaults;
-	
-	public void setDefaults(Map<String, Object> defaults) {
-		this.defaults = defaults;
-	}
-	
-	public Map<String, Object> getDefaults() {
-		return defaults;
-	}
-	
-	public final void render(Component component, boolean preview,
-			int position, int listSize, HttpServletRequest request,
-			HttpServletResponse response) throws IOException {
+	public final void render(Component component, int position, int listSize, 
+			HttpServletRequest request, HttpServletResponse response) 
+			throws IOException {
 
 		Object outerContainer = request.getAttribute(CONTAINER);
 		request.setAttribute(CONTAINER, component);
 		try {
-			renderInternal(component, preview, position, listSize, 
+			renderInternal(component, position, listSize, 
 					request, response);
 		}
 		catch (Exception e) {
@@ -93,11 +82,7 @@ public abstract class AbstractComponent implements ComponentRenderer {
 		request.setAttribute(CONTAINER, outerContainer);
 	}
 
-	public boolean isDynamic() {
-		return false;
-	}
-
-	protected abstract void renderInternal(Component component, boolean preview,
+	protected abstract void renderInternal(Component component,
 			int position, int listSize, HttpServletRequest request,
 			HttpServletResponse response) throws Exception;
 	

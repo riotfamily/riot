@@ -23,12 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.render.list;
 
+import java.io.StringWriter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.ComponentListConfig;
-import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.context.ComponentListRequestContext;
 import org.riotfamily.components.context.ComponentRequestUtils;
 import org.riotfamily.components.dao.ComponentDao;
@@ -49,8 +51,6 @@ public class ComponentListRenderer {
 	
 	private ComponentDao componentDao;
 
-	private ComponentRepository componentRepository;
-	
 	private PlatformTransactionManager transactionManager;
 	
 	private RenderStrategy liveModeRenderStrategy;
@@ -59,11 +59,9 @@ public class ComponentListRenderer {
 
 	
 	public ComponentListRenderer(ComponentDao componentDao, 
-			ComponentRepository componentRepository,
 			PlatformTransactionManager transactionManager) {
 		
 		this.componentDao = componentDao;
-		this.componentRepository = componentRepository;
 		this.transactionManager = transactionManager;
 	}
 
@@ -83,7 +81,7 @@ public class ComponentListRenderer {
 		list.setContainer(container);
 		content.setValue(key, list);
 		for (String type : config.getInitialComponentTypes()) {
-			Component component = componentRepository.createComponent(type, null);
+			Component component = new Component(type);
 			list.appendComponent(component);
 		}
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
@@ -94,7 +92,7 @@ public class ComponentListRenderer {
 		return list;
 	}
 	
-	public void renderComponentList(ContentContainer container, 
+	public String renderComponentList(ContentContainer container, 
 			String key, ComponentListConfig config,
 			HttpServletRequest request,
 			HttpServletResponse response) 
@@ -121,12 +119,15 @@ public class ComponentListRenderer {
 		else {
 			list = (ComponentList) container.getLiveVersion().getValue(key);
 		}
+		
+		StringWriter sw = new StringWriter();
 		if (list != null) {
-			strategy.render(list, config, request, response);
+			strategy.render(list, config, request, new CapturingResponseWrapper(response, sw));
 		}
+		return sw.toString();
 	}
 	
-	public void renderNestedComponentList(Component component, 
+	public String renderNestedComponentList(Component component, 
 			String key, ComponentListConfig config,
 			HttpServletRequest request,
 			HttpServletResponse response) 
@@ -152,10 +153,13 @@ public class ComponentListRenderer {
 		else {
 			list = (ComponentList) component.getValue(key);
 		}
+		
+		StringWriter sw = new StringWriter();
 		if (list != null) {
-			strategy.render(list, config, request, response);
+			strategy.render(list, config, request, new CapturingResponseWrapper(response, sw));
 		}
 		request.removeAttribute(PARENT_ATTRIBUTE);
+		return sw.toString();
 	}
 
 }

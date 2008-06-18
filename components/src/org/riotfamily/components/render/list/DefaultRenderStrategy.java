@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.render.list;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,13 +31,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.components.config.ComponentListConfig;
-import org.riotfamily.components.config.ComponentRepository;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.render.component.ComponentRenderer;
 
-public abstract class AbstractRenderStrategy implements RenderStrategy {
+public class DefaultRenderStrategy implements RenderStrategy {
 	
 	public static final String INHERTING_COMPONENT = "inherit";
 	
@@ -46,39 +44,19 @@ public abstract class AbstractRenderStrategy implements RenderStrategy {
 	
 	protected ComponentDao dao; 
 	
-	protected ComponentRepository repository;
-					
-	public AbstractRenderStrategy(ComponentDao dao, 
-			ComponentRepository repository) {
-		
+	private ComponentRenderer renderer;
+	
+	public DefaultRenderStrategy(ComponentDao dao, ComponentRenderer renderer) {
 		this.dao = dao;
-		this.repository = repository;
+		this.renderer = renderer;
 	}
 		
-	/**
-	 * Renders the given list. The default implementation calls 
-	 * {@link #getComponentsToRender(ComponentList)} and passes the result
-	 * to {@link #renderComponents(List)}.
-	 */
 	public void render(ComponentList list,
 			ComponentListConfig config,
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
-		renderComponents(list.getComponents(), config, request, response);
-	}
-	
-	/**
-	 * Renders the given list. The default implementation iterates over the 
-	 * given list and calls {@link #renderContainer(Component, String)} 
-	 * for each item. If the list is empty or null, 
-	 * {@link #onEmptyComponentList(HttpServletRequest, HttpServletResponse)} is invoked.
-	 */
-	protected final void renderComponents(List<Component> components,
-			ComponentListConfig config, 
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		
+		List<Component> components = list.getComponents();
 		if (components == null || components.isEmpty()) {
 			onEmptyComponentList(config, request, response);
 			return;
@@ -97,24 +75,12 @@ public abstract class AbstractRenderStrategy implements RenderStrategy {
 
 	}
 	
-	protected final void renderComponent(Component component,
+	protected void renderComponent(Component component, 
 			int position, int listSize, ComponentListConfig config, 
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
-
-		ComponentRenderer renderer = repository.getRenderer(component.getType());		
-		renderComponent(renderer, component, position, listSize, config, request, response);
+		
+		renderer.render(component, position, listSize, request, response);
 	}
-	
-	protected abstract void renderComponent(ComponentRenderer renderer, 
-			Component component, int position, int listSize,
-			ComponentListConfig config, 
-			HttpServletRequest request, HttpServletResponse response) 
-			throws Exception;
 
-	
-	protected RenderStrategy getStrategyForParentList() throws IOException {
-		return this;
-	}
-	
 }
