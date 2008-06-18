@@ -32,21 +32,15 @@
 <#assign templateName = .data_model['org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView.templateName']! />
 
 <#---
-  - Includes the given path using a RequestDispatcher. The argument may also be
-  - a sequence of paths, in which case multiple includes are performed.
-  - If the given path is empty (default), no include is performed. 
-  - @param path A path or sequence of paths to include
+  - Includes the given path using a RequestDispatcher. 
+  - @param path The path to include
   -->
-<#macro include path="">
-<#compress>
-	<#if path?is_sequence>
-		<#list path as item>
-			${commonMacroHelper.include(item)}
-		</#list>
-	<#elseif path?has_content>
+<#macro include path>
+	<#if childTemplate!false>
+		${commonMacroHelper.capture(path)}
+	<#else>
 		${commonMacroHelper.include(path)}
 	</#if>
-</#compress>
 </#macro>
 
 <#---
@@ -429,3 +423,26 @@
 <#function hyphenatePlainText text>
 	<#return commonMacroHelper.hyphenatePlainText(text) />
 </#function>
+
+<#macro template extends>
+	<#assign childTemplate=true />
+	<#local swallow><#nested/></#local>
+	<#assign childTemplate=false />
+	<#include extends> 
+</#macro>
+
+<#macro block name>
+	<#if !templateBlocks??>
+		<#assign templateBlocks = {} />
+	</#if>
+	<#if childTemplate!false>
+       <#local content><#nested /></#local>
+       <#assign templateBlocks = templateBlocks + {name: content} />
+   <#else>
+       <#if templateBlocks[name]??>
+           ${templateBlocks[name]}
+       <#else>
+           <#nested>
+       </#if>
+   </#if>
+</#macro>
