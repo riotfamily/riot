@@ -85,10 +85,6 @@
 			<db:add-foreign-key name="riot_content_value_wrappers" table="riot_content_values" references="riot_value_wrappers">
                 <db:ref local="wrapper" foreign="id" />
             </db:add-foreign-key>
-
-			<db:add-foreign-key name="riot_content_containers" table="riot_contents" references="riot_content_containers">
-			    <db:ref local="container" foreign="id" />
-			</db:add-foreign-key>
 			
 			<db:add-foreign-key name="riot_list_wrapper" table="riot_value_wrappers" references="riot_value_wrappers">
 			    <db:ref local="list" foreign="id" />
