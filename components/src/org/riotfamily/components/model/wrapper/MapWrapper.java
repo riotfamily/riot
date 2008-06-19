@@ -42,6 +42,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.IndexColumn;
+import org.riotfamily.common.util.Generics;
 
 
 /**
@@ -70,7 +71,7 @@ public class MapWrapper extends ValueWrapper<Map<String, Object>>
 
 
 	public void wrap(Object value) {
-		putAll((Map) value);
+		putAll((Map<String, Object>) value);
 	}
 	
 	@Transient
@@ -81,9 +82,9 @@ public class MapWrapper extends ValueWrapper<Map<String, Object>>
 	public void setValue(Map<String, Object> value) {
 	}
 	
-	public ValueWrapper getWrapper(String key) {
+	public ValueWrapper<?> getWrapper(String key) {
 		if (wrapperMap != null) {
-			return (ValueWrapper) wrapperMap.get(key);
+			return (ValueWrapper<?>) wrapperMap.get(key);
 		}
 		return null;
 	}
@@ -94,7 +95,7 @@ public class MapWrapper extends ValueWrapper<Map<String, Object>>
 		}
 		HashMap<String, Object> result = new HashMap<String, Object>();
 		for (Map.Entry<String, Object> entry : wrapperMap.entrySet()) {
-			ValueWrapper wrapper = (ValueWrapper) entry.getValue();
+			ValueWrapper<?> wrapper = (ValueWrapper<?>) entry.getValue();
 			if (wrapper != null) {
 				result.put(entry.getKey(), wrapper.unwrap());
 			}
@@ -106,12 +107,12 @@ public class MapWrapper extends ValueWrapper<Map<String, Object>>
 	}
 	
 	public MapWrapper deepCopy() {
-		HashMap map = new HashMap();
+		HashMap<String, Object> map = Generics.newHashMap();
 		if (wrapperMap != null) {
-			Iterator it = wrapperMap.entrySet().iterator();
+			Iterator<Map.Entry<String, Object>> it = wrapperMap.entrySet().iterator();
 			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry) it.next();
-				ValueWrapper wrapper = (ValueWrapper) entry.getValue();
+				Map.Entry<String, Object> entry = it.next();
+				ValueWrapper<?> wrapper = (ValueWrapper<?>) entry.getValue();
 				map.put(entry.getKey(), wrapper.deepCopy());
 			}
 		}
@@ -126,11 +127,11 @@ public class MapWrapper extends ValueWrapper<Map<String, Object>>
 			return null;
 		}
 		HashSet<String> result = new HashSet<String>();
-		Iterator it = wrapperMap.values().iterator();
+		Iterator<Object> it = wrapperMap.values().iterator();
 		while (it.hasNext()) {
-			ValueWrapper wrapper = (ValueWrapper) it.next();
+			ValueWrapper<?> wrapper = (ValueWrapper<?>) it.next();
 			if (wrapper != null) {
-				Collection tags = wrapper.getCacheTags();
+				Collection<String> tags = wrapper.getCacheTags();
 				if (tags != null) {
 					result.addAll(tags);
 				}

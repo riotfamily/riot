@@ -140,9 +140,9 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	}
 
 	protected void digestGroupEntries(Element groupElement, GroupDefinition group) {
-		Iterator it = XmlUtils.getChildElements(groupElement).iterator();
+		Iterator<Element> it = XmlUtils.getChildElements(groupElement).iterator();
 		while (it.hasNext()) {
-			Element ele = (Element) it.next();
+			Element ele = it.next();
 			String namespace = ele.getNamespaceURI();
 			if (namespace == null || namespace.equals(NAMESPACE)) {
 				EditorDefinition ed = digestEditorDefinition(ele);
@@ -278,7 +278,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	}
 
 	protected void digestChildEditors(Element ele, ObjectEditorDefinition editorDef) {
-		Iterator it = XmlUtils.getChildElementsByRegex(
+		Iterator<Element> it = XmlUtils.getChildElementsByRegex(
 				ele, ANYTHING).iterator();
 
 		while (it.hasNext()) {
@@ -334,12 +334,12 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 		formChooserDefinition.setParentEditorDefinition(parentDef);
 		addEditorDefinition(formChooserDefinition);
 
-		Iterator it = DomUtils.getChildElementsByTagName(
+		Iterator<Element> it = XmlUtils.getChildElementsByTagName(
 				chooserElement, FORM_OPTION).iterator();
-
+	
 		while (it.hasNext()) {
 			FormDefinition formDefinition =
-					digestFormDefinition((Element) it.next(),
+					digestFormDefinition(it.next(),
 					formChooserDefinition);
 
 			formChooserDefinition.addFormDefinition(formDefinition);

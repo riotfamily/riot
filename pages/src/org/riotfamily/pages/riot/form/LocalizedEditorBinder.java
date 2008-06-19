@@ -52,6 +52,7 @@ public class LocalizedEditorBinder implements EditorBinder {
 		delegate.bind(editor, property);
 	}
 
+	@SuppressWarnings("unchecked")
 	public PropertyEditor findCustomEditor(Class requiredType, String propertyPath) {
 		return delegate.findCustomEditor(requiredType, propertyPath);
 	}
@@ -92,11 +93,13 @@ public class LocalizedEditorBinder implements EditorBinder {
 		return delegate.isEditingExistingBean();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void registerCustomEditor(Class requiredType,
 			PropertyEditor propertyEditor) {
 		delegate.registerCustomEditor(requiredType, propertyEditor);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void registerCustomEditor(Class requiredType, String propertyPath,
 			PropertyEditor propertyEditor) {
 		delegate.registerCustomEditor(requiredType, propertyPath,

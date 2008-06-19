@@ -25,13 +25,10 @@ package org.riotfamily.revolt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.riotfamily.revolt.support.DialectResolver;
 import org.riotfamily.revolt.support.LogTable;
 import org.springframework.beans.factory.BeanNameAware;
@@ -42,7 +39,7 @@ import org.springframework.beans.factory.BeanNameAware;
  */
 public class EvolutionHistory implements BeanNameAware {
 
-	private static final Log log = LogFactory.getLog(EvolutionHistory.class);
+	//private static final Log log = LogFactory.getLog(EvolutionHistory.class);
 	
 	private String[] depends = new String[0];
 	

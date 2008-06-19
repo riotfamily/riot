@@ -24,10 +24,11 @@
 package org.riotfamily.website.generic.model;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.riotfamily.common.util.Generics;
 
 /**
  * @author Alf Werder <alf dot werder at artundweise dot de>
@@ -90,8 +91,8 @@ public class ModelBuilderStack implements CacheableModelBuilder {
 		}
 	}
 
-	public Map buildModel(HttpServletRequest request) throws Exception {
-		Map model = new HashMap();
+	public Map<String, Object> buildModel(HttpServletRequest request) throws Exception {
+		Map<String, Object> model = Generics.newHashMap();
 		
 		for (int i=0; i<modelBuilders.length; i++) {
 			model.putAll(modelBuilders[i].buildModel(request));

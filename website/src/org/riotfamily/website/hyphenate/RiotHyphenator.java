@@ -3,7 +3,6 @@ package org.riotfamily.website.hyphenate;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -13,6 +12,7 @@ import net.davidashen.util.ErrorHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 
@@ -22,7 +22,7 @@ public class RiotHyphenator implements InitializingBean {
 	
 	private File baseDir;
 	
-	private Map hyphenators = new HashMap();
+	private Map<String, Hyphenator> hyphenators = Generics.newHashMap();
 
 	public void setBaseDir(Resource resource) throws IOException {
 		this.baseDir = resource.getFile();

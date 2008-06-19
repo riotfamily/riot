@@ -40,7 +40,7 @@ public abstract class BaseModelBuilder implements ModelBuilder {
 		this.modelKey = modelKey;
 	}
 
-	public final Map buildModel(HttpServletRequest request) throws Exception {
+	public final Map<String, Object> buildModel(HttpServletRequest request) throws Exception {
 		HashMap<String, Object> model = new HashMap<String, Object>();
 		model.put(modelKey, buildModelObject(request));
 		return model;

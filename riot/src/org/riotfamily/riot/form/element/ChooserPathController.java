@@ -56,11 +56,11 @@ public class ChooserPathController extends PathController {
 		EditorReference rootRef = null;
 		EditorReference prev = null;
 		
-		Iterator it = path.getComponents().iterator();
+		Iterator<EditorReference> it = path.getComponents().iterator();
 		
 		if (rootEditorId != null) {
 			while (it.hasNext()) {
-				EditorReference ref = (EditorReference) it.next();
+				EditorReference ref = it.next();
 				if (rootEditorId.equals(ref.getEditorId()) 
 						&& (rootId == null || rootId.equals(ref.getObjectId()))) {
 					

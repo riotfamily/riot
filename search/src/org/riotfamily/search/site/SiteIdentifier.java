@@ -28,7 +28,7 @@ public class SiteIdentifier {
 	
 	private String contextPath;
 	
-	private List sites;
+	private List<Site> sites;
 
 	
 	public SiteIdentifier(PlatformTransactionManager transactionManager, PageDao pageDao) {
@@ -45,9 +45,9 @@ public class SiteIdentifier {
 			protected void doInTransactionWithoutResult(TransactionStatus ts) {
 				sites = pageDao.listSites();
 				if (sites != null) {
-				    Iterator i = sites.iterator();
+				    Iterator<Site> i = sites.iterator();
 				    while (i.hasNext()) {
-				        Hibernate.initialize(((Site) i.next()).getAliases());
+				        Hibernate.initialize(i.next().getAliases());
 				    }
 				}
 			}
@@ -98,9 +98,9 @@ public class SiteIdentifier {
 	}
 
 	private Site getSite(String hostName, String path) {
-		Iterator it = sites.iterator();
+		Iterator<Site> it = sites.iterator();
 		while (it.hasNext()) {
-			Site site = (Site) it.next();
+			Site site = it.next();
 			if (site.matches(hostName, path)) {
 				return site;
 			}
@@ -113,9 +113,9 @@ public class SiteIdentifier {
 	 * Sites.
 	 */
 	public boolean isSiteHost(String hostName) {
-		Iterator it = sites.iterator();
+		Iterator<Site> it = sites.iterator();
 		while (it.hasNext()) {
-			Site site = (Site) it.next();
+			Site site = it.next();
 			if (site.hostNameMatches(hostName, false)) {
 				return true;
 			}

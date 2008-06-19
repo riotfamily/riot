@@ -25,10 +25,8 @@ package org.riotfamily.forms.factory.xml;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -76,7 +74,7 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	
 	private MimetypesFileTypeMap mimetypesMap;
 	
-	private Map tinyMCEProfiles;
+	private Map<String, Object> tinyMCEProfiles;
 	
 	private HashMap<String, Class<? extends Element>> customElements;
 	
@@ -163,14 +161,14 @@ public class XmlFormRepository extends AbstractFormRepository implements
 		return this.mimetypesMap;
 	}
 	
-	public Map getTinyMCEConfig(String profile) {
+	public Map<String, Object> getTinyMCEConfig(String profile) {
 		if (profile == null) {
 			profile = "default";
 		}
-		return (Map) tinyMCEProfiles.get(profile);
+		return (Map<String, Object>) tinyMCEProfiles.get(profile);
 	}
 
-	public void setTinyMCEProfiles(Map profiles) {
+	public void setTinyMCEProfiles(Map<String, Object> profiles) {
 		this.tinyMCEProfiles = profiles;
 	}
 

@@ -92,9 +92,9 @@ public final class HibernateUtils {
 			return null;
 		}
 		StringBuffer hql = new StringBuffer();
-		Map properties;
+		Map<String, Object> properties;
 		if (example instanceof Map) {
-			properties = (Map) example;
+			properties = (Map<String, Object>) example;
 		}
 		else {
 			properties = PropertyUtils.getProperties(example, propertyNames);
@@ -107,7 +107,7 @@ public final class HibernateUtils {
 					hql.append(" and ");
 				}
 				if (value instanceof Collection) {
-					Collection c = (Collection) value;
+					Collection<?> c = (Collection<?>) value;
 					hql.append("1 = 1");
 					for (int j = 0; j < c.size(); j++) {
 						hql.append(" and :").append(name).append("_").append(j)
@@ -144,14 +144,14 @@ public final class HibernateUtils {
 			String name = names[i];
 			Object value;
 			if (object instanceof Map) {
-				value = ((Map) object).get(name);
+				value = ((Map<String, Object>) object).get(name);
 			}
 			else {
 				value = PropertyUtils.getProperty(object, name);
 			}
 			if (value instanceof Collection) {
 				int j = 0;
-				Iterator values = ((Collection) value).iterator();
+				Iterator<?> values = ((Collection<?>) value).iterator();
 				while (values.hasNext()) {
 					query.setParameter(name + "_" + j++, values.next());
 				}

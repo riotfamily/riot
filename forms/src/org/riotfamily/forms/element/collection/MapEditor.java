@@ -202,9 +202,9 @@ public class MapEditor extends TemplateElement implements Editor {
 		return map;
 	}
 
-	private Set getKeys() {
-		HashSet keys = new HashSet();
-		Iterator it = items.getElements().iterator();
+	private Set<Object> getKeys() {
+		HashSet<Object> keys = Generics.newHashSet();
+		Iterator<Element> it = items.getElements().iterator();
 		while (it.hasNext()) {
 			MapItem item = (MapItem) it.next();
 			keys.add(item.getKey());

@@ -32,6 +32,7 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.util.SpringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
@@ -148,8 +149,8 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	
 	public void afterPropertiesSet() throws IOException, TemplateException {
 		if (objectWrapper == null) {
-			Collection plugins = applicationContext.getBeansOfType(
-					ObjectWrapperPlugin.class).values();
+			Collection plugins = SpringUtils.beansOfType(
+					applicationContext, ObjectWrapperPlugin.class).values();
 			
 			if (!plugins.isEmpty()) {
 				objectWrapper = new PluginObjectWrapper(plugins);
@@ -189,7 +190,7 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	
 	protected void importMacroLibraries(Configuration config) {
 		if (macroLibraries != null) {
-			Enumeration names = macroLibraries.propertyNames();
+			Enumeration<?> names = macroLibraries.propertyNames();
 			while (names.hasMoreElements()) {
 				String namespace = (String) names.nextElement();
 				String lib = macroLibraries.getProperty(namespace);

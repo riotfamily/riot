@@ -55,9 +55,9 @@ public class AbstractResourceController extends AbstractCacheableController
 	
 	private FileTypeMap fileTypeMap = FileTypeMap.getDefaultFileTypeMap();
 	
-    private List mappings;
+    private List<ResourceMapping> mappings;
     
-    private List filters;
+    private List<ResourceFilter> filters;
     
 	private long lastModified = System.currentTimeMillis();
 	
@@ -88,11 +88,11 @@ public class AbstractResourceController extends AbstractCacheableController
 		this.fileTypeMap = fileTypeMap;
 	}
 
-	public void setMappings(List resourceMappings) {
+	public void setMappings(List<ResourceMapping> resourceMappings) {
 		this.mappings = resourceMappings;
 	}
 
-	public void setFilters(List filters) {
+	public void setFilters(List<ResourceFilter> filters) {
 		this.filters = filters;
 	}
 
@@ -104,9 +104,9 @@ public class AbstractResourceController extends AbstractCacheableController
 	}
 	
 	protected Resource lookupResource(String path) throws IOException {
-		Iterator it = mappings.iterator();
+		Iterator<ResourceMapping> it = mappings.iterator();
     	while (it.hasNext()) {
-    		ResourceMapping mapping = (ResourceMapping) it.next();
+    		ResourceMapping mapping = it.next();
 			Resource res = mapping.getResource(path);
 			if (res != null) {
 				return res;
@@ -229,9 +229,9 @@ public class AbstractResourceController extends AbstractCacheableController
 		
 		Reader in = new InputStreamReader(res.getInputStream(), "UTF-8");
 		if (filters != null) {
-			Iterator it = filters.iterator();
+			Iterator<ResourceFilter> it = filters.iterator();
 			while (it.hasNext()) {
-				ResourceFilter filter = (ResourceFilter) it.next();
+				ResourceFilter filter = it.next();
 				if (filter.matches(path)) {
 					log.debug("Filter " + filter + " matches.");
 					in = filter.createFilterReader(in, request);

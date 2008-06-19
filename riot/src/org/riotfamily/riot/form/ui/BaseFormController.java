@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.ButtonFactory;
@@ -179,10 +180,10 @@ public abstract class BaseFormController extends RepositoryFormController
 		return EditorDefinitionUtils.loadBean(editorDefinition, objectId);
 	}
 
-	protected Map createModel(Form form, ObjectEditorDefinition formDefinition,
+	protected Map<String, Object> createModel(Form form, ObjectEditorDefinition formDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 
-		HashMap model = new HashMap();
+		HashMap<String, Object> model = Generics.newHashMap();
 		model.put(EditorConstants.EDITOR_ID, formDefinition.getId());
 		model.put(EditorConstants.PARENT_EDITOR_ID, FormUtils.getParentEditorId(form));
 		model.put(EditorConstants.PARENT_ID, FormUtils.getParentId(form));
@@ -199,7 +200,7 @@ public abstract class BaseFormController extends RepositoryFormController
 
 		StringWriter sw = new StringWriter();
 		renderForm(form, new PrintWriter(sw));
-		Map model = createModel(form, getObjectEditorDefinition(request),
+		Map<String, Object> model = createModel(form, getObjectEditorDefinition(request),
 				request, response);
 
 		model.put("form", sw.toString());

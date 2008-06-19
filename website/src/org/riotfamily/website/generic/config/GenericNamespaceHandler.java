@@ -84,6 +84,7 @@ public class GenericNamespaceHandler extends GenericNamespaceHandlerSupport {
 			super(StaticModelBuilder.class);
 		}
 		
+		@SuppressWarnings("unchecked")
 		protected void postProcess(BeanDefinitionBuilder beanDefinition,
 				ParserContext parserContext, Element element) {
 			

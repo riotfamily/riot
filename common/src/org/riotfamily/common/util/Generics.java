@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 public final class Generics {
@@ -22,6 +23,14 @@ public final class Generics {
 	public static<K, V> HashMap<K, V> newHashMap(Map<? extends K, ? extends V> m) {
 		return new HashMap<K, V>(m);
 	}
+	
+	public static<K, V> TreeMap<K, V> newTreeMap() {
+		return new TreeMap<K, V>();
+	}
+	
+	public static<K, V> TreeMap<K, V> newTreeMap(Map<? extends K, ? extends V> m) {
+		return new TreeMap<K, V>(m);
+	}	
 	
 	public static<V> ArrayList<V> newArrayList() {
 		return new ArrayList<V>();

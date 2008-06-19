@@ -15,7 +15,7 @@ public class SiteFacade {
 
 	private HttpServletRequest request;
 	
-	private Map properties = null;
+	private Map<String, Object> properties = null;
 	
 	public SiteFacade(Site site, HttpServletRequest request) {
 		this.site = site;
@@ -72,7 +72,7 @@ public class SiteFacade {
 		return site.isEnabled();
 	}
 	
-	public Map getProperties() {
+	public Map<String, Object> getProperties() {
 		if (properties == null) {
 			properties = site.getPropertiesMap();
 		}

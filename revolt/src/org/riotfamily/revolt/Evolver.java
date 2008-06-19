@@ -32,9 +32,9 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.revolt.support.DatabaseUtils;
 import org.riotfamily.revolt.support.LogTable;
-import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.StringUtils;
@@ -70,7 +70,7 @@ public class Evolver implements ApplicationContextAware {
 	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
-		Collection<EvolutionHistory> evolutions = BeanFactoryUtils.beansOfTypeIncludingAncestors(
+		Collection<EvolutionHistory> evolutions = SpringUtils.beansOfTypeIncludingAncestors(
 				applicationContext, EvolutionHistory.class).values();
 		
 		if (enabled) {
@@ -115,11 +115,11 @@ public class Evolver implements ApplicationContextAware {
 	}
 	
 	private void executeScripts() {
-		Iterator it = scripts.entrySet().iterator();
+		Iterator<Map.Entry<DataSource, Script>> it = scripts.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			DataSource dataSource = (DataSource) entry.getKey();
-			Script script = (Script) entry.getValue();
+			Map.Entry<DataSource, Script> entry = it.next();
+			DataSource dataSource = entry.getKey();
+			Script script = entry.getValue();
 			if (!script.isManualExecutionOnly()) {
 				script.execute(dataSource);
 			}
@@ -128,9 +128,9 @@ public class Evolver implements ApplicationContextAware {
 		
 	private String getInstructions() {
 		StringBuffer sb = new StringBuffer();
-		Iterator it = scripts.entrySet().iterator();
+		Iterator<Map.Entry<DataSource, Script>> it = scripts.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
+			Map.Entry<DataSource, Script> entry = it.next();
 			DataSource dataSource = (DataSource) entry.getKey();
 			Script script = (Script) entry.getValue();
 			if (!automatic || script.isManualExecutionOnly()) {

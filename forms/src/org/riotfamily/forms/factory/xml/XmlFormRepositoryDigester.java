@@ -269,9 +269,9 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		factory.setPropertyValues(pvs);
 
 		if (ContainerElement.class.isAssignableFrom(elementClass)) {
-			Iterator it = XmlUtils.getChildElements(ele).iterator();
+			Iterator<Element> it = XmlUtils.getChildElements(ele).iterator();
 			while (it.hasNext()) {
-				parseElementDefinition((Element) it.next(), factory);
+				parseElementDefinition(it.next(), factory);
 			}
 		}
 
@@ -402,7 +402,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			}
 		}
 
-		Iterator it = XmlUtils.getChildElementsByRegex(
+		Iterator<Element> it = XmlUtils.getChildElementsByRegex(
 				element, "property|set-property").iterator();
 
 		while (it.hasNext()) {

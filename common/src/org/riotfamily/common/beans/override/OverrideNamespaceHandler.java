@@ -101,6 +101,7 @@ public class OverrideNamespaceHandler extends GenericNamespaceHandlerSupport {
 			super(MapMergeProcessor.class);
 		}
 		
+		@SuppressWarnings("unchecked")
 		protected void postProcess(BeanDefinitionBuilder beanDefinition, 
 				ParserContext parserContext, Element element) {
 			

@@ -25,12 +25,12 @@ package org.riotfamily.riot.resource;
 
 import java.io.FilterReader;
 import java.io.Reader;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.io.PropertyFilterReader;
+import org.riotfamily.common.util.Generics;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 public class PropertyResourceFilter extends AbstractPathMatchingResourceFilter {
@@ -39,13 +39,13 @@ public class PropertyResourceFilter extends AbstractPathMatchingResourceFilter {
 
 	public static final String LANGUAGE_PROPERTY = "language";
 
-	private Map properties;
+	private Map<String, String> properties;
 	
 	private boolean exposeContextPath = true;
 	
 	private boolean exposeLanguage = true;
 	
-	public void setProperties(Map properties) {
+	public void setProperties(Map<String, String> properties) {
 		this.properties = properties;
 	}
 		
@@ -58,7 +58,7 @@ public class PropertyResourceFilter extends AbstractPathMatchingResourceFilter {
 	}
 
 	public FilterReader createFilterReader(Reader in, HttpServletRequest request) {
-		Map props = new HashMap(properties);
+		Map<String, String> props = Generics.newHashMap(properties);
 		if (exposeContextPath) {
 			props.put(CONTEXT_PATH_PROPERTY, request.getContextPath());
 		}

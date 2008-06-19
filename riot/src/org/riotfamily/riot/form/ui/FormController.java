@@ -61,10 +61,10 @@ public class FormController extends BaseFormController {
 		this.listService = listService;
 	}
 
-	protected Map createModel(Form form, ObjectEditorDefinition editorDefinition,
+	protected Map<String, Object> createModel(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 
-		Map model = super.createModel(form, editorDefinition, request, response);
+		Map<String, Object> model = super.createModel(form, editorDefinition, request, response);
 		model.put(PARAM_SAVED, Boolean.valueOf(request.getParameter(PARAM_SAVED) != null));
 
 		Object object = null;

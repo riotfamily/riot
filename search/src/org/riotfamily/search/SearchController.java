@@ -214,16 +214,16 @@ public class SearchController implements Controller, InitializingBean {
 	}
 
 	protected Query createFilterQuery(HttpServletRequest request) {
-		Map filterParams = WebUtils.getParametersStartingWith(request, "filter_");
+		Map<String, String> filterParams = WebUtils.getParametersStartingWith(request, "filter_");
 		if (filterParams.isEmpty()) {
 			return null;
 		}
 		BooleanQuery query = new BooleanQuery();
-		Iterator it = filterParams.entrySet().iterator();
+		Iterator<Map.Entry<String, String>> it = filterParams.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			String field = (String) entry.getKey();
-			String value = (String) entry.getValue();
+			Map.Entry<String, String> entry = it.next();
+			String field = entry.getKey();
+			String value = entry.getValue();
 			query.add(new TermQuery(new Term(field, value)), Occur.MUST);
 		}
 		return query;

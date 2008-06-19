@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.riotfamily.common.collection.IteratorEnumeration;
+import org.riotfamily.common.util.Generics;
 import org.springframework.util.Assert;
 
 public class ComponentRequest extends HttpServletRequestWrapper {
@@ -120,12 +121,12 @@ public class ComponentRequest extends HttpServletRequestWrapper {
 		return context.getAttributes().get(name);
 	}
 
-	public Enumeration getAttributeNames() {
-		HashSet names = new HashSet();
+	public Enumeration<?> getAttributeNames() {
+		HashSet<String> names = Generics.newHashSet();
 		names.addAll(context.getAttributes().keySet());
-		Iterator it = attributes.entrySet().iterator();
+		Iterator<Map.Entry<String, Object>> it = attributes.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry attribute = (Map.Entry) it.next();
+			Map.Entry<String, Object> attribute = it.next();
 			if (attribute.getValue() != null) {
 				names.add(attribute.getKey());
 			}
@@ -135,7 +136,7 @@ public class ComponentRequest extends HttpServletRequestWrapper {
 				names.remove(attribute.getKey());
 			}
 		}
-		return new IteratorEnumeration(names.iterator());
+		return new IteratorEnumeration<String>(names.iterator());
 	}
 
 	public void setAttribute(String name, Object value) {

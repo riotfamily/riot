@@ -108,15 +108,15 @@ public class CsvExportController implements Controller {
 		Object parent = EditorDefinitionUtils.loadParent(listDefinition, parentId);
 
 		ListParams params = new ListParamsImpl();
-		Collection beans = listConfig.getDao().list(parent, params);
-		Iterator beanIterator = beans.iterator();
+		Collection<?> beans = listConfig.getDao().list(parent, params);
+		Iterator<?> beanIterator = beans.iterator();
 		while (beanIterator.hasNext()) {
 			BeanWrapper bean = new BeanWrapperImpl(beanIterator.next());
 			for (int i = 0; i < command.getProperties().size(); i++) {
 				String propertyName = (String) command.getProperties().get(i);
 				Object value = bean.getPropertyValue(propertyName);
 				if (value instanceof Collection) {
-					Iterator it = ((Collection) value).iterator();
+					Iterator<?> it = ((Collection<?>) value).iterator();
 					while (it.hasNext()) {
 						out.print(it.next());
 						out.print(' ');

@@ -44,9 +44,9 @@ public class ListItem {
 	
 	private String cssClass;
 	
-	private List columns;
+	private List<String> columns;
 	
-	private List commands;
+	private List<CommandState> commands;
 
 	private CommandState defaultCommand;
 		
@@ -61,11 +61,11 @@ public class ListItem {
 		this.objectId = objectId;
 	}
 
-	public List getColumns() {
+	public List<String> getColumns() {
 		return this.columns;
 	}
 
-	public void setColumns(List columns) {
+	public void setColumns(List<String> columns) {
 		this.columns = columns;
 	}
 
@@ -77,11 +77,11 @@ public class ListItem {
 		this.cssClass = cssClass;
 	}
 
-	public List getCommands() {
+	public List<CommandState> getCommands() {
 		return this.commands;
 	}
 
-	public void setCommands(List commands) {
+	public void setCommands(List<CommandState> commands) {
 		this.commands = commands;
 	}
 
@@ -146,9 +146,9 @@ public class ListItem {
 	}
 	
 	private CommandState getCommandState(String id) {
-		Iterator it = commands.iterator();
+		Iterator<CommandState> it = commands.iterator();
 		while (it.hasNext()) {
-			CommandState state = (CommandState) it.next();
+			CommandState state = it.next();
 			if (state.getId().equals(id)) {
 				return state;
 			}

@@ -24,10 +24,8 @@
 package org.riotfamily.forms;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -404,9 +402,9 @@ public class Form implements BeanEditor {
 
 	public void processRequest(FormRequest request) {
 		errors.removeAllErrors();
-		Iterator it = containers.iterator();
+		Iterator<Container> it = containers.iterator();
 		while (it.hasNext()) {
-			Container container = (Container) it.next();
+			Container container = it.next();
 			container.processRequest(request);
 		}
 		if (validator != null) {
@@ -455,9 +453,9 @@ public class Form implements BeanEditor {
 	public void setFormContext(FormContext formContext) {
 		this.formContext = formContext;
 		this.errors = new FormErrors(this);
-		Iterator it = getRegisteredElements().iterator();
+		Iterator<Element> it = getRegisteredElements().iterator();
 		while (it.hasNext()) {
-			Element element = (Element) it.next();
+			Element element = it.next();
 			element.setFormContext(formContext);
 		}
 	}

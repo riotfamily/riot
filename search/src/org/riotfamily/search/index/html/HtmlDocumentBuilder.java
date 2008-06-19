@@ -2,7 +2,6 @@ package org.riotfamily.search.index.html;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -11,6 +10,7 @@ import org.htmlparser.filters.NodeClassFilter;
 import org.htmlparser.tags.BodyTag;
 import org.htmlparser.tags.HeadingTag;
 import org.htmlparser.util.NodeList;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.crawler.PageData;
 import org.riotfamily.search.index.DocumentBuilder;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,7 +26,7 @@ public class HtmlDocumentBuilder implements DocumentBuilder, InitializingBean {
 	
 	private FieldExtractor languageExtractor;
 
-	private Map customFieldExtractors;
+	private Map<String, FieldExtractor> customFieldExtractors;
 	
 	/**
 	 * Sets a NodeFilter that is used to extract the ancestor(s) of the nodes
@@ -64,7 +64,7 @@ public class HtmlDocumentBuilder implements DocumentBuilder, InitializingBean {
 	 * field within your index, put a {@link FieldExtractor} in this
 	 * {@link Map}. The key of this entry is used as the name of the field.
 	 */
-	public void setCustomFieldExtractors(Map customFieldExtractors) {
+	public void setCustomFieldExtractors(Map<String, FieldExtractor> customFieldExtractors) {
 		this.customFieldExtractors = customFieldExtractors;
 	}
 	
@@ -73,7 +73,7 @@ public class HtmlDocumentBuilder implements DocumentBuilder, InitializingBean {
 	 */
 	public void addCustomFieldExtractor(String field, FieldExtractor extractor) {
 		if (customFieldExtractors == null) {
-			customFieldExtractors = new TreeMap();
+			customFieldExtractors = Generics.newTreeMap();
 		}
 		customFieldExtractors.put(field, extractor);
 	}
@@ -132,11 +132,11 @@ public class HtmlDocumentBuilder implements DocumentBuilder, InitializingBean {
 		}
 		
 		if (customFieldExtractors != null) {
-			Iterator i = customFieldExtractors.entrySet().iterator();
+			Iterator<Map.Entry<String, FieldExtractor>> i = customFieldExtractors.entrySet().iterator();
 			while (i.hasNext()) {
-				Map.Entry entry = (Map.Entry) i.next();
-				String key = (String) entry.getKey();
-				FieldExtractor extractor = (FieldExtractor) entry.getValue(); 
+				Map.Entry<String, FieldExtractor> entry = i.next();
+				String key = entry.getKey();
+				FieldExtractor extractor = entry.getValue(); 
 				String value = extractor.getFieldValue(pageData);
 				if (value != null) {
 					doc.add(new Field(key, value, 

@@ -95,6 +95,7 @@ public abstract class AbstractMultiSelectElement
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Object getValue() {
 		Collection<Object> collection = null;
 		if (getEditorBinding() != null) {

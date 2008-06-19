@@ -47,7 +47,7 @@ public class HqlModelBuilder extends AbstractHqlModelBuilder {
 			HttpServletRequest request) {
 		
 		if (item != null) {
-			Class clazz = Hibernate.getClass(item);
+			Class<?> clazz = Hibernate.getClass(item);
 			Serializable id = getSessionFactory()
 					.getClassMetadata(clazz).getIdentifier(
 					item, EntityMode.POJO);
@@ -55,7 +55,7 @@ public class HqlModelBuilder extends AbstractHqlModelBuilder {
 			TaggingContext.tag(request, clazz.getName() + "#" + id);
 		}
 		else {
-			Class clazz = query.getReturnTypes()[0].getReturnedClass();
+			Class<?> clazz = query.getReturnTypes()[0].getReturnedClass();
 			TaggingContext.tag(request, clazz.getName());
 		}
 	}

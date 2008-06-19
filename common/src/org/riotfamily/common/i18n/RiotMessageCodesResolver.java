@@ -55,6 +55,7 @@ public class RiotMessageCodesResolver implements AdvancedMessageCodesResolver {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public String[] resolveMessageCodes(String errorCode, String objectName, 
 			String field, Class fieldType) {
 		

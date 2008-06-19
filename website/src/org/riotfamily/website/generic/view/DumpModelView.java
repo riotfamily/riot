@@ -80,9 +80,9 @@ public class DumpModelView implements View {
 		out.end();
 		
 		out.start(Html.BODY).start(Html.DL);
-		Iterator it = model.entrySet().iterator();
+		Iterator<Map.Entry<Object, Object>> it = model.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
+			Map.Entry<Object, Object> entry = it.next();
 			out.start(Html.DT).body(entry.getKey().toString()).end();
 			out.start(Html.DD).body(StylerUtils.style(entry.getValue())).end();
 		}

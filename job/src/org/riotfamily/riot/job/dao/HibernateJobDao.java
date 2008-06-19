@@ -58,7 +58,7 @@ public class HibernateJobDao extends HibernateSupport implements JobDao {
 		query.setParameter("objectId", objectId);
 		query.setMaxResults(1);
 		
-		List jobs = query.list();
+		List<JobDetail> jobs = query.list();
 		if (jobs.isEmpty()) {
 			return null;
 		}
@@ -75,7 +75,7 @@ public class HibernateJobDao extends HibernateSupport implements JobDao {
 		query.setParameter("objectId", objectId);
 		query.setMaxResults(1);
 		
-		List jobs = query.list();
+		List<JobDetail> jobs = query.list();
 		if (jobs.isEmpty()) {
 			return null;
 		}

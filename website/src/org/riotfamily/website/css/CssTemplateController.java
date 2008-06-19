@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.Compressible;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.compressor.YUICssCompressor;
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.util.ServletUtils;
@@ -245,7 +246,7 @@ public class CssTemplateController extends AbstractCacheableController
 
 			response.setContentType(contentType);
 
-			Map	model = buildModel();
+			Map<String, Object>	model = buildModel();
 			model.put(KEY_PROPERTY, key);
 			model.put(CONTEXT_PATH_PROPERTY, request.getContextPath());
 
@@ -257,15 +258,15 @@ public class CssTemplateController extends AbstractCacheableController
 			compressor.compress(in, response.getWriter());
 		}
 
-		private Map buildModel() {
-			HashMap model = new HashMap();
+		private Map<String, Object> buildModel() {
+			HashMap<String, Object> model = Generics.newHashMap();
 			model.put("color", colorTool);
 			if (iniFile != null) {
-				Map sections = iniFile.getSections();
+				Map<String, Object> sections = iniFile.getSections();
 				model.putAll(sections);
-				model.putAll((Map) sections.get(IniFile.GLOBAL_SECTION));
+				model.putAll((Map<String, Object>) sections.get(IniFile.GLOBAL_SECTION));
 				if (key != null) {
-					Map current = (Map) sections.get(key);
+					Map<String, Object> current = (Map<String, Object>) sections.get(key);
 					if (current != null) {
 						model.putAll(current);
 					}

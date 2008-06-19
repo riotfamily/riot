@@ -60,9 +60,9 @@ public class JobUIUpdater implements ServletContextAware {
 	
 	private void send(Long jobId, String functionName, Object arg) {		
 		ServerContext serverContext = ServerContextFactory.get(servletContext);
-		Iterator it = serverContext.getAllScriptSessions().iterator();
+		Iterator<ScriptSession> it = serverContext.getAllScriptSessions().iterator();
 		while (it.hasNext()) {
-			ScriptSession session = (ScriptSession) it.next();
+			ScriptSession session = it.next();
 			Long pageJobId = (Long) session.getAttribute(JOB_ID_ATTRIBUTE);
 			if (jobId.equals(pageJobId)) {
 				ScriptBuffer script = new ScriptBuffer();

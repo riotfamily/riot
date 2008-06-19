@@ -40,6 +40,7 @@ public class MapDecorator implements BeanDefinitionDecorator {
 		this.mapPropertyName = mapPropertyName;
 	}
 
+	@SuppressWarnings("unchecked")
 	public BeanDefinitionHolder decorate(Node node,
 			BeanDefinitionHolder definition, ParserContext parserContext) {
 

@@ -48,10 +48,10 @@ public class ListItemDecorator implements BeanDefinitionDecorator {
 
 		BeanDefinition bd = definition.getBeanDefinition();
 		MutablePropertyValues pvs = bd.getPropertyValues();
-		Collection c = null;
+		Collection<Object> c = null;
 		PropertyValue pv = pvs.getPropertyValue(listPropertyName);
 		if (pv != null) {
-			c = (Collection) pv.getValue();
+			c = (Collection<Object>) pv.getValue();
 		}
 		if (c == null) {
 			c = new ManagedList();

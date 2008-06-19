@@ -26,7 +26,6 @@ package org.riotfamily.common.web.view.freemarker;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 
 import org.springframework.core.OrderComparator;
 

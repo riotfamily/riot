@@ -32,6 +32,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface ModelBuilder {
 
-	Map buildModel(HttpServletRequest request) throws Exception;
+	Map<String, Object> buildModel(HttpServletRequest request) throws Exception;
 
 }

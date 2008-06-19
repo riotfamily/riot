@@ -35,13 +35,13 @@ public final class CacheInvalidationUtils {
 	private CacheInvalidationUtils() {
 	}
 		
-	public static void invalidate(CacheService cacheService, Class clazz) {
+	public static void invalidate(CacheService cacheService, Class<?> clazz) {
 		if (cacheService != null) {
 		    cacheService.invalidateTaggedItems(clazz.getName());
 		}
 	}
 	
-	public static void invalidate(CacheService cacheService, Class clazz, Object objectId) {
+	public static void invalidate(CacheService cacheService, Class<?> clazz, Object objectId) {
 		if (cacheService != null) {
 		    cacheService.invalidateTaggedItems(clazz.getName());
 		    cacheService.invalidateTaggedItems(clazz.getName() + '#' + objectId);

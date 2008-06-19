@@ -26,7 +26,7 @@ package org.riotfamily.forms;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.BeanUtils;
+import org.riotfamily.common.util.SpringUtils;
 import org.springframework.core.GenericCollectionTypeResolver;
 import org.springframework.util.Assert;
 
@@ -36,7 +36,7 @@ import org.springframework.util.Assert;
  */
 public class MapEditorBinder extends AbstractEditorBinder {
 
-	private Map map;
+	private Map<Object,Object> map;
 	
 	private Class<? extends Map> mapClass = HashMap.class;
 	
@@ -44,7 +44,7 @@ public class MapEditorBinder extends AbstractEditorBinder {
 
 	private boolean editingExisitingMap;
 	
-	public MapEditorBinder(Map map) {
+	public MapEditorBinder(Map<Object, Object> map) {
 		Assert.notNull(map);
 		this.map = map;
 		this.mapClass = map.getClass();
@@ -56,13 +56,13 @@ public class MapEditorBinder extends AbstractEditorBinder {
 		Assert.isAssignable(Map.class, mapClass);
 		this.mapClass = mapClass; 
 		this.valueClass = GenericCollectionTypeResolver.getMapValueType(mapClass);
-		this.map = (Map) BeanUtils.instantiateClass(mapClass);
+		this.map = SpringUtils.newInstance(mapClass);
 	}
 
 	public void setBackingObject(Object backingObject) {
 		if (backingObject != null) {
 			Assert.isInstanceOf(mapClass, backingObject);
-			map = (Map) backingObject;
+			map = (Map<Object, Object>) backingObject;
 			editingExisitingMap = true;
 		}
 		else {

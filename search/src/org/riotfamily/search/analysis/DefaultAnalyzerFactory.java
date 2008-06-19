@@ -2,7 +2,6 @@ package org.riotfamily.search.analysis;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -14,6 +13,7 @@ import org.apache.lucene.analysis.el.GreekAnalyzer;
 import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.th.ThaiAnalyzer;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
 
 public class DefaultAnalyzerFactory implements AnalyzerFactory {
 
-	private static Map snowballNames = new HashMap();
+	private static Map<String, String> snowballNames = Generics.newHashMap();
 	static {
 		snowballNames.put("da", "Danish");
 		snowballNames.put("nl", "Dutch");
@@ -69,7 +69,7 @@ public class DefaultAnalyzerFactory implements AnalyzerFactory {
 			String path = ResourceUtils.getPath(this, "/stopwords/" + language + ".txt");
 			Resource res = new ClassPathResource(path);
 			if (res.exists()) {
-				HashSet wordSet = WordlistLoader.getWordSet(
+				HashSet<String> wordSet = WordlistLoader.getWordSet(
 						new InputStreamReader(res.getInputStream(), "UTF-8"));
 				
 				return StringUtils.toStringArray(wordSet);

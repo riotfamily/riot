@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.riotfamily.riot.list.command.CommandState;
+
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
@@ -41,13 +43,13 @@ public class ListModel {
 
 	private boolean tree;
 	
-	private List columns;
+	private List<ListColumn> columns;
 
-	private List items;
+	private List<ListItem> items;
 
-	private List listCommands;
+	private List<CommandState> listCommands;
 	
-	private List batchCommands;
+	private List<CommandState> batchCommands;
 
 	private int itemCommandCount;
 
@@ -63,7 +65,7 @@ public class ListModel {
 
 	private String cssClass;
 	
-	private Map texts;
+	private Map<String, String> texts;
 
 	public ListModel(int itemsTotal, int pageSize, int currentPage) {
 		this.itemsTotal = itemsTotal;
@@ -109,27 +111,27 @@ public class ListModel {
 		this.tree = tree;
 	}
 
-	public List getColumns() {
+	public List<ListColumn> getColumns() {
 		return this.columns;
 	}
 
-	public void setColumns(List columns) {
+	public void setColumns(List<ListColumn> columns) {
 		this.columns = columns;
 	}
 
-	public List getItems() {
+	public List<ListItem> getItems() {
 		return this.items;
 	}
 
-	public void setItems(List items) {
+	public void setItems(List<ListItem> items) {
 		this.items = items;
 	}
 
 	public ListItem findItem(String objectId) {
 		if (items != null && objectId != null) {
-			Iterator it = items.iterator();
+			Iterator<ListItem> it = items.iterator();
 			while (it.hasNext()) {
-				ListItem item = (ListItem) it.next();
+				ListItem item = it.next();
 				if (objectId.equals(item.getObjectId())) {
 					return item;
 				}
@@ -138,19 +140,19 @@ public class ListModel {
 		return null;
 	}
 	
-	public List getListCommands() {
+	public List<CommandState> getListCommands() {
 		return this.listCommands;
 	}
 
-	public void setListCommands(List listCommands) {
+	public void setListCommands(List<CommandState> listCommands) {
 		this.listCommands = listCommands;
 	}
 	
-	public List getBatchCommands() {
+	public List<CommandState> getBatchCommands() {
 		return this.batchCommands;
 	}
 
-	public void setBatchCommands(List batchCommands) {
+	public void setBatchCommands(List<CommandState> batchCommands) {
 		this.batchCommands = batchCommands;
 	}
 
@@ -194,11 +196,11 @@ public class ListModel {
 		this.cssClass = cssClass;
 	}
 
-	public Map getTexts() {
+	public Map<String, String> getTexts() {
 		return texts;
 	}
 
-	public void setTexts(Map texts) {
+	public void setTexts(Map<String, String> texts) {
 		this.texts = texts;
 	}
 

@@ -300,7 +300,7 @@ public class ListSession implements RenderContext {
 	private void fillInItems(ListModel model, Collection<?> beans, Object root,
 			HttpServletRequest request) {
 		
-		ArrayList<Object> items = new ArrayList<Object>(beans.size());
+		ArrayList<ListItem> items = new ArrayList<ListItem>(beans.size());
 		int rowIndex = 0;
 		Iterator<?> it = beans.iterator();
 		while (it.hasNext()) {

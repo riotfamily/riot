@@ -48,7 +48,7 @@ public final class PackageLister {
 	        	map.put(name, packages[i]);
 	        }
 	    }
-	    ArrayList<Package> result = new ArrayList<Package>(map.values());
+	    ArrayList<Package> result = Generics.newArrayList(map.values()); 
 	    Collections.sort(result, PACKAGE_COMPARATOR);
 	    return result;
 	}

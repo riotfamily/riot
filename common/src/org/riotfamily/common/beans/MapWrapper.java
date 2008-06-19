@@ -26,7 +26,6 @@ package org.riotfamily.common.beans;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.riotfamily.common.util.SpringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValue;

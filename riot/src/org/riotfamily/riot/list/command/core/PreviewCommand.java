@@ -29,6 +29,7 @@ import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.mapping.HandlerUrlResolver;
 import org.riotfamily.common.web.mapping.ReverseHandlerMapping;
 import org.riotfamily.common.web.util.ServletUtils;
@@ -160,8 +161,8 @@ public class PreviewCommand extends PopupCommand
 			return bean;
 		}
 		BeanWrapper wrapper = new BeanWrapperImpl(bean);
-		HashMap attributes = new HashMap();
-		Enumeration names = wildcardProperties.propertyNames();
+		HashMap<String, Object> attributes = Generics.newHashMap();
+		Enumeration<?> names = wildcardProperties.propertyNames();
 		while (names.hasMoreElements()) {
 			String wildcard = (String) names.nextElement();
 			String property = wildcardProperties.getProperty(wildcard);

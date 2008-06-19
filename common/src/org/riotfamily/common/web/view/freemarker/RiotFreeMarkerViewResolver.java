@@ -28,6 +28,7 @@ import java.util.Map;
 import org.riotfamily.common.web.view.MacroHelperFactory;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
+import org.riotfamily.common.util.SpringUtils;
 
 public class RiotFreeMarkerViewResolver extends FreeMarkerViewResolver {
 
@@ -35,7 +36,7 @@ public class RiotFreeMarkerViewResolver extends FreeMarkerViewResolver {
 	
 	private boolean freeMarkerServletMode = false;
 	
-	private Map<?,?> macroHelperFactories;
+	private Map<String, MacroHelperFactory> macroHelperFactories;
 	
 	public RiotFreeMarkerViewResolver() {
 		setExposeSpringMacroHelpers(true);
@@ -51,7 +52,8 @@ public class RiotFreeMarkerViewResolver extends FreeMarkerViewResolver {
 	
 	protected void initApplicationContext() {
 		super.initApplicationContext();
-		macroHelperFactories = getApplicationContext().getBeansOfType(MacroHelperFactory.class);
+		macroHelperFactories = SpringUtils.beansOfType(
+				getApplicationContext(), MacroHelperFactory.class);
 	}
 
 	protected Class<?> requiredViewClass() {

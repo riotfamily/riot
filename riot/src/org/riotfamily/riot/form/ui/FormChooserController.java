@@ -54,10 +54,10 @@ public class FormChooserController extends FormController {
 		return formId;
 	}
 	
-	protected Map createModel(Form form, ObjectEditorDefinition editorDefinition,
+	protected Map<String, Object> createModel(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 
-		Map model = super.createModel(form, editorDefinition, request, response);
+		Map<String, Object> model = super.createModel(form, editorDefinition, request, response);
 		FormChooserDefinition chooser =	(FormChooserDefinition) editorDefinition;
 		model.put("formId", form.getId());
 		if (form.isNew()) {

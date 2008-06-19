@@ -26,7 +26,6 @@ package org.riotfamily.pages.view;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -60,7 +59,7 @@ public class PageFacade {
 	
 	private PathCompleter pathCompleter;
 	
-	private Map properties = null;
+	private Map<String, Object> properties = null;
 	
 	private TaggingContext taggingContext;
 	
@@ -212,7 +211,7 @@ public class PageFacade {
 		return container;
 	}
 
-	public Map getProperties() {
+	public Map<String, Object> getProperties() {
 		if (properties == null) {
 			properties = page.getPropertiesMap(preview);
 		}
@@ -226,7 +225,7 @@ public class PageFacade {
 		return page.getProperty(key, preview);
 	}
 	
-	public Map getLocal() {
+	public Map<String, Object> getLocal() {
 		return page.getLocalPropertiesMap(preview);
 	}
 

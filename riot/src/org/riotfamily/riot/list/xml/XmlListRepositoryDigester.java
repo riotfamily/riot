@@ -88,8 +88,8 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 
 	public void digest(Document doc, Resource resource) {
 		Element root = doc.getDocumentElement();
-		List nodes = DomUtils.getChildElementsByTagName(root, LIST);
-		Iterator it = nodes.iterator();
+		List<Element> nodes = XmlUtils.getChildElementsByTagName(root, LIST);
+		Iterator<Element> it = nodes.iterator();
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();
 			String namespace = ele.getNamespaceURI();
@@ -136,7 +136,7 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 				dao = instanciateDao(className);
 			}
 		}
-		List nodes = DomUtils.getChildElementsByTagName(ele, PROPERTY);
+		List<Element> nodes = XmlUtils.getChildElementsByTagName(ele, PROPERTY);
 		if (singleton && !nodes.isEmpty()) {
 			throw new RuntimeException(PROPERTY 
 					+ " must not be applied to singleton beans.");
@@ -162,16 +162,16 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 		
 		Element columns = DomUtils.getChildElementByTagName(listElement, COLUMNS);
 		
-		List nodes = DomUtils.getChildElementsByTagName(columns, COLUMN);
-		Iterator it = nodes.iterator();
+		List<Element> nodes = XmlUtils.getChildElementsByTagName(columns, COLUMN);
+		Iterator<Element> it = nodes.iterator();
 		while (it.hasNext()) {
-			listConfig.addColumnConfig(digestColumn((Element) it.next()));
+			listConfig.addColumnConfig(digestColumn(it.next()));
 		}
 		
-		nodes = DomUtils.getChildElementsByTagName(columns, COMMAND);
+		nodes = XmlUtils.getChildElementsByTagName(columns, COMMAND);
 		it = nodes.iterator();
 		while (it.hasNext()) {
-			Element e = (Element) it.next();
+			Element e = it.next();
 			String commandId = XmlUtils.getAttribute(e, ID);
 			listConfig.addColumnCommand(listRepository.getCommand(commandId));
 		}
@@ -190,10 +190,10 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	}
 	
 	protected void digestCommands(ListConfig listConfig, Element listElement) {
-		List nodes = DomUtils.getChildElementsByTagName(listElement, COMMAND);
-		Iterator it = nodes.iterator();
+		List<Element> nodes = XmlUtils.getChildElementsByTagName(listElement, COMMAND);
+		Iterator<Element> it = nodes.iterator();
 		while (it.hasNext()) {
-			Element ele = (Element) it.next();
+			Element ele = it.next();
 			String commandId = XmlUtils.getAttribute(ele, ID);
 			listConfig.addCommand(listRepository.getCommand(commandId));
 		}

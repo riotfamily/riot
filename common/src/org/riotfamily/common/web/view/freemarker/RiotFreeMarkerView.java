@@ -24,7 +24,6 @@
 package org.riotfamily.common.web.view.freemarker;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -32,6 +31,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.util.RequestHolder;
 import org.riotfamily.common.web.view.MacroHelperFactory;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -66,7 +66,7 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 	
 	private boolean freeMarkerServletMode = false;
 
-	private Map macroHelperFactories;
+	private Map<String, MacroHelperFactory> macroHelperFactories;
 
 	/**
 	 * Sets whether the model may contain keys that are also present as request
@@ -95,7 +95,7 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 	 * Sets a Map of {@link MacroHelperFactory} instances keyed by the 
 	 * variable name under which the created helper should be exposed.
 	 */
-	public void setMacroHelperFactories(Map macroHelperFactories) {
+	public void setMacroHelperFactories(Map<String, MacroHelperFactory> macroHelperFactories) {
 		this.macroHelperFactories = macroHelperFactories;
 	}
 
@@ -103,7 +103,7 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 			HttpServletResponse response) throws Exception {
 	
 		if (allowModelOverride) {
-			Map emptyModel = new HashMap();
+			Map<String, Object> emptyModel = Generics.newHashMap();
 			emptyModel.put(MODEL_ATTRIBUTE, model);
 			model = emptyModel;
 		}
@@ -138,10 +138,10 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 			unwrapModel(model);
 			model.put(REQUEST_KEY, request);
 			if (macroHelperFactories != null) {
-				Iterator it = macroHelperFactories.entrySet().iterator();
+				Iterator<Map.Entry<String, MacroHelperFactory>> it = macroHelperFactories.entrySet().iterator();
 				while (it.hasNext()) {
-					Map.Entry entry = (Map.Entry) it.next();
-					MacroHelperFactory factory = (MacroHelperFactory) entry.getValue();
+					Map.Entry<String, MacroHelperFactory> entry = it.next();
+					MacroHelperFactory factory = entry.getValue();
 					model.put(entry.getKey(), factory.createMacroHelper(request, response));
 				}
 			}

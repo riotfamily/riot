@@ -68,12 +68,12 @@ public class StepIntoCommand extends AbstractCommand {
 			Assert.isInstanceOf(AbstractObjectEditorDefinition.class, def);
 			AbstractObjectEditorDefinition displayDef = (AbstractObjectEditorDefinition) def;
 
-			List childRefs = displayDef.getChildEditorReferences(
+			List<EditorReference> childRefs = displayDef.getChildEditorReferences(
 					context.getBean(), context.getMessageResolver());
 
-			Iterator it = childRefs.iterator();
+			Iterator<EditorReference> it = childRefs.iterator();
 			while (it.hasNext()) {
-				EditorReference ref = (EditorReference) it.next();
+				EditorReference ref = it.next();
 				return ref.getEditorUrl();
 			}
 			return null;

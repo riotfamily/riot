@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.riot.editor.EditorConstants;
 import org.springframework.web.servlet.ModelAndView;
@@ -70,7 +71,7 @@ public class ListController implements Controller {
 		ListSession session = listService.getOrCreateListSession(
 				editorId, parentId, parentEditorId, choose, request);
 
-		HashMap model = new HashMap();
+		HashMap<String, Object> model = Generics.newHashMap();
 		model.put(EditorConstants.EDITOR_ID, editorId);
 		model.put(EditorConstants.PARENT_ID, parentId);
 		model.put("expand", request.getParameter("expand"));

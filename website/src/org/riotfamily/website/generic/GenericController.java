@@ -73,7 +73,7 @@ public class GenericController extends AbstractCacheableController {
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		Map model = modelBuilderStack.buildModel(request);
+		Map<String, Object> model = modelBuilderStack.buildModel(request);
 
 		if (contentType != null) {
 			response.setContentType(contentType);

@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.riotfamily.common.util.Generics;
+
 /**
  * Reads config files with multiple sections. Example:
  * <pre>
@@ -60,9 +62,9 @@ public class IniFile {
 	
 	private File file;
 	
-	HashMap sections = new HashMap();
+	HashMap<String, Object> sections = Generics.newHashMap();
 	
-	Map section;
+	Map<String, Object> section;
 	
 	private long lastModified;
 	
@@ -75,7 +77,7 @@ public class IniFile {
 		return file.lastModified();
 	}
 	
-	public synchronized Map getSections() {
+	public synchronized Map<String, Object> getSections() {
 		if (file.lastModified() > lastModified) {
 			try {
 				load();
@@ -115,9 +117,9 @@ public class IniFile {
 	}
 	
 	private void setSection(String name) {
-		section = (Map) sections.get(name);
+		section = (Map<String, Object>) sections.get(name);
 		if (section == null) {
-			section = new HashMap();
+			section = Generics.newHashMap();
 			sections.put(name, section);
 		}
 	}

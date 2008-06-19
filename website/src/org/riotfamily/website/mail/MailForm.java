@@ -23,8 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.mail;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import org.riotfamily.common.util.Generics;
 
 public class MailForm {
 
@@ -60,7 +61,7 @@ public class MailForm {
 	
 	private String fax;
 	
-	private Map extras = new HashMap();
+	private Map extras = Generics.newHashMap();
 
 	
 	public String getCity() {
