@@ -19,13 +19,6 @@
 <#assign includeUri = commonMacroHelper.getPathWithinApplication() />
 
 <#--- 
-  - The name of the top-level handler.
-  - @see <a href="http://www.riotfamily.org/api/latest/org/riotfamily/website/view/CommonMacroHelper.html#getTopLevelHandlerName()">
-  -      commonMacroHelper.getTopLevelHandlerName()</a>
- -->
-<#assign topLevelHandlerName = commonMacroHelper.getTopLevelHandlerName()?if_exists />
-
-<#--- 
   - The name of the current FreeMarker template (may be useful for debugging).
   - @see <a href="http://www.riotfamily.org/api/latest/org/riotfamily/common/web/view/freemarker/RiotFreeMarkerView.html">RiotFreeMarkerView</a>
  -->
@@ -157,10 +150,6 @@
   -->
 <#function absoluteUrlForHandler handlerName attributes={} prefix="">
 	<#return absoluteUrl(pathForHandler(handlerName, attributes, prefix)) />
-</#function>
-
-<#function isHandler handlerName>
-	<#return handlerName == topLevelHandlerName />
 </#function>
 
 <#---
@@ -358,20 +347,30 @@
   -->
 <#macro txt2img loadPrototype=true>
 	<script type="text/javascript">
-		document.write('<link rel="stylesheet" type="text/css" href="${resource(pathForHandler("txt2ImgController", "css"))}" />');
+		document.write('<link rel="stylesheet" type="text/css" href="${resource(pathForHandler("txt2ImgController", "css"))?xml}" />');
 	</script>
 	<#if loadPrototype>
 		<@riot.script src="prototype/prototype.js" />
 	</#if>
-	<script src="${resource(pathForHandler("txt2ImgController", "js") + '?locale=' + .locale)}" type="text/javascript"></script>
+	<script type="text/javascript" src="${resource(pathForHandler("txt2ImgController", "js") + '?locale=' + .locale)?xml}"></script>
 </#macro>
 
 <#macro stylesheets hrefs compress=commonMacroHelper.compressResources>
 	<#if compress>
-		<link rel="stylesheet" type="text/css" href="${resolve(pathForHandler("minifyCssController"))}?files=${toDelimitedString(hrefs)}" />
+		<link rel="stylesheet" type="text/css" href="${resolve(pathForHandler("minifyCssController") + "?files=" + toDelimitedString(hrefs))?xml}" />
 	<#else>
 		<#list hrefs as href>
-			<link rel="stylesheet" type="text/css" href="${resource(href)}" />
+			<link rel="stylesheet" type="text/css" href="${resource(href)?xml}" />
+		</#list>
+	</#if>
+</#macro>
+
+<#macro scripts srcs compress=commonMacroHelper.compressResources>
+	<#if compress>
+		<script type="text/javascript" src="${resolve(pathForHandler("minifyScriptController") + "files=" + toDelimitedString(srcs))?xml}"></script>
+	<#else>
+		<#list srcs as src>
+			<script type="text/javascript" src="${resource(src)?xml}"></script>
 		</#list>
 	</#if>
 </#macro>
@@ -423,26 +422,3 @@
 <#function hyphenatePlainText text>
 	<#return commonMacroHelper.hyphenatePlainText(text) />
 </#function>
-
-<#macro template extends>
-	<#assign childTemplate=true />
-	<#local swallow><#nested/></#local>
-	<#assign childTemplate=false />
-	<#include extends> 
-</#macro>
-
-<#macro block name>
-	<#if !templateBlocks??>
-		<#assign templateBlocks = {} />
-	</#if>
-	<#if childTemplate!false>
-       <#local content><#nested /></#local>
-       <#assign templateBlocks = templateBlocks + {name: content} />
-   <#else>
-       <#if templateBlocks[name]??>
-           ${templateBlocks[name]}
-       <#else>
-           <#nested>
-       </#if>
-   </#if>
-</#macro>

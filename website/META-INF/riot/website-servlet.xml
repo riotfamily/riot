@@ -95,6 +95,7 @@
 			<props>
 				<prop key="c">classpath:org/riotfamily/website/view/common.ftl</prop>
 				<prop key="form">classpath:org/riotfamily/website/view/form.ftl</prop>
+				<prop key="template">classpath:org/riotfamily/website/view/template.ftl</prop>
 				<prop key="riot">classpath:org/riotfamily/riot/runtime/macro/riot.ftl</prop>
 			</props>
 		</property>

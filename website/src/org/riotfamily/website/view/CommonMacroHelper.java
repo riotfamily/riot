@@ -47,7 +47,6 @@ import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.collaboration.SharedProperties;
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.mapping.HandlerUrlResolver;
-import org.riotfamily.common.web.mapping.ReverseHandlerMapping;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.util.StringCapturingResponseWrapper;
 import org.riotfamily.website.hyphenate.RiotHyphenator;
@@ -199,11 +198,6 @@ public class CommonMacroHelper {
 		return ServletUtils.addRequestParameters(url, request);
 	}
 	
-	public String getTopLevelHandlerName() {
-		return (String) request.getAttribute(
-				ReverseHandlerMapping.TOP_LEVEL_HANDLER_NAME_ATTRIBUTE);
-	}
-
 	public boolean isExternalUrl(String url) {
 		try {
 			URI uri = new URI(url);
