@@ -11,7 +11,6 @@ import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.search.SearchController;
 
-
 /**
  * SearchController subclass that filters the search search result to show
  * only hits from the same site.  
