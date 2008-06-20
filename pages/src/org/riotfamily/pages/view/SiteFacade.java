@@ -6,7 +6,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.cachius.servlet.TaggingContext;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.model.Site;
