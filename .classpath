@@ -52,8 +52,8 @@
 	<classpathentry kind="lib" path="lib/dom4j.jar"/>
 	<classpathentry kind="lib" path="lib/texhyphj.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
-	<classpathentry kind="lib" path="/8x4/webapp/WEB-INF/lib/persistence.jar"/>
-	<classpathentry kind="lib" path="/8x4/webapp/WEB-INF/lib/hibernate.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate.jar"/>
+	<classpathentry kind="lib" path="lib/persistence.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
