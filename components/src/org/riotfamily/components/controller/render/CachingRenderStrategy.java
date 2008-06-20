@@ -187,7 +187,6 @@ public abstract class CachingRenderStrategy extends AbstractRenderStrategy {
 	    HttpServletResponse response) throws Exception {
 	    
 	    ComponentCacheUtils.addListTag(request, location, isPreview());
-	    
 	    super.onListNotFound(location, config, request, response);
 	}
 		

@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.Site;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -35,15 +36,27 @@ import org.riotfamily.pages.model.PageNode;
  */
 public final class PageCacheUtils {
 
+	private static final String SITE_PREFIX = Site.class.getName() + '#';
+
 	private static final String NODE_PREFIX = PageNode.class.getName() + '#';
 	
 	private PageCacheUtils() {
 	}
-	
+
+	public static String getSiteTag(Site site) {
+		return SITE_PREFIX + site.getId();
+	}
+
+	public static void addSiteTag(TaggingContext context, Site site) {
+		if (context != null) {
+			context.addTag(getSiteTag(site));
+		}
+	}
+
 	public static String getNodeTag(PageNode node) {
 		return NODE_PREFIX + node.getId();
 	}
-	
+
 	public static void addNodeTag(TaggingContext context, PageNode node) {
 		if (context != null) {
 			context.addTag(getNodeTag(node));

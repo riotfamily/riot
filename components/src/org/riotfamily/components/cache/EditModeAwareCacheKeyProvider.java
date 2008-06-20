@@ -41,7 +41,7 @@ public class EditModeAwareCacheKeyProvider extends DefaultCacheKeyProvider {
 	
 		String cacheKey = super.getCacheKey(controller, request);
 		if (cacheKey != null && AccessController.isAuthenticatedUser()) {
-			String prefix = EditModeUtils.isEditMode() ? "edit:" : "live:";
+			String prefix = EditModeUtils.isEditMode(request) ? "edit:" : "live:";
 			cacheKey = prefix + cacheKey;
 		}
 		return cacheKey;

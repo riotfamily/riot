@@ -66,7 +66,7 @@ public class PagesMacroHelper {
 		PageNode rootNode = pageDao.getRootNode();
 		PageCacheUtils.addNodeTag(request, rootNode);
 		return getVisiblePages(rootNode.getChildPages(facade.getSite()),
-				EditModeUtils.isEditMode());
+				EditModeUtils.isEditMode(request));
 	}
 
 	public Page getPageForUrl(String url, SiteFacade facade) {

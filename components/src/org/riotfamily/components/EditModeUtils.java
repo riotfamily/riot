@@ -50,9 +50,6 @@ public final class EditModeUtils {
 		return AccessController.isAuthenticatedUser() && !isLiveMode(request);
 	}
 	
-	public static boolean isEditMode() {
-		return AccessController.isAuthenticatedUser() && !isLiveMode();
-	}
 	
 	public static boolean isLiveMode(HttpServletRequest request) {
 		Boolean liveMode = (Boolean) request.getAttribute(LIVE_MODE_ATTRIBUTE);
@@ -62,18 +59,6 @@ public final class EditModeUtils {
 			if (session != null) {
 				liveMode = (Boolean) session.getAttribute(LIVE_MODE_ATTRIBUTE);
 			}
-		}
-		
-		return liveMode == Boolean.TRUE;
-	}
-	
-	public static boolean isLiveMode() {
-		Boolean liveMode = (Boolean) RequestContextHolder.getRequestAttributes()
-				.getAttribute(LIVE_MODE_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
-		
-		if (liveMode == null) {
-			liveMode = (Boolean) RequestContextHolder.getRequestAttributes()
-				.getAttribute(LIVE_MODE_ATTRIBUTE, RequestAttributes.SCOPE_SESSION);
 		}
 		
 		return liveMode == Boolean.TRUE;

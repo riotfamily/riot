@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.riot.form;
 
+import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.forms.AbstractEditorBinder;
@@ -56,6 +57,14 @@ public class ContentContainerEditorBinder extends AbstractEditorBinder {
 				previewVersion = new Content();
 			}
 		}
+	}
+	
+	public Object populateBackingObject() {
+		if (container instanceof Component) {
+			Component c = (Component) container;
+			c.getList().getOrCreatePreviewContainers();
+		}
+		return super.populateBackingObject();
 	}
 	
 	protected ContentContainer createContainer() {
