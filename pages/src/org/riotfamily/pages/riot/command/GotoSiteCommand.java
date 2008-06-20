@@ -12,7 +12,7 @@ public class GotoSiteCommand extends PopupCommand {
 	protected String getUrl(CommandContext context) {
 		Site site = (Site) context.getBean();
 		SiteFacade facade = new SiteFacade(site, context.getRequest());
-		return facade.makeAbsolute("");
+		return facade.makeAbsolute("/");
 	}
 	
 	protected String getStyleClass(CommandContext context, String action) {
