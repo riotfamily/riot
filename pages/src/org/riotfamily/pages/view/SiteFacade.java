@@ -6,7 +6,9 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.model.Site;
 
 public class SiteFacade {
@@ -16,10 +18,14 @@ public class SiteFacade {
 	private HttpServletRequest request;
 	
 	private Map<String, Object> properties = null;
+
+	private TaggingContext taggingContext;
 	
 	public SiteFacade(Site site, HttpServletRequest request) {
 		this.site = site;
 		this.request = request;
+		this.taggingContext = TaggingContext.getContext();
+		PageCacheUtils.addSiteTag(taggingContext, site);
 	}
 	
 	public Site getSite() {
