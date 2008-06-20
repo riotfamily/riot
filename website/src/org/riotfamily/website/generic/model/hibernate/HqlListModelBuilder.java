@@ -26,7 +26,7 @@ package org.riotfamily.website.generic.model.hibernate;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Query;
-import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.cachius.servlet.TaggingContext;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

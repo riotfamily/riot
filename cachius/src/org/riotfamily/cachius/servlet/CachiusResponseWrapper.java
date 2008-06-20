@@ -21,16 +21,18 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.cachius;
+package org.riotfamily.cachius.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.riotfamily.cachius.CacheItem;
 import org.riotfamily.cachius.support.Cookies;
 import org.riotfamily.cachius.support.Headers;
 import org.riotfamily.cachius.support.SessionIdEncoder;
@@ -153,8 +155,11 @@ public class CachiusResponseWrapper extends HttpServletResponseWrapper {
             if (outputStream != null) {
                 throw new IllegalStateException();
             }
-	        writer = new PrintWriter(cacheItem.getWriter(
-	        		sessionIdEncoder.getSessionId()));
+            Writer itemWriter = cacheItem.getWriter();
+            if (sessionIdEncoder.urlsNeedEncoding()) {
+               	itemWriter = sessionIdEncoder.createIdRemovingWriter(itemWriter);
+            }
+	        writer = new PrintWriter(itemWriter);
 	    }
         return writer;
     }

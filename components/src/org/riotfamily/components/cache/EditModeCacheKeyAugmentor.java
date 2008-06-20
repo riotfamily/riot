@@ -25,8 +25,7 @@ package org.riotfamily.components.cache;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.spring.CacheableController;
-import org.riotfamily.cachius.spring.DefaultCacheKeyProvider;
+import org.riotfamily.cachius.servlet.CacheKeyAugmentor;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.riot.security.AccessController;
 
@@ -34,16 +33,11 @@ import org.riotfamily.riot.security.AccessController;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class EditModeAwareCacheKeyProvider extends DefaultCacheKeyProvider {
+public class EditModeCacheKeyAugmentor implements CacheKeyAugmentor {
 
-	public String getCacheKey(CacheableController controller, 
-			HttpServletRequest request) {
-	
-		String cacheKey = super.getCacheKey(controller, request);
-		if (cacheKey != null && AccessController.isAuthenticatedUser()) {
-			String prefix = EditModeUtils.isEditMode(request) ? "edit:" : "live:";
-			cacheKey = prefix + cacheKey;
+	public void augmentCacheKey(StringBuffer key, HttpServletRequest request) {
+		if (AccessController.isAuthenticatedUser()) {
+			key.insert(0, EditModeUtils.isEditMode(request) ? "edit:" : "live:");
 		}
-		return cacheKey;
 	}
 }

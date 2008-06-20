@@ -30,7 +30,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -148,7 +147,7 @@ public final class Cache implements Serializable {
 	}
 
     /**
-     * Returns whether an item with the given key exists nd was not invalidated.
+     * Returns whether an item with the given key exists and was not invalidated.
      */
     public boolean containsValidKey(String key) {
         if (map.containsKey(key)) {
@@ -262,7 +261,7 @@ public final class Cache implements Serializable {
      * Removes the given item from all specified tag lists. If item is the last
      * entry in a tag-list, the whole list is removed from the taggedItems map.
      */
-    private void removeTags(CacheItem item, Set<String> tags) {
+    protected void removeTags(CacheItem item, Set<String> tags) {
     	if (tags != null) {
     		for (String tag : tags) {
 		    	List<CacheItem> items = getTaggedItems(tag);
@@ -279,7 +278,7 @@ public final class Cache implements Serializable {
     /**
      * Adds the given item to the specified tag lists.
      */
-    private void addTags(CacheItem item, Set<String> tags) {
+    protected void addTags(CacheItem item, Set<String> tags) {
     	if (tags != null) {
     		for (String tag : tags) {
 		    	List<CacheItem> items = getTaggedItems(tag);
@@ -292,27 +291,6 @@ public final class Cache implements Serializable {
     	}
     }
 
-    /**
-     * Updates the tags of the given CacheItem.
-     */
-    public void tagItem(CacheItem item, Set<String> newTags) {
-    	Set<String> tagsToRemove = new HashSet<String>();
-    	Set<String> existingTags = item.getTags();
-    	if (existingTags != null) {
-    		tagsToRemove.addAll(existingTags);
-    	}
-    	if (newTags != null) {
-	    	Set<String> tagsToAdd = new HashSet<String>();
-	    	for (String tag : newTags) {
-				if (!tagsToRemove.remove(tag)) {
-					tagsToAdd.add(tag);
-				}
-			}
-	    	addTags(item, tagsToAdd);
-    	}
-  		removeTags(item, tagsToRemove);
-    	item.setTags(newTags);
-    }
 
     /**
      * Invalidates all items tagged with the given String.

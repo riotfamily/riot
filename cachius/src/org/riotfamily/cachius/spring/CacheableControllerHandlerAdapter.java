@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.cachius.CacheService;
+import org.riotfamily.cachius.servlet.CacheKeyAugmentor;
 import org.riotfamily.common.web.view.ViewResolverHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -57,20 +58,23 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
 
     private CacheService cacheService;
 
-    private CacheKeyProvider cacheKeyProvider = new DefaultCacheKeyProvider();
-    
     private ViewResolverHelper viewResolverHelper;
 
+    private CacheKeyAugmentor cacheKeyAugmentor;
+    
     private int order = 0;
 
     public CacheableControllerHandlerAdapter(CacheService cacheService) {
 		this.cacheService = cacheService;
 	}
     
-	public void setCacheKeyProvider(CacheKeyProvider cacheKeyProvider) {
-		this.cacheKeyProvider = cacheKeyProvider;
+    public CacheableControllerHandlerAdapter(CacheService cacheService, 
+    		CacheKeyAugmentor cacheKeyAugmentor) {
+    	
+		this.cacheService = cacheService;
+		this.cacheKeyAugmentor = cacheKeyAugmentor;
 	}
-
+    
     /**
 	 * Returns the order in which this HandlerAdapter is processed.
 	 */
@@ -103,8 +107,9 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
     public final ModelAndView handle(HttpServletRequest request,
             HttpServletResponse response, Object handler) throws Exception {
 
-    	cacheService.serve(request, response, new CacheableControllerProcessor(
-    			(CacheableController) handler, cacheKeyProvider, viewResolverHelper));
+    	cacheService.handle(new ControllerCacheHandler(
+    			request, response, (CacheableController) handler, 
+    			cacheKeyAugmentor, viewResolverHelper));
     	
         return null;
 	}
@@ -115,9 +120,9 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
      */
     public final long getLastModified(HttpServletRequest request, Object handler) {
     	if (handler instanceof LastModified && !WebUtils.isIncludeRequest(request)) {
-	    	return cacheService.getLastModified(request, 
-	    			new CacheableControllerProcessor(
-	    			(CacheableController) handler, cacheKeyProvider, viewResolverHelper));
+	    	return cacheService.getLastModified(new ControllerCacheHandler(
+	    			request, null, (CacheableController) handler, 
+	    			cacheKeyAugmentor, viewResolverHelper));
     	}
         return -1L;
     }

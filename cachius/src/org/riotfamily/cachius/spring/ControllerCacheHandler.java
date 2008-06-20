@@ -26,7 +26,8 @@ package org.riotfamily.cachius.spring;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.cachius.CacheableRequestProcessor;
+import org.riotfamily.cachius.servlet.CacheKeyAugmentor;
+import org.riotfamily.cachius.servlet.ZippedResponseHandler;
 import org.riotfamily.common.web.view.ViewResolverHelper;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -35,51 +36,49 @@ import org.springframework.web.servlet.View;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class CacheableControllerProcessor implements CacheableRequestProcessor {
+public class ControllerCacheHandler extends ZippedResponseHandler {
 
 	private CacheableController controller;
 	
-	private CacheKeyProvider cacheKeyProvider;
-	
 	private ViewResolverHelper viewResolverHelper;
 	
-	
-	public CacheableControllerProcessor(CacheableController controller, 
-			CacheKeyProvider cacheKeyProvider,
+	public ControllerCacheHandler(HttpServletRequest request, 
+			HttpServletResponse response, CacheableController controller,
+			CacheKeyAugmentor cacheKeyAugmentor,
 			ViewResolverHelper viewResolverHelper) {
 
+		super(request, response, cacheKeyAugmentor);
 		this.controller = controller;
-		this.cacheKeyProvider = cacheKeyProvider;
 		this.viewResolverHelper = viewResolverHelper;
 	}
 
-	public String getCacheKey(HttpServletRequest request) {
-		return cacheKeyProvider.getCacheKey(controller, request);
+	protected String getCacheKeyInternal() {
+		return controller.getCacheKey(getRequest());
+	}
+	
+	@Override
+	public long getLastModified() throws Exception {
+		return controller.getLastModified(getRequest());
 	}
 
-	public long getLastModified(HttpServletRequest request) throws Exception {
-		return controller.getLastModified(request);
-	}
-
+	@Override
 	public long getTimeToLive() {
 		return controller.getTimeToLive();
 	}
 
-	public boolean responseShouldBeZipped(HttpServletRequest request) {
+	protected boolean responseShouldBeZipped() {
 		if (controller instanceof Compressible) {
-			return ((Compressible) controller).gzipResponse(request);
+			return ((Compressible) controller).gzipResponse(getRequest());
 		}
 		return false;
 	}
 	
-	public void processRequest(HttpServletRequest request, 
-			HttpServletResponse response) throws Exception {
-		
-		ModelAndView mv = controller.handleRequest(request, response);
+	protected void handleInternal(HttpServletResponse response) throws Exception {
+		ModelAndView mv = controller.handleRequest(getRequest(), response);
 		if (mv != null) {
-	    	View view = viewResolverHelper.resolveView(request, mv);
-	    	view.render(mv.getModel(), request, response);
+	    	View view = viewResolverHelper.resolveView(getRequest(), mv);
+	    	view.render(mv.getModel(), getRequest(), response);
 	    }
 	}
-	
+
 }

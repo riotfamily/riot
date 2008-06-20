@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
-import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.cachius.servlet.TaggingContext;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

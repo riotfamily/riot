@@ -26,7 +26,7 @@ package org.riotfamily.pages.cache;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.CacheService;
-import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.cachius.servlet.TaggingContext;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
 

@@ -24,36 +24,20 @@
 package org.riotfamily.cachius;
 
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.cachius.spring.CacheableController;
 import org.riotfamily.cachius.support.ReaderWriterLock;
-import org.riotfamily.cachius.support.SessionCreationPreventingRequestWrapper;
-import org.riotfamily.cachius.support.SessionIdEncoder;
-import org.riotfamily.common.web.collaboration.SharedProperties;
-import org.riotfamily.common.web.util.ServletUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.util.WebUtils;
+import org.riotfamily.common.util.Generics;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
 public class CacheService {
-
-	private static Pattern IE_MAJOR_VERSION_PATTERN = 
-		Pattern.compile("^Mozilla/\\d\\.\\d+ \\(compatible[-;] MSIE (\\d)");
-
-	private static Pattern BUGGY_NETSCAPE_PATTERN = 
-		Pattern.compile("^Mozilla/4\\.0[678]");
 
 	private static Log log = LogFactory.getLog(CacheService.class);
 	
@@ -62,95 +46,65 @@ public class CacheService {
 	public CacheService(Cache cache) {
 		this.cache = cache;
 	}
+		
+    /**
+     * Invalidates all items tagged with the given String.
+     */
+    public void invalidateTaggedItems(String tag) {
+        cache.invalidateTaggedItems(tag);
+    }
 
-	public long getLastModified(HttpServletRequest request, 
-			CacheableRequestProcessor processor) {
-		
-		String cacheKey = processor.getCacheKey(request);
-		boolean zip = processor.responseShouldBeZipped(request) 
-				&& responseCanBeZipped(request);
-		
-		SessionIdEncoder sessionIdEncoder = new SessionIdEncoder(request);
-		CacheItem cacheItem = getCacheItem(cacheKey, sessionIdEncoder, zip);
+	public long getLastModified(CacheHandler callback) {
+		CacheItem cacheItem = null;
+		String cacheKey = callback.getCacheKey();
+		if (cacheKey != null) {
+			cacheItem = cache.getItem(cacheKey);
+		}
 		if (cacheItem != null) {
 			if (!cacheItem.isNew()) {
 				long now = System.currentTimeMillis();
-		        long ttl = processor.getTimeToLive();
+		        long ttl = callback.getTimeToLive();
 		        if (ttl == CacheableController.CACHE_ETERNALLY
 		        		|| cacheItem.getLastCheck() + ttl <= now) {
 
 		        	return cacheItem.getLastModified();
 		        }
 			}
-    		try {
-    			return processor.getLastModified(request);
-    		}
-    		catch (Exception e) {
-    			log.error("Error invoking the last-modified method", e);
-    		}
 		}
-		return -1L;
+		try {
+			return callback.getLastModified();
+		}
+		catch (Exception e) {
+			log.error("Error invoking the last-modified method", e);
+			return -1L;
+		}
 	}
 	
-	public void serve(HttpServletRequest request, HttpServletResponse response, 
-			CacheableRequestProcessor processor) throws Exception {
-		
-		boolean shouldZip = processor.responseShouldBeZipped(request); 
-		boolean zip = shouldZip && responseCanBeZipped(request);
-		
-		String cacheKey = processor.getCacheKey(request);
-		SessionIdEncoder sessionIdEncoder = new SessionIdEncoder(request);
-		CacheItem cacheItem = getCacheItem(cacheKey, sessionIdEncoder, zip);
-		
+	public void handle(CacheHandler callback) throws Exception {
+		CacheItem cacheItem = null;
+		String cacheKey = callback.getCacheKey();
+		if (cacheKey != null) {
+			cacheItem = cache.getItem(cacheKey);
+		}
         if (cacheItem == null) {
-        	log.debug("No CacheItem for " 
-        			+ ServletUtils.getRequestUri(request) 
-        			+ " - Response won't be cached.");
-        	
-            processor.processRequest(request, response);
+            callback.handleUncached();
         }
         else {
-        	long mtime = getLastModified(cacheItem, processor, request);
+        	long mtime = getModificationTime(cacheItem, callback);
         	if (mtime > cacheItem.getLastModified()) {
-        		capture(cacheItem, request, response, sessionIdEncoder, mtime, processor, shouldZip, zip);
+        		capture(cacheItem, mtime, callback);
         	}
         	else {
-        		if (!serve(cacheItem, request, response, sessionIdEncoder)) {
+        		if (!writeCacheItem(callback, cacheItem)) {
         			// The rare case, that the item was deleted due to a cleanup
-       				capture(cacheItem, request, response, sessionIdEncoder, mtime, processor, shouldZip, zip);        			
+       				capture(cacheItem, mtime, callback);        			
         		}
         	}
         }
 	}
 	
-	private CacheItem getCacheItem(String cacheKey, 
-			SessionIdEncoder sessionIdEncoder, boolean zip) {
-		
-        if (cacheKey == null) {
-            return null;
-        }
-
-        if (sessionIdEncoder.urlsNeedEncoding()) {
-            cacheKey += ";jsessionid";
-        }
-        
-        if (zip) {
-        	cacheKey += ".gz";
-        }
-        
-        CacheItem cacheItem = cache.getItem(cacheKey);
-        if (cacheItem != null && (cacheItem.isNew() || !cacheItem.exists())) {
-        	cacheItem.setFilterSessionId(sessionIdEncoder.urlsNeedEncoding());
-        }
-        return cacheItem;
-    }
-	
-	/**
-     * 
-     */
-    private long getLastModified(CacheItem cacheItem,
-    		CacheableRequestProcessor processor, HttpServletRequest request)
-    		throws Exception {
+	private long getModificationTime(CacheItem cacheItem,
+    		CacheHandler callback) throws Exception {
 
     	long now = System.currentTimeMillis();
     	
@@ -160,12 +114,12 @@ public class CacheService {
             return now;
         }
 
-        long ttl = processor.getTimeToLive();
+        long ttl = callback.getTimeToLive();
         if (ttl == CacheableController.CACHE_ETERNALLY) {
         	return 0;
         }
         if (cacheItem.getLastCheck() + ttl < now) {
-	        long mtime = processor.getLastModified(request);
+	        long mtime = callback.getLastModified();
 	        cacheItem.setLastCheck(now);
 	        if (mtime > cacheItem.getLastModified()) {
 	            return mtime;
@@ -173,20 +127,14 @@ public class CacheService {
         }
        	return cacheItem.getLastModified();
     }
+	
     
-    
-    private void capture(CacheItem cacheItem, 
-    		HttpServletRequest request, HttpServletResponse response,
-    		SessionIdEncoder sessionIdEncoder, long mtime, 
-    		CacheableRequestProcessor processor, 
-    		boolean shouldZip, boolean zip) 
-    		throws Exception {
+    private void capture(CacheItem cacheItem, long mtime, 
+    		CacheHandler callback) throws Exception {
     	
     	if (log.isDebugEnabled()) {
     		log.debug("Updating cache item " + cacheItem.getKey());
     	}
-		CachiusResponseWrapper wrapper = new CachiusResponseWrapper(
-				response, cacheItem, sessionIdEncoder);
 		
 		ReaderWriterLock lock = cacheItem.getLock();
 		try {
@@ -194,45 +142,42 @@ public class CacheService {
 			lock.lockForWriting();
 			// Check if another writer has already updated the item
 			if (mtime > cacheItem.getLastModified()) {
-				TaggingContext ctx = TaggingContext.openNestedContext(request);
-				Map<String, String> propertySnapshot = SharedProperties.getSnapshot(request);
-				request = new SessionCreationPreventingRequestWrapper(request);
-				processor.processRequest(request, wrapper);
-				ctx.close();
-				Map<String, String> props = SharedProperties.getDiff(request, propertySnapshot);
-				cacheItem.setProperties(props);
-				cache.tagItem(cacheItem, ctx.getTags());
-				wrapper.stopCapturing();
-				if (wrapper.isOk() && !ctx.isPreventCaching()) {
+				Set<String> oldTags = cacheItem.getTags();
+				cacheItem.setTags(null);
+				if (callback.updateCacheItem(cacheItem)) {
+					Set<String> newTags = Generics.newHashSet();
+					if (cacheItem.getTags() != null) {
+						newTags.addAll(cacheItem.getTags());
+					}
+					Iterator<String> it = newTags.iterator();
+					while (it.hasNext()) {
+						String tag = it.next();
+						boolean existingTag = oldTags != null && oldTags.remove(tag);
+						if (existingTag) {
+							it.remove();
+						}
+					}
+					cache.removeTags(cacheItem, oldTags);
+					cache.addTags(cacheItem, newTags);
+					
 					cacheItem.setLastModified(mtime);
 				}
 				else {
 					cacheItem.invalidate();
 				}
-				if (cacheItem.getSize() > 0) {
-					if (shouldZip) {
-						wrapper.setHeader("Vary", "Accept-Encoding, User-Agent");
-						if (zip) {
-							cacheItem.gzipContent();
-							wrapper.setHeader("Content-Encoding", "gzip");
-						}
-					}					
-				}
-				wrapper.updateHeaders();
 			}
 			else {
 				log.debug("Item has already been updated by another thread");
 			}
-			cacheItem.writeTo(response, sessionIdEncoder.getSessionId());
+			callback.writeCacheItem(cacheItem);
 		}
 		finally {
 			lock.releaseWriterLock();
 		}
     }
    
-    private boolean serve(CacheItem cacheItem, HttpServletRequest request, 
-            HttpServletResponse response, SessionIdEncoder sessionIdEncoder) 
-    		throws IOException {
+    private boolean writeCacheItem(CacheHandler callback,
+    		CacheItem cacheItem) throws IOException {
     	
     	if (log.isDebugEnabled()) {
     		log.debug("Serving cached version of " + cacheItem.getKey());
@@ -245,8 +190,7 @@ public class CacheService {
     		if (!cacheItem.exists()) {
         		return false;
         	}
-        	cacheItem.writeTo(response, sessionIdEncoder.getSessionId());
-        	SharedProperties.setProperties(request, cacheItem.getProperties());
+        	callback.writeCacheItem(cacheItem);
     	}
     	finally {
     		lock.releaseReaderLock();
@@ -254,77 +198,4 @@ public class CacheService {
     	return true;
     }
     
-    public boolean isCached(String key) {
-    	return cache.containsValidKey(key);
-    }
-    
-    /**
-	 * Checks whether the response can be compressed. This is the case when
-	 * {@link #clientAcceptsGzip(HttpServletRequest) the client accepts gzip 
-	 * encoded content}, the {@link #userAgentHasGzipBugs(HttpServletRequest) 
-	 * user-agent has no known gzip-related bugs} and the request is not an 
-	 * {@link WebUtils#isIncludeRequest(javax.servlet.ServletRequest)
-	 * include request}.
-	 */
-	protected boolean responseCanBeZipped(HttpServletRequest request) {
-		return clientAcceptsGzip(request) 
-				&& !userAgentHasGzipBugs(request)
-				&& !WebUtils.isIncludeRequest(request);
-	}
-	
-	/**
-	 * Returns whether the Accept-Encoding header contains "gzip".
-	 */
-	@SuppressWarnings("unchecked")
-	protected boolean clientAcceptsGzip(HttpServletRequest request) {
-		Enumeration values = request.getHeaders("Accept-Encoding");
-		if (values != null) {
-			while (values.hasMoreElements()) {
-				String value = (String) values.nextElement();
-				if (value.indexOf("gzip") != -1) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Returns whether the User-Agent has known gzip-related bugs. This is true
-	 * for Internet Explorer &lt; 6.0 SP2 and Mozilla 4.06, 4.07 and 4.08. The
-	 * method will also return true if the User-Agent header is not present or
-	 * empty.
-	 */
-	protected boolean userAgentHasGzipBugs(HttpServletRequest request) {
-		String ua = request.getHeader("User-Agent");
-		if (!StringUtils.hasLength(ua)) {
-			return true;
-		}
-		Matcher m = IE_MAJOR_VERSION_PATTERN.matcher(ua);
-		if (m.find()) {
-			int major = Integer.parseInt(m.group(1));
-			if (major > 6) {
-				// Bugs are fixed in IE 7 
-				return false;
-			}
-			if (ua.indexOf("Opera") != -1) {
-				// Opera has no known gzip bugs
-				return false;
-			}
-			if (major == 6) {
-				// Bugs are fixed in Service Pack 2 
-				return ua.indexOf("SV1") == -1;
-			}
-			// All other version are buggy.
-			return true;
-		}
-		return BUGGY_NETSCAPE_PATTERN.matcher(ua).find();
-	}
-	
-    /**
-     * Invalidates all items tagged with the given String.
-     */
-    public void invalidateTaggedItems(String tag) {
-        cache.invalidateTaggedItems(tag);
-    }
 }

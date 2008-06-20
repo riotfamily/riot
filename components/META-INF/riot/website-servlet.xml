@@ -52,19 +52,6 @@
 		</property>
 	</bean>
 	
-	<!-- REVIST -->
-	<!-- 
-	<override:properties ref="cachiusHandlerAdapter">
-		<property name="cacheKeyProvider">
-			<bean class="org.riotfamily.components.context.ComponentRequestCacheKeyProvider" />
-		</property>
-	</override:properties>
-	
-	<override:properties ref="cachiusHandlerAdapter">
-		<property name="cacheKeyProvider">
-			<bean class="org.riotfamily.components.cache.EditModeAwareCacheKeyProvider" />
-		</property>
-	</override:properties>
- 	-->
+	<override:bean ref="cacheKeyAugmentor" class="org.riotfamily.components.cache.EditModeCacheKeyAugmentor" />
  
 </beans>

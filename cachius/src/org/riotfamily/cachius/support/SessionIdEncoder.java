@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.cachius.support;
 
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -257,7 +258,13 @@ public class SessionIdEncoder {
         sb.append(anchor);
         sb.append(query);
         return sb.toString();
-
     }
 
+    public Writer createIdRemovingWriter(Writer out) {
+    	return new TokenFilterWriter(getSessionId(), "${jsessionid}", out);
+    }
+    
+    public Writer createIdInsertingWriter(Writer out) {
+    	return new TokenFilterWriter("${jsessionid}", getSessionId(), out);
+    }
 }

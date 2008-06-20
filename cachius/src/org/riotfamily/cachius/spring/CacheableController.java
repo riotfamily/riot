@@ -37,7 +37,7 @@ public interface CacheableController extends Controller {
 	public static final long CACHE_ETERNALLY = -1L;
 	
 	/**
-	 * returns the key that is used to look up a previously cached version.
+	 * Returns the key that is used to look up a previously cached version.
 	 * The key must include all values that govern the output, such as the 
 	 * requested URL, parameters, attributes, cookie values or the name of the 
 	 * controller. The key itself is not interpreted in any way and thus can 

@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.cachius;
+package org.riotfamily.cachius.servlet;
 
 import java.util.HashSet;
 import java.util.Set;

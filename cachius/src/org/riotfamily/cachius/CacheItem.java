@@ -51,7 +51,6 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.cachius.support.Cookies;
 import org.riotfamily.cachius.support.Headers;
 import org.riotfamily.cachius.support.ReaderWriterLock;
-import org.riotfamily.cachius.support.TokenFilterWriter;
 import org.riotfamily.common.io.IOUtils;
 import org.springframework.util.FileCopyUtils;
 
@@ -72,7 +71,7 @@ import org.springframework.util.FileCopyUtils;
  *
  * @author Felix Gnass
  */
-class CacheItem implements Serializable {
+public class CacheItem implements Serializable {
     	
     private static final String ITEM_PREFIX = "item";
     
@@ -89,9 +88,6 @@ class CacheItem implements Serializable {
     
     /** Set of tags to categorize the item */
     private Set<String> tags;
-    
-    /** Flag indicating whether session IDs are filtered */  
-    private boolean filterSessionId;
     
     /** The file containing the actual data */
     private File file;
@@ -142,14 +138,14 @@ class CacheItem implements Serializable {
     /**
      * Returns the key.
      */
-    protected String getKey() {
+    public String getKey() {
         return key;
     }
        
     /**
      * Sets tags which can be used to look up the item for invalidation.
      */
-    protected void setTags(Set<String> tags) {
+    public void setTags(Set<String> tags) {
     	this.tags = tags != null ? new HashSet<String>(tags) : null;
     	if (log.isDebugEnabled() && tags != null) {
     		log.debug("Tagging item " + this + " with " + tags);
@@ -168,7 +164,7 @@ class CacheItem implements Serializable {
 	 * {@link #getLastModified() lastModified} timestamp is set to 
 	 * {@value #NOT_YET}.  
 	 */
-    protected boolean isNew() {
+	public boolean isNew() {
         return lastModified == NOT_YET;
     }
     
@@ -189,14 +185,14 @@ class CacheItem implements Serializable {
     /**
      * Returns the last modification time.
      */
-    protected long getLastModified() {
+	public long getLastModified() {
         return lastModified;
     }
   
     /**
      * Sets the last modification time.
      */
-	protected void setLastModified(long lastModified) {
+	public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
     }
 
@@ -204,7 +200,7 @@ class CacheItem implements Serializable {
 	 * Invalidates the item by setting the {@link #setLastModified(long) 
 	 * lastModified} timestamp to {@value #NOT_YET}.
 	 */
-	protected void invalidate() {
+	public void invalidate() {
     	lastModified = NOT_YET;
     	if (log.isDebugEnabled()) {
     		log.debug(this + " has been invalidated");
@@ -214,7 +210,7 @@ class CacheItem implements Serializable {
 	/**
 	 * Returns the time when the last up-to-date check was performed.
 	 */
-	protected long getLastCheck() {
+	public long getLastCheck() {
 		return this.lastCheck;
 	}
 
@@ -228,21 +224,21 @@ class CacheItem implements Serializable {
     /**
      * Checks whether the cache file exists an is a regular file.
      */
-	protected boolean exists() {
+	public boolean exists() {
         return file != null && file.isFile();
     }
     
 	/**
 	 * Returns the size of the cached data in bytes.
 	 */
-	protected int getSize() {
+	public int getSize() {
 		return file != null ? (int) file.length() : 0;
 	}
     
 	/**
 	 * Sets the Content-Type.
 	 */
-	protected void setContentType(String contentType) {
+	public void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
 	
@@ -256,14 +252,18 @@ class CacheItem implements Serializable {
 	/**
 	 * Sets HTTP headers. 
 	 */
-	protected void setHeaders(Headers headers) {
+	public void setHeaders(Headers headers) {
 		this.headers = headers;
+	}
+	
+	public Headers getHeaders() {
+		return headers;
 	}
 	
 	/**
 	 * Sets cookies.
 	 */
-	protected void setCookies(Cookies cookies) {
+	public void setCookies(Cookies cookies) {
 		this.cookies = cookies;
 	}
 
@@ -271,7 +271,7 @@ class CacheItem implements Serializable {
 	 * Sets shared properties.
 	 * @see org.riotfamily.common.web.collaboration.SharedProperties
 	 */
-	protected void setProperties(Map<String, String> properties) {
+	public void setProperties(Map<String, String> properties) {
 		this.properties = properties;
 	}
 	
@@ -289,29 +289,18 @@ class CacheItem implements Serializable {
 		return this.lock;
 	}
 	
-	/**
-	 * Sets whether to filter jsessionid tokens.
-	 */
-    protected void setFilterSessionId(boolean filterSessionId) {
-		this.filterSessionId = filterSessionId;
-	}
-    
-    protected Writer getWriter(String sessionId) 
+    public Writer getWriter() 
     		throws UnsupportedEncodingException, FileNotFoundException {
     	
     	binary = false;
-    	Writer writer = new OutputStreamWriter(getOutputStream(), FILE_ENCODING);
-    	if (filterSessionId) {
-        	writer = new TokenFilterWriter(sessionId, "${jsessionid}", writer);
-        }
-    	return writer;
+    	return new OutputStreamWriter(getOutputStream(), FILE_ENCODING);
     }
 
-    protected OutputStream getOutputStream() throws FileNotFoundException {
+    public OutputStream getOutputStream() throws FileNotFoundException {
     	return new FileOutputStream(file);
     }
     
-    protected void gzipContent() throws IOException {
+    public void gzipContent() throws IOException {
     	InputStream in = new BufferedInputStream(new FileInputStream(file));
     	File zipFile = new File(file.getParentFile(), file.getName() + ".gz");
     	OutputStream out = new GZIPOutputStream(new FileOutputStream(zipFile));
@@ -321,44 +310,38 @@ class CacheItem implements Serializable {
     	zipFile.renameTo(file);
     }
     
-    protected void writeTo(HttpServletResponse response, String sessionId) 
-    		throws IOException {
+    public void writeTo(HttpServletResponse response) throws IOException {
             
-        try {
-        	if (contentType != null) {
-        		response.setContentType(contentType);
+    	if (contentType != null) {
+    		response.setContentType(contentType);
+    	}
+        if (headers != null) {
+            headers.addToResponse(response);
+        }
+        if (cookies != null) {
+        	cookies.addToResponse(response);
+        }
+        int contentLength = getSize();
+        if (contentLength > 0) {
+        	if (setContentLength) {
+        		response.setContentLength(contentLength);
         	}
-            if (headers != null) {
-                headers.addToResponse(response);
+            if (binary) {
+                writeTo(response.getOutputStream());
             }
-            if (cookies != null) {
-            	cookies.addToResponse(response);
-            }
-            int contentLength = getSize();
-            if (contentLength > 0) {
-            	if (setContentLength) {
-            		response.setContentLength(contentLength);
-            	}
-	            if (binary) {
-	                InputStream in = new BufferedInputStream(
-	                        new FileInputStream(file));
-	                        
-	                IOUtils.serve(in, response.getOutputStream());
-	            }
-	            else {
-	                Reader in = new BufferedReader(new InputStreamReader(
-	                        new FileInputStream(file), FILE_ENCODING));
-	                
-	                Writer out = response.getWriter();
-	                if (filterSessionId) {
-	                    out = new TokenFilterWriter("${jsessionid}", 
-	                            sessionId, out);
-	                }
-	                
-	                IOUtils.serve(in, out);
-	            }
+            else {
+                writeTo(response.getWriter());
             }
         }
+    }
+    
+    public void writeTo(OutputStream out) throws IOException {
+    	try {
+	    	InputStream in = new BufferedInputStream(
+	                new FileInputStream(file));
+	                
+	        IOUtils.serve(in, out);
+    	}
         catch (FileNotFoundException e) {
             log.warn("Cache file not found. Invalidating item to trigger " +
                     "an update on the next request.");
@@ -366,8 +349,25 @@ class CacheItem implements Serializable {
             invalidate();
         }
     }
+    
+    public void writeTo(Writer out) throws IOException {
+		try {
+		    if (getSize() > 0) {
+	            Reader in = new BufferedReader(new InputStreamReader(
+	                    new FileInputStream(file), FILE_ENCODING));
+	            
+	            IOUtils.serve(in, out);
+		    }
+		}
+		catch (FileNotFoundException e) {
+		    log.warn("Cache file not found. Invalidating item to trigger " +
+		            "an update on the next request.");
+		    
+		    invalidate();
+		}
+    }
 
-    protected void clear() throws IOException {
+    public void clear() throws IOException {
     	IOUtils.clear(file);
     }
 
