@@ -59,11 +59,29 @@ public class TemplateMacroHelper {
 		return blocks.get(name) != null;
 	}
 	
+	private static String getRequiredStringParam(Map params, String name, Environment env) 
+			throws TemplateException {
+		
+		Object value = params.get(name);
+		if (value instanceof SimpleScalar) {
+			return ((SimpleScalar) value).getAsString();
+		}
+		throw new TemplateException("Missing parameter: " + name, env);
+	}
+	
+	private static String getStringParam(Map params, String name, String defaultValue) {
+		Object value = params.get(name);
+		if (value instanceof SimpleScalar) {
+			return ((SimpleScalar) value).getAsString();
+		}
+		return defaultValue;
+	}
+	
 	public class ExtendDirective implements TemplateDirectiveModel {
 		public void execute(Environment env, Map params, TemplateModel[] loopVars,
 				TemplateDirectiveBody body) throws TemplateException, IOException {
 		
-			String file = ((SimpleScalar) params.get("file")).getAsString();
+			String file = getRequiredStringParam(params, "file", env);
 			if (!file.startsWith("/")) {
 				String dir = "/";
 				String path = env.getTemplate().getName();
@@ -84,9 +102,9 @@ public class TemplateMacroHelper {
 		public void execute(Environment env, Map params, TemplateModel[] loopVars,
 				TemplateDirectiveBody body) throws TemplateException, IOException {
 			
-			String name = ((SimpleScalar) params.get("name")).getAsString();
-			
-			String cacheKey = ServletUtils.getPathWithinApplication(request) + "#" + name;
+			String name = getRequiredStringParam(params, "name", env);
+			String cacheKey = getStringParam(params, "cacheKey",
+					ServletUtils.getPathWithinApplication(request) + "#" + name);
 			
 			if (childTemplate) {
 				blocks.put(name, captureBody(body, cacheKey));
