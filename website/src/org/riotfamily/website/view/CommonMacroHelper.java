@@ -216,8 +216,8 @@ public class CommonMacroHelper {
 	}
 
 	public String include(String url) throws ServletException, IOException {
-		request.getRequestDispatcher(url).include(request, response);
-		return "";
+		//request.getRequestDispatcher(url).include(request, response);
+		return capture(url);
 	}
 	
 	public String capture(String url) throws ServletException, IOException {

@@ -29,11 +29,7 @@
   - @param path The path to include
   -->
 <#macro include path>
-	<#if childTemplate!false>
-		${commonMacroHelper.capture(path)}
-	<#else>
-		${commonMacroHelper.include(path)}
-	</#if>
+	${commonMacroHelper.include(path)}
 </#macro>
 
 <#---
