@@ -40,7 +40,7 @@ public class PageDefinition {
 
 	private String pathComponent;
 
-	private String handlerName;
+	private String type;
 
 	private List<PageDefinition> pageDefinitions;
 
@@ -61,11 +61,11 @@ public class PageDefinition {
 	public String getPathComponent() {
 		return pathComponent != null
 				? pathComponent
-				: FormatUtils.camelToXmlCase(handlerName);
+				: FormatUtils.camelToXmlCase(type);
 	}
 
-	public void setHandlerName(String handlerName) {
-		this.handlerName = handlerName;
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public void setHidden(boolean hidden) {
@@ -99,7 +99,7 @@ public class PageDefinition {
 	public PageNode createNode(PageNode parent, List<Site> sites, PageDao pageDao) {
 		PageNode node = new PageNode();
 		parent.addChildNode(node);
-		node.setPageType(handlerName);
+		node.setPageType(type);
 		node.setSystemNode(systemNode);
 		node.setHidden(hidden);
 		createPages(node, sites, pageDao);

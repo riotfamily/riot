@@ -54,7 +54,7 @@ public class PageNamespaceHandler extends GenericNamespaceHandlerSupport {
 
 		registerBeanDefinitionDecorator("prop", new MapEntryDecorator("properties", "key"));
 		
-		register("handler-name", ChildPageTypeDefinition.class);
+		register("page-type", ChildPageTypeDefinition.class);
 	}
 	
 }

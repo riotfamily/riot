@@ -43,7 +43,7 @@
 				<xsd:element ref="page" minOccurs="0" maxOccurs="unbounded" />
 			</xsd:sequence>
 			<xsd:attribute name="path-component" type="xsd:string" />
-			<xsd:attribute name="handler-name" type="xsd:string" />
+			<xsd:attribute name="type" type="xsd:string" />
 			<xsd:attribute default="false" name="hidden" type="xsd:boolean" />
 			<xsd:attribute default="true" name="published" type="xsd:boolean" />
 			<xsd:attribute default="true" name="system" type="xsd:boolean" />
@@ -51,7 +51,7 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="handler-name">
+	<xsd:element name="page-type">
 		<xsd:complexType>
 			<xsd:attribute name="parent" type="xsd:string" />
 			<xsd:attribute name="child" type="xsd:string" />

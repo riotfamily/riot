@@ -1,6 +1,7 @@
 http\://www.riotfamily.org/schema/pages/page.xsd=org/riotfamily/pages/setup/config/page.xsd
-http\://www.riotfamily.org/schema/pages/page-6.5.xsd=org/riotfamily/pages/setup/config/page.xsd
 http\://www.riotfamily.org/schema/pages/page-7.0.xsd=org/riotfamily/pages/setup/config/page.xsd
+http\://www.riotfamily.org/schema/pages/page-8.0.xsd=org/riotfamily/pages/setup/config/page.xsd
 http\://www.riotfamily.org/schema/pages/form-elements.xsd=org/riotfamily/pages/riot/form/form-elements.xsd
 http\://www.riotfamily.org/schema/pages/form-elements-6.5.xsd=org/riotfamily/pages/riot/form/form-elements.xsd
 http\://www.riotfamily.org/schema/pages/form-elements-7.0.xsd=org/riotfamily/pages/riot/form/form-elements.xsd
+http\://www.riotfamily.org/schema/pages/form-elements-8.0.xsd=org/riotfamily/pages/riot/form/form-elements.xsd
