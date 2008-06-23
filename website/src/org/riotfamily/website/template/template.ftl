@@ -34,7 +34,7 @@
 <#---
   - Hash that contains variables set by child templates.
   - @see <a href="#set">&lt;@set values... /&gt;</a>
-  ->
+  -->
 <#assign vars = {} />
 
 <#---
