@@ -344,7 +344,10 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		if (childNodes != null) {
 			for (PageNode childNode : childNodes) {
 				if (childNode.isSystemNode()) {
-					addTranslation(childNode.getPage(masterSite), site);
+					Page page = childNode.getPage(masterSite);
+					if (page != null) {
+						addTranslation(page, site);
+					}
 					translateSystemPages(childNode, masterSite, site);
 				}
 			}
