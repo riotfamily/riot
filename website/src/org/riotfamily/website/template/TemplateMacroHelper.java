@@ -59,7 +59,7 @@ public class TemplateMacroHelper {
 		return blocks.get(name) != null;
 	}
 	
-	private static String getRequiredStringParam(Map params, String name, Environment env) 
+	private static String getRequiredStringParam(Map<String, ?> params, String name, Environment env) 
 			throws TemplateException {
 		
 		Object value = params.get(name);
@@ -69,7 +69,7 @@ public class TemplateMacroHelper {
 		throw new TemplateException("Missing parameter: " + name, env);
 	}
 	
-	private static String getStringParam(Map params, String name, String defaultValue) {
+	private static String getStringParam(Map<String, ?> params, String name, String defaultValue) {
 		Object value = params.get(name);
 		if (value instanceof SimpleScalar) {
 			return ((SimpleScalar) value).getAsString();
@@ -78,6 +78,8 @@ public class TemplateMacroHelper {
 	}
 	
 	public class ExtendDirective implements TemplateDirectiveModel {
+		
+		@SuppressWarnings("unchecked")
 		public void execute(Environment env, Map params, TemplateModel[] loopVars,
 				TemplateDirectiveBody body) throws TemplateException, IOException {
 		
@@ -91,14 +93,18 @@ public class TemplateMacroHelper {
 				}
 				file = StringUtils.cleanPath(dir + file);
 			}
-			childTemplate = true;
-			body.render(new NullWriter());
-			childTemplate = false;
+			if (body != null) {
+				childTemplate = true;
+				body.render(new NullWriter());
+				childTemplate = false;
+			}
 			env.include(file, "UTF-8", true);
 		}
 	}
 	
 	public class BlockDirective implements TemplateDirectiveModel {
+		
+		@SuppressWarnings("unchecked")
 		public void execute(Environment env, Map params, TemplateModel[] loopVars,
 				TemplateDirectiveBody body) throws TemplateException, IOException {
 			
