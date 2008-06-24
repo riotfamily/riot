@@ -145,7 +145,6 @@
 		<bean class="org.riotfamily.common.web.dwr.SpringConfigurator">
 			<property name="converterTypes">
 				<props>
-					<prop key="org.riotfamily.components.editor.TypeInfo">bean</prop>
 					<prop key="org.riotfamily.components.editor.ListRef">bean</prop>
 				</props>
 			</property>

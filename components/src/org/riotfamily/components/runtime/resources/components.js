@@ -138,6 +138,7 @@ riot.ComponentList = Class.create({
 		}		
 		this.maxComponents = el.readAttribute('riot:maxComponents');
 		this.minComponents = el.readAttribute('riot:minComponents');
+		this.validTypes = el.readAttribute('riot:validTypes').split(',');
 				
 		this.findComponentElements();
 	},
@@ -557,11 +558,12 @@ riot.InsertButton = Class.create({
 		this.element = RBuilder.node('div', {className: 'riot-insert-button',
 				onclick: this.onclick.bindAsEventListener(this)});
 
-		ComponentEditor.getValidTypes(componentList.id, this.setValidTypes.bind(this));
+		this.types = componentList.validTypes;
+		ComponentEditor.getComponentTypeLables(componentList.validTypes, this.setLabels.bind(this));
 	},
 	
-	setValidTypes: function(types) {
-		this.types = types;
+	setLabels: function(labels) {
+		this.labels = labels;
 		this.element.insertSelfAfter(this.componentList.element);
 	},
 
@@ -574,13 +576,14 @@ riot.InsertButton = Class.create({
 			riot.activeInsertButton.element.removeClassName('riot-insert-button-active');
 		}
 		if (this.types.length == 1) {
-			this.insert(this.types[0].type);
+			this.insert(this.types[0]);
 			riot.toolbar.removeInspector();
 		}
 		else {
 			this.element.addClassName('riot-insert-button-active');
 			riot.activeInsertButton = this;
-			this.inspector = new riot.TypeInspector(this.types, null,
+			this.inspector = new riot.TypeInspector(
+					this.types, this.labels, null,
 					this.insert.bind(this));
 
 			riot.toolbar.setInspector(this.inspector.element);
@@ -635,15 +638,15 @@ riot.InsertButton = Class.create({
  */
 riot.TypeInspector = Class.create({
 
-	initialize: function(types, activeType, onchange) {
+	initialize: function(types, labels, activeType, onchange) {
 		this.onchange = onchange;
 		var select = RBuilder.node('div', {className: 'type-inspector'});
 		for (var i = 0; i < types.length; i++) {
 			var e = RBuilder.node('div', {className: 'type'},
-				RBuilder.node('span', {className: 'type-' + types[i].type}, types[i].description)
+				RBuilder.node('span', {className: 'type-' + types[i]}, labels[i])
 			);
-			e.type = types[i].type;
-			if (e.type == this.type) {
+			e.type = types[i];
+			if (e.type == activeType) {
 				this.activeTypeButton = e;
 				e.className = 'active-type';
 			}
@@ -675,18 +678,6 @@ riot.setLiveHtml = function(html) {
 		}
 	}
 }
-
-/**
- * DWR error handler that reloads the page if the RequestContext has expired
- */ 
-dwr.engine.setErrorHandler(function(err, ex) {
-	if (ex.javaClassName == 'org.riotfamily.components.context.RequestContextExpiredException') {
-		location.reload();
-	}
-	else {
-		alert(err);
-	}
-});
 
 /**
  * Moves the float and clear style of the component's one and only child element

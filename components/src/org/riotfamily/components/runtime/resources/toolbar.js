@@ -45,7 +45,6 @@ riot.Toolbar = Class.create({
 		if (!dirty) this.disablePublishButtons();
 		this.buttons.values().invoke('activate');
 		this.buttons.get('browse').select();
-		this.keepAliveTimer = setInterval(this.keepAlive.bind(this), 60000);
 	},
 
 	enablePublishButtons: function() {
@@ -100,12 +99,6 @@ riot.Toolbar = Class.create({
 
 	hideInspector: function() {
 		this.inspectorPanel.style.display = 'none';
-	},
-
-	keepAlive: function() {
-		ComponentEditor.keepAlive({
-			errorHandler: Prototype.emptyFunction
-		});
 	},
 
 	logout: function() {

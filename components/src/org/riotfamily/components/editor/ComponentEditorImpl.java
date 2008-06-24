@@ -44,11 +44,7 @@ import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.PasswordGenerator;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
-import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.config.ContentFormRepository;
-import org.riotfamily.components.context.ComponentRequestUtils;
-import org.riotfamily.components.context.RequestContextExpiredException;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
@@ -189,7 +185,7 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	 *
 	 */
 	public String[] updateTextChunks(Long componentId, String property,
-			String[] chunks) throws RequestContextExpiredException {
+			String[] chunks) {
 
 		String[] html = new String[chunks.length];
 		Component component = componentDao.loadComponent(componentId);
@@ -210,19 +206,14 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	 * Returns a list of TypeInfo beans indicating which component types are
 	 * valid for the list with the given id.
 	 */
-	public List<TypeInfo> getValidTypes(Long listId) {
-		ComponentListConfig cfg = getComponentListConfig(listId);
-		
-		List<String> types = cfg.getValidComponentTypes();
+	public List<String> getComponentTypeLables(List<String> types) {
 		Locale locale = getLocale();
-		ArrayList<TypeInfo> result = new ArrayList<TypeInfo>();
+		ArrayList<String> labels = new ArrayList<String>();
 		for (String type : types) {
-			String description = messageSource.getMessage("component." + type,
-					null, FormatUtils.xmlToTitleCase(type), locale);
-
-			result.add(new TypeInfo(type, description));
+			labels.add(messageSource.getMessage("component." + type,
+					null, FormatUtils.xmlToTitleCase(type), locale));
 		}
-		return result;
+		return labels;
 	}
 
 	/**
@@ -230,8 +221,7 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	 * by the given id.
 	 */
 	public String insertComponent(Long listId, int position, String type,
-			Map<String, String> properties) 
-			throws RequestContextExpiredException {
+			Map<String, String> properties) {
 
 		ComponentList componentList = componentDao.loadComponentList(listId);
 		Component component = createComponent(type, properties);
@@ -256,34 +246,26 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 		return component;
 	}
 	
-	public String setType(Long componentId, String type) 
-			throws RequestContextExpiredException {
-		
+	public String setType(Long componentId, String type) {
 		Component component = componentDao.loadComponent(componentId);
 		component.setType(type);
 		return renderComponent(component);
 	}
 	
-	public String renderComponent(Long componentId) 
-			throws RequestContextExpiredException {
-		
+	public String renderComponent(Long componentId) {
 		Component component = componentDao.loadComponent(componentId);
 		return renderComponent(component);
 	}
 
-	private String renderComponent(Component component)
-			throws RequestContextExpiredException {
+	private String renderComponent(Component component) {
 
 		try {
 			ComponentList list = component.getList();
 			StringWriter sw = new StringWriter();
-			HttpServletRequest request = getWrappedRequest(list.getId());
+			HttpServletRequest request = WebContextFactory.get().getHttpServletRequest();
 			HttpServletResponse response = getCapturingResponse(sw);
 			renderer.render(component, list.indexOf(component), list.getSize(), request, response);
 			return sw.toString();
-		}
-		catch (RequestContextExpiredException e) {
-			throw e;
 		}
 		catch (Exception e) {
 			log.error("Error rendering component.", e);
@@ -365,17 +347,6 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	}
 
 	/**
-	 * This method is invoked by the Riot toolbar to inform the server that
-	 * the specified URL is still being edited.
-	 */
-	public void keepAlive() {
-		WebContext ctx = WebContextFactory.get();
-		HttpServletRequest request = ctx.getHttpServletRequest();
-		String path = ServletUtils.getPath(ctx.getCurrentPage());
-		ComponentRequestUtils.touchContext(request, path);
-	}
-
-	/**
 	 * Performs a logout.
 	 */
 	public void logout() {
@@ -385,23 +356,7 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	}
 
 	/* Utility methods */
-
-	private HttpServletRequest getWrappedRequest(Long listId)
-			throws RequestContextExpiredException {
-
-		WebContext ctx = WebContextFactory.get();
-		HttpServletRequest request = ctx.getHttpServletRequest();
-		String path = ServletUtils.getPath(ctx.getCurrentPage());
-		return ComponentRequestUtils.wrapRequest(request, path, listId);
-	}
 	
-	private ComponentListConfig getComponentListConfig(Long listId) {
-		WebContext ctx = WebContextFactory.get();
-		HttpServletRequest request = ctx.getHttpServletRequest();
-		String path = ServletUtils.getPath(ctx.getCurrentPage());
-		return ComponentRequestUtils.getContext(request, path, listId).getComponentListConfig();
-	}
-
 	private HttpServletResponse getCapturingResponse(StringWriter sw) {
 		WebContext ctx = WebContextFactory.get();
 		return new CapturingResponseWrapper(ctx.getHttpServletResponse(), sw);

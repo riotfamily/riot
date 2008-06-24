@@ -31,8 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.ComponentListConfig;
-import org.riotfamily.components.context.ComponentListRequestContext;
-import org.riotfamily.components.context.ComponentRequestUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
@@ -109,12 +107,6 @@ public class ComponentListRenderer {
 			if (AccessController.isGranted("edit", list.getContainer())) {
 				strategy = editModeRenderStrategy;
 			}
-			
-			ComponentListRequestContext context = ComponentRequestUtils.createContext(request, list.getId());
-			if (context != null) {
-				context.setComponentListConfig(config);
-				ComponentRequestUtils.storeContext(context, request, 120000);
-			}
 		}
 		else {
 			list = (ComponentList) container.getLiveVersion().getValue(key);
@@ -143,11 +135,6 @@ public class ComponentListRenderer {
 			}
 			if (AccessController.isGranted("edit", list.getContainer())) {
 				strategy = editModeRenderStrategy;
-			}
-			ComponentListRequestContext context = ComponentRequestUtils.createContext(request, list.getId());
-			if (context != null) {
-				context.setComponentListConfig(config);
-				ComponentRequestUtils.storeContext(context, request, 120000);
 			}
 		}
 		else {

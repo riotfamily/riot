@@ -33,20 +33,25 @@ import org.riotfamily.common.web.view.ViewResolutionException;
 import org.riotfamily.common.web.view.ViewResolverHelper;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.render.list.ComponentListRenderer;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * ComponentRenderer implementation that resolves a view-name just like 
  * Spring's DispatcherServlet and renders the view passing the 
  * Component's properties as model.
  */
-public class ViewComponentRenderer extends AbstractComponentRenderer {
+public class ViewComponentRenderer extends AbstractComponentRenderer 
+		implements ApplicationContextAware {
 
 	private String viewNamePrefix = "";
 	
 	private String viewNameSuffix = "";
+	
+	private ViewResolverHelper viewResolverHelper;
 	
 	public void setViewNamePrefix(String viewNamePrefix) {
 		this.viewNamePrefix = viewNamePrefix;
@@ -56,6 +61,12 @@ public class ViewComponentRenderer extends AbstractComponentRenderer {
 		this.viewNameSuffix = viewNameSuffix;
 	}
 
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+
+		viewResolverHelper = new ViewResolverHelper(applicationContext);		
+	}
+	
 	protected void renderInternal(Component component, 
 			int position, int listSize, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
@@ -74,10 +85,7 @@ public class ViewComponentRenderer extends AbstractComponentRenderer {
 		String viewName = viewNamePrefix + component.getType() + viewNameSuffix;
 		ModelAndView mv = new ModelAndView(viewName, model);
 		try {
-			View view = new ViewResolverHelper(
-					RequestContextUtils.getWebApplicationContext(request))
-					.resolveView(request, mv);
-
+			View view = viewResolverHelper.resolveView(request, mv);
 			view.render(model, request, response);
 		}
 		catch (ViewResolutionException e) {

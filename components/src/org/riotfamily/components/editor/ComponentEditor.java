@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.riotfamily.components.context.RequestContextExpiredException;
-
 /**
  * Interface used by the Riot Toolbar to edit components. All methods defined
  * by this interface are exposed to the JavaScript client via DWR.
@@ -42,7 +40,7 @@ public interface ComponentEditor {
 	public void updateText(Long contentId, String property, String text);
 	
 	public String[] updateTextChunks(Long componentId, String property,
-			String[] chunks) throws RequestContextExpiredException;
+			String[] chunks);
 
 	public String generateToken();
 	
@@ -56,17 +54,14 @@ public interface ComponentEditor {
 			
 	public void discardImage(Long imageId);
 			
-	public List<TypeInfo> getValidTypes(Long listId);
+	public List<String> getComponentTypeLables(List<String> types);
 
 	public String insertComponent(Long listId, int position, String type,
-			Map<String, String> properties)
-			throws RequestContextExpiredException;
+			Map<String, String> properties);
 
-	public String setType(Long componentId, String type)
-			throws RequestContextExpiredException;
+	public String setType(Long componentId, String type);
 	
-	public String renderComponent(Long componentId)
-			throws RequestContextExpiredException;
+	public String renderComponent(Long componentId);
 
 	public void moveComponent(Long componentId, Long nextComponentId);
 
@@ -75,8 +70,6 @@ public interface ComponentEditor {
 	public void publish(Long[] listIds, Long[] containerIds);
 
 	public void discard(Long[] listIds, Long[] containerIds);
-
-	public void keepAlive();
 
 	public void logout();
 

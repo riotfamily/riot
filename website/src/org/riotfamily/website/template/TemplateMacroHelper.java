@@ -112,11 +112,14 @@ public class TemplateMacroHelper {
 			String cacheKey = getStringParam(params, "cacheKey",
 					ServletUtils.getPathWithinApplication(request) + "#" + name);
 			
+			String content = blocks.get(name);
 			if (childTemplate) {
-				blocks.put(name, captureBody(body, cacheKey));
+				if (content == null) {
+					content = captureBody(body, cacheKey);
+					blocks.put(name, content);
+				}
 			}
 			else {
-				String content = blocks.get(name);
 				if (content != null) {
 					env.getOut().write(content);
 				}

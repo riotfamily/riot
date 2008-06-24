@@ -37,6 +37,7 @@ import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.components.render.component.EditModeComponentDecorator;
+import org.springframework.util.StringUtils;
 
 public class EditModeRenderStrategy extends DefaultRenderStrategy {
 
@@ -70,6 +71,11 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 			.attribute(Html.COMMON_CLASS, className)
 			.attribute("riot:listId", list.getId().toString());
 		
+		if (config.getValidComponentTypes() != null) {
+			wrapper.attribute("riot:validTypes", 
+					StringUtils.collectionToCommaDelimitedString(
+					config.getValidComponentTypes()));
+		}
 		if (config.getMinComponents() != null) {
 			wrapper.attribute("riot:minComponents", 
 					config.getMinComponents().intValue());

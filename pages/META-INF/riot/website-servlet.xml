@@ -15,19 +15,6 @@
 	<bean id="pageResolver" class="org.riotfamily.pages.mapping.PageResolver">
 		<constructor-arg ref="pageDao" />
 	</bean>
-
-	<!-- 
-	<bean id="pageHandlerMapping" class="org.riotfamily.pages.mapping.PageHandlerMapping">
-		<constructor-arg ref="pageDao" />
-		<constructor-arg ref="pageResolver" />
-		<constructor-arg ref="pathCompleter" />
-		<property name="interceptors">
-			<list>
-				<ref bean="riotInterceptors" />
-			</list>
-		</property>
-	</bean>
-	-->
 	
 	<bean id="pageController" name="/**/*.html" class="org.riotfamily.pages.controller.PageController">
 		<constructor-arg ref="pageResolver" />
@@ -62,7 +49,6 @@
 
 	<bean id="currentPage" class="org.riotfamily.pages.view.CurrentPageMacroHelperFactory">
 		<constructor-arg ref="pageResolver" />
-		<constructor-arg ref="pageDao" />
 	</bean>
 
 	<bean id="pagesMacroHelper" class="org.riotfamily.pages.view.PagesMacroHelperFactory">
