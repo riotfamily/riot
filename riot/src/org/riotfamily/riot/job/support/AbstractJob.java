@@ -78,8 +78,9 @@ public abstract class AbstractJob implements Job, BeanNameAware {
 			try {
 				 jd = setupInternal(objectId);
 			}
-			catch (Exception e) {
-				transactionManager.rollback(status);				
+			catch (JobCreationException e) {
+				transactionManager.rollback(status);
+				throw e;
 			}
 			transactionManager.commit(status);			
 		}
@@ -104,7 +105,7 @@ public abstract class AbstractJob implements Job, BeanNameAware {
 	protected void initDescription(JobDescription jd, Object entity) throws Exception {
 	}
 	
-	public final void execute(final JobContext context) {
+	public final void execute(final JobContext context) throws Exception {
 		if (transactionManager != null) {
 			
 			TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
@@ -114,7 +115,8 @@ public abstract class AbstractJob implements Job, BeanNameAware {
 			catch (JobInterruptedException e) {				
 			}
 			catch (Exception e) {
-				transactionManager.rollback(status);				
+				transactionManager.rollback(status);
+				throw e;
 			}
 			transactionManager.commit(status);			
 		}
