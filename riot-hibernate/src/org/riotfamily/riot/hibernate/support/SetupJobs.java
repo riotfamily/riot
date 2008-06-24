@@ -56,7 +56,10 @@ public class SetupJobs implements InitializingBean {
 		if (transactionManager != null) {
 			new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
 				public Object doInTransaction(TransactionStatus status) {
-					executeJobs();
+					try {
+						executeJobs();
+					} catch (Exception e) {
+					}
 					return null;
 				}
 			});
@@ -67,7 +70,7 @@ public class SetupJobs implements InitializingBean {
 		
 	}
 	
-	protected void executeJobs() {
+	protected void executeJobs() throws Exception {
 		JobContext context = new CommonsLogginJobContext();
 		Iterator it = jobs.iterator();
 		while (it.hasNext()) {
