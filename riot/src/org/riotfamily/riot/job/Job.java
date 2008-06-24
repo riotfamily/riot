@@ -51,7 +51,7 @@ public interface Job {
 	 * Performs the actual work. The given context can be used to log messages
 	 * or to provide progress information.
 	 */
-	public void execute(JobContext context);
+	public void execute(JobContext context) throws Exception;
 
 	/**
 	 * Invoked when a job is canceled or completed.
