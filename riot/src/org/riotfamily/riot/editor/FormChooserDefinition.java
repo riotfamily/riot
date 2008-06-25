@@ -47,6 +47,10 @@ public class FormChooserDefinition extends FormDefinition {
 	public FormChooserDefinition(EditorRepository editorRepository) {
 		super(editorRepository);
 	}
+	
+	public void setDiscriminatorProperty(String discriminatorProperty) {
+		this.discriminatorProperty = discriminatorProperty;
+	}
 
 	public void addFormDefinition(FormDefinition formDef) {
 		formDefinitions.add(formDef);

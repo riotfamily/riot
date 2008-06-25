@@ -100,7 +100,11 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 
 
 	private static final String[] FORM_ATTR = new String[] {
-		"name", "formId=form-ref", "label-property", "hidden"
+		"name", "formId=form-ref", "label-property", "hidden", "discriminator-value"
+	};
+	
+	private static final String[] FORM_CHOOSER_ATTR = new String[] {
+		"name", "label-property", "discriminator-property"
 	};
 
 	private static final String ANYTHING = OBJECT_EDITOR + '|' + LIST_EDITOR;
@@ -329,7 +333,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 				new FormChooserDefinition(editorRepository);
 
 		XmlUtils.populate(formChooserDefinition, chooserElement,
-				FORM_ATTR, beanFactory);
+				FORM_CHOOSER_ATTR, beanFactory);
 
 		formChooserDefinition.setParentEditorDefinition(parentDef);
 		addEditorDefinition(formChooserDefinition);
