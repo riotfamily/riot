@@ -277,8 +277,8 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 		return HibernateUtils.get(getSession(), entityClass, objectId);
     }
 
-    public void reattach(Object entity) {
-		getSession().update(entity);
+    public Object merge(Object entity) {
+		return getSession().merge(entity);
 	}
     
     public void update(Object entity) {
@@ -297,9 +297,6 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 
     	PropertyUtils.setProperty(item, positionProperty, pos2);
     	PropertyUtils.setProperty(nextItem, positionProperty, pos1);
-
-    	getSession().update(item);
-    	getSession().update(nextItem);
     }
 
 	/**

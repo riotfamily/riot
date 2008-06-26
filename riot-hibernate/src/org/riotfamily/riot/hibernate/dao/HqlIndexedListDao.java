@@ -40,6 +40,5 @@ public class HqlIndexedListDao extends HqlCollectionDao
     	
     	List<?> list = (List<?>) getCollection(parent);
     	Collections.swap(list, list.indexOf(entity), list.indexOf(nextItem));
-    	getSession().update(parent);
 	}
 }

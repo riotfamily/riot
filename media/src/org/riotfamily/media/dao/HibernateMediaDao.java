@@ -21,13 +21,12 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.media.dao.hibernate;
+package org.riotfamily.media.dao;
 
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.riotfamily.media.dao.MediaDao;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.data.FileData;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;

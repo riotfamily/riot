@@ -60,7 +60,7 @@ public interface ComponentDao {
 	 * Saves the given ComponentList.
 	 */
 	public void saveComponentList(ComponentList list);
-	
+		
 	/**
 	 * Saves the given ContentContainer.
 	 */
@@ -71,16 +71,6 @@ public interface ComponentDao {
 	 */
 	public void saveContent(Content content);
 	
-	/**
-	 * Updates the given ComponentList.
-	 */
-	public void updateComponentList(ComponentList list);
-
-	/**
-	 * Updates the given ContentContainer.
-	 */
-	public void updateContentContainer(ContentContainer container);
-
 	/**
 	 * Updates the given Content.
 	 */

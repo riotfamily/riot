@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.dao.hibernate;
+package org.riotfamily.pages.dao;
 
 import java.io.Serializable;
 import java.util.List;
@@ -35,7 +35,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.riotfamily.pages.dao.AbstractPageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.PageNode;
@@ -73,16 +72,8 @@ public class HibernatePageDao extends AbstractPageDao {
 		hibernate.save(object);
 	}
 
-	protected void updateObject(Object object) {
-		hibernate.update(object);
-	}
-
 	protected void deleteObject(Object object) {
 		hibernate.delete(object);
-	}
-
-	protected void flush() {
-		hibernate.flush();
 	}
 	
 	public List<Site> listSites() {
@@ -131,6 +122,10 @@ public class HibernatePageDao extends AbstractPageDao {
 		return (Page) hibernate.uniqueResult(c);
 	}
 
+	public Page mergePage(Page page) {
+		return hibernate.merge(page);
+	}
+	
 	public PageNode findNodeOfType(String pageType) {
 		Criteria c = hibernate.createCacheableCriteria(PageNode.class);
 		c.createCriteria("node").add(Restrictions.eq("pageType", pageType));

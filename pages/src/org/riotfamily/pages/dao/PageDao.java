@@ -109,7 +109,7 @@ public interface PageDao {
 
 	public Page addTranslation(Page page, Site site);
 
-	public void reattachPage(Page page);
+	public Object mergePage(Page page);
 
 	public void updatePage(Page page);
 

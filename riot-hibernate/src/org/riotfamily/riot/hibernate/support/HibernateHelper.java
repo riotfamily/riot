@@ -198,6 +198,19 @@ public class HibernateHelper extends HibernateSupport {
 	}
 	
 	/**
+	 * Persists the given transient instance.
+	 * @see Session#persist(Object)
+	 */
+	public void persist(Object object) throws DataAccessException {
+		try {
+			getSession().persist(object);
+		}
+		catch (HibernateException e) {
+			throw SessionFactoryUtils.convertHibernateAccessException(e);
+		}
+	}
+	
+	/**
 	 * Either saves or updates the given instance, depending upon resolution 
 	 * of the unsaved-value checks.
 	 */

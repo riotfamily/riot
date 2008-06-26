@@ -99,12 +99,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	protected abstract void saveObject(Object object);
 
-	protected abstract void updateObject(Object object);
-
 	protected abstract void deleteObject(Object object);
-
-	protected abstract void flush();
-	
 
 	public Page loadPage(Long id) {
 		return (Page) loadObject(Page.class, id);
@@ -188,19 +183,12 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		}
 		
 		node.addPage(translation);
-		updateObject(node);
 		deleteAlias(translation);
 		saveObject(translation);
 		PageCacheUtils.invalidateNode(cacheService, node.getParent());
 		return translation;
 	}
 
-	public void reattachPage(Page page) {
-		PageNode node = page.getNode();
-		updateNode(node);
-		updateObject(page);
-	}
-	
 	public void updatePage(Page page) {
 		PageNode node = page.getNode();
 		
@@ -223,7 +211,6 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	
 	public void publishPage(Page page) {
 		page.setPublished(true);
-		updateObject(page);
 		PageNode node = page.getNode();
 		PageCacheUtils.invalidateNode(cacheService, node);
 		PageCacheUtils.invalidateNode(cacheService, node.getParent());
@@ -240,14 +227,12 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	
 	public void unpublishPage(Page page) {
 		page.setPublished(false);
-		updateObject(page);
 		PageNode node = page.getNode();
 		PageCacheUtils.invalidateNode(cacheService, node);
 		PageCacheUtils.invalidateNode(cacheService, node.getParent());
 	}
 
 	public void updateNode(PageNode node) {
-		updateObject(node);
 		PageCacheUtils.invalidateNode(cacheService, node);
 	}
 
@@ -266,7 +251,6 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 			String oldPath = page.getPath();
 			page.setPath(page.buildPath());
 			createAlias(page, oldPath);
-			updateObject(page);
 			updatePaths(page.getChildPages());
 		}
 	}
@@ -355,7 +339,6 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 
 	public void updateSite(Site site) {
-		updateObject(site);
 	}
 
 	public void deleteSite(Site site) {

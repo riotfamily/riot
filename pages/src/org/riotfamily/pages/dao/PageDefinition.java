@@ -123,7 +123,7 @@ public class PageDefinition {
 			page.setFolder(folder);
 			page.setCreationDate(new Date());
 			if (site.getMasterSite() == null) {
-				page.getPageProperties().getPreviewVersion().wrapValues(properties);
+				page.getPageProperties().getPreviewVersion().wrap(properties);
 			}
 			node.addPage(page);
 			pageDao.deleteAlias(page);

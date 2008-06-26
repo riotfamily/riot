@@ -115,13 +115,11 @@ public class HqlCollectionDao extends HibernateSupport
     	}
 		getCollection(parent).add(entity);
 		getSession().save(entity);
-		getSession().update(parent);
     }
     
     public void delete(Object entity, Object parent) {
     	getCollection(parent).remove(entity);
 		getSession().delete(entity);
-    	getSession().update(parent);
     }
        
     @SuppressWarnings("unchecked")
@@ -213,8 +211,8 @@ public class HqlCollectionDao extends HibernateSupport
 		return HibernateUtils.get(getSession(), entityClass, objectId);
     }
     
-    public void reattach(Object entity) {
-		getSession().update(entity);
+    public Object merge(Object entity) {
+		return getSession().merge(entity);
 	}
     
     public void update(Object entity) {
@@ -225,20 +223,12 @@ public class HqlCollectionDao extends HibernateSupport
     	if (parentProperty != null) {
     		PropertyUtils.setProperty(entity, parentProperty, parent);
     	}
-    	getSession().update(parent);
-    	if (parentProperty != null) {
-    		getSession().update(entity);	
-    	}
     }
     
     public void removeChild(Object entity, Object parent) {
     	getCollection(parent).remove(entity);
     	if (parentProperty != null) {
     		PropertyUtils.setProperty(entity, parentProperty, null);
-    	}
-    	getSession().update(parent);
-    	if (parentProperty != null) {
-    		getSession().update(entity);	
     	}
     }
 

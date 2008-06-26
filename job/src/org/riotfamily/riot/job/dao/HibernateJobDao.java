@@ -103,7 +103,7 @@ public class HibernateJobDao extends HibernateSupport implements JobDao {
 	}
 
 	public void updateJobDetail(JobDetail job) {
-		getSession().update(job);
+		//getSession().update(job);
 	}
 
 	public Collection<JobLogEntry> getLogEntries(Long jobId) {

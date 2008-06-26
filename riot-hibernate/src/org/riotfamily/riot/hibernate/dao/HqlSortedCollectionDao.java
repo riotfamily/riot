@@ -57,10 +57,6 @@ public class HqlSortedCollectionDao extends HqlCollectionDao
     	
     	c.add(entity);
     	c.add(nextItem);
-    	
-    	getSession().update(entity);
-    	getSession().update(nextItem);
 	}
-
 	
 }

@@ -56,7 +56,7 @@ public interface RiotDao {
 	 * can use this method to perform modification checks or to reattach the
 	 * object to a persistence session.  
 	 */
-	public void reattach(Object entity) throws DataAccessException;
+	public Object merge(Object entity) throws DataAccessException;
 	
 	/**
 	 * Updates the given entity. This method is invoked after an object has

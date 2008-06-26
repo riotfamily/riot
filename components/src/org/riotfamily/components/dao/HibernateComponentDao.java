@@ -21,12 +21,11 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.components.dao.hibernate;
+package org.riotfamily.components.dao;
 
 import org.hibernate.SessionFactory;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.cache.ComponentCacheUtils;
-import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
@@ -90,18 +89,7 @@ public class HibernateComponentDao implements ComponentDao {
 	public void saveContent(Content version) {
 		hibernate.save(version);
 	}
-	
-	public void updateComponentList(ComponentList list) {
-		ComponentCacheUtils.invalidateContainer(cacheService, list.getContainer());
-		hibernate.update(list);
-	}
-
-	public void updateContentContainer(ContentContainer container) {
-		if (container.getId() != null) {
-			hibernate.update(container);
-		}
-	}
-	
+		
 	public void updateContent(Content content) {
 		hibernate.update(content);
 	}
@@ -116,7 +104,6 @@ public class HibernateComponentDao implements ComponentDao {
 				deleteContent(liveVersion);
 			}
 			container.setDirty(false);
-			updateContentContainer(container);
 			ComponentCacheUtils.invalidateContainer(cacheService, container);
 			published = true;
 		}
@@ -133,7 +120,6 @@ public class HibernateComponentDao implements ComponentDao {
 				deleteContent(preview);
 			}
 			container.setDirty(false);
-			updateContentContainer(container);
 			discarded = true;
 		}
 		return discarded;

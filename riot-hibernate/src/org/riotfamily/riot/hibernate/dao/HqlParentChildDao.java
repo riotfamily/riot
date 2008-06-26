@@ -90,7 +90,6 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
     public void addChild(Object entity, Object parent) {
     	PropertyUtils.setProperty(entity, parentProperty, parent);
     	setPositionIfNeeded(entity, parent);
-    	update(entity);
     }
     
     /**
