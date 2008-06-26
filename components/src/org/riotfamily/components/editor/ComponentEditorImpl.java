@@ -40,10 +40,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
+import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.PasswordGenerator;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
+import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ContentFormRepository;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
@@ -75,6 +77,8 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 
 	private ComponentDao componentDao;
 	
+	private CacheService cacheService;
+	
 	private MediaDao mediaDao;
 	
 	private ImageCropper imageCropper;
@@ -90,11 +94,13 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 
 	private Map<String, Map<String, Object>> tinyMCEProfiles;
 
-	public ComponentEditorImpl(ComponentDao componentDao,
-			MediaDao mediaDao, ImageCropper imageCropper,
-			ComponentRenderer renderer, ContentFormRepository formRepository) {
+	public ComponentEditorImpl(ComponentDao componentDao, 
+			CacheService cacheService, MediaDao mediaDao, 
+			ImageCropper imageCropper, ComponentRenderer renderer, 
+			ContentFormRepository formRepository) {
 		
 		this.componentDao = componentDao;
+		this.cacheService = cacheService;
 		this.mediaDao = mediaDao;
 		this.imageCropper = imageCropper;
 		this.renderer = new EditModeComponentDecorator(renderer, formRepository);
@@ -139,7 +145,6 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 				original, imageCropper, width, height, x, y, scaledWidth));
 		
 		content.setValue(property, croppedImage);
-		//componentDao.saveOrUpdatePreviewVersion(container);
 		return croppedImage.getUri();
 	}
 	
@@ -147,7 +152,6 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 		Content content = componentDao.loadContent(contentId);
 		RiotFile image = mediaDao.loadFile(imageId);
 		content.setValue(property, image);
-		//componentDao.saveOrUpdatePreviewVersion(container);
 		return image.getUri();
 	}
 	
@@ -226,7 +230,6 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 		ComponentList componentList = componentDao.loadComponentList(listId);
 		Component component = createComponent(type, properties);
 		componentList.insertComponent(component, position);
-		componentDao.updateComponentList(componentList);
 		return renderComponent(component);
 	}
 
@@ -240,7 +243,7 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	private Component createComponent(String type, Map<String, String> properties) {
 		Component component = new Component(type);
 		if (properties != null) {
-			component.wrapValues(properties);
+			component.wrap(properties);
 		}
 		componentDao.saveContent(component);
 		return component;
@@ -289,8 +292,6 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 		else {
 			components.add(component);
 		}
-		componentList.getContainer().setDirty(true);
-		componentDao.updateComponentList(componentList);
 	}
 
 	public void deleteComponent(Long componentId) {
@@ -298,51 +299,33 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 		ComponentList componentList = component.getList();
 		List<Component> components = componentList.getComponents();
 		components.remove(component);
-		componentList.getContainer().setDirty(true);
-		componentDao.updateComponentList(componentList);
 	}
 
-	public void publish(Long[] listIds, Long[] containerIds) {
-		HashSet<ContentContainer> containers = new HashSet<ContentContainer>();
+	public void markAsDirty(Long containerId) {
+		ContentContainer container = componentDao.loadContentContainer(containerId);
+		container.setDirty(true);
+		ComponentCacheUtils.invalidateContainer(cacheService, container);
+	}
+	
+	public void publish(Long[] containerIds) {
 		if (containerIds != null) {
 			for (Long id : containerIds) {
 				if (id != null) {
-					containers.add(componentDao.loadContentContainer(id));
+					ContentContainer container = componentDao.loadContentContainer(id);
+					componentDao.publishContainer(container);
 				}
 			}
-		}
-		if (listIds != null) {
-			for (Long id : listIds) {
-				if (id != null) {
-					ComponentList list = componentDao.loadComponentList(id);
-					containers.add(list.getContainer());
-				}
-			}
-		}
-		for (ContentContainer container : containers) {
-			componentDao.publishContainer(container);
 		}
 	}
 
-	public void discard(Long[] listIds, Long[] containerIds) {
-		HashSet<ContentContainer> containers = new HashSet<ContentContainer>();
+	public void discard(Long[] containerIds) {
 		if (containerIds != null) {
 			for (Long id : containerIds) {
 				if (id != null) {
-					containers.add(componentDao.loadContentContainer(id));
+					ContentContainer container = componentDao.loadContentContainer(id);
+					componentDao.discardContainer(container);
 				}
 			}
-		}
-		if (listIds != null) {
-			for (Long id : listIds) {
-				if (id != null) {
-					ComponentList list = componentDao.loadComponentList(id);
-					containers.add(list.getContainer());
-				}
-			}
-		}
-		for (ContentContainer container : containers) {
-			componentDao.discardContainer(container);
 		}
 	}
 

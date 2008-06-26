@@ -31,12 +31,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.components.config.ComponentListConfig;
-import org.riotfamily.components.config.ContentFormUrlService;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.components.render.component.EditModeComponentDecorator;
+import org.riotfamily.forms.factory.FormRepository;
 import org.springframework.util.StringUtils;
 
 public class EditModeRenderStrategy extends DefaultRenderStrategy {
@@ -44,10 +44,11 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 	private EditModeComponentDecorator editModeRenderer;
 	
 	public EditModeRenderStrategy(ComponentDao dao, ComponentRenderer renderer,
-			ContentFormUrlService contentFormUrlService) {
+			FormRepository formRepository, ComponentListRenderer listRenderer) {
 		
 		super(dao, renderer);
-		editModeRenderer = new EditModeComponentDecorator(renderer, contentFormUrlService);
+		editModeRenderer = new EditModeComponentDecorator(renderer, formRepository);
+		listRenderer.setEditModeRenderStrategy(this);
 	}
 
 	/**
@@ -62,13 +63,8 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 		
 		DocumentWriter wrapper = new DocumentWriter(response.getWriter());
 		
-		String className = "riot-list riot-component-list";
-		if (list.getContainer().isDirty()) {
-			className += " riot-dirty";
-		}
-		
 		wrapper.start(Html.DIV)
-			.attribute(Html.COMMON_CLASS, className)
+			.attribute(Html.COMMON_CLASS, "riot-component-list")
 			.attribute("riot:listId", list.getId().toString());
 		
 		if (config.getValidComponentTypes() != null) {

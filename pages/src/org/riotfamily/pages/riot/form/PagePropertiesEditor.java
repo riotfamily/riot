@@ -26,12 +26,15 @@ package org.riotfamily.pages.riot.form;
 import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;
+import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.NestedForm;
 import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
+import org.riotfamily.riot.form.ui.FormUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -50,14 +53,37 @@ public class PagePropertiesEditor extends CompositeElement
 	
 	private LocalizedEditorBinder binder;
 	
-	public PagePropertiesEditor(FormRepository repository, Page masterPage, 
+	public PagePropertiesEditor(FormRepository repository, Form form, 
 			String pageType) {
 		
 		this.repository = repository;
-		this.masterPage = masterPage;
-		this.binder = new LocalizedEditorBinder(new PagePropertiesEditorBinder());
+		this.masterPage = getMasterPage(form);
+		this.binder = new LocalizedEditorBinder(new PagePropertiesEditorBinder((Page) form.getBackingObject()));
 		this.currentForm = new PropertiesForm(pageType);
 		addComponent(currentForm);
+	}
+	
+	private Page getMasterPage(Form form) {
+		Page page = (Page) form.getBackingObject();
+		if (page.getNode() != null) {
+			Site site = page.getSite();
+			if (site == null) {
+				Object parent = FormUtils.loadParent(form);
+				if (parent instanceof Page) {
+					site = ((Page) parent).getSite();
+				}
+				else if (parent instanceof Site) {
+					site = (Site) parent;
+				}
+			}
+			if (site != null) {
+				Site masterSite = site.getMasterSite();
+				if (masterSite != null) {
+					return page.getNode().getPage(masterSite);
+				}
+			}
+		}
+		return null;
 	}
 	
 	public String getLabel() {

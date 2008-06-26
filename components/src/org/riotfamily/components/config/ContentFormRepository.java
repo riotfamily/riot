@@ -34,8 +34,7 @@ import org.springframework.validation.Validator;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class ContentFormRepository extends XmlFormRepository 
-		implements ContentFormUrlService {
+public class ContentFormRepository extends XmlFormRepository {
 
 	public FormFactory createFormFactory(Class<?> beanClass, 
 			FormInitializer initializer, Validator validator) {
@@ -53,10 +52,6 @@ public class ContentFormRepository extends XmlFormRepository
 			return "/components/form/" + formId + "/" + containerId + "/" + contentId;
 		}
 		return null;
-	}
-	
-	public void setContentFormUrlService(ContentFormUrlServiceDelegate delegate) {
-		delegate.setContentFormRepository(this);
 	}
 	
 }

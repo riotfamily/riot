@@ -32,7 +32,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -49,8 +48,6 @@ public class ComponentList {
 	private Long id;
 
 	private String type;
-	
-	private ContentContainer container;
 	
 	private List<Component> components;
 
@@ -72,15 +69,6 @@ public class ComponentList {
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	@ManyToOne(cascade=CascadeType.MERGE)
-	public ContentContainer getContainer() {
-		return container;
-	}
-	
-	public void setContainer(ContentContainer container) {
-		this.container = container;
 	}
 
 	@OneToMany(cascade=CascadeType.ALL)
@@ -106,7 +94,6 @@ public class ComponentList {
 		else {
 			getComponents().add(component);
 		}
-		container.setDirty(true);
 	}
 	
 	public void appendComponent(Component component) {
@@ -124,7 +111,6 @@ public class ComponentList {
 	
 	public ComponentList createCopy() {
 		ComponentList copy = new ComponentList();
-		copy.setContainer(container);
 		copy.setComponents(copyComponents(components));
 		return copy;
 	}

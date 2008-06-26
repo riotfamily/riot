@@ -263,7 +263,7 @@ public class Site {
 	@Transient
 	public Map<String, Object> getLocalPropertiesMap() {
 		if (properties != null) { 
-			return properties.unwrapValues();
+			return properties.unwrap();
 		}
 		return Collections.emptyMap();
 	}

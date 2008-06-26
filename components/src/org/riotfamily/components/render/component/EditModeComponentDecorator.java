@@ -5,20 +5,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
-import org.riotfamily.components.config.ContentFormUrlService;
 import org.riotfamily.components.model.Component;
+import org.riotfamily.forms.factory.FormRepository;
 
 public class EditModeComponentDecorator implements ComponentRenderer {
 
-	private ContentFormUrlService contentFormUrlService;
+	private FormRepository formRepository;
 	
 	private ComponentRenderer renderer;
 	
 	public EditModeComponentDecorator(ComponentRenderer renderer, 
-			ContentFormUrlService contentFormUrlService) {
+			FormRepository formRepository) {
 		
 		this.renderer = renderer;
-		this.contentFormUrlService = contentFormUrlService;
+		this.formRepository = formRepository;
 	}
 
 	public void render(Component component, int position, int listSize,
@@ -26,22 +26,21 @@ public class EditModeComponentDecorator implements ComponentRenderer {
 			throws Exception {
 
 		String type = component.getType();
-		String formUrl = contentFormUrlService.getContentFormUrl(type, 
-				component.getList().getContainer().getId() , component.getId());
 		
-		String className = "riot-list-component riot-component " +
+		String className = "riot-content riot-component " +
 				"riot-component-" + type;
 		
-		if (formUrl != null) {
+		String formId = formRepository.containsForm(type) ? type : null;
+		if (formId != null) {
 			className += " riot-form";
 		}
 		
 		TagWriter wrapper = new TagWriter(response.getWriter());
 		wrapper.start(Html.DIV)
 				.attribute(Html.COMMON_CLASS, className)
-				.attribute("riot:componentId", component.getId().toString())
+				.attribute("riot:contentId", component.getId().toString())
 				.attribute("riot:componentType", type)
-				.attribute("riot:form", formUrl)
+				.attribute("riot:form", formId)
 				.body();
 
 		renderer.render(component, position, listSize, request, response);

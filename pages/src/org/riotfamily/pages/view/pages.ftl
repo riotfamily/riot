@@ -38,7 +38,7 @@
   -->
 <#macro use page=currentPage form="" tag="" attributes...>
 	<#local attributes = c.unwrapAttributes(attributes) />
-	<@inplace.use container=page.contentContainer model=page.properties form=form tag=tag attributes=attributes>
+	<@inplace.use container=page.contentContainer form=form tag=tag attributes=attributes>
 		<#nested />
 	</@inplace.use>
 </#macro>
@@ -50,7 +50,7 @@
 <#macro link page tag="a" editable=page==currentPage labelKey="title" form="" attributes...>
 	<#local attributes = c.unwrapAttributes(attributes) />
 	<#if editable>
-		<@inplace.use container=page.contentContainer model=page.properties form=form>
+		<@inplace.use container=page.contentContainer form=form>
 			<@inplace.link key=labelKey href=c.url(page.url) tag=tag attributes=attributes>${page[labelKey]}</@inplace.link>
 		</@inplace.use>
 	<#else>

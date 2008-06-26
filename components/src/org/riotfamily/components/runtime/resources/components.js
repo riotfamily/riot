@@ -1,23 +1,15 @@
 /**
- * Returns a wrapper for the given element. A wrapper is either an  EntityList, 
- * ComponentList, Component or an editor. What kind of wrapper
- * is returned depends on the given CSS selector. The function is invoked by
+ * Returns a wrapper for the given element. A wrapper is either a ComponentList, 
+ * Component or an editor. What kind of wrapper is returned depends on the 
+ * given CSS selector. The function is invoked by 
  * ToolbarButton.getHandlerTargets() when a button's handler is to be applied.
  */
 riot.getWrapper = function(el, selector) {
-	if (selector == '.riot-list' || selector == '.riot-component-list') {
-		if (el.hasClassName('riot-entity-list')) {
-			if (!el.entityList) {
-				el.entityList = new riot.EntityList(el);
-			}
-			return el.entityList;
-		}
-		else {
-			return riot.getComponentList(el);
-		 }
+	if (selector == '.riot-component-list') {
+		return riot.getComponentList(el);
 	}
 	if (selector == '.riot-component'|| selector == '.riot-form') {
-		return riot.getComponent(el);
+		return riot.getContent(el);
 	}
 	if (selector == '.riot-text-editor') {
 		return riot.getTextEditor(el);
@@ -35,21 +27,21 @@ riot.getWrapper = function(el, selector) {
 riot.getTextEditor = function(el) {
 	if (!el.textEditor) {
 		var editorType = el.readAttribute('riot:editorType');
-		var component = riot.findComponent(el);
+		var content = riot.findContent(el);
 		if (editorType == 'text') {
-			el.textEditor = new riot.InplaceTextEditor(el, component, {
+			el.textEditor = new riot.InplaceTextEditor(el, content, {
 				textTransform: el.readAttribute('riot:textTransform') == 'true'
 			});
 		}
 		if (editorType == 'textarea') {
-			el.textEditor = new riot.PopupTextEditor(el, component, {useInnerHtmlAsDefault: true});
+			el.textEditor = new riot.PopupTextEditor(el, content, {useInnerHtmlAsDefault: true});
 		}
 		if (editorType == 'richtext') {
-			el.textEditor = new riot.RichtextEditor(el, component, {useInnerHtmlAsDefault: true, config: el.readAttribute('riot:config')});
+			el.textEditor = new riot.RichtextEditor(el, content, {useInnerHtmlAsDefault: true, config: el.readAttribute('riot:config')});
 		}
 		if (editorType == 'richtext-chunks') {
-			//TODO Check if component is a list-component!
-			el.textEditor = new riot.RichtextEditor(el, component, {split: true, useInnerHtmlAsDefault: true, config: el.readAttribute('riot:config')});
+			//TODO Check if content is a component!
+			el.textEditor = new riot.RichtextEditor(el, content, {split: true, useInnerHtmlAsDefault: true, config: el.readAttribute('riot:config')});
 		}
 	}
 	return el.textEditor;
@@ -60,7 +52,7 @@ riot.getTextEditor = function(el) {
  */
 riot.getImageEditor = function(el) {
 	if (!el.imageEditor) {
-		el.imageEditor = new riot.ImageEditor(el, riot.findComponent(el), {
+		el.imageEditor = new riot.ImageEditor(el, riot.findContent(el), {
 			srcTemplate: el.readAttribute('riot:srcTemplate'),
 			minWidth: el.readAttribute('riot:minWidth'),
 			maxWidth: el.readAttribute('riot:maxWidth'),
@@ -73,41 +65,46 @@ riot.getImageEditor = function(el) {
 }
 
 /**
- * Returns either an EntityComponent, ListComponent or Component wrapper for
- * the given element. What type of wrapper is returned depends on the element's
- * CSS class.
+ * Returns the ContentContainer for the given element.
  */
-riot.getComponent = function(el) {
-	if (!el.component) {
-		if (el.hasClassName('riot-entity-component')) {
-			el.component = new riot.EntityComponent(el);
-		}
-		else if (el.hasClassName('riot-list-component')) {
-			el.component = new riot.ListComponent(el);
-		}
-		else {
-			el.component = new riot.Component(el);
-		}
+riot.getContentContainer = function(el) {
+	if (!el.contentContainer) {
+		el.contentContainer = new riot.ContentContainer(el.readAttribute('riot:containerId'));
 	}
-	return el.component;
+	return el.contentContainer;
 }
 
 /**
  * Searches the element's ancestors (including the element itself) for an
- * element with the class 'riot-component' and returns the wrapper for that
+ * element with the class 'riot-container' and returns the expando for that
  * element.
  */
-riot.findComponent = function(el) {
-	if (!el.hasClassName('riot-component')) {
-		el = el.up('.riot-component');
+riot.findContainer = function(el) {
+	if (el && !el.hasClassName('riot-container')) {
+		el = el.up('.riot-container');
 	}
-	if (!el) return;
-	return riot.getComponent(el);
+	if (el) {
+		return riot.getContentContainer(el);
+	}
+	if (!riot.defaultContainer) {
+		riot.defualtContainer = new riot.ContentContainer(riotDefaultContainerId);
+	}
+	return riot.defualtContainer;
+}
+
+/**
+ * Returns the ComponentList for the given element.
+ */
+riot.getComponentList = function(el) {
+	if (!el.componentList) {
+		el.componentList = new riot.ComponentList(el);
+	}
+	return el.componentList;
 }
 
 /**
  * Searches the element's ancestors (including the element itself) for an
- * element with the class 'riot-component-list' and returns the wrapper for that
+ * element with the class 'riot-component-list' and returns the expando for that
  * element.
  */
 riot.findComponentList = function(el) {
@@ -118,24 +115,51 @@ riot.findComponentList = function(el) {
 	return null;
 }
 
-/**
- * Returns the ComponentList wrapper for the given element.
- */
-riot.getComponentList = function(el) {
-	if (!el.componentList) {
-		el.componentList = new riot.ComponentList(el);
+riot.getContent = function(el) {
+	if (!el.content) {
+		if (el.hasClassName('riot-component')) {
+			el.content = new riot.Component(el);
+		}
+		else {
+			el.content = new riot.Content(el);
+		}
 	}
-	return el.componentList;
+	return el.content;
 }
+
+/**
+ * Searches the element's ancestors (including the element itself) for an
+ * element with the class 'riot-component' and returns the expando for that
+ * element.
+ */
+riot.findContent = function(el) {
+	if (el && !el.hasClassName('riot-content')) {
+		el = el.up('.riot-content');
+	}
+	if (el) {
+		return riot.getContent(el);
+	}
+	if (!riot.defaultContent) {
+		riot.defaultContent = new riot.Content(null, riotDefaultContentId);
+	}
+}
+
+riot.ContentContainer = Class.create({ 
+	initialize: function(id) {
+		this.id = id;
+	},
+	
+	markAsDirty: function() {
+		ComponentEditor.markAsDirty(this.id);
+		riot.toolbar.enablePublishButtons();
+	}
+});
 
 riot.ComponentList = Class.create({ 
 	initialize: function(el) {
 		this.element = el;
 		this.id = el.readAttribute('riot:listId');
 		if (!el.id) el.id = 'riot-list-' + this.id;
-		if (el.hasClassName('riot-dirty') || typeof el.down('.riot-dirty') != 'undefined') {
-			this.markDirty();
-		}		
 		this.maxComponents = el.readAttribute('riot:maxComponents');
 		this.minComponents = el.readAttribute('riot:minComponents');
 		this.validTypes = el.readAttribute('riot:validTypes').split(',');
@@ -148,10 +172,6 @@ riot.ComponentList = Class.create({
 		this.componentElements = Element.findChildren(this.element, 'riot-component', false, 'div') || [];
 	},
 		
-	markDirty: function() {
-		this.dirty = true;
-	},
-	
 	insertOn: function() {
 		if (!this.maxComponents || this.componentElements.length < this.maxComponents) {
 			this.element.addClassName('riot-mode-insert');
@@ -265,7 +285,7 @@ riot.ComponentList = Class.create({
 		if (this.componentElements.length > this.minComponents) {
 			var list = this;
 			this.componentElements.each(function(el) {
-				riot.getComponent(el).setClickHandler(list.removeComponent.bind(list));
+				riot.getContent(el).setClickHandler(list.removeComponent.bind(list));
 			});
 		}
 	},
@@ -279,6 +299,7 @@ riot.ComponentList = Class.create({
 	
 	removeComponent: function(c) {
 		ComponentEditor.deleteComponent(c.id);
+		c.markAsDirty();
 		this.componentElements = this.componentElements.without(c.element);
 		riot.outline.hide();
 		riot.outline.suspended = true;
@@ -288,7 +309,6 @@ riot.ComponentList = Class.create({
 			list.updatePositionClasses();
 			riot.outline.suspended = false;
 		});
-		this.markDirty();
 		if (this.minComponents > 0 && this.componentElements.length == this.minComponents) {
 			this.removeOff();
 		} 
@@ -338,50 +358,51 @@ riot.ComponentDragObserver = Class.create({
 			this.componentList.findComponentElements();
 			var nextId = null;
 			if (nextEl) {
-				nextId = riot.getComponent(nextEl).id;
+				nextId = riot.getContent(nextEl).id;
 				nextEl.forceRerendering();
 			}
-			ComponentEditor.moveComponent(riot.getComponent(el).id, nextId);
-			this.componentList.markDirty();
+			var component = riot.getContent(el);
+			ComponentEditor.moveComponent(component.id, nextId);
+			component.markAsDirty();
 		}
 		this.componentList.updatePositionClasses();
 		this.nextEl = null;
 	}
 });
 
-riot.EntityList = Class.create({
 
-	initialize: function(el) {
+riot.Content = Class.create({ 
+	initialize: function(el, id) {
 		this.element = el;
-		this.id = el.readAttribute('riot:listId');
-	},
-
-	insertOn: function() {
-		this.insertButton = RBuilder.node('div', {
-			className: 'riot-insert-button',
-			onclick: this.createObject.bindAsEventListener(this)
-		});
-		this.element.prependChild(this.insertButton);
+		this.id = id || el.readAttribute('riot:contentId');
 	},
 	
-	insertOff: function() {
-		this.insertButton.remove();
+	retrieveText: function(key, callback) {
+		ComponentEditor.getText(this.id, key, callback);
 	},
 	
-	createObject: function() {
-		EntityEditor.createObject(this.id, this.update.bind(this));
-		riot.toolbar.buttons.get('browse').click();
+	updateText: function(key, value, updateFromServer) {
+		this.markAsDirty();
+		ComponentEditor.updateText(this.id, key, value,	updateFromServer 
+				? this.update.bind(this) : Prototype.emptyFunction);
+	},
+	
+	update: function() {
+		window.location.reload();		
+	},
+	
+	markAsDirty: function() {
+		riot.findContainer(this.element).markAsDirty();
 	}
-
 });
 
-riot.Component = Class.create({
+
+riot.Component = Class.create(riot.Content, {
 
 	initialize: function(el) {
 		this.element = el;
-		this.id = el.readAttribute('riot:componentId');
+		this.id = el.readAttribute('riot:contentId');
 		this.form = el.readAttribute('riot:form');
-		this.dirty = el.hasClassName('riot-dirty');
 		this.bShowOutline = this.showOutline.bindAsEventListener(this);
 		this.bHideOutline = this.hideOutline.bindAsEventListener(this);
 		this.bOnClick = this.onClick.bindAsEventListener(this);
@@ -427,26 +448,16 @@ riot.Component = Class.create({
 		this.element.enableLinks();
 	},
 	
-	retrieveText: function(key, callback) {
-		ComponentEditor.getText(this.id, key, callback);
-	},
-	
-	updateText: function(key, value, updateFromServer) {
-		ComponentEditor.updateText(this.id, key, value, updateFromServer
-				? this.update.bind(this) : Prototype.emptyFunction);
-
-		this.markDirty();
+	updateTextChunks: function(key, chunks) {
+		ComponentEditor.updateTextChunks(this.id, key, chunks, this.update.bind(this));
+		this.markAsDirty();
 	},
 	
 	cropImage: function(key, imageId, w, h, x, y, sw, callback) {
 		ComponentEditor.cropImage(this.id, key, imageId,
 				w, h, x, y, sw, callback);
 	},
-	
-	markDirty: function() {
-		this.dirty = true;
-	},
-	
+		
 	propertiesOn: function() {
 		this.element.parentNode.addClassName('riot-mode-properties');
 		this.setClickHandler(this.editProperties.bind(this));
@@ -474,22 +485,10 @@ riot.Component = Class.create({
 	
 	propertiesChanged: function() {
 		riot.popup.close();
-		this.markDirty();
-		// Timeout as we othwerwise get an 0x8004005 [nsIXMLHttpRequest.open] error.
+		this.markAsDirty();
+		// Timeout as we otherwise get an 0x8004005 [nsIXMLHttpRequest.open] error.
 		// See https://bugzilla.mozilla.org/show_bug.cgi?id=249843
 		setTimeout(this.update.bind(this), 1);
-	},
-	
-	update: function() {
-		window.location.reload();
-	}
-});
-
-riot.ListComponent = Class.create(riot.Component, {
-
-	updateTextChunks: function(key, chunks) {
-		ComponentEditor.updateTextChunks(this.id, key, chunks, this.update.bind(this));
-		this.markDirty();
 	},
 	
 	update: function() {
@@ -508,45 +507,10 @@ riot.ListComponent = Class.create(riot.Component, {
 			});
 		}
 		riot.toolbar.selectedButton.reApplyHandler();
-	},
-	
-	markDirty: function() {
-		this.dirty = true;
-		if (!this.componentList) {
-			this.componentList = riot.findComponentList(this.element);
-		}
-		this.componentList.markDirty();
 	}
-	
+
 });
 
-
-riot.EntityComponent = Class.create(riot.Component, {
-
-	initialize: function($super, el) {
-		$super(el);
-		this.listId = el.readAttribute('riot:listId');
-		this.objectId = el.readAttribute('riot:objectId');
-	},
-	
-	retrieveText: function(key, callback) {
-		EntityEditor.getText(this.listId, this.objectId, key, callback);
-	},
-
-	updateText: function(key, value, updateFromServer) {
-		EntityEditor.updateText(this.listId, this.objectId, key, value, 
-				updateFromServer ? this.update.bind(this) : Prototype.emptyFunction);
-	},
-	
-	cropImage: function(key, imageId, w, h, x, y, sw, callback) {
-		EntityEditor.cropImage(this.listId, this.objectId, key, imageId,
-				w, h, x, y, sw, callback);
-	},
-	
-	update: function() {
-		window.location.reload();
-	}
-});
 
 /**
  * Button to append components to a list.
@@ -606,12 +570,13 @@ riot.InsertButton = Class.create({
 		this.componentList.element.appendChild(el);
 		this.componentList.findComponentElements();
 		this.componentList.updatePositionClasses();
-		this.componentId = el.readAttribute('riot:componentId');
+		this.id = el.readAttribute('riot:contentId');
 		if (window.riotEditCallbacks) {
 			riotEditCallbacks.each(function(callback) {
 				callback(el);
 			});
 		}
+		riot.toolbar.enablePublishButtons();
 	},
 
 	onupdate: function(html) {
@@ -629,7 +594,7 @@ riot.InsertButton = Class.create({
 	},
 	
 	changeType: function(type) {
-		ComponentEditor.setType(this.componentId, type, this.onupdate.bind(this));
+		ComponentEditor.setType(this.id, type, this.onupdate.bind(this));
 	}
 });
 
@@ -754,16 +719,14 @@ riot.publishOff = function() {
 
 riot.applyOn = function() {
 	riot.toolbar.buttons.get('browse').click();
-	var listIds = $$('.riot-component-list')
-		.collect(riot.getComponentList)
-		.pluck('id');
-			
-	var containerIds = $$('.riot-single-component')
-		.collect(riot.getComponent)
+	var containerIds = $$('.riot-container')
+		.collect(riot.getContainer)
 		.pluck('id'); 
 	
-	riot.applyFunction(listIds, containerIds);
+	containerIds.push(riotDefaultContainerId);
+	riot.applyFunction(containerIds);
 	riot.previewFrame.initialized = false;
+	riot.toolbar.disablePublishButtons();
 }
 
 riot.previewFrame = RBuilder.node('iframe', {name: 'riotPreviewFrame', id: 'riotPreviewFrame'}).appendTo(document.body);

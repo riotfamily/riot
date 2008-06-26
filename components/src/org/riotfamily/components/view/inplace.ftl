@@ -89,50 +89,6 @@
 	${inplaceMacroHelper.renderNestedComponentList(this, key, min, max, initial, valid)!}
 </#macro>
 
-<#macro entityList listId>
-	<#assign currentListId = listId />
-	<#if editMode>
-		<div class="riot-list riot-entity-list" riot:listId="${listId}">
-			<#nested>
-		</div>
-	<#else>
-		<#nested />
-	</#if>
-	<#assign currentListId = "" />
-</#macro>
-
-<#macro entity object form="">
-	<#local previousScope = scope />
-	<#assign scope = object />
-	<#if editMode>
-		<#local listId = currentListId />
-		<#if !listId?has_content>
-			<#local listId = inplaceMacroHelper.getDefaultListId(object) />
-		</#if>
-		<#local objectId = inplaceMacroHelper.getObjectId(listId, object) />
-		
-		<#local attributes = {
-			"class": "riot-component riot-entity-component",
-			"riot:listId": listId,
-			"riot:objectId": objectId
-		} />
-		
-		<#if form?has_content>
-			<#local attributes = attributes + {
-					"class": attributes.class + " riot-form",
-					"riot:form": "/components/entity-form/" + listId + "/" + form + "/" + objectId
-			} />
-		</#if>
-		
-		<div ${c.joinAttributes(attributes)}>
-			<#nested />
-		</div>
-	<#else>
-		<#nested />
-	</#if>
-	<#assign scope = previousScope />
-</#macro>
-
 <#---
   - Macro that makes content editable via the Riot toolbar. The text is edited
   - in-line, which means that no further markup is supported, except for
@@ -323,23 +279,23 @@
 <#---
   -
   -->
-<#macro use container model=container.getProperties(editMode) form="" tag="" attributes...>
+<#macro use container form="" tag="" attributes...>
 	<#local attributes = c.unwrapAttributes(attributes) />
 	<#local previousScope = scope />
-	<#assign scope =  model />
+	<#assign scope = container.unwrap(editMode) />
 	<#if editMode>
 		<#if !tag?has_content>
 			<#local tag = "span" />
 		</#if>
 		<#local attributes = attributes + {
 				"riot:containerId": container.id?c,
-				"class": ("riot-component riot-single-component " + attributes.class!)?trim
+				"riot:contentId": container.getContent(editMode).id?c,
+				"class": ("riot-container riot-content " + attributes.class!)?trim
 		} />
 		<#if form?has_content>
-			<#local formUrl = inplaceMacroHelper.getFormUrl(form, container)! />
 			<#local attributes = attributes + {
 					"class": attributes.class + " riot-form",
-					"riot:form": formUrl					
+					"riot:form": form					
 			} />
 		</#if>
 		<#if container.dirty>

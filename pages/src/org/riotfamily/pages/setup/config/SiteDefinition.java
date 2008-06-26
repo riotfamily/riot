@@ -89,7 +89,7 @@ public class SiteDefinition {
 		site.setMasterSite(masterSite);
 		if (properties != null) {
 			Content props = new Content();
-			props.wrapValues(properties);
+			props.wrap(properties);
 			site.setProperties(props);
 		}
 		pageDao.saveSite(site);

@@ -213,7 +213,7 @@ public class PageFacade {
 
 	public Map<String, Object> getProperties() {
 		if (properties == null) {
-			properties = page.getPropertiesMap(preview);
+			properties = page.getPageProperties().unwrap(preview);
 		}
 		return properties;
 	}
@@ -222,11 +222,11 @@ public class PageFacade {
 	 * @see http://freemarker.org/docs/api/freemarker/ext/beans/BeanModel.html#get(java.lang.String)
 	 */
 	public Object get(String key) {
-		return page.getProperty(key, preview);
+		return getProperties().get(key);
 	}
 	
 	public Map<String, Object> getLocal() {
-		return page.getLocalPropertiesMap(preview);
+		return page.getPageProperties().unwrapLocal(preview);
 	}
 
 	public String getTitle() {

@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.view.MacroHelperFactory;
-import org.riotfamily.components.config.ContentFormUrlService;
 import org.riotfamily.components.render.list.ComponentListRenderer;
 import org.riotfamily.riot.list.RiotDaoService;
 
@@ -44,18 +43,14 @@ public class InplaceMacroHelperFactory implements MacroHelperFactory {
 	
 	private List<DynamicToolbarScript> dynamicToolbarScripts = Collections.emptyList();
 
-	private ContentFormUrlService contentFormUrlService;
-	
 	private ComponentListRenderer componentListRenderer;
 
 	private RiotDaoService riotDaoService;
 	
 	public InplaceMacroHelperFactory(
-			ContentFormUrlService contentFormUrlService,
 			ComponentListRenderer componentListRenderer,
 			RiotDaoService riotDaoService) {
 		
-		this.contentFormUrlService = contentFormUrlService;
 		this.componentListRenderer = componentListRenderer;
 		this.riotDaoService = riotDaoService;
 	}
@@ -72,7 +67,6 @@ public class InplaceMacroHelperFactory implements MacroHelperFactory {
 			HttpServletResponse response) {
 
 		return new InplaceMacroHelper(request, response, toolbarScripts, 
-				dynamicToolbarScripts, contentFormUrlService, 
-				componentListRenderer, riotDaoService);
+				dynamicToolbarScripts, componentListRenderer, riotDaoService);
 	}
 }

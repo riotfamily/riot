@@ -22,7 +22,7 @@
 
 	<bean id="pageTypeHierarchy" class="org.riotfamily.pages.setup.PageTypeHierarchy" />
 	
-	<bean id="pageDao" class="org.riotfamily.pages.dao.hibernate.HibernatePageDao">
+	<bean id="pageDao" class="org.riotfamily.pages.dao.HibernatePageDao">
 		<property name="cacheService" ref="cacheService" />
 		<property name="componentDao" ref="componentDao" />
 		<property name="sessionFactory" ref="sessionFactory" />

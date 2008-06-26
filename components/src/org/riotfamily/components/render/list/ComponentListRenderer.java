@@ -72,11 +72,10 @@ public class ComponentListRenderer {
 	}
 	
 
-	private ComponentList createList(ContentContainer container, 
-			Content content, String key, ComponentListConfig config) {
+	private ComponentList createList(Content content, String key, 
+			ComponentListConfig config) {
 		
 		final ComponentList list = new ComponentList();
-		list.setContainer(container);
 		content.setValue(key, list);
 		for (String type : config.getInitialComponentTypes()) {
 			Component component = new Component(type);
@@ -101,10 +100,10 @@ public class ComponentListRenderer {
 		if (EditModeUtils.isEditMode(request)) {
 			list = (ComponentList) container.getPreviewVersion().getValue(key);
 			if (list == null) {
-				list = createList(container, container.getPreviewVersion(), key, config);
+				list = createList(container.getPreviewVersion(), key, config);
 			}
 			
-			if (AccessController.isGranted("edit", list.getContainer())) {
+			if (AccessController.isGranted("edit", container)) {
 				strategy = editModeRenderStrategy;
 			}
 		}
@@ -131,9 +130,10 @@ public class ComponentListRenderer {
 		if (EditModeUtils.isEditMode(request)) {
 			list = (ComponentList) component.getValue(key);
 			if (list == null) {
-				list = createList(component.getList().getContainer(), component, key, config);
+				list = createList(component, key, config);
 			}
-			if (AccessController.isGranted("edit", list.getContainer())) {
+			//FIXME Pass the root container instead ...
+			if (AccessController.isGranted("edit", list)) {
 				strategy = editModeRenderStrategy;
 			}
 		}

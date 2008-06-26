@@ -72,7 +72,7 @@ public class ViewComponentRenderer extends AbstractComponentRenderer
 			HttpServletResponse response) throws Exception {
 
 		Map<String, Object> model = new HashMap<String, Object>();
-		Map<String, Object> props = component.unwrapValues();
+		Map<String, Object> props = component.unwrap();
 		if (props != null) {
 			model.putAll(props);
 		}

@@ -48,7 +48,7 @@ public class ContentEditorBinder extends AbstractEditorBinder {
 	public Object getBackingObject() {
 		return content;
 	}
-
+	
 	public Class<?> getBeanClass() {
 		return content.getClass();
 	}

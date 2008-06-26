@@ -67,8 +67,6 @@ public class Content {
 
 	private Map<String, ValueWrapper<?>> wrappers;
 
-	private boolean dirty;
-
 	public Content() {
 	}
 
@@ -100,7 +98,6 @@ public class Content {
 	
 	public void setWrapper(String key, ValueWrapper<?> wrapper) {
 		getWrappers().put(key, wrapper);
-		setDirty(true);
 	}
 	
 	public Object getValue(String key) {
@@ -122,15 +119,6 @@ public class Content {
 			ValueWrapper<Object> wrapper = (ValueWrapper<Object>) getWrapper(key);
 			setWrapper(key, ValueWrapperService.createOrUpdate(wrapper, value));
 		}
-		setDirty(true);
-	}
-
-	public boolean isDirty() {
-		return this.dirty;
-	}
-
-	public void setDirty(boolean dirty) {
-		this.dirty = dirty;
 	}
 
 	@OneToMany(cascade=CascadeType.ALL)
@@ -149,7 +137,7 @@ public class Content {
 		this.wrappers = wrappers;
 	}
 	
-	public Map<String, Object> unwrapValues() {
+	public Map<String, Object> unwrap() {
 		HashMap<String, Object> result = new HashMap<String, Object>();
 		if (wrappers != null) {
 			for (Entry<String, ValueWrapper<?>> entry : wrappers.entrySet()) {
@@ -165,7 +153,7 @@ public class Content {
 		return result;
 	}
 	
-	public void wrapValues(Map<String, ?> values) {
+	public void wrap(Map<String, ?> values) {
 		if (values != null) {
 			for (Entry<String, ?> entry : values.entrySet()) {
 				setValue(entry.getKey(), entry.getValue());
@@ -181,8 +169,6 @@ public class Content {
 		else {
 			getWrappers().clear();
 		}
-		setDirty(true);
-		
 	}
 	
 	/**

@@ -69,9 +69,4 @@ public class Component extends Content {
 		return copy;
 	}
 	
-	@Transient
-	public Long getContainerId() {
-		return list.getContainer().getId();
-	}
-	
 }

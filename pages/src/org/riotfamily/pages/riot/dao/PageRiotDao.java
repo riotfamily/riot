@@ -151,9 +151,9 @@ public class PageRiotDao implements ParentChildDao, TreeHintDao,
 		}
 	}
 
-	public void reattach(Object entity) throws DataAccessException {
+	public Object merge(Object entity) throws DataAccessException {
 		Page page = (Page) entity;
-		pageDao.reattachPage(page);
+		return pageDao.mergePage(page);
 	}
 	
 	public void update(Object entity) throws DataAccessException {

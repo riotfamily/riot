@@ -66,10 +66,12 @@ public interface ComponentEditor {
 	public void moveComponent(Long componentId, Long nextComponentId);
 
 	public void deleteComponent(Long componentId);
+	
+	public void markAsDirty(Long containerId);
 
-	public void publish(Long[] listIds, Long[] containerIds);
+	public void publish(Long[] containerIds);
 
-	public void discard(Long[] listIds, Long[] containerIds);
+	public void discard(Long[] containerIds);
 
 	public void logout();
 

@@ -12,8 +12,7 @@ Resources.loadStyleSheet('style/edit-mode.css');
 Resources.loadScriptSequence([
 	{src: 'dwr/engine.js', test: 'dwr.engine'},
 	{src: 'dwr/util.js', test: 'dwr.util'},
-	{src: 'dwr/interface/ComponentEditor.js', test: 'ComponentEditor'},
-	{src: 'dwr/interface/EntityEditor.js', test: 'EntityEditor', onload: loadToolbarScripts}
+	{src: 'dwr/interface/ComponentEditor.js', test: 'ComponentEditor', onload: loadToolbarScripts}
 ]);
 
 function loadToolbarScripts() {

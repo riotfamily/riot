@@ -57,9 +57,9 @@ riot.outline = {
 riot.outline.divs = $H(riot.outline.elements).values();
 
 riot.InplaceEditor = Class.create({
-	initialize: function(element, component, options) {
+	initialize: function(element, content, options) {
 		this.element = $(element);
-		this.component = component;
+		this.content = content;
 		this.key = this.element.readAttribute('riot:key');
 		this.onclickHandler = this.onclick.bindAsEventListener(this);
 		this.oninit(options);
@@ -104,7 +104,6 @@ riot.InplaceEditor = Class.create({
 	/* Handler that is invoked when an enabled editor is clicked */
 	onclick: function(ev) {
 		Event.stop(ev);
-		riot.toolbar.selectedComponent = this.component;
 		riot.activeEditor = this;
 		this.edit();
 	},
@@ -134,7 +133,7 @@ riot.InplaceEditor = Class.create({
 	save: function() {
 		var text = this.getText();
 		if (this.text != text) {
-			this.component.updateText(this.key, text);
+			this.content.updateText(this.key, text);
 		}
 		this.onsave(text);
 	},
@@ -284,7 +283,7 @@ riot.PopupTextEditor = Class.create(riot.InplaceEditor, {
 
 	edit: function() {
 		if (!riot.activePopup) {
-			this.component.retrieveText(this.key, this.setText.bind(this));
+			this.content.retrieveText(this.key, this.setText.bind(this));
 		}
 	},
 
@@ -313,7 +312,7 @@ riot.PopupTextEditor = Class.create(riot.InplaceEditor, {
 	save: function() {
 		var text = this.getText();
 		if (this.text != text) {
-			this.component.updateText(this.key, text, true);
+			this.content.updateText(this.key, text, true);
 		}
 		this.onsave(text);
 	},
@@ -356,10 +355,10 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 				if (chunks.length == 0) {
 					chunks.push('<p></p>');
 				}
-				this.component.updateTextChunks(this.key, chunks);
+				this.content.updateTextChunks(this.key, chunks);
 			}
 			else {
-				this.component.updateText(this.key, this.cleanUp(text), true);
+				this.content.updateText(this.key, this.cleanUp(text), true);
 			}
 			this.onsave(text);
 		}
@@ -641,13 +640,13 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	var bgImage = brightness > 227 ? 'margin.gif' : 'margin_hi.gif';
 
 	var editorWidth = body.scrollWidth ? body.scrollWidth : inst.contentWindow.innerWidth;
-	var componentWidth = riot.activeEditor.element.offsetWidth;
-	var margin = editorWidth - componentWidth;
+	var contentWidth = riot.activeEditor.element.offsetWidth;
+	var margin = editorWidth - contentWidth;
 	if (margin > 0) {
 		body.style.paddingRight = (margin - 5) + 'px';
 		body.style.backgroundImage = 'url(' + Resources.resolveUrl(bgImage) + ')';
 		body.style.backgroundRepeat = 'repeat-y';
-		body.style.backgroundPosition = (componentWidth + 5) + 'px';
+		body.style.backgroundPosition = (contentWidth + 5) + 'px';
 		body.style.backgroundAttachment = 'fixed';
 	}
 }
@@ -695,8 +694,8 @@ riot.initSwfUpload = function(readyCallback) {
 }
 
 riot.ImageEditor = Class.create(riot.InplaceEditor, {
-	initialize: function($super, el, component, options) {
-		$super(el, component, options);
+	initialize: function($super, el, content, options) {
+		$super(el, content, options);
 		this.key = this.element.readAttribute('riot:key');
 		var aw = el.parentNode.offsetWidth;
 		if (this.options.maxWidth == 'auto') this.options.maxWidth = aw;
@@ -733,7 +732,7 @@ riot.ImageEditor = Class.create(riot.InplaceEditor, {
 	},
 	
 	crop: function(w, h, x, y, sw) {
-		this.component.cropImage(this.key, this.imageId,
+		this.content.cropImage(this.key, this.imageId,
 				w, h, x, y, sw, this.update.bind(this));
 	},
 	
@@ -742,13 +741,13 @@ riot.ImageEditor = Class.create(riot.InplaceEditor, {
 			riot.outline.suspended = false;
 			this.cropper.destroy();		
 			this.cropper = null;
-			this.component.update();			
+			this.content.update();			
 		}
 		else {
 			var img = new Image();
 			img.onload = this.onload.bind(this, img, path);
 			img.src = riot.contextPath + path;
-			this.component.markDirty();
+			this.content.markAsDirty();
 		}
 	},
 	

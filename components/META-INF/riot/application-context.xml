@@ -37,7 +37,7 @@
 		<property name="argument" ref="valueWrapperFactory" />
 	</bean>
 	
-	<bean id="componentDao" class="org.riotfamily.components.dao.hibernate.HibernateComponentDao">
+	<bean id="componentDao" class="org.riotfamily.components.dao.HibernateComponentDao">
 		<constructor-arg ref="sessionFactory" />
 		<constructor-arg ref="cacheService" />
 	</bean>

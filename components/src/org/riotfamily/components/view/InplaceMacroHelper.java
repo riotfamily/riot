@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.components.EditModeUtils;
-import org.riotfamily.components.config.ContentFormUrlService;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ContentContainer;
@@ -52,8 +51,6 @@ public class InplaceMacroHelper {
 
 	private List<DynamicToolbarScript> dynamicToolbarScripts;
 	
-	private ContentFormUrlService contentFormUrlService;
-	
 	private ComponentListRenderer componentListRenderer;
 	
 	private RiotDaoService riotDaoService;
@@ -62,7 +59,6 @@ public class InplaceMacroHelper {
 			HttpServletResponse response, 
 			List<String> toolbarScripts,
 			List<DynamicToolbarScript> dynamicToolbarScripts, 
-			ContentFormUrlService contentFormUrlService,
 			ComponentListRenderer componentListRenderer,
 			RiotDaoService riotDaoService) {
 
@@ -70,7 +66,6 @@ public class InplaceMacroHelper {
 		this.response = response;
 		this.toolbarScripts = toolbarScripts;
 		this.dynamicToolbarScripts = dynamicToolbarScripts;
-		this.contentFormUrlService = contentFormUrlService;
 		this.componentListRenderer = componentListRenderer;
 		this.riotDaoService = riotDaoService;
 	}
@@ -98,11 +93,6 @@ public class InplaceMacroHelper {
 		return sb.toString();
 	}
 	
-	public String getFormUrl(String formId, ContentContainer container) {
-		return contentFormUrlService.getContentFormUrl(formId, 
-				container.getId(), container.getPreviewVersion().getId());
-	}
-		
 	public String getObjectId(String listId, Object object) {
 		RiotDao dao = riotDaoService.getDao(listId);
 		return dao.getObjectId(object);

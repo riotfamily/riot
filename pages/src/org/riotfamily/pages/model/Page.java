@@ -24,9 +24,7 @@
 package org.riotfamily.pages.model;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -48,8 +46,6 @@ import org.riotfamily.common.beans.MapWrapper;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.common.web.servlet.PathCompleter;
-import org.riotfamily.components.model.Content;
-import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.Assert;
@@ -108,7 +104,6 @@ public class Page {
 	}
 
 	@ManyToOne(cascade=CascadeType.MERGE)
-	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	public PageNode getNode() {
 		return this.node;
 	}
@@ -302,7 +297,7 @@ public class Page {
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	public PageProperties getPageProperties() {
 		if (pageProperties == null) {
-			pageProperties = new PageProperties();
+			pageProperties = new PageProperties(this);
 		}
 		return pageProperties;
 	}
@@ -311,11 +306,6 @@ public class Page {
 		this.pageProperties = contentContainer;
 	}
 
-	public Content getContent(boolean preview) {
-		return preview ? getPageProperties().getLatestVersion()
-				: getPageProperties().getLiveVersion();
-	}
-	
 	@Transient
 	public Page getMasterPage() {
 		Page masterPage = null;
@@ -327,47 +317,13 @@ public class Page {
 		return masterPage;
 	}
 	
-	public Map<String, Object> getPropertiesMap(boolean preview) {
-		Map<String, Object> mergedProperties;
-		Page masterPage = getMasterPage();
-		if (masterPage != null) {
-			mergedProperties = masterPage.getPropertiesMap(preview);
-		}
-		else {
-			mergedProperties = new HashMap<String, Object>();
-		}
-		mergedProperties.putAll(getLocalPropertiesMap(preview));
-		return mergedProperties;
-	}
-	
-	public Map<String, Object> getLocalPropertiesMap(boolean preview) {
-		Content content = getContent(preview);
-		if (content != null) { 
-			return content.unwrapValues();
-		}
-		return Collections.emptyMap();
-	}
-
-	public Object getProperty(String key, boolean preview) {
-		Content version = getContent(preview);
-		Object value = null;
-		ValueWrapper<?> wrapper = version.getWrapper(key);
-		if (wrapper != null) {
-			value = wrapper.unwrap();
-		}
-		if (value == null && getMasterPage() != null) {
-			value = getMasterPage().getProperty(key, preview);
-		}
-		return value;
-	}
-
 	@Transient
 	public String getTitle() {
 		return getTitle(true);
 	}
 	
 	public String getTitle(boolean preview) {
-		Object title = getProperty(TITLE_PROPERTY, preview);
+		Object title = getPageProperties().unwrap(preview).get(TITLE_PROPERTY);
 		if (title != null) {
 			return title.toString();
 		}

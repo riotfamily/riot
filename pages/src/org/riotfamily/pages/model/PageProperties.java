@@ -1,5 +1,8 @@
 package org.riotfamily.pages.model;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -17,6 +20,14 @@ import org.riotfamily.components.model.ContentContainer;
 public class PageProperties extends ContentContainer {
 
 	private Set<Page> pages;
+
+	
+	public PageProperties() {
+	}
+	
+	public PageProperties(Page page) {
+		pages = Collections.singleton(page);
+	}
 
 	@OneToMany
 	@JoinColumn(name="pageProperties")
@@ -37,6 +48,24 @@ public class PageProperties extends ContentContainer {
 	@Transient
 	public Page getPage() {
 		return pages.iterator().next();
+	}
+	
+	
+	public Map<String, Object> unwrap(boolean preview) {
+		Map<String, Object> mergedProperties;
+		Page masterPage = getPage().getMasterPage();
+		if (masterPage != null) {
+			mergedProperties = masterPage.getPageProperties().unwrap(preview);
+		}
+		else {
+			mergedProperties = new HashMap<String, Object>();
+		}
+		mergedProperties.putAll(unwrapLocal(preview));
+		return mergedProperties;
+	}
+	
+	public Map<String, Object> unwrapLocal(boolean preview) {
+		return super.unwrap(preview);
 	}
 	
 }

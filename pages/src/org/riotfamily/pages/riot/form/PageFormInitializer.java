@@ -86,8 +86,7 @@ public class PageFormInitializer implements FormInitializer {
 			pageType = page.getPageType();
 		}
 		
-		PagePropertiesEditor ppe = new PagePropertiesEditor(repository, 
-				getMasterPage(form), pageType);
+		PagePropertiesEditor ppe = new PagePropertiesEditor(repository, form, pageType);
 		
 		if (sb != null) {
 			sb.addChangeListener(ppe);
@@ -111,29 +110,5 @@ public class PageFormInitializer implements FormInitializer {
 		}
 		return null;
 	}
-	
-	private Page getMasterPage(Form form) {
-		Page page = (Page) form.getBackingObject();
-		if (page.getNode() != null) {
-			Site site = page.getSite();
-			if (site == null) {
-				Object parent = FormUtils.loadParent(form);
-				if (parent instanceof Page) {
-					site = ((Page) parent).getSite();
-				}
-				else if (parent instanceof Site) {
-					site = (Site) parent;
-				}
-			}
-			if (site != null) {
-				Site masterSite = site.getMasterSite();
-				if (masterSite != null) {
-					return page.getNode().getPage(masterSite);
-				}
-			}
-		}
-		return null;
-	}
-
 	
 }

@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
+import java.util.Collections;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
@@ -51,6 +52,8 @@ public class ContentContainer {
 	private Content liveVersion;
 
 	private Content previewVersion;
+	
+	private boolean dirty;
 	
 	public ContentContainer() {
 	}
@@ -100,22 +103,25 @@ public class ContentContainer {
 		return liveVersion;
 	}
 	
-	public Map<String, Object> unwrapValues(boolean preview) {
-		return getContent(preview).unwrapValues();
+	public Map<String, Object> unwrap(boolean preview) {
+		Content content = getContent(preview);
+		if (content != null) { 
+			return content.unwrap();
+		}
+		return Collections.emptyMap();
 	}
 	
-	@Transient
 	public boolean isDirty() {
-		return previewVersion != null && previewVersion.isDirty();
+		return dirty;
+	}
+	
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
 	}
 	
 	@Transient
 	public boolean isPublished() {
 		return liveVersion != null;
-	}
-
-	public void setDirty(boolean dirty) {
-		previewVersion.setDirty(dirty);
 	}
 	
 }

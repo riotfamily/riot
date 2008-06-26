@@ -3,7 +3,7 @@ riot.Toolbar = Class.create({
 		this.buttons = $H({
 			gotoRiot: new riot.ToolbarButton('gotoRiot', '${toolbarButton.gotoRiot}', null, riot.path),
 			browse: new riot.ToolbarButton('browse', '${toolbarButton.browse}'),
-			insert: new riot.ToolbarButton('insert', '${toolbarButton.insert}', '.riot-list'),
+			insert: new riot.ToolbarButton('insert', '${toolbarButton.insert}', '.riot-component-list'),
 			remove: new riot.ToolbarButton('remove', '${toolbarButton.remove}', '.riot-component-list'),
 			edit: new riot.ToolbarButton('edit', '${toolbarButton.edit}', '.riot-text-editor'),
 			editImages: new riot.ToolbarButton('editImages', '${toolbarButton.editImages}', '.riot-image-editor'),
@@ -62,7 +62,6 @@ riot.Toolbar = Class.create({
 			this.selectedButton.reset();
 			this.setInspector(null);
 		}
-		this.selectedComponent = null;
 		this.selectedButton = button;
 	},
 
