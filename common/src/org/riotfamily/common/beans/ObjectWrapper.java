@@ -23,10 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans;
 
-import org.springframework.beans.PropertyAccessor;
+import org.springframework.beans.ConfigurablePropertyAccessor;
 
 
-public interface ObjectWrapper extends PropertyAccessor {
+public interface ObjectWrapper extends ConfigurablePropertyAccessor {
 
 	public void setObject(Object object);
 

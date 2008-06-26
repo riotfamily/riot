@@ -21,12 +21,15 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.website.mail;
+package org.riotfamily.website.misc;
 
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.web.bind.MapServletRequestDataBinder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -62,7 +65,17 @@ public class SimpleMailFormController extends SimpleFormController
 	
 	
 	public SimpleMailFormController() {
-		setCommandClass(MailForm.class);
+		setCommandClass(HashMap.class);
+	}
+	
+	@Override
+	protected ServletRequestDataBinder createBinder(
+			HttpServletRequest request, Object command) throws Exception {
+		
+		ServletRequestDataBinder binder = new MapServletRequestDataBinder((Map <?, ?>) command, getCommandName());
+		prepareBinder(binder);
+		initBinder(request, binder);
+		return binder;
 	}
 
 	public void setTo(String to) {

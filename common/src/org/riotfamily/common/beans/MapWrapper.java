@@ -26,24 +26,28 @@ package org.riotfamily.common.beans;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.AbstractPropertyAccessor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
+import org.springframework.beans.TypeMismatchException;
+import org.springframework.core.MethodParameter;
 import org.springframework.util.Assert;
 
 /**
  * PropertyAccessor implementation that works on maps.
  */
-public class MapWrapper implements ObjectWrapper {
+public class MapWrapper extends AbstractPropertyAccessor 
+		implements ObjectWrapper {
 
-	private Map map;
+	private Map<?, ?> map;
 
 	private Class<?> valueClass;
 
 	private Class<?> mapClass = HashMap.class;
 
-	public MapWrapper(Map map) {
+	public MapWrapper(Map<?, ?> map) {
 		this.map = map;
 	}
 
@@ -78,9 +82,10 @@ public class MapWrapper implements ObjectWrapper {
 		return Object.class;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setObject(Object object) {
 		Assert.isInstanceOf(Map.class, object);
-		map = (Map<?,?>) object;
+		map = (Map) object;
 	}
 
 	public Object getObject() {
@@ -91,9 +96,9 @@ public class MapWrapper implements ObjectWrapper {
 		return mapClass;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected Map getMap() {
 		if (map == null) {
-			//map = (Map<?, ?>) SpringUtils.newInstance(mapClass);
 			map = (Map) BeanUtils.instantiateClass(mapClass);
 		}
 		return map;
@@ -103,16 +108,13 @@ public class MapWrapper implements ObjectWrapper {
 		return getMap().get(propertyName);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setPropertyValue(String propertyName, Object value) {
 		getMap().put(propertyName, value);
 	}
 
 	public void setPropertyValue(PropertyValue pv) {
 		setPropertyValue(pv.getName(), pv.getValue());
-	}
-
-	public void setPropertyValues(Map map) {
-		getMap().putAll(map);
 	}
 
 	public void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown,
@@ -132,4 +134,10 @@ public class MapWrapper implements ObjectWrapper {
 		setPropertyValues(pvs);
 	}
 
+	@SuppressWarnings("unchecked")
+	public Object convertIfNecessary(Object value, Class requiredType,
+			MethodParameter methodParam) throws TypeMismatchException {
+		
+		return value;
+	}
 }
