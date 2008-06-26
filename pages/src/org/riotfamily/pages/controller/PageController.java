@@ -26,7 +26,6 @@ package org.riotfamily.pages.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.springframework.web.servlet.ModelAndView;
@@ -38,38 +37,15 @@ import org.springframework.web.servlet.mvc.Controller;
  */
 public class PageController implements Controller {
 
-	private PageResolver pageResolver;
-	
-	public PageController(PageResolver pageResolver) {
-		this.pageResolver = pageResolver;
-	}
-
 	public ModelAndView handleRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		
-		Page page = pageResolver.getPage(request);
-		if (page == null || !page.isRequestable()) {
-			response.sendError(HttpServletResponse.SC_NOT_FOUND);
-			return null;
-		}
-		
-		if (page.isWildcardInPath()) {
-			String path = pageResolver.getPathWithinSite(request);
-			exposeAttributes(page.getPath(), path, request);
-		}
-		
+		Page page = PageResolver.getResolvedPage(request);
 		String pageType = page.getPageType();
 		if (pageType == null) {
 			pageType = "default";
 		}
 		return new ModelAndView(pageType + ".ftl");
-	}
-
-	protected void exposeAttributes(String antPattern, String urlPath,
-			HttpServletRequest request) {
-
-		AttributePattern pattern = new AttributePattern(antPattern);
-		pattern.expose(urlPath, request);
 	}
 	
 }

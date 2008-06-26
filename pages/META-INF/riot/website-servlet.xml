@@ -16,8 +16,15 @@
 		<constructor-arg ref="pageDao" />
 	</bean>
 	
-	<bean id="pageController" name="/**/*.html" class="org.riotfamily.pages.controller.PageController">
+	<bean id="pageHandlerMapping" class="org.riotfamily.pages.mapping.PageHandlerMapping">
+		<constructor-arg ref="pageDao" />
 		<constructor-arg ref="pageResolver" />
+		<constructor-arg ref="pathCompleter" />
+		<property name="interceptors">
+			<list>
+				<ref bean="riotInterceptors" />
+			</list>
+		</property>
 	</bean>
 	
 	<bean id="folderFilterPlugin" class="org.riotfamily.pages.mapping.FolderFilterPlugin">
