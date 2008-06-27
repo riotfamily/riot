@@ -60,7 +60,7 @@
 			<db:create-table name="riot_job_log">
 				<db:column name="id" type="BIGINT" not-null="true" primary-key="true" auto-increment="true" />
 				<db:column name="job" type="BIGINT" />
-				<db:column name="date" type="TIMESTAMP" />
+				<db:column name="`date`" type="TIMESTAMP" />
 				<db:column name="priority" type="INTEGER" />
 				<db:column name="message" type="VARCHAR" length="255" />
 			</db:create-table>

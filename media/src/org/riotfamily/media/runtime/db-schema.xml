@@ -16,7 +16,7 @@
                 <db:column name="`type`" type="VARCHAR" length="255" not-null="true" />
                 <db:column name="fileName" type="VARCHAR" length="255" />
                 <db:column name="contentType" type="VARCHAR" length="255" />
-                <db:column name="size" type="BIGINT" />
+                <db:column name="`size`" type="BIGINT" />
                 <db:column name="creationDate" type="TIMESTAMP" />
                 <db:column name="owner" type="VARCHAR" length="255" />
                 <db:column name="md5" type="VARCHAR" length="32" />

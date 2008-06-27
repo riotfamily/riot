@@ -73,9 +73,9 @@
                 <db:column name="value_type" type="VARCHAR" length="255" not-null="true" />
                 <db:column name="string" type="LONGVARCHAR" />
                 <db:column name="bit" type="BIT" />
-                <db:column name="number" type="NUMERIC" length="255" />
-                <db:column name="date" type="TIMESTAMP" />
-                <db:column name="file" type="BIGINT" />
+                <db:column name="`number`" type="NUMERIC" length="255" />
+                <db:column name="`date`" type="TIMESTAMP" />
+                <db:column name="`file`" type="BIGINT" />
                 <db:column name="list" type="BIGINT" />
                 <db:column name="list_pos" type="BIGINT" />
                 <db:column name="map" type="BIGINT" />
@@ -95,7 +95,7 @@
 			</db:add-foreign-key>
             
             <db:add-foreign-key name="riot_list_wrapper" table="riot_value_wrappers" references="riot_media_files">
-                <db:ref local="file" foreign="id" />
+                <db:ref local="`file`" foreign="id" />
             </db:add-foreign-key>
             <db:add-column table="riot_value_wrappers" name="page" type="BIGINT" />
             

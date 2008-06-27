@@ -25,7 +25,9 @@
 		</map>
 		<property name="fileName" />
 		<property name="contentType" />
-		<property name="size" />
+		<property name="size">
+		    <column name="`size`" />
+		</property>
 		<property name="creationDate" />
 		<property name="owner" />
 		<property name="md5" length="32" />
