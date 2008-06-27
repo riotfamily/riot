@@ -34,6 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.revolt.support.DatabaseUtils;
 import org.riotfamily.revolt.support.LogTable;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -88,7 +89,9 @@ public class Evolver implements ApplicationContextAware {
 			
 			String instructions = getInstructions();
 			if (StringUtils.hasLength(instructions)) {
-				throw new EvolutionInstructions(instructions);
+			    log.fatal(instructions);
+			    throw new FatalBeanException("Database not up-to-date. " +
+			    	"See instructions above.");
 			}
 			
 			while (it.hasNext()) {
