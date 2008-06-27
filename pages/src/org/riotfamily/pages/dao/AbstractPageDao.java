@@ -338,9 +338,6 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		}
 	}
 
-	public void updateSite(Site site) {
-	}
-
 	public void deleteSite(Site site) {
 		for (Page page : getRootNode().getChildPages(site)) {
 			deletePage(page);

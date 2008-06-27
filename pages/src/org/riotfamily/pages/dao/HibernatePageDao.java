@@ -114,6 +114,10 @@ public class HibernatePageDao extends AbstractPageDao {
 						"More than one site found for locale " + locale, 1);
 		}				
 	}
+	
+	public Site mergeSite(Site site) {
+		return hibernate.merge(site);
+	}
 
 	public Page findPage(Site site, String path) {
 		Criteria c = hibernate.createCacheableCriteria(Page.class);

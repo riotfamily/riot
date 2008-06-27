@@ -143,7 +143,7 @@ public interface PageDao {
 	
 	public void saveSite(Site site);
 
-	public void updateSite(Site site);
+	public Site mergeSite(Site site);
 
 	public void deleteSite(Site site);
 
