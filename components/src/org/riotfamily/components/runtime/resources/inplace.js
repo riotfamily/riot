@@ -362,6 +362,9 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 			}
 			this.onsave(text);
 		}
+		else {
+			this.close();
+		}		
 	}
 
 });
