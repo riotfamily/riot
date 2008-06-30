@@ -338,19 +338,6 @@
 	</#if>
 </#macro>
 
-<#---
-  - Writes a script tag that loads the txt2img.js file.
-  -->
-<#macro txt2img loadPrototype=true>
-	<script type="text/javascript">
-		document.write('<link rel="stylesheet" type="text/css" href="${resource(pathForHandler("txt2ImgController", "css"))?xml}" />');
-	</script>
-	<#if loadPrototype>
-		<@riot.script src="prototype/prototype.js" />
-	</#if>
-	<script type="text/javascript" src="${resource(pathForHandler("txt2ImgController", "js") + '?locale=' + .locale)?xml}"></script>
-</#macro>
-
 <#macro stylesheets hrefs compress=commonMacroHelper.compressResources>
 	<#if compress>
 		<link rel="stylesheet" type="text/css" href="${resolve(pathForHandler("minifyCssController") + "?files=" + toDelimitedString(hrefs))?xml}" />
@@ -363,12 +350,22 @@
 
 <#macro scripts srcs compress=commonMacroHelper.compressResources>
 	<#if compress>
-		<script type="text/javascript" src="${resolve(pathForHandler("minifyScriptController") + "files=" + toDelimitedString(srcs))?xml}"></script>
+		<script type="text/javascript" src="${resolve(pathForHandler("minifyScriptController") + "?files=" + toDelimitedString(srcs))?xml}"></script>
 	<#else>
 		<#list srcs as src>
 			<script type="text/javascript" src="${resource(src)?xml}"></script>
 		</#list>
 	</#if>
+</#macro>
+
+<#macro removeNoscriptClass>
+	<script type="text/javascript">
+		var b = document.body;
+		var noscriptClass = b.className.replace(/(^|\s+)noscript(\s+|$)/, ' ');
+		if (b.className != noscriptClass) {
+			b.className = noscriptClass;
+		}
+	</script>
 </#macro>
 
 <#--- 

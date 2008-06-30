@@ -80,11 +80,11 @@
 	</bean>
 	
 	<bean id="minifyCssController" name="/riot-utils/joined.css" class="org.riotfamily.website.minify.MinifyCssController">
-		<property name="developmentMode" value="${riot.resources.reloadable=false}" />
+		<property name="reloadable" value="${riot.resources.reloadable=false}" />
 	</bean>
 	
 	<bean id="minifyScriptController" name="/riot-utils/joined.js" class="org.riotfamily.website.minify.MinifyScriptController">
-		<property name="developmentMode" value="${riot.resources.reloadable=false}" />
+		<property name="reloadable" value="${riot.resources.reloadable=false}" />
 	</bean>
 		
 	<bean id="freemarkerConfig" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerConfigurer">
@@ -96,6 +96,7 @@
 				<prop key="c">classpath:org/riotfamily/website/view/common.ftl</prop>
 				<prop key="form">classpath:org/riotfamily/website/view/form.ftl</prop>
 				<prop key="template">classpath:org/riotfamily/website/template/template.ftl</prop>
+				<prop key="txt2img">classpath:org/riotfamily/website/txt2img/txt2img.ftl</prop>
 				<prop key="riot">classpath:org/riotfamily/riot/runtime/macro/riot.ftl</prop>
 			</props>
 		</property>
@@ -120,6 +121,8 @@
 		<property name="compressResources" value="${riot.resources.compress=true}" />
 	</bean>
 	
+	<bean id="txt2ImgMacroHelper" class="org.riotfamily.website.txt2img.Txt2ImgMacroHelperFactory" />
+	
 	<bean id="templateMacroHelper" class="org.riotfamily.website.template.TemplateMacroHelperFactory">
 		<constructor-arg ref="cacheService" />
 		<constructor-arg ref="cacheKeyAugmentor" />
@@ -140,6 +143,12 @@
 			</bean>			
 		</property>
 	</bean>
+	
+	<bean id="txt2imgButtonController" class="org.riotfamily.website.txt2img.Txt2ImgButtonController">
+		<constructor-arg ref="txt2ImgMacroHelper" />
+	</bean>
+	<alias name="txt2imgButtonController" alias="/riot-utils/imagebtn/buttons.css" />
+	<alias name="txt2imgButtonController" alias="/riot-utils/imagebtn/@{style}/@{fileName}" />
 	
 	<bean id="countryFlagController" name="/riot-utils/country/@{locale}.gif" class="org.riotfamily.website.misc.CountryFlagController">
 		<constructor-arg ref="fileTypeMap" />

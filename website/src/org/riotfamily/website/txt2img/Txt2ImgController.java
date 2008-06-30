@@ -42,8 +42,12 @@ import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.Compressible;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.compressor.YUIJavaScriptCompressor;
 import org.riotfamily.common.web.util.ServletUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
@@ -59,7 +63,7 @@ import org.springframework.web.util.HtmlUtils;
  * @since 6.5
  */
 public class Txt2ImgController extends AbstractCacheableController
-		implements LastModified, Compressible {
+		implements ApplicationContextAware, LastModified, Compressible {
 
 	private static final Resource SCRIPT_RESOURCE = new ClassPathResource(
 			"txt2img.js", Txt2ImgController.class);
@@ -78,28 +82,23 @@ public class Txt2ImgController extends AbstractCacheableController
 	
 	private Pattern refererPattern;
 
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		
+		for (ReplacementRule rule : SpringUtils.listBeansOfType(applicationContext, ReplacementRule.class)) {
+			String[] sel = StringUtils.tokenizeToStringArray(rule.getSelector(), ",");
+			for (int i = 0; i < sel.length; i++) {
+				selectors.add(sel[i]);
+				rules.put(sel[i], rule);
+			}		
+		}
+	}
+	
 	/**
 	 * @param compressor the compressor to set
 	 */
 	public void setCompressor(YUIJavaScriptCompressor compressor) {
 		this.compressor = compressor;
-	}
-	
-	/**
-	 * Sets a List of {@link ReplacementRule} objects.
-	 */
-	public void setRules(List<ReplacementRule> rules) {
-		for (ReplacementRule rule : rules) {
-			addRule(rule);
-		}
-	}
-
-	public void addRule(ReplacementRule rule) {
-		String[] sel = StringUtils.tokenizeToStringArray(rule.getSelector(), ",");
-		for (int i = 0; i < sel.length; i++) {
-			selectors.add(sel[i]);
-			rules.put(sel[i], rule);
-		}
 	}
 	
 	protected void appendCacheKey(StringBuffer key, HttpServletRequest request) {
@@ -261,6 +260,9 @@ public class Txt2ImgController extends AbstractCacheableController
 		for (String selector : selectors) {
 			out.write(selector);
 			out.write("{visibility: hidden}\n");
+			out.write("body.noscript ");
+			out.write(selector);
+			out.write("{visibility: visible}\n");
 		}
 	}
 

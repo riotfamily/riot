@@ -35,9 +35,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.OutputStream;
 
-import org.riotfamily.common.image.ImageUtils;
 import org.riotfamily.common.util.ColorUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -105,7 +103,7 @@ public class ImageGenerator implements InitializingBean {
 	public void setColor(String color) {
 		this.color = ColorUtils.parseColor(color);
 	}
-	
+		
 	/**
 	 * Sets the font size.
 	 */
@@ -220,14 +218,6 @@ public class ImageGenerator implements InitializingBean {
 				maxWidth = new Integer(maxWidth.intValue() * scale);
 			}
 		}
-	}
-	
-	public void generate(String text, int maxWidth, String color, OutputStream os) 
-			throws IOException {
-		
-        BufferedImage image = generate(text, maxWidth, color);
-        ImageUtils.write(image, "png", os);
-        image.flush();
 	}
 	
 	public BufferedImage generate(String text, int maxWidth, String color) {

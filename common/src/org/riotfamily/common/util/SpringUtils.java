@@ -1,11 +1,13 @@
 package org.riotfamily.common.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.core.OrderComparator;
@@ -30,10 +32,23 @@ public final class SpringUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public static<T> T getBean(BeanFactory beanFactory, String name, 
+			Class<T> requiredType) {
+		
+		return (T) beanFactory.getBean(name, requiredType);
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static<T> Map<String, T> beansOfType(
 			ListableBeanFactory lbf, Class<T> type) {
 		
 		return lbf.getBeansOfType(type);
+	}
+	
+	public static<T> Collection<T> listBeansOfType(
+			ListableBeanFactory lbf, Class<T> type) {
+		
+		return beansOfType(lbf, type).values();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -41,6 +56,12 @@ public final class SpringUtils {
 			ListableBeanFactory lbf, Class<T> type) {
 		
 		return BeanFactoryUtils.beansOfTypeIncludingAncestors(lbf, type);
+	}
+	
+	public static<T> Collection<T> listBeansOfTypeIncludingAncestors(
+			ListableBeanFactory lbf, Class<T> type) {
+		
+		return beansOfTypeIncludingAncestors(lbf, type).values();
 	}
 	
 	@SuppressWarnings("unchecked")
