@@ -14,7 +14,7 @@
   - getStatus() function (which in turn is used internally in many places).
   -
   - @param command Name of the command object. Defaults to 'command'.
-  - @param Additional attributes that will be added to the form tag.
+  - @param attributes All additional attributes that will be added to the form tag.
   -->
 <#macro form command attributes...>
 	<#assign command = command />
