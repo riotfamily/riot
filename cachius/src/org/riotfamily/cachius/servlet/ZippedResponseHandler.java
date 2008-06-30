@@ -48,34 +48,46 @@ public abstract class ZippedResponseHandler extends ResponseCapturingHandler {
 	private static Pattern BUGGY_NETSCAPE_PATTERN = 
 			Pattern.compile("^Mozilla/4\\.0[678]");
 	
-	private boolean shouldZip;
+	private Boolean shouldZip;
 	
-	private boolean zip;
+	private Boolean zip;
 	
 	public ZippedResponseHandler(HttpServletRequest request, 
 			HttpServletResponse response, 
 			CacheKeyAugmentor cacheKeyAugmentor) {
 		
 		super(request, response, cacheKeyAugmentor);
-		shouldZip = responseShouldBeZipped();
-		zip = shouldZip && responseCanBeZipped();
+	}
+	
+	protected boolean shouldZip() {
+		if (shouldZip == null) {
+			shouldZip = responseShouldBeZipped();
+		}
+		return shouldZip;
+	}
+	
+	protected abstract boolean responseShouldBeZipped();
+	
+	protected boolean isZip() {
+		if (zip == null) {
+			zip = shouldZip() && responseCanBeZipped();
+		}
+		return zip;
 	}
 
 	protected void augmentCacheKey(StringBuffer key) {
-		if (zip) {
+		if (isZip()) {
 			key.append(".gz");
 		}
 		super.augmentCacheKey(key);
 	}
 
-	protected abstract boolean responseShouldBeZipped();
-	
 	protected final void postProcess(CacheItem cacheItem) throws IOException {
 		if (cacheItem.getSize() > 0) {
-			if (shouldZip) {
+			if (shouldZip()) {
 				Headers headers = cacheItem.getHeaders();
 				headers.set("Vary", "Accept-Encoding, User-Agent");
-				if (zip) {
+				if (isZip()) {
 					cacheItem.gzipContent();
 					headers.set("Content-Encoding", "gzip");
 				}
