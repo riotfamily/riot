@@ -61,7 +61,7 @@ import org.springframework.web.servlet.mvc.LastModified;
 public abstract class AbstractMinifyController extends AbstractCacheableController 
 		implements LastModified, Compressible {
 	
-	private boolean developmentMode;
+	private boolean reloadable;
 
 	private long startUpTime = System.currentTimeMillis();
 	
@@ -69,23 +69,23 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 	 * If set to <code>true</code>, the output will not be cached, 
 	 * not compressed or obfuscated and no expires header will be sent. 
 	 */
-	public void setDevelopmentMode(boolean developmentMode) {
-		this.developmentMode = developmentMode;
+	public void setReloadable(boolean reloadable) {
+		this.reloadable = reloadable;
 	}
 	
 	/**
 	 * Returns the server start-up time, or the current time if running in
-	 * {@link #setDevelopmentMode(boolean) development mode}.
+	 * {@link #setReloadable(boolean) development mode}.
 	 */
 	public long getLastModified(HttpServletRequest request) {
-		return developmentMode ? System.currentTimeMillis() : startUpTime;
+		return reloadable ? System.currentTimeMillis() : startUpTime;
 	}
 
 	/**
-	 * The cache is bypassed in {@link #setDevelopmentMode(boolean) development mode}.
+	 * The cache is bypassed in {@link #setReloadable(boolean) development mode}.
 	 */
 	protected boolean bypassCache(HttpServletRequest request) {
-		return developmentMode;
+		return reloadable;
 	}
 
 	/**
@@ -141,7 +141,7 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 				response.setContentType(contentType);
 			}
 			
-			if (!developmentMode) {
+			if (!reloadable) {
 				ServletUtils.setFarFutureExpiresHeader(response);
 				Compressor compressor = getCompressor();
 				if (compressor != null) {
