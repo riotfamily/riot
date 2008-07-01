@@ -87,9 +87,9 @@ riot.findContainer = function(el) {
 		return riot.getContentContainer(el);
 	}
 	if (!riot.defaultContainer) {
-		riot.defualtContainer = new riot.ContentContainer(riotDefaultContainerId);
+		riot.defaultContainer = new riot.ContentContainer(riotDefaultContainerId);
 	}
-	return riot.defualtContainer;
+	return riot.defaultContainer;
 }
 
 /**
@@ -403,6 +403,7 @@ riot.Component = Class.create(riot.Content, {
 		this.element = el;
 		this.id = el.readAttribute('riot:contentId');
 		this.form = el.readAttribute('riot:form');
+		this.container = riot.findContainer(el);
 		this.bShowOutline = this.showOutline.bindAsEventListener(this);
 		this.bHideOutline = this.hideOutline.bindAsEventListener(this);
 		this.bOnClick = this.onClick.bindAsEventListener(this);
@@ -469,8 +470,10 @@ riot.Component = Class.create(riot.Content, {
 	},
 	
 	editProperties: function() {
-		var path = location.pathname.substring(riot.contextPath.length);
-		var formUrl = riot.path + this.form + '?' + $H(riotComponentFormParams).toQueryString();
+		var formUrl = riot.path + '/components/form/' + this.form + '/' 
+				+ this.container.id + '/' + this.id + '?' 
+				+ $H(riotComponentFormParams).toQueryString();
+		
 		var iframe = RBuilder.node('iframe', {src: formUrl, className: 'properties', width: 1, height: 1});
 		riot.popup = new riot.Popup('${title.properties}', iframe, function() {
 			var win = iframe.contentWindow ? iframe.contentWindow : iframe.window;
