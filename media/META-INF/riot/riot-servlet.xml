@@ -54,5 +54,7 @@
 			</list>
 	    </property>
     </bean>
+    
+    <bean id="riotImageRenderer" class="org.riotfamily.media.riot.ui.RiotImageRenderer" />
 
 </beans>
