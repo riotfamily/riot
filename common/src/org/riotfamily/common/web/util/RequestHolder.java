@@ -49,7 +49,7 @@ public final class RequestHolder {
 	public static void set(HttpServletRequest request,
 			HttpServletResponse response) {
 		
-		RequestHolder holder = (RequestHolder) threadLocal.get();
+		RequestHolder holder = threadLocal.get();
 		if (holder == null) {
 			holder = new RequestHolder(request, response);
 			threadLocal.set(holder);
