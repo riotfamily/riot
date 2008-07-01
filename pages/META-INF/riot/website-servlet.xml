@@ -40,7 +40,9 @@
 	</override:put>
 	
 	<bean id="siteObjectWrapperPlugin" class="org.riotfamily.pages.view.SiteObjectWrapperPlugin" />
-	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin" />
+	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin">
+		<constructor-arg ref="pathCompleter" />
+	</bean>
 	
 	<override:add ref="inplaceMacroHelper" property="toolbarScripts" append="true">
 		<value>tiny_mce/page-chooser.js</value>
