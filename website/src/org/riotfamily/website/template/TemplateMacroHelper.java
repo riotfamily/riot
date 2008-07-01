@@ -17,10 +17,12 @@ import org.springframework.util.StringUtils;
 
 import freemarker.core.Environment;
 import freemarker.template.SimpleScalar;
+import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateDirectiveBody;
 import freemarker.template.TemplateDirectiveModel;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
+import freemarker.template.TemplateModelException;
 
 public class TemplateMacroHelper {
 
@@ -77,6 +79,16 @@ public class TemplateMacroHelper {
 		return defaultValue;
 	}
 	
+	private static boolean getBooleanParam(Map<String, ?> params, String name, 
+			boolean defaultValue) throws TemplateModelException {
+		
+		Object value = params.get(name);
+		if (value instanceof TemplateBooleanModel) {
+			return ((TemplateBooleanModel) value).getAsBoolean();
+		}
+		return defaultValue;
+	}
+	
 	public class ExtendDirective implements TemplateDirectiveModel {
 		
 		@SuppressWarnings("unchecked")
@@ -109,8 +121,13 @@ public class TemplateMacroHelper {
 				TemplateDirectiveBody body) throws TemplateException, IOException {
 			
 			String name = getRequiredStringParam(params, "name", env);
-			String cacheKey = getStringParam(params, "cacheKey",
-					ServletUtils.getPathWithinApplication(request) + "#" + name);
+			String cacheKey = null;
+			
+			boolean cache = getBooleanParam(params, "cache", true);
+			if (cache) {
+				cacheKey = getStringParam(params, "cacheKey",
+						ServletUtils.getPathWithinApplication(request) + "#" + name);
+			}
 			
 			String content = blocks.get(name);
 			if (childTemplate) {
