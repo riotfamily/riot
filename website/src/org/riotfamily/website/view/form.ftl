@@ -1,12 +1,24 @@
 <#---
   - Alternative to Spring's form macros.
-  - @namespace form 
+  - @namespace form
+  - @requires c 
  -->
  
 <#---
   - @internal
   -->
 <#assign command = "command" />
+
+<#---
+  - @internal
+  -->
+<#function getStatus form=command field="">
+	<#if field?has_content>
+		<#return springMacroRequestContext.getBindStatus(form + '.' + field) />
+	<#else>
+		<#return springMacroRequestContext.getBindStatus(form) />
+	</#if>
+</#function>
 
 <#---
   - Renders a form tag for the command object with the specified name.
@@ -18,24 +30,31 @@
   -->
 <#macro form command attributes...>
 	<#assign command = command />
-	<form${join(attributes)}>
+	<form${c.joinAttributes(attributes)}>
 		<#nested />
 	</form>
 </#macro>
 
 <#---
-  - Returns whether a field or the whole form contains an error.
+  - Returns whether the form has any errors.
   -->
-<#function hasErrors field="">
+<#function hasErrors form=command>
+	<#local status = getStatus(form) />
+	<#if !status.errors?exists>
+		<#return false />
+	</#if>
+	<#return status.errors.hasErrors() />
+</#function>
+
+<#---
+  - Returns whether the field has any errors.
+  -->
+<#function hasFieldErrors field>
 	<#local status = getStatus() />
 	<#if !status.errors?exists>
 		<#return false />
 	</#if>
-	<#if field?has_content>
-		<#return status.errors.hasFieldErrors(field) />
-	<#else>
-		<#return status.errors.hasErrors() />
-	</#if>
+	<#return status.errors.hasFieldErrors(field) />
 </#function>
 
 <#--- 
@@ -52,7 +71,7 @@
 		<#local errors = status.errors.allErrors />
 	</#if>
 	<#if errors?has_content>
-		<#if tag?has_content><${tag + join(attributes)}></#if>
+		<#if tag?has_content><${tag + c.joinAttributes(attributes)}></#if>
 		<#list errors as error>
 			<#nested commonMacroHelper.getMessage(error), error />
 		</#list>
@@ -67,7 +86,10 @@
   - If the field has a validation error, a special CSS class will be added to
   - the label tag (default is 'error'). 
   -->
-<#macro label for field=for errorClass="error" code="" attributes...>
+<#macro label for field="" errorClass="error" code="" attributes...>
+	<#if !field?has_content>
+		<#local field = for />
+	</#if>
 	<#local text><#nested /></#local>
 	<#if !text?has_content>
 		<#if !code?has_content>
@@ -76,11 +98,11 @@
 		<#local text = c.getMessage(code) />
 	</#if>
 	<#local attributes = addErrorClass(attributes, field, errorClass) />
-	<label for="${for}"${join(attributes)}>${text}</label>
+	<label for="${for}"${c.joinAttributes(attributes)}>${text}</label>
 </#macro>
 
 <#function getValue field>
-	<#return getStatus(field).value?if_exists?string?html />
+	<#return getStatus(command, field).value?if_exists?string?html />
 </#function>
 
 <#---
@@ -91,7 +113,7 @@
 		<#local attributes = attributes + {"class": type} />
 	</#if>
 	<#local attributes = addErrorClass(attributes, field, errorClass) />
-    <input id="${id}" type="${type}" name="${field}" value="${getValue(field)}"${join(attributes)} />
+    <input id="${id}" type="${type}" name="${field}" value="${getValue(field)}"${c.joinAttributes(attributes)} />
 </#macro>
 
 <#---
@@ -99,7 +121,7 @@
   -->
 <#macro textarea field id=field errorClass="error" attributes...>
 	<#local attributes = addErrorClass(attributes, field, errorClass) />
-    <textarea id="${id}" name="${field}"${join(attributes)}>${getValue(field)}</textarea>
+    <textarea id="${id}" name="${field}"${c.joinAttributes(attributes)}>${getValue(field)}</textarea>
 </#macro>
 
 <#---
@@ -107,7 +129,7 @@
   -
   - @param field The field name
   - @param options An iterable containing the possible options
-  - @param id The element's CSS id. Defaults to the field name.
+  - @param id The element's CSS id.
   - @param errorClass The CSS class to assign in case of a validation error.
   - @param valueProperty Name of the property that contains the option's value.
   - @param labelProperty Name of the property that contains the option's label.
@@ -121,7 +143,7 @@
 	labelProperty="" messagePrefix="" addEmptyOption=false emptyValue="" emptyLabel="" attributes...>
 	
 	<#local attributes = addErrorClass(attributes, field, errorClass) />
-    <select id="${id}" name="${field}"${join(attributes)}>
+    <select id="${id}" name="${field}"${c.joinAttributes(attributes)}>
     	<#if addEmptyOption || emptyLabel?has_content>
     		<@option emptyValue?html emptyLabel?html />
     	</#if>
@@ -136,7 +158,7 @@
   -->
 <#macro checkbox field id=field errorClass="error" value="on" attributes...>
 	<#local attributes = addErrorClass(attributes, field, errorClass) />
-	<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check getStatus(field).value?if_exists />${join(attributes)} />
+	<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check getStatus(command, field).value?if_exists />${c.joinAttributes(attributes)} />
 	<input type="hidden" name="_${field}" value="on"/>
 </#macro>
 
@@ -183,7 +205,7 @@
   - @param messagePrefix A prefix added to the massage codes.
   -->	
 <#macro listOptions field options valueProperty="" labelProperty="" messagePrefix="">
-	<#local value = getStatus(field).value?if_exists />
+	<#local value = getStatus(command, field).value?if_exists />
 	<#if options?is_hash>
 		<#list options?keys as option>
 			<#if value?is_sequence>
@@ -234,11 +256,16 @@
   - @param attributes Additional attributes to be added to the option tag. 
   --> 
 <#macro option value label=value selected=false attributes...>
-	<option value="${value}"<#if selected> selected="selected"</#if>${join(attributes)}>${label}</option>
+	<option value="${value}"<#if selected> selected="selected"</#if>${c.joinAttributes(attributes)}>${label}</option>
 </#macro>
 
 <#macro check checked><#if checked> checked="checked"</#if></#macro>
 
+<#---
+  - Returns whether a sequence contains the given String.
+  -
+  - @internal
+  -->
 <#function containsString seq s>
 	<#list seq as item>
 		<#if item?string == s>
@@ -248,29 +275,15 @@
 	<#return false />
 </#function>
 
+<#---
+  - Adds the specified errorClass to the attributes hash if the given field
+  - has han error.
+  -
+  - @internal
+  -->
 <#function addErrorClass attributes field errorClass>
-	<#if errorClass?has_content && hasErrors(field)>
+	<#if errorClass?has_content && hasFieldErrors(field)>
 		<#return attributes + {"class": (attributes.class?if_exists + ' ' + errorClass)?trim} />
 	</#if>
 	<#return attributes />
-</#function>
-
-<#function getStatus field="">
-	<#if field?has_content>
-		<#return springMacroRequestContext.getBindStatus(command + '.' + field) />
-	<#else>
-		<#return springMacroRequestContext.getBindStatus(command) />
-	</#if>
-</#function>
-
-<#function join attributes>
-	<#local attrs = "" />
-	<#if attributes?is_hash>
-		<#list attributes?keys as attributeName>
-			<#if attributes[attributeName]?has_content>
-				<#local attrs = attrs + " " + attributeName + "=\"" + attributes[attributeName] + "\"" />
-			</#if>
-		</#list>
-	</#if>
-	<#return attrs />
 </#function>
