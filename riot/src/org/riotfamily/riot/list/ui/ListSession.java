@@ -467,6 +467,9 @@ public class ListSession implements RenderContext {
 					return messageResolver.getClassLabel(null, clazz);
 				}
 			}
+			else if (lookupLevel == 0) {
+				return messageResolver.getPropertyLabel(getListId(), clazz, root);
+			}
 		}
 		return messageResolver.getPropertyLabel(
 				getListId(), clazz, property);
