@@ -23,39 +23,42 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.txt2img;
 
-import java.io.File;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.io.IOUtils;
-import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.cachius.spring.CacheableController;
+import org.riotfamily.cachius.spring.Compressible;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
-public class Txt2ImgButtonController implements Controller {
+public class ButtonStylesheetController implements CacheableController, Compressible {
 
-	Txt2ImgMacroHelperFactory factory;
+	private ButtonService buttonService;
 	
-	public Txt2ImgButtonController(Txt2ImgMacroHelperFactory factory) {
-		this.factory = factory;
+	public ButtonStylesheetController(ButtonService buttonService) {
+		this.buttonService = buttonService;
+	}
+
+	public boolean gzipResponse(HttpServletRequest request) {
+		return true;
+	}
+	
+	public String getCacheKey(HttpServletRequest request) {
+		return "txt2imgButtonRules";
+	}
+
+	public long getTimeToLive() {
+		return buttonService.isReloadable() ? 0 : CACHE_ETERNALLY;
+	}
+	
+	public long getLastModified(HttpServletRequest request) throws Exception {
+		return buttonService.getLastModified();
 	}
 
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-
-		String style = (String) request.getAttribute("style");
-		if (style == null) {
-			File f = new File(factory.getButtonDir(), "buttons.css");
-			response.setContentType("text/css");
-			IOUtils.serve(f, response.getOutputStream());	
-		}
-		else {
-			File dir = new File(factory.getButtonDir(), style);
-			String fileName = (String) request.getAttribute("fileName");
-			File f = new File(dir, FormatUtils.sanitizePath(fileName).replace(' ', '+'));
-			IOUtils.serve(f, response.getOutputStream());
-		}
+		
+		response.setContentType("text/css");
+		buttonService.writeRules(response.getWriter());
 		return null;
 	}
 

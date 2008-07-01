@@ -23,35 +23,23 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.txt2img;
 
-import java.io.File;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.util.Assert;
 
 public class Txt2ImgMacroHelper {
 
-	private Map<String, ButtonStyle> buttons;
-	
-	private File baseDir;
+	private ButtonService buttonService;
 	
 	private HttpServletRequest request;
 	
 	
-	public Txt2ImgMacroHelper(File baseDir, Map<String, ButtonStyle> buttons,
+	public Txt2ImgMacroHelper(ButtonService buttonService,
 			HttpServletRequest request) {
 		
-		this.baseDir = baseDir;
-		this.buttons = buttons;
+		this.buttonService = buttonService;
 		this.request = request;
 	}
 
 	public String getButtonStyle(String id, String label) throws Exception {
-		ButtonStyle button = buttons.get(id);
-		Assert.notNull(button, "No such button: " + id);
-		File dir = new File(baseDir, id);
-		dir.mkdirs();
-		return button.getInlineStyle(dir, label, request);
+		return buttonService.getInlineStyle(id, label, request);
 	}
 }

@@ -18,7 +18,7 @@
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
- *   flx
+ *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.txt2img;
@@ -42,10 +42,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 
 /**
+ * Class to render text as image. Supports resampling to improve the kerning
+ * at small font sizes.
+ * 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class ImageGenerator implements InitializingBean {
+public class TextRenderer implements InitializingBean {
 
 	private Font font = Font.getFont("Serif");
 	
@@ -148,11 +151,7 @@ public class ImageGenerator implements InitializingBean {
 	public void setPaddingTop(int paddingTop) {
 		this.paddingTop = paddingTop;
 	}
-	
-	protected int getPaddingTop() {
-		return paddingTop;
-	}
-	
+		
 	/**
 	 * Sets the padding at the right side of the image in pixels. 
 	 * The default value is <code>0</code>.
@@ -160,11 +159,7 @@ public class ImageGenerator implements InitializingBean {
 	public void setPaddingRight(int paddingRight) {
 		this.paddingRight = paddingRight;
 	}
-	
-	protected int getPaddingRight() {
-		return paddingRight;
-	}
-	
+		
 	/**
 	 * Sets the padding at the bottom of the image in pixels. 
 	 * The default value is <code>0</code>.
@@ -173,20 +168,12 @@ public class ImageGenerator implements InitializingBean {
 		this.paddingBottom = paddingBottom;
 	}
 	
-	protected int getPaddingBottom() {
-		return paddingBottom;
-	}
-	
 	/**
 	 * Sets the padding at the left side of the image in pixels. 
 	 * The default value is <code>0</code>.
 	 */
 	public void setPaddingLeft(int paddingLeft) {
 		this.paddingLeft = paddingLeft;
-	}
-	
-	protected int getPaddingLeft() {
-		return paddingLeft;
 	}
 	
 	/**

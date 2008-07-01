@@ -23,57 +23,23 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.txt2img;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.io.IOUtils;
-import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.view.MacroHelperFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.web.context.ServletContextAware;
-import org.springframework.web.util.WebUtils;
 
-public class Txt2ImgMacroHelperFactory implements ServletContextAware,
-		ApplicationContextAware, InitializingBean, MacroHelperFactory {
+public class Txt2ImgMacroHelperFactory implements MacroHelperFactory {
 
-	private Map<String, ButtonStyle> buttons;
+	private ButtonService buttonService;
 	
-	private File buttonDir;
-	
-	public void setServletContext(ServletContext servletContext) {
-		buttonDir = new File(WebUtils.getTempDir(servletContext), "txt2img");
+	public Txt2ImgMacroHelperFactory(ButtonService buttonService) {
+		this.buttonService = buttonService;
 	}
 
-	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
-		buttons = SpringUtils.beansOfType(ctx, ButtonStyle.class);
-	}
-	
-	public void afterPropertiesSet() throws Exception {
-		IOUtils.clearDirectory(buttonDir);
-		File styleSheet = new File(buttonDir, "buttons.css");
-		FileWriter out = new FileWriter(styleSheet);
-		for (ButtonStyle button : buttons.values()) {
-			out.write(button.getRules());
-		}
-		out.close();
-	}
-	
-	public File getButtonDir() {
-		return buttonDir;
-	}
-	
 	public Object createMacroHelper(HttpServletRequest request,
 			HttpServletResponse response) {
 
-		return new Txt2ImgMacroHelper(buttonDir, buttons, request);
+		return new Txt2ImgMacroHelper(buttonService, request);
 	}
 
 }

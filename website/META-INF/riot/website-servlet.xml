@@ -53,17 +53,11 @@
 	<bean id="riotInterceptors" class="org.riotfamily.common.web.interceptor.ChainedHandlerInterceptor">
 		<property name="interceptors">
 			<list>
-				<ref local="noCacheInterceptor" />
+				<bean class="org.riotfamily.website.interceptor.NoCacheHeaderInterceptor" />
 				<bean class="org.riotfamily.common.web.collaboration.SharedPropertiesInterceptor" />
 			</list>
 		</property>
 	</bean>
-
-	<!-- 
-	  - Deprecated. Projects should use the "riotInterceptors" instead which 
-	  - also contains this interceptor.
-	  -->	
-	<bean id="noCacheInterceptor" class="org.riotfamily.website.interceptor.NoCacheHeaderInterceptor" />
 	
 	<bean id="resourceStamper" class="org.riotfamily.common.web.filter.ResourceStamper" />
 
@@ -121,7 +115,15 @@
 		<property name="compressResources" value="${riot.resources.compress=true}" />
 	</bean>
 	
-	<bean id="txt2ImgMacroHelper" class="org.riotfamily.website.txt2img.Txt2ImgMacroHelperFactory" />
+	<bean id="buttonService" class="org.riotfamily.website.txt2img.ButtonService">
+		<constructor-arg ref="cacheService" />
+		<constructor-arg ref="resourceStamper" />
+		<property name="reloadable" value="${riot.resources.reloadable=false}" />
+	</bean>
+	
+	<bean id="txt2ImgMacroHelper" class="org.riotfamily.website.txt2img.Txt2ImgMacroHelperFactory">
+		<constructor-arg ref="buttonService" />
+	</bean>
 	
 	<bean id="templateMacroHelper" class="org.riotfamily.website.template.TemplateMacroHelperFactory">
 		<constructor-arg ref="cacheService" />
@@ -144,12 +146,14 @@
 		</property>
 	</bean>
 	
-	<bean id="txt2imgButtonController" class="org.riotfamily.website.txt2img.Txt2ImgButtonController">
-		<constructor-arg ref="txt2ImgMacroHelper" />
+	<bean id="txt2imgButtonController" name="/riot-utils/imagebtn/@{style}/@{label}.*" class="org.riotfamily.website.txt2img.ButtonController">
+		<constructor-arg ref="buttonService" />
 	</bean>
-	<alias name="txt2imgButtonController" alias="/riot-utils/imagebtn/buttons.css" />
-	<alias name="txt2imgButtonController" alias="/riot-utils/imagebtn/@{style}/@{fileName}" />
 	
+	<bean id="txt2imgButtonCssController" name="/riot-utils/imagebtn/buttons.css" class="org.riotfamily.website.txt2img.ButtonStylesheetController">
+		<constructor-arg ref="buttonService" />
+	</bean>
+		
 	<bean id="countryFlagController" name="/riot-utils/country/@{locale}.gif" class="org.riotfamily.website.misc.CountryFlagController">
 		<constructor-arg ref="fileTypeMap" />
 		<property name="location" value="classpath:/org/riotfamily/riot/runtime/resources/style/icons/flags/" />

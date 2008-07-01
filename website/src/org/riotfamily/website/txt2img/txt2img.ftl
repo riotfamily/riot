@@ -34,5 +34,5 @@
   - image-buttons.
   -->
 <#function buttonStyleSheet>
-	<#return c.pathForHandler('txt2imgButtonController') />
+	<#return c.pathForHandler('txt2imgButtonCssController') />
 </#function>

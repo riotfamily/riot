@@ -26,23 +26,21 @@ package org.riotfamily.website.txt2img;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.image.ImageUtils;
-import org.riotfamily.common.io.IOUtils;
-import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
-public class ButtonStyle extends ListItemImageGenerator implements BeanNameAware {
+/**
+ * Class to render button graphics. 
+ */
+public class ButtonRenderer extends ListItemRenderer implements BeanNameAware {
 
+	private File bgFile;
+	
 	private BufferedImage bg;
 		
 	private String hoverColor;
@@ -51,8 +49,11 @@ public class ButtonStyle extends ListItemImageGenerator implements BeanNameAware
 	
 	private int buttonHeight;
 	
+	private final long creationTime = System.currentTimeMillis();
+	
 	public void setBg(Resource res) throws IOException {
-		this.bg = ImageIO.read(res.getInputStream());
+		bgFile = res.getFile();
+		bg = ImageIO.read(bgFile);
 	}
 	
 	public void setHoverColor(String hoverColor) {
@@ -61,6 +62,10 @@ public class ButtonStyle extends ListItemImageGenerator implements BeanNameAware
 	
 	public void setBeanName(String name) {
 		this.id = name;
+	}
+	
+	public String getId() {
+		return id;
 	}
 	
 	@Override
@@ -73,27 +78,11 @@ public class ButtonStyle extends ListItemImageGenerator implements BeanNameAware
 		super.afterPropertiesSet();
 	}
 	
-	public String getInlineStyle(File dir, String label, 
-			HttpServletRequest request) throws Exception {
-		
-		String fileName = FormatUtils.uriEscape(label).replace('%', '@');
-		File styleFile = new File(dir, fileName + ".style");
-		File imageFile = new File(dir, fileName + ".png");
-		if (styleFile.exists() && imageFile.exists()) {
-			FileReader in = new FileReader(styleFile);
-			StringWriter sw = new StringWriter();
-			IOUtils.copy(in, sw);
-			return sw.toString();
-		}
-		String style = generateSprite(label, imageFile, request);
-		FileWriter out = new FileWriter(styleFile);
-		out.write(style);
-		out.close();
-		return style;
+	public long getLastModified() {
+		return Math.max(creationTime, bgFile.lastModified());
 	}
-	
-	protected String generateSprite(String label, File file, 
-			HttpServletRequest request) throws Exception {
+		
+	public BufferedImage generate(String label) throws Exception {
 		
 		BufferedImage labelImage = generate(label, Integer.MAX_VALUE, null, false);
 		int textImageWidth = labelImage.getWidth();
@@ -115,12 +104,7 @@ public class ButtonStyle extends ListItemImageGenerator implements BeanNameAware
 			BufferedImage hoverLabelImage = generate(label, Integer.MAX_VALUE, hoverColor, true);
 			g.drawImage(hoverLabelImage, c, top + buttonHeight, null);
 		}
-		
-		ImageUtils.write(image, file);
-		
-		return "width:" + width + "px;background-image:url(" 
-				+ request.getContextPath() + "/riot-utils/imagebtn/" 
-				+ id + "/" + file.getName() + ")";
+		return image;
 	}
 	
 	public String getRules() {

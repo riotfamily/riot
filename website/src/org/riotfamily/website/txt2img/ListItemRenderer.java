@@ -30,16 +30,19 @@ import org.riotfamily.common.image.ImageUtils;
 import org.springframework.core.io.Resource;
 
 /**
+ * TextRenderer that supports bullet icons.
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
+ * @since 8.0
  */
-public class ListItemImageGenerator extends ImageGenerator {
+public class ListItemRenderer extends TextRenderer {
 
 	private BufferedImage bulletIcon;
 	
 	private BufferedImage hoverBulletIcon;
 	
 	private int bulletTop = 0;
+	
+	private int paddingLeft = 0;
 	
 	public void setBulletIcon(Resource res) throws IOException {
 		this.bulletIcon = ImageUtils.read(res);
@@ -54,12 +57,18 @@ public class ListItemImageGenerator extends ImageGenerator {
 	}
 	
 	@Override
+	public void setPaddingLeft(int paddingLeft) {
+		this.paddingLeft = paddingLeft;
+		super.setPaddingLeft(paddingLeft);
+	}
+	
+	@Override
 	public void afterPropertiesSet() {
 		if (bulletIcon != null) {
-			setPaddingLeft(getPaddingLeft() + bulletIcon.getWidth());
+			setPaddingLeft(paddingLeft + bulletIcon.getWidth());
 		}
 		else if (hoverBulletIcon != null) {
-			setPaddingLeft(getPaddingLeft() + hoverBulletIcon.getWidth());
+			setPaddingLeft(paddingLeft + hoverBulletIcon.getWidth());
 		}
 		super.afterPropertiesSet();
 	}

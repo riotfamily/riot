@@ -34,7 +34,7 @@ import org.riotfamily.common.image.ImageUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class ReplacementRule extends ListItemImageGenerator {
+public class ReplacementRule extends ListItemRenderer {
 
 	private String selector;
 	
