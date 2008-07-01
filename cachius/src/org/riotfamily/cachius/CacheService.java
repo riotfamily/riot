@@ -80,31 +80,31 @@ public class CacheService {
 		}
 	}
 	
-	public void handle(CacheHandler callback) throws Exception {
+	public void handle(CacheHandler handler) throws Exception {
 		CacheItem cacheItem = null;
-		String cacheKey = callback.getCacheKey();
+		String cacheKey = handler.getCacheKey();
 		if (cacheKey != null) {
 			cacheItem = cache.getItem(cacheKey);
 		}
         if (cacheItem == null) {
-            callback.handleUncached();
+            handler.handleUncached();
         }
         else {
-        	long mtime = getModificationTime(cacheItem, callback);
+        	long mtime = getModificationTime(cacheItem, handler);
         	if (mtime > cacheItem.getLastModified()) {
-        		capture(cacheItem, mtime, callback);
+        		capture(cacheItem, mtime, handler);
         	}
         	else {
-        		if (!writeCacheItem(callback, cacheItem)) {
+        		if (!writeCacheItem(handler, cacheItem)) {
         			// The rare case, that the item was deleted due to a cleanup
-       				capture(cacheItem, mtime, callback);        			
+       				capture(cacheItem, mtime, handler);        			
         		}
         	}
         }
 	}
 	
 	private long getModificationTime(CacheItem cacheItem,
-    		CacheHandler callback) throws Exception {
+    		CacheHandler handler) throws Exception {
 
     	long now = System.currentTimeMillis();
     	
@@ -114,12 +114,12 @@ public class CacheService {
             return now;
         }
 
-        long ttl = callback.getTimeToLive();
+        long ttl = handler.getTimeToLive();
         if (ttl == CacheableController.CACHE_ETERNALLY) {
         	return 0;
         }
         if (cacheItem.getLastCheck() + ttl < now) {
-	        long mtime = callback.getLastModified();
+	        long mtime = handler.getLastModified();
 	        cacheItem.setLastCheck(now);
 	        if (mtime > cacheItem.getLastModified()) {
 	            return mtime;
