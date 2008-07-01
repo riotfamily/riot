@@ -137,7 +137,7 @@ public class AttributePattern {
 			String s = m.group(i + 1);
 			if (s.length() > 0) {
 				String type = attributeTypes.get(i);
-				value = convert(FormatUtils.uriUnescape(s), type);
+				value = convert(s, type);
 			}
 			request.setAttribute(name, value);
 			attributes.put(name, value);
