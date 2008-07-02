@@ -71,7 +71,7 @@
 		<subant target="collect-xml-schemas">
 			<fileset refid="module-build.files" />
 		</subant>
-		<scp todir="${user.name}@riotfamily.org:/var/www/riotfamily.org/www/htdocs/schema" keyfile="${user.home}/.ssh/id_rsa" passphrase="" trust="true">
+		<scp todir="${user.name}@riotfamily.org:/var/www/riotfamily.org/www/htdocs/schema" keyfile="${user.home}/.ssh/id_rsa" passphrase="" trust="true" sftp="true">
 			<fileset dir="${build.dir}/schema" />
 		</scp>
 	</target>
