@@ -25,6 +25,7 @@ package org.riotfamily.website.txt2img;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 
@@ -138,13 +139,9 @@ public class ButtonService implements ApplicationContextAware {
 			return reloadable ? 0 : CACHE_ETERNALLY;
 		}
 
-		public void handleUncached() throws Exception {
-			throw new IllegalStateException();
-		}
-
 		public boolean updateCacheItem(CacheItem cacheItem) throws Exception {
-			BufferedImage image = renderer.generate(label);
-			ImageUtils.write(image, ImageUtils.FORMAT_PNG, cacheItem.getOutputStream());
+			BufferedImage image = generateImage();
+			writeImage(image, cacheItem.getOutputStream());
 			Map<String, String> properties = Generics.newHashMap();
 			properties.put("inlineStyle", getInlineStyle(image));
 			cacheItem.setContentType("image/png");
@@ -153,7 +150,15 @@ public class ButtonService implements ApplicationContextAware {
 			return true;
 		}
 		
-		private String getInlineStyle(BufferedImage image) {
+		protected BufferedImage generateImage() throws Exception {
+			return renderer.generate(label);
+		}
+		
+		protected void writeImage(BufferedImage image, OutputStream out) throws IOException {
+			ImageUtils.write(image, ImageUtils.FORMAT_PNG, out);
+		}
+		
+		protected String getInlineStyle(BufferedImage image) {
 			String url = resourceStamper.stamp(imageUri);
 			return "width:" + image.getWidth() + "px;" 
 					+ "background-image:url(" + url + ")";
@@ -172,6 +177,10 @@ public class ButtonService implements ApplicationContextAware {
 			super(label, renderer, imageUri);
 		}
 
+		public void handleUncached() throws Exception {
+			inlineStyle = getInlineStyle(generateImage());
+		}
+		
 		public void writeCacheItem(CacheItem cacheItem) throws IOException {
 			inlineStyle = cacheItem.getProperties().get("inlineStyle");
 		}
@@ -193,6 +202,11 @@ public class ButtonService implements ApplicationContextAware {
 			this.response = response;
 		}
 
+		public void handleUncached() throws Exception {
+			response.setContentType("image/png");
+			writeImage(generateImage(), response.getOutputStream());
+		}
+		
 		public void writeCacheItem(CacheItem cacheItem) throws IOException {
 			cacheItem.writeTo(response);
 		}
