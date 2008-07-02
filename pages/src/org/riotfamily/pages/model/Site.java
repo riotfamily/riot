@@ -42,7 +42,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.model.Content;
@@ -236,8 +235,7 @@ public class Site {
 		this.aliases = aliases;
 	}
 	
-	@ManyToOne(cascade=CascadeType.ALL)
-	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	public Content getProperties() {
 		return properties;
 	}

@@ -249,7 +249,7 @@ public abstract class AbstractFormController implements Controller {
 	protected void populateForm(Form form, HttpServletRequest request) 
 			throws Exception {
 		
-		form.setValue(getFormBackingObject(request));
+		form.setBackingObject(getFormBackingObject(request));
 	}
 	
 	/**

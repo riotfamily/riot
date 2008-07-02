@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -29,8 +29,7 @@ public class PageProperties extends ContentContainer {
 		pages = Collections.singleton(page);
 	}
 
-	@OneToMany
-	@JoinColumn(name="pageProperties")
+	@OneToMany(mappedBy="pageProperties", fetch=FetchType.EAGER)
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	public Set<Page> getPages() {
 		return pages;

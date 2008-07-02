@@ -281,13 +281,15 @@ public abstract class BaseFormController extends RepositoryFormController
 				Object bean = form.populateBackingObject();				
 				dao.save(bean, parent);
 				FormUtils.setObjectId(form, dao.getObjectId(bean));
-				form.setValue(bean);
+				//form.setBackingObject(bean);
 			}
 			else {
 				log.debug("Updating entity ...");
 				Object bean = form.getBackingObject();
-				form.getEditorBinder().setBackingObject(dao.merge(bean));
-				dao.update(form.populateBackingObject());
+				Object merged = dao.merge(bean);
+				form.setBackingObject(merged);
+				form.populateBackingObject();
+				dao.update(merged);
 			}
 		}
 		catch (Exception e) {

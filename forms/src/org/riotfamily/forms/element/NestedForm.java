@@ -72,6 +72,10 @@ public class NestedForm extends TemplateElement implements
 		this.editorBinder = editorBinder.replace(this.editorBinder);
 	}
 	
+	public void setBackingObject(Object value) {
+		editorBinder.setBackingObject(value);
+	}
+	
 	public void setBeanClass(Class<?> beanClass) {
 		Assert.notNull(beanClass, "The beanClass must not be null.");
 		if (Map.class.isAssignableFrom(beanClass)) {

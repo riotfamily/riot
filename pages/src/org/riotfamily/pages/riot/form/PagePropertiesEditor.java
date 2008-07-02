@@ -27,6 +27,7 @@ import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
+import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.element.NestedForm;
 import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
@@ -41,7 +42,7 @@ import org.riotfamily.riot.form.ui.FormUtils;
  * @since 7.0
  */
 public class PagePropertiesEditor extends CompositeElement 
-		implements Editor, ChangeListener {
+		implements Editor, NestedEditor, ChangeListener {
 
 	private FormRepository repository;
 	
@@ -97,6 +98,10 @@ public class PagePropertiesEditor extends CompositeElement
 	public void setValue(Object value) {
 		initialValue = value;
 		currentForm.setValue(value);
+	}
+	
+	public void setBackingObject(Object obj) {
+		currentForm.setBackingObject(obj);
 	}
 
 	public void valueChanged(ChangeEvent event) {

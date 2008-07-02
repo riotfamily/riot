@@ -41,7 +41,7 @@ public class ContentContainerEditorBinder extends AbstractEditorBinder {
 		return true;
 	}
 
-	public void setBackingObject(Object backingObject) {
+	protected void setBackingObjectInternal(Object backingObject) {
 		container = (ContentContainer) backingObject;
 		if (container == null) {
 			container = createContainer();

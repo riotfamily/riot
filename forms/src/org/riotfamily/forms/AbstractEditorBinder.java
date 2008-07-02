@@ -129,8 +129,25 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 		}
 	}
 
+	public final void setBackingObject(Object backingObject) {
+		setBackingObjectInternal(backingObject);
+		if (isEditingExistingBean()) {
+			for (EditorBinding binding : bindings) {
+				Editor editor = binding.getEditor();
+				if (editor instanceof NestedEditor) {
+					Object value = getPropertyValue(binding.getProperty());
+					NestedEditor nested = (NestedEditor) editor;
+					nested.setBackingObject(value);
+				}
+			}
+		}
+	}
+	
+	protected void setBackingObjectInternal(Object backingObject) {
+	}
+	
 	public void initEditors() {
-		for (EditorBinding binding  : bindings) {
+		for (EditorBinding binding : bindings) {
 			Editor editor = binding.getEditor();
 			Object value = null;
 			if (isEditingExistingBean()) {

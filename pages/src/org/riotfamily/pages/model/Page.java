@@ -41,7 +41,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.riotfamily.common.beans.MapWrapper;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.mapping.AttributePattern;
@@ -112,13 +111,13 @@ public class Page {
 		this.node = node;
 	}
 
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.MERGE)
 	public Site getSite() {
 		return this.site;
 	}
 
 	public void setSite(Site site) {
-		Assert.state(this.site == null, 
+		Assert.state(this.site == null || this.site.equals(site), 
 				"The page is already associated with a site");
 		
 		this.site = site;
@@ -293,8 +292,7 @@ public class Page {
 		return node.getPageType();
 	}
 
-	@ManyToOne(cascade=CascadeType.ALL)
-	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	public PageProperties getPageProperties() {
 		if (pageProperties == null) {
 			pageProperties = new PageProperties(this);

@@ -59,7 +59,7 @@ public class MapEditorBinder extends AbstractEditorBinder {
 		this.map = SpringUtils.newInstance(mapClass);
 	}
 
-	public void setBackingObject(Object backingObject) {
+	protected void setBackingObjectInternal(Object backingObject) {
 		if (backingObject != null) {
 			Assert.isInstanceOf(mapClass, backingObject);
 			map = (Map<Object, Object>) backingObject;

@@ -69,7 +69,7 @@ public class HibernatePageDao extends AbstractPageDao {
 	}
 
 	protected void saveObject(Object object) {
-		hibernate.save(object);
+		hibernate.persist(object);
 	}
 
 	protected void deleteObject(Object object) {

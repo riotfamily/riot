@@ -134,7 +134,6 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 				child.createNode(node, sites, this);
 			}
 		}
-		
 		saveObject(node);
 	}
 	
@@ -152,14 +151,16 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		if (node == null) {
 			node = new PageNode();
 		}
-		node.addPage(page); // It could be that the node does not yet contain
-							// the page itself, for example when edited nested...
 
+		node.addPage(page); // It could be that the node does not yet contain
+		// the page itself, for example when edited nested...
+
+		
 		if (!PageValidationUtils.isValidChild(parentNode, page)) {
 			log.warn("Page not saved because not valid: " + page);
 			throw new DuplicatePathComponentException("Page '{0}' did not validate", page.toString());
 		}
-
+		
 		parentNode.addChildNode(node);
 		page.setCreationDate(new Date());
 		

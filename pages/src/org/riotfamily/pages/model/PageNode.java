@@ -42,7 +42,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
@@ -102,7 +101,6 @@ public class PageNode {
 	 * the PageDao.
 	 */
 	@ManyToOne(cascade=CascadeType.MERGE)
-	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	public PageNode getParent() {
 		return this.parent;
 	}
@@ -119,7 +117,6 @@ public class PageNode {
 	 * Returns the set of {@link Page pages} associated with this node.
 	 */
 	@OneToMany(mappedBy="node", cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	public Set<Page> getPages() {
 		return pages;

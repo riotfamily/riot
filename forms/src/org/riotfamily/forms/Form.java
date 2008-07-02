@@ -165,14 +165,10 @@ public class Form implements BeanEditor {
 		}
 	}
 
-	public void setValue(Object backingObject) {
-		editorBinder.setBackingObject(backingObject);
+	public void setBackingObject(Object value) {
+		editorBinder.setBackingObject(value);
 	}
-
-	public Object getValue() {
-		return editorBinder.getBackingObject();
-	}
-
+	
 	public boolean isNew() {
 		return !editorBinder.isEditingExistingBean();
 	}
