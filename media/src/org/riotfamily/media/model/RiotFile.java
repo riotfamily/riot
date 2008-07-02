@@ -105,6 +105,10 @@ public class RiotFile {
 	public void setFileData(FileData fileData) {
 		this.fileData = fileData;
 	}
+	
+	public void addVariant(String name, RiotFile variant) {
+		fileData.addVariant(name, variant);
+	}
 
 	@Transient
 	public String getUri() {
