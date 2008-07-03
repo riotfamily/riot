@@ -110,9 +110,10 @@ public class ButtonRenderer extends ListItemRenderer implements BeanNameAware {
 	public String getRules() {
 		StringBuilder sb = new StringBuilder();
 		sb.append('.').append(id)
-				.append("{border:none;background-repeat:none;text-indent:-999em;")
+				.append("{border:0;background-repeat:none;text-indent:-999em;")
 				.append("height:").append(buttonHeight).append("px;}\n")
-				.append('.').append(id).append(":hover{")
+				.append('.').append(id).append(":hover,")
+				.append('.').append(id).append("Hover {")
 				.append("background-position:0 -").append(buttonHeight)
 				.append("px}\n");
 		

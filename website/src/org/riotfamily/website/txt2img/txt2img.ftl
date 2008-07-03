@@ -25,7 +25,7 @@
   -->
 <#macro button style tag="button" attributes...>
 	<#local label><#nested /></#local>
-	<#local attributes = attributes + {"class": style + " " + attributes.class!} />
+	<#local attributes = attributes + {"class": "txt2imgbtn " + style} />
 	<${tag} style="${txt2ImgMacroHelper.getButtonStyle(style, label)}" ${c.joinAttributes(attributes)}>${label?trim}</${tag}>
 </#macro>
 
@@ -36,3 +36,27 @@
 <#function buttonStyleSheet>
 	<#return c.pathForHandler('txt2imgButtonCssController') />
 </#function>
+
+<#---
+  - Renders an inline JavaScript to support hover states for buttons that are 
+  - no &lt;a&gt; elements in IE &lt; 7.
+  - <p>
+  - The macro outputs a function called <code>addButtonHoverHandler</code>
+  - which is automatically invoked when the DOM is ready. The code is wrapped
+  - inside a condtional comment so it won't be visible to other browsers.
+  - </p>
+  - <b>Note:</b> The code requires prototype.js to be loaded. 
+  -->
+<#macro insertButtonHoverHack>
+	<script type="text/javascript">
+	/*@cc_on
+	/*@if (@_jscript_version < 5.7)
+		function addButtonHoverHandler {
+			$$('.txt2imgbtn:not(a)').observe('mouseover', function() {this._txt2imgClass = this.className; this.className += 'Hover'})
+					.observe('mouseout', function() {this.className = this._txt2imgClass});
+		}
+		document.observe('dom:loaded', addButtonHoverHandler); 
+	/*@end
+	@*/
+	</script>
+</#macro>
