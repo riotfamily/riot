@@ -471,11 +471,11 @@ ul.radioButtonGroup {
 	background-image: url(images/image_checkbox_checked.gif);
 }
 
-.chooser .chosen span {
+.chooser span {
 	color: #3d3d3d;
 	padding-right: 10px;
 }
-.chooser .chosen img {
+.chooser img {
 	vertical-align: middle;
 }
 

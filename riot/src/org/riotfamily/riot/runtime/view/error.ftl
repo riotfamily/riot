@@ -16,17 +16,20 @@
 		</script>
 	</head>
 	<body id="error">
-		<h1><@spring.messageText "label.error.title", "An error has occurred" /></h1>
-		<p id="message">
-			${exception.getMessage()?if_exists}
-		</p>
-
-		<h2><a class="detail" href="javascript:showErrorDetail()"><@spring.messageText "label.error.detail", "Error Detail" /></a></h2>
-		<p id="stacktrace">
-		<#list rootCause.stackTrace as element>
-			<span class="className">${element.className}</span>.<span class="methodName">${element.methodName}</span><#if element.fileName?exists> <span class="source">(<span class="fileName">${element.fileName}</span>:<span class="lineNumber">${element.lineNumber}</span>)</span></#if><br />
-		</#list>
-		</p>
-
+		<div id="body-wrapper">
+			<div id="wrapper">	
+				<h1><@spring.messageText "label.error.title", "An error has occurred" /></h1>
+				<p id="message">
+					${exception.getMessage()?if_exists}
+				</p>
+			
+				<h2><a class="detail" href="javascript:showErrorDetail()"><@spring.messageText "label.error.detail", "Error Detail" /></a></h2>
+				<p id="stacktrace">
+				<#list rootCause.stackTrace as element>
+					<span class="className">${element.className}</span>.<span class="methodName">${element.methodName}</span><#if element.fileName?exists> <span class="source">(<span class="fileName">${element.fileName}</span>:<span class="lineNumber">${element.lineNumber}</span>)</span></#if><br />
+				</#list>
+				</p>
+			</div>
+		</div>
 	</body>
 </html>
