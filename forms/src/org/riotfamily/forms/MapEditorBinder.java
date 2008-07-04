@@ -91,6 +91,13 @@ public class MapEditorBinder extends AbstractEditorBinder {
 		if (value != null) {
 			return value.getClass();
 		}
+		Editor editor = findEditorByProperty(propertyName);
+		if (editor != null) {
+			value = editor.getValue();
+			if (value != null) {
+				return value.getClass();
+			}
+		}
 		return Object.class;
 	}
 	
