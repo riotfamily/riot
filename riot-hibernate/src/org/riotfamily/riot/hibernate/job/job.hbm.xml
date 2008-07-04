@@ -28,7 +28,7 @@
 			<generator class="native" />
 		</id>
 		<many-to-one name="job" access="field" />
-		<property name="date" access="field" />
+		<property name="date" access="field"><column name="`date`" /></property>
 		<property name="priority" access="field" />
 		<property name="message" access="field" />
 	</class>
