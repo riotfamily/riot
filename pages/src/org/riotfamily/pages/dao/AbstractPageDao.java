@@ -164,7 +164,6 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		PageNode node = page.getNode();
 		if (node == null) {
 			node = new PageNode();
-			
 		}
 
 		if (!PageValidationUtils.isValidChild(parentNode, page)) {
