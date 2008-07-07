@@ -1,0 +1,17 @@
+<ivy-module version="1.3">
+    <info organisation="riotfamily" module="riot-job" revision="${riot.revision}" />
+    <configurations>
+    	<conf name="build" />
+    	<conf name="runtime" />
+    	<conf name="test" extends="runtime" />
+    	<conf name="src" />
+    </configurations>
+    <publications>
+    	<artifact conf="build,runtime,test" />
+    	<artifact type="source" ext="src.zip" conf="src" />
+    </publications>
+    <dependencies>
+	    <dependency org="riotfamily" name="riot-hibernate" rev="${dep.riot.revision}" conf="*->@" />
+	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build,test->default;runtime->web,mail,aop;src->src" />
+    </dependencies>
+</ivy-module>

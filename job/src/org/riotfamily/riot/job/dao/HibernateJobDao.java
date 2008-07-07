@@ -27,67 +27,77 @@ import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.riotfamily.riot.hibernate.support.HibernateSupport;
+import org.hibernate.SessionFactory;
+import org.riotfamily.riot.hibernate.support.HibernateHelper;
 import org.riotfamily.riot.job.model.JobDetail;
 import org.riotfamily.riot.job.model.JobLogEntry;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public class HibernateJobDao extends HibernateSupport implements JobDao {
+public class HibernateJobDao implements JobDao {
+	
+	private HibernateHelper hibernate;
+	
+	public HibernateJobDao(SessionFactory sessionFactory) {		
+		this.hibernate = new HibernateHelper(sessionFactory);
+	}
 
 	public Collection<JobDetail> getJobDetails() {
-		return createQuery("from JobDetail job " +
-				"order by job.endDate desc").list();
+		Query query = hibernate.createQuery("from JobDetail job " +
+				"order by job.endDate desc");
+		return hibernate.list(query);
 	}
 	
 	public Collection<JobDetail> getPendingJobDetails() {
-		return createQuery("from JobDetail job where " +
+		Query query = hibernate.createQuery("from JobDetail job where " +
 				"job.state != " + JobDetail.CANCELED + " and " +
 				"job.state != " + JobDetail.COMPLETED + 
-				"order by job.startDate desc").list();
+				"order by job.startDate desc");
+		
+		return hibernate.list(query);
 	}
 	
 	public JobDetail getPendingJobDetail(String type, String objectId) {
-		Query query = createQuery("from JobDetail job where " +
+		Query query = hibernate.createQuery("from JobDetail job where " +
 				"job.state != " + JobDetail.CANCELED + " and " +
 				"job.state != " + JobDetail.COMPLETED + " and " +
-				"job.type = :type and job.objectId = :objectId " +
+				"job.type = :type and (:objectId is null or job.objectId = :objectId)" +
 				"order by job.startDate desc");
 		
 		query.setParameter("type", type);
 		query.setParameter("objectId", objectId);
 		query.setMaxResults(1);
 		
-		List<JobDetail> jobs = query.list();
+		List<JobDetail> jobs = hibernate.list(query);
 		if (jobs.isEmpty()) {
 			return null;
 		}
-		return (JobDetail) jobs.get(0);
+		return jobs.get(0);
 	}
 	
 	public JobDetail getLastCompletedJobDetail(String type, String objectId) {
-		Query query = createQuery("from JobDetail job where " +
+		Query query = hibernate.createQuery("from JobDetail job where " +
 				"job.state = " + JobDetail.COMPLETED  + " and " +
-				"job.type = :type and job.objectId = :objectId " +
+				"job.type = :type and (:objectId is null or job.objectId = :objectId)" +
 				"order by job.startDate desc");
 		
 		query.setParameter("type", type);
 		query.setParameter("objectId", objectId);
 		query.setMaxResults(1);
 		
-		List<JobDetail> jobs = query.list();
+		List<JobDetail> jobs = hibernate.list(query);
 		if (jobs.isEmpty()) {
 			return null;
 		}
-		return (JobDetail) jobs.get(0);
+		return jobs.get(0);
 	}
 	
 	public int getAverageStepTime(String type) {
-		Query query = createQuery("select avg(averageStepTime) from " +
+		Query query = hibernate.createQuery("select avg(averageStepTime) from " +
 				"JobDetail where stepsCompleted > 0 and " + "type = :type");
 			
 		query.setParameter("type", type);
-		Number time = (Number) query.uniqueResult();
+		Number time = hibernate.uniqueResult(query);
 		if (time == null) {
 			return 0;
 		}
@@ -95,27 +105,27 @@ public class HibernateJobDao extends HibernateSupport implements JobDao {
 	}
 	
 	public JobDetail getJobDetail(Long id) {
-		return (JobDetail) getSession().load(JobDetail.class, id);
+		return hibernate.get(JobDetail.class, id);
 	}
 	
 	public void saveJobDetail(JobDetail job) {
-		getSession().save(job);
+		hibernate.save(job);
 	}
 
 	public void updateJobDetail(JobDetail job) {
-		//getSession().update(job);
+		hibernate.update(job);
 	}
 
 	public Collection<JobLogEntry> getLogEntries(Long jobId) {
-		Query query = createQuery("from JobLogEntry e where " +
+		Query query = hibernate.createQuery("from JobLogEntry e where " +
 				"e.job.id = :jobId order by e.date desc");
 		
 		query.setParameter("jobId", jobId);
-		return query.list();
+		return hibernate.list(query);
 	}
 
 	public void log(JobLogEntry entry) {
-		getSession().save(entry);
+		hibernate.save(entry);
 	}
 
 }

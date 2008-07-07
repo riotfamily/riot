@@ -44,10 +44,10 @@ public class JobLogEntry {
 	
 	public static final int ERROR = 2;
 	
+	@Id @GeneratedValue(strategy=GenerationType.AUTO)	
 	private Long id;
 	
 	@ManyToOne
-	@AccessType("field")
 	private JobDetail job;
 	
 	private Date date;
@@ -69,31 +69,22 @@ public class JobLogEntry {
 		this.message = message;
 		this.date = new Date();
 	}
-
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	@AccessType("field")
-	public Long getId() {
-		return this.id;
-	}
-
+	
 	@Transient
 	public Long getJobId() {
 		return job.getId();
 	}
 	
-	@AccessType("field")
 	public Date getDate() {
 		return this.date;
 	}
 
-	@AccessType("field")
 	public String getMessage() {
 		return this.message;
 	}
-
-	@AccessType("field")
+	
 	public int getPriority() {
 		return this.priority;
 	}
-
+	
 }

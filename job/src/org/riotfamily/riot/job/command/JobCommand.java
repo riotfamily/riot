@@ -55,8 +55,15 @@ public class JobCommand extends AbstractCommand implements
 		String objectId = context.getObjectId() != null
 				? context.getObjectId() : context.getParentId();
 
+		StringBuffer url = new StringBuffer();
+		url.append(runtime.getServletPrefix())
+		   .append("/job?type=")
+		   .append(jobType);
 		
-		return new GotoUrlResult(context, runtime.getServletPrefix()
-				+ "/job?objectId="	+ objectId + "&type=" + jobType);
+		if (objectId != null) {
+			url.append("&objectId=")
+			   .append(objectId);
+		}
+		return new GotoUrlResult(context, url.toString());
 	}
 }

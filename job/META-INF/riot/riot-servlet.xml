@@ -1,15 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.5.xsd
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-		http://www.springframework.org/schema/util
-		http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-8.0.xsd">
 
 	<bean id="jobDao" class="org.riotfamily.riot.job.dao.HibernateJobDao">
-		<property name="sessionFactory" ref="sessionFactory" />
+		<constructor-arg ref="sessionFactory" />
 	</bean>
 	
 	<!-- 
@@ -19,8 +23,6 @@
 	-->
 	
 	<bean id="jobUIUpdater" class="org.riotfamily.riot.job.ui.JobUIUpdater" />
-
-	<bean id="jobDao" class="org.riotfamily.riot.job.dao.HibernateJobDao" />
 	
 	<bean id="jobManager" class="org.riotfamily.riot.job.JobManager">
 		<constructor-arg ref="jobDao" />
@@ -37,17 +39,12 @@
 		<property name="jobManager" ref="jobManager" />
 	</bean>
 
-	<override:add ref="dwrController" property="configurators">
-		<property name="converterTypes">
-			<props>
-				<prop key="org.riotfamily.riot.job.model.*">bean</prop>
-			</props>
-		</property>
-		<property name="serviceBeans">
-			<map>
-				<entry key="JobUIService" value-ref="jobUIService" />
-			</map>
-		</property>
-	</override:add>
+	<override:put ref="riotDwrConfigurator" property="converterTypes">		
+		<entry key="org.riotfamily.riot.job.model.*" value="bean"></entry>		
+	</override:put>
+
+	<override:put ref="riotDwrConfigurator" property="serviceBeans">		
+		<entry key="JobUIService" value-ref="jobUIService" />		
+	</override:put>
 
 </beans>
