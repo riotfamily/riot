@@ -530,6 +530,47 @@
 	<!--
 	  - Controller that exposes DWR services.
 	  -->
+	
+	<bean id="riotDwrConfigurator" class="org.riotfamily.common.web.dwr.SpringConfigurator">
+		<property name="converters">
+			<map>
+				<entry key="java.lang.Exception">
+					<bean class="org.directwebremoting.convert.ExceptionConverter">
+						<property name="include" value="message,lineNumber" />
+					</bean>
+				</entry>
+			</map>
+		</property>
+		<property name="converterTypes">
+			<props>
+				<prop key="org.riotfamily.riot.list.ui.*">bean</prop>
+				<prop key="org.riotfamily.riot.list.command.*">bean</prop>
+			</props>
+		</property>
+		<property name="serviceBeans">
+			<map>
+				<entry key="ListService" value-ref="listService" />
+			</map>
+		</property>
+		<property name="serviceInterfaces">
+			<list>
+				<value>org.riotfamily.riot.list.ui.ListService</value>
+			</list>
+		</property>
+		<property name="signatures">
+			<value>
+				import org.riotfamily.riot.list.ui.ListItem;
+				import org.riotfamily.riot.list.command.CommandState;
+				import java.util.List;
+				import javax.servlet.http.HttpServletRequest;
+				ListItem.setColumns(List&lt;String&gt;);
+				ListItem.setCommands(List&lt;CommandState&gt;);
+				ListService.filter(String, Map&lt;String, List&gt;, HttpServletRequest);
+				ListService.execBatchCommand(String, List&lt;ListItem&gt;, CommandState, boolean, HttpServletRequest, HttpServletResponse);
+			</value>
+		</property>
+	</bean>
+				
 	<bean id="dwrController"
 		name="/resources/*/dwr/**"
 		class="org.riotfamily.common.web.dwr.DwrController">
@@ -542,45 +583,7 @@
 		</property>
 		<property name="configurators">
 			<list>
-				<bean class="org.riotfamily.common.web.dwr.SpringConfigurator">
-					<property name="converters">
-						<map>
-							<entry key="java.lang.Exception">
-								<bean class="org.directwebremoting.convert.ExceptionConverter">
-									<property name="include" value="message,lineNumber" />
-								</bean>
-							</entry>
-						</map>
-					</property>
-					<property name="converterTypes">
-						<props>
-							<prop key="org.riotfamily.riot.list.ui.*">bean</prop>
-							<prop key="org.riotfamily.riot.list.command.*">bean</prop>
-						</props>
-					</property>
-					<property name="serviceBeans">
-						<map>
-							<entry key="ListService" value-ref="listService" />
-						</map>
-					</property>
-					<property name="serviceInterfaces">
-						<list>
-							<value>org.riotfamily.riot.list.ui.ListService</value>
-						</list>
-					</property>
-					<property name="signatures">
-						<value>
-							import org.riotfamily.riot.list.ui.ListItem;
-							import org.riotfamily.riot.list.command.CommandState;
-							import java.util.List;
-							import javax.servlet.http.HttpServletRequest;
-							ListItem.setColumns(List&lt;String&gt;);
-							ListItem.setCommands(List&lt;CommandState&gt;);
-							ListService.filter(String, Map&lt;String, List&gt;, HttpServletRequest);
-							ListService.execBatchCommand(String, List&lt;ListItem&gt;, CommandState, boolean, HttpServletRequest, HttpServletResponse);
-						</value>
-					</property>
-				</bean>
+				<ref bean="riotDwrConfigurator" />
 			</list>
 		</property>
 	</bean>
