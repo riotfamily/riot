@@ -23,22 +23,25 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.misc;
 
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.bind.MapServletRequestDataBinder;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.util.Assert;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
-
-import freemarker.template.Configuration;
-import freemarker.template.Template;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * Simple controller that sends data collected from a from via email.
@@ -46,6 +49,8 @@ import freemarker.template.Template;
  */
 public class SimpleMailFormController extends SimpleFormController 
 		implements InitializingBean {
+	
+	private Pattern labelPattern = Pattern.compile("\\|([^\\|]*)\\|([^\\|]*)\\|");
 
 	private String to;
 	
@@ -57,12 +62,8 @@ public class SimpleMailFormController extends SimpleFormController
 	
 	private MailSender mailSender;
 	
-	private Configuration freemarkerConfig;
-	
-	private String mailTemplateName;
-	
 	private String[] requiredFields;
-	
+
 	
 	public SimpleMailFormController() {
 		setCommandClass(HashMap.class);
@@ -98,14 +99,6 @@ public class SimpleMailFormController extends SimpleFormController
 		this.mailSender = mailSender;
 	}
 
-	public void setFreemarkerConfig(Configuration freemarkerConfig) {
-		this.freemarkerConfig = freemarkerConfig;
-	}
-
-	public void setMailTemplateName(String mailTemplateName) {
-		this.mailTemplateName = mailTemplateName;
-	}
-
 	public void setRequiredFields(String[] requiredFields) {
 		this.requiredFields = requiredFields;
 	}
@@ -113,8 +106,6 @@ public class SimpleMailFormController extends SimpleFormController
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(to);
 		Assert.notNull(mailSender);
-		Assert.notNull(freemarkerConfig);
-		Assert.notNull(mailTemplateName);
 	}
 	
 	protected void initBinder(HttpServletRequest request, 
@@ -123,22 +114,60 @@ public class SimpleMailFormController extends SimpleFormController
 		binder.setRequiredFields(requiredFields);
 	}
 	
-	protected void doSubmitAction(Object command) throws Exception {
-		Template template = freemarkerConfig.getTemplate(mailTemplateName);
+	@Override
+	protected ModelAndView onSubmit(HttpServletRequest request,
+			HttpServletResponse response, Object command, BindException errors)
+			throws Exception {
 		
-		StringWriter mailTextWriter = new StringWriter();
-		template.process(command, mailTextWriter);
-	
 		SimpleMailMessage mail = new SimpleMailMessage();
 		mail.setTo(to);
 		mail.setBcc(bcc);
 		mail.setFrom(from);
 		mail.setSubject(subject);
-		mail.setText(mailTextWriter.toString());
+		
+		mail.setText(getMailText(request, command));
 		prepareMail(mail, command);
 		mailSender.send(mail);
+		
+		String url = ServletUtils.getOriginatingRequestUri(request) + "?success=true"; 
+		return new ModelAndView(new RedirectView(url));
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	protected String getMailText(HttpServletRequest request, Object command) {		
 
+		Map<String, String> labels = new HashMap<String, String>();
+		
+		String fieldString = request.getParameter("_fields");
+		Matcher m = labelPattern.matcher(fieldString);		
+		while (m.find()) {
+			labels.put(m.group(1), m.group(2));			
+		}
+		
+		String[] fields = labelPattern.matcher(fieldString).replaceAll("").split(",");
+		
+		Map<String, String> values = (Map<String, String>) command;
+		StringBuffer mailText = new StringBuffer();		
+		for (int i = 0; i < fields.length; i++) {
+			String field = fields[i];
+			if (labels.containsKey(field)) {
+				if (i > 0) {
+					mailText.append("\n\n");
+				}		
+				mailText.append(labels.get(field))
+				  	    .append(':');				  
+			}
+			String value = values.get(field);
+			if (value == null) {
+				value = "-";
+			}
+			mailText.append(' ').append(value);
+		}	
+		
+		return mailText.toString();
+	}
+	
 	/**
 	 * This method can be overriden in order to manipulate the mail before it
 	 * is being sent.
