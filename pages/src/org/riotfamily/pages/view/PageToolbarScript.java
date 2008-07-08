@@ -40,12 +40,8 @@ public class PageToolbarScript implements DynamicToolbarScript {
 		if (page != null) {
 			return String.format(
 					"riotComponentFormParams.pageId = %s;\n" +
-					"riotComponentFormParams.siteId = %s;\n" + 
-					"riotDefaultContainerId = %s;\n" +
-					"riotDefaultContentId = %s;", 
-					page.getId(), page.getSite().getId(),
-					page.getPageProperties().getId(),
-					page.getPageProperties().getContent(true).getId());
+					"riotComponentFormParams.siteId = %s;\n", 
+					page.getId(), page.getSite().getId());
 		}
 		return null;
 	}

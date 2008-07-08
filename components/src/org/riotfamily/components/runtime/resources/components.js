@@ -85,11 +85,7 @@ riot.findContainer = function(el) {
 	}
 	if (el) {
 		return riot.getContentContainer(el);
-	}
-	if (!riot.defaultContainer) {
-		riot.defaultContainer = new riot.ContentContainer(riotDefaultContainerId);
-	}
-	return riot.defaultContainer;
+	}	
 }
 
 /**
@@ -138,10 +134,7 @@ riot.findContent = function(el) {
 	}
 	if (el) {
 		return riot.getContent(el);
-	}
-	if (!riot.defaultContent) {
-		riot.defaultContent = new riot.Content(null, riotDefaultContentId);
-	}
+	}	
 }
 
 riot.ContentContainer = Class.create({ 
@@ -726,7 +719,6 @@ riot.applyOn = function() {
 		.collect(riot.getContainer)
 		.pluck('id'); 
 	
-	containerIds.push(riotDefaultContainerId);
 	riot.applyFunction(containerIds);
 	riot.previewFrame.initialized = false;
 	riot.toolbar.disablePublishButtons();
