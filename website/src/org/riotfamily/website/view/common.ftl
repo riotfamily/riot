@@ -268,6 +268,13 @@
 	<#return commonMacroHelper.toTitleCase(s) />
 </#function>
 
+<#---
+  - Strips HTML Tags and Whitespaces from the given String
+  -->
+<#function stripTagsAndWhitespaces s>
+	<#return commonMacroHelper.stripTagsAndWhitespaces(s) />
+</#function>
+
 <#function toDelimitedString collection delim=",">
 	<#return commonMacroHelper.toDelimitedString(collection, delim) />
 </#function>

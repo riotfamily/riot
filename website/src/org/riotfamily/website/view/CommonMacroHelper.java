@@ -337,6 +337,11 @@ public class CommonMacroHelper {
 	public String toTitleCase(String s) {
 		return FormatUtils.fileNameToTitleCase(s);
 	}
+	
+	public String stripTagsAndWhitespaces(String s) {
+		return FormatUtils.stripWhitespaces(FormatUtils.stripTags(s));
+	}
+	
 
 	public static class ObjectGroup {
 		
