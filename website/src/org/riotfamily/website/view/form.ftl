@@ -30,8 +30,10 @@
   -->
 <#macro form command attributes...>
 	<#assign command = command />
+	<#assign fields = "" />
 	<form${c.joinAttributes(attributes)}>
 		<#nested />
+		<input type="hidden" name="_fields" value="${fields?xml}" />
 	</form>
 </#macro>
 
@@ -99,6 +101,7 @@
 	</#if>
 	<#local attributes = addErrorClass(attributes, field, errorClass) />
 	<label for="${for}"${c.joinAttributes(attributes)}>${text}</label>
+	<#assign fields = fields + "|" + field + "|" + c.stripTagsAndWhitespaces(text) + '|'/>
 </#macro>
 
 <#function getValue field>
@@ -114,6 +117,7 @@
 	</#if>
 	<#local attributes = addErrorClass(attributes, field, errorClass) />
     <input id="${id}" type="${type}" name="${field}" value="${getValue(field)}"${c.joinAttributes(attributes)} />
+    <#assign fields = fields + field + ',' />
 </#macro>
 
 <#---
@@ -122,6 +126,7 @@
 <#macro textarea field id=field errorClass="error" attributes...>
 	<#local attributes = addErrorClass(attributes, field, errorClass) />
     <textarea id="${id}" name="${field}"${c.joinAttributes(attributes)}>${getValue(field)}</textarea>
+    <#assign fields = fields + field + ',' />
 </#macro>
 
 <#---
@@ -151,6 +156,7 @@
         	<@option value label selected />
         </@listOptions>
     </select>
+    <#assign fields = fields + field + ',' />
 </#macro>
 
 <#---
@@ -160,27 +166,44 @@
 	<#local attributes = addErrorClass(attributes, field, errorClass) />
 	<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check getStatus(command, field).value?if_exists />${c.joinAttributes(attributes)} />
 	<input type="hidden" name="_${field}" value="on"/>
+	<#assign fields = fields + field + ',' />
 </#macro>
 
 <#---
   - Renders a list of checkboxes for the given options. See also #listOptions.
   -->
-<#macro checkboxes field options>
+<#macro checkboxes field options labelFirst=false>
+	<#assign fields = fields + "|" + field + "|" />	
 	<@listOptions field options ; value, label, checked, id>
-		<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check checked/> />
-		<label for="${id}">${label}</label>
+		<#if labelFirst>
+			<label for="${id}">${label}</label>
+			<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check checked/> />		
+		<#else>
+			<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check checked/> />
+			<label for="${id}">${label}</label>
+		</#if>
+		<#assign fields = fields + c.stripTagsAndWhitespaces(label) + ' '/>
 	</@listOptions>
 	<input type="hidden" name="_${field}" value="on" />
+	<#assign fields = fields + '|' + field + ',' />
 </#macro>
 
 <#---
   - Renders a list of radio buttons for the given options. See also #listOptions.
   -->
-<#macro radioButtons field options>
+<#macro radioButtons field options labelFirst=false>
+	<#assign fields = fields + "|" + field + "|" />	
 	<@listOptions field options ; value, label, checked, id>
-		<input type="radio" name="${field}" id="${id}" value="${value}"<@check checked/> />
-		<label for="${id}">${label}</label>
+		<#if labelFirst>
+			<label for="${id}">${label}</label>
+			<input type="radio" name="${field}" id="${id}" value="${value}"<@check checked/> />
+		<#else>			
+			<input type="radio" name="${field}" id="${id}" value="${value}"<@check checked/> />
+			<label for="${id}">${label}</label>
+		</#if>		
+		<#assign fields = fields + c.stripTagsAndWhitespaces(label) + ' '/>
 	</@listOptions>
+	<#assign fields = fields + '|' + field + ',' />
 </#macro>
 
 <#---
