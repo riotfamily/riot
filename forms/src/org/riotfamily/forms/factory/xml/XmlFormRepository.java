@@ -74,7 +74,7 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	
 	private MimetypesFileTypeMap mimetypesMap;
 	
-	private Map<String, Object> tinyMCEProfiles;
+	private Map<String, Map<String, Object>> tinyMCEProfiles;
 	
 	private HashMap<String, Class<? extends Element>> customElements;
 	
@@ -165,10 +165,10 @@ public class XmlFormRepository extends AbstractFormRepository implements
 		if (profile == null) {
 			profile = "default";
 		}
-		return (Map<String, Object>) tinyMCEProfiles.get(profile);
+		return tinyMCEProfiles.get(profile);
 	}
 
-	public void setTinyMCEProfiles(Map<String, Object> profiles) {
+	public void setTinyMCEProfiles(Map<String, Map<String, Object>> profiles) {
 		this.tinyMCEProfiles = profiles;
 	}
 
