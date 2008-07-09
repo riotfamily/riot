@@ -58,17 +58,6 @@
 		<list:command id="add" />
 	</list:list>
 	
-	<list:list id="pageAliases">
-		<list:dao ref="pageAliasRiotDao" />
-		<list:columns>
-			<list:column property="path" />
-			<list:column property="page.path" />
-			<list:command id="edit" />
-			<list:command id="delete" />
-		</list:columns>
-		<list:command id="add" />
-	</list:list>
-
 	<list:list id="pages" default-command="showChildPages">
 		<list:dao ref="pageRiotDao" />
 		<list:columns>
@@ -117,9 +106,4 @@
 		</form:group>
 	</form:form>
 	
-	<form:form id="pageAlias" bean-class="org.riotfamily.pages.model.PageAlias">
-		<form:textfield bind="path" />
-		<riot:chooser bind="page" display="path" target-editor-id="page" root-editor-id="pages" />
-	</form:form>
-
 </riot-config>

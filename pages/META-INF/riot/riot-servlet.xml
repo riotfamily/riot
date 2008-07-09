@@ -85,12 +85,6 @@
 		<property name="pageDao" ref="pageDao" />
 	</bean>
 	
-	<bean id="pageAliasRiotDao" class="org.riotfamily.riot.hibernate.dao.HqlParentChildDao">
-		<property name="sessionFactory" ref="sessionFactory" />
-		<property name="entityClass" value="org.riotfamily.pages.model.PageAlias" />
-		<property name="parentProperty" value="site" />
-	</bean>
-
 	<bean id="locales" class="org.riotfamily.pages.riot.form.SiteLocalesOptionsModel">
 		<constructor-arg ref="pageDao" />
 	</bean>
