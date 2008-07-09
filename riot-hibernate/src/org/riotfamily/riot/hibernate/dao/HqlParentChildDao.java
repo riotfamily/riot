@@ -24,6 +24,7 @@
 package org.riotfamily.riot.hibernate.dao;
 
 import org.hibernate.Query;
+import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.ListParams;
@@ -40,6 +41,10 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
 
     private String parentProperty;
     
+	public HqlParentChildDao(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
+
 	public String getParentProperty() {
 		return parentProperty;
 	}

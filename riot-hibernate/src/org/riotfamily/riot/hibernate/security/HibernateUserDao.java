@@ -24,9 +24,11 @@
 package org.riotfamily.riot.hibernate.security;
 
 import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.HashUtils;
+import org.riotfamily.riot.hibernate.dao.AbstractHibernateRiotDao;
 import org.riotfamily.riot.hibernate.dao.HqlDao;
 import org.riotfamily.riot.list.support.ListParamsImpl;
 import org.riotfamily.riot.security.auth.RiotUser;
@@ -40,8 +42,8 @@ import org.springframework.util.Assert;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class HibernateUserDao extends HqlDao implements RiotUserDao, 
-		InitializingBean {
+public class HibernateUserDao extends AbstractHibernateRiotDao 
+		implements RiotUserDao {
 
 	public static final String DEFAULT_USERNAME = "admin";
 	
@@ -57,11 +59,16 @@ public class HibernateUserDao extends HqlDao implements RiotUserDao,
 	
 	private RiotUser initialUser;
 	
+	public HibernateUserDao(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
+
 	/**
 	 * Sets the user class.
 	 * @throws IllegalArgumentException if the given class does not implement 
 	 *         the {@link RiotUser} interface.
 	 */
+	@Override
 	public void setEntityClass(Class<?> entityClass) {
 		Assert.isAssignable(RiotUser.class, entityClass);
 		super.setEntityClass(entityClass);
@@ -125,7 +132,8 @@ public class HibernateUserDao extends HqlDao implements RiotUserDao,
 	 * contain any user objects.
 	 * </p> 
 	 */
-	public void afterPropertiesSet() throws Exception {
+	@Override
+	protected void initDao() throws Exception {
 		if (initialUser != null) {
 			Assert.isInstanceOf(getEntityClass(), initialUser);
 		}
@@ -140,6 +148,7 @@ public class HibernateUserDao extends HqlDao implements RiotUserDao,
 					
 			PropertyUtils.setProperty(initialUser, passwordProperty, password);
 		}
+		super.initDao();
 	}
 	
 	/**
@@ -159,7 +168,7 @@ public class HibernateUserDao extends HqlDao implements RiotUserDao,
 		if (hashPasswords) {
 			password = hashPassword(password);
 		}
-		Criteria c = createCriteria(getEntityClass())
+		Criteria c = getSession().createCriteria(getEntityClass())
 			.add(Restrictions.eq(usernameProperty, username))
 			.add(Restrictions.eq(passwordProperty, password));
 			

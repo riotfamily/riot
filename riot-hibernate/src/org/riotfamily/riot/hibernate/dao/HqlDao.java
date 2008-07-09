@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.dao;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,13 +30,12 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Query;
+import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.Order;
-import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.dao.SortableDao;
 import org.riotfamily.riot.dao.SwappableItemDao;
-import org.riotfamily.riot.hibernate.support.HibernateSupport;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.riotfamily.riot.list.support.EmptyListParams;
 import org.springframework.util.Assert;
@@ -45,12 +43,10 @@ import org.springframework.util.Assert;
 /**
  * RiotDao implementation based on Hibernate.
  */
-public class HqlDao extends HibernateSupport implements RiotDao,
+public class HqlDao extends AbstractHibernateRiotDao implements 
 		SortableDao, SwappableItemDao {
 
 	private static final Log log = LogFactory.getLog(HqlDao.class);
-
-    private Class<?> entityClass;
 
     private boolean polymorph = true;
 
@@ -60,44 +56,23 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     
     private boolean setPositionOnSave;
 
-	/**
-     * @return Returns the itemClass.
-     */
-    public Class<?> getEntityClass() {
-        return entityClass;
-    }
+    
+    public HqlDao(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
 
-    /**
-     * @param itemClass The itemClass to set.
-     */
-    public void setEntityClass(Class<?> itemClass) {
-        this.entityClass = itemClass;
-    }
-
-    /**
-     * @return Returns the polymorph.
-     */
-    public boolean isPolymorph() {
+	public boolean isPolymorph() {
         return polymorph;
     }
 
-    /**
-     * @param polymorph The polymorph to set.
-     */
     public void setPolymorph(boolean polymorph) {
         this.polymorph = polymorph;
     }
 
-    /**
-     * @return Returns the where.
-     */
     public String getWhere() {
         return where;
     }
 
-    /**
-     * @param where The where to set.
-     */
     public void setWhere(String where) {
         this.where = where;
     }
@@ -106,19 +81,21 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 		this.positionProperty = positionProperty;
 	}
 
-	public String getObjectId(Object item) {
-		return HibernateUtils.getIdAsString(getSessionFactory(), item);
+	public void setSetPositionOnSave(boolean setPositionOnSave) {
+		this.setPositionOnSave = setPositionOnSave;
+	}
+	
+	protected boolean isSetPositionOnSave() {
+		return setPositionOnSave;
 	}
 
+	
 	/**
      * Returns a list of items.
      */
-    public Collection<?> list(Object parent, ListParams params) {
-        return listInternal(parent, params);
-    }
-
+	@Override
     protected List<?> listInternal(Object parent, ListParams params) {
-    	Query query = createQuery(buildHql(parent, params));
+    	Query query = getSession().createQuery(buildHql(parent, params));
     	setQueryParameters(query, parent, params);
         if (params.getPageSize() > 0) {
             query.setFirstResult(params.getOffset());
@@ -131,7 +108,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
      * Returns the total number of items.
      */
     public int getListSize(Object parent, ListParams params) {
-        Query query = createQuery(buildCountHql(parent, params));
+        Query query = getSession().createQuery(buildCountHql(parent, params));
         setQueryParameters(query, parent, params);
         Number size = (Number) query.uniqueResult();
         if (size == null) {
@@ -145,7 +122,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 
     	if (params.getFilter() != null) {
     		if (params.getFilter() instanceof Map) {
-    			Map filterMap = (Map) params.getFilter();
+    			Map<?, ?> filterMap = (Map<?, ?>) params.getFilter();
     			query.setProperties(filterMap);
     		}
     		else {
@@ -167,7 +144,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     protected String buildMaxPositionHql(Object parent) {
     	StringBuffer hql = new StringBuffer();
     	hql.append("select max(").append(positionProperty).append(") from ");
-    	hql.append(entityClass.getName());
+    	hql.append(getEntityClass().getName());
     	hql.append(" as this");
     	HibernateUtils.appendHql(
     		hql, "where", getWhereClause(parent, new EmptyListParams()));
@@ -181,7 +158,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     protected String buildCountHql(Object parent, ListParams params) {
     	StringBuffer hql = new StringBuffer();
     	hql.append("select count(this) from ");
-    	hql.append(entityClass.getName());
+    	hql.append(getEntityClass().getName());
     	hql.append(" as this");
     	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
     	log.debug(hql);
@@ -194,7 +171,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     protected String buildHql(Object parent, ListParams params) {
     	StringBuffer hql = new StringBuffer();
     	hql.append("select this from ");
-    	hql.append(entityClass.getName());
+    	hql.append(getEntityClass().getName());
     	hql.append(" as this");
     	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
     	HibernateUtils.appendHql(hql, "order by", getOrderBy(params));
@@ -223,7 +200,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 
         if (!polymorph) {
         	HibernateUtils.appendHql(sb, "and", "(this.class = ")
-        		.append(entityClass.getName()).append(')');
+        		.append(getEntityClass().getName()).append(')');
         }
 
         return sb.toString();
@@ -255,7 +232,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     
     protected void setPositionIfNeeded(Object entity, Object parent) {
     	if (setPositionOnSave) {
-    		Query query = createQuery(buildMaxPositionHql(parent));
+    		Query query = getSession().createQuery(buildMaxPositionHql(parent));
     		Number maxPosition = (Number) query.uniqueResult();
     		
     		PropertyUtils.setProperty(entity, positionProperty,
@@ -263,26 +240,11 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     	}
     }
 
+    @Override
     public void save(Object entity, Object parent) {
     	setPositionIfNeeded(entity, parent);
-    	getSession().save(entity);
+    	super.save(entity, parent);
     }
-
-    public void delete(Object entity, Object parent) {
-    	getSession().delete(entity);
-    }
-
-    public Object load(String objectId) {
-    	Assert.notNull(objectId, "A non-null id must be passed to load()");
-		return HibernateUtils.get(getSession(), entityClass, objectId);
-    }
-
-    public Object merge(Object entity) {
-		return getSession().merge(entity);
-	}
-    
-    public void update(Object entity) {
-	}
 
     public void swapEntity(Object item, Object parent, ListParams params,
     		int swapWith) {
@@ -298,16 +260,5 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     	PropertyUtils.setProperty(item, positionProperty, pos2);
     	PropertyUtils.setProperty(nextItem, positionProperty, pos1);
     }
-
-	/**
-	 * @param setPositionOnSave the setPositionOnSave to set
-	 */
-	public void setSetPositionOnSave(boolean setPositionOnSave) {
-		this.setPositionOnSave = setPositionOnSave;
-	}
-	
-	protected boolean isSetPositionOnSave() {
-		return setPositionOnSave;
-	}
 
 }

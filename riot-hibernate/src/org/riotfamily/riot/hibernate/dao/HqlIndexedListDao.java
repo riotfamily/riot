@@ -26,11 +26,16 @@ package org.riotfamily.riot.hibernate.dao;
 import java.util.Collections;
 import java.util.List;
 
+import org.hibernate.SessionFactory;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.SwappableItemDao;
 
 public class HqlIndexedListDao extends HqlCollectionDao 
 		implements SwappableItemDao {
+
+	public HqlIndexedListDao(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
 
 	public void swapEntity(Object entity, Object parent, 
     		ListParams params, int swapWith) {

@@ -30,28 +30,24 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Query;
+import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.Order;
 import org.riotfamily.riot.dao.ParentChildDao;
 import org.riotfamily.riot.dao.SortableDao;
-import org.riotfamily.riot.hibernate.support.HibernateSupport;
-import org.riotfamily.riot.hibernate.support.HibernateUtils;
-import org.springframework.util.Assert;
 
 
 /**
  * RiotDao implementation that loads a bean and returns one of the
  * bean's properties as (filtered) collection.
  */
-public class HqlCollectionDao extends HibernateSupport 
+public class HqlCollectionDao extends AbstractHibernateRiotDao 
 		implements SortableDao, ParentChildDao, CutAndPasteEnabledDao {
 
 	private Log log = LogFactory.getLog(HqlCollectionDao.class);
 	
-	private Class<?> entityClass;
-    
 	private boolean polymorph = true;
         
     private String where;
@@ -62,15 +58,12 @@ public class HqlCollectionDao extends HibernateSupport
     
     private String collectionProperty; 
     
-	public Class<?> getEntityClass() {
-        return entityClass;
-    }
-     
-    public void setEntityClass(Class<?> itemClass) {
-        this.entityClass = itemClass;
-    }
     
-    public void setPolymorph(boolean polymorph) {
+    public HqlCollectionDao(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
+
+	public void setPolymorph(boolean polymorph) {
         this.polymorph = polymorph;
     }
         
@@ -90,10 +83,6 @@ public class HqlCollectionDao extends HibernateSupport
 		this.parentProperty = parentProperty;
 	}
     
-	public String getObjectId(Object entity) {
-		return HibernateUtils.getIdAsString(getSessionFactory(), entity);
-	}
-
 	public Object getParent(Object entity) {
 		if (parentProperty != null) {
 			return PropertyUtils.getProperty(entity, parentProperty);
@@ -103,23 +92,25 @@ public class HqlCollectionDao extends HibernateSupport
 		hql.append(" parent join parent.").append(collectionProperty);
 		hql.append(" child where child = :child");
 		
-		Query query = createQuery(hql.toString());
+		Query query = getSession().createQuery(hql.toString());
 		query.setMaxResults(1);
 		query.setParameter("child", entity);
 		return query.uniqueResult();
 	}
     
+	@Override
 	public void save(Object entity, Object parent) {
 		if (parentProperty != null) {
     		PropertyUtils.setProperty(entity, parentProperty, parent);
     	}
 		getCollection(parent).add(entity);
-		getSession().save(entity);
+		super.save(entity, parent);
     }
     
+	@Override
     public void delete(Object entity, Object parent) {
     	getCollection(parent).remove(entity);
-		getSession().delete(entity);
+		super.delete(entity, parent);
     }
        
     @SuppressWarnings("unchecked")
@@ -131,7 +122,7 @@ public class HqlCollectionDao extends HibernateSupport
         boolean hasWhere = false;
         if (!polymorph) {
             hql.append(" where this.class = ");
-            hql.append(entityClass.getName());
+            hql.append(getEntityClass().getName());
             hasWhere = true;
         }
         if (where != null) {
@@ -142,10 +133,7 @@ public class HqlCollectionDao extends HibernateSupport
         hql.append(getOrderBy(params));
     }
 
-	public Collection<?> list(Object parent, ListParams params) {
-        return listInternal(parent, params);
-	}
-	
+	@Override
 	protected List<?> listInternal(Object parent, ListParams params) {
 		StringBuffer hql = new StringBuffer("select this ");
         buildQueryString(hql, params);	                    
@@ -170,7 +158,7 @@ public class HqlCollectionDao extends HibernateSupport
         StringBuffer hql = new StringBuffer("select count(*) ");
         if (!polymorph) {
             hql.append(" where this.class = ");
-            hql.append(entityClass.getName());
+            hql.append(getEntityClass().getName());
         }
         if (where != null) {
             hql.append(polymorph ? " where " : " and ");
@@ -206,18 +194,6 @@ public class HqlCollectionDao extends HibernateSupport
         return sb.toString();
     }
         
-    public Object load(String objectId) {
-    	Assert.notNull(objectId, "A non-null id must be passed to load()");
-		return HibernateUtils.get(getSession(), entityClass, objectId);
-    }
-    
-    public Object merge(Object entity) {
-		return getSession().merge(entity);
-	}
-    
-    public void update(Object entity) {
-	}
-    
     public void addChild(Object entity, Object parent) {
     	getCollection(parent).add(entity);
     	if (parentProperty != null) {

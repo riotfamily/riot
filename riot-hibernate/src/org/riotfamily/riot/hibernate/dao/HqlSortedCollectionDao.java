@@ -26,6 +26,7 @@ package org.riotfamily.riot.hibernate.dao;
 import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.SwappableItemDao;
@@ -35,6 +36,10 @@ public class HqlSortedCollectionDao extends HqlCollectionDao
 
 	private String positionProperty;
 	
+	public HqlSortedCollectionDao(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
+
 	public void setPositionProperty(String positionProperty) {
 		this.positionProperty = positionProperty;
 	}
