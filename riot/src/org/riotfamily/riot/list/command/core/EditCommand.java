@@ -39,9 +39,9 @@ import org.springframework.util.Assert;
  */
 public class EditCommand extends AbstractCommand {
 	
-	private static final String ACTION_EDIT = "edit";
+	public static final String ACTION_EDIT = "edit";
 	
-	private static final String ACTION_ADD = "add";
+	public static final String ACTION_ADD = "add";
 	
 	protected String getAction(CommandContext context) {
 		if (context.getObjectId() == null) {
