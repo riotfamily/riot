@@ -10,6 +10,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
@@ -17,6 +18,19 @@ import org.springframework.util.Assert;
 public final class SpringUtils {
 
 	private SpringUtils() {
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static<T> T classForName(String className) {
+		try {
+			return (T) Class.forName(className);
+		} 
+		catch (ClassNotFoundException e) {
+			throw new BeanCreationException("Class not found", e);
+		}
+		catch (ClassCastException e) {
+			throw new BeanCreationException("Invalid cast", e);
+		}
 	}
 	
 	public static<T> T newInstance(Class<T> clazz) {
@@ -29,6 +43,19 @@ public final class SpringUtils {
 		catch (IllegalAccessException e) {
 			throw new BeanCreationException("Instantiation failed", e);
 		}
+	}
+	
+	public static<T> T newInstance(String className) {
+		Class<T> clazz = classForName(className);
+		return newInstance(clazz);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static<T> T createBean(String className, 
+			AutowireCapableBeanFactory beanFactory, int autowire) {
+		
+		Class<?> beanClass = SpringUtils.classForName(className);
+		return (T) beanFactory.createBean(beanClass, autowire, false);
 	}
 	
 	@SuppressWarnings("unchecked")

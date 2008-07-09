@@ -33,7 +33,6 @@ import java.util.regex.Pattern;
 
 import org.riotfamily.common.util.Generics;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.NullValueInNestedPathException;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -218,30 +217,6 @@ public final class PropertyUtils {
             }
         }
         return ClassUtils.getUserClass(clazz);
-    }
-
-    /**
-     * Creates a new instance of the class specified by the given name.
-     * The method uses {@link ClassUtils#forName(String)} and
-     * {@link BeanUtils#instantiateClass(Class)} internally.
-     * ClassNotFoundExceptions are caught and re-thrown as
-     * {@link FatalBeanException}.
-     */
-    @SuppressWarnings("unchecked")
-	public static<T> T newInstance(String className) {
-		try {
-			Class<T> clazz = ClassUtils.forName(className);
-			return clazz.newInstance();
-		}
-		catch (ClassNotFoundException e) {
-			throw new FatalBeanException(e.getMessage(), e);
-		} 
-		catch (InstantiationException e) {
-			throw new FatalBeanException(e.getMessage(), e);
-		}
-		catch (IllegalAccessException e) {
-			throw new FatalBeanException(e.getMessage(), e);
-		}
     }
 
 }
