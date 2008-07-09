@@ -58,14 +58,21 @@ public class HibernateJobDao implements JobDao {
 	}
 	
 	public JobDetail getPendingJobDetail(String type, String objectId) {
-		Query query = hibernate.createQuery("from JobDetail job where " +
-				"job.state != " + JobDetail.CANCELED + " and " +
-				"job.state != " + JobDetail.COMPLETED + " and " +
-				"job.type = :type and (:objectId is null or job.objectId = :objectId)" +
-				"order by job.startDate desc");
+		StringBuffer hql = new StringBuffer();
+		hql.append("from JobDetail job where")
+		   .append(" job.state != ")
+		   .append(JobDetail.CANCELED)
+		   .append(" and job.state != ")
+		   .append(JobDetail.COMPLETED)
+		   .append(" and job.type = :type");
+		if (objectId != null) {
+			hql.append(" and job.objectId = :objectId");
+		}
+		hql.append(" order by job.startDate desc");
+		Query query = hibernate.createQuery(hql.toString());
 		
-		query.setParameter("type", type);
-		query.setParameter("objectId", objectId);
+		hibernate.setParameter(query, "type", type);
+		hibernate.setParameter(query, "objectId", objectId);
 		query.setMaxResults(1);
 		
 		List<JobDetail> jobs = hibernate.list(query);
@@ -76,13 +83,19 @@ public class HibernateJobDao implements JobDao {
 	}
 	
 	public JobDetail getLastCompletedJobDetail(String type, String objectId) {
-		Query query = hibernate.createQuery("from JobDetail job where " +
-				"job.state = " + JobDetail.COMPLETED  + " and " +
-				"job.type = :type and (:objectId is null or job.objectId = :objectId)" +
-				"order by job.startDate desc");
+		StringBuffer hql = new StringBuffer();
+		hql.append("from JobDetail job where")
+		   .append(" job.state = ")
+		   .append(JobDetail.COMPLETED)
+		   .append(" and job.type = :type");
+		if (objectId != null) {
+			hql.append(" and job.objectId = :objectId");
+		}
+		hql.append(" order by job.startDate desc");
+		Query query = hibernate.createQuery(hql.toString());
 		
-		query.setParameter("type", type);
-		query.setParameter("objectId", objectId);
+		hibernate.setParameter(query, "type", type);
+		hibernate.setParameter(query, "objectId", objectId);
 		query.setMaxResults(1);
 		
 		List<JobDetail> jobs = hibernate.list(query);
