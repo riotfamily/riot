@@ -45,10 +45,6 @@
 
 	<bean id="messageCodesResolver" class="org.riotfamily.common.i18n.RiotMessageCodesResolver" />
 
-	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">
-		<property name="proxyTargetClass" value="true" />
-	</bean>
-
 	<bean class="org.riotfamily.riot.runtime.RiotRuntimeBeanPostProcessor">
 		<constructor-arg ref="riotRuntime" />
 	</bean>

@@ -28,23 +28,6 @@
 
 	<bean id="riotDaoService" class="org.riotfamily.riot.list.RiotDaoService" />
 	
-	<bean id="riotDaoPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
-		<property name="classFilter">
-			<bean class="org.springframework.aop.support.RootClassFilter">
-				<constructor-arg value="org.riotfamily.riot.dao.RiotDao" />
-			</bean>
-		</property>
-		<property name="mappedNames">
-			<list>
-				<value>save</value>
-				<value>update</value>
-				<value>delete</value>
-				<value>addChild</value>
-				<value>swapEntity</value>
-			</list>
-		</property>
-	</bean>
-
 	<bean id="riotAccessControlInterceptor" class="org.riotfamily.riot.security.session.AccessControlInterceptor" />
 
 	<!--
