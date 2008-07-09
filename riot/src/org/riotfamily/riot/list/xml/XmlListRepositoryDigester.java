@@ -27,14 +27,14 @@ package org.riotfamily.riot.list.xml;
 import java.util.Iterator;
 import java.util.List;
 
-import org.riotfamily.common.beans.PropertyUtils;
-import org.riotfamily.common.xml.XmlUtils;
+import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.xml.DocumentDigester;
+import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.list.ColumnConfig;
 import org.riotfamily.riot.list.ListConfig;
 import org.riotfamily.riot.list.ListRepository;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Document;
@@ -77,10 +77,10 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	
 	private ListRepository listRepository;
 	
-	private BeanFactory beanFactory;
+	private AutowireCapableBeanFactory beanFactory;
 		
 	public XmlListRepositoryDigester(ListRepository listRepository,
-			BeanFactory beanFactory) {
+			AutowireCapableBeanFactory beanFactory) {
 		
 		this.listRepository = listRepository;
 		this.beanFactory = beanFactory;
@@ -150,7 +150,8 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	 * Creates a new instance of the specified Dao class.
 	 */
 	protected RiotDao instanciateDao(String className) {
-		return (RiotDao) PropertyUtils.newInstance(className);
+		return SpringUtils.createBean(className, beanFactory, 
+				AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
 	}
 
 	/**

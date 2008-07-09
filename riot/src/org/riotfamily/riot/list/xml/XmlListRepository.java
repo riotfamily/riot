@@ -34,14 +34,20 @@ import org.riotfamily.common.xml.DocumentReader;
 import org.riotfamily.common.xml.ValidatingDocumentReader;
 import org.riotfamily.riot.list.ListConfig;
 import org.riotfamily.riot.list.ListRepository;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.io.Resource;
+import org.springframework.util.Assert;
 
 /**
  *
  */
-public class XmlListRepository extends ListRepository implements 
-		InitializingBean, ConfigurableBean {
+public class XmlListRepository extends ListRepository implements
+		BeanFactoryAware, InitializingBean, ConfigurableBean {
 
 	private List<Resource> configLocations;
 	
@@ -49,7 +55,10 @@ public class XmlListRepository extends ListRepository implements
 	
 	private BeanConfigurationWatcher configWatcher;
 	
+	
 	private XmlListRepositoryDigester digester;
+
+	private AutowireCapableBeanFactory beanFactory;
 	
 	public XmlListRepository() {
 		configWatcher = new BeanConfigurationWatcher(this);
@@ -81,8 +90,13 @@ public class XmlListRepository extends ListRepository implements
 		configWatcher.addListener(listener);
 	}
 	
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		Assert.isInstanceOf(AutowireCapableBeanFactory.class, beanFactory);
+		this.beanFactory = (AutowireCapableBeanFactory) beanFactory;
+	}
+	
 	public void afterPropertiesSet() throws Exception {
-		digester = new XmlListRepositoryDigester(this, getApplicationContext());
+		digester = new XmlListRepositoryDigester(this, beanFactory);
 		configure();
 	}
 	
