@@ -33,9 +33,11 @@ public class RiotImageRenderer implements ObjectRenderer {
 
 	public void render(Object obj, RenderContext context, PrintWriter writer) {
 		RiotImage image = (RiotImage) obj;
-		writer.format("<img src=\"%s\" width=\"%s\" height=\"%s\" />",
-				context.getContextPath() + image.getUri(), 
-				image.getWidth(), image.getHeight());
+		if (image != null) {
+			writer.format("<img src=\"%s\" width=\"%s\" height=\"%s\" />",
+					context.getContextPath() + image.getUri(), 
+					image.getWidth(), image.getHeight());
+		}
 	}
 
 }
