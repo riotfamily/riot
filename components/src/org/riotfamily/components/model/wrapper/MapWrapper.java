@@ -31,7 +31,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -41,9 +40,9 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.IndexColumn;
 import org.riotfamily.common.util.Generics;
-
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -56,10 +55,10 @@ public class MapWrapper extends ValueWrapper<Map<String, Object>>
 
 	private Map<String, Object> wrapperMap;
 		
-	@OneToMany(targetEntity=ValueWrapper.class, cascade=CascadeType.ALL)
+	@OneToMany(targetEntity=ValueWrapper.class)
 	@JoinColumn(name="map_value")
 	@IndexColumn(name="map_key")
-	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@Cascade(CascadeType.ALL)
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 	public Map<String, Object> getWrapperMap() {
 		return wrapperMap;

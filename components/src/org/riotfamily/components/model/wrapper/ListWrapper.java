@@ -32,7 +32,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -41,7 +40,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-
+import org.hibernate.annotations.CascadeType;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -66,8 +65,8 @@ public class ListWrapper extends ValueWrapper<List<?>>
 	public void setValue(List<?> value) {
 	}
 
-	@OneToMany(cascade=CascadeType.ALL)
-	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@OneToMany
+	@Cascade(CascadeType.ALL)
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 	public List<ValueWrapper<?>> getWrapperList() {
 		return wrapperList;

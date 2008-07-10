@@ -31,6 +31,8 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.media.model.RiotImage;
 
@@ -73,6 +75,7 @@ public class CroppedImageData extends ImageData {
 	}
 
 	@ManyToOne
+	@Cascade(CascadeType.ALL)
 	public RiotImage getOriginal() {
 		return this.original;
 	}

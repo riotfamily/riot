@@ -7,6 +7,8 @@ import javax.persistence.JoinColumn;
 
 import org.hibernate.annotations.Any;
 import org.hibernate.annotations.AnyMetaDef;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 @DiscriminatorValue("Entity")
@@ -24,6 +26,7 @@ public class EntityWrapper extends ValueWrapper<Object> {
 	@Any(metaColumn=@Column(name="entity_table"))
 	@AnyMetaDef(idType="long", metaType="string", metaValues={})
 	@JoinColumn(name="entity_id")
+	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public Object getValue() {
 		return value;
 	}

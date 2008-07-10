@@ -23,13 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model.wrapper;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.riotfamily.media.model.RiotFile;
 
 /**
@@ -42,9 +42,9 @@ public class RiotFileWrapper extends ValueWrapper<RiotFile> {
 
 	private RiotFile value;
 
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name="riot_file_id")
-	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@Cascade(CascadeType.ALL)
 	public RiotFile getValue() {
 		return value;
 	}

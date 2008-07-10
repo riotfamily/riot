@@ -26,7 +26,6 @@ package org.riotfamily.components.model;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -40,6 +39,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 @Table(name="riot_content_containers")
@@ -67,8 +68,9 @@ public class ContentContainer {
 		this.id = id;
 	}
 
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name="live_version")
+	@Cascade(CascadeType.ALL)
 	public Content getLiveVersion() {
 		return this.liveVersion;
 	}
@@ -77,8 +79,9 @@ public class ContentContainer {
 		this.liveVersion = liveVersion;
 	}
 
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name="preview_version")
+	@Cascade(CascadeType.ALL)
 	public Content getPreviewVersion() {
 		if (previewVersion == null) {
 			previewVersion = new Content();

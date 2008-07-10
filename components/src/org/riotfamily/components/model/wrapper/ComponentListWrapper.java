@@ -1,12 +1,12 @@
 package org.riotfamily.components.model.wrapper;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.riotfamily.components.model.ComponentList;
 
 @Entity
@@ -15,9 +15,9 @@ public class ComponentListWrapper extends ValueWrapper<ComponentList> {
 
 	private ComponentList value;
 
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name="component_list_id")
-	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@Cascade(CascadeType.ALL)
 	public ComponentList getValue() {
 		return value;
 	}

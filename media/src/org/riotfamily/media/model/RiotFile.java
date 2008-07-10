@@ -30,7 +30,6 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -43,7 +42,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.riotfamily.media.model.data.FileData;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -59,6 +60,8 @@ public class RiotFile {
 	private Long id;
 	
 	private FileData fileData;
+	
+	private boolean dirty;
 	
 	public RiotFile() {
 	}
@@ -96,18 +99,26 @@ public class RiotFile {
 		this.id = id;
 	}
 
-	@ManyToOne(cascade=CascadeType.PERSIST)
-	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@ManyToOne
+	@Cascade({CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public FileData getFileData() {
 		return fileData;
 	}
 	
 	public void setFileData(FileData fileData) {
+		if (!ObjectUtils.nullSafeEquals(this.fileData, fileData)) {
+			dirty = true;
+		}
 		this.fileData = fileData;
 	}
 	
 	public void addVariant(String name, RiotFile variant) {
 		fileData.addVariant(name, variant);
+	}
+	
+	@Transient
+	public boolean isDirty() {
+		return dirty;
 	}
 
 	@Transient

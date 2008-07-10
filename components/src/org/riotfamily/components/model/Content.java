@@ -30,7 +30,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
@@ -48,6 +47,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.IndexColumn;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.components.model.wrapper.ValueWrapperService;
@@ -121,10 +121,10 @@ public class Content {
 		}
 	}
 
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany
 	@JoinColumn(name="content")
 	@IndexColumn(name="property")
-	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@Cascade(CascadeType.ALL)
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 	public Map<String, ValueWrapper<?>> getWrappers() {
 		if (wrappers == null) {

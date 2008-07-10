@@ -26,7 +26,6 @@ package org.riotfamily.components.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -38,6 +37,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.IndexColumn;
 
 @Entity
@@ -71,9 +72,10 @@ public class ComponentList {
 		this.type = type;
 	}
 
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany
 	@JoinColumn(name="list")
 	@IndexColumn(name="list_pos")
+	@Cascade(CascadeType.ALL)
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 	public List<Component> getComponents() {
 		if (components == null) {

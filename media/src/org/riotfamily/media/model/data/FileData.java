@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -47,6 +46,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.HashUtils;
 import org.riotfamily.media.model.RiotFile;
@@ -275,8 +275,8 @@ public class FileData {
 		this.files = files;
 	}
 	
-	@OneToMany(cascade=CascadeType.PERSIST)
-	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@OneToMany
+	@Cascade(CascadeType.ALL)
 	public Map<String, RiotFile> getVariants() {
 		return this.variants;
 	}
