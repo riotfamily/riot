@@ -23,6 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.dao;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
@@ -67,15 +70,6 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
 		super.delete(entity, parent);
 	}
 	
-	protected void setQueryParameters(Query query, Object parent, 
-			ListParams params) {
-		
-		super.setQueryParameters(query, parent, params);
-		 if (parent != null) {
-        	query.setParameter("parent", parent);
-        }
-	}
-	
     protected String getWhereClause(Object parent, ListParams params) {
         StringBuffer sb = new StringBuffer();
         if (parentProperty != null) {
@@ -89,8 +83,29 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
         	}
         }
         HibernateUtils.appendHql(sb, "and", super.getWhereClause(parent, params));
-        return sb.toString();
+        
+        return sb.toString().replaceAll(":parent\\.(\\w+)", ":parent_$1");
     }
+    
+    protected void setQueryParameters(Query query, Object parent, 
+			ListParams params) {
+		
+		super.setQueryParameters(query, parent, params);
+		 if (parent != null) {
+			for (String param : query.getNamedParameters()) {
+				Object value = parent;
+				Matcher m = Pattern.compile("parent(?:_(\\w+))?").matcher(param);
+				if (m.matches()) {
+					String nested = m.group(1);
+					if (nested != null) {
+						value = PropertyUtils.getProperty(parent, nested);
+					}
+				}
+				query.setParameter(param, value);
+			}
+        }
+	}
+    
     
     public void addChild(Object entity, Object parent) {
     	PropertyUtils.setProperty(entity, parentProperty, parent);
