@@ -70,7 +70,7 @@ public abstract class AbstractHibernateRiotDao extends HibernateDaoSupport imple
 	}
 	
 	public void save(Object entity, Object parent) throws DataAccessException {
-		getSession().persist(entity);
+		getSession().save(entity);
 	}
 
 	public Object merge(Object entity) throws DataAccessException {
