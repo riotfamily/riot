@@ -34,6 +34,7 @@ import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ErrorUtils;
+import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.JavaScriptEvent;
@@ -54,7 +55,7 @@ import org.springframework.web.multipart.MultipartFile;
  * A widget to upload files.
  */
 public class FileUpload extends CompositeElement implements Editor,
-		ResourceElement {
+		ResourceElement, NestedEditor {
 
 	protected static FormResource RESOURCE = new ScriptResource(
 			"inline-upload.js", null, 
@@ -66,9 +67,7 @@ public class FileUpload extends CompositeElement implements Editor,
 	
 	private RiotFile file;
 	
-	private RiotFile rejectedFile;
-
-	private boolean fileUploaded;
+	private RiotFile uploadedFile;
 	
 	public FileUpload(ProcessingService processingService) {
 		this.processingService = processingService;
@@ -89,6 +88,10 @@ public class FileUpload extends CompositeElement implements Editor,
 		return new PreviewElement();
 	}
 	
+	public void setBackingObject(Object obj) {
+		setValue(getEditorBinding().getValue());
+	}
+	
 	public void setValue(Object value) {
 		log.debug("Value set to: " + value);
 		if (value == null) {
@@ -103,8 +106,17 @@ public class FileUpload extends CompositeElement implements Editor,
 	}
 
 	public Object getValue() {
-		if (fileUploaded && processor != null) {
-			processingService.process(file.getFileData(), processor);
+		if (uploadedFile != null) {
+			if (processor != null) {
+				processingService.process(uploadedFile.getFileData(), processor);
+			}
+			if (file == null) {
+				file = uploadedFile;
+			}
+			else {
+				file.setFileData(uploadedFile.getFileData());
+			}
+			uploadedFile = null;
 		}
 		return file;
 	}
@@ -113,12 +125,12 @@ public class FileUpload extends CompositeElement implements Editor,
 		return file;
 	}
 	
-	protected RiotFile getRejectedFile() {
-		return rejectedFile;
+	protected RiotFile getUploadedFile() {
+		return uploadedFile;
 	}
 	
 	protected RiotFile getPreviewFile() {
-		return rejectedFile != null ? rejectedFile : file;
+		return uploadedFile != null ? uploadedFile : file;
 	}
 	
 	/**
@@ -136,15 +148,15 @@ public class FileUpload extends CompositeElement implements Editor,
 	}
 	
 	protected void processRequestInternal(FormRequest request) {
-		validate(getPreviewFile());
+		validate();
 	}
 	
-	private void validate(RiotFile file) {
+	private void validate() {
 		ErrorUtils.removeErrors(this);
-		if (file != null) {
-			validateFile(file);
+		if (uploadedFile != null) {
+			validateFile(uploadedFile);
 		}
-		else if (isRequired()) {
+		else if (file == null && isRequired()) {
 			ErrorUtils.rejectRequired(this);
 		}
 	}
@@ -152,23 +164,11 @@ public class FileUpload extends CompositeElement implements Editor,
 	protected void validateFile(RiotFile file) {
 	}
 	
-	protected void setNewFile(RiotFile file) {
-		validate(file);
-		if (!ErrorUtils.hasErrors(this)) {
-			this.file = file;
-			this.rejectedFile = null;
-			this.fileUploaded = true;
-		}
-		else {
-			this.rejectedFile = file;
-			this.file = null;
-		}
+	protected final void setNewFile(RiotFile file) {
+		uploadedFile = file;
+		validate();
 	}
-	
-	public boolean isFileUploaded() {
-		return this.fileUploaded;
-	}
-	
+		
 	public class UploadElement extends TemplateElement
 			implements JavaScriptEventAdapter {
 
