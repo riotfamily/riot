@@ -44,6 +44,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.collaboration.SharedProperties;
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.mapping.HandlerUrlResolver;
@@ -240,15 +241,13 @@ public class CommonMacroHelper {
      * @param titleProperty The property to use for grouping
      * @return A list of {@link ObjectGroup ObjectGroups}
      */
-    public List<ObjectGroup> partition(Collection<?> c, String titleProperty) {
-		ArrayList<ObjectGroup> groups = new ArrayList<ObjectGroup>();
-		ObjectGroup group = null;
-		for (Object item : c) {
+    public<T> List<ObjectGroup<?, T>> partition(Collection<T> c, String titleProperty) {
+		ArrayList<ObjectGroup<?, T>> groups = Generics.newArrayList();
+		ObjectGroup<Object, T> group = null;
+		for (T item : c) {
 			Object title = PropertyUtils.getProperty(item, titleProperty);
-			if (group == null || (title != null
-					&& !title.equals(group.getTitle()))) {
-
-				group = new ObjectGroup(title, item);
+			if (group == null || (title != null && !title.equals(group.getTitle()))) {
+				group = ObjectGroup.newInstance(title, item, false);
 				groups.add(group);
 			}
 			else {
@@ -340,32 +339,5 @@ public class CommonMacroHelper {
 	
 	public String stripTagsAndWhitespaces(String s) {
 		return FormatUtils.stripWhitespaces(FormatUtils.stripTags(s));
-	}
-	
-
-	public static class ObjectGroup {
-		
-		private Object title;
-		
-		private List<Object> items;
-
-		private ObjectGroup(Object title, Object item) {
-			this.title = title;
-			this.items = new ArrayList<Object>();
-			this.items.add(item);
-		}
-
-		public void add(Object item) {
-			items.add(item);
-		}
-		
-		public Object getTitle() {
-			return this.title;
-		}
-		
-		public List<Object> getItems() {
-			return this.items;
-		}
-
 	}
 }
