@@ -108,6 +108,8 @@ public interface PageDao {
 	public void savePage(Page parent, Page child);
 
 	public Page addTranslation(Page page, Site site);
+	
+	public Page addTranslation(PageNode node, Site site, String pathComponent);
 
 	public Object mergePage(Page page);
 

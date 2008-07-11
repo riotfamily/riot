@@ -189,6 +189,19 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		PageCacheUtils.invalidateNode(cacheService, node.getParent());
 		return translation;
 	}
+	
+	public Page addTranslation(PageNode node, Site site, String pathComponent) {
+		log.info("Adding translation " + node + " --> " + site);
+		Page translation = new Page();
+		translation.setSite(site);
+		translation.setCreationDate(new Date());
+		translation.setPathComponent(pathComponent);
+				
+		node.addPage(translation);		
+		saveObject(translation);
+		PageCacheUtils.invalidateNode(cacheService, node.getParent());
+		return translation;
+	}
 
 	public void updatePage(Page page) {
 		PageNode node = page.getNode();
