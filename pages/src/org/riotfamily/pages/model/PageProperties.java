@@ -49,6 +49,9 @@ public class PageProperties extends ContentContainer {
 		return pages.iterator().next();
 	}
 	
+	public Map<String, Object> unwrap() {
+		return unwrap(false);
+	}
 	
 	public Map<String, Object> unwrap(boolean preview) {
 		Map<String, Object> mergedProperties;
