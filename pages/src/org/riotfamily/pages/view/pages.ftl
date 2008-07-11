@@ -13,6 +13,8 @@
 <#---
   - Returns the page with the given pageType. There must be only
   - one PageNode with that pageType, otherwise an exception is thrown.
+  - @param pageType The pageType to look up
+  - @param site The site to use in case the site can't be determined from the current request
   -->
 <#function pageOfType pageType site=currentSite>
 	<#return pagesMacroHelper.getPageOfType(pageType, site) />
@@ -20,14 +22,17 @@
 
 <#---
   - Returns all pages with the given pageType.
+  - @param pageType The pageType to look up
+  - @param site The site to use in case the site can't be determined from the current request
   -->
 <#function pagesOfType pageType site=currentSite>
 	<#return pagesMacroHelper.getPagesOfType(pageType, site) />
 </#function>
 
 <#---
-  - Returns the page for the given url.
-  - @param site The site to use in case the site can't be determined from the url
+  - Returns the page for the given URL.
+  - @param url The URL to get page for
+  - @param site The site to use in case the site can't be determined from the URL
   -->
 <#function pageForUrl url site=currentSite>
 	<#return pagesMacroHelper.getPageForUrl(url, site) />
@@ -56,8 +61,4 @@
 	<#else>
 		<@c.link href=c.url(page.url) attributes=attributes>${page[labelKey]}</@c.link>
 	</#if>
-</#macro>
-
-<#macro componentList key page=currentPage min=0 max=1000 initial=[] valid=[]>
-	<@inplace.componentList page.contentContainer key min max initial valid />
 </#macro>
