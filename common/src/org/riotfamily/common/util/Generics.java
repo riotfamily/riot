@@ -64,6 +64,10 @@ public final class Generics {
 		return new LinkedHashSet<V>(c);
 	}
 	
+	public static<V> TreeSet<V> newTreeSet() {
+		return new TreeSet<V>();
+	}
+	
 	public static<V> TreeSet<V> newTreeSet(Comparator<? super V> comparator) {
 		return new TreeSet<V>(comparator);
 	}
