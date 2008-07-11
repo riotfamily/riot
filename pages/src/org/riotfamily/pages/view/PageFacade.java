@@ -119,8 +119,7 @@ public class PageFacade {
 	}
 
 	public String getWildcardUrl(Object attributes) {
-		String host = page.getSite().getHostName();
-		if (host != null && !host.equals(request.getServerName())) {
+		if (!page.getSite().hostNameMatches(request.getServerName())) {
 			return getAbsoluteWildcardUrl(attributes);
 		}
 		return page.getUrl(pathCompleter, attributes);
