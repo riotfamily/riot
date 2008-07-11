@@ -92,13 +92,17 @@ td {
 	vertical-align: middle;
 	float: none;
 }
+td img {
+	vertical-align: middle;
+}
 
 table.selectable td.col-1 {
 	white-space: nowrap;
 }
 
 td input.check {
-	margin: 0 6px 0 6px;
+	margin: 0 6px 1px 6px;
+	vertical-align: middle;
 }
 .expand {
 	width: 15px;
