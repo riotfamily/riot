@@ -26,8 +26,14 @@ package org.riotfamily.pages.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.view.PageToViewNameTranslator;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -35,17 +41,41 @@ import org.springframework.web.servlet.mvc.Controller;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 8.0
  */
-public class PageController implements Controller {
+public class PageController implements Controller, ApplicationContextAware {
 
-	public ModelAndView handleRequest(HttpServletRequest request, 
+	private PageToViewNameTranslator pageToViewNameTranslator;
+	
+	private ApplicationContext applicationContext;
+	
+	public final void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+		pageToViewNameTranslator = SpringUtils.beanOfType(applicationContext, 
+				PageToViewNameTranslator.class);
+	}
+	
+	protected final ApplicationContext getApplicationContext() {
+		return applicationContext;
+	}
+
+	public final ModelAndView handleRequest(HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		
 		Page page = PageResolver.getResolvedPage(request);
-		String pageType = page.getPageType();
-		if (pageType == null) {
-			pageType = "default";
-		}
-		return new ModelAndView(pageType + ".ftl");
+		
+		ExtendedModelMap model = new ExtendedModelMap();
+		populateModel(model, page, request, response);
+		
+		String viewName = pageToViewNameTranslator.getViewName(page);
+		return new ModelAndView(viewName, model);
+	}
+	
+	protected void populateModel(Model model, Page page,
+			HttpServletRequest request, HttpServletResponse response) {
+		
+		populateModel(model, page);
+	}
+
+	protected void populateModel(Model model, Page page) {
 	}
 	
 }

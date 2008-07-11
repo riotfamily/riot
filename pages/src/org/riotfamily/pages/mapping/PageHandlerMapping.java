@@ -35,7 +35,6 @@ import org.riotfamily.common.web.mapping.AbstractReverseHandlerMapping;
 import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.common.web.mapping.UrlResolverContext;
 import org.riotfamily.common.web.servlet.PathCompleter;
-import org.riotfamily.pages.controller.PageController;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
@@ -58,7 +57,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	
 	private PathCompleter pathCompleter;
 
-	private Object defaultPageHandler = new PageController();
+	private Object defaultPageHandler;
 
 	private PathMatcher pathMatcher = new AntPathMatcher();
 	
@@ -71,6 +70,12 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		this.pathCompleter = pathCompleter;
 	}
 
+	/**
+	 * Sets the handler to use if no matching handler for the page's
+	 * pageType is found. The handler will only be returned when the request
+	 * maps to a page. Otherwise the {@link #getDefaultHandler() default handler}
+	 * will be used.
+	 */
 	public void setDefaultPageHandler(Object defaultPageHandler) {
 		this.defaultPageHandler = defaultPageHandler;
 	}

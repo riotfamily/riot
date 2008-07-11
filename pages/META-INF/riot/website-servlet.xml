@@ -20,11 +20,19 @@
 		<constructor-arg ref="pageDao" />
 		<constructor-arg ref="pageResolver" />
 		<constructor-arg ref="pathCompleter" />
+		<property name="defaultPageHandler">
+			<bean class="org.riotfamily.pages.controller.PageController" />
+		</property>
 		<property name="interceptors">
 			<list>
 				<ref bean="riotInterceptors" />
 			</list>
 		</property>
+	</bean>
+	
+	<bean id="pageToViewNameTranslator" class="org.riotfamily.pages.view.DefaultPageToViewNameTranslator">
+		<property name="defaultPageType" value="default" />
+		<property name="suffix" value=".ftl" />
 	</bean>
 	
 	<bean id="folderFilterPlugin" class="org.riotfamily.pages.mapping.FolderFilterPlugin">
