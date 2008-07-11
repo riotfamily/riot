@@ -300,10 +300,10 @@ public class Page {
 		return pageProperties;
 	}
 
-	public void setPageProperties(PageProperties contentContainer) {
-		this.pageProperties = contentContainer;
+	public void setPageProperties(PageProperties pageProperties) {
+		this.pageProperties = pageProperties;
 	}
-
+	
 	@Transient
 	public Page getMasterPage() {
 		Page masterPage = null;
