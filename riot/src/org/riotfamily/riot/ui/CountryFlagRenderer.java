@@ -39,8 +39,14 @@ public class CountryFlagRenderer implements ObjectRenderer, RiotRuntimeAware {
 
 	private RiotRuntime runtime;
 
+	private String internationalFlag = "int";
+	
 	public void setRiotRuntime(RiotRuntime runtime) {
 		this.runtime = runtime;
+	}
+	
+	public void setInternationalFlag(String internationalFlag) {
+		this.internationalFlag = internationalFlag;
 	}
 
 	protected boolean flagExists(String flag) {
@@ -53,7 +59,7 @@ public class CountryFlagRenderer implements ObjectRenderer, RiotRuntimeAware {
 	protected void renderFlag(String flag, String title, 
 			RenderContext context, PrintWriter writer) {
 		
-		writer.print("<img src=\"");
+		writer.print("<img class=\"flag\" src=\"");
 		writer.print(context.getContextPath());
 		writer.print(runtime.getResourcePath());
 		writer.print("style/icons/flags/");
@@ -79,9 +85,10 @@ public class CountryFlagRenderer implements ObjectRenderer, RiotRuntimeAware {
 			else {
 				flag = obj.toString();
 			}
-			if (flagExists(flag)) {
-				renderFlag(flag, title, context, writer);
+			if (!flagExists(flag)) {
+				flag = internationalFlag;
 			}
+			renderFlag(flag, title, context, writer);
 		}
 	}
 
