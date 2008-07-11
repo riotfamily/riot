@@ -4,10 +4,7 @@
   -->
 
 <#--- @internal -->
-<#assign scope = .data_model />
-
-<#--- @internal -->
-<#assign currentListId = "" />
+<#assign currentModel = .data_model />
 
 <#---
   - Whether the page is viewed in edit-mode.
@@ -78,8 +75,11 @@
 	</#if>
 </#macro>
 
-<#macro componentList container key min=0 max=1000 initial=[] valid=[]>
-	${inplaceMacroHelper.renderComponentList(container, key, min, max, initial, valid)!}
+<#macro componentList key min=0 max=1000 initial=[] valid=[]>
+	<#if !currentContainer??>
+		<#stop "Use inplace.use to select a container">
+	</#if>
+	${inplaceMacroHelper.renderComponentList(currentContainer, key, min, max, initial, valid)!}
 </#macro>
 
 <#macro nestedComponentList key min=0 max=1000 initial=[] valid=[]>
@@ -160,7 +160,7 @@
 		<#if alwaysUseNested>
 			<#local value><#nested /></#local>
 		<#else>
-			<#local value = scope[key]?if_exists />
+			<#local value = currentModel[key]?if_exists />
 			<#if !value?has_content>
 				<#local value><#nested /></#local>
 			</#if>
@@ -198,7 +198,7 @@
 			<#local maxHeight = height />
 			<#local defaultHeight = height />
 		</#if>
-		<#local value = (scope[key].uri)!default>
+		<#local value = (currentModel[key].uri)!default>
 		<#if value?has_content>
 			<#if transform?is_string>
 				<#local src = transform?replace("*", value) />
@@ -207,11 +207,11 @@
 			</#if>
 			<#if tag == "img">
 				<#local attributes = attributes + {"src": src} />
-				<#if !attributes.width?has_content && scope[key]??>
-					<#local attributes = attributes + {"width": scope[key].width?c} />
+				<#if !attributes.width?has_content && currentModel[key]??>
+					<#local attributes = attributes + {"width": currentModel[key].width?c} />
 				</#if>
-				<#if !attributes.height?has_content && scope[key]??>
-					<#local attributes = attributes + {"height": scope[key].height?c} />
+				<#if !attributes.height?has_content && currentModel[key]??>
+					<#local attributes = attributes + {"height": currentModel[key].height?c} />
 				</#if>
 				<#if !attributes.alt?has_content>
 					<#local attributes = attributes + {"alt": " "} />
@@ -281,8 +281,9 @@
   -->
 <#macro use container form="" tag="" attributes...>
 	<#local attributes = c.unwrapAttributes(attributes) />
-	<#local previousScope = scope />
-	<#assign scope = container.unwrap(editMode) />
+	<#local previousModel = currentModel />
+	<#assign currentContainer = container />
+	<#assign currentModel = container.unwrap(editMode) />
 	<#if editMode>
 		<#if !tag?has_content>
 			<#local tag = "span" />
@@ -311,7 +312,7 @@
 	<#else>
 		<#nested>
 	</#if>
-	<#assign scope = previousScope />
+	<#assign currentModel = previousModel />
 </#macro>
 
 <#---
