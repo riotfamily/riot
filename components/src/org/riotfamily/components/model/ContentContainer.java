@@ -94,16 +94,11 @@ public class ContentContainer {
 	}
 
 	@Transient
-	public Content getLatestVersion() {
-		return previewVersion != null ? previewVersion : liveVersion;
-	}
-
-	@Transient
 	public Content getContent(boolean preview) {
-		if (preview && previewVersion != null) {
-			return previewVersion;
+		if (!preview && liveVersion != null) {
+			return liveVersion;
 		}
-		return liveVersion;
+		return previewVersion;
 	}
 	
 	public Map<String, Object> unwrap(boolean preview) {
