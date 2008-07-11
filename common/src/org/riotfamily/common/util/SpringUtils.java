@@ -66,6 +66,11 @@ public final class SpringUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public static<T> T beanOfType(ListableBeanFactory lbf, Class<T> type) {
+		return (T) BeanFactoryUtils.beanOfType(lbf, type);
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static<T> Map<String, T> beansOfType(
 			ListableBeanFactory lbf, Class<T> type) {
 		
