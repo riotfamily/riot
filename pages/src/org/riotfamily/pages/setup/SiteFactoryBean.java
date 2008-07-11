@@ -67,7 +67,7 @@ public class SiteFactoryBean implements FactoryBean, InitializingBean, Applicati
 		return new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
 			
 			public Object doInTransaction(TransactionStatus status) {
-				return pageDao.findSite(locale);
+				return pageDao.findSiteByLocale(locale);
 			}
 		
 		});		

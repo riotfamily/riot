@@ -99,10 +99,10 @@ public class HibernatePageDao extends AbstractPageDao {
 		return rootNode;
 	}
 	
-	public Site findSite(Locale locale) {
+	public Site findSiteByLocale(Locale locale) {
 		Criteria c = hibernate.createCacheableCriteria(Site.class);
 		c.add(Restrictions.eq("locale", locale));
-		List sites = hibernate.list(c);
+		List<Site> sites = hibernate.list(c);
 		if (sites.size() == 0) {
 			return null;
 		}
@@ -143,14 +143,14 @@ public class HibernatePageDao extends AbstractPageDao {
 		return (Page) hibernate.uniqueResult(c);
 	}
 
-	public List findPagesOfType(String pageType, Site site) {
+	public List<Page> findPagesOfType(String pageType, Site site) {
 		Criteria c = hibernate.createCacheableCriteria(Page.class);
 		c.add(Restrictions.eq("site", site));
 		c.createCriteria("node").add(Restrictions.eq("pageType", pageType));
 		return hibernate.list(c);
 	}
 	
-	public List getWildcardPaths(Site site) {
+	public List<String> getWildcardPaths(Site site) {
 		Criteria c = hibernate.createCacheableCriteria(Page.class);
 		c.setProjection(Projections.property("path"));
 		c.add(Restrictions.eq("wildcardInPath", Boolean.TRUE));

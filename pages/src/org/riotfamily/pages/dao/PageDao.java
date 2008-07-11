@@ -53,7 +53,7 @@ public interface PageDao {
 	 */
 	public PageNode loadPageNode(Long id);
 
-	public Site findSite(Locale locale);
+	public Site findSiteByLocale(Locale locale);
 	
 	public Site findSite(String hostName, String path);
 		
