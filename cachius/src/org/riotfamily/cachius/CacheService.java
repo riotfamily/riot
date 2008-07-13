@@ -142,12 +142,16 @@ public class CacheService {
 			lock.lockForWriting();
 			// Check if another writer has already updated the item
 			if (mtime > cacheItem.getLastModified()) {
-				Set<String> oldTags = cacheItem.getTags();
-				cacheItem.setTags(null);
-				if (callback.updateCacheItem(cacheItem)) {
+				TaggingContext ctx = TaggingContext.openNestedContext();
+				boolean update = callback.updateCacheItem(cacheItem);
+				ctx.close();
+				if (update && !ctx.isPreventCaching()) {
+					Set<String> oldTags = cacheItem.getTags();
+					Set<String> tags = ctx.getTags();
+					cacheItem.setTags(tags);
 					Set<String> newTags = Generics.newHashSet();
-					if (cacheItem.getTags() != null) {
-						newTags.addAll(cacheItem.getTags());
+					if (tags != null) {
+						newTags.addAll(tags);
 					}
 					Iterator<String> it = newTags.iterator();
 					while (it.hasNext()) {
@@ -159,7 +163,7 @@ public class CacheService {
 					}
 					cache.removeTags(cacheItem, oldTags);
 					cache.addTags(cacheItem, newTags);
-					
+					cacheItem.setInvolvedFiles(ctx.getInvolvedFiles());
 					cacheItem.setLastModified(mtime);
 				}
 				else {

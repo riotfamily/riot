@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
-import org.riotfamily.cachius.servlet.TaggingContext;
+import org.riotfamily.cachius.TaggingContext;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -52,11 +52,11 @@ public class HqlModelBuilder extends AbstractHqlModelBuilder {
 					.getClassMetadata(clazz).getIdentifier(
 					item, EntityMode.POJO);
 
-			TaggingContext.tag(request, clazz.getName() + "#" + id);
+			TaggingContext.tag(clazz.getName() + "#" + id);
 		}
 		else {
 			Class<?> clazz = query.getReturnTypes()[0].getReturnedClass();
-			TaggingContext.tag(request, clazz.getName());
+			TaggingContext.tag(clazz.getName());
 		}
 	}
 }

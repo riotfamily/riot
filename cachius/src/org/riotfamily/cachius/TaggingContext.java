@@ -21,41 +21,37 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.cachius.servlet;
+package org.riotfamily.cachius;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 
 /**
  * Provides static methods to tag cache items.
  */
 public class TaggingContext {
-
-	private static final String REQUEST_ATTRIBUTE = TaggingContext.class.getName();
+	
+	private static ThreadLocal<TaggingContext> currentContext = new ThreadLocal<TaggingContext>();
 
 	private Log log = LogFactory.getLog(TaggingContext.class);
 
-	private HttpServletRequest request;
-	
 	private TaggingContext parent;
 
 	private HashSet<String> tags;
+	
+	private HashSet<File> involvedFiles;
 	
 	private boolean preventCaching;
 
 	/**
 	 * Private constructor that creates a nested context.
 	 */
-	private TaggingContext(HttpServletRequest request, TaggingContext parent) {
-		this.request = request;
+	private TaggingContext(TaggingContext parent) {
 		this.parent = parent;
 	}
 
@@ -90,6 +86,26 @@ public class TaggingContext {
 	}
 	
 	/**
+	 * Adds the given file.
+	 * @throws IllegalArgumentException if the tag is <code>null</code>
+	 */
+	public void addInvolvedFile(File file) {
+		Assert.notNull(file, "File must not be null.");
+		if (involvedFiles == null) {
+			involvedFiles = new HashSet<File>();
+		}
+		involvedFiles.add(file);
+		if (parent != null) {
+			parent.addInvolvedFile(file);
+		}
+		else {
+			if (log.isDebugEnabled()) {
+				log.debug("Adding file: " + file);
+			}
+		}
+	}
+	
+	/**
 	 * Sets whether caching should be prevented, i.e. the CacheItem should
 	 * be discarded.
 	 */
@@ -111,22 +127,20 @@ public class TaggingContext {
 		return this.tags;
 	}
 	
+	public HashSet<File> getInvolvedFiles() {
+		return involvedFiles;
+	}
+	
 	/**
 	 * Closes the context making its parent the new current context. 
 	 */
 	public void close() {
-		request.setAttribute(REQUEST_ATTRIBUTE, parent);
+		currentContext.set(parent);
 	}
+	
 	
 	// -- Static methods ------------------------------------------------------
 
-	
-	public static void tag(HttpServletRequest request, String tag) {
-		TaggingContext context = getContext(request);
-		if (context != null) {
-			context.addTag(tag);
-		}
-	}
 	
 	public static void tag(String tag) {
 		TaggingContext context = getContext();
@@ -135,10 +149,10 @@ public class TaggingContext {
 		}
 	}
 	
-	public static void preventCaching(HttpServletRequest request) {
-		TaggingContext context = getContext(request);
+	public static void addFile(File file) {
+		TaggingContext context = getContext();
 		if (context != null) {
-			context.setPreventCaching(true);
+			context.addInvolvedFile(file);
 		}
 	}
 	
@@ -152,29 +166,19 @@ public class TaggingContext {
 	/**
 	 * Opens a nested context.
 	 */
-	public static TaggingContext openNestedContext(HttpServletRequest request) {
-		TaggingContext parent = getContext(request);
-		TaggingContext context = new TaggingContext(request, parent);
-		request.setAttribute(REQUEST_ATTRIBUTE, context);
+	public static TaggingContext openNestedContext() {
+		TaggingContext parent = currentContext.get();
+		TaggingContext context = new TaggingContext(parent);
+		currentContext.set(context);
 		return context;
 	}
 
 	/**
-	 * Retrieves the current context from the given request. The method will 
+	 * Retrieves the context for the current thread. The method will 
 	 * return <code>null</code> if no open context exists.
 	 */
-	public static TaggingContext getContext(HttpServletRequest request) {
-		return (TaggingContext) request.getAttribute(REQUEST_ATTRIBUTE);
-	}
-
-	/**
-	 * Retrieves the current context using Spring's 
-	 * {@link RequestContextHolder}. 
-	 */
 	public static TaggingContext getContext() {
-		return (TaggingContext) RequestContextHolder.getRequestAttributes()
-				.getAttribute(REQUEST_ATTRIBUTE, 
-				RequestAttributes.SCOPE_REQUEST);
+		return currentContext.get();
 	}
 
 }

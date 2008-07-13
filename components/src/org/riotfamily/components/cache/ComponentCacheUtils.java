@@ -28,7 +28,7 @@ import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.CacheService;
-import org.riotfamily.cachius.servlet.TaggingContext;
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 
@@ -54,7 +54,7 @@ public final class ComponentCacheUtils {
 	public static void addContainerTags(HttpServletRequest request, 
 			ContentContainer container, boolean preview) {
 		
-		TaggingContext.tag(request, getContainerTag(container, preview));
+		TaggingContext.tag(getContainerTag(container, preview));
 		addContentTags(request, container.getContent(preview));
 	}
 
@@ -64,7 +64,7 @@ public final class ComponentCacheUtils {
 		Collection<String> tags = version.getCacheTags();
 		if (tags != null) {
 			for (String tag : tags) {
-				TaggingContext.tag(request, tag);
+				TaggingContext.tag(tag);
 			}
 		}
 	}

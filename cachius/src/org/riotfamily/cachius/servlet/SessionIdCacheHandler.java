@@ -95,18 +95,12 @@ public abstract class SessionIdCacheHandler implements CacheHandler {
 	public final boolean updateCacheItem(CacheItem cacheItem) 
 			throws Exception {
 		
-		TaggingContext ctx = TaggingContext.openNestedContext(request);
 		Map<String, String> propertySnapshot = SharedProperties.getSnapshot(request);
-		
 		boolean ok = updateCacheItemInternal(cacheItem);
-		
 		postProcess(cacheItem);
-		
-		ctx.close();
 		Map<String, String> props = SharedProperties.getDiff(request, propertySnapshot);
 		cacheItem.setProperties(props);
-		cacheItem.setTags(ctx.getTags());
-		return ok && !ctx.isPreventCaching();		
+		return ok;		
 	}
 	
 	protected abstract boolean updateCacheItemInternal(CacheItem cacheItem) 

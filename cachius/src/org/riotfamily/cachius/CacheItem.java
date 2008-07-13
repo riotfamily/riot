@@ -60,14 +60,6 @@ import org.springframework.util.FileCopyUtils;
  * HTTP headers are kept in memory and are serialized by the default java 
  * serialization mechanism. The actual content is read from a file to avoid 
  * the overhead of object deserialization on each request.
- * <br>
- * If URL rewriting is used to track the session, the sessionId is
- * replaced by a special token in the cache file. When such an item is
- * send to a client, the token is replaced with the current sessionId.
- * <br>
- * If the sessionId comes from a cookie or the controller outputs binary data,
- * a direct stream copy is performed instead of using Readers/Writers to 
- * improve performance.
  *
  * @author Felix Gnass
  */
@@ -92,6 +84,9 @@ public class CacheItem implements Serializable {
     /** The file containing the actual data */
     private File file;
 
+    /** Set of files involved in the creation of the cached data */
+    private Set<File> involvedFiles;
+    
     /** The Content-Type of the cached data */
     private String contentType;
     
@@ -157,6 +152,14 @@ public class CacheItem implements Serializable {
 	 */
 	public Set<String> getTags() {
 		return this.tags;
+	}
+	
+    public void setInvolvedFiles(Set<File> files) {
+    	this.involvedFiles = files != null ? new HashSet<File>(files) : null;
+    }
+    
+  public Set<File> getInvolvedFiles() {
+		return this.involvedFiles;
 	}
 	
 	/**

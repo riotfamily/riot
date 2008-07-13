@@ -4,57 +4,49 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
  * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
- *   Felix Gnass [fgnass at neteye dot de]
- * 
+ *   Felix Gnass
+ *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.website.generic.model.hibernate;
+package org.riotfamily.common.web.view.freemarker;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
 
-import org.hibernate.Query;
 import org.riotfamily.cachius.TaggingContext;
 
-/**
- * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
- */
-public class HqlListModelBuilder extends AbstractHqlModelBuilder {
+import freemarker.cache.FileTemplateLoader;
 
-	private Integer maxResults;
-	
-	public void setMaxResults(Integer maxResults) {
-		this.maxResults = maxResults;
+/**
+ * TemplateLoader that invokes {@link TaggingContext#addInvolvedFile(File)}
+ * to track files involved in the generation of cached content.
+ * @since 8.0
+ */
+public class RiotFileTemplateLoader extends FileTemplateLoader {
+
+	public RiotFileTemplateLoader(File baseDir) throws IOException {
+		super(baseDir);
 	}
-	
-	protected Object getResult(Query query) {
-		if (maxResults != null) {
-			query.setMaxResults(maxResults.intValue());
+
+	@Override
+	public Object findTemplateSource(String name) throws IOException {
+		File file = (File) super.findTemplateSource(name);
+		if (file != null) {
+			TaggingContext.addFile(file);
 		}
-		return query.list();
+		return file;
 	}
-	
-	protected String generateModelKey(Query query) {
-		return super.generateModelKey(query) + "List";
-	}
-	
-	protected void tagResult(Query query, Object result, 
-			HttpServletRequest request) {
-		
-		TaggingContext.tag(getResultClass(query).getName());
-	}
-		
 }

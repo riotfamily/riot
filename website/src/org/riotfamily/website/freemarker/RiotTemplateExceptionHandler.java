@@ -26,7 +26,7 @@ package org.riotfamily.website.freemarker;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.riotfamily.cachius.servlet.TaggingContext;
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.riot.security.AccessController;
 

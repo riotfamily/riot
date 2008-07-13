@@ -32,7 +32,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.servlet.TaggingContext;
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.servlet.RequestPathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
