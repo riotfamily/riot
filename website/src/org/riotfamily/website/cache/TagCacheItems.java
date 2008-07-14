@@ -14,7 +14,7 @@
  *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -23,28 +23,16 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.cache;
 
-import java.lang.reflect.Method;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.riotfamily.cachius.CacheService;
-import org.riotfamily.riot.dao.RiotDao;
-import org.springframework.aop.AfterReturningAdvice;
-import org.springframework.util.Assert;
-
-public class CacheInvalidationAdvice implements AfterReturningAdvice {
-
-	private CacheService cacheService;
-
-	public void setCacheService(CacheService cacheService) {
-		this.cacheService = cacheService;
-	}
-
-	public void afterReturning(Object returnValue, Method method,
-			Object[] args, Object target) throws Throwable {
-
-		Assert.isInstanceOf(RiotDao.class, target);
-		RiotDao dao = (RiotDao) target;
-		Object item = args[0];
-		CacheInvalidationUtils.invalidate(cacheService, dao, item);
-	}
-
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+@Documented
+public @interface TagCacheItems {
 }

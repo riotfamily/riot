@@ -29,11 +29,29 @@ import java.util.Map;
 
 public class GenericEntityListener<T> implements EntityListener {
 
-	public Class<?> getEntityClass() {
+	public boolean supports(Class<?> entityClass) {
+		return getEntityClass().isAssignableFrom(entityClass);
+	}
+	
+	protected Class<?> getEntityClass() {
 		ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
 		return (Class<?>) type.getActualTypeArguments()[0];
 	}
 
+	
+	@SuppressWarnings("unchecked")
+	public final boolean preInit(Object entity, Serializable id,
+			Map<String, Object> state) {
+		
+		return onInit((T) entity, id, state);
+	}
+	
+	protected boolean onInit(T entity, Serializable id, 
+			Map<String, Object> state) {
+		
+		return false;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public final boolean preSave(Object entity, Serializable id) {
 		return onSave((T) entity, id);

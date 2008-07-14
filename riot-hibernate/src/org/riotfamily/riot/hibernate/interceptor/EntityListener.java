@@ -29,7 +29,9 @@ import java.util.Map;
 
 public interface EntityListener {
 
-	public Class<?> getEntityClass();
+	public boolean supports(Class<?> entityClass);
+	
+	public boolean preInit(Object entity, Serializable id, Map<String, Object> state);
 	
 	public boolean preSave(Object entity, Serializable id);
 	

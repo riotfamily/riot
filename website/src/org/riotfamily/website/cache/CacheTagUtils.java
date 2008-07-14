@@ -23,18 +23,33 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.cache;
 
+import java.io.Serializable;
+
 import org.riotfamily.cachius.CacheService;
-import org.riotfamily.riot.dao.RiotDao;
+import org.riotfamily.cachius.TaggingContext;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public final class CacheInvalidationUtils {
+public final class CacheTagUtils {
 
-	private CacheInvalidationUtils() {
+	private CacheTagUtils() {
 	}
-		
+	
+	public static void tag(Class<?> clazz, Serializable id) {
+		TaggingContext ctx = TaggingContext.getContext();
+		if (ctx != null) {
+			if (!ctx.hasTag(clazz.getName())) {
+				ctx.addTag(clazz.getName() + '#' + id);
+			}
+		}
+	}
+	
+	public static void tag(Class<?> clazz) {
+		TaggingContext.tag(clazz.getName());
+	}
+	
 	public static void invalidate(CacheService cacheService, Class<?> clazz) {
 		if (cacheService != null) {
 		    cacheService.invalidateTaggedItems(clazz.getName());
@@ -47,13 +62,5 @@ public final class CacheInvalidationUtils {
 		    cacheService.invalidateTaggedItems(clazz.getName() + '#' + objectId);
 		}
 	}
-	
-	public static void invalidate(CacheService cacheService, RiotDao dao) {
-		invalidate(cacheService, dao.getEntityClass());
-	}
-	
-	public static void invalidate(CacheService cacheService, RiotDao dao, Object object) {
-		invalidate(cacheService, dao.getEntityClass(), dao.getObjectId(object));
-	}
-	
+		
 }

@@ -85,6 +85,10 @@ public class TaggingContext {
 		}
 	}
 	
+	public boolean hasTag(String tag) {
+		return tags != null && tags.contains(tag);
+	}
+	
 	/**
 	 * Adds the given file.
 	 * @throws IllegalArgumentException if the tag is <code>null</code>

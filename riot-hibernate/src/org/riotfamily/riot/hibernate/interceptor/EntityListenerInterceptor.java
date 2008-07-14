@@ -46,6 +46,21 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	public void setApplicationContext(ApplicationContext ctx) {
 		this.listeners = SpringUtils.listBeansOfType(ctx, EntityListener.class);
 	}
+		
+	@Override
+	public boolean onLoad(Object entity, Serializable id, Object[] state,
+			String[] propertyNames, Type[] types) {
+		
+		boolean result = false;
+		List<EntityListener> listeners = getListeners(entity.getClass());
+		if (!listeners.isEmpty()) {
+			Map<String, Object> stateMap = createStateMap(propertyNames, state);
+			for (EntityListener listener : listeners) {
+				result |= listener.preInit(entity, id, stateMap);
+			}
+		}
+		return result;
+	}
 	
 	@Override
 	public boolean onSave(Object entity, Serializable id, Object[] state,
@@ -103,7 +118,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		if (listeners == null) {
 			listeners = Generics.newArrayList();
 			for (EntityListener listener : this.listeners) {
-				if (listener.getEntityClass().isAssignableFrom(entityClass)) {
+				if (listener.supports(entityClass)) {
 					listeners.add(listener);
 				}
 			}
@@ -111,4 +126,5 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		}
 		return listeners;
 	}
+	
 }

@@ -43,7 +43,6 @@ import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.riot.hibernate.support.HibernateSupport;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
-import org.riotfamily.website.cache.CacheInvalidationAdvice;
 import org.riotfamily.website.generic.model.CacheableModelBuilder;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
