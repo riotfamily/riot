@@ -43,6 +43,8 @@ public class CacheService {
 	
 	private Cache cache;
 	
+	private boolean checkInvolvedFiles = true;
+	
 	public CacheService(Cache cache) {
 		this.cache = cache;
 	}
@@ -105,6 +107,16 @@ public class CacheService {
 	
 	private long getModificationTime(CacheItem cacheItem,
     		CacheHandler handler) throws Exception {
+		
+		long mtime = getHandlerModificationTime(cacheItem, handler);
+		if (checkInvolvedFiles) {
+			mtime = Math.max(mtime, cacheItem.getLastFileModified());
+		}
+		return mtime;
+	}
+	
+	private long getHandlerModificationTime(CacheItem cacheItem,
+    		CacheHandler handler) throws Exception {
 
     	long now = System.currentTimeMillis();
     	
@@ -163,7 +175,12 @@ public class CacheService {
 					}
 					cache.removeTags(cacheItem, oldTags);
 					cache.addTags(cacheItem, newTags);
-					cacheItem.setInvolvedFiles(ctx.getInvolvedFiles());
+					if (checkInvolvedFiles) {
+						cacheItem.setInvolvedFiles(ctx.getInvolvedFiles());
+					}
+					else {
+						cacheItem.setInvolvedFiles(null);
+					}
 					cacheItem.setLastModified(mtime);
 				}
 				else {

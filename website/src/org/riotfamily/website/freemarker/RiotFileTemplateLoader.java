@@ -21,7 +21,7 @@
  *   Felix Gnass
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.web.view.freemarker;
+package org.riotfamily.website.freemarker;
 
 import java.io.File;
 import java.io.IOException;

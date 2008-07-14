@@ -73,7 +73,7 @@ public class CacheItem implements Serializable {
     
     private static final String FILE_ENCODING = "UTF-8";
     
-    private Log log = LogFactory.getLog(CacheItem.class);
+    private transient Log log = LogFactory.getLog(CacheItem.class);
     
     /** The key used for lookups */
     private String key;
@@ -158,9 +158,22 @@ public class CacheItem implements Serializable {
     	this.involvedFiles = files != null ? new HashSet<File>(files) : null;
     }
     
-  public Set<File> getInvolvedFiles() {
+    public Set<File> getInvolvedFiles() {
 		return this.involvedFiles;
 	}
+    
+    public long getLastFileModified() {
+    	long mtime = -1;
+    	if (involvedFiles != null) {
+    		for (File file : involvedFiles) {
+    			mtime = Math.max(file.lastModified(), mtime);
+    			if (log.isDebugEnabled() && file.lastModified() > this.lastModified) {
+    				log.debug("File " + file + " has been modified");
+    			}
+    		}
+    	}
+    	return mtime;
+    }
 	
 	/**
 	 * Returns whether the item is new. An item is considered as new if the
@@ -396,6 +409,7 @@ public class CacheItem implements Serializable {
          
          in.defaultReadObject();
          lock = new ReaderWriterLock();
+         log = LogFactory.getLog(CacheItem.class);
     }
     
     public int hashCode() {

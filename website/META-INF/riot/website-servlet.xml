@@ -81,7 +81,7 @@
 		<property name="reloadable" value="${riot.resources.reloadable=false}" />
 	</bean>
 		
-	<bean id="freemarkerConfig" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerConfigurer">
+	<bean id="freemarkerConfig" class="org.riotfamily.website.freemarker.WebsiteFreeMarkerConfigurer">
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="templateLoaderPath" value="/WEB-INF/view" />
 		<property name="freemarkerSettings" value="${website-servlet.freemarker.*}" />

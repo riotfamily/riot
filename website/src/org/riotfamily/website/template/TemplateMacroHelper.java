@@ -132,7 +132,7 @@ public class TemplateMacroHelper {
 			String content = blocks.get(name);
 			if (childTemplate) {
 				if (content == null) {
-					content = captureBody(body, cacheKey);
+					content = captureBody(body, cacheKey, env);
 					blocks.put(name, content);
 				}
 			}
@@ -141,25 +141,26 @@ public class TemplateMacroHelper {
 					env.getOut().write(content);
 				}
 				else {
-					renderBody(body, env.getOut(), cacheKey);
+					renderBody(body, env.getOut(), cacheKey, env);
 				}
 			}
 		}
 		
-		private String captureBody(TemplateDirectiveBody body, String cacheKey) 
-				throws TemplateException, IOException {
+		private String captureBody(TemplateDirectiveBody body, String cacheKey, 
+				Environment env) throws TemplateException, IOException {
 			
 			StringWriter sw = new StringWriter();
-			renderBody(body, sw, cacheKey);
+			renderBody(body, sw, cacheKey, env);
 			return sw.toString();
 		}
 		
 		private void renderBody(TemplateDirectiveBody body, Writer out, 
-				String cacheKey) throws TemplateException, IOException {
+				String cacheKey, Environment env) 
+				throws TemplateException, IOException {
 			
 			if (body != null) {
 				try {
-					cacheService.handle(new BodyCacheHandler(body, out, cacheKey));
+					cacheService.handle(new BodyCacheHandler(body, out, cacheKey, env));
 				}
 				catch (TemplateException e) {
 					throw e;
@@ -179,10 +180,15 @@ public class TemplateMacroHelper {
 			
 			private String cacheKey;
 			
-			public BodyCacheHandler(TemplateDirectiveBody body, Writer out, String cacheKey) {
+			private Environment env;
+			
+			public BodyCacheHandler(TemplateDirectiveBody body, Writer out, 
+					String cacheKey, Environment env) {
+				
 				super(request, out, cacheKeyAugmentor);
 				this.body = body;
 				this.cacheKey = cacheKey;
+				this.env = env;
 			}
 
 			@Override
@@ -191,6 +197,7 @@ public class TemplateMacroHelper {
 			}
 			
 			protected void render(Writer out) throws Exception {
+				env.getConfiguration().getTemplate(env.getTemplate().getName());
 				body.render(out);
 			}
 					
