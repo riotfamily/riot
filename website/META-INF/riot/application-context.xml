@@ -22,6 +22,7 @@
 	
 	 <bean id="cacheService" class="org.riotfamily.cachius.CacheService">
         <constructor-arg ref="websiteCache" />
+        <property name="checkInvolvedFiles" value="${riot.resources.reloadable=false}" />
     </bean>
 
 </beans>

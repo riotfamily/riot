@@ -43,12 +43,16 @@ public class CacheService {
 	
 	private Cache cache;
 	
-	private boolean checkInvolvedFiles = true;
+	private boolean checkInvolvedFiles;
 	
 	public CacheService(Cache cache) {
 		this.cache = cache;
 	}
-		
+	
+	public void setCheckInvolvedFiles(boolean checkInvolvedFiles) {
+		this.checkInvolvedFiles = checkInvolvedFiles;
+	}
+	
     /**
      * Invalidates all items tagged with the given String.
      */
