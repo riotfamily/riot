@@ -255,6 +255,7 @@
 				<xsd:extension base="template-editor">
 					<xsd:group ref="elements" />
 					<xsd:attribute name="parent-property" type="xsd:string" />
+					<xsd:attribute name="position-property" type="xsd:string" />
 					<xsd:attribute name="collection-class" type="xsd:string" />
 					<xsd:attribute name="sortable" type="xsd:boolean" />
 					<xsd:attribute name="min-size" type="xsd:positiveInteger" />

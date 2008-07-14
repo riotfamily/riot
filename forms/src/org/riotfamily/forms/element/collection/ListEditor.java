@@ -62,6 +62,8 @@ public class ListEditor extends TemplateElement implements Editor,
 		
 	private String parentProperty;
 	
+	private String positionProperty;
+	
 	/** Factory to create elements for newly added items */
 	ElementFactory itemElementFactory;
 	
@@ -117,6 +119,10 @@ public class ListEditor extends TemplateElement implements Editor,
 
 	public void setParentProperty(String parentProperty) {
 		this.parentProperty = parentProperty;
+	}
+	
+	public void setPositionProperty(String positionProperty) {
+		this.positionProperty = positionProperty;
 	}
 
 	public FormResource getResource() {
@@ -193,6 +199,7 @@ public class ListEditor extends TemplateElement implements Editor,
 	public Object getValue() {
 		Collection<Object> collection = createOrClearCollection();
 		Iterator<Element> it = getListItems().iterator();
+		int i = 0;
 		while (it.hasNext()) {
 			ListItem item = (ListItem) it.next();
 			Object value = item.getValue();
@@ -200,6 +207,9 @@ public class ListEditor extends TemplateElement implements Editor,
 				if (parentProperty != null) {
 					PropertyUtils.setProperty(value, parentProperty, 
 							getEditorBinding().getEditorBinder().getBackingObject());
+				}
+				if (positionProperty != null) {
+					PropertyUtils.setProperty(value, positionProperty, String.valueOf(i++));
 				}
 				collection.add(value);
 			}
