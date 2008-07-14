@@ -51,11 +51,12 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	public boolean onSave(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, Type[] types) {
 		
+		boolean result = false;
 		List<EntityListener> listeners = getListeners(entity.getClass());
 		for (EntityListener listener : listeners) {
-			listener.preSave(entity, id);
+			result |= listener.preSave(entity, id);
 		}
-		return false;
+		return result;
 	}
 	
 	@Override
@@ -63,14 +64,15 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			Object[] currentState, Object[] previousState,
 			String[] propertyNames, Type[] types) {
 		
+		boolean result = false;
 		List<EntityListener> listeners = getListeners(entity.getClass());
 		if (!listeners.isEmpty()) {
 			Map<String, Object> prevStateMap = createStateMap(propertyNames, previousState);
 			for (EntityListener listener : listeners) {
-				listener.preUpdate(entity, id, prevStateMap);
+				result |= listener.preUpdate(entity, id, prevStateMap);
 			}
 		}
-		return false;
+		return result;
 	}
 	
 	@Override

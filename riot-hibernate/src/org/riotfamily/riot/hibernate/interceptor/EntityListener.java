@@ -31,10 +31,10 @@ public interface EntityListener {
 
 	public Class<?> getEntityClass();
 	
-	public void preSave(Object entity, Serializable id);
+	public boolean preSave(Object entity, Serializable id);
 	
 	public void preDelete(Object entity, Serializable id);
 	
-	public void preUpdate(Object entity, Serializable id, Map<String, Object> previousState);
+	public boolean preUpdate(Object entity, Serializable id, Map<String, Object> previousState);
 	
 }

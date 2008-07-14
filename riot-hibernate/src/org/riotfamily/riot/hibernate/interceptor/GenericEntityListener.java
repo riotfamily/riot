@@ -35,22 +35,24 @@ public class GenericEntityListener<T> implements EntityListener {
 	}
 
 	@SuppressWarnings("unchecked")
-	public final void preSave(Object entity, Serializable id) {
-		onSave((T) entity, id);
+	public final boolean preSave(Object entity, Serializable id) {
+		return onSave((T) entity, id);
 	}	
 	
-	protected void onSave(T entity, Serializable id) {
+	protected boolean onSave(T entity, Serializable id) {
+		return false;
 	}
 
 	@SuppressWarnings("unchecked")
-	public final void preUpdate(Object entity, Serializable id,
+	public final boolean preUpdate(Object entity, Serializable id,
 			Map<String, Object> previousState) {
 		
-		onUpdate((T) entity, id, previousState); 
+		return onUpdate((T) entity, id, previousState); 
 	}
 	
-	protected void onUpdate(T entity, Serializable id, 
+	protected boolean onUpdate(T entity, Serializable id, 
 			Map<String, Object> previousState) {
+		return false;
 	}
 
 	@SuppressWarnings("unchecked")
