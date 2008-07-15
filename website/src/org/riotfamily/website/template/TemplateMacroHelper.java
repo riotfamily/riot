@@ -1,11 +1,11 @@
 package org.riotfamily.website.template;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,9 +36,13 @@ public class TemplateMacroHelper {
 	
 	private HttpServletRequest request;
 
+	private List<TemplateDirectiveBody> bodies = Generics.newArrayList();
+	
 	private Map<String, Block> blocks = Generics.newHashMap();
 	
-	private boolean capture;
+	private boolean nestedBlock = false;
+	
+	private TemplateDirectiveModel rootDirective = new RootDirective();
 	
 	private TemplateDirectiveModel extendDirective = new ExtendDirective();
 	
@@ -53,6 +57,10 @@ public class TemplateMacroHelper {
 		this.request = request;
 	}
 
+	public TemplateDirectiveModel getRootDirective() {
+		return rootDirective;
+	}
+	
 	public TemplateDirectiveModel getExtendDirective() {
 		return extendDirective;
 	}
@@ -93,6 +101,18 @@ public class TemplateMacroHelper {
 		return defaultValue;
 	}
 	
+	
+	public class RootDirective implements TemplateDirectiveModel {
+	
+		@SuppressWarnings("unchecked")
+		public void execute(Environment env, Map params, TemplateModel[] loopVars,
+				TemplateDirectiveBody body) throws TemplateException, IOException {
+			
+			bodies.add(body);
+		}
+	}
+	
+	
 	public class ExtendDirective implements TemplateDirectiveModel {
 		
 		@SuppressWarnings("unchecked")
@@ -109,12 +129,29 @@ public class TemplateMacroHelper {
 				}
 				file = StringUtils.cleanPath(dir + file);
 			}
-			if (body != null) {
-				capture = true;
-				body.render(new NullWriter());
-				capture = false;
+			
+			boolean deepest = bodies.isEmpty();
+			
+			bodies.add(body);
+			
+			if (deepest) {
+				TaggingContext ctx = TaggingContext.openNestedContext();
+				env.include(file, "UTF-8", true);
+				Writer out = new NullWriter();
+				Iterator<TemplateDirectiveBody> it = bodies.iterator();
+				while (it.hasNext()) {
+					TemplateDirectiveBody b = it.next();
+					it.remove();
+					if (!it.hasNext()) {
+						out = env.getOut();
+					}
+					b.render(out);
+				}
+				ctx.close();
 			}
-			env.include(file, "UTF-8", true);
+			else {
+				env.include(file, "UTF-8", true);
+			}
 		}
 	}
 	
@@ -134,21 +171,22 @@ public class TemplateMacroHelper {
 			}
 			
 			Block block = blocks.get(name);
-			if (capture) {
-				if (block == null) {
-					capture = false;
-					block = captureBody(body, cacheKey, env);
-					capture = true;
-					blocks.put(name, block);
-				}
-			}
-			else {
+			if (nestedBlock || bodies.isEmpty()) {
 				if (block != null) {
 					block.propagateTagsAndFiles();
 					env.getOut().write(block.getContent());
 				}
 				else {
 					renderBody(body, env.getOut(), cacheKey, env);
+				}
+			}
+			else {
+				if (block == null) {
+					boolean nested = nestedBlock;
+					nestedBlock = true;
+					block = captureBody(body, cacheKey, env);
+					nestedBlock = nested;
+					blocks.put(name, block);
 				}
 			}
 		}
@@ -235,16 +273,11 @@ public class TemplateMacroHelper {
 		
 		private String content;
 		
-		private Set<String> tags;
-		
-		private Set<File> involvedFiles;
+		private CacheItem cacheItem;
 
 		public Block(String content, CacheItem cacheItem) {
 			this.content = content;
-			if (cacheItem != null) {
-				tags = cacheItem.getTags();
-				involvedFiles = cacheItem.getInvolvedFiles();
-			}
+			this.cacheItem = cacheItem;
 		}
 		
 		public String getContent() {
@@ -252,11 +285,7 @@ public class TemplateMacroHelper {
 		}
 
 		public void propagateTagsAndFiles() {
-			TaggingContext ctx = TaggingContext.getContext();
-			if (ctx != null) {
-				ctx.addTags(tags);
-				ctx.addInvolvedFiles(involvedFiles);
-			}
+			TaggingContext.propagateTagsAndFiles(cacheItem);
 		}
 		
 	}

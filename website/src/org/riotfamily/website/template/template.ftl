@@ -3,6 +3,8 @@
   - @namespace template
   -->
 
+<#assign root = templateMacroHelper.rootDirective />
+
 <#---
   - Variable that contains a macro to define a child template that extends
   - another template. The value of this variable is a TemplateDirectiveModel
