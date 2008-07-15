@@ -24,6 +24,7 @@
 package org.riotfamily.cachius;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -85,6 +86,14 @@ public class TaggingContext {
 		}
 	}
 	
+	public void addTags(Collection<String> tags) {
+		if (tags != null) {
+			for (String tag : tags) {
+				addTag(tag);
+			}
+		}
+	}
+	
 	public boolean hasTag(String tag) {
 		return tags != null && tags.contains(tag);
 	}
@@ -105,6 +114,14 @@ public class TaggingContext {
 		else {
 			if (log.isDebugEnabled()) {
 				log.debug("Adding file: " + file);
+			}
+		}
+	}
+	
+	public void addInvolvedFiles(Collection<File> files) {
+		if (files != null) {
+			for (File file : files) {
+				addInvolvedFile(file);
 			}
 		}
 	}

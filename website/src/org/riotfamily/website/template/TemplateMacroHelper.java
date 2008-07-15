@@ -1,13 +1,17 @@
 package org.riotfamily.website.template;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.cachius.CacheItem;
 import org.riotfamily.cachius.CacheService;
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.cachius.servlet.CacheKeyAugmentor;
 import org.riotfamily.cachius.servlet.ServletWriterHandler;
 import org.riotfamily.common.io.NullWriter;
@@ -32,9 +36,9 @@ public class TemplateMacroHelper {
 	
 	private HttpServletRequest request;
 
-	private Map<String, String> blocks = Generics.newHashMap();
+	private Map<String, Block> blocks = Generics.newHashMap();
 	
-	private boolean childTemplate;
+	private boolean capture;
 	
 	private TemplateDirectiveModel extendDirective = new ExtendDirective();
 	
@@ -106,9 +110,9 @@ public class TemplateMacroHelper {
 				file = StringUtils.cleanPath(dir + file);
 			}
 			if (body != null) {
-				childTemplate = true;
+				capture = true;
 				body.render(new NullWriter());
-				childTemplate = false;
+				capture = false;
 			}
 			env.include(file, "UTF-8", true);
 		}
@@ -129,16 +133,19 @@ public class TemplateMacroHelper {
 						ServletUtils.getPathWithinApplication(request) + "#" + name);
 			}
 			
-			String content = blocks.get(name);
-			if (childTemplate) {
-				if (content == null) {
-					content = captureBody(body, cacheKey, env);
-					blocks.put(name, content);
+			Block block = blocks.get(name);
+			if (capture) {
+				if (block == null) {
+					capture = false;
+					block = captureBody(body, cacheKey, env);
+					capture = true;
+					blocks.put(name, block);
 				}
 			}
 			else {
-				if (content != null) {
-					env.getOut().write(content);
+				if (block != null) {
+					block.propagateTagsAndFiles();
+					env.getOut().write(block.getContent());
 				}
 				else {
 					renderBody(body, env.getOut(), cacheKey, env);
@@ -146,21 +153,23 @@ public class TemplateMacroHelper {
 			}
 		}
 		
-		private String captureBody(TemplateDirectiveBody body, String cacheKey, 
+		private Block captureBody(TemplateDirectiveBody body, String cacheKey, 
 				Environment env) throws TemplateException, IOException {
 			
 			StringWriter sw = new StringWriter();
-			renderBody(body, sw, cacheKey, env);
-			return sw.toString();
+			CacheItem cacheItem = renderBody(body, sw, cacheKey, env);
+			return new Block(sw.toString(), cacheItem);
 		}
 		
-		private void renderBody(TemplateDirectiveBody body, Writer out, 
+		private CacheItem renderBody(TemplateDirectiveBody body, Writer out, 
 				String cacheKey, Environment env) 
 				throws TemplateException, IOException {
 			
 			if (body != null) {
 				try {
-					cacheService.handle(new BodyCacheHandler(body, out, cacheKey, env));
+					BodyCacheHandler handler = new BodyCacheHandler(body, out, cacheKey, env);
+					cacheService.handle(handler);
+					return handler.getCacheItem();
 				}
 				catch (TemplateException e) {
 					throw e;
@@ -172,6 +181,7 @@ public class TemplateMacroHelper {
 					throw new RuntimeException(e);
 				}
 			}
+			return null;
 		}
 		
 		private class BodyCacheHandler extends ServletWriterHandler {
@@ -181,6 +191,8 @@ public class TemplateMacroHelper {
 			private String cacheKey;
 			
 			private Environment env;
+			
+			private CacheItem cacheItem;
 			
 			public BodyCacheHandler(TemplateDirectiveBody body, Writer out, 
 					String cacheKey, Environment env) {
@@ -200,8 +212,53 @@ public class TemplateMacroHelper {
 				env.getConfiguration().getTemplate(env.getTemplate().getName());
 				body.render(out);
 			}
-					
+			
+			@Override
+			protected void postProcess(CacheItem cacheItem) throws Exception {
+				// Remember the CacheItem so that we can access it later 
+				this.cacheItem = cacheItem;
+			}
+			
+			@Override
+			protected void writeCacheItemInternal(CacheItem cacheItem) throws IOException {
+				this.cacheItem = cacheItem;
+				super.writeCacheItemInternal(cacheItem);
+			}
+			
+			public CacheItem getCacheItem() {
+				return cacheItem;
+			}
 		}
+	}
+	
+	private static class Block {
+		
+		private String content;
+		
+		private Set<String> tags;
+		
+		private Set<File> involvedFiles;
+
+		public Block(String content, CacheItem cacheItem) {
+			this.content = content;
+			if (cacheItem != null) {
+				tags = cacheItem.getTags();
+				involvedFiles = cacheItem.getInvolvedFiles();
+			}
+		}
+		
+		public String getContent() {
+			return content;
+		}
+
+		public void propagateTagsAndFiles() {
+			TaggingContext ctx = TaggingContext.getContext();
+			if (ctx != null) {
+				ctx.addTags(tags);
+				ctx.addInvolvedFiles(involvedFiles);
+			}
+		}
+		
 	}
 	
 }

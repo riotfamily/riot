@@ -38,7 +38,7 @@ public abstract class ServletWriterHandler extends SessionIdCacheHandler {
 	protected abstract void render(Writer out) throws Exception;
 
 	@Override
-	protected final void writeCacheItemInternal(CacheItem cacheItem)
+	protected void writeCacheItemInternal(CacheItem cacheItem)
 			throws IOException {
 		
 		Writer writer = out;
