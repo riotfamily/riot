@@ -193,6 +193,7 @@ public class CacheService {
 			}
 			else {
 				log.debug("Item has already been updated by another thread");
+				TaggingContext.propagateTagsAndFiles(cacheItem);
 			}
 			callback.writeCacheItem(cacheItem);
 		}
@@ -216,6 +217,7 @@ public class CacheService {
         		return false;
         	}
         	callback.writeCacheItem(cacheItem);
+        	TaggingContext.propagateTagsAndFiles(cacheItem);
     	}
     	finally {
     		lock.releaseReaderLock();

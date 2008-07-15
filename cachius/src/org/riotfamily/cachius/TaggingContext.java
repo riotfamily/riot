@@ -28,8 +28,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -38,8 +36,6 @@ import org.springframework.util.Assert;
 public class TaggingContext {
 	
 	private static ThreadLocal<TaggingContext> currentContext = new ThreadLocal<TaggingContext>();
-
-	private Log log = LogFactory.getLog(TaggingContext.class);
 
 	private TaggingContext parent;
 
@@ -79,11 +75,6 @@ public class TaggingContext {
 		if (parent != null) {
 			parent.addTag(tag);
 		}
-		else {
-			if (log.isDebugEnabled()) {
-				log.debug("Adding tag: " + tag);
-			}
-		}
 	}
 	
 	public void addTags(Collection<String> tags) {
@@ -110,11 +101,6 @@ public class TaggingContext {
 		involvedFiles.add(file);
 		if (parent != null) {
 			parent.addInvolvedFile(file);
-		}
-		else {
-			if (log.isDebugEnabled()) {
-				log.debug("Adding file: " + file);
-			}
 		}
 	}
 	
@@ -202,4 +188,14 @@ public class TaggingContext {
 		return currentContext.get();
 	}
 
+	public static void propagateTagsAndFiles(CacheItem cacheItem) {
+		if (cacheItem != null) {
+			TaggingContext context = getContext();
+			if (context != null) {
+				context.addTags(cacheItem.getTags());
+				context.addInvolvedFiles(cacheItem.getInvolvedFiles());
+				context.setPreventCaching(cacheItem.isNew());
+			}
+		}
+	}
 }
