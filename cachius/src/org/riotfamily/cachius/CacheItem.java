@@ -143,7 +143,9 @@ public class CacheItem implements Serializable {
     public void setTags(Set<String> tags) {
     	this.tags = tags != null ? new HashSet<String>(tags) : null;
     	if (log.isDebugEnabled() && tags != null) {
-    		log.debug("Tagging item " + this + " with " + tags);
+    		for (String tag : tags) {
+    			log.debug("Tag: " + tag);
+    		}
     	}
     }
     
@@ -156,6 +158,11 @@ public class CacheItem implements Serializable {
 	
     public void setInvolvedFiles(Set<File> files) {
     	this.involvedFiles = files != null ? new HashSet<File>(files) : null;
+    	if (log.isDebugEnabled() && files != null) {
+    		for (File file : files) {
+    			log.debug("File: " + file.getName());
+    		}
+    	}
     }
     
     public Set<File> getInvolvedFiles() {
