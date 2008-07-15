@@ -8,7 +8,7 @@ riot.getWrapper = function(el, selector) {
 	if (selector == '.riot-component-list') {
 		return riot.getComponentList(el);
 	}
-	if (selector == '.riot-component'|| selector == '.riot-form') {
+	if (selector == '.riot-component' || selector == '.riot-form') {
 		return riot.getContent(el);
 	}
 	if (selector == '.riot-text-editor') {
@@ -368,35 +368,8 @@ riot.Content = Class.create({
 	initialize: function(el, id) {
 		this.element = el;
 		this.id = id || el.readAttribute('riot:contentId');
-	},
-	
-	retrieveText: function(key, callback) {
-		ComponentEditor.getText(this.id, key, callback);
-	},
-	
-	updateText: function(key, value, updateFromServer) {
-		this.markAsDirty();
-		ComponentEditor.updateText(this.id, key, value,	updateFromServer 
-				? this.update.bind(this) : Prototype.emptyFunction);
-	},
-	
-	update: function() {
-		window.location.reload();		
-	},
-	
-	markAsDirty: function() {
-		riot.findContainer(this.element).markAsDirty();
-	}
-});
-
-
-riot.Component = Class.create(riot.Content, {
-
-	initialize: function(el) {
-		this.element = el;
-		this.id = el.readAttribute('riot:contentId');
-		this.form = el.readAttribute('riot:form');
 		this.container = riot.findContainer(el);
+		this.form = el.readAttribute('riot:form');
 		this.bShowOutline = this.showOutline.bindAsEventListener(this);
 		this.bHideOutline = this.hideOutline.bindAsEventListener(this);
 		this.bOnClick = this.onClick.bindAsEventListener(this);
@@ -442,16 +415,16 @@ riot.Component = Class.create(riot.Content, {
 		this.element.enableLinks();
 	},
 	
-	updateTextChunks: function(key, chunks) {
-		ComponentEditor.updateTextChunks(this.id, key, chunks, this.update.bind(this));
-		this.markAsDirty();
+	retrieveText: function(key, callback) {
+		ComponentEditor.getText(this.id, key, callback);
 	},
 	
-	cropImage: function(key, imageId, w, h, x, y, sw, callback) {
-		ComponentEditor.cropImage(this.id, key, imageId,
-				w, h, x, y, sw, callback);
+	updateText: function(key, value, updateFromServer) {
+		this.markAsDirty();
+		ComponentEditor.updateText(this.id, key, value,	updateFromServer 
+				? this.update.bind(this) : Prototype.emptyFunction);
 	},
-		
+	
 	propertiesOn: function() {
 		this.element.parentNode.addClassName('riot-mode-properties');
 		this.setClickHandler(this.editProperties.bind(this));
@@ -487,6 +460,32 @@ riot.Component = Class.create(riot.Content, {
 		setTimeout(this.update.bind(this), 1);
 	},
 	
+	update: function() {
+		window.location.reload();		
+	},
+	
+	markAsDirty: function() {
+		riot.findContainer(this.element).markAsDirty();
+	}
+});
+
+
+riot.Component = Class.create(riot.Content, {
+
+	initialize: function($super, el) {
+		$super(el);
+	},
+	
+	updateTextChunks: function(key, chunks) {
+		ComponentEditor.updateTextChunks(this.id, key, chunks, this.update.bind(this));
+		this.markAsDirty();
+	},
+	
+	cropImage: function(key, imageId, w, h, x, y, sw, callback) {
+		ComponentEditor.cropImage(this.id, key, imageId,
+				w, h, x, y, sw, callback);
+	},
+		
 	update: function() {
 		ComponentEditor.renderComponent(this.id, this.replaceHtml.bind(this));
 	},
