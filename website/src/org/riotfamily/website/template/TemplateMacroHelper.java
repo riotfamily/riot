@@ -6,7 +6,6 @@ import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,9 +36,9 @@ public class TemplateMacroHelper {
 	
 	private HttpServletRequest request;
 
-	private List<TemplateDirectiveBody> bodies = Generics.newArrayList();
+	private List<TemplateDefinition> definitions = Generics.newArrayList();
 	
-	private Set<String> templateNames = Generics.newHashSet();
+	private TemplateDefinition currentTemplate;
 	
 	private Map<String, Block> blocks = Generics.newHashMap();
 	
@@ -76,33 +75,6 @@ public class TemplateMacroHelper {
 		return blocks.get(name) != null;
 	}
 	
-	private static String getRequiredStringParam(Map<String, ?> params, String name, Environment env) 
-			throws TemplateException {
-		
-		Object value = params.get(name);
-		if (value instanceof SimpleScalar) {
-			return ((SimpleScalar) value).getAsString();
-		}
-		throw new TemplateException("Missing parameter: " + name, env);
-	}
-	
-	private static String getStringParam(Map<String, ?> params, String name, String defaultValue) {
-		Object value = params.get(name);
-		if (value instanceof SimpleScalar) {
-			return ((SimpleScalar) value).getAsString();
-		}
-		return defaultValue;
-	}
-	
-	private static boolean getBooleanParam(Map<String, ?> params, String name, 
-			boolean defaultValue) throws TemplateModelException {
-		
-		Object value = params.get(name);
-		if (value instanceof TemplateBooleanModel) {
-			return ((TemplateBooleanModel) value).getAsBoolean();
-		}
-		return defaultValue;
-	}
 	
 	
 	public class RootDirective implements TemplateDirectiveModel {
@@ -111,8 +83,7 @@ public class TemplateMacroHelper {
 		public void execute(Environment env, Map params, TemplateModel[] loopVars,
 				TemplateDirectiveBody body) throws TemplateException, IOException {
 			
-			bodies.add(body);
-			templateNames.add(env.getTemplate().getName());
+			definitions.add(new TemplateDefinition(body, env));
 		}
 	}
 	
@@ -134,22 +105,21 @@ public class TemplateMacroHelper {
 				file = StringUtils.cleanPath(dir + file);
 			}
 			
-			boolean deepest = bodies.isEmpty();
-			bodies.add(body);
-			templateNames.add(env.getTemplate().getName());
+			boolean deepest = definitions.isEmpty();
+			definitions.add(new TemplateDefinition(body, env));
 			
 			env.include(file, "UTF-8", true);
 			
 			if (deepest) {
 				Writer out = new NullWriter();
-				Iterator<TemplateDirectiveBody> it = bodies.iterator();
+				Iterator<TemplateDefinition> it = definitions.iterator();
 				while (it.hasNext()) {
-					TemplateDirectiveBody b = it.next();
+					currentTemplate = it.next();
 					it.remove();
 					if (!it.hasNext()) {
 						out = env.getOut();
 					}
-					b.render(out);
+					currentTemplate.render(out);
 				}
 			}
 		}
@@ -171,7 +141,7 @@ public class TemplateMacroHelper {
 			}
 			
 			Block block = blocks.get(name);
-			if (nestedBlock || bodies.isEmpty()) {
+			if (nestedBlock || definitions.isEmpty()) {
 				//Render
 				if (block != null) {
 					block.render(env.getOut());
@@ -206,7 +176,7 @@ public class TemplateMacroHelper {
 			
 			if (body != null) {
 				try {
-					BodyCacheHandler handler = new BodyCacheHandler(body, out, cacheKey, env);
+					BodyCacheHandler handler = new BodyCacheHandler(body, out, cacheKey);
 					cacheService.handle(handler);
 					return handler.getTaggingContext();
 				}
@@ -229,17 +199,14 @@ public class TemplateMacroHelper {
 			
 			private String cacheKey;
 			
-			private Environment env;
-			
 			private TaggingContext taggingContext;
 			
 			public BodyCacheHandler(TemplateDirectiveBody body, Writer out, 
-					String cacheKey, Environment env) {
+					String cacheKey) {
 				
 				super(request, out, cacheKeyAugmentor);
 				this.body = body;
 				this.cacheKey = cacheKey;
-				this.env = env;
 			}
 
 			@Override
@@ -248,9 +215,7 @@ public class TemplateMacroHelper {
 			}
 			
 			protected void render(Writer out) throws Exception {
-				for (String name : templateNames) {
-					env.getConfiguration().getTemplate(name);
-				}
+				currentTemplate.requestTemplate();
 				body.render(out);
 			}
 			
@@ -263,6 +228,31 @@ public class TemplateMacroHelper {
 				return taggingContext;
 			}
 			
+		}
+	}
+		
+	private static class TemplateDefinition {
+		
+		private TemplateDirectiveBody body;
+		
+		private Environment env;
+		
+		private String templateName;
+
+		public TemplateDefinition(TemplateDirectiveBody body,
+				Environment env) {
+			
+			this.body = body;
+			this.env = env;
+			this.templateName = env.getTemplate().getName();
+		}
+		
+		public void render(Writer out) throws TemplateException, IOException {
+			body.render(out);
+		}
+		
+		public void requestTemplate() throws IOException {
+			env.getConfiguration().getTemplate(templateName);
 		}
 	}
 	
@@ -282,5 +272,37 @@ public class TemplateMacroHelper {
 			out.write(content);
 		}
 	}
+
+	// Static utility methods -------------------------------------------------
+	
+	private static String getRequiredStringParam(Map<String, ?> params, 
+			String name, Environment env) throws TemplateException {
+
+		Object value = params.get(name);
+		if (value instanceof SimpleScalar) {
+			return ((SimpleScalar) value).getAsString();
+		}
+		throw new TemplateException("Missing parameter: " + name, env);
+	}
+	
+	private static String getStringParam(Map<String, ?> params, String name, 
+			String defaultValue) {
 		
+		Object value = params.get(name);
+		if (value instanceof SimpleScalar) {
+			return ((SimpleScalar) value).getAsString();
+		}
+		return defaultValue;
+	}
+	
+	private static boolean getBooleanParam(Map<String, ?> params, String name, 
+			boolean defaultValue) throws TemplateModelException {
+	
+		Object value = params.get(name);
+		if (value instanceof TemplateBooleanModel) {
+			return ((TemplateBooleanModel) value).getAsBoolean();
+		}
+		return defaultValue;
+	}
+
 }
