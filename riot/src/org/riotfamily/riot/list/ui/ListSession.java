@@ -227,13 +227,7 @@ public class ListSession implements RenderContext {
 		listCommands = Collections.emptyList();
 		itemCommands = Generics.newArrayList();
 
-		ListDefinition targetList = null;
-		if (target instanceof ListDefinition) {
-			targetList = (ListDefinition) target;
-		}
-		else {
-			targetList = EditorDefinitionUtils.getParentListDefinition(target);
-		}
+		ListDefinition targetList = EditorDefinitionUtils.getListDefinition(target);
 
 		if (targetList != listDefinition) {
 			ListDefinition nextList = targetList;

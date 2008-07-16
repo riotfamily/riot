@@ -115,12 +115,11 @@ public class ViewController implements Controller,
 		mv.addObject(EditorConstants.OBJECT_ID, objectId);
 		mv.addObject("form", sw.toString());
 
-		ListDefinition parentListDef = EditorDefinitionUtils
-				.getParentListDefinition(editorDef);
+		ListDefinition listDef = EditorDefinitionUtils.getListDefinition(editorDef);
 
-		if (parentListDef != null) {
+		if (listDef != null) {
 			ListSession session = listService.getOrCreateListSession(
-				parentListDef.getId(),
+				listDef.getId(),
 				EditorDefinitionUtils.getParentId(editorDef, object),
 				null, null, request);
 

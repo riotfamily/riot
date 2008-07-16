@@ -87,12 +87,12 @@ public class FormController extends BaseFormController {
 		model.put("childLists", editorDefinition.getChildEditorReferences(object,
 				form.getFormContext().getMessageResolver()));
 
-		ListDefinition parentListDef = EditorDefinitionUtils
-				.getParentListDefinition(editorDefinition);
+		ListDefinition listDef = EditorDefinitionUtils
+				.getListDefinition(editorDefinition);
 
-		if (parentListDef != null) {
+		if (listDef != null) {
 			ListSession session = listService.getOrCreateListSession(
-				parentListDef.getId(), FormUtils.getParentId(form),
+				listDef.getId(), FormUtils.getParentId(form),
 				FormUtils.getParentEditorId(form), null, request);
 
 			model.put("listKey", session.getKey());

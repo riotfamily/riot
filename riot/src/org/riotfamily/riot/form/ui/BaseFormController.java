@@ -264,7 +264,7 @@ public abstract class BaseFormController extends RepositoryFormController
 	protected void saveOrUpdate(Form form, ObjectEditorDefinition editor)
 			throws Exception {
 		
-		ListDefinition listDef = EditorDefinitionUtils.getParentListDefinition(editor);
+		ListDefinition listDef = EditorDefinitionUtils.getListDefinition(editor);
 		RiotDao dao = listDef.getDao();
 		
 		TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
