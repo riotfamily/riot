@@ -19,7 +19,7 @@
 		<property name="servletName" value="website" />
 	</bean>
 	
-	<bean class="org.riotfamily.components.render.list.EditModeRenderStrategy">
+	<bean id="editModeRenderStrategy" class="org.riotfamily.components.render.list.EditModeRenderStrategy">
 		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="componentRenderer" />
 		<constructor-arg ref="contentFormRepository" />

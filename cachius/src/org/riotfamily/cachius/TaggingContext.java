@@ -117,9 +117,11 @@ public class TaggingContext {
 	 * be discarded.
 	 */
 	public void setPreventCaching(boolean preventCaching) {
-		this.preventCaching = preventCaching;
-		if (parent != null) {
-			parent.setPreventCaching(preventCaching);
+		if (preventCaching) {
+			this.preventCaching = true;
+			if (parent != null) {
+				parent.setPreventCaching(true);
+			}
 		}
 	}
 	
@@ -188,13 +190,24 @@ public class TaggingContext {
 		return currentContext.get();
 	}
 
-	public static void propagateTagsAndFiles(CacheItem cacheItem) {
+	public static void inheritFrom(CacheItem cacheItem) {
 		if (cacheItem != null) {
 			TaggingContext context = getContext();
 			if (context != null) {
 				context.addTags(cacheItem.getTags());
 				context.addInvolvedFiles(cacheItem.getInvolvedFiles());
 				context.setPreventCaching(cacheItem.isNew());
+			}
+		}
+	}
+	
+	public static void inheritFrom(TaggingContext other) {
+		if (other != null) {
+			TaggingContext context = getContext();
+			if (context != null) {
+				context.addTags(other.getTags());
+				context.addInvolvedFiles(other.getInvolvedFiles());
+				context.setPreventCaching(other.isPreventCaching());
 			}
 		}
 	}

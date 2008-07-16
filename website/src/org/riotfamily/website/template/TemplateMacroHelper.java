@@ -6,6 +6,7 @@ import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,6 +38,8 @@ public class TemplateMacroHelper {
 	private HttpServletRequest request;
 
 	private List<TemplateDirectiveBody> bodies = Generics.newArrayList();
+	
+	private Set<String> templateNames = Generics.newHashSet();
 	
 	private Map<String, Block> blocks = Generics.newHashMap();
 	
@@ -109,6 +112,7 @@ public class TemplateMacroHelper {
 				TemplateDirectiveBody body) throws TemplateException, IOException {
 			
 			bodies.add(body);
+			templateNames.add(env.getTemplate().getName());
 		}
 	}
 	
@@ -131,12 +135,12 @@ public class TemplateMacroHelper {
 			}
 			
 			boolean deepest = bodies.isEmpty();
-			
 			bodies.add(body);
+			templateNames.add(env.getTemplate().getName());
+			
+			env.include(file, "UTF-8", true);
 			
 			if (deepest) {
-				TaggingContext ctx = TaggingContext.openNestedContext();
-				env.include(file, "UTF-8", true);
 				Writer out = new NullWriter();
 				Iterator<TemplateDirectiveBody> it = bodies.iterator();
 				while (it.hasNext()) {
@@ -147,10 +151,6 @@ public class TemplateMacroHelper {
 					}
 					b.render(out);
 				}
-				ctx.close();
-			}
-			else {
-				env.include(file, "UTF-8", true);
 			}
 		}
 	}
@@ -172,15 +172,16 @@ public class TemplateMacroHelper {
 			
 			Block block = blocks.get(name);
 			if (nestedBlock || bodies.isEmpty()) {
+				//Render
 				if (block != null) {
-					block.propagateTagsAndFiles();
-					env.getOut().write(block.getContent());
+					block.render(env.getOut());
 				}
 				else {
 					renderBody(body, env.getOut(), cacheKey, env);
 				}
 			}
 			else {
+				//Capture
 				if (block == null) {
 					boolean nested = nestedBlock;
 					nestedBlock = true;
@@ -195,11 +196,11 @@ public class TemplateMacroHelper {
 				Environment env) throws TemplateException, IOException {
 			
 			StringWriter sw = new StringWriter();
-			CacheItem cacheItem = renderBody(body, sw, cacheKey, env);
-			return new Block(sw.toString(), cacheItem);
+			TaggingContext ctx = renderBody(body, sw, cacheKey, env);
+			return new Block(sw.toString(), ctx);
 		}
 		
-		private CacheItem renderBody(TemplateDirectiveBody body, Writer out, 
+		private TaggingContext renderBody(TemplateDirectiveBody body, Writer out, 
 				String cacheKey, Environment env) 
 				throws TemplateException, IOException {
 			
@@ -207,7 +208,7 @@ public class TemplateMacroHelper {
 				try {
 					BodyCacheHandler handler = new BodyCacheHandler(body, out, cacheKey, env);
 					cacheService.handle(handler);
-					return handler.getCacheItem();
+					return handler.getTaggingContext();
 				}
 				catch (TemplateException e) {
 					throw e;
@@ -230,7 +231,7 @@ public class TemplateMacroHelper {
 			
 			private Environment env;
 			
-			private CacheItem cacheItem;
+			private TaggingContext taggingContext;
 			
 			public BodyCacheHandler(TemplateDirectiveBody body, Writer out, 
 					String cacheKey, Environment env) {
@@ -247,25 +248,21 @@ public class TemplateMacroHelper {
 			}
 			
 			protected void render(Writer out) throws Exception {
-				env.getConfiguration().getTemplate(env.getTemplate().getName());
+				for (String name : templateNames) {
+					env.getConfiguration().getTemplate(name);
+				}
 				body.render(out);
 			}
 			
 			@Override
 			protected void postProcess(CacheItem cacheItem) throws Exception {
-				// Remember the CacheItem so that we can access it later 
-				this.cacheItem = cacheItem;
+				taggingContext = TaggingContext.getContext();
 			}
 			
-			@Override
-			protected void writeCacheItemInternal(CacheItem cacheItem) throws IOException {
-				this.cacheItem = cacheItem;
-				super.writeCacheItemInternal(cacheItem);
+			public TaggingContext getTaggingContext() {
+				return taggingContext;
 			}
 			
-			public CacheItem getCacheItem() {
-				return cacheItem;
-			}
 		}
 	}
 	
@@ -273,21 +270,17 @@ public class TemplateMacroHelper {
 		
 		private String content;
 		
-		private CacheItem cacheItem;
+		private TaggingContext context;
 
-		public Block(String content, CacheItem cacheItem) {
+		public Block(String content, TaggingContext context) {
 			this.content = content;
-			this.cacheItem = cacheItem;
-		}
-		
-		public String getContent() {
-			return content;
+			this.context = context;
 		}
 
-		public void propagateTagsAndFiles() {
-			TaggingContext.propagateTagsAndFiles(cacheItem);
+		public void render(Writer out) throws IOException {
+			TaggingContext.inheritFrom(context);
+			out.write(content);
 		}
-		
 	}
-	
+		
 }

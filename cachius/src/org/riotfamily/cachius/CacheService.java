@@ -193,7 +193,7 @@ public class CacheService {
 			}
 			else {
 				log.debug("Item has already been updated by another thread");
-				TaggingContext.propagateTagsAndFiles(cacheItem);
+				TaggingContext.inheritFrom(cacheItem);
 			}
 			callback.writeCacheItem(cacheItem);
 		}
@@ -205,8 +205,8 @@ public class CacheService {
     private boolean writeCacheItem(CacheHandler callback,
     		CacheItem cacheItem) throws IOException {
     	
-    	if (log.isDebugEnabled()) {
-    		log.debug("Serving cached version of " + cacheItem.getKey());
+    	if (log.isTraceEnabled()) {
+    		log.trace("Serving cached version of " + cacheItem.getKey());
     	}
     	
     	ReaderWriterLock lock = cacheItem.getLock();
@@ -217,7 +217,7 @@ public class CacheService {
         		return false;
         	}
         	callback.writeCacheItem(cacheItem);
-        	TaggingContext.propagateTagsAndFiles(cacheItem);
+        	TaggingContext.inheritFrom(cacheItem);
     	}
     	finally {
     		lock.releaseReaderLock();
