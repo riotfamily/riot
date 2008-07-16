@@ -43,7 +43,7 @@ import org.springframework.core.PriorityOrdered;
 public class PropertyOverrideProcessor implements BeanFactoryPostProcessor, 
 		PriorityOrdered {
 
-	private static Log log = LogFactory.getLog(PropertyOverrideProcessor.class);
+	private Log log = LogFactory.getLog(PropertyOverrideProcessor.class);
 	
 	private String ref;
 

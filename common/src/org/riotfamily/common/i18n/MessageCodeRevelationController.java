@@ -46,7 +46,7 @@ import org.springframework.web.servlet.mvc.Controller;
 public class MessageCodeRevelationController implements Controller, 
 		BeanFactoryAware {
 
-	private static Log log = LogFactory.getLog(
+	private Log log = LogFactory.getLog(
 			MessageCodeRevelationController.class);
 	
 	private CodeRevealingMessageSource messageSource;

@@ -46,7 +46,7 @@ public class CacheFactory {
 	
 	private static final String CACHE_FILE = "cache-info";
 
-	private static Log log = LogFactory.getLog(CacheFactory.class);
+	private Log log = LogFactory.getLog(CacheFactory.class);
 	
 	private int capacity = DEFAULT_CAPACITY;
 

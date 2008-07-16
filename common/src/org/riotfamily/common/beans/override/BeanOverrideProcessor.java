@@ -46,7 +46,7 @@ import org.springframework.core.PriorityOrdered;
  */
 public class BeanOverrideProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
 
-	private static Log log = LogFactory.getLog(BeanOverrideProcessor.class);
+	private Log log = LogFactory.getLog(BeanOverrideProcessor.class);
 	
 	private String ref;
 

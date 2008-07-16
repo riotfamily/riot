@@ -41,7 +41,7 @@ import org.springframework.util.Assert;
  */
 public class EditorRepository implements RiotRuntimeAware {
 
-	private static Log log = LogFactory.getLog(EditorRepository.class);
+	private Log log = LogFactory.getLog(EditorRepository.class);
 
 	private Map<String, EditorDefinition> editorDefinitions = Generics.newHashMap();
 

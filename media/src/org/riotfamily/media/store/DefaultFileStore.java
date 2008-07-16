@@ -46,7 +46,7 @@ import org.springframework.web.context.ServletContextAware;
 public class DefaultFileStore implements FileStore, ServletContextAware, 
 		InitializingBean {
 
-	private static Log log = LogFactory.getLog(DefaultFileStore.class);
+	private Log log = LogFactory.getLog(DefaultFileStore.class);
 	
 	private String uriPrefix;
 	

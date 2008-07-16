@@ -52,7 +52,7 @@ import org.springframework.web.context.ServletContextAware;
 public abstract class FilterPlugin implements ServletContextAware, 
 		InitializingBean, DisposableBean, Ordered {
 
-	private static Log log = LogFactory.getLog(FilterPlugin.class);
+	private Log log = LogFactory.getLog(FilterPlugin.class);
 	
 	private ServletContext servletContext;
 	

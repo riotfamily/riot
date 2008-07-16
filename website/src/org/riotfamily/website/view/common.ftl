@@ -283,7 +283,7 @@
 	<#return commonMacroHelper.getMessage(code, args) />
 </#function>
 
-<#macro message code args...><#local default><#nested></#local><#if !default?has_content><#local default=code /></#if>${commonMacroHelper.getMessage(code, args)!default}</#macro>
+<#macro message code args=[]><#local default><#nested></#local><#if !default?has_content><#local default=code /></#if>${commonMacroHelper.getMessage(code, args)!default}</#macro>
 
 <#---
   - @internal

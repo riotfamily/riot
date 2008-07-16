@@ -40,7 +40,7 @@ import org.springframework.web.util.WebUtils;
  */
 public class IncludeOnlyInterceptor extends PathMatchingInterceptor {
 
-	private static Log log = LogFactory.getLog(IncludeOnlyInterceptor.class);
+	private Log log = LogFactory.getLog(IncludeOnlyInterceptor.class);
 	
 	protected boolean doPreHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler) throws Exception {

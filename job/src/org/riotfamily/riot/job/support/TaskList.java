@@ -32,7 +32,7 @@ import org.riotfamily.riot.job.model.JobDetail;
 
 public class TaskList {
 
-	private static Log log = LogFactory.getLog(TaskList.class);
+	private Log log = LogFactory.getLog(TaskList.class);
 	
 	private HashSet<JobTask> activeTasks = Generics.newHashSet();
 	

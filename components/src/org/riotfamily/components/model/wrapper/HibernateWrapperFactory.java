@@ -41,7 +41,7 @@ import org.riotfamily.common.collection.TypeComparatorUtils;
  */
 public class HibernateWrapperFactory implements ValueWrapperFactory {
 
-	private static Log log = LogFactory.getLog(HibernateWrapperFactory.class);
+	private Log log = LogFactory.getLog(HibernateWrapperFactory.class);
 	
 	private ArrayList<WrapperClassInfo> wrapperClassInfos = new ArrayList<WrapperClassInfo>();
 		

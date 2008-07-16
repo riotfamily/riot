@@ -56,7 +56,7 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	/** Constant for the id attribute */
 	public static final String ID_ATTRIBUTE = "id";
 
-	private static Log log = LogFactory.getLog(AbstractGenericBeanDefinitionParser.class);
+	private Log log = LogFactory.getLog(AbstractGenericBeanDefinitionParser.class);
 	
 	private Class<?> beanClass;
 

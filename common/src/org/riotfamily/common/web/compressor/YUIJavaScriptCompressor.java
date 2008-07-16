@@ -43,7 +43,7 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
  */
 public class YUIJavaScriptCompressor implements Compressor {
 
-	private static Log log = LogFactory.getLog(YUIJavaScriptCompressor.class);
+	private Log log = LogFactory.getLog(YUIJavaScriptCompressor.class);
 	
 	private ErrorReporter defaultErrorReporter = new CommonsLoggingErrorReporter(log);
 	

@@ -20,7 +20,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class SiteIdentifier {
 
-	private static Log log = LogFactory.getLog(SiteIdentifier.class);
+	private Log log = LogFactory.getLog(SiteIdentifier.class);
 	
 	private PlatformTransactionManager transactionManager;
 	

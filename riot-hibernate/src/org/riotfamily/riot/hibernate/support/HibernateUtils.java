@@ -48,9 +48,11 @@ public final class HibernateUtils {
 	
 	public static final String PUBLISHED_PARAM_NAME = "published";
 	
-	private static Log log = LogFactory.getLog(HibernateUtils.class);
-	
 	private HibernateUtils() {
+	}
+	
+	private static Log getLog() {
+		return LogFactory.getLog(HibernateUtils.class);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -85,6 +87,7 @@ public final class HibernateUtils {
 	 * a query-by-example.
 	 * @since 6.4
 	 */
+	@SuppressWarnings("unchecked")
 	public static String getExampleWhereClause(Object example, String alias,
 			String[] propertyNames) {
 
@@ -92,9 +95,9 @@ public final class HibernateUtils {
 			return null;
 		}
 		StringBuffer hql = new StringBuffer();
-		Map<String, Object> properties;
+		Map properties;
 		if (example instanceof Map) {
-			properties = (Map<String, Object>) example;
+			properties = (Map) example;
 		}
 		else {
 			properties = PropertyUtils.getProperties(example, propertyNames);
@@ -137,6 +140,7 @@ public final class HibernateUtils {
 	 *
 	 * @since 6.4
 	 */
+	@SuppressWarnings("unchecked")
 	public static void setCollectionValueParams(Query query,
 			String[] names, Object object) {
 
@@ -144,7 +148,7 @@ public final class HibernateUtils {
 			String name = names[i];
 			Object value;
 			if (object instanceof Map) {
-				value = ((Map<String, Object>) object).get(name);
+				value = ((Map) object).get(name);
 			}
 			else {
 				value = PropertyUtils.getProperty(object, name);
@@ -223,7 +227,7 @@ public final class HibernateUtils {
 						PUBLISHED_PARAM_NAME, Boolean.TRUE);	
 			}
 			else {
-				log.warn("No filter named " + LIVE_MODE_FILTER_NAME 
+				getLog().warn("No filter named " + LIVE_MODE_FILTER_NAME 
 						+ " defined for SessionFactory");
 			}
 		}

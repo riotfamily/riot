@@ -44,6 +44,7 @@ public abstract class AbstractMultiSelectElement
 
 	private List<Object> selectedValues = Generics.newArrayList();
 
+	@SuppressWarnings("unchecked")
 	private Class<? extends Collection> collectionClass;
 
 	private Integer maxSelection;
@@ -59,6 +60,7 @@ public abstract class AbstractMultiSelectElement
 		this.collectionClass = collectionClass;
 	}	
 	
+	@SuppressWarnings("unchecked")
 	public Class<? extends Collection> getCollectionClass() {
 		return this.collectionClass;
 	}
@@ -67,6 +69,7 @@ public abstract class AbstractMultiSelectElement
 		this.maxSelection = maxSelection;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void afterBindingSet() {
 		if (collectionClass == null) {
 			Class<?> type = getEditorBinding().getPropertyType();

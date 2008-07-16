@@ -42,7 +42,7 @@ public class DocumentReader {
 
 	protected static final int VALIDATION_MODE_NONE = 0;
 		
-	private static Log log = LogFactory.getLog(DocumentReader.class);
+	private Log log = LogFactory.getLog(DocumentReader.class);
 		
 	private Resource resource;
 	

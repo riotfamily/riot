@@ -44,7 +44,7 @@ import org.springframework.util.StringUtils;
  */
 public class JoiningResourceController extends AbstractResourceController {
 
-	private static Log log = LogFactory.getLog(JoiningResourceController.class);
+	private Log log = LogFactory.getLog(JoiningResourceController.class);
 	
 	private Compressor compressor;
 	

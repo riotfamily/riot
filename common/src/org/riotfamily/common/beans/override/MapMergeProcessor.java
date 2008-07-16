@@ -45,7 +45,7 @@ import org.springframework.util.StringUtils;
  */
 public class MapMergeProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
 
-	private static Log log = LogFactory.getLog(MapMergeProcessor.class);
+	private Log log = LogFactory.getLog(MapMergeProcessor.class);
 			
 	private String ref;
 	

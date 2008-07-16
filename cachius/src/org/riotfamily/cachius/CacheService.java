@@ -39,7 +39,7 @@ import org.riotfamily.common.util.Generics;
  */
 public class CacheService {
 
-	private static Log log = LogFactory.getLog(CacheService.class);
+	private Log log = LogFactory.getLog(CacheService.class);
 	
 	private Cache cache;
 	

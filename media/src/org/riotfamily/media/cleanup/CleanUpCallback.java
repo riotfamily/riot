@@ -36,7 +36,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
  */
 public class CleanUpCallback extends TransactionCallbackWithoutResult {
 
-	private static Log log = LogFactory.getLog(CleanUpCallback.class);
+	private Log log = LogFactory.getLog(CleanUpCallback.class);
 	
 	private MediaDao mediaDao;
 	

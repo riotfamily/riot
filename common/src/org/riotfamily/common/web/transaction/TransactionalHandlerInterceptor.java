@@ -50,7 +50,7 @@ public class TransactionalHandlerInterceptor implements HandlerInterceptor {
 	private static final String TX_STATUS_ATTRIBUTE = 
 			TransactionalHandlerInterceptor.class.getName() + ".status";
 	
-	private static Log log = LogFactory.getLog(TransactionalHandlerInterceptor.class);
+	private Log log = LogFactory.getLog(TransactionalHandlerInterceptor.class);
 	
 	private TransactionAttribute transactionAttribute = 
 			new DefaultTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED);

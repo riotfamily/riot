@@ -30,10 +30,15 @@ public class ErrorUtils {
 
 	public static final String ERROR_REQUIRED = "required";
 
-	private static Log log = LogFactory.getLog(ErrorUtils.class);
-
+	private ErrorUtils() {
+	}
+	
+	private static Log getLog() {
+		return LogFactory.getLog(ErrorUtils.class);
+	}
+	
 	public static void reject(Editor editor, String errorCode, Object[] args) {
-		log.debug("Rejecting value " + editor.getFieldName() + ": " + errorCode);
+		getLog().debug("Rejecting value " + editor.getFieldName() + ": " + errorCode);
 		editor.getForm().getErrors().rejectValue(
 				editor.getFieldName(), errorCode, args, null);
 		
@@ -46,7 +51,7 @@ public class ErrorUtils {
 
 
 	public static void reject(Editor editor, String errorCode) {
-		log.debug("Rejecting value " + editor.getFieldName() + ": " + errorCode);
+		getLog().debug("Rejecting value " + editor.getFieldName() + ": " + errorCode);
 		editor.getForm().getErrors().rejectValue(
 				editor.getFieldName(), errorCode);
 		

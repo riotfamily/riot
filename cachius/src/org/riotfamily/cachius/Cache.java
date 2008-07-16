@@ -47,7 +47,7 @@ import org.riotfamily.common.io.IOUtils;
  */
 public final class Cache implements Serializable {
 
-    private static Log log = LogFactory.getLog(Cache.class);
+    private Log log = LogFactory.getLog(Cache.class);
     
     private static ItemUsageComparator itemUsageComparator = new ItemUsageComparator();
     

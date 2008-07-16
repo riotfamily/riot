@@ -38,8 +38,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class EmailValidationUtils {
 
-    private static Log log = LogFactory.getLog(EmailValidationUtils.class);
-    
     private static final String SPECIAL_CHARS = "\\(\\)<>@,;:\\\\\\\"\\.\\[\\]";
     private static final String VALID_CHARS = "[^\\s" + SPECIAL_CHARS + "]";
     private static final String QUOTED_USER = "(\"[^\"]*\")";
@@ -75,6 +73,10 @@ public final class EmailValidationUtils {
 	private EmailValidationUtils() {
     }
 
+	private static Log getLog() {
+		return LogFactory.getLog(EmailValidationUtils.class);
+	}
+	
     /**
      * <p>Checks if a field has a valid e-mail address.</p>
      *
@@ -83,42 +85,42 @@ public final class EmailValidationUtils {
      */
     public static boolean isValid(String email) {
         if (email == null) {
-            log.debug("Address is null");
+            getLog().debug("Address is null");
             return false;
         }
         Matcher addrMatcher = addrPattern.matcher(email);
         if (addrMatcher.matches()) {
             email = addrMatcher.group(1);
-            log.debug("Extracted machine part from address: " + email);
+            getLog().debug("Extracted machine part from address: " + email);
         }
         
         if (!legalAsciiPattern.matcher(email).matches()) {
-            log.debug("Address must only contain ASCII characters");
+        	getLog().debug("Address must only contain ASCII characters");
             return false;
         }
 
         // Check the whole email address structure
         Matcher emailMatcher = emailPattern.matcher(email);
         if (!emailMatcher.matches()) {
-            log.debug("Invalid address structure");
+        	getLog().debug("Invalid address structure");
             return false;
         }
 
         if (email.endsWith(".")) {
-            log.debug("Address must not end with a dot");
+            getLog().debug("Address must not end with a dot");
             return false;
         }
 
         if (!isValidUser(emailMatcher.group(1))) {
-            log.debug("Invalid user");
+        	getLog().debug("Invalid user");
             return false;
         }
 
         if (!isValidDomain(emailMatcher.group(2))) {
-            log.debug("Invalid domain");
+        	getLog().debug("Invalid domain");
             return false;
         }
-        log.debug("Address is valid");
+        getLog().debug("Address is valid");
         return true;
     }
 

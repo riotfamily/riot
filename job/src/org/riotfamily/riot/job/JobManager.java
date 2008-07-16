@@ -45,7 +45,7 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 
 	private static final String THREAD_NAME_PREFIX = "JobThread";
 	
-	private static Log log = LogFactory.getLog(JobManager.class);
+	private Log log = LogFactory.getLog(JobManager.class);
 	
 	private Map<String, Job> jobs;
 	

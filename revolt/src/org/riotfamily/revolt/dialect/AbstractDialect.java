@@ -38,7 +38,7 @@ import org.riotfamily.revolt.support.TypeMap;
  */
 public abstract class AbstractDialect implements Dialect {
 
-	private static Log log = LogFactory.getLog(AbstractDialect.class);
+	private Log log = LogFactory.getLog(AbstractDialect.class);
 	
 	private HashMap<String, String> nativeTypes = new HashMap<String, String>();
 	

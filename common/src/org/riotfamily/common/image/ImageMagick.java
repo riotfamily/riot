@@ -42,7 +42,7 @@ import org.springframework.util.Assert;
  */
 public class ImageMagick implements InitializingBean {
 
-	private static Log log = LogFactory.getLog(ImageMagick.class);
+	private Log log = LogFactory.getLog(ImageMagick.class);
 	
 	private static Pattern majorMinorPattern = Pattern.compile("ImageMagick ([0-9]).([0-9])");
 	

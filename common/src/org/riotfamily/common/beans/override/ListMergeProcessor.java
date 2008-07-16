@@ -45,7 +45,7 @@ import org.springframework.util.Assert;
  */
 public class ListMergeProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
 
-	private static Log log = LogFactory.getLog(ListMergeProcessor.class);
+	private Log log = LogFactory.getLog(ListMergeProcessor.class);
 			
 	private String ref;
 	

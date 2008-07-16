@@ -39,7 +39,7 @@ import org.springframework.dao.DataAccessException;
 
 public class JobTask implements Runnable {
 	
-	private static Log log = LogFactory.getLog(JobTask.class);
+	private Log log = LogFactory.getLog(JobTask.class);
 	
 	private Job job;
 

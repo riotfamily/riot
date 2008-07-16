@@ -44,7 +44,12 @@ public class IOUtils {
 	
 	public static final int BUFFER_SIZE = 4096;
 	
-	private static Log log = LogFactory.getLog(IOUtils.class);
+	private IOUtils() {
+	}
+	
+	private static Log getLog() {
+		return LogFactory.getLog(IOUtils.class);
+	}
 	
 	/**
 	 * Copies the content of the given InputStream to an OutputStream.
@@ -286,11 +291,11 @@ public class IOUtils {
 	public static void move(File source, File dest) {
 		if (!source.renameTo(dest)) {
 			try {
-				log.info("Unable to move file " + source);
+				getLog().info("Unable to move file " + source);
 				FileCopyUtils.copy(source, dest);
 			}
 			catch (IOException e) {
-				log.warn("Copy failed.", e);
+				getLog().warn("Copy failed.", e);
 			}
 	    	delete(source);
 	    }

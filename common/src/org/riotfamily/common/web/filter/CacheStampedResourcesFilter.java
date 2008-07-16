@@ -50,7 +50,7 @@ import org.riotfamily.common.web.util.ServletUtils;
  */
 public class CacheStampedResourcesFilter extends HttpFilterBean {
 
-	private static Log log = LogFactory.getLog(
+	private Log log = LogFactory.getLog(
 			CacheStampedResourcesFilter.class);
 	
 	public static final String DEFAULT_EXPIRATION = "10Y";

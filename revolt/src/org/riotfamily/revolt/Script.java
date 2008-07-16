@@ -132,7 +132,7 @@ public class Script {
 
 	public static class SqlCallback implements StatementCallback, SqlProvider {
 
-		private static Log log = LogFactory.getLog(SqlCallback.class);
+		private Log log = LogFactory.getLog(SqlCallback.class);
 		
 		private String sql;
 

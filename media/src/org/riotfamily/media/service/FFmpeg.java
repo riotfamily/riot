@@ -41,7 +41,7 @@ import org.springframework.util.Assert;
  */
 public class FFmpeg implements InitializingBean {
 
-	private static Log log = LogFactory.getLog(FFmpeg.class);
+	private Log log = LogFactory.getLog(FFmpeg.class);
 	
 	private static final Pattern DURATION_PATTERN = Pattern.compile(
 			"Duration: (\\d\\d):(\\d\\d):(\\d\\d)");
