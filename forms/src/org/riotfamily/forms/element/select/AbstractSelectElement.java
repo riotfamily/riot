@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.select;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,6 +32,7 @@ import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.MessageUtils;
+import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.options.OptionsModel;
@@ -44,7 +44,7 @@ import org.springframework.util.Assert;
  * options like selectboxes or radio button groups.
  */
 public abstract class AbstractSelectElement extends AbstractEditorBase implements
-		Editor, SelectElement, JavaScriptEventAdapter {
+		Editor, SelectElement, NestedEditor, JavaScriptEventAdapter {
 
 	
 	private Object options;
@@ -127,31 +127,20 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 	public boolean isVisible() {		
 		return super.isVisible() && !(hideIfEmpty && !hasOptionValues());
 	}
-
-	public final void renderInternal(PrintWriter writer) {
-		resetOptionItems();
-		renderSelectElement(writer);
-	}
 	
-	protected abstract void renderSelectElement(PrintWriter writer);
+	public void setBackingObject(Object obj) {
+		reset();
+	}
 	
 	public void reset() {
-		resetOptionItems();
-		resetOptionValues();
-		setValue(null);
-		if (getFormListener() != null) {
-			getFormListener().elementChanged(this);
+		if (optionItems != null) {
+			optionItems = createOptionItems();
+			if (getFormListener() != null) {
+				getFormListener().elementChanged(this);
+			}
 		}
 	}
-	
-	protected void resetOptionItems() {
-		optionItems = null;
-	}
-	
-	protected void resetOptionValues() {
-		optionValues = null;
-	}
-	
+			
 	protected final List<OptionItem> getOptionItems() {
 		if (optionItems == null) {
 			optionItems = createOptionItems();
@@ -164,16 +153,19 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 			optionsModel = OptionsModelUtils.createOptionsModel(options, this);
 		}
 		List<OptionItem> items = new ArrayList<OptionItem>();
-		if (options != null) {			
-			optionValues = optionsModel.getOptionValues(this);			
+		optionValues = optionsModel.getOptionValues(this);
+		if (optionValues != null) {
 			for (Object item : optionValues) {
 				String label = getOptionLabel(item);
 				Object value = getOptionValue(item);
 				items.add(new OptionItem(item, value, label, this));
 			}
 		}
+		updateSelection(optionValues);
 		return items;
 	}
+	
+	protected abstract void updateSelection(Collection<?> optionValues);
 	
 	protected String getOptionLabel(Object item) {
 		Object obj = item;

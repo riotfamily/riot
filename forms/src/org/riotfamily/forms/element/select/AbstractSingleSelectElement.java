@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.select;
 
+import java.util.Collection;
+
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.request.FormRequest;
 
@@ -59,13 +61,25 @@ public abstract class AbstractSingleSelectElement
 		updateSelection(request.getParameter(getParamName()));
 	}
 	
+	protected void updateSelection(Collection<?> optionValues) {
+		if (optionValues != null && selectedValue != null) {
+			for (Object value : optionValues) {
+				if (selectedValue.equals(value)) {
+					selectedValue = value;
+					return;
+				}
+			}
+		}
+		selectedValue = null;
+	}
+	
 	private void updateSelection(String index) {
 		int i = -1;
 		if (index != null) {
 			i = Integer.parseInt(index);
 		}
 		if (i >= 0) {
-			OptionItem option = (OptionItem) getOptionItems().get(i);
+			OptionItem option = getOptionItems().get(i);
 			selectedValue = option.getValue();
 		}
 		else {

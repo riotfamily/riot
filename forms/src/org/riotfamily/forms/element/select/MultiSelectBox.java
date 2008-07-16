@@ -49,7 +49,7 @@ public class MultiSelectBox extends AbstractMultiSelectElement {
 		this.maxSize = maxSize;
 	}
 
-	public void renderSelectElement(PrintWriter writer) {
+	protected void renderInternal(PrintWriter writer) {
 		TagWriter selectTag = new TagWriter(writer);
 
 		List<OptionItem> options = getOptionItems();

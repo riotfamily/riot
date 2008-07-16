@@ -93,7 +93,7 @@ public class SelectBox extends AbstractSingleSelectElement {
 		return super.getValue();
 	}
 			
-	public void renderSelectElement(PrintWriter writer) {
+	protected void renderInternal(PrintWriter writer) {
 		List<OptionItem> optionItems = getOptionItems();
 		TagWriter selectTag = new TagWriter(writer);
 		selectTag.start(Html.SELECT);

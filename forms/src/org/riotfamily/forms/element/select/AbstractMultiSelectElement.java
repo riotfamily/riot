@@ -42,7 +42,7 @@ import org.riotfamily.forms.request.FormRequest;
 public abstract class AbstractMultiSelectElement 
 		extends AbstractSelectElement {
 
-	private Collection<Object> selectedValues = Generics.newArrayList();
+	private List<Object> selectedValues = Generics.newArrayList();
 
 	private Class<? extends Collection> collectionClass;
 
@@ -136,6 +136,18 @@ public abstract class AbstractMultiSelectElement
 	 */
 	public void processRequest(FormRequest request) {
 		updateSelection(request.getParameterValues(getParamName()));
+	}
+	
+	protected void updateSelection(Collection<?> optionValues) {
+		List<?> oldSelection = selectedValues;
+		selectedValues = Generics.newArrayList();
+		if (optionValues != null) {
+			for (Object value : optionValues) {
+				if (oldSelection.contains(value)) {
+					selectedValues.add(value);
+				}
+			}
+		}
 	}
 	
 	private void updateSelection(String[] indexes) {
