@@ -304,4 +304,21 @@ public class FileData {
 			mediaService.delete(uri);
 		}
 	}
+	
+	@Override
+	public int hashCode() {
+		if (uri != null) {
+			return uri.hashCode();
+		}
+		return 0;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (uri != null && obj instanceof FileData) {
+			FileData other = (FileData) obj;
+			return uri.equals(other.uri);
+		}
+		return super.equals(obj);
+	}
 }

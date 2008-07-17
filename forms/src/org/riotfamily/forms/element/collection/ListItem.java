@@ -25,13 +25,14 @@ package org.riotfamily.forms.element.collection;
 
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
+import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.ClickEvent;
 import org.riotfamily.forms.event.ClickListener;
 
-public class ListItem extends TemplateElement implements DHTMLElement, ClickListener {
+public class ListItem extends TemplateElement implements NestedEditor, DHTMLElement, ClickListener {
 	
 	private ListEditor list;
 
@@ -74,6 +75,21 @@ public class ListItem extends TemplateElement implements DHTMLElement, ClickList
 		binding.setExistingItem(!newItem);
 		binding.setValue(value);
 		editor.setValue(value);
+	}
+	
+	boolean isNew() {
+		return !binding.isEditingExistingBean();
+	}
+	
+	public Object getBackingObject() {
+		return binding.getValue();
+	}
+	
+	public void setBackingObject(Object obj) {
+		binding.setValue(obj);
+		if (editor instanceof NestedEditor) {
+			((NestedEditor) editor).setBackingObject(obj);
+		}
 	}
 	
 	public Object getValue() {

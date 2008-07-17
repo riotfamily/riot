@@ -41,6 +41,21 @@ public class ContentListItem extends ListItem {
 		super(list);
 	}
 	
+	@Override
+	public Object getBackingObject() {
+		return wrapper;
+	}
+	
+	@Override
+	public void setBackingObject(Object obj) {
+		if (obj != null) {
+			wrapper = (ValueWrapper<Object>) obj;
+			obj = wrapper.getValue();
+		}
+		super.setBackingObject(obj);
+	}
+	
+	@Override
 	public void setValue(Object value, boolean newItem) {
 		if (value != null) {
 			wrapper = (ValueWrapper<Object>) value;
@@ -49,6 +64,7 @@ public class ContentListItem extends ListItem {
 		super.setValue(value, newItem);
 	}
 	
+	@Override
 	public Object getValue() {
 		Editor editor = getEditor();
 		Object value = editor.getValue();

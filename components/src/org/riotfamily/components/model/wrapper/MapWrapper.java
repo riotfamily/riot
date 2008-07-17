@@ -43,6 +43,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.IndexColumn;
 import org.riotfamily.common.util.Generics;
+import org.springframework.util.ObjectUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -224,6 +225,26 @@ public class MapWrapper extends ValueWrapper<Map<String, Object>>
 		    Entry<? extends String, ?> e = i.next();
 		    put(e.getKey(), e.getValue());
 		}
+	}
+	
+	@Override
+	public int hashCode() {
+		if (getId() != null) {
+			return getId().hashCode();
+		}
+		return super.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof MapWrapper) {
+			if (getId() != null) {
+				MapWrapper other = (MapWrapper) obj;
+				return getId().equals(other.getId());
+			}
+			return super.equals(obj);
+		}
+		return false;
 	}
 
 }

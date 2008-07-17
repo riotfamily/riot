@@ -89,7 +89,7 @@ public class FileUpload extends CompositeElement implements Editor,
 	}
 	
 	public void setBackingObject(Object obj) {
-		setValue(getEditorBinding().getValue());
+		setValue(obj);
 	}
 	
 	public void setValue(Object value) {

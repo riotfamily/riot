@@ -27,7 +27,7 @@ import java.util.List;
 
 
 /**
- * Composite element that notifys the form whenever an element is added or 
+ * Composite element that notifies the form whenever an element is added or 
  * removed. This way elements can benefit from the framework's AJAX support 
  * without needing to know anything about. 
  * Refer to the {@link org.riotfamily.forms.element.collection.ListEditor} implementation

@@ -174,4 +174,21 @@ public class RiotFile {
 	public RiotFile get(String name) {
 		return getFileData().getVariant(name) ;
 	}
+	
+	@Override
+	public int hashCode() {
+		if (fileData != null) {
+			return fileData.hashCode();
+		}
+		return 0;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (fileData != null && obj instanceof RiotFile) {
+			RiotFile other = (RiotFile) obj;
+			return fileData.equals(other.fileData);
+		}
+		return super.equals(obj);
+	}
 }

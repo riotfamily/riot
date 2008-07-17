@@ -40,6 +40,7 @@ import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.ErrorUtils;
+import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.element.select.SelectElement;
@@ -50,12 +51,13 @@ import org.riotfamily.forms.options.OptionsModel;
 import org.riotfamily.forms.options.OptionsModelUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 
 /**
  * A list widget to edit maps.
  */
-public class MapEditor extends TemplateElement implements Editor {
+public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 	
 	/** Class to use for newly created maps */
 	private Class<?> mapClass = HashMap.class;
@@ -191,6 +193,21 @@ public class MapEditor extends TemplateElement implements Editor {
 		return map;
 	}
 				
+	public void setBackingObject(Object obj) {
+		if (obj instanceof Map) {
+			Map<?,?> newValues = Generics.newHashMap((Map<?,?>) obj);
+			Iterator<Element> it = items.getElements().iterator();
+			while (it.hasNext()) {
+				MapItem item = (MapItem) it.next();
+				Object oldValue = item.getValue();
+				Object newValue = newValues.get(item.key);
+				if (ObjectUtils.nullSafeEquals(oldValue, newValue)) {
+					item.setBackingObject(newValue);
+				}
+			}
+		}
+	}
+	
 	private Map createOrClearMap() {
 		Map map = (Map) getEditorBinding().getValue();
 		if (map == null) {
@@ -286,6 +303,13 @@ public class MapEditor extends TemplateElement implements Editor {
 			binding.setExistingItem(!newItem);
 			binding.setValue(value);
 			editor.setValue(value);
+		}
+		
+		public void setBackingObject(Object obj) {
+			binding.setValue(obj);
+			if (editor instanceof NestedEditor) {
+				((NestedEditor) editor).setBackingObject(obj);
+			}
 		}
 		
 		public void focus() {

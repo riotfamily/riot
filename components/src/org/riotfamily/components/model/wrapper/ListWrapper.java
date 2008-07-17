@@ -66,7 +66,7 @@ public class ListWrapper extends ValueWrapper<List<?>>
 	}
 
 	@OneToMany
-	@Cascade(CascadeType.ALL)
+	@Cascade({CascadeType.ALL, CascadeType.DELETE_ORPHAN})
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 	public List<ValueWrapper<?>> getWrapperList() {
 		return wrapperList;
@@ -285,6 +285,26 @@ public class ListWrapper extends ValueWrapper<List<?>>
 					a.getClass().getComponentType(), 0);
 		}
 		return wrapperList.toArray(a);
+	}
+	
+	@Override
+	public int hashCode() {
+		if (getId() != null) {
+			return getId().hashCode();
+		}
+		return super.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ListWrapper) {
+			if (getId() != null) {
+				ListWrapper other = (ListWrapper) obj;
+				return getId().equals(other.getId());
+			}
+			return super.equals(obj);
+		}
+		return false;
 	}
 	
 }

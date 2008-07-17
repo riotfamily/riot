@@ -32,12 +32,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.ErrorUtils;
+import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.event.Button;
@@ -54,7 +56,7 @@ import org.springframework.util.StringUtils;
 /**
  * A list widget to edit lists and sets.
  */
-public class ListEditor extends TemplateElement implements Editor, 
+public class ListEditor extends TemplateElement implements Editor, NestedEditor, 
 		ResourceElement, DHTMLElement {
 		
 	/** Class to use for newly created collections */
@@ -196,6 +198,23 @@ public class ListEditor extends TemplateElement implements Editor,
 		}
 	}
 	
+	public void setBackingObject(Object obj) {
+		if (obj instanceof Collection) {
+			List<?> newValues = Generics.newArrayList((Collection<?>) obj);
+			Iterator<Element> it = getListItems().iterator();
+			while (it.hasNext()) {
+				ListItem item = (ListItem) it.next();
+				if (!item.isNew()) {
+					Object oldValue = item.getBackingObject();
+					int i = newValues.indexOf(oldValue);
+					if (i >= 0) {
+						item.setBackingObject(newValues.get(i));
+					}
+				}
+			}
+		}
+	}
+	
 	public Object getValue() {
 		Collection<Object> collection = createOrClearCollection();
 		Iterator<Element> it = getListItems().iterator();
@@ -217,7 +236,8 @@ public class ListEditor extends TemplateElement implements Editor,
 		return collection;
 	}
 				
-	private Collection createOrClearCollection() {
+	@SuppressWarnings("unchecked")
+	private Collection<Object> createOrClearCollection() {
 		Collection collection = (Collection) getEditorBinding().getValue();
 		if (collection == null) {
 			collection = (Collection) BeanUtils.instantiateClass(collectionClass);

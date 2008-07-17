@@ -120,10 +120,14 @@ public abstract class ValueWrapper<T> {
 	/**
 	 * Delegates the call to the equals method of the wrapped object. 
 	 */
-	public boolean equals(ValueWrapper<T> obj) {
-		T otherValue = obj.getValue();
-		if (otherValue != null) {
-			return otherValue.equals(getValue());
+	@SuppressWarnings("unchecked")
+	public boolean equals(Object obj) {
+		if (obj instanceof ValueWrapper) {
+			ValueWrapper<T> other = (ValueWrapper<T>) obj;
+			T otherValue = other.getValue();
+			if (otherValue != null) {
+				return otherValue.equals(getValue());
+			}
 		}
 		return false;
 	}
