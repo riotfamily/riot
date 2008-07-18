@@ -89,7 +89,7 @@ public class NumberField extends TextField implements DHTMLElement,
 	public String getInitScript() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("NumberInput.create('");
-		sb.append(getId());
+		sb.append(getEventTriggerId());
 		sb.append("', {");
 		sb.append("required:").append(isRequired()).append(',');
 		appendValue(sb, "minValue", minValue);

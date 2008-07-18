@@ -4,9 +4,7 @@ var NumberInput = {
 	}
 };
 
-NumberInput.Field = Class.create();
-NumberInput.Field.prototype = {
-
+NumberInput.Field = Class.create({
 	initialize: function(element) {
 		this.element = $(element);
 		this.options = Object.extend({
@@ -134,8 +132,6 @@ NumberInput.Field.prototype = {
 	},
 
 	handleKeyPress: function(e) {
-		//$('debug').innerHTML = this.downCode;
-		
 		if (this.isControlKey(this.downCode)) return true;			
 		var code = e.keyCode ? e.keyCode : e.which;
 		if (code == Event.KEY_UP) {
@@ -229,10 +225,9 @@ NumberInput.Field.prototype = {
 		}
 	}
 
-}
+});
 
-NumberInput.SpinButton = Class.create();
-NumberInput.SpinButton.prototype = {
+NumberInput.SpinButton = Class.create({
 	initialize: function(field, action) {
 		this.field = field;
 		this.func = this.field[action].bind(field);
@@ -268,4 +263,4 @@ NumberInput.SpinButton.prototype = {
 		if (this.timeout) clearTimeout(this.timeout);
 	}
 
-}
+});
