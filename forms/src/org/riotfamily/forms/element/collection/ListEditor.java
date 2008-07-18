@@ -36,7 +36,6 @@ import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
-import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.NestedEditor;
@@ -49,6 +48,7 @@ import org.riotfamily.forms.request.FormRequest;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
+import org.riotfamily.forms.resource.ScriptResource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 
@@ -69,8 +69,10 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	/** Factory to create elements for newly added items */
 	ElementFactory itemElementFactory;
 	
+	List<ListItem> items = Generics.newArrayList();
+	
 	/** Container of ListItems */
-	private Container items = new Container();
+	private Container container = new Container(items);
 	
 	/** Button to add an item to the list */
 	private Button addButton;
@@ -79,10 +81,12 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	
 	private int maxSize;
 		
-	private boolean sortable;
+	private boolean sortable = false;
+	
+	private boolean dragAndDrop = true;
 	
 	public ListEditor() {
-		addComponent("items", items);
+		addComponent("items", container);
 		addButton = new Button();
 		addButton.setLabelKey("label.form.list.add");
 		addButton.setLabel("Add");
@@ -97,10 +101,24 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	
 	public void setSortable(boolean sortable) {
 		this.sortable = sortable;
+		if (!sortable) {
+			dragAndDrop = false;
+		}
 	}
 	
 	public boolean isSortable() {
 		return sortable;
+	}
+	
+	public void setDragAndDrop(boolean dragAndDrop) {
+		this.dragAndDrop = dragAndDrop;
+		if (dragAndDrop) {
+			sortable = true;
+		}
+	}
+	
+	public boolean isDragAndDrop() {
+		return dragAndDrop;
 	}
 
 	public void setMinSize(int minSize) {
@@ -128,7 +146,13 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	}
 
 	public FormResource getResource() {
-		return sortable ? Resources.SCRIPTACULOUS_DRAG_DROP : null;
+		if (sortable) {
+			if (dragAndDrop) {
+				return Resources.SCRIPTACULOUS_DRAG_DROP;
+			}
+			return new ScriptResource("form/listEditor.js", "initListEditor", Resources.PROTOTYPE);
+		}
+		return null;
 	}
 	
 	/**
@@ -162,11 +186,7 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	public ElementFactory getItemElementFactory() {
 		return this.itemElementFactory;
 	}
-	
-	protected List<Element> getListItems() {
-		return items.getElements();
-	}
-	
+		
 	/**
 	 * 
 	 */
@@ -201,9 +221,7 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	public void setBackingObject(Object obj) {
 		if (obj instanceof Collection) {
 			List<?> newValues = Generics.newArrayList((Collection<?>) obj);
-			Iterator<Element> it = getListItems().iterator();
-			while (it.hasNext()) {
-				ListItem item = (ListItem) it.next();
+			for (ListItem item : items) {
 				if (!item.isNew()) {
 					Object oldValue = item.getBackingObject();
 					int i = newValues.indexOf(oldValue);
@@ -217,10 +235,8 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	
 	public Object getValue() {
 		Collection<Object> collection = createOrClearCollection();
-		Iterator<Element> it = getListItems().iterator();
 		int i = 0;
-		while (it.hasNext()) {
-			ListItem item = (ListItem) it.next();
+		for (ListItem item : items) {
 			Object value = item.getValue();
 			if (value != null) {
 				if (parentProperty != null) {
@@ -255,7 +271,7 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 		
 		item.setEditor(editor);
 		item.setValue(value, newItem);
-		items.addElement(item);		
+		container.addElement(item);		
 		return item;
 	}
 	
@@ -264,11 +280,11 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	}
 	
 	public void removeItem(ListItem item) {		
-		items.removeElement(item);				
+		container.removeElement(item);				
 	}	
 	
 	protected void validate() {
-		int size = items.getElements().size();
+		int size = container.getElements().size();
 		if (minSize > 0 && size < minSize) {
 			ErrorUtils.reject(this, "list.size.tooSmall", 
 					new Object[] {new Integer(minSize)});
@@ -278,14 +294,13 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 					new Object[] {new Integer(maxSize)});
 		}
 	}
-	
-	public Container getItems() {
-		return this.items;
-	}
-	
+		
 	public String getInitScript() {
 		if (sortable && isEnabled() && !items.isEmpty()) {
-			return TemplateUtils.getInitScript(this, ListEditor.class);
+			if (dragAndDrop) {
+				return TemplateUtils.getInitScript(this, ListEditor.class);
+			}
+			return String.format("initListEditor('%s');", container.getId()); 
 		}
 		else {
 			return null;
@@ -296,8 +311,7 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 		if (sortable) {
 			String itemOrder = request.getParameter(getParamName());
 			if (StringUtils.hasLength(itemOrder)) {
-				Collections.sort(getListItems(), 
-						new ListItemComparator(itemOrder));
+				Collections.sort(items,	new ListItemComparator(itemOrder));
 			}
 		}
 		validate();

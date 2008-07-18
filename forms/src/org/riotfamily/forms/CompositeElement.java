@@ -37,14 +37,14 @@ import org.springframework.util.Assert;
 /**
  * Abstract superclass for elements that consist of several child elements.  
  * Calls to <code>processRequest()</code> and <code>render()</code> are 
- * automatically delegated to the components. Addionally the components are
+ * automatically delegated to the components. Additionally the components are
  * initialized, i.e. <code>setParent()</code>, <code>setForm()</code> and 
  * <code>Form.registerElement()</code> are called.  
  */
 public abstract class CompositeElement extends AbstractEditorBase 
 		implements BeanFactoryAware {
 
-	private List<Element> components = new ArrayList<Element>();
+	private List<Element> components;
 	
 	private AutowireCapableBeanFactory beanFactory;
 	
@@ -52,6 +52,15 @@ public abstract class CompositeElement extends AbstractEditorBase
 	 * Empty default constructor.
 	 */
 	public CompositeElement() {
+		components = new ArrayList<Element>();
+	}
+	
+	/**
+	 * Empty default constructor.
+	 */
+	@SuppressWarnings("unchecked")
+	public CompositeElement(List<? extends Element> components) {
+		this.components = (List<Element>) components;
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {

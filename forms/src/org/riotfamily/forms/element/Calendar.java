@@ -178,12 +178,12 @@ public class Calendar extends AbstractTextElement implements ResourceElement,
 			lang = "en";
 		}
 
-		resource = new ScriptResource("jscalendar/calendar-setup.js", "Calendar.setup", new FormResource[] {
+		resource = new ScriptResource("jscalendar/calendar-setup.js", "Calendar.setup", 
 			new ScriptResource("jscalendar/lang/calendar-" + lang + ".js", "Calendar._DN",
 				new ScriptResource("jscalendar/calendar.js", "Calendar")
 			),
 			new StylesheetResource("jscalendar/calendar.css")
-		});
+		);
 	}
 
 	public FormResource getResource() {

@@ -43,17 +43,7 @@ public class ScriptResource implements FormResource {
 		this(url, null);
 	}
 	
-	public ScriptResource(String url, String test) {
-		this(url, test, (FormResource[]) null);
-	}
-	
-	public ScriptResource(String src, String test, FormResource dependency) {
-		this(src, test, dependency != null 
-				? new FormResource[] { dependency } 
-				: null);
-	}
-	
-	public ScriptResource(String url, String test, FormResource[] dependencies) {
+	public ScriptResource(String url, String test, FormResource... dependencies) {
 		Assert.notNull(url);
 		this.url = url;
 		this.test = test;

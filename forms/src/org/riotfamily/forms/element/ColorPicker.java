@@ -55,12 +55,10 @@ public class ColorPicker extends AbstractTextElement
 	public FormResource getResource() {
 		return new ScriptResource(
 			"form/colorPicker/colorPicker.js", "Control.ColorPicker",
-			new FormResource[] {
-				Resources.SCRIPTACULOUS_SLIDER,
-				Resources.SCRIPTACULOUS_DRAG_DROP,
-				new ScriptResource("form/colorPicker/yahoo.color.js", "YAHOO.util.Color"),
-				new StylesheetResource("form/colorPicker/colorPicker.css")
-			}
+			Resources.SCRIPTACULOUS_SLIDER,
+			Resources.SCRIPTACULOUS_DRAG_DROP,
+			new ScriptResource("form/colorPicker/yahoo.color.js", "YAHOO.util.Color"),
+			new StylesheetResource("form/colorPicker/colorPicker.css")
 		);
 	}
 

@@ -1,4 +1,4 @@
-Sortable.create('${element.items.id}', {
+Sortable.create('${items.id}', {
 	handle: 'handle',
 	format: /(.*)/,
 	onUpdate: function(element) {

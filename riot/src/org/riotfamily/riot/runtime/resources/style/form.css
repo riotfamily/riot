@@ -273,40 +273,12 @@ ul.radioButtonGroup input {
 	position: relative;
 }
 
-/*
-.mapEditor ul.mapItems {
-	margin: 0;
-	padding: 0;
-	background-color: #ebebeb;
-	border-bottom: 1px solid #fff;
-}
-.mapEditor li {
-	list-style-type: none;
-	display: block;
-	padding: 0;
-	margin: 0;
-}
-.mapEditor li.compositeMapItem {
-	margin-bottom: 1px;
-	border-bottom: 1px solid #fff;
-}
-.mapEditor div.mapItem {
-	padding: 10px 0 5px 36px;
-	background: #fff;
-}
-.mapEditor .compositeMapItem div.mapItem {
-	margin: 0 0 0 30px;
-	padding: 10px 0 5px 6px;
-	border-bottom: 1px solid #fff;
-}
-.mapItem .indent {
-	margin-left: 10px;
-}
-*/
 
 .collectionEditor ul.items {
 	padding: 0;
 	margin: 0;
+}
+.collectionEditor ul.drag-drop {
 	background-color: #a4a4a4;
 }
 
@@ -348,6 +320,50 @@ table.item td.removeButton {
 	background: #ebebeb;
 	vertical-align: middle;
 }
+
+.listEditor li.nodrag {
+    border-top: 1px solid #cdcdcd;
+    border-bottom: 1px solid #cdcdcd;
+    margin-bottom: 1px;
+}
+
+.listEditor td.button,
+.listEditor td.removeButton {
+    width: 32px;
+    background-color: #ebebeb;
+    background-repeat: no-repeat;
+    background-position: 0 center;
+    overflow: hidden;   
+}
+.listEditor td.hover,
+.listEditor td.hover div {
+    color: #fff;
+    background-color: #cb0038;
+    background-position: -32px center;
+}
+
+.listEditor td.up, 
+.listEditor td.down {
+    height: 16px;
+}
+.listEditor td.up {
+    border-bottom: 1px solid #fff;
+    background-image: url(images/list_up.gif);
+}
+.listEditor td.down {
+    border-top: 1px solid #fff;
+    background-image: url(images/list_down.gif);
+}
+.listEditor td.disabled {
+    background-color: #ebebeb;
+    background-position: -64px center;
+}
+.listEditor input.remove {
+    height: 32px;
+    background-position: -32px center;
+    background-image: url(images/list_remove.gif);
+}
+
 
 .addKey {
 	background: url(images/add_grey.gif) 10px 12px no-repeat;

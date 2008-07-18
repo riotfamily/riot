@@ -55,6 +55,10 @@ public class ListItem extends TemplateElement implements NestedEditor, DHTMLElem
 		addComponent("removeButton", removeButton);
 	}
 	
+	public ListEditor getList() {
+		return list;
+	}
+	
 	public void clicked(ClickEvent event) {					
 		list.removeItem(this);
 	}
@@ -101,10 +105,6 @@ public class ListItem extends TemplateElement implements NestedEditor, DHTMLElem
 			return null;
 		}
 		return list.getInitScript();
-	}
-	
-	public boolean isShowDragHandle() {
-		return list.isSortable();
 	}
 	
 	public void focus() {

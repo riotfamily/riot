@@ -25,7 +25,7 @@ package org.riotfamily.forms.element.collection;
 
 import java.util.Comparator;
 
-class ListItemComparator implements Comparator {
+class ListItemComparator implements Comparator<ListItem> {
 
 	private String itemOrder;
 	
@@ -33,9 +33,7 @@ class ListItemComparator implements Comparator {
 		this.itemOrder = itemOrder;
 	}
 
-	public int compare(Object obj1, Object obj2) {
-		ListItem item1 = (ListItem) obj1;
-		ListItem item2 = (ListItem) obj2;
+	public int compare(ListItem item1, ListItem item2) {
 		int pos1 = itemOrder.indexOf(item1.getId() + ',');
 		int pos2 = itemOrder.indexOf(item2.getId() + ',');
 		return pos1 - pos2;

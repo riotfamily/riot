@@ -43,10 +43,8 @@ public class InternalLinkField extends TextField implements ResourceElement,
 
 	private static final ScriptResource RESOURCE = new ScriptResource(
 			"riot-js/window-callback.js", "WindowCallback",
-			new FormResource[] {
-				Resources.PROTOTYPE,
-				new StylesheetResource("style/internal-link-field.css")
-			}
+			Resources.PROTOTYPE,
+			new StylesheetResource("style/internal-link-field.css")
 	);
 
 	private String chooserUrl = "/riot/pages/chooser";

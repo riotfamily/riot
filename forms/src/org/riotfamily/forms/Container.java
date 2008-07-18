@@ -40,6 +40,10 @@ public class Container extends CompositeElement implements ContainerElement {
 	 */
 	public Container() {
 	}
+	
+	public Container(List<? extends Element> components) {
+		super(components);
+	}
 
 	public List<Element> getElements() {
 		return getComponents();

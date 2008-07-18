@@ -52,6 +52,5 @@ public final class Resources {
 			PROTOTYPE);
 	
 	public static final ScriptResource RIOT_UTIL = 
-			new ScriptResource("riot-js/util.js", "RElement", 
-			PROTOTYPE);
+			new ScriptResource("riot-js/util.js", "RElement", PROTOTYPE);
 }

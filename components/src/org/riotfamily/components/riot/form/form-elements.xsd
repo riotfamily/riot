@@ -14,6 +14,7 @@
 				<xsd:extension base="form:template-editor">
 					<xsd:group ref="form:elements" />
 					<xsd:attribute name="sortable" type="xsd:boolean" />
+					<xsd:attribute name="drag-and-drop" type="xsd:boolean" />
 					<xsd:attribute name="min-size" type="xsd:positiveInteger" />
 					<xsd:attribute name="max-size" type="xsd:positiveInteger" />
 				</xsd:extension>

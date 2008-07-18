@@ -1,5 +1,5 @@
 <div class="listEditor collectionEditor">
-	<ul id="${items.id}" class="items">
+	<ul id="${items.id}" class="items<#if element.dragAndDrop> drag-drop</#if>">
 		<#list items.elements as item>
 			${item.render()}
 		</#list>
