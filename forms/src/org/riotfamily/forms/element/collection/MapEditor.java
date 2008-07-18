@@ -252,11 +252,14 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 		
 		private Button removeButton;
 		
-		private CollectionItemEditorBinding binding = new CollectionItemEditorBinding();
+		private CollectionItemEditorBinding binding;
 		
 		public MapItem(Object key, boolean removable) {
 			super("item");
 			this.key = key;
+			binding = new CollectionItemEditorBinding(
+					MapEditor.this.getEditorBinding().getEditorBinder());
+			
 			setSurroundByDiv(false);
 			editor = (Editor) itemElementFactory.createElement(this, getForm(), false);
 			editor.setEditorBinding(binding);

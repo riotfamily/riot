@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms;
 
+import java.beans.PropertyEditor;
 import java.util.List;
 
 import org.springframework.beans.PropertyEditorRegistrar;
@@ -51,6 +52,8 @@ public interface EditorBinder extends PropertyEditorRegistry {
 	public void setPropertyValue(String property, Object value);
 
 	public Class<?> getPropertyType(String property);
+	
+	public PropertyEditor getPropertyEditor(Class<?> type, String propertyPath);
 
 	/**
 	 * Binds the given editor to the property with the specified name.

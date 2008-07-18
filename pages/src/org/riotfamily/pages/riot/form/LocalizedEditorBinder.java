@@ -84,6 +84,10 @@ public class LocalizedEditorBinder implements EditorBinder {
 	public Object getPropertyValue(String property) {
 		return delegate.getPropertyValue(property);
 	}
+	
+	public PropertyEditor getPropertyEditor(Class<?> type, String propertyPath) {
+		return delegate.getPropertyEditor(type, propertyPath);
+	}
 
 	public void initEditors() {
 		delegate.initEditors();

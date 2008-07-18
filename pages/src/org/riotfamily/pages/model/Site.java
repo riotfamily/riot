@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.model;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -235,8 +234,11 @@ public class Site {
 		this.aliases = aliases;
 	}
 	
-	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+	@ManyToOne(cascade=CascadeType.ALL)
 	public Content getProperties() {
+		if (properties == null) {
+			properties = new Content();
+		}
 		return properties;
 	}
 
@@ -246,11 +248,9 @@ public class Site {
 
 	public Object getProperty(String key) {
 		Object value = null;
-		if (properties != null) {
-			ValueWrapper<?> wrapper = properties.getWrapper(key);
-			if (wrapper != null) {
-				value = wrapper.unwrap();
-			}
+		ValueWrapper<?> wrapper = getProperties().getWrapper(key);
+		if (wrapper != null) {
+			value = wrapper.unwrap();
 		}
 		if (value == null && masterSite != null) {
 			value = masterSite.getProperty(key);
@@ -260,10 +260,7 @@ public class Site {
 	
 	@Transient
 	public Map<String, Object> getLocalPropertiesMap() {
-		if (properties != null) { 
-			return properties.unwrap();
-		}
-		return Collections.emptyMap();
+		return getProperties().unwrap();
 	}
 	
 	@Transient

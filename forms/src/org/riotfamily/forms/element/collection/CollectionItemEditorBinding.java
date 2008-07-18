@@ -28,19 +28,27 @@ import java.beans.PropertyEditor;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.EditorBinder;
 import org.riotfamily.forms.EditorBinding;
+import org.springframework.beans.PropertyEditorRegistry;
 
 
 
 public class CollectionItemEditorBinding implements EditorBinding {
 
+		private EditorBinder binder;
+		
 		private Editor editor;
 		
 		private Object value;
 		
 		private boolean existingItem;
 		
+		
+		public CollectionItemEditorBinding(EditorBinder binder) {
+			this.binder = binder;
+		}
+
 		public Class<?> getBeanClass() {
-			return value != null ? value.getClass() : null;
+			return value != null ? value.getClass() : Object.class;
 		}
 
 		public boolean isEditingExistingBean() {
@@ -60,7 +68,7 @@ public class CollectionItemEditorBinding implements EditorBinding {
 		}
 
 		public EditorBinder getEditorBinder() {
-			return null;
+			return binder;
 		}
 
 		public String getProperty() {
@@ -68,7 +76,7 @@ public class CollectionItemEditorBinding implements EditorBinding {
 		}
 
 		public PropertyEditor getPropertyEditor() {
-			return null;
+			return binder.getPropertyEditor(getBeanClass(), null);
 		}
 
 		public String getPropertyPath() {
