@@ -120,10 +120,6 @@ public class FileUpload extends CompositeElement implements Editor,
 		}
 		return file;
 	}
-
-	protected RiotFile getFile() {
-		return file;
-	}
 	
 	protected RiotFile getUploadedFile() {
 		return uploadedFile;

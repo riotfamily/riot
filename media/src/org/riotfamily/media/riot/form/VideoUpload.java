@@ -87,14 +87,14 @@ public class VideoUpload extends FileUpload {
 		public void handleContentRequest(HttpServletRequest request,
 				HttpServletResponse response) throws IOException {
 
-			if (getFile() != null) {
+			if (getPreviewFile() != null) {
 				response.setDateHeader("Expires", 0);
-				response.setHeader("Content-Type", getFile().getContentType());
+				response.setHeader("Content-Type", getPreviewFile().getContentType());
 		        response.setHeader("Content-Disposition",
-		        		"attachment;filename=" + getFile().getFileName());
+		        		"attachment;filename=" + getPreviewFile().getFileName());
 
-				response.setContentLength((int) getFile().getSize());
-				IOUtils.serve(getFile().getInputStream(), 
+				response.setContentLength((int) getPreviewFile().getSize());
+				IOUtils.serve(getPreviewFile().getInputStream(), 
 						response.getOutputStream());
 			}
 			else {
@@ -126,7 +126,7 @@ public class VideoUpload extends FileUpload {
 		}
 
 		public RiotVideo getVideo() {
-			return (RiotVideo) VideoUpload.this.getFile();
+			return (RiotVideo) VideoUpload.this.getPreviewFile();
 		}
 
 		public String getPlayerUrl() {

@@ -222,7 +222,7 @@ public class ImageUpload extends FileUpload {
 	}
 
 	protected void undoCrop() {
-		CroppedImageData imageData = (CroppedImageData) getFile().getFileData();
+		CroppedImageData imageData = (CroppedImageData) getPreviewFile().getFileData();
 		setNewFile(imageData.getOriginal());
 	}
 	

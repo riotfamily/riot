@@ -192,15 +192,15 @@ public class FlashUpload extends FileUpload {
 		public void handleContentRequest(HttpServletRequest request,
 				HttpServletResponse response) throws IOException {
 
-			if (getFile() != null) {
+			if (getPreviewFile() != null) {
 				response.setDateHeader("Expires", 0);
-				response.setHeader("Content-Type", getFile().getContentType());
+				response.setHeader("Content-Type", getPreviewFile().getContentType());
 		        response.setHeader("Content-Disposition",
-		        		"attachment;filename=" + getFile().getFileName());
+		        		"attachment;filename=" + getPreviewFile().getFileName());
 
-				response.setContentLength((int) getFile().getSize());
+				response.setContentLength((int) getPreviewFile().getSize());
 				
-				FileCopyUtils.copy(getFile().getInputStream(), 
+				FileCopyUtils.copy(getPreviewFile().getInputStream(), 
 						response.getOutputStream());
 			}
 			else {
@@ -224,7 +224,7 @@ public class FlashUpload extends FileUpload {
 		}
 		
 		public RiotSwf getSwf() {
-			return (RiotSwf) FlashUpload.this.getFile();
+			return (RiotSwf) FlashUpload.this.getPreviewFile();
 		}
 
 		public String getDownloadUrl() {
