@@ -27,6 +27,7 @@ import org.riotfamily.components.riot.form.ContentEditorBinder;
 import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;
+import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.element.NestedForm;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.FormRepository;
@@ -37,7 +38,7 @@ import org.riotfamily.pages.model.Site;
  * @since 7.0
  */
 public class SitePropertiesEditor extends CompositeElement 
-		implements Editor {
+		implements Editor, NestedEditor {
 
 	private FormRepository repository;
 	
@@ -67,6 +68,11 @@ public class SitePropertiesEditor extends CompositeElement
 	public void setValue(Object value) {
 		propertiesForm.setValue(value);
 	}
+	
+	public void setBackingObject(Object obj) {
+		propertiesForm.setBackingObject(obj);
+	}
+	
 	
 	private class PropertiesForm extends NestedForm {
 		
