@@ -422,3 +422,17 @@
 <#function hyphenatePlainText text>
 	<#return commonMacroHelper.hyphenatePlainText(text) />
 </#function>
+
+<#---
+	- Splits a list into evenly distributed parts like:
+	- 1 | 4 | 7
+	- 2 | 5 | 8
+	- 3 | 6
+	- 
+	- @param items The items to split
+	- @param groups The number of groups (NOT number of group-items)
+	- @return The splitted list
+  -->
+<#function group items groups>
+	<#return commonMacroHelper.group(items, groups) />
+</#function>

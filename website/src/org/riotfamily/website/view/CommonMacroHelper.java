@@ -340,4 +340,41 @@ public class CommonMacroHelper {
 	public String stripTagsAndWhitespaces(String s) {
 		return FormatUtils.stripWhitespaces(FormatUtils.stripTags(s));
 	}
+	
+	/**
+	 * Splits a list into evenly distributed parts like:
+	 * 1 | 4 | 7
+	 * 2 | 5 | 8
+	 * 3 | 6
+	 * 
+	 * @param <T>
+	 * @param items The items to split
+	 * @param groups The number of groups (NOT number of group-items)
+	 * @return The splitted list
+	 */
+	public<T> List<List<T>> group(List<T> items, int groups) {
+		if (items == null) {
+			return null;
+		}
+		List<List<T>> result = new ArrayList<List<T>>();
+		int itemsSize = items.size();
+		int remainder = itemsSize % groups;
+		int maxGroupMembers = itemsSize / groups;
+		if (remainder > 0) {
+			++maxGroupMembers;
+		}
+		int currentIndex = 0;
+		for (int i = 0; i < groups; i++) {
+			int currentGroupMembers = maxGroupMembers;
+			if (remainder > 0 && i >= remainder) {
+				--currentGroupMembers;
+			}
+			List<T> currentList = new ArrayList<T>();
+			for (int j = 0; j < currentGroupMembers; j++) {
+				currentList.add(items.get(currentIndex++));
+			}
+			result.add(currentList);
+		}
+		return result;
+	}
 }
