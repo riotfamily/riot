@@ -286,7 +286,8 @@ riot.ComponentList = Class.create({
 	removeOff: function() {
 		this.element.removeClassName('riot-mode-remove');
 		this.componentElements.each(function(el) {
-			if (el.component) el.component.removeClickHandler();
+			var c = riot.getContent(el);
+			if (c) c.removeClickHandler();
 		});
 	},
 	
