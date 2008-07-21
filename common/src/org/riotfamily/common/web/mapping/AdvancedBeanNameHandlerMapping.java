@@ -24,6 +24,7 @@
 package org.riotfamily.common.web.mapping;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -129,6 +130,7 @@ public class AdvancedBeanNameHandlerMapping
 	 * not starting with "/".
 	 */
 	private void registerPatterns(String beanName, List patterns) {
+		patterns = Collections.unmodifiableList(patterns);
 		patternsByBeanName.put(beanName, patterns);
 		String[] aliases = getApplicationContext().getAliases(beanName);
 		for (int i = 0; i < aliases.length; i++) {
