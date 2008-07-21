@@ -59,7 +59,12 @@ table.pages tr.hidden-page td {
 	position: absolute;
 	top: 17px;	
 	left: -34px;
+	z-index: 1;
 }
+.noindent-pageProperty input.button-toggle {
+	left: 0;
+}
+
 .pageProperty .box-title input.button-toggle {
 	margin-top: 0;
 	top:0;
