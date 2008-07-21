@@ -66,6 +66,7 @@ public class NestedForm extends TemplateElement implements
 		this.indent = indent;
 		if (!indent) {
 			setRequired(true);
+			setStyleClass("noindent");
 		}
 		setTemplate(TemplateUtils.getTemplatePath(NestedForm.class, 
 				indent ? null : "_noindent"));
