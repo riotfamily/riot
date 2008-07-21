@@ -716,7 +716,7 @@ riot.publishOff = function() {
 riot.applyOn = function() {
 	riot.toolbar.buttons.get('browse').click();
 	var containerIds = $$('.riot-container')
-		.collect(riot.getContainer)
+		.collect(riot.getContentContainer)
 		.pluck('id'); 
 	
 	riot.applyFunction(containerIds);
