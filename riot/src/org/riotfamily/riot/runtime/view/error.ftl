@@ -22,7 +22,6 @@
 				<p id="message">
 					${exception.getMessage()?if_exists}
 				</p>
-			
 				<h2><a class="detail" href="javascript:showErrorDetail()"><@spring.messageText "label.error.detail", "Error Detail" /></a></h2>
 				<p id="stacktrace">
 				<#list rootCause.stackTrace as element>
