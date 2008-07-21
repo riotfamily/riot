@@ -11,7 +11,7 @@
 	display: block;
 	clear: both;
 	border-bottom: 1px solid #ebebeb;
-	height: 82px;
+	height: 80px;
 	overflow: hidden;
 	color: #3d3d3d;
 	text-decoration: none;
@@ -26,15 +26,14 @@ background-color:#ebebeb;
 	width: 80px;
 	height: 80px;
 	background: ${highlight_color} url(icons/editors/arrow.gif) no-repeat;
-	margin: 1px 9px 1px 1px;
 }
 
 #editors a:hover .icon {
 	background-position: 0px -80px;
 }
-
 #editors .text {
-	padding: 25px 0 0 7px;
+	float: left;
+	padding: 25px 0 0 16px;
 }
 
 #editors a.editor .label {
