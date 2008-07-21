@@ -33,7 +33,7 @@ public class SiteFacade {
 	}
 	
 	public String getAbsoluteUrl() {
-		return makeAbsolute("");
+		return makeAbsolute("/");
 	}
 	
 	public String makeAbsolute(String path) {
