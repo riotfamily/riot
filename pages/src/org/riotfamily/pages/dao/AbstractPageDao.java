@@ -211,6 +211,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 			throw new DuplicatePathComponentException("Page '{0}' did not validate", page.toString());
 		}
 		
+		PageCacheUtils.invalidateNode(cacheService, node);
 		PageCacheUtils.invalidateNode(cacheService, node.getParent());
 
 		String oldPath = page.getPath();
