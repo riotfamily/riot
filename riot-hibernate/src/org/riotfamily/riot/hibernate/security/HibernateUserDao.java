@@ -29,11 +29,9 @@ import org.hibernate.criterion.Restrictions;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.HashUtils;
 import org.riotfamily.riot.hibernate.dao.AbstractHibernateRiotDao;
-import org.riotfamily.riot.hibernate.dao.HqlDao;
 import org.riotfamily.riot.list.support.ListParamsImpl;
 import org.riotfamily.riot.security.auth.RiotUser;
 import org.riotfamily.riot.security.auth.RiotUserDao;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
@@ -230,7 +228,7 @@ public class HibernateUserDao extends AbstractHibernateRiotDao
 	 * Returns whether any user exists in the database.
 	 */
 	protected boolean anyUserExists() {
-		return getListSize(null, new ListParamsImpl()) > 0;
+		return list(null, new ListParamsImpl()).size() > 0;
 	}
 	
 	/**
