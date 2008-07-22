@@ -22,12 +22,12 @@
 
 			<h1 id="name"></h1>
 			<div id="description"></div>
-		
+
 			<div id="control">
 				<div id="runnable">
 					<div id="start"><div id="startFace"></div></div>
 					<div id="cancel"><div id="cancelFace">Cancel</div></div>
-		
+
 					<div id="progress">
 						<div id="eta"></div>
 						<div id="percentage"></div>
@@ -38,7 +38,7 @@
 					Job finished.
 				</div>
 			</div>
-		
+
 			<div id="logTitle">Log Messages</div>
 			<div id="logPane">
 				<div id="log"></div>
