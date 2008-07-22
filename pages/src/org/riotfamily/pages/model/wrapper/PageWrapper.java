@@ -30,6 +30,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
@@ -59,6 +61,7 @@ public class PageWrapper extends ValueWrapper<Page> {
 	@ManyToOne
 	@JoinColumn(table="riot_page_wrappers", name="id")
 	@OnDelete(action=OnDeleteAction.CASCADE)
+	@NotFound(action=NotFoundAction.IGNORE)
 	public Page getValue() {
 		return this.value;
 	}
