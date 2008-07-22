@@ -229,19 +229,26 @@ public abstract class AbstractReverseHandlerMapping
 		if (patterns == null || patterns.isEmpty()) {
 			return null;
 		}
+
+		AttributePattern result = null;
 		Iterator<AttributePattern> it = patterns.iterator();
 		while (it.hasNext()) {
 			AttributePattern p = it.next();
-			if (!p.canFillIn(attributes, defaults, anonymousWildcards)) {
-				it.remove();
+			if (p.canFillIn(attributes, defaults, anonymousWildcards)) {
+				if (result != null) {
+					throw new IllegalArgumentException("Exactly one mapping with "
+							+ anonymousWildcards + " anonymous wildcards is required "
+							+ "for hander "	+ handlerName);
+				}
+				result = p;
 			}
 		}
-		if (patterns.size() != 1) {
-			throw new IllegalArgumentException("Exactly one mapping with "
-					+ anonymousWildcards + " anonymous wildcards required "
+		if (result == null) {
+			throw new IllegalArgumentException("Could not find mapping with "
+					+ anonymousWildcards + " anonymous wildcards "
 					+ "for hander "	+ handlerName);
 		}
-		return patterns.get(0);
+		return result;
 	}
 	
 	/**

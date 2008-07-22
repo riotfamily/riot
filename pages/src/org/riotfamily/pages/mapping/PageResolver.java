@@ -269,10 +269,13 @@ public class PageResolver {
 		if (site != null) {
 			pathWithinSite = FormatUtils.stripTrailingSlash(site.stripPrefix(path));
 		}
-		expose(pathWithinSite, request, PATH_ATTRIBUTE);
+		exposePathWithinSite(pathWithinSite, request);
 		return site;
 	}
 
+	protected void exposePathWithinSite(String pathWithinSite, HttpServletRequest request) {
+		expose(pathWithinSite, request, PATH_ATTRIBUTE);
+	}
 
 	private Page resolvePage(HttpServletRequest request) {
 		Site site = getSite(request);

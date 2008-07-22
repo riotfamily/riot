@@ -17,7 +17,9 @@ public class LocaleRenderer implements ObjectRenderer {
 			else {
 				String s = obj.toString();
 				Locale locale = StringUtils.parseLocaleString(s);
-				writer.print(locale.getDisplayName(inLocale));
+				if (locale != null) {
+					writer.print(locale.getDisplayName(inLocale));
+				}
 			}
 		}
 	}

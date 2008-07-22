@@ -16,7 +16,10 @@
 <@riot.stylesheet href="style/common.css" />
 <@riot.stylesheet href="style/job.css" />
 </head>
-<body onload="dwr.engine.setActiveReverseAjax(true)">
+<body id="job" onload="dwr.engine.setActiveReverseAjax(true)">
+	<div id="body-wrapper">
+		<div id="wrapper">	
+
 	<h1 id="name"></h1>
 	<div id="description"></div>
 
@@ -130,5 +133,8 @@ function cancelJob() {
 JobUIService.getLogEntries(${jobId}, populateLog);
 JobUIService.getJobDetail(${jobId}, updateJob);
 </script>
+
+		</div>
+	</div>
 </body>
 </html>
