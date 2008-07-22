@@ -83,6 +83,8 @@ public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
 	}
 	
 	public void update(Object entity) throws DataAccessException {
+		Site site = (Site) entity;
+		pageDao.updateSite(site);
 	}
 
 	public void delete(Object entity, Object parent) throws DataAccessException {

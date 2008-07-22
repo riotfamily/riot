@@ -347,6 +347,10 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		translateSystemPages(getRootNode(), masterSite, site);
 	}
 	
+	public void updateSite(Site site) {
+		PageCacheUtils.invalidateSite(cacheService, site);
+	}
+	
 	private void translateSystemPages(PageNode node, Site masterSite, Site site) {
 		List<PageNode> childNodes = node.getChildNodes();
 		if (childNodes != null) {

@@ -77,4 +77,10 @@ public final class PageCacheUtils {
 		}
 	}
 	
+	public static void invalidateSite(CacheService cacheService, Site site) {
+		if (cacheService != null) {
+		    cacheService.invalidateTaggedItems(getSiteTag(site));
+		}
+	}
+	
 }
