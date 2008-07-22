@@ -11,17 +11,6 @@
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-7.0.xsd">
-		
-	<!--
-		- Controller that displays the sitemap as DHTML tree. Used by the
-		- internalLink form element.
-		-->
-	<bean id="pageChooserController" name="/pages/chooser"
-		class="org.riotfamily.pages.riot.chooser.PageChooserController">
-
-		<constructor-arg ref="pageDao" />
-		<constructor-arg ref="pathCompleter" />
-	</bean>
 
 	<bean id="pageFormInitializer" class="org.riotfamily.pages.riot.form.PageFormInitializer">
 		<constructor-arg ref="pageTypeHierarchy" />
@@ -61,13 +50,7 @@
 	<override:add ref="editorRepository" property="configLocations">
 		<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
 	</override:add>
-
-	<override:put ref="customFormElements">
-		<entry key="internalLink" value="org.riotfamily.pages.riot.form.InternalLinkField" />
-		<entry key="{http://www.riotfamily.org/schema/pages/form-elements}link"
-				value="org.riotfamily.pages.riot.form.InternalLinkField" />
-	</override:put>
-				
+			
 	<override:add ref="resourceMappings" append="true">			
 		<bean class="org.riotfamily.riot.resource.ResourceMapping">
 			<property name="path" value="/" />
