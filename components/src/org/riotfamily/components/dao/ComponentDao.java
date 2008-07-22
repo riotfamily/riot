@@ -27,6 +27,7 @@ import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
+import org.riotfamily.components.model.wrapper.ValueWrapper;
 
 /**
  * DAO interface that provides methods to access
@@ -94,5 +95,9 @@ public interface ComponentDao {
 	public boolean publishContainer(ContentContainer container);
 	
 	public boolean discardContainer(ContentContainer container);
+	
+	public ContentContainer findContainerForComponent(Component component);
+	
+	public ContentContainer findContainerForWrapper(ValueWrapper<?> wrapper);
 	
 }
