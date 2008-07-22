@@ -1,4 +1,4 @@
-<div id="${element.id}" class="${(editor.compositeElement?default(false))?string('composite','single')}	pageProperty pageProperty${element.overwrite?string('Overwrite','Inherit')} ${editor.styleClass}-pageProperty">
+<div id="${element.id}" class="${(editor.compositeElement?default(false))?string('composite','single')}	pageProperty pageProperty${element.overwrite?string('Overwrite','Inherit')}<#if editor.styleClass??> ${editor.styleClass}-pageProperty</#if>">
 	<#if editor.label?exists>
 		<#if editor.compositeElement?default(false)>
 			<div class="box-title">
