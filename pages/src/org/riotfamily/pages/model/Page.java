@@ -30,17 +30,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.riotfamily.common.beans.MapWrapper;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.mapping.AttributePattern;
@@ -102,7 +104,8 @@ public class Page {
 		this.id = id;
 	}
 
-	@ManyToOne(cascade=CascadeType.MERGE)
+	@ManyToOne
+	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public PageNode getNode() {
 		return this.node;
 	}
@@ -111,7 +114,8 @@ public class Page {
 		this.node = node;
 	}
 
-	@ManyToOne(cascade=CascadeType.MERGE)
+	@ManyToOne
+	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public Site getSite() {
 		return this.site;
 	}
@@ -292,7 +296,8 @@ public class Page {
 		return node.getPageType();
 	}
 
-	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+	@ManyToOne
+	@Cascade(CascadeType.ALL)
 	public PageProperties getPageProperties() {
 		if (pageProperties == null) {
 			pageProperties = new PageProperties(this);

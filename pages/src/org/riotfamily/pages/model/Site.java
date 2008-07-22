@@ -28,7 +28,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -41,6 +40,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.CollectionOfElements;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.model.Content;
@@ -234,7 +235,8 @@ public class Site {
 		this.aliases = aliases;
 	}
 	
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne
+	@Cascade(CascadeType.ALL)
 	public Content getProperties() {
 		if (properties == null) {
 			properties = new Content();
