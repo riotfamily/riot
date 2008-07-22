@@ -43,6 +43,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -64,6 +65,8 @@ import org.riotfamily.components.model.wrapper.ValueWrapperService;
 public class Content {
 
 	private Long id;
+	
+	private int version;
 
 	private Map<String, ValueWrapper<?>> wrappers;
 
@@ -90,6 +93,15 @@ public class Content {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	@Version
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
 	}
 
 	public ValueWrapper<?> getWrapper(String key) {
