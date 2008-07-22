@@ -84,12 +84,12 @@ public class MapEditorBinder extends AbstractEditorBinder {
 	}
 
 	public Class<?> getPropertyType(String propertyName) {
-		if (valueClass != null) {
-			return valueClass;
-		}
 		Object value = getPropertyValue(propertyName);
 		if (value != null) {
 			return value.getClass();
+		}
+		if (valueClass != null) {
+			return valueClass;
 		}
 		return Object.class;
 	}
