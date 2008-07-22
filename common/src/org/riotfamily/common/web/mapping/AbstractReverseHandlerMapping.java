@@ -114,7 +114,8 @@ public abstract class AbstractReverseHandlerMapping
 		if (p == null) {
 			return null;
 		}
-		return addServletMappingIfNecessary(p.toString(), context);
+		String url = p.fillInAttribute(null, defaults);
+		return addServletMappingIfNecessary(url, context);
 	}
 	
 	/**
