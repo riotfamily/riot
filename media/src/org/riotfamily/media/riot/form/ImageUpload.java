@@ -230,7 +230,7 @@ public class ImageUpload extends FileUpload {
 			implements ContentElement, DHTMLElement, ResourceElement {
 
 		public PreviewElement() {
-			setSurroundByDiv(false);
+			setWrap(false);
 		}
 		
 		public FormResource getResource() {

@@ -59,7 +59,9 @@ public abstract class AbstractElement implements Element {
 	
 	private boolean visible = true;
 	
-	private boolean surroundByDiv = true;
+	private boolean wrap = true;
+	
+	private boolean inline = false;
 	
 	public String getId() {
 		return id;
@@ -77,8 +79,12 @@ public abstract class AbstractElement implements Element {
 		this.styleClass = styleClass;
 	}
 	
-	public void setSurroundByDiv(boolean surroundByDiv) {
-		this.surroundByDiv = surroundByDiv;
+	protected void setWrap(boolean wrap) {
+		this.wrap = wrap;
+	}
+	
+	protected void setInline(boolean inline) {
+		this.inline = inline;
 	}
 		
 	public Form getForm() {
@@ -149,9 +155,9 @@ public abstract class AbstractElement implements Element {
 	}
 
 	public final void render(PrintWriter writer) {
-		if (surroundByDiv) {
+		if (wrap) {
 			TagWriter div = new TagWriter(writer);
-			div.start(Html.DIV);
+			div.start(inline ? Html.SPAN: Html.DIV);
 			div.attribute(Html.COMMON_ID, getId());
 			div.body();
 			if (isVisible()) {

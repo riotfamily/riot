@@ -46,7 +46,7 @@ public class ListItem extends TemplateElement implements NestedEditor, DHTMLElem
 		super("item");
 		this.list = list;
 		binding = new CollectionItemEditorBinding(list.getEditorBinding().getEditorBinder());
-		setSurroundByDiv(false);
+		setWrap(false);
 		setTemplate(TemplateUtils.getTemplatePath(ListItem.class));
 		removeButton = new Button();
 		removeButton.setLabelKey("label.form.list.remove");

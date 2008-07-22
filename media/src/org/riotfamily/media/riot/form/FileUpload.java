@@ -177,6 +177,7 @@ public class FileUpload extends CompositeElement implements Editor,
 		private volatile boolean completed;
 
 		public UploadElement() {
+			setWrap(false);
 			this.uploadId = UploadStatus.createUploadId();
 		}
 		
@@ -252,6 +253,7 @@ public class FileUpload extends CompositeElement implements Editor,
 
 		private RemoveButton() {
 			setCssClass("remove-file");
+			setInline(true);
 		}
 
 		public String getLabel() {
@@ -260,6 +262,7 @@ public class FileUpload extends CompositeElement implements Editor,
 
 		protected void onClick() {
 			file = null;
+			uploadedFile = null;
 			ErrorUtils.removeErrors(FileUpload.this);
 			if (getFormListener() != null) {
 				getFormListener().elementChanged(FileUpload.this);
@@ -267,7 +270,7 @@ public class FileUpload extends CompositeElement implements Editor,
 		}
 
 		public void renderInternal(PrintWriter writer) {
-			if (!FileUpload.this.isRequired() && file != null) {
+			if (!FileUpload.this.isRequired() && getPreviewFile() != null) {
 				super.renderInternal(writer);
 			}
 		}
@@ -281,12 +284,13 @@ public class FileUpload extends CompositeElement implements Editor,
 			implements ContentElement {
 
 		public RiotFile getFile() {
-			return file;
+			return getPreviewFile();
 		}
 		
 		public void handleContentRequest(HttpServletRequest request,
 				HttpServletResponse response) throws IOException {
 
+			RiotFile file = getPreviewFile();
 			if (file != null) {
 				response.setDateHeader("Expires", 0);
 				response.setHeader("Content-Type", "application/x-download");

@@ -64,7 +64,7 @@ public class TinyMCE extends AbstractTextElement
 	
 	public TinyMCE() {
 		setStyleClass("richtext");
-		setSurroundByDiv(false);
+		setWrap(false);
 	}
 
 	public void setRows(int rows) {

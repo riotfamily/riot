@@ -260,7 +260,7 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 			binding = new CollectionItemEditorBinding(
 					MapEditor.this.getEditorBinding().getEditorBinder());
 			
-			setSurroundByDiv(false);
+			setWrap(false);
 			editor = (Editor) itemElementFactory.createElement(this, getForm(), false);
 			editor.setEditorBinding(binding);
 			binding.setEditor(editor);

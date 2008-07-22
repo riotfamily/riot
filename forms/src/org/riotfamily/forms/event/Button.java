@@ -57,6 +57,7 @@ public class Button extends AbstractEditorBase
 	
 	private int tabIndex;
 	
+	
 	public String getEventTriggerId() {		
 		return getId() + "-event-source";
 	}
