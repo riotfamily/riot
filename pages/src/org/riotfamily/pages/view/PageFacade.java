@@ -32,7 +32,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.servlet.RequestPathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
@@ -61,8 +60,6 @@ public class PageFacade {
 	
 	private Map<String, Object> properties = null;
 	
-	private TaggingContext taggingContext;
-	
 	public PageFacade(Page page, HttpServletRequest request) {
 		this(page, request, new RequestPathCompleter(request));
 	}
@@ -74,8 +71,7 @@ public class PageFacade {
 		this.request = request;
 		this.pathCompleter = pathCompleter;
 		this.preview = EditModeUtils.isEditMode(request);
-		this.taggingContext = TaggingContext.getContext();
-		PageCacheUtils.addNodeTag(taggingContext, page.getNode());
+		PageCacheUtils.addNodeTag(page.getNode());
 	}
 	
 	public Long getId() {
@@ -163,13 +159,13 @@ public class PageFacade {
 	}
 
 	public Collection<Page> getChildPages() {
-		PageCacheUtils.addNodeTag(taggingContext, page.getNode());
+		PageCacheUtils.addNodeTag(page.getNode());
 		return getVisiblePages(page.getChildPages());
 	}
 
 	public List<Page> getSiblings() {
 		PageNode parentNode = page.getNode().getParent();
-		PageCacheUtils.addNodeTag(taggingContext, parentNode);
+		PageCacheUtils.addNodeTag(parentNode);
 		return getVisiblePages(parentNode.getChildPages(page.getSite()));
 	}
 	

@@ -64,7 +64,7 @@ public class PagesMacroHelper {
 	
 	public List<Page> getTopLevelPages(SiteFacade facade) {
 		PageNode rootNode = pageDao.getRootNode();
-		PageCacheUtils.addNodeTag(request, rootNode);
+		PageCacheUtils.addNodeTag(rootNode);
 		return getVisiblePages(rootNode.getChildPages(facade.getSite()),
 				EditModeUtils.isEditMode(request));
 	}

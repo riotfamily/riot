@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.cache;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.pages.model.PageNode;
@@ -47,26 +45,14 @@ public final class PageCacheUtils {
 		return SITE_PREFIX + site.getId();
 	}
 
-	public static void addSiteTag(TaggingContext context, Site site) {
-		if (context != null) {
-			context.addTag(getSiteTag(site));
-		}
+	public static void addSiteTag(Site site) {
+		TaggingContext.tag(getSiteTag(site));
 	}
 
 	public static String getNodeTag(PageNode node) {
 		return NODE_PREFIX + node.getId();
 	}
-
-	public static void addNodeTag(TaggingContext context, PageNode node) {
-		if (context != null) {
-			context.addTag(getNodeTag(node));
-		}
-	}
-	
-	public static void addNodeTag(HttpServletRequest request, PageNode node) {
-		TaggingContext.tag(getNodeTag(node));
-	}
-	
+		
 	public static void addNodeTag(PageNode node) {
 		TaggingContext.tag(getNodeTag(node));
 	}
