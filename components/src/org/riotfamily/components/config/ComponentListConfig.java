@@ -23,9 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.config;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import org.riotfamily.common.util.Generics;
 import org.springframework.util.Assert;
 
 public class ComponentListConfig {
@@ -34,7 +35,7 @@ public class ComponentListConfig {
 	
 	private Integer maxComponents;
 	
-	private List<String> validComponentTypes;
+	private Set<String> validComponentTypes;
 	
 	private List<String> initialComponentTypes;
 
@@ -46,11 +47,11 @@ public class ComponentListConfig {
 		this.minComponents = minComponents;
 		this.maxComponents = maxComponents;
 		this.initialComponentTypes = initialComponentTypes;
-		this.validComponentTypes = validComponentTypes;
 		if (validComponentTypes == null || validComponentTypes.isEmpty()) {
 			Assert.notNull(initialComponentTypes, "Either inital or valid component types must be specified");
-			this.validComponentTypes = new ArrayList<String>(initialComponentTypes);
+			validComponentTypes = initialComponentTypes;
 		}
+		this.validComponentTypes = Generics.newLinkedHashSet(validComponentTypes);
 	}
 
 	public Integer getMinComponents() {
@@ -61,7 +62,7 @@ public class ComponentListConfig {
 		return maxComponents;
 	}
 
-	public List<String> getValidComponentTypes() {
+	public Set<String> getValidComponentTypes() {
 		return validComponentTypes;
 	}
 
