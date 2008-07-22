@@ -35,6 +35,7 @@ import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.Site;
 
 /**
  * @author Carsten Woelk [cwoelk at neteye dot de]
@@ -91,4 +92,7 @@ public class PagesMacroHelper {
 		return result;
 	}
 
+	public Site getSiteWithProperty(String name, Object value) {
+		return this.pageDao.findSiteWithProperty(name, value);
+	}
 }

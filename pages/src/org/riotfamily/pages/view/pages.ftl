@@ -39,6 +39,15 @@
 </#function>
 
 <#---
+  - Returns the site with the given property-value.
+  - @param name The name of the property
+  - @param value The value of the property
+  -->
+<#function siteWithProperty name value>
+	<#return pagesMacroHelper.getSiteWithProperty(name, value) />
+</#function>
+
+<#---
   - @see <a href="inplace.html#use">inplace.use</a>
   -->
 <#macro use page=currentPage form="" tag="" attributes...>

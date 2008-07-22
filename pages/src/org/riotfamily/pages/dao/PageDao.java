@@ -56,6 +56,8 @@ public interface PageDao {
 	public Site findSiteByLocale(Locale locale);
 	
 	public Site findSite(String hostName, String path);
+	
+	public Site findSiteWithProperty(String name, Object value);
 		
 	/**
 	 * Returns the Page with the given site and path, or <code>null</code> if

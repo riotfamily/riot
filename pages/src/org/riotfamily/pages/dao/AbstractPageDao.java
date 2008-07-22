@@ -100,7 +100,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	protected abstract void saveObject(Object object);
 
 	protected abstract void deleteObject(Object object);
-
+	
 	public Page loadPage(Long id) {
 		return (Page) loadObject(Page.class, id);
 	}
@@ -121,7 +121,17 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		}
 		return null;
 	}
-	
+
+	public Site findSiteWithProperty(String name, Object value) {
+		for (Site site : listSites()) {
+			Object currentValue = site.getProperty(name);
+			if (value.equals(currentValue)) {
+				return site;
+			}
+		}
+		return null;
+	}
+
 	public void saveNode(PageNode node) {
 		String pageType = pageTypeHierarchy.initPageType(node);
 		if (autoCreatePages != null && pageType != null) {
