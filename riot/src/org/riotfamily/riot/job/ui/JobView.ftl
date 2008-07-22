@@ -16,33 +16,36 @@
 <@riot.stylesheet href="style/common.css" />
 <@riot.stylesheet href="style/job.css" />
 </head>
-<body onload="dwr.engine.setActiveReverseAjax(true)">
-	<h1 id="name"></h1>
-	<div id="description"></div>
+<body id="job" onload="dwr.engine.setActiveReverseAjax(true)">
+	<div id="body-wrapper">
+		<div id="wrapper">	
 
-	<div id="control">
-		<div id="runnable">
-			<div id="start"><div id="startFace"></div></div>
-			<div id="cancel"><div id="cancelFace">Cancel</div></div>
+			<h1 id="name"></h1>
+			<div id="description"></div>
 
-			<div id="progress">
-				<div id="eta"></div>
-				<div id="percentage"></div>
-				<div class="bar"><div id="progressBar"></div></div>
+			<div id="control">
+				<div id="runnable">
+					<div id="start"><div id="startFace"></div></div>
+					<div id="cancel"><div id="cancelFace">Cancel</div></div>
+
+					<div id="progress">
+						<div id="eta"></div>
+						<div id="percentage"></div>
+						<div class="bar"><div id="progressBar"></div></div>
+					</div>
+				</div>
+				<div id="finished">
+					Job finished.
+				</div>
 			</div>
-		</div>
-		<div id="finished">
-			Job finished.
-		</div>
-	</div>
 
-	<div id="logTitle">Log Messages</div>
-	<div id="logPane">
-		<div id="log"></div>
-	</div>
-	<div id="logFilter">
-		<input type="checkbox" id="errorsOnly" onclick="RElement.toggleClassName('log', 'errorsOnly')" /><label for="errorsOnly">Errors Only</label>
-	</div>
+			<div id="logTitle">Log Messages</div>
+			<div id="logPane">
+				<div id="log"></div>
+			</div>
+			<div id="logFilter">
+				<input type="checkbox" id="errorsOnly" onclick="RElement.toggleClassName('log', 'errorsOnly')" /><label for="errorsOnly">Errors Only</label>
+			</div>
 
 <script type="text/javascript" language="JavaScript">
 
@@ -130,5 +133,9 @@ function cancelJob() {
 JobUIService.getLogEntries(${jobId}, populateLog);
 JobUIService.getJobDetail(${jobId}, updateJob);
 </script>
+
+		</div>
+	</div>
+
 </body>
 </html>

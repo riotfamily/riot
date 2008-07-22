@@ -39,7 +39,7 @@ public class ContentContainerEditorBinder extends AbstractEditorBinder {
 	private Content previewVersion;
 	
 	public boolean isEditingExistingBean() {
-		return true;
+		return container.getLatestVersion() != null;
 	}
 
 	public void setBackingObject(Object backingObject) {

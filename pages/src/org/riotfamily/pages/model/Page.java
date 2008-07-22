@@ -105,7 +105,7 @@ public class Page {
 	}
 
 	public void setSite(Site site) {
-		Assert.state(this.site == null, 
+		Assert.state(this.site == null || this.site.equals(site), 
 				"The page is already associated with a site");
 		
 		this.site = site;

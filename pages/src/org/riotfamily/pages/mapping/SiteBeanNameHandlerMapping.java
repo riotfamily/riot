@@ -46,14 +46,13 @@ public class SiteBeanNameHandlerMapping extends AdvancedBeanNameHandlerMapping {
 
 	protected Map getDefaults(UrlResolverContext context) {
 		Site site = PageResolver.getResolvedSite(context);
-		Map defaults = null;
+		String sitePrefix = null;
 		if (site != null) {
-			String sitePrefix = site.getPathPrefix();
-			if (sitePrefix == null) {
-				sitePrefix = "";
-			}
-			defaults = Collections.singletonMap("sitePrefix", sitePrefix);
+			sitePrefix = site.getPathPrefix();
 		}
-		return defaults;
+		if (sitePrefix == null) {
+			sitePrefix = "";
+		}
+		return Collections.singletonMap("sitePrefix", sitePrefix);
 	}
 }

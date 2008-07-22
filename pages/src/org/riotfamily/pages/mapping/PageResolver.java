@@ -150,7 +150,7 @@ public class PageResolver {
 		}
 		return page != NOT_FOUND ? (Page) page : null;
 	}
-	
+
 	/**
 	 * Returns the previously resolved Page for the given request.
 	 * <p>
@@ -186,6 +186,20 @@ public class PageResolver {
 		Object site = context.getAttribute(SITE_ATTRIBUTE);
 		return site != NOT_FOUND ? (Site) site : null; 
 	}
+
+	/**
+	 * Returns the previously resolved path for the given request.
+	 * <p>
+	 * <strong>Note:</strong> This method does not perform any lookups itself.
+	 * Only use this method if you are sure that 
+	 * {@link #getPathWithinSite(HttpServletRequest)} or
+	 * {@link #getPathWithinSite(HttpServletRequest)} has been invoked before.
+	 */
+	public static String getResolvedPath(HttpServletRequest request) {
+		Object path = request.getAttribute(PATH_ATTRIBUTE);
+		return path != NOT_FOUND ? (String) path : null;
+	}
+
 
 	/**
 	 * Returns the Page which is requestable at the given URL. This may return
@@ -259,10 +273,13 @@ public class PageResolver {
 		if (site != null) {
 			pathWithinSite = FormatUtils.stripTrailingSlash(site.stripPrefix(path));
 		}
-		expose(pathWithinSite, request, PATH_ATTRIBUTE);
+		exposePathWithinSite(pathWithinSite, request);
 		return site;
 	}
 
+	protected void exposePathWithinSite(String pathWithinSite, HttpServletRequest request) {
+		expose(pathWithinSite, request, PATH_ATTRIBUTE);
+	}
 
 	private Page resolvePage(HttpServletRequest request) {
 		Site site = getSite(request);

@@ -55,14 +55,26 @@ table.pages tr.hidden-page td {
 	background-color: #a4a4a4;
 }
 .pageProperty input.button-toggle {
-	height: 19px;
+	height: 17px;
 	position: absolute;
 	top: 17px;	
 	left: -34px;
 }
+.pageProperty .optional div.not-present {
+	height: 32px;
+}
+.pageProperty .optional input.button-toggle {
+	height: 32px;
+	top: auto;
+	left: auto;
+}
+.pagePropertyInherit input.button-add,
+.pagePropertyInherit .not-present input.button-toggle  {
+	background-image: url(images/add_grey.gif);
+}
 .pageProperty .box-title input.button-toggle {
-	margin-top: 0;
-	left: 1px;
+	top: 1px;
+	left: 0px;
 }
 .pageProperty input.button-overwrite {
 	background-image: url(icons/edit_small.gif);
