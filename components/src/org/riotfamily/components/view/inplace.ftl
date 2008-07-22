@@ -156,8 +156,8 @@
 <#--- @internal -->
 <#macro editable key editor="text" tag="" alwaysUseNested=false transform=false attributes... >
 	<#compress>
-		<#if !currentContainer??>
-			<#stop "Use inplace.use (or pages.use) to select a container">
+		<#if !currentContainer?? && !this??>
+			<#stop "Use inplace macros can only be used inside components or inplace.use tags">
 		</#if>
 		<#local attributes = c.unwrapAttributes(attributes) />
 		<#if alwaysUseNested>
