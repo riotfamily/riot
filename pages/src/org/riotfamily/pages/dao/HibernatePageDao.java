@@ -116,7 +116,8 @@ public class HibernatePageDao extends AbstractPageDao {
 	}
 	
 	public Site mergeSite(Site site) {
-		return hibernate.merge(site);
+		hibernate.saveOrUpdate(site);
+		return site;
 	}
 
 	public Page findPage(Site site, String path) {
@@ -127,7 +128,8 @@ public class HibernatePageDao extends AbstractPageDao {
 	}
 
 	public Page mergePage(Page page) {
-		return hibernate.merge(page);
+		hibernate.saveOrUpdate(page);
+		return page;
 	}
 	
 	public PageNode findNodeOfType(String pageType) {
