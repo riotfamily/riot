@@ -31,17 +31,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.IndexColumn;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
@@ -100,7 +103,9 @@ public class PageNode {
 	 * a parent. This node can be obtained via the getRootNode() method of
 	 * the PageDao.
 	 */
-	@ManyToOne(cascade=CascadeType.MERGE)
+	@ManyToOne
+	@JoinColumn(name="parent_id", insertable=false, updatable=false)
+	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public PageNode getParent() {
 		return this.parent;
 	}
@@ -116,7 +121,8 @@ public class PageNode {
 	/**
 	 * Returns the set of {@link Page pages} associated with this node.
 	 */
-	@OneToMany(mappedBy="node", cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToMany(mappedBy="node")
+	@Cascade({CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	public Set<Page> getPages() {
 		return pages;
@@ -141,7 +147,9 @@ public class PageNode {
 	/**
 	 * Returns the child nodes. 
 	 */
-	@OneToMany(mappedBy="parent")
+	@OneToMany
+    @IndexColumn(name="node_pos")
+    @JoinColumn(name="parent_id")
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	public List<PageNode> getChildNodes() {
 		return this.childNodes;
