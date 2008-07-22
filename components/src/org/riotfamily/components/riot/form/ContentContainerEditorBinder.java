@@ -41,6 +41,7 @@ public class ContentContainerEditorBinder extends AbstractEditorBinder {
 		return true;
 	}
 
+	@Override
 	protected void setBackingObjectInternal(Object backingObject) {
 		container = (ContentContainer) backingObject;
 		if (container == null) {
@@ -62,16 +63,18 @@ public class ContentContainerEditorBinder extends AbstractEditorBinder {
 		return container.getClass();
 	}
 	
+	@Override
 	public Class<?> getPropertyType(String path) {
 		return Object.class;
 	}
-
+	
 	public Object getPropertyValue(String property) {
 		return previewVersion.getValue(property);
 	}
 
 	public void setPropertyValue(String property, Object value) {
 		previewVersion.setValue(property, value);
+		container.setDirty(true);
 	}
 
 }
