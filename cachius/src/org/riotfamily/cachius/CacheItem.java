@@ -174,7 +174,10 @@ public class CacheItem implements Serializable {
     	if (involvedFiles != null) {
     		for (File file : involvedFiles) {
     			mtime = Math.max(file.lastModified(), mtime);
-    			if (log.isDebugEnabled() && file.lastModified() > this.lastModified) {
+    			if (log.isDebugEnabled() 
+    					&& file.lastModified() > this.lastModified 
+    					&& this.lastModified > NOT_YET) {
+    				
     				log.debug("File " + file + " has been modified");
     			}
     		}
