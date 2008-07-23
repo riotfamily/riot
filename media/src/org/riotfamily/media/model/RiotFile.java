@@ -61,7 +61,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @since 7.0
  */
 @Entity
-@Table(name="riot_file_data")
+@Table(name="riot_files")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorValue("file")
 public class RiotFile {
