@@ -138,8 +138,10 @@ public abstract class CompositeElement extends AbstractEditorBase
 		Iterator it = tempList.iterator();
 		while (it.hasNext()) {
 			Element element = (Element) it.next();
-			log.debug("Processing component: " + element);
-			element.processRequest(request);
+			if (element.isEnabled()) {
+				log.debug("Processing component: " + element);
+				element.processRequest(request);
+			}
 		}
 	}
 	
