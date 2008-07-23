@@ -28,24 +28,27 @@ import java.util.Map;
 
 import org.springframework.core.GenericCollectionTypeResolver;
 import org.springframework.core.JdkVersion;
+import org.springframework.core.Ordered;
 
 import freemarker.core.Environment;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 
 /**
- * ObjectWrapper that supports Maps containing {@link Locale} keys. When the
- * map is to be wrapped, the entry for the current locale is returned instead
- * of the map itself.
+ * ObjectWrapperPlugin that supports Maps containing {@link Locale} keys. When 
+ * the map is to be wrapped, the entry for the current locale is returned 
+ * instead of the map itself.
  *
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class LocalizedObjectWrapper implements ObjectWrapperPlugin {
+public class LocalizedObjectWrapperPlugin implements ObjectWrapperPlugin, Ordered {
 
 	private boolean exact = false;
 
 	private Locale fallbackLocale = null;
+	
+	private int order = Ordered.LOWEST_PRECEDENCE;
 
 	/**
 	 * Sets whether the current locale must exactly match the key. If set to
@@ -64,6 +67,17 @@ public class LocalizedObjectWrapper implements ObjectWrapperPlugin {
 		this.fallbackLocale = fallbackLocale;
 	}
 	
+	public int getOrder() {
+		return order;
+	}
+
+	/**
+	 * Sets the order. Default is {@link Ordered#LOWEST_PRECEDENCE}.
+	 */
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
 	public boolean supports(Object obj) {
 		if (obj instanceof Map<?, ?>) {
 			Map<?, ?> map = (Map<?,?>) obj;

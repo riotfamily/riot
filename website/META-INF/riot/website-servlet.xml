@@ -100,7 +100,9 @@
 		</property>
 	</bean>
 	
-	<bean id="localizedObjectWrapper" class="org.riotfamily.common.web.view.freemarker.LocalizedObjectWrapper" />
+	<bean id="taggingObjectWrapperPlugin" class="org.riotfamily.website.cache.TaggingObjectWrapperPlugin" />
+	
+	<bean id="localizedObjectWrapperPlugin" class="org.riotfamily.common.web.view.freemarker.LocalizedObjectWrapperPlugin" />
     	
 	<bean id="viewResolver" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerViewResolver">
 		<property name="exposeRequestAttributes" value="true" />

@@ -44,6 +44,7 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
 /**
+ * FreeMarkerConfigurer that supports some additional settings. 
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
@@ -57,8 +58,6 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 			new ErrorPrintingExceptionHandler();
 	
 	private Properties macroLibraries;
-	
-	private ObjectWrapper objectWrapper;
 	
 	private Map<String, ?> sharedVariables;
 		
@@ -88,14 +87,6 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		this.exceptionHandler = exceptionHandler;
 	}
 	
-	/**
-	 * Sets the {@link ObjectWrapper} to be used. If <code>null</code> 
-	 * (which is the default), FreeMarker's DefaultObjectWrapper will be used. 
-	 */
-	public void setObjectWrapper(ObjectWrapper objectWrapper) {
-		this.objectWrapper = objectWrapper;
-	}
-
 	/**
 	 * Set a Map that contains well-known FreeMarker objects which will be passed
 	 * to FreeMarker's <code>Configuration.setAllSharedVariables()</code> method.
@@ -148,18 +139,6 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		this.applicationContext = applicationContext;
 	}
 	
-	public void afterPropertiesSet() throws IOException, TemplateException {
-		if (objectWrapper == null) {
-			Collection<ObjectWrapperPlugin> plugins = SpringUtils.beansOfType(
-					applicationContext, ObjectWrapperPlugin.class).values();
-			
-			if (!plugins.isEmpty()) {
-				objectWrapper = new PluginObjectWrapper(plugins);
-			}
-		}
-		super.afterPropertiesSet();
-	}
-	
 	@SuppressWarnings("unchecked")
 	protected void postProcessTemplateLoaders(List templateLoaders) {
 		super.postProcessTemplateLoaders(templateLoaders);
@@ -173,10 +152,13 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		config.setWhitespaceStripping(whitespaceStripping);
 		importMacroLibraries(config);
 		config.setTemplateExceptionHandler(exceptionHandler);
-		if (objectWrapper != null) {
-			config.setObjectWrapper(objectWrapper);
-		}
 		
+		Collection<ObjectWrapperPlugin> plugins = SpringUtils.orderedBeans(
+				applicationContext, ObjectWrapperPlugin.class);
+		
+		ObjectWrapper objectWrapper = new PluginObjectWrapper(plugins);
+		config.setObjectWrapper(objectWrapper);
+				
 		if (sharedVariables != null) {
 			config.setAllSharedVariables(
 					new SimpleHash(sharedVariables, objectWrapper));

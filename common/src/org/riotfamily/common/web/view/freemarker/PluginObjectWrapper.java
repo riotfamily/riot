@@ -23,11 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.view.freemarker;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-
-import org.springframework.core.OrderComparator;
 
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.TemplateModel;
@@ -39,11 +35,10 @@ import freemarker.template.TemplateModelException;
  */
 public class PluginObjectWrapper extends DefaultObjectWrapper {
 
-	private ArrayList<ObjectWrapperPlugin> plugins;
+	private Collection<ObjectWrapperPlugin> plugins;
 	
 	public PluginObjectWrapper(Collection<ObjectWrapperPlugin> plugins) {
-		this.plugins = new ArrayList<ObjectWrapperPlugin>(plugins);
-		Collections.sort(this.plugins, new OrderComparator());
+		this.plugins = plugins;
 	}
 	
 	public TemplateModel wrap(Object obj) throws TemplateModelException {

@@ -24,10 +24,13 @@
 package org.riotfamily.media.model;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.DiscriminatorValue;
@@ -37,59 +40,144 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.riotfamily.media.model.data.FileData;
-import org.springframework.util.ObjectUtils;
+import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.HashUtils;
+import org.riotfamily.media.service.MediaService;
+import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.riot.security.auth.RiotUser;
+import org.springframework.util.Assert;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
 @Entity
-@Table(name="riot_files")
+@Table(name="riot_file_data")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorValue("file")
 public class RiotFile {
+	
+	protected static MediaService mediaService;
 
+	public static void setMediaService(MediaService mediaService) {
+		RiotFile.mediaService = mediaService;
+	}
+	
 	private Long id;
 	
-	private FileData fileData;
+	private String uri;
 	
-	private boolean dirty;
+	private String fileName;
+	
+	private String contentType;
+	
+	private long size;
+	
+	private String md5;
+	
+	private String owner;
+	
+	private Date creationDate;
+	
+	private Map<String, RiotFile> variants;
+	
+	private transient boolean emptyFileCreated;
 	
 	public RiotFile() {
 	}
-
-	public RiotFile(FileData data) {
-		this.fileData = data;
-	}
 	
 	public RiotFile(File file) throws IOException {
-		this(new FileData(file));
+		setFile(file);
 	}
 	
 	public RiotFile(MultipartFile multipartFile) throws IOException {
-		this(new FileData(multipartFile));
+		setMultipartFile(multipartFile);
 	}
 	
 	public RiotFile(InputStream in, String fileName) throws IOException {
-		this(new FileData(in, fileName));
+		setInputStream(in, fileName);
 	}
 	
 	public RiotFile(byte[] bytes, String fileName) throws IOException {
-		this(new FileData(bytes, fileName));
-	}
-	
-	public RiotFile createCopy() {
-		return new RiotFile(fileData);
+		setBytes(bytes, fileName);
 	}
 
+	@Transient
+	public void setMultipartFile(MultipartFile multipartFile) throws IOException {
+		fileName = multipartFile.getOriginalFilename();
+		size = multipartFile.getSize();
+		contentType = multipartFile.getContentType();
+		initCreationInfo();
+		uri = mediaService.store(multipartFile.getInputStream(), fileName);
+		md5 = HashUtils.md5(multipartFile.getInputStream());
+		inspect(getFile());
+	}
+	
+	@Transient
+	public void setFile(File file) throws IOException {
+		fileName = file.getName();
+		size = file.length();
+		contentType = mediaService.getContentType(file);
+		initCreationInfo();
+		uri = mediaService.store(new FileInputStream(file), fileName);
+		md5 = HashUtils.md5(new FileInputStream(file));
+		inspect(file);
+	}
+	
+	@Transient
+	public void setInputStream(InputStream in, String fileName) throws IOException {
+		File f = createEmptyFile(fileName);
+		FileCopyUtils.copy(in, new FileOutputStream(f));
+		contentType = mediaService.getContentType(f);		
+		update();
+	}
+	
+	@Transient
+	public void setBytes(byte[] bytes, String fileName) throws IOException {
+		File f = createEmptyFile(fileName);
+		FileCopyUtils.copy(bytes, f);
+		contentType = mediaService.getContentType(f);		
+		update();
+	}
+	
+	public File createEmptyFile(String name) throws IOException {
+		fileName = name;
+		uri = mediaService.store(null, name);
+		emptyFileCreated = true;
+		initCreationInfo();
+		return getFile();
+	}
+	
+	public void update() throws IOException {
+		Assert.state(emptyFileCreated == true, "update() must only be called " +
+				"after createEmptyFile() has been invoked!");
+		
+		size = getFile().length();
+		md5 = HashUtils.md5(getInputStream());
+		inspect(getFile());
+	}
+	
+	private void initCreationInfo() {
+		creationDate = new Date();
+		RiotUser user = AccessController.getCurrentUser();
+		//FIXME Does not work with swfupload.js (no session, no user)
+		if (user != null) {
+			owner = user.getUserId();
+		}
+	}
+	
+	protected void inspect(File file) throws IOException {
+	}
+	
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return this.id;
@@ -99,95 +187,124 @@ public class RiotFile {
 		this.id = id;
 	}
 
-	@ManyToOne
-	@Cascade({CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
-	public FileData getFileData() {
-		return fileData;
-	}
-	
-	public void setFileData(FileData fileData) {
-		if (!ObjectUtils.nullSafeEquals(this.fileData, fileData)) {
-			dirty = true;
-		}
-		this.fileData = fileData;
-	}
-	
-	public void addVariant(String name, RiotFile variant) {
-		fileData.addVariant(name, variant);
-	}
-	
-	@Transient
-	public boolean isDirty() {
-		return dirty;
-	}
-
-	@Transient
 	public String getUri() {
-		return getFileData().getUri();
+		return this.uri;
 	}
 
-	@Transient
-	public InputStream getInputStream() throws FileNotFoundException {
-		return getFileData().getInputStream();
+	public void setUri(String uri) {
+		this.uri = uri;
 	}
 	
 	@Transient
 	public File getFile() {
-		return getFileData().getFile();
+		return mediaService.retrieve(uri);
+	}
+	
+	public void deleteFile() {
+		mediaService.delete(uri);
+	}
+
+	@Transient
+	public InputStream getInputStream() throws FileNotFoundException {
+		return new FileInputStream(getFile());
+	}
+
+	public String getFileName() {
+		return this.fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getContentType() {
+		return this.contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public long getSize() {
+		return this.size;
+	}
+
+	public void setSize(long size) {
+		this.size = size;
 	}
 	
 	@Transient
-	public String getContentType() {
-		return getFileData().getContentType();
-	}
-
-	@Transient
-	public Date getCreationDate() {
-		return getFileData().getCreationDate();
-	}
-
-	@Transient
-	public String getFileName() {
-		return getFileData().getFileName();
-	}
-
-	@Transient
 	public String getFormatedSize() {
-		return getFileData().getFormatedSize();
+		return FormatUtils.formatByteSize(size);
 	}
 
-	@Transient
-	public long getSize() {
-		return getFileData().getSize();
+	public String getOwner() {
+		return this.owner;
 	}
 
-	@Transient
-	public String getUploadedBy() {
-		return getFileData().getOwner();
+	public void setOwner(String uploadedBy) {
+		this.owner = uploadedBy;
 	}
 
-	@Transient
+	public Date getCreationDate() {
+		return this.creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public String getMd5() {
+		return this.md5;
+	}
+
+	public void setMd5(String md5) {
+		this.md5 = md5;
+	}
+
+	@OneToMany
+	@Cascade(CascadeType.ALL)
 	public Map<String, RiotFile> getVariants() {
-		return getFileData().getVariants();
+		return this.variants;
+	}
+
+	public void setVariants(Map<String, RiotFile> variants) {
+		this.variants = variants;
+	}
+	
+	public void addVariant(String name, RiotFile variant) {
+		if (variants == null) {
+			variants = new HashMap<String, RiotFile>();
+		}
+		variants.put(name, variant);
 	}
 	
 	public RiotFile get(String name) {
-		return getFileData().getVariant(name) ;
+		if (variants == null) {
+			return null;
+		}
+		return variants.get(name);
+	}
+
+	protected void finalize() throws Throwable {
+		if (id == null && uri != null) {
+			mediaService.delete(uri);
+		}
 	}
 	
 	@Override
 	public int hashCode() {
-		if (fileData != null) {
-			return fileData.hashCode();
+		if (uri != null) {
+			return uri.hashCode();
 		}
 		return 0;
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (fileData != null && obj instanceof RiotFile) {
+		if (uri != null && obj instanceof RiotFile) {
 			RiotFile other = (RiotFile) obj;
-			return fileData.equals(other.fileData);
+			return uri.equals(other.uri);
 		}
 		return super.equals(obj);
 	}

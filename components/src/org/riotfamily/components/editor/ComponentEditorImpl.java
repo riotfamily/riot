@@ -55,10 +55,9 @@ import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.components.render.component.EditModeComponentDecorator;
 import org.riotfamily.media.dao.MediaDao;
+import org.riotfamily.media.model.CroppedRiotImage;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
-import org.riotfamily.media.model.data.CroppedImageData;
-import org.riotfamily.media.model.data.ImageData;
 import org.riotfamily.riot.security.session.LoginManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -141,8 +140,8 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	
 		Content content = componentDao.loadContent(contentId);
 		RiotImage original = (RiotImage) mediaDao.loadFile(imageId);
-		RiotImage croppedImage = new RiotImage(new CroppedImageData(
-				original, imageCropper, width, height, x, y, scaledWidth));
+		RiotImage croppedImage = new CroppedRiotImage(
+				original, imageCropper, width, height, x, y, scaledWidth);
 		
 		content.setValue(property, croppedImage);
 		return croppedImage.getUri();
@@ -180,7 +179,7 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	public RiotImage storeImage(String token, MultipartFile multipartFile) 
 			throws IOException {
 		
-		RiotImage image = new RiotImage(new ImageData(multipartFile));
+		RiotImage image = new RiotImage(multipartFile);
 		mediaDao.saveFile(image);
 		return image;
 	}

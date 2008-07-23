@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.service;
 
-import org.riotfamily.media.model.data.FileData;
+import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.processing.FileProcessor;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -40,7 +40,7 @@ public class ProcessingService implements BeanFactoryAware {
 		this.beanFactory = beanFactory;
 	}
 	
-	public void process(FileData data, String processorId) {
+	public void process(RiotFile data, String processorId) {
 		FileProcessor processor = (FileProcessor) 
 				beanFactory.getBean(processorId, FileProcessor.class);
 		

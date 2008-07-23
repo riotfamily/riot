@@ -31,8 +31,6 @@ import org.riotfamily.common.image.ImageMagickThumbnailer;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
-import org.riotfamily.media.model.data.FileData;
-import org.riotfamily.media.model.data.ImageData;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -84,20 +82,20 @@ public class ThumbnailCreator extends AbstractFileProcessor
 		thumbnailer.setCrop(crop);
 	}
 	
-	protected RiotFile createVariant(FileData data) throws IOException {
-		ImageData thumbnail = new ImageData();
-		String thumbName = data.getFileName();
+	protected RiotFile createVariant(RiotFile original) throws IOException {
+		RiotImage thumbnail = new RiotImage();
+		String thumbName = original.getFileName();
 		if (format != null) {
 			thumbName = FormatUtils.stripExtension(thumbName);
 			thumbName += "." + format.toLowerCase();
 		}
 		File dest = thumbnail.createEmptyFile(thumbName);
-		thumbnailer.renderThumbnail(data.getFile(), dest, width, height);
+		thumbnailer.renderThumbnail(original.getFile(), dest, width, height);
 		thumbnail.update();
 		if (!thumbnail.isValid()) {
 			throw new IOException("Thumbnail creation failed");
 		}
-		return new RiotImage(thumbnail);
+		return thumbnail;
 	}
 	
 }

@@ -25,7 +25,7 @@ package org.riotfamily.media.processing;
 
 import java.util.List;
 
-import org.riotfamily.media.model.data.FileData;
+import org.riotfamily.media.model.RiotFile;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -39,7 +39,7 @@ public class BatchProcessor implements FileProcessor {
 		this.processors = processors;
 	}
 
-	public void process(FileData data) {
+	public void process(RiotFile data) {
 		if (processors != null) {
 			for (FileProcessor processor : processors) {
 				processor.process(data);

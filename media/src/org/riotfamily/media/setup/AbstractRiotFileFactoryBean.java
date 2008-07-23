@@ -51,7 +51,7 @@ public abstract class AbstractRiotFileFactoryBean extends AbstractFactoryBean {
 	protected Object createInstance() throws Exception {
 		RiotFile file = createRiotFile(resource);
 		if (processor != null) {
-			processor.process(file.getFileData());
+			processor.process(file);
 		}
 		return file;
 	}

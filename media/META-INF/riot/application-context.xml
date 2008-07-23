@@ -14,13 +14,9 @@
 	<override:add ref="sessionFactory" property="annotatedClasses">
 		<value>org.riotfamily.media.model.RiotFile</value>
 		<value>org.riotfamily.media.model.RiotImage</value>
+		<value>org.riotfamily.media.model.CroppedRiotImage</value>
 		<value>org.riotfamily.media.model.RiotSwf</value>
 		<value>org.riotfamily.media.model.RiotVideo</value>
-		<value>org.riotfamily.media.model.data.FileData</value>
-		<value>org.riotfamily.media.model.data.ImageData</value>
-		<value>org.riotfamily.media.model.data.CroppedImageData</value>
-		<value>org.riotfamily.media.model.data.SwfData</value>
-		<value>org.riotfamily.media.model.data.VideoData</value>
 	</override:add>
 	
 	<bean id="mediaDao" class="org.riotfamily.media.dao.HibernateMediaDao">
@@ -41,7 +37,7 @@
 	</bean>
 	
 	<bean id="fileDataInitializer" class="org.riotfamily.common.beans.MethodInvokingBean">
-		<property name="staticMethod" value="org.riotfamily.media.model.data.FileData.setMediaService" />
+		<property name="staticMethod" value="org.riotfamily.media.model.RiotFile.setMediaService" />
 		<property name="argument" ref="mediaService"/>
 	</bean>
 

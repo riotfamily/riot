@@ -48,7 +48,7 @@
 			<list>
 				<bean class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 					<property name="jobDetail" ref="mediaCleanUpJobDetail" />
-					<property name="repeatInterval" value="3600000" />
+					<property name="repeatInterval" value="${riot.media.cleanUpInterval=3600000}" />
 					<property name="startDelay" value="60000" />
 				</bean>
 			</list>

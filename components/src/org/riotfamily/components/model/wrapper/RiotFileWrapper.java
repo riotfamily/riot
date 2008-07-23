@@ -55,7 +55,7 @@ public class RiotFileWrapper extends ValueWrapper<RiotFile> {
 
 	public RiotFileWrapper deepCopy() {
 		RiotFileWrapper copy = new RiotFileWrapper();
-		copy.wrap(value.createCopy());
+		copy.wrap(value);
 		return copy;
 	}	
 	

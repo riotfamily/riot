@@ -24,6 +24,7 @@
 package org.riotfamily.media.model;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -31,7 +32,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import org.riotfamily.media.model.data.ImageData;
+import org.devlib.schmidt.imageinfo.ImageInfo;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -43,57 +44,68 @@ import org.springframework.web.multipart.MultipartFile;
 @DiscriminatorValue("image")
 public class RiotImage extends RiotFile {
 
-	public RiotImage() {
-		super();
-	}
+	private int width;
+	
+	private int height;
 
-	public RiotImage(ImageData data) {
-		super(data);
+	private String format;
+	
+	public RiotImage() {
 	}
 
 	public RiotImage(File file) throws IOException {
-		super(new ImageData(file));
+		super(file);
 	}
-	
+
 	public RiotImage(MultipartFile multipartFile) throws IOException {
-		super(new ImageData(multipartFile));
+		super(multipartFile);
 	}
 	
 	public RiotImage(InputStream in, String fileName) throws IOException {
-		super(new ImageData(in, fileName));
+		super(in, fileName);
 	}
-	
+
 	public RiotImage(byte[] bytes, String fileName) throws IOException {
-		super(new ImageData(bytes, fileName));
-	}
-	
-	public RiotFile createCopy() {
-		return new RiotImage(getImageData());
-	}
-	
-	@Transient
-	public ImageData getImageData() {
-		return (ImageData) getFileData();
+		super(bytes, fileName);
 	}
 
-	@Transient
+	protected void inspect(File file) throws IOException {
+		ImageInfo info = new ImageInfo();
+		info.setInput(new FileInputStream(file));
+		if (info.check()) {
+			width = info.getWidth();
+			height = info.getHeight();
+			format = info.getFormatName();
+			setContentType("image/" + format.toLowerCase());
+		}
+	}
+	
 	public int getWidth() {
-		return getImageData().getWidth();
-	}
-	
-	@Transient
-	public int getHeight() {
-		return getImageData().getHeight();
+		return this.width;
 	}
 
-	@Transient
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return this.height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
 	public String getFormat() {
-		return getImageData().getFormat();
+		return this.format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
 	}
 	
 	@Transient
 	public boolean isValid() {
-		return getImageData().isValid();
+		return format != null;
 	}
-
 }

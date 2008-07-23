@@ -44,9 +44,9 @@ import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
+import org.riotfamily.media.model.CroppedRiotImage;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
-import org.riotfamily.media.model.data.CroppedImageData;
 import org.riotfamily.media.service.ProcessingService;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -215,15 +215,13 @@ public class ImageUpload extends FileUpload {
 			int scaledWidth) throws IOException {
 
 		RiotImage original = (RiotImage) getPreviewFile();
-		CroppedImageData data = new CroppedImageData(original, cropper, 
-				width, height, x, y, scaledWidth);
-		
-		setNewFile(new RiotImage(data));
+		setNewFile(new CroppedRiotImage(original, cropper, 
+				width, height, x, y, scaledWidth));
 	}
 
 	protected void undoCrop() {
-		CroppedImageData imageData = (CroppedImageData) getPreviewFile().getFileData();
-		setNewFile(imageData.getOriginal());
+		CroppedRiotImage croppedImage = (CroppedRiotImage) getPreviewFile();
+		setNewFile(croppedImage.getOriginal());
 	}
 	
 	public class PreviewElement extends AbstractElement

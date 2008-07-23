@@ -24,7 +24,6 @@
 package org.riotfamily.media.processing;
 
 import org.riotfamily.media.model.RiotFile;
-import org.riotfamily.media.model.data.FileData;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -53,7 +52,7 @@ public abstract class AbstractFileProcessor implements FileProcessor,
 		}
 	}
 	
-	public void process(FileData data) throws FileProcessingException {
+	public void process(RiotFile data) throws FileProcessingException {
 		try {
 			data.addVariant(variant, createVariant(data));
 		}
@@ -62,6 +61,6 @@ public abstract class AbstractFileProcessor implements FileProcessor,
 		}
 	}
 	
-	protected abstract RiotFile createVariant(FileData data) throws Exception;
+	protected abstract RiotFile createVariant(RiotFile data) throws Exception;
 
 }

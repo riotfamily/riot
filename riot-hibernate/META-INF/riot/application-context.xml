@@ -61,6 +61,9 @@
 				</bean>
 			</list>
 		</property>
+		<property name="entityInterceptor">
+			<bean class="org.riotfamily.riot.hibernate.interceptor.EntityListenerInterceptor" />
+		</property>
 	</bean>
 
 	<!-- The Transaction Manager -->

@@ -31,9 +31,8 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import org.riotfamily.media.model.data.SwfData;
+import org.riotfamily.common.util.FlashInfo;
 import org.springframework.web.multipart.MultipartFile;
-
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -42,58 +41,71 @@ import org.springframework.web.multipart.MultipartFile;
 @Entity
 @DiscriminatorValue("swf")
 public class RiotSwf extends RiotFile {
+
+	private static final String CONTENT_TYPE = "application/x-shockwave-flash";
+	
+	private int width;
+	
+	private int height;
+	
+	private int version;
 	
 	public RiotSwf() {
-		super();
-	}
-
-	public RiotSwf(SwfData data) {
-		super(data);
 	}
 	
 	public RiotSwf(File file) throws IOException {
-		super(new SwfData(file));
+		super(file);
 	}
-	
+
 	public RiotSwf(MultipartFile multipartFile) throws IOException {
-		super(new SwfData(multipartFile));
+		super(multipartFile);
 	}
 	
 	public RiotSwf(InputStream in, String fileName) throws IOException {
-		super(new SwfData(in, fileName));
+		super(in, fileName);
 	}
 	
 	public RiotSwf(byte[] bytes, String fileName) throws IOException {
-		super(new SwfData(bytes, fileName));
+		super(bytes, fileName);
 	}
 
-	@Transient
-	public SwfData getSwfData() {
-		return (SwfData) getFileData();
+	protected void inspect(File file) throws IOException {
+		FlashInfo flashInfo = new FlashInfo(file);
+		setContentType(CONTENT_TYPE);
+		if (flashInfo.isValid()) {
+			width = flashInfo.getWidth();
+			height = flashInfo.getHeight();
+			version = flashInfo.getVersion();
+		}
 	}
 
-	public RiotFile createCopy() {
-		return new RiotSwf(getSwfData());
-	}
-	
 	@Transient
 	public boolean isValid() {
-		return getSwfData().isValid();
+		return version > 0;
 	}
 	
-	@Transient
 	public int getWidth() {
-		return getSwfData().getWidth();
-	}
-	
-	@Transient
-	public int getHeight() {
-		return getSwfData().getHeight();
+		return this.width;
 	}
 
-	@Transient
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return this.height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
 	public int getVersion() {
-		return getSwfData().getVersion();
+		return this.version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
 	}
 	
 }

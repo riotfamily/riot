@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
+import org.hibernate.Query;
 import org.hibernate.QueryException;
 import org.hibernate.ScrollableResults;
 import org.hibernate.engine.QueryParameters;
@@ -42,6 +43,16 @@ import org.hibernate.hql.QueryTranslator;
 import org.hibernate.hql.ast.ASTQueryTranslatorFactory;
 import org.hibernate.type.Type;
 
+/**
+ * Hibernate hook to tag cache items with the entity's class name when 
+ * a query is performed.
+ * <p>
+ * The class checks whether {@link Query#list()} performs a query for entities
+ * with the {@link TagCacheItems} annotation. This way cache items can be tagged
+ * properly even if the query returns no results.
+ * </p>
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class CacheQueryTranslatorFactory extends ASTQueryTranslatorFactory {
 
 	@Override

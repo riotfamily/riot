@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.processing;
 
-import org.riotfamily.media.model.data.FileData;
+import org.riotfamily.media.model.RiotFile;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -31,6 +31,6 @@ import org.riotfamily.media.model.data.FileData;
  */
 public interface FileProcessor {
 
-	public void process(FileData data) throws FileProcessingException;
+	public void process(RiotFile file) throws FileProcessingException;
 
 }

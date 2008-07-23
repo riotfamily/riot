@@ -32,6 +32,14 @@ import org.springframework.ui.freemarker.SpringTemplateLoader;
 
 import freemarker.cache.TemplateLoader;
 
+/**
+ * FreeMarkerConfigurer that uses a {@link RiotFileTemplateLoader} so that
+ * the Cachius cache knows which templates are involved in the creation of a
+ * CacheItem. 
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 8.0
+ */
 public class WebsiteFreeMarkerConfigurer extends RiotFreeMarkerConfigurer {
 
 	/**

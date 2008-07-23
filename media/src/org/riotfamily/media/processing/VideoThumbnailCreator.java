@@ -27,9 +27,8 @@ import java.util.ArrayList;
 
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.media.model.RiotFile;
+import org.riotfamily.media.model.RiotImage;
 import org.riotfamily.media.model.RiotVideo;
-import org.riotfamily.media.model.data.FileData;
-import org.riotfamily.media.model.data.VideoData;
 import org.riotfamily.media.service.FFmpeg;
 
 /**
@@ -62,9 +61,9 @@ public class VideoThumbnailCreator extends AbstractFileProcessor {
 		this.fill = fill;
 	}
 
-	protected RiotFile createVariant(FileData data) throws Exception {
-		VideoData video = (VideoData) data;
-		VideoData thumb = new VideoData();
+	protected RiotFile createVariant(RiotFile data) throws Exception {
+		RiotVideo video = (RiotVideo) data;
+		RiotImage thumb = new RiotImage();
 		ArrayList<String> args = new ArrayList<String>();
 		args.add("-i");
 		args.add(video.getFile().getAbsolutePath());
@@ -107,7 +106,7 @@ public class VideoThumbnailCreator extends AbstractFileProcessor {
 		args.add(thumb.createEmptyFile(thumbName).getAbsolutePath());
 		ffmpeg.invoke(args);
 		thumb.update();
-		return new RiotVideo(thumb);
+		return thumb;
 	}
 	
 }

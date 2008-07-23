@@ -29,9 +29,8 @@ import java.io.InputStream;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 
-import org.riotfamily.media.model.data.VideoData;
+import org.riotfamily.media.service.VideoMetaData;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -42,82 +41,128 @@ import org.springframework.web.multipart.MultipartFile;
 @DiscriminatorValue("video")
 public class RiotVideo extends RiotFile {
 
-	public RiotVideo() {
-		super();
-	}
+	private int width;
+	
+	private int height;
 
-	public RiotVideo(VideoData data) {
-		super(data);
+	private long duration;
+
+	private int bps;
+	
+	private String videoCodec;
+	
+	private float fps;
+	
+	private String audioCodec;
+	
+	private int samplingRate;
+	
+	private boolean stereo;
+	
+	
+	public RiotVideo() {
 	}
 	
 	public RiotVideo(File file) throws IOException {
-		super(new VideoData(file));
+		super(file);
 	}
-	
+
 	public RiotVideo(MultipartFile multipartFile) throws IOException {
-		super(new VideoData(multipartFile));
+		super(multipartFile);
 	}
-	
+
 	public RiotVideo(InputStream in, String fileName) throws IOException {
-		super(new VideoData(in, fileName));
+		super(in, fileName);
 	}
 	
 	public RiotVideo(byte[] bytes, String fileName) throws IOException {
-		super(new VideoData(bytes, fileName));
+		super(bytes, fileName);
 	}
-	
-	public RiotFile createCopy() {
-		return new RiotVideo(getVideoData());
+
+	protected void inspect(File file) throws IOException {
+		VideoMetaData meta = mediaService.identifyVideo(file);
+		setContentType("video/mpeg");
+		setDuration(meta.getDuration());
+		setBps(meta.getBps());
+		setVideoCodec(meta.getVideoCodec());
+		setWidth(meta.getWidth());
+		setHeight(meta.getHeight());
+		setFps(meta.getFps());
+		setAudioCodec(meta.getAudioCodec());
+		setSamplingRate(meta.getSamplingRate());
+		setStereo(meta.isStereo());
 	}
-	
-	@Transient
-	public VideoData getVideoData() {
-		return (VideoData) getFileData();
-	}
-	
-	@Transient
+
 	public int getWidth() {
-		return getVideoData().getWidth();
+		return this.width;
 	}
 
-	@Transient
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
 	public int getHeight() {
-		return getVideoData().getHeight();
+		return this.height;
 	}
 
-	@Transient
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
 	public long getDuration() {
-		return getVideoData().getDuration();
+		return this.duration;
 	}
 
-	@Transient
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
+
 	public int getBps() {
-		return getVideoData().getBps();
+		return this.bps;
 	}
 
-	@Transient
+	public void setBps(int bps) {
+		this.bps = bps;
+	}
+
 	public String getVideoCodec() {
-		return getVideoData().getVideoCodec();
+		return this.videoCodec;
 	}
 
-	@Transient
+	public void setVideoCodec(String videoCodec) {
+		this.videoCodec = videoCodec;
+	}
+
 	public float getFps() {
-		return getVideoData().getFps();
+		return this.fps;
 	}
 
-	@Transient
+	public void setFps(float fps) {
+		this.fps = fps;
+	}
+
 	public String getAudioCodec() {
-		return getVideoData().getAudioCodec();
+		return this.audioCodec;
 	}
 
-	@Transient
+	public void setAudioCodec(String audioCodec) {
+		this.audioCodec = audioCodec;
+	}
+
 	public int getSamplingRate() {
-		return getVideoData().getSamplingRate();
+		return this.samplingRate;
 	}
 
-	@Transient
+	public void setSamplingRate(int samplingRate) {
+		this.samplingRate = samplingRate;
+	}
+
 	public boolean isStereo() {
-		return getVideoData().isStereo();
+		return this.stereo;
 	}
 
+	public void setStereo(boolean stereo) {
+		this.stereo = stereo;
+	}
+	
 }

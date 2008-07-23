@@ -33,6 +33,8 @@ import freemarker.cache.FileTemplateLoader;
 /**
  * TemplateLoader that invokes {@link TaggingContext#addInvolvedFile(File)}
  * to track files involved in the generation of cached content.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
  * @since 8.0
  */
 public class RiotFileTemplateLoader extends FileTemplateLoader {

@@ -29,6 +29,12 @@ import java.util.Map;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.riot.hibernate.interceptor.EntityListener;
 
+/**
+ * EntityListener that invalidates tagged cache items whenever an entity with
+ * a {@link TagCacheItems} annotation is modified or deleted.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
 public class CacheTagEntityListener implements EntityListener {
 
 	private CacheService cacheService;

@@ -108,15 +108,9 @@ public class FileUpload extends CompositeElement implements Editor,
 	public Object getValue() {
 		if (uploadedFile != null) {
 			if (processor != null) {
-				processingService.process(uploadedFile.getFileData(), processor);
+				processingService.process(uploadedFile, processor);
 			}
-			if (file == null) {
-				file = uploadedFile;
-			}
-			else {
-				file.setFileData(uploadedFile.getFileData());
-			}
-			uploadedFile = null;
+			file = uploadedFile;
 		}
 		return file;
 	}
