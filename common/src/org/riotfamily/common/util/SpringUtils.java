@@ -11,9 +11,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.core.OrderComparator;
-import org.springframework.core.Ordered;
-import org.springframework.util.Assert;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 public final class SpringUtils {
 
@@ -97,16 +95,18 @@ public final class SpringUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static<T extends Ordered> List<T> 
-			orderedBeansIncludingAncestors(
+	public static<T> List<T> orderedBeansIncludingAncestors(
 			ListableBeanFactory lbf, Class<T> type) {
 		
-		Map<String, T> map = beansOfTypeIncludingAncestors(lbf, type);
-		ArrayList<T> beans = new ArrayList<T>(map.values());
-		Assert.notEmpty(beans, "At last one bean of type '" + type.getName()
-				+ "' must be present.");
-		
-		Collections.sort(beans, new OrderComparator());
+		ArrayList<T> beans = new ArrayList<T>(listBeansOfTypeIncludingAncestors(lbf, type));
+		Collections.sort(beans, new AnnotationAwareOrderComparator());
+		return beans;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static<T> List<T> orderedBeans(ListableBeanFactory lbf, Class<T> type) {
+		ArrayList<T> beans = new ArrayList<T>(listBeansOfType(lbf, type));
+		Collections.sort(beans, new AnnotationAwareOrderComparator());
 		return beans;
 	}
 
