@@ -35,12 +35,15 @@
 		<property name="suffix" value=".ftl" />
 	</bean>
 	
+	<bean id="siteNotFoundHandler" class="org.riotfamily.pages.mapping.DefaultSiteNotFoundHandler" />
+	
 	<bean id="folderFilterPlugin" class="org.riotfamily.pages.mapping.FolderFilterPlugin">
 		<constructor-arg ref="pageDao" />
 		<constructor-arg ref="pageResolver" />
 		<constructor-arg ref="pathCompleter" />
 		<constructor-arg ref="transactionManager" />
 		<property name="filterName" value="website-filter" />
+		<property name="siteNotFoundHandler" ref="siteNotFoundHandler" />
 	</bean>
 	
 	<override:put ref="freemarkerConfig" property="macroLibraries">
