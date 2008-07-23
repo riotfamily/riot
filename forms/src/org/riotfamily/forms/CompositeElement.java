@@ -138,8 +138,10 @@ public abstract class CompositeElement extends AbstractEditorBase
 		// Temporary list to allow concurrent modification
 		List<Element> tempList = new ArrayList<Element>(components);
 		for (Element component : tempList) {
-			log.debug("Processing component: " + component);
-			component.processRequest(request);
+			if (component.isEnabled()) {
+				log.debug("Processing component: " + component);
+				component.processRequest(request);
+			}
 		}
 	}
 	

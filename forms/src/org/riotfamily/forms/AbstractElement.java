@@ -216,7 +216,7 @@ public abstract class AbstractElement implements Element {
 	 * the user.
 	 */
 	public boolean isRequired() {
-		return required && isEnabled();
+		return required;
 	}
 	
 	/**
