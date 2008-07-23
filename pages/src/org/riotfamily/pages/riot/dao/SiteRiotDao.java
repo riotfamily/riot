@@ -29,7 +29,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.SwappableItemDao;
 import org.riotfamily.riot.dao.support.RiotDaoAdapter;
@@ -42,8 +44,8 @@ import org.springframework.util.Assert;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao, 
-		InitializingBean {
+public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
+		CutAndPasteEnabledDao, InitializingBean {
 
 	private PageDao pageDao;
 
@@ -110,4 +112,14 @@ public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
 		pageDao.updateSite(other);
 	}
 
+	public void removeChild(Object entity, Object parent) {
+		Page page = (Page) entity;
+		page.getNode().getChildNodes().remove(page.getNode());
+	}
+	
+	public void addChild(Object entity, Object parent) {
+		Page page = (Page) entity;
+		pageDao.getRootNode().addChildNode(page.getNode());
+	}
+	
 }
