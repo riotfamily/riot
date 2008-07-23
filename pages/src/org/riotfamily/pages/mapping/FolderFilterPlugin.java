@@ -73,7 +73,7 @@ public class FolderFilterPlugin extends FilterPlugin {
 	
 	private PlatformTransactionManager tx;
 	
-	private String siteChooserUrl;
+	private SiteNotFoundHandler siteNotFoundHandler;
 	
 	public FolderFilterPlugin(PageDao pageDao,
 			PageResolver pageResolver,
@@ -86,14 +86,8 @@ public class FolderFilterPlugin extends FilterPlugin {
 		this.tx = tx;
 	}
 	
-	/**
-	 * Sets an URL to which the user will be redirected if no site matches.
-	 * Default is <code>null</code>, which means that no redirect is sent and 
-	 * the request is handed on to the next plugin in the chain.  
-	 * @param  url A context-relative URL
-	 */
-	public void setSiteChooserUrl(String url) {
-		this.siteChooserUrl = url;
+	public void setSiteNotFoundHandler(SiteNotFoundHandler siteNotFoundHandler) {
+		this.siteNotFoundHandler = siteNotFoundHandler;
 	}
 
 	public void doFilter(HttpServletRequest request, 
@@ -123,13 +117,7 @@ public class FolderFilterPlugin extends FilterPlugin {
 		
 		Site site = pageResolver.getSite(request, pathCompleter);
 		if (site == null) {
-			if (siteChooserUrl != null) {
-				response.sendRedirect(response.encodeRedirectURL(
-						request.getContextPath() + siteChooserUrl));
-				
-				return true;
-			}
-			return false;
+			return siteNotFoundHandler.handleSiteNotFound(request, response);
 		}
 		String path = pageResolver.getPathWithinSite(request);
 		if (path.length() == 0) {
