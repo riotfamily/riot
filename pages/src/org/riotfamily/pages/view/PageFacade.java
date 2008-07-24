@@ -203,6 +203,10 @@ public class PageFacade {
 	public ContentContainer getContentContainer() {
 		ContentContainer container = page.getPageProperties(); 
 		ComponentCacheUtils.addContainerTags(container, preview);
+		Page master = page.getMasterPage();
+		if (master != null) {
+			ComponentCacheUtils.addContainerTags(master.getPageProperties(), preview);
+		}
 		return container;
 	}
 
