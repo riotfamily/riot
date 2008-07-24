@@ -263,8 +263,8 @@ public class XmlUtils {
 			property = FormatUtils.xmlToCamelCase(attr);
 		}
 
-		String value = element.getAttribute(attr);
-		if (StringUtils.hasLength(value)) {
+		String value = getAttribute(element, attr);
+		if (value != null) {
 			if (beanRef) {
 				return new PropertyValue(property, beanFactory.getBean(value));
 			}
