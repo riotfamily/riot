@@ -318,5 +318,13 @@ public class PageResolver {
 		request.setAttribute(attributeName, object);
 	}
 	
-	
+	/**
+	 * Resets all internally used attributes.
+	 * @param request
+	 */
+	public static void resetAttributes(HttpServletRequest request) {
+		request.removeAttribute(SITE_ATTRIBUTE);
+		request.removeAttribute(PAGE_ATTRIBUTE);
+		request.removeAttribute(PATH_ATTRIBUTE);
+	}
 }
