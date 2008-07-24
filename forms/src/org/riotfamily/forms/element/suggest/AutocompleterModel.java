@@ -31,6 +31,7 @@ import java.util.Collection;
  */
 public interface AutocompleterModel {
 
-	public Collection<String> getSuggestions(String search);
+	public Collection<String> getSuggestions(String search, 
+			AutocompleteTextField element);
 
 }
