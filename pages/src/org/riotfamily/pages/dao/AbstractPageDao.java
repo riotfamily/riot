@@ -181,17 +181,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	public Page addTranslation(Page page, Site site) {
 		log.info("Adding translation " + page + " --> " + site);
-		Page translation = new Page();
-		translation.setSite(site);
-		translation.setCreationDate(new Date());
-		translation.setPathComponent(page.getPathComponent());
-		translation.setFolder(page.isFolder());
-		translation.setHidden(page.isHidden());
+		Page translation = new Page(page, site);
 		PageNode node = page.getNode();
-		if (node.isSystemNode()) {
-			translation.setPublished(page.isPublished());
-		}
-		
 		node.addPage(translation);
 		deleteAlias(translation);
 		saveObject(translation);

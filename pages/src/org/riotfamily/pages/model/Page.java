@@ -34,7 +34,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -95,6 +94,17 @@ public class Page {
 		this.site = site;
 	}
 
+	public Page(Page master, Site site) {
+		this.site = site;
+		this.creationDate = new Date();
+		this.pathComponent = master.getPathComponent();
+		this.folder = master.isFolder();
+		this.hidden = master.isHidden();
+		if (master.getNode().isSystemNode()) {
+			published = master.isPublished();
+		}
+	}
+	
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return this.id;
@@ -312,10 +322,12 @@ public class Page {
 	@Transient
 	public Page getMasterPage() {
 		Page masterPage = null;
-		Site masterSite = site.getMasterSite();
-		while (masterPage == null && masterSite != null) {
-			masterPage = node.getPage(masterSite);
-			masterSite = masterSite.getMasterSite();
+		if (site != null) {
+			Site masterSite = site.getMasterSite();
+			while (masterPage == null && masterSite != null) {
+				masterPage = node.getPage(masterSite);
+				masterSite = masterSite.getMasterSite();
+			}
 		}
 		return masterPage;
 	}

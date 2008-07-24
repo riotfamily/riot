@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +14,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.ContentContainer;
 
 @Entity
@@ -27,6 +29,16 @@ public class PageProperties extends ContentContainer {
 	
 	public PageProperties(Page page) {
 		pages = Collections.singleton(page);
+		Page master = page.getMasterPage();
+		if (master != null) {
+			Map<String, Object> masterProps = master.getPageProperties().unwrap(true);
+			for (Entry<String, Object> entry : masterProps.entrySet()) {
+				if (entry.getValue() instanceof ComponentList) {
+					ComponentList list = (ComponentList) entry.getValue();
+					getPreviewVersion().setValue(entry.getKey(), list.createCopy());
+				}
+			}
+		}
 	}
 
 	@OneToMany(mappedBy="pageProperties", fetch=FetchType.EAGER)
