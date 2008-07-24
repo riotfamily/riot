@@ -71,7 +71,7 @@ public class AutocompleteTextField extends AbstractTextElement
 	
 	public String getInitScript() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("new Ajax.Autocompleter(\"").append(getId()).append("\", \"")
+		sb.append("new Ajax.Autocompleter(\"").append(getEventTriggerId()).append("\", \"")
 			.append(getChoicesDivId()).append("\", \"")
 			.append(getFormContext().getContentUrl(this)).append("\", {});");
 		
@@ -84,7 +84,7 @@ public class AutocompleteTextField extends AbstractTextElement
 		String search = request.getParameter(getParamName());
 		DocumentWriter doc = new DocumentWriter(response.getWriter());
 		doc.start(Html.UL);
-		for (String value : model.getSuggestions(search)) {
+		for (String value : model.getSuggestions(search, this)) {
 			doc.start(Html.LI).body(value).end();
 		}
 		doc.end();
