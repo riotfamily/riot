@@ -323,13 +323,15 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:complexType name="autocomplete">
-		<xsd:complexContent>
-			<xsd:extension base="simple-editor">
-				<xsd:attribute name="model" type="xsd:string" use="required" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
+	<xsd:element name="autocomplete">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="simple-editor">
+					<xsd:attribute name="model" type="xsd:string" use="required" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
 
 	<xsd:element name="import">
 		<xsd:complexType>
