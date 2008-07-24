@@ -188,9 +188,7 @@ public class AbstractResourceController extends AbstractCacheableController
             HttpServletResponse response) throws IOException {
         
     	String path = getResourcePath(request);
-    	if (!checkForModifications) {
-    		ServletUtils.setFarFutureExpiresHeader(response);
-    	}
+   		ServletUtils.setFarFutureExpiresHeader(response);
     	if (!serveResource(path, request, response)) {
     		response.sendError(HttpServletResponse.SC_NOT_FOUND);	
     	}
