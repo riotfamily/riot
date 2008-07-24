@@ -640,6 +640,20 @@ public class ListSession implements RenderContext {
 				commandState, confirmed, request, response);
 	}
 	
+	public CommandResult execFormCommand(ListItem item, 
+			CommandState commandState, boolean confirmed,
+			HttpServletRequest request, HttpServletResponse response) {
+		
+		Command command = getCommand(listConfig.getFormCommands(), commandState.getId());
+		CommandContextImpl context = new CommandContextImpl(this, request);
+		Object target = loadBean(item.getObjectId());
+		context.setBean(target, item.getObjectId());
+		context.setParent(null, item.getParentId(), item.getParentEditorId());
+		context.setRowIndex(item.getRowIndex());
+		return execCommand(item, command, context, target, 
+				commandState, confirmed, request, response);
+	}
+	
 	private CommandResult execCommand(ListItem item, Command command, 
 			CommandContext context, Object target, 
 			CommandState commandState, boolean confirmed,

@@ -182,10 +182,26 @@ public class ListConfig {
 		return columnCommands;
 	}
 	
+	/**
+	 * Returns list of commands that have {@link Command#isShowOnForm()} set to true.
+	 * 
+	 * @return list of commands
+	 */
 	public List getFormCommands() {
 		if (formCommands == null) {
 			formCommands = new ArrayList();
+			
+			//add column commands that we want to show on form
 			Iterator it = columnCommands.iterator();
+			while (it.hasNext()) {
+				Command command = (Command) it.next();
+				if (command.isShowOnForm()) {
+					formCommands.add(command);
+				}
+			}
+			
+			//add list commands that we want to show on form
+			it = commands.iterator();
 			while (it.hasNext()) {
 				Command command = (Command) it.next();
 				if (command.isShowOnForm()) {

@@ -25,7 +25,8 @@ var RiotList = Class.create({
 
 	renderFormCommands: function(objectId, target) {
 		var item = {objectId: objectId};
-		ListService.getFormCommands(this.key, objectId, this.appendCommands.bind(this, target, true, item, this.itemCommandClickHandler));
+		var handler = this.onFormCommandClick.bindAsEventListener(this);
+		ListService.getFormCommands(this.key, objectId, this.appendCommands.bind(this, target, true, item, handler));
 	},
 
 	renderTable: function(commandTarget, model) {
@@ -157,7 +158,7 @@ var RiotList = Class.create({
 		});
 	},
 
-	onItemCommandClick: function(event) {
+	onCommandClick: function(event, source) {
 		event.stop();
 		var a = event.findElement('a');
 		if (!this.selectParentMode) {
@@ -171,11 +172,19 @@ var RiotList = Class.create({
 				new Effect.BlindDown(this.dialog, {duration: 0.3});
 			}
 			else {
-				this.execCommand(a.item, null, a.command, false);
+				this.execCommand(a.item, null, a.command, false, source);
 			}
 		}
 	},
 	
+	onItemCommandClick: function(event) {
+		this.onCommandClick(event, 'item');
+	},
+	
+	onFormCommandClick: function(event) {
+		this.onCommandClick(event, 'form');
+	},
+
 	selectParent: function(command) {
 		this.selectParentMode = true;
 		this.parentCommand = command;
@@ -213,11 +222,15 @@ var RiotList = Class.create({
 		this.execCommand(null, parentId, this.parentCommand, true);
 	},
 	
-	execCommand: function(item, parentId, command, confirmed) {
+	execCommand: function(item, parentId, command, confirmed, source) {
 		if (this.setBusy()) {
 			if (item) {
-				ListService.execItemCommand(this.key, item, command, confirmed,
-						this.processCommandResult.bind(this));
+				if (source && source == 'form')
+					ListService.execFormCommand(this.key, item, command, confirmed,
+							this.processCommandResult.bind(this));
+				else				
+					ListService.execItemCommand(this.key, item, command, confirmed,
+							this.processCommandResult.bind(this));
 			}
 			else {
 				ListService.execListCommand(this.key, parentId, command, confirmed,

@@ -205,6 +205,15 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 				item, command, confirmed, request, response);
 	}
 	
+	public CommandResult execFormCommand(String key, ListItem item,
+			CommandState command, boolean confirmed,
+			HttpServletRequest request, HttpServletResponse response)
+			throws ListSessionExpiredException {
+
+		return getListSession(key, request).execFormCommand(
+				item, command, confirmed, request, response);
+	}
+	
 	public CommandResult execBatchCommand(String key, List items,
 			CommandState command, boolean confirmed,
 			HttpServletRequest request, HttpServletResponse response)
