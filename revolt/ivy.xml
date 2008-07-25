@@ -3,7 +3,7 @@
     <configurations>
     	<conf name="build" />
     	<conf name="runtime" />
-    	<conf name="test" extends="runtime" />
+		<conf name="test" extends="runtime" />
     	<conf name="src" />
     </configurations>
     <publications>
@@ -11,7 +11,7 @@
     	<artifact type="source" ext="src.zip" conf="src" />
     </publications>
     <dependencies>
-	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build,runtime->default;test->test;src->src" />
+	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build,runtime->default;src->src" />
 	    <dependency org="apache" name="commons-logging" rev="${dep.commons-logging.revision}" conf="build,runtime->default" />
 	    <dependency org="hsqldb" name="hsqldb" rev="1.8.0.8" conf="test->default" />
     </dependencies>

@@ -37,7 +37,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/c3p0.jar"/>
-	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
 	<classpathentry kind="lib" path="lib/yuicompressor.jar"/>
 	<classpathentry kind="lib" path="lib/quartz.jar"/>
@@ -48,7 +47,6 @@
 	<classpathentry kind="lib" path="lib/commons-httpclient.jar"/>
 	<classpathentry kind="lib" path="lib/htmlparser.jar"/>
 	<classpathentry kind="lib" path="lib/spring-webmvc.jar" sourcepath="lib/spring-webmvc.src.zip"/>
-	<classpathentry kind="lib" path="lib/spring-test.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j.jar"/>
 	<classpathentry kind="lib" path="lib/texhyphj.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
