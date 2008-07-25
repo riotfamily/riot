@@ -21,12 +21,10 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.website.misc;
+package org.riotfamily.website.form;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,13 +43,10 @@ import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * Simple controller that sends data collected from a from via email.
- * A FreeMarker template is used to format the mail body.
  */
-public class SimpleMailFormController extends SimpleFormController 
+public abstract class SimpleMailFormController extends SimpleFormController 
 		implements InitializingBean {
 	
-	private Pattern labelPattern = Pattern.compile("\\|([^\\|]*)\\|([^\\|]*)\\|");
-
 	private String to;
 	
 	private String[] bcc;
@@ -114,6 +109,7 @@ public class SimpleMailFormController extends SimpleFormController
 		binder.setRequiredFields(requiredFields);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected ModelAndView onSubmit(HttpServletRequest request,
 			HttpServletResponse response, Object command, BindException errors)
@@ -125,54 +121,22 @@ public class SimpleMailFormController extends SimpleFormController
 		mail.setFrom(from);
 		mail.setSubject(subject);
 		
-		mail.setText(getMailText(request, command));
-		prepareMail(mail, command);
+		Map<String, String> data = (Map<String, String>) command;
+		mail.setText(getMailText(request, data));
+		prepareMail(mail, data);
 		mailSender.send(mail);
 		
 		String url = ServletUtils.getOriginatingRequestUri(request) + "?success=true"; 
 		return new ModelAndView(new RedirectView(url));
 	}
 	
-	
-	@SuppressWarnings("unchecked")
-	protected String getMailText(HttpServletRequest request, Object command) {		
-
-		Map<String, String> labels = new HashMap<String, String>();
-		
-		String fieldString = request.getParameter("_fields");
-		Matcher m = labelPattern.matcher(fieldString);		
-		while (m.find()) {
-			labels.put(m.group(1), m.group(2));			
-		}
-		
-		String[] fields = labelPattern.matcher(fieldString).replaceAll("").split(",");
-		
-		Map<String, String> values = (Map<String, String>) command;
-		StringBuffer mailText = new StringBuffer();		
-		for (int i = 0; i < fields.length; i++) {
-			String field = fields[i];
-			if (labels.containsKey(field)) {
-				if (i > 0) {
-					mailText.append("\n\n");
-				}		
-				mailText.append(labels.get(field))
-				  	    .append(':');				  
-			}
-			String value = values.get(field);
-			if (value == null) {
-				value = "-";
-			}
-			mailText.append(' ').append(value);
-		}	
-		
-		return mailText.toString();
-	}
+	protected abstract String getMailText(HttpServletRequest request, Map<String, String> data);
 	
 	/**
-	 * This method can be overriden in order to manipulate the mail before it
+	 * This method can be overridden in order to manipulate the mail before it
 	 * is being sent.
 	 */
-	protected void prepareMail(SimpleMailMessage mail, Object command) {
+	protected void prepareMail(SimpleMailMessage mail, Map<String, String> data) {
 	}
 	
 }

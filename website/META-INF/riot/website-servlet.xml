@@ -88,7 +88,7 @@
 		<property name="macroLibraries">
 			<props>
 				<prop key="c">classpath:org/riotfamily/website/view/common.ftl</prop>
-				<prop key="form">classpath:org/riotfamily/website/view/form.ftl</prop>
+				<prop key="form">classpath:org/riotfamily/website/form/form.ftl</prop>
 				<prop key="template">classpath:org/riotfamily/website/template/template.ftl</prop>
 				<prop key="txt2img">classpath:org/riotfamily/website/txt2img/txt2img.ftl</prop>
 				<prop key="riot">classpath:org/riotfamily/riot/runtime/macro/riot.ftl</prop>
@@ -116,6 +116,8 @@
 		<property name="hyphenator" ref="riotHyphenator" />
 		<property name="compressResources" value="${riot.resources.compress=true}" />
 	</bean>
+	
+	<bean id="formMacroHelper" class="org.riotfamily.website.form.FormMacroHelperFactory" />
 	
 	<bean id="buttonService" class="org.riotfamily.website.txt2img.ButtonService">
 		<constructor-arg ref="cacheService" />
