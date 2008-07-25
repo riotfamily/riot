@@ -164,7 +164,7 @@
   -->
 <#macro checkbox field id=field errorClass="error" value="on" attributes...>
 	<#local attributes = addErrorClass(attributes, field, errorClass) />
-	<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check getStatus(command, field).value?if_exists />${c.joinAttributes(attributes)} />
+	<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check getStatus(command, field).value! == value />${c.joinAttributes(attributes)} />
 	<input type="hidden" name="_${field}" value="on"/>
 	<#assign fields = fields + field + ',' />
 </#macro>
