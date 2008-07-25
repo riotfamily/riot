@@ -38,7 +38,7 @@ var RiotTextArea = Class.create({
             borderStyle: 'solid',
 			position: 'absolute'
 		});
-		this.el.surroundWith(RBuilder.node('div', {className: 'textarea-wrapper'}).setStyle({position: 'relative'})).prependChild(this.measure);
+		this.el.wrap(RBuilder.node('div', {className: 'textarea-wrapper'}).setStyle({position: 'relative'})).prependChild(this.measure);
 		this.el.observe('keyup', this.resize.bind(this));
 		this.resize();
 		this.autoSize = true;

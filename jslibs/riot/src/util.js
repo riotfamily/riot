@@ -110,19 +110,6 @@ var RElement = {
 		return replacement;
 	},
 
-	surroundWith: function(el, wrapper) {
-		el = $(el);
-		el.replaceBy(wrapper).appendChild(el);
-		return wrapper;
-	},
-
-	appendHtml: function(el, html) {
-		el = $(el);
-		var wrapper = RBuilder.node('div');
-		wrapper.update(html);
-		wrapper.childElements().invoke('appendTo', el);
-	},
-	
 	makeBlock: function(el) {
 		el = $(el);
 		el.style.display = 'block';
