@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -22,6 +23,14 @@ public final class Generics {
 	
 	public static<K, V> HashMap<K, V> newHashMap(Map<? extends K, ? extends V> m) {
 		return new HashMap<K, V>(m);
+	}
+	
+	public static<K, V> LinkedHashMap<K, V> newLinkedHashMap() {
+		return new LinkedHashMap<K, V>();
+	}
+	
+	public static<K, V> LinkedHashMap<K, V> newLinkedHashMap(Map<? extends K, ? extends V> m) {
+		return new LinkedHashMap<K, V>(m);
 	}
 	
 	public static<K, V> TreeMap<K, V> newTreeMap() {
