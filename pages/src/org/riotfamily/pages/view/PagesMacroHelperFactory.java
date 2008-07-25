@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.view;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -52,7 +54,7 @@ public class PagesMacroHelperFactory implements MacroHelperFactory {
 	}
 
 	public Object createMacroHelper(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, Map<String, ?> model) {
 		
 		return new PagesMacroHelper(pageDao, pageResolver,
 				pathCompleter, request);

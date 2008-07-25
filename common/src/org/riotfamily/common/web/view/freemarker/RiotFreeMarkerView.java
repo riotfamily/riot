@@ -142,7 +142,7 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 				while (it.hasNext()) {
 					Map.Entry<String, MacroHelperFactory> entry = it.next();
 					MacroHelperFactory factory = entry.getValue();
-					model.put(entry.getKey(), factory.createMacroHelper(request, response));
+					model.put(entry.getKey(), factory.createMacroHelper(request, response, model));
 				}
 			}
 			if (freeMarkerServletMode) {

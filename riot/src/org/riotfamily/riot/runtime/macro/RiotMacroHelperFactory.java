@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.runtime.macro;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,7 +44,7 @@ public class RiotMacroHelperFactory implements MacroHelperFactory {
 	}
 	
 	public Object createMacroHelper(HttpServletRequest request, 
-			HttpServletResponse response) {
+			HttpServletResponse response, Map<String, ?> model) {
 		
 		return new RiotMacroHelper(runtime, request, response);
 	}

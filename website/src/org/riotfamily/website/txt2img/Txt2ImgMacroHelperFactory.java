@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.txt2img;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,7 +39,7 @@ public class Txt2ImgMacroHelperFactory implements MacroHelperFactory {
 	}
 
 	public Object createMacroHelper(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, Map<String, ?> model) {
 
 		return new Txt2ImgMacroHelper(buttonService, request);
 	}

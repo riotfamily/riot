@@ -377,4 +377,5 @@ public class CommonMacroHelper {
 		}
 		return result;
 	}
+	
 }

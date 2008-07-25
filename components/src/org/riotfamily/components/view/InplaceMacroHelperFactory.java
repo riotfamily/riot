@@ -25,6 +25,7 @@ package org.riotfamily.components.view;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -64,7 +65,7 @@ public class InplaceMacroHelperFactory implements MacroHelperFactory {
 	}
 
 	public Object createMacroHelper(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, Map<String, ?> model) {
 
 		return new InplaceMacroHelper(request, response, toolbarScripts, 
 				dynamicToolbarScripts, componentListRenderer, riotDaoService);
