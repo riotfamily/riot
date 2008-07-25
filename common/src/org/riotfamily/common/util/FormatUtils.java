@@ -758,6 +758,10 @@ public final class FormatUtils {
 		return TAG_PATTERN.matcher(s).replaceAll("");
 	}
 	
+	public static String stripTagsAndSpaces(String s) {
+		return stripWhitespaces(stripTags(s));
+	}
+	
 	/**
 	 * Calls {@link StringUtils#cleanPath(String)} and removes all occurrences
 	 * of "../".
