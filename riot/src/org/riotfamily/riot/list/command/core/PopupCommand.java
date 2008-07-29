@@ -35,12 +35,18 @@ public abstract class PopupCommand extends AbstractCommand {
 
 	private String windowName;
 	
+	private String popupArguments;
+	
 	public PopupCommand() {
 		setShowOnForm(true);
 	}
 	
 	public void setWindowName(String windowName) {
 		this.windowName = windowName;
+	}
+	
+	public void setPopupArguments(String popupArguments) {
+		this.popupArguments = popupArguments;
 	}
 	
 	protected boolean isEnabled(CommandContext context, String action) {
@@ -50,7 +56,7 @@ public abstract class PopupCommand extends AbstractCommand {
 	public CommandResult execute(CommandContext context) {
 		String url = getUrl(context);
 		return new PopupResult(url, windowName,	
-				getPopupBlockerMessage(context, url));
+				getPopupBlockerMessage(context, url), popupArguments);
 	}
 	
 	protected String getPopupBlockerMessage(CommandContext context, String url) {

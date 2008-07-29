@@ -33,6 +33,8 @@ public class PopupResult implements CommandResult {
 	
 	private String windowName;
 	
+	private String arguments;
+	
 	private String popupBlockerMessage;
 	
 	
@@ -45,11 +47,12 @@ public class PopupResult implements CommandResult {
 	}
 	
 	public PopupResult(String url, String windowName, 
-			String popupBlockerMessage) {
+			String popupBlockerMessage, String arguments) {
 		
 		this.url = url;
 		this.windowName = windowName;
 		this.popupBlockerMessage = popupBlockerMessage;
+		this.arguments = arguments;
 	}
 
 	public String getPopupBlockerMessage() {
@@ -72,4 +75,8 @@ public class PopupResult implements CommandResult {
 		this.windowName = windowName;
 	}
 	
+	public String getArguments() {
+		return arguments;
+	}
+		
 }

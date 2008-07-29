@@ -220,16 +220,20 @@ var RiotList = Class.create({
 						this.processCommandResult.bind(this));
 			}
 			else {
-				ListService.execListCommand(this.key, parentId, command, confirmed,
-						this.processCommandResult.bind(this));
+				this.execListCommand(parentId, command, confirmed)				
 			}
 		}
+	},
+	
+	execListCommand: function(parentId, command, confirmed, objectId) {
+		ListService.execListCommand(this.key, parentId, command, confirmed, 
+				objectId, this.processCommandResult.bind(this));
 	},
 		
 	refreshSiblings: function(objectId) {
 		if (objectId) {
 			var tr = $('item-' + objectId);
-			if (tr.parentRow) {
+			if (tr && tr.parentRow) {
 				tr.parentRow.refreshChildren();
 				return;
 			}
@@ -342,7 +346,7 @@ var RiotList = Class.create({
 				}
 			}
 			else if (result.action == 'popup') {
-				var win = window.open(result.url, result.windowName || 'commandPopup');
+				var win = window.open(result.url, result.windowName || 'commandPopup', result.arguments);
 				if (!win) {
 					alert(result.popupBlockerMessage || 'The Popup has been blocked by the browser.');
 				}

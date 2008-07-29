@@ -188,12 +188,12 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 	}
 
 	public CommandResult execListCommand(String key, String parentId, 
-			CommandState command, boolean confirmed,
+			CommandState command, boolean confirmed, String objectId,
 			HttpServletRequest request, HttpServletResponse response)
 			throws ListSessionExpiredException {
 
 		return getListSession(key, request).execListCommand(
-				parentId, command, confirmed, request, response);
+				parentId, command, confirmed, objectId, request, response);
 	}
 	
 	public CommandResult execItemCommand(String key, ListItem item,

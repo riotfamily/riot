@@ -606,7 +606,7 @@ public class ListSession implements RenderContext {
 	}
 
 	public CommandResult execListCommand(String parentId, 
-			CommandState commandState, boolean confirmed,
+			CommandState commandState, boolean confirmed, String objectId,
 			HttpServletRequest request, HttpServletResponse response) {
 		
 		Command command = getCommand(listCommands, commandState.getId());
@@ -620,6 +620,9 @@ public class ListSession implements RenderContext {
 			target = loadParent();
 			context.setParent(target, this.parentId, this.parentEditorId);
 		}
+		
+		context.setBean(null, objectId);
+		
 		return execCommand(null, command, context, target, 
 				commandState, confirmed, request, response);
 	}

@@ -61,7 +61,7 @@ public interface ListService {
 			throws ListSessionExpiredException;
 	
 	public CommandResult execListCommand(String key, String parentId,
-			CommandState command, boolean confirmed, 
+			CommandState command, boolean confirmed, String objectId,
 			HttpServletRequest request, HttpServletResponse response)
 			throws ListSessionExpiredException;
 	
