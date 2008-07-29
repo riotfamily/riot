@@ -233,6 +233,7 @@ public class HqlDao extends AbstractHibernateRiotDao implements
     protected void setPositionIfNeeded(Object entity, Object parent) {
     	if (setPositionOnSave) {
     		Query query = getSession().createQuery(buildMaxPositionHql(parent));
+    		setQueryParameters(query, parent, new EmptyListParams());
     		Number maxPosition = (Number) query.uniqueResult();
     		
     		PropertyUtils.setProperty(entity, positionProperty,
