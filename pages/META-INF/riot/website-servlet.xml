@@ -53,7 +53,7 @@
 	<bean id="siteObjectWrapperPlugin" class="org.riotfamily.pages.view.SiteObjectWrapperPlugin" />
 	
 	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin">
-		<constructor-arg ref="pathCompleter" />
+		<property name="pathCompleter" ref="pathCompleter" />
 	</bean>
 	
 	<!-- 

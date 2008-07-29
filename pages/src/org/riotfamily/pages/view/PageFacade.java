@@ -61,7 +61,7 @@ public class PageFacade {
 	private Map<String, Object> properties = null;
 	
 	public PageFacade(Page page, HttpServletRequest request) {
-		this(page, request, new RequestPathCompleter(request));
+		this(page, request, null);
 	}
 	
 	public PageFacade(Page page, HttpServletRequest request, 
@@ -69,7 +69,12 @@ public class PageFacade {
 		
 		this.page = page;
 		this.request = request;
-		this.pathCompleter = pathCompleter;
+		if (pathCompleter != null) {
+			this.pathCompleter = pathCompleter;
+		}
+		else {
+			this.pathCompleter = new RequestPathCompleter(request);
+		}
 		this.preview = EditModeUtils.isEditMode(request);
 		PageCacheUtils.addNodeTag(page.getNode());
 	}

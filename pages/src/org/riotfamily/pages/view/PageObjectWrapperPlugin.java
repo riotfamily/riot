@@ -41,7 +41,7 @@ public class PageObjectWrapperPlugin implements ObjectWrapperPlugin {
 
 	private PathCompleter pathCompleter;
 
-	public PageObjectWrapperPlugin(PathCompleter pathCompleter) {
+	public void setPathCompleter(PathCompleter pathCompleter) {
 		this.pathCompleter = pathCompleter;
 	}
 
