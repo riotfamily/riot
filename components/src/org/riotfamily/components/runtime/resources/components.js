@@ -153,10 +153,7 @@ riot.ComponentList = Class.create({
 		this.element = el;
 		this.id = el.readAttribute('riot:listId');
 		if (!el.id) el.id = 'riot-list-' + this.id;
-		this.maxComponents = el.readAttribute('riot:maxComponents');
-		this.minComponents = el.readAttribute('riot:minComponents');
-		this.validTypes = el.readAttribute('riot:validTypes').split(',');
-				
+		this.config = window["riotComponentListConfig" + this.id];
 		this.findComponentElements();
 	},
 	
@@ -166,7 +163,7 @@ riot.ComponentList = Class.create({
 	},
 		
 	insertOn: function() {
-		if (!this.maxComponents || this.componentElements.length < this.maxComponents) {
+		if (!this.config.max || this.componentElements.length < this.config.max) {
 			this.element.addClassName('riot-mode-insert');
 			this.insertButton = new riot.InsertButton(this);
 			riot.activeInsertButton = null;
@@ -275,11 +272,15 @@ riot.ComponentList = Class.create({
 	
 	removeOn: function() {
 		this.element.addClassName('riot-mode-remove');
-		if (this.componentElements.length > this.minComponents) {
+		if (this.componentElements.length > this.config.min) {
 			var list = this;
-			this.componentElements.each(function(el) {
-				riot.getContent(el).setClickHandler(list.removeComponent.bind(list));
-			});
+			var handler = list.removeComponent.bind(list);
+			this.componentElements.map(riot.getContent).each(function(c) {
+				var min = this.getComponentConfig(c.type).min;
+				if (min == 0 || this.countComponents(c.type) > min) {
+					c.setClickHandler(handler);
+				}
+			}, this);
 		}
 	},
 	
@@ -303,9 +304,17 @@ riot.ComponentList = Class.create({
 			list.updatePositionClasses();
 			riot.outline.suspended = false;
 		});
-		if (this.minComponents > 0 && this.componentElements.length == this.minComponents) {
+		if (this.config.min > 0 && this.componentElements.length == this.config.min) {
 			this.removeOff();
 		} 
+	},
+	
+	getComponentConfig: function(type) {
+		return this.config.validTypes.find(function(c) {return c.type == type});
+	},
+	
+	countComponents: function(type) {
+		return this.componentElements.map(riot.getContent).select(function(c) {return c.type == type}).length;
 	}
 	
 });
@@ -437,8 +446,8 @@ riot.Content = Class.create({
 	},
 	
 	editProperties: function() {
-		var formUrl = riot.path + '/components/form/' + this.form + '/' 
-				+ this.container.id + '/' + this.id + '?' 
+		var formUrl = riot.path + '/components/form/' + this.container.id 
+				+ '/' + this.id + '/' + this.form + '?' 
 				+ $H(riotComponentFormParams).toQueryString();
 		
 		var iframe = RBuilder.node('iframe', {src: formUrl, className: 'properties', width: 1, height: 1});
@@ -475,6 +484,7 @@ riot.Component = Class.create(riot.Content, {
 
 	initialize: function($super, el) {
 		$super(el);
+		this.type = el.readAttribute('riot:componentType');
 	},
 	
 	updateTextChunks: function(key, chunks) {
@@ -515,18 +525,13 @@ riot.InsertButton = Class.create({
 
 	initialize: function(componentList) {
 		this.componentList = componentList;
-		this.element = RBuilder.node('div', {className: 'riot-insert-button',
-				onclick: this.onclick.bindAsEventListener(this)});
-
-		this.types = componentList.validTypes;
-		ComponentEditor.getComponentTypeLables(componentList.validTypes, this.setLabels.bind(this));
+		this.types = componentList.config.validTypes.select(function(config) {
+			return !config.max || componentList.countComponents(config.type) < config.max;
+		});
+		this.componentList.element.insert({after: this.element = new Element('div', {className: 'riot-insert-button'})
+			.observe('click', this.onclick.bindAsEventListener(this))});
 	},
 	
-	setLabels: function(labels) {
-		this.labels = labels;
-		this.element.insertSelfAfter(this.componentList.element);
-	},
-
 	remove: function() {
 		this.element.remove();
 	},
@@ -543,16 +548,15 @@ riot.InsertButton = Class.create({
 			this.element.addClassName('riot-insert-button-active');
 			riot.activeInsertButton = this;
 			this.inspector = new riot.TypeInspector(
-					this.types, this.labels, null,
-					this.insert.bind(this));
+					this.types, this.insert.bind(this));
 
 			riot.toolbar.setInspector(this.inspector.element);
 		}
 	},
 
-	insert: function(type) {
-		ComponentEditor.insertComponent(this.componentList.id, -1, type, null,
-				this.oninsert.bind(this));
+	insert: function(config) {
+		ComponentEditor.insertComponent(this.componentList.id, -1, config.type, 
+				Object.toJSON(config.defaults), this.oninsert.bind(this));
 
 		if (this.inspector) {
 			this.inspector.onchange = this.changeType.bind(this);
@@ -589,8 +593,8 @@ riot.InsertButton = Class.create({
 		}
 	},
 	
-	changeType: function(type) {
-		ComponentEditor.setType(this.id, type, this.onupdate.bind(this));
+	changeType: function(config) {
+		ComponentEditor.setType(this.id, config.type, Object.toJSON(config.defaults), this.onupdate.bind(this));
 	}
 });
 
@@ -599,18 +603,14 @@ riot.InsertButton = Class.create({
  */
 riot.TypeInspector = Class.create({
 
-	initialize: function(types, labels, activeType, onchange) {
+	initialize: function(configs, onchange) {
 		this.onchange = onchange;
 		var select = RBuilder.node('div', {className: 'type-inspector'});
-		for (var i = 0; i < types.length; i++) {
+		for (var i = 0; i < configs.length; i++) {
 			var e = RBuilder.node('div', {className: 'type'},
-				RBuilder.node('span', {className: 'type-' + types[i]}, labels[i])
+				RBuilder.node('span', {className: 'type-' + configs[i].type}, configs[i].label)
 			);
-			e.type = types[i];
-			if (e.type == activeType) {
-				this.activeTypeButton = e;
-				e.className = 'active-type';
-			}
+			e.config = configs[i];
 			var inspector = this;
 			e.onclick = function() {
 				if (inspector.activeTypeButton) {
@@ -618,7 +618,7 @@ riot.TypeInspector = Class.create({
 				}
 				this.className = 'active-type'
 				inspector.activeTypeButton = this;
-				inspector.onchange(this.type);
+				inspector.onchange(this.config);
 			}
 			select.appendChild(e);
 		}

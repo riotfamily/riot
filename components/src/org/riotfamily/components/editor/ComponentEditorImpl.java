@@ -25,16 +25,16 @@ package org.riotfamily.components.editor;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,7 +42,6 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.image.ImageCropper;
-import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.PasswordGenerator;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.components.cache.ComponentCacheUtils;
@@ -59,18 +58,14 @@ import org.riotfamily.media.model.CroppedRiotImage;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
 import org.riotfamily.riot.security.session.LoginManager;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * Service bean to edit ComponentLists and ComponentVersions.
  */
 @Transactional
-public class ComponentEditorImpl implements ComponentEditor, UploadManager, 
-		MessageSourceAware {
+public class ComponentEditorImpl implements ComponentEditor, UploadManager {
 
 	private Log log = LogFactory.getLog(ComponentEditorImpl.class);
 
@@ -89,8 +84,6 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	
 	private ComponentRenderer renderer;
 
-	private MessageSource messageSource;
-
 	private Map<String, Map<String, Object>> tinyMCEProfiles;
 
 	public ComponentEditorImpl(ComponentDao componentDao, 
@@ -103,10 +96,6 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 		this.mediaDao = mediaDao;
 		this.imageCropper = imageCropper;
 		this.renderer = new EditModeComponentDecorator(renderer, formRepository);
-	}
-
-	public void setMessageSource(MessageSource messageSource) {
-		this.messageSource = messageSource;
 	}
 	
 	public Map<String, Map<String, Object>> getTinyMCEProfiles() {
@@ -200,31 +189,24 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 		for (int i = 1; i < chunks.length; i++) {
 			html[i] = insertComponent(list.getId(), offset + i, 
 					component.getType(),
-					Collections.singletonMap(property, chunks[i]));
+					Collections.singletonMap(property, (Object) chunks[i]));
 		}
 		return html;
-	}
-
-	/**
-	 * Returns a list of TypeInfo beans indicating which component types are
-	 * valid for the list with the given id.
-	 */
-	public List<String> getComponentTypeLables(List<String> types) {
-		Locale locale = getLocale();
-		ArrayList<String> labels = new ArrayList<String>();
-		for (String type : types) {
-			labels.add(messageSource.getMessage("component." + type,
-					null, FormatUtils.xmlToTitleCase(type), locale));
-		}
-		return labels;
 	}
 
 	/**
 	 * Creates a new Component and inserts it in the list identified
 	 * by the given id.
 	 */
-	public String insertComponent(Long listId, int position, String type,
-			Map<String, String> properties) {
+	@SuppressWarnings("unchecked")
+	public String insertComponent(Long listId, int position, String type, String properties) {
+		// NOTE: The initial properties are passed as JSON String because DWR
+		// currently doesn't support Map<String, ?>.
+		return insertComponent(listId, position, type, JSONObject.fromObject(properties));
+	}
+	
+	private String insertComponent(Long listId, int position, String type,
+			Map<String, ?> properties) {
 
 		ComponentList componentList = componentDao.loadComponentList(listId);
 		Component component = createComponent(type, properties);
@@ -239,18 +221,20 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	 * @param properties Properties of the version to create
 	 * @return The newly created component
 	 */
-	private Component createComponent(String type, Map<String, String> properties) {
+	private Component createComponent(String type, Map<String, ?> properties) {
 		Component component = new Component(type);
-		if (properties != null) {
-			component.wrap(properties);
-		}
+		component.wrap(properties);
 		componentDao.saveContent(component);
 		return component;
 	}
 	
-	public String setType(Long componentId, String type) {
+	@SuppressWarnings("unchecked")
+	public String setType(Long componentId, String type, String properties) {
 		Component component = componentDao.loadComponent(componentId);
 		component.setType(type);
+		if (properties != null) {
+			component.wrap(JSONObject.fromObject(properties));
+		}
 		return renderComponent(component);
 	}
 	
@@ -342,12 +326,6 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	private HttpServletResponse getCapturingResponse(StringWriter sw) {
 		WebContext ctx = WebContextFactory.get();
 		return new CapturingResponseWrapper(ctx.getHttpServletResponse(), sw);
-	}
-
-	private Locale getLocale() {
-		WebContext ctx = WebContextFactory.get();
-		HttpServletRequest request = ctx.getHttpServletRequest();
-		return RequestContextUtils.getLocale(request);
 	}
 
 }

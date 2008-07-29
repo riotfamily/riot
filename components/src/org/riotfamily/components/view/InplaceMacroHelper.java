@@ -106,7 +106,7 @@ public class InplaceMacroHelper {
 	public String renderComponentList(ContentContainer container, 
 			String key, Integer minComponents, Integer maxComponents,
 			List<String> initalComponentTypes, 
-			List<String> validComponentTypes)
+			List<?> validComponentTypes)
 			throws Exception {
 		
 		ComponentListConfig config = new ComponentListConfig(minComponents,
@@ -119,7 +119,7 @@ public class InplaceMacroHelper {
 	public String renderNestedComponentList(Component parent, 
 			String key, Integer minComponents, Integer maxComponents,
 			List<String> initalComponentTypes, 
-			List<String> validComponentTypes)
+			List<?> validComponentTypes)
 			throws Exception {
 		
 		ComponentListConfig config = new ComponentListConfig(minComponents,

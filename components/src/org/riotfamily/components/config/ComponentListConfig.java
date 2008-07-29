@@ -23,51 +23,79 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.config;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+
+import net.sf.json.JSONObject;
 
 import org.riotfamily.common.util.Generics;
-import org.springframework.util.Assert;
 
 public class ComponentListConfig {
 
-	private Integer minComponents;
+	private Integer min;
 	
-	private Integer maxComponents;
+	private Integer max;
 	
-	private Set<String> validComponentTypes;
+	private Map<String, ComponentConfig> validTypes  = Generics.newHashMap();
 	
-	private List<String> initialComponentTypes;
+	private List<String> initialTypes = Generics.newArrayList();
 
 	
-	public ComponentListConfig(Integer minComponents, Integer maxComponents,
-			List<String> initialComponentTypes, 
-			List<String> validComponentTypes) {
-
-		this.minComponents = minComponents;
-		this.maxComponents = maxComponents;
-		this.initialComponentTypes = initialComponentTypes;
-		if (validComponentTypes == null || validComponentTypes.isEmpty()) {
-			Assert.notNull(initialComponentTypes, "Either inital or valid component types must be specified");
-			validComponentTypes = initialComponentTypes;
+	public ComponentListConfig(Integer min, Integer max, List<String> initial, List<?> valid) {
+		this.min = min;
+		this.max = max;
+		if (initial != null) {
+			initialTypes.addAll(initial); 
 		}
-		this.validComponentTypes = Generics.newLinkedHashSet(validComponentTypes);
+		if (valid != null) {
+			for (Object obj : valid) {
+				ComponentConfig config = new ComponentConfig(obj);
+				validTypes.put(config.getType(), config);
+				if (config.getMin() > 0) {
+					int count = 0;
+					for (String initialType : initialTypes) {
+						if (initialType.equals(config.getType())) {
+							count++;
+						}
+					}
+					for (int i = count; i < config.getMin(); i++) {
+						initialTypes.add(config.getType());
+					}
+				}
+			}
+		}
+		else if (initial != null) {
+			for (String initialType : initial) {
+				if (!validTypes.containsKey(initialType)) {
+					validTypes.put(initialType, new ComponentConfig(initialType));
+				}
+			}
+		}
 	}
 
-	public Integer getMinComponents() {
-		return minComponents;
+	public Integer getMin() {
+		return min;
 	}
 
-	public Integer getMaxComponents() {
-		return maxComponents;
+	public Integer getMax() {
+		return max;
 	}
 
-	public Set<String> getValidComponentTypes() {
-		return validComponentTypes;
+	public Collection<ComponentConfig> getValidTypes() {
+		return validTypes.values();
 	}
 
-	public List<String> getInitialComponentTypes() {
-		return initialComponentTypes;
+	public List<String> getInitialTypes() {
+		return initialTypes;
+	}
+	
+	public ComponentConfig getConfig(String type) {
+		return validTypes.get(type);
+	}
+	
+	public String toJSON() {
+		return JSONObject.fromObject(this).toString();
 	}
 
 }

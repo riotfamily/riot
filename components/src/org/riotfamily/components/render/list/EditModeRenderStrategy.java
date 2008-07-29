@@ -37,7 +37,6 @@ import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.components.render.component.EditModeComponentDecorator;
 import org.riotfamily.forms.factory.FormRepository;
-import org.springframework.util.StringUtils;
 
 public class EditModeRenderStrategy extends DefaultRenderStrategy {
 
@@ -67,23 +66,13 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 			.attribute(Html.COMMON_CLASS, "riot-component-list")
 			.attribute("riot:listId", list.getId().toString());
 		
-		if (config.getValidComponentTypes() != null) {
-			wrapper.attribute("riot:validTypes", 
-					StringUtils.collectionToCommaDelimitedString(
-					config.getValidComponentTypes()));
-		}
-		if (config.getMinComponents() != null) {
-			wrapper.attribute("riot:minComponents", 
-					config.getMinComponents().intValue());
-		}
-		if (config.getMaxComponents() != null) {
-			wrapper.attribute("riot:maxComponents", 
-					config.getMaxComponents().intValue());
-		}
-		
 		wrapper.body();
 		super.render(list, config, request, response);
-		wrapper.closeAll();
+		wrapper.end();
+		wrapper.start(Html.SCRIPT).body("riotComponentListConfig" + list.getId() 
+				+ " = " + config.toJSON() + ";", false);
+		
+		wrapper.end();
 	}
 
 	/**

@@ -77,9 +77,12 @@ public class ComponentListRenderer {
 		
 		final ComponentList list = new ComponentList();
 		content.setValue(key, list);
-		for (String type : config.getInitialComponentTypes()) {
-			Component component = new Component(type);
-			list.appendComponent(component);
+		if (config.getInitialTypes() != null) {
+			for (String type : config.getInitialTypes()) {
+				Component component = new Component(type);
+				component.wrap(config.getConfig(type).getDefaults());
+				list.appendComponent(component);
+			}
 		}
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus status) {

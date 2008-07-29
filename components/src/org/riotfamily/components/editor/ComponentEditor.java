@@ -24,7 +24,6 @@
 package org.riotfamily.components.editor;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,12 +53,9 @@ public interface ComponentEditor {
 			
 	public void discardImage(Long imageId);
 			
-	public List<String> getComponentTypeLables(List<String> types);
+	public String insertComponent(Long listId, int position, String type, String properties);
 
-	public String insertComponent(Long listId, int position, String type,
-			Map<String, String> properties);
-
-	public String setType(Long componentId, String type);
+	public String setType(Long componentId, String type, String properties);
 	
 	public String renderComponent(Long componentId);
 
