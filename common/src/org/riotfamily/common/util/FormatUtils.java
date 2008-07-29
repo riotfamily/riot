@@ -601,15 +601,14 @@ public final class FormatUtils {
 		return sb.toString();
 	}
 
-	public static String regexEscape(String s) {
-		return escapeChars(s, ".+*?{[^$", '\\');
-	}
-
 	/**
 	 * Translates the given string into application/x-www-form-urlencoded
 	 * format using UTF-8 as encoding scheme.
 	 */
 	public static String uriEscape(String input) {
+		if (input == null) {
+			return null;
+		}
 		try {
 			return URLEncoder.encode(input, "UTF-8");
 		}
@@ -704,11 +703,23 @@ public final class FormatUtils {
 		return -1;
 	}
 
+	/**
+	 * Strips whitespaces without preserving line breaks.
+	 * @see #stripWhitespaces(String, boolean) 
+	 */
 	public static String stripWhitespaces(String s) {
 		return stripWhitespaces(s, false);
 	}
 
+	/**
+	 * Replaces consecutive whitespaces by a single space character.
+	 * @param s The String to tidy up
+	 * @param preserveBreaks Whether line breaks should be preserved 
+	 */
 	public static String stripWhitespaces(String s, boolean preserveBreaks) {
+		if (s == null) {
+			return null;
+		}
 		StringReader in = new StringReader(s);
 		StringBuffer sb = new StringBuffer();
 		try {
@@ -758,6 +769,11 @@ public final class FormatUtils {
 		return TAG_PATTERN.matcher(s).replaceAll("");
 	}
 	
+	/**
+	 * Convenience method that strips tags and whitespaces.
+	 * @see #stripTags(String)
+	 * @see #stripWhitespaces(String)
+	 */
 	public static String stripTagsAndSpaces(String s) {
 		return stripWhitespaces(stripTags(s));
 	}
