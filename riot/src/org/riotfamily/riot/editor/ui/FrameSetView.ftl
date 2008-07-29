@@ -14,7 +14,7 @@
 	</head>
 	<frameset id="rows" rows="119,*,37" border="0">
 		<frame name="path" src="${riot.href("/path")}" scrolling="no" />
-		<frame name="editor" src="${riot.href("/group")}" scrolling="auto" />
+		<frame name="editor" src="${riot.href(url!"/group")}" scrolling="auto" />
 		<frame name="statusBar" src="${riot.href("/statusbar")}" scrolling="no" />
 	</frameset>
 </html>

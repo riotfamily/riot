@@ -421,9 +421,7 @@
 	<alias name="groupController" alias="/group" />
 	<alias name="groupController" alias="/group/@{editorId}" />
 
-	<bean id="editorFramesetController" name="/" class="org.springframework.web.servlet.mvc.ParameterizableViewController">
-		<property name="viewName" value="classpath:/org/riotfamily/riot/runtime/view/frameset.ftl" />
-	</bean>
+	<bean id="editorFramesetController" name="/" class="org.riotfamily.riot.editor.ui.FrameSetController" />	
 
 	<bean id="pathController" name="/path" class="org.riotfamily.riot.editor.ui.PathController">
 		<constructor-arg ref="editorRepository" />

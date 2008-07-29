@@ -26,6 +26,7 @@ package org.riotfamily.riot.security.session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.riot.editor.ui.FrameSetController;
 import org.riotfamily.riot.runtime.RiotRuntime;
 import org.riotfamily.riot.runtime.RiotRuntimeAware;
 import org.riotfamily.riot.security.auth.RiotUser;
@@ -62,6 +63,10 @@ public class LoginInterceptor extends AccessControlInterceptor
 			return true;
 		}
 		else {
+			if (request.getParameter(FrameSetController.REQUESTED_URL_PARAM) != null) {				
+				request.getSession().setAttribute(FrameSetController.REQUESTED_URL_PARAM, 
+						request.getParameter(FrameSetController.REQUESTED_URL_PARAM));
+			}
 			response.sendRedirect(response.encodeRedirectURL(
 					request.getContextPath() + runtime.getServletPrefix() 
 					+ loginUrl));
