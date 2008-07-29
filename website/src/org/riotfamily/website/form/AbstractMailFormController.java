@@ -44,7 +44,7 @@ import org.springframework.web.servlet.view.RedirectView;
 /**
  * Simple controller that sends data collected from a from via email.
  */
-public abstract class SimpleMailFormController extends SimpleFormController 
+public abstract class AbstractMailFormController extends SimpleFormController 
 		implements InitializingBean {
 	
 	private String to;
@@ -60,7 +60,7 @@ public abstract class SimpleMailFormController extends SimpleFormController
 	private String[] requiredFields;
 
 	
-	public SimpleMailFormController() {
+	public AbstractMailFormController() {
 		setCommandClass(HashMap.class);
 	}
 	
@@ -130,7 +130,8 @@ public abstract class SimpleMailFormController extends SimpleFormController
 		return new ModelAndView(new RedirectView(url));
 	}
 	
-	protected abstract String getMailText(HttpServletRequest request, Map<String, String> data);
+	protected abstract String getMailText(HttpServletRequest request, 
+			Map<String, String> data) throws Exception;
 	
 	/**
 	 * This method can be overridden in order to manipulate the mail before it
