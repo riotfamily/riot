@@ -5,7 +5,8 @@ var RiotTextArea = Class.create({
 	setMaxLength: function(maxlength) {
 		this.maxLength = maxlength;
 		if (!this.counter) {
-			var c = this.counter = RBuilder.node('div', {className: 'counter'}).insertSelfAfter(this.el);
+			this.counter = new Element('div', {className: 'counter'});
+			this.el.insert({after: this.counter});
 			this.el.observe('keypress', this.checkLength.bindAsEventListener(this));
 			this.el.observe('keyup', this.updateCounter.bind(this));
 		}

@@ -616,7 +616,7 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 
 	var e = riot.activeEditor.element;
 	var clone = $(e.cloneNode(false));
-	clone.hide().insertSelfBefore(e);
+	e.insert({before: clone.hide()});
 	
 	var classNames = null;
 	var styles = inst.settings.theme_advanced_styles;
@@ -836,7 +836,7 @@ Cropper.UI = Class.create({
 		this.element = RBuilder.node('div', {className:'cropper'})
 			.cloneStyle(editor.element, ['margin', 'position', 'top', 'left']);
 		
-		this.element.insertSelfAfter(this.editor.element);
+		this.editor.element.insert({after: this.element});
 		
 		this.preview = RBuilder.node('div')
 			.setStyle({MozUserSelect: 'none', overflow: 'hidden', position: 'relative'})

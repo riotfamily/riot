@@ -76,11 +76,6 @@ var StyleUtils = {
 }
 
 var RElement = {
-	insertSelfBefore: function(el, marker) {
-		el = $(el);
-		marker.parentNode.insertBefore(el, marker);
-		return el;
-	},
 
 	insertSelfAfter: function(el, marker) {
 		el = $(el);
