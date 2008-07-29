@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
 
 import org.riotfamily.common.util.Generics;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.NullValueInNestedPathException;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -117,6 +119,15 @@ public final class PropertyUtils {
 			properties.put(name, getProperty(bean, name));
 		}
 		return properties;
+	}
+
+	/**
+	 * Sets properties from the given Map.
+	 * @see MutablePropertyValues#addPropertyValues(Map)
+	 * @since 8.0
+	 */
+	public static void setProperties(Object bean, Map<String, ?> properties) {
+		new BeanWrapperImpl(bean).setPropertyValues(new MutablePropertyValues(properties));
 	}
 
 	/**
