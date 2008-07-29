@@ -18,6 +18,6 @@
 	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->web;src->src" />
 	    <dependency org="devlib" name="imageinfo" rev="1.7" conf="build,runtime,test->default" />
 	    <dependency org="apache" name="commons-fileupload" rev="1.2" conf="runtime->default" />
-	    <dependency org="json" name="json-lib" rev="2.2.2" conf="build,runtime->default" />
+	    <dependency org="json" name="json-lib" rev="${dep.json-lib.revision}" conf="src->src;build,runtime->default" />
     </dependencies>
 </ivy-module>

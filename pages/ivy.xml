@@ -17,6 +17,5 @@
 		<dependency org="riotfamily" name="riot-website" rev="${dep.riot.revision}" conf="*->@" />
 		<dependency org="riotfamily" name="riot-components" rev="${dep.riot.revision}" conf="*->@" />
 		<dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->web;src->src" />
-		<dependency org="json" name="json-lib" rev="2.2.2" conf="build,runtime->default" />
 	</dependencies>
 </ivy-module>

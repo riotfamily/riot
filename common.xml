@@ -4,7 +4,10 @@
 		Build file to be included by all sub-projects (modules).
 	</description>
 
-	<property name="project.version" value="8.0" />
+	<!-- Location of this buildfile -->
+	<dirname property="root.dir" file="${ant.file.common}" />
+	
+	<property file="${root.dir}/build.properties" />
 
 	<tstamp>
 		<format property="build.date" pattern="yyyy-MM-dd" />
@@ -25,18 +28,7 @@
 		<equals arg1="${publish.status}" arg2="integration" />
 	</condition>
 	<property name="dep.riot.revision" value="${project.version}" />
-
-	<!--
-	  - Revisions of 3rd party libraries used by more than one module
-	  -->
-	<property name="dep.commons-logging.revision" value="1.1.1" />
-	<property name="dep.spring.revision" value="2.5.1" />
-	<property name="dep.quartz.revision" value="1.6.0" />
-	<property name="dep.freemarker.revision" value="2.3.13" />
 	
-	<!-- Location of this buildfile -->
-	<dirname property="root.dir" file="${ant.file.common}" />
-
 	<!-- Globally shared directories -->
 	<property name="lib.dir" value="${root.dir}/lib" />
 	<property name="build.dir" value="${root.dir}/build" />

@@ -16,7 +16,7 @@
         <dependency org="apache" name="commons-logging" rev="${dep.commons-logging.revision}" conf="build,runtime->default" />
         <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->web,mail,aop;src->webmvc-src" />
 		<dependency org="freemarker" name="freemarker" rev="${dep.freemarker.revision}" conf="src->src;%->default" />
-		<dependency org="json" name="json-lib" rev="2.2.2" conf="src->src;build,runtime->default" />
+		<dependency org="json" name="json-lib" rev="${dep.json-lib.revision}" conf="src->src;build,runtime->default" />
 		<dependency org="getahead" name="dwr" rev="2.0.1" conf="build,runtime->default" />
 		<dependency org="sun" name="jaf" rev="1.1" conf="build,runtime->default" />
 		<dependency org="yahoo" name="yuicompressor" rev="2.2.5" conf="build,runtime->default" />
