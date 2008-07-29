@@ -528,7 +528,9 @@ riot.InsertButton = Class.create({
 		this.types = componentList.config.validTypes.select(function(config) {
 			return !config.max || componentList.countComponents(config.type) < config.max;
 		});
-		this.componentList.element.insert({after: this.element = new Element('div', {className: 'riot-insert-button'})
+		this.componentList.element.insert({after: this.element = 
+			new Element('div', {className: 'riot-button-face'})
+			.wrap(new Element('div', {className: 'riot-insert-button'}))
 			.observe('click', this.onclick.bindAsEventListener(this))});
 	},
 	
