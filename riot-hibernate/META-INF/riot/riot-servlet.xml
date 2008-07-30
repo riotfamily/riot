@@ -28,10 +28,6 @@
 		<property name="entityClass" value="org.riotfamily.riot.hibernate.security.User" />
 	</bean>
  
- 	<util:list id="roles">
-		<value>admin</value>
-	</util:list>
- 
  	<override:bean ref="authenticationService" class="org.riotfamily.riot.security.auth.UserDaoAuthenticationService">
  		<property name="userDao" ref="riotUserDao" />
  	</override:bean>

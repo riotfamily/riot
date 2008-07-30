@@ -36,8 +36,6 @@ public class User implements RiotUser {
 
 	private String id;
 	
-	private String role;
-	
 	private String password;
 	
 	private transient String newPassword;
@@ -58,14 +56,6 @@ public class User implements RiotUser {
 	@Transient
 	public String getUserId() {
 		return getId();
-	}
-
-	public String getRole() {
-		return this.role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
 	}
 
 	public String getEmail() {
