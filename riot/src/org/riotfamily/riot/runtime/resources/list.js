@@ -346,7 +346,13 @@ var RiotList = Class.create({
 				}
 			}
 			else if (result.action == 'popup') {
-				var win = window.open(result.url, result.windowName || 'commandPopup', result.arguments);
+				var win;
+				if (result.arguments) {
+					 win = window.open(result.url, result.windowName || 'commandPopup', result.arguments);
+				}
+				else {
+					win = window.open(result.url, result.windowName || 'commandPopup');
+				}
 				if (!win) {
 					alert(result.popupBlockerMessage || 'The Popup has been blocked by the browser.');
 				}
