@@ -105,5 +105,21 @@
 			<form:checkbox bind="folder" />
 		</form:group>
 	</form:form>
-	
+
+	<form:form id="riotUser" bean-class="org.riotfamily.pages.riot.security.SiteUser">
+		<form:group>
+			<form:editable-if-new>
+				<form:textfield bind="id" required="true" />
+			</form:editable-if-new>
+			<form:textfield bind="name" />
+			<form:textfield bind="email" />
+		</form:group>
+		<form:group>
+			<form:passwordfield bind="newPassword" confirm="true"/>
+		</form:group>
+		<form:checkbox-group bind="sites" label-property="name" collection-class="java.util.HashSet">
+			<form:options ref="siteRiotDao" />			
+		</form:checkbox-group>
+	</form:form>
+
 </riot-config>

@@ -43,20 +43,24 @@
 		<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
 	</override:add>
 	
-	<override:add ref="formRepository" property="configLocations">
+	<override:add ref="formRepository" property="configLocations" append="true">
 		<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
 	</override:add>
 	
 	<override:add ref="editorRepository" property="configLocations">
 		<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
 	</override:add>
-			
+
 	<override:add ref="resourceMappings" append="true">			
 		<bean class="org.riotfamily.riot.resource.ResourceMapping">
 			<property name="path" value="/" />
 			<property name="location" value="classpath:/org/riotfamily/pages/runtime/resources/" />
 		</bean>
 	</override:add>
+	
+	<override:properties ref="riotUserDao">
+		<property name="entityClass" value="org.riotfamily.pages.riot.security.SiteUser" />
+	</override:properties>
 	
 	<!-- DAOs and models -->
 
@@ -111,6 +115,12 @@
 
 	<bean id="gotoSiteCommand" class="org.riotfamily.pages.riot.command.GotoSiteCommand">
 		<property name="windowName" value="preview" />
+	</bean>
+	
+	<!-- Policy -->
+	
+	<bean class="org.riotfamily.pages.riot.security.SiteUserPolicy">
+		<constructor-arg ref="pageDao" />
 	</bean>
 	
 </beans>
