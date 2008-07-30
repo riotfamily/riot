@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.xml;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,7 +40,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
@@ -51,10 +51,11 @@ public class XmlListRepository extends ListRepository implements
 
 	private List<Resource> configLocations;
 	
+	private List<Resource> priorityConfigLocations;
+	
 	private boolean reloadable = true;
 	
 	private BeanConfigurationWatcher configWatcher;
-	
 	
 	private XmlListRepositoryDigester digester;
 
@@ -75,9 +76,35 @@ public class XmlListRepository extends ListRepository implements
 				this.configLocations.add(configLocations[i]);
 			}
 		}
-		configWatcher.setResources(this.configLocations);
+		configWatcher.setResources(getConfigLocations());
 	}
 
+	public void setPriorityConfig(Resource config) {
+		setPriorityConfigLocations(new Resource[] { config });
+	}
+
+	public void setPriorityConfigLocations(Resource[] configLocations) {
+		this.priorityConfigLocations = Generics.newArrayList();
+		if (configLocations != null) {
+			for (int i = 0; i < configLocations.length; i++) {
+				this.priorityConfigLocations.add(configLocations[i]);
+			}
+		}
+		configWatcher.setResources(getConfigLocations());
+	}
+	
+	private List<Resource> getConfigLocations() {
+		ArrayList<Resource> mergedConfigLocations = Generics.newArrayList();
+		if (configLocations != null) {
+			mergedConfigLocations.addAll(configLocations);
+		}
+		if (priorityConfigLocations != null) {
+			mergedConfigLocations.addAll(priorityConfigLocations);
+			
+		}
+		return mergedConfigLocations;
+	}
+	
 	public boolean isReloadable() {
 		return this.reloadable;
 	}
@@ -108,7 +135,7 @@ public class XmlListRepository extends ListRepository implements
 	public void configure() {
 		getListConfigs().clear();
 		getListConfigsByClass().clear();
-		Iterator<Resource> it = configLocations.iterator();
+		Iterator<Resource> it = getConfigLocations().iterator();
 		while (it.hasNext()) {
 			Resource res = it.next();
 			DocumentReader reader = new ValidatingDocumentReader(res);

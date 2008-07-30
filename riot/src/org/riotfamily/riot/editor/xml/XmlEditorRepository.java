@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor.xml;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,6 +51,8 @@ public class XmlEditorRepository extends EditorRepository
 
 	private List<Resource> configLocations;
 
+	private List<Resource> priorityConfigLocations;
+
 	private boolean reloadable = true;
 
 	private BeanConfigurationWatcher configWatcher =
@@ -72,9 +75,35 @@ public class XmlEditorRepository extends EditorRepository
 				this.configLocations.add(configLocations[i]);
 			}
 		}
-		configWatcher.setResources(this.configLocations);
+		configWatcher.setResources(getConfigLocations());
 	}
 
+	public void setPriorityConfig(Resource config) {
+		setPriorityConfigLocations(new Resource[] { config });
+	}
+
+	public void setPriorityConfigLocations(Resource[] configLocations) {
+		this.priorityConfigLocations = Generics.newArrayList();
+		if (configLocations != null) {
+			for (int i = 0; i < configLocations.length; i++) {
+				this.priorityConfigLocations.add(configLocations[i]);
+			}
+		}
+		configWatcher.setResources(getConfigLocations());
+	}
+	
+	private List<Resource> getConfigLocations() {
+		ArrayList<Resource> mergedConfigLocations = Generics.newArrayList();
+		if (configLocations != null) {
+			mergedConfigLocations.addAll(configLocations);
+		}
+		if (priorityConfigLocations != null) {
+			mergedConfigLocations.addAll(priorityConfigLocations);
+			
+		}
+		return mergedConfigLocations;
+	}
+	
 	/**
 	 * @since 6.5
 	 */
@@ -106,7 +135,7 @@ public class XmlEditorRepository extends EditorRepository
 	public void configure() {
 		setRootGroupDefinition(null);
 		getEditorDefinitions().clear();
-		Iterator<Resource> it = configLocations.iterator();
+		Iterator<Resource> it = getConfigLocations().iterator();
 		while (it.hasNext()) {
 			Resource res = it.next();
 			DocumentReader reader = new ValidatingDocumentReader(res);

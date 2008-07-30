@@ -221,7 +221,7 @@
 	<!-- Repositories -->
 
 	<bean id="listRepository" class="org.riotfamily.riot.list.xml.XmlListRepository">
-		<property name="configLocations">
+		<property name="priorityConfigLocations">
 			<value>/WEB-INF/riot-config/lists.xml</value>
 		</property>
 		<property name="riotDaoService" ref="riotDaoService" />
@@ -249,7 +249,7 @@
 	</util:map>
 	
 	<bean id="formRepository" class="org.riotfamily.forms.factory.xml.XmlFormRepository">
-		<property name="configLocations">
+		<property name="priorityConfigLocations">
 			<list>
 				<value>/WEB-INF/riot-config/forms.xml</value>
 			</list>
@@ -266,7 +266,7 @@
 	</bean>
 
 	<bean id="editorRepository" class="org.riotfamily.riot.editor.xml.XmlEditorRepository">
-		<property name="configLocations">
+		<property name="priorityConfigLocations">
 			<list>
 				<value>/WEB-INF/riot-config/editors.xml</value>
 			</list>

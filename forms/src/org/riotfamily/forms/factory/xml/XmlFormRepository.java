@@ -33,6 +33,7 @@ import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.xml.BeanConfigurationWatcher;
 import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;
@@ -60,6 +61,8 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	private Log log = LogFactory.getLog(XmlFormRepository.class);
 	
 	private List<Resource> configLocations;
+	
+	private List<Resource> priorityConfigLocations;
 	
 	private boolean reloadable = true;
 
@@ -116,15 +119,41 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	}
 	
 	public void setConfigLocations(Resource[] configLocations) {
-		this.configLocations = new ArrayList<Resource>();
+		this.configLocations = Generics.newArrayList();
 		if (configLocations != null) {
 			for (int i = 0; i < configLocations.length; i++) {
 				this.configLocations.add(configLocations[i]);
 			}
 		}
-		configWatcher.setResources(this.configLocations);
+		configWatcher.setResources(getConfigLocations());
 	}
 
+	public void setPriorityConfig(Resource config) {
+		setPriorityConfigLocations(new Resource[] { config });
+	}
+
+	public void setPriorityConfigLocations(Resource[] configLocations) {
+		this.priorityConfigLocations = Generics.newArrayList();
+		if (configLocations != null) {
+			for (int i = 0; i < configLocations.length; i++) {
+				this.priorityConfigLocations.add(configLocations[i]);
+			}
+		}
+		configWatcher.setResources(getConfigLocations());
+	}
+	
+	private List<Resource> getConfigLocations() {
+		ArrayList<Resource> mergedConfigLocations = Generics.newArrayList();
+		if (configLocations != null) {
+			mergedConfigLocations.addAll(configLocations);
+		}
+		if (priorityConfigLocations != null) {
+			mergedConfigLocations.addAll(priorityConfigLocations);
+			
+		}
+		return mergedConfigLocations;
+	}
+	
 	public Class<?> getDefaultBeanClass() {
 		return this.defaultBeanClass;
 	}
@@ -193,7 +222,7 @@ public class XmlFormRepository extends AbstractFormRepository implements
 	
 	public void configure() {
 		getFactories().clear();
-		for (Resource res : configLocations) {
+		for (Resource res : getConfigLocations()) {
 			if (res.exists()) {
 				log.info("Reading forms from " + res.getDescription());
 				DocumentReader reader = new ValidatingDocumentReader(res);
