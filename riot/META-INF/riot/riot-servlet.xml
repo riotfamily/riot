@@ -113,9 +113,7 @@
 	</bean>
 
 	<!-- BeanPostProcessor that wraps all RiotUserDao beans -->
-	<bean class="org.riotfamily.riot.security.session.RiotUserDaoProcessor">
-		<constructor-arg ref="transactionManager" />
-	</bean>
+	<bean class="org.riotfamily.riot.security.session.RiotUserDaoProcessor" />
 		
 	<!-- A RiotUserDao-based AuthenticationService -->
 	<bean id="authenticationService" class="org.riotfamily.riot.security.auth.StaticAuthenticationService">
@@ -286,6 +284,10 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="riotHandlerUrlResolver" class="org.riotfamily.common.web.mapping.HandlerUrlResolver" />
+	
+	<bean id="riotPathCompleter" class="org.riotfamily.riot.runtime.RiotPathCompleter" />
 
 	<!-- Controllers -->
 
@@ -509,6 +511,8 @@
 
 	<bean id="statusController" name="/status" class="org.riotfamily.riot.status.StatusController" />
 
+	<bean id="exportController" name="/export/@{listSessionKey}/@{commandId}" class="org.riotfamily.riot.list.export.ExportController" />
+
 	<bean id="org.directwebremoting.PageNormalizer"
 		class="org.riotfamily.common.web.dwr.NoOpPageNormalizer" />
 
@@ -516,10 +520,6 @@
 	<bean id="org.directwebremoting.Remoter"
 		class="org.riotfamily.common.web.dwr.ConstantsRemoter" />
 	-->
-
-	<bean id="csvExportController" name="/csv" class="org.riotfamily.riot.list.export.CsvExportController">
-		<constructor-arg ref="editorRepository" />
-	</bean>
 
 	<!--
 	  - Controller that exposes DWR services.
