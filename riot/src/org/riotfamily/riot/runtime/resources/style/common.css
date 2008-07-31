@@ -94,6 +94,10 @@ div.box-title .label {
 	_margin-right: expression(-1 * (this.parentNode.offsetWidth % 2));
 }
 
+span.locale img {
+	margin-right: 4px;
+}
+
 span.messageCode {
 	padding: 0 0 0 20px;
 	text-decoration: none;
