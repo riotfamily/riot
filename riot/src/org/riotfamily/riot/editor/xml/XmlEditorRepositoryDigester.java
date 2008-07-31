@@ -262,6 +262,9 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 			ObjectEditorDefinition parent = (ObjectEditorDefinition) ed.getParentEditorDefinition();
 			parent.getChildEditorDefinitions().remove(ed);
 		}
+		if (ed instanceof ListDefinition) {
+			((ListDefinition) ed).setHidden(false);
+		}
 		return ed;
 	}
 
