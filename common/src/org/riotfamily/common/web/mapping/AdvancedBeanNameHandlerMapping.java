@@ -53,6 +53,8 @@ public class AdvancedBeanNameHandlerMapping
 	
 	private Object rootHandler;
 	
+	private boolean lazyInitHandlers = false;
+	
 	public final void setStripServletMapping(boolean stripServletMapping) {
 		this.stripServletMapping = stripServletMapping;
 	}
@@ -77,6 +79,21 @@ public class AdvancedBeanNameHandlerMapping
 	protected final Object getRootHandler() {
 		return this.rootHandler;
 	}
+	
+	/**
+	 * Set whether to lazily initialize handlers. Only applicable to
+	 * singleton handlers, as prototypes are always lazily initialized.
+	 * Default is "false", as eager initialization allows for more efficiency
+	 * through referencing the controller objects directly.
+	 * <p>If you want to allow your controllers to be lazily initialized,
+	 * make them "lazy-init" and set this flag to true. Just making them
+	 * "lazy-init" will not work, as they are initialized through the
+	 * references from the handler mapping in this case.
+	 */
+	public void setLazyInitHandlers(boolean lazyInitHandlers) {
+		this.lazyInitHandlers = lazyInitHandlers;
+	}
+	
 	
     /**
 	 * <strong>Copied from BeanNameUrlHandlerMapping</strong>
@@ -144,7 +161,7 @@ public class AdvancedBeanNameHandlerMapping
 		Object handler = handlerName;
 		
 		// Eagerly resolve handler if referencing singleton via name.
-		if (getApplicationContext().isSingleton(handlerName)) {
+		if (!this.lazyInitHandlers && getApplicationContext().isSingleton(handlerName)) {
 			handler = getApplicationContext().getBean(handlerName);
 		}
 
