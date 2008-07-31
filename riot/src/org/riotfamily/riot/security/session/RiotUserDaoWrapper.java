@@ -29,18 +29,10 @@ import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.security.auth.RiotUser;
 import org.riotfamily.riot.security.auth.RiotUserDao;
 import org.springframework.dao.DataAccessException;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Wrapper that invokes {@link UserHolder#updateUser(String, RiotUser)} whenever
  * a user is updated or deleted.
- * <p>
- * Note: The methods {@link #findUserByCredentials(String, String)} and 
- * {@link #findUserById(String)} are executed within a transaction.
- * </p>
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
@@ -48,29 +40,16 @@ public class RiotUserDaoWrapper implements RiotUserDao {
 
 	private RiotUserDao wrappedInstance;
 	
-	private PlatformTransactionManager transactionManager;
-	
-	public RiotUserDaoWrapper(RiotUserDao userDao, 
-			PlatformTransactionManager transactionManager) {
-		
+	public RiotUserDaoWrapper(RiotUserDao userDao) {
 		this.wrappedInstance = userDao;
-		this.transactionManager = transactionManager;
 	}
 	
 	public RiotUser findUserByCredentials(final String username, final String password) {
-		return (RiotUser) new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
-			public Object doInTransaction(TransactionStatus status) {
-				return wrappedInstance.findUserByCredentials(username, password);
-			}
-		});
+		return wrappedInstance.findUserByCredentials(username, password);
 	}
 	
 	public RiotUser findUserById(final String userId) {
-		return (RiotUser) new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
-			public Object doInTransaction(TransactionStatus status) {
-				return wrappedInstance.findUserById(userId);
-			}
-		});
+		return wrappedInstance.findUserById(userId);
 	}
 
 	public Class<?> getEntityClass() {

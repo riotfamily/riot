@@ -26,7 +26,6 @@ package org.riotfamily.riot.security.session;
 import org.riotfamily.riot.security.auth.RiotUserDao;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * BeanPostProcessor that wraps all {@link RiotUserDao} instances with a 
@@ -36,12 +35,6 @@ import org.springframework.transaction.PlatformTransactionManager;
  * @since 6.5
  */
 public class RiotUserDaoProcessor implements BeanPostProcessor {
-
-	private PlatformTransactionManager transactionManager;
-	
-	private RiotUserDaoProcessor(PlatformTransactionManager transactionManager) {
-		this.transactionManager = transactionManager;
-	}
 
 	public Object postProcessBeforeInitialization(Object bean, String beanName) 
 			throws BeansException {
@@ -53,7 +46,7 @@ public class RiotUserDaoProcessor implements BeanPostProcessor {
 			throws BeansException {
 		
 		if (bean instanceof RiotUserDao) {
-			return new RiotUserDaoWrapper((RiotUserDao) bean, transactionManager);
+			return new RiotUserDaoWrapper((RiotUserDao) bean);
 		}
 		return bean;
 	}

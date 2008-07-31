@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.security.auth;
 
+import org.springframework.transaction.annotation.Transactional;
+
 
 /**
  * AuthenticationService that uses a {@link RiotUserDao} to lookup a 
@@ -40,10 +42,12 @@ public class UserDaoAuthenticationService
 		this.userDao = userDao;
 	}
 
+	@Transactional
 	public RiotUser authenticate(String username, String password) {
 		return userDao.findUserByCredentials(username, password);
 	}
 	
+	@Transactional
 	public RiotUser getUserById(String userId) {
 		return userDao.findUserById(userId);
 	}
