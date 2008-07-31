@@ -163,5 +163,9 @@ public class CommandContextImpl implements CommandContext {
 	public void setRowIndex(int rowIndex) {
 		this.rowIndex = rowIndex;
 	}
+	
+	public String getListSessionKey() {
+		return session.getKey();
+	}
 
 }
