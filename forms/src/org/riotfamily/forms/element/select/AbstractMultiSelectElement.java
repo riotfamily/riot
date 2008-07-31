@@ -142,12 +142,12 @@ public abstract class AbstractMultiSelectElement
 	}
 	
 	protected void updateSelection(Collection<?> optionValues) {
-		List<?> oldSelection = selectedValues;
-		selectedValues = Generics.newArrayList();
 		if (optionValues != null) {
 			for (Object value : optionValues) {
-				if (oldSelection.contains(value)) {
-					selectedValues.add(value);
+				int i = selectedValues.indexOf(value);
+				if (i >= 0) {
+					selectedValues.remove(i);
+					selectedValues.add(i, value);
 				}
 			}
 		}
