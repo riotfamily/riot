@@ -24,53 +24,56 @@
 package org.riotfamily.riot.list.export;
 
 import java.util.List;
+import java.util.Map;
 
+import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.web.mapping.HandlerUrlResolver;
+import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
-import org.riotfamily.riot.runtime.RiotRuntime;
-import org.riotfamily.riot.runtime.RiotRuntimeAware;
 
-public class CsvExportCommand extends AbstractCommand implements
-		RiotRuntimeAware {
+public class ExportCommand extends AbstractCommand {
 
-	private List properties;
+	private HandlerUrlResolver handlerUrlResolver;
+	
+	private PathCompleter pathCompleter;
+	
+	private Exporter exporter;
+	
+	private List<String> properties;
 
-	private String encoding;
-
-	private RiotRuntime runtime;
-
-	public String getEncoding() {
-		return this.encoding;
+	
+	public ExportCommand(HandlerUrlResolver handlerUrlResolver,
+			PathCompleter pathCompleter) {
+		
+		this.handlerUrlResolver = handlerUrlResolver;
+		this.pathCompleter = pathCompleter;
 	}
 
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
+	public Exporter getExporter() {
+		return exporter;
 	}
 
-	public void setRiotRuntime(RiotRuntime runtime) {
-		this.runtime = runtime;
+	public void setExporter(Exporter exporter) {
+		this.exporter = exporter;
 	}
 
-	public void setProperties(List properties) {
+	public void setProperties(List<String> properties) {
 		this.properties = properties;
 	}
 
-	public List getProperties() {
+	public List<String> getProperties() {
 		return this.properties;
 	}
-
+	
 	public CommandResult execute(CommandContext context) {
-		StringBuffer url = new StringBuffer();
-		url.append(runtime.getServletPrefix())
-			.append("/csv?commandId=")
-		   	.append(getId())
-		    .append("&listId=")
-		    .append(context.getListConfig().getId())
-		    .append("&parentId")
-		    .append(context.getParentId());
-		return new GotoUrlResult(context, url.toString());
+		Map<String, String> attributes = Generics.newHashMap();
+		attributes.put("commandId", getId());
+		attributes.put("listSessionKey", context.getListSessionKey());
+		String url = handlerUrlResolver.getUrlForHandler(context.getRequest(), "exportController", attributes);
+		return new GotoUrlResult(context, pathCompleter.addServletMapping(url));
 	}
 
 }
