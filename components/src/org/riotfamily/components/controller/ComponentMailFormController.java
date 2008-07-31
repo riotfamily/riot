@@ -50,6 +50,10 @@ public class ComponentMailFormController extends AbstractMailFormController {
 		this.dao = dao;
 	}
 	
+	public ComponentDao getDao() {
+		return dao;
+	}
+	
 	@Override
 	protected void initBinder(HttpServletRequest request,
 			ServletRequestDataBinder binder) throws Exception {
@@ -69,7 +73,6 @@ public class ComponentMailFormController extends AbstractMailFormController {
 		}
 	}
 	
-
 	@Override
 	protected String getMailText(HttpServletRequest request,
 			Map<String, String> data) throws ServletRequestBindingException {
@@ -91,8 +94,7 @@ public class ComponentMailFormController extends AbstractMailFormController {
 				}
 				sb.append('\n');
 			}
-		}
-		log.info(sb);
+		}		
 		return sb.toString();
 	}
 }
