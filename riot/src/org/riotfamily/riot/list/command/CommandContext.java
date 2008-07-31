@@ -67,5 +67,7 @@ public interface CommandContext {
 	public int getBatchSize();
 
 	public int getBatchIndex();
+	
+	public String getListSessionKey();
 
 }
