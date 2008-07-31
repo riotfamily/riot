@@ -70,10 +70,6 @@ public class PathController implements Controller, MessageSourceAware {
 		return ResourceUtils.getPath(PathController.class, "PathView.ftl");
 	}
 
-	public EditorRepository getRepository() {
-		return repository;
-	}
-
 	/**
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request,
