@@ -23,16 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.mapping;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.util.SpringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.OrderComparator;
 import org.springframework.util.Assert;
 
 /**
@@ -46,15 +44,19 @@ public class HandlerUrlResolver implements ApplicationContextAware {
 
 	private List<ReverseHandlerMapping> mappings;
 	
-	@SuppressWarnings("unchecked")
+	private ApplicationContext applicationContext;
+	
 	public void setApplicationContext(ApplicationContext applicationContext) {
-		mappings = new ArrayList<ReverseHandlerMapping>(
-				applicationContext.getBeansOfType(
-				ReverseHandlerMapping.class).values());
-		
-		if (!mappings.isEmpty()) {
-			Collections.sort(mappings, new OrderComparator());
+		this.applicationContext = applicationContext;
+	}
+	
+	private List<ReverseHandlerMapping> getMappings() {
+		if (mappings == null) {
+			Assert.notNull(applicationContext, "The ApplicationContext must be set first");
+			mappings = SpringUtils.orderedBeans(applicationContext, 
+					ReverseHandlerMapping.class);
 		}
+		return mappings;
 	}
 	
 	/**
@@ -95,8 +97,8 @@ public class HandlerUrlResolver implements ApplicationContextAware {
 			String handlerName, Object attributes, String prefix) {
 		
 		String url = null;
-		Assert.notNull(mappings, "The ApplicationContext must be set first");
-		Iterator<ReverseHandlerMapping> it = mappings.iterator();
+		
+		Iterator<ReverseHandlerMapping> it = getMappings().iterator();
 		while (url == null && it.hasNext()) {
 			ReverseHandlerMapping mapping = it.next();
 			url = mapping.getUrlForHandler(
