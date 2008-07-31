@@ -48,6 +48,10 @@ public class CountryFlagRenderer implements ObjectRenderer, RiotRuntimeAware {
 	public void setInternationalFlag(String internationalFlag) {
 		this.internationalFlag = internationalFlag;
 	}
+	
+	protected String getInternationalFlag() {
+		return internationalFlag;
+	}
 
 	protected boolean flagExists(String flag) {
 		return getClass().getResourceAsStream(
