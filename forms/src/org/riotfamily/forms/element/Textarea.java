@@ -64,6 +64,7 @@ public class Textarea extends AbstractTextElement implements ResourceElement,
 			doc.start(Html.DIV).attribute(Html.COMMON_CLASS, "textarea-wrapper");
 		}
 		doc.start(Html.TEXTAREA)
+			.attribute(Html.COMMON_ID, getEventTriggerId())
 			.attribute(Html.COMMON_CLASS, getStyleClass())			
 			.attribute(Html.INPUT_NAME, getParamName())
 			.attribute(Html.INPUT_DISABLED, !isEnabled());
@@ -85,7 +86,7 @@ public class Textarea extends AbstractTextElement implements ResourceElement,
 	public String getInitScript() {
 		if (getMaxLength() != null || rows == null) {
 			StringBuffer sb = new StringBuffer();
-			sb.append("new RiotTextArea('").append(getId()).append("')");
+			sb.append("new RiotTextArea('").append(getEventTriggerId()).append("')");
 			if (getMaxLength() != null) {
 				sb.append(".setMaxLength(").append(getMaxLength()).append(')');
 			}
