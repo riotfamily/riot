@@ -34,8 +34,10 @@ import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.list.ColumnConfig;
 import org.riotfamily.riot.list.ListConfig;
 import org.riotfamily.riot.list.ListRepository;
+import org.riotfamily.riot.list.command.Command;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.core.io.Resource;
+import org.springframework.util.Assert;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,34 +49,16 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	
 	public static final String NAMESPACE = "http://www.riotfamily.org/schema/riot/list-config";
 	
-	private static final String LIST = "list";
-	
-	private static final String ID = "id";
-	
 	private static final String[] LIST_ATTRS = new String[] {
 		"id", "id-property", "filterFormId=filter-form", 
 		"defaultCommandId=default-command", "order-by",
 		"label-property", "row-style-property", "search"
 	};
 	
-	private static final String DAO = "dao";
-	
-	private static final String DAO_REF = "ref";
-	
-	private static final String DAO_CLASS = "class";
-	
-	private static final String PROPERTY = "property";
-	
-	private static final String COLUMNS = "columns";
-	
-	private static final String COLUMN = "column";
-	
 	private static final String[] COLUMN_ATTRS = new String[] {
 		"sortable", "lookup-level", "@renderer", "property", "case-sensitive"
 	};
 		
-	private static final String COMMAND = "command";
-	
 	private ListRepository listRepository;
 	
 	private AutowireCapableBeanFactory beanFactory;
@@ -88,7 +72,7 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 
 	public void digest(Document doc, Resource resource) {
 		Element root = doc.getDocumentElement();
-		List<Element> nodes = XmlUtils.getChildElementsByTagName(root, LIST);
+		List<Element> nodes = XmlUtils.getChildElementsByTagName(root, "list");
 		Iterator<Element> it = nodes.iterator();
 		while (it.hasNext()) {
 			Element ele = (Element) it.next();
@@ -102,7 +86,7 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	/**
 	 * Creates a ListConfig by digesting a &lt;list&gt tag.
 	 */
-	protected ListConfig digestListConfig(Element listElement) {
+	private ListConfig digestListConfig(Element listElement) {
 		ListConfig listConfig = new ListConfig();
 		
 		XmlUtils.populate(listConfig, listElement, LIST_ATTRS);
@@ -117,29 +101,28 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	/**
 	 * Creates (or retrieves) a RiotDao by digesting a &lt;dao&gt; tag.
 	 */
-	protected void digestDao(ListConfig listConfig, 
+	private void digestDao(ListConfig listConfig, 
 			Element listElement) {
 		
-		Element ele = DomUtils.getChildElementByTagName(listElement, DAO);
+		Element ele = DomUtils.getChildElementByTagName(listElement, "dao");
 		
 		RiotDao dao = null;
 		boolean singleton = false;
 		
-		String ref = XmlUtils.getAttribute(ele, DAO_REF);
+		String ref = XmlUtils.getAttribute(ele, "ref");
 		if (ref != null) {
 			dao = (RiotDao) beanFactory.getBean(ref, RiotDao.class);
 			singleton = beanFactory.isSingleton(ref);
 		}
 		else {
-			String className = XmlUtils.getAttribute(ele, DAO_CLASS);
+			String className = XmlUtils.getAttribute(ele, "class");
 			if (className != null) {
 				dao = instanciateDao(className);
 			}
 		}
-		List<Element> nodes = XmlUtils.getChildElementsByTagName(ele, PROPERTY);
+		List<Element> nodes = XmlUtils.getChildElementsByTagName(ele, "property");
 		if (singleton && !nodes.isEmpty()) {
-			throw new RuntimeException(PROPERTY 
-					+ " must not be applied to singleton beans.");
+			throw new RuntimeException("<property> must not be used with singleton beans.");
 		}
 		XmlUtils.populate(dao, nodes, beanFactory);
 		
@@ -149,7 +132,7 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	/**
 	 * Creates a new instance of the specified Dao class.
 	 */
-	protected RiotDao instanciateDao(String className) {
+	private RiotDao instanciateDao(String className) {
 		return SpringUtils.createBean(className, beanFactory, 
 				AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
 	}
@@ -158,30 +141,28 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	 * Adds columns to the given ListConfig by digesting the &lt;columns&gt;
 	 * child of the given &lt;list&gt; element.
 	 */
-	protected void digestColumns(ListConfig listConfig, 
+	private void digestColumns(ListConfig listConfig, 
 			Element listElement) {
 		
-		Element columns = DomUtils.getChildElementByTagName(listElement, COLUMNS);
+		Element columns = DomUtils.getChildElementByTagName(listElement, "columns");
 		
-		List<Element> nodes = XmlUtils.getChildElementsByTagName(columns, COLUMN);
+		List<Element> nodes = XmlUtils.getChildElementsByTagName(columns, "column");
 		Iterator<Element> it = nodes.iterator();
 		while (it.hasNext()) {
 			listConfig.addColumnConfig(digestColumn(it.next()));
 		}
 		
-		nodes = XmlUtils.getChildElementsByTagName(columns, COMMAND);
+		nodes = XmlUtils.getChildElementsByTagName(columns, "command");
 		it = nodes.iterator();
 		while (it.hasNext()) {
-			Element e = it.next();
-			String commandId = XmlUtils.getAttribute(e, ID);
-			listConfig.addColumnCommand(listRepository.getCommand(commandId));
+			listConfig.addColumnCommand(digestCommand(it.next()));
 		}
 	}
 	
 	/**
 	 * Creates a ColumnConfig by digesting the given element.
 	 */
-	protected ColumnConfig digestColumn(Element ele) {
+	private ColumnConfig digestColumn(Element ele) {
 		ColumnConfig columnConfig = new ColumnConfig();
 		XmlUtils.populate(columnConfig, ele, COLUMN_ATTRS, beanFactory);	
 		if (columnConfig.getRenderer() == null) {
@@ -190,14 +171,23 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 		return columnConfig;
 	}
 	
-	protected void digestCommands(ListConfig listConfig, Element listElement) {
-		List<Element> nodes = XmlUtils.getChildElementsByTagName(listElement, COMMAND);
+	private void digestCommands(ListConfig listConfig, Element listElement) {
+		List<Element> nodes = XmlUtils.getChildElementsByTagName(listElement, "command");
 		Iterator<Element> it = nodes.iterator();
 		while (it.hasNext()) {
-			Element ele = it.next();
-			String commandId = XmlUtils.getAttribute(ele, ID);
-			listConfig.addCommand(listRepository.getCommand(commandId));
+			listConfig.addCommand(digestCommand(it.next()));
 		}
+	}
+	
+	private Command digestCommand(Element ele) {
+		String commandId = XmlUtils.getAttribute(ele, "id");
+		if (commandId != null) {
+			return listRepository.getCommand(commandId);
+		}
+		String className = XmlUtils.getAttribute(ele, "class");
+		Assert.notNull(className, "Either id or class must be specified");
+		return SpringUtils.createBean(className, beanFactory, 
+				AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
 	}
 		
 }
