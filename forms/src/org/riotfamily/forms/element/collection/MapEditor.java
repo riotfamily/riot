@@ -68,6 +68,10 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 	
 	private ObjectRenderer labelRenderer;
 	
+	private boolean keepNullValues;
+	
+	private boolean removeUnknownKeys;
+	
 	private Container items = new Container();
 
 	private ElementFactory keyElementFactory;
@@ -76,7 +80,7 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 	
 	/** Factory to create elements for newly added items */
 	private ElementFactory itemElementFactory;
-	
+
 	
 	public MapEditor() {
 		addComponent("items", items);
@@ -93,6 +97,14 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 	
 	public void setLabelRenderer(ObjectRenderer labelRenderer) {
 		this.labelRenderer = labelRenderer;
+	}
+	
+	public void setKeepNullValues(boolean keepNullValues) {
+		this.keepNullValues = keepNullValues;
+	}
+
+	public void setRemoveUnknownKeys(boolean removeUnknownKeys) {
+		this.removeUnknownKeys = removeUnknownKeys;
 	}
 	
 	/**
@@ -183,12 +195,19 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Object getValue() {
 		Map map = createOrClearMap();
 		Iterator<Element> it = items.getElements().iterator();
 		while (it.hasNext()) {
 			MapItem item = (MapItem) it.next();
-			map.put(item.getKey(), item.getValue());
+			Object value = item.getValue();
+			if (value != null || keepNullValues) {
+				map.put(item.getKey(), value);
+			}
+			else {
+				map.remove(item.getKey());
+			}
 		}
 		return map;
 	}
@@ -208,12 +227,13 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private Map createOrClearMap() {
 		Map map = (Map) getEditorBinding().getValue();
 		if (map == null) {
 			map = (Map) BeanUtils.instantiateClass(mapClass);
 		}
-		else {
+		else if (removeUnknownKeys) {
 			map.clear();
 		}
 		return map;

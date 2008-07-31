@@ -285,6 +285,8 @@
 					<xsd:attribute name="label-property" type="xsd:string" />
 					<xsd:attribute name="label-renderer" type="xsd:string" />
 					<xsd:attribute name="label-renderer-class" type="xsd:string" />
+					<xsd:attribute name="keep-null-values" type="xsd:boolean" default="false" />
+					<xsd:attribute name="remove-unknown-keys" type="xsd:boolean" default="false" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
