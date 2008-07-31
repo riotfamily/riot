@@ -206,6 +206,10 @@ public class ListSession implements RenderContext {
 		params.setOrder(listConfig.getDefaultOrder());
 	}
 	
+	public static ListSession getListSession(HttpServletRequest request, String key) {
+		return (ListSession) request.getSession().getAttribute(key);
+	}
+	
 	private Map<String,String> getTexts() {
 		HashMap<String,String> texts = Generics.newHashMap();
 		addText(texts, "label.tree.selectTarget");
@@ -525,7 +529,7 @@ public class ListSession implements RenderContext {
 	public CommandState getParentCommandState(String commandId, ListItem item,
 			HttpServletRequest request) {
 
-		Command command = getCommand(listCommands, commandId);
+		Command command = getListCommand(commandId);
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		Object parent;
 		if (item != null) {
@@ -609,7 +613,7 @@ public class ListSession implements RenderContext {
 			CommandState commandState, boolean confirmed, String objectId,
 			HttpServletRequest request, HttpServletResponse response) {
 		
-		Command command = getCommand(listCommands, commandState.getId());
+		Command command = getListCommand(commandState.getId());
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		Object target = null;
 		if (parentId != null) {
@@ -710,6 +714,10 @@ public class ListSession implements RenderContext {
 		return result; 
 	}
 	
+	public Command getListCommand(String id) {
+		return getCommand(listCommands, id);
+	}
+	
 	private Command getCommand(Collection<Command> commands, String id) {
 		Iterator<Command> it = commands.iterator();
 		while (it.hasNext()) {
@@ -737,7 +745,7 @@ public class ListSession implements RenderContext {
 		return null;
 	}
 	
-	private Object loadParent() {
+	public Object loadParent() {
 		return loadParent(this.parentId, this.parentEditorId);
 	}
 

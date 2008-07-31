@@ -140,7 +140,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 	protected ListSession getListSession(String key, HttpServletRequest request)
 			throws ListSessionExpiredException {
 
-		ListSession session = (ListSession) request.getSession().getAttribute(key);
+		ListSession session = ListSession.getListSession(request, key);
 		if (session != null) {
 			//Trigger a modification check:
 			editorRepository.getListRepository().getListConfig(session.getListId());
