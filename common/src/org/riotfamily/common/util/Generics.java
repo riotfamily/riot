@@ -44,7 +44,11 @@ public final class Generics {
 	public static<V> ArrayList<V> newArrayList() {
 		return new ArrayList<V>();
 	}
-	
+
+	public static<V> ArrayList<V> newArrayList(int initialCapacity) {
+		return new ArrayList<V>(initialCapacity);
+	}
+
 	public static<V> ArrayList<V> newArrayList(Collection<? extends V> c) {
 		return new ArrayList<V>(c);
 	}
