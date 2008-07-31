@@ -53,6 +53,13 @@ public class ListParamsImpl implements ListParams {
 	public ListParamsImpl() {
 	}
 	
+	public ListParamsImpl(ListParams params) {
+		filter = params.getFilter();
+		filteredProperties = params.getFilteredProperties();
+		search = params.getSearch();
+		order = params.getOrder();
+	}
+	
 	public Object getFilter() {
 		return filter;
 	}
