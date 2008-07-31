@@ -48,7 +48,7 @@ public class ComponentListConfig {
 		if (initial != null) {
 			initialTypes.addAll(initial); 
 		}
-		if (valid != null) {
+		if (valid != null && !valid.isEmpty()) {
 			for (Object obj : valid) {
 				ComponentConfig config = new ComponentConfig(obj);
 				validTypes.put(config.getType(), config);
