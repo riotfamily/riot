@@ -32,9 +32,10 @@ import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.runtime.RiotRuntime;
 import org.riotfamily.riot.runtime.RiotRuntimeAware;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.util.ClassUtils;
 
 /**
- * Abstract baseclass for commands.
+ * Abstract base class for commands.
  */
 public abstract class AbstractCommand implements Command, BeanNameAware, 
 		RiotRuntimeAware {
@@ -46,12 +47,25 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 	protected Log log = LogFactory.getLog(getClass());
 
 	private String id;
+	
+	private String beanName;
 
 	private boolean showOnForm;
 	
 	private String riotServletPrefix;
 
 	public String getId() {
+		if (id == null) {
+			if (beanName != null) {
+				id = beanName;
+			}
+			else {
+				id = ClassUtils.getShortName(getClass());
+			}
+			if (id.endsWith(COMMAND_NAME_SUFFIX)) {
+				id = id.substring(0, id.length() - COMMAND_NAME_SUFFIX.length());
+			}
+		}
 		return id;
 	}
 
@@ -73,13 +87,7 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 	 * it will be removed from the id.
 	 */
 	public void setBeanName(String beanName) {
-		if (id == null) {
-			if (beanName.endsWith(COMMAND_NAME_SUFFIX)) {
-				beanName = beanName.substring(0, beanName.length() -
-						COMMAND_NAME_SUFFIX.length());
-			}
-			id = beanName;
-		}
+		this.beanName = beanName;
 	}
 	
 	/**
