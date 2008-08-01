@@ -69,5 +69,7 @@ public interface CommandContext {
 	public int getBatchIndex();
 	
 	public String getListSessionKey();
+	
+	public String getListUrl();
 
 }

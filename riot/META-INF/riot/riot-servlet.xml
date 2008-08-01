@@ -25,6 +25,9 @@
     	<property name="defaultLocale"><value>en_US</value></property>
     </bean>
     
+    <!-- Initialize the RiotRuntime -->
+    <bean class="org.riotfamily.riot.runtime.RiotRuntimeInitializer" />
+    
     <util:list id="messageBasenames">
     	<value>/WEB-INF/i18n/messages</value>
     	<value>/WEB-INF/riot-config/messages</value>
@@ -284,11 +287,7 @@
 			</list>
 		</property>
 	</bean>
-	
-	<bean id="riotHandlerUrlResolver" class="org.riotfamily.common.web.mapping.HandlerUrlResolver" />
-	
-	<bean id="riotPathCompleter" class="org.riotfamily.riot.runtime.RiotPathCompleter" />
-
+		
 	<!-- Controllers -->
 
 	<!--
@@ -511,7 +510,7 @@
 
 	<bean id="statusController" name="/status" class="org.riotfamily.riot.status.StatusController" />
 
-	<bean id="exportController" name="/export/@{listSessionKey}/@{commandId}" class="org.riotfamily.riot.list.export.ExportController" />
+	<bean id="exportController" name="/export/@{listSessionKey}/@{commandId}" class="org.riotfamily.riot.list.command.export.ExportController" />
 
 	<bean id="org.directwebremoting.PageNormalizer"
 		class="org.riotfamily.common.web.dwr.NoOpPageNormalizer" />

@@ -37,11 +37,13 @@ import org.springframework.web.servlet.ModelAndView;
 public abstract class DialogCommand extends AbstractCommand {
 
 	public final CommandResult execute(CommandContext context) {
+		Form form = createForm(context.getBean());
+		form.setAttribute("listUrl", context.getListUrl());
 		context.getRequest().getSession().setAttribute(
-				getFormSessionAttribute(), createForm(context.getBean()));
-		
-		return new GotoUrlResult(context, getRiotServletPrefix() 
-				+ "/dialog/" + getId());
+				getFormSessionAttribute(), form);
+
+		return new GotoUrlResult(context, getRuntime().getUrl(
+				"commandDialogController", getId()));
 	}
 	
 	public String getFormSessionAttribute() {

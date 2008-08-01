@@ -23,18 +23,19 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.runtime;
 
-import org.riotfamily.common.web.servlet.AbstractPathCompleter;
+import org.riotfamily.common.web.mapping.HandlerUrlResolver;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-/**
- * PathCompleter that obtains the servletPrefix from the {@link RiotRuntime}.
- * @author Felix Gnass [fgnass at neteye dot de]
- * @since 8.0
- */
-public class RiotPathCompleter extends AbstractPathCompleter 
-		implements RiotRuntimeAware {
+public class RiotRuntimeInitializer implements RiotRuntimeAware, ApplicationContextAware {
 
+	private HandlerUrlResolver handlerUrlResolver = new HandlerUrlResolver();
+	
 	public void setRiotRuntime(RiotRuntime runtime) {
-		setServletPrefix(runtime.getServletPrefix());
+		runtime.setHandlerUrlResolver(handlerUrlResolver);
 	}
 	
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		handlerUrlResolver.setApplicationContext(applicationContext);
+	}
 }

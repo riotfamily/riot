@@ -167,5 +167,9 @@ public class CommandContextImpl implements CommandContext {
 	public String getListSessionKey() {
 		return session.getKey();
 	}
+	
+	public String getListUrl() {
+		return getListDefinition().getEditorUrl(getObjectId(), getParentId(), getParentEditorId());
+	}
 
 }

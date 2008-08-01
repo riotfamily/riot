@@ -25,6 +25,10 @@ package org.riotfamily.riot.runtime;
 
 import javax.servlet.ServletContext;
 
+import org.riotfamily.common.web.mapping.HandlerUrlResolver;
+import org.riotfamily.common.web.mapping.UrlResolverContext;
+import org.riotfamily.common.web.servlet.DefaultPathCompleter;
+import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.riot.RiotVersion;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
@@ -52,11 +56,18 @@ public class RiotRuntime implements ServletContextAware {
 	private String resourceMapping;
 
 	private String resourcePath;
+	
+	private HandlerUrlResolver handlerUrlResolver;
+	
+	private PathCompleter pathCompleter;
+	
+	private UrlResolverContext context = new UrlResolverContext();
 
+	
 	public void setResourceMapping(String resourceMapping) {
 		this.resourceMapping = resourceMapping;
 	}
-
+	
 	public void setServletContext(ServletContext context) {
 		Assert.notNull(resourceMapping, "A resourceMapping must be specified.");
 		servletPrefix = (String) context.getInitParameter(SERVLET_PREFIX_ATTRIBUTE);
@@ -64,6 +75,14 @@ public class RiotRuntime implements ServletContextAware {
 			servletPrefix = DEFAULT_SERVLET_PREFIX;
 		}
 		resourcePath = servletPrefix + resourceMapping + '/' + getVersionString() + '/';
+		pathCompleter = new DefaultPathCompleter(servletPrefix, null);
+	}
+	
+	/**
+	 * @see RiotRuntimeInitializer
+	 */
+	public void setHandlerUrlResolver(HandlerUrlResolver handlerUrlResolver) {
+		this.handlerUrlResolver = handlerUrlResolver;
 	}
 	
 	public String getServletPrefix() {
@@ -76,6 +95,10 @@ public class RiotRuntime implements ServletContextAware {
     
 	public String getVersionString() {
 		return RiotVersion.getVersionString();
+	}
+	
+	public String getUrl(String handlerName, Object attributes) {
+		return pathCompleter.addServletMapping(handlerUrlResolver.getUrlForHandler(context, handlerName, attributes));
 	}
 
 	public static RiotRuntime getRuntime(ApplicationContext context) {

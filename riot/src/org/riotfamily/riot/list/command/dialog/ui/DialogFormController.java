@@ -42,6 +42,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -134,6 +135,10 @@ public class DialogFormController extends AjaxFormController
 			throw e;
 		}
 		transactionManager.commit(status);
+		if (modelAndView == null) {
+			String listUrl = (String) form.getAttribute("listUrl");
+			modelAndView = new ModelAndView(new RedirectView(listUrl, true));
+		}
 		return modelAndView;
 	}
 	

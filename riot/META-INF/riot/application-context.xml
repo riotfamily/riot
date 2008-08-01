@@ -19,7 +19,7 @@
 	<bean id="riotRuntime" class="org.riotfamily.riot.runtime.RiotRuntime">
 		<property name="resourceMapping" value="/resources" />
 	</bean>
-
+	
 	<bean id="riotServletPrefix" factory-bean="riotRuntime" factory-method="getServletPrefix" />
 
 	<bean id="riotResourcePath" factory-bean="riotRuntime" factory-method="getResourcePath" />
