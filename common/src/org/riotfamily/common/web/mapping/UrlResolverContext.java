@@ -15,6 +15,9 @@ public class UrlResolverContext {
 	
 	private PathCompleter pathCompleter;
 
+	public UrlResolverContext() {
+	}
+
 	public UrlResolverContext(HttpServletRequest request) {
 		this.attributes = ServletUtils.takeAttributesSnapshot(request);
 		this.pathCompleter = new RequestPathCompleter(request);
