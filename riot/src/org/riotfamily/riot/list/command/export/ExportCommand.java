@@ -21,14 +21,12 @@
  *   Jan-Frederic Linde [jfl at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.list.export;
+package org.riotfamily.riot.list.command.export;
 
 import java.util.List;
 import java.util.Map;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.web.mapping.HandlerUrlResolver;
-import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
@@ -36,22 +34,13 @@ import org.riotfamily.riot.list.command.result.GotoUrlResult;
 
 public class ExportCommand extends AbstractCommand {
 
-	private HandlerUrlResolver handlerUrlResolver;
-	
-	private PathCompleter pathCompleter;
-	
+	public static final String ACTION_EXPORT = "export";
+
 	private Exporter exporter;
 	
 	private List<String> properties;
 
 	
-	public ExportCommand(HandlerUrlResolver handlerUrlResolver,
-			PathCompleter pathCompleter) {
-		
-		this.handlerUrlResolver = handlerUrlResolver;
-		this.pathCompleter = pathCompleter;
-	}
-
 	public Exporter getExporter() {
 		return exporter;
 	}
@@ -68,12 +57,17 @@ public class ExportCommand extends AbstractCommand {
 		return this.properties;
 	}
 	
+	@Override
+	protected String getAction(CommandContext context) {
+		return ACTION_EXPORT;
+	}
+	
 	public CommandResult execute(CommandContext context) {
 		Map<String, String> attributes = Generics.newHashMap();
 		attributes.put("commandId", getId());
 		attributes.put("listSessionKey", context.getListSessionKey());
-		String url = handlerUrlResolver.getUrlForHandler(context.getRequest(), "exportController", attributes);
-		return new GotoUrlResult(context, pathCompleter.addServletMapping(url));
+		String url = getRuntime().getUrl("exportController", attributes);
+		return new GotoUrlResult(context, url);
 	}
 
 }

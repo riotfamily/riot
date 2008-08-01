@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.list.export;
+package org.riotfamily.riot.list.command.export;
 
 import java.io.IOException;
 import java.io.PrintWriter;
