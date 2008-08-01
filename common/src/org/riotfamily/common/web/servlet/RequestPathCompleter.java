@@ -31,11 +31,10 @@ import org.riotfamily.common.web.util.ServletUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class RequestPathCompleter extends AbstractPathCompleter {
+public class RequestPathCompleter extends DefaultPathCompleter {
 
 	public RequestPathCompleter(HttpServletRequest request) {
-		setServletPrefix(ServletUtils.getServletPrefix(request));
-		setServletSuffix(ServletUtils.getServletSuffix(request));
+		super(ServletUtils.getServletPrefix(request), ServletUtils.getServletSuffix(request));
 	}
 
 }

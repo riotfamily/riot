@@ -25,13 +25,22 @@ package org.riotfamily.common.web.servlet;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 7.0
+ * @since 8.0
  */
-public class AbstractPathCompleter implements PathCompleter {
+public class DefaultPathCompleter implements PathCompleter {
 
 	private String servletPrefix;
 
 	private String servletSuffix;
+	
+	
+	public DefaultPathCompleter() {
+	}
+	
+	public DefaultPathCompleter(String servletPrefix, String servletSuffix) {
+		this.servletPrefix = servletPrefix;
+		this.servletSuffix = servletSuffix;
+	}
 	
 	protected void setServletPrefix(String servletPrefix) {
 		this.servletPrefix = servletPrefix;

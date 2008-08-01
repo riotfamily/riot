@@ -36,7 +36,7 @@ import org.springframework.web.context.ServletContextAware;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class WebXmlPathCompleter extends AbstractPathCompleter 
+public class WebXmlPathCompleter extends DefaultPathCompleter 
 		implements ServletContextAware, InitializingBean {
 
 	private static final Log log = LogFactory.getLog(WebXmlPathCompleter.class);
