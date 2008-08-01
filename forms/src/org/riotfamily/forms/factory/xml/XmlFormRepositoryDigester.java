@@ -121,7 +121,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		elementClasses.put("calendar", Calendar.class);
 		elementClasses.put("color-picker", ColorPicker.class);
 		elementClasses.put("checkbox", Checkbox.class);
-		elementClasses.put("imagecheckbox", ImageCheckbox.class);
+		elementClasses.put("image-checkbox", ImageCheckbox.class);
 		elementClasses.put("nested-form", NestedForm.class);
 		elementClasses.put("list", ListEditor.class);
 		elementClasses.put("map", MapEditor.class);
@@ -129,7 +129,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		elementClasses.put("selectbox", SelectBox.class);
 		elementClasses.put("radio-group", RadioButtonGroup.class);
 		elementClasses.put("checkbox-group", CheckboxGroup.class);
-		elementClasses.put("imagecheckbox-group", ImageCheckboxGroup.class);
+		elementClasses.put("image-checkbox-group", ImageCheckboxGroup.class);
 		elementClasses.put("editable-if-new", EditableIfNew.class);
 		elementClasses.put("autocomplete", AutocompleteTextField.class);
 	}

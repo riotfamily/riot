@@ -46,6 +46,12 @@
 .action-paste {
 	background-image: url(icons/commands/paste.gif);
 }
+.action-export {
+	background-image: url(icons/commands/export.gif);
+}
+.action-import {
+	background-image: url(icons/commands/import.gif);
+}
 
 tr.cut td {
 	font-style: italic;

@@ -139,7 +139,7 @@
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:element name="imagecheckbox">
+	<xsd:element name="image-checkbox">
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="simple-editor">
@@ -227,7 +227,7 @@
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:element name="imagecheckbox-group">
+	<xsd:element name="image-checkbox-group">
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="multiselect">
@@ -334,6 +334,8 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
+	
+	<xsd:element name="upload" type="simple-editor" />
 
 	<xsd:element name="import">
 		<xsd:complexType>

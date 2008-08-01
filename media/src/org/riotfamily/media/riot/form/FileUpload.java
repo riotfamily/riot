@@ -24,27 +24,16 @@
 package org.riotfamily.media.riot.form;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.ContentElement;
-import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.element.TemplateElement;
-import org.riotfamily.forms.event.Button;
-import org.riotfamily.forms.event.JavaScriptEvent;
-import org.riotfamily.forms.event.JavaScriptEventAdapter;
-import org.riotfamily.forms.fileupload.UploadStatus;
-import org.riotfamily.forms.request.FormRequest;
-import org.riotfamily.forms.resource.FormResource;
-import org.riotfamily.forms.resource.ResourceElement;
-import org.riotfamily.forms.resource.ScriptResource;
-import org.riotfamily.forms.resource.StylesheetResource;
+import org.riotfamily.forms.element.upload.AbstractFileUpload;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.service.ProcessingService;
 import org.springframework.util.FileCopyUtils;
@@ -54,12 +43,8 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * A widget to upload files.
  */
-public class FileUpload extends CompositeElement implements Editor,
-		ResourceElement, NestedEditor {
-
-	protected static FormResource RESOURCE = new ScriptResource(
-			"inline-upload.js", null, 
-			new StylesheetResource("style/riot-media.css"));
+public class FileUpload extends AbstractFileUpload 
+		implements NestedEditor {
 
 	private ProcessingService processingService;
 	
@@ -71,19 +56,12 @@ public class FileUpload extends CompositeElement implements Editor,
 	
 	public FileUpload(ProcessingService processingService) {
 		this.processingService = processingService;
-		addComponent(new UploadElement());
-		addComponent(new RemoveButton());
-		addComponent(createPreviewElement());
 	}
 	
 	public void setProcessor(String processor) {
 		this.processor = processor;
 	}
 
-	public FormResource getResource() {
-		return RESOURCE;
-	}
-	
 	protected Element createPreviewElement() {
 		return new PreviewElement();
 	}
@@ -123,12 +101,9 @@ public class FileUpload extends CompositeElement implements Editor,
 		return uploadedFile != null ? uploadedFile : file;
 	}
 	
-	/**
-	 * Though this is a composite element we want it to be treated as a
-	 * single widget.
-	 */
-	public boolean isCompositeElement() {
-		return false;
+	@Override
+	protected boolean isFilePresent() {
+		return getPreviewFile() != null;
 	}
 	
 	protected RiotFile createRiotFile(MultipartFile multipartFile) 
@@ -137,11 +112,8 @@ public class FileUpload extends CompositeElement implements Editor,
 		return new RiotFile(multipartFile);
 	}
 	
-	protected void processRequestInternal(FormRequest request) {
-		validate();
-	}
-	
-	private void validate() {
+	@Override
+	protected void validate() {
 		ErrorUtils.removeErrors(this);
 		if (uploadedFile != null) {
 			validateFile(uploadedFile);
@@ -154,125 +126,22 @@ public class FileUpload extends CompositeElement implements Editor,
 	protected void validateFile(RiotFile file) {
 	}
 	
+	@Override
+	protected void onUpload(MultipartFile multipartFile) throws IOException {
+		setNewFile(createRiotFile(multipartFile));
+	}
+	
 	protected final void setNewFile(RiotFile file) {
 		uploadedFile = file;
 		validate();
 	}
-		
-	public class UploadElement extends TemplateElement
-			implements JavaScriptEventAdapter {
-
-		private String uploadId;
-
-		private UploadStatus status;
-		
-		private volatile boolean processing;
-		
-		private volatile boolean completed;
-
-		public UploadElement() {
-			setWrap(false);
-			this.uploadId = UploadStatus.createUploadId();
-		}
-		
-		public String getEventTriggerId() {		
-			return getId();
-		}
-
-		public String getUploadId() {
-			return uploadId;
-		}
-
-		public String getUploadUrl() {
-			return getFormContext().getUploadUrl(uploadId);
-		}
-
-		public UploadStatus getStatus() {
-			return status;
-		}
-		
-		public boolean isProcessing() {
-			return processing;
-		}
-
-		public void processRequestInternal(FormRequest request) {
-			log.debug("Processing " + getParamName());
-			MultipartFile multipartFile = request.getFile(getParamName());
-			if ((multipartFile != null) && (!multipartFile.isEmpty())) {
-				try {
-					processing = true;
-					setNewFile(createRiotFile(multipartFile));
-				}
-				catch (IOException e) {
-					log.error("error saving uploaded file", e);
-				}
-				processing = false;
-				completed = true;
-			}
-		}
-
-		public int getEventTypes() {
-			return JavaScriptEvent.NONE;
-		}
-
-		public void handleJavaScriptEvent(JavaScriptEvent event) {
-			status = UploadStatus.getStatus(uploadId);
-			if (getFormListener() != null) {
-				if (status != null) {
-					if (status.isError()) {
-						ErrorUtils.reject(FileUpload.this, "error.uploadFailed");
-						getFormListener().elementChanged(FileUpload.this);
-					}
-					else if (completed) {
-						status.clear();
-						status = null;
-						completed = false;
-						getFormListener().elementChanged(FileUpload.this);
-					}
-					else {
-						log.debug("Progress: " + status.getProgress());
-						getFormListener().elementChanged(this);
-						getFormListener().refresh(this);
-					}
-				}
-				else {
-					getFormListener().refresh(this);
-				}
-			}
-		}
-
+	
+	@Override
+	protected void onRemove() {
+		file = null;
+		uploadedFile = null;
 	}
-
-	private class RemoveButton extends Button {
-
-		private RemoveButton() {
-			setCssClass("remove-file");
-			setInline(true);
-		}
-
-		public String getLabel() {
-			return "Remove";
-		}
-
-		protected void onClick() {
-			file = null;
-			uploadedFile = null;
-			ErrorUtils.removeErrors(FileUpload.this);
-			if (getFormListener() != null) {
-				getFormListener().elementChanged(FileUpload.this);
-			}
-		}
-
-		public void renderInternal(PrintWriter writer) {
-			if (!FileUpload.this.isRequired() && getPreviewFile() != null) {
-				super.renderInternal(writer);
-			}
-		}
-
-		public int getEventTypes() {
-			return JavaScriptEvent.ON_CLICK;
-		}
-	}
+		
 
 	public class PreviewElement extends TemplateElement
 			implements ContentElement {

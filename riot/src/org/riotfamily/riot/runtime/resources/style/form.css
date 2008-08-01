@@ -574,3 +574,64 @@ div.autocomplete ul li {
 div.autocomplete ul li.selected {
 	background-color: #ffb;
 }
+
+.uploadProgress {
+	margin-bottom: 3px;
+}
+
+.uploadProgress .gauge {
+	width: 150px;
+	height: 19px;
+	background: url(images/progress.gif) #ebebeb;
+	float: left;
+	margin-right: 12px;
+}
+
+.uploadProgress .gauge .bar {
+	background-color: ${highlight_color};
+	background-image: url(images/progress.gif);
+	height: 100%;
+}
+
+.uploadProgress .stats {
+	position: relative;
+	top: 4px;
+}
+
+.filePreview {
+	margin: 10px 0;
+	overflow:hidden;
+}
+
+.filePreview .fileInfo {
+	margin-bottom: 10px;
+}
+.filePreview .fileInfo td {
+	padding: 0px;
+	color: #3d3d3d;
+}
+.filePreview .fileInfo td.label {
+	font-weight: bold;
+	padding: 0 4px 0 0;
+	width: auto;
+	text-align: right;
+}
+
+.filePreview .download,
+.filePreview .view,
+.filePreview .hide {
+	width: 32px;
+	height: 32px;
+	float: left;
+	display: block;
+	margin: 1px 4px 0 1px;
+}
+.filePreview .download {
+	background: url(images/download.gif) no-repeat;
+}
+.filePreview .view {
+	background: url(images/view.gif) no-repeat;
+}
+.filePreview .hide {
+	background: url(images/hide-view.gif) no-repeat;
+}

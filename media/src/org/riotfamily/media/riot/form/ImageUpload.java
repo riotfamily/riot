@@ -44,6 +44,7 @@ import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
 import org.riotfamily.forms.resource.Resources;
 import org.riotfamily.forms.resource.ScriptResource;
+import org.riotfamily.forms.resource.StylesheetResource;
 import org.riotfamily.media.model.CroppedRiotImage;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
@@ -58,7 +59,8 @@ public class ImageUpload extends FileUpload {
 
 	private static final FormResource PREVIEW_RESOURCE = new ScriptResource(
 			"riot-js/image-cropper.js", "Cropper",
-			Resources.SCRIPTACULOUS_SLIDER);
+			Resources.SCRIPTACULOUS_SLIDER,
+			new StylesheetResource("style/cropper.css"));
 
 	private int[] widths;
 
