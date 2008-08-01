@@ -39,6 +39,7 @@ import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
+import org.springframework.orm.hibernate3.HibernateSystemException;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerMapping;
@@ -148,16 +149,22 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	 * a RedirectController, or <code>null</code> in case no alias can be found.
 	 */
 	protected Object getPageNotFoundHandler(Site site, String path) {
-		PageAlias alias = pageDao.findPageAlias(site, path);
-		if (alias != null) {
-			Page page = alias.getPage();
-			if (page != null) {
-				String url = page.getUrl(pathCompleter);
-				return new RedirectController(url, true, false);
+		try {
+			PageAlias alias = pageDao.findPageAlias(site, path);
+			if (alias != null) {
+				Page page = alias.getPage();
+				if (page != null) {
+					String url = page.getUrl(pathCompleter);
+					return new RedirectController(url, true, false);
+				}
+				else {
+					return new HttpErrorController(HttpServletResponse.SC_GONE);
+				}
 			}
-			else {
-				return new HttpErrorController(HttpServletResponse.SC_GONE);
-			}
+			return null;
+		}
+		catch (HibernateSystemException e) {
+			// No hibernate session bound to thread
 		}
 		return null;
 	}
