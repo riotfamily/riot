@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="cachius/src"/>
+	<classpathentry kind="src" path="dbmsgsrc/src"/>
 	<classpathentry kind="src" path="common/src"/>
 	<classpathentry kind="src" path="components/src"/>
 	<classpathentry kind="src" path="forms/src"/>
@@ -52,5 +53,6 @@
 	<classpathentry kind="lib" path="lib/hibernate-annotations.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate.jar"/>
 	<classpathentry kind="lib" path="lib/persistence.jar"/>
+	<classpathentry kind="lib" path="lib/poi.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

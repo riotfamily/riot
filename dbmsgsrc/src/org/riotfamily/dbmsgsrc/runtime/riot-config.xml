@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<riot-config
+	xmlns="http://www.riotfamily.org/schema/riot/riot-config"
+	xmlns:ed="http://www.riotfamily.org/schema/riot/editor-config"
+	xmlns:list="http://www.riotfamily.org/schema/riot/list-config"
+	xmlns:form="http://www.riotfamily.org/schema/forms/form-config"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.riotfamily.org/schema/riot/riot-config
+		http://www.riotfamily.org/schema/riot/riot-config.xsd
+		http://www.riotfamily.org/schema/riot/editor-config
+		http://www.riotfamily.org/schema/riot/editor-config.xsd
+		http://www.riotfamily.org/schema/riot/list-config
+		http://www.riotfamily.org/schema/riot/list-config.xsd
+		http://www.riotfamily.org/schema/forms/form-config
+		http://www.riotfamily.org/schema/forms/form-config-7.0.xsd
+		">
+
+	<list:list id="messageBundleEntries">
+		<list:dao class="org.riotfamily.riot.hibernate.dao.HqlDao">
+			<list:property name="entityClass" value="org.riotfamily.dbmsgsrc.model.MessageBundleEntry" />
+		</list:dao>
+		<list:columns>
+			<list:column property="code" />
+			<list:command id="edit" />
+			<list:command id="delete" />
+		</list:columns>
+		<list:command id="add" />
+	</list:list>
+	
+	<form:form id="messageBundleEntry" bean-class="org.riotfamily.dbmsgsrc.model.MessageBundleEntry">
+		<form:group>
+			<form:textfield bind="code" required="true" />
+		</form:group>
+		<form:nested-form bind="defaultMessage" required="true" bean-class="org.riotfamily.dbmsgsrc.model.Message">
+			<form:textarea bind="text" required="true" />
+		</form:nested-form>
+		<form:map bind="messages" label-renderer-class="org.riotfamily.riot.ui.LocaleRenderer">
+			<form:key-options ref="locales" />
+			<form:nested-form indent="false" bean-class="org.riotfamily.dbmsgsrc.model.Message">
+				<form:textarea bind="text" />
+			</form:nested-form>
+		</form:map>
+	</form:form>
+	
+	<ed:list id="messages" list-ref="messageBundleEntries">
+		<ed:form form-ref="messageBundleEntry" />
+	</ed:list>
+
+	<list:list id="localMessages">
+		<list:dao class="org.riotfamily.dbmsgsrc.riot.LocalMessageDao" />
+		<list:columns>
+			<list:column property="entry.code" />
+			<list:column property="entry.defaultMessage.text" />
+			<list:column property="text" />
+			<list:command class="org.riotfamily.dbmsgsrc.riot.TranslateMessageCommand" />
+		</list:columns>
+		<list:command class="org.riotfamily.dbmsgsrc.riot.ImportMessagesCommand" />
+		<list:command id="exportMessages" />
+	</list:list>
+	
+	<form:form id="message">
+		<form:textarea bind="text" required="true" />
+	</form:form>
+	
+	<ed:list id="localMessages" list-ref="localMessages" hidden="true">
+		<ed:form form-ref="localMessage" />
+	</ed:list>
+	
+</riot-config>
