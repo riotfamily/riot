@@ -342,17 +342,18 @@ public class CommonMacroHelper {
 	}
 	
 	/**
-	 * Splits a list into evenly distributed parts like:
+	 * Splits a list into a specified number of groups. The items are 
+	 * distributed evenly. Example:
+	 * <pre>
 	 * 1 | 4 | 7
 	 * 2 | 5 | 8
 	 * 3 | 6
-	 * 
-	 * @param <T>
+	 * </pre>
 	 * @param items The items to split
 	 * @param groups The number of groups (NOT number of group-items)
 	 * @return The splitted list
 	 */
-	public<T> List<List<T>> group(List<T> items, int groups) {
+	public<T> List<List<T>> split(List<T> items, int groups) {
 		if (items == null) {
 			return null;
 		}

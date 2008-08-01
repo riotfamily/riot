@@ -345,26 +345,29 @@
 	</#if>
 </#macro>
 
-<#macro stylesheets hrefs compress=commonMacroHelper.compressResources>
+<#macro stylesheets hrefs compress=commonMacroHelper.compressResources rel="stylesheet" type="text/css" attributes...>
 	<#if compress>
-		<link rel="stylesheet" type="text/css" href="${resolve(pathForHandler("minifyCssController") + "?files=" + toDelimitedString(hrefs))?xml}" />
+		<link rel="${rel}" type="${type}" href="${resolve(pathForHandler("minifyCssController") + "?files=" + toDelimitedString(hrefs))?xml}"${joinAttributes(attributes)} />
 	<#else>
 		<#list hrefs as href>
-			<link rel="stylesheet" type="text/css" href="${resource(href)?xml}" />
+			<link rel="${rel}" type="${type}" href="${resource(href)?xml}"${joinAttributes(attributes)} />
 		</#list>
 	</#if>
 </#macro>
 
-<#macro scripts srcs compress=commonMacroHelper.compressResources>
+<#macro scripts srcs compress=commonMacroHelper.compressResources type="text/javascript" attributes...>
 	<#if compress>
-		<script type="text/javascript" src="${resolve(pathForHandler("minifyScriptController") + "?files=" + toDelimitedString(srcs))?xml}"></script>
+		<script src="${resolve(pathForHandler("minifyScriptController") + "?files=" + toDelimitedString(srcs))?xml}" type="${type}"${joinAttributes(attributes)}></script>
 	<#else>
 		<#list srcs as src>
-			<script type="text/javascript" src="${resource(src)?xml}"></script>
+			<script src="${resource(src)?xml}" type="${type}"${joinAttributes(attributes)}></script>
 		</#list>
 	</#if>
 </#macro>
 
+<#---
+  - Emits a script block that removes the 'noscript' class from the document's body element. 
+  -->
 <#macro removeNoscriptClass>
 	<script type="text/javascript">
 		var b = document.body;
@@ -424,15 +427,17 @@
 </#function>
 
 <#---
-	- Splits a list into evenly distributed parts like:
-	- 1 | 4 | 7
-	- 2 | 5 | 8
-	- 3 | 6
-	- 
-	- @param items The items to split
-	- @param groups The number of groups (NOT number of group-items)
-	- @return The splitted list
+  - Splits a list into a specified number of groups. The items are distributed
+  - evenly. Example:
+  - <pre>
+  - 1 | 4 | 7
+  - 2 | 5 | 8
+  - 3 | 6
+  - </pre>
+  - @param items The items to split
+  - @param groups The number of groups (NOT number of group-items)
+  - @return The splitted list
   -->
-<#function group items groups>
-	<#return commonMacroHelper.group(items, groups) />
+<#function split items groups>
+	<#return commonMacroHelper.split(items, groups) />
 </#function>
