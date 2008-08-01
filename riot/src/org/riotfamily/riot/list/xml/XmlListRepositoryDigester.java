@@ -186,8 +186,11 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 		}
 		String className = XmlUtils.getAttribute(ele, "class");
 		Assert.notNull(className, "Either id or class must be specified");
-		return SpringUtils.createBean(className, beanFactory, 
+		Command command = SpringUtils.createBean(className, beanFactory, 
 				AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
+		
+		listRepository.addCommand(command);
+		return command;
 	}
 		
 }

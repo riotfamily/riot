@@ -39,6 +39,11 @@ public interface Command {
 	public String getId();
 	
 	/**
+	 * Sets a unique identifier used to reference the command.
+	 */
+	public void setId(String id);
+	
+	/**
 	 * Executes the command.
 	 */
 	public CommandResult execute(CommandContext context);

@@ -94,6 +94,17 @@ public class ListRepository implements ApplicationContextAware {
 		return command;
 	}
 
+	public void addCommand(Command command) {
+		String id = command.getId();
+		Command existingCommand = getCommand(id);
+		for (int i = 2; existingCommand != null; i++) {
+			id = command.getId() + i;
+			existingCommand = getCommand(id);
+		}
+		command.setId(id);
+		commands.put(id, command);
+	}
+	
 	public ListConfig getListConfig(String listId) {
 		return (ListConfig) listConfigs.get(listId);
 	}
