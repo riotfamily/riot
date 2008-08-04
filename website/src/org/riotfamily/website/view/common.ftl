@@ -101,7 +101,7 @@
 </#function>
 
 <#---
-  - Adds a timestamp to the given URI.
+  - Adds the server startup time to the given URI.
   - <h4>Example:</h4>
   - <pre>${stamp('main.css')}
   - ==> main.css?121345
@@ -109,6 +109,17 @@
   -->
 <#function stamp href>
 	<#return commonMacroHelper.addTimestamp(href) />
+</#function>
+
+<#---
+  - Adds the current timestamp to the given URI.
+  - <h4>Example:</h4>
+  - <pre>${stamp('main.css')}
+  - ==> main.css?121345
+  - </pre>
+  -->
+<#function stampNow href>
+	<#return commonMacroHelper.addCurrentTimestamp(href) />
 </#function>
 
 

@@ -43,19 +43,29 @@ public class ResourceStamper implements InitializingBean {
 
 	private String timePattern = DFAULT_TIME_PATTERN;
 	
-	private String time;
+	private String startupTime;
+	
+	private SimpleDateFormat format;
 	
 	public void setTimePattern(String timePattern) {
 		this.timePattern = timePattern;
 	}
 	
 	public void afterPropertiesSet() throws Exception {
-		SimpleDateFormat df = new SimpleDateFormat(timePattern);
-		time = df.format(new Date());
+		format = new SimpleDateFormat(timePattern);
+		startupTime = now();
+	}
+	
+	private String now() {
+		return format.format(new Date());
 	}
 	
 	public String stamp(String url) {
-		return ServletUtils.addParameter(url, time, null);
+		return stamp(url, false);
+	}
+	
+	public String stamp(String url, boolean now) {
+		return ServletUtils.addParameter(url, now ? now() : startupTime, null);
 	}
 
 }
