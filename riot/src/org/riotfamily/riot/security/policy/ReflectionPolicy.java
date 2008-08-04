@@ -50,7 +50,7 @@ import org.springframework.util.StringUtils;
  */
 public class ReflectionPolicy implements AuthorizationPolicy {
 
-	private static final Log log = LogFactory.getLog(ReflectionPolicy.class);
+	private Log log = LogFactory.getLog(ReflectionPolicy.class);
 	
 	private Object delegate = this;
 	

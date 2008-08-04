@@ -45,8 +45,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SessionReferenceRemover implements HttpSessionBindingListener {
 
-	private static final Log log = LogFactory
-			.getLog(SessionReferenceRemover.class);
+	private Log log = LogFactory.getLog(SessionReferenceRemover.class);
 	
 	private static final String SESSION_KEY = 
 			SessionReferenceRemover.class.getName();

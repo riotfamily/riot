@@ -59,7 +59,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  */
 public class FolderFilterPlugin extends FilterPlugin {
 
-	private static final Log log = LogFactory.getLog(FolderFilterPlugin.class);
+	private Log log = LogFactory.getLog(FolderFilterPlugin.class);
 
 	private static final TransactionDefinition TX_DEF = 
 			new DefaultTransactionDefinition();

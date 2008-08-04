@@ -46,7 +46,7 @@ import org.springframework.util.StringUtils;
  */
 public class PageResolver {
 	
-	private static final Log log = LogFactory.getLog(PageResolver.class);
+	private Log log = LogFactory.getLog(PageResolver.class);
 
 	public static final String PATH_ATTRIBUTE = PageResolver.class.getName() + ".path";
 

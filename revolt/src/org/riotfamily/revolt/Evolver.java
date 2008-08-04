@@ -44,7 +44,7 @@ import org.springframework.util.StringUtils;
  */
 public class Evolver implements ApplicationContextAware {
 
-	private static final Log log = LogFactory.getLog(Evolver.class);
+	private Log log = LogFactory.getLog(Evolver.class);
 	
 	private boolean enabled = true;
 	

@@ -39,7 +39,7 @@ import org.springframework.web.context.ServletContextAware;
 public class WebXmlPathCompleter extends DefaultPathCompleter 
 		implements ServletContextAware, InitializingBean {
 
-	private static final Log log = LogFactory.getLog(WebXmlPathCompleter.class);
+	private Log log = LogFactory.getLog(WebXmlPathCompleter.class);
 
 	private String servletName;
 

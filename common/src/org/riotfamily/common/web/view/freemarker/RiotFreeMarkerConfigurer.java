@@ -51,8 +51,7 @@ import freemarker.template.TemplateExceptionHandler;
 public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer 
 		implements ApplicationContextAware {
 
-	private static final Log log = LogFactory
-			.getLog(RiotFreeMarkerConfigurer.class);
+	private Log log = LogFactory.getLog(RiotFreeMarkerConfigurer.class);
 	
 	private TemplateExceptionHandler exceptionHandler = 
 			new ErrorPrintingExceptionHandler();

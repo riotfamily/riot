@@ -37,7 +37,7 @@ import org.riotfamily.riot.security.auth.RiotUser;
  */
 public class LoggingPolicy implements AuthorizationPolicy {
 	
-    private static final Log log = LogFactory.getLog(LoggingPolicy.class);
+    private Log log = LogFactory.getLog(LoggingPolicy.class);
     
 	private int order = Integer.MIN_VALUE;
 	

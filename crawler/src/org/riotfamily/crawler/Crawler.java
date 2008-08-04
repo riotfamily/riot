@@ -40,7 +40,7 @@ import org.springframework.context.event.ApplicationEventMulticaster;
  */
 public class Crawler implements InitializingBean, ApplicationListener, Runnable {
 
-	private static final Log log = LogFactory.getLog(Crawler.class);
+	private Log log = LogFactory.getLog(Crawler.class);
 
 	private String startPage;
 

@@ -47,8 +47,6 @@ import org.springframework.util.StringUtils;
  */
 public final class FormatUtils {
 
-	private static final Log log = LogFactory.getLog(FormatUtils.class);
-
 	private static NumberFormat numberFormat = new DecimalFormat("0.#");
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
@@ -71,6 +69,10 @@ public final class FormatUtils {
 	private static final Pattern PARENT_DIR_PATTERN = Pattern.compile("\\.\\./");
 	
 	private FormatUtils() {
+	}
+	
+	private static Log getLog() {
+		return LogFactory.getLog(FormatUtils.class);
 	}
 
 	public static String formatNumber(Number number, String pattern, Locale locale) {
@@ -697,7 +699,7 @@ public final class FormatUtils {
 				return Integer.parseInt(group);
 			}
 			catch (NumberFormatException e) {
-				log.error("Not a valid number: " + group);
+				getLog().error("Not a valid number: " + group);
 			}
 		}
 		return -1;

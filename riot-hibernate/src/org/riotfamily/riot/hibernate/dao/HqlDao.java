@@ -46,7 +46,7 @@ import org.springframework.util.Assert;
 public class HqlDao extends AbstractHibernateRiotDao implements 
 		SortableDao, SwappableItemDao {
 
-	private static final Log log = LogFactory.getLog(HqlDao.class);
+	private Log log = LogFactory.getLog(HqlDao.class);
 
     private boolean polymorph = true;
 

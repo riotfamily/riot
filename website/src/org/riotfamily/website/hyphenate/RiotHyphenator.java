@@ -18,7 +18,7 @@ import org.springframework.core.io.Resource;
 
 public class RiotHyphenator implements InitializingBean {
 	
-	private static final Log log = LogFactory.getLog(RiotHyphenator.class);
+	private Log log = LogFactory.getLog(RiotHyphenator.class);
 	
 	private File baseDir;
 	

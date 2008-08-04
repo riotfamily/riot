@@ -39,8 +39,6 @@ import org.springframework.beans.factory.BeanNameAware;
  */
 public class EvolutionHistory implements BeanNameAware {
 
-	//private static final Log log = LogFactory.getLog(EvolutionHistory.class);
-	
 	private String[] depends = new String[0];
 	
 	private String moduleName;

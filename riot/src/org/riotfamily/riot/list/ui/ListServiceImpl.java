@@ -58,7 +58,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 public class ListServiceImpl implements ListService, MessageSourceAware,
 		ConfigurationEventListener {
 
-	private static final Log log = LogFactory.getLog(ListServiceImpl.class);
+	private Log log = LogFactory.getLog(ListServiceImpl.class);
 
 	private EditorRepository editorRepository;
 

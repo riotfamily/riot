@@ -40,8 +40,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class WeakReferenceCollection<T> extends AbstractCollection<T> {
 
-	private static final Log log = LogFactory
-			.getLog(WeakReferenceCollection.class);
+	private Log log = LogFactory.getLog(WeakReferenceCollection.class);
 	
 	private Collection<WeakReference<T>> references = new ArrayList<WeakReference<T>>();
 	

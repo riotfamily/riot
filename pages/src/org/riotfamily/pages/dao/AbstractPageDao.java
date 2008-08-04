@@ -53,7 +53,7 @@ import org.springframework.util.ObjectUtils;
 	*/
 public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
-	private static final Log log = LogFactory.getLog(AbstractPageDao.class);
+	private Log log = LogFactory.getLog(AbstractPageDao.class);
 
 	private CacheService cacheService;
 	

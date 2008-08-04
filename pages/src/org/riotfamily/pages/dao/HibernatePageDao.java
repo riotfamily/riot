@@ -52,7 +52,7 @@ import org.springframework.util.Assert;
  */
 public class HibernatePageDao extends AbstractPageDao {
 
-	private static final Log log = LogFactory.getLog(HibernatePageDao.class);
+	private Log log = LogFactory.getLog(HibernatePageDao.class);
 
 	private HibernateHelper hibernate;
 

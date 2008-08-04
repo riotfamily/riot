@@ -53,7 +53,7 @@ import org.springframework.web.util.WebUtils;
 public class Indexer implements PageHandler,
 		ServletContextAware, InitializingBean {
 
-	private static final Log log = LogFactory.getLog(Indexer.class);
+	private Log log = LogFactory.getLog(Indexer.class);
 
 	private Directory indexDir;
 
