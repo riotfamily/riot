@@ -9,17 +9,17 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.riotfamily.org/schema/riot/riot-config
-		http://www.riotfamily.org/schema/riot/riot-config-7.0.xsd
+		http://www.riotfamily.org/schema/riot/riot-config-8.0.xsd
 		http://www.riotfamily.org/schema/riot/editor-config
-		http://www.riotfamily.org/schema/riot/editor-config-7.0.xsd
+		http://www.riotfamily.org/schema/riot/editor-config-8.0.xsd
 		http://www.riotfamily.org/schema/riot/list-config
-		http://www.riotfamily.org/schema/riot/list-config-7.0.xsd
+		http://www.riotfamily.org/schema/riot/list-config-8.0.xsd
 		http://www.riotfamily.org/schema/forms/form-config
-		http://www.riotfamily.org/schema/forms/form-config-7.0.xsd
+		http://www.riotfamily.org/schema/forms/form-config-8.0.xsd
 		http://www.riotfamily.org/schema/riot/form-elements
-		http://www.riotfamily.org/schema/riot/form-elements-7.0.xsd
+		http://www.riotfamily.org/schema/riot/form-elements-8.0.xsd
 		http://www.riotfamily.org/schema/components/form-elements
-		http://www.riotfamily.org/schema/components/form-elements-7.0.xsd">
+		http://www.riotfamily.org/schema/components/form-elements-8.0.xsd">
 
 	<ed:list id="localContent" list-ref="site-chooser" icon="world">
 		<ed:tree id="sitemap" list-ref="pages" icon="sitemap">

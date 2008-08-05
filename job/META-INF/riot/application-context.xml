@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-7.0.xsd">
+		http://www.riotfamily.org/schema/common/override-8.0.xsd">
 
 	<override:add ref="sessionFactory" property="annotatedClasses">
 		<value>org.riotfamily.riot.job.model.JobDetail</value>
