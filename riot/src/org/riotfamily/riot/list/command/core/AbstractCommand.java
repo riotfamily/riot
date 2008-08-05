@@ -51,6 +51,8 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 
 	private boolean showOnForm;
 	
+	private boolean targetRequired = true;
+	
 	private RiotRuntime runtime;
 
 	public String getId() {
@@ -131,6 +133,19 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 	public void setShowOnForm(boolean showOnForm) {
 		this.showOnForm = showOnForm;
 	}
+	
+	/**
+	 * Returns whether the command requires a target for the execution.
+	 * This flag only applies to trees. It prevents target selection, which is
+	 * particularly useful when you have a command that applies to the whole tree structure.
+	 */
+	protected boolean isTargetRequired() {
+		return targetRequired;
+	}
+
+	protected void setTargetRequired(boolean targetRequired) {
+		this.targetRequired = targetRequired;
+	}
 
 	/**
 	 *
@@ -149,6 +164,7 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 		state.setLabel(getLabel(context, action));
 		state.setStyleClass(getStyleClass(context, action));
 		state.setItemStyleClass(getItemStyleClass(context, action));
+		state.setTargetRequired(isTargetRequired());
 		return state;
 	}
 

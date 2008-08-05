@@ -71,9 +71,14 @@
 			  - TinyMCE elements.
 			  -->
 			function registerKeyHandler(doc) {
-				Event.observe(doc, 'keypress', function(e) {
+				Event.observe(doc, 'keydown', function(e) {
+				
+					//we have to use code for KEY_CTRL(17) explicitly as it is not defined in Event
+					if (e.keyCode == 17 || !e.ctrlKey)
+						return;
+					
 					var key = String.fromCharCode(e.charCode ? e.charCode : e.keyCode).toUpperCase();
-					if (key == 'S' && e.ctrlKey) {
+					if (key == 'S') {
 						ajaxSubmit();
 						e.stop();
 					}
