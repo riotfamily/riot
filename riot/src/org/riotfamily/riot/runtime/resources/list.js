@@ -152,7 +152,7 @@ var RiotList = Class.create({
 		el = $(el);
 		var alwaysOn = item == null && this.tree;
 		return commands.collect(function(command) {
-			var button = new CommandButton(item, command, handler, renderLabel, alwaysOn);
+			var button = new CommandButton(item, command, handler, renderLabel, alwaysOn && command.targetRequired);
 			el.appendChild(button.element);
 			return button;
 		});
@@ -162,7 +162,7 @@ var RiotList = Class.create({
 		event.stop();
 		var a = event.findElement('a');
 		if (!this.selectParentMode) {
-			if (this.tree && !a.item) {
+			if (a.targetRequired && this.tree && !a.item) {
 				this.selectParent(a.command);
 				var cancel = RBuilder.node('button', {}, this.texts['label.tree.cancelCommand']);
 				this.dialog = RBuilder.node('div', {className: 'select-parent'}, 
@@ -601,7 +601,8 @@ var CommandButton = Class.create({
 		this.command = command;
 		this.handler = handler;
 		this.element = RBuilder.node('a', {href: '#', item: item, command: command,
-				className: 'action action-' + command.styleClass});
+				className: 'action action-' + command.styleClass,
+				targetRequired: command.targetRequired});
 
 		if (item && item.defaultCommand == command) {
 			this.element.addClassName('default');

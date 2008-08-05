@@ -42,6 +42,8 @@ public class CommandState {
 	
 	private String label;
 	
+	private boolean targetRequired;
+	
 	public String getAction() {
 		return this.action;
 	}
@@ -88,6 +90,14 @@ public class CommandState {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+	
+	public boolean isTargetRequired() {
+		return targetRequired;
+	}
+
+	public void setTargetRequired(boolean targetRequired) {
+		this.targetRequired = targetRequired;
 	}
 
 }
