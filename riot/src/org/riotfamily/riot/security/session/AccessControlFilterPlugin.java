@@ -25,12 +25,12 @@ package org.riotfamily.riot.security.session;
 
 import java.io.IOException;
 
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.filter.FilterPlugin;
-import org.riotfamily.common.web.filter.PluginChain;
 import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
@@ -47,14 +47,14 @@ public final class AccessControlFilterPlugin extends FilterPlugin {
 	}
 
 	public void doFilter(HttpServletRequest request,
-		HttpServletResponse response, PluginChain pluginChain)
+		HttpServletResponse response, FilterChain filterChain)
 		throws IOException, ServletException {
 		
 		try {
 			LoginManager loginManager = LoginManager.getInstance(getServletContext());
 			RiotUser user = loginManager.getUser(request);
 			SecurityContext.bindUserToCurrentThread(user);
-			pluginChain.doFilter(request, response);
+			filterChain.doFilter(request, response);
 		}
 		finally {
 			SecurityContext.resetUser();

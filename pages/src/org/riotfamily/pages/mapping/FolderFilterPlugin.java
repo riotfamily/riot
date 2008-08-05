@@ -26,6 +26,7 @@ package org.riotfamily.pages.mapping;
 import java.io.IOException;
 import java.util.Collection;
 
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.web.filter.FilterPlugin;
-import org.riotfamily.common.web.filter.PluginChain;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
@@ -91,7 +91,7 @@ public class FolderFilterPlugin extends FilterPlugin {
 	}
 
 	public void doFilter(HttpServletRequest request, 
-			HttpServletResponse response, PluginChain pluginChain)
+			HttpServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {
 		
 		boolean requestHandled = false;
@@ -108,7 +108,7 @@ public class FolderFilterPlugin extends FilterPlugin {
 			tx.commit(status);
 		}
 		if (!requestHandled) {
-			pluginChain.doFilter(request, response);
+			filterChain.doFilter(request, response);
 		}
 	}
 

@@ -25,6 +25,7 @@ package org.riotfamily.common.web.filter;
 
 import java.io.IOException;
 
+import javax.servlet.FilterChain;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -83,7 +84,7 @@ public abstract class FilterPlugin implements ServletContextAware,
 	 * The contract is the same as for {@link javax.servlet.FilterFilter#doFilter}.
 	 */
 	public abstract void doFilter(HttpServletRequest request, 
-			HttpServletResponse response, PluginChain pluginChain)
+			HttpServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException;
 	
 	/**

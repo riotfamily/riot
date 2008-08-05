@@ -27,6 +27,8 @@ import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public class PluginChain {
+public class PluginChain implements FilterChain {
 
 	private FilterChain filterChain;
 	
@@ -59,5 +61,11 @@ public class PluginChain {
 		else {
 			filterChain.doFilter(request, response);
 		}
+	}
+
+	public void doFilter(ServletRequest request, ServletResponse response)
+			throws IOException, ServletException {
+		
+		doFilter((HttpServletRequest) request, (HttpServletResponse) response);
 	}
 }

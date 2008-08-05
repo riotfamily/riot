@@ -19,6 +19,11 @@
 		<property name="location" value="classpath:/application.properties" />
 		<property name="contextOverride" value="true" />
 	</bean>
+
+	<bean id="openSessionInViewFilterPlugin" class="org.riotfamily.riot.hibernate.support.OpenSessionInViewFilterPlugin">
+		<constructor-arg ref="sessionFactory" />
+		<property name="filterName" value="website-filter" />
+	</bean>
 	
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 	
