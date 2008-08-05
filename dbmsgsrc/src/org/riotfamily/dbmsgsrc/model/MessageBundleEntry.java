@@ -10,14 +10,19 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.MapKey;
 import org.riotfamily.common.util.Generics;
 
 @Entity
+@Table(name="riot_dbmsgsrc_entries")
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="messages")
 public class MessageBundleEntry {
 
 	public static final Locale C_LOCALE = new Locale("c");
@@ -27,6 +32,15 @@ public class MessageBundleEntry {
 	private String code;
 	
 	private Map<Locale, Message> messages;
+
+	
+	public MessageBundleEntry() {
+	}
+	
+	public MessageBundleEntry(String code, String defaultMessage) {
+		this.code = code;
+		setDefaultMessage(new Message(defaultMessage));
+	}
 
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
@@ -65,6 +79,7 @@ public class MessageBundleEntry {
     @JoinColumn(name="entry_id")
     @MapKey(columns={@Column(name="locale")})
 	@Cascade({CascadeType.ALL, CascadeType.DELETE_ORPHAN})
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="messages")
 	public Map<Locale, Message> getMessages() {
 		return messages;
 	}
@@ -73,7 +88,7 @@ public class MessageBundleEntry {
 		this.messages = messages;
 	}
 	
-	public String getMessage(Locale locale) {
+	public Message getMessage(Locale locale) {
 		Message message = messages.get(locale);
 		if (message == null && locale.getCountry() != null) {
 			Locale lang = new Locale(locale.getLanguage());
@@ -82,7 +97,7 @@ public class MessageBundleEntry {
 		if (message == null) {
 			return null;
 		}
-		return message.getText();
+		return message;
 	}
 	
 	public void addTranslation(Locale locale) {

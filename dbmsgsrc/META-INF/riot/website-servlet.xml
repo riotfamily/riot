@@ -1,0 +1,19 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-8.0.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+		
+	<bean id="dbMessageSourceDao" class="org.riotfamily.dbmsgsrc.dao.HibernateMessageSourceDao">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+	
+	<override:bean ref="messageSource" class="org.riotfamily.dbmsgsrc.support.DbMessageSource">
+		<constructor-arg ref="dbMessageSourceDao" />
+	</override:bean>
+
+</beans>

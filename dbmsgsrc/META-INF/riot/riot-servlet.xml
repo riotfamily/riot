@@ -6,7 +6,7 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-7.0.xsd">
+		http://www.riotfamily.org/schema/common/override-8.0.xsd">
 	
 	<override:add ref="listRepository" property="configLocations">
 		<value>classpath:/org/riotfamily/dbmsgsrc/runtime/riot-config.xml</value>

@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.dbmsgsrc.model;
 
+import java.text.MessageFormat;
 import java.util.Locale;
 
 import javax.persistence.Column;
@@ -32,10 +33,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 
 @Entity
+@Table(name="riot_dbmsgsrc_messages")
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="messages")
 public class Message {
 
 	private Long id;
@@ -45,6 +52,15 @@ public class Message {
 	private Locale locale;
 	
 	private String text;
+
+	private MessageFormat messageFormat;
+	
+	public Message() {
+	}
+	
+	public Message(String text) {
+		this.text = text;
+	}
 
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
@@ -83,4 +99,12 @@ public class Message {
 		this.text = text;
 	}
 	
+	@Transient
+	public MessageFormat getMessageFormat() {
+		if (messageFormat == null) {
+			messageFormat = new MessageFormat(text, locale);
+		}
+		return messageFormat;
+	}
+
 }

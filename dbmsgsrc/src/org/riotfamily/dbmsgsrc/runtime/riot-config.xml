@@ -13,7 +13,7 @@
 		http://www.riotfamily.org/schema/riot/list-config
 		http://www.riotfamily.org/schema/riot/list-config.xsd
 		http://www.riotfamily.org/schema/forms/form-config
-		http://www.riotfamily.org/schema/forms/form-config-7.0.xsd
+		http://www.riotfamily.org/schema/forms/form-config-8.0.xsd
 		">
 
 	<list:list id="messageBundleEntries">
@@ -22,6 +22,7 @@
 		</list:dao>
 		<list:columns>
 			<list:column property="code" />
+			<list:column property="defaultMessage.text" sortable="false" />
 			<list:command id="edit" />
 			<list:command id="delete" />
 		</list:columns>
