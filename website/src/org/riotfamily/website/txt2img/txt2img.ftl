@@ -52,8 +52,15 @@
 	/*@cc_on
 	/*@if (@_jscript_version < 5.7)
 		function addButtonHoverHandler() {
-			$$('.txt2imgbtn:not(a)').observe('mouseover', function() {this._txt2imgClass = this.className; this.className += 'Hover'})
-					.observe('mouseout', function() {this.className = this._txt2imgClass});
+			$$('.txt2imgbtn:not(a)').each(function(el) {
+				el.observe('mouseover', function() {
+					this._txt2imgClass = this.className; 
+					this.className += this.className + 'Hover';
+				});
+				el.observe('mouseout', function() {
+					this.className = this._txt2imgClass;
+				});
+			});
 		}
 		document.observe('dom:loaded', addButtonHoverHandler); 
 	/*@end

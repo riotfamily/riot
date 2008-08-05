@@ -26,18 +26,13 @@ if (typeof Prototype=='undefined') {
 	throw("Txt2img requires the Prototype JavaScript library");
 }
 
-var RiotImageReplacement = Class.create({
+var Txt2ImgConfig = Class.create({
 
-	// Whether to use the alphaImageLoader or not. The flag will be set to 
-	// true in IE6 by a conditional statement below ...
-	 
-	useFilter: false,
-		
 	initialize: function(generatorUrl, pixelUrl, selectors) {
-		this.selectors = selectors;
 		this.generatorUrl = generatorUrl;
 		this.pixelImage = new Image();
 		this.pixelImage.src = pixelUrl;
+		this.selectors = selectors;
 		this.createHoverRules();
 		document.observe("dom:loaded", this.insertImages.bind(this));
 		if (window.riotEditCallbacks) {
@@ -68,51 +63,88 @@ var RiotImageReplacement = Class.create({
 		});
 	},
 
-	insertImages: function(el) {
+	insertImages: function() {
 		new CssMatcher(this.selectors, this.processElement.bind(this)).match(document.body);
 	},
-
+	
 	processElement: function(el, sel) {
-		el = Element.extend(el);
-
 		if (el.className == 'print-text') return;
-		if (!el.onedit) el.onedit = this.processElement.bind(this, el, sel);
-		if (el.down('img.replacement')) return;
-		
-		var text = el.innerHTML;
-		text = text.strip().gsub(/<br\/?>/i, '\n').stripTags();
-		if (text.length > 0) {
-			var transform = el.getStyle('text-transform') || '';
+		if (!el.txt2img) {
+			el.txt2img = new Txt2ImgReplacement(this, el, sel);
+		}
+		el.txt2img.replace();
+	}
+	
+});
+
+var Txt2ImgReplacement = Class.create({
+	
+	initialize: function(config, el, sel) {
+		this.config = config;
+		this.el = $(el);
+		this.sel = sel;
+		el.onedit = this.update.bind(this);
+	},
+	
+	// Whether to use the alphaImageLoader or not. The flag will be set to 
+	// true in IE6 by a conditional statement below ...
+
+	useFilter: false,
+	
+	replace: function() {
+		if (!this.el.down('img.replacement')) {
+			this.updateText(this.el.innerHTML.strip().gsub(/<br\/?>/i, '\n').stripTags());
+		}
+	},
+	
+	updateText: function(text) {
+		this.text = text;
+		this.update();
+	},
+	
+	updateSelector: function() {
+		this.sel = this.config.selectors.find(this.el.match.bind(this.el));
+		this.update();
+	},
+	
+	update: function() {
+		if (this.text.length > 0) {
+			var transform = this.el.getStyle('text-transform') || '';
 			var width = 0;
-			if (el.getStyle('display') == 'block') {
-				width = el.offsetWidth - parseInt(el.getStyle('padding-left'))
-						- parseInt(el.getStyle('padding-right'));
+			if (this.el.getStyle('display') == 'block') {
+				width = this.el.offsetWidth - parseInt(this.el.getStyle('padding-left'))
+						- parseInt(this.el.getStyle('padding-right'));
 			}
 	
-			var color = el.getStyle('color');
-			var hoverEl = document.createElement('span');
-			hoverEl.className = 'txt2imgHover';
-			el.appendChild(hoverEl);
-			var hoverColor = Element.getStyle(hoverEl, 'color');
-			Element.remove(hoverEl);
+			var color = this.el.getStyle('color');
+			var hoverColor = this.getHoverColor();
 	
 			var hover = null;
 			if (hoverColor != color) {
 				hover = new Image();
-				hover.src = this.getImageUrl(text, transform, width, sel, hoverColor, true);
+				hover.src = this.getImageUrl(transform, width, hoverColor, true);
 			}
 			
 			var img = new Image();
-			img.src = this.getImageUrl(text, transform, width, sel, color);
-			this.insertImage(el, img, hover);
+			img.onload = this.insertImage.bind(this, img, hover);
+			img.src = this.getImageUrl(transform, width, color);
 		}
 	},
 	
-	getImageUrl: function(text, transform, width, sel, color, hover) {
-		var url = this.generatorUrl;
+	getHoverColor: function() {
+		var hoverEl = document.createElement('span');
+		hoverEl.className = 'txt2imgHover';
+		this.el.appendChild(hoverEl);
+		var hoverColor = Element.getStyle(hoverEl, 'color');
+		Element.remove(hoverEl);
+		return hoverColor;
+	},
+	
+	getImageUrl: function(transform, width, color, hover) {
+		var url = this.config.generatorUrl;
 		url += url.include('?') ? '&' : '?';
-		url += 'text=' + this.encode(text) + '&transform=' + transform
-				+ '&width=' + width + '&selector=' + this.encode(sel)
+		url += 'text=' + this.encode(this.text) + '&transform=' + transform
+				+ '&width=' + width + '&selector=' + this.encode(this.sel)
 				+ '&color=' + this.encode(color);
 				
 		if (hover) {
@@ -127,7 +159,7 @@ var RiotImageReplacement = Class.create({
 		// thereby corrupting the URL.
 		return escape(encodeURIComponent(s).replace(/%/g, '@')).replace(/%/g, '@');
 	},
-
+	
 	setImageSrc: function(el, src) {
 		if (this.useFilter) {
 			el.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"
@@ -137,32 +169,25 @@ var RiotImageReplacement = Class.create({
 			el.src = src;
 		}
 	},
-
-	insertImage: function(el, image, hover) {
+	
+	insertImage: function(image, hover) {
 		var img;
 		img = document.createElement('img');
 		img.style.verticalAlign = 'top';
 		img.style.border = 'none';
 		if (this.useFilter) {
-			img.src = this.pixelImage.src;
-			if (image.width > 0) {
-				img.style.width = image.width + 'px';
-				img.style.height = image.height + 'px';
-			}
-			else {
-				image.onload = function() {
-					img.style.width = this.width + 'px';
-					img.style.height = this.height + 'px';
-				}
-			}
+			img.src = this.config.pixelImage.src;
+			img.style.width = image.width + 'px';
+			img.style.height = image.height + 'px';
 		}
 		this.setImageSrc(img, image.src);
 		img.className = 'replacement';
 
+		var a = this.el.up('a') || this.el;
+		if (a._txt2ImgOver) a.stopObserving('mouseover', a._txt2ImgOver);
+		if (a._txt2ImgOut) a.stopObserving('mouseout', a._txt2ImgOut);
+		
 		if (hover) {
-			var a = el.up('a') || el;
-			if (a._txt2ImgOver) a.stopObserving('mouseover', a._txt2ImgOver);
-			if (a._txt2ImgOut) a.stopObserving('mouseout', a._txt2ImgOut);
 			a._txt2ImgOver = this.setImageSrc.bind(this, img, hover.src);
 			a._txt2ImgOut = this.setImageSrc.bind(this, img, image.src);
 			a.observe('mouseover', a._txt2ImgOver);
@@ -172,20 +197,22 @@ var RiotImageReplacement = Class.create({
 
 		var printText = document.createElement("span");
 		printText.className = "print-text";
-		printText.innerHTML = el.innerHTML;
-		el.update();
-		el.appendChild(img);
-		el.appendChild(printText);
-		el.addClassName('txt2img');
-		el.style.visibility = 'visible';
+		printText.innerHTML = this.text;
+		this.el.update();
+		this.el.appendChild(img);
+		this.el.appendChild(printText);
+		this.el.addClassName('txt2img');
+		this.el.style.visibility = 'visible';
 	}
+	
 });
 
 /*@cc_on
 /*@if (@_jscript_version < 5.7)
-	RiotImageReplacement.prototype.useFilter = true;
+	Txt2ImgReplacement.prototype.useFilter = true;
 /*@end
 @*/
+
 
 var ElementMatcher = Class.create({
 	initialize: function(s) {
@@ -247,6 +274,11 @@ var CssSelector = Class.create({
 	}
 });
 
+/**
+ * Txt2img uses a custom CSS matcher instead of prototype's $$() function
+ * to minimize the performance impact in IE 6. Please note that therefore 
+ * CSS 3 selectors are not supported.
+ */
 var CssMatcher = Class.create({
 	initialize: function(selectors, handler) {
 		this.sel = selectors.collect(function(s) {return new CssSelector(s)});
@@ -307,6 +339,8 @@ var CssMatcher = Class.create({
 		}
 		
 		if (this.el) {
+			// Yield execution the back to browser's renderer after 50 elements
+			// in order to prevent a complete UI freeze in IE.
 			if (this.counter % 50 == 0)	{
 				setTimeout(this.callback, 1);
 			}
