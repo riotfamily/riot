@@ -2,8 +2,8 @@
     <info
     	organisation="riotfamily"
     	module="prototype-js"
-    	revision="1.6.0.2"
-    	status="release">
+    	revision="1.6.0.3-dev-20080804164000"
+    	status="integration">
 
 	    <license name="MIT" url="http://dev.rubyonrails.org/browser/spinoffs/prototype/LICENSE" />
 	    <description homepage="http://prototypejs.org/">

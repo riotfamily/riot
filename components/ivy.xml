@@ -17,6 +17,8 @@
         <dependency org="riotfamily" name="riot-website" rev="${dep.riot.revision}" conf="*->@" />
         <dependency org="riotfamily" name="swfobject-js" rev="1.5" conf="runtime->default" />
         <dependency org="riotfamily" name="swfupload-js" rev="7.0-beta3" conf="runtime->default" />
+        <!-- Snapshot build that fixes http://dev.rubyonrails.org/ticket/11182 -->
+        <dependency org="riotfamily" name="prototype-js" rev="1.6.0.3-dev-20080804164000" conf="runtime->default" />
         <dependency org="freemarker" name="freemarker" rev="${dep.freemarker.revision}" conf="runtime->default" />
         <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->web;src->src" />
     </dependencies>
