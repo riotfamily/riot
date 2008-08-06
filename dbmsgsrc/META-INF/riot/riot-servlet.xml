@@ -22,7 +22,7 @@
 	
 	<bean name="exportMessages" class="org.riotfamily.riot.list.command.export.ExportCommand">
 		<property name="exporter">
-			<bean class="org.riotfamily.riot.list.command.export.CsvExporter" />
+			<bean class="org.riotfamily.dbmsgsrc.riot.TranslationExcelExporter" />
 		</property>
 	</bean>
   	

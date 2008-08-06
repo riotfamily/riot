@@ -44,7 +44,7 @@
 		</form:map>
 	</form:form>
 	
-	<ed:list id="dbMessages" list-ref="messageBundleEntries">
+	<ed:list id="dbMessages" list-ref="messageBundleEntries" icon="bubble">
 		<ed:form form-ref="messageBundleEntry" />
 	</ed:list>
 
@@ -64,7 +64,7 @@
 		<form:textarea bind="text" required="true" />
 	</form:form>
 	
-	<ed:list id="localDbMessages" list-ref="localDbMessages" hidden="true">
+	<ed:list id="localDbMessages" list-ref="localDbMessages" icon="bubble" hidden="true">
 		<ed:form form-ref="dbMessage" />
 	</ed:list>
 	
