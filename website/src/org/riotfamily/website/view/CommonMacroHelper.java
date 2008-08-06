@@ -134,6 +134,9 @@ public class CommonMacroHelper {
 		if (!StringUtils.hasText(defaultMessage)) {
 			defaultMessage = null;
 		}
+		else {
+			defaultMessage = FormatUtils.stripWhitespaces(defaultMessage);
+		}
 		return ctx.getMessage(code, args, defaultMessage, getLocale());
 	}
 	
