@@ -127,10 +127,12 @@ public class CommonMacroHelper {
 		return requestLocale;
 	}
 	
-	public String getMessage(String code, List args, String defaultMessage) {
-		return ctx.getMessage(code, args.toArray(), defaultMessage, getLocale());
+	public String getMessage(String code, List args, String defaultMessage,
+			Locale locale) {
+		
+		return ctx.getMessage(code, args.toArray(), defaultMessage, locale);
 	}
-	
+
 	public String getMessage(MessageSourceResolvable resolvable) {
 		return ctx.getMessage(resolvable, getLocale());
 	}
