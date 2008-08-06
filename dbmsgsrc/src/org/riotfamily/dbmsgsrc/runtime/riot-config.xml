@@ -7,11 +7,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.riotfamily.org/schema/riot/riot-config
-		http://www.riotfamily.org/schema/riot/riot-config.xsd
+		http://www.riotfamily.org/schema/riot/riot-config-8.0.xsd
 		http://www.riotfamily.org/schema/riot/editor-config
-		http://www.riotfamily.org/schema/riot/editor-config.xsd
+		http://www.riotfamily.org/schema/riot/editor-config-8.0.xsd
 		http://www.riotfamily.org/schema/riot/list-config
-		http://www.riotfamily.org/schema/riot/list-config.xsd
+		http://www.riotfamily.org/schema/riot/list-config-8.0.xsd
 		http://www.riotfamily.org/schema/forms/form-config
 		http://www.riotfamily.org/schema/forms/form-config-8.0.xsd
 		">
@@ -44,11 +44,11 @@
 		</form:map>
 	</form:form>
 	
-	<ed:list id="messages" list-ref="messageBundleEntries">
+	<ed:list id="dbMessages" list-ref="messageBundleEntries">
 		<ed:form form-ref="messageBundleEntry" />
 	</ed:list>
 
-	<list:list id="localMessages">
+	<list:list id="localDbMessages">
 		<list:dao class="org.riotfamily.dbmsgsrc.riot.LocalMessageDao" />
 		<list:columns>
 			<list:column property="entry.code" />
@@ -60,12 +60,12 @@
 		<list:command id="exportMessages" />
 	</list:list>
 	
-	<form:form id="message">
+	<form:form id="dbMessage">
 		<form:textarea bind="text" required="true" />
 	</form:form>
 	
-	<ed:list id="localMessages" list-ref="localMessages" hidden="true">
-		<ed:form form-ref="localMessage" />
+	<ed:list id="localDbMessages" list-ref="localDbMessages" hidden="true">
+		<ed:form form-ref="dbMessage" />
 	</ed:list>
 	
 </riot-config>
