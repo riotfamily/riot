@@ -46,6 +46,9 @@
 .action-paste {
 	background-image: url(icons/commands/paste.gif);
 }
+.action-sync {
+	background-image: url(icons/commands/sync.gif);
+}
 .action-export {
 	background-image: url(icons/commands/export.gif);
 }
