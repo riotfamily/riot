@@ -155,8 +155,8 @@
 <#---
   - Renders a list of radio buttons for the given options. See also #listOptions.
   -->
-<#macro radioButtons field options labelFirst=false>
-	<@listOptions field options ; value, label, checked, id>
+<#macro radioButtons field options labelFirst=false valueProperty="" labelProperty="" messagePrefix="">
+	<@listOptions field options valueProperty labelProperty messagePrefix ; value, label, checked, id>
 		<#if labelFirst>
 			<label for="${id}">${label}</label>
 			<input type="radio" name="${field}" id="${id}" value="${value}"<@check checked/> />
