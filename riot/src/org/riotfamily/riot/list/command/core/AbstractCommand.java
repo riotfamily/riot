@@ -48,6 +48,8 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 	private String id;
 	
 	private String beanName;
+	
+	private String styleClass;
 
 	private boolean showOnForm;
 	
@@ -198,13 +200,20 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 		return action;
 	}
 
+	public void setStyleClass(String styleClass) {
+		this.styleClass = styleClass;
+	}
+	
 	/**
 	 * Returns the CSS class that is assigned to command's HTML element and
-	 * therefore defines which icon is displayed. The default implementation
-	 * returns the given action.
+	 * therefore defines which icon is displayed. If no class is set, the 
+	 * default implementation will return the action instead.
 	 */
 	protected String getStyleClass(CommandContext context, String action) {
-		return action;
+		if (styleClass == null) {
+			return action;
+		}
+		return styleClass;
 	}
 
 	/**
