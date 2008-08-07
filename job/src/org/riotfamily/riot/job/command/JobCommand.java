@@ -23,47 +23,36 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job.command;
 
+import java.util.Map;
+
+import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
-import org.riotfamily.riot.runtime.RiotRuntime;
-import org.riotfamily.riot.runtime.RiotRuntimeAware;
 
-public class JobCommand extends AbstractCommand implements
-		RiotRuntimeAware {
-
-	public static final String JOB_STATUS_ACTION = "jobStatus";
+public class JobCommand extends AbstractCommand {
 
 	private String jobType;
-
-	private RiotRuntime runtime;
 
 	public void setJobType(String jobType) {
 		this.jobType = jobType;
 	}
 
-	public void setRiotRuntime(RiotRuntime runtime) {
-		this.runtime = runtime;
-	}
-
 	public boolean isEnabled(CommandContext context) {
 		return true;
 	}
-
+	
 	public CommandResult execute(CommandContext context) {
 		String objectId = context.getObjectId() != null
 				? context.getObjectId() : context.getParentId();
 
-		StringBuffer url = new StringBuffer();
-		url.append(runtime.getServletPrefix())
-		   .append("/job?type=")
-		   .append(jobType);
-		
-		if (objectId != null) {
-			url.append("&objectId=")
-			   .append(objectId);
-		}
-		return new GotoUrlResult(context, url.toString());
+		Map<String, String> attributes = Generics.newHashMap();
+		attributes.put("type", jobType);
+		attributes.put("objectId", objectId);
+		String url = getRuntime().getUrl("jobUIController", attributes);
+		return new GotoUrlResult(context, ServletUtils.addParameter(url, 
+				"title", getLabel(context, getAction(context))));
 	}
 }
