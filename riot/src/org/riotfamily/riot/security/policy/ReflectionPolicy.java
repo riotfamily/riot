@@ -114,10 +114,10 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 			bestMatch = findSingleParamMethod(aac.action);
 		}
 		if (bestMatch != null) {
-			log.info("Using " + bestMatch + " for " + aac);
+			log.debug("Using " + bestMatch + " for " + aac);
 		}
 		else {
-			log.warn("No method found for " + aac);
+			log.debug("No method found for " + aac);
 		}
 		return bestMatch;
 		
