@@ -21,7 +21,7 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.beans;
+package org.riotfamily.common.beans.config;
 
 import javax.servlet.ServletContext;
 
