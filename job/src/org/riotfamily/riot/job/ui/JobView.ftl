@@ -49,7 +49,7 @@
 
 <script type="text/javascript" language="JavaScript">
 
-subPage('<@spring.messageText "job.title." + type, type />'); <#-- see path.js -->
+subPage('<@spring.messageText "job.title." + type, title />'); <#-- see path.js -->
 TweakStyle.roundElement('start', 'all');
 TweakStyle.roundElement('cancel', 'all');
 TweakStyle.roundElement('logPane', 'all');

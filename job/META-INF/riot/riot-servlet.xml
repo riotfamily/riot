@@ -35,9 +35,11 @@
 		<constructor-arg ref="jobUIUpdater" />
 	</bean>
 
-	<bean id="jobUIController" name="/job" class="org.riotfamily.riot.job.ui.JobUIController">
+	<bean id="jobUIController" class="org.riotfamily.riot.job.ui.JobUIController">
 		<property name="jobManager" ref="jobManager" />
 	</bean>
+	<alias name="jobUIController" alias="/job/@{type}" />
+	<alias name="jobUIController" alias="/job/@{type}/@{objectId}" />
 
 	<override:put ref="riotDwrConfigurator" property="converterTypes">		
 		<entry key="org.riotfamily.riot.job.model.*" value="bean"></entry>		
