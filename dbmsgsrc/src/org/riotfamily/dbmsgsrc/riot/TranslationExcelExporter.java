@@ -112,8 +112,8 @@ public class TranslationExcelExporter implements Exporter {
 				Message message = (Message) item;
 				HSSFRow row = sheet.createRow(i++);
 				addCell(row, 0, message.getEntry().getCode(), locked);
-				addCell(row, 1, message.getText(), editable);
-				addCell(row, 2, message.getEntry().getDefaultMessage().getText(), locked);
+				addCell(row, 1, message.getEntry().getDefaultMessage().getText(), locked);
+				addCell(row, 2, message.getText(), editable);
 				addCell(row, 3, message.getText(), hidden);
 			}
 			/*
