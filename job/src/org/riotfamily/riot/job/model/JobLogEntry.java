@@ -33,8 +33,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.AccessType;
-
 
 @Entity
 @Table(name="riot_job_log")
@@ -44,6 +42,7 @@ public class JobLogEntry {
 	
 	public static final int ERROR = 2;
 	
+	@SuppressWarnings("unused")
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)	
 	private Long id;
 	
