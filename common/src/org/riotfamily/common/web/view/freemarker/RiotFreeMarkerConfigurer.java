@@ -64,6 +64,8 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	
 	private boolean useTemplateCache = true;
 	
+	private boolean useComputerNumberFormat = true;
+	
 	private int templateUpdateDelay = 5;
 	
 	private String urlEscapingCharset = "UTF-8";
@@ -119,6 +121,14 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	}
 	
 	/**
+	 * Whether the <code>#0.#</code> should be used as default number format.
+	 * Default is <code>true</code>.
+	 */
+	public void setUseComputerNumberFormat(boolean useComputerNumberFormat) {
+		this.useComputerNumberFormat = useComputerNumberFormat;
+	}
+	
+	/**
 	 * Sets whether the FreeMarker template cache should be used 
 	 * (default is <code>true</code>).
 	 */
@@ -149,6 +159,10 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		
 		config.setURLEscapingCharset(urlEscapingCharset);
 		config.setWhitespaceStripping(whitespaceStripping);
+		if (useComputerNumberFormat) {
+			config.setNumberFormat("#0.#");
+		}
+		
 		importMacroLibraries(config);
 		config.setTemplateExceptionHandler(exceptionHandler);
 		
