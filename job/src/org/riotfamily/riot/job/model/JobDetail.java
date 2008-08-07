@@ -231,6 +231,9 @@ public class JobDetail {
 	public String getEstimatedTime() {
 		if (averageStepTime > 0 && stepsTotal > 0) {
 			long eta = averageStepTime * stepsTotal - executionTime;
+			if (eta < 0) {
+				eta = 0;
+			}
 			return FormatUtils.formatMillis(eta);
 		}
 		return null;
