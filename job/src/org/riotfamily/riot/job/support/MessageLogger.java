@@ -4,56 +4,43 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
+ *
  * The Original Code is Riot.
- * 
+ *
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2007
  * the Initial Developer. All Rights Reserved.
- * 
+ *
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
- *   Jan-Frederic Linde [jfl at neteye dot de]
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.job;
+package org.riotfamily.riot.job.support;
 
-import org.riotfamily.riot.job.support.MessageLogger;
-
-
+import org.riotfamily.riot.job.JobContext;
 
 /**
- * Context that is passed to a {@link Job} upon execution.
- * 
+ * Interface to log messages.
+ * @see JobContext
  * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 8.0
  */
-public interface JobContext extends MessageLogger {
+public interface MessageLogger {
 
 	/**
-	 * Returns the objectId.
+	 * Logs an info message.
 	 */
-	public String getObjectId();
-
-	/**
-	 * Notifies the DAO that a step has been completed.
-	 * @throws JobInterruptedException if the job has been interrupted 
-	 */
-	public void stepCompleted() throws JobInterruptedException;
-				
-	/**
-	 * Changes the job's description.
-	 */
-	public void updateDescription(String description);
+	public void logInfo(String message);
 	
 	/**
-	 * Changes the number of total steps.
+	 * Logs an error message.
 	 */
-	public void updateStepsTotal(int stepsTotal);
-		
+	public void logError(String message);
+
 }
