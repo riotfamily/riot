@@ -294,6 +294,11 @@
 	<#return commonMacroHelper.getMessage(code, args) />
 </#function>
 
+<#function getMessageWithDefault code default args...>
+	<#return commonMacroHelper.getMessageWithDefault(code, default, args) />
+</#function>
+
+
 <#macro message code args=[]><#local default><#nested></#local>${commonMacroHelper.getMessageWithDefault(code, args, default)}</#macro>
 
 <#---
