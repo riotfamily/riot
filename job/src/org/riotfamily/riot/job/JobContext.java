@@ -24,8 +24,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job;
 
-import org.riotfamily.riot.job.support.MessageLogger;
-
 
 
 /**
@@ -33,7 +31,7 @@ import org.riotfamily.riot.job.support.MessageLogger;
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public interface JobContext extends MessageLogger {
+public interface JobContext {
 
 	/**
 	 * Returns the objectId.
@@ -45,7 +43,17 @@ public interface JobContext extends MessageLogger {
 	 * @throws JobInterruptedException if the job has been interrupted 
 	 */
 	public void stepCompleted() throws JobInterruptedException;
-				
+			
+	/**
+	 * Logs an info message.
+	 */
+	public void logInfo(String message);
+	
+	/**
+	 * Logs an error message.
+	 */
+	public void logError(String message);
+	
 	/**
 	 * Changes the job's description.
 	 */
