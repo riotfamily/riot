@@ -30,7 +30,15 @@ import org.riotfamily.riot.job.JobInterruptedException;
 
 public class CommonsLogginJobContext implements JobContext {
 	
-	private Log log = LogFactory.getLog(CommonsLogginJobContext.class);
+	private Log log;
+	
+	public CommonsLogginJobContext() {
+		log = LogFactory.getLog(CommonsLogginJobContext.class);
+	}
+
+	public CommonsLogginJobContext(Log log) {
+		this.log = log;
+	}
 
 	public String getObjectId() {
 		return null;
