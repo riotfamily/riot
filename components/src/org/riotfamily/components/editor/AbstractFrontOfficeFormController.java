@@ -130,6 +130,7 @@ public abstract class AbstractFrontOfficeFormController
 		try {
 			Object bean = form.getBackingObject();
 			reattach(bean, request);
+			form.setBackingObject(bean);
 			form.populateBackingObject();
 			update(bean, request);
 		}
