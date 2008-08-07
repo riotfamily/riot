@@ -11,8 +11,7 @@
     	<artifact type="source" ext="src.zip" conf="src" />
     </publications>
     <dependencies>
-	    <dependency org="riotfamily" name="riot-core" rev="${dep.riot.revision}" conf="*->@" />
-        <dependency org="riotfamily" name="riot-hibernate" rev="${dep.riot.revision}" conf="*->@" />
+        <dependency org="riotfamily" name="riot-pages" rev="${dep.riot.revision}" conf="*->@" />
         <dependency org="apache" name="poi" rev="3.1" conf="build,runtime->default" />
     </dependencies>
 </ivy-module>
