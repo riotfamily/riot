@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.beans.MapWrapper;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.springframework.beans.PropertyAccessor;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -181,10 +183,26 @@ public class AttributePattern {
 		if (required == null) {
 			required = Collections.emptyMap();
 		}
+		
 		if (optional == null) {
 			optional = Collections.emptyMap();
 		}
-		return canFillIn(required.keySet(), optional.keySet(), anonymous);
+
+		Set<String> requiredNames = Generics.newHashSet();
+		for (Entry<String, ?> entry : required.entrySet()) {
+			if (entry.getValue() != null) {
+				requiredNames.add(entry.getKey());
+			}
+		}
+		
+		Set<String> optionalNames = Generics.newHashSet();
+		for (Entry<String, ?> entry : optional.entrySet()) {
+			if (entry.getValue() != null) {
+				optionalNames.add(entry.getKey());
+			}
+		}
+		
+		return canFillIn(requiredNames, optionalNames, anonymous);
 	}
 	
 	public boolean canFillIn(Set<String> required, Set<String> optional, int anonymous) {
@@ -253,10 +271,9 @@ public class AttributePattern {
 				}
 			} 
 			else {
-				if (replacement == null) {
-					return null;
+				if (replacement != null) {
+					m.appendReplacement(url, FormatUtils.uriEscape(replacement));
 				}
-				m.appendReplacement(url, FormatUtils.uriEscape(replacement));
 			}
 		}
 		m.appendTail(url);
