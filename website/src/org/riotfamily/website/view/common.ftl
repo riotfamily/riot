@@ -363,7 +363,7 @@
 
 <#macro stylesheets hrefs compress=commonMacroHelper.compressResources rel="stylesheet" type="text/css" attributes...>
 	<#if compress>
-		<link rel="${rel}" type="${type}" href="${resolve(pathForHandler("minifyCssController") + "?files=" + toDelimitedString(hrefs))?xml}"${joinAttributes(attributes)} />
+		<link rel="${rel}" type="${type}" href="${resource(pathForHandler("minifyCssController") + "?files=" + toDelimitedString(hrefs))?xml}"${joinAttributes(attributes)} />
 	<#else>
 		<#list hrefs as href>
 			<link rel="${rel}" type="${type}" href="${resource(href)?xml}"${joinAttributes(attributes)} />
@@ -373,7 +373,7 @@
 
 <#macro scripts srcs compress=commonMacroHelper.compressResources type="text/javascript" attributes...>
 	<#if compress>
-		<script src="${resolve(pathForHandler("minifyScriptController") + "?files=" + toDelimitedString(srcs))?xml}" type="${type}"${joinAttributes(attributes)}></script>
+		<script src="${resource(pathForHandler("minifyScriptController") + "?files=" + toDelimitedString(srcs))?xml}" type="${type}"${joinAttributes(attributes)}></script>
 	<#else>
 		<#list srcs as src>
 			<script src="${resource(src)?xml}" type="${type}"${joinAttributes(attributes)}></script>
