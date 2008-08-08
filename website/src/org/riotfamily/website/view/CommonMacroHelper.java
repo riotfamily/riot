@@ -50,6 +50,7 @@ import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.mapping.HandlerUrlResolver;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.common.web.util.StringCapturingResponseWrapper;
+import org.riotfamily.website.cache.CacheTagUtils;
 import org.riotfamily.website.hyphenate.RiotHyphenator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSourceResolvable;
@@ -391,6 +392,10 @@ public class CommonMacroHelper {
 			result.add(currentList);
 		}
 		return result;
+	}
+	
+	public void tag(String className) throws ClassNotFoundException {
+		CacheTagUtils.tag(className);
 	}
 	
 }

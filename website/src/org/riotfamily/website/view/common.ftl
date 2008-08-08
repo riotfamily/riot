@@ -457,3 +457,11 @@
 <#function split items groups>
 	<#return commonMacroHelper.split(items, groups) />
 </#function>
+
+<#---
+  - Tags the current cacheItem with the given className
+  - @param className The className to tag the cacheItem with
+  -->
+<#macro tag className>
+	${commonMacroHelper.tag(className)}
+</#macro>

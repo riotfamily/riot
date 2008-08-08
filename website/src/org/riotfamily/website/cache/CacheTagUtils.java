@@ -50,6 +50,11 @@ public final class CacheTagUtils {
 		TaggingContext.tag(clazz.getName());
 	}
 	
+	public static void tag(String className) throws ClassNotFoundException {
+		Class<?> clazz = Class.forName(className);
+		tag(clazz);
+	}
+	
 	public static void invalidate(CacheService cacheService, Class<?> clazz) {
 		if (cacheService != null) {
 		    cacheService.invalidateTaggedItems(clazz.getName());
