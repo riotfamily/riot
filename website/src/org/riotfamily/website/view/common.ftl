@@ -299,7 +299,7 @@
 </#function>
 
 
-<#macro message code args=[]><#local default><#nested></#local>${commonMacroHelper.getMessageWithDefault(code, args, default)}</#macro>
+<#macro message code args=[]><#local default><#nested></#local>${commonMacroHelper.getMessageWithDefault(code, default, args)}</#macro>
 
 <#---
   - @internal
