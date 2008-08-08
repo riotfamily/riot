@@ -133,7 +133,7 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 	}
 	
 	public void reset() {
-		if (optionItems != null) {
+		if (getFormContext() != null) {
 			optionItems = createOptionItems();
 			if (getFormListener() != null) {
 				getFormListener().elementChanged(this);
