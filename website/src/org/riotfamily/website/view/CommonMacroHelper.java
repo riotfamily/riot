@@ -130,7 +130,7 @@ public class CommonMacroHelper {
 		return ctx.getMessage(code, args, null, getLocale());
 	}
 	
-	public String getMessageWithDefault(String code, Object[] args, String defaultMessage) {
+	public String getMessageWithDefault(String code, String defaultMessage, Object[] args) {
 		if (!StringUtils.hasText(defaultMessage)) {
 			defaultMessage = null;
 		}
