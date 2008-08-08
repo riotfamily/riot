@@ -285,4 +285,8 @@ public class PageNode {
 		this.systemNode = systemNode;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("PageNode %s (type: %s)", id, pageType);
+	}
 }
