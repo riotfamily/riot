@@ -395,7 +395,7 @@ riot.Popup = Class.create({
 	hideElements: function(name) {
 		var exclude = this.div;
 		$$(name).each(function (e) {
-			if (!e.childOf(exclude)) {
+			if (!e.childOf(exclude) && e.getStyle('visibility') != 'hidden') {
 				e.makeInvisible();
 				e.hidden = true;
 			}

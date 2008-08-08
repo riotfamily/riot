@@ -405,6 +405,9 @@ riot.Content = Class.create({
 		this.clickHandler = clickHandler;
 		var c = this.element.childElements();
 		this.targetElement = c.length == 1 ? c[0] : this.element;
+		if (this.targetElement.getStyle('visibility') == 'hidden') {
+			this.targetElement = this.element;
+		}
 		Event.observe(this.targetElement, 'click', this.bOnClick);
 		Event.observe(this.targetElement, 'mouseover', this.bShowOutline);
 		Event.observe(this.targetElement, 'mouseout', this.bHideOutline);
