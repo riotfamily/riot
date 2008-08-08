@@ -93,15 +93,15 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
 		super.setQueryParameters(query, parent, params);
 		 if (parent != null) {
 			for (String param : query.getNamedParameters()) {
-				Object value = parent;
 				Matcher m = Pattern.compile("parent(?:_(\\w+))?").matcher(param);
 				if (m.matches()) {
+					Object value = parent;
 					String nested = m.group(1);
 					if (nested != null) {
 						value = PropertyUtils.getProperty(parent, nested);
 					}
+					query.setParameter(param, value);
 				}
-				query.setParameter(param, value);
 			}
         }
 	}
