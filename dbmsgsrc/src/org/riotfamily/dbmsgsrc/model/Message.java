@@ -39,10 +39,12 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
+import org.riotfamily.website.cache.TagCacheItems;
 
 @Entity
 @Table(name="riot_dbmsgsrc_messages")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="messages")
+@TagCacheItems
 public class Message {
 
 	private Long id;
