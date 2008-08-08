@@ -54,7 +54,7 @@ public class CommonsLogginJobContext implements JobContext {
 
 	public void logInfo(String message) {
 		if (stepsTotal > 0) {
-			message = String.valueOf(stepsCompleted * 100 / stepsTotal) + "% - "  + message;
+			message = "[" + (stepsCompleted * 100 / stepsTotal) + "%] " + message;
 		}
 		log.info(message);
 	}
