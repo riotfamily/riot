@@ -32,6 +32,10 @@ public class CommonsLogginJobContext implements JobContext {
 	
 	private Log log;
 	
+	private int stepsTotal;
+	
+	private int stepsCompleted;
+	
 	public CommonsLogginJobContext() {
 		log = LogFactory.getLog(CommonsLogginJobContext.class);
 	}
@@ -49,13 +53,18 @@ public class CommonsLogginJobContext implements JobContext {
 	}
 
 	public void logInfo(String message) {
+		if (stepsTotal > 0) {
+			message = String.valueOf(stepsCompleted * 100 / stepsTotal) + "% - "  + message;
+		}
 		log.info(message);
 	}
 
 	public void stepCompleted() throws JobInterruptedException {
+		stepsCompleted++;
 	}
 	
 	public void updateStepsTotal(int stepsTotal) {
+		this.stepsTotal = stepsTotal;
 	}
 	
 	public void updateDescription(String description) {
