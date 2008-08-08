@@ -196,6 +196,28 @@ public class PageResolver {
 		Object site = context.getAttribute(SITE_ATTRIBUTE);
 		return site != NOT_FOUND ? (Site) site : null; 
 	}
+	
+	/**
+	 * Returns the previously resolved Path within the Site for the given request.
+	 * <p>
+	 * <strong>Note:</strong> This method does not perform any lookups itself.
+	 * Only use this method if you are sure that 
+	 * {@link #getSite(HttpServletRequest)} has been invoked before. 
+	 */
+	public static String getResolvedPathWithinSite(HttpServletRequest request) {
+		return (String)request.getAttribute(PATH_ATTRIBUTE);
+	}
+
+	/**
+	 * Returns the previously resolved Path within the Site for the given context.
+	 * <p>
+	 * <strong>Note:</strong> This method does not perform any lookups itself.
+	 * Only use this method if you are sure that 
+	 * {@link #getSite(HttpServletRequest)} has been invoked before. 
+	 */
+	public static String getResolvedPathWithinSite(UrlResolverContext context) {
+		return (String)context.getAttribute(PATH_ATTRIBUTE);
+	}
 
 	/**
 	 * Returns the Page which is requestable at the given URL. This may return
