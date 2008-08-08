@@ -132,7 +132,8 @@ public abstract class AbstractJob implements Job, BeanNameAware {
 		return null;
 	}
 	
-	protected abstract void execute(JobContext context, Object entity);
+	protected abstract void execute(JobContext context, Object entity)
+			throws Exception;
 	
 	public void tearDown(String objectId) {
 	}
