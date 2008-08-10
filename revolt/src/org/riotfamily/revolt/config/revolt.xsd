@@ -17,7 +17,7 @@
 	
 	<xsd:element name="history">
 		<xsd:complexType>
-			<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+			<xsd:sequence minOccurs="0" maxOccurs="unbounded">
 				<xsd:element ref="change-set" />
 			</xsd:sequence>
 			<xsd:attribute name="module" type="xsd:string" use="required" />

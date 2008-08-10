@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.revolt.support.DatabaseUtils;
 import org.riotfamily.revolt.support.LogTable;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.StringUtils;
@@ -85,7 +86,9 @@ public class Evolver implements ApplicationContextAware {
 			
 			String instructions = getInstructions();
 			if (StringUtils.hasLength(instructions)) {
-				throw new EvolutionInstructions(instructions);
+				log.fatal(instructions);
+				throw new FatalBeanException("Database not up-to-date. " 
+						+ "See instructions above.");
 			}
 		}
 	}
@@ -103,7 +106,7 @@ public class Evolver implements ApplicationContextAware {
 		}
 		return logTable;
 	}
-	
+		
 	private Script getScript(EvolutionHistory history) {
 		DataSource dataSource = history.getDataSource();
 		Script script = (Script) scripts.get(dataSource);

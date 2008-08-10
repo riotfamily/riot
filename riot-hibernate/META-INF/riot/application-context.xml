@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:db="http://www.riotfamily.org/schema/revolt"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
@@ -9,7 +10,9 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
-		http://www.riotfamily.org/schema/common/override-8.0.xsd">
+		http://www.riotfamily.org/schema/common/override-8.0.xsd
+		http://www.riotfamily.org/schema/revolt
+		http://www.riotfamily.org/schema/revolt/revolt-8.0.xsd">
 
 	<!-- JDBC DataSource pooled by C3P0 -->
 	<bean id="riotDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
@@ -24,15 +27,17 @@
 	    <property name="checkoutTimeout" value="30000" />
 	</bean>
 
-	<!-- 
 	<bean id="revolt" class="org.riotfamily.revolt.Evolver">
 		<property name="automatic" value="${riot.revolt.automatic=false}" />
 		<property name="enabled" value="${riot.revolt.enabled=true}" />
 	</bean>
- 	-->
+ 
+	<db:history data-source="riotDataSource" module="riot" check-table-name="revolt_changelog" />
  
 	<!-- The Hibernate SessionFactory -->
-	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean"
+			depends-on="revolt">
+			
 		<property name="dataSource" ref="riotDataSource" />
 		<property name="mappingLocations">
 			<list>

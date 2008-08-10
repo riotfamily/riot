@@ -37,8 +37,8 @@ import org.riotfamily.revolt.Script;
 import org.riotfamily.revolt.definition.Column;
 import org.riotfamily.revolt.definition.Table;
 import org.riotfamily.revolt.refactor.InsertData;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -79,11 +79,11 @@ public class LogTable {
 		if (!exists) {
 			return Collections.emptyList();
 		}
-		JdbcTemplate template = new JdbcTemplate(dataSource);
+		SimpleJdbcTemplate template = new SimpleJdbcTemplate(dataSource);
 		return template.query("select change_set_id, seq_nr from " 
 				+ TABLE_NAME + " where module = ? order by seq_nr asc", 
-				new Object[] { moduleName }, new RowMapper() {
-					public Object mapRow(ResultSet rs, int rowNumber) 
+				new ParameterizedRowMapper<String>() {
+					public String mapRow(ResultSet rs, int rowNumber) 
 							throws SQLException {
 						
 						String changeSetId = rs.getString(1);
@@ -99,10 +99,10 @@ public class LogTable {
 						}
 						return changeSetId;
 					}
-				}
-		);
+				}, 
+				moduleName);
 	}
-	
+
 	public Script getCreateTableScript() {
 		Script script = dialect.createTable(table);
 		if (DatabaseUtils.anyTablesExist(dataSource)) {
@@ -110,7 +110,7 @@ public class LogTable {
 		}
 		return script;
 	}
-		
+
 	public Script getInsertScript(ChangeSet changeSet) {
 		InsertData insert = new InsertData(TABLE_NAME);
 		insert.addEntry("module", changeSet.getModuleName());
