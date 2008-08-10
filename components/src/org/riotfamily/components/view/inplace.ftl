@@ -282,7 +282,7 @@
 <#---
   -
   -->
-<#macro use container form="" tag="" attributes...>
+<#macro use container form="" tag="" autoSizePopup=true attributes...>
 	<#local attributes = c.unwrapAttributes(attributes) />
 	<#local previousModel = currentModel />
 	<#assign currentContainer = container />
@@ -299,7 +299,8 @@
 		<#if form?has_content>
 			<#local attributes = attributes + {
 					"class": attributes.class + " riot-form",
-					"riot:form": form					
+					"riot:form": form,
+					"riot:autoSizePopup": autoSizePopup?string	
 			} />
 		</#if>
 		<#if container.dirty>

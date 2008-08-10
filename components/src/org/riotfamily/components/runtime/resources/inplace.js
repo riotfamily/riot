@@ -375,8 +375,9 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 });
 
 riot.Popup = Class.create({
-	initialize: function(title, content, ok, help) {
+	initialize: function(title, content, ok, autoSize, help) {
 		this.ok = ok;
+		this.autoSize = autoSize;
 		this.overlay = RBuilder.node('div', {id: 'riot-overlay', style: {display: 'none'}});
 		this.div = RBuilder.node('div', {id: 'riot-popup', style: {position: 'absolute'}},
 			help ? RBuilder.node('div', {className: 'riot-help-button', onclick: help}) : null,
@@ -423,8 +424,16 @@ riot.Popup = Class.create({
 		this.hideElements('object');
 		this.hideElements('embed');
 
-		var top = Math.max(5, Math.round(document.viewport.getHeight() / 2 - this.div.clientHeight / 2));
-		var left = Math.round(document.viewport.getWidth() / 2 - this.div.clientWidth / 2);
+		var top = 50;
+		var left = 50;
+		if (this.autoSize) {
+			top = Math.max(5, Math.round(document.viewport.getHeight() / 2 - this.div.clientHeight / 2));
+			left = Math.round(document.viewport.getWidth() / 2 - this.div.clientWidth / 2);
+		}
+		else {
+			this.div.style.width = (document.viewport.getWidth() - 100) + 'px';
+			this.content.style.height = (document.viewport.getHeight() - 150) + 'px';
+		}
 
 		this.div.hide();
 		this.div.style.position = '';
@@ -435,6 +444,7 @@ riot.Popup = Class.create({
 		}
 		this.div.style.top = top + 'px';
 		this.div.style.left = left + 'px';
+		
 		var h = Math.max(document.viewport.getHeight(), document.body.getHeight());
 		this.overlay.style.height = h + 'px';
 		this.overlay.show();
@@ -473,7 +483,7 @@ riot.TextareaPopup = Class.create(riot.Popup, {
 
 	initialize: function($super, editor) {
 		this.textarea = RBuilder.node('textarea', {value: editor.text || ''}),
-		$super('${title.editorPopup}', this.textarea, editor.save.bind(editor), editor.help);
+		$super('${title.editorPopup}', this.textarea, editor.save.bind(editor), true, editor.help);
 		var availableTextareaHeight = document.viewport.getHeight() - 82;
 		if (availableTextareaHeight < this.textarea.getHeight()) {
 			this.textarea.style.height = availableTextareaHeight + 'px';

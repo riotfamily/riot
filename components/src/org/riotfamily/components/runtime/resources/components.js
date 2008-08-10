@@ -380,6 +380,7 @@ riot.Content = Class.create({
 		this.id = id || el.readAttribute('riot:contentId');
 		this.container = riot.findContainer(el);
 		this.form = el.readAttribute('riot:form');
+		this.autoSizePopup = el.readAttribute('riot:autoSizePopup') != 'false';
 		this.bShowOutline = this.showOutline.bindAsEventListener(this);
 		this.bHideOutline = this.hideOutline.bindAsEventListener(this);
 		this.bOnClick = this.onClick.bindAsEventListener(this);
@@ -457,7 +458,7 @@ riot.Content = Class.create({
 		riot.popup = new riot.Popup('${title.properties}', iframe, function() {
 			var win = iframe.contentWindow ? iframe.contentWindow : iframe.window;
 			win.save();
-		});
+		}, this.autoSizePopup);
 		
 		// The ComponentFormSuccessView.ftl will invoke
 		// parent.riot.popup.component.propertiesChanged()

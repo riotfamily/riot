@@ -50,9 +50,9 @@
 <#---
   - @see <a href="inplace.html#use">inplace.use</a>
   -->
-<#macro use page=currentPage form="" tag="" attributes...>
+<#macro use page=currentPage form="" tag="" autoSizePopup=true attributes...>
 	<#local attributes = c.unwrapAttributes(attributes) />
-	<@inplace.use container=page.contentContainer form=form tag=tag attributes=attributes>
+	<@inplace.use container=page.contentContainer form=form tag=tag autoSizePopup=autoSizePopup attributes=attributes>
 		<#nested />
 	</@inplace.use>
 </#macro>
