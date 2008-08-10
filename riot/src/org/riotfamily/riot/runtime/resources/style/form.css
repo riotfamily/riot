@@ -338,7 +338,7 @@ table.item td.removeButton {
 .listEditor td.hover,
 .listEditor td.hover div {
     color: #fff;
-    background-color: #cb0038;
+    background-color: ${highlight_color};
     background-position: -32px center;
 }
 
