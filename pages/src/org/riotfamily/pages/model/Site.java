@@ -326,9 +326,9 @@ public class Site {
 		}
 		Site other = (Site) obj;
 		
-		return ObjectUtils.nullSafeEquals(this.hostName, other.hostName)
-				&& ObjectUtils.nullSafeEquals(this.pathPrefix, other.pathPrefix)
-				&& ObjectUtils.nullSafeEquals(this.locale, other.locale)
-				&& ObjectUtils.nullSafeEquals(this.masterSite, other.masterSite);
+		return ObjectUtils.nullSafeEquals(this.hostName, other.getHostName())
+				&& ObjectUtils.nullSafeEquals(this.pathPrefix, other.getPathPrefix())
+				&& ObjectUtils.nullSafeEquals(this.locale, other.getLocale())
+				&& ObjectUtils.nullSafeEquals(this.masterSite, other.getMasterSite());
 	}
 }
