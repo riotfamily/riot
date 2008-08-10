@@ -32,7 +32,7 @@
 		<property name="enabled" value="${riot.revolt.enabled=true}" />
 	</bean>
  
-	<db:history data-source="riotDataSource" module="riot" check-table-name="revolt_changelog" />
+	<db:history data-source="riotDataSource" module="riot" check-table-name="revolt_change_log" />
  
 	<!-- The Hibernate SessionFactory -->
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean"
