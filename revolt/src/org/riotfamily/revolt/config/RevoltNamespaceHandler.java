@@ -92,6 +92,8 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 			MutablePropertyValues pv = new MutablePropertyValues();
 			pv.addPropertyValue("changeSets", parseChangeSets(element));
 			
+			pv.addPropertyValue("checkTableName", element.getAttribute("check-table-name"));
+			
 			String depends = element.getAttribute("depends");
 			if (depends != null) {
 				pv.addPropertyValue("depends",
