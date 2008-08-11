@@ -8,7 +8,6 @@ import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.security.auth.RiotUser;
 import org.riotfamily.riot.security.policy.AuthorizationPolicy;
 
@@ -34,13 +33,7 @@ public class SiteUserPolicy implements AuthorizationPolicy {
 		if (riotUser instanceof SiteUser) {
 			SiteUser user = (SiteUser) riotUser;
 			
-			if (isLimited(user)) {		
-				if (object instanceof EditorDefinition) {
-					EditorDefinition editor = (EditorDefinition) object;				
-					if ("systemPreferences".equals(editor.getId())) {
-						return ACCESS_DENIED;
-					}
-				}
+			if (isLimited(user)) {				
 				if (object instanceof Site) {
 					Site site = (Site) object;
 					if (!user.getSites().contains(site)) {
