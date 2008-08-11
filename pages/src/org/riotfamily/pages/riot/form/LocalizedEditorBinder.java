@@ -2,7 +2,6 @@ package org.riotfamily.pages.riot.form;
 
 import java.beans.PropertyEditor;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.riotfamily.forms.Editor;
@@ -42,7 +41,7 @@ public class LocalizedEditorBinder implements EditorBinder {
 	}
 	
 	public Object populateBackingObject() {
-		for (EditorBinding binding : getBindings()) {
+		for (EditorBinding binding : getBindings().values()) {
 			setPropertyValue(binding.getProperty(), getValue(binding));
 		}
 		return getBackingObject();
@@ -65,7 +64,7 @@ public class LocalizedEditorBinder implements EditorBinder {
 		return delegate.getBeanClass();
 	}
 
-	public List<EditorBinding> getBindings() {
+	public Map<String, EditorBinding> getBindings() {
 		return delegate.getBindings();
 	}
 

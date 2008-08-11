@@ -24,7 +24,7 @@
 package org.riotfamily.forms;
 
 import java.beans.PropertyEditor;
-import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.PropertyEditorRegistry;
@@ -35,7 +35,7 @@ import org.springframework.beans.PropertyEditorRegistry;
  */
 public interface EditorBinder extends PropertyEditorRegistry {
 
-	public List<EditorBinding> getBindings();
+	public Map<String, EditorBinding> getBindings();
 
 	public EditorBinder replace(EditorBinder previousBinder);
 	
