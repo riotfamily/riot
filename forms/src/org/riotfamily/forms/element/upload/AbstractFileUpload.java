@@ -45,7 +45,7 @@ public abstract class AbstractFileUpload extends CompositeElement implements Edi
 		ResourceElement {
 	
 	protected static FormResource RESOURCE = new ScriptResource(
-			"inline-upload.js", null);
+			"form/inline-upload.js", null);
 	
 	public AbstractFileUpload() {
 		addComponent(new UploadElement());
