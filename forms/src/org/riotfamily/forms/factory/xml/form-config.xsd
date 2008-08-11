@@ -301,6 +301,12 @@
 			<xsd:attribute name="label-items" type="xsd:boolean" default="true" />
 		</xsd:complexType>
 	</xsd:element>
+	
+	<xsd:element name="switch">
+		<xsd:complexType>
+			<xsd:group ref="elements" minOccurs="3" maxOccurs="unbounded" />
+		</xsd:complexType>
+	</xsd:element>
 
 	<xsd:element name="calendar">
 		<xsd:complexType>

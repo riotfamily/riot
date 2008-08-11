@@ -61,6 +61,18 @@ public abstract class AbstractSingleSelectElement
 		updateSelection(request.getParameter(getParamName()));
 	}
 	
+	public int getSelectedIndex() {
+		if (hasSelection()) {
+			for (int i = 0; i < getOptionItems().size(); i++) {
+				OptionItem option = getOptionItems().get(i);
+				if (selectedValue.equals(option.getValue())) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
 	protected void updateSelection(Collection<?> optionValues) {
 		if (optionValues != null && selectedValue != null) {
 			for (Object value : optionValues) {

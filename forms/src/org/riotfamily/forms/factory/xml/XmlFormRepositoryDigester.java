@@ -55,6 +55,7 @@ import org.riotfamily.forms.element.TinyMCE;
 import org.riotfamily.forms.element.collection.ListEditor;
 import org.riotfamily.forms.element.collection.MapEditor;
 import org.riotfamily.forms.element.select.CheckboxGroup;
+import org.riotfamily.forms.element.select.ElementSwitch;
 import org.riotfamily.forms.element.select.ImageCheckboxGroup;
 import org.riotfamily.forms.element.select.MultiSelectBox;
 import org.riotfamily.forms.element.select.RadioButtonGroup;
@@ -132,6 +133,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		elementClasses.put("image-checkbox-group", ImageCheckboxGroup.class);
 		elementClasses.put("editable-if-new", EditableIfNew.class);
 		elementClasses.put("autocomplete", AutocompleteTextField.class);
+		elementClasses.put("switch", ElementSwitch.class);
 	}
 
 	public void digest(Document doc, Resource resource) {
