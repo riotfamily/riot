@@ -188,7 +188,7 @@ public class Site {
 	}
 	
 	public boolean prefixMatches(String path) {
-		return pathPrefix == null || path.startsWith(pathPrefix + "/");
+		return pathPrefix == null || path.startsWith(pathPrefix + "/") || pathPrefix.equals(path);
 	}
 			
 	public boolean matches(String hostName, String path) {
