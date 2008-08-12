@@ -44,6 +44,7 @@ import org.springframework.util.Assert;
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
+ * @deprecated
  */
 public class TransactionalJobDetailFactoryBean implements 
 		FactoryBean, BeanNameAware, BeanFactoryAware, InitializingBean {

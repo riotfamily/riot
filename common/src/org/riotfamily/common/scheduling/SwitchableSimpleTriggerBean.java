@@ -10,6 +10,7 @@ import org.springframework.scheduling.quartz.SimpleTriggerBean;
  * start never.
  * 
  * @author Alf Werder <alf dot werder at artundweise dot de>
+ * @deprecated
  */
 public class SwitchableSimpleTriggerBean extends SimpleTriggerBean  {
 	private static final long serialVersionUID = 0L;
