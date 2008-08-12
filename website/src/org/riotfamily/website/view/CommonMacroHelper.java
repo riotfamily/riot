@@ -226,6 +226,17 @@ public class CommonMacroHelper {
 		}
 		return false;
 	}
+	
+	public String getHostName(String url) {
+		try {
+			URI uri = new URI(url);
+			return uri.getHost();
+		}
+		catch (URISyntaxException e) {
+			log.warn(e.getMessage());
+		}
+		return null;
+	}
 
 	public String include(String url) throws ServletException, IOException {
 		//request.getRequestDispatcher(url).include(request, response);

@@ -131,6 +131,13 @@
 </#function>
 
 <#---
+  - Returns the hostName of the given URL
+  -->
+<#function hostName url>
+	<#return commonMacroHelper.getHostName(url?trim) />
+</#function>
+
+<#---
   - Converts the given path into an absolute URL by adding the protocol,
   - server-name, port and contextPath of the current request.
   -->
