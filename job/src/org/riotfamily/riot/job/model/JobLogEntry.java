@@ -33,6 +33,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.riotfamily.common.util.FormatUtils;
+
 
 @Entity
 @Table(name="riot_job_log")
@@ -65,7 +67,7 @@ public class JobLogEntry {
 	public JobLogEntry(JobDetail job, int priority, String message) {
 		this.job = job;
 		this.priority = priority;
-		this.message = message;
+		this.message = FormatUtils.truncate(message, 255);
 		this.date = new Date();
 	}
 	
