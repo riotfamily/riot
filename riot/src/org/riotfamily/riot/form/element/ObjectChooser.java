@@ -197,8 +197,14 @@ public class ObjectChooser extends AbstractChooser
 		return EditorDefinitionUtils.getListDefinition(targetEditorDefinition).getDao();
 	}
 	
+	@Override
 	protected Object loadBean(String objectId) {
-		return EditorDefinitionUtils.loadBean(targetEditorDefinition, objectId);
+		return getRiotDao().load(objectId);
+	}
+	
+	@Override
+	protected Object mergeBean(Object bean) {
+		return getRiotDao().merge(bean);
 	}
 
 	protected void renderLabel(Object object, PrintWriter writer) {

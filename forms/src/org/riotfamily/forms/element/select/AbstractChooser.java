@@ -116,8 +116,11 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	public String getInitScript() {
 		return "new Chooser('" + getId() + "');";
 	}
-	
+		
 	protected abstract Object loadBean(String objectId);
+	
+	protected abstract Object mergeBean(Object bean);
+	
 	
 	protected void setObjectId(String objectId) {
 		log.debug("Setting objectId to: " + objectId);
@@ -136,7 +139,7 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	}
 
 	public Object getValue() {
-		return object;
+		return mergeBean(object);
 	}
 	
 	public void handleContentRequest(HttpServletRequest request, 
