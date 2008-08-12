@@ -139,6 +139,9 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	}
 
 	public Object getValue() {
+		if (object == null) {
+			return null;
+		}
 		return mergeBean(object);
 	}
 	
