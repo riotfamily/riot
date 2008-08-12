@@ -1,3 +1,4 @@
 http\://www.riotfamily.org/schema/common/override.xsd=/org/riotfamily/common/beans/override/override.xsd
 http\://www.riotfamily.org/schema/common/override-6.5.xsd=/org/riotfamily/common/beans/override/override.xsd
 http\://www.riotfamily.org/schema/common/override-7.0.xsd=/org/riotfamily/common/beans/override/override.xsd
+http\://www.riotfamily.org/schema/common/override-8.0.xsd=/org/riotfamily/common/beans/override/override.xsd
