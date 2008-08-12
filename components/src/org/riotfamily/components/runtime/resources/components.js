@@ -560,7 +560,7 @@ riot.InsertButton = Class.create({
 		}
 	},
 
-	insert: function(config) {
+	insert: function(config) {		
 		ComponentEditor.insertComponent(this.componentList.id, -1, config.type, 
 				Object.toJSON(config.defaults), this.oninsert.bind(this));
 
@@ -583,6 +583,9 @@ riot.InsertButton = Class.create({
 			});
 		}
 		riot.toolbar.enablePublishButtons();
+		if (this.componentList.config.max && this.componentList.componentElements.length == this.componentList.config.max) {
+			this.componentList.insertOff();			
+		}
 	},
 
 	onupdate: function(html) {
