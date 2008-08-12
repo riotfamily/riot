@@ -73,10 +73,13 @@ public class ListItemRenderer extends TextRenderer {
 		super.afterPropertiesSet();
 	}
 	
-	public BufferedImage generate(String text, int maxWidth, String color, 
-			boolean hover) throws IOException {
+	@Override
+	public BufferedImage generate(String text, int maxWidth, String color) {
+		return generate(text, maxWidth, color, false);
+	}
 	
-		BufferedImage image = generate(text, maxWidth, color);
+	public BufferedImage generate(String text, int maxWidth, String color, boolean hover) {
+		BufferedImage image = super.generate(text, maxWidth, color);
 		if (bulletIcon != null && !hover) {
 			image.getGraphics().drawImage(bulletIcon, 0, bulletTop, null);
 		}
