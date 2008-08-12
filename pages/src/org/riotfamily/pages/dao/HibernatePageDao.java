@@ -116,7 +116,7 @@ public class HibernatePageDao extends AbstractPageDao {
 	}
 	
 	public Site mergeSite(Site site) {
-		hibernate.saveOrUpdate(site);
+		hibernate.update(site);
 		return site;
 	}
 
@@ -128,7 +128,7 @@ public class HibernatePageDao extends AbstractPageDao {
 	}
 
 	public Page mergePage(Page page) {
-		hibernate.saveOrUpdate(page);
+		hibernate.update(page);
 		return page;
 	}
 	
