@@ -581,4 +581,22 @@
 		</property>
 	</bean>
 
+	<bean class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="name" value="startup" />
+		<property name="repeatCount" value="0" />
+		<property name="startDelay" value="20000" />
+	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="name" value="daily" />
+		<property name="cronExpression" value="0 0 3 * * ?" />
+	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="name" value="hourly" />
+		<property name="cronExpression" value="0 0 * * * ?" />
+	</bean>	
+	
+	<bean id="riotTaskScheduler" class="org.riotfamily.common.scheduling.ScheduledTaskSchedulerFactoryBean" />
+
 </beans>
