@@ -52,7 +52,7 @@ public class SiteUserPolicy implements AuthorizationPolicy {
 		return ACCESS_ABSTAIN;
 	}
 
-	private boolean isLimited(SiteUser siteUser) {
+	protected boolean isLimited(SiteUser siteUser) {
 		Set<Site> sites = siteUser.getSites();
 		if (sites != null && sites.size() > 0) {
 			return true;
