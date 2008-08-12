@@ -23,18 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.dao;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.metadata.CollectionMetadata;
-import org.riotfamily.common.util.Generics;
 import org.riotfamily.media.model.RiotFile;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,15 +35,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class HibernateMediaDao implements MediaDao {
 
-	private Log log = LogFactory.getLog(HibernateMediaDao.class);
-	
 	private SessionFactory sessionFactory;
 
-	private List<String> fileQueries = Generics.newArrayList();
-	
 	public HibernateMediaDao(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
-		init();
 	}
 	
 	private Session getSession() {
@@ -64,39 +49,20 @@ public class HibernateMediaDao implements MediaDao {
 		return (RiotFile) getSession().get(RiotFile.class, id);
 	}
 		
-	public RiotFile findDataByUri(String uri) {
+	public RiotFile findFileByUri(String uri) {
 		return (RiotFile) getSession().createQuery("from " 
 				+ RiotFile.class.getName() 
-				+ " data where data.uri = :uri")
+				+ " where uri = :uri")
 				.setParameter("uri", uri)
 				.uniqueResult();
 	}
 	
-	public RiotFile findDataByMd5(String md5) {
+	public RiotFile findFileByMd5(String md5) {
 		return (RiotFile) getSession().createQuery("from " 
 				+ RiotFile.class.getName() 
-				+ " data where data.md5 = :md5")
+				+ " where md5 = :md5")
 				.setParameter("md5", md5)
 				.uniqueResult();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void deleteOrphanedFiles() {
-		Set<Long> ids = Generics.newHashSet();
-		for (String hql : fileQueries) {
-			ids.addAll(getSession().createQuery(hql).list());
-		}
-		
-		Iterator<Long> it = getSession().createQuery(
-				"select id from " + RiotFile.class.getName()).iterate();
-		
-		while (it.hasNext()) {
-			Long id = it.next();
-			if (!ids.contains(id)) {
-				log.info("Deleting orphaned file: " + id);
-				deleteFile(id);
-			}
-		}
 	}
 	
 	public void saveFile(RiotFile file) {
@@ -107,36 +73,4 @@ public class HibernateMediaDao implements MediaDao {
 		getSession().delete(file);
 	}
 	
-	public void deleteFile(Long id) {
-		getSession().createQuery("delete from " + RiotFile.class.getName() 
-				+ " where id = :id").setParameter("id", id).executeUpdate();
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void init() {
-		Collection<ClassMetadata> allMeta = sessionFactory.getAllClassMetadata().values();
-		for (ClassMetadata meta : allMeta) { 
-			for (String name : meta.getPropertyNames()) {
-				if (RiotFile.class.isAssignableFrom(meta.getPropertyType(name).getReturnedClass())) {
-					fileQueries.add(String.format(
-							"select %1$s.id from %2$s where %1$s is not null",
-							name, meta.getEntityName()));
-				}
-			}
-		}
-		
-		Collection<CollectionMetadata> allCollMeta = sessionFactory.getAllCollectionMetadata().values();
-		for (CollectionMetadata meta : allCollMeta) {
-			if (RiotFile.class.isAssignableFrom(meta.getElementType().getReturnedClass())) {
-				String role = meta.getRole();
-				int i = role.lastIndexOf('.');
-				String entityName = role.substring(0, i);
-				String property = role.substring(i + 1);
-				fileQueries.add(String.format("select file.id from %1$s ref " +
-						"join ref.%2$s as file where file is not null",
-						entityName, property));	
-			}
-		}
-	}
-
 }

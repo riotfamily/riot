@@ -33,28 +33,15 @@
 		<value>classpath:/org/riotfamily/media/runtime/i18n/messages</value>
 	</override:add>
 	
-	<bean id="mediaCleanUpJobDetail" class="org.riotfamily.common.scheduling.TransactionalJobDetailFactoryBean">
-		<property name="callback">
-			<bean class="org.riotfamily.media.cleanup.CleanUpCallback">
-				<constructor-arg ref="mediaDao" />
-			</bean>
-		</property>
+	<bean id="mediaCleanUp" class="org.riotfamily.media.cleanup.HibernateCleanUpTask">
+		<constructor-arg ref="sessionFactory" />
+		<constructor-arg ref="fileStore" />
+		<constructor-arg ref="transactionManager" />
+		<property name="triggerNames" value="${riot.media.cleanUp.schedule=startup,daily" />
 	</bean>
-
+	
 	<bean id="mediaProcessingService" class="org.riotfamily.media.service.ProcessingService" />
 	
-	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-	    <property name="triggers">
-			<list>
-				<bean class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-					<property name="jobDetail" ref="mediaCleanUpJobDetail" />
-					<property name="repeatInterval" value="${riot.media.cleanUpInterval=3600000}" />
-					<property name="startDelay" value="60000" />
-				</bean>
-			</list>
-	    </property>
-    </bean>
-    
     <bean id="riotImageRenderer" class="org.riotfamily.media.riot.ui.RiotImageRenderer" />
 
 </beans>

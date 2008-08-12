@@ -33,12 +33,10 @@ public interface MediaDao {
 
 	public RiotFile loadFile(Long id);
 	
-	public RiotFile findDataByUri(String uri);
+	public RiotFile findFileByUri(String uri);
 	
-	public RiotFile findDataByMd5(String md5);
-	
-	public void deleteOrphanedFiles();
-	
+	public RiotFile findFileByMd5(String md5);
+
 	public void saveFile(RiotFile file);
 	
 	public void deleteFile(RiotFile file);
