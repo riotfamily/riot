@@ -161,6 +161,7 @@ public class HibernateComponentDao implements ComponentDao {
 				deleteContent(preview);
 			}
 			container.setDirty(false);
+			ComponentCacheUtils.invalidateContainer(cacheService, container);
 			discarded = true;
 		}
 		return discarded;
