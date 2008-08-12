@@ -227,7 +227,7 @@ public class PageNode {
 				"site before it can be added.");
 		
 		Assert.isNull(getPage(page.getSite()), "This node already has a " +
-				" page for the site " + page.getSite());
+				"page for the site " + page.getSite());
 		
 		page.setNode(this);
 		if (pages == null) {
