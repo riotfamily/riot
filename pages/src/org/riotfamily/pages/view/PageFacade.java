@@ -38,10 +38,10 @@ import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
-import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 
 /**
@@ -201,23 +201,23 @@ public class PageFacade {
 	}
 
 	public Long getContentId() {
-		Content content = getContentContainer().getContent(preview);
+		Content content = getPageProperties().getContent(preview);
 		return content != null ? content.getId() : null;
 	}
 		
-	public ContentContainer getContentContainer() {
-		ContentContainer container = page.getPageProperties(); 
-		ComponentCacheUtils.addContainerTags(container, preview);
+	public PageProperties getPageProperties() {
+		PageProperties pageProperties = page.getPageProperties(); 
+		ComponentCacheUtils.addContainerTags(pageProperties, preview);
 		Page master = page.getMasterPage();
 		if (master != null) {
 			ComponentCacheUtils.addContainerTags(master.getPageProperties(), preview);
 		}
-		return container;
+		return pageProperties;
 	}
 
 	public Map<String, Object> getProperties() {
 		if (properties == null) {
-			properties = page.getPageProperties().unwrap(preview);
+			properties = getPageProperties().unwrap(preview);
 		}
 		return properties;
 	}
@@ -230,7 +230,7 @@ public class PageFacade {
 	}
 	
 	public Map<String, Object> getLocal() {
-		return page.getPageProperties().unwrapLocal(preview);
+		return getPageProperties().unwrapLocal(preview);
 	}
 
 	public String getTitle() {
