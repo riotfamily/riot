@@ -27,11 +27,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 
 import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.io.RecursiveFileIterator;
 import org.riotfamily.common.util.FormatUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -139,8 +141,9 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 	/**
 	 * Returns whether the next storage directory should be used.
 	 */
-	private boolean storageExceeded() {
-		return storageDir == null || storageDir.list().length >= maxFilesPerDir;
+	private boolean shouldUseNewStorageDir() {
+		return storageDir == null || !storageDir.exists() 
+				|| storageDir.list().length >= maxFilesPerDir;
 	}
 
 	/**
@@ -150,9 +153,9 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 	 * {@link #setMaxFilesPerDir(int) maxFilesPerDir} value.
 	 */
 	protected File getStorageDir() {
-		if (storageExceeded()) {
+		if (shouldUseNewStorageDir()) {
 			synchronized (this) {
-				while (storageExceeded()) {
+				while (shouldUseNewStorageDir()) {
 					String name = String.valueOf(storageDirIndex++);
 					storageDir = createDir(new File(baseDir, name));
 				}	
@@ -242,6 +245,27 @@ public class DefaultFileStore implements FileStore, ServletContextAware,
 			!dir.equals(baseDir)) {
 			
 			dir.delete();
+		}
+	}
+	
+	public Iterator<String> iterator() {
+		return new FileUriIterator();
+	}
+	
+	private class FileUriIterator implements Iterator<String> {
+		
+		private RecursiveFileIterator it = new RecursiveFileIterator(baseDir);
+		
+		public boolean hasNext() {
+			return it.hasNext();
+		}
+		
+		public String next() {
+			return getUri(it.next());
+		}
+		
+		public void remove() {
+			it.remove();
 		}
 	}
 	

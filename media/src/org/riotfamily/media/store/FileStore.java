@@ -30,7 +30,7 @@ import java.io.InputStream;
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public interface FileStore {
+public interface FileStore extends Iterable<String> {
 
 	/**
 	 * Stores data and returns an URI that can be used to request the file via HTTP.
