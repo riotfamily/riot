@@ -8,7 +8,6 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-	<!-- TODO: Rename to websiteHandlerUrlResolver -->
 	<bean id="handlerUrlResolver" class="org.riotfamily.common.beans.config.WebApplicationContextBeanImporter">
 		<property name="servletName" value="website" />
 	</bean>
