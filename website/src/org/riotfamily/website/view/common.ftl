@@ -378,6 +378,10 @@
 	</#if>
 </#macro>
 
+<#macro stylesheet href rel="stylesheet" type="text/css" attributes...>
+	<link rel="${rel}" type="${type}" href="${resolve(href)?xml}"${joinAttributes(attributes)} />
+</#macro>
+
 <#macro scripts srcs compress=commonMacroHelper.compressResources type="text/javascript" attributes...>
 	<#if compress>
 		<script src="${resource(pathForHandler("minifyScriptController") + "?files=" + toDelimitedString(srcs))?xml}" type="${type}"${joinAttributes(attributes)}></script>
