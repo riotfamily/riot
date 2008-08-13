@@ -45,6 +45,7 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 	
 	private ArrayList<WrapperClassInfo> wrapperClassInfos = new ArrayList<WrapperClassInfo>();
 		
+	@SuppressWarnings("unchecked")
 	public HibernateWrapperFactory(SessionFactory sessionFactory) {
 		Iterator<?> it = sessionFactory.getAllClassMetadata().values().iterator();
 		while (it.hasNext()) {
