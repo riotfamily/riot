@@ -83,7 +83,7 @@ var Txt2ImgReplacement = Class.create({
 		this.config = config;
 		this.el = $(el);
 		this.sel = sel;
-		el.onedit = this.update.bind(this);
+		el.onedit = this.updateText.bind(this);
 	},
 	
 	// Whether to use the alphaImageLoader or not. The flag will be set to 
@@ -93,11 +93,14 @@ var Txt2ImgReplacement = Class.create({
 	
 	replace: function() {
 		if (!this.el.down('img.replacement')) {
-			this.updateText(this.el.innerHTML.strip().gsub(/<br\/?>/i, '\n').stripTags());
+			this.updateText();
 		}
 	},
-	
+		
 	updateText: function(text) {
+		if (!text) {
+			text = this.el.innerHTML.strip().gsub(/<br\/?>/i, '\n').stripTags();
+		}
 		this.text = text;
 		this.update();
 	},
