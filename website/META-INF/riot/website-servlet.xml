@@ -105,7 +105,9 @@
 		</property>
 	</bean>
 	
-	<bean id="taggingObjectWrapperPlugin" class="org.riotfamily.website.cache.TaggingObjectWrapperPlugin" />
+	<bean id="taggingObjectWrapperPlugin" class="org.riotfamily.website.cache.TaggingObjectWrapperPlugin">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
 	
 	<bean id="localizedObjectWrapperPlugin" class="org.riotfamily.common.web.view.freemarker.LocalizedObjectWrapperPlugin" />
     	

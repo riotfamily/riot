@@ -23,8 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.cache;
 
+import org.hibernate.SessionFactory;
 import org.riotfamily.common.web.view.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.web.view.freemarker.PluginObjectWrapper;
+import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.springframework.core.Ordered;
 
 import freemarker.template.TemplateModel;
@@ -39,8 +41,12 @@ import freemarker.template.TemplateModelException;
 public class TaggingObjectWrapperPlugin implements ObjectWrapperPlugin, Ordered {
 
 	private int order = Ordered.HIGHEST_PRECEDENCE;
+
+	private SessionFactory sessionFactory;
 	
-	private JpaIdResolver idResolver = new JpaIdResolver();
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 	
 	public int getOrder() {
 		return order;
@@ -55,7 +61,8 @@ public class TaggingObjectWrapperPlugin implements ObjectWrapperPlugin, Ordered 
 
 	public boolean supports(Object obj) {
 		if (obj.getClass().isAnnotationPresent(TagCacheItems.class)) {
-			CacheTagUtils.tag(obj.getClass(), idResolver.getId(obj));
+			
+			CacheTagUtils.tag(obj.getClass(), HibernateUtils.getIdAsString(sessionFactory, obj));
 		}
 		return false;
 	}
