@@ -27,15 +27,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.riotfamily.revolt.support.DialectResolver;
 import org.riotfamily.revolt.support.LogTable;
 import org.springframework.beans.factory.BeanNameAware;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * 
  */
 public class EvolutionHistory implements BeanNameAware {
 
@@ -47,31 +43,25 @@ public class EvolutionHistory implements BeanNameAware {
 	
 	private List<ChangeSet> changeSets;
 
-	private DataSource dataSource;
-	
-	private Dialect dialect;
-	
 	private LogTable logTable;
 	
 	private ArrayList<String> appliedIds;
 	
-	public EvolutionHistory(DataSource dataSource) {
-		this.dataSource = dataSource;
-		this.dialect = new DialectResolver().getDialect(dataSource);
-	}
-	
-	public DataSource getDataSource() {
-		return this.dataSource;
-	}
-	
-	public Dialect getDialect() {
-		return this.dialect;
-	}
-
 	public void setBeanName(String name) {
 		this.moduleName = name;
 	}
 	
+	/**
+	 * Sets the name of a table that, if it exists, indicates that the module
+	 * is already installed. The check is performed when the history contains  
+	 * only one change-set in order to determine whether the module was 
+	 * installed before. In case of a fresh install (check-table not found), 
+	 * no changes are performed and the change-set are marked as applied.
+	 * <p>
+	 * Use the name of a table that exits <em>before</em> any change-set is 
+	 * applied. It's okay when that table is renamed or dropped later.
+	 * </p>   
+	 */
 	public void setCheckTableName(String checkTableName) {
 		this.checkTableName = checkTableName;
 	}
@@ -99,15 +89,29 @@ public class EvolutionHistory implements BeanNameAware {
 		appliedIds.addAll(logTable.getAppliedChangeSetIds(moduleName));
 	}
 
+	private boolean isModuleAlreadyInstalled() {
+		if (!appliedIds.isEmpty()) {
+			// Some changes have already been applied
+			return true; 
+		}
+		if (changeSets.size() == 1) {
+			// Module has exactly one change-set 
+			return logTable.tableExists(checkTableName);
+		}
+		// The module contains more than one change-set. If it was installed
+		// before there would have been entries in the log table. 
+		return false;
+	}
+	
 	/**
 	 * Returns a script that needs to be executed in order update the schema.
 	 */
-	public Script getScript() {
-		if (!logTable.exists() || !logTable.tableExists(checkTableName)) {
-			return getInitScript();
+	public Script getScript(Dialect dialect) {
+		if (isModuleAlreadyInstalled()) {
+			return getMigrationScript(dialect);
 		}
 		else {
-			return getMigrationScript();
+			return getInitScript();
 		}
 	}
 	
@@ -119,7 +123,7 @@ public class EvolutionHistory implements BeanNameAware {
 		return script;
 	}
 	
-	private Script getMigrationScript() {
+	private Script getMigrationScript(Dialect dialect) {
 		Script script = new Script();
 		for (ChangeSet changeSet : changeSets) {
 			if (!isApplied(changeSet)) {

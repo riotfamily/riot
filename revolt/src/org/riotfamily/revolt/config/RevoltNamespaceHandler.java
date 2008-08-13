@@ -84,11 +84,6 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 			RootBeanDefinition definition = new RootBeanDefinition();
 			definition.setBeanClass(EvolutionHistory.class);
 			
-			ConstructorArgumentValues ctorArgs = new ConstructorArgumentValues();
-			ctorArgs.addGenericArgumentValue(new RuntimeBeanReference(
-					element.getAttribute("data-source")));
-			
-			definition.setConstructorArgumentValues(ctorArgs);
 			MutablePropertyValues pv = new MutablePropertyValues();
 			pv.addPropertyValue("changeSets", parseChangeSets(element));
 			

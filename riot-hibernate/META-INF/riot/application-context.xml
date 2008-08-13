@@ -14,30 +14,26 @@
 		http://www.riotfamily.org/schema/revolt
 		http://www.riotfamily.org/schema/revolt/revolt-8.0.xsd">
 
-	<!-- JDBC DataSource pooled by C3P0 -->
-	<bean id="riotDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-		<property name="driverClass" value="${jdbc.driver_class}" />
-	    <property name="jdbcUrl" value="${jdbc.url}" />
-	    <property name="user" value="${jdbc.username}" />
-	    <property name="password" value="${jdbc.password}" />
-	    <property name="maxPoolSize" value="${jdbc.maxPoolSize=10}" />
-	    <property name="maxStatements" value="0" />
-	    <property name="acquireIncrement" value="1" />
-	    <property name="idleConnectionTestPeriod" value="60" />
-	    <property name="checkoutTimeout" value="30000" />
-	</bean>
-
-	<bean id="revolt" class="org.riotfamily.revolt.Evolver">
+	<bean id="riotDataSource" class="org.riotfamily.revolt.RevoltDataSourceFactoryBean">
 		<property name="automatic" value="${riot.revolt.automatic=false}" />
-		<property name="enabled" value="${riot.revolt.enabled=true}" />
+		<property name="dataSource">
+			<!-- JDBC DataSource pooled by C3P0 -->
+			<bean class="com.mchange.v2.c3p0.ComboPooledDataSource">
+				<property name="driverClass" value="${jdbc.driver_class}" />
+			    <property name="jdbcUrl" value="${jdbc.url}" />
+			    <property name="user" value="${jdbc.username}" />
+			    <property name="password" value="${jdbc.password}" />
+			    <property name="maxPoolSize" value="${jdbc.maxPoolSize=10}" />
+			    <property name="maxStatements" value="0" />
+			    <property name="acquireIncrement" value="1" />
+			    <property name="idleConnectionTestPeriod" value="60" />
+			    <property name="checkoutTimeout" value="30000" />
+			</bean>		
+		</property>
 	</bean>
- 
-	<db:history data-source="riotDataSource" module="riot" check-table-name="revolt_change_log" />
- 
+  	
 	<!-- The Hibernate SessionFactory -->
-	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean"
-			depends-on="revolt">
-			
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="dataSource" ref="riotDataSource" />
 		<property name="mappingLocations">
 			<list>
