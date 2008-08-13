@@ -39,6 +39,7 @@ import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.pages.cache.PageCacheUtils;
+import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.PageProperties;
@@ -149,6 +150,14 @@ public class PageFacade {
 		return page.getAbsoluteUrl(pathCompleter, true,
 				ServletUtils.getServerNameAndPort(request),
 				request.getContextPath(), attributes);
+	}
+	
+	public Page getLocalPage() {
+		Site currentSite = PageResolver.getResolvedSite(request);
+		if (page.getSite().equals(currentSite)) {
+			return page;
+		}
+		return page.getNode().getPage(currentSite);
 	}
 	
 	public boolean isWildcard() {
