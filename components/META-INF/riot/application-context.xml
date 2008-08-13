@@ -27,8 +27,10 @@
 		<value>org.riotfamily.components.model.wrapper.RiotFileWrapper</value>
 		<value>org.riotfamily.components.model.wrapper.StringWrapper</value>
 	</override:add>
-		
-	<bean id="valueWrapperFactory" class="org.riotfamily.components.model.wrapper.HibernateWrapperFactory">
+
+	<!-- Note: We use depends-on to get shorter stack-traces when the schema validation fails -->
+	<bean id="valueWrapperFactory" depends-on="sessionFactory" 
+			class="org.riotfamily.components.model.wrapper.HibernateWrapperFactory">
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 	
