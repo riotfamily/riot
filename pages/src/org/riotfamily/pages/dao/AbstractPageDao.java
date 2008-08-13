@@ -312,6 +312,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		
 		node.removePage(page);
 		
+		PageCacheUtils.invalidateNode(cacheService, node);
 		PageCacheUtils.invalidateNode(cacheService, parentNode);
 		
 		deleteObject(page);
