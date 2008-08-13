@@ -16,7 +16,6 @@ import org.riotfamily.cachius.servlet.CacheKeyAugmentor;
 import org.riotfamily.cachius.servlet.ServletWriterHandler;
 import org.riotfamily.common.io.NullWriter;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.util.StringUtils;
 
 import freemarker.core.Environment;
@@ -137,7 +136,7 @@ public class TemplateMacroHelper {
 			boolean cache = getBooleanParam(params, "cache", true);
 			if (cache) {
 				cacheKey = getStringParam(params, "cacheKey",
-						ServletUtils.getPathWithinApplication(request) + "#" + name);
+						request.getRequestURL().append('#').append(name).toString());
 			}
 			
 			Block block = blocks.get(name);
