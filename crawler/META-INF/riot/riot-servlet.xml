@@ -12,30 +12,14 @@
 	
 	<bean id="linkExtractor" class="org.riotfamily.crawler.DefaultLinkExtractor" />
 	
-	<bean name="/crawler/status" class="org.riotfamily.crawler.CrawlerController">
+	<bean id="crawlerControlController" name="/crawler/status" class="org.riotfamily.crawler.CrawlerController">
 		<constructor-arg ref="crawler" />
 	</bean>
 			
-	<bean id="crawlerJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	<bean id="crawlerTask" class="org.riotfamily.common.scheduling.MethodInvokingScheduledTask">
 		<property name="targetObject" ref="crawler" />
 		<property name="targetMethod" value="run" />
-		<property name="concurrent" value="false" />
+		<property name="triggerNames" value="${riot.crawler.schedule=startup,daily}" />
 	</bean>
-
-	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-	    <property name="triggers">
-			<list>
-				<bean class="org.riotfamily.common.scheduling.SwitchableSimpleTriggerBean">
-					<property name="jobDetail" ref="crawlerJobDetail" />
-					<property name="repeatCount" value="0" />
-					<property name="startDelay" value="${riot.crawler.startDelay=60000}" />
-				</bean>
-				<bean class="org.springframework.scheduling.quartz.CronTriggerBean">
-					<property name="jobDetail" ref="crawlerJobDetail" />
-					<property name="cronExpression" value="${riot.crawler.cronExpression=0 0 4 * * ?}" />
-				</bean>
-			</list>
-	    </property>
-    </bean>
- 	
+ 
 </beans>
