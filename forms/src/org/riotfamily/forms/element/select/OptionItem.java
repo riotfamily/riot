@@ -33,13 +33,16 @@ public class OptionItem {
 	private Object value;
 
 	private String label;
+	
+	private String styleClass;
 
 	private SelectElement parent;
 	
-	public OptionItem(Object object, Object value, String label, SelectElement parent) {
+	public OptionItem(Object object, Object value, String label, String styleClass, SelectElement parent) {
 		this.object = object;
 		this.value = value;
 		this.label = label;
+		this.styleClass = styleClass;
 		this.parent = parent;
 	}
 
@@ -69,6 +72,10 @@ public class OptionItem {
 	
 	public String getId() {
 		return parent.getId() + '-' + getIndex();
+	}
+	
+	public String getStyleClass() {
+		return styleClass;
 	}
 
 	public void render() {
