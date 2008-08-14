@@ -19,6 +19,13 @@
 		<property name="location" value="classpath:/application.properties" />
 		<property name="contextOverride" value="true" />
 	</bean>
+	
+	<!--
+	  - FilterPlugin that sets a far-future expires header for all stamped URLs 
+	  -->
+	<bean id="expiresHeaderFilterPlugin" class="org.riotfamily.common.web.filter.ExpiresHeaderFilterPlugin">
+		<property name="filterName" value="website-filter" />
+	</bean>
 
 	<bean id="openSessionInViewFilterPlugin" class="org.riotfamily.riot.hibernate.support.OpenSessionInViewFilterPlugin">
 		<constructor-arg ref="sessionFactory" />

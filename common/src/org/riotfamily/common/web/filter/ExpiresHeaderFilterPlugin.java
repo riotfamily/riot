@@ -37,7 +37,7 @@ import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 
 /**
- * Servlet filter that sets a far future Expires header for request URLs that 
+ * Filter plugin that sets a far future Expires header for request URLs that 
  * contain a timestamp. URLs are considered as 'stamped' if they match the 
  * configured pattern.
  * <p>
@@ -48,10 +48,10 @@ import org.riotfamily.common.web.util.ServletUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public class CacheStampedResourcesFilter extends HttpFilterBean {
+public class ExpiresHeaderFilterPlugin extends FilterPlugin {
 
 	private Log log = LogFactory.getLog(
-			CacheStampedResourcesFilter.class);
+			ExpiresHeaderFilterPlugin.class);
 	
 	public static final String DEFAULT_EXPIRATION = "10Y";
 
@@ -74,15 +74,17 @@ public class CacheStampedResourcesFilter extends HttpFilterBean {
 		this.stampPattern = stampPattern;
 	}
 
-	protected void initFilterBean() throws ServletException {
+	@Override
+	protected void initPlugin() {
 		expires = System.currentTimeMillis()
 				+ FormatUtils.parseMillis(expiresAfter);
 	}
 
-	protected void filter(HttpServletRequest request,
+	@Override
+	public void doFilter(HttpServletRequest request,
 			HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
-
+			throws IOException, ServletException {
+		
 		if (isStamped(request)) {
 			if (log.isDebugEnabled()) {
 				log.debug("Setting Expires header for " 
@@ -92,7 +94,7 @@ public class CacheStampedResourcesFilter extends HttpFilterBean {
 		}
 		filterChain.doFilter(request, response);
 	}
-
+	
 	protected boolean isStamped(HttpServletRequest request) {
 		String url = ServletUtils.getRequestUrlWithQueryString(request);
 		return stampPattern.matcher(url).matches();
