@@ -53,6 +53,8 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 	
 	private String labelProperty;
 	
+	private String styleClassProperty;
+	
 	private String labelMessageKey;
 	
 	private boolean appendLabel;
@@ -85,6 +87,10 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 
 	public void setLabelProperty(String labelProperty) {
 		this.labelProperty = labelProperty;
+	}
+	
+	public void setStyleClassProperty(String styleClassProperty) {
+		this.styleClassProperty = styleClassProperty;
 	}
 
 	public void setLabelMessageKey(String labelMessageKey) {
@@ -158,7 +164,8 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 			for (Object item : optionValues) {
 				String label = getOptionLabel(item);
 				Object value = getOptionValue(item);
-				items.add(new OptionItem(item, value, label, this));
+				String styleClass = getOptionStyleClass(item);
+				items.add(new OptionItem(item, value, label, styleClass, this));
 			}
 		}
 		updateSelection(optionValues);
@@ -198,6 +205,13 @@ public abstract class AbstractSelectElement extends AbstractEditorBase implement
 		else {
 			return item;
 		}
+	}
+	
+	protected String getOptionStyleClass(Object item) {
+		if (styleClassProperty != null) {
+			return PropertyUtils.getPropertyAsString(item, styleClassProperty);
+		}
+		return null;
 	}
 	
 	public int getOptionIndex(OptionItem option) {
