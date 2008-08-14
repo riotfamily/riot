@@ -472,6 +472,10 @@ ul.radioButtonGroup {
 	margin: 0;
 }
 
+.imageCheckboxGroup input.checkbox {
+	display: none;
+}
+
 .imageCheckbox {
 	width: 14px;
 	height: 14px;
@@ -485,6 +489,10 @@ ul.radioButtonGroup {
 }
 .imageCheckbox.checked div {
 	background-image: url(images/image_checkbox_checked.gif);
+}
+
+.imageRadioButtonGroup input.radio {
+	display: none;
 }
 
 .chooser span {
