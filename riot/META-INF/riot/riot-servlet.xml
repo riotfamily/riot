@@ -577,6 +577,7 @@
 		<property name="parameters">
 			<props>
 				<prop key="pollAndCometEnabled">true</prop>
+				<prop key="maxWaitAfterWrite">${riot.dwr.maxWaitAfterWrite=-1}</prop>
 				<prop key="crossDomainSessionSecurity">false</prop>
 			</props>
 		</property>
