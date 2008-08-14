@@ -33,6 +33,10 @@ public class ImageCheckboxGroup extends CheckboxGroup {
 
 	private String imageProperty;
 	
+	public ImageCheckboxGroup() {
+		setStyleClass("imageCheckboxGroup");
+	}
+	
 	public void setImageProperty(String imageProperty) {
 		this.imageProperty = imageProperty;
 	}
@@ -40,15 +44,21 @@ public class ImageCheckboxGroup extends CheckboxGroup {
 	public String getInitScript() {
 		StringBuffer sb = new StringBuffer(super.getInitScript());
 		for (OptionItem option : getOptionItems()) {
-			String image = PropertyUtils.getPropertyAsString(
-					option.getObject(), imageProperty);
-			
 			sb.append("new RiotImageCheckbox('");
 			sb.append(option.getId());
-			sb.append("', null, '");
-			sb.append(getFormContext().getContextPath());
-			sb.append(image);
-			sb.append("');");
+			sb.append("'");
+			if (imageProperty != null) {
+				String image = PropertyUtils.getPropertyAsString(
+						option.getObject(), imageProperty);
+			
+				if (image != null) { 
+					sb.append(", '");
+					sb.append(getFormContext().getContextPath());
+					sb.append(image);
+					sb.append("'");
+				}
+			}
+			sb.append(");");
 		}
 		return sb.toString();
 	}
