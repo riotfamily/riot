@@ -6,24 +6,51 @@
 	<script type="text/javascript" src="../src/checkbox.js"></script>
 	<link rel="stylesheet" type="text/css" href="../../../riot/src/org/riotfamily/riot/runtime/resources/style/form.css" />
 	<style type="text/css">
-		.foo {
-			border: 1px solid red;
+		img.bar {
+			border: 4px solid red;
 		}
-		.checked .foo {
-			border: 1px solid green;
+		.checked img.bar {
+			border: 4px solid lime;
+		}
+
+		.imageRadio div.color {
+			width: 16px;
+			height: 16px;
+			border: 4px solid white;
+		}
+		.imageRadio div.color1 {
+			background: yellow;
+		}
+		.imageRadio div.color2 {
+			background: lime;
+		}
+		.imageRadio div.color3 {
+			background: magenta;
+		}
+		.imageRadio.checked div.color {
+			border: 4px solid black;
+			background-image: none;
 		}
 	</style>
 </head>
 <body>
 <br />
 <ul id="test1" class="checkboxGroup">
-	<li><input type="checkbox" name="option1" id="option1" /><label for="option1" class="option">Option 1</label></li>
-	<li><input type="checkbox" name="option2" id="option2" /><label for="option2" class="option">Option 2</label></li>
-	<li><input type="checkbox" name="option3" id="option3" /><label for="option3" class="option">Option 3</label></li>
+	<li><input type="checkbox" name="option1" id="option1" /><label for="option1" class="foo">Option 1</label></li>
+	<li><input type="checkbox" name="option2" id="option2" /><label for="option2" class="bar">Option 2</label></li>
+	<li><input type="checkbox" name="option3" id="option3" /><label for="option3" class="baz">Option 3</label></li>
+</ul>
+<ul id="test2" class="radioboxGroup">
+	<li><input type="radio" name="option" id="radio1" /><label for="radio1" class="color color1">Option 1</label></li>
+	<li><input type="radio" name="option" id="radio2" /><label for="radio2" class="color color2">Option 2</label></li>
+	<li><input type="radio" name="option" id="radio3" /><label for="radio3" class="color color3">Option 3</label></li>
 </ul>
 <script type="text/javascript">
-	new RiotImageCheckbox('option1', 'foo');
-	new RiotImageCheckbox('option2', 'foo', 'downloads.jpg');
+	new RiotImageCheckbox('option1');
+	new RiotImageCheckbox('option2', 'downloads.jpg');
+	new RiotImageRadioButton('radio1');
+	new RiotImageRadioButton('radio2');
+	new RiotImageRadioButton('radio3');
 </script>
 </body>
 </html>
