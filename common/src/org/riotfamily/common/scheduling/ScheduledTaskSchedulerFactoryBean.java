@@ -42,6 +42,7 @@ import org.quartz.spi.TriggerFiredBundle;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.JobDetailBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
@@ -58,7 +59,8 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 8.0
  */
-public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean {
+public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean 
+		implements BeanNameAware {
 
 	private Log log = LogFactory.getLog(ScheduledTaskSchedulerFactoryBean.class);
 	
@@ -91,10 +93,13 @@ public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean {
 				"This Scheduler does not support manually registered Triggers");
 	}
 	
+	public void setBeanName(String name) {
+		setSchedulerName(name);
+	}
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		setJobFactory(new ScheduledTaskJobFactory());
-		//setAutoStartup(false);
 		super.afterPropertiesSet();
 	}
 
@@ -125,7 +130,7 @@ public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean {
 				for (String triggerName : task.getTriggerNames()) {
 					ScheduledTaskQueueJob job = jobs.get(triggerName);
 					if (job == null) {
-						job = new ScheduledTaskQueueJob();
+						job = new ScheduledTaskQueueJob(triggerName);
 						jobs.put(triggerName, job);
 					}
 					job.addTask(task);
@@ -146,7 +151,14 @@ public class ScheduledTaskSchedulerFactoryBean extends SchedulerFactoryBean {
 		
 		private List<ScheduledTask> tasks = Generics.newArrayList();
 		
+		private String triggerName;
+		
+		public ScheduledTaskQueueJob(String triggerName) {
+			this.triggerName = triggerName;
+		}
+
 		public void addTask(ScheduledTask task) {
+			log.info(String.format("Adding %s to %s trigger", task.getClass(), triggerName));
 			tasks.add(task);
 		}
 		
