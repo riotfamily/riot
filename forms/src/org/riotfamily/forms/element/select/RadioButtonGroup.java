@@ -39,7 +39,7 @@ public class RadioButtonGroup extends AbstractSingleSelectElement {
 	
 	public RadioButtonGroup() {
 		setOptionRenderer(new InputTagRenderer("radio"));
-		template = TemplateUtils.getTemplatePath(this);
+		template = TemplateUtils.getTemplatePath(RadioButtonGroup.class);
 	}
 	
 	public void setTemplate(String template) {
