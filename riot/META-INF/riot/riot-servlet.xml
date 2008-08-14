@@ -493,6 +493,12 @@
 		<constructor-arg ref="transactionManager" />
 		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
+	
+	<bean name="/changePassword" id="changePasswordController" class="org.riotfamily.riot.security.ui.ChangePasswordController">		
+		<constructor-arg ref="riotUserDao" />
+		<constructor-arg ref="transactionManager" />
+		<property name="formContextFactory" ref="formContextFactory" />
+	</bean>
 
 	<bean id="packageListController" name="/packages" class="org.riotfamily.common.web.controller.PackageListController">
 		<property name="viewName" value="classpath:/org/riotfamily/riot/runtime/view/packages.ftl" />

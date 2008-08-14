@@ -51,6 +51,11 @@ public class RiotUserDaoWrapper implements RiotUserDao {
 	public RiotUser findUserById(final String userId) {
 		return wrappedInstance.findUserById(userId);
 	}
+	
+	public void updatePassword(RiotUser user, String newPassword) {
+		wrappedInstance.updatePassword(user, newPassword);
+		UserHolder.updateUser(user.getUserId(), user);
+	}
 
 	public Class<?> getEntityClass() {
 		return wrappedInstance.getEntityClass();

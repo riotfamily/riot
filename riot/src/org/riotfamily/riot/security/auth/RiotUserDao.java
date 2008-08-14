@@ -35,4 +35,6 @@ public interface RiotUserDao extends RiotDao {
 	
 	public RiotUser findUserById(String userId);
 	
+	public void updatePassword(RiotUser user, String newPassword);
+	
 }

@@ -68,6 +68,10 @@ public class StaticRiotUserDao extends RiotDaoAdapter implements RiotUserDao,
 		return null;
 	}
 	
+	public void updatePassword(RiotUser user, String newPassword) {
+		password = newPassword;		
+	}
+	
 	private static class RootUser implements RiotUser {
 
 		private static final String ID = "root";
@@ -76,4 +80,5 @@ public class StaticRiotUserDao extends RiotDaoAdapter implements RiotUserDao,
 			return ID;
 		}
 	}
+
 }

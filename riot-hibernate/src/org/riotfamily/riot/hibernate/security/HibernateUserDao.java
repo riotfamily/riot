@@ -158,6 +158,12 @@ public class HibernateUserDao extends AbstractHibernateRiotDao
 		return HashUtils.md5(plainText);
 	}
 	
+	public void updatePassword(RiotUser user, String newPassword) {
+		PropertyUtils.setProperty(user, newPasswordProperty, newPassword);
+		hashNewPassword(user);
+		getSession().update(user);
+	}
+	
 	/**
 	 * Performs a database lookup with the given credentials. If no matching 
 	 * user is found, {@link #findInitialUser(String, String)} is called.
