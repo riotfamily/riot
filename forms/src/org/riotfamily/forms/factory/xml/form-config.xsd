@@ -158,6 +158,7 @@
 				</xsd:choice>
 				<xsd:attribute name="label-property" type="xsd:string" />
 				<xsd:attribute name="value-property" type="xsd:string" />
+				<xsd:attribute name="style-class-property" type="xsd:string" />
 				<xsd:attribute name="label-message-key" type="xsd:string" />
 				<xsd:attribute name="append-label" type="xsd:boolean" />
 				<xsd:attribute name="hide-if-empty" type="xsd:boolean" default="false"/>
@@ -233,17 +234,28 @@
 				<xsd:extension base="multiselect">
 					<xsd:attribute name="max-selection" type="xsd:positiveInteger" />
 					<xsd:attribute name="style-class" type="xsd:string" />
-					<xsd:attribute name="image-property" type="xsd:string" use="required" />
+					<xsd:attribute name="image-property" type="xsd:string" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-
+	
 	<xsd:element name="radio-group">
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="select">
 					<xsd:attribute name="style-class" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="image-radio-group">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="select">
+					<xsd:attribute name="style-class" type="xsd:string" />
+					<xsd:attribute name="image-property" type="xsd:string" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
