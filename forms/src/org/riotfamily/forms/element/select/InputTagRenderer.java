@@ -49,6 +49,7 @@ public class InputTagRenderer implements OptionRenderer {
 		optionTag.attribute(Html.INPUT_CHECKED, option.isSelected());
 		optionTag.attribute(Html.INPUT_DISABLED, !enabled);
 		optionTag.attribute(Html.COMMON_ID, option.getId());
+		optionTag.attribute(Html.COMMON_CLASS, type);
 		optionTag.end();
 	}	
 
