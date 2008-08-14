@@ -17,43 +17,55 @@ RiotCheckboxGroup.prototype = {
 	}
 }
 
-var RiotImageCheckbox = Class.create();
-RiotImageCheckbox.prototype = {
-	initialize: function(el, className, src) {
-		el = $(el).hide(el);
-		this.checkbox = el;
+var RiotImageCheckbox = Class.create({
+	initialize: function(el, src) {
+		el = this.el = $(el).hide();
 		var id = el.id;
 		var handler = this.handleClick.bindAsEventListener(this);
+		var className = '';
 		$$('label[for="' + id + '"]').each(function(label) {
 			label.observe('click', handler);
+			className += label.className + ' ';
 		});
+		el.id += '-checkbox';
+		this.wrapper = new Element('span', {id: id, className: 'image' + el.type.capitalize()});
+		el.wrap(this.wrapper)
+		
+		el.image = new Element(src ? 'img' : 'div', {className: className});
+		el.image.onclick = handler;
+		if (src) el.image.src = src;
+		this.wrapper.appendChild(el.image);
 
-		this.wrapper = document.createElement('span');
-		el.id = id + '-checkbox';
-		this.wrapper.id = id;
-		this.wrapper.className = 'imageCheckbox';
-
-		el.parentNode.insertBefore(this.wrapper, el);
-		el.remove();
-		this.wrapper.appendChild(el);
-
-		var image = document.createElement(src ? 'img' : 'div');
-		image.className = className || 'image';
-		image.src = src;
-		this.wrapper.appendChild(image);
-
-		if (this.checkbox.checked) {
-			Element.addClassName(this.wrapper, 'checked');
+		if (el.checked) {
+			this.wrapper.addClassName('checked');
 		}
-		image.onclick = handler;
 	},
+	
 	handleClick: function(e) {
-		this.checkbox.checked = !this.checkbox.checked;
-		if (this.checkbox.checked) {
-			Element.addClassName(this.wrapper, 'checked');
+		this.el.checked = !this.el.checked;
+		if (this.el.checked) {
+			this.wrapper.addClassName('checked');
 		}
 		else {
-			Element.removeClassName(this.wrapper, 'checked');
+			this.wrapper.removeClassName('checked');
 		}
 	}
-}
+});
+
+
+var RiotImageRadioButton = Class.create(RiotImageCheckbox, {
+	
+	initialize: function($super, el, src) {
+		$super(el, src);
+		this.others = $$('input[name="' + this.el.name + '"]:not(#' + this.el.id +')');
+	},
+	
+	handleClick: function(e) {
+		if (!this.el.checked) {
+			this.el.checked = true;
+			this.wrapper.addClassName('checked');
+			this.others.pluck('parentNode').invoke('removeClassName', 'checked');
+		}
+	}
+	
+});
