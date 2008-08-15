@@ -94,13 +94,7 @@ public class EvolutionHistory implements BeanNameAware {
 			// Some changes have already been applied
 			return true; 
 		}
-		if (changeSets.size() == 1) {
-			// Module has exactly one change-set 
-			return logTable.tableExists(checkTableName);
-		}
-		// The module contains more than one change-set. If it was installed
-		// before there would have been entries in the log table. 
-		return false;
+		return logTable.tableExists(checkTableName);
 	}
 	
 	/**
