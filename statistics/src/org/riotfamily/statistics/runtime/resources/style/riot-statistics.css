@@ -1,0 +1,23 @@
+/* TODO : Move this styles to riot core */
+
+.action-performGarbageCollection {
+	background-image: url(icons/commands/garbage.gif);
+}
+
+.action-toggleHibernateStatistics,
+.action-toggleRequestStatistics {
+	background-image: url(icons/commands/toggle.gif);
+}
+
+.action-refresh {
+	background-image: url(icons/commands/refresh.gif);
+}
+
+.action-clearRiotHibernateCache, 
+.action-clearHibernateStatisticsBaseline, 
+.action-clearRequestStatisticsBaseline,
+.action-clearApplicationHibernateCache,
+.action-clearCacheRegion {
+	background-image: url(icons/commands/delete.gif);
+}
+
