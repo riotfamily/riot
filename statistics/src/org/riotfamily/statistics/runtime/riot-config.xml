@@ -99,8 +99,8 @@
             <list:column property="name" />
             <list:column property="value" />
         </list:columns>
-        <list:command id="clearRiotHibernateCache" />  
-        <list:command id="clearApplicationHibernateCache" />  
+        <!-- list:command id="clearRiotHibernateCache" />  
+        <list:command id="clearApplicationHibernateCache" / -->  
         <list:command id="refresh" />  
     </list:list>
     
@@ -115,9 +115,9 @@
             <list:column property="missCount" sortable="true" />
             <list:column property="putCount" sortable="true" />
             <list:column property="kbInMemory" sortable="true" />
-            <list:command id="clearCacheRegion" /> 
+            <!-- list:command id="clearCacheRegion" / --> 
         </list:columns>
-        <list:command id="clearRiotHibernateCache" />  
+        <!-- list:command id="clearRiotHibernateCache" / -->  
         <list:command id="refresh" />  
     </list:list>
 
