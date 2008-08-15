@@ -16,6 +16,7 @@
 		<@riot.script src="riot-js/util.js" />		
 		<@riot.script src="style/tweak.js" />		
 		<script type="text/javascript" language="JavaScript">
+			subPage('<@spring.messageText "label.status.changePassword", "Change Password" />');
 			<#--
 			  - Hides the form and displays a 'Saving ...' message.
 			  - The function is invoked by save() or when the form is submitted
@@ -36,6 +37,7 @@
 					${form}
 				</div>
 				<script type="text/javascript" language="JavaScript">
+					
 					TweakStyle.form();					
 					$('form').observe('submit', hideFormForSaving);
 				</script>
