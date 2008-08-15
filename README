@@ -6,6 +6,7 @@ The Riot Family consists of several sub-projects. These are:
  * cachius - A caching library for the Spring MVC framework
  * pages - CMS features for websites
  * riot-hibernate - Hibernate 3 integration
+ * statistics - Riot runtime statistics
  
 The 'jslibs' directory contains 3rd party JavaScript libraries and some Ant
 files to package them as JARs.

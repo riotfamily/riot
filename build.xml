@@ -97,6 +97,7 @@
 			<packageset dir="riot-hibernate/src" />
 			<packageset dir="pages/src" />
 			<packageset dir="website/src" />
+			<packageset dir="statistics/src" />
 
 			<group title="Core" packages="org.riotfamily.riot*" />
 			<group title="Website" packages="org.riotfamily.website*" />
@@ -106,6 +107,7 @@
 			<group title="Cachius" packages="org.riotfamily.cachius*" />
 			<group title="Forms" packages="org.riotfamily.forms*" />
 			<group title="Hibernate" packages="org.riotfamily.riot.hibernate*" />
+			<group title="Statistics" packages="org.riotfamily.statistics*" />
 
 			<link href="http://java.sun.com/j2ee/1.4/docs/api" />
 			<link href="http://java.sun.com/j2se/1.4.2/docs/api" />
