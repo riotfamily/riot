@@ -14,22 +14,22 @@
 		http://www.riotfamily.org/schema/revolt
 		http://www.riotfamily.org/schema/revolt/revolt-8.0.xsd">
 
+	<!-- JDBC DataSource pooled by C3P0 -->
+	<bean id="c3p0" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driver_class}" />
+	    <property name="jdbcUrl" value="${jdbc.url}" />
+	    <property name="user" value="${jdbc.username}" />
+	    <property name="password" value="${jdbc.password}" />
+	    <property name="maxPoolSize" value="${jdbc.maxPoolSize=10}" />
+	    <property name="maxStatements" value="0" />
+	    <property name="acquireIncrement" value="1" />
+	    <property name="idleConnectionTestPeriod" value="60" />
+	    <property name="checkoutTimeout" value="30000" />
+	</bean>
+			
 	<bean id="riotDataSource" class="org.riotfamily.revolt.RevoltDataSourceFactoryBean">
 		<property name="automatic" value="${riot.revolt.automatic=false}" />
-		<property name="dataSource">
-			<!-- JDBC DataSource pooled by C3P0 -->
-			<bean class="com.mchange.v2.c3p0.ComboPooledDataSource">
-				<property name="driverClass" value="${jdbc.driver_class}" />
-			    <property name="jdbcUrl" value="${jdbc.url}" />
-			    <property name="user" value="${jdbc.username}" />
-			    <property name="password" value="${jdbc.password}" />
-			    <property name="maxPoolSize" value="${jdbc.maxPoolSize=10}" />
-			    <property name="maxStatements" value="0" />
-			    <property name="acquireIncrement" value="1" />
-			    <property name="idleConnectionTestPeriod" value="60" />
-			    <property name="checkoutTimeout" value="30000" />
-			</bean>		
-		</property>
+		<property name="dataSource" ref="c3p0" />
 	</bean>
   	
 	<!-- The Hibernate SessionFactory -->
