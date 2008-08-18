@@ -37,7 +37,7 @@
 		<constructor-arg ref="sessionFactory" />
 		<constructor-arg ref="fileStore" />
 		<constructor-arg ref="transactionManager" />
-		<property name="triggerNames" value="${riot.media.cleanUp.schedule=startup,daily" />
+		<property name="triggerNames" value="${riot.media.cleanUp.schedule=startup,daily}" />
 	</bean>
 	
 	<bean id="mediaProcessingService" class="org.riotfamily.media.service.ProcessingService" />
