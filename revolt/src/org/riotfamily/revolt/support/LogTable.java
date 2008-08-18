@@ -32,7 +32,6 @@ import javax.sql.DataSource;
 
 import org.riotfamily.revolt.ChangeSet;
 import org.riotfamily.revolt.Dialect;
-import org.riotfamily.revolt.EvolutionException;
 import org.riotfamily.revolt.Script;
 import org.riotfamily.revolt.definition.Column;
 import org.riotfamily.revolt.definition.Table;
@@ -80,24 +79,11 @@ public class LogTable {
 			return Collections.emptyList();
 		}
 		SimpleJdbcTemplate template = new SimpleJdbcTemplate(dataSource);
-		return template.query("select change_set_id, seq_nr from " 
+		return template.query("select change_set_id from " 
 				+ TABLE_NAME + " where module = ? order by seq_nr asc", 
 				new ParameterizedRowMapper<String>() {
-					public String mapRow(ResultSet rs, int rowNumber) 
-							throws SQLException {
-						
-						String changeSetId = rs.getString(1);
-						int sequenceNumber = rs.getInt(2);
-						
-						if (sequenceNumber != rowNumber) {
-							throw new EvolutionException(
-									"Expected a ChangeSet with sequence number "
-									+ rowNumber + " for module '" + moduleName 
-									+ "' but found ChangeSet [" + changeSetId
-									+ "] which has the number " 
-									+ sequenceNumber);
-						}
-						return changeSetId;
+					public String mapRow(ResultSet rs, int rowNumber) throws SQLException {
+						return rs.getString(1);
 					}
 				}, 
 				moduleName);
