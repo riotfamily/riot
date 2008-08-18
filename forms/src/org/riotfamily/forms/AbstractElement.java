@@ -231,7 +231,11 @@ public abstract class AbstractElement implements Element {
 	}
 
 	public void setVisible(boolean visible) {
+		boolean toggled = this.visible != visible; 
 		this.visible = visible;
+		if (toggled && getFormListener() != null) {
+			getFormListener().elementChanged(this);
+		}
 	}
 
 	public boolean isCompositeElement() {
