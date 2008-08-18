@@ -130,37 +130,16 @@ public class EvolutionHistory implements BeanNameAware {
 		
 	/**
 	 * Returns whether the given changeSet has already been applied.
-	 * @throws DatabaseOutOfSyncException If the ChangeSet id in the log-table
-	 * 		   doesn't match the the one of the ChangeSet
 	 */
 	private boolean isApplied(ChangeSet changeSet) {
-		if (appliedIds.size() > changeSet.getSequenceNumber()) {
-			String appliedId = (String) appliedIds.get(
-					changeSet.getSequenceNumber());
-			
-			if (appliedId.equals(changeSet.getId())) {
-				return true;
-			}
-			throw new EvolutionException("ChangeSet number " 
-					+ changeSet.getSequenceNumber() + " should be [" 
-					+ changeSet.getId() + "] but is [" + appliedId + "]");
-		}
-		return false;
+		return appliedIds.contains(changeSet.getId());
 	}
 	
 	/**
 	 * Returns a script that can be used to add an entry to the log-table that
 	 * marks the given ChangeSet as applied. 
-	 * @throws DatabaseOutOfSyncException If the sequence number of the 
-	 * 		   ChangeSet doesn't match the number of already applied changes.
 	 */
 	private Script markAsApplied(ChangeSet changeSet) {
-		if (changeSet.getSequenceNumber() != appliedIds.size()) {
-			throw new EvolutionException("ChangeSet [" 
-					+ changeSet.getId() + "] is number " 
-					+ changeSet.getSequenceNumber() + " but there are already "
-					+ appliedIds.size() + " ChangeSets applied!");
-		}
 		appliedIds.add(changeSet.getId());
 		return logTable.getInsertScript(changeSet);
 	}
