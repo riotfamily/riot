@@ -316,7 +316,18 @@
 	
 	<xsd:element name="switch">
 		<xsd:complexType>
-			<xsd:group ref="elements" minOccurs="3" maxOccurs="unbounded" />
+			<xsd:complexContent>
+				<xsd:extension base="simple-editor">
+					<xsd:sequence maxOccurs="unbounded">
+						<xsd:element name="case">
+							<xsd:complexType>
+								<xsd:group ref="elements" />
+								<xsd:attribute name="value" type="xsd:string" use="required" />
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 

@@ -196,12 +196,12 @@ public abstract class AbstractBindingResultSupport implements BindingResult {
 		return getFieldErrors().size();
 	}
 
-	public List<ObjectError> getFieldErrors() {
-		List<ObjectError> result = Generics.newLinkedList();
+	public List<FieldError> getFieldErrors() {
+		List<FieldError> result = Generics.newLinkedList();
 		for (Iterator<ObjectError> it = this.errors.iterator(); it.hasNext();) {
 			ObjectError error = it.next();
 			if (error instanceof FieldError) {
-				result.add(error);
+				result.add((FieldError) error);
 			}
 		}
 		return Collections.unmodifiableList(result);

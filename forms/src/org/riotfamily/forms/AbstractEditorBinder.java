@@ -76,7 +76,6 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 		log.debug("Binding " + editor + " to property " + property);
 		if (bindings.containsKey(property)) {
 			EditorBindingImpl eb = (EditorBindingImpl) bindings.get(property);
-			editor.setValue(eb.getEditor().getValue());
 			eb.setEditor(editor);
 			editor.setEditorBinding(eb);
 		}
@@ -179,6 +178,28 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 		return pe;
 	}
 	
+	protected String getPropertyPath(Editor editor, String property) {
+		EditorBinding parentBinding = findParentBinding(editor);
+		if (parentBinding != null) {
+			return parentBinding.getPropertyPath() + '.' + property;
+		}
+		return property;
+	}
+	
+	private EditorBinding findParentBinding(Editor editor) {
+		Element parent = editor.getParent();
+		while (parent != null) {
+			if (parent instanceof Editor) {
+				Editor parentEditor = (Editor) parent;
+				if (parentEditor.getEditorBinding() != null) {
+					return parentEditor.getEditorBinding(); 
+				}
+			}
+			parent = parent.getParent();
+		}
+		return null;
+	}
+	
 	private class EditorBindingImpl implements EditorBinding {
 
 		private Editor editor;
@@ -219,27 +240,9 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 		}
 		
 		public String getPropertyPath() {
-			EditorBinding parentBinding = findParentBinding();
-			if (parentBinding != null) {
-				return parentBinding.getPropertyPath() + '.' + getProperty();
-			}
-			return getProperty();
+			return AbstractEditorBinder.this.getPropertyPath(editor, property);
 		}
-		
-		private EditorBinding findParentBinding() {
-			Element parent = editor.getParent();
-			while (parent != null) {
-				if (parent instanceof Editor) {
-					Editor parentEditor = (Editor) parent;
-					if (parentEditor.getEditorBinding() != null) {
-						return parentEditor.getEditorBinding(); 
-					}
-				}
-				parent = parent.getParent();
-			}
-			return null;
-		}
-		
+				
 		public Class<?> getPropertyType() {
 			return AbstractEditorBinder.this.getPropertyType(property);
 		}

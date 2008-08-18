@@ -23,89 +23,76 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.select;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.riotfamily.forms.CompositeElement;
-import org.riotfamily.forms.ContainerElement;
+import org.riotfamily.common.util.Generics;
+import org.riotfamily.forms.Container;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Element;
-import org.riotfamily.forms.TemplateUtils;
-import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
-import org.riotfamily.forms.request.FormRequest;
 
-public class ElementSwitch extends CompositeElement implements ContainerElement {
+public class ElementSwitch extends Container implements Editor, ChangeListener {
 	
-	private AbstractSingleSelectElement selectElement;
+	private SelectBox selectBox = new SelectBox();
+
+	private List<String> options = Generics.newArrayList();
+
+	private Map<String, SwitchCase> cases = Generics.newHashMap();
 	
-	private TemplateElement templateElement;
-	
-	private List<Element> elements = new ArrayList<Element>();
+	private SwitchCase activeCase;
 	
 	public ElementSwitch() {
-		templateElement = new TemplateElement("chooseableElement");
-		templateElement.setTemplate(TemplateUtils.getTemplatePath(this.getClass()));
-		addComponent(templateElement);
+		selectBox = new SelectBox();
+		selectBox.setRequired(true);
+		selectBox.setOptions(options);
+		selectBox.addChangeListener(this);
+		addComponent(selectBox);
 	}
 
-	public void addElement(Element element) {
-		if (selectElement == null) {
-			selectElement = (AbstractSingleSelectElement) element;
-			selectElement.addChangeListener(new ChangeListener() {
-			
-				public void valueChanged(ChangeEvent event) {					
-					getForm().getFormListener().elementChanged(ElementSwitch.this);					
-				}
-			});
-			templateElement.setAttribute("select", element);
-		}
-		else {
-			elements.add(element);
-		}
-		
-	}
-	
-	public List<Element> getElements() {		
-		return null;
-	}
-
-	public void removeElement(Element element) {		
-	}
-	
-	@Override
-	protected void initCompositeElement() {		
-		initComponent(selectElement);
-		for (Element element : elements) {
-			initComponent(element);
-		}
-	}
-	
-	@Override
-	protected void renderInternal(PrintWriter writer) {
-		int selectedIndex = selectElement.getSelectedIndex();
-		if (selectedIndex == -1) {
-			selectedIndex = 0;
-		}
-		Editor element =(Editor) elements.get(selectedIndex);
-		String property = element.getEditorBinding().getProperty();
-		element.getEditorBinding().getEditorBinder().bind(element, property);
-		templateElement.setAttribute("element", element);
-		super.renderInternal(writer);
-	}
-	
-	@Override
-	protected void processRequestInternal(FormRequest request) {		
-		selectElement.processRequest(request);
-		int selectedIndex = selectElement.getSelectedIndex();
-		elements.get(selectedIndex).processRequest(request);
-	}
-	
 	@Override
 	public boolean isCompositeElement() {		
 		return false;
 	}
+		
+	public void addElement(Element element) {
+		SwitchCase switchCase = (SwitchCase) element;
+		switchCase.setVisible(false);
+		switchCase.setSwitchBinding(getEditorBinding());
+		String value = switchCase.getValue();
+		cases.put(value, switchCase);
+		options.add(value);
+		selectBox.reset();
+		super.addElement(element);
+	}
+
+	private void activateCase(Object value) {
+		if (activeCase != null) {
+			activeCase.deactivate();
+		}
+		if (value != null) {
+			activeCase = cases.get(value);
+			activeCase.activate();
+		}
+	}
 	
+	public void valueChanged(ChangeEvent event) {
+		activateCase(event.getNewValue());
+	}
+	
+	public Object getValue() {
+		activeCase.populateBackingObject();
+		return selectBox.getValue();
+	}
+
+	public void setValue(Object value) {
+		if (value == null) {
+			value = options.get(0);
+		}
+		selectBox.setValue(value);
+		activateCase(value);
+		activeCase.initEditors();
+	}
+
 }

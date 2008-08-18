@@ -60,7 +60,7 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 	private boolean clientHasExpandedState;
 	
 	public ElementGroup() {
-		super("group");
+		super("group", TemplateUtils.getTemplatePath(ElementGroup.class));
 		addComponent("elements", container);
 		addComponent("expandButton", new ExpandButton());
 	}

@@ -62,6 +62,7 @@ import org.riotfamily.forms.element.select.MultiSelectBox;
 import org.riotfamily.forms.element.select.RadioButtonGroup;
 import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.element.select.SelectElement;
+import org.riotfamily.forms.element.select.SwitchCase;
 import org.riotfamily.forms.element.suggest.AutocompleteTextField;
 import org.riotfamily.forms.factory.ConfigurableElementFactory;
 import org.riotfamily.forms.factory.ContainerElementFactory;
@@ -136,6 +137,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		elementClasses.put("editable-if-new", EditableIfNew.class);
 		elementClasses.put("autocomplete", AutocompleteTextField.class);
 		elementClasses.put("switch", ElementSwitch.class);
+		elementClasses.put("case", SwitchCase.class);
 	}
 
 	public void digest(Document doc, Resource resource) {
