@@ -28,8 +28,8 @@
             <ed:list list-ref="application-properties" icon="tag"  />
         </ed:group>
         <ed:list list-ref="riot-module-versions" icon="numbers"/>
-        <ed:list list-ref="hibernate-common-statistics" icon="hibernate"/>
-        <ed:group name="cache-statistics" icon="stats">
+        <ed:group name="hibernate-statistics" icon="hibernate">
+        	<ed:list list-ref="hibernate-common-statistics" icon="hibernate" />
             <ed:list list-ref="hibernate-cache-statistics" icon="stats" />
             <ed:list list-ref="hibernate-cache-regions" icon="regions" />
         </ed:group>
@@ -40,7 +40,7 @@
             <ed:list list-ref="request-critical-statistics" icon="hourglass" /> 
             <ed:list list-ref="request-current-statistics" icon="stats" /> 
         </ed:group>
-        <ed:list list-ref="swarm-statistics" icon="stats" />    
+        <!-- <ed:list list-ref="swarm-statistics" icon="stats" /> -->    
     </ed:group>
 		
 	<list:list id="system-properties" search="name,value" order-by="name">
