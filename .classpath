@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="cachius/src"/>
+	<classpathentry kind="src" path="statistics/src"/>
 	<classpathentry kind="src" path="dbmsgsrc/src"/>
 	<classpathentry kind="src" path="common/src"/>
 	<classpathentry kind="src" path="components/src"/>

@@ -1,0 +1,22 @@
+.action-performGarbageCollection {
+	background-image: url(icons/commands/garbage.gif);
+}
+
+.action-switchOn {
+	background-image: url(icons/commands/switch_on.gif);
+}
+.action-switchOff {
+	background-image: url(icons/commands/switch_off.gif);
+}
+.action-refresh {
+	background-image: url(icons/commands/refresh.gif);
+}
+
+.action-clearRiotHibernateCache, 
+.action-clearHibernateStatisticsBaseline, 
+.action-clearRequestStatisticsBaseline,
+.action-clearApplicationHibernateCache,
+.action-clearCacheRegion {
+	background-image: url(icons/commands/delete.gif);
+}
+

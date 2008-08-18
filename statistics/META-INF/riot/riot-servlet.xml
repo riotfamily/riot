@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-2.0.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-7.0.xsd">
+
+    <!-- ================================================================== -->
+    <!-- Module resources                                                   -->
+    <!-- ================================================================== -->
+        
+    <override:add ref="resourceMappings" append="true">         
+        <bean class="org.riotfamily.riot.resource.ResourceMapping">
+            <property name="path" value="/" />
+            <property name="location" value="classpath:/org/riotfamily/statistics/runtime/resources/" />
+        </bean>
+    </override:add>    
+        
+    <override:add ref="messageBasenames">
+		<value>classpath:/org/riotfamily/statistics/runtime/i18n/messages</value>
+	</override:add>
+    
+    <override:add ref="customStyleSheets">
+        <value>style/riot-statistics.css</value>
+    </override:add>
+
+    <override:add ref="listRepository" property="configLocations">
+		<value>${riot-statistics.lists=classpath:/org/riotfamily/statistics/runtime/riot-config.xml}</value>
+	</override:add>
+	
+	<override:add ref="formRepository" property="configLocations">
+		<value>${riot-statistics.forms=classpath:/org/riotfamily/statistics/runtime/riot-config.xml}</value>
+	</override:add>
+	
+	<override:add ref="editorRepository" property="configLocations">
+		<value>${riot-statistics.editors=classpath:/org/riotfamily/statistics/runtime/riot-config.xml}</value>
+	</override:add>
+
+    <!-- ================================================================== -->
+    <!-- DAOs handling frontend specific statistics                              -->
+    <!-- ================================================================== -->
+
+    <bean id="requestStatisticsDao" abstract="true" >
+        <property name="requestCountFilterPlugin" ref="requestCountFilterPlugin" />
+    </bean>
+    
+    <bean id="requestOverviewStatisticsDao" parent="requestStatisticsDao" class="org.riotfamily.statistics.dao.RequestOverviewStatisticsDao" />
+    <bean id="requestCurrentStatisticsDao" parent="requestStatisticsDao" class="org.riotfamily.statistics.dao.RequestCurrentStatisticsDao" />
+    <bean id="requestCriticalStatisticsDao" parent="requestStatisticsDao" class="org.riotfamily.statistics.dao.RequestCriticalStatisticsDao" />
+   
+   
+    <bean id="requestCountFilterPlugin" class="org.riotfamily.statistics.web.RequestCountFilterPlugin">
+        
+        <!-- Requests with response times slower than 10000 ms are logged  -->
+        <property name="warnThreshold" value="${riot.statistics.reqcount.warnthreshold=10000}" />
+
+        <!-- When max. number of parallel requests is exceeded a failure is signaled to the monitoring system  -->
+        <property name="maxRequests" value="${riot.statistics.reqcount.maxrequests=500}" />
+        
+        <!-- URL called by the monitoring system to ensure system health  -->
+        <property name="monitoredUrl" value="${riot.statistics.reqcount.monitoredurl=/status/application}" />
+        
+        <!-- Request count filter active/inactive  -->
+        <property name="enabled" value="${riot.statistics.reqcount.enabled=false}" />
+        
+        <!--  Filter name -->
+        <property name="filterName" value="website-filter" />
+    </bean>
+
+    <!-- ================================================================== -->
+    <!-- Riot Commands                                                      -->
+    <!-- ================================================================== -->
+    
+    <bean id="hibernateStatisticsCommand" abstract="true" >
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <bean id="refreshCommand" class="org.riotfamily.statistics.commands.RefreshStatisticsCommand" />
+    <bean id="performGarbageCollectionCommand" class="org.riotfamily.statistics.commands.PerformGarbageCollectionCommand" />
+    <bean id="toggleHibernateStatisticsCommand" parent="hibernateStatisticsCommand" class="org.riotfamily.statistics.commands.ToggleHibernateStatisticsCommand" />
+    <bean id="clearApplicationHibernateCacheCommand" parent="hibernateStatisticsCommand" class="org.riotfamily.statistics.commands.ClearApplicationHibernateCacheCommand" />
+    <bean id="clearRiotHibernateCacheCommand" parent="hibernateStatisticsCommand" class="org.riotfamily.statistics.commands.ClearRiotHibernateCacheCommand" />
+    <bean id="clearCacheRegionCommand" parent="hibernateStatisticsCommand" class="org.riotfamily.statistics.commands.ClearCacheRegionCommand" />
+    <bean id="clearHibernateStatisticsBaselineCommand" parent="hibernateStatisticsCommand" class="org.riotfamily.statistics.commands.ClearHibernateStatisticsBaselineCommand" />
+
+    <bean id="requestStatisticsCommand" abstract="true" >
+        <property name="requestCountFilterPlugin" ref="requestCountFilterPlugin" />
+    </bean>
+    <bean id="clearRequestStatisticsBaselineCommand" parent="requestStatisticsCommand" class="org.riotfamily.statistics.commands.ClearRequestStatisticsBaselineCommand" />
+    <bean id="toggleRequestStatisticsCommand" parent="requestStatisticsCommand" class="org.riotfamily.statistics.commands.ToggleRequestStatisticsCommand" />
+
+
+</beans>
+

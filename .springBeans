@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.0.5.v200805211800]]></pluginVersion>
+	<pluginVersion><![CDATA[2.0.6.v200806241357]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -21,6 +21,8 @@
 		<config>website/META-INF/riot/website-servlet.xml</config>
 		<config>media/META-INF/riot/application-context.xml</config>
 		<config>media/META-INF/riot/riot-servlet.xml</config>
+		<config>statistics/META-INF/riot/application-context.xml</config>
+		<config>statistics/META-INF/riot/riot-servlet.xml</config>
 	</configs>
 	<configSets>
 		<configSet>

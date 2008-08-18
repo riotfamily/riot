@@ -1,6 +1,6 @@
-#Fri Jul 25 18:40:23 CEST 2008
+#Mon Aug 18 13:15:07 GMT+01:00 2008
 eclipse.preferences.version=1
-org.springframework.ide.eclipse.core.builders.enable.beanmetadatabuilder=true
+org.springframework.ide.eclipse.core.builders.enable.beanmetadatabuilder=false
 org.springframework.ide.eclipse.core.enable.project.preferences=false
 org.springframework.ide.eclipse.core.validator.enable.org.springframework.ide.eclipse.beans.core.beansvalidator=true
 org.springframework.ide.eclipse.core.validator.enable.org.springframework.ide.eclipse.core.springvalidator=false
