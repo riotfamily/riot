@@ -82,7 +82,14 @@ public class TemplateMacroHelper {
 		public void execute(Environment env, Map params, TemplateModel[] loopVars,
 				TemplateDirectiveBody body) throws TemplateException, IOException {
 			
-			definitions.add(new TemplateDefinition(body, env));
+			TemplateDefinition root = new TemplateDefinition(body, env);
+			if (definitions.isEmpty()) {
+				currentTemplate = root;
+				body.render(env.getOut());
+			}
+			else {
+				definitions.add(root);
+			}
 		}
 	}
 	
