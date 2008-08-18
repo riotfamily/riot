@@ -57,6 +57,10 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class ImageUpload extends FileUpload {
 
+	public enum Alpha {
+		ALLOWED, REQUIRED, FORBIDDEN
+		
+	}
 	private static final FormResource PREVIEW_RESOURCE = new ScriptResource(
 			"riot-js/image-cropper.js", "Cropper",
 			Resources.SCRIPTACULOUS_SLIDER,
@@ -79,6 +83,8 @@ public class ImageUpload extends FileUpload {
 	private int previewHeight = 100;
 
 	private String validFormats = "GIF,JPEG,PNG";
+	
+	private Alpha alpha;
 
 	private ImageCropper cropper;
 
@@ -162,6 +168,10 @@ public class ImageUpload extends FileUpload {
 	public void setValidFormats(String validFormats) {
 		this.validFormats = validFormats;
 	}
+	
+	public void setAlpha(String alpha) {
+		this.alpha = alpha != null ? Alpha.valueOf(alpha.toUpperCase()) : null;
+	}
 
 	protected RiotFile createRiotFile(MultipartFile multipartFile) throws IOException {
 		return new RiotImage(multipartFile);
@@ -173,6 +183,14 @@ public class ImageUpload extends FileUpload {
 			if (validFormats.indexOf(image.getFormat()) == -1) {
 				ErrorUtils.reject(this, "image.invalidFormat",
 				new Object[] { validFormats, image.getFormat() });
+			}
+		}
+		if (alpha != null) {
+			if (alpha == Alpha.REQUIRED && !image.isAlpha()) {
+				ErrorUtils.reject(this, "image.alphaRequired");
+			}
+			else if (alpha == Alpha.FORBIDDEN && image.isAlpha()) {
+				ErrorUtils.reject(this, "image.alphaForbidden");
 			}
 		}
 		int imageHeight = image.getHeight();

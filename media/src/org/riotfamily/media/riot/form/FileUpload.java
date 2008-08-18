@@ -36,6 +36,7 @@ import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.element.upload.AbstractFileUpload;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.service.ProcessingService;
+import org.riotfamily.media.service.UnknownFormatException;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -128,7 +129,12 @@ public class FileUpload extends AbstractFileUpload
 	
 	@Override
 	protected void onUpload(MultipartFile multipartFile) throws IOException {
-		setNewFile(createRiotFile(multipartFile));
+		try {
+			setNewFile(createRiotFile(multipartFile));
+		}
+		catch (UnknownFormatException e) {
+			ErrorUtils.reject(this, "unknownFileFormat");
+		}
 	}
 	
 	protected final void setNewFile(RiotFile file) {

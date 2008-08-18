@@ -29,6 +29,15 @@
 			<xsd:complexContent>
 				<xsd:extension base="file-upload">
 					<xsd:attribute name="valid-formats" type="xsd:string" />
+					<xsd:attribute name="alpha">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="allowed" />
+								<xsd:enumeration value="required" />
+								<xsd:enumeration value="forbidden" />
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
 					<xsd:attribute name="width" type="xsd:positiveInteger" />
 					<xsd:attribute name="height" type="xsd:positiveInteger" />
 					<xsd:attribute name="widths" type="commaDelimitedIntegers" />
