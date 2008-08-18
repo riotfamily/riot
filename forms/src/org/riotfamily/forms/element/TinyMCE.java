@@ -117,6 +117,10 @@ public class TinyMCE extends AbstractTextElement
 				new JSONFunction(new String[] {"id", "body", "doc"},
 				"if (window.registerKeyHandler) registerKeyHandler(doc);"));
 		
+		json.element("save_callback", 
+				new JSONFunction(new String[] {"id", "html", "body"},
+				"return html.replace(/<!--.*?-->/g, '');"));
+		
 		return json.toString();
 	}
 	
