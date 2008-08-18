@@ -103,7 +103,7 @@ public class Message {
 	
 	@Transient
 	public MessageFormat getMessageFormat() {
-		if (messageFormat == null) {
+		if (messageFormat == null && text != null) {
 			messageFormat = new MessageFormat(text, locale);
 		}
 		return messageFormat;
