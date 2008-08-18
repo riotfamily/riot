@@ -68,8 +68,11 @@ public class TaskJobContext implements JobContext {
 		task.updateDescription(description);
 	}
 	
-	public void updateStepsTotal(int stepsTotal) {
+	public void updateStepsTotal(int stepsTotal, boolean resetStepsCompleted) {
 		task.updateStepsTotal(stepsTotal);
+		if (resetStepsCompleted) {
+			task.getDetail().setStepsCompleted(0);
+		}
 	}
 
 }

@@ -157,8 +157,11 @@ public class JobTask implements Runnable {
 	 * Logs an info message.
 	 */
 	public void logInfo(String message) {
-		jobLog.info(message);
 		log(message, JobLogEntry.INFO);
+		if (detail.getStepsTotal()> 0) {
+			message = "[" + (detail.getStepsCompleted() * 100 / detail.getStepsTotal()) + "%] " + message;
+		}
+		jobLog.info(message);
 	}
 	
 	/**

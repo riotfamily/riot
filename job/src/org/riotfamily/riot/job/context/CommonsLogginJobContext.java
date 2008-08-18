@@ -63,8 +63,11 @@ public class CommonsLogginJobContext implements JobContext {
 		stepsCompleted++;
 	}
 	
-	public void updateStepsTotal(int stepsTotal) {
+	public void updateStepsTotal(int stepsTotal, boolean resetStepsCompleted) {
 		this.stepsTotal = stepsTotal;
+		if (resetStepsCompleted) {
+			stepsCompleted = 0;
+		}
 	}
 	
 	public void updateDescription(String description) {

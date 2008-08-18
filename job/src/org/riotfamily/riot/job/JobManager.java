@@ -93,14 +93,14 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 		return jobs.get(type);
 	}
 	
-	public JobDetail getOrCreateJob(String type, String objectId) 
+	public JobDetail getOrCreateJob(String type, String objectId, boolean async) 
 			throws JobCreationException {
 		
 		JobDetail detail = dao.getPendingJobDetail(type, objectId);
 		if (detail == null) {
 			detail = dao.getLastCompletedJobDetail(type, objectId);
 			if (detail == null || getJob(type).isRepeatable()) {
-				detail = setupJob(type, objectId);
+				detail = setupJob(type, objectId, async);
 				log.debug("No pending job found of type " + type 
 						+ " for objectId '" + objectId + "' - a new job has "
 						+ " been set up with id " + detail.getId());
@@ -112,14 +112,26 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 		return detail;
 	}
 	
-	private JobDetail setupJob(String type, String objectId) 
+	private JobDetail setupJob(String type, String objectId, boolean async) 
 			throws JobCreationException {
 		
 		int averageStepTime = dao.getAverageStepTime(type);
 		JobDetail detail = new JobDetail(type, objectId, averageStepTime);
 		dao.saveJobDetail(detail);
-		taskExecutor.execute(new JobSetupTask(detail));
+		if (async) {
+			taskExecutor.execute(new JobSetupTask(detail));
+		}
+		else {
+			doSetupJob(detail);
+		}
 		return detail;
+	}
+	
+	private void doSetupJob(JobDetail detail) {
+		Job job = getJob(detail.getType());
+		detail.init(job.setup(detail.getObjectId()));
+		dao.updateJobDetail(detail);
+		uiUpdater.updateJob(detail);
 	}
 		
 	public void executeJob(JobDetail detail) {
@@ -161,17 +173,12 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 
 		private JobDetail detail;
 		
-		private Job job;
-		
 		public JobSetupTask(JobDetail detail) {
 			this.detail = detail;
-			this.job = getJob(detail.getType());
 		}
 
 		public void run() {
-			detail.init(job.setup(detail.getObjectId()));
-			dao.updateJobDetail(detail);
-			uiUpdater.updateJob(detail);
+			doSetupJob(detail);
 		}
 	}
 }

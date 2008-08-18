@@ -32,7 +32,7 @@ public class JobUIController implements Controller {
 		String jobType = ServletUtils.getRequiredStringAttribute(request, "type");
 		String objectId = (String) request.getAttribute("objectId");
 		
-		JobDetail detail = jobManager.getOrCreateJob(jobType, objectId);
+		JobDetail detail = jobManager.getOrCreateJob(jobType, objectId, true);
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject("jobId", detail.getId());
 		mv.addObject("title", request.getParameter("title"));

@@ -62,6 +62,6 @@ public interface JobContext {
 	/**
 	 * Changes the number of total steps.
 	 */
-	public void updateStepsTotal(int stepsTotal);
-		
+	public void updateStepsTotal(int stepsTotal, boolean resetStepsCompleted);
+			
 }
