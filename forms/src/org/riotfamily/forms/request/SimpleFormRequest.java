@@ -37,9 +37,9 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class SimpleFormRequest implements FormRequest {
 
-	private Map<String,Object> params;
+	private Map<String, String> params;
 	
-	public SimpleFormRequest(Map<String,Object> params) {
+	public SimpleFormRequest(Map<String, String> params) {
 		if (params != null) {
 			this.params = params;
 		}

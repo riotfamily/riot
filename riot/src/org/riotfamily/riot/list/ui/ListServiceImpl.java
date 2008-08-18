@@ -174,7 +174,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 		return getListSession(key, request).getFilterFormHtml();
 	}
 
-	public List<?> getFormCommands(String key, String objectId,
+	public List<CommandState> getFormCommands(String key, String objectId,
 			HttpServletRequest request) throws ListSessionExpiredException {
 
 		return getListSession(key, request).getFormCommands(objectId, request);
@@ -205,7 +205,16 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 				item, command, confirmed, request, response);
 	}
 	
-	public CommandResult execBatchCommand(String key, List items,
+	public CommandResult execFormCommand(String key, ListItem item,
+			CommandState command, boolean confirmed,
+			HttpServletRequest request, HttpServletResponse response)
+			throws ListSessionExpiredException {
+
+		return getListSession(key, request).execFormCommand(
+				item, command, confirmed, request, response);
+	}
+	
+	public CommandResult execBatchCommand(String key, List<ListItem> items,
 			CommandState command, boolean confirmed,
 			HttpServletRequest request, HttpServletResponse response)
 			throws ListSessionExpiredException {
@@ -214,7 +223,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 				items, command, confirmed, request, response);
 	}
 
-	public ListModel filter(String key, Map filter, HttpServletRequest request)
+	public ListModel filter(String key, Map<String, String> filter, HttpServletRequest request)
 			throws ListSessionExpiredException {
 		return getListSession(key, request).filter(filter, request);
 	}

@@ -50,10 +50,10 @@ public interface ListService {
 	public ListModel sort(String key, String property, 
 			HttpServletRequest request) throws ListSessionExpiredException;
 	
-	public ListModel filter(String key, Map filter, HttpServletRequest request)
+	public ListModel filter(String key, Map<String, String> filter, HttpServletRequest request)
 			throws ListSessionExpiredException;
 		
-	public List getFormCommands(String key, String objectId, 
+	public List<CommandState> getFormCommands(String key, String objectId, 
 			HttpServletRequest request) throws ListSessionExpiredException;
 	
 	public CommandState getParentCommandState(String key,
@@ -70,7 +70,12 @@ public interface ListService {
 			HttpServletRequest request, HttpServletResponse response)
 			throws ListSessionExpiredException;
 	
-	public CommandResult execBatchCommand(String key, List items, 
+	public CommandResult execFormCommand(String key, ListItem item,
+			CommandState command, boolean confirmed, 
+			HttpServletRequest request, HttpServletResponse response)
+			throws ListSessionExpiredException;
+	
+	public CommandResult execBatchCommand(String key, List<ListItem> items, 
 			CommandState command, boolean confirmed, 
 			HttpServletRequest request, HttpServletResponse response)
 			throws ListSessionExpiredException;

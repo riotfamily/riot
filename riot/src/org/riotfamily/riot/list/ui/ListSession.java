@@ -491,7 +491,7 @@ public class ListSession implements RenderContext {
 		return filterFormHtml;
 	}
 
-	public ListModel filter(Map<String,Object> filter, HttpServletRequest request) {
+	public ListModel filter(Map<String, String> filter, HttpServletRequest request) {
 		if (filterForm != null) {
 			filterForm.processRequest(new SimpleFormRequest(filter));
 			params.setFilter(filterForm.populateBackingObject());
@@ -517,7 +517,7 @@ public class ListSession implements RenderContext {
 		return !listCommands.isEmpty();
 	}
 
-	public List<?> getFormCommands(String objectId, HttpServletRequest request) {
+	public List<CommandState> getFormCommands(String objectId, HttpServletRequest request) {
 		Object bean = null;
 		if (objectId != null) {
 			bean = loadBean(objectId);
@@ -636,6 +636,20 @@ public class ListSession implements RenderContext {
 			HttpServletRequest request, HttpServletResponse response) {
 		
 		Command command = getCommand(itemCommands, commandState.getId());
+		CommandContextImpl context = new CommandContextImpl(this, request);
+		Object target = loadBean(item.getObjectId());
+		context.setBean(target, item.getObjectId());
+		context.setParent(null, item.getParentId(), item.getParentEditorId());
+		context.setRowIndex(item.getRowIndex());
+		return execCommand(item, command, context, target, 
+				commandState, confirmed, request, response);
+	}
+	
+	public CommandResult execFormCommand(ListItem item, 
+			CommandState commandState, boolean confirmed,
+			HttpServletRequest request, HttpServletResponse response) {
+		
+		Command command = getCommand(listConfig.getFormCommands(), commandState.getId());
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		Object target = loadBean(item.getObjectId());
 		context.setBean(target, item.getObjectId());
