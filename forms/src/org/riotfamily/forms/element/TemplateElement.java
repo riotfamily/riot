@@ -46,7 +46,12 @@ public class TemplateElement extends CompositeElement {
 	}
 	
 	public TemplateElement(String modelKey) {
-		template = TemplateUtils.getTemplatePath(this);
+		this.template = TemplateUtils.getTemplatePath(this);
+		setAttribute(modelKey, this);
+	}
+	
+	public TemplateElement(String modelKey, String template) {
+		this.template = template;
 		setAttribute(modelKey, this);
 	}
 		
