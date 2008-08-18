@@ -31,9 +31,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.io.RuntimeCommand;
-import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 
 /**
@@ -48,30 +46,43 @@ public class ImageMagick implements InitializingBean {
 	
 	private static Pattern majorMinorMicroPattern = Pattern.compile("ImageMagick ([0-9]).([0-9]).([0-9])");
 	
-	private String convertCommand;
-
+	private String commandName;
+	
+	private String command;
+	
 	private int majorVersion;
 	
 	private int minorVersion;
 	
 	private int microVersion;
 	
-	public void setConvertCommand(String convertCommand) {
-		this.convertCommand = convertCommand;
+	public ImageMagick() {
+		this("convert");
+	}
+	
+	public ImageMagick(String commandName) {
+		this.commandName = commandName;
 	}
 
-	private String getDefaultConvertCommand() {
+	public void setCommand(String command) {
+		this.command = command;
+	}
+	
+	private String getDefaultCommand() {
 		String os = System.getProperty("os.name");
-		return os.startsWith("Windows") ? "convert.exe" : "convert";
+		if (os.startsWith("Windows")) {
+			return commandName + ".exe";
+		}
+		return commandName;
 	}
 	
 	public void afterPropertiesSet() {
 		try {
-			if (convertCommand == null) {
-				convertCommand = getDefaultConvertCommand();
+			if (command == null) {
+				command = getDefaultCommand();
 			}
-			log.info("Looking for ImageMagick binary: " + convertCommand);
-			String version = new RuntimeCommand(convertCommand, "-version").exec().getOutput();
+			log.info("Looking for ImageMagick binary: " + command);
+			String version = new RuntimeCommand(command, "-version").exec().getOutput();
 			log.info(version);
 			
 			Matcher matcher = majorMinorMicroPattern.matcher(version);
@@ -119,21 +130,30 @@ public class ImageMagick implements InitializingBean {
 						&& this.minorVersion > minorVersion)
 				|| this.majorVersion > majorVersion;
 	}
-			
+	
+	public String invoke(String... args) throws IOException {
+		Assert.state(isAvailable(), "ImageMagick binary '" 
+				+ command + "' not found in path.");
+		
+		String[] cmd = new String[args.length + 1];
+		int i = 0;
+		cmd[i++] = command;
+		for (String arg : args) {
+			cmd[i++] = arg;
+		}
+		return new RuntimeCommand(cmd).exec().getResult();
+	}
+	
 	public String invoke(List<String> args) throws IOException {
 		Assert.state(isAvailable(), "ImageMagick binary '" 
-				+ convertCommand + "' not found in path.");
+				+ command + "' not found in path.");
 		
 		String[] cmd = new String[args.size() + 1];
-		cmd[0] = convertCommand;
+		cmd[0] = command;
 		for (int i = 0; i < args.size(); i++) {
 			cmd[i + 1] = (String) args.get(i);
 		}
 		return new RuntimeCommand(cmd).exec().getResult();
 	}	
 	
-	public static ImageMagick getInstance(ApplicationContext ctx) {
-		return (ImageMagick) BeanFactoryUtils.beanOfTypeIncludingAncestors(
-				ctx, ImageMagick.class);
-	}
 }

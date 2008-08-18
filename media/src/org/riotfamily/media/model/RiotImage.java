@@ -24,7 +24,6 @@
 package org.riotfamily.media.model;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -32,7 +31,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import org.devlib.schmidt.imageinfo.ImageInfo;
+import org.riotfamily.media.service.ImageMetaData;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -44,11 +43,13 @@ import org.springframework.web.multipart.MultipartFile;
 @DiscriminatorValue("image")
 public class RiotImage extends RiotFile {
 
+	private String format;
+	
 	private int width;
 	
 	private int height;
 
-	private String format;
+	private boolean alpha;
 	
 	public RiotImage() {
 	}
@@ -70,14 +71,12 @@ public class RiotImage extends RiotFile {
 	}
 
 	protected void inspect(File file) throws IOException {
-		ImageInfo info = new ImageInfo();
-		info.setInput(new FileInputStream(file));
-		if (info.check()) {
-			width = info.getWidth();
-			height = info.getHeight();
-			format = info.getFormatName();
-			setContentType("image/" + format.toLowerCase());
-		}
+		ImageMetaData meta = mediaService.identifyImage(file);
+		format = meta.getFormat();
+		width = meta.getWidth();
+		height = meta.getHeight();
+		alpha = meta.getType().contains("Matte");
+		setContentType("image/" + format.toLowerCase());
 	}
 	
 	public int getWidth() {
@@ -104,6 +103,14 @@ public class RiotImage extends RiotFile {
 		this.format = format;
 	}
 	
+	public boolean isAlpha() {
+		return alpha;
+	}
+
+	public void setAlpha(boolean alpha) {
+		this.alpha = alpha;
+	}
+
 	@Transient
 	public boolean isValid() {
 		return format != null;

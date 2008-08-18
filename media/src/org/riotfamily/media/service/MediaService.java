@@ -42,10 +42,15 @@ public class MediaService {
 	private FileTypeMap fileTypeMap;
 	
 	private FFmpeg ffmpeg;
+	
+	private ImageMagickIdentify imageMagick;
 
-	public MediaService(FileStore fileStore, FileTypeMap fileTypeMap, FFmpeg ffmpeg) {
+	public MediaService(FileStore fileStore, FileTypeMap fileTypeMap, 
+			ImageMagickIdentify imageMagick, FFmpeg ffmpeg) {
+		
 		this.fileStore = fileStore;
 		this.fileTypeMap = fileTypeMap;
+		this.imageMagick = imageMagick;
 		this.ffmpeg = ffmpeg;
 	}
 
@@ -63,6 +68,10 @@ public class MediaService {
 	
 	public String getContentType(File file) {
 		return fileTypeMap.getContentType(file);
+	}
+	
+	public ImageMetaData identifyImage(File file) throws UnknownFormatException {
+		return imageMagick.identify(file);
 	}
 	
 	public VideoMetaData identifyVideo(File file) throws IOException {

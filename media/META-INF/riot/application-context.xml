@@ -28,11 +28,14 @@
 		<property name="storagePath" value="${riot.media.storagePath=}" />
 	</bean>
 	
+	<bean id="imageMagickIdentify" class="org.riotfamily.media.service.ImageMagickIdentify" />
+	
 	<bean id="ffmpeg" class="org.riotfamily.media.service.FFmpeg" />
 	
 	<bean id="mediaService" class="org.riotfamily.media.service.MediaService">
 		<constructor-arg ref="fileStore" />
 		<constructor-arg ref="fileTypeMap" />
+		<constructor-arg ref="imageMagickIdentify" />
 		<constructor-arg ref="ffmpeg" />
 	</bean>
 	
