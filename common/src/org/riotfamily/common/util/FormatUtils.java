@@ -28,6 +28,7 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -67,6 +68,8 @@ public final class FormatUtils {
 	private static final Pattern TAG_PATTERN = Pattern.compile("</?[^>]+>");
 	
 	private static final Pattern PARENT_DIR_PATTERN = Pattern.compile("\\.\\./");
+	
+	private static final Pattern DATE_DELIMITER_PATTERN = Pattern.compile("^[M|Y|D]*([^MYD])[M|Y|D]*([^MYD])[M|Y|D]*$");
 	
 	private FormatUtils() {
 	}
@@ -547,6 +550,46 @@ public final class FormatUtils {
 	public static String formatIsoDate(Date date) {
 		return dateFormat.format(date);
 	}
+	
+	/**
+	 * Returns the date format for the given locale.
+	 * Examples:
+	 *
+	 * <pre>
+	 *  Locale.ENGLISH - &quot;MM/DD/YYYY&quot;
+	 *  Locale.GERMAN - &quot;DD.MM.YYYY&quot;
+	 * </pre>
+	 * 	 
+	 */
+	public static String getDateFormat(Locale locale) {
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.DATE, 24);
+		c.set(Calendar.MONTH, Calendar.DECEMBER);
+		c.set(Calendar.YEAR, 1970);
+		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+		return df.format(c.getTime())
+				.replace("12", "MM")
+				.replace("70", "YYYY")
+				.replace("24", "DD");
+	}
+	
+	/**
+	 * Returns the date delimiter for the given date format
+	 * Examples:
+	 *
+	 * <pre>
+	 *   &quot;MM/DD/YYYY&quot; - &quot;/&quot;
+	 *   &quot;DD.MM.YYYY&quot; - &quot;.&quot;
+	 * </pre>
+	 * 	 
+	 */
+	public static String getDateDelimiter(String dateFormat) {
+		Matcher m = DATE_DELIMITER_PATTERN.matcher(dateFormat);
+		if (m.matches()) {				
+			return m.group(1);
+		}
+		return null;
+	}
 
 	/**
 	 * Invokes toLowerCase(), converts all whitespaces to underscores and
@@ -791,5 +834,5 @@ public final class FormatUtils {
 		}
 		return PARENT_DIR_PATTERN.matcher(StringUtils.cleanPath(s)).replaceAll("");
 	}
-
+		
 }

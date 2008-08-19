@@ -26,9 +26,7 @@ package org.riotfamily.website.view;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -135,27 +133,14 @@ public class CommonMacroHelper {
 	
 	public String getDateFormat() {
 		if (dateFormat == null) {			
-			Calendar c = Calendar.getInstance();
-			c.set(Calendar.DATE, 24);
-			c.set(Calendar.MONTH, Calendar.DECEMBER);
-			c.set(Calendar.YEAR, 1970);
-			DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, getLocale());
-			dateFormat = df.format(c.getTime())
-					.replace("12", "MM")
-					.replace("70", "YYYY")
-					.replace("24", "DD");
-			
+			dateFormat = FormatUtils.getDateFormat(getLocale());			
 		}
 		return dateFormat;
 	}
 	
 	public String getDateDelimiter() {		
 		if (dateDelimiter == null) {
-			Pattern p = Pattern.compile("^[M|Y|D]*([^MYD])[M|Y|D]*([^MYD])[M|Y|D]*$");
-			Matcher m = p.matcher(getDateFormat());
-			if (m.matches()) {				
-				dateDelimiter = m.group(1);
-			}
+			dateDelimiter = FormatUtils.getDateDelimiter(dateFormat);			
 		}
 		return dateDelimiter;
 	}
