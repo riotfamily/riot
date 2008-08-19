@@ -119,7 +119,8 @@ public class TinyMCE extends AbstractTextElement
 		
 		json.element("save_callback", 
 				new JSONFunction(new String[] {"id", "html", "body"},
-				"return html.replace(/<!--.*?-->/g, '');"));
+				"return html.replace(/<!--(.|\\n)*?-->/g, '')" 
+				+ ".replace(/&lt;!--(.|\\n)*?\\smso-(.|\\n)*?--&gt;/g, '');"));
 		
 		return json.toString();
 	}

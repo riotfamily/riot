@@ -532,7 +532,10 @@ riot.TinyMCEPopup = Class.create(riot.TextareaPopup, {
 	},
 
 	getText: function() {
-		return this.tinymce.getContent().strip();
+		var html = this.tinymce.getContent();
+		html = html.replace(/<!--(.|\n)*?-->/g, '');
+		html = html.replace(/&lt;!--(.|\n)*?\smso-(.|\n)*?--&gt;/g, '');
+		return html.strip();
 	}
 
 });
@@ -674,9 +677,6 @@ riot.fixedTinyMCESettings = {
 	strict_loading_mode: true,
 	use_native_selects: true,
 	setupcontent_callback: riot.setupTinyMCEContent,
-	save_callback: function(id, html, body) {
-		return html.replace(/<!--.*?-->/g, '');
-	},
 	relative_urls: false,
 	theme_advanced_layout_manager: 'RowLayout',
 	theme_advanced_containers_default_align: 'left',
