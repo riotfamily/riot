@@ -204,6 +204,14 @@
 	<#return commonMacroHelper.getCurrentTime()?datetime />
 </#function>
 
+<#function dateFormat>
+	<#return commonMacroHelper.getDateFormat() />
+</#function>
+
+<#function dateDelimiter>
+	<#return commonMacroHelper.getDateDelimiter() />
+</#function>
+
 <#---
   - Returns whether the given date is in the future. 
   -->
