@@ -86,7 +86,7 @@ public class LongConversationTemplate extends HibernateAccessor {
 				}
 			}
 			else {
-				SessionFactoryUtils.releaseSession(session, getSessionFactory());
+				SessionFactoryUtils.closeSession(session);
 				if (sessionHolder == null || sessionHolder.doesNotHoldNonDefaultSession()) {
 					TransactionSynchronizationManager.unbindResource(getSessionFactory());
 				}
