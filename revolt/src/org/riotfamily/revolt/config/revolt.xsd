@@ -7,7 +7,33 @@
 
 	<xsd:attributeGroup name="column-attributes">
 		<xsd:attribute name="name" type="xsd:string" use="required" />
-		<xsd:attribute name="type" type="xsd:string" use="required" />
+		<xsd:attribute name="type" use="required">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="BIT" />
+					<xsd:enumeration value="TINYINT" />
+					<xsd:enumeration value="SMALLINT" />
+					<xsd:enumeration value="INTEGER" />
+					<xsd:enumeration value="BIGINT" />
+					<xsd:enumeration value="FLOAT" />
+					<xsd:enumeration value="REAL" />
+					<xsd:enumeration value="DOUBLE" />
+					<xsd:enumeration value="NUMERIC" />
+					<xsd:enumeration value="DECIMAL" />
+					<xsd:enumeration value="CHAR" />
+					<xsd:enumeration value="VARCHAR" />
+					<xsd:enumeration value="LONGVARCHAR" />
+					<xsd:enumeration value="DATE" />
+					<xsd:enumeration value="TIME" />
+					<xsd:enumeration value="TIMESTAMP" />
+					<xsd:enumeration value="BINARY" />
+					<xsd:enumeration value="VARBINARY" />
+					<xsd:enumeration value="LONGVARBINARY" />
+					<xsd:enumeration value="BLOB" />
+					<xsd:enumeration value="CLOB" />					
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<xsd:attribute name="length" type="xsd:positiveInteger" />
 		<xsd:attribute name="primary-key" type="xsd:boolean" />
 		<xsd:attribute name="not-null" type="xsd:boolean" />
