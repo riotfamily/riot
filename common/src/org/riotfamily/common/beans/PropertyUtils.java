@@ -55,11 +55,20 @@ public final class PropertyUtils {
 	private PropertyUtils() {
 	}
 
+	@SuppressWarnings("unchecked")
+	public static ObjectWrapper createWrapper(Object obj) {
+		Assert.notNull(obj);
+		if (obj instanceof Map) {
+			return new MapWrapper((Map) obj);
+		}
+		return new ProtectedBeanWrapper(obj);
+	}
+	
 	public static Object getProperty(Object bean, String name) {
 		if (bean == null) {
 			return null;
 		}
-		ProtectedBeanWrapper wrapper = new ProtectedBeanWrapper(bean);
+		ObjectWrapper wrapper = createWrapper(bean);
 		try {
 			return wrapper.getPropertyValue(name);	
 		}
@@ -84,7 +93,7 @@ public final class PropertyUtils {
 	}
 
 	public static void setProperty(Object bean, String name, Object value) {
-		ProtectedBeanWrapper wrapper = new ProtectedBeanWrapper(bean);
+		ObjectWrapper wrapper = createWrapper(bean);
 		wrapper.setPropertyValue(name, value);
 	}
 

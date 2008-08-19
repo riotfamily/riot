@@ -25,7 +25,9 @@ package org.riotfamily.riot.dao;
 
 import java.io.Serializable;
 
-public class Order implements Serializable {
+import org.springframework.beans.support.SortDefinition;
+
+public class Order implements Serializable, SortDefinition {
 
 	String property;
 
@@ -52,6 +54,10 @@ public class Order implements Serializable {
 		return caseSensitive;
 	}
 
+	public boolean isIgnoreCase() {
+		return !caseSensitive;
+	}
+	
 	public boolean isProperty(String property) {
 		return this.property.equals(property);
 	}
