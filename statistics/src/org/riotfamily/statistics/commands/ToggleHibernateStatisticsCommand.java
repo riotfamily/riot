@@ -7,7 +7,7 @@ public class ToggleHibernateStatisticsCommand extends AbstractHibernateStatistic
 	@Override
 	protected String getStyleClass(CommandContext context, String action) {
 		return getSessionFactory().getStatistics().isStatisticsEnabled() ? 
-				"switchOff" : "switchOn";
+				"switchOn" : "switchOff";
 	}
 
 	@Override

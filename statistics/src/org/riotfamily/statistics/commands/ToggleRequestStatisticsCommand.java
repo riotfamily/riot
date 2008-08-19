@@ -26,7 +26,7 @@ public class ToggleRequestStatisticsCommand extends AbstractCommand  {
 	@Override
 	protected String getStyleClass(CommandContext context, String action) {
 		return requestCountFilterPlugin.isEnabled() ?
-				"switchOff" : "switchOn";
+				"switchOn" : "switchOff";
 	}
 	
 	public CommandResult execute(CommandContext context) {
