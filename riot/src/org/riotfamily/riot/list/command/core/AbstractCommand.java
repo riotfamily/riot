@@ -32,6 +32,7 @@ import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.runtime.RiotRuntime;
 import org.riotfamily.riot.runtime.RiotRuntimeAware;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.util.StringUtils;
 
 /**
  * Abstract base class for commands.
@@ -72,6 +73,7 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 			if (id.endsWith(COMMAND_NAME_SUFFIX)) {
 				id = id.substring(0, id.length() - COMMAND_NAME_SUFFIX.length());
 			}
+			id = StringUtils.uncapitalize(id);
 		}
 		return id;
 	}

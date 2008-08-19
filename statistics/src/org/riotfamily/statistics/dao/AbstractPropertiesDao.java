@@ -1,41 +1,40 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is Riot.
+ *
+ * The Initial Developer of the Original Code is
+ * Neteye GmbH.
+ * Portions created by the Initial Developer are Copyright (C) 2007
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Felix Gnass [fgnass at neteye dot de]
+ *
+ * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.statistics.dao;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-import org.riotfamily.riot.dao.ListParams;
-import org.riotfamily.statistics.domain.SimpleStatistics;
-import org.springframework.dao.DataAccessException;
+import org.riotfamily.statistics.domain.Statistics;
 
-public abstract class AbstractPropertiesDao extends AbstractKeyValueStatisticsDao {
+public abstract class AbstractPropertiesDao extends AbstractSimpleStatsDao {
 
-	protected List listInternal(Object entity, ListParams params) throws DataAccessException {
-		List list = new ArrayList();
-		Map props = getProperties();
-		int idx = 0;
-		for (Iterator iterator = props.keySet().iterator(); iterator.hasNext();) {
-			String key = (String) iterator.next();
-			String value = (String)props.get(key);
-			if (isFiltered (params, key, value)) {
-				SimpleStatistics entry = new SimpleStatistics();
-				entry.setIdx(++idx);
-				entry.setName(key);
-				entry.setValue(value);
-				list.add(entry); 
-			}
+	@Override
+	protected void populateStats(Statistics stats) throws Exception {
+		for (Map.Entry<String, String> entry : getProperties().entrySet()) {
+			stats.add(entry.getKey(), entry.getValue());
 		}
-		return list;
-
 	}
 	
-
-	public Object load(String id) throws DataAccessException {
-		String value = System.getProperties().getProperty(id);
-		return new SimpleStatistics(id, value);
-	}
-	
-	protected abstract Map getProperties();
-
+	protected abstract Map<String, String> getProperties() throws Exception;
 }

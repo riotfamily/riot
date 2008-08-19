@@ -21,15 +21,27 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.statistics.dao;
+package org.riotfamily.statistics.domain;
 
-import java.util.Map;
+import java.util.List;
 
-public class EnvironmentPropertiesDao extends AbstractPropertiesDao {
+import org.riotfamily.common.util.Generics;
 
-	@Override
-	protected Map<String, String> getProperties() throws Exception {
-		return System.getenv();
+public class Statistics {
+
+	private List<SimpleStatsItem> items = Generics.newArrayList();
+	
+	public void add(String name, Object value) {
+		items.add(new SimpleStatsItem(name, value));
 	}
-
+	
+	/*
+	public void add(String name, Object value, ObjectRenderer renderer) {
+		
+	}
+	*/
+	
+	public List<SimpleStatsItem> getItems() {
+		return items;
+	}
 }

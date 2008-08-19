@@ -12,7 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.filter.FilterPlugin;
-import org.riotfamily.statistics.domain.RequestStatistics;
+import org.riotfamily.statistics.domain.RequestStatsItem;
 import org.springframework.core.CollectionFactory;
 
 public class RequestCountFilterPlugin extends FilterPlugin {
@@ -32,8 +32,8 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 	CollectionFactory s;
 	
 	/* LinkedLists perform better than ArrayLists when modified often. */
-	private List<RequestStatistics> currentRequests = Generics.newLinkedList();
-	private List<RequestStatistics> criticalRequests = Generics.newLinkedList();
+	private List<RequestStatsItem> currentRequests = Generics.newLinkedList();
+	private List<RequestStatsItem> criticalRequests = Generics.newLinkedList();
 
 	public void doFilter(HttpServletRequest request, 
 			HttpServletResponse response, FilterChain filterChain) 
@@ -47,7 +47,7 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 		request.setAttribute(TOP_LEVEL_REQUEST_STAMP, new Long(System.currentTimeMillis()));
 		String url = request.getRequestURI();
 
-		RequestStatistics reqStats = new RequestStatistics(url);
+		RequestStatsItem reqStats = new RequestStatsItem(url);
 		reqStats.setClientIp(request.getRemoteAddr());
 
 		synchronized (this) {
@@ -69,7 +69,7 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 		}
 	}
 
-	private void updateStatsBefore(RequestStatistics reqStats) {
+	private void updateStatsBefore(RequestStatsItem reqStats) {
 		synchronized (this) {
 			totalRequestCount++;
 			currentRequests.add(reqStats);
@@ -79,7 +79,7 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 		}
 	}
 
-	private void updateStatsAfter(RequestStatistics reqStats) {
+	private void updateStatsAfter(RequestStatsItem reqStats) {
 		reqStats.responseDone();
 		synchronized (this) {
 			totalResponseTime += reqStats.getResponseTime();
@@ -88,13 +88,13 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 		}
 	}
 
-	private void checkCriticalCandidate(RequestStatistics reqStats) {
+	private void checkCriticalCandidate(RequestStatsItem reqStats) {
 		if (reqStats.getResponseTime() > warnThreshold) {
 			if (criticalRequests.size() < maxListSize) {
 				addCriticalRequest(reqStats);
 			} 
 			else {
-				RequestStatistics fastestReq = findFastest(criticalRequests);
+				RequestStatsItem fastestReq = findFastest(criticalRequests);
 				if (reqStats.getResponseTime() > fastestReq.getResponseTime()) {
 					criticalRequests.remove(fastestReq);
 					addCriticalRequest(reqStats);
@@ -107,9 +107,9 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 		}
 	}
 
-	private void addCriticalRequest(RequestStatistics reqStats) {
+	private void addCriticalRequest(RequestStatsItem reqStats) {
 		for (int i = 0; i < criticalRequests.size(); i++) {
-			RequestStatistics rs = (RequestStatistics) criticalRequests.get(i);
+			RequestStatsItem rs = (RequestStatsItem) criticalRequests.get(i);
 			if (rs.getResponseTime() > reqStats.getResponseTime() ) {
 				criticalRequests.add(i, reqStats);
 				return;
@@ -118,7 +118,7 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 		criticalRequests.add(reqStats);
 	}
 
-	private RequestStatistics findFastest(List<RequestStatistics> list) {
+	private RequestStatsItem findFastest(List<RequestStatsItem> list) {
 		if (list.size() > 0) {
 			return list.get(0);
 		}
@@ -175,11 +175,11 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 		return totalResponseTime;
 	}
 
-	public List<RequestStatistics> getCurrentRequests() {
+	public List<RequestStatsItem> getCurrentRequests() {
 		return currentRequests;
 	}
 
-	public List<RequestStatistics> getCriticalRequests() {
+	public List<RequestStatsItem> getCriticalRequests() {
 		return criticalRequests;
 	}
 

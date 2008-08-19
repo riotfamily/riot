@@ -8,9 +8,6 @@
 .action-switchOff {
 	background-image: url(icons/commands/switch_off.gif);
 }
-.action-refresh {
-	background-image: url(icons/commands/refresh.gif);
-}
 
 .action-clearRiotHibernateCache, 
 .action-clearHibernateStatisticsBaseline, 

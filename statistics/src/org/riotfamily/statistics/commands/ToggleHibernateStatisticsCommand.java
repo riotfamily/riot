@@ -1,8 +1,14 @@
 package org.riotfamily.statistics.commands;
 
+import org.hibernate.SessionFactory;
 import org.riotfamily.riot.list.command.CommandContext;
 
-public class ToggleHibernateStatisticsCommand extends AbstractHibernateStatisticsCommand  {
+public class ToggleHibernateStatisticsCommand 
+		extends AbstractHibernateStatisticsCommand {
+	
+	public ToggleHibernateStatisticsCommand(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
 
 	@Override
 	protected String getStyleClass(CommandContext context, String action) {

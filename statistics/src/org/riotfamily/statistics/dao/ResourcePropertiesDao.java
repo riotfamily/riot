@@ -25,11 +25,20 @@ package org.riotfamily.statistics.dao;
 
 import java.util.Map;
 
-public class EnvironmentPropertiesDao extends AbstractPropertiesDao {
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 
-	@Override
-	protected Map<String, String> getProperties() throws Exception {
-		return System.getenv();
+public class ResourcePropertiesDao extends AbstractPropertiesDao {
+
+	private Resource resource;
+
+	public void setResource(Resource resource) {
+		this.resource = resource;
 	}
-
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	protected Map<String, String> getProperties() throws Exception {
+		return (Map) PropertiesLoaderUtils.loadProperties(resource);
+	}
 }

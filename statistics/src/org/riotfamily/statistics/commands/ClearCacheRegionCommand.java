@@ -7,23 +7,26 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.SessionFactory;
 import org.hibernate.cache.entry.CacheEntry;
 import org.hibernate.stat.SecondLevelCacheStatistics;
 import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.statistics.domain.CacheRegionStatistics;
+import org.riotfamily.statistics.domain.CacheRegionStatsItem;
 
-public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand{
+public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand {
 
-	private static Log log = LogFactory.getLog(ClearCacheRegionCommand.class);
+	private Log log = LogFactory.getLog(ClearCacheRegionCommand.class);
 	
-	public void doExecute(CommandContext context) 
-	{
-		CacheRegionStatistics crs = (CacheRegionStatistics)context.getBean();
+	public ClearCacheRegionCommand(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
+
+	public void doExecute(CommandContext context) {
+		CacheRegionStatsItem crs = (CacheRegionStatsItem) context.getBean();
 		clearHibernateCacheRegion(crs.getName());
-		
 	}
 	
-	private  void clearHibernateCacheRegion(String region) {
+	private void clearHibernateCacheRegion(String region) {
 		try {
 			SecondLevelCacheStatistics stats = getSessionFactory().getStatistics().getSecondLevelCacheStatistics(region);
 			Set classes = getCacheEntrySet(stats);
@@ -31,7 +34,8 @@ public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand{
 				String clazz = (String) iterator.next();
 				evictCacheEntry(clazz, false);
 			}
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			log.warn("Clearing cache region failed: " + region);
 			throw new RuntimeException("Clearing cache region failed");
 		}

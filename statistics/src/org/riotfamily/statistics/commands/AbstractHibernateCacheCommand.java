@@ -1,8 +1,14 @@
 package org.riotfamily.statistics.commands;
 
+import org.hibernate.SessionFactory;
 import org.riotfamily.common.util.SpringUtils;
 
-public abstract class AbstractHibernateCacheCommand extends AbstractHibernateStatisticsCommand  {
+public abstract class AbstractHibernateCacheCommand 
+		extends AbstractHibernateStatisticsCommand {
+
+	public AbstractHibernateCacheCommand(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
 
 	protected void clearCache(String entityPrefix, boolean inverse) {
 		String[] entityNames = getSessionFactory().getStatistics().getEntityNames();

@@ -1,59 +1,57 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is Riot.
+ *
+ * The Initial Developer of the Original Code is
+ * Neteye GmbH.
+ * Portions created by the Initial Developer are Copyright (C) 2007
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Felix Gnass [fgnass at neteye dot de]
+ *
+ * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.statistics.dao;
 
-import java.sql.SQLException;
-import java.util.List;
-
-import javax.sql.DataSource;
-
-import org.riotfamily.common.util.Generics;
-import org.riotfamily.riot.dao.ListParams;
-import org.riotfamily.statistics.domain.SimpleStatistics;
+import org.riotfamily.statistics.domain.Statistics;
 
 import com.mchange.v2.c3p0.impl.AbstractPoolBackedDataSource;
 
-public class C3P0StatisticsDao extends AbstractKeyValueStatisticsDao {
+public class C3P0StatisticsDao extends AbstractSimpleStatsDao {
 
-	private DataSource dataSource;
+	private AbstractPoolBackedDataSource ds;
 	
-	public DataSource getDataSource() {
-		return dataSource;
+	public void setDataSource(AbstractPoolBackedDataSource ds) {
+		this.ds = ds;
 	}
 
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
+	@Override
+	protected void populateStats(Statistics stats) throws Exception {
+		stats.add("Connections", ds.getNumConnections());
+		stats.add("Busy connections", ds.getNumBusyConnections());
+		stats.add("Idle connections", ds.getNumIdleConnections());
+		
+		stats.add("Failed check-ins ", ds.getNumFailedCheckinsDefaultUser());
+		stats.add("Failed check-outs", ds.getNumFailedCheckoutsDefaultUser());
+		stats.add("Failed idle-tests", ds.getNumFailedIdleTestsDefaultUser());
+		
+		stats.add("Threads waiting for checkout", ds.getNumThreadsAwaitingCheckoutDefaultUser());
+		stats.add("Unclosed orphaned connections", ds.getNumUnclosedOrphanedConnections());
+		
+		stats.add("Last acquisition failure", ds.getLastAcquisitionFailureDefaultUser());
+		stats.add("Last check-in failure", ds.getLastCheckinFailureDefaultUser());
+		stats.add("Last check-out failure", ds.getLastCheckoutFailureDefaultUser());
+		stats.add("Last connection test failure", ds.getLastConnectionTestFailureDefaultUser());
+		stats.add("Last idle test failure", ds.getLastIdleTestFailureDefaultUser());
 	}
-	
-	protected List listInternal(Object parent, ListParams params) {
-		List<SimpleStatistics> result = Generics.newArrayList();
-		if (dataSource != null) {
-			if (dataSource instanceof AbstractPoolBackedDataSource) {
-				AbstractPoolBackedDataSource cpds = (AbstractPoolBackedDataSource) dataSource;
-				try {
-					result.add(new SimpleStatistics("C3P0 number of busy connections", cpds.getNumBusyConnections() + ""));
-					result.add(new SimpleStatistics("C3P0 number of connections", cpds.getNumConnections() + ""));
-					result.add(new SimpleStatistics("C3P0 number of failed check-ins (default user)", cpds.getNumFailedCheckinsDefaultUser()+ ""));
-					result.add(new SimpleStatistics("C3P0 number of failed check-outs (default user)", cpds.getNumFailedCheckoutsDefaultUser()+ ""));
-					result.add(new SimpleStatistics("C3P0 number of failed idle-tests (default user)", cpds.getNumFailedIdleTestsDefaultUser()+ ""));
-					result.add(new SimpleStatistics("C3P0 number of idle connections", cpds.getNumIdleConnections()+ ""));
-					result.add(new SimpleStatistics("C3P0 number of threads waiting for checkout (default user)", cpds.getNumThreadsAwaitingCheckoutDefaultUser()+ ""));
-					result.add(new SimpleStatistics("C3P0 number of unclosed orphaned connections", cpds.getNumUnclosedOrphanedConnections()+ ""));
-					result.add(new SimpleStatistics("C3P0 number of user pools", cpds.getNumUserPools()+ ""));
-					result.add(new SimpleStatistics("C3P0 last acquisition failure (default user)", getStr(cpds.getLastAcquisitionFailureDefaultUser())));
-					result.add(new SimpleStatistics("C3P0 last check-in failure (default user)", getStr(cpds.getLastCheckinFailureDefaultUser())));
-					result.add(new SimpleStatistics("C3P0 last check-out failure (default user)", getStr(cpds.getLastCheckoutFailureDefaultUser())));
-					result.add(new SimpleStatistics("C3P0 last connection test failure (default user)", getStr(cpds.getLastConnectionTestFailureDefaultUser())));
-					result.add(new SimpleStatistics("C3P0 last idle test failure (default user)", getStr(cpds.getLastIdleTestFailureDefaultUser())));
-				} 
-				catch (SQLException e) {
-					result.add(new SimpleStatistics("C3P0 DS Error", e.toString()));
-				}
-			}
-		}
-		return result;
-	}
-
-	private String getStr(Throwable ex) {
-		return ex == null ? "-" : ex.toString() + " (Msg.: " + ex.getMessage() + ")";
-	}
-
 }

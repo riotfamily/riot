@@ -2,7 +2,7 @@ package org.riotfamily.statistics.domain;
 
 import java.util.Date;
 
-public class RequestStatistics extends NamedEntity {
+public class RequestStatsItem extends StatsItem {
 
 	private Date timestamp = new Date();
 
@@ -10,7 +10,7 @@ public class RequestStatistics extends NamedEntity {
 
 	private String clientIp;
 
-	public RequestStatistics(String name) {
+	public RequestStatsItem(String name) {
 		super(name);
 	}
 

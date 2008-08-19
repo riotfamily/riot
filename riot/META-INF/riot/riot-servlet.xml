@@ -186,6 +186,8 @@
 	<bean id="viewCommand" class="org.riotfamily.riot.list.command.core.EditCommand" />
 
 	<bean id="deleteCommand" class="org.riotfamily.riot.list.command.core.DeleteCommand" />
+	
+	<bean id="refreshCommand" class="org.riotfamily.riot.list.command.core.RefreshCommand" />
 
 	<bean id="stepIntoCommand" class="org.riotfamily.riot.list.command.core.StepIntoCommand" />
 
@@ -498,18 +500,6 @@
 		<constructor-arg ref="riotUserDao" />
 		<constructor-arg ref="transactionManager" />
 		<property name="formContextFactory" ref="formContextFactory" />
-	</bean>
-
-	<bean id="packageListController" name="/packages" class="org.riotfamily.common.web.controller.PackageListController">
-		<property name="viewName" value="classpath:/org/riotfamily/riot/runtime/view/packages.ftl" />
-		<property name="patterns">
-			<list>
-				<value>org.riotfamily.*</value>
-				<value>org.springframework.*</value>
-				<value>org.hibernate.*</value>
-				<value>java.*</value>
-			</list>
-		</property>
 	</bean>
 
 	<bean id="messageCodeRevelationController" name="/toggle-i18n" class="org.riotfamily.common.i18n.MessageCodeRevelationController" />

@@ -5,45 +5,43 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.stat.SecondLevelCacheStatistics;
-import org.riotfamily.riot.dao.ListParams;
-import org.riotfamily.statistics.domain.CacheRegionStatistics;
+import org.riotfamily.common.util.Generics;
+import org.riotfamily.statistics.domain.CacheRegionStatsItem;
+import org.riotfamily.statistics.domain.StatsItem;
 import org.springframework.dao.DataAccessException;
 
-public class HibernateCacheRegionDao extends AbstractNamedEntityDao {
+public class HibernateCacheRegionDao extends AbstractStatsItemDao {
 
 	private SessionFactory sessionFactory;
 	
-	public Class getEntityClass() {
-		return CacheRegionStatistics.class;
-	}
 	
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
+	public HibernateCacheRegionDao(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
-	}	
+	}
 
-	protected List listInternal(Object parent, ListParams params) {
-		ArrayList result = new ArrayList();
-		String[] regions = getSessionFactory().getStatistics().getSecondLevelCacheRegionNames();
-		for (int i = 0; i < regions.length; i++) {
-			CacheRegionStatistics entity = new CacheRegionStatistics(regions[i]);
-			SecondLevelCacheStatistics stats = getSessionFactory().getStatistics().getSecondLevelCacheStatistics(regions[i]);
-			entity.setElementsInMemory(new Long(stats.getElementCountInMemory()));
-			entity.setElementsOnDisk(new Long(stats.getElementCountOnDisk()));
-			entity.setHitCount(new Long(stats.getHitCount()));
-			entity.setMissCount(new Long(stats.getMissCount()));
-			entity.setPutCount(new Long(stats.getPutCount()));
-			entity.setKbInMemory(new Long(stats.getSizeInMemory() / 1024));
-			result.add(entity);
-		}
-		return result;
+	public Class<?> getEntityClass() {
+		return CacheRegionStatsItem.class;
 	}
 	
+	@Override
+	protected List<? extends StatsItem> getStats() {
+		ArrayList<CacheRegionStatsItem> stats = Generics.newArrayList();
+		String[] regions = sessionFactory.getStatistics().getSecondLevelCacheRegionNames();
+		for (String region : regions) {
+			CacheRegionStatsItem item = new CacheRegionStatsItem(region);
+			SecondLevelCacheStatistics sl = sessionFactory.getStatistics().getSecondLevelCacheStatistics(region);
+			item.setElementsInMemory(sl.getElementCountInMemory());
+			item.setElementsOnDisk(sl.getElementCountOnDisk());
+			item.setHitCount(sl.getHitCount());
+			item.setMissCount(sl.getMissCount());
+			item.setPutCount(sl.getPutCount());
+			item.setKbInMemory(sl.getSizeInMemory() / 1024);
+			stats.add(item);
+		}
+		return stats;
+	}
 	
 	public Object load(String id) throws DataAccessException {
-		return new CacheRegionStatistics(id);
+		return new CacheRegionStatsItem(id);
 	}
 }

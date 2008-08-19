@@ -1,6 +1,6 @@
 package org.riotfamily.statistics.domain;
 
-public class CacheRegionStatistics extends NamedEntity {
+public class CacheRegionStatsItem extends StatsItem {
 	
 	private Long elementsInMemory;
 	
@@ -14,7 +14,7 @@ public class CacheRegionStatistics extends NamedEntity {
 	
 	private Long kbInMemory;
 
-	public CacheRegionStatistics(String name) {
+	public CacheRegionStatsItem(String name) {
 		super(name);
 	}
 	

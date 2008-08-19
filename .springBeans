@@ -21,7 +21,6 @@
 		<config>website/META-INF/riot/website-servlet.xml</config>
 		<config>media/META-INF/riot/application-context.xml</config>
 		<config>media/META-INF/riot/riot-servlet.xml</config>
-		<config>statistics/META-INF/riot/application-context.xml</config>
 		<config>statistics/META-INF/riot/riot-servlet.xml</config>
 	</configs>
 	<configSets>

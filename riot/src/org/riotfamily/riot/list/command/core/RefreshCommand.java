@@ -21,15 +21,22 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.statistics.dao;
+package org.riotfamily.riot.list.command.core;
 
-import java.util.Map;
+import org.riotfamily.riot.list.command.CommandContext;
+import org.riotfamily.riot.list.command.CommandResult;
+import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
-public class EnvironmentPropertiesDao extends AbstractPropertiesDao {
+public class RefreshCommand extends AbstractCommand {
+
+	private static final String ACTION_REFRESH = "refresh";
 
 	@Override
-	protected Map<String, String> getProperties() throws Exception {
-		return System.getenv();
+	protected String getAction(CommandContext context) {
+		return ACTION_REFRESH;
 	}
-
+	
+	public CommandResult execute(CommandContext context) {
+		return new RefreshSiblingsResult(context);
+	}
 }

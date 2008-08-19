@@ -55,6 +55,9 @@
 .action-import {
 	background-image: url(icons/commands/import.gif);
 }
+.action-refresh {
+	background-image: url(icons/commands/refresh.gif);
+}
 
 tr.cut td {
 	font-style: italic;

@@ -23,13 +23,19 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.statistics.dao;
 
-import java.util.Map;
+import java.util.List;
 
-public class EnvironmentPropertiesDao extends AbstractPropertiesDao {
+import org.riotfamily.statistics.domain.Statistics;
+import org.riotfamily.statistics.domain.StatsItem;
+
+public abstract class AbstractSimpleStatsDao extends AbstractStatsItemDao {
 
 	@Override
-	protected Map<String, String> getProperties() throws Exception {
-		return System.getenv();
+	protected List<? extends StatsItem> getStats() throws Exception {
+		Statistics stats = new Statistics();
+		populateStats(stats);
+		return stats.getItems();
 	}
-
+	
+	protected abstract void populateStats(Statistics stats) throws Exception;
 }

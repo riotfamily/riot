@@ -34,6 +34,7 @@ import org.riotfamily.riot.dao.Order;
 import org.riotfamily.riot.dao.SortableDao;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.RecoverableDataAccessException;
 
 public abstract class InMemoryRiotDao extends RiotDaoAdapter 
 		implements SortableDao {
@@ -42,18 +43,23 @@ public abstract class InMemoryRiotDao extends RiotDaoAdapter
 	public Collection<?> list(Object parent, ListParams params)
 			throws DataAccessException {
 		
-		Collection<?> items = listInternal(parent);
-		ArrayList<Object> list = Generics.newArrayList(items.size());
-		for (Object item : items) {
-			if (filterMatches(item, params) && searchMatches(item, params)) {
-				list.add(item);
+		try {
+			Collection<?> items = listInternal(parent);
+			ArrayList<Object> list = Generics.newArrayList(items.size());
+			for (Object item : items) {
+				if (filterMatches(item, params) && searchMatches(item, params)) {
+					list.add(item);
+				}
 			}
+			if (params.getOrder() != null && params.getOrder().size() > 0) {
+				Order order = params.getOrder().get(0);
+				PropertyComparator.sort(list, order);
+			}
+			return list;
 		}
-		if (params.getOrder() != null && params.getOrder().size() > 0) {
-			Order order = params.getOrder().get(0);
-			PropertyComparator.sort(list, order);
+		catch (Exception e) {
+			throw new RecoverableDataAccessException(e.getMessage(), e);
 		}
-		return list;
 	}
 	
 	protected boolean filterMatches(Object item, ListParams params) {
@@ -93,6 +99,6 @@ public abstract class InMemoryRiotDao extends RiotDaoAdapter
 		return false;
 	}
 	
-	protected abstract Collection<?> listInternal(Object parent);
+	protected abstract Collection<?> listInternal(Object parent) throws Exception;
 	
 }
