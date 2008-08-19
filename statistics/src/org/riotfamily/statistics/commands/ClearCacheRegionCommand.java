@@ -12,6 +12,11 @@ import org.hibernate.stat.SecondLevelCacheStatistics;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.statistics.domain.CacheRegionStatistics;
 
+/**
+ * Clear cache regions. The command currently generates ClastCastExceptions in some cases due to an hibernate bug. 
+ * @author lars
+ *
+ */
 public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand{
 
 	private static Log log = LogFactory.getLog(ClearCacheRegionCommand.class);
