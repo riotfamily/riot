@@ -485,13 +485,17 @@ public class ComponentEditorImpl implements ComponentEditor, MessageSourceAware 
 	private void checkEditGranted(String contextKey) 
 			throws RequestContextExpiredException {
 		
-		AccessController.checkPermission("toolbarEdit", getWrappedRequest(contextKey));
+		if (contextKey != null) {
+			AccessController.checkPermission("toolbarEdit", getWrappedRequest(contextKey));
+		}
 	}
 	
 	private void checkPublishGranted(String contextKey) 
 			throws RequestContextExpiredException {
-
-		AccessController.checkPermission("toolbarPublish", getWrappedRequest(contextKey));
+		
+		if (contextKey != null) {
+			AccessController.checkPermission("toolbarPublish", getWrappedRequest(contextKey));
+		}
 	}
 
 	private HttpServletRequest getWrappedRequest(String key)
