@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.security.session;
 
+import java.util.List;
+
 import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
@@ -32,8 +34,10 @@ import org.riotfamily.riot.security.auth.RiotUser;
  */
 public interface SessionMetaDataStore {
 
-	public SessionMetaData loadSessionMetaData(RiotUser user);
+	public List<SessionMetaData> listAll();
 	
-	public void storeSessionMetaData(SessionMetaData data);
+	public SessionMetaData sessionStarted(String userName, RiotUser user, String loginIP);
+	
+	public void sessionEnded(SessionMetaData data);
 
 }

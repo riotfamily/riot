@@ -41,7 +41,7 @@ public class LoginManager implements ServletContextAware {
 
 	private UserLookupAuthenticationService userLookupService;
 	
-	private SessionMetaDataStore metaDataStore;
+	private SessionMetaDataStore metaDataStore = new TransientSessionMetaDataStore();
 	
 	
 	public LoginManager(AuthenticationService authenticationService) {
@@ -102,27 +102,17 @@ public class LoginManager implements ServletContextAware {
 	 * {@link SessionMetaDataStore}. If no store is configured or no persistent
 	 * data is found, a new instance is created. 
 	 */
-	private SessionMetaData getOrCreateMetaData(String userName, RiotUser user, 
+	private SessionMetaData sessionStarted(String userName, RiotUser user, 
 			HttpServletRequest request) {
 		
-		SessionMetaData metaData = null;
-		if (metaDataStore != null) {
-			metaData = metaDataStore.loadSessionMetaData(user);
-		}
-		if (metaData == null) {
-			metaData = new SessionMetaData(user.getUserId());
-		}
-		metaData.sessionStarted(userName, request.getRemoteHost());
-		return metaData;
+		return metaDataStore.sessionStarted(userName, user, request.getRemoteHost());
 	}
 	
 	/**
 	 * Stores the given SessionData in the {@link SessionMetaDataStore}.
 	 */
-	void storeSessionMetaData(SessionMetaData sessionData) {
-		if (metaDataStore != null) {
-			metaDataStore.storeSessionMetaData(sessionData);
-		}
+	void sessionEnded(SessionMetaData sessionData) {
+		metaDataStore.sessionEnded(sessionData);
 	}
 	
 	/**
@@ -132,7 +122,7 @@ public class LoginManager implements ServletContextAware {
 	private void storeUserInSession(String userName, RiotUser user, 
 			HttpServletRequest request) {
 		
-		SessionMetaData sessionData = getOrCreateMetaData(userName, user, request);
+		SessionMetaData sessionData = sessionStarted(userName, user, request);
 		UserHolder.storeInSession(user, sessionData, request.getSession());
 	}
 

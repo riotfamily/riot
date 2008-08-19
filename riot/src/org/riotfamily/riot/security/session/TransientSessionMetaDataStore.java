@@ -23,6 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.security.session;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
@@ -32,11 +36,44 @@ import org.riotfamily.riot.security.auth.RiotUser;
  */
 public class TransientSessionMetaDataStore implements SessionMetaDataStore {
 
-	public SessionMetaData loadSessionMetaData(RiotUser user) {
-		return null;
+	public List<SessionMetaData> listAll() {
+		return Collections.emptyList();
+	}
+	
+	public SessionMetaData sessionStarted(String userName, RiotUser user, String loginIP) {
+		return new SessionMetaDataImpl(userName, user);
 	}
 
-	public void storeSessionMetaData(SessionMetaData sessionData) {
+	public void sessionEnded(SessionMetaData sessionData) {
+	}
+	
+	private static class SessionMetaDataImpl implements SessionMetaData {
+
+		private String userName;
+		
+		private String userId;
+		
+		private SessionMetaDataImpl(String userName, RiotUser user) {
+			this.userName = userName;
+			this.userId = user.getUserId();
+		}
+		
+		public Date getLastLoginDate() {
+			return null;
+		}
+
+		public String getLastLoginIP() {
+			return null;
+		}
+
+		public String getUserId() {
+			return userId;
+		}
+
+		public String getUserName() {
+			return userName;
+		}
+		
 	}
 	
 }

@@ -95,9 +95,8 @@ public class UserHolder implements Serializable, HttpSessionBindingListener {
 	 */
 	public void valueUnbound(HttpSessionBindingEvent event) {
 		users.remove(this);
-		metaData.sessionEnded();
 		ServletContext sc = event.getSession().getServletContext();
-		LoginManager.getInstance(sc).storeSessionMetaData(metaData);
+		LoginManager.getInstance(sc).sessionEnded(metaData);
 	}
 	
 	/**

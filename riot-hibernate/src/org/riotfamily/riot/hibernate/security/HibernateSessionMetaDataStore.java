@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.security;
 
+import java.util.List;
+
 import org.riotfamily.riot.security.auth.RiotUser;
 import org.riotfamily.riot.security.session.SessionMetaData;
 import org.riotfamily.riot.security.session.SessionMetaDataStore;
@@ -33,13 +35,29 @@ import org.springframework.transaction.annotation.Transactional;
 public class HibernateSessionMetaDataStore extends HibernateDaoSupport 
 		implements SessionMetaDataStore {
 
-	public SessionMetaData loadSessionMetaData(RiotUser user) {
-		return (SessionMetaData) getHibernateTemplate().get(
-				SessionMetaData.class, user.getUserId());
+	@SuppressWarnings("unchecked")
+	public List<SessionMetaData> listAll() {
+		return getHibernateTemplate().loadAll(PersistentSessionMetaData.class);
 	}
 
-	public void storeSessionMetaData(SessionMetaData sessionData) {
-		getHibernateTemplate().saveOrUpdate(sessionData);
+	public void sessionEnded(SessionMetaData data) {
+		getSession().update(data);
+		((PersistentSessionMetaData) data).sessionEnded();
+	}
+
+	public SessionMetaData sessionStarted(String userName, RiotUser user, 
+			String loginIP) {
+		
+		PersistentSessionMetaData meta = (PersistentSessionMetaData) 
+				getHibernateTemplate().get(PersistentSessionMetaData.class, 
+				user.getUserId());
+		
+		if (meta == null) {
+			meta = new PersistentSessionMetaData(user);
+		}
+		meta.sessionStarted(userName, loginIP);
+		getHibernateTemplate().saveOrUpdate(meta);
+		return meta;
 	}
 
 }

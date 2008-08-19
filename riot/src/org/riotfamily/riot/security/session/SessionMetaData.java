@@ -27,73 +27,18 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Class that holds meta data about the last and current session.
+ * Interface that provides meta data about the last and current session.
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public class SessionMetaData implements Serializable {
+public interface SessionMetaData extends Serializable {
 
-	private String userId;
-	
-	private String userName;
-	
-	private Date loginDate;
-	
-	private Date lastLoginDate;
-	
-	private String loginIP;
-	
-	private String lastLoginIP;
+	public String getUserId();
 
-	
-	public SessionMetaData() {
-	}
+	public String getUserName();
 
-	public SessionMetaData(String userId) {
-		this.userId = userId;		
-	}
-	
-	void sessionStarted(String userName, String loginIP) {
-		this.userName = userName;
-		this.loginIP = loginIP;
-		this.loginDate = new Date();
-	}
-	
-	void sessionEnded() {
-		lastLoginDate = loginDate;
-		lastLoginIP = loginIP;
-	}
-	
-	public String getUserId() {
-		return userId;
-	}
+	public Date getLastLoginDate();
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public Date getLastLoginDate() {
-		return lastLoginDate;
-	}
-
-	public void setLastLoginDate(Date lastLoginDate) {
-		this.lastLoginDate = lastLoginDate;
-	}
-
-	public String getLastLoginIP() {
-		return lastLoginIP;
-	}
-
-	public void setLastLoginIP(String lastLoginIP) {
-		this.lastLoginIP = lastLoginIP;
-	}
+	public String getLastLoginIP();
 	
 }

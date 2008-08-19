@@ -35,14 +35,10 @@
 	<!-- The Hibernate SessionFactory -->
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="dataSource" ref="riotDataSource" />
-		<property name="mappingLocations">
-			<list>
-				<value>classpath:/org/riotfamily/riot/hibernate/security/security.hbm.xml</value>
-			</list>
-		</property>
 		<property name="annotatedClasses">
 			<list>
 				<value>org.riotfamily.riot.hibernate.security.User</value>
+				<value>org.riotfamily.riot.hibernate.security.PersistentSessionMetaData</value>
 			</list>
 		</property>
 		
