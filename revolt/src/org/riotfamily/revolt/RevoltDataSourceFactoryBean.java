@@ -38,6 +38,10 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
 
 public class RevoltDataSourceFactoryBean implements FactoryBean, 
@@ -106,7 +110,13 @@ public class RevoltDataSourceFactoryBean implements FactoryBean,
 			}
 			
 			if (automatic && !script.isManualExecutionOnly()) {
-				script.execute(dataSource);
+				new TransactionTemplate(new DataSourceTransactionManager(dataSource)).execute(
+					new TransactionCallbackWithoutResult() {
+						protected void doInTransactionWithoutResult(TransactionStatus status) {
+							script.execute(dataSource);
+						}
+					}
+				);
 			}
 			else {
 				String instructions = getInstructions();
