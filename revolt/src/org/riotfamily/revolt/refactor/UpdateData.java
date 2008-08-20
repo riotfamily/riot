@@ -44,13 +44,17 @@ public class UpdateData implements Refactoring {
 	}
 
 	public Script getScript(Dialect dialect) {
+		Script result = new Script();
 		for (UpdateStatement statement : statements) {
 			if (statement.supports(dialect)) {
-				return new Script(statement.getSql());
+				result.append(new Script(statement.getSql()));				
+			}
+			else {
+				throw new EvolutionException("No update statment for dialect " 
+						+ dialect.getName());
 			}
 		}
-		throw new EvolutionException("No update statment for dialect " 
-				+ dialect.getName());
+		return result;		
 	}
 	
 }
