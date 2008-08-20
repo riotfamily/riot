@@ -298,28 +298,30 @@ public class ListSession implements RenderContext {
 	private void fillInItems(ListModel model, Collection<?> beans, Object root,
 			HttpServletRequest request) {
 		
-		ArrayList<ListItem> items = new ArrayList<ListItem>(beans.size());
+		ArrayList<ListItem> items = new ArrayList<ListItem>();
 		int rowIndex = 0;
 		Iterator<?> it = beans.iterator();
 		while (it.hasNext()) {
 			Object bean = it.next();
-			ListItem item = new ListItem();
-			item.setRowIndex(rowIndex++);
-			item.setObjectId(EditorDefinitionUtils.getObjectId(listDefinition, bean));
-			item.setParentId(model.getParentId());
-			item.setParentEditorId(model.getParentEditorId());
-			item.setColumns(getColumns(bean));
-			item.setCommands(getCommandStates(itemCommands,
-					item, bean, model.getItemsTotal(), request));
-
-			if (listConfig.getRowStyleProperty() != null) {
-				item.setCssClass(FormatUtils.toCssClass(
-						PropertyUtils.getPropertyAsString(bean, 
-						listConfig.getRowStyleProperty())));
+			if (AccessController.isGranted("list", bean, root)) {
+				ListItem item = new ListItem();
+				item.setRowIndex(rowIndex++);
+				item.setObjectId(EditorDefinitionUtils.getObjectId(listDefinition, bean));
+				item.setParentId(model.getParentId());
+				item.setParentEditorId(model.getParentEditorId());
+				item.setColumns(getColumns(bean));
+				item.setCommands(getCommandStates(itemCommands,
+						item, bean, model.getItemsTotal(), request));
+	
+				if (listConfig.getRowStyleProperty() != null) {
+					item.setCssClass(FormatUtils.toCssClass(
+							PropertyUtils.getPropertyAsString(bean, 
+							listConfig.getRowStyleProperty())));
+				}
+				item.setDefaultCommandIds(defaultCommandIds);
+				item.setExpandable(isExpandable(bean, root));
+				items.add(item);
 			}
-			item.setDefaultCommandIds(defaultCommandIds);
-			item.setExpandable(isExpandable(bean, root));
-			items.add(item);
 		}
 		model.setItems(items);
 	}
