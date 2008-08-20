@@ -32,6 +32,7 @@
             <ed:list list-ref="request-critical-statistics" icon="hourglass" /> 
             <ed:list list-ref="request-current-statistics" icon="stats" /> 
         </ed:group>
+        <ed:list list-ref="cachius-statistics" icon="stats" />
         <!-- <ed:list list-ref="swarm-statistics" icon="stats" /> -->    
     </ed:group>
 		
@@ -116,6 +117,17 @@
             <list:column property="value" />
         </list:columns>
         <list:command class="org.riotfamily.statistics.commands.PerformGarbageCollectionCommand" /> 
+        <list:command id="refresh" />  
+    </list:list>
+    
+     <list:list id="cachius-statistics" order-by="">
+        <list:dao class="org.riotfamily.statistics.dao.CachiusStatisticsDao">
+        	<list:property name="cache" ref="websiteCache" />
+        </list:dao>
+        <list:columns>
+            <list:column property="name" />
+            <list:column property="value" />
+        </list:columns>
         <list:command id="refresh" />  
     </list:list>
     

@@ -75,6 +75,14 @@ public final class Cache implements Serializable {
     
     private transient CleanUpThread cleanUpThread;
     
+    private transient long hits;
+    
+    private transient long misses;
+    
+    private transient long lastOverflow = System.currentTimeMillis();
+    
+    private transient long averageOverflowInterval;
+    
     /**
      * Create the cache.
      */
@@ -170,6 +178,7 @@ public final class Cache implements Serializable {
         CacheItem item = map.get(key);
         if (item == null) {
         	synchronized (addItemlock) {
+        		misses++;
         		item = map.get(key);
                 if (item == null) {
                 	try {
@@ -184,6 +193,9 @@ public final class Cache implements Serializable {
                 }
         	}
         	checkCapacity();
+        }
+        else {
+        	hits++;
         }
         item.touch();
         return item;
@@ -223,11 +235,18 @@ public final class Cache implements Serializable {
     }
     
     /**
-     * Removes items from the cache that havn't been used for a long time.
+     * Removes items from the cache that haven't been used for a long time.
      * The number of items removed is <code>capacity * evictionFactor</code>.
      */
     private void cleanup() {
     	log.info("Cache capacity exceeded. Performing cleanup ...");
+    	long timeSinceLastOverflow = System.currentTimeMillis() - lastOverflow;
+    	if (averageOverflowInterval == 0) {
+    		averageOverflowInterval = timeSinceLastOverflow;
+    	}
+    	else {
+    		averageOverflowInterval = (averageOverflowInterval + timeSinceLastOverflow) / 2;
+    	}
 		ArrayList<CacheItem> items = new ArrayList<CacheItem>(map.values());
 		Collections.sort(items, itemUsageComparator);
 		int i = (int) Math.ceil(capacity * evictionFactor);
@@ -306,6 +325,26 @@ public final class Cache implements Serializable {
 	    	}
     	}
     }
+    
+    public long getHits() {
+		return hits;
+	}
+    
+    public long getMisses() {
+		return misses;
+	}
+    
+    public int getCapacity() {
+		return capacity;
+	}
+    
+    public int getSize() {
+		return size;
+	}
+    
+    public long getAverageOverflowInterval() {
+		return averageOverflowInterval;
+	}
 
     /**
      * Comparator that compares items by their {@link CacheItem#getLastUsed() 
