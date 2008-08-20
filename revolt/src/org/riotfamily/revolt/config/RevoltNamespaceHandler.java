@@ -45,10 +45,9 @@ import org.riotfamily.revolt.refactor.CreateAutoIncrementSequence;
 import org.riotfamily.revolt.refactor.CreateIndex;
 import org.riotfamily.revolt.refactor.CreateTable;
 import org.riotfamily.revolt.refactor.DropColumn;
-import org.riotfamily.revolt.refactor.DropForeignKey;
+import org.riotfamily.revolt.refactor.DropConstraint;
 import org.riotfamily.revolt.refactor.DropIndex;
 import org.riotfamily.revolt.refactor.DropTable;
-import org.riotfamily.revolt.refactor.DropUniqueConstraint;
 import org.riotfamily.revolt.refactor.InsertData;
 import org.riotfamily.revolt.refactor.ModifyColumn;
 import org.riotfamily.revolt.refactor.RenameColumn;
@@ -163,10 +162,6 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 			refactoring = new DropColumn(ele.getAttribute("table"),
 					ele.getAttribute("column"));
 		}
-		if (DomUtils.nodeNameEquals(ele, "drop-foreign-key")) {
-			refactoring = new DropForeignKey(ele.getAttribute("table"),
-					ele.getAttribute("foreign-key"));
-		}
 		if (DomUtils.nodeNameEquals(ele, "drop-index")) {
 			refactoring = new DropIndex(ele.getAttribute("table"),
 					ele.getAttribute("index"));
@@ -175,8 +170,8 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 			refactoring = new DropTable(ele.getAttribute("table"),
 					Boolean.valueOf(ele.getAttribute("cascade")).booleanValue());
 		}
-		if (DomUtils.nodeNameEquals(ele, "drop-unique-constraint")) {
-			refactoring = new DropUniqueConstraint(ele.getAttribute("table"),
+		if (DomUtils.nodeNameEquals(ele, "drop-constraint")) {
+			refactoring = new DropConstraint(ele.getAttribute("table"),
 					ele.getAttribute("constraint"));
 		}
 		if (DomUtils.nodeNameEquals(ele, "modify-column")) {

@@ -142,12 +142,6 @@
 						<xsd:attribute name="column" type="xsd:string" use="required" />
 					</xsd:complexType>
 				</xsd:element>
-				<xsd:element name="drop-foreign-key">
-					<xsd:complexType>
-						<xsd:attribute name="table" type="xsd:string" use="required" />
-						<xsd:attribute name="foreign-key" type="xsd:string" use="required" />
-					</xsd:complexType>
-				</xsd:element>
 				<xsd:element name="drop-index">
 					<xsd:complexType>
 						<xsd:attribute name="table" type="xsd:string" use="required" />
@@ -160,7 +154,7 @@
 						<xsd:attribute name="cascade" type="xsd:boolean" />
 					</xsd:complexType>
 				</xsd:element>
-				<xsd:element name="drop-unique-constraint">
+				<xsd:element name="drop-constraint">
 					<xsd:complexType>
 						<xsd:attribute name="table" type="xsd:string" use="required" />
 						<xsd:attribute name="constraint" type="xsd:string" use="required" />

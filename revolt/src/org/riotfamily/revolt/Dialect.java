@@ -63,11 +63,9 @@ public interface Dialect {
 
 	public Script addUniqueConstraint(String table, UniqueConstraint constraint);
 
-	public Script dropUniqueConstraint(String table, String name);
+	public Script dropConstraint(String table, String name);
 
 	public Script addForeignKey(String table, ForeignKey fk);
-
-	public Script dropForeignKey(String table, String name);
 
 	public Script insert(String table, Collection<RecordEntry> data);
 	

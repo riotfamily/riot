@@ -31,30 +31,31 @@ import org.riotfamily.revolt.Script;
  * @author Felix Gnass [fgnass at neteye dot de]
  * 
  */
-public class DropForeignKey implements Refactoring {
+public class DropConstraint implements Refactoring {
 
 	private String table;
 
-	private String foreignKey;
+	private String constraint;
+
 	
-	public DropForeignKey() {
+	public DropConstraint() {
 	}
 
-	public DropForeignKey(String table, String foreignKey) {
+	public DropConstraint(String table, String constraint) {
 		this.table = table;
-		this.foreignKey = foreignKey;
+		this.constraint = constraint;
 	}
-
+	
 	public void setTable(String table) {
 		this.table = table;
 	}
 
-	public void setForeignKey(String foreignKey) {
-		this.foreignKey = foreignKey;
+	public void setConstraint(String constraint) {
+		this.constraint = constraint;
 	}
 
 	public Script getScript(Dialect dialect) {
-		return dialect.dropForeignKey(table, foreignKey);
+		return dialect.dropConstraint(table, constraint);
 	}
 
 }

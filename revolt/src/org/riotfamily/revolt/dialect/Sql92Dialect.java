@@ -138,10 +138,6 @@ public abstract class Sql92Dialect extends AbstractDialect {
 		return sql;
 	}
 
-	public Script dropUniqueConstraint(String table, String name) {
-		return dropConstraint(table, name);
-	}
-
 	public Script addForeignKey(String table, ForeignKey fk) {
 		Script sql = alterTable(table).append("ADD CONSTRAINT")
 				.append(fk.getName()).append("FOREIGN KEY");
@@ -158,10 +154,6 @@ public abstract class Sql92Dialect extends AbstractDialect {
 		return sql;
 	}
 	
-	public Script dropForeignKey(String table, String name) {
-		return dropConstraint(table, name);
-	}
-
 	public Script insert(String table, Collection<RecordEntry> data) {
 		Script sql = new Script("INSERT INTO")
 				.append(quote(table));
@@ -184,7 +176,7 @@ public abstract class Sql92Dialect extends AbstractDialect {
 		return new Script("ALTER TABLE").append(quote(name));
 	}
 
-	protected Script dropConstraint(String table, String name) {
+	public Script dropConstraint(String table, String name) {
 		return alterTable(table).append("DROP CONSTRAINT").append(name);
 	}
 
