@@ -23,11 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.scheduling;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Ordered;
 import org.springframework.util.MethodInvoker;
 
 public class MethodInvokingScheduledTask extends MethodInvoker 
-		implements ScheduledTask, Ordered {
+		implements ScheduledTask, Ordered, InitializingBean {
 
 	private String[] triggerNames;
 	
@@ -47,6 +48,10 @@ public class MethodInvokingScheduledTask extends MethodInvoker
 	
 	public void setOrder(int order) {
 		this.order = order;
+	}
+	
+	public void afterPropertiesSet() throws Exception {
+		prepare();
 	}
 	
 	public void execute() throws Exception {
