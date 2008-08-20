@@ -146,7 +146,7 @@ public class CommonMacroHelper {
 	}
 	
 	public String getMessage(String code, Collection<?> args) {
-		return ctx.getMessage(code, args.toArray(), null, getLocale());
+		return ctx.getMessage(code.trim(), args.toArray(), null, getLocale());
 	}
 	
 	public String getMessageWithDefault(String code, String defaultMessage, Collection<?> args) {
@@ -156,7 +156,7 @@ public class CommonMacroHelper {
 		else {
 			defaultMessage = FormatUtils.stripWhitespaces(defaultMessage);
 		}
-		return ctx.getMessage(code, args.toArray(), defaultMessage, getLocale());
+		return ctx.getMessage(code.trim(), args.toArray(), defaultMessage, getLocale());
 	}
 	
 	public String getMessage(MessageSourceResolvable resolvable) {
