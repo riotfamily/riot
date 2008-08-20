@@ -87,7 +87,7 @@ public class ListRepository implements ApplicationContextAware {
 	}
 	
 	public Command getCommand(String commandId) {
-		Command command = (Command) commands.get(commandId);
+		Command command = commands.get(commandId);
 		if (command == null) {
 			log.error("No such command: " + commandId);
 		}
@@ -96,7 +96,7 @@ public class ListRepository implements ApplicationContextAware {
 
 	public void addCommand(Command command) {
 		String id = command.getId();
-		Command existingCommand = getCommand(id);
+		Command existingCommand = commands.get(id);
 		for (int i = 2; existingCommand != null; i++) {
 			id = command.getId() + i;
 			existingCommand = getCommand(id);
