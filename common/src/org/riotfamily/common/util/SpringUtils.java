@@ -6,12 +6,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.util.Assert;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
 
 public final class SpringUtils {
 
@@ -108,6 +113,40 @@ public final class SpringUtils {
 		ArrayList<T> beans = new ArrayList<T>(listBeansOfType(lbf, type));
 		Collections.sort(beans, new AnnotationAwareOrderComparator());
 		return beans;
+	}
+	
+	public static WebApplicationContext getWebsiteApplicationContext(
+			ServletContext servletContext, String servletName) {
+		
+		Assert.notNull(servletName, "A servleName must be specified");
+		String contextAttribute = DispatcherServlet.SERVLET_CONTEXT_PREFIX 
+				+ servletName;
+		
+		WebApplicationContext ctx = (WebApplicationContext) 
+				servletContext.getAttribute(contextAttribute);
+		
+		Assert.state(ctx != null, "No WebApplicationContext found in the " +
+				"ServletContext under the key '" + contextAttribute + "'. " +
+				"Make sure your DispatcherServlet is called '" + 
+				servletName + "' and publishContext is set to true.");
+		
+		return ctx;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static<T> T getBean(ServletContext servletContext, 
+			String servletName, String beanName) {
+		
+		return (T) getWebsiteApplicationContext(servletContext, servletName)
+				.getBean(beanName);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static<T> T getBean(ServletContext servletContext, 
+			String servletName, String beanName, Class<T> requiredType) {
+		
+		return (T) getWebsiteApplicationContext(servletContext, servletName)
+				.getBean(beanName, requiredType);
 	}
 
 }

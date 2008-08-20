@@ -25,9 +25,11 @@ package org.riotfamily.components.render.list;
 
 import java.io.StringWriter;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.ComponentListConfig;
@@ -37,12 +39,15 @@ import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.riot.security.AccessController;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.context.ServletContextAware;
+import org.springframework.web.context.WebApplicationContext;
 
-public class ComponentListRenderer {
+public class ComponentListRenderer implements ServletContextAware {
 
 	public static final String PARENT_ATTRIBUTE = 
 			ComponentListRenderer.class.getName() + ".parent";
@@ -54,6 +59,8 @@ public class ComponentListRenderer {
 	private RenderStrategy liveModeRenderStrategy;
 	
 	private RenderStrategy editModeRenderStrategy;
+
+	private String websiteServletName = "website";
 
 	
 	public ComponentListRenderer(ComponentDao componentDao, 
@@ -69,6 +76,26 @@ public class ComponentListRenderer {
 
 	public void setEditModeRenderStrategy(RenderStrategy editModeRenderStrategy) {
 		this.editModeRenderStrategy = editModeRenderStrategy;
+	}
+	
+	public void setWebsiteServletName(String websiteServletName) {
+		this.websiteServletName = websiteServletName;
+	}
+	
+	public void setServletContext(ServletContext servletContext) {
+		if (editModeRenderStrategy == null) {
+			// UGLY HACK: Usually the editModeRenderStrategy is set when the 
+			// riot-servlet is initialized. If the website-servlet is reloaded 
+			// we have to look up the strategy again ...
+			try {
+				WebApplicationContext ctx = SpringUtils.getWebsiteApplicationContext(servletContext, websiteServletName);
+				this.editModeRenderStrategy = SpringUtils.beanOfType(ctx, EditModeRenderStrategy.class);
+			}
+			catch (NoSuchBeanDefinitionException e) {
+			}
+			catch (IllegalStateException e) {
+			}
+		}
 	}
 	
 

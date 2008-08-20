@@ -2,13 +2,12 @@ package org.riotfamily.common.beans.config;
 
 import javax.servlet.ServletContext;
 
+import org.riotfamily.common.util.SpringUtils;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.context.ServletContextAware;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
 
 /**
  * FactoryBean that imports a bean from another WebApplicationContext.
@@ -34,6 +33,7 @@ public class WebApplicationContextBeanImporter implements ServletContextAware,
 	/**
 	 * Sets the name of the DispatcherServlet from which the bean should be imported.
 	 */
+	@Required
 	public void setServletName(String servletName) {
 		this.servletName = servletName;
 	}
@@ -53,25 +53,9 @@ public class WebApplicationContextBeanImporter implements ServletContextAware,
 	}
 	
 	public void afterPropertiesSet() throws Exception {
-		bean = getWebsiteApplicationContext().getBean(beanName);
+		bean = SpringUtils.getBean(servletContext, servletName, beanName);
 	}
-	
-	private WebApplicationContext getWebsiteApplicationContext() {
-		Assert.notNull(servletName, "A servleName must be specified");
-		String contextAttribute = DispatcherServlet.SERVLET_CONTEXT_PREFIX 
-				+ servletName;
 		
-		WebApplicationContext ctx = (WebApplicationContext) 
-				servletContext.getAttribute(contextAttribute);
-		
-		Assert.state(ctx != null, "No WebApplicationContext found in the " +
-				"ServletContext under the key '" + contextAttribute + "'. " +
-				"Make sure your DispatcherServlet is called '" + 
-				servletName + "' and publishContext is set to true.");
-		
-		return ctx;
-	}
-	
 	public Object getObject() throws Exception {
 		return bean;
 	}
@@ -83,5 +67,5 @@ public class WebApplicationContextBeanImporter implements ServletContextAware,
 	public boolean isSingleton() {
 		return true;
 	}
-
+	
 }
