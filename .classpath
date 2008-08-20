@@ -24,7 +24,6 @@
 			<attribute name="javadoc_location" value="http://freemarker.org/docs/api/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/imageinfo.jar"/>
 	<classpathentry kind="lib" path="lib/json-lib.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/servlet.jar">
