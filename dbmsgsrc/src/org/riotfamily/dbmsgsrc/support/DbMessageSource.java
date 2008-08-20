@@ -10,16 +10,24 @@ import org.riotfamily.website.cache.CacheTagUtils;
 
 public class DbMessageSource extends AbstractMessageSource {
 
+	private static final String DEFAULT_BUNDLE = "default";
+
 	private DbMessageSourceDao dao;
+	
+	private String bundle = DEFAULT_BUNDLE;
 	
 	public DbMessageSource(DbMessageSourceDao dao) {
 		this.dao = dao;
+	}
+	
+	public void setBundle(String bundle) {
+		this.bundle = bundle;
 	}
 
 	@Override
 	protected MessageFormat resolveCode(String code, Locale locale, String defaultMessage) {
 		CacheTagUtils.tag(Message.class);
-		MessageBundleEntry entry = dao.findEntry(code);
+		MessageBundleEntry entry = dao.findEntry(bundle, code);
 		if (entry != null) {
 			Message message = entry.getMessage(locale);
 			if (message != null) {
@@ -27,7 +35,7 @@ public class DbMessageSource extends AbstractMessageSource {
 			}
 		}
 		else {
-			dao.saveEntry(new MessageBundleEntry(code, defaultMessage));
+			dao.saveEntry(new MessageBundleEntry(bundle, code, defaultMessage));
 		}
 		return null;
 	}

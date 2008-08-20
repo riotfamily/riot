@@ -32,6 +32,7 @@
 	<form:form id="messageBundleEntry" bean-class="org.riotfamily.dbmsgsrc.model.MessageBundleEntry">
 		<form:group>
 			<form:textfield bind="code" required="true" />
+			<form:textarea bind="comment" />
 		</form:group>
 		<form:nested-form bind="defaultMessage" required="true" bean-class="org.riotfamily.dbmsgsrc.model.Message">
 			<form:textarea bind="text" required="true" />

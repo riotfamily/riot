@@ -27,7 +27,7 @@ import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 
 public interface DbMessageSourceDao {
 
-	public MessageBundleEntry findEntry(String code);
+	public MessageBundleEntry findEntry(String bundle, String code);
 	
 	public void saveEntry(MessageBundleEntry entry);
 	

@@ -18,6 +18,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.riotfamily.common.util.Generics;
 
@@ -30,6 +31,8 @@ public class MessageBundleEntry {
 	
 	private Long id;
 	
+	private String bundle;
+	
 	private String code;
 	
 	private String comment;
@@ -40,7 +43,8 @@ public class MessageBundleEntry {
 	public MessageBundleEntry() {
 	}
 	
-	public MessageBundleEntry(String code, String defaultMessage) {
+	public MessageBundleEntry(String bundle, String code, String defaultMessage) {
+		this.bundle = bundle;
 		this.code = code;
 		setDefaultMessage(new Message(defaultMessage));
 	}
@@ -53,8 +57,17 @@ public class MessageBundleEntry {
 	public void setId(Long id) {
 		this.id = id;
 	}
+	
+	@NaturalId
+	public String getBundle() {
+		return bundle;
+	}
 
-	@Column(unique=true)
+	public void setBundle(String bundle) {
+		this.bundle = bundle;
+	}
+
+	@NaturalId
 	public String getCode() {
 		return code;
 	}

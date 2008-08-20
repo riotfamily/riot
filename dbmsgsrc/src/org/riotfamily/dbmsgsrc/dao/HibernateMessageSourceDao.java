@@ -37,9 +37,12 @@ public class HibernateMessageSourceDao implements DbMessageSourceDao {
 		hibernate = new HibernateHelper(sessionFactory, "dbmsgsrc");
 	}
 
-	public MessageBundleEntry findEntry(String code) {
+	public MessageBundleEntry findEntry(String bundle, String code) {
 		return (MessageBundleEntry) hibernate.createCacheableCriteria(
-				MessageBundleEntry.class).add(Restrictions.eq("code", code))
+				MessageBundleEntry.class)
+				.add(Restrictions.naturalId()
+					.set("bundle", bundle)
+					.set("code", code))
 				.uniqueResult();
 	}
 
