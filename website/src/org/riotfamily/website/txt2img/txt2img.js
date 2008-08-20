@@ -329,7 +329,7 @@ var CssMatcher = Class.create({
 			}
 			else {
 				var p = this.el;
-				while (p && !nextEl) {
+				while (p && !nextEl && p.parentNode) {
 					p = p.parentNode;
 					if (p == this.rootEl) return;
 					for (var i = 0; i < this.sel.length; i++) {
