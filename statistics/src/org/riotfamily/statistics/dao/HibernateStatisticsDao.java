@@ -54,7 +54,6 @@ public class HibernateStatisticsDao extends AbstractSimpleStatsDao {
 		stats.add("Query execution count", hs.getQueryExecutionCount());
 		stats.add("Query execution max time", hs.getQueryExecutionMaxTime());
 		stats.add("Query execution critical statement", hs.getQueryExecutionMaxTimeQueryString());
-		stats.add("Query execution max time", hs.getQueryExecutionMaxTime());
 	}
 	
 }
