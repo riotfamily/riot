@@ -31,7 +31,7 @@ var RiotList = Class.create({
 	renderFormCommands: function(objectId, target) {
 		var item = {objectId: objectId};
 		var handler = this.onFormCommandClick.bindAsEventListener(this);
-		ListService.getFormCommands(this.key, objectId, this.renderCommands.bind(this, target, true, item, handler));
+		ListService.getFormCommands(this.key, objectId, this.renderCommands.bind(this, $(target), true, item, handler));
 	},
 
 	renderTable: function(model) {
