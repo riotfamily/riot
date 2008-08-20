@@ -157,6 +157,7 @@
 				<xsd:element name="drop-table">
 					<xsd:complexType>
 						<xsd:attribute name="table" type="xsd:string" use="required" />
+						<xsd:attribute name="cascade" type="xsd:boolean" />
 					</xsd:complexType>
 				</xsd:element>
 				<xsd:element name="drop-unique-constraint">

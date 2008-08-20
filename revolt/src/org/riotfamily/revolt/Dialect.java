@@ -47,7 +47,7 @@ public interface Dialect {
 
 	public Script renameTable(String name, String renameTo);
 
-	public Script dropTable(String name);
+	public Script dropTable(String name, boolean cascade);
 
 	public Script addColumn(String table, Column column);
 

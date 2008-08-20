@@ -90,8 +90,12 @@ public abstract class Sql92Dialect extends AbstractDialect {
 				"Tables can't be renamed in SQL 92"); 
 	}
 
-	public Script dropTable(String name) {
-		return new Script("DROP TABLE").append(quote(name));
+	public Script dropTable(String name, boolean cascade) {
+		Script sql = new Script("DROP TABLE").append(quote(name));
+		if (cascade) {
+			sql.append("CASCADE");
+		}
+		return sql;
 	}
 
 	public Script addColumn(String table, Column column) {

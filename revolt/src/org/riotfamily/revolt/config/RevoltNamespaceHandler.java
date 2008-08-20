@@ -57,8 +57,6 @@ import org.riotfamily.revolt.refactor.UpdateData;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.config.ConstructorArgumentValues;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.NamespaceHandler;
@@ -174,7 +172,8 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 					ele.getAttribute("index"));
 		}
 		if (DomUtils.nodeNameEquals(ele, "drop-table")) {
-			refactoring = new DropTable(ele.getAttribute("table"));
+			refactoring = new DropTable(ele.getAttribute("table"),
+					Boolean.valueOf(ele.getAttribute("cascade")).booleanValue());
 		}
 		if (DomUtils.nodeNameEquals(ele, "drop-unique-constraint")) {
 			refactoring = new DropUniqueConstraint(ele.getAttribute("table"),
