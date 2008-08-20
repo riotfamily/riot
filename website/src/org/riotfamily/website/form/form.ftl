@@ -190,7 +190,7 @@
   -->	
 <#macro listOptions field options valueProperty="" labelProperty="" messagePrefix="">
 	<#if options?is_hash>
-		<#list options?keys as option>
+		<#list options?keys as option>			
 			<#local selected = formMacroHelper.isSelected(field, option) />
 			<#nested option?html, options[option]?html, selected, field + '-' + option_index />
 		</#list>
@@ -204,6 +204,9 @@
 	    		</#if>
 	    		<#if valueProperty?has_content>
 	    			<#local optionValue = option[valueProperty]?if_exists />
+	    			<#if optionValue?? && !optionValue?is_string>
+	    				<#local optionValue = optionValue?string /> 
+	    			</#if>	    			
 	    		<#else>
 	    			<#local optionValue = option?string />
 	    		</#if>
