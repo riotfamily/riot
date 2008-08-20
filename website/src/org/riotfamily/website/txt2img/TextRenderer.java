@@ -34,12 +34,17 @@ import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.riotfamily.common.util.ColorUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+import org.springframework.util.Assert;
 
 /**
  * Class to render text as image. Supports resampling to improve the kerning
@@ -50,7 +55,7 @@ import org.springframework.core.io.Resource;
  */
 public class TextRenderer implements InitializingBean {
 
-	private Font font = Font.getFont("Serif");
+	private List<Font> fonts = Generics.newArrayList();
 	
 	private float fontSize = 22;
 	
@@ -79,19 +84,75 @@ public class TextRenderer implements InitializingBean {
 	private int scale = 1;
 	
 	/**
-	 * Sets the font file to use. The resource must either point to a Type 1
-	 * or TrueType font. The type is determined by the extension of the 
-	 * resource's filename (the check is case insensitive). If the extension 
-	 * is <i>.pfa</i> or <i>.pfb</i> {@link Font#TYPE1_FONT} is used, 
-	 * otherwise {@link Font#TRUETYPE_FONT}.
+	 * Sets the font to use. The resource must either point to a Type 1
+	 * or a TrueType font or a directory containing fonts. In case a directory
+	 * is specified, the font that contains the most glyphs needed to render a
+	 * given text is used. 
+	 * The font type is determined by the filename extension. 
+	 * Supported extensions are <i>.pfa</i>, <i>.pfb</i> and <i>.ttf</i>.
 	 */
 	public void setFont(Resource res) throws FontFormatException, IOException {
-		String ext = FormatUtils.getExtension(res.getFilename()).toLowerCase();
-		int format = Font.TRUETYPE_FONT;
-		if (ext.equals("pfa") || ext.equals("pfb")) {
-			format = Font.TYPE1_FONT;
+		try {
+			File f = res.getFile();
+			if (f.isDirectory()) {
+				addAllFonts(f);
+			}
+			else {
+				addFont(f);
+			}
 		}
-		this.font = Font.createFont(format, res.getInputStream());
+		catch (IOException e) {
+			addFont(res);
+		}
+		Assert.notEmpty(fonts, "Found no fonts at " + res.getFilename());
+	}
+	
+	private int getFontFormat(String fileName) {
+		String ext = FormatUtils.getExtension(fileName).toLowerCase();
+		if (ext.equals("ttf")) {
+			return Font.TRUETYPE_FONT;			
+		}
+		if (ext.equals("pfa") || ext.equals("pfb")) {
+			return Font.TYPE1_FONT;
+		}
+		return -1;
+	}
+	
+	private void addFont(Resource res) throws FontFormatException, IOException {
+		int format = getFontFormat(res.getFilename());
+		if (format != -1) {
+			fonts.add(Font.createFont(format, res.getInputStream()));
+		}
+	}
+	
+	private void addFont(File file) throws FontFormatException, IOException {
+		int format = getFontFormat(file.getName());
+		if (format != -1) {
+			fonts.add(Font.createFont(format, file));
+		}
+	}
+	
+	private void addAllFonts(File dir) throws FontFormatException, IOException {
+		File[] files = dir.listFiles();
+		Arrays.sort(files);
+		for (File file : files) {
+			addFont(file);
+		}
+	}
+	
+	protected Font getFont(String text) {
+		int maxChars = -1;
+		Font bestMatch = null;
+		for (Font font : fonts) {
+			int upTo = font.canDisplayUpTo(text);
+			if (upTo == -1) {
+				return font;
+			}
+			if (upTo > maxChars) {
+				bestMatch = font;
+			}
+		}
+		return bestMatch;
 	}
 	
 	/**
@@ -264,7 +325,7 @@ public class TextRenderer implements InitializingBean {
 				? ColorUtils.parseColor(color)
 				: this.color;
 				
-		Font font = this.font.deriveFont(fontSize);
+		Font font = getFont(text).deriveFont(fontSize);
 		
 		Graphics2D graphics = createGraphics(image);
 		FontRenderContext fc = graphics.getFontRenderContext();
