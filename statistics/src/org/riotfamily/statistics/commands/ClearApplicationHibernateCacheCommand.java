@@ -13,4 +13,5 @@ public class ClearApplicationHibernateCacheCommand
 	public void doExecute(CommandContext context) {
 		clearCache("org.riotfamily", true);
 	}
+	
 }

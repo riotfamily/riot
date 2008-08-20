@@ -53,6 +53,9 @@ public interface ListService {
 	public ListModel filter(String key, Map<String, String> filter, HttpServletRequest request)
 			throws ListSessionExpiredException;
 		
+	public List<CommandState> getListCommands(String key, 
+			HttpServletRequest request) throws ListSessionExpiredException;
+	
 	public List<CommandState> getFormCommands(String key, String objectId, 
 			HttpServletRequest request) throws ListSessionExpiredException;
 	

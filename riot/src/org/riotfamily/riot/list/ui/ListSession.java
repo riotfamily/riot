@@ -381,7 +381,7 @@ public class ListSession implements RenderContext {
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		context.setParent(parent, this.parentId, this.parentEditorId);
 		context.setItemsTotal(model.getItemsTotal());
-		model.setListCommands(getListCommandStates(listCommands, context, request));
+		model.setListCommands(getListCommandStates(context));
 		model.setBatchCommands(getBatchStates(itemCommands, context, request));
 		model.setTexts(getTexts());
 		model.setCssClass(listConfig.getId());
@@ -516,8 +516,14 @@ public class ListSession implements RenderContext {
 	public boolean hasListCommands() {
 		return !listCommands.isEmpty();
 	}
-
-	public List<CommandState> getFormCommands(String objectId, HttpServletRequest request) {
+	
+	public List<CommandState> getListCommandStates(HttpServletRequest request) {
+		return getListCommandStates(new CommandContextImpl(this, request));
+	}
+			
+	public List<CommandState> getFormCommandStates(String objectId, 
+			HttpServletRequest request) {
+		
 		Object bean = null;
 		if (objectId != null) {
 			bean = loadBean(objectId);
@@ -568,15 +574,10 @@ public class ListSession implements RenderContext {
 		return states;
 	}
 	
-	private List<CommandState> getListCommandStates(List<Command> commands, CommandContext context,
-			HttpServletRequest request) {
-
+	private List<CommandState> getListCommandStates(CommandContext context) {
 		ArrayList<CommandState> states = Generics.newArrayList();
-		Iterator<Command> it = commands.iterator();
-		while (it.hasNext()) {
-			Command command = it.next();
-			CommandState state = command.getState(context);
-			states.add(state);
+		for (Command command : listCommands) {
+			states.add(command.getState(context));
 		}
 		checkPermissions(states, context.getParent());
 		return states;

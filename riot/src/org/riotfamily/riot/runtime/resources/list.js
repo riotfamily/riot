@@ -20,16 +20,21 @@ var RiotList = Class.create({
 			this.filterForm = $(filterForm);
 		}
 		Event.observe(window, 'resize', this.resizeColumns.bind(this));
-		ListService.getModel(this.key, expandedId, this.renderTable.bind(this, commandTarget));
+		
+		if (commandTarget && $(commandTarget)) {
+			this.commandTarget = new Element('div');
+			$(commandTarget).appendChild(this.commandTarget);
+		}
+		ListService.getModel(this.key, expandedId, this.renderTable.bind(this));
 	},
 
 	renderFormCommands: function(objectId, target) {
 		var item = {objectId: objectId};
 		var handler = this.onFormCommandClick.bindAsEventListener(this);
-		ListService.getFormCommands(this.key, objectId, this.appendCommands.bind(this, target, true, item, handler));
+		ListService.getFormCommands(this.key, objectId, this.renderCommands.bind(this, target, true, item, handler));
 	},
 
-	renderTable: function(commandTarget, model) {
+	renderTable: function(model) {
 		this.columns = [];
 		this.headings = {};
 		this.tree = model.tree;
@@ -41,13 +46,13 @@ var RiotList = Class.create({
 			style: { width: model.itemCommandCount * 32 + 'px' }});
 		// Expand the column for IE browsers
 		th.innerHTML = '<div style="width: ' + model.itemCommandCount * 32 + 'px;"></div>';			
-		this.appendCommands(commandTarget, true, null, this.itemCommandClickHandler, model.listCommands);
+		this.renderListCommands(model.listCommands);
 		this.updateFilter(model);
 		if (this.hasBatchCommands) {
 			this.batchContainer.addClassName('commands batchCommands');
 			this.table.addClassName('selectable');
 			var handler = this.onBatchCommandClick.bindAsEventListener(this);
-			this.batchButtons = this.appendCommands(this.batchContainer, false, null, handler, model.batchCommands);
+			this.batchButtons = this.renderCommands(this.batchContainer, false, null, handler, model.batchCommands);
 			
 			RBuilder.node('div', {className: 'selectionStatus'},
 				this.selectionStatus = RBuilder.node('span', {className: 'itemCount'}),
@@ -58,6 +63,10 @@ var RiotList = Class.create({
 		}
 	},
 
+	renderListCommands: function(commands) {
+		this.renderCommands(this.commandTarget, true, null, this.itemCommandClickHandler, commands);
+	},
+	
 	updateColsAndRows: function(model) {
 		model.columns.each(this.updateSortIndicator.bind(this));
 		this.updateRows(model);
@@ -148,14 +157,16 @@ var RiotList = Class.create({
 		}
 	},
 
-	appendCommands: function(el, renderLabel, item, handler, commands) {
-		el = $(el);
-		var alwaysOn = item == null && this.tree;
-		return commands.collect(function(command) {
-			var button = new CommandButton(item, command, handler, renderLabel, alwaysOn && command.targetRequired);
-			el.appendChild(button.element);
-			return button;
-		});
+	renderCommands: function(el, renderLabel, item, handler, commands) {
+		if (el && commands) {
+			el.update();
+			var alwaysOn = item == null && this.tree;
+			return commands.collect(function(command) {
+				var button = new CommandButton(item, command, handler, renderLabel, alwaysOn && command.targetRequired);
+				el.appendChild(button.element);
+				return button;
+			});
+		}
 	},
 
 	onCommandClick: function(event, source) {
@@ -240,6 +251,10 @@ var RiotList = Class.create({
 				objectId, this.processCommandResult.bind(this));
 	},
 		
+	refreshListCommands: function() {
+		ListService.getListCommands(this.key, this.renderListCommands.bind(this));
+	},
+	
 	refreshSiblings: function(objectId) {
 		if (objectId) {
 			var tr = $('item-' + objectId);
@@ -335,6 +350,9 @@ var RiotList = Class.create({
 			}
 			else if (result.action == 'refreshSiblings') {
 				this.refreshSiblings(result.objectId);
+			}
+			else if (result.action == 'refreshListCommands') {
+				this.refreshListCommands();
 			}
 			else if (result.action == 'confirm') {
 				if (confirm(result.message)) {
@@ -456,7 +474,7 @@ var ListRow = {
 
 		var td = RBuilder.node('td', {className: 'commands'});
 
-		list.appendCommands(td, false, row, list.itemCommandClickHandler, row.commands);
+		list.renderCommands(td, false, row, list.itemCommandClickHandler, row.commands);
 
 		row.commands.each(function(command) {
 			if (command.itemStyleClass) {
