@@ -18,6 +18,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.Type;
 import org.riotfamily.common.util.Generics;
 
 @Entity
@@ -30,6 +31,8 @@ public class MessageBundleEntry {
 	private Long id;
 	
 	private String code;
+	
+	private String comment;
 	
 	private Map<Locale, Message> messages;
 
@@ -58,6 +61,15 @@ public class MessageBundleEntry {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	@Type(type="text")
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	@Transient
