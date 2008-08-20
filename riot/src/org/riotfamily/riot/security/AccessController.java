@@ -68,6 +68,10 @@ public final class AccessController {
 		return isGranted(getCurrentUser(), action, object);
 	}
 	
+	public static boolean isGranted(String action, Object... object) {
+		return isGranted(getCurrentUser(), action, object);
+	}
+	
 	public static void checkPermission(String action, Object object) {
 		RiotUser subject = getCurrentUser();
 		if (subject != null) {

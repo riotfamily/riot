@@ -26,12 +26,14 @@ package org.riotfamily.riot.security.policy;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.collection.TypeComparatorUtils;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
@@ -73,8 +75,19 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 	
 	public int checkPermission(RiotUser user, String action, Object object) {
 		Method method = getMethod(action, object);
-		if (method != null) {			
-			Object[] args = new Object[] {user, object};
+		if (method != null) {
+			Object[] args = null;
+			if (object != null && object.getClass().isArray()) {
+				Object[] objects = (Object[]) object;
+				args = new Object[objects.length + 1];
+				args[0] = user;
+				for (int i = 0; i < objects.length; i++) {
+					args[i+1] = objects[i];
+				}
+			}
+			else {
+				args = new Object[] {user, object};
+			}
 			Integer result = (Integer)ReflectionUtils.invokeMethod(method, delegate, args);
 			return result.intValue();
 		}
@@ -95,14 +108,16 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 	
 	private Method findMethod(ActionAndClass aac) {
 		Method bestMatch = null;
-		if (aac.clazz != null) {
+		if (aac.classes != null) {
 			int smallestDiff = Integer.MAX_VALUE;
 			Method[] methods = delegate.getClass().getMethods();
 			for (int i = 0; i < methods.length; i++) {
 				Method method = methods[i];
-				if (signatureMatches(method, aac.action, aac.clazz)) {
-					Class<?> type = method.getParameterTypes()[1];
-					int diff = TypeComparatorUtils.getTypeDifference(type, aac.clazz);
+				if (signatureMatches(method, aac.action, aac.classes)) {
+					int diff = 0;
+					for (int j = 0; j < aac.classes.length; j++) {
+						diff += TypeComparatorUtils.getTypeDifference(method.getParameterTypes()[j+1], aac.classes[j]);
+					}					
 					if (diff < smallestDiff) {
 						smallestDiff = diff;
 						bestMatch = method;
@@ -124,14 +139,22 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 	}
 	
 	
-	private boolean signatureMatches(Method method, String action, Class<?> type) {
+	private boolean signatureMatches(Method method, String action, Class<?>[] types) {
 		if (method.getName().equals(action) && Modifier.isPublic(method.getModifiers())) {
-			Class<?>[] types = method.getParameterTypes();
-			if (types.length > 0 && RiotUser.class.isAssignableFrom(types[0])) {
-				if (type == null) {
-					return types.length == 1;
+			Class<?>[] paramTypes = method.getParameterTypes();
+			if (paramTypes.length > 0 && RiotUser.class.isAssignableFrom(paramTypes[0])) {
+				if (types == null) {
+					return paramTypes.length == 1;
 				}
-				return types.length == 2 && types[1].isAssignableFrom(type);
+				
+				if (paramTypes.length == types.length + 1) {
+					for (int i = 0; i < types.length; i++) {
+						if (!paramTypes[i+1].isAssignableFrom(types[i])) {
+							return false;
+						}						
+					}
+					return true;
+				}				
 			}
 		}
 		return false;
@@ -152,18 +175,35 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 		
 		private String action;
 		
-		private Class<?> clazz;
+		private Class<?>[] classes;
 		
 		public ActionAndClass(String action, Object obj) {
 			this.action = StringUtils.uncapitalize(FormatUtils.xmlToCamelCase(action));
-			this.clazz = obj != null ? ClassUtils.getUserClass(obj) : null;
+			if (obj != null) {
+				if (obj.getClass().isArray()) {
+					Object[] objects = (Object[]) obj;
+					List<Class<?>> tempClasses = Generics.newArrayList();					
+					for (int i =0; i < objects.length; i++) {
+						if (objects[i] != null) {
+							tempClasses.add(ClassUtils.getUserClass(objects[i]));
+						}
+					}
+					classes = tempClasses.toArray(new Class<?>[tempClasses.size()]);
+					
+				}
+				else {
+					classes = new Class<?>[] {ClassUtils.getUserClass(obj)};
+				}
+			}
 		}
 
 		public String toString() {
-			StringBuffer sb = new StringBuffer(action);
-			if (clazz != null) {
-				sb.append(' ');
-				sb.append(clazz.getName());
+			StringBuffer sb = new StringBuffer(action);			
+			if (classes != null) {
+				for (Class<?> clazz : classes) {
+					sb.append(' ');
+					sb.append(clazz.getName());
+				}
 			}
 			return sb.toString();
 		}
@@ -176,7 +216,7 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 			if (obj instanceof ActionAndClass) {
 				ActionAndClass other = (ActionAndClass) obj;
 				return ObjectUtils.nullSafeEquals(action, other.action)
-						&& ObjectUtils.nullSafeEquals(clazz, other.clazz);
+						&& ObjectUtils.nullSafeEquals(classes, other.classes);
 			}
 			return false;
 		}
