@@ -38,6 +38,7 @@ import org.riotfamily.riot.dao.SortableDao;
 import org.riotfamily.riot.dao.SwappableItemDao;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.riotfamily.riot.list.support.EmptyListParams;
+import org.riotfamily.riot.list.support.ListParamsImpl;
 import org.springframework.util.Assert;
 
 /**
@@ -254,7 +255,7 @@ public class HqlDao extends AbstractHibernateRiotDao implements
 
     	Assert.notNull(positionProperty, "A positionProperty must be specified.");
 
-    	List<?> items = listInternal(parent, params);
+    	List<?> items = listInternal(parent, new ListParamsImpl(params));
     	Object nextItem = items.get(swapWith);
 
     	Object pos1 = PropertyUtils.getProperty(item, positionProperty);

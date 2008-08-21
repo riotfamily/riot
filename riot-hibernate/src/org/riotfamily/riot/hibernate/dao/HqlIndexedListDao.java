@@ -29,6 +29,7 @@ import java.util.List;
 import org.hibernate.SessionFactory;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.SwappableItemDao;
+import org.riotfamily.riot.list.support.ListParamsImpl;
 
 public class HqlIndexedListDao extends HqlCollectionDao 
 		implements SwappableItemDao {
@@ -40,7 +41,7 @@ public class HqlIndexedListDao extends HqlCollectionDao
 	public void swapEntity(Object entity, Object parent, 
     		ListParams params, int swapWith) {
     	
-    	List<?> items = listInternal(parent, params);
+    	List<?> items = listInternal(parent, new ListParamsImpl(params));
     	Object nextItem = items.get(swapWith);
     	
     	List<?> list = (List<?>) getCollection(parent);

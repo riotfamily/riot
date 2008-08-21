@@ -57,8 +57,9 @@ public class SwapCommand extends AbstractCommand {
 
 	public CommandResult execute(CommandContext context) {
 		SwappableItemDao dao = (SwappableItemDao) context.getDao();
+		int index = context.getParams().getOffset() + context.getRowIndex();
 		dao.swapEntity(context.getBean(), context.getParent(), context.getParams(),
-				context.getRowIndex() + swapWith);
+				index + swapWith);
 		
 		return new RefreshSiblingsResult(context);
 	}
