@@ -312,6 +312,14 @@ table.item td.itemElement {
 	width: 100%;
 	padding: 10px;
 }
+.mapEditor table.item td.itemElement {
+	padding: 10px 0;
+}
+.mapEditor table.item td.itemElement label {
+	margin-left: 8px;
+}
+
+
 table.item .draggable td.itemElement {
 	padding-right: 0;
 }
@@ -386,6 +394,16 @@ table.item .indent {
 	margin: 10px 0 0 0;
 }
 
+.nestedForm .present {
+	float: left;
+}
+
+.nestedForm .single,
+.nestedForm .composite {
+	clear: none;
+	margin-bottom: 0;
+}
+
 .listEditor .button-add,
 .button-remove,
 .button-toggle,
@@ -407,14 +425,12 @@ table.item .indent {
     -webkit-padding-start: 0;	
 }
 
-.listEditor .button-add, 
-.nestedForm .not-present .button-toggle {
+.listEditor .button-add {
 	background-image: url(images/add.gif);
 }
-.nestedForm .present {
-	float: left;
+.nestedForm .not-present .button-toggle {
+	background-image: url(images/edit.gif);
 }
-
 
 .collectionEditor .button-remove {
 	background: #fff url(images/remove_invert.gif) no-repeat;
