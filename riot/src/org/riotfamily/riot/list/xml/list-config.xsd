@@ -27,6 +27,7 @@
 	    	<xsd:attribute name="row-style-property" type="xsd:string" />
 	    	<xsd:attribute name="label-property" type="xsd:string" />
 	    	<xsd:attribute name="search" type="xsd:string" />
+	    	<xsd:attribute name="page-size" type="xsd:nonNegativeInteger" />
 	    </xsd:complexType>
 	</xsd:element>
 
