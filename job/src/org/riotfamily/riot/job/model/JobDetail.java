@@ -43,9 +43,9 @@ import org.riotfamily.riot.job.JobDescription;
 @Table(name="riot_jobs")
 public class JobDetail {
 
-	public static final int NEW  = -1;
+	public static final int NEW = -1;
 	
-	public static final int INITIALIZED  = 0;
+	public static final int INITIALIZED = 0;
 	
 	public static final int STARTED = 1;
 	

@@ -46,7 +46,9 @@ public class ScheduledJob extends ScheduledTaskSupport {
 
 	public void execute() throws Exception {
 		JobDetail jobDetail = jobManager.getOrCreateJob(jobType, null, false);
-		if (jobDetail.getState() == JobDetail.INITIALIZED) {
+		if (jobDetail.getState() == JobDetail.INITIALIZED
+				|| jobDetail.getState() == JobDetail.INTERRUPTED) {
+			
 			jobManager.executeJob(jobDetail);
 		}
 	}
