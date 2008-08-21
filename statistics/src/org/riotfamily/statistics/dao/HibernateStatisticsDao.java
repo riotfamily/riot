@@ -39,18 +39,17 @@ public class HibernateStatisticsDao extends AbstractSimpleStatsDao {
 	@Override
 	protected void populateStats(Statistics stats) throws Exception {
 		org.hibernate.stat.Statistics hs = sessionFactory.getStatistics();
-		
 		stats.add("Hibernate statistics", hs.isStatisticsEnabled());
 		stats.add("Start time", new Date(hs.getStartTime()));
-		stats.add("Connect count", hs.getConnectCount());
-		stats.add("Close statement count", hs.getCloseStatementCount());
 		stats.add("Flush count", hs.getFlushCount());
 		stats.add("Session open count", hs.getSessionOpenCount());
 		stats.add("Session close count", hs.getSessionCloseCount());
 		stats.add("Transaction count", hs.getTransactionCount());
 		stats.add("Successful transaction count", hs.getSuccessfulTransactionCount());
 		stats.add("Optimistic failure count", hs.getOptimisticFailureCount());
+		stats.add("Connect count", hs.getConnectCount());
 		stats.add("Prepare statement count", hs.getPrepareStatementCount());
+		stats.add("Close statement count", hs.getCloseStatementCount());
 		stats.add("Query execution count", hs.getQueryExecutionCount());
 		stats.add("Query execution max time", hs.getQueryExecutionMaxTime());
 		stats.add("Query execution critical statement", hs.getQueryExecutionMaxTimeQueryString());
