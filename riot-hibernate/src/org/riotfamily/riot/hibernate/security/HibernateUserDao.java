@@ -28,7 +28,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.HashUtils;
-import org.riotfamily.riot.hibernate.dao.AbstractHibernateRiotDao;
+import org.riotfamily.riot.hibernate.dao.HqlDao;
 import org.riotfamily.riot.list.support.ListParamsImpl;
 import org.riotfamily.riot.security.auth.RiotUser;
 import org.riotfamily.riot.security.auth.RiotUserDao;
@@ -40,7 +40,7 @@ import org.springframework.util.Assert;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class HibernateUserDao extends AbstractHibernateRiotDao 
+public class HibernateUserDao extends HqlDao 
 		implements RiotUserDao {
 
 	public static final String DEFAULT_USERNAME = "admin";

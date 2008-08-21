@@ -25,6 +25,7 @@ package org.riotfamily.riot.hibernate.support;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -88,8 +89,8 @@ public final class HibernateUtils {
 	 * @since 6.4
 	 */
 	@SuppressWarnings("unchecked")
-	public static String getExampleWhereClause(Object example, String alias,
-			String[] propertyNames) {
+	public static String getExampleWhereClause(Class<?> entityClass, 
+			Object example , String alias, String[] propertyNames) {
 
 		if (example == null || propertyNames == null) {
 			return null;
@@ -108,9 +109,16 @@ public final class HibernateUtils {
 			if (value != null) {
 				if (hql.length() > 0) {
 					hql.append(" and ");
-				}
-				if (value instanceof Collection) {
-					Collection<?> c = (Collection<?>) value;
+				}				
+				Class<?> propertyClass = PropertyUtils.getPropertyType(entityClass, name);
+				if (Collection.class.isAssignableFrom(propertyClass)) {
+					Collection<?> c = null;
+					if (value instanceof Collection) {
+						c = (Collection<?>) value;
+					}
+					else {
+						c = Collections.singleton(value);
+					}					
 					hql.append("1 = 1");
 					for (int j = 0; j < c.size(); j++) {
 						hql.append(" and :").append(name).append("_").append(j)
@@ -142,7 +150,7 @@ public final class HibernateUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void setCollectionValueParams(Query query,
-			String[] names, Object object) {
+			String[] names, Class<?> entityClass, Object object) {
 
 		for (int i = 0; i < names.length; i++) {
 			String name = names[i];
@@ -153,11 +161,21 @@ public final class HibernateUtils {
 			else {
 				value = PropertyUtils.getProperty(object, name);
 			}
-			if (value instanceof Collection) {
-				int j = 0;
-				Iterator<?> values = ((Collection<?>) value).iterator();
-				while (values.hasNext()) {
-					query.setParameter(name + "_" + j++, values.next());
+			if (value != null) {
+				Class<?> propertyClass = PropertyUtils.getPropertyType(entityClass, name);
+				if (Collection.class.isAssignableFrom(propertyClass)) {
+					Collection<?> c = null;
+					if (value instanceof Collection) {
+						c = (Collection<?>) value;
+					}
+					else {
+						c = Collections.singleton(value);
+					}
+					int j = 0;
+					Iterator<?> values = c.iterator();
+					while (values.hasNext()) {
+						query.setParameter(name + "_" + j++, values.next());
+					}
 				}
 			}
 		}

@@ -130,7 +130,8 @@ public class HqlDao extends AbstractHibernateRiotDao implements
     		}
 
     		HibernateUtils.setCollectionValueParams(query,
-    				params.getFilteredProperties(), params.getFilter());
+    				params.getFilteredProperties(), getEntityClass(), 
+    				params.getFilter());
         }
     	if (params.getSearch() != null) {
     		query.setParameter("search", params.getSearch()
@@ -185,6 +186,7 @@ public class HqlDao extends AbstractHibernateRiotDao implements
 
     	if (params.getFilter() != null) {
     		String filter = HibernateUtils.getExampleWhereClause(
+    				getEntityClass(),
     				params.getFilter(), "this",
     				params.getFilteredProperties());
 
