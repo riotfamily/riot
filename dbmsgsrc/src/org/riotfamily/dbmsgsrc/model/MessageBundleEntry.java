@@ -21,6 +21,7 @@ import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.riotfamily.common.util.Generics;
+import org.springframework.util.StringUtils;
 
 @Entity
 @Table(name="riot_dbmsgsrc_entries")
@@ -115,12 +116,12 @@ public class MessageBundleEntry {
 	
 	public Message getMessage(Locale locale) {
 		Message message = messages.get(locale);
-		if (message == null && locale.getCountry() != null) {
+		if (message == null && StringUtils.hasLength(locale.getCountry())) {
 			Locale lang = new Locale(locale.getLanguage());
 			message = messages.get(lang);
 		}
 		if (message == null) {
-			return null;
+			message = getDefaultMessage();
 		}
 		return message;
 	}

@@ -40,7 +40,7 @@
 		<form:map bind="messages" label-renderer-class="org.riotfamily.riot.ui.LocaleRenderer">
 			<form:key-options ref="locales" />
 			<form:nested-form indent="false" bean-class="org.riotfamily.dbmsgsrc.model.Message">
-				<form:textarea bind="text" />
+				<form:textarea bind="text" required="true" />
 			</form:nested-form>
 		</form:map>
 	</form:form>
