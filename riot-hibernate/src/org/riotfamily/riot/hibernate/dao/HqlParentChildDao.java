@@ -44,6 +44,8 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
 
     private String parentProperty;
     
+    private boolean parentPropertyMapped;
+    
 	public HqlParentChildDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
@@ -54,6 +56,18 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
 	
 	public void setParentProperty(String parentProperty) {
 		this.parentProperty = parentProperty;
+	}
+	
+	@Override
+	protected final void initDao() throws Exception {
+		if (parentProperty != null) {
+			parentPropertyMapped = HibernateUtils.isPersistentProperty(
+					getSessionFactory(), getEntityClass(), parentProperty);
+		}
+		initParentChildDao();
+	}
+	
+	protected void initParentChildDao() throws Exception {
 	}
 	
 	public Object getParent(Object entity) {
@@ -72,7 +86,7 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
 	
     protected String getWhereClause(Object parent, ListParams params) {
         StringBuffer sb = new StringBuffer();
-        if (parentProperty != null) {
+        if (parentPropertyMapped) {
         	sb.append("this.");
        		sb.append(parentProperty);
         	if (parent == null) {

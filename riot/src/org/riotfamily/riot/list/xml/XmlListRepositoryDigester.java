@@ -121,11 +121,13 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 			}
 		}
 		List<Element> nodes = XmlUtils.getChildElementsByTagName(ele, "property");
-		if (singleton && !nodes.isEmpty()) {
-			throw new RuntimeException("<property> must not be used with singleton beans.");
+		if (!nodes.isEmpty()) {
+			if (singleton) { 
+				throw new RuntimeException("<property> must not be used with singleton beans.");
+			}
+			XmlUtils.populate(dao, nodes, beanFactory);
+			beanFactory.initializeBean(dao, null);
 		}
-		XmlUtils.populate(dao, nodes, beanFactory);
-		
 		listConfig.setDao(dao);
 	}
 	

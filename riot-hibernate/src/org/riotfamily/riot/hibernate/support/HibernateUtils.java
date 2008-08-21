@@ -34,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -81,6 +82,18 @@ public final class HibernateUtils {
 		Class<?> clazz = Hibernate.getClass(bean);
 		ClassMetadata metadata = sessionFactory.getClassMetadata(clazz);
 		return metadata.getIdentifier(bean, EntityMode.POJO).toString();
+	}
+	
+	public static boolean isPersistentProperty(SessionFactory sessionFactory, 
+			Class<?> clazz, String property) {
+		
+		try {
+			ClassMetadata metadata = sessionFactory.getClassMetadata(clazz);
+			return metadata.getPropertyType(property) != null;
+		}
+		catch (HibernateException e) {
+			return false;
+		}
 	}
 
 	/**
