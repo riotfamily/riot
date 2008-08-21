@@ -582,6 +582,7 @@ riot.InsertButton = Class.create({
 				callback(el);
 			});
 		}
+		riot.findContainer(el).markAsDirty();
 		riot.toolbar.enablePublishButtons();
 		if (this.componentList.config.max && this.componentList.componentElements.length == this.componentList.config.max) {
 			this.componentList.insertOff();			
