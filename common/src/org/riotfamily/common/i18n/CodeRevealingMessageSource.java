@@ -37,7 +37,7 @@ import org.springframework.util.StringUtils;
  */
 public class CodeRevealingMessageSource extends DelegatingMessageSource {
 	
-	private boolean revealCodes = true;
+	private boolean revealCodes = false;
 
 	public boolean isRevealCodes() {
 		return this.revealCodes;
