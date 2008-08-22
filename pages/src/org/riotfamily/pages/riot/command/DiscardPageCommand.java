@@ -34,6 +34,7 @@ import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
 import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
+import org.riotfamily.riot.security.AccessController;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -69,8 +70,8 @@ public class DiscardPageCommand extends AbstractCommand implements BatchCommand 
 		if (ACTION_DISCARD.equals(action)) {
 			return true;
 		}
-		return !PageCommandUtils.isSystemPage(context)
-				&& PageCommandUtils.isTranslated(context);
+		return PageCommandUtils.isTranslated(context) 
+				&& AccessController.isGranted(action, context.getBean());
 	}
 	
 	public String getConfirmationMessage(CommandContext context) {

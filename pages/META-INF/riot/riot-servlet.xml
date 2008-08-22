@@ -117,10 +117,12 @@
 		<property name="windowName" value="preview" />
 	</bean>
 	
-	<!-- Policy -->
+	<!-- Policies -->
 	
 	<bean id="siteUserPolicy" class="org.riotfamily.pages.riot.security.SiteUserPolicy">
 		<constructor-arg ref="pageDao" />
 	</bean>
+	
+	<bean id="systemPagePolicy" class="org.riotfamily.pages.riot.security.SystemPagePolicy" />
 	
 </beans>
