@@ -283,15 +283,18 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 	}
 
 	protected void createGoneAlias(Site site, String path) {
-		PageAlias alias = new PageAlias(null, site, path);
-		log.info("Creating " + alias);
-		saveObject(alias);
+		PageAlias alias = findPageAlias(site, path);
+		if (alias == null) {
+			alias = new PageAlias(null, site, path);
+			log.info("Creating gone alias " + alias);
+			saveObject(alias);
+		}		
 	}
 	
 	protected void createAlias(Page page, String path) {
 		deleteAlias(page);
 		PageAlias alias = new PageAlias(page, page.getSite(), path);
-		log.info("Creating " + alias);
+		log.info("Creating alias " + alias);
 		saveObject(alias);
 	}
 
