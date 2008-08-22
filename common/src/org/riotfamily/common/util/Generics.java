@@ -84,5 +84,9 @@ public final class Generics {
 	public static<V> TreeSet<V> newTreeSet(Comparator<? super V> comparator) {
 		return new TreeSet<V>(comparator);
 	}
+	
+	public static<V> ThreadLocal<V> newThreadLocal() {
+		return new ThreadLocal<V>();
+	}
 
 }
