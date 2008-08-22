@@ -273,6 +273,11 @@ ul.radioButtonGroup input {
 	position: relative;
 }
 
+.collectionEditor .nestedForm .single,
+.collectionEditor .nestedForm .composite {
+	clear: none;
+	margin-bottom: 0;
+}
 
 .collectionEditor ul.items {
 	padding: 0;
@@ -396,12 +401,6 @@ table.item .indent {
 
 .nestedForm .present {
 	float: left;
-}
-
-.nestedForm .single,
-.nestedForm .composite {
-	clear: none;
-	margin-bottom: 0;
 }
 
 .listEditor .button-add,
