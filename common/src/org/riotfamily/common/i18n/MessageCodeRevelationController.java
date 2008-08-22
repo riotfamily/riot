@@ -37,8 +37,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * Controller that toggles the <code>revealCodes</code> property of a 
- * CodeRevlealingMessageSource.
+ * Controller that toggles code revelation of a CodeRevlealingMessageSource
+ * for the current user.
  *  
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4

@@ -24,7 +24,11 @@
 package org.riotfamily.common.i18n;
 
 import java.util.Locale;
+import java.util.Set;
 
+import org.riotfamily.common.util.Generics;
+import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DelegatingMessageSource;
 import org.springframework.util.StringUtils;
@@ -37,14 +41,26 @@ import org.springframework.util.StringUtils;
  */
 public class CodeRevealingMessageSource extends DelegatingMessageSource {
 	
-	private boolean revealCodes = false;
+	private Set<String> revealTo = Generics.newHashSet();
 
 	public boolean isRevealCodes() {
-		return this.revealCodes;
+		RiotUser user = AccessController.getCurrentUser();
+		if (user != null) {
+			return revealTo.contains(user.getUserId());
+		}
+		return false;
 	}
 
-	public void setRevealCodes(boolean revealAllCodes) {
-		this.revealCodes = revealAllCodes;
+	public void setRevealCodes(boolean revealCodes) {
+		RiotUser user = AccessController.getCurrentUser();
+		if (user != null) {
+			if (revealCodes) {
+				revealTo.add(user.getUserId());
+			}
+			else {
+				revealTo.remove(user.getUserId());
+			}
+		}
 	}
 
 	protected String revealCode(String message, String code) {
@@ -61,7 +77,7 @@ public class CodeRevealingMessageSource extends DelegatingMessageSource {
 	public String getMessage(String code, Object[] args, String defaultMessage,
 			Locale locale) {
 		
-		if (revealCodes) {
+		if (isRevealCodes()) {
 			return revealCode(super.getMessage(code, args, 
 					defaultMessage, locale), code);
 		}
@@ -73,7 +89,7 @@ public class CodeRevealingMessageSource extends DelegatingMessageSource {
 	}
 
 	public String getMessage(MessageSourceResolvable resolvable, Locale locale) {
-		if (revealCodes) {
+		if (isRevealCodes()) {
 			return revealCode(super.getMessage(resolvable, locale),
 					StringUtils.arrayToDelimitedString(
 					resolvable.getCodes(), " | "));

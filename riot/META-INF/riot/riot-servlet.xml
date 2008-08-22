@@ -35,7 +35,6 @@
 	</util:list>
 	
 	<bean id="messageSource" name="riotMessageSource" class="org.riotfamily.common.i18n.CodeRevealingMessageSource">
-		<property name="revealCodes" value="false" />
 		<property name="parentMessageSource">
 			<bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 				<property name="defaultEncoding" value="UTF-8" />
