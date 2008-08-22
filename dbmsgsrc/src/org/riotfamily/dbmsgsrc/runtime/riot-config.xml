@@ -85,6 +85,7 @@
 	</list:list>
 	
 	<form:form id="riotMessageBundleEntry" bean-class="org.riotfamily.dbmsgsrc.model.MessageBundleEntry">
+		<form:textfield bind="code" read-only="true" />
 		<form:map bind="messages" label-renderer-class="org.riotfamily.riot.ui.LocaleRenderer">
 			<form:key-options class="org.riotfamily.dbmsgsrc.support.CurrentLocaleOptionsModel" />
 			<form:nested-form indent="false" required="true" bean-class="org.riotfamily.dbmsgsrc.model.Message">

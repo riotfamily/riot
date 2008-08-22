@@ -474,6 +474,10 @@
 	</bean>
 	<alias name="formChooserController" alias="/form-chooser/@{editorId}" />
 	
+	<bean id="popupFormController" parent="formController" class="org.riotfamily.riot.form.ui.PopupFormController" />
+	<alias name="popupFormController" alias="/popup-form/@{editorId}" />
+	<alias name="popupFormController" alias="/popup-form/@{editorId}/@{objectId}" />
+	
 	<bean id="viewController" class="org.riotfamily.riot.editor.ui.ViewController">
 		<constructor-arg ref="editorRepository" />
 		<constructor-arg ref="listService" />

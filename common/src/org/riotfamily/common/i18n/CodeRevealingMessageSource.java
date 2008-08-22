@@ -43,6 +43,22 @@ public class CodeRevealingMessageSource extends DelegatingMessageSource {
 	
 	private Set<String> revealTo = Generics.newHashSet();
 
+	private String contextPath = "";
+	
+	private Set<String> doNotReveal;
+	
+	public void setDoNotReveal(Set<String> doNotReveal) {
+		this.doNotReveal = doNotReveal;
+	}
+	
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
+	}
+	
+	protected String getContextPath() {
+		return contextPath;
+	}
+	
 	public boolean isRevealCodes() {
 		RiotUser user = AccessController.getCurrentUser();
 		if (user != null) {
@@ -63,6 +79,10 @@ public class CodeRevealingMessageSource extends DelegatingMessageSource {
 		}
 	}
 
+	protected boolean shouldBeRevealed(String code) {
+		return isRevealCodes() && (doNotReveal == null || !doNotReveal.contains(code));
+	}
+	
 	protected String revealCode(String message, String code) {
 		StringBuffer sb = new StringBuffer();
 		if (message != null) {
@@ -77,7 +97,7 @@ public class CodeRevealingMessageSource extends DelegatingMessageSource {
 	public String getMessage(String code, Object[] args, String defaultMessage,
 			Locale locale) {
 		
-		if (isRevealCodes()) {
+		if (shouldBeRevealed(code)) {
 			return revealCode(super.getMessage(code, args, 
 					defaultMessage, locale), code);
 		}
@@ -89,11 +109,12 @@ public class CodeRevealingMessageSource extends DelegatingMessageSource {
 	}
 
 	public String getMessage(MessageSourceResolvable resolvable, Locale locale) {
-		if (isRevealCodes()) {
+		if (shouldBeRevealed(resolvable.getCodes()[0])) {
 			return revealCode(super.getMessage(resolvable, locale),
 					StringUtils.arrayToDelimitedString(
 					resolvable.getCodes(), " | "));
 		}
 		return super.getMessage(resolvable, locale);
 	}
+
 }

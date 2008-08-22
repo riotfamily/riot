@@ -40,6 +40,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.riotfamily.website.cache.TagCacheItems;
+import org.springframework.util.ObjectUtils;
 
 @Entity
 @Table(name="riot_dbmsgsrc_messages")
@@ -108,6 +109,23 @@ public class Message {
 			messageFormat = new MessageFormat(text, locale);
 		}
 		return messageFormat;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj instanceof Message) {
+			Message other = (Message) obj;
+			return ObjectUtils.nullSafeEquals(id, other.getId());
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
 	}
 
 }

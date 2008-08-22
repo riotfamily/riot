@@ -24,6 +24,10 @@ public class DbMessageSource extends AbstractMessageSource {
 		this.bundle = bundle;
 	}
 
+	MessageBundleEntry getEntry(String code) {
+		return dao.findEntry(bundle, code);
+	}
+	
 	@Override
 	protected MessageFormat resolveCode(String code, Locale locale, String defaultMessage) {
 		CacheTagUtils.tag(Message.class);

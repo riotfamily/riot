@@ -25,11 +25,17 @@ package org.riotfamily.dbmsgsrc.support;
 
 import org.riotfamily.common.i18n.CodeRevealingMessageSource;
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
+import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
+import org.riotfamily.riot.runtime.RiotRuntime;
+import org.riotfamily.riot.runtime.RiotRuntimeAware;
 import org.springframework.context.MessageSource;
 
-public class RiotDbMessageSource extends CodeRevealingMessageSource {
+public class RiotDbMessageSource extends CodeRevealingMessageSource 
+		implements RiotRuntimeAware {
 
 	private DbMessageSource dbMessageSource;
+	
+	private RiotRuntime runtime;
 	
 	public RiotDbMessageSource(DbMessageSourceDao dao) {
 		dbMessageSource = new DbMessageSource(dao);
@@ -42,19 +48,31 @@ public class RiotDbMessageSource extends CodeRevealingMessageSource {
 		dbMessageSource.setParentMessageSource(parent);
 	}
 	
+	public void setRiotRuntime(RiotRuntime runtime) {
+		this.runtime = runtime;
+	}
+		
 	@Override
 	protected String revealCode(String message, String code) {
-		StringBuffer sb = new StringBuffer();
-		if (message != null) {
-			sb.append(message);
+		String url = getEditorUrl(code);
+		if (url != null) {
+			StringBuilder sb = new StringBuilder();
+			if (message != null) {
+				sb.append(message);
+			}
+			sb.append("<span class=\"messageCode\" onclick=\"window.open('")
+				.append(url).append("','dbmsgsrc','width=650,height=400');return false\"></span>");
+			
+			return sb.toString();
 		}
-		sb.append("<span class=\"messageCode\" onclick=\"window.open('")
-			.append(getEditorUrl(code)).append("', 'dbmsgsrc')\"></span>");
-		
-		return sb.toString();
+		return message;
 	}
 
 	private String getEditorUrl(String code) {
-		return "about:blank";
+		MessageBundleEntry entry = dbMessageSource.getEntry(code);
+		if (entry != null) {
+			return getContextPath() + runtime.getUrl("popupFormController", "riotMessageBundleEntry", entry.getId());
+		}
+		return null;
 	}
 }

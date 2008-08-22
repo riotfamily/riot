@@ -36,6 +36,11 @@
 		        <property name="basenames" ref="messageBasenames" />
 		    </bean>
 		</property>
+		<property name="doNotReveal">
+			<list>
+				<value>riot.title</value>
+			</list>
+		</property>
 	</bean>
   	
 </beans>

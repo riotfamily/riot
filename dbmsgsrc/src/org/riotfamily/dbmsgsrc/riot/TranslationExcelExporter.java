@@ -69,7 +69,7 @@ public class TranslationExcelExporter implements Exporter {
 			wb = new HSSFWorkbook();
 
 			sheet = wb.createSheet("Translations");
-			sheet.protectSheet("");
+			//sheet.protectSheet("");
 
 			locked = wb.createCellStyle();
 			locked.setLocked(true);
@@ -113,7 +113,7 @@ public class TranslationExcelExporter implements Exporter {
 	
 				addCell(row, 0, getCategory(message), editable);
 				addCell(row, 1, message.getEntry().getCode(), locked);
-				addCell(row, 2, message.getEntry().getDefaultMessage().getText(), locked);
+				addCell(row, 2, message.getEntry().getDefaultText(), locked);
 				addCell(row, 3, message.getText(), editable);
 				addCell(row, 4, message.getEntry().getComment(), editable);
 				addCell(row, 5, message.getText(), hidden);

@@ -47,7 +47,9 @@ public class MessageBundleEntry {
 	public MessageBundleEntry(String bundle, String code, String defaultMessage) {
 		this.bundle = bundle;
 		this.code = code;
-		setDefaultMessage(new Message(defaultMessage));
+		if (StringUtils.hasText(defaultMessage)) {
+			setDefaultMessage(new Message(defaultMessage));
+		}
 	}
 
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
@@ -87,6 +89,12 @@ public class MessageBundleEntry {
 	}
 
 	@Transient
+	public String getDefaultText() {
+		Message message = getDefaultMessage();
+		return message != null ? message.getText() : null;
+	}
+	
+	@Transient
 	public Message getDefaultMessage() {
 		if (messages == null) {
 			return null;
@@ -125,7 +133,7 @@ public class MessageBundleEntry {
 	
 	public void addTranslation(Locale locale) {
 		Message msg = new Message();
-		msg.setText(getDefaultMessage().getText());
+		msg.setText(getDefaultText());
 		messages.put(locale, msg);
 	}
 

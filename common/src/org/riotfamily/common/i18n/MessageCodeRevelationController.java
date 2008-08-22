@@ -72,6 +72,7 @@ public class MessageCodeRevelationController implements Controller,
 		if (messageSource != null) {
 			boolean reveal = !messageSource.isRevealCodes();
 			messageSource.setRevealCodes(reveal);
+			messageSource.setContextPath(request.getContextPath());
 		}
 		return null;
 	}

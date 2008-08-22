@@ -100,6 +100,10 @@ public class RiotRuntime implements ServletContextAware {
 	public String getUrl(String handlerName, Object attributes) {
 		return pathCompleter.addServletMapping(handlerUrlResolver.getUrlForHandler(context, handlerName, attributes));
 	}
+	
+	public String getUrl(String handlerName, Object... attributes) {
+		return pathCompleter.addServletMapping(handlerUrlResolver.getUrlForHandler(context, handlerName, attributes));
+	}
 
 	public static RiotRuntime getRuntime(ApplicationContext context) {
 		return (RiotRuntime) BeanFactoryUtils.beanOfTypeIncludingAncestors(
