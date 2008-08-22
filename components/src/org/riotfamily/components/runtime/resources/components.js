@@ -635,7 +635,7 @@ riot.TypeInspector = Class.create({
 
 		this.element = RBuilder.node('div', {},
 			RBuilder.node('div', {className: 'riot-close-button', onclick: riot.toolbar.hideInspector.bind(riot.toolbar)}),
-			RBuilder.node('div', {className: 'headline'}, '${title.typeInspector}'),
+			RBuilder.node('div', {className: 'headline', innerHTML: '${title.typeInspector}'}),
 			select
 		);
 	}

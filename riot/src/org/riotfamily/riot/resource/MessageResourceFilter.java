@@ -41,6 +41,8 @@ public class MessageResourceFilter extends AbstractPathMatchingResourceFilter
 	
 	private String prefix;
 	
+	private boolean escapeJsStrings;
+	
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
@@ -49,11 +51,15 @@ public class MessageResourceFilter extends AbstractPathMatchingResourceFilter
 		this.prefix = prefix;
 	}
 
+	public void setEscapeJsStrings(boolean escapeJsStrings) {
+		this.escapeJsStrings = escapeJsStrings;
+	}
+	
 	public FilterReader createFilterReader(Reader in, 
 			HttpServletRequest request) {
 		
 		Locale locale = RequestContextUtils.getLocale(request);
-		return new MessageFilterReader(in, messageSource, locale, prefix);
+		return new MessageFilterReader(in, messageSource, locale, prefix, escapeJsStrings);
 	}
 
 }

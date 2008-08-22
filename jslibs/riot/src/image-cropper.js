@@ -117,12 +117,12 @@ Cropper.UI.prototype = {
 
 			// Buttons:
 			e = this.cropButton = Cropper.appendDiv(this.controls, 'cropButton');
-			e.appendChild(document.createTextNode(o.cropLabel || 'Crop'));
+			e.innerHTML = o.cropLabel || 'Crop';
 			e.onclick = this.crop.bind(this);
 
 			e = this.undoButton = Cropper.appendDiv(this.controls).hide();
 			e.className = 'undoButton';
-			e.appendChild(document.createTextNode(o.undoLabel || 'Undo'));
+			e.innerHTML = o.undoLabel || 'Undo';
 			e.onclick = this.undo.bind(this);
 		}
 

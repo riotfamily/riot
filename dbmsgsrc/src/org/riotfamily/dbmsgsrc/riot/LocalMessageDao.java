@@ -28,6 +28,7 @@ import java.util.List;
 import org.hibernate.SessionFactory;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
+import org.riotfamily.dbmsgsrc.support.DbMessageSource;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.hibernate.dao.AbstractHibernateRiotDao;
@@ -35,9 +36,15 @@ import org.springframework.dao.DataAccessException;
 
 public class LocalMessageDao extends AbstractHibernateRiotDao {
 
+	private String bundle = DbMessageSource.DEFAULT_BUNDLE;
+	
 	public LocalMessageDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
 		setEntityClass(Message.class);
+	}
+	
+	public void setBundle(String bundle) {
+		this.bundle = bundle;
 	}
 
 	@Override
@@ -49,9 +56,11 @@ public class LocalMessageDao extends AbstractHibernateRiotDao {
 				"select coalesce(lm, dm) from MessageBundleEntry e"
 				+ " left join e.messages lm with lm.text is not null" 
 				+ " and lm.locale = :locale"
-				+ " left join e.messages dm with dm.locale = :default")
+				+ " left join e.messages dm with dm.locale = :default"
+				+ " where e.bundle = :bundle")
 				.setParameter("locale", site.getLocale())
 				.setParameter("default", MessageBundleEntry.C_LOCALE)
+				.setParameter("bundle", bundle)
 				.list();
 	}
 	

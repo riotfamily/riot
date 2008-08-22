@@ -119,7 +119,7 @@ riot.Toolbar = Class.create({
 riot.ToolbarButton = Class.create({
 	initialize: function(handler, title, selector, href) {
 		this.handler = handler;
-		this.title = title;
+		this.title = title.stripTags();
 		this.selector = selector;
 		this.element = this.createElement();
 		

@@ -382,7 +382,7 @@ riot.Popup = Class.create({
 		this.div = RBuilder.node('div', {id: 'riot-popup', style: {position: 'absolute'}},
 			help ? RBuilder.node('div', {className: 'riot-help-button', onclick: help}) : null,
 			this.closeButton = RBuilder.node('div', {className: 'riot-close-button', onclick: this.close.bind(this)}),
-			RBuilder.node('div', {className: 'headline'}, title),
+			RBuilder.node('div', {className: 'headline', innerHTML: title}),
 			this.content = content,
 			this.okButton = RBuilder.node('div', {className: 'button-ok', onclick: ok}, 'Ok')
 		);

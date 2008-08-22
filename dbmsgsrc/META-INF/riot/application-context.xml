@@ -13,4 +13,8 @@
 		<value>org.riotfamily.dbmsgsrc.model.Message</value>
 	</override:add>
 
+	<bean id="dbMessageSourceDao" class="org.riotfamily.dbmsgsrc.dao.HibernateMessageSourceDao">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
 </beans>

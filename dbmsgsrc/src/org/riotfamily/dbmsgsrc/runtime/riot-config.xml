@@ -19,6 +19,7 @@
 	<list:list id="messageBundleEntries">
 		<list:dao class="org.riotfamily.riot.hibernate.dao.HqlDao">
 			<list:property name="entityClass" value="org.riotfamily.dbmsgsrc.model.MessageBundleEntry" />
+			<list:property name="where" value="this.bundle = 'default'" />
 		</list:dao>
 		<list:columns>
 			<list:column property="code" />
@@ -67,6 +68,33 @@
 	
 	<ed:list id="localDbMessages" list-ref="localDbMessages" icon="bubble" hidden="true">
 		<ed:form form-ref="dbMessage" />
+	</ed:list>
+
+	<list:list id="riotMessageBundleEntries">
+		<list:dao class="org.riotfamily.riot.hibernate.dao.HqlDao">
+			<list:property name="entityClass" value="org.riotfamily.dbmsgsrc.model.MessageBundleEntry" />
+			<list:property name="where" value="this.bundle = 'riot'" />
+		</list:dao>
+		<list:columns>
+			<list:column property="code" />
+			<list:column property="defaultMessage.text" sortable="false" />
+			<list:command id="edit" />
+			<list:command id="delete" />
+		</list:columns>
+		<list:command id="add" />
+	</list:list>
+	
+	<form:form id="riotMessageBundleEntry" bean-class="org.riotfamily.dbmsgsrc.model.MessageBundleEntry">
+		<form:map bind="messages" label-renderer-class="org.riotfamily.riot.ui.LocaleRenderer">
+			<form:key-options class="org.riotfamily.dbmsgsrc.support.CurrentLocaleOptionsModel" />
+			<form:nested-form indent="false" required="true" bean-class="org.riotfamily.dbmsgsrc.model.Message">
+				<form:textarea bind="text" required="true" />
+			</form:nested-form>
+		</form:map>
+	</form:form>
+	
+	<ed:list list-ref="riotMessageBundleEntries" hidden="true">
+		<ed:form form-ref="riotMessageBundleEntry" />
 	</ed:list>
 	
 </riot-config>

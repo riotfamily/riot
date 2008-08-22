@@ -120,9 +120,6 @@ public class MessageBundleEntry {
 			Locale lang = new Locale(locale.getLanguage());
 			message = messages.get(lang);
 		}
-		if (message == null) {
-			message = getDefaultMessage();
-		}
 		return message;
 	}
 	

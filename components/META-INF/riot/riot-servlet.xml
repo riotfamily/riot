@@ -111,6 +111,7 @@
 		</bean>
 		<bean class="org.riotfamily.riot.resource.MessageResourceFilter">
 			<property name="prefix" value="components." />
+			<property name="escapeJsStrings" value="true" />
 			<property name="matches">
 				<list>
 					<value>/**/toolbar.js</value>

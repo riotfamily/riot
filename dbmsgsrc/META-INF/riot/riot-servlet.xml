@@ -25,5 +25,17 @@
 			<bean class="org.riotfamily.dbmsgsrc.riot.TranslationExcelExporter" />
 		</property>
 	</bean>
+	
+	<bean id="messageSource" class="org.riotfamily.dbmsgsrc.support.RiotDbMessageSource">
+		<constructor-arg ref="dbMessageSourceDao" />
+		<property name="parentMessageSource">
+			<bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+				<property name="defaultEncoding" value="UTF-8" />
+				<property name="fallbackToSystemLocale" value="false" />
+				<property name="cacheSeconds" value="1" />
+		        <property name="basenames" ref="messageBasenames" />
+		    </bean>
+		</property>
+	</bean>
   	
 </beans>
