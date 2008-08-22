@@ -95,7 +95,6 @@ public class TranslationExcelExporter implements Exporter {
 		    font.setFontName("Trebuchet MS");
 		    font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
 		    style.setFont(font);
-		    style.setLocked(true);
 		    
 			HSSFRow row = sheet.createRow(0);
 			short col = 0;
