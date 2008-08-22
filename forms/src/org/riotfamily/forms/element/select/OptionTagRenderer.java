@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.FormatUtils;
 
 
 /**
@@ -41,7 +42,7 @@ public class OptionTagRenderer implements OptionRenderer {
 		optionTag.attribute(Html.COMMON_CLASS, option.getStyleClass());
 		optionTag.attribute(Html.INPUT_VALUE, option.getIndex());
 		optionTag.attribute(Html.OPTION_SELECTED, option.isSelected());
-		optionTag.body(option.getLabel());
+		optionTag.body(FormatUtils.stripTags(option.getLabel()));
 		optionTag.end();
 	}
 
