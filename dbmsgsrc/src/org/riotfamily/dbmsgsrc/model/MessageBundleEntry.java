@@ -123,6 +123,9 @@ public class MessageBundleEntry {
 	}
 	
 	public Message getMessage(Locale locale) {
+		if (messages == null) {
+			return null;
+		}
 		Message message = messages.get(locale);
 		if (message == null && StringUtils.hasLength(locale.getCountry())) {
 			Locale lang = new Locale(locale.getLanguage());
@@ -134,6 +137,9 @@ public class MessageBundleEntry {
 	public void addTranslation(Locale locale) {
 		Message msg = new Message();
 		msg.setText(getDefaultText());
+		if (messages == null) {
+			messages = Generics.newHashMap();
+		}
 		messages.put(locale, msg);
 	}
 

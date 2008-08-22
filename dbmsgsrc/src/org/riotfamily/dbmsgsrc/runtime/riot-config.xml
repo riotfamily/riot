@@ -27,6 +27,7 @@
 			<list:command id="edit" />
 			<list:command id="delete" />
 		</list:columns>
+		<list:command class="org.riotfamily.dbmsgsrc.riot.RemoveEmptyEntriesCommand" />
 		<list:command id="add" />
 	</list:list>
 	

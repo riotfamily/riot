@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.dbmsgsrc.dao;
 
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
@@ -49,6 +51,20 @@ public class HibernateMessageSourceDao implements DbMessageSourceDao {
 	@Transactional
 	public void saveEntry(MessageBundleEntry entry) {
 		hibernate.save(entry);
+	}
+	
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public void removeEmptyEntries(String bundle) {
+		List<MessageBundleEntry> entries = hibernate.createCacheableCriteria(
+				MessageBundleEntry.class)
+				.add(Restrictions.sizeLe("messages", 1))
+				.add(Restrictions.naturalId().set("bundle", bundle))
+				.list();
+		
+		for (MessageBundleEntry entry : entries) {
+			hibernate.delete(entry);
+		}
 	}
 
 }

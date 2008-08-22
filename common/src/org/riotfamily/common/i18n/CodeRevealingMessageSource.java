@@ -31,7 +31,6 @@ import org.riotfamily.riot.security.AccessController;
 import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DelegatingMessageSource;
-import org.springframework.util.StringUtils;
 
 /**
  * MessageSource that reveals the code(s) used to look-up a message.
@@ -83,13 +82,20 @@ public class CodeRevealingMessageSource extends DelegatingMessageSource {
 		return isRevealCodes() && (doNotReveal == null || !doNotReveal.contains(code));
 	}
 	
-	protected String revealCode(String message, String code) {
+	protected String revealCodes(String message, String... codes) {
 		StringBuffer sb = new StringBuffer();
 		if (message != null) {
 			sb.append(message);
 		}
-		sb.append("<span class=\"messageCode\" title=\"")
-			.append(code).append("\"></span>");
+		sb.append("<span class=\"messageCode\" title=\"");
+		int i = 0;
+		for (String code : codes) {
+			sb.append(code);
+			if (++i < codes.length) {
+				sb.append(" | ");
+			}
+		}
+		sb.append("\"></span>");
 		
 		return sb.toString();
 	}
@@ -98,7 +104,7 @@ public class CodeRevealingMessageSource extends DelegatingMessageSource {
 			Locale locale) {
 		
 		if (shouldBeRevealed(code)) {
-			return revealCode(super.getMessage(code, args, 
+			return revealCodes(super.getMessage(code, args, 
 					defaultMessage, locale), code);
 		}
 		return super.getMessage(code, args, defaultMessage, locale);
@@ -110,9 +116,7 @@ public class CodeRevealingMessageSource extends DelegatingMessageSource {
 
 	public String getMessage(MessageSourceResolvable resolvable, Locale locale) {
 		if (shouldBeRevealed(resolvable.getCodes()[0])) {
-			return revealCode(super.getMessage(resolvable, locale),
-					StringUtils.arrayToDelimitedString(
-					resolvable.getCodes(), " | "));
+			return revealCodes(super.getMessage(resolvable, locale), resolvable.getCodes());
 		}
 		return super.getMessage(resolvable, locale);
 	}

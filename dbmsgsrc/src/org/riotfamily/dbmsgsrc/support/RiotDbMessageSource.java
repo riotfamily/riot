@@ -53,8 +53,8 @@ public class RiotDbMessageSource extends CodeRevealingMessageSource
 	}
 		
 	@Override
-	protected String revealCode(String message, String code) {
-		String url = getEditorUrl(code);
+	protected String revealCodes(String message, String... codes) {
+		String url = getEditorUrl(codes[0]);
 		if (url != null) {
 			StringBuilder sb = new StringBuilder();
 			if (message != null) {
@@ -69,7 +69,7 @@ public class RiotDbMessageSource extends CodeRevealingMessageSource
 	}
 
 	private String getEditorUrl(String code) {
-		MessageBundleEntry entry = dbMessageSource.getEntry(code);
+		MessageBundleEntry entry = dbMessageSource.getEntry(code, null);
 		if (entry != null) {
 			return getContextPath() + runtime.getUrl("popupFormController", "riotMessageBundleEntry", entry.getId());
 		}

@@ -7,6 +7,7 @@ import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.website.cache.CacheTagUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 public class DbMessageSource extends AbstractMessageSource {
 
@@ -24,22 +25,23 @@ public class DbMessageSource extends AbstractMessageSource {
 		this.bundle = bundle;
 	}
 
-	MessageBundleEntry getEntry(String code) {
-		return dao.findEntry(bundle, code);
+	@Transactional
+	MessageBundleEntry getEntry(String code, String defaultMessage) {
+		MessageBundleEntry entry = dao.findEntry(bundle, code);
+		if (entry == null) {
+			entry = new MessageBundleEntry(bundle, code, defaultMessage);
+			dao.saveEntry(entry);
+		}
+		return entry;
 	}
 	
 	@Override
 	protected MessageFormat resolveCode(String code, Locale locale, String defaultMessage) {
 		CacheTagUtils.tag(Message.class);
-		MessageBundleEntry entry = dao.findEntry(bundle, code);
-		if (entry != null) {
-			Message message = entry.getMessage(locale);
-			if (message != null) {
-				return message.getMessageFormat();
-			}
-		}
-		else {
-			dao.saveEntry(new MessageBundleEntry(bundle, code, defaultMessage));
+		MessageBundleEntry entry = getEntry(code, defaultMessage);
+		Message message = entry.getMessage(locale);
+		if (message != null) {
+			return message.getMessageFormat();
 		}
 		return null;
 	}
