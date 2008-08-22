@@ -84,7 +84,7 @@ public class TranslationExcelExporter implements Exporter {
 			hidden = wb.createCellStyle();
 			hidden.setLocked(true);
 			
-			createHeadings("Code", "Default Message", "Translation");
+			createHeadings("Category", "Code", "Default Message", "Translation", "Comment");
 			createRows(items);
 			return wb;
 		}
@@ -111,20 +111,30 @@ public class TranslationExcelExporter implements Exporter {
 			for (Object item : items) {
 				Message message = (Message) item;
 				HSSFRow row = sheet.createRow(i++);
-				addCell(row, 0, message.getEntry().getCode(), locked);
-				addCell(row, 1, message.getEntry().getDefaultMessage().getText(), locked);
-				addCell(row, 2, message.getText(), editable);
-				addCell(row, 3, message.getText(), hidden);
+	
+				addCell(row, 0, getCategory(message), editable);
+				addCell(row, 1, message.getEntry().getCode(), locked);
+				addCell(row, 2, message.getEntry().getDefaultMessage().getText(), locked);
+				addCell(row, 3, message.getText(), editable);
+				addCell(row, 4, message.getEntry().getComment(), editable);
+				addCell(row, 5, message.getText(), hidden);
 			}
-			/*
-			for (short c = 0; c < 3; c++)  {
-				sheet.autoSizeColumn(c);
-			}
-			*/
-			sheet.setColumnWidth((short) 0, (short) (25 * 256));
-			sheet.setColumnWidth((short) 1, (short) (50 * 256));
+
+			sheet.autoSizeColumn((short) 0);
+			sheet.setColumnWidth((short) 1, (short) (25 * 256));
 			sheet.setColumnWidth((short) 2, (short) (50 * 256));
-			sheet.setColumnHidden((short) 3, true);
+			sheet.setColumnWidth((short) 3, (short) (50 * 256));
+			sheet.setColumnWidth((short) 4, (short) (50 * 256));
+			sheet.setColumnHidden((short) 5, true);
+		}
+
+		private String getCategory(Message message) {
+			String category = message.getEntry().getCode();
+			int i = category.indexOf('.');
+			if (i != -1) {
+				category = category.substring(0, i);
+			}
+			return category;
 		}
 
 		private void addCell(HSSFRow row, int i, String text, HSSFCellStyle style) {
