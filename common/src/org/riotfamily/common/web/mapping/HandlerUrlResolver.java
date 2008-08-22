@@ -75,6 +75,18 @@ public class HandlerUrlResolver implements ApplicationContextAware {
 	/**
 	 * Returns the URL of a mapped handler.
 	 * @param handlerName The name of the handler
+	 * @param attributes Optional attributes to fill out wildcards.
+	 * @param request The current request
+	 */
+	public String getUrlForHandler(HttpServletRequest request, 
+			String handlerName, Object... attributes) {
+		
+		return getUrlForHandler(request, handlerName, attributes, null);
+	}
+	
+	/**
+	 * Returns the URL of a mapped handler.
+	 * @param handlerName The name of the handler
 	 * @param attributes Optional attributes to fill out wildcards. Can either 
 	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
 	 * @param request The current request
@@ -89,6 +101,12 @@ public class HandlerUrlResolver implements ApplicationContextAware {
 	
 	public String getUrlForHandler(UrlResolverContext context,
 			String handlerName, Object attributes) {
+		
+		return getUrlForHandler(context, handlerName, attributes, null);
+	}
+	
+	public String getUrlForHandler(UrlResolverContext context,
+			String handlerName, Object... attributes) {
 		
 		return getUrlForHandler(context, handlerName, attributes, null);
 	}

@@ -226,7 +226,7 @@ public class AttributePattern {
 				}
 			}
 		}
-		return true;
+		return unmatched == anonymous;
 	}
 
 	public boolean matches(String path) {
@@ -311,6 +311,21 @@ public class AttributePattern {
 			map = Collections.singletonMap(unmatched, value);
 		}
 		return fillInAttributes(map, defaults);
+	}
+	
+	public String fillInAttributes(Object[] values) {
+		Matcher m = ATTRIBUTE_NAME_PATTERN.matcher(attributePattern);
+		Map<String, Object> map = Generics.newHashMap();
+		int i = 0;
+		while (m.find()) {
+			if (i >= values.length) {
+				throw new IllegalStateException("Pattern contains more " +
+						"wildcards than elements in the given array.");
+			}
+			String name = m.group(1);
+			map.put(name, values[i++]);
+		}
+		return fillInAttributes(map, null);
 	}
 	
 	public String toString() {

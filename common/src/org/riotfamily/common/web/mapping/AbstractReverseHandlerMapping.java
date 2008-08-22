@@ -24,12 +24,14 @@
 package org.riotfamily.common.web.mapping;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hsqldb.Collation;
 import org.riotfamily.common.beans.MapWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.ClassUtils;
@@ -90,12 +92,23 @@ public abstract class AbstractReverseHandlerMapping
 					(Map<String, ?>) attributes, 
 					defaults, prefix, context); 
 		}
-		if (ClassUtils.isAssignable(String.class, attributes.getClass()) ||
+		
+		if (attributes instanceof String ||
 				ClassUtils.isPrimitiveOrWrapper(attributes.getClass())) {
 			
 			return getUrlForHandlerWithAttribute(handlerName, attributes, 
 					defaults, prefix, context);
 		}
+		
+		if (attributes instanceof Collation) {
+			Collection c = (Collection) attributes;
+			attributes = c.toArray(new Object[c.size()]);
+		}
+		
+		if (attributes.getClass().isArray()) {
+			return getUrlForHandlerWithArray(handlerName, (Object[]) attributes, prefix, context);
+		}
+		
 		return getUrlForHandlerWithBean(handlerName, attributes, defaults, 
 				prefix, context);
 	}
@@ -133,6 +146,20 @@ public abstract class AbstractReverseHandlerMapping
 			return null;
 		}
 		String url = p.fillInAttribute(attribute, defaults);
+		return addServletMappingIfNecessary(url, context);
+	}
+	
+	private String getUrlForHandlerWithArray(String handlerName, 
+			Object[] attributes, String prefix, 
+			UrlResolverContext context) {
+		
+		AttributePattern p = getPatternForHandler(handlerName, prefix, context, 
+				null, null, attributes.length);
+		
+		if (p == null) {
+			return null;
+		}
+		String url = p.fillInAttributes(attributes);
 		return addServletMappingIfNecessary(url, context);
 	}
 	
