@@ -26,9 +26,6 @@ package org.riotfamily.common.i18n;
 import java.util.Locale;
 import java.util.Set;
 
-import org.riotfamily.common.util.Generics;
-import org.riotfamily.riot.security.AccessController;
-import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DelegatingMessageSource;
 
@@ -40,9 +37,9 @@ import org.springframework.context.support.DelegatingMessageSource;
  */
 public class CodeRevealingMessageSource extends DelegatingMessageSource {
 	
-	private Set<String> revealTo = Generics.newHashSet();
-
 	private String contextPath = "";
+	
+	private boolean revealCodes;
 	
 	private Set<String> doNotReveal;
 	
@@ -59,23 +56,11 @@ public class CodeRevealingMessageSource extends DelegatingMessageSource {
 	}
 	
 	public boolean isRevealCodes() {
-		RiotUser user = AccessController.getCurrentUser();
-		if (user != null) {
-			return revealTo.contains(user.getUserId());
-		}
-		return false;
+		return revealCodes;
 	}
 
 	public void setRevealCodes(boolean revealCodes) {
-		RiotUser user = AccessController.getCurrentUser();
-		if (user != null) {
-			if (revealCodes) {
-				revealTo.add(user.getUserId());
-			}
-			else {
-				revealTo.remove(user.getUserId());
-			}
-		}
+		this.revealCodes = revealCodes;
 	}
 
 	protected boolean shouldBeRevealed(String code) {
