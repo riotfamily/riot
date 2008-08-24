@@ -68,9 +68,9 @@ public class ExportController implements Controller {
 		response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
 		
 		ListParamsImpl params = new ListParamsImpl(listSession.getParams());
-		Collection<?> items = listConfig.getDao().list(listSession.loadParent(), params);
-		
-		exporter.export(items, properties, response);
+		Object parent = listSession.loadParent();
+		Collection<?> items = listConfig.getDao().list(parent, params);
+		exporter.export(items, parent, properties, response);
 		return null;
 	}
 }

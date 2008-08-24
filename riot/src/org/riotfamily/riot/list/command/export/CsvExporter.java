@@ -51,8 +51,9 @@ public class CsvExporter implements Exporter {
 		return "csv";
 	}
 	
-	public void export(Collection<?> items, List<String> properties,
-			HttpServletResponse response) throws IOException {
+	public void export(Collection<?> items, Object parent, 
+			List<String> properties, HttpServletResponse response) 
+			throws IOException {
 	
 		response.setContentType("text/csv; charset=" + encoding);
 		response.setCharacterEncoding(encoding);

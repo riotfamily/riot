@@ -26,6 +26,7 @@ package org.riotfamily.dbmsgsrc.riot;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,6 +38,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.riotfamily.dbmsgsrc.model.Message;
+import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.list.command.export.Exporter;
 
 public class TranslationExcelExporter implements Exporter {
@@ -46,10 +48,12 @@ public class TranslationExcelExporter implements Exporter {
 		return "xls";
 	}
 	
-	public void export(Collection<?> items, List<String> properties,
-			HttpServletResponse response) throws IOException {
+	public void export(Collection<?> items, Object parent, 
+			List<String> properties, HttpServletResponse response) 
+			throws IOException {
 		
-		HSSFWorkbook wb = new WorkbookCreator().createWorkbook(items);
+		Site site = (Site) parent;
+		HSSFWorkbook wb = new WorkbookCreator().createWorkbook(items, site);
 		wb.write(response.getOutputStream());
 	}
 	
@@ -65,7 +69,7 @@ public class TranslationExcelExporter implements Exporter {
 		
 		HSSFCellStyle hidden;
 		
-		private HSSFWorkbook createWorkbook(Collection<?> items) {
+		private HSSFWorkbook createWorkbook(Collection<?> items, Site site) {
 			wb = new HSSFWorkbook();
 
 			sheet = wb.createSheet("Translations");
@@ -85,7 +89,7 @@ public class TranslationExcelExporter implements Exporter {
 			hidden.setLocked(true);
 			
 			createHeadings("Category", "Code", "Default Message", "Translation", "Comment");
-			createRows(items);
+			createRows(items, site.getLocale());
 			return wb;
 		}
 		
@@ -105,16 +109,19 @@ public class TranslationExcelExporter implements Exporter {
 			}
 		}
 
-		private void createRows(Collection<?> items) {
+		private void createRows(Collection<?> items, Locale locale) {
 			int i = 1;
 			for (Object item : items) {
 				Message message = (Message) item;
+				String translation = null;
+				if (message.getLocale().equals(locale)) {
+					translation = message.getText();
+				}
 				HSSFRow row = sheet.createRow(i++);
-	
 				addCell(row, 0, getCategory(message), editable);
 				addCell(row, 1, message.getEntry().getCode(), locked);
 				addCell(row, 2, message.getEntry().getDefaultText(), locked);
-				addCell(row, 3, message.getText(), editable);
+				addCell(row, 3, translation, editable);
 				addCell(row, 4, message.getEntry().getComment(), editable);
 				addCell(row, 5, message.getText(), hidden);
 			}
