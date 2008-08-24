@@ -614,13 +614,22 @@ riot.InsertButton = Class.create({
 riot.TypeInspector = Class.create({
 
 	initialize: function(configs, onchange) {
+		this.configs = configs;
 		this.onchange = onchange;
-		var select = RBuilder.node('div', {className: 'type-inspector'});
-		for (var i = 0; i < configs.length; i++) {
+		this.element = RBuilder.node('div', {},
+			RBuilder.node('div', {className: 'riot-close-button', onclick: riot.toolbar.hideInspector.bind(riot.toolbar)}),
+			RBuilder.node('div', {className: 'headline', innerHTML: '${title.typeInspector}'}),
+			this.select = RBuilder.node('div', {className: 'type-inspector'})
+		);
+		ComponentEditor.getComponentLabels(configs.pluck('type'), this.setLabels.bind(this));
+	},
+	
+	setLabels: function(labels) {
+		for (var i = 0; i < this.configs.length; i++) {
 			var e = RBuilder.node('div', {className: 'type'},
-				RBuilder.node('span', {className: 'type-' + configs[i].type}, configs[i].label)
+				RBuilder.node('span', {className: 'type-' + this.configs[i].type, innerHTML: labels[i]})
 			);
-			e.config = configs[i];
+			e.config = this.configs[i];
 			var inspector = this;
 			e.onclick = function() {
 				if (inspector.activeTypeButton) {
@@ -630,15 +639,10 @@ riot.TypeInspector = Class.create({
 				inspector.activeTypeButton = this;
 				inspector.onchange(this.config);
 			}
-			select.appendChild(e);
+			this.select.appendChild(e);
 		}
-
-		this.element = RBuilder.node('div', {},
-			RBuilder.node('div', {className: 'riot-close-button', onclick: riot.toolbar.hideInspector.bind(riot.toolbar)}),
-			RBuilder.node('div', {className: 'headline', innerHTML: '${title.typeInspector}'}),
-			select
-		);
 	}
+	
 });
 
 riot.setLiveHtml = function(html) {

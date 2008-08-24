@@ -188,6 +188,12 @@ body > #riot-inspector {
 	background: ${highlight_color} url(icons/dialogs/componentType_hi.gif) top left no-repeat;
 }
 
+#riot-inspector span.messageCode {
+	padding: 0 0 0 20px;
+	text-decoration: none;
+	background: url(images/i18n.gif) right center no-repeat;
+}
+
 .riot-insert-button {
 	clear: both;
 	display: block;

@@ -79,12 +79,17 @@
     <!-- 
 	  - HandlerAdapter that handles CacheableControllers.
 	  -->
-    <bean class="org.riotfamily.cachius.spring.CacheableControllerHandlerAdapter">
+    <bean id="cacheableHandlerAdapter" class="org.riotfamily.cachius.spring.CacheableControllerHandlerAdapter">
 		<constructor-arg>
 			<bean class="org.riotfamily.cachius.CacheService">
 				<constructor-arg ref="riotCache" />
 			</bean>
 		</constructor-arg>
+		<property name="cacheKeyAugmentor">
+			<bean class="org.riotfamily.common.i18n.CodeRevelationCacheKeyAugmentor">
+				<constructor-arg ref="messageSource" />
+			</bean>
+		</property>
 	</bean>
 	
 	<!-- 

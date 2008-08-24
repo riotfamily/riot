@@ -49,7 +49,7 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 		editModeRenderer = new EditModeComponentDecorator(renderer, formRepository);
 		listRenderer.setEditModeRenderStrategy(this);
 	}
-
+	
 	/**
 	 * Overrides the default implementation to render a DIV tag around the
 	 * actual list. The DIV has attributes that are required for the
@@ -69,6 +69,7 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 		wrapper.body();
 		super.render(list, config, request, response);
 		wrapper.end();
+		
 		wrapper.start(Html.SCRIPT).body("riotComponentListConfig" + list.getId() 
 				+ " = " + config.toJSON() + ";", false);
 		

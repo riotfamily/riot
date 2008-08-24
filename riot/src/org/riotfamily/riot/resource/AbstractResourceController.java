@@ -47,6 +47,11 @@ import org.springframework.web.servlet.mvc.LastModified;
 
 /**
  * Controller that serves an internal resource.
+ * <p>
+ * Note: This will only work when a prefix mapping is used for the 
+ * DispatcherServlet (like <tt>/riot/*</tt>) since 
+ * <code>request.getPathInfo()</code> is used.
+ * </p>
  */
 public class AbstractResourceController extends AbstractCacheableController
 		implements LastModified, Compressible {

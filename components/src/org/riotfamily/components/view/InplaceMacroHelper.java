@@ -54,7 +54,7 @@ public class InplaceMacroHelper {
 	private ComponentListRenderer componentListRenderer;
 	
 	private RiotDaoService riotDaoService;
-
+	
 	public InplaceMacroHelper(HttpServletRequest request,
 			HttpServletResponse response, 
 			List<String> toolbarScripts,
@@ -109,8 +109,9 @@ public class InplaceMacroHelper {
 			List<?> validComponentTypes)
 			throws Exception {
 		
-		ComponentListConfig config = new ComponentListConfig(minComponents,
-				maxComponents, initalComponentTypes, validComponentTypes);
+		ComponentListConfig config = new ComponentListConfig(
+				minComponents, maxComponents, 
+				initalComponentTypes, validComponentTypes);
 		
 		return componentListRenderer.renderComponentList(container, key, config, 
 				request, response);
@@ -122,8 +123,9 @@ public class InplaceMacroHelper {
 			List<?> validComponentTypes)
 			throws Exception {
 		
-		ComponentListConfig config = new ComponentListConfig(minComponents,
-				maxComponents, initalComponentTypes, validComponentTypes);
+		ComponentListConfig config = new ComponentListConfig(
+				minComponents, maxComponents, 
+				initalComponentTypes, validComponentTypes);
 		
 		return componentListRenderer.renderNestedComponentList(parent, key, 
 				config, request, response);

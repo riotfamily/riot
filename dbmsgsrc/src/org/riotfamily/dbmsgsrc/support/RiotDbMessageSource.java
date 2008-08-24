@@ -25,6 +25,7 @@ package org.riotfamily.dbmsgsrc.support;
 
 import java.util.Set;
 
+import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.common.i18n.CodeRevealingMessageSource;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;

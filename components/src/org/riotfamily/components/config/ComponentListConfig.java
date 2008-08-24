@@ -41,8 +41,9 @@ public class ComponentListConfig {
 	
 	private List<String> initialTypes = Generics.newArrayList();
 
-	
-	public ComponentListConfig(Integer min, Integer max, List<String> initial, List<?> valid) {
+	public ComponentListConfig(Integer min, Integer max, 
+			List<String> initial, List<?> valid) {
+		
 		this.min = min;
 		this.max = max;
 		if (initial != null) {

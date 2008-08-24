@@ -31,8 +31,6 @@ public class ComponentConfig {
 
 	private String type;
 	
-	private String label;
-	
 	private int min;
 	
 	private Integer max;
@@ -57,17 +55,6 @@ public class ComponentConfig {
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public String getLabel() {
-		if (label == null) {
-			label = type;
-		}
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
 	}
 
 	public int getMin() {

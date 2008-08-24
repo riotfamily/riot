@@ -55,7 +55,7 @@ public class InplaceMacroHelperFactory implements MacroHelperFactory {
 		this.componentListRenderer = componentListRenderer;
 		this.riotDaoService = riotDaoService;
 	}
-
+	
 	public void setToolbarScripts(List<String> toolbarScripts) {
 		this.toolbarScripts = toolbarScripts;
 	}
@@ -67,6 +67,7 @@ public class InplaceMacroHelperFactory implements MacroHelperFactory {
 	public Object createMacroHelper(HttpServletRequest request,
 			HttpServletResponse response, Map<String, ?> model) {
 
+		
 		return new InplaceMacroHelper(request, response, toolbarScripts, 
 				dynamicToolbarScripts, componentListRenderer, riotDaoService);
 	}

@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,6 +43,8 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.image.ImageCropper;
+import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.PasswordGenerator;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.components.cache.ComponentCacheUtils;
@@ -58,14 +61,18 @@ import org.riotfamily.media.model.CroppedRiotImage;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
 import org.riotfamily.riot.security.session.LoginManager;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * Service bean to edit ComponentLists and ComponentVersions.
  */
 @Transactional
-public class ComponentEditorImpl implements ComponentEditor, UploadManager {
+public class ComponentEditorImpl implements ComponentEditor, UploadManager,
+		MessageSourceAware {
 
 	private Log log = LogFactory.getLog(ComponentEditorImpl.class);
 
@@ -86,6 +93,8 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager {
 
 	private Map<String, Map<String, Object>> tinyMCEProfiles;
 
+	private MessageSource messageSource;
+	
 	public ComponentEditorImpl(ComponentDao componentDao, 
 			CacheService cacheService, MediaDao mediaDao, 
 			ImageCropper imageCropper, ComponentRenderer renderer, 
@@ -96,6 +105,10 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager {
 		this.mediaDao = mediaDao;
 		this.imageCropper = imageCropper;
 		this.renderer = new EditModeComponentDecorator(renderer, formRepository);
+	}
+
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
 	}
 	
 	public Map<String, Map<String, Object>> getTinyMCEProfiles() {
@@ -194,6 +207,16 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager {
 		return html;
 	}
 
+	public List<String> getComponentLabels(List<String> types, HttpServletRequest request) {
+		Locale locale = RequestContextUtils.getLocale(request);
+		List<String> labels = Generics.newArrayList();
+		for (String type : types) {
+			labels.add(messageSource.getMessage("component." + type, null, 
+					FormatUtils.xmlToTitleCase(type), locale));
+		}
+		return labels;
+	}
+	
 	/**
 	 * Creates a new Component and inserts it in the list identified
 	 * by the given id.

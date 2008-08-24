@@ -36,17 +36,12 @@ import org.springframework.core.io.Resource;
 
 /**
  * Controller that serves an internal resource.
- * <p>
- * Note: This will only work when a prefix mapping is used for the 
- * DispatcherServlet (like <tt>/riot/*</tt>) since 
- * <code>request.getPathInfo()</code> is used.
- * </p>
  */
 public class ResourceController extends AbstractResourceController {
 
-	private Map compressors;
+	private Map<String, Compressor> compressors;
 	
-	public void setCompressors(Map compressors) {
+	public void setCompressors(Map<String, Compressor> compressors) {
 		this.compressors = compressors;
 	}
 	
@@ -55,7 +50,7 @@ public class ResourceController extends AbstractResourceController {
 		
 		Reader in = super.getReader(res, path, contentType, request);
 		if (compressors != null) {
-			Compressor compressor = (Compressor) compressors.get(contentType);
+			Compressor compressor = compressors.get(contentType);
 			if (compressor != null) {
 				StringWriter buffer = new StringWriter();
 				compressor.compress(in, buffer);
