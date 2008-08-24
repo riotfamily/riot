@@ -58,6 +58,8 @@ public class PagePropertiesFormController extends ContentFormController {
 		form.setEditorBinder(binder);
 		
 		String formId = getFormId(request);
+		form.setId(formId);
+		
 		FormFactory factory = getFormRepository().getFormFactory(formId);
 		
 		for (ElementFactory ef : factory.getChildFactories()) {
