@@ -116,6 +116,7 @@ public class Form implements BeanEditor {
 	/**
 	 * @since 6.4
 	 */
+	@SuppressWarnings("unchecked")
 	public Form(Object object) {
 		this();
 		Assert.notNull(object);
@@ -155,6 +156,7 @@ public class Form implements BeanEditor {
 		return renderModel.get(key);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setBeanClass(Class<?> beanClass) {
 		Assert.notNull(beanClass, "The beanClass must not be null.");
 		if (Map.class.isAssignableFrom(beanClass)) {
