@@ -93,6 +93,10 @@ public class CacheableControllerHandlerAdapter implements HandlerAdapter,
         viewResolverHelper = new ViewResolverHelper(context);
     }
 
+	public void setCacheKeyAugmentor(CacheKeyAugmentor cacheKeyAugmentor) {
+		this.cacheKeyAugmentor = cacheKeyAugmentor;
+	}
+	
     /**
      * Returns <code>true</code> if handler implements the
      * {@link CacheableController} interface.
