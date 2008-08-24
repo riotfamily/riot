@@ -101,7 +101,7 @@ public class TextField extends AbstractTextElement {
 			DocumentWriter doc = new DocumentWriter(writer);
 									
 			String msg = MessageUtils.getMessage(this, getConfirmMessage());
-			doc.start(Html.P).body(msg).end();
+			doc.start(Html.P).body(msg, false).end();
 			
 			doc.startEmpty(Html.INPUT)
 					.attribute(Html.INPUT_TYPE, getType())
