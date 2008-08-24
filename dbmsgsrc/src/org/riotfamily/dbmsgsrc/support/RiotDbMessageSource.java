@@ -25,7 +25,6 @@ package org.riotfamily.dbmsgsrc.support;
 
 import java.util.Set;
 
-import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.common.i18n.CodeRevealingMessageSource;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
@@ -35,6 +34,7 @@ import org.riotfamily.riot.runtime.RiotRuntimeAware;
 import org.riotfamily.riot.security.AccessController;
 import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.context.MessageSource;
+import org.springframework.transaction.PlatformTransactionManager;
 
 public class RiotDbMessageSource extends CodeRevealingMessageSource 
 		implements RiotRuntimeAware {
@@ -45,8 +45,8 @@ public class RiotDbMessageSource extends CodeRevealingMessageSource
 	
 	private Set<String> revealTo = Generics.newHashSet();
 	
-	public RiotDbMessageSource(DbMessageSourceDao dao) {
-		dbMessageSource = new DbMessageSource(dao);
+	public RiotDbMessageSource(DbMessageSourceDao dao, PlatformTransactionManager tx) {
+		dbMessageSource = new DbMessageSource(dao, tx);
 		dbMessageSource.setBundle("riot");
 		super.setParentMessageSource(dbMessageSource);
 	}

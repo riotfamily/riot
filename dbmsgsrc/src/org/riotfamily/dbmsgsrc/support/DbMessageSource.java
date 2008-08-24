@@ -7,7 +7,10 @@ import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.website.cache.CacheTagUtils;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public class DbMessageSource extends AbstractMessageSource {
 
@@ -15,24 +18,30 @@ public class DbMessageSource extends AbstractMessageSource {
 
 	private DbMessageSourceDao dao;
 	
+	private TransactionTemplate transactionTemplate;
+	
 	private String bundle = DEFAULT_BUNDLE;
 	
-	public DbMessageSource(DbMessageSourceDao dao) {
+	public DbMessageSource(DbMessageSourceDao dao, PlatformTransactionManager tx) {
 		this.dao = dao;
+		this.transactionTemplate = new TransactionTemplate(tx); 
 	}
 	
 	public void setBundle(String bundle) {
 		this.bundle = bundle;
 	}
 
-	@Transactional
-	MessageBundleEntry getEntry(String code, String defaultMessage) {
-		MessageBundleEntry entry = dao.findEntry(bundle, code);
-		if (entry == null) {
-			entry = new MessageBundleEntry(bundle, code, defaultMessage);
-			dao.saveEntry(entry);
-		}
-		return entry;
+	MessageBundleEntry getEntry(final String code, final String defaultMessage) {
+		return (MessageBundleEntry) transactionTemplate.execute(new TransactionCallback() {
+			public Object doInTransaction(TransactionStatus status) {
+				MessageBundleEntry entry = dao.findEntry(bundle, code);
+				if (entry == null) {
+					entry = new MessageBundleEntry(bundle, code, defaultMessage);
+					dao.saveEntry(entry);
+				}
+				return entry;
+			}
+		});
 	}
 	
 	@Override

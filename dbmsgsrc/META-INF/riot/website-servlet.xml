@@ -10,6 +10,7 @@
 		
 	<override:bean ref="messageSource" class="org.riotfamily.dbmsgsrc.support.DbMessageSource">
 		<constructor-arg ref="dbMessageSourceDao" />
+		<constructor-arg ref="transactionManager" />
 	</override:bean>
 
 </beans>
