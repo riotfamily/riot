@@ -23,11 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.dialog;
 
+import java.util.Map;
+
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.Form;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
+import org.riotfamily.riot.list.ui.ListSession;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -41,9 +45,13 @@ public abstract class DialogCommand extends AbstractCommand {
 		form.setAttribute("listUrl", context.getListUrl());
 		context.getRequest().getSession().setAttribute(
 				getFormSessionAttribute(), form);
+		
+		Map<String, String> attributes = Generics.newHashMap();
+		attributes.put("commandId", getId());
+		attributes.put("listSessionKey", context.getListSessionKey());
 
 		return new GotoUrlResult(context, getRuntime().getUrl(
-				"commandDialogController", getId()));
+				"commandDialogController", attributes));
 	}
 	
 	public String getFormSessionAttribute() {
@@ -52,6 +60,6 @@ public abstract class DialogCommand extends AbstractCommand {
 	
 	public abstract Form createForm(Object bean);
 	
-	public abstract ModelAndView handleInput(Object input);
+	public abstract ModelAndView handleInput(Object input, ListSession listSession);
 	
 }

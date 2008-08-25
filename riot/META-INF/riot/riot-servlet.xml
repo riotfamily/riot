@@ -497,7 +497,7 @@
 	</bean>
 
 	<bean id="commandDialogController"
-		name="/dialog/@{commandId}"
+		name="/dialog/@{listSessionKey}/@{commandId}"
 		class="org.riotfamily.riot.list.command.dialog.ui.DialogFormController">
 		<constructor-arg ref="listRepository" />		
 		<constructor-arg ref="transactionManager" />

@@ -31,12 +31,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.AjaxFormController;
 import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.riot.list.ListRepository;
 import org.riotfamily.riot.list.command.dialog.DialogCommand;
+import org.riotfamily.riot.list.ui.ListSession;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -75,6 +77,7 @@ public class DialogFormController extends AjaxFormController
 		addButton(buttonFactory);
 	}
 
+	
 	protected String getCommandId(HttpServletRequest request) {
 		return (String) request.getAttribute(commandIdAttribute);
 	}
@@ -82,6 +85,7 @@ public class DialogFormController extends AjaxFormController
 	protected DialogCommand getCommand(HttpServletRequest request) {
 		return (DialogCommand) listRepository.getCommand(getCommandId(request));
 	}
+	
 	
 	/**
 	 * Delegates the form creation to the DialogCommand.
@@ -128,7 +132,9 @@ public class DialogFormController extends AjaxFormController
 		TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
 		try {
 			Object input = form.populateBackingObject();
-			modelAndView = getCommand(request).handleInput(input);
+			String key = ServletUtils.getRequiredStringAttribute(request, "listSessionKey");
+			ListSession listSession = ListSession.getListSession(request, key);			
+			modelAndView = getCommand(request).handleInput(input, listSession);
 		}
 		catch (Exception e) {
 			transactionManager.rollback(status);
@@ -140,6 +146,6 @@ public class DialogFormController extends AjaxFormController
 			modelAndView = new ModelAndView(new RedirectView(listUrl, true));
 		}
 		return modelAndView;
-	}
+	}	
 	
 }
