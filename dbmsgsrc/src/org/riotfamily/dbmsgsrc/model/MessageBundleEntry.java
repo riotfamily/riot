@@ -48,7 +48,7 @@ public class MessageBundleEntry {
 		this.bundle = bundle;
 		this.code = code;
 		if (StringUtils.hasText(defaultMessage)) {
-			setDefaultMessage(new Message(defaultMessage));
+			setDefaultMessage(new Message(C_LOCALE, defaultMessage));
 		}
 	}
 

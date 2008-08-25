@@ -61,7 +61,7 @@ public class Message {
 	public Message() {
 	}
 	
-	public Message(String text) {
+	public Message(Locale locale, String text) {
 		this.text = text;
 	}
 
