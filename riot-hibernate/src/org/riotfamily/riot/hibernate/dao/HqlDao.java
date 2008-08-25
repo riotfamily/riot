@@ -23,9 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.dao;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,8 +31,6 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.riot.dao.ListParams;
-import org.riotfamily.riot.dao.Order;
-import org.riotfamily.riot.dao.SortableDao;
 import org.riotfamily.riot.dao.SwappableItemDao;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.riotfamily.riot.list.support.EmptyListParams;
@@ -44,13 +40,16 @@ import org.springframework.util.Assert;
 /**
  * RiotDao implementation based on Hibernate.
  */
-public class HqlDao extends AbstractHibernateRiotDao implements 
-		SortableDao, SwappableItemDao {
+public class HqlDao extends AbstractHqlDao implements SwappableItemDao {
 
 	private Log log = LogFactory.getLog(HqlDao.class);
 
+	private Class<?> entityClass;
+	
     private boolean polymorph = true;
 
+    private String select = "this";
+    
     private String where;
 
     private String positionProperty;
@@ -62,7 +61,16 @@ public class HqlDao extends AbstractHibernateRiotDao implements
 		super(sessionFactory);
 	}
 
-	public boolean isPolymorph() {
+	public Class<?> getEntityClass() {
+		return entityClass;
+	}
+
+	public void setEntityClass(Class<?> entityClass) {
+		this.entityClass = entityClass;
+	}
+
+	@Override
+	protected boolean isPolymorph() {
         return polymorph;
     }
 
@@ -70,6 +78,14 @@ public class HqlDao extends AbstractHibernateRiotDao implements
         this.polymorph = polymorph;
     }
 
+    protected String getSelect() {
+    	return select;
+    }
+    
+    public void setSelect(String select) {
+		this.select = select;
+	}
+    
     public String getWhere() {
         return where;
     }
@@ -90,56 +106,6 @@ public class HqlDao extends AbstractHibernateRiotDao implements
 		return setPositionOnSave;
 	}
 
-	
-	/**
-     * Returns a list of items.
-     */
-	@Override
-    protected List<?> listInternal(Object parent, ListParams params) {
-    	Query query = getSession().createQuery(buildHql(parent, params));
-    	setQueryParameters(query, parent, params);
-        if (params.getPageSize() > 0) {
-            query.setFirstResult(params.getOffset());
-            query.setMaxResults(params.getPageSize());
-        }
-        return query.list();
-    }
-
-    /**
-     * Returns the total number of items.
-     */
-    public int getListSize(Object parent, ListParams params) {
-        Query query = getSession().createQuery(buildCountHql(parent, params));
-        setQueryParameters(query, parent, params);
-        Number size = (Number) query.uniqueResult();
-        if (size == null) {
-        	return 0;
-        }
-        return size.intValue();
-    }
-
-    protected void setQueryParameters(Query query, Object parent,
-    		ListParams params) {
-
-    	if (params.getFilter() != null) {
-    		if (params.getFilter() instanceof Map) {
-    			Map<?, ?> filterMap = (Map<?, ?>) params.getFilter();
-    			query.setProperties(filterMap);
-    		}
-    		else {
-    			query.setProperties(params.getFilter());
-    		}
-
-    		HibernateUtils.setCollectionValueParams(query,
-    				params.getFilteredProperties(), getEntityClass(), 
-    				params.getFilter());
-        }
-    	if (params.getSearch() != null) {
-    		query.setParameter("search", params.getSearch()
-    				.toLowerCase().replace('*', '%') + "%");
-    	}
-    }
-
     /**
      * Builds a HQL query string to retrieve the maximal position property value
      */
@@ -154,86 +120,7 @@ public class HqlDao extends AbstractHibernateRiotDao implements
         return hql.toString();
     }
 
-    /**
-     * Builds a HQL query string to retrieve the total number of items.
-     */
-    protected String buildCountHql(Object parent, ListParams params) {
-    	StringBuffer hql = new StringBuffer();
-    	hql.append("select count(this) from ");
-    	hql.append(getEntityClass().getName());
-    	hql.append(" as this");
-    	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
-    	log.debug(hql);
-        return hql.toString();
-    }
-
-    /**
-     * Builds a HQL query string to retrieve a list of items.
-     */
-    protected String buildHql(Object parent, ListParams params) {
-    	StringBuffer hql = new StringBuffer();
-    	hql.append("select this from ");
-    	hql.append(getEntityClass().getName());
-    	hql.append(" as this");
-    	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
-    	HibernateUtils.appendHql(hql, "order by", getOrderBy(params));
-    	log.debug(hql);
-        return hql.toString();
-    }
-
-    protected String getWhereClause(Object parent, ListParams params) {
-        StringBuffer sb = new StringBuffer();
-        HibernateUtils.appendHql(sb, null, where);
-
-    	if (params.getFilter() != null) {
-    		String filter = HibernateUtils.getExampleWhereClause(
-    				getEntityClass(),
-    				params.getFilter(), "this",
-    				params.getFilteredProperties());
-
-    		HibernateUtils.appendHql(sb, "and", filter);
-    	}
-
-    	if (params.getSearch() != null) {
-    		String search = HibernateUtils.getSearchWhereClause("this",
-    				params.getSearchProperties(), "search");
-
-    		HibernateUtils.appendHql(sb, "and", search);
-        }
-
-        if (!polymorph) {
-        	HibernateUtils.appendHql(sb, "and", "(this.class = ")
-        		.append(getEntityClass().getName()).append(')');
-        }
-
-        return sb.toString();
-    }
-
-    protected String getOrderBy(ListParams params) {
-        StringBuffer sb = new StringBuffer();
-        if (params.hasOrder()) {
-        	Iterator<Order> it = params.getOrder().iterator();
-        	while (it.hasNext()) {
-        		Order order = it.next();
-        		if (!order.isCaseSensitive()) {
-        			sb.append(" lower(");
-        		}
-        		sb.append(" this.");
-        		sb.append(order.getProperty());
-        		if (!order.isCaseSensitive()) {
-        			sb.append(" ) ");
-        		}
-        		sb.append(' ');
-        		sb.append(order.isAscending() ? "asc" : "desc");
-        		if (it.hasNext()) {
-        			sb.append(',');
-        		}
-        	}
-        }
-        return sb.toString();
-    }
-    
-    protected void setPositionIfNeeded(Object entity, Object parent) {
+	protected void setPositionIfNeeded(Object entity, Object parent) {
     	if (setPositionOnSave) {
     		Query query = getSession().createQuery(buildMaxPositionHql(parent));
     		setQueryParameters(query, parent, new EmptyListParams());

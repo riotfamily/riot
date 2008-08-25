@@ -35,26 +35,16 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 public abstract class AbstractHibernateRiotDao extends HibernateDaoSupport implements RiotDao {
 
-	private Class<?> entityClass;
-
 	public AbstractHibernateRiotDao(SessionFactory sessionFactory) {
 		setSessionFactory(sessionFactory);
 	}
 	
-	public void setEntityClass(Class<?> entityClass) {
-		this.entityClass = entityClass;
-	}
-	
-	public Class<?> getEntityClass() {
-		return entityClass;
-	}
-
 	public String getObjectId(Object entity) {
 		return HibernateUtils.getIdAsString(getSessionFactory(), entity);
 	}
 
 	public Object load(String id) throws DataAccessException {
-		return HibernateUtils.get(getSession(), entityClass, id);
+		return HibernateUtils.get(getSession(), getEntityClass(), id);
 	}
 
 	public int getListSize(Object parent, ListParams params) throws DataAccessException {
@@ -66,7 +56,7 @@ public abstract class AbstractHibernateRiotDao extends HibernateDaoSupport imple
 	}
 	
 	protected List<?> listInternal(Object parent, ListParams params) throws DataAccessException {
-		return getSession().createCriteria(entityClass).list();
+		return getSession().createCriteria(getEntityClass()).list();
 	}
 	
 	public void save(Object entity, Object parent) throws DataAccessException {

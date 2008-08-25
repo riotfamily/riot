@@ -231,8 +231,9 @@ public final class HibernateUtils {
 
 		if (StringUtils.hasText(term)) {
 			if (expression != null && hql.length() > 0) {
-				hql.append(' ').append(expression).append(' ');
+				hql.append(' ').append(expression);
 			}
+			hql.append(' ');
 			hql.append(term);
 		}
 		return hql;

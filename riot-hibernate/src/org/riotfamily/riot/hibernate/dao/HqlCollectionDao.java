@@ -52,6 +52,8 @@ public class HqlCollectionDao extends AbstractHibernateRiotDao
         
     private String where;
     
+    private Class<?> entityClass;
+    
     private Class<?> parentClass;
     
     private String parentProperty;
@@ -63,10 +65,18 @@ public class HqlCollectionDao extends AbstractHibernateRiotDao
 		super(sessionFactory);
 	}
 
+    public void setEntityClass(Class<?> entityClass) {
+		this.entityClass = entityClass;
+	}
+    
+	public Class<?> getEntityClass() {
+		return entityClass;
+	}
+
 	public void setPolymorph(boolean polymorph) {
         this.polymorph = polymorph;
     }
-        
+	        
     public void setWhere(String string) {
         where = string;
     }
