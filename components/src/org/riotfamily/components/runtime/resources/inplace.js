@@ -367,6 +367,9 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 		}
 	},
 	
+	onclose: function() {
+	},
+	
 	cleanUp: function(str) {
  		str = str.replace(/<!(?:--[\s\S]*?--\s*)?>\s*/g, '');
  		return str.replace(/<\s*?br\s*?>/ig, '<br />');

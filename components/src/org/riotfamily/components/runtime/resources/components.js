@@ -511,12 +511,13 @@ riot.Component = Class.create(riot.Content, {
 		var el = tmp.down();
 		this.element.replaceBy(el);
 		this.element = el;
+		riot.toolbar.selectedButton.applyHandler(false);
 		if (window.riotEditCallbacks) {
 			riotEditCallbacks.each(function(callback) {
 				callback(el);
 			});
 		}
-		riot.toolbar.selectedButton.reApplyHandler();
+		riot.toolbar.selectedButton.applyHandler(true);
 	}
 
 });
