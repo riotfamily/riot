@@ -56,7 +56,7 @@ public class LocalMessageDao extends AbstractHibernateRiotDao {
 				"select coalesce(lm, dm) from MessageBundleEntry e"
 				+ " left join e.messages lm with lm.text is not null" 
 				+ " and lm.locale = :locale"
-				+ " left join e.messages dm with dm.locale = :default"
+				+ " join e.messages dm with dm.locale = :default"
 				+ " where e.bundle = :bundle")
 				.setParameter("locale", site.getLocale())
 				.setParameter("default", MessageBundleEntry.C_LOCALE)
