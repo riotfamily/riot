@@ -51,12 +51,12 @@
 		<ed:form form-ref="messageBundleEntry" />
 	</ed:list>
 
-	<list:list id="localDbMessages">
+	<list:list id="localDbMessages" search="entry.code,entry.defaultMessage.text,text">
 		<list:dao class="org.riotfamily.dbmsgsrc.riot.LocalMessageDao" />
 		<list:columns>
 			<list:column property="entry.code" />
 			<list:column property="entry.defaultMessage.text" />
-			<list:column property="text" />
+			<list:column property="text" sortable="false" />
 			<list:command class="org.riotfamily.dbmsgsrc.riot.TranslateMessageCommand" />
 		</list:columns>
 		<list:command class="org.riotfamily.dbmsgsrc.riot.ImportMessagesCommand" />

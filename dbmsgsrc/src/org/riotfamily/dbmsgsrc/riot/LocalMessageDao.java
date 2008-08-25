@@ -23,24 +23,25 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.dbmsgsrc.riot;
 
-import java.util.List;
-
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.dbmsgsrc.support.DbMessageSource;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.dao.ListParams;
-import org.riotfamily.riot.hibernate.dao.AbstractHibernateRiotDao;
-import org.springframework.dao.DataAccessException;
+import org.riotfamily.riot.hibernate.dao.AbstractHqlDao;
 
-public class LocalMessageDao extends AbstractHibernateRiotDao {
+public class LocalMessageDao extends AbstractHqlDao {
 
 	private String bundle = DbMessageSource.DEFAULT_BUNDLE;
 	
 	public LocalMessageDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
-		setEntityClass(Message.class);
+	}
+	
+	public Class<?> getEntityClass() {
+		return Message.class;
 	}
 	
 	public void setBundle(String bundle) {
@@ -48,20 +49,51 @@ public class LocalMessageDao extends AbstractHibernateRiotDao {
 	}
 
 	@Override
-	protected List<?> listInternal(Object parent, ListParams params)
-			throws DataAccessException {
-		
-		Site site = (Site) parent;
-		return getSession().createQuery(
-				"select coalesce(lm, dm) from MessageBundleEntry e"
-				+ " left join e.messages lm with lm.text is not null" 
-				+ " and lm.locale = :locale"
-				+ " join e.messages dm with dm.locale = :default"
-				+ " where e.bundle = :bundle")
-				.setParameter("locale", site.getLocale())
-				.setParameter("default", MessageBundleEntry.C_LOCALE)
-				.setParameter("bundle", bundle)
-				.list();
+	protected String getSelect() {
+		return "coalesce(lm, dm) as this";
+	}
+
+	@Override
+	protected String getFrom() {
+		return MessageBundleEntry.class.getName()  
+				+ " as e left join e.messages lm with lm.text is not null" 
+				+ " and lm.locale = :locale "
+				+ "join e.messages dm with dm.locale = :default";
+	}
+
+	@Override
+	protected String getWhere() {
+		return "e.bundle = :bundle";
 	}
 	
+	@Override
+	protected String getWhereClause(Object parent, ListParams params) {
+		return mapAliases(super.getWhereClause(parent, params));
+	}
+	
+	@Override
+	protected String getOrderBy(ListParams params) {
+		return mapAliases(super.getOrderBy(params));
+	}
+	
+	private String mapAliases(String hql) {
+		if (hql == null) {
+			return null;
+		}
+		return hql.replace("this.entry", "e")
+				.replace("e.defaultMessage", "dm")		
+				.replace("this.text", "lm.text");
+	}
+	
+	@Override
+	protected void setQueryParameters(Query query, Object parent,
+			ListParams params) {
+		
+		super.setQueryParameters(query, parent, params);
+		Site site = (Site) parent;
+		query.setParameter("bundle", bundle);
+		query.setParameter("locale", site.getLocale());
+		query.setParameter("default", MessageBundleEntry.C_LOCALE);
+	}
+
 }
