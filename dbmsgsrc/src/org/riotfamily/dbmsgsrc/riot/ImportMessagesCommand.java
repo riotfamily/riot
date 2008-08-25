@@ -112,6 +112,9 @@ public class ImportMessagesCommand extends DialogCommand {
 	}
 	
 	private boolean isValid(HSSFSheet sheet) {
+		if (sheet == null) {
+			return false;
+		}
 		HSSFRow headings = sheet.getRow(0);
 		String code = headings.getCell(1).getRichStringCellValue().getString();
 		String translation = headings.getCell(3).getRichStringCellValue().getString();

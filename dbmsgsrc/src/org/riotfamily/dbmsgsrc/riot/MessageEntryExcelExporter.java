@@ -69,7 +69,7 @@ public class MessageEntryExcelExporter implements Exporter {
 		private HSSFWorkbook createWorkbook(Collection<?> items) {
 			wb = new HSSFWorkbook();
 
-			sheet = wb.createSheet("Messages");
+			sheet = wb.createSheet("Translations");
 			//sheet.protectSheet("");
 
 			locked = wb.createCellStyle();

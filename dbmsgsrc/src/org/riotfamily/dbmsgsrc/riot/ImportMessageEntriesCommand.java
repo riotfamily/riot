@@ -86,7 +86,7 @@ public static final String ACTION_IMPORT = "import";
 	
 	private void updateMessages(byte[] data) throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(data));
-		HSSFSheet sheet = wb.getSheet("Messages");
+		HSSFSheet sheet = wb.getSheet("Translations");
 		
 		if (isValid(sheet)) {
 			for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
@@ -110,6 +110,9 @@ public static final String ACTION_IMPORT = "import";
 	}
 	
 	private boolean isValid(HSSFSheet sheet) {
+		if (sheet == null) {
+			return false;
+		}
 		HSSFRow headings = sheet.getRow(0);
 		String code = headings.getCell(1).getRichStringCellValue().getString();
 		String defaultMessage = headings.getCell(2).getRichStringCellValue().getString();
