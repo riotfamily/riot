@@ -135,8 +135,12 @@ public class MessageBundleEntry {
 	}
 	
 	public void addTranslation(Locale locale) {
+		addTranslation(locale, getDefaultText());		
+	}
+	
+	public void addTranslation(Locale locale, String text) {
 		Message msg = new Message();
-		msg.setText(getDefaultText());
+		msg.setText(text);
 		if (messages == null) {
 			messages = Generics.newHashMap();
 		}

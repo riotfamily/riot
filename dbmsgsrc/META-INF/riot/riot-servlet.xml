@@ -26,6 +26,10 @@
 		</property>
 	</bean>
 	
+	<bean name="importMessages" class="org.riotfamily.dbmsgsrc.riot.ImportMessagesCommand">
+		<constructor-arg ref="dbMessageSourceDao" />
+	</bean>
+	
 	<override:bean ref="messageSource" class="org.riotfamily.dbmsgsrc.support.RiotDbMessageSource">
 		<constructor-arg ref="dbMessageSourceDao" />
 		<constructor-arg ref="transactionManager" />

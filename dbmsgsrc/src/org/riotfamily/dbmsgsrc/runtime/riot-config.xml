@@ -59,11 +59,12 @@
 			<list:column property="text" sortable="false" />
 			<list:command class="org.riotfamily.dbmsgsrc.riot.TranslateMessageCommand" />
 		</list:columns>
-		<list:command class="org.riotfamily.dbmsgsrc.riot.ImportMessagesCommand" />
+		<list:command id="importMessages" />
 		<list:command id="exportMessages" />
 	</list:list>
 	
 	<form:form id="dbMessage" bean-class="org.riotfamily.dbmsgsrc.model.Message">
+		<form:textarea bind="entry.comment" read-only="true" />
 		<form:textarea bind="text" required="true" />
 	</form:form>
 	

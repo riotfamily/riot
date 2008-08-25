@@ -23,15 +23,44 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.dbmsgsrc.riot;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
+import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
+import org.riotfamily.dbmsgsrc.support.DbMessageSource;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.upload.FileUpload;
+import org.riotfamily.pages.model.Site;
+import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.dialog.DialogCommand;
+import org.riotfamily.riot.list.ui.ListSession;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 public class ImportMessagesCommand extends DialogCommand {
 
+	private static final Log log = LogFactory.getLog(ImportMessagesCommand.class);
+	
 	public static final String ACTION_IMPORT = "import";
+	
+	private DbMessageSourceDao dao;
+	
+	private String bundle = DbMessageSource.DEFAULT_BUNDLE;
+	
+	public ImportMessagesCommand(DbMessageSourceDao dao) {
+		this.dao = dao;
+	}
+
+	public void setBundle(String bundle) {
+		this.bundle = bundle;
+	}
 	
 	@Override
 	protected String getAction(CommandContext context) {
@@ -48,10 +77,46 @@ public class ImportMessagesCommand extends DialogCommand {
 	}
 	
 	@Override
-	public ModelAndView handleInput(Object input) {
+	public ModelAndView handleInput(Object input, ListSession listSession) {
+		Site site = (Site) EditorDefinitionUtils.loadParent(
+					listSession.getListDefinition(), listSession.getParentId());		
 		Upload upload = (Upload) input;
-		upload.getData();
+		try {
+			updateMessages(upload.getData(), site);
+		} catch (IOException e) {			
+		}
 		return null;
+	}
+	
+	private void updateMessages(byte[] data, Site site) throws IOException {
+		HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(data));
+		HSSFSheet sheet = wb.getSheet("Translations");
+		
+		if (isValid(sheet)) {
+			for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
+				HSSFRow row = sheet.getRow(i);
+				String code = row.getCell(1).getRichStringCellValue().getString();
+				String translation = row.getCell(3).getRichStringCellValue().getString();
+				if (StringUtils.hasText(translation)) {
+					MessageBundleEntry entry = dao.findEntry(bundle, code);
+					if (entry != null) {
+						entry.addTranslation(site.getLocale(), translation);
+						dao.saveEntry(entry);					
+					}
+					else {
+						log.info("Message Code does not exist - " + code);
+					}
+				}				
+			}
+		}
+	}
+	
+	private boolean isValid(HSSFSheet sheet) {
+		HSSFRow headings = sheet.getRow(0);
+		String code = headings.getCell(1).getRichStringCellValue().getString();
+		String translation = headings.getCell(3).getRichStringCellValue().getString();
+		return "Code".equals(code) && "Translation".equals(translation);
+		
 	}
 	
 	public static class Upload {
@@ -67,4 +132,5 @@ public class ImportMessagesCommand extends DialogCommand {
 		}
 		
 	}
+	
 }
