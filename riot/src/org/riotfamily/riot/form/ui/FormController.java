@@ -123,7 +123,9 @@ public class FormController extends BaseFormController {
 
 		String listUrl = EditorDefinitionUtils.getListUrl(
 				editorDefinition,
-				form.getBackingObject(), 
+				FormUtils.getObjectId(form),
+				FormUtils.getParentId(form),
+				FormUtils.getParentEditorId(form),
 				form.getFormContext().getMessageResolver());
 
 		return new ModelAndView(new RedirectView(listUrl, true));

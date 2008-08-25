@@ -155,4 +155,17 @@ public final class EditorDefinitionUtils {
 		}
 		return ref.getEditorUrl();
 	}
+	
+	public static String getListUrl(EditorDefinition def, String objectId,
+			String parentId, String parentEditorId, 
+			MessageResolver messageResolver) {
+		
+		EditorReference ref = def.createEditorPath(objectId, parentId, 
+				parentEditorId, messageResolver);
+		
+		while (!ref.getEditorType().equals("list")) {
+			ref = ref.getParent();
+		}
+		return ref.getEditorUrl();
+	}
 }

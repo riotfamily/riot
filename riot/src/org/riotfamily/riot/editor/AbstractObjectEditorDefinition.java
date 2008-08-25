@@ -112,6 +112,29 @@ public abstract class AbstractObjectEditorDefinition
 	public EditorReference createEditorPath(String objectId, String parentId,
 			String parentEditorId, MessageResolver messageResolver) {
 
+		if (parentId != null || objectId == null) {
+			EditorReference parent = null;
+			if (getParentEditorDefinition() != null) {
+				parent = getParentEditorDefinition()
+						.createEditorPath(null, parentId, parentEditorId, 
+						messageResolver);
+			}
+			Object bean = null;
+			if (objectId != null) {
+				bean = loadBean(objectId);
+			}
+			EditorReference component = createPathComponent(bean, parentId, 
+					parentEditorId, messageResolver);
+			
+			component.setParent(parent);
+			return component;
+		}
+		else if (objectId != null) {
+			Object bean = loadBean(objectId);
+			return createEditorPath(bean, messageResolver);
+		}
+		return null;
+		/*
 		if (objectId != null) {
 			//Editing an existing object
 			Object bean = loadBean(objectId);
@@ -131,6 +154,7 @@ public abstract class AbstractObjectEditorDefinition
 			component.setParent(parent);
 			return component;
 		}
+		*/
 	}
 
 	/**
