@@ -79,10 +79,16 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 			Object[] args = null;
 			if (object != null && object.getClass().isArray()) {
 				Object[] objects = (Object[]) object;
-				args = new Object[objects.length + 1];
-				args[0] = user;
+				List<Object> tempArgs = Generics.newArrayList();				
 				for (int i = 0; i < objects.length; i++) {
-					args[i+1] = objects[i];
+					if (objects[i] != null) {
+						tempArgs.add(objects[i]);
+					}					
+				}
+				args = new Object[tempArgs.size() + 1];
+				args[0] = user;
+				for (int i = 0; i < tempArgs.size(); i++) {
+					args[i+1] = tempArgs.get(i);
 				}
 			}
 			else {
