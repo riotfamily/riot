@@ -3,6 +3,7 @@ package org.riotfamily.components.model.wrapper;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 
 import org.hibernate.annotations.Any;
@@ -23,7 +24,7 @@ public class EntityWrapper extends ValueWrapper<Object> {
 		return copy;
 	}
 
-	@Any(metaColumn=@Column(name="entity_table"))
+	@Any(metaColumn=@Column(name="entity_table"), fetch=FetchType.LAZY)
 	@AnyMetaDef(idType="long", metaType="string", metaValues={})
 	@JoinColumn(name="entity_id")
 	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})

@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -43,7 +42,7 @@ public class PageProperties extends ContentContainer {
 		}
 	}
 
-	@OneToMany(mappedBy="pageProperties", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="pageProperties") //, fetch=FetchType.EAGER
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public Set<Page> getPages() {

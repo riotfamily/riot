@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -68,7 +69,7 @@ public class ContentContainer {
 		this.id = id;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="live_version")
 	@Cascade(CascadeType.ALL)
 	public Content getLiveVersion() {
@@ -79,7 +80,7 @@ public class ContentContainer {
 		this.liveVersion = liveVersion;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="preview_version")
 	@Cascade(CascadeType.ALL)
 	public Content getPreviewVersion() {

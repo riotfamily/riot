@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -103,7 +104,7 @@ public class PageNode {
 	 * a parent. This node can be obtained via the getRootNode() method of
 	 * the PageDao.
 	 */
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="parent_id", insertable=false, updatable=false)
 	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public PageNode getParent() {

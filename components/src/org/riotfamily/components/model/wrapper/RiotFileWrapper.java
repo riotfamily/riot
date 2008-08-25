@@ -25,6 +25,7 @@ package org.riotfamily.components.model.wrapper;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -42,7 +43,7 @@ public class RiotFileWrapper extends ValueWrapper<RiotFile> {
 
 	private RiotFile value;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="riot_file_id")
 	@Cascade({CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public RiotFile getValue() {

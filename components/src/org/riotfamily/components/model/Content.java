@@ -34,6 +34,7 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -120,6 +121,7 @@ public class Content {
 		return wrapper != null ? wrapper.getValue() : null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void setValue(String key, Object value) {
 		if (value == null) {
 			getWrappers().remove(key);
@@ -133,7 +135,7 @@ public class Content {
 		}
 	}
 
-	@OneToMany
+	@OneToMany(fetch=FetchType.EAGER)
 	@JoinColumn(name="content")
 	@IndexColumn(name="property")
 	@Cascade(CascadeType.ALL)
