@@ -87,6 +87,10 @@ public class SiteFacade {
 	public Object get(String key) {
 		return site.getProperty(key);
 	}
+	
+	public Map<String, Object> getLocal() {
+		return site.getLocalPropertiesMap();
+	}
 
 	public String toString() {
 		return site.toString();
