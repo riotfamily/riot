@@ -146,5 +146,13 @@ public class MessageBundleEntry {
 		}
 		messages.put(locale, msg);
 	}
+	
+	@Transient
+	public boolean isTranslated() {
+		if (messages == null) {
+			return false;
+		}
+		return messages.size() > 1;
+	}
 
 }

@@ -16,7 +16,7 @@
 		http://www.riotfamily.org/schema/forms/form-config-8.0.xsd
 		">
 
-	<list:list id="messageBundleEntries">
+	<list:list id="messageBundleEntries" search="code">
 		<list:dao class="org.riotfamily.riot.hibernate.dao.HqlDao">
 			<list:property name="entityClass" value="org.riotfamily.dbmsgsrc.model.MessageBundleEntry" />
 			<list:property name="where" value="this.bundle = 'default'" />
@@ -24,6 +24,7 @@
 		<list:columns>
 			<list:column property="code" />
 			<list:column property="defaultMessage.text" sortable="false" />
+			<list:column property="translated" sortable="false" renderer="cssClassRenderer" />
 			<list:command id="edit" />
 			<list:command id="delete" />
 		</list:columns>
