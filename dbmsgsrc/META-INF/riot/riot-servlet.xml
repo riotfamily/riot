@@ -22,11 +22,21 @@
 	
 	<bean name="exportMessages" class="org.riotfamily.riot.list.command.export.ExportCommand">
 		<property name="exporter">
+			<bean class="org.riotfamily.dbmsgsrc.riot.MessageEntryExcelExporter" />
+		</property>
+	</bean>
+	
+	<bean name="exportLocalMessages" class="org.riotfamily.riot.list.command.export.ExportCommand">
+		<property name="exporter">
 			<bean class="org.riotfamily.dbmsgsrc.riot.TranslationExcelExporter" />
 		</property>
 	</bean>
 	
-	<bean name="importMessages" class="org.riotfamily.dbmsgsrc.riot.ImportMessagesCommand">
+	<bean name="importMessages" class="org.riotfamily.dbmsgsrc.riot.ImportMessageEntriesCommand">
+		<constructor-arg ref="dbMessageSourceDao" />
+	</bean>
+	
+	<bean name="importLocalMessages" class="org.riotfamily.dbmsgsrc.riot.ImportMessagesCommand">
 		<constructor-arg ref="dbMessageSourceDao" />
 	</bean>
 	

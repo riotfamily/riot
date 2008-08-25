@@ -28,6 +28,8 @@
 			<list:command id="delete" />
 		</list:columns>
 		<list:command class="org.riotfamily.dbmsgsrc.riot.RemoveEmptyEntriesCommand" />
+		<list:command id="importMessages" />
+		<list:command id="exportMessages" />		
 		<list:command id="add" />
 	</list:list>
 	
@@ -59,8 +61,8 @@
 			<list:column property="text" sortable="false" />
 			<list:command class="org.riotfamily.dbmsgsrc.riot.TranslateMessageCommand" />
 		</list:columns>
-		<list:command id="importMessages" />
-		<list:command id="exportMessages" />
+		<list:command id="importLocalMessages" />
+		<list:command id="exportLocalMessages" />
 	</list:list>
 	
 	<form:form id="dbMessage" bean-class="org.riotfamily.dbmsgsrc.model.Message">
