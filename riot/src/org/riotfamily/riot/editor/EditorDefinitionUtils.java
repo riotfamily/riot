@@ -95,6 +95,9 @@ public final class EditorDefinitionUtils {
 	}
 
 	public static String getObjectId(EditorDefinition def, Object item) {
+		if (item == null) {
+			return null;
+		}
 		ListDefinition listDef = getListDefinition(def);
 		if (listDef == null) {
 			return null;
