@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.image;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -69,11 +70,22 @@ public class ImageMagick implements InitializingBean {
 	}
 	
 	private String getDefaultCommand() {
+		StringBuilder cmd = new StringBuilder();
 		String os = System.getProperty("os.name");
-		if (os.startsWith("Windows")) {
-			return commandName + ".exe";
+		boolean windows = os.startsWith("Windows");
+		String magickHome = System.getenv("MAGICK_HOME");
+		if (magickHome != null) {
+			cmd.append(magickHome).append(File.separatorChar);
+			if (!windows) {
+				cmd.append("bin");
+				cmd.append(File.separatorChar);
+			}
 		}
-		return commandName;
+		cmd.append(commandName);
+		if (windows) {
+			cmd.append(".exe");
+		}
+		return cmd.toString();
 	}
 	
 	public void afterPropertiesSet() {
