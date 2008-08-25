@@ -98,7 +98,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 	public ListSession getOrCreateListSession(String editorId, String parentId,
 			String parentEditorId, String choose, HttpServletRequest request) {
 
-		String key = "list-" + editorId + "#" + parentId;
+		String key = "list-" + editorId + "_" + parentId;
 		if (choose != null) {
 			key += "-choose:" + choose;
 		}
