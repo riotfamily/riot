@@ -156,14 +156,17 @@ public abstract class AbstractElement implements Element {
 
 	public final void render(PrintWriter writer) {
 		if (wrap) {
-			TagWriter div = new TagWriter(writer);
-			div.start(inline ? Html.SPAN: Html.DIV);
-			div.attribute(Html.COMMON_ID, getId());
-			div.body();
+			TagWriter wrapper = new TagWriter(writer);
+			wrapper.start(inline ? Html.SPAN: Html.DIV);
+			wrapper.attribute(Html.COMMON_ID, getId());
+			if (getStyleClass() != null) {
+				wrapper.attribute(Html.COMMON_CLASS, getStyleClass() + "-wrapper");
+			}
+			wrapper.body();
 			if (isVisible()) {
 				renderInternal(writer);
 			}
-			div.closeAll();
+			wrapper.closeAll();
 		}
 		else {			
 			renderInternal(writer);

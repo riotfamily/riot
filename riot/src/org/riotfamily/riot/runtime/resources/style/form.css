@@ -155,7 +155,7 @@ div.tinymce-disabled a {
 }
 
 #elements,
-.textarea-wrapper {
+.textarea-container {
 	_height: 1px;
 }
 textarea {
@@ -210,20 +210,20 @@ input.checkbox {
 }
 
 div.checkbox,
-div.checkbox-element {
+div.checkbox-element,
+.checkbox-pageProperty {
 	position: relative;
 	_height: 1px;
 }
 div.checkbox label,
-div.checkbox-element label {
+div.checkbox-element label,
+.checkbox-pageProperty label {
 	padding-left: 20px;
 }
-div.checkbox .element,
-div.checkbox-element .element {
+
+.checkbox-wrapper {
 	position: absolute;
-	left: 0px;
 	top: 0;
-	margin: 0;
 }
 
 ul.checkboxGroup li,
@@ -267,10 +267,6 @@ ul.radioButtonGroup input {
 	font-size: 11px;
 	font-weight: normal;
 	margin: 0 0 2px 0;
-}
-
-.nestedForm {
-	position: relative;
 }
 
 .collectionEditor .nestedForm .single,

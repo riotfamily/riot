@@ -30,7 +30,7 @@ var RiotTextArea = Class.create({
         var border = parseInt(this.el.getStyle('borderTopWidth')) + parseInt(this.el.getStyle('borderBottomWidth'));
 		var padding = parseInt(this.el.getStyle('paddingTop')) + parseInt(this.el.getStyle('paddingBottom'));
 		this.maxHeight -= (this.maxHeight - border - padding) % parseInt(this.el.getStyle('lineHeight'));
-		this.measure = RBuilder.node('div').cloneStyle(this.el, [
+		this.measure = new Element('div').cloneStyle(this.el, [
 			'paddingTop', 'paddingRight', 'paddingBottom', 
 			'paddingLeft', 'lineHeight', 'fontSize', 'fontFamily',
             'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth'
@@ -39,8 +39,13 @@ var RiotTextArea = Class.create({
             borderStyle: 'solid',
 			position: 'absolute'
 		});
-		this.el.wrap(RBuilder.node('div', {className: 'textarea-wrapper'}).setStyle({position: 'relative'})).prependChild(this.measure);
-		this.el.observe('keyup', this.resize.bind(this));
+		
+		if (!Prototype.Browser.IE) {
+			this.el.observe('keyup', this.resize.bind(this));
+			Element.wrap(this.el, new Element('div', {className: 'textarea-container'}))
+					.insert({bottom: this.measure}); 
+		}
+		
 		this.resize();
 		this.autoSize = true;
 		return this;
