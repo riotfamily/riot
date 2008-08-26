@@ -21,11 +21,12 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.i18n;
+package org.riotfamily.riot.resource;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.servlet.CacheKeyAugmentor;
+import org.riotfamily.common.i18n.CodeRevealingMessageSource;
 
 /**
  * CacheKeyAugmentor that adds a String to the cacheKey if message code 

@@ -86,7 +86,7 @@
 			</bean>
 		</constructor-arg>
 		<property name="cacheKeyAugmentor">
-			<bean class="org.riotfamily.common.i18n.CodeRevelationCacheKeyAugmentor">
+			<bean class="org.riotfamily.riot.resource.CodeRevelationCacheKeyAugmentor">
 				<constructor-arg ref="messageSource" />
 			</bean>
 		</property>
