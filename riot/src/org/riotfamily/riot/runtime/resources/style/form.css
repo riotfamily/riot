@@ -292,6 +292,11 @@ ul.radioButtonGroup input {
 	border-bottom: 1px solid #ebebeb;
 	vertical-align: top; /* Eliminates vertical gap in IE */ 
 }
+
+.collectionEditor table {
+	border-collapse: collapse;
+}
+
 .collectionEditor table.item {
 	width: 100%;
 	border-spacing: 0;

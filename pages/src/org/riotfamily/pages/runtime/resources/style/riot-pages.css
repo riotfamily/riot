@@ -61,6 +61,11 @@ table.pages tr.hidden-page td {
 	left: -34px;
 	z-index: 1;
 }
+.checkbox-pageProperty input.button-toggle {
+	top: -3px;
+	_top: 0px;
+}
+	
 .noindent-pageProperty input.button-toggle {
 	left: 0;
 }
@@ -69,12 +74,16 @@ table.pages tr.hidden-page td {
 	margin-top: 0;
 	top:0;
 	left: 1px;
+	width: 31px;
 }
 .pageProperty input.button-overwrite {
 	background-image: url(icons/edit_small.gif);
 }
 .pageProperty input.button-inherit {
 	background-image: url(icons/remove_small.gif);
+}
+.pageProperty .box-title {
+	position: relative;
 }
 .pageProperty .box-title input.button-overwrite {
 	background-image: url(icons/edit_invert_small.gif);
