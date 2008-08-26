@@ -62,6 +62,7 @@ public class Message {
 	}
 	
 	public Message(Locale locale, String text) {
+		this.locale = locale;
 		this.text = text;
 	}
 
