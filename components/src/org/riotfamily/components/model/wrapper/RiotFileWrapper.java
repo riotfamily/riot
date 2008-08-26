@@ -43,7 +43,7 @@ public class RiotFileWrapper extends ValueWrapper<RiotFile> {
 
 	private RiotFile value;
 
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="riot_file_id")
 	@Cascade({CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	public RiotFile getValue() {
