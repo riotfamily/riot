@@ -31,7 +31,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hsqldb.Collation;
 import org.riotfamily.common.beans.MapWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.ClassUtils;
@@ -100,7 +99,7 @@ public abstract class AbstractReverseHandlerMapping
 					defaults, prefix, context);
 		}
 		
-		if (attributes instanceof Collation) {
+		if (attributes instanceof Collection) {
 			Collection c = (Collection) attributes;
 			attributes = c.toArray(new Object[c.size()]);
 		}
