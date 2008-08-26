@@ -98,7 +98,7 @@
 	margin: 0;
 }
 .prio2 {
-	color: ${highlight_color};
+	color: ${error_color};
 }
 #log.errorsOnly .prio1 {
 	display: none;
