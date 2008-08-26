@@ -293,11 +293,14 @@ var CssMatcher = Class.create({
 	match: function(el) {
 		this.rootEl = el;
 		this.el = el;
+		this.stack = [];
 		this.processElement();
 	},
 	
 	nextElement: function(node) {
-		while (node && node.nodeType != 1) {
+		while (node && (node.nodeType != 1 || node.nodeName == 'SCRIPT'
+				|| node.nodeName == 'NOSCRIPT' || node.nodeName == 'OBJECT'
+				|| node.nodeName == 'TEXTAREA' || node.nodeName == 'IFRAME')) {
 			node = node.nextSibling;
 		}
 		return node;
@@ -315,10 +318,11 @@ var CssMatcher = Class.create({
 		}
 		var nextEl = this.nextElement(this.el.firstChild);
 		if (!matched && nextEl) {
-			this.el = nextEl; 
+			this.el = nextEl;
+			this.stack.push(nextEl);
 		}
 		else {
-			if (this.el == this.rootEl) return;
+			this.stack.pop();
 			for (var i = 0; i < this.sel.length; i++) {
 				this.sel[i].leave(this.el);
 			} 
@@ -326,18 +330,23 @@ var CssMatcher = Class.create({
 			nextEl = this.nextElement(this.el.nextSibling);
 			if (nextEl) {
 				this.el = nextEl;
+				this.stack.push(nextEl);
 			}
 			else {
-				var p = this.el;
-				while (p && !nextEl && p.parentNode) {
-					p = p.parentNode;
-					if (p == this.rootEl) return;
+				while (!nextEl && this.stack.length > 0) {
+					var p = this.stack.pop();
 					for (var i = 0; i < this.sel.length; i++) {
 						this.sel[i].leave(p);
 					}
 					nextEl = this.nextElement(p.nextSibling);
 				}
-				this.el = nextEl;
+				if (nextEl) {
+					this.el = nextEl;
+					this.stack.push(nextEl);
+				}
+				else {
+					return;
+				}
 			}
 		}
 		
