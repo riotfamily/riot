@@ -35,6 +35,7 @@ import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.render.list.ComponentListRenderer;
 import org.riotfamily.riot.dao.RiotDao;
 import org.riotfamily.riot.list.RiotDaoService;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.util.ClassUtils;
 
 /**
@@ -80,6 +81,14 @@ public class InplaceMacroHelper {
 
 	public List<String> getToolbarScripts() {
 		return this.toolbarScripts;
+	}
+	
+	public boolean isEditGranted() {
+		return AccessController.isGranted("toolbarEdit", request);
+	}
+	
+	public boolean isPublishGranted() {
+		return AccessController.isGranted("toolbarPublish", request);
 	}
 
 	public String getInitScript() {

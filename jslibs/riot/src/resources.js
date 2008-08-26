@@ -23,7 +23,7 @@ var Resources = {
 	 * Dynamically loads a script from the given url. Optionally a test
 	 * may be specified to check whether the script is (already) loaded.
 	 */
-	loadScript: function(src, test) {
+	loadScript: function(src, test, onload) {
 		if (Resources._STOP_LOADING) return;
 		src = Resources.resolveUrl(src);
 		Resources._debug('Script requested: ' + src);
@@ -38,6 +38,7 @@ var Resources = {
 				Resources.waitFor(test, function() {
 					Resources._debug('Script is now loaded: ' + src);
 					Resources._loaded(src);
+					if (onload) onload();
 				});
 			}
 			else {

@@ -742,4 +742,3 @@ riot.applyOn = function() {
 riot.previewFrame = RBuilder.node('iframe', {name: 'riotPreviewFrame', id: 'riotPreviewFrame'}).appendTo(document.body);
 riot.init();
 riot.adoptFloatsAndClears();
-riot.toolbar.activate();
