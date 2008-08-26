@@ -57,6 +57,7 @@ public class ListParamsImpl implements ListParams {
 		filter = params.getFilter();
 		filteredProperties = params.getFilteredProperties();
 		search = params.getSearch();
+		searchProperties = params.getSearchProperties();
 		order = params.getOrder();
 	}
 	
