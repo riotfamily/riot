@@ -14,15 +14,7 @@
 		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-8.0.xsd">
-		
-	<!-- HQL OptionsModel prototype -->
-	
-	<bean id="hqlOptionsModel" scope="prototype" 
-		class="org.riotfamily.riot.hibernate.form.HqlOptionsModel">
-		
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-		
+				
 	<bean id="riotUserDao" class="org.riotfamily.riot.hibernate.security.HibernateUserDao">
 		<constructor-arg ref="sessionFactory" />
 		<property name="entityClass" value="org.riotfamily.riot.hibernate.security.User" />
