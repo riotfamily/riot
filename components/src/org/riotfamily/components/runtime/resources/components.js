@@ -439,6 +439,11 @@ riot.Content = Class.create({
 				? this.update.bind(this) : Prototype.emptyFunction);
 	},
 	
+	cropImage: function(key, imageId, w, h, x, y, sw, callback) {
+		ComponentEditor.cropImage(this.id, key, imageId,
+				w, h, x, y, sw, callback);
+	},
+	
 	propertiesOn: function() {
 		this.element.parentNode.addClassName('riot-mode-properties');
 		this.setClickHandler(this.editProperties.bind(this));
@@ -496,11 +501,6 @@ riot.Component = Class.create(riot.Content, {
 		this.markAsDirty();
 	},
 	
-	cropImage: function(key, imageId, w, h, x, y, sw, callback) {
-		ComponentEditor.cropImage(this.id, key, imageId,
-				w, h, x, y, sw, callback);
-	},
-		
 	update: function() {
 		ComponentEditor.renderComponent(this.id, this.replaceHtml.bind(this));
 	},
@@ -706,22 +706,29 @@ riot.discardOn = function() {
 		riotPreviewFrame.location.href = window.location.pathname + '?' + params.toQueryString();
 		riot.previewFrame.initialized = true;
 	}
+	else {
+		riot.toolbar.applyButton.enable();
+	}
 	riot.previewFrame.setStyle({
 		display: 'block',
 		visibility: 'visible'
 	}); 
 	$$('body > *:not(#riotPreviewFrame)').invoke('hide');
-	riot.applyFunction = ComponentEditor.discard;
+	riot.applyFunction = function(containerIds) {
+		ComponentEditor.discard(containerIds, function() {window.location.reload();});
+	};
 }
 
 riot.discardOff = function() {
-	riot.previewFrame.hide();
+	riot.toolbar.applyButton.disable();
+	riot.previewFrame.hide();		
 	$$('body > *:not(#riotPreviewFrame)').invoke('show');
+	riot.outline.hide();
 }
 
 riot.publishOn = function() {
 	riot.toolbar.applyButton.enable();
-	riot.applyFunction = ComponentEditor.publish;
+	riot.applyFunction = ComponentEditor.publish;	
 }
 
 riot.publishOff = function() {
@@ -734,9 +741,9 @@ riot.applyOn = function() {
 		.collect(riot.getContentContainer)
 		.pluck('id'); 
 	
-	riot.applyFunction(containerIds);
-	riot.previewFrame.initialized = false;
-	riot.toolbar.disablePublishButtons();
+	riot.applyFunction(containerIds);	
+	riot.previewFrame.initialized = false;	
+	riot.toolbar.disablePublishButtons();	
 }
 
 riot.previewFrame = RBuilder.node('iframe', {name: 'riotPreviewFrame', id: 'riotPreviewFrame'}).appendTo(document.body);
