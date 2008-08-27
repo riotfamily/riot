@@ -60,7 +60,7 @@ public class ComponentListRenderer implements ServletContextAware {
 	
 	private RenderStrategy editModeRenderStrategy;
 
-	private String websiteServletName = "website";
+	private String riotServletName = "riot";
 
 	
 	public ComponentListRenderer(ComponentDao componentDao, 
@@ -78,8 +78,8 @@ public class ComponentListRenderer implements ServletContextAware {
 		this.editModeRenderStrategy = editModeRenderStrategy;
 	}
 	
-	public void setWebsiteServletName(String websiteServletName) {
-		this.websiteServletName = websiteServletName;
+	public void setRiotServletName(String riotServletName) {
+		this.riotServletName = riotServletName;
 	}
 	
 	public void setServletContext(ServletContext servletContext) {
@@ -88,7 +88,7 @@ public class ComponentListRenderer implements ServletContextAware {
 			// riot-servlet is initialized. If the website-servlet is reloaded 
 			// we have to look up the strategy again ...
 			try {
-				WebApplicationContext ctx = SpringUtils.getWebsiteApplicationContext(servletContext, websiteServletName);
+				WebApplicationContext ctx = SpringUtils.getWebsiteApplicationContext(servletContext, riotServletName);
 				this.editModeRenderStrategy = SpringUtils.beanOfType(ctx, EditModeRenderStrategy.class);
 			}
 			catch (NoSuchBeanDefinitionException e) {
