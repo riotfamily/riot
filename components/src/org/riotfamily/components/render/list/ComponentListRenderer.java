@@ -125,7 +125,7 @@ public class ComponentListRenderer implements ServletContextAware {
 			HttpServletResponse response) 
 			throws Exception {
 
-		ComponentList list;
+		ComponentList list = null;
 		RenderStrategy strategy = liveModeRenderStrategy;
 		if (EditModeUtils.isEditMode(request)) {
 			list = (ComponentList) container.getPreviewVersion().getValue(key);
@@ -137,7 +137,7 @@ public class ComponentListRenderer implements ServletContextAware {
 				strategy = editModeRenderStrategy;
 			}
 		}
-		else {
+		else if (container.getLiveVersion() != null) {
 			list = (ComponentList) container.getLiveVersion().getValue(key);
 		}
 		
