@@ -89,6 +89,9 @@ public final class HibernateUtils {
 		
 		try {
 			ClassMetadata metadata = sessionFactory.getClassMetadata(clazz);
+			if (metadata == null) {
+				return false;
+			}
 			return metadata.getPropertyType(property) != null;
 		}
 		catch (HibernateException e) {
