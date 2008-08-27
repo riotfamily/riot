@@ -64,19 +64,16 @@ import org.riotfamily.forms.element.select.SelectBox;
 import org.riotfamily.forms.element.select.SelectElement;
 import org.riotfamily.forms.element.select.SwitchCase;
 import org.riotfamily.forms.element.suggest.AutocompleteTextField;
+import org.riotfamily.forms.element.suggest.AutocompleterModel;
 import org.riotfamily.forms.factory.ConfigurableElementFactory;
 import org.riotfamily.forms.factory.ContainerElementFactory;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.FormRepositoryException;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.io.Resource;
-import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.validation.Validator;
 import org.w3c.dom.Attr;
@@ -170,11 +167,10 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 
 		Class<?> beanClass = getBeanClass(beanClassName);
 		FormInitializer initializer = (FormInitializer) getOrCreate(
-				formElement, "initializer", "initializer-class",
-				FormInitializer.class);
+				formElement, "initializer", FormInitializer.class);
 
 		Validator validator = (Validator) getOrCreate(formElement,
-				"validator", "validator-class", Validator.class);
+				"validator", Validator.class);
 				
 		FormFactory formFactory = formRepository.createFormFactory(
 				beanClass, initializer, validator);
@@ -184,37 +180,6 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			parseElementDefinition(ele, formFactory);
 		}
 		formRepository.registerFormFactory(formId, formFactory);
-	}
-
-	private Object getOrCreate(Element element, String refAttribute,
-			String classNameAttribute, Class<?> requiredClass) {
-
-		String ref = XmlUtils.getAttribute(
-				element, refAttribute);
-
-		if (ref != null) {
-			return beanFactory.getBean(ref, requiredClass);
-		}
-		else {
-			String className = XmlUtils.getAttribute(
-				element, classNameAttribute);
-
-			if (className != null) {
-				try {
-					Class<?> beanClass = ClassUtils.forName(className);
-					Object obj = beanFactory.createBean(beanClass, 
-							AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR, 
-							false);
-					
-					Assert.isInstanceOf(requiredClass, obj);
-					return obj;
-				}
-				catch (ClassNotFoundException e) {
-					throw new FatalBeanException(e.getMessage()); 
-				}
-			}
-		}
-		return null;
 	}
 
 	protected void parsePackageDefinition(Element element) {
@@ -315,8 +280,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	
 	private void initMapEditor(Element ele, MutablePropertyValues pvs) {
 		ObjectRenderer renderer = (ObjectRenderer) getOrCreate(
-				ele, "label-renderer", "label-renderer-class",
-				ObjectRenderer.class);
+				ele, "label-renderer", ObjectRenderer.class);
 		
 		if (renderer != null) {
 			pvs.removePropertyValue("labelRenderer");
@@ -337,8 +301,9 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 	}
 	
 	private void initAutocompleteTextField(Element ele, MutablePropertyValues pvs) {
-		pvs.addPropertyValue("model", beanFactory.getBean(
-				XmlUtils.getAttribute(ele, "model")));
+		Element modelElement = XmlUtils.getFirstChildByTagName(ele, "model");
+		pvs.addPropertyValue("model", getOrCreate(modelElement, 
+				"ref", "class", AutocompleterModel.class));
 	}
 	
 	private void initTinyMCE(Element ele, MutablePropertyValues pvs) {
@@ -391,7 +356,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		}
 	}
 
-	protected MutablePropertyValues getPropertyValues(Element element) {
+	private MutablePropertyValues getPropertyValues(Element element) {
 		MutablePropertyValues pvs = new MutablePropertyValues();
 
 		NamedNodeMap attrs = element.getAttributes();
@@ -408,15 +373,9 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			}
 		}
 
-		Iterator<Element> it = XmlUtils.getChildElementsByRegex(
-				element, "property|set-property").iterator();
-
-		while (it.hasNext()) {
-			Element ele = (Element) it.next();
+		for (Element ele : XmlUtils.getChildElementsByTagName(element, "property")) { 
 			String name = XmlUtils.getAttribute(ele, "name");
-
 			Object value = null;
-
 			String beanName = XmlUtils.getAttribute(ele, "ref");
 			if (beanName != null) {
 				value = beanFactory.getBean(beanName);
@@ -424,7 +383,6 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 			else {
 				value = XmlUtils.getAttribute(ele, "value");
 			}
-
 			pvs.addPropertyValue(name, value);
 		}
 
@@ -436,30 +394,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		log.debug("Looking for OptionsModel ...");
 		Element modelElement = XmlUtils.getFirstChildByRegex(ele, "model|options|key-options");
 		if (modelElement != null) {
-			Object model = null;
-			String className = XmlUtils.getAttribute(modelElement, "class");
-			if (className != null) {
-				try {
-					model = SpringUtils.newInstance(className);
-				}
-				catch (BeansException e) {
-					throw new FormRepositoryException(resource, formId,
-							"Error creating OptionsModel", e);
-				}
-			}
-			else {
-				String beanName = XmlUtils.getAttribute(modelElement, "ref");
-				if (beanName != null) {
-					model = beanFactory.getBean(beanName);
-				}
-			}
-			if (model != null) {
-				List<Element> propertyElements = XmlUtils.getChildElementsByRegex(
-						modelElement, "property|set-property");
-
-				XmlUtils.populate(model, propertyElements, beanFactory);
-			}
-			return model;
+			return getOrCreate(modelElement, "ref", "class", Object.class);
 		}
 		else {
 			ArrayList<Object> values = Generics.newArrayList();
@@ -478,8 +413,60 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	private<T> T getOrCreate(Element element, String attribute, Class<T> requiredClass) {
+		T bean = null;
+		boolean singleton = false;
+		String attr = XmlUtils.getAttribute(element, attribute);
+		if (attr != null) {
+			if (attr.indexOf('.') != -1) {
+				bean = (T) SpringUtils.createBean(attr, beanFactory, 
+						AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
+			}
+			else {
+				bean = SpringUtils.getBean(beanFactory, attr, requiredClass);
+				singleton = beanFactory.isSingleton(attr);
+			}
+		}
+		populate(bean, element, singleton);
+		return bean;
+	}
 	
+	@SuppressWarnings("unchecked")
+	private<T> T getOrCreate(Element element, String refAttribute, String classNameAttribute, Class<T> requiredClass) {
 
+		T bean = null;
+		boolean singleton = false;
+		
+		String ref = XmlUtils.getAttribute(element, refAttribute);
+		if (ref != null) {
+			bean = SpringUtils.getBean(beanFactory, ref, requiredClass);
+			singleton = beanFactory.isSingleton(ref);
+		}
+		else {
+			String className = XmlUtils.getAttribute(element, classNameAttribute);
+			if (className != null) {
+				bean = (T) SpringUtils.createBean(className, beanFactory, 
+						AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
+			}
+		}
+		populate(bean, element, singleton);
+		return bean;
+	}
+	
+	private void populate(Object bean, Element element, boolean singleton) {
+		if (bean != null) {
+			List<Element> propertyElements = XmlUtils.getChildElementsByTagName(element, "property");
+			if (!propertyElements.isEmpty()) {
+				if (singleton) { 
+					throw new RuntimeException("<property> must not be used with singleton beans.");
+				}
+				XmlUtils.populate(bean, propertyElements, beanFactory);
+			}
+			beanFactory.initializeBean(bean, null);
+		}
+	}
+	
 	private class Import {
 
 		private ContainerElementFactory parent;

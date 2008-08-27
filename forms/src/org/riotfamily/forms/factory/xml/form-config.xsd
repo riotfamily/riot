@@ -296,7 +296,6 @@
 					<xsd:attribute name="map-class" type="xsd:string" />
 					<xsd:attribute name="label-property" type="xsd:string" />
 					<xsd:attribute name="label-renderer" type="xsd:string" />
-					<xsd:attribute name="label-renderer-class" type="xsd:string" />
 					<xsd:attribute name="keep-null-values" type="xsd:boolean" default="false" />
 					<xsd:attribute name="remove-unknown-keys" type="xsd:boolean" default="false" />
 				</xsd:extension>
@@ -358,7 +357,9 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="simple-editor">
-					<xsd:attribute name="model" type="xsd:string" use="required" />
+					<xsd:choice>
+						<xsd:element name="model" type="options" />
+					</xsd:choice>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -403,9 +404,7 @@
 			<xsd:attribute name="id" type="xsd:string" use="required" />
 			<xsd:attribute name="bean-class" type="xsd:string" />
 			<xsd:attribute name="initializer" type="xsd:string" />
-			<xsd:attribute name="initializer-class" type="xsd:string" />
 			<xsd:attribute name="validator" type="xsd:string" />
-			<xsd:attribute name="validator-class" type="xsd:string" />
 			<xsd:attribute name="template" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
