@@ -42,6 +42,8 @@ public class ListItemRenderer extends TextRenderer {
 	
 	private int bulletTop = 0;
 	
+	private int bulletLeft = 0;
+	
 	private int paddingLeft = 0;
 	
 	public void setBulletIcon(Resource res) throws IOException {
@@ -54,6 +56,10 @@ public class ListItemRenderer extends TextRenderer {
 	
 	public void setBulletTop(int bulletTop) {
 		this.bulletTop = bulletTop;
+	}
+	
+	public void setBulletLeft(int bulletLeft) {
+		this.bulletLeft = bulletLeft;
 	}
 	
 	@Override
@@ -81,10 +87,10 @@ public class ListItemRenderer extends TextRenderer {
 	public BufferedImage generate(String text, int maxWidth, String color, boolean hover) {
 		BufferedImage image = super.generate(text, maxWidth, color);
 		if (bulletIcon != null && !hover) {
-			image.getGraphics().drawImage(bulletIcon, 0, bulletTop, null);
+			image.getGraphics().drawImage(bulletIcon, bulletLeft, bulletTop, null);
 		}
 		if (hoverBulletIcon != null && hover) {
-			image.getGraphics().drawImage(hoverBulletIcon, 0, bulletTop, null);
+			image.getGraphics().drawImage(hoverBulletIcon, bulletLeft, bulletTop, null);
 		}
 		return image;
 	}
