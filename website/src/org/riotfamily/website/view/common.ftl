@@ -290,8 +290,24 @@
 	<#return commonMacroHelper.round(number) />
 </#function>
 
+<#---
+  - Converts the given string to title case. Example:
+  - <pre>
+  -  foo.bar     -&gt; Foo Bar
+  -  foo-foo_bar -&gt; Foo Foo Bar
+  -  foo.barBar  -&gt; Foo Bar Bar
+  - </pre>
+  -->
 <#function toTitleCase s>
 	<#return commonMacroHelper.toTitleCase(s) />
+</#function>
+
+<#---
+  - XML-escapes dangling ampersands, i.e. '&amp;' chars that don't mark the
+  - beginning of an entity.
+  -->
+<#function xmlEscapeDanglingAmps s>
+	<#return commonMacroHelper.xmlEscapeDanglingAmps(s) />
 </#function>
 
 <#---
@@ -312,7 +328,6 @@
 <#function getMessageWithDefault code default args...>
 	<#return commonMacroHelper.getMessageWithDefault(code, default, args) />
 </#function>
-
 
 <#macro message code args=[]><#local default><#nested></#local>${commonMacroHelper.getMessageWithDefault(code, default, args)}</#macro>
 

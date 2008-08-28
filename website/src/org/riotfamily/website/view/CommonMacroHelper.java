@@ -384,7 +384,11 @@ public class CommonMacroHelper {
 	public String stripTagsAndWhitespaces(String s) {
 		return FormatUtils.stripWhitespaces(FormatUtils.stripTags(s));
 	}
-	
+		
+	public String xmlEscapeDanglingAmps(String s) {
+		return FormatUtils.xmlEscapeDanglingAmps(s);
+	}
+		
 	/**
 	 * Splits a list into a specified number of groups. The items are 
 	 * distributed evenly. Example:
