@@ -37,7 +37,6 @@ import org.riotfamily.riot.list.ListRepository;
 import org.riotfamily.riot.list.command.Command;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.core.io.Resource;
-import org.springframework.util.Assert;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -102,44 +101,11 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	/**
 	 * Creates (or retrieves) a RiotDao by digesting a &lt;dao&gt; tag.
 	 */
-	private void digestDao(ListConfig listConfig, 
-			Element listElement) {
-		
+	private void digestDao(ListConfig listConfig, Element listElement) {
 		Element ele = DomUtils.getChildElementByTagName(listElement, "dao");
-		
-		RiotDao dao = null;
-		boolean singleton = false;
-		
-		String ref = XmlUtils.getAttribute(ele, "ref");
-		if (ref != null) {
-			dao = (RiotDao) beanFactory.getBean(ref, RiotDao.class);
-			singleton = beanFactory.isSingleton(ref);
-		}
-		else {
-			String className = XmlUtils.getAttribute(ele, "class");
-			if (className != null) {
-				dao = instanciateDao(className);
-			}
-		}
-		List<Element> nodes = XmlUtils.getChildElementsByTagName(ele, "property");
-		if (!nodes.isEmpty()) {
-			if (singleton) { 
-				throw new RuntimeException("<property> must not be used with singleton beans.");
-			}
-			XmlUtils.populate(dao, nodes, beanFactory);
-			beanFactory.initializeBean(dao, null);
-		}
-		listConfig.setDao(dao);
+		listConfig.setDao(getOrCreate(ele, "ref", "class", RiotDao.class));
 	}
 	
-	/**
-	 * Creates a new instance of the specified Dao class.
-	 */
-	private RiotDao instanciateDao(String className) {
-		return SpringUtils.createBean(className, beanFactory, 
-				AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
-	}
-
 	/**
 	 * Adds columns to the given ListConfig by digesting the &lt;columns&gt;
 	 * child of the given &lt;list&gt; element.
@@ -187,13 +153,48 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 		if (commandId != null) {
 			return listRepository.getCommand(commandId);
 		}
-		String className = XmlUtils.getAttribute(ele, "class");
-		Assert.notNull(className, "Either id or class must be specified");
-		Command command = SpringUtils.createBean(className, beanFactory, 
-				AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
-		
+		Command command = getOrCreate(ele, null, "class", Command.class);
 		listRepository.addCommand(command);
 		return command;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private<T> T getOrCreate(Element element, String refAttribute, 
+			String classNameAttribute, Class<T> requiredClass) {
+
+		T bean = null;
+		boolean singleton = false;
+		
+		String ref = null;
+		if (refAttribute != null) {
+			ref = XmlUtils.getAttribute(element, refAttribute);
+		}
+		if (ref != null) {
+			bean = SpringUtils.getBean(beanFactory, ref, requiredClass);
+			singleton = beanFactory.isSingleton(ref);
+		}
+		else {
+			String className = XmlUtils.getAttribute(element, classNameAttribute);
+			if (className != null) {
+				bean = (T) SpringUtils.createBean(className, beanFactory, 
+						AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
+			}
+		}
+		populate(bean, element, singleton);
+		return bean;
+	}
+	
+	private void populate(Object bean, Element element, boolean singleton) {
+		if (bean != null) {
+			List<Element> propertyElements = XmlUtils.getChildElementsByTagName(element, "property");
+			if (!propertyElements.isEmpty()) {
+				if (singleton) { 
+					throw new RuntimeException("<property> must not be used with singleton beans.");
+				}
+				XmlUtils.populate(bean, propertyElements, beanFactory);
+			}
+			beanFactory.initializeBean(bean, null);
+		}
 	}
 		
 }
