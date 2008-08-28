@@ -33,23 +33,36 @@ public class SiteUserPolicy implements AuthorizationPolicy {
 		if (riotUser instanceof SiteUser) {
 			SiteUser user = (SiteUser) riotUser;
 			
-			if (isLimited(user)) {				
-				if (object instanceof Site) {
-					Site site = (Site) object;
-					if (!user.getSites().contains(site)) {
-						return ACCESS_DENIED;
+			if (isLimited(user)) {
+				boolean allowed = true;
+				if (object.getClass().isArray()) {
+					Object[] objects = (Object[]) object;
+					for (Object o : objects) {
+						allowed &= isAllowed(user, o);
 					}
 				}
-				if (object instanceof HttpServletRequest) {
-					HttpServletRequest request = (HttpServletRequest) object;
-					Page page = pageResolver.getPage(request);
-					if (page != null && !user.getSites().contains(page.getSite())) {
-						return ACCESS_DENIED;
-					}
+				else {
+					allowed &= isAllowed(user, object);
+				}
+				if (!allowed) {
+					return ACCESS_DENIED;
 				}
 			}
 		}
 		return ACCESS_ABSTAIN;
+	}
+	
+	private boolean isAllowed(SiteUser user, Object object) {
+		if (object instanceof Site) {
+			Site site = (Site) object;
+			return !user.getSites().contains(site);
+		}
+		if (object instanceof HttpServletRequest) {
+			HttpServletRequest request = (HttpServletRequest) object;
+			Page page = pageResolver.getPage(request);
+			return page != null && !user.getSites().contains(page.getSite());
+		}
+		return true;
 	}
 
 	protected boolean isLimited(SiteUser siteUser) {

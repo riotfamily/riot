@@ -24,6 +24,7 @@
 package org.riotfamily.pages.riot.security;
 
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.security.auth.RiotUser;
 import org.riotfamily.riot.security.policy.ReflectionPolicy;
 
@@ -33,14 +34,14 @@ public class SystemPagePolicy extends ReflectionPolicy {
 		setOrder(Integer.MAX_VALUE - 3);
 	}
 	
-	public int delete(RiotUser riotUser, Page page) {
+	public int delete(RiotUser riotUser, Page page, CommandContext context) {
 		if (page.getNode().isSystemNode()) {
 			return ACCESS_DENIED;
 		}
 		return ACCESS_ABSTAIN;
 	}
 	
-	public int unpublish(RiotUser riotUser, Page page) {
+	public int unpublish(RiotUser riotUser, Page page, CommandContext context) {
 		if (page.getNode().isSystemNode()) {
 			return ACCESS_DENIED;
 		}
