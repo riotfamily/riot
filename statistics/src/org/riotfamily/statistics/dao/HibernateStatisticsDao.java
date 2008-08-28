@@ -42,16 +42,20 @@ public class HibernateStatisticsDao extends AbstractSimpleStatsDao {
 		stats.add("Start time", new Date(hs.getStartTime()));
 		stats.add("Flush count", hs.getFlushCount());
 		stats.add("Session open count", hs.getSessionOpenCount());
-		stats.add("Session close count", hs.getSessionCloseCount());
+		stats.add("Session close count", hs.getSessionCloseCount(), 
+					hs.getSessionCloseCount() < hs.getSessionOpenCount());
+		
 		stats.add("Transaction count", hs.getTransactionCount());
 		stats.add("Successful transaction count", hs.getSuccessfulTransactionCount());
 		stats.add("Optimistic failure count", hs.getOptimisticFailureCount());
 		stats.add("Connect count", hs.getConnectCount());
 		stats.add("Prepare statement count", hs.getPrepareStatementCount());
-		stats.add("Close statement count", hs.getCloseStatementCount());
+		stats.add("Close statement count", hs.getCloseStatementCount(),
+				hs.getCloseStatementCount() < hs.getPrepareStatementCount());
+		
 		stats.add("Query execution count", hs.getQueryExecutionCount());
-		stats.add("Query execution max time", hs.getQueryExecutionMaxTime());
-		stats.add("Query execution critical statement", hs.getQueryExecutionMaxTimeQueryString());
+		stats.addOkBelow("Query execution max time", hs.getQueryExecutionMaxTime(), 1000);
+		stats.add("Slowest statement", hs.getQueryExecutionMaxTimeQueryString());
 	}
 	
 }

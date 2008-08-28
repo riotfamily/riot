@@ -41,17 +41,17 @@ public class C3P0StatisticsDao extends AbstractSimpleStatsDao {
 		stats.add("Busy connections", ds.getNumBusyConnections());
 		stats.add("Idle connections", ds.getNumIdleConnections());
 		
-		stats.add("Failed check-ins ", ds.getNumFailedCheckinsDefaultUser());
-		stats.add("Failed check-outs", ds.getNumFailedCheckoutsDefaultUser());
-		stats.add("Failed idle-tests", ds.getNumFailedIdleTestsDefaultUser());
+		stats.addOkBelow("Failed check-ins ", ds.getNumFailedCheckinsDefaultUser(), 0);
+		stats.addOkBelow("Failed check-outs", ds.getNumFailedCheckoutsDefaultUser(), 0);
+		stats.addOkBelow("Failed idle-tests", ds.getNumFailedIdleTestsDefaultUser(), 0);
 		
 		stats.add("Threads waiting for checkout", ds.getNumThreadsAwaitingCheckoutDefaultUser());
-		stats.add("Unclosed orphaned connections", ds.getNumUnclosedOrphanedConnections());
+		stats.addOkBelow("Unclosed orphaned connections", ds.getNumUnclosedOrphanedConnections(), 0);
 		
-		stats.add("Last acquisition failure", ds.getLastAcquisitionFailureDefaultUser());
-		stats.add("Last check-in failure", ds.getLastCheckinFailureDefaultUser());
-		stats.add("Last check-out failure", ds.getLastCheckoutFailureDefaultUser());
-		stats.add("Last connection test failure", ds.getLastConnectionTestFailureDefaultUser());
-		stats.add("Last idle test failure", ds.getLastIdleTestFailureDefaultUser());
+		stats.addOkIfNull("Last acquisition failure", ds.getLastAcquisitionFailureDefaultUser());
+		stats.addOkIfNull("Last check-in failure", ds.getLastCheckinFailureDefaultUser());
+		stats.addOkIfNull("Last check-out failure", ds.getLastCheckoutFailureDefaultUser());
+		stats.addOkIfNull("Last connection test failure", ds.getLastConnectionTestFailureDefaultUser());
+		stats.addOkIfNull("Last idle test failure", ds.getLastIdleTestFailureDefaultUser());
 	}
 }

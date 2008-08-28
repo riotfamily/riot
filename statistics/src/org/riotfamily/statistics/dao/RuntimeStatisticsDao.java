@@ -26,7 +26,6 @@ package org.riotfamily.statistics.dao;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 
-import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.statistics.domain.Statistics;
 
 public class RuntimeStatisticsDao extends AbstractSimpleStatsDao {
@@ -40,12 +39,17 @@ public class RuntimeStatisticsDao extends AbstractSimpleStatsDao {
 	@Override
 	protected void populateStats(Statistics stats) throws Exception {
 		Runtime rt = Runtime.getRuntime();
-		stats.add("Free memory", FormatUtils.formatByteSize(rt.freeMemory()));
-		stats.add("Total memory", FormatUtils.formatByteSize(rt.totalMemory()));
-		stats.add("Used memory", FormatUtils.formatByteSize(rt.totalMemory() - rt.freeMemory()));
-		stats.add("Max memory", FormatUtils.formatByteSize(rt.maxMemory()));
+		long used = rt.totalMemory() - rt.freeMemory();
+		boolean critical = rt.maxMemory() - used > rt.maxMemory() * 0.8;
+		
+		stats.addBytes("Available memory", rt.maxMemory());
+		stats.addBytes("Used memory", used, critical);
+		
+		stats.addBytes("Free memory", rt.freeMemory());
+		stats.addBytes("Total memory", rt.totalMemory());
+		
 		stats.add("Number of processors", rt.availableProcessors());
 		stats.add("Active threads", Thread.activeCount());
-		stats.add("System encoding", systemEncoding);
+		stats.addOkIfEquals("System encoding", systemEncoding, "UTF8");
 	}
 }

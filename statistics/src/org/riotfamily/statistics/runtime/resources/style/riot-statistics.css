@@ -19,3 +19,7 @@
 	background-image: url(icons/commands/delete.gif);
 }
 
+tr.critical {
+	color: ${error_color};
+}
+

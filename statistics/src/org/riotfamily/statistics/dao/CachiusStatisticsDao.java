@@ -25,7 +25,6 @@ package org.riotfamily.statistics.dao;
 
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.CachiusStatistics;
-import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.statistics.domain.Statistics;
 
 public class CachiusStatisticsDao extends AbstractSimpleStatsDao {
@@ -44,7 +43,7 @@ public class CachiusStatisticsDao extends AbstractSimpleStatsDao {
 	protected void populateStats(Statistics stats) throws Exception {
 		stats.add("Capacity", cachius.getCapacity());
 		stats.add("Cached items", cachius.getSize());
-		stats.add("Average overflow interval", FormatUtils.formatMillis(cachius.getAverageOverflowInterval()));
+		stats.addMillis("Average overflow interval", cachius.getAverageOverflowInterval());
 		stats.add("Number of tags", cachius.getNumberOfTags());
 		
 		stats.add("Hits", cachius.getHits());
