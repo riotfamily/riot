@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.dbmsgsrc.riot;
 
+import java.util.Map;
+
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.dbmsgsrc.model.Message;
@@ -57,8 +59,8 @@ public class LocalMessageDao extends AbstractHqlDao {
 	protected String getFrom() {
 		return MessageBundleEntry.class.getName()  
 				+ " as e left join e.messages lm with lm.text is not null" 
-				+ " and lm.locale = :locale "
-				+ "join e.messages dm with dm.locale = :default";
+				+ " and lm.locale = :locale"
+				+ " join e.messages dm with dm.locale = :default";
 	}
 
 	@Override
@@ -69,6 +71,20 @@ public class LocalMessageDao extends AbstractHqlDao {
 	@Override
 	protected String getWhereClause(Object parent, ListParams params) {
 		return mapAliases(super.getWhereClause(parent, params));
+	}
+	
+	@Override
+	protected String getFilterWhereClause(ListParams params) {
+		Map<?, ?> filterMap = (Map<?, ?>) params.getFilter();
+		if ((Boolean)filterMap.get("notTranslatedOnly")) {
+			return "lm is null";
+		}
+		return null;
+	}
+	
+	@Override
+	protected void setFilterParameters(Query query, ListParams params) {
+		
 	}
 	
 	@Override

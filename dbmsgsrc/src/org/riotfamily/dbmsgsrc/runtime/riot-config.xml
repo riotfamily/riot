@@ -54,12 +54,12 @@
 		<ed:form form-ref="messageBundleEntry" />
 	</ed:list>
 
-	<list:list id="localDbMessages" search="entry.code,entry.defaultMessage.text,text">
+	<list:list id="localDbMessages" search="entry.code,entry.defaultMessage.text,text" filter-form="dbMessageFilter">
 		<list:dao class="org.riotfamily.dbmsgsrc.riot.LocalMessageDao" />
 		<list:columns>
 			<list:column property="entry.code" />
 			<list:column property="entry.defaultMessage.text" />
-			<list:column property="text" sortable="false" />
+			<list:column renderer="localMessageRenderer" sortable="false" />
 			<list:command class="org.riotfamily.dbmsgsrc.riot.TranslateMessageCommand" />
 		</list:columns>
 		<list:command id="importLocalMessages" />
@@ -69,6 +69,10 @@
 	<form:form id="dbMessage" bean-class="org.riotfamily.dbmsgsrc.model.Message">
 		<form:textarea bind="entry.comment" read-only="true" />
 		<form:textarea bind="text" required="true" />
+	</form:form>
+	
+	<form:form id="dbMessageFilter" bean-class="java.util.HashMap">
+		<form:checkbox bind="notTranslatedOnly" />		
 	</form:form>
 	
 	<ed:list id="localDbMessages" list-ref="localDbMessages" icon="bubble" hidden="true">
