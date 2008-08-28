@@ -64,6 +64,14 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     	return null;
     }
     
+    protected boolean isPrefixSearch() {
+    	return true;
+    }
+    
+    protected boolean isSuffixSearch() {
+    	return true;
+    }
+    
 	/**
      * Returns a list of items.
      */
@@ -98,8 +106,17 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     		setFilterParameters(query, params);
         }
     	if (params.getSearch() != null) {
-    		query.setParameter("search", params.getSearch()
-    				.toLowerCase().replace('*', '%') + "%");
+    		String search = params.getSearch().toLowerCase();
+    		if (isPrefixSearch()) {
+    			search += '%';
+    		}
+    		if (isSuffixSearch()) {
+    			search = '%' + search;
+    		}
+    		if (!isPrefixSearch() && !isSuffixSearch()) {
+    			search = search.replace('*', '%');
+    		}
+    		query.setParameter("search", search);
     	}
     }
 
