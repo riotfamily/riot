@@ -82,6 +82,13 @@ public class MessageResolver {
 		return getMessage(codes, null, defaultMessage);
 	}
 	
+	public String getPropertyLabelWithoutDefault(String objectName, 
+			Class<?> clazz, String property) {
+		
+		String[] codes = messageCodesResolver.resolveLabel(objectName, clazz, property);		
+		return getMessage(codes, null, null);
+	}
+	
 	public String getClassLabel(String objectName, Class<?> clazz) {
 		String[] codes = messageCodesResolver.resolveLabel(objectName, clazz);
 		String defaultMessage = FormatUtils.camelToTitleCase(objectName);

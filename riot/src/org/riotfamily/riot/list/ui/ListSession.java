@@ -423,12 +423,13 @@ public class ListSession implements RenderContext {
 	private void fillInColumnConfigs(ListModel model) {
 		ArrayList<ListColumn> columns = Generics.newArrayList();
 		Iterator<ColumnConfig> it = listConfig.getColumnConfigs().iterator();
+		int i = 0;
 		while (it.hasNext()) {
-			ColumnConfig config = (ColumnConfig) it.next();
+			ColumnConfig config = it.next();
 			ListColumn column = new ListColumn();
 			column.setProperty(config.getProperty());
 			column.setHeading(getHeading(config.getProperty(),
-					config.getLookupLevel()));
+					config.getLookupLevel(), i++));
 
 			column.setSortable(sortable && config.isSortable());
 			column.setCssClass(FormatUtils.toCssClass(config.getProperty()));
@@ -443,13 +444,15 @@ public class ListSession implements RenderContext {
 		model.setColumns(columns);
 	}
 	
-	private String getHeading(String property, int lookupLevel) {
-		return getHeading(getBeanClass(), property, lookupLevel);
+	private String getHeading(String property, int lookupLevel, int columnIndex) {
+		return getHeading(getBeanClass(), property, lookupLevel, columnIndex);
 	}
 
-	private String getHeading(Class<?> clazz, String property, int lookupLevel) {
-		if (property == null) {
-			return null;
+	private String getHeading(Class<?> clazz, String property, int lookupLevel, 
+				int columnIndex) {
+		
+		if (property == null) {	
+			return messageResolver.getPropertyLabelWithoutDefault(getListId(), clazz, String.valueOf(columnIndex));			
 		}
 		if (clazz != null) {
 			String root = property;
@@ -461,7 +464,7 @@ public class ListSession implements RenderContext {
 				clazz = PropertyUtils.getPropertyType(clazz, root);
 				if (pos > 0) {
 					String nestedProperty = property.substring(pos + 1);
-					return getHeading(clazz, nestedProperty, lookupLevel - 1);
+					return getHeading(clazz, nestedProperty, lookupLevel - 1, columnIndex);
 				}
 				else {
 					return messageResolver.getClassLabel(null, clazz);
