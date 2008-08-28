@@ -98,10 +98,8 @@
   - Renders a textarea for the specified field.
   -->
 <#macro textarea field id=field errorClass="error" attributes...>
-	<#compress>
-		<#local attributes = addErrorClass(attributes, field, errorClass) />
-	    <textarea id="${id}" name="${field}"${c.joinAttributes(attributes)}>${getDisplayValue(field)}</textarea>
-	</#compress>
+	<#local attributes = addErrorClass(attributes, field, errorClass) />
+    <textarea id="${id}" name="${field}"${c.joinAttributes(attributes)}>${getDisplayValue(field)}</textarea>
 </#macro>
 
 <#---
