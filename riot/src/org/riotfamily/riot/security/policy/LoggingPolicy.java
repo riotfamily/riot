@@ -59,8 +59,10 @@ public class LoggingPolicy implements AuthorizationPolicy {
 				if (object.getClass().isArray()) {
 					Object[] objects = (Object[]) object;
 					for (Object o : objects) {
-						message.append(o.getClass().getName());
-						message.append(',');
+						if (o != null) {
+							message.append(o.getClass().getName());
+							message.append(',');
+						}
 					}
 				}
 				else {
