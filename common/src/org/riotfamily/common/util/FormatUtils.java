@@ -67,6 +67,10 @@ public final class FormatUtils {
 
 	private static final Pattern TAG_PATTERN = Pattern.compile("</?[^>]+>");
 	
+	private static final Pattern DANGLING_AMP_PATTERN = Pattern.compile("&\\b");
+	
+	private static final Pattern DANGLING_LT_PATTERN = Pattern.compile("<\\b");
+		
 	private static final Pattern PARENT_DIR_PATTERN = Pattern.compile("\\.\\./");
 	
 	private static final Pattern DATE_DELIMITER_PATTERN = Pattern.compile("^[M|Y|D]*([^MYD])[M|Y|D]*([^MYD])[M|Y|D]*$");
@@ -800,6 +804,19 @@ public final class FormatUtils {
 			in.close();
 		}
 		return sb.toString();
+	}
+	
+	/**
+	 * XML-escapes ampersands and lower-than chars followed by a word boundary. 
+	 * @since 8.0
+	 */
+	public static String xmlEscapeDanglingChars(String s) {
+		if (s == null) {
+			return null;
+		}
+		s = DANGLING_AMP_PATTERN.matcher(s).replaceAll("&amp;");
+		s = DANGLING_LT_PATTERN.matcher(s).replaceAll("&lt;");
+		return s;
 	}
 	
 	/**
