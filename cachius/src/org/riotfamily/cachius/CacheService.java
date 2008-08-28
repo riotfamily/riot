@@ -45,10 +45,21 @@ public class CacheService {
 	
 	private boolean checkInvolvedFiles;
 	
+	private CachiusStatistics stats;
+	
 	public CacheService(Cache cache) {
 		this.cache = cache;
+		this.stats = new CachiusStatistics(this);
 	}
 	
+	public CachiusStatistics getStatistics() {
+		return stats;
+	}
+	
+	protected Cache getCache() {
+		return cache;
+	}
+		
 	public void setCheckInvolvedFiles(boolean checkInvolvedFiles) {
 		this.checkInvolvedFiles = checkInvolvedFiles;
 	}
@@ -152,10 +163,16 @@ public class CacheService {
     		log.debug("Updating cache item " + cacheItem.getKey());
     	}
 		
+    	stats.addMiss();
+    	long t1 = System.currentTimeMillis();
 		ReaderWriterLock lock = cacheItem.getLock();
 		try {
 			// Acquire a writer lock ...
 			lock.lockForWriting();
+		
+			long t2 = System.currentTimeMillis();
+			stats.lockAcquired(t2 - t1);
+			
 			// Check if another writer has already updated the item
 			if (mtime > cacheItem.getLastModified()) {
 				TaggingContext ctx = TaggingContext.openNestedContext();
@@ -196,6 +213,9 @@ public class CacheService {
 				TaggingContext.inheritFrom(cacheItem);
 			}
 			callback.writeCacheItem(cacheItem);
+			
+			long t3 = System.currentTimeMillis();
+			stats.itemUpdated(cacheItem, t3 - t2);
 		}
 		finally {
 			lock.releaseWriterLock();
@@ -218,6 +238,7 @@ public class CacheService {
         	}
         	callback.writeCacheItem(cacheItem);
         	TaggingContext.inheritFrom(cacheItem);
+        	stats.addHit();
     	}
     	finally {
     		lock.releaseReaderLock();

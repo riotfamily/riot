@@ -74,14 +74,10 @@ public final class Cache implements Serializable {
     private transient Object addItemlock;
     
     private transient CleanUpThread cleanUpThread;
+        
+    private transient volatile long lastOverflow = System.currentTimeMillis();
     
-    private transient long hits;
-    
-    private transient long misses;
-    
-    private transient long lastOverflow = System.currentTimeMillis();
-    
-    private transient long averageOverflowInterval;
+    private transient volatile long averageOverflowInterval;
     
     /**
      * Create the cache.
@@ -178,7 +174,6 @@ public final class Cache implements Serializable {
         CacheItem item = map.get(key);
         if (item == null) {
         	synchronized (addItemlock) {
-        		misses++;
         		item = map.get(key);
                 if (item == null) {
                 	try {
@@ -193,9 +188,6 @@ public final class Cache implements Serializable {
                 }
         	}
         	checkCapacity();
-        }
-        else {
-        	hits++;
         }
         item.touch();
         return item;
@@ -326,13 +318,11 @@ public final class Cache implements Serializable {
     	}
     }
     
-    public long getHits() {
-		return hits;
-	}
-    
-    public long getMisses() {
-		return misses;
-	}
+    protected void invalidateAll() {
+    	for (CacheItem item : map.values()) {
+    		item.invalidate();
+    	}
+    }
     
     public int getCapacity() {
 		return capacity;
@@ -342,9 +332,18 @@ public final class Cache implements Serializable {
 		return size;
 	}
     
+    public int getNumberOfTags() {
+    	return taggedItems.size(); 
+    }
+    
     public long getAverageOverflowInterval() {
 		return averageOverflowInterval;
 	}
+    
+    protected void resetOverflowStats() {
+    	lastOverflow = 0;
+    	averageOverflowInterval = 0;
+    }
 
     /**
      * Comparator that compares items by their {@link CacheItem#getLastUsed() 

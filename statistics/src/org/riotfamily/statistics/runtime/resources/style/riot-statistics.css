@@ -1,3 +1,4 @@
+.action-invalidateCachiusCache,
 .action-performGarbageCollection {
 	background-image: url(icons/commands/garbage.gif);
 }
@@ -9,6 +10,7 @@
 	background-image: url(icons/commands/switch_off.gif);
 }
 
+.action-resetCachiusStatistics, 
 .action-clearRiotHibernateCache, 
 .action-clearHibernateStatisticsBaseline, 
 .action-clearRequestStatisticsBaseline,

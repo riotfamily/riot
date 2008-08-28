@@ -26,7 +26,7 @@
             <ed:list list-ref="hibernate-cache-regions" icon="regions" />
         </ed:group>
         <ed:list list-ref="connection-pool-statistics" icon="connections" />
-        <ed:list list-ref="memory-statistics" icon="chip" />    
+        <ed:list list-ref="runtime-statistics" icon="chip" />    
         <ed:group name="request-statistics" icon="clock">
             <ed:list list-ref="request-overview-statistics" icon="stats" /> 
             <ed:list list-ref="request-critical-statistics" icon="hourglass" /> 
@@ -110,8 +110,8 @@
         <list:command id="refresh" />  
     </list:list>
 
-    <list:list id="memory-statistics" order-by="">
-        <list:dao class="org.riotfamily.statistics.dao.MemoryStatisticsDao" />
+    <list:list id="runtime-statistics" order-by="">
+        <list:dao class="org.riotfamily.statistics.dao.RuntimeStatisticsDao" />
         <list:columns>
             <list:column property="name" />
             <list:column property="value" />
@@ -122,13 +122,15 @@
     
      <list:list id="cachius-statistics" order-by="">
         <list:dao class="org.riotfamily.statistics.dao.CachiusStatisticsDao">
-        	<list:property name="cache" ref="websiteCache" />
+        	<list:property name="cacheService" ref="cacheService" />
         </list:dao>
         <list:columns>
             <list:column property="name" />
             <list:column property="value" />
         </list:columns>
         <list:command id="refresh" />  
+        <list:command class="org.riotfamily.statistics.commands.ResetCachiusStatisticsCommand" />
+        <list:command class="org.riotfamily.statistics.commands.InvalidateCachiusCacheCommand" />
     </list:list>
     
     <!-- 

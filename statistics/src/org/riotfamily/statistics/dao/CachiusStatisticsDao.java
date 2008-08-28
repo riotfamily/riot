@@ -23,24 +23,35 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.statistics.dao;
 
-import org.riotfamily.cachius.Cache;
+import org.riotfamily.cachius.CacheService;
+import org.riotfamily.cachius.CachiusStatistics;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.statistics.domain.Statistics;
 
 public class CachiusStatisticsDao extends AbstractSimpleStatsDao {
 
-	private Cache cache;
+	private CachiusStatistics cachius;
 
-	public void setCache(Cache cache) {
-		this.cache = cache;
+	public void setCacheService(CacheService service) {
+		this.cachius = service.getStatistics();
+	}
+	
+	public CachiusStatistics getCachiusStatistics() {
+		return cachius;
 	}
 	
 	@Override
 	protected void populateStats(Statistics stats) throws Exception {
-		stats.add("Cached items", cache.getSize());
-		stats.add("Capacity", cache.getCapacity());
-		stats.add("Hits", cache.getHits());
-		stats.add("Misses", cache.getMisses());
-		stats.add("Average overflow interval", FormatUtils.formatMillis(cache.getAverageOverflowInterval()));
+		stats.add("Capacity", cachius.getCapacity());
+		stats.add("Cached items", cachius.getSize());
+		stats.add("Average overflow interval", FormatUtils.formatMillis(cachius.getAverageOverflowInterval()));
+		stats.add("Number of tags", cachius.getNumberOfTags());
+		
+		stats.add("Hits", cachius.getHits());
+		stats.add("Misses", cachius.getMisses());
+		
+		stats.add("Max update time [ms]", cachius.getMaxUpdateTime());
+		stats.add("Max update lock acquisition time [ms]", cachius.getMaxLockAcquisitionTime());
+		stats.add("Slowest update", cachius.getSlowestUpdate());
 	}
 }
