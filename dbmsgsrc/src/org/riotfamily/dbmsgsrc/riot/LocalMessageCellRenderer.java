@@ -25,17 +25,17 @@ package org.riotfamily.dbmsgsrc.riot;
 
 import java.io.PrintWriter;
 
-import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.RenderContext;
+import org.riotfamily.common.web.ui.StringRenderer;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 
-public class LocalMessageCellRenderer implements ObjectRenderer {
+public class LocalMessageCellRenderer extends StringRenderer {
 	
 	public void render(Object obj, RenderContext context, PrintWriter writer) {
 		Message message = (Message) obj;
 		if (!MessageBundleEntry.C_LOCALE.equals(message.getLocale())) {
-			writer.print(message.getText());
+			super.render(message.getText(), context, writer);			
 		}		
 	}
 
