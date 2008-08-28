@@ -121,19 +121,7 @@ public class MessageBundleEntry {
 	public void setMessages(Map<Locale, Message> messages) {
 		this.messages = messages;
 	}
-	
-	public Message getMessage(Locale locale) {
-		if (messages == null) {
-			return null;
-		}
-		Message message = messages.get(locale);
-		if (message == null && StringUtils.hasLength(locale.getCountry())) {
-			Locale lang = new Locale(locale.getLanguage());
-			message = messages.get(lang);
-		}
-		return message;
-	}
-	
+		
 	public void addTranslation(Locale locale) {
 		addTranslation(locale, getDefaultText());		
 	}

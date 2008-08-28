@@ -39,6 +39,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.website.cache.TagCacheItems;
 import org.springframework.util.ObjectUtils;
 
@@ -105,8 +106,12 @@ public class Message {
 	}
 	
 	@Transient
-	public MessageFormat getMessageFormat() {
+	public MessageFormat getMessageFormat(boolean escapeSingleQuotes) {
 		if (messageFormat == null && text != null) {
+			String pattern = text;
+			if (escapeSingleQuotes) {
+				pattern = FormatUtils.escapeChars(pattern, "'", '\'');
+			}
 			messageFormat = new MessageFormat(text, locale);
 		}
 		return messageFormat;

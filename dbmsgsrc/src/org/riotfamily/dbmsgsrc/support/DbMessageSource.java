@@ -2,6 +2,7 @@ package org.riotfamily.dbmsgsrc.support;
 
 import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.Map;
 
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.Message;
@@ -11,6 +12,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.StringUtils;
 
 public class DbMessageSource extends AbstractMessageSource {
 
@@ -22,6 +24,10 @@ public class DbMessageSource extends AbstractMessageSource {
 	
 	private String bundle = DEFAULT_BUNDLE;
 	
+	private boolean fallbackToDefaultCountry = true;
+	
+	private boolean escapeSingleQuotes = true;
+	
 	public DbMessageSource(DbMessageSourceDao dao, PlatformTransactionManager tx) {
 		this.dao = dao;
 		this.transactionTemplate = new TransactionTemplate(tx); 
@@ -30,7 +36,25 @@ public class DbMessageSource extends AbstractMessageSource {
 	public void setBundle(String bundle) {
 		this.bundle = bundle;
 	}
+	
+	/**
+	 * Whether the to use <i>&lt;lang&gt;_&lt;LANG&gt;</i> as first fallback 
+	 * in case no message for <i>&lt;lang&gt;_&lt;COUNTRY&gt;</i> exists.
+	 * If set to <code>false</code>, <i>&lt;lang&gt;</i> will be used. Default 
+	 * is <code>true</code>.   
+	 */
+	public void setFallbackToDefaultCountry(boolean fallbackToDefaultCountry) {
+		this.fallbackToDefaultCountry = fallbackToDefaultCountry;
+	}
 
+	/**
+	 * Whether single quotes should be escaped before texts are passed to the
+	 * {@link MessageFormat}. Default is <code>true</code>.
+	 */
+	public void setEscapeSingleQuotes(boolean escapeSingleQuotes) {
+		this.escapeSingleQuotes = escapeSingleQuotes;
+	}
+	
 	MessageBundleEntry getEntry(final String code, final String defaultMessage) {
 		return (MessageBundleEntry) transactionTemplate.execute(new TransactionCallback() {
 			public Object doInTransaction(TransactionStatus status) {
@@ -48,11 +72,40 @@ public class DbMessageSource extends AbstractMessageSource {
 	protected MessageFormat resolveCode(String code, Locale locale, String defaultMessage) {
 		CacheTagUtils.tag(Message.class);
 		MessageBundleEntry entry = getEntry(code, defaultMessage);
-		Message message = entry.getMessage(locale);
+		Message message = getMessage(entry, locale);
 		if (message != null) {
-			return message.getMessageFormat();
+			return message.getMessageFormat(escapeSingleQuotes);
 		}
 		return null;
+	}
+	
+	@Override
+	protected String resolveCodeWithoutArguments(String code, Locale locale, String defaultMessage) {
+		CacheTagUtils.tag(Message.class);
+		MessageBundleEntry entry = getEntry(code, defaultMessage);
+		Message message = getMessage(entry, locale);
+		if (message != null) {
+			return message.getText();
+		}
+		return null;
+	}
+	
+	protected Message getMessage(MessageBundleEntry entry, Locale locale) {
+		Map<Locale, Message> messages = entry.getMessages();
+		if (messages == null) {
+			return null;
+		}
+		Message message = messages.get(locale);
+		if (message == null && StringUtils.hasLength(locale.getCountry())) {
+			String lang = locale.getLanguage();
+			if (fallbackToDefaultCountry && !lang.equals(locale.getCountry().toLowerCase())) {
+				message = messages.get(new Locale(lang, lang.toUpperCase()));
+			}
+			if (message == null) {
+				message = messages.get(new Locale(lang));
+			}
+		}
+		return message;
 	}
 	
 	@Override
@@ -62,11 +115,16 @@ public class DbMessageSource extends AbstractMessageSource {
 			MessageBundleEntry entry = dao.findEntry(bundle, code);
 			Message message = entry.getDefaultMessage();
 			if (message != null) {
-				MessageFormat messageFormat = message.getMessageFormat();
-				if (messageFormat != null) {
-					synchronized (messageFormat) {
-						return messageFormat.format(args);
+				if (args != null) {
+					MessageFormat messageFormat = message.getMessageFormat(escapeSingleQuotes);
+					if (messageFormat != null) {
+						synchronized (messageFormat) {
+							return messageFormat.format(args);
+						}
 					}
+				}
+				else {
+					return message.getText();
 				}
 			}
 		}
