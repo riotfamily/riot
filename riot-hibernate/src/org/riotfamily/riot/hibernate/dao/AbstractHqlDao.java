@@ -95,17 +95,7 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     		ListParams params) {
 
     	if (params.getFilter() != null) {
-    		if (params.getFilter() instanceof Map) {
-    			Map<?, ?> filterMap = (Map<?, ?>) params.getFilter();
-    			query.setProperties(filterMap);
-    		}
-    		else {
-    			query.setProperties(params.getFilter());
-    		}
-
-    		HibernateUtils.setCollectionValueParams(query,
-    				params.getFilteredProperties(), getEntityClass(), 
-    				params.getFilter());
+    		setFilterParameters(query, params);
         }
     	if (params.getSearch() != null) {
     		query.setParameter("search", params.getSearch()
@@ -145,19 +135,11 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
         HibernateUtils.appendHql(sb, null, getWhere());
 
     	if (params.getFilter() != null) {
-    		String filter = HibernateUtils.getExampleWhereClause(
-    				getEntityClass(),
-    				params.getFilter(), "this",
-    				params.getFilteredProperties());
-
-    		HibernateUtils.appendHql(sb, "and", filter);
+    		HibernateUtils.appendHql(sb, "and", getFilterWhereClause(params));
     	}
 
     	if (params.getSearch() != null) {
-    		String search = HibernateUtils.getSearchWhereClause("this",
-    				params.getSearchProperties(), "search");
-
-    		HibernateUtils.appendHql(sb, "and", search);
+    		HibernateUtils.appendHql(sb, "and", getSearchWhereClause(params));
         }
 
         if (!isPolymorph()) {
@@ -166,6 +148,31 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
         }
 
         return sb.toString();
+    }
+    
+    protected String getFilterWhereClause(ListParams params) {
+    	return HibernateUtils.getExampleWhereClause(getEntityClass(),
+    				params.getFilter(), "this",	params.getFilteredProperties());
+    }
+    
+    protected void setFilterParameters(Query query, ListParams params) {
+    	if (params.getFilter() instanceof Map) {
+			Map<?, ?> filterMap = (Map<?, ?>) params.getFilter();
+			query.setProperties(filterMap);
+		}
+		else {
+			query.setProperties(params.getFilter());
+		}
+
+		HibernateUtils.setCollectionValueParams(query,
+				params.getFilteredProperties(), getEntityClass(), 
+				params.getFilter());
+    }
+    
+    protected String getSearchWhereClause(ListParams params) {
+    	return HibernateUtils.getSearchWhereClause("this", 
+    				params.getSearchProperties(), "search");
+    	
     }
 
     protected String getOrderBy(ListParams params) {
