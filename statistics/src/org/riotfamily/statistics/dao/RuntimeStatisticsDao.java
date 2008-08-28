@@ -23,11 +23,20 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.statistics.dao;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.statistics.domain.Statistics;
 
-public class MemoryStatisticsDao extends AbstractSimpleStatsDao {
+public class RuntimeStatisticsDao extends AbstractSimpleStatsDao {
 
+	private String systemEncoding;
+	
+	public RuntimeStatisticsDao() {
+		systemEncoding = new OutputStreamWriter(new ByteArrayOutputStream()).getEncoding();
+	}
+	
 	@Override
 	protected void populateStats(Statistics stats) throws Exception {
 		Runtime rt = Runtime.getRuntime();
@@ -37,5 +46,6 @@ public class MemoryStatisticsDao extends AbstractSimpleStatsDao {
 		stats.add("Max memory", FormatUtils.formatByteSize(rt.maxMemory()));
 		stats.add("Number of processors", rt.availableProcessors());
 		stats.add("Active threads", Thread.activeCount());
+		stats.add("System encoding", systemEncoding);
 	}
 }
