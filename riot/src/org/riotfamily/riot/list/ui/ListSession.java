@@ -552,7 +552,7 @@ public class ListSession implements RenderContext {
 		
 		CommandState state = command.getState(context);
 		boolean granted = AccessController.isGranted(
-				state.getAction(), parent);
+				state.getAction(), parent, context);
 
 		state.setEnabled(state.isEnabled() && granted);
 		return state;
@@ -668,7 +668,7 @@ public class ListSession implements RenderContext {
 			HttpServletRequest request, HttpServletResponse response) {
 		
 		String action = command.getState(context).getAction();
-		if (AccessController.isGranted(action, target)) {
+		if (AccessController.isGranted(action, target, context)) {
 			if (!confirmed) {
 				String message = command.getConfirmationMessage(context);
 				if (message != null) {
@@ -716,7 +716,7 @@ public class ListSession implements RenderContext {
 				context.setBean(bean, item.getObjectId());
 				context.setParent(null, item.getParentId(), item.getParentEditorId());
 				context.setRowIndex(item.getRowIndex());
-				if (AccessController.isGranted(commandState.getAction(), bean)) {
+				if (AccessController.isGranted(commandState.getAction(), bean, context)) {
 					context.setBatchIndex(batchIndex);
 					result = command.execute(context);
 				}
