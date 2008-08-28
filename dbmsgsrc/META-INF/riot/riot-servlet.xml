@@ -40,6 +40,8 @@
 		<constructor-arg ref="dbMessageSourceDao" />
 	</bean>
 	
+	<bean id="localMessageRenderer" class="org.riotfamily.dbmsgsrc.riot.LocalMessageCellRenderer" />
+	
 	<override:bean ref="messageSource" class="org.riotfamily.dbmsgsrc.support.RiotDbMessageSource">
 		<constructor-arg ref="dbMessageSourceDao" />
 		<constructor-arg ref="transactionManager" />
