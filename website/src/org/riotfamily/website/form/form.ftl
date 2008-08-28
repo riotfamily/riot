@@ -61,18 +61,20 @@
   - the label tag (default is 'error'). 
   -->
 <#macro label for field="" errorClass="error" code="" attributes...>
-	<#if !field?has_content>
-		<#local field = for />
-	</#if>
-	<#local text><#nested /></#local>
-	<#if !text?has_content>
-		<#if !code?has_content>
-			<#local code = formMacroHelper.command + '.' + field />
+	<#compress>
+		<#if !field?has_content>
+			<#local field = for />
 		</#if>
-		<#local text = c.getMessage(code) />
-	</#if>
-	<#local attributes = addErrorClass(attributes, field, errorClass) />
-	<label for="${for}"${c.joinAttributes(attributes)}>${text}</label>
+		<#local text><#nested /></#local>
+		<#if !text?has_content>
+			<#if !code?has_content>
+				<#local code = formMacroHelper.command + '.' + field />
+			</#if>
+			<#local text = c.getMessage(code) />
+		</#if>
+		<#local attributes = addErrorClass(attributes, field, errorClass) />
+		<label for="${for}"${c.joinAttributes(attributes)}>${text}</label>
+	</#compress>
 </#macro>
 
 <#function getDisplayValue field>
@@ -83,19 +85,23 @@
   - Renders an input element for the specified field.
   -->
 <#macro input type field id=field errorClass="error" attributes...>
-	<#if !attributes.class?exists>
-		<#local attributes = attributes + {"class": type} />
-	</#if>
-	<#local attributes = addErrorClass(attributes, field, errorClass) />
-    <input id="${id}" type="${type}" name="${field}" value="${getDisplayValue(field)}"${c.joinAttributes(attributes)} />
+	<#compress>
+		<#if !attributes.class?exists>
+			<#local attributes = attributes + {"class": type} />
+		</#if>
+		<#local attributes = addErrorClass(attributes, field, errorClass) />
+	    <input id="${id}" type="${type}" name="${field}" value="${getDisplayValue(field)}"${c.joinAttributes(attributes)} />
+	</#compress>
 </#macro>
 
 <#---
   - Renders a textarea for the specified field.
   -->
 <#macro textarea field id=field errorClass="error" attributes...>
-	<#local attributes = addErrorClass(attributes, field, errorClass) />
-    <textarea id="${id}" name="${field}"${c.joinAttributes(attributes)}>${getDisplayValue(field)}</textarea>
+	<#compress>
+		<#local attributes = addErrorClass(attributes, field, errorClass) />
+	    <textarea id="${id}" name="${field}"${c.joinAttributes(attributes)}>${getDisplayValue(field)}</textarea>
+	</#compress>
 </#macro>
 
 <#---
@@ -116,55 +122,63 @@
 <#macro select field options id=field errorClass="error" valueProperty="" 
 	labelProperty="" messagePrefix="" addEmptyOption=false emptyValue="" emptyLabel="" attributes...>
 	
-	<#local attributes = addErrorClass(attributes, field, errorClass) />
-    <select id="${id}" name="${field}"${c.joinAttributes(attributes)}>
-    	<#if addEmptyOption || emptyLabel?has_content>
-    		<@option emptyValue?html emptyLabel?html />
-    	</#if>
-        <@listOptions field options valueProperty labelProperty messagePrefix ; value, label, selected>
-        	<@option value label selected />
-        </@listOptions>
-    </select>
+	<#compress>
+		<#local attributes = addErrorClass(attributes, field, errorClass) />
+	    <select id="${id}" name="${field}"${c.joinAttributes(attributes)}>
+	    	<#if addEmptyOption || emptyLabel?has_content>
+	    		<@option emptyValue?html emptyLabel?html />
+	    	</#if>
+	        <@listOptions field options valueProperty labelProperty messagePrefix ; value, label, selected>
+	        	<@option value label selected />
+	        </@listOptions>
+	    </select>
+	</#compress>
 </#macro>
 
 <#---
   - Renders a checkbox. 
   -->
 <#macro checkbox field id=field errorClass="error" value="on" attributes...>
-	<#local attributes = addErrorClass(attributes, field, errorClass) />
-	<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check formMacroHelper.getValue(field)! == value />${c.joinAttributes(attributes)} />
-	<input type="hidden" name="_${field}" value="on"/>
+	<#compress>
+		<#local attributes = addErrorClass(attributes, field, errorClass) />
+		<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check formMacroHelper.getValue(field)! == value />${c.joinAttributes(attributes)} />
+		<input type="hidden" name="_${field}" value="on"/>
+	</#compress>
 </#macro>
 
 <#---
   - Renders a list of checkboxes for the given options. See also #listOptions.
   -->
 <#macro checkboxes field options labelFirst=false>
-	<@listOptions field options ; value, label, checked, id>
-		<#if labelFirst>
-			<label for="${id}">${label}</label>
-			<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check checked/> />		
-		<#else>
-			<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check checked/> />
-			<label for="${id}">${label}</label>
-		</#if>
-	</@listOptions>
-	<input type="hidden" name="_${field}" value="on" />
+	<#compress>
+		<@listOptions field options ; value, label, checked, id>
+			<#if labelFirst>
+				<label for="${id}">${label}</label>
+				<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check checked/> />		
+			<#else>
+				<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check checked/> />
+				<label for="${id}">${label}</label>
+			</#if>
+		</@listOptions>
+		<input type="hidden" name="_${field}" value="on" />
+	</#compress>
 </#macro>
 
 <#---
   - Renders a list of radio buttons for the given options. See also #listOptions.
   -->
 <#macro radioButtons field options labelFirst=false valueProperty="" labelProperty="" messagePrefix="">
-	<@listOptions field options valueProperty labelProperty messagePrefix ; value, label, checked, id>
-		<#if labelFirst>
-			<label for="${id}">${label}</label>
-			<input type="radio" name="${field}" id="${id}" value="${value}"<@check checked/> />
-		<#else>			
-			<input type="radio" name="${field}" id="${id}" value="${value}"<@check checked/> />
-			<label for="${id}">${label}</label>
-		</#if>		
-	</@listOptions>
+	<#compress>
+		<@listOptions field options valueProperty labelProperty messagePrefix ; value, label, checked, id>
+			<#if labelFirst>
+				<label for="${id}">${label}</label>
+				<input type="radio" name="${field}" id="${id}" value="${value}"<@check checked/> />
+			<#else>			
+				<input type="radio" name="${field}" id="${id}" value="${value}"<@check checked/> />
+				<label for="${id}">${label}</label>
+			</#if>		
+		</@listOptions>
+	</#compress>
 </#macro>
 
 <#---
@@ -234,7 +248,9 @@
   - @param attributes Additional attributes to be added to the option tag. 
   --> 
 <#macro option value label=value selected=false attributes...>
-	<option value="${value}"<#if selected> selected="selected"</#if>${c.joinAttributes(attributes)}>${label}</option>
+	<#compress>
+		<option value="${value}"<#if selected> selected="selected"</#if>${c.joinAttributes(attributes)}>${label}</option>
+	</#compress>
 </#macro>
 
 <#macro check checked><#if checked> checked="checked"</#if></#macro>
