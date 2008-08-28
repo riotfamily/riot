@@ -39,7 +39,6 @@ public class HibernateStatisticsDao extends AbstractSimpleStatsDao {
 	@Override
 	protected void populateStats(Statistics stats) throws Exception {
 		org.hibernate.stat.Statistics hs = sessionFactory.getStatistics();
-		stats.add("Hibernate statistics", hs.isStatisticsEnabled());
 		stats.add("Start time", new Date(hs.getStartTime()));
 		stats.add("Flush count", hs.getFlushCount());
 		stats.add("Session open count", hs.getSessionOpenCount());

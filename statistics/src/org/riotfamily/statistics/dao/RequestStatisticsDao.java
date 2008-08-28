@@ -36,7 +36,6 @@ public class RequestStatisticsDao extends AbstractSimpleStatsDao {
 
 	@Override
 	protected void populateStats(Statistics stats) throws Exception {
-		stats.add("Enabled", requestCountFilterPlugin.isEnabled());
 		stats.add("Total request count", requestCountFilterPlugin.getTotalRequestCount());
 		stats.add("Parallel request count (now)", requestCountFilterPlugin.getCurrentRequestCount());
 		stats.add("Parallel request count (high water mark)", requestCountFilterPlugin.getParallelRequestsHWM());
