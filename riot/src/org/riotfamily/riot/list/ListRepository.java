@@ -32,9 +32,9 @@ import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.ui.ObjectRenderer;
-import org.riotfamily.common.web.ui.StringRenderer;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.riot.list.command.Command;
+import org.riotfamily.riot.ui.DefaultObjectRenderer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -53,13 +53,9 @@ public class ListRepository implements ApplicationContextAware {
 	
 	private ApplicationContext applicationContext;
 	
-	private ObjectRenderer defaultCellRenderer;
+	private ObjectRenderer defaultCellRenderer = new DefaultObjectRenderer();
 	
 	private int defaultPageSize = 50;
-
-	public ListRepository() {
-		setDefaultCellRenderer(new StringRenderer());
-	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
