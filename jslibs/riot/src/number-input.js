@@ -20,8 +20,7 @@ NumberInput.Field = Class.create({
 		}, arguments[1] || {});
 		
 		this.element.onkeydown = this.handleKeyDown.bindAsEventListener(this);
-		this.element.onkeypress = this.handleKeyPress.bindAsEventListener(this);
-		this.element.onkeyup = this.validate.bindAsEventListener(this);
+		this.element.onkeypress = this.handleKeyPress.bindAsEventListener(this);		
 		this.element.onchange = this.validate.bindAsEventListener(this);
 		this.element.onblur = this.handleOnBlur.bindAsEventListener(this);
 
@@ -86,7 +85,7 @@ NumberInput.Field = Class.create({
 			if (this.options.minValue && this.getValue() < this.options.minValue) {
 				this.setValue(this.options.minValue);
 			}
-			if (this.options.maxValue && this.getValue() > this.options.maxValue) {
+			else if (this.options.maxValue && this.getValue() > this.options.maxValue) {
 				this.setValue(this.options.maxValue);
 			}
 		}
