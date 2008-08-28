@@ -6,6 +6,6 @@
 	</ul>
 	${addButton.render()}
 	<#if element.sortable>
-		<input type="hidden" name="${element.paramName}" id="${element.id}-order" />
+		<input type="hidden" name="${element.paramName}" id="${items.id}-order" />
 	</#if>
 </div>

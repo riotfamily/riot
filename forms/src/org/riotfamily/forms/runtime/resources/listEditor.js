@@ -21,7 +21,7 @@ var initListEditor = function(id) {
     	down.each(function(b, i) {
     		toggle(b, 'disabled', i == last);
         });
-        if (order) order.value = $$('#' + id + '>li').pluck(id).join(',') + ',';
+        if (order) order.value = $$('#' + id + '>li').pluck('id').join(',') + ',';
     };
     
     $$(tr+'>td.up').invoke('observe', 'click', function() {
