@@ -28,8 +28,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.hibernate.EntityMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
@@ -41,7 +41,7 @@ import org.riotfamily.common.collection.TypeComparatorUtils;
  */
 public class HibernateWrapperFactory implements ValueWrapperFactory {
 
-	private Log log = LogFactory.getLog(HibernateWrapperFactory.class);
+	private RiotLog log = RiotLog.get(HibernateWrapperFactory.class);
 	
 	private ArrayList<WrapperClassInfo> wrapperClassInfos = new ArrayList<WrapperClassInfo>();
 		

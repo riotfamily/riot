@@ -1,23 +1,22 @@
 package org.riotfamily.website.hyphenate;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
 
 import net.davidashen.text.Hyphenator;
 import net.davidashen.util.ErrorHandler;
 
-public class CommonsLoggingErrorHandler implements ErrorHandler {
+public class RiotLogErrorHandler implements ErrorHandler {
 
 	private String fileName;
 	
-	private Log log;
+	private RiotLog log;
 	
-	public CommonsLoggingErrorHandler(String fileName) {
+	public RiotLogErrorHandler(String fileName) {
 		this.fileName = fileName + ": "; 
-		this.log = LogFactory.getLog(Hyphenator.class);
+		this.log = RiotLog.get(Hyphenator.class);
 	}
 	
-	public CommonsLoggingErrorHandler(Log log) {
+	public RiotLogErrorHandler(RiotLog log) {
 		this.log = log;
 	}
 	

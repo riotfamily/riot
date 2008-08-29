@@ -34,8 +34,8 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.cachius.spring.CacheableController;
@@ -65,7 +65,7 @@ public abstract class AbstractHqlModelBuilder extends HibernateSupport
 
 	private static final Pattern PARAM_PATTERN = Pattern.compile("\\:([._\\w]+)");
 	
-	private Log log = LogFactory.getLog(AbstractHqlModelBuilder.class);
+	private RiotLog log = RiotLog.get(AbstractHqlModelBuilder.class);
 
 	private ApplicationContext applicationContext;
 

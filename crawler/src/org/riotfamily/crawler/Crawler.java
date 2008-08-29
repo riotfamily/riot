@@ -26,8 +26,8 @@ package org.riotfamily.crawler;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.htmlparser.util.ParserException;
 import org.riotfamily.common.web.event.ContentChangedEvent;
 import org.springframework.beans.factory.InitializingBean;
@@ -40,7 +40,7 @@ import org.springframework.context.event.ApplicationEventMulticaster;
  */
 public class Crawler implements InitializingBean, ApplicationListener, Runnable {
 
-	private Log log = LogFactory.getLog(Crawler.class);
+	private RiotLog log = RiotLog.get(Crawler.class);
 
 	private String startPage;
 

@@ -37,8 +37,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.riotfamily.cachius.CacheService;
@@ -74,7 +74,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 		MessageSourceAware {
 
-	private Log log = LogFactory.getLog(ComponentEditorImpl.class);
+	private RiotLog log = RiotLog.get(ComponentEditorImpl.class);
 
 	private ComponentDao componentDao;
 	

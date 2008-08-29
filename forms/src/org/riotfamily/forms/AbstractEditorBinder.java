@@ -30,8 +30,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.beans.propertyeditors.SqlDateEditor;
 import org.springframework.beans.InvalidPropertyException;
 import org.springframework.beans.PropertyEditorRegistrar;
@@ -47,7 +47,7 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 		implements EditorBinder {
 
-	private Log log = LogFactory.getLog(AbstractEditorBinder.class);
+	private RiotLog log = RiotLog.get(AbstractEditorBinder.class);
 
 	/** List of {@link EditorBinding editor bindings} */
 	private Map<String, EditorBinding> bindings = new LinkedHashMap<String, EditorBinding>();

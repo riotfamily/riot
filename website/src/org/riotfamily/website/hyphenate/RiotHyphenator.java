@@ -9,8 +9,8 @@ import java.util.Map;
 import net.davidashen.text.Hyphenator;
 import net.davidashen.util.ErrorHandler;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.springframework.beans.factory.InitializingBean;
@@ -18,7 +18,7 @@ import org.springframework.core.io.Resource;
 
 public class RiotHyphenator implements InitializingBean {
 	
-	private Log log = LogFactory.getLog(RiotHyphenator.class);
+	private RiotLog log = RiotLog.get(RiotHyphenator.class);
 	
 	private File baseDir;
 	
@@ -38,7 +38,7 @@ public class RiotHyphenator implements InitializingBean {
 					String localeCode = FormatUtils.stripExtension(file.getName());
 					try {
 						Hyphenator hyphenator = new Hyphenator();
-						hyphenator.setErrorHandler(new CommonsLoggingErrorHandler(file.getName()));
+						hyphenator.setErrorHandler(new RiotLogErrorHandler(file.getName()));
 						hyphenator.loadTable(new FileInputStream(file));				
 						hyphenators.put(localeCode, hyphenator);
 					} 

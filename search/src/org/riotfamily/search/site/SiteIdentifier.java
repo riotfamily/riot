@@ -3,8 +3,8 @@ package org.riotfamily.search.site;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.hibernate.Hibernate;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
@@ -20,7 +20,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class SiteIdentifier {
 
-	private Log log = LogFactory.getLog(SiteIdentifier.class);
+	private RiotLog log = RiotLog.get(SiteIdentifier.class);
 	
 	private PlatformTransactionManager transactionManager;
 	

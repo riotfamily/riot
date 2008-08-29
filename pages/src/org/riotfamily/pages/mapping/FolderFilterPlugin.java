@@ -31,8 +31,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
@@ -59,7 +59,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  */
 public class FolderFilterPlugin extends FilterPlugin {
 
-	private Log log = LogFactory.getLog(FolderFilterPlugin.class);
+	private RiotLog log = RiotLog.get(FolderFilterPlugin.class);
 
 	private static final TransactionDefinition TX_DEF = 
 			new DefaultTransactionDefinition();

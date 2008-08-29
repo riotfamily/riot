@@ -33,8 +33,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
@@ -60,7 +60,7 @@ public class Form implements BeanEditor {
 
 	private static final String ELEMENT_CONTAINER_ATTR = "elements";
 
-	private Log log = LogFactory.getLog(Form.class);
+	private RiotLog log = RiotLog.get(Form.class);
 
 	private String id = DEFAULT_ID;
 

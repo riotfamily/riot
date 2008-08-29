@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.io.RuntimeCommand;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -41,7 +41,7 @@ import org.springframework.util.Assert;
  */
 public class FFmpeg implements InitializingBean {
 
-	private Log log = LogFactory.getLog(FFmpeg.class);
+	private RiotLog log = RiotLog.get(FFmpeg.class);
 	
 	private static final Pattern DURATION_PATTERN = Pattern.compile(
 			"Duration: (\\d\\d):(\\d\\d):(\\d\\d)");

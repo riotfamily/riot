@@ -24,8 +24,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.xml;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -56,7 +56,7 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	/** Constant for the id attribute */
 	public static final String ID_ATTRIBUTE = "id";
 
-	private Log log = LogFactory.getLog(AbstractGenericBeanDefinitionParser.class);
+	private RiotLog log = RiotLog.get(AbstractGenericBeanDefinitionParser.class);
 	
 	private Class<?> beanClass;
 

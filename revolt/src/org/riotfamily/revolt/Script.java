@@ -30,8 +30,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlProvider;
@@ -132,7 +132,7 @@ public class Script {
 
 	public static class SqlCallback implements StatementCallback, SqlProvider {
 
-		private Log log = LogFactory.getLog(SqlCallback.class);
+		private RiotLog log = RiotLog.get(SqlCallback.class);
 		
 		private String sql;
 

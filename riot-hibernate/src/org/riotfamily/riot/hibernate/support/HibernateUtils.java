@@ -29,8 +29,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.hibernate.Criteria;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
@@ -53,8 +53,8 @@ public final class HibernateUtils {
 	private HibernateUtils() {
 	}
 	
-	private static Log getLog() {
-		return LogFactory.getLog(HibernateUtils.class);
+	private static RiotLog getLog() {
+		return RiotLog.get(HibernateUtils.class);
 	}
 
 	@SuppressWarnings("unchecked")

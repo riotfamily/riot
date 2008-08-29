@@ -26,8 +26,8 @@ package org.riotfamily.revolt.dialect;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.revolt.Dialect;
 import org.riotfamily.revolt.definition.Column;
 import org.riotfamily.revolt.support.TypeMap;
@@ -38,7 +38,7 @@ import org.riotfamily.revolt.support.TypeMap;
  */
 public abstract class AbstractDialect implements Dialect {
 
-	private Log log = LogFactory.getLog(AbstractDialect.class);
+	private RiotLog log = RiotLog.get(AbstractDialect.class);
 	
 	private HashMap<String, String> nativeTypes = new HashMap<String, String>();
 	

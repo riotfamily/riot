@@ -32,8 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.Generics;
@@ -58,7 +58,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 public class ListServiceImpl implements ListService, MessageSourceAware,
 		ConfigurationEventListener {
 
-	private Log log = LogFactory.getLog(ListServiceImpl.class);
+	private RiotLog log = RiotLog.get(ListServiceImpl.class);
 
 	private EditorRepository editorRepository;
 

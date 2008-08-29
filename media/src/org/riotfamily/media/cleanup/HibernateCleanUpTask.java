@@ -28,8 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
@@ -45,7 +45,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 public class HibernateCleanUpTask extends LongConversationTask {
 
-	private Log log = LogFactory.getLog(HibernateCleanUpTask.class);
+	private RiotLog log = RiotLog.get(HibernateCleanUpTask.class);
 	
 	private FileStore fileStore;
 	

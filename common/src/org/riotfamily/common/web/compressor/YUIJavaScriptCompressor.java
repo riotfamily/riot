@@ -29,8 +29,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
 import org.springframework.util.FileCopyUtils;
@@ -43,9 +43,9 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
  */
 public class YUIJavaScriptCompressor implements Compressor {
 
-	private Log log = LogFactory.getLog(YUIJavaScriptCompressor.class);
+	private RiotLog log = RiotLog.get(YUIJavaScriptCompressor.class);
 	
-	private ErrorReporter defaultErrorReporter = new CommonsLoggingErrorReporter(log);
+	private ErrorReporter defaultErrorReporter = new RiotLogErrorReporter(log);
 	
 	private int linebreak = -1;
 	
@@ -140,7 +140,7 @@ public class YUIJavaScriptCompressor implements Compressor {
 	 * error messages.  
 	 */
 	public void compress(Reader in, Writer out, String fileName) throws IOException {
-		CommonsLoggingErrorReporter errorReporter = new CommonsLoggingErrorReporter(log);
+		RiotLogErrorReporter errorReporter = new RiotLogErrorReporter(log);
 		errorReporter.setSourceName(fileName);
 		compress(in, out, errorReporter);
 	}

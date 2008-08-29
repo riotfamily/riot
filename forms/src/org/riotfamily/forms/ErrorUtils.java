@@ -23,8 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 
 public class ErrorUtils {
 
@@ -33,8 +33,8 @@ public class ErrorUtils {
 	private ErrorUtils() {
 	}
 	
-	private static Log getLog() {
-		return LogFactory.getLog(ErrorUtils.class);
+	private static RiotLog getLog() {
+		return RiotLog.get(ErrorUtils.class);
 	}
 	
 	public static void reject(Editor editor, String errorCode, Object[] args) {

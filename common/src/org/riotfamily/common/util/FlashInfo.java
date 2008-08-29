@@ -11,15 +11,15 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 
 /**
  * @author brooks
  */
 public class FlashInfo {
 
-	protected Log log = LogFactory.getLog(getClass());
+	protected RiotLog log = RiotLog.get(getClass());
 
 	public static String COMPRESSED = "compressed";
 

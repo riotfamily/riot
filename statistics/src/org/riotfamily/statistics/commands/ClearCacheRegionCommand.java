@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.hibernate.SessionFactory;
 import org.hibernate.cache.entry.CacheEntry;
 import org.hibernate.stat.SecondLevelCacheStatistics;
@@ -15,7 +15,7 @@ import org.riotfamily.statistics.domain.CacheRegionStatsItem;
 
 public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand {
 
-	private Log log = LogFactory.getLog(ClearCacheRegionCommand.class);
+	private RiotLog log = RiotLog.get(ClearCacheRegionCommand.class);
 	
 	public ClearCacheRegionCommand(SessionFactory sessionFactory) {
 		super(sessionFactory);

@@ -25,14 +25,14 @@ package org.riotfamily.riot.job.support;
 
 import java.util.HashSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.riot.job.model.JobDetail;
 
 public class TaskList {
 
-	private Log log = LogFactory.getLog(TaskList.class);
+	private RiotLog log = RiotLog.get(TaskList.class);
 	
 	private HashSet<JobTask> activeTasks = Generics.newHashSet();
 	

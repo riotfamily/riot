@@ -28,8 +28,8 @@ import java.io.IOException;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
@@ -53,7 +53,7 @@ import org.springframework.web.util.WebUtils;
 public class Indexer implements PageHandler,
 		ServletContextAware, InitializingBean {
 
-	private Log log = LogFactory.getLog(Indexer.class);
+	private RiotLog log = RiotLog.get(Indexer.class);
 
 	private Directory indexDir;
 

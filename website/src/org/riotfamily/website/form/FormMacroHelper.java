@@ -26,8 +26,8 @@ package org.riotfamily.website.form;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
@@ -37,7 +37,7 @@ import org.springframework.web.servlet.support.RequestContext;
 
 public class FormMacroHelper {
 
-	private Log log = LogFactory.getLog(FormMacroHelper.class);
+	private RiotLog log = RiotLog.get(FormMacroHelper.class);
 	
 	private String command;
 	

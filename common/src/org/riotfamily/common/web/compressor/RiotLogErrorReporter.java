@@ -23,29 +23,25 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.compressor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
+import org.riotfamily.common.log.RiotLog;
 
 /**
- * ErrorReporter that logs errors and warnings to a Commons-Logging {@link Log}
- * instance.
- * 
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
+ * @since 8.0
  */
-public class CommonsLoggingErrorReporter implements ErrorReporter {
+public class RiotLogErrorReporter implements ErrorReporter {
 
-	private Log log;
+	private RiotLog log;
 	
 	private String defaultSourceName;
 	
-	public CommonsLoggingErrorReporter(String categoryName) {
-		this(LogFactory.getLog(categoryName));
+	public RiotLogErrorReporter(String categoryName) {
+		this(RiotLog.get(categoryName));
 	}
 	
-	public CommonsLoggingErrorReporter(Log log) {
+	public RiotLogErrorReporter(RiotLog log) {
 		this.log = log;
 	}
 

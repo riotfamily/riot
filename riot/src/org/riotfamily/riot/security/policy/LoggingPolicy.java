@@ -25,8 +25,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.security.policy;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
@@ -37,7 +37,7 @@ import org.riotfamily.riot.security.auth.RiotUser;
  */
 public class LoggingPolicy implements AuthorizationPolicy {
 	
-    private Log log = LogFactory.getLog(LoggingPolicy.class);
+    private RiotLog log = RiotLog.get(LoggingPolicy.class);
     
 	private int order = Integer.MIN_VALUE;
 	

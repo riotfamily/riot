@@ -27,8 +27,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -52,7 +52,7 @@ import org.springframework.util.Assert;
  */
 public class HibernatePageDao extends AbstractPageDao {
 
-	private Log log = LogFactory.getLog(HibernatePageDao.class);
+	private RiotLog log = RiotLog.get(HibernatePageDao.class);
 
 	private HibernateHelper hibernate;
 

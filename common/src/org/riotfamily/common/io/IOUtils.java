@@ -36,8 +36,8 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.SocketException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.util.FileCopyUtils;
 
 public class IOUtils {
@@ -47,8 +47,8 @@ public class IOUtils {
 	private IOUtils() {
 	}
 	
-	private static Log getLog() {
-		return LogFactory.getLog(IOUtils.class);
+	private static RiotLog getLog() {
+		return RiotLog.get(IOUtils.class);
 	}
 	
 	/**

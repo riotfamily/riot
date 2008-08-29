@@ -27,8 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.riot.dao.ListParams;
@@ -42,7 +42,7 @@ import org.riotfamily.riot.hibernate.support.HibernateUtils;
 public abstract class AbstractHqlDao extends AbstractHibernateRiotDao 
 		implements SortableDao {
 
-	private Log log = LogFactory.getLog(AbstractHqlDao.class);
+	private RiotLog log = RiotLog.get(AbstractHqlDao.class);
 
     public AbstractHqlDao(SessionFactory sessionFactory) {
 		super(sessionFactory);

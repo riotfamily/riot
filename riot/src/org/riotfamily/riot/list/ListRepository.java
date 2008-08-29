@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.ui.ObjectRenderer;
@@ -43,7 +43,7 @@ import org.springframework.context.ApplicationContextAware;
  */
 public class ListRepository implements ApplicationContextAware {
 
-	private Log log = LogFactory.getLog(ListRepository.class);
+	private RiotLog log = RiotLog.get(ListRepository.class);
 	
 	private HashMap<String, ListConfig> listConfigs = Generics.newHashMap();
 	

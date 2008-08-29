@@ -26,8 +26,8 @@ package org.riotfamily.common.web.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 
 /**
  * Utility class to perform basic email address syntax checks. The
@@ -73,8 +73,8 @@ public final class EmailValidationUtils {
 	private EmailValidationUtils() {
     }
 
-	private static Log getLog() {
-		return LogFactory.getLog(EmailValidationUtils.class);
+	private static RiotLog getLog() {
+		return RiotLog.get(EmailValidationUtils.class);
 	}
 	
     /**

@@ -28,8 +28,8 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.riot.editor.EditorConstants;
@@ -41,7 +41,7 @@ import org.springframework.web.servlet.mvc.Controller;
  */
 public class ListController implements Controller {
 
-	protected Log log = LogFactory.getLog(ListController.class);
+	protected RiotLog log = RiotLog.get(ListController.class);
 
 	private String viewName = ResourceUtils.getPath(
 			ListController.class, "ListView.ftl");

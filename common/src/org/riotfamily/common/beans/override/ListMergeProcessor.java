@@ -25,8 +25,8 @@ package org.riotfamily.common.beans.override;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -45,7 +45,7 @@ import org.springframework.util.Assert;
  */
 public class ListMergeProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
 
-	private Log log = LogFactory.getLog(ListMergeProcessor.class);
+	private RiotLog log = RiotLog.get(ListMergeProcessor.class);
 			
 	private String ref;
 	

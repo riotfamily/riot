@@ -38,8 +38,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
@@ -76,8 +76,8 @@ public final class FormatUtils {
 	private FormatUtils() {
 	}
 	
-	private static Log getLog() {
-		return LogFactory.getLog(FormatUtils.class);
+	private static RiotLog getLog() {
+		return RiotLog.get(FormatUtils.class);
 	}
 
 	public static String formatNumber(Number number, String pattern, Locale locale) {

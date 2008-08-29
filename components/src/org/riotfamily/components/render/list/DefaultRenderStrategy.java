@@ -28,8 +28,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
@@ -40,7 +40,7 @@ public class DefaultRenderStrategy implements RenderStrategy {
 	
 	public static final String INHERTING_COMPONENT = "inherit";
 	
-	protected Log log = LogFactory.getLog(getClass());
+	protected RiotLog log = RiotLog.get(getClass());
 	
 	protected ComponentDao dao; 
 	

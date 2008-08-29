@@ -8,8 +8,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.statistics.domain.RequestStatsItem;
@@ -19,7 +19,7 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 
 	private static final String TOP_LEVEL_REQUEST_STAMP = "TOP_LEVEL_REQUEST_STAMP";
 
-	private static Log log = LogFactory.getLog(RequestCountFilterPlugin.class);
+	private static RiotLog log = RiotLog.get(RequestCountFilterPlugin.class);
 
 	private long warnThreshold;
 	private long maxRequests;

@@ -25,8 +25,8 @@ package org.riotfamily.riot.hibernate.dao;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
@@ -42,7 +42,7 @@ import org.springframework.util.Assert;
  */
 public class HqlDao extends AbstractHqlDao implements SwappableItemDao {
 
-	private Log log = LogFactory.getLog(HqlDao.class);
+	private RiotLog log = RiotLog.get(HqlDao.class);
 
 	private Class<?> entityClass;
 	

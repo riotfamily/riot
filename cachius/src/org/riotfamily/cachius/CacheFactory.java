@@ -31,8 +31,8 @@ import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -46,7 +46,7 @@ public class CacheFactory {
 	
 	private static final String CACHE_FILE = "cache-info";
 
-	private Log log = LogFactory.getLog(CacheFactory.class);
+	private RiotLog log = RiotLog.get(CacheFactory.class);
 	
 	private int capacity = DEFAULT_CAPACITY;
 

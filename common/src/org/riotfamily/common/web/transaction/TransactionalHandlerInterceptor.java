@@ -26,8 +26,8 @@ package org.riotfamily.common.web.transaction;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -50,7 +50,7 @@ public class TransactionalHandlerInterceptor implements HandlerInterceptor {
 	private static final String TX_STATUS_ATTRIBUTE = 
 			TransactionalHandlerInterceptor.class.getName() + ".status";
 	
-	private Log log = LogFactory.getLog(TransactionalHandlerInterceptor.class);
+	private RiotLog log = RiotLog.get(TransactionalHandlerInterceptor.class);
 	
 	private TransactionAttribute transactionAttribute = 
 			new DefaultTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED);

@@ -26,8 +26,8 @@ package org.riotfamily.pages.mapping;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.common.web.mapping.UrlResolverContext;
@@ -46,7 +46,7 @@ import org.springframework.util.StringUtils;
  */
 public class PageResolver {
 	
-	private Log log = LogFactory.getLog(PageResolver.class);
+	private RiotLog log = RiotLog.get(PageResolver.class);
 
 	public static final String PATH_ATTRIBUTE = PageResolver.class.getName() + ".path";
 

@@ -27,8 +27,8 @@ import java.util.Collection;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.revolt.support.DatabaseUtils;
 import org.riotfamily.revolt.support.DialectResolver;
@@ -47,7 +47,7 @@ import org.springframework.util.StringUtils;
 public class RevoltDataSourceFactoryBean implements FactoryBean, 
 		ApplicationContextAware {
 
-	private Log log = LogFactory.getLog(RevoltDataSourceFactoryBean.class);
+	private RiotLog log = RiotLog.get(RevoltDataSourceFactoryBean.class);
 	
 	private DataSource dataSource;
 

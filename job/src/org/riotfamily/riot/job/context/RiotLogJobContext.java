@@ -23,24 +23,23 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job.context;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.riot.job.JobContext;
 import org.riotfamily.riot.job.JobInterruptedException;
 
-public class CommonsLogginJobContext implements JobContext {
+public class RiotLogJobContext implements JobContext {
 	
-	private Log log;
+	private RiotLog log;
 	
 	private int stepsTotal;
 	
 	private int stepsCompleted;
 	
-	public CommonsLogginJobContext() {
-		log = LogFactory.getLog(CommonsLogginJobContext.class);
+	public RiotLogJobContext() {
+		log = RiotLog.get(RiotLogJobContext.class);
 	}
 
-	public CommonsLogginJobContext(Log log) {
+	public RiotLogJobContext(RiotLog log) {
 		this.log = log;
 	}
 

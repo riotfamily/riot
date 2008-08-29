@@ -23,8 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job.support;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.riot.job.JobContext;
 
 /**
@@ -36,7 +36,7 @@ import org.riotfamily.riot.job.JobContext;
  */
 public class ExecutionTimeUpdater implements Runnable {
 
-	private Log log = LogFactory.getLog(ExecutionTimeUpdater.class);
+	private RiotLog log = RiotLog.get(ExecutionTimeUpdater.class);
 	
 	private TaskList taskList;
 	

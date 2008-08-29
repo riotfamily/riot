@@ -36,8 +36,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.io.IOUtils;
 
 /**
@@ -47,7 +47,7 @@ import org.riotfamily.common.io.IOUtils;
  */
 public final class Cache implements Serializable {
 
-    private Log log = LogFactory.getLog(Cache.class);
+    private RiotLog log = RiotLog.get(Cache.class);
     
     private static ItemUsageComparator itemUsageComparator = new ItemUsageComparator();
     
@@ -366,7 +366,7 @@ public final class Cache implements Serializable {
      */
     private class CleanUpThread extends Thread {
     	
-    	private Log log = LogFactory.getLog(CleanUpThread.class);
+    	private RiotLog log = RiotLog.get(CleanUpThread.class);
     	
     	private boolean running = true;
     	

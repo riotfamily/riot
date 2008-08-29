@@ -26,8 +26,8 @@ package org.riotfamily.common.io;
 import java.io.File;
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 
 /**
  * Iterator that iterates recursively over all files in a directory. Calling
@@ -41,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class RecursiveFileIterator implements Iterator<File> {
 
-	private Log log = LogFactory.getLog(RecursiveFileIterator.class);
+	private RiotLog log = RiotLog.get(RecursiveFileIterator.class);
 	
 	private File dir;
 	

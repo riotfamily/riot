@@ -25,8 +25,8 @@ package org.riotfamily.common.web.servlet;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -39,7 +39,7 @@ import org.springframework.web.context.ServletContextAware;
 public class WebXmlPathCompleter extends DefaultPathCompleter 
 		implements ServletContextAware, InitializingBean {
 
-	private Log log = LogFactory.getLog(WebXmlPathCompleter.class);
+	private RiotLog log = RiotLog.get(WebXmlPathCompleter.class);
 
 	private String servletName;
 

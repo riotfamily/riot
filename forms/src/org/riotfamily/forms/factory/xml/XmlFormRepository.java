@@ -31,8 +31,8 @@ import java.util.Map.Entry;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.xml.BeanConfigurationWatcher;
 import org.riotfamily.common.xml.ConfigurableBean;
@@ -58,7 +58,7 @@ import org.springframework.validation.Validator;
 public class XmlFormRepository extends AbstractFormRepository implements
 		BeanFactoryAware, InitializingBean, ConfigurableBean {
 
-	private Log log = LogFactory.getLog(XmlFormRepository.class);
+	private RiotLog log = RiotLog.get(XmlFormRepository.class);
 	
 	private List<Resource> configLocations;
 	

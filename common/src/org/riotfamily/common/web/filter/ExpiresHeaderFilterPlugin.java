@@ -31,8 +31,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 
@@ -50,7 +50,7 @@ import org.riotfamily.common.web.util.ServletUtils;
  */
 public class ExpiresHeaderFilterPlugin extends FilterPlugin {
 
-	private Log log = LogFactory.getLog(
+	private RiotLog log = RiotLog.get(
 			ExpiresHeaderFilterPlugin.class);
 	
 	public static final String DEFAULT_EXPIRATION = "10Y";

@@ -40,8 +40,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
@@ -63,7 +63,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 	*/
 public class CommonMacroHelper {
 
-	private Log log = LogFactory.getLog(CommonMacroHelper.class);
+	private RiotLog log = RiotLog.get(CommonMacroHelper.class);
 
 	private static final Pattern LINK_PATTERN = Pattern.compile(
 			"(\\s+href\\s*=\\s*\")(.+?)(\")", Pattern.CASE_INSENSITIVE);

@@ -27,8 +27,8 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.web.interceptor.PathMatchingInterceptor;
 import org.springframework.web.util.WebUtils;
 
@@ -40,7 +40,7 @@ import org.springframework.web.util.WebUtils;
  */
 public class IncludeOnlyInterceptor extends PathMatchingInterceptor {
 
-	private Log log = LogFactory.getLog(IncludeOnlyInterceptor.class);
+	private RiotLog log = RiotLog.get(IncludeOnlyInterceptor.class);
 	
 	protected boolean doPreHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler) throws Exception {

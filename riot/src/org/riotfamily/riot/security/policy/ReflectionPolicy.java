@@ -29,8 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.collection.TypeComparatorUtils;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
@@ -52,7 +52,7 @@ import org.springframework.util.StringUtils;
  */
 public class ReflectionPolicy implements AuthorizationPolicy {
 
-	private Log log = LogFactory.getLog(ReflectionPolicy.class);
+	private RiotLog log = RiotLog.get(ReflectionPolicy.class);
 	
 	private Object delegate = this;
 	

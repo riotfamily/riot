@@ -27,8 +27,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
@@ -46,7 +46,7 @@ import org.riotfamily.riot.dao.SortableDao;
 public class HqlCollectionDao extends AbstractHibernateRiotDao 
 		implements SortableDao, ParentChildDao, CutAndPasteEnabledDao {
 
-	private Log log = LogFactory.getLog(HqlCollectionDao.class);
+	private RiotLog log = RiotLog.get(HqlCollectionDao.class);
 	
 	private boolean polymorph = true;
         

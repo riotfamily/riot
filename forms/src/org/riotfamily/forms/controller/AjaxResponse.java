@@ -34,8 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.DHTMLElement;
@@ -57,7 +57,7 @@ import org.riotfamily.forms.resource.ResourceElement;
  */
 public class AjaxResponse implements FormListener {
 
-	private Log log = LogFactory.getLog(AjaxResponse.class);
+	private RiotLog log = RiotLog.get(AjaxResponse.class);
 	
 	private PrintWriter writer;
 	

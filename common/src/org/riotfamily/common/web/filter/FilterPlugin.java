@@ -31,8 +31,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -53,7 +53,7 @@ import org.springframework.web.context.ServletContextAware;
 public abstract class FilterPlugin implements ServletContextAware, 
 		InitializingBean, DisposableBean, Ordered {
 
-	private Log log = LogFactory.getLog(FilterPlugin.class);
+	private RiotLog log = RiotLog.get(FilterPlugin.class);
 	
 	private ServletContext servletContext;
 	

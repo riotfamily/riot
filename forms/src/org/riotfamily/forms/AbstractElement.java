@@ -25,8 +25,8 @@ package org.riotfamily.forms;
 
 import java.io.PrintWriter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.request.FormRequest;
@@ -37,7 +37,7 @@ import org.riotfamily.forms.request.FormRequest;
  */
 public abstract class AbstractElement implements Element {
 
-	protected Log log = LogFactory.getLog(getClass());
+	protected RiotLog log = RiotLog.get(getClass());
 	
 	private Form form;
 

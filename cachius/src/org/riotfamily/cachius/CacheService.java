@@ -27,8 +27,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.cachius.spring.CacheableController;
 import org.riotfamily.cachius.support.ReaderWriterLock;
 import org.riotfamily.common.util.Generics;
@@ -39,7 +39,7 @@ import org.riotfamily.common.util.Generics;
  */
 public class CacheService {
 
-	private Log log = LogFactory.getLog(CacheService.class);
+	private RiotLog log = RiotLog.get(CacheService.class);
 	
 	private Cache cache;
 	

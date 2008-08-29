@@ -26,8 +26,8 @@ package org.riotfamily.dbmsgsrc.riot;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -46,7 +46,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 public class ImportMessagesCommand extends DialogCommand {
 
-	private static final Log log = LogFactory.getLog(ImportMessagesCommand.class);
+	private static final RiotLog log = RiotLog.get(ImportMessagesCommand.class);
 	
 	public static final String ACTION_IMPORT = "import";
 	

@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 
 /**
  * Collection whose values are stored as {@link WeakReference weak references}.
@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class WeakReferenceCollection<T> extends AbstractCollection<T> {
 
-	private Log log = LogFactory.getLog(WeakReferenceCollection.class);
+	private RiotLog log = RiotLog.get(WeakReferenceCollection.class);
 	
 	private Collection<WeakReference<T>> references = new ArrayList<WeakReference<T>>();
 	

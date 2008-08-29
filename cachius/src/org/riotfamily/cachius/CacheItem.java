@@ -46,8 +46,8 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.cachius.support.Cookies;
 import org.riotfamily.cachius.support.Headers;
 import org.riotfamily.cachius.support.ReaderWriterLock;
@@ -73,7 +73,7 @@ public class CacheItem implements Serializable {
     
     private static final String FILE_ENCODING = "UTF-8";
     
-    private transient Log log = LogFactory.getLog(CacheItem.class);
+    private transient RiotLog log = RiotLog.get(CacheItem.class);
     
     /** The key used for lookups */
     private String key;
@@ -419,7 +419,7 @@ public class CacheItem implements Serializable {
          
          in.defaultReadObject();
          lock = new ReaderWriterLock();
-         log = LogFactory.getLog(CacheItem.class);
+         log = RiotLog.get(CacheItem.class);
     }
     
     public int hashCode() {

@@ -30,8 +30,8 @@ import org.apache.commons.httpclient.HttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 
 /**
  * PageLoader implementation that uses the Jakarta Commons HttpClient.
@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CommonsHttpClientPageLoader implements PageLoader {
 
-	private Log log = LogFactory.getLog(CommonsHttpClientPageLoader.class);
+	private RiotLog log = RiotLog.get(CommonsHttpClientPageLoader.class);
 
     private HttpClient client = new HttpClient();
 

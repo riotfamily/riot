@@ -35,8 +35,8 @@ import javax.activation.FileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.Compressible;
 import org.riotfamily.common.io.IOUtils;
@@ -56,7 +56,7 @@ import org.springframework.web.servlet.mvc.LastModified;
 public class AbstractResourceController extends AbstractCacheableController
 		implements LastModified, Compressible {
 
-	private Log log = LogFactory.getLog(AbstractResourceController.class);
+	private RiotLog log = RiotLog.get(AbstractResourceController.class);
 	
 	private FileTypeMap fileTypeMap = FileTypeMap.getDefaultFileTypeMap();
 	

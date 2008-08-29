@@ -30,8 +30,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -49,7 +49,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  */
 public class OpenSessionInViewFilterPlugin extends FilterPlugin {
 
-	private Log log = LogFactory.getLog(OpenSessionInViewFilterPlugin.class);
+	private RiotLog log = RiotLog.get(OpenSessionInViewFilterPlugin.class);
 	
 	private SessionFactory sessionFactory;
 

@@ -30,8 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.pages.cache.PageCacheUtils;
@@ -53,7 +53,7 @@ import org.springframework.util.ObjectUtils;
 	*/
 public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
-	private Log log = LogFactory.getLog(AbstractPageDao.class);
+	private RiotLog log = RiotLog.get(AbstractPageDao.class);
 
 	private CacheService cacheService;
 	

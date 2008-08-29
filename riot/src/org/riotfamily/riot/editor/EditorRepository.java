@@ -25,8 +25,8 @@ package org.riotfamily.riot.editor;
 
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.xml.ConfigurationEventListener;
@@ -41,7 +41,7 @@ import org.springframework.util.Assert;
  */
 public class EditorRepository implements RiotRuntimeAware {
 
-	private Log log = LogFactory.getLog(EditorRepository.class);
+	private RiotLog log = RiotLog.get(EditorRepository.class);
 
 	private Map<String, EditorDefinition> editorDefinitions = Generics.newHashMap();
 

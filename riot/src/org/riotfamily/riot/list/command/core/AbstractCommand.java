@@ -23,8 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.core;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.command.CommandContext;
@@ -44,7 +44,7 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 
 	private final String COMMAND_MESSAGE_PREFIX = "command.";
 
-	protected Log log = LogFactory.getLog(getClass());
+	protected RiotLog log = RiotLog.get(getClass());
 
 	private String id;
 	

@@ -25,8 +25,8 @@ package org.riotfamily.forms.fileupload;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
@@ -40,7 +40,7 @@ import org.springframework.web.multipart.MultipartResolver;
  */
 public class FormsMultipartResolver implements MultipartResolver {
 
-	private Log log = LogFactory.getLog(FormsMultipartResolver.class);
+	private RiotLog log = RiotLog.get(FormsMultipartResolver.class);
 	
 	private MultipartResolver resolver;
 	

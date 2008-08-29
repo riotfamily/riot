@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
@@ -89,7 +89,7 @@ public class XmlFormRepositoryDigester implements DocumentDigester {
 
 	public static final String NAMESPACE = "http://www.riotfamily.org/schema/forms/form-config";
 
-	private Log log = LogFactory.getLog(XmlFormRepositoryDigester.class);
+	private RiotLog log = RiotLog.get(XmlFormRepositoryDigester.class);
 
 	private ConfigurableListableBeanFactory beanFactory;
 

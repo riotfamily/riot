@@ -23,8 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.override;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -43,7 +43,7 @@ import org.springframework.core.PriorityOrdered;
 public class PropertyOverrideProcessor implements BeanFactoryPostProcessor, 
 		PriorityOrdered {
 
-	private Log log = LogFactory.getLog(PropertyOverrideProcessor.class);
+	private RiotLog log = RiotLog.get(PropertyOverrideProcessor.class);
 	
 	private String ref;
 

@@ -25,13 +25,13 @@ package org.riotfamily.riot.resource;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.core.io.Resource;
 
 public class ResourceMapping {
 
-	private Log log = LogFactory.getLog(ResourceMapping.class);
+	private RiotLog log = RiotLog.get(ResourceMapping.class);
 	
 	private String path;
 	

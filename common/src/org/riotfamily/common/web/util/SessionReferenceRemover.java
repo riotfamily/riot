@@ -30,8 +30,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.log.RiotLog;
 
 /**
  * Utility class that removes a value from a collection when the HTTP session 
@@ -45,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SessionReferenceRemover implements HttpSessionBindingListener {
 
-	private Log log = LogFactory.getLog(SessionReferenceRemover.class);
+	private RiotLog log = RiotLog.get(SessionReferenceRemover.class);
 	
 	private static final String SESSION_KEY = 
 			SessionReferenceRemover.class.getName();
