@@ -92,6 +92,10 @@ public class FileUpload extends AbstractFileUpload {
 	public class PreviewElement extends TemplateElement
 			implements ContentElement {
 		
+		public boolean isFilePresent() {
+			return FileUpload.this.isFilePresent();
+		}
+		
 		public void handleContentRequest(HttpServletRequest request,
 				HttpServletResponse response) throws IOException {
 		
