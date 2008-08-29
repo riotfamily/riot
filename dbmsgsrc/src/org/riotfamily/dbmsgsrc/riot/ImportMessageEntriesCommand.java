@@ -68,6 +68,7 @@ public static final String ACTION_IMPORT = "import";
 	@Override
 	public Form createForm(Object bean) {
 		Form form = new Form(Upload.class);
+		form.setId("importMessageEntriesForm");
 		FileUpload fileUpload = new FileUpload();
 		fileUpload.setRequired(true);
 		form.addElement(fileUpload, "data");

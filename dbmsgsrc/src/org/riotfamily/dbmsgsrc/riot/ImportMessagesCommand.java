@@ -70,6 +70,7 @@ public class ImportMessagesCommand extends DialogCommand {
 	@Override
 	public Form createForm(Object bean) {
 		Form form = new Form(Upload.class);
+		form.setId("importMessagesForm");
 		FileUpload fileUpload = new FileUpload();
 		fileUpload.setRequired(true);
 		form.addElement(fileUpload, "data");
