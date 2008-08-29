@@ -71,7 +71,7 @@ public class PropertyOverrideProcessor implements BeanFactoryPostProcessor,
 			ConfigurableListableBeanFactory beanFactory) 
 			throws BeansException {
 	
-		log.info("Overriding properties of bean [" + ref + "]");
+		log.debug("Overriding properties of bean [" + ref + "]");
 		BeanDefinition bd = beanFactory.getBeanDefinition(ref);
 		bd.getPropertyValues().addPropertyValues(propertyValues);
 	}

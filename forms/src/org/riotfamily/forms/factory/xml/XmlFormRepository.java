@@ -224,7 +224,7 @@ public class XmlFormRepository extends AbstractFormRepository implements
 		getFactories().clear();
 		for (Resource res : getConfigLocations()) {
 			if (res.exists()) {
-				log.info("Reading forms from " + res.getDescription());
+				log.debug("Reading forms from " + res.getDescription());
 				DocumentReader reader = new ValidatingDocumentReader(res);
 				digester.digest(reader.readDocument(), res);
 			}

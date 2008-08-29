@@ -89,7 +89,7 @@ public class MapMergeProcessor implements BeanFactoryPostProcessor, PriorityOrde
 		
 		if (log.isInfoEnabled()) {
 			String keys = StringUtils.collectionToCommaDelimitedString(entries.keySet());
-			log.info("Adding [" + keys + "] to " + ref + "." + property);
+			log.debug("Adding [" + keys + "] to " + ref + "." + property);
 		}
 		
 		PropertyValue pv = bd.getPropertyValues().getPropertyValue(property);

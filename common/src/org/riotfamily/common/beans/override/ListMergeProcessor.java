@@ -93,7 +93,7 @@ public class ListMergeProcessor implements BeanFactoryPostProcessor, PriorityOrd
 			property = "sourceList";
 		}
 		
-		log.info("Adding " + values.size() + " items to " + ref 
+		log.debug("Adding " + values.size() + " items to " + ref 
 				+ "." + property + ": " + values);
 		
 		PropertyValue pv = bd.getPropertyValues().getPropertyValue(property);

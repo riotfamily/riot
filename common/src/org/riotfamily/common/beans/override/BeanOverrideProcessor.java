@@ -89,7 +89,7 @@ public class BeanOverrideProcessor implements BeanFactoryPostProcessor, Priority
 	}
 	
 	private void overwriteBeanDefinition(BeanDefinition target, BeanDefinition source) {
-		log.info("Replacing bean [" + ref + "] with a [" 
+		log.debug("Replacing bean [" + ref + "] with a [" 
 				+ source.getBeanClassName() + "]");
 		
 		target.setBeanClassName(source.getBeanClassName());
