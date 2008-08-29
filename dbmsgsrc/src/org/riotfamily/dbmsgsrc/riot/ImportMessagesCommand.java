@@ -95,18 +95,20 @@ public class ImportMessagesCommand extends DialogCommand {
 		if (isValid(sheet)) {
 			for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
 				HSSFRow row = sheet.getRow(i);
-				String code = row.getCell(1).getRichStringCellValue().getString();
-				String translation = row.getCell(3).getRichStringCellValue().getString();
-				if (StringUtils.hasText(translation)) {
-					MessageBundleEntry entry = dao.findEntry(bundle, code);
-					if (entry != null) {
-						entry.addTranslation(site.getLocale(), translation);
-						dao.saveEntry(entry);					
+				if (row.getCell(1) != null) {
+					String code = row.getCell(1).getRichStringCellValue().getString();
+					String translation = row.getCell(3).getRichStringCellValue().getString();
+					if (StringUtils.hasText(translation)) {
+						MessageBundleEntry entry = dao.findEntry(bundle, code);
+						if (entry != null) {
+							entry.addTranslation(site.getLocale(), translation);
+							dao.saveEntry(entry);					
+						}
+						else {
+							log.info("Message Code does not exist - " + code);
+						}
 					}
-					else {
-						log.info("Message Code does not exist - " + code);
-					}
-				}				
+				}
 			}
 		}
 	}
