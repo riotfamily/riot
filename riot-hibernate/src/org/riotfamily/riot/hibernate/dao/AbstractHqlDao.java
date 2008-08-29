@@ -56,8 +56,12 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     	return "this";
     }
 
-    protected String getFrom() {
-    	return getEntityClass().getName() + " as this";
+    protected String getFrom(ListParams params) {
+    	StringBuffer from = new StringBuffer();
+    	from.append(getEntityClass().getName());
+    	from.append(" as this");
+    	HibernateUtils.appendJoinsForSearch(from, "this", params.getSearchProperties());    	    	
+    	return from.toString() ;
     }
     
     protected String getWhere() {
@@ -126,7 +130,7 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     protected final String buildCountHql(Object parent, ListParams params) {
     	StringBuffer hql = new StringBuffer();
     	hql.append("select count(*) from ");
-    	hql.append(getFrom());
+    	hql.append(getFrom(params));
     	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
     	log.debug(hql);
         return hql.toString();
@@ -140,7 +144,7 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     	hql.append("select ");
     	hql.append(getSelect());
     	hql.append(" from ");
-    	hql.append(getFrom());
+    	hql.append(getFrom(params));
     	HibernateUtils.appendHql(hql, "where", getWhereClause(parent, params));
     	HibernateUtils.appendHql(hql, "order by", getOrderBy(params));
     	log.debug(hql);

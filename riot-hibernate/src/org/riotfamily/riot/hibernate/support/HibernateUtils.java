@@ -216,11 +216,54 @@ public final class HibernateUtils {
 			if (i > 0) {
 				hql.append(" or ");
 			}
+			
+			hql.append('(');
+			if (name.indexOf('.') != -1) {				
+				String[] path = name.split("\\.");
+				for (int j = 0; j < path.length - 1; j++) {
+					hql.append(alias).append('.');
+					for (int k = 0; k <= j; k++) {
+						hql.append(path[k]);
+						if (k < j - 1) {
+							hql.append('.');
+						}
+					}
+					hql.append(" is not null");
+				}
+				hql.append(" and ");
+			}
 			hql.append("lower(").append(alias).append('.').append(name);
-			hql.append(") like :").append(searchParamName);
+			hql.append(") like :").append(searchParamName).append(')');;
 		}
-		hql.append(')');
+		hql.append(')');		
 		return hql.toString();
+	}
+	
+	/**
+	 * Joins all path properties requested by the search property names
+	 * Example: search should be foo.bar = :search -&gt <code>join this.foo</code>
+	 */
+	public static StringBuffer appendJoinsForSearch(StringBuffer hql, String alias, String[] propertyNames) {
+		if (propertyNames == null || propertyNames.length == 0) {
+			return hql;
+		}		
+		for (int i = 0; i < propertyNames.length; i++) {
+			String name = propertyNames[i];			
+			
+			if (name.indexOf('.') != -1) {				
+				String[] path = name.split("\\.");
+				for (int j = 0; j < path.length - 1; j++) {
+					hql.append(" left join ").append(alias).append('.');
+					for (int k = 0; k <= j; k++) {
+						hql.append(path[k]);
+						if (k < j - 1) {
+							hql.append('.');
+						}
+					}					
+				}				
+			}			
+		}				
+		return hql;
 	}
 
 	/**
