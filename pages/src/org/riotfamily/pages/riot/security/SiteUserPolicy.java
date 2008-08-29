@@ -34,17 +34,17 @@ public class SiteUserPolicy implements AuthorizationPolicy {
 			SiteUser user = (SiteUser) riotUser;
 			
 			if (isLimited(user)) {
-				boolean allowed = true;
+				boolean denied = false;
 				if (object.getClass().isArray()) {
 					Object[] objects = (Object[]) object;
 					for (Object o : objects) {
-						allowed &= isAllowed(user, o);
+						denied |= isDenied(user, o);
 					}
 				}
 				else {
-					allowed &= isAllowed(user, object);
+					denied &= isDenied(user, object);
 				}
-				if (!allowed) {
+				if (denied) {
 					return ACCESS_DENIED;
 				}
 			}
@@ -52,7 +52,7 @@ public class SiteUserPolicy implements AuthorizationPolicy {
 		return ACCESS_ABSTAIN;
 	}
 	
-	private boolean isAllowed(SiteUser user, Object object) {
+	private boolean isDenied(SiteUser user, Object object) {
 		if (object instanceof Site) {
 			Site site = (Site) object;
 			return !user.getSites().contains(site);
@@ -62,7 +62,7 @@ public class SiteUserPolicy implements AuthorizationPolicy {
 			Page page = pageResolver.getPage(request);
 			return page != null && !user.getSites().contains(page.getSite());
 		}
-		return true;
+		return false;
 	}
 
 	protected boolean isLimited(SiteUser siteUser) {
