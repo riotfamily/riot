@@ -224,11 +224,14 @@ public final class HibernateUtils {
 					hql.append(alias).append('.');
 					for (int k = 0; k <= j; k++) {
 						hql.append(path[k]);
-						if (k < j - 1) {
+						if (k < j) {
 							hql.append('.');
 						}
 					}
-					hql.append(" is not null");
+					hql.append(" is not null ");
+					if (j < path.length - 2) {
+						hql.append(" and ");
+					}
 				}
 				hql.append(" and ");
 			}
@@ -241,7 +244,7 @@ public final class HibernateUtils {
 	
 	/**
 	 * Joins all path properties requested by the search property names
-	 * Example: search should be foo.bar = :search -&gt <code>join this.foo</code>
+	 * Example: search should be foo.bar = :search -&gt <code>join this.foo</code>	 * 
 	 */
 	public static StringBuffer appendJoinsForSearch(StringBuffer hql, String alias, String[] propertyNames) {
 		if (propertyNames == null || propertyNames.length == 0) {
@@ -256,7 +259,7 @@ public final class HibernateUtils {
 					hql.append(" left join ").append(alias).append('.');
 					for (int k = 0; k <= j; k++) {
 						hql.append(path[k]);
-						if (k < j - 1) {
+						if (k < j) {
 							hql.append('.');
 						}
 					}					
