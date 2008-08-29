@@ -56,7 +56,7 @@ public class LocalMessageDao extends AbstractHqlDao {
 	}
 
 	@Override
-	protected String getFrom() {
+	protected String getFrom(ListParams params) {
 		return MessageBundleEntry.class.getName()  
 				+ " as e left join e.messages lm with lm.text is not null" 
 				+ " and lm.locale = :locale"
