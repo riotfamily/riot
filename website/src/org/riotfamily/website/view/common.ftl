@@ -420,11 +420,13 @@
   -->
 <#macro removeNoscriptClass>
 	<script type="text/javascript">
-		var b = document.body;
-		var noscriptClass = b.className.replace(/(^|\s+)noscript(\s+|$)/, ' ');
-		if (b.className != noscriptClass) {
-			b.className = noscriptClass;
-		}
+		(function() {
+			var b = document.body;
+			var noscriptClass = b.className.replace(/(^|\s+)noscript(\s+|$)/, ' ');
+			if (b.className != noscriptClass) {
+				b.className = noscriptClass;
+			}
+		})();
 	</script>
 </#macro>
 
