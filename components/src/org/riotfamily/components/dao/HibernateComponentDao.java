@@ -23,8 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.dao;
 
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Component;
@@ -98,11 +100,12 @@ public class HibernateComponentDao implements ComponentDao {
 	}
 
 	public ContentContainer findContainerForComponent(Component component) {
-		Query query = hibernate.createQuery(
-				"from ComponentListWrapper where value = :list")
-				.setParameter("list", component.getList());
-		
-		ComponentListWrapper wrapper = hibernate.uniqueResult(query);
+		ComponentListWrapper wrapper = (ComponentListWrapper)
+				hibernate.createCriteria(ComponentListWrapper.class)
+				.add(Restrictions.eq("value", component.getList()))
+				.setFetchMode("value", FetchMode.SELECT)
+				.uniqueResult();
+
 		return findContainerForWrapper(wrapper);
 	}
 	
@@ -114,7 +117,10 @@ public class HibernateComponentDao implements ComponentDao {
 		query.setParameter("wrapper", wrapper);
 		Content content = hibernate.uniqueResult(query);
 		if (content != null) {
-			query = hibernate.createQuery("from ContentContainer contentContainer where contentContainer.liveVersion = :content or contentContainer.previewVersion = :content");
+			query = hibernate.createQuery("from ContentContainer contentContainer" 
+					+ " where contentContainer.liveVersion = :content"
+					+ " or contentContainer.previewVersion = :content");
+			
 			query.setParameter("content", content);
 			return hibernate.uniqueResult(query);
 		}
