@@ -40,9 +40,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.collaboration.SharedProperties;
@@ -140,6 +139,9 @@ public class CommonMacroHelper {
 	
 	public String getDateDelimiter() {		
 		if (dateDelimiter == null) {
+			if (dateFormat == null) {
+				getDateFormat();
+			}
 			dateDelimiter = FormatUtils.getDateDelimiter(dateFormat);			
 		}
 		return dateDelimiter;
