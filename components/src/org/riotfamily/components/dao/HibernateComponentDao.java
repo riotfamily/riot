@@ -113,7 +113,7 @@ public class HibernateComponentDao implements ComponentDao {
 		if (wrapper == null) {
 			return null;
 		}
-		Query query = hibernate.createQuery("from Content c where :wrapper in elements(c.wrappers)");
+		Query query = hibernate.createQuery("select c from Content c join c.wrappers w where w = :wrapper");
 		query.setParameter("wrapper", wrapper);
 		Content content = hibernate.uniqueResult(query);
 		if (content != null) {
@@ -125,12 +125,12 @@ public class HibernateComponentDao implements ComponentDao {
 			return hibernate.uniqueResult(query);
 		}
 		else {
-			query = hibernate.createQuery("from ListWrapper l where :wrapper in elements(l.wrapperList)");
+			query = hibernate.createQuery("select l from ListWrapper l join l.wrapperList w where w = :wrapper");
 			query.setParameter("wrapper", wrapper);
 			ValueWrapper<?> parent = hibernate.uniqueResult(query);
 			
 			if (parent == null) {			
-				query = hibernate.createQuery("from MapWrapper m where :wrapper in elements(l.wrapperMap)");
+				query = hibernate.createQuery("select m from MapWrapper m join m.wrapperMap w where w = :wrapper");
 				query.setParameter("wrapper", wrapper);
 				parent = hibernate.uniqueResult(query);
 			}
