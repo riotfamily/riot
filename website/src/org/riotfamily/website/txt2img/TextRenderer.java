@@ -263,7 +263,8 @@ public class TextRenderer implements InitializingBean {
 			paddingLeft *= scale;
 			lineSpacing *= scale;
 			if (maxWidth != null) {
-				maxWidth = new Integer(maxWidth.intValue() * scale);
+				maxWidth = new Integer(maxWidth.intValue() * scale 
+						- paddingLeft - paddingRight);
 			}
 		}
 	}
@@ -273,7 +274,7 @@ public class TextRenderer implements InitializingBean {
 			maxWidth = this.maxWidth.intValue();
 		}
 		else if (resample && maxWidth < Integer.MAX_VALUE) {
-			maxWidth *= scale;
+			maxWidth = maxWidth * scale - paddingLeft - paddingRight;
 		}
 		
 		float fontSize = this.fontSize;
