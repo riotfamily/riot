@@ -205,6 +205,19 @@ public class PageFacade {
 		return page.getAncestors();
 	}
 
+	public Object findPropertyInAncestors(String key) {
+		Page p = page;
+		while (p != null) {
+			Map<String, Object> props = p.getPageProperties().unwrap(preview);
+			Object value = props.get(key);
+			if (value != null) {
+				return value;
+			}
+			p = p.getParentPage();
+		}
+		return null;
+	}
+	
 	public String getPageType() {
 		return page.getPageType();
 	}
