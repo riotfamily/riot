@@ -41,7 +41,7 @@ public class ButtonController implements Controller {
 			HttpServletResponse response) throws Exception {
 		
 		String style = (String) request.getAttribute("style");
-		String label = (String) request.getAttribute("label"); 
+		String label = request.getParameter("label"); 
 		buttonService.serveImage(style, label, request, response);
 		return null;
 	}

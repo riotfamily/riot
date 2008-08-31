@@ -107,7 +107,7 @@ public class ButtonService implements ApplicationContextAware {
 	
 	private String getImageUri(String style, String label, HttpServletRequest request) {
 		String encodedLabel = FormatUtils.uriEscape(label);
-		return String.format("%s/riot-utils/imagebtn/%s/%s.png", 
+		return String.format("%s/riot-utils/imagebtn/%s.png?label=%s", 
 				request.getContextPath(), style, encodedLabel);
 	}
 	
