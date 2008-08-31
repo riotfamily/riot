@@ -239,25 +239,25 @@ riot.ComponentList = Class.create({
 			el.descendants().each(function(desc) {
 				if (desc.className && desc.up('.riot-component') == el) {
 					// Set "first" or "not-first" class					
-					var firstExp = /(^|\s)(not-)?first(\s|$)/; 
+					var firstExp = /(^|\s|-)(not-)?first(-|\s|$)/; 
 					if (firstExp.test(desc.className)) {
 						var firstClass = (i == 0) ? 'first' : 'not-first'; 
 						desc.className = desc.className.replace(firstExp, '$1' + firstClass + '$3');
 					}
 					// Set "last" or "not-last" class
-					var lastExp = /(^|\s)(not-)?last(\s|$)/; 
+					var lastExp = /(^|\s|-)(not-)?last(-|\s|$)/; 
 					if (lastExp.test(desc.className)) {
 						var lastClass = (i == last) ? 'last' : 'not-last'; 
 						desc.className = desc.className.replace(lastExp, '$1' + lastClass + '$3');
 					}
 					// Set "even" or "odd" class
-					var zebraExp = /(^|\s)(even|odd)(\s|$)/; 
+					var zebraExp = /(^|\s|-)(even|odd)(-|\s|$)/; 
 					if (zebraExp.test(desc.className)) {
 						var zebraClass = (i % 2 == 0) ? 'even' : 'odd'; 
 						desc.className = desc.className.replace(zebraExp, '$1' + zebraClass + '$3');
 					}
 					// Set "every-nth" or "not-every-nth" class
-					var modExp = /(^|\s)(not-)?every-(\d+)(nd|rd|th)(\s|$)/;
+					var modExp = /(^|\s)(not-)?every-(\d+)(nd|rd|th)(-|\s|$)/;
 					var match = desc.className.match(modExp);
 					if (match) {
 						var nth = match[3];
@@ -507,9 +507,10 @@ riot.Component = Class.create(riot.Content, {
 	
 	replaceHtml: function(html) {
 		var tmp = RBuilder.node('div');
-		tmp.update(html);
+		tmp.innerHTML = html.stripScripts();
 		var el = tmp.down();
 		this.element.replaceBy(el);
+		html.evalScripts.bind(html).defer();
 		this.element = el;
 		riot.toolbar.selectedButton.applyHandler(false);
 		if (window.riotEditCallbacks) {
@@ -592,9 +593,10 @@ riot.InsertButton = Class.create({
 
 	onupdate: function(html) {
 		var tmp = RBuilder.node('div');
-		tmp.update(html);
+		tmp.innerHTML = html.stripScripts();
 		var el = tmp.down();
 		this.componentElement.replaceBy(el);
+		html.evalScripts.bind(html).defer();
 		this.componentList.findComponentElements();
 		this.componentElement = el;
 		if (window.riotEditCallbacks) {
