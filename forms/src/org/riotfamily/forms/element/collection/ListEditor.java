@@ -226,7 +226,10 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 					Object oldValue = item.getBackingObject();
 					int i = newValues.indexOf(oldValue);
 					if (i >= 0) {
-						item.setBackingObject(newValues.get(i));
+						Object newValue = newValues.get(i);
+						if (newValue != oldValue) {
+							item.setBackingObject(newValue);
+						}
 					}
 				}
 			}
@@ -234,7 +237,7 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	}
 	
 	public Object getValue() {
-		Collection<Object> collection = createOrClearCollection();
+		ArrayList<Object> temp = Generics.newArrayList();
 		int i = 0;
 		for (ListItem item : items) {
 			Object value = item.getValue();
@@ -246,9 +249,11 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 				if (positionProperty != null) {
 					PropertyUtils.setProperty(value, positionProperty, String.valueOf(i++));
 				}
-				collection.add(value);
+				temp.add(value);
 			}
 		}
+		Collection<Object> collection = createOrClearCollection();
+		collection.addAll(temp);
 		return collection;
 	}
 				

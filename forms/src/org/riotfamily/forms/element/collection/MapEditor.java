@@ -220,7 +220,7 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 				MapItem item = (MapItem) it.next();
 				Object oldValue = item.getValue();
 				Object newValue = newValues.get(item.key);
-				if (ObjectUtils.nullSafeEquals(oldValue, newValue)) {
+				if (ObjectUtils.nullSafeEquals(oldValue, newValue) && oldValue != newValue) {
 					item.setBackingObject(newValue);
 				}
 			}
