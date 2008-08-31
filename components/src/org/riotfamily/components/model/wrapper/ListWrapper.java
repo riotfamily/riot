@@ -41,6 +41,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.IndexColumn;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -66,6 +67,7 @@ public class ListWrapper extends ValueWrapper<List<?>>
 	}
 
 	@OneToMany
+	@IndexColumn(name="list_pos")
 	@Cascade({CascadeType.ALL, CascadeType.DELETE_ORPHAN})
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 	public List<ValueWrapper<?>> getWrapperList() {

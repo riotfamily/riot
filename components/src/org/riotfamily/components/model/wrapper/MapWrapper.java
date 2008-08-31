@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -42,6 +43,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.MapKey;
 import org.riotfamily.common.util.Generics;
 import org.springframework.util.ObjectUtils;
 
@@ -58,7 +60,7 @@ public class MapWrapper extends ValueWrapper<Map<String, Object>>
 		
 	@OneToMany(targetEntity=ValueWrapper.class)
 	@JoinColumn(name="map_value")
-	@IndexColumn(name="map_key")
+	@MapKey(columns={@Column(name="map_key")})
 	@Cascade(CascadeType.ALL)
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
 	public Map<String, Object> getWrapperMap() {
