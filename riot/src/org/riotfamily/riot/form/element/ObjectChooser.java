@@ -178,17 +178,19 @@ public class ObjectChooser extends AbstractChooser
 	
 	private void initRootId() {
 		if (rootId == null) {
-			if (rootProperty != null) {
-				Object parent = FormUtils.loadParent(getForm());
-				Object root = PropertyUtils.getProperty(parent, rootProperty);
-				rootId = EditorDefinitionUtils.getObjectId(rootListDefinition, root);
-			}
-			else if (rootIdAttribute != null) {
+			if (rootIdAttribute != null) {
 				rootId = (String) getForm().getAttribute(rootIdAttribute);
 			}
-			else if (rootEditorId != null) {
-				rootId = FormUtils.getParentId(getForm());
-				parentEditorId = FormUtils.getParentEditorId(getForm());
+			if (rootId == null) {
+				if (rootProperty != null) {
+					Object parent = FormUtils.loadParent(getForm());
+					Object root = PropertyUtils.getProperty(parent, rootProperty);
+					rootId = EditorDefinitionUtils.getObjectId(rootListDefinition, root);
+				}
+				else if (rootEditorId != null) {
+					rootId = FormUtils.getParentId(getForm());
+					parentEditorId = FormUtils.getParentEditorId(getForm());
+				}
 			}
 		}
 	}
