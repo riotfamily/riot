@@ -30,11 +30,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.components.EditModeUtils;
+import org.riotfamily.components.dao.ComponentDao;
+import org.riotfamily.components.model.Component;
+import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 
 /**
@@ -43,8 +47,10 @@ import org.riotfamily.pages.model.Site;
  */
 public class PagesMacroHelper {
 
+	private ComponentDao componentDao;
+	
 	private PageDao pageDao;
-
+	
 	private PageResolver pageResolver;
 
 	private PathCompleter pathCompleter;
@@ -52,9 +58,11 @@ public class PagesMacroHelper {
 	private HttpServletRequest request;
 
 	
-	public PagesMacroHelper(PageDao pageDao, PageResolver pageResolver,
-			PathCompleter pathCompleter, HttpServletRequest request) {
+	public PagesMacroHelper(ComponentDao componentDao, PageDao pageDao, 
+			PageResolver pageResolver, PathCompleter pathCompleter, 
+			HttpServletRequest request) {
 		
+		this.componentDao = componentDao;
 		this.pageDao = pageDao;
 		this.pageResolver = pageResolver;
 		this.pathCompleter = pathCompleter;
@@ -82,6 +90,14 @@ public class PagesMacroHelper {
 		return pageDao.findPagesOfType(pageType, facade.getSite());
 	}
 
+	public Page getPageForComponent(Component component) {
+		ContentContainer container = componentDao.findContainerForComponent(component);
+		if (container instanceof PageProperties) {
+			return ((PageProperties) container).getPage();
+		}
+		return null;
+	}
+	
 	private List<Page> getVisiblePages(List<Page> pages, boolean preview) {
 		ArrayList<Page> result = new ArrayList<Page>();
 		for (Page page : pages) {

@@ -38,6 +38,10 @@
 	<#return pagesMacroHelper.getPageForUrl(url, site) />
 </#function>
 
+<#function pageForComponent component>
+	<#return pagesMacroHelper.getPageForComponent(component) />
+</#function>
+
 <#---
   - Returns the site with the given property-value.
   - @param name The name of the property
