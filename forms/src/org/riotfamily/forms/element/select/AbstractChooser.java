@@ -135,7 +135,9 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	}
 	
 	public void setValue(Object value) {
+		Object oldObject = object;
 		this.object = value;
+		fireChangeEvent(object, oldObject);
 	}
 
 	public Object getValue() {
