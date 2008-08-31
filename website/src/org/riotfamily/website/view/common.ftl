@@ -501,3 +501,5 @@
 <#macro tag className>
 	${commonMacroHelper.tag(className)}
 </#macro>
+
+<#assign exposeAsVariables = commonMacroHelper.exposeAsVariablesDirective />

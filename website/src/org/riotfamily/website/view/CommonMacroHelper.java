@@ -30,8 +30,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,6 +57,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.RequestContextUtils;
+
+import freemarker.core.Environment;
+import freemarker.template.ObjectWrapper;
+import freemarker.template.TemplateDirectiveBody;
+import freemarker.template.TemplateDirectiveModel;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateModel;
 
 /**
 	* @author Felix Gnass [fgnass at neteye dot de]
@@ -433,4 +442,29 @@ public class CommonMacroHelper {
 		CacheTagUtils.tag(className);
 	}
 	
+	public ExposeAsVariablesDirective getExposeAsVariablesDirective() {
+		return new ExposeAsVariablesDirective();
+	}
+	
+	public static class ExposeAsVariablesDirective implements TemplateDirectiveModel {
+		
+		@SuppressWarnings("unchecked")
+		public void execute(Environment env, Map params,
+				TemplateModel[] loopVars, TemplateDirectiveBody body)
+				throws TemplateException, IOException {
+			
+			Object param = params.values().iterator().next();
+			if (param instanceof Map) {
+				ObjectWrapper objectWrapper = env.getConfiguration().getObjectWrapper();
+				Map map = (Map) param;
+				Iterator it = map.entrySet().iterator();
+				while (it.hasNext()) {
+					Map.Entry entry = (Map.Entry) it.next();
+					TemplateModel model = objectWrapper.wrap(entry.getValue());
+					env.setVariable((String) entry.getKey(), model); 
+				}
+			}
+		}
+		
+	}
 }
