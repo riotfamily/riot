@@ -32,6 +32,8 @@ import javax.persistence.SecondaryTable;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.OnDelete;
@@ -62,6 +64,7 @@ public class PageWrapper extends ValueWrapper<Page> {
 
 	@ManyToOne
 	@JoinColumn(table="riot_page_wrappers", name="id")
+	@Fetch(FetchMode.SELECT)
 	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	@OnDelete(action=OnDeleteAction.CASCADE)
 	@NotFound(action=NotFoundAction.IGNORE)
