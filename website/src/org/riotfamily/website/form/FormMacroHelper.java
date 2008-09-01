@@ -142,9 +142,14 @@ public class FormMacroHelper {
 	}
 	
 	public String getDisplayValue(String field) {
-		BindStatus status = getFieldStatus(field);
-		if (status != null) {
-			return status.getDisplayValue();
+		try {
+			BindStatus status = getFieldStatus(field);
+			if (status != null) {
+				return status.getDisplayValue();
+			}
+		}
+		catch (Exception e) {
+			log.error("Error determing form field display value, %s.%s", e, command, field);
 		}
 		return "";
 	}
