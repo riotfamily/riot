@@ -237,7 +237,7 @@ public final class ColorUtils {
 				}
 			}
 		}
-		throw new IllegalArgumentException("Invalid color format.");
+		throw new IllegalArgumentException("Invalid color format: " + s);
 	}
 	
 	/**
