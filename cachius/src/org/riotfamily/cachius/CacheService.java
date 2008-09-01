@@ -26,11 +26,11 @@ package org.riotfamily.cachius;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
-import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.cachius.spring.CacheableController;
-import org.riotfamily.cachius.support.ReaderWriterLock;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 
 /**
@@ -165,16 +165,20 @@ public class CacheService {
 		
     	stats.addMiss();
     	long t1 = System.currentTimeMillis();
-		ReaderWriterLock lock = cacheItem.getLock();
+    	
+    	// Acquire a writer lock ...
+    	WriteLock writeLock = cacheItem.getLock().writeLock();
+		writeLock.lock();
 		try {
-			// Acquire a writer lock ...
-			lock.lockForWriting();
-		
 			long t2 = System.currentTimeMillis();
 			stats.lockAcquired(t2 - t1);
 			
 			// Check if another writer has already updated the item
-			if (mtime > cacheItem.getLastModified()) {
+			if (cacheItem.getLastModified() > mtime) {
+				log.debug("Item has already been updated by another thread");
+				TaggingContext.inheritFrom(cacheItem);
+			}
+			else {
 				TaggingContext ctx = TaggingContext.openNestedContext();
 				boolean update = callback.updateCacheItem(cacheItem);
 				ctx.close();
@@ -208,17 +212,26 @@ public class CacheService {
 					cacheItem.invalidate();
 				}
 			}
-			else {
-				log.debug("Item has already been updated by another thread");
-				TaggingContext.inheritFrom(cacheItem);
-			}
-			callback.writeCacheItem(cacheItem);
 			
-			long t3 = System.currentTimeMillis();
-			stats.itemUpdated(cacheItem, t3 - t2);
+			// Acquire read lock for downgrading
+			ReadLock readLock = cacheItem.getLock().readLock();
+	        readLock.lock();
+	        try {
+		        writeLock.unlock();
+				callback.writeCacheItem(cacheItem);
+				
+				long t3 = System.currentTimeMillis();
+				stats.itemUpdated(cacheItem, t3 - t2);
+	        }
+	        finally {
+	        	readLock.unlock();	
+	        }
 		}
 		finally {
-			lock.releaseWriterLock();
+			// Release write lock in case an exception occurred before the lock was downgraded
+			if (cacheItem.getLock().isWriteLockedByCurrentThread()) {
+				writeLock.unlock();
+			}
 		}
     }
    
@@ -229,10 +242,10 @@ public class CacheService {
     		log.trace("Serving cached version of " + cacheItem.getKey());
     	}
     	
-    	ReaderWriterLock lock = cacheItem.getLock();
+    	// Acquire a read lock and serve the cached version    	
+    	ReadLock readLock = cacheItem.getLock().readLock();
+		readLock.lock();
     	try {
-    		// Acquire a reader lock and serve the cached version
-    		lock.lockForReading();
     		if (!cacheItem.exists()) {
         		return false;
         	}
@@ -241,7 +254,7 @@ public class CacheService {
         	stats.addHit();
     	}
     	finally {
-    		lock.releaseReaderLock();
+    		readLock.unlock();
     	}
     	return true;
     }

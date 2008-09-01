@@ -42,16 +42,16 @@ import java.io.Writer;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.cachius.support.Cookies;
 import org.riotfamily.cachius.support.Headers;
-import org.riotfamily.cachius.support.ReaderWriterLock;
 import org.riotfamily.common.io.IOUtils;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.util.FileCopyUtils;
 
 
@@ -103,10 +103,10 @@ public class CacheItem implements Serializable {
     private boolean binary = true;
     
     /** 
-     * Reader/writer lock to prevent concurrent threads from updating
+     * ReadWriteLock to prevent concurrent threads from updating
      * the cached content while others are reading.
      */
-    private transient ReaderWriterLock lock = new ReaderWriterLock();
+    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     
     /** Time of the last usage */
     private long lastUsed;
@@ -311,7 +311,7 @@ public class CacheItem implements Serializable {
 	/**
 	 * Returns the lock. 
 	 */
-	protected ReaderWriterLock getLock() {
+	protected ReentrantReadWriteLock getLock() {
 		return this.lock;
 	}
 	
@@ -398,8 +398,9 @@ public class CacheItem implements Serializable {
     }
 
     protected void delete() {
+    	WriteLock writeLock = lock.writeLock();
+    	writeLock.lock();
     	try {
-            lock.lockForWriting();
             if (file.exists()) {
         		if (!file.delete()) {
         			log.warn("Failed to delete cache file: " + file);
@@ -407,7 +408,7 @@ public class CacheItem implements Serializable {
         	}
         }
         finally {
-            lock.releaseWriterLock();
+            writeLock.unlock();
         }
     }
          
@@ -418,7 +419,7 @@ public class CacheItem implements Serializable {
             ClassNotFoundException {
          
          in.defaultReadObject();
-         lock = new ReaderWriterLock();
+         lock = new ReentrantReadWriteLock();
          log = RiotLog.get(CacheItem.class);
     }
     
