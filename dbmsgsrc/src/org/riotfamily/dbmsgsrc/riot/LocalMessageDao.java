@@ -75,11 +75,19 @@ public class LocalMessageDao extends AbstractHqlDao {
 	
 	@Override
 	protected String getFilterWhereClause(ListParams params) {
+		StringBuffer filter = new StringBuffer();
 		Map<?, ?> filterMap = (Map<?, ?>) params.getFilter();
+		
 		if ((Boolean)filterMap.get("notTranslatedOnly")) {
-			return "lm is null";
+			filter.append("lm is null");
 		}
-		return null;
+		if ((Boolean)filterMap.get("equalToDefaultText")) {
+			if (filter.length() > 0) {
+				filter.append(" and ");
+			}
+			filter.append("lm.text = dm.text");
+		}
+		return filter.toString();
 	}
 	
 	@Override

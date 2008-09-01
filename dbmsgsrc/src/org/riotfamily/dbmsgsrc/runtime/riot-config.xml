@@ -72,7 +72,8 @@
 	</form:form>
 	
 	<form:form id="dbMessageFilter" bean-class="java.util.HashMap">
-		<form:checkbox bind="notTranslatedOnly" />		
+		<form:checkbox bind="notTranslatedOnly" />
+		<form:checkbox bind="equalToDefaultText" />		
 	</form:form>
 	
 	<ed:list id="localDbMessages" list-ref="localDbMessages" icon="bubble" hidden="true">
