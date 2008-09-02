@@ -54,6 +54,11 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
 	
 	public void save(Object entity, Object parent) {
 		PropertyUtils.setProperty(entity, parentProperty, parent);
+    	if (positionProperty != null && setPositionOnSave) {
+    		PropertyUtils.setProperty(entity, positionProperty,
+    						getNextPosition(parent));
+    		
+    	}
 		getSession().save(entity);
 	}
 	
@@ -87,8 +92,39 @@ public class HqlParentChildDao extends HqlDao implements ParentChildDao,
         return sb.toString();
     }
     
+    protected Object getNextPosition(Object parent) {
+    	StringBuffer hql = new StringBuffer();
+    	hql.append("select max(")
+    		.append(positionProperty)
+    		.append(") + 1 from ")
+    		.append(entityClass.getName())
+    		.append(" where ");
+    	
+    	if (parent != null) {
+    		hql.append(parentProperty).append(" = :parent");
+    	} else {
+    		hql.append(parentProperty).append(" is null");
+    	}
+    	
+    	Query query = getSession().createQuery(hql.toString());
+    	if (parent != null) {
+    		query.setEntity("parent", parent);
+    	}
+    	
+    	Object res = query.uniqueResult();
+    	if (res == null) {
+    		res = new Integer(0);
+    	}
+    	return res;
+    }
+
     public void addChild(Object entity, Object parent) {
     	PropertyUtils.setProperty(entity, parentProperty, parent);
+    	if (positionProperty != null && setPositionOnSave) {
+    		PropertyUtils.setProperty(entity, positionProperty,
+    						getNextPosition(parent));
+    		
+    	}
     	update(entity);
     }
     

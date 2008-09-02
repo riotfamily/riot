@@ -48,15 +48,15 @@ public class HqlDao extends HibernateSupport implements RiotDao,
 	
 	private static final Log log = LogFactory.getLog(HqlDao.class);
 	
-    private Class entityClass;
+    protected Class entityClass;
 
     private boolean polymorph = true;
 
     private String where;
     
-    private String positionProperty;
+    protected String positionProperty;
     
-    private boolean setPositionOnSave = false;
+    protected boolean setPositionOnSave = false;
     
 	/**
      * @return Returns the itemClass.
