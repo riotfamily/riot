@@ -473,10 +473,12 @@ riot.Content = Class.create({
 	
 	propertiesChanged: function() {
 		riot.popup.close();
-		this.markAsDirty();
-		// Timeout as we otherwise get an 0x8004005 [nsIXMLHttpRequest.open] error.
-		// See https://bugzilla.mozilla.org/show_bug.cgi?id=249843
-		setTimeout(this.update.bind(this), 1);
+		// Timeout as we otherwise get an 0x8004005 [nsIXMLHttpRequest.open] error
+		// in Firefox 2.0. See https://bugzilla.mozilla.org/show_bug.cgi?id=249843
+		setTimeout(function() {
+			this.markAsDirty();
+			this.update();
+		}.bind(this), 1);
 	},
 	
 	update: function() {
