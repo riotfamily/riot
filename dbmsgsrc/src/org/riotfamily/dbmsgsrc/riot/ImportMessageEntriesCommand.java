@@ -26,11 +26,10 @@ package org.riotfamily.dbmsgsrc.riot;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.dbmsgsrc.support.DbMessageSource;
@@ -39,6 +38,7 @@ import org.riotfamily.forms.element.upload.FileUpload;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.dialog.DialogCommand;
 import org.riotfamily.riot.list.ui.ListSession;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -79,6 +79,7 @@ public static final String ACTION_IMPORT = "import";
 	public ModelAndView handleInput(Object input, ListSession listSession) {		
 		Upload upload = (Upload) input;
 		try {
+			log.info("Global messages uploaded by %s", AccessController.getCurrentUser().getUserId());
 			updateMessages(upload.getData());
 		} catch (IOException e) {			
 		}

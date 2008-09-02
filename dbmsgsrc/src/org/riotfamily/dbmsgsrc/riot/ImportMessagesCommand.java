@@ -26,11 +26,10 @@ package org.riotfamily.dbmsgsrc.riot;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.dbmsgsrc.support.DbMessageSource;
@@ -41,6 +40,7 @@ import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.dialog.DialogCommand;
 import org.riotfamily.riot.list.ui.ListSession;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -83,6 +83,7 @@ public class ImportMessagesCommand extends DialogCommand {
 					listSession.getListDefinition(), listSession.getParentId());		
 		Upload upload = (Upload) input;
 		try {
+			log.info("Local messages uploaded for site %s by %s", site, AccessController.getCurrentUser().getUserId());
 			updateMessages(upload.getData(), site);
 		} catch (IOException e) {			
 		}
