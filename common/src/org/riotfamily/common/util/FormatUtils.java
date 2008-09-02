@@ -39,7 +39,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
@@ -571,8 +570,9 @@ public final class FormatUtils {
 		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
 		return df.format(c.getTime())
 				.replace("12", "MM")
-				.replace("70", "YYYY")
-				.replace("24", "DD");
+				.replace("1970", "YYYY")				
+				.replace("24", "DD")
+				.replace("70", "YYYY");
 	}
 	
 	/**
