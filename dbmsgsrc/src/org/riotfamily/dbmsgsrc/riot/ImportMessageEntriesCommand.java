@@ -93,7 +93,7 @@ public static final String ACTION_IMPORT = "import";
 		if (isValid(sheet)) {
 			for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
 				HSSFRow row = sheet.getRow(i);
-				if (row.getCell(1) != null) {
+				if (row.getCell(1) != null && row.getCell(3) != null) {
 					String code = row.getCell(1).getRichStringCellValue().getString();
 					String defaultMessage = row.getCell(2).getRichStringCellValue().getString();
 					String comment = row.getCell(3).getRichStringCellValue().getString();
@@ -108,6 +108,9 @@ public static final String ACTION_IMPORT = "import";
 							log.info("Message Code does not exist - " + code);
 						}
 					}
+				}
+				else {
+					log.info("Skipping invalid row %s" + i);
 				}
 			}
 		}

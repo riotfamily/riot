@@ -97,7 +97,7 @@ public class ImportMessagesCommand extends DialogCommand {
 		if (isValid(sheet)) {
 			for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
 				HSSFRow row = sheet.getRow(i);
-				if (row.getCell(1) != null) {
+				if (row.getCell(1) != null && row.getCell(3) != null) {
 					String code = row.getCell(1).getRichStringCellValue().getString();
 					String translation = row.getCell(3).getRichStringCellValue().getString();
 					if (StringUtils.hasText(translation)) {
@@ -110,6 +110,9 @@ public class ImportMessagesCommand extends DialogCommand {
 							log.info("Message Code does not exist - " + code);
 						}
 					}
+				}
+				else {
+					log.info("Skipping invalid row %s" + i);
 				}
 			}
 		}
