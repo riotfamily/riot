@@ -42,6 +42,16 @@
 	    </ivy:buildlist>
 		<subant target="install" buildpathref="resolved-build.files" />
 	</target>
+	
+	<target name="install-release" depends="-configure-ivy">
+		<ivy:buildlist reference="resolved-build.files">
+			<fileset refid="js-build.files" />
+			<fileset refid="module-build.files" />
+		</ivy:buildlist>
+		<subant target="install" buildpathref="resolved-build.files">
+			<property name="publish.status" value="release" />
+		</subant>
+	</target>
 
 	<target name="publish-schemas">
 		<subant target="collect-xml-schemas">
