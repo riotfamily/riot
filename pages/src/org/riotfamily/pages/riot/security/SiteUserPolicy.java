@@ -35,7 +35,7 @@ public class SiteUserPolicy implements AuthorizationPolicy {
 			
 			if (isLimited(user)) {
 				boolean denied = false;
-				if (object.getClass().isArray()) {
+				if (object != null && object.getClass().isArray()) {
 					Object[] objects = (Object[]) object;
 					for (Object o : objects) {
 						denied |= isDenied(user, o);
