@@ -514,7 +514,8 @@ riot.TinyMCEPopup = Class.create(riot.TextareaPopup, {
 	},
 	
 	close: function($super) {
-		tinymce.EditorManager.remove(this.tinymce);
+		if (this.tinymce != null)
+			tinymce.EditorManager.remove(this.tinymce);
 		$super();
 	},
 
