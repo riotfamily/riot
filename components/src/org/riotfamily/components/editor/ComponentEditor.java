@@ -24,7 +24,6 @@
 package org.riotfamily.components.editor;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +55,7 @@ public interface ComponentEditor {
 			
 	public void discardImage(Long imageId);
 			
-	public List<String> getComponentLabels(List<String> types, HttpServletRequest request);
+	public String[] getComponentLabels(String[] types, HttpServletRequest request);
 	
 	public String insertComponent(Long listId, int position, String type, String properties);
 

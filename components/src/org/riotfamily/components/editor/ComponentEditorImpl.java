@@ -37,14 +37,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
-import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.common.image.ImageCropper;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.PasswordGenerator;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.components.cache.ComponentCacheUtils;
@@ -207,12 +205,12 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 		return html;
 	}
 
-	public List<String> getComponentLabels(List<String> types, HttpServletRequest request) {
+	public String[] getComponentLabels(String[] types, HttpServletRequest request) {
 		Locale locale = RequestContextUtils.getLocale(request);
-		List<String> labels = Generics.newArrayList();
-		for (String type : types) {
-			labels.add(messageSource.getMessage("component." + type, null, 
-					FormatUtils.xmlToTitleCase(type), locale));
+		String[] labels = new String[types.length];
+		for (int i = 0; i < types.length; i++) {
+			labels[i]= messageSource.getMessage("component." + types[i], null, 
+					FormatUtils.xmlToTitleCase(types[i]), locale);
 		}
 		return labels;
 	}
