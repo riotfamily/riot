@@ -29,6 +29,7 @@ import java.io.IOException;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
@@ -36,6 +37,7 @@ import org.riotfamily.dbmsgsrc.support.DbMessageSource;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.upload.FileUpload;
 import org.riotfamily.pages.model.Site;
+import org.riotfamily.riot.dao.InvalidPropertyValueException;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.dialog.DialogCommand;
@@ -84,8 +86,12 @@ public class ImportMessagesCommand extends DialogCommand {
 		Upload upload = (Upload) input;
 		try {
 			log.info("Local messages uploaded for site %s by %s", site, AccessController.getCurrentUser().getUserId());
-			updateMessages(upload.getData(), site);
-		} catch (IOException e) {			
+			updateMessages(upload.getData(), site);			
+		} 
+		catch (OfficeXmlFileException e) {
+			throw new InvalidPropertyValueException("data","error.dbmsgsrc.unsupportedExcelVersion", "The Excel version is not support. Please save Excel file as version 97 - 2003");
+		}
+		catch (IOException e) {			
 		}
 		return null;
 	}
