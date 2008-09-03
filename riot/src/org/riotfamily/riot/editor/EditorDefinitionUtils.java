@@ -124,13 +124,15 @@ public final class EditorDefinitionUtils {
 		Object parent = getParent(def, bean);
 		if (parent != null) {
 			EditorDefinition parentDef = getParentListDefinition(def);
-			if (parentDef instanceof TreeDefinition) {
-				TreeDefinition tree = (TreeDefinition) parentDef;
-				if (!tree.isNode(parent)) {
-					parentDef = parentDef.getParentEditorDefinition();
+			if (parentDef != null) {
+				if (parentDef instanceof TreeDefinition) {
+					TreeDefinition tree = (TreeDefinition) parentDef;
+					if (!tree.isNode(parent)) {
+						parentDef = parentDef.getParentEditorDefinition();
+					}
 				}
+				return getObjectId(parentDef, parent);
 			}
-			return getObjectId(parentDef, parent);
 		}
 		return null;
 	}

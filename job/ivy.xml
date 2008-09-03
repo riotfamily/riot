@@ -12,6 +12,6 @@
     </publications>
     <dependencies>
 	    <dependency org="riotfamily" name="riot-hibernate" rev="${dep.riot.revision}" conf="*->@" />
-	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build,test->default;runtime->web,mail,aop;src->src" />
+	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build,test->default;runtime->webmvc,mail,aop;src->src" />
     </dependencies>
 </ivy-module>

@@ -13,6 +13,6 @@
     <dependencies>
 		<dependency org="riotfamily" name="riot-common" rev="${dep.riot.revision}" conf="*->@" />
 		<dependency org="apache" name="commons-logging" rev="${dep.commons-logging.revision}" conf="build,runtime->default" />
-		<dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->web;src->src" />
+		<dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->webmvc;src->src" />
     </dependencies>
 </ivy-module>
