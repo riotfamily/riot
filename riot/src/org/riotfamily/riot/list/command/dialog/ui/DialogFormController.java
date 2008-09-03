@@ -36,6 +36,8 @@ import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.AjaxFormController;
 import org.riotfamily.forms.controller.ButtonFactory;
 import org.riotfamily.forms.controller.FormSubmissionHandler;
+import org.riotfamily.riot.dao.InvalidPropertyValueException;
+import org.riotfamily.riot.dao.RiotDaoException;
 import org.riotfamily.riot.list.ListRepository;
 import org.riotfamily.riot.list.command.dialog.DialogCommand;
 import org.riotfamily.riot.list.ui.ListSession;
@@ -135,6 +137,18 @@ public class DialogFormController extends AjaxFormController
 			String key = ServletUtils.getRequiredStringAttribute(request, "listSessionKey");
 			ListSession listSession = ListSession.getListSession(request, key);			
 			modelAndView = getCommand(request).handleInput(input, listSession);
+		}
+		catch (InvalidPropertyValueException e) {
+			transactionManager.rollback(status);
+			form.getErrors().rejectValue(e.getField(), e.getCode(),
+					e.getArguments(), e.getMessage());
+
+			return showForm(form, request, response);
+		}
+		catch (RiotDaoException e) {
+			transactionManager.rollback(status);
+			form.getErrors().reject(e.getCode(), e.getArguments(), e.getMessage());
+			return showForm(form, request, response);
 		}
 		catch (Exception e) {
 			transactionManager.rollback(status);
