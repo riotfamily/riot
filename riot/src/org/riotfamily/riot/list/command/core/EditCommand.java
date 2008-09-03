@@ -28,6 +28,7 @@ import org.riotfamily.riot.editor.FormDefinition;
 import org.riotfamily.riot.editor.IntermediateDefinition;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.ObjectEditorDefinition;
+import org.riotfamily.riot.editor.ViewDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.GotoUrlResult;
@@ -41,6 +42,8 @@ public class EditCommand extends AbstractCommand {
 	
 	public static final String ACTION_EDIT = "edit";
 	
+	public static final String ACTION_VIEW = "view";
+	
 	public static final String ACTION_ADD = "add";
 	
 	protected String getAction(CommandContext context) {
@@ -50,6 +53,9 @@ public class EditCommand extends AbstractCommand {
 		ObjectEditorDefinition def = context.getListDefinition().getDisplayDefinition();
 		if (def instanceof FormDefinition) {
 			return ACTION_EDIT;
+		}
+		if (def instanceof ViewDefinition) {
+			return ACTION_VIEW;
 		}
 		return StepIntoCommand.ACTION_STEP_INTO;
 	}

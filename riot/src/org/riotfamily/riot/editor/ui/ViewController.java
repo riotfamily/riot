@@ -123,7 +123,7 @@ public class ViewController implements Controller,
 				EditorDefinitionUtils.getParentId(editorDef, object),
 				null, null, request);
 
-			model.put("listKey", session.getKey());
+			mv.addObject("listKey", session.getKey());
 		}
 
 		return mv;

@@ -42,14 +42,14 @@ public class ViewDefinition extends AbstractObjectEditorDefinition
 		return TYPE_VIEW;
 	}
 	
-	public String getTemplate() {
-		return this.template;
+	public void setViewName(String viewName) {
+		template = viewName;
 	}
-
-	public void setTemplate(String template) {
-		this.template = template;
+	
+	public String getTemplate() {		
+		return template;
 	}
-
+		
 	public String getEditorUrlWithinServlet(String objectId, String parentId,
 			String parentEditorId) {
 		
