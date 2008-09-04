@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.collection;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -85,6 +86,8 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	
 	private boolean dragAndDrop = true;
 	
+	private String cloneMethod;
+	
 	public ListEditor() {
 		addComponent("items", container);
 		addButton = new Button();
@@ -92,7 +95,7 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 		addButton.setLabel("Add");
 		addButton.addClickListener(new ClickListener() {
 			public void clicked(ClickEvent event) {
-				addItem(null, true).focus();				
+				addItem(getNewItemValue(), true).focus();				
 			}
 		});
 		addComponent("addButton", addButton);
@@ -119,6 +122,10 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	
 	public boolean isDragAndDrop() {
 		return dragAndDrop;
+	}
+	
+	public void setCloneMethod(String cloneMethod) {
+		this.cloneMethod = cloneMethod;
 	}
 
 	public void setMinSize(int minSize) {
@@ -286,7 +293,27 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 	
 	public void removeItem(ListItem item) {		
 		container.removeElement(item);				
-	}	
+	}
+	
+	private Object getNewItemValue() {
+		if (cloneMethod != null) {
+			return getLastItemValue();
+		}
+		return null;
+	}
+	
+	private Object getLastItemValue() {		
+		if (items.size() > 0) {			
+			Object value = items.get(items.size() -1).getValue();
+			try {
+				Method m = value.getClass().getMethod(cloneMethod);			
+				return m.invoke(value);
+			} catch (Exception e) {
+				log.error("Error cloning list item value", e);
+			}		
+		}
+		return null;
+	}
 	
 	protected void validate() {
 		int size = container.getElements().size();
