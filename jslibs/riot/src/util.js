@@ -137,7 +137,7 @@ var RElement = {
 	getBackgroundColor: function(el) {
 		element = $(el);
 		var bg;
-		while (el && el.style && (!bg || bg == 'transparent')) {
+		while (el && el.style && (!bg || bg == 'transparent' || bg.match(/^rgba.*0\)$/))) {
 			bg = Element.getStyle(el, 'background-color');
 			el = el.parentNode;
 		}
