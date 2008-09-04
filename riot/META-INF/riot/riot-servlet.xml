@@ -252,6 +252,7 @@
 		<entry key="theme_advanced_container_buttons1" value="bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap" />
 		<entry key="forced_root_block" value="p" />
 		<entry key="entity_encoding" value="raw" />
+		<entry key="plugins" value="safari" />
 	</util:map>
 	
 	<util:map id="tinyMCEProfiles">

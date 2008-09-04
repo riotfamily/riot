@@ -14,7 +14,7 @@
 	    <dependency org="riotfamily" name="riot-common" rev="${dep.riot.revision}" conf="*->@" />
 	    <dependency org="riotfamily" name="riot-js" rev="${dep.riot.revision}" conf="runtime->default" />
 	    <dependency org="riotfamily" name="jscalendar-js" rev="1.0.1" conf="runtime->default" />
-	    <dependency org="riotfamily" name="tinymce-js" rev="3.0" conf="runtime->default" />
+	    <dependency org="riotfamily" name="tinymce-js" rev="3.1.1" conf="runtime->default" />
 	    <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->webmvc;src->src" />
 	    <dependency org="apache" name="commons-fileupload" rev="1.2" conf="runtime->default" />
 	    <dependency org="json" name="json-lib" rev="${dep.json-lib.revision}" conf="src->src;build,runtime->default" />
