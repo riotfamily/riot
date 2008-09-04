@@ -135,7 +135,7 @@ public class Button extends AbstractEditorBase
 	public void renderInternal(PrintWriter writer) {
 		TagWriter tag = new TagWriter(writer);
 		tag.startEmpty(Html.INPUT)
-				.attribute(Html.INPUT_TYPE, "submit")
+				.attribute(Html.INPUT_TYPE, submit ? "submit" : "button")
 				.attribute(Html.COMMON_ID, getEventTriggerId())
 				.attribute(Html.COMMON_CLASS, getCssClass())				
 				.attribute(Html.COMMON_TABINDEX, tabIndex)
