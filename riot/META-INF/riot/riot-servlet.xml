@@ -244,7 +244,10 @@
 	<util:map id="defaultTinyMCEConfig">
 		<entry key="gecko_spellcheck">
 			<value type="java.lang.Boolean">true</value>
-		</entry>		
+		</entry>
+		<entry key="inline_styles">
+			<value type="java.lang.Boolean">false</value>
+		</entry>				
 		<entry key="valid_elements" value="+a[href|target|name],-strong/b,-em/i,h3/h2/h1,h4/h5/h6,p,br,hr,ul,ol,li,blockquote,sub,sup,span[class&lt;mailto]" />
 		<entry key="theme_advanced_container_buttons1" value="bold,italic,sup,bullist,numlist,outdent,indent,hr,link,unlink,anchor,code,undo,redo,charmap" />
 		<entry key="forced_root_block" value="p" />
