@@ -1,4 +1,4 @@
-<div class="nestedForm ${form.property?default('unbound')}">
+<div class="nestedForm<#if form.styleClass??> ${form.styleClass}</#if> ${form.property?default('unbound')}">
 	<#if !form.required>
 		<div class="<#if form.present>present<#else>not-present</#if>">
 	  		${toggleButton.render()}

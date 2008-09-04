@@ -44,6 +44,7 @@
 					<xsd:attribute name="bean-class" type="xsd:string" />
 					<xsd:attribute name="indent" type="xsd:boolean" default="true" />
 					<xsd:attribute name="template" type="xsd:string" />
+					<xsd:attribute name="style-class" type="xsd:string" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -271,6 +272,7 @@
 					<xsd:attribute name="collection-class" type="xsd:string" />
 					<xsd:attribute name="sortable" type="xsd:boolean" />
 					<xsd:attribute name="drag-and-drop" type="xsd:boolean" />
+					<xsd:attribute name="clone-method" type="xsd:string" />					
 					<xsd:attribute name="min-size" type="xsd:positiveInteger" />
 					<xsd:attribute name="max-size" type="xsd:positiveInteger" />
 				</xsd:extension>
