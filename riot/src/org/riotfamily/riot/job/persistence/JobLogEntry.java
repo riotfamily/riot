@@ -25,6 +25,8 @@ package org.riotfamily.riot.job.persistence;
 
 import java.util.Date;
 
+import org.riotfamily.common.util.FormatUtils;
+
 
 public class JobLogEntry {
 
@@ -52,7 +54,7 @@ public class JobLogEntry {
 	public JobLogEntry(JobDetail job, int priority, String message) {
 		this.job = job;
 		this.priority = priority;
-		this.message = message;
+		this.message = FormatUtils.truncate(message, 255);
 		this.date = new Date();
 	}
 
