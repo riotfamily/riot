@@ -55,7 +55,7 @@ public class SwitchCase extends ElementGroup implements BeanEditor {
 
 	public void setSwitchBinding(EditorBinding binding) {
 		editorBinder.setDelegate(binding.getEditorBinder());
-		propertyPath = binding.getPropertyPath();
+		propertyPath = binding.getPropertyPath() + '.' + value;
 	}
 	
 	public void initEditors() {
@@ -135,6 +135,11 @@ public class SwitchCase extends ElementGroup implements BeanEditor {
 
 		public void setPropertyValue(String property, Object value) {
 			delegate.setPropertyValue(property, value);
+		}
+		
+		@Override
+		protected String getPropertyPath(Editor editor, String property) {
+			return propertyPath + '.' + property;
 		}
 		
 	}

@@ -27,13 +27,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.forms.BeanEditor;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
 
-public class ElementSwitch extends Container implements Editor, ChangeListener {
+public class ElementSwitch extends Container 
+		implements Editor, BeanEditor, ChangeListener {
 	
 	private SelectBox selectBox = new SelectBox();
 
@@ -77,9 +79,17 @@ public class ElementSwitch extends Container implements Editor, ChangeListener {
 		}
 	}
 	
+	// ---------------------------------------------------------------------
+	// Implementation of the ChangeListener interface
+	// ---------------------------------------------------------------------
+	
 	public void valueChanged(ChangeEvent event) {
 		activateCase(event.getNewValue());
 	}
+	
+	// ---------------------------------------------------------------------
+	// Implementation of the Editor interface
+	// ---------------------------------------------------------------------
 	
 	public Object getValue() {
 		activeCase.populateBackingObject();
@@ -93,6 +103,30 @@ public class ElementSwitch extends Container implements Editor, ChangeListener {
 		selectBox.setValue(value);
 		activateCase(value);
 		activeCase.initEditors();
+	}
+	
+	// ---------------------------------------------------------------------
+	// Implementation of the BeanEditor interface
+	// ---------------------------------------------------------------------
+
+	public Editor getEditor(String property) {
+		int i = property.indexOf('.');
+		String discriminator = property.substring(0, i);
+		return cases.get(discriminator).getEditor(property.substring(i + 1));
+	}
+
+	public void setBackingObject(Object obj) {
+		for (SwitchCase c : cases.values()) {
+			c.setBackingObject(obj);
+		}
+	}
+	
+	public void bind(Editor editor, String property) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setBeanClass(Class<?> beanClass) {
+		throw new UnsupportedOperationException();
 	}
 
 }
