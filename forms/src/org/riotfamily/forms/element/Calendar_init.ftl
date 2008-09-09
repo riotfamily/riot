@@ -1,10 +1,7 @@
 (function() {
-	var inputField = document.getElementById('${element.id}');
-	
-	var button = document.createElement('button');
-	button.className = 'calendar-button';
-	inputField.parentNode.insertBefore(button, inputField.nextSibling);
-	
+	var inputField = $('${element.eventTriggerId}');
+	var button = new Element('button', {className: 'calendar-button'});
+	inputField.insert({after: button});
 	Calendar.setup({
 		inputField: inputField,
 		ifFormat: '${element.jsFormatPattern}',
