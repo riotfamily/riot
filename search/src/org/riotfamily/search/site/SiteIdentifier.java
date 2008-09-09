@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.hibernate.Hibernate;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;

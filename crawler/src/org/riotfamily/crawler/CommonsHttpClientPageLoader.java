@@ -31,7 +31,6 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 
 /**
  * PageLoader implementation that uses the Jakarta Commons HttpClient.

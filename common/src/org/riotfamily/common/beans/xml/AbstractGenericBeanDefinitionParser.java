@@ -25,7 +25,6 @@
 package org.riotfamily.common.beans.xml;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -35,7 +34,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.Assert;
@@ -44,7 +43,7 @@ import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
 /**
- * Class similar to Spring's {@link AbstractBeanDefinitionParser}.
+ * Class similar to Spring's {@link AbstractSingleBeanDefinitionParser}.
  * Supports registering aliased beans and decoration of nested beans.
  *
  * @author Carsten Woelk [cwoelk at neteye dot de]
@@ -142,10 +141,10 @@ public abstract class AbstractGenericBeanDefinitionParser implements BeanDefinit
 	 */
 	protected final AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
 		BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(beanClass);
-		builder.setSource(parserContext.extractSource(element));
+		builder.getRawBeanDefinition().setSource(parserContext.extractSource(element));
 		if (parserContext.isNested()) {
-			// Inner bean definition must receive same singleton status as containing bean.
-			builder.setSingleton(parserContext.getContainingBeanDefinition().isSingleton());
+			// Inner bean definition must receive same scope as containing bean.
+			builder.setScope(parserContext.getContainingBeanDefinition().getScope());
 		}
 		if (parserContext.isDefaultLazyInit()) {
 			// Default-lazy-init applies to custom bean definitions as well.

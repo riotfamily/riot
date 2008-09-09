@@ -26,7 +26,6 @@
 package org.riotfamily.riot.security.policy;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.riot.security.auth.RiotUser;
 
 /**

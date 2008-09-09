@@ -31,7 +31,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.beans.propertyeditors.SqlDateEditor;
 import org.springframework.beans.InvalidPropertyException;
 import org.springframework.beans.PropertyEditorRegistrar;

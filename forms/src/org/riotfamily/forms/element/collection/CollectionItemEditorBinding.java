@@ -28,7 +28,6 @@ import java.beans.PropertyEditor;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.EditorBinder;
 import org.riotfamily.forms.EditorBinding;
-import org.springframework.beans.PropertyEditorRegistry;
 
 
 

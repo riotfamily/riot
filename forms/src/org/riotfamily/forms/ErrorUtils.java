@@ -24,7 +24,6 @@
 package org.riotfamily.forms;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 
 public class ErrorUtils {
 

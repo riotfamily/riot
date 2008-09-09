@@ -28,7 +28,6 @@ import java.util.Collection;
 import javax.sql.DataSource;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.revolt.support.DatabaseUtils;
 import org.riotfamily.revolt.support.DialectResolver;

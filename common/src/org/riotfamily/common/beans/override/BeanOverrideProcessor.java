@@ -24,7 +24,6 @@
 package org.riotfamily.common.beans.override;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.beans.override.OverrideNamespaceHandler.BeanReplacement;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;

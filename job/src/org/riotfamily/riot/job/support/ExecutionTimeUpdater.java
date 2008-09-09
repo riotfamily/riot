@@ -24,7 +24,6 @@
 package org.riotfamily.riot.job.support;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.riot.job.JobContext;
 
 /**

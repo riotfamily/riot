@@ -26,7 +26,6 @@ package org.riotfamily.riot.resource;
 import java.io.IOException;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.springframework.core.io.Resource;
 
 public class ResourceMapping {

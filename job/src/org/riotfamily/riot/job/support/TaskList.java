@@ -26,7 +26,6 @@ package org.riotfamily.riot.job.support;
 import java.util.HashSet;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.riot.job.model.JobDetail;
 

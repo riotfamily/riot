@@ -30,7 +30,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
 import org.springframework.util.FileCopyUtils;

@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.ui.ObjectRenderer;

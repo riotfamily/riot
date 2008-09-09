@@ -30,7 +30,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.io.RuntimeCommand;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;

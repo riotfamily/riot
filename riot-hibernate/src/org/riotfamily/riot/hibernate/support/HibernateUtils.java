@@ -29,8 +29,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.hibernate.Criteria;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
@@ -38,9 +36,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.metadata.ClassMetadata;
 import org.riotfamily.common.beans.PropertyUtils;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.riot.security.AccessController;
 import org.springframework.util.StringUtils;
 
@@ -290,10 +289,10 @@ public final class HibernateUtils {
 
 	public static void addEqOrNull(Criteria c, String name, Object val) {
 		if (val != null) {
-			c.add(Expression.eq(name, val));
+			c.add(Restrictions.eq(name, val));
 		}
 		else {
-			c.add(Expression.isNull(name));
+			c.add(Restrictions.isNull(name));
 		}
 	}
 

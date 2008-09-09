@@ -27,7 +27,6 @@ import java.io.File;
 import java.util.Iterator;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 
 /**
  * Iterator that iterates recursively over all files in a directory. Calling

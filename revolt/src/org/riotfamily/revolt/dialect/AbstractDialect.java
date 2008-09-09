@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.revolt.Dialect;
 import org.riotfamily.revolt.definition.Column;
 import org.riotfamily.revolt.support.TypeMap;

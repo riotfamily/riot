@@ -30,7 +30,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 
 /**
  * Collection whose values are stored as {@link WeakReference weak references}.

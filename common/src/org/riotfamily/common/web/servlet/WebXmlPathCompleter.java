@@ -26,7 +26,6 @@ package org.riotfamily.common.web.servlet;
 import javax.servlet.ServletContext;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;

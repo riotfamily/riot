@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;

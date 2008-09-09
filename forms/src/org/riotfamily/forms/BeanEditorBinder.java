@@ -54,7 +54,7 @@ public class BeanEditorBinder extends AbstractEditorBinder {
 	protected void setBackingObjectInternal(Object backingObject) {
 		editingExistingBean = backingObject != null;
 		if (backingObject != null) {
-			beanWrapper.setWrappedInstance(backingObject);
+			beanWrapper = new ProtectedBeanWrapper(backingObject);
 		}
 		else {
 			beanWrapper = new ProtectedBeanWrapper(getBeanClass());

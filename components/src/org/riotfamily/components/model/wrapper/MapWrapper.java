@@ -42,10 +42,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.MapKey;
 import org.riotfamily.common.util.Generics;
-import org.springframework.util.ObjectUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -72,6 +70,7 @@ public class MapWrapper extends ValueWrapper<Map<String, Object>>
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public void wrap(Object value) {
 		putAll((Map<String, Object>) value);
 	}
@@ -206,6 +205,7 @@ public class MapWrapper extends ValueWrapper<Map<String, Object>>
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object put(String key, Object value) {
 		if (value == null) {
 			return remove(key);

@@ -26,7 +26,6 @@ package org.riotfamily.riot.editor;
 import java.util.Map;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.xml.ConfigurationEventListener;
