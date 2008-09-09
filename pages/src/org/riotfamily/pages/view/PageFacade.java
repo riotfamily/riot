@@ -160,6 +160,10 @@ public class PageFacade {
 		return page.getNode().getPage(currentSite);
 	}
 	
+	public Page getMasterPage() {
+		return page.getMasterPage();
+	}
+
 	public boolean isWildcard() {
 		return page.isWildcard();
 	}

@@ -19,7 +19,7 @@
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/dwr.jar"/>
-	<classpathentry kind="lib" path="lib/freemarker.jar">
+	<classpathentry kind="lib" path="lib/freemarker.jar" sourcepath="lib/freemarker.src.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="http://freemarker.org/docs/api/"/>
 		</attributes>
@@ -46,7 +46,7 @@
 	<classpathentry kind="lib" path="lib/lucene-snowball.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient.jar"/>
 	<classpathentry kind="lib" path="lib/htmlparser.jar"/>
-	<classpathentry kind="lib" path="lib/spring-webmvc.jar" sourcepath="/family-homepage/lib/spring-webmvc.src.zip"/>
+	<classpathentry kind="lib" path="lib/spring-webmvc.jar" sourcepath="lib/spring-webmvc.src.zip"/>
 	<classpathentry kind="lib" path="lib/dom4j.jar"/>
 	<classpathentry kind="lib" path="lib/texhyphj.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
