@@ -150,7 +150,11 @@ public class PageFacade {
 				ServletUtils.getServerNameAndPort(request),
 				request.getContextPath(), attributes);
 	}
-	
+
+	public Page getMasterPage() {
+		return page.getMasterPage();
+	}
+
 	public boolean isWildcard() {
 		return page.isWildcard();
 	}
