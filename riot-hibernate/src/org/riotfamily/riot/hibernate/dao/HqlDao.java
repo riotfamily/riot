@@ -256,6 +256,7 @@ public class HqlDao extends HibernateSupport implements RiotDao,
     protected void setPositionIfNeeded(Object entity, Object parent) {
     	if (setPositionOnSave) {
     		Query query = createQuery(buildMaxPositionHql(parent));
+    		setQueryParameters(query, parent, new EmptyListParams());
     		Number maxPosition = (Number) query.uniqueResult();
     		
     		PropertyUtils.setProperty(entity, positionProperty,
