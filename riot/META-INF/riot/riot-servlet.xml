@@ -11,6 +11,10 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
+	<description>
+		Riot servlet (Riot Core)
+	</description>
+	
 	<tx:annotation-driven />
 	
 	<!-- Read placeholders from application.properties  -->
@@ -22,11 +26,17 @@
 	
 	<!-- FixedLocaleResolver to display the Riot user interface in English -->
     <bean id="localeResolver" class="org.springframework.web.servlet.i18n.FixedLocaleResolver">
+    	<description>
+    		Resolves the Locale for Riot users.
+    	</description>
     	<property name="defaultLocale"><value>en_US</value></property>
     </bean>
     
-    <!-- Initialize the RiotRuntime -->
-    <bean class="org.riotfamily.riot.runtime.RiotRuntimeInitializer" />
+    <bean class="org.riotfamily.riot.runtime.RiotRuntimeInitializer">
+    	<description>
+			Initializes the RiotRuntime.    	
+    	</description>
+    </bean>
     
     <util:list id="messageBasenames">
     	<value>/WEB-INF/i18n/messages</value>
@@ -51,35 +61,35 @@
 		<constructor-arg ref="riotRuntime" />
 	</bean>
 	
-	<!--
-	  - MultipartResolver that provides information about the file upload progress
-	  -->
 	<bean id="multipartResolver" class="org.riotfamily.forms.fileupload.FormsMultipartResolver">
+		<description>
+			MultipartResolver that provides information about the file upload progress.
+		</description>
 		<constructor-arg>
 			<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 		</constructor-arg>
 	</bean>
 
-	<!--
-	  - Exception resolver that outputs a nicely formatted error message.
-	  -->
 	<bean id="exceptionResolver" class="org.riotfamily.common.web.util.AdvancedMappingExceptionResolver">
+		<description>
+			Exception resolver that outputs a nicely formatted error message.		
+		</description>
 		<property name="defaultErrorView" value="classpath:/org/riotfamily/riot/runtime/view/error.ftl" />
 	</bean>
 
-	<!--
-	  - A Cachius cache to cache riot resources.
-	  -->
 	<bean id="riotCache" class="org.riotfamily.cachius.spring.CacheFactoryBean">
+		<description>
+			A Cachius cache to cache riot resources.
+		</description>
 		<property name="cacheDir" value="${riot.riotCache.cacheDir=}" />
 		<property name="cacheDirName" value="riot-cache" />
 		<property name="restore" value="false" />
 	</bean>
     
-    <!-- 
-	  - HandlerAdapter that handles CacheableControllers.
-	  -->
     <bean id="cacheableHandlerAdapter" class="org.riotfamily.cachius.spring.CacheableControllerHandlerAdapter">
+    	<description>
+    		HandlerAdapter that handles CacheableControllers.
+    	</description>
 		<constructor-arg>
 			<bean class="org.riotfamily.cachius.CacheService">
 				<constructor-arg ref="riotCache" />
@@ -92,16 +102,17 @@
 		</property>
 	</bean>
 	
-	<!-- 
-	  - HandlerAdapter that handles regular (non-cacheable) Controllers.
-	  -->
-	<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+	<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter">
+		<description>
+			HandlerAdapter that handles regular (non-cacheable) Controllers.
+		</description>
+	</bean>
 
-	<!--
-	  - HandlerInterceptor that ensures that only authenticated users can
-	  - access the Riot admin pages.
-	  -->
 	<bean id="loginInterceptor" class="org.riotfamily.riot.security.session.LoginInterceptor">
+		<description>
+			HandlerInterceptor that ensures that only authenticated users can
+	  		access the Riot admin pages.
+		</description>
 		<property name="loginUrl" value="/login" />
 		<property name="includesOverwriteExcludes" value="true" />
 		<property name="excludes">
@@ -300,28 +311,31 @@
 		
 	<!-- Controllers -->
 
-	<!--
-	  - MVC controller that displays the login form and passes the user input
-	  - to the LoginManager.
-	  -->
 	<bean id="loginFormController" name="/login" class="org.riotfamily.riot.security.ui.LoginFormController">
+		<description>
+			Controller that displays the login form and passes the user input to the LoginManager.		
+		</description>
 		<constructor-arg ref="loginManager" />
 		<property name="viewName" value="classpath:org/riotfamily/riot/security/ui/LoginFormView.ftl" />
 	</bean>
 
-	<!--
-	  - MVC controller that displays the bottom status frame containing
-	  - login information.
-	  -->
-	<bean id="statusbarController" name="/statusbar" class="org.riotfamily.riot.security.ui.LoginStatusController" />
+	<bean id="statusbarController" name="/statusbar" class="org.riotfamily.riot.security.ui.LoginStatusController">
+		<description>
+			Controller that displays the bottom status frame containing login information.
+		</description>
+	</bean>
 
-	<!-- Controller that keeps the HTTP session alive -->
-	<bean name="/ping" class="org.riotfamily.common.web.controller.SessionKeepAliveController" />
+	<bean name="/ping" class="org.riotfamily.common.web.controller.SessionKeepAliveController">
+		<description>
+			Controller that keeps the HTTP session alive.		
+		</description>
+	</bean>
 
-	<!--
-	  - Controller that performs a logout.
-	  -->
-	<bean id="logoutController" name="/logout" class="org.riotfamily.riot.security.ui.LogoutController" />
+	<bean id="logoutController" name="/logout" class="org.riotfamily.riot.security.ui.LogoutController">
+		<description>
+			Controller that performs a logout.		
+		</description>
+	</bean>
 
 	<util:map id="cssProperties">
 		<entry key="highlight_color" value="#cb0038" />
@@ -528,10 +542,6 @@
 		class="org.riotfamily.common.web.dwr.ConstantsRemoter" />
 	-->
 
-	<!--
-	  - Controller that exposes DWR services.
-	  -->
-	
 	<bean id="riotDwrConfigurator" class="org.riotfamily.common.web.dwr.SpringConfigurator">
 		<property name="converters">
 			<map>
@@ -575,6 +585,9 @@
 	<bean id="dwrController"
 		name="/resources/*/dwr/**"
 		class="org.riotfamily.common.web.dwr.DwrController">
+		<description>
+			Controller that exposes DWR services.		
+		</description>
 		<property name="mapping" value="dwr" />
 		<property name="parameters">
 			<props>
@@ -591,17 +604,26 @@
 	</bean>
 
 	<bean id="startupTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<description>
+			Quartz trigger that fires at startup.
+		</description>
 		<property name="name" value="startup" />
 		<property name="repeatCount" value="0" />
 		<property name="startDelay" value="0" />
 	</bean>
 	
 	<bean id="dailyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<description>
+			Quartz trigger that fires once a day at 3:00 AM.
+		</description>
 		<property name="name" value="daily" />
 		<property name="cronExpression" value="0 0 3 * * ?" />
 	</bean>
 	
 	<bean id="hourlyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<description>
+			Quartz trigger that fires every hour.
+		</description>
 		<property name="name" value="hourly" />
 		<property name="cronExpression" value="0 0 * * * ?" />
 	</bean>	

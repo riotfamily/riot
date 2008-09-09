@@ -8,9 +8,16 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
+	<description>
+		Root application context (Riot Core)
+	</description>
+	
 	<tx:annotation-driven />
 
 	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
+		<description>
+			Configurer that fills in placeholders from application.properties
+		</description>
 		<property name="location" value="classpath:/application.properties" />
 		<property name="ignoreResourceNotFound" value="true" />
 		<property name="contextOverride" value="true" />

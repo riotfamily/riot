@@ -8,7 +8,15 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+	<description>
+		Website servlet (Riot Website)
+	</description>
+	
 	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<description>
+			Default MessageSource for the website servlet that reads properties
+			from /WEB-INF/i18n/messages.
+		</description>
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="fallbackToSystemLocale" value="false" />
 		<property name="cacheSeconds" value="1" />
@@ -16,23 +24,34 @@
     </bean>
 	
 	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
+		<description>
+			Configurer that fills in placeholders from application.properties
+		</description>
 		<property name="location" value="classpath:/application.properties" />
 		<property name="contextOverride" value="true" />
 	</bean>
 	
-	<!--
-	  - FilterPlugin that sets a far-future expires header for all stamped URLs 
-	  -->
 	<bean id="expiresHeaderFilterPlugin" class="org.riotfamily.common.web.filter.ExpiresHeaderFilterPlugin">
+		<description>
+			FilterPlugin that sets a far-future expires header for all stamped URLs.
+		</description>
 		<property name="filterName" value="website-filter" />
 	</bean>
 
 	<bean id="openSessionInViewFilterPlugin" class="org.riotfamily.riot.hibernate.support.OpenSessionInViewFilterPlugin">
+		<description>
+			FilterPlugin that binds a Hibernate Session to the thread for the 
+			entire processing of the request just like Spring's OpenSessionInViewFilter.
+		</description>
 		<constructor-arg ref="sessionFactory" />
 		<property name="filterName" value="website-filter" />
 	</bean>
 	
-	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<description>
+			MultipartResolver that uses Jakarta Commons FileUpload to handle uploads.
+		</description>
+	</bean>
 	
 	<bean class="org.riotfamily.common.web.servlet.ReloadableDispatcherServletConfig">
 		<property name="reloadable" value="${website-servlet.reloadable=false}" />
@@ -44,25 +63,26 @@
 	
 	<bean id="cacheKeyAugmentor" class="org.riotfamily.cachius.servlet.NoOpCacheKeyAugmentor" />
 	
-	<!-- 
-	  - HandlerAdapter that handles CacheableControllers.
-	  -->
 	<bean id="cacheableHandlerAdapter" class="org.riotfamily.cachius.spring.CacheableControllerHandlerAdapter">
+		<description>
+			HandlerAdapter that handles CacheableControllers.
+		</description>
 		<constructor-arg ref="cacheService" />
 		<constructor-arg ref="cacheKeyAugmentor" />
 	</bean>
 	
-	<!-- 
-	  - HandlerAdapter that handles regular (non-cacheable) Controllers.
-	  -->
-	<bean id="simpleControllerHandlerAdapter" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+	<bean id="simpleControllerHandlerAdapter" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter">
+		<description>
+			HandlerAdapter that handles regular (non-cacheable) Controllers.
+		</description>
+	</bean>
 	
-	<!-- 
-	  - ChainedHandlerInterceptor that combines all interceptors that are required
-	  - by Riot or one of its modules. Modules should use the override:add tag and
-	  - add their interceptors to this bean definition. 
-	  -->
 	<bean id="riotInterceptors" class="org.riotfamily.common.web.interceptor.ChainedHandlerInterceptor">
+		<description>
+			ChainedHandlerInterceptor that combines all interceptors that are required
+	  		by Riot or one of its modules. Modules should use the override:add tag and
+	  		add their interceptors to this bean definition.
+		</description>
 		<property name="interceptors">
 			<list>
 				<bean class="org.riotfamily.website.interceptor.NoCacheHeaderInterceptor" />
@@ -75,7 +95,10 @@
 
 	<bean id="cssTemplateController" name="/**/*.css" 
 			class="org.riotfamily.website.css.CssTemplateController">
-			
+
+		<description>
+			Controller to serve CSS files.
+		</description>		
 		<property name="addContextPathToUrls" value="true" />
 		<property name="stamper" ref="resourceStamper" />
 		<property name="compressor">
@@ -86,14 +109,23 @@
 	</bean>
 	
 	<bean id="minifyCssController" name="/riot-utils/joined.css" class="org.riotfamily.website.minify.MinifyCssController">
+		<description>
+			Controller to compress (minify) CSS files.
+		</description>
 		<property name="reloadable" value="${riot.resources.reloadable=false}" />
 	</bean>
 	
 	<bean id="minifyScriptController" name="/riot-utils/joined.js" class="org.riotfamily.website.minify.MinifyScriptController">
+		<description>
+			Controller to compress (minify) JavaScript files.
+		</description>
 		<property name="reloadable" value="${riot.resources.reloadable=false}" />
 	</bean>
 		
 	<bean id="freemarkerConfig" class="org.riotfamily.website.freemarker.WebsiteFreeMarkerConfigurer">
+		<description>
+			FreeMarker configuration.
+		</description>
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="templateLoaderPath" value="/WEB-INF/view" />
 		<property name="freemarkerSettings" value="${website-servlet.freemarker.*}" />
@@ -114,6 +146,10 @@
 	</bean>
 	
 	<bean id="taggingObjectWrapperPlugin" class="org.riotfamily.website.cache.TaggingObjectWrapperPlugin">
+		<description>
+			ObjectWrapperPlugin that tags cache items whenever a class with the
+ 			@TagCacheItems annotation is accessed by a FreeMarker template.
+		</description>
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
