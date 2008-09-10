@@ -76,12 +76,14 @@ public abstract class AbstractChooser extends AbstractEditorBase
 		renderLabel(object, writer);
 		
 		doc.start(Html.BUTTON).attribute(Html.COMMON_CLASS, "choose");
+		doc.attribute(Html.INPUT_DISABLED, !isEnabled());
 		doc.body("Choose");
 		doc.end();
 		
 		if (!isRequired() && getValue() != null) {
 			doc.start(Html.BUTTON);
 			doc.attribute(Html.COMMON_CLASS, "unset");
+			doc.attribute(Html.INPUT_DISABLED, !isEnabled());
 			doc.body("Unset");
 			doc.end();
 		}
