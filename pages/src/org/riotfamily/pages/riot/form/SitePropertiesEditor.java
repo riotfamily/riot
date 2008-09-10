@@ -69,10 +69,17 @@ public class SitePropertiesEditor extends CompositeElement
 		propertiesForm.setValue(value);
 	}
 	
+	// ------------------------------------------------------------------
+	// Implementation of the NestedEditor interface 
+	// ------------------------------------------------------------------
+	
 	public void setBackingObject(Object obj) {
 		propertiesForm.setBackingObject(obj);
 	}
 	
+	public Editor getEditor(String property) {
+		return propertiesForm.getEditor(property);
+	}
 	
 	private class PropertiesForm extends NestedForm {
 		

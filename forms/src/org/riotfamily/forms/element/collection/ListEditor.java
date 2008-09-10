@@ -243,6 +243,27 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 		}
 	}
 	
+	public Editor getEditor(String property) {
+		if (property != null) {
+			int i = property.indexOf('.');
+			if (i != -1) {
+				String nested = property.substring(i + 1);
+				String id = property = property.substring(0, i);
+				Editor editor = (Editor) getForm().getElementById(id); 
+				if (editor instanceof NestedEditor) {
+					NestedEditor ne = (NestedEditor) editor;
+					return ne.getEditor(nested);
+				}
+				else {
+					throw new IllegalStateException("Editor for " + property 
+							+ " must implement the NestedEditor interface");
+				}
+			}
+			return (Editor) getForm().getElementById(property);
+		}
+		return null;
+	}
+	
 	public Object getValue() {
 		ArrayList<Object> temp = Generics.newArrayList();
 		int i = 0;

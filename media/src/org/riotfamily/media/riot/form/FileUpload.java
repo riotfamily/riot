@@ -28,10 +28,10 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.forms.BackingObjectAware;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.ErrorUtils;
-import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.element.upload.AbstractFileUpload;
 import org.riotfamily.media.model.RiotFile;
@@ -45,7 +45,7 @@ import org.springframework.web.multipart.MultipartFile;
  * A widget to upload files.
  */
 public class FileUpload extends AbstractFileUpload 
-		implements NestedEditor {
+		implements BackingObjectAware {
 
 	private ProcessingService processingService;
 	

@@ -23,16 +23,16 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element.collection;
 
+import org.riotfamily.forms.BackingObjectAware;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
-import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.ClickEvent;
 import org.riotfamily.forms.event.ClickListener;
 
-public class ListItem extends TemplateElement implements NestedEditor, DHTMLElement, ClickListener {
+public class ListItem extends TemplateElement implements BackingObjectAware, DHTMLElement, ClickListener {
 	
 	private ListEditor list;
 
@@ -45,7 +45,7 @@ public class ListItem extends TemplateElement implements NestedEditor, DHTMLElem
 	public ListItem(ListEditor list) {
 		super("item");
 		this.list = list;
-		binding = new CollectionItemEditorBinding(list.getEditorBinding().getEditorBinder());
+		binding = new CollectionItemEditorBinding(list.getEditorBinding());
 		setWrap(false);
 		setTemplate(TemplateUtils.getTemplatePath(ListItem.class));
 		removeButton = new Button();
@@ -92,8 +92,8 @@ public class ListItem extends TemplateElement implements NestedEditor, DHTMLElem
 	
 	public void setBackingObject(Object obj) {
 		binding.setValue(obj);
-		if (editor instanceof NestedEditor) {
-			((NestedEditor) editor).setBackingObject(obj);
+		if (editor instanceof BackingObjectAware) {
+			((BackingObjectAware) editor).setBackingObject(obj);
 		}
 	}
 	

@@ -23,11 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
+import org.riotfamily.forms.BeanEditor;
 import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
-import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.element.NestedForm;
 import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
@@ -42,7 +42,7 @@ import org.riotfamily.riot.form.ui.FormUtils;
  * @since 7.0
  */
 public class PagePropertiesEditor extends CompositeElement 
-		implements Editor, NestedEditor, ChangeListener {
+		implements Editor, BeanEditor, ChangeListener {
 
 	private FormRepository repository;
 	
@@ -91,6 +91,10 @@ public class PagePropertiesEditor extends CompositeElement
 		return null;
 	}
 	
+	// -----------------------------------------------------------------
+	// Implementation of the Editor interface
+	// -----------------------------------------------------------------
+	
 	public Object getValue() {
 		return currentForm.getValue();
 	}
@@ -100,10 +104,30 @@ public class PagePropertiesEditor extends CompositeElement
 		currentForm.setValue(value);
 	}
 	
+	// -----------------------------------------------------------------
+	// Implementation of the BeanEditor interface
+	// -----------------------------------------------------------------
+	
 	public void setBackingObject(Object obj) {
 		currentForm.setBackingObject(obj);
 	}
 
+	public Editor getEditor(String property) {
+		return currentForm.getEditor(property);
+	}
+	
+	public void bind(Editor editor, String property) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setBeanClass(Class<?> beanClass) {
+		throw new UnsupportedOperationException();
+	}
+	
+	// -----------------------------------------------------------------
+	// Implementation of the ChangeListener interface
+	// -----------------------------------------------------------------
+	
 	public void valueChanged(ChangeEvent event) {
 		String handlerName = (String) event.getNewValue();
 		removeComponent(currentForm);

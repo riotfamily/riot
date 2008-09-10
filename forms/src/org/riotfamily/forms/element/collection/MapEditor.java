@@ -35,6 +35,7 @@ import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.StringRenderer;
+import org.riotfamily.forms.BackingObjectAware;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Element;
@@ -227,6 +228,27 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 		}
 	}
 	
+	public Editor getEditor(String property) {
+		if (property != null) {
+			int i = property.indexOf('.');
+			if (i != -1) {
+				String nested = property.substring(i + 1);
+				String id = property = property.substring(0, i);
+				Editor editor = (Editor) getForm().getElementById(id); 
+				if (editor instanceof NestedEditor) {
+					NestedEditor ne = (NestedEditor) editor;
+					return ne.getEditor(nested);
+				}
+				else {
+					throw new IllegalStateException("Editor for " + property 
+							+ " must implement the NestedEditor interface");
+				}
+			}
+			return (Editor) getForm().getElementById(property);
+		}
+		return null;
+	}
+	
 	@SuppressWarnings("unchecked")
 	private Map createOrClearMap() {
 		Map map = (Map) getEditorBinding().getValue();
@@ -277,9 +299,7 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 		public MapItem(Object key, boolean removable) {
 			super("item");
 			this.key = key;
-			binding = new CollectionItemEditorBinding(
-					MapEditor.this.getEditorBinding().getEditorBinder());
-			
+			binding = new CollectionItemEditorBinding(MapEditor.this.getEditorBinding());
 			setWrap(false);
 			editor = (Editor) itemElementFactory.createElement(this, getForm(), false);
 			editor.setEditorBinding(binding);
@@ -330,8 +350,8 @@ public class MapEditor extends TemplateElement implements Editor, NestedEditor {
 		
 		public void setBackingObject(Object obj) {
 			binding.setValue(obj);
-			if (editor instanceof NestedEditor) {
-				((NestedEditor) editor).setBackingObject(obj);
+			if (editor instanceof BackingObjectAware) {
+				((BackingObjectAware) editor).setBackingObject(obj);
 			}
 		}
 		

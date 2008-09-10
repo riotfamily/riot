@@ -92,14 +92,13 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 				String nested = property.substring(i + 1);
 				property = property.substring(0, i);
 				Editor editor = findEditorByProperty(property);
-				if (editor instanceof BeanEditor) {
-					BeanEditor be = (BeanEditor) editor;
-					return be.getEditor(nested);
+				if (editor instanceof NestedEditor) {
+					NestedEditor ne = (NestedEditor) editor;
+					return ne.getEditor(nested);
 				}
 				else {
-					throw new InvalidPropertyException(getBeanClass(),
-							property, "Nested editor must implement the " +
-							"BeanEditor interface");
+					throw new IllegalStateException("Editor for " + property 
+							+ " must implement the NestedEditor interface");
 				}
 			}
 			return findEditorByProperty(property);
@@ -138,10 +137,10 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 		if (isEditingExistingBean()) {
 			for (EditorBinding binding : bindings.values()) {
 				Editor editor = binding.getEditor();
-				if (editor instanceof NestedEditor) {
+				if (editor instanceof BackingObjectAware) {
 					Object value = getPropertyValue(binding.getProperty());
-					NestedEditor nested = (NestedEditor) editor;
-					nested.setBackingObject(value);
+					BackingObjectAware boa = (BackingObjectAware) editor;
+					boa.setBackingObject(value);
 				}
 			}
 		}

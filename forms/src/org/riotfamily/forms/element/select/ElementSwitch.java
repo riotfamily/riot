@@ -27,15 +27,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.forms.BeanEditor;
 import org.riotfamily.forms.Container;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.Element;
+import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
 
 public class ElementSwitch extends Container 
-		implements Editor, BeanEditor, ChangeListener {
+		implements Editor, NestedEditor, ChangeListener {
 	
 	private SelectBox selectBox = new SelectBox();
 
@@ -106,7 +106,7 @@ public class ElementSwitch extends Container
 	}
 	
 	// ---------------------------------------------------------------------
-	// Implementation of the BeanEditor interface
+	// Implementation of the NestedEditor interface
 	// ---------------------------------------------------------------------
 
 	public Editor getEditor(String property) {
@@ -119,14 +119,6 @@ public class ElementSwitch extends Container
 		for (SwitchCase c : cases.values()) {
 			c.setBackingObject(obj);
 		}
-	}
-	
-	public void bind(Editor editor, String property) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void setBeanClass(Class<?> beanClass) {
-		throw new UnsupportedOperationException();
 	}
 
 }

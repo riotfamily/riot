@@ -33,7 +33,7 @@ import org.riotfamily.forms.EditorBinding;
 
 public class CollectionItemEditorBinding implements EditorBinding {
 
-		private EditorBinder binder;
+		private EditorBinding parentBinding;
 		
 		private Editor editor;
 		
@@ -42,8 +42,8 @@ public class CollectionItemEditorBinding implements EditorBinding {
 		private boolean existingItem;
 		
 		
-		public CollectionItemEditorBinding(EditorBinder binder) {
-			this.binder = binder;
+		public CollectionItemEditorBinding(EditorBinding parentBinding) {
+			this.parentBinding = parentBinding;
 		}
 
 		public Class<?> getBeanClass() {
@@ -67,7 +67,7 @@ public class CollectionItemEditorBinding implements EditorBinding {
 		}
 
 		public EditorBinder getEditorBinder() {
-			return binder;
+			return parentBinding.getEditorBinder();
 		}
 
 		public String getProperty() {
@@ -75,11 +75,11 @@ public class CollectionItemEditorBinding implements EditorBinding {
 		}
 
 		public PropertyEditor getPropertyEditor() {
-			return binder.getPropertyEditor(getBeanClass(), null);
+			return getEditorBinder().getPropertyEditor(getBeanClass(), null);
 		}
 
 		public String getPropertyPath() {
-			return "[" + editor.getId() + "]";
+			return parentBinding.getPropertyPath() + '.' + editor.getId();
 		}
 
 		public Class<?> getPropertyType() {

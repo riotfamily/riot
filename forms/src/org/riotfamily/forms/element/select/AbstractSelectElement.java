@@ -29,10 +29,10 @@ import java.util.List;
 
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.forms.AbstractEditorBase;
+import org.riotfamily.forms.BackingObjectAware;
 import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.MessageUtils;
-import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.options.OptionsModel;
@@ -43,10 +43,10 @@ import org.springframework.util.Assert;
  * Abstract superclass for elements that let the user choose from a set of
  * options like selectboxes or radio button groups.
  */
-public abstract class AbstractSelectElement extends AbstractEditorBase implements
-		Editor, SelectElement, NestedEditor, JavaScriptEventAdapter {
+public abstract class AbstractSelectElement extends AbstractEditorBase 
+		implements Editor, SelectElement, BackingObjectAware, 
+		JavaScriptEventAdapter {
 
-	
 	private Object options;
 	
 	private String valueProperty;
