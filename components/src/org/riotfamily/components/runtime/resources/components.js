@@ -718,6 +718,11 @@ riot.discardOn = function() {
 		visibility: 'visible'
 	}); 
 	$$('body > *:not(#riotPreviewFrame)').invoke('hide');
+	var html = $$('html').first();
+	if (!html.originalOverflow) {
+		html.originalOverflow = html.style.overflow;
+	}
+	html.style.overflow = 'hidden';
 	riot.applyFunction = function(containerIds) {
 		ComponentEditor.discard(containerIds, function() {window.location.reload();});
 	};
@@ -725,7 +730,9 @@ riot.discardOn = function() {
 
 riot.discardOff = function() {
 	riot.toolbar.applyButton.disable();
-	riot.previewFrame.hide();		
+	riot.previewFrame.hide();
+	var html = $$('html').first();
+	html.style.overflow = html.originalOverflow;
 	$$('body > *:not(#riotPreviewFrame)').invoke('show');
 	riot.outline.hide();
 }
