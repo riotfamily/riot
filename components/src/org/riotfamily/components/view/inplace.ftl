@@ -42,6 +42,7 @@
 	<#else>
 		<#if inplaceMacroHelper.isLiveModePreview()>
 			<@riot.stylesheet href="style/toolbar.css" />
+			<@riot.stylesheet href="style/edit-mode.css" />
 			<script type="text/javascript" language="JavaScript">
 				parent.riot.toolbar.renderProxy(document);
 			</script>
