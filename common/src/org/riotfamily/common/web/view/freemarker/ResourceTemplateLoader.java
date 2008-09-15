@@ -55,6 +55,13 @@ public class ResourceTemplateLoader implements TemplateLoader,
 	}
 
 	public long getLastModified(Object templateSource) {
+		Resource resource = (Resource) templateSource;
+		try {
+			return resource.lastModified();
+		}
+		catch (IOException e) {
+			// If the resource cannot be resolved 
+		}
 		return -1;
 	}
 
