@@ -549,15 +549,22 @@ public final class ServletUtils {
 	 */
 	public static String addParameter(String url, String name, String value) {
 		StringBuffer sb = new StringBuffer(url);
-		boolean first = url.indexOf('?') == -1;
-		sb.append(first ? '?' : '&');
-		sb.append(name);
-		if (value != null) {
-			sb.append('=').append(FormatUtils.uriEscape(value));
-		}
+		appendParameter(sb, name, value);
 		return sb.toString();
 	}
 
+	/**
+	 * Appends the given parameter to the given URL's query string.
+	 */
+	public static void appendParameter(StringBuffer url, String name, String value) {
+		boolean first = url.indexOf("?") == -1;
+		url.append(first ? '?' : '&');
+		url.append(name);
+		if (value != null) {
+			url.append('=').append(FormatUtils.uriEscape(value));
+		}
+	}
+	
 	/**
 	 * Returns an URL with all of the given request's parameters added to the
 	 * given URL's query string.
@@ -575,6 +582,20 @@ public final class ServletUtils {
 		return url;
 	}
 	
+	/**
+	 * Appends all of the given request's parameters to the given URL's query string.
+	 */
+	@SuppressWarnings("unchecked")
+	public static void appendRequestParameters(StringBuffer url, HttpServletRequest request) {
+		Enumeration<String> e = request.getParameterNames();
+		while (e.hasMoreElements()) {
+			String name = e.nextElement();
+			String[] values = request.getParameterValues(name);
+			for (int i=0; i < values.length; i++) {
+				appendParameter(url, name, values[i]);
+			}
+		}
+	}
 
 	public static String getRequestUrlWithQueryString(
 			HttpServletRequest request) {
