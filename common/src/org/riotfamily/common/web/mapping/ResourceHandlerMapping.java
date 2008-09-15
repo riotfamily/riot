@@ -41,19 +41,17 @@ public class ResourceHandlerMapping extends AbstractHandlerMapping {
 	protected Object getHandlerInternal(HttpServletRequest request)
 			throws Exception {
 		
-		if (ServletUtils.isDirectRequest(request)) {
-			String path = ServletUtils.getOriginatingPathWithinApplication(request);
-			if (FormatUtils.getExtension(path) != null) {
-				path = StringUtils.cleanPath(path);
-				Resource res = new ServletContextResource(getServletContext(), path);
-				if (res.exists()) {
-					if (!FORBIDDEN.matcher(path).find()) {
-						String contentType = null;
-						if (fileTypeMap != null) {
-							contentType = fileTypeMap.getContentType(path);
-						}
-						return new ServeResourceCotroller(res, contentType);
+		String path = ServletUtils.getPathWithinApplication(request);
+		if (StringUtils.hasLength(FormatUtils.getExtension(path))) {
+			path = StringUtils.cleanPath(path);
+			Resource res = new ServletContextResource(getServletContext(), path);
+			if (res.exists()) {
+				if (!FORBIDDEN.matcher(path).find()) {
+					String contentType = null;
+					if (fileTypeMap != null) {
+						contentType = fileTypeMap.getContentType(path);
 					}
+					return new ServeResourceCotroller(res, contentType);
 				}
 			}
 		}
