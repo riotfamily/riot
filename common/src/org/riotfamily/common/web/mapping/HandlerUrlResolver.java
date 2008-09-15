@@ -29,6 +29,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.SpringUtils;
+import org.riotfamily.common.web.servlet.PathCompleter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
@@ -42,10 +43,16 @@ import org.springframework.util.Assert;
  */
 public class HandlerUrlResolver implements ApplicationContextAware {
 
+	private PathCompleter pathCompleter;
+	
 	private List<ReverseHandlerMapping> mappings;
 	
 	private ApplicationContext applicationContext;
 	
+	public HandlerUrlResolver(PathCompleter pathCompleter) {
+		this.pathCompleter = pathCompleter;
+	}
+
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 	}
@@ -95,7 +102,7 @@ public class HandlerUrlResolver implements ApplicationContextAware {
 	public String getUrlForHandler(HttpServletRequest request, 
 			String handlerName, Object attributes, String prefix) {
 		
-		UrlResolverContext context = new UrlResolverContext(request);
+		UrlResolverContext context = new UrlResolverContext(request, pathCompleter);
 		return getUrlForHandler(context, handlerName, attributes, prefix);
 	}
 	

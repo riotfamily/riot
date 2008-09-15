@@ -28,7 +28,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.view.MacroHelperFactory;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.pages.dao.PageDao;
@@ -46,22 +45,18 @@ public class PagesMacroHelperFactory implements MacroHelperFactory {
 
 	private PageResolver pageResolver;
 
-	private PathCompleter pathCompleter;
-	
 	public PagesMacroHelperFactory(ComponentDao componentDao, PageDao pageDao, 
-			PageResolver pageResolver, PathCompleter pathCompleter) {
+			PageResolver pageResolver) {
 		
 		this.componentDao = componentDao;
 		this.pageDao = pageDao;
 		this.pageResolver = pageResolver;
-		this.pathCompleter = pathCompleter;
 	}
 
 	public Object createMacroHelper(HttpServletRequest request,
 			HttpServletResponse response, Map<String, ?> model) {
 		
-		return new PagesMacroHelper(componentDao, pageDao, pageResolver,
-				pathCompleter, request);
+		return new PagesMacroHelper(componentDao, pageDao, pageResolver, request);
 	}
 	
 }

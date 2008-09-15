@@ -4,7 +4,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
@@ -17,8 +16,8 @@ public class SiteUserPolicy implements AuthorizationPolicy {
 	
 	private int order = Integer.MAX_VALUE - 2;
 	
-	public SiteUserPolicy(PageDao pageDao) {
-		this.pageResolver = new PageResolver(pageDao);
+	public SiteUserPolicy(PageResolver pageResolver) {
+		this.pageResolver = pageResolver;
 	}
 	
     public int getOrder() {

@@ -56,72 +56,36 @@ public class PageResolver {
 	private static final Object NOT_FOUND = new Object();
 	
 	private PageDao pageDao;
+	
+	private PathCompleter pathCompleter;
 
-	public PageResolver(PageDao pageDao) {
+	public PageResolver(PageDao pageDao, PathCompleter pathCompleter) {
 		this.pageDao = pageDao;
+		this.pathCompleter = pathCompleter;
 	}
 	
 	/**
-	 * Returns the first Site that matches the given request.
-	 * <p>
-	 * <strong>Important:</strong> This method can only be used <em>after</em> 
-	 * the servlet container has selected a servlet to handle the the request. 
-	 * In other words this method must not be used within a servlet filter 
-	 * because it's impossible to determine the servlet mapping at this point.
-	 * If you need to resolve the Site in a filter use 
-	 * {@link #getSite(HttpServletRequest, PathCompleter) this method} instead.
+	 * Returns the first Site that matches the given request. The PathCompleter
+	 * is used to strip the servlet mapping from the request URI.
 	 * @return The first matching Site, or <code>null</code> if no match is found
 	 */
 	public Site getSite(HttpServletRequest request) {
-		return getSite(request, null);
-	}
-
-	/**
-	 * Returns the first Site that matches the given request. The PathCompleter
-	 * is used to strip the servlet mapping from the request URI.
-	 * <p>
-	 * This method is intended for use inside a servlet filter, because in
-	 * that phase of request processing the servlet mapping is not known yet.
-	 * @return The first matching Site, or <code>null</code> if no match is found
-	 */
-	public Site getSite(HttpServletRequest request, PathCompleter pathCompleter) {
 		Object site = request.getAttribute(SITE_ATTRIBUTE);
 		if (site == null) {
-			site = resolveSite(request, pathCompleter);
+			site = resolveSite(request);
 			expose(site, request, SITE_ATTRIBUTE);
 		}
 		return site != NOT_FOUND ? (Site) site : null; 
 	}
 		
 	/**
-	 * Returns the path within the resolved Site. That is the requestURI 
-	 * without the contextPath, without the servlet prefix or suffix and 
-	 * without the Site's {@link Site#getPathPrefix() pathPrefix}.
-	 * <p>
-	 * <strong>Important:</strong> This method can only be used <em>after</em> 
-	 * the servlet container has selected a servlet to handle the the request
-	 * <em>or</em> {@link #getSite(HttpServletRequest, PathCompleter)} has been
-	 * invoked before.
-	 * In other words this method should not be used within a servlet filter 
-	 * unless you can assert the above. If you are unsure use 
-	 * {@link #getPathWithinSite(HttpServletRequest, PathCompleter)} instead.
+	 * Returns the path within the resolved Site.
 	 */
 	public String getPathWithinSite(HttpServletRequest request) {
-		return getPathWithinSite(request, null);
-	}
-
-	/**
-	 * Returns the path within the resolved Site.
-	 * <p>
-	 * This method is intended for use inside a servlet filter, because in
-	 * that phase of request processing the servlet mapping is not known yet.
-	 * @see #getPathWithinSite(HttpServletRequest)
-	 */
-	public String getPathWithinSite(HttpServletRequest request, PathCompleter pathCompleter) {
 		Object path = request.getAttribute(PATH_ATTRIBUTE);
 		if (path == null) {
 			// This will exposes the path attribute as side effect:
-			Site site = getSite(request, pathCompleter);
+			Site site = getSite(request);
 			if (site != null) {
 				path = request.getAttribute(PATH_ATTRIBUTE);
 			}
@@ -131,13 +95,6 @@ public class PageResolver {
 	
 	/**
 	 * Returns the Page for the given request.
-	 * <p>
-	 * <strong>Important:</strong> This method can only be used <em>after</em> 
-	 * the servlet container has selected a servlet to handle the the request
-	 * <em>or</em> {@link #getSite(HttpServletRequest, PathCompleter)} has been
-	 * invoked before.
-	 * In other words this method should not be used within a servlet filter 
-	 * unless you can assert the above.
 	 */
 	public Page getPage(HttpServletRequest request) {
 		Object page = request.getAttribute(PAGE_ATTRIBUTE);
@@ -229,8 +186,7 @@ public class PageResolver {
 	 * @param pathCompleter in order to strip the servlet mapping
 	 * @return the page matching the parameters or null if no page was found
 	 */
-	public Page resolvePage(String url, String contextPath, Site fallbackSite,
-			PathCompleter pathCompleter) {
+	public Page resolvePage(String url, String contextPath, Site fallbackSite) {
 		
 		String host = ServletUtils.getHost(url);
 		String path = ServletUtils.getPath(url);
@@ -246,7 +202,7 @@ public class PageResolver {
 			return null;
 		}
 
-		path = pathCompleter.stripServletMapping(path);
+		path = pathCompleter.stripMapping(path);
 		log.debug("Path is now '" + path + "'.");
 		log.debug("Host is '" + host + "'.");
 
@@ -273,18 +229,10 @@ public class PageResolver {
 	}	
 
 	
-	private Site resolveSite(HttpServletRequest request, PathCompleter pathCompleter) {
+	private Site resolveSite(HttpServletRequest request) {
 		String hostName = request.getServerName();
-		String path;
-		if (pathCompleter == null) {
-			path = ServletUtils.getPathWithoutServletMapping(request);
-			log.debug("Path without a PathCompleter resolved to '" + path + "'.");
-		}
-		else {
-			path = ServletUtils.getPathWithinApplication(request);
-			path = pathCompleter.stripServletMapping(path);
-			log.debug("Path with a PathCompleter resolved to '" + path + "'.");
-		}
+		String path = ServletUtils.getPathWithinApplication(request);
+		path = pathCompleter.stripMapping(path);
 		Site site = pageDao.findSite(hostName, path);
 		String pathWithinSite = null;
 		if (site != null) {

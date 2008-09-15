@@ -28,7 +28,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
@@ -53,19 +52,15 @@ public class PagesMacroHelper {
 	
 	private PageResolver pageResolver;
 
-	private PathCompleter pathCompleter;
-	
 	private HttpServletRequest request;
 
 	
 	public PagesMacroHelper(ComponentDao componentDao, PageDao pageDao, 
-			PageResolver pageResolver, PathCompleter pathCompleter, 
-			HttpServletRequest request) {
+			PageResolver pageResolver, HttpServletRequest request) {
 		
 		this.componentDao = componentDao;
 		this.pageDao = pageDao;
 		this.pageResolver = pageResolver;
-		this.pathCompleter = pathCompleter;
 		this.request = request;
 	}
 	
@@ -79,7 +74,7 @@ public class PagesMacroHelper {
 
 	public Page getPageForUrl(String url, SiteFacade facade) {
 		return pageResolver.resolvePage(url, request.getContextPath(),
-				facade.getSite(), pathCompleter);
+				facade.getSite());
 	}
 	
 	public Page getPageOfType(String pageType, SiteFacade facade) {

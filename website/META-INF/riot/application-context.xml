@@ -5,8 +5,8 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="pathCompleter" class="org.riotfamily.common.web.servlet.WebXmlPathCompleter">
-		<property name="servletName" value="website" />
+	<bean id="pathCompleter" class="org.riotfamily.common.web.servlet.DefaultPathCompleter">
+		<property name="suffix" value=".html" />
 	</bean>
 
 	<bean id="websiteCache" class="org.riotfamily.cachius.spring.CacheFactoryBean">

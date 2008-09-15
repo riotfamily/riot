@@ -35,6 +35,7 @@ import org.riotfamily.common.web.mapping.AbstractReverseHandlerMapping;
 import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.common.web.mapping.UrlResolverContext;
 import org.riotfamily.common.web.servlet.PathCompleter;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
@@ -94,7 +95,6 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 			if (site == null) {
 				return null;
 			}
-			
 			return getPageNotFoundHandler(site, path);
 		}
 		
@@ -116,9 +116,11 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	 */
 	protected Object getPageHandler(Page page, HttpServletRequest request) {
 		if (page.isFolder()) {
-			return getFolderHandler(page);
+			return getFolderHandler(page.getChildPages());
 		}
-		if (page.isRequestable()) {
+		if (page.isRequestable() && pathCompleter.containsMapping(
+				ServletUtils.getPathWithinApplication(request))) {
+			
 			String handlerName = page.getPageType();
 			if (handlerName != null && getApplicationContext().containsBean(handlerName)) {
 				Object handler = getApplicationContext().getBean(handlerName);
@@ -130,18 +132,15 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		return null;
 	}
 
-	/**
-	 * Returns a Controller that sends a redirect to the request to the first 
-	 * requestable child page.
-	 */
-	private Object getFolderHandler(Page folder) {
-		for (Page page : folder.getChildPages()) {
+	
+	private Object getFolderHandler(List<Page> childPages) {
+		for (Page page : childPages) {
 			if (page.isRequestable()) {
 				String url = page.getUrl(pathCompleter);
 				return new RedirectController(url, true, false);
 			}
 		}
-		return null;
+		return new HttpErrorController(HttpServletResponse.SC_NOT_FOUND);
 	}
 	
 	/**
@@ -150,6 +149,9 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	 */
 	protected Object getPageNotFoundHandler(Site site, String path) {
 		try {
+			if (path.length() == 0) {
+				return getFolderHandler(pageDao.getRootNode().getChildPages(site));
+			}
 			PageAlias alias = pageDao.findPageAlias(site, path);
 			if (alias != null) {
 				Page page = alias.getPage();
@@ -164,7 +166,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 			return null;
 		}
 		catch (HibernateSystemException e) {
-			// No hibernate session bound to thread
+			// No Hibernate session bound to thread
 		}
 		return null;
 	}

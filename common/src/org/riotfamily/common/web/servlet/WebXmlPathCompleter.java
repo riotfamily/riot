@@ -35,7 +35,7 @@ import org.springframework.web.context.ServletContextAware;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class WebXmlPathCompleter extends DefaultPathCompleter 
+public class WebXmlPathCompleter extends PathCompleterSupport 
 		implements ServletContextAware, InitializingBean {
 
 	private RiotLog log = RiotLog.get(WebXmlPathCompleter.class);
@@ -75,10 +75,10 @@ public class WebXmlPathCompleter extends DefaultPathCompleter
 				
 		int i = servletMapping.indexOf('*');
 		if (i == 0) {
-			setServletSuffix(servletMapping.substring(1));
+			setSuffix(servletMapping.substring(1));
 		}
 		if (i > 0) {
-			setServletPrefix(servletMapping.substring(0, i - 1));
+			setPrefix(servletMapping.substring(0, i - 1));
 		}
 	}
 	

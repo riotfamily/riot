@@ -32,10 +32,19 @@
     	<property name="defaultLocale"><value>en_US</value></property>
     </bean>
     
+    <bean id="riotHandlerUrlResolver" class="org.riotfamily.common.web.mapping.HandlerUrlResolver">
+		<constructor-arg>
+			<bean class="org.riotfamily.common.web.servlet.WebXmlPathCompleter">
+				<property name="servletName" value="riot" />
+			</bean>
+		</constructor-arg>
+	</bean>
+		
     <bean class="org.riotfamily.riot.runtime.RiotRuntimeInitializer">
     	<description>
 			Initializes the RiotRuntime.    	
     	</description>
+    	<constructor-arg ref="riotHandlerUrlResolver" />
     </bean>
     
     <util:list id="messageBasenames">

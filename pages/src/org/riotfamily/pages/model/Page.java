@@ -202,7 +202,7 @@ public class Page {
 	}
 	
 	public String getUrl(PathCompleter pathCompleter, Object attributes) {
-		String pagePath = pathCompleter.addServletMapping(getFullPath());
+		String pagePath = pathCompleter.addMapping(getFullPath());
 		if (isWildcardInPath()) {
 			pagePath = fillInWildcards(pagePath, attributes);
 		}
@@ -212,7 +212,7 @@ public class Page {
 	public String getAbsoluteUrl(PathCompleter pathCompleter, boolean secure,
 			String defaultHost, String contextPath, Object attributes) {
 		
-		String pagePath =  pathCompleter.addServletMapping(getPath());
+		String pagePath =  pathCompleter.addMapping(getPath());
 		if (isWildcardInPath()) {
 			pagePath = fillInWildcards(pagePath, attributes);
 		}

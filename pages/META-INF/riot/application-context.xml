@@ -29,5 +29,10 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="pageTypeHierarchy" ref="pageTypeHierarchy" />
 	</bean>
+	
+	<bean id="pageResolver" class="org.riotfamily.pages.mapping.PageResolver">
+		<constructor-arg ref="pageDao" />
+		<constructor-arg ref="pathCompleter" />
+	</bean>
 
 </beans>

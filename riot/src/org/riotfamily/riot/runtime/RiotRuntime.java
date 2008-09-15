@@ -27,7 +27,7 @@ import javax.servlet.ServletContext;
 
 import org.riotfamily.common.web.mapping.HandlerUrlResolver;
 import org.riotfamily.common.web.mapping.UrlResolverContext;
-import org.riotfamily.common.web.servlet.DefaultPathCompleter;
+import org.riotfamily.common.web.servlet.PathCompleterSupport;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.riot.RiotVersion;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -75,7 +75,7 @@ public class RiotRuntime implements ServletContextAware {
 			servletPrefix = DEFAULT_SERVLET_PREFIX;
 		}
 		resourcePath = servletPrefix + resourceMapping + '/' + getVersionString() + '/';
-		pathCompleter = new DefaultPathCompleter(servletPrefix, null);
+		pathCompleter = new PathCompleterSupport(servletPrefix, null);
 	}
 	
 	/**
@@ -98,11 +98,11 @@ public class RiotRuntime implements ServletContextAware {
 	}
 	
 	public String getUrl(String handlerName, Object attributes) {
-		return pathCompleter.addServletMapping(handlerUrlResolver.getUrlForHandler(context, handlerName, attributes));
+		return pathCompleter.addMapping(handlerUrlResolver.getUrlForHandler(context, handlerName, attributes));
 	}
 	
 	public String getUrl(String handlerName, Object... attributes) {
-		return pathCompleter.addServletMapping(handlerUrlResolver.getUrlForHandler(context, handlerName, attributes));
+		return pathCompleter.addMapping(handlerUrlResolver.getUrlForHandler(context, handlerName, attributes));
 	}
 
 	public static RiotRuntime getRuntime(ApplicationContext context) {

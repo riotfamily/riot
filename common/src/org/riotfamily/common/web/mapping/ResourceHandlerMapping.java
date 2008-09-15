@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.io.IOUtils;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
@@ -20,11 +21,6 @@ import org.springframework.web.servlet.mvc.LastModified;
 
 /**
  * HandlerMapping that serves static resources from the application directory.
- * <p>
- * This can be useful if you map your DispatcherServlet to *.xml in order to
- * serve dynamic XML files but still have some static resources that would 
- * otherwise be handled by the default servlet.
- * </p>
  * <p>
  * For security reasons no resources under WEB-INF or outside of the 
  * application directory will be served.
@@ -47,15 +43,17 @@ public class ResourceHandlerMapping extends AbstractHandlerMapping {
 		
 		if (ServletUtils.isDirectRequest(request)) {
 			String path = ServletUtils.getOriginatingPathWithinApplication(request);
-			path = StringUtils.cleanPath(path);
-			Resource res = new ServletContextResource(getServletContext(), path);
-			if (res.exists()) {
-				if (!FORBIDDEN.matcher(path).find()) {
-					String contentType = null;
-					if (fileTypeMap != null) {
-						contentType = fileTypeMap.getContentType(path);
+			if (FormatUtils.getExtension(path) != null) {
+				path = StringUtils.cleanPath(path);
+				Resource res = new ServletContextResource(getServletContext(), path);
+				if (res.exists()) {
+					if (!FORBIDDEN.matcher(path).find()) {
+						String contentType = null;
+						if (fileTypeMap != null) {
+							contentType = fileTypeMap.getContentType(path);
+						}
+						return new ServeResourceCotroller(res, contentType);
 					}
-					return new ServeResourceCotroller(res, contentType);
 				}
 			}
 		}

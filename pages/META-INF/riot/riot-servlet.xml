@@ -120,7 +120,7 @@
 	<!-- Policies -->
 	
 	<bean id="siteUserPolicy" class="org.riotfamily.pages.riot.security.SiteUserPolicy">
-		<constructor-arg ref="pageDao" />
+		<constructor-arg ref="pageResolver" />
 	</bean>
 	
 	<bean id="systemPagePolicy" class="org.riotfamily.pages.riot.security.SystemPagePolicy" />

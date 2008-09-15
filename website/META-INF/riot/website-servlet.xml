@@ -159,7 +159,9 @@
 		<property name="exposeRequestAttributes" value="true" />
 	</bean>
 	
-	<bean id="handlerUrlResolver" class="org.riotfamily.common.web.mapping.HandlerUrlResolver" />
+	<bean id="handlerUrlResolver" class="org.riotfamily.common.web.mapping.HandlerUrlResolver">
+		<constructor-arg ref="pathCompleter" />
+	</bean>
 	
 	<bean id="commonMacroHelper" class="org.riotfamily.website.view.CommonMacroHelperFactory">
 		<property name="stamper" ref="resourceStamper" />

@@ -24,18 +24,17 @@
 package org.riotfamily.riot.runtime;
 
 import org.riotfamily.common.web.mapping.HandlerUrlResolver;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
-public class RiotRuntimeInitializer implements RiotRuntimeAware, ApplicationContextAware {
+public class RiotRuntimeInitializer implements RiotRuntimeAware {
 
-	private HandlerUrlResolver handlerUrlResolver = new HandlerUrlResolver();
+	private HandlerUrlResolver handlerUrlResolver;
 	
+	public RiotRuntimeInitializer(HandlerUrlResolver handlerUrlResolver) {
+		this.handlerUrlResolver = handlerUrlResolver;
+	}
+
 	public void setRiotRuntime(RiotRuntime runtime) {
 		runtime.setHandlerUrlResolver(handlerUrlResolver);
 	}
 	
-	public void setApplicationContext(ApplicationContext applicationContext) {
-		handlerUrlResolver.setApplicationContext(applicationContext);
-	}
 }

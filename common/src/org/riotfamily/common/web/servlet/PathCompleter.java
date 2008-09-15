@@ -32,8 +32,10 @@ package org.riotfamily.common.web.servlet;
  */
 public interface PathCompleter {
 
-	public String addServletMapping(String path);
+	public String addMapping(String path);
 	
-	public String stripServletMapping(String path);
+	public boolean containsMapping(String path);
+	
+	public String stripMapping(String path);
 
 }

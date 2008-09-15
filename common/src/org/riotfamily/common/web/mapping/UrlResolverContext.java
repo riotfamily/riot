@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.servlet.PathCompleter;
-import org.riotfamily.common.web.servlet.RequestPathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.util.Assert;
 
@@ -17,10 +16,14 @@ public class UrlResolverContext {
 
 	public UrlResolverContext() {
 	}
+	
+	public UrlResolverContext(PathCompleter pathCompleter) {
+		this.pathCompleter = pathCompleter;
+	}
 
-	public UrlResolverContext(HttpServletRequest request) {
+	public UrlResolverContext(HttpServletRequest request, PathCompleter pathCompleter) {
 		this.attributes = ServletUtils.takeAttributesSnapshot(request);
-		this.pathCompleter = new RequestPathCompleter(request);
+		this.pathCompleter = pathCompleter;
 	}
 	
 	public UrlResolverContext(Map<String, Object> attributes, PathCompleter pathCompleter) {
@@ -37,7 +40,7 @@ public class UrlResolverContext {
 	
 	public String addServletMapping(String path) {
 		Assert.notNull(pathCompleter, "The context has no PathCompleter");
-		return pathCompleter.addServletMapping(path);
+		return pathCompleter.addMapping(path);
 	}
 	
 	

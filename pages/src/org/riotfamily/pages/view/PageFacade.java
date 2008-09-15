@@ -33,7 +33,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.servlet.PathCompleter;
-import org.riotfamily.common.web.servlet.RequestPathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.cache.ComponentCacheUtils;
@@ -60,22 +59,13 @@ public class PageFacade {
 	private PathCompleter pathCompleter;
 	
 	private Map<String, Object> properties = null;
-	
-	public PageFacade(Page page, HttpServletRequest request) {
-		this(page, request, null);
-	}
-	
+		
 	public PageFacade(Page page, HttpServletRequest request, 
 			PathCompleter pathCompleter) {
 		
 		this.page = page;
 		this.request = request;
-		if (pathCompleter != null) {
-			this.pathCompleter = pathCompleter;
-		}
-		else {
-			this.pathCompleter = new RequestPathCompleter(request);
-		}
+		this.pathCompleter = pathCompleter;
 		this.preview = EditModeUtils.isEditMode(request);
 		PageCacheUtils.addNodeTag(page.getNode());
 	}
