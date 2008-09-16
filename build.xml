@@ -123,7 +123,15 @@
 		</fmdoc>
 	</target>
 
-	<target name="dist" depends="js-jar,jar,javadoc,fmdoc">
+	<target name="beandoc" depends="-configure-ivy">
+		<ivy:retrieve organisation="springframework" module="beandoc" revision="1.0-dev-riot1" inline="true" pattern="${lib.dir}/[artifact].[ext]" />
+		<java classpathref="classpath" classname="org.springframework.beandoc.client.BeanDocClient">
+			<arg value="--properties" />
+			<arg value="beandoc.properties" />
+		</java>
+	</target>
+
+	<target name="dist" depends="js-jar,jar,javadoc,fmdoc,beandoc">
 		<delete file="${dist.zip.file}" />
 		<mkdir dir="${build.dir}/tmp" />
 		<copy todir="${build.dir}/tmp" flatten="true">
