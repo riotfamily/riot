@@ -335,6 +335,7 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 				}
 			}
 		}
+		nofifyUsers();
 	}
 
 	public void discard(Long[] containerIds) {
@@ -346,6 +347,7 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 				}
 			}
 		}
+		nofifyUsers();
 	}
 
 	/**
