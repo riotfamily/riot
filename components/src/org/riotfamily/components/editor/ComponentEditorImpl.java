@@ -25,6 +25,7 @@ package org.riotfamily.components.editor;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -32,11 +33,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
+import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSession;
+import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.riotfamily.cachius.CacheService;
@@ -58,10 +63,13 @@ import org.riotfamily.media.dao.MediaDao;
 import org.riotfamily.media.model.CroppedRiotImage;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
+import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.riot.security.auth.RiotUser;
 import org.riotfamily.riot.security.session.LoginManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -70,7 +78,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  */
 @Transactional
 public class ComponentEditorImpl implements ComponentEditor, UploadManager,
-		MessageSourceAware {
+		MessageSourceAware, ServletContextAware {
 
 	private RiotLog log = RiotLog.get(ComponentEditorImpl.class);
 
@@ -93,6 +101,8 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 
 	private MessageSource messageSource;
 	
+	private ServletContext servletContext;
+	
 	public ComponentEditorImpl(ComponentDao componentDao, 
 			CacheService cacheService, MediaDao mediaDao, 
 			ImageCropper imageCropper, ComponentRenderer renderer, 
@@ -107,6 +117,10 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
+	}
+	
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;
 	}
 	
 	public Map<String, Map<String, Object>> getTinyMCEProfiles() {
@@ -309,6 +323,7 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 		ContentContainer container = componentDao.loadContentContainer(containerId);
 		container.setDirty(true);
 		ComponentCacheUtils.invalidateContainer(cacheService, container);
+		nofifyUsers();
 	}
 	
 	public void publish(Long[] containerIds) {
@@ -347,6 +362,40 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	private HttpServletResponse getCapturingResponse(StringWriter sw) {
 		WebContext ctx = WebContextFactory.get();
 		return new CapturingResponseWrapper(ctx.getHttpServletResponse(), sw);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void nofifyUsers() {
+		Locale locale = RequestContextUtils.getLocale(WebContextFactory.get().getHttpServletRequest());
+
+		RiotUser user = AccessController.getCurrentUser();
+		String userName = "";
+		if (user.getName() != null) {
+			userName = " (" + user.getName() + ")";
+		}
+		
+		String message = messageSource.getMessage(
+				"components.concurrentModification", 
+				new Object[] {
+					userName, "javascript:location.reload()" 
+				},
+				"The page has been modified by another user{0}. Please "
+				+ "<a href=\"{1}\">reload</a> the page in order "
+				+ "to see the changes.", locale);
+		
+		log.info(message);
+		
+		ScriptBuffer script = new ScriptBuffer();
+		script.appendScript("riot.showNotification(").appendData(message).appendScript(");");
+		String page = WebContextFactory.get().getCurrentPage();
+		ScriptSession currentSession = WebContextFactory.get().getScriptSession();
+		Collection<ScriptSession> sessions = ServerContextFactory.get(servletContext).getScriptSessionsByPage(page);
+		for (ScriptSession session : sessions) {
+			if (!session.equals(currentSession)) {
+				log.info("Notifying session %s", session.getId());
+				session.addScript(script);
+			}
+		}
 	}
 
 }

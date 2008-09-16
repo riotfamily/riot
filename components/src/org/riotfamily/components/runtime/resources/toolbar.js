@@ -241,6 +241,7 @@ riot.ToolbarButton = Class.create({
 	},
 	
 	applyHandlerInternal: function(enable) {
+		dwr.engine.setActiveReverseAjax(true);
 		if (this.selector) {
 			var targets = this.getHandlerTargets();
 			for (var i = 0; i < targets.length; i++) {
@@ -266,3 +267,13 @@ riot.ToolbarButton = Class.create({
 });
 
 riot.toolbar = new riot.Toolbar();
+
+riot.showNotification = function(message) {
+	var el = $('riot-notification');
+	if (!el) {
+		el = new Element('div', {id: 'riot-notification'});
+		document.body.appendChild(el);
+	}
+	el.innerHTML = message;
+	dwr.engine.setActiveReverseAjax(false);
+}
