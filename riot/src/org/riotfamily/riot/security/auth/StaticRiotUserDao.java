@@ -24,36 +24,30 @@
 package org.riotfamily.riot.security.auth;
 
 import org.riotfamily.riot.dao.support.RiotDaoAdapter;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
+import org.springframework.beans.factory.annotation.Required;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class StaticRiotUserDao extends RiotDaoAdapter implements RiotUserDao, 
-		InitializingBean {
+public class StaticRiotUserDao extends RiotDaoAdapter implements RiotUserDao {
 
 	private static final RiotUser ROOT = new RootUser();
 	
 	private String username;
 	
 	private String password;
+
+	@Required
+	public void setUsername(String username) {
+		this.username = username;
+	}
 	
-	
+	@Required
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(this.username, "No username set.");
-		Assert.notNull(this.password, "No password set.");
-	}
-	
 	public RiotUser findUserByCredentials(String username, String password) {
 		if (this.username.equals(username) && this.password.equals(password)) {
 			return ROOT;
@@ -79,6 +73,15 @@ public class StaticRiotUserDao extends RiotDaoAdapter implements RiotUserDao,
 		public String getUserId() {
 			return ID;
 		}
+		
+		public String getEmail() {
+			return null;
+		}
+		
+		public String getName() {
+			return ID;
+		}
+	
 	}
 
 }

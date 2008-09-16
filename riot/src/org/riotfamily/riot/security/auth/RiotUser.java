@@ -35,4 +35,8 @@ public interface RiotUser {
 
 	public String getUserId();
 
+	public String getName();
+	
+	public String getEmail();
+	
 }

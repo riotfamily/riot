@@ -143,9 +143,13 @@
 	<bean class="org.riotfamily.riot.security.session.RiotUserDaoProcessor" />
 		
 	<!-- A RiotUserDao-based AuthenticationService -->
-	<bean id="authenticationService" class="org.riotfamily.riot.security.auth.StaticAuthenticationService">
-	 	<property name="username" value="root" />
-	 	<property name="password" value="riot" />
+	<bean id="authenticationService" class="org.riotfamily.riot.security.auth.UserDaoAuthenticationService">
+	 	<property name="userDao">
+	 		<bean class="org.riotfamily.riot.security.auth.StaticRiotUserDao">
+	 			<property name="username" value="admin" />
+	 			<property name="password" value="admin" />
+	 		</bean>
+	 	</property>
 	</bean>
 	
 	<!--

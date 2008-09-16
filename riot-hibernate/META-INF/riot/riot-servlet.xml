@@ -23,16 +23,15 @@
 		<constructor-arg ref="sessionFactory" />
 		<property name="entityClass" value="org.riotfamily.riot.hibernate.security.User" />
 	</bean>
- 
- 	<override:bean ref="authenticationService" class="org.riotfamily.riot.security.auth.UserDaoAuthenticationService">
- 		<property name="userDao" ref="riotUserDao" />
- 	</override:bean>
- 	
+
+	<override:properties ref="authenticationService">
+		<property name="userDao" ref="riotUserDao" />
+	</override:properties>
+	  	
 	<override:bean ref="sessionMetaDataStore" class="org.riotfamily.riot.hibernate.security.HibernateSessionMetaDataStore">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</override:bean>
 	
-	<!-- Overrides -->
 	
 	<override:add ref="messageBasenames">
 		<value>classpath:/org/riotfamily/riot/hibernate/runtime/i18n/messages</value>
