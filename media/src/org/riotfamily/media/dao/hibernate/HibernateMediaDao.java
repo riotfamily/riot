@@ -23,9 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.dao.hibernate;
 
-import java.util.List;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Query;
+import org.hibernate.ScrollableResults;
 import org.hibernate.SessionFactory;
 import org.riotfamily.media.dao.MediaDao;
 import org.riotfamily.media.model.RiotFile;
@@ -38,6 +39,8 @@ import org.springframework.util.Assert;
  * @since 7.0
  */
 public class HibernateMediaDao implements MediaDao {
+	
+	private static final Log log = LogFactory.getLog(HibernateMediaDao.class);
 
 	private HibernateHelper hibernate;
 
@@ -63,13 +66,24 @@ public class HibernateMediaDao implements MediaDao {
 		
 		hibernate.setParameter(query, "md5", md5);
 		return (FileData) hibernate.uniqueResult(query);
-	}
+	}	
 	
-	public List findStaleData() {
-		Query query = hibernate.createQuery("from " + FileData.class.getName() 
+	public void deleteStaleData() {		
+		Query query = hibernate.createQuery("select data.id from " + FileData.class.getName() 
 				+ " data where data.files is empty");
 		
-		return hibernate.list(query);
+		log.info("deleteStaleData");
+		
+		ScrollableResults srs = query.scroll();		
+		while (srs.next()) {
+			Long id = srs.getLong(0);
+			log.info("file " + id);
+			FileData data = (FileData) hibernate.get(FileData.class, id);
+			log.info(String.format("Deleting unused media file id: %s, uri %s", new Object[] {data.getId(), data.getUri()}));
+			data.deleteFile();
+			deleteData(data);
+			hibernate.evict(data);
+		}
 	}
 	
 	public void saveFile(RiotFile file) {

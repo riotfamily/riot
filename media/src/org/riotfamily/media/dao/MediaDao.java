@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.dao;
 
-import java.util.List;
-
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.data.FileData;
 
@@ -40,7 +38,7 @@ public interface MediaDao {
 	
 	public FileData findDataByMd5(String md5);
 	
-	public List findStaleData();
+	public void deleteStaleData();
 	
 	public void saveFile(RiotFile file);
 	
