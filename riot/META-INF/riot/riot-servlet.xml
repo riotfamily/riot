@@ -61,10 +61,20 @@
 	</bean>
 
 	<!--
-	  - Exception resolver that outputs a nicely formatted error message.
+	  - Exception resolver for HttpRequests that outputs a nicely formatted error message.
 	  -->
 	<bean id="exceptionResolver" class="org.riotfamily.common.web.util.AdvancedMappingExceptionResolver">
 		<property name="defaultErrorView" value="classpath:/org/riotfamily/riot/runtime/view/error.ftl" />
+		<property name="order" value="1" />
+	</bean>
+	
+	<!--
+	  - Exception resolver that returns AjaxResponse as result of Ajax.Request()
+	  -->
+	<bean id="xmlExceptionResolver" class="org.riotfamily.common.web.util.XmlHttpRequestExceptionHandler">
+		<!-- triggers onFailure() callback on Ajax.Request() -->
+		<property name="defaultStatusCode" value="500" />
+		<property name="order" value="2" />
 	</bean>
 
 	<!--
