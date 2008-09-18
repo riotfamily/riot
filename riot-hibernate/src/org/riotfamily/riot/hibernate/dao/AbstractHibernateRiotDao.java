@@ -29,6 +29,7 @@ import java.util.List;
 import org.hibernate.SessionFactory;
 import org.riotfamily.riot.dao.ListParams;
 import org.riotfamily.riot.dao.RiotDao;
+import org.riotfamily.riot.hibernate.support.ActiveRecord;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -60,18 +61,30 @@ public abstract class AbstractHibernateRiotDao extends HibernateDaoSupport imple
 	}
 	
 	public void save(Object entity, Object parent) throws DataAccessException {
-		getSession().save(entity);
+		if (entity instanceof ActiveRecord) {
+			((ActiveRecord) entity).save();
+		} else {
+			getSession().save(entity);
+		}
 	}
 
 	public Object merge(Object entity) throws DataAccessException {
-		return getSession().merge(entity);
+		if (entity instanceof ActiveRecord) {
+			return ((ActiveRecord) entity).merge();
+		} else {
+			return getSession().merge(entity);
+		}
 	}
 	
 	public void update(Object entity) throws DataAccessException {
 	}
 	
 	public void delete(Object entity, Object parent) throws DataAccessException {
-		getSession().delete(entity);
+		if (entity instanceof ActiveRecord) {
+			((ActiveRecord) entity).delete();
+		} else {
+			getSession().delete(entity);
+		}
 	}
 	
 }
