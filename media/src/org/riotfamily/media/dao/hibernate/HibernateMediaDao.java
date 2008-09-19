@@ -79,7 +79,7 @@ public class HibernateMediaDao implements MediaDao {
 			Long id = srs.getLong(0);
 			log.info("file " + id);
 			FileData data = (FileData) hibernate.get(FileData.class, id);
-			log.info(String.format("Deleting unused media file id: %s, uri %s", new Object[] {data.getId(), data.getUri()}));
+			log.info("Deleting unused media file id: " + data.getId() + ", uri " + data.getUri());
 			data.deleteFile();
 			deleteData(data);
 			hibernate.evict(data);
