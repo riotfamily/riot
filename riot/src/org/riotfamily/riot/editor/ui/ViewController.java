@@ -124,6 +124,8 @@ public class ViewController implements Controller,
 				null, null, request);
 
 			mv.addObject("listKey", session.getKey());
+			mv.addObject(EditorConstants.PARENT_ID, session.getParentId());
+			mv.addObject(EditorConstants.PARENT_EDITOR_ID, session.getParentEditorId());
 		}
 
 		return mv;

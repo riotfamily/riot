@@ -534,7 +534,7 @@ public class ListSession implements RenderContext {
 			bean = loadBean(objectId);
 		}
 		return getCommandStates(listConfig.getFormCommands(),
-				new ListItem(objectId), bean, 1, request);
+				new ListItem(objectId, parentId, parentEditorId), bean, 1, request);
 	}
 
 	public CommandState getParentCommandState(String commandId, ListItem item,
@@ -786,6 +786,10 @@ public class ListSession implements RenderContext {
 
 	public ListParamsImpl getParams() {
 		return params;
+	}
+
+	public String getParentEditorId() {
+		return parentEditorId;
 	}
 
 	public String getParentId() {

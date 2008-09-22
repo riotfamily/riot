@@ -57,8 +57,10 @@ public class ListItem {
 	public ListItem() {
 	}
 	
-	public ListItem(String objectId) {
+	public ListItem(String objectId, String parentId, String parentEditorId) {
 		this.objectId = objectId;
+		this.parentId = parentId;
+		this.parentEditorId = parentEditorId;
 	}
 
 	public List<String> getColumns() {

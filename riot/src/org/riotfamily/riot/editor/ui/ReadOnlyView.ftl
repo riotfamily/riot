@@ -42,7 +42,12 @@
 				<script type="text/javascript" language="JavaScript">
 					TweakStyle.form();
 					var list = new RiotList('${listKey}');
-					list.renderFormCommands('${objectId}', 'formCommands');
+					var item = {
+						objectId: <#if objectId??>'${objectId}'<#else>null</#if>,
+						parentId: <#if parentId??>'${parentId}'<#else>null</#if>,
+						parentEditorId: <#if parentEditorId??>'${parentEditorId}'<#else>null</#if>
+					};
+					list.renderFormCommands(item, 'formCommands');
 				</script>
 			</div>
 		</div>

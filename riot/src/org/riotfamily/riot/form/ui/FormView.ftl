@@ -144,7 +144,12 @@
 				<script type="text/javascript" language="JavaScript">
 					TweakStyle.form();
 					var list = new RiotList('${listKey}');
-					list.renderFormCommands(<#if objectId?exists>'${objectId}'<#else>null</#if>, 'formCommands');
+					var item = {
+						objectId: <#if objectId??>'${objectId}'<#else>null</#if>,
+						parentId: <#if parentId??>'${parentId}'<#else>null</#if>,
+						parentEditorId: <#if parentEditorId??>'${parentEditorId}'<#else>null</#if>
+					};
+					list.renderFormCommands(item, 'formCommands');
 					$('${formId}').observe('submit', hideFormForSaving);
 				</script>
 			</div>
