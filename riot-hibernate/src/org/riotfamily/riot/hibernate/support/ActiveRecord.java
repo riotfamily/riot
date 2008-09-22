@@ -29,9 +29,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
+import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 
 import org.hibernate.LockMode;
+import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -49,7 +57,7 @@ public abstract class ActiveRecord {
 	private static transient SessionFactory sessionFactory;
 
 	/**
-	 * Return the identifier of this instance.
+	 * Returns the identifier of this persistent instance.
 	 * 
 	 * @return this instance's identifier 
 	 */
@@ -59,7 +67,7 @@ public abstract class ActiveRecord {
 	}
 
 	/**
-	 * Set the identifier of this instance.
+	 * Sets the identifier of this persistent instance.
 	 * 
 	 * @param id an identifier
 	 */
@@ -68,45 +76,68 @@ public abstract class ActiveRecord {
 	}
 	
 	/**
-	 * Persist this transient instance, first assigning a generated
+	 * Persists this transient instance, first assigning a generated
 	 * identifier.
+	 * <p>
+	 * Why is this method <code>final</code>? Changing the implementation of
+	 * this method could seriously defect the whole persistence mechanism. If
+	 * you need to perform some operations before or after saving an instance
+	 * of this entity bean class, use the JPA annotations {@link PrePersist} or
+	 * {@link PostPersist}. 
 	 * 
 	 * @see Session#save(Object)
+	 * @see PrePersist
+	 * @see PostPersist
 	 */
-	public void save() {
+	public final void save() {
 		getSession().save(this);
 	}
 	
 	/**
-	 * Copy the state of this object onto the persistent object with the
+	 * Copies the state of this object onto the persistent object with the
 	 * same identifier.
-	 * 
+	 * <p>
+	 * Why is this method <code>final</code>? Changing the implementation of
+	 * this method could seriously defect the whole persistence mechanism. If
+	 * you need to perform some operations before or after updating an instance
+	 * of this entity bean class, use the JPA annotations {@link PreUpdate} or
+	 * {@link PostUpdate}. 
+	 *  
 	 * @return a detached instance with state to be copied
 	 * 
 	 * @see Session#merge(Object)
+	 * @see PreUpdate
+	 * @see PostUpdate
 	 */
-	//TODO: Revisit for proper return type after learning more about java generics
 	@SuppressWarnings("unchecked")
-	public <T> T merge() {
+	public final <T> T merge() {
 		return (T) getSession().merge(this);
 	}
 
 	/**
-	 * Remove this persistent instance from the datastore.
+	 * Removes this persistent instance from the data store.
+	 * <p>
+	 * Why is this method <code>final</code>? Changing the implementation of
+	 * this method could seriously defect the whole persistence mechanism. If
+	 * you need to perform some operations before or after deleting an instance
+	 * of this entity bean class, use the JPA annotations {@link PreRemove} or
+	 * {@link PostRemove}. 
 	 * 
 	 * @see Session#delete(Object)
+	 * @see PreRemove
+	 * @see PostRemove
 	 */
-	public void delete() {
+	public final void delete() {
 		getSession().delete(this);
 	}
 	
 	/**
-	 * Return the persistent instance of the given entity class with the given
+	 * Returns the persistent instance of the given entity class with the given
 	 * identifier, or null if there is no such persistent instance.
-	 * 
+	 * <p>
 	 * Under the hood {@link Session#get(Class, java.io.Serializable)} is used,
 	 * not {@link Session#load(Class, java.io.Serializable)} as one might
-	 * expect because of the method's name. See the hibernate documentation for
+	 * expect because of this method's name. See Hibernate documentation for
 	 * a detailed discussion of the difference. 
 	 * 
 	 * @param clazz a persistent class
@@ -122,27 +153,30 @@ public abstract class ActiveRecord {
 	}
 	
 	/**
-	 * Obtain the specified lock level upon the given object.
+	 * Obtains the specified lock level upon this persistent instance.
+	 * <p>
+	 * Why is this method <code>final</code>? Changing the implementation of
+	 * this method could seriously defect the whole persistence mechanism.
 	 * 
 	 * @param lockMode a {@link LockMode}
 	 * 
 	 * @see Session#lock(Object, LockMode)
 	 */
-	public void lock(LockMode lockMode) {
+	public final void lock(LockMode lockMode) {
 		getSession().lock(this, lockMode);
 	}
 
 	/**
-	 * Return the Hibernate {@link Session} to use for persistence operations.
+	 * Returns the Hibernate {@link Session} to use for persistence operations.
 	 * 
 	 * @return the Hibernate {@link Session}
 	 */
-	protected static Session getSession() {
+	protected final static Session getSession() {
 		return sessionFactory.getCurrentSession();
 	}
 	
 	/**
-	 * Set the Hibernate {@link SessionFactory} to use within the whole JVM.
+	 * Sest the Hibernate {@link SessionFactory} to use within the whole JVM.
 	 *  
 	 * @param sessionFactory a {@link SessionFactory}
 	 */
@@ -151,24 +185,98 @@ public abstract class ActiveRecord {
 	}
 	
 	/**
-	 * Execute an HQL query, binding a number of values to "?" parameters in
-	 * the query string.
+	 * Creates a HQL {@link Query}, binding a number of values to "?"
+	 * parameters in the query string. 
 	 * 
 	 * @param hql a query expressed in Hibernate's query language that may
 	 *            contain one or more '?' parameter placeholders
-	 * @param params the values of the parameters 
-	 * @return a {@link List} containing the results of the query execution
+	 * @param params the values of the parameters
+	 * @return a newly created {@link Query}
 	 */
-	@SuppressWarnings("unchecked")
-	protected static<T> List<T> find(String hql, Object... params) {
-		Query query =
-			getSession().createQuery(hql);
+	protected static Query createQuery(String hql, Object... params) {
+		Query query = getSession().createQuery(hql);
+		
 		if (params != null) {
 			int index = 0;
 			for (Object param: params) {
 				query.setParameter(index ++, param);
 			}
 		}
-		return query.list();
+		
+		return query;
+	}
+	
+	/**
+	 * Executes a HQL query, binding a number of values to "?" parameters in
+	 * the query string.
+	 * 
+	 * @param hql a query expressed in Hibernate's query language that may
+	 *            contain one or more '?' parameter placeholders
+	 * @param params the values of the parameters
+	 * @return a {@link List} containing the results of the query execution
+	 */
+	@SuppressWarnings("unchecked")
+	protected static<T> List<T> find(String hql, Object... params) {
+		return createQuery(hql, params).list();
+	}
+
+	/**
+	 * Convenience method to return a single instance that matches the query,
+	 * or null if the query returns no results.
+	 * 
+	 * @param hql a query expressed in Hibernate's query language that may
+	 *        contain one or more '?' parameter placeholders
+	 * @param params the values of the parameters 
+	 * @return the single result or <code>null</code>
+	 * @throws NonUniqueResultException if there is more than one matching
+	 *                                  result
+	 */
+	@SuppressWarnings("unchecked")
+	protected static<T> T load(String hql, Object... params)
+		throws NonUniqueResultException {
+		
+		return (T) createQuery(hql, params).uniqueResult();
+	}
+
+	/**
+	 * Convenience method to perform some code for every single result obtained
+	 * by the given query. It's save to call this method on a result set of
+	 * arbitrary length.
+	 * <p>
+	 * This is achieved by two design decisions: {@link Query#scroll()}
+	 * is used to obtain a scrollale result set and after processing a single
+	 * result, {@link Session#evict(Object)} is called for the entity just
+	 * processed. So, implementors of {@link ForEachCallback} must be aware
+	 * that only the currently processed entity is attached to the
+	 * Hibernate {@link Session}.
+	 * 
+	 * @param <T> a mapped type or {@link Object[]} if the query returns more
+	 *            than 1 column per row
+	 * @param callback a {@link ForEachCallback} to call for every entity
+	 *                 returned by the given query
+	 * @param hql a query expressed in Hibernate's query language that may
+	 *            contain one or more '?' parameter placeholders
+	 * @param params the values of the parameters
+	 * @see Query#scroll()
+	 * @see Session#evict(Object)
+	 * @see ForEachCallback
+	 */
+	@SuppressWarnings("unchecked")
+	protected static <T> void forEach(ForEachCallback<T> callback, String hql,
+		Object... params) {
+		
+		ScrollableResults results = createQuery(hql, params).scroll();
+		
+		while (results.next()) {
+			Object[] row = results.get();
+			callback.execute(row.length > 1? (T) row: (T) row[0]);
+			for (Object entity: row) {
+				getSession().evict(entity);
+			}
+		}
+	}
+	
+	protected static interface ForEachCallback<T> {
+		public void execute(T t);
 	}
 }
