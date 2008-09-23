@@ -13,12 +13,12 @@
  * The Original Code is Riot.
  *
  * The Initial Developer of the Original Code is
- * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2007
+ * artundweise GmbH, Neteye GmbH
+ * Portions created by the Initial Developer are Copyright (C) 2008
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   alf
+ *   Alf Werder [alf dot werder at artundweise dot de]
  *
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.support;
@@ -29,12 +29,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.PostPersist;
-import javax.persistence.PostRemove;
-import javax.persistence.PostUpdate;
-import javax.persistence.PrePersist;
-import javax.persistence.PreRemove;
-import javax.persistence.PreUpdate;
 
 import org.hibernate.LockMode;
 import org.hibernate.NonUniqueResultException;
@@ -47,7 +41,7 @@ import org.hibernate.SessionFactory;
  * Use as base class for persistent entity beans if you prefer the
  * active record pattern.
  * 
- * @author Alf Werder <alf dot werder at artundweise dot de>
+ * @author Alf Werder [alf dot werder at artundweise dot de]
  * @since 8.0
  */
 
@@ -80,14 +74,9 @@ public abstract class ActiveRecord {
 	 * identifier.
 	 * <p>
 	 * Why is this method <code>final</code>? Changing the implementation of
-	 * this method could seriously defect the whole persistence mechanism. If
-	 * you need to perform some operations before or after saving an instance
-	 * of this entity bean class, use the JPA annotations {@link PrePersist} or
-	 * {@link PostPersist}. 
+	 * this method could seriously defect the whole persistence mechanism.
 	 * 
 	 * @see Session#save(Object)
-	 * @see PrePersist
-	 * @see PostPersist
 	 */
 	public final void save() {
 		getSession().save(this);
@@ -98,16 +87,11 @@ public abstract class ActiveRecord {
 	 * same identifier.
 	 * <p>
 	 * Why is this method <code>final</code>? Changing the implementation of
-	 * this method could seriously defect the whole persistence mechanism. If
-	 * you need to perform some operations before or after updating an instance
-	 * of this entity bean class, use the JPA annotations {@link PreUpdate} or
-	 * {@link PostUpdate}. 
+	 * this method could seriously defect the whole persistence mechanism.
 	 *  
 	 * @return a detached instance with state to be copied
 	 * 
 	 * @see Session#merge(Object)
-	 * @see PreUpdate
-	 * @see PostUpdate
 	 */
 	@SuppressWarnings("unchecked")
 	public final <T> T merge() {
@@ -118,14 +102,9 @@ public abstract class ActiveRecord {
 	 * Removes this persistent instance from the data store.
 	 * <p>
 	 * Why is this method <code>final</code>? Changing the implementation of
-	 * this method could seriously defect the whole persistence mechanism. If
-	 * you need to perform some operations before or after deleting an instance
-	 * of this entity bean class, use the JPA annotations {@link PreRemove} or
-	 * {@link PostRemove}. 
+	 * this method could seriously defect the whole persistence mechanism. 
 	 * 
 	 * @see Session#delete(Object)
-	 * @see PreRemove
-	 * @see PostRemove
 	 */
 	public final void delete() {
 		getSession().delete(this);

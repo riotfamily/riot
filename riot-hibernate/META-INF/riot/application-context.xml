@@ -72,10 +72,9 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
-    <bean class="org.riotfamily.common.beans.MethodInvokingBean">
+    <bean id="activeRecordInitializer" class="org.riotfamily.common.beans.MethodInvokingBean">
         <property name="staticMethod" value="org.riotfamily.riot.hibernate.support.ActiveRecord.setSessionFactory" />
         <property name="argument" ref="sessionFactory"/>
     </bean>
- 
 
 </beans>
