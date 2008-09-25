@@ -181,7 +181,12 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		
 		Site site = PageResolver.getResolvedSite(context);
 		if (site == null) {
-			return null;
+			// Check if we have a single-site website
+			List sites = pageDao.listSites();
+			if (sites.size() != 1) {
+				return null;
+			}
+			site = (Site) sites.get(0);
 		}
 		List pages = pageDao.findPagesForHandler(beanName, site);
 		ArrayList patterns = new ArrayList(pages.size());
