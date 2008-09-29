@@ -114,7 +114,8 @@ var Txt2ImgReplacement = Class.create({
 		if (this.text.length > 0) {
 			var transform = this.el.getStyle('text-transform') || '';
 			var width = 0;
-			if (this.el.getStyle('display') == 'block') {
+			var display = this.el.getStyle('display');
+			if (display == 'block' || display == 'inline-block') {
 				width = this.el.offsetWidth - parseInt(this.el.getStyle('padding-left'))
 						- parseInt(this.el.getStyle('padding-right'));
 			}
