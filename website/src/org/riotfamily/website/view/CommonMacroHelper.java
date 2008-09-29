@@ -24,6 +24,7 @@
 package org.riotfamily.website.view;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ import org.riotfamily.website.cache.CacheTagUtils;
 import org.riotfamily.website.hyphenate.RiotHyphenator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSourceResolvable;
+import org.springframework.util.MethodInvoker;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -311,6 +313,17 @@ public class CommonMacroHelper {
 		}
 		return groups;
 	}
+    
+    public Object invokeStaticMethod(String method, Collection<?> args) 
+    		throws ClassNotFoundException, NoSuchMethodException, 
+    		InvocationTargetException, IllegalAccessException {
+    	
+    	MethodInvoker methodInvoker = new MethodInvoker();
+    	methodInvoker.setStaticMethod(method);
+    	methodInvoker.setArguments(args.toArray());
+    	methodInvoker.prepare();
+    	return methodInvoker.invoke();
+    }
     
     public String toDelimitedString(Collection<?> c, String delim) {
     	return StringUtils.collectionToDelimitedString(c, delim);

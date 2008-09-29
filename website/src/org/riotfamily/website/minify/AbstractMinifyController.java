@@ -25,10 +25,12 @@ package org.riotfamily.website.minify;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -130,10 +132,7 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 					response.sendError(HttpServletResponse.SC_FORBIDDEN);
 					return null;
 				}
-				CapturingResponseWrapper wrapper = new CapturingResponseWrapper(response, buffer);
-				request.getRequestDispatcher(path).include(request, wrapper);
-				wrapper.flush();
-				buffer.write('\n');		
+				capture(path, buffer, request, response);		
 			}
 			
 			String contentType = getContentType();
@@ -155,6 +154,16 @@ public abstract class AbstractMinifyController extends AbstractCacheableControll
 			FileCopyUtils.copy(buffer.toByteArray(), response.getOutputStream());
 		}
 		return null;
+	}
+
+	protected void capture(String path, ByteArrayOutputStream buffer,
+			HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		
+		CapturingResponseWrapper wrapper = new CapturingResponseWrapper(response, buffer);
+		request.getRequestDispatcher(path).include(request, wrapper);
+		wrapper.flush();
+		buffer.write('\n');
 	}
 
 	protected abstract String getContentType();

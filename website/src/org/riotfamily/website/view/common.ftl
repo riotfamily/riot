@@ -24,6 +24,11 @@
  -->
 <#assign templateName = .data_model['org.riotfamily.common.web.view.freemarker.RiotFreeMarkerView.templateName']! />
 
+
+<#function invokeStaticMethod method args...>
+	<#return commonMacroHelper.invokeStaticMethod(method, args)! />
+</#function>
+
 <#---
   - Includes the given path using a RequestDispatcher. 
   - @param path The path to include
@@ -393,7 +398,8 @@
 
 <#macro stylesheets hrefs compress=commonMacroHelper.compressResources rel="stylesheet" type="text/css" attributes...>
 	<#if compress>
-		<link rel="${rel}" type="${type}" href="${resource(pathForHandler("minifyCssController") + "?files=" + toDelimitedString(hrefs))?xml}"${joinAttributes(attributes)} />
+		<#local files = invokeStaticMethod('org.riotfamily.website.minify.MinifyCssController.buildParam', hrefs) />
+		<link rel="${rel}" type="${type}" href="${resource(pathForHandler("minifyCssController") + "?files=" + files?xml)}"${joinAttributes(attributes)} />
 	<#else>
 		<#list hrefs as href>
 			<link rel="${rel}" type="${type}" href="${resource(href)?xml}"${joinAttributes(attributes)} />
