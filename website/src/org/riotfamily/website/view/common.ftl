@@ -401,8 +401,20 @@
 		<#local files = invokeStaticMethod('org.riotfamily.website.minify.MinifyCssController.buildParam', hrefs) />
 		<link rel="${rel}" type="${type}" href="${resource(pathForHandler("minifyCssController") + "?files=" + files?xml)}"${joinAttributes(attributes)} />
 	<#else>
-		<#list hrefs as href>
-			<link rel="${rel}" type="${type}" href="${resource(href)?xml}"${joinAttributes(attributes)} />
+		<#if attributes?is_sequence>
+			<#local attributes = {} />
+		</#if>
+		<#list hrefs as sheet>
+			<#local attrs = attributes />
+			<#if sheet?is_hash>
+				<#local href = sheet.href />
+				<#if sheet.media??>
+					<#local attrs = attrs + {"media": sheet.media} />
+				</#if>
+			<#else>
+				<#local href = sheet />
+			</#if>
+			<link rel="${rel}" type="${type}" href="${resource(href)?xml}"${joinAttributes(attrs)} />
 		</#list>
 	</#if>
 </#macro>
