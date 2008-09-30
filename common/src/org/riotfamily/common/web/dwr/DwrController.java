@@ -55,13 +55,13 @@ public class DwrController extends AbstractController
 
 	private String mapping;
 
-    private List configurators;
+    private List<?> configurators;
 
     private boolean includeDefaultConfig = true;
 
     private ServletConfig servletConfig;
 
-    private Map parameters;
+    private Map<?,?> parameters;
 
     private SpringContainer container;
 
@@ -93,14 +93,14 @@ public class DwrController extends AbstractController
      * Sets the configurators to apply to this controller. The configurators
      * are used to set up DWR correctly.
      */
-    public void setConfigurators(List configurators) {
+    public void setConfigurators(List<?> configurators) {
         this.configurators = configurators;
     }
 
     /**
 	 * Sets parameters just like the init-parameters of the DwrServlet.
 	 */
-	public void setParameters(Map parameters) {
+	public void setParameters(Map<?,?> parameters) {
 		this.parameters = parameters;
 	}
 

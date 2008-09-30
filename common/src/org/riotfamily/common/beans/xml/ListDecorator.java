@@ -44,7 +44,7 @@ public class ListDecorator implements BeanDefinitionDecorator {
 			BeanDefinitionHolder definition, ParserContext parserContext) {
 
 		BeanDefinition bd = definition.getBeanDefinition();
-		List list = parserContext.getDelegate().parseListElement((Element) node, bd);
+		List<?> list = parserContext.getDelegate().parseListElement((Element) node, bd);
 		bd.getPropertyValues().addPropertyValue(listPropertyName, list);
 		return definition;
 	}

@@ -51,10 +51,10 @@ public class MapEntryDecorator implements BeanDefinitionDecorator {
 
 		BeanDefinition bd = definition.getBeanDefinition();
 		MutablePropertyValues pvs = bd.getPropertyValues();
-		Map map = null;
+		Map<Object,Object> map = null;
 		PropertyValue pv = pvs.getPropertyValue(mapPropertyName);
 		if (pv != null) {
-			map = (Map) pv.getValue();
+			map = (Map<Object,Object>) pv.getValue();
 		}
 		if (map == null) {
 			map = new ManagedMap();

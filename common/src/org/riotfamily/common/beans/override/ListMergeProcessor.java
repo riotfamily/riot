@@ -50,7 +50,7 @@ public class ListMergeProcessor implements BeanFactoryPostProcessor, PriorityOrd
 	
 	private String property;
 	
-	private List values;
+	private List<?> values;
 	
 	private boolean append = false;
 	
@@ -72,7 +72,7 @@ public class ListMergeProcessor implements BeanFactoryPostProcessor, PriorityOrd
 		this.property = property;
 	}
 
-	public void setValues(List values) {
+	public void setValues(List<?> values) {
 		this.values = values;
 	}
 	

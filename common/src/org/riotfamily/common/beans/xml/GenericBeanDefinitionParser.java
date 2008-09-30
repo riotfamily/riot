@@ -51,7 +51,7 @@ public class GenericBeanDefinitionParser extends AbstractGenericBeanDefinitionPa
 
 	private HashMap<String, String> translations = Generics.newHashMap();
 
-	private HashSet references = Generics.newHashSet();
+	private HashSet<String> references = Generics.newHashSet();
 
 	public GenericBeanDefinitionParser(Class<?> beanClass) {
 		super(beanClass);

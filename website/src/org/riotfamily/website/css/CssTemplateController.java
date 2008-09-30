@@ -262,11 +262,11 @@ public class CssTemplateController extends AbstractCacheableController
 			HashMap<String, Object> model = Generics.newHashMap();
 			model.put("color", colorTool);
 			if (iniFile != null) {
-				Map<String, Object> sections = iniFile.getSections();
+				Map<String, Map<String,Object>> sections = iniFile.getSections();
 				model.putAll(sections);
-				model.putAll((Map<String, Object>) sections.get(IniFile.GLOBAL_SECTION));
+				model.putAll(sections.get(IniFile.GLOBAL_SECTION));
 				if (key != null) {
-					Map<String, Object> current = (Map<String, Object>) sections.get(key);
+					Map<String, Object> current = sections.get(key);
 					if (current != null) {
 						model.putAll(current);
 					}

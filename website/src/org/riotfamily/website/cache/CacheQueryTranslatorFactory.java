@@ -72,7 +72,7 @@ public class CacheQueryTranslatorFactory extends ASTQueryTranslatorFactory {
 			this.delegate = delegate;
 		}
 
-		public List collectSqlStrings() {
+		public List<?> collectSqlStrings() {
 			return delegate.collectSqlStrings();
 		}
 
@@ -106,7 +106,7 @@ public class CacheQueryTranslatorFactory extends ASTQueryTranslatorFactory {
 			return delegate.getQueryIdentifier();
 		}
 
-		public Set getQuerySpaces() {
+		public Set<?> getQuerySpaces() {
 			return delegate.getQuerySpaces();
 		}
 
@@ -130,12 +130,12 @@ public class CacheQueryTranslatorFactory extends ASTQueryTranslatorFactory {
 			return delegate.isManipulationStatement();
 		}
 
-		public Iterator iterate(QueryParameters params, EventSource eventSource)
+		public Iterator<?> iterate(QueryParameters params, EventSource eventSource)
 				throws HibernateException {
 			return delegate.iterate(params, eventSource);
 		}
 
-		public List list(SessionImplementor impl, QueryParameters params)
+		public List<?> list(SessionImplementor impl, QueryParameters params)
 				throws HibernateException {
 			
 			try {

@@ -50,7 +50,7 @@ public class MapMergeProcessor implements BeanFactoryPostProcessor, PriorityOrde
 	
 	private String property;
 	
-	private Map entries;
+	private Map<String, ?> entries;
 	
 	private int order = 1;
 	
@@ -70,7 +70,7 @@ public class MapMergeProcessor implements BeanFactoryPostProcessor, PriorityOrde
 		this.property = property;
 	}
 
-	public void setEntries(Map entries) {
+	public void setEntries(Map<String, ?> entries) {
 		this.entries = entries;
 	}
 

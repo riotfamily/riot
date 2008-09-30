@@ -62,7 +62,7 @@ public class IniFile {
 	
 	private File file;
 	
-	HashMap<String, Object> sections = Generics.newHashMap();
+	HashMap<String, Map<String,Object>> sections = Generics.newHashMap();
 	
 	Map<String, Object> section;
 	
@@ -77,7 +77,7 @@ public class IniFile {
 		return file.lastModified();
 	}
 	
-	public synchronized Map<String, Object> getSections() {
+	public synchronized Map<String, Map<String,Object>> getSections() {
 		if (file.lastModified() > lastModified) {
 			try {
 				load();
@@ -117,7 +117,7 @@ public class IniFile {
 	}
 	
 	private void setSection(String name) {
-		section = (Map<String, Object>) sections.get(name);
+		section = sections.get(name);
 		if (section == null) {
 			section = Generics.newHashMap();
 			sections.put(name, section);

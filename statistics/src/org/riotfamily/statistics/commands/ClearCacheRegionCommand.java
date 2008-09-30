@@ -1,14 +1,15 @@
 package org.riotfamily.statistics.commands;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
-import org.riotfamily.common.log.RiotLog;
 import org.hibernate.SessionFactory;
 import org.hibernate.cache.entry.CacheEntry;
 import org.hibernate.stat.SecondLevelCacheStatistics;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.statistics.domain.CacheRegionStatsItem;
 
@@ -28,9 +29,9 @@ public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand {
 	private void clearHibernateCacheRegion(String region) {
 		try {
 			SecondLevelCacheStatistics stats = getSessionFactory().getStatistics().getSecondLevelCacheStatistics(region);
-			Set classes = getCacheEntrySet(stats);
-			for (Iterator iterator = classes.iterator(); iterator.hasNext();) {
-				String clazz = (String) iterator.next();
+			Set<String> classes = getCacheEntrySet(stats);
+			for (Iterator<String> iterator = classes.iterator(); iterator.hasNext();) {
+				String clazz = iterator.next();
 				evictCacheEntry(clazz, false);
 			}
 		} 
@@ -40,17 +41,17 @@ public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand {
 		}
 	}
 	
-	private Set getCacheEntrySet(SecondLevelCacheStatistics slStats) {
-		Set entities = new HashSet();
+	private Set<String> getCacheEntrySet(SecondLevelCacheStatistics slStats) {
+		Set<String> entities = Generics.newHashSet();
 		
 		/* Liefert z.Zt ClassCastException.
 		 * (http://opensource.atlassian.com/projects/hibernate/browse/HHH-2815)
 		 */
-		Map entries = slStats.getEntries();
+		Map<?,?> entries = (Map<?,?>) slStats.getEntries();
 		
 		if (slStats != null && entries != null) {
-			for (Iterator iterator = entries.entrySet().iterator(); iterator.hasNext();) {
-				Map.Entry entry = (Map.Entry)iterator.next();
+			for (Iterator<?> iterator = entries.entrySet().iterator(); iterator.hasNext();) {
+				Entry<?,?> entry = (Entry<?,?>) iterator.next();
 				if (entry.getValue() instanceof CacheEntry) {
 					String clzz =  ((CacheEntry)entry.getValue()).getSubclass();
 					if (clzz != null) {

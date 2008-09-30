@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.AccessControl;
@@ -100,11 +101,11 @@ public class SpringConfigurator implements Configurator {
         }
 		
         if (converterTypes != null) {
-			Iterator it = converterTypes.entrySet().iterator();
+			Iterator<Entry<Object,Object>> it = converterTypes.entrySet().iterator();
 			while (it.hasNext()) {
-				Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
-				String match = entry.getKey();
-				String type = entry.getValue();
+				Entry<Object, Object> entry = it.next();
+				String match = (String) entry.getKey();
+				String type = (String) entry.getValue();
 				try {
 					converterManager.addConverter(match, type, Collections.EMPTY_MAP);
 				}

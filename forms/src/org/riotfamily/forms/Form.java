@@ -159,7 +159,7 @@ public class Form implements BeanEditor {
 	public void setBeanClass(Class<?> beanClass) {
 		Assert.notNull(beanClass, "The beanClass must not be null.");
 		if (Map.class.isAssignableFrom(beanClass)) {
-			editorBinder = new MapEditorBinder((Class<? extends Map>) beanClass);
+			editorBinder = new MapEditorBinder((Class<? extends Map<Object,Object>>) beanClass);
 		}
 		else {
 			editorBinder = new BeanEditorBinder(beanClass);

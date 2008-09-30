@@ -6,13 +6,13 @@ import javax.servlet.http.HttpServletRequest;
 
 public class StaticModelBuilder implements ModelBuilder {
 
-	private Map model;
+	private Map<String,Object> model;
 	
-	public void setModel(Map model) {
+	public void setModel(Map<String,Object> model) {
 		this.model = model;
 	}
 
-	public Map buildModel(HttpServletRequest request) {
+	public Map<String,Object> buildModel(HttpServletRequest request) {
 		return model;
 	}
 }

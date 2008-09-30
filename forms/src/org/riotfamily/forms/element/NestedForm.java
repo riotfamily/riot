@@ -83,7 +83,7 @@ public class NestedForm extends TemplateElement implements
 	public void setBeanClass(Class<?> beanClass) {
 		Assert.notNull(beanClass, "The beanClass must not be null.");
 		if (Map.class.isAssignableFrom(beanClass)) {
-			editorBinder = new MapEditorBinder((Class<Map>) beanClass);
+			editorBinder = new MapEditorBinder((Class<Map<Object,Object>>) beanClass);
 		}
 		else {
 			editorBinder = new BeanEditorBinder(beanClass);

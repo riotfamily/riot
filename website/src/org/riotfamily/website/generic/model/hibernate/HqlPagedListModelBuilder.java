@@ -147,7 +147,7 @@ public class HqlPagedListModelBuilder extends HqlListModelBuilder {
 				pageSize);
 	}
 
-	public Map buildModel(final HttpServletRequest request) {
+	public Map<String, Object> buildModel(final HttpServletRequest request) {
 		HibernateUtils.enableLiveModeFilterIfNecessary(getSession());
 		final int page = getPage(request);
 		final int pageSize = getPageSize(request);
@@ -156,7 +156,7 @@ public class HqlPagedListModelBuilder extends HqlListModelBuilder {
 		setParameters(query, request);
 		query.setFirstResult((page - 1) * pageSize);
 		query.setMaxResults(pageSize);
-		List items = query.list();
+		List<?> items = query.list();
 
 		Query countQuery = createQuery(countHql);
 		setParameters(countQuery, request);
