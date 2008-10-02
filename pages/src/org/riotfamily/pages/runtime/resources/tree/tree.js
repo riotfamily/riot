@@ -8,11 +8,11 @@ var Tree = Class.create({
 	initialize: function(el, linkHandler) {
 		el = $(el);
 		this.linkHandler = linkHandler;
-		this.initUl(el);
 		var a = el.select('a');
 		for (var i = 0; i < a.length; i++) {
 			a[i].observe('click', this.handleClick.bindAsEventListener(this, a[i]));
-		}
+		}		
+		this.initUl(el);
 	},
 
 	handleClick: function(ev, a) {
