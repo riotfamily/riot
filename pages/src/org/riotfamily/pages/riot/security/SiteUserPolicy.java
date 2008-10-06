@@ -41,7 +41,7 @@ public class SiteUserPolicy implements AuthorizationPolicy {
 					}
 				}
 				else {
-					denied &= isDenied(user, object);
+					denied |= isDenied(user, object);
 				}
 				if (denied) {
 					return ACCESS_DENIED;
