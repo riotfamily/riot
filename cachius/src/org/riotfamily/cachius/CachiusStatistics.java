@@ -28,8 +28,14 @@ import java.util.concurrent.atomic.AtomicLong;
 public class CachiusStatistics {
 
 	private CacheService service;
+
+	private volatile long maxReadLockAcquisitionTime;
 	
-	private volatile long maxLockAcquisitionTime;
+	private volatile String slowestReadLock;
+	
+	private volatile long maxWriteLockAcquisitionTime;
+	
+	private volatile String slowestWriteLock;
 	
 	private volatile long maxUpdateTime;
 	
@@ -51,9 +57,17 @@ public class CachiusStatistics {
 		misses.incrementAndGet();
 	}
 	
-	protected void lockAcquired(long time) {
-		if (time > maxLockAcquisitionTime) {
-			maxLockAcquisitionTime = time;
+	protected void readLockAcquired(CacheItem item, long time) {
+		if (time > maxReadLockAcquisitionTime) {
+			maxReadLockAcquisitionTime = time;
+			slowestReadLock = item.getKey();
+		}
+	}
+	
+	protected void writeLockAcquired(CacheItem item, long time) {
+		if (time > maxWriteLockAcquisitionTime) {
+			maxWriteLockAcquisitionTime = time;
+			slowestWriteLock = item.getKey();
 		}
 	}
 	
@@ -67,7 +81,10 @@ public class CachiusStatistics {
 	// Public methods --------------------------------------------------------
 	
 	public void reset() {
-		maxLockAcquisitionTime = 0;
+		maxReadLockAcquisitionTime = 0;
+		slowestReadLock = null;
+		maxWriteLockAcquisitionTime = 0;
+		slowestWriteLock = null;
 		maxUpdateTime = 0;
 		slowestUpdate = null;
 		hits.set(0);
@@ -75,8 +92,20 @@ public class CachiusStatistics {
 		service.getCache().resetOverflowStats();
 	}
 	
-	public long getMaxLockAcquisitionTime() {
-		return maxLockAcquisitionTime;
+	public long getMaxReadLockAcquisitionTime() {
+		return maxReadLockAcquisitionTime;
+	}
+	
+	public String getSlowestReadLock() {
+		return slowestReadLock;
+	}
+	
+	public long getMaxWriteLockAcquisitionTime() {
+		return maxWriteLockAcquisitionTime;
+	}
+	
+	public String getSlowestWriteLock() {
+		return slowestWriteLock;
 	}
 
 	public long getMaxUpdateTime() {
@@ -109,6 +138,10 @@ public class CachiusStatistics {
     
     public long getAverageOverflowInterval() {
 		return service.getCache().getAverageOverflowInterval();
+	}
+    
+    public long getMaxInvalidationTime() {
+		return service.getCache().getMaxInvalidationTime();
 	}
 	
     public void invalidateAllItems() {

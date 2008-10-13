@@ -171,7 +171,7 @@ public class CacheService {
 		writeLock.lock();
 		try {
 			long t2 = System.currentTimeMillis();
-			stats.lockAcquired(t2 - t1);
+			stats.writeLockAcquired(cacheItem, t2 - t1);
 			
 			// Check if another writer has already updated the item
 			if (cacheItem.getLastModified() > mtime) {
@@ -242,10 +242,14 @@ public class CacheService {
     		log.trace("Serving cached version of " + cacheItem.getKey());
     	}
     	
-    	// Acquire a read lock and serve the cached version    	
+    	// Acquire a read lock and serve the cached version
+    	long t1 = System.currentTimeMillis();
     	ReadLock readLock = cacheItem.getLock().readLock();
 		readLock.lock();
     	try {
+    		long t2 = System.currentTimeMillis();
+			stats.readLockAcquired(cacheItem, t2 - t1);
+			
     		if (!cacheItem.exists()) {
         		return false;
         	}

@@ -40,9 +40,9 @@ public class RequestStatisticsDao extends AbstractSimpleStatsDao {
 		stats.add("Parallel request count (now)", requestCountFilterPlugin.getCurrentRequestCount());
 		stats.add("Parallel request count (high water mark)", requestCountFilterPlugin.getParallelRequestsHWM());
 		if (requestCountFilterPlugin.getAvgResponseTime() >= 0) {
-			stats.add("Average Response time [ms]", requestCountFilterPlugin.getAvgResponseTime());
+			stats.add("Average response time [ms]", requestCountFilterPlugin.getAvgResponseTime());
 		}
-		stats.add("Total Response time [min] ", (requestCountFilterPlugin.getTotalResponseTime() / 1000 / 60));
+		stats.add("Total response time [min] ", (requestCountFilterPlugin.getTotalResponseTime() / 1000 / 60));
 		stats.add("Parallel request count (critical threshold)", requestCountFilterPlugin.getMaxRequests());
 		stats.add("Critical request count", requestCountFilterPlugin.getCriticalRequestCount());	
 	}

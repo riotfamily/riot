@@ -78,6 +78,8 @@ public final class Cache implements Serializable {
     
     private transient volatile long averageOverflowInterval;
     
+    private transient volatile long maxInvalidationTime;
+    
     /**
      * Create the cache.
      */
@@ -308,11 +310,17 @@ public final class Cache implements Serializable {
     protected void invalidateTaggedItems(String tag) {
     	if (tag != null) {
 	    	log.debug("Invalidating items tagged as " + tag);
+	    	long t1 = System.currentTimeMillis();
 	    	List<CacheItem> items = getTaggedItems(tag);
 	    	if (items != null) {
 	    		for (CacheItem item : items) {
 					item.invalidate();
 				}
+	    	}
+	    	long t2 = System.currentTimeMillis();
+	    	long time = t2 - t1;
+	    	if (time > maxInvalidationTime) {
+	    		maxInvalidationTime = time;
 	    	}
     	}
     }
@@ -339,9 +347,14 @@ public final class Cache implements Serializable {
 		return averageOverflowInterval;
 	}
     
+    public long getMaxInvalidationTime() {
+		return maxInvalidationTime;
+	}
+    
     protected void resetOverflowStats() {
     	lastOverflow = 0;
     	averageOverflowInterval = 0;
+    	maxInvalidationTime = 0;
     }
 
     /**

@@ -45,12 +45,18 @@ public class CachiusStatisticsDao extends AbstractSimpleStatsDao {
 		stats.add("Cached items", cachius.getSize());
 		stats.addMillis("Average overflow interval", cachius.getAverageOverflowInterval());
 		stats.add("Number of tags", cachius.getNumberOfTags());
+		stats.add("Max invalidation time [ms]", cachius.getMaxInvalidationTime());
 		
 		stats.add("Hits", cachius.getHits());
 		stats.add("Misses", cachius.getMisses());
 		
 		stats.add("Max update time [ms]", cachius.getMaxUpdateTime());
-		stats.add("Max update lock acquisition time [ms]", cachius.getMaxLockAcquisitionTime());
 		stats.add("Slowest update", cachius.getSlowestUpdate());
+		
+		stats.add("Max read lock acquisition time [ms]", cachius.getMaxReadLockAcquisitionTime());
+		stats.add("Slowest read lock acquisition", cachius.getSlowestReadLock());
+		
+		stats.add("Max write lock acquisition time [ms]", cachius.getMaxWriteLockAcquisitionTime());
+		stats.add("Slowest write lock acquisition", cachius.getSlowestWriteLock());
 	}
 }

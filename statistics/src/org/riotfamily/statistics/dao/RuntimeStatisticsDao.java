@@ -40,9 +40,9 @@ public class RuntimeStatisticsDao extends AbstractSimpleStatsDao {
 	protected void populateStats(Statistics stats) throws Exception {
 		Runtime rt = Runtime.getRuntime();
 		long used = rt.totalMemory() - rt.freeMemory();
-		boolean critical = (rt.maxMemory() - used) > rt.maxMemory() * 80 / 100;
+		boolean critical = used > rt.maxMemory() * 80 / 100;
 		
-		stats.addBytes("Available memory", rt.maxMemory());
+		stats.addBytes("Max memory", rt.maxMemory());
 		stats.addBytes("Used memory", used, critical);
 		
 		stats.addBytes("Free memory", rt.freeMemory());
