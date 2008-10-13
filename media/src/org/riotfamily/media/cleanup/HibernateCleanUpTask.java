@@ -69,8 +69,8 @@ public class HibernateCleanUpTask extends LongConversationTask {
 
 				log.info("Deleting orphaned files ...");
 
-				Iterator<RiotFile> it = session.createQuery(
-						"from " + RiotFile.class.getName()).iterate();
+				Iterator<Long> it = session.createQuery(
+						"select id from " + RiotFile.class.getName()).iterate();
 				
 				Set<Long> ids = Generics.newHashSet();
 				for (String hql : fileQueries) {
@@ -79,9 +79,10 @@ public class HibernateCleanUpTask extends LongConversationTask {
 				}
 				
 				while (it.hasNext()) {
-					RiotFile file = it.next();
-					if (!ids.contains(file.getId())) {
-						log.debug("Deleting orphaned file: " + file.getUri());
+					Long id = it.next();
+					if (!ids.contains(id)) {
+						log.debug("Deleting orphaned file: " + id);
+						RiotFile file = (RiotFile) session.load(RiotFile.class, id);
 						session.delete(file);
 					}
 				}
