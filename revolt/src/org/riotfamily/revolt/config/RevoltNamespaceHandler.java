@@ -46,6 +46,7 @@ import org.riotfamily.revolt.refactor.CreateIndex;
 import org.riotfamily.revolt.refactor.CreateTable;
 import org.riotfamily.revolt.refactor.DropColumn;
 import org.riotfamily.revolt.refactor.DropConstraint;
+import org.riotfamily.revolt.refactor.DropForeignKey;
 import org.riotfamily.revolt.refactor.DropIndex;
 import org.riotfamily.revolt.refactor.DropTable;
 import org.riotfamily.revolt.refactor.InsertData;
@@ -161,6 +162,10 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 		if (DomUtils.nodeNameEquals(ele, "drop-column")) {
 			refactoring = new DropColumn(ele.getAttribute("table"),
 					ele.getAttribute("column"));
+		}
+		if (DomUtils.nodeNameEquals(ele, "drop-foreign-key")) {
+			refactoring = new DropForeignKey(ele.getAttribute("table"),
+					ele.getAttribute("foreign-key"));
 		}
 		if (DomUtils.nodeNameEquals(ele, "drop-index")) {
 			refactoring = new DropIndex(ele.getAttribute("table"),

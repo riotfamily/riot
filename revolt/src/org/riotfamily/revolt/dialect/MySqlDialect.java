@@ -100,6 +100,11 @@ public class MySqlDialect extends Sql92Dialect {
 		return alterTable(table).append("DROP INDEX").append(name);
 	}
 	
+	@Override
+	public Script dropForeignKey(String table, String name) {
+		return alterTable(table).append("DROP FOREIGN KEY").append(name);
+	}
+	
 	protected String convertBackticksToIdentifierDelimiter(String s) {
 		return s;
 	}
