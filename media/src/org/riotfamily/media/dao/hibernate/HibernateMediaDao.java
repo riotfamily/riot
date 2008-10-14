@@ -82,7 +82,6 @@ public class HibernateMediaDao implements MediaDao {
 			log.info("Deleting unused media file id: " + data.getId() + ", uri " + data.getUri());
 			data.deleteFile();
 			deleteData(data);
-			hibernate.evict(data);
 		}
 	}
 	
