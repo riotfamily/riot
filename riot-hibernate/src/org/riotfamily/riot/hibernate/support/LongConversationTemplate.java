@@ -27,6 +27,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.orm.hibernate3.HibernateAccessor;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.orm.hibernate3.SessionHolder;
@@ -43,6 +44,8 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  */
 public class LongConversationTemplate extends HibernateAccessor {
 
+	private RiotLog log = RiotLog.get(LongConversationTemplate.class);
+	
 	public LongConversationTemplate(SessionFactory sessionFactory) {
 		setSessionFactory(sessionFactory);
 	}
@@ -56,7 +59,7 @@ public class LongConversationTemplate extends HibernateAccessor {
 
 		boolean existingTransaction = (sessionHolder != null && sessionHolder.containsSession(session));
 		if (existingTransaction) {
-			logger.debug("Found thread-bound Session for HibernateInterceptor");
+			log.debug("Found thread-bound Session for HibernateInterceptor");
 		}
 		else {
 			if (sessionHolder != null) {
@@ -79,7 +82,7 @@ public class LongConversationTemplate extends HibernateAccessor {
 		}
 		finally {
 			if (existingTransaction) {
-				logger.debug("Not closing pre-bound Hibernate Session after HibernateInterceptor");
+				log.debug("Not closing pre-bound Hibernate Session after HibernateInterceptor");
 				disableFilters(session);
 				if (previousFlushMode != null) {
 					session.setFlushMode(previousFlushMode);

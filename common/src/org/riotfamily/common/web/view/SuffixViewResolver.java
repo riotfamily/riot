@@ -26,6 +26,7 @@ package org.riotfamily.common.web.view;
 import java.util.Locale;
 import java.util.Map;
 
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -56,6 +57,8 @@ public class SuffixViewResolver extends AbstractCachingViewResolver
 	 * way but rather be treated as special shortcut.
 	 */
 	public static final String FORWARD_URL_PREFIX = "forward:";
+	
+	private RiotLog log = RiotLog.get(SuffixViewResolver.class);
 	
 	private Map<String, ViewResolver> resolvers;
 
@@ -156,9 +159,9 @@ public class SuffixViewResolver extends AbstractCachingViewResolver
 		if (i > 0) {
 			suffix = viewName.substring(i + 1);
 			resolver = resolvers.get(suffix);
-			if (logger.isDebugEnabled()) {
+			if (log.isDebugEnabled()) {
 				if (resolver != null) {
-					logger.debug("Using " + resolver + " for suffix [" 
+					log.debug("Using " + resolver + " for suffix [" 
 							+ suffix + ']');
 				}
 			}

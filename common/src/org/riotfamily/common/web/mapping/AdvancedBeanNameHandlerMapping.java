@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.util.StringUtils;
@@ -44,6 +45,8 @@ import org.springframework.util.StringUtils;
 public class AdvancedBeanNameHandlerMapping 
 		extends AbstractReverseHandlerMapping {
 
+	private RiotLog log = RiotLog.get(this);
+	
 	private ArrayList<Mapping> mappings = new ArrayList<Mapping>();
 	
     private HashMap<String, List<AttributePattern>> patternsByBeanName = 
@@ -165,8 +168,8 @@ public class AdvancedBeanNameHandlerMapping
 			handler = getApplicationContext().getBean(handlerName);
 		}
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Mapped URL path [" + pattern
+		if (log.isDebugEnabled()) {
+			log.debug("Mapped URL path [" + pattern
 					+ "] onto handler [" + handler + "]");
 		}
 		mappings.add(new Mapping(pattern, handlerName, handler));
@@ -191,8 +194,8 @@ public class AdvancedBeanNameHandlerMapping
 			throws Exception {
 
 		String lookupPath = getLookupPath(request);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Looking up handler for [" + lookupPath + "]");
+		if (log.isDebugEnabled()) {
+			log.debug("Looking up handler for [" + lookupPath + "]");
 		}
 		return lookupHandler(lookupPath, request);
 	}

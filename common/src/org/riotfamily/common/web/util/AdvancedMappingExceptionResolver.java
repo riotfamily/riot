@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.util;
 
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
@@ -37,15 +38,17 @@ public class AdvancedMappingExceptionResolver
 
 	private String rootCaseAttribute = "rootCause";
 	
+	private RiotLog log = RiotLog.get(this);
+	
 	public void setRootCaseAttribute(String rootCaseAttribute) {
 		this.rootCaseAttribute = rootCaseAttribute;
 	}
 
 	@SuppressWarnings("unchecked")
 	protected ModelAndView getModelAndView(String viewName, Exception ex) {
-		logger.error("Unhandled exception", ex);
+		log.error("Unhandled exception", ex);
 		ModelAndView mv = super.getModelAndView(viewName, ex);
-		
+
 		Throwable rootCause = ex; 
 		while (rootCause.getCause() != null) {
 			rootCause = rootCause.getCause();

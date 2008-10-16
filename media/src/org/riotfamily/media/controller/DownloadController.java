@@ -6,18 +6,17 @@ import java.io.FileInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.io.IOUtils;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.media.store.FileStore;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 public class DownloadController implements Controller {
 
-	private	FileStore fileStore;
+	private RiotLog log = RiotLog.get(this);
 	
-	private static Log log = LogFactory.getLog(DownloadController.class);	
+	private	FileStore fileStore;
 	
 	public DownloadController(FileStore fileStore) {
 		this.fileStore = fileStore;

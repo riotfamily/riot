@@ -23,12 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.xml;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.riotfamily.common.log.RiotLog;
 import org.springframework.beans.factory.xml.DefaultDocumentLoader;
 import org.springframework.beans.factory.xml.DocumentLoader;
 import org.springframework.core.io.Resource;
-import org.springframework.util.xml.SimpleSaxErrorHandler;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
@@ -42,11 +40,11 @@ public class DocumentReader {
 
 	protected static final int VALIDATION_MODE_NONE = 0;
 		
-	private Log log = LogFactory.getLog(DocumentReader.class);
+	private RiotLog log = RiotLog.get(DocumentReader.class);
 		
 	private Resource resource;
 	
-	private ErrorHandler errorHandler = new SimpleSaxErrorHandler(log);
+	private ErrorHandler errorHandler = new RiotSaxErrorHandler(log);
 
 	private DocumentLoader loader = new DefaultDocumentLoader();
 	

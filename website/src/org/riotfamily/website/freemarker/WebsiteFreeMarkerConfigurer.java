@@ -26,6 +26,7 @@ package org.riotfamily.website.freemarker;
 import java.io.File;
 import java.io.IOException;
 
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.web.view.freemarker.RiotFreeMarkerConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.ui.freemarker.SpringTemplateLoader;
@@ -42,6 +43,8 @@ import freemarker.cache.TemplateLoader;
  */
 public class WebsiteFreeMarkerConfigurer extends RiotFreeMarkerConfigurer {
 
+	private RiotLog log = RiotLog.get(this);
+	
 	/**
 	 * {@inheritDoc}
 	 * This class overrides the super method to create a 
@@ -54,15 +57,15 @@ public class WebsiteFreeMarkerConfigurer extends RiotFreeMarkerConfigurer {
 			try {
 				Resource path = getResourceLoader().getResource(templateLoaderPath);
 				File file = path.getFile();  // will fail if not resolvable in the file system
-				if (logger.isDebugEnabled()) {
-					logger.debug(
+				if (log.isDebugEnabled()) {
+					log.debug(
 							"Template loader path [" + path + "] resolved to file path [" + file.getAbsolutePath() + "]");
 				}
 				return new RiotFileTemplateLoader(file);
 			}
 			catch (IOException ex) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Cannot resolve template loader path [" + templateLoaderPath +
+				if (log.isDebugEnabled()) {
+					log.debug("Cannot resolve template loader path [" + templateLoaderPath +
 							"] to [java.io.File]: using SpringTemplateLoader as fallback", ex);
 				}
 				return new SpringTemplateLoader(getResourceLoader(), templateLoaderPath);
@@ -70,7 +73,7 @@ public class WebsiteFreeMarkerConfigurer extends RiotFreeMarkerConfigurer {
 		}
 		else {
 			// Always load via SpringTemplateLoader (without hot detection of template changes).
-			logger.debug("File system access not preferred: using SpringTemplateLoader");
+			log.debug("File system access not preferred: using SpringTemplateLoader");
 			return new SpringTemplateLoader(getResourceLoader(), templateLoaderPath);
 		}
 	}

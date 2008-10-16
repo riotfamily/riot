@@ -23,11 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.log;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
+import org.apache.log4j.MDC;
+import org.apache.log4j.NDC;
 
 /**
- * Thin wrapper around commons logging that supports varargs. All framework
+ * Thin wrapper around Log4J that supports varargs. All framework
  * code should use this class so that we can easily switch to another logging
  * framework in future.
  * 
@@ -36,125 +37,135 @@ import org.apache.commons.logging.LogFactory;
  */
 public class RiotLog {
 
-	private Log log;
+	private Logger logger;
 	
-	private RiotLog(Log log) {
-		this.log = log;
+	private RiotLog(Logger logger) {
+		this.logger = logger;
 	}
 	
 	public static RiotLog get(Class<?> clazz) {
-		return new RiotLog(LogFactory.getLog(clazz));
+		return new RiotLog(Logger.getLogger(clazz));
+	}
+	
+	public static RiotLog get(Object obj) {
+		return new RiotLog(Logger.getLogger(obj.getClass()));
 	}
 	
 	public static RiotLog get(String name) {
-		return new RiotLog(LogFactory.getLog(name));
+		return new RiotLog(Logger.getLogger(name));
 	}
 	
 	public boolean isTraceEnabled() {
-		return log.isTraceEnabled();
+		return logger.isTraceEnabled();
 	}
 	
 	public void trace(Object msg) {
-		log.trace(msg);
+		logger.trace(msg);
 	}
 	
 	public void trace(String msg, Object... args) {
-		if (log.isTraceEnabled()) {
-			log.trace(String.format(msg, args));
+		if (logger.isTraceEnabled()) {
+			logger.trace(String.format(msg, args));
 		}
 	}
 	
 	public boolean isDebugEnabled() {
-		return log.isDebugEnabled();
+		return logger.isDebugEnabled();
 	}
 	
 	public void debug(Object msg) {
-		log.debug(msg);
+		logger.debug(msg);
 	}
 	
 	public void debug(String msg, Object... args) {
-		if (log.isDebugEnabled()) {
-			log.debug(String.format(msg, args));
+		if (logger.isDebugEnabled()) {
+			logger.debug(String.format(msg, args));
 		}
 	}
 	
 	public boolean isInfoEnabled() {
-		return log.isInfoEnabled();
+		return logger.isInfoEnabled();
 	}
 	
 	public void info(Object msg) {
-		log.info(msg);
+		logger.info(msg);
 	}
 	
 	public void info(String msg, Object... args) {
-		if (log.isInfoEnabled()) {
-			log.info(String.format(msg, args));
+		if (logger.isInfoEnabled()) {
+			logger.info(String.format(msg, args));
 		}
-	}
-	
-	public boolean isWarnEnabled() {
-		return log.isWarnEnabled();
 	}
 	
 	public void warn(Object msg) {
-		log.warn(msg);
+		logger.warn(msg);
 	}
 	
 	public void warn(Throwable t) {
-		log.warn(t.getMessage(), t);
+		logger.warn(t.getMessage(), t);
 	}
 	
 	public void warn(Object msg, Throwable t) {
-		log.warn(msg, t);
+		logger.warn(msg, t);
 	}
 	
 	public void warn(String msg, Throwable t, Object... args) {
-		if (log.isWarnEnabled()) {
-			log.warn(String.format(msg, args), t);
-		}
+		logger.warn(String.format(msg, args), t);
 	}
 	
-	public boolean isErrorEnabled() {
-		return log.isErrorEnabled();
+	public void warn(String msg, Object... args) {
+		logger.warn(String.format(msg, args));
 	}
 	
 	public void error(Object msg) {
-		log.error(msg);
+		logger.error(msg);
 	}
 	
 	public void error(Throwable t) {
-		log.error(t.getMessage(), t);
+		logger.error(t.getMessage(), t);
 	}
 	
 	public void error(Object msg, Throwable t) {
-		log.error(msg, t);
+		logger.error(msg, t);
 	}
 	
 	public void error(String msg, Throwable t, Object... args) {
-		if (log.isErrorEnabled()) {
-			log.error(String.format(msg, args), t);
-		}
+		logger.error(String.format(msg, args), t);
 	}
 	
-	public boolean isFatalEnabled() {
-		return log.isFatalEnabled();
+	public void error(String msg, Object... args) {
+		logger.error(String.format(msg, args));
 	}
 	
 	public void fatal(Object msg) {
-		log.fatal(msg);
+		logger.fatal(msg);
 	}
 	
 	public void fatal(Throwable t) {
-		log.fatal(t.getMessage(), t);
+		logger.fatal(t.getMessage(), t);
 	}
 	
 	public void fatal(Object msg, Throwable t) {
-		log.fatal(msg, t);
+		logger.fatal(msg, t);
 	}
 	
 	public void fatal(String msg, Throwable t, Object... args) {
-		if (log.isFatalEnabled()) {
-			log.fatal(String.format(msg, args), t);
-		}
+		logger.fatal(String.format(msg, args), t);
+	}
+	
+	public static void put(String key, Object value) {
+		MDC.put(key, value);
+	}
+	
+	public static void remove(String key) {
+		MDC.remove(key);
+	}
+	
+	public static void push(String msg) {
+		NDC.push(msg);
+	}
+	
+	public static String pop() {
+		return NDC.pop();
 	}
 }

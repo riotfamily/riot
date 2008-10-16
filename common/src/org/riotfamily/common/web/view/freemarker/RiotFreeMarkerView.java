@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.util.RequestHolder;
 import org.riotfamily.common.web.view.MacroHelperFactory;
@@ -62,6 +63,8 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 	public static final String MODEL_ATTRIBUTE = 
 			RiotFreeMarkerView.class.getName() + ".model";
 
+	private RiotLog log = RiotLog.get(RiotFreeMarkerView.class);
+	
 	private boolean allowModelOverride = true;
 	
 	private boolean freeMarkerServletMode = false;
@@ -149,8 +152,8 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 				super.doRender(model, request, response);
 			}
 			else {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Rendering FreeMarker template [" + getUrl() 
+				if (log.isDebugEnabled()) {
+					log.debug("Rendering FreeMarker template [" + getUrl() 
 							+ "] in FreeMarkerView '" + getBeanName() + "'");
 				}
 				Locale locale = RequestContextUtils.getLocale(request);
