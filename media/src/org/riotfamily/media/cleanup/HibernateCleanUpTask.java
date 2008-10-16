@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.riotfamily.common.log.RiotLog;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
@@ -62,43 +63,55 @@ public class HibernateCleanUpTask extends LongConversationTask {
 		init();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void doInHibernate(final Session session) throws Exception {
-		transactionTemplate.execute(new TransactionCallback() {
-			@SuppressWarnings("unchecked")
-			public Object doInTransaction(TransactionStatus status) {
+		
+		log.info("Looking for orphaned files ...");
 
-				log.info("Deleting orphaned files ...");
+		List<Long> fileIds = session.createQuery(
+				"select id from " + RiotFile.class.getName()).list();
+		
+		Set<Long> referencedIds = Generics.newHashSet();
+		for (String hql : fileQueries) {
+			log.info(hql);
+			referencedIds.addAll(session.createQuery(hql).list());
+		}
 
-				Iterator<Long> it = session.createQuery(
-						"select id from " + RiotFile.class.getName()).iterate();
-				
-				Set<Long> ids = Generics.newHashSet();
-				for (String hql : fileQueries) {
-					log.info(hql);
-					ids.addAll(session.createQuery(hql).list());
-				}
-				
-				while (it.hasNext()) {
-					Long id = it.next();
-					if (!ids.contains(id)) {
-						log.debug("Deleting orphaned file: " + id);
-						RiotFile file = (RiotFile) session.load(RiotFile.class, id);
-						session.delete(file);
-					}
-				}
-				return null;
-			}
-		});
-		log.info("Deleting unmanaged files ...");
-		Iterator<String> it = fileStore.iterator();
-		while (it.hasNext()) {
-			String uri = it.next();
-			if (!fileExists(session, uri)) {
-				log.debug("Deleting unmanaged file: " + uri);
-				it.remove();
+		log.info("Deleting orphaned files ...");
+		
+		for (Long id : fileIds) {
+			if (!referencedIds.contains(id)) {
+				delete(session, id);
 			}
 		}
+		
+		log.info("Deleting unmanaged files ...");
+		Iterator<String> files = fileStore.iterator();
+		while (files.hasNext()) {
+			String uri = files.next();
+			if (!fileExists(session, uri)) {
+				log.debug("Deleting unmanaged file: " + uri);
+				files.remove();
+			}
+		}
+		
 		log.info("Media clean-up finished.");
+	}
+	
+	private void delete(final Session session, final Long id) {
+		try {
+			transactionTemplate.execute(new TransactionCallback() {
+				public Object doInTransaction(TransactionStatus status) {
+					log.debug("Deleting orphaned file: " + id);
+					RiotFile file = (RiotFile) session.load(RiotFile.class, id);
+					session.delete(file);
+					return null;
+				}
+			});
+		}
+		catch (HibernateException e) {
+			log.error("Failed to delete RiotFile " + id, e);
+		}
 	}
 	
 	public boolean fileExists(Session session, String uri) {
