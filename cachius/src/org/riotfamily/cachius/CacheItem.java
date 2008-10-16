@@ -106,7 +106,7 @@ public class CacheItem implements Serializable {
      * ReadWriteLock to prevent concurrent threads from updating
      * the cached content while others are reading.
      */
-    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private transient ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
     
     /** Time of the last usage */
     private long lastUsed;
@@ -419,7 +419,7 @@ public class CacheItem implements Serializable {
             ClassNotFoundException {
          
          in.defaultReadObject();
-         lock = new ReentrantReadWriteLock();
+         lock = new ReentrantReadWriteLock(true);
          log = RiotLog.get(CacheItem.class);
     }
     
