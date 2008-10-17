@@ -13,10 +13,12 @@ NumberInput.Field = Class.create({
 			maxValue: false,
 			allowFloats: false,
 			precision: 2,
+			decimalSeparator: '.',
 			unit: null,			
 			spinner: true,
 			stepSize: 1,
-			spinButtonTag: 'button'
+			spinButtonTag: 'button',
+			defaultValue: '0'
 		}, arguments[1] || {});
 		
 		this.element.onkeydown = this.handleKeyDown.bindAsEventListener(this);
@@ -25,7 +27,7 @@ NumberInput.Field = Class.create({
 		this.element.onblur = this.handleOnBlur.bindAsEventListener(this);
 
 		if (!this.element.value) {
-			this.setValue(0);
+			this.setValue(this.options.defaultValue);
 		}
 		this.validate();
 		
@@ -59,11 +61,12 @@ NumberInput.Field = Class.create({
 	},
 
 	getValue: function() {
-		var v = parseFloat(this.element.value);
+		var v = this.element.value.length == 0 ? 0 : parseFloat(this.element.value);
 		return isNaN(v) ? 0 : v;
 	},
 
 	setValue: function(v) {
+		if (typeof v == 'undefined') v = this.options.defaultValue;
 		if (this.isValid(v)) {
 			this.element.value = v;
 		}
@@ -71,8 +74,8 @@ NumberInput.Field = Class.create({
 
 	isValid: function(v) {
 		var value = v;
-		if (typeof value == 'undefined') value = this.element.value;
-		var empty = /^-?$/.test(value);
+		if (typeof value == 'undefined') return false;
+		var empty = (value.length == 0);
 		var valid = /^-?[0-9]*([.,][0-9]*)?$/.test(value);
 		if (valid) value = parseFloat(value);
 		return empty || (valid && 
@@ -147,19 +150,16 @@ NumberInput.Field = Class.create({
 
 		// Allow miuns, if negative values are allowed, the current value is positive
 		// and the cursor is at the beginning ...
+		// Allow miuns, if negative values are allowed, the current value is positive
+		// and the cursor is at the beginning ...
 		if (c == '-' && (this.options.minValue === false || this.options.minValue < 0) 
 				&& this.getValue() >= 0 && this.getSelectionStart() == 0) {
 
 			return true;
 		}
-
-		if (c == '.') {
-			if (this.options.allowFloats) {
-				if (this.element.value.indexOf('.') == -1) {
-					return true;
-				}
-			}
-			return false;
+		
+		if (c == this.options.decimalSeparator && this.options.allowFloats) {
+			return (this.element.value.indexOf(this.options.decimalSeparator) == -1);
 		}
 
 		// Allow only numeric characters
@@ -168,7 +168,7 @@ NumberInput.Field = Class.create({
 		}
 
 		if (this.getSelectionEnd() == this.getSelectionStart()) {
-			var i = this.element.value.indexOf('.');
+			var i = this.element.value.indexOf(this.options.decimalSeparator);
 			if (i != -1 && this.getSelectionStart() > i) {
 				// Cursor is behind the decimal separator
 				if (this.options.precision) {
@@ -217,11 +217,10 @@ NumberInput.Field = Class.create({
 	
 	handleOnBlur: function() {
 		if (this.options.required) {
-			var empty = /^-?$/.test(this.element.value);
-			if (empty) {
-				this.setValue(0);
-			}
+			if ((typeof this.element.value == 'undefined') || value.length == 0) 
+				this.setValue(this.options.defaultValue);
 		}
+		this.validate();
 	}
 
 });
