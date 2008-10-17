@@ -119,7 +119,7 @@ public class NumberField extends TextField implements DHTMLElement,
 	        String def = getDefaultText() == null ? mvStr : getDefaultText();
 	        sb.append("defaultValue:'").append(def).append("',");
                 
-	        if (spinner) {
+	        if (spinner && isEnabled()) {
 			sb.append("stepSize:").append(stepSize).append(',');
 			sb.append("spinButtonTag:'div'");
 		}
