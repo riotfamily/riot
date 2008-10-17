@@ -107,23 +107,23 @@ public class NumberField extends TextField implements DHTMLElement,
 		}
 		
 		NumberFormat nf = getNumberFormat();
-		String decimalSeparator;
+		char decimalSeparator;
 		if (nf instanceof DecimalFormat) {
-		    decimalSeparator = "" + ((DecimalFormat)nf).getDecimalFormatSymbols().getDecimalSeparator();
+			decimalSeparator = ((DecimalFormat) nf).getDecimalFormatSymbols()
+					.getDecimalSeparator();
 		} else {
-		    decimalSeparator = ".";
+			decimalSeparator = '.';
 		}
-	        sb.append("decimalSeparator:'").append(decimalSeparator).append("',");
-	        
-	        String mvStr = numberFormat.format(minValue == null ? 0f : minValue.floatValue()); 
-	        String def = getDefaultText() == null ? mvStr : getDefaultText();
-	        sb.append("defaultValue:'").append(def).append("',");
-                
-	        if (spinner && isEnabled()) {
+		sb.append("decimalSeparator:'").append(decimalSeparator).append("',");
+		float mv = minValue == null ? 0f : minValue.floatValue();
+		String def = getDefaultText() == null ? numberFormat.format(mv)
+												: getDefaultText();
+		sb.append("defaultValue:'").append(def).append("',");
+
+		if (spinner && isEnabled()) {
 			sb.append("stepSize:").append(stepSize).append(',');
 			sb.append("spinButtonTag:'div'");
-		}
-		else {
+		} else {
 			sb.append("spinner:false");
 		}
 		sb.append("});");
@@ -189,16 +189,17 @@ public class NumberField extends TextField implements DHTMLElement,
 		}
 	}
 
-        private NumberFormat getNumberFormat() {
-            if (numberFormat == null) {
-                Locale locale = getFormContext().getLocale();
-                numberFormat = (NumberFormat)NumberFormat.getNumberInstance(locale).clone();
-                if (numberFormat instanceof DecimalFormat) {
-                     ((DecimalFormat)numberFormat).setGroupingUsed(false);
-                    
-                 } 
-            }
-            return numberFormat;
-        }
+	private NumberFormat getNumberFormat() {
+		if (numberFormat == null) {
+			Locale locale = getFormContext().getLocale();
+			numberFormat = (NumberFormat) NumberFormat
+					.getNumberInstance(locale).clone();
+			if (numberFormat instanceof DecimalFormat) {
+				((DecimalFormat) numberFormat).setGroupingUsed(false);
+
+			}
+		}
+		return numberFormat;
+	}
 	
 }
