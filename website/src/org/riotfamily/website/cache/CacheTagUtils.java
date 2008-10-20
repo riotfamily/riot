@@ -37,17 +37,20 @@ public final class CacheTagUtils {
 	private CacheTagUtils() {
 	}
 	
+	public static String getTag(Class<?> clazz) {
+		return clazz.getName();	
+	}
+	
+	public static String getTag(Class<?> clazz, Serializable id) {
+		return clazz.getName() + '#' + id; 
+	}
+	
 	public static void tag(Class<?> clazz, Serializable id) {
-		TaggingContext ctx = TaggingContext.getContext();
-		if (ctx != null) {
-			if (!ctx.hasTag(clazz.getName())) {
-				ctx.addTag(clazz.getName() + '#' + id);
-			}
-		}
+		TaggingContext.tag(getTag(clazz, id));
 	}
 	
 	public static void tag(Class<?> clazz) {
-		TaggingContext.tag(clazz.getName());
+		TaggingContext.tag(getTag(clazz));
 	}
 	
 	public static void tag(String className) throws ClassNotFoundException {
@@ -57,14 +60,14 @@ public final class CacheTagUtils {
 	
 	public static void invalidate(CacheService cacheService, Class<?> clazz) {
 		if (cacheService != null) {
-		    cacheService.invalidateTaggedItems(clazz.getName());
+		    cacheService.invalidateTaggedItems(getTag(clazz));
 		}
 	}
 	
-	public static void invalidate(CacheService cacheService, Class<?> clazz, Object objectId) {
+	public static void invalidate(CacheService cacheService, Class<?> clazz, Serializable objectId) {
 		if (cacheService != null) {
-		    cacheService.invalidateTaggedItems(clazz.getName());
-		    cacheService.invalidateTaggedItems(clazz.getName() + '#' + objectId);
+		    cacheService.invalidateTaggedItems(getTag(clazz));
+		    cacheService.invalidateTaggedItems(getTag(clazz, objectId));
 		}
 	}
 		

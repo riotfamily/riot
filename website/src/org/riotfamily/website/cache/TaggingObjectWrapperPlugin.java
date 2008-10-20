@@ -60,18 +60,14 @@ public class TaggingObjectWrapperPlugin implements ObjectWrapperPlugin, Ordered 
 	}
 
 	public boolean supports(Object obj) {
-		if (obj.getClass().isAnnotationPresent(TagCacheItems.class)) {
-			
-			CacheTagUtils.tag(obj.getClass(), HibernateUtils.getIdAsString(sessionFactory, obj));
-		}
-		return false;
+		return obj.getClass().isAnnotationPresent(TagCacheItems.class);
 	}
 
 	public TemplateModel wrapSupportedObject(Object obj,
 			PluginObjectWrapper wrapper) throws TemplateModelException {
-		
-		throw new IllegalStateException("This method should never be called");
-	}
 
+		String tag = CacheTagUtils.getTag(obj.getClass(), HibernateUtils.getIdAsString(sessionFactory, obj));
+		return new TaggingTemplateModel(obj, wrapper, tag);
+	}
 	
 }
