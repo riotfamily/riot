@@ -15,7 +15,7 @@
 	<classpathentry kind="src" path="crawler/src"/>
 	<classpathentry kind="src" path="search/src"/>
 	<classpathentry kind="src" path="job/src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-6-sun-1.6.0.07"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/dwr.jar"/>
 	<classpathentry kind="lib" path="lib/freemarker.jar" sourcepath="lib/freemarker.src.zip">
