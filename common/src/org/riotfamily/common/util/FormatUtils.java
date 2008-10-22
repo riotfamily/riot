@@ -113,7 +113,7 @@ public final class FormatUtils {
 		if (s == null) {
 			return null;
 		}
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		char last = 0;
 		for (int i = 0; i < s.length(); i++) {
 			char c = s.charAt(i);
@@ -139,7 +139,7 @@ public final class FormatUtils {
 	 * </pre>
 	 */
 	public static String xmlToCamelCase(String s) {
-		StringBuffer sb = new StringBuffer(s);
+		StringBuilder sb = new StringBuilder(s);
 		int offset = 0;
 		int i;
 		while ((i = sb.indexOf("-", offset)) >= 0) {
@@ -197,7 +197,7 @@ public final class FormatUtils {
 		if (s == null) {
 			return null;
 		}
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		boolean lastWasLower = false;
 		for (int i = 0; i < s.length(); i++) {
 			char c = s.charAt(i);
@@ -220,7 +220,7 @@ public final class FormatUtils {
 	 * "a", "b", null -> "a b a-b"
 	 */
 	public static String combine(String[] s) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < s.length; i++) {
 			if (s[i] != null) {
 				sb.append(s[i]);
@@ -347,7 +347,7 @@ public final class FormatUtils {
 		int hours = (int) (millis / (1000 * 60 * 60));
 		int minutes = (int) (millis / (1000 * 60)) % 60;
 		int seconds = (int) (millis / 1000) % 60;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (hours > 0) {
 			sb.append(hours);
 			sb.append(':');
@@ -768,7 +768,7 @@ public final class FormatUtils {
 			return null;
 		}
 		StringReader in = new StringReader(s);
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		try {
 			boolean lineBreak = false;
 			boolean charsWritten = false;
