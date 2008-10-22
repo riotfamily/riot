@@ -56,16 +56,17 @@ public class DbMessageSource extends AbstractMessageSource {
 	}
 	
 	MessageBundleEntry getEntry(final String code, final String defaultMessage) {
-		return (MessageBundleEntry) transactionTemplate.execute(new TransactionCallback() {
-			public Object doInTransaction(TransactionStatus status) {
-				MessageBundleEntry entry = dao.findEntry(bundle, code);
-				if (entry == null) {
-					entry = new MessageBundleEntry(bundle, code, defaultMessage);
+		MessageBundleEntry result = dao.findEntry(bundle, code);
+		if (result == null) {
+			result = (MessageBundleEntry) transactionTemplate.execute(new TransactionCallback() {
+				public Object doInTransaction(TransactionStatus status) {
+					MessageBundleEntry entry = new MessageBundleEntry(bundle, code, defaultMessage);
 					dao.saveEntry(entry);
+					return entry;
 				}
-				return entry;
-			}
-		});
+			});
+		}
+		return result;
 	}
 	
 	@Override
