@@ -36,7 +36,7 @@ public class HibernateMessageSourceDao implements DbMessageSourceDao {
 	private HibernateHelper hibernate;
 	
 	public HibernateMessageSourceDao(SessionFactory sessionFactory) {
-		hibernate = new HibernateHelper(sessionFactory, "dbmsgsrc");
+		hibernate = new HibernateHelper(sessionFactory, "messages");
 	}
 
 	public MessageBundleEntry findEntry(String bundle, String code) {
