@@ -42,7 +42,7 @@ public final class CacheTagUtils {
 	}
 	
 	public static String getTag(Class<?> clazz, Serializable id) {
-		return clazz.getName() + '#' + id; 
+		return new StringBuilder(clazz.getName()).append('#').append(id.toString()).toString(); 
 	}
 	
 	public static void tag(Class<?> clazz, Serializable id) {
