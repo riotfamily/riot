@@ -14,9 +14,6 @@ riot.getWrapper = function(el, selector) {
 	if (selector == '.riot-text-editor') {
 		return riot.getTextEditor(el);
 	}
-	if (selector == '.riot-image-editor') {
-		return riot.getImageEditor(el);
-	}
 	return null;
 }
 
@@ -45,23 +42,6 @@ riot.getTextEditor = function(el) {
 		}
 	}
 	return el.textEditor;
-}
-
-/**
- * Retruns an image editor for the given element.
- */
-riot.getImageEditor = function(el) {
-	if (!el.imageEditor) {
-		el.imageEditor = new riot.ImageEditor(el, riot.findContent(el), {
-			srcTemplate: el.readAttribute('riot:srcTemplate'),
-			minWidth: el.readAttribute('riot:minWidth'),
-			maxWidth: el.readAttribute('riot:maxWidth'),
-			minHeight: el.readAttribute('riot:minHeight'),
-			maxHeight: el.readAttribute('riot:maxHeight'),
-			updateFromServer: el.readAttribute('riot:updateFromServer')
-		});
-	}
-	return el.imageEditor;
 }
 
 /**
@@ -438,12 +418,7 @@ riot.Content = Class.create({
 		ComponentEditor.updateText(this.id, key, value,	updateFromServer 
 				? this.update.bind(this) : Prototype.emptyFunction);
 	},
-	
-	cropImage: function(key, imageId, w, h, x, y, sw, callback) {
-		ComponentEditor.cropImage(this.id, key, imageId,
-				w, h, x, y, sw, callback);
-	},
-	
+		
 	propertiesOn: function() {
 		this.element.parentNode.addClassName('riot-mode-properties');
 		this.setClickHandler(this.editProperties.bind(this));
@@ -699,8 +674,6 @@ riot.init = function() {
 			});
 		}
 	};
-	
-	b.get('editImages').precondition = riot.initSwfUpload;
 };
 
 riot.discardOn = function() {

@@ -1,5 +1,5 @@
 <#---
-  - Macros to edit texts and images via the frontoffice.
+  - Macros to edit texts via the frontoffice.
   - @namespace inplace
   -->
 
@@ -194,18 +194,8 @@
 	</#compress>
 </#macro>
 
-<#macro image key default="" tag="img" minWidth="10" maxWidth="1000" minHeight="10" maxHeight="1000" width="" height="" defaultWidth="100" defaultHeight="100" transform=c.url updateFromServer=false attributes... >
+<#macro image key default="" transform=c.url attributes... >
 	<#compress>
-		<#if width?has_content>
-			<#local minWidth = width />
-			<#local maxWidth = width />
-			<#local defaultWidth = width />
-		</#if>
-		<#if height?has_content>
-			<#local minHeight = height />
-			<#local maxHeight = height />
-			<#local defaultHeight = height />
-		</#if>
 		<#local value = (currentModel[key].uri)!default>
 		<#if value?has_content>
 			<#if transform?is_string>
@@ -213,62 +203,19 @@
 			<#else>
 				<#local src = transform(value) />
 			</#if>
-			<#if tag == "img">
-				<#local attributes = attributes + {"src": src} />
-				<#if !attributes.width?has_content && currentModel[key]??>
-					<#local attributes = attributes + {"width": currentModel[key].width?c} />
-				</#if>
-				<#if !attributes.height?has_content && currentModel[key]??>
-					<#local attributes = attributes + {"height": currentModel[key].height?c} />
-				</#if>
-				<#if !attributes.alt?has_content>
-					<#local attributes = attributes + {"alt": " "} />
-				</#if>
-			<#else>
-				<#local attributes = attributes + {"style": "background-image:url(" + src + ");" + attributes.style!} />
+			<#local attributes = attributes + {"src": src} />
+			<#if !attributes.width?has_content && currentModel[key]??>
+				<#local attributes = attributes + {"width": currentModel[key].width?c} />
 			</#if>
+			<#if !attributes.height?has_content && currentModel[key]??>
+				<#local attributes = attributes + {"height": currentModel[key].height?c} />
+			</#if>
+			<#if !attributes.alt?has_content>
+				<#local attributes = attributes + {"alt": " "} />
+			</#if>
+			<img${c.joinAttributes(attributes)} />
 		<#elseif editMode>
-			<#if tag == "img">
-				<#local attributes = attributes + {
-					"src": riot.resource("style/images/pixel.gif"),
-					"class": ("nosrc " + attributes.class!)?trim,
-					"width": defaultWidth,
-					"height": defaultHeight		
-					} />
-			<#else>
-				<#local attributes = attributes + {
-					"class": ("nosrc " + attributes.class!)?trim
-					} />
-			</#if>	
-		</#if>
-		<#if editMode>
-			<#if transform?is_string>
-				<#local srcTemplate = transform />
-			<#else>
-				<#local srcTemplate = transform("/*")?replace("/*", "*") />
-			</#if>
-			<#local attributes = attributes + {
-				"class": ("riot-image-editor " + attributes.class!)?trim,
-				"riot:editorType": "image",
-				"riot:key": key,
-				"riot:srcTemplate": srcTemplate,
-				"riot:minWidth": minWidth,
-				"riot:maxWidth": maxWidth,
-				"riot:minHeight": minHeight,
-				"riot:maxHeight": maxHeight 
-				} />
-			<#if updateFromServer>
-				<#local attributes = attributes + {
-					"riot:updateFromServer": "true"
-				} />
-			</#if>
-		</#if>
-		<#if value?has_content || editMode>
-			<#if tag == "img">	
-				<img${c.joinAttributes(attributes)} />
-			<#else>
-				<${tag}${c.joinAttributes(attributes)}><#nested /></${tag}>
-			</#if>
+			<#nested />
 		</#if>
 	</#compress>
 </#macro>

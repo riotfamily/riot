@@ -8,7 +8,6 @@ riot.Toolbar = Class.create({
 			insert: new riot.ToolbarButton('insert', '${toolbarButton.insert}', '.riot-component-list'),
 			remove: new riot.ToolbarButton('remove', '${toolbarButton.remove}', '.riot-component-list'),
 			edit: new riot.ToolbarButton('edit', '${toolbarButton.edit}', '.riot-text-editor'),
-			editImages: new riot.ToolbarButton('editImages', '${toolbarButton.editImages}', '.riot-image-editor'),
 			properties: new riot.ToolbarButton('properties', '${toolbarButton.properties}', '.riot-form'),
 			move: new riot.ToolbarButton('move', '${toolbarButton.move}', '.riot-component-list'),
 			logout: new riot.ToolbarButton('logout', '${toolbarButton.logout}'),
@@ -18,11 +17,6 @@ riot.Toolbar = Class.create({
 
 		this.buttons.get('logout').applyHandler = this.logout;
 		
-		var flashVersion = deconcept.SWFObjectUtil.getPlayerVersion();
-		if (!flashVersion.versionIsValid(new deconcept.PlayerVersion([9,0,28]))) {
-			this.buttons.get('editImages').disable().element.title = "This feature requires Flash 9.0.28 or higher";
-		}
-
 		var buttonElements = this.buttons.values().pluck('element');
 		document.body.appendChild(this.element = RBuilder.node('div', {id: 'riot-toolbar'},
 			RBuilder.node('div', {id: 'riot-toolbar-buttons'}, buttonElements)
