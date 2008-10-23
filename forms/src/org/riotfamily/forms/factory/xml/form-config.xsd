@@ -322,7 +322,7 @@
 					<xsd:sequence maxOccurs="unbounded">
 						<xsd:element name="case">
 							<xsd:complexType>
-								<xsd:group ref="elements" />
+								<xsd:group ref="elements" minOccurs="0" />
 								<xsd:attribute name="value" type="xsd:string" use="required" />
 							</xsd:complexType>
 						</xsd:element>
