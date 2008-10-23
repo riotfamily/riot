@@ -50,9 +50,15 @@ public class ElementSwitch extends Container
 		selectBox.setRequired(true);
 		selectBox.setOptions(options);
 		selectBox.addChangeListener(this);
+		selectBox.setAppendLabel(true);
 		addComponent(selectBox);
 	}
 
+	@Override
+	protected void afterBindingSet() {
+		selectBox.setLabelMessageKey(getEditorBinding().getProperty() + ".");
+	}
+	
 	@Override
 	public boolean isCompositeElement() {		
 		return false;
