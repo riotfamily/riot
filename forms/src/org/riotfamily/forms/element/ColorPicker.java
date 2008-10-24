@@ -64,7 +64,7 @@ public class ColorPicker extends AbstractTextElement
 
 	public String getInitScript() {
 		StringBuffer sb = new StringBuffer("new Control.ColorPicker('")
-				.append(getId()).append("', {IMAGE_BASE: '")
+				.append(getEventTriggerId()).append("', {IMAGE_BASE: '")
 				.append(getFormContext().getContextPath())
 				.append(getFormContext().getResourcePath())
 				.append("form/colorPicker/").append("', swatch: '")
