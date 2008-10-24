@@ -25,6 +25,7 @@ package org.riotfamily.riot.job.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,6 +34,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Index;
 import org.riotfamily.common.util.FormatUtils;
 
 
@@ -49,6 +51,7 @@ public class JobLogEntry {
 	private Long id;
 	
 	@ManyToOne
+	@Index(name="riot_job_log_job_id")
 	private JobDetail job;
 	
 	private Date date;
