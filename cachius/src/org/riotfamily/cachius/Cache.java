@@ -278,9 +278,11 @@ public final class Cache implements Serializable {
     		for (String tag : tags) {
 		    	List<CacheItem> items = getTaggedItems(tag);
 		    	if (items != null) {
-		    		items.remove(item);
-		    		if (items.isEmpty()) {
-		    			taggedItems.remove(tag);
+		    		synchronized (items) {
+			    		items.remove(item);
+			    		if (items.isEmpty()) {
+			    			taggedItems.remove(tag);
+			    		}
 		    		}
 		    	}
 	    	}
@@ -295,8 +297,10 @@ public final class Cache implements Serializable {
     		for (String tag : tags) {
 		    	List<CacheItem> items = getTaggedItems(tag);
 		    	if (items == null) {
-		    		items = new ArrayList<CacheItem>();
-		    		taggedItems.put(tag, items);
+		    		synchronized (items) {
+			    		items = new ArrayList<CacheItem>();
+			    		taggedItems.put(tag, items);
+		    		}
 		    	}
 		    	items.add(item);
 	    	}
@@ -313,8 +317,10 @@ public final class Cache implements Serializable {
 	    	long t1 = System.currentTimeMillis();
 	    	List<CacheItem> items = getTaggedItems(tag);
 	    	if (items != null) {
-	    		for (CacheItem item : items) {
-					item.invalidate();
+	    		synchronized (items) {
+	    			for (CacheItem item : items) {
+						item.invalidate();
+					}	
 				}
 	    	}
 	    	long t2 = System.currentTimeMillis();
