@@ -420,7 +420,7 @@
 </#macro>
 
 <#macro stylesheet href rel="stylesheet" type="text/css" attributes...>
-	<link rel="${rel}" type="${type}" href="${resolve(href)?xml}"${joinAttributes(attributes)} />
+	<link rel="${rel}" type="${type}" href="${resource(href)?xml}"${joinAttributes(attributes)} />
 </#macro>
 
 <#macro scripts srcs compress=commonMacroHelper.compressResources type="text/javascript" attributes...>
