@@ -27,6 +27,9 @@ public class StringRenderer implements ObjectRenderer {
 	}
 	
 	protected String convertToString(Object obj) {
+		if (obj instanceof String) {
+			return (String) obj;
+		}
 		PropertyEditor editor = this.propertyEditor;
 		if (editor == null) {
 			Class<?> type = obj.getClass();
