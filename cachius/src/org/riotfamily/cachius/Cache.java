@@ -266,17 +266,19 @@ public final class Cache implements Serializable {
      */
     private void removeTags(CacheItem item, Set tags) {
     	if (tags != null) {
-	    	Iterator it = tags.iterator();
-	    	while (it.hasNext()) {
-				String tag = (String) it.next();
-		    	List items = getTaggedItems(tag);
-		    	if (items != null) {
-		    		items.remove(item);
-		    		if (items.isEmpty()) {
-		    			taggedItems.remove(tag);
-		    		}
-		    	}
-	    	}
+    		synchronized (taggedItems) {
+    			Iterator it = tags.iterator();
+    			while (it.hasNext()) {
+    				String tag = (String) it.next();
+    				List items = getTaggedItems(tag);
+    				if (items != null) {
+    					items.remove(item);
+    					if (items.isEmpty()) {
+    						taggedItems.remove(tag);
+    					}
+    				}
+    			}
+    		}
     	}
     }
     
@@ -285,16 +287,18 @@ public final class Cache implements Serializable {
      */
     private void addTags(CacheItem item, Set tags) {
     	if (tags != null) {
-	    	Iterator it = tags.iterator();
-	    	while (it.hasNext()) {
-				String tag = (String) it.next();
-		    	List items = getTaggedItems(tag);
-		    	if (items == null) {
-		    		items = new ArrayList();
-		    		taggedItems.put(tag, items);
-		    	}
-		    	items.add(item);
-	    	}
+    		synchronized (taggedItems) {
+    			Iterator it = tags.iterator();
+    			while (it.hasNext()) {
+    				String tag = (String) it.next();
+    				List items = getTaggedItems(tag);
+    				if (items == null) {
+    					items = new ArrayList();
+    					taggedItems.put(tag, items);
+    				}
+    				items.add(item);
+    			}				
+    		}
     	}
     }
 
