@@ -297,13 +297,13 @@ public final class Cache implements Serializable {
     		for (String tag : tags) {
 		    	List<CacheItem> items = getTaggedItems(tag);
 		    	if (items == null) {
-		    		synchronized (items) {
-			    		items = new ArrayList<CacheItem>();
-			    		taggedItems.put(tag, items);
-		    		}
+		    		items = new ArrayList<CacheItem>();
+		    		taggedItems.put(tag, items);
 		    	}
-		    	items.add(item);
-	    	}
+		    	synchronized (items) {
+		    		items.add(item);
+		    	}
+    		}
     	}
     }
 
