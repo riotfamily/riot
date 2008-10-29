@@ -97,9 +97,12 @@ public class DbMessageSource extends AbstractMessageSource {
 			return null;
 		}
 		Message message = messages.get(locale);
-		if (message == null && StringUtils.hasLength(locale.getCountry())) {
+		if (message == null) {
+			String country = locale.getCountry();
 			String lang = locale.getLanguage();
-			if (fallbackToDefaultCountry && !lang.equals(locale.getCountry().toLowerCase())) {
+			if (fallbackToDefaultCountry && (!StringUtils.hasLength(country)
+					|| !lang.equals(country.toLowerCase()))) {
+				
 				message = messages.get(new Locale(lang, lang.toUpperCase()));
 			}
 			if (message == null) {
