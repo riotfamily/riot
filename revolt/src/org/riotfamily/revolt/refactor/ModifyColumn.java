@@ -27,6 +27,7 @@ import org.riotfamily.revolt.Dialect;
 import org.riotfamily.revolt.Refactoring;
 import org.riotfamily.revolt.Script;
 import org.riotfamily.revolt.definition.Column;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -55,7 +56,7 @@ public class ModifyColumn implements Refactoring {
 		this.column = column;
 	}
 
-	public Script getScript(Dialect dialect) {
+	public Script getScript(Dialect dialect, SimpleJdbcTemplate template) {
 		return dialect.modifyColumn(table, column);
 	}
 

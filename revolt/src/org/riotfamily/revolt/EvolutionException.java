@@ -35,6 +35,10 @@ public class EvolutionException extends RuntimeException {
 		super(message);
 	}
 	
+	public EvolutionException(Throwable cause) {
+		super(cause);
+	}
+	
 	public EvolutionException(String message, Throwable cause) {
 		super(message, cause);
 	}

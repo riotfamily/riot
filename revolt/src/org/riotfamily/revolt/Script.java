@@ -23,18 +23,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt;
 
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.riotfamily.common.log.RiotLog;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SqlProvider;
-import org.springframework.jdbc.core.StatementCallback;
 import org.springframework.util.Assert;
 
 /**
@@ -43,7 +38,9 @@ import org.springframework.util.Assert;
  */
 public class Script {
 
-	private List<SqlCallback> callbacks = new ArrayList<SqlCallback>();
+	private RiotLog log = RiotLog.get(Script.class);
+	
+	private List<String> statements = new ArrayList<String>();
 
 	private StringBuffer buffer;
 
@@ -85,7 +82,7 @@ public class Script {
 	public Script append(Script script) {
 		if (script != null) {
 			newStatement();
-			callbacks.addAll(script.getCallbacks());
+			statements.addAll(script.getStatements());
 			manualExecutionOnly |= script.isManualExecutionOnly();
 		}
 		return this;
@@ -93,7 +90,7 @@ public class Script {
 
 	public void newStatement() {
 		if (buffer != null && buffer.length() > 0) {
-			callbacks.add(new SqlCallback(buffer.toString()));
+			statements.add(buffer.toString());
 		}
 		buffer = new StringBuffer();
 	}
@@ -106,9 +103,9 @@ public class Script {
 		manualExecutionOnly = true;
 	}
 
-	public List<SqlCallback> getCallbacks() {
+	public List<String> getStatements() {
 		newStatement();
-		return callbacks;
+		return statements;
 	}
 
 	public void execute(DataSource dataSource) {
@@ -116,39 +113,18 @@ public class Script {
 				"This script must be manually executed.");
 		
 		JdbcTemplate template = new JdbcTemplate(dataSource);
-		for (StatementCallback callback : getCallbacks()) { 
-			template.execute(callback);
+		for (String statement : getStatements()) {
+			log.info(statement);
+			template.execute(statement);
 		}
 	}
 	
 	public String getSql() {
 		StringBuffer sql = new StringBuffer();
-		for (SqlProvider provider : callbacks) {
-			sql.append(provider.getSql()).append(";\n");
+		for (String statement : getStatements()) {
+			sql.append(statement).append(";\n");
 		}
 		return sql.toString();
 	}
 
-	public static class SqlCallback implements StatementCallback, SqlProvider {
-
-		private RiotLog log = RiotLog.get(SqlCallback.class);
-		
-		private String sql;
-
-		public SqlCallback(String sql) {
-			this.sql = sql;
-		}
-
-		public String getSql() {
-			return sql;
-		}
-
-		public Object doInStatement(Statement statement) 
-				throws SQLException, DataAccessException {
-			
-			log.info("Revolt: " + sql);
-			statement.execute(sql);
-			return null;
-		}
-	}
 }

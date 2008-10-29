@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.revolt;
 
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+
 
 
 /**
@@ -31,6 +33,6 @@ package org.riotfamily.revolt;
  */
 public interface Refactoring {
 
-	public Script getScript(Dialect dialect);
+	public Script getScript(Dialect dialect, SimpleJdbcTemplate template) throws Exception;
 
 }

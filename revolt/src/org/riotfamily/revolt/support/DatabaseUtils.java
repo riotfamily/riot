@@ -33,6 +33,7 @@ import javax.sql.DataSource;
 import org.riotfamily.revolt.definition.Identifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -59,9 +60,8 @@ public class DatabaseUtils {
 	/**
 	 * Returns whether the DataSource contains any tables.
 	 */
-	public static boolean anyTablesExist(DataSource dataSource) {
-		JdbcTemplate template = new JdbcTemplate(dataSource);
-		Boolean result = (Boolean) template.execute(new ConnectionCallback() {
+	public static boolean anyTablesExist(JdbcOperations operations) {
+		Boolean result = (Boolean) operations.execute(new ConnectionCallback() {
 			public Object doInConnection(Connection connection)
 					throws SQLException, DataAccessException {
 
@@ -76,11 +76,10 @@ public class DatabaseUtils {
 	/**
 	 * Returns whether the specified table exists.
 	 */
-	public static boolean tableExists(DataSource dataSource,
+	public static boolean tableExists(JdbcOperations operations,
 			final Identifier table) {
 
-		JdbcTemplate template = new JdbcTemplate(dataSource);
-		Boolean result = (Boolean) template.execute(new ConnectionCallback() {
+		Boolean result = (Boolean) operations.execute(new ConnectionCallback() {
 			public Object doInConnection(Connection connection)
 					throws SQLException, DataAccessException {
 

@@ -28,7 +28,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.revolt.ChangeSet;
+import org.riotfamily.revolt.EvolutionException;
 import org.riotfamily.revolt.EvolutionHistory;
 import org.riotfamily.revolt.Refactoring;
 import org.riotfamily.revolt.definition.Column;
@@ -58,6 +60,7 @@ import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.NamespaceHandler;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -114,8 +117,9 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 		return changeSets;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List<Refactoring> parseRefactorings(Element element) {
-		ArrayList<Refactoring> refactorings = Generics.newArrayList();
+		ManagedList refactorings = new ManagedList();
 		NodeList childNodes = element.getChildNodes();
 		
 		for (int i = 0; i < childNodes.getLength(); i++) {
@@ -131,13 +135,12 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 	}
 	
 	private Refactoring parseRefactoring(Element ele) {
-		Refactoring refactoring = null;
 		if (DomUtils.nodeNameEquals(ele, "add-column")) {
-			refactoring = new AddColumn(ele.getAttribute("table"), 
+			return new AddColumn(ele.getAttribute("table"), 
 					parseColumn(ele));
 		}
 		if (DomUtils.nodeNameEquals(ele, "add-foreign-key")) {
-			refactoring = new AddForeignKey(ele.getAttribute("table"), 
+			return new AddForeignKey(ele.getAttribute("table"), 
 					new ForeignKey(ele.getAttribute("name"), 
 					ele.getAttribute("references"),
 					parseReferences(ele), 
@@ -145,64 +148,67 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 					parseOnUpdate(ele)));
 		}
 		if (DomUtils.nodeNameEquals(ele, "add-unique-constraint")) {
-			refactoring = new AddUniqueConstraint(ele.getAttribute("table"), 
+			return new AddUniqueConstraint(ele.getAttribute("table"), 
 					 new UniqueConstraint(ele.getAttribute("name"),
 					StringUtils.tokenizeToStringArray(ele.getAttribute("on"), ",")));
 		}
 		if (DomUtils.nodeNameEquals(ele, "create-index")) {
-			refactoring = new CreateIndex(ele.getAttribute("table"), 
+			return new CreateIndex(ele.getAttribute("table"), 
 					new Index(ele.getAttribute("name"),
 					StringUtils.tokenizeToStringArray(ele.getAttribute("on"), ","),
 					Boolean.valueOf(ele.getAttribute("unique")).booleanValue()));
 		}
 		if (DomUtils.nodeNameEquals(ele, "create-table")) {
-			refactoring = new CreateTable(ele.getAttribute("name"), 
+			return new CreateTable(ele.getAttribute("name"), 
 					parseColumns(ele));
 		}
 		if (DomUtils.nodeNameEquals(ele, "drop-column")) {
-			refactoring = new DropColumn(ele.getAttribute("table"),
+			return new DropColumn(ele.getAttribute("table"),
 					ele.getAttribute("column"));
 		}
 		if (DomUtils.nodeNameEquals(ele, "drop-foreign-key")) {
-			refactoring = new DropForeignKey(ele.getAttribute("table"),
+			return new DropForeignKey(ele.getAttribute("table"),
 					ele.getAttribute("foreign-key"));
 		}
 		if (DomUtils.nodeNameEquals(ele, "drop-index")) {
-			refactoring = new DropIndex(ele.getAttribute("table"),
+			return new DropIndex(ele.getAttribute("table"),
 					ele.getAttribute("index"));
 		}
 		if (DomUtils.nodeNameEquals(ele, "drop-table")) {
-			refactoring = new DropTable(ele.getAttribute("table"),
+			return new DropTable(ele.getAttribute("table"),
 					Boolean.valueOf(ele.getAttribute("cascade")).booleanValue());
 		}
 		if (DomUtils.nodeNameEquals(ele, "drop-constraint")) {
-			refactoring = new DropConstraint(ele.getAttribute("table"),
+			return new DropConstraint(ele.getAttribute("table"),
 					ele.getAttribute("constraint"));
 		}
 		if (DomUtils.nodeNameEquals(ele, "modify-column")) {
-			refactoring = new ModifyColumn(ele.getAttribute("table"),
+			return new ModifyColumn(ele.getAttribute("table"),
 					parseColumn(ele));
 		}
 		if (DomUtils.nodeNameEquals(ele, "rename-column")) {
-			refactoring = new RenameColumn(ele.getAttribute("table"),
+			return new RenameColumn(ele.getAttribute("table"),
 					ele.getAttribute("column"), ele.getAttribute("rename-to"));
 		}
 		if (DomUtils.nodeNameEquals(ele, "rename-table")) {
-			refactoring = new RenameTable(ele.getAttribute("table"), 
+			return new RenameTable(ele.getAttribute("table"), 
 					ele.getAttribute("rename-to"));
 		}
 		if (DomUtils.nodeNameEquals(ele, "insert-data")) {
-			refactoring = new InsertData(ele.getAttribute("table"), 
+			return new InsertData(ele.getAttribute("table"), 
 					parseEntries(ele));
 		}
 		if (DomUtils.nodeNameEquals(ele, "update-data")) {
-			refactoring = new UpdateData(parseUpdateStatements(ele));
+			return new UpdateData(parseUpdateStatements(ele));
 		}
 		if (DomUtils.nodeNameEquals(ele, "create-auto-increment-seq")) {
-			refactoring = new CreateAutoIncrementSequence(
+			return new CreateAutoIncrementSequence(
 					ele.getAttribute("name"));
 		}
-		return refactoring;
+		if (DomUtils.nodeNameEquals(ele, "custom")) {
+			return SpringUtils.newInstance(ele.getAttribute("class"));
+		}
+		throw new EvolutionException("Unsupported refactoring: " + ele.getNodeName());
 	}
 	
 	private String parseOnUpdate(Element ele) {

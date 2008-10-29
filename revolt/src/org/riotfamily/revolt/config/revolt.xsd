@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		xmlns:beans="http://www.springframework.org/schema/beans"
 		elementFormDefault="qualified"
 		attributeFormDefault="unqualified" 
 		targetNamespace="http://www.riotfamily.org/schema/revolt"
 		xmlns="http://www.riotfamily.org/schema/revolt">
+
+	<xsd:import namespace="http://www.springframework.org/schema/beans"
+		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.5.xsd" />
 
 	<xsd:attributeGroup name="column-attributes">
 		<xsd:attribute name="name" type="xsd:string" use="required" />
@@ -208,6 +212,11 @@
 								</xsd:complexType>
 							</xsd:element>
 						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="custom">
+					<xsd:complexType>
+						<xsd:attribute name="class" use="required" />
 					</xsd:complexType>
 				</xsd:element>
 			</xsd:choice>

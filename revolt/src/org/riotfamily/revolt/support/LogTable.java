@@ -28,8 +28,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
 
-import javax.sql.DataSource;
-
 import org.riotfamily.revolt.ChangeSet;
 import org.riotfamily.revolt.Dialect;
 import org.riotfamily.revolt.Script;
@@ -47,7 +45,7 @@ public class LogTable {
 
 	private static final String TABLE_NAME = "revolt_change_log";
 	
-	private DataSource dataSource;
+	private SimpleJdbcTemplate template;
 	
 	private Dialect dialect;
 	
@@ -55,30 +53,25 @@ public class LogTable {
 	
 	private boolean exists;
 	
-	public LogTable(DataSource dataSource, Dialect dialect) {
-		this.dataSource = dataSource;
+	public LogTable(SimpleJdbcTemplate template, Dialect dialect) {
+		this.template = template;
 		this.dialect = dialect;
 		
 		table = new Table(TABLE_NAME);
 		table.addColumn(new Column("change_set_id", TypeMap.VARCHAR, 255));
 		table.addColumn(new Column("module", TypeMap.VARCHAR, 255));
 		table.addColumn(new Column("seq_nr", TypeMap.INTEGER));
-		exists = DatabaseUtils.tableExists(dataSource, table);
+		exists = DatabaseUtils.tableExists(template.getJdbcOperations(), table);
 	}
 	
 	public boolean exists() {
 		return exists;
 	}
-	
-	public boolean tableExists(String tableName) {
-		return DatabaseUtils.tableExists(dataSource, new Table(tableName));
-	}
-	
+		
 	public Collection<String> getAppliedChangeSetIds(final String moduleName) {
 		if (!exists) {
 			return Collections.emptyList();
 		}
-		SimpleJdbcTemplate template = new SimpleJdbcTemplate(dataSource);
 		return template.query("select change_set_id from " 
 				+ TABLE_NAME + " where module = ? order by seq_nr asc", 
 				new ParameterizedRowMapper<String>() {
@@ -91,7 +84,7 @@ public class LogTable {
 
 	public Script getCreateTableScript() {
 		Script script = dialect.createTable(table);
-		if (DatabaseUtils.anyTablesExist(dataSource)) {
+		if (DatabaseUtils.anyTablesExist(template.getJdbcOperations())) {
 			script.forceManualExecution();
 		}
 		return script;
@@ -102,7 +95,7 @@ public class LogTable {
 		insert.addEntry("module", changeSet.getModuleName());
 		insert.addEntry("change_set_id", changeSet.getId());
 		insert.addEntry("seq_nr", new Integer(changeSet.getSequenceNumber()));
-		return insert.getScript(dialect);
+		return insert.getScript(dialect, template);
 	}
 
 }

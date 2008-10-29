@@ -30,6 +30,7 @@ import org.riotfamily.revolt.EvolutionException;
 import org.riotfamily.revolt.Refactoring;
 import org.riotfamily.revolt.Script;
 import org.riotfamily.revolt.definition.UpdateStatement;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -43,13 +44,13 @@ public class UpdateData implements Refactoring {
 		this.statements = statements;
 	}
 
-	public Script getScript(Dialect dialect) {
+	public Script getScript(Dialect dialect, SimpleJdbcTemplate template) {
 		for (UpdateStatement statement : statements) {
 			if (statement.supports(dialect)) {
 				return new Script(statement.getSql());
 			}
 		}
-		throw new EvolutionException("No update statment for dialect " 
+		throw new EvolutionException("No update statement for dialect " 
 				+ dialect.getName());
 	}
 	
