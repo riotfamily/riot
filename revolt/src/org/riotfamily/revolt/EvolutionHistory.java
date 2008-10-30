@@ -63,7 +63,9 @@ public class EvolutionHistory implements BeanNameAware {
 	 * <p>
 	 * Use the name of a table that exits <em>before</em> any change-set is 
 	 * applied. It's okay when that table is renamed or dropped later.
-	 * </p>   
+	 * When no table name is set, all changes are performed that have not been
+	 * marked as applied.
+	 * </p>
 	 */
 	public void setCheckTableName(String checkTableName) {
 		this.checkTableName = checkTableName;
@@ -97,7 +99,7 @@ public class EvolutionHistory implements BeanNameAware {
 			// Some changes have already been applied
 			return true; 
 		}
-		return DatabaseUtils.tableExists(template.getJdbcOperations(), new Table(checkTableName));
+		return checkTableName == null || DatabaseUtils.tableExists(template.getJdbcOperations(), new Table(checkTableName));
 	}
 	
 	/**
