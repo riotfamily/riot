@@ -32,6 +32,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.EditModeUtils;
@@ -49,6 +50,8 @@ import org.riotfamily.pages.model.Site;
  * @since 6.5
  */
 public class PageFacade {
+	
+	public static final String TITLE_PROPERTY = "title";
 
 	private Page page;
 
@@ -250,8 +253,13 @@ public class PageFacade {
 	}
 
 	public String getTitle() {
-		return page.getTitle(preview);
+		Object title = getProperties().get(TITLE_PROPERTY);
+		if (title != null) {
+			return title.toString();
+		}
+		return FormatUtils.xmlToTitleCase(page.getPathComponent());
 	}
+
 	
 	public boolean isPublished() {
 		return page.isPublished();

@@ -63,6 +63,7 @@ import org.springframework.util.ClassUtils;
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
 public class Page {
 
+	@Deprecated
 	public static final String TITLE_PROPERTY = "title";
 	
 	private Long id;
@@ -334,10 +335,12 @@ public class Page {
 	}
 	
 	@Transient
+	@Deprecated
 	public String getTitle() {
 		return getTitle(true);
 	}
 	
+	@Deprecated
 	public String getTitle(boolean preview) {
 		Object title = getPageProperties().unwrap(preview).get(TITLE_PROPERTY);
 		if (title != null) {
