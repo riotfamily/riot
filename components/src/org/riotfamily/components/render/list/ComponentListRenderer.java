@@ -131,6 +131,13 @@ public class ComponentListRenderer implements ServletContextAware {
 			list = (ComponentList) container.getPreviewVersion().getValue(key);
 			if (list == null) {
 				list = createList(container.getPreviewVersion(), key, config);
+				
+				// If the new list is not empty, we have to store it and mark
+				// the container as dirty.
+				if (list.getSize() > 0) {
+					container.getPreviewVersion().setValue(key, list);
+					container.setDirty(true);
+				}
 			}
 			
 			if (AccessController.isGranted("edit", container)) {
