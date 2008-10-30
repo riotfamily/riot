@@ -30,17 +30,33 @@
 </#function>
 
 <#---
+  - Excludes the currently processed template block from getting cached.
+  -->
+<#macro preventCaching>
+    ${invokeStaticMethod('org.riotfamily.cachius.TaggingContext.preventCaching')}
+</#macro>
+
+<#---
   - Includes the given path using a RequestDispatcher. 
   - @param path The path to include
+  - @param dynamic Set to true if the current template block should not get
+  -                cached because the included controller delivers dynamic
+  -                content
   -->
-<#macro include path>
+<#macro include path dynamic=false>
+    <#if dynamic><@preventCaching /></#if>
 	${commonMacroHelper.include(path)}
 </#macro>
 
 <#---
   - Performs a request using a RequestDispatcher and returns the captured output.
+  - @param path The path to capture
+  - @param dynamic Set to true if the current template block should not get
+  -                cached because the included controller delivers dynamic
+  -                content
   -->
-<#function capture path="">
+<#function capture path="" dynamic=false>
+	<#if dynamic><@preventCaching /></#if>
 	<#return commonMacroHelper.capture(path) />
 </#function>
 
