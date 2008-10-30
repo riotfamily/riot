@@ -730,6 +730,16 @@ riot.applyOn = function() {
 	riot.toolbar.disablePublishButtons();	
 }
 
+riot.editProperties = function(e) {
+	e = e || this;
+	var componentElement = Element.up(e, '.riot-component');
+	if (componentElement && (!componentElement.component || !componentElement.component.mode)) {
+		riot.toolbar.buttons.get('properties').click();
+		componentElement.component.properties();
+	}
+	return false;
+}
+
 riot.previewFrame = RBuilder.node('iframe', {name: 'riotPreviewFrame', id: 'riotPreviewFrame'}).appendTo(document.body);
 riot.init();
 riot.adoptFloatsAndClears();
