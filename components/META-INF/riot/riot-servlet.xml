@@ -50,7 +50,11 @@
 	  - FormRepository providing component property forms.
 	  -->
 	<bean id="contentFormRepository" class="org.riotfamily.components.config.ContentFormRepository">
-		<property name="config" value="/WEB-INF/riot-config/content-forms.xml" />
+		<property name="configLocations">
+		    <list>
+		        <value>/WEB-INF/riot-config/content-forms.xml</value>
+		    </list>
+		</property>
 		<property name="customElements" ref="customFormElements" />
 		<property name="mimetypesMap" ref="fileTypeMap" />
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />

@@ -127,7 +127,11 @@
 			FreeMarker configuration.
 		</description>
 		<property name="defaultEncoding" value="UTF-8" />
-		<property name="templateLoaderPath" value="/WEB-INF/view" />
+		<property name="templateLoaderPaths">
+		    <list>
+		        <value>/WEB-INF/view</value>
+		    </list>
+		</property>
 		<property name="freemarkerSettings" value="${website-servlet.freemarker.*}" />
 		<property name="useTemplateCache" value="${website-servlet.useTemplateCache=true}" />
 		<property name="macroLibraries">
