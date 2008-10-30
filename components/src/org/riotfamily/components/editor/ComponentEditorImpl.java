@@ -322,7 +322,7 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	public void markAsDirty(Long containerId) {
 		ContentContainer container = componentDao.loadContentContainer(containerId);
 		container.setDirty(true);
-		ComponentCacheUtils.invalidateContainer(cacheService, container);
+		ComponentCacheUtils.invalidatePreviewVersion(cacheService, container);
 		nofifyUsers();
 	}
 	
