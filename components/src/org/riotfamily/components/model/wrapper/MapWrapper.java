@@ -26,7 +26,6 @@ package org.riotfamily.components.model.wrapper;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -120,25 +119,6 @@ public class MapWrapper extends ValueWrapper<Map<String, Object>>
 		MapWrapper copy = new MapWrapper();
 		copy.wrap(map);
 		return copy;
-	}
-	
-	@Transient
-	public Collection<String> getCacheTags() {
-		if (wrapperMap == null) {
-			return null;
-		}
-		HashSet<String> result = new HashSet<String>();
-		Iterator<Object> it = wrapperMap.values().iterator();
-		while (it.hasNext()) {
-			ValueWrapper<?> wrapper = (ValueWrapper<?>) it.next();
-			if (wrapper != null) {
-				Collection<String> tags = wrapper.getCacheTags();
-				if (tags != null) {
-					result.addAll(tags);
-				}
-			}
-		}
-		return result;
 	}
 
 	public void clear() {

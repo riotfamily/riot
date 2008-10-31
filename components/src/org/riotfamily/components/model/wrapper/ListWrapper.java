@@ -27,7 +27,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -109,23 +108,6 @@ public class ListWrapper extends ValueWrapper<List<?>>
 		return copy;
 	}
 	
-	@Transient
-	public Collection<String> getCacheTags() {
-		if (wrapperList == null) {
-			return null;
-		}
-		HashSet<String> result = new HashSet<String>();
-		for (ValueWrapper<?> wrapper : wrapperList) {
-			if (wrapper != null) {
-				Collection<String> tags = wrapper.getCacheTags();
-				if (tags != null) {
-					result.addAll(tags);
-				}
-			}
-		}
-		return result;
-	}
-
 	public void clear() {
 		if (wrapperList != null) {
 			wrapperList.clear();

@@ -23,9 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -44,7 +42,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -184,24 +181,6 @@ public class Content {
 		else {
 			getWrappers().clear();
 		}
-	}
-	
-	/**
-	 * Returns a Collection of Strings that should be used to tag the
-	 * CacheItem containing the rendered Content.
-	 */
-	@Transient
-	public Collection<String> getCacheTags() {
-		HashSet<String> result = new HashSet<String>();
-		for (ValueWrapper<?> wrapper : wrappers.values()) {
-			if (wrapper != null) {
-				Collection<String> tags = wrapper.getCacheTags();
-				if (tags != null) {
-					result.addAll(tags);
-				}
-			}
-		}
-		return result;
 	}
 	
 }

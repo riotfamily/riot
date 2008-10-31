@@ -23,8 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model.wrapper;
 
-import java.util.Collection;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -96,15 +94,6 @@ public abstract class ValueWrapper<T> {
 	 * deepCopy method is invoked for all nested values too. 
 	 */
 	public abstract ValueWrapper<T> deepCopy();
-
-	/**
-	 * Returns a Collection of Strings that should be used to tag the
-	 * CacheItem containing the rendered content.
-	 */
-	@Transient
-	public Collection<String> getCacheTags() {
-		return null;
-	}
 
 	/**
 	 * Delegates the call to the hashCode method of the wrapped object. 

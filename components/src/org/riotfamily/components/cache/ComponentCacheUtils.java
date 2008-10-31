@@ -23,14 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.cache;
 
-import java.util.Collection;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.components.EditModeUtils;
-import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 
 /**
@@ -58,16 +55,6 @@ public final class ComponentCacheUtils {
 	
 	public static void addContainerTags(ContentContainer container, boolean preview) {
 		TaggingContext.tag(getContainerTag(container, preview));
-		addContentTags(container.getContent(preview));
-	}
-
-	private static void addContentTags(Content version) {
-		Collection<String> tags = version.getCacheTags();
-		if (tags != null) {
-			for (String tag : tags) {
-				TaggingContext.tag(tag);
-			}
-		}
 	}
 	
 	/**
