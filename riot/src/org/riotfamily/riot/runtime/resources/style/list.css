@@ -69,15 +69,34 @@ th {
 	text-align: left;
 	font-weight: normal;
 }
+td {
+	height: 32px;
+}
+tr.selected {
+	background-color: #f5f8da;
+}
+tr.highlight {
+	background-color: #ebebeb;
+}
+tr.highlight-selected {
+	background-color: #eff7b4;
+}
+
+
+td {
+	cursor: default;
+	-moz-user-select: none;
+	user-select: none;
+}
+
 th.col-1 {
 	background: ${title_bg_color} url(images/corner.gif) top left no-repeat;
 }
-th.commands {
+th.col-last {
 	background: ${title_bg_color} url(images/corner.gif) top right no-repeat;
 }
 th.sortable {
 	cursor: pointer;
-	cursor: hand;
 }
 th span {
 	padding-right: 16px;
@@ -96,78 +115,25 @@ td img {
 	vertical-align: middle;
 }
 
-table.selectable td.col-1 {
-	white-space: nowrap;
-}
-
-td input.check {
-	margin: 0 6px 1px 6px;
-	vertical-align: middle;
-}
 .expand {
 	width: 15px;
 	height: 15px;
 	float: left;
 	overflow: hidden;
 	background: url(images/expand_collapse.gif) 0 -30px no-repeat;
+	cursor: pointer;
+	margin-right: 5px;
 }
 
 .expandable .expand {
 	background-position: 0 0;
 }
-.select-parent-mode .expand {
-	background-color: ${highlight_color};
-	background-position: 0 -45px;
-}
-.select-parent-mode .expanded .expand {
-	background-color: transparent;
-	background-position: -15px 0;
-}
-.parent-command .expand {
-	background-position: 0 -45px;
-	margin-right: 5px;
-}
-.parent-command .expand {
-	background-color: #a4a4a4;
-}
-.parent-command .action {
-	background-position: 0 -64px;
-}
-
-.parent-command .label {
-	color: #a4a4a4;
-}
-.parent-command .enabled .label {
-	color: ${highlight_color};
-}
-.parent-command .enabled .action {
-	background-position: 0 0;
-}
-
-tr.highlight-parent .expand {
-	background-position: 0 -15px;
-}
-tr.highlight-parent .enabled .action {
-	background-position: 0 -32px;
-	background-color: ${highlight_color};
-}
-
 .expanded .expand {
 	background-position: -15px 0;
 }
 
-th.commands,
-td.commands {
-	padding: 0;
-}
-
 tbody td {
-	border-bottom: 1px solid #ebebeb;
-}
-
-.view-mode tr.highlight,
-.select-parent-mode tr.highlight-parent {
-	background-color: #ebebeb;
+	border-bottom: 1px solid #e8e8e8;
 }
 
 tr.cut,
@@ -222,57 +188,3 @@ td div.false {
 	background-image: url(images/false.gif);
 }
 
-#list .commands .action {
-	float: left;
-}
-
-#list div.batchCommands {
-	overflow: hidden;
-	background: #ebebeb url(images/arrow_batch.gif) 15px center no-repeat;
-	padding-left: 32px;
-}
-
-#list div.batchCommands .selectionStatus {
-	float: right;
-	margin-right: 8px;
-	line-height: 32px;
-	overflow: hidden;
-}
-#list div.batchCommands .selectionStatus .itemCount {
-	margin-right: 8px;
-}
-#list div.batchCommands .selectionStatus .clear {
-	text-decoration: underline;
-}
-
-#list .commands .enabled:hover,
-tr.highlight .highlight-default .default {
-	background-position: 0 -32px;
-	background-color: ${highlight_color};
-}
-
-#list .busy .commands .enabled:hover,
-#list .busy tr.highlight .highlight-default .default {
-	background-position: 0 0;
-	background-color: transparent;
-	cursor: progress;
-}
-
-#list .select-parent-mode tbody .commands a {
-	visibility: hidden;
-}
-
-#list .view-mode tr.parent-command {
-	display: none;
-}
-
-#commands .select-parent {
-	margin-left: 34px;
-}
-
-#list .commands .disabled {
-	background-position: 0 -64px;
-}
-#list .commands .disabled:hover {
-	background-color: #ebebeb;
-}

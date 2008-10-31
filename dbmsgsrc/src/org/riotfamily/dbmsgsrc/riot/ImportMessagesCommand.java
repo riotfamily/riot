@@ -39,7 +39,6 @@ import org.riotfamily.forms.element.upload.FileUpload;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.dao.InvalidPropertyValueException;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
-import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.dialog.DialogCommand;
 import org.riotfamily.riot.list.ui.ListSession;
 import org.riotfamily.riot.security.AccessController;
@@ -65,7 +64,7 @@ public class ImportMessagesCommand extends DialogCommand {
 	}
 	
 	@Override
-	protected String getAction(CommandContext context) {
+	public String getAction() {
 		return ACTION_IMPORT;
 	}
 	

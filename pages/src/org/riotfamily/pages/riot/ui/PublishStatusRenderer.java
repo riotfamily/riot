@@ -21,15 +21,43 @@
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.list.command;
+package org.riotfamily.pages.riot.ui;
 
+import java.io.PrintWriter;
+
+import org.riotfamily.common.web.ui.ObjectRenderer;
+import org.riotfamily.common.web.ui.RenderContext;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.riot.list.ui.ListSession;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public interface BatchCommand extends Command {
+public class PublishStatusRenderer implements ObjectRenderer {
 
-	public String getBatchConfirmationMessage(CommandContext context);
+	public void render(Object obj, RenderContext context, PrintWriter writer) {
+		writer.print("<div class=\"publish-status publish-status-");
+		writer.print(getStyleClass((Page) obj, (ListSession) context));
+		writer.print("\"></div>");
+	}
+	
+	private String getStyleClass(Page page, ListSession session) {
+		if (isTranslated(page, session)) {
+			if (!page.isPublished()) {
+				return "new";
+			}
+			if (page.isDirty()) {
+				return "dirty";
+			}
+			return "published";
+		}
+		return "translatable";
+	}
+
+	private boolean isTranslated(Page page, ListSession session) {
+		//TODO
+		return true;
+	}
 
 }

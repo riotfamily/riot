@@ -167,8 +167,9 @@ public class PageRiotDao implements ParentChildDao, TreeHintDao,
 		Page page = (Page) entity;
 		PageNode node = page.getNode();
 		
-		ArrayList<Page> pages = new ArrayList<Page>(list(parent, params));
-		PageNode otherNode = ((Page) pages.get(swapWith)).getNode();
+		List<Page> pages = new ArrayList<Page>(list(parent, params));
+		int i = pages.indexOf(page);
+		PageNode otherNode = pages.get(i + swapWith).getNode();
 		
 		PageNode parentNode = node.getParent();
 		List<PageNode> nodes = parentNode.getChildNodes();

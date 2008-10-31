@@ -116,13 +116,13 @@
 				</div>
 			</div>
 			<div id="extras" class="extra">
-				<div id="commands" class="box">
+				<div class="box command-box">
 					<div class="box-title">
 						<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
 					</div>
-					<div class="list">
+					<div class="commands">
 						<div id="formCommands"></div>
-						<div class="item"><a class="saveButton action" href="javascript:save()"><span class="label"><@spring.messageText "label.form.button.save", "Save" /></span></a></div>
+						<a class="saveButton action" href="javascript:save()"><span class="label"><@spring.messageText "label.form.button.save", "Save" /></span></a>
 					</div>
 				</div>
 	

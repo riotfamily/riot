@@ -32,14 +32,15 @@ import org.riotfamily.riot.list.command.core.SwapCommand;
  */
 public class SwapPageCommand extends SwapCommand {
 
-	protected boolean isEnabled(CommandContext context, String action) {
+	@Override
+	public boolean isEnabled(CommandContext context) {
 		boolean isMasterLocale = PageCommandUtils.isMasterLocale(context);
 		if (!PageCommandUtils.isMasterLocaleList(context) && (
 				isMasterLocale || PageCommandUtils.hasTranslation(context))
 		) {
 			return false;
 		}
-		return super.isEnabled(context, action);
+		return super.isEnabled(context);
 	}
 
 

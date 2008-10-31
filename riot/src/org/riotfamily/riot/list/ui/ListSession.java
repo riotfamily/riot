@@ -63,10 +63,8 @@ import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.list.command.core.ChooseCommand;
 import org.riotfamily.riot.list.command.core.DescendCommand;
-import org.riotfamily.riot.list.command.result.ConfirmBatchResult;
 import org.riotfamily.riot.list.command.result.ConfirmResult;
 import org.riotfamily.riot.list.support.ListParamsImpl;
 import org.riotfamily.riot.security.AccessController;
@@ -116,11 +114,13 @@ public class ListSession implements RenderContext {
 
 	private boolean sortable;
 	
+	private boolean chooser;
+	
 	private List<Command> listCommands;
 
 	private List<Command> itemCommands;
-
-	private String[] defaultCommandIds;
+	
+	private List<Command> commands;
 
 	private ListParamsImpl params;
 
@@ -163,7 +163,10 @@ public class ListSession implements RenderContext {
 		listCommands = listConfig.getCommands();
 		itemCommands = listConfig.getColumnCommands();
 		
-		defaultCommandIds = listConfig.getDefaultCommandIds();
+		commands = Generics.newArrayList();
+		commands.addAll(itemCommands);
+		commands.addAll(listCommands);
+		
 		title = listDefinition.createReference(parentId, messageResolver).getLabel();
 		params = new ListParamsImpl();
 
@@ -229,8 +232,9 @@ public class ListSession implements RenderContext {
 
 	public void setChooserTarget(EditorDefinition target) {
 		listCommands = Collections.emptyList();
-		itemCommands = Generics.newArrayList();
-
+		itemCommands = Collections.emptyList();
+		commands = Generics.newArrayList();
+		chooser = true;
 		ListDefinition targetList = EditorDefinitionUtils.getListDefinition(target);
 
 		if (targetList != listDefinition) {
@@ -239,16 +243,15 @@ public class ListSession implements RenderContext {
 				nextList = EditorDefinitionUtils.getNextListDefinition(
 						listDefinition, targetList);
 			}
-			itemCommands.add(new DescendCommand(nextList, target));
+			commands.add(new DescendCommand(nextList, target));
 		}
-
-		if (listDefinition.getBeanClass().isAssignableFrom(
-				target.getBeanClass())) {
-
-			itemCommands.add(new ChooseCommand(target));
+		else {
+			if (listDefinition.getBeanClass().isAssignableFrom(
+					target.getBeanClass())) {
+	
+				commands.add(new ChooseCommand(target));
+			}
 		}
-
-		defaultCommandIds = new String[] { DescendCommand.ID, ChooseCommand.ID };
 	}
 
 	public String getTitle() {
@@ -310,20 +313,32 @@ public class ListSession implements RenderContext {
 				item.setParentId(model.getParentId());
 				item.setParentEditorId(model.getParentEditorId());
 				item.setColumns(getColumns(bean));
-				item.setCommands(getCommandStates(itemCommands,
-						item, bean, model.getItemsTotal(), request));
+				item.setCommands(getCommandStates(commands, createContext(
+						item, bean, model.getItemsTotal(), request)));
 	
 				if (listConfig.getRowStyleProperty() != null) {
 					item.setCssClass(FormatUtils.toCssClass(
 							PropertyUtils.getPropertyAsString(bean, 
 							listConfig.getRowStyleProperty())));
 				}
-				item.setDefaultCommandIds(defaultCommandIds);
+
 				item.setExpandable(isExpandable(bean, root));
 				items.add(item);
 			}
 		}
 		model.setItems(items);
+	}
+	
+	private List<CommandState> getCommandStates(List<Command> commands, CommandContext context) {
+		ArrayList<CommandState> states = Generics.newArrayList();
+		for (Command command : commands) {
+			CommandState state = new CommandState();
+			state.setCommandId(command.getId());
+			state.setAction(command.getAction());
+			state.setEnabled(command.isEnabled(context) && isGranted(command, context));
+			states.add(state);
+		}
+		return states;
 	}
 	
 	private boolean isExpandable(Object bean, Object root) {
@@ -377,17 +392,25 @@ public class ListSession implements RenderContext {
 		else {
 			model = getItems(parent, this.parentId, this.parentEditorId, parent, request);
 		}
+		
 		model.setEditorId(listDefinition.getId());
-		model.setItemCommandCount(itemCommands.size());
 		
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		context.setParent(parent, this.parentId, this.parentEditorId);
 		context.setItemsTotal(model.getItemsTotal());
-		model.setListCommands(getListCommandStates(context));
-		model.setBatchCommands(getBatchStates(itemCommands, context, request));
+		
+		model.setListCommands(getCommandButtons(listCommands, context, true));
+		model.setItemCommands(getCommandButtons(itemCommands, context, false));
+		
 		model.setTexts(getTexts());
 		model.setCssClass(listConfig.getId());
 		model.setTree(treeDefinition != null);
+		
+		boolean singleAction = listCommands.isEmpty() 
+				&& itemCommands.size() == 1
+				&& !(itemCommands.get(0) instanceof BatchCommand);
+		
+		model.setInstantAction(chooser || singleAction);
 		fillInColumnConfigs(model);
 		model.setFilterFormHtml(filterFormHtml);
 		return model;
@@ -517,165 +540,100 @@ public class ListSession implements RenderContext {
 		Object root = loadParent();
 		return getItems(root, this.parentId, this.parentEditorId, root, request);
 	}
-
-	public boolean hasListCommands() {
-		return !listCommands.isEmpty();
-	}
 	
-	public List<CommandState> getListCommandStates(HttpServletRequest request) {
-		return getListCommandStates(new CommandContextImpl(this, request));
-	}
-			
-	public List<CommandState> getFormCommandStates(String objectId, 
+	public List<CommandButton> getFormCommandButtons(String objectId, 
 			HttpServletRequest request) {
 		
 		Object bean = null;
 		if (objectId != null) {
 			bean = loadBean(objectId);
 		}
-		return getCommandStates(listConfig.getFormCommands(),
-				new ListItem(objectId, parentId, parentEditorId), bean, 1, request);
+		ListItem item = new ListItem(objectId, parentId, parentEditorId);
+		return getCommandButtons(listConfig.getFormCommands(),
+				createContext(item, bean, 1, request), true);
 	}
 
-	public CommandState getParentCommandState(String commandId, ListItem item,
-			HttpServletRequest request) {
-
-		Command command = getListCommand(commandId);
-		CommandContextImpl context = new CommandContextImpl(this, request);
-		Object parent;
-		if (item != null) {
-			parent = loadBean(item.getObjectId());
-			context.setParent(parent, item.getObjectId(), listDefinition.getId());
-			context.setRowIndex(item.getRowIndex());
-		}
-		else {
-			parent = loadParent();
-			context.setParent(parent, this.parentId, this.parentEditorId);
-		}
-		
-		CommandState state = command.getState(context);
-		boolean granted = AccessController.isGranted(
-				state.getAction(), parent, context);
-
-		state.setEnabled(state.isEnabled() && granted);
-		return state;
+	public List<CommandButton> getListCommandButtons(HttpServletRequest request) {
+		CommandContext context = new CommandContextImpl(this, request);
+		return getCommandButtons(listCommands, context, true);
 	}
 	
-	private List<CommandState> getCommandStates(List<Command> commands, ListItem item, Object bean,
+	private List<CommandButton> getCommandButtons(List<Command> commands, 
+			CommandContext context, boolean checkState) {
+		
+		ArrayList<CommandButton> buttons = Generics.newArrayList();
+		for (Command command : commands) {
+			CommandButton button = getCommandButton(command, context);
+			if (checkState) {
+				button.setEnabled(command.isEnabled(context) 
+						&& isGranted(command, context));
+			}
+			buttons.add(button);
+		}
+		return buttons;
+	}
+	
+	private CommandButton getCommandButton(Command command, CommandContext context) {
+		CommandButton button = new CommandButton();
+		button.setCommandId(command.getId());
+		button.setAction(command.getAction());
+		button.setStyleClass(command.getStyleClass());
+		button.setBatchSupport(command instanceof BatchCommand);
+		button.setLabel(command.getLabel(messageResolver));
+		return button;
+	}
+	
+	private CommandContext createContext(ListItem item, Object bean,
 			int itemsTotal, HttpServletRequest request) {
-
-		ArrayList<CommandState> states = Generics.newArrayList();
+		
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		context.setBean(bean, item.getObjectId());
 		context.setParent(null, item.getParentId(), item.getParentEditorId());
 		context.setItemsTotal(itemsTotal);
 		context.setRowIndex(item.getRowIndex());
-		Iterator<Command> it = commands.iterator();
-		while (it.hasNext()) {
-			Command command = it.next();
-			states.add(command.getState(context));
-		}
-		checkPermissions(states, bean);
-		return states;
+		return context;
 	}
 	
-	private List<CommandState> getListCommandStates(CommandContext context) {
-		ArrayList<CommandState> states = Generics.newArrayList();
-		for (Command command : listCommands) {
-			states.add(command.getState(context));
-		}
-		checkPermissions(states, context.getParent());
-		return states;
-	}
-	
-	private List<CommandState> getBatchStates(List<?> commands, CommandContext context, 
+	private CommandContext createContext(ListItem item, Command command, 
 			HttpServletRequest request) {
-
-		ArrayList<CommandState> states = Generics.newArrayList();
-		Iterator<?> it = commands.iterator();
-		while (it.hasNext()) {
-			Object command = it.next();
-			if (command instanceof BatchCommand) {
-				BatchCommand bc = (BatchCommand) command;
-				states.addAll(bc.getBatchStates(context));
-			}
-		}
-		checkPermissions(states, context.getParent());
-		return states;
-	}
-	
-	private void checkPermissions(List<CommandState> states, Object bean) {
-		Iterator<CommandState> it = states.iterator();
-		while (it.hasNext()) {
-			CommandState state = it.next();
-			boolean granted = AccessController.isGranted(
-					state.getAction(), bean);
-
-			state.setEnabled(state.isEnabled() && granted);
-		}
-	}
-
-	public CommandResult execListCommand(String parentId, 
-			CommandState commandState, boolean confirmed, String objectId,
-			HttpServletRequest request, HttpServletResponse response) {
 		
-		Command command = getListCommand(commandState.getId());
 		CommandContextImpl context = new CommandContextImpl(this, request);
-		Object target = null;
-		if (parentId != null) {
-			target = loadBean(parentId);
-			context.setParent(target, parentId, listDefinition.getId());
+		if (listCommands.contains(command)) {
+			if (item != null && treeDefinition != null) {
+				context.setParent(null, item.getObjectId(), listDefinition.getId());
+			}
+			else {
+				context.setParent(loadParent(), this.parentId, this.parentEditorId);
+			}			
 		}
 		else {
-			target = loadParent();
-			context.setParent(target, this.parentId, this.parentEditorId);
+			Object target = loadBean(item.getObjectId());
+			context.setBean(target, item.getObjectId());
+			context.setParent(null, item.getParentId(), item.getParentEditorId());
 		}
-		
-		context.setBean(null, objectId);
-		
-		return execCommand(null, command, context, target, 
-				commandState, confirmed, request, response);
+		return context;
 	}
 	
-	public CommandResult execItemCommand(ListItem item, 
-			CommandState commandState, boolean confirmed,
-			HttpServletRequest request, HttpServletResponse response) {
-		
-		Command command = getCommand(itemCommands, commandState.getId());
-		CommandContextImpl context = new CommandContextImpl(this, request);
-		Object target = loadBean(item.getObjectId());
-		context.setBean(target, item.getObjectId());
-		context.setParent(null, item.getParentId(), item.getParentEditorId());
-		context.setRowIndex(item.getRowIndex());
-		return execCommand(item, command, context, target, 
-				commandState, confirmed, request, response);
+	private boolean isGranted(Command command, CommandContext context) {
+		String action = command.getAction();
+		Object target = context.getBean();
+		if (target == null) {
+			target = context.getParent();
+		}
+		return AccessController.isGranted(action, target, context);
 	}
 	
-	public CommandResult execFormCommand(ListItem item, 
-			CommandState commandState, boolean confirmed,
-			HttpServletRequest request, HttpServletResponse response) {
+	public CommandResult execCommand(ListItem item, String commandId, 
+			boolean confirmed, HttpServletRequest request, 
+			HttpServletResponse response) {
 		
-		Command command = getCommand(listConfig.getFormCommands(), commandState.getId());
-		CommandContextImpl context = new CommandContextImpl(this, request);
-		Object target = loadBean(item.getObjectId());
-		context.setBean(target, item.getObjectId());
-		context.setParent(null, item.getParentId(), item.getParentEditorId());
-		context.setRowIndex(item.getRowIndex());
-		return execCommand(item, command, context, target, 
-				commandState, confirmed, request, response);
-	}
-	
-	private CommandResult execCommand(ListItem item, Command command, 
-			CommandContext context, Object target, 
-			CommandState commandState, boolean confirmed,
-			HttpServletRequest request, HttpServletResponse response) {
-		
-		String action = command.getState(context).getAction();
-		if (AccessController.isGranted(action, target, context)) {
+		Command command = getCommand(commandId);
+		CommandContext context = createContext(item, command, request);
+		if (isGranted(command, context)) {
 			if (!confirmed) {
 				String message = command.getConfirmationMessage(context);
 				if (message != null) {
-					return new ConfirmResult(item, commandState, message);
+					return new ConfirmResult(command.getId(), message);
 				}
 			}
 			TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
@@ -695,17 +653,17 @@ public class ListSession implements RenderContext {
 		}
 	}
 	
-	public CommandResult execBatchCommand(List<ListItem> items, CommandState commandState,
+	public CommandResult execBatchCommand(List<ListItem> items, String commandId,
 			boolean confirmed, HttpServletRequest request,
 			HttpServletResponse response) {
 
-		BatchCommand command = (BatchCommand) getCommand(itemCommands, commandState.getId());
+		BatchCommand command = (BatchCommand) getCommand(commandId);
 		CommandContextImpl context = new CommandContextImpl(this, request);
 		context.setBatchSize(items.size());
 		if (!confirmed) {
-			String message = command.getBatchConfirmationMessage(context, commandState.getAction());
+			String message = command.getBatchConfirmationMessage(context);
 			if (message != null) {
-				return new ConfirmBatchResult(commandState, message);
+				return new ConfirmResult(commandId, message);
 			}
 		}
 		TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
@@ -715,11 +673,10 @@ public class ListSession implements RenderContext {
 			int batchIndex = 0;
 			while (it.hasNext()) {
 				ListItem item = it.next();
-				Object bean = loadBean(item.getObjectId());
-				context.setBean(bean, item.getObjectId());
+				context.setBean(null, item.getObjectId());
 				context.setParent(null, item.getParentId(), item.getParentEditorId());
 				context.setRowIndex(item.getRowIndex());
-				if (AccessController.isGranted(commandState.getAction(), bean, context)) {
+				if (isGranted(command, context)) {
 					context.setBatchIndex(batchIndex);
 					result = command.execute(context);
 				}
@@ -733,15 +690,9 @@ public class ListSession implements RenderContext {
 		transactionManager.commit(status);
 		return result; 
 	}
-	
-	public Command getListCommand(String id) {
-		return getCommand(listCommands, id);
-	}
-	
-	private Command getCommand(Collection<Command> commands, String id) {
-		Iterator<Command> it = commands.iterator();
-		while (it.hasNext()) {
-			Command command = it.next();
+		
+	public Command getCommand(String id) {
+		for (Command command : commands) {
 			if (id.equals(command.getId())) {
 				return command;
 			}
@@ -788,10 +739,6 @@ public class ListSession implements RenderContext {
 		return params;
 	}
 
-	public String getParentEditorId() {
-		return parentEditorId;
-	}
-
 	public String getParentId() {
 		return parentId;
 	}
@@ -800,20 +747,24 @@ public class ListSession implements RenderContext {
 		return listDefinition.getBeanClass();
 	}
 
-	public MessageResolver getMessageResolver() {
-		return messageResolver;
-	}
-
-	public String getContextPath() {
-		return contextPath;
-	}
-
 	void invalidate() {
 		expired = true;
 	}
 
 	public boolean isExpired() {
 		return expired;
+	}
+
+	// ----------------------------------------------------------------------
+	// Implementation of the RenderContext interface
+	// ----------------------------------------------------------------------
+	
+	public MessageResolver getMessageResolver() {
+		return messageResolver;
+	}
+
+	public String getContextPath() {
+		return contextPath;
 	}
 
 }

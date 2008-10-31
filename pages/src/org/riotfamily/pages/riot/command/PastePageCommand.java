@@ -40,8 +40,9 @@ public class PastePageCommand extends PasteCommand {
 		this.pageDao = pageDao;
 	}
 
-	protected boolean isEnabled(CommandContext context, String action) {
-		boolean enabled = super.isEnabled(context, action);
+	@Override
+	public boolean isEnabled(CommandContext context) {
+		boolean enabled = super.isEnabled(context);
 		Clipboard cb = Clipboard.get(context);
 		for (Object object : cb.getObjects()) {
 			if (object instanceof Page) {

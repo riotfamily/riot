@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.CommandState;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -53,33 +52,14 @@ public interface ListService {
 	public ListModel filter(String key, Map<String, String> filter, HttpServletRequest request)
 			throws ListSessionExpiredException;
 		
-	public List<CommandState> getListCommands(String key, 
+	public List<CommandButton> getListCommands(String key, 
 			HttpServletRequest request) throws ListSessionExpiredException;
 	
-	public List<CommandState> getFormCommands(String key, String objectId, 
+	public List<CommandButton> getFormCommands(String key, String objectId, 
 			HttpServletRequest request) throws ListSessionExpiredException;
-	
-	public CommandState getParentCommandState(String key,
-			String commandId, ListItem item, HttpServletRequest request)
-			throws ListSessionExpiredException;
-	
-	public CommandResult execListCommand(String key, String parentId,
-			CommandState command, boolean confirmed, String objectId,
-			HttpServletRequest request, HttpServletResponse response)
-			throws ListSessionExpiredException;
-	
-	public CommandResult execItemCommand(String key, ListItem item,
-			CommandState command, boolean confirmed, 
-			HttpServletRequest request, HttpServletResponse response)
-			throws ListSessionExpiredException;
-	
-	public CommandResult execFormCommand(String key, ListItem item,
-			CommandState command, boolean confirmed, 
-			HttpServletRequest request, HttpServletResponse response)
-			throws ListSessionExpiredException;
-	
-	public CommandResult execBatchCommand(String key, List<ListItem> items, 
-			CommandState command, boolean confirmed, 
+		
+	public CommandResult execCommand(String key, List<ListItem> items, 
+			String commandId, boolean confirmed, 
 			HttpServletRequest request, HttpServletResponse response)
 			throws ListSessionExpiredException;
 	

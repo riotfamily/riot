@@ -42,7 +42,8 @@ public class HqlIndexedListDao extends HqlCollectionDao
     		ListParams params, int swapWith) {
     	
     	List<?> items = listInternal(parent, new ListParamsImpl(params));
-    	Object nextItem = items.get(swapWith);
+    	int i = items.indexOf(entity);
+    	Object nextItem = items.get(i + swapWith);
     	
     	List<?> list = (List<?>) getCollection(parent);
     	Collections.swap(list, list.indexOf(entity), list.indexOf(nextItem));

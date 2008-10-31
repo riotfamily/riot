@@ -44,19 +44,19 @@ public class GotoPageCommand extends PopupCommand {
 	public GotoPageCommand(PathCompleter pathCompleter) {
 		this.pathCompleter = pathCompleter;
 	}
-
-	protected Page getPage(CommandContext context) {
-		return (Page) context.getBean();
-	}
 	
 	protected String getUrl(CommandContext context) {
 		HttpServletRequest request = context.getRequest();
-		Page page = getPage(context);
-		PageFacade facade = new PageFacade(page, request, pathCompleter);
+		PageFacade facade = new PageFacade(getPage(context), request, pathCompleter);
 		return facade.getAbsoluteUrl();
 	}
+	
+	protected Page getPage(CommandContext context) {
+		return (Page) context.getBean();
+	}
 
-	protected String getStyleClass(CommandContext context, String action) {
+	@Override
+	public String getStyleClass() {
 		return STYLE_CLASS;
 	}
 

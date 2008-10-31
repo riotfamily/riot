@@ -15,7 +15,8 @@ public class GotoSiteCommand extends PopupCommand {
 		return facade.makeAbsolute("/");
 	}
 	
-	protected String getStyleClass(CommandContext context, String action) {
+	@Override
+	public String getStyleClass() {
 		return STYLE_CLASS;
 	}
 

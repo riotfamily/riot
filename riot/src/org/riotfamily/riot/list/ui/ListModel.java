@@ -27,8 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.riotfamily.riot.list.command.CommandState;
-
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
@@ -43,16 +41,16 @@ public class ListModel {
 
 	private boolean tree;
 	
+	private boolean instantAction;
+	
 	private List<ListColumn> columns;
 
 	private List<ListItem> items;
 
-	private List<CommandState> listCommands;
+	private List<CommandButton> listCommands;
 	
-	private List<CommandState> batchCommands;
-
-	private int itemCommandCount;
-
+	private List<CommandButton> itemCommands;
+	
 	private int pages;
 
 	private int pageSize;
@@ -110,6 +108,14 @@ public class ListModel {
 	public void setTree(boolean tree) {
 		this.tree = tree;
 	}
+	
+	public boolean isInstantAction() {
+		return instantAction;
+	}
+
+	public void setInstantAction(boolean instantAction) {
+		this.instantAction = instantAction;
+	}
 
 	public List<ListColumn> getColumns() {
 		return this.columns;
@@ -140,30 +146,22 @@ public class ListModel {
 		return null;
 	}
 	
-	public List<CommandState> getListCommands() {
+	public List<CommandButton> getListCommands() {
 		return this.listCommands;
 	}
 
-	public void setListCommands(List<CommandState> listCommands) {
+	public void setListCommands(List<CommandButton> listCommands) {
 		this.listCommands = listCommands;
 	}
 	
-	public List<CommandState> getBatchCommands() {
-		return this.batchCommands;
+	public List<CommandButton> getItemCommands() {
+		return this.itemCommands;
 	}
 
-	public void setBatchCommands(List<CommandState> batchCommands) {
-		this.batchCommands = batchCommands;
+	public void setItemCommands(List<CommandButton> itemCommands) {
+		this.itemCommands = itemCommands;
 	}
-
-	public int getItemCommandCount() {
-		return this.itemCommandCount;
-	}
-
-	public void setItemCommandCount(int itemCommandCount) {
-		this.itemCommandCount = itemCommandCount;
-	}
-
+	
 	public int getCurrentPage() {
 		return this.currentPage;
 	}

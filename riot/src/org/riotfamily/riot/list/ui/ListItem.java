@@ -23,10 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.ui;
 
-import java.util.Iterator;
 import java.util.List;
-
-import org.riotfamily.riot.list.command.CommandState;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -47,9 +44,7 @@ public class ListItem {
 	private List<String> columns;
 	
 	private List<CommandState> commands;
-
-	private CommandState defaultCommand;
-		
+	
 	private boolean expandable;
 	
 	private ListModel children;
@@ -80,7 +75,7 @@ public class ListItem {
 	}
 
 	public List<CommandState> getCommands() {
-		return this.commands;
+		return commands;
 	}
 
 	public void setCommands(List<CommandState> commands) {
@@ -133,37 +128,6 @@ public class ListItem {
 
 	public void setChildren(ListModel children) {
 		this.children = children;
-	}
-
-	void setDefaultCommandIds(String[] defaultCommandIds) {
-		if (defaultCommandIds != null) {
-			for (int i = 0; i < defaultCommandIds.length; i++) {
-				CommandState state = getCommandState(defaultCommandIds[i]);
-				if (state != null && state.isEnabled()) {
-					defaultCommand = state;
-					break;
-				}
-			}
-		}
-	}
-	
-	private CommandState getCommandState(String id) {
-		Iterator<CommandState> it = commands.iterator();
-		while (it.hasNext()) {
-			CommandState state = it.next();
-			if (state.getId().equals(id)) {
-				return state;
-			}
-		}
-		return null;
-	}
-	
-	public void setDefaultCommand(CommandState defaultCommand) {
-		this.defaultCommand = defaultCommand;
-	}
-	
-	public CommandState getDefaultCommand() {
-		return defaultCommand;
 	}
 	
 	public boolean equals(Object obj) {

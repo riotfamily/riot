@@ -99,6 +99,8 @@ public class ViewController implements Controller,
 		StringWriter sw = new StringWriter();
 
 		Object object = EditorDefinitionUtils.loadBean(editorDef, objectId);
+		String parentId = EditorDefinitionUtils.getParentId(editorDef, object);
+		
 		HashMap<String, Object> model = new HashMap<String, Object>();
 		model.put("object", object);
 		model.put("request", request);
@@ -113,19 +115,17 @@ public class ViewController implements Controller,
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject(EditorConstants.EDITOR_ID, editorId);
 		mv.addObject(EditorConstants.OBJECT_ID, objectId);
+		mv.addObject(EditorConstants.PARENT_ID, parentId);
 		mv.addObject("form", sw.toString());
 
 		ListDefinition listDef = EditorDefinitionUtils.getListDefinition(editorDef);
 
 		if (listDef != null) {
 			ListSession session = listService.getOrCreateListSession(
-				listDef.getId(),
-				EditorDefinitionUtils.getParentId(editorDef, object),
-				null, null, request);
+				listDef.getId(), parentId, null, null, request);
 
 			mv.addObject("listKey", session.getKey());
 			mv.addObject(EditorConstants.PARENT_ID, session.getParentId());
-			mv.addObject(EditorConstants.PARENT_EDITOR_ID, session.getParentEditorId());
 		}
 
 		return mv;

@@ -24,8 +24,6 @@
 package org.riotfamily.riot.list.command.result;
 
 import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.CommandState;
-import org.riotfamily.riot.list.ui.ListItem;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -35,16 +33,13 @@ public class ConfirmResult implements CommandResult {
 
 	public static final String ACTION = "confirm";
 	
-	private ListItem item;
-	
-	private CommandState command;
+	private String commandId;
 	
 	private String message;
 
 	
-	public ConfirmResult(ListItem item, CommandState command, String message) {
-		this.item = item;
-		this.command = command;
+	public ConfirmResult(String commandId, String message) {
+		this.commandId = commandId;
 		this.message = message;
 	}
 
@@ -52,12 +47,8 @@ public class ConfirmResult implements CommandResult {
 		return ACTION;
 	}
 	
-	public CommandState getCommand() {
-		return this.command;
-	}
-
-	public ListItem getItem() {
-		return this.item;
+	public String getCommandId() {
+		return this.commandId;
 	}
 	
 	public String getMessage() {

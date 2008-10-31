@@ -14,13 +14,13 @@ public abstract class AbstractSwitchCommand extends AbstractCommand {
 	public static final String ACTION_DISABLE = "disable";
 	
 	@Override
-	protected String getAction(CommandContext context) {
+	public String getAction() {
 		return isEnabled() ? ACTION_DISABLE : ACTION_ENABLE;
 	}
 	
 	@Override
-	protected String getStyleClass(CommandContext context, String action) {
-		return action.equals(ACTION_ENABLE) ? "switchOff" : "switchOn";
+	public String getStyleClass() {
+		return isEnabled() ? "switchOn" : "switchOff";
 	}
 	
 	public CommandResult execute(CommandContext context) {

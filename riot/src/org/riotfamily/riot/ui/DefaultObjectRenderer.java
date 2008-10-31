@@ -31,6 +31,8 @@ import org.riotfamily.common.web.ui.DateRenderer;
 import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.RenderContext;
 import org.riotfamily.common.web.ui.StringRenderer;
+import org.riotfamily.riot.runtime.RiotRuntime;
+import org.riotfamily.riot.runtime.RiotRuntimeAware;
 
 /**
  * Default ObjectRenderer with special handling for Boolean, Date, and 
@@ -39,15 +41,20 @@ import org.riotfamily.common.web.ui.StringRenderer;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 8.0
  */
-public class DefaultObjectRenderer implements ObjectRenderer {
+public class DefaultObjectRenderer implements ObjectRenderer, RiotRuntimeAware {
 
-	private ObjectRenderer booleanRenderer = new CssClassRenderer();
+	private CssClassRenderer booleanRenderer = new CssClassRenderer();
 	
-	private ObjectRenderer dateRenderer = new DateRenderer();
+	private DateRenderer dateRenderer = new DateRenderer();
 	
-	private ObjectRenderer localeRenderer = new LocaleRenderer();
+	private LocaleRenderer localeRenderer = new LocaleRenderer();
 	
-	private ObjectRenderer defaultRenderer = new StringRenderer();
+	private StringRenderer defaultRenderer = new StringRenderer();
+
+
+	public void setRiotRuntime(RiotRuntime runtime) {
+		localeRenderer.setRiotRuntime(runtime);
+	}
 	
 	public void render(Object obj, RenderContext context, PrintWriter writer) {
 		if (obj == null) {
@@ -66,5 +73,5 @@ public class DefaultObjectRenderer implements ObjectRenderer {
 			defaultRenderer.render(obj, context, writer);
 		}
 	}
-	
+
 }

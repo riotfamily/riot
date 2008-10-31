@@ -35,17 +35,23 @@ table.pages tr.hidden-page td {
 	background-image: url(icons/commands/discard.gif);
 }
 
-#list .commands .action-translatable {
-	background: url(icons/commands/publish_state.gif) 2px -96px no-repeat;
+.publish-status {
+	width: 32px;
+	height: 32px;
+	float: right;
 }
-#list .commands .action-published {
-	background: url(icons/commands/publish_state.gif) 2px -64px no-repeat;
+
+.publish-status-translatable {
+	background: url(icons/publish_state.gif) 2px -96px no-repeat;
 }
-#list .commands .action-dirty {
-	background: url(icons/commands/publish_state.gif) 2px -32px no-repeat;
+.publish-status-published {
+	background: url(icons/publish_state.gif) 2px -64px no-repeat;
 }
-#list .commands .action-new {
-	background: url(icons/commands/publish_state.gif) 2px 0px no-repeat;
+.publish-status-dirty {
+	background: url(icons/publish_state.gif) 2px -32px no-repeat;
+}
+.publish-status-new {
+	background: url(icons/publish_state.gif) 2px 0px no-repeat;
 }
 
 .pageProperty {

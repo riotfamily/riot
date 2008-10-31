@@ -40,6 +40,10 @@ public class ExportCommand extends AbstractCommand {
 	
 	private List<String> properties;
 
+	@Override
+	public String getAction() {
+		return ACTION_EXPORT;
+	}
 	
 	public Exporter getExporter() {
 		return exporter;
@@ -55,11 +59,6 @@ public class ExportCommand extends AbstractCommand {
 
 	public List<String> getProperties() {
 		return this.properties;
-	}
-	
-	@Override
-	protected String getAction(CommandContext context) {
-		return ACTION_EXPORT;
 	}
 	
 	public CommandResult execute(CommandContext context) {

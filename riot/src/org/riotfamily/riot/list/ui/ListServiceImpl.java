@@ -32,9 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.MessageResolver;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.util.SessionReferenceRemover;
 import org.riotfamily.common.xml.ConfigurableBean;
@@ -43,7 +43,6 @@ import org.riotfamily.forms.controller.FormContextFactory;
 import org.riotfamily.riot.editor.EditorRepository;
 import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.CommandState;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -173,59 +172,33 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 		return getListSession(key, request).getFilterFormHtml();
 	}
 
-	public List<CommandState> getListCommands(String key,
+	public List<CommandButton> getListCommands(String key,
 			HttpServletRequest request) throws ListSessionExpiredException {
 		
-		return getListSession(key, request).getListCommandStates(request);
+		return getListSession(key, request).getListCommandButtons(request);
 	}
 	
-	public List<CommandState> getFormCommands(String key, String objectId,
+	public List<CommandButton> getFormCommands(String key, String objectId,
 			HttpServletRequest request) throws ListSessionExpiredException {
 
-		return getListSession(key, request).getFormCommandStates(objectId, request);
+		return getListSession(key, request).getFormCommandButtons(objectId, request);
 	}
 	
-	public CommandState getParentCommandState(String key, String commandId,
-			ListItem item, HttpServletRequest request) 
-			throws ListSessionExpiredException {
-	
-		return getListSession(key, request).getParentCommandState(commandId, item, request);
-	}
-
-	public CommandResult execListCommand(String key, String parentId, 
-			CommandState command, boolean confirmed, String objectId,
+	public CommandResult execCommand(String key, List<ListItem> items,
+			String commandId, boolean confirmed,
 			HttpServletRequest request, HttpServletResponse response)
 			throws ListSessionExpiredException {
 
-		return getListSession(key, request).execListCommand(
-				parentId, command, confirmed, objectId, request, response);
-	}
-	
-	public CommandResult execItemCommand(String key, ListItem item,
-			CommandState command, boolean confirmed,
-			HttpServletRequest request, HttpServletResponse response)
-			throws ListSessionExpiredException {
-
-		return getListSession(key, request).execItemCommand(
-				item, command, confirmed, request, response);
-	}
-	
-	public CommandResult execFormCommand(String key, ListItem item,
-			CommandState command, boolean confirmed,
-			HttpServletRequest request, HttpServletResponse response)
-			throws ListSessionExpiredException {
-
-		return getListSession(key, request).execFormCommand(
-				item, command, confirmed, request, response);
-	}
-	
-	public CommandResult execBatchCommand(String key, List<ListItem> items,
-			CommandState command, boolean confirmed,
-			HttpServletRequest request, HttpServletResponse response)
-			throws ListSessionExpiredException {
-
-		return getListSession(key, request).execBatchCommand(
-				items, command, confirmed, request, response);
+		if (items.size() > 1) {
+			return getListSession(key, request).execBatchCommand(
+					items, commandId, confirmed, request, response);
+		}
+		ListItem item = null;
+		if (items.size() == 1) {
+			item = items.get(0);
+		}
+		return getListSession(key, request).execCommand(
+				item, commandId, confirmed, request, response);
 	}
 
 	public ListModel filter(String key, Map<String, String> filter, HttpServletRequest request)

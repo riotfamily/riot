@@ -21,22 +21,51 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.list.command.core;
+package org.riotfamily.pages.riot.command;
 
+import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.pages.dao.PageValidationUtils;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
+import org.riotfamily.riot.list.command.core.EditCommand;
 import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
-public class RefreshCommand extends AbstractCommand {
+public class TranslatePageCommand extends EditCommand {
 
-	private static final String ACTION_REFRESH = "refresh";
+	public static final String ACTION_TRANSLATE = "translate";
+	
+	private PageDao pageDao;
+
+	public TranslatePageCommand(PageDao pageDao) {
+		this.pageDao = pageDao;
+	}
 
 	@Override
-	public String getAction() {
-		return ACTION_REFRESH;
+	public boolean isEnabled(CommandContext context) {
+		Page page = PageCommandUtils.getPage(context);
+		Site site = PageCommandUtils.getParentSite(context);
+		return PageValidationUtils.isTranslatable(page, site);
 	}
 	
+	@Override
+	public String getAction() {
+		return ACTION_TRANSLATE;
+	}
+	
+	public String getItemStyleClass(CommandContext context) {
+		if (!PageCommandUtils.isTranslated(context)) {
+			return "master";
+		}
+		return null;
+	}
+
 	public CommandResult execute(CommandContext context) {
+		Page page = PageCommandUtils.getPage(context);
+		Site site = PageCommandUtils.getParentSite(context);
+		pageDao.addTranslation(page, site);
 		return new RefreshSiblingsResult(context);
 	}
+
 }

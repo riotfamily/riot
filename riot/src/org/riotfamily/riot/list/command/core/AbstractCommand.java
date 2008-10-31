@@ -23,11 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.core;
 
+import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.riot.list.command.Command;
 import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.runtime.RiotRuntime;
 import org.riotfamily.riot.runtime.RiotRuntimeAware;
 import org.springframework.beans.factory.BeanNameAware;
@@ -53,10 +53,11 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 
 	private boolean showOnForm;
 	
-	private boolean targetRequired = true;
-	
 	private RiotRuntime runtime;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getId() {
 		if (id == null) {
 			if (beanName != null) {
@@ -111,6 +112,8 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 	}
 
 	/**
+	 * @inheritDoc
+	 * 
 	 * Always returns <code>null</code>. Sublasses may override this method
 	 * in order to display a confirmation message before the command is
 	 * executed.
@@ -129,6 +132,9 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 		return new Object[] {label, type, context.getObjectId()};
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isShowOnForm() {
 		return this.showOnForm;
 	}
@@ -136,69 +142,21 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 	public void setShowOnForm(boolean showOnForm) {
 		this.showOnForm = showOnForm;
 	}
-	
-	/**
-	 * Returns whether the command requires a target for the execution.
-	 * This flag only applies to trees. It prevents target selection, which is
-	 * particularly useful when you have a command that applies to the whole tree structure.
-	 */
-	protected boolean isTargetRequired() {
-		return targetRequired;
-	}
-
-	protected void setTargetRequired(boolean targetRequired) {
-		this.targetRequired = targetRequired;
-	}
 
 	/**
-	 *
+	 * Returns the command's id.
 	 */
-	public CommandState getState(CommandContext context) {
-		String action = getAction(context);
-		CommandState state = getState(context, action);
-		state.setEnabled(isEnabled(context, action));
-		return state;
-	}
-	
-	protected CommandState getState(CommandContext context, String action) {
-		CommandState state = new CommandState();
-		state.setId(getId());
-		state.setAction(action);
-		state.setLabel(getLabel(context, action));
-		state.setStyleClass(getStyleClass(context, action));
-		state.setItemStyleClass(getItemStyleClass(context, action));
-		state.setTargetRequired(isTargetRequired());
-		return state;
-	}
-
-	/**
-	 * Returns the command's id. Subclasses may override this method if the
-	 * action depends on the context.
-	 */
-	protected String getAction(CommandContext context) {
+	public String getAction() {
 		return getId();
 	}
 
 	/**
-	 * Returns a label by resolving the message-key
-	 * <code>command.<i>labelKeySuffix</i></code>, where <i>labelKeySuffix</i>
-	 * is the String returned by {@link #getLabelKeySuffix(CommandContext, String)}.
+	 * {@inheritDoc}
 	 */
-	protected String getLabel(CommandContext context, String action) {
-		String key = getLabelKeySuffix(context, action);
-		return context.getMessageResolver().getMessage(
-				COMMAND_MESSAGE_PREFIX + key, null,
-				FormatUtils.camelToTitleCase(key));
-	}
-
-	/**
-	 * Returns the command's action. Subclasses may override this method if the
-	 * label depends on the context.
-	 *
-	 * @see #getLabel(CommandContext, String)
-	 */
-	protected String getLabelKeySuffix(CommandContext context, String action) {
-		return action;
+	public String getLabel(MessageResolver messageResolver) {
+		return messageResolver.getMessage(
+				COMMAND_MESSAGE_PREFIX + getAction(), null,
+				FormatUtils.camelToTitleCase(getAction()));
 	}
 
 	public void setStyleClass(String styleClass) {
@@ -206,36 +164,33 @@ public abstract class AbstractCommand implements Command, BeanNameAware,
 	}
 	
 	/**
-	 * Returns the CSS class that is assigned to command's HTML element and
-	 * therefore defines which icon is displayed. If no class is set, the 
-	 * default implementation will return the action instead.
+	 * {@inheritDoc}
+	 * 
+	 * If no class is set, the default implementation will return the 
+	 * action instead.
 	 */
-	protected String getStyleClass(CommandContext context, String action) {
+	public String getStyleClass() {
 		if (styleClass == null) {
-			return action;
+			return getAction();
 		}
 		return styleClass;
 	}
 
 	/**
-	 * Returns a CSS class that is added to the list of class names of the
-	 * whole item/row. The default implementation always returns
-	 * <code>null</code>. Subclasses may override this method to highlight
-	 * a list item depending on the context.
+	 * {@inheritDoc}
+	 * 
+	 * The default implementation always returns <code>null</code>.
 	 */
-	protected String getItemStyleClass(CommandContext context, String action) {
+	public String getItemStyleClass(CommandContext context) {
 		return null;
 	}
 
 	/**
-	 * Subclasses may inspect the given context to decide whether the
-	 * command should be enabled. Commands don't need to check the
-	 * {@link org.riotfamily.riot.security.policy.AuthorizationPolicy policy} since
-	 * commands will be automatically disabled if the action returned by
-	 * {@link #getAction(CommandContext) getAction()} is denied.
+	 * {@inheritDoc}
+	 * 
 	 * The default implementation always returns <code>true</code>.
 	 */
-	protected boolean isEnabled(CommandContext context, String action) {
+	public boolean isEnabled(CommandContext context) {
 		return true;
 	}
 

@@ -32,11 +32,11 @@
 				</div>
 			</div>
 			<div id="extras" class="extra">
-				<div id="commands" class="box">
+				<div class="box command-box">
 					<div class="box-title">
 						<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
 					</div>
-					<div id="formCommands" class="list"></div>
+					<div id="formCommands" class="commands"></div>
 				</div>
 	
 				<script type="text/javascript" language="JavaScript">
@@ -45,7 +45,7 @@
 					var item = {
 						objectId: <#if objectId??>'${objectId}'<#else>null</#if>,
 						parentId: <#if parentId??>'${parentId}'<#else>null</#if>,
-						parentEditorId: <#if parentEditorId??>'${parentEditorId}'<#else>null</#if>
+						parentEditorId: null
 					};
 					list.renderFormCommands(item, 'formCommands');
 				</script>

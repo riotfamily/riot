@@ -21,19 +21,19 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.riot.command;
+package org.riotfamily.dbmsgsrc.riot;
 
+import org.riotfamily.dbmsgsrc.model.Message;
+import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.core.StepIntoCommand;
+import org.riotfamily.riot.list.command.core.EditCommand;
 
-/**
- * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
- */
-public class ShowChildPagesCommand extends StepIntoCommand {
+public class EditMessageCommand extends EditCommand {
 
+	@Override
 	public boolean isEnabled(CommandContext context) {
-		return super.isEnabled(context) && PageCommandUtils.isTranslated(context);
+		Message message = (Message) context.getBean();
+		return !MessageBundleEntry.C_LOCALE.equals(message.getLocale());
 	}
-
+	
 }

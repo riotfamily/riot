@@ -142,7 +142,8 @@ public class HqlDao extends AbstractHqlDao implements SwappableItemDao {
     	Assert.notNull(positionProperty, "A positionProperty must be specified.");
 
     	List<?> items = listInternal(parent, new ListParamsImpl(params));
-    	Object nextItem = items.get(swapWith);
+    	int i = items.indexOf(item);
+    	Object nextItem = items.get(i + swapWith);
 
     	Object pos1 = PropertyUtils.getProperty(item, positionProperty);
     	Object pos2 = PropertyUtils.getProperty(nextItem, positionProperty);

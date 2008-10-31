@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.common.util.SpringUtils;
+import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.xml.DocumentDigester;
 import org.riotfamily.common.xml.XmlUtils;
 import org.riotfamily.riot.dao.RiotDao;
@@ -56,7 +57,7 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	};
 	
 	private static final String[] COLUMN_ATTRS = new String[] {
-		"sortable", "lookup-level", "@renderer", "property", "case-sensitive"
+		"sortable", "lookup-level", "property", "case-sensitive"
 	};
 		
 	private ListRepository listRepository;
@@ -134,9 +135,11 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	private ColumnConfig digestColumn(Element ele) {
 		ColumnConfig columnConfig = new ColumnConfig();
 		XmlUtils.populate(columnConfig, ele, COLUMN_ATTRS, beanFactory);	
-		if (columnConfig.getRenderer() == null) {
-			columnConfig.setRenderer(listRepository.getDefaultCellRenderer());
+		ObjectRenderer renderer = getOrCreate(ele, "renderer", ObjectRenderer.class);
+		if (renderer == null) {
+			renderer = listRepository.getDefaultCellRenderer();
 		}
+		columnConfig.setRenderer(renderer);
 		return columnConfig;
 	}
 	
@@ -156,6 +159,25 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 		Command command = getOrCreate(ele, null, "class", Command.class);
 		listRepository.addCommand(command);
 		return command;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private<T> T getOrCreate(Element element, String attribute, Class<T> requiredClass) {
+		T bean = null;
+		boolean singleton = false;
+		String attr = XmlUtils.getAttribute(element, attribute);
+		if (attr != null) {
+			if (attr.indexOf('.') != -1) {
+				bean = (T) SpringUtils.createBean(attr, beanFactory, 
+						AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
+			}
+			else {
+				bean = SpringUtils.getBean(beanFactory, attr, requiredClass);
+				singleton = beanFactory.isSingleton(attr);
+			}
+		}
+		populate(bean, element, singleton);
+		return bean;
 	}
 	
 	@SuppressWarnings("unchecked")

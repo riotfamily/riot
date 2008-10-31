@@ -23,37 +23,54 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.command;
 
+import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
+import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 7.0
+ * @since 8.0
  */
-public class PublishStatus extends AbstractCommand {
+public class DeletePageCommand extends AbstractCommand implements BatchCommand {
 
-	protected boolean isEnabled(CommandContext context, String action) {
-		return false;
+	public static final String ACTION_DELETE = "delete";
+	
+	private PageDao pageDao;
+	
+	public DeletePageCommand(PageDao pageDao) {
+		this.pageDao = pageDao;
+	}
+
+	public String getAction() {
+		return ACTION_DELETE;
 	}
 	
-	protected String getStyleClass(CommandContext context, String action) {
-		if (PageCommandUtils.isTranslated(context)) {
-			Page page = PageCommandUtils.getPage(context);
-			if (!page.isPublished()) {
-				return "new";
-			}
-			if (page.isDirty()) {
-				return "dirty";
-			}
-			return "published";
-		}
-		return "translatable";
+	public boolean isEnabled(CommandContext context) {
+		Page page = (Page) context.getBean();
+		return PageCommandUtils.isTranslated(context) && !page.isPublished();
+	}
+	
+	public String getConfirmationMessage(CommandContext context) {
+		Page page = (Page) context.getBean();
+		return context.getMessageResolver().getMessage("confirm.delete",
+				new Object[] {page.getTitle()},
+				"Do you really want to delete '"
+				 + page.getTitle(true) + "'?");
+	}
+	
+	public String getBatchConfirmationMessage(CommandContext context) {
+		return context.getMessageResolver().getMessage("confirm.delete.selected", 
+				"Do you really want to delete all selected pages?'");
 	}
 	
 	public CommandResult execute(CommandContext context) {
-		return null;
+		Page page = (Page) context.getBean();
+		pageDao.deletePage(page);
+		return new RefreshSiblingsResult(context);
 	}
-
+	
 }

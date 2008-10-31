@@ -44,11 +44,13 @@ public class StepIntoCommand extends AbstractCommand {
 
 	public static final String ACTION_STEP_INTO = "stepInto";
 
-	protected String getAction(CommandContext context) {
+	@Override
+	public String getAction() {
 		return ACTION_STEP_INTO;
 	}
 
-	protected boolean isEnabled(CommandContext context, String action) {
+	@Override
+	public boolean isEnabled(CommandContext context) {
 		return getTargetUrl(context) != null;
 	}
 

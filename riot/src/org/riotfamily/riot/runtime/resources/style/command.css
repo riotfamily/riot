@@ -1,12 +1,53 @@
-.action {
+.command-box {
+	display: none;
+}
+
+.commands {
+	padding-top: 5px;
+	overflow: hidden;
+}
+
+.commands .action {
 	display: block;
-	width: 32px;
-	height: 32px;
+	width: 85px;
+	float: left;
+	text-decoration: none;
+	padding-left: 32px;
+	margin: 0 0 1px 1px;
 	background-repeat: no-repeat;
 }
-.action:focus {
-	outline: none;
-	-moz-outline: none;
+
+.commands .label {
+	display: block;
+	padding-left: 4px;
+	background-color: #ebebeb;
+	text-transform: capitalize;
+	color: #000;
+	font-size: 11px;
+	line-height: 32px;
+}
+
+.commands .enabled:hover .label {
+	color: ${highlight_color};
+}
+
+.commands .disabled .label {
+	color: #a4a4a4;
+}
+
+/*
+.commands .enabled:hover {
+	background-position: 0 -32px;
+	background-color: ${highlight_color};
+}
+*/
+
+.commands .disabled {
+	cursor: default;
+	background-position: 0 -64px;
+}
+.commands .disabled:hover {
+	background-color: #ebebeb;
 }
 
 .action-edit {
@@ -70,33 +111,4 @@ tr.cut .action-cut:hover,
 tr.copied .action-copy:hover {
 	background-color: #ebebeb;
 	background-position: 0 -64px;
-}
-
-#commands .action {
-	margin: 4px 0;
-	width: auto;
-	text-decoration: none;
-	padding-left: 32px;
-}
-#commands .action .label {
-	display: block;
-	padding-left: 4px;
-	background-color: #ebebeb;
-	text-transform: capitalize;
-	color: #000 !important;
-	font-size: 11px;
-	line-height: 32px;
-}
-#commands .enabled:hover {
-	background-position: 0 -32px;
-	background-color: ${highlight_color};
-}
-#commands .disabled {
-	cursor: default;
-}
-.extra #commands .disabled {
-	background-position: 0 -64px;
-}
-.extra #commands .disabled:hover {
-	background-color: #ebebeb;
 }

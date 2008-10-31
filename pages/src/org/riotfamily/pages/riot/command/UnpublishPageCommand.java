@@ -14,59 +14,54 @@
  * 
  * The Initial Developer of the Original Code is
  * Neteye GmbH.
- * Portions created by the Initial Developer are Copyright (C) 2006
+ * Portions created by the Initial Developer are Copyright (C) 2008
  * the Initial Developer. All Rights Reserved.
  * 
  * Contributor(s):
  *   Felix Gnass [fgnass at neteye dot de]
  * 
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.list.command.core;
+package org.riotfamily.pages.riot.command;
 
+import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.result.PopupResult;
+import org.riotfamily.riot.list.command.core.AbstractCommand;
+import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.4
+ * @since 7.0
  */
-public abstract class PopupCommand extends AbstractCommand {
+public class UnpublishPageCommand extends AbstractCommand implements BatchCommand {
 
-	private String windowName;
+	public static final String ACTION_UNPUBLISH = "unpublish";
 	
-	private String popupArguments;
+	private PageDao pageDao;
 	
-	public PopupCommand() {
-		setShowOnForm(true);
+	public UnpublishPageCommand(PageDao pageDao) {
+		this.pageDao = pageDao;
+	}
+
+	public String getAction() {
+		return ACTION_UNPUBLISH;
 	}
 	
-	public void setWindowName(String windowName) {
-		this.windowName = windowName;
-	}
-	
-	public void setPopupArguments(String popupArguments) {
-		this.popupArguments = popupArguments;
-	}
-	
-	@Override
 	public boolean isEnabled(CommandContext context) {
-		return context.getObjectId() != null;
-	}
-
-	public CommandResult execute(CommandContext context) {
-		String url = getUrl(context);
-		return new PopupResult(url, windowName,	
-				getPopupBlockerMessage(context, url), popupArguments);
+		Page page = (Page) context.getBean();
+		return page.isPublished();
 	}
 	
-	protected String getPopupBlockerMessage(CommandContext context, String url) {
-		return context.getMessageResolver().getMessage("error.popupBlocked", 
-				new Object[] { url }, 
-				"A popup-blocker prevented the window from opening. " +
-				"Please allow popups for this domain.");
+	public CommandResult execute(CommandContext context) {
+		Page page = (Page) context.getBean();
+		pageDao.unpublishPage(page);
+		return new RefreshSiblingsResult(context);
 	}
-
-	protected abstract String getUrl(CommandContext context);
-
+	
+	public String getBatchConfirmationMessage(CommandContext context) {
+		return null;
+	}
+	
 }

@@ -209,7 +209,7 @@
 
 	<bean id="editCommand" class="org.riotfamily.riot.list.command.core.EditCommand" />
 
-	<bean id="addCommand" class="org.riotfamily.riot.list.command.core.EditCommand" />
+	<bean id="addCommand" class="org.riotfamily.riot.list.command.core.AddCommand" />
 
 	<bean id="viewCommand" class="org.riotfamily.riot.list.command.core.EditCommand" />
 
@@ -235,8 +235,6 @@
 	
 	<bean id="previewCommand" class="org.riotfamily.riot.list.command.core.PreviewCommand" />
 	
-	<bean id="publishCommand" class="org.riotfamily.riot.list.command.core.PublishCommand" />
-
 	<!-- Alternative renderers -->
 
 	<bean id="imageRenderer" class="org.riotfamily.common.web.ui.ImageRenderer" />
@@ -256,6 +254,9 @@
 			<value>/WEB-INF/riot-config/lists.xml</value>
 		</property>
 		<property name="riotDaoService" ref="riotDaoService" />
+		<property name="defaultCellRenderer">
+			<bean class="org.riotfamily.riot.ui.DefaultObjectRenderer" />
+		</property>
 	</bean>
 
 	<util:map id="customFormElements">
@@ -584,13 +585,14 @@
 		<property name="signatures">
 			<value>
 				import org.riotfamily.riot.list.ui.ListItem;
-				import org.riotfamily.riot.list.command.CommandState;
+				import org.riotfamily.riot.list.ui.CommandState;
 				import java.util.List;
 				import javax.servlet.http.HttpServletRequest;
+				import javax.servlet.http.HttpServletResponse;
 				ListItem.setColumns(List&lt;String&gt;);
 				ListItem.setCommands(List&lt;CommandState&gt;);
 				ListService.filter(String, Map&lt;String, List&gt;, HttpServletRequest);
-				ListService.execBatchCommand(String, List&lt;ListItem&gt;, CommandState, boolean, HttpServletRequest, HttpServletResponse);
+				ListService.execCommand(String, List&lt;ListItem&gt;, String, boolean, HttpServletRequest, HttpServletResponse);
 			</value>
 		</property>
 	</bean>

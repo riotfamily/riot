@@ -23,13 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.core;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
 /**
@@ -43,30 +39,29 @@ public class DeleteCommand extends AbstractCommand implements BatchCommand {
 	public DeleteCommand() {
 		setShowOnForm(true);
 	}
-		
-	protected String getAction(CommandContext context) {
+
+	@Override
+	public String getAction() {
 		return ACTION_DELETE;
 	}
 	
-	protected boolean isEnabled(CommandContext context, String action) {
+	@Override
+	public boolean isEnabled(CommandContext context) {
 		return context.getObjectId() != null;
 	}
-		
+
+	@Override
 	public String getConfirmationMessage(CommandContext context) {
 		Object[] args = getDefaultMessageArgs(context);
 		return context.getMessageResolver().getMessage("confirm.delete", args, 
 				"Do you really want to delete this element?");
 	}
 
-	public String getBatchConfirmationMessage(CommandContext context, String action) {
+	public String getBatchConfirmationMessage(CommandContext context) {
 		return context.getMessageResolver().getMessage("confirm.delete.selected", 
 				"Do you really want to delete all selected elements?");
 	}
-	
-	public List<CommandState> getBatchStates(CommandContext context) {
-		return Collections.singletonList(getState(context, ACTION_DELETE));
-	}
-	
+		
 	public CommandResult execute(CommandContext context) {
 		Object item = context.getBean();
 		context.getDao().delete(item, context.getParent());

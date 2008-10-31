@@ -31,11 +31,13 @@ public class PasteCommand extends AbstractCommand {
 
 	public static final String ACTION_PASTE = "paste";
 
-	protected String getAction(CommandContext context) {
+	@Override
+	public String getAction() {
 		return ACTION_PASTE;
 	}
 
-	protected boolean isEnabled(CommandContext context, String action) {
+	@Override
+	public boolean isEnabled(CommandContext context) {
 		Clipboard cb = Clipboard.get(context);
 		return cb.canPaste(context);
 	}

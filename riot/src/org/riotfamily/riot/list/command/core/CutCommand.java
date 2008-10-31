@@ -23,13 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command.core;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.riotfamily.riot.list.command.BatchCommand;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.CommandState;
 import org.riotfamily.riot.list.command.result.BatchResult;
 import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
@@ -37,15 +33,18 @@ public class CutCommand extends AbstractCommand implements BatchCommand {
 
 	public static final String ACTION_CUT = "cut";
 
-	protected String getAction(CommandContext context) {
+	@Override
+	public String getAction() {
 		return ACTION_CUT;
 	}
 
-	protected String getItemStyleClass(CommandContext context, String action) {
+	@Override
+	public String getItemStyleClass(CommandContext context) {
 		return Clipboard.get(context).isCut(context) ? "cut" : null;
 	}
 
-	protected boolean isEnabled(CommandContext context, String action) {
+	@Override
+	public boolean isEnabled(CommandContext context) {
 		return Clipboard.get(context).canCut(context);
 	}
 
@@ -60,11 +59,8 @@ public class CutCommand extends AbstractCommand implements BatchCommand {
 		return result;
 	}
 
-	public String getBatchConfirmationMessage(CommandContext context, String action) {
+	public String getBatchConfirmationMessage(CommandContext context) {
 		return null;
 	}
 
-	public List<CommandState> getBatchStates(CommandContext context) {
-		return Collections.singletonList(getState(context, ACTION_CUT));
-	}
 }

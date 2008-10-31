@@ -171,7 +171,8 @@ public class PreviewCommand extends PopupCommand
 		return attributes;
 	}
 	
-	protected String getStyleClass(CommandContext context, String action) {
+	@Override
+	public String getStyleClass() {
 		return STYLE_CLASS;
 	}
 }

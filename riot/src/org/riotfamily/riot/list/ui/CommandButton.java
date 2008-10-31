@@ -21,19 +21,38 @@
  *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.riot.command;
+package org.riotfamily.riot.list.ui;
 
-import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.core.StepIntoCommand;
+public class CommandButton extends CommandState {
 
-/**
- * @author Felix Gnass [fgnass at neteye dot de]
- * @since 6.5
- */
-public class ShowChildPagesCommand extends StepIntoCommand {
+	private String label;
+	
+	private String styleClass;
 
-	public boolean isEnabled(CommandContext context) {
-		return super.isEnabled(context) && PageCommandUtils.isTranslated(context);
+	private boolean batchSupport;
+	
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getStyleClass() {
+		return styleClass;
+	}
+
+	public void setStyleClass(String styleClass) {
+		this.styleClass = styleClass;
+	}
+
+	public boolean isBatchSupport() {
+		return batchSupport;
+	}
+
+	public void setBatchSupport(boolean batchSupport) {
+		this.batchSupport = batchSupport;
 	}
 
 }

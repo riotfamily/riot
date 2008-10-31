@@ -10,7 +10,7 @@
 	font-weight: bold;
 }
 
-#commands .saveButton {
+.commands .saveButton {
 	background-image: url(icons/commands/save.gif);
 }
 

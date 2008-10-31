@@ -36,7 +36,7 @@
 	<list:list id="site-chooser" label-property="name">
 		<list:dao ref="siteRiotDao" />
 		<list:columns>
-			<list:column property="locale" renderer="countryFlagRenderer" />
+			<list:column property="locale" renderer="org.riotfamily.riot.ui.CountryFlagRenderer" />
 			<list:column property="name" />
 			<list:command id="edit" />
 		</list:columns>
@@ -45,15 +45,15 @@
 	<list:list id="sites" label-property="name" default-command="edit">
 		<list:dao ref="siteRiotDao" />
 		<list:columns>
-			<list:column property="locale" renderer="countryFlagRenderer" />
+			<list:column property="locale" renderer="org.riotfamily.riot.ui.CountryFlagRenderer" />
 			<list:column property="name" />
-			<list:column property="enabled" renderer="cssClassRenderer" />
+			<list:column property="enabled" />
+			<list:command id="edit" />
+			<list:command id="stepInto" />
 			<list:command id="moveUp" />
 			<list:command id="moveDown" />
-			<list:command id="edit" />
 			<list:command id="delete" />
 			<list:command id="gotoSite" />
-			<list:command id="stepInto" />
 		</list:columns>
 		<list:command id="add" />
 	</list:list>
@@ -63,13 +63,16 @@
 		<list:columns>
 			<list:column property="title" />
 			<list:column property="pathComponent" />
-			<list:command id="discardPage" />
-			<list:command id="publishStatus" />
+			<list:column renderer="org.riotfamily.pages.riot.ui.PublishStatusRenderer" />
+			<list:command id="editPage" />
+			<list:command id="translatePage" />
 			<list:command id="publishPage" />
+			<list:command id="discardPage" />
+			<list:command id="unpublishPage" />
+			<list:command id="deletePage" />
 			<list:command id="moveUpPage" />
 			<list:command id="moveDownPage" />
 			<list:command id="cutPage" />
-			<list:command id="editPage" />
 			<list:command id="gotoPage" />
 		</list:columns>
 		<list:command id="add"/>

@@ -24,7 +24,6 @@
 package org.riotfamily.dbmsgsrc.riot;
 
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
-import org.riotfamily.dbmsgsrc.support.DbMessageSource;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.AbstractCommand;
@@ -34,22 +33,17 @@ public class RemoveEmptyEntriesCommand extends AbstractCommand {
 
 	private DbMessageSourceDao dao;
 
-	private String bundle = DbMessageSource.DEFAULT_BUNDLE;
-	
 	public RemoveEmptyEntriesCommand(DbMessageSourceDao dao) {
 		this.dao = dao;
 	}
 
-	public void setBundle(String bundle) {
-		this.bundle = bundle;
-	}
-	
 	@Override
-	protected String getStyleClass(CommandContext context, String action) {
+	public String getStyleClass() {
 		return "delete";
 	}
 	
 	public CommandResult execute(CommandContext context) {
+		String bundle = ((MessageBundleEntryDao) context.getDao()).getBundle();
 		dao.removeEmptyEntries(bundle);
 		return new RefreshSiblingsResult();
 	}

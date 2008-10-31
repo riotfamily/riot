@@ -81,10 +81,16 @@
 	<bean id="publishPageCommand" class="org.riotfamily.pages.riot.command.PublishPageCommand">
 		<constructor-arg ref="pageDao" />
 	</bean>
-
-	<bean id="publishStatusCommand" class="org.riotfamily.pages.riot.command.PublishStatus" />
-		
+	
 	<bean id="discardPageCommand" class="org.riotfamily.pages.riot.command.DiscardPageCommand">
+		<constructor-arg ref="pageDao" />
+	</bean>
+	
+	<bean id="unpublishPageCommand" class="org.riotfamily.pages.riot.command.UnpublishPageCommand">
+		<constructor-arg ref="pageDao" />
+	</bean>
+
+	<bean id="deletePageCommand" class="org.riotfamily.pages.riot.command.DeletePageCommand">
 		<constructor-arg ref="pageDao" />
 	</bean>
 
@@ -98,7 +104,9 @@
 
 	<bean id="cutPageCommand" class="org.riotfamily.pages.riot.command.CutPageCommand" />
 
-	<bean id="editPageCommand" class="org.riotfamily.pages.riot.command.EditPageCommand">
+	<bean id="editPageCommand" class="org.riotfamily.pages.riot.command.EditPageCommand" />
+	
+	<bean id="translatePageCommand" class="org.riotfamily.pages.riot.command.TranslatePageCommand">
 		<constructor-arg ref="pageDao" />
 	</bean>
 

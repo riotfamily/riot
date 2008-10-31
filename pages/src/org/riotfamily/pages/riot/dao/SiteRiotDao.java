@@ -103,7 +103,10 @@ public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
 			int swapWith) {
 		
 		Site site = (Site) entity;
-		Site other = (Site) pageDao.listSites().get(swapWith);
+		List<Site> sites = pageDao.listSites();
+		int i = sites.indexOf(site);
+		Site other = sites.get(i + swapWith);
+		
 		long pos = site.getPosition();
 		site.setPosition(other.getPosition());
 		other.setPosition(pos);

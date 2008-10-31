@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.list.command;
 
+import org.riotfamily.common.i18n.MessageResolver;
+
 
 
 /**
@@ -43,6 +45,9 @@ public interface Command {
 	 */
 	public void setId(String id);
 	
+	
+	public String getAction();
+	
 	/**
 	 * Executes the command.
 	 */
@@ -58,13 +63,34 @@ public interface Command {
 	public String getConfirmationMessage(CommandContext context);
 	
 	/**
-	 * @since 6.5
+	 * Implementors may inspect the given context to decide whether the
+	 * command should be enabled. Commands don't need to check the
+	 * {@link org.riotfamily.riot.security.policy.AuthorizationPolicy policy} since
+	 * commands will be automatically disabled if the action returned by
+	 * {@link #getAction()} is denied.
 	 */
-	public CommandState getState(CommandContext context);
-
+	public boolean isEnabled(CommandContext context);
+	
 	/**
 	 * Returns whether the command should be shown beside the form.
 	 */
 	public boolean isShowOnForm();
+		
+	public String getLabel(MessageResolver messageResolver);
+	
+	/**
+	 * Returns the CSS class that is assigned to command's HTML element and
+	 * therefore defines which icon is displayed. If no class is set, the 
+	 * default implementation will return the action instead.
+	 */
+	public String getStyleClass();
+	
+	/**
+	 * Returns a CSS class that is added to the list of class names of the
+	 * whole item/row. The default implementation always returns
+	 * <code>null</code>. Subclasses may override this method to highlight
+	 * a list item depending on the context.
+	 */
+	public String getItemStyleClass(CommandContext context);
 	
 }

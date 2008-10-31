@@ -28,29 +28,29 @@ import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.core.EditCommand;
+import org.riotfamily.riot.list.command.core.AbstractCommand;
 import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 
-public class TranslateMessageCommand extends EditCommand {
+public class TranslateMessageCommand extends AbstractCommand {
+
+	public static final String ACTION_TRANSLATE = "translate";
 
 	@Override
-	protected String getAction(CommandContext context) {
-		Message message = (Message) context.getBean();
-		if (MessageBundleEntry.C_LOCALE.equals(message.getLocale())) {
-			return ACTION_ADD;
-		}
-		return super.getAction(context);
+	public String getAction() {
+		return ACTION_TRANSLATE;
 	}
 	
 	@Override
+	public boolean isEnabled(CommandContext context) {
+		Message message = (Message) context.getBean();
+		return MessageBundleEntry.C_LOCALE.equals(message.getLocale());
+	}
+	
 	public CommandResult execute(CommandContext context) {
 		Message message = (Message) context.getBean();
-		if (MessageBundleEntry.C_LOCALE.equals(message.getLocale())) {
-			Site site = (Site) context.getParent();
-			message.getEntry().addTranslation(site.getLocale());
-			return new RefreshSiblingsResult(context);
-		}
-		return super.execute(context);
+		Site site = (Site) context.getParent();
+		message.getEntry().addTranslation(site.getLocale());
+		return new RefreshSiblingsResult(context);
 	}
 
 }

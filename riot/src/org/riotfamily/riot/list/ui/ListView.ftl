@@ -27,9 +27,7 @@
 		</script>
 	</head>
 
-	<#assign hasExtraColumn = hasCommands || filterForm?exists />
-
-	<body<#if choose??> id="chooser"</#if> onload="TweakStyle.list()"<#if !hasExtraColumn> class="wide"</#if>>
+	<body<#if choose??> id="chooser"</#if> onload="TweakStyle.list()">
 		<div id="body-wrapper">
 		
 			<div id="wrapper">
@@ -49,15 +47,21 @@
 					</div>
 				</#if>
 	
-				<#if hasCommands>
-					<div id="commands" class="box">
-						<div class="box-title">
-							<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
-						</div>
-						<div id="listCommands">
-						</div>
+				<div class="box command-box">
+					<div class="box-title">
+						<span class="label"><@spring.messageText "label.itemCommands", "Item Commands" /></span>
 					</div>
-				</#if>
+					<div id="itemCommands" class="commands">
+					</div>
+				</div>
+				
+				<div class="box command-box">
+					<div class="box-title">
+						<span class="label"><@spring.messageText "label.listCommands", "List Commands" /></span>
+					</div>
+					<div id="listCommands" class="commands">
+					</div>
+				</div>
 	
 			</div>
 			
@@ -65,7 +69,7 @@
 		
 		<script type="text/javascript" language="JavaScript">
 			var list = new RiotList('${listKey}');
-			list.render('list', 'listCommands', <#if expand??>'${expand}'<#else>null</#if><#if filterForm?exists>, 'filterForm'</#if>);
+			list.render('list', 'listCommands', 'itemCommands', <#if expand??>'${expand}'<#else>null</#if><#if filterForm?exists>, 'filterForm'</#if>);
 		</script>
 	</body>
 </html>

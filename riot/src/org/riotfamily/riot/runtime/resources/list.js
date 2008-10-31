@@ -3,77 +3,55 @@ var RiotList = Class.create({
 	initialize: function(key) {
 		this.key = key;
 		this.selection = [];
-		this.itemCommandClickHandler = this.onItemCommandClick.bindAsEventListener(this);
 	},
 
-	render: function(target, commandTarget, expandedId, filterForm) {
+	render: function(target, commandTarget, itemCommandTarget, expandedId, filterForm) {
 		target = $(target);
-		this.table = RBuilder.node('table', {className: 'view-mode', parent: target},
+		this.table = RBuilder.node('table', {parent: target},
 			RBuilder.node('thead', null,
 				this.headRow = RBuilder.node('tr')
 			),
 			this.tbody = RBuilder.node('tbody')
 		);
-		this.batchContainer = RBuilder.node('div', {parent: target, style: {display: 'none'}});
+		
 		this.pager = new Pager(target, this.gotoPage.bind(this));
 		if (filterForm) {
 			this.filterForm = $(filterForm);
 		}
-		Event.observe(window, 'resize', this.resizeColumns.bind(this));
 		
+		Event.observe(window, 'resize', this.resizeColumns.bind(this));
+		Event.observe(document, 'click', this.clearSelection.bind(this));
+
 		if (commandTarget && $(commandTarget)) {
 			this.commandTarget = new Element('div');
 			$(commandTarget).appendChild(this.commandTarget);
+		}
+		
+		if (itemCommandTarget && $(itemCommandTarget)) {
+			this.itemCommandTarget = new Element('div');
+			$(itemCommandTarget).appendChild(this.itemCommandTarget);
 		}
 		ListService.getModel(this.key, expandedId, this.renderTable.bind(this));
 	},
 
 	renderFormCommands: function(item, target) {
-		var handler = this.onFormCommandClick.bindAsEventListener(this);
-		ListService.getFormCommands(this.key, item.objectId, this.renderCommands.bind(this, $(target), true, item, handler));
+		this.selection = [item];
+		var handler = this.execCommand.bind(this);
+		ListService.getFormCommands(this.key, item.objectId, this.renderCommands.bind(this, $(target), handler));
 	},
 
 	renderTable: function(model) {
 		this.columns = [];
 		this.headings = {};
-		this.tree = model.tree;
-		this.texts = model.texts;
+		this.model = model;
 		this.table.addClassName(model.cssClass);
-		this.hasBatchCommands = model.batchCommands && model.batchCommands.length > 0; 
 		model.columns.each(this.addColumnHeading.bind(this));
-		var th = RBuilder.node('th', {className: 'commands', parent: this.headRow,
-			style: { width: model.itemCommandCount * 32 + 'px' }});
-		// Expand the column for IE browsers
-		th.innerHTML = '<div style="width: ' + model.itemCommandCount * 32 + 'px;"></div>';			
-		this.renderListCommands(model.listCommands);
-		this.updateFilter(model);
-		if (this.hasBatchCommands) {
-			this.batchContainer.addClassName('commands batchCommands');
-			this.table.addClassName('selectable');
-			var handler = this.onBatchCommandClick.bindAsEventListener(this);
-			this.batchButtons = this.renderCommands(this.batchContainer, false, null, handler, model.batchCommands);
-			
-			RBuilder.node('div', {className: 'selectionStatus'},
-				this.selectionStatus = RBuilder.node('span', {className: 'itemCount'}),
-				RBuilder.node('span', {className: 'clear'}, '[', this.texts['label.selection.clear'], ']').observe('click', this.clearSelection.bind(this))
-			).appendTo(this.batchContainer);	
-			
-			this.updateBatchStates();
+		this.columns.last().addClassName('col-last');
+		if (!model.instantAction) {
+			this.renderListCommands(model.listCommands);
+			this.renderItemCommands(model.itemCommands);
 		}
-	},
-
-	renderListCommands: function(commands) {
-		this.renderCommands(this.commandTarget, true, null, this.itemCommandClickHandler, commands);
-	},
-	
-	updateColsAndRows: function(model) {
-		model.columns.each(this.updateSortIndicator.bind(this));
-		this.updateRows(model);
-	},
-
-	updateRowsAndPager: function(model) {
-		this.updateRows(model);
-		this.pager.update(model.currentPage, model.pages);
+		this.updateFilter(model);
 	},
 
 	addColumnHeading: function(col) {
@@ -90,6 +68,43 @@ var RiotList = Class.create({
 			this.updateSortIndicator(col);
 		}
 		this.headRow.appendChild(th);
+	},
+	
+	renderListCommands: function(commands) {
+		var handler = this.execCommand.bind(this);
+		this.listCommandButtons = this.renderCommands(this.commandTarget, handler, commands);
+	},
+	
+	renderItemCommands: function(commands) {
+		var handler = this.execCommand.bind(this);
+		this.itemCommandButtons = this.renderCommands(this.itemCommandTarget, handler, commands);
+	},
+	
+	renderCommands: function(el, handler, commands) {
+		var buttons;
+		if (el && commands) {
+			el.update();
+			var list = this;
+			buttons = commands.collect(function(command) {
+				var button = new CommandButton(list, command, handler);
+				el.appendChild(button.element);
+				return button;
+			});
+			if (buttons.length > 0) {
+				el.up('.box').makeBlock();
+			}
+		}
+		return buttons;
+	},
+	
+	updateColsAndRows: function(model) {
+		model.columns.each(this.updateSortIndicator.bind(this));
+		this.updateRows(model);
+	},
+
+	updateRowsAndPager: function(model) {
+		this.updateRows(model);
+		this.pager.update(model.currentPage, model.pages);
 	},
 
 	updateSortIndicator: function(col) {
@@ -151,103 +166,15 @@ var RiotList = Class.create({
 		for (var i = 0; i < model.items.length; i++) {
 			ListRow.create(this, model, null, model.items[i]); 
 		}
-		if (this.tree) {
-			this.tbody.appendChild(ListRow.createCommandRow(this, 0, null));
-		}
-	},
-
-	renderCommands: function(el, renderLabel, item, handler, commands) {
-		if (el && commands) {
-			el.update();
-			var alwaysOn = item == null && this.tree;
-			return commands.collect(function(command) {
-				var button = new CommandButton(item, command, handler, renderLabel, alwaysOn && command.targetRequired);
-				el.appendChild(button.element);
-				return button;
-			});
-		}
-	},
-
-	onCommandClick: function(event, source) {
-		event.stop();
-		var a = event.findElement('a');
-		if (!this.selectParentMode) {
-			if (a.command.targetRequired && this.tree && !a.item) {
-				this.selectParent(a.command);
-				var cancel = RBuilder.node('button', {}, this.texts['label.tree.cancelCommand']);
-				this.dialog = RBuilder.node('div', {className: 'select-parent'}, 
-					this.texts['label.tree.selectTarget'], cancel
-				).hide().insertSelfAfter(a);
-				cancel.observe('click', this.cancelParentSelection.bind(this));
-				new Effect.BlindDown(this.dialog, {duration: 0.3});
-			}
-			else {
-				this.execCommand(a.item, null, a.command, false, source);
-			}
-		}
+		this.updateCommandStates();
 	},
 	
-	onItemCommandClick: function(event) {
-		this.onCommandClick(event, 'item');
-	},
-	
-	onFormCommandClick: function(event) {
-		this.onCommandClick(event, 'form');
-	},
-
-	selectParent: function(command) {
-		this.selectParentMode = true;
-		this.parentCommand = command;
-		this.table.removeClassName('view-mode');
-		this.table.addClassName('select-parent-mode');
-		DWREngine.beginBatch();
-		this.table.select('.parent-command').invoke('setup', command.id);
-		DWREngine.endBatch();
-	},
-	
-	cancelParentSelection: function() {
-		this.table.addClassName('view-mode');
-		this.table.removeClassName('select-parent-mode');
-		this.tbody.select('tr.leaf').invoke('collapse');
-		this.dialog.remove();
-		this.dialog = null;
-		this.selectParentMode = false;
-	},
-	
-	onBatchCommandClick: function(event) {
-		var a = event.findElement('a');
-		this.execBatchCommand(a.command, false);
-		event.stop();
-	},
-	
-	execBatchCommand: function(command, confirmed) {
+	execCommand: function(commandId, confirmed) {
 		if (this.setBusy()) {
-			ListService.execBatchCommand(this.key, this.selection, command, confirmed,
+			ListService.execCommand(this.key, this.selection, commandId,
+					confirmed || false,
 					this.processCommandResult.bind(this));
 		}
-	},
-
-	execParentCommand: function(parentId) {
-		this.cancelParentSelection();
-		this.execCommand(null, parentId, this.parentCommand, true);
-	},
-	
-	execCommand: function(item, parentId, command, confirmed, source) {
-		if (this.setBusy()) {
-			if (item) {
-				var service = source == 'form' ? ListService.execFormCommand : ListService.execItemCommand;
-				service(this.key, item, command, confirmed,
-						this.processCommandResult.bind(this));
-			}
-			else {
-				this.execListCommand(parentId, command, confirmed)				
-			}
-		}
-	},
-	
-	execListCommand: function(parentId, command, confirmed, objectId) {
-		ListService.execListCommand(this.key, parentId, command, confirmed, 
-				objectId, this.processCommandResult.bind(this));
 	},
 		
 	refreshListCommands: function() {
@@ -264,35 +191,55 @@ var RiotList = Class.create({
 		}
 		ListService.getModel(this.key, null, this.updateRowsAndPager.bind(this));
 	},
+		
+	getSelectionIndex: function(item) {
+		for (var i = 0; i < this.selection.length; i++) {
+			if (this.selection[i].objectId == item.objectId) {
+				return i;
+			}
+		}
+		return -1;
+	},
 	
 	isSelected: function(item) {
-		return this.selection.any(function(i) {
-			return i.objectId == item.objectId;
-		});
+		return getSelectionIndex(item) != -1;
 	},
 	
 	toggleSelection: function(tr) {
-		var cb = tr.cb;
-		var item = tr.item; 
-		if (cb.checked) {
-			if (!this.isSelected(item)) {
-				this.selection.push(item);
-			}
+		if (tr.hasClassName('selected')) {
+			this.unselectRow(tr);
 		}
 		else {
-			this.selection = this.selection.reject(function(i) {
-				return i.objectId == item.objectId;
-			});
+			this.selectRow(tr);
 		}
-		this.updateBatchStates();
+	},
+	
+	selectRow: function(tr) {
+		if (!tr.hasClassName('selected')) {
+			this.selection.push(tr.item);
+			tr.addClassName('selected');
+			if (tr.hasClassName('highlight')) {
+				tr.addClassName('highlight-selected');	
+			}
+			this.updateCommandStates();
+		}
+	},
+	
+	unselectRow: function(tr) {
+		if (tr.hasClassName('selected')) {
+			this.selection = this.selection.reject(function(i) {
+				return i.objectId == tr.item.objectId;
+			});
+			tr.removeClassName('selected');
+			tr.removeClassName('highlight-selected');
+			this.updateCommandStates();
+		}
 	},
 	
 	clearSelection: function() {
 		this.selection = [];
-		this.tbody.select('input.check').each(function(cb) {
-			cb.checked = false;
-		});
-		this.updateBatchStates();
+		this.tbody.select('tr.selected').invoke('removeClassName', 'selected');
+		this.updateCommandStates();
 	},
 	
 	isActionEnabled: function(action, item) {
@@ -305,39 +252,29 @@ var RiotList = Class.create({
 		return false;
 	},
 	
-	isActionEnabledForSelection: function(action) {
+	isButtonEnabledForSelection: function(button) {
 		if (this.selection.length == 0) {
+			return button.command.enabled;
+		}
+		if (this.selection.length > 1 && !button.command.batchSupport) {
 			return false;
 		}
 		for (var i = 0; i < this.selection.length; i++) {
 			var item = this.selection[i];
-			if (!this.isActionEnabled(action, item)) {
+			if (!this.isActionEnabled(button.command.action, item)) {
 				return false;
 			}
 		}
 		return true;
 	},
 	
-	updateBatchStates: function() {
-		for (var i = 0; i < this.batchButtons.length; i++) {
-			var button = this.batchButtons[i];
-			var enabled = this.isActionEnabledForSelection(button.command.action);
-			button.setEnabled(enabled);
-		}
-		
-		if (this.selection.length > 1) {
-			this.selectionStatus.update(this.texts['label.selection.count'].interpolate(this.selection));	
-		}
-		else {
-			this.selectionStatus.update();
-		}
-		
-		
-		if (this.selection.length > 0 && !this.batchContainer.visible()) {
-			new Effect.Appear(this.batchContainer, {duration: 0.3});
-		}	
-		else if (this.selection.length == 0 && this.batchContainer.visible()) {
-			new Effect.Fade(this.batchContainer, {duration: 0.3});
+	updateCommandStates: function() {
+		if (this.itemCommandButtons) {
+			var buttons = this.itemCommandButtons.concat(this.listCommandButtons);
+			for (var i = 0; i < buttons.length; i++) {
+				var button = buttons[i];
+				button.setEnabled(this.isButtonEnabledForSelection(button));
+			}
 		}
 	},
 	
@@ -355,12 +292,7 @@ var RiotList = Class.create({
 			}
 			else if (result.action == 'confirm') {
 				if (confirm(result.message)) {
-					this.execCommand(result.item, result.item.parentId, result.command, true);
-				}
-			}
-			else if (result.action == 'confirmBatch') {
-				if (confirm(result.message)) {
-					this.execBatchCommand(result.command, true);
+					this.execCommand(result.commandId, true);
 				}
 			}
 			else if (result.action == 'gotoUrl') {
@@ -414,9 +346,7 @@ var RiotList = Class.create({
 			return false;
 		}
 		this.busy = true;
-		if (this.table) {
-			this.table.addClassName('busy');
-		}
+		document.body.addClassName('busy');
 		return true;
 	},
 	
@@ -425,9 +355,7 @@ var RiotList = Class.create({
 			return false;
 		}
 		this.busy = false;
-		if (this.table) {
-			this.table.removeClassName('busy');
-		}
+		document.body.removeClassName('busy');
 		return true;
 	}
 
@@ -443,7 +371,6 @@ var ListRow = {
 			level: parentRow ? parentRow.level + 1 : 0
 		});
 		Object.extend(tr, ListRow.Methods);
-		tr.setHoverClass('highlight');
 		if (row.cssClass) {
 			tr.addClassName(row.cssClass);
 		}
@@ -456,13 +383,7 @@ var ListRow = {
 		
 		for (var i = 0; i < row.columns.length; i++) {
 			var cell = RBuilder.node('td', {innerHTML: row.columns[i], className: list.columns[i].className}).appendTo(tr);
-			if (list.hasBatchCommands && i == 0) {
-				tr.cb = RBuilder.node('input', {type: 'checkbox', className: 'check'});
-				cell.prependChild(tr.cb);
-				tr.cb.checked = tr.cb.defaultChecked = list.isSelected(row);
-				tr.cb.observe('click', list.toggleSelection.bind(list, tr));
-			}
-			if (list.tree && i == 0) {
+			if (list.model.tree && i == 0) {
 				var arrow = RBuilder.node('div', {
 					parent: tr, className: 'expand', style: 'margin-left:' + (tr.level * 22) + 'px'
 				});
@@ -471,21 +392,30 @@ var ListRow = {
 			}
 		}
 
-		var td = RBuilder.node('td', {className: 'commands'});
-
-		list.renderCommands(td, false, row, list.itemCommandClickHandler, row.commands);
-
-		row.commands.each(function(command) {
-			if (command.itemStyleClass) {
-				tr.addClassName(command.itemStyleClass);
-			}
-		});
-
-		if (row.defaultCommand) {
+		var i = list.getSelectionIndex(row); 
+		if (i != -1) {
+			tr.addClassName('selected');
+			list.selection[i] = row;
+		}
+		
+		if (Prototype.Browser.IE) {
+			//Prevent text selection in unselected items
+			tr.onmousedown = function() {
+				this.selectedOnMouseDown = this.hasClassName('selected') && !event.ctrlKey; 
+			};
+			tr.onselectstart = function() {
+				return this.selectedOnMouseDown; 
+			};
+		}
+		
+		if (list.model.instantAction) {
 			tr.observe('click', tr.execDefaultCommand.bindAsEventListener(tr));
 		}
-			
-		tr.appendChild(td);
+		else {
+			tr.observe('click', tr.toggle.bindAsEventListener(tr));
+			tr.observe('dblclick', tr.execDefaultCommand.bindAsEventListener(tr));
+		}
+		
 		if (parentRow) {
 			tr.insertSelfAfter(parentRow);
 			parentRow.childRows.push(tr);
@@ -501,53 +431,31 @@ var ListRow = {
 			row.children = null;
 		}
 	},
-	
-	createCommandRow: function(list, level, item) {
-		var parentId = item ? item.objectId : null;
 		
-		var arrow = RBuilder.node('div', {
-			className: 'expand', 
-			style: 'margin-left:' + ((level) * 22) + 'px;'
-		});
-		
-		var icon = RBuilder.node('a', { href: '#', style: 'float:right'});
-		var label = RBuilder.node('span', {className: 'label'});
-		
-		var tr = RBuilder.node('tr', {
-				className: 'parent-command', 
-				level: level,
-				label: label,
-				icon: icon,
-				list: list,
-				item: item,
-				setup: function(commandId) {
-					if (commandId) {
-						ListService.getParentCommandState(this.list.key, commandId, this.item, this.foo.bind(this));
-					}
-				},
-				foo: function(cmd) {
-					this.label.innerHTML = cmd.label + ' ...';
-					this.icon.className = 'action action-' + cmd.styleClass;
-					this.label.parentNode.className = this.icon.parentNode.className = cmd.enabled ? 'enabled' : 'disabled';
-				}
-			}, 
-			RBuilder.node('td', {colSpan: list.columns.length}, arrow, label),
-			RBuilder.node('td', {}, icon)
-		).setHoverClass('highlight-parent').observe('click', list.execParentCommand.bind(list, parentId));
-		
-		if (list.parentCommand) {
-			tr.setup(list.parentCommand.id);
-		}
-		return tr;
-	},
-	
 	Methods: {
 	
+		toggle: function(ev) {
+			if (!ev.ctrlKey && !ev.metaKey) {
+				this.list.clearSelection();
+			}
+			this.list.toggleSelection(this);
+			ev.stop();
+		},
+		
+		execDefaultCommand: function() {
+			if (this.item.commands.length > 0) {
+				var cmd = this.item.commands[0];
+				if (cmd.enabled) {
+					if (this.list.selection.length == 0) {
+						this.list.selection = [this.item];
+					}
+					this.list.execCommand(cmd.commandId, false);
+				}
+			}
+		},
+		
 		remove: function() {
 			this.removeChildren();
-			if (this.commandRow) {
-				this.commandRow.remove();
-			}
 			this.parentNode.removeChild(this);
 		},
 		
@@ -567,7 +475,7 @@ var ListRow = {
 		
 		toggleChildren: function(event) {
 			event.stop();
-			if (this.item.expandable || this.list.selectParentMode) {
+			if (this.item.expandable) {
 				if (this.expanded) {
 					this.collapse();
 				}
@@ -581,12 +489,6 @@ var ListRow = {
 			if (!this.expanded) {
 				this.expanded = true;
 				this.addClassName('expanded');
-				if (this.commandRow) {
-					this.commandRow.show();	
-				}
-				else {
-					this.commandRow = ListRow.createCommandRow(this.list, this.level+1, this.item).insertSelfAfter(this);
-				}
 				ListService.getChildren(this.list.key, this.item.objectId, this.addChildren.bind(this));
 			}
 		},
@@ -595,49 +497,44 @@ var ListRow = {
 			if (this.expanded) {
 				this.expanded = false;
 				this.removeClassName('expanded');
+				this.childRows.each(this.list.unselectRow.bind(list));
 				this.removeChildren();
-				if (this.commandRow) {
-					this.commandRow.hide();
-				}
 			}
 		},
 				
 		replaceChildren: function(model) {
 			this.removeChildren();
 			this.addChildren(model);
+			this.list.updateCommandStates();
 		},
 		
 		refreshChildren: function() {
 			ListService.getChildren(this.list.key, this.item.objectId, this.replaceChildren.bind(this));
 		},
 		
-		execDefaultCommand: function(event) {
-			if (event.element() != this.cb) {
-				this.list.execCommand(this.item, null, this.item.defaultCommand, false);
+		onmouseover: function() {
+			this.addClassName('highlight');
+			if (this.hasClassName('selected')) {
+				this.addClassName('highlight-selected');
 			}
+		},
+		
+		onmouseout: function() {
+			this.removeClassName('highlight').removeClassName('highlight-selected');
 		}
+		
 	}
 }
 
 var CommandButton = Class.create({
-	initialize: function(item, command, handler, renderLabel, enabled) {
-		this.item = item;
+	initialize: function(list, command, handler) {
+		this.list = list;
 		this.command = command;
 		this.handler = handler;
-		this.element = RBuilder.node('a', {href: '#', item: item, command: command,
-				className: 'action action-' + command.styleClass});
-
-		if (item && item.defaultCommand == command) {
-			this.element.addClassName('default');
-		}
-		if (renderLabel) {
-			RBuilder.node('span', {className: 'label', parent: this.element, innerHTML: command.label});
-		}
-		else {
-			this.element.title = command.label.stripTags();
-		}
+		this.element = RBuilder.node('a', {href: '#', className: 'action action-' + command.styleClass});
+		RBuilder.node('span', {className: 'label', parent: this.element, innerHTML: command.label});
 		this.element.observe('click', this.onclick.bindAsEventListener(this));
-		this.setEnabled(enabled || command.enabled);
+		this.setEnabled(command.enabled);
 	},
 	
 	setEnabled: function(enabled) {
@@ -654,11 +551,9 @@ var CommandButton = Class.create({
 	
 	onclick: function(event) {
 		if (this.enabled) {
-			this.handler(event);
+			this.handler(this.command.commandId);
 		}
-		else {
-			event.stop();
-		}
+		event.stop();
 	}
 });
 

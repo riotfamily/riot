@@ -34,6 +34,7 @@ import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
 public class SwapCommand extends AbstractCommand {
 
 	public static final String ACTION_MOVE_UP = "moveUp";
+	
 	public static final String ACTION_MOVE_DOWN = "moveDown";
 
 	private int swapWith;
@@ -42,11 +43,13 @@ public class SwapCommand extends AbstractCommand {
 		this.swapWith = swapWith;
 	}
 
-	protected String getAction(CommandContext context) {
+	@Override
+	public String getAction() {
 		return swapWith > 0 ? ACTION_MOVE_DOWN : ACTION_MOVE_UP;
 	}
 
-	protected boolean isEnabled(CommandContext context, String action) {
+	@Override
+	public boolean isEnabled(CommandContext context) {
 		if (context.getDao() instanceof SwappableItemDao) {
 			int index = context.getParams().getOffset() + context.getRowIndex();
 			return index + swapWith >= 0 &&
@@ -57,10 +60,7 @@ public class SwapCommand extends AbstractCommand {
 
 	public CommandResult execute(CommandContext context) {
 		SwappableItemDao dao = (SwappableItemDao) context.getDao();
-		int index = context.getParams().getOffset() + context.getRowIndex();
-		dao.swapEntity(context.getBean(), context.getParent(), context.getParams(),
-				index + swapWith);
-		
+		dao.swapEntity(context.getBean(), context.getParent(), context.getParams(), swapWith);
 		return new RefreshSiblingsResult(context);
 	}
 

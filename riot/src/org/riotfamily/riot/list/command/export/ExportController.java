@@ -50,7 +50,7 @@ public class ExportController implements Controller {
 		ListConfig listConfig = listSession.getListDefinition().getListConfig();
 		
 		String commandId = ServletUtils.getRequiredStringAttribute(request, "commandId");
-		ExportCommand command = (ExportCommand) listSession.getListCommand(commandId);
+		ExportCommand command = (ExportCommand) listSession.getCommand(commandId);
 		
 		List<String> properties = command.getProperties();
 		if (properties == null) {

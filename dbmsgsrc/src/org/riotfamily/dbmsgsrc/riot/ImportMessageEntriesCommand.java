@@ -37,7 +37,6 @@ import org.riotfamily.dbmsgsrc.support.DbMessageSource;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.upload.FileUpload;
 import org.riotfamily.riot.dao.InvalidPropertyValueException;
-import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.dialog.DialogCommand;
 import org.riotfamily.riot.list.ui.ListSession;
 import org.riotfamily.riot.security.AccessController;
@@ -63,7 +62,7 @@ public static final String ACTION_IMPORT = "import";
 	}
 	
 	@Override
-	protected String getAction(CommandContext context) {
+	public String getAction() {
 		return ACTION_IMPORT;
 	}
 	

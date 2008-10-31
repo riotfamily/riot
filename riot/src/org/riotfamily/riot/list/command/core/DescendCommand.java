@@ -53,11 +53,13 @@ public class DescendCommand extends AbstractCommand {
 		this.targetDefinition = targetDefinition;
 	}
 
+	@Override
 	public String getId() {
 		return ID;
 	}
-		
-	protected boolean isEnabled(CommandContext context, String action) {
+	
+	@Override
+	public boolean isEnabled(CommandContext context) {
 		RiotDao dao = nextListDefinition.getDao();
 		int size = dao.getListSize(context.getBean(), params);
 		if (size == -1) {

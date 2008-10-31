@@ -17,14 +17,11 @@
 		">
 
 	<list:list id="messageBundleEntries" search="code">
-		<list:dao class="org.riotfamily.riot.hibernate.dao.HqlDao">
-			<list:property name="entityClass" value="org.riotfamily.dbmsgsrc.model.MessageBundleEntry" />
-			<list:property name="where" value="this.bundle = 'default'" />
-		</list:dao>
+		<list:dao class="org.riotfamily.dbmsgsrc.riot.MessageBundleEntryDao" />
 		<list:columns>
 			<list:column property="code" />
 			<list:column property="defaultMessage.text" sortable="false" />
-			<list:column property="translated" sortable="false" renderer="cssClassRenderer" />
+			<list:column property="translated" sortable="false" />
 			<list:command id="edit" />
 			<list:command id="delete" />
 		</list:columns>
@@ -60,6 +57,7 @@
 			<list:column property="entry.code" />
 			<list:column property="entry.defaultMessage.text" />
 			<list:column renderer="localMessageRenderer" sortable="false" />
+			<list:command class="org.riotfamily.dbmsgsrc.riot.EditMessageCommand" />
 			<list:command class="org.riotfamily.dbmsgsrc.riot.TranslateMessageCommand" />
 		</list:columns>
 		<list:command id="importLocalMessages" />
