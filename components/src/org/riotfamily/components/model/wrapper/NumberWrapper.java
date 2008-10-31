@@ -23,12 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.model.wrapper;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
 
 
 /**
@@ -39,37 +39,22 @@ import javax.persistence.Entity;
 @DiscriminatorValue("Number")
 public class NumberWrapper extends ValueWrapper<Number> {
 
-	private BigDecimal value;
-
-	@Column(name="number_value")
+	private Number value;
+	
+	@Type(type="org.riotfamily.riot.hibernate.support.ImmutableAnyType")
+	@Columns(columns = {
+	    @Column(name="num_type"),
+	    @Column(name="num_value")
+	})
 	public Number getValue() {
 		return value;
 	}
 	
+	@Override
 	public void setValue(Number value) {
-		if (value instanceof BigDecimal) {
-			this.value = (BigDecimal) value;
-		}
-		else if (value instanceof BigInteger) {
-			this.value = new BigDecimal((BigInteger) value);
-		}
-		else if (value instanceof Integer) {
-			this.value = new BigDecimal(((Integer) value).intValue());
-		}
-		else if (value instanceof Short) {
-			this.value = new BigDecimal(((Short) value).intValue());
-		}
-		else if (value instanceof Long) {
-			this.value = new BigDecimal(((Long) value).longValue());
-		}
-		else if (value instanceof Double) {
-			this.value = new BigDecimal(((Double) value).doubleValue());
-		}
-		else if (value instanceof Float) {
-			this.value = new BigDecimal(((Float) value).doubleValue());
-		}
+		this.value = value;
 	}
-
+	
 	public NumberWrapper deepCopy() {
 		NumberWrapper copy = new NumberWrapper();
 		copy.wrap(value);
