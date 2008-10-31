@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job.dao;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
@@ -55,6 +56,21 @@ public class HibernateJobDao implements JobDao {
 				"order by job.startDate desc");
 		
 		return hibernate.list(query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void deleteObsoleteJobDetails() {
+		Query query = hibernate.createQuery("from JobDetail job where " +
+				"job.startDate < :date");
+		
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_MONTH, -7);
+		query.setDate("date", cal.getTime());
+		
+		List<JobDetail> details = query.list();
+		for (JobDetail detail : details) {
+			hibernate.delete(detail);
+		}
 	}
 	
 	public JobDetail getPendingJobDetail(String type, String objectId) {

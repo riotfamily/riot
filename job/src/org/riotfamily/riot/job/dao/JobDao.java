@@ -51,4 +51,6 @@ public interface JobDao {
 	
 	public void updateJobDetail(JobDetail detail);
 
+	public void deleteObsoleteJobDetails();
+
 }

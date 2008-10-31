@@ -39,10 +39,6 @@ public class JobCommand extends AbstractCommand {
 	public void setJobType(String jobType) {
 		this.jobType = jobType;
 	}
-
-	public boolean isEnabled(CommandContext context) {
-		return true;
-	}
 	
 	public CommandResult execute(CommandContext context) {
 		String objectId = context.getObjectId() != null
@@ -52,7 +48,8 @@ public class JobCommand extends AbstractCommand {
 		attributes.put("type", jobType);
 		attributes.put("objectId", objectId);
 		String url = getRuntime().getUrl("jobUIController", attributes);
+		
 		return new GotoUrlResult(context, ServletUtils.addParameter(url, 
-				"title", getLabel(context, getAction(context))));
+				"title", getLabel(context.getMessageResolver())));
 	}
 }

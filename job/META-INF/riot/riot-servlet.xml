@@ -48,5 +48,11 @@
 	<override:put ref="riotDwrConfigurator" property="serviceBeans">		
 		<entry key="JobUIService" value-ref="jobUIService" />		
 	</override:put>
+	
+	<bean id="jobCleanUpTask" class="org.riotfamily.riot.job.support.JobCleanUpTask">
+		<constructor-arg ref="transactionManager" />
+		<constructor-arg ref="jobDao" />
+		<property name="triggerNames" value="${riot.job.cleanUp.schedule=daily}" />
+	</bean>
 
 </beans>

@@ -31,7 +31,6 @@ import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.riot.job.dao.JobDao;
 import org.riotfamily.riot.job.model.JobDetail;
 import org.riotfamily.riot.job.model.JobLogEntry;
-import org.riotfamily.riot.job.support.ExecutionTimeUpdater;
 import org.riotfamily.riot.job.support.JobTask;
 import org.riotfamily.riot.job.support.TaskList;
 import org.riotfamily.riot.job.ui.JobUIUpdater;
@@ -57,13 +56,10 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 	
 	private TaskList taskList = new TaskList();
 	
-	private ExecutionTimeUpdater executionTimeUpdater = new ExecutionTimeUpdater(taskList);
-	
 	public JobManager(JobDao dao, JobUIUpdater uiUpdater) {
 		this.dao = dao;
 		this.uiUpdater = uiUpdater;
 		taskExecutor.setThreadPriority(Thread.MIN_PRIORITY);
-		taskExecutor.execute(executionTimeUpdater);
 	}
 
 	public void setApplicationContext(ApplicationContext context) {
@@ -163,7 +159,6 @@ public class JobManager implements ApplicationContextAware, DisposableBean {
 	}
 	
 	public void destroy() throws Exception {
-		executionTimeUpdater.stop();
 		taskList.interruptAll();
 		log.debug("JobManager has been shut down.");
 	}

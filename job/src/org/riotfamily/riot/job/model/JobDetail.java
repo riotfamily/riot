@@ -24,11 +24,15 @@
 package org.riotfamily.riot.job.model;
 
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -81,6 +85,7 @@ public class JobDetail {
 	
 	private String objectId;
 	
+	private Set<JobLogEntry> log;
 	
 	public JobDetail() {
 	}
@@ -249,6 +254,16 @@ public class JobDetail {
 	
 	public String toString() {
 		return "Job " + id + ": " + name;
+	}
+
+	@OneToMany(mappedBy="job", cascade=CascadeType.ALL)
+	@OrderBy("date")
+	public Set<JobLogEntry> getLog() {
+		return log;
+	}
+
+	public void setLog(Set<JobLogEntry> log) {
+		this.log = log;
 	}
 	
 }
