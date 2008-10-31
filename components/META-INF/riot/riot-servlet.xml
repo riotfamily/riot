@@ -32,8 +32,6 @@
 	<bean id="componentEditor" class="org.riotfamily.components.editor.ComponentEditorImpl">
 		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="cacheService" />
-		<constructor-arg ref="mediaDao" />
-		<constructor-arg ref="imageCropper" />
 		<constructor-arg ref="componentRenderer" />
 		<constructor-arg ref="contentFormRepository" />
 		<property name="tinyMCEProfiles" ref="tinyMCEProfiles" />
@@ -86,11 +84,7 @@
 		<constructor-arg ref="loginManager" />
 		<property name="successViewName" value="classpath:/org/riotfamily/components/runtime/view/toolbar-login-success.ftl" />
 	</bean>
-	
-	<bean name="/components/upload" class="org.riotfamily.components.editor.FileUploadController">
-		<constructor-arg ref="componentEditor" />
-	</bean>
-	
+		
 	<!-- Overrides -->
 
 	<override:add ref="messageBasenames">
@@ -99,7 +93,6 @@
 
 	<override:add ref="loginInterceptor" property="excludes">
 		<value>/pages/login</value>
-		<value>/components/upload</value>
 	</override:add>
 	
 	<override:add ref="resourceFilters">

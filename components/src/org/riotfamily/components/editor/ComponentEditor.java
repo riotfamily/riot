@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.editor;
 
-import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,18 +42,6 @@ public interface ComponentEditor {
 	public String[] updateTextChunks(Long componentId, String property,
 			String[] chunks);
 
-	public String generateToken();
-	
-	public void invalidateToken(String token);
-	
-	public String updateImage(Long contentId, String property, Long imageId);
-	
-	public String cropImage(Long contentId, String property, Long imageId,
-			int width, int height, int x, int y, int scaledWidth)
-			throws IOException;
-			
-	public void discardImage(Long imageId);
-			
 	public String[] getComponentLabels(String[] types, HttpServletRequest request);
 	
 	public String insertComponent(Long listId, int position, String type, String properties);

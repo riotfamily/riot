@@ -23,15 +23,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.editor;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -45,10 +42,8 @@ import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.riotfamily.cachius.CacheService;
-import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.util.PasswordGenerator;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.config.ContentFormRepository;
@@ -59,10 +54,6 @@ import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.render.component.ComponentRenderer;
 import org.riotfamily.components.render.component.EditModeComponentDecorator;
-import org.riotfamily.media.dao.MediaDao;
-import org.riotfamily.media.model.CroppedRiotImage;
-import org.riotfamily.media.model.RiotFile;
-import org.riotfamily.media.model.RiotImage;
 import org.riotfamily.riot.security.AccessController;
 import org.riotfamily.riot.security.auth.RiotUser;
 import org.riotfamily.riot.security.session.LoginManager;
@@ -70,14 +61,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.ServletContextAware;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * Service bean to edit ComponentLists and ComponentVersions.
  */
 @Transactional
-public class ComponentEditorImpl implements ComponentEditor, UploadManager,
+public class ComponentEditorImpl implements ComponentEditor,
 		MessageSourceAware, ServletContextAware {
 
 	private RiotLog log = RiotLog.get(ComponentEditorImpl.class);
@@ -85,15 +75,6 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	private ComponentDao componentDao;
 	
 	private CacheService cacheService;
-	
-	private MediaDao mediaDao;
-	
-	private ImageCropper imageCropper;
-	
-	private PasswordGenerator tokenGenerator = 
-			new PasswordGenerator(16, true, true, true);
-
-	private Set<String> validTokens = Collections.synchronizedSet(new HashSet<String>());
 	
 	private ComponentRenderer renderer;
 
@@ -104,14 +85,11 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	private ServletContext servletContext;
 	
 	public ComponentEditorImpl(ComponentDao componentDao, 
-			CacheService cacheService, MediaDao mediaDao, 
-			ImageCropper imageCropper, ComponentRenderer renderer, 
+			CacheService cacheService, ComponentRenderer renderer, 
 			ContentFormRepository formRepository) {
 		
 		this.componentDao = componentDao;
 		this.cacheService = cacheService;
-		this.mediaDao = mediaDao;
-		this.imageCropper = imageCropper;
 		this.renderer = new EditModeComponentDecorator(renderer, formRepository);
 	}
 
@@ -146,56 +124,6 @@ public class ComponentEditorImpl implements ComponentEditor, UploadManager,
 	public void updateText(Long contentId, String property, String text) {
 		Content content = componentDao.loadContent(contentId);
 		content.setValue(property, text);
-	}
-
-	public String cropImage(Long contentId, String property, Long imageId,
-			int width, int height, int x, int y, int scaledWidth)
-			throws IOException {
-	
-		Content content = componentDao.loadContent(contentId);
-		RiotImage original = (RiotImage) mediaDao.loadFile(imageId);
-		RiotImage croppedImage = new CroppedRiotImage(
-				original, imageCropper, width, height, x, y, scaledWidth);
-		
-		content.setValue(property, croppedImage);
-		return croppedImage.getUri();
-	}
-	
-	public String updateImage(Long contentId, String property, Long imageId) {
-		Content content = componentDao.loadContent(contentId);
-		RiotFile image = mediaDao.loadFile(imageId);
-		content.setValue(property, image);
-		return image.getUri();
-	}
-	
-	public void discardImage(Long imageId) {
-		RiotFile image = mediaDao.loadFile(imageId);
-		mediaDao.deleteFile(image);
-	}
-	
-	public String generateToken() {
-		String token = tokenGenerator.generate();
-		validTokens.add(token);
-		log.debug("Generated token: " + token);
-		return token;
-	}
-	
-	public boolean isValidToken(String token) {
-		boolean valid = validTokens.contains(token);
-		log.debug((valid ? "Valid" : "Invalid") + " token: " + token);
-		return valid;
-	}
-	
-	public void invalidateToken(String token) {
-		validTokens.remove(token);
-	}
-	
-	public RiotImage storeImage(String token, MultipartFile multipartFile) 
-			throws IOException {
-		
-		RiotImage image = new RiotImage(multipartFile);
-		mediaDao.saveFile(image);
-		return image;
 	}
 
 	/**
