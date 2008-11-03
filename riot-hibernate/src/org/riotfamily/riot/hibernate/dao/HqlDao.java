@@ -130,6 +130,13 @@ public class HqlDao extends AbstractHqlDao implements SwappableItemDao {
     	}
     }
 
+	protected String getOrderBy(ListParams params) {
+        if (positionProperty != null) {
+        	return positionProperty;	
+        }
+        return super.getOrderBy(params);
+    }
+	
     @Override
     public void save(Object entity, Object parent) {
     	setPositionIfNeeded(entity, parent);
