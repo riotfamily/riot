@@ -59,7 +59,13 @@ public class FormUtils {
 	}
 	
 	public static EditorDefinition getParentEditor(Form form) {
-		return (EditorDefinition) form.getAttribute(EditorConstants.PARENT_EDITOR);
+		EditorDefinition parentDef = (EditorDefinition) form.getAttribute(EditorConstants.PARENT_EDITOR);
+		String objectId = getObjectId(form);
+		if (parentDef == null && objectId != null) {
+			EditorDefinition def = getEditorDefinition(form);
+			parentDef = EditorDefinitionUtils.getParentListDefinition(def, objectId);
+		}
+		return parentDef;
 	}
 	
 	public static String getParentEditorId(Form form) {

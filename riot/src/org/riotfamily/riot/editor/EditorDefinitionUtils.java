@@ -123,18 +123,35 @@ public final class EditorDefinitionUtils {
 	public static String getParentId(EditorDefinition def, Object bean) {
 		Object parent = getParent(def, bean);
 		if (parent != null) {
+			ListDefinition listDef = getListDefinition(def);
+			if (listDef instanceof TreeDefinition) {
+				TreeDefinition tree = (TreeDefinition) listDef;
+				if (tree.isNode(parent)) {
+					return getObjectId(listDef, parent);
+				}
+			}
 			EditorDefinition parentDef = getParentListDefinition(def);
 			if (parentDef != null) {
-				if (parentDef instanceof TreeDefinition) {
-					TreeDefinition tree = (TreeDefinition) parentDef;
-					if (!tree.isNode(parent)) {
-						parentDef = parentDef.getParentEditorDefinition();
-					}
-				}
 				return getObjectId(parentDef, parent);
 			}
 		}
 		return null;
+	}
+	
+	public static ListDefinition getParentListDefinition(
+			EditorDefinition def, String objectId) {
+		
+		Object parent = getParent(def, loadBean(def, objectId));
+		if (parent != null) {
+			ListDefinition listDef = getListDefinition(def);
+			if (listDef instanceof TreeDefinition) {
+				TreeDefinition tree = (TreeDefinition) listDef;
+				if (tree.isNode(parent)) {
+					return listDef;
+				}
+			}
+		}
+		return getParentListDefinition(def);
 	}
 	
 	public static Object loadParent(EditorDefinition def, String parentId) {
