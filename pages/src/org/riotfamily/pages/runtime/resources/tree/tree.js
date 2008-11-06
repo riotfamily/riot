@@ -17,10 +17,11 @@ var Tree = Class.create({
 
 	handleClick: function(ev, a) {
 		ev.stop();
-		this.linkHandler(a.getAttribute('href'));
+		this.linkHandler(a.getAttribute('href', 2));
 	},
 
 	initUl: function(ul) {
+		ul = $(ul);
 		var items = ul.childElements().findAll(function(e) {return e.tagName == 'LI'});
 		for (var i = 0, len = items.length; i < len; i++) {
 			this.initLi(items[i], i == len -1);
