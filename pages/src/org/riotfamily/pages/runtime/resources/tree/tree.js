@@ -8,19 +8,20 @@ var Tree = Class.create({
 	initialize: function(el, linkHandler) {
 		el = $(el);
 		this.linkHandler = linkHandler;
+		this.initUl(el);
 		var a = el.select('a');
 		for (var i = 0; i < a.length; i++) {
 			a[i].observe('click', this.handleClick.bindAsEventListener(this, a[i]));
-		}		
-		this.initUl(el);
+		}
 	},
 
 	handleClick: function(ev, a) {
 		ev.stop();
-		this.linkHandler(a.getAttribute('href'));
+		this.linkHandler(a.getAttribute('href', 2));
 	},
 
 	initUl: function(ul) {
+		ul = $(ul);
 		var items = ul.childElements().findAll(function(e) {return e.tagName == 'LI'});
 		for (var i = 0, len = items.length; i < len; i++) {
 			this.initLi(items[i], i == len -1);
