@@ -107,6 +107,8 @@
 		<property name="handlerUrlResolver" ref="handlerUrlResolver" />
 	</bean>
 	
+	<bean id="formMacroHelper" class="org.riotfamily.common.web.view.freemarker.FormMacroHelperFactory" />
+	
 	<bean id="riotMacroHelper" class="org.riotfamily.riot.runtime.macro.RiotMacroHelperFactory">
 		<constructor-arg ref="riotRuntime" />
 	</bean>
