@@ -211,7 +211,7 @@
 
 	<bean id="addCommand" class="org.riotfamily.riot.list.command.core.AddCommand" />
 
-	<bean id="viewCommand" class="org.riotfamily.riot.list.command.core.EditCommand" />
+	<bean id="viewCommand" class="org.riotfamily.riot.list.command.core.ViewCommand" />
 
 	<bean id="deleteCommand" class="org.riotfamily.riot.list.command.core.DeleteCommand" />
 	
