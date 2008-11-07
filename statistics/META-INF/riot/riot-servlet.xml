@@ -38,7 +38,7 @@
         </bean>
     </override:add>    
         
-    <override:add ref="messageBasenames">
+    <override:add ref="messageBasenames" append="true">
 		<value>classpath:/org/riotfamily/statistics/runtime/i18n/messages</value>
 	</override:add>
     
