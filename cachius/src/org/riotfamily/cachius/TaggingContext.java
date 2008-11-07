@@ -24,6 +24,7 @@
 package org.riotfamily.cachius;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -88,7 +89,7 @@ public class TaggingContext {
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets whether caching should be prevented, i.e. the CacheItem should
 	 * be discarded.
@@ -149,6 +150,21 @@ public class TaggingContext {
 		}
 	}
 
+	public static void inheritFrom(CacheItem cacheItem) {
+		if (cacheItem != null) {
+			TaggingContext context = getContext();
+			if (context != null) {
+				if (cacheItem.getTags() != null) {
+					Iterator it = cacheItem.getTags().iterator();
+					while (it.hasNext()) {
+						context.addTag((String) it.next());
+					}
+				}
+				context.setPreventCaching(cacheItem.isNew());
+			}
+		}
+	}
+	
 	/**
 	 * Opens a nested context.
 	 */
