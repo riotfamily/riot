@@ -29,7 +29,7 @@
 		</bean>
 	</override:add>
 	
-	<override:add ref="messageBasenames">
+	<override:add ref="messageBasenames" append="true">
 		<value>classpath:/org/riotfamily/media/runtime/i18n/messages</value>
 	</override:add>
 	
@@ -48,7 +48,7 @@
 			<list>
 				<bean class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 					<property name="jobDetail" ref="mediaCleanUpJobDetail" />
-					<property name="repeatInterval" value="3600000" />
+					<property name="repeatInterval" value="43200000" />
 					<property name="startDelay" value="60000" />
 				</bean>
 			</list>

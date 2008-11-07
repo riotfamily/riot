@@ -102,7 +102,7 @@
 	
 	<!-- Overrides -->
 
-	<override:add ref="messageBasenames">
+	<override:add ref="messageBasenames" append="true">
 		<value>classpath:/org/riotfamily/components/runtime/i18n/messages</value>
 	</override:add>
 
