@@ -246,6 +246,7 @@ public class CacheService {
         		return false;
         	}
         	cacheItem.writeTo(response, sessionIdEncoder.getSessionId());
+        	TaggingContext.inheritFrom(cacheItem);
         	SharedProperties.setProperties(request, cacheItem.getProperties());
     	}
     	finally {
