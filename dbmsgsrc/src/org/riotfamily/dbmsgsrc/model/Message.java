@@ -112,7 +112,7 @@ public class Message {
 			if (escapeSingleQuotes) {
 				pattern = FormatUtils.escapeChars(pattern, "'", '\'');
 			}
-			messageFormat = new MessageFormat(text, locale);
+			messageFormat = new MessageFormat(pattern, locale);
 		}
 		return messageFormat;
 	}
