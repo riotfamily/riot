@@ -2,6 +2,10 @@ package org.riotfamily.statistics.domain;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.riotfamily.common.web.util.ServletUtils;
+
 public class RequestStatsItem extends StatsItem {
 
 	private Date timestamp = new Date();
@@ -9,9 +13,12 @@ public class RequestStatsItem extends StatsItem {
 	private long responseTime = -1;
 
 	private String clientIp;
+	
+	private boolean upload;
 
-	public RequestStatsItem(String name) {
-		super(name);
+	public RequestStatsItem(HttpServletRequest request) {
+		super(request.getRequestURI());
+		upload = ServletUtils.isMultipartRequest(request);
 	}
 
 	public Date getTimestamp() {
@@ -41,4 +48,7 @@ public class RequestStatsItem extends StatsItem {
 		this.clientIp = clientIp;
 	}
 
+	public boolean isUpload() {
+		return upload;
+	}
 }

@@ -1,6 +1,7 @@
 package org.riotfamily.statistics.web;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.FilterChain;
@@ -12,46 +13,53 @@ import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.statistics.domain.RequestStatsItem;
-import org.springframework.core.CollectionFactory;
 
 public class RequestCountFilterPlugin extends FilterPlugin {
-
-	private static final String TOP_LEVEL_REQUEST_STAMP = "TOP_LEVEL_REQUEST_STAMP";
 
 	private static RiotLog log = RiotLog.get(RequestCountFilterPlugin.class);
 
 	private long warnThreshold;
+	
 	private long maxRequests;
+	
 	private int maxListSize = 45;
+	
 	private long parallelRequestsHWM;
+	
 	private int totalRequestCount = 0;
+	
 	private long totalResponseTime = 0;
+	
 	private String monitoredUrl;
+	
 	private boolean enabled = false;
-	CollectionFactory s;
+	
+	private boolean ignoreUploads = false;
 	
 	/* LinkedLists perform better than ArrayLists when modified often. */
-	private List<RequestStatsItem> currentRequests = Generics.newLinkedList();
-	private List<RequestStatsItem> criticalRequests = Generics.newLinkedList();
+	private LinkedList<RequestStatsItem> currentRequests = Generics.newLinkedList();
 
+	private LinkedList<RequestStatsItem> criticalRequests = Generics.newLinkedList();
+
+	
 	public void doFilter(HttpServletRequest request, 
 			HttpServletResponse response, FilterChain filterChain) 
 			throws IOException, ServletException {
 
-		if (!isEnabled() || request.getAttribute(TOP_LEVEL_REQUEST_STAMP) != null) {
+		if (!isEnabled()) {
 			filterChain.doFilter(request, response);
 			return;
 		}
 
-		request.setAttribute(TOP_LEVEL_REQUEST_STAMP, new Long(System.currentTimeMillis()));
-		String url = request.getRequestURI();
-
-		RequestStatsItem reqStats = new RequestStatsItem(url);
+		RequestStatsItem reqStats = new RequestStatsItem(request);
 		reqStats.setClientIp(request.getRemoteAddr());
 
 		synchronized (this) {
-			if (currentRequests.size() > maxRequests && monitoredUrl.equalsIgnoreCase(url)) {
-				log.error("Maximum number of currentRequests reached (" + maxRequests + "). Signalling failure...");
+			if (currentRequests.size() > maxRequests 
+					&& monitoredUrl.equalsIgnoreCase(reqStats.getName())) {
+				
+				log.error("Maximum number of currentRequests reached (" 
+						+ maxRequests + "). Signalling failure...");
 
 				/* Temporarily not available */
 				response.sendError(503);
@@ -83,7 +91,9 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 		synchronized (this) {
 			totalResponseTime += reqStats.getResponseTime();
 			currentRequests.remove(reqStats);
-			checkCriticalCandidate(reqStats);
+			if (!ignoreUploads || !reqStats.isUpload()) {
+				checkCriticalCandidate(reqStats);
+			}
 		}
 	}
 
@@ -105,9 +115,9 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 	}
 
 	private void addCriticalRequest(RequestStatsItem reqStats) {
-		for (int i = 0; i < criticalRequests.size(); i++) {
-			RequestStatsItem rs = (RequestStatsItem) criticalRequests.get(i);
-			if (rs.getResponseTime() > reqStats.getResponseTime() ) {
+		int i = 0;
+		for (RequestStatsItem item : criticalRequests) {
+			if (item.getResponseTime() < reqStats.getResponseTime()) {
 				criticalRequests.add(i, reqStats);
 				return;
 			}
@@ -115,9 +125,9 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 		criticalRequests.add(reqStats);
 	}
 
-	private RequestStatsItem findFastest(List<RequestStatsItem> list) {
-		if (list.size() > 0) {
-			return list.get(0);
+	private RequestStatsItem findFastest(LinkedList<RequestStatsItem> list) {
+		if (!list.isEmpty()) {
+			return list.getFirst();
 		}
 		return null;
 	}
@@ -186,6 +196,14 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public boolean isIgnoreUploads() {
+		return ignoreUploads;
+	}
+
+	public void setIgnoreUploads(boolean ignoreUploads) {
+		this.ignoreUploads = ignoreUploads;
 	}
 
 	public long getParallelRequestsHWM() {

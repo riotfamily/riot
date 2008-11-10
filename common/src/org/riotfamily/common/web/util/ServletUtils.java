@@ -461,6 +461,22 @@ public final class ServletUtils {
 	public static boolean isXmlHttpRequest(HttpServletRequest request) {
 		return XML_HTTP_REQUEST.equals(request.getHeader(REQUESTED_WITH_HEADER));
 	}
+	
+	public static boolean isMultipartRequest(HttpServletRequest request) {
+        if (!"post".equals(request.getMethod().toLowerCase())) {
+            return false;
+        }
+        String contentType = request.getContentType();
+        if (contentType == null) {
+            return false;
+        }
+        if (contentType.toLowerCase().startsWith("multipart/")) {
+            return true;
+        }
+        return false;
+    }
+
+
 
 	/**
 	 * Returns whether the given request is a direct request, i.e. not 
