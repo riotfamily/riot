@@ -15,16 +15,17 @@
 	<!-- FilterPlugin to collect request statistics -->
 	<bean id="requestCountFilterPlugin" class="org.riotfamily.statistics.web.RequestCountFilterPlugin">
 		<property name="filterName" value="website-filter" />
-        <property name="enabled" value="${riot.statistics.reqcount.enabled=false}" />
+        <property name="enabled" value="${riot.statistics.request.enabled=false}" />
+        <property name="ignoreUploads" value="${riot.statistics.request.ignoreUploads=false}" />
         		        
         <!-- Requests with response times slower than 10000 ms are logged  -->
-        <property name="warnThreshold" value="${riot.statistics.reqcount.warnthreshold=10000}" />
+        <property name="warnThreshold" value="${riot.statistics.request.warnThreshold=10000}" />
 
         <!-- When max. number of parallel requests is exceeded a failure is signaled to the monitoring system  -->
-        <property name="maxRequests" value="${riot.statistics.reqcount.maxrequests=500}" />
+        <property name="maxRequests" value="${riot.statistics.request.maxRequests=500}" />
         
         <!-- URL called by the monitoring system to ensure system health  -->
-        <property name="monitoredUrl" value="${riot.statistics.reqcount.monitoredurl=/status/application}" />
+        <property name="monitoredUrl" value="${riot.statistics.request.monitoredUrl=/status/application}" />
     </bean>
 
     <!-- ================================================================== -->
