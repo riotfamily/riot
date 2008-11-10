@@ -2,13 +2,16 @@ package org.riotfamily.common.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -60,6 +63,11 @@ public final class Generics {
 	public static<V> LinkedList<V> newLinkedList(Collection<? extends V> c) {
 		return new LinkedList<V>(c);
 	}
+
+	public static<V> List<V> newSynchronizedLinkedList() {
+		LinkedList<V> list = new LinkedList<V>(); 
+		return Collections.synchronizedList(list);
+	}
 	
 	public static<V> HashSet<V> newHashSet() {
 		return new HashSet<V>();
@@ -67,6 +75,11 @@ public final class Generics {
 	
 	public static<V> HashSet<V> newHashSet(Collection<? extends V> c) {
 		return new HashSet<V>(c);
+	}
+	
+	public static<V> Set<V> newSynchronizedHashSet(Collection<? extends V> c) {
+		HashSet<V> set = new HashSet<V>(c);
+		return Collections.synchronizedSet(set);
 	}
 	
 	public static<V> LinkedHashSet<V> newLinkedHashSet() {
