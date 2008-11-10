@@ -7,13 +7,11 @@ var RiotList = Class.create({
 
 	render: function(target, commandTarget, itemCommandTarget, expandedId, filterForm) {
 		target = $(target);
-		this.table = RBuilder.node('table', {parent: target},
-			RBuilder.node('thead', null,
-				this.headRow = RBuilder.node('tr')
-			),
-			this.tbody = RBuilder.node('tbody')
-		);
+		this.table = new Element('table')
+			.insert(new Element('thead').insert(this.headRow = new Element('tr')))
+			.insert(this.tbody = new Element('tbody'));
 		
+		target.insert(this.table);
 		this.pager = new Pager(target, this.gotoPage.bind(this));
 		if (filterForm) {
 			this.filterForm = $(filterForm);
@@ -531,9 +529,11 @@ var CommandButton = Class.create({
 		this.list = list;
 		this.command = command;
 		this.handler = handler;
-		this.element = RBuilder.node('a', {href: '#', className: 'action action-' + command.styleClass});
-		RBuilder.node('span', {className: 'label', parent: this.element, innerHTML: command.label});
-		this.element.observe('click', this.onclick.bindAsEventListener(this));
+		this.element = new Element('a', {href: '#'}).addClassName('action')
+			.insert(new Element('div').addClassName('icon action-' + command.styleClass))
+			.insert(new Element('span').addClassName('label').insert(command.label))
+			.observe('click', this.onclick.bindAsEventListener(this));
+		
 		this.setEnabled(command.enabled);
 	},
 	
