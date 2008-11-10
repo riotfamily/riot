@@ -122,7 +122,7 @@
 					</div>
 					<div class="commands">
 						<div id="formCommands"></div>
-						<a class="saveButton action" href="javascript:save()"><span class="label"><@spring.messageText "label.form.button.save", "Save" /></span></a>
+						<a class="action enabled" href="javascript:save()"><div class="icon saveButton"></div><span class="label"><@spring.messageText "label.form.button.save", "Save" /></span></a>
 					</div>
 				</div>
 	
