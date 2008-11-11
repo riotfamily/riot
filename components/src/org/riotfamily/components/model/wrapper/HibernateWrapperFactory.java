@@ -28,11 +28,12 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import org.riotfamily.common.log.RiotLog;
 import org.hibernate.EntityMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.riotfamily.common.collection.TypeComparatorUtils;
+import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.Generics;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -51,10 +52,8 @@ public class HibernateWrapperFactory implements ValueWrapperFactory {
 			ClassMetadata meta = (ClassMetadata) it.next();
 			Class<?> wrapperClass = meta.getMappedClass(EntityMode.POJO);
 			if (ValueWrapper.class.isAssignableFrom(wrapperClass)) {
-				String[] properties = meta.getPropertyNames();
-				if (properties.length > 0) {
-					String valueProperty = properties[0];
-					Class<?> valueClass = meta.getPropertyType(valueProperty).getReturnedClass();
+				Class<?> valueClass = Generics.getTypeArguments(ValueWrapper.class, wrapperClass).get(0);
+				if (valueClass != null) {
 					log.debug("Registering " + wrapperClass	+ " as wrapper for " + valueClass);
 					wrapperClassInfos.add(new WrapperClassInfo((Class<ValueWrapper<?>>) wrapperClass, valueClass));
 				}
