@@ -138,12 +138,17 @@ public class TemplateMacroHelper {
 				TemplateDirectiveBody body) throws TemplateException, IOException {
 			
 			String name = getRequiredStringParam(params, "name", env);
-			String cacheKey = null;
+			String cacheKey = getStringParam(params, "cacheKey", null);
 			
 			boolean cache = getBooleanParam(params, "cache", true);
-			if (cache) {
-				cacheKey = getStringParam(params, "cacheKey",
-						request.getRequestURL().append('#').append(name).toString());
+			
+			if (!cache || cacheKey != null) {
+				//Prevent caching of enclosing content
+				TaggingContext.preventCaching();
+			}
+			
+			if (cache && cacheKey == null) {
+				cacheKey = request.getRequestURL().append('#').append(name).toString();
 			}
 			
 			Block block = blocks.get(name);
