@@ -344,7 +344,7 @@ var RiotList = Class.create({
 			return false;
 		}
 		this.busy = true;
-		document.body.addClassName('busy');
+		Element.addClassName(document.body, 'busy');
 		return true;
 	},
 	
@@ -353,7 +353,7 @@ var RiotList = Class.create({
 			return false;
 		}
 		this.busy = false;
-		document.body.removeClassName('busy');
+		Element.removeClassName(document.body, 'busy');
 		return true;
 	}
 
