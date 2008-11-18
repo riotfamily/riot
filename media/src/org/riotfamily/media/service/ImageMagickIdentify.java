@@ -41,7 +41,7 @@ public class ImageMagickIdentify extends ImageMagick {
 	
 	public ImageMetaData identify(File file) throws UnknownFormatException {
 		try {
-			String meta = invoke("-verbose", "-ping", "-format", JSON_FORMAT, file.getAbsolutePath());
+			String meta = invoke("-ping", "-format", JSON_FORMAT, file.getAbsolutePath());
 			JSONObject json = JSONObject.fromObject(meta);
 			return (ImageMetaData) JSONObject.toBean(json, ImageMetaData.class);
 		}
