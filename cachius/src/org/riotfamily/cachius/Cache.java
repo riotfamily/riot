@@ -52,7 +52,7 @@ public final class Cache implements Serializable {
     
     private int size;
 
-    private Map<String, CacheItem> map;
+    private Map<String, CacheEntry> map;
     
     private Map<String, List<CacheItem>> taggedItems;
     
@@ -91,7 +91,7 @@ public final class Cache implements Serializable {
         	mapCapacity++;
         }
         
-        this.map = new ConcurrentHashMap<String, CacheItem>(mapCapacity); 
+        this.map = new ConcurrentHashMap<String, CacheEntry>(mapCapacity); 
         this.taggedItems = new ConcurrentHashMap<String, List<CacheItem>>(mapCapacity);
 
         init();
@@ -135,7 +135,7 @@ public final class Cache implements Serializable {
      */
     protected final void setCapacity(int capacity) {
         this.capacity = capacity;
-        numberOfDirs = capacity / 1000;
+        numberOfDirs = capacity / 500;
         dirs = new File[numberOfDirs];
     }
 
@@ -150,16 +150,6 @@ public final class Cache implements Serializable {
     public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
-
-    /**
-     * Returns whether an item with the given key exists and was not invalidated.
-     */
-    public boolean containsValidKey(String key) {
-        if (map.containsKey(key)) {
-            return !map.get(key).isNew();
-        }
-    	return false;
-    }
     
     /**
      * Returns the CacheItem with the given key or creates a new one, if no
@@ -168,18 +158,18 @@ public final class Cache implements Serializable {
      * @param key The cache key
      * @return The CacheItem for the given key
      */
-    public CacheItem getItem(String key) {
+    public CacheEntry getItem(String key) {
     	if (!enabled) {
     		return null;
     	}
-        CacheItem item = map.get(key);
-        if (item == null) {
+        CacheEntry entry = map.get(key);
+        if (entry == null) {
         	synchronized (addItemlock) {
-        		item = map.get(key);
-                if (item == null) {
+        		entry = map.get(key);
+                if (entry == null) {
                 	try {
-	                	item = new CacheItem(key, getNextDir());
-	                	map.put(key, item);
+	                	entry = new CacheEntry(key, getNextDir());
+	                	map.put(key, entry);
 	                	size++;
                 	}
                 	catch (Exception e) {
@@ -190,8 +180,8 @@ public final class Cache implements Serializable {
         	}
         	checkCapacity();
         }
-        item.touch();
-        return item;
+        entry.touch();
+        return entry;
     }
     
     /**
@@ -240,12 +230,12 @@ public final class Cache implements Serializable {
     	else {
     		averageOverflowInterval = (averageOverflowInterval + timeSinceLastOverflow) / 2;
     	}
-		ArrayList<CacheItem> items = new ArrayList<CacheItem>(map.values());
-		Collections.sort(items, itemUsageComparator);
+		ArrayList<CacheEntry> entries = new ArrayList<CacheEntry>(map.values());
+		Collections.sort(entries, itemUsageComparator);
 		int i = (int) Math.ceil(capacity * evictionFactor);
-		Iterator<CacheItem> it = items.iterator();
+		Iterator<CacheEntry> it = entries.iterator();
 		while (it.hasNext() && i > 0) {
-			removeItem(it.next());
+			removeEntry(it.next());
 			i--;
 		}
     }
@@ -253,12 +243,13 @@ public final class Cache implements Serializable {
     /**
      * Removes the given item from the cache.
      */
-    private void removeItem(CacheItem item) {
+    private void removeEntry(CacheEntry entry) {
     	synchronized (addItemlock) {
-	    	map.remove(item.getKey());
+	    	map.remove(entry.getKey());
 	    	size--;
-	   		removeTags(item, item.getTags());			
-	    	item.delete();
+	    	CacheItem item = entry.getItem();
+	   		removeTags(item, item.getTags());
+	   		entry.delete();
     	}
     }
 
@@ -332,8 +323,8 @@ public final class Cache implements Serializable {
     }
     
     protected void invalidateAll() {
-    	for (CacheItem item : map.values()) {
-    		item.invalidate();
+    	for (CacheEntry entry : map.values()) {
+    		entry.getItem().invalidate();
     	}
     }
     
@@ -364,13 +355,13 @@ public final class Cache implements Serializable {
     }
 
     /**
-     * Comparator that compares items by their {@link CacheItem#getLastUsed() 
+     * Comparator that compares items by their {@link CacheItem#getLastAccess() 
      * last-used} date.
      */
-    private static class ItemUsageComparator implements Comparator<CacheItem> {
-    	public int compare(CacheItem item1, CacheItem item2) {
-    		long l1 = item1.getLastUsed();
-    		long l2 = item2.getLastUsed();
+    private static class ItemUsageComparator implements Comparator<CacheEntry> {
+    	public int compare(CacheEntry e1, CacheEntry e2) {
+    		long l1 = e1.getLastAccess();
+    		long l2 = e2.getLastAccess();
     		return (l1 < l2 ? -1 : (l1 == l2 ? 0 : 1));
     	}
     }

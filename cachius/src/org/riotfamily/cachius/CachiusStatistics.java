@@ -29,14 +29,6 @@ public class CachiusStatistics {
 
 	private CacheService service;
 
-	private volatile long maxReadLockAcquisitionTime;
-	
-	private volatile String slowestReadLock;
-	
-	private volatile long maxWriteLockAcquisitionTime;
-	
-	private volatile String slowestWriteLock;
-	
 	private volatile long maxUpdateTime;
 	
 	private volatile String slowestUpdate;
@@ -57,34 +49,16 @@ public class CachiusStatistics {
 		misses.incrementAndGet();
 	}
 	
-	protected void readLockAcquired(CacheItem item, long time) {
-		if (time > maxReadLockAcquisitionTime) {
-			maxReadLockAcquisitionTime = time;
-			slowestReadLock = item.getKey();
-		}
-	}
-	
-	protected void writeLockAcquired(CacheItem item, long time) {
-		if (time > maxWriteLockAcquisitionTime) {
-			maxWriteLockAcquisitionTime = time;
-			slowestWriteLock = item.getKey();
-		}
-	}
-	
-	protected void itemUpdated(CacheItem item, long time) {
+	protected void itemUpdated(CacheEntry entry, long time) {
 		if (time > maxUpdateTime) {
 			maxUpdateTime = time;
-			slowestUpdate = item.getKey();
+			slowestUpdate = entry.getKey();
 		}
 	}
 
 	// Public methods --------------------------------------------------------
 	
 	public void reset() {
-		maxReadLockAcquisitionTime = 0;
-		slowestReadLock = null;
-		maxWriteLockAcquisitionTime = 0;
-		slowestWriteLock = null;
 		maxUpdateTime = 0;
 		slowestUpdate = null;
 		hits.set(0);
@@ -92,22 +66,6 @@ public class CachiusStatistics {
 		service.getCache().resetOverflowStats();
 	}
 	
-	public long getMaxReadLockAcquisitionTime() {
-		return maxReadLockAcquisitionTime;
-	}
-	
-	public String getSlowestReadLock() {
-		return slowestReadLock;
-	}
-	
-	public long getMaxWriteLockAcquisitionTime() {
-		return maxWriteLockAcquisitionTime;
-	}
-	
-	public String getSlowestWriteLock() {
-		return slowestWriteLock;
-	}
-
 	public long getMaxUpdateTime() {
 		return maxUpdateTime;
 	}

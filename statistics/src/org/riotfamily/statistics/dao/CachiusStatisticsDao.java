@@ -52,11 +52,5 @@ public class CachiusStatisticsDao extends AbstractSimpleStatsDao {
 		
 		stats.add("Max update time [ms]", cachius.getMaxUpdateTime());
 		stats.add("Slowest update", cachius.getSlowestUpdate());
-		
-		stats.add("Max read lock acquisition time [ms]", cachius.getMaxReadLockAcquisitionTime());
-		stats.add("Slowest read lock acquisition", cachius.getSlowestReadLock());
-		
-		stats.add("Max write lock acquisition time [ms]", cachius.getMaxWriteLockAcquisitionTime());
-		stats.add("Slowest write lock acquisition", cachius.getSlowestWriteLock());
 	}
 }

@@ -42,8 +42,6 @@ import java.io.Writer;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
@@ -75,9 +73,6 @@ public class CacheItem implements Serializable {
     
     private transient RiotLog log = RiotLog.get(CacheItem.class);
     
-    /** The key used for lookups */
-    private String key;
-    
     /** Set of tags to categorize the item */
     private Set<String> tags;
     
@@ -102,41 +97,27 @@ public class CacheItem implements Serializable {
     /** Flag indicating whether the content is binary or character data */
     private boolean binary = true;
     
-    /** 
-     * ReadWriteLock to prevent concurrent threads from updating
-     * the cached content while others are reading.
-     */
-    private transient ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
-    
-    /** Time of the last usage */
-    private long lastUsed;
-    
     /** Time of the last modification */
     private long lastModified;
     
-    /** Time of the last up-to-date check */
-    private long lastCheck;
-
+    /** Time when the item will expire */
+    private long expires;
+    
+    /** Whether the item has been invalidated */
+    private boolean invalidated;
+    
     /** Whether to set Content-Length header or not */
 	private boolean setContentLength;
     
     
     /**
-     * Creates a new CacheItem with the given key in the specified directory.
+     * Creates a new CacheItem in the specified directory.
      */
-    protected CacheItem(String key, File cacheDir) throws IOException {
-        this.key = key;
+    protected CacheItem(File cacheDir) throws IOException {
         file = File.createTempFile(ITEM_PREFIX, ITEM_SUFFIX, cacheDir);
         lastModified = NOT_YET;
     }
         
-    /**
-     * Returns the key.
-     */
-    public String getKey() {
-        return key;
-    }
-       
     /**
      * Sets tags which can be used to look up the item for invalidation.
      */
@@ -169,7 +150,10 @@ public class CacheItem implements Serializable {
 		return this.involvedFiles;
 	}
     
-    public long getLastFileModified() {
+    /**
+     * Returns the most recent modification date of the involved files.  
+     */
+    public long getLastFileModification() {
     	long mtime = -1;
     	if (involvedFiles != null) {
     		for (File file : involvedFiles) {
@@ -184,30 +168,7 @@ public class CacheItem implements Serializable {
     	}
     	return mtime;
     }
-	
-	/**
-	 * Returns whether the item is new. An item is considered as new if the
-	 * {@link #getLastModified() lastModified} timestamp is set to 
-	 * {@value #NOT_YET}.  
-	 */
-	public boolean isNew() {
-        return lastModified == NOT_YET;
-    }
-    
-    /**
-     * Sets the lastUsed timestamp to the current time.
-     */
-    protected void touch() {
-    	this.lastUsed = System.currentTimeMillis();
-    }
-    
-    /**
-	 * Returns the last usage time.
-	 */
-	public long getLastUsed() {
-		return this.lastUsed;
-	}
-    
+	    
     /**
      * Returns the last modification time.
      */
@@ -220,47 +181,52 @@ public class CacheItem implements Serializable {
      */
 	public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
+        this.invalidated = false;
     }
 
 	/**
-	 * Invalidates the item by setting the {@link #setLastModified(long) 
-	 * lastModified} timestamp to {@value #NOT_YET}.
+	 * Invalidates the item.
 	 */
 	public void invalidate() {
-    	lastModified = NOT_YET;
+    	this.invalidated = true;
     	if (log.isDebugEnabled()) {
     		log.debug(this + " has been invalidated");
     	}
     }
 	
-	/**
-	 * Returns the time when the last up-to-date check was performed.
-	 */
-	public long getLastCheck() {
-		return this.lastCheck;
+	public boolean isInvalidated() {
+		return invalidated;
 	}
+	
+	public void setTimeToLive(long ttl) {
+		this.expires = ttl == -1 ? -1 : System.currentTimeMillis() + ttl;
+	}
+	
+    public boolean isExpired() {
+    	return (expires == -1 && invalidated) 
+    		|| (expires >= 0 && System.currentTimeMillis() > expires) 
+    		|| !exists(); 
+    }
 
 	/**
-	 * Sets the time of the last up-to-date check.
-	 */
-	protected void setLastCheck(long lastCheck) {
-		this.lastCheck = lastCheck;
-	}
-
-    /**
-     * Checks whether the cache file exists an is a regular file.
+     * Checks whether the cache file exists, is a regular file and any
+     * data has been ever written into it.
      */
 	public boolean exists() {
-        return file != null && file.isFile();
+        return file.isFile() && lastModified > NOT_YET;
     }
     
 	/**
 	 * Returns the size of the cached data in bytes.
 	 */
 	public int getSize() {
-		return file != null ? (int) file.length() : 0;
+		return (int) file.length();
 	}
-    
+
+	protected File getDir() {
+		return file.getParentFile();
+	}
+	
 	/**
 	 * Sets the Content-Type.
 	 */
@@ -306,13 +272,6 @@ public class CacheItem implements Serializable {
 	 */
 	public Map<String, String> getProperties() {
 		return properties;
-	}
-	
-	/**
-	 * Returns the lock. 
-	 */
-	protected ReentrantReadWriteLock getLock() {
-		return this.lock;
 	}
 	
     public Writer getWriter() 
@@ -398,48 +357,21 @@ public class CacheItem implements Serializable {
     }
 
     protected void delete() {
-    	WriteLock writeLock = lock.writeLock();
-    	writeLock.lock();
-    	try {
-            if (file.exists()) {
-        		if (!file.delete()) {
-        			log.warn("Failed to delete cache file: " + file);
-        		}
-        	}
-        }
-        finally {
-            writeLock.unlock();
-        }
+        if (file.exists()) {
+    		if (!file.delete()) {
+    			log.warn("Failed to delete cache file: " + file);
+    		}
+    	}
     }
          
     /**
-     * Calls <code>in.defaultReadObject()</code> and creates a new lock.
+     * Calls <code>in.defaultReadObject()</code> and creates a new log.
      */ 
     private void readObject(ObjectInputStream in) throws IOException, 
             ClassNotFoundException {
          
          in.defaultReadObject();
-         lock = new ReentrantReadWriteLock(true);
          log = RiotLog.get(CacheItem.class);
     }
     
-    public int hashCode() {
-        return key.hashCode();
-    }
-    
-    public boolean equals(Object obj) {
-    	if (obj == this) {
-    		return true;
-    	}
-    	if (obj instanceof CacheItem) {
-    		CacheItem other = (CacheItem) obj;
-    		return key.equals(other.key);
-    	}
-    	return false;
-    }
-    
-    public String toString() {
-    	return key;
-    }
-
 }

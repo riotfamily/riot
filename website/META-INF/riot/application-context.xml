@@ -26,6 +26,8 @@
 		</description>
         <constructor-arg ref="websiteCache" />
         <property name="checkInvolvedFiles" value="${riot.resources.reloadable=false}" />
+        <property name="staleWhileRevalidate" value="${riot.websiteCache.staleWhileRevalidate=false}" />
+        <property name="staleUnlessExpired" value="${riot.websiteCache.staleUnlessExpired=false}" />
     </bean>
     
     <bean class="org.riotfamily.website.cache.CacheTagEntityListener">

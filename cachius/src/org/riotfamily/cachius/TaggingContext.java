@@ -196,7 +196,7 @@ public class TaggingContext {
 			if (context != null) {
 				context.addTags(cacheItem.getTags());
 				context.addInvolvedFiles(cacheItem.getInvolvedFiles());
-				context.setPreventCaching(cacheItem.isNew());
+				//REVISIT context.setPreventCaching(cacheItem.isNew());
 			}
 		}
 	}
