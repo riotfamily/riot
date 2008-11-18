@@ -75,7 +75,8 @@ public abstract class AbstractSingleSelectElement
 	
 	protected void updateSelection(Collection<?> optionValues) {
 		if (optionValues != null && selectedValue != null) {
-			for (Object value : optionValues) {
+			for (Object item : optionValues) {
+				Object value = getOptionValue(item);
 				if (selectedValue.equals(value)) {
 					selectedValue = value;
 					return;
