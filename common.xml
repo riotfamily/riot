@@ -68,7 +68,7 @@
 		<available file="${root.dir}/ivysettings-local.xml" property="ivysettings" value="${root.dir}/ivysettings-local.xml" />
 		<property name="ivysettings" value="${ivysettings-default}" />
 
-		<ivy:settings id="ivy.instance" file="${ivysettings}" />
+		<ivy:configure id="ivy.instance" file="${ivysettings}" override="true" />
 		<property name="ivy.configured" value="true" />
 	</target>
 
