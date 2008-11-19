@@ -41,25 +41,37 @@ var Txt2ImgConfig = Class.create({
 	},
 
 	createHoverRules: function() {
-		$A(document.styleSheets).each(function(sheet) {
-			$A(sheet.rules || sheet.cssRules).each(function(rule) {
-				if (rule.selectorText) {
-					rule.selectorText.split(',').each(function(sel) {
-						if (sel.include(':hover')) {
-							if (rule.style.color) {
-								var newSel = sel.replace(/:hover/, ' .txt2imgHover');
-								var newStyle = 'color: ' + rule.style.color;
-								if (sheet.insertRule) {
-									sheet.insertRule(newSel + ' {' + newStyle + '}', sheet.cssRules.length);
-								}
-								else if (sheet.addRule) {
-									sheet.addRule(newSel, newStyle);
-								}
+		var processRule = function(sheet, rule) {
+			if (rule.selectorText) {
+				rule.selectorText.split(',').each(function(sel) {
+					if (sel.include(':hover')) {
+						if (rule.style.color) {
+							var newSel = sel.replace(/:hover/, ' .txt2imgHover');
+							var newStyle = 'color: ' + rule.style.color;
+							if (sheet.insertRule) {
+								sheet.insertRule(newSel + ' {' + newStyle + '}', sheet.cssRules.length);
+							}
+							else if (sheet.addRule) {
+								sheet.addRule(newSel, newStyle);
 							}
 						}
-					});
+					}
+				});
+			}
+			else {
+				if (rule.cssRules) {
+					var a = $A(rule.cssRules);
+					for (var i = 0; i < a.length; i++) {
+						processRule(sheet, a[i]);
+					}
 				}
-			});
+			}
+		};
+		$A(document.styleSheets).each(function(sheet) {
+			var a = $A(sheet.rules || sheet.cssRules);
+			for (var i = 0; i < a.length; i++) {
+				processRule(sheet, a[i]);
+			}
 		});
 	},
 
