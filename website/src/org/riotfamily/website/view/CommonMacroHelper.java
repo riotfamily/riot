@@ -162,14 +162,16 @@ public class CommonMacroHelper {
 		return ctx.getMessage(code.trim(), args.toArray(), null, getLocale());
 	}
 	
-	public String getMessageWithDefault(String code, String defaultMessage, Collection<?> args) {
+	public String getMessageWithDefault(String code, String defaultMessage, 
+			Collection<?> args, Locale locale) {
+		
 		if (!StringUtils.hasText(defaultMessage)) {
 			defaultMessage = null;
 		}
 		else {
 			defaultMessage = FormatUtils.stripWhitespaces(defaultMessage);
 		}
-		return ctx.getMessage(code.trim(), args.toArray(), defaultMessage, getLocale());
+		return ctx.getMessage(code.trim(), args.toArray(), defaultMessage, locale);
 	}
 	
 	public String getMessage(MessageSourceResolvable resolvable) {

@@ -347,10 +347,10 @@
 </#function>
 
 <#function getMessageWithDefault code default args...>
-	<#return commonMacroHelper.getMessageWithDefault(code, default, args) />
+	<#return commonMacroHelper.getMessageWithDefault(code, default, args, locale) />
 </#function>
 
-<#macro message code args=[]><#local default><#nested></#local>${commonMacroHelper.getMessageWithDefault(code, default, args)}</#macro>
+<#macro message code args=[] locale=locale><#local default><#nested></#local>${commonMacroHelper.getMessageWithDefault(code, default, args, locale)}</#macro>
 
 <#---
   - @internal
