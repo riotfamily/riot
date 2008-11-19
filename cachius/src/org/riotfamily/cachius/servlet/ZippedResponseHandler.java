@@ -52,11 +52,17 @@ public abstract class ZippedResponseHandler extends ResponseCapturingHandler {
 	
 	private Boolean zip;
 	
+	private int minSize = 0;
+	
 	public ZippedResponseHandler(HttpServletRequest request, 
 			HttpServletResponse response, 
 			CacheKeyAugmentor cacheKeyAugmentor) {
 		
 		super(request, response, cacheKeyAugmentor);
+	}
+	
+	public void setMinSize(int minSize) {
+		this.minSize = minSize;
 	}
 	
 	protected boolean shouldZip() {
@@ -83,15 +89,16 @@ public abstract class ZippedResponseHandler extends ResponseCapturingHandler {
 	}
 
 	protected final void postProcess(CacheItem cacheItem) throws IOException {
-		if (cacheItem.getSize() > 0) {
-			if (shouldZip()) {
-				Headers headers = cacheItem.getHeaders();
-				headers.set("Vary", "Accept-Encoding, User-Agent");
-				if (isZip()) {
-					cacheItem.gzipContent();
-					headers.set("Content-Encoding", "gzip");
-				}
-			}					
+		Headers headers = cacheItem.getHeaders();
+		if (shouldZip() && cacheItem.getSize() > minSize) {
+			headers.set("Vary", "Accept-Encoding, User-Agent");
+			if (isZip()) {
+				cacheItem.gzipContent();
+				headers.set("Content-Encoding", "gzip");
+			}
+		}
+		else {
+			headers.remove("Content-Encoding");
 		}
 	}
 		

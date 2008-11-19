@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -71,6 +72,16 @@ public class Headers implements Serializable {
 		set(name, format.format(new Date(date)));
 	}
 
+	public void remove(String name) {
+		Iterator<Header> it = headers.iterator();
+		while (it.hasNext()) {
+			Header header = it.next();
+			if (header.getName().equals(name)) {
+				it.remove();
+			}
+		}
+	}
+	
 	public void addToResponse(HttpServletResponse response) {
 		for (Header header : headers) {
 			header.addToResponse(response);

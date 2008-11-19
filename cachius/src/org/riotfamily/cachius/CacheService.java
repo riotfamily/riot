@@ -178,16 +178,19 @@ public class CacheService {
     private void capture(CacheEntry entry, long mtime, 
     		CacheHandler handler) throws Exception {
     	
+    	CacheItem item = entry.getItem();
     	if (log.isDebugEnabled()) {
-    		log.debug("Updating cache item " + entry.getKey());
+    		log.debug("Updating cache item %s", item);
     	}
-		
-    	if (staleWhileRevalidate && entry.getItem().exists()) {
+		long t1 = System.currentTimeMillis();
+    	if (staleWhileRevalidate && item.exists()) {
     		nonBlockingCapture(entry, mtime, handler);
     	}
     	else {
     		blockingCapture(entry, mtime, handler);
     	}
+    	long t2 = System.currentTimeMillis();
+    	stats.itemUpdated(item, t2 - t1);
     }
     
     private void nonBlockingCapture(CacheEntry entry, long mtime, 

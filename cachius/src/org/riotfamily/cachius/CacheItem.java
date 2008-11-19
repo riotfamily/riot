@@ -73,6 +73,8 @@ public class CacheItem implements Serializable {
     
     private transient RiotLog log = RiotLog.get(CacheItem.class);
     
+    private CacheEntry entry;
+    
     /** Set of tags to categorize the item */
     private Set<String> tags;
     
@@ -113,9 +115,10 @@ public class CacheItem implements Serializable {
     /**
      * Creates a new CacheItem in the specified directory.
      */
-    protected CacheItem(File cacheDir) throws IOException {
-        file = File.createTempFile(ITEM_PREFIX, ITEM_SUFFIX, cacheDir);
-        lastModified = NOT_YET;
+    protected CacheItem(CacheEntry entry, File cacheDir) throws IOException {
+    	this.entry = entry;
+        this.file = File.createTempFile(ITEM_PREFIX, ITEM_SUFFIX, cacheDir);
+        this.lastModified = NOT_YET;
     }
         
     /**
@@ -374,4 +377,8 @@ public class CacheItem implements Serializable {
          log = RiotLog.get(CacheItem.class);
     }
     
+    @Override
+    public String toString() {
+    	return entry.getKey();
+    }
 }

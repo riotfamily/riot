@@ -49,10 +49,10 @@ public class CachiusStatistics {
 		misses.incrementAndGet();
 	}
 	
-	protected void itemUpdated(CacheEntry entry, long time) {
+	protected void itemUpdated(CacheItem item, long time) {
 		if (time > maxUpdateTime) {
 			maxUpdateTime = time;
-			slowestUpdate = entry.getKey();
+			slowestUpdate = item.toString();
 		}
 	}
 

@@ -42,6 +42,8 @@ public class CacheEntry {
 	/** The key used for lookups */
     private String key;
     
+    private File cacheDir;
+    
     private CacheItem item;
     
     /** Time of the last access */
@@ -56,7 +58,8 @@ public class CacheEntry {
     
     public CacheEntry(String key, File cacheDir) throws IOException {
     	this.key = key;
-    	this.item = new CacheItem(cacheDir);
+    	this.cacheDir = cacheDir;
+    	this.item = newItem();
 	}
 
 	/**
@@ -76,7 +79,7 @@ public class CacheEntry {
 	}
 	
 	public CacheItem newItem() throws IOException {
-		return new CacheItem(item.getDir());
+		return new CacheItem(this, cacheDir);
 	}
 	
 	/**
