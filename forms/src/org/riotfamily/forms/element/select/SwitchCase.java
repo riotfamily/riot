@@ -54,7 +54,6 @@ public class SwitchCase extends ElementGroup implements BeanEditor {
 	}
 
 	public void setSwitchBinding(EditorBinding binding) {
-		editorBinder.setDelegate(binding.getEditorBinder());
 		propertyPath = binding.getPropertyPath() + '.' + value;
 	}
 	
@@ -64,6 +63,10 @@ public class SwitchCase extends ElementGroup implements BeanEditor {
 	
 	public void populateBackingObject() {
 		editorBinder.populateBackingObject();
+	}
+	
+	public void clear() {
+		editorBinder.clear();
 	}
 	
 	public void activate() {
@@ -108,38 +111,48 @@ public class SwitchCase extends ElementGroup implements BeanEditor {
 
 		private EditorBinder delegate;
 	
-		public void setDelegate(EditorBinder delegate) {
-			this.delegate = delegate;
+		private EditorBinder getDelegate() {
+			if (delegate == null) {
+				ElementSwitch parent = (ElementSwitch) getParent();
+				delegate = parent.getEditorBinding().getEditorBinder();
+			}
+			return delegate;
 		}
 		
 		@Override
 		public Class<?> getPropertyType(String path) {
-			return delegate.getPropertyType(path);
+			return getDelegate().getPropertyType(path);
 		}
 
 		public Object getBackingObject() {
-			return delegate.getBackingObject();
+			return getDelegate().getBackingObject();
 		}
 
 		public Class<?> getBeanClass() {
-			return delegate.getBeanClass();
+			return getDelegate().getBeanClass();
 		}
 
 		public Object getPropertyValue(String property) {
-			return delegate.getPropertyValue(property);
+			return getDelegate().getPropertyValue(property);
 		}
 
 		public boolean isEditingExistingBean() {
-			return delegate.isEditingExistingBean();
+			return getDelegate().isEditingExistingBean();
 		}
 
 		public void setPropertyValue(String property, Object value) {
-			delegate.setPropertyValue(property, value);
+			getDelegate().setPropertyValue(property, value);
 		}
 		
 		@Override
 		protected String getPropertyPath(Editor editor, String property) {
 			return propertyPath + '.' + property;
+		}
+		
+		private void clear() {
+			for (String property : getBoundProperties()) {
+				setPropertyValue(property, null);
+			}
 		}
 		
 	}

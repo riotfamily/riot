@@ -98,6 +98,11 @@ public class ElementSwitch extends Container
 	// ---------------------------------------------------------------------
 	
 	public Object getValue() {
+		for(SwitchCase c : cases.values()) {
+			if (c != activeCase) {
+				c.clear();
+			}
+		}
 		activeCase.populateBackingObject();
 		return selectBox.getValue();
 	}
