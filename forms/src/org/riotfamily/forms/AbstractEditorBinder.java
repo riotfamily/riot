@@ -90,15 +90,19 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 			int i = property.indexOf('.');
 			if (i != -1) {
 				String nested = property.substring(i + 1);
-				property = property.substring(0, i);
-				Editor editor = findEditorByProperty(property);
-				if (editor instanceof NestedEditor) {
-					NestedEditor ne = (NestedEditor) editor;
-					return ne.getEditor(nested);
+				try {
+					Editor editor = findEditorByProperty(property.substring(0, i));
+					if (editor instanceof NestedEditor) {
+						NestedEditor ne = (NestedEditor) editor;
+						return ne.getEditor(nested);
+					}
+					else {
+						throw new IllegalStateException("Editor for " + property 
+								+ " must implement the NestedEditor interface");
+					}
 				}
-				else {
-					throw new IllegalStateException("Editor for " + property 
-							+ " must implement the NestedEditor interface");
+				catch (InvalidPropertyException e) {
+					//nested editor was not defined, fall back to direct binding
 				}
 			}
 			return findEditorByProperty(property);
