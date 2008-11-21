@@ -312,9 +312,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 				"The page has been modified by another user{0}. Please "
 				+ "<a href=\"{1}\">reload</a> the page in order "
 				+ "to see the changes.", locale);
-		
-		log.info(message);
-		
+				
 		ScriptBuffer script = new ScriptBuffer();
 		script.appendScript("riot.showNotification(").appendData(message).appendScript(");");
 		String page = WebContextFactory.get().getCurrentPage();
@@ -322,7 +320,7 @@ public class ComponentEditorImpl implements ComponentEditor,
 		Collection<ScriptSession> sessions = ServerContextFactory.get(servletContext).getScriptSessionsByPage(page);
 		for (ScriptSession session : sessions) {
 			if (!session.equals(currentSession)) {
-				log.info("Notifying session %s", session.getId());
+				log.info("Notifying session %s: %s", session.getId(), message);
 				session.addScript(script);
 			}
 		}
