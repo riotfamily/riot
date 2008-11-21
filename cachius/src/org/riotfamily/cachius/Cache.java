@@ -235,6 +235,7 @@ public final class Cache implements Serializable {
 			removeItem(item);
 			i--;
 		}
+    	log.info("Cleanup finished");
     }
     
     /**
