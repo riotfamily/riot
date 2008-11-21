@@ -53,5 +53,6 @@
 	<classpathentry kind="lib" path="lib/hibernate.jar" sourcepath="lib/hibernate.src.zip"/>
 	<classpathentry kind="lib" path="lib/persistence.jar"/>
 	<classpathentry kind="lib" path="lib/poi.jar"/>
+	<classpathentry kind="lib" path="lib/javamail.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
