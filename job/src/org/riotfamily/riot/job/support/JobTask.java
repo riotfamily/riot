@@ -167,7 +167,7 @@ public class JobTask implements Runnable {
 	 * Logs an error message.
 	 */
 	public void logError(String message) {
-		jobLog.error(message);
+		jobLog.warn(message);
 		log(message, JobLogEntry.ERROR);
 	}
 	
