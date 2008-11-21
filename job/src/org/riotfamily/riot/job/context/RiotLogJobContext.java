@@ -48,7 +48,7 @@ public class RiotLogJobContext implements JobContext {
 	}
 
 	public void logError(String message) {
-		log.error(message);
+		log.warn(message);
 	}
 
 	public void logInfo(String message) {
