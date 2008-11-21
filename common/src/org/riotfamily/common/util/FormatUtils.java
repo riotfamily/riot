@@ -389,6 +389,28 @@ public final class FormatUtils {
 	}
 
 	/**
+	 * Returns the the path without a leading slash.
+	 * @since 7.0 - backported
+	 */
+	public static String stripLeadingSlash(String path) {
+		if (path != null && path.startsWith("/")) {
+			path = path.substring(1);
+		}
+		return path;
+	}
+
+	/**
+	 * Returns the the path without a trailing slash.
+	 * @since 7.0 - backported
+	 */
+	public static String stripTrailingSlash(String path) {
+		if (path != null && path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
+		return path;
+	}
+
+	/**
 	 * Parses a formatted String and returns the date. The date to parse starts
 	 * with today. You can use one of the following sufixes:
 	 *
