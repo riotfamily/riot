@@ -55,6 +55,8 @@ public class HibernatePageDao extends AbstractPageDao {
 
 	private HibernateHelper hibernate;
 
+	private String hibernateCacheRegion = "page_queries"; 
+
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.hibernate = new HibernateHelper(sessionFactory, "pages");
 	}
@@ -84,19 +86,19 @@ public class HibernatePageDao extends AbstractPageDao {
 	}
 	
 	public List listSites() {
-		Criteria c = hibernate.createCacheableCriteria(Site.class);
+		Criteria c = hibernate.createCacheableCriteria(hibernateCacheRegion, Site.class);
 		c.addOrder(Order.asc("position"));
 		return hibernate.list(c);
 	}
 
 	public Site getDefaultSite() {
-		Criteria c = hibernate.createCacheableCriteria(Site.class);
+		Criteria c = hibernate.createCacheableCriteria(hibernateCacheRegion, Site.class);
 		c.setMaxResults(1);
 		return (Site) hibernate.uniqueResult(c);
 	}
 	
 	public PageNode getRootNode() {
-		Criteria c = hibernate.createCacheableCriteria(PageNode.class);
+		Criteria c = hibernate.createCacheableCriteria(hibernateCacheRegion, PageNode.class);
 		c.add(Restrictions.isNull("parent"));
 		PageNode rootNode = (PageNode) hibernate.uniqueResult(c);
 		if (rootNode == null) {
@@ -107,34 +109,34 @@ public class HibernatePageDao extends AbstractPageDao {
 	}
 
 	public Page findPage(Site site, String path) {
-		Criteria c = hibernate.createCacheableCriteria(Page.class);
+		Criteria c = hibernate.createCacheableCriteria(hibernateCacheRegion, Page.class);
 		c.add(Restrictions.eq("site", site));
 		c.add(Restrictions.eq("path", path));
 		return (Page) hibernate.uniqueResult(c);
 	}
 
 	public PageNode findNodeForHandler(String handlerName) {
-		Criteria c = hibernate.createCacheableCriteria(PageNode.class);
+		Criteria c = hibernate.createCacheableCriteria(hibernateCacheRegion, PageNode.class);
 		c.createCriteria("node").add(Restrictions.eq("handlerName", handlerName));
 		return (PageNode) hibernate.uniqueResult(c);
 	}
 
 	public Page findPageForHandler(String handlerName, Site site) {
-		Criteria c = hibernate.createCacheableCriteria(Page.class);
+		Criteria c = hibernate.createCacheableCriteria(hibernateCacheRegion, Page.class);
 		c.add(Restrictions.eq("site", site));
 		c.createCriteria("node").add(Restrictions.eq("handlerName", handlerName));
 		return (Page) hibernate.uniqueResult(c);
 	}
 
 	public List findPagesForHandler(String handlerName, Site site) {
-		Criteria c = hibernate.createCacheableCriteria(Page.class);
+		Criteria c = hibernate.createCacheableCriteria(hibernateCacheRegion, Page.class);
 		c.add(Restrictions.eq("site", site));
 		c.createCriteria("node").add(Restrictions.eq("handlerName", handlerName));
 		return hibernate.list(c);
 	}
 	
 	public List getWildcardPaths(Site site) {
-		Criteria c = hibernate.createCacheableCriteria(Page.class);
+		Criteria c = hibernate.createCacheableCriteria(hibernateCacheRegion, Page.class);
 		c.setProjection(Projections.property("path"));
 		c.add(Restrictions.eq("wildcardInPath", Boolean.TRUE));
 		c.add(Restrictions.eq("site", site));
@@ -142,7 +144,7 @@ public class HibernatePageDao extends AbstractPageDao {
 	}
 
 	public PageAlias findPageAlias(Site site, String path) {
-		Criteria c = hibernate.createCacheableCriteria(PageAlias.class);
+		Criteria c = hibernate.createCacheableCriteria(hibernateCacheRegion, PageAlias.class);
 		c.add(Restrictions.eq("site", site));
 		c.add(Restrictions.eq("path", path));
 		return (PageAlias) hibernate.uniqueResult(c);

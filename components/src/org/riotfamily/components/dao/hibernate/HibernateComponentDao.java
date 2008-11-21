@@ -47,6 +47,8 @@ public class HibernateComponentDao implements ComponentDao {
 
 	private HibernateHelper hibernate;
 
+	private String hibernateCacheRegion = "component_queries"; 
+
 	public HibernateComponentDao() {
 	}
 
@@ -59,8 +61,8 @@ public class HibernateComponentDao implements ComponentDao {
 	}
 
 	public ComponentList findComponentList(Location location) {
-		Query query = hibernate.createCacheableQuery("from "
-				+ ComponentList.class.getName()	+ " list where "
+		Query query = hibernate.createCacheableQuery(hibernateCacheRegion,
+				"from "	+ ComponentList.class.getName()	+ " list where "
 				+ "list.location = :location and list.parent is null");
 
 		hibernate.setParameter(query, "location", location);
@@ -68,8 +70,8 @@ public class HibernateComponentDao implements ComponentDao {
 	}
 
 	public ComponentList findComponentList(VersionContainer parent, String slot) {
-		Query query = hibernate.createCacheableQuery("from "
-				+ ComponentList.class.getName() + " list where list.parent = "
+		Query query = hibernate.createCacheableQuery(hibernateCacheRegion,
+				"from " + ComponentList.class.getName() + " list where list.parent = "
 				+":parent and list.location.slot = :slot");
 
 		hibernate.setParameter(query, "parent", parent);
@@ -78,8 +80,8 @@ public class HibernateComponentDao implements ComponentDao {
 	}
 
 	public List findComponentLists(String type, String path) {
-		Query query = hibernate.createCacheableQuery("from "
-				+ ComponentList.class.getName() + " list where "
+		Query query = hibernate.createCacheableQuery(hibernateCacheRegion,
+				"from "	+ ComponentList.class.getName() + " list where "
 				+ "list.location.type = :type "
 				+ "and list.location.path = :path "
 				+ "and list.parent is null");
@@ -90,8 +92,8 @@ public class HibernateComponentDao implements ComponentDao {
 	}
 
 	public List findDirtyComponentLists() {
-		Query query = hibernate.createCacheableQuery("from "
-				+ ComponentList.class.getName()
+		Query query = hibernate.createCacheableQuery(hibernateCacheRegion,
+				"from "	+ ComponentList.class.getName()
 				+ " list where list.dirty = true");
 
 		return hibernate.list(query);
