@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.web.controller.RedirectController;
 import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.common.web.filter.PluginChain;
 import org.riotfamily.common.web.mapping.AttributePattern;
@@ -117,14 +118,12 @@ public class FolderFilterPlugin extends FilterPlugin {
 
 	private boolean sendRedirect(String hostName, String path, 
 			HttpServletRequest request, HttpServletResponse response)
-			throws IOException {
+			throws IOException, ServletException {
 		
 		Site site = pageDao.findSite(hostName, path);
 		if (site == null) {
 			if (siteChooserUrl != null) {
-				response.sendRedirect(response.encodeRedirectURL(
-						request.getContextPath() + siteChooserUrl));
-				
+				request.getRequestDispatcher(siteChooserUrl).forward(request, response);
 				return true;
 			}
 			return false;
@@ -135,7 +134,7 @@ public class FolderFilterPlugin extends FilterPlugin {
 		}
 		if (path.length() == 0) {
 			Collection topLevelPages = pageDao.getRootNode().getChildPages(site);
-			sendRedirect(topLevelPages, request, response);
+			forward(topLevelPages, request, response);
 			return true;
 		}
 		
@@ -171,12 +170,34 @@ public class FolderFilterPlugin extends FilterPlugin {
 	}
 	
 	private void sendRedirect(Collection pages, HttpServletRequest request, 
-			HttpServletResponse response) throws IOException {
+			HttpServletResponse response) throws IOException, ServletException {
 		
 		String url = getFirstRequestablePageUrl(pages);
 		if (url != null) {
-			response.sendRedirect(response.encodeRedirectURL(
-					request.getContextPath() + url));
+			try {
+				new RedirectController(url, true, false, true).handleRequest(request, response);
+			}
+			catch (IOException e) {
+				throw e;
+			}
+			catch (ServletException e) {
+				throw e;
+			}
+			catch (Exception e) {
+				throw new ServletException(e);
+			}
+		}
+		else {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		}
+	}
+	
+	private void forward(Collection pages, HttpServletRequest request, 
+			HttpServletResponse response) throws IOException, ServletException {
+		
+		String url = getFirstRequestablePageUrl(pages);
+		if (url != null) {
+			request.getRequestDispatcher(url).forward(request, response);
 		}
 		else {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);

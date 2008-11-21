@@ -82,7 +82,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 			throws Exception {
 
 		String hostName = request.getServerName();
-		String path = ServletUtils.getOriginatingPathWithoutServletMapping(request);
+		String path = ServletUtils.getPathWithoutServletMapping(request);
 		Site site = pageDao.findSite(hostName, path);
 		if (site == null) {
 			return null;
@@ -155,7 +155,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 			Page page = (Page) it.next();
 			if (page.isRequestable()) {
 				String url = pageUrlBuilder.getUrl(page);
-				return new RedirectController(url, true, false);
+				return new RedirectController(url, true, false, true);
 			}
 		}
 		return null;
