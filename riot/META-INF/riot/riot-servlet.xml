@@ -240,6 +240,10 @@
 	<bean id="imageRenderer" class="org.riotfamily.common.web.ui.ImageRenderer" />
 
 	<bean id="mediumDateRenderer" class="org.riotfamily.common.web.ui.DateRenderer" />
+	
+	<bean id="dateTimeRenderer" class="org.riotfamily.common.web.ui.DateRenderer">
+		<property name="pattern" value="dd.MM.yy HH:mm:ss" />
+	</bean>
 
 	<bean id="localeRenderer" class="org.riotfamily.common.web.ui.LocaleRenderer" />
 
