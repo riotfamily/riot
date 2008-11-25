@@ -149,7 +149,9 @@ public abstract class AbstractEditorBinder extends PropertyEditorRegistrySupport
 		while (it.hasNext()) {
 			EditorBinding binding = (EditorBinding) it.next();
 			Object value = binding.getEditor().getValue();
-			setPropertyValue(binding.getProperty(), value);
+			if (binding.getEditor().isEnabled()) {
+	                        setPropertyValue(binding.getProperty(), value);
+			}
 		}
 		return getBackingObject();
 	}
