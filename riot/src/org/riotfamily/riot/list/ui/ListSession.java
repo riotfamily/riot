@@ -604,6 +604,9 @@ public class ListSession implements RenderContext {
 			}
 			else {
 				context.setParent(loadParent(), this.parentId, this.parentEditorId);
+				if (item != null) {
+					context.setBean(null, item.getObjectId());
+				}
 			}			
 		}
 		else {
