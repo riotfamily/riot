@@ -247,8 +247,7 @@ public final class Cache implements Serializable {
     	synchronized (addItemlock) {
 	    	map.remove(entry.getKey());
 	    	size--;
-	    	CacheItem item = entry.getItem();
-	   		removeTags(item, item.getTags());
+	   		removeFromIndex(entry.getItem());
 	   		entry.delete();
     	}
     }
@@ -261,10 +260,10 @@ public final class Cache implements Serializable {
     }
     
     /**
-     * Removes the given item from all specified tag lists. If item is the last
-     * entry in a tag-list, the whole list is removed from the taggedItems map.
+     * Removes the item from the internal tag index.
      */
-    protected void removeTags(CacheItem item, Set<String> tags) {
+    protected void removeFromIndex(CacheItem item) {
+    	Set<String> tags = item.getTags();
     	if (tags != null) {
     		for (String tag : tags) {
 		    	List<CacheItem> items = getTaggedItems(tag);
@@ -281,9 +280,10 @@ public final class Cache implements Serializable {
     }
     
     /**
-     * Adds the given item to the specified tag lists.
+     * Adds the item to the internal tag index.  
      */
-    protected void addTags(CacheItem item, Set<String> tags) {
+    protected void addToIndex(CacheItem item) {
+    	Set<String> tags = item.getTags();
     	if (tags != null) {
     		for (String tag : tags) {
 		    	List<CacheItem> items = getTaggedItems(tag);

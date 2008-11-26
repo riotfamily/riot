@@ -24,13 +24,10 @@
 package org.riotfamily.cachius;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.util.Generics;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -220,7 +217,7 @@ public class CacheService {
 		
 		log.debug("Performing non-blocking update ...");
 		CacheItem newItem = entry.newItem();
-		boolean update = updateCacheItem(handler, newItem);
+		boolean update = updateCacheItem(handler, oldItem, newItem);
 		
 		if (update) {
 			writeLock = entry.getLock().writeLock();
@@ -255,7 +252,7 @@ public class CacheService {
 				TaggingContext.inheritFrom(item);
 			}
 			else {
-				updateCacheItem(handler, item);
+				updateCacheItem(handler, item, item);
 				item.setLastModified(mtime);
 				item.setTimeToLive(handler.getTimeToLive());
 			}
@@ -269,39 +266,27 @@ public class CacheService {
     }
     
     private boolean updateCacheItem(CacheHandler handler,
-    		CacheItem cacheItem) throws Exception {
+    		CacheItem oldItem, CacheItem newItem) throws Exception {
     	
     	TaggingContext ctx = TaggingContext.openNestedContext();
-		boolean update = handler.updateCacheItem(cacheItem);
+		boolean update = handler.updateCacheItem(newItem);
 		ctx.close();
 		if (update && !ctx.isPreventCaching()) {
-			Set<String> oldTags = cacheItem.getTags();
-			Set<String> tags = ctx.getTags();
-			cacheItem.setTags(tags);
-			Set<String> newTags = Generics.newHashSet();
-			if (tags != null) {
-				newTags.addAll(tags);
-			}
-			Iterator<String> it = newTags.iterator();
-			while (it.hasNext()) {
-				String tag = it.next();
-				boolean existingTag = oldTags != null && oldTags.remove(tag);
-				if (existingTag) {
-					it.remove();
-				}
-			}
-			cache.removeTags(cacheItem, oldTags);
-			cache.addTags(cacheItem, newTags);
+			cache.removeFromIndex(oldItem);
+			
+			newItem.setTags(ctx.getTags());
+			cache.addToIndex(newItem);
+			
 			if (checkInvolvedFiles) {
-				cacheItem.setInvolvedFiles(ctx.getInvolvedFiles());
+				newItem.setInvolvedFiles(ctx.getInvolvedFiles());
 			}
 			else {
-				cacheItem.setInvolvedFiles(null);
+				newItem.setInvolvedFiles(null);
 			}
 			return true;
 		}
 		else {
-			cacheItem.invalidate();
+			newItem.invalidate();
 			return false;
 		}
     }
