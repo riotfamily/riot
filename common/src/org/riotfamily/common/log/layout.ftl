@@ -66,13 +66,6 @@ table {
 	margin-right: 5px;
 }
 
-a.block {
-	display: block;
-	text-decoration: none;
-	color: #000;
-	-moz-outline: none;
-}
-
 .toggle {
 	text-decoration: underline;
 	cursor: pointer;
@@ -87,44 +80,39 @@ a.block {
 .details {
 	display: none;
 }
-	.block:focus .stack,
-	.block:focus .details {
-		display: block;
-	}
-	.block:focus .toggle {
-		display: none;
-	}
+<#list events as event>#d${event_index}:target, #s${event_index}:target<#if event_has_next>,<#else>{</#if> </#list>
+	display: block
+}
+
 </style>
 </head>
 <body>
 
 <#list events as event>
 	<div class="entry ${event.level?lower_case}">
-		<a href="#show" class="block">
-			<span class="time">${helper.toDate(event.timeStamp)?string('HH:mm:ss,SSS')}</span>
-			<span class="category">${event.loggerName}</span>
-			<span class="toggle">Show Details</span>
-			<table class="details">
+		<span class="time">${helper.toDate(event.timeStamp)?string('HH:mm:ss,SSS')}</span>
+		<span class="category">${event.loggerName}</span>
+		<a href="#d${event_index}" class="toggle">Show Details</a>
+		<table id="d${event_index}" class="details">
+			<tr>
+				<th>Thread</th>
+				<td>${event.threadName}</td>
+			</tr>
+			<#list event.properties?keys as key>
 				<tr>
-					<th>Thread</th>
-					<td>${event.threadName}</td>
+					<th>${key}</th>
+					<td>${event.properties[key]}</td>
 				</tr>
-				<#list event.properties?keys as key>
-					<tr>
-						<th>${key}</th>
-						<td>${event.properties[key]}</td>
-					</tr>
-				</#list>
-			</table>
-		</a>
+			</#list>
+		</table>
+		
 		<tt class="message">${event.renderedMessage?replace(',',',&#x200B;')?replace('/','&#x200B;/')?replace('\n', '<br/>')?replace('\\s(?=\\s)','&nbsp;','r')}</tt>
+		
 		<#if event.ThrowableStrRep?has_content>
-			<a href="#show" class="block">
-				<span class="toggle">Show Stacktrace</span>
-				<tt class="stack">
-					<#list event.ThrowableStrRep as line>${line?replace('\\s(?=\\s)','&nbsp;','r')}<br/></#list>
-				</tt>
-			</a>
+			<a href="#s${event_index}" class="toggle">Show Stacktrace</a>
+			<tt id="s${event_index}" class="stack">
+				<#list event.ThrowableStrRep as line>${line?replace('\\s(?=\\s)','&nbsp;','r')}<br/></#list>
+			</tt>
 		</#if>
 	</div>
 </#list>
