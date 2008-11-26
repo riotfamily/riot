@@ -71,6 +71,7 @@ public class TaggingContext {
 		if (tags == null) {
 			tags = new HashSet<String>();
 		}
+		tag = tag.intern();
 		tags.add(tag);
 		if (parent != null) {
 			parent.addTag(tag);
