@@ -194,7 +194,7 @@
 	</#compress>
 </#macro>
 
-<#macro image key default="" transform=c.url attributes... >
+<#macro image key default="" transform=c.resolve attributes... >
 	<#compress>
 		<#local value = (currentModel[key].uri)!default>
 		<#if value?has_content>
