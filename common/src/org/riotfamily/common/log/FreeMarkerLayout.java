@@ -110,6 +110,12 @@ public class FreeMarkerLayout extends Layout {
 	@Override
 	public String format(LoggingEvent event) {
 		events.add(event);
+		// Initialize the internal fields
+		event.getThreadName();
+		event.getRenderedMessage();
+		event.getNDC();
+		event.getMDCCopy();
+		event.getThrowableStrRep();
 		return "";
 	}
 

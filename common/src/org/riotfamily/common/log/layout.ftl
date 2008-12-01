@@ -108,10 +108,10 @@ table {
 		
 		<tt class="message">${event.renderedMessage?replace(',',',&#x200B;')?replace('/','&#x200B;/')?replace('\n', '<br/>')?replace('\\s(?=\\s)','&nbsp;','r')}</tt>
 		
-		<#if event.ThrowableStrRep?has_content>
+		<#if event.throwableStrRep?has_content>
 			<a href="#s${event_index}" class="toggle">Show Stacktrace</a>
 			<tt id="s${event_index}" class="stack">
-				<#list event.ThrowableStrRep as line>${line?replace('\\s(?=\\s)','&nbsp;','r')}<br/></#list>
+				<#list event.throwableStrRep as line>${line?replace('\\s(?=\\s)','&nbsp;','r')}<br/></#list>
 			</tt>
 		</#if>
 	</div>
