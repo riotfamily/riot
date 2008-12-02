@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<riot-config
+	xmlns="http://www.riotfamily.org/schema/riot/riot-config"
+	xmlns:ed="http://www.riotfamily.org/schema/riot/editor-config"
+	xmlns:list="http://www.riotfamily.org/schema/riot/list-config"
+	xmlns:form="http://www.riotfamily.org/schema/forms/form-config"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.riotfamily.org/schema/riot/riot-config
+		http://www.riotfamily.org/schema/riot/riot-config.xsd
+		http://www.riotfamily.org/schema/riot/editor-config
+		http://www.riotfamily.org/schema/riot/editor-config.xsd
+		http://www.riotfamily.org/schema/riot/list-config
+		http://www.riotfamily.org/schema/riot/list-config.xsd
+		http://www.riotfamily.org/schema/forms/form-config
+		http://www.riotfamily.org/schema/forms/form-config.xsd">
+
+	<ed:list id="brokenLinks" list-ref="brokenLinks" icon="brokenLinks" />
+
+	<list:list id="brokenLinks">
+		<list:dao ref="brokenLinkRiotDao" />
+		<list:columns>
+			<list:column property="destination" sortable="false" />
+			<list:column property="statusCode" />
+			<list:command id="viewBrokenLink" />
+		</list:columns>
+	</list:list>
+
+</riot-config>
