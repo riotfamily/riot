@@ -45,6 +45,7 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.search.ResultHighlighter.HighlightingContext;
 import org.riotfamily.search.analysis.AnalyzerFactory;
@@ -62,6 +63,8 @@ import org.springframework.web.util.WebUtils;
 
 public class SearchController implements Controller, InitializingBean {
 
+	private RiotLog log = RiotLog.get(this);
+	
 	private static final String RESULT_MODEL_KEY = "result";
 
 	private static final String PAGER_MODEL_KEY = "pager";
@@ -123,6 +126,9 @@ public class SearchController implements Controller, InitializingBean {
 		if (analyzerFactory == null) {
 			analyzerFactory = new DefaultAnalyzerFactory();
 		}
+		if (indexDir == null) {
+			log.error("Index Directory is null.");
+		}
 	}
 	
 	public ModelAndView handleRequest(HttpServletRequest request,
@@ -141,7 +147,7 @@ public class SearchController implements Controller, InitializingBean {
 		result.setPage(page);
 		result.setPageSize(pageSize);
 
-		if (!IndexReader.indexExists(indexDir)) {
+		if (indexDir == null || !IndexReader.indexExists(indexDir)) {
 			return onEmptyIndex(result, request);
 		}
 			
@@ -213,6 +219,7 @@ public class SearchController implements Controller, InitializingBean {
 		return new CachingWrapperFilter(new QueryWrapperFilter(filterQuery));
 	}
 
+	@SuppressWarnings("unchecked")
 	protected Query createFilterQuery(HttpServletRequest request) {
 		Map<String, String> filterParams = WebUtils.getParametersStartingWith(request, "filter_");
 		if (filterParams.isEmpty()) {
