@@ -130,6 +130,9 @@ public class FormChooserDefinition extends FormDefinition {
 			if (parentId != null) {
 				sb.append("&parentId=").append(parentId);
 			}
+			if (parentEditorId != null) {
+			    sb.append("&parentEditorId=").append(parentEditorId);
+			}			
 			return sb.toString();
 		}
 	}
