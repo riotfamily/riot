@@ -122,7 +122,9 @@ public class CacheService {
         else {
         	CacheItem item = entry.getItem();
         	long mtime = getModificationTime(item, handler);
-        	if (mtime > item.getLastModified()) {
+        	if (mtime > item.getLastModified()|| (item.isInvalidated() 
+        			&& mtime == item.getLastModified())) {
+        		
         		stats.addMiss();
         		capture(entry, mtime, handler);
         	}
