@@ -10,24 +10,7 @@
 		http://www.springframework.org/schema/util/spring-util-2.5.xsd
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-8.0.xsd">
-
-	<override:add ref="sessionFactory" property="annotatedClasses">
-		<value>org.riotfamily.components.model.Component</value>
-		<value>org.riotfamily.components.model.ComponentList</value>
-		<value>org.riotfamily.components.model.Content</value>
-		<value>org.riotfamily.components.model.ContentContainer</value>
-		<value>org.riotfamily.components.model.wrapper.ValueWrapper</value>
-		<value>org.riotfamily.components.model.wrapper.BooleanWrapper</value>
-		<value>org.riotfamily.components.model.wrapper.ComponentListWrapper</value>
-		<value>org.riotfamily.components.model.wrapper.DateWrapper</value>
-		<value>org.riotfamily.components.model.wrapper.EntityWrapper</value>
-		<value>org.riotfamily.components.model.wrapper.ListWrapper</value>
-		<value>org.riotfamily.components.model.wrapper.MapWrapper</value>
-		<value>org.riotfamily.components.model.wrapper.NumberWrapper</value>
-		<value>org.riotfamily.components.model.wrapper.RiotFileWrapper</value>
-		<value>org.riotfamily.components.model.wrapper.StringWrapper</value>
-	</override:add>
-
+ 
 	<!-- Note: We use depends-on to get shorter stack-traces when the schema validation fails -->
 	<bean id="valueWrapperFactory" depends-on="sessionFactory" 
 			class="org.riotfamily.components.model.wrapper.HibernateWrapperFactory">

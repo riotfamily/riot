@@ -11,16 +11,6 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-	<override:add ref="sessionFactory" property="annotatedClasses" append="true">
-		<value>org.riotfamily.pages.model.Page</value>
-		<value>org.riotfamily.pages.model.PageAlias</value>
-		<value>org.riotfamily.pages.model.PageNode</value>
-		<value>org.riotfamily.pages.model.PageProperties</value>
-		<value>org.riotfamily.pages.model.Site</value>
-		<value>org.riotfamily.pages.model.wrapper.PageWrapper</value>
-		<value>org.riotfamily.pages.riot.security.SiteUser</value>
-	</override:add>
-
 	<bean id="pageTypeHierarchy" class="org.riotfamily.pages.setup.PageTypeHierarchy" />
 	
 	<bean id="pageDao" class="org.riotfamily.pages.dao.HibernatePageDao">

@@ -11,14 +11,6 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-8.0.xsd">
 
-	<override:add ref="sessionFactory" property="annotatedClasses">
-		<value>org.riotfamily.media.model.RiotFile</value>
-		<value>org.riotfamily.media.model.RiotImage</value>
-		<value>org.riotfamily.media.model.CroppedRiotImage</value>
-		<value>org.riotfamily.media.model.RiotSwf</value>
-		<value>org.riotfamily.media.model.RiotVideo</value>
-	</override:add>
-	
 	<bean id="mediaDao" class="org.riotfamily.media.dao.HibernateMediaDao">
 		<constructor-arg ref="sessionFactory" />
 	</bean>

@@ -39,13 +39,11 @@
 	<!-- The Hibernate SessionFactory -->
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="dataSource" ref="riotDataSource" />
-		<property name="annotatedClasses">
+		<property name="packagesToScan">
 			<list>
-				<value>org.riotfamily.riot.hibernate.security.User</value>
-				<value>org.riotfamily.riot.hibernate.security.PersistentSessionMetaData</value>
-			</list>
+				<value>org.riotfamily.</value>
+			</list> 	
 		</property>
-		
 		<property name="hibernateProperties">
 			<util:properties location="classpath:/application.properties" />
 		</property>
