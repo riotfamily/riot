@@ -89,7 +89,7 @@ public class XmlEditorRepositoryDigester implements DocumentDigester {
 	private static final String CUSTOM_REF = "ref";
 	
 	private static final String[] CUSTOM_ATTR = new String[] {
-		"name", "target", "url", "icon"
+		"name", "target", "url", "handler", "icon"
 	};
 
 	private static final String OBJECT_EDITOR = FORM + '|'

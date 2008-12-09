@@ -113,6 +113,7 @@
 			<xsd:attribute name="icon" type="xsd:string" />
 			<xsd:attribute name="target" type="xsd:string" />
 			<xsd:attribute name="url" type="xsd:string" />
+			<xsd:attribute name="handler" type="xsd:string" />
 			<xsd:attribute name="ref" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>

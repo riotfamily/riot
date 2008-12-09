@@ -33,6 +33,8 @@ public class CustomEditorDefinition extends AbstractObjectEditorDefinition {
 
 	protected static final String TYPE_CUSTOM = "custom";
 
+	private String handler;
+	
 	private String url;
 
 	private String target;
@@ -49,6 +51,10 @@ public class CustomEditorDefinition extends AbstractObjectEditorDefinition {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+	
+	public void setHandler(String handler) {
+		this.handler = handler;
+	}
 
 	public EditorReference createReference(String objectId,
 			MessageResolver messageResolver) {
@@ -64,10 +70,17 @@ public class CustomEditorDefinition extends AbstractObjectEditorDefinition {
 	public String getTargetUrl(String objectId, String parentId, 
 			String parentEditorId) {
 		
-		if (objectId != null) {
-			return ServletUtils.addParameter(url, "objectId", objectId);
+		if (handler != null) {
+			return getEditorRepository().getRiotRuntime().getUrlForHandler(
+					handler, objectId);
 		}
-		return url;
+		if (url != null) {
+			if (objectId != null) {
+				return ServletUtils.addParameter(url, "objectId", objectId);
+			}
+			return url;
+		}
+		return null;
 	}
 
 	public String getEditorUrl(String objectId, String parentId, 
