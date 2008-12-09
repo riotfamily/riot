@@ -561,6 +561,14 @@ dwr.engine.setErrorHandler(function(err, ex) {
 	if (ex.javaClassName == 'org.riotfamily.riot.list.ui.ListSessionExpiredException') {
 		location.reload();
 	}
+	else if (ex.javaClassName == 'org.riotfamily.riot.security.PermissionDeniedException') {
+		if (ex.permissionRequestUrl) {
+			location.href = top.contextPath + ex.permissionRequestUrl;
+		}
+		else {
+			alert(ex.message);
+		}
+	}
 	else {
 		list.setIdle();
 		throw ex;

@@ -1,3 +1,6 @@
+var contextPath = '${contextPath}';
+var riotServletPrefix = '${riotServletPrefix}';
+
 var RiotFrameset = Class.create({
 
 	initialize: function(id) {
@@ -39,7 +42,7 @@ var RiotFrameset = Class.create({
 	},
 
 	toggleI18n: function() {
-		new Ajax.Request('${contextPath}${riotServletPrefix}/toggle-i18n', {
+		new Ajax.Request(contextPath + riotServletPrefix + '/toggle-i18n', {
 			method: 'get', onComplete: this.reloadFrames
 		});
 	}
