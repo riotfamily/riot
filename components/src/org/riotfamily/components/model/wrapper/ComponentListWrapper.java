@@ -7,6 +7,7 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 
 @Entity
@@ -32,4 +33,9 @@ public class ComponentListWrapper extends ValueWrapper<ComponentList> {
 		return copy;
 	}	
 	
+	public void each(ValueCallback callback) {
+		for (Component component : value.getComponents()) {
+			component.each(callback);
+		}
+	}
 }

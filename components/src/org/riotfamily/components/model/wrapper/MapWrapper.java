@@ -121,6 +121,12 @@ public class MapWrapper extends ValueWrapper<Map<String, Object>>
 		return copy;
 	}
 
+	public void each(ValueCallback callback) {
+		for (Object wrapper : wrapperMap.values()) {
+			((ValueWrapper<?>) wrapper).each(callback);
+		}
+	}
+	
 	public void clear() {
 		if (wrapperMap != null) {
 			wrapperMap.clear();

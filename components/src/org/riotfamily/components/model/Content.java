@@ -49,6 +49,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.MapKey;
+import org.riotfamily.components.model.wrapper.ValueCallback;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.components.model.wrapper.ValueWrapperService;
 
@@ -180,6 +181,12 @@ public class Content {
 		}
 		else {
 			getWrappers().clear();
+		}
+	}
+	
+	public void each(ValueCallback callback) {
+		for (ValueWrapper<?> wrapper : getWrappers().values()) {
+			wrapper.each(callback);
 		}
 	}
 	

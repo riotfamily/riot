@@ -95,6 +95,10 @@ public abstract class ValueWrapper<T> {
 	 */
 	public abstract ValueWrapper<T> deepCopy();
 
+	public void each(ValueCallback callback) {
+		callback.doWithValue(getValue());
+	}
+	
 	/**
 	 * Delegates the call to the hashCode method of the wrapped object. 
 	 */

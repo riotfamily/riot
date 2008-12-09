@@ -108,6 +108,12 @@ public class ListWrapper extends ValueWrapper<List<?>>
 		return copy;
 	}
 	
+	public void each(ValueCallback callback) {
+		for (ValueWrapper<?> wrapper : wrapperList) {
+			wrapper.each(callback);
+		}
+	}
+	
 	public void clear() {
 		if (wrapperList != null) {
 			wrapperList.clear();
