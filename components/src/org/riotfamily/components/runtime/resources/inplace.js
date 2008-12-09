@@ -378,20 +378,28 @@ riot.RichtextEditor = Class.create(riot.PopupTextEditor, {
 });
 
 riot.Popup = Class.create({
-	initialize: function(title, content, ok, autoSize, help) {
+	initialize: function(title, content, ok, autoSize) {
 		this.ok = ok;
 		this.autoSize = autoSize;
-		this.overlay = RBuilder.node('div', {id: 'riot-overlay', style: {display: 'none'}});
-		this.div = RBuilder.node('div', {id: 'riot-popup', style: {position: 'absolute'}},
-			help ? RBuilder.node('div', {className: 'riot-help-button', onclick: help}) : null,
-			this.closeButton = RBuilder.node('div', {className: 'riot-close-button', onclick: this.close.bind(this)}),
-			RBuilder.node('div', {className: 'headline', innerHTML: title}),
-			this.content = content,
-			this.okButton = RBuilder.node('div', {className: 'button-ok', onclick: ok}, 'Ok')
-		);
+		this.overlay = new Element('div', {id: 'riot-overlay'}).setStyle({display: 'none'});
+		
+		if (typeof content == 'string') {
+			this.content = new Element('iframe', {src: content, width: 1, height: 1}).observe('load', this.open.bind(this));
+		}
+		else {
+			this.content = content;
+		}
+		
+		this.div = new Element('div', {id: 'riot-popup'}).setStyle({position: 'absolute'})
+			.insert(new Element('div', {'class': 'riot-close-button'}).observe('click', this.close.bind(this)))
+			.insert(new Element('div', {'class': 'headline'}).insert(title))
+			.insert(this.content)
+			.insert(ok ? new Element('div', {'class': 'button-ok'}).observe('click', ok.bind(this)).insert('Ok') : '')
+			.makeInvisible();
+		
 		this.keyDownHandler = this.handleKeyDown.bindAsEventListener(this);
 		Event.observe(document, 'keydown', this.keyDownHandler);
-		this.div.makeInvisible();
+		
 		document.body.appendChild(this.overlay);
 		document.body.appendChild(this.div);
 	},
@@ -430,6 +438,18 @@ riot.Popup = Class.create({
 		var top = 50;
 		var left = 50;
 		if (this.autoSize) {
+			var doc = this.content.contentWindow || this.content.contentDocument;
+			if (doc) {
+				if (doc.document) {
+					doc = doc.document;
+				}
+				doc.viewport = document.viewport;
+				doc.body.parentNode.style.border = 'none';
+				var w = Math.max(600, doc.body.offsetWidth + 32);
+				var h = Math.min(Math.round(doc.viewport.getHeight() * 0.8), doc.body.offsetHeight + 32);
+				this.content.style.height = h + 'px';
+				this.div.style.width = w + 'px';
+			}
 			top = Math.max(5, Math.round(document.viewport.getHeight() / 2 - this.div.clientHeight / 2));
 			left = Math.round(document.viewport.getWidth() / 2 - this.div.clientWidth / 2);
 		}
@@ -486,7 +506,7 @@ riot.TextareaPopup = Class.create(riot.Popup, {
 
 	initialize: function($super, editor) {
 		this.textarea = RBuilder.node('textarea', {value: editor.text || ''}),
-		$super('${title.editorPopup}', this.textarea, editor.save.bind(editor), true, editor.help);
+		$super('${title.editorPopup}', this.textarea, editor.save.bind(editor), true);
 		var availableTextareaHeight = document.viewport.getHeight() - 82;
 		if (availableTextareaHeight < this.textarea.getHeight()) {
 			this.textarea.style.height = availableTextareaHeight + 'px';

@@ -434,9 +434,8 @@ riot.Content = Class.create({
 				+ '/' + this.id + '/' + this.form + '?' 
 				+ $H(riotComponentFormParams).toQueryString();
 		
-		var iframe = RBuilder.node('iframe', {src: formUrl, className: 'properties', width: 1, height: 1});
-		riot.popup = new riot.Popup('${title.properties}', iframe, function() {
-			var win = iframe.contentWindow ? iframe.contentWindow : iframe.window;
+		riot.popup = new riot.Popup('${title.properties}', formUrl, function() {
+			var win = this.content.contentWindow || this.content.window;
 			win.save();
 		}, this.autoSizePopup);
 		
@@ -625,15 +624,6 @@ riot.TypeInspector = Class.create({
 	
 });
 
-riot.setLiveHtml = function(html) {
-	if (riot.publishWidgets) { 
-		// If apply has been clicked quicker than the lists have been loaded, do nothing ...
-		for (var i = 0; i < riot.publishWidgets.length; i++) {
-			riot.publishWidgets[i].setLiveHtml(html[i]);
-		}
-	}
-}
-
 /**
  * Moves the float and clear style of the component's one and only child element
  * to the the component's div.
@@ -721,7 +711,7 @@ riot.publishOff = function() {
 
 riot.applyOn = function() {
 	riot.toolbar.buttons.get('browse').click();
-	var containerIds = $$('.riot-container')
+	var containerIds = riotContainerIds || $$('.riot-container')
 		.collect(riot.getContentContainer)
 		.pluck('id'); 
 	
@@ -739,6 +729,13 @@ riot.editProperties = function(e) {
 	}
 	return false;
 }
+
+dwr.engine.setErrorHandler(function(err, ex) {
+	if (ex.javaClassName == 'org.riotfamily.riot.security.PermissionDeniedException') {
+		riot.popup = new riot.Popup('${title.permissionDenied}', riot.contextPath + ex.permissionRequestUrl, null, true);
+	}
+});
+
 
 riot.previewFrame = RBuilder.node('iframe', {name: 'riotPreviewFrame', id: 'riotPreviewFrame'}).appendTo(document.body);
 riot.init();

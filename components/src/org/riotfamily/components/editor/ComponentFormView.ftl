@@ -27,24 +27,6 @@
 			function save() {
 				$$('input.button-save').first().click();
 			}
-
-			if (parent && parent.riot) {
-				Event.observe(window, 'load', function() {
-					var p = parent.riot.popup;
-					if (parent.riot.activePopup != p) {
-						var h = Math.min(
-								Math.round(Viewport.getInnerHeight(parent) * 0.8),
-								Viewport.getBodyHeight() + 32);
-
-						p.content.style.height = h + 'px';
-
-						var w = Math.max(600, Viewport.getBodyWidth() + 32);
-						p.div.style.width = w + 'px';
-
-						p.open();
-					}
-				});
-			}
 		</script>
 	</head>
 	<body>
