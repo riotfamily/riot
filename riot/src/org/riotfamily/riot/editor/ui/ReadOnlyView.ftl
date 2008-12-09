@@ -28,7 +28,7 @@
 		<div id="body-wrapper">
 			<div id="wrapper">
 				<div id="form" class="main">
-					${form}
+					<#include template />
 				</div>
 			</div>
 			<div id="extras" class="extra">

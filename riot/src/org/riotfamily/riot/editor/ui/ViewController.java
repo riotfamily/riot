@@ -23,14 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.editor.ui;
 
-import java.io.StringWriter;
-import java.util.HashMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
-import org.riotfamily.common.web.view.freemarker.ResourceTemplateLoader;
 import org.riotfamily.riot.editor.EditorConstants;
 import org.riotfamily.riot.editor.EditorDefinition;
 import org.riotfamily.riot.editor.EditorDefinitionUtils;
@@ -39,28 +35,18 @@ import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.editor.ViewReference;
 import org.riotfamily.riot.list.ui.ListService;
 import org.riotfamily.riot.list.ui.ListSession;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ResourceLoaderAware;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
-import freemarker.template.Configuration;
-
-public class ViewController implements Controller,
-		ResourceLoaderAware, InitializingBean {
+public class ViewController implements Controller {
 
 	private EditorRepository editorRepository;
-
-	private ResourceLoader resourceLoader;
 
 	private ListService listService;
 
 	private String viewName = ResourceUtils.getPath(
 			ViewController.class, "ReadOnlyView.ftl");
-
-	private Configuration configuration;
 
 	public ViewController(EditorRepository repository,
 			ListService listService) {
@@ -71,17 +57,6 @@ public class ViewController implements Controller,
 
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
-	}
-
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
-	}
-
-	public void afterPropertiesSet() throws Exception {
-		configuration = new Configuration();
-		ResourceTemplateLoader loader = new ResourceTemplateLoader();
-		loader.setResourceLoader(resourceLoader);
-		configuration.setTemplateLoader(loader);
 	}
 
 	public final ModelAndView handleRequest(HttpServletRequest request,
@@ -96,27 +71,15 @@ public class ViewController implements Controller,
 		EditorDefinition editorDef = editorRepository.getEditorDefinition(editorId);
 		Assert.notNull(editorDef, "No such EditorDefinition: " + editorId);
 
-		StringWriter sw = new StringWriter();
-
 		Object object = EditorDefinitionUtils.loadBean(editorDef, objectId);
 		String parentId = EditorDefinitionUtils.getParentId(editorDef, object);
 		
-		HashMap<String, Object> model = new HashMap<String, Object>();
-		model.put("object", object);
-		model.put("request", request);
-		try {
-			String template = ((ViewReference) editorDef).getTemplate();
-			configuration.getTemplate(template).process(model, sw);
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
 		ModelAndView mv = new ModelAndView(viewName);
 		mv.addObject(EditorConstants.EDITOR_ID, editorId);
 		mv.addObject(EditorConstants.OBJECT_ID, objectId);
 		mv.addObject(EditorConstants.PARENT_ID, parentId);
-		mv.addObject("form", sw.toString());
+		mv.addObject("object", object);
+		mv.addObject("template", ((ViewReference) editorDef).getTemplate());
 
 		ListDefinition listDef = EditorDefinitionUtils.getListDefinition(editorDef);
 
