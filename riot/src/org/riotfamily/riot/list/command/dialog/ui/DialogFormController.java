@@ -135,8 +135,8 @@ public class DialogFormController extends AjaxFormController
 		try {
 			Object input = form.populateBackingObject();
 			String key = ServletUtils.getRequiredStringAttribute(request, "listSessionKey");
-			ListSession listSession = ListSession.getListSession(request, key);			
-			modelAndView = getCommand(request).handleInput(input, listSession);
+			ListSession listSession = ListSession.getListSession(request, key);
+			modelAndView = getCommand(request).handleInput(input, form.getAttribute("bean"), listSession);
 		}
 		catch (InvalidPropertyValueException e) {
 			transactionManager.rollback(status);

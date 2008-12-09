@@ -79,7 +79,7 @@ public class ImportMessagesCommand extends DialogCommand {
 	}
 	
 	@Override
-	public ModelAndView handleInput(Object input, ListSession listSession) {
+	public ModelAndView handleInput(Object input, Object bean, ListSession listSession) {
 		Site site = (Site) EditorDefinitionUtils.loadParent(
 					listSession.getListDefinition(), listSession.getParentId());		
 		Upload upload = (Upload) input;

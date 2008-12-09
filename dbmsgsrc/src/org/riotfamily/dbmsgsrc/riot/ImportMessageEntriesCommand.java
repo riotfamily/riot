@@ -77,7 +77,7 @@ public static final String ACTION_IMPORT = "import";
 	}
 	
 	@Override
-	public ModelAndView handleInput(Object input, ListSession listSession) {		
+	public ModelAndView handleInput(Object input, Object bean, ListSession listSession) {		
 		Upload upload = (Upload) input;
 		try {
 			log.info("Global messages uploaded by %s", AccessController.getCurrentUser().getUserId());

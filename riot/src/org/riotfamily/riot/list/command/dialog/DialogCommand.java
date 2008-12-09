@@ -60,6 +60,6 @@ public abstract class DialogCommand extends AbstractCommand {
 	
 	public abstract Form createForm(Object bean);
 	
-	public abstract ModelAndView handleInput(Object input, ListSession listSession);
+	public abstract ModelAndView handleInput(Object input, Object bean, ListSession listSession);
 	
 }
