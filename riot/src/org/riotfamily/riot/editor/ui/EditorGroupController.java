@@ -26,6 +26,7 @@ package org.riotfamily.riot.editor.ui;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.riot.editor.EditorConstants;
@@ -48,6 +49,8 @@ public class EditorGroupController implements Controller, MessageSourceAware {
 	private EditorRepository editorRepository;
 
 	private MessageSource messageSource;
+	
+	private AdvancedMessageCodesResolver messageCodesResolver;
 
 	private String modelKey = "group";
 
@@ -61,6 +64,10 @@ public class EditorGroupController implements Controller, MessageSourceAware {
 
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
+	}
+	
+	public void setMessageCodesResolver(AdvancedMessageCodesResolver messageCodesResolver) {
+		this.messageCodesResolver = messageCodesResolver;
 	}
 
 	public ModelAndView handleRequest(HttpServletRequest request,
@@ -79,7 +86,7 @@ public class EditorGroupController implements Controller, MessageSourceAware {
 		}
 
 		MessageResolver messageResolver = new MessageResolver(messageSource,
-				editorRepository.getMessageCodesResolver(),
+				messageCodesResolver,
 				RequestContextUtils.getLocale(request));
 
 		EditorGroup group = new EditorGroup();

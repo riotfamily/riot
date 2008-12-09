@@ -28,6 +28,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.riot.editor.EditorConstants;
@@ -47,6 +48,8 @@ public class PathController implements Controller, MessageSourceAware {
 	private EditorRepository repository;
 
 	private MessageSource messageSource;
+	
+	private AdvancedMessageCodesResolver messageCodesResolver;
 
 	private String modelKey = "path";
 
@@ -58,6 +61,10 @@ public class PathController implements Controller, MessageSourceAware {
 		this.messageSource = messageSource;
 	}
 
+	public void setMessageCodesResolver(AdvancedMessageCodesResolver messageCodesResolver) {
+		this.messageCodesResolver = messageCodesResolver;
+	}
+	
 	public String getModelKey() {
 		return modelKey;
 	}
@@ -87,7 +94,7 @@ public class PathController implements Controller, MessageSourceAware {
 		EditorReference lastComponent = createLastPathComponent(
 				editor, objectId, parentId, parentEditorId,
 				new MessageResolver(messageSource,
-				repository.getMessageCodesResolver(),
+				messageCodesResolver,
 				RequestContextUtils.getLocale(request)));
 
 		path = new EditorPath(editorId, objectId, parentId,

@@ -313,7 +313,6 @@
 		</property>
 		<property name="listRepository" ref="listRepository" />
 		<property name="formRepository" ref="formRepository" />
-		<property name="messageCodesResolver" ref="messageCodesResolver" />
 	</bean>
 
 	<bean id="handlerMapping" class="org.riotfamily.common.web.mapping.AdvancedBeanNameHandlerMapping">
@@ -460,6 +459,7 @@
 
 	<bean id="groupController" class="org.riotfamily.riot.editor.ui.EditorGroupController">
 		<constructor-arg ref="editorRepository" />
+		<property name="messageCodesResolver" ref="messageCodesResolver" />
 	</bean>
 	<alias name="groupController" alias="/group" />
 	<alias name="groupController" alias="/group/@{editorId}" />
@@ -468,6 +468,7 @@
 
 	<bean id="pathController" name="/path" class="org.riotfamily.riot.editor.ui.PathController">
 		<constructor-arg ref="editorRepository" />
+		<property name="messageCodesResolver" ref="messageCodesResolver" />
 	</bean>
 	
 	<bean id="chooserPathController" class="org.riotfamily.riot.form.element.ChooserPathController">
@@ -555,17 +556,17 @@
 	<bean id="org.directwebremoting.PageNormalizer"
 		class="org.riotfamily.common.web.dwr.NoOpPageNormalizer" />
 
-	<!--
-	<bean id="org.directwebremoting.Remoter"
-		class="org.riotfamily.common.web.dwr.ConstantsRemoter" />
-	-->
-
 	<bean id="riotDwrConfigurator" class="org.riotfamily.common.web.dwr.SpringConfigurator">
 		<property name="converters">
 			<map>
+				<entry key="org.riotfamily.riot.security.PermissionDeniedException">
+					<bean class="org.directwebremoting.convert.ExceptionConverter">
+						<property name="include" value="message,permissionRequestUrl" />
+					</bean>
+				</entry>
 				<entry key="java.lang.Exception">
 					<bean class="org.directwebremoting.convert.ExceptionConverter">
-						<property name="include" value="message,lineNumber" />
+						<property name="include" value="message" />
 					</bean>
 				</entry>
 			</map>

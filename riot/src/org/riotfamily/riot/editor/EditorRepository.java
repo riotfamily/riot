@@ -26,7 +26,6 @@ package org.riotfamily.riot.editor;
 import java.util.Map;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.i18n.AdvancedMessageCodesResolver;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.xml.ConfigurationEventListener;
 import org.riotfamily.forms.factory.FormRepository;
@@ -50,18 +49,20 @@ public class EditorRepository implements RiotRuntimeAware {
 
 	private FormRepository formRepository;
 
-	private AdvancedMessageCodesResolver messageCodesResolver;
-
-	private String riotServletPrefix;
+	private RiotRuntime runtime;
+	
+	public void setRiotRuntime(RiotRuntime runtime) {
+		this.runtime = runtime;
+	}
+	
+	public RiotRuntime getRiotRuntime() {
+		return runtime;
+	}
 
 	public String getRiotServletPrefix() {
-		return riotServletPrefix;
+		return runtime.getServletPrefix();
 	}
-
-	public void setRiotRuntime(RiotRuntime runtime) {
-		riotServletPrefix = runtime.getServletPrefix();
-	}
-
+	
 	public GroupDefinition getRootGroupDefinition() {
 		return this.rootGroupDefinition;
 	}
@@ -121,14 +122,6 @@ public class EditorRepository implements RiotRuntimeAware {
 
 	public void setFormRepository(FormRepository formRepository) {
 		this.formRepository = formRepository;
-	}
-
-	public AdvancedMessageCodesResolver getMessageCodesResolver() {
-		return this.messageCodesResolver;
-	}
-
-	public void setMessageCodesResolver(AdvancedMessageCodesResolver messageKeyResolver) {
-		this.messageCodesResolver = messageKeyResolver;
 	}
 
 	/**
