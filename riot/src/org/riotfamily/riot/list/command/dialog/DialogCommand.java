@@ -50,7 +50,7 @@ public abstract class DialogCommand extends AbstractCommand {
 		attributes.put("commandId", getId());
 		attributes.put("listSessionKey", context.getListSessionKey());
 
-		return new GotoUrlResult(context, getRuntime().getUrl(
+		return new GotoUrlResult(context, getRuntime().getUrlForHandler(
 				"commandDialogController", attributes));
 	}
 	

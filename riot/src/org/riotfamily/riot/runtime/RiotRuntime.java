@@ -24,11 +24,13 @@
 package org.riotfamily.riot.runtime;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.web.mapping.HandlerUrlResolver;
 import org.riotfamily.common.web.mapping.UrlResolverContext;
-import org.riotfamily.common.web.servlet.PathCompleterSupport;
 import org.riotfamily.common.web.servlet.PathCompleter;
+import org.riotfamily.common.web.servlet.PathCompleterSupport;
+import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.riot.RiotVersion;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
@@ -97,12 +99,30 @@ public class RiotRuntime implements ServletContextAware {
 		return RiotVersion.getVersionString();
 	}
 	
-	public String getUrl(String handlerName, Object attributes) {
+	public String getUrlForHandler(String handlerName, Object attributes) {
 		return pathCompleter.addMapping(handlerUrlResolver.getUrlForHandler(context, handlerName, attributes));
 	}
 	
-	public String getUrl(String handlerName, Object... attributes) {
+	public String getUrlForHandler(String handlerName, Object... attributes) {
 		return pathCompleter.addMapping(handlerUrlResolver.getUrlForHandler(context, handlerName, attributes));
+	}
+	
+	public String getDeeplinkForHandler(HttpServletRequest request, String handlerName, Object attribute) {
+		return ServletUtils.getAbsoluteUrlPrefix(request)
+				.append(request.getContextPath())
+				.append(servletPrefix)
+				.append("?url=")
+				.append(handlerUrlResolver.getUrlForHandler(context, handlerName, attribute))
+				.toString();
+	}
+	
+	public String getDeeplinkForHandler(HttpServletRequest request, String handlerName, Object... attributes) {
+		return ServletUtils.getAbsoluteUrlPrefix(request)
+				.append(request.getContextPath())
+				.append(servletPrefix)
+				.append("?url=")
+				.append(handlerUrlResolver.getUrlForHandler(context, handlerName, attributes))
+				.toString();
 	}
 
 	public static RiotRuntime getRuntime(ApplicationContext context) {
