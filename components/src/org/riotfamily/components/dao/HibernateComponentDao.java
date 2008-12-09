@@ -36,6 +36,7 @@ import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.model.wrapper.ComponentListWrapper;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
+import org.riotfamily.riot.security.AccessController;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -143,16 +144,19 @@ public class HibernateComponentDao implements ComponentDao {
 
 	public boolean publishContainer(ContentContainer container) {
 		boolean published = false;
-		Content preview = container.getPreviewVersion();
-		if (preview != null) {
-			Content liveVersion = container.getLiveVersion();
-			container.setLiveVersion(preview.createCopy());
-			if (liveVersion != null) {
-				deleteContent(liveVersion);
+		if (container.isDirty()) {
+			Content preview = container.getPreviewVersion();
+			if (preview != null) {
+				AccessController.assertIsGranted("publish", container);
+				Content liveVersion = container.getLiveVersion();
+				container.setLiveVersion(preview.createCopy());
+				if (liveVersion != null) {
+					deleteContent(liveVersion);
+				}
+				container.setDirty(false);
+				ComponentCacheUtils.invalidateContainer(cacheService, container);
+				published = true;
 			}
-			container.setDirty(false);
-			ComponentCacheUtils.invalidateContainer(cacheService, container);
-			published = true;
 		}
 		return published;
 	}
