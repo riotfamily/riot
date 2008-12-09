@@ -60,6 +60,7 @@ public class PublishPageCommand extends AbstractCommand implements BatchCommand 
 		return new RefreshSiblingsResult(context);
 	}
 
+	@SuppressWarnings("deprecation")
 	public String getConfirmationMessage(CommandContext context) {
 		Page page = (Page) context.getBean();
 		return context.getMessageResolver().getMessage("confirm.publishPage",

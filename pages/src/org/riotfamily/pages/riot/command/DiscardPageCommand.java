@@ -57,6 +57,7 @@ public class DiscardPageCommand extends AbstractCommand implements BatchCommand 
 				&& page.getPageProperties().isPublished();
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public String getConfirmationMessage(CommandContext context) {
 		Page page = (Page) context.getBean();

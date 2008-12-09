@@ -54,6 +54,7 @@ public class DeletePageCommand extends AbstractCommand implements BatchCommand {
 		return PageCommandUtils.isTranslated(context) && !page.isPublished();
 	}
 	
+	@SuppressWarnings("deprecation")
 	public String getConfirmationMessage(CommandContext context) {
 		Page page = (Page) context.getBean();
 		return context.getMessageResolver().getMessage("confirm.delete",
