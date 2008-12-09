@@ -85,7 +85,7 @@ public abstract class AbstractConditionalElement extends AbstractElement
 	}
 
 	public void processRequest(FormRequest request) {
-		if (isEditable()) {
+		if (isEditable() && isEnabled()) {
 			editor.processRequest(request);
 		}
 	}

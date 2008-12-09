@@ -33,6 +33,7 @@ import org.riotfamily.forms.Element;
 import org.riotfamily.forms.NestedEditor;
 import org.riotfamily.forms.event.ChangeEvent;
 import org.riotfamily.forms.event.ChangeListener;
+import org.riotfamily.forms.request.FormRequest;
 
 public class ElementSwitch extends Container 
 		implements Editor, NestedEditor, ChangeListener {
@@ -83,6 +84,11 @@ public class ElementSwitch extends Container
 			activeCase = cases.get(value);
 			activeCase.activate();
 		}
+	}
+	
+	@Override
+	public void processRequest(FormRequest request) {
+		activeCase.processRequest(request);
 	}
 	
 	// ---------------------------------------------------------------------

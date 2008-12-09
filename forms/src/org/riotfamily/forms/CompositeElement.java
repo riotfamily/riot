@@ -139,7 +139,6 @@ public abstract class CompositeElement extends AbstractEditorBase
 		List<Element> tempList = new ArrayList<Element>(components);
 		for (Element component : tempList) {
 			if (component.isEnabled()) {
-				log.debug("Processing component: " + component);
 				component.processRequest(request);
 			}
 		}
@@ -169,7 +168,6 @@ public abstract class CompositeElement extends AbstractEditorBase
 
 	protected void renderInternal(PrintWriter writer) {		
 		for (Element component : components) {
-			log.debug("Rendering component " + component);
 			component.render(writer);
 		}	
 	}	

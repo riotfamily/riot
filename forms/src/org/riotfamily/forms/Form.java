@@ -402,7 +402,9 @@ public class Form implements BeanEditor {
 		Iterator<Container> it = containers.iterator();
 		while (it.hasNext()) {
 			Container container = it.next();
-			container.processRequest(request);
+			if (container.isEnabled()) {
+				container.processRequest(request);
+			}
 		}
 		if (validator != null) {
 			validator.validate(populateBackingObject(), errors);
@@ -418,7 +420,9 @@ public class Form implements BeanEditor {
 	public void processExclusiveRequest(String elementId, FormRequest request) {
 		errors.removeAllErrors();
 		Element element = getElementById(elementId);
-		element.processRequest(request);
+		if (element.isEnabled()) {
+			element.processRequest(request);
+		}
 	}
 
 	public void setFormListener(FormListener formListener) {

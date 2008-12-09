@@ -219,12 +219,10 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 	}
 
 	public void processRequest(FormRequest request) {
-		if (isEnabled()) {
-			text = request.getParameter(getParamName());
-			validate();
-			if (!ErrorUtils.hasErrors(this)) {
-				setValueFromText();
-			}
+		text = request.getParameter(getParamName());
+		validate();
+		if (!ErrorUtils.hasErrors(this)) {
+			setValueFromText();
 		}
 	}
 
