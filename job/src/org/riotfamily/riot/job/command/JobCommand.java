@@ -47,7 +47,7 @@ public class JobCommand extends AbstractCommand {
 		Map<String, String> attributes = Generics.newHashMap();
 		attributes.put("type", jobType);
 		attributes.put("objectId", objectId);
-		String url = getRuntime().getUrl("jobUIController", attributes);
+		String url = getRuntime().getUrlForHandler("jobUIController", attributes);
 		
 		return new GotoUrlResult(context, ServletUtils.addParameter(url, 
 				"title", getLabel(context.getMessageResolver())));
