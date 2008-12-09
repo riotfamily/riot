@@ -26,7 +26,9 @@ package org.riotfamily.riot.security;
 import java.util.List;
 
 import org.riotfamily.riot.security.auth.RiotUser;
+import org.riotfamily.riot.security.policy.AssertionPolicy;
 import org.riotfamily.riot.security.policy.AuthorizationPolicy;
+import org.riotfamily.riot.security.policy.AuthorizationPolicy.Permission;
 import org.riotfamily.riot.security.session.AccessControlFilterPlugin;
 import org.riotfamily.riot.security.session.AccessControlInterceptor;
 import org.riotfamily.riot.security.session.SecurityContext;
@@ -56,8 +58,9 @@ public final class AccessController {
 		AccessController.policies = policies;
 	}
 		
-	public static RiotUser getCurrentUser() {
-		return SecurityContext.getCurrentUser();
+	@SuppressWarnings("unchecked")
+	public static <T extends RiotUser> T getCurrentUser() {
+		return (T) SecurityContext.getCurrentUser();
 	}
 	
 	public static boolean isAuthenticatedUser() {
@@ -72,35 +75,36 @@ public final class AccessController {
 		return isGranted(getCurrentUser(), action, object);
 	}
 	
-	public static void checkPermission(String action, Object object) {
-		RiotUser subject = getCurrentUser();
-		if (subject != null) {
-			for (AuthorizationPolicy policy : policies) {
-				int access = policy.checkPermission(subject, action, object);
-				if (access == AuthorizationPolicy.ACCESS_GRANTED) {
-					return;
-				}
-				else if (access == AuthorizationPolicy.ACCESS_DENIED) {
-					throw new AccessDeniedException(subject, action, object, policy);
-				}
-			}
-		}
-		throw new AccessDeniedException(subject, action, object, null);
-	}
-
 	public static boolean isGranted(RiotUser user, String action, Object object) {
 		if (user != null) {
 			for (AuthorizationPolicy policy : policies) {
-				int access = policy.checkPermission(user, action, object);
-				if (access == AuthorizationPolicy.ACCESS_GRANTED) {
+				Permission permission = policy.getPermission(user, action, object);
+				if (permission == Permission.GRANTED) {
 					return true;
 				}
-				else if (access == AuthorizationPolicy.ACCESS_DENIED) {
+				else if (permission == Permission.DENIED) {
 					return false;
 				}
 			}
 		}
 		return false;
+	}
+	
+	public static void assertIsGranted(String action, Object object) 
+			throws PermissionDeniedException {
+		
+		RiotUser subject = getCurrentUser();
+		if (subject != null) {
+			for (AuthorizationPolicy policy : policies) {
+				if (policy instanceof AssertionPolicy) {
+					AssertionPolicy assertionPolicy = (AssertionPolicy) policy;
+					assertionPolicy.assertIsGranted(subject, action, object);
+				}
+				else if (policy.getPermission(subject, action, object) == Permission.DENIED) {
+					throw new PermissionDeniedException(subject, action, object, policy);
+				}
+			}
+		}
 	}
 	
 }

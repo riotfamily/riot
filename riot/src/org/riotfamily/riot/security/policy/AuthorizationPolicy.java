@@ -32,19 +32,17 @@ import org.springframework.core.Ordered;
  */
 public interface AuthorizationPolicy extends Ordered {
 
-	public int ACCESS_ABSTAIN = 0;
+	public enum Permission {
+		ABSTAIN, DENIED, GRANTED
+	}
 	
-	public int ACCESS_DENIED = 1;
-	
-	public int ACCESS_GRANTED = 2;
-
 	/**
-	 * Checks whether the given user is allowed to perform the specified action.
+	 * Returns the permission for the given user, action and object.
 	 * 
 	 * @param subject The user
 	 * @param action The action to be performed
 	 * @param object The object on which the action is to be performed
 	 */
-    public int checkPermission(RiotUser user, String action, Object object);    
+    public Permission getPermission(RiotUser user, String action, Object object);
 
 }

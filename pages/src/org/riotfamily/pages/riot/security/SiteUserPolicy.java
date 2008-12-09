@@ -28,7 +28,7 @@ public class SiteUserPolicy implements AuthorizationPolicy {
 		this.order = order;
 	}
 	
-	public int checkPermission(RiotUser riotUser, String action, Object object) {
+	public Permission getPermission(RiotUser riotUser, String action, Object object) {
 		if (riotUser instanceof SiteUser) {
 			SiteUser user = (SiteUser) riotUser;
 			
@@ -44,13 +44,13 @@ public class SiteUserPolicy implements AuthorizationPolicy {
 					denied |= isDenied(user, object);
 				}
 				if (denied) {
-					return ACCESS_DENIED;
+					return Permission.DENIED;
 				}
 			}
 		}
-		return ACCESS_ABSTAIN;
+		return Permission.ABSTAIN;
 	}
-	
+		
 	private boolean isDenied(SiteUser user, Object object) {
 		if (object instanceof Site) {
 			Site site = (Site) object;

@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.security.policy;
 
+import org.riotfamily.riot.security.PermissionDeniedException;
 import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
@@ -40,8 +41,13 @@ public class GrantAllPolicy implements AuthorizationPolicy {
 		this.order = order;
 	}
 
-	public int checkPermission(RiotUser user, String action, Object object) {
-        return ACCESS_GRANTED;
+	public Permission getPermission(RiotUser user, String action, Object object) {
+        return Permission.GRANTED;
     }
+	
+	public void assertIsGranted(RiotUser user, String action, Object object)
+			throws PermissionDeniedException {
+		
+	}
 
 }

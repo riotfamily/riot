@@ -29,10 +29,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.collection.TypeComparatorUtils;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.riot.security.PermissionDeniedException;
 import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
@@ -49,7 +50,7 @@ import org.springframework.util.StringUtils;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class ReflectionPolicy implements AuthorizationPolicy {
+public class ReflectionPolicy implements AssertionPolicy {
 
 	private RiotLog log = RiotLog.get(ReflectionPolicy.class);
 	
@@ -72,35 +73,48 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 		this.methods.clear();
 	}
 	
-	public int checkPermission(RiotUser user, String action, Object object) {
-		Method method = getMethod(action, object);
+	public Permission getPermission(RiotUser user, String action, Object object) {
+		Method method = getMethod(action, object, false);
 		if (method != null) {
-			Object[] args = null;
-			if (object != null && object.getClass().isArray()) {
-				Object[] objects = (Object[]) object;
-				List<Object> tempArgs = Generics.newArrayList();				
-				for (int i = 0; i < objects.length; i++) {
-					if (objects[i] != null) {
-						tempArgs.add(objects[i]);
-					}					
-				}
-				args = new Object[tempArgs.size() + 1];
-				args[0] = user;
-				for (int i = 0; i < tempArgs.size(); i++) {
-					args[i+1] = tempArgs.get(i);
-				}
-			}
-			else {
-				args = new Object[] {user, object};
-			}
-			Integer result = (Integer)ReflectionUtils.invokeMethod(method, delegate, args);
-			return result.intValue();
+			return (Permission) invoke(method, user, object);
 		}
-		return ACCESS_ABSTAIN;
+		return Permission.ABSTAIN;
 	}
 	
-	private Method getMethod(String action, Object object) {
-		ActionAndClass aac = new ActionAndClass(action, object);
+	public void assertIsGranted(RiotUser user, String action, Object object) {
+		Method method = getMethod(action, object, false);
+		if (method != null) {
+			invoke(method, user, object);
+		}
+		else if (getPermission(user, action, object) == Permission.DENIED) {
+			throw new PermissionDeniedException(user, action, object, this);
+		}
+	}
+	
+	private Object invoke(Method method, RiotUser user, Object object) {
+		Object[] args = null;
+		if (object != null && object.getClass().isArray()) {
+			Object[] objects = (Object[]) object;
+			List<Object> tempArgs = Generics.newArrayList();				
+			for (int i = 0; i < objects.length; i++) {
+				if (objects[i] != null) {
+					tempArgs.add(objects[i]);
+				}					
+			}
+			args = new Object[tempArgs.size() + 1];
+			args[0] = user;
+			for (int i = 0; i < tempArgs.size(); i++) {
+				args[i+1] = tempArgs.get(i);
+			}
+		}
+		else {
+			args = new Object[] {user, object};
+		}
+		return ReflectionUtils.invokeMethod(method, delegate, args);
+	}
+	
+	private Method getMethod(String action, Object object, boolean isVoid) {
+		ActionAndClass aac = new ActionAndClass(action, object, isVoid);
 		Method method = (Method) methods.get(aac);
 		if (method == null) {
 			if (!methods.containsKey(aac)) {
@@ -118,7 +132,7 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 			Method[] methods = delegate.getClass().getMethods();
 			for (int i = 0; i < methods.length; i++) {
 				Method method = methods[i];
-				if (signatureMatches(method, aac.action, aac.classes)) {
+				if (signatureMatches(method, aac.action, aac.classes, aac.isVoid)) {
 					int diff = 0;
 					for (int j = 0; j < aac.classes.length; j++) {
 						diff += TypeComparatorUtils.getTypeDifference(method.getParameterTypes()[j+1], aac.classes[j]);
@@ -131,7 +145,7 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 			}
 		}
 		if (bestMatch == null) {
-			bestMatch = findSingleParamMethod(aac.action);
+			bestMatch = findSingleParamMethod(aac.action, aac.isVoid);
 		}
 		if (bestMatch != null) {
 			log.debug("Using " + bestMatch + " for " + aac);
@@ -144,8 +158,12 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 	}
 	
 	
-	private boolean signatureMatches(Method method, String action, Class<?>[] types) {
-		if (method.getName().equals(action) && Modifier.isPublic(method.getModifiers())) {
+	private boolean signatureMatches(Method method, String action, 
+			Class<?>[] types, boolean isVoid) {
+		
+		if (method.getName().equals(action) && Modifier.isPublic(method.getModifiers())
+				&& (isVoid ^ method.getReturnType() != Void.TYPE)) {
+			
 			Class<?>[] paramTypes = method.getParameterTypes();
 			if (paramTypes.length > 0 && RiotUser.class.isAssignableFrom(paramTypes[0])) {
 				if (types == null) {
@@ -165,11 +183,11 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 		return false;
 	}
 	
-	private Method findSingleParamMethod(String action) {
+	private Method findSingleParamMethod(String action, boolean isVoid) {
 		Method[] methods = delegate.getClass().getMethods();
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
-			if (signatureMatches(method, action, null)) {
+			if (signatureMatches(method, action, null, isVoid)) {
 				return method;
 			}
 		}
@@ -182,7 +200,9 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 		
 		private Class<?>[] classes;
 		
-		public ActionAndClass(String action, Object obj) {
+		private boolean isVoid;
+		
+		public ActionAndClass(String action, Object obj, boolean isVoid) {
 			this.action = StringUtils.uncapitalize(FormatUtils.xmlToCamelCase(action));
 			if (obj != null) {
 				if (obj.getClass().isArray()) {
@@ -200,10 +220,15 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 					classes = new Class<?>[] {ClassUtils.getUserClass(obj)};
 				}
 			}
+			this.isVoid = isVoid;
 		}
 
 		public String toString() {
-			StringBuffer sb = new StringBuffer(action);			
+			StringBuilder sb = new StringBuilder();
+			if (isVoid) {
+				sb.append("void ");
+			}
+			sb.append(action);
 			if (classes != null) {
 				for (Class<?> clazz : classes) {
 					sb.append(' ');
@@ -221,7 +246,8 @@ public class ReflectionPolicy implements AuthorizationPolicy {
 			if (obj instanceof ActionAndClass) {
 				ActionAndClass other = (ActionAndClass) obj;
 				return ObjectUtils.nullSafeEquals(action, other.action)
-						&& ObjectUtils.nullSafeEquals(classes, other.classes);
+						&& ObjectUtils.nullSafeEquals(classes, other.classes)
+						&& isVoid == other.isVoid;
 			}
 			return false;
 		}

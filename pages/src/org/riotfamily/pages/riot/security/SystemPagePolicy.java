@@ -34,18 +34,18 @@ public class SystemPagePolicy extends ReflectionPolicy {
 		setOrder(Integer.MAX_VALUE - 3);
 	}
 	
-	public int delete(RiotUser riotUser, Page page, CommandContext context) {
+	public Permission delete(RiotUser riotUser, Page page, CommandContext context) {
 		if (page.getNode().isSystemNode()) {
-			return ACCESS_DENIED;
+			return Permission.DENIED;
 		}
-		return ACCESS_ABSTAIN;
+		return Permission.ABSTAIN;
 	}
 	
-	public int unpublish(RiotUser riotUser, Page page, CommandContext context) {
+	public Permission unpublish(RiotUser riotUser, Page page, CommandContext context) {
 		if (page.getNode().isSystemNode()) {
-			return ACCESS_DENIED;
+			return Permission.DENIED;
 		}
-		return ACCESS_ABSTAIN;
+		return Permission.ABSTAIN;
 	}
 
 }
