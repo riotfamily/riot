@@ -25,13 +25,14 @@ package org.riotfamily.riot.runtime.macro;
 
 import java.io.IOException;
 
-import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.riot.runtime.RiotRuntime;
-import org.riotfamily.riot.security.AccessController;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.riotfamily.common.web.util.ServletUtils;
+import org.riotfamily.riot.runtime.RiotRuntime;
+import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -59,6 +60,10 @@ public class RiotMacroHelper {
 		return this.runtime;
 	}
 	
+	public RiotUser getUser() {
+		return AccessController.getCurrentUser();
+	}
+	
 	public String resolveAndEncodeUrl(String url) {
 		return ServletUtils.resolveAndEncodeUrl(url, request, response);
 	}
@@ -66,6 +71,14 @@ public class RiotMacroHelper {
 	public String include(String url) throws ServletException, IOException {
 		request.getRequestDispatcher(url).include(request, response);
 		return "";
-	}	
+	}
+	
+	public String getUrlForHandler(String handlerName, Object attributes) {
+		return runtime.getUrlForHandler(handlerName, attributes);
+	}
+	
+	public String getDeeplinkForHandler(String handlerName, Object attributes) {
+		return runtime.getDeeplinkForHandler(request, handlerName, attributes);
+	}
 	
 }

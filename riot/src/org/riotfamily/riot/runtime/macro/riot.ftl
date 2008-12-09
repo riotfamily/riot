@@ -1,3 +1,7 @@
+<#if riotMacroHelper.user??>
+	<#assign user = riotMacroHelper.user />
+</#if>
+
 <#macro stylesheet href>
 <link rel="stylesheet" type="text/css" href="${resource(href)}" />
 </#macro>
@@ -41,4 +45,18 @@
   -->
 <#function url href>
 	<#return riotMacroHelper.resolveAndEncodeUrl(href?trim) />
+</#function>
+
+<#---
+  - Returns the URL for the given handlerName. 
+  -->
+<#function urlForHandler handlerName attributes={}>
+	<#return url(riotMacroHelper.runtime.getUrl(handlerName, attributes)) />
+</#function>
+
+<#---
+  - Returns a deeplink for the given handlerName. 
+  -->
+<#function deeplinkForHandler handlerName attributes={}>
+	<#return riotMacroHelper.getDeeplinkForHandler(handlerName, attributes) />
 </#function>
