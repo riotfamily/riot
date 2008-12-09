@@ -91,4 +91,21 @@ public class User implements RiotUser {
 		this.newPassword = newPassword;
 	}
 	
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (id != null && getClass().isInstance(obj)) {
+			User other = (User) obj;
+			return id.equals(other.getId());
+		}
+		return false;
+	}
+	
 }
