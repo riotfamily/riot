@@ -133,4 +133,12 @@
 	
 	<bean id="systemPagePolicy" class="org.riotfamily.pages.riot.security.SystemPagePolicy" />
 	
+	<!--  FreeMarker Object Wrappers  -->
+	
+	<bean id="siteObjectWrapperPlugin" class="org.riotfamily.pages.view.SiteObjectWrapperPlugin" />
+	
+	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin">
+		<property name="pathCompleter" ref="pathCompleter" />
+	</bean>
+	
 </beans>
