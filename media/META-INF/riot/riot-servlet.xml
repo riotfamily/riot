@@ -49,7 +49,7 @@
 				<bean class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 					<property name="jobDetail" ref="mediaCleanUpJobDetail" />
 					<property name="repeatInterval" value="43200000" />
-					<property name="startDelay" value="60000" />
+					<property name="startDelay" value="43200000" />
 				</bean>
 			</list>
 	    </property>
