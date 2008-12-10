@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.log;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
 import org.apache.log4j.NDC;
@@ -37,7 +38,9 @@ import org.apache.log4j.NDC;
  */
 public class RiotLog {
 
-	private Logger logger;
+	private static final String FQCN = RiotLog.class.getName();
+	
+	private transient Logger logger;
 	
 	private RiotLog(Logger logger) {
 		this.logger = logger;
@@ -74,12 +77,12 @@ public class RiotLog {
 	}
 	
 	public void debug(Object msg) {
-		logger.debug(msg);
+		logger.log(FQCN, Level.DEBUG, msg, null);
 	}
 	
 	public void debug(String msg, Object... args) {
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format(msg, args));
+			debug(String.format(msg, args));
 		}
 	}
 	
@@ -88,69 +91,69 @@ public class RiotLog {
 	}
 	
 	public void info(Object msg) {
-		logger.info(msg);
+		logger.log(FQCN, Level.INFO, msg, null);
 	}
 	
 	public void info(String msg, Object... args) {
 		if (logger.isInfoEnabled()) {
-			logger.info(String.format(msg, args));
+			info(String.format(msg, args));
 		}
 	}
 	
 	public void warn(Object msg) {
-		logger.warn(msg);
+		logger.log(FQCN, Level.WARN, msg, null);
 	}
 	
 	public void warn(Throwable t) {
-		logger.warn(t.getMessage(), t);
+		logger.log(FQCN, Level.WARN, t.getMessage(), t);
 	}
 	
 	public void warn(Object msg, Throwable t) {
-		logger.warn(msg, t);
+		logger.log(FQCN, Level.WARN, msg, t);
 	}
 	
 	public void warn(String msg, Throwable t, Object... args) {
-		logger.warn(String.format(msg, args), t);
+		warn(String.format(msg, args), t);
 	}
 	
 	public void warn(String msg, Object... args) {
-		logger.warn(String.format(msg, args));
+		warn(String.format(msg, args));
 	}
 	
 	public void error(Object msg) {
-		logger.error(msg);
+		logger.log(FQCN, Level.ERROR, msg, null);
 	}
 	
 	public void error(Throwable t) {
-		logger.error(t.getMessage(), t);
+		logger.log(FQCN, Level.ERROR, t.getMessage(), t);
 	}
 	
 	public void error(Object msg, Throwable t) {
-		logger.error(msg, t);
+		logger.log(FQCN, Level.ERROR, msg, t);
 	}
 	
 	public void error(String msg, Throwable t, Object... args) {
-		logger.error(String.format(msg, args), t);
+		error(String.format(msg, args), t);
 	}
 	
 	public void error(String msg, Object... args) {
-		logger.error(String.format(msg, args));
+		error(String.format(msg, args));
 	}
 	
 	public void fatal(Object msg) {
-		logger.fatal(msg);
+		logger.log(FQCN, Level.FATAL, msg, null);
 	}
 	
 	public void fatal(Throwable t) {
-		logger.fatal(t.getMessage(), t);
+		logger.log(FQCN, Level.FATAL, t.getMessage(), t);
 	}
 	
 	public void fatal(Object msg, Throwable t) {
-		logger.fatal(msg, t);
+		logger.log(FQCN, Level.FATAL, msg, t);
 	}
 	
 	public void fatal(String msg, Throwable t, Object... args) {
-		logger.fatal(String.format(msg, args), t);
+		fatal(String.format(msg, args), t);
 	}
 	
 	public static void put(String key, Object value) {
