@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.markup.DocumentWriter;
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.web.servlet.View;
@@ -68,23 +67,23 @@ public class DumpModelView implements View {
 			HttpServletResponse response) throws Exception {
 		
 		DocumentWriter out = new DocumentWriter(response.getWriter());
-		out.start(Html.HTML);
+		out.start("html");
 		
-		out.start(Html.HEAD);
-		out.start(Html.TITLE).body("Model Dump").end();
+		out.start("head");
+		out.start("title").body("Model Dump").end();
 		if (styleSheet != null) {
-			out.start(Html.LINK).attribute(Html.LINK_REL, "stylesheet")
-					.attribute(Html.LINK_HREF, 
-					ServletUtils.resolveUrl(styleSheet, request)).end();
+			out.start("link")
+					.attribute("rel", "stylesheet")
+					.attribute("href", ServletUtils.resolveUrl(styleSheet, request)).end();
 		}
 		out.end();
 		
-		out.start(Html.BODY).start(Html.DL);
+		out.start("body").start("dl");
 		Iterator<Map.Entry<Object, Object>> it = model.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry<Object, Object> entry = it.next();
-			out.start(Html.DT).body(entry.getKey().toString()).end();
-			out.start(Html.DD).body(StylerUtils.style(entry.getValue())).end();
+			out.start("dt").body(entry.getKey().toString()).end();
+			out.start("dd").body(StylerUtils.style(entry.getValue())).end();
 		}
 		out.closeAll();
 	}

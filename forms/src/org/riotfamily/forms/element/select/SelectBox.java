@@ -26,7 +26,6 @@ package org.riotfamily.forms.element.select;
 import java.io.PrintWriter;
 import java.util.List;
 
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.MessageUtils;
 
@@ -95,13 +94,14 @@ public class SelectBox extends AbstractSingleSelectElement {
 			
 	protected void renderInternal(PrintWriter writer) {
 		List<OptionItem> optionItems = getOptionItems();
-		TagWriter selectTag = new TagWriter(writer);
-		selectTag.start(Html.SELECT);
-		selectTag.attribute(Html.COMMON_ID, getEventTriggerId());
-		selectTag.attribute(Html.INPUT_NAME, getParamName());			
-		selectTag.attribute(Html.SELECT_SIZE, 1);
-		selectTag.attribute(Html.INPUT_DISABLED, !isEnabled());
-		selectTag.body();
+		TagWriter selectTag = new TagWriter(writer)
+				.start("select")
+				.attribute("id", getEventTriggerId())
+				.attribute("name", getParamName())			
+				.attribute("size", 1)
+				.attribute("disabled", !isEnabled())
+				.body();
+		
 		for (OptionItem item : optionItems) {
 			item.render();
 		}

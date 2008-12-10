@@ -26,9 +26,7 @@ package org.riotfamily.forms.element;
 import java.beans.PropertyEditor;
 import java.io.PrintWriter;
 
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
-import org.riotfamily.common.util.PasswordGenerator;
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.AbstractElement;
 import org.riotfamily.forms.Editor;
@@ -57,7 +55,7 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 
 	private boolean trim = true;
 
-	private boolean randomParamName;
+	private boolean allowAutocomplete;
 
 	private String defaultText;
 
@@ -124,12 +122,10 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 	}
 
 	/**
-	 * Sets whether a random (nonce) word should be used as parameter name
-	 * to disable the browser's autocompletion feature.
+	 * Sets whether browsers are allowed to perform autocompletion. 
 	 */
-	public void setRandomParamName(boolean randomParamName) {
-		//REVIST Consider using setAttribute("autocomlete", "off") instead
-		this.randomParamName = randomParamName;
+	public void setAllowAutocomplete(boolean allowAutocomplete) {
+		this.allowAutocomplete = allowAutocomplete;
 	}
 
 	/**
@@ -266,26 +262,22 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 	
 	protected void validateSyntax() {
 	}
-
-	protected String getDesiredParamName() {
-		if (randomParamName) {
-			return PasswordGenerator.getDefaultInstance().generate();
-		}
-		return super.getDesiredParamName();
-	}
-
+	
 	public void renderInternal(PrintWriter writer) {
 		TagWriter input = new TagWriter(writer);
-		input.startEmpty(Html.INPUT)
-				.attribute(Html.INPUT_TYPE, getType())
-				.attribute(Html.COMMON_ID, getEventTriggerId())
-				.attribute(Html.COMMON_CLASS, getStyleClass())				
-				.attribute(Html.INPUT_NAME, getParamName())
-				.attribute(Html.INPUT_VALUE, getText())
-				.attribute(Html.INPUT_DISABLED, !isEnabled());
+		input.startEmpty("input")
+				.attribute("type", getType())
+				.attribute("id", getEventTriggerId())
+				.attribute("class", getStyleClass())				
+				.attribute("name", getParamName())
+				.attribute("value", getText())
+				.attribute("disabled", !isEnabled());
 
+		if (!allowAutocomplete) {
+			input.attribute("autocomplete", "off");
+		}
 		if (getMaxLength() != null) {
-			input.attribute(Html.INPUT_MAX_LENGTH, getMaxLength().intValue());
+			input.attribute("maxlength", getMaxLength().intValue());
 		}
 		input.end();
 	}

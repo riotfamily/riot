@@ -26,7 +26,6 @@ package org.riotfamily.forms.element.select;
 import java.io.PrintWriter;
 import java.util.List;
 
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 
 
@@ -53,11 +52,11 @@ public class MultiSelectBox extends AbstractMultiSelectElement {
 		TagWriter selectTag = new TagWriter(writer);
 
 		List<OptionItem> options = getOptionItems();
-		selectTag.start(Html.SELECT);
-		selectTag.attribute(Html.COMMON_ID, getEventTriggerId());
-		selectTag.attribute(Html.INPUT_NAME, getParamName());
-		selectTag.attribute(Html.SELECT_SIZE, Math.min(options.size(), maxSize));
-		selectTag.attribute(Html.SELECT_MULTIPLE, true);
+		selectTag.start("select");
+		selectTag.attribute("id", getEventTriggerId());
+		selectTag.attribute("name", getParamName());
+		selectTag.attribute("size", Math.min(options.size(), maxSize));
+		selectTag.attribute("multiple", true);
 		selectTag.body();
 		for (OptionItem item : options) {
 			item.render();

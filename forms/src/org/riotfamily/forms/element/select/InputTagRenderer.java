@@ -25,7 +25,6 @@ package org.riotfamily.forms.element.select;
 
 import java.io.PrintWriter;
 
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 
 
@@ -42,14 +41,14 @@ public class InputTagRenderer implements OptionRenderer {
 	
 	public void renderOption(OptionItem option, PrintWriter writer, boolean enabled) {
 		TagWriter optionTag = new TagWriter(writer);
-		optionTag.startEmpty(Html.INPUT);
-		optionTag.attribute(Html.INPUT_TYPE,type);
-		optionTag.attribute(Html.INPUT_NAME, option.getParent().getParamName());
-		optionTag.attribute(Html.INPUT_VALUE, option.getIndex());
-		optionTag.attribute(Html.INPUT_CHECKED, option.isSelected());
-		optionTag.attribute(Html.INPUT_DISABLED, !enabled);
-		optionTag.attribute(Html.COMMON_ID, option.getId());
-		optionTag.attribute(Html.COMMON_CLASS, type);
+		optionTag.startEmpty("input");
+		optionTag.attribute("type", type);
+		optionTag.attribute("name", option.getParent().getParamName());
+		optionTag.attribute("value", option.getIndex());
+		optionTag.attribute("checked", option.isSelected());
+		optionTag.attribute("disabled", !enabled);
+		optionTag.attribute("id", option.getId());
+		optionTag.attribute("class", type);
 		optionTag.end();
 	}	
 

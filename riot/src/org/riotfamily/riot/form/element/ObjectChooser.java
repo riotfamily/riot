@@ -29,9 +29,9 @@ import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.beans.ProtectedBeanWrapper;
 import org.riotfamily.common.i18n.MessageResolver;
 import org.riotfamily.common.markup.DocumentWriter;
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.RenderContext;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.Form;
@@ -44,7 +44,6 @@ import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.form.ui.FormUtils;
 import org.riotfamily.riot.list.ColumnConfig;
 import org.riotfamily.riot.list.ListConfig;
-import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -214,7 +213,7 @@ public class ObjectChooser extends AbstractChooser
 			return;
 		}
 		if (display == null) {
-			new TagWriter(writer).start(Html.SPAN)
+			new TagWriter(writer).start("span")
 					.body(targetEditorDefinition.getLabel(object, 
 							getFormContext().getMessageResolver())).end();
 			
@@ -222,8 +221,7 @@ public class ObjectChooser extends AbstractChooser
 		}
 		
 		DocumentWriter doc = new DocumentWriter(writer);
-		doc.start(Html.SPAN).attribute(Html.COMMON_CLASS, 
-				"chosen " + targetListConfig.getId());
+		doc.start("span").attribute("class", "chosen " + targetListConfig.getId());
 
 		LabelRenderContext context = new LabelRenderContext();
 		ObjectRenderer defaultRenderer = editorRepository.getListRepository()
@@ -240,7 +238,7 @@ public class ObjectChooser extends AbstractChooser
 				renderer = defaultRenderer;
 			}
 			Object value = wrapper.getPropertyValue(display[i]);
-			doc.start(Html.SPAN).attribute(Html.COMMON_CLASS, 
+			doc.start("span").attribute("class",  
 					FormatUtils.toCssClass(display[i])).body();
 			
 			renderer.render(value, context, writer);

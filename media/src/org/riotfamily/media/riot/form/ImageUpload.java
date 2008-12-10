@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.io.IOUtils;
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.AbstractElement;
@@ -258,10 +257,9 @@ public class ImageUpload extends FileUpload {
 		protected void renderInternal(PrintWriter writer) {
 			int w = crop && maxWidth > 0 ? maxWidth : previewWidth;
 			int h = (maxHeight > 0 ? maxHeight : previewHeight) + 50;
-			new TagWriter(writer).start(Html.DIV)
-					.attribute(Html.COMMON_ID, getId())
-					.attribute(Html.COMMON_STYLE,
-							"width:" + w + "px;height:" + h + "px")
+			new TagWriter(writer).start("div")
+					.attribute("id", getId())
+					.attribute("style", "width:" + w + "px;height:" + h + "px")
 					.end();
 		}
 

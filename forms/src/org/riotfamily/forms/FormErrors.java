@@ -26,11 +26,9 @@ package org.riotfamily.forms;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.riotfamily.common.markup.DocumentWriter;
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.util.Generics;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.AbstractErrors;
@@ -84,14 +82,12 @@ public class FormErrors extends AbstractErrors {
 		if (errors != null) {
 			PrintWriter writer = element.getForm().getFormContext().getWriter();
 			DocumentWriter tag = new DocumentWriter(writer);
-			tag.start(Html.UL)
-					.attribute(Html.COMMON_ID, element.getId() + "-error")
-					.attribute(Html.COMMON_CLASS, "errors");
-			Iterator<String> it = errors.iterator();
-			while (it.hasNext()) {
-				tag.start(Html.LI)
-						.body(it.next())
-						.end();
+			tag.start("ul")
+					.attribute("id", element.getId() + "-error")
+					.attribute("class", "errors");
+			
+			for (String error : errors) {
+				tag.start("li").body(error).end();
 			}
 			tag.end();
 		}

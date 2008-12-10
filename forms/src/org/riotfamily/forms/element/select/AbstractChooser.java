@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.markup.DocumentWriter;
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.ContentElement;
@@ -69,21 +68,19 @@ public abstract class AbstractChooser extends AbstractEditorBase
 	
 	protected void renderInternal(PrintWriter writer) {
 		DocumentWriter doc = new DocumentWriter(writer);
-		doc.start(Html.DIV)				
-				.attribute(Html.COMMON_CLASS, "chooser")
-				.body();
+		doc.start("div").attribute("class", "chooser").body();
 				
 		renderLabel(object, writer);
 		
-		doc.start(Html.BUTTON).attribute(Html.COMMON_CLASS, "choose");
-		doc.attribute(Html.INPUT_DISABLED, !isEnabled());
+		doc.start("button").attribute("class", "choose");
+		doc.attribute("disabled", !isEnabled());
 		doc.body("Choose");
 		doc.end();
 		
 		if (!isRequired() && getValue() != null) {
-			doc.start(Html.BUTTON);
-			doc.attribute(Html.COMMON_CLASS, "unset");
-			doc.attribute(Html.INPUT_DISABLED, !isEnabled());
+			doc.start("button");
+			doc.attribute("class", "unset");
+			doc.attribute("disabled", !isEnabled());
 			doc.body("Unset");
 			doc.end();
 		}

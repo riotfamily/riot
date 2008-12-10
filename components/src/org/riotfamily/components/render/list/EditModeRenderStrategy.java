@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.markup.DocumentWriter;
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
@@ -60,20 +59,20 @@ public class EditModeRenderStrategy extends DefaultRenderStrategy {
 			HttpServletRequest request, HttpServletResponse response) 
 			throws Exception {
 		
-		DocumentWriter wrapper = new DocumentWriter(response.getWriter());
+		DocumentWriter doc = new DocumentWriter(response.getWriter());
 		
-		wrapper.start(Html.DIV)
-			.attribute(Html.COMMON_CLASS, "riot-component-list")
+		doc.start("div")
+			.attribute("class", "riot-component-list")
 			.attribute("riot:listId", list.getId().toString());
 		
-		wrapper.body();
+		doc.body();
 		super.render(list, config, request, response);
-		wrapper.end();
+		doc.end();
 		
-		wrapper.start(Html.SCRIPT).body("riotComponentListConfig" + list.getId() 
+		doc.start("script").body("riotComponentListConfig" + list.getId() 
 				+ " = " + config.toJSON() + ";", false);
 		
-		wrapper.end();
+		doc.end();
 	}
 
 	/**

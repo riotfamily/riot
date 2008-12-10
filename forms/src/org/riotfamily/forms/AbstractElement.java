@@ -26,7 +26,6 @@ package org.riotfamily.forms;
 import java.io.PrintWriter;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.request.FormRequest;
 
@@ -156,10 +155,10 @@ public abstract class AbstractElement implements Element {
 	public final void render(PrintWriter writer) {
 		if (wrap) {
 			TagWriter wrapper = new TagWriter(writer);
-			wrapper.start(inline ? Html.SPAN: Html.DIV);
-			wrapper.attribute(Html.COMMON_ID, getId());
+			wrapper.start(inline ? "span": "div");
+			wrapper.attribute("id", getId());
 			if (getStyleClass() != null) {
-				wrapper.attribute(Html.COMMON_CLASS, getStyleClass() + "-wrapper");
+				wrapper.attribute("class", getStyleClass() + "-wrapper");
 			}
 			wrapper.body();
 			if (isVisible()) {

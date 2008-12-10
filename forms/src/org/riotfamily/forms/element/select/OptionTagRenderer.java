@@ -25,7 +25,6 @@ package org.riotfamily.forms.element.select;
 
 import java.io.PrintWriter;
 
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.FormatUtils;
 
@@ -36,14 +35,14 @@ import org.riotfamily.common.util.FormatUtils;
 public class OptionTagRenderer implements OptionRenderer {
 
 	public void renderOption(OptionItem option, PrintWriter writer, boolean enabled) {
-		TagWriter optionTag = new TagWriter(writer);
-		optionTag.start(Html.OPTION);
-		optionTag.attribute(Html.COMMON_ID, option.getId());
-		optionTag.attribute(Html.COMMON_CLASS, option.getStyleClass());
-		optionTag.attribute(Html.INPUT_VALUE, option.getIndex());
-		optionTag.attribute(Html.OPTION_SELECTED, option.isSelected());
-		optionTag.body(FormatUtils.stripTags(option.getLabel()));
-		optionTag.end();
+		new TagWriter(writer)
+				.start("option")
+				.attribute("id", option.getId())
+				.attribute("class", option.getStyleClass())
+				.attribute("value", option.getIndex())
+				.attribute("selected", option.isSelected())
+				.body(FormatUtils.stripTags(option.getLabel()))
+				.end();
 	}
 
 }

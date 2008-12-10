@@ -27,7 +27,6 @@ import java.io.PrintWriter;
 import java.util.regex.Pattern;
 
 import org.riotfamily.common.markup.DocumentWriter;
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.MessageUtils;
 import org.riotfamily.forms.request.FormRequest;
@@ -101,15 +100,15 @@ public class TextField extends AbstractTextElement {
 			DocumentWriter doc = new DocumentWriter(writer);
 									
 			String msg = MessageUtils.getMessage(this, getConfirmMessage());
-			doc.start(Html.P).body(msg, false).end();
-			
-			doc.startEmpty(Html.INPUT)
-					.attribute(Html.INPUT_TYPE, getType())
-					.attribute(Html.COMMON_CLASS, getStyleClass())
-					.attribute(Html.INPUT_NAME, getConfirmParamName())
-					.attribute(Html.INPUT_DISABLED, !isEnabled())
-					.attribute(Html.INPUT_VALUE, 
-					confirmText != null ? confirmText : getText());
+			doc.start("p").body(msg, false).end();
+			doc.startEmpty("input")
+					.attribute("type", getType())
+					.attribute("class", getStyleClass())
+					.attribute("name", getConfirmParamName())
+					.attribute("disabled", !isEnabled())
+					.attribute("value",	confirmText != null 
+							? confirmText 
+							: getText());
 			
 			doc.closeAll();
 		}		

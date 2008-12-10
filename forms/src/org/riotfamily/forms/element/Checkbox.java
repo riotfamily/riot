@@ -25,7 +25,6 @@ package org.riotfamily.forms.element;
 
 import java.io.PrintWriter;
 
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.Editor;
@@ -86,12 +85,12 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 
 	public void renderInternal(PrintWriter writer) {
 		TagWriter inputTag = new TagWriter(writer);
-		inputTag.startEmpty(Html.INPUT)
-				.attribute(Html.INPUT_TYPE, TYPE_CHECKBOX)
-				.attribute(Html.INPUT_NAME, getParamName())				
-				.attribute(Html.COMMON_CLASS, getStyleClass())
-				.attribute(Html.INPUT_CHECKED, checked)
-				.attribute(Html.INPUT_DISABLED, !isEnabled())
+		inputTag.startEmpty("input")
+				.attribute("type", TYPE_CHECKBOX)
+				.attribute("name", getParamName())				
+				.attribute("class", getStyleClass())
+				.attribute("checked", checked)
+				.attribute("disabled", !isEnabled())
 				.end();
 	}
 

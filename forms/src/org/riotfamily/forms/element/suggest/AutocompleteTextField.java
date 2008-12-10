@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.markup.DocumentWriter;
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.DHTMLElement;
@@ -59,9 +58,9 @@ public class AutocompleteTextField extends AbstractTextElement
 	public void renderInternal(PrintWriter writer) {
 		super.renderInternal(writer);
 		TagWriter tag = new TagWriter(writer);
-		tag.start(Html.DIV).attribute(Html.COMMON_ID, getChoicesDivId())
-				.attribute(Html.COMMON_CLASS, "autocomplete")
-				.attribute(Html.COMMON_STYLE, "display:none")
+		tag.start("div").attribute("id", getChoicesDivId())
+				.attribute("class", "autocomplete")
+				.attribute("style", "display:none")
 				.end();
 	}
 	
@@ -83,9 +82,9 @@ public class AutocompleteTextField extends AbstractTextElement
 
 		String search = request.getParameter(getParamName());
 		DocumentWriter doc = new DocumentWriter(response.getWriter());
-		doc.start(Html.UL);
+		doc.start("ul");
 		for (String value : model.getSuggestions(search, this)) {
-			doc.start(Html.LI).body(value).end();
+			doc.start("li").body(value).end();
 		}
 		doc.end();
 	}

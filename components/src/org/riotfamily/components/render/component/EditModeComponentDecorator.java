@@ -3,7 +3,6 @@ package org.riotfamily.components.render.component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.forms.factory.FormRepository;
@@ -36,8 +35,8 @@ public class EditModeComponentDecorator implements ComponentRenderer {
 		}
 		
 		TagWriter wrapper = new TagWriter(response.getWriter());
-		wrapper.start(Html.DIV)
-				.attribute(Html.COMMON_CLASS, className)
+		wrapper.start("div")
+				.attribute("class", className)
 				.attribute("riot:contentId", component.getId().toString())
 				.attribute("riot:componentType", type)
 				.attribute("riot:form", formId)

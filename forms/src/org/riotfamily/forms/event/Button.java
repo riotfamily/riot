@@ -26,7 +26,6 @@ package org.riotfamily.forms.event;
 import java.io.PrintWriter;
 import java.util.List;
 
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
@@ -134,17 +133,17 @@ public class Button extends AbstractEditorBase
 
 	public void renderInternal(PrintWriter writer) {
 		TagWriter tag = new TagWriter(writer);
-		tag.startEmpty(Html.INPUT)
-				.attribute(Html.INPUT_TYPE, submit ? "submit" : "button")
-				.attribute(Html.COMMON_ID, getEventTriggerId())
-				.attribute(Html.COMMON_CLASS, getCssClass())				
-				.attribute(Html.COMMON_TABINDEX, tabIndex)
-				.attribute(Html.INPUT_DISABLED, !isEnabled())
-				.attribute(Html.INPUT_NAME, getParamName())
-				.attribute(Html.INPUT_VALUE, getLabel());
+		tag.startEmpty("input")
+				.attribute("type", submit ? "submit" : "button")
+				.attribute("id", getEventTriggerId())
+				.attribute("class", getCssClass())				
+				.attribute("tabindex", tabIndex)
+				.attribute("disabled", !isEnabled())
+				.attribute("name", getParamName())
+				.attribute("value", getLabel());
 		
 		if (partitialSubmit != null && isEnabled()) {
-			tag.attribute(Html.COMMON_ONCLICK, "submitElement('" + 
+			tag.attribute("onclick", "submitElement('" + 
 					partitialSubmit + "', this); return false;");
 		}
 		tag.end();

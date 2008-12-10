@@ -23,6 +23,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms.element;
 
+import java.io.PrintWriter;
+
+import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.HashUtils;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Editor;
@@ -126,6 +129,19 @@ public class PasswordField extends TemplateElement
 	
 	public boolean isShowInput() {
 		return showInput;
+	}
+	
+	@Override
+	protected void renderInternal(PrintWriter writer) {
+		//Render a faux input field because Firefox does not respect
+		//autocomplete="off" on input fields preceeding a password field.
+		new TagWriter(writer)
+			.startEmpty("input")
+			.attribute("type", "text")
+			.attribute("style", "display:none")
+			.end();
+		
+		super.renderInternal(writer);
 	}
 	
 	protected void toggle() {

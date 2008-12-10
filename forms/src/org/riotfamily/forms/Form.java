@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.markup.DocumentWriter;
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.forms.request.FormRequest;
@@ -307,21 +306,21 @@ public class Form implements BeanEditor {
 		formContext.setWriter(writer);
 		DocumentWriter doc = new DocumentWriter(writer);
 
-		doc.start(Html.SCRIPT);
-		doc.attribute(Html.SCRIPT_SRC, formContext.getContextPath()
+		doc.start("script");
+		doc.attribute("src", formContext.getContextPath()
 				+ formContext.getResourcePath() + "form/hint.js");
 
-		doc.attribute(Html.SCRIPT_TYPE, "text/javascript");
-		doc.attribute(Html.SCRIPT_LANGUAGE, "JavaScript");
+		doc.attribute("type", "text/javascript");
+		doc.attribute("language", "JavaScript");
 		doc.end();
 		
-		doc.start(Html.SCRIPT).body();
+		doc.start("script").body();
 		writer.write("if (!window.Resources) document.write('" 
 				+ "<script src=\"" + formContext.getContextPath()
 				+ formContext.getResourcePath() + "riot-js/resources.js"
 				+ "\"></scr'+'ipt>');\n");
 		doc.end();
-		doc.start(Html.SCRIPT).body();
+		doc.start("script").body();
 		writer.write("Resources.basePath='" + formContext.getContextPath() 
 				+ formContext.getResourcePath()	+ "';\n");
 		
@@ -349,9 +348,9 @@ public class Form implements BeanEditor {
 			TagWriter script = new TagWriter(writer);
 			String initScript = dhtml.getInitScript();
 			if (initScript != null) {
-				script.start(Html.SCRIPT);
-				script.attribute(Html.SCRIPT_LANGUAGE, "JavaScript");
-				script.attribute(Html.SCRIPT_TYPE, "text/javascript");
+				script.start("script");
+				script.attribute("language", "JavaScript");
+				script.attribute("type", "text/javascript");
 				script.body().print("//").cData().println();
 				if (dhtml instanceof ResourceElement) {
 					ResourceElement resEle = (ResourceElement) dhtml;

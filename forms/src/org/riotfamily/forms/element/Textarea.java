@@ -26,7 +26,6 @@ package org.riotfamily.forms.element;
 import java.io.PrintWriter;
 
 import org.riotfamily.common.markup.DocumentWriter;
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.ResourceElement;
@@ -61,19 +60,19 @@ public class Textarea extends AbstractTextElement implements ResourceElement,
 			// If no init script is rendered we surround the textarea with a 
 			// div so that we work around the IE 100% width bug via CSS:
 			// http://fplanque.net/2003/Articles/iecsstextarea/
-			doc.start(Html.DIV).attribute(Html.COMMON_CLASS, "textarea-wrapper");
+			doc.start("div").attribute("class", "textarea-wrapper");
 		}
-		doc.start(Html.TEXTAREA)
-			.attribute(Html.COMMON_ID, getEventTriggerId())
-			.attribute(Html.COMMON_CLASS, getStyleClass())			
-			.attribute(Html.INPUT_NAME, getParamName())
-			.attribute(Html.INPUT_DISABLED, !isEnabled());
+		doc.start("textarea")
+			.attribute("id", getEventTriggerId())
+			.attribute("class", getStyleClass())			
+			.attribute("name", getParamName())
+			.attribute("disabled", !isEnabled());
 		
 		if (rows != null) {
-			doc.attribute(Html.TEXTAREA_ROWS, rows.intValue());
+			doc.attribute("rows", rows.intValue());
 		}
 		if (cols != null) {
-			doc.attribute(Html.TEXTAREA_COLS, cols.intValue());
+			doc.attribute("cols", cols.intValue());
 		}
 		
 		doc.body(getText()).closeAll();

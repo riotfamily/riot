@@ -25,7 +25,6 @@ package org.riotfamily.forms.element;
 
 import java.io.PrintWriter;
 
-import org.riotfamily.common.markup.Html;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.resource.FormResource;
@@ -49,8 +48,8 @@ public class ColorPicker extends AbstractTextElement
 	public void renderInternal(PrintWriter writer) {
 		super.renderInternal(writer);
 		TagWriter tag = new TagWriter(writer);
-		tag.startEmpty(Html.BUTTON).attribute(Html.COMMON_ID, getId() + "-swatch")
-				.attribute(Html.COMMON_CLASS, "color-swatch").end();
+		tag.startEmpty("button").attribute("id", getId() + "-swatch")
+				.attribute("class", "color-swatch").end();
 	}
 	public FormResource getResource() {
 		return new ScriptResource(
