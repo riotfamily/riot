@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
 
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
@@ -17,6 +18,8 @@ import org.springframework.util.StringUtils;
 public class DbMessageSource extends AbstractMessageSource {
 
 	public static final String DEFAULT_BUNDLE = "default";
+
+	private RiotLog log = RiotLog.get(DbMessageSource.class);
 
 	private DbMessageSourceDao dao;
 	
@@ -58,13 +61,22 @@ public class DbMessageSource extends AbstractMessageSource {
 	MessageBundleEntry getEntry(final String code, final String defaultMessage) {
 		MessageBundleEntry result = dao.findEntry(bundle, code);
 		if (result == null) {
-			result = (MessageBundleEntry) transactionTemplate.execute(new TransactionCallback() {
-				public Object doInTransaction(TransactionStatus status) {
-					MessageBundleEntry entry = new MessageBundleEntry(bundle, code, defaultMessage);
-					dao.saveEntry(entry);
-					return entry;
+			try {
+				result = (MessageBundleEntry) transactionTemplate.execute(new TransactionCallback() {
+					public Object doInTransaction(TransactionStatus status) {
+						MessageBundleEntry entry = new MessageBundleEntry(bundle, code, defaultMessage);
+						dao.saveEntry(entry);
+						return entry;
+					}
+				});
+			}
+			catch (Exception e) {
+				log.warn("Caught Exception when trying to persist default MessageEntry: ", e);
+				result = dao.findEntry(bundle, code);
+				if (result == null) {
+					result = new MessageBundleEntry(bundle, code, defaultMessage);
 				}
-			});
+			}
 		}
 		return result;
 	}
