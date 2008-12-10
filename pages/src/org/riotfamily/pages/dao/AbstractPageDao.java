@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.cachius.CacheService;
+import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.model.Page;
@@ -316,6 +317,7 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		
 		PageCacheUtils.invalidateNode(cacheService, node);
 		PageCacheUtils.invalidateNode(cacheService, parentNode);
+		ComponentCacheUtils.invalidateContainer(cacheService, page.getPageProperties());
 		
 		deleteObject(page);
 		
