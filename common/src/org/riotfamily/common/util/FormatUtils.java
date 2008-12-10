@@ -847,5 +847,17 @@ public final class FormatUtils {
 		}
 		return PARENT_DIR_PATTERN.matcher(StringUtils.cleanPath(s)).replaceAll("");
 	}
-		
+	
+	/**
+	 * Repeats a String the given number of times.
+	 * @since 8.0 
+	 */
+	public static String repeat(String s, int times) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < times; i++) {
+			sb.append(s);
+		}
+		return sb.toString();
+	}
+	
 }
