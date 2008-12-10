@@ -37,7 +37,7 @@
 	</bean>
   	
 	<!-- The Hibernate SessionFactory -->
-	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+	<bean id="sessionFactory" class="org.riotfamily.riot.hibernate.support.RiotSessionFactoryBean">
 		<property name="dataSource" ref="riotDataSource" />
 		<property name="packagesToScan">
 			<list>
