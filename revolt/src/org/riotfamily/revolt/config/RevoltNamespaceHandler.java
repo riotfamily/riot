@@ -51,6 +51,7 @@ import org.riotfamily.revolt.refactor.DropConstraint;
 import org.riotfamily.revolt.refactor.DropForeignKey;
 import org.riotfamily.revolt.refactor.DropIndex;
 import org.riotfamily.revolt.refactor.DropTable;
+import org.riotfamily.revolt.refactor.ExecSql;
 import org.riotfamily.revolt.refactor.InsertData;
 import org.riotfamily.revolt.refactor.ModifyColumn;
 import org.riotfamily.revolt.refactor.RenameColumn;
@@ -200,6 +201,9 @@ public class RevoltNamespaceHandler implements NamespaceHandler {
 		}
 		if (DomUtils.nodeNameEquals(ele, "update-data")) {
 			return new UpdateData(parseUpdateStatements(ele));
+		}
+		if (DomUtils.nodeNameEquals(ele, "exec-sql")) {
+			return new ExecSql(ele.getTextContent());
 		}
 		if (DomUtils.nodeNameEquals(ele, "create-auto-increment-seq")) {
 			return new CreateAutoIncrementSequence(
