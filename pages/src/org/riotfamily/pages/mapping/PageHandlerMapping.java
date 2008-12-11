@@ -95,7 +95,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		else {
 			page = findWildcardPage(site, path);
 			if (page != null) {
-				exposeAttributes(page.getPath(), path, request);
+				exposeAttributes(page, path, request);
 				exposePathWithinMapping(pathMatcher.extractPathWithinPattern(
 						page.getPath(), path), request);
 			}
@@ -187,10 +187,10 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, pathWithinMapping);
 	}
 	
-	protected void exposeAttributes(String antPattern, String urlPath,
+	protected void exposeAttributes(Page page, String urlPath,
 			HttpServletRequest request) {
 
-		AttributePattern pattern = new AttributePattern(antPattern);
+		AttributePattern pattern = new AttributePattern(page.getPath());
 		pattern.expose(urlPath, request);
 	}
 	
