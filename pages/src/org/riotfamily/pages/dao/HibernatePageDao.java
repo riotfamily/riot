@@ -126,7 +126,8 @@ public class HibernatePageDao extends AbstractPageDao {
 	}
 
 	public Page mergePage(Page page) {
-		return hibernate.merge(page);
+		hibernate.update(page);
+		return page;
 	}
 	
 	public PageNode findNodeOfType(String pageType) {
