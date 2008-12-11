@@ -90,7 +90,27 @@ public class SmartSmtpAppender extends AppenderSkeleton {
 	public void setHost(String host) {
 		mailSender.setHost(host);
 	}
+
+	/**
+	 * Sets the SMTP username to use.
+	 */
+	public void setUsername(String username) {
+		mailSender.setUsername(username);
+		enableSmtpAuth();
+	}
+
+	/**
+	 * Sets the SMTP password to use.
+	 */
+	public void setPassword(String password) {
+		mailSender.setPassword(password);
+		enableSmtpAuth();
+	}
 	
+	private void enableSmtpAuth() {
+		mailSender.getJavaMailProperties().setProperty("mail.smtp.auth", "true");
+	}
+
 	/**
 	 * Sets the recipients. Multiple addresses can be specified separated 
 	 * by commas.
