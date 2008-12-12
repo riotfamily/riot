@@ -38,7 +38,11 @@ riot.Toolbar = Class.create({
 
 	activate: function() {
 		if (this.edit) { 
-			var dirty = typeof document.body.down('.riot-dirty') != 'undefined';
+			var dirty = $$('.riot-dirty').any(function(e) {
+				return !riotContainerIds || riotContainerIds.indexOf(
+						parseInt(e.readAttribute('riot:containerId'))) != -1;
+			})
+			
 			if (!dirty || !this.publish) this.disablePublishButtons();
 			this.buttons.values().invoke('activate');
 			this.buttons.get('browse').select();
