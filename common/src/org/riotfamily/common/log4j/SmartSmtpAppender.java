@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.log4j;
 
+import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -108,7 +109,9 @@ public class SmartSmtpAppender extends AppenderSkeleton {
 	}
 	
 	private void enableSmtpAuth() {
-		mailSender.getJavaMailProperties().setProperty("mail.smtp.auth", "true");
+		Properties javaMailProperties = new Properties();
+		javaMailProperties.setProperty("mail.smtp.auth", "true");
+		mailSender.setJavaMailProperties(javaMailProperties);
 	}
 
 	/**
