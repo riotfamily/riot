@@ -77,6 +77,13 @@
 	<#return url(commonMacroHelper.getUrlForHandler(handlerName, attributes, prefix)) />
 </#function>
 
+<#---
+  - Returns the absolute URL for the given handlerName. 
+  -->
+<#function absoluteUrlForHandler handlerName attributes={} prefix="">
+	<#return absoluteUrl(commonMacroHelper.getUrlForHandler(handlerName, attributes, prefix)) />
+</#function>
+
 <#function isHandler(handlerName)>
 	<#return handlerName == topLevelHandlerName />
 </#function>
