@@ -270,6 +270,9 @@ public class TextRenderer implements InitializingBean {
 	}
 	
 	public BufferedImage generate(String text, int maxWidth, String color) {
+		if (text == null) {
+			text = "";
+		}
 		if (this.maxWidth != null) {
 			maxWidth = this.maxWidth.intValue();
 		}
