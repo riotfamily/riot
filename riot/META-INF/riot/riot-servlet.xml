@@ -473,6 +473,7 @@
 	
 	<bean id="chooserPathController" class="org.riotfamily.riot.form.element.ChooserPathController">
 		<constructor-arg ref="editorRepository" />
+		<property name="messageCodesResolver" ref="messageCodesResolver" />
 	</bean>
 	<alias name="chooserPathController" alias="/chooser-path/@{targetEditorId}" />
 	<alias name="chooserPathController" alias="/chooser-path/@{targetEditorId}/@{rootEditorId}" />
