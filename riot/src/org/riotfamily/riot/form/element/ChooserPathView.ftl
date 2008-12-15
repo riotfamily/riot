@@ -13,12 +13,23 @@
 		<@riot.script src="pathView.js" />
 		<script type="text/javascript" language="JavaScript">
 			path = new Path();
+			window.onload = function() {
+				if (parent && parent.frameset) {
+					parent.frameset.resizeFrame(window);
+				}
+			};
 		</script>
 	</head>
 	<body id="chooser" class="path">
-		<div id="body-wrapper">
-			<div id="path"><@renderPath /></div>
-		</div>
+		<table>
+			<tbody>
+				<tr>
+					<td id="path">
+						<@renderPath />
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</body>
 </html>
 </#if>
@@ -26,9 +37,10 @@
 <#macro renderPath>
 	<#list path.components as comp>
 		<#if comp.enabled>
-			<a href="${riot.url(comp.editorUrl)}" target="chooserList" class="node">${comp.label?default('[untitled]')}</a>
+			<b><a href="${riot.url(comp.editorUrl)}" target="editor" class="editor ${comp.editorType}">${comp.label?default('[untitled]')}</a></b>
 		<#else>
-			<span class="node active node-active">${comp.label?default('[untitled]')}</span>
+			<b><span class="editor ${comp.editorType}<#if !comp_has_next> active ${comp.editorType}-active</#if>">${comp.label?default('[untitled]')}</span></b>
 		</#if>
 	</#list>
 </#macro>
+

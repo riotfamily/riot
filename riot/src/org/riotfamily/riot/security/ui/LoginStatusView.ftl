@@ -14,10 +14,10 @@
 		<div id="panel">
 			<div id="status">
 				<div id="loading"><@spring.messageText "label.status.busy", "Loading ..." /></div>
+				<b><a href="${riot.href("/logout")}"><@spring.messageText "label.status.logout", "Logout" /></a></b>
+				<b><a href="${riot.href("/changePassword")}" target="editor"><@spring.messageText "label.status.changePassword", "Change Password" /></a></b>
 				<span class="label"><@spring.messageText "label.status.username", "User" />:</span> <span class="value">${sessionData.userName?if_exists}</span>
 				<span class="label"><@spring.messageText "label.status.lastLogin", "Last login" />: </span><span class="value">${sessionData.lastLoginDate?if_exists} [${sessionData.lastLoginIP?if_exists}]</span>
-				<a href="${riot.href("/changePassword")}" target="editor" class="value"><@spring.messageText "label.status.changePassword", "Change Password" /></a>
-				<a href="${riot.href("/logout")}"><@spring.messageText "label.status.logout", "Logout" /></a>
 			</div>
 		</div>
 		<script>

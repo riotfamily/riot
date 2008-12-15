@@ -11,16 +11,31 @@
 		<@riot.stylesheet href="style/path.css" />
 		<@riot.script src="prototype/prototype.js" />
 		<@riot.script src="pathView.js" />
-		<@riot.script src="style/tweak.js" />
 		<script type="text/javascript" language="JavaScript">
 			path = new Path();
+			window.onload = function() {
+				if (parent && parent.frameset) {
+					parent.frameset.resizeFrame(window);
+				}
+			};
 		</script>
 	</head>
-	<body onload="TweakStyle.path()" class="path">
-		<div id="body-wrapper">
-			<div id="logo" title="Riot V${riotMacroHelper.runtime.versionString}"></div>
-			<div id="pathWrapper"><div id="path"><@renderPath /></div></div>
-		</div>
+	<body class="path">
+		<table>
+			<tbody>
+				<tr>
+					<td id="path">
+						<@renderPath />
+					</td>
+					<td id="riot">
+						<a href="http://www.riotfamily.org" title="Riot V${riotMacroHelper.runtime.versionString}"></a>
+					</td>
+					<td id="project">
+						<a id="logo" href="/"></a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</body>
 </html>
 </#if>
@@ -28,9 +43,9 @@
 <#macro renderPath>
 	<#list path.components as comp>
 		<#if comp.enabled>
-			<a href="${riot.url(comp.editorUrl)}" target="editor" class="${comp.editorType}">${comp.label?default('[untitled]')}<#if comp.editorType == "list">:</#if></a>
+			<b><a href="${riot.url(comp.editorUrl)}" target="editor" class="editor ${comp.editorType}">${comp.label?default('[untitled]')}</a></b>
 		<#else>
-			<span class="${comp.editorType} active ${comp.editorType}-active">${comp.label?default('[untitled]')}</span>
+			<b><span class="editor ${comp.editorType}<#if !comp_has_next> active ${comp.editorType}-active</#if>">${comp.label?default('[untitled]')}</span></b>
 		</#if>
 	</#list>
 </#macro>

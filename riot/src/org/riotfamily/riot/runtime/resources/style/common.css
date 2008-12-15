@@ -13,6 +13,9 @@ body, a, td, th, h1, h2 {
 a {
 	color: ${highlight_color};
 }
+b {
+	font-weight: normal;
+}
 img {
 	border: 0;
 }

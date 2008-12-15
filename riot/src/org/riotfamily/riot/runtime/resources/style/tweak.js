@@ -61,11 +61,6 @@ var TweakStyle = {
 		this.roundElement('tip-of-the-day', 'all');
 	},
 
-	path: function() {
-		parent.frameset.resizeFrame(window);
-		this.roundElement('path');
-	},
-
 	group: function() {
 		$$('#editors .text').each(function(el) {
 			var h = el.offsetHeight - parseInt(el.getStyle('padding-top'));

@@ -13,67 +13,42 @@ body, a, span {
 a {
 	color: #000;
 }
-.active {
-	color: ${highlight_color};
-}
-.start-active {
-	text-decoration: none;
-}
 
-.path #body-wrapper {
-	padding-bottom: 0;
+table {
+	width: 100%;
+	border-bottom: 1px solid #ebebeb;
 }
-#path .none-active {
-	color: #000;
-}
-
-#pathWrapper {
-	margin-top: 20px;
-	padding: 0;
-	background-color: #ebebeb;
+td {
+	vertical-align: middle;
 }
 #path {
-	margin: 0 0 0 22px;
-	border-left: 1px solid #fff;
+	padding-left: 20px;
 }
-
-#chooser.path #path {
-	margin-top: 0;
-	background-color: #fff;
+#project {
+	width: 117px;
 }
-#chooser.path #path a {
-	padding-right: 0;
-}
-#chooser.path #body-wrapper {
-	padding: 10px 0 0 18px;
-}
-
-.group, .list, .tree, .form, .node, .none {
-	padding-top: 4px;
-	padding-bottom: 4px;
-	line-height: 22px;
+#project a {
+	display: block;
+	margin: 5px 20px;
 }
 
 .group,
 .list,
-.tree {
-	padding-left: 9px;
-}
-
-.list,
 .tree,
-.node {
-	margin-right: 5px;
+.form {
+	padding-left: 5px;
 }
-
 .group,
 .form,
 .node,
 .none {
-	padding-right: 9px;
-	border-right: 1px solid #fff;
+	padding-right: 14px;
+	background: url(images/path_arrow.gif) right 4px no-repeat;
 }
 
-#logo {
-	margin: 0 34px 0 18px;
+.active {
+	color: ${highlight_color};
+	background-image: none;
 }
+
+

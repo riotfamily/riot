@@ -24,7 +24,9 @@ a {
 	color: ${highlight_color};
 	text-decoration: none;
 }
-
+b {
+	margin-right: 10px;
+}
 #loading {
 	visibility: hidden;
 	background-color: ${highlight_color};
