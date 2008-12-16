@@ -275,8 +275,13 @@ public abstract class BaseFormController extends RepositoryFormController
 				String parentId = FormUtils.getParentId(form);
 				if (parentId != null) {
 					String parentEditorId = FormUtils.getParentEditorId(form);
-					EditorDefinition parentDef = editorRepository.getEditorDefinition(parentEditorId);
-					parent = EditorDefinitionUtils.loadBean(parentDef, parentId);
+					if (parentEditorId != null) {
+						EditorDefinition parentDef = editorRepository.getEditorDefinition(parentEditorId);
+						parent = EditorDefinitionUtils.loadBean(parentDef, parentId);
+					}
+					else {
+						parent = EditorDefinitionUtils.loadParent(editor, parentId);
+					}
 				}
 				Object bean = form.populateBackingObject();				
 				dao.save(bean, parent);
