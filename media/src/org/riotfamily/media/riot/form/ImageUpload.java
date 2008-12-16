@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.riot.form;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.io.IOUtils;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.AbstractElement;
@@ -56,6 +58,9 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class ImageUpload extends FileUpload {
 
+	@SuppressWarnings("unused")
+	private RiotLog log = RiotLog.get(this);	
+	
 	public enum Alpha {
 		ALLOWED, REQUIRED, FORBIDDEN
 		
@@ -287,9 +292,14 @@ public class ImageUpload extends FileUpload {
 				}
 				else {
 					ServletUtils.setNoCacheHeaders(response);
-					response.setHeader("Content-Type", file.getContentType());
-					response.setContentLength((int) file.getSize());
-					IOUtils.serve(file.getInputStream(), response.getOutputStream());
+					try {
+						response.setHeader("Content-Type", file.getContentType());
+						response.setContentLength((int) file.getSize());
+						IOUtils.serve(file.getInputStream(), response.getOutputStream());
+					}
+					catch (FileNotFoundException e) {
+						log.error(e.getMessage());
+					}
 				}
 			}
 			else {
