@@ -24,6 +24,7 @@
 package org.riotfamily.cachius;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,6 +114,9 @@ public class CacheService {
         else {
         	long mtime = getLastModified(cacheItem, processor, request);
         	if (mtime > cacheItem.getLastModified()) {
+        		if (log.isDebugEnabled()) {
+        			log.debug("Serve check: Processor last mod: " + new Date(mtime) + " - item last mod: " + new Date(cacheItem.getLastModified()) + " - diff: " + (mtime - cacheItem.getLastModified()) + "ms");
+			}
         		capture(cacheItem, request, response, sessionIdEncoder, mtime, processor, shouldZip, zip);
         	}
         	else {
@@ -158,6 +162,7 @@ public class CacheService {
         // No need to check if the item has just been constructed or
         // the cache file has been deleted
         if (cacheItem.isNew() || !cacheItem.exists()) {
+            cacheItem.setLastCheck(now);
             return now;
         }
 
@@ -169,6 +174,9 @@ public class CacheService {
 	        long mtime = processor.getLastModified(request);
 	        cacheItem.setLastCheck(now);
 	        if (mtime > cacheItem.getLastModified()) {
+	        	if (log.isDebugEnabled()) {
+	        		log.debug("TTL check: Processor last mod: " + new Date(mtime) + " - item last mod: " + new Date(cacheItem.getLastModified()) + " - diff: " + (mtime - cacheItem.getLastModified()) + "ms");
+	        	}
 	            return mtime;
 	        }
         }
