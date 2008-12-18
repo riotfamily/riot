@@ -303,8 +303,8 @@ public class ListEditor extends TemplateElement implements Editor, NestedEditor,
 				item, getForm(), false);
 		
 		item.setEditor(editor);
+		container.addElement(item);
 		item.setValue(value, newItem);
-		container.addElement(item);		
 		return item;
 	}
 	
