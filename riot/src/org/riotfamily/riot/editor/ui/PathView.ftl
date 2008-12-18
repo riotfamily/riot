@@ -45,7 +45,7 @@
 		<#if comp.enabled>
 			<b><a href="${riot.url(comp.editorUrl)}" target="editor" class="editor ${comp.editorType}">${comp.label?default('[untitled]')}</a></b>
 		<#else>
-			<b><span class="editor ${comp.editorType}<#if !comp_has_next> active ${comp.editorType}-active</#if>">${comp.label?default('[untitled]')}</span></b>
+			<b<#if !comp_has_next> class="active"</#if>><span class="editor ${comp.editorType}">${comp.label?default('[untitled]')}</span></b>
 		</#if>
 	</#list>
 </#macro>

@@ -46,7 +46,7 @@ td {
 	background: url(images/path_arrow.gif) right 4px no-repeat;
 }
 
-.active {
+.active span {
 	color: ${highlight_color};
 	background-image: none;
 }
