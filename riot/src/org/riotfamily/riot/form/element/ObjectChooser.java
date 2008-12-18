@@ -221,7 +221,7 @@ public class ObjectChooser extends AbstractChooser
 		}
 		
 		DocumentWriter doc = new DocumentWriter(writer);
-		doc.start("span").attribute("class", "chosen " + targetListConfig.getId());
+		doc.start("span").attribute("class", "label " + targetListConfig.getId());
 
 		LabelRenderContext context = new LabelRenderContext();
 		ObjectRenderer defaultRenderer = editorRepository.getListRepository()
