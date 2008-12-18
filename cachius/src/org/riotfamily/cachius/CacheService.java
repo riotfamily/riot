@@ -157,6 +157,7 @@ public class CacheService {
         // No need to check if the item has just been constructed or
         // the cache file has been deleted
         if (cacheItem.isNew() || !cacheItem.exists()) {
+            cacheItem.setLastCheck(now);
             return now;
         }
 
