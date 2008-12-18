@@ -52,6 +52,7 @@ public class ElementSwitch extends Container
 		selectBox.setOptions(options);
 		selectBox.addChangeListener(this);
 		selectBox.setAppendLabel(true);
+		selectBox.setStyleClass("element-switch");
 		addComponent(selectBox);
 	}
 

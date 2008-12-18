@@ -97,6 +97,7 @@ public class SelectBox extends AbstractSingleSelectElement {
 		TagWriter selectTag = new TagWriter(writer)
 				.start("select")
 				.attribute("id", getEventTriggerId())
+				.attribute("class", getStyleClass())
 				.attribute("name", getParamName())			
 				.attribute("size", 1)
 				.attribute("disabled", !isEnabled())
