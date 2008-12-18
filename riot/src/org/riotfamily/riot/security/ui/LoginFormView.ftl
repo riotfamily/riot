@@ -5,7 +5,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title><@spring.messageText "title.login", "RiotV6 :: Login" /></title>
+		<title><@spring.messageText "title.login", "Riot Login" /></title>
 		<script type="text/javascript" language="JavaScript">
 			if (window != top) {
 				top.location.replace(window.location.href);
