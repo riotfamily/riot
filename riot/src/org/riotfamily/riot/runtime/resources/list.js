@@ -382,7 +382,7 @@ var ListRow = {
 		for (var i = 0; i < row.columns.length; i++) {
 			var cell = RBuilder.node('td', {innerHTML: row.columns[i], className: list.columns[i].className}).appendTo(tr);
 			if (list.model.tree && i == 0) {
-				var arrow = RBuilder.node('div', {
+				var arrow = RBuilder.node('span', {
 					parent: tr, className: 'expand', style: 'margin-left:' + (tr.level * 22) + 'px'
 				});
 				cell.prependChild(arrow);
@@ -469,6 +469,7 @@ var ListRow = {
 			for (var i = model.items.length - 1; i >= 0; i--) {
 				ListRow.create(this.list, model, this, model.items[i]);
 			}
+			this.removeClassName('expanding');
 		},
 		
 		toggleChildren: function(event) {
@@ -487,6 +488,7 @@ var ListRow = {
 			if (!this.expanded) {
 				this.expanded = true;
 				this.addClassName('expanded');
+				this.addClassName('expanding');
 				ListService.getChildren(this.list.key, this.item.objectId, this.addChildren.bind(this));
 			}
 		},
@@ -530,9 +532,10 @@ var CommandButton = Class.create({
 		this.command = command;
 		this.handler = handler;
 		this.element = new Element('a', {href: '#'}).addClassName('action')
-			.insert(new Element('div').addClassName('icon action-' + command.styleClass))
-			.insert(new Element('span').addClassName('label').insert(command.label))
-			.observe('click', this.onclick.bindAsEventListener(this));
+			.insert(new Element('span').addClassName('icon action-' + command.styleClass))
+			.insert(new Element('span').addClassName('label')
+				.insert(new Element('div').insert(command.label))
+			).observe('click', this.onclick.bindAsEventListener(this));
 		
 		this.setEnabled(command.enabled);
 	},
