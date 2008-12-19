@@ -142,6 +142,9 @@ public class AttributePattern {
 			request.setAttribute(name, value);
 			attributes.put(name, value);
 		}
+		if (request.getAttribute(EXPOSED_ATTRIBUTES) instanceof Map) {
+			attributes.putAll((Map) request.getAttribute(EXPOSED_ATTRIBUTES));
+		}
 		request.setAttribute(EXPOSED_ATTRIBUTES, attributes);
 	}
 
