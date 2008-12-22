@@ -82,8 +82,9 @@ public class TemplateMacroHelper {
 		public void execute(Environment env, Map params, TemplateModel[] loopVars,
 				TemplateDirectiveBody body) throws TemplateException, IOException {
 			
-			TemplateDefinition root = new TemplateDefinition(body, env);
+			TemplateDefinition root = new TemplateDefinition(body, env);			
 			if (definitions.isEmpty()) {
+				// Not extended, root template directly requested
 				currentTemplate = root;
 				body.render(env.getOut());
 			}
@@ -101,6 +102,31 @@ public class TemplateMacroHelper {
 				TemplateDirectiveBody body) throws TemplateException, IOException {
 		
 			String file = getRequiredStringParam(params, "file", env);
+			file = resolveTemplate(env, file);
+			
+			boolean deepest = definitions.isEmpty();
+			definitions.add(new TemplateDefinition(body, env));
+			
+			env.include(file, "UTF-8", true);
+			
+			if (deepest) {
+				// Template was not extended
+				Writer out = new NullWriter();
+				// Go from deepest up to root template
+				Iterator<TemplateDefinition> it = definitions.iterator();
+				while (it.hasNext()) {
+					currentTemplate = it.next();
+					it.remove();
+					if (!it.hasNext()) {
+						// Reached the root template, write to output
+						out = env.getOut();
+					}
+					currentTemplate.render(out);
+				}
+			}
+		}
+
+		private String resolveTemplate(Environment env, String file) {
 			if (!file.startsWith("/")) {
 				String dir = "/";
 				String path = env.getTemplate().getName();
@@ -110,24 +136,7 @@ public class TemplateMacroHelper {
 				}
 				file = StringUtils.cleanPath(dir + file);
 			}
-			
-			boolean deepest = definitions.isEmpty();
-			definitions.add(new TemplateDefinition(body, env));
-			
-			env.include(file, "UTF-8", true);
-			
-			if (deepest) {
-				Writer out = new NullWriter();
-				Iterator<TemplateDefinition> it = definitions.iterator();
-				while (it.hasNext()) {
-					currentTemplate = it.next();
-					it.remove();
-					if (!it.hasNext()) {
-						out = env.getOut();
-					}
-					currentTemplate.render(out);
-				}
-			}
+			return file;
 		}
 	}
 	
@@ -164,9 +173,9 @@ public class TemplateMacroHelper {
 					renderBody(body, env.getOut(), cacheKey, env);
 				}
 			}
-			else {
-				//Capture
+			else {				
 				if (block == null) {
+					//Capture, Block has not been processed by a deeper template 
 					boolean nested = nestedBlock;
 					nestedBlock = true;
 					block = captureBody(body, cacheKey, env);
