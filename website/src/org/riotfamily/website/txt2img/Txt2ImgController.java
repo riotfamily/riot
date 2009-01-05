@@ -204,7 +204,7 @@ public class Txt2ImgController extends AbstractCacheableController
 
 		String selector = getEncodedParam(request, "selector");
 		ReplacementRule rule = rules.get(selector);
-		Assert.notNull(rule, "No ReplacementRule found for selector '" + selector);
+		Assert.notNull(rule, "No ReplacementRule found for selector '" + selector + "'");
 		int maxWidth = ServletRequestUtils.getIntParameter(request, "width", 0);
 		if (maxWidth <= 0) {
 			maxWidth = Integer.MAX_VALUE;
