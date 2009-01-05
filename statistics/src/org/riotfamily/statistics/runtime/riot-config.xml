@@ -155,7 +155,7 @@
         <list:command id="refresh" />  
     </list:list>
 
-    <list:list id="request-critical-statistics" order-by="responeTime desc" search="name">
+    <list:list id="request-critical-statistics" order-by="responseTime desc" search="name">
         <list:dao class="org.riotfamily.statistics.dao.CriticalRequestStatisticsDao" />
         <list:columns>
             <list:column property="name" />
@@ -166,7 +166,7 @@
         <list:command id="refresh" />  
     </list:list>
 
-    <list:list id="request-current-statistics" order-by="responeTime desc" search="name">
+    <list:list id="request-current-statistics" order-by="responseTime desc" search="name">
         <list:dao class="org.riotfamily.statistics.dao.CurrentRequestStatisticsDao" />
         <list:columns>
             <list:column property="name" sortable="true"/>
