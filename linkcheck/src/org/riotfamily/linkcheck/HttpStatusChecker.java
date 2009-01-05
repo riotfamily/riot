@@ -52,7 +52,7 @@ public class HttpStatusChecker {
 				}						
 			}
 			catch (IOException e) {
-				log.error(e);
+				log.info(e.getMessage());
 			}
 			finally {
 				method.releaseConnection();
