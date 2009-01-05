@@ -40,6 +40,7 @@ import org.riotfamily.riot.dao.InvalidPropertyValueException;
 import org.riotfamily.riot.list.command.dialog.DialogCommand;
 import org.riotfamily.riot.list.ui.ListSession;
 import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -80,7 +81,8 @@ public static final String ACTION_IMPORT = "import";
 	public ModelAndView handleInput(Object input, Object bean, ListSession listSession) {		
 		Upload upload = (Upload) input;
 		try {
-			log.info("Global messages uploaded by %s", AccessController.getCurrentUser().getUserId());
+			RiotUser user = AccessController.getCurrentUser();
+			log.info("Global messages uploaded by %s", user.getUserId());
 			updateMessages(upload.getData());
 		}
 		catch (OfficeXmlFileException e) {

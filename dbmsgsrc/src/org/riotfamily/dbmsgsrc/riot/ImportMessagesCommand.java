@@ -42,6 +42,7 @@ import org.riotfamily.riot.editor.EditorDefinitionUtils;
 import org.riotfamily.riot.list.command.dialog.DialogCommand;
 import org.riotfamily.riot.list.ui.ListSession;
 import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -84,7 +85,8 @@ public class ImportMessagesCommand extends DialogCommand {
 					listSession.getListDefinition(), listSession.getParentId());		
 		Upload upload = (Upload) input;
 		try {
-			log.info("Local messages uploaded for site %s by %s", site, AccessController.getCurrentUser().getUserId());
+			RiotUser user = AccessController.getCurrentUser();
+			log.info("Local messages uploaded for site %s by %s", site, user.getUserId());
 			updateMessages(upload.getData(), site);			
 		} 
 		catch (OfficeXmlFileException e) {
