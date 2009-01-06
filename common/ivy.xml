@@ -14,6 +14,7 @@
 		<dependency org="json" name="json-lib" rev="2.0" conf="*->default" />
 		<dependency org="getahead" name="dwr" rev="2.0.1" conf="*->default" />
 		<dependency org="sun" name="jaf" rev="latest.release" conf="*->default" />
+		<dependency org="sun" name="javamail" rev="1.4" conf="*->default" />
 		<dependency org="yahoo" name="yuicompressor" rev="2.2.5" conf="*->default" />
     </dependencies>
 </ivy-module>
