@@ -23,12 +23,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.media.riot.form;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.io.IOUtils;
 import org.riotfamily.common.markup.Html;
@@ -56,6 +59,8 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class ImageUpload extends FileUpload {
 
+	private static final Log log = LogFactory.getLog(ImageUpload.class);
+	
 	private static final FormResource PREVIEW_RESOURCE = new ScriptResource(
 			"riot-js/image-cropper.js", "Cropper",
 			Resources.SCRIPTACULOUS_SLIDER);
@@ -267,9 +272,14 @@ public class ImageUpload extends FileUpload {
 				}
 				else {
 					ServletUtils.setNoCacheHeaders(response);
-					response.setHeader("Content-Type", file.getContentType());
-					response.setContentLength((int) file.getSize());
-					IOUtils.serve(file.getInputStream(), response.getOutputStream());
+					try {
+						response.setHeader("Content-Type", file.getContentType());
+						response.setContentLength((int) file.getSize());
+						IOUtils.serve(file.getInputStream(), response.getOutputStream());
+					}
+					catch (FileNotFoundException e) {
+						log.error(e.getMessage());
+					}
 				}
 			}
 			else {
