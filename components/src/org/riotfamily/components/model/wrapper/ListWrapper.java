@@ -33,7 +33,7 @@ import java.util.ListIterator;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
@@ -65,7 +65,7 @@ public class ListWrapper extends ValueWrapper<List<?>>
 	public void setValue(List<?> value) {
 	}
 
-	@OneToMany
+	@ManyToMany //REVISIT Using @OneToMany causes constraint violation upon updates
 	@IndexColumn(name="list_pos")
 	@Cascade({CascadeType.ALL, CascadeType.DELETE_ORPHAN})
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="components")
@@ -192,6 +192,7 @@ public class ListWrapper extends ValueWrapper<List<?>>
 		return wrapperList == null || wrapperList.isEmpty();
 	}
 
+	@SuppressWarnings("unchecked")
 	public Iterator iterator() {
 		if (wrapperList == null) {
 			return Collections.emptyList().iterator();
@@ -199,6 +200,7 @@ public class ListWrapper extends ValueWrapper<List<?>>
 		return wrapperList.iterator();
 	}
 
+	@SuppressWarnings("unchecked")
 	public ListIterator listIterator() {
 		if (wrapperList == null) {
 			return Collections.emptyList().listIterator();
@@ -206,6 +208,7 @@ public class ListWrapper extends ValueWrapper<List<?>>
 		return wrapperList.listIterator();
 	}
 
+	@SuppressWarnings("unchecked")
 	public ListIterator listIterator(int index) {
 		if (wrapperList == null) {
 			return Collections.emptyList().listIterator(index);
@@ -254,7 +257,8 @@ public class ListWrapper extends ValueWrapper<List<?>>
 		}
 		return wrapperList.size();
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	public List subList(int fromIndex, int toIndex) {
 		if (wrapperList == null) {
 			throw new IndexOutOfBoundsException();
@@ -269,6 +273,7 @@ public class ListWrapper extends ValueWrapper<List<?>>
 		return wrapperList.toArray();
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object[] toArray(Object[] a) {
 		if (wrapperList == null) {
 			return (Object[]) Array.newInstance(
