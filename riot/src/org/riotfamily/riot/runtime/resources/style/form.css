@@ -5,7 +5,6 @@ b {
 	display: inline-block;
 	height: 21px;
 	vertical-align: middle;
-	background: url(images/button_bg.gif);
 }
 
 b a,
@@ -16,8 +15,6 @@ b span.editor {
 	display: block;
 	_display: inline-block;
 	
-	background: url(images/button_bg.gif) 0 -21px;
-
 	border: 0;
 	margin: 0 1px;
 	padding: 0 10px;

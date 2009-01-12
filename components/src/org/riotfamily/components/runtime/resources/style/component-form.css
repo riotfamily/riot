@@ -2,37 +2,3 @@ body {
 	padding: 10px 10px 30px 10px;
 	margin: 0;
 }
-
-.indent {
-	margin-left: 0;
-}
-
-.single .element {
-	margin-bottom: 16px;
-}
-
-div.title {
-	background: none;
-}
-div.title label {
-	padding: 2px 0 0 0;
-	background: none;
-	margin: 0;
-	color: #3d3d3d;
-	font-weight: bold;
-	text-transform: none;
-}
-div.title span.hint-trigger {
-	background-image: url(images/hint.gif);
-	background-position: 0px 3px;
-}
-
-ul.checkboxGroup, 
-ul.radioButtonGroup {
-	margin: 10px 0 0 3px;
-}
-
-.checkboxGroup label,
-.radioButtonGroup label {
-	font-weight: normal;
-}

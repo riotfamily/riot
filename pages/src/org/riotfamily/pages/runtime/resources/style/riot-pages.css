@@ -61,17 +61,15 @@ table.pages tr.hidden-page td {
 .pageProperty-title label {
 	display: inline;
 }
- 
-.pageProperty-title b {
+
+.pageProperty b {
 	height: 15px;
 	margin: 0 1px 2px 2px;
-	padding: 0;
-	background: ${highlight_color} url(images/button-notch-small.gif) repeat-x; 
+	background: ${highlight_color} url(images/button-notch-small.gif) repeat-x;
 }
-.pageProperty-title b input {
+.pageProperty b input {
 	height: 15px;
 	line-height: 15px;
-	font-size: 11px;
 	padding: 0 2px;
 	margin: 0 1px;
 	background: ${highlight_color};
