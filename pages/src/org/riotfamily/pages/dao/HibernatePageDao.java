@@ -126,7 +126,7 @@ public class HibernatePageDao extends AbstractPageDao {
 	}
 
 	public Page mergePage(Page page) {
-		hibernate.update(page);
+		hibernate.reattach(page);
 		return page;
 	}
 	

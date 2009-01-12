@@ -29,6 +29,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
+import org.hibernate.NonUniqueObjectException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -247,6 +248,24 @@ public class HibernateHelper extends HibernateSupport {
 		}
 		catch (HibernateException e) {
 			throw SessionFactoryUtils.convertHibernateAccessException(e);
+		}
+	}
+	
+	/**
+	 * Re-attaches the given instance. The method first tries to call 
+	 * Session.update() which will fail if persistent instance with the same
+	 * identifier has already been loaded in the session. In that case the
+	 * state of the detached object is merged into the persistent instance
+	 * using Session.merge(). Therefore callers should continue working with 
+	 * the returned object. 
+	 */
+	public<T> T reattach(T object) throws DataAccessException {
+		try {
+			getSession().update(object);
+			return object;
+		}
+		catch (NonUniqueObjectException e) {
+			return merge(object);
 		}
 	}
 
