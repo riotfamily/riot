@@ -70,7 +70,7 @@ public final class FormatUtils {
 			
 	private static final Pattern PARENT_DIR_PATTERN = Pattern.compile("\\.\\./");
 	
-	private static final Pattern DATE_DELIMITER_PATTERN = Pattern.compile("^[M|Y|D]*([^MYD])[M|Y|D]*([^MYD])[M|Y|D]*$");
+	private static final Pattern DATE_DELIMITER_PATTERN = Pattern.compile("^[M|Y|D]*([^MYD])[M|Y|D]*([^MYD])[M|Y|D]*([^MYD])?$");
 	
 	private FormatUtils() {
 	}
