@@ -257,7 +257,10 @@ public class PageResolver {
 		if (page == null) {
 			page = findWildcardPage(site, path);
 		}
-		if (page == null || !page.isRequestable()) {
+		if (page == null || !page.isRequestable()
+				|| !pathCompleter.containsMapping(
+						ServletUtils.getPathWithinApplication(request))) {
+			
 			return null;
 		}
 		return page;

@@ -35,7 +35,6 @@ import org.riotfamily.common.web.mapping.AbstractReverseHandlerMapping;
 import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.common.web.mapping.UrlResolverContext;
 import org.riotfamily.common.web.servlet.PathCompleter;
-import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
@@ -90,7 +89,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		}
 		Page page = pageResolver.getPage(request);
 		String path = pageResolver.getPathWithinSite(request);
-		if (page == null || !page.isRequestable()) {
+		if (page == null) {
 			Site site = pageResolver.getSite(request);
 			if (site == null) {
 				return null;
@@ -118,18 +117,14 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		if (page.isFolder()) {
 			return getFolderHandler(page.getChildPages());
 		}
-		if (page.isRequestable() && pathCompleter.containsMapping(
-				ServletUtils.getPathWithinApplication(request))) {
 			
-			String handlerName = page.getPageType();
-			if (handlerName != null && getApplicationContext().containsBean(handlerName)) {
-				Object handler = getApplicationContext().getBean(handlerName);
-				exposeHandlerName(handlerName, request);
-				return handler;
-			}
-			return defaultPageHandler;
+		String handlerName = page.getPageType();
+		if (handlerName != null && getApplicationContext().containsBean(handlerName)) {
+			Object handler = getApplicationContext().getBean(handlerName);
+			exposeHandlerName(handlerName, request);
+			return handler;
 		}
-		return null;
+		return defaultPageHandler;
 	}
 
 	
