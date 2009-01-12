@@ -21,13 +21,12 @@
 		<@riot.script src="dwr/interface/ListService.js" />
 		<@riot.script src="list.js" />
 		<@riot.script src="path.js" />
-		<@riot.script src="style/tweak.js" />
 		<script type="text/javascript" language="JavaScript">
 			updatePath('${editorId}', null, '${parentId?if_exists}');
 		</script>
 	</head>
 
-	<body<#if choose??> id="chooser"</#if> onload="TweakStyle.list()">
+	<body<#if choose??> id="chooser"</#if>>
 		<div id="body-wrapper">
 		
 			<div id="wrapper">

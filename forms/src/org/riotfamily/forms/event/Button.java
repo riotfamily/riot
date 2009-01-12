@@ -46,8 +46,6 @@ public class Button extends AbstractEditorBase
 	
 	private String label;
 	
-	private String cssClass;
-	
 	private boolean submit = false;
 	
 	private String partitialSubmit;
@@ -57,6 +55,10 @@ public class Button extends AbstractEditorBase
 	private int tabIndex;
 	
 	
+	public Button() {
+		setInline(true);
+	}
+
 	public String getEventTriggerId() {		
 		return getId() + "-event-source";
 	}
@@ -83,20 +85,24 @@ public class Button extends AbstractEditorBase
 		this.label = label;
 	}
 	
-	public String getCssClass() {
-		if (cssClass != null) {
-			return cssClass;
-		}
+	@Override
+	protected String getSystemStyleClass() {
+		String suffix = null;
 		if (getLabelKey() != null) {
 			int i = getLabelKey().lastIndexOf('.');
 			String s = i != -1 ? getLabelKey().substring(i + 1) : getLabelKey();
-			return "button button-" + FormatUtils.toCssClass(s);
+			suffix = FormatUtils.toCssClass(s);
 		}
-		return "button button-" + FormatUtils.toCssClass(getLabel());
+		else {
+			suffix = FormatUtils.toCssClass(getLabel());
+		}
+		return "button button-" + suffix;
 	}
-
-	public void setCssClass(String cssClass) {
-		this.cssClass = cssClass;
+	
+	@Override
+	protected String getWrapperStyleClass() {
+		return FormatUtils.join(" ", "button-wrapper", 
+				isEnabled() ? null : "disabled");
 	}
 
 	public void setSubmit(boolean submit) {
@@ -136,7 +142,7 @@ public class Button extends AbstractEditorBase
 		tag.startEmpty("input")
 				.attribute("type", submit ? "submit" : "button")
 				.attribute("id", getEventTriggerId())
-				.attribute("class", getCssClass())				
+				.attribute("class", getSystemStyleClass())				
 				.attribute("tabindex", tabIndex)
 				.attribute("disabled", !isEnabled())
 				.attribute("name", getParamName())

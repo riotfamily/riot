@@ -16,9 +16,8 @@
 		<link rel="icon" href="${riot.resource("/style/images/favicon.ico")}" type="image/x-icon" />
     	<link rel="shortcut icon" href="${riot.resource("/style/images/favicon.ico")}" type="image/x-icon" />
     	<@riot.script src="prototype/prototype.js" />
-    	<@riot.script src="style/tweak.js" />
 	</head>
-	<body onload="TweakStyle.login();window.focus();$('username').focus()">
+	<body onload="window.focus();$('username').focus()">
 		<div id="login">
 			<div id="logo"></div>
 			<div id="form">
@@ -28,11 +27,17 @@
 							<@spring.messageText "error.login.invalidCredentials", "Invalid username or password" />
 						</div>
 					</#if>
-					<label for="username"><@spring.messageText "label.login.username", "Username" /></label>
-					<input id="username" type="text" name="riot-username" value="${username!?html}" />
-					<label for="password"><@spring.messageText "label.login.password", "Password" /></label>
-					<input id="password" type="password" name="riot-password" />
-					<input id="submit" type="submit" class="button-login" value="${springMacroRequestContext.getMessage("label.login.submit", "Login")?html}" />
+					<div class="username">
+						<label for="username"><@spring.messageText "label.login.username", "Username" /></label>
+						<input id="username" type="text" name="riot-username" value="${username!?html}" />
+					</div>
+					<div class="password">
+						<label for="password"><@spring.messageText "label.login.password", "Password" /></label>
+						<input id="password" type="password" name="riot-password" />
+					</div>
+					<div class="button">
+						<input id="submit" type="submit" class="button-login" value="${springMacroRequestContext.getMessage("label.login.submit", "Login")?html}" />
+					</div>
 				</form>
 			</div>
 		</div>

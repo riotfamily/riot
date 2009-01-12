@@ -139,6 +139,13 @@ public abstract class AbstractLocalizedElement extends TemplateElement {
 					: "button-toggle button-overwrite";
 		}
 		
+		@Override
+		public String getLabelKey() {
+			return overwrite 
+					? "label.localizedElement.inherit" 
+					: "label.localizedElement.overwrite";
+		}
+		
 		protected void onClick() {
 			toggle();
 		}

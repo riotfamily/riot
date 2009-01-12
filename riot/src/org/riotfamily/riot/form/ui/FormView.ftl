@@ -18,7 +18,6 @@
 		<@riot.script src="dwr/util.js" />
 		<@riot.script src="dwr/interface/ListService.js" />
 		<@riot.script src="list.js" />
-		<@riot.script src="style/tweak.js" />
 		<script type="text/javascript" language="JavaScript">
 			updatePath('${editorId}', '${objectId?if_exists}', '${parentId?if_exists}', '${parentEditorId?if_exists}');
 			
@@ -122,7 +121,7 @@
 					</div>
 					<div class="commands">
 						<div id="formCommands"></div>
-						<a class="action enabled" href="javascript:save()"><div class="icon saveButton"></div><span class="label"><@spring.messageText "label.form.button.save", "Save" /></span></a>
+						<a class="action enabled" href="javascript:save()"><span class="icon saveButton"></span><span class="label"><@spring.messageText "label.form.button.save", "Save" /></span></a>
 					</div>
 				</div>
 	
@@ -142,7 +141,6 @@
 				</#if>
 				
 				<script type="text/javascript" language="JavaScript">
-					TweakStyle.form();
 					var list = new RiotList('${listKey}');
 					var item = {
 						objectId: <#if objectId??>'${objectId}'<#else>null</#if>,

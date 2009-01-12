@@ -23,69 +23,80 @@ form {
 #form {
 	border-top: 1px solid #ebebeb;
 	border-bottom: 1px solid #ebebeb;
-	padding: 14px;
-	overflow:hidden;
+	padding: 14px 14px 12px 14px;
+	margin-bottom: 40px;
+	text-align: right;
 }
 
 label {
-	width: 80px;
-	height: 18px;
-	*height: 16px;
-	line-height: 16px;
-	_overflow: visible;	
-	display: block;
-	float: left;
-	clear: left;
-	padding: 5px 0;
-	margin-bottom: 10px;
-	margin-right: 10px;
-	text-align: right;
+	display: -moz-inline-stack;
+	display: inline-block;
+	margin-right: 5px;
+	vertical-align: middle;
+}
+
+input {
+	vertical-align: middle;
 }
 
 .error {
 	text-align: left;
 	color: ${highlight_color};
-	margin-left: 92px;
-	padding-bottom: 10px;
+	padding: 0 0 10px 105px; 
+}
+
+div.username {
+	margin-bottom: 8px;
+}
+div.password {
+	margin-bottom: 10px;
 }
 
 #username, 
 #password {
 	width: 167px;
-	height: 16px;
-	line-height: 16px;
+	xline-height: 11px;
+	_height: 16px;
 	_overflow: visible;	
-	display: block;
-	float: right;
+	font-family: Arial, Helvetica, sans-serif;
 	font-size: 11px;
-	margin-bottom: 10px;
 	border: 1px solid #ebebeb;
-	padding: 5px 4px 4px 4px;	
-	*padding: 4px 4px 4px 3px;
+	padding: 6px 4px;	
 }
 
-#submit {
-	display: none;
-}
-
-.button-login {
-	display: block;
-	clear: both;
-	margin-left: 138px;
-	width: 133px;
+.button {
+	display: -moz-inline-stack;
+	display: inline-block;
+	zoom:1;
+	*display:inline;
 	height: 46px;
-	background: ${highlight_color} url(images/login.gif) 10px 10px no-repeat;
+	background: ${highlight_color} url(images/button-notch.gif) repeat-x;
 }
-.button-login .face {
-	text-align: left;
-	padding: 10px 0 0 40px;
+.button-login {
+	height: 46px;
+	display: block;
+	padding: 10px 40px 36px 36px;
+	_padding: 10px 10px 36px 38px;
+	background: ${highlight_color} url(images/login.gif) 10px 10px no-repeat;
+	border: 0;
+	margin: 0 1px;
 	color: #fff;
-	font-family: "Trebuchet MS", arial, sans-serif;
-	font-size:12px;
+	text-decoration: none;
+	font-size: 11px;
+	font-family: Arial;
+	text-transform: uppercase;
+	text-align: left;
+	vertical-align: top;
 }
 
-#tip-of-the-day {
-	margin-top: 50px;
-	padding: 10px;
-	background-color: #ebebeb;
+#tip { 
+	margin: 0 1px;
+	padding: 1px 0;
+	background-color: #e5e4e0;
+}
+
+#tip p { 
+	margin: 0 -1px;
+	padding: 12px;
+	background-color: #e5e4e0;
 }

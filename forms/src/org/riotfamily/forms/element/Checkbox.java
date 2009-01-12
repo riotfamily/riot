@@ -37,8 +37,6 @@ import org.riotfamily.forms.request.FormRequest;
  */
 public class Checkbox extends AbstractEditorBase implements Editor {
 
-	private static final String TYPE_CHECKBOX = "checkbox";
-
 	private boolean checked;
 
 	private Object checkedValue = Boolean.TRUE;
@@ -47,10 +45,6 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 
 	private boolean checkedByDefault = false;
 	
-	public Checkbox() {
-		setStyleClass(TYPE_CHECKBOX);
-	}
-
 	/**
 	 * Sets the value representing the element's checked state. Defaults to 
 	 * <code>Boolean.TRUE</code>
@@ -86,12 +80,17 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 	public void renderInternal(PrintWriter writer) {
 		TagWriter inputTag = new TagWriter(writer);
 		inputTag.startEmpty("input")
-				.attribute("type", TYPE_CHECKBOX)
+				.attribute("type", "checkbox")
 				.attribute("name", getParamName())				
 				.attribute("class", getStyleClass())
 				.attribute("checked", checked)
 				.attribute("disabled", !isEnabled())
 				.end();
+	}
+	
+	@Override
+	protected String getSystemStyleClass() {
+		return "checkbox";
 	}
 
 	/**

@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.util.Generics;
+import org.springframework.beans.InvalidPropertyException;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.AbstractErrors;
 import org.springframework.validation.Errors;
@@ -149,9 +150,13 @@ public class FormErrors extends AbstractErrors {
 	// -----------------------------------------------------------------------
 	
 	public Object getFieldValue(String field) {
-		return form.getEditor(field).getValue();
+		try {
+			return form.getEditor(field).getValue();
+		}
+		catch (InvalidPropertyException e) {
+			return null;
+		}
 	}
-
 	
 	@SuppressWarnings("unchecked")
 	public void addAllErrors(Errors errors) {

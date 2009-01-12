@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 
 import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms.request.FormRequest;
 
 
@@ -70,11 +71,23 @@ public abstract class AbstractElement implements Element {
 	}
 	
 	public String getStyleClass() {
-		return styleClass;
+		return FormatUtils.join(" ", styleClass, getSystemStyleClass(), 
+				isEnabled() ? null : "disabled");
 	}
 	
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
+	}
+	
+	protected String getSystemStyleClass() {
+		return null;
+	}
+	
+	protected String getWrapperStyleClass() {
+		if (getSystemStyleClass() != null) {
+			return getSystemStyleClass() + "-wrapper";
+		}
+		return null;
 	}
 	
 	protected void setWrap(boolean wrap) {
@@ -155,10 +168,10 @@ public abstract class AbstractElement implements Element {
 	public final void render(PrintWriter writer) {
 		if (wrap) {
 			TagWriter wrapper = new TagWriter(writer);
-			wrapper.start(inline ? "span": "div");
+			wrapper.start(inline ? "span" : "div");
 			wrapper.attribute("id", getId());
-			if (getStyleClass() != null) {
-				wrapper.attribute("class", getStyleClass() + "-wrapper");
+			if (getWrapperStyleClass() != null) {
+				wrapper.attribute("class", getWrapperStyleClass());
 			}
 			wrapper.body();
 			if (isVisible()) {

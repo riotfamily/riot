@@ -169,8 +169,7 @@ public abstract class AbstractFileUpload extends CompositeElement implements Edi
 	private class RemoveButton extends Button {
 
 		private RemoveButton() {
-			setCssClass("remove-file");
-			setInline(true);
+			setStyleClass("remove-file");
 		}
 
 		public String getLabel() {

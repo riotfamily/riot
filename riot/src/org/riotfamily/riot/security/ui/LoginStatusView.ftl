@@ -8,9 +8,8 @@
 		<title></title>
 		<@riot.stylesheet href="style/status.css" />
 		<@riot.script src="prototype/prototype.js" />
-		<@riot.script src="style/tweak.js" />
 	</head>
-	<body onload="TweakStyle.status()">
+	<body onload="parent.frameset.resizeFrame(window);">
 		<div id="panel">
 			<div id="status">
 				<div id="loading"><@spring.messageText "label.status.busy", "Loading ..." /></div>

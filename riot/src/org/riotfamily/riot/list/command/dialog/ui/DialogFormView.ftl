@@ -10,7 +10,6 @@
 		<@riot.stylesheet href="style/form-custom.css" />
 		<@riot.script src="prototype/prototype.js" />
 		<@riot.script src="path.js" />
-		<@riot.script src="style/tweak.js" />
 	</head>
 	<body>
 		<div id="body-wrapper">
@@ -20,7 +19,6 @@
 			</div>
 			<script>
 				subPage('${title}');
-				TweakStyle.dialogForm();
 			</script>
 		</div>
 	</body>

@@ -72,7 +72,7 @@ public class ButtonFactory {
 			button.setLabelKey(labelKey);
 		}
 		if (cssClass != null) {
-			button.setCssClass(cssClass);
+			button.setStyleClass(cssClass);
 		}
 		button.addClickListener(new ClickListener() {
 			public void clicked(ClickEvent event) {

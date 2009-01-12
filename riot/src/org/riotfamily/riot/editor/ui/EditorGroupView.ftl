@@ -12,7 +12,6 @@
 		<@riot.script src="prototype/prototype.js" />
 		<@riot.script src="scriptaculous/effects.js" />
 		<@riot.script src="effects.js" />
-		<@riot.script src="style/tweak.js" />
 		<@riot.script src="riot-js/util.js" />
 		<script type="text/javascript" language="JavaScript">
 			updatePath('${group.id}', '${group.objectId?if_exists}');
@@ -25,11 +24,11 @@
 					<div class="box-title"><span class="label">${group.title?if_exists}</span></div>
 					<#list group.editors as ref>
 						<a class="editor ${ref.styleClass?default('default')}" href="${riot.url(ref.editorUrl)}" <#if ref.targetWindow?exists> target="${ref.targetWindow}"</#if>>
-							<div class="icon"<#if ref.icon?exists> style="background-image:url(${riot.resource("style/icons/editors/" + ref.icon + ".gif")})"</#if>></div>
-							<div class="text">
+							<span class="icon"<#if ref.icon?exists> style="background-image:url(${riot.resource("style/icons/editors/" + ref.icon + ".gif")})"</#if>></span>
+							<span class="text">
 								<div class="label">${ref.label}</div>
 								<div class="description">${ref.description?if_exists}</div>
-							</div>
+							</span>
 						</a>
 					</#list>
 				</div>
@@ -38,6 +37,5 @@
 				<@riot.controller "/status" />
 			</div>
 		</div>
-		<script>TweakStyle.group();</script>
 	</body>
 </html>

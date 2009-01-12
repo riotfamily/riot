@@ -28,6 +28,10 @@
         <property name="monitoredUrl" value="${riot.statistics.request.monitoredUrl=/status/application}" />
     </bean>
 
+	<bean id="requestTimestampRenderer" class="org.riotfamily.common.web.ui.DateRenderer">
+		<property name="pattern" value="dd.MM.yy HH:mm:ss" />
+	</bean>
+	
     <!-- ================================================================== -->
     <!-- Module resources                                                   -->
     <!-- ================================================================== -->

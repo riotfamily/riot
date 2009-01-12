@@ -13,7 +13,6 @@
 		<@riot.stylesheet href="style/component-form.css" />
 		<@riot.stylesheet href="style/component-form-custom.css" />
 		<@riot.script src="prototype/prototype.js" />
-		<@riot.script src="style/tweak.js" />
 		<style type="text/css">
 			html, body {
 				border: none;
@@ -25,8 +24,5 @@
 	</head>
 	<body>
 		${form}
-		<script type="text/javascript" language="JavaScript">
-			TweakStyle.form();
-		</script>			
 	</body>
 </html>

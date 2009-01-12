@@ -11,7 +11,6 @@
 <@riot.script src="prototype/prototype.js" />
 <@riot.script src="scriptaculous/effects.js" />
 <@riot.script src="riot-js/util.js" />
-<@riot.script src="style/tweak.js" />
 <@riot.script src="path.js" />
 <@riot.stylesheet href="style/common.css" />
 <@riot.stylesheet href="style/job.css" />
@@ -50,9 +49,6 @@
 <script type="text/javascript" language="JavaScript">
 
 subPage('<@spring.messageText "job.title." + type, title />'); <#-- see path.js -->
-TweakStyle.roundElement('start', 'all');
-TweakStyle.roundElement('cancel', 'all');
-TweakStyle.roundElement('logPane', 'all');
 
 var state;
 

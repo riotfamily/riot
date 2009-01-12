@@ -13,7 +13,6 @@
 		<@riot.stylesheet href="style/component-form.css" />
 		<@riot.stylesheet href="style/component-form-custom.css" />
 		<@riot.script src="prototype/prototype.js" />
-		<@riot.script src="style/tweak.js" />
 		<@riot.script src="riot-js/viewport.js" />
 		<style type="text/css">
 			html, body {

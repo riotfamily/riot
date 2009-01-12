@@ -9,10 +9,8 @@
 
 #editors a {
 	display: block;
-	clear: both;
 	border-bottom: 1px solid #ebebeb;
 	height: 80px;
-	overflow: hidden;
 	color: #3d3d3d;
 	text-decoration: none;
 }
@@ -22,9 +20,11 @@ background-color:#ebebeb;
 }
 
 #editors .icon {
-	float: left;
+	display: -moz-inline-stack;
+	display: inline-block;
 	width: 80px;
 	height: 80px;
+	vertical-align: middle;
 	background: ${highlight_color} url(icons/editors/arrow.gif) no-repeat;
 }
 
@@ -32,8 +32,10 @@ background-color:#ebebeb;
 	background-position: 0px -80px;
 }
 #editors .text {
-	float: left;
-	padding: 25px 0 0 16px;
+	display: -moz-inline-stack;
+	display: inline-block;
+	vertical-align: middle;
+	padding-left: 16px;
 }
 
 #editors a.editor .label {

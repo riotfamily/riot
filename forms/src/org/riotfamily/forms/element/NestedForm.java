@@ -195,7 +195,7 @@ public class NestedForm extends TemplateElement implements
 	private class ToggleButton extends Button {
 		
 		private ToggleButton() {
-			setCssClass("button button-toggle");
+			setStyleClass("button-toggle");
 			setTabIndex(2);
 		}
 		

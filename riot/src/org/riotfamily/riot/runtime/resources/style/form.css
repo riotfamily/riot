@@ -1,5 +1,34 @@
 @import url(common.css);
 
+b {
+	display: -moz-inline-stack;	
+	display: inline-block;
+	height: 21px;
+	vertical-align: middle;
+	background: url(images/button_bg.gif);
+}
+
+b a,
+b input,
+b span.editor {
+	height: 21px;
+	line-height: 21px;
+	display: block;
+	_display: inline-block;
+	
+	background: url(images/button_bg.gif) 0 -21px;
+
+	border: 0;
+	margin: 0 1px;
+	padding: 0 10px;
+
+	/* font style */
+	color: #fff;
+	text-decoration: none;
+	font-size: 11px;
+	font-family: Arial;
+}
+
 #childLists .list {
 	margin-top:10px;
 }
@@ -27,32 +56,31 @@
 
 .buttons {
 	clear:both;
-	margin-bottom: 30px;
-	position: relative;
+	padding: 20px 16px 30px 0;
+	text-align: right;
 }
-.buttons .button {
-	display: block;
-	float: right;
-	width: 144px;
-	height: 56px;
-	background-color: ${highlight_color};
-	background-position: 10px 10px;
-	background-repeat: no-repeat;
-}
-.buttons .button .face {
-	padding: 10px 0 0 40px;
-	color: #fff;
-	text-transform: uppercase;
-	text-decoration: none;
-	font-family: "Trebuchet MS", arial, sans-serif;
-	font-size:12px;
+.buttons span {
+	display: -moz-inline-stack;
+	_display: inline-block;
+	height: 46px;
+	background: ${highlight_color} url(images/button-notch.gif) repeat-x;
 }
 
-.buttons .button-save {
-	background-image: url(images/save.gif);
-}
-.buttons .button-execute {
-	background-image: url(images/play.gif);
+.buttons span input {
+	height: 46px;
+	display: block;
+	padding: 10px 40px 36px 36px;
+	_padding: 10px 10px 36px 38px;
+	background: ${highlight_color} url(images/save.gif) 10px 10px no-repeat;
+	border: 0;
+	margin: 0 1px;
+	color: #fff;
+	text-decoration: none;
+	font-size: 11px;
+	font-family: Arial;
+	text-transform: uppercase;
+	text-align: left;
+	vertical-align: top;
 }
 
 #saving {
@@ -63,9 +91,6 @@ div.form-error,
 label.error,
 .indent label.error {
 	color: ${error_color};
-}
-.box-title label.error {
-	color: #fff;
 }
 div.form-error {
 	margin:15px 0;
@@ -83,55 +108,77 @@ ul.errors li {
 }
 
 label {
-	font-size: 12px;
+	display: block;
+	font-size: 11px;
 	font-weight: bold;
 	color: ${label_color};
 	-moz-user-select: none;
+	margin: 4px 0;
 }
-label.disabled {
+.composite-title label {
+	color: ${highlight_color};
+}
+label.disabled,
+.disabled label,
+.disabled div.title label {
 	color: #888;
 }
-
-div.box-title {
-	background: ${highlight_color} url(images/list.gif) top left no-repeat;
+.composite-title {
+	margin-top: 20px;
 }
-div.box-title label {
-	display: block;
-	font-weight: normal;
-}
-div.box-title .no-label {
-	display: block;
-	height: 15px;
+.composite-element {
+	border-top: 1px solid #d2d1ce;
 }
 
 .element {
+	margin-bottom: 10px;
 	padding-right: 2px;
 }
-
-.single {
-	margin-left: 36px;
+.element-switch {
+	margin-bottom: 5px;
 }
 
-.single, .composite {
-	clear: both;
-	margin-bottom: 30px;
-}
-
-textarea, input.text, input.number, input.password, select, option {
-	font-family: verdana, arial, sans-serif;
-	font-size:11px;
+input {
 	color: #3d3d3d;
+}
+textarea, input.text, input.number, input.password, input.button, select, option {
+	font-family: arial, sans-serif;
+	font-size: 11px;
+}
+textarea, input.text, input.number, input.password {
+	padding: 4px 0;
+}
+input.file {
+	font-family: arial, sans-serif;
+	font-size: 11px;
+	_padding: 3px 0;
+	vertical-align: top;
+}
+input.button {
+	font-family: arial, sans-serif; 
+	font-size: 11px;
+	padding: 1px 5px;
 }
 textarea, input.text, input.number, input.password {
 	display: block;
-	padding: 4px 0;
 }
-textarea.disabled, input.disabled, select.disabled {
-	background-color: ButtonFace;
+textarea.disabled, 
+input.disabled {
+	color: #999;
+	background-color: #ebebeb;
+}
+.disabled input.button {
+	color: graytext;
+}
+select.disabled {
+	color: graytext;
 }
 
 textarea, input.text, input.password {
 	width: 100%;
+}
+input.number {
+	width: auto;
 }
 input.text, input.number, input.password {
 	_height: 16px;
@@ -246,47 +293,33 @@ ul.radioButtonGroup input {
 	vertical-align: middle;
 }
 
-.indent {
-	margin: 0 0 0 36px;
-	padding-top: 8px;
-}
-.indent .indent {
-	margin: 0;
-	padding-top: 10px;
-}
-.indent .element {
-	margin-bottom: 17px;
-}
-.indent .indent .element {
-	margin-bottom: 10px;
-}
-.indent .indent .indent .element {
-	margin-bottom: 5px;
+ul.checkboxGroup label {
+	display: inline;
+	font-size: 11px;
+	font-weight: normal;
 }
 
+.indent {
+	margin-left: 36px;
+	padding-top: 10px;
+}
+.indent .indent {
+	margin-left: 0;
+	padding-top: 0;
+}
 .indent label {
 	display: block;
 	font-weight: bold;
 	color: ${label_color};
-	margin: 0 0 4px 0;
 }
 
-.indent .indent label,
-.mapItem .indent label {
-	font-size: 11px;
-	font-weight: normal;
-	margin: 0 0 2px 0;
-}
-
-.collectionEditor .nestedForm .single,
-.collectionEditor .nestedForm .composite {
-	clear: none;
-	margin-bottom: 0;
-}
 
 .collectionEditor ul.items {
 	padding: 0;
-	margin: 0;
+	margin: -1px 0 0 0;
+}
+.collectionEditor span .button-add {
+	margin-top: 1px;
 }
 .collectionEditor ul.drag-drop {
 	background-color: #a4a4a4;
@@ -298,7 +331,7 @@ ul.radioButtonGroup input {
 	padding: 0;
 	margin: 0;
 	background-color: #fff;
-	border-bottom: 1px solid #ebebeb;
+	xborder-bottom: 1px solid #ebebeb;
 	vertical-align: top; /* Eliminates vertical gap in IE */ 
 }
 
@@ -339,12 +372,7 @@ table.item .draggable td.itemElement {
 	padding-right: 0;
 }
 
-table.item td.removeButton {
-	background: #ebebeb;
-	vertical-align: middle;
-}
-
-.listEditor li.nodrag {
+.listEditor li.item {
     border-top: 1px solid #cdcdcd;
     border-bottom: 1px solid #cdcdcd;
     margin-bottom: 1px;
@@ -358,6 +386,17 @@ table.item td.removeButton {
     background-position: 0 center;
     overflow: hidden;   
 }
+
+.listEditor td.removeButton {
+	vertical-align: middle;
+}
+.listEditor td.removeButton input.remove {
+    height: 32px;
+    background-position: -32px center;
+    background-image: url(images/list_remove.gif);
+}
+
+
 .listEditor td.hover,
 .listEditor td.hover div {
     color: #fff;
@@ -381,12 +420,6 @@ table.item td.removeButton {
     background-color: #ebebeb;
     background-position: -64px center;
 }
-.listEditor input.remove {
-    height: 32px;
-    background-position: -32px center;
-    background-image: url(images/list_remove.gif);
-}
-
 
 .addKey {
 	background: url(images/add_grey.gif) 10px 12px no-repeat;
@@ -398,24 +431,20 @@ table.item td.removeButton {
 	display: inline;
 }
 
-table.item .group,
-table.item .nestedForm {
-	border-bottom: 0;
-}
 table.item .indent {
 	margin: 0;
 }
-.item .nestedForm {
-	margin: 10px 0 0 0;
+
+.nestedForm .button-toggle {
+	display: block;
+	margin: 10px 0;
 }
 
-.nestedForm .present {
-	float: left;
+.item {
+	clear: both;
 }
-
 .listEditor .button-add,
-.button-remove,
-.button-toggle,
+td.removeButton .button-remove,
 .button-expand,
 .button-collapse {
 	margin: 0;
@@ -437,22 +466,14 @@ table.item .indent {
 .listEditor .button-add {
 	background-image: url(images/add.gif);
 }
-.nestedForm .not-present .button-toggle {
-	background-image: url(images/edit.gif);
-}
 
-.collectionEditor .button-remove {
+td.removeButton .button-remove {
 	background: #fff url(images/remove_invert.gif) no-repeat;
 }
-.collectionEditor .button-remove:hover {
+td.removeButton .button-remove:hover {
 	background-color: ${highlight_color};
 }
 
-
-.button-remove,
-.nestedForm .button-toggle {
-	background-image: url(images/remove.gif);
-}
 .button-expand {
 	background-image: url(images/expand.gif);
 }
@@ -488,7 +509,7 @@ button.color-swatch {
 ul.checkboxGroup,
 ul.radioButtonGroup {
 	padding: 0;
-	margin: 20px 0 30px 36px;
+	margin: 20px 0 30px 0;
 }
 .checkboxGroup li,
 .radioButtonGroup li {
@@ -520,8 +541,7 @@ ul.radioButtonGroup {
 	display: none;
 }
 
-.chooser span {
-	color: #3d3d3d;
+.chooser .label {
 	padding-right: 10px;
 }
 .chooser img {
@@ -565,11 +585,8 @@ ul.radioButtonGroup {
 	padding-left: 12px;
 	height: 12px;
 	cursor: help;
-	margin: 0 3px;
 	background: url(images/hint.gif) left center no-repeat;
-}
-.box-title .hint-trigger {
-	background: url(images/hint_inverse.gif) 0 2px no-repeat;
+	vertical-align: middle;
 }
 
 .hint {
@@ -580,8 +597,8 @@ ul.radioButtonGroup {
 }
 div.form-hint {
 	background: url(images/hint.gif) 0 2px no-repeat;
-	padding-left:20px;
-	margin-bottom:20px;
+	padding-left: 20px;
+	margin-bottom: 30px;
 }
 
 div.autocomplete {
@@ -631,6 +648,17 @@ div.autocomplete ul li.selected {
 	position: relative;
 	top: 4px;
 }
+span.remove-file {
+	display: -moz-inline-stack;
+	display: inline-block; 
+	_vertical-align: top; 
+	padding-top: 1px;
+}
+input.remove-file {
+	font-size: 12px;
+	padding: 0 7px;
+	_padding: 0 2px;
+}
 
 .filePreview {
 	margin: 10px 0;
@@ -642,7 +670,6 @@ div.autocomplete ul li.selected {
 }
 .filePreview .fileInfo td {
 	padding: 0px;
-	color: #3d3d3d;
 }
 .filePreview .fileInfo td.label {
 	font-weight: bold;

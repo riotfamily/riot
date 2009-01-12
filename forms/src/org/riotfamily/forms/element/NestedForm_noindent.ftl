@@ -6,34 +6,26 @@
 	</#if>
 	<#if form.required || form.present>
 		<#list elements.elements as element>
-			<div id="container-${element.id}" class="${(element.compositeElement?default(false))?string('composite','single')} ${element.styleClass!}"<#if !element.visible> style="display: none"</#if>>
-				<#if element.label?exists && (elements.elements?size > 1)>
-					<#if element.compositeElement?default(false)>
-						<div class="box-title">
-							<label for="${element.id}">
-								<#if element.label?has_content>
-									${element.label}
-								<#else>
-									<span class="no-label"></span>
-								</#if>
-								<#if element.hint?exists>
-									<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')">&nbsp;</span>
-								</#if>
-							</label>
-						</div>
-					<#else>
+			<#assign composite = element.compositeElement?default(false) && element.label?? />
+			<div id="container-${element.id}" class="${element.styleClass!}"<#if !element.visible> style="display: none"</#if>>
+				<#if element.label?? && (elements.elements?size > 1)>
+					<div class="title<#if composite> composite-title</#if>">
 						<label for="${element.id}">
-							${element.label}<#if element.required>* </#if>
+							<#if element.label?has_content>
+								${element.label}<#if element.required>* </#if>
+							<#else>
+								<span class="no-label"></span>
+							</#if>
 							<#if element.hint?exists>
 								<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')">&nbsp;</span>
 							</#if>
 						</label>
-					</#if>
+					</div>
 				</#if>
-				<div class="element">
-					<#if element.hint?exists>
-						<div id="${element.id}-hint" class="hint">${element.hint}</div>
-					</#if>
+				<#if element.hint?exists>
+					<div id="${element.id}-hint" class="hint">${element.hint}</div>
+				</#if>
+				<div class="element<#if composite> composite-element</#if>">
 					${element.render()}
 					${errors.renderErrors(element)}
 				</div>

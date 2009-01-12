@@ -58,10 +58,6 @@ public class PasswordField extends TemplateElement
 		addComponent("toggleButton", new ToggleButton());
 	}
 	
-	public boolean isCompositeElement() {
-		return false;
-	}
-
 	public void setConfirm(boolean confirm) {
 		textField.setConfirm(confirm);
 	}

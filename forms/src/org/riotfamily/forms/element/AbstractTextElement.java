@@ -27,6 +27,7 @@ import java.beans.PropertyEditor;
 import java.io.PrintWriter;
 
 import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.forms.AbstractEditorBase;
 import org.riotfamily.forms.AbstractElement;
 import org.riotfamily.forms.Editor;
@@ -86,21 +87,9 @@ public abstract class AbstractTextElement extends AbstractEditorBase
 		return getId() + "-event-source";
 	}
 
-	/**
-	 * Overrides {@link AbstractElement#getStyleClass()} and returns the
-	 * element's type if no custom style has been set.
-	 *
-	 * @see #getType()
-	 */
-	public String getStyleClass() {
-		String styleClass = super.getStyleClass();
-		if (styleClass == null) {
-			styleClass = type;
-		}
-		if (!isEnabled()) {
-			styleClass += " disabled";
-		}
-		return styleClass; 
+	@Override
+	protected String getSystemStyleClass() {
+		return type;
 	}
 
 	public Integer getMaxLength() {

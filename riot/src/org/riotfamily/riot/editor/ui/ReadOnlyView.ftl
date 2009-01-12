@@ -18,7 +18,6 @@
 		<@riot.script src="dwr/util.js" />
 		<@riot.script src="dwr/interface/ListService.js" />
 		<@riot.script src="list.js" />
-		<@riot.script src="style/tweak.js" />
 
 		<script type="text/javascript" language="JavaScript">
 			updatePath('${editorId}', '${objectId?if_exists}', '${parentId?if_exists}');
@@ -40,7 +39,6 @@
 				</div>
 	
 				<script type="text/javascript" language="JavaScript">
-					TweakStyle.form();
 					var list = new RiotList('${listKey}');
 					var item = {
 						objectId: <#if objectId??>'${objectId}'<#else>null</#if>,

@@ -14,7 +14,6 @@
 		<@riot.script src="prototype/prototype.js" />
 		<@riot.script src="path.js" />
 		<@riot.script src="riot-js/util.js" />		
-		<@riot.script src="style/tweak.js" />		
 		<script type="text/javascript" language="JavaScript">
 			subPage('<@spring.messageText "label.status.changePassword", "Change Password" />');
 			<#--
@@ -37,8 +36,6 @@
 					${form}
 				</div>
 				<script type="text/javascript" language="JavaScript">
-					
-					TweakStyle.form();					
 					$('form').observe('submit', hideFormForSaving);
 				</script>
 				<div id="saving" style="display:none">

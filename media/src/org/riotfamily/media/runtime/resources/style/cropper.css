@@ -1,6 +1,6 @@
 .cropper {
 	clear: left;
-	margin: 10px 0;
+	margin-top: 10px;
 	overflow: hidden;
 }
 .cropper .canvas {
@@ -22,7 +22,20 @@
 .cropper .zoomHandle {
 	width:5px;
 	height:12px;
-	background-color: ${title_bg_color};
+	background-color: #333;
+}
+.disabled .cropper .zoomHandle {
+	background-color: ButtonFace;
+}
+.cropper .mask {
+	display: none;
+}
+.disabled .cropper .mask {
+	display: block;
+	position: relative;
+	background: url(images/mask_white.png);
+	height: 100%;
+	z-index: 1;
 }
 
 .cropper .sizeSelectors {

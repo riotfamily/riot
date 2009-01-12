@@ -42,65 +42,57 @@ table.pages tr.hidden-page td {
 }
 
 .publish-status-translatable {
-	background: url(icons/publish_state.gif) 2px -96px no-repeat;
+	background: url(icons/publish_state.png) 2px -96px no-repeat;
 }
 .publish-status-published {
-	background: url(icons/publish_state.gif) 2px -64px no-repeat;
+	background: url(icons/publish_state.png) 2px -64px no-repeat;
 }
 .publish-status-dirty {
-	background: url(icons/publish_state.gif) 2px -32px no-repeat;
+	background: url(icons/publish_state.png) 2px -32px no-repeat;
 }
 .publish-status-new {
-	background: url(icons/publish_state.gif) 2px 0px no-repeat;
+	background: url(icons/publish_state.png) 2px 0px no-repeat;
 }
 
-.pageProperty {
-	position: relative;
-}
-.pagePropertyInherit .box-title label {
-	background-color: #a4a4a4;
-}
-.pageProperty input.button-toggle {
-	height: 19px;
-	position: absolute;
-	top: 17px;	
-	left: -34px;
-	z-index: 1;
-}
-.checkbox-pageProperty input.button-toggle {
-	top: -3px;
-	_top: 0px;
-}
-	
-.noindent-pageProperty input.button-toggle {
-	left: 0;
+.pageProperty-title {
+	padding: 4px 0;
 }
 
-.pageProperty .box-title input.button-toggle {
-	margin-top: 0;
-	top:0;
-	left: 1px;
-	width: 31px;
+.pageProperty-title label {
+	display: inline;
 }
-.pageProperty input.button-overwrite {
-	background-image: url(icons/edit_small.gif);
+ 
+.pageProperty-title b {
+	height: 15px;
+	margin: 0 1px 2px 2px;
+	padding: 0;
+	background: ${highlight_color} url(images/button-notch-small.gif) repeat-x; 
 }
-.pageProperty input.button-inherit {
-	background-image: url(icons/remove_small.gif);
+.pageProperty-title b input {
+	height: 15px;
+	line-height: 15px;
+	font-size: 11px;
+	padding: 0 2px;
+	margin: 0 1px;
+	background: ${highlight_color};
 }
-.pageProperty .box-title {
-	position: relative;
+
+.pagePropertyOverwrite .pageProperty-title b,
+.pagePropertyOverwrite .pageProperty-title b input {
+	background-color: ${label_color};
 }
-.pageProperty .box-title input.button-overwrite {
-	background-image: url(icons/edit_invert_small.gif);
-	background-color: ${highlight_color};
-}
-.pageProperty .box-title input.button-inherit {
-	background-image: url(icons/remove_invert_small.gif);
-	background-color: ${highlight_color};
-}
+
 .pagePropertyInherit .listEditor .button-add, 
 .pagePropertyInherit .nestedForm .not-present .button-toggle {
 	background-image:url(images/add_grey.gif);
 }
 
+form .pagePropertyInherit,
+form .pagePropertyInherit label,
+form .pagePropertyInherit .label,
+form .pagePropertyInherit .box-title label {
+	color: #999;
+}
+.pagePropertyInherit .listEditor .button-add {
+	display: none;
+}

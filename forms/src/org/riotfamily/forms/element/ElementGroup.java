@@ -96,7 +96,7 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 		return MessageUtils.getMessage(this, labelKey);
 	}
 	
-	public String getStyleClass() {
+	public String getSystemStyleClass() {
 		if (labelKey != null) {
 			return FormatUtils.toCssClass(labelKey);
 		}

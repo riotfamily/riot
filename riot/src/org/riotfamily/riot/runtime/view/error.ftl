@@ -8,7 +8,6 @@
 		<title></title>
 		<@riot.stylesheet href="style/error.css" />
 		<@riot.script src="prototype/prototype.js" />
-		<@riot.script src="style/tweak.js" />
 		<script>
 			function showErrorDetail() {
 				$('stacktrace').style.display = 'block';

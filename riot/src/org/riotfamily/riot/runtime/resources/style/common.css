@@ -71,10 +71,9 @@ div.extra {
 	margin: 8px 32px 4px 35px;
 }
 
-.extra .box-title {
+.box-title {
 	background: ${highlight_color} url(images/list.gif) top left no-repeat;
 }
-
 div.box-title,
 div.box-title span,
 div.box-title label {
@@ -91,11 +90,6 @@ div.box-title .label {
 }
 * html .box-title {height: 1%;}
 
-.corner-tr,
-.corner-br {
-	/* For IE6 as this has a rounding bug */
-	_margin-right: expression(-1 * (this.parentNode.offsetWidth % 2));
-}
 
 span.locale img {
 	margin-right: 6px;
@@ -106,3 +100,4 @@ span.messageCode {
 	text-decoration: none;
 	background: url(images/i18n.gif) right center no-repeat;
 }
+

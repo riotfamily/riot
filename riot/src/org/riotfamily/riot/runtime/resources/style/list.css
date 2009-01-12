@@ -114,22 +114,25 @@ td {
 td img {
 	vertical-align: middle;
 }
-
+ 
 .expand {
-	width: 15px;
-	height: 15px;
-	float: left;
-	overflow: hidden;
-	background: url(images/expand_collapse.gif) 0 -30px no-repeat;
+	display: -moz-inline-stack;
+	display: inline-block;
+	width: 25px;
+	height: 32px;
+	background: url(images/expand_collapse.gif) 0 -64px no-repeat;
 	cursor: pointer;
-	margin-right: 5px;
+	vertical-align: middle;
 }
 
 .expandable .expand {
 	background-position: 0 0;
 }
 .expanded .expand {
-	background-position: -15px 0;
+	background-position: 0 -32px;
+}
+.expanding .expand { 
+	background: url(images/expanding.gif) 0 0 no-repeat;
 }
 
 tbody td {

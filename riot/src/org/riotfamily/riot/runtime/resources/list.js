@@ -56,7 +56,7 @@ var RiotList = Class.create({
 		var label;
 		var className = 'col-' + (this.columns.length + 1) + ' ' + col.cssClass;
 		var th = RBuilder.node('th', {property: col.property, className: className},
-			label = RBuilder.node('span', {innerHTML: col.heading})
+			label = RBuilder.node('span', {innerHTML: col.heading || ''})
 		);
 		this.columns.push(th);
 		this.headings[col.property] = label;

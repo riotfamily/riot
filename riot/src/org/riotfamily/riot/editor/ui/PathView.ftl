@@ -20,7 +20,7 @@
 			};
 		</script>
 	</head>
-	<body class="path">
+	<body class="path" onload="parent.frameset.resizeFrame(window)">
 		<table>
 			<tbody>
 				<tr>

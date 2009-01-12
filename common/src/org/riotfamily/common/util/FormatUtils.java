@@ -215,11 +215,24 @@ public final class FormatUtils {
 		return sb.toString();
 	}
 
+	public static String join(String delimiter, String... parts) {
+		StringBuilder sb = new StringBuilder();
+		for (String s : parts) {
+			if (s != null) {
+				if (sb.length() > 0) {
+					sb.append(delimiter);
+				}
+				sb.append(s);
+			}
+		}
+		return sb.toString();
+	}
+	
 	/**
 	 * "a", "b", "c" -> "a b c a-b a-b-c"
 	 * "a", "b", null -> "a b a-b"
 	 */
-	public static String combine(String[] s) {
+	public static String combine(String... s) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < s.length; i++) {
 			if (s[i] != null) {
