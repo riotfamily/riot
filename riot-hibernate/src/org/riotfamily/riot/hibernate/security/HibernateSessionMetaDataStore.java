@@ -41,7 +41,7 @@ public class HibernateSessionMetaDataStore extends HibernateDaoSupport
 	}
 
 	public void sessionEnded(SessionMetaData data) {
-		getSession().update(data);
+		getSession().merge(data);
 		((PersistentSessionMetaData) data).sessionEnded();
 	}
 
