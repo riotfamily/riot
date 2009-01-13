@@ -26,7 +26,6 @@ package org.riotfamily.website.css;
 import java.awt.Color;
 
 import org.riotfamily.common.util.ColorUtils;
-import org.springframework.util.Assert;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -41,7 +40,6 @@ public class ColorTool {
 	 */
 	public String brightness(String color, int percentage) {
 		Color c = ColorUtils.parseColor(color);
-		Assert.notNull(c, "Could not parse the given color: " + color);
 		c = ColorUtils.brightness(c, (float) percentage / 100);
 		return ColorUtils.toHex(c);
 	}
@@ -53,7 +51,6 @@ public class ColorTool {
 	 */
 	public String saturation(String color, int percentage) {
 		Color c = ColorUtils.parseColor(color);
-		Assert.notNull(c, "Could not parse the given color: " + color);
 		c = ColorUtils.saturation(c, (float) percentage / 100);
 		return ColorUtils.toHex(c);
 	}

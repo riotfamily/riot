@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.util.Assert;
-
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
@@ -202,8 +200,6 @@ public final class ColorUtils {
 	 * </pre>
 	 * You may also use one of the color names listed at
 	 * {@linkplain http://www.w3schools.com/css/css_colornames.asp}
-	 * 
-	 * If the color could not be determined this will return <pre>null</pre>.
 	 */
 	public static Color parseColor(String s) throws IllegalArgumentException {
 		int r, g, b;
@@ -241,7 +237,7 @@ public final class ColorUtils {
 				}
 			}
 		}
-		return null;
+		throw new IllegalArgumentException("Invalid color format: " + s);
 	}
 	
 	/**
@@ -250,7 +246,6 @@ public final class ColorUtils {
 	 * @param scale The factor (a value from -1 to 1) 
 	 */
 	public static Color brightness(Color c, float scale) {
-		Assert.notNull(c, "Color can't be null");
 		int r = c.getRed();
 		int g = c.getGreen();
 		int b = c.getBlue();
@@ -274,7 +269,6 @@ public final class ColorUtils {
 	 * @param scale The factor (a value from -1 to 1) 
 	 */
 	public static Color saturation(Color c, float scale) {
-		Assert.notNull(c, "Color can't be null");
 		int r = c.getRed();
 		int g = c.getGreen();
 		int b = c.getBlue();
@@ -290,7 +284,6 @@ public final class ColorUtils {
 	}
 
 	public static String toHex(Color c) {
-		Assert.notNull(c, "Color can't be null");
 		String r = Integer.toHexString(c.getRed());
 		String g = Integer.toHexString(c.getGreen());
 		String b = Integer.toHexString(c.getBlue());
@@ -305,7 +298,6 @@ public final class ColorUtils {
 		}
 		return ("#" + r + g + b).toUpperCase();
 	}
-
 }
 
 	
