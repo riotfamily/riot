@@ -24,6 +24,7 @@
 package org.riotfamily.website.cache;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Map;
 
 import org.riotfamily.cachius.CacheService;
@@ -47,27 +48,34 @@ public class CacheTagEntityListener implements EntityListener {
 		return entityClass.isAnnotationPresent(TagCacheItems.class);
 	}
 		
-	public boolean preInit(Object entity, Serializable id,
+	public boolean onInit(Object entity, Serializable id,
 			Map<String, Object> state) {
 		
 		CacheTagUtils.tag(entity.getClass(), id);
 		return false;
 	}
 	
-	public void preDelete(Object entity, Serializable id) {
+	public void onDelete(Object entity, Serializable id) {
 		CacheTagUtils.invalidate(cacheService, entity.getClass(), id);
 	}
 
-	public boolean preSave(Object entity, Serializable id) {
+	public boolean onSave(Object entity, Serializable id) {
 		CacheTagUtils.invalidate(cacheService, entity.getClass());
 		return false;
 	}
 
-	public boolean preUpdate(Object entity, Serializable id,
+	public boolean onUpdate(Object entity, Serializable id,
 			Map<String, Object> previousState) {
 	
 		CacheTagUtils.invalidate(cacheService, entity.getClass(), id);
 		return false;
+	}
+	
+	public void onUpdateCollection(Object entity, Serializable id,
+			Collection<?> collection, Collection<?> previousState,  
+			String property) {
+		
+		CacheTagUtils.invalidate(cacheService, entity.getClass(), id);
 	}
 
 }

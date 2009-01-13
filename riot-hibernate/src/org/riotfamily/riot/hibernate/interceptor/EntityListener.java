@@ -24,6 +24,7 @@
 package org.riotfamily.riot.hibernate.interceptor;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Map;
 
 
@@ -31,12 +32,18 @@ public interface EntityListener {
 
 	public boolean supports(Class<?> entityClass);
 	
-	public boolean preInit(Object entity, Serializable id, Map<String, Object> state);
+	public boolean onInit(Object entity, Serializable id,
+			Map<String, Object> state);
 	
-	public boolean preSave(Object entity, Serializable id);
+	public boolean onSave(Object entity, Serializable id);
 	
-	public void preDelete(Object entity, Serializable id);
+	public void onDelete(Object entity, Serializable id);
 	
-	public boolean preUpdate(Object entity, Serializable id, Map<String, Object> previousState);
+	public boolean onUpdate(Object entity, Serializable id, 
+			Map<String, Object> previousState);
 	
+	public void onUpdateCollection(Object entity, Serializable id, 
+			Collection<?> collection, Collection<?> previousState, 
+			String property);
+
 }

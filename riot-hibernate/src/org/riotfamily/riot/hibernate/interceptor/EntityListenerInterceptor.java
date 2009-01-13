@@ -29,7 +29,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
+import org.hibernate.collection.PersistentCollection;
 import org.hibernate.type.Type;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.SpringUtils;
@@ -56,7 +58,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		if (!listeners.isEmpty()) {
 			Map<String, Object> stateMap = createStateMap(propertyNames, state);
 			for (EntityListener listener : listeners) {
-				result |= listener.preInit(entity, id, stateMap);
+				result |= listener.onInit(entity, id, stateMap);
 			}
 		}
 		return result;
@@ -69,7 +71,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		boolean result = false;
 		List<EntityListener> listeners = getListeners(entity.getClass());
 		for (EntityListener listener : listeners) {
-			result |= listener.preSave(entity, id);
+			result |= listener.onSave(entity, id);
 		}
 		return result;
 	}
@@ -84,10 +86,33 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		if (!listeners.isEmpty()) {
 			Map<String, Object> prevStateMap = createStateMap(propertyNames, previousState);
 			for (EntityListener listener : listeners) {
-				result |= listener.preUpdate(entity, id, prevStateMap);
+				result |= listener.onUpdate(entity, id, prevStateMap);
 			}
 		}
 		return result;
+	}
+	
+	@Override
+	public void onCollectionUpdate(Object collection, Serializable key)
+			throws CallbackException {
+		
+		if (collection instanceof PersistentCollection 
+				&& collection instanceof Collection) {
+			
+			Collection<?> c = (Collection<?>) collection;
+			PersistentCollection pc = (PersistentCollection) collection;
+			Object entity = pc.getOwner();
+			
+			List<EntityListener> listeners = getListeners(entity.getClass());
+			if (!listeners.isEmpty()) {
+				Collection<?> prevState = (Collection<?>) pc.getStoredSnapshot();
+				int i = pc.getRole().lastIndexOf('.');
+				String property = pc.getRole().substring(i+1);
+				for (EntityListener listener : listeners) {
+					listener.onUpdateCollection(entity, key, c, prevState, property);
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -96,7 +121,7 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 		
 		List<EntityListener> listeners = getListeners(entity.getClass());
 		for (EntityListener listener : listeners) {
-			listener.preDelete(entity, id);
+			listener.onDelete(entity, id);
 		}
 	}
 	

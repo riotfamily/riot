@@ -25,6 +25,7 @@ package org.riotfamily.riot.hibernate.interceptor;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 import java.util.Map;
 
 public class GenericEntityListener<T> implements EntityListener {
@@ -40,45 +41,56 @@ public class GenericEntityListener<T> implements EntityListener {
 
 	
 	@SuppressWarnings("unchecked")
-	public final boolean preInit(Object entity, Serializable id,
+	public final boolean onInit(Object entity, Serializable id,
 			Map<String, Object> state) {
 		
-		return onInit((T) entity, id, state);
+		return init((T) entity, id, state);
 	}
 	
-	protected boolean onInit(T entity, Serializable id, 
+	protected boolean init(T entity, Serializable id, 
 			Map<String, Object> state) {
 		
 		return false;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public final boolean preSave(Object entity, Serializable id) {
-		return onSave((T) entity, id);
+	public final boolean onSave(Object entity, Serializable id) {
+		return save((T) entity, id);
 	}	
 	
-	protected boolean onSave(T entity, Serializable id) {
+	protected boolean save(T entity, Serializable id) {
 		return false;
 	}
 
 	@SuppressWarnings("unchecked")
-	public final boolean preUpdate(Object entity, Serializable id,
+	public final boolean onUpdate(Object entity, Serializable id,
 			Map<String, Object> previousState) {
 		
-		return onUpdate((T) entity, id, previousState); 
+		return update((T) entity, id, previousState); 
 	}
 	
-	protected boolean onUpdate(T entity, Serializable id, 
+	protected boolean update(T entity, Serializable id, 
 			Map<String, Object> previousState) {
 		return false;
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	public final void preDelete(Object entity, Serializable id) {
-		onDelete((T) entity, id);
+	public final void onUpdateCollection(Object entity, Serializable id,
+			Collection<?> c, Collection<?> previousState, String property) {
+		
+		updateCollection((T) entity, id, c, previousState, property); 
 	}
 	
-	protected void onDelete(T entity, Serializable id) {
+	protected void updateCollection(T entity, Serializable id, 
+			Collection<?> c, Collection<?> previousState, String property) {
+	}
+
+	@SuppressWarnings("unchecked")
+	public final void onDelete(Object entity, Serializable id) {
+		delete((T) entity, id);
+	}
+	
+	protected void delete(T entity, Serializable id) {
 	}
 
 }
