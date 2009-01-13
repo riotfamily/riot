@@ -77,10 +77,15 @@ public class Checkbox extends AbstractEditorBase implements Editor {
 		return checked;
 	}
 
+	public String getEventTriggerId() {		
+		return getId() + "-event-source";
+	}
+	
 	public void renderInternal(PrintWriter writer) {
 		TagWriter inputTag = new TagWriter(writer);
 		inputTag.startEmpty("input")
 				.attribute("type", "checkbox")
+				.attribute("id", getEventTriggerId())
 				.attribute("name", getParamName())				
 				.attribute("class", getStyleClass())
 				.attribute("checked", checked)

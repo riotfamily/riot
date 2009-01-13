@@ -11,7 +11,7 @@
 		<div id="container-${element.id}" class="${element.styleClass!}"<#if !element.visible> style="display: none"</#if>>
 			<#if element.label?exists>
 				<div class="title<#if composite> composite-title</#if>">
-					<label for="${element.id}">
+					<label for="${element.eventTriggerId}">
 						<#if element.label?has_content>
 							${element.label}<#if element.required>* </#if>
 						<#else>

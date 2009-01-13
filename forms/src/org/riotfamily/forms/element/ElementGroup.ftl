@@ -9,7 +9,7 @@
 				<div id="container-${element.id}" class="item<#if element.styleClass?exists> ${element.styleClass}-element</#if>"<#if !element.visible> style="display: none"</#if>>
 					<#if group.labelItems>
 						<div class="title<#if composite> composite-title</#if>">
-							<label for="${element.id}" class="field <#if element.form.errors.hasErrors(element)> error</#if>">
+							<label for="${element.eventTriggerId}" class="field <#if element.form.errors.hasErrors(element)> error</#if>">
 								${element.label?if_exists}<#if element.required>* </#if>
 								<#if element.hint?exists>
 									<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')">&nbsp;</span>

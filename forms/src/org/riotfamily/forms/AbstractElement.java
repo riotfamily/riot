@@ -70,6 +70,10 @@ public abstract class AbstractElement implements Element {
 		this.id = id;
 	}
 	
+	public String getEventTriggerId() {
+		return id;
+	}
+	
 	public String getStyleClass() {
 		return FormatUtils.join(" ", styleClass, getSystemStyleClass(), 
 				isEnabled() ? null : "disabled");

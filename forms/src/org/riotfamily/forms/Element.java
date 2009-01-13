@@ -51,6 +51,8 @@ public interface Element {
 	 */
 	public String getId();
 	
+	public String getEventTriggerId();
+	
 	/**
 	 * Sets a reference to the form that contains the element.
 	 */

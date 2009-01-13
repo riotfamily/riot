@@ -2,7 +2,7 @@
 	<#assign composite = editor.compositeElement?default(false) && editor.label?? />
 	<#if editor.label??>
 		<div class="pageProperty-title title<#if composite> composite-title</#if>">
-			<label for="${editor.id}">
+			<label for="${editor.eventTriggerId}">
 				<#if editor.label?has_content>
 					${editor.label}<#if editor.required>* </#if>
 				<#else>
