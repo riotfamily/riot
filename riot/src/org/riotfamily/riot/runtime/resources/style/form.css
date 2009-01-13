@@ -1,36 +1,10 @@
 @import url(common.css);
 
-b {
-	display: -moz-inline-stack;	
-	display: inline-block;
-	height: 21px;
-	vertical-align: middle;
-}
-
-b a,
-b input,
-b span.editor {
-	height: 21px;
-	line-height: 21px;
-	display: block;
-	_display: inline-block;
-	
-	border: 0;
-	margin: 0 1px;
-	padding: 0 10px;
-
-	/* font style */
-	color: #fff;
-	text-decoration: none;
-	font-size: 11px;
-	font-family: Arial;
-}
-
 #childLists .list {
 	margin-top:10px;
 }
 #childLists .item {
-	padding: 3px 0 3px 35px;
+	padding: 3px 0 3px 20px;
 }
 #childLists a {
 	font-weight: bold;
@@ -53,9 +27,10 @@ b span.editor {
 
 .buttons {
 	clear:both;
-	padding: 20px 16px 30px 0;
+	margin-bottom: 30px;
 	text-align: right;
 }
+
 .buttons span {
 	display: -moz-inline-stack;
 	_display: inline-block;
@@ -106,7 +81,7 @@ ul.errors li {
 
 label {
 	display: block;
-	font-size: 11px;
+	font-size: 13px;
 	font-weight: bold;
 	color: ${label_color};
 	-moz-user-select: none;
@@ -120,25 +95,22 @@ label.disabled,
 .disabled div.title label {
 	color: #888;
 }
-.composite-title {
-	margin-top: 20px;
-}
 .composite-element {
 	border-top: 1px solid #d2d1ce;
 }
 
 .element {
-	margin-bottom: 10px;
+	margin-bottom: 30px;
 	padding-right: 2px;
 }
 .element-switch {
-	margin-bottom: 5px;
+	margin-bottom: 12px;
 }
 
 input {
 	color: #3d3d3d;
 }
-textarea, input.text, input.number, input.password, input.button, select, option {
+textarea, input.text, input.number, input.password, select, option {
 	font-family: arial, sans-serif;
 	font-size: 11px;
 }
@@ -151,7 +123,7 @@ input.file {
 	_padding: 3px 0;
 	vertical-align: top;
 }
-input.button {
+input.button, button {
 	font-family: arial, sans-serif; 
 	font-size: 11px;
 	padding: 1px 5px;
@@ -258,10 +230,6 @@ select {
 	margin: 0;
 }
 
-input.checkbox {
-	margin: 0 0 3px;
-}
-
 div.checkbox,
 div.checkbox-element,
 .checkbox-pageProperty {
@@ -271,12 +239,12 @@ div.checkbox-element,
 div.checkbox label,
 div.checkbox-element label,
 .checkbox-pageProperty label {
-	padding-left: 20px;
+	padding-left: 22px;
 }
 
 .checkbox-wrapper {
 	position: absolute;
-	top: 0;
+	top: 2px;
 }
 
 ul.checkboxGroup li,
@@ -369,6 +337,11 @@ table.item .draggable td.itemElement {
 	padding-right: 0;
 }
 
+table.item td.removeButton {
+	background: #ebebeb;
+	vertical-align: middle;
+}
+
 .listEditor li.item {
     border-top: 1px solid #cdcdcd;
     border-bottom: 1px solid #cdcdcd;
@@ -383,17 +356,6 @@ table.item .draggable td.itemElement {
     background-position: 0 center;
     overflow: hidden;   
 }
-
-.listEditor td.removeButton {
-	vertical-align: middle;
-}
-.listEditor td.removeButton input.remove {
-    height: 32px;
-    background-position: -32px center;
-    background-image: url(images/list_remove.gif);
-}
-
-
 .listEditor td.hover,
 .listEditor td.hover div {
     color: #fff;
@@ -417,6 +379,12 @@ table.item .draggable td.itemElement {
     background-color: #ebebeb;
     background-position: -64px center;
 }
+.listEditor input.remove {
+    height: 32px;
+    background-position: -32px center;
+    background-image: url(images/list_remove.gif);
+}
+
 
 .addKey {
 	background: url(images/add_grey.gif) 10px 12px no-repeat;
@@ -432,16 +400,8 @@ table.item .indent {
 	margin: 0;
 }
 
-.nestedForm .button-toggle {
-	display: block;
-	margin: 10px 0;
-}
-
-.item {
-	clear: both;
-}
 .listEditor .button-add,
-td.removeButton .button-remove,
+.button-remove,
 .button-expand,
 .button-collapse {
 	margin: 0;
@@ -464,13 +424,17 @@ td.removeButton .button-remove,
 	background-image: url(images/add.gif);
 }
 
-td.removeButton .button-remove {
+.collectionEditor .button-remove {
 	background: #fff url(images/remove_invert.gif) no-repeat;
 }
-td.removeButton .button-remove:hover {
+.collectionEditor .button-remove:hover {
 	background-color: ${highlight_color};
 }
 
+
+.button-remove {
+	background-image: url(images/remove.gif);
+}
 .button-expand {
 	background-image: url(images/expand.gif);
 }
@@ -573,6 +537,7 @@ ul.radioButtonGroup {
 	vertical-align: middle;
 }
 .toggle-plaintext label {
+	display: inline;
 	font-weight: normal;
 	vertical-align: middle;
 }
@@ -644,17 +609,6 @@ div.autocomplete ul li.selected {
 .uploadProgress .stats {
 	position: relative;
 	top: 4px;
-}
-span.remove-file {
-	display: -moz-inline-stack;
-	display: inline-block; 
-	_vertical-align: top; 
-	padding-top: 1px;
-}
-input.remove-file {
-	font-size: 12px;
-	padding: 0 7px;
-	_padding: 0 2px;
 }
 
 .filePreview {

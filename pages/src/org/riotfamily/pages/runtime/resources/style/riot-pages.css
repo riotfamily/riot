@@ -63,20 +63,34 @@ table.pages tr.hidden-page td {
 }
 
 .pageProperty b {
+	display: -moz-inline-stack;	
+	display: inline-block;
+	vertical-align: middle;
 	height: 15px;
 	margin: 0 1px 2px 2px;
 	background: ${highlight_color} url(images/button-notch-small.gif) repeat-x;
 }
 .pageProperty b input {
+	display: block;
+	_display: inline-block;
+	color: #fff;
+	text-decoration: none;
+	font-size: 11px;
+	font-family: Arial;
 	height: 15px;
-	line-height: 15px;
+	line-height: 15px !important;
+	border: 0;
 	padding: 0 2px;
 	margin: 0 1px;
 	background: ${highlight_color};
 }
+/* Fix 1px offset issue in Firefox */
+.pageProperty b input::-moz-focus-inner { 
+	border: none;
+}
 
-.pagePropertyOverwrite .pageProperty-title b,
-.pagePropertyOverwrite .pageProperty-title b input {
+.pagePropertyOverwrite b,
+.pagePropertyOverwrite b input {
 	background-color: ${label_color};
 }
 
