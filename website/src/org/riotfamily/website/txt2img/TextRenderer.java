@@ -45,6 +45,7 @@ import org.riotfamily.common.util.Generics;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * Class to render text as image. Supports resampling to improve the kerning
@@ -270,8 +271,8 @@ public class TextRenderer implements InitializingBean {
 	}
 	
 	public BufferedImage generate(String text, int maxWidth, String color) {
-		if (text == null) {
-			text = "";
+		if (!StringUtils.hasText(text)) {
+			text = " ";
 		}
 		if (this.maxWidth != null) {
 			maxWidth = this.maxWidth.intValue();
@@ -300,8 +301,8 @@ public class TextRenderer implements InitializingBean {
 		drawText(text, maxWidth, color, fontSize, image);
 		
 		if (resample) {
-			int w = (int) (size.getWidth() / scale);
-			int h = (int) (size.getHeight() / scale);
+			int w = checkSize((int) (size.getWidth() / scale));
+			int h = checkSize((int) (size.getHeight() / scale));
 			Image scaledImage = image.getScaledInstance(w, h, Image.SCALE_SMOOTH);
 			image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 			Graphics g = image.getGraphics();
@@ -336,7 +337,7 @@ public class TextRenderer implements InitializingBean {
 
         HyphenatedLineBreakMeasurerer measurer = new HyphenatedLineBreakMeasurerer(text, font, fg, fc);
 	    int y = paddingTop;
-	    int maxX = 0;
+	    int maxX = 1;
 	    while (measurer.hasNext()) {
 	    	TextLayout layout = measurer.nextLayout(maxWidth);
 			y += layout.getAscent();
@@ -353,7 +354,14 @@ public class TextRenderer implements InitializingBean {
 	    }
 	    y += paddingBottom;
 	    graphics.dispose();
-	    return new Dimension(maxX, y);
+	    return new Dimension(checkSize(maxX), checkSize(y));
+	}
+	
+	protected int checkSize(int size) {
+		if (size <= 0) {
+			return 1;
+		}
+		return size;
 	}
 	
 	protected Graphics2D createGraphics(BufferedImage image) {
