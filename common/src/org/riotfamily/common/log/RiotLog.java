@@ -169,8 +169,8 @@ public class RiotLog {
 	}
 	
 	public static void remove(String key) {
-		boolean isClearMdcDeferred = (Boolean) MDC.get(CLEAR_MDC_DEFERRED_KEY);
-		if (!isClearMdcDeferred) {
+		Boolean isClearMdcDeferred = (Boolean) MDC.get(CLEAR_MDC_DEFERRED_KEY);
+		if (Boolean.FALSE.equals(isClearMdcDeferred)) {
 			MDC.remove(key);
 		}
 	}
