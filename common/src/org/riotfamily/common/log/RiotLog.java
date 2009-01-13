@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.log;
 
+import java.util.Hashtable;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
@@ -39,7 +41,9 @@ import org.apache.log4j.NDC;
 public class RiotLog {
 
 	private static final String FQCN = RiotLog.class.getName();
-	
+
+	private static final String CLEAR_MDC_DEFERRED_KEY = "_" + FQCN + "#CLEAR_MDC_DEFERRED";
+
 	private transient Logger logger;
 	
 	private RiotLog(Logger logger) {
@@ -156,12 +160,19 @@ public class RiotLog {
 		fatal(String.format(msg, args), t);
 	}
 	
+	public static void setClearMdcDeferred(boolean clearMdcDeferred) {
+		put(CLEAR_MDC_DEFERRED_KEY, clearMdcDeferred);
+	}
+	
 	public static void put(String key, Object value) {
 		MDC.put(key, value);
 	}
 	
 	public static void remove(String key) {
-		MDC.remove(key);
+		boolean isClearMdcDeferred = (Boolean) MDC.get(CLEAR_MDC_DEFERRED_KEY);
+		if (!isClearMdcDeferred) {
+			MDC.remove(key);
+		}
 	}
 	
 	public static void push(String msg) {
@@ -171,4 +182,14 @@ public class RiotLog {
 	public static String pop() {
 		return NDC.pop();
 	}
+
+	@SuppressWarnings("unchecked")
+	public static void clear() {
+		NDC.clear();
+		Hashtable context = MDC.getContext();
+		if (context != null) {
+			context.clear();
+		}
+	}
+
 }

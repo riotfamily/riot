@@ -99,10 +99,12 @@ table {
 				<td>${event.threadName}</td>
 			</tr>
 			<#list event.properties?keys as key>
-				<tr>
-					<th>${key}</th>
-					<td>${event.properties[key]}</td>
-				</tr>
+				<#if !key?starts_with("_")>
+					<tr>
+						<th>${key}</th>
+						<td>${event.properties[key]?string}</td>
+					</tr>
+				</#if>
 			</#list>
 		</table>
 		

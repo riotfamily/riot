@@ -47,27 +47,22 @@ public class DiagnosticContextFilter extends HttpFilterBean {
 			HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		
-		try {
-			String ip = request.getRemoteAddr();
-			String url = ServletUtils.getRequestUrlWithQueryString(request);
-			HttpSession session = request.getSession(false);
-			
-			RiotLog.put(IP, ip);
-			RiotLog.put(URL, url);
-			if (session != null) {
-				RiotLog.put(SESSION_ID, session.getId());
-			}
-			
-			RiotLog.push(" [" + ip + " => " + url + "]");
-			
-			chain.doFilter(request, response);
+		RiotLog.clear();
+		RiotLog.setClearMdcDeferred(true);
+
+		String ip = request.getRemoteAddr();
+		String url = ServletUtils.getRequestUrlWithQueryString(request);
+		HttpSession session = request.getSession(false);
+
+		RiotLog.put(IP, ip);
+		RiotLog.put(URL, url);
+		if (session != null) {
+			RiotLog.put(SESSION_ID, session.getId());
 		}
-		finally {
-			RiotLog.pop();
-			RiotLog.remove(URL);
-			RiotLog.remove(IP);
-			RiotLog.remove(SESSION_ID);
-		}
+
+		RiotLog.push(" [" + ip + " => " + url + "]");
+
+		chain.doFilter(request, response);
 	}
 
 	
