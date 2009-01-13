@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.security.session;
 
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
@@ -37,6 +38,9 @@ public class SecurityContext {
 	
 	public static void bindUserToCurrentThread(RiotUser user) {
 		threadLocal.set(user);
+		if (user != null) {
+			RiotLog.put("RiotUser", user.getUserId());
+		}
 	}
 	
 	public static RiotUser getCurrentUser() {
@@ -45,6 +49,7 @@ public class SecurityContext {
 	
 	public static void resetUser() {
 		threadLocal.set(null);
+		RiotLog.remove("RiotUser");
 	}
 	
 }
