@@ -63,7 +63,7 @@ table.pages tr.hidden-page td {
 }
 
 .pageProperty b {
-	display: -moz-inline-stack;	
+	display: -moz-inline-box;
 	display: inline-block;
 	vertical-align: middle;
 	height: 15px;

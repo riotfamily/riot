@@ -26,8 +26,10 @@
 						<a class="editor ${ref.styleClass?default('default')}" href="${riot.url(ref.editorUrl)}" <#if ref.targetWindow?exists> target="${ref.targetWindow}"</#if>>
 							<span class="icon"<#if ref.icon?exists> style="background-image:url(${riot.resource("style/icons/editors/" + ref.icon + ".gif")})"</#if>></span>
 							<span class="text">
-								<div class="label">${ref.label}</div>
-								<div class="description">${ref.description?if_exists}</div>
+								<div>
+									<div class="label">${ref.label}</div>
+									<div class="description">${ref.description?if_exists}</div>
+								</div>
 							</span>
 						</a>
 					</#list>
