@@ -76,7 +76,7 @@ public class Button extends AbstractEditorBase
 			return label;
 		}
 		if (getLabelKey() != null) {
-			return MessageUtils.getMessage(this, getLabelKey());
+			return FormatUtils.stripTags(MessageUtils.getMessage(this, getLabelKey()));
 		}
 		return "Submit";
 	}

@@ -55,7 +55,7 @@ table.pages tr.hidden-page td {
 }
 
 .pageProperty-title {
-	padding: 4px 0;
+	margin-bottom: 4px;
 }
 
 .pageProperty-title label {

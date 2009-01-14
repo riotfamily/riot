@@ -241,14 +241,16 @@ div.checkbox-element,
 div.checkbox label,
 div.checkbox-element label,
 .checkbox-pageProperty label {
-	padding-left: 22px;
+	padding-left: 20px;
 }
 
 .checkbox-wrapper {
 	position: absolute;
-	top: 2px;
+	top: 1px;
 }
-
+input.checkbox {
+	margin: 0;
+}
 ul.checkboxGroup li,
 ul.radioButtonGroup li {
 	margin: 6px 0 0 0;

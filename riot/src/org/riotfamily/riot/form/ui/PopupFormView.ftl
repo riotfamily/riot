@@ -17,9 +17,6 @@
 			html, body {
 				border: none;
 			}
-			.buttons input.button-save {
-				display: none;
-			}
 		</style>
 	</head>
 	<body>
