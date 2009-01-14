@@ -40,6 +40,10 @@ public class DiagnosticContextFilter extends HttpFilterBean {
 	
 	private static final String IP = "IP";
 	
+	private static final String REFERER = "Referer";
+	
+	private static final String USER_AGENT = "User-Agent";
+	
 	private static final String SESSION_ID = "sessionId";
 
 	@Override
@@ -52,10 +56,18 @@ public class DiagnosticContextFilter extends HttpFilterBean {
 
 		String ip = request.getRemoteAddr();
 		String url = ServletUtils.getRequestUrlWithQueryString(request);
+		String referer = request.getHeader(REFERER);
+		String userAgent = request.getHeader(USER_AGENT);
 		HttpSession session = request.getSession(false);
 
 		RiotLog.put(IP, ip);
 		RiotLog.put(URL, url);
+		if (referer != null) {
+			RiotLog.put(REFERER, referer);
+		}
+		if (userAgent != null) {
+			RiotLog.put(USER_AGENT, userAgent);
+		}
 		if (session != null) {
 			RiotLog.put(SESSION_ID, session.getId());
 		}
