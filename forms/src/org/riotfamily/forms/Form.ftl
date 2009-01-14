@@ -13,7 +13,7 @@
 				<div class="title<#if composite> composite-title</#if>">
 					<label for="${element.eventTriggerId}">
 						<#if element.label?has_content>
-							${element.label}<#if element.required>* </#if>
+							${element.label}<#if element.required && !composite>* </#if>
 						<#else>
 							<span class="no-label"></span>
 						</#if>

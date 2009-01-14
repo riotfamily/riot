@@ -4,7 +4,7 @@
 		<div class="pageProperty-title title<#if composite> composite-title</#if>">
 			<label for="${editor.eventTriggerId}">
 				<#if editor.label?has_content>
-					${editor.label}<#if editor.required>* </#if>
+					${editor.label}<#if editor.required && !composite>* </#if>
 				<#else>
 					<span class="no-label"></span>
 				</#if>

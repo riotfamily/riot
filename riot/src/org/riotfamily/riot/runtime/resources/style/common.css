@@ -8,7 +8,7 @@ body {
 }
 body, a, td, th, h1, h2 {
 	font-family: "Trebuchet MS", arial, sans-serif;
-	font-size: 12px;
+	font-size: 13px;
 }
 a {
 	color: ${highlight_color};

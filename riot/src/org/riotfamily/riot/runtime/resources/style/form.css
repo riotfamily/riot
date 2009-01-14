@@ -60,8 +60,7 @@
 }
 
 div.form-error,
-label.error,
-.indent label.error {
+label.error {
 	color: ${error_color};
 }
 div.form-error {
@@ -102,6 +101,9 @@ label.disabled,
 .element {
 	margin-bottom: 30px;
 	padding-right: 2px;
+}
+.collectionEditor .element {
+	margin-bottom: 0;
 }
 .element-switch {
 	margin-bottom: 12px;
@@ -265,11 +267,9 @@ ul.checkboxGroup label {
 }
 
 .indent {
-	margin-left: 36px;
 	padding-top: 10px;
 }
 .indent .indent {
-	margin-left: 0;
 	padding-top: 0;
 }
 .indent label {
@@ -281,7 +281,7 @@ ul.checkboxGroup label {
 
 .collectionEditor ul.items {
 	padding: 0;
-	margin: -1px 0 0 0;
+	margin: 0;
 }
 .collectionEditor span .button-add {
 	margin-top: 1px;
@@ -328,10 +328,6 @@ table.item td.itemElement {
 .mapEditor table.item td.itemElement {
 	padding: 10px 0;
 }
-.mapEditor table.item td.itemElement label {
-	margin-left: 8px;
-}
-
 
 table.item .draggable td.itemElement {
 	padding-right: 0;
@@ -341,7 +337,9 @@ table.item td.removeButton {
 	background: #ebebeb;
 	vertical-align: middle;
 }
-
+.listEditor ul.items {
+	margin-top: -1px;
+}
 .listEditor li.item {
     border-top: 1px solid #cdcdcd;
     border-bottom: 1px solid #cdcdcd;
@@ -509,8 +507,11 @@ ul.radioButtonGroup {
 	vertical-align: middle;
 }
 
-.confirm-text p {
+.confirm-text p,
+.password p {
+	display: block;
 	margin: 10px 0 5px 0;
+	color: ${label_color};
 }
 .password .button-change {
 	margin-top: 5px; 
