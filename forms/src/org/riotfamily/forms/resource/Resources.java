@@ -53,4 +53,8 @@ public final class Resources {
 	
 	public static final ScriptResource RIOT_UTIL = 
 			new ScriptResource("riot-js/util.js", "RElement", PROTOTYPE);
+	
+	public static final ScriptResource RIOT_EFFECTS = 
+			new ScriptResource("riot-js/effects.js", "Effect.Remove", 
+			SCRIPTACULOUS_EFFECTS);
 }

@@ -100,7 +100,7 @@ function processAjaxResponse(transport) {
 
 function performAction(action) {
 	if (action.command == 'remove') {
-		$(action.element).remove();
+		new Effect.Remove(action.element);
 	}
 	else if (action.command == 'insert') {
 		$(action.element).insert(action.value);
