@@ -101,6 +101,8 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 
 	protected abstract void deleteObject(Object object);
 	
+	protected abstract void refreshIfDetached(Object object);
+	
 	public Page loadPage(Long id) {
 		return (Page) loadObject(Page.class, id);
 	}
@@ -177,6 +179,10 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		deleteAlias(page);
 		PageCacheUtils.invalidateNode(cacheService, parentNode);
 		log.debug("Page saved: " + page);
+	}
+
+	public void refreshPageIfDetached(Page page) {
+		refreshIfDetached(page);
 	}
 
 	public Page addTranslation(Page page, Site site) {
@@ -342,7 +348,11 @@ public abstract class AbstractPageDao implements PageDao, InitializingBean {
 		}
 		translateSystemPages(getRootNode(), masterSite, site);
 	}
-	
+
+	public void refreshSiteIfDetached(Site site) {
+		refreshIfDetached(site);
+	}
+
 	public void updateSite(Site site) {
 		PageCacheUtils.invalidateSite(cacheService, site);
 	}

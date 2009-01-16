@@ -29,6 +29,7 @@ import java.util.Locale;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -69,6 +70,15 @@ public class HibernatePageDao extends AbstractPageDao {
 
 	protected void saveObject(Object object) {
 		hibernate.persist(object);
+	}
+
+	protected void refreshIfDetached(Object object) {
+		if (object != null) {
+			Session session = hibernate.getSession();
+			if (!session.contains(object)) {
+				session.refresh(object);
+			}
+		}
 	}
 
 	protected void deleteObject(Object object) {

@@ -113,6 +113,8 @@ public interface PageDao {
 	
 	public Page addTranslation(PageNode node, Site site, String pathComponent);
 
+	public void refreshPageIfDetached(Page page);
+
 	public Object mergePage(Page page);
 
 	public void updatePage(Page page);
@@ -146,6 +148,8 @@ public interface PageDao {
 	public List<Site> listSites();
 	
 	public void saveSite(Site site);
+
+	public void refreshSiteIfDetached(Site site);
 
 	public Site mergeSite(Site site);
 	
