@@ -8,10 +8,10 @@
 				<#else>
 					<span class="no-label"></span>
 				</#if>
-				<#if editor.hint?exists>
-					<span class="hint-trigger" onclick="toggleHint('${editor.id}-hint')">&nbsp;</span>
-				</#if>
 			</label>
+			<#if editor.hint?exists>
+				<span class="hint-trigger" onclick="toggleHint('${editor.id}-hint')">&nbsp;</span>
+			</#if>
 			<#if display??>
 				<b>${toggleButton.render()}</b>
 			</#if>

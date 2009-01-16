@@ -17,10 +17,10 @@
 						<#else>
 							<span class="no-label"></span>
 						</#if>
-						<#if element.hint?exists>
-							<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')">&nbsp;</span>
-						</#if>
 					</label>
+					<#if element.hint?exists>
+						<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')">&nbsp;</span>
+					</#if>
 				</div>
 			</#if>
 			<#if element.hint?exists>

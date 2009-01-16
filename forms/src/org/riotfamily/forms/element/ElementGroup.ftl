@@ -11,10 +11,10 @@
 						<div class="title<#if composite> composite-title</#if>">
 							<label for="${element.eventTriggerId}" class="field <#if element.form.errors.hasErrors(element)> error</#if>">
 								${element.label?if_exists}<#if element.required && !composite>* </#if>
-								<#if element.hint?exists>
-									<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')">&nbsp;</span>
-								</#if>
 							</label>
+							<#if element.hint?exists>
+								<span class="hint-trigger" onclick="toggleHint('${element.id}-hint')">&nbsp;</span>
+							</#if>
 						</div>
 					</#if>
 					<#if element.hint?exists>
