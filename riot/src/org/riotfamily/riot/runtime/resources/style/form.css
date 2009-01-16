@@ -79,12 +79,14 @@ ul.errors li {
 }
 
 label {
-	display: block;
 	font-size: 13px;
 	font-weight: bold;
 	color: ${label_color};
 	-moz-user-select: none;
 	margin: 4px 0;
+}
+.title {
+	margin-bottom:4px;
 }
 .composite-title label {
 	color: ${highlight_color};
@@ -105,6 +107,9 @@ label.disabled,
 .collectionEditor .element {
 	margin-bottom: 0;
 }
+.collectionEditor .nestedForm .element {
+	margin-bottom: 20px;
+}
 .element-switch {
 	margin-bottom: 12px;
 }
@@ -118,17 +123,6 @@ textarea, input.text, input.number, input.password, select, option {
 }
 textarea, input.text, input.number, input.password {
 	padding: 4px 0;
-}
-input.file {
-	font-family: arial, sans-serif;
-	font-size: 11px;
-	_padding: 3px 0;
-	vertical-align: top;
-}
-input.button, button {
-	font-family: arial, sans-serif; 
-	font-size: 11px;
-	padding: 1px 5px;
 }
 textarea, input.text, input.number, input.password {
 	display: block;
@@ -246,7 +240,7 @@ div.checkbox-element label,
 
 .checkbox-wrapper {
 	position: absolute;
-	top: 1px;
+	top: 0;
 }
 input.checkbox {
 	margin: 0;
@@ -263,19 +257,17 @@ ul.radioButtonGroup input {
 }
 
 ul.checkboxGroup label {
-	display: inline;
 	font-size: 11px;
 	font-weight: normal;
 }
 
 .indent {
-	padding-top: 10px;
+	padding-top: 20px;
 }
 .indent .indent {
 	padding-top: 0;
 }
 .indent label {
-	display: block;
 	font-weight: bold;
 	color: ${label_color};
 }
@@ -333,6 +325,9 @@ table.item td.itemElement {
 
 table.item .draggable td.itemElement {
 	padding-right: 0;
+}
+.itemElement .indent {
+	padding-top: 10px;
 }
 
 table.item td.removeButton {
@@ -540,7 +535,6 @@ ul.radioButtonGroup {
 	vertical-align: middle;
 }
 .toggle-plaintext label {
-	display: inline;
 	font-weight: normal;
 	vertical-align: middle;
 }

@@ -54,14 +54,6 @@ table.pages tr.hidden-page td {
 	background: url(icons/publish_state.png) 2px 0px no-repeat;
 }
 
-.pageProperty-title {
-	margin-bottom: 4px;
-}
-
-.pageProperty-title label {
-	display: inline;
-}
-
 .pageProperty b {
 	display: -moz-inline-box;
 	display: inline-block;

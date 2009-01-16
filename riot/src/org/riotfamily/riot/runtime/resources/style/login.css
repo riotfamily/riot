@@ -75,7 +75,8 @@ div.password {
 .button-login {
 	height: 46px;
 	display: block;
-	padding: 10px 40px 36px 36px;
+	position: relative;
+	padding: 10px 40px 30px 36px;
 	_padding: 10px 10px 36px 38px;
 	background: ${highlight_color} url(images/login.gif) 10px 10px no-repeat;
 	border: 0;

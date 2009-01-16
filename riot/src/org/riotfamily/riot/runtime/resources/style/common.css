@@ -7,8 +7,8 @@ body {
 	padding: 0;
 }
 body, a, td, th, h1, h2 {
-	font-family: "Trebuchet MS", arial, sans-serif;
-	font-size: 13px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
 }
 a {
 	color: ${highlight_color};
@@ -78,7 +78,6 @@ div.box-title,
 div.box-title span,
 div.box-title label {
 	color: #fff;
-	text-transform: uppercase;
 }
 
 div.box-title label,
