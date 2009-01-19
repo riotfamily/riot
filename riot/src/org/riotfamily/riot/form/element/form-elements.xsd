@@ -12,11 +12,36 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="form:simple-editor">
-					<xsd:attribute name="target-editor-id" type="xsd:string" />
-					<xsd:attribute name="root-editor-id" type="xsd:string" />
-					<xsd:attribute name="root-property" type="xsd:string" />
-					<xsd:attribute name="root-id-attribute" type="xsd:string" />
-					<xsd:attribute name="display" type="xsd:string" />
+					<xsd:attribute name="target-editor-id" type="xsd:string">
+			    		<xsd:annotation>
+			    			<xsd:documentation>Some defined editor (e.g. list,
+			    			tree, etc) which contains the desired target</xsd:documentation>
+			    		</xsd:annotation>					
+					</xsd:attribute>
+					<xsd:attribute name="root-editor-id" type="xsd:string">
+			    		<xsd:annotation>
+			    			<xsd:documentation>Some defined editor (e.g. list,
+			    			tree, etc) which leads to the desired target</xsd:documentation>
+			    		</xsd:annotation>					
+					</xsd:attribute>
+					<xsd:attribute name="root-property" type="xsd:string">
+			    		<xsd:annotation>
+			    			<xsd:documentation>Passes a specific property of
+			    			the target's parent object</xsd:documentation>
+			    		</xsd:annotation>					
+					</xsd:attribute>
+					<xsd:attribute name="root-id-attribute" type="xsd:string">
+			    		<xsd:annotation>
+			    			<xsd:documentation>Passes an additional attribute,
+			    			such as the Site ID</xsd:documentation>
+			    		</xsd:annotation>					
+					</xsd:attribute>					
+					<xsd:attribute name="display" type="xsd:string">
+			    		<xsd:annotation>
+			    			<xsd:documentation>The target's property that shall
+			    			be displayed in the form after picking target</xsd:documentation>
+			    		</xsd:annotation>										
+					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

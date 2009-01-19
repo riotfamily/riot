@@ -15,17 +15,40 @@
 	<xsd:element name="list">
 	    <xsd:complexType>
 	    	<xsd:sequence>
-	    		<xsd:element ref="dao" />
+	    		<xsd:element ref="dao">
+		    		<xsd:annotation>
+		    			<xsd:documentation>Reference to DAO of your choice
+		    			(e.g. HqlDao, ParentChildDao, etc)</xsd:documentation>
+		    		</xsd:annotation>	    		
+	    		</xsd:element>
 	    		<xsd:element ref="columns" />
 	    		<xsd:element ref="command" minOccurs="0" maxOccurs="unbounded" />
 	    	</xsd:sequence>
 	    	<xsd:attribute name="id" type="xsd:string" use="required" />
 	    	<xsd:attribute name="id-property" type="xsd:string" />
-	    	<xsd:attribute name="filter-form" type="xsd:string" />
-	    	<xsd:attribute name="order-by" type="xsd:string" />
+	    	<xsd:attribute name="filter-form" type="xsd:string">
+	    		<xsd:annotation>
+	    			<xsd:documentation>An optional form for the search dialogue</xsd:documentation>
+	    		</xsd:annotation>
+	    	</xsd:attribute>
+	    	<xsd:attribute name="order-by" type="xsd:string">
+	    		<xsd:annotation>
+	    			<xsd:documentation>Property by which the list is sorted</xsd:documentation>
+	    		</xsd:annotation>	    	
+	    	</xsd:attribute>
 	    	<xsd:attribute name="row-style-property" type="xsd:string" />
-	    	<xsd:attribute name="label-property" type="xsd:string" />
-	    	<xsd:attribute name="search" type="xsd:string" />
+	    	<xsd:attribute name="label-property" type="xsd:string">
+	    		<xsd:annotation>
+	    			<xsd:documentation>Property that represents the entity best. 
+	    			Is shown in the path when editing entities, for example. </xsd:documentation>
+	    		</xsd:annotation>	    	
+	    	</xsd:attribute>
+	    	<xsd:attribute name="search" type="xsd:string">
+	    		<xsd:annotation>
+	    			<xsd:documentation>Accepts a comma-separated list of 
+	    			properties that can be searched</xsd:documentation>
+	    		</xsd:annotation>	    	
+	    	</xsd:attribute>
 	    	<xsd:attribute name="page-size" type="xsd:nonNegativeInteger" />
 	    </xsd:complexType>
 	</xsd:element>
@@ -71,7 +94,12 @@
 	    <xsd:complexType>
 	    	<xsd:attribute name="property" type="xsd:string" />
 	    	<xsd:attribute name="lookup-level" type="xsd:positiveInteger" />
-	    	<xsd:attribute name="renderer" type="xsd:string" />
+	    	<xsd:attribute name="renderer" type="xsd:string">
+	    		<xsd:annotation>
+	    			<xsd:documentation>Allows a specific renderer for non-string
+	    			properties, such as images or dates.</xsd:documentation>
+	    		</xsd:annotation>	    		    	
+	    	</xsd:attribute>
 	    	<xsd:attribute name="sortable" type="xsd:boolean" />
 	    	<xsd:attribute name="case-sensitive" type="xsd:boolean" />
 	    </xsd:complexType>
