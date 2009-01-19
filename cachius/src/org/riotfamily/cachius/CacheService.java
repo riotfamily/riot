@@ -250,7 +250,7 @@ public class CacheService {
 		writeLock.lock();
 		try {
 			CacheItem item = entry.getItem();
-			if (item.getLastModified() >= mtime || !mustRevalidate(item)) {
+			if (item.getLastModified() >= mtime) {
 				TaggingContext.inheritFrom(item);
 			}
 			else {
