@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.RenderContext;
 import org.riotfamily.pages.model.Page;
+import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.list.ui.ListSession;
 
 /**
@@ -56,8 +57,19 @@ public class PublishStatusRenderer implements ObjectRenderer {
 	}
 
 	private boolean isTranslated(Page page, ListSession session) {
-		//TODO
-		return true;
+		Site parentSite = getParentSite(session);
+		return parentSite == null || parentSite.equals(page.getSite());
+	}
+	
+	private Site getParentSite(ListSession session) {
+		Object parent = session.loadParent();
+		if (parent instanceof Page) {
+			return ((Page) parent).getSite();
+		}
+		else if (parent instanceof Site) {
+			return (Site) parent;
+		}
+		return null;
 	}
 
 }
