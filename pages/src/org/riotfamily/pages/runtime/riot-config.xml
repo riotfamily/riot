@@ -42,7 +42,7 @@
 		</list:columns>
 	</list:list>
 	
-	<list:list id="sites" label-property="name" default-command="edit">
+	<list:list id="sites" label-property="name">
 		<list:dao ref="siteRiotDao" />
 		<list:columns>
 			<list:column property="locale" renderer="org.riotfamily.riot.ui.CountryFlagRenderer" />
@@ -58,7 +58,7 @@
 		<list:command id="add" />
 	</list:list>
 	
-	<list:list id="pages" default-command="showChildPages">
+	<list:list id="pages">
 		<list:dao ref="pageRiotDao" />
 		<list:columns>
 			<list:column property="title" />

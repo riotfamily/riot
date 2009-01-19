@@ -21,7 +21,6 @@
 	    	</xsd:sequence>
 	    	<xsd:attribute name="id" type="xsd:string" use="required" />
 	    	<xsd:attribute name="id-property" type="xsd:string" />
-	    	<xsd:attribute name="default-command" type="xsd:string" />
 	    	<xsd:attribute name="filter-form" type="xsd:string" />
 	    	<xsd:attribute name="order-by" type="xsd:string" />
 	    	<xsd:attribute name="row-style-property" type="xsd:string" />

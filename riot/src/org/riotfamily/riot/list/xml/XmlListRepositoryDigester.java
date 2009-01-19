@@ -50,10 +50,8 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	public static final String NAMESPACE = "http://www.riotfamily.org/schema/riot/list-config";
 	
 	private static final String[] LIST_ATTRS = new String[] {
-		"id", "id-property", "filterFormId=filter-form", 
-		"defaultCommandId=default-command", "order-by",
-		"label-property", "row-style-property", "search",
-		"page-size"
+		"id", "id-property", "filterFormId=filter-form", "order-by",
+		"label-property", "row-style-property", "search", "page-size"
 	};
 	
 	private static final String[] COLUMN_ATTRS = new String[] {
