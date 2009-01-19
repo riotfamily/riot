@@ -178,7 +178,10 @@ public class ObjectChooser extends AbstractChooser
 	private void initRootId() {
 		if (rootId == null) {
 			if (rootIdAttribute != null) {
-				rootId = (String) getForm().getAttribute(rootIdAttribute);
+				Object object = getForm().getAttribute(rootIdAttribute);
+				if (object != null) {
+					rootId = String.valueOf(object);
+				}
 			}
 			if (rootId == null) {
 				if (rootProperty != null) {

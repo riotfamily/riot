@@ -63,11 +63,10 @@ public class PageFormInitializer implements FormInitializer {
 			Object parent = FormUtils.loadParent(form);
 			if (parent instanceof Page) {
 				parentPage = (Page) parent;
-				//Make the parent id available for the InternalLinkField:
 				form.setAttribute("pageId", parentPage.getId());
+				form.setAttribute("siteId", parentPage.getSite().getId());
 			}
 			else if (parent instanceof Site) {
-				//Make the site id available for the InternalLinkField:
 				Site site = (Site) parent;
 				form.setAttribute("siteId", site.getId());
 			}
@@ -83,6 +82,7 @@ public class PageFormInitializer implements FormInitializer {
 		else {
 			Page page = (Page) form.getBackingObject();
 			form.setAttribute("pageId", page.getId());
+			form.setAttribute("siteId", page.getSite().getId());
 			pageType = page.getPageType();
 		}
 		
