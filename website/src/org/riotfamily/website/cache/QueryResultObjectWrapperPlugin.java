@@ -23,31 +23,27 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.cache;
 
-import org.hibernate.SessionFactory;
+import org.hibernate.type.Type;
 import org.riotfamily.common.web.view.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.web.view.freemarker.PluginObjectWrapper;
-import org.riotfamily.riot.hibernate.support.HibernateUtils;
+import org.riotfamily.riot.hibernate.support.QueryResult;
 import org.springframework.core.Ordered;
 
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 
 /**
- * ObjectWrapperPlugin that tags cache items whenever a class with the
- * {@link TagCacheItems} annotation is accessed by a FreeMarker template.
+ * ObjectWrapperPlugin that tags cache items whenever a {@link QueryResult}
+ * for entities with the {@link TagCacheItems} annotation is accessed by a 
+ * FreeMarker template.
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public class TaggingObjectWrapperPlugin implements ObjectWrapperPlugin, Ordered {
+public class QueryResultObjectWrapperPlugin 
+		implements ObjectWrapperPlugin, Ordered {
 
 	private int order = Ordered.HIGHEST_PRECEDENCE;
 
-	private SessionFactory sessionFactory;
-	
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-	
 	public int getOrder() {
 		return order;
 	}
@@ -58,17 +54,24 @@ public class TaggingObjectWrapperPlugin implements ObjectWrapperPlugin, Ordered 
 	public void setOrder(int order) {
 		this.order = order;
 	}
-
+	
 	public boolean supports(Object obj) {
-		return obj.getClass().isAnnotationPresent(TagCacheItems.class);
+		return obj instanceof QueryResult;
 	}
 
+	@SuppressWarnings("unchecked")
 	public TemplateModel wrapSupportedObject(Object obj,
 			PluginObjectWrapper wrapper) throws TemplateModelException {
-
-		TaggingStringModel model = new TaggingStringModel(obj, wrapper);
-		model.addTag(CacheTagUtils.getTag(obj.getClass(), HibernateUtils.getIdAsString(sessionFactory, obj)));
-		return model;
+		
+		QueryResult result = (QueryResult) obj;
+		TaggingSequence seqence = new TaggingSequence(result, wrapper);
+		for (Type type : result.getReturnTypes()) {
+			Class clazz = type.getReturnedClass();
+			if (clazz.isAnnotationPresent(TagCacheItems.class)) {
+				seqence.addTag(CacheTagUtils.getTag(clazz));
+			}
+		}
+		return seqence;
 	}
-	
+
 }

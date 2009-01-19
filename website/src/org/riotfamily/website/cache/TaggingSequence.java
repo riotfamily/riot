@@ -23,26 +23,39 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.website.cache;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.riotfamily.cachius.TaggingContext;
+import org.riotfamily.common.util.Generics;
 
-import freemarker.ext.beans.BeansWrapper;
-import freemarker.ext.beans.StringModel;
-import freemarker.template.TemplateModel;
-import freemarker.template.TemplateModelException;
+import freemarker.template.ObjectWrapper;
+import freemarker.template.SimpleSequence;
 
-public class TaggingTemplateModel extends StringModel {
+/**
+ * SimpleSequence subclass that tags cache items with a list of configured tags
+ * whenever the size of the sequence is accessed.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
+public class TaggingSequence extends SimpleSequence {
 
-	private String tag;
+	private List<String> tags = Generics.newArrayList();
 	
-	public TaggingTemplateModel(Object object, BeansWrapper wrapper, String tag) {
-		super(object, wrapper);
-		this.tag = tag;
+	public TaggingSequence(Collection<?> collection, ObjectWrapper wrapper) {
+		super(collection, wrapper);
+	}
+	
+	public void addTag(String tag) {
+		tags.add(tag);
 	}
 
 	@Override
-	public TemplateModel get(String key) throws TemplateModelException {
-		TaggingContext.tag(tag);
-		return super.get(key);
+	public int size() {
+		for (String tag : tags) {
+			TaggingContext.tag(tag);
+		}
+		return super.size();
 	}
 	
 }

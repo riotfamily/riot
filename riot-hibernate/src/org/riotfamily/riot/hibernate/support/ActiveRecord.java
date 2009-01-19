@@ -69,6 +69,25 @@ public abstract class ActiveRecord {
 		this.id = id;
 	}
 	
+	@Override
+	public int hashCode() {
+		return (id == null) ? 0 : id.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (getClass().isInstance(obj)) {
+			ActiveRecord other = (ActiveRecord) obj;
+			if (id != null) {
+				return id.equals(other.getId());
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Persists this transient instance, first assigning a generated
 	 * identifier.
@@ -194,9 +213,8 @@ public abstract class ActiveRecord {
 	 * @param params the values of the parameters
 	 * @return a {@link List} containing the results of the query execution
 	 */
-	@SuppressWarnings("unchecked")
 	protected static<T> List<T> find(String hql, Object... params) {
-		return createQuery(hql, params).list();
+		return new QueryResult<T>(createQuery(hql, params));
 	}
 
 	/**
@@ -259,22 +277,4 @@ public abstract class ActiveRecord {
 		public void execute(T t);
 	}
 	
-	@Override
-	public int hashCode() {
-		return (id == null) ? 0 : id.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (getClass().isInstance(obj)) {
-			ActiveRecord other = (ActiveRecord) obj;
-			if (id != null) {
-				return id.equals(other.getId());
-			}
-		}
-		return false;
-	}
 }
