@@ -54,8 +54,6 @@ public class RevoltDataSourceFactoryBean implements FactoryBean,
 
 	private boolean automatic;
 	
-	private Dialect dialect;
-	
 	private Script script = new Script();
 
 	private Collection<EvolutionHistory> evolutions;
@@ -63,7 +61,6 @@ public class RevoltDataSourceFactoryBean implements FactoryBean,
 	@Required
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
-		this.dialect = new DialectResolver().getDialect(dataSource);
 	}
 	
 	/**
@@ -105,6 +102,7 @@ public class RevoltDataSourceFactoryBean implements FactoryBean,
 	
 	public void afterPropertiesSet() throws Exception {
 		if (!evolutions.isEmpty()) {
+			Dialect dialect = new DialectResolver().getDialect(dataSource);
 			SimpleJdbcTemplate template = new SimpleJdbcTemplate(dataSource);
 			LogTable logTable = new LogTable(template, dialect);
 			if (!logTable.exists()) {
