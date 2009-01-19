@@ -75,10 +75,8 @@ public class PageResolver {
 			site = resolveSite(request);
 			expose(site, request, SITE_ATTRIBUTE);
 		}
-
 		Site result = site != NOT_FOUND ? (Site) site : null;
 		pageDao.refreshSiteIfDetached(result);
-		
 		return result; 
 	}
 		
@@ -106,10 +104,8 @@ public class PageResolver {
 			page = resolvePage(request);
 			expose(page, request, PAGE_ATTRIBUTE);
 		}
-		
 		Page result = page != NOT_FOUND ? (Page) page : null;
 		pageDao.refreshPageIfDetached(result);
-		
 		return result;
 	}
 	
