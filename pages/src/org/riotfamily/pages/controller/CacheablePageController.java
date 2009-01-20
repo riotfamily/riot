@@ -25,21 +25,19 @@ package org.riotfamily.pages.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.cachius.spring.CacheableController;
+import org.riotfamily.pages.mapping.PageResolver;
+import org.riotfamily.pages.model.Page;
+import org.riotfamily.website.view.CacheableViewController;
+import org.springframework.ui.Model;
 
-public class CacheablePageController extends PageController 
-		implements CacheableController {
+public class CacheablePageController extends CacheableViewController {
 
-	public String getCacheKey(HttpServletRequest request) {
-		return request.getRequestURL().toString();
+	@Override
+	protected void populateModel(Model model, HttpServletRequest request) {
+		populateModel(model, PageResolver.getResolvedPage(request));
 	}
-
-	public long getLastModified(HttpServletRequest request) throws Exception {
-		return System.currentTimeMillis();
-	}
-
-	public long getTimeToLive() {
-		return CACHE_ETERNALLY;
+	
+	protected void populateModel(Model model, Page page) {
 	}
 
 }

@@ -23,15 +23,31 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.view;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
+import org.springframework.web.servlet.RequestToViewNameTranslator;
 
-public class DefaultPageToViewNameTranslator implements PageToViewNameTranslator {
+/**
+ * RequestToViewNameTranslator that uses the pageType of the resolved Page
+ * to construct a viewName.
+ * 
+ * @see PageResolver
+ * @since 8.0
+ * @author Felix Gnass [fgnass at neteye dot de]
+ */
+public class PageRequestToViewNameTranslator 
+		implements RequestToViewNameTranslator {
 
-	public String prefix = "";
+	private String prefix = "";
 	
-	public String suffix = "";
+	private String suffix = "";
 	
-	public String defaultPageType = "default";
+	private String defaultPageType = "default";
+	
+	private RequestToViewNameTranslator noPageTranslator;
+	
 	
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
@@ -44,12 +60,24 @@ public class DefaultPageToViewNameTranslator implements PageToViewNameTranslator
 	public void setDefaultPageType(String defaultPageType) {
 		this.defaultPageType = defaultPageType;
 	}
-
-	public String getViewName(Page page) throws Exception {
-		String pageType = page.getPageType();
-		if (pageType == null) {
-			pageType = defaultPageType;
-		}
-		return prefix + pageType + suffix;
+	
+	public void setNoPageTranslator(RequestToViewNameTranslator noPageTranslator) {
+		this.noPageTranslator = noPageTranslator;
 	}
+
+	public String getViewName(HttpServletRequest request) throws Exception {
+		Page page = PageResolver.getResolvedPage(request);
+		if (page != null) {
+			String pageType = page.getPageType();
+			if (pageType == null) {
+				pageType = defaultPageType;
+			}
+			return prefix + pageType + suffix;
+		}
+		else if (noPageTranslator != null) {
+			return noPageTranslator.getViewName(request);
+		}
+		return null;
+	}
+
 }

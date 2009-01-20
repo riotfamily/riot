@@ -18,7 +18,7 @@
 		<constructor-arg ref="pathCompleter" />
 		<property name="order" value="2" />
 		<property name="defaultPageHandler">
-			<bean class="org.riotfamily.pages.controller.PageController" />
+			<bean class="org.riotfamily.website.view.CacheableViewController" />
 		</property>
 		<property name="interceptors">
 			<list>
@@ -27,8 +27,14 @@
 		</property>
 	</bean>
 	
-	<bean id="pageToViewNameTranslator" class="org.riotfamily.pages.view.DefaultPageToViewNameTranslator">
+	<bean id="viewNameTranslator" class="org.riotfamily.pages.view.PageRequestToViewNameTranslator">
 		<property name="defaultPageType" value="default" />
+		<property name="prefix" value="pages/" />
+		<property name="suffix" value=".ftl" />
+		<property name="noPageTranslator" ref="noPageViewNameTranslator" />
+	</bean>
+	
+	<bean id="noPageViewNameTranslator" class="org.riotfamily.pages.view.SiteRequestToViewNameTranslator">
 		<property name="suffix" value=".ftl" />
 	</bean>
 	
