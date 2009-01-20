@@ -212,7 +212,7 @@ public class PageResolver {
 
 		Site site = pageDao.findSite(host, path);
 		if (site == null) {
-			log.warn("Could not find site for url '" + url + "'. Using fallback.");
+			log.debug("Could not find site for url '" + url + "'. Using fallback.");
 			site = fallbackSite;
 		}
 		path = site.stripPrefix(path);
