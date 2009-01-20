@@ -237,9 +237,9 @@ public class CacheService {
 			}	
 		}
 		else {
+			TaggingContext.inheritFrom(newItem);
+			handler.writeCacheItem(newItem);
 			newItem.delete();
-			TaggingContext.inheritFrom(oldItem);
-			serveCacheEntry(handler, entry);
 		}
     }
     
@@ -254,9 +254,10 @@ public class CacheService {
 				TaggingContext.inheritFrom(item);
 			}
 			else {
-				updateCacheItem(handler, item, item);
-				item.setLastModified(mtime);
-				item.setTimeToLive(handler.getTimeToLive());
+				if (updateCacheItem(handler, item, item)) {
+					item.setLastModified(mtime);
+					item.setTimeToLive(handler.getTimeToLive());
+				}
 			}
 			serveCacheEntry(handler, entry);
 		}
@@ -306,9 +307,6 @@ public class CacheService {
         		entry.getLock().writeLock().unlock();
         	}
         	CacheItem item = entry.getItem();
-        	if (!item.exists()) {
-        		return false;
-        	}
 			handler.writeCacheItem(item);
         }
         finally {
