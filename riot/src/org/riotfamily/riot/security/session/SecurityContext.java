@@ -38,9 +38,7 @@ public class SecurityContext {
 	
 	public static void bindUserToCurrentThread(RiotUser user) {
 		threadLocal.set(user);
-		if (user != null) {
-			RiotLog.put("RiotUser", user.getUserId());
-		}
+		RiotLog.put("RiotUser", (user != null) ? user.getUserId() : null);
 	}
 	
 	public static RiotUser getCurrentUser() {

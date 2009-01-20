@@ -165,7 +165,12 @@ public class RiotLog {
 	}
 	
 	public static void put(String key, Object value) {
-		MDC.put(key, value);
+		if (value != null) {
+			MDC.put(key, value);
+		}
+		else {
+			MDC.remove(key);
+		}
 	}
 	
 	public static void remove(String key) {
