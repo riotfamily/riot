@@ -51,7 +51,7 @@ import org.riotfamily.search.ResultHighlighter.HighlightingContext;
 import org.riotfamily.search.analysis.AnalyzerFactory;
 import org.riotfamily.search.analysis.DefaultAnalyzerFactory;
 import org.riotfamily.search.index.DocumentBuilder;
-import org.riotfamily.website.generic.view.Pager;
+import org.riotfamily.website.view.Pager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
