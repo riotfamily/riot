@@ -27,6 +27,8 @@ import org.riotfamily.common.log4j.RiotLog;
 import org.riotfamily.riot.security.auth.RiotUser;
 
 /**
+ * Class that associates a RiotUser with the current thread.
+ *  
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
@@ -36,9 +38,7 @@ public class SecurityContext {
 	
 	public static void bindUserToCurrentThread(RiotUser user) {
 		threadLocal.set(user);
-		if (user != null) {
-			RiotLog.put("RiotUser", user.getUserId());
-		}
+		RiotLog.put("RiotUser", (user != null) ? user.getUserId() : null);
 	}
 	
 	public static RiotUser getCurrentUser() {
