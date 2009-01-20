@@ -25,11 +25,11 @@ package org.riotfamily.pages.view;
 
 import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.RequestHolder;
+import org.riotfamily.common.web.view.freemarker.FacadeTemplateModel;
 import org.riotfamily.common.web.view.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.web.view.freemarker.PluginObjectWrapper;
 import org.riotfamily.pages.model.Page;
 
-import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 
@@ -55,7 +55,7 @@ public class PageObjectWrapperPlugin implements ObjectWrapperPlugin {
 		
 		Page page = (Page) obj;
 		PageFacade facade = new PageFacade(page, RequestHolder.getRequest(), pathCompleter);
-		return new StringModel(facade, wrapper);
+		return new FacadeTemplateModel(facade, page, wrapper);
 	}
 
 }

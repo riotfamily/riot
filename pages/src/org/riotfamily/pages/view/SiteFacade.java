@@ -23,11 +23,7 @@ public class SiteFacade {
 		this.request = request;
 		PageCacheUtils.addSiteTag(site);
 	}
-	
-	public Site getSite() {
-		return site;
-	}
-	
+		
 	public String getAbsoluteUrl() {
 		return makeAbsolute("/");
 	}

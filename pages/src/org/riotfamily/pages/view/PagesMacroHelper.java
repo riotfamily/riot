@@ -65,24 +65,23 @@ public class PagesMacroHelper {
 	}
 	
 	
-	public List<Page> getTopLevelPages(SiteFacade facade) {
+	public List<Page> getTopLevelPages(Site site) {
 		PageNode rootNode = pageDao.getRootNode();
 		PageCacheUtils.addNodeTag(rootNode);
-		return getVisiblePages(rootNode.getChildPages(facade.getSite()),
+		return getVisiblePages(rootNode.getChildPages(site),
 				EditModeUtils.isEditMode(request));
 	}
 
-	public Page getPageForUrl(String url, SiteFacade facade) {
-		return pageResolver.resolvePage(url, request.getContextPath(),
-				facade.getSite());
+	public Page getPageForUrl(String url, Site site) {
+		return pageResolver.resolvePage(url, request.getContextPath(), site);
 	}
 	
-	public Page getPageOfType(String pageType, SiteFacade facade) {
-		return pageDao.findPageOfType(pageType, facade.getSite());
+	public Page getPageOfType(String pageType, Site site) {
+		return pageDao.findPageOfType(pageType, site);
 	}
 
-	public List<Page> getPagesOfType(String pageType, SiteFacade facade) {
-		return pageDao.findPagesOfType(pageType, facade.getSite());
+	public List<Page> getPagesOfType(String pageType, Site site) {
+		return pageDao.findPagesOfType(pageType, site);
 	}
 
 	public Page getPageForComponent(Component component) {

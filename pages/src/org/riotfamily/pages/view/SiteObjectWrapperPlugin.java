@@ -24,11 +24,11 @@
 package org.riotfamily.pages.view;
 
 import org.riotfamily.common.web.util.RequestHolder;
+import org.riotfamily.common.web.view.freemarker.FacadeTemplateModel;
 import org.riotfamily.common.web.view.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.web.view.freemarker.PluginObjectWrapper;
 import org.riotfamily.pages.model.Site;
 
-import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 
@@ -48,7 +48,7 @@ public class SiteObjectWrapperPlugin implements ObjectWrapperPlugin {
 		
 		Site site = (Site) obj;
 		SiteFacade facade = new SiteFacade(site, RequestHolder.getRequest());
-		return new StringModel(facade, wrapper);
+		return new FacadeTemplateModel(facade, site, wrapper);
 	}
 
 }
