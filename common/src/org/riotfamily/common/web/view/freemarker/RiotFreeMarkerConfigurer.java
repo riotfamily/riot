@@ -36,6 +36,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
+import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
 import freemarker.template.SimpleHash;
@@ -64,6 +65,8 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	private boolean useTemplateCache = true;
 	
 	private boolean useComputerNumberFormat = true;
+	
+	private boolean exposeStaticModels = true;
 	
 	private int templateUpdateDelay = 5;
 	
@@ -128,6 +131,14 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 	}
 	
 	/**
+	 * Whether {@link BeansWrapper#getStaticModels()} should be exposed as
+	 * <tt>statics</tt>.
+	 */
+	public void setExposeStaticModels(boolean exposeStaticModels) {
+		this.exposeStaticModels = exposeStaticModels;
+	}
+	
+	/**
 	 * Sets whether the FreeMarker template cache should be used 
 	 * (default is <code>true</code>).
 	 */
@@ -170,10 +181,15 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		
 		ObjectWrapper objectWrapper = new PluginObjectWrapper(plugins);
 		config.setObjectWrapper(objectWrapper);
-				
+		
 		if (sharedVariables != null) {
 			config.setAllSharedVariables(
 					new SimpleHash(sharedVariables, objectWrapper));
+		}
+		
+		if (exposeStaticModels) {
+			config.setSharedVariable("statics", 
+					BeansWrapper.getDefaultInstance().getStaticModels());
 		}
 		
 		if (useTemplateCache) {
