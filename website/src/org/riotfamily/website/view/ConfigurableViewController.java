@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 /**
 * Class similar to Spring's 
@@ -49,7 +50,7 @@ import org.springframework.web.servlet.ModelAndView;
 * @author Felix Gnass [fgnass at neteye dot de]
 * @since 8.0
 */
-public class ConfigurableViewController {
+public class ConfigurableViewController implements Controller {
 
 	private String viewName;
 
