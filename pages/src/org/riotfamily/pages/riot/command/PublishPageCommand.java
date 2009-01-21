@@ -50,8 +50,12 @@ public class PublishPageCommand extends AbstractCommand implements BatchCommand 
 	
 	public boolean isEnabled(CommandContext context) {
 		Page page = (Page) context.getBean();
-		return (!page.isPublished() || page.isDirty()) 
-				&& PageCommandUtils.isTranslated(context);
+		if (page != null && (!page.isPublished() || page.isDirty()) 
+				&& PageCommandUtils.isTranslated(context)) {
+			
+			return true;
+		}
+		return false;
 	}
 
 	public CommandResult execute(CommandContext context) {

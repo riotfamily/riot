@@ -47,7 +47,12 @@ public class GotoPageCommand extends PopupCommand {
 
 	public boolean isEnabled(CommandContext context) {
 		Page page = getPage(context);
-		return page.isPublished() && PageCommandUtils.isTranslated(context);
+		if (page != null && page.isPublished()
+				&& PageCommandUtils.isTranslated(context)) {
+			
+			return true;
+		}
+		return false;
 	}
 
 	protected String getUrl(CommandContext context) {
