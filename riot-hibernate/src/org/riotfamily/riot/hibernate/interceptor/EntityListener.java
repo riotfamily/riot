@@ -24,7 +24,6 @@
 package org.riotfamily.riot.hibernate.interceptor;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Map;
 
 
@@ -43,7 +42,7 @@ public interface EntityListener {
 			Map<String, Object> previousState);
 	
 	public void onUpdateCollection(Object entity, Serializable id, 
-			Collection<?> collection, Collection<?> previousState, 
+			Object collection, Object previousState, 
 			String property);
 
 }

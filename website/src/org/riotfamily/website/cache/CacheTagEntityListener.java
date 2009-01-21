@@ -24,7 +24,6 @@
 package org.riotfamily.website.cache;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Map;
 
 import org.riotfamily.cachius.CacheService;
@@ -72,8 +71,7 @@ public class CacheTagEntityListener implements EntityListener {
 	}
 	
 	public void onUpdateCollection(Object entity, Serializable id,
-			Collection<?> collection, Collection<?> previousState,  
-			String property) {
+			Object collection, Object previousState, String property) {
 		
 		CacheTagUtils.invalidate(cacheService, entity.getClass(), id);
 	}

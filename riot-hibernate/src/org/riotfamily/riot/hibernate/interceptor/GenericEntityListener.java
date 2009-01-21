@@ -25,7 +25,6 @@ package org.riotfamily.riot.hibernate.interceptor;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
-import java.util.Collection;
 import java.util.Map;
 
 public class GenericEntityListener<T> implements EntityListener {
@@ -76,13 +75,13 @@ public class GenericEntityListener<T> implements EntityListener {
 	
 	@SuppressWarnings("unchecked")
 	public final void onUpdateCollection(Object entity, Serializable id,
-			Collection<?> c, Collection<?> previousState, String property) {
+			Object c, Object previousState, String property) {
 		
 		updateCollection((T) entity, id, c, previousState, property); 
 	}
 	
 	protected void updateCollection(T entity, Serializable id, 
-			Collection<?> c, Collection<?> previousState, String property) {
+			Object c, Object previousState, String property) {
 	}
 
 	@SuppressWarnings("unchecked")

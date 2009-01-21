@@ -96,20 +96,18 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	public void onCollectionUpdate(Object collection, Serializable key)
 			throws CallbackException {
 		
-		if (collection instanceof PersistentCollection 
-				&& collection instanceof Collection) {
-			
-			Collection<?> c = (Collection<?>) collection;
+		if (collection instanceof PersistentCollection) {
+
 			PersistentCollection pc = (PersistentCollection) collection;
 			Object entity = pc.getOwner();
 			
 			List<EntityListener> listeners = getListeners(entity.getClass());
 			if (!listeners.isEmpty()) {
-				Collection<?> prevState = (Collection<?>) pc.getStoredSnapshot();
+				Object prevState = pc.getStoredSnapshot();
 				int i = pc.getRole().lastIndexOf('.');
 				String property = pc.getRole().substring(i+1);
 				for (EntityListener listener : listeners) {
-					listener.onUpdateCollection(entity, key, c, prevState, property);
+					listener.onUpdateCollection(entity, key, pc, prevState, property);
 				}
 			}
 		}
