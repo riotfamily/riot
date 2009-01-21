@@ -103,8 +103,10 @@ public class FormController extends BaseFormController {
 
 	protected ModelAndView afterSave(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
-
-		if (!editorDefinition.getChildEditorDefinitions().isEmpty()) {
+		
+		if (request.getParameter("stayInForm") != null 
+				|| !editorDefinition.getChildEditorDefinitions().isEmpty()) {
+			
 			return reloadForm(form, editorDefinition);
 		}
 		else {
@@ -115,7 +117,12 @@ public class FormController extends BaseFormController {
 	protected ModelAndView afterUpdate(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 
-		return showParentList(form, editorDefinition);
+		if (request.getParameter("stayInForm") != null) {
+			return reloadForm(form, editorDefinition);
+		}
+		else {
+			return showParentList(form, editorDefinition);
+		}
 	}
 
 	protected ModelAndView showParentList(Form form,

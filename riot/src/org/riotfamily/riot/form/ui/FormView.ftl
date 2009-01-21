@@ -53,16 +53,7 @@
 			  -->
 			function save() {
 				$('${formId}').down('input.button-save').click();
-			}
-			
-			<#--
-			  - Submits the form via AJAX. The function is invoked when Ctrl+S
-			  - is pressed.
-			  -->
-			function ajaxSubmit() {
-				onSubmit();
-				submitForm('${formId}');
-			}
+			}			
 			
 			<#--
 			  - Registers a keypress listener on the given document. Note: 
@@ -78,8 +69,9 @@
 					
 					var key = String.fromCharCode(e.charCode ? e.charCode : e.keyCode).toUpperCase();
 					if (key == 'S') {
-						ajaxSubmit();
-						e.stop();
+						e.stop();					
+						$('${formId}').insert(new Element('input', {type: 'hidden', name: 'stayInForm', value: 'true'}));
+						save();
 					}
 				});
 			}
