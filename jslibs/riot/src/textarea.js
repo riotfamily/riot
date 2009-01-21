@@ -43,10 +43,10 @@ var RiotTextArea = Class.create({
 		if (!Prototype.Browser.IE) {
 			this.el.observe('keyup', this.resize.bind(this));
 			Element.wrap(this.el, new Element('div', {className: 'textarea-container'}))
-					.insert({bottom: this.measure}); 
+					.insert({bottom: this.measure});
+			this.resize();
 		}
-		
-		this.resize();
+
 		this.autoSize = true;
 		return this;
 	},
