@@ -84,8 +84,8 @@ public class ConfigurableViewController implements Controller {
 		}
 		
 		ExtendedModelMap model = new ExtendedModelMap();
-		ModelAndView mv = new ModelAndView(viewName, model);
 		populateModel(model, request);
+		ModelAndView mv = new ModelAndView(viewName, model);
 		return mv;
 	}
 	
