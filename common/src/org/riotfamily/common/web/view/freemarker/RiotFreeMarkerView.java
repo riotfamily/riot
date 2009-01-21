@@ -23,24 +23,22 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.view.freemarker;
 
-import java.io.IOException;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.collection.GuardedMap;
 import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.util.RequestHolder;
-import org.riotfamily.common.web.view.MacroHelperFactory;
+import org.riotfamily.common.web.view.ModelPostProcessor;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
 
 import freemarker.ext.servlet.FreemarkerServlet;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 /**
  * Differences to Spring's FreeMarkerView:
@@ -49,16 +47,13 @@ import freemarker.template.TemplateException;
  * <li>The plain HttpServletRequest object is exposed under the key "request"</li>
  * <li>The model is not exposed to the request, unless the 
  * {@link #setFreeMarkerServletMode(boolean) freeMarkeServletMode} is enabled</li>
- * <li>Provides the possibility to create stateful macro helpers via the 
- * {@link MacroHelperFactory} interface</li>
+ * <li>Provides the possibility to post process the model via the 
+ * {@link ModelPostProcessor} interface</li>
  * </ul> 
  */
 public class RiotFreeMarkerView extends FreeMarkerView {	
 	
 	public static final String REQUEST_KEY = "request";
-
-	public static final Object TEMPLATE_NAME_KEY = 
-			RiotFreeMarkerView.class.getName() + ".templateName";
 	
 	public static final String MODEL_ATTRIBUTE = 
 			RiotFreeMarkerView.class.getName() + ".model";
@@ -69,7 +64,7 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 	
 	private boolean freeMarkerServletMode = false;
 
-	private Map<String, MacroHelperFactory> macroHelperFactories;
+	private Collection<ModelPostProcessor> modelPostProcessors;
 
 	/**
 	 * Sets whether the model may contain keys that are also present as request
@@ -94,14 +89,11 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 		this.freeMarkerServletMode = freeMarkerServletMode;
 	}
 	
-	/**
-	 * Sets a Map of {@link MacroHelperFactory} instances keyed by the 
-	 * variable name under which the created helper should be exposed.
-	 */
-	public void setMacroHelperFactories(Map<String, MacroHelperFactory> macroHelperFactories) {
-		this.macroHelperFactories = macroHelperFactories;
+	public void setModelPostProcessors(Collection<ModelPostProcessor> modelPostProcessors) {
+		this.modelPostProcessors = modelPostProcessors;
 	}
 
+	@SuppressWarnings("unchecked")
 	public final void render(Map model, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 	
@@ -124,6 +116,7 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 		return response;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void unwrapModel(Map model) {
 		Map originalModel = (Map) model.remove(MODEL_ATTRIBUTE);
 		if (originalModel != null) {
@@ -131,6 +124,7 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void renderMergedTemplateModel(final Map model, 
 			final HttpServletRequest request, 
 			final HttpServletResponse response) 
@@ -140,12 +134,10 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 			RequestHolder.set(request, response);
 			unwrapModel(model);
 			model.put(REQUEST_KEY, request);
-			if (macroHelperFactories != null) {
-				Iterator<Map.Entry<String, MacroHelperFactory>> it = macroHelperFactories.entrySet().iterator();
-				while (it.hasNext()) {
-					Map.Entry<String, MacroHelperFactory> entry = it.next();
-					MacroHelperFactory factory = entry.getValue();
-					model.put(entry.getKey(), factory.createMacroHelper(request, response, model));
+			if (modelPostProcessors != null) {
+				Map<String, Object> guardedModel = GuardedMap.guard(model);
+				for (ModelPostProcessor processor : modelPostProcessors) {
+					processor.postProcess(guardedModel, request, response);
 				}
 			}
 			if (freeMarkerServletMode) {
@@ -163,14 +155,6 @@ public class RiotFreeMarkerView extends FreeMarkerView {
 		finally {
 			RequestHolder.unset();
 		}
-	}
-	
-	protected void processTemplate(Template template, Map model, 
-			HttpServletResponse response) throws IOException,
-			TemplateException {
-		
-		model.put(TEMPLATE_NAME_KEY, template.getName());
-		super.processTemplate(template, model, response);
 	}
 
 }
