@@ -730,6 +730,10 @@ riot.editProperties = function(e) {
 	return false;
 }
 
+dwr.engine.setTextHtmlHandler(function() {
+	location.reload();
+});
+
 dwr.engine.setErrorHandler(function(err, ex) {
 	if (ex.javaClassName == 'org.riotfamily.riot.security.PermissionDeniedException') {
 		riot.popup = new riot.Popup('${title.permissionDenied}', riot.contextPath + ex.permissionRequestUrl, null, true);
