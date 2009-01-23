@@ -61,9 +61,23 @@
 			</list>
 		</property>
 		<property name="entityInterceptor">
-			<bean class="org.riotfamily.riot.hibernate.interceptor.EntityListenerInterceptor" />
+			<bean class="org.riotfamily.riot.hibernate.interceptor.ChainedInterceptor">
+				<property name="interceptors" ref="hibernateInterceptors" />
+			</bean>
 		</property>
 	</bean>
+	
+	<bean id="entityListenerInterceptor" class="org.riotfamily.riot.hibernate.interceptor.EntityListenerInterceptor">
+		<description>
+			Hibernate interceptor that scans the ApplicationContext for beans
+ 			implementing the EntityListener interface and invokes the 
+ 			appropriate callbacks.
+		</description>
+	</bean>
+	
+	<util:list id="hibernateInterceptors">
+		<ref bean="entityListenerInterceptor" />
+	</util:list>
 
 	<!-- The Transaction Manager -->
 	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">

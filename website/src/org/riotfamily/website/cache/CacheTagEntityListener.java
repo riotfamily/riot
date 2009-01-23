@@ -24,18 +24,20 @@
 package org.riotfamily.website.cache;
 
 import java.io.Serializable;
-import java.util.Map;
 
+import org.hibernate.CallbackException;
+import org.hibernate.EmptyInterceptor;
+import org.hibernate.collection.PersistentCollection;
+import org.hibernate.type.Type;
 import org.riotfamily.cachius.CacheService;
-import org.riotfamily.riot.hibernate.interceptor.EntityListener;
 
 /**
- * EntityListener that invalidates tagged cache items whenever an entity with
- * a {@link TagCacheItems} annotation is modified or deleted.
+ * Hibernate Interceptor that invalidates tagged cache items whenever an entity 
+ * with a {@link TagCacheItems} annotation is modified or deleted.
  * 
  * @author Felix Gnass [fgnass at neteye dot de]
  */
-public class CacheTagEntityListener implements EntityListener {
+public class CacheTagEntityListener extends EmptyInterceptor {
 
 	private CacheService cacheService;
 	
@@ -43,37 +45,57 @@ public class CacheTagEntityListener implements EntityListener {
 		this.cacheService = cacheService;
 	}
 
-	public boolean supports(Class<?> entityClass) {
-		return entityClass.isAnnotationPresent(TagCacheItems.class);
+	@Override
+	public boolean onLoad(Object entity, Serializable id, Object[] state,
+			String[] propertyNames, Type[] types) {
+		
+		if (entity.getClass().isAnnotationPresent(TagCacheItems.class)) {
+			CacheTagUtils.tag(entity.getClass(), id);
+		}
+		return false;
+	}		
+	
+	@Override
+	public void onDelete(Object entity, Serializable id, Object[] state,
+			String[] propertyNames, Type[] types) {
+		
+		if (entity.getClass().isAnnotationPresent(TagCacheItems.class)) {
+			CacheTagUtils.invalidate(cacheService, entity.getClass(), id);
+		}
 	}
+	
+	@Override
+	public boolean onSave(Object entity, Serializable id, Object[] state,
+			String[] propertyNames, Type[] types) {
 		
-	public boolean onInit(Object entity, Serializable id,
-			Map<String, Object> state) {
-		
-		CacheTagUtils.tag(entity.getClass(), id);
+		if (entity.getClass().isAnnotationPresent(TagCacheItems.class)) {
+			CacheTagUtils.invalidate(cacheService, entity.getClass());
+		}
 		return false;
 	}
 	
-	public void onDelete(Object entity, Serializable id) {
-		CacheTagUtils.invalidate(cacheService, entity.getClass(), id);
-	}
-
-	public boolean onSave(Object entity, Serializable id) {
-		CacheTagUtils.invalidate(cacheService, entity.getClass());
-		return false;
-	}
-
-	public boolean onUpdate(Object entity, Serializable id,
-			Map<String, Object> previousState) {
+	@Override
+	public boolean onFlushDirty(Object entity, Serializable id,
+			Object[] currentState, Object[] previousState,
+			String[] propertyNames, Type[] types) {
 	
-		CacheTagUtils.invalidate(cacheService, entity.getClass(), id);
+		if (entity.getClass().isAnnotationPresent(TagCacheItems.class)) {
+			CacheTagUtils.invalidate(cacheService, entity.getClass(), id);
+		}
 		return false;
 	}
 	
-	public void onUpdateCollection(Object entity, Serializable id,
-			Object collection, Object previousState, String property) {
+	@Override
+	public void onCollectionUpdate(Object collection, Serializable key)
+			throws CallbackException {
 		
-		CacheTagUtils.invalidate(cacheService, entity.getClass(), id);
+		if (collection instanceof PersistentCollection) {
+			PersistentCollection pc = (PersistentCollection) collection;
+			Object entity = pc.getOwner();
+			if (entity != null && entity.getClass().isAnnotationPresent(TagCacheItems.class)) {
+				CacheTagUtils.invalidate(cacheService, entity.getClass(), pc.getKey());		
+			}
+		}
 	}
-
+	
 }

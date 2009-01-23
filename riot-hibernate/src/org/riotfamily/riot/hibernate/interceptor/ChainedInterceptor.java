@@ -34,6 +34,14 @@ import org.hibernate.Interceptor;
 import org.hibernate.Transaction;
 import org.hibernate.type.Type;
 
+
+/**
+ * Hibernate {@link Interceptor} that allows the chaining of multiple 
+ * implementations.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 8.0
+ */
 public class ChainedInterceptor extends EmptyInterceptor {
 
 	private Set<Interceptor> interceptors = Collections.emptySet();
@@ -78,9 +86,12 @@ public class ChainedInterceptor extends EmptyInterceptor {
 	}
 
 	public Boolean isTransient(Object entity) {
-		boolean result = false;
+		Boolean result = null;
 		for (Interceptor interceptor : interceptors) {
-			result |= interceptor.isTransient(entity);
+			result = interceptor.isTransient(entity);
+			if (result != null) {
+				break;
+			}
 		}
 		return result;
 	}

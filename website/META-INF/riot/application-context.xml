@@ -1,9 +1,12 @@
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans.xsd">
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-8.0.xsd">
 
 	<bean id="pathCompleter" class="org.riotfamily.common.web.servlet.DefaultPathCompleter">
 		<property name="suffix" value=".html" />
@@ -30,12 +33,14 @@
         <property name="staleUnlessExpired" value="${riot.websiteCache.staleUnlessExpired=false}" />
     </bean>
     
-    <bean class="org.riotfamily.website.cache.CacheTagEntityListener">
-    	<description>
-    		EntityListener that invalidates tagged cache items whenever an 
-    		entity with @TagCacheItems annotation is modified or deleted.
-    	</description>
-		<constructor-arg ref="cacheService" />
-	</bean>
+    <override:add ref="hibernateInterceptors">
+	    <bean class="org.riotfamily.website.cache.CacheTagEntityListener">
+	    	<description>
+	    		EntityListener that invalidates tagged cache items whenever an 
+	    		entity with @TagCacheItems annotation is modified or deleted.
+	    	</description>
+			<constructor-arg ref="cacheService" />
+		</bean>
+    </override:add>
 
 </beans>

@@ -24,13 +24,18 @@
 package org.riotfamily.riot.hibernate.interceptor;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.sql.Connection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
+import org.hibernate.Interceptor;
+import org.hibernate.SessionFactory;
+import org.hibernate.classic.Session;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.type.Type;
 import org.riotfamily.common.util.Generics;
@@ -38,28 +43,85 @@ import org.riotfamily.common.util.SpringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+/**
+ * Hibernate {@link Interceptor} that scans the ApplicationContext for beans
+ * implementing the {@link EntityListener} interface and invokes the appropriate 
+ * callbacks.
+ * 
+ * @author Felix Gnass [fgnass at neteye dot de]
+ * @since 8.0
+ */
 public class EntityListenerInterceptor extends EmptyInterceptor
 		implements ApplicationContextAware {
 
-	private Collection<EntityListener> listeners;
+	private ApplicationContext context;
 	
-	private Map<Class<?>, List<EntityListener>> cachedListenerns = Generics.newHashMap();
+	private String sessionFactoryName;
 	
-	public void setApplicationContext(ApplicationContext ctx) {
-		this.listeners = SpringUtils.listBeansOfType(ctx, EntityListener.class);
+	private SessionFactory sessionFactory;
+	
+	private Map<Class<?>, List<EntityListener<Object>>> listeners = Generics.newHashMap();
+	
+	private ThreadLocal<Interceptions> interceptions = Generics.newThreadLocal();
+	
+	
+	public void setSessionFactoryName(String sessionFactoryName) {
+		this.sessionFactoryName = sessionFactoryName;
 	}
-		
-	@Override
-	public boolean onLoad(Object entity, Serializable id, Object[] state,
-			String[] propertyNames, Type[] types) {
-		
-		boolean result = false;
-		List<EntityListener> listeners = getListeners(entity.getClass());
-		if (!listeners.isEmpty()) {
-			Map<String, Object> stateMap = createStateMap(propertyNames, state);
-			for (EntityListener listener : listeners) {
-				result |= listener.onInit(entity, id, stateMap);
+
+	public void setApplicationContext(ApplicationContext context) {
+		this.context = context;
+		for (EntityListener<Object> listener : SpringUtils.listBeansOfType(
+				context, EntityListener.class)) {
+
+			registerListener(getEntityClass(listener), listener);
+		}
+	}
+	
+	/**
+	 * Returns the generic type argument of the given EntityListener.
+	 */
+	private Class<?> getEntityClass(EntityListener<?> listener) {
+		return Generics.getTypeArguments(EntityListener.class, listener.getClass()).get(0);		
+	}
+	
+	private void registerListener(Class<?> entityClass, EntityListener<Object> listener) {
+		List<EntityListener<Object>> list = listeners.get(entityClass);
+		if (list == null) {
+			list = Generics.newArrayList();
+			listeners.put(entityClass, list);
+		}
+		list.add(listener);
+	}
+	
+	private boolean listenerExists(Object entity) {
+		return !getListeners(entity).isEmpty();
+	}
+	
+	private List<EntityListener<Object>> getListeners(Object entity) {
+		Class<? >entityClass = entity.getClass();
+		List<EntityListener<Object>> result = listeners.get(entityClass);
+		if (result == null) {
+			for (Class<?> registeredClass : listeners.keySet()) {
+				if (registeredClass.isAssignableFrom(entityClass)) {
+					result = listeners.get(registeredClass);
+					listeners.put(entityClass, result);
+					break;
+				}
 			}
+			if (result == null) {
+				result = Collections.emptyList();
+			}
+		}
+		return result;
+	}
+	
+	
+	private Interceptions getInterceptions() {
+		Interceptions result = interceptions.get();
+		if (result == null) {
+			result = new Interceptions();
+			interceptions.set(result);
 		}
 		return result;
 	}
@@ -67,13 +129,11 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	@Override
 	public boolean onSave(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, Type[] types) {
-		
-		boolean result = false;
-		List<EntityListener> listeners = getListeners(entity.getClass());
-		for (EntityListener listener : listeners) {
-			result |= listener.onSave(entity, id);
+
+		if (listenerExists(entity)) {
+			getInterceptions().entitySaved(entity);
 		}
-		return result;
+		return false;
 	}
 	
 	@Override
@@ -81,15 +141,10 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			Object[] currentState, Object[] previousState,
 			String[] propertyNames, Type[] types) {
 		
-		boolean result = false;
-		List<EntityListener> listeners = getListeners(entity.getClass());
-		if (!listeners.isEmpty()) {
-			Map<String, Object> prevStateMap = createStateMap(propertyNames, previousState);
-			for (EntityListener listener : listeners) {
-				result |= listener.onUpdate(entity, id, prevStateMap);
-			}
+		if (listenerExists(entity)) {
+			getInterceptions().entityUpdated(entity);
 		}
-		return result;
+		return false;
 	}
 	
 	@Override
@@ -97,18 +152,10 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 			throws CallbackException {
 		
 		if (collection instanceof PersistentCollection) {
-
 			PersistentCollection pc = (PersistentCollection) collection;
 			Object entity = pc.getOwner();
-			
-			List<EntityListener> listeners = getListeners(entity.getClass());
-			if (!listeners.isEmpty()) {
-				Object prevState = pc.getStoredSnapshot();
-				int i = pc.getRole().lastIndexOf('.');
-				String property = pc.getRole().substring(i+1);
-				for (EntityListener listener : listeners) {
-					listener.onUpdateCollection(entity, key, pc, prevState, property);
-				}
+			if (listenerExists(entity)) {
+				getInterceptions().entityUpdated(entity);
 			}
 		}
 	}
@@ -117,37 +164,115 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	public void onDelete(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, Type[] types) {
 		
-		List<EntityListener> listeners = getListeners(entity.getClass());
-		for (EntityListener listener : listeners) {
-			listener.onDelete(entity, id);
+		for (EntityListener<Object> listener : getListeners(entity)) {
+			listener.onDelete(entity);
 		}
 	}
 	
-
-	private Map<String, Object> createStateMap(String[] propertyNames, Object[] values) {
-		if (values == null) {
-			return Collections.emptyMap();
-		}
-		Map<String, Object> map = Generics.newHashMap();
-		int i = 0;
-		for (String name : propertyNames) {
-			map.put(name, values[i++]);
-		}
-		return map;
-	}
-
-	private List<EntityListener> getListeners(Class<?> entityClass) {
-		List<EntityListener> listeners = cachedListenerns.get(entityClass);
-		if (listeners == null) {
-			listeners = Generics.newArrayList();
-			for (EntityListener listener : this.listeners) {
-				if (listener.supports(entityClass)) {
-					listeners.add(listener);
+	@Override
+	@SuppressWarnings("unchecked")
+	public void postFlush(Iterator entities) {
+		Interceptions i = interceptions.get();
+		if (i != null) {
+			try {
+				Session session = createTemporarySession();
+				for (Object entity : i.getSavedEntites()) {
+					Object mergedEntity = session.merge(entity);
+					List<EntityListener<Object>> listeners = getListeners(mergedEntity);
+					for (EntityListener<Object> listener : listeners) {
+						listener.onSave(mergedEntity);
+					}	
 				}
+				for (Object entity : i.getUpdatedEntites()) {
+					Object mergedEntity = session.merge(entity);
+					List<EntityListener<Object>> listeners = getListeners(mergedEntity);
+					for (EntityListener<Object> listener : listeners) {
+						listener.onUpdate(mergedEntity);
+					}	
+				}
+				session.flush();
+				session.close();
 			}
-			cachedListenerns.put(entityClass, listeners);
+			finally {
+				interceptions.set(null);			
+			}
 		}
-		return listeners;
 	}
 	
+	/**
+	 * Lazily retrieves the SessionFactory from the ApplicationContext. If a
+	 * sessionFactoryName {@link #setSessionFactoryName(String) is set}, the
+	 * method will try to look up a bean with the specified name. Otherwise
+	 * the ApplicationContext must contain exactly one bean that implements
+	 * the {@link SessionFactory} interface.
+	 * <p>
+	 * Note: The SessionFactory can't be injected directly as this would result
+	 * in an unresolvable cyclic dependency.
+	 * </p>  
+	 */
+	private SessionFactory getSessionFactory() {
+		if (sessionFactory == null) {
+			if (sessionFactoryName != null) {
+				sessionFactory = SpringUtils.getBean(context, 
+						sessionFactoryName, SessionFactory.class);
+			}
+			else {
+				sessionFactory = SpringUtils.beanOfType(context, SessionFactory.class);
+			}
+		}
+		return sessionFactory;
+	}
+	
+	@SuppressWarnings("deprecation")
+	private Session createTemporarySession() {
+		SessionFactory sf = getSessionFactory();
+		Connection connection = sf.getCurrentSession().connection();
+		return sf.openSession(connection, NoOpInterceptor.INSTANCE);
+	}
+	
+	
+	/**
+	 * Interceptor that does nothing. This implementation is used with the
+	 * temporary session created in {@link #postFlush(Iterator)} to prevent
+	 * endless recursions. 
+	 */
+	private static class NoOpInterceptor extends EmptyInterceptor {
+		static NoOpInterceptor INSTANCE = new NoOpInterceptor();
+	}
+	
+	private static class Interceptions {
+		
+		private Set<Object> savedEntites;
+		
+		private Set<Object> updatedEntites;
+		
+		public void entitySaved(Object entity) {
+			if (savedEntites == null) {
+				savedEntites = Generics.newHashSet();
+			}
+			savedEntites.add(entity);
+		}
+		
+		public void entityUpdated(Object entity) {
+			if (updatedEntites == null) {
+				updatedEntites = Generics.newHashSet();
+			}
+			updatedEntites.add(entity);
+		}
+		
+		public Set<Object> getSavedEntites() {
+			if (savedEntites == null) {
+				return Collections.emptySet();
+			}
+			return savedEntites;
+		}
+		
+		public Set<Object> getUpdatedEntites() {
+			if (updatedEntites == null) {
+				return Collections.emptySet();
+			}
+			return updatedEntites;
+		}
+		
+	}
 }

@@ -133,6 +133,17 @@ public final class Generics {
 	public static <T> List<Class<?>> getTypeArguments(Class<T> baseClass,
 			Class<?> childClass) {
 		
+		if (baseClass.isInterface()) {
+			ParameterizedType pt = getInterfaceType(baseClass, childClass);
+			List<Class<?>> result = Generics.newArrayList();
+			if (pt != null) {
+				for (Type arg : pt.getActualTypeArguments()) {
+					result.add(Generics.getClass(arg));
+				}
+			}
+			return result;
+		}
+		
 		Map<Type, Type> resolvedTypes = new HashMap<Type, Type>();
 		Type type = childClass;
 		
@@ -174,6 +185,22 @@ public final class Generics {
 			typeArgumentsAsClasses.add(getClass(baseType));
 		}
 		return typeArgumentsAsClasses;
+	}
+	
+	private static ParameterizedType getInterfaceType(Class<?> interfaceClass, 
+			Class<?> implementingClass) {
+		
+		for (Type genericInterface : implementingClass.getGenericInterfaces()) {
+			Class<?> cls = Generics.getClass(genericInterface);
+			if (cls.equals(interfaceClass) && genericInterface instanceof ParameterizedType) {
+				return (ParameterizedType) genericInterface;
+			}
+			ParameterizedType pt = getInterfaceType(interfaceClass, cls);
+			if (pt != null) {
+				return pt;
+			}
+		}
+		return null;
 	}
 
 }

@@ -23,26 +23,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.hibernate.interceptor;
 
-import java.io.Serializable;
-import java.util.Map;
 
 
-public interface EntityListener {
+public interface EntityListener<T> {
 
-	public boolean supports(Class<?> entityClass);
+	public void onSave(T entity);
 	
-	public boolean onInit(Object entity, Serializable id,
-			Map<String, Object> state);
+	public void onUpdate(T entity);
 	
-	public boolean onSave(Object entity, Serializable id);
+	public void onDelete(T entity);
 	
-	public void onDelete(Object entity, Serializable id);
-	
-	public boolean onUpdate(Object entity, Serializable id, 
-			Map<String, Object> previousState);
-	
-	public void onUpdateCollection(Object entity, Serializable id, 
-			Object collection, Object previousState, 
-			String property);
-
 }
