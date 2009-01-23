@@ -53,6 +53,16 @@ public class ListParamsImpl implements ListParams {
 	public ListParamsImpl() {
 	}
 	
+	public ListParamsImpl(ListParams params) {
+		offset = params.getOffset();
+		pageSize = params.getPageSize();
+		filter = params.getFilter();
+		filteredProperties = params.getFilteredProperties();
+		search = params.getSearch();
+		searchProperties = params.getSearchProperties();
+		order = params.getOrder();
+	}
+	
 	public Object getFilter() {
 		return filter;
 	}
