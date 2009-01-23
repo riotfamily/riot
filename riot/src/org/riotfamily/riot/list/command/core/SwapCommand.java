@@ -24,9 +24,12 @@
 package org.riotfamily.riot.list.command.core;
 
 import org.riotfamily.riot.dao.SwappableItemDao;
+import org.riotfamily.riot.editor.EditorDefinitionUtils;
+import org.riotfamily.riot.editor.ListDefinition;
 import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
+import org.riotfamily.riot.list.support.ListParamsImpl;
 
 /**
  * Command that swaps two items in a list.
@@ -56,10 +59,38 @@ public class SwapCommand extends AbstractCommand {
 	}
 
 	public CommandResult execute(CommandContext context) {
-		SwappableItemDao dao = (SwappableItemDao) context.getDao();
-		dao.swapEntity(context.getBean(), context.getParent(), context.getParams(),
-				context.getRowIndex() + swapWith);
 		
+		SwappableItemDao dao = (SwappableItemDao) context.getDao();
+		ListDefinition listDef = context.getListDefinition();
+		String parentId = context.getParentId();
+		Object parent = EditorDefinitionUtils.loadParent(listDef, parentId);
+		
+		ListParamsImpl params = new ListParamsImpl(context.getParams());
+		
+		int size = dao.getListSize(parent, params);
+		int offset = params.getOffset(), pageSize = params.getPageSize();
+    	
+		if(getAction(context).equals(ACTION_MOVE_UP)) {
+			
+			offset = (params.getOffset() > 0) ? 
+					params.getOffset() - 1 : params.getOffset();
+		
+		} else {
+			
+			pageSize = (size <= (params.getOffset() + params.getPageSize())) 
+    			? params.getPageSize() : params.getPageSize() + 1;
+		}
+    	
+    	params.setOffset(offset);
+    	params.setPageSize(pageSize);
+		
+    	int swap = context.getRowIndex() + swapWith;
+    	
+    	swap = (context.getRowIndex() == 1 && swap == 0 && offset > 0) ? 1 : swap;
+    	swap = (swap == -1) ? 0 : swap;
+    	
+		dao.swapEntity(context.getBean(), parent, params, swap);
+
 		return new RefreshSiblingsResult(context);
 	}
 
