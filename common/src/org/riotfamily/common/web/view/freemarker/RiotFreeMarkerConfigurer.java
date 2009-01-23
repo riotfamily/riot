@@ -179,7 +179,7 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		Collection<ObjectWrapperPlugin> plugins = SpringUtils.orderedBeans(
 				applicationContext, ObjectWrapperPlugin.class);
 		
-		ObjectWrapper objectWrapper = new PluginObjectWrapper(plugins);
+		PluginObjectWrapper objectWrapper = new PluginObjectWrapper(plugins);
 		config.setObjectWrapper(objectWrapper);
 		
 		if (sharedVariables != null) {
@@ -188,8 +188,7 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		}
 		
 		if (exposeStaticModels) {
-			config.setSharedVariable("statics", 
-					BeansWrapper.getDefaultInstance().getStaticModels());
+			config.setSharedVariable("statics", objectWrapper.getStaticModels());
 		}
 		
 		if (useTemplateCache) {
@@ -198,6 +197,15 @@ public class RiotFreeMarkerConfigurer extends FreeMarkerConfigurer
 		else {
 			config.setCacheStorage(new NoCacheStorage());
 		}
+		
+		Collection<ConfigurationPostProcessor> postProcessors = 
+				SpringUtils.orderedBeans(applicationContext, 
+						ConfigurationPostProcessor.class);
+		
+		for (ConfigurationPostProcessor postProcessor : postProcessors) {
+			postProcessor.postProcessConfiguration(config);
+		}
+		
 	}
 	
 	protected void importMacroLibraries(Configuration config) {

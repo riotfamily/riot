@@ -166,7 +166,15 @@
 	</bean>
 	
 	<bean id="localizedObjectWrapperPlugin" class="org.riotfamily.common.web.view.freemarker.LocalizedObjectWrapperPlugin" />
-    	
+    
+    <bean class="org.riotfamily.website.freemarker.ActiveRecordClassExposer">
+    	<description>
+    		ConfigurationPostProcessor that provides convenient access to the 
+    		static methods of ActiveRecord classes from within FreeMarker templates.
+    	</description>
+    	<constructor-arg ref="sessionFactory" />
+    </bean>
+    
 	<bean id="viewResolver" class="org.riotfamily.common.web.view.freemarker.RiotFreeMarkerViewResolver">
 		<property name="exposeRequestAttributes" value="true" />
 	</bean>
