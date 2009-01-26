@@ -281,6 +281,9 @@ public class ListSession implements RenderContext {
 		
 		int itemsTotal = listConfig.getDao().getListSize(parent, params);
 		int pageSize = params.getPageSize();
+		if (params.getOffset() >= itemsTotal) {
+			params.setPage(params.getPage() - 1);
+		}
 		Collection beans = listConfig.getDao().list(parent, params);
 		if (itemsTotal < beans.size()) {
 			itemsTotal = beans.size();
