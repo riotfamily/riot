@@ -98,10 +98,8 @@ var Txt2ImgReplacement = Class.create({
 		el.onedit = this.updateText.bind(this);
 	},
 	
-	// Whether to use the alphaImageLoader or not. The flag will be set to 
-	// true in IE6 by a conditional statement below ...
-
-	useFilter: false,
+	// Whether to use the alphaImageLoader or not (detects IE 6):
+	useFilter: document.all && typeof document.addEventListener != 'function',
 	
 	replace: function() {
 		if (!this.el.down('img.replacement')) {
@@ -222,13 +220,6 @@ var Txt2ImgReplacement = Class.create({
 	}
 	
 });
-
-/*@cc_on
-/*@if (@_jscript_version < 5.7)
-	Txt2ImgReplacement.prototype.useFilter = true;
-/*@end
-@*/
-
 
 var ElementMatcher = Class.create({
 	initialize: function(s) {
