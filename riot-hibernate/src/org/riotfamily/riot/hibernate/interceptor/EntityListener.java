@@ -27,10 +27,10 @@ package org.riotfamily.riot.hibernate.interceptor;
 
 public interface EntityListener<T> {
 
-	public void onSave(T entity);
+	public void onSave(T entity) throws Exception;
 	
-	public void onUpdate(T entity);
+	public void onUpdate(T entity) throws Exception;
 	
-	public void onDelete(T entity);
+	public void onDelete(T entity) throws Exception;
 	
 }

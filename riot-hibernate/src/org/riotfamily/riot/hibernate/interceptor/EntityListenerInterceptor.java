@@ -164,8 +164,13 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 	public void onDelete(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, Type[] types) {
 		
-		for (EntityListener<Object> listener : getListeners(entity)) {
-			listener.onDelete(entity);
+		try {
+			for (EntityListener<Object> listener : getListeners(entity)) {
+				listener.onDelete(entity);
+			}
+		}
+		catch (Exception e) {
+			throw new CallbackException(e);
 		}
 	}
 	
@@ -192,6 +197,9 @@ public class EntityListenerInterceptor extends EmptyInterceptor
 				}
 				session.flush();
 				session.close();
+			}
+			catch (Exception e) {
+				throw new CallbackException(e);
 			}
 			finally {
 				interceptions.set(null);			
