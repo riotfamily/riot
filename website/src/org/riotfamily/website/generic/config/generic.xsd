@@ -61,7 +61,6 @@
 		</xsd:choice>
 		<xsd:attribute name="id" type="xsd:ID" />
 		<xsd:attribute name="hql" use="required" />
-		<xsd:attribute name="max" type="xsd:positiveInteger" />
 		<xsd:attribute name="model-key" />
 		<xsd:attribute name="time-to-live" type="xsd:string" default="eternal" />
 		<xsd:attribute name="tag-cache-items" type="xsd:boolean" default="true" />
@@ -70,12 +69,22 @@
 	</xsd:complexType>
 
 	<xsd:element name="hql" type="hql" />
-	<xsd:element name="hql-list" type="hql" />
+	
+	<xsd:element name="hql-list" type="hql">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="hql">
+					<xsd:attribute name="max" type="xsd:positiveInteger" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
 
 	<xsd:element name="hql-paged-list">
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="hql">
+					<xsd:attribute name="max" type="xsd:positiveInteger" />				
 					<xsd:attribute name="count-hql" use="optional" />
 					<xsd:attribute name="page-param" type="xsd:string" default="page" />
 					<xsd:attribute name="page-size" type="xsd:positiveInteger" default="10" />
