@@ -46,7 +46,7 @@ public class GotoPageCommand extends PopupCommand {
 	}
 
 	public boolean isEnabled(CommandContext context) {
-		Page page = getPage(context);
+		Page page = PageCommandUtils.getPage(context);
 		if (page != null && page.isRequestable()
 				&& PageCommandUtils.isTranslated(context)) {
 			
@@ -56,15 +56,16 @@ public class GotoPageCommand extends PopupCommand {
 	}
 
 	protected String getUrl(CommandContext context) {
+		Page page = PageCommandUtils.getPage(context);
 		HttpServletRequest request = context.getRequest();
-		PageFacade facade = new PageFacade(getPage(context), request, pathCompleter);
+		return getUrl(page, request);
+	}
+	
+	protected String getUrl(Page page, HttpServletRequest request) {
+		PageFacade facade = new PageFacade(page, request, pathCompleter);
 		return facade.getAbsoluteUrl();
 	}
 	
-	protected Page getPage(CommandContext context) {
-		return (Page) context.getBean();
-	}
-
 	@Override
 	public String getStyleClass() {
 		return STYLE_CLASS;
