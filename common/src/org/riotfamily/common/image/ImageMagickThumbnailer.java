@@ -35,69 +35,22 @@ import java.util.ArrayList;
 public class ImageMagickThumbnailer implements Thumbnailer {
 
 	private ImageMagick imageMagick;
-		
-	private boolean crop;
-	
-	private String backgroundColor;
-	
-	public void setCrop(boolean crop) {
-		this.crop = crop;
-	}
-	
+			
 	public ImageMagickThumbnailer(ImageMagick imageMagick) {
 		this.imageMagick = imageMagick;
 	}
 
-	/**
-	 * If a background color is specified, the image will be exactly resized to 
-	 * <code>maxWidth x maxHeight</code>, unused space will be filled with the
-	 * given color. If <code>crop</code> is enabled, the value is ignored.
-	 * <p>
-	 * Colors are represented in ImageMagick in the same form used by SVG:
-	 * <pre>
-  	 * name                 (color name like red, blue, white, etc.)
-  	 * #RGB                 (R,G,B are hex numbers, 4 bits each)
-  	 * #RRGGBB              (8 bits each)
-  	 * #RRRGGGBBB           (12 bits each)
-  	 * #RRRRGGGGBBBB        (16 bits each)
-  	 * #RGBA                (4 bits each)
-  	 * #RRGGBBOO            (8 bits each)
-  	 * #RRRGGGBBBOOO        (12 bits each)
-  	 * #RRRRGGGGBBBBOOOO    (16 bits each)
-  	 * rgb(r,g,b)           0-255 for each of rgb
-  	 * rgba(r,g,b,a)        0-255 for each of rgb and 0-1 for alpha
-  	 * cmyk(c,m,y,k)        0-255 for each of cmyk
-  	 * cmyka(c,m,y,k,a)     0-255 for each of cmyk and 0-1 for alpha
-  	 * </pre>
-  	 * </p>
-  	 * For a transparent background specify an alpha value, 
-  	 * like in <code>#ffff</code>.
-	 */
-	public void setBackgroundColor(String backgroundColor) {
-		this.backgroundColor = backgroundColor;
-	}
-
-	public void renderThumbnail(File source, File dest, int width, int height)
+	public void renderThumbnail(File source, File dest, int width, int height,
+			boolean fixedWidth, String backgroundColor)
 			throws IOException {
 		
 		ArrayList<String> args = new ArrayList<String>();
 		args.add(source.getAbsolutePath());
 		args.add("-resize");
-		if (crop) {
-			args.add("x" + height * 2);
-			args.add("-resize");
-			args.add(width * 2 + "x<");
-			args.add("-resize");
-			args.add("50%");
-			args.add("-gravity");
-			args.add("center");
-			args.add("-crop");
-			args.add(width + "x" + height + "+0+0");
-			args.add("+repage");
-		}
-		else {
-			args.add(width + "x" + height + ">");
+		if (fixedWidth) {
 			if (backgroundColor != null) {
+				// Add padding ...
+				args.add(width + "x" + height + ">");
 				args.add("-size");
 				args.add(width + "x" + height);
 				args.add("xc:" + backgroundColor);
@@ -106,7 +59,25 @@ public class ImageMagickThumbnailer implements Thumbnailer {
 				args.add("center");
 				args.add("-composite");
 			}
+			else {
+				// Crop from center ...
+				args.add("x" + height * 2);
+				args.add("-resize");
+				args.add(width * 2 + "x<");
+				args.add("-resize");
+				args.add("50%");
+				args.add("-gravity");
+				args.add("center");
+				args.add("-crop");
+				args.add(width + "x" + height + "+0+0");
+				args.add("+repage");
+			}
+			
 		}
+		else {
+			args.add(width + "x" + height + ">");
+		}
+		
 		args.add("-colorspace");
 		args.add("RGB");
 		args.add(dest.getAbsolutePath());

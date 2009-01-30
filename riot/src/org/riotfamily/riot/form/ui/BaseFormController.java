@@ -240,27 +240,7 @@ public abstract class BaseFormController extends RepositoryFormController
 		}
 		return afterUpdate(form, editorDef, request, response);
 	}
-	
-	protected void processForm(Form form, HttpServletRequest request) {
-		super.processForm(form, request);
-		if (request.getParameter("ajaxSave") != null && !form.hasErrors()) {
-			ObjectEditorDefinition editor = getObjectEditorDefinition(request);
-			try {
-				saveOrUpdate(form, editor);
-			}
-			catch (InvalidPropertyValueException e) {
-				form.getErrors().rejectValue(e.getField(), e.getCode(),
-						e.getArguments(), e.getMessage());
-			}
-			catch (RiotDaoException e) {
-				form.getErrors().reject(e.getCode(), e.getArguments(), e.getMessage());
-			}
-			catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-	
+		
 	protected void saveOrUpdate(Form form, ObjectEditorDefinition editor)
 			throws Exception {
 		

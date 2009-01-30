@@ -104,9 +104,15 @@ function performAction(action) {
 	}
 	else if (action.command == 'insert') {
 		$(action.element).insert(action.value);
+		if (window.onInsertElement) {
+			onInsertElement($(action.element));
+		}
 	}
 	else if (action.command == 'replace') {
 		$(action.element).replace(action.value);
+		if (window.onInsertElement) {
+			onInsertElement($(action.element));
+		}
 	}
 	else if (action.command == 'error') {						
 		var errors = $(action.element + '-error');

@@ -104,10 +104,9 @@ public class FormController extends BaseFormController {
 	protected ModelAndView afterSave(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 		
-		if (request.getParameter("stayInForm") != null 
-				|| !editorDefinition.getChildEditorDefinitions().isEmpty()) {
-			
-			return reloadForm(form, editorDefinition);
+		String focus = request.getParameter("focus");
+		if (focus != null || !editorDefinition.getChildEditorDefinitions().isEmpty()) {
+			return reloadForm(form, editorDefinition, focus);
 		}
 		else {
 			return showParentList(form, editorDefinition);
@@ -117,8 +116,9 @@ public class FormController extends BaseFormController {
 	protected ModelAndView afterUpdate(Form form, ObjectEditorDefinition editorDefinition,
 			HttpServletRequest request, HttpServletResponse response) {
 
-		if (request.getParameter("stayInForm") != null) {
-			return reloadForm(form, editorDefinition);
+		String focus = request.getParameter("focus");
+		if (focus != null) {
+			return reloadForm(form, editorDefinition, focus);
 		}
 		else {
 			return showParentList(form, editorDefinition);
@@ -139,7 +139,8 @@ public class FormController extends BaseFormController {
 	}
 
 	protected ModelAndView reloadForm(Form form,
-			ObjectEditorDefinition editorDefinition) {
+			ObjectEditorDefinition editorDefinition,
+			String focusElement) {
 
 		String formUrl = editorDefinition.createEditorPath(
 				form.getBackingObject(),
@@ -147,6 +148,9 @@ public class FormController extends BaseFormController {
 				.getEditorUrl();
 
 		formUrl = ServletUtils.addParameter(formUrl, "saved", "true");
+		if (focusElement != null) {
+			formUrl = ServletUtils.addParameter(formUrl, "focus", focusElement);
+		}
 		return new ModelAndView(new RedirectView(formUrl, true));
 	}
 	

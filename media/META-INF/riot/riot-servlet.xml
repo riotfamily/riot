@@ -40,8 +40,6 @@
 		<property name="triggerNames" value="${riot.media.cleanUp.schedule=startup,daily}" />
 	</bean>
 	
-	<bean id="mediaProcessingService" class="org.riotfamily.media.service.ProcessingService" />
-	
     <bean id="riotImageRenderer" class="org.riotfamily.media.riot.ui.RiotImageRenderer" />
 
 </beans>

@@ -77,11 +77,6 @@ public class ThumbnailCreator extends AbstractFileProcessor
 		this.height = height;
 	}
 		
-	public void afterPropertiesSet() {
-		thumbnailer.setBackgroundColor(backgroundColor);
-		thumbnailer.setCrop(crop);
-	}
-	
 	protected RiotFile createVariant(RiotFile original) throws IOException {
 		RiotImage thumbnail = new RiotImage();
 		String thumbName = original.getFileName();
@@ -90,7 +85,10 @@ public class ThumbnailCreator extends AbstractFileProcessor
 			thumbName += "." + format.toLowerCase();
 		}
 		File dest = thumbnail.createEmptyFile(thumbName);
-		thumbnailer.renderThumbnail(original.getFile(), dest, width, height);
+		boolean fixedSize = crop || backgroundColor != null;
+		thumbnailer.renderThumbnail(original.getFile(), dest, width, height,
+				fixedSize, backgroundColor);
+		
 		thumbnail.update();
 		if (!thumbnail.isValid()) {
 			throw new IOException("Thumbnail creation failed");

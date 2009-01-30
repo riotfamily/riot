@@ -305,15 +305,6 @@ public class Form implements BeanEditor {
 
 		formContext.setWriter(writer);
 		DocumentWriter doc = new DocumentWriter(writer);
-
-		doc.start("script");
-		doc.attribute("src", formContext.getContextPath()
-				+ formContext.getResourcePath() + "form/hint.js");
-
-		doc.attribute("type", "text/javascript");
-		doc.attribute("language", "JavaScript");
-		doc.end();
-		
 		doc.start("script").body();
 		writer.write("if (!window.Resources) document.write('" 
 				+ "<script src=\"" + formContext.getContextPath()

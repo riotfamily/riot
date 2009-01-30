@@ -35,7 +35,6 @@ import org.riotfamily.forms.ErrorUtils;
 import org.riotfamily.forms.element.TemplateElement;
 import org.riotfamily.forms.element.upload.AbstractFileUpload;
 import org.riotfamily.media.model.RiotFile;
-import org.riotfamily.media.service.ProcessingService;
 import org.riotfamily.media.service.UnknownFormatException;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,22 +46,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileUpload extends AbstractFileUpload 
 		implements BackingObjectAware {
 
-	private ProcessingService processingService;
-	
-	private String processor;
-	
 	private RiotFile file;
 	
 	private RiotFile uploadedFile;
 	
-	public FileUpload(ProcessingService processingService) {
-		this.processingService = processingService;
-	}
-	
-	public void setProcessor(String processor) {
-		this.processor = processor;
-	}
-
 	protected Element createPreviewElement() {
 		return new PreviewElement();
 	}
@@ -86,9 +73,6 @@ public class FileUpload extends AbstractFileUpload
 
 	public Object getValue() {
 		if (uploadedFile != null) {
-			if (processor != null) {
-				processingService.process(uploadedFile, processor);
-			}
 			file = uploadedFile;
 		}
 		return file;

@@ -49,7 +49,6 @@ import org.riotfamily.forms.resource.StylesheetResource;
 import org.riotfamily.media.model.CroppedRiotImage;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.model.RiotImage;
-import org.riotfamily.media.service.ProcessingService;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -94,10 +93,7 @@ public class ImageUpload extends FileUpload {
 
 	private boolean crop = true;
 
-	public ImageUpload(ProcessingService processingService, 
-			ImageCropper cropper) {
-		
-		super(processingService);
+	public ImageUpload(ImageCropper cropper) {
 		this.cropper = cropper;	
 	}
 

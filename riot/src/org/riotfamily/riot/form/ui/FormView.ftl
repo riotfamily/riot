@@ -46,15 +46,29 @@
 				}
 			}
 			
+			var focusedElement = '';
+			
+			onInsertElement = function(element) {
+				element.select('textarea','input:not(input[type="submit"])').each(function(el) {
+					el.onfocus = function() {
+						focusedElement = el.id || '';
+					}
+				});
+			}
+			
 			<#--
 			  - Submits the form by clicking on the submit button. 
 			  - This function is invoked by the 'Save' button
 			  - in the right-hand column.
 			  -->
-			function save() {
-				$('${formId}').down('input.button-save').click();
-			}			
-			
+			function save(stayInForm) {
+				var form = $('${formId}');
+				if (stayInForm) {
+					form.insert(new Element('input', {type: 'hidden', name: 'focus', value: focusedElement}));
+				}
+				form.down('input.button-save').click();
+			}
+
 			<#--
 			  - Registers a keypress listener on the given document. Note: 
 			  - this function is also invoked by the setupcontent_callback of
@@ -70,8 +84,7 @@
 					var key = String.fromCharCode(e.charCode ? e.charCode : e.keyCode).toUpperCase();
 					if (key == 'S') {
 						e.stop();					
-						$('${formId}').insert(new Element('input', {type: 'hidden', name: 'stayInForm', value: 'true'}));
-						save();
+						save(true);
 					}
 				});
 			}
@@ -133,14 +146,22 @@
 				</#if>
 				
 				<script type="text/javascript" language="JavaScript">
-					var list = new RiotList('${listKey}');
-					var item = {
-						objectId: <#if objectId??>'${objectId}'<#else>null</#if>,
-						parentId: <#if parentId??>'${parentId}'<#else>null</#if>,
-						parentEditorId: <#if parentEditorId??>'${parentEditorId}'<#else>null</#if>
-					};
-					list.renderFormCommands(item, 'formCommands');
-					$('${formId}').observe('submit', hideFormForSaving);
+					(function() {
+						var list = new RiotList('${listKey}');
+						var item = {
+							objectId: <#if objectId??>'${objectId}'<#else>null</#if>,
+							parentId: <#if parentId??>'${parentId}'<#else>null</#if>,
+							parentEditorId: <#if parentEditorId??>'${parentEditorId}'<#else>null</#if>
+						};
+						list.renderFormCommands(item, 'formCommands');
+						var form = $('${formId}'); 
+						form.observe('submit', hideFormForSaving);
+						onInsertElement(form);
+						<#if request.getParameter("focus")?has_content>
+							var el = $('${request.getParameter("focus")}');
+							if (el && el.focus) el.focus();
+						</#if>
+					})();
 				</script>
 			</div>
 	

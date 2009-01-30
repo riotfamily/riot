@@ -37,7 +37,7 @@ public interface Thumbnailer {
 	 * Renders a thumbnail image of the source file to the specified 
 	 * destination.
 	 */
-	public void renderThumbnail(File source, File dest, int width, int height)
-			throws IOException;
+	public void renderThumbnail(File source, File dest, int width, int height,
+			boolean fixedSize, String backgroundColor) throws IOException;
 	
 }

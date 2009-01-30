@@ -1,4 +1,15 @@
 <form id="${form.id}" action="${form.action}" method="post" enctype="multipart/form-data">
+<script type="text/javascript" language="JavaScript">
+	function toggleHint(id) {
+		var el = document.getElementById(id);
+		if (el.offsetWidth > 0) {
+			el.style.display = 'none';
+		}
+		else {
+			el.style.display = 'block';
+		}
+	}
+</script>
 <div id="elements">
 	<#if form.hint?exists>
 		<div class="form-hint">${form.hint}</div>
