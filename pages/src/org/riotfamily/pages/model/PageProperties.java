@@ -54,7 +54,7 @@ public class PageProperties extends ContentContainer {
 	}
 
 	/*
-	 * NOTE: PageProperties actually have a ont-to-one relation to a Page.
+	 * NOTE: PageProperties actually have a one-to-one relation to a Page.
 	 * It is mapped as a Set though, so that we can take advantage of 
 	 * Hibernate's second level cache and lazy loading.
 	 */
