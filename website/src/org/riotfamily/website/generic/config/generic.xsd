@@ -70,7 +70,7 @@
 
 	<xsd:element name="hql" type="hql" />
 	
-	<xsd:element name="hql-list" type="hql">
+	<xsd:element name="hql-list">
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="hql">
