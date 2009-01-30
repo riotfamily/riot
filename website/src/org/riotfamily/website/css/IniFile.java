@@ -25,8 +25,9 @@ package org.riotfamily.website.css;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,6 +61,8 @@ public class IniFile {
 	
 	private File file;
 	
+	private String encoding;
+	
 	HashMap sections = new HashMap();
 	
 	Map section;
@@ -67,7 +70,12 @@ public class IniFile {
 	private long lastModified;
 	
 	public IniFile(File file) throws IOException {
+		this(file, "UTF-8");
+	}
+	
+	public IniFile(File file, String encoding) throws IOException {
 		this.file = file;
+		this.encoding = encoding;
 		load();
 	}
 
@@ -91,7 +99,7 @@ public class IniFile {
 		lastModified = file.lastModified();
 		sections.clear();
 		setSection(GLOBAL_SECTION);
-		BufferedReader br = new BufferedReader(new FileReader(file));
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
 		for (String ln = br.readLine(); ln != null; ln = br.readLine()) {
 			ln = ln.trim();
 			if (ln.length() > 0 && ln.charAt(0) != ';') {
