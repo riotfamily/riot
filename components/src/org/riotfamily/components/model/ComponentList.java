@@ -48,8 +48,6 @@ public class ComponentList {
 
 	private Long id;
 
-	private String type;
-	
 	private List<Component> components;
 
 	public ComponentList() {
@@ -62,14 +60,6 @@ public class ComponentList {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	@OneToMany
