@@ -102,6 +102,18 @@ public abstract class ActiveRecord {
 	}
 	
 	/**
+	 * Updates this persistent instance.
+	 * <p>
+	 * Why is this method <code>final</code>? Changing the implementation of
+	 * this method could seriously defect the whole persistence mechanism.
+	 * 
+	 * @see Session#update(Object)
+	 */
+	public final void update() {
+		getSession().update(this);
+	}	
+	
+	/**
 	 * Copies the state of this object onto the persistent object with the
 	 * same identifier.
 	 * <p>
