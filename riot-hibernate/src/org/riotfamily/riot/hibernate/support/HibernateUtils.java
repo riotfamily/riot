@@ -41,6 +41,7 @@ import org.hibernate.metadata.ClassMetadata;
 import org.riotfamily.common.beans.PropertyUtils;
 import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.riot.security.AccessController;
+import org.springframework.beans.PropertyAccessorUtils;
 import org.springframework.util.StringUtils;
 
 public final class HibernateUtils {
@@ -84,17 +85,28 @@ public final class HibernateUtils {
 	}
 	
 	public static boolean isPersistentProperty(SessionFactory sessionFactory, 
-			Class<?> clazz, String property) {
+			Class<?> clazz, String propertyPath) {
 		
-		try {
-			ClassMetadata metadata = sessionFactory.getClassMetadata(clazz);
-			if (metadata == null) {
+		int pos = PropertyAccessorUtils.getFirstNestedPropertySeparatorIndex(propertyPath);
+		// Handle nested properties recursively.
+		if (pos > -1) {
+			String nestedProperty = propertyPath.substring(0, pos);
+			String nestedPath = propertyPath.substring(pos + 1);
+			Class<?> nestedClazz = PropertyUtils.getPropertyType(clazz, nestedProperty);
+			return isPersistentProperty(sessionFactory, clazz, nestedProperty)
+					&& isPersistentProperty(sessionFactory, nestedClazz, nestedPath);
+		}
+		else {
+			try {
+				ClassMetadata metadata = sessionFactory.getClassMetadata(clazz);
+				if (metadata == null) {
+					return false;
+				}
+				return metadata.getPropertyType(propertyPath) != null;
+			}
+			catch (HibernateException e) {
 				return false;
 			}
-			return metadata.getPropertyType(property) != null;
-		}
-		catch (HibernateException e) {
-			return false;
 		}
 	}
 
@@ -143,7 +155,7 @@ public final class HibernateUtils {
 				}
 				else {
 					hql.append(alias).append('.').append(name);
-					hql.append(" = :").append(name);
+					hql.append(" = :").append(name.replaceAll("\\.", "_dot_"));
 				}
 			}
 		}

@@ -52,4 +52,5 @@ public class StringRenderer implements ObjectRenderer {
 	
 	private static class StringPropertyEditor extends PropertyEditorSupport {
 	}
+
 }

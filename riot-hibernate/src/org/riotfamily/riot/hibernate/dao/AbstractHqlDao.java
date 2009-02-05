@@ -175,10 +175,16 @@ public abstract class AbstractHqlDao extends AbstractHibernateRiotDao
     				params.getFilter(), "this",	params.getFilteredProperties());
     }
     
-    protected void setFilterParameters(Query query, ListParams params) {
+    @SuppressWarnings("unchecked")
+	protected void setFilterParameters(Query query, ListParams params) {
     	if (params.getFilter() instanceof Map) {
-			Map<?, ?> filterMap = (Map<?, ?>) params.getFilter();
-			query.setProperties(filterMap);
+			Map<String, ?> filterMap = (Map<String, ?>) params.getFilter();
+			for (String name : filterMap.keySet()) {
+				Object value = filterMap.get(name);
+				if (value != null) {
+					query.setParameter(name.replaceAll("\\.", "_dot_"), value);
+				}
+			}
 		}
 		else {
 			query.setProperties(params.getFilter());

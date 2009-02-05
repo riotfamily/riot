@@ -36,6 +36,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.NullValueInNestedPathException;
+import org.springframework.beans.PropertyAccessorUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
@@ -186,12 +187,22 @@ public final class PropertyUtils {
 		return null;
 	}
 
-    public static Class<?> getPropertyType(Class<?> clazz, String property) {
-        PropertyDescriptor pd = BeanUtils.getPropertyDescriptor(clazz, property);
-        Assert.notNull(pd, "Property '" + property + "' not found in class " + clazz);
-        return pd.getPropertyType();
+    public static Class<?> getPropertyType(Class<?> clazz, String propertyPath) {
+		int pos = PropertyAccessorUtils.getFirstNestedPropertySeparatorIndex(propertyPath);
+		// Handle nested properties recursively.
+		if (pos > -1) {
+			String nestedProperty = propertyPath.substring(0, pos);
+			String nestedPath = propertyPath.substring(pos + 1);
+			Class<?> nestedClazz = getPropertyType(clazz, nestedProperty);
+			return getPropertyType(nestedClazz, nestedPath);
+		}
+		else {
+	        PropertyDescriptor pd = BeanUtils.getPropertyDescriptor(clazz, propertyPath);
+	        Assert.notNull(pd, "Property '" + propertyPath + "' not found in class " + clazz);
+	        return pd.getPropertyType();
+		}
     }
-
+    
     /**
 	 * @since 6.4
 	 */
