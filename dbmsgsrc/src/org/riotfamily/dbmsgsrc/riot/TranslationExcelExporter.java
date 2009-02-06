@@ -48,7 +48,7 @@ public class TranslationExcelExporter implements Exporter {
 		return "xls";
 	}
 	
-	public void export(Collection<?> items, Object parent, 
+	public void export(String objectId, Collection<?> items, Object parent, 
 			List<String> properties, HttpServletResponse response) 
 			throws IOException {
 		

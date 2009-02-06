@@ -52,6 +52,8 @@ public class ExportController implements Controller {
 		String commandId = ServletUtils.getRequiredStringAttribute(request, "commandId");
 		ExportCommand command = (ExportCommand) listSession.getCommand(commandId);
 		
+		String objectId = (String) request.getAttribute("objectId");
+		
 		List<String> properties = command.getProperties();
 		if (properties == null) {
 			properties = Generics.newArrayList();
@@ -70,7 +72,7 @@ public class ExportController implements Controller {
 		ListParamsImpl params = new ListParamsImpl(listSession.getParams());
 		Object parent = listSession.loadParent();
 		Collection<?> items = listConfig.getDao().list(parent, params);
-		exporter.export(items, parent, properties, response);
+		exporter.export(objectId, items, parent, properties, response);
 		return null;
 	}
 }

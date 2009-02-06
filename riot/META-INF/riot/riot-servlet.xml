@@ -553,6 +553,7 @@
 	<bean id="statusController" name="/status" class="org.riotfamily.riot.status.StatusController" />
 
 	<bean id="exportController" name="/export/@{listSessionKey}/@{commandId}" class="org.riotfamily.riot.list.command.export.ExportController" />
+	<alias alias="/export/@{listSessionKey}/@{commandId}/@{objectId}" name="exportController"/>
 
 	<bean id="org.directwebremoting.PageNormalizer"
 		class="org.riotfamily.common.web.dwr.NoOpPageNormalizer" />

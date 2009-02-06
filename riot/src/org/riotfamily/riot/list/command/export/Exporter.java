@@ -33,7 +33,7 @@ public interface Exporter {
 
 	public String getFileExtension();
 	
-	public void export(Collection<?> items, Object parent, 
+	public void export(String objectId, Collection<?> items, Object parent, 
 			List<String> properties, HttpServletResponse response) 
 			throws IOException;
 }

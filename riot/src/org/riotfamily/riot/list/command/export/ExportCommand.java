@@ -65,6 +65,7 @@ public class ExportCommand extends AbstractCommand {
 		Map<String, String> attributes = Generics.newHashMap();
 		attributes.put("commandId", getId());
 		attributes.put("listSessionKey", context.getListSessionKey());
+		attributes.put("objectId", context.getObjectId());
 		String url = getRuntime().getUrlForHandler("exportController", attributes);
 		return new GotoUrlResult(context, url);
 	}
