@@ -301,4 +301,10 @@ public abstract class AbstractFormController implements Controller {
 		return AbstractFormController.class.getName() + ".form";
 	}
 	
+	/**
+	 * Removes the Form from the HTTP session.
+	 */
+	protected void removeFormFromSession(HttpServletRequest request) {
+		request.getSession().removeAttribute(getSessionAttribute(request));
+	}
 }

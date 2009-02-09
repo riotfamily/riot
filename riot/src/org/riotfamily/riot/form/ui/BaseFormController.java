@@ -94,12 +94,11 @@ public abstract class BaseFormController extends RepositoryFormController
 
 	/**
 	 * Returns the name of the attribute under which the {@link Form} is
-	 * stored in the HTTP session. This implementation returns the 
-	 * <em>editorId</em> with the controller's class name as prefix. 
+	 * stored in the HTTP session. This implementation returns the
+	 * requestURI with the controller's class name as prefix. 
 	 */
 	protected String getSessionAttribute(HttpServletRequest request) {
-		return BaseFormController.class.getName()
-				+ request.getAttribute(EditorConstants.EDITOR_ID);
+		return getClass().getName() + ":" + request.getRequestURI();
 	}
 
 	/**
@@ -235,6 +234,7 @@ public abstract class BaseFormController extends RepositoryFormController
 		ObjectEditorDefinition editorDef = getObjectEditorDefinition(request);
 		boolean save = form.isNew();
 		saveOrUpdate(form, editorDef);
+		removeFormFromSession(request);
 		if (save) {
 			return afterSave(form, editorDef, request, response);
 		}
