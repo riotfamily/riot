@@ -4,11 +4,11 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.website.cache.CacheTagUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -18,8 +18,6 @@ import org.springframework.util.StringUtils;
 public class DbMessageSource extends AbstractMessageSource {
 
 	public static final String DEFAULT_BUNDLE = "default";
-
-	private RiotLog log = RiotLog.get(DbMessageSource.class);
 
 	private DbMessageSourceDao dao;
 	
@@ -70,8 +68,7 @@ public class DbMessageSource extends AbstractMessageSource {
 					}
 				});
 			}
-			catch (Exception e) {
-				log.warn("Caught Exception when trying to persist default MessageEntry: ", e);
+			catch (DataIntegrityViolationException e) {
 				result = dao.findEntry(bundle, code);
 				if (result == null) {
 					result = new MessageBundleEntry(bundle, code, defaultMessage);
