@@ -65,6 +65,7 @@ import org.riotfamily.riot.list.command.CommandContext;
 import org.riotfamily.riot.list.command.CommandResult;
 import org.riotfamily.riot.list.command.core.ChooseCommand;
 import org.riotfamily.riot.list.command.core.DescendCommand;
+import org.riotfamily.riot.list.command.result.BatchResult;
 import org.riotfamily.riot.list.command.result.ConfirmResult;
 import org.riotfamily.riot.list.support.ListParamsImpl;
 import org.riotfamily.riot.security.AccessController;
@@ -673,7 +674,7 @@ public class ListSession implements RenderContext {
 			}
 		}
 		TransactionStatus status = transactionManager.getTransaction(TRANSACTION_DEFINITION);
-		CommandResult result = null;
+		BatchResult result = new BatchResult();
 		try {
 			Iterator<ListItem> it = items.iterator();
 			int batchIndex = 0;
@@ -684,7 +685,7 @@ public class ListSession implements RenderContext {
 				context.setRowIndex(item.getRowIndex());
 				if (isGranted(command, context)) {
 					context.setBatchIndex(batchIndex);
-					result = command.execute(context);
+					result.add(command.execute(context));
 				}
 				batchIndex++;
 			}
