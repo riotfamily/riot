@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class Generics {
 
@@ -50,6 +51,15 @@ public final class Generics {
 	public static <K, V> TreeMap<K, V> newTreeMap(
 			Map<? extends K, ? extends V> m) {
 		return new TreeMap<K, V>(m);
+	}
+	
+	public static <K, V> ConcurrentHashMap<K, V> newConcurrentHashMap() {
+		return new ConcurrentHashMap<K, V>();
+	}
+	
+	public static <K, V> ConcurrentHashMap<K, V> newConcurrentHashMap(
+			Map<? extends K, ? extends V> m) {
+		return new ConcurrentHashMap<K, V>(m);
 	}
 
 	public static <V> ArrayList<V> newArrayList() {
