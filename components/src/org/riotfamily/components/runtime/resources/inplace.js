@@ -557,7 +557,8 @@ riot.TinyMCEPopup = Class.create(riot.TextareaPopup, {
 	getText: function() {
 		var html = this.tinymce.getContent();
 		html = html.replace(/<!--(.|\n)*?-->/g, '');
-		html = html.replace(/&lt;!--(.|\n)*?\smso-(.|\n)*?--&gt;/g, '');
+		html = html.replace(/&lt;!--(.|\n)*?(smso-|@page)(.|\n)*?--&gt;/g, '');
+		html = html.replace(/<p>\s*<\/p>/g, '');
 		return html.strip();
 	}
 
