@@ -41,13 +41,13 @@ public class ImageMagickThumbnailer implements Thumbnailer {
 	}
 
 	public void renderThumbnail(File source, File dest, int width, int height,
-			boolean fixedWidth, String backgroundColor)
+			boolean fixedSize, String backgroundColor)
 			throws IOException {
 		
 		ArrayList<String> args = new ArrayList<String>();
 		args.add(source.getAbsolutePath());
 		args.add("-resize");
-		if (fixedWidth) {
+		if (fixedSize) {
 			if (backgroundColor != null) {
 				// Add padding ...
 				args.add(width + "x" + height + ">");
