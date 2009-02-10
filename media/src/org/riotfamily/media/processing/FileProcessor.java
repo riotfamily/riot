@@ -28,6 +28,7 @@ import org.riotfamily.media.model.RiotFile;
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
+ * @deprecated
  */
 public interface FileProcessor {
 

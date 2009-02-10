@@ -26,6 +26,7 @@ package org.riotfamily.media.processing;
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
+ * @deprecated
  */
 public class FileProcessingException extends RuntimeException {
 

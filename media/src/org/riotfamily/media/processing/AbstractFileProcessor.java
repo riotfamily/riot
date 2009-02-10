@@ -30,6 +30,7 @@ import org.springframework.beans.factory.InitializingBean;
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
+ * @deprecated
  */
 public abstract class AbstractFileProcessor implements FileProcessor, 
 		BeanNameAware, InitializingBean {

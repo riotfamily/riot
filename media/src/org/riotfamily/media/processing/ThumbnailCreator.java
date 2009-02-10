@@ -26,6 +26,8 @@ package org.riotfamily.media.processing;
 import java.io.File;
 import java.io.IOException;
 
+import org.riotfamily.common.image.ImageMagick;
+import org.riotfamily.common.image.ImageMagickThumbnailer;
 import org.riotfamily.common.image.Thumbnailer;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.media.model.RiotFile;
@@ -35,6 +37,7 @@ import org.springframework.beans.factory.InitializingBean;
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
+ * @deprecated
  */
 public class ThumbnailCreator extends AbstractFileProcessor 
 		implements InitializingBean {
@@ -54,6 +57,10 @@ public class ThumbnailCreator extends AbstractFileProcessor
 
 	public ThumbnailCreator(Thumbnailer thumbnailer) {
 		this.thumbnailer = thumbnailer;
+	}
+
+	public ThumbnailCreator(ImageMagick imageMagick) {
+		this.thumbnailer = new ImageMagickThumbnailer(imageMagick);
 	}
 	
 	public void setCrop(boolean crop) {
