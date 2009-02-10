@@ -21,14 +21,10 @@
  *   Alf Werder [alf dot werder at artundweise dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.riot.hibernate.support;
+package org.riotfamily.riot.hibernate.domain;
 
+import java.io.Serializable;
 import java.util.List;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
 
 import org.hibernate.LockMode;
 import org.hibernate.NonUniqueResultException;
@@ -36,6 +32,8 @@ import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.riotfamily.common.beans.config.ConfigurableBean;
+import org.riotfamily.riot.hibernate.support.QueryResult;
 
 /**
  * Use as base class for persistent entity beans if you prefer the
@@ -44,48 +42,16 @@ import org.hibernate.SessionFactory;
  * @author Alf Werder [alf dot werder at artundweise dot de]
  * @since 8.0
  */
-
-@MappedSuperclass
-public abstract class ActiveRecord {
-	private Long id;
-	private static transient SessionFactory sessionFactory;
-
-	/**
-	 * Returns the identifier of this persistent instance.
-	 * 
-	 * @return this instance's identifier 
-	 */
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * Sets the identifier of this persistent instance.
-	 * 
-	 * @param id an identifier
-	 */
-	public void setId(Long id) {
-		this.id = id;
+public abstract class ActiveRecord extends ConfigurableBean {
+	
+	private static SessionFactory sessionFactory;
+	
+	final static void setSessionFactory(SessionFactory sessionFactory) {
+		ActiveRecord.sessionFactory = sessionFactory;
 	}
 	
-	@Override
-	public int hashCode() {
-		return (id == null) ? 0 : id.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (getClass().isInstance(obj)) {
-			ActiveRecord other = (ActiveRecord) obj;
-			if (id != null) {
-				return id.equals(other.getId());
-			}
-		}
-		return false;
+	protected static final SessionFactory getSessionFactory() {
+		return ActiveRecord.sessionFactory;
 	}
 	
 	/**
@@ -102,18 +68,6 @@ public abstract class ActiveRecord {
 	}
 	
 	/**
-	 * Updates this persistent instance.
-	 * <p>
-	 * Why is this method <code>final</code>? Changing the implementation of
-	 * this method could seriously defect the whole persistence mechanism.
-	 * 
-	 * @see Session#update(Object)
-	 */
-	public final void update() {
-		getSession().update(this);
-	}	
-	
-	/**
 	 * Copies the state of this object onto the persistent object with the
 	 * same identifier.
 	 * <p>
@@ -127,6 +81,17 @@ public abstract class ActiveRecord {
 	@SuppressWarnings("unchecked")
 	public final <T> T merge() {
 		return (T) getSession().merge(this);
+	}
+	
+	/**
+	 * Updates the persistent instance with the same identifier as this 
+	 * detached instance. If there is a persistent instance with the same 
+	 * identifier, an exception is thrown.
+	 *
+	 * @see Session#update(Object)
+	 */
+	public final void update() {
+		getSession().update(this);
 	}
 
 	/**
@@ -158,7 +123,7 @@ public abstract class ActiveRecord {
 	 * @see Session#load(Class, java.io.Serializable)
 	 */
 	@SuppressWarnings("unchecked")
-	public static<T> T load(Class<T> clazz, Long id) {
+	protected static<T> T load(Class<T> clazz, Serializable id) {
 		return (T) getSession().get(clazz, id);
 	}
 	
@@ -182,16 +147,7 @@ public abstract class ActiveRecord {
 	 * @return the Hibernate {@link Session}
 	 */
 	protected final static Session getSession() {
-		return sessionFactory.getCurrentSession();
-	}
-	
-	/**
-	 * Sest the Hibernate {@link SessionFactory} to use within the whole JVM.
-	 *  
-	 * @param sessionFactory a {@link SessionFactory}
-	 */
-	public static void setSessionFactory(SessionFactory sessionFactory) {
-		ActiveRecord.sessionFactory = sessionFactory;
+		return getSessionFactory().getCurrentSession();
 	}
 	
 	/**
@@ -253,7 +209,7 @@ public abstract class ActiveRecord {
 	 * arbitrary length.
 	 * <p>
 	 * This is achieved by two design decisions: {@link Query#scroll()}
-	 * is used to obtain a scrollale result set and after processing a single
+	 * is used to obtain a scrollable result set and after processing a single
 	 * result, {@link Session#evict(Object)} is called for the entity just
 	 * processed. So, implementors of {@link ForEachCallback} must be aware
 	 * that only the currently processed entity is attached to the

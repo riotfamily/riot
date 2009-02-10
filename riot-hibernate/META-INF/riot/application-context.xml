@@ -84,9 +84,10 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
-    <bean id="activeRecordInitializer" class="org.riotfamily.common.beans.MethodInvokingBean">
-        <property name="staticMethod" value="org.riotfamily.riot.hibernate.support.ActiveRecord.setSessionFactory" />
-        <property name="argument" ref="sessionFactory"/>
+    <bean id="activeRecordInitializer" class="org.riotfamily.riot.hibernate.domain.ActiveRecordInitializer">
+    	<constructor-arg ref="sessionFactory" />
     </bean>
+
+	<bean class="org.riotfamily.common.beans.config.SpringConfigurer" />
 
 </beans>

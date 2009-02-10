@@ -31,7 +31,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.web.view.freemarker.ConfigurationPostProcessor;
-import org.riotfamily.riot.hibernate.support.ActiveRecord;
+import org.riotfamily.riot.hibernate.domain.ActiveRecord;
 import org.springframework.util.ClassUtils;
 
 import freemarker.ext.beans.BeansWrapper;

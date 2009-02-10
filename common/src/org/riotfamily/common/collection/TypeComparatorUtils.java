@@ -1,5 +1,10 @@
 package org.riotfamily.common.collection;
 
+import java.util.Collection;
+import java.util.TreeSet;
+
+import org.riotfamily.common.util.Generics;
+
 public class TypeComparatorUtils {
 	
 	private TypeComparatorUtils() {
@@ -34,6 +39,20 @@ public class TypeComparatorUtils {
 			}
 		}
 		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static<T> Class<? super T> findNearestSuperClass(
+			Collection<Class<?>> candidates, Class<T> subClass) {
+		
+		TypeDifferenceComparator comparator = new TypeDifferenceComparator(subClass);
+		TreeSet<Class<?>> set = Generics.newTreeSet(comparator);
+		set.addAll(candidates);
+		Class<?> nearest = set.first();
+		if (nearest.isAssignableFrom(subClass)) {
+			return (Class<? super T>) nearest;
+		}
+		return null;
 	}
 	
 	public static int compare(Class<?> class1, Class<?> class2, Class<?> targetClass) {
