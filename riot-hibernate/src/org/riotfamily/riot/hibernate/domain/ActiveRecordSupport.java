@@ -111,4 +111,22 @@ public abstract class ActiveRecordSupport extends ActiveRecord
 		return false;
 	}
 
+	/**
+	 * Generic implementation that returns a String with the pattern 
+	 * <code>&lt;className&gt;#&lt;id&gt;</code> for persistent objects, or 
+	 * <code>&lt;className&gt;@&lt;identityHashCode&gt;</code> if the instance
+	 * is unsaved.
+	 */
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getClass().getName());
+		if (id != null) {
+			sb.append('#').append(id);
+		}
+		else {
+			sb.append('@').append(Integer.toHexString(System.identityHashCode(this)));
+		}
+		return sb.toString();
+	}
 }
