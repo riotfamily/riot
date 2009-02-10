@@ -53,7 +53,7 @@ public class DiscardPageCommand extends AbstractCommand implements BatchCommand 
 	@Override
 	public boolean isEnabled(CommandContext context) {
 		Page page = (Page) context.getBean();
-		return PageCommandUtils.isTranslated(context) && page.isDirty()
+		return PageCommandUtils.isLocalPage(context) && page.isDirty()
 				&& page.getPageProperties().isPublished();
 	}
 	

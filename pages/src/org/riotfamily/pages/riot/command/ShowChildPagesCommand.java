@@ -33,7 +33,7 @@ import org.riotfamily.riot.list.command.core.StepIntoCommand;
 public class ShowChildPagesCommand extends StepIntoCommand {
 
 	public boolean isEnabled(CommandContext context) {
-		return super.isEnabled(context) && PageCommandUtils.isTranslated(context);
+		return super.isEnabled(context) && PageCommandUtils.isLocalPage(context);
 	}
 
 }

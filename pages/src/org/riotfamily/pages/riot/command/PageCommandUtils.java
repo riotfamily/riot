@@ -71,7 +71,7 @@ public final class PageCommandUtils {
 		return getPage(context).getNode().getPages().size() > 1;
 	}
 
-	public static boolean isTranslated(CommandContext context) {
+	public static boolean isLocalPage(CommandContext context) {
 		Page page = getPage(context);
 		Site parentSite = getParentSite(context);
 		return parentSite == null || parentSite.equals(page.getSite());

@@ -55,7 +55,7 @@ public class TranslatePageCommand extends EditCommand {
 	}
 	
 	public String getItemStyleClass(CommandContext context) {
-		if (!PageCommandUtils.isTranslated(context)) {
+		if (!PageCommandUtils.isLocalPage(context)) {
 			return "master";
 		}
 		return null;

@@ -31,7 +31,7 @@ public class EditPageCommand extends EditCommand {
 
 	@Override
 	public boolean isEnabled(CommandContext context) {
-		return PageCommandUtils.isTranslated(context);
+		return PageCommandUtils.isLocalPage(context);
 	}
 
 	public String getItemStyleClass(CommandContext context) {

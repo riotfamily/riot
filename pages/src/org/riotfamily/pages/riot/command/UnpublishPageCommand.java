@@ -52,7 +52,7 @@ public class UnpublishPageCommand extends AbstractCommand implements BatchComman
 	public boolean isEnabled(CommandContext context) {
 		Page page = (Page) context.getBean();
 		if (page != null && page.isPublished()
-				&& PageCommandUtils.isTranslated(context)) {
+				&& PageCommandUtils.isLocalPage(context)) {
 			
 			return true;
 		}
