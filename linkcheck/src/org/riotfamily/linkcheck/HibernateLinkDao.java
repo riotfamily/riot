@@ -5,12 +5,15 @@ import java.util.Iterator;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class HibernateLinkDao implements LinkDao {
 
+	private RiotLog log = RiotLog.get(HibernateLinkDao.class);
+	
 	private HibernateHelper hibernate;
 	
 	public HibernateLinkDao(SessionFactory sessionFactory) {		
@@ -36,7 +39,12 @@ public class HibernateLinkDao implements LinkDao {
 		Iterator<Link> it = links.iterator();
 		while (it.hasNext()) {
 			Link link = it.next();
-			hibernate.saveOrUpdate(link);
+			if (link.getSource() == null) {
+				log.error("Trying to save link without a source. Possibly this link refers to a broken start page.");
+			}
+			else {
+				hibernate.saveOrUpdate(link);
+			}
 		}
 	}
 	
