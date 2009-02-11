@@ -24,6 +24,7 @@ background-color:#ebebeb;
 	display: inline-block;
 	width: 80px;
 	height: 80px;
+	_height: 79px;
 	vertical-align: middle;
 	background: ${highlight_color} url(icons/editors/arrow.gif) no-repeat;
 }
