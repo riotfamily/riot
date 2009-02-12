@@ -27,7 +27,7 @@
 .riotSkin .mceStatusbar a.mceResize {display:block; float:right; background:url(../../img/icons.gif) -800px 0; width:20px; height:20px; cursor:se-resize}
 .riotSkin .mceStatusbar a:hover {text-decoration:underline}
 .riotSkin table.mceToolbar {margin-left:3px}
-.riotSkin span.mceIcon, .riotSkin img.mceIcon {display:block; width:20px; height:20px}
+.riotSkin span.mceIcon, .riotSkin img.mceIcon {display:block; width:20px; height:20px; overflow: hidden}
 .riotSkin .mceIcon {background:${highlight_color} url(img/icons.gif) no-repeat 20px 20px}
 .riotSkin td.mceCenter {text-align:center;}
 .riotSkin td.mceCenter table {margin:0 auto; text-align:left;}

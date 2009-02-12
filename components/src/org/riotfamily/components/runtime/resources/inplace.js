@@ -560,6 +560,7 @@ riot.TinyMCEPopup = Class.create(riot.TextareaPopup, {
 		tinymce.dom.Event._pageInit();
 		tinyMCE.init(Object.extend({
 			elements: this.textarea.identify(),
+			auto_focus: this.textarea.id,
 			init_instance_callback: this.setInstance.bind(this)
 		}, settings));
 	},
@@ -648,7 +649,7 @@ riot.stylesheetMaker = {
 				Object.extend(styles, this.getStyles(p, this.properties[selector]));
 			}
 			if (selector == 'body') {
-				styles['background-color'] = RElement.getBackgroundColor(p);
+				styles['background-color'] = RElement.getBackgroundColor(p) + ' !important';
 			}
 			rules += this.getRule(selector, styles);
 		}
@@ -714,7 +715,7 @@ riot.setupTinyMCEContent = function(editorId, body, doc) {
 	var contentWidth = riot.activeEditor.element.offsetWidth;
 	var margin = editorWidth - contentWidth;
 	if (margin > 0) {
-		body.style.paddingRight = (margin - 5) + 'px';
+		body.style.marginRight = (margin - 5) + 'px';
 		body.style.backgroundImage = 'url(' + Resources.resolveUrl(bgImage) + ')';
 		body.style.backgroundRepeat = 'repeat-y';
 		body.style.backgroundPosition = (contentWidth + 5) + 'px';
