@@ -27,26 +27,31 @@ var RiotTextArea = Class.create({
 	autoResize: function(maxHeight) {
 		if (this.autoSize) return;
 		this.maxHeight = maxHeight || 300;
-        var border = parseInt(this.el.getStyle('borderTopWidth')) + parseInt(this.el.getStyle('borderBottomWidth'));
-		var padding = parseInt(this.el.getStyle('paddingTop')) + parseInt(this.el.getStyle('paddingBottom'));
-		this.maxHeight -= (this.maxHeight - border - padding) % parseInt(this.el.getStyle('lineHeight'));
-		this.measure = new Element('div').cloneStyle(this.el, [
-			'paddingTop', 'paddingRight', 'paddingBottom', 
-			'paddingLeft', 'lineHeight', 'fontSize', 'fontFamily',
-            'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth'
-		]).setStyle({
-			visibility: 'hidden',
-            borderStyle: 'solid',
-			position: 'absolute'
-		});
-		
-		if (!Prototype.Browser.IE) {
+		if (Prototype.Browser.WebKit) {
+			this.el.style.resize = 'vertical';
+			this.el.style.maxHeight = this.maxHeight + 'px';
+			this.el.style.maxWidth = (this.el.offsetWidth - 2) + 'px';
+		}
+		else if (!Prototype.Browser.IE) {
+	        var border = parseInt(this.el.getStyle('borderTopWidth')) + parseInt(this.el.getStyle('borderBottomWidth'));
+			var padding = parseInt(this.el.getStyle('paddingTop')) + parseInt(this.el.getStyle('paddingBottom'));
+			this.maxHeight -= (this.maxHeight - border - padding) % parseInt(this.el.getStyle('lineHeight'));
+			this.measure = new Element('div').cloneStyle(this.el, [
+				'paddingTop', 'paddingRight', 'paddingBottom', 
+				'paddingLeft', 'lineHeight', 'fontSize', 'fontFamily',
+	            'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth'
+			]).setStyle({
+				visibility: 'hidden',
+	            borderStyle: 'solid',
+				position: 'absolute'
+			});
+			
 			this.el.observe('keyup', this.resize.bind(this));
 			Element.wrap(this.el, new Element('div', {className: 'textarea-container'}))
 					.insert({bottom: this.measure});
+			
 			this.resize();
 		}
-
 		this.autoSize = true;
 		return this;
 	},
