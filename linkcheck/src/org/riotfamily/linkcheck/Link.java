@@ -1,23 +1,30 @@
 package org.riotfamily.linkcheck;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.Query;
 import org.hibernate.annotations.AccessType;
+import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.crawler.Href;
 import org.riotfamily.crawler.PageData;
+import org.riotfamily.riot.hibernate.domain.ActiveRecord;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 @Entity
 @AccessType("field")
 @Table(name="riot_links")
-public class Link implements Serializable {
+public class Link extends ActiveRecord implements Serializable {
 
+	private static RiotLog log = RiotLog.get(Link.class);
+	
 	@Id	
 	private LinkPK primaryKey;
 	
@@ -122,5 +129,69 @@ public class Link implements Serializable {
 	public void setPrimaryKey(LinkPK primaryKey) {
 		this.primaryKey = primaryKey;
 	}
+	
+	public static Link loadLink(String source, String destination) {
+		String hql = "from Link where id.source = :source and id.destination = :destination";
+		Query query = getSession().createQuery(hql);
+		query.setParameter("source", source);
+		query.setParameter("destination", destination);
+		query.setMaxResults(1);
+		return (Link) query.uniqueResult();
+	}	
+	
+	public static void deleteAll() {
+		String hql = "delete from Link";
+		Query query = getSession().createQuery(hql);
+		query.executeUpdate();
+	}
+	
+	public static void saveAll(Collection<Link> links) {
+		Iterator<Link> it = links.iterator();
+		while (it.hasNext()) {
+			Link link = it.next();
+			if (link.getSource() == null) {
+				log.error("Trying to save link without a source. Possibly this link refers to a broken start page.");
+			}
+			else {
+				getSession().saveOrUpdate(link);
+			}
+		}
+	}	
+	
+	@SuppressWarnings("unchecked")
+	public static Collection<Link> findAllBrokenLinks() {
+		String hql = "from Link order by id.source";
+		Query query = getSession().createQuery(hql);
+		return query.list();
+	}
+	
+	public static int countBrokenLinks() {
+		String hql = "select count(*) from Link";
+		Query query = getSession().createQuery(hql);
+		Number count = (Number) query.uniqueResult();
+		return count.intValue();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Collection<String> findBrokenLinksOnPage(String url) {
+		String hql = "select id.destination from Link where id.source = :url";
+		Query query = getSession().createQuery(hql);
+		query.setParameter("url", url);
+		return query.list();
+	}
+	
+	public static void deleteBrokenLinksFrom(String sourceUrl) {
+		String hql = "delete from Link where id.source = :url";
+		Query query = getSession().createQuery(hql);
+		query.setParameter("url", sourceUrl);
+		query.executeUpdate();
+	}
+	
+	public static void deleteBrokenLinksTo(String destUrl) {
+		String hql = "delete from Link where id.destination = :url";
+		Query query = getSession().createQuery(hql);
+		query.setParameter("url", destUrl);
+		query.executeUpdate();
+	}	
 
 }

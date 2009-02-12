@@ -18,17 +18,11 @@ public class LinkChecker implements PageHandler {
 	
 	private LinkExtractor linkExtractor = new LinkCheckLinkExtractor();
 	
-	private LinkDao dao;
-	
 	private HashSet<Link> brokenLinks;
 	
 	private HashSet<String> checkedUrls;
 	
 	private HashSet<Href> hrefsToCheck;
-	
-	public void setDao(LinkDao dao) {
-		this.dao = dao;
-	}
 	
 	public void crawlerStarted() {
 		brokenLinks = new HashSet<Link>();
@@ -69,8 +63,8 @@ public class LinkChecker implements PageHandler {
 			}
 		}
 		
-		dao.deleteAll();
-		dao.saveAll(brokenLinks);
+		Link.deleteAll();
+		Link.saveAll(brokenLinks);
 		
 		checkedUrls = null;
 		hrefsToCheck = null;
@@ -79,8 +73,8 @@ public class LinkChecker implements PageHandler {
 	
 	public void handlePageIncremental(PageData pageData) {
 		if (pageData.getStatusCode() < 400) {
-			dao.deleteBrokenLinksFrom(pageData.getUrl());
-			dao.deleteBrokenLinksTo(pageData.getUrl());
+			Link.deleteBrokenLinksFrom(pageData.getUrl());
+			Link.deleteBrokenLinksTo(pageData.getUrl());
 			HashSet<Link> brokenLinks = new HashSet<Link>();
 			Collection<String> links = linkExtractor.extractLinks(pageData);
 			Iterator<String> it = links.iterator();
@@ -91,7 +85,7 @@ public class LinkChecker implements PageHandler {
 					brokenLinks.add(link);
 				}
 			}
-			dao.saveAll(brokenLinks);
+			Link.saveAll(brokenLinks);
 		}
 	}	
 

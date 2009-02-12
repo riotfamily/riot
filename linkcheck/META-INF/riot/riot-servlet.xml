@@ -7,27 +7,19 @@
 		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-8.0.xsd">
-	 	
- 	<bean id="linkDao" class="org.riotfamily.linkcheck.HibernateLinkDao">
- 		<constructor-arg ref="sessionFactory" />
- 	</bean>
- 	
+
  	<bean id="brokenLinkRiotDao" class="org.riotfamily.linkcheck.BrokenLinkRiotDao">
  		<constructor-arg ref="sessionFactory" />
  	</bean>
  	
- 	<bean id="brokenLinkService" class="org.riotfamily.linkcheck.BrokenLinkService">
- 		<constructor-arg ref="linkDao" />
- 	</bean>
+ 	<bean id="brokenLinkService" class="org.riotfamily.linkcheck.BrokenLinkService"/>
  	
  	<bean id="viewBrokenLinkCommand" class="org.riotfamily.riot.list.command.core.LinkCommand">
  		<property name="link" value="@{source}" />
  		<property name="contextRelative" value="false" />
  	</bean>
  	
-	<bean id="linkChecker" class="org.riotfamily.linkcheck.LinkChecker">
-		<property name="dao" ref="linkDao" />
-	</bean> 	
+	<bean id="linkChecker" class="org.riotfamily.linkcheck.LinkChecker"/>
  	
  	<override:add ref="messageBasenames">
 		<value>classpath:/org/riotfamily/linkcheck/runtime/messages</value>
@@ -63,7 +55,6 @@
 	</override:add>	
 	
 	<bean class="org.riotfamily.linkcheck.BrokenLinkStatusMonitor">
-		<constructor-arg ref="linkDao" />
 		<property name="link" value="/list/brokenLinks" />
 	</bean>
  	
