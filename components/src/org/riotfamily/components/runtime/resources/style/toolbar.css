@@ -456,3 +456,7 @@ body > #riot-overlay {
 img.nosrc {
 	background: url(images/checkerboard_dark.gif);
 }
+
+.riot-inplace-text-editor:focus {
+	outline: none;
+}
