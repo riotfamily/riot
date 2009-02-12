@@ -167,21 +167,34 @@ riot.InplaceTextEditor = Class.create(riot.InplaceEditor, {
 	oninit: function(options) {
 		this.options = options || {};
 		this.inline = this.element.getStyle('display') == 'inline';
-		this.input = this.inline ? RBuilder.node('input', {type: 'text'})
-				: RBuilder.node('textarea', {wrap: 'off'});
+		this.input = this.inline
+				? new Element('input', {type: 'text'})
+				: new Element('textarea', {wrap: 'off'});
 
+		this.input.className = 'riot-inplace-text-editor';
 		this.input.setStyle({
 			position: 'absolute', overflow: 'hidden',
-			top: 0,	left: 0, border: 0, padding: 0, margin: 0,
-			backgroundColor: 'transparent', zIndex: 10000
+			top: 0,	left: 0, border: 0, padding: 0, margin: 0, borderWidth: 0,
+			backgroundColor: 'transparent', zIndex: 10000,
+			resize: 'none'
 		});
 
 		this.input.onkeypress = this.input.onkeyup = this.updateElement.bindAsEventListener(this);
 		this.input.onblur = this.close.bindAsEventListener(this);
-		this.input.cloneStyle(this.element, [
-			'font-size', 'font-weight', 'font-family', 'font-style',
-			'color', 'background-color', 'text-align', 'text-decoration',
-			'letter-spacing', 'line-height', 'padding-left', 'padding-top']);
+		
+		var styles = ['font-size', 'font-weight', 'font-family', 'font-style',
+			'color', 'background-color', 'background-image', 
+			'background-repeat', 'text-align', 'text-decoration',
+			'letter-spacing', 'line-height', 'padding-left', 'padding-top'];
+		
+		if (Prototype.Browser.IE) {
+			styles.push('background-position-x');
+			styles.push('background-position-y');
+		}
+		else {
+			styles.push('background-position');
+		}
+		this.input.cloneStyle(this.element, styles);
 
 		if (this.options.textTransform) {
 			this.input.cloneStyle(this.element, ['text-transform']);
@@ -210,6 +223,16 @@ riot.InplaceTextEditor = Class.create(riot.InplaceEditor, {
 				this.paddingLeft = parseInt(this.element.getStyle('padding-left'));
 				this.paddingTop = parseInt(this.element.getStyle('padding-top'));
 			}
+		}
+		else {
+			var i = 0;
+			if (Prototype.Browser.WebKit) {
+				i = -3;
+			}
+			else if (Prototype.Browser.Gecko) {
+				i = -1;
+			}
+			this.input.style.textIndent = i + 'px';
 		}
 		
 		this.extraWidth = 0;
