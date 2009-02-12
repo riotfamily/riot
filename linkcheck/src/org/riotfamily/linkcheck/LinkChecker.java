@@ -9,6 +9,7 @@ import org.riotfamily.crawler.Href;
 import org.riotfamily.crawler.LinkExtractor;
 import org.riotfamily.crawler.PageData;
 import org.riotfamily.crawler.PageHandler;
+import org.springframework.transaction.annotation.Transactional;
 
 public class LinkChecker implements PageHandler {
 	
@@ -51,6 +52,7 @@ public class LinkChecker implements PageHandler {
 		}
 	}
 	
+	@Transactional
 	public void crawlerFinished() {
 		log.info("Checking links that have not been crawled ...");
 		Iterator<Href> it = hrefsToCheck.iterator();
