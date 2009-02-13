@@ -21,13 +21,15 @@
  *   Carsten Woelk [cwoelk at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.common.image;
+package org.riotfamily.media.service;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.riotfamily.media.service.FFmpeg;
+import org.riotfamily.common.image.ImageMagick;
+import org.riotfamily.common.image.ImageMagickThumbnailer;
+import org.riotfamily.common.image.Thumbnailer;
 
 public class FfmpegThumbnailer implements Thumbnailer {
 
