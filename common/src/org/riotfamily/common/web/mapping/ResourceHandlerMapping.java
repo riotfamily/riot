@@ -51,14 +51,14 @@ public class ResourceHandlerMapping extends AbstractHandlerMapping {
 					if (fileTypeMap != null) {
 						contentType = fileTypeMap.getContentType(path);
 					}
-					return new ServeResourceCotroller(res, contentType);
+					return new ServeResourceController(res, contentType);
 				}
 			}
 		}
 		return null;
 	}
 	
-	private static class ServeResourceCotroller 
+	private static class ServeResourceController 
 			implements Controller, LastModified {
 		
 		private static final long STARTUP_TIME = System.currentTimeMillis();
@@ -69,7 +69,7 @@ public class ResourceHandlerMapping extends AbstractHandlerMapping {
 		
 		private long lastModified;
 		
-		public ServeResourceCotroller(Resource res, String contentType) {
+		public ServeResourceController(Resource res, String contentType) {
 			this.res = res;
 			this.contentType = contentType;
 			try {
