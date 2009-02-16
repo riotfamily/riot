@@ -37,6 +37,7 @@ public class RequestStatisticsDao extends AbstractSimpleStatsDao {
 	@Override
 	protected void populateStats(Statistics stats) throws Exception {
 		stats.add("Total request count", requestCountFilterPlugin.getTotalRequestCount());
+		stats.add("Total faulty response count", requestCountFilterPlugin.getFaultyResponseCount());
 		stats.add("Parallel request count (now)", requestCountFilterPlugin.getCurrentRequestCount());
 		stats.add("Parallel request count (high water mark)", requestCountFilterPlugin.getParallelRequestsHWM());
 		if (requestCountFilterPlugin.getAvgResponseTime() >= 0) {

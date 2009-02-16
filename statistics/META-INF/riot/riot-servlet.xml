@@ -18,14 +18,17 @@
         <property name="enabled" value="${riot.statistics.request.enabled=false}" />
         <property name="ignoreUploads" value="${riot.statistics.request.ignoreUploads=false}" />
         		        
-        <!-- Requests with response times slower than 10000 ms are logged  -->
+        <!-- Requests with response times slower than 10000 ms are logged -->
         <property name="warnThreshold" value="${riot.statistics.request.warnThreshold=10000}" />
 
-        <!-- When max. number of parallel requests is exceeded a failure is signaled to the monitoring system  -->
+        <!-- When max. number of parallel requests is exceeded a failure is signaled to the monitoring system -->
         <property name="maxRequests" value="${riot.statistics.request.maxRequests=500}" />
         
-        <!-- URL called by the monitoring system to ensure system health  -->
+        <!-- URL called by the monitoring system to ensure system health -->
         <property name="monitoredUrl" value="${riot.statistics.request.monitoredUrl=/status/application}" />
+        
+        <!-- Response status codes which should be monitored -->
+        <property name="faultStatusCodes" value="${riot.statistics.request.faultStatusCodes=404,500}" />
     </bean>
 
 	<bean id="requestTimestampRenderer" class="org.riotfamily.common.web.ui.DateRenderer">

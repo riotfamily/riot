@@ -63,6 +63,10 @@ public final class ServletUtils {
 
 	private static final String CACHE_CONTROL_HEADER = "Cache-Control";
 
+	public static final String REFERER_HEADER = "Referer";
+	
+	public static final String USER_AGENT_HEADER = "User-Agent";
+
 	public static final String REQUESTED_WITH_HEADER = "X-Requested-With";
 
 	public static final String XML_HTTP_REQUEST = "XMLHttpRequest";
@@ -453,7 +457,21 @@ public final class ServletUtils {
 		}
 		return request.getServerName();
 	}
-	
+
+	/**
+	 * Convenience method to get the <code>Referer</code> header.
+	 */
+	public static String getReferer(HttpServletRequest request) {
+		return request.getHeader(REFERER_HEADER);
+	}
+
+	/**
+	 * Convenience method to get the <code>USER_AGENT_HEADER</code> header.
+	 */
+	public static String getUserAgent(HttpServletRequest request) {
+		return request.getHeader(USER_AGENT_HEADER);
+	}
+
 	/**
 	 * Returns whether the <code>X-Requested-With</code> header is set to
 	 * <code>XMLHttpRequest</code> as done by prototype.js.

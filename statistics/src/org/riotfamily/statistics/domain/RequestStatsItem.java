@@ -18,7 +18,8 @@ public class RequestStatsItem extends StatsItem {
 
 	public RequestStatsItem(HttpServletRequest request) {
 		super(request.getRequestURI());
-		upload = ServletUtils.isMultipartRequest(request);
+		this.clientIp = request.getRemoteAddr();
+		this.upload = ServletUtils.isMultipartRequest(request);
 	}
 
 	public Date getTimestamp() {

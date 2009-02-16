@@ -31,6 +31,7 @@
             <ed:list list-ref="request-overview-statistics" icon="stats" /> 
             <ed:list list-ref="request-critical-statistics" icon="hourglass" /> 
             <ed:list list-ref="request-current-statistics" icon="stats" /> 
+            <ed:list list-ref="response-faulty-statistics" icon="stats" /> 
         </ed:group>
         <ed:list list-ref="cachius-statistics" icon="stats" />
         <!-- <ed:list list-ref="swarm-statistics" icon="stats" /> -->    
@@ -173,6 +174,19 @@
             <list:column property="timestamp" sortable="true" />
             <list:column property="responseTime" sortable="true" />
             <list:column property="clientIp" sortable="true" />
+        </list:columns>
+        <list:command id="refresh" /> 
+    </list:list>
+
+    <list:list id="response-faulty-statistics" order-by="count desc" search="name">
+        <list:dao class="org.riotfamily.statistics.dao.FaultyResponsesStatisticsDao" />
+        <list:columns>
+            <list:column property="name" sortable="true"/>
+            <list:column property="count" sortable="true"/>
+            <list:column property="status" sortable="true"/>
+            <list:column property="referer" sortable="true" />
+            <list:column property="clientIp" sortable="true" />
+            <list:column property="userAgent" sortable="true" />
         </list:columns>
         <list:command id="refresh" /> 
     </list:list>
