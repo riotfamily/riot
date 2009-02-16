@@ -154,7 +154,7 @@ public class ListServiceImpl implements ListService, MessageSourceAware,
 		Iterator<ListSession> it = sessions.iterator();
 		while (it.hasNext()) {
 			ListSession session = it.next();
-			log.info("Invalidating session " + session.getKey());
+			log.debug("Invalidating session " + session.getKey());
 			session.invalidate();
 			it.remove();
 		}
