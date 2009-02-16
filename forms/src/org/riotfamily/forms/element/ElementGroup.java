@@ -158,19 +158,31 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 				: null;
 	}
 	
-	private class ExpandButton extends Button {
+	public class ExpandButton extends Button {
 		
 		private ExpandButton() {
 		}
 		
 		public String getLabel() {
-			return "toggle";
+			return expanded
+					? getCollapseLabel()
+					: getExpandLabel();
 		}
 
 		public String getCssClass() {
 			return expanded 
 					? "button button-collapse" 
 					: "button button-expand";
+		}
+		
+		public String getExpandLabel() {
+			return FormatUtils.stripTags(MessageUtils.getMessage(this, 
+					"label.elementGroup.expand"));
+		}
+		
+		public String getCollapseLabel() {
+			return FormatUtils.stripTags(MessageUtils.getMessage(this, 
+					"label.elementGroup.collapse"));
 		}
 		
 		protected void onClick() {

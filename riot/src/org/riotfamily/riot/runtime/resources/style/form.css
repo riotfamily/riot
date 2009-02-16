@@ -396,9 +396,7 @@ table.item .indent {
 }
 
 .listEditor .button-add,
-.button-remove,
-.button-expand,
-.button-collapse {
+.button-remove {
 	margin: 0;
 	border: none;
 	background-color: #fff;
@@ -429,13 +427,6 @@ table.item .indent {
 
 .button-remove {
 	background-image: url(images/remove.gif);
-}
-.button-expand {
-	background-image: url(images/expand.gif);
-}
-.button-collapse {
-	background-image: url(images/collapse.gif);
-	float: left;
 }
 
 .calendar-button {
