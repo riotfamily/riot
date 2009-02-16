@@ -451,10 +451,11 @@ riot.Popup = Class.create({
 			return;
 		}
 		riot.activePopup = this;
+		var initialWidth = document.body.offsetWidth;
 		if (Prototype.Browser.IE) {
 			this.hideElements('select');
-			this.root = $$(document.compatMode && document.compatMode == 'BackCompat' ? 'body' : 'html').first().makeClipping();
 		}
+		this.root = $$(document.compatMode && document.compatMode == 'BackCompat' ? 'body' : 'html').first().makeClipping();
 		this.hideElements('object');
 		this.hideElements('embed');
 
@@ -497,6 +498,11 @@ riot.Popup = Class.create({
 		riot.outline.suspended = true;
 		riot.outline.hide();
 		this.div.makeVisible().show();
+
+		// The call to makeClipping() above removes the scrollbars - add a margin to prevent visual shift. 
+		var margin = (document.body.offsetWidth - initialWidth) + 'px'; 
+		document.body.style.marginRight = margin;
+		this.overlay.style.paddingRight = margin; 
 	},
 
 	close: function() {
@@ -504,7 +510,14 @@ riot.Popup = Class.create({
 		if (riot.activePopup == this) {
 			if (Prototype.Browser.IE) {
 				this.showElements('select');
-				this.root.undoClipping();
+			}
+			// Reset the margin
+			document.body.style.marginRight = 0;
+			this.root.undoClipping();
+			if (Prototype.Browser.WebKit) {
+				// Force re-rendering of scrollbars in Safari
+				window.scrollBy(0,-1);
+				window.scrollBy(0,1);
 			}
 			this.showElements('object');
 			this.showElements('embed');
