@@ -136,10 +136,10 @@
 <#---
   - Renders a checkbox. 
   -->
-<#macro checkbox field id=field errorClass="error" value="on" attributes...>
+<#macro checkbox field id=field errorClass="error" value="true" attributes...>
 	<#compress>
 		<#local attributes = addErrorClass(attributes, field, errorClass) />
-		<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check formMacroHelper.getValue(field)! == value />${c.joinAttributes(attributes)} />
+		<input type="checkbox" name="${field}" id="${id}" value="${value}"<@check formMacroHelper.getDisplayValue(field)! == value />${c.joinAttributes(attributes)} />
 		<input type="hidden" name="_${field}" value="on"/>
 	</#compress>
 </#macro>
