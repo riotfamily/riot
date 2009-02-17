@@ -396,7 +396,7 @@ table.item .indent {
 }
 
 .listEditor .button-add,
-.button-remove {
+.collectionEditor .button-remove {
 	margin: 0;
 	border: none;
 	background-color: #fff;
@@ -422,11 +422,6 @@ table.item .indent {
 }
 .collectionEditor .button-remove:hover {
 	background-color: ${highlight_color};
-}
-
-
-.button-remove {
-	background-image: url(images/remove.gif);
 }
 
 .calendar-button {
@@ -635,3 +630,10 @@ div.autocomplete ul li.selected {
 .filePreview .hide {
 	background: url(images/hide-view.gif) no-repeat;
 }
+
+.button-expand,
+.button-collapse,
+.button-set,
+.button-remove {
+	margin-top: 10px;
+} 

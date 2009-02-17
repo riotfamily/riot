@@ -163,13 +163,15 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 		private ExpandButton() {
 		}
 		
+		@Override
 		public String getLabel() {
 			return expanded
 					? getCollapseLabel()
 					: getExpandLabel();
 		}
 
-		public String getCssClass() {
+		@Override
+		public String getSystemStyleClass() {
 			return expanded 
 					? "button button-collapse" 
 					: "button button-expand";
@@ -185,10 +187,12 @@ public class ElementGroup extends TemplateElement implements ContainerElement,
 					"label.elementGroup.collapse"));
 		}
 		
+		@Override
 		protected void onClick() {
 			toggle();
 		}
 		
+		@Override
 		public int getEventTypes() {
 			return JavaScriptEvent.ON_CLICK;
 		}

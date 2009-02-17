@@ -35,7 +35,6 @@ import org.riotfamily.forms.Editor;
 import org.riotfamily.forms.EditorBinder;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.MapEditorBinder;
-import org.riotfamily.forms.MessageUtils;
 import org.riotfamily.forms.TemplateUtils;
 import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.JavaScriptEvent;
@@ -199,19 +198,19 @@ public class NestedForm extends TemplateElement implements
 			setTabIndex(2);
 		}
 		
-		public String getLabel() {
-			String key = present ? "label.nestedForm.remove" : "label.nestedForm.set";
-			String label = MessageUtils.getMessage(this, key);
-			if (label == null) {
-				label = present ? "Remove" : "Set";
-			}
-			return label;
+		@Override
+		public String getLabelKey() {
+			return  present 
+					? "label.nestedForm.remove" 
+					: "label.nestedForm.set";
 		}
-
+		
+		@Override
 		protected void onClick() {
 			toggle();
 		}
 		
+		@Override
 		public int getEventTypes() {
 			return JavaScriptEvent.ON_CLICK;
 		}
