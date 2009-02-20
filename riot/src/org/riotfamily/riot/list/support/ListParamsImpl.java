@@ -100,7 +100,7 @@ public class ListParamsImpl implements ListParams {
 	}
 
 	public void setOffset(int offset) {
-		this.offset = offset;
+		this.offset = offset >= 0 ? offset : 0;
 	}
 	
 	public int getPage() {
@@ -108,7 +108,7 @@ public class ListParamsImpl implements ListParams {
 	}
 	
 	public void setPage(int page) {
-		offset = (page - 1) * pageSize;
+		setOffset((page - 1) * pageSize);
 	}
 
 	public List getOrder() {
