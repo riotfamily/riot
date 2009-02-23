@@ -1,10 +1,8 @@
 var RiotImageReplacement = Class.create();
 RiotImageReplacement.prototype = {
 
-	// Whether to use the alphaImageLoader or not. The flag will be set to 
-	// true in IE6 by a conditional statement below ...
-	 
-	useFilter: false,
+	// Whether to use the alphaImageLoader or not (detects IE 6):
+	useFilter: document.all && typeof document.addEventListener != 'function',
 		
 	initialize: function(generatorUrl, pixelUrl, selectors) {
 		this.selectors = selectors;
@@ -152,12 +150,6 @@ RiotImageReplacement.prototype = {
 		el.appendChild(printText);
 	}
 }
-
-/*@cc_on
-/*@if (@_jscript_version < 5.7)
-	RiotImageReplacement.prototype.useFilter = true;
-/*@end
-@*/
 
 var ElementMatcher = Class.create();
 ElementMatcher.prototype = {

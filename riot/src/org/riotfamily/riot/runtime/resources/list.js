@@ -267,13 +267,17 @@ RiotList.prototype = {
 
 }
 
+dwr.engine.setTextHtmlHandler(function() {
+	location.reload();
+});
+
 dwr.engine.setErrorHandler(function(err, ex) {
 	if (ex.javaClassName == 'org.riotfamily.riot.list.ui.ListSessionExpiredException') {
 		location.reload();
 	}
 	else {
 		list.setIdle();
-		alert(err);
+		alert(ex.message);
 	}
 });
 

@@ -806,12 +806,16 @@ if (riot.toolbar.buttons.get('publish')) {
 
 riot.toolbar.buttons.get('editImages').precondition = riot.initSwfUpload;
 
+dwr.engine.setTextHtmlHandler(function() {
+	location.reload();
+});
+
 dwr.engine.setErrorHandler(function(err, ex) {
 	if (ex.javaClassName == 'org.riotfamily.components.context.RequestContextExpiredException') {
 		location.reload();
 	}
 	else {
-		alert(err);
+		alert(ex.message);
 	}
 });
 
