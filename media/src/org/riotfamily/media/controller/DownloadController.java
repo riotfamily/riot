@@ -29,7 +29,7 @@ public class DownloadController implements Controller {
 		if (uri != null) {
 			File file = fileStore.retrieve(uri);
 			log.debug("Serving file "+uri+" with content-disposition: attachment");
-			if (file != null) {
+			if (file != null && file.canRead()) {
 				response.setHeader("Content-Disposition", "attachment");
 				response.setContentLength((int) file.length());
 				IOUtils.serve(new FileInputStream(file), 
