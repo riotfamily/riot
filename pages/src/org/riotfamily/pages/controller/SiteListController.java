@@ -84,7 +84,7 @@ public class SiteListController extends AbstractCacheableController {
 		return null;
 	}
 
-	public long getTimeToLive(HttpServletRequest request) {
+	public long getTimeToLive() {
 		return CacheableController.CACHE_ETERNALLY;
 	}
 

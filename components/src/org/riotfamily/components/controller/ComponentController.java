@@ -106,7 +106,7 @@ public class ComponentController extends AbstractCacheableController {
 		key.append("?id=").append(getVersionId(request));
 	}
 
-	public long getTimeToLive(HttpServletRequest request) {
+	public long getTimeToLive() {
 		return CACHE_ETERNALLY;
 	}
 
