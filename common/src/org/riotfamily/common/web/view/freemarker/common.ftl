@@ -128,11 +128,11 @@
 </#function>
 
 
-<#function getMessage code args=[] default=code>
-	<#return commonMacroHelper.getMessage(code, args, default) />
+<#function getMessage code args=[] default=code locale=locale>
+	<#return commonMacroHelper.getMessage(code, args, default, locale) />
 </#function>
 
-<#macro message code args=[] default=code>${commonMacroHelper.getMessage(code, args, default)}</#macro>
+<#macro message code args=[] default=code locale=locale>${commonMacroHelper.getMessage(code, args, default, locale)}</#macro>
 
 
 <#function unwrapAttributes attributes>
