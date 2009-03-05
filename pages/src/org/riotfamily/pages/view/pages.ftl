@@ -31,8 +31,10 @@
   - Renders an editable HTML link to the given Page.
   -->
 <#macro link page tag="a" labelKey="title" form="" attributes...>
-	<#local attributes = common.unwrapAttributes(attributes) />
-	<@inplace.use container=page.versionContainer model=page.properties form=form>
-		<@inplace.link key=labelKey href=common.url(page.url) tag=tag attributes=attributes>${page.title}</@inplace.link>
-	</@inplace.use>
+	<#compress>
+		<#local attributes = common.unwrapAttributes(attributes) />
+		<@inplace.use container=page.versionContainer model=page.properties form=form>
+			<@inplace.link key=labelKey href=common.url(page.url) tag=tag attributes=attributes>${page.title}</@inplace.link>
+		</@inplace.use>
+	</#compress>
 </#macro>

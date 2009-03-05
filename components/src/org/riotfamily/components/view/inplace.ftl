@@ -249,14 +249,16 @@
 </#macro>
 
 <#macro link key href tag="a" externalClass="externalLink" externalTarget="_blank" alwaysUseNested=false textTransform=true attributes...>
-	<#local attributes = common.unwrapAttributes(attributes) + {"href": href} />
-	<#if common.isExternalUrl(href)>
-		<#local attributes = attributes + {
-			"target": externalTarget,
-			"class": ((attributes.class!) + " " + externalClass)?trim
-		} />
-	</#if>
-	<@text key=key tag=tag alwaysUseNested=alwaysUseNested textTransform=textTransform attributes=attributes><#nested /></@text>
+	<#compress>
+		<#local attributes = common.unwrapAttributes(attributes) + {"href": href} />
+		<#if common.isExternalUrl(href)>
+			<#local attributes = attributes + {
+				"target": externalTarget,
+				"class": ((attributes.class!) + " " + externalClass)?trim
+			} />
+		</#if>
+		<@text key=key tag=tag alwaysUseNested=alwaysUseNested textTransform=textTransform attributes=attributes><#nested /></@text>
+	</#compress>
 </#macro>
 
 <#--
