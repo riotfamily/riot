@@ -23,6 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.components.controller;
 
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -100,7 +102,7 @@ public class ComponentListController implements Controller,
 	public void setInitialComponentTypes(String[] initialComponentTypes) {
 		this.initialComponentTypes = initialComponentTypes;
 		if (validComponentTypes == null) {
-			validComponentTypes = initialComponentTypes;
+			setValidComponentTypes(initialComponentTypes);
 		}
 	}
 
@@ -125,7 +127,13 @@ public class ComponentListController implements Controller,
 	}
 
 	public void setValidComponentTypes(String[] validComponentTypes) {
-		this.validComponentTypes = validComponentTypes;
+		ArrayList validTypes = new ArrayList(validComponentTypes.length);
+		for (int i = 0; i < validComponentTypes.length; i++) {
+			if (!validTypes.contains(validComponentTypes[i])) {
+				validTypes.add(validComponentTypes[i]);
+			}
+		}
+		this.validComponentTypes = (String[]) validTypes.toArray(new String[validTypes.size()]);
 	}
 
 	public void setComponentRepository(ComponentRepository repository) {
