@@ -118,7 +118,7 @@ public class CsvExportController implements Controller {
 		String fileName = listId + '-' + sdf.format(new Date()) + ".csv";
 		
 		response.setContentType("text/csv; charset=" + fileEncoding);
-		response.setCharacterEncoding(encoding);
+		response.setCharacterEncoding(fileEncoding);
 		response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
 		
 		PrintWriter out = response.getWriter();
