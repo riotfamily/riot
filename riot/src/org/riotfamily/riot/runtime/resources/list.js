@@ -91,6 +91,10 @@ var RiotList = Class.create({
 			if (buttons.length > 0) {
 				el.up('.box').makeBlock();
 			}
+			var p = el.ancestors().find(function(el) { return el.getStyle('position') == 'fixed'});
+			if (p && p.offsetTop + p.offsetHeight > document.viewport.getHeight()) {
+				p.style.position = 'absolute';
+			}
 		}
 		return buttons;
 	},
@@ -497,7 +501,7 @@ var ListRow = {
 			if (this.expanded) {
 				this.expanded = false;
 				this.removeClassName('expanded');
-				this.childRows.each(this.list.unselectRow.bind(list));
+				this.childRows.each(this.list.unselectRow.bind(this.list));
 				this.removeChildren();
 			}
 		},
