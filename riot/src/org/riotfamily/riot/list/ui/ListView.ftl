@@ -34,7 +34,7 @@
 					<div id="list"></div>
 				</div>
 			</div>
-			<div class="extra">
+			<div id="extras" class="extra">
 	
 				<#if filterForm?exists>
 					<div id="filter" class="box">
@@ -67,8 +67,10 @@
 		</div>		
 		
 		<script type="text/javascript" language="JavaScript">
-			var list = new RiotList('${listKey}');
-			list.render('list', 'listCommands', 'itemCommands', <#if expand??>'${expand}'<#else>null</#if><#if filterForm?exists>, 'filterForm'</#if>);
+			(function() {
+				var list = new RiotList('${listKey}');
+				list.render('list', 'listCommands', 'itemCommands', <#if expand??>'${expand}'<#else>null</#if><#if filterForm?exists>, 'filterForm'</#if>);
+			})();
 		</script>
 	</body>
 </html>
