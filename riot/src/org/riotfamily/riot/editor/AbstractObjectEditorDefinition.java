@@ -91,8 +91,39 @@ public abstract class AbstractObjectEditorDefinition
 	}
 
 	public void addChildEditorDefinition(EditorDefinition editorDef) {
-		childEditorDefinitions.add(editorDef);
-		editorDef.setParentEditorDefinition(this);
+		if (!importGroup(editorDef)) {
+			childEditorDefinitions.add(editorDef);
+			editorDef.setParentEditorDefinition(this);
+		}
+	}
+	
+	private boolean importGroup(EditorDefinition editorDef) {
+		if (editorDef instanceof GroupDefinition) {
+			GroupDefinition gd = (GroupDefinition) editorDef;
+			GroupDefinition existingGroup = findChildGroupByName(gd.getName());
+			if (existingGroup != null) {
+				if (existingGroup.getIcon() == null) {
+					existingGroup.setIcon(gd.getIcon());
+				}
+				for (EditorDefinition child : gd.getChildEditorDefinitions()) {
+					existingGroup.addChildEditorDefinition(child);
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private GroupDefinition findChildGroupByName(String name) {
+		for (EditorDefinition child : getChildEditorDefinitions()) {
+			if (child instanceof GroupDefinition) {
+				GroupDefinition gd = (GroupDefinition) child;
+				if (name.equals(gd.getName())) {
+					return gd;
+				}
+			}
+		}
+		return null;
 	}
 
 	protected Object loadBean(String objectId) {

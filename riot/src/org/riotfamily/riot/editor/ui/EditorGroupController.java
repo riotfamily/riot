@@ -52,8 +52,6 @@ public class EditorGroupController implements Controller, MessageSourceAware {
 	
 	private AdvancedMessageCodesResolver messageCodesResolver;
 
-	private String modelKey = "group";
-
 
 	private String viewName = ResourceUtils.getPath(
 			EditorGroupController.class, "EditorGroupView.ftl");
@@ -68,6 +66,10 @@ public class EditorGroupController implements Controller, MessageSourceAware {
 	
 	public void setMessageCodesResolver(AdvancedMessageCodesResolver messageCodesResolver) {
 		this.messageCodesResolver = messageCodesResolver;
+	}
+
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
 	}
 
 	public ModelAndView handleRequest(HttpServletRequest request,
@@ -100,7 +102,7 @@ public class EditorGroupController implements Controller, MessageSourceAware {
 			}
 		}
 
-		return new ModelAndView(viewName, modelKey, group);
+		return new ModelAndView(viewName, "group", group);
 	}
 
 }

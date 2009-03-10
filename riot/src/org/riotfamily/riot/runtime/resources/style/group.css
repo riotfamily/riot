@@ -14,11 +14,6 @@
 	color: #3d3d3d;
 	text-decoration: none;
 }
-
-#editors a:hover {
-background-color:#ebebeb;
-}
-
 #editors .icon {
 	display: -moz-inline-stack;
 	display: inline-block;
@@ -29,7 +24,14 @@ background-color:#ebebeb;
 	background: ${highlight_color} url(icons/editors/arrow.gif) no-repeat;
 }
 
-#editors a:hover .icon {
+#editors a:hover,
+#editors a:focus {
+	background-color: #ebebeb;
+	outline: none;
+	-moz-outline: none;
+}
+#editors a:hover .icon,
+#editors a:focus .icon {
 	background-position: 0px -80px;
 }
 #editors .text {

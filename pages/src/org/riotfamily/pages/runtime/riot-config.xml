@@ -27,11 +27,13 @@
 		</ed:tree>
 	</ed:list>
 	
-	<ed:list id="manageSites" list-ref="sites" icon="world">
-		<ed:form form-ref="site">
-			<ed:form form-ref="siteProperties" />
-		</ed:form>
-	</ed:list>
+	<ed:group name="systemPreferences" icon="tools">
+		<ed:list id="manageSites" list-ref="sites" icon="world">
+			<ed:form form-ref="site">
+				<ed:form form-ref="siteProperties" />
+			</ed:form>
+		</ed:list>
+	</ed:group>
 
 	<list:list id="site-chooser" label-property="name">
 		<list:dao ref="siteRiotDao" />

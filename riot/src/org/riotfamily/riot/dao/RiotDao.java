@@ -33,7 +33,7 @@ import org.springframework.dao.DataAccessException;
 public interface RiotDao {
 	
 	/**
-	 * Returns the class that is accessed by the dao.
+	 * Returns the class that is accessed by the DAO.
 	 */
 	public Class<?> getEntityClass();
 
@@ -51,10 +51,10 @@ public interface RiotDao {
 	public Object load(String id) throws DataAccessException;
 	
 	/**
-	 * Reattaches the given entity. This method is invoked before an object
+	 * Re-attaches the given entity. This method is invoked before an object
 	 * that has been loaded in a previous request is modified. Implementors
-	 * can use this method to perform modification checks or to reattach the
-	 * object to a persistence session.  
+	 * can use this method to perform modification checks or to re-attach the
+	 * object to a persistence context.  
 	 */
 	public Object merge(Object entity) throws DataAccessException;
 	

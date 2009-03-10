@@ -13,29 +13,31 @@
 		http://www.riotfamily.org/schema/riot/list-config
 		http://www.riotfamily.org/schema/riot/list-config-8.0.xsd">
 		
-	<ed:group name="system-statistics" icon="stats">
-        <ed:group name="properties" icon="tag">
-            <ed:list list-ref="system-properties" icon="tag"  />
-            <ed:list list-ref="environment-properties" icon="tag" />
-            <ed:list list-ref="application-properties" icon="tag"  />
-        </ed:group>
-        <ed:list list-ref="riot-module-versions" icon="numbers"/>
-        <ed:group name="hibernate-statistics" icon="hibernate">
-        	<ed:list list-ref="hibernate-common-statistics" icon="hibernate" />
-            <ed:list list-ref="hibernate-cache-statistics" icon="stats" />
-            <ed:list list-ref="hibernate-cache-regions" icon="regions" />
-        </ed:group>
-        <ed:list list-ref="connection-pool-statistics" icon="connections" />
-        <ed:list list-ref="runtime-statistics" icon="chip" />    
-        <ed:group name="request-statistics" icon="clock">
-            <ed:list list-ref="request-overview-statistics" icon="stats" /> 
-            <ed:list list-ref="request-critical-statistics" icon="hourglass" /> 
-            <ed:list list-ref="request-current-statistics" icon="stats" /> 
-            <ed:list list-ref="response-faulty-statistics" icon="stats" /> 
-        </ed:group>
-        <ed:list list-ref="cachius-statistics" icon="stats" />
-        <!-- <ed:list list-ref="swarm-statistics" icon="stats" /> -->    
-    </ed:group>
+	<ed:group name="systemPreferences" icon="tools">
+		<ed:group name="system-statistics" icon="stats">
+	        <ed:group name="properties" icon="tag">
+	            <ed:list list-ref="system-properties" icon="tag"  />
+	            <ed:list list-ref="environment-properties" icon="tag" />
+	            <ed:list list-ref="application-properties" icon="tag"  />
+	        </ed:group>
+	        <ed:list list-ref="riot-module-versions" icon="numbers"/>
+	        <ed:group name="hibernate-statistics" icon="hibernate">
+	        	<ed:list list-ref="hibernate-common-statistics" icon="hibernate" />
+	            <ed:list list-ref="hibernate-cache-statistics" icon="stats" />
+	            <ed:list list-ref="hibernate-cache-regions" icon="regions" />
+	        </ed:group>
+	        <ed:list list-ref="connection-pool-statistics" icon="connections" />
+	        <ed:list list-ref="runtime-statistics" icon="chip" />    
+	        <ed:group name="request-statistics" icon="clock">
+	            <ed:list list-ref="request-overview-statistics" icon="stats" /> 
+	            <ed:list list-ref="request-critical-statistics" icon="hourglass" /> 
+	            <ed:list list-ref="request-current-statistics" icon="stats" /> 
+	            <ed:list list-ref="response-faulty-statistics" icon="stats" /> 
+	        </ed:group>
+	        <ed:list list-ref="cachius-statistics" icon="stats" />
+	        <!-- <ed:list list-ref="swarm-statistics" icon="stats" /> -->    
+	    </ed:group>
+	</ed:group>
 		
 	<list:list id="system-properties" search="name,value" order-by="name">
         <list:dao class="org.riotfamily.statistics.dao.SystemPropertiesDao" />

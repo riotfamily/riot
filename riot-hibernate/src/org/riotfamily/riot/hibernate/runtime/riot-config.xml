@@ -15,9 +15,11 @@
 		http://www.riotfamily.org/schema/forms/form-config
 		http://www.riotfamily.org/schema/forms/form-config-8.0.xsd">
 
-	<ed:list id="riotUsers" list-ref="riotUsers" icon="users">
-		<ed:form form-ref="riotUser" />
-	</ed:list>
+	<ed:group name="systemPreferences" icon="tools">
+		<ed:list id="riotUsers" list-ref="riotUsers" icon="users">
+			<ed:form form-ref="riotUser" />
+		</ed:list>
+	</ed:group>
 		
 	<list:list id="riotUsers">
 		<list:dao ref="riotUserDao" />			

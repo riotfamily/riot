@@ -120,7 +120,7 @@
 				</div>
 			</div>
 			<div id="extras" class="extra">
-				<div class="box command-box">
+				<div class="box">
 					<div class="box-title">
 						<span class="label"><@spring.messageText "label.commands", "Commands" /></span>
 					</div>
