@@ -76,7 +76,7 @@ public class Button extends AbstractEditorBase
 			return label;
 		}
 		if (getLabelKey() != null) {
-			return FormatUtils.stripTags(MessageUtils.getMessage(this, getLabelKey()));
+			return MessageUtils.getMessage(this, getLabelKey());
 		}
 		return "Submit";
 	}
@@ -146,7 +146,7 @@ public class Button extends AbstractEditorBase
 				.attribute("tabindex", tabIndex)
 				.attribute("disabled", !isEnabled())
 				.attribute("name", getParamName())
-				.attribute("value", getLabel());
+				.attribute("value", FormatUtils.stripTags(getLabel()));
 		
 		if (partitialSubmit != null && isEnabled()) {
 			tag.attribute("onclick", "submitElement('" + 
