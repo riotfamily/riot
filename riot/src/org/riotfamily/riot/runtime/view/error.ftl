@@ -19,7 +19,7 @@
 			<div id="wrapper">	
 				<h1><@spring.messageText "label.error.title", "An error has occurred" /></h1>
 				<p id="message">
-					${exception.getMessage()?if_exists}
+					${exception.getMessage()!?html}
 				</p>
 				<h2><a class="detail" href="javascript:showErrorDetail()"><@spring.messageText "label.error.detail", "Error Detail" /></a></h2>
 				<p id="stacktrace">
