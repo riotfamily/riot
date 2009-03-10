@@ -24,6 +24,9 @@ Path.prototype = {
 		if (params != this.params) {
 			this.params = params;
 			new Ajax.Updater('path', this.url, {parameters: params});
+			if (top.frameset) {
+				top.frameset.updateHash();
+			}
 		}
 	},
 

@@ -5,6 +5,7 @@ var RiotFrameset = Class.create({
 
 	initialize: function(id) {
 		this.id = id;
+		this.updated = false;
 	},
 
 	resizeFrame: function(frame) {
@@ -24,19 +25,27 @@ var RiotFrameset = Class.create({
 
 	getFrameHeight: function(w) {
 		var d = w.document;
-		// IEs    : d.body.scrollHeight
-		// Opera  : d.documentElement.clientHeight
-	    // Mozilla: d.body.clientHeight 
-		// Safari : d.body.clientHeight
 		if (Prototype.Browser.IE) return d.body.scrollHeight;
 		if (Prototype.Browser.Opera) return d.documentElement.clientHeight;
-		//if (Prototype.Browser.WebKit) {
-			// REVISIT: This calculates the heights wrong for some reasons.
-			// If an alert is being displayed here everything works fine...
-		//}
 		return d.body.clientHeight;
 	},
 
+	updateHash: function() {
+		var l = frames[1].location;
+		var newHash = l.pathname + l.search;
+		if (!this.updated) {
+			this.updated = true;
+			if (location.hash) {
+				var currentHash = location.hash.substring(1);
+				if (currentHash != newHash) {
+					l.replace(currentHash);
+					return;
+				}
+			}
+		}
+		location.hash = newHash;
+	},
+	
 	reloadFrames: function() {
 		$A(frames).each(function(w) {w.location.reload()});
 	},
