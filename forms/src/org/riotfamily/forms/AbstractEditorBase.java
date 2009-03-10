@@ -39,8 +39,6 @@ public abstract class AbstractEditorBase extends AbstractElement {
 
 	private String paramName;
 
-	private String desiredParamName;
-	
 	private EditorBinding binding;
 	
 	private String fieldName;
@@ -59,24 +57,9 @@ public abstract class AbstractEditorBase extends AbstractElement {
 		return binding;
 	}
 	
-	public void setDesiredParamName(String desiredParamName) {
-		this.desiredParamName = desiredParamName;
-	}
-	
-	protected String getDesiredParamName() {
-		if (desiredParamName != null) {
-			return desiredParamName;	
-		}
-		if (binding != null) {
-			return binding.getProperty();
-		}
-		return null;
-	}
-	
 	public String getParamName() {
 		if (paramName == null) {
-			paramName = getForm().createUniqueParameterName(getDesiredParamName());
-			log.debug("Param name for element " + getId() + " is: " + paramName);
+			paramName = getForm().createUniqueParameterName();
 		}
 		return paramName;
 	}

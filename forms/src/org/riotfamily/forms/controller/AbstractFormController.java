@@ -25,15 +25,12 @@ package org.riotfamily.forms.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.forms.Container;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
@@ -62,9 +59,6 @@ public abstract class AbstractFormController implements Controller {
 	
 	private boolean processNewForms;
 	
-	private List<ButtonFactory> buttonFactories;
-	
-
 	public void setFormContextFactory(FormContextFactory contextFactory) {
 		this.formContextFactory = contextFactory;
 	}
@@ -73,17 +67,6 @@ public abstract class AbstractFormController implements Controller {
 		this.processNewForms = processNewForms;
 	}
 	
-	public void setButtonFactories(List<ButtonFactory> buttonFactories) {
-		this.buttonFactories = buttonFactories;
-	}
-	
-	protected void addButton(ButtonFactory buttonFactory) {
-		if (buttonFactories == null) {
-			buttonFactories = new ArrayList<ButtonFactory>();
-		}
-		buttonFactories.add(buttonFactory);
-	}
-
 	protected final void initController() {
 	}
 	
@@ -213,13 +196,6 @@ public abstract class AbstractFormController implements Controller {
 		Form form = createForm(request);
 		form.setFormContext(formContextFactory.createFormContext(request, response));
 		
-		if (buttonFactories != null && !buttonFactories.isEmpty()) {
-			Container container = form.createContainer(BUTTON_CONTAINER_ID);
-			for (ButtonFactory buttonFactory : buttonFactories) {
-				container.addElement(buttonFactory.createButton());
-			}
-		}
-		
 		populateForm(form, request); 
 		form.init();
 		initForm(form, request);
@@ -269,7 +245,7 @@ public abstract class AbstractFormController implements Controller {
 	protected abstract Form createForm(HttpServletRequest request);
 	
 	/**
-	 * Subclasses may overwite this method to inialize forms after they have
+	 * Subclasses may overwrite this method to initialize forms after they have
 	 * been populated. The default implementation does nothing.
 	 */
 	protected void initForm(Form form, HttpServletRequest request) {
@@ -282,16 +258,15 @@ public abstract class AbstractFormController implements Controller {
 		if (isExclusiveRequest(request)) {
 			return null;
 		}
-		FormSubmissionHandler handler = (FormSubmissionHandler) 
-				form.getAttribute(FORM_SUBMISSION_HANDLER);
-		
-		form.setAttribute(FORM_SUBMISSION_HANDLER, null);
-		
-		if (handler != null && !form.hasErrors()) {
-			return handler.handleFormSubmission(form, request, response);
+		if (form.getClickedButton() != null && !form.hasErrors()) {
+			return handleFormSubmission(form, request, response);
 		}
 		return showForm(form, request, response);
 	}
+	
+	protected abstract ModelAndView handleFormSubmission(Form form, 
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception;
 	
 	/**
 	 * Returns the name of the attribute under which the {@link Form} is

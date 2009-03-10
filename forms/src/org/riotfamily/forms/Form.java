@@ -37,12 +37,14 @@ import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.forms.event.Button;
+import org.riotfamily.forms.event.ClickEvent;
+import org.riotfamily.forms.event.ClickListener;
 import org.riotfamily.forms.request.FormRequest;
 import org.riotfamily.forms.request.HttpFormRequest;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.LoadingCodeGenerator;
 import org.riotfamily.forms.resource.ResourceElement;
-import org.riotfamily.forms.resource.StylesheetResource;
 import org.springframework.util.Assert;
 import org.springframework.validation.Validator;
 
@@ -57,21 +59,23 @@ public class Form implements BeanEditor {
 	private static final String FORM_ATTR = "form";
 
 	private static final String ELEMENT_CONTAINER_ATTR = "elements";
+	
+	private static final String BUTTON_CONTAINER_ATTR = "buttons";
 
 	private RiotLog log = RiotLog.get(Form.class);
 
 	private String id = DEFAULT_ID;
 
-	/** Elements keyed by their id */
+	/** Elements keyed by their ID */
 	private Map<String, Element> elementMap = new HashMap<String, Element>();
 
-	/** Counter to create unique ids */
+	/** Counter to create unique IDs */
 	private int idCount;
 
 	/** Set of used parameter names */
 	private Set<String> paramNames = Generics.newHashSet();
 
-	/** EditorBinder to bind toplevel elements to properties */
+	/** EditorBinder to bind top-level elements to properties */
 	private EditorBinder editorBinder;
 
 	/** Set containing resources required by the form itself (not it's elements) */
@@ -82,6 +86,8 @@ public class Form implements BeanEditor {
 	private List<Container> containers = Generics.newArrayList();
 
 	private Container elements;
+	
+	private Container buttons;
 
 	private FormContext formContext;
 
@@ -93,8 +99,8 @@ public class Form implements BeanEditor {
 
 	private boolean rendering;
 
-	private boolean includeStylesheet;
-
+	private String clickedButton;
+	
 	private String template = TemplateUtils.getTemplatePath(this);
 
 	private Map<String, Object> renderModel = Generics.newHashMap();
@@ -104,6 +110,7 @@ public class Form implements BeanEditor {
 	public Form() {
 		setAttribute(FORM_ATTR, this);
 		elements = createContainer(ELEMENT_CONTAINER_ATTR);
+		buttons = createContainer(BUTTON_CONTAINER_ATTR);
 	}
 
 	public Form(Class<?> type) {
@@ -192,6 +199,10 @@ public class Form implements BeanEditor {
 	public List<Element> getElements() {
 		return this.elements.getComponents();
 	}
+	
+	public List<Element> getButtons() {
+		return this.buttons.getComponents();
+	}
 
 	public String getHint() {
 		if (hint == null) {
@@ -206,6 +217,23 @@ public class Form implements BeanEditor {
 	public void addElement(Editor element, String property) {
 		bind(element, property);
 		addElement(element);
+	}
+	
+	public void addButton(String name) {
+		Button button = new Button();
+		button.setSubmit(true);
+		button.setParamName(name);
+		button.setLabelKey("label.form.button." + name);
+		button.addClickListener(new ClickListener() {
+			public void clicked(ClickEvent event) {
+				clickedButton = event.getSource().getParamName();
+			}
+		});
+		buttons.addElement(button);
+	}
+	
+	public String getClickedButton() {
+		return clickedButton;
 	}
 
 	public Container createContainer(String name) {
@@ -378,9 +406,6 @@ public class Form implements BeanEditor {
 			initializer.initForm(this);
 		}
 		editorBinder.initEditors();
-		if (includeStylesheet) {
-			addResource(new StylesheetResource("form/form.css"));
-		}
 	}
 
 	public void processRequest(HttpServletRequest request) {
@@ -388,6 +413,7 @@ public class Form implements BeanEditor {
 	}
 
 	public void processRequest(FormRequest request) {
+		clickedButton = null;
 		errors.removeAllErrors();
 		Iterator<Container> it = containers.iterator();
 		while (it.hasNext()) {

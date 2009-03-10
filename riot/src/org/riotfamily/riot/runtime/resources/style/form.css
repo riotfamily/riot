@@ -38,12 +38,14 @@
 	background: ${highlight_color} url(images/button-notch.gif) repeat-x;
 }
 
-.buttons span input {
+.buttons input {
 	height: 46px;
 	display: block;
 	padding: 10px 40px 36px 36px;
 	_padding: 10px 10px 36px 38px;
-	background: ${highlight_color} url(images/save.gif) 10px 10px no-repeat;
+	background-color: ${highlight_color};
+	background-position: 10px 10px;
+	background-repeat: no-repeat;
 	border: 0;
 	margin: 0 1px;
 	color: #fff;
@@ -54,6 +56,10 @@
 	text-align: left;
 	vertical-align: top;
 }
+
+.buttons input.button-save {
+	background-image: url(images/save.gif);
+} 
 
 #saving {
 	margin-left: 32px;

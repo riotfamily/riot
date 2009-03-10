@@ -32,8 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.AjaxFormController;
-import org.riotfamily.forms.controller.ButtonFactory;
-import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.element.PasswordField;
 import org.riotfamily.riot.runtime.RiotRuntime;
 import org.riotfamily.riot.runtime.RiotRuntimeAware;
@@ -47,7 +45,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class ChangePasswordController extends AjaxFormController 
-		implements FormSubmissionHandler, RiotRuntimeAware {
+		implements RiotRuntimeAware {
 	
 	private static final DefaultTransactionDefinition TRANSACTION_DEFINITION =
 		new DefaultTransactionDefinition(
@@ -67,10 +65,6 @@ public class ChangePasswordController extends AjaxFormController
 		
 		this.dao = dao;
 		this.transactionManager = transactionManager;
-		ButtonFactory buttonFactory = new ButtonFactory(this);
-		buttonFactory.setLabelKey("label.form.button.save");
-		buttonFactory.setCssClass("button button-save");
-		addButton(buttonFactory);
 	}
 	
 	public void setRiotRuntime(RiotRuntime runtime) {
@@ -78,12 +72,12 @@ public class ChangePasswordController extends AjaxFormController
 	}
 
 	protected Form createForm(HttpServletRequest request) {
-		
 		Form form = new Form(NewPassword.class);
 		PasswordField pw = new PasswordField();
 		pw.setConfirm(true);
 		pw.setRequired(true);
 		form.addElement(pw, "password");
+		form.addButton("save");
 		return form;
 	}
 	

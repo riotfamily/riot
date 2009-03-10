@@ -31,8 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.forms.Form;
-import org.riotfamily.forms.controller.ButtonFactory;
-import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.forms.factory.RepositoryFormController;
 import org.riotfamily.riot.dao.InvalidPropertyValueException;
@@ -47,8 +45,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Felix Gnass [fgnass at neteye dot de]
  */
 public abstract class AbstractFrontOfficeFormController 
-		extends RepositoryFormController 
-		implements FormSubmissionHandler {
+		extends RepositoryFormController {
 
 	private static final String SESSION_ATTRIBUTE = "frontOfficeForm";
 
@@ -71,10 +68,6 @@ public abstract class AbstractFrontOfficeFormController
 		
 		super(formRepository);
 		this.transactionManager = transactionManager;
-		ButtonFactory buttonFactory = new ButtonFactory(this);
-		buttonFactory.setLabelKey("label.form.button.save");
-		buttonFactory.setCssClass("button button-save");
-		addButton(buttonFactory);
 	}
 
 	public void setViewName(String viewName) {
@@ -93,6 +86,12 @@ public abstract class AbstractFrontOfficeFormController
 		return SESSION_ATTRIBUTE;
 	}
 
+	@Override
+	protected void initForm(Form form, HttpServletRequest request) {
+		super.initForm(form, request);
+		form.addButton("save");
+	}
+	
 	protected ModelAndView showForm(final Form form,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {

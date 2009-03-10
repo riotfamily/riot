@@ -30,12 +30,11 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.AjaxFormController;
-import org.riotfamily.forms.controller.ButtonFactory;
-import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.riot.dao.InvalidPropertyValueException;
 import org.riotfamily.riot.dao.RiotDaoException;
 import org.riotfamily.riot.list.ListRepository;
@@ -52,8 +51,7 @@ import org.springframework.web.servlet.view.RedirectView;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.4
  */
-public class DialogFormController extends AjaxFormController
-		implements FormSubmissionHandler {
+public class DialogFormController extends AjaxFormController {
 	
 	private static final DefaultTransactionDefinition TRANSACTION_DEFINITION =
 			new DefaultTransactionDefinition(
@@ -73,10 +71,6 @@ public class DialogFormController extends AjaxFormController
 		
 		this.listRepository = listRepository;
 		this.transactionManager = transactionManager;
-		ButtonFactory buttonFactory = new ButtonFactory(this);
-		buttonFactory.setLabelKey("label.dialog.button.execute");
-		buttonFactory.setCssClass("button button-execute");
-		addButton(buttonFactory);
 	}
 
 	
@@ -93,7 +87,11 @@ public class DialogFormController extends AjaxFormController
 	 * Delegates the form creation to the DialogCommand.
 	 */
 	protected Form createForm(HttpServletRequest request) {
-		return getForm(request);
+		Form form = getForm(request);
+		if (form.getButtons().isEmpty()) {
+			form.addButton("execute");
+		}
+		return form;
 	}
 	
 	/**
@@ -121,7 +119,7 @@ public class DialogFormController extends AjaxFormController
 		
 		HashMap<String, Object> model = new HashMap<String, Object>();
 		model.put("form", sw.toString());
-		model.put("title", getTitle(form, request));
+		model.put("title", FormatUtils.stripTags(getTitle(form, request)));
 		return new ModelAndView(viewName, model);
 	}
 
@@ -136,7 +134,9 @@ public class DialogFormController extends AjaxFormController
 			Object input = form.populateBackingObject();
 			String key = ServletUtils.getRequiredStringAttribute(request, "listSessionKey");
 			ListSession listSession = ListSession.getListSession(request, key);
-			modelAndView = getCommand(request).handleInput(input, form.getAttribute("bean"), listSession);
+			modelAndView = getCommand(request).handleInput(input, 
+					form.getClickedButton(),
+					form.getAttribute("bean"), listSession);
 		}
 		catch (InvalidPropertyValueException e) {
 			transactionManager.rollback(status);

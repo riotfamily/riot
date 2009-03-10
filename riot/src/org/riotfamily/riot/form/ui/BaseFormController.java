@@ -34,8 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.util.ResourceUtils;
 import org.riotfamily.forms.Form;
-import org.riotfamily.forms.controller.ButtonFactory;
-import org.riotfamily.forms.controller.FormSubmissionHandler;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.forms.factory.RepositoryFormController;
 import org.riotfamily.riot.dao.InvalidPropertyValueException;
@@ -58,8 +56,7 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  *
  */
-public abstract class BaseFormController extends RepositoryFormController
-		implements FormSubmissionHandler {
+public abstract class BaseFormController extends RepositoryFormController {
 
 	protected static final String EDITOR_DEFINITION_ATTR =
 			FormController.class.getName() + ".editorDefinition";
@@ -82,10 +79,6 @@ public abstract class BaseFormController extends RepositoryFormController
 		super(formRepository);
 		this.editorRepository = editorRepository;
 		this.transactionManager = transactionManager;
-		ButtonFactory buttonFactory = new ButtonFactory(this);
-		buttonFactory.setLabelKey("label.form.button.save");
-		buttonFactory.setCssClass("button button-save");
-		addButton(buttonFactory);
 	}
 
 	public void setViewName(String viewName) {
@@ -160,6 +153,7 @@ public abstract class BaseFormController extends RepositoryFormController
 	
 	protected Form createForm(HttpServletRequest request) {
 		Form form = super.createForm(request);
+		form.addButton("save");
 		FormUtils.setObjectId(form, getObjectId(request));
 		FormUtils.setParentId(form, getParentId(request));
 		FormUtils.setParentEditor(form, getParentEditor(request));
@@ -266,7 +260,6 @@ public abstract class BaseFormController extends RepositoryFormController
 				Object bean = form.populateBackingObject();				
 				dao.save(bean, parent);
 				FormUtils.setObjectId(form, dao.getObjectId(bean));
-				//form.setBackingObject(bean);
 			}
 			else {
 				log.debug("Updating entity ...");
