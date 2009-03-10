@@ -45,9 +45,11 @@
 		</form:map>
 	</form:form>
 	
-	<ed:list id="dbMessages" list-ref="messageBundleEntries" icon="bubble">
-		<ed:form form-ref="messageBundleEntry" />
-	</ed:list>
+	<ed:group name="systemPreferences" icon="tools">
+		<ed:list id="dbMessages" list-ref="messageBundleEntries" icon="bubble">
+			<ed:form form-ref="messageBundleEntry" />
+		</ed:list>
+	</ed:group>
 
 	<list:list id="localDbMessages" search="entry.code,entry.defaultMessage.text,text" filter-form="dbMessageFilter">
 		<list:dao class="org.riotfamily.dbmsgsrc.riot.LocalMessageDao" />
