@@ -67,10 +67,8 @@
 		</div>		
 		
 		<script type="text/javascript" language="JavaScript">
-			(function() {
-				var list = new RiotList('${listKey}');
-				list.render('list', 'listCommands', 'itemCommands', <#if expand??>'${expand}'<#else>null</#if><#if filterForm?exists>, 'filterForm'</#if>);
-			})();
+			var list = new RiotList('${listKey}');
+			list.render('list', 'listCommands', 'itemCommands', <#if expand??>'${expand}'<#else>null</#if><#if filterForm?exists>, 'filterForm'</#if>);
 		</script>
 	</body>
 </html>
