@@ -43,7 +43,7 @@ public final class FileUtils {
 			throws IOException {
 		
 		File f = fileStore.retrieve(uri);
-		File dest = File.createTempFile(f.getName(), ".copy");
+		File dest = File.createTempFile("Copy of " + f.getName(), null);
 		FileCopyUtils.copy(f, dest);
 		return fileStore.store(dest, f.getName());
 	}
