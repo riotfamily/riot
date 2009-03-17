@@ -73,13 +73,17 @@ public class PageResolver {
 		Object site = request.getAttribute(SITE_ATTRIBUTE);
 		if (site == null) {
 			site = resolveSite(request);
-			expose(site, request, SITE_ATTRIBUTE);
+			exposeSite((Site) site, request);
 		}
 		Site result = site != NOT_FOUND ? (Site) site : null;
 		pageDao.refreshSiteIfDetached(result);
 		return result; 
 	}
-		
+
+	protected void exposeSite(Site site, HttpServletRequest request) {
+		expose(site, request, SITE_ATTRIBUTE);
+	}
+
 	/**
 	 * Returns the path within the resolved Site.
 	 */
@@ -102,11 +106,15 @@ public class PageResolver {
 		Object page = request.getAttribute(PAGE_ATTRIBUTE);
 		if (page == null) {
 			page = resolvePage(request);
-			expose(page, request, PAGE_ATTRIBUTE);
+			exposePage((Page) page, request);
 		}
 		Page result = page != NOT_FOUND ? (Page) page : null;
 		pageDao.refreshPageIfDetached(result);
 		return result;
+	}
+	
+	protected void exposePage(Page page, HttpServletRequest request) {
+		expose(page, request, PAGE_ATTRIBUTE);
 	}
 	
 	/**
