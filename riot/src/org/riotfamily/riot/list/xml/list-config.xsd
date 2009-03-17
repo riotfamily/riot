@@ -102,6 +102,7 @@
 	    	</xsd:attribute>
 	    	<xsd:attribute name="sortable" type="xsd:boolean" />
 	    	<xsd:attribute name="case-sensitive" type="xsd:boolean" />
+	    	<xsd:attribute name="css-class" type="xsd:string" />
 	    </xsd:complexType>
 	</xsd:element>
 

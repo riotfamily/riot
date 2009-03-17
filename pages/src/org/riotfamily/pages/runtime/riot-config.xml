@@ -65,7 +65,7 @@
 		<list:columns>
 			<list:column property="title" />
 			<list:column property="pathComponent" />
-			<list:column renderer="org.riotfamily.pages.riot.ui.PublishStatusRenderer" />
+			<list:column renderer="org.riotfamily.pages.riot.ui.PublishStatusRenderer" css-class="publish-status" />
 			<list:command id="editPage" />
 			<list:command id="translatePage" />
 			<list:command id="publishPage" />

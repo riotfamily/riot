@@ -459,7 +459,7 @@ public class ListSession implements RenderContext {
 					config.getLookupLevel(), i++));
 
 			column.setSortable(sortable && config.isSortable());
-			column.setCssClass(FormatUtils.toCssClass(config.getProperty()));
+			column.setCssClass(getCssClass(config));
 			if (params.hasOrder() && params.getPrimaryOrder()
 					.getProperty().equals(config.getProperty())) {
 
@@ -469,6 +469,12 @@ public class ListSession implements RenderContext {
 			columns.add(column);
 		}
 		model.setColumns(columns);
+	}
+	
+	private String getCssClass(ColumnConfig config) {
+		return FormatUtils.join(" ",
+				FormatUtils.toCssClass(config.getProperty()),
+				FormatUtils.toCssClass(config.getCssClass()));
 	}
 	
 	private String getHeading(String property, int lookupLevel, int columnIndex) {

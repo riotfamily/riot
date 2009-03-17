@@ -55,7 +55,7 @@ public class XmlListRepositoryDigester implements DocumentDigester {
 	};
 	
 	private static final String[] COLUMN_ATTRS = new String[] {
-		"sortable", "lookup-level", "property", "case-sensitive"
+		"sortable", "lookup-level", "property", "case-sensitive", "css-class"
 	};
 		
 	private ListRepository listRepository;
