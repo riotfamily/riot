@@ -35,22 +35,22 @@ table.pages tr.hidden-page td {
 	background-image: url(icons/commands/discard.gif);
 }
 
-.publish-status {
+.publish-status div {
 	width: 32px;
 	height: 32px;
 	float: right;
 }
 
-.publish-status-translatable {
+.publish-status div.translatable {
 	background: url(icons/publish_state.png) 2px -96px no-repeat;
 }
-.publish-status-published {
+.publish-status div.published {
 	background: url(icons/publish_state.png) 2px -64px no-repeat;
 }
-.publish-status-dirty {
+.publish-status div.dirty {
 	background: url(icons/publish_state.png) 2px -32px no-repeat;
 }
-.publish-status-new {
+.publish-status div.new {
 	background: url(icons/publish_state.png) 2px 0px no-repeat;
 }
 

@@ -23,24 +23,33 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.ui;
 
-import java.io.PrintWriter;
-
-import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.RenderContext;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.riot.list.ui.ListSession;
+import org.riotfamily.riot.ui.CssClassRenderer;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 7.0
  */
-public class PublishStatusRenderer implements ObjectRenderer {
+public class PublishStatusRenderer extends CssClassRenderer {
 
-	public void render(Object obj, RenderContext context, PrintWriter writer) {
-		writer.print("<div class=\"publish-status publish-status-");
-		writer.print(getStyleClass((Page) obj, (ListSession) context));
-		writer.print("\"></div>");
+	private static final String LABEL_MESSAGE_KEY = "publish-status.";
+	
+	@Override
+	public String getLabelMessageKey() {
+		return LABEL_MESSAGE_KEY;
+	}
+	
+	@Override
+	public boolean isAppendLabel() {
+		return true;
+	}
+	
+	@Override
+	protected String convertToString(Object obj, RenderContext context) {
+		return getStyleClass((Page) obj, (ListSession) context);
 	}
 	
 	private String getStyleClass(Page page, ListSession session) {
