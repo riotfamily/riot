@@ -50,7 +50,6 @@ public class DeletePageCommand extends AbstractCommand implements BatchCommand {
 	}
 	
 	public boolean isEnabled(CommandContext context) {
-		Page page = (Page) context.getBean();
 		return PageCommandUtils.isLocalPage(context);
 	}
 	
