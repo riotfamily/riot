@@ -68,6 +68,18 @@ public class RiotSwf extends RiotFile {
 	public RiotSwf(byte[] bytes, String fileName) throws IOException {
 		super(bytes, fileName);
 	}
+	
+	public RiotSwf(RiotSwf riotSwf) throws IOException {
+		super(riotSwf);
+		this.width = riotSwf.getWidth();
+		this.height = riotSwf.getHeight();
+		this.version = riotSwf.getVersion();
+	}
+	
+	@Override
+	public RiotSwf deepCopy() throws IOException {
+		return new RiotSwf(this);
+	}
 
 	protected void inspect(File file) throws IOException {
 		FlashInfo flashInfo = new FlashInfo(file);

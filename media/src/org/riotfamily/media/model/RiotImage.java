@@ -70,6 +70,19 @@ public class RiotImage extends RiotFile {
 		super(bytes, fileName);
 	}
 
+	public RiotImage(RiotImage riotImage) throws IOException {
+		super(riotImage);
+		this.format = riotImage.getFormat();
+		this.width = riotImage.getWidth();
+		this.height = riotImage.getHeight();
+		this.alpha = riotImage.isAlpha();
+	}
+	
+	@Override
+	public RiotImage deepCopy() throws IOException {
+		return new RiotImage(this);
+	}
+
 	protected void inspect(File file) throws IOException {
 		ImageMetaData meta = mediaService.identifyImage(file);
 		format = meta.getFormat();
