@@ -184,8 +184,9 @@
         <list:dao class="org.riotfamily.statistics.dao.FaultyResponsesStatisticsDao" />
         <list:columns>
             <list:column property="name" sortable="true"/>
-            <list:column property="count" sortable="true"/>
             <list:column property="status" sortable="true"/>
+            <list:column property="count" sortable="true"/>
+            <list:column property="lastTime" sortable="true" />
             <list:column property="referer" sortable="true" />
             <list:column property="clientIp" sortable="true" />
             <list:column property="userAgent" sortable="true" />

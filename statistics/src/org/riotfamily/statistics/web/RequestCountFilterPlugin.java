@@ -161,12 +161,15 @@ public class RequestCountFilterPlugin extends FilterPlugin {
 					&& item.getStatus() == reqStats.getStatus()) {
 				
 				item.count();
+				faultyResponses.remove(item);
+				faultyResponses.add(item);
 				return;
 			}
 		}
-		if (faultyResponses.size() < maxListSize) {
-			faultyResponses.add(reqStats);
-		} 
+		faultyResponses.add(reqStats);
+		if (faultyResponses.size() > maxListSize) {
+			faultyResponses.removeFirst();
+		}
 	}
 	
 	public synchronized void reset() {
