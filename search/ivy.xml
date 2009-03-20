@@ -15,6 +15,6 @@
 	    <dependency org="riotfamily" name="riot-website" rev="${dep.riot.revision}" conf="*->@" />
 	    <dependency org="riotfamily" name="riot-crawler" rev="${dep.riot.revision}" conf="*->@" />
 	    <dependency org="riotfamily" name="riot-pages" rev="${dep.riot.revision}" conf="build->build" />
-    	<dependency org="apache" name="lucene" conf="build,runtime->highlighter,analyzers,snowball" rev="2.2.0" />
+    	<dependency org="apache" name="lucene" conf="build,runtime->highlighter,analyzers,snowball" rev="2.4.1" />
     </dependencies>
 </ivy-module>
