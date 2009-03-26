@@ -49,7 +49,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.cachius.support.Cookies;
 import org.riotfamily.cachius.support.Headers;
 import org.riotfamily.common.io.IOUtils;
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
 import org.springframework.util.FileCopyUtils;
 
 

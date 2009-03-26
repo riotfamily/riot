@@ -4,11 +4,11 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.core.security.auth.RiotUser;
+import org.riotfamily.core.security.policy.AuthorizationPolicy;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.riot.security.auth.RiotUser;
-import org.riotfamily.riot.security.policy.AuthorizationPolicy;
 
 public class SiteUserPolicy implements AuthorizationPolicy {
 	

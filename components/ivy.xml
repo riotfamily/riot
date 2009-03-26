@@ -19,5 +19,6 @@
         <dependency org="riotfamily" name="prototype-js" rev="1.6.0.3-dev-20080804164000" conf="runtime->default" />
         <dependency org="freemarker" name="freemarker" rev="${dep.freemarker.revision}" conf="runtime->default" />
         <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->webmvc;src->src" />
+        <dependency org="directwebremoting" name="dwr" rev="${dep.dwr.revision}" conf="src->src;%->default" />
     </dependencies>
 </ivy-module>

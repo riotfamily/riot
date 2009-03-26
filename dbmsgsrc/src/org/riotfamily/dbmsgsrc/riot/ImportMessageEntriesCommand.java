@@ -30,23 +30,22 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
+import org.riotfamily.core.command.CommandContext;
+import org.riotfamily.core.command.CommandResult;
+import org.riotfamily.core.command.Selection;
+import org.riotfamily.core.command.dialog.DialogCommand;
+import org.riotfamily.core.dao.InvalidPropertyValueException;
+import org.riotfamily.core.security.AccessController;
+import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
 import org.riotfamily.dbmsgsrc.support.DbMessageSource;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.element.upload.FileUpload;
-import org.riotfamily.riot.dao.InvalidPropertyValueException;
-import org.riotfamily.riot.list.command.dialog.DialogCommand;
-import org.riotfamily.riot.list.ui.ListSession;
-import org.riotfamily.riot.security.AccessController;
-import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.ModelAndView;
 
 public class ImportMessageEntriesCommand extends DialogCommand {
-
-public static final String ACTION_IMPORT = "import";
 
 	private static final RiotLog log = RiotLog.get(ImportMessageEntriesCommand.class);
 
@@ -63,12 +62,11 @@ public static final String ACTION_IMPORT = "import";
 	}
 	
 	@Override
-	public String getAction() {
-		return ACTION_IMPORT;
+	protected String getStyleClass(CommandContext context) {
+		return "import";
 	}
 	
-	@Override
-	public Form createForm(Object bean) {
+	public Form createForm(Selection selection) {
 		Form form = new Form(Upload.class);
 		form.setId("importMessageEntriesForm");
 		FileUpload fileUpload = new FileUpload();
@@ -78,7 +76,9 @@ public static final String ACTION_IMPORT = "import";
 	}
 	
 	@Override
-	public ModelAndView handleInput(Object input, Object bean, ListSession listSession) {		
+		public CommandResult handleInput(CommandContext context,
+				Selection selection, Object input, String button) {
+
 		Upload upload = (Upload) input;
 		try {
 			RiotUser user = AccessController.getCurrentUser();

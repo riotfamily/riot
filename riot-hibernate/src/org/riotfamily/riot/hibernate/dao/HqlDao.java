@@ -28,12 +28,11 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
-import org.riotfamily.common.log.RiotLog;
-import org.riotfamily.riot.dao.ListParams;
-import org.riotfamily.riot.dao.SwappableItemDao;
+import org.riotfamily.common.util.RiotLog;
+import org.riotfamily.core.dao.ListParams;
+import org.riotfamily.core.dao.SwappableItemDao;
+import org.riotfamily.core.screen.list.ListParamsImpl;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
-import org.riotfamily.riot.list.support.EmptyListParams;
-import org.riotfamily.riot.list.support.ListParamsImpl;
 import org.springframework.util.Assert;
 
 /**
@@ -114,7 +113,7 @@ public class HqlDao extends AbstractHqlDao implements SwappableItemDao {
     	hql.append(getEntityClass().getName());
     	hql.append(" as this");
     	HibernateUtils.appendHql(
-    		hql, "where", getWhereClause(parent, new EmptyListParams()));
+    		hql, "where", getWhereClause(parent, new ListParamsImpl()));
     	log.debug(hql);
         return hql.toString();
     }
@@ -122,7 +121,7 @@ public class HqlDao extends AbstractHqlDao implements SwappableItemDao {
 	protected void setPositionIfNeeded(Object entity, Object parent) {
     	if (setPositionOnSave) {
     		Query query = getSession().createQuery(buildMaxPositionHql(parent));
-    		setQueryParameters(query, parent, new EmptyListParams());
+    		setQueryParameters(query, parent, new ListParamsImpl());
     		Number maxPosition = (Number) query.uniqueResult();
     		
     		PropertyUtils.setProperty(entity, positionProperty,

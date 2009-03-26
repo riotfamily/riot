@@ -24,7 +24,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.xml;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;

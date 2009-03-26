@@ -27,7 +27,8 @@ import java.io.IOException;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.forms.ContentElement;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
@@ -59,8 +59,8 @@ public abstract class AbstractFormController implements Controller {
 	
 	private boolean processNewForms;
 	
-	public void setFormContextFactory(FormContextFactory contextFactory) {
-		this.formContextFactory = contextFactory;
+	public AbstractFormController(FormContextFactory formContextFactory) {
+		this.formContextFactory = formContextFactory;
 	}
 
 	public final void setProcessNewForms(boolean processNewForms) {

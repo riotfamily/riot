@@ -32,8 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.image.ImageCropper;
 import org.riotfamily.common.io.IOUtils;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.AbstractElement;
 import org.riotfamily.forms.ContentElement;

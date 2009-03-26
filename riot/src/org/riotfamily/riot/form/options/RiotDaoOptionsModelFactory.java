@@ -27,13 +27,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.core.dao.RiotDao;
+import org.riotfamily.core.screen.list.ListParamsImpl;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.OptionsModelFactory;
 import org.riotfamily.forms.options.OptionsModel;
 import org.riotfamily.forms.options.StaticOptionsModel;
-import org.riotfamily.riot.dao.RiotDao;
-import org.riotfamily.riot.list.support.ListParamsImpl;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

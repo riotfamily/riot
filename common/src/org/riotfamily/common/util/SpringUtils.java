@@ -73,6 +73,11 @@ public final class SpringUtils {
 		return (T) BeanFactoryUtils.beanOfType(lbf, type);
 	}
 	
+	public static<T> T beanOfType(BeanFactory beanFactory, Class<T> type) {
+		Assert.isInstanceOf(ListableBeanFactory.class, beanFactory);
+		return beanOfType((ListableBeanFactory) beanFactory, type);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static<T> Map<String, T> beansOfType(
 			ListableBeanFactory lbf, Class<T> type) {

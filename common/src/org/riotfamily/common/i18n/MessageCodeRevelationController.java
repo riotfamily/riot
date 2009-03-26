@@ -26,7 +26,7 @@ package org.riotfamily.common.i18n;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;

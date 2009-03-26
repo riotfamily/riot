@@ -23,7 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.forms;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
+
 
 public class ErrorUtils {
 

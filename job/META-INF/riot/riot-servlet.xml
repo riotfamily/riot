@@ -41,6 +41,7 @@
 	<alias name="jobUIController" alias="/job/@{type}" />
 	<alias name="jobUIController" alias="/job/@{type}/@{objectId}" />
 
+	<!-- 
 	<override:put ref="riotDwrConfigurator" property="converterTypes">		
 		<entry key="org.riotfamily.riot.job.model.*" value="bean"></entry>		
 	</override:put>
@@ -48,7 +49,8 @@
 	<override:put ref="riotDwrConfigurator" property="serviceBeans">		
 		<entry key="JobUIService" value-ref="jobUIService" />		
 	</override:put>
-	
+ 	-->
+ 	
 	<bean id="jobCleanUpTask" class="org.riotfamily.riot.job.support.JobCleanUpTask">
 		<constructor-arg ref="transactionManager" />
 		<constructor-arg ref="jobDao" />

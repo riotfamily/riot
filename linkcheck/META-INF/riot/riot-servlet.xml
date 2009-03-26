@@ -32,6 +32,7 @@
 		</bean>
 	</override:add>
 	
+	<!-- 
 	<override:add ref="listRepository" property="configLocations">
 		<value>classpath:/org/riotfamily/linkcheck/runtime/riot-config.xml</value>
 	</override:add>
@@ -39,7 +40,9 @@
 	<override:add ref="editorRepository" property="configLocations">
 		<value>classpath:/org/riotfamily/linkcheck/runtime/riot-config.xml</value>
 	</override:add>
- 	
+ 	-->
+ 	 
+ 	<!--
  	<override:add ref="dwrController" property="configurators">
  		<bean class="org.riotfamily.common.web.dwr.SpringConfigurator">
 			<property name="serviceBeans">
@@ -49,7 +52,8 @@
 			</property>							
 		</bean>
 	</override:add>
-	
+	-->
+	 
 	<override:add ref="crawler" property="pageHandlers">
 		<ref bean="linkChecker"/>
 	</override:add>	

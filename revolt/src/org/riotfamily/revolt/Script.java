@@ -28,7 +28,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;
 

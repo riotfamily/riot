@@ -27,9 +27,9 @@ import java.util.Collection;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.riotfamily.core.screen.form.FormUtils;
 import org.riotfamily.forms.element.suggest.AutocompleteTextField;
 import org.riotfamily.forms.element.suggest.AutocompleterModel;
-import org.riotfamily.riot.form.ui.FormUtils;
 import org.riotfamily.riot.hibernate.support.HibernateSupport;
 
 public class DistinctAutoCompleterModel extends HibernateSupport 

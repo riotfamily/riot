@@ -28,10 +28,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ContentContainer;
+import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageResolver;

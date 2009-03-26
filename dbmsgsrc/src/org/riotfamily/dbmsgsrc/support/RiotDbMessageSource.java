@@ -27,37 +27,35 @@ import java.util.Set;
 
 import org.riotfamily.common.i18n.CodeRevealingMessageSource;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.web.mapping.HandlerUrlResolver;
+import org.riotfamily.core.security.AccessController;
+import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
-import org.riotfamily.riot.runtime.RiotRuntime;
-import org.riotfamily.riot.runtime.RiotRuntimeAware;
-import org.riotfamily.riot.security.AccessController;
-import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.PlatformTransactionManager;
 
-public class RiotDbMessageSource extends CodeRevealingMessageSource 
-		implements RiotRuntimeAware {
+public class RiotDbMessageSource extends CodeRevealingMessageSource {
 
 	private DbMessageSource dbMessageSource;
 	
-	private RiotRuntime runtime;
-	
 	private Set<String> revealTo = Generics.newHashSet();
+
+	private HandlerUrlResolver handlerUrlResolver;
 	
-	public RiotDbMessageSource(DbMessageSourceDao dao, PlatformTransactionManager tx) {
+	public RiotDbMessageSource(DbMessageSourceDao dao, 
+			PlatformTransactionManager tx, 
+			HandlerUrlResolver handlerUrlResolver) {
+		
 		dbMessageSource = new DbMessageSource(dao, tx);
 		dbMessageSource.setBundle("riot");
 		super.setParentMessageSource(dbMessageSource);
+		this.handlerUrlResolver = handlerUrlResolver;
 	}
 	
 	@Override
 	public void setParentMessageSource(MessageSource parent) {
 		dbMessageSource.setParentMessageSource(parent);
-	}
-	
-	public void setRiotRuntime(RiotRuntime runtime) {
-		this.runtime = runtime;
 	}
 	
 	@Override
@@ -101,7 +99,9 @@ public class RiotDbMessageSource extends CodeRevealingMessageSource
 	private String getEditorUrl(String code) {
 		MessageBundleEntry entry = dbMessageSource.getEntry(code, null);
 		if (entry != null) {
-			return getContextPath() + runtime.getUrlForHandler("popupFormController", "riotMessageBundleEntry", entry.getId());
+			return getContextPath() + handlerUrlResolver.getUrlForHandler(null,
+					"popupFormController", "riotMessageBundleEntry", entry.getId());
+
 		}
 		return null;
 	}

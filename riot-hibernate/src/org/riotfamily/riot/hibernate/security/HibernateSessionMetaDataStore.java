@@ -25,9 +25,9 @@ package org.riotfamily.riot.hibernate.security;
 
 import java.util.List;
 
-import org.riotfamily.riot.security.auth.RiotUser;
-import org.riotfamily.riot.security.session.SessionMetaData;
-import org.riotfamily.riot.security.session.SessionMetaDataStore;
+import org.riotfamily.core.security.auth.RiotUser;
+import org.riotfamily.core.security.session.SessionMetaData;
+import org.riotfamily.core.security.session.SessionMetaDataStore;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 

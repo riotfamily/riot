@@ -23,8 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.beans.override;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.beans.override.OverrideNamespaceHandler.BeanReplacement;
+import org.riotfamily.common.util.RiotLog;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;

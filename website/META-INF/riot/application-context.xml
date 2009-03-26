@@ -8,10 +8,6 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-8.0.xsd">
 
-	<bean id="pathCompleter" class="org.riotfamily.common.web.servlet.DefaultPathCompleter">
-		<property name="suffix" value=".html" />
-	</bean>
-
 	<bean id="websiteCache" class="org.riotfamily.cachius.spring.CacheFactoryBean">
 		<description>
 			A Cachius cache instance to cache web content.		
@@ -33,8 +29,10 @@
         <property name="staleUnlessExpired" value="${riot.websiteCache.staleUnlessExpired=false}" />
     </bean>
     
+    <bean id="resourceStamper" class="org.riotfamily.common.web.filter.ResourceStamper" />
+    
     <override:add ref="hibernateInterceptors">
-	    <bean class="org.riotfamily.website.cache.CacheTagEntityListener">
+	    <bean class="org.riotfamily.riot.hibernate.cachius.CacheTagInterceptor">
 	    	<description>
 	    		EntityListener that invalidates tagged cache items whenever an 
 	    		entity with @TagCacheItems annotation is modified or deleted.

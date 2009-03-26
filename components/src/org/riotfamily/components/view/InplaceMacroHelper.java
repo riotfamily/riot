@@ -28,15 +28,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.render.list.ComponentListRenderer;
-import org.riotfamily.riot.dao.RiotDao;
-import org.riotfamily.riot.list.RiotDaoService;
-import org.riotfamily.riot.security.AccessController;
-import org.springframework.util.ClassUtils;
+import org.riotfamily.components.support.EditModeUtils;
+import org.riotfamily.core.security.AccessController;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -54,21 +51,18 @@ public class InplaceMacroHelper {
 	
 	private ComponentListRenderer componentListRenderer;
 	
-	private RiotDaoService riotDaoService;
 	
 	public InplaceMacroHelper(HttpServletRequest request,
 			HttpServletResponse response, 
 			List<String> toolbarScripts,
 			List<DynamicToolbarScript> dynamicToolbarScripts, 
-			ComponentListRenderer componentListRenderer,
-			RiotDaoService riotDaoService) {
+			ComponentListRenderer componentListRenderer) {
 
 		this.request = request;
 		this.response = response;
 		this.toolbarScripts = toolbarScripts;
 		this.dynamicToolbarScripts = dynamicToolbarScripts;
 		this.componentListRenderer = componentListRenderer;
-		this.riotDaoService = riotDaoService;
 	}
 
 	public boolean isEditMode() {
@@ -101,17 +95,7 @@ public class InplaceMacroHelper {
 		}
 		return sb.toString();
 	}
-	
-	public String getObjectId(String listId, Object object) {
-		RiotDao dao = riotDaoService.getDao(listId);
-		return dao.getObjectId(object);
-	}
-	
-	public String getDefaultListId(Object object) {
-		return riotDaoService.getDefaultListId(
-				ClassUtils.getUserClass(object));
-	}
-	
+		
 	public String renderComponentList(ContentContainer container, 
 			String key, Integer minComponents, Integer maxComponents,
 			List<String> initalComponentTypes, 

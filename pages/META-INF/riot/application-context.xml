@@ -19,10 +19,14 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="pageTypeHierarchy" ref="pageTypeHierarchy" />
 	</bean>
+
+	<bean id="pathConverter" class="org.riotfamily.pages.mapping.DefaultPathConverter">
+		<property name="suffix" value=".html" />
+	</bean>
 	
 	<bean id="pageResolver" class="org.riotfamily.pages.mapping.PageResolver">
 		<constructor-arg ref="pageDao" />
-		<constructor-arg ref="pathCompleter" />
+		<property name="pathConverter" ref="pathConverter" />
 	</bean>
-
+		
 </beans>

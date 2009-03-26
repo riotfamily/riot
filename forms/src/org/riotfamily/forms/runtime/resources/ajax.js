@@ -56,11 +56,20 @@ function submitEvent(e) {
 }
 
 function submitElement(id, clickedButton) {
-	var e = $(id);
-	var form = e.up('form');
+	
+	var form = clickedButton.form;
 	var url = form.action || window.loction.href;
-	var elements = e.descendants(); elements.push(e);
-	var data = elements.inject({_exclusive: id}, function(result, element) {
+	
+	var elements;
+	if (id != form.id) {
+		var e = $(id);
+		elements = e.descendants(); elements.push(e);
+	}
+	else {
+		elements = form.descendants();
+	}
+	
+	var data = elements.inject({}, function(result, element) {
 		if (!element.disabled && element.form && element.name
 				&& element.type != 'file' 
 				&& (element.type != 'submit' || element == clickedButton)) {
@@ -68,7 +77,7 @@ function submitElement(id, clickedButton) {
 			var key = element.name, value = element.getValue();
 			if (value != null) {
 				if (key in result) {
-				if (result[key].constructor != Array) result[key] = [result[key]];
+					if (result[key].constructor != Array) result[key] = [result[key]];
             		result[key].push(value);
 				}
 				else result[key] = value;
@@ -76,21 +85,14 @@ function submitElement(id, clickedButton) {
       	}
       	return result;
     });
+	
+	if (id != form.id) {
+		data._exclusive = id;
+	}
+	
 	new Ajax.Request(url, {
 		onSuccess: processAjaxResponse,
 		parameters: data
-	});
-}
-
-function submitForm(form) {
-	form = $(form);
-	var url = form.action || window.loction.href;
-	var elements = form.select('textarea','input:not(input[type="submit"])');
-	var params = Form.serializeElements(elements, true);
-	params.ajaxSave = 'true';
-	var request = new Ajax.Request(url, {
-		onSuccess: processAjaxResponse,
-		parameters: params
 	});
 }
 				

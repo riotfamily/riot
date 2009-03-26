@@ -10,6 +10,7 @@ import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.riot.form.ContentEditorBinder;
 import org.riotfamily.forms.ElementFactory;
 import org.riotfamily.forms.Form;
+import org.riotfamily.forms.controller.FormContextFactory;
 import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.model.Page;
@@ -27,11 +28,13 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 public class PagePropertiesFormController extends ContentFormController {
 
-	public PagePropertiesFormController(FormRepository formRepository,
+	public PagePropertiesFormController(FormContextFactory formContextFactory,
+			FormRepository formRepository,
 			PlatformTransactionManager transactionManager,
 			ComponentDao componentDao, CacheService cacheService) {
 		
-		super(formRepository, transactionManager, componentDao, cacheService);
+		super(formContextFactory, formRepository, transactionManager, 
+				componentDao, cacheService);
 	}
 
 	protected Form createForm(HttpServletRequest request) {

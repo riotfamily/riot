@@ -3,7 +3,7 @@ package org.riotfamily.statistics.dao;
 import java.util.Collection;
 import java.util.List;
 
-import org.riotfamily.riot.dao.support.InMemoryRiotDao;
+import org.riotfamily.core.dao.InMemoryRiotDao;
 import org.riotfamily.statistics.domain.StatsItem;
 
 public abstract class AbstractStatsItemDao extends InMemoryRiotDao {

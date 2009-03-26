@@ -1,0 +1,178 @@
+/**
+ * Common styles shared by several views
+ */
+body {
+	color: #000;
+	margin: 0;
+	padding: 0;
+}
+body, a, td, th, h1, h2 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+a {
+	color: ${highlight_color};
+}
+b {
+	font-weight: normal;
+}
+img {
+	border: 0;
+}
+table {
+	border-spacing: 0;
+}
+td {
+	margin: 0;
+	padding: 0;
+	vertical-align: top;
+}
+
+#path b {
+	padding-left: 5px;
+}
+#path a {
+	padding-right: 14px;
+	background: url(images/path_arrow.gif) right 4px no-repeat;
+}
+#path .active span {
+	color: ${highlight_color};
+}
+
+#body-wrapper {
+	width: 100%;
+	padding: 30px 0;
+	position: relative;
+	float: none;
+}
+#wrapper {
+	padding: 0 22px;
+	/* For IE6 */
+	_float: left;
+}
+.main {
+	margin-right: 280px;
+	/* For IE6 */
+	_width: 100%;
+}
+div.extra {
+	width: 280px;
+	position: fixed;
+	top: 30px;
+	right: 0;
+	/* For IE6 */
+	_position: static;
+	_float: left;
+	_top: auto;
+	_right: auto;
+	_margin-left: -280px;
+}
+.wide .main {
+	margin-right: 0px;
+}
+.wide .extra {
+	display: none;
+}
+.extra .box {
+	background-color: #ebebeb;
+	padding-bottom: 10px;
+	margin-bottom: 50px;
+	width: 260px;
+}
+.extra .box form {
+	margin: 8px 32px 4px 35px;
+}
+
+.box-title {
+	background: ${highlight_color} url(images/list.gif) top left no-repeat;
+}
+div.box-title,
+div.box-title span,
+div.box-title label {
+	color: #fff;
+}
+
+div.box-title label,
+div.box-title .label {
+	display: block;
+	margin-left: 32px;
+	padding: 2px 0 2px 6px;
+	background: ${title_bg_color} url(images/corner.gif) top right no-repeat;
+}
+* html .box-title {height: 1%;}
+
+
+span.locale img {
+	margin-right: 6px;
+}
+
+span.messageCode {
+	padding: 0 0 0 20px;
+	text-decoration: none;
+	background: url(images/i18n.gif) right center no-repeat;
+}
+
+.riot-dialog {
+	border-collapse: collapse;
+}
+.riot-dialog .pane {
+	background: #3d3d3d;
+	padding: 1px;
+}
+.riot-dialog .title-bar {
+	color: #fff;
+	overflow: hidden;
+	background: #3d3d3d;
+}
+.riot-dialog .title {
+	padding: 4px;
+	float: left;
+}
+.riot-dialog .close-button {
+	float: right;
+	width: 22px;
+	height: 22px;
+	overflow: hidden;
+	background: red;
+}
+.riot-dialog .content {
+	background: #fff;
+	overflow: hidden;
+}
+.riot-dialog .content .message {
+	margin: 20px 20px 40px 20px;
+}
+.riot-dialog .content .buttons {
+	margin: 0 15px 20px 20px;
+	text-align: right;
+}
+.riot-dialog .content form.buttons input {
+	margin-right: 5px;
+}
+.riot-dialog td {
+	padding: 0;
+}
+.riot-dialog .border {
+	width: 8px;
+	height: 8px;
+	background: #000;
+	opacity: 0.6;
+}
+.riot-dialog iframe {
+	border: none;
+}
+
+#riot-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #000;
+	filter: alpha(opacity=60);
+	-moz-opacity: 0.6;
+	opacity: 0.6;
+}
+body > #riot-overlay {
+	position: fixed;
+}

@@ -37,9 +37,8 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
-import org.riotfamily.riot.list.command.export.Exporter;
 
-public class MessageEntryExcelExporter implements Exporter {
+public class MessageEntryExcelExporter { //FIXME implements Exporter {
 
 	
 	public String getFileExtension() {

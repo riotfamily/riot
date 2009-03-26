@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job.context;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.riot.job.JobContext;
 import org.riotfamily.riot.job.JobInterruptedException;
 

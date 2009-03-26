@@ -33,6 +33,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * View that sends a redirect to the originating request URI.
+ * <b>NOTE:</b> The implementation is not thread safe.
  *  
  * @see ServletUtils#getOriginatingRequestUri(HttpServletRequest)
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -44,6 +45,7 @@ public class RedirectAfterPostView extends RedirectView {
 	public void render(Map model, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		
+		setHttp10Compatible(ServletUtils.isHttp10(request));
 		setUrl(ServletUtils.getOriginatingRequestUri(request));
 		super.render(model, request, response);
 	}

@@ -25,7 +25,7 @@ package org.riotfamily.riot.job.support;
 
 import java.util.Date;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.riot.job.Job;
 import org.riotfamily.riot.job.JobInterruptedException;
 import org.riotfamily.riot.job.context.TaskJobContext;

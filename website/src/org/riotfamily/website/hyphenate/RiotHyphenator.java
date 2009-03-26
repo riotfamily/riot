@@ -9,9 +9,9 @@ import java.util.Map;
 import net.davidashen.text.Hyphenator;
 import net.davidashen.util.ErrorHandler;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.RiotLog;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 

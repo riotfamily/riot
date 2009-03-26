@@ -27,15 +27,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.riotfamily.common.log.RiotLog;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
-import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
-import org.riotfamily.riot.dao.ListParams;
-import org.riotfamily.riot.dao.Order;
-import org.riotfamily.riot.dao.ParentChildDao;
-import org.riotfamily.riot.dao.SortableDao;
+import org.riotfamily.common.util.RiotLog;
+import org.riotfamily.core.dao.CutAndPasteEnabledDao;
+import org.riotfamily.core.dao.ListParams;
+import org.riotfamily.core.dao.Order;
+import org.riotfamily.core.dao.ParentChildDao;
+import org.riotfamily.core.dao.SortableDao;
 
 
 /**

@@ -23,15 +23,21 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.statistics.commands;
 
-import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.core.AbstractCommand;
-import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
+import org.riotfamily.core.command.CommandContext;
+import org.riotfamily.core.command.CommandResult;
+import org.riotfamily.core.command.Selection;
+import org.riotfamily.core.command.impl.AbstractCommand;
+import org.riotfamily.core.command.result.RefreshSiblingsResult;
 import org.riotfamily.statistics.dao.CachiusStatisticsDao;
 
 public class InvalidateCachiusCacheCommand extends AbstractCommand {
 	
-	public CommandResult execute(CommandContext context) {
+	@Override
+	protected String getStyleClass(CommandContext context) {
+		return "clear";
+	}
+	
+	public CommandResult execute(CommandContext context, Selection selection) {
 		CachiusStatisticsDao dao = (CachiusStatisticsDao) context.getDao();
 		dao.getCachiusStatistics().invalidateAllItems();
 		return new RefreshSiblingsResult(context);

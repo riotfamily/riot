@@ -35,8 +35,8 @@ import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.model.wrapper.ComponentListWrapper;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
+import org.riotfamily.core.security.AccessController;
 import org.riotfamily.riot.hibernate.support.HibernateHelper;
-import org.riotfamily.riot.security.AccessController;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

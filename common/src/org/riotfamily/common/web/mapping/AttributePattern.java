@@ -298,19 +298,24 @@ public class AttributePattern {
 			}
 		}
 		
-		Map<String, Object> map;
-		if (unmatched == null) {
-			if (attributeNames.size() != 1) {
-				throw new IllegalStateException("No unmatched wildcard, "
-						+ "don't know which default should be overwritten.");
+		if (value != null) {
+			Map<String, Object> map;
+			if (unmatched == null) {
+				if (attributeNames.size() != 1) {
+					throw new IllegalStateException("No unmatched wildcard, "
+							+ "don't know which default should be overwritten.");
+				}
+				String name = attributeNames.get(0);
+				map = Collections.singletonMap(name, value);
 			}
-			String name = attributeNames.get(0);
-			map = Collections.singletonMap(name, value);
+			else {
+				map = Collections.singletonMap(unmatched, value);
+			}
+			return fillInAttributes(map, defaults);
 		}
 		else {
-			map = Collections.singletonMap(unmatched, value);
+			return fillInAttributes((PropertyAccessor) null, defaults);
 		}
-		return fillInAttributes(map, defaults);
 	}
 	
 	public String fillInAttributes(Object[] values) {

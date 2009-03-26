@@ -37,7 +37,7 @@
 	</bean>
   	
 	<!-- The Hibernate SessionFactory -->
-	<bean id="sessionFactory" class="org.riotfamily.riot.hibernate.support.RiotSessionFactoryBean">
+	<bean id="sessionFactory" class="org.riotfamily.common.hibernate.RiotSessionFactoryBean">
 		<property name="dataSource" ref="riotDataSource" />
 		<property name="packagesToScan">
 			<list>
@@ -61,13 +61,13 @@
 			</list>
 		</property>
 		<property name="entityInterceptor">
-			<bean class="org.riotfamily.riot.hibernate.interceptor.ChainedInterceptor">
+			<bean class="org.riotfamily.common.hibernate.ChainedInterceptor">
 				<property name="interceptors" ref="hibernateInterceptors" />
 			</bean>
 		</property>
 	</bean>
 	
-	<bean id="entityListenerInterceptor" class="org.riotfamily.riot.hibernate.interceptor.EntityListenerInterceptor">
+	<bean id="entityListenerInterceptor" class="org.riotfamily.common.hibernate.EntityListenerInterceptor">
 		<description>
 			Hibernate interceptor that scans the ApplicationContext for beans
  			implementing the EntityListener interface and invokes the 
@@ -84,7 +84,7 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
-    <bean id="activeRecordInitializer" class="org.riotfamily.riot.hibernate.domain.ActiveRecordInitializer">
+    <bean id="activeRecordInitializer" class="org.riotfamily.common.hibernate.ActiveRecordInitializer">
     	<constructor-arg ref="sessionFactory" />
     </bean>
 

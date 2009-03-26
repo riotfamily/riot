@@ -26,11 +26,9 @@ package org.riotfamily.pages.mapping;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.web.mapping.AttributePattern;
-import org.riotfamily.common.web.mapping.UrlResolverContext;
-import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
@@ -57,11 +55,18 @@ public class PageResolver {
 	
 	private PageDao pageDao;
 	
-	private PathCompleter pathCompleter;
+	private PathConverter pathConverter;
 
-	public PageResolver(PageDao pageDao, PathCompleter pathCompleter) {
+	public PageResolver(PageDao pageDao) {
 		this.pageDao = pageDao;
-		this.pathCompleter = pathCompleter;
+	}
+
+	public void setPathConverter(PathConverter pathConverter) {
+		this.pathConverter = pathConverter;
+	}
+	
+	public PathConverter getPathConverter() {
+		return pathConverter;
 	}
 	
 	/**
@@ -122,18 +127,6 @@ public class PageResolver {
 	}
 	
 	/**
-	 * Returns the previously resolved Page for the given context.
-	 * <p>
-	 * <strong>Note:</strong> This method does not perform any lookups itself.
-	 * Only use this method if you are sure that 
-	 * {@link #getPage(HttpServletRequest)} has been invoked before. 
-	 */
-	public static Page getResolvedPage(UrlResolverContext context) {
-		Object page = context.getAttribute(PAGE_ATTRIBUTE);
-		return page != NOT_FOUND ? (Page) page : null;
-	}
-	
-	/**
 	 * Returns the previously resolved Site for the given request.
 	 * <p>
 	 * <strong>Note:</strong> This method does not perform any lookups itself.
@@ -146,18 +139,6 @@ public class PageResolver {
 	}
 	
 	/**
-	 * Returns the previously resolved Site for the given context.
-	 * <p>
-	 * <strong>Note:</strong> This method does not perform any lookups itself.
-	 * Only use this method if you are sure that 
-	 * {@link #getSite(HttpServletRequest)} has been invoked before. 
-	 */
-	public static Site getResolvedSite(UrlResolverContext context) {
-		Object site = context.getAttribute(SITE_ATTRIBUTE);
-		return site != NOT_FOUND ? (Site) site : null; 
-	}
-	
-	/**
 	 * Returns the previously resolved Path within the Site for the given request.
 	 * <p>
 	 * <strong>Note:</strong> This method does not perform any lookups itself.
@@ -166,17 +147,6 @@ public class PageResolver {
 	 */
 	public static String getResolvedPathWithinSite(HttpServletRequest request) {
 		return (String)request.getAttribute(PATH_ATTRIBUTE);
-	}
-
-	/**
-	 * Returns the previously resolved Path within the Site for the given context.
-	 * <p>
-	 * <strong>Note:</strong> This method does not perform any lookups itself.
-	 * Only use this method if you are sure that 
-	 * {@link #getSite(HttpServletRequest)} has been invoked before. 
-	 */
-	public static String getResolvedPathWithinSite(UrlResolverContext context) {
-		return (String)context.getAttribute(PATH_ATTRIBUTE);
 	}
 
 	/**
@@ -199,16 +169,13 @@ public class PageResolver {
 		if (StringUtils.startsWithIgnoreCase(path, contextPath)) {
 			path = path.substring(contextPath.length());
 		}
-		log.debug("Path is '" + path + "'.");
-		
 		if (path == null) {
 			log.warn("The path is null. Can't continue.");
 			return null;
 		}
-
-		path = pathCompleter.stripMapping(path);
-		log.debug("Path is now '" + path + "'.");
-		log.debug("Host is '" + host + "'.");
+		if (pathConverter != null) {
+			path = pathConverter.removeSuffix(path);
+		}
 
 		Site site = pageDao.findSite(host, path);
 		if (site == null) {
@@ -216,7 +183,6 @@ public class PageResolver {
 			site = fallbackSite;
 		}
 		path = site.stripPrefix(path);
-		log.debug("Path is now '" + path + "'.");
 
 		Page page = pageDao.findPage(site, path);
 		if (page == null) {
@@ -236,7 +202,9 @@ public class PageResolver {
 	private Site resolveSite(HttpServletRequest request) {
 		String hostName = request.getServerName();
 		String path = ServletUtils.getPathWithinApplication(request);
-		path = pathCompleter.stripMapping(path);
+		if (pathConverter != null) {
+			path = pathConverter.removeSuffix(path);
+		}
 		Site site = pageDao.findSite(hostName, path);
 		String pathWithinSite = null;
 		if (site != null) {
@@ -261,13 +229,14 @@ public class PageResolver {
 		if (page == null) {
 			page = findWildcardPage(site, path);
 		}
-		if (page == null || !page.isRequestable()
-				|| !pathCompleter.containsMapping(
-						ServletUtils.getPathWithinApplication(request))) {
-			
+		if (page == null || !page.isRequestable() || !suffixMatches(path)) {
 			return null;
 		}
 		return page;
+	}
+	
+	private boolean suffixMatches(String path) {
+		return pathConverter == null || pathConverter.hasSuffix(path);
 	}
 	
 	private Page findWildcardPage(Site site, String urlPath) {

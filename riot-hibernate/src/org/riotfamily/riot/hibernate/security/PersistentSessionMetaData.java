@@ -29,8 +29,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.riotfamily.riot.security.auth.RiotUser;
-import org.riotfamily.riot.security.session.SessionMetaData;
+import org.riotfamily.core.security.auth.RiotUser;
+import org.riotfamily.core.security.session.SessionMetaData;
 
 @Entity
 @Table(name="riot_session_data")

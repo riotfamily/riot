@@ -30,8 +30,8 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.markup.TagWriter;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.components.model.Component;
 
 /**

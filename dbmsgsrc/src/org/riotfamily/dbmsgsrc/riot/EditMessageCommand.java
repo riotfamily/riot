@@ -23,16 +23,20 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.dbmsgsrc.riot;
 
+import org.riotfamily.core.command.CommandContext;
+import org.riotfamily.core.command.Selection;
+import org.riotfamily.core.command.impl.AbstractCommand;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
-import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.core.EditCommand;
 
-public class EditMessageCommand extends EditCommand {
+public abstract class EditMessageCommand extends AbstractCommand {
 
 	@Override
-	public boolean isEnabled(CommandContext context) {
-		Message message = (Message) context.getBean();
+	public boolean isEnabled(CommandContext context, Selection selection) {
+		if (selection.size() != 1) {
+			return false;
+		}
+		Message message = (Message) selection.getSingleObject();
 		return !MessageBundleEntry.C_LOCALE.equals(message.getLocale());
 	}
 	

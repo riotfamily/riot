@@ -8,18 +8,11 @@
 		http://www.riotfamily.org/schema/common/override
 		http://www.riotfamily.org/schema/common/override-8.0.xsd">
 	
-	<override:add ref="listRepository" property="configLocations">
-		<value>classpath:/org/riotfamily/dbmsgsrc/runtime/riot-config.xml</value>
-	</override:add>
-	
 	<override:add ref="formRepository" property="configLocations">
 		<value>classpath:/org/riotfamily/dbmsgsrc/runtime/riot-config.xml</value>
 	</override:add>
-	
-	<override:add ref="editorRepository" property="configLocations">
-		<value>classpath:/org/riotfamily/dbmsgsrc/runtime/riot-config.xml</value>
-	</override:add>
-	
+
+	<!-- 	
 	<bean name="exportMessages" class="org.riotfamily.riot.list.command.export.ExportCommand">
 		<property name="exporter">
 			<bean class="org.riotfamily.dbmsgsrc.riot.MessageEntryExcelExporter" />
@@ -31,7 +24,8 @@
 			<bean class="org.riotfamily.dbmsgsrc.riot.TranslationExcelExporter" />
 		</property>
 	</bean>
-	
+	 -->
+	 
 	<bean name="importMessages" class="org.riotfamily.dbmsgsrc.riot.ImportMessageEntriesCommand">
 		<constructor-arg ref="dbMessageSourceDao" />
 	</bean>
@@ -45,6 +39,7 @@
 	<override:bean ref="messageSource" class="org.riotfamily.dbmsgsrc.support.RiotDbMessageSource">
 		<constructor-arg ref="dbMessageSourceDao" />
 		<constructor-arg ref="transactionManager" />
+		<constructor-arg ref="handlerUrlResolver" />
 		<property name="parentMessageSource">
 			<bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 				<property name="defaultEncoding" value="UTF-8" />

@@ -31,9 +31,9 @@ import java.util.Iterator;
 
 import javax.servlet.ServletContext;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.io.RecursiveFileIterator;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.RiotLog;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;

@@ -1,9 +1,10 @@
 package org.riotfamily.website.hyphenate;
 
-import org.riotfamily.common.log.RiotLog;
 
 import net.davidashen.text.Hyphenator;
 import net.davidashen.util.ErrorHandler;
+
+import org.riotfamily.common.util.RiotLog;
 
 public class RiotLogErrorHandler implements ErrorHandler {
 

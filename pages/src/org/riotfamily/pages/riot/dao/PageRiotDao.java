@@ -28,15 +28,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.riotfamily.core.dao.CutAndPasteEnabledDao;
+import org.riotfamily.core.dao.ListParams;
+import org.riotfamily.core.dao.ParentChildDao;
+import org.riotfamily.core.dao.SwappableItemDao;
+import org.riotfamily.core.dao.TreeDao;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
-import org.riotfamily.riot.dao.ListParams;
-import org.riotfamily.riot.dao.ParentChildDao;
-import org.riotfamily.riot.dao.SwappableItemDao;
-import org.riotfamily.riot.dao.TreeHintDao;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
@@ -45,7 +45,7 @@ import org.springframework.util.Assert;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class PageRiotDao implements ParentChildDao, TreeHintDao, 
+public class PageRiotDao implements ParentChildDao, TreeDao, 
 		SwappableItemDao, CutAndPasteEnabledDao, InitializingBean {
 
 	private PageDao pageDao;
@@ -110,6 +110,10 @@ public class PageRiotDao implements ParentChildDao, TreeHintDao,
 		}
 	}
 
+	public boolean isNode(Object object) {
+		return object instanceof Page;
+	}
+	
 	public boolean hasChildren(Object parent, Object root, ListParams params) {
 		Page page = (Page) parent;
 		if (root != null) {

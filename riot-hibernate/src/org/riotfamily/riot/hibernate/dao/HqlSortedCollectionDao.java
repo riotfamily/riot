@@ -28,9 +28,9 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
-import org.riotfamily.riot.dao.ListParams;
-import org.riotfamily.riot.dao.SwappableItemDao;
-import org.riotfamily.riot.list.support.ListParamsImpl;
+import org.riotfamily.core.dao.ListParams;
+import org.riotfamily.core.dao.SwappableItemDao;
+import org.riotfamily.core.screen.list.ListParamsImpl;
 
 public class HqlSortedCollectionDao extends HqlCollectionDao
 		implements SwappableItemDao {

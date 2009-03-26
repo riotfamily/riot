@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
+import org.riotfamily.core.screen.form.FormUtils;
 import org.riotfamily.forms.BeanEditor;
 import org.riotfamily.forms.CompositeElement;
 import org.riotfamily.forms.Editor;
@@ -35,7 +36,6 @@ import org.riotfamily.forms.factory.FormFactory;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.riot.form.ui.FormUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

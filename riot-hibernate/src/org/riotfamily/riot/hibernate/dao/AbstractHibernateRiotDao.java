@@ -27,8 +27,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
-import org.riotfamily.riot.dao.ListParams;
-import org.riotfamily.riot.dao.RiotDao;
+import org.riotfamily.core.dao.ListParams;
+import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;

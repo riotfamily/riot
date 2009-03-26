@@ -23,28 +23,21 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.dbmsgsrc.riot;
 
-import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
-import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.core.AbstractCommand;
-import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
+import org.riotfamily.core.command.CommandContext;
+import org.riotfamily.core.command.CommandResult;
+import org.riotfamily.core.command.Selection;
+import org.riotfamily.core.command.impl.AbstractCommand;
+import org.riotfamily.core.command.result.RefreshSiblingsResult;
 
 public class RemoveEmptyEntriesCommand extends AbstractCommand {
 
-	private DbMessageSourceDao dao;
-
-	public RemoveEmptyEntriesCommand(DbMessageSourceDao dao) {
-		this.dao = dao;
-	}
-
-	@Override
-	public String getStyleClass() {
+	protected String getStyleClass(CommandContext context) {
 		return "delete";
 	}
 	
-	public CommandResult execute(CommandContext context) {
-		String bundle = ((MessageBundleEntryDao) context.getDao()).getBundle();
-		dao.removeEmptyEntries(bundle);
+	public CommandResult execute(CommandContext context, Selection selection) {
+		//String bundle = ((MessageBundleEntryDao) context.getDao()).getBundle();
+		//dao.removeEmptyEntries(bundle);
 		return new RefreshSiblingsResult();
 	}
 }

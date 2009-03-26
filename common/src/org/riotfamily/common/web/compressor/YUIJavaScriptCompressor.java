@@ -29,9 +29,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import org.riotfamily.common.log.RiotLog;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
+import org.riotfamily.common.util.RiotLog;
 import org.springframework.util.FileCopyUtils;
 
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;

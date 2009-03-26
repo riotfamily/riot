@@ -26,7 +26,7 @@ package org.riotfamily.riot.job;
 import java.util.Date;
 import java.util.Map;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.riot.job.dao.JobDao;
 import org.riotfamily.riot.job.model.JobDetail;

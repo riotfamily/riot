@@ -34,8 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.DHTMLElement;
 import org.riotfamily.forms.Element;
@@ -141,7 +141,11 @@ public class AjaxResponse implements FormListener {
 	}
 	
 	public void alert(String message) {
-		json.add(new Action("eval", null, "alert('" + message + "');"));
+		eval("alert('" + message + "');");
+	}
+	
+	public void eval(String script) {
+		json.add(new Action("eval", null, script));
 	}
 	
 	private void renderPropagations() {

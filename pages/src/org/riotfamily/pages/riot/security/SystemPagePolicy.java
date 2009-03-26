@@ -23,10 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.security;
 
+import org.riotfamily.core.command.CommandContext;
+import org.riotfamily.core.security.auth.RiotUser;
+import org.riotfamily.core.security.policy.ReflectionPolicy;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.security.auth.RiotUser;
-import org.riotfamily.riot.security.policy.ReflectionPolicy;
 
 public class SystemPagePolicy extends ReflectionPolicy {
 	

@@ -10,11 +10,11 @@ import javax.persistence.Table;
 
 import org.hibernate.Query;
 import org.hibernate.annotations.AccessType;
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.hibernate.ActiveRecord;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.crawler.Href;
 import org.riotfamily.crawler.PageData;
-import org.riotfamily.riot.hibernate.domain.ActiveRecord;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 

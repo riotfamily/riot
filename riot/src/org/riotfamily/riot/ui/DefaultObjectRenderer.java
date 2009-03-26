@@ -31,8 +31,6 @@ import org.riotfamily.common.web.ui.DateRenderer;
 import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.RenderContext;
 import org.riotfamily.common.web.ui.StringRenderer;
-import org.riotfamily.riot.runtime.RiotRuntime;
-import org.riotfamily.riot.runtime.RiotRuntimeAware;
 
 /**
  * Default ObjectRenderer with special handling for Boolean, Date, and 
@@ -41,19 +39,21 @@ import org.riotfamily.riot.runtime.RiotRuntimeAware;
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 8.0
  */
-public class DefaultObjectRenderer implements ObjectRenderer, RiotRuntimeAware {
+public class DefaultObjectRenderer implements ObjectRenderer {
 
-	private CssClassRenderer booleanRenderer = new CssClassRenderer();
+	private CssClassRenderer booleanRenderer;
 	
-	private DateRenderer dateRenderer = new DateRenderer();
+	private DateRenderer dateRenderer;
 	
-	private LocaleRenderer localeRenderer = new LocaleRenderer();
+	private LocaleRenderer localeRenderer;
 	
-	private StringRenderer defaultRenderer = new StringRenderer();
+	private StringRenderer defaultRenderer;
 
-
-	public void setRiotRuntime(RiotRuntime runtime) {
-		localeRenderer.setRiotRuntime(runtime);
+	public DefaultObjectRenderer(String resourcePath) {
+		booleanRenderer = new CssClassRenderer();
+		dateRenderer = new DateRenderer();
+		localeRenderer = new LocaleRenderer(resourcePath);
+		defaultRenderer = new StringRenderer();
 	}
 	
 	public void render(Object obj, RenderContext context, PrintWriter writer) {

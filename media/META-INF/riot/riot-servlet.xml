@@ -23,7 +23,7 @@
 	</override:put>
 		
 	<override:add ref="resourceMappings" append="true">			
-		<bean class="org.riotfamily.riot.resource.ResourceMapping">
+		<bean class="org.riotfamily.core.resource.ResourceMapping">
 			<property name="path" value="/" />
 			<property name="location" value="classpath:/org/riotfamily/media/runtime/resources/" />
 		</bean>

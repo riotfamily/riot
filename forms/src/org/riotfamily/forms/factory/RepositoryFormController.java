@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.controller.AjaxFormController;
+import org.riotfamily.forms.controller.FormContextFactory;
 
 
 
@@ -43,7 +44,11 @@ public abstract class RepositoryFormController extends AjaxFormController {
 	
 	private String formIdParam = DEFAULT_FORM_ID_PARAM;
 	
-	public RepositoryFormController(FormRepository formRepository) {
+	
+	public RepositoryFormController(FormContextFactory formContextFactory,
+			FormRepository formRepository) {
+		
+		super(formContextFactory);
 		this.formRepository = formRepository;
 	}
 	

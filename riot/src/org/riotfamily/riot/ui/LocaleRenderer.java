@@ -9,6 +9,10 @@ import org.springframework.util.StringUtils;
 
 public class LocaleRenderer extends CountryFlagRenderer {
 
+	public LocaleRenderer(String resourcePath) {
+		super(resourcePath);
+	}
+
 	public void render(Object obj, RenderContext context, PrintWriter writer) {
 		if (obj instanceof Locale) {
 			TagWriter span = new TagWriter(writer).start("span")

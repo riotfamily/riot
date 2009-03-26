@@ -26,11 +26,10 @@ package org.riotfamily.riot.job.command;
 import java.util.Map;
 
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.core.AbstractCommand;
-import org.riotfamily.riot.list.command.result.GotoUrlResult;
+import org.riotfamily.core.command.CommandContext;
+import org.riotfamily.core.command.CommandResult;
+import org.riotfamily.core.command.Selection;
+import org.riotfamily.core.command.impl.AbstractCommand;
 
 public class JobCommand extends AbstractCommand {
 
@@ -40,16 +39,24 @@ public class JobCommand extends AbstractCommand {
 		this.jobType = jobType;
 	}
 	
-	public CommandResult execute(CommandContext context) {
-		String objectId = context.getObjectId() != null
-				? context.getObjectId() : context.getParentId();
+	@Override
+	protected String getAction(CommandContext context) {
+		return jobType;
+	}
+	
+	public CommandResult execute(CommandContext context, Selection selection) {
+		String objectId = selection.getSingleObjectId() != null
+				? selection.getSingleObjectId() 
+				: context.getListState().getParentId();
 
 		Map<String, String> attributes = Generics.newHashMap();
 		attributes.put("type", jobType);
 		attributes.put("objectId", objectId);
-		String url = getRuntime().getUrlForHandler("jobUIController", attributes);
-		
+		//String url = getRuntime().getUrlForHandler("jobUIController", attributes);
+		/*
 		return new GotoUrlResult(context, ServletUtils.addParameter(url, 
 				"title", getLabel(context.getMessageResolver())));
+		*/
+		return null;
 	}
 }

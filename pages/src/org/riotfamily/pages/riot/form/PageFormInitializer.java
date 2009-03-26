@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.riot.form;
 
+import org.riotfamily.core.screen.form.FormUtils;
 import org.riotfamily.forms.Form;
 import org.riotfamily.forms.FormInitializer;
 import org.riotfamily.forms.element.NestedForm;
@@ -31,7 +32,6 @@ import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.setup.PageTypeHierarchy;
-import org.riotfamily.riot.form.ui.FormUtils;
 
 /**
  * FormInitializer that imports form fields defined in content-forms.xml.

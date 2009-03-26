@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.util;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
@@ -269,9 +270,9 @@ public final class ServletUtils {
 	public static String addServletMapping(String path, 
 			HttpServletRequest request) {
 		
-		String suffix = getServletPrefix(request);
+		String suffix = getServletSuffix(request);
 		if (suffix.length() > 0) {
-			return path + suffix;
+			path += suffix;
 		}
 		return getServletPrefix(request) + path;
 	}
@@ -349,6 +350,40 @@ public final class ServletUtils {
 		StringBuffer sb = getAbsoluteUrlPrefix(request);
 		sb.append(resolveUrl(url, request));
 		return sb.toString();
+	}
+
+	public static void sendRedirect(HttpServletRequest request, 
+			HttpServletResponse response, String location)
+			throws IOException {
+
+		location = response.encodeRedirectURL(location);
+		if (isHttp10(request)) {
+			// HTTP 1.0 only supports 302.
+			response.sendRedirect(location);
+		}
+		else {
+			// Correct HTTP status code is 303, in particular for POST requests.
+			response.setStatus(303);
+			response.setHeader("Location", location);
+		}
+	}
+
+	public static boolean isHttp10(HttpServletRequest request) {
+		return "HTTP/1.0".equals(request.getProtocol());
+	}
+	
+	public static void resolveAndRedirect(HttpServletRequest request,
+			HttpServletResponse response, String location)
+			throws IOException {
+		
+		sendRedirect(request, response, resolveUrl(location, request));
+	}
+	
+	public static void sendPermanentRedirect(HttpServletResponse response, 
+			String location) throws IOException {
+
+		response.setStatus(301);
+		response.setHeader("Location", response.encodeRedirectURL(location));
 	}
 	
 	@SuppressWarnings("unchecked")

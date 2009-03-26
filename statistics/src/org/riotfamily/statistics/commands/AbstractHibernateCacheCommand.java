@@ -2,10 +2,11 @@ package org.riotfamily.statistics.commands;
 
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.util.SpringUtils;
-import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.core.AbstractCommand;
-import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
+import org.riotfamily.core.command.CommandContext;
+import org.riotfamily.core.command.CommandResult;
+import org.riotfamily.core.command.Selection;
+import org.riotfamily.core.command.impl.AbstractCommand;
+import org.riotfamily.core.command.result.RefreshSiblingsResult;
 
 public abstract class AbstractHibernateCacheCommand extends AbstractCommand {
 
@@ -19,12 +20,12 @@ public abstract class AbstractHibernateCacheCommand extends AbstractCommand {
 		return sessionFactory;
 	}
 	
-	public CommandResult execute(CommandContext context) {
-		doExecute(context);
+	public CommandResult execute(CommandContext context, Selection selection) {
+		doExecute(context, selection);
 		return new RefreshSiblingsResult(context);
 	}
 	
-	protected abstract void doExecute(CommandContext context);
+	protected abstract void doExecute(CommandContext context, Selection selection);
 
 	protected void clearCache(String entityPrefix, boolean inverse) {
 		String[] entityNames = sessionFactory.getStatistics().getEntityNames();

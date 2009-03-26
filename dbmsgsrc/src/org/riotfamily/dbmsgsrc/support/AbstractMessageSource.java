@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.RiotLog;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceResolvable;

@@ -169,22 +169,22 @@
 <#---
   - Returns the path for the given handlerName. 
   -->
-<#function pathForHandler handlerName attributes={} prefix="">
-	<#return commonMacroHelper.getUrlForHandler(handlerName, attributes, prefix) />
+<#function pathForHandler handlerName attributes={}>
+	<#return commonMacroHelper.getUrlForHandler(handlerName, attributes) />
 </#function>
 
 <#---
   - Returns the URL for the given handlerName. 
   -->
-<#function urlForHandler handlerName attributes={} prefix="">
-	<#return url(pathForHandler(handlerName, attributes, prefix)) />
+<#function urlForHandler handlerName attributes={}>
+	<#return url(pathForHandler(handlerName, attributes)) />
 </#function>
 
 <#---
   - Returns the absolute URL for the given handlerName. 
   -->
-<#function absoluteUrlForHandler handlerName attributes={} prefix="">
-	<#return absoluteUrl(pathForHandler(handlerName, attributes, prefix)) />
+<#function absoluteUrlForHandler handlerName attributes={}>
+	<#return absoluteUrl(pathForHandler(handlerName, attributes)) />
 </#function>
 
 <#---

@@ -31,7 +31,8 @@ import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
+
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

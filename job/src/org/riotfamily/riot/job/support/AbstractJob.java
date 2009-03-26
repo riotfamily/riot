@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.riot.job.support;
 
-import org.riotfamily.riot.dao.RiotDao;
+import org.riotfamily.core.dao.RiotDao;
 import org.riotfamily.riot.job.Job;
 import org.riotfamily.riot.job.JobContext;
 import org.riotfamily.riot.job.JobCreationException;

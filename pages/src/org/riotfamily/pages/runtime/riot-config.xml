@@ -21,66 +21,6 @@
 		http://www.riotfamily.org/schema/components/form-elements
 		http://www.riotfamily.org/schema/components/form-elements-8.0.xsd">
 
-	<ed:list id="localContent" list-ref="site-chooser" icon="world">
-		<ed:tree id="sitemap" list-ref="pages" icon="sitemap">
-			<ed:form id="page" form-ref="page" />
-		</ed:tree>
-	</ed:list>
-	
-	<ed:group name="systemPreferences" icon="tools">
-		<ed:list id="manageSites" list-ref="sites" icon="world">
-			<ed:form form-ref="site">
-				<ed:form form-ref="siteProperties" />
-			</ed:form>
-		</ed:list>
-	</ed:group>
-
-	<list:list id="site-chooser" label-property="name">
-		<list:dao ref="siteRiotDao" />
-		<list:columns>
-			<list:column property="locale" renderer="org.riotfamily.riot.ui.CountryFlagRenderer" />
-			<list:column property="name" />
-			<list:command id="edit" />
-		</list:columns>
-	</list:list>
-	
-	<list:list id="sites" label-property="name">
-		<list:dao ref="siteRiotDao" />
-		<list:columns>
-			<list:column property="locale" renderer="org.riotfamily.riot.ui.CountryFlagRenderer" />
-			<list:column property="name" />
-			<list:column property="enabled" />
-			<list:command id="edit" />
-			<list:command id="stepInto" />
-			<list:command id="moveUp" />
-			<list:command id="moveDown" />
-			<list:command id="delete" />
-			<list:command id="gotoSite" />
-		</list:columns>
-		<list:command id="add" />
-	</list:list>
-	
-	<list:list id="pages">
-		<list:dao ref="pageRiotDao" />
-		<list:columns>
-			<list:column property="title" />
-			<list:column property="pathComponent" />
-			<list:column renderer="org.riotfamily.pages.riot.ui.PublishStatusRenderer" />
-			<list:command id="editPage" />
-			<list:command id="translatePage" />
-			<list:command id="publishPage" />
-			<list:command id="discardPage" />
-			<list:command id="unpublishPage" />
-			<list:command id="deletePage" />
-			<list:command id="moveUpPage" />
-			<list:command id="moveDownPage" />
-			<list:command id="cutPage" />
-			<list:command id="gotoPage" />
-		</list:columns>
-		<list:command id="add"/>
-		<list:command id="pastePage" />
-	</list:list>
-	
 	<form:form id="site" bean-class="org.riotfamily.pages.model.Site">
 		<form:group label-key="site.general">
 			<form:textfield bind="name" max-length="255" />

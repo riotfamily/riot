@@ -26,7 +26,7 @@ package org.riotfamily.website.freemarker;
 import java.io.File;
 import java.io.IOException;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.web.view.freemarker.RiotFreeMarkerConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.ui.freemarker.SpringTemplateLoader;

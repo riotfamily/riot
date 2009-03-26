@@ -1,0 +1,17 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:override="http://www.riotfamily.org/schema/common/override"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.riotfamily.org/schema/common/override
+		http://www.riotfamily.org/schema/common/override-8.0.xsd">
+
+	<override:properties ref="freemarkerConfig">
+		<property name="exceptionHandler">
+			<bean class="org.riotfamily.core.view.RiotTemplateExceptionHandler" />
+		</property>
+	</override:properties>
+		
+</beans>

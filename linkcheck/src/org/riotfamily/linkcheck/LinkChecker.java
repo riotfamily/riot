@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.crawler.Href;
 import org.riotfamily.crawler.LinkExtractor;
 import org.riotfamily.crawler.PageData;

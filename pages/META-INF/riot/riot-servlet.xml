@@ -24,11 +24,11 @@
 	<!-- Overrides -->
 
 	<override:bean ref="componentFormController" class="org.riotfamily.pages.riot.form.PagePropertiesFormController">
+		<constructor-arg ref="formContextFactory" />
 		<constructor-arg ref="contentFormRepository" />
 		<constructor-arg ref="transactionManager" />
 		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="cacheService" />
-		<property name="formContextFactory" ref="formContextFactory" />
 	</override:bean>
 	
 	<override:add ref="messageBasenames" append="true">
@@ -39,20 +39,22 @@
 		<value>style/riot-pages.css</value>
 	</override:add>
 	
-	<override:add ref="listRepository" property="configLocations">
+	<override:add ref="formRepository" property="configLocations" append="true">
 		<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
 	</override:add>
 	
-	<override:add ref="formRepository" property="configLocations" append="true">
+	<!-- 
+	<override:add ref="listRepository" property="configLocations">
 		<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
 	</override:add>
 	
 	<override:add ref="editorRepository" property="configLocations">
 		<value>classpath:/org/riotfamily/pages/runtime/riot-config.xml</value>
 	</override:add>
-
+ 	-->
+ 	
 	<override:add ref="resourceMappings" append="true">			
-		<bean class="org.riotfamily.riot.resource.ResourceMapping">
+		<bean class="org.riotfamily.core.resource.ResourceMapping">
 			<property name="path" value="/" />
 			<property name="location" value="classpath:/org/riotfamily/pages/runtime/resources/" />
 		</bean>
@@ -76,55 +78,6 @@
 		<constructor-arg ref="pageDao" />
 	</bean>
 	
-	<!-- Page Commands -->
-
-	<bean id="publishPageCommand" class="org.riotfamily.pages.riot.command.PublishPageCommand">
-		<constructor-arg ref="pageDao" />
-	</bean>
-	
-	<bean id="discardPageCommand" class="org.riotfamily.pages.riot.command.DiscardPageCommand">
-		<constructor-arg ref="pageDao" />
-	</bean>
-	
-	<bean id="unpublishPageCommand" class="org.riotfamily.pages.riot.command.UnpublishPageCommand">
-		<constructor-arg ref="pageDao" />
-	</bean>
-
-	<bean id="deletePageCommand" class="org.riotfamily.pages.riot.command.DeletePageCommand">
-		<constructor-arg ref="pageDao" />
-	</bean>
-
-	<bean id="moveUpPageCommand" class="org.riotfamily.pages.riot.command.SwapPageCommand">
-		<property name="swapWith" value="-1" />
-	</bean>
-
-	<bean id="moveDownPageCommand" class="org.riotfamily.pages.riot.command.SwapPageCommand">
-		<property name="swapWith" value="1" />
-	</bean>
-
-	<bean id="cutPageCommand" class="org.riotfamily.pages.riot.command.CutPageCommand" />
-
-	<bean id="editPageCommand" class="org.riotfamily.pages.riot.command.EditPageCommand" />
-	
-	<bean id="translatePageCommand" class="org.riotfamily.pages.riot.command.TranslatePageCommand">
-		<constructor-arg ref="pageDao" />
-	</bean>
-
-	<bean id="gotoPageCommand" class="org.riotfamily.pages.riot.command.GotoPageCommand">
-		<constructor-arg ref="pathCompleter" />
-		<property name="windowName" value="preview" />
-	</bean>
-
-	<bean id="showChildPagesCommand" class="org.riotfamily.pages.riot.command.ShowChildPagesCommand" />
-
-	<bean id="pastePageCommand" class="org.riotfamily.pages.riot.command.PastePageCommand">
-		<constructor-arg ref="pageDao" />
-	</bean>
-
-	<bean id="gotoSiteCommand" class="org.riotfamily.pages.riot.command.GotoSiteCommand">
-		<property name="windowName" value="preview" />
-	</bean>
-	
 	<!-- Policies -->
 	
 	<bean id="siteUserPolicy" class="org.riotfamily.pages.riot.security.SiteUserPolicy">
@@ -138,7 +91,125 @@
 	<bean id="siteObjectWrapperPlugin" class="org.riotfamily.pages.view.SiteObjectWrapperPlugin" />
 	
 	<bean id="pageObjectWrapperPlugin" class="org.riotfamily.pages.view.PageObjectWrapperPlugin">
-		<property name="pathCompleter" ref="pathCompleter" />
+		<property name="pathConverter" ref="pathConverter" />
 	</bean>
+	
+	<bean id="sitemap" class="org.riotfamily.core.screen.list.ListScreen">
+		<property name="dao" ref="pageRiotDao" />
+		<property name="columns">
+			<list>
+				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
+					<property name="property" value="title" />
+				</bean>
+				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
+					<property name="property" value="pathComponent" />
+				</bean>
+				<!-- 
+				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
+					<property name="renderer">
+						<bean class="org.riotfamily.pages.riot.ui.PublishStatusRenderer" />
+					</property>
+				</bean>
+				 -->
+			</list>
+		</property>
+		<property name="commands">
+			<list>
+				<bean class="org.riotfamily.core.command.impl.EditCommand" />
+				<bean class="org.riotfamily.core.command.impl.AddCommand" />
+			</list>
+		</property>
+		<property name="itemScreen">
+			<bean id="page" class="org.riotfamily.core.screen.form.FormScreen" autowire="constructor" />
+		</property>
+	</bean>
+	
+	<bean id="localContent" class="org.riotfamily.core.screen.list.ListScreen">
+		<property name="dao">
+			<bean class="org.riotfamily.riot.hibernate.dao.HqlDao" autowire="constructor">
+				<property name="entityClass" value="org.riotfamily.example.petstore.Pet" />
+			</bean>
+		</property>
+		<property name="columns">
+			<list>
+				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
+					<property name="property" value="locale" />
+				</bean>
+				<bean class="org.riotfamily.core.screen.list.ColumnConfig">
+					<property name="property" value="name" />
+				</bean>
+			</list>
+		</property>
+		<property name="commands">
+			<list>
+				<bean class="org.riotfamily.core.command.impl.EditCommand" />
+			</list>
+		</property>
+		<property name="itemScreen">
+			<bean id="localSitemap" parent="sitemap" />
+		</property>
+	</bean>
+	
+	<!-- 
+	<ed:list id="localContent" list-ref="site-chooser" icon="world">
+		<ed:tree id="sitemap" list-ref="pages" icon="sitemap">
+			<ed:form id="page" form-ref="page" />
+		</ed:tree>
+	</ed:list>
+	
+	<ed:group name="systemPreferences" icon="tools">
+		<ed:list id="manageSites" list-ref="sites" icon="world">
+			<ed:form form-ref="site">
+				<ed:form form-ref="siteProperties" />
+			</ed:form>
+		</ed:list>
+	</ed:group>
+
+	<list:list id="site-chooser" label-property="name">
+		<list:dao ref="siteRiotDao" />
+		<list:columns>
+			<list:column property="locale" renderer="countryFlagRenderer" />
+			<list:column property="name" />
+			<list:command id="edit" />
+		</list:columns>
+	</list:list>
+	
+	<list:list id="sites" label-property="name">
+		<list:dao ref="siteRiotDao" />
+		<list:columns>
+			<list:column property="locale" renderer="countryFlagRenderer" />
+			<list:column property="name" />
+			<list:column property="enabled" />
+			<list:command id="edit" />
+			<list:command id="stepInto" />
+			<list:command id="moveUp" />
+			<list:command id="moveDown" />
+			<list:command id="delete" />
+			<list:command id="gotoSite" />
+		</list:columns>
+		<list:command id="add" />
+	</list:list>
+	
+	<list:list id="pages">
+		<list:dao ref="pageRiotDao" />
+		<list:columns>
+			<list:column property="title" />
+			<list:column property="pathComponent" />
+			<list:column renderer="org.riotfamily.pages.riot.ui.PublishStatusRenderer" />
+			<list:command id="editPage" />
+			<list:command id="translatePage" />
+			<list:command id="publishPage" />
+			<list:command id="discardPage" />
+			<list:command id="unpublishPage" />
+			<list:command id="deletePage" />
+			<list:command id="moveUpPage" />
+			<list:command id="moveDownPage" />
+			<list:command id="cutPage" />
+			<list:command id="gotoPage" />
+		</list:columns>
+		<list:command id="add"/>
+		<list:command id="pastePage" />
+	</list:list>
+	-->
 	
 </beans>

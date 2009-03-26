@@ -36,8 +36,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.io.IOUtils;
+import org.riotfamily.common.util.RiotLog;
 
 /**
  * The Cachius cache.

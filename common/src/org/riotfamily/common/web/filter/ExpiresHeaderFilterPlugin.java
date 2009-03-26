@@ -24,15 +24,14 @@
 package org.riotfamily.common.web.filter;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.web.util.ServletUtils;
 
 /**
@@ -54,27 +53,27 @@ public class ExpiresHeaderFilterPlugin extends FilterPlugin {
 	
 	public static final String DEFAULT_EXPIRATION = "10Y";
 
-	public static final Pattern DEFAULT_PATTERN =
-			Pattern.compile("(^.*/\\d{14}/.+$)|(^.+[?&][0-9]+$)");
-
 	private static final String EXPIRES_HEADER = "Expires";
-
-	private Pattern stampPattern = DEFAULT_PATTERN;
 
 	private String expiresAfter = DEFAULT_EXPIRATION;
 
 	private long expires;
+	
+	private ResourceStamper stamper;
 
 	public void setExpiresAfter(String expiresAfter) {
 		this.expiresAfter = expiresAfter;
 	}
-
-	public void setStampPattern(Pattern stampPattern) {
-		this.stampPattern = stampPattern;
+	
+	public void setStamper(ResourceStamper stamper) {
+		this.stamper = stamper;
 	}
 
 	@Override
 	protected void initPlugin() {
+		if (stamper == null) {
+			stamper = new ResourceStamper();
+		}
 		expires = System.currentTimeMillis()
 				+ FormatUtils.parseMillis(expiresAfter);
 	}
@@ -96,6 +95,6 @@ public class ExpiresHeaderFilterPlugin extends FilterPlugin {
 	
 	protected boolean isStamped(HttpServletRequest request) {
 		String url = ServletUtils.getRequestUrlWithQueryString(request);
-		return stampPattern.matcher(url).matches();
+		return stamper.isStamped(url);
 	}
 }

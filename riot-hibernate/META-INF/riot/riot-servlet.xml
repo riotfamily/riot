@@ -32,24 +32,15 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</override:bean>
 	
-	
 	<override:add ref="messageBasenames" append="true">
 		<value>classpath:/org/riotfamily/riot/hibernate/runtime/i18n/messages</value>
-	</override:add>
-	
-	<override:add ref="listRepository" property="configLocations">
-		<value>classpath:/org/riotfamily/riot/hibernate/runtime/riot-config.xml</value>
 	</override:add>
 	
 	<override:add ref="formRepository" property="configLocations">
 		<value>classpath:/org/riotfamily/riot/hibernate/runtime/riot-config.xml</value>
 	</override:add>
-	
-	<override:add ref="editorRepository" property="configLocations">
-		<value>classpath:/org/riotfamily/riot/hibernate/runtime/riot-config.xml</value>
-	</override:add>
-	
-	<override:add ref="handlerMapping" property="interceptors">
+		
+	<override:add ref="handlerInterceptors">
 		<bean class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
 			<property name="sessionFactory" ref="sessionFactory" />
 		</bean>

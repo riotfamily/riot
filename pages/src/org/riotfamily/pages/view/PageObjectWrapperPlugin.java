@@ -23,11 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.view;
 
-import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.common.web.util.RequestHolder;
 import org.riotfamily.common.web.view.freemarker.FacadeTemplateModel;
 import org.riotfamily.common.web.view.freemarker.ObjectWrapperPlugin;
 import org.riotfamily.common.web.view.freemarker.PluginObjectWrapper;
+import org.riotfamily.pages.mapping.PathConverter;
 import org.riotfamily.pages.model.Page;
 
 import freemarker.template.TemplateModel;
@@ -39,10 +39,10 @@ import freemarker.template.TemplateModelException;
  */
 public class PageObjectWrapperPlugin implements ObjectWrapperPlugin {
 
-	private PathCompleter pathCompleter;
+	private PathConverter pathConverter;
 
-	public void setPathCompleter(PathCompleter pathCompleter) {
-		this.pathCompleter = pathCompleter;
+	public void setPathConverter(PathConverter pathConverter) {
+		this.pathConverter = pathConverter;
 	}
 
 	public boolean supports(Object obj) {
@@ -54,7 +54,7 @@ public class PageObjectWrapperPlugin implements ObjectWrapperPlugin {
 			throws TemplateModelException {
 		
 		Page page = (Page) obj;
-		PageFacade facade = new PageFacade(page, RequestHolder.getRequest(), pathCompleter);
+		PageFacade facade = new PageFacade(page, RequestHolder.getRequest(), pathConverter);
 		return new FacadeTemplateModel(facade, page, wrapper);
 	}
 

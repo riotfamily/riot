@@ -32,8 +32,8 @@ import org.hibernate.EntityMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.riotfamily.common.collection.TypeComparatorUtils;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.RiotLog;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

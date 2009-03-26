@@ -28,10 +28,10 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.core.security.AccessController;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.options.OptionsModel;
 import org.riotfamily.forms.options.OptionsModelUtils;
-import org.riotfamily.riot.security.AccessController;
 
 /**
  * @author Jan-Frederic Linde [jfl at neteye dot de]

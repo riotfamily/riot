@@ -24,6 +24,7 @@
 package org.riotfamily.forms;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,18 +34,22 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.markup.DocumentWriter;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.forms.event.Button;
 import org.riotfamily.forms.event.ClickEvent;
 import org.riotfamily.forms.event.ClickListener;
+import org.riotfamily.forms.event.EventPropagation;
+import org.riotfamily.forms.event.JavaScriptEventAdapter;
 import org.riotfamily.forms.request.FormRequest;
 import org.riotfamily.forms.request.HttpFormRequest;
 import org.riotfamily.forms.resource.FormResource;
 import org.riotfamily.forms.resource.LoadingCodeGenerator;
 import org.riotfamily.forms.resource.ResourceElement;
+import org.riotfamily.forms.resource.Resources;
+import org.riotfamily.forms.resource.ScriptResource;
 import org.springframework.util.Assert;
 import org.springframework.validation.Validator;
 
@@ -157,8 +162,9 @@ public class Form implements BeanEditor {
 		renderModel.put(key,value);
 	}
 
-	public Object getAttribute(String key) {
-		return renderModel.get(key);
+	@SuppressWarnings("unchecked")
+	public<T> T getAttribute(String key) {
+		return (T) renderModel.get(key);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -219,17 +225,21 @@ public class Form implements BeanEditor {
 		addElement(element);
 	}
 	
-	public void addButton(String name) {
-		Button button = new Button();
-		button.setSubmit(true);
-		button.setParamName(name);
-		button.setLabelKey("label.form.button." + name);
+	public void addButton(Button button) {
 		button.addClickListener(new ClickListener() {
 			public void clicked(ClickEvent event) {
 				clickedButton = event.getSource().getParamName();
 			}
 		});
-		buttons.addElement(button);
+		buttons.addElement(button);	
+	}
+	
+	public void addButton(String name) {
+		Button button = new Button();
+		button.setSubmit(true);
+		button.setParamName(name);
+		button.setLabelKey("label.form.button." + name);
+		addButton(button);
 	}
 	
 	public String getClickedButton() {
@@ -349,6 +359,30 @@ public class Form implements BeanEditor {
 		formContext.getTemplateRenderer().render(
 				template, renderModel, writer);
 
+		writer.print("<script>");
+		ArrayList<EventPropagation> propagations = new ArrayList<EventPropagation>();
+		for (Element element : getRegisteredElements()) { 
+			if (element instanceof JavaScriptEventAdapter) {
+				JavaScriptEventAdapter adapter = (JavaScriptEventAdapter) element;
+				EventPropagation.addPropagations(adapter, propagations);
+			}
+		}
+		
+		if (!propagations.isEmpty()) {
+			writer.print("Resources.waitFor('propagate', function() {");
+			for (EventPropagation p : propagations) { 
+				writer.print("propagate('");
+				writer.print(p.getTriggerId());
+				writer.print("', '");
+				writer.print(p.getType());
+				writer.print("', '");
+				writer.print(p.getSourceId());
+				writer.print("');\n");
+			}
+			writer.print("});");
+		}
+		writer.print("</script>");
+		
 		rendering = false;
 	}
 
@@ -402,6 +436,9 @@ public class Form implements BeanEditor {
 	}
 
 	public void init() {
+		addResource(new ScriptResource("form/ajax.js", "propagate", 
+				Resources.RIOT_EFFECTS));
+		
 		if (initializer != null) {
 			initializer.initForm(this);
 		}

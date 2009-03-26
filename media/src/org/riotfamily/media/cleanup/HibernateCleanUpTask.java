@@ -28,16 +28,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.riotfamily.common.log.RiotLog;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
+import org.riotfamily.common.scheduling.LongConversationTask;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.media.model.RiotFile;
 import org.riotfamily.media.store.FileStore;
-import org.riotfamily.riot.hibernate.support.LongConversationTask;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;

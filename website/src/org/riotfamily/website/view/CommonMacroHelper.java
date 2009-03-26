@@ -44,9 +44,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.beans.PropertyUtils;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.web.collaboration.SharedProperties;
 import org.riotfamily.common.web.filter.ResourceStamper;
 import org.riotfamily.common.web.mapping.HandlerUrlResolver;
@@ -212,11 +212,8 @@ public class CommonMacroHelper {
 				.append(request.getContextPath()).append(url).toString();
 	}
 
-	public String getUrlForHandler(String handlerName, 
-			Object attributes, String prefix) {
-		
-		return handlerUrlResolver.getUrlForHandler(request, handlerName, 
-				attributes, prefix);
+	public String getUrlForHandler(String handlerName, Object attributes) {
+		return handlerUrlResolver.getUrlForHandler(request, handlerName, attributes);
 	}
 
 	public String getOriginatingRequestUri() {

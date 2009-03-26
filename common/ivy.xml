@@ -16,8 +16,9 @@
         <dependency org="apache" name="commons-logging" rev="${dep.commons-logging.revision}" conf="build,runtime->default" />
         <dependency org="springframework" name="spring" rev="${dep.spring.revision}" conf="build->default;runtime->webmvc,mail,aop;src->webmvc-src" />
 		<dependency org="freemarker" name="freemarker" rev="${dep.freemarker.revision}" conf="src->src;%->default" />
+		<dependency org="hibernate" name="hibernate" rev="${dep.hibernate.revision}" conf="build->core;src->src" />
+		<dependency org="hibernate" name="hibernate-annotations" rev="${dep.hibernate-annotations.revision}" conf="build->default" />
 		<dependency org="json" name="json-lib" rev="${dep.json-lib.revision}" conf="src->src;build,runtime->default" />
-		<dependency org="getahead" name="dwr" rev="2.0.5" conf="src->src;build,runtime->default" />
 		<dependency org="sun" name="jaf" rev="1.1" conf="build,runtime->default" />
 		<dependency org="sun" name="javamail" rev="1.4" conf="build,runtime->default" />
 		<dependency org="yahoo" name="yuicompressor" rev="2.2.5" conf="build,runtime->default" />

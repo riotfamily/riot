@@ -31,8 +31,8 @@ import java.util.Map.Entry;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.xml.BeanConfigurationWatcher;
 import org.riotfamily.common.xml.ConfigurableBean;
 import org.riotfamily.common.xml.ConfigurationEventListener;

@@ -25,7 +25,7 @@ package org.riotfamily.forms.fileupload;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;

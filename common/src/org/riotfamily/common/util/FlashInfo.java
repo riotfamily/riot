@@ -11,7 +11,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-import org.riotfamily.common.log.RiotLog;
+
 
 /**
  * @author brooks

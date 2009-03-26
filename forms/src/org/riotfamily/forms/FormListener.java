@@ -46,4 +46,7 @@ public interface FormListener {
 	public void elementEnabled(Element element);	
 	
 	public void refresh(Element element);
+	
+	public void eval(String script);
+
 }

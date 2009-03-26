@@ -1,11 +1,13 @@
 package org.riotfamily.statistics.commands;
 
-import org.riotfamily.riot.list.command.CommandContext;
-import org.riotfamily.riot.list.command.CommandResult;
-import org.riotfamily.riot.list.command.core.AbstractCommand;
-import org.riotfamily.riot.list.command.result.BatchResult;
-import org.riotfamily.riot.list.command.result.RefreshListCommandsResult;
-import org.riotfamily.riot.list.command.result.RefreshSiblingsResult;
+import org.riotfamily.core.command.CommandContext;
+import org.riotfamily.core.command.CommandInfo;
+import org.riotfamily.core.command.CommandResult;
+import org.riotfamily.core.command.Selection;
+import org.riotfamily.core.command.impl.AbstractCommand;
+import org.riotfamily.core.command.result.BatchResult;
+import org.riotfamily.core.command.result.RefreshListCommandsResult;
+import org.riotfamily.core.command.result.RefreshSiblingsResult;
 
 public abstract class AbstractSwitchCommand extends AbstractCommand {
 	
@@ -14,16 +16,20 @@ public abstract class AbstractSwitchCommand extends AbstractCommand {
 	public static final String ACTION_DISABLE = "disable";
 	
 	@Override
-	public String getAction() {
-		return isEnabled() ? ACTION_DISABLE : ACTION_ENABLE;
+	public CommandInfo getInfo(CommandContext context) {
+		CommandInfo info = new CommandInfo();
+		if (isEnabled()) {
+			info.setLabel(ACTION_DISABLE);
+			info.setStyleClass("switchOn");
+		}
+		else {
+			info.setLabel(ACTION_ENABLE);
+			info.setStyleClass("switchOff");
+		}
+		return info;
 	}
-	
-	@Override
-	public String getStyleClass() {
-		return isEnabled() ? "switchOn" : "switchOff";
-	}
-	
-	public CommandResult execute(CommandContext context) {
+		
+	public CommandResult execute(CommandContext context, Selection selection) {
 		setEnabled(!isEnabled());
 		return new BatchResult(
 				new RefreshSiblingsResult(context), 

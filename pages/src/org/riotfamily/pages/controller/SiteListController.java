@@ -31,9 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.CacheableController;
-import org.riotfamily.common.web.servlet.PathCompleter;
-import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.pages.dao.PageDao;
+import org.riotfamily.pages.mapping.PathConverter;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
@@ -48,15 +47,13 @@ public class SiteListController extends AbstractCacheableController {
 
 	private PageDao pageDao;
 
-	private PathCompleter pathCompleter;
+	private PathConverter pathConverter;
 
 	private String viewName;
 
-	public SiteListController(PageDao pageDao,
-			PathCompleter pathCompleter) {
-
+	public SiteListController(PageDao pageDao, PathConverter pathConverter) {
 		this.pageDao = pageDao;
-		this.pathCompleter = pathCompleter;
+		this.pathConverter = pathConverter;
 	}
 
 	public void setViewName(String viewName) {
@@ -71,8 +68,8 @@ public class SiteListController extends AbstractCacheableController {
 			Site site = sites.get(0);
 			PageNode root = pageDao.getRootNode();
 			Page page = (Page) root.getChildPages(site).iterator().next();
-			String url = ServletUtils.resolveUrl(page.getUrl(pathCompleter), request);
-			return new ModelAndView(new RedirectView(url));
+			String url = page.getUrl(pathConverter);
+			return new ModelAndView(new RedirectView(url, true));
 		}
 		if (!sites.isEmpty()) {
 			TaggingContext.tag(Site.class.getName());

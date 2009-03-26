@@ -23,18 +23,18 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.mapping;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.controller.HttpErrorController;
 import org.riotfamily.common.web.controller.RedirectController;
 import org.riotfamily.common.web.mapping.AbstractReverseHandlerMapping;
 import org.riotfamily.common.web.mapping.AttributePattern;
-import org.riotfamily.common.web.mapping.UrlResolverContext;
-import org.riotfamily.common.web.servlet.PathCompleter;
 import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
@@ -56,19 +56,17 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 
 	private PageResolver pageResolver;
 	
-	private PathCompleter pathCompleter;
-
+	private PathConverter pathConverter;
+	
 	private Object defaultPageHandler;
 
 	private PathMatcher pathMatcher = new AntPathMatcher();
 	
 
-	public PageHandlerMapping(PageDao pageDao, PageResolver pageResolver,
-			PathCompleter pathCompleter) {
-
+	public PageHandlerMapping(PageDao pageDao, PageResolver pageResolver) {
 		this.pageDao = pageDao;
 		this.pageResolver = pageResolver;
-		this.pathCompleter = pathCompleter;
+		this.pathConverter = pageResolver.getPathConverter();
 	}
 
 	/**
@@ -131,7 +129,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	private Object getFolderHandler(List<Page> childPages) {
 		for (Page page : childPages) {
 			if (page.isRequestable()) {
-				String url = page.getUrl(pathCompleter);
+				String url = page.getUrl(pathConverter);
 				return new RedirectController(url, true, false);
 			}
 		}
@@ -151,7 +149,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 			if (alias != null) {
 				Page page = alias.getPage();
 				if (page != null) {
-					String url = page.getUrl(pathCompleter);
+					String url = page.getUrl(pathConverter);
 					return new RedirectController(url, true, false);
 				}
 				else {
@@ -180,10 +178,16 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		pattern.expose(urlPath, request);
 	}
 	
-	protected List<AttributePattern> getPatternsForHandler(String beanName, 
-			UrlResolverContext context) {
+	@Override
+	protected Map<String, Object> getDefaults(HttpServletRequest request) {
+		Object site = PageResolver.getResolvedSite(request);
+		return Collections.singletonMap("site", site);
+	}
+	
+	protected List<AttributePattern> getPatternsForHandler(String beanName,
+			Map<String, Object> defaults) {
 		
-		Site site = PageResolver.getResolvedSite(context);
+		Site site = (Site) defaults.get("site");
 		if (site == null) {
 			// Check if we have a single-site website
 			List<Site> sites = pageDao.listSites();
@@ -193,9 +197,9 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 			site = sites.get(0);
 		}
 		List<Page> pages = pageDao.findPagesOfType(beanName, site);
-		ArrayList<AttributePattern> patterns = new ArrayList<AttributePattern>(pages.size());
+		List<AttributePattern> patterns = Generics.newArrayList(pages.size());
 		for (Page page : pages) {
-			patterns.add(new AttributePattern(page.getUrl(pathCompleter)));
+			patterns.add(new AttributePattern(page.getUrl(pathConverter)));
 		}
 		return patterns;
 	}

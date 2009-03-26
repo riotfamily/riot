@@ -27,12 +27,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.riotfamily.common.log.RiotLog;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.riotfamily.riot.dao.ListParams;
-import org.riotfamily.riot.dao.Order;
-import org.riotfamily.riot.dao.SortableDao;
+import org.riotfamily.common.util.RiotLog;
+import org.riotfamily.core.dao.ListParams;
+import org.riotfamily.core.dao.Order;
+import org.riotfamily.core.dao.SortableDao;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 
 /**

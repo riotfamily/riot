@@ -46,8 +46,8 @@ import org.hibernate.annotations.CascadeType;
 import org.riotfamily.common.beans.MapWrapper;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.web.mapping.AttributePattern;
-import org.riotfamily.common.web.servlet.PathCompleter;
-import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.core.security.AccessController;
+import org.riotfamily.pages.mapping.PathConverter;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -199,26 +199,26 @@ public class Page {
 		return getPath();
 	}
 
-	public String getUrl(PathCompleter pathCompleter) {
+	public String getUrl(PathConverter pathCompleter) {
 		return getUrl(pathCompleter, null);
 	}
 	
-	public String getUrl(PathCompleter pathCompleter, Object attributes) {
-		String pagePath = pathCompleter.addMapping(getFullPath());
+	public String getUrl(PathConverter converter, Object attributes) {
+		String pagePath = getFullPath();
+		if (converter != null) {
+			pagePath = converter.addSuffix(pagePath);
+		}
 		if (isWildcardInPath()) {
 			pagePath = fillInWildcards(pagePath, attributes);
 		}
 		return pagePath;
 	}	
 	
-	public String getAbsoluteUrl(PathCompleter pathCompleter, boolean secure,
+	public String getAbsoluteUrl(PathConverter converter, boolean secure,
 			String defaultHost, String contextPath, Object attributes) {
 		
-		String pagePath =  pathCompleter.addMapping(getPath());
-		if (isWildcardInPath()) {
-			pagePath = fillInWildcards(pagePath, attributes);
-		}
-		return site.makeAbsolute(secure, defaultHost, contextPath, pagePath);
+		String relativeUrl = getUrl(converter, attributes);
+		return site.makeAbsolute(secure, defaultHost, contextPath, relativeUrl);
 	}
 	
 	@SuppressWarnings("unchecked")

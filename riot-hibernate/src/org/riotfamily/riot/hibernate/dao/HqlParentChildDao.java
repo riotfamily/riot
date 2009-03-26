@@ -29,9 +29,9 @@ import java.util.regex.Pattern;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.riotfamily.common.beans.PropertyUtils;
-import org.riotfamily.riot.dao.CutAndPasteEnabledDao;
-import org.riotfamily.riot.dao.ListParams;
-import org.riotfamily.riot.dao.ParentChildDao;
+import org.riotfamily.core.dao.CutAndPasteEnabledDao;
+import org.riotfamily.core.dao.ListParams;
+import org.riotfamily.core.dao.ParentChildDao;
 import org.riotfamily.riot.hibernate.support.HibernateUtils;
 
 

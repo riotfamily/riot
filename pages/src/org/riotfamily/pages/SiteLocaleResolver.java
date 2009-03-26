@@ -27,9 +27,9 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.i18n.ChainedLocaleResolver;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Site;
-import org.riotfamily.website.i18n.ChainedLocaleResolver;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

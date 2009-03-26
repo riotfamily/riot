@@ -26,8 +26,8 @@ package org.riotfamily.components.cache;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.servlet.CacheKeyAugmentor;
-import org.riotfamily.components.EditModeUtils;
-import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.components.support.EditModeUtils;
+import org.riotfamily.core.security.AccessController;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

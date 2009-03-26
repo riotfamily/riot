@@ -33,17 +33,20 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.FormatUtils;
-import org.riotfamily.common.web.servlet.PathCompleter;
+import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
+import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.pages.cache.PageCacheUtils;
 import org.riotfamily.pages.mapping.PageResolver;
+import org.riotfamily.pages.mapping.PathConverter;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
@@ -59,18 +62,27 @@ public class PageFacade {
 	
 	private boolean preview;
 	
-	private PathCompleter pathCompleter;
+	private PathConverter pathConverter;
 	
 	private Map<String, Object> properties = null;
-		
+
 	public PageFacade(Page page, HttpServletRequest request, 
-			PathCompleter pathCompleter) {
+			PathConverter pathConverter) {
 		
 		this.page = page;
 		this.request = request;
-		this.pathCompleter = pathCompleter;
+		this.pathConverter = pathConverter;
 		this.preview = EditModeUtils.isEditMode(request);
 		PageCacheUtils.addNodeTag(page.getNode());
+	}
+	
+	public PageFacade(Page page, HttpServletRequest request) {
+		this(page, request, getPathConverter(request));
+	}
+	
+	private static PathConverter getPathConverter(HttpServletRequest request) {
+		WebApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
+		return SpringUtils.beanOfType(ctx, PathConverter.class);
 	}
 	
 	public Long getId() {
@@ -117,7 +129,7 @@ public class PageFacade {
 		if (!page.getSite().hostNameMatches(request.getServerName())) {
 			return getAbsoluteWildcardUrl(attributes);
 		}
-		return page.getUrl(pathCompleter, attributes);
+		return page.getUrl(pathConverter, attributes);
 	}
 	
 	public String getAbsoluteUrl() {
@@ -125,7 +137,7 @@ public class PageFacade {
 	}
 
 	public String getAbsoluteWildcardUrl(Object attributes) {
-		return page.getAbsoluteUrl(pathCompleter, request.isSecure(), 
+		return page.getAbsoluteUrl(pathConverter, request.isSecure(), 
 				ServletUtils.getServerNameAndPort(request),
 				request.getContextPath(), attributes);
 	}
@@ -140,7 +152,7 @@ public class PageFacade {
 			
 			return getUrl();
 		}
-		return page.getAbsoluteUrl(pathCompleter, true,
+		return page.getAbsoluteUrl(pathConverter, true,
 				ServletUtils.getServerNameAndPort(request),
 				request.getContextPath(), attributes);
 	}

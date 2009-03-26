@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.web.filter.FilterPlugin;
 import org.riotfamily.statistics.domain.FaultyRepsonseStatsItem;
 import org.riotfamily.statistics.domain.RequestStatsItem;

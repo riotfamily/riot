@@ -28,23 +28,21 @@ import java.util.Locale;
 
 import org.riotfamily.common.web.ui.ObjectRenderer;
 import org.riotfamily.common.web.ui.RenderContext;
-import org.riotfamily.riot.runtime.RiotRuntime;
-import org.riotfamily.riot.runtime.RiotRuntimeAware;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
-public class CountryFlagRenderer implements ObjectRenderer, RiotRuntimeAware {
+public class CountryFlagRenderer implements ObjectRenderer {
 
-	private RiotRuntime runtime;
-
+	private String resourcePath;
+	
 	private String internationalFlag = "int";
 	
-	public void setRiotRuntime(RiotRuntime runtime) {
-		this.runtime = runtime;
+	public CountryFlagRenderer(String resourcePath) {
+		this.resourcePath = resourcePath;
 	}
-	
+
 	public void setInternationalFlag(String internationalFlag) {
 		this.internationalFlag = internationalFlag;
 	}
@@ -57,7 +55,6 @@ public class CountryFlagRenderer implements ObjectRenderer, RiotRuntimeAware {
 		return getClass().getResourceAsStream(
 				"/org/riotfamily/riot/runtime/resources/style/icons/flags/"
 				+ flag.toLowerCase() + ".gif") != null;
-		
 	}
 	
 	protected void renderFlag(String flag, String title, 
@@ -65,7 +62,7 @@ public class CountryFlagRenderer implements ObjectRenderer, RiotRuntimeAware {
 		
 		writer.print("<img class=\"flag\" src=\"");
 		writer.print(context.getContextPath());
-		writer.print(runtime.getResourcePath());
+		writer.print(resourcePath);
 		writer.print("style/icons/flags/");
 		writer.print(flag.toLowerCase());
 		writer.print(".gif\"");

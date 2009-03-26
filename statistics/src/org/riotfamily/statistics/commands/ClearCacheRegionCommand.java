@@ -8,9 +8,10 @@ import java.util.Map.Entry;
 import org.hibernate.SessionFactory;
 import org.hibernate.cache.entry.CacheEntry;
 import org.hibernate.stat.SecondLevelCacheStatistics;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
-import org.riotfamily.riot.list.command.CommandContext;
+import org.riotfamily.common.util.RiotLog;
+import org.riotfamily.core.command.CommandContext;
+import org.riotfamily.core.command.Selection;
 import org.riotfamily.statistics.domain.CacheRegionStatsItem;
 
 public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand {
@@ -21,8 +22,14 @@ public class ClearCacheRegionCommand extends AbstractHibernateCacheCommand {
 		super(sessionFactory);
 	}
 
-	public void doExecute(CommandContext context) {
-		CacheRegionStatsItem crs = (CacheRegionStatsItem) context.getBean();
+	@Override
+	protected String getStyleClass(CommandContext context) {
+		return "clear";
+	}
+	
+	public void doExecute(CommandContext context, Selection selection) {
+		//TODO BatchSupport
+		CacheRegionStatsItem crs = (CacheRegionStatsItem) selection.getSingleObject();
 		clearHibernateCacheRegion(crs.getName());
 	}
 	

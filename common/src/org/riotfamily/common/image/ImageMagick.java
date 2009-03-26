@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.io.RuntimeCommand;
+import org.riotfamily.common.util.RiotLog;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 

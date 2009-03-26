@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.collection.GuardedMap;
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.util.Generics;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.web.util.RequestHolder;
 import org.riotfamily.common.web.view.ModelPostProcessor;
 import org.springframework.web.servlet.support.RequestContextUtils;

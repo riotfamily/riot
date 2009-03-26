@@ -28,7 +28,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.riotfamily.riot.security.auth.RiotUser;
+import org.riotfamily.core.security.auth.RiotUser;
 
 @Entity
 @Table(name="riot_users")

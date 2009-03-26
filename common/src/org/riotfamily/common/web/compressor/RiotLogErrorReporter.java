@@ -25,7 +25,7 @@ package org.riotfamily.common.web.compressor;
 
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

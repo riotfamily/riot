@@ -41,7 +41,7 @@ public class NumberWrapper extends ValueWrapper<Number> {
 
 	private Number value;
 	
-	@Type(type="org.riotfamily.riot.hibernate.support.ImmutableAnyType")
+	@Type(type="org.riotfamily.common.hibernate.ImmutableAnyType")
 	@Columns(columns = {
 	    @Column(name="num_type"),
 	    @Column(name="num_value")

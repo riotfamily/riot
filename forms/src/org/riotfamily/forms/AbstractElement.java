@@ -25,9 +25,9 @@ package org.riotfamily.forms;
 
 import java.io.PrintWriter;
 
-import org.riotfamily.common.log.RiotLog;
 import org.riotfamily.common.markup.TagWriter;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.forms.request.FormRequest;
 
 

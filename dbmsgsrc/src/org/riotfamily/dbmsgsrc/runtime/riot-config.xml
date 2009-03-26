@@ -37,7 +37,7 @@
 		<form:nested-form bind="defaultMessage" bean-class="org.riotfamily.dbmsgsrc.model.Message">
 			<form:textarea bind="text" required="true" />
 		</form:nested-form>
-		<form:map bind="messages" label-renderer="org.riotfamily.riot.ui.LocaleRenderer">
+		<form:map bind="messages" label-renderer="localeRenderer">
 			<form:key-options ref="locales" />
 			<form:nested-form indent="false" bean-class="org.riotfamily.dbmsgsrc.model.Message">
 				<form:textarea bind="text" required="true" />
@@ -94,7 +94,7 @@
 	
 	<form:form id="riotMessageBundleEntry" bean-class="org.riotfamily.dbmsgsrc.model.MessageBundleEntry">
 		<form:textfield bind="code" read-only="true" />
-		<form:map bind="messages" label-renderer="org.riotfamily.riot.ui.LocaleRenderer">
+		<form:map bind="messages" label-renderer="localeRenderer">
 			<form:key-options class="org.riotfamily.dbmsgsrc.support.CurrentLocaleOptionsModel" />
 			<form:nested-form indent="false" required="true" bean-class="org.riotfamily.dbmsgsrc.model.Message">
 				<form:textarea bind="text" />

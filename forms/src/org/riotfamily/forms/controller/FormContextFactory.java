@@ -79,7 +79,7 @@ public final class FormContextFactory implements MessageSourceAware,
 	public void setMessageCodesResolver(AdvancedMessageCodesResolver resolver) {
 		this.messageCodesResolver = resolver;
 	}
-
+	
 	/**
 	 * Sets the {@link MessageSource} that is used to look up labels and
 	 * error messages.
@@ -132,12 +132,14 @@ public final class FormContextFactory implements MessageSourceAware,
 		}
 	}
 	
+	public MessageResolver getMessageResolver(Locale locale) {
+		return new MessageResolver(messageSource, messageCodesResolver, locale);
+	}
 	public FormContext createFormContext(HttpServletRequest request, 
 			HttpServletResponse response) {
 
 		Locale locale = RequestContextUtils.getLocale(request);
-		MessageResolver messageResolver = new MessageResolver(messageSource,
-				messageCodesResolver, locale);
+		MessageResolver messageResolver = getMessageResolver(locale);
 		
 		String contextPath = request.getContextPath();
 		String formUrl = ServletUtils.getOriginatingRequestUri(request);

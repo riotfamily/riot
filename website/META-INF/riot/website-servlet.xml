@@ -38,7 +38,7 @@
 		<property name="filterName" value="website-filter" />
 	</bean>
 
-	<bean id="openSessionInViewFilterPlugin" class="org.riotfamily.riot.hibernate.support.OpenSessionInViewFilterPlugin">
+	<bean id="openSessionInViewFilterPlugin" class="org.riotfamily.common.web.filter.OpenSessionInViewFilterPlugin">
 		<description>
 			FilterPlugin that binds a Hibernate Session to the thread for the 
 			entire processing of the request just like Spring's OpenSessionInViewFilter.
@@ -57,7 +57,7 @@
 		<property name="reloadable" value="${website-servlet.reloadable=false}" />
 	</bean>
 	
-	<bean name="riotAccessControlFilterPlugin" class="org.riotfamily.riot.security.session.AccessControlFilterPlugin">
+	<bean name="riotAccessControlFilterPlugin" class="org.riotfamily.core.security.session.AccessControlFilterPlugin">
 		<property name="filterName" value="website-filter" />
 	</bean>
 	
@@ -85,14 +85,12 @@
 		</description>
 		<property name="interceptors">
 			<list>
-				<bean class="org.riotfamily.website.interceptor.NoCacheHeaderInterceptor" />
+				<bean class="org.riotfamily.components.support.NoCacheHeaderInterceptor" />
 				<bean class="org.riotfamily.common.web.collaboration.SharedPropertiesInterceptor" />
 			</list>
 		</property>
 	</bean>
 	
-	<bean id="resourceStamper" class="org.riotfamily.common.web.filter.ResourceStamper" />
-
 	<bean id="cssTemplateController" name="/**/*.css" 
 			class="org.riotfamily.website.css.CssTemplateController">
 
@@ -140,16 +138,12 @@
 				<prop key="form">classpath:org/riotfamily/website/form/form.ftl</prop>
 				<prop key="template">classpath:org/riotfamily/website/template/template.ftl</prop>
 				<prop key="txt2img">classpath:org/riotfamily/website/txt2img/txt2img.ftl</prop>
-				<prop key="riot">classpath:org/riotfamily/riot/runtime/macro/riot.ftl</prop>
 			</props>
 		</property>
 		<property name="whitespaceStripping" value="true" />
-		<property name="exceptionHandler">
-			<bean class="org.riotfamily.website.freemarker.RiotTemplateExceptionHandler" />
-		</property>
 	</bean>
 	
-	<bean id="taggingObjectWrapperPlugin" class="org.riotfamily.website.cache.TaggingObjectWrapperPlugin">
+	<bean id="taggingObjectWrapperPlugin" class="org.riotfamily.riot.hibernate.cachius.TaggingObjectWrapperPlugin">
 		<description>
 			ObjectWrapperPlugin that tags cache items whenever a class with the
  			@TagCacheItems annotation is accessed by a FreeMarker template.
@@ -157,7 +151,7 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
-	<bean id="queryResultObjectWrapperPlugin" class="org.riotfamily.website.cache.QueryResultObjectWrapperPlugin">
+	<bean id="queryResultObjectWrapperPlugin" class="org.riotfamily.riot.hibernate.cachius.QueryResultObjectWrapperPlugin">
 		<description>
 			ObjectWrapperPlugin that tags cache items whenever a QueryResult
 			for items with a @TagCacheItems annotation is accessed by a 
@@ -167,7 +161,7 @@
 	
 	<bean id="localizedObjectWrapperPlugin" class="org.riotfamily.common.web.view.freemarker.LocalizedObjectWrapperPlugin" />
     
-    <bean class="org.riotfamily.website.freemarker.ActiveRecordClassExposer">
+    <bean class="org.riotfamily.common.hibernate.ActiveRecordClassExposer">
     	<description>
     		ConfigurationPostProcessor that provides convenient access to the 
     		static methods of ActiveRecord classes from within FreeMarker templates.
@@ -179,9 +173,7 @@
 		<property name="exposeRequestAttributes" value="true" />
 	</bean>
 	
-	<bean id="handlerUrlResolver" class="org.riotfamily.common.web.mapping.HandlerUrlResolver">
-		<constructor-arg ref="pathCompleter" />
-	</bean>
+	<bean id="handlerUrlResolver" class="org.riotfamily.common.web.mapping.HandlerUrlResolver" />
 	
 	<bean id="commonMacroHelper" class="org.riotfamily.website.view.CommonMacroHelperFactory">
 		<property name="stamper" ref="resourceStamper" />
@@ -211,10 +203,6 @@
 		<property name="baseDir" value="/WEB-INF/hyphenation" />
 	</bean>
 	
-	<bean id="riotMacroHelper" class="org.riotfamily.riot.runtime.macro.RiotMacroHelperFactory">
-		<constructor-arg ref="riotRuntime" />
-	</bean>
-	
 	<bean id="txt2ImgController" name="/riot-utils/txt2img.@{type}" class="org.riotfamily.website.txt2img.Txt2ImgController">
 		<property name="compressor">
 			<bean class="org.riotfamily.common.web.compressor.YUIJavaScriptCompressor">
@@ -223,7 +211,7 @@
 		</property>
 	</bean>
 	
-	<bean id="quickjumpController" name="/riot-utils/quickjump.html" class="org.riotfamily.website.misc.QuickjumpController" />
+	<bean id="quickjumpController" name="/riot-utils/quickjump.html" class="org.riotfamily.common.web.controller.QuickjumpController" />
 	
 	<bean id="txt2imgButtonController" name="/riot-utils/imagebtn/@{style}.*" class="org.riotfamily.website.txt2img.ButtonController">
 		<constructor-arg ref="buttonService" />
@@ -233,7 +221,7 @@
 		<constructor-arg ref="buttonService" />
 	</bean>
 		
-	<bean id="countryFlagController" name="/riot-utils/country/@{locale}.gif" class="org.riotfamily.website.misc.CountryFlagController">
+	<bean id="countryFlagController" name="/riot-utils/country/@{locale}.gif" class="org.riotfamily.common.web.controller.CountryFlagController">
 		<constructor-arg ref="fileTypeMap" />
 		<property name="location" value="classpath:/org/riotfamily/riot/runtime/resources/style/icons/flags/" />
 		<property name="defaultFlag" value="europeanunion" />

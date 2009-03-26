@@ -1,12 +1,11 @@
 package org.riotfamily.pages.mapping;
 
-import java.util.Collections;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.mapping.AdvancedBeanNameHandlerMapping;
-import org.riotfamily.common.web.mapping.UrlResolverContext;
 import org.riotfamily.pages.model.Site;
 
 /**
@@ -44,8 +43,10 @@ public class SiteBeanNameHandlerMapping extends AdvancedBeanNameHandlerMapping {
 		return handler;
 	}
 
-	protected Map<String, ?> getDefaults(UrlResolverContext context) {
-		Site site = PageResolver.getResolvedSite(context);
+	protected Map<String, Object> getDefaults(HttpServletRequest request) {
+		Map<String, Object> defaults = Generics.newHashMap();
+		Site site = PageResolver.getResolvedSite(request);
+		defaults.put("site", site);
 		String sitePrefix = null;
 		if (site != null) {
 			sitePrefix = site.getPathPrefix();
@@ -53,6 +54,7 @@ public class SiteBeanNameHandlerMapping extends AdvancedBeanNameHandlerMapping {
 		if (sitePrefix == null) {
 			sitePrefix = "";
 		}
-		return Collections.singletonMap("sitePrefix", sitePrefix);
+		defaults.put("sitePrefix", sitePrefix);
+		return defaults;
 	}
 }

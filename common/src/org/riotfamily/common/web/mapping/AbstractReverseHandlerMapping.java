@@ -23,7 +23,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.mapping;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -48,118 +47,89 @@ public abstract class AbstractReverseHandlerMapping
 	/**
 	 * Returns the URL of a mapped handler.
 	 * @param handlerName The name of the handler
-	 * @param prefix Optional prefix to sort out ambiguities
 	 * @param attributes Optional attributes to fill out wildcards. Can either 
 	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
-	 * @param request The current request
+	 * @param request Optional request that is used as context to look up 
+	 *        default wildcard values.
 	 */
-	public String getUrlForHandler(String handlerName, String prefix, 
-			Object attributes, UrlResolverContext context) {
+	@SuppressWarnings("unchecked")
+	public String getUrlForHandler(String handlerName, Object attributes, 
+			HttpServletRequest request) {
 		
-		Map<String, ?> defaults = getDefaults(context);
-		return getUrlForHandler(handlerName, prefix, attributes, defaults, context);
+		Map<String, Object> defaults = getDefaults(request);
+		String url = null;
+		if (attributes == null) {
+			url = getUrlForHandlerWithoutAttributes(handlerName, defaults);
+		}
+		else if (attributes instanceof Map) {
+			url = getUrlForHandlerWithMap(handlerName,
+					(Map<String, Object>) attributes, defaults); 
+		}
+		else if (attributes instanceof String ||
+				ClassUtils.isPrimitiveOrWrapper(attributes.getClass())) {
+			
+			url = getUrlForHandlerWithSingleAttribute(handlerName, attributes, defaults);
+		}
+		else {
+			if (attributes instanceof Collection) {
+				Collection c = (Collection) attributes;
+				attributes = c.toArray(new Object[c.size()]);
+			}
+			
+			if (attributes.getClass().isArray()) {
+				url = getUrlForHandlerWithArray(handlerName, (Object[]) attributes);
+			}
+			else {
+				url = getUrlForHandlerWithBean(handlerName, attributes, defaults);				
+			}
+		}
+		if (url != null) {
+			url = addServletMappingIfNecessary(url, request);
+		}
+		return url;
 	}
 	
 	/**
 	 * Returns a Map of default values that are used to build URLs. The default
 	 * implementation return <code>null</code>.
 	 */
-	protected Map<String, ?> getDefaults(UrlResolverContext context) {
+	protected Map<String, Object> getDefaults(HttpServletRequest request) {
 		return null;
-	}
-	
-	/**
-	 * Returns the URL of a mapped handler.
-	 * @param handlerName The name of the handler
-	 * @param prefix Optional prefix to sort out ambiguities
-	 * @param attributes Optional attributes to fill out wildcards. Can either 
-	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
-	 * @param defaults Optional Map of default values that are used when no
-	 * 		  attribute value was provided for a certain wildcard.
-	 * @param request The current request
-	 */
-	@SuppressWarnings("unchecked")
-	protected String getUrlForHandler(String handlerName, String prefix, 
-			Object attributes, Map<String, ?> defaults, 
-			UrlResolverContext context) {
-		
-		if (attributes == null) {
-			return getUrlForHandler(handlerName, defaults, prefix, context);
-		}
-		if (attributes instanceof Map) {
-			return getUrlForHandlerWithMap(handlerName, 
-					(Map<String, ?>) attributes, 
-					defaults, prefix, context); 
-		}
-		
-		if (attributes instanceof String ||
-				ClassUtils.isPrimitiveOrWrapper(attributes.getClass())) {
-			
-			return getUrlForHandlerWithAttribute(handlerName, attributes, 
-					defaults, prefix, context);
-		}
-		
-		if (attributes instanceof Collection) {
-			Collection c = (Collection) attributes;
-			attributes = c.toArray(new Object[c.size()]);
-		}
-		
-		if (attributes.getClass().isArray()) {
-			return getUrlForHandlerWithArray(handlerName, (Object[]) attributes, prefix, context);
-		}
-		
-		return getUrlForHandlerWithBean(handlerName, attributes, defaults, 
-				prefix, context);
 	}
 
 	/**
 	 * Returns the URL for a handler without any extra wildcards. If the pattern
 	 * contains wildcards all of them must be present in the defaults map.
 	 */
-	private String getUrlForHandler(String handlerName, 
-			Map<String, ?> defaults, String prefix, 
-			UrlResolverContext context) {
+	private String getUrlForHandlerWithoutAttributes(String handlerName,
+			Map<String, Object> defaults) {
 		
-		AttributePattern p = getPatternForHandler(handlerName, prefix, context, 
-				null, defaults, 0);
-		
+		AttributePattern p = getPatternForHandler(handlerName, null, defaults, 0);
 		if (p == null) {
 			return null;
 		}
-		String url = p.fillInAttribute(null, defaults);
-		return addServletMappingIfNecessary(url, context);
+		return p.fillInAttribute(null, defaults);
 	}
 	
 	/**
-	 * Returns the URL for a handler with one custom wildcard. If the pattern
-	 * contains wildcards all of them must be present in the defaults map.
+	 * Returns the URL for a handler with one single unnamed wildcard. 
 	 */
-	private String getUrlForHandlerWithAttribute(String handlerName, 
-			Object attribute, Map<String, ?> defaults, String prefix, 
-			UrlResolverContext context) {
+	private String getUrlForHandlerWithSingleAttribute(String handlerName, 
+			Object attribute, Map<String, Object> defaults) {
 		
-		AttributePattern p = getPatternForHandler(handlerName, prefix, context, 
-				null, defaults, 1);
-		
+		AttributePattern p = getPatternForHandler(handlerName, null, defaults, 1);
 		if (p == null) {
 			return null;
 		}
-		String url = p.fillInAttribute(attribute, defaults);
-		return addServletMappingIfNecessary(url, context);
+		return p.fillInAttribute(attribute, defaults);
 	}
 	
-	private String getUrlForHandlerWithArray(String handlerName, 
-			Object[] attributes, String prefix, 
-			UrlResolverContext context) {
-		
-		AttributePattern p = getPatternForHandler(handlerName, prefix, context, 
-				null, null, attributes.length);
-		
+	private String getUrlForHandlerWithArray(String handlerName, Object[] attributes) {
+		AttributePattern p = getPatternForHandler(handlerName, null, null, attributes.length);
 		if (p == null) {
 			return null;
 		}
-		String url = p.fillInAttributes(attributes);
-		return addServletMappingIfNecessary(url, context);
+		return p.fillInAttributes(attributes);
 	}
 	
 	/**
@@ -167,17 +137,15 @@ public abstract class AbstractReverseHandlerMapping
 	 * The wildcard replacements are taken from the given Map.
 	 */
 	private String getUrlForHandlerWithMap(String beanName, 
-			Map<String, ?> attributes, Map<String, ?> defaults, 
-			String prefix, UrlResolverContext context) {
+			Map<String, Object> attributes, Map<String, Object> defaults) {
 		
-		List<AttributePattern> patterns = getPatternsForHandler(beanName, prefix, context);
+		List<AttributePattern> patterns = getPatternsForHandler(beanName, defaults);
 		if (patterns == null || patterns.isEmpty()) {
 			return null;
 		}
 		for (AttributePattern p : patterns) {
 			if (p.canFillIn(attributes, defaults, 0)) {
-				String path = p.fillInAttributes(new MapWrapper(attributes), defaults);
-				return addServletMappingIfNecessary(path, context);
+				return p.fillInAttributes(new MapWrapper(attributes), defaults);
 			}
 		}
 		return null;
@@ -191,41 +159,13 @@ public abstract class AbstractReverseHandlerMapping
 	 * @throws IllegalArgumentException if more than one mapping is registered
 	 */
 	private String getUrlForHandlerWithBean(String beanName, Object bean,
-			Map<String, ?> defaults, String prefix, 
-			UrlResolverContext context) {
+			Map<String, Object> defaults) {
 		
-		AttributePattern p = getPatternForHandler(beanName, prefix, context);
+		AttributePattern p = getPatternForHandler(beanName, defaults);
 		if (p != null) {
-			String path = p.fillInAttributes(new BeanWrapperImpl(bean), defaults);
-			return addServletMappingIfNecessary(path, context);
+			return p.fillInAttributes(new BeanWrapperImpl(bean), defaults);
 		}
 		return null;
-	}
-	
-	/**
-	 * Returns all {@link AttributePattern patterns} for the handler with the
-	 * specified name that start with the given prefix.
-	 *  
-	 * @param handlerName Name of the handler
-	 * @param prefix Optional prefix to narrow the the result
-	 * @param request The current request
-	 */
-	protected List<AttributePattern> getPatternsForHandler(String handlerName, String prefix, 
-			UrlResolverContext context) {
-		
-		List<AttributePattern> patterns = getPatternsForHandler(handlerName, context);
-		if (patterns == null || patterns.isEmpty() 
-				|| prefix == null || prefix.length() == 0) {
-			
-			return patterns;
-		}
-		ArrayList<AttributePattern> matchingPatterns = new ArrayList<AttributePattern>();
-		for (AttributePattern p : patterns) {
-			if (p.startsWith(prefix)) {
-				matchingPatterns.add(p);
-			}
-		}
-		return matchingPatterns;
 	}
 	
 	/**
@@ -234,10 +174,10 @@ public abstract class AbstractReverseHandlerMapping
 	 * name.
 	 */
 	protected abstract List<AttributePattern> getPatternsForHandler(
-			String beanName, UrlResolverContext context);
+			String beanName, Map<String, Object> defaults);
 	
 	protected String addServletMappingIfNecessary(String path, 
-			UrlResolverContext context) {
+			HttpServletRequest request) {
 		
 		return path;
 	}
@@ -248,11 +188,10 @@ public abstract class AbstractReverseHandlerMapping
 	 * @throws IllegalArgumentException if more than one mapping is registered
 	 */
 	protected AttributePattern getPatternForHandler(String handlerName, 
-			String prefix, UrlResolverContext context, 
-			Map<String, Object> attributes, Map<String, ?> defaults, 
+			Map<String, Object> attributes, Map<String, Object> defaults, 
 			int anonymousWildcards) {
 		
-		List<AttributePattern> patterns = getPatternsForHandler(handlerName, prefix, context);
+		List<AttributePattern> patterns = getPatternsForHandler(handlerName, defaults);
 		if (patterns == null || patterns.isEmpty()) {
 			return null;
 		}
@@ -283,9 +222,9 @@ public abstract class AbstractReverseHandlerMapping
 	 * @throws IllegalArgumentException if more than one mapping is registered
 	 */
 	protected AttributePattern getPatternForHandler(String handlerName, 
-			String prefix, UrlResolverContext context) {
+			Map<String, Object> defaults) {
 		
-		List<AttributePattern> patterns = getPatternsForHandler(handlerName, prefix, context);
+		List<AttributePattern> patterns = getPatternsForHandler(handlerName, defaults);
 		if (patterns == null || patterns.isEmpty()) {
 			return null;
 		}

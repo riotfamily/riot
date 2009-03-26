@@ -48,9 +48,9 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.HashUtils;
+import org.riotfamily.core.security.AccessController;
+import org.riotfamily.core.security.auth.RiotUser;
 import org.riotfamily.media.service.MediaService;
-import org.riotfamily.riot.security.AccessController;
-import org.riotfamily.riot.security.auth.RiotUser;
 import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -169,7 +169,6 @@ public class RiotFile {
 	private void initCreationInfo() {
 		creationDate = new Date();
 		RiotUser user = AccessController.getCurrentUser();
-		//FIXME Does not work with swfupload.js (no session, no user)
 		if (user != null) {
 			owner = user.getUserId();
 		}

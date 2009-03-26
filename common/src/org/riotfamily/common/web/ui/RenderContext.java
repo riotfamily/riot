@@ -30,5 +30,5 @@ public interface RenderContext {
 	public MessageResolver getMessageResolver();
 	
 	public String getContextPath();
-
+	
 }

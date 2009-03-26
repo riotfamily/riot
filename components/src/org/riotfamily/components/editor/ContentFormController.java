@@ -33,6 +33,7 @@ import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.forms.Form;
+import org.riotfamily.forms.controller.FormContextFactory;
 import org.riotfamily.forms.factory.FormRepository;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -48,11 +49,13 @@ public class ContentFormController extends AbstractFrontOfficeFormController {
 	
 	private CacheService cacheService;
 	
-	public ContentFormController(FormRepository formRepository,
+	
+	public ContentFormController(FormContextFactory formContextFactory,
+			FormRepository formRepository,
 			PlatformTransactionManager transactionManager,
 			ComponentDao componentDao, CacheService cacheService) {
-
-		super(formRepository, transactionManager);
+		
+		super(formContextFactory, formRepository, transactionManager);
 		this.componentDao = componentDao;
 		this.cacheService = cacheService;
 	}

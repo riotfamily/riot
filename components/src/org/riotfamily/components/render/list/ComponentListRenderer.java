@@ -31,14 +31,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.common.web.util.CapturingResponseWrapper;
-import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.config.ComponentListConfig;
 import org.riotfamily.components.dao.ComponentDao;
 import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ComponentList;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.ContentContainer;
-import org.riotfamily.riot.security.AccessController;
+import org.riotfamily.components.support.EditModeUtils;
+import org.riotfamily.core.security.AccessController;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;

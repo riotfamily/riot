@@ -15,46 +15,6 @@
 		Root application context (Riot Core)
 	</description>
 	
-	<context:annotation-config />
-	<tx:annotation-driven />
-
-	<bean id="configurer" class="org.riotfamily.common.beans.config.PlaceholderWithDefaultConfigurer">
-		<description>
-			Configurer that fills in placeholders from application.properties
-		</description>
-		<property name="location" value="classpath:/application.properties" />
-		<property name="ignoreResourceNotFound" value="true" />
-		<property name="contextOverride" value="true" />
-	</bean>
-
-	<bean id="riotRuntime" class="org.riotfamily.riot.runtime.RiotRuntime">
-		<property name="resourceMapping" value="/resources" />
-	</bean>
-	
-	<bean id="riotServletPrefix" factory-bean="riotRuntime" factory-method="getServletPrefix" />
-
-	<bean id="riotResourcePath" factory-bean="riotRuntime" factory-method="getResourcePath" />
-	
-	<bean id="riotVersion" factory-bean="riotRuntime" factory-method="getVersionString" />
-
-	<bean id="riotDaoService" class="org.riotfamily.riot.list.RiotDaoService" />
-	
-	<bean id="riotAccessControlInterceptor" class="org.riotfamily.riot.security.session.AccessControlInterceptor" />
-
-	<!--
-      - The default JDK map lacks some important web-related mimetypes ...
-	  -->
-	<bean id="fileTypeMap" class="org.riotfamily.common.io.MimetypesFileTypeMapFactoryBean">
-		<property name="types">
-			<list>
-				<value>text/css css</value>
-				<value>text/xml xml</value>
-				<value>text/javascript js</value>
-				<value>image/png png</value>
-			</list>
-		</property>
-	</bean>
-	
 	<bean id="imageMagick" class="org.riotfamily.common.image.ImageMagick" />
 
 </beans>

@@ -1,0 +1,7 @@
+<project name="riot-newcore" default="compile">
+
+	<property name="module.title" value="New Riot Core" />
+	
+	<import file="../module-build.xml" />
+
+</project>

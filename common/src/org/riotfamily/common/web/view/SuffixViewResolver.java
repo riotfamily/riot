@@ -26,7 +26,7 @@ package org.riotfamily.common.web.view;
 import java.util.Locale;
 import java.util.Map;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;

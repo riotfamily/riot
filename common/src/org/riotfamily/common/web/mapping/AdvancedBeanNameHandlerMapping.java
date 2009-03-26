@@ -27,10 +27,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.riotfamily.common.log.RiotLog;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.util.StringUtils;
@@ -52,20 +53,16 @@ public class AdvancedBeanNameHandlerMapping
     private HashMap<String, List<AttributePattern>> patternsByBeanName = 
     		new HashMap<String, List<AttributePattern>>();
     
-	private boolean stripServletMapping = true;
+	private boolean alwaysUseFullPath = false;
 	
 	private Object rootHandler;
 	
 	private boolean lazyInitHandlers = false;
-	
-	public final void setStripServletMapping(boolean stripServletMapping) {
-		this.stripServletMapping = stripServletMapping;
+
+	public void setAlwaysUseFullPath(boolean alwaysUseFullPath) {
+		this.alwaysUseFullPath = alwaysUseFullPath;
 	}
-	
-	protected final boolean isStripServletMapping() {
-		return this.stripServletMapping;
-	}
-	
+
 	/**
 	 * Set the root handler for this handler mapping, that is,
 	 * the handler to be registered for the root path ("/").
@@ -176,11 +173,11 @@ public class AdvancedBeanNameHandlerMapping
 	}
 
 	protected String getLookupPath(HttpServletRequest request) {
-		if (stripServletMapping) {
-			return ServletUtils.getPathWithoutServletMapping(request);
+		if (alwaysUseFullPath) {
+			return ServletUtils.getPathWithinApplication(request);
 		}
 		else {
-			return ServletUtils.getPathWithinApplication(request);
+			return ServletUtils.getPathWithoutServletMapping(request);
 		}
 	}
 	
@@ -229,17 +226,20 @@ public class AdvancedBeanNameHandlerMapping
 		}
 		return null;
 	}
-		
+
+	@Override
 	protected String addServletMappingIfNecessary(String path, 
 			HttpServletRequest request) {
 		
-		if (path != null && isStripServletMapping()) {
+		if (path != null && request != null && !alwaysUseFullPath) {
 			return ServletUtils.addServletMapping(path, request);
 		}
 		return path;
 	}
 	
-	protected List<AttributePattern> getPatternsForHandler(String beanName, UrlResolverContext context) {
+	protected List<AttributePattern> getPatternsForHandler(String beanName,
+			Map<String, Object> defaults) {
+		
 		return patternsByBeanName.get(beanName);
 	}
 	

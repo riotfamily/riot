@@ -40,7 +40,7 @@
     <!-- ================================================================== -->
         
     <override:add ref="resourceMappings" append="true">         
-        <bean class="org.riotfamily.riot.resource.ResourceMapping">
+        <bean class="org.riotfamily.core.resource.ResourceMapping">
             <property name="path" value="/" />
             <property name="location" value="classpath:/org/riotfamily/statistics/runtime/resources/" />
         </bean>
@@ -53,14 +53,6 @@
     <override:add ref="customStyleSheets">
         <value>style/riot-statistics.css</value>
     </override:add>
-
-    <override:add ref="listRepository" property="configLocations">
-		<value>${riot-statistics.lists=classpath:/org/riotfamily/statistics/runtime/riot-config.xml}</value>
-	</override:add>
-		
-	<override:add ref="editorRepository" property="configLocations">
-		<value>${riot-statistics.editors=classpath:/org/riotfamily/statistics/runtime/riot-config.xml}</value>
-	</override:add>
      
  	<util:list id="packageListPatterns">
  		<value>org.riotfamily.*</value>

@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.TaggingContext;
-import org.riotfamily.components.EditModeUtils;
 import org.riotfamily.components.model.ContentContainer;
+import org.riotfamily.components.support.EditModeUtils;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]

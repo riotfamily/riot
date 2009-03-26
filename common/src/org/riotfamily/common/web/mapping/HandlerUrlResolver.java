@@ -23,13 +23,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.common.web.mapping;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.riotfamily.common.util.SpringUtils;
-import org.riotfamily.common.web.servlet.PathCompleter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
@@ -43,16 +41,17 @@ import org.springframework.util.Assert;
  */
 public class HandlerUrlResolver implements ApplicationContextAware {
 
-	private PathCompleter pathCompleter;
-	
 	private List<ReverseHandlerMapping> mappings;
+	
+	private HandlerUrlResolver parent;
 	
 	private ApplicationContext applicationContext;
 	
-	public HandlerUrlResolver(PathCompleter pathCompleter) {
-		this.pathCompleter = pathCompleter;
+	
+	public void setParent(HandlerUrlResolver parent) {
+		this.parent = parent;
 	}
-
+	
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 	}
@@ -74,61 +73,28 @@ public class HandlerUrlResolver implements ApplicationContextAware {
 	 * @param request The current request
 	 */
 	public String getUrlForHandler(HttpServletRequest request, 
-			String handlerName, Object attributes) {
-		
-		return getUrlForHandler(request, handlerName, attributes, null);
-	}
-	
-	/**
-	 * Returns the URL of a mapped handler.
-	 * @param handlerName The name of the handler
-	 * @param attributes Optional attributes to fill out wildcards.
-	 * @param request The current request
-	 */
-	public String getUrlForHandler(HttpServletRequest request, 
 			String handlerName, Object... attributes) {
 		
-		return getUrlForHandler(request, handlerName, attributes, null);
-	}
-	
-	/**
-	 * Returns the URL of a mapped handler.
-	 * @param handlerName The name of the handler
-	 * @param attributes Optional attributes to fill out wildcards. Can either 
-	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
-	 * @param request The current request
-	 * @param prefix Optional prefix to sort out ambiguities
-	 */
-	public String getUrlForHandler(HttpServletRequest request, 
-			String handlerName, Object attributes, String prefix) {
-		
-		UrlResolverContext context = new UrlResolverContext(request, pathCompleter);
-		return getUrlForHandler(context, handlerName, attributes, prefix);
-	}
-	
-	public String getUrlForHandler(UrlResolverContext context,
-			String handlerName, Object attributes) {
-		
-		return getUrlForHandler(context, handlerName, attributes, null);
-	}
-	
-	public String getUrlForHandler(UrlResolverContext context,
-			String handlerName, Object... attributes) {
-		
-		return getUrlForHandler(context, handlerName, attributes, null);
-	}
-		
-	public String getUrlForHandler(UrlResolverContext context, 
-			String handlerName, Object attributes, String prefix) {
-		
-		String url = null;
-		
-		Iterator<ReverseHandlerMapping> it = getMappings().iterator();
-		while (url == null && it.hasNext()) {
-			ReverseHandlerMapping mapping = it.next();
-			url = mapping.getUrlForHandler(
-					handlerName, prefix, attributes, context);
+		Object attr;
+		if (attributes.length == 0) {
+			attr = null;
 		}
-		return url;
+		else if (attributes.length == 1) {
+			attr = attributes[0];
+		}
+		else {
+			attr = attributes;
+		}
+		for (ReverseHandlerMapping mapping : getMappings()) {
+			String url = mapping.getUrlForHandler(handlerName, attr, request);
+			if (url != null) {
+				return url;
+			}
+		}
+		if (parent != null) {
+			return parent.getUrlForHandler(request, handlerName, attributes);
+		}
+		return null;
 	}
+	
 }

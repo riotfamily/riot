@@ -64,11 +64,11 @@
 	<bean id="componentFormController"
 		name="/components/form/@{containerId}/@{contentId}/@{formId*}"
 		class="org.riotfamily.components.editor.ContentFormController">
+		<constructor-arg ref="formContextFactory" />
 		<constructor-arg ref="contentFormRepository" />
 		<constructor-arg ref="transactionManager" />
 		<constructor-arg ref="componentDao" />
 		<constructor-arg ref="cacheService" /> 
-		<property name="formContextFactory" ref="formContextFactory" />
 	</bean>
 	
 	<override:properties ref="loginFormController">
@@ -80,7 +80,7 @@
 	  -->
 	<bean id="toolbarLoginFormController"
 		name="/pages/login"
-		class="org.riotfamily.riot.security.ui.LoginFormController">
+		class="org.riotfamily.core.security.ui.LoginFormController">
 		<constructor-arg ref="loginManager" />
 		<property name="successViewName" value="classpath:/org/riotfamily/components/runtime/view/toolbar-login-success.ftl" />
 	</bean>
@@ -96,17 +96,17 @@
 	</override:add>
 	
 	<override:add ref="resourceFilters">
-		<bean class="org.riotfamily.riot.resource.PropertyResourceFilter">
+		<bean class="org.riotfamily.core.resource.PropertyResourceFilter">
 			<property name="match" value="/**/toolbar-loader.js" />
 			<property name="properties">
 				<map>
 					<entry key="riotServletPrefix" value-ref="riotServletPrefix" />
 					<entry key="riotVersion" value-ref="riotVersion" />
-					<entry key="resourcePath" value-ref="riotResourcePath" />
+					<entry key="resourcePath" value-ref="resourcePath" />
 				</map>
 			</property>
 		</bean>
-		<bean class="org.riotfamily.riot.resource.MessageResourceFilter">
+		<bean class="org.riotfamily.core.resource.MessageResourceFilter">
 			<property name="prefix" value="components." />
 			<property name="escapeJsStrings" value="true" />
 			<property name="matches">
@@ -120,12 +120,13 @@
 	</override:add>
 	
 	<override:add ref="resourceMappings" append="true">
-		<bean class="org.riotfamily.riot.resource.ResourceMapping">
+		<bean class="org.riotfamily.core.resource.ResourceMapping">
 			<property name="path" value="/" />
 			<property name="location" value="classpath:/org/riotfamily/components/runtime/resources/" />
 		</bean>
 	</override:add>	
 	
+	<!--
 	<override:add ref="dwrController" property="configurators">
 		<bean class="org.riotfamily.common.web.dwr.SpringConfigurator">
 			<property name="converterTypes">
@@ -145,5 +146,6 @@
 			</property>
 		</bean>
 	</override:add>
-	
+	-->
+	 
 </beans>

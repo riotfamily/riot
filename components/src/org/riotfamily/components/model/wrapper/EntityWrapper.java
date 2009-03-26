@@ -35,7 +35,7 @@ public class EntityWrapper extends ValueWrapper<Object> {
 	 * http://opensource.atlassian.com/projects/hibernate/browse/HHH-3475
 	 */
 	
-	@Type(type="org.riotfamily.riot.hibernate.support.FailSafeAnyType")
+	@Type(type="org.riotfamily.common.hibernate.FailSafeAnyType")
 	@Columns(columns = {
 	    @Column(name="entity_table"),
 	    @Column(name="entity_id")

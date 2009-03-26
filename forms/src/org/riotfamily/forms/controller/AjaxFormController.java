@@ -24,8 +24,6 @@
 package org.riotfamily.forms.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,11 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.forms.Element;
 import org.riotfamily.forms.Form;
-import org.riotfamily.forms.event.EventPropagation;
 import org.riotfamily.forms.event.JavaScriptEvent;
 import org.riotfamily.forms.event.JavaScriptEventAdapter;
-import org.riotfamily.forms.resource.Resources;
-import org.riotfamily.forms.resource.ScriptResource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.web.servlet.ModelAndView;
@@ -52,7 +47,10 @@ public abstract class AjaxFormController extends AbstractFormController
 	
 	private MessageSource messageSource;
 	
-	
+	public AjaxFormController(FormContextFactory formContextFactory) {
+		super(formContextFactory);
+	}
+
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
@@ -69,12 +67,7 @@ public abstract class AjaxFormController extends AbstractFormController
 			return super.handleFormRequest(form, request, response);
 		}
 	}
-	
-	protected void initForm(Form form, HttpServletRequest request) {
-		form.addResource(new ScriptResource("form/ajax.js", "propagate", 
-				Resources.RIOT_EFFECTS));
-	}
-	
+		
 	protected boolean isEventRequest(HttpServletRequest request) {
 		return request.getParameter("event.type") != null;
 	}
@@ -124,33 +117,6 @@ public abstract class AjaxFormController extends AbstractFormController
 		else {
 			log.error("Element does not implement JavaScriptEventAdapter");
 		}
-	}
-	
-	protected void renderForm(Form form, PrintWriter writer) {
-		form.render(writer);
-		writer.print("<script>");
-		ArrayList<EventPropagation> propagations = new ArrayList<EventPropagation>();
-		for (Element element : form.getRegisteredElements()) { 
-			if (element instanceof JavaScriptEventAdapter) {
-				JavaScriptEventAdapter adapter = (JavaScriptEventAdapter) element;
-				EventPropagation.addPropagations(adapter, propagations);
-			}
-		}
-		
-		if (!propagations.isEmpty()) {
-			writer.print("Resources.waitFor('propagate', function() {");
-			for (EventPropagation p : propagations) { 
-				writer.print("propagate('");
-				writer.print(p.getTriggerId());
-				writer.print("', '");
-				writer.print(p.getType());
-				writer.print("', '");
-				writer.print(p.getSourceId());
-				writer.print("');\n");
-			}
-			writer.print("});");
-		}
-		writer.print("</script>");
 	}
 	
 }

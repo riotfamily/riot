@@ -28,7 +28,6 @@ import java.io.IOException;
 
 import javax.servlet.ServletContext;
 
-import org.riotfamily.common.log.RiotLog;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
@@ -36,6 +35,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.crawler.PageData;
 import org.riotfamily.crawler.PageHandler;
 import org.riotfamily.search.analysis.AnalyzerFactory;

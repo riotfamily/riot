@@ -30,11 +30,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.util.ResourceUtils;
+import org.riotfamily.core.dao.InvalidPropertyValueException;
+import org.riotfamily.core.dao.RiotDaoException;
 import org.riotfamily.forms.Form;
+import org.riotfamily.forms.controller.FormContextFactory;
 import org.riotfamily.forms.factory.FormRepository;
 import org.riotfamily.forms.factory.RepositoryFormController;
-import org.riotfamily.riot.dao.InvalidPropertyValueException;
-import org.riotfamily.riot.dao.RiotDaoException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -63,10 +64,13 @@ public abstract class AbstractFrontOfficeFormController
 
 	private String formIdAttribute = "formId";
 
-	public AbstractFrontOfficeFormController(FormRepository formRepository,
+	
+	public AbstractFrontOfficeFormController(
+			FormContextFactory formContextFactory, 
+			FormRepository formRepository,
 			PlatformTransactionManager transactionManager) {
 		
-		super(formRepository);
+		super(formContextFactory, formRepository);
 		this.transactionManager = transactionManager;
 	}
 

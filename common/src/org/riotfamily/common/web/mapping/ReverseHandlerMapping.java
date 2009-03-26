@@ -49,12 +49,12 @@ public interface ReverseHandlerMapping {
 	/**
 	 * Returns the URL of a mapped handler.
 	 * @param handlerName The name of the handler
-	 * @param prefix Optional prefix to sort out ambiguities
 	 * @param attributes Optional attributes to fill out wildcards. Can either 
 	 * 		  be <code>null</code>, a primitive wrapper, a Map or a bean.
-	 * @param context The context
+	 * @param request Optional request that is used as context to look up 
+	 *        default wildcard values.
 	 */
-	public String getUrlForHandler(String handlerName, 
-			String prefix, Object attributes, UrlResolverContext context);
+	public String getUrlForHandler(String handlerName, Object attributes, 
+			HttpServletRequest request);
 
 }
