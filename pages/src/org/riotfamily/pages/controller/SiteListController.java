@@ -31,10 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.riotfamily.cachius.TaggingContext;
 import org.riotfamily.cachius.spring.AbstractCacheableController;
 import org.riotfamily.cachius.spring.CacheableController;
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PathConverter;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -45,14 +43,11 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 public class SiteListController extends AbstractCacheableController {
 
-	private PageDao pageDao;
-
 	private PathConverter pathConverter;
 
 	private String viewName;
 
-	public SiteListController(PageDao pageDao, PathConverter pathConverter) {
-		this.pageDao = pageDao;
+	public SiteListController(PathConverter pathConverter) {
 		this.pathConverter = pathConverter;
 	}
 
@@ -63,11 +58,10 @@ public class SiteListController extends AbstractCacheableController {
 	public ModelAndView handleRequest(HttpServletRequest request,
 					HttpServletResponse response) throws Exception {
 
-		List<Site> sites = pageDao.listSites();
+		List<Site> sites = Site.findAll();
 		if (sites.size() == 1) {
 			Site site = sites.get(0);
-			PageNode root = pageDao.getRootNode();
-			Page page = (Page) root.getChildPages(site).iterator().next();
+			Page page = site.getChildPages().iterator().next();
 			String url = page.getUrl(pathConverter);
 			return new ModelAndView(new RedirectView(url, true));
 		}

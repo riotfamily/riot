@@ -66,18 +66,12 @@
 	
 	<!-- DAOs and models -->
 
-	<bean id="siteRiotDao" class="org.riotfamily.pages.riot.dao.SiteRiotDao">
-		<property name="pageDao" ref="pageDao" />
-	</bean>
+	<bean id="siteRiotDao" class="org.riotfamily.pages.riot.dao.SiteRiotDao" />
 
- 	<bean id="pageRiotDao" class="org.riotfamily.pages.riot.dao.PageRiotDao">
-		<property name="pageDao" ref="pageDao" />
-	</bean>
+ 	<bean id="pageRiotDao" class="org.riotfamily.pages.riot.dao.PageRiotDao" />
 	
-	<bean id="locales" class="org.riotfamily.pages.riot.form.SiteLocalesOptionsModel">
-		<constructor-arg ref="pageDao" />
-	</bean>
-	
+	<bean id="locales" class="org.riotfamily.pages.riot.form.SiteLocalesOptionsModel" />
+
 	<!-- Policies -->
 	
 	<bean id="siteUserPolicy" class="org.riotfamily.pages.riot.security.SiteUserPolicy">

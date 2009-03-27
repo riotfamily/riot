@@ -32,39 +32,23 @@ import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.RiotDaoAdapter;
 import org.riotfamily.core.dao.SwappableItemDao;
 import org.riotfamily.core.security.AccessController;
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
-import org.springframework.util.Assert;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
 public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
-		CutAndPasteEnabledDao, InitializingBean {
-
-	private PageDao pageDao;
-
-	public SiteRiotDao() {
-	}
-
-	public void setPageDao(PageDao pageDao) {
-		this.pageDao = pageDao;
-	}
-
-	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(pageDao, "A PageDao must be set.");
-	}
+		CutAndPasteEnabledDao {
 
 	public Class<?> getEntityClass() {
 		return Site.class;
 	}
 
 	public Collection<?> list(Object parent, ListParams params) throws DataAccessException {
-		List<Site> allSites = pageDao.listSites();
+		List<Site> allSites = Site.findAll();
 		ArrayList<Site> result = new ArrayList<Site>(allSites.size());
 		for (Site site : allSites) {
 			if (AccessController.isGranted("list", site)) {
@@ -75,20 +59,19 @@ public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
 	}
 
 	public void save(Object entity, Object parent) throws DataAccessException {
-		pageDao.saveSite((Site) entity);
+		((Site) entity).save();
 	}
 
 	public Object merge(Object entity) throws DataAccessException {
-		return pageDao.mergeSite((Site) entity);
+		return ((Site) entity).merge();
 	}
 	
 	public void update(Object entity) throws DataAccessException {
-		Site site = (Site) entity;
-		pageDao.updateSite(site);
+		((Site) entity).update();
 	}
 
 	public void delete(Object entity, Object parent) throws DataAccessException {
-		pageDao.deleteSite((Site) entity);
+		((Site) entity).delete();
 	}
 
 	public String getObjectId(Object entity) {
@@ -96,14 +79,14 @@ public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
 	}
 
 	public Object load(String id) throws DataAccessException {
-		return pageDao.loadSite(new Long(id));
+		return Site.load(Long.valueOf(id));
 	}
 	
 	public void swapEntity(Object entity, Object parent, ListParams params, 
 			int swapWith) {
 		
 		Site site = (Site) entity;
-		List<Site> sites = pageDao.listSites();
+		List<Site> sites = Site.findAll();
 		int i = sites.indexOf(site);
 		Site other = sites.get(i + swapWith);
 		
@@ -114,12 +97,13 @@ public class SiteRiotDao extends RiotDaoAdapter implements SwappableItemDao,
 
 	public void removeChild(Object entity, Object parent) {
 		Page page = (Page) entity;
-		page.getNode().getChildNodes().remove(page.getNode());
+		page.getParentPage().removePage(page);
 	}
 	
 	public void addChild(Object entity, Object parent) {
 		Page page = (Page) entity;
-		pageDao.getRootNode().addChildNode(page.getNode());
+		Site site = (Site) parent;
+		site.addPage(page);
 	}
 	
 }

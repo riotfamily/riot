@@ -24,14 +24,13 @@
 package org.riotfamily.pages.model;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.criterion.Restrictions;
+import org.riotfamily.common.hibernate.ActiveRecordSupport;
 
 
 
@@ -46,10 +45,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name="riot_page_aliases")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
-public class PageAlias {
+public class PageAlias extends ActiveRecordSupport {
 
-	private Long id;
-	
+
 	private Page page;
 	
 	private Site site;
@@ -63,15 +61,6 @@ public class PageAlias {
 		this.page = page;
 		this.site = site;
 		this.path = path;
-	}
-
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	public Long getId() {
-		return this.id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@ManyToOne
@@ -102,6 +91,19 @@ public class PageAlias {
 
 	public String toString() {
 		return "PageAlias[" + page + " --> " + path + "]";
+	}
+	
+	// ----------------------------------------------------------------------
+	// 
+	// ----------------------------------------------------------------------
+	
+	public static PageAlias loadBySiteAndPath(Site site, String path) {
+		return (PageAlias) getSession().createCriteria(PageAlias.class)
+				.setCacheable(true)
+				.setCacheRegion("pages")
+				.add(Restrictions.eq("site", site))
+				.add(Restrictions.eq("path", path))
+				.uniqueResult();
 	}
 	
 }

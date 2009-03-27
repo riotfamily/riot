@@ -23,13 +23,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.dao;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.PageNode;
-import org.riotfamily.pages.model.Site;
+import org.riotfamily.pages.model.SiteMapItem;
 
 /**
  * @author Carsten Woelk [cwoelk at neteye dot de]
@@ -40,11 +35,16 @@ public final class PageValidationUtils {
 	private PageValidationUtils() { }
 
 
-	public static boolean isValidChild(PageNode node, Page page) {
-		Collection<Page> childs = getChildsWithoutPage(node, page);
-		return !containsPathComponent(childs, page.getPathComponent());
+	public static boolean isValidChild(SiteMapItem parent, Page page) {
+		for (Page child : parent.getChildPages()) {
+			if (!child.equals(page) && child.getPathComponent().equals(page.getPathComponent())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
+	/*
 	public static boolean isTranslatable(Page page, Site targetSite) {
 		Collection<Page> siblings = getSiblings(page, targetSite);
 		return !PageValidationUtils.containsPathComponent(siblings,
@@ -62,10 +62,6 @@ public final class PageValidationUtils {
 		return false;
 	}
 
-	/**
-	 * Returns all siblings of the page in the given site. If the site is
-	 * identical to the page's site, the page itself will be contained too.
-	 */
 	public static Collection<Page> getSiblings(Page page, Site site) {
 		return page.getNode().getParent().getChildPages(site);
 	}
@@ -79,6 +75,6 @@ public final class PageValidationUtils {
 		result.remove(item);
 		return result;
 	}
-
+	*/
 
 }

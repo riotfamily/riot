@@ -39,10 +39,8 @@ import org.riotfamily.components.cache.ComponentCacheUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.pages.cache.PageCacheUtils;
-import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.mapping.PathConverter;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 import org.springframework.web.context.WebApplicationContext;
@@ -73,7 +71,7 @@ public class PageFacade {
 		this.request = request;
 		this.pathConverter = pathConverter;
 		this.preview = EditModeUtils.isEditMode(request);
-		PageCacheUtils.addNodeTag(page.getNode());
+		PageCacheUtils.addNodeTag(page);
 	}
 	
 	public PageFacade(Page page, HttpServletRequest request) {
@@ -87,10 +85,6 @@ public class PageFacade {
 	
 	public Long getId() {
 		return page.getId();
-	}
-	
-	public PageNode getNode() {
-		return page.getNode();
 	}
 	
 	public Site getSite() {
@@ -156,15 +150,7 @@ public class PageFacade {
 				ServletUtils.getServerNameAndPort(request),
 				request.getContextPath(), attributes);
 	}
-	
-	public Page getLocalPage() {
-		Site currentSite = PageResolver.getResolvedSite(request);
-		if (page.getSite().equals(currentSite)) {
-			return page;
-		}
-		return page.getNode().getPage(currentSite);
-	}
-	
+		
 	public Page getMasterPage() {
 		return page.getMasterPage();
 	}
@@ -182,14 +168,14 @@ public class PageFacade {
 	}
 
 	public Collection<Page> getChildPages() {
-		PageCacheUtils.addNodeTag(page.getNode());
+		PageCacheUtils.addNodeTag(page);
 		return getVisiblePages(page.getChildPages());
 	}
 
 	public List<Page> getSiblings() {
-		PageNode parentNode = page.getNode().getParent();
-		PageCacheUtils.addNodeTag(parentNode);
-		return getVisiblePages(parentNode.getChildPages(page.getSite()));
+		Page parent = page.getParentPage();
+		PageCacheUtils.addNodeTag(parent);
+		return getVisiblePages(parent.getChildPages());
 	}
 	
 	public Page getPreviousSibling() {
@@ -281,7 +267,7 @@ public class PageFacade {
 		return page.isVisible(preview);
 	}
 
-	private List<Page> getVisiblePages(List<Page> pages) {
+	private List<Page> getVisiblePages(Collection<Page> pages) {
 		ArrayList<Page> result = new ArrayList<Page>();
 		for (Page page : pages) {
 			if (page.isVisible(preview)) {

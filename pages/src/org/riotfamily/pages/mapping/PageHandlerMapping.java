@@ -23,6 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.riotfamily.pages.mapping;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,6 @@ import org.riotfamily.common.web.controller.HttpErrorController;
 import org.riotfamily.common.web.controller.RedirectController;
 import org.riotfamily.common.web.mapping.AbstractReverseHandlerMapping;
 import org.riotfamily.common.web.mapping.AttributePattern;
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
@@ -52,8 +52,6 @@ import org.springframework.web.util.WebUtils;
  */
 public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 
-	private PageDao pageDao;
-
 	private PageResolver pageResolver;
 	
 	private PathConverter pathConverter;
@@ -63,8 +61,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	private PathMatcher pathMatcher = new AntPathMatcher();
 	
 
-	public PageHandlerMapping(PageDao pageDao, PageResolver pageResolver) {
-		this.pageDao = pageDao;
+	public PageHandlerMapping(PageResolver pageResolver) {
 		this.pageResolver = pageResolver;
 		this.pathConverter = pageResolver.getPathConverter();
 	}
@@ -126,7 +123,7 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	}
 
 	
-	private Object getFolderHandler(List<Page> childPages) {
+	private Object getFolderHandler(Collection<Page> childPages) {
 		for (Page page : childPages) {
 			if (page.isRequestable()) {
 				String url = page.getUrl(pathConverter);
@@ -143,9 +140,9 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 	protected Object getPageNotFoundHandler(Site site, String path) {
 		try {
 			if (path.length() == 0) {
-				return getFolderHandler(pageDao.getRootNode().getChildPages(site));
+				return getFolderHandler(site.getChildPages());
 			}
-			PageAlias alias = pageDao.findPageAlias(site, path);
+			PageAlias alias = PageAlias.loadBySiteAndPath(site, path);
 			if (alias != null) {
 				Page page = alias.getPage();
 				if (page != null) {
@@ -190,13 +187,13 @@ public class PageHandlerMapping extends AbstractReverseHandlerMapping {
 		Site site = (Site) defaults.get("site");
 		if (site == null) {
 			// Check if we have a single-site website
-			List<Site> sites = pageDao.listSites();
+			List<Site> sites = Site.findAll();
 			if (sites.size() != 1) {
 				return null;
 			}
 			site = sites.get(0);
 		}
-		List<Page> pages = pageDao.findPagesOfType(beanName, site);
+		List<Page> pages = Page.findByTypeAndSite(beanName, site);
 		List<AttributePattern> patterns = Generics.newArrayList(pages.size());
 		for (Page page : pages) {
 			patterns.add(new AttributePattern(page.getUrl(pathConverter)));

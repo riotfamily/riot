@@ -2,7 +2,6 @@ package org.riotfamily.pages.setup;
 
 import java.util.Locale;
 
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Site;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.FactoryBean;
@@ -18,16 +17,10 @@ public class SiteFactoryBean implements FactoryBean, InitializingBean, Applicati
 	
 	private Locale locale;
 	
-	private PageDao pageDao;
-
 	private PlatformTransactionManager transactionManager;
 	
 	private ApplicationContext applicationContext;
 	
-	public void setPageDao(PageDao pageDao) {
-		this.pageDao = pageDao;
-	}
-
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}
@@ -37,20 +30,14 @@ public class SiteFactoryBean implements FactoryBean, InitializingBean, Applicati
 	}
 	
 	public void afterPropertiesSet() throws Exception {
-		
 		if (transactionManager == null) {
 			transactionManager = (PlatformTransactionManager) 
 					BeanFactoryUtils.beanOfTypeIncludingAncestors(
 					applicationContext, PlatformTransactionManager.class);
 		}
-		if (pageDao == null) {
-			pageDao = (PageDao)	BeanFactoryUtils.beanOfTypeIncludingAncestors(
-					applicationContext, PageDao.class);
-		}		
 	}
 			
 	public void setLocale(Locale locale) {
-		//this.locale = StringUtils.parseLocaleString(locale);
 		this.locale = locale;		
 	}
 
@@ -67,7 +54,7 @@ public class SiteFactoryBean implements FactoryBean, InitializingBean, Applicati
 		return new TransactionTemplate(transactionManager).execute(new TransactionCallback() {
 			
 			public Object doInTransaction(TransactionStatus status) {
-				return pageDao.findSiteByLocale(locale);
+				return Site.loadByLocale(locale);
 			}
 		
 		});		

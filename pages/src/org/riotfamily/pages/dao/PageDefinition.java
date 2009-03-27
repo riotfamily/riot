@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
 
 /**
@@ -96,26 +96,27 @@ public class PageDefinition {
 		this.pageDefinitions = definitions;
 	}
 
-	public PageNode createNode(PageNode parent, List<Site> sites, PageDao pageDao) {
+	/*
+	public PageNode createNode(PageNode parent, List<Site> sites) {
 		PageNode node = new PageNode();
 		parent.addChildNode(node);
 		node.setPageType(type);
 		node.setSystemNode(systemNode);
 		node.setHidden(hidden);
-		createPages(node, sites, pageDao);
-		pageDao.saveNode(node);
+		createPages(node, sites);
+		node.save();
 		for (Page page : node.getPages()) {
-			pageDao.publishPageProperties(page);
+			page.publishPageProperties();
 		}
 		if (pageDefinitions != null) {
 			for (PageDefinition childDefinition : pageDefinitions) {
-				childDefinition.createNode(node, sites, pageDao);
+				childDefinition.createNode(node, sites);
 			}
 		}
 		return node;
 	}
 
-	private void createPages(PageNode node, List<Site> sites, PageDao pageDao) {
+	private void createPages(PageNode node, List<Site> sites) {
 		for (Site site : sites) {
 			Page page = new Page(getPathComponent(), site);
 			page.setNode(node);
@@ -126,8 +127,8 @@ public class PageDefinition {
 				page.getPageProperties().getPreviewVersion().wrap(properties);
 			}
 			node.addPage(page);
-			pageDao.deleteAlias(page);
+			PageAlias.deleteByPage(page);
 		}
 	}
-
+	*/
 }

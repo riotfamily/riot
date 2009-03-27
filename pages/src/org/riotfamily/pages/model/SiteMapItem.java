@@ -18,34 +18,22 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Jan-Frederic Linde [jfl at neteye dot de]
+ *   Felix Gnass [fgnass at neteye dot de]
  *
  * ***** END LICENSE BLOCK ***** */
-package org.riotfamily.pages.riot.security;
+package org.riotfamily.pages.model;
 
-import org.riotfamily.core.screen.list.command.CommandContext;
-import org.riotfamily.core.security.auth.RiotUser;
-import org.riotfamily.core.security.policy.ReflectionPolicy;
-import org.riotfamily.pages.model.Page;
+import java.util.Collection;
 
-public class SystemPagePolicy extends ReflectionPolicy {
-	
-	public SystemPagePolicy() {
-		setOrder(Integer.MAX_VALUE - 3);
-	}
-	
-	public Permission delete(RiotUser riotUser, Page page, CommandContext context) {
-		if (page.isSystemPage()) {
-			return Permission.DENIED;
-		}
-		return Permission.ABSTAIN;
-	}
-	
-	public Permission unpublish(RiotUser riotUser, Page page, CommandContext context) {
-		if (page.isSystemPage()) {
-			return Permission.DENIED;
-		}
-		return Permission.ABSTAIN;
-	}
+import javax.persistence.MappedSuperclass;
 
+@MappedSuperclass
+public interface SiteMapItem {
+
+	public Collection<Page> getChildPages();
+	
+	public void addPage(Page page);
+	
+	//public void removePage(Page page);
+	
 }

@@ -33,10 +33,8 @@ import org.riotfamily.components.model.Component;
 import org.riotfamily.components.model.ContentContainer;
 import org.riotfamily.components.support.EditModeUtils;
 import org.riotfamily.pages.cache.PageCacheUtils;
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageResolver;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.PageProperties;
 import org.riotfamily.pages.model.Site;
 
@@ -48,27 +46,24 @@ public class PagesMacroHelper {
 
 	private ComponentDao componentDao;
 	
-	private PageDao pageDao;
-	
 	private PageResolver pageResolver;
 
 	private HttpServletRequest request;
 
 	
-	public PagesMacroHelper(ComponentDao componentDao, PageDao pageDao, 
+	public PagesMacroHelper(ComponentDao componentDao,  
 			PageResolver pageResolver, HttpServletRequest request) {
 		
 		this.componentDao = componentDao;
-		this.pageDao = pageDao;
 		this.pageResolver = pageResolver;
 		this.request = request;
 	}
 	
-	
+	/*
 	public List<Page> getTopLevelPages(Site site) {
-		PageNode rootNode = pageDao.getRootNode();
-		PageCacheUtils.addNodeTag(rootNode);
-		return getVisiblePages(rootNode.getChildPages(site),
+		Page rootPage = site.getRootPage();
+		PageCacheUtils.addNodeTag(rootPage);
+		return getVisiblePages(rootPage.getChildPages(),
 				EditModeUtils.isEditMode(request));
 	}
 
@@ -105,4 +100,5 @@ public class PagesMacroHelper {
 	public Site getSiteWithProperty(String name, Object value) {
 		return this.pageDao.findSiteWithProperty(name, value);
 	}
+	*/
 }

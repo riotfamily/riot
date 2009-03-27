@@ -13,19 +13,11 @@
 
 	<bean id="pageTypeHierarchy" class="org.riotfamily.pages.setup.PageTypeHierarchy" />
 	
-	<bean id="pageDao" class="org.riotfamily.pages.dao.HibernatePageDao">
-		<property name="cacheService" ref="cacheService" />
-		<property name="componentDao" ref="componentDao" />
-		<property name="sessionFactory" ref="sessionFactory" />
-		<property name="pageTypeHierarchy" ref="pageTypeHierarchy" />
-	</bean>
-
 	<bean id="pathConverter" class="org.riotfamily.pages.mapping.DefaultPathConverter">
 		<property name="suffix" value=".html" />
 	</bean>
 	
 	<bean id="pageResolver" class="org.riotfamily.pages.mapping.PageResolver">
-		<constructor-arg ref="pageDao" />
 		<property name="pathConverter" ref="pathConverter" />
 	</bean>
 		

@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.riotfamily.dbmsgsrc.dao.DbMessageSourceDao;
 import org.riotfamily.dbmsgsrc.model.Message;
 import org.riotfamily.dbmsgsrc.model.MessageBundleEntry;
@@ -68,7 +69,7 @@ public class DbMessageSource extends AbstractMessageSource {
 					}
 				});
 			}
-			catch (DataIntegrityViolationException e) {
+			catch (ConstraintViolationException e) {
 				result = dao.findEntry(bundle, code);
 				if (result == null) {
 					result = new MessageBundleEntry(bundle, code, defaultMessage);

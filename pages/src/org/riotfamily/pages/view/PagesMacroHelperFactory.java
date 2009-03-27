@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.riotfamily.common.web.view.MacroHelperFactory;
 import org.riotfamily.components.dao.ComponentDao;
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.mapping.PageResolver;
 
 /**
@@ -41,22 +40,19 @@ public class PagesMacroHelperFactory implements MacroHelperFactory {
 
 	private ComponentDao componentDao;
 	
-	private PageDao pageDao;
-
 	private PageResolver pageResolver;
 
-	public PagesMacroHelperFactory(ComponentDao componentDao, PageDao pageDao, 
+	public PagesMacroHelperFactory(ComponentDao componentDao,  
 			PageResolver pageResolver) {
 		
 		this.componentDao = componentDao;
-		this.pageDao = pageDao;
 		this.pageResolver = pageResolver;
 	}
 
 	public Object createMacroHelper(HttpServletRequest request,
 			HttpServletResponse response, Map<String, ?> model) {
 		
-		return new PagesMacroHelper(componentDao, pageDao, pageResolver, request);
+		return new PagesMacroHelper(componentDao, pageResolver, request);
 	}
 	
 }

@@ -30,7 +30,6 @@ import org.riotfamily.common.util.FormatUtils;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.PageAlias;
 import org.riotfamily.pages.model.Site;
@@ -53,13 +52,8 @@ public class PageResolver {
 
 	private static final Object NOT_FOUND = new Object();
 	
-	private PageDao pageDao;
-	
 	private PathConverter pathConverter;
 
-	public PageResolver(PageDao pageDao) {
-		this.pageDao = pageDao;
-	}
 
 	public void setPathConverter(PathConverter pathConverter) {
 		this.pathConverter = pathConverter;
@@ -81,7 +75,7 @@ public class PageResolver {
 			expose(site, request, SITE_ATTRIBUTE);
 		}
 		Site result = site != NOT_FOUND ? (Site) site : null;
-		pageDao.refreshSiteIfDetached(result);
+		result.refreshIfDetached();
 		return result; 
 	}
 		
@@ -110,7 +104,7 @@ public class PageResolver {
 			expose(page, request, PAGE_ATTRIBUTE);
 		}
 		Page result = page != NOT_FOUND ? (Page) page : null;
-		pageDao.refreshPageIfDetached(result);
+		result.refreshIfDetached();
 		return result;
 	}
 	
@@ -177,17 +171,17 @@ public class PageResolver {
 			path = pathConverter.removeSuffix(path);
 		}
 
-		Site site = pageDao.findSite(host, path);
+		Site site = Site.loadByHostNameAndPath(host, path);
 		if (site == null) {
 			log.debug("Could not find site for url '" + url + "'. Using fallback.");
 			site = fallbackSite;
 		}
 		path = site.stripPrefix(path);
 
-		Page page = pageDao.findPage(site, path);
+		Page page = Page.loadBySiteAndPath(site, path);
 		if (page == null) {
 			log.debug("Haven't found a page for '" + site + path + "'. Trying to find a page through an alias.");
-			PageAlias alias = pageDao.findPageAlias(site, path);
+			PageAlias alias = PageAlias.loadBySiteAndPath(site, path);
 			if (alias != null) {
 				page = alias.getPage();
 			}
@@ -205,7 +199,7 @@ public class PageResolver {
 		if (pathConverter != null) {
 			path = pathConverter.removeSuffix(path);
 		}
-		Site site = pageDao.findSite(hostName, path);
+		Site site = Site.loadByHostNameAndPath(hostName, path);
 		String pathWithinSite = null;
 		if (site != null) {
 			pathWithinSite = FormatUtils.stripTrailingSlash(site.stripPrefix(path));
@@ -225,7 +219,7 @@ public class PageResolver {
 			return null;
 		}
 		String path = getPathWithinSite(request);
-		Page page = pageDao.findPage(site, path);
+		Page page = Page.loadBySiteAndPath(site, path);
 		if (page == null) {
 			page = findWildcardPage(site, path);
 		}
@@ -242,14 +236,14 @@ public class PageResolver {
 	private Page findWildcardPage(Site site, String urlPath) {
 		Page page = null; 
 		AttributePattern bestMatch = null;
-		for (String path : pageDao.getWildcardPaths(site)) {
+		for (String path : site.listWildcardPaths()) {
 			AttributePattern p = new AttributePattern(path);
 			if (p.matches(urlPath) && p.isMoreSpecific(bestMatch)) {
 				bestMatch = p;
 			}
 		}
 		if (bestMatch != null) {
-			page = pageDao.findPage(site, bestMatch.toString());
+			page = Page.loadBySiteAndPath(site, bestMatch.toString());
 		}
 		return page;
 	}

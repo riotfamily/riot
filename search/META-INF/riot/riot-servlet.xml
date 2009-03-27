@@ -38,7 +38,6 @@
 		 -->
 		<bean id="siteIdentifer" class="org.riotfamily.search.site.SiteIdentifier">
 			<constructor-arg ref="transactionManager" />
-			<constructor-arg ref="pageDao" />
 		</bean>
 		
 		<!-- 

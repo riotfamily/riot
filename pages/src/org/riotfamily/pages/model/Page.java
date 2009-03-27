@@ -29,22 +29,28 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.riotfamily.common.beans.MapWrapper;
+import org.riotfamily.common.hibernate.ActiveRecordSupport;
 import org.riotfamily.common.util.FormatUtils;
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.common.web.mapping.AttributePattern;
 import org.riotfamily.core.security.AccessController;
 import org.riotfamily.pages.mapping.PathConverter;
@@ -61,19 +67,29 @@ import org.springframework.util.ClassUtils;
 @Entity
 @Table(name="riot_pages", uniqueConstraints = {@UniqueConstraint(columnNames={"site_id", "path"})})
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
-public class Page {
+public class Page extends ActiveRecordSupport implements SiteMapItem {
 
 	@Deprecated
 	public static final String TITLE_PROPERTY = "title";
 	
-	private Long id;
-
-	private PageNode node;
-
+	private String pageType;
+	
+	private Page parentPage;
+	
+	private long position;
+	
+	private Set<Page> childPages;
+	
+	private Page masterPage;
+	
+	private Set<Page> translations;
+	
 	private Site site;
 
 	private String pathComponent;
 
+	private boolean systemPage;
+	
 	private boolean hidden;
 
 	private boolean folder;
@@ -97,33 +113,23 @@ public class Page {
 	}
 
 	public Page(Page master, Site site) {
+		this.masterPage = master;
 		this.site = site;
 		this.creationDate = new Date();
 		this.pathComponent = master.getPathComponent();
 		this.folder = master.isFolder();
 		this.hidden = master.isHidden();
-		if (master.getNode().isSystemNode()) {
+		if (master.isSystemPage()) {
 			published = master.isPublished();
 		}
 	}
 	
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	public Long getId() {
-		return this.id;
+	public String getPageType() {
+		return pageType;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	@ManyToOne
-	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
-	public PageNode getNode() {
-		return this.node;
-	}
-
-	public void setNode(PageNode node) {
-		this.node = node;
+	public void setPageType(String pageType) {
+		this.pageType = pageType;
 	}
 
 	@ManyToOne
@@ -137,6 +143,62 @@ public class Page {
 				"The page is already associated with a site");
 		
 		this.site = site;
+	}
+
+	@OneToMany
+    @JoinColumn(name="parent_id")
+    @OrderBy("position")
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
+	public Set<Page> getChildPages() {
+		return childPages;
+	}
+
+	public void setChildPages(Set<Page> childPages) {
+		this.childPages = childPages;
+	}
+	
+	@Column(name="pos")
+	public long getPosition() {
+		if (position == 0) {
+			position = System.currentTimeMillis();
+		}
+		return position;
+	}
+
+	public void setPosition(long position) {
+		this.position = position;
+	}
+
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="parent_id", insertable=false, updatable=false)
+	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
+	public Page getParentPage() {
+		return parentPage;
+	}
+
+	public void setParentPage(Page parentPage) {
+		this.parentPage = parentPage;
+	}
+			
+	@ManyToOne
+	@Cascade({CascadeType.MERGE, CascadeType.SAVE_UPDATE})
+	public Page getMasterPage() {
+		return masterPage;
+	}
+
+	public void setMasterPage(Page masterPage) {
+		this.masterPage = masterPage;
+	}
+		
+	@OneToMany(mappedBy="masterPage")
+	@Cascade({CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
+	public Set<Page> getTranslations() {
+		return translations;
+	}
+
+	public void setTranslations(Set<Page> translations) {
+		this.translations = translations;
 	}
 
 	@Transient
@@ -158,6 +220,14 @@ public class Page {
 
 	public void setPathComponent(String pathComponent) {
 		this.pathComponent = pathComponent;
+	}
+
+	public boolean isSystemPage() {
+		return systemPage;
+	}
+
+	public void setSystemPage(boolean systemPage) {
+		this.systemPage = systemPage;
 	}
 
 	public boolean isHidden() {
@@ -268,24 +338,6 @@ public class Page {
 		return path.toString();
 	}
 
-	@Transient
-	public Page getParentPage() {
-		PageNode parentNode = node.getParent();
-		if (parentNode == null) {
-			return null;
-		}
-		return parentNode.getPage(site);
-	}
-
-	@Transient
-	public List<Page> getChildPages() {
-		return node.getChildPages(site);
-	}
-
-	@Transient
-	public Collection<Page> getChildPagesWithFallback() {
-		return node.getChildPagesWithFallback(site);
-	}
 
 	@Transient
 	public Collection<Page> getAncestors() {
@@ -298,15 +350,7 @@ public class Page {
 		return pages;
 	}
 
-	public void addChildPage(Page child) {
-		child.setSite(site);
-		node.addChildNode(new PageNode(child));
-	}
-
-	@Transient
-	public String getPageType() {
-		return node.getPageType();
-	}
+		
 
 	@ManyToOne
 	@Cascade(CascadeType.ALL)
@@ -321,26 +365,12 @@ public class Page {
 		this.pageProperties = pageProperties;
 	}
 	
-	@Transient
-	public Page getMasterPage() {
-		Page masterPage = null;
-		if (site != null) {
-			Site masterSite = site.getMasterSite();
-			while (masterPage == null && masterSite != null) {
-				masterPage = node.getPage(masterSite);
-				masterSite = masterSite.getMasterSite();
-			}
-		}
-		return masterPage;
-	}
 	
 	@Transient
-	@Deprecated
 	public String getTitle() {
 		return getTitle(true);
 	}
 	
-	@Deprecated
 	public String getTitle(boolean preview) {
 		Object title = getPageProperties().unwrap(preview).get(TITLE_PROPERTY);
 		if (title != null) {
@@ -370,7 +400,6 @@ public class Page {
 
 	public boolean isVisible(boolean preview) {
 		return !isHidden() 
-				&& !node.isHidden() 
 				&& !isWildcard() 
 				&& (published || preview)
 				&& (!folder || hasVisibleChildPage(preview));
@@ -388,20 +417,104 @@ public class Page {
 	public String toString() {
 		return site + ":" + path;
 	}
-
-	public boolean equals(Object o) {
-		if (o instanceof Page) {
-			Page page = (Page) o;
-			if (id == null) {
-				return this == o;
-			}
-			return id.equals(page.getId());
+	
+	@Transient
+	public Set<Page> getSiblings() {
+		return getParentPage().getChildPages();
+	}
+	
+	
+	@Transient
+	public List<Page> getChildPagesWithFallback() {
+		List<Page> pages = Generics.newArrayList();
+		pages.addAll(getChildPages());
+		pages.addAll(getTranslationCandidates());
+		return pages;
+	}
+	
+	@Transient
+	public List<Page> getTranslationCandidates() {
+		List<Page> candidates = Generics.newArrayList();
+		Page master = getMasterPage();
+		if (master != null) {
+			for (Page page : master.getChildPages()) {
+				boolean translated = false;
+				for (Page child : getChildPages()) {
+					if (page.equals(child.getMasterPage())) {
+						translated = true;
+						break;
+					}
+				}
+				if (!translated) {
+					candidates.add(page);
+				}
+			}			
 		}
-		return false;
+		return candidates;
 	}
 
-	public int hashCode() {
-		return id != null ? id.hashCode() : 0;
+	
+	// ----------------------------------------------------------------------
+	// 
+	// ----------------------------------------------------------------------
+	
+	public void addPage(Page child) {
+		/*
+		if (!PageValidationUtils.isValidChild(this, child)) {
+			throw new DuplicatePathComponentException(
+					"Page '{0}' did not validate", child.toString());
+		}
+		*/
+		getChildPages().add(child);
+		child.setSite(getSite());
+		//child.setCreationDate(new Date()); // -> EntityListener
+		//deleteAlias(page); // -> EntityListener
+		//PageCacheUtils.invalidateNode(cacheService, parentNode); // -> EntityListener
 	}
-
+	
+	public void removePage(Page child) {
+		getChildPages().remove(child);
+	}
+	
+	public void publish() {
+		setPublished(true);
+		//PageCacheUtils.invalidateNode(cacheService, this);
+		//PageCacheUtils.invalidateNode(cacheService, getParent());
+		//FIXME componentDao.publishContainer(getPageProperties());	
+	}
+	
+	public void unpublish() {
+		setPublished(false);
+		//PageCacheUtils.invalidateNode(cacheService, this);
+		//PageCacheUtils.invalidateNode(cacheService, getParent());
+	}
+	
+	public void discardPageProperties() {
+		//FIXME componentDao.discardContainer(getPageProperties());
+	}
+	
+	public void refreshIfDetached() {
+		Session session = getSession();
+		if (!session.contains(this)) {
+			session.refresh(this);
+		}
+	}
+	
+	public static Page load(Long id) {
+		return load(Page.class, id);
+	}
+	
+	
+	public static Page loadBySiteAndPath(Site site, String path) {
+		return load("from Page where site = ? and path = ?", site, path);
+	}
+	
+	public static List<Page> findByTypeAndSite(String type, Site site) {
+		return find("from Page where type = ? and site = ?", type, site);
+	}
+	
+	public static List<Page> findRootPagesBySite(Site site) {
+		return find("from Page where parentPage is null and site = ?", site);
+	}
+	
 }

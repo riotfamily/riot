@@ -28,7 +28,6 @@ import java.util.Map;
 
 import org.riotfamily.common.util.SpringUtils;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.setup.config.ChildPageTypeDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -64,11 +63,11 @@ public class PageTypeHierarchy implements ApplicationContextAware {
 		return StringUtils.commaDelimitedListToStringArray(getChildType(page));
 	}
 	
-	public String initPageType(PageNode node) {
+	public String initPageType(Page page) {
 		String pageType = null;
-		if (node.getPageType() == null && node.getParent() != null) {
-			pageType = getChildType(node.getParent().getPageType());
-			node.setPageType(pageType);
+		if (page.getPageType() == null && page.getParentPage() != null) {
+			pageType = getChildType(page.getParentPage().getPageType());
+			page.setPageType(pageType);
 		}
 		return pageType;
 	}

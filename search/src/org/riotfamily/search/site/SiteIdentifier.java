@@ -6,7 +6,6 @@ import java.util.List;
 import org.hibernate.Hibernate;
 import org.riotfamily.common.util.RiotLog;
 import org.riotfamily.common.web.util.ServletUtils;
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Site;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -23,16 +22,13 @@ public class SiteIdentifier {
 	
 	private PlatformTransactionManager transactionManager;
 	
-	private PageDao pageDao;
-	
 	private String contextPath;
 	
 	private List<Site> sites;
 
 	
-	public SiteIdentifier(PlatformTransactionManager transactionManager, PageDao pageDao) {
+	public SiteIdentifier(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
-		this.pageDao = pageDao;
 	}
 	
 	public void setContextPath(String contextPath) {
@@ -42,7 +38,7 @@ public class SiteIdentifier {
 	public void updateSiteList() {
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus ts) {
-				sites = pageDao.listSites();
+				sites = Site.findAll();
 				if (sites != null) {
 				    Iterator<Site> i = sites.iterator();
 				    while (i.hasNext()) {

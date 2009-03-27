@@ -28,7 +28,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.riotfamily.components.model.Content;
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Site;
 
 /**
@@ -79,7 +78,7 @@ public class SiteDefinition {
 		this.siteDefinitions = sites;
 	}
 	
-	public void createSites(List<Site> list, PageDao pageDao, Site masterSite) {
+	public void createSites(List<Site> list, Site masterSite) {
 		Site site = new Site();
 		site.setName(name);
 		site.setHostName(hostName);
@@ -92,11 +91,11 @@ public class SiteDefinition {
 			props.wrap(properties);
 			site.setProperties(props);
 		}
-		pageDao.saveSite(site);
+		site.save();
 		list.add(site);
 		if (siteDefinitions != null) {
 			for (SiteDefinition definition : siteDefinitions) {
-				definition.createSites(list, pageDao, site);
+				definition.createSites(list, site);
 			}
 		}
 	}

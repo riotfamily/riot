@@ -28,51 +28,36 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.riotfamily.common.util.Generics;
 import org.riotfamily.core.dao.CutAndPasteEnabledDao;
 import org.riotfamily.core.dao.ListParams;
 import org.riotfamily.core.dao.ParentChildDao;
 import org.riotfamily.core.dao.SwappableItemDao;
 import org.riotfamily.core.dao.TreeDao;
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.model.Page;
-import org.riotfamily.pages.model.PageNode;
 import org.riotfamily.pages.model.Site;
-import org.springframework.beans.factory.InitializingBean;
+import org.riotfamily.pages.model.SiteMapItem;
 import org.springframework.dao.DataAccessException;
-import org.springframework.util.Assert;
 
 /**
  * @author Felix Gnass [fgnass at neteye dot de]
  * @since 6.5
  */
 public class PageRiotDao implements ParentChildDao, TreeDao, 
-		SwappableItemDao, CutAndPasteEnabledDao, InitializingBean {
-
-	private PageDao pageDao;
+		SwappableItemDao, CutAndPasteEnabledDao {
 
 	public PageRiotDao() {
 	}
 
-	public void setPageDao(PageDao pageDao) {
-		this.pageDao = pageDao;
-	}
-	
-	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(pageDao, "A PageDao must be set.");
-	}
-
 	public Object getParent(Object entity) {
 		Page page = (Page) entity;
-		Page parentPage = page.getParentPage();
-		if (parentPage != null) {
-			return parentPage;
-		}
-		return page.getSite();
+		Page parent = page.getParentPage();
+		return parent != null ? parent : page.getSite();
 	}
 
 	public void delete(Object entity, Object parent) throws DataAccessException {
 		Page page = (Page) entity;
-		pageDao.deletePage(page);
+		page.delete();
 	}
 
 	public Class<?> getEntityClass() {
@@ -93,21 +78,12 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 	public Collection<Page> list(Object parent, ListParams params)
 			throws DataAccessException {
 
-		if (parent instanceof Page) {
-			Page parentPage = (Page) parent;
-			
-			return parentPage.getChildPagesWithFallback();
+		SiteMapItem parentItem = (SiteMapItem) parent;
+		if (parentItem == null) {
+			parentItem = Site.loadDefaultSite();
 		}
-		else {
-			Site site;
-			if (parent instanceof Site) {
-				site = (Site) parent;
-			}
-			else {
-				site = pageDao.getDefaultSite();
-			}
-			return pageDao.getRootNode().getChildPagesWithFallback(site);
-		}
+		return parentItem.getChildPages(); //FIXME getChildPagesWithFallback();
+		
 	}
 
 	public boolean isNode(Object object) {
@@ -133,70 +109,71 @@ public class PageRiotDao implements ParentChildDao, TreeDao,
 	}
 	
 	public Object load(String id) throws DataAccessException {
-		return pageDao.loadPage(new Long(id));
+		return Page.load(Long.valueOf(id));
 	}
 
 	public void save(Object entity, Object parent) throws DataAccessException {
 		Page page = (Page) entity;
-		if (parent instanceof Page) {
-			Page parentPage = (Page) parent;
-			pageDao.savePage(parentPage, page);
+		SiteMapItem parentItem = (SiteMapItem) parent;
+		if (parentItem == null) {
+			parentItem = Site.loadDefaultSite();
 		}
-		else {
-			Site site;
-			if (parent instanceof Site) {
-				site = (Site) parent;
-			}
-			else {
-				site = pageDao.getDefaultSite();
-			}
-			page.setSite(site);
-			pageDao.savePage(site, page);
-		}
+		parentItem.addPage(page);
+		page.save();
 	}
 
 	public Object merge(Object entity) throws DataAccessException {
 		Page page = (Page) entity;
-		return pageDao.mergePage(page);
+		return page.merge();
 	}
 	
 	public void update(Object entity) throws DataAccessException {
 		Page page = (Page) entity;
-		pageDao.updatePage(page);
+		page.update();
 	}
 
 	public void swapEntity(Object entity, Object parent, ListParams params,
 			int swapWith) {
 
 		Page page = (Page) entity;
-		PageNode node = page.getNode();
-		
+	
 		List<Page> pages = new ArrayList<Page>(list(parent, params));
 		int i = pages.indexOf(page);
-		PageNode otherNode = pages.get(i + swapWith).getNode();
 		
-		PageNode parentNode = node.getParent();
-		List<PageNode> nodes = parentNode.getChildNodes();
+		Page otherPage = pages.get(i + swapWith);
+		List<Page> siblings = Generics.newArrayList(page.getSiblings());
 
-		int pos = nodes.indexOf(node);
-		int otherPos = nodes.indexOf(otherNode);
+		int pos = siblings.indexOf(page);
+		int otherPos = siblings.indexOf(otherPage);
 		
-		Collections.swap(nodes, pos, otherPos);
-		pageDao.updateNode(parentNode);
+		Collections.swap(siblings, pos, otherPos);
+		//REVISIT PageCacheUtils.invalidateNode(cacheService, parent);
 	}
 
 	public void addChild(Object entity, Object parent) {
 		Page page = (Page) entity;
-		PageNode node = page.getNode();
-		PageNode parentNode = null;
-		if (parent instanceof Page) {
-			Page parentPage = (Page) parent;
-			parentNode = parentPage.getNode();
+		SiteMapItem parentItem = (SiteMapItem) parent;
+		if (parentItem == null) {
+			parentItem = Site.loadDefaultSite();
 		}
-		else {
-			parentNode = pageDao.getRootNode();
+		page.getParentPage().removePage(page);
+		parentItem.addPage(page);
+		
+		updatePaths(page);
+		//FIXME
+		//PageCacheUtils.invalidateNode(cacheService, node);
+		//PageCacheUtils.invalidateNode(cacheService, parentNode);
+		//PageCacheUtils.invalidateNode(cacheService, newParent);
+		
+	}
+	
+	private void updatePaths(Page page) {
+		String oldPath = page.getPath();
+		page.setPath(page.buildPath());
+		//FIXME createAlias(page, oldPath);
+		for (Page child : page.getChildPages()) {
+			updatePaths(child);
 		}
-		pageDao.moveNode(node, parentNode);
 	}
 
 	public void removeChild(Object entity, Object parent) {

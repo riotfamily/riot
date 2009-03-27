@@ -28,9 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import org.riotfamily.pages.dao.PageDao;
 import org.riotfamily.pages.dao.PageDefinition;
-import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 import org.riotfamily.pages.setup.config.SiteDefinition;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -52,15 +51,9 @@ public class PageSetupBean implements InitializingBean, ApplicationContextAware 
 
 	private List<PageDefinition> pageDefinitions;
 
-	private PageDao pageDao;
-
 	private PlatformTransactionManager transactionManager;
 	
 	private ApplicationContext applicationContext;
-
-	public void setPageDao(PageDao pageDao) {
-		this.pageDao = pageDao;
-	}
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
@@ -84,10 +77,6 @@ public class PageSetupBean implements InitializingBean, ApplicationContextAware 
 					BeanFactoryUtils.beanOfTypeIncludingAncestors(
 					applicationContext, PlatformTransactionManager.class);
 		}
-		if (pageDao == null) {
-			pageDao = (PageDao)	BeanFactoryUtils.beanOfTypeIncludingAncestors(
-					applicationContext, PageDao.class);
-		}
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				createNodes();
@@ -95,17 +84,20 @@ public class PageSetupBean implements InitializingBean, ApplicationContextAware 
 		});
 	}
 
+	//FIXME
 	protected void createNodes() {
-		if (pageDao.listSites().isEmpty()) {
+		/*
+		if (Site.findAll().isEmpty()) {
 			List<Site> sites = createSites();
-			PageNode rootNode = pageDao.getRootNode();
+			Page rootNode = Page.getRootNode();
 			if (pageDefinitions != null) {
 				for (PageDefinition definition : pageDefinitions) {
-					definition.createNode(rootNode, sites, pageDao);
+					definition.createNode(rootNode, sites);
 				}
 			}
-			pageDao.updateNode(rootNode);
+			rootNode.update(); //REVISIT
 		}
+		*/
 	}
 	
 	protected List<Site> createSites() {
@@ -117,7 +109,7 @@ public class PageSetupBean implements InitializingBean, ApplicationContextAware 
 		}
 		ArrayList<Site> result = new ArrayList<Site>();
 		for (SiteDefinition definition : siteDefinitions) { 
-			definition.createSites(result, pageDao, null);
+			definition.createSites(result, null);
 		}
 		return result;
 	}

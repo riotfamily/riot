@@ -361,7 +361,7 @@ var ListRow = {
 		}
 		if (row.expandable) {
 			tr.addClassName('expandable');
-			this.expandable = true;
+			tr.expandable = true;
 		}
 		else {
 			tr.addClassName('leaf');

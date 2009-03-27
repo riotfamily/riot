@@ -25,7 +25,7 @@ package org.riotfamily.pages.cache;
 
 import org.riotfamily.cachius.CacheService;
 import org.riotfamily.cachius.TaggingContext;
-import org.riotfamily.pages.model.PageNode;
+import org.riotfamily.pages.model.Page;
 import org.riotfamily.pages.model.Site;
 
 /**
@@ -36,7 +36,7 @@ public final class PageCacheUtils {
 
 	private static final String SITE_PREFIX = Site.class.getName() + '#';
 
-	private static final String NODE_PREFIX = PageNode.class.getName() + '#';
+	private static final String NODE_PREFIX = Page.class.getName() + '#';
 	
 	private PageCacheUtils() {
 	}
@@ -49,17 +49,17 @@ public final class PageCacheUtils {
 		TaggingContext.tag(getSiteTag(site));
 	}
 
-	public static String getNodeTag(PageNode node) {
-		return NODE_PREFIX + node.getId();
+	public static String getNodeTag(Page page) {
+		return NODE_PREFIX + page.getId();
 	}
 		
-	public static void addNodeTag(PageNode node) {
-		TaggingContext.tag(getNodeTag(node));
+	public static void addNodeTag(Page page) {
+		TaggingContext.tag(getNodeTag(page));
 	}
 		
-	public static void invalidateNode(CacheService cacheService, PageNode node) {
+	public static void invalidateNode(CacheService cacheService, Page page) {
 		if (cacheService != null) {
-		    cacheService.invalidateTaggedItems(getNodeTag(node));
+		    cacheService.invalidateTaggedItems(getNodeTag(page));
 		}
 	}
 	

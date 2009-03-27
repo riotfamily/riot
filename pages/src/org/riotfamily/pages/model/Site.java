@@ -24,6 +24,7 @@
 package org.riotfamily.pages.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -31,19 +32,18 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.CollectionOfElements;
+import org.riotfamily.common.hibernate.ActiveRecordSupport;
 import org.riotfamily.common.web.util.ServletUtils;
 import org.riotfamily.components.model.Content;
 import org.riotfamily.components.model.wrapper.ValueWrapper;
@@ -57,9 +57,7 @@ import org.springframework.util.StringUtils;
 @Entity
 @Table(name="riot_sites")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="pages")
-public class Site {
-
-	private Long id;
+public class Site extends ActiveRecordSupport implements SiteMapItem {
 
 	private String name;
 	
@@ -81,21 +79,14 @@ public class Site {
 	
 	private Content properties;
 	
+		
+	
 	public boolean isEnabled() {
 		return this.enabled;
 	}
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-	}
-
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	public Long getId() {
-		return this.id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getName() {
@@ -204,7 +195,7 @@ public class Site {
 	public void setMasterSite(Site masterSite) {
 		this.masterSite = masterSite;
 	}
-	
+		
 	@OneToMany(mappedBy="masterSite")
 	public Set<Site> getDerivedSites() {
 		return this.derivedSites;
@@ -332,4 +323,68 @@ public class Site {
 				&& ObjectUtils.nullSafeEquals(this.locale, other.getLocale())
 				&& ObjectUtils.nullSafeEquals(this.masterSite, other.getMasterSite());
 	}
+	
+	// ----------------------------------------------------------------------
+	// 
+	// ----------------------------------------------------------------------
+
+	@Transient
+	public List<Page> getChildPages() {
+		return Page.findRootPagesBySite(this);
+	}
+	
+	public void addPage(Page page) {
+		page.setSite(this);
+		page.setParentPage(null);
+		page.save(); //REVISIT
+	}
+	
+	public List<String> listWildcardPaths() {
+		return find("select path from Page where site = ?", this);
+	}
+
+	public void refreshIfDetached() {
+		Session session = getSession();
+		if (!session.contains(this)) {
+			session.refresh(this);
+		}
+	}
+	
+	public static Site load(Long id) {
+		return load(Site.class, id);
+	}
+	
+	public static Site loadDefaultSite() {
+		Site site = (Site) getSession().createCriteria(Site.class)
+				.setCacheable(true)
+				.setCacheRegion("pages")
+				.setMaxResults(1)
+				.uniqueResult();
+		
+		if (site == null) {
+			site = new Site();
+			site.setLocale(Locale.getDefault());
+			site.save();
+		}
+		return site;
+	}
+	
+	public static Site loadByLocale(Locale locale) {
+		return load("from Site where locale = ?", locale);
+	}
+	
+	public static List<Site> findAll() {
+		return find("from Site");
+	}
+	
+	public static Site loadByHostNameAndPath(String hostName, String path) {
+		for (Site site : findAll()) {
+			if (site.matches(hostName, path)) {
+				return site;
+			}
+		}
+		return null;
+	}
+	
+	
 }
