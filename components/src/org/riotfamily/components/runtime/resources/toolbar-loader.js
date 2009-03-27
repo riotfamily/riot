@@ -10,9 +10,9 @@ Resources.loadStyleSheet('style/toolbar.css');
 Resources.loadStyleSheet('style/edit-mode.css');
 
 Resources.loadScriptSequence([
-	{src: 'dwr/engine.js', test: 'dwr.engine'},
-	{src: 'dwr/util.js', test: 'dwr.util'},
-	{src: 'dwr/interface/ComponentEditor.js', test: 'ComponentEditor', onload: loadToolbarScripts}
+	{src: riot.path + '/engine.js', test: 'dwr.engine'},
+	{src: riot.path + '/util.js', test: 'dwr.util'},
+	{src: riot.path + '/interface/ComponentEditor.js', test: 'ComponentEditor', onload: loadToolbarScripts}
 ]);
 
 function loadToolbarScripts() {

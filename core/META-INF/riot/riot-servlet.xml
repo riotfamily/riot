@@ -34,17 +34,6 @@
 		<property name="reloadable" value="${riot-servlet.reloadable=true}" />
 	</bean>
 
-
-	<!-- Riot Runtime -->
-		
-	<bean id="riotRuntime" class="org.riotfamily.core.runtime.RiotRuntime">
-		<property name="resourceMapping" value="/resources" />
-	</bean>
-	<bean id="riotServletPrefix" factory-bean="riotRuntime" factory-method="getServletPrefix" />
-	<bean id="resourcePath" factory-bean="riotRuntime" factory-method="getResourcePath" />
-	<bean id="riotVersion" factory-bean="riotRuntime" factory-method="getRiotVersion" />
-	
-	
 	<!-- Spring Web-MVC Setup -->
 	
 	<dwr:controller id="dwrController" debug="true" />

@@ -13,5 +13,13 @@
 			<bean class="org.riotfamily.core.view.RiotTemplateExceptionHandler" />
 		</property>
 	</override:properties>
-		
+
+	<override:put ref="freemarkerConfig" property="freemarkerVariables">
+		<entry key="runtime" value-ref="riotRuntime" />
+	</override:put>
+	
+	<override:put ref="freemarkerConfig" property="macroLibraries">
+		<entry key="riot" value="classpath:org/riotfamily/core/view/riot.ftl" />
+	</override:put>
+	
 </beans>
